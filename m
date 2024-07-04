@@ -1,116 +1,95 @@
-Return-Path: <linux-kernel+bounces-241140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 436AC92777B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:50:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC5492777C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54F7B21ACE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:50:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9C901F23E94
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D311AED3A;
-	Thu,  4 Jul 2024 13:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9D71AE840;
+	Thu,  4 Jul 2024 13:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtojCYjb"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DSDdFON0"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F4B41A81;
-	Thu,  4 Jul 2024 13:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D681411F9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720101012; cv=none; b=COvLsAR9HyDZOY4npDlAEk7Tezg0A6RwtGEwjLZ3BOjpE/kM7OtBdh/4pqUwHZFwcs/y5Lig9a16PS3/+7MTO2wii7c5MuHSljOfLQmP/+7PBK7h1XUIdc43R/66SfaHV9YWgcrHHyXfHpZ2Yl8bX7Tv03pDzL0g80eYMpbJjmg=
+	t=1720101065; cv=none; b=kKRVLrDcfNv3cwUyAkccVYmmI5vzI2f1q+yzuVMiHqzxI8CwZL0YtTZfLPs27kW1SzYu5X7yshAUBqGL5+uxGdjLpWOHp4Jv3Y0kZAB5V64UncjsJ9zjCBl2yYMbqMMGylOY41MhkWadTJK7i9LDiO0MU85j6zqh+ClK7dDOskY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720101012; c=relaxed/simple;
-	bh=+ps+mPqvUr3UdUKN2F/JW+Y5JpOkV/Up2p6K6Mg6aYo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WHWlzZnjN65eaT5E5V7FyM0sLkYkiXrAUtXjILF7MIQpztNvRbveaa93NMf5UKGn5TwOHD3VaK9Q2Txk9y60Nu/c/Ny5Qp0NfA3FLLmyu8et3zM20WDzrINszyqY5d3ympb5A7kZvj4YEBslQmfBrcNsmhMHxOQOJJhns8ngaAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NtojCYjb; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ba3e37feeso950399a12.3;
-        Thu, 04 Jul 2024 06:50:10 -0700 (PDT)
+	s=arc-20240116; t=1720101065; c=relaxed/simple;
+	bh=Mk2zjU0OD/BqtSdx1Y/wNXDDAcjEI73Cmr4nJ0Iw0TU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SlWPpD1zcRFpB/+EkWUz/ru7eKDgEQyk0FsFPZ9XmUDGOBCDjR0EnKMDZd1fib2yMJrH9VPe5Ipo44q1TbuPgcZAM455J/UAZyM96R4UX99hRJYLzsWtpGodRwk/3tETEKvzDTX6ZogkeCqGPMjMlmqZO27fT+SvVFRNSHHYiws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DSDdFON0; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a725eed1cecso63327566b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 06:51:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720101009; x=1720705809; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q6r/waSsOqXycyGSsbPh3a4zrLTjlE29Ir1GCdLEYT0=;
-        b=NtojCYjbt7VDNH9ZgLSTidJVTLTORvvw+WcWdxM5t7l391Old8gpb4pI/Ym5Rmfvnz
-         xzYonWrq633ySdxZ4X10+T+x7JuAIfU6gn5PWNUg9BZ7X12TmEYiQ7kaUoHM4Sno9k0L
-         Mo+pZE8HavHgt11sOMtt9ZW2kFFn+S0Xwj52/Fq4xLHtmk2Cpc+yXyiQ3nxgFHVvv6Ll
-         KW5vV4fpJzDPhxbYe2tMiwk/MmZQRjCn3gp++wk8+LDCVq5HJzAVdwsLbf0U+G06v+4e
-         P1Z6MadA/w+t+To2e3ak6u5qopwJNPzNolKRc2rErLY4YA14PYRH+CKzcMNzIhzUrNq0
-         5IvQ==
+        d=google.com; s=20230601; t=1720101062; x=1720705862; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mk2zjU0OD/BqtSdx1Y/wNXDDAcjEI73Cmr4nJ0Iw0TU=;
+        b=DSDdFON0Hjt/NiO3u6wC7+FmZL0+1EhRt/bN9TGCv/AiYzDNDgQJeCmRJKI9QEmmRK
+         4f3LhWPqTuglCp3HmVu9p+3qxkFddHmVypKeYsqTBT7+90jiyJofsZMu7bQnzuZUmBfj
+         Mc8T+urOWRv25/DX4XXIJn72TRpuJryJIc2SqIUN+qo4SJy6xm5pDhgQPHenNn66iiuh
+         D7uasbX60uSLuz/2TVbuTX126OOCymRZBMCV6F5mD+ZXwZu9ydqOoLaE3hcZtKPD/TUJ
+         C96Aw/cDggEFR2PyN5fl84WFj5ZIHwwLFCMpJI+LN/3hoZdEesQGK/NiFlvWJhCubSBx
+         CpFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720101009; x=1720705809;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q6r/waSsOqXycyGSsbPh3a4zrLTjlE29Ir1GCdLEYT0=;
-        b=ili4xSNSrvVr7nLtREQW3Cw7GH+uKQQRa6O2ZRXB4E9VxBocFoXNXeNXz1ThYH4d9h
-         gkv196g4i7aeoVazd9t8alTKcVPeYjoizbBxDZ2aaqwj/yDI+0TfQPohKbR8nvUNV6o2
-         2cl8smC1Y7q8kD/Yh2z4/9u5DuJtAnHGisb5Z2iknKf+CgaaVKNuaM6T5seF7qqSmRdI
-         5jl4/3Q21jU+yk3hmxNtkD32CxJEc/O89XxRksqqOyjY94+maqmD/rpxRKCyv6BMLBBz
-         Lgg87p2uQTfN03SpHhzIM5loQjN2W/9N55wPcChuwlJsSGKN6i2cOnC/eP7x1EHQU8ub
-         r3bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNm6OHqErcRSnLNRIwTLkBjHX+2EB2IpmjX/+ydzuYU+lMRcd4dURyKvG3Ns1ccUzt1kw1FxJ/+b/3TmVZd0faEFCz+Zjrf4LQl25rNkL/+hn1s/XYBGCpnnfAqST8t/2cfqqv2ewa
-X-Gm-Message-State: AOJu0YwUz0/oo9sbKj4OASfzze7BjWNZGpSJSKTEk9RUywgwcMc1GjfV
-	NZePmLlQcfnVveriI+TJcjLWK9BncUNzxkndAf/3fN4d+gkHNfYQ
-X-Google-Smtp-Source: AGHT+IFuD9zVB2yFYSSPQOQHSaVbxcTPs1qG6SlqZuDT8SRutE/v4wcFP+815XVElc3D9v0bfMxVaQ==
-X-Received: by 2002:aa7:c25a:0:b0:58b:585b:42a2 with SMTP id 4fb4d7f45d1cf-58e5bb8742emr1044311a12.38.1720101008745;
-        Thu, 04 Jul 2024 06:50:08 -0700 (PDT)
-Received: from A13PC04R.einet.ad.eivd.ch ([193.134.219.72])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-58615037a8fsm8434753a12.92.2024.07.04.06.50.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 06:50:08 -0700 (PDT)
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-To: kw@linux.com
-Cc: abaci@linux.alibaba.com,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	jiapeng.chong@linux.alibaba.com,
-	kishon@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Subject: Re: Re: [PATCH -next v2] misc: pci_endpoint_test: Remove some unused functions
-Date: Thu,  4 Jul 2024 15:49:53 +0200
-Message-Id: <20240704134953.2360738-1-rick.wertenbroek@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240704071406.GA2735079@rocinante>
-References: <20240704071406.GA2735079@rocinante>
+        d=1e100.net; s=20230601; t=1720101062; x=1720705862;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mk2zjU0OD/BqtSdx1Y/wNXDDAcjEI73Cmr4nJ0Iw0TU=;
+        b=lvXTkHqLPqnwnmyo3pKoF/ORVoVGste8L3oR7ss9RWbBrXCzuQQacIrpACPkiNCwz8
+         7zlmtUseu//DUjokiWvbMOsm11qFmHV1+jxzqXWryoaU3WQMwjcpjPQmS8AE8ksN1mtf
+         NZjUqOLscYLb90YMAHW08DHuqS3sxy+I+SIB1OTCjnngW1OLpNhfswTMzImVwTlIU+b0
+         wATooZXh4bO640zWCf0wqITQv45m6bJIAfbAaRTfCgqWptPeKANL5+49Q7272jgCBBD2
+         /2WY5NkR5E89h0MLwQZgC8MVGwFfSgC4Ca4TbzQR6lk7AGctTCreMaNziQ9fZNWz+rjd
+         lEzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWS5jSpipkmT5WqtJZg2mNzFdZ5e6+fj7ufWSFCL5//HzCFRBLbcUuFn3rC1Ww8fLXGxZWxJp9uyvaAUs6wOfRgkYxLtMXrx5lGesU5
+X-Gm-Message-State: AOJu0YyI707t9Dgp4rbQ0xI52e+fd3qGWbrXVovyOhVPMhFI/mSZwT7g
+	WbXCQj5aBfOx00ei6iYXs9ORMB4n9TRG9YlvDnesVv3l3kwlWVwKJSMtJlwTLE5UyB86i5n332A
+	gJw0Jlg==
+X-Google-Smtp-Source: AGHT+IFrFc15nopfz9rvRJbJq682fsp+q2IZ5nbvfQreeYJuORUbZwDxqyh1wfijUhGGgU291E1rUbV7ygFF
+X-Received: from dvyukov-desk.muc.corp.google.com ([2a00:79e0:9c:201:ef38:74e6:67b5:dcc0])
+ (user=dvyukov job=sendgmr) by 2002:a17:906:99c8:b0:a72:8fe5:9c60 with SMTP id
+ a640c23a62f3a-a77ba727e6emr125366b.14.1720101061941; Thu, 04 Jul 2024
+ 06:51:01 -0700 (PDT)
+Date: Thu,  4 Jul 2024 15:50:57 +0200
+In-Reply-To: <2023082746-antelope-drop-down-5562@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <2023082746-antelope-drop-down-5562@gregkh>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240704135057.1174408-1-dvyukov@google.com>
+Subject: Re: [PATCH] fs/befs: fix shift-out-of-bounds in befs_check_sb
+From: Dmitry Vyukov <dvyukov@google.com>
+To: gregkh@linuxfoundation.org
+Cc: 88c258bd-3d0c-de79-b411-6552841eb8d0@gmail.com, 
+	Linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	luisbg@kernel.org, salah.triki@gmail.com, 
+	syzbot+fc26c366038b54261e53@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 04, 2024 at 04:14:06PM +0900, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> > These functions are defined in the pci_endpoint_test.c file, but not
-> > called elsewhere, so delete these unused functions.
-> > 
-> > drivers/misc/pci_endpoint_test.c:144:19: warning: unused function 'pci_endpoint_test_bar_readl'.
-> > drivers/misc/pci_endpoint_test.c:150:20: warning: unused function 'pci_endpoint_test_bar_writel'.
-> 
-> Have you see my question to the first version of this patch?
-> 
-> 	Krzysztof
+Hi,
 
-Hello,
-The functions were removed in this patch : https://lore.kernel.org/linux-pci/20240322164139.678228-1-cassel@kernel.org/
-So in linux-next they are indeed not used anymore.
+What's the kernel policy for such cases?
+Should this be merged via some fallback fs/mm tree,
+or taken directly by Linus?
+The filesystem is still enabled in all major distros.
+Or should we delete the filesystem from the kernel?
 
-You applied it to misc : https://lore.kernel.org/linux-pci/20240517100929.GB202520@rocinante/
-
-Regards,
-Rick
 
