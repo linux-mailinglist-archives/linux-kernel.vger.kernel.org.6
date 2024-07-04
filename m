@@ -1,101 +1,109 @@
-Return-Path: <linux-kernel+bounces-241389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E54927AC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:02:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EEC8927ACA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8EDC1C21B65
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:02:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D2E1F23DC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DD51B29C2;
-	Thu,  4 Jul 2024 16:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC121B29B8;
+	Thu,  4 Jul 2024 16:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tNk978tW"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/sR22A3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07491AC252;
-	Thu,  4 Jul 2024 16:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1B81AEFC1;
+	Thu,  4 Jul 2024 16:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720108960; cv=none; b=kArSSJ2W7qy/eN4zwU0GHz40j70lYPmF1a2/o61ir8qdn+fx4wP3mExHO1HWWFDyb848fDa3/19PzWlEaS04sIdoURoiiGio6SL+eWvg+/Qs2g2h1RAeGYwrbQEM4pzjgdR/2P/sX1SXWPyp4sXAvTmkSa7zWpgyFjSsXpi2CWk=
+	t=1720108985; cv=none; b=Fs2CS3ZxbCqFXo3qJ2tMhTY/HQdvPCRdNeuLvX6zhdUnvqExH46XdguyRzHw5n4ZedAoMmFUvqugEKxqUPTnrnyzMTfmUcMThh8eNVpl77rV+03ljmj2w1qdo2JeQN1uhQLZ18QGxg2WQUhQbwNmWtpZ1HnUhYvEJDaJYWkS918=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720108960; c=relaxed/simple;
-	bh=412ezJhJd2chMr71hp4430KnNpntdeybGZqVYxi2nYE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Oo3uVyJFyjZx8go0R3P1yKdtD4a+hPCgJOhs/S1lfN16PipaCtYMeD8RT9cpquNsRoLYb6dAL9+Oq45nnXmM+fmZpuctUuXKI/b48ypppAF2eRBkJQwWM7cyj7oCME+gpB2hL2fAjNZklCxqnXyP4hJHDb4Zdb0N9y3jhxVieHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tNk978tW; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720108939; x=1720713739; i=markus.elfring@web.de;
-	bh=ww+sy9tlzyZVvwsDOx3rAgVU1lYCE/bquZTDMZYP9c8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tNk978tWOsl97HIs1uOZ3j1iRRMjUGUytxS9bgiE+BSd39bfvd8lG9Tvov599hAj
-	 PlblHp9TpeB0CDjtbjMaFxaVh+8KKMvOWuGbAM6+F3zcE4ARC3T7B6gqNmOYOLqfu
-	 Wse84spa3iLWDAPXpubP3HEnTB8BrrS1Xa1fJDpHZcTuszl4ntOUuoYQzAwKb4eTm
-	 p+WufT4bxXRYDHoU1uap1sTvyOlb0zDv5GACo/JXJ2woY1YAJC68IROhnoEJkCcmF
-	 9/vcjvBk2nPORqrA8bqeidti0szKriWKg7Pc48bNhDYqaqKW21aIXOdOFpDFP6UsD
-	 mrTPF64hfCilQSzrsg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuVKK-1s72kL0zNy-012jW1; Thu, 04
- Jul 2024 18:02:19 +0200
-Message-ID: <7645fee3-7e92-455c-a136-061bebce1670@web.de>
-Date: Thu, 4 Jul 2024 18:02:17 +0200
+	s=arc-20240116; t=1720108985; c=relaxed/simple;
+	bh=fWzclTWymnwqbl1dZdbeNzoyKUjrCfnp6EvesSA7FeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdtmSa3euuEWHI5z5ELMH0M3bT9OYQQk4FYyB4iAEY4wXywKA3AROMI3ChB0yj6U8G7Ya3oBkSkp3eTcLjoeMQIIUvKgJDouaPlJ8T8Hj+oZ9CRjVeh3jC9XQRDH61B6tri/OUiRUC2iavzDSicZ1JfjYcM5hGZfNBSfFrEKepM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/sR22A3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AFA8C3277B;
+	Thu,  4 Jul 2024 16:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720108985;
+	bh=fWzclTWymnwqbl1dZdbeNzoyKUjrCfnp6EvesSA7FeY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j/sR22A3l1Oo1VLSCWou9JXWakcbWZu4t7QUuCAj2xjFqbSUWT7OkZngX37cnVFHk
+	 /KxZ0M25wU1NMoFIqHm2B4XrIe3B8XNSz1zWr4n0XRD1mKpJAD9IGH/9JkB+zFg/GL
+	 g8AkSxnCbww6zQenflNTxLQrBVljt0NMP2Lx+RoFreXFEWLfv5hHetcmeJPlSgX+FD
+	 1MzWFAufcm8LnbXI+XElbJ13cGY/RWAOHGfjrXtOXgkqEmANqH8BMsLEZqIfllJe4X
+	 rRxGgUsfM/JjABE0dpovKk+0Gw6UvHRzxRfsOBNsYP0La/HGOtmE+fmEufW96XBgJo
+	 2rCIzHluigWfg==
+Date: Thu, 4 Jul 2024 11:03:01 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Elliot Berman <quic_eberman@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] firmware: qcom: tzmem: blacklist more platforms for SHM
+ Bridge
+Message-ID: <jdfuvgaty44kg3xm63l765eueoy66qp7yngmf67nxqh5oifuzq@7gbzytqn5cj7>
+References: <20240704-shmbridge-blacklist-v1-1-14b027b3b2dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
- Justin Chen <justin.chen@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
-References: <ZoWKBkHH9D1fqV4r@stanley.mountain>
-Subject: Re: [PATCH net] net: bcmasp: Fix error code in probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZoWKBkHH9D1fqV4r@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oNWnod1BIQ/iZp45ufgYO3iTp7TrhWqDEbEyP/9h638QHKPD8IA
- LKdRQyN4dn44R+ubB+q1L5kLZOgknKx1WYtwhdIV8uYjOzsDRobrqneDnHfp0YebVhASBPo
- FwrwqKR79bKGCd6y7OZCK2fD5cd62ebqO4ogwspHvFyZmkp5SRcZ3qyHImXyjMTSAt7AMuB
- Nd2cslh7goQoF8HMKDT8w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ALai391Nt5Q=;pN/S8t10ED8lLb1JaUTmSsN2KWG
- +skHmKzNjitsT5ktcpmYruyiJ1D46ORhANsq8hdODK+Cegjj9yeNWvvE/VeeDL36xaRAkWC7O
- m9AQNOV5yxyXt0/S1FjypIKczbT7uo3WiAkoTbmvwuoG4w3G/Hl21EibqEDKVqP2/Po1VLPoW
- 8vjRtd8sXaU8kKeGSzOsw50QAzo/cpsy78rU+my96T2X4FZh5iIVlBuTAbC7/GVNg35MH3knH
- uDfCIPEHC/+CjC2D1c8HVSzbq6uqcbFiCssEiDcfYs6eJFtqnxW3/8rE+KMQvGoK7Va+8/b7u
- O4fcyDu768Oa0uoSu8cAn+5idGZczgUmSv1m7S+Iw+9E9qKwnGPafy3VEziEoXU9bR/7d7VBe
- V+XsR2WjglFzuQWTaCGQfHr9qoCy7wBdBVqjo6Xnwcif7QXQdNR7LDGDUuZORJIGOOrD8B3kj
- rK3GjTvIzOw9yCDKZaXISg7XUx5obN7U5X1CcGPyeidFRPXS2xyMFG40fftx4kCeuZpPo5mZe
- a1D1/n7j9Ia5lqIW1fxsEimrOwuwtm9Ii1r80sQ5+f+OEDCIIvTFrGXoD98YpuUZiLfz57KY/
- fp30IcA6MvCVF6gmWE4MbEc8KtoTK6h+k+rzMKSJ2CGSshWiyWthJ8kfA9L3Uj743XrcCFQ4h
- 8bq2S0xktW/7SHymPa9iNlfGfNStp9RDu4NMeX+6ZUb6CendCn2lWLe9CQNYYaMUVBI52j0vw
- 07j62P6yCnaL8Dmp66oHEve2sorxHxiAgh8B2Fb77NfM3yrG67x97cDYqeYy4gZiVAUEYpoX3
- BAR5uuTiJ7cIa0XNJHabxGppJ6kVXq8HFSaFuK8GzNUhk=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704-shmbridge-blacklist-v1-1-14b027b3b2dc@linaro.org>
 
-> Return an error code if bcmasp_interface_create() fails.  Don't return
-> success.
+On Thu, Jul 04, 2024 at 02:12:46PM GMT, Dmitry Baryshkov wrote:
+> The SHM bridge makes the Qualcomm RB3 and SM8150-HDK reset while probing
+> the RMTFS (in qcom_scm_assign_mem()). Blacklist the SHM Bridge on
+> corresponding platforms using SoC-level compat string. If later it's
+> found that the bad behaviour is limited just to the particular boards
+> rather than SoC, the compat strings can be adjusted.
+> 
+> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Fixes: f86c61498a57 ("firmware: qcom: tzmem: enable SHM Bridge support")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/firmware/qcom/qcom_tzmem.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+> index 5d526753183d..c715729f071c 100644
+> --- a/drivers/firmware/qcom/qcom_tzmem.c
+> +++ b/drivers/firmware/qcom/qcom_tzmem.c
+> @@ -78,6 +78,8 @@ static bool qcom_tzmem_using_shm_bridge;
+>  /* List of machines that are known to not support SHM bridge correctly. */
+>  static const char *const qcom_tzmem_blacklist[] = {
+>  	"qcom,sc8180x",
+> +	"qcom,sdm845", /* reset in rmtfs memory assignment */
+> +	"qcom,sm8150", /* reset in rmtfs memory assignment */
 
-Would you like to refer to the function name =E2=80=9Cbcmasp_probe=E2=80=
-=9D in the summary phrase?
+What confidence do we have in that this list is now complete?
+
+As Bartosz says, we booted RB3 successfully with an earlier version of
+this series, what changed?
 
 Regards,
-Markus
+Bjorn
+
+>  	NULL
+>  };
+>  
+> 
+> ---
+> base-commit: 82e4255305c554b0bb18b7ccf2db86041b4c8b6e
+> change-id: 20240704-shmbridge-blacklist-021bd97b8a93
+> 
+> Best regards,
+> -- 
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
