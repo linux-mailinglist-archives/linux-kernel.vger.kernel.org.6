@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-240834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45686927362
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:53:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69DF927369
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44811F24243
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:53:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AFF5B22287
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B35F1AB8E3;
-	Thu,  4 Jul 2024 09:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1haj+qv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03DE1AB8E5;
+	Thu,  4 Jul 2024 09:55:35 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE7518A93F;
-	Thu,  4 Jul 2024 09:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C556F18FC81;
+	Thu,  4 Jul 2024 09:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720086797; cv=none; b=a50T3973eSTaVh+dNLXn9mixux2rlubJVbxfFN30vdBk98QvVLmsR1iXvCF4iEtMVk34HHCbZVKwUPTS+Ma0BehuTZzGJhkG/PZ3GL1VSz4z5IEzyA9sV5WWcf/V5wO81GiV1ZFr83Td0/TQk3Z1Xhh1Oh8OG22bEuF/od3RQUc=
+	t=1720086935; cv=none; b=W3SFrad1XBGyMSYNMSQlJN/elXh4YcnkBlzGqCv7PwIJB9kc9W7HnzCpRlBGRt8o+L4WXQZ6uOJv20pSzDk00cZ9foxlLFtny/pnoc73tgHaKKASCY/ednfBYJ9/OkejWfRo6PsGYUeoAfgxKiV5PBy0s2KIEvLdC0uZlvLm3Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720086797; c=relaxed/simple;
-	bh=B8dMfcWXHdgKDl/LUosbH/t3NH/n75FSpahN1BHbALE=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=HRapoSBOxaR4chm6gKxkpL4RTBzgBohvhiuqmeis2Aonh/LLexDP5XqOZoOpZtW7iSDzZP6NH4IUax+j1ARkhdC9FZcYqBGrz9BBZ/ztjU1MUtwsf8dA+84a1HYCU5nd7bW4vlcbiSGtUnVS+J9fGAFqn/mBAgT55r/aUz/jY2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1haj+qv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BBDAC3277B;
-	Thu,  4 Jul 2024 09:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720086797;
-	bh=B8dMfcWXHdgKDl/LUosbH/t3NH/n75FSpahN1BHbALE=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=T1haj+qvw5bFe2oh4yNapY4OAhzoWJM9BhfQp5rx1/82Gf5X6q21HxzSG0NoKtA67
-	 VW35vH4xbLEWKnLlSVbCYH3jM5nHG3dkUcNeb0I48G915W+0efedxusZPsKvh3VpvT
-	 pJAaOn3OZeGV4fYkr9LDQC8fIPCymuB+tgOBDlbycV0Rhkcmnt5UebW4hBDHV5NKst
-	 zCn3K+Ld4JHdC/J1Ioaq1KaNZlCq0Xz6OqR2KgGuNT6znoFx4oOI3DaI31MWXNVx+R
-	 7cbXc2nqAmZsIFCOYnmzaJD5Z/rHXSTWI/oQzYkUuOyIFSgzBrZ67hi51fNoRvuk77
-	 MdYrucuUGDWYw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Ping-Ke Shih <pkshih@realtek.com>,  <linux-wireless@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH net] wifi: rtw89: Fix array index mistake in
- rtw89_sta_info_get_iter()
-References: <20240703210510.11089-1-amishin@t-argos.ru>
-Date: Thu, 04 Jul 2024 12:53:14 +0300
-In-Reply-To: <20240703210510.11089-1-amishin@t-argos.ru> (Aleksandr Mishin's
-	message of "Thu, 4 Jul 2024 00:05:10 +0300")
-Message-ID: <87wmm1cwl1.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1720086935; c=relaxed/simple;
+	bh=a9gCjavV0b9EvjwTw4am+1ns/6TjE63fRGCPyiA7MTM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m8EwxB60bdGUK5LdfEreauIdPvuIxgNTbXWqM+NIdeIcn9K3mYwipcm+2guawDE1cELfPicfDI1M5Da17S9lyRXaUmOg9KSOwBCjqLGGEVwCEamEIVu/ua1D85gBfSFeD6S9R/gGOKksfDXWkG8Du27Au7OBKaFSazSaqAbCIwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875ac2.versanet.de ([83.135.90.194] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sPJBX-0007Vl-DI; Thu, 04 Jul 2024 11:55:27 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dsimic@manjaro.org
+Subject: [PATCH v2 0/2] ROCK 5 ITX devicetree
+Date: Thu,  4 Jul 2024 11:55:22 +0200
+Message-Id: <20240704095524.788607-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Aleksandr Mishin <amishin@t-argos.ru> writes:
+Add a basic support for the Rock 5 ITX board.
 
-> In rtw89_sta_info_get_iter() 'status->he_gi' is compared to array size.
-> But then 'rate->he_gi' is used as array index instead of 'status->he_gi'.
-> This can lead to go beyond array boundaries in case of 'rate->he_gi' is
-> not equal to 'status->he_gi' and is bigger than array size. Looks like
-> "copy-paste" mistake.
->
-> Fix this mistake by replacing 'rate->he_gi' with 'status->he_gi'.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+After struggling a bit with the pcie3 ports, thankfully they seem to run
+pretty nice now thanks to me finding the property for the shared-rx-clk
+for the pcie3 phy.
 
-A reminder for maintainers: rtw89 patches go to Ping's rtw tree, not net
-tree.
+changes in v2:
+- update naming to include a space/dash between 5 and ITX. As Dragan wrote
+    "the name of this board deviates from the standard Radxa naming scheme,
+     which is something like "ROCK <number><letter>" thus, "rock-5a" is
+     fine, but it should be "rock-5-itx", simply because there's a space
+     between "5" and "ITX" in "ROCK 5 ITX"
+- spelling fixes (Dragan)
+- removed status from adc-keys (Krzysztof)
+- added Krzysztof's binding Ack, after asking on IRC about the
+  added "-"
+- updated copyright statement to something correct
+
+Heiko Stuebner (2):
+  dt-bindings: arm: rockchip: Add ROCK 5 ITX board
+  arm64: dts: rockchip: add rock5 itx board
+
+ .../devicetree/bindings/arm/rockchip.yaml     |    5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 1186 +++++++++++++++++
+ 3 files changed, 1192 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.39.2
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
