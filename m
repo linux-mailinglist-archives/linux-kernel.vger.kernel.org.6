@@ -1,140 +1,266 @@
-Return-Path: <linux-kernel+bounces-241198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE35892782B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:21:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F0192782D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A13286892
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3351D1F24274
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98EF1B0100;
-	Thu,  4 Jul 2024 14:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E1B1AEFFA;
+	Thu,  4 Jul 2024 14:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLyswuB4"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mF6iv2g/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A1E1AED3A;
-	Thu,  4 Jul 2024 14:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420441AED3A;
+	Thu,  4 Jul 2024 14:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720102875; cv=none; b=AE93f5JxPAGatEMGVNB6ctJZrGZken21dyIocrJVylKHE9QCi4I6gDSzokWXdqZEkojFB6sli3XZmtA52XrIT/bgiXw1/OdqEJccsrUl/oicAjsCePiIMRydzmvx8pIKk63Y+FFZCS7bpM5geW6WTmrAVVdqU8xNA9ZT5UhnDAo=
+	t=1720102895; cv=none; b=XawX+gxxl3t4iCDVWQMkOxeStU2oamNR4tQqVQLI5qZ/oktfKuFTOETQz1nl6Yqqu+xMUq6cO0OAgZxYzI5Av1qui6x+Qb6s6iQgYoqSaK1kwTy7Fb3Bou4gLJSFNEisWFohOqnHpE89gwv7TnHnongxIJi3ZwfcoZmeTBbkCk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720102875; c=relaxed/simple;
-	bh=dtJs/mlP5TqeSFNvqsF9NgvGa2f2V8tx72IbVVet0XY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KwKvbpaXkKOuPVQgsBO6Hy2o5upR7OAkO1rI2+XEJQSkRNxzzuRBM3YJ9RDt91W9Gg3S+eRuSDhS+TbHUg+MvXwjjAg8cvMSVz4cqDnREpIsBQ85ZjtYfqzHmtEbAqXjIRFZWVOb9pfHbbFGmvisPLslZVuXDOs3IoLIgUOwoG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SLyswuB4; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fb1ff21748so3783905ad.3;
-        Thu, 04 Jul 2024 07:21:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720102873; x=1720707673; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DHqp/0g0cWxpjDK3cFPyUUh5NMgsCqOCbHb/t7M/QjU=;
-        b=SLyswuB4xlyBFSLZ1ZcCnqHK1/mthgOpBIoqO/yPvYCyniN3S408MHqFf4dbD5n/Vx
-         5CO+SDMmI4KCM5rETnospjt661EeoBU68lVmWaj3Df/tfUlE+qj9ZZpH+4/7nuANvcOm
-         njA8Mwz1D6PKisvCF9e6jTS4KF1SMtzJDmSQFX1YpVNsMxIzLEIHzOAJIPqD7tvHIbBM
-         Gw4FjMUFODICJtlvFhSiZKZKeWe1PNwVjlIOPydxDSEP5XSyjzMqTiSXiWUcPnTCuDSv
-         IPbwi2XG/swfQVMqr0LiEmuJzDOUCTFlPke1wkvFK1eN0fnFI9Ijdm6Wk3mH3RC3mqtp
-         yCcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720102873; x=1720707673;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DHqp/0g0cWxpjDK3cFPyUUh5NMgsCqOCbHb/t7M/QjU=;
-        b=vMQInJzANYfuGB4udjVGQWrobOajOb8QOoRLZIOymNEHx2xn0E6gK54QBxBHytyDoG
-         YUVMZSnZSxFR6IPXRxAzWI/BsrrqkzcHloPRmi9CvxGNSTLt6Tyn69f/XUBjtYYbtI/4
-         59Yj+pZFVTvvUrwKDn3MjckA2Ae3uq6L/vx4DNnwWdfWNYe8qVcNZSkClB9PHvQbVDIS
-         De2PhIZQkewGLNJfpxSXqNmqTr2QOK+9HyYfJRsxJmva+Gok/r6Eq0Ahc9lx9aq74HOi
-         KVKtNRAhh27/f+yiyswSAWuqZKGae1bYbVBYkofYnkbO4XuDh20Rt1NppeyFH2/HhH2/
-         Z5JA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Kv6bKzEzIMnjofj//lBK3cGJYgPWuzs5VnqveeqFB+vJ07tTgqoAlIkv1Ui9MTu3dqQ++azC39i4egOtXze5UbadS2hUg+CmOzJ4mFu2+RbbWI4fpItNr/9bNmlgZ+2f5ebH
-X-Gm-Message-State: AOJu0YzMpQy58m89sFrMr7jWmSYB4uQGJgrNtGuI7Ddcm0okC2lQI5Lf
-	rD/6GY7oPL3eP0pLsA2FM0CqlDx2vP0UOZRG3KTG3T73OBtiS78j
-X-Google-Smtp-Source: AGHT+IGMOb1iAmr9YuX8soStafBBy/6myE0L2RVYmRWnnIkDKUkeLGBaNK1mq2/0LJJjz5ZUlrfsnA==
-X-Received: by 2002:a17:902:e541:b0:1f9:cb0c:5b8f with SMTP id d9443c01a7336-1fb33e163b5mr16513645ad.10.1720102873033;
-        Thu, 04 Jul 2024 07:21:13 -0700 (PDT)
-Received: from [10.40.5.113] ([89.207.175.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac2f03acdsm123088185ad.302.2024.07.04.07.21.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jul 2024 07:21:11 -0700 (PDT)
-Message-ID: <1f45e8ee-3c59-4cf0-a965-7eb0e3cb885f@gmail.com>
-Date: Thu, 4 Jul 2024 15:21:00 +0100
+	s=arc-20240116; t=1720102895; c=relaxed/simple;
+	bh=iLKFAWGQDFnDn9GxZS2C+VpnF9ad2e3JbRlZUG+rICQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CwlIcvkLtPBkYb1cLPPaAiwEs5nlcUaQzeJFP3Ex+u1dYcFMp9mfE8JmeU6TpzpCRTjJizXXlMN+qK1DPu0VvVL95k3HgGwtTowYNOS52kR5NbYM8t17bpRpGp5u+0Im1FE966A1KnfTz7T9mI/Lq7qXaaCNFFZaSS+BtsuRdC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mF6iv2g/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E3E3C32781;
+	Thu,  4 Jul 2024 14:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720102895;
+	bh=iLKFAWGQDFnDn9GxZS2C+VpnF9ad2e3JbRlZUG+rICQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mF6iv2g/KmFoTCif6bpdtxVhm3ZUt7Tl+4BN7TjP8go5rTrdsHnsuvUYl6maJTLrL
+	 A1AVtYR5fNU2u9oDARHGYByPit0K31ueOrLz8C7XJDTTrNcT+DMLvpwpYh+zKENYmz
+	 NxEUM+Mg86iNcXo6bO1yjRqXuPWOSiEl4V54F3zRfEOELlqSLTikaBSHyJ0kpyoP1Q
+	 BZU5JI9sWTEDX0/iax1ynJkl3BKfhuI4Z7nj3tO3MDLen6IjvBxWVqFP3OXrJ68l3W
+	 FXPVl0tOLhfZeyUUKlbPlbleanQPEuVePZZhWTn381UpOFhYbjmLxR7TpxW6oApe88
+	 Iu7zXhRUprbYw==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-24c5ec50da1so108370fac.3;
+        Thu, 04 Jul 2024 07:21:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXGTryIO0KOIlYTMWXyPpZW4Te3pYBGMv6iV39i5VwIalKh0lGlmjU1BHLVefqz/okEHbQCDLolQsdtbcKeUm/YRXAyYESB7FxfRJ89LbXXvsx9qLYHH3p/xJMTTPOy7roEeFQBHnk=
+X-Gm-Message-State: AOJu0Yyq17izuSFr/q3OHVh5ztkjQ+iazNOoxf4NXDtYzpBHuXT+gyEl
+	lmC9OLBejmRdvbvPbR+7c5HnbYvAMcL70VqP84cTRjXE9+noBczcWy+SccaY5snW1L1ZPO+NAqv
+	vlC7Hi7uK8OIdWloFAe6MMNScetk=
+X-Google-Smtp-Source: AGHT+IFMajNeUi1LGfOE5/p5eMZrEJ628V1/uxpM2bC+gcHyzFoGeOm0k1VNiPUwTuhaTBAzx/3/aeD4upUrSbAOj2g=
+X-Received: by 2002:a05:6870:b250:b0:25e:180:9183 with SMTP id
+ 586e51a60fabf-25e2bf95bc9mr1626226fac.4.1720102894360; Thu, 04 Jul 2024
+ 07:21:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v1 1/1] net: dsa: microchip: lan9371/2: update
- MAC capabilities for port 4
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Vladimir Oltean <olteanv@gmail.com>,
- Woojung Huh <woojung.huh@microchip.com>,
- Arun Ramadoss <arun.ramadoss@microchip.com>
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com
-References: <20240704141348.3947232-1-o.rempel@pengutronix.de>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240704141348.3947232-1-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <6064157.lOV4Wx5bFT@rjwysocki.net> <218d45a8-4c3d-453b-aded-d232c366da2c@linaro.org>
+In-Reply-To: <218d45a8-4c3d-453b-aded-d232c366da2c@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Jul 2024 16:21:23 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gRoy0+LD0EgwbS0NL8kHhas4T6itgawGjE8iNf57MOcg@mail.gmail.com>
+Message-ID: <CAJZ5v0gRoy0+LD0EgwbS0NL8kHhas4T6itgawGjE8iNf57MOcg@mail.gmail.com>
+Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 4, 2024 at 2:49=E2=80=AFPM Daniel Lezcano <daniel.lezcano@linar=
+o.org> wrote:
+>
+> On 04/07/2024 13:46, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
+> > if zone temperature is invalid") caused __thermal_zone_device_update()
+> > to return early if the current thermal zone temperature was invalid.
+> >
+> > This was done to avoid running handle_thermal_trip() and governor
+> > callbacks in that case which led to confusion.  However, it went too
+> > far because monitor_thermal_zone() still needs to be called even when
+> > the zone temperature is invalid to ensure that it will be updated
+> > eventually in case thermal polling is enabled and the driver has no
+> > other means to notify the core of zone temperature changes (for example=
+,
+> > it does not register an interrupt handler or ACPI notifier).
+> >
+> > Also if the .set_trips() zone callback is expected to set up monitoring
+> > interrupts for a thermal zone, it needs to be provided with valid
+> > boundaries and that can only be done if the zone temperature is known.
+> >
+> > Accordingly, to ensure that __thermal_zone_device_update() will
+> > run again after a failing zone temperature check, make it call
+> > monitor_thermal_zone() regardless of whether or not the zone
+> > temperature is valid and make the latter schedule a thermal zone
+> > temperature update if the zone temperature is invalid even if
+> > polling is not enabled for the thermal zone (however, if this
+> > continues to fail, give up after some time).
+>
+> Rafael,
+>
+> do we agree that we should fix somehow the current issue in this way
+> because we are close to the merge window,
 
+Yes.
 
-On 7/4/2024 3:13 PM, Oleksij Rempel wrote:
-> Set proper MAC capabilities for port 4 on LAN9371 and LAN9372 switches with
-> integrated 100BaseTX PHY.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> but the proper fix is not doing that ?
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+We need to decide what to do in general when __thermal_zone_get_temp()
+returns an error.  A proper fix would result from that, but it would
+require more time than is available IMV.  We can properly fix this in
+6.11.
+
+For 6.10 I see two options:
+
+1. Apply the v2 of this patch:
+
+https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.net/
+
+I slightly prefer it because it is simpler and doesn't change the size
+of struct thermal_zone_device.  However, the clear disadvantage of it
+is that it will poke at dead thermal zones indefinitely.
+
+The THERMAL_RECHECK_DELAY_MS value in it can be adjusted.  Maybe 250
+ms would be a better choice?
+
+2. Apply this patch (ie. v3)
+
+It is nicer to thermal zones that never become operational, but it may
+miss thermal zones that become operational very late.
+
+> > Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() =
+if zone temperature is invalid")
+> > Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd033f=
+ca16@linaro.org
+> > Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.net
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >   drivers/thermal/thermal_core.c |   13 ++++++++++++-
+> >   drivers/thermal/thermal_core.h |    9 +++++++++
+> >   2 files changed, 21 insertions(+), 1 deletion(-)
+> >
+> > Index: linux-pm/drivers/thermal/thermal_core.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_core.c
+> > +++ linux-pm/drivers/thermal/thermal_core.c
+> > @@ -300,6 +300,14 @@ static void monitor_thermal_zone(struct
+> >               thermal_zone_device_set_polling(tz, tz->passive_delay_jif=
+fies);
+> >       else if (tz->polling_delay_jiffies)
+> >               thermal_zone_device_set_polling(tz, tz->polling_delay_jif=
+fies);
+> > +     else if (tz->temperature =3D=3D THERMAL_TEMP_INVALID &&
+> > +              tz->recheck_delay_jiffies <=3D THERMAL_MAX_RECHECK_DELAY=
+) {
+> > +             thermal_zone_device_set_polling(tz, tz->recheck_delay_jif=
+fies);
+> > +             /* Double the recheck delay for the next attempt. */
+> > +             tz->recheck_delay_jiffies +=3D tz->recheck_delay_jiffies;
+> > +             if (tz->recheck_delay_jiffies > THERMAL_MAX_RECHECK_DELAY=
+)
+> > +                     dev_info(&tz->device, "Temperature unknown, givin=
+g up\n");
+> > +     }
+> >   }
+> >
+> >   static struct thermal_governor *thermal_get_tz_governor(struct therma=
+l_zone_device *tz)
+> > @@ -430,6 +438,7 @@ static void update_temperature(struct th
+> >
+> >       tz->last_temperature =3D tz->temperature;
+> >       tz->temperature =3D temp;
+> > +     tz->recheck_delay_jiffies =3D 1;
+> >
+> >       trace_thermal_temperature(tz);
+> >
+> > @@ -514,7 +523,7 @@ void __thermal_zone_device_update(struct
+> >       update_temperature(tz);
+> >
+> >       if (tz->temperature =3D=3D THERMAL_TEMP_INVALID)
+> > -             return;
+> > +             goto monitor;
+> >
+> >       tz->notify_event =3D event;
+> >
+> > @@ -536,6 +545,7 @@ void __thermal_zone_device_update(struct
+> >
+> >       thermal_debug_update_trip_stats(tz);
+> >
+> > +monitor:
+> >       monitor_thermal_zone(tz);
+> >   }
+> >
+> > @@ -1438,6 +1448,7 @@ thermal_zone_device_register_with_trips(
+> >
+> >       thermal_set_delay_jiffies(&tz->passive_delay_jiffies, passive_del=
+ay);
+> >       thermal_set_delay_jiffies(&tz->polling_delay_jiffies, polling_del=
+ay);
+> > +     tz->recheck_delay_jiffies =3D 1;
+> >
+> >       /* sys I/F */
+> >       /* Add nodes that are always present via .groups */
+> > Index: linux-pm/drivers/thermal/thermal_core.h
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_core.h
+> > +++ linux-pm/drivers/thermal/thermal_core.h
+> > @@ -67,6 +67,8 @@ struct thermal_governor {
+> >    * @polling_delay_jiffies: number of jiffies to wait between polls wh=
+en
+> >    *                  checking whether trip points have been crossed (0=
+ for
+> >    *                  interrupt driven systems)
+> > + * @recheck_delay_jiffies: delay after a failed thermal zone temperatu=
+re check
+> > + *                   before attempting to check it again
+> >    * @temperature:    current temperature.  This is only for core code,
+> >    *                  drivers should use thermal_zone_get_temp() to get=
+ the
+> >    *                  current temperature
+> > @@ -108,6 +110,7 @@ struct thermal_zone_device {
+> >       int num_trips;
+> >       unsigned long passive_delay_jiffies;
+> >       unsigned long polling_delay_jiffies;
+> > +     unsigned long recheck_delay_jiffies;
+> >       int temperature;
+> >       int last_temperature;
+> >       int emul_temperature;
+> > @@ -133,6 +136,12 @@ struct thermal_zone_device {
+> >       struct thermal_trip_desc trips[] __counted_by(num_trips);
+> >   };
+> >
+> > +/*
+> > + * Maximum delay after a failing thermal zone temperature check before
+> > + * attempting to check it again (in jiffies).
+> > + */
+> > +#define THERMAL_MAX_RECHECK_DELAY    (30 * HZ)
+> > +
+> >   /* Default Thermal Governor */
+> >   #if defined(CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE)
+> >   #define DEFAULT_THERMAL_GOVERNOR       "step_wise"
+> >
+> >
+> >
+>
+> --
+> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
+M SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
+>
 
