@@ -1,112 +1,108 @@
-Return-Path: <linux-kernel+bounces-240750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2B7927215
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:50:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E6592720D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F51D28788F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9DF1F23EAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1985E1AAE15;
-	Thu,  4 Jul 2024 08:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FD01AAE1C;
+	Thu,  4 Jul 2024 08:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zbMOtq5w"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WdarRZbE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDED1A2554;
-	Thu,  4 Jul 2024 08:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD031AAE07;
+	Thu,  4 Jul 2024 08:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720083004; cv=none; b=AlvHzxCh6URlCf/JH27KXhytTt5+RmlfrPVj368pB6XyRE5tn57UTF7teYNGEmjfWCkkAulzczo/nDJA+TInvS9WrLoq2zZ7BT3mtMmhC+0DbYOEbLxOHRL/ai4W7IapVLWNZof2zTrdiMdFvQxE/WxwEXozp23xlmq2IBsdka8=
+	t=1720082963; cv=none; b=euGGUpGjizEqQQZFP5S4FjXNkncajIaz5w2Ksm7geMuhDAKUBO3y8juG68X4yPO+G4rNoxDorF6+jDqlCr3KNsQ/2CQVZM+3gxbqQVVp6IPwudcPy6Pkd8KE4wx+XyxO2/Lvqv69EoNUGiKs9LOTgLE75tHM8ho/wSk7tcu4Nqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720083004; c=relaxed/simple;
-	bh=taELz09kemQcRTcnI5iQ5KPDeTeYJTdJK5+QS+mBmtQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h2hcdTyRpaMEH3j2uHbUL/NtD9c7ejkAiS8YJwS8IwDE/KZZjZXBVhVzlKAxKv9Bi7NWedRXV3ZVxLxZpKKcjYQxjGxK5ZkmS/eY3LOBWDQq8dx8q7od4fJJzzaQf0sj3NRZKsSckDLA3TNccEdzYat4XuYIycuIMGFlqgsVW0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zbMOtq5w; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720083002; x=1751619002;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=taELz09kemQcRTcnI5iQ5KPDeTeYJTdJK5+QS+mBmtQ=;
-  b=zbMOtq5wxHblZWbmSzYvx47wqcdqUvA6a+IgILuVlgvMwn1ezJquKR0y
-   Lb8N9BuZzI+ibVKgVcOdP3b7TVTQLeE2gKL0J2HYbxAfXYP+meGKwXOTf
-   1K6NV3YiQAXpCab01LygKM/snEBGUNuSHWiHixAcjkwo9exgGQfFJVmWC
-   M9eqim61P7DbQu+ZhUDbgroyySkA8MF8ju7DU5oPxiw27AwhrPrpkzmHX
-   t5p72pJPfe/eBOjZJwJ2I5ZL9+FuG9agMyYZUPdmTTMrdTdwFOBFTtARj
-   g+NBwfkEKFIg45UagHGw0nJWKHpTbc8urXPLDD78LmfoeOLV8ZdoZYAxG
-   g==;
-X-CSE-ConnectionGUID: kCPvKpFuTFyELXI+0A+2CQ==
-X-CSE-MsgGUID: 6Zy3XaIjSHW4BIiCUH1q7w==
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="28816296"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Jul 2024 01:50:01 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 4 Jul 2024 01:49:21 -0700
-Received: from che-lt-i67131.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 4 Jul 2024 01:49:10 -0700
-From: Manikandan Muralidharan <manikandan.m@microchip.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <linux@armlinux.org.uk>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <arnd@arndb.de>, <Jason@zx2c4.com>,
-	<palmer@rivosinc.com>, <mpe@ellerman.id.au>, <rdunlap@infradead.org>,
-	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: <manikandan.m@microchip.com>, <Hari.PrasathGE@microchip.com>,
-	<Nicolas.Ferre@microchip.com>
-Subject: [PATCH 4/4] ARM: configs: at91: Enable Microchip's MIPI DSI Host Controller support
-Date: Thu, 4 Jul 2024 14:18:37 +0530
-Message-ID: <20240704084837.168075-5-manikandan.m@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240704084837.168075-1-manikandan.m@microchip.com>
-References: <20240704084837.168075-1-manikandan.m@microchip.com>
+	s=arc-20240116; t=1720082963; c=relaxed/simple;
+	bh=WCn65WDtIvVPfu0INFIGmav3d54/SQMOxRtg1fEBkI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbQJkVy589gELIZM0GI+AMUQvD+moqoyn413+fYJ+ntotbWfH6jyQa5yfPwLshBvYpwal0mQSvTtIXsTXK5Pp3k21lp7iBuT0rHBFGz6eryAhnkTeB9/MCJ20k4XLN4UEQ/321LPPeCS1b3/kQGv87eyGt30JOpIwzvYbe5hmyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WdarRZbE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88B46C4AF0C;
+	Thu,  4 Jul 2024 08:49:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720082963;
+	bh=WCn65WDtIvVPfu0INFIGmav3d54/SQMOxRtg1fEBkI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WdarRZbEP/CYPUxiXF0O8Z4/5Ujz+uZqRYppYk8+5sVqDLwqK5rtI3WN4VOVBUtrt
+	 U08K/JUleyte7zPZYhGDCtmrcRuyoXW1xcCwM8Zm3EirR+LXYrpqRvJGUYQ7ybQt6c
+	 lKUoIP5V6G7vJdUp//7CKqFISKoo9wnU4vAXo/6Q=
+Date: Thu, 4 Jul 2024 10:49:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Tuo Li <islituo@gmail.com>
+Cc: jirislaby@kernel.org, baijiaju1990@gmail.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH] tty: n_gsm: fix a possible data race in gsmtty_open
+Message-ID: <2024070411-unrevised-sash-927f@gregkh>
+References: <20240704082658.189577-1-islituo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704082658.189577-1-islituo@gmail.com>
 
-Enable the Microchip's DSI controller wrapper driver that uses
-the Synopsys DesignWare MIPI DSI host controller bridge.
+On Thu, Jul 04, 2024 at 04:26:58PM +0800, Tuo Li wrote:
+> In the function gsmtty_open(), the counter port->count is updated without
+> holding the lock port->lock, which may lead to a data race.
+> 
+> This possible data race is found by an experimental static analysis tool.
+> This tool analyzes the locking APIs to deduce locking rules about which
+> variable should be protected by which lock. And then the tool checks
+> whether a given variable access violates the deduced locking rules, to
+> detect data races. The above possible data race is reported, when the tool
+> analyzes the source code of Linux 6.2.
+> 
+> Referring to the function tty_port_open() in tty_port.c:
+>   spin_lock_irq(&port->lock);
+>   ++port->count;
+>   spin_unlock_irq(&port->lock);
+>     
+> we add a lock/unlock pair to protect the access to port->count, to fix
+> this possible data race.
+> 
+> Fixes: 86176ed90545 ("TTY: n_gsm, use tty_port_install")
+> Signed-off-by: Tuo Li <islituo@gmail.com>
+> ---
+>  drivers/tty/n_gsm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+> index be35f7334ecd..b709f1a6bd2d 100644
+> --- a/drivers/tty/n_gsm.c
+> +++ b/drivers/tty/n_gsm.c
+> @@ -4307,7 +4307,9 @@ static int gsmtty_open(struct tty_struct *tty, struct file *filp)
+>  	struct gsm_dlci *dlci = tty->driver_data;
+>  	struct tty_port *port = &dlci->port;
+>  
+> +	spin_lock_irq(&port->lock);
+>  	port->count++;
+> +	spin_unlock_irq(&port->lock);
 
-Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
----
- arch/arm/configs/at91_dt_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Open counts are almost never a good idea, especially like this.  Please
+fix to use a proper reference count instead which will fix this issue.
 
-diff --git a/arch/arm/configs/at91_dt_defconfig b/arch/arm/configs/at91_dt_defconfig
-index 1d53aec4c836..c5c8623f1075 100644
---- a/arch/arm/configs/at91_dt_defconfig
-+++ b/arch/arm/configs/at91_dt_defconfig
-@@ -143,6 +143,7 @@ CONFIG_VIDEO_OV2640=m
- CONFIG_VIDEO_OV7740=m
- CONFIG_DRM=y
- CONFIG_DRM_ATMEL_HLCDC=y
-+CONFIG_DRM_MICROCHIP_DW_MIPI_DSI=y
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_EDP=y
- CONFIG_FB_ATMEL=y
--- 
-2.25.1
+Also, you mention kernel 6.2, which is VERY old, especially for this
+driver, please redo this against the latest kernel tree which has lots
+and lots of fixes for this code in it since that obsolete release.
 
+And finally, as you are using an automated tool, you need to describe it
+better, see the documentation for how to do so.
+
+thanks,
+
+greg k-h
 
