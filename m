@@ -1,114 +1,182 @@
-Return-Path: <linux-kernel+bounces-241662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7E1927DB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:20:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1637E927DB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 21:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FDD1C22D5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372B61C2359A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FA2137C2A;
-	Thu,  4 Jul 2024 19:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7A113665A;
+	Thu,  4 Jul 2024 19:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="e5yZkCE9"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFD+u1UB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A6C6CDA1;
-	Thu,  4 Jul 2024 19:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C7A4CB28
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 19:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720120801; cv=none; b=PmK368iQuPW6waNgtfL9PHt5DUm0gqrJTnhELxH9Urau6ass6Uk7usOMDcN7TJW0DvG+l9eYh8f+hXwb/xC3SFAhxIhN9LtGzAisXdHZujV0ymnCG6GTz3PUEY0x9PyYera0wWZZeKvGCnmvkHYC6r4TshlejLvc/R/gOFpMOtA=
+	t=1720120739; cv=none; b=FWZKR1ZDlBq1/RdY7TIKRZn0a1xVkqe5Hgj07HIP/IhBr+AgWFpEC6mPdTviX6Qil8TSMhZGZYlhD7VwnvGCnPGFUHnF4WWv7BgXFhnJgHp8hwDyr9k7SDp+Z+dPHTPESi18UzFo+zQ6VHbNWTBnkb119WPO3nl3YVVviL20VL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720120801; c=relaxed/simple;
-	bh=5EKYtMONthEsFSA+n04NFH8luj6pT4LCFD5nneRT3jk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YhCJFyU2SAFmH7KLnCH/ZkqR6fcdH+XGvDZ1rjyXXRS5LdoIHBzILB++/E+xG4aGxUF+lCoJboznnrXxM+qMFpa20isvthEypXsRPdqBi1rNloMuL1daxHOehm6F50buoEAhBIWl8VsJ6IWyjnPm/F3dyj56Ob3mN0qqu42IN9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=e5yZkCE9; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: heiko@sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1720120794;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=12kQGJpaxYXve/bNP2Rvzy67ptC3odJSOf9IDo8D060=;
-	b=e5yZkCE9Ici3nvB7wz3sGd0TYcyIk2C3zY2FsiTaZiC9RFqNZwenUU0Pi0C9dQCkiaQLVx
-	GthxTDvHEs0RrfGFiKJgkZwiwis9mQTzfH4h2QdHMKZAM+LW44xMIZN9Dl6Bs9nr1l0NN1
-	Aqv+tLEuQo0AtZpWbzfI+SqBL7Nb66MQTznoHVT+p3fUyMa3sA65aBn5x6VJHStbpQv5mh
-	niIEg3sAHNZQdI/rvMSO2sw04gpwjejRa/iNHmzpANDuSALc4qDbyDPi2QPB4Qlqt6lwKq
-	oEgwIVGIxzjV9Mz3qFrIcQczJ+MlRVi8Qx4NHx0JZL5ohtdJXj/PxTNrZtIq6w==
-X-Envelope-To: knaerzche@gmail.com
-X-Envelope-To: dsimic@manjaro.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: didi.debian@cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Alex Bee <knaerzche@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH] arm64: dts: rockchip: Add avdd supplies to hdmi on rock64
-Date: Thu,  4 Jul 2024 21:18:33 +0200
-Message-ID: <20240704191919.38856-1-didi.debian@cknow.org>
+	s=arc-20240116; t=1720120739; c=relaxed/simple;
+	bh=s220n8X2nhm1THi0+P5Yi7KI/flzymriSlcmI0M2fDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Sbx8B4gNWOJ0R8ZhEMs/sCD4qMHOQJRzJxswH17O+HxLK6Xhg6vQ+BlDkSACHOBEIFGEj+Oi+HNP0uXVkLOuzDplQ2i5Y4hxmbazcUa98MGPCN4/pZXN6DS00hoZ0uPkKCyLbG5h5bzzJ1+fbotE+j35MDXK9Gx3O5Cx9YvbcAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFD+u1UB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38974C3277B;
+	Thu,  4 Jul 2024 19:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720120738;
+	bh=s220n8X2nhm1THi0+P5Yi7KI/flzymriSlcmI0M2fDw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TFD+u1UB/jJ5FPBj1sHWe9Fa+x93EcH91O7TJVKp1Pb+6x4SJjaZ16Ev8GpLjMKxi
+	 2QWH/08KjuMkjIt87g4aJiBOaC1vJ8TXqdGh5xyJIBxHhnhWzqpayF0lrf6wB/4+rk
+	 rvcYmLmlYNftjinun5vCcR8VZ/PqssPb3UtFkLybVqlRBZNXrbkhdjOcs3BjVkYAWF
+	 yzM2l7NHpAC9Nj5iGvMgG7RtwRJles+EeOztAPbD1pwTsJ5YZ0sC7MCz4nd4bdyLNy
+	 /+TXJiyz+gEDJQDd7PqJ/BaAgfLZBCuFKFNTFF92DJ7PVLvpVYWXnTgLihGHJgNuNf
+	 j4a4wQN9/23eg==
+Date: Thu, 4 Jul 2024 16:18:55 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Build failure for perf daemon on perf-tools-next
+Message-ID: <Zob1n0hC6uavZKT9@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Pine64's Rock64 was missing the avdd supply properties on the hdmi node,
-causing the following warnings:
+Hi,
 
-  dwhdmi-rockchip ff3c0000.hdmi: supply avdd-0v9 not found, using dummy regulator
-  dwhdmi-rockchip ff3c0000.hdmi: supply avdd-1v8 not found, using dummy regulator
+	I hadn't notice this before, its like this code isn't being
+built and some change made it build or that daemon->start field (or curr
+local variable) changed its type or we have a new compiler that has a
+new type check, I'm still checking:
 
-In the Rock64 Schematic document version 2.0 those supplies are marked
-as DVIDEO_AVDD_1V0 and DVIDEO_AVDD_1V8 respectively, but in version 3.0
-those are named HDMI_AVDD_1V0 and HDMI_AVDD_1V8, which is a bit clearer.
-In both versions those are connected to LDO3 and LDO1 respectively.
+perfbuilder@number:~$ dsh debian:experimental-x-mips
+$ bash
+toolsbuilder@84768d80be97:/$ cat /etc/os-release=20
+PRETTY_NAME=3D"Debian GNU/Linux trixie/sid"
+NAME=3D"Debian GNU/Linux"
+VERSION_CODENAME=3Dtrixie
+ID=3Ddebian
+HOME_URL=3D"https://www.debian.org/"
+SUPPORT_URL=3D"https://www.debian.org/support"
+BUG_REPORT_URL=3D"https://bugs.debian.org/"
+toolsbuilder@84768d80be97:/$ mips-linux-gnu-gcc -v
+Using built-in specs.
+COLLECT_GCC=3Dmips-linux-gnu-gcc
+COLLECT_LTO_WRAPPER=3D/usr/libexec/gcc-cross/mips-linux-gnu/13/lto-wrapper
+Target: mips-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion=3D'Debian 13.2.0-25'=
+ --with-bugurl=3Dfile:///usr/share/doc/gcc-13/README.Bugs --enable-language=
+s=3Dc,ada,c++,go,d,fortran,objc,obj-c++,m2 --prefix=3D/usr --with-gcc-major=
+-version-only --program-suffix=3D-13 --enable-shared --enable-linker-build-=
+id --libexecdir=3D/usr/libexec --without-included-gettext --enable-threads=
+=3Dposix --libdir=3D/usr/lib --enable-nls --with-sysroot=3D/ --enable-cloca=
+le=3Dgnu --enable-libstdcxx-debug --enable-libstdcxx-time=3Dyes --with-defa=
+ult-libstdcxx-abi=3Dnew --enable-libstdcxx-backtrace --enable-gnu-unique-ob=
+ject --disable-libitm --disable-libsanitizer --disable-libquadmath --disabl=
+e-libquadmath-support --enable-plugin --enable-default-pie --with-system-zl=
+ib --enable-libphobos-checking=3Drelease --without-target-system-zlib --ena=
+ble-multiarch --disable-werror --enable-multilib --with-arch-32=3Dmips32r2 =
+--with-fp-32=3Dxx --with-lxc1-sxc1=3Dno --enable-targets=3Dall --with-arch-=
+64=3Dmips64r2 --enable-checking=3Drelease --build=3Dx86_64-linux-gnu --host=
+=3Dx86_64-linux-gnu --target=3Dmips-linux-gnu --program-prefix=3Dmips-linux=
+-gnu- --includedir=3D/usr/mips-linux-gnu/include --with-build-config=3Dboot=
+strap-lto-lean --enable-link-serialization=3D8
+Thread model: posix
+Supported LTO compression algorithms: zlib zstd
+gcc version 13.2.0 (Debian 13.2.0-25)=20
+toolsbuilder@84768d80be97:/$
 
-While the DeviceTree property is named 'avdd-0v9-supply' the
-'rockchip,dw-hdmi.yaml' binding document notes the following:
 
-  A 0.9V supply that powers up the SoC internal circuitry. The actual
-  pin name varies between the different SoCs and is usually
-  HDMI_TX_AVDD_0V9 or sometimes HDMI_AVDD_1V0.
 
-So the 'vdd_10' reference is not an error.
-
-Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
----
- arch/arm64/boot/dts/rockchip/rk3328-rock64.dts | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-index 229fe9da9c2d..90fef766f3ae 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-@@ -154,6 +154,8 @@ &gmac2io {
- };
- 
- &hdmi {
-+	avdd-0v9-supply = <&vdd_10>;
-+	avdd-1v8-supply = <&vcc_18>;
- 	status = "okay";
- };
- 
--- 
-2.45.2
+ 21     6.70 debian:experimental-x-mips    : FAIL gcc version 13.2.0 (Debia=
+n 13.2.0-25)=20
+    builtin-daemon.c: In function 'cmd_session_list':
+    builtin-daemon.c:691:35: error: format '%lu' expects argument of type '=
+long unsigned int', but argument 4 has type 'time_t' {aka 'long long int'} =
+[-Werror=3Dformat=3D]
+      691 |                 fprintf(out, "%c%lu",
+          |                                 ~~^
+          |                                   |
+          |                                   long unsigned int
+          |                                 %llu
+      692 |                         /* session up time */
+      693 |                         csv_sep, (curr - daemon->start) / 60);
+          |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          |                                                         |
+          |                                                         time_t =
+{aka long long int}
+    builtin-daemon.c:703:52: error: format '%lu' expects argument of type '=
+long unsigned int', but argument 3 has type 'time_t' {aka 'long long int'} =
+[-Werror=3Dformat=3D]
+      703 |                         fprintf(out, "  up:      %lu minutes\n",
+          |                                                  ~~^
+          |                                                    |
+          |                                                    long unsigne=
+d int
+          |                                                  %llu
+      704 |                                 (curr - daemon->start) / 60);
+          |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          |                                                        |
+          |                                                        time_t {=
+aka long long int}
+    builtin-daemon.c:730:43: error: format '%lu' expects argument of type '=
+long unsigned int', but argument 4 has type 'time_t' {aka 'long long int'} =
+[-Werror=3Dformat=3D]
+      730 |                         fprintf(out, "%c%lu",
+          |                                         ~~^
+          |                                           |
+          |                                           long unsigned int
+          |                                         %llu
+      731 |                                 /* session up time */
+      732 |                                 csv_sep, (curr - session->start=
+) / 60);
+          |                                          ~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~
+          |                                                                =
+  |
+          |                                                                =
+  time_t {aka long long int}
+    builtin-daemon.c:748:52: error: format '%lu' expects argument of type '=
+long unsigned int', but argument 3 has type 'time_t' {aka 'long long int'} =
+[-Werror=3Dformat=3D]
+      748 |                         fprintf(out, "  up:      %lu minutes\n",
+          |                                                  ~~^
+          |                                                    |
+          |                                                    long unsigne=
+d int
+          |                                                  %llu
+      749 |                                 (curr - session->start) / 60);
+          |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          |                                                         |
+          |                                                         time_t =
+{aka long long int}
+    cc1: all warnings being treated as errors
+    tests/workloads/landlock.c:27:15: error: packed attribute causes ineffi=
+cient alignment for 'allowed_access' [-Werror=3Dattributes]
+       27 |         __u64 allowed_access;
+          |               ^~~~~~~~~~~~~~
+    tests/workloads/landlock.c:28:15: error: packed attribute causes ineffi=
+cient alignment for 'parent_fd' [-Werror=3Dattributes]
+       28 |         __s32 parent_fd;
+          |               ^~~~~~~~~
+    cc1: all warnings being treated as errors
+    make[4]: *** [/git/perf-6.10.0-rc3/tools/build/Makefile.build:158: work=
+loads] Error 2
+    make[3]: *** [/git/perf-6.10.0-rc3/tools/build/Makefile.build:158: test=
+s] Error 2
 
 
