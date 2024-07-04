@@ -1,116 +1,105 @@
-Return-Path: <linux-kernel+bounces-241318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232949279B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:13:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4659279B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93081B24E5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:13:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2941928655E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40E01B11FC;
-	Thu,  4 Jul 2024 15:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312D61B1204;
+	Thu,  4 Jul 2024 15:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjPdDL6C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="GMJ9YPEJ"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0F31AED55;
-	Thu,  4 Jul 2024 15:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967241AED55;
+	Thu,  4 Jul 2024 15:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720106026; cv=none; b=nFWM09bZQX36BM3zgvlfZwEwxy0om6HO2cs4nOGWYH+wrHBQ6Tbfx4rKrwjCfCelp9vDQ10GqkgG2ZjpxvumCzI3I6rOnQaHgalsQeypWiqb00y0QfYe3Oof4NTdr/OOBPLVz2LqrHwuwU+dNE5z8I7nn2pr/PpjEx+zZS0dxCA=
+	t=1720106100; cv=none; b=CX53oF6wg2WhRRZCmzginL2BUV8UnMYbOhWd5IsCxjvU6IlvGqZJrfZcLKhfQKBFZpQHu4vbGOvHwBJMbCsFH4/I9ok7uj0TD1vu8gUKRDUB93ef4xsVef4TyXdBXTCul6UeLPiYOSH1g74wnugRVUbPEkbZJtJcijhbWtyfdHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720106026; c=relaxed/simple;
-	bh=z7E+MknHGutSinOZE8ZFEWbblRdqQlH1U//ryH1/BB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NAcfp+F4yX/n4KH7I4HpgVyN5Db5zkIbODTnUgzOnFtZMZIexkFOWq0SO9V4/IZjTF11XzrhUCKh0EsYg55rMRehbrj8HSpzbc1IlHzOwTZTBo8RXK0DXHZMEpTrfqof+4eJ4t1oIx0/djJS1qTcjbQVQsK0rZSTJvKrcgohtPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjPdDL6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D81C3277B;
-	Thu,  4 Jul 2024 15:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720106025;
-	bh=z7E+MknHGutSinOZE8ZFEWbblRdqQlH1U//ryH1/BB4=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=NjPdDL6CQBJrq0/WmbQgLIoMGSBl5lUkuAp+B53vBy/alChCVD8VDqK490MdjOv96
-	 ItGHH12WL0HtHNWaVv+ZlExbr9a5G+D/ow1x3KzNaZ8TGWRrPOND3B0t1IlVXc8bqu
-	 XDZVx24zyj3/1K6CbLoU6jAJh925ERsGh7oJe4d8J9UTYt8hojYyuwi77x3proNI3E
-	 ihAH3V/v3O/svzggxKcL8xk4lD7S49HQiQQ2CJaIjdbwsDeg2SCXIkeLM6mEaP5GPd
-	 SUhdqP5GHGS284mhY38zoGGmMBnKkttsDARXs4ZsOAnR07hvX3izvUay9DwtSuOofB
-	 DPZWV6Z6xS57g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6D6F0CE09D9; Thu,  4 Jul 2024 08:13:45 -0700 (PDT)
-Date: Thu, 4 Jul 2024 08:13:45 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com,
-	bpf@vger.kernel.org, jolsa@kernel.org, clm@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
- and per-CPU RW semaphore
-Message-ID: <2118e0a9-e878-4bc5-83d2-9a11b2d5efb9@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240701223935.3783951-1-andrii@kernel.org>
- <20240702102353.GG11386@noisy.programming.kicks-ass.net>
- <20240702115447.GA28838@noisy.programming.kicks-ass.net>
- <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
- <20240702191857.GJ11386@noisy.programming.kicks-ass.net>
- <fd1d8b71-2a42-4649-b7ba-1b2e88028a20@paulmck-laptop>
- <20240703075057.GK11386@noisy.programming.kicks-ass.net>
- <6b728325-b628-488f-aabf-dbd9afa388fb@paulmck-laptop>
- <20240704083935.GR11386@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1720106100; c=relaxed/simple;
+	bh=n03wDCvXM92XTDf9U5mj020XVXdBf5n8TY7CUvk3uTg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U0iYlshDLmX49K6saqTJud4hRZ5CSkFq1AJSnwY7YqwLxVl41LdrKT8HfhIR0Cy7HKXH9Y6dpoaPOVzcY7+XyPA1u3x/j5n0UZloOl4gtBgqp0R6ewYjEtMbcDP6W073Y5WZpMcf8ADIzJLajW7nS70idQN3UCSZ86qgzE0Umm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=GMJ9YPEJ; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720106098; x=1751642098;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=n03wDCvXM92XTDf9U5mj020XVXdBf5n8TY7CUvk3uTg=;
+  b=GMJ9YPEJaHWbAfgZJ/u7Bb08p/7w+lxgbFznOydSbhLtj3maM1wVv+jy
+   Wyf04rlBRCYOJqcjslGz1kKIWGUBLc2Xh637fq3lRLmsJ8e9Pwyp1ASLW
+   1yuNNBs1bu9r7nbYSqyYf5r30gOg0c62NufqX22Cx8rD3J2izXJ3xIh3b
+   hq1W006xAtTlNcYNTDKFz49LYHRaf0ie3WnTqYeYVAMdMEbBNiqBwnBv1
+   uHU5SDXfQl1MgdDswrBI2S4CUITn4nCjOXjpWoqbMuTZoYzhf7lnovvhF
+   L1+CqQfkpEdOViQ4WtS/p3VTBDcZri2xVdiVhOXK5JtgxkMZ6Y9kBaRxL
+   w==;
+X-CSE-ConnectionGUID: QsL3knLaRq6A8nmQ6t3mOw==
+X-CSE-MsgGUID: HORkfyXQQliBaZQyZIVpYw==
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="29497510"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Jul 2024 08:14:57 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 4 Jul 2024 08:14:38 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 4 Jul 2024 08:14:35 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Andrei Simion <andrei.simion@microchip.com>
+Subject: [PATCH 0/7] Update the eeprom nodename following device tree specification
+Date: Thu, 4 Jul 2024 18:14:04 +0300
+Message-ID: <20240704151411.69558-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704083935.GR11386@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Jul 04, 2024 at 10:39:35AM +0200, Peter Zijlstra wrote:
-> On Wed, Jul 03, 2024 at 07:08:21AM -0700, Paul E. McKenney wrote:
-> > On Wed, Jul 03, 2024 at 09:50:57AM +0200, Peter Zijlstra wrote:
-> 
-> > > Would it make sense to disable it for those architectures that have
-> > > already done this work?
-> > 
-> > It might well.  Any architectures other than x86 at this point?
-> 
-> Per 408b961146be ("tracing: WARN on rcuidle")
-> and git grep "select.*ARCH_WANTS_NO_INSTR"
-> arch/arm64/Kconfig:     select ARCH_WANTS_NO_INSTR
-> arch/loongarch/Kconfig: select ARCH_WANTS_NO_INSTR
-> arch/riscv/Kconfig:     select ARCH_WANTS_NO_INSTR
-> arch/s390/Kconfig:      select ARCH_WANTS_NO_INSTR
-> arch/x86/Kconfig:       select ARCH_WANTS_NO_INSTR
-> 
-> I'm thinking you can simply use that same condition here?
+Change the nodename for each eeprom according to device tree specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+and according to the format specified in at24.yaml
 
-New one on me!  And it does look like that would work, and it also
-looks like other code assumes that these architectures have all of their
-deep-idle and entry/exit functions either inlined or noinstr-ed, so it
-should be OK for Tasks Trace Rude to do likewise.  Thank you!!!
+Andrei Simion (7):
+  ARM: dts: microchip: at91-sama5d2_xplained: Align the eeprom nodename
+  ARM: dts: microchip: at91-sama5d2_ptc_ek: Align the eeprom nodename
+  ARM: dts: microchip: at91-sama5d34ek: Align the eeprom nodename
+  ARM: dts: microchip: at91-sama5d27_som1: Align the eeprom nodename
+  ARM: dts: microchip: at91sam9g20ek_common: Align the eeprom nodename
+  ARM: dts: microchip: at91sam9260ek: Align the eeprom nodename
+  ARM: dts: microchip: at91sam9263ek: Align the eeprom nodename
 
-If you would like a sneak preview, please see the last few commits on
-the "dev" branch of -rcu.  And this is easier than my original plan
-immortalized (at least temporarily) on the "dev.2024.07.02a" branch.
+ arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi   | 2 +-
+ arch/arm/boot/dts/microchip/at91-sama5d2_ptc_ek.dts   | 2 +-
+ arch/arm/boot/dts/microchip/at91-sama5d2_xplained.dts | 2 +-
+ arch/arm/boot/dts/microchip/at91sam9260ek.dts         | 2 +-
+ arch/arm/boot/dts/microchip/at91sam9263ek.dts         | 2 +-
+ arch/arm/boot/dts/microchip/at91sam9g20ek_common.dtsi | 2 +-
+ arch/arm/boot/dts/microchip/sama5d34ek.dts            | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-Things left to do: (1) Rebase fixes into original commits. (2)
-Make RCU Tasks stop ignoring idle tasks.  (3) Reorder the commits
-for bisectability.  (4) Make rcutorture test RCU Tasks Rude even when
-running on platforms that don't need it.  (5) Fix other bugs that I have
-not yet spotted.
 
-I expect to post an RFC patch early next week.  Unless there is some
-emergency, I will slate these for the v6.12 merge window to give them
-some soak time.
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+-- 
+2.34.1
 
-							Thanx, Paul
 
