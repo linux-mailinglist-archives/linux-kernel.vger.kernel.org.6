@@ -1,160 +1,91 @@
-Return-Path: <linux-kernel+bounces-241410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845BB927B2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F113927B2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B5B28463C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:33:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49CEB283D4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60171B14FD;
-	Thu,  4 Jul 2024 16:33:23 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E39A1B29C0;
+	Thu,  4 Jul 2024 16:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Ux68MPp6"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69201CA87
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 16:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CAB1AE859
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 16:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720110803; cv=none; b=ut9klWkVi3v9ezMJma12q0wf7F3VlY0Ip/08Y0C0e0DYciq4miPcw4PRoB7D/bKhPu9gl/h69i/XCbWS/D6fFfdipDPI7pbdclEI7RudPNrrX9UXWXp4LHUp/wW1aAhDR6uxKcmVtbcbzTY2FA0CLZ00ZUlj/ymHHNCDjgoOQqM=
+	t=1720110896; cv=none; b=eh0AzIY5HywzCUuNqYdtDcZBiZyk1YQyaKsOwaY/kRhrayQmcigNTDyCBh47UbPfkR0/g+lbSSVCyIaTZues/effqEQU/vQcb318IfQSlj6aWv+vgYN9BOHpBL8XiM0/3CyweFGymB7dVZr9y59LUUzp9kwi2bx2VYaNvbBa82w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720110803; c=relaxed/simple;
-	bh=oHgUj9RNVdjnFkamtyzSaZh2U2oXd+4eUW+sFd/bc+Q=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=APev9vOTJwEKAlvpTIyl0xpyl/0CEwBdG/67exk4TbYSQBTTXlAwvzj4sEHF7Jnq9FgST4Alm6QFAeV2v4QNf2MJvWMcpmCm6NOdvNLDVrRJvnP5Oodr4LJlFv79CsKkSUYrraO7HFcscBKCfZNlwYwJ56qW+rH49xmfyYXacVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7ebd11f77d8so104824639f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 09:33:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720110801; x=1720715601;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qUKxMIsnh86EKvdFfJf776bnEDX8f4aMiOh9C/pfS/o=;
-        b=Vmapn/5HI3vZvdO6xzNDNS+hCPZaFytnguQcaQerNbCVbcQ57UrZtLdz+U0fQQzVkJ
-         OSmENuziSc96aeno/rYHC2gkpQBpFZvSLvg2hIJXyehvLcTWBCsLIq0zXKGUwbM05/TL
-         DUrjWP8tSnX2jARjKTqef5t2C4A1sCpWXn6sAy/qw0gXU/jqZASuI0KyyaMFo8KgGhVi
-         nNCtFlkSPXiQTBgFXO8fNA7PgkvH3/xobrRa4JFjqPyUczQE6bhtOb3nliWPGKZPeLk0
-         rGGTsZ/U7YydZXMyzQLTqWGRJIeeTu5MBSHQYXoxUfZT9D+4hrvdHJMXoxnqPP3r5yWD
-         48YA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUrptT9jSzecd8PDsrtnI2ihvcGHOHn/HjJW8sWxPyL9IG6Q2hrfhSPiRAPhI3Z6TFBh6t0f6RHEjMoH3AL96mp4eQbHz5p0g9pTVh
-X-Gm-Message-State: AOJu0YzCU3S8NrS8fAmE1nNG/EP41YH+a7iVDOVVuvyjJmL85uAy0bKY
-	fJJqARIx1JA/k12+LhNZp+1NSrdbZ/R0J7A1v945EfvregI75RkLAwKMXPRB9GdLoy4EkPwzjuY
-	vYwu/Dc7o4u/MmfHVfftjuhMj//irG4cnsxmJ+aXio7VdHUSAl2c/lfs=
-X-Google-Smtp-Source: AGHT+IHWysKmk8S/npyqeKHy2fCBHQ0tjog4ECmymqcWf0CzoBCgl3niFulWEkUAN0knz+qOG6w83FwEhbZEe9xToq7ABFNUgu/A
+	s=arc-20240116; t=1720110896; c=relaxed/simple;
+	bh=9v65Sv3yo11Kw53F/T4eQd+faLb6N3scflAh/xOOfRI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Rv5CaZQhGZtAA4P4/F7sBf3ht4JaGx9KPNMc+Vm93eYK0447vZ2fo/TiWsOCfXQlO8CtnK/noTyw97dm6Dwk2XgIS13O9kzSUi7o2c+opvRie8rBX72BCVpDWfqKxfKjJ1wyQi5vIL1Z5TSfFNkp3KHyFvtvTHsymPjXvlyAnig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Ux68MPp6; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=VsVGu7SaO/39voxPm+AHRwDd0yVTAjmoCN49SoXRhfA=; b=Ux68MPp6ndC6eIi6JoA4rlHnds
+	fO1cOdiz8D7Vz/aSGORepKmpGuuDi1sHMd8QNAkGfrj1KtgTyFqXz3I5FmCXVaxeZlZtjmGcuMG9V
+	n3vgfcqSJjLDr8eFz/vJRi8g0dHaKgMPzxAHQMm8aGsLcalDrqHXHk6DdeHPYc02YBhKHDp1A3EHi
+	KjEojp7O55JD01/fg3kMFp560wmO3dhn0wAZiXfEPL3b4sXRT4BBWe/fhcPNJauO/37TpnG86CSfD
+	AUBkqZLJgNM9cpNHMObJBBI1I06oY9iS/cSVweir3170dgPUdgObierpkpLhfrja9PblRJvaq8FUh
+	5mNhMzaQ==;
+Received: from [191.19.134.16] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sPPPy-00BAK7-4c; Thu, 04 Jul 2024 18:34:46 +0200
+Message-ID: <f59f5b44-0fa7-4229-b060-3a6ffbc2b6c2@igalia.com>
+Date: Thu, 4 Jul 2024 13:34:39 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4118:b0:4bf:38f9:eb1b with SMTP id
- 8926c6da1cb9f-4bf643fbae3mr110699173.6.1720110801082; Thu, 04 Jul 2024
- 09:33:21 -0700 (PDT)
-Date: Thu, 04 Jul 2024 09:33:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000045f576061c6e8142@google.com>
-Subject: [syzbot] [batman?] INFO: rcu detected stall in batadv_iv_send_outstanding_bat_ogm_packet
- (5)
-From: syzbot <syzbot+7beee86dd68b7ee38e4a@syzkaller.appspotmail.com>
-To: a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	mareklindner@neomailbox.ch, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sven@narfation.org, sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [ANNOUNCE] Graphics & DRM MC at LPC 2024
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+To: dri-devel <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Daniel Stone <daniel@fooishbar.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel.vetter@ffwll.ch>, Robert Foss <rfoss@redhat.com>,
+ Maxime Ripard <mripard@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>
+References: <92bacfe3-efac-4615-9d30-a6215f6bba29@igalia.com>
+Content-Language: en-US
+In-Reply-To: <92bacfe3-efac-4615-9d30-a6215f6bba29@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Em 13/05/2024 13:46, André Almeida escreveu:
+> The Graphics and DRM Microconference was accepted for Linux Plumbers 
+> 2024! Please, submit your proposal in the following page:
+> 
+>      https://lpc.events/event/18/abstracts/
+> 
+> Remember to select "Graphics & DRM MC" in the Track field. The deadline 
+> for submissions is Sunday 30th June. The accepted proposals will be 
+> listed here:
+> 
 
-syzbot found the following issue on:
+The deadline was extended till July 15th :)
 
-HEAD commit:    707081b61156 Merge branch 'for-next/core', remote-tracking..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1182b083180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=caeac3f3565b057a
-dashboard link: https://syzkaller.appspot.com/bug?extid=7beee86dd68b7ee38e4a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6cad68bf7532/disk-707081b6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1a27e5400778/vmlinux-707081b6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/67dfc53755d0/Image-707081b6.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7beee86dd68b7ee38e4a@syzkaller.appspotmail.com
-
-watchdog: BUG: soft lockup - CPU#0 stuck for 27s! [kworker/u4:5:575]
-Modules linked in:
-irq event stamp: 132863
-hardirqs last  enabled at (132862): [<ffff80008ad68de8>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:85 [inline]
-hardirqs last  enabled at (132862): [<ffff80008ad68de8>] exit_to_kernel_mode+0xdc/0x10c arch/arm64/kernel/entry-common.c:95
-hardirqs last disabled at (132863): [<ffff80008ad66a78>] __el1_irq arch/arm64/kernel/entry-common.c:533 [inline]
-hardirqs last disabled at (132863): [<ffff80008ad66a78>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:551
-softirqs last  enabled at (128034): [<ffff80008002189c>] softirq_handle_end kernel/softirq.c:399 [inline]
-softirqs last  enabled at (128034): [<ffff80008002189c>] __do_softirq+0xac8/0xce4 kernel/softirq.c:582
-softirqs last disabled at (128036): [<ffff80008aad75f4>] spin_lock_bh include/linux/spinlock.h:356 [inline]
-softirqs last disabled at (128036): [<ffff80008aad75f4>] batadv_tt_local_commit_changes+0x24/0x44 net/batman-adv/translation-table.c:3717
-CPU: 0 PID: 575 Comm: kworker/u4:5 Not tainted 6.8.0-rc7-syzkaller-g707081b61156 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Workqueue: bat_events batadv_iv_send_outstanding_bat_ogm_packet
-pstate: 00400005 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : queued_spin_lock_slowpath+0x15c/0xcf8 kernel/locking/qspinlock.c:383
-lr : queued_spin_lock_slowpath+0x168/0xcf8 kernel/locking/qspinlock.c:383
-sp : ffff800098c77720
-x29: ffff800098c777c0 x28: 1fffe0001b8a126a x27: 1ffff0001318eef0
-x26: dfff800000000000 x25: 1fffe0001b8a126c x24: ffff800098c77740
-x23: ffff800098c77780 x22: ffff70001318eee8 x21: 0000000000000001
-x20: 0000000000000001 x19: ffff0000dc509350 x18: ffff0001b4015840
-x17: ffff800125414000 x16: ffff8000809fd934 x15: 0000000000000001
-x14: 1fffe0001b8a126a x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001b8a126b x10: 1fffe0001b8a126a x9 : 0000000000000000
-x8 : 0000000000000001 x7 : ffff80008aad75f4 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff80008ae5db50
-x2 : 0000000000000000 x1 : 0000000000000001 x0 : 0000000000000001
-Call trace:
- __cmpwait_case_8 arch/arm64/include/asm/cmpxchg.h:229 [inline]
- __cmpwait arch/arm64/include/asm/cmpxchg.h:257 [inline]
- queued_spin_lock_slowpath+0x15c/0xcf8 kernel/locking/qspinlock.c:383
- queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
- do_raw_spin_lock+0x320/0x348 kernel/locking/spinlock_debug.c:116
- __raw_spin_lock_bh include/linux/spinlock_api_smp.h:127 [inline]
- _raw_spin_lock_bh+0x50/0x60 kernel/locking/spinlock.c:178
- spin_lock_bh include/linux/spinlock.h:356 [inline]
- batadv_tt_local_commit_changes+0x24/0x44 net/batman-adv/translation-table.c:3717
- batadv_iv_ogm_schedule_buff net/batman-adv/bat_iv_ogm.c:811 [inline]
- batadv_iv_ogm_schedule+0x1ec/0xdf0 net/batman-adv/bat_iv_ogm.c:868
- batadv_iv_send_outstanding_bat_ogm_packet+0x740/0x900 net/batman-adv/bat_iv_ogm.c:1712
- process_one_work+0x694/0x1204 kernel/workqueue.c:2633
- process_scheduled_works kernel/workqueue.c:2706 [inline]
- worker_thread+0x938/0xef4 kernel/workqueue.c:2787
- kthread+0x288/0x310 kernel/kthread.c:388
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>      https://lpc.events/event/18/contributions/1664/
+> 
+> LPC 2024 will happen in Vienna, Austria, on September 18-20:
+> 
+>      https://lpc.events/event/18/
+> 
+> Thanks!
 
