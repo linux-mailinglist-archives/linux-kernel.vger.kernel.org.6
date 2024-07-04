@@ -1,179 +1,186 @@
-Return-Path: <linux-kernel+bounces-241601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C90C927D05
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:29:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4824927D0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 20:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1E2286A69
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:29:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43454B2309E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 18:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD16B136E28;
-	Thu,  4 Jul 2024 18:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E1374BF5;
+	Thu,  4 Jul 2024 18:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="l5Si8M9U";
-	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="qBMcCXzG"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ElCLYoZ5"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D872B13D250;
-	Thu,  4 Jul 2024 18:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720117686; cv=pass; b=jj6oh2INDP3zM0CtvAxK5k4aabQpAabUiVjkqWVbM2IbtSlVw+psm83X+3l5HoBc3XA0Vxy+0CC0iLuMGyvl/nP4oSyhoStyje+/uxS0cP/PPscVj/g52wgaAqmJgez5FgrEP6JD4St7TnmYj2IryXwjbAGdH/uPiQs7S9GZnpc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720117686; c=relaxed/simple;
-	bh=6NFNT1aliQ0mk/TC71IaMfgcjYB9X2hKt+teOtKS05c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CYFBMNYkbPJ2VXNUdGPynivGMY7e/ix4r9zPXWTR/cMXJHT96pf80pPpdcm44zPJFA9/oD1S3DP4BlESVu6cUEXam3i6OOM3ve7Uuy5y0Qj0FhxV6odRb2ccXbX4Ee4AYMoa+9xE9Z6xCOm92TM9CHurnsrxYnXo2MuIxYB719Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=l5Si8M9U; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=qBMcCXzG; arc=pass smtp.client-ip=85.215.255.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
-ARC-Seal: i=1; a=rsa-sha256; t=1720117643; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Fy80Yhj0x290kYEKrd1RQq5Ma4YrsvEuYkpH3LYU9DoorwUkKSLbMWAvJixniXyf5g
-    yVC4srGT7gF1k+RLkH9bW3YN6L5wNbkjSEp9fzCOwqTCH4VJtr4otCsKv5epcDFCbOmC
-    uI7Ntpymsr6rOrlXg/q0Con21LOV8yaMA1SfenfbFiDHQBX18wmyYDlCgtTdpd8qAoj2
-    SMNKyehlaFcgbSy369A+C5icUBoE/w9pPV0QFmNjw7Bi+BeHBxocimWkNImqMF4Wp/pk
-    w/GNQKJmEaAPEiorZmrAiAKUinkZrpdp4RqJrpOrNaFPffpX7PUCSxemxIfkGYRCLTR/
-    fgww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1720117643;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=MF0O/2pT9UmMWAClfRsttShUZ9knD0aIZeQYuAUw6dU=;
-    b=EHC56Dpn2gs6Skqy1ifHEIIlFMQaQI9TfG1ICcGuahMdnAon0fBmAmSqUe/ogSu9JB
-    cElXLbZfbSiWIY6Yyn8W7lS7ojbTf4vx7qjAjbPIFjHMIrI8xHoYwPH7VClf0scPN2UO
-    yzaPaqy6YTt25/IjANSsYlsSzcu8QsaOWnQWjU+4lW2MXwH3qTKOWs+vMeg7olTDzdQt
-    2pYUo+mjowSdEGnCsKOHvgQw863GszbGGz5G7mpEFfNwLrvzGv2JAMVXORhIdlH1mwm6
-    KzYTWoj/xDprxISEgXnqYUiJ9d0khPVrp+llDDh/v3zFTnCHNqqeLX4S0b+b66hs511s
-    chMQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1720117643;
-    s=strato-dkim-0002; d=xenosoft.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=MF0O/2pT9UmMWAClfRsttShUZ9knD0aIZeQYuAUw6dU=;
-    b=l5Si8M9UJxarFg/qgHvJFHeU7jTArtd5tKBk45N+PGvKPPeTbhOZWRLQ4OB7DCUPfc
-    X+80A8ms55gD0Fb41YnWnJl1WN+cz030p5gzUvY2QaH+LqaL1lVTSJYMVw1+g5cGprO/
-    4/qYGjuB5RJmWj/l3Dyra/k5LI1T4rCDxzpMhqeRIZQnGyEpjFsVDEdBQSdQI8CkFJa3
-    djf5MYuSPZM2HgIQKAD1U6CBeDyfXQCchwWPnCLOYyrLRYwss6b4C6X2qqLLO8Rj/5ZL
-    3vAG+lYfPuGayKYv/4phOz3m8H0fc09XNNFfXqR5RqrSLWlOTQJGYeUM65HNA1c+LDMk
-    Y/Ow==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1720117643;
-    s=strato-dkim-0003; d=xenosoft.de;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=MF0O/2pT9UmMWAClfRsttShUZ9knD0aIZeQYuAUw6dU=;
-    b=qBMcCXzGHDJUBfTeFFb6gqTp2Nv7XFgLfH/4PCluveo1Sc4a7mTdMpfYKnUq3gXI2E
-    eEtys1FZvCwUm2s8XsDA==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHvJzedR43JwnbXz/kFsuSUCat82PJROdEuWUwpcR8HY5"
-Received: from [IPV6:2a01:599:806:6955:6d1:546c:8e64:4d8]
-    by smtp.strato.de (RZmta 50.5.0 AUTH)
-    with ESMTPSA id e08389064IRLU8S
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 4 Jul 2024 20:27:21 +0200 (CEST)
-Message-ID: <3baff554-e8f6-42b0-b931-207175a4d8fd@xenosoft.de>
-Date: Thu, 4 Jul 2024 20:27:57 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E2A53389
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 18:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720117875; cv=none; b=qaxzDRTqDgbOZrgNcBhJLBkCcY9keHz/EzT3IkSg8Ia69Vx6TWterh8XTBAeOfwX7dwnuG8VZytGWl1vjBvqBNPC0zzupNqSsggJrwzmrKahgK8dhYohvfNYsh8+gTY1xu3jeJc0NH4CIG3I/yDL2EnsqZAPbreSzEZDh9GsJfQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720117875; c=relaxed/simple;
+	bh=AgQS/DVDrI3+TiOXvEEotS5qwSgKZahU4Qq3oMYHwNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tRJlFNr0pYmAFrXjq3JamPR57HkI3N8kqGfn1pBUZ/542Ql5nvLX6HaHd7x3N1iHUPTyntga2p4auBtr79Ka06mxwa6a3Q/ghxFol86Ks7xnGuZPra2uEupZ+9mOcfiDVh/CDPqBTraJBOpWaHyFs4t3Erj7WLKx6vKAANAkDwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ElCLYoZ5; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4f2fb0c0fbcso185330e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 11:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720117873; x=1720722673; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=74ZA+j1I1EFqnPAhMsUNbwVbUxlYztRDmLLqYaBK4kQ=;
+        b=ElCLYoZ5H4QSZbHRztraoD36W2Uw6eTlKfTUcoI4eNb+zxKP/c+a6zY+f2UA0qbPk+
+         mu3lxsQ2FIaF5uwX9ax/5AjjqcFRckyz4OosJUrZSZ87lvUGDKn9SpvzJ3H8SGO7PeT+
+         Cmu8WLY22KgUQKEVxV2agrnH+Fs1+YeayqDPfRy4iiwDx4kAqQSx5E0uO/00UGafUekq
+         yvEDSYGpocFfAOTGCTxhlzCWVJ4p4icSAxCtEfThpEtYWFsHawTq1lG2wi7RelHHbTtC
+         CG+f81aZUfouYsGeDjUrMTzBYPKWTfrSpGrPdr6elvb0qfgSUXI0vz/Go68Cbp5+QKse
+         I+QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720117873; x=1720722673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=74ZA+j1I1EFqnPAhMsUNbwVbUxlYztRDmLLqYaBK4kQ=;
+        b=Ld5Mex81b5Ydq5V7Z4zG3VgfPTb988GDoYL+oaRt02XchaOePBpnEJITDDx93m6Iiz
+         +TOXCxaw3GDmmEIlqHM63E5UdomclootvbanWCFXZRuXPBxdwo8V8Fk4yuYFHur0hk3G
+         9kqdXIJIuJN8keIbFtrqoMtvfbmHWhT3Y2QrPWQlL1pJd9H+OAwEOJgYSJEm/AkYmq8R
+         4f3dqYcFqtBUShVebmgaaUCSHl9hvJr26sWr8E5B3mwXrS3HSvnXwAhzzPf+LrRWXcNR
+         n1XW89fxRz9od1wUqYODD9V+tROLl/hi0vhWUJXs2jV0BHx7HmdN7uJAuz2ie2deDSh/
+         q6ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXpy13RGx8xoILVgO2qzbCafWsUXfNp+kS2pu7TGoX9l+DD5jJ8zmA6Vp0TS2GgdTj0GuW2IZwsTkVi6f3j4bPupPRMsAfFe67AIqvj
+X-Gm-Message-State: AOJu0YxmX7BB3FZ+gGIE9NJmoGXbtYg07eOWqS04E/3zPjnL4kHmetrW
+	wLOlPCVhlR6KI4+bErAL8EGdWN/tZEr8NZm1K1y+veUpAdZ+TVn2tIu6iF+FTPEOfOZ9hDjFxPY
+	F/W7RU4U+9Pf6SGJRB/xyKK+aGGGrTCxbb9Y/jw==
+X-Google-Smtp-Source: AGHT+IFHH4qjAo1Foyl2FUb4fk5DO3d/le7RX5bROz5xpVRaqmNzLEjPmmLVbIq6bhq14LQtW74/pb3csuS6bawJL44=
+X-Received: by 2002:a05:6122:3a1b:b0:4ef:5e40:2cc8 with SMTP id
+ 71dfb90a1353d-4f2f4022896mr2884333e0c.11.1720117872889; Thu, 04 Jul 2024
+ 11:31:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
- after the of/irq updates 2024-05-29
-To: Michael Ellerman <mpe@ellerman.id.au>, Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com,
- DTML <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
- Matthew Leaman <matthew@a-eon.biz>, Darren Stevens
- <darren@stevens-zone.net>, Christian Zigotzky <info@xenosoft.de>
-References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
- <86zfqzhgys.wl-maz@kernel.org>
- <ccf14173-9818-44ef-8610-db2900c67ae8@xenosoft.de>
- <874j95jrur.fsf@mail.lhotse>
-Content-Language: en-US
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-In-Reply-To: <874j95jrur.fsf@mail.lhotse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240703102830.432293640@linuxfoundation.org>
+In-Reply-To: <20240703102830.432293640@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 5 Jul 2024 00:01:01 +0530
+Message-ID: <CA+G9fYurwddc360a=u5=Qr=Ys59Qy3PqrVYO5qoKvwGupaD2SA@mail.gmail.com>
+Subject: Re: [PATCH 4.19 000/139] 4.19.317-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04.07.24 13:53, Michael Ellerman wrote:
-> Christian Zigotzky <chzigotzky@xenosoft.de> writes:
->> On 02.07.24 18:54, Marc Zyngier wrote:
->>> On Sun, 30 Jun 2024 11:21:55 +0100,
->>> Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
->>>> Hello,
->>>>
->>>> There is an issue with the identification of ATA drives with our
->>>> P.A. Semi Nemo boards [1] after the
->>>> commit "of/irq: Factor out parsing of interrupt-map parent
->>>> phandle+args from of_irq_parse_raw()" [2].
-> ...
->>> --- a/drivers/of/irq.c
->>> +++ b/drivers/of/irq.c
->>> @@ -282,8 +282,10 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
->>>    
->>>    			oldimap = imap;
->>>    			imap = of_irq_parse_imap_parent(oldimap, imaplen, out_irq);
->>> -			if (!imap)
->>> -				goto fail;
->>> +			if (!imap) {
->>> +				match = 0;
->>> +				break;
->>> +			}
->>>    
->>>    			match &= of_device_is_available(out_irq->np);
->>>    			if (match)
->>>
->>>
->> We tested this patch yesterday and it solves the boot problem.
-> Hi Christian,
+On Wed, 3 Jul 2024 at 16:12, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Instead of that patch, can you try the one below. AFAICS the device tree
-> fixups done in early boot mean the interrupt-map is not needed, and also
-> has the wrong content, so if we can remove it entirely that might avoid
-> the problems in the parsing code.
+> This is the start of the stable review cycle for the 4.19.317 release.
+> There are 139 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> I don't know if your firmware actually implements those methods, I
-> couldn't find anything online to confirm or deny it. Seems the only
-> option is to test it.
+> Responses should be made by Fri, 05 Jul 2024 10:28:04 +0000.
+> Anything received after that time might be too late.
 >
-> cheers
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.19.317-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.19.y
+> and the diffstat can be found below.
 >
+> thanks,
 >
-> diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-> index fbb68fc28ed3..28fe082ede57 100644
-> --- a/arch/powerpc/kernel/prom_init.c
-> +++ b/arch/powerpc/kernel/prom_init.c
-> @@ -3138,6 +3138,14 @@ static void __init fixup_device_tree_pasemi(void)
->   
->   	prom_setprop(iob, name, "interrupt-controller", &val, 0);
->   
-> +	prom_printf("nemo: deleting interrupt-map properties\n");
-> +	rc = call_prom("interpret", 1, 1,
-> +		      " s\" /pxp@0,e0000000\" find-device"
-> +		      " s\" interrupt-map\" delete-property"
-> +		      " s\" interrupt-map-mask\" delete-property"
-> +		      " device-end");
-> +	prom_printf("nemo: interpret returned %d\n", rc);
-> +
->   	pci_name = "/pxp@0,e0000000/pci@11";
->   	node = call_prom("finddevice", 1, 1, ADDR(pci_name));
->   	parent = ADDR(iob);
-Hi Michael,
+> greg k-h
 
-Many thanks for your patch. We will test it as soon as possible.
 
-Christian
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 4.19.317-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 485999dcb7d90b9212ab9cde5bc707548f0dcd39
+* git describe: v4.19.316-140-g485999dcb7d9
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-4.19.y/build/v4.19=
+.316-140-g485999dcb7d9
+
+## Test Regressions (compared to v4.19.316)
+
+## Metric Regressions (compared to v4.19.316)
+
+## Test Fixes (compared to v4.19.316)
+
+## Metric Fixes (compared to v4.19.316)
+
+## Test result summary
+total: 66635, pass: 58258, fail: 354, skip: 7961, xfail: 62
+
+## Build Summary
+* arc: 10 total, 10 passed, 0 failed
+* arm: 102 total, 96 passed, 6 failed
+* arm64: 27 total, 22 passed, 5 failed
+* i386: 15 total, 12 passed, 3 failed
+* mips: 20 total, 20 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 24 total, 24 passed, 0 failed
+* s390: 6 total, 6 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 23 total, 18 passed, 5 failed
+
+## Test suites summary
+* boot
+* kunit
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
