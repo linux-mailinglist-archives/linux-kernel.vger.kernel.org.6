@@ -1,139 +1,276 @@
-Return-Path: <linux-kernel+bounces-240823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C463A927342
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:42:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1421F927346
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 11:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465321F23978
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF9D281B8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 09:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206F61AB526;
-	Thu,  4 Jul 2024 09:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YYJqa6fR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE16F1A2555
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CC91AB51B;
+	Thu,  4 Jul 2024 09:43:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4D41A2555
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 09:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720086129; cv=none; b=VoS6h6hdtl5KmE2/ApNybEV4NdbItKBdRmwqyEYSEY1fbp6VydJ2yI5Gto8WOwr2LW/wEYKRnAbj1Qs8yDJEoByDVlqj7PpVp2RApYLqdtbnJL0QmudvIYeOzj/5l3VJ5DEoPsRYU1rEIueKzh4fs0cRuTLre/BqCu2EnqOd2DE=
+	t=1720086210; cv=none; b=ns0nGv2RuLzkpBOel2leCZ1kOY4Mk+Mlia4hwEHSpb0wN4+laph0YGyVF/Svs/bWBHMp0xxbDjo7gt5GlYmtz05K1tEZcOyWzGoVSFDP6o6Chsq8otgFvNE2cR2IWfcLsfut9hX6xmnsA7PpqILtDm3z0aaMjjHJarrEf4B+jy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720086129; c=relaxed/simple;
-	bh=by/P7ek/G1+1pP2GiQ9ZIY5V4Tbnh4AI7R7ZhNI9RGE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oqowvlK6ISEqXba56GP/JaL7du2jGZ7Vc4JuEV366zklAjGX6kGHf8MV0fW9ZZWLcxtYewpzo0at3K5otDVuuBAXSEF0koD4zypj3LoEz1vCIuMlet4IWG0qHKFppOJNoI1XuS1vHq4PHjJ4HFcVHjSaEZdg99rabfnZqyc5TeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YYJqa6fR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720086126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=by/P7ek/G1+1pP2GiQ9ZIY5V4Tbnh4AI7R7ZhNI9RGE=;
-	b=YYJqa6fRA0d5wBcF0+bK4PBbH8p+JiYUUeLsW0LJSXiVZ9UF1t7js3I7p5GCGM3u6PVXyi
-	CcFo9qTsFwff7/0DmLY/b0ny1f9Kag5JcEUsgzwsyqrmSqdnZeAO2HbTGRsFahiBQdii5h
-	iUcCLWVIsCmHeBDVnnnpAnG9rwYB55s=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-643-7vC82cT4PaW16sK4Bq5WMg-1; Thu, 04 Jul 2024 05:42:03 -0400
-X-MC-Unique: 7vC82cT4PaW16sK4Bq5WMg-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ee855d0761so779411fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 02:42:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720086121; x=1720690921;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=by/P7ek/G1+1pP2GiQ9ZIY5V4Tbnh4AI7R7ZhNI9RGE=;
-        b=Q/rnAPxAqoKgv+6DHwXjMJShc2687wnVIGr+4lfvx2OZlHUWW2zIknbBR0VltsPUfF
-         XqtDoNf03pkHnFOZc9IR/t5fOrqMKT2rb4lqHVBxjBEJoIhMEvtxhfIL4P8tBhEbu16l
-         qIrDDPf4pCjQ2kHMLaHbziEl3ScgVWcAku1MFGRe5Y6sb95Vn13p/9n02FG8+rl0T7vz
-         UuocNOV2R8MgcD8TH71b7LFECIcVc6b2Hb+1WY0UUXKnMXQ70JKfT3gRKtl0AIVA4hNY
-         9B30ff5zB9x+hT1WtTUSaMhH/wHCN9D3mhpy5uVR56rXkXKO8j1M8N29HUFm4DVdag8x
-         qXVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGCUjugMHzD/vWIa1DO4qSveyoExmHVlioZ1fjpSUo1mncXZTtpnyxuSB6jsMzQNy62/VrwLtioogIfScPSDbn4IYu69XAaJ4tTcmN
-X-Gm-Message-State: AOJu0Yw6rdAluWL0HiGcb0MIGZKFF7MCGxZmP84A8Gax0wRTDeSjT3le
-	vofWt/vnWXIgIvEyWqYEfwo6GE7XfraVWf3rrus2oJrCxfSJBcLmLVdxVi2yzzSTPFRi63H15yu
-	4Kv6lOeLVkgTAdJcgQztVnQtPVnpjC4a307fthoXa0S2jm+IKh39riaM7FKajdA==
-X-Received: by 2002:a2e:8ed9:0:b0:2ed:59fa:551e with SMTP id 38308e7fff4ca-2ee8edff698mr6755451fa.4.1720086121613;
-        Thu, 04 Jul 2024 02:42:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2D9gun8gCFnzvaVbgqOam2osyWZTKA2Va2LmGhSx8n8+rUrprx4KMf8DzJJHjmE1CvzPfnQ==
-X-Received: by 2002:a2e:8ed9:0:b0:2ed:59fa:551e with SMTP id 38308e7fff4ca-2ee8edff698mr6755291fa.4.1720086121225;
-        Thu, 04 Jul 2024 02:42:01 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3344:172b:1510:dd78:6ccd:a776:5943])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36798e435c3sm2036101f8f.72.2024.07.04.02.41.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 02:42:00 -0700 (PDT)
-Message-ID: <b30c7c109f41651809d9899c30b15a46595f11ef.camel@redhat.com>
-Subject: Re: [PATCH net-next] ntp: fix size argument for kcalloc
-From: Paolo Abeni <pabeni@redhat.com>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Chen Ni
- <nichen@iscas.ac.cn>
-Cc: oss-drivers@corigine.com, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, louis.peens@corigine.com, kuba@kernel.org, 
- davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
- yinjun.zhang@corigine.com, johannes.berg@intel.com,
- ryno.swart@corigine.com,  ziyang.chen@corigine.com, linma@zju.edu.cn,
- niklas.soderlund@corigine.com
-Date: Thu, 04 Jul 2024 11:41:59 +0200
-In-Reply-To: <65153ac3f432295a89b42c8b9de83fcabdefe19c.camel@redhat.com>
-References: <20240703025625.1695052-1-nichen@iscas.ac.cn>
-	 <5cafbf6e-37ad-4792-963e-568bcc20640d@intel.com>
-	 <65153ac3f432295a89b42c8b9de83fcabdefe19c.camel@redhat.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1720086210; c=relaxed/simple;
+	bh=XNVlXmwjWxTdsIpOYEgbBPXcbZLyYi+ZecX1qdtzNhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C0AeFZ3+ykFCmyKr4Je6uW/ex6Bh+OeX8xJfKnleloRRCZAOQF7tj+2ap7mTO2ZtPnnqOmKg3enwqPt3DPhbkMZQHObfSU7uZvgIDAF+5AAd2KOakgbL8KLq2gJkrKeWl5Ebpb86iwC/RgWA9pFcHaEUlQqqZ/ab5jz6wO3A2eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B7DC367;
+	Thu,  4 Jul 2024 02:43:45 -0700 (PDT)
+Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 943333F766;
+	Thu,  4 Jul 2024 02:43:18 -0700 (PDT)
+Message-ID: <4de05ed8-6ec7-4b90-942c-a170a26be384@arm.com>
+Date: Thu, 4 Jul 2024 10:43:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
+ shmem
+Content-Language: en-GB
+To: Yang Shi <shy828301@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Bang Li
+ <libang.li@antgroup.com>, hughd@google.com, akpm@linux-foundation.org,
+ wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240628104926.34209-1-libang.li@antgroup.com>
+ <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
+ <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
+ <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
+ <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
+ <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
+ <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
+ <2e0a1554-d24f-4d0d-860b-0c2cf05eb8da@arm.com>
+ <06c74db8-4d10-4a41-9a05-776f8dca7189@redhat.com>
+ <429f2873-8532-4cc8-b0e1-1c3de9f224d9@arm.com>
+ <7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com>
+ <CAHbLzkrv2U39oOFuuHpmcfvDOuMayjwdgXLshxtDSSPGPzOkJQ@mail.gmail.com>
+ <2450e4f8-236f-49ce-8bd3-b30a6d8c5e57@arm.com>
+ <CAHbLzkponjBbtYo6F0+QJ_tmoUFa8i2VPCX7MGX758sAmyLtpQ@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAHbLzkponjBbtYo6F0+QJ_tmoUFa8i2VPCX7MGX758sAmyLtpQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-07-04 at 11:36 +0200, Paolo Abeni wrote:
-> On Wed, 2024-07-03 at 11:16 +0200, Przemek Kitszel wrote:
-> > On 7/3/24 04:56, Chen Ni wrote:
-> > > The size argument to kcalloc should be the size of desired structure,
-> >=20
-> > xsk_pools is a double pointer, so not "desired structure" but rather yo=
-u
-> > should talk about an element size.
-> >=20
-> > > not the pointer to it.
-> > >=20
-> > > Fixes: 6402528b7a0b ("nfp: xsk: add AF_XDP zero-copy Rx and Tx suppor=
-t")
-> >=20
-> > even if the the behavior is not changed, the fix should be targeted to
-> > net tree
->=20
-> This patch is IMHO more a cleanup than a real fix. As such it's more
-> suited for net-next. For the same reason I think it should not go to
-> stable, so I'm dropping the fixes tag, too.
+On 03/07/2024 17:08, Yang Shi wrote:
+> On Tue, Jul 2, 2024 at 1:24 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 01/07/2024 19:20, Yang Shi wrote:
+>>> On Mon, Jul 1, 2024 at 3:23 AM David Hildenbrand <david@redhat.com> wrote:
+>>>>
+>>>> On 01.07.24 12:16, Ryan Roberts wrote:
+>>>>> On 01/07/2024 10:17, David Hildenbrand wrote:
+>>>>>> On 01.07.24 11:14, Ryan Roberts wrote:
+>>>>>>> On 01/07/2024 09:57, David Hildenbrand wrote:
+>>>>>>>> On 01.07.24 10:50, Ryan Roberts wrote:
+>>>>>>>>> On 01/07/2024 09:48, David Hildenbrand wrote:
+>>>>>>>>>> On 01.07.24 10:40, Ryan Roberts wrote:
+>>>>>>>>>>> On 01/07/2024 09:33, Baolin Wang wrote:
+>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> On 2024/7/1 15:55, Ryan Roberts wrote:
+>>>>>>>>>>>>> On 28/06/2024 11:49, Bang Li wrote:
+>>>>>>>>>>>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+>>>>>>>>>>>>>> anonymous shmem"), we can configure different policies through
+>>>>>>>>>>>>>> the multi-size THP sysfs interface for anonymous shmem. But
+>>>>>>>>>>>>>> currently "THPeligible" indicates only whether the mapping is
+>>>>>>>>>>>>>> eligible for allocating THP-pages as well as the THP is PMD
+>>>>>>>>>>>>>> mappable or not for anonymous shmem, we need to support semantics
+>>>>>>>>>>>>>> for mTHP with anonymous shmem similar to those for mTHP with
+>>>>>>>>>>>>>> anonymous memory.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>>       fs/proc/task_mmu.c      | 10 +++++++---
+>>>>>>>>>>>>>>       include/linux/huge_mm.h | 11 +++++++++++
+>>>>>>>>>>>>>>       mm/shmem.c              |  9 +--------
+>>>>>>>>>>>>>>       3 files changed, 19 insertions(+), 11 deletions(-)
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>>>>>>>>>>>>> index 93fb2c61b154..09b5db356886 100644
+>>>>>>>>>>>>>> --- a/fs/proc/task_mmu.c
+>>>>>>>>>>>>>> +++ b/fs/proc/task_mmu.c
+>>>>>>>>>>>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
+>>>>>>>>>>>>>>       {
+>>>>>>>>>>>>>>           struct vm_area_struct *vma = v;
+>>>>>>>>>>>>>>           struct mem_size_stats mss = {};
+>>>>>>>>>>>>>> +    bool thp_eligible;
+>>>>>>>>>>>>>>             smap_gather_stats(vma, &mss, 0);
+>>>>>>>>>>>>>>       @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void
+>>>>>>>>>>>>>> *v)
+>>>>>>>>>>>>>>             __show_smap(m, &mss, false);
+>>>>>>>>>>>>>>       -    seq_printf(m, "THPeligible:    %8u\n",
+>>>>>>>>>>>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>>>>>>>>>>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
+>>>>>>>>>>>>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>>>>>>>>>>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
+>>>>>>>>>>>>>> +    if (vma_is_anon_shmem(vma))
+>>>>>>>>>>>>>> +        thp_eligible =
+>>>>>>>>>>>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>>>>>>>>>>>>>> +                            vma, vma->vm_pgoff, thp_eligible);
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Afraid I haven't been following the shmem mTHP support work as much as I
+>>>>>>>>>>>>> would
+>>>>>>>>>>>>> have liked, but is there a reason why we need a separate function for
+>>>>>>>>>>>>> shmem?
+>>>>>>>>>>>>
+>>>>>>>>>>>> Since shmem_allowable_huge_orders() only uses shmem specific logic to
+>>>>>>>>>>>> determine
+>>>>>>>>>>>> if huge orders are allowable, there is no need to complicate the
+>>>>>>>>>>>> thp_vma_allowable_orders() function by adding more shmem related logic,
+>>>>>>>>>>>> making
+>>>>>>>>>>>> it more bloated. In my view, providing a dedicated helper
+>>>>>>>>>>>> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
+>>>>>>>>>>>
+>>>>>>>>>>> My point was really that a single interface (thp_vma_allowable_orders)
+>>>>>>>>>>> should be
+>>>>>>>>>>> used to get this information. I have no strong opinon on how the
+>>>>>>>>>>> implementation
+>>>>>>>>>>> of that interface looks. What you suggest below seems perfectly reasonable
+>>>>>>>>>>> to me.
+>>>>>>>>>>
+>>>>>>>>>> Right. thp_vma_allowable_orders() might require some care as discussed in
+>>>>>>>>>> other
+>>>>>>>>>> context (cleanly separate dax and shmem handling/orders). But that would be
+>>>>>>>>>> follow-up cleanups.
+>>>>>>>>>
+>>>>>>>>> Are you planning to do that, or do you want me to send a patch?
+>>>>>>>>
+>>>>>>>> I'm planning on looking into some details, especially the interaction with large
+>>>>>>>> folios in the pagecache. I'll let you know once I have a better idea what
+>>>>>>>> actually should be done :)
+>>>>>>>
+>>>>>>> OK great - I'll scrub it from my todo list... really getting things done today :)
+>>>>>>
+>>>>>> Resolved the khugepaged thiny already? :P
+>>>>>>
+>>>>>> [khugepaged not active when only enabling the sub-size via the 2M folder IIRC]
+>>>>>
+>>>>> Hmm... baby brain?
+>>>>
+>>>> :)
+>>>>
+>>>> I think I only mentioned it in a private mail at some point.
+>>>>
+>>>>>
+>>>>> Sorry about that. I've been a bit useless lately. For some reason it wasn't on
+>>>>> my list, but its there now. Will prioritise it, because I agree it's not good.
+>>>>
+>>>>
+>>>> IIRC, if you do
+>>>>
+>>>> echo never > /sys/kernel/mm/transparent_hugepage/enabled
+>>>> echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+>>>>
+>>>> khugepaged will not get activated.
+>>>
+>>> khugepaged is controlled by the top level knob.
+>>
+>> What do you mean by "top level knob"? I assume
+>> /sys/kernel/mm/transparent_hugepage/enabled ?
+> 
+> Yes.
+> 
+>>
+>> If so, that's not really a thing in its own right; its just the legacy PMD-size
+>> THP control, and we only take any notice of it if a per-size control is set to
+>> "inherit". So if we have:
+>>
+>> # echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+>>
+>> Then by design, /sys/kernel/mm/transparent_hugepage/enabled should be ignored.
+>>
+>>> But the above setting
+>>> sounds confusing, can we disable the top level knob, but enable it on
+>>> a per-order basis? TBH, it sounds weird and doesn't make too much
+>>> sense to me.
+>>
+>> Well that's the design and that's how its documented. It's done this way for
+>> back-compat. All controls are now per-size. But at boot, we default all per-size
+>> controls to "never" except for the PMD-sized control, which is defaulted to
+>> "inherit". That way, an unenlightened user-space can still control PMD-sized THP
+>> via the legacy (top-level) control. But enlightened apps can directly control
+>> per-size.
+> 
+> OK, good to know.
+> 
+>>
+>> I'm not sure how your way would work, because you would have 2 controls
+>> competing to do the same thing?
+> 
+> I don't see how they compete if they are 2-level knobs. 
 
-Thinking again about it, this patch has a few things to be cleaned-up.=C2=
-=A0
+I'm not sure I understand exactly how your 2-level proposal works. Could you
+explain in more detail?
 
-@Chen Ni, please submit a new revision, adjusting the subj and commit
-message as per Przemek and Simon feedback and dropping the fixes tag,
-still targeting net-next.=20
+The problem as I see it, is that the control can take multiple values; "never",
+"always" or "madvise". In a two-level scheme, what do we do when top level says
+"always" but per-size control says "madvise", or vice-versa? The scheme we
+adopted has clear and obvious (to me at least) semantics in this case.
 
-You can retain the already collected tags.
+The other problem is that the top-level control is still used to control file
+memory collapse (when CONFIG_READ_ONLY_THP_FOR_FS is configured). If you're
+advocating for a scheme where the top-level is set to the most permissive you
+want to allow, then the per-size controls are only able to further restrict,
+that would make it impossible to, for instance set all 2M THP (inc file-backed)
+to madvise, but set all 64K THP to always.
 
-Thanks,
+> And I failed
+> to see how it achieved back-compat. For example, memcached reads
+> /sys/kernel/mm/transparent_hugepage/enabled to determine whether it
+> should manage memory in huge page (2M) granularity. If the setting is
+> set to :
+> 
+> # echo never > /sys/kernel/mm/transparent_hugepage/enabled
+> # echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+> 
+> memcached will manage memory in 4K granularity, but 2M THP is actually
+> enabled unless memcached checks the per-order knobs.
+> 
+> If we use 2-level mode, memcached doesn't need check per-order setting
+> at all in order to know whether THP is enabled or not. And it actually
+> doesn't care about what orders are enabled, it assumes THP size is 2M
+> (or PMD size). Even though 2M is not enabled but lower orders are
+> enabled, memcached still can fully utilize the mTHP since the memory
+> chunk managed by memcached is still 2M aligned in this setting. So
+> unenlightened applications still can work well. Jemalloc should do the
+> similar thing if I remember correctly.
 
-Paolo
+I wonder why we didn't decide to just make
+/sys/kernel/mm/transparent_hugepage/enabled an alias for
+/sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled ? That may have
+solved this problem more cleanly? But that would have made it difficult to
+introduce "auto" in future (the idea was to set all per-size to 'inherit' and
+then set top-level to 'auto').
+
+
+> 
+>>
+>>>
+>>>>
+>>>> --
+>>>> Cheers,
+>>>>
+>>>> David / dhildenb
+>>>>
+>>>>
+>>
 
 
