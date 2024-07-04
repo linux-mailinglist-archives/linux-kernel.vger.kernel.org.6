@@ -1,182 +1,120 @@
-Return-Path: <linux-kernel+bounces-240849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEB29273A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:06:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2419273A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 12:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB8A288C64
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313E21F273CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FE21AB90A;
-	Thu,  4 Jul 2024 10:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NpMk3Rqg"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BC01AB90C;
+	Thu,  4 Jul 2024 10:07:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E62918637;
-	Thu,  4 Jul 2024 10:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4BB1AB8E0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 10:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720087596; cv=none; b=TA6haB8t3YxjbeDRtIz8KrRsCnFKOUOCi1yCiOkjYbLb9bxN/zOR3TeFDwF/FexekW8frG6uG31vzu0Q3n6St5gdyiLcaEsNoyt/CczItuh8qLfio/+7T7udbRGBazupZwjdWyM12m5GqyvtAJzAyWk5pWkVp84zHqOFnkK1IpU=
+	t=1720087657; cv=none; b=st/9GD21pWVNid8shNKma2w0F7Z/LBIGIdarvbh+LvX0H4T4ZwmpUzPRm0IjPFPxuXgWNM04E95E7iGiCgMOkr2p3nojqQXxYtKI8+fnLLIMXatWQ1b70c8UHBwLMyCKf//aisfNGeAVUrDRQ0Fy3SFs/NS+XWr2mc9tLxkGSIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720087596; c=relaxed/simple;
-	bh=tSzlOKj7J16zKhWQxfbOxXq2j9lBM1d7lqleazh6Vg8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=EGymL35WxyTGG8k+xp2Txg8Q7ZqZPGyBVHtaeUrwl1K+upad8FdeMCoFWbOjtrSPBqYNhe07GtiEMyDBy3IFrRaR55ITCWxl0vdLXckVJbU/qh2LUGFNJbc1u8uZ/6cjx6ejfBmu9RFrxcOHSq45xRIyzsyD7RjrYpC2MA4828A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NpMk3Rqg; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4264a3847b6so3092305e9.0;
-        Thu, 04 Jul 2024 03:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720087593; x=1720692393; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WlIjn4Ntu69O5x5oWoN15bYcnfbMpOVbMNKPzZXPEAw=;
-        b=NpMk3Rqg8GlGcbPkt3gXCMgSGDbkVv1W8gf9lGP7do+v1ej5fgLVnwytRamp6erN7x
-         RSdELUyeBmjfT6eijkKjvvJf1J17u/19bp8PBFxrNKgkleLy839PNrqLzL4STYsBa3cS
-         EncvX3ocUpKSHw6SBqHTd3J5VMVZcRoTjc81k9jRas5v72ELlZV9Zbr/W10yRfWQbK6d
-         OhxJJrQPCT66R6g721MDNeRO/FaJ4MNE2AogXYJmo5q7kzqbvGjgP3rmz8gBUjkC9WsX
-         K80W4tPJUSjniFvL17bKspwtLGdfW9edLQulDQU7EEIW7dbRfASZoF1g2gTgQiZ0jEN5
-         YBrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720087593; x=1720692393;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WlIjn4Ntu69O5x5oWoN15bYcnfbMpOVbMNKPzZXPEAw=;
-        b=wxBzxEMIkuxk8CMnDmpIH4LEO//0nn3M8xTLb9Ph7QQcGZP2qXTYpp4pipR11KWz2+
-         duR1PAgsjHD5b8c36sEB7TGsCU5bL/lu48lalA2N0goa4f1h75UmhvE9NxpkouyfBonz
-         VVHMIBxiYAYS7IzqHQXoUijdrjdP+QRPzaaVJt0skLtKElCTxK94se+VxXzZXnuUbUcH
-         yNHRd7UuaXL+Rf7hsXoPFOjLxoq9HpIrARlr/CbTn03oEEAMyMJSB2zIviZOk6mmBa3b
-         Jz5hYaHmd6gG+NfRlInPiTcD6iwCytumvVuH2RxNS9VH+GxSfpqDg4WnKQbBJrELXEVy
-         Q4eg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9ymb+aWXfEiNkMDQGTJB/Q09MC78a2ZHRTUKEQCvLfPc5lqAD6PqO/j5Gc7x0xcK+CoeanbOFQkLCoWkfD8eSsIGL/Gwi1S6FDLZqhsCG/NRpDwHLyJC3bhLpFgkUDGjTmG6NhNQRTTqxCxFI2Whas9fIPAfvnz27wxwFKRb1tNLKbw==
-X-Gm-Message-State: AOJu0YzM6M8Oh40Sg7Au4RBFniXn0Y5DLIx5j6yblNdxPbEMNp7enERd
-	RSwEUjvCH1PtdprsVA0o2OKFmi/IsJTdWtPWkLJLZwIpY5zGckIp
-X-Google-Smtp-Source: AGHT+IFz93kR9vhi8ICmWkFiLx7dTQqOBD/dGHu72Dday1rvCW+zLBePP+YmKjm2UF0fS5UbinrlDQ==
-X-Received: by 2002:a05:600c:1ca4:b0:426:4765:16f7 with SMTP id 5b1f17b1804b1-4264a3dc17fmr8529705e9.21.1720087593190;
-        Thu, 04 Jul 2024 03:06:33 -0700 (PDT)
-Received: from localhost (host-79-55-57-217.retail.telecomitalia.it. [79.55.57.217])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1e8014sm17597385e9.21.2024.07.04.03.06.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 03:06:32 -0700 (PDT)
-Date: Thu, 04 Jul 2024 12:06:31 +0200
-From: Matteo Martelli <matteomartelli3@gmail.com>
-To: Conor Dooley <conor@kernel.org>, 
- Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <668674271f02d_92937078@njaxe.notmuch>
-In-Reply-To: <20240703-bovine-thumping-c3747fd7caa1@spud>
-References: <20240703-iio-pac1921-v1-0-54c47d9180b6@gmail.com>
- <20240703-iio-pac1921-v1-1-54c47d9180b6@gmail.com>
- <20240703-bovine-thumping-c3747fd7caa1@spud>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: add binding for pac1921
+	s=arc-20240116; t=1720087657; c=relaxed/simple;
+	bh=L1au4gRMKcI5BIEcsS+8zjDDar+BRU9MILS6EafA7W4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLr7JLpKKq02tiaMTx2YYiIWPIAkfKAdMyRcUOFzmJNg+PfkN1y21eKqwfAcBG0sKf2+coCaXplxxam6zvGexBuVW/FtDRO4wUKfkCf4QwGpRW74bwhbJ/as+KnOJY2gV0mbi7UMXPJ5XEyh3BS/z0cghVgd+q45P7a+CIm1ILk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sPJMm-0004rB-JU; Thu, 04 Jul 2024 12:07:04 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sPJMl-007460-14; Thu, 04 Jul 2024 12:07:03 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 97EF92FABC2;
+	Thu, 04 Jul 2024 10:07:02 +0000 (UTC)
+Date: Thu, 4 Jul 2024 12:07:02 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>, "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: can: fsl,flexcan: add common
+ 'can-transceiver' for fsl,flexcan
+Message-ID: <20240704-outstanding-outrageous-herring-003368-mkl@pengutronix.de>
+References: <20240629021754.3583641-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dr2n3t7ohmn737hp"
+Content-Disposition: inline
+In-Reply-To: <20240629021754.3583641-1-Frank.Li@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Conor, thanks for your feedback,
 
-Conor Dooley wrote:
-> > +
-> > +  microchip,dv-gain:
-> > +    description:
-> > +      Digital multiplier to control the effective bus voltage gain. The gain
-> > +      value of 1 is the setting for the full-scale range and it can be increased
-> > +      when the system is designed for a lower VBUS range.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    enum: [1, 2, 4, 8, 16, 32]
-> > +    default: 1
-> > +
-> > +  microchip,di-gain:
-> 
-> Why is this gain a fixed property in the devicetree, rather than
-> something the user can control? Feels like it should be user
-> controllable.
+--dr2n3t7ohmn737hp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gains are user controllable via the IIO_CHAN_INFO_HARDWAREGAIN. I also added
-them as DT properties thinking that they could be pre-set depending on hardware
-specifications: for instance by board design the monitored section is already
-known to be in a particular voltage/current range (datasheet specifies
-gains-ranges mapping at table 4-6 and table 4-7). Then, even if gains are
-pre-set, the user can change them at runtime for instance by scaling them down
-upon an overflow event. However, I can get rid of those gain properties if they
-are out of the DT scope.
+On 28.06.2024 22:17:54, Frank Li wrote:
+> Add common 'can-transceiver' children node for fsl,flexcan.
+>=20
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dtb: can@2180000: 'can-tran=
+sceiver' does not match any of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/net/can/fsl,flexca=
+n.yaml#
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-> > +    description:
-> > +      Digital multiplier to control the effective current gain. The gain
-> > +      value of 1 is the setting for the full-scale range and it can be
-> > +      increased when the system is designed for a lower VSENSE range.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    enum: [1, 2, 4, 8, 16, 32, 64, 128]
-> > +    default: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - shunt-resistor-micro-ohms
-> 
-> You're missing a vdd-supply btw and the !read/int pin isn't described
-> here either. I think the latter needs a property to control it (probably
-> a GPIO since it is intended for host control) and a default value for if
-> the GPIO isn't provided?
+Applied to linux-can-next.
 
-The driver does not currently handle the vdd regulator nor the gpio for the
-!read/int pin. Should they be added to the DT schema anyway?
+Thanks,
+Marc
 
-I think I can add the vdd regulator handling with little effort, my guess is
-that the "vdd-supply" property can be optional and defined as "vdd-supply: true"
-in the DT schema. Then the driver, if the vdd-supply property is present in the
-DT, would enable the regulator during device initialization and PM resume, and
-disable it on driver removal and PM suspend.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Reguarding the !read/int pin, the current driver overrides it with a register
-bit so it would not be considered at all by the device.
+--dr2n3t7ohmn737hp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i2c {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        adc@4c {
-> > +            compatible = "microchip,pac1921";
-> > +            #io-channel-cells = <1>;
-> > +            label = "vbat";
-> > +            reg = <0x4c>;
-> 
-> Order here should be compatible, reg, generic properties and then finally
-> vendor ones.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks, I will fix this in next patch version.
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmaGdEMACgkQKDiiPnot
+vG+ndwgAmTD3vI+lh+SpHXPC8faiwWnvlpIAuwu1ia2S5LNiIxhehoz6+WgxW3h/
+0KkIbn2zQva+MUsldVljBQd1tGssLrV54uni1v1OF1Hwnjd/E89cYqEZasllZEX/
+sBlUbgBOxj9DW8liWUhk7hsPxPmrSKHJIgnMDq6lW8998oT+EG2DSfTGyU19aJJr
+/mbyaZ/IXIGplQKbS/4tVGABrip20ab95BrbDf6WphlTIgtleyt9ZICdT7CQ6YCH
+WtWHrmy9L6hSNOSTR7qUSG7af7fcXVgg6P1Scmw1DyEirWKyqxXYldb9Tyl1H8gj
+RezwMSF47aHNA9/vXmPeX7WjWsH2Cw==
+=36qY
+-----END PGP SIGNATURE-----
 
-> 
-> Thanks for your patch,
-> Conor.
-> 
-
-Thanks again for you feedback,
-Matteo
+--dr2n3t7ohmn737hp--
 
