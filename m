@@ -1,87 +1,147 @@
-Return-Path: <linux-kernel+bounces-241094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E647B9276F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:15:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25E59276D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9EF8285C95
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:15:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE05C286C26
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F171B1AE86C;
-	Thu,  4 Jul 2024 13:15:16 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1971ABCD6;
-	Thu,  4 Jul 2024 13:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111451AED3F;
+	Thu,  4 Jul 2024 13:05:32 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2692F7E9;
+	Thu,  4 Jul 2024 13:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098916; cv=none; b=kPg/ucvxa6SoMGyLH5GlNBdS/yMYcCn6hwXyb3pf0kwTSb0RQZKaSsUL0KFx6TEhbkTNm2BaBuNKUQ9xE0syPzlnCcoMQ+35rjCqtxPKaGc2snWiIJfN3nn83gfMnRGXvQ4rlhujjhMnKiNTNCmRvLEl3QjhmBZ8JiAvFoOp2wc=
+	t=1720098331; cv=none; b=f9LQz3HmlFKzUoVvrB9IhVlwnpHqqk92TnXt2TDBIWDVigK+HL2V8p+rC2KZvoxc5Tz3GZXID8WdU/5/vJj5MqUkoFGcGfhwXNIVa+foUXIIJp46DHoX3Tz0Pzbb8H3bLLNKtplnhedXttJhgoz2bUIIw6roRFlTf8zW7wr47XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720098916; c=relaxed/simple;
-	bh=Q/JhbQbqOX1FvIWnsq0qQq2hBFxOM73aUCyVvrP5e8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bASa//scIYZqDTyy9BaLKCqyCGqA6b39FEexZLET5wrptDePG8VI15ySDWnay2MCqJbLcTco3CsMTuEMeTt9xkBql05NtvuoBc4lwkhO+YQi1D45jB+sJ+wURx2M5SHmwHgRw2zt7yM1MRY69/I+QqGo5MX9yuGMF/20IcVijXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sPMIZ-0002xd-00; Thu, 04 Jul 2024 15:14:55 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id EEE98C0120; Thu,  4 Jul 2024 15:05:21 +0200 (CEST)
-Date: Thu, 4 Jul 2024 15:05:21 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	"paulburton@kernel.org" <paulburton@kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/10] MIPS: smp: Manage IPI interrupts as percpu_devid
- interrupts
-Message-ID: <ZoaeEYdEmEBl6R7J@alpha.franken.de>
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
- <20240616-b4-mips-ipi-improvements-v1-2-e332687f1692@flygoat.com>
- <ZoVoUabfZiiAXWKR@alpha.franken.de>
- <fdedcd38-4688-4938-9184-2eaa5dedeb43@app.fastmail.com>
+	s=arc-20240116; t=1720098331; c=relaxed/simple;
+	bh=RQk7tE0/w5gVbSYZXfznfyC1ncfi65f6dAeeTU+5b1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQuhcz/zov1E1WZjGbJnCpjJrFk6zFXZYLyvmcPlg50rGUp8CkaGLvLIQxUbjw9a3sbwn1rd1N7wPT/2fE8yfEbRx05vqbxf6VvjGf0zIa+BqRNlBQV+uzxFuRrM+ax0HOGMmiwTmiRzZuavn7B0YPSWYSDm44ohd0BEMnYKQ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6D3FA211E5;
+	Thu,  4 Jul 2024 13:05:28 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9354513889;
+	Thu,  4 Jul 2024 13:05:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id aU6OIReehmY0GQAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 04 Jul 2024 13:05:27 +0000
+Message-ID: <8e21c868-2409-4260-9b56-6feb0eea512a@suse.de>
+Date: Thu, 4 Jul 2024 16:05:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fdedcd38-4688-4938-9184-2eaa5dedeb43@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/12] PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG,
+ INTR2_CPU_BASE offsets SoC-specific
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240703180300.42959-1-james.quinlan@broadcom.com>
+ <20240703180300.42959-7-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20240703180300.42959-7-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 6D3FA211E5
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
 
-On Thu, Jul 04, 2024 at 04:08:09AM +0800, Jiaxun Yang wrote:
-> 
-> 
-> 在2024年7月3日七月 下午11:03，Thomas Bogendoerfer写道：
-> [...]
-> >
-> > there is no user of mips_smp_ipi_disable() (at least I didn't see one),
-> > so do we need this patch at all ? Just looking like ARM or RiscV isn't
-> > a justification for code churn.
-> 
-> Hi Thomas,
-> 
-> The per-cpu enablement process is necessary for IPI_MUX and
-> my upcoming IPI driver.
-> 
-> The disablement, I'm not really sure, maybe it's a good idea to call it at
-> platform's __cpu_disable to prevent spurious IPI after IRQ migration.
+Hi Jim,
 
-don't add dead code, so drop mips_smp_ipi_disable() for now.
+On 7/3/24 21:02, Jim Quinlan wrote:
+> Our HW design has again changed a register offset which used to be standard
+> for all Broadcom SOCs with PCIe cores.  This difference is now reconciled
+> for the registers HARD_DEBUG and INTR2_CPU_BASE.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 33 +++++++++++++++++----------
+>  1 file changed, 21 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 59daa4b2e6c5..d8c0f1474369 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -122,7 +122,6 @@
+>  #define PCIE_MEM_WIN0_LIMIT_HI(win)	\
+>  		PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI + ((win) * 8)
+>  
+> -#define PCIE_MISC_HARD_PCIE_HARD_DEBUG					0x4204
+>  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK	0x2
+>  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK		0x200000
+>  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK		0x08000000
+> @@ -131,9 +130,9 @@
+>  	  (PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK | \
+>  	   PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK)
+>  
+> -#define PCIE_INTR2_CPU_BASE		0x4300
+>  #define PCIE_MSI_INTR2_BASE		0x4500
+> -/* Offsets from PCIE_INTR2_CPU_BASE and PCIE_MSI_INTR2_BASE */
+> +
+> +/* Offsets from INTR2_CPU and MSI_INTR2 BASE offsets */
+>  #define  MSI_INT_STATUS			0x0
+>  #define  MSI_INT_CLR			0x8
+>  #define  MSI_INT_MASK_SET		0x10
+> @@ -187,6 +186,8 @@
+>  #define IDX_ADDR(pcie)			(pcie->reg_offsets[EXT_CFG_INDEX])
+>  #define DATA_ADDR(pcie)			(pcie->reg_offsets[EXT_CFG_DATA])
+>  #define PCIE_RGR1_SW_INIT_1(pcie)	(pcie->reg_offsets[RGR1_SW_INIT_1])
+> +#define	HARD_DEBUG(pcie)		(pcie->reg_offsets[PCIE_HARD_DEBUG])
+> +#define	INTR2_CPU_BASE(pcie)		(pcie->reg_offsets[PCIE_INTR2_CPU_BASE])
+>  
 
-Thomas.
+Drop the tab before HARD_DEBUG & INTR2_CPU_BASE. Also checkpatch should
+complain about missing brackets around pcie:
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+#define	HARD_DEBUG(pcie) ((pcie)->reg_offsets[PCIE_HARD_DEBUG])
+
+~Stan
 
