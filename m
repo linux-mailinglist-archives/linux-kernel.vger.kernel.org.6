@@ -1,126 +1,224 @@
-Return-Path: <linux-kernel+bounces-241305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52DA492798D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:06:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04B292798F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840B11C20A15
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245E11F2388D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA87A1B14FD;
-	Thu,  4 Jul 2024 15:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C591AED55;
+	Thu,  4 Jul 2024 15:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Da8FYNKL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="oL/xeAqo"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788C51B14EF
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 15:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650771AEFF5;
+	Thu,  4 Jul 2024 15:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720105535; cv=none; b=ojDgYnO5tKDXCYNIQuuNo2268z3vTx9Tnov1SJeFzrRKy/FzmGGJa/IeK9HnTUEYVtE6oG5XH2wkmIHn5XdYFWKAvFINEcOqyJJhWRGvfIXneM8c11VUmJuTnL59QVPt7P3/wItX1ostm4jnul1rFfakOOtqwaZstQkWpLlMImE=
+	t=1720105566; cv=none; b=WImbED8gL+uzfgTMslA+4IOXMlfZvK8io+IPxLStQ7m9sVi//9Sie5NkgYTto/SJNiDYUiMQmxBg4NwRX/urNqLsEGsxWkvrED0ecFIsRtIJo8RGI22k8H9pD+CnZubt2WyB/DyWuAv858vYmXmJUNar/wBr8KzFnDd+pCKUNCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720105535; c=relaxed/simple;
-	bh=N3FvdvqUI/RpaPvNgUHSb1vVzFHCisvI1Y3XeoEUkdo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nmDcLTzq+GfASdFjKo2f4UcaoVGlyV0d3YrUYJGJCivPq0Ignop4fsWeBRFjYq1rDEklnrasZtG1cUiI9F42K9n8TWxnDAweKpHTnigvDzZ3B3rak3LvpfC4N/kBInpteAhz7f94Bvhw0yC0f0tZ+vYHJNjHhsMHU7n41EpRNf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Da8FYNKL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720105532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jT1nLd4pOr4eOcDqj2qthQWAmW5FIF2uUy9DJJrU6O4=;
-	b=Da8FYNKL4uhdz605QHFFnMfHptHkGi+MI/HnbhtmspPDYjjx8cIByMrpu8f7fYMyrUFcns
-	KdXGw4Wf9WMfAj1d9mSZYJjF+hflGkjOzAXZcBazjk/9aWqNUQgW4HGzdKcErM2t4wRhKT
-	QCLmoNQz3YWzDvWAaKFb8BvO2djoWF0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-27-vxB6Zk_9NsKlaA6WLAUfGw-1; Thu,
- 04 Jul 2024 11:05:29 -0400
-X-MC-Unique: vxB6Zk_9NsKlaA6WLAUfGw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF1531935850;
-	Thu,  4 Jul 2024 15:05:27 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 69E4B1955F3B;
-	Thu,  4 Jul 2024 15:05:27 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id 68B6430C1C14; Thu,  4 Jul 2024 15:05:26 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 657543FB52;
-	Thu,  4 Jul 2024 17:05:26 +0200 (CEST)
-Date: Thu, 4 Jul 2024 17:05:26 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>
-cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-    Sami Tolvanen <samitolvanen@google.com>, 
-    Bart Van Assche <bvanassche@acm.org>, dm-devel@lists.linux.dev, 
-    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
-Subject: Re: [PATCH 0/7] dm-verity cleanups and optimizations
-In-Reply-To: <20240703191546.GA1756@quark.localdomain>
-Message-ID: <448e290-2c88-72ae-eaa9-c5d4b9388a42@redhat.com>
-References: <20240702064835.120541-1-ebiggers@kernel.org> <20240703191546.GA1756@quark.localdomain>
+	s=arc-20240116; t=1720105566; c=relaxed/simple;
+	bh=O/rIHm2vHUSZsxeUoiEX/0t9NEzq9RzAEAqRqaKvRhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A3basVCJ6J0kP43mo72NskFTidl3mIGUOnTPFFxE4IadFHgODrMrIdlmwIL9HjOwZn5G4wdv1ZG4c8gEWSd/URJ0dlp77HcqeTpkYDXi9nsfso+Qe7iq2aVKEpJw+VuHJ4dDgeA7MmiovOB+hPA0+Zv+vQxjxtCi4xBI1U2iQac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=oL/xeAqo; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Finn Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1720105558; bh=BfMLSZ0AT/mlle+53mZ6wwVCSyTdxQNs4XoaGRKGrCo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=oL/xeAqo14mbEBOpub69gGN+CpzUImD6m2uaiva1K4yk815JJV04Ygsr3TV/FwYzH
+	 6M4ZOzXJzjQyuodgNP9TVEBvaQ9TWy88txYGLKkWJwpD1xG5BoT+fLR6Nkd/FxNof8
+	 sfu4i3dJKsPM4y2ZAJk3fwhJB92z/b93HtFMPkLQ=
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 11/13] kbuild: rust: add `rustc-version` support
+Date: Thu, 04 Jul 2024 17:05:56 +0200
+Message-ID: <69FCD7F0-9B70-45B5-B58D-E952A2FA99A1@kloenk.dev>
+In-Reply-To: <20240701183625.665574-12-ojeda@kernel.org>
+References: <20240701183625.665574-1-ojeda@kernel.org>
+ <20240701183625.665574-12-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
 
-On Wed, 3 Jul 2024, Eric Biggers wrote:
+On 1 Jul 2024, at 20:36, Miguel Ojeda wrote:
 
-> On Mon, Jul 01, 2024 at 11:48:28PM -0700, Eric Biggers wrote:
-> > This series contains some cleanups and optimizations for dm-verity that
-> > I've split out from my multibuffer hashing series
-> > https://lore.kernel.org/linux-crypto/20240621165922.77672-1-ebiggers@kernel.org/.
-> > 
-> > This series does not depend on any crypto API changes, so it can be
-> > applied right away.
-> > 
-> > Eric Biggers (7):
-> >   dm-verity: move hash algorithm setup into its own function
-> >   dm-verity: move data hash mismatch handling into its own function
-> >   dm-verity: make real_digest and want_digest fixed-length
-> >   dm-verity: provide dma_alignment limit in io_hints
-> >   dm-verity: always "map" the data blocks
-> >   dm-verity: make verity_hash() take dm_verity_io instead of
-> >     ahash_request
-> >   dm-verity: hash blocks with shash import+finup when possible
-> > 
-> >  drivers/md/dm-verity-fec.c    |  32 +--
-> >  drivers/md/dm-verity-fec.h    |   6 +-
-> >  drivers/md/dm-verity-target.c | 461 ++++++++++++++++------------------
-> >  drivers/md/dm-verity.h        |  39 ++-
-> >  4 files changed, 242 insertions(+), 296 deletions(-)
-> 
-> Thanks for applying this, Mikulas!
-> 
-> I sent out a new version of "dm-verity: provide dma_alignment limit in io_hints"
-> to address Christoph's comment.
-> 
-> Also, I noticed that when you applied the patches, patch 2 somehow ended up with
-> the same commit message as patch 1.  Can you fix that?  Thanks!
-> 
-> - Eric
+> Now that we are starting to support several Rust versions, introduce
+> `rustc-version` support, mimicking the C side:
+>
+>   - `scripts/rustc-version.sh`, that mimics the other version scripts
+>      (with one more digit, e.g. Rust 1.79.0 is 107900).
+>
+>   - `rustc-{info,name,version}` Kbuild macros.
+>
+>   - `CONFIG_RUSTC_VERSION` Kconfig symbol that calls `rustc-version`.
+>
+>   - `rustc-min-version` Kbuild macro that uses `CONFIG_RUSTC_VERSION`.
+>
+> With these, we can easily support flags conditionally depending on
+> `rustc`'s version -- a user comes in the next patch.
+>
+> Another user will be the `-Ctarget-feature=3D+reserve-x18`/`-Zfixed-x18=
+`
+> arm64 flags [1].
+>
+> Link: https://lore.kernel.org/rust-for-linux/20240305-shadow-call-stack=
+-v2-1-c7b4a3f4d616@google.com/ [1]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Hi
+Reviewed-by: Finn Behrens <me@kloenk.dev>
 
-It should be fixed now.
+> ---
+>  init/Kconfig              |  6 +++++
+>  scripts/Kconfig.include   |  6 +++++
+>  scripts/Makefile.compiler |  4 +++
+>  scripts/rustc-version.sh  | 52 +++++++++++++++++++++++++++++++++++++++=
 
-Mikulas
+>  4 files changed, 68 insertions(+)
+>  create mode 100755 scripts/rustc-version.sh
+>
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 94e20d3b99d4..7d344f248785 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1920,6 +1920,12 @@ config RUST
+>
+>  	  If unsure, say N.
+>
+> +config RUSTC_VERSION
+> +	int
+> +	depends on RUST
+> +	default $(rustc-version)
+> +	default 0
+> +
+>  config RUSTC_VERSION_TEXT
+>  	string
+>  	depends on RUST
+> diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+> index 3ee8ecfb8c04..82ab889725db 100644
+> --- a/scripts/Kconfig.include
+> +++ b/scripts/Kconfig.include
+> @@ -45,6 +45,12 @@ $(error-if,$(success,test -z "$(cc-info)"),Sorry$(co=
+mma) this C compiler is not
+>  cc-name :=3D $(shell,set -- $(cc-info) && echo $1)
+>  cc-version :=3D $(shell,set -- $(cc-info) && echo $2)
+>
+> +# Get the Rust compiler name, version, and error out if it is not supp=
+orted.
+> +rustc-info :=3D $(shell,$(srctree)/scripts/rustc-version.sh $(RUSTC))
+> +$(error-if,$(success,test -z "$(rustc-info)"),Sorry$(comma) this Rust =
+compiler is not supported.)
+> +rustc-name :=3D $(shell,set -- $(rustc-info) && echo $1)
+> +rustc-version :=3D $(shell,set -- $(rustc-info) && echo $2)
+> +
+>  # Get the assembler name, version, and error out if it is not supporte=
+d.
+>  as-info :=3D $(shell,$(srctree)/scripts/as-version.sh $(CC) $(CLANG_FL=
+AGS))
+>  $(error-if,$(success,test -z "$(as-info)"),Sorry$(comma) this assemble=
+r is not supported.)
+> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> index 92be0c9a13ee..17eaa085b59c 100644
+> --- a/scripts/Makefile.compiler
+> +++ b/scripts/Makefile.compiler
+> @@ -69,6 +69,10 @@ gcc-min-version =3D $(call test-ge, $(CONFIG_GCC_VER=
+SION), $1)
+>  # Usage: cflags-$(call clang-min-version, 110000) +=3D -foo
+>  clang-min-version =3D $(call test-ge, $(CONFIG_CLANG_VERSION), $1)
+>
+> +# rustc-min-version
+> +# Usage: rustflags-$(call rustc-min-version, 107900) +=3D -foo
+> +rustc-min-version =3D $(call test-ge, $(CONFIG_RUSTC_VERSION), $1)
+> +
+>  # ld-option
+>  # Usage: KBUILD_LDFLAGS +=3D $(call ld-option, -X, -Y)
+>  ld-option =3D $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2=
+),$(3))
+> diff --git a/scripts/rustc-version.sh b/scripts/rustc-version.sh
+> new file mode 100755
+> index 000000000000..4e658fd55ae6
+> --- /dev/null
+> +++ b/scripts/rustc-version.sh
+> @@ -0,0 +1,52 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Print the Rust compiler name and its version in a 5 or 6-digit form.=
 
+> +# Also, perform the minimum version check.
+> +
+> +set -e
+> +
+> +# Convert the version string x.y.z to a canonical up-to-7-digits form.=
+
+> +#
+> +# Note that this function uses one more digit (compared to other
+> +# instances in other version scripts) to give a bit more space to
+> +# `rustc` since it will reach 1.100.0 in late 2026.
+> +get_canonical_version()
+> +{
+> +	IFS=3D.
+> +	set -- $1
+> +	echo $((100000 * $1 + 100 * $2 + $3))
+> +}
+> +
+> +orig_args=3D"$@"
+> +
+> +set -- $("$@" --version)
+> +
+> +name=3D$1
+> +
+> +min_tool_version=3D$(dirname $0)/min-tool-version.sh
+> +
+> +case "$name" in
+> +rustc)
+> +	version=3D$2
+> +	min_version=3D$($min_tool_version rustc)
+> +	;;
+> +*)
+> +	echo "$orig_args: unknown Rust compiler" >&2
+> +	exit 1
+> +	;;
+> +esac
+> +
+> +rustcversion=3D$(get_canonical_version $version)
+> +min_rustcversion=3D$(get_canonical_version $min_version)
+> +
+> +if [ "$rustcversion" -lt "$min_rustcversion" ]; then
+> +	echo >&2 "***"
+> +	echo >&2 "*** Rust compiler is too old."
+> +	echo >&2 "***   Your $name version:    $version"
+> +	echo >&2 "***   Minimum $name version: $min_version"
+> +	echo >&2 "***"
+> +	exit 1
+> +fi
+> +
+> +echo $name $rustcversion
+> -- =
+
+> 2.45.2
 
