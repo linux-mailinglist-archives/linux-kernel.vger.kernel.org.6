@@ -1,108 +1,83 @@
-Return-Path: <linux-kernel+bounces-240721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1421F9271A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:28:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF3A9271B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 10:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BE11C2163B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:28:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E85BB217A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 08:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8791A4F13;
-	Thu,  4 Jul 2024 08:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3C21A4F2A;
+	Thu,  4 Jul 2024 08:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I9wSr5qn"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Sj8g5Bfn"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197A31A3BC5;
-	Thu,  4 Jul 2024 08:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871491822E2
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 08:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720081685; cv=none; b=twUnbOKImGK2GAmgTOBliVygB6Jw41uD6EbWN3CaWI9mlxk2fgFCOpRu5xWNVO94GrnXZLKyp4IVFt0kFkcZAbq7Cab2Qu6IoLDxx1NVfOjKhgSZ+a3FU5mZwnHChkO8I3vVZQXx2KTsWtcCGfo1U2PXrnaXwsUtZj0ynSzRfUY=
+	t=1720081718; cv=none; b=LYiTKuaptMaezzVPFh8TyWLbd4+dTbqnHH/VwANFygB6w5HnRS0iRxNi/IYkbP1UXB2EW0Fx13sJs//BmKm2ZLyUK+hrUsgIagwHLsSB+6ashwuLHMS9L269sZW3KsqNMB5wSB3nDAEWgYJ3N82zRfV2gcWaOippiuMZKSKAdu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720081685; c=relaxed/simple;
-	bh=wVc3mDrD8ZHGcxEpI3RL80GBUfv7tqc7amf82VOOdic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TFWEI8CUKTSU0nNT8rUPdjkdsPOMGPr8Mbqcbk1oauSOPKIsM6Dq/+74FTV47fednp3bc2zcxklzsBDKTFlOjK1KulNW1gUyRlLdXdw9M6EpJXKlECHBAkW7KlVhEQZj1R3vtdGDsGG+V4HBJfN9/k+dd/yfGODevSbKc1EgAO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I9wSr5qn; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720081682;
-	bh=wVc3mDrD8ZHGcxEpI3RL80GBUfv7tqc7amf82VOOdic=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I9wSr5qndJJgZNK1GxM3ELWQWxcNRB0+T2ztlEssHpreWLW1x0yx/AW8C8CjFao7q
-	 6tunopOnUy9YaYgE6BhE8LLp/MMeFR9xq5+hu8qRwq2dq2N8b0o1AgcmIv6XOPXExI
-	 SOB6RiEioW7sWw7YaHcV26LEQmTVgkOOV4rxnUhjZgaURn/sxkqmInVgzBi8Nf9xg1
-	 zzQ9MyIkkaBIfpaMD9nANIAFKME2+NH9lhW1iXLwdr6zGpV3HpHBtRCVS2ghQJvc20
-	 P/hQHND/IWN5dEj8pOdBPWdb3hp7Ua4Cb94yo8VbN2Y5tV+kQX5JNm5YDoFQ3+qQZy
-	 DQ1/PpgNHDFeA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E651C37821A0;
-	Thu,  4 Jul 2024 08:27:59 +0000 (UTC)
-Message-ID: <2a1e25ad-c9d2-44f1-b52e-74f12b437381@collabora.com>
-Date: Thu, 4 Jul 2024 10:27:59 +0200
+	s=arc-20240116; t=1720081718; c=relaxed/simple;
+	bh=0W3TbFtOxB1Ei4t8o9l0G5JIqoAbVkUTyOOYDSzVqxw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=q+FjHTN6DwgRWHLwkWxJPcYe/AXlp/neh56g4OcqozXb4adjeK8wQZIk5Fot0yKsrl+hU01HrVRBjVVPmveLqhS5K/ubKnz5Cn6r7GION09o2VC3G6zzozdc6+LshaijCZGDRERj46rAv7VhuaPIcwYE3Q3KupGKWara5o4LKNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Sj8g5Bfn; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4648S2sl1336152
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 4 Jul 2024 01:28:03 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4648S2sl1336152
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1720081684;
+	bh=0W3TbFtOxB1Ei4t8o9l0G5JIqoAbVkUTyOOYDSzVqxw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Sj8g5BfnEP+v/fY4O15kU1ZAstCMjTL20MKGBtoebNJXM4pNuHgxS69l2xvl8GK9S
+	 vPTyw1oqdvyI8y+9h95LiLSPfIJUXK2ALQbpqNjaKqnXfIxeYf/6ier9vd/Ej1hwgj
+	 x43Ex7zJtmAnkKR7ZJZBY2jcGlEfx00hZ+3ywlhy5B1bEyl3bFmNEsgKEWYWsuCGmL
+	 WYHZAyMcVDRVy6w4URQ0uDz16GPti0c1r430YEbfeHls87xo5rxX9xtDD/YGtlVjV1
+	 79kCOjvKBT9FaztrtqaA9WKBrx9/ksaGQBqFl3t0Oq36308KroKOy43QYsP4Xy5S6d
+	 sfex8L6a2Dqeg==
+Date: Thu, 04 Jul 2024 01:28:01 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>
+CC: Andrew Cooper <andrew.cooper3@citrix.com>, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+        nik.borisov@suse.com, houwenlong.hwl@antgroup.com
+Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240704082343.GAZoZcD-yGxjYajcJT@fat_crate.local>
+References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com> <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base> <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com> <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com> <56909a1e-b360-4090-945e-cf6ec623cccc@citrix.com> <ada20b3c-2935-4d4f-8daf-ba7b9a533877@zytor.com> <20240704082343.GAZoZcD-yGxjYajcJT@fat_crate.local>
+Message-ID: <848595B3-9AAC-405E-B132-4B5169045631@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] cpufreq: Make cpufreq_driver->exit() return void
-To: Viresh Kumar <viresh.kumar@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Huang Rui <ray.huang@amd.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Perry Yuan <perry.yuan@amd.com>, Hector Martin <marcan@marcan.st>,
- Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Markus Mayer <mmayer@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Len Brown <lenb@kernel.org>, Kevin Hilman <khilman@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Cristian Marussi <cristian.marussi@arm.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
- Lizhe <sensor1010@163.com>, linux-kernel@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-References: <cover.1720075640.git.viresh.kumar@linaro.org>
- <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Il 04/07/24 08:53, Viresh Kumar ha scritto:
-> From: Lizhe <sensor1010@163.com>
-> 
-> The cpufreq core doesn't check the return type of the exit() callback
-> and there is not much the core can do on failures at that point. Just
-> drop the returned value and make it return void.
-> 
-> Signed-off-by: Lizhe <sensor1010@163.com>
-> [ Viresh: Reworked the patches to fix all missing changes together. ]
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+On July 4, 2024 1:23:43 AM PDT, Borislav Petkov <bp@alien8=2Ede> wrote:
+>On Wed, Jul 03, 2024 at 10:57:29PM -0700, Xin Li wrote:
+>> Won't it be way better if we could have all x86 vendors agree on it?
+>
+>It would be way better if you simply do it as I suggested and stop debati=
+ng=2E
+>One fine day you'll know why I'm adamant about it=2E
+>
+>Thx=2E
+>
 
-For MediaTek:
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+I think that counts as an objection, so let's do it=2E
 
