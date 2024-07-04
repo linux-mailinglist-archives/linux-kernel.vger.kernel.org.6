@@ -1,138 +1,134 @@
-Return-Path: <linux-kernel+bounces-241156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EE89277A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B8E9277A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 16:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68A121F26332
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C971F26593
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 14:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837121AED4A;
-	Thu,  4 Jul 2024 14:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33D61AED4A;
+	Thu,  4 Jul 2024 14:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZldM6dRI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RSyWU75G"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F632F37;
-	Thu,  4 Jul 2024 14:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB2A2F37;
+	Thu,  4 Jul 2024 14:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720101691; cv=none; b=tgQCONFypWJH+qHU6KBcoYAl7nBbVkzPoTi74G+UUc7CsovBmLjNqowNHtIfiZje+1Vm2aNEuYWZLuCFSbrvWTqa714FLAt1VPNxI87V3zUR8om/mNZ0oPRiGs6ztlGi52ySBCWaXAxiELdJ7w4j38icogyWcaVIASYZQV2r/8c=
+	t=1720101710; cv=none; b=B6aD0PasNMWgKLItbWc398vH8oILiQPYkBvPVepmFDKRWOLPEgeboeWiv2Ao7zssExLddy88XDx2RpmoGd0wXSKleHtNdIGkMbKUP0xNP9oCYXuHpqgomcVA2aJ0GoGCmjUYCOvgmefJrCD3yXHrcr+SsK2yMhgpMv4K+dUmd3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720101691; c=relaxed/simple;
-	bh=UFqN8xvCB8w9vIeI+cu2J0sVHAmfZ9jRZhHRZGntYjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=asLp2iZTD990r52Y8WAQZWRr6xcgzvcFBec6uUgb+7kmQHlcvT9YvulyzVfuMX/Monad4JI35fVdruAsWJ2mfcaCVpCH9SsNUP1tLrakUUjjB6oGPE5JfOQg5g6IL46fJ8fttIYT/g90ZcWTLaKlu48jwIKqPtkaKlTjLIKi18w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZldM6dRI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4647noL9015114;
-	Thu, 4 Jul 2024 14:01:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Rvrm85HRa0dhBRIcgLfXrelgW6iDhoI2iPvXaq7OgR4=; b=ZldM6dRI4srAatFx
-	8kT5PL14lSET464rmd/i2N9PIxo9Ig/fs8gfPDGRTtwxCZNNWANHCIoEiovsgAJw
-	r7QnwN0odgtXE9Jpfvuv4+eQC16ktbELN7upPhmLNP6z/xR+oUc7UcdeUEJtYUGU
-	klfj+3J+sd3x+3wN/ZP1g5JiyPNswAlP1tjCuJJhe6/8eoikqFD3PU/ps8gwZ64q
-	5kW/OUT6i8DVCZWYEoHOnl9OjS+7bQrwWNwooAlHNQmzG8Q/hF+z54DGpppCg1vg
-	ZXzuUKvs/U4U2itzpzPdxUhfjWnC3dJYQ/XLtb+VRZWgIpq2DGQlB6RxiI+61AE8
-	0kGkaQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402996un0x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Jul 2024 14:01:21 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 464E1J7r012872
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 4 Jul 2024 14:01:19 GMT
-Received: from [10.253.9.70] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 4 Jul 2024
- 07:01:18 -0700
-Message-ID: <13741696-6f30-40b0-be95-2406208cbe0c@quicinc.com>
-Date: Thu, 4 Jul 2024 22:01:15 +0800
+	s=arc-20240116; t=1720101710; c=relaxed/simple;
+	bh=H5Uew8F2uXvEpeO76s6GsNJFSC8jO/pWdK+eFV2lhsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNhRipHM1YgQSSoc31zN8aZG42R/bxzNovtkBSZpvH/PJYj3MCPVW9vM9fsIPB2R6xKpbsDxAr47w5OHOeOzfZDd6My0v8Yrv5F6CM7SOGGA3qYi36zahD5CoX17pXfZD8j5Eh2W3jiX0sUvovI08LjIY0f7MBT2hHUBaYOCijM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RSyWU75G; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Dk4Niv3otUMwysFaaWf12wUtBDt6vqrPW64ZZuSzVzk=; b=RSyWU75GYpDDW6nYKA0tPDxeiX
+	CuosGDsAFhLkOEVroKGteQkj2w747LfTcfn+VtzCZGm5LcOoRVCeA0qpebHLAuzcVyO1Bh0xksZJz
+	H+Ux2ifXRph8HZufCRpWn2z5Hq45XfgABPUu8Eh/Grxw9UHb75Yce6v+7J8MJUvZ9v9k=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sPN1f-001oUO-8j; Thu, 04 Jul 2024 16:01:31 +0200
+Date: Thu, 4 Jul 2024 16:01:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Michal Kubecek <mkubecek@suse.cz>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Woojung.Huh@microchip.com, kernel@pengutronix.de,
+	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v1 1/1] ethtool: netlink: do not return SQI value if
+ link is down
+Message-ID: <dbfa3bc1-fff0-4dc7-a9f2-6cd304d4eaf8@lunn.ch>
+References: <20240704054007.969557-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kobject_uevent: Fix OOB access within zap_modalias_env()
-To: Zhou congjie <zcjie0802@qq.com>
-CC: <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-        <akpm@linux-foundation.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-References: <1716524403-5415-1-git-send-email-quic_zijuhu@quicinc.com>
- <tencent_6866D69439F77A09338872DC0398A84CB908@qq.com>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <tencent_6866D69439F77A09338872DC0398A84CB908@qq.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -FtCGf4onjOmWOg-URm8vZYOAdi4M0ul
-X-Proofpoint-ORIG-GUID: -FtCGf4onjOmWOg-URm8vZYOAdi4M0ul
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-04_10,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 clxscore=1011 mlxlogscore=859
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407040100
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704054007.969557-1-o.rempel@pengutronix.de>
 
-On 6/30/2024 11:08 PM, Zhou congjie wrote:
-> On Fri, 24 May 2024, Zijun Hu wrote:
+On Thu, Jul 04, 2024 at 07:40:07AM +0200, Oleksij Rempel wrote:
+> Do not attach SQI value if link is down. "SQI values are only valid if link-up
+> condition is present" per OpenAlliance specification of 100Base-T1
+> Interoperability Test suite [1]. The same rule would apply for other link
+> types.
 > 
->> Subject: [PATCH] kobject_uevent: Fix OOB access within zap_modalias_env()
->> zap_modalias_env() wrongly calculates size of memory block
->> to move, so maybe cause OOB memory access issue, fixed by
->> correcting size to memmove.
->>
->> Fixes: 9b3fa47d4a76 ("kobject: fix suppressing modalias in uevents delivered over netlink")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  lib/kobject_uevent.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
->> index 03b427e2707e..f153b4f9d4d9 100644
->> --- a/lib/kobject_uevent.c
->> +++ b/lib/kobject_uevent.c
->> @@ -434,7 +434,7 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
->>  
->>  		if (i != env->envp_idx - 1) {
->>  			memmove(env->envp[i], env->envp[i + 1],
->> -				env->buflen - len);
->> +				env->buf + env->buflen - env->envp[i + 1]);
->>  
->>  			for (j = i; j < env->envp_idx - 1; j++)
->>  				env->envp[j] = env->envp[j + 1] - len;
->>
+> [1] https://opensig.org/automotive-ethernet-specifications/#
 > 
-> I notice it too.
+> Fixes: 8066021915924 ("ethtool: provide UAPI for PHY Signal Quality Index (SQI)")
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  net/ethtool/linkstate.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
 > 
-> In the debug, I find that length of "env->buflen - len" is definitely 
-> larger than  "env->buf + env->buflen - env->envp[i+1". So memmove() just 
-> copy some extra '\0', and the problem will not happen when the length of 
-> env variables is much smaller than 2048. That is why the problem is 
-> difficult to be observed.
->
-yes, it is a factor of why this issue is not easy to be observed
-> But when the length of env variables is close to 2048 or even more than 
-> 2048, the memmove will access the memory not belong to env->buf[2048]. 
-> 
+> diff --git a/net/ethtool/linkstate.c b/net/ethtool/linkstate.c
+> index b2de2108b356a..370ae628b13a4 100644
+> --- a/net/ethtool/linkstate.c
+> +++ b/net/ethtool/linkstate.c
+> @@ -37,6 +37,8 @@ static int linkstate_get_sqi(struct net_device *dev)
+>  	mutex_lock(&phydev->lock);
+>  	if (!phydev->drv || !phydev->drv->get_sqi)
+>  		ret = -EOPNOTSUPP;
+> +	else if (!phydev->link)
+> +		ret = -ENETDOWN;
+>  	else
+>  		ret = phydev->drv->get_sqi(phydev);
+>  	mutex_unlock(&phydev->lock);
+> @@ -55,6 +57,8 @@ static int linkstate_get_sqi_max(struct net_device *dev)
+>  	mutex_lock(&phydev->lock);
+>  	if (!phydev->drv || !phydev->drv->get_sqi_max)
+>  		ret = -EOPNOTSUPP;
+> +	else if (!phydev->link)
+> +		ret = -ENETDOWN;
+>  	else
+>  		ret = phydev->drv->get_sqi_max(phydev);
+>  	mutex_unlock(&phydev->lock);
 
+I guess this part is optional. I think i've always seen hard coded
+values. But this is O.K.
+
+> @@ -93,12 +97,12 @@ static int linkstate_prepare_data(const struct ethnl_req_info *req_base,
+>  	data->link = __ethtool_get_link(dev);
+>  
+>  	ret = linkstate_get_sqi(dev);
+> -	if (ret < 0 && ret != -EOPNOTSUPP)
+> +	if (ret < 0 && ret != -EOPNOTSUPP && ret != -ENETDOWN)
+>  		goto out;
+>  	data->sqi = ret;
+
+So data->sqi becomes -ENETDOWN 
+
+
+> -	if (data->sqi != -EOPNOTSUPP &&
+> +	if (data->sqi != -EOPNOTSUPP && data->sqi != -ENETDOWN &&
+>  	    nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI, data->sqi))
+>  		return -EMSGSIZE;
+
+Thinking about the old code, if the driver returned something other
+than -EOPNOTSUPP, it looks like the error code would make it to user
+space. Is ethtool/iproute2 setup to correctly handle this? If it is,
+maybe pass the -ENETDOWN to user space?
+
+	Andrew
 
