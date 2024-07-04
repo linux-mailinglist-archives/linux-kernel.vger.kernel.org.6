@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-241085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481199276E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:11:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F709276EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE7C7B215E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:11:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13F0B1C22077
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05271AED4A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14B81AED54;
 	Thu,  4 Jul 2024 13:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9WEZoNS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fo2jZkvc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195F6846F;
-	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3949E1AD9DE
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098657; cv=none; b=chfQhAYfNiOV0bc7j+8sCH5Vo61SMdhsVvl0wTr8erRqCIQ3hibaQ454w2tUTxgLEPVuJzpC2hN9vgglNg2uZjY6l206QSaDmfX+6/SmrH6Vjc1ySMp85l0ysvAkgeBjRvEs8vi6HynzlTvTZipHBLrQfirJ/i+gV3fhA+zmpds=
+	t=1720098657; cv=none; b=MOSwK8SnFMZVaPeiIaa+JfbEewgPSRTQEwy3oefIULdzp177KicjDGUbIbOhaEyIJX7Q2RUKaY2aZDfFrX/ZTaiwuyGZPKf9S68i2/qcblJK6ldSkh5M9Z9SSn0il+7gvOPxoA24rpgR2SWdsYFq5ax7yg3h5GbZg7KrXh4OBIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720098657; c=relaxed/simple;
-	bh=P52GeseScYIMI/6SpZlxsaUn4vxd5oniu7tXtl7TbGo=;
+	bh=d1R6VyIbkJ6U7w801EO8l21bk3qkW3imoEOlfi6mJ0o=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UxyfwNA2twck3z66xh3+uSEKDRElPYh9R1kYl1uQad5tXnECqBE2p5WsDDr6zakD639ykeWCl2U2Qi/AiRTz5Co5XTzEoA4TOftseCefqaPtFA74tqvTdy0cfYhGEFRoTXOUfy6PdYsedOiv1Ol5uaNyvYZoWLn29hqGW6rKfvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9WEZoNS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AE7B7C4AF0A;
+	 In-Reply-To:To:Cc; b=GQXAWzKzy9KE1dNCyvhRYqQXQcA79vBgR/qWuPbgHRai/QCHGXYdzit+LXHLdcRwmQcSCczRHZuV3eoMzi69ABcJs1KOfzlYnK1yCGtAacSejItg+YdPborDkM/auKp5e5immdZHGBVQQoFSjLDowmPC4V0OaeTsw9ZidupcJD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fo2jZkvc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CB4A9C4AF0C;
 	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1720098656;
-	bh=P52GeseScYIMI/6SpZlxsaUn4vxd5oniu7tXtl7TbGo=;
+	bh=d1R6VyIbkJ6U7w801EO8l21bk3qkW3imoEOlfi6mJ0o=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=a9WEZoNSW5x9LREt6QpcGDpp7AhfxjGaJ0PJUvK9YZKSHAbEBn0Xt6RXZF7v1i2Xt
-	 gFqqaWmhRboESpn0lIuXmBwEng5XhifPNUfWArRs8C7wC50bN7VASOVfMFo5aVbos6
-	 OxtNPMbLZqp56BRdBCm10wMga/TglC1G4EcwvZQA2bhEjsCWNwc9HlGB0Y1ohVxTaa
-	 4zM71QZ72rJDt5zOZprKRzWzMStI8ouJwEGkbbaDuPUslmRliczv+3tizB1CgYz3KW
-	 OyOMNFk1rmPQwvsTBk9Q7Gs3G6M4kTeMQflzm91rWEFQYVhD/MmRmsMhGWKsGwbUXP
-	 XYVmzftOrKBFA==
+	b=fo2jZkvcZSDt1fGr5ZrtsubKDg0lm7xDjMC9jQnY4iYDYlIxVv8JLu59v3NRhkhb3
+	 +31IvMoMqRPLlLD5TnKhcbpCo+WEl+FmkFY3ULZtIzz0lmwEu8T+L/OkXcGagr4DYd
+	 CsoqzJteqGJOKYigMc5UDq+YNWx+UgHY9sVD08nqjFvsweG2GUZ4gRb5AGXYlvkorr
+	 g254OZ7RieYGkdAlQPCGpbG61KIRqBnBqZuq/bicQ9M4WMOnl//qrOUT1t9sCRdq08
+	 KHsOzteSG9RJ7k1Uhhha9F5VoIwT2QOUpQQ+mj2gwc9CdFhS3nzsXh5VWho1I3KNVl
+	 y1rXL7FyCDNZA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9E51CC43446;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B9FA3C43331;
 	Thu,  4 Jul 2024 13:10:56 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,38 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] documentation: Fix riscv cmodx example
+Subject: Re: [PATCH V2 -fixes] riscv: kexec: Avoid deadlock in kexec crash path
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172009865664.17306.16379914644000401734.git-patchwork-notify@kernel.org>
+ <172009865675.17306.18375440466203340384.git-patchwork-notify@kernel.org>
 Date: Thu, 04 Jul 2024 13:10:56 +0000
-References: <20240628-fix_cmodx_example-v1-1-e6c6523bc163@rivosinc.com>
-In-Reply-To: <20240628-fix_cmodx_example-v1-1-e6c6523bc163@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, corbet@lwn.net, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alexghiti@rivosinc.com,
- atishp@rivosinc.com, palmer@rivosinc.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
+References: <20240626023316.539971-1-songshuaishuai@tinylab.org>
+In-Reply-To: <20240626023316.539971-1-songshuaishuai@tinylab.org>
+To: Song Shuai <songshuaishuai@tinylab.org>
+Cc: linux-riscv@lists.infradead.org, takakura@valinux.co.jp, alex@ghiti.fr,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ bhe@redhat.com, akpm@linux-foundation.org, guoren@kernel.org,
+ xianting.tian@linux.alibaba.com, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Fri, 28 Jun 2024 17:25:49 -0700 you wrote:
-> ON/OFF in the keys was swapped between the first and second argument of
-> the prctl. The prctl key is always PR_RISCV_SET_ICACHE_FLUSH_CTX, and
-> the second argument can be PR_RISCV_CTX_SW_FENCEI_ON or
-> PR_RISCV_CTX_SW_FENCEI_OFF.
+On Wed, 26 Jun 2024 10:33:16 +0800 you wrote:
+> If the kexec crash code is called in the interrupt context, the
+> machine_kexec_mask_interrupts() function will trigger a deadlock while
+> trying to acquire the irqdesc spinlock and then deactivate irqchip in
+> irq_set_irqchip_state() function.
 > 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Fixes: 6a08e4709c58 ("documentation: Document PR_RISCV_SET_ICACHE_FLUSH_CTX prctl")
+> Unlike arm64, riscv only requires irq_eoi handler to complete EOI and
+> keeping irq_set_irqchip_state() will only leave this possible deadlock
+> without any use. So we simply remove it.
 > 
 > [...]
 
 Here is the summary with links:
-  - documentation: Fix riscv cmodx example
-    https://git.kernel.org/riscv/c/7c5d838d7090
+  - [V2,-fixes] riscv: kexec: Avoid deadlock in kexec crash path
+    https://git.kernel.org/riscv/c/c562ba719df5
 
 You are awesome, thank you!
 -- 
