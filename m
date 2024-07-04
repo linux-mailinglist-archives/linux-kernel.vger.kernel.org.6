@@ -1,160 +1,74 @@
-Return-Path: <linux-kernel+bounces-241488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9118E927BCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:17:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44C3927BD0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 19:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27BD1C22FC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A797A28C79E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 17:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D1238F9A;
-	Thu,  4 Jul 2024 17:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6432E3E4;
+	Thu,  4 Jul 2024 17:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/IJ5KxP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOMOXjWy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECCC262A8;
-	Thu,  4 Jul 2024 17:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAEF28689;
+	Thu,  4 Jul 2024 17:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720113425; cv=none; b=pTILyUCvMxNVjeavcHGd7McGYEcK0lFyMrOCWHKkNqqDuhWYrofvy490sTmdqCjqYvFlj4hw8DEL95ds9WWm7DysQkYLfeeYS7v2uplUr7JlmU9vuyLwMB3HSwevHPU5MOjfOyMO+UrBmLc1YDJJotBZRXpGOuQFHZu2Q3eAqvQ=
+	t=1720113536; cv=none; b=KnmiW1B4GsRVqt4PJ6AIS4QO/Lf42wFBYLJ6ENvcBw6eqRXOqRF2mXcHu2q/68ExWn9H9l6NU3ITp/XiRS1WOOtqMyRgzzn4c9Wiwm+ZxYu0YVy/qiaeLdVlh4Mxgc+/HV1jmn8W4lmv+oJ8I85JnMyP7ZAsRQpQ1M23TTbNeTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720113425; c=relaxed/simple;
-	bh=6KBZ6d3b2y4heC9NhfRu6FvZmJNP5IgVVL6D6CaLHHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlRJ8Zlf5CL6uEPhr88AwC4z58IlpRU2hCGKIVmAPdK+95vkopAddNhfUKViaZWtpf9SomPKOLLzaL9/1ZxuCHovaYLZgNmsmNQRN73zjXmnI5HQcM65j3Tn3Gdhhj6BMNjrXmzc1trFNpNQJrbyFuPJ9BflWDy46uNJ+T1xsOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/IJ5KxP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F33C3277B;
-	Thu,  4 Jul 2024 17:16:59 +0000 (UTC)
+	s=arc-20240116; t=1720113536; c=relaxed/simple;
+	bh=jy3MlrkXfIxa1ryQ6DT3vwurPB+Lgox4T1h/YphFWa4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PN30lEpl7AOT3Ce2qVoG/iYUQjS/DS6ANTUsVPO/J1HAq3geGQ5plNbmN6CgG9tgDSuVw7Jr7lnXRN+N9ZhLxXe+pnhDsLjsWAuBWmXyqmAbQDoqS/iSCRtVYiuK3wx8TalSa7iKzLIJOmzp5qVto4dSQ8zwae7zTW9wnj4bJ4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOMOXjWy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D378C3277B;
+	Thu,  4 Jul 2024 17:18:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720113425;
-	bh=6KBZ6d3b2y4heC9NhfRu6FvZmJNP5IgVVL6D6CaLHHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E/IJ5KxPMbOiZFO8Yr3ndkeiBUqJM/u94mYyMeSZp3KhKpSf4jXJtz3sGcDCAzOxp
-	 JCvfpuwAr6ywDGpeSMJxsTkqYzV0A7vxBgDjpqlK9n8qKT3bsG/bNIlQRfhIkrRUpJ
-	 aAV9Vct6jstAVQR5uba29phm+3ylyzkhwuQPT2fQFksz1iaeA+nS3WHY9OYpMWVLK2
-	 46XXkV7zHaECXBLFtS+6NOoclLfZvw8LqnoZP2uiYtp6B1VD06R1zhYVazDmYakJTK
-	 XHLjJS7YQR2D8E0/EbjKVAdcYTSRK76TtyYxGDfmA5TSDcHzU4gaF30SONys7SenJN
-	 wzzyNDgCrDu8g==
-Date: Thu, 4 Jul 2024 18:16:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Kees Cook <keescook@chromium.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] rust: add flags for shadow call stack sanitizer
-Message-ID: <20240704-unless-cache-8a971c244348@spud>
-References: <20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com>
- <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com>
+	s=k20201202; t=1720113536;
+	bh=jy3MlrkXfIxa1ryQ6DT3vwurPB+Lgox4T1h/YphFWa4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vOMOXjWy8e4W5zkYb1+r7xaTH5Xvh1ns0N4jxrz7x7HwHTnbjPh+DegODox1x0AJE
+	 +Jr2C/ZF2NMZD6KP1VWObgdJWlFN/QU0stT/unPU28f/xdAmEPPCiMdtt4VktwtmH8
+	 KpIMDyncqNIj7FgikTlgNl0uCAijIjjhhpgepGDw+PxTNuIQ4i9h/d4nP223yWhhET
+	 N6kaajeWKiABuCy5b6eWIXbBtu6M/znUFEMhG4VUDb8BGPb41uuIodUxzj6P+0SP90
+	 kahF3UXv473Ru365jNrjLH0lLsEcxrSqUwp7DB9J6R+KsMj2eLkdBFk6giJKVoFTAa
+	 qxC5G2yiAwV2g==
+Date: Thu, 4 Jul 2024 10:18:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: horia.geanta@nxp.com, pankaj.gupta@nxp.com, gaurav.jain@nxp.com,
+ linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 3/4] crypto: caam: Unembed net_dev structure
+ from qi
+Message-ID: <20240704101854.1aceef76@kernel.org>
+In-Reply-To: <ZobKod5Fhf1kvLp1@gmail.com>
+References: <20240702185557.3699991-1-leitao@debian.org>
+	<20240702185557.3699991-4-leitao@debian.org>
+	<20240703194533.5a00ea5d@kernel.org>
+	<ZobKod5Fhf1kvLp1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pilQx93eD8hL4hZr"
-Content-Disposition: inline
-In-Reply-To: <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 4 Jul 2024 09:15:29 -0700 Breno Leitao wrote:
+> So, if alloc_netdev_dummy() fails, then the cpu current cpu will not be
+> set in `clean_mask`, thus, free_caam_qi_pcpu_netdev() will not free it
+> later.
 
---pilQx93eD8hL4hZr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 04, 2024 at 03:07:58PM +0000, Alice Ryhl wrote:
-> As of rustc 1.80.0, the Rust compiler supports the -Zfixed-x18 flag, so
-> we can now use Rust with the shadow call stack sanitizer.
->=20
-> On older versions of Rust, it is possible to use shadow call stack by
-> passing -Ctarget-feature=3D+reserve-x18 instead of -Zfixed-x18. However,
-> this flag emits a warning, so this patch does not add support for that.
->=20
-> Currently, the compiler thinks that the aarch64-unknown-none target
-> doesn't support -Zsanitizer=3Dshadow-call-stack, so the build will fail if
-> you enable shadow call stack in non-dynamic mode. See [2] for the
-> feature request to add this. Kconfig is not configured to reject this
-> configuration because that leads to cyclic Kconfig rules.
->=20
-> Link: https://github.com/rust-lang/rust/issues/121972 [1]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  Makefile            | 1 +
->  arch/Kconfig        | 2 +-
->  arch/arm64/Makefile | 3 +++
->  3 files changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Makefile b/Makefile
-> index c11a10c8e710..4ae741601a1c 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -945,6 +945,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
->  ifndef CONFIG_DYNAMIC_SCS
->  CC_FLAGS_SCS	:=3D -fsanitize=3Dshadow-call-stack
->  KBUILD_CFLAGS	+=3D $(CC_FLAGS_SCS)
-> +KBUILD_RUSTFLAGS +=3D -Zsanitizer=3Dshadow-call-stack
->  endif
->  export CC_FLAGS_SCS
->  endif
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 238448a9cb71..5a6e296df5e6 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -690,7 +690,7 @@ config SHADOW_CALL_STACK
->  	bool "Shadow Call Stack"
->  	depends on ARCH_SUPPORTS_SHADOW_CALL_STACK
->  	depends on DYNAMIC_FTRACE_WITH_ARGS || DYNAMIC_FTRACE_WITH_REGS || !FUN=
-CTION_GRAPH_TRACER
-> -	depends on !RUST
-> +	depends on !RUST || RUSTC_VERSION >=3D 108000
->  	depends on MMU
->  	help
->  	  This option enables the compiler's Shadow Call Stack, which
-
-For these security related options, like CFI_CLANG or RANDSTRUCT, I'm
-inclined to say that RUST is actually what should grow the depends on.
-That way it'll be RUST that gets silently disabled in configs when patch
-1 gets backported (where it is mostly useless anyway) rather than SCS
-nor will it disable SCS when someone enables RUST in their config,
-instead it'd be a conscious choice.
-
-Cheers,
-Conor.
-
---pilQx93eD8hL4hZr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZobZCQAKCRB4tDGHoIJi
-0op3AQDGn+hWppfWYDd7g/Ck3at4aD+SwbMd/jUQuQ9pL+qLpgD+MahETrfZpXoA
-f/6oMzXX33g7xHjyqSsL73pnqhMoBQU=
-=7i1H
------END PGP SIGNATURE-----
-
---pilQx93eD8hL4hZr--
+Ah, sorry, I missed the clean mask, my eyes must have pattern matched
+the loop as for_each_cpu().
 
