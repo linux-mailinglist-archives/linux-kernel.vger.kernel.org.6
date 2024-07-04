@@ -1,79 +1,124 @@
-Return-Path: <linux-kernel+bounces-240416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32921926D63
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:18:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD5A926D69
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 04:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59FAB1C21BAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:18:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488372846F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 02:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63E414012;
-	Thu,  4 Jul 2024 02:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB574134B2;
+	Thu,  4 Jul 2024 02:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCFgzSWM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ct4RJi4U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B829746E;
-	Thu,  4 Jul 2024 02:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FEC9457;
+	Thu,  4 Jul 2024 02:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720059517; cv=none; b=tlpYESLHymoSUyGBcoCxS4udvSfskUTZcwcvXNYrisFruEx8n1IhryLRXlTcalT3oruhg8dI4XPmdoBWSRMqBQyyde1fzG29An1CJ5JHJvaE6kI4Ll2ONWS/47adPfF7p+3T2eJTfIRlKg83xbAl5PAKgW/RZLV4dtsWMrOVvbw=
+	t=1720059942; cv=none; b=LVr+GULfu7FFZie8ANS/5H2VDLVwmSzG5CvKf+wyWzwMfP6jTpU0Ggn692n6ab7AVeIb9FgI00vP4tlienZnbwBLkC6Ij9X+y1WBfP1QDWhUIzpUjGuzvm3Sm0hMYCu5l2HW4QZqPytukQRQalBwgPbpkpWDUcLJVhBwfipnf6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720059517; c=relaxed/simple;
-	bh=bzxG6FQCK4DTM7wjB53HY0++y2BjGiKWfc9ZeGo4RZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hMiAuEQ2SnWQlZLGh4hVBbR3NVAOrAkF/Y/DMLrYFPawWvNCNBjNgFajm/cD5C08Fucyi6Vbo7/+zdRt+4NY2N8KNO6GRxT8r/jF45GVLhI8au25KSRHCGH4lPp6DTJYRWP3LiaNWSz3Uw7WksIcqMDCXqSMrazvOAuK7LinPz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCFgzSWM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD3AC2BD10;
-	Thu,  4 Jul 2024 02:18:36 +0000 (UTC)
+	s=arc-20240116; t=1720059942; c=relaxed/simple;
+	bh=dVK3JwyGY6+ZxaownZlNQSE2BC7btSfN5OnAiAZQZ4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WkFY5nt00DJKOB4IXvt/AmBuF9yhx2kbx7HW+eePpBTFMK02Tql1ldny8YEvv8vDlmceVRinqQ3ijmVwkDSAtACImPgtv/imSIaWikFgH3OYHJrZKIIKMYOVWa3VqMbGkzQxZZvre0qDPhZqZyRPqDsn4nfumqj5b2dRE8/ENy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ct4RJi4U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0636EC2BD10;
+	Thu,  4 Jul 2024 02:25:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720059516;
-	bh=bzxG6FQCK4DTM7wjB53HY0++y2BjGiKWfc9ZeGo4RZk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jCFgzSWMImIi6srb9NugYrCifg2ICF3a660/AR9VIc9SY+/JC0+n7VbTxbWb/dlMa
-	 ZGOWxZuAn7x8e0zBzCJ1WQeq0QkuNmUNq4b2kTzZ+a6d/7Nm4jI6b79tYINvj77HwS
-	 0sFv3b7tISt77bxvcS5LiGipLD6O+A+y0ZGRQzPPoN58jR0wRto2wu4IHd9W76SeDP
-	 zqEmMPt/FIm3r0bszMmmrj71h1ADalSqRGcxyMEcq3GUL8GnFzTSVnbPotrE3mEJJp
-	 P1NrywAqtcpCsZe3+8WCNeqPBCGxpmS52bVn6gLQgEFo7kbBj507MS9JjZkEmEQZEl
-	 RKkZ7gft9F3CQ==
-Date: Wed, 3 Jul 2024 19:18:35 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yunseong Kim <yskelg@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, Sasha Levin <sashal@kernel.org>, Steven
- Rostedt <rostedt@goodmis.org>, Taehee Yoo <ap420073@gmail.com>, Pedro
- Tammela <pctammela@mojatatu.com>, Austin Kim <austindh.kim@gmail.com>,
- MichelleJin <shjy180909@gmail.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
- ppbuk5246@gmail.com, Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: Re: [PATCH] tracing/net_sched: NULL pointer dereference in
- perf_trace_qdisc_reset()
-Message-ID: <20240703191835.2cc2606f@kernel.org>
-In-Reply-To: <20240702180146.5126-2-yskelg@gmail.com>
-References: <20240702180146.5126-2-yskelg@gmail.com>
+	s=k20201202; t=1720059941;
+	bh=dVK3JwyGY6+ZxaownZlNQSE2BC7btSfN5OnAiAZQZ4k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ct4RJi4UBlXR8zvL7tq3WfcJzNxSMfIBvhReVvdfk4/yeM7j+bpJpMY/TfOhEVMrU
+	 D6OaR8M3vzOTpamEc81Sjau1qBtqxVvD/T3iD32AqdLMootP6kBgJRAVwLhbOEdKis
+	 htf0LDi3L4b1Xj5wED+T5Mxd7fHQ33flEzxBYrBER8sa5ElC668hF/S+9rlYzULKdE
+	 vc9zjHUdewDsspd09EMUHfuy9J2zuhahCLpg98fqhLhC8LmAQLI+iBUoapSkPo2qGa
+	 mK9rlyv4y6h+SXjIiKeevneGgLbC6EeZomiaxAxwi95PCJ3DfUWgcGCMdrd/O5TORT
+	 gSKtN+CzRSWcA==
+Date: Wed, 3 Jul 2024 21:25:37 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: David Collins <quic_collinsd@quicinc.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] spmi: pmic-arb: add missing newline in dev_err format
+ strings
+Message-ID: <ansfnfz2ttzdq3l6t2xr4xxd2bi7uixt45hghgqjppf47lvvnf@yoc63yszrohc>
+References: <20240703221248.3640490-1-quic_collinsd@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703221248.3640490-1-quic_collinsd@quicinc.com>
 
-On Wed,  3 Jul 2024 03:01:47 +0900 Yunseong Kim wrote:
-> Support backports for stable version. There are two places where null
-> deref could happen before
-> commit 2c92ca849fcc ("tracing/treewide: Remove second parameter of __assign_str()")
-> Link: https://lore.kernel.org/linux-trace-kernel/20240516133454.681ba6a0@rorschach.local.home/
+On Wed, Jul 03, 2024 at 03:12:48PM GMT, David Collins wrote:
+> dev_err() format strings should end with '\n'.  Several such
+> format strings in the spmi-pmic-arb driver are missing it.
+> Add newlines where needed.
 > 
-> I've checked +v6.1.82 +v6.6.22 +v6.7.10, +v6.8, +6.9, this version need
-> to be applied, So, I applied the patch, tested it again, and confirmed
-> working fine.
+> Fixes: 02922ccbb330 ("spmi: pmic-arb: Register controller for bus instead of arbiter")
+> Signed-off-by: David Collins <quic_collinsd@quicinc.com>
 
-You're missing the customary "[ Upstream commit <upstream commit> ]"
-line, not sure Greg will pick this up.
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/spmi/spmi-pmic-arb.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+> index 791cdc160c51..c408ded0c00f 100644
+> --- a/drivers/spmi/spmi-pmic-arb.c
+> +++ b/drivers/spmi/spmi-pmic-arb.c
+> @@ -398,7 +398,7 @@ static int pmic_arb_fmt_read_cmd(struct spmi_pmic_arb_bus *bus, u8 opc, u8 sid,
+>  
+>  	*offset = rc;
+>  	if (bc >= PMIC_ARB_MAX_TRANS_BYTES) {
+> -		dev_err(&bus->spmic->dev, "pmic-arb supports 1..%d bytes per trans, but:%zu requested",
+> +		dev_err(&bus->spmic->dev, "pmic-arb supports 1..%d bytes per trans, but:%zu requested\n",
+>  			PMIC_ARB_MAX_TRANS_BYTES, len);
+>  		return  -EINVAL;
+>  	}
+> @@ -477,7 +477,7 @@ static int pmic_arb_fmt_write_cmd(struct spmi_pmic_arb_bus *bus, u8 opc,
+>  
+>  	*offset = rc;
+>  	if (bc >= PMIC_ARB_MAX_TRANS_BYTES) {
+> -		dev_err(&bus->spmic->dev, "pmic-arb supports 1..%d bytes per trans, but:%zu requested",
+> +		dev_err(&bus->spmic->dev, "pmic-arb supports 1..%d bytes per trans, but:%zu requested\n",
+>  			PMIC_ARB_MAX_TRANS_BYTES, len);
+>  		return  -EINVAL;
+>  	}
+> @@ -1702,7 +1702,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+>  
+>  	index = of_property_match_string(node, "reg-names", "cnfg");
+>  	if (index < 0) {
+> -		dev_err(dev, "cnfg reg region missing");
+> +		dev_err(dev, "cnfg reg region missing\n");
+>  		return -EINVAL;
+>  	}
+>  
+> @@ -1712,7 +1712,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+>  
+>  	index = of_property_match_string(node, "reg-names", "intr");
+>  	if (index < 0) {
+> -		dev_err(dev, "intr reg region missing");
+> +		dev_err(dev, "intr reg region missing\n");
+>  		return -EINVAL;
+>  	}
+>  
+> -- 
+> 2.25.1
+> 
+> 
 
