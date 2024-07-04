@@ -1,149 +1,147 @@
-Return-Path: <linux-kernel+bounces-240370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-240372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6096C926CE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:02:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A34A926CF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 03:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EC68B2308A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:02:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3BB1C208E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 01:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F83610D;
-	Thu,  4 Jul 2024 01:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD83125B9;
+	Thu,  4 Jul 2024 01:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YHsj+YGW"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QAlaIvdj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20CAFBF6
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5D38F6E;
+	Thu,  4 Jul 2024 01:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720054948; cv=none; b=mqrM8rd2AHcYHW7m6SPbmI2eDSQlXebkb8Ql6hFeVcQQMuqKZIcHBEyBKhMvIHAZf0ih33hjPrjYcnaIKXf0l7vM1hRQ6YnS+YOBC5WOyJA24fMcUxqXarY4LdlfR34o/THbXzud3NlXe0oP0RddRg9wA7uk8rxg3i1ccmflZGU=
+	t=1720055330; cv=none; b=ouBvtmClUsVm0P64n+dfdv8biCzxHHF8ZdMjHNV/Yy20AMxSDhJfgacN26o6G9mOhXJ1RkC/Qjq0slIzx8S3bvVQd4hdtt1KGmLgZcjbfyOK9EkHlQE1hN5DJKe3+vWOevsf0LX+RCWZoKh5KK/vKaXY50ZYV9J0IxmutI2Qn+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720054948; c=relaxed/simple;
-	bh=T8bV0qkR/9fchtnuJV6c/xKL8rqww+QPHg9J2h1t1JI=;
-	h=Mime-Version:Subject:From:To:CC:Message-ID:Date:Content-Type:
-	 References; b=Rnlwp/en1FpSQ07sN7iDDz6BYmhOaQwa3RQ8VIpWojYwZFN6v++XgJKEAk6E3WL/vhYC+l6QgtE/ed/KbWeuYwtwSQuVwwKpp+deZatYr6nc1ZKSQ19Jr5LEEneSabI66znwnEQEry2yvSy2x1/ZSeB8W/W55cr4UagxY4W8TcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YHsj+YGW; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240704010223epoutp03b3bf69cf3912832b62bd8c55158e9900~e3Nt--87k0413704137epoutp03B
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Jul 2024 01:02:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240704010223epoutp03b3bf69cf3912832b62bd8c55158e9900~e3Nt--87k0413704137epoutp03B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720054943;
-	bh=SRywyYtqWBt1JqxXnaHByQq7LKdm/U99W5lYcjMpL4o=;
-	h=Subject:Reply-To:From:To:CC:Date:References:From;
-	b=YHsj+YGWXPGSmlhEXGHg6nZcnKBSyW034s0SzLYCLJEEkR9qXfM5ewvEfeZ6C02mJ
-	 tEVlbzZ6Sh7jSkJlX//yLZyD4EeYeunKdZOrBpGCs+zFNO0t5N8u8p7xXFgzc/mK64
-	 0NWQeea+YRCguhyQ+b/rnuGyFo9PLIWO5/IR+Hmg=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240704010222epcas2p243c529630d475eb5cbdafed0775a6576~e3NtasxUr1175911759epcas2p2d;
-	Thu,  4 Jul 2024 01:02:22 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.102]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WDyzd75Fxz4x9QN; Thu,  4 Jul
-	2024 01:02:21 +0000 (GMT)
-X-AuditID: b6c32a45-1c7ff70000002678-3a-6685f49d3e2d
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B3.92.09848.D94F5866; Thu,  4 Jul 2024 10:02:21 +0900 (KST)
+	s=arc-20240116; t=1720055330; c=relaxed/simple;
+	bh=+gPwRMizNRnmALYAEjy/0xLoBBS/xkVQmgndl2o7b94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pO3NangZkUnC/8GZvCh6emzIDPXLxsJ97+qFFmeJ0z+4Y3J9cAKyNMcAISuKR3CisuhAUVHGuk4WUd2pg/VKpJP9cp2s6KpbEw0JTSCCUdSxY91yMIkad7K5lhOHxsL8s69D1GfEloBTksfmKpCcP6YZg1qCf9YunVON+YskPX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QAlaIvdj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463ENifX011674;
+	Thu, 4 Jul 2024 01:07:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dsSxjkGVI8XhNUSGwpkBQkns23Qi4Z/x+ep2PMlQrKA=; b=QAlaIvdjxmxzKyIQ
+	QRuKoXner9XOjQXq+dZqhV+d90lw17APFbJyqNps/nJQ1HhF+R6a0pmHUUGgVY6s
+	7bZv4l4ZrM0asR8EjHvD9W3IhtGr6OOziRepyhSOfio0irpSU06tpBYoAyu8ziwS
+	UCwMsbbeugGdyqa4bg9Q7Pfenv1Kg+veyS+k0nNbTQjvKTM33Llsa71mOON5fBxF
+	adUzxjc/3EHfbAGCOiL1guH7YyqyuA8OHvSB1mcwRyqqu5gDnmYyYTbYq+sO7NNi
+	KC/0Flb8nXovHy+wBupyMB7apSn4DO1CVdIQHrPqE1kR0Gi+M2ef4lqUHZzc5tGR
+	ksujMA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yr9ad63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 01:07:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 464171TD016478
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 4 Jul 2024 01:07:01 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 18:06:40 -0700
+Message-ID: <abc2b71d-cf92-4872-bcb2-e300910101e2@quicinc.com>
+Date: Thu, 4 Jul 2024 09:06:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: [PATCH] f2fs: fix null reference error when checking end of zone
-Reply-To: daejun7.park@samsung.com
-Sender: Daejun Park <daejun7.park@samsung.com>
-From: Daejun Park <daejun7.park@samsung.com>
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
-	<chao@kernel.org>, "daehojeong@google.com" <daehojeong@google.com>,
-	"linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Daejun Park <daejun7.park@samsung.com>, Seokhwan Kim
-	<sukka.kim@samsung.com>, Dongjin Kim <dongjin_.kim@samsung.com>, Yonggil
-	Song <yonggil.song@samsung.com>, Jaeyoon Choi <j_yoon.choi@samsung.com>,
-	Nayeon Kim <nayeoni.kim@samsung.com>, Siwoo Jung <siu.jung@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
-Date: Thu, 04 Jul 2024 10:01:21 +0900
-X-CMS-MailID: 20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/47] arm64: qcom: dts: add QCS9100 support
+To: Jakub Kicinski <kuba@kernel.org>, <patchwork-bot+netdevbpf@kernel.org>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <djakov@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <jassisinghbrar@gmail.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <manivannan.sadhasivam@linaro.org>,
+        <will@kernel.org>, <joro@8bytes.org>, <conor@kernel.org>,
+        <tglx@linutronix.de>, <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <vkoul@kernel.org>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <mcoquelin.stm32@gmail.com>, <robimarko@gmail.com>,
+        <bartosz.golaszewski@linaro.org>, <kishon@kernel.org>,
+        <quic_wcheng@quicinc.com>, <alim.akhtar@samsung.com>,
+        <avri.altman@wdc.com>, <bvanassche@acm.org>, <agross@kernel.org>,
+        <gregkh@linuxfoundation.org>, <quic_tdas@quicinc.com>,
+        <robin.murphy@arm.com>, <daniel.lezcano@linaro.org>,
+        <rui.zhang@intel.com>, <lukasz.luba@arm.com>,
+        <quic_rjendra@quicinc.com>, <ulf.hansson@linaro.org>,
+        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
+        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <ahalaney@redhat.com>,
+        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
+        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
+        <mantas@8devices.com>, <athierry@redhat.com>,
+        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
+        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-gpio@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <171998042970.21654.12559535993133117436.git-patchwork-notify@kernel.org>
+ <20240703114952.6013f05e@kernel.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <20240703114952.6013f05e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmme7cL61pBo+fWlicnnqWyeLlIU2L
-	qe17GS1WPQi3+HHSxKJ/dzuLxZP1s5gtLi1yt7i8aw6bRcsfJ4vzE18zWazqmMtoMfX8ESYH
-	Xo8Fm0o9Nq3qZPPYveAzk0ffllWMHp83yQWwRmXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5ua
-	GRjqGlpamCsp5CXmptoqufgE6Lpl5gCdp6RQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUot
-	SMkpMC/QK07MLS7NS9fLSy2xMjQwMDIFKkzIzujdcZW9YDlnxbTe9YwNjFfZuxg5OSQETCQ2
-	Lb/P3MXIxSEksINRou3XTrYuRg4OXgFBib87hEFqhAU8JU5dWcIIYgsJKEmsvziLHSKuJ3Hr
-	4RqwOJuAjsT0E/fZQeaICMxlkpjefghsKLPADCaJJQ+/s0Fs45WY0f6UBcKWlti+fCsjhK0h
-	8WNZLzOELSpxc/Vbdhj7/bH5UDUiEq33zkLVCEo8+LkbKi4pcXvuJqj6fIn/V5ZD2TUS2w7M
-	g7L1Ja51bGSBeMxXYuI8f5Awi4CqxMmNi6FOc5G4eP8u2HhmAXmJ7W/nMIOUMwtoSqzfpQ9i
-	SggoSxy5xQJRwSfRcfgvO8xTDRt/Y2XvmPeECcJWk1j3cz0TxBgZiVvzGCcwKs1ChPMsJGtn
-	IaxdwMi8ilEstaA4Nz212KjAEB61yfm5mxjB6VTLdQfj5Lcf9A4xMnEwHmKU4GBWEuGVet+c
-	JsSbklhZlVqUH19UmpNafIjRFOjhicxSosn5wISeVxJvaGJpYGJmZmhuZGpgriTOe691boqQ
-	QHpiSWp2ampBahFMHxMHp1QD065KsZCHmZ0SeSebJnzg8wrUlWWcGGIT3yG0QVYpztZth1ZU
-	seOO0CkL3Zcf2fezuK+xU96fqVQ54NnR03d4hfM/T5esizZbdrDkePCdR/lp04TLVphkxCm+
-	8eLSrF466ajY7xtPDVb8MLz/d6s7y71L8c4H/lUfNgjyPsIac3WFYfrBRC+jnRN4njpEcFoc
-	z/87Q0T+woZWG/4zi1ckLV6ziKs0tYJBZVJp0OUyidXM29ndvkSf3sf71+SJQlVi8rL5Pffy
-	7z3q0hRybFufKPFF/PzKpln+LU9dL6/m2X1p88H5n25cnDn9E4fol4dVxi79bB8mT4/ruVth
-	Z/n6eJL748OCs5aWfTzOqvnfTomlOCPRUIu5qDgRAHRtqtMwBAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90
-References: <CGME20240704010121epcms2p4cff8b25d976d4a1b820ba18f1eb5aa90@epcms2p4>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pY74PWBmJp-T34f-5gwp8tD56wDL7Owx
+X-Proofpoint-ORIG-GUID: pY74PWBmJp-T34f-5gwp8tD56wDL7Owx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_18,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ mlxlogscore=732 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407040007
 
-This patch fixes a potentially null pointer being accessed by
-is_end_zone_blkaddr() that checks the last block of a zone
-when f2fs is mounted as a single device.
 
-Fixes: e067dc3c6b9c ("f2fs: maintain six open zones for zoned devices")
-Signed-off-by: Daejun Park <daejun7.park@samsung.com>
----
- fs/f2fs/data.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b6dcb3bcaef7..1aa7eefa659c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -925,6 +925,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- #ifdef CONFIG_BLK_DEV_ZONED
- static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
- {
-+	struct block_device *bdev = sbi->sb->s_bdev;
- 	int devi = 0;
- 
- 	if (f2fs_is_multi_device(sbi)) {
-@@ -935,8 +936,9 @@ static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
- 			return false;
- 		}
- 		blkaddr -= FDEV(devi).start_blk;
-+		bdev = FDEV(devi).bdev;
- 	}
--	return bdev_is_zoned(FDEV(devi).bdev) &&
-+	return bdev_is_zoned(bdev) &&
- 		f2fs_blkz_is_seq(sbi, devi, blkaddr) &&
- 		(blkaddr % sbi->blocks_per_blkz == sbi->blocks_per_blkz - 1);
- }
+On 7/4/2024 2:49 AM, Jakub Kicinski wrote:
+> This is some bug / false positive in the bot, to be clear.
+> Commit df18948d331e is ("Merge branch 'device-memory-tcp'").
+> No idea how it got from that to DTS.
+
+This issue may be due to the patch series being too large. In the 
+future, I plan to split the patch series by different subsystem, which 
+should prevent similar issue.
+
 -- 
-2.25.1
-
+Thx and BRs,
+Tengfei Fan
 
