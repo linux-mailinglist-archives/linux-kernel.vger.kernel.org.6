@@ -1,153 +1,162 @@
-Return-Path: <linux-kernel+bounces-241092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A424C9276F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:14:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F019276FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 15:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77371C21FB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:14:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B951F25009
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Jul 2024 13:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9EB1AE860;
-	Thu,  4 Jul 2024 13:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUE5VZkZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECE6846F;
-	Thu,  4 Jul 2024 13:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4381AE872;
+	Thu,  4 Jul 2024 13:15:17 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C146191F69;
+	Thu,  4 Jul 2024 13:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720098865; cv=none; b=PQQC53CJqk016Wd0aXcVBz417H3M5YnuoC7PvlvAX8TWHR2Ihro3Ov5ygYQmA8k3KB26OyG4wmSjXV6TX6Gv7jUltNUBTekmDZ81qzcXXEsn7YlJnoaSkvbFCZs3SliyRs8AiVKGXykp3AIuNx98ExYJIM9ijLkgqgDdnrC/FMc=
+	t=1720098916; cv=none; b=NOALWqR8T2boFwZUtAUfmIuT5Bn3VseXQd56vqXHxG/XSHmlFJwlHduaqOHBQphRpVk2hFHF/T7doGtFu8wbNLNY9rHza3mFFGgdonZbMosXIaQwye0bOpuxFAGpRT0ZwAwfU1c7EOTZtmTsvy7W2H1mspNB31dJArxcohpsVeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720098865; c=relaxed/simple;
-	bh=gww8mc4143BBYA7PxrdUysHhBlH0eL2LYz/Lge5Qf9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L330+277K4ivj32KRmF9CUyPe4fUREsh3yk9ZrrzLGHKaK6Mh0gUV8dzKxt44FahbqYx0XkcOZa9VxrpUBOGe+u6j4X01rw0A2QYfO+sGE2bBcsBVIPaRdmhGxtUWLPZuDTaBfzLEMJZSNn7A4YVSf4rxH7sWLsuoSDl4uxLWA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cUE5VZkZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82CD5C3277B;
-	Thu,  4 Jul 2024 13:14:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720098863;
-	bh=gww8mc4143BBYA7PxrdUysHhBlH0eL2LYz/Lge5Qf9Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cUE5VZkZiISb/eCFNvUjHvzbm9FTD7VMQli6jBnr8rWAc0gNSLbKhmq/P1O+s6vxW
-	 OHVAHNFUMqspvWmQ7JWHNTfTuJ8D1MMyzPBHMn/fmgX3N5/Nc3utIy/f/R7fgEXw8m
-	 eXyjrpCi2H+M/dpKlTAS+LKF8Yzyl7qnDgj2h8a+as5GQULr69oIFBOdvN3Ku+JNYM
-	 nguCzdElIgUemLEl2BD2cTOG5gT699/Yky5jlVd9lAFo0DcZuTgxqNT74tYodSHc2I
-	 YkAV8fkAzwFvBGeDosKWWeywtQp8bb6Pqiy7pckbNWlZH+91sCpE6VVskAA11ORf3k
-	 W621JwhkGfIgQ==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Rob Herring <robh@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH] kbuild: avoid build error when single DTB is turned into composite DTB
-Date: Thu,  4 Jul 2024 22:13:58 +0900
-Message-ID: <20240704131400.1501638-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720098916; c=relaxed/simple;
+	bh=MFX7kZkRTYN9b0VDd+CSSOrsnZhZlsjPvngX0p0a8iU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWuj5b4ke/EM978jO7cE+X11GZG5RN+ZArmd60lrLzblh6csnnAzQOH45b/fhTbJQCyeGqn8Z5uevri6S5bLzMapvD6iT4dFRHF9e/FFP62g1Q0iN7Bab14vgzWDucYnFIa2omI7dufj8rwKRa5RSdj9sRCxkTpgSpW3NjrQWmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sPMIZ-0002xf-00; Thu, 04 Jul 2024 15:14:55 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id B8138C0120; Thu,  4 Jul 2024 15:14:38 +0200 (CEST)
+Date: Thu, 4 Jul 2024 15:14:38 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	"paulburton@kernel.org" <paulburton@kernel.org>,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] MIPS: smp: Make IPI interrupts scalable
+Message-ID: <ZoagPhyg9WFjc1b/@alpha.franken.de>
+References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
+ <20240616-b4-mips-ipi-improvements-v1-1-e332687f1692@flygoat.com>
+ <ZoVokcDYqZnuqd2X@alpha.franken.de>
+ <7a822a33-dd67-4827-bbd0-01e75e203951@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7a822a33-dd67-4827-bbd0-01e75e203951@app.fastmail.com>
 
-As commit afa974b77128 ("kbuild: add real-prereqs shorthand for
-$(filter-out FORCE,$^)") explained, $(real-prereqs) is not just a list
-of objects when linking a multi-object module. If a single-object module
-is turned into a multi-object module, $^ (and therefore $(real-prereqs)
-as well) contains header files recorded in the *.cmd file. Such headers
-must be filtered out.
+On Thu, Jul 04, 2024 at 04:15:21AM +0800, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年7月3日七月 下午11:04，Thomas Bogendoerfer写道：
+> > On Sun, Jun 16, 2024 at 10:03:05PM +0100, Jiaxun Yang wrote:
+> >> Define enum ipi_message_type as other architectures did to
+> >> allow easy extension to number of IPI interrupts, fiddle
+> >> around platform IPI code to adopt to the new infra, add
+> >> extensive BUILD_BUG_ON on IPI numbers to ensure future
+> >> extensions won't break existing platforms.
+> >> 
+> >> IPI related stuff are pulled to asm/ipi.h to avoid include
+> >> linux/interrupt.h in asm/smp.h.
+> >> 
+> >> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> >> ---
+> >>  arch/mips/cavium-octeon/smp.c   | 109 ++++++++++++-----------------------
+> >>  arch/mips/include/asm/ipi.h     |  34 +++++++++++
+> >>  arch/mips/include/asm/smp-ops.h |   8 +--
+> >>  arch/mips/include/asm/smp.h     |  42 ++++++--------
+> >>  arch/mips/kernel/smp-bmips.c    |  43 +++++++-------
+> >>  arch/mips/kernel/smp-cps.c      |   1 +
+> >>  arch/mips/kernel/smp.c          | 124 ++++++++++++++++++++--------------------
+> >>  arch/mips/loongson64/smp.c      |  51 +++++++++--------
+> >>  arch/mips/mm/c-octeon.c         |   2 +-
+> >>  arch/mips/sgi-ip27/ip27-smp.c   |  15 +++--
+> >>  arch/mips/sgi-ip30/ip30-smp.c   |  15 +++--
+> >>  arch/mips/sibyte/bcm1480/smp.c  |  19 +++---
+> >>  arch/mips/sibyte/sb1250/smp.c   |  13 +++--
+> >>  13 files changed, 236 insertions(+), 240 deletions(-)
+> >
+> > you are touching a lot of platforms, how many did you test ?
+> 
+> As mentioned in cover letter:
+> 
+> ```
+> It has been tested on MIPS Boston I6500, malta SOC-It, Loongson-2K,
+> Cavium CN7130 (EdgeRouter 4), and an unannounced interaptiv UP MT
+> platform with EIC.
+> 
+> I don't really know broadcom platforms and SGI platforms well so
+> changes to those platforms are kept minimal (no functional change).
 
-Now that a DTB can be built either from a single source or multiple
-source files, the same issue can occur.
+I get a merge conflict in arch/mips/loongson64/smp.c and see following
+warnings:
 
-Consider the following scenario:
+IP30 build:
 
-First, foo.dtb is implemented as a single-blob device tree.
+  CC      arch/mips/fw/arc/init.o
+In file included from /local/tbogendoerfer/korg/linux/arch/mips/fw/arc/init.c:15:
+/local/tbogendoerfer/korg/linux/arch/mips/include/asm/smp-ops.h:23:40: error: ‘enum ipi_message_type’ declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+   23 |  void (*send_ipi_single)(int cpu, enum ipi_message_type op);
+      |                                        ^~~~~~~~~~~~~~~~
+/local/tbogendoerfer/korg/linux/arch/mips/include/asm/smp-ops.h:24:57: error: ‘enum ipi_message_type’ declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+   24 |  void (*send_ipi_mask)(const struct cpumask *mask, enum ipi_message_type op);
+      |   
 
-The code looks something like this:
+/local/tbogendoerfer/korg/linux/arch/mips/kernel/smp.c: In function ‘smp_prepare_cpus’:
+/local/tbogendoerfer/korg/linux/arch/mips/kernel/smp.c:475:6: warning: unused variable ‘rc’ [-Wunused-variable]
+  475 |  int rc;
 
-[Sample Code 1]
+/local/tbogendoerfer/korg/linux/arch/mips/include/asm/ipi.h:49:13: warning: ‘mips_smp_show_ipi_stats’ defined but not used [-Wunused-function]
+   49 | static void mips_smp_show_ipi_stats(struct seq_file *p, int prec)
 
-  Makefile:
 
-      dtb-y += foo.dtb
+bcm1480 build:
 
-  foo.dts:
+/local/tbogendoerfer/korg/linux/arch/mips/kernel/smp.c: In function ‘smp_prepare_cpus’:
+/local/tbogendoerfer/korg/linux/arch/mips/kernel/smp.c:475:6: warning: unused variable ‘rc’ [-Wunused-variable]
+  475 |  int rc;
+      |      ^~
 
-    #include <dt-bindings/gpio/gpio.h>
-    /dts-v1/;
-    / { };
+In file included from /local/tbogendoerfer/korg/linux/arch/mips/kernel/smp.c:34:
+At top level:
+/local/tbogendoerfer/korg/linux/arch/mips/include/asm/ipi.h:49:13: warning: ‘mips_smp_show_ipi_stats’ defined but not used [-Wunused-function]
+   49 | static void mips_smp_show_ipi_stats(struct seq_file *p, int prec)
 
-When it is compiled, .foo.dtb.cmd records that foo.dtb depends on
-scripts/dtc/include-prefixes/dt-bindings/gpio/gpio.h.
+octeon build:
 
-Later, foo.dtb is split into a base and an overlay. The code looks
-something like this:
-
-[Sample Code 2]
-
-  Makefile:
-
-      dtb-y += foo.dtb
-      foo-dtbs := foo-base.dtb foo-addon.dtbo
-
-  foo-base.dts:
-
-    #include <dt-bindings/gpio/gpio.h>
-    /dts-v1/;
-    / { };
-
-  foo-addon.dtso:
-
-    /dts-v1/;
-    /plugin/;
-    / { };
-
-If you rebuild foo.dtb without 'make clean', you will get this error:
-
-  Overlay 'scripts/dtc/include-prefixes/dt-bindings/gpio/gpio.h' is incomplete
-
-The reason for the error is because $(real-prereqs) contains not only
-foo-base.dtb and foo-addon.dtbo but also
-scripts/dtc/include-prefixes/dt-bindings/gpio/gpio.h, which is passed to
-the fdtoverlay tool.
-
-Fixes: 15d16d6dadf6 ("kbuild: Add generic rule to apply fdtoverlay")
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- scripts/Makefile.lib | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index d78b5d38beaa..636119dc4403 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -407,8 +407,12 @@ cmd_dtc = $(HOSTCC) -E $(dtc_cpp_flags) -x assembler-with-cpp -o $(dtc-tmp) $< ;
- 		-d $(depfile).dtc.tmp $(dtc-tmp) ; \
- 	cat $(depfile).pre.tmp $(depfile).dtc.tmp > $(depfile)
+/local/tbogendoerfer/korg/linux/arch/mips/cavium-octeon/smp.c:84:6: warning: no previous prototype for ‘octeon_send_ipi_single’ [-Wmissing-prototypes]
+   84 | void octeon_send_ipi_single(int cpu, enum ipi_message_type op)
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /local/tbogendoerfer/korg/linux/arch/mips/cavium-octeon/smp.c:20:
+/local/tbogendoerfer/korg/linux/arch/mips/include/asm/ipi.h:49:13: warning: ‘mips_smp_show_ipi_stats’ defined but not used [-Wunused-function]
+   49 | static void mips_smp_show_ipi_stats(struct seq_file *p, int prec)
+      |             ^~~~~~~~~~~~~~~~~~~~~~~
  
-+# NOTE:
-+# Do not replace $(filter %.dtb %.dtbo, $^) with $(real-prereqs). When a single
-+# DTB is turned into a multi-blob DTB, $^ will contain header file dependencies
-+# recorded in the .*.cmd file.
- quiet_cmd_fdtoverlay = DTOVL   $@
--      cmd_fdtoverlay = $(objtree)/scripts/dtc/fdtoverlay -o $@ -i $(real-prereqs)
-+      cmd_fdtoverlay = $(objtree)/scripts/dtc/fdtoverlay -o $@ -i $(filter %.dtb %.dtbo, $^)
- 
- $(multi-dtb-y): FORCE
- 	$(call if_changed,fdtoverlay)
+/local/tbogendoerfer/korg/linux/arch/mips/kernel/smp.c: In function ‘smp_prepare_cpus’:
+/local/tbogendoerfer/korg/linux/arch/mips/kernel/smp.c:475:6: warning: unused variable ‘rc’ [-Wunused-variable]
+  475 |  int rc;
+
+/local/tbogendoerfer/korg/linux/arch/mips/include/asm/ipi.h:49:13: warning: ‘mips_smp_show_ipi_stats’ defined but not used [-Wunused-function]
+   49 | static void mips_smp_show_ipi_stats(struct seq_file *p, int prec)
+
+Please fix.
+
+Thomas.
+
 -- 
-2.43.0
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
