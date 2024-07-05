@@ -1,268 +1,161 @@
-Return-Path: <linux-kernel+bounces-242481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0189288A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:24:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40BC9288AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4621F24B8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:24:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314FB1C22B03
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0EF13D243;
-	Fri,  5 Jul 2024 12:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9EF14A60C;
+	Fri,  5 Jul 2024 12:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+v3ic4T"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MbNH/85Z"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3510D149DE3;
-	Fri,  5 Jul 2024 12:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A47C13D243;
+	Fri,  5 Jul 2024 12:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720182267; cv=none; b=SZ1cX7crqpGiOVYB/Kk17bs8jwmM8+N48fld5qH6Phvgr0sDa67ZMfve6PTYHL51lB3zp/92o1kbAFXD438FfmtAniAWqxrabHcWvPfePzpOjg7MiqC9hYKgNPe9iLP28LvPtMQIFYv7wqDOTN3GlzvBClCW1fXn12mxY2T6bMA=
+	t=1720182396; cv=none; b=BfZlvJIXYy0nDuySYl7cEKyoDeOFyW/1ox2Xg+d5JoximEHHwBrp2rqLD32J8UytnDBZqatIfu5n/q3UdYxJhyK/Ak4eadJiTcP5Vmhqoc3qFxfwBCPFmvHXcawRVXvZSzvl2oEAJ9gumPLO34ypuBzXKcK4HdFRvBzT1igkpOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720182267; c=relaxed/simple;
-	bh=qyZ4pgN9ODC0BjiNwh5o1P10S3yVrnbu2zdf6ekHKXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ioFLoodlQilZhOD/D4cyLdBOJIBL+3a0oTsw/8e+dxDWK/jUiM96JyM9zbt+xvvvv+7DA0mrusZyKZc/dQYikkABN5vtdRn0uiOBv6w5SCgI5UPRZWQWptTWKsF+0EOXSH8GOJJxzr+rZZGerZVYurHibD5lJOk1U/nN//HCCT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+v3ic4T; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77d85f7fa3so59365866b.0;
-        Fri, 05 Jul 2024 05:24:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720182264; x=1720787064; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iabrIAMUEOTL61vdHDoYq/UZjIRy45Aj4kyep8lAuoI=;
-        b=K+v3ic4TJYHHoOlJj2Td1pvsqSpcD0xtpsE4tjqGeoM0KjgfxqPejUaF93Z9KmUQLZ
-         qk9Omrl5nvO9CbTROkkXRnto4Tg+1KXsbpvvyMO5oSLilcpi2IItdaQOt1e5k9Oe5s0I
-         EQM9dbG1IMeafZh+UOoUXWLzJAoY3UPr3KKViKYdRnKdlYO3kVrBn1eSGTQXB4HCd/gl
-         wOexYPpl+FcFd14J0XYqKtf9+3bD77HHy5XQ89uq4R0J7zeiz41av/LdMad2yqjUG9AT
-         7E6qfB+7epTGSHhFHJcuXMSqLE7kQU+ufq7I6eXAtW+mEGuwd2RsPpC32l2j1eBOB3tM
-         6Bxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720182264; x=1720787064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iabrIAMUEOTL61vdHDoYq/UZjIRy45Aj4kyep8lAuoI=;
-        b=X910fM1uzShga3vLKWiDw9gE74GlMpOuB0vtzQSERgbwqptOeSKXpdU4lktzsZ7QSj
-         1Hl4hZl2GK7FKj5+KjdKkpOZslooG2hr19ZqpeH/OIhGzcmaTfMYj696SO1El/L3fGb5
-         fdbMY8f7PSYenolzDsP+HcESre+FMd/PJ3bH28q/l2eJuy5cDqYMsQP4czkg2lDBmFi+
-         8XxqhwMerqc6Wx+FwATr5PVUdeegVPWfNE6easfRrA4zdEFpp+VFlyOMBZl9XtFJiBKe
-         ULPSuiGs5gmVckUzYYot5bMbnveFdk/Mlp4dm7TuHWT6+iQ0enAIi1us8oyGgzSacFFt
-         aang==
-X-Forwarded-Encrypted: i=1; AJvYcCXNPJoid+qBF8ivyEBSwm6ODd4tIh32qsvB0azEIgAI0elJI1m2VAXyDOx2hR2neM4ANFmWkOgMfhYd6AJYFnw+E2efg6NtIxYmfYqOpj+FaCwdAGjnI6BaL4Dq2Va7xjeiYkV7dtspeQjJHexjZG28f/atBNOeqtpbrvgs8d6dXtN+U/Iv
-X-Gm-Message-State: AOJu0YxijI75g36q909W2l9OiApvsSKdu/tPrAWldKhBIwVCjhopdRzM
-	RTX68/BNPIW0ukhGq19768tsTJQ/GGoofQe4TsyaU3QdT764O12r8bZ38kgWOF8p5RKs/L0ISTo
-	+nePL6I+c1HvMJSAhpThHn1udBYI=
-X-Google-Smtp-Source: AGHT+IEkwLYq9DV+FyUhDlmnP1mMXhabJ2ZHkHkFRFF3nDAXxGnMPurbx/i4zDvRg7nKq8uR0YUrjTeOGYI9xZwgGlU=
-X-Received: by 2002:a17:906:b751:b0:a6f:4287:f196 with SMTP id
- a640c23a62f3a-a77bd99ec1bmr292931566b.2.1720182263880; Fri, 05 Jul 2024
- 05:24:23 -0700 (PDT)
+	s=arc-20240116; t=1720182396; c=relaxed/simple;
+	bh=4cGnOhuIoomBwrD24hVQFlP9MtQb5SmqGxpFHWYkwpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F3A0UsSUijnUXfsbgotUcjLdLSzsg8awn6HvdOKSpXXe/yO6GTdqcT3jsfhTOnqyI7WcZlBxVDBm6UpsNmA/XEqaOV7faxEKKJfVNKBWe03QM04yiY9Bd6LdtGlwUfwLUurzUMFiLTE7GGG/ptj7EYOK4eb9+rm8v5Qof3Jvnqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MbNH/85Z; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720182391;
+	bh=aZeNuP2pelRkI3CSCXzaDUpVS59Y3c8MYTsNt4sB4jk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MbNH/85ZZAmLzPqUmW/KoPjNcWSQUJa5m1sHj4DwaD/Ggp9suzqFFsesZCl9i0j5X
+	 JVbctaMNgLWgMP/bGFHZqDnj1IIW7hvpR/uRbno/OxJjv1QanWSpH6FOaOZijgz61I
+	 Zol9kCM1ZW6mji0n8O+R1b+o7ClH1Hw814x1Io/hCwfnpz69tRzqI7rZiXaVALAkYH
+	 T3sq1bsZYZYctf/nMILRfaHpInxI0sVxnTAUiuwQNJmPn/d69H+rS8STQtquhj6Rls
+	 OlFggb8LXFVlFRXHsXFhyjRXI1cYJKQCr2Kg8lNrw5PZ+p+UV/XRyjr/zyRRxJicY0
+	 Im6zX8yemoKDQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WFt6K6cs3z4wbh;
+	Fri,  5 Jul 2024 22:26:17 +1000 (AEST)
+Date: Fri, 5 Jul 2024 22:26:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Masahiro
+ Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>, Vineet Gupta <vgupta@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Dinh Nguyen
+ <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, Stefan Kristiansson
+ <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Rich Felker
+ <dalias@libc.org>, John Paul Adrian Glaubitz
+ <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Christian Brauner
+ <brauner@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-openrisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 03/17] um: don't generate asm/bpf_perf_event.h
+Message-ID: <20240705222616.017b1593@canb.auug.org.au>
+In-Reply-To: <20240704143611.2979589-4-arnd@kernel.org>
+References: <20240704143611.2979589-1-arnd@kernel.org>
+	<20240704143611.2979589-4-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240622182200.245339-1-animeshagarwal28@gmail.com> <268a722a-c2e8-42fe-9cae-104e3f082a0a@kernel.org>
-In-Reply-To: <268a722a-c2e8-42fe-9cae-104e3f082a0a@kernel.org>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 5 Jul 2024 15:24:10 +0300
-Message-ID: <CAEnQRZBXTkQCwAyy6i1k_hb5ts99p4Cd8bihLu7bz+4TfJm9wA@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: dt-bindings: fsl,imx-audio-sgtl5000: Convert to dtschema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/IAaJheb.p6.1G=gRNPNGj_e";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/IAaJheb.p6.1G=gRNPNGj_e
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2024 at 10:08=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 22/06/2024 20:21, Animesh Agarwal wrote:
-> > Convert the imx-audio-sgtl bindings to DT schema. Make bindings complet=
-e
-> > by adding audio-cpu property.
->
-> On what basis? Who needs or uses audio-cpu? Driver? DTS? Both? If only
-> DTS, then is it needed? Maybe not?
->
-> >
-> > Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> > Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> > ---
-> >  .../sound/fsl,imx-audio-sgtl5000.yaml         | 108 ++++++++++++++++++
-> >  .../bindings/sound/imx-audio-sgtl5000.txt     |  56 ---------
-> >  2 files changed, 108 insertions(+), 56 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx-aud=
-io-sgtl5000.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/sound/imx-audio-s=
-gtl5000.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl=
-5000.yaml b/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl5000.=
-yaml
-> > new file mode 100644
-> > index 000000000000..906dcecb73b7
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl5000.ya=
-ml
-> > @@ -0,0 +1,108 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sound/fsl,imx-audio-sgtl5000.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Freescale i.MX audio complex with SGTL5000 codec
-> > +
-> > +maintainers:
-> > +  - Animesh Agarwal <animeshagarwal28@gmail.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - fsl,imx25-pdk-sgtl5000
-> > +              - fsl,imx51-babbage-sgtl5000
-> > +              - fsl,imx53-m53evk-sgtl5000
-> > +              - tq,imx53-mba53-sgtl5000
-> > +              - fsl,imx53-cpuvo-sgtl5000
-> > +              - fsl,imx53-qsb-sgtl5000
-> > +              - karo,tx53-audio-sgtl5000
->
-> Keep list ordered alphabetically.
->
-> > +              - fsl,imx53-voipac-sgtl5000
-> > +              - fsl,imx6q-ba16-sgtl5000
-> > +              - fsl,imx6q-ventana-sgtl5000
-> > +              - fsl,imx-sgtl5000
-> > +              - fsl,imx6-armadeus-sgtl5000
-> > +              - fsl,imx6dl-nit6xlite-sgtl5000
-> > +              - fsl,imx6q-nitrogen6_max-sgtl5000
-> > +              - fsl,imx6q-nitrogen6_som2-sgtl5000
-> > +              - fsl,imx6q-nitrogen6x-sgtl5000
-> > +              - fsl,imx6-rex-sgtl5000
-> > +              - fsl,imx6q-sabrelite-sgtl5000
-> > +              - fsl,imx6-wandboard-sgtl5000
->
-> None of these were in the old binding and commit msg mentions only
-> audio-cpu. From where do you get these?
->
->
-> > +          - const: fsl,imx-audio-sgtl5000
-> > +      - const: fsl,imx-audio-sgtl5000
-> > +
-> > +  model:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: The user-visible name of this sound complex.
-> > +
-> > +  audio-cpu:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: The phandle of an CPU DAI controller
-> > +
-> > +  ssi-controller:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: The phandle of the i.MX SSI controller.
-> > +
-> > +  audio-codec:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: The phandle of the SGTL5000 audio codec.
-> > +
-> > +  audio-routing:
-> > +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-> > +    description: |
-> > +      A list of the connections between audio components. Each entry i=
-s a pair
-> > +      of strings, the first being the connection's sink, the second be=
-ing the
-> > +      connection's source. Valid names could be:
-> > +
-> > +      Power supplies:
-> > +        * Mic Bias
-> > +
-> > +      SGTL5000 pins:
-> > +        * MIC_IN
-> > +        * LINE_IN
-> > +        * HP_OUT
-> > +        * LINE_OUT
-> > +
-> > +      Board connectors:
-> > +        * Mic Jack
-> > +        * Line In Jack
-> > +        * Headphone Jack
-> > +        * Line Out Jack
-> > +        * Ext Spk
-> > +
-> > +  mux-int-port:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: The internal port of the i.MX audio muxer (AUDMUX).
-> > +    enum: [1, 2]
->
-> default:
->
-> > +
-> > +  mux-ext-port:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: The external port of the i.MX audio muxer.
-> > +    enum: [3, 4, 5, 6]
->
-> defaukt:
->
-> > +
-> > +required:
-> > +  - compatible
-> > +  - model
->
-> Several other properties were required. Why changing this? Please
-> explain in commit msg all changes done to the binding comparing to pure
-> conversion.
+Hi Arnd,
 
-I wonder how should we handle the case where 1 compatible string is
-found in 2 drivers.
+On Thu,  4 Jul 2024 16:35:57 +0200 Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> If we start validating the existence of the asm-generic side of
+> generated headers, this one causes a warning:
+>=20
+> make[3]: *** No rule to make target 'arch/um/include/generated/asm/bpf_pe=
+rf_event.h', needed by 'all'.  Stop.
+>=20
+> The problem is that the asm-generic header only exists for the uapi
+> variant, but arch/um has no uapi headers and instead uses the x86
+> userspace API.
+>=20
+> Add a custom file with an explicit redirect to avoid this.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/um/include/asm/Kbuild           | 1 -
+>  arch/um/include/asm/bpf_perf_event.h | 3 +++
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/um/include/asm/bpf_perf_event.h
+>=20
+> diff --git a/arch/um/include/asm/Kbuild b/arch/um/include/asm/Kbuild
+> index 6fe34779291a..6c583040537c 100644
+> --- a/arch/um/include/asm/Kbuild
+> +++ b/arch/um/include/asm/Kbuild
+> @@ -1,5 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -generic-y +=3D bpf_perf_event.h
+>  generic-y +=3D bug.h
+>  generic-y +=3D compat.h
+>  generic-y +=3D current.h
+> diff --git a/arch/um/include/asm/bpf_perf_event.h b/arch/um/include/asm/b=
+pf_perf_event.h
+> new file mode 100644
+> index 000000000000..0a30420c83de
+> --- /dev/null
+> +++ b/arch/um/include/asm/bpf_perf_event.h
+> @@ -0,0 +1,3 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#include <asm-generic/bpf_perf_event.h>
 
-e.g
+Just wondering if that file should have some explanatory comment in it
+to prevent it being cleaned up in a few years ... or at least to
+explain why it causes the above error when removed.
 
-soc/fsl/fsl-asoc-card.c:        { .compatible =3D "fsl,imx-audio-sgtl5000",=
- },
-soc/fsl/imx-sgtl5000.c: { .compatible =3D "fsl,imx-audio-sgtl5000", },
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/IAaJheb.p6.1G=gRNPNGj_e
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Take for example audio-cpu propertyssi-controller which was only added
-in the newer soc/fsl/fsl-asoc-card.c driver. So this is required in
-the new driver unless
-the old binding "ssi-controller" is not present.
+-----BEGIN PGP SIGNATURE-----
 
-Given the fact that there are already 10 years since this commit:
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaH5mgACgkQAVBC80lX
+0GxvyAgAnvriHKpdKWTfcYd3ec6OiQntfWfgTjPlWVORKO3a85cAPDy3acHNxKoW
+6Bfh4LWjBSmmqSTbP6rIFpInGlZedDil+cHdDALd7D/dBOCwUJkG1oB7aY7A1HkA
+hPQhv7pLSbZkhJ3M0TurrRsFbO9QR1RFnxIxPRPy4gEkjPGnLJ0H1gqh11s5irVU
+WGCviIF/qU3Xkj6DjtzAS1lY7y0BGec3kvR02WhKHvoh7SJrquU5M1i5qzLpuw82
+0xowL25d77AbRzea52VD6Sv2H614Q8hfDtDQB6rTGdz6Bo7Pu6F50S3NfYe0Uu5y
+zmTMyLek7tdd4FU+Gs4HcQFuJNsSeQ==
+=SXsw
+-----END PGP SIGNATURE-----
 
-commit 708b4351f08c08ea93f773fb9197bdd3f3b08273
-Author: Nicolin Chen <nicoleotsuka@gmail.com>
-Date:   Wed Jul 30 19:27:38 2014 +0800
-
-    ASoC: fsl: Add Freescale Generic ASoC Sound Card with ASRC support
-
-The driver is also compatible with the old Device Tree bindings of WM8962 a=
-nd
-    SGTL5000. So we may consider to remove those two drivers after
-this driver is
-    totally enabled. (It needs to be added into defconfig)
-
-I think we should send a patch to remove soc/fsl/imx-sgtl5000.c
-because I assume that by this point it's functionality
-was fully implemented in soc/fsl/fsl-asoc-card.c
-
-Thanks,
-Daniel.
+--Sig_/IAaJheb.p6.1G=gRNPNGj_e--
 
