@@ -1,106 +1,171 @@
-Return-Path: <linux-kernel+bounces-242102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035C192838A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:18:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C757492838C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2511282E65
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72EFA1F253E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BECA145B26;
-	Fri,  5 Jul 2024 08:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74428145B3F;
+	Fri,  5 Jul 2024 08:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IGrkMXYM"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DE72BD18;
-	Fri,  5 Jul 2024 08:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bPPRVJFz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FypYW0TJ"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4462145FF4;
+	Fri,  5 Jul 2024 08:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720167472; cv=none; b=rRGvibCtfZkG9WEyK5fhwZ241CALRf9BId/CHC5Y5p2U3BuR5L4k0RYryK1N8Mi13gcJV8ZpK0vqyazm3mY4oy7WZqUtNW1jsp6Ezez41hemTaqMp71+oaVKqPfnpabPh+59SrF/1S7QhGzo/B6ja29KaJD1A499gYNHws9tfq0=
+	t=1720167476; cv=none; b=oNY+84IkT5o5G6aiXmcJOdMD13vSy8uY8tQAvn3fMmnw/XBMpzbF1rb7JkqXdU7Kz42TFHEb5zFjdWOd0cVZ40rXa8Bmdo9dvPRnYYQNm/GoJrwEHa7cbm5bmGi6qbyPBeSDsMBeTGU6pYXRdp6VBu18WHGqj9prFcrI9kaCOVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720167472; c=relaxed/simple;
-	bh=N62di29Oedf7GoIGih7+uiyJQLoR834Yqg6nabF1rSI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cy8nwHu7x1jroX7FkERHKZBvYzI4rcvmzemZFTJm1ugjOFzu3d+hBy61AkHXIcL/64Tcb9P7YCwS17LoY9LizIqhMkFuK4dVTE9YAetVI6BpSHfydfm7hn/li1qaPFIsDz3SUFS29en+JYXT+uN6TA7LQ/1uFgYbRAqq19sUejY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IGrkMXYM; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=bLr8/
-	EeBth9+HcrumTkeLcx679O6m9o8qb++SNgq8HI=; b=IGrkMXYMUFegPJEDu9jR9
-	JuXacEhWUT0SPR6zarzhka6C71UtDF4kJIoQLw4u88wZEMFEOqhzdSb2guvleX1b
-	HUsgk2O+3mAgn9vOj5kQj+XfNOvSup8kpkinC3CEPktGKNrWRLOXw8UO8PZwfV4o
-	wfjQMsd+pikzZIQEG24j5w=
-Received: from localhost.localdomain (unknown [223.104.77.193])
-	by gzga-smtp-mta-g1-5 (Coremail) with SMTP id _____wD3vwoWrIdmYRHZBg--.27334S2;
-	Fri, 05 Jul 2024 16:17:27 +0800 (CST)
-From: Slark Xiao <slark_xiao@163.com>
-To: johan@kernel.org
-Cc: gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: [PATCH] USB: serial: option: add support for Foxconn T99W651
-Date: Fri,  5 Jul 2024 16:17:09 +0800
-Message-Id: <20240705081709.105496-1-slark_xiao@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720167476; c=relaxed/simple;
+	bh=JaZCq90X99txXZZxHzux67wr72AiqVEawp8RvvV6yHg=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=g9ILBwXlSM2ZNdXvk6oCKc2Z8zn5RT7/4G0m6UwIzXQPInnbRowUG6LVXe6pcp5/zgBVwjTecmBoElMZUzPJT1a0p5fSPzAh2Qsv9rOpVsD/qKkA41HdwTAi8VWnGgtz+nsnLDxGZBzOc9g4JbiXbN2hQ3apOnC9T0M/lPM96Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bPPRVJFz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FypYW0TJ; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id E8BD1138046B;
+	Fri,  5 Jul 2024 04:17:52 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 05 Jul 2024 04:17:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720167472; x=1720253872; bh=yX5cCkRdrC
+	0vhKeykg3zHmQM8vjUu8YPsevI5qXlp5M=; b=bPPRVJFzZMyuJiV7d9nFdo88/a
+	OZw6+WdvrAAAOoPbYBosQvrmGTVZVz9XRpJlSu93Yy+cQn9zsKHItGtN+6YX27f9
+	PT4Zk9k6d8IfQvqNWo0RquYYvy4r2fZgPcmGVOW5bHBoAR+dw1KElI0CIhM2NHCz
+	7/dLGBMFiK0W5qN5nT6XxldhyjG2J6PMiOQbbfXIIaG/ufQn+2oCpX0kVoZ3fLKw
+	fbMj3d+iUC7mxpACX1fvj1HD3LlTIU34AiIAtjvaXaN7YNfI/swvoPyL3ql5tM86
+	UDAaHovjEsaIjaKREy2w9HUog89ZbUYKZbVfUofT6j7vw7tQ4JkW2phkvswQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720167472; x=1720253872; bh=yX5cCkRdrC0vhKeykg3zHmQM8vjU
+	u8YPsevI5qXlp5M=; b=FypYW0TJxqN2Rdcgv/IZURdb7QK+8264E6i0zF1ePm1o
+	1ODSn7QOheYwJzVfExxo0nV6c6j4xk/mw/eEy9W1Mfic1B32taOn/qlZk9wgpo2y
+	To2X1DFSrkK31nQZ/yWh8p3l+17IGfDBmlCDj+BiMHjmNYrGGAI+zM/3i+rlNnjh
+	iwNmM8/u+3/9ib3m2LImWYEjjyjzCu0TBm492PuxFbJM1RsG1OMdkusKXKRreA8w
+	1Jyxmwbo/LrcaAtbAWB3kJJXXlyxfpXTbnXXKNBQK6QDkv+em7eKf9Twuefe2O9+
+	5v/nofzgqfRf3DF3RMXGxbUSSue9lDdLuWcKe17G6w==
+X-ME-Sender: <xms:MKyHZobzYwNs4LEoKjKjOA_vzCIEuvpZnmFmcPVqtp6nECfQWHY4CQ>
+    <xme:MKyHZjYw1znDYS-ij887nZqukCUix8VdQhv6AvZnQ3Nd0DvsoQLArNlXXKEfr9NtG
+    xG7vTpf3tiAH1nTx9E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddugddtudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:MKyHZi9jGDNVqkUNJSwbg0byIb6LTPQcjmQTUtx179Eg4EoBnkeZMA>
+    <xmx:MKyHZirhtSCIuc5OoiP2LNYo8sud51vWirq2osKxyXgc3PpthnUtmA>
+    <xmx:MKyHZjpfuJDLYwkCMosXhjbij4USIQ1Co_hY7p-sgHRai4LCxVHVSA>
+    <xmx:MKyHZgREbdqSntQKkAynDCa9HpUPxMkK522rTvQDprBoepw-p_aTSg>
+    <xmx:MKyHZkdGbejUp37PvcNC9Gsa6Ey1KEHis4THiDUXWnr2i_HPu3ZcLMIo>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7060CB6008D; Fri,  5 Jul 2024 04:17:52 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3vwoWrIdmYRHZBg--.27334S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJr1kCFy3Jr47uF4DAF4Dtwb_yoW8CrW8pF
-	n0yryavrWDWayrXFyDtrn3Zr95uan3K3ySgasrAw4aqFyfZrs7t3sFyFy8XF17Kr4rKrnF
-	vrs0yrWUKF1kJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRhNVhUUUUU=
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRxkTZGV4KIaf7wAAsq
+Message-Id: <3adf7f7b-a46e-4368-a87a-a217a8a8f9d1@app.fastmail.com>
+In-Reply-To: <20240705022334.1378363-3-nico@fluxnic.net>
+References: <20240705022334.1378363-1-nico@fluxnic.net>
+ <20240705022334.1378363-3-nico@fluxnic.net>
+Date: Fri, 05 Jul 2024 10:17:18 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nicolas Pitre" <nico@fluxnic.net>, "Russell King" <linux@armlinux.org.uk>
+Cc: "Nicolas Pitre" <npitre@baylibre.com>,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, "Nathan Chancellor" <nathan@kernel.org>
+Subject: Re: [PATCH 2/2] asm-generic/div64: reimplement __arch_xprod64()
+Content-Type: text/plain
 
-T99W651 is a RNDIS based modem device. There are 3 serial ports
-need to be enumerated: Diag, NMEA and AT.
+On Fri, Jul 5, 2024, at 04:20, Nicolas Pitre wrote:
+> From: Nicolas Pitre <npitre@baylibre.com>
+>
+> Several years later I just realized that this code could be optimized
+> and more importantly simplified even further. With some reordering, it
+> is possible to dispense with overflow handling entirely and still have
+> optimal code.
+>
+> There is also no longer a reason to have the possibility for
+> architectures to override the generic version. Only ARM did it and these
+> days the compiler does a better job than the hand-crafted assembly
+> version anyway.
+>
+> Kernel binary gets slightly smaller as well. Using the ARM's
+> versatile_defconfig plus CONFIG_TEST_DIV64=y:
+>
+> Before this patch:
+>
+>    text    data     bss     dec     hex filename
+> 9644668 2743926  193424 12582018         bffc82 vmlinux
+>
+> With this patch:
+>
+>    text    data     bss     dec     hex filename
+> 9643572 2743926  193424 12580922         bff83a vmlinux
+>
+> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
 
-Test evidence as below:
-T:  Bus=01 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  6 Spd=480 MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0489 ProdID=e145 Rev=05.15
-S:  Manufacturer=QCOM
-S:  Product=SDXPINN-IDP _SN:93B562B2
-S:  SerialNumber=82e6fe26
-C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#=0x0 Alt= 0 #EPs= 1 Cls=ef(misc ) Sub=04 Prot=01 Driver=rndis_host
-I:  If#=0x1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-I:  If#=0x3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-I:  If#=0x5 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=70 Driver=(none)
-I:  If#=0x6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+This looks really nice, thanks for the work!
 
-0&1: RNDIS, 2:AT, 3:NMEA, 4:DIAG, 5:QDSS, 6:ADB
-QDSS is not a serial port.
+I've tried reproducing your finding to see what compiler
+version started being good enough to benefit from the
+new version. Looking at just the vmlinux size as you did
+above, I can confirm that the generated code is noticeably
+smaller in gcc-11 and above, slightly smaller in gcc-10
+but larger in gcc-9 and below. With gcc-10 being 4 years
+old now and already in debian 'oldstable', that should be
+good enough.
 
-Signed-off-by: Slark Xiao <slark_xiao@163.com>
----
- drivers/usb/serial/option.c | 2 ++
- 1 file changed, 2 insertions(+)
+Unfortunately, I see that clang-19 still produces smaller
+arm code with the old version, so this is likely missing
+some optimization that went into gcc. Specifically these
+are the numbers I see for an armv7 defconfig with many
+drivers disabled for faster builds, comparing the current
+upstream version with inline asm, the upstream C version
+(patch 1/2 applied) and the new C version (both applied):
 
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index 178760bc7b92..4a43cec86db7 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2294,6 +2294,8 @@ static const struct usb_device_id option_ids[] = {
- 	  .driver_info = RSVD(3) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x0489, 0xe0f0, 0xff),			/* Foxconn T99W373 MBIM */
- 	  .driver_info = RSVD(3) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x0489, 0xe145, 0xff),			/* Foxconn T99W651 RNDIS */
-+	  .driver_info = RSVD(5) | RSVD(6) },
- 	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 (IOT version) */
- 	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
- 	{ USB_DEVICE(0x1782, 0x4d10) },						/* Fibocom L610 (AT mode) */
--- 
-2.25.1
+text	   data	    bss	    dec	    hex	filename
+6332190	2577094	 257664	9166948	 8be064	vmlinux-old-asm
+6334518	2577158	 257664	9169340	 8be9bc	vmlinux-old-C
+6333366	2577158	 257664	9168188	 8be53c	vmlinux-new-C
 
+The results for clang-14 are very similar. Adding Nathan
+and the llvm linux mailing list to see if anyone there
+thinks we need to dig deeper on whether llvm should handle
+this better.
+
+I also checked a few other 32-bit targets with gcc-14
+and found that mips and powerpc get slightly worse with
+your new version, while x86 doesn't use this code and
+is unaffected.
+
+With all this said, I think we still want your patch
+or something very close to it because the new version
+is so much more readable and better on the one 32-bit
+config that users care about in practice (armv7 with
+modern gcc), but it would be nice if we could find
+a way to not make it worse for the other configurations.
+
+       Arnd
 
