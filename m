@@ -1,143 +1,115 @@
-Return-Path: <linux-kernel+bounces-242631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20686928AA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:24:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A2F928AA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A051AB22C29
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:24:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E09C1F27449
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A3D16B38F;
-	Fri,  5 Jul 2024 14:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF341581E3;
+	Fri,  5 Jul 2024 14:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GomyGT6q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZO90tDo"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F072F14885C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E05B146A69
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720189463; cv=none; b=eNa9KVMJtVT1rNVwZygABx1IXOUEyCqxXUlrJVAaTSEWOXIqguOnuqajkQ6JiF9Wy73gAnAVWTDnxOnTYvkNftZ7OMGCacyB+YVK3EcsnEhVM6uj3VjeQ9aVd0lnO9mHFsjZGLd6aqHMKHtyIAWbxHO0Hz+QIvLquKdaJ1XvbLE=
+	t=1720189518; cv=none; b=lUnBFqW8EGHpU3IATFiKx7D/Zc94/c2kP4rPYEfudf4tfwMMnqX9E8CJ88qjvv9YCgy7hPD6BTBcDfonarbd+ZpXB0onjS1mrAjOTtMZzO/UekOpQRWV03ZDjNp855xfWb3KUYZROHkdT1NMfusAoU69hFoqpZnd4nGxixnYzyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720189463; c=relaxed/simple;
-	bh=ezE9cMK85xGULq2NDfyultVM78ZkLbyifJxcFeIVVd4=;
+	s=arc-20240116; t=1720189518; c=relaxed/simple;
+	bh=C4tqAmHM8v4mD3hhTZJZUBWCm1/4vg81FUX8llaVkDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3F+3VH9qcVanS+kFO9YCpDmCKXmGa4O9LWVf+NMurIrX6pWCUL4AHUbvX+vGs0O9CgekBnkKatm6JQ8rn5uyiG04fZ7bE1QM/rQiiufe9aIF6K0Bk3xQWtuhI61gx5H4Yv3RWAhrMAbtqvP2iPONstcG94h88Oqj4AAsG4fgl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GomyGT6q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720189460;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqBTg61cVL77faXIzfdAxULAIPGMk1ZHXjVPHmfrZtE=;
-	b=GomyGT6q4Dkoew0pCRUYAoml9aFCdZYOXIEQEjz64CtThBXoFF7Mra3soyxFZs7BYZGnr4
-	vzGyfb+mUwBbgyhfR+bveNOh3TOMIFBnkRrYodstWMD/mhDtfkrnQteBVO2+kFcUWqNqxi
-	S8ghGxK+13S2T1g7QDuve6Z+12fHe3M=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-669-Q-DYbXsCOj2i2hmqJ27mRA-1; Fri, 05 Jul 2024 10:24:18 -0400
-X-MC-Unique: Q-DYbXsCOj2i2hmqJ27mRA-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-446405b39baso3463611cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 07:24:18 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UW0PPRSzrwOafeQhLhPxM+aIEK1uEzm6qQvyZCiTB9JWEo5pCCC6bohwinhlw4fUznIxalCHYzFUsVIV90dMT3RYwtQI2VeDmGbxlsyzMD/f30c8/n5DC4vCEn6/3FQo8JMMOdeyQ3iaGj0ZCBBCjgDcvsVft06HjVKEXG62W7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LZO90tDo; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-25e3bc751daso618015fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 07:25:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720189516; x=1720794316; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nXc3UlGjeR76mLpFRQ7ArGxbQkbw5AvjaQ5WOZ1mVMs=;
+        b=LZO90tDoQpkYiCjah/eBNdundKCGXg/5lM3mmBLTq4oTGMPIF70T2xosVQZcSysImg
+         Mxz1EftZEwGcHhi+qDJ2gRd0DM4J0MsmSvIpCv7KcLFo9CruSP4hY2f/3OFzI5ez2n+y
+         JNKnqK04I8MPcopXkYx/cXXzUxwLTQv38PtOsXprp7hJoA9utoQtguG8RonQAO5p56jG
+         Ld6c7myuTMgDM8AGG6y3F2DR9PbjubAM1HO3uPta6q8zeEUG3mfBOODy2ulvt9QoJEEs
+         nXudxSOeWhIpEevDNIb4/wUgQ2LIkwexmQmvB0L08OBeZ9khb+RQJj9CuHHdDE5iOFE0
+         0y9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720189458; x=1720794258;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IqBTg61cVL77faXIzfdAxULAIPGMk1ZHXjVPHmfrZtE=;
-        b=EUPzZVYBvxGRh14XJZRMFan31ree0kYbnj0/NYZ3MnmiAgoFnjl5cKwvNNW3oYG+QI
-         NMy7rFBQ8PrtX4hb/k7eKqOw5fcVRl6RcAAG9veyXzz9No+bvZ762k/dVv7W6VjC61BR
-         Q7wJ8PdNUWjgivYs2IwPKQf0nawPYf62d1wRmTEp2TBgilPiDfEMnaZQbFo46GkeWQjB
-         vxvN0AkujS0GdCWEtOLfkZf0dytSE2bItso8Na1rZ17PkribdXl2kgzF99ks9m4n9Vxi
-         I66yplsa/GBggVM/T/b60o/6KZL7QrxaErgrj3FsDg/k7Laph/b/NftDAh/glQh9sJKc
-         LzsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjB4OGbsedzjtYmxe0G+GmPdk9N89dp8cfSD+L+EjwvxqYpYzuF2GWUPb4vbxikVq20oUwDtlBqVih7zR7d06JecBBXqBrLX2y/JXJ
-X-Gm-Message-State: AOJu0YxhRMiNmj66Xv3FdRCX2wDulFkhnHE4a0t3NIb0/u6FQWePiwSj
-	vSLGUg+lsDJnagVD2fHTBDnsIQmXKH6V7FhlN+263z1E8UJeQIx3SbJY9mxUhU722DNTifzV0bk
-	83G0t6f50VgTEj2EvLd3B4mcg5sEvJs6AJUW8tB68QhwlgwwI4X/xxLO/A7fwaA==
-X-Received: by 2002:ac8:7c4b:0:b0:446:395a:37c9 with SMTP id d75a77b69052e-447cc1cd760mr50256861cf.4.1720189458367;
-        Fri, 05 Jul 2024 07:24:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKP4/uPX8iCeoUcNLMV3z8vBAByHvLymsXhgYIxVOYKgo8tVByPTMSYbiLBJ2KPlAF3hMSkQ==
-X-Received: by 2002:ac8:7c4b:0:b0:446:395a:37c9 with SMTP id d75a77b69052e-447cc1cd760mr50256521cf.4.1720189457935;
-        Fri, 05 Jul 2024 07:24:17 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4465149b579sm69523231cf.75.2024.07.05.07.24.15
+        d=1e100.net; s=20230601; t=1720189516; x=1720794316;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nXc3UlGjeR76mLpFRQ7ArGxbQkbw5AvjaQ5WOZ1mVMs=;
+        b=aRIrIMQ530zFMX3rFViv+U0mf2a17CbISgZF0QV0iVYB9xF6e48vNnRAuPHFSrfwKN
+         FyeP8QOcmDcQ4P06J2LCsFiLSzQhS8ZgeYSfWvt94bR9TVyoyBJBW1DFRgJLDhngwJcn
+         WJL1+PouqQ+MsZ9Z+TZGVy0kiv9lhfms7HBL2iPa11chjSnTXnRPCy5R3E0jNjR4Ns0+
+         jtWjZbmhNtYwZUIsQXdIrzoMIdCq5Bd/+fMxaoS3THk+hHL6oHClrKDujte56Trswuaw
+         A3Idms1diKEifSkz3M+Pr1dcKCtSM8VQ8udBwmXgiSoLqfN609JLO9Unb5UWEICtyhOr
+         HPRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdn7ZquKUCYmiPWl5TKBAyzuuQ2yhZrwKbrbhJ3675skAtZRvwf5BbLSEH7HrVhk1UDSfG0jgCvszT2HRmSHe06UuAU6HGllQIA5Fd
+X-Gm-Message-State: AOJu0YwIbO5utN4cyGgmepyFIXVJ8hNh59YzZ9AC1ZomvX0rlZRg5Uku
+	b+hCMMppvgXFnAP2G/cGBTInmz/CFM27ihIsr/s03Zi1JruEOBPkhM623ToUV5C7tLPDCU8hsiA
+	m
+X-Google-Smtp-Source: AGHT+IHPlj4ATuT25r3JDKsOmpgXkUlB9bwlGVA8tDvmU40oqlMbYDXNcAQKERtcZUZ6QmueddNTAQ==
+X-Received: by 2002:a05:6870:8182:b0:25e:2208:6c8a with SMTP id 586e51a60fabf-25e2b8cf279mr4072132fac.4.1720189516448;
+        Fri, 05 Jul 2024 07:25:16 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:45d:774f:47f7:bb6a])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25e4be5ae0fsm209740fac.29.2024.07.05.07.25.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 07:24:17 -0700 (PDT)
-Date: Fri, 5 Jul 2024 10:24:14 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
-	david@fromorbit.com, Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
-Message-ID: <ZogCDpfSyCcjVXWH@x1n>
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
+        Fri, 05 Jul 2024 07:25:15 -0700 (PDT)
+Date: Fri, 5 Jul 2024 16:25:14 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: =?iso-8859-1?Q?=C1gatha?= Isabelle Chris Moreira Guedes <code@agatha.dev>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	patch-reply@agatha.dev
+Subject: Re: [PATCH v2] init: staging: Fix missing warning/taint on builtin
+ code
+Message-ID: <19a4a521-2e68-402d-83d0-618c299f2c10@suswa.mountain>
+References: <n5plxnkubcnbuyv7l24i4cwsauh4odwk6g5yiys6oiiwj3i34r@izcjggvv2om2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <n5plxnkubcnbuyv7l24i4cwsauh4odwk6g5yiys6oiiwj3i34r@izcjggvv2om2>
 
-Hi, Alistair,
+On Thu, Jul 04, 2024 at 09:20:49PM -0300, Ágatha Isabelle Chris Moreira Guedes wrote:
+> +#ifdef CONFIG_STAGING
+> +/**
+> + * staging_init_taint() - We need to taint the kernel whenever staging code
+> + * is initialized (from built-in drivers) or loaded (as modules) and issue
+> + * a warning the first time it happens.
+> + */
+> +void staging_taint(const char *code_id, bool module)
+> +{
+> +	char *code_type = module ? "module" : "builtin driver";
+> +
+> +	pr_warn("%s %s: The kernel contains code from staging directory"
+> +		", the quality is unknown, you have been warned.\n",
 
-On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
-> Now that DAX is managing page reference counts the same as normal
-> pages there are no callers for vmf_insert_pXd functions so remove
-> them.
-> 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> ---
->  include/linux/huge_mm.h |   2 +-
->  mm/huge_memory.c        | 165 +-----------------------------------------
->  2 files changed, 167 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 9207d8e..0fb6bff 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
->  		    unsigned long cp_flags);
->  
-> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
-> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
->  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
->  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+I wasn't going to say anything but since you're resending anyway,
+please, don't break the line like this so it starts with a comma.  The
+comma can go on the line before.  But if it couldn't then we would move
+the whole word "directory," to the next line.
 
-There's a plan to support huge pfnmaps in VFIO, which may still make good
-use of these functions.  I think it's fine to remove them but it may mean
-we'll need to add them back when supporting pfnmaps with no memmap.
-
-Is it still possible to make the old API generic to both service the new
-dax refcount plan, but at the meantime working for pfn injections when
-there's no page struct?
-
-Thanks,
-
--- 
-Peter Xu
+regards,
+dan carpenter
 
 
