@@ -1,406 +1,582 @@
-Return-Path: <linux-kernel+bounces-242443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACFA928812
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:39:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E90B8928827
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7131C21EFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F321C23B45
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A48149DF8;
-	Fri,  5 Jul 2024 11:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="jjS5vZ7+"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2015.outbound.protection.outlook.com [40.92.103.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5910014A096;
+	Fri,  5 Jul 2024 11:46:32 +0000 (UTC)
+Received: from hs01.dakr.org (hs01.dk-develop.de [173.249.23.66])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6313914A0AA
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720179538; cv=fail; b=u1RtuBHYRJVEe1IiF8AvZ9wEOWROu1QWxQUwq7PgvuBUeBcOOrLWzFe70PO0dzamsmXkuuSwU9kvcTAz++Lyo2f5zOSyAgs/I5IquAYlSuixWg0nNiBqs6OJzJfv3HepMLFStQXt4tQ0b18F7GfEr7pTDXSF2oKF3k55IHyJcK8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720179538; c=relaxed/simple;
-	bh=j0+xhevOuSoMCE5eE4/8iVQ2PgLSv8heLyqUZ8QgNFo=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Dc2Fa8TyRubnF6HO20vpfBrpuAkLwWvYnI55z+bM189X+7Dl3YaN6JOu2G/h5XXWsw7LMqDQxFkNfKPsTaoYx3XYHgwR5jg34BFNg6ql8nhHBZv/SbFFXNEK3tQVe0+WSwgtaowbmmv3uXPBYNIaOc1IcYGGgSAJbkGQBmPOw8I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=jjS5vZ7+; arc=fail smtp.client-ip=40.92.103.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f9PefxstraXxJI2A7K/HrLZ4VyJXoTrkhR7nSmM003EN8cozpmiABsPvR/Z2r6MAkW1i9L6Bfw1eR5age9vVkrJboEq9RF4Yc4pzk2w7MuISqInbvUoNBE2J8fQ/U08gD6yV1bOpsyE8ZThAUwiTPcvyDofqrlIcDeZtnNUbuwlQ7KqNFbnFak1CU7emzJq7icm4+PB80NPSig2S7ZArMq1lOtQulKs5xWmfgpYnWrQsp0tBiuoU4RwT7zHHahjkY80GV4KdQbcDcQoZNESgKxdvA0myfoU5Iw4gAbUDFpmDnP8VBhHIn5CQL0Ef/OsZqrWHP6dD3BkhBFDtI7gcpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7xEcWa5kp2VliKfvzY4gmVML9aX1YNmeNytLhWkP2fg=;
- b=XxBMITfK6vttTz/htvIvyfelJGVTu2WWpAeV7a5rG/q/+vf1XanuciUQ6EK/I+elBUIwr+ZZwbh5tXxdLvxCwZ7KKV1dK95MZpWK+JDOFRzeIEnXI5DVozfUjElS+zUimkcVMlLVdF29UAZ+IoE1abN5LqwTk97BOSsQb0GcdBgWQjmrGtVvUeXwKXvVUmSarYpeUEKV2eNiAxo4mHjEOFAgwKTdk5Meum81Vr0I0ceJSUdrBow7peUa5050mE+5G5yp7Bh5uPA7iNq2iUJLQROW9j2p44AWss6zFS85FcgIuvLGkOdwW5oncTA7E7p/W6Nm084mXqqPTcAURQJ0+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7xEcWa5kp2VliKfvzY4gmVML9aX1YNmeNytLhWkP2fg=;
- b=jjS5vZ7+kIgcglmo65lQY0Um6kjXgDFxb2VRsuWL5xILoeaX/+noUXu2vXcUVsq3ooYspD/gyUhi0iqlyBOV7BAHE71wZOkov9s4vr9XWoYGh6OMaB+9WX/GS2IJgjES81hniOx5k7PcPVaXW44D64s5QRXIC64MsWnCPDU+t2/ddDtr5xQvZOrfWtuEkRuY/Nob92Ap90YToba42k9IscNqHnRWOq5w0YyoFi6hZw3aWISRBvvCYYZ//dgSij/18ZCd3U+yEvyuw1qEsIOlx9qrpX2dM2k26zV4OA2HjxF/pg73NK+/MG1v/qKR/2x9gXLxc5FFgJktNkJGQ//H9A==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB1034.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:108::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.30; Fri, 5 Jul 2024 11:38:49 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7741.027; Fri, 5 Jul 2024
- 11:38:49 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"daniel@ffwll.ch" <daniel@ffwll.ch>
-CC: Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay
-	<kekrby@gmail.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/format-helper: Add conversion from XRGB8888 to BGR888
-Thread-Topic: [PATCH] drm/format-helper: Add conversion from XRGB8888 to
- BGR888
-Thread-Index: AQHazs/njcTATpGwcUGZTLkvEbNPGA==
-Date: Fri, 5 Jul 2024 11:38:49 +0000
-Message-ID: <4C98332B-4E56-4314-8BDA-709AD3974899@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn: [5aJwhNqa8K+XmiabSocOh4gYukYLhu0hiREzotLbHN8e1TZLyTq7bBKT/l+u01+b]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB1034:EE_
-x-ms-office365-filtering-correlation-id: 775f557f-a405-4815-a27b-08dc9ce70995
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|19110799003|8060799006|102099032|3412199025|440099028;
-x-microsoft-antispam-message-info:
- Hm8SgvWLlQmXNCbILgsmt8ox/AdtHqafLbz/tF0zOQ4gj9dHMIC1dUxKkaPR0HG/sh/gxtu8TiEtlcq7OO2zwuM/eO8ajuxe5XfO5fOVS+tUyg6Gao6kAES9Kj06Tlm7WmU86vsEdRBSFjwXB4tF/+LccjOKymORD1TISFgNTgEqcdsldcrm0L+qjJhwn9gB35enxvQMDETetsZ0mC6z1J44R5rQ2eZDrV3uaUktj54EYLpOgM7Bp1bI/Ci4Sjtj+Ly5hRRitsvkmrQ2OtMXC7unCnCZ5JAPHIWW4v+kIOMrJYps4pF05mUR3HIzKM9Z8/8KSDfxioUHil7fGAbPOXKJMcHPDiPAoGxi5IRpKzhhGYcVkxVQKoHc0Q6f4GWhoUE6mfkUDIUKsNls64N5blz0GlwbImssOWBqs2vJkVf4JmQltINzWfqfqech7LXhzhaUYLVXFpdnmqm6Dq6tee3WYysX7PpowVxoH5B1dZ6cokDEvEPQuSdZlRb+fWeAMrz/HrCPQAsB/fd0ynkFOD76CABPgwYOkTvQSOiAZbgK01lR0O/Ihj/G+B/3fTjZpSo/KY9CxMIYmnxi1dWiRGdQpYeC8/QMuCvZwzBMoCTuSJToLtWrvtM5iJgkoAZpI5T7CQXamMuZ0LeHE+JGWA==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?0JEvb6cigOwFpzIPpmR5Oj0Tv6QaHtOW57oVMAO0BTjKFRnnBGrSvfq4CkhR?=
- =?us-ascii?Q?S3FZEewfQu5NK6QJYrkVK1kjdyGlG5V4L5hc0xNR8IxtVBJud60f8Nes9Sfh?=
- =?us-ascii?Q?9kPMr16ckrqHpn+jesHq9lmc/JHbhKtThLBXQdb3i6UG0NaiQ/nFaLrwKENV?=
- =?us-ascii?Q?HVYiMoNdVGuvbMWqh0NvFlOC/zwq3lWtchW55WhLaEa2XWhBKS5qaRbuUwqz?=
- =?us-ascii?Q?rUemcEgfSVAq/zINi9DlS1DeUT6focqLBDqG6kfGrVi+6w/dBVtJcqIQtxzs?=
- =?us-ascii?Q?BnDMAKbpzujjI8sFHlzbSSQrtxFPosZ2xbjN7rlBY/53Wo0/t2Lifn0s+TrZ?=
- =?us-ascii?Q?a1QkCPRD6yY0Vhb9BxH3PjDzc0FCoKSw4lCp9sSB0HanBNq03pmo0sZQDoSv?=
- =?us-ascii?Q?/BBp8VlWwqFLzbXKWe7HdSGACPwenMHrlWo9kp4z0GTK0bcOvF3HpL5Otijk?=
- =?us-ascii?Q?a2ESl7C3ANQ4FHxyjbMzKtxnRaLkyxXQiTwzcz1QjFqGW9gzKGrUYRS75YqY?=
- =?us-ascii?Q?h4i+BrF9UG+hCtURYMeKy+oLqt5oTU8Lj2WudoDH+gmxrUkoIs6KlHyCdzS+?=
- =?us-ascii?Q?Z1uhs4h2ykf7KxU7bSjlKW+ZSX+tfcTT3WJgx7OpzxMi2OnUBqKvEKNRskJ8?=
- =?us-ascii?Q?3m9awcXTj07fL6VyOUKCGdGEXDJ7ql8IBCbmxNx9GSVWrgR/3Qt0BK0dRx6n?=
- =?us-ascii?Q?Ho8EqQA4ZMFvR/wkMWBuTCmExsuhRxLBa+viSW5xVkibKhh79vIK1dImWf5c?=
- =?us-ascii?Q?gyntG7PoJMykkVSivSmPiS4L7xTydj1Zgm8E96gUuGJUtDX8ewqMzRKxgREM?=
- =?us-ascii?Q?n+8G0ta94bg05+SWi3eaaFSn0+V9BdYEiGR+EQkN69lyRS9NE7DC0tBnFBu0?=
- =?us-ascii?Q?++wJO/CBDI90YvzDLTyTabTQSI+HIFnTl01/JRE6fe8pR9ZWXXzEtZdkuzUJ?=
- =?us-ascii?Q?w7FCVHnfJPqVk1Xkqi7uNAf85JKPEdHMVioub3EURevQehgjE4KOMIObItMo?=
- =?us-ascii?Q?CfMGtlIBg1uIjWg+qJmabLVi8ox+PbarYEPu2nFocN4O8OJWqyeOatXODI9C?=
- =?us-ascii?Q?kcoN/mOrU2EJt1JwFwJi0GFvlyeK2C/HLMFmFL4HQUsEvTfquNcOUsK52W6U?=
- =?us-ascii?Q?eTw+Xul88uiAjWyRPt5ex7YsJoO8osYDsP8veFt2JCgMCxLbE1leV3WRgsxH?=
- =?us-ascii?Q?degdNLjLoTTT8KkkUIS6MEQ/B27Hcw3ZRp6Mw/wOo7Zf5lwc8tGmxipbT30I?=
- =?us-ascii?Q?SbYPkamd+93pm60xzJkwllpn+pJFg/fN1EOI6JRqL/KfKK3E72XVdB9Pq9AJ?=
- =?us-ascii?Q?MZBZ/UfLomRqHc63SCVpaVz/?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2199F7F7A61F76438D3355CFDB5FFD0E@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7965514658A;
+	Fri,  5 Jul 2024 11:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.23.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720179991; cv=none; b=miEZZWmORGEQGY3khauzZizLQgfVgOpPSjPry6sM8QijiweuE4gr0LR6SpFo+qquV0b3uRpIziEkIJhZrVGkpshQ8n+eHaf+QZG6myDmU1FlykqYKBUE6ZEfLTCK/K/0+dn0ZK0F3Ti0df5v2ejAlk5uZRmkupnpylQwJ31r7oo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720179991; c=relaxed/simple;
+	bh=3R2MhzqWrS62U5h1nkLOH2P75ff+pAEl6NSxiIB2K4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AV+IEaTZQ/8hPR9v0gTRxQLZrE8Fbp8fy3dtnCwqaC3WDiKucuMlCFAm+BAOKgLjxSqQhIh21mayx2opGB45dSs42priIdkB72hm8k4VCjEX/DCfYXJciFPan1YoaXYbKPMIxHT0Q3mkf1rnIJ1CV05HFI7AL4w1fbD/v7lqeKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org; spf=pass smtp.mailfrom=dakr.org; arc=none smtp.client-ip=173.249.23.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dakr.org
+Message-ID: <fe1386ab-49c0-415d-8bbb-ff14b8197782@dakr.org>
+Date: Fri, 5 Jul 2024 13:39:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 775f557f-a405-4815-a27b-08dc9ce70995
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2024 11:38:49.1514
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1034
+Subject: Re: [RFC PATCH V3 6/8] rust: Extend cpufreq bindings for driver
+ registration
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>
+Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
+ Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+ rust-for-linux@vger.kernel.org,
+ Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+ Erik Schilling <erik.schilling@linaro.org>,
+ =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <cover.1719990273.git.viresh.kumar@linaro.org>
+ <0f8618610dde586284d8c9971b8bdf215eef0456.1719990273.git.viresh.kumar@linaro.org>
+Content-Language: en-US
+From: Danilo Krummrich <me@dakr.org>
+In-Reply-To: <0f8618610dde586284d8c9971b8bdf215eef0456.1719990273.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Kerem Karabay <kekrby@gmail.com>
+On 7/3/24 09:14, Viresh Kumar wrote:
+> This extends the cpufreq bindings with bindings for registering a
+> driver.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>   rust/kernel/cpufreq.rs | 482 ++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 479 insertions(+), 3 deletions(-)
+> 
+> diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
+> index 6f9d34ebbcb0..66dad18f4ab6 100644
+> --- a/rust/kernel/cpufreq.rs
+> +++ b/rust/kernel/cpufreq.rs
+> @@ -9,14 +9,16 @@
+>   use crate::{
+>       bindings, clk, cpumask,
+>       device::Device,
+> -    error::{code::*, from_err_ptr, to_result, Result, VTABLE_DEFAULT_ERROR},
+> +    error::{code::*, from_err_ptr, from_result, to_result, Result, VTABLE_DEFAULT_ERROR},
+>       prelude::*,
+> -    types::{ARef, ForeignOwnable},
+> +    types::ForeignOwnable,
+>   };
+>   
+>   use core::{
+> +    cell::UnsafeCell,
+> +    marker::PhantomData,
+>       pin::Pin,
+> -    ptr::self,
+> +    ptr::{self, addr_of_mut},
+>   };
+>   
+>   use macros::vtable;
+> @@ -563,3 +565,477 @@ fn register_em(_policy: &mut Policy) {
+>           kernel::build_error(VTABLE_DEFAULT_ERROR)
+>       }
+>   }
+> +
+> +/// Registration of a cpufreq driver.
+> +pub struct Registration<T: Driver> {
+> +    registered: bool,
+> +    drv: UnsafeCell<bindings::cpufreq_driver>,
+> +    _p: PhantomData<T>,
+> +}
+> +
+> +// SAFETY: `Registration` doesn't offer any methods or access to fields when shared between threads
+> +// or CPUs, so it is safe to share it.
+> +unsafe impl<T: Driver> Sync for Registration<T> {}
+> +
+> +// SAFETY: Registration with and unregistration from the cpufreq subsystem can happen from any thread.
+> +// Additionally, `T::Data` (which is dropped during unregistration) is `Send`, so it is okay to move
+> +// `Registration` to different threads.
+> +#[allow(clippy::non_send_fields_in_send_ty)]
+> +unsafe impl<T: Driver> Send for Registration<T> {}
+> +
+> +impl<T: Driver> Registration<T> {
+> +    /// Creates new [`Registration`] but does not register it yet.
+> +    ///
+> +    /// It is allowed to move.
+> +    fn new() -> Result<Box<Self>> {
+> +        Ok(Box::new(
+> +            Self {
+> +                registered: false,
+> +                drv: UnsafeCell::new(bindings::cpufreq_driver::default()),
+> +                _p: PhantomData,
+> +            },
+> +            GFP_KERNEL,
+> +        )?)
+> +    }
+> +
+> +    /// Registers a cpufreq driver with the rest of the kernel.
+> +    pub fn register(
+> +        name: &'static CStr,
+> +        data: T::Data,
+> +        flags: u16,
+> +        boost: bool,
+> +    ) -> Result<Box<Self>> {
 
-Add XRGB8888 emulation helper for devices that only support BGR888.
+If you directly call `register` from `new` you can avoid having `Self::registered`.
+It's also a bit cleaner, once you got an instance of `Registration` it means something
+is registered, once it's dropped, it's unregistered.
 
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/gpu/drm/drm_format_helper.c           | 54 +++++++++++++
- .../gpu/drm/tests/drm_format_helper_test.c    | 81 +++++++++++++++++++
- include/drm/drm_format_helper.h               |  3 +
- 3 files changed, 138 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_form=
-at_helper.c
-index b1be458ed..28c0e76a1 100644
---- a/drivers/gpu/drm/drm_format_helper.c
-+++ b/drivers/gpu/drm/drm_format_helper.c
-@@ -702,6 +702,57 @@ void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, =
-const unsigned int *dst_pi
- }
- EXPORT_SYMBOL(drm_fb_xrgb8888_to_rgb888);
-=20
-+static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, u=
-nsigned int pixels)
-+{
-+	u8 *dbuf8 =3D dbuf;
-+	const __le32 *sbuf32 =3D sbuf;
-+	unsigned int x;
-+	u32 pix;
-+
-+	for (x =3D 0; x < pixels; x++) {
-+		pix =3D le32_to_cpu(sbuf32[x]);
-+		/* write red-green-blue to output in little endianness */
-+		*dbuf8++ =3D (pix & 0x00FF0000) >> 16;
-+		*dbuf8++ =3D (pix & 0x0000FF00) >> 8;
-+		*dbuf8++ =3D (pix & 0x000000FF) >> 0;
-+	}
-+}
-+
-+/**
-+ * drm_fb_xrgb8888_to_bgr888 - Convert XRGB8888 to BGR888 clip buffer
-+ * @dst: Array of BGR888 destination buffers
-+ * @dst_pitch: Array of numbers of bytes between the start of two consecut=
-ive scanlines
-+ *             within @dst; can be NULL if scanlines are stored next to ea=
-ch other.
-+ * @src: Array of XRGB8888 source buffers
-+ * @fb: DRM framebuffer
-+ * @clip: Clip rectangle area to copy
-+ * @state: Transform and conversion state
-+ *
-+ * This function copies parts of a framebuffer to display memory and conve=
-rts the
-+ * color format during the process. Destination and framebuffer formats mu=
-st match. The
-+ * parameters @dst, @dst_pitch and @src refer to arrays. Each array must h=
-ave at
-+ * least as many entries as there are planes in @fb's format. Each entry s=
-tores the
-+ * value for the format's respective color plane at the same index.
-+ *
-+ * This function does not apply clipping on @dst (i.e. the destination is =
-at the
-+ * top-left corner).
-+ *
-+ * Drivers can use this function for BGR888 devices that don't natively
-+ * support XRGB8888.
-+ */
-+void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *=
-dst_pitch,
-+			       const struct iosys_map *src, const struct drm_framebuffer *fb,
-+			       const struct drm_rect *clip, struct drm_format_conv_state *state=
-)
-+{
-+	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] =3D {
-+		3,
-+	};
-+
-+	drm_fb_xfrm(dst, dst_pitch, dst_pixsize, src, fb, clip, false, state,
-+		    drm_fb_xrgb8888_to_bgr888_line);
-+}
-+EXPORT_SYMBOL(drm_fb_xrgb8888_to_bgr888);
-+
- static void drm_fb_xrgb8888_to_argb8888_line(void *dbuf, const void *sbuf,=
- unsigned int pixels)
- {
- 	__le32 *dbuf32 =3D dbuf;
-@@ -1035,6 +1086,9 @@ int drm_fb_blit(struct iosys_map *dst, const unsigned=
- int *dst_pitch, uint32_t d
- 		} else if (dst_format =3D=3D DRM_FORMAT_RGB888) {
- 			drm_fb_xrgb8888_to_rgb888(dst, dst_pitch, src, fb, clip, state);
- 			return 0;
-+		} else if (dst_format =3D=3D DRM_FORMAT_BGR888) {
-+			drm_fb_xrgb8888_to_bgr888(dst, dst_pitch, src, fb, clip, state);
-+			return 0;
- 		} else if (dst_format =3D=3D DRM_FORMAT_ARGB8888) {
- 			drm_fb_xrgb8888_to_argb8888(dst, dst_pitch, src, fb, clip, state);
- 			return 0;
-diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/d=
-rm/tests/drm_format_helper_test.c
-index 08992636e..e54f0f6e7 100644
---- a/drivers/gpu/drm/tests/drm_format_helper_test.c
-+++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
-@@ -60,6 +60,11 @@ struct convert_to_rgb888_result {
- 	const u8 expected[TEST_BUF_SIZE];
- };
-=20
-+struct convert_to_bgr888_result {
-+	unsigned int dst_pitch;
-+	const u8 expected[TEST_BUF_SIZE];
-+};
-+
- struct convert_to_argb8888_result {
- 	unsigned int dst_pitch;
- 	const u32 expected[TEST_BUF_SIZE];
-@@ -107,6 +112,7 @@ struct convert_xrgb8888_case {
- 	struct convert_to_argb1555_result argb1555_result;
- 	struct convert_to_rgba5551_result rgba5551_result;
- 	struct convert_to_rgb888_result rgb888_result;
-+	struct convert_to_bgr888_result bgr888_result;
- 	struct convert_to_argb8888_result argb8888_result;
- 	struct convert_to_xrgb2101010_result xrgb2101010_result;
- 	struct convert_to_argb2101010_result argb2101010_result;
-@@ -151,6 +157,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
-ases[] =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D { 0x00, 0x00, 0xFF },
- 		},
-+		.bgr888_result =3D {
-+			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
-+			.expected =3D { 0xFF, 0x00, 0x00 },
-+		},
- 		.argb8888_result =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D { 0xFFFF0000 },
-@@ -217,6 +227,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
-ases[] =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D { 0x00, 0x00, 0xFF },
- 		},
-+		.bgr888_result =3D {
-+			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
-+			.expected =3D { 0xFF, 0x00, 0x00 },
-+		},
- 		.argb8888_result =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D { 0xFFFF0000 },
-@@ -330,6 +344,15 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
-ases[] =3D {
- 				0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
- 			},
- 		},
-+		.bgr888_result =3D {
-+			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
-+			.expected =3D {
-+				0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
-+				0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00,
-+				0x00, 0x00, 0xFF, 0xFF, 0x00, 0xFF,
-+				0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
-+			},
-+		},
- 		.argb8888_result =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D {
-@@ -468,6 +491,17 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
-ases[] =3D {
- 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
- 			},
- 		},
-+		.bgr888_result =3D {
-+			.dst_pitch =3D 15,
-+			.expected =3D {
-+				0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05, 0xA8, 0xF3, 0x03,
-+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05,
-+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				0xA8, 0x03, 0x03, 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C,
-+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			},
-+		},
- 		.argb8888_result =3D {
- 			.dst_pitch =3D 20,
- 			.expected =3D {
-@@ -914,6 +948,52 @@ static void drm_test_fb_xrgb8888_to_rgb888(struct kuni=
-t *test)
- 	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
- }
-=20
-+static void drm_test_fb_xrgb8888_to_bgr888(struct kunit *test)
-+{
-+	const struct convert_xrgb8888_case *params =3D test->param_value;
-+	const struct convert_to_bgr888_result *result =3D &params->bgr888_result;
-+	size_t dst_size;
-+	u8 *buf =3D NULL;
-+	__le32 *xrgb8888 =3D NULL;
-+	struct iosys_map dst, src;
-+
-+	struct drm_framebuffer fb =3D {
-+		.format =3D drm_format_info(DRM_FORMAT_XRGB8888),
-+		.pitches =3D { params->pitch, 0, 0 },
-+	};
-+
-+	dst_size =3D conversion_buf_size(DRM_FORMAT_BGR888, result->dst_pitch,
-+				       &params->clip, 0);
-+	KUNIT_ASSERT_GT(test, dst_size, 0);
-+
-+	buf =3D kunit_kzalloc(test, dst_size, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buf);
-+	iosys_map_set_vaddr(&dst, buf);
-+
-+	xrgb8888 =3D cpubuf_to_le32(test, params->xrgb8888, TEST_BUF_SIZE);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xrgb8888);
-+	iosys_map_set_vaddr(&src, xrgb8888);
-+
-+	/*
-+	 * BGR888 expected results are already in little-endian
-+	 * order, so there's no need to convert the test output.
-+	 */
-+	drm_fb_xrgb8888_to_bgr888(&dst, &result->dst_pitch, &src, &fb, &params->c=
-lip,
-+				  &fmtcnv_state);
-+	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
-+
-+	buf =3D dst.vaddr; /* restore original value of buf */
-+	memset(buf, 0, dst_size);
-+
-+	int blit_result =3D 0;
-+
-+	blit_result =3D drm_fb_blit(&dst, &result->dst_pitch, DRM_FORMAT_BGR888, =
-&src, &fb, &params->clip,
-+				  &fmtcnv_state);
-+
-+	KUNIT_EXPECT_FALSE(test, blit_result);
-+	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
-+}
-+
- static void drm_test_fb_xrgb8888_to_argb8888(struct kunit *test)
- {
- 	const struct convert_xrgb8888_case *params =3D test->param_value;
-@@ -1851,6 +1931,7 @@ static struct kunit_case drm_format_helper_test_cases=
-[] =3D {
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb1555, convert_xrgb8888_gen_p=
-arams),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgba5551, convert_xrgb8888_gen_p=
-arams),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgb888, convert_xrgb8888_gen_par=
-ams),
-+	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_bgr888, convert_xrgb8888_gen_par=
-ams),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb8888, convert_xrgb8888_gen_p=
-arams),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_xrgb2101010, convert_xrgb8888_ge=
-n_params),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb2101010, convert_xrgb8888_ge=
-n_params),
-diff --git a/include/drm/drm_format_helper.h b/include/drm/drm_format_helpe=
-r.h
-index f13b34e0b..b53cf85ca 100644
---- a/include/drm/drm_format_helper.h
-+++ b/include/drm/drm_format_helper.h
-@@ -95,6 +95,9 @@ void drm_fb_xrgb8888_to_rgba5551(struct iosys_map *dst, c=
-onst unsigned int *dst_
- void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *=
-dst_pitch,
- 			       const struct iosys_map *src, const struct drm_framebuffer *fb,
- 			       const struct drm_rect *clip, struct drm_format_conv_state *state=
-);
-+void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *=
-dst_pitch,
-+			       const struct iosys_map *src, const struct drm_framebuffer *fb,
-+			       const struct drm_rect *clip, struct drm_format_conv_state *state=
-);
- void drm_fb_xrgb8888_to_argb8888(struct iosys_map *dst, const unsigned int=
- *dst_pitch,
- 				 const struct iosys_map *src, const struct drm_framebuffer *fb,
- 				 const struct drm_rect *clip, struct drm_format_conv_state *state);
---=20
-2.34.1
-
+> +        let mut reg = Self::new()?;
+> +        let drv = reg.drv.get_mut();
+> +
+> +        // Account for the trailing null character.
+> +        let len = name.len() + 1;
+> +        if len > drv.name.len() {
+> +            return Err(EINVAL);
+> +        };
+> +
+> +        // SAFETY: `name` is a valid Cstr, and we are copying it to an array of equal or larger
+> +        // size.
+> +        let name = unsafe { &*(name.as_bytes_with_nul() as *const [u8] as *const [i8]) };
+> +        drv.name[..len].copy_from_slice(name);
+> +
+> +        drv.boost_enabled = boost;
+> +        drv.flags = flags;
+> +
+> +        // Allocate an array of 3 pointers to be passed to the C code.
+> +        let mut attr = Box::new([ptr::null_mut(); 3], GFP_KERNEL)?;
+> +        let mut next = 0;
+> +
+> +        // SAFETY: The C code returns a valid pointer here, which is again passed to the C code in
+> +        // an array.
+> +        attr[next] =
+> +            unsafe { addr_of_mut!(bindings::cpufreq_freq_attr_scaling_available_freqs) as *mut _ };
+> +        next += 1;
+> +
+> +        if boost {
+> +            // SAFETY: The C code returns a valid pointer here, which is again passed to the C code
+> +            // in an array.
+> +            attr[next] =
+> +                unsafe { addr_of_mut!(bindings::cpufreq_freq_attr_scaling_boost_freqs) as *mut _ };
+> +            next += 1;
+> +        }
+> +        attr[next] = ptr::null_mut();
+> +
+> +        // Pass the ownership of the memory block to the C code. This will be freed when
+> +        // the [`Registration`] object goes out of scope.
+> +        drv.attr = Box::leak(attr) as *mut _;
+> +
+> +        // Initialize mandatory callbacks.
+> +        drv.init = Some(Self::init_callback);
+> +        drv.verify = Some(Self::verify_callback);
+> +
+> +        // Initialize optional callbacks.
+> +        drv.setpolicy = if T::HAS_SETPOLICY {
+> +            Some(Self::setpolicy_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.target = if T::HAS_TARGET {
+> +            Some(Self::target_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.target_index = if T::HAS_TARGET_INDEX {
+> +            Some(Self::target_index_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.fast_switch = if T::HAS_FAST_SWITCH {
+> +            Some(Self::fast_switch_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.adjust_perf = if T::HAS_ADJUST_PERF {
+> +            Some(Self::adjust_perf_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.get_intermediate = if T::HAS_GET_INTERMEDIATE {
+> +            Some(Self::get_intermediate_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.target_intermediate = if T::HAS_TARGET_INTERMEDIATE {
+> +            Some(Self::target_intermediate_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.get = if T::HAS_GET {
+> +            Some(Self::get_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.update_limits = if T::HAS_UPDATE_LIMITS {
+> +            Some(Self::update_limits_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.bios_limit = if T::HAS_BIOS_LIMIT {
+> +            Some(Self::bios_limit_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.online = if T::HAS_ONLINE {
+> +            Some(Self::online_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.offline = if T::HAS_OFFLINE {
+> +            Some(Self::offline_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.exit = if T::HAS_EXIT {
+> +            Some(Self::exit_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.suspend = if T::HAS_SUSPEND {
+> +            Some(Self::suspend_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.resume = if T::HAS_RESUME {
+> +            Some(Self::resume_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.ready = if T::HAS_READY {
+> +            Some(Self::ready_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.set_boost = if T::HAS_SET_BOOST {
+> +            Some(Self::set_boost_callback)
+> +        } else {
+> +            None
+> +        };
+> +        drv.register_em = if T::HAS_REGISTER_EM {
+> +            Some(Self::register_em_callback)
+> +        } else {
+> +            None
+> +        };
+> +
+> +        // Set driver data before registering the driver, as the cpufreq core may call few
+> +        // callbacks before `cpufreq_register_driver()` returns.
+> +        reg.set_data(data)?;
+> +
+> +        // SAFETY: It is safe to register the driver with the cpufreq core in the C code.
+> +        to_result(unsafe { bindings::cpufreq_register_driver(reg.drv.get()) })?;
+> +        reg.registered = true;
+> +        Ok(reg)
+> +    }
+> +
+> +    /// Returns the previous set data for a cpufreq driver.
+> +    pub fn data<D: ForeignOwnable>() -> Option<<D>::Borrowed<'static>> {
+> +        // SAFETY: The driver data is earlier set by us from [`set_data()`].
+> +        let data = unsafe { bindings::cpufreq_get_driver_data() };
+> +        if data.is_null() {
+> +            None
+> +        } else {
+> +            // SAFETY: The driver data is earlier set by us from [`set_data()`].
+> +            Some(unsafe { D::borrow(data) })
+> +        }
+> +    }
+> +
+> +    // Sets the data for a cpufreq driver.
+> +    fn set_data(&mut self, data: T::Data) -> Result<()> {
+> +        let drv = self.drv.get_mut();
+> +
+> +        if drv.driver_data.is_null() {
+> +            // Pass the ownership of the data to the foreign interface.
+> +            drv.driver_data = <T::Data as ForeignOwnable>::into_foreign(data) as _;
+> +            Ok(())
+> +        } else {
+> +            Err(EBUSY)
+> +        }
+> +    }
+> +
+> +    // Clears and returns the data for a cpufreq driver.
+> +    fn clear_data(&mut self) -> Option<T::Data> {
+> +        let drv = self.drv.get_mut();
+> +
+> +        if drv.driver_data.is_null() {
+> +            None
+> +        } else {
+> +            // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
+> +            // relinquish it now.
+> +            let data = Some(unsafe { <T::Data as ForeignOwnable>::from_foreign(drv.driver_data) });
+> +            drv.driver_data = ptr::null_mut();
+> +            data
+> +        }
+> +    }
+> +}
+> +
+> +// cpufreq driver callbacks.
+> +impl<T: Driver> Registration<T> {
+> +    // Policy's init callback.
+> +    extern "C" fn init_callback(ptr: *mut bindings::cpufreq_policy) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +
+> +            let data = T::init(&mut policy)?;
+> +            policy.set_data(data)?;
+> +            Ok(0)
+> +        })
+> +    }
+> +
+> +    // Policy's exit callback.
+> +    extern "C" fn exit_callback(ptr: *mut bindings::cpufreq_policy) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +
+> +            let data = policy.clear_data();
+> +            T::exit(&mut policy, data).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's online callback.
+> +    extern "C" fn online_callback(ptr: *mut bindings::cpufreq_policy) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::online(&mut policy).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's offline callback.
+> +    extern "C" fn offline_callback(ptr: *mut bindings::cpufreq_policy) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::offline(&mut policy).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's suspend callback.
+> +    extern "C" fn suspend_callback(ptr: *mut bindings::cpufreq_policy) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::suspend(&mut policy).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's resume callback.
+> +    extern "C" fn resume_callback(ptr: *mut bindings::cpufreq_policy) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::resume(&mut policy).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's ready callback.
+> +    extern "C" fn ready_callback(ptr: *mut bindings::cpufreq_policy) {
+> +        // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +        // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +        // `ptr`.
+> +        let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +        T::ready(&mut policy);
+> +    }
+> +
+> +    // Policy's verify callback.
+> +    extern "C" fn verify_callback(ptr: *mut bindings::cpufreq_policy_data) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut data = unsafe { PolicyData::from_raw_policy_data(ptr) };
+> +            T::verify(&mut data).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's setpolicy callback.
+> +    extern "C" fn setpolicy_callback(ptr: *mut bindings::cpufreq_policy) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::setpolicy(&mut policy).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's target callback.
+> +    extern "C" fn target_callback(
+> +        ptr: *mut bindings::cpufreq_policy,
+> +        target_freq: u32,
+> +        relation: u32,
+> +    ) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::target(&mut policy, target_freq, Relation::new(relation)?).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's target_index callback.
+> +    extern "C" fn target_index_callback(
+> +        ptr: *mut bindings::cpufreq_policy,
+> +        index: u32,
+> +    ) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::target_index(&mut policy, index).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's fast_switch callback.
+> +    extern "C" fn fast_switch_callback(
+> +        ptr: *mut bindings::cpufreq_policy,
+> +        target_freq: u32,
+> +    ) -> core::ffi::c_uint {
+> +        // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +        // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +        // `ptr`.
+> +        let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +        T::fast_switch(&mut policy, target_freq)
+> +    }
+> +
+> +    // Policy's adjust_perf callback.
+> +    extern "C" fn adjust_perf_callback(cpu: u32, min_perf: u64, target_perf: u64, capacity: u64) {
+> +        if let Ok(mut policy) = Policy::from_cpu(cpu) {
+> +            T::adjust_perf(&mut policy, min_perf, target_perf, capacity);
+> +        }
+> +    }
+> +
+> +    // Policy's get_intermediate callback.
+> +    extern "C" fn get_intermediate_callback(
+> +        ptr: *mut bindings::cpufreq_policy,
+> +        index: u32,
+> +    ) -> core::ffi::c_uint {
+> +        // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +        // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +        // `ptr`.
+> +        let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +        T::get_intermediate(&mut policy, index)
+> +    }
+> +
+> +    // Policy's target_intermediate callback.
+> +    extern "C" fn target_intermediate_callback(
+> +        ptr: *mut bindings::cpufreq_policy,
+> +        index: u32,
+> +    ) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::target_intermediate(&mut policy, index).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's get callback.
+> +    extern "C" fn get_callback(cpu: u32) -> core::ffi::c_uint {
+> +        // SAFETY: Get the policy for a CPU.
+> +        Policy::from_cpu(cpu).map_or(0, |mut policy| T::get(&mut policy).map_or(0, |f| f))
+> +    }
+> +
+> +    // Policy's update_limit callback.
+> +    extern "C" fn update_limits_callback(cpu: u32) {
+> +        // SAFETY: Get the policy for a CPU.
+> +        if let Ok(mut policy) = Policy::from_cpu(cpu) {
+> +            T::update_limits(&mut policy);
+> +        }
+> +    }
+> +
+> +    // Policy's bios_limit callback.
+> +    extern "C" fn bios_limit_callback(cpu: i32, limit: *mut u32) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            let mut policy = Policy::from_cpu(cpu as u32)?;
+> +
+> +            // SAFETY: The pointer is guaranteed by the C code to be valid.
+> +            T::bios_limit(&mut policy, &mut (unsafe { *limit })).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's set_boost callback.
+> +    extern "C" fn set_boost_callback(
+> +        ptr: *mut bindings::cpufreq_policy,
+> +        state: i32,
+> +    ) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +            // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +            // `ptr`.
+> +            let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +            T::set_boost(&mut policy, state).map(|_| 0)
+> +        })
+> +    }
+> +
+> +    // Policy's register_em callback.
+> +    extern "C" fn register_em_callback(ptr: *mut bindings::cpufreq_policy) {
+> +        // SAFETY: `ptr` is valid by the contract with the C code. `policy` is alive only for the
+> +        // duration of this call, so it is guaranteed to remain alive for the lifetime of
+> +        // `ptr`.
+> +        let mut policy = unsafe { Policy::from_raw_policy(ptr) };
+> +        T::register_em(&mut policy);
+> +    }
+> +}
+> +
+> +impl<T: Driver> Drop for Registration<T> {
+> +    // Removes the registration from the kernel if it has completed successfully before.
+> +    fn drop(&mut self) {
+> +        pr_info!("Registration dropped\n");
+> +        let drv = self.drv.get_mut();
+> +
+> +        if self.registered {
+> +            // SAFETY: The driver was earlier registered from `register()`.
+> +            unsafe { bindings::cpufreq_unregister_driver(drv) };
+> +        }
+> +
+> +        // Free the previously leaked memory to the C code.
+> +        if !drv.attr.is_null() {
+> +            // SAFETY: The pointer was earlier initialized from the result of `Box::leak`.
+> +            unsafe { drop(Box::from_raw(drv.attr)) };
+> +        }
+> +
+> +        // Free data
+> +        drop(self.clear_data());
+> +    }
+> +}
 
