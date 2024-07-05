@@ -1,269 +1,328 @@
-Return-Path: <linux-kernel+bounces-242702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C68928BD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:35:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB218928BD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999BC1C21738
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB071F25888
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBB7148FE3;
-	Fri,  5 Jul 2024 15:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEED16C6A7;
+	Fri,  5 Jul 2024 15:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lf29z5tZ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXTplHGj"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F5F14B06B
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0979F18AF4
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720193738; cv=none; b=I+8g7/E4JFivfJUMbdKFTi3l6v1ewv/pPMosIAYqmlyB30bUGnJdyPJpnRKe9SF/mO3pIEEqRm/cAuGfjTffhwEAOfxW4G3JAwo285HX3HmXzP1S1OCvlm6VwvLdR5kmoMqlUvt5SKnb+Co3Skq/XUIjyUCdalzRp3DqNGhSDj4=
+	t=1720193797; cv=none; b=gWWvSAPdLzqiwHyItxL6u++vX84rdGrhA6XHPqIm39DeH8Zda7crPM+vInPU0AYctYvLpSRo6QbOUbVzvqbqdjQvtp8nIDa0lkfLSnwxaIDPRSLmrbnQgjYhj9gubEGkRtiNSzocJyhJ3SFIeJSRI+SZlUrq5X7YVK44x/Ndp7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720193738; c=relaxed/simple;
-	bh=sMQ1un7wRnduIdXmdxXJBYlSB5U5KZzM85nm28qm3O4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3xmDGj3uYRZA8uwhXFiVzlmIK1CrpRWoNyBUleyTgnsUIvRSqQFnS7dBVa1ezoiRTDGYUzaS9w7c0CW2XvoMhpVljwQyhagPJRhTpTtm6xaGFGkuuqPAl9sDcz28bSGwd1BmW3iYBTsW+6651M0oRmuWmQ95ciBFFaui80gxyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=lf29z5tZ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-424a3d36c28so1961075e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 08:35:36 -0700 (PDT)
+	s=arc-20240116; t=1720193797; c=relaxed/simple;
+	bh=XPU2WmfxmFUnsnFSplKybijzyaIcRBm62uzXwf5sY38=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAZUTGuPJBQoA7fq6NDlHVFWbaonquoDf1kyUnciXNC/YNDbNZYBuy7Tv1EWqZ1oK9cl6Y5zCawl6cRlr8yfPCulogPotG0MBwLJEpKArU9W6Wa1BqMuszhvp9wbl1H614eWu8GYLwlZtrII0q/Dlc5v29jlpKP4SepClyXsPSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZXTplHGj; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ea7bdde68so717359e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 08:36:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1720193735; x=1720798535; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YKIOErnN4ZSBK93fEaGuNPtZhO0OBRfZiH5pNgGd0zQ=;
-        b=lf29z5tZyj6esZh8whoSm5U/7EFRbQ+2HcjwSYebg4bFd9gIN8mZoPX2UF7C1aWh0g
-         Vs0PDuIbCjYmegX51Q0eer5hUsZMb8ROsn62PRNlTsZIJlKMMRHxmj5TsNuTIk31Ra/C
-         nZrtMUiqXGKHXllF7hmVXhqtT4A4QJL64Ju4c=
+        d=gmail.com; s=20230601; t=1720193794; x=1720798594; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QIZP3joz7yWrDjusAFwphux3IuUyMO032ZfYF3VwyQw=;
+        b=ZXTplHGjANQjcyuqRzg2UJ++rauyFb2VvxaK3J+VEePneQufaX1hQwLZCL8pjJO9kl
+         1DgPmhBzxKafejfCzi4K3nQrdrqPe1YDcY6maCiYJdEYON5uIzctL5yRKRaoi25QUtbt
+         hC4rN5mi+zI5Tx7czDRhhn0jgb4c3k20gd2KmiOC4v0QHuHO7Q+a4/d+jJaF2PAxMqsF
+         luwxnBkuNHjiZd1M1hRDCXi72qK6V4hT5JoxIJHa06cDfti8XGHik278BkmntxmUQ8JG
+         9hvSStsg7k7agdjacPg3WpTDaEiIziEUUNSpZyh3MdpkAkY8o/9t1e8MnCisTj/EE4z6
+         rEBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720193735; x=1720798535;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YKIOErnN4ZSBK93fEaGuNPtZhO0OBRfZiH5pNgGd0zQ=;
-        b=ic+lFNRQiCuhsU8ig3ckIg1YlceqwHTpRBULJk+5DWhyVkeJqEAc3EO4gab0GcfZqj
-         Ab/F0NwiDzbJo5OZxvqzIkGbFhncdcx43D8oKUyJtJfpkFRL098IIjIgg82EDvctAxPT
-         gULUs5rLChXhhSnsZXbW5WJe1f8Sfm2sNzjzOiAyOhBH7cknTJ1RV4gKoMgpXCLycpHj
-         rRIOoH/m29PQDlfLKi5fljKxhWZjxWX4xso7yfNtHjNKZ/hPk0jww6ETL/pe5++8pg0Z
-         qBKq7pC4vd+LO7OdoiEamC6RSn+G8DtSW/Coi9m2oV8gWkJ8UM73Qu6ZgbbnXb6AIh4v
-         rbZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCqNCLMfjT4hpowUxmAHuUJjQmVwPUhADQYYUReo3MGw0dFu4ePDvWOZtdMYtSt18B18sUoBGub5/99S12ZADd/a0dx9cDXvEgMmbl
-X-Gm-Message-State: AOJu0Yzaj8V3MZgQxVVVBPSLG1Vd/eq0YeK9lvInMVJWD6y0gwB4qRbE
-	/kyyl9uc3yynWPLy8+fvWnupWEid9yuQRHIDki8DjUCY8/7XS0tHX1rh6hwRuHs=
-X-Google-Smtp-Source: AGHT+IGsJ1mkZ0D80/UjIJ9jqd/HQtwk88TIn27ewYuZuyXXRnv9JvlWXptYv3VuFI8J6TfR4dnNdg==
-X-Received: by 2002:a05:600c:1c9f:b0:425:7ac6:96f7 with SMTP id 5b1f17b1804b1-4264a35297dmr36017775e9.0.1720193735231;
-        Fri, 05 Jul 2024 08:35:35 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca492sm67724735e9.34.2024.07.05.08.35.34
+        d=1e100.net; s=20230601; t=1720193794; x=1720798594;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QIZP3joz7yWrDjusAFwphux3IuUyMO032ZfYF3VwyQw=;
+        b=Gy6AMJhLs0nKfqgT6tWXKVVjMgBo9m7k5dkzLKxrNFexoP2UBH0qtFPG9+ub86UZip
+         g/XG6El7hW/7BopTQwCWCXvOhF5xE2QrojD7tkUAeTNqjJsRxtOCyFZ5HTi5h3pdwpiA
+         P9FflvaL5051WDPTqDY0AElyGuG4nu4sPxlxO5DmkJ3GTTQlnWRfDSMpGx83ohqRGnQ5
+         qk3BLE/4H8sUK0NgOE4HDZtskCUQnKeGOV3uVYSHaGMB6+2y3by9/6wA2gJTAUPTPRNO
+         CIn16Fsqg7jasGx37ie5WgyMPn6/pmOQhFenTG8FpjRQ6Sck44nli1UnabAU1HLfV7mf
+         Jyrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQj/WN2AROjW7+cY1yzGQOJR3qs3jGH9g/VuW7Zyd7D9MNm+ST49DBSG9TlUYwktKlIZX+mkKOQ7bbmeCWEsVW+0YNesLcUS7Yl5F3
+X-Gm-Message-State: AOJu0YwsxfdR/h7+uvj2XMItqqN5R4fGbN0EJI8odoQMZXWe8bFW7gxj
+	+SKmos8We/e7fQ6Wg8OpllO94j7hlGxA0fqeAUQA8VL9pPkme3UO
+X-Google-Smtp-Source: AGHT+IFvc0sePQPs0XiSA4BWWPuO+g4TAgR+1Z4B4ZKB+IN0mOTsPlcAAdDOqlgZ/WAtSAfHJEMSdg==
+X-Received: by 2002:a19:5511:0:b0:52e:969c:db83 with SMTP id 2adb3069b0e04-52ea0629f3amr3357579e87.17.1720193793675;
+        Fri, 05 Jul 2024 08:36:33 -0700 (PDT)
+Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ea1b0bf6fsm524345e87.108.2024.07.05.08.36.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 08:35:34 -0700 (PDT)
-Date: Fri, 5 Jul 2024 17:35:32 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Maxime Ripard <mripard@kernel.org>, John Stultz <jstultz@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
- related-flags
-Message-ID: <ZogSxHFPt8SpOa0w@phenom.ffwll.local>
-Mail-Followup-To: Thierry Reding <thierry.reding@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	John Stultz <jstultz@google.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
- <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
- <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
- <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
- <qy7aczeu6kumv5utemoevi7omp5ryq55zmgzxh5hrz5orf2osp@wypg66awof4n>
- <20240628-resilient-resolute-rook-0fc531@houat>
- <3e37rhrcqogix5obsu2gq7jar7bcoamx4bbd376az5z3zdkwvm@jstirwdl5efm>
- <20240704-therapeutic-maroon-coucal-f61a63@houat>
- <wapv4gl2se34tq3isycb7bui5xi3x6kxjqtyz24qhjipnkbuqu@sv4w2crksuq5>
+        Fri, 05 Jul 2024 08:36:33 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 5 Jul 2024 17:36:31 +0200
+To: Adrian Huang <adrianhuang0701@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Adrian Huang <ahuang12@lenovo.com>,
+	Jiwei Sun <sunjw10@lenovo.com>
+Subject: Re: [PATCH 1/1] mm/vmalloc: Add preempt point in purge_vmap_node()
+ when enabling kasan
+Message-ID: <ZogS_04dP5LlRlXN@pc636>
+References: <20240705130808.1581-1-ahuang12@lenovo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <wapv4gl2se34tq3isycb7bui5xi3x6kxjqtyz24qhjipnkbuqu@sv4w2crksuq5>
-X-Operating-System: Linux phenom 6.9.7-amd64 
+In-Reply-To: <20240705130808.1581-1-ahuang12@lenovo.com>
 
-Just figured I'll jump in on one detail here.
+On Fri, Jul 05, 2024 at 09:08:08PM +0800, Adrian Huang wrote:
+> From: Adrian Huang <ahuang12@lenovo.com>
+> 
+> When compiling kernel source 'make -j $(nproc)' with the up-and-running
+> KASAN-enabled kernel on a 256-core machine, the following soft lockup
+> is shown:
+> 
+> watchdog: BUG: soft lockup - CPU#28 stuck for 22s! [kworker/28:1:1760]
+> CPU: 28 PID: 1760 Comm: kworker/28:1 Kdump: loaded Not tainted 6.10.0-rc5 #95
+> Workqueue: events drain_vmap_area_work
+> RIP: 0010:smp_call_function_many_cond+0x1d8/0xbb0
+> Code: 38 c8 7c 08 84 c9 0f 85 49 08 00 00 8b 45 08 a8 01 74 2e 48 89 f1 49 89 f7 48 c1 e9 03 41 83 e7 07 4c 01 e9 41 83 c7 03 f3 90 <0f> b6 01 41 38 c7 7c 08 84 c0 0f 85 d4 06 00 00 8b 45 08 a8 01 75
+> RSP: 0018:ffffc9000cb3fb60 EFLAGS: 00000202
+> RAX: 0000000000000011 RBX: ffff8883bc4469c0 RCX: ffffed10776e9949
+> RDX: 0000000000000002 RSI: ffff8883bb74ca48 RDI: ffffffff8434dc50
+> RBP: ffff8883bb74ca40 R08: ffff888103585dc0 R09: ffff8884533a1800
+> R10: 0000000000000004 R11: ffffffffffffffff R12: ffffed1077888d39
+> R13: dffffc0000000000 R14: ffffed1077888d38 R15: 0000000000000003
+> FS:  0000000000000000(0000) GS:ffff8883bc400000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00005577b5c8d158 CR3: 0000000004850000 CR4: 0000000000350ef0
+> Call Trace:
+>  <IRQ>
+>  ? watchdog_timer_fn+0x2cd/0x390
+>  ? __pfx_watchdog_timer_fn+0x10/0x10
+>  ? __hrtimer_run_queues+0x300/0x6d0
+>  ? sched_clock_cpu+0x69/0x4e0
+>  ? __pfx___hrtimer_run_queues+0x10/0x10
+>  ? srso_return_thunk+0x5/0x5f
+>  ? ktime_get_update_offsets_now+0x7f/0x2a0
+>  ? srso_return_thunk+0x5/0x5f
+>  ? srso_return_thunk+0x5/0x5f
+>  ? hrtimer_interrupt+0x2ca/0x760
+>  ? __sysvec_apic_timer_interrupt+0x8c/0x2b0
+>  ? sysvec_apic_timer_interrupt+0x6a/0x90
+>  </IRQ>
+>  <TASK>
+>  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+>  ? smp_call_function_many_cond+0x1d8/0xbb0
+>  ? __pfx_do_kernel_range_flush+0x10/0x10
+>  on_each_cpu_cond_mask+0x20/0x40
+>  flush_tlb_kernel_range+0x19b/0x250
+>  ? srso_return_thunk+0x5/0x5f
+>  ? kasan_release_vmalloc+0xa7/0xc0
+>  purge_vmap_node+0x357/0x820
+>  ? __pfx_purge_vmap_node+0x10/0x10
+>  __purge_vmap_area_lazy+0x5b8/0xa10
+>  drain_vmap_area_work+0x21/0x30
+>  process_one_work+0x661/0x10b0
+>  worker_thread+0x844/0x10e0
+>  ? srso_return_thunk+0x5/0x5f
+>  ? __kthread_parkme+0x82/0x140
+>  ? __pfx_worker_thread+0x10/0x10
+>  kthread+0x2a5/0x370
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork+0x30/0x70
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
+> 
+> Debugging Analysis:
+>  1. [Crash] The call trace indicates CPU #28 is waiting for other CPUs'
+>     responses by sending an IPI message in order to flush tlb.
+>     However, crash indicates the target CPU has responded.
+> 
+>      A. CPU #28 is waiting for CPU #2' response.
+> 
+> 	crash> cfd_data | grep -w 28
+> 	  [28]: ffff8883bc4469c0
+> 	crash> struct call_function_data ffff8883bc4469c0
+> 	struct call_function_data {
+> 	  csd = 0x4ca40,
+> 	  cpumask = 0xffff888103585e40,
+> 	  cpumask_ipi = 0xffff8881035858c0
+> 	}
+> 
+>         crash> struct __call_single_data 0x4ca40:a | grep ffff8883bb74ca40
+>         [2]: ffff8883bb74ca40
+> 
+>      B. CPU #2 has responded because the bit 'CSD_FLAG_LOCK' of u_flags
+>         is cleared.
+> 
+>         crash> struct __call_single_data 0xffff8883bb74ca40
+>         struct __call_single_data {
+>           node = {
+>             ...
+>             {
+>               u_flags = 0,
+>               a_flags = {
+>                 counter = 0
+>               }
+>             },
+> 	    ...
+>           },
+>           func = 0xffffffff8117b080 <do_kernel_range_flush>,
+>           info = 0xffff8883bc444940
+>         }
+> 
+>      C. CPU #2 is running userspace application 'nm'.
+> 
+>         crash> bt -c 2
+> 	PID: 52035  TASK: ffff888194c21ac0  CPU: 2   COMMAND: "nm"
+>  	#0 [ffffc90043157ea8] crash_nmi_callback at ffffffff81122f42
+>  	#1 [ffffc90043157eb0] nmi_handle at ffffffff8108c988
+> 	#2 [ffffc90043157f10] default_do_nmi at ffffffff835b3460
+>  	#3 [ffffc90043157f30] exc_nmi at ffffffff835b3630
+>  	#4 [ffffc90043157f50] asm_exc_nmi at ffffffff83601573
+>         RIP: 00007f6261b90d38 RSP: 00007ffe4d1cb180 RFLAGS: 00000202
+>         RAX: 0000000000000001 RBX: 6e6f2d7865646e69 RCX: 00007f626281f634
+>         RDX: 00007f6262ba7f67 RSI: 00007f626265f65e RDI: 00007f62648f8a30
+>         RBP: 2d6f746c6e696874  R8: 00007f62618a4cc0  R9: 0000000000000001
+>         R10: 00007f627233e488 R11: 00007f627233d768 R12: 000055bee0ff4b90
+>         R13: 000055bee0fac650 R14: 00007ffe4d1cb280 R15: 0000000000000000
+>         ORIG_RAX: ffffffffffffffff  CS: 0033  SS: 002b
+> 
+>      D. The soft lockup CPU iteratively traverses 128 vmap_nodes (128 bits
+> 	are set) and flushes tlb. This might be the time-consuming work.
+> 
+> 	crash> p /x purge_nodes
+> 	$1 = {
+> 	  bits = {0xffffffffffffffff, 0xffffffffffffffff, 0x0, ...}
+> 
+>  2. [Ftrace] In order to prove that the soft lockup CPU spends too much
+>     time iterating vmap_nodes and flushing tlb when purging vm_area
+>     structures, the ftrace confirms the speculation (Some info is trimmed).
+> 
+>      kworker: funcgraph_entry:		    |  drain_vmap_area_work() {
+>      kworker: funcgraph_entry:              |   mutex_lock() {
+>      kworker: funcgraph_entry:  1.092 us    |     __cond_resched();
+>      kworker: funcgraph_exit:   3.306 us    |   }
+>      ...				        ...
+>      kworker: funcgraph_entry: 		    |    flush_tlb_kernel_range() {
+>      ...				 	  ...
+>      kworker: funcgraph_exit: # 7533.649 us |    }
+>      ...                                         ...
+>      kworker: funcgraph_entry:  2.344 us    |   mutex_unlock();
+>      kworker: funcgraph_exit: $ 23871554 us | }
+> 
+>      The drain_vmap_area_work() spends over 23 seconds.
+> 
+>      There are 2805 flush_tlb_kernel_range() calls in this ftrace log.
+>        * One is called in __purge_vmap_area_lazy().
+>        * Others are called in kasan_release_vmalloc().
+> 
+>  3. Extending the soft lockup time can work around the issue (For example,
+>     # echo 60 > /proc/sys/kernel/watchdog_thresh). This confirms the
+>     above-mentioned speculation: drain_vmap_area_work() spends too much
+>     time.
+> 
+> Commit 72210662c5a2 ("mm: vmalloc: offload free_vmap_area_lock lock")
+> employs an effective vmap node logic. However, current design iterates
+> 128 vmap_nodes and flushes tlb by a single CPU if
+> vmap_lazy_nr < 2 * lazy_max_pages(). When enabling kasan, this might
+> trigger the soft lockup because additional tlb flushes of kasan vmalloc
+> spend much more time if 128 vmap nodes have the available purge list.
+> 
+> Fix the issue by adding preempt point in purge_vmap_node() when
+> enabling kasan.
+> 
+> Fixes: 72210662c5a2 ("mm: vmalloc: offload free_vmap_area_lock lock")
+> Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+> Reviewed-and-tested-by: Jiwei Sun <sunjw10@lenovo.com>
+> ---
+>  mm/vmalloc.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index d0cbdd7c1e5b..380bdc317c8d 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2193,6 +2193,15 @@ static void purge_vmap_node(struct work_struct *work)
+>  	struct vmap_area *va, *n_va;
+>  	LIST_HEAD(local_list);
+>  
+> +	/*
+> +	 * Add the preemption point when enabling KASAN. Each vmap_area of
+> +	 * vmap nodes has to flush tlb when releasing vmalloc, which might
+> +	 * be the time-consuming work if lots of vamp nodes have the
+> +	 * available purge list.
+> +	 */
+> +	if (kasan_enabled())
+> +		cond_resched();
+> +
+>  	vn->nr_purged = 0;
+>  
+>  	list_for_each_entry_safe(va, n_va, &vn->purge_list, list) {
+> -- 
+> 2.34.1
+> 
+Thank you for highlighting this. We had a preempt point during purging
+process. But it has been removed by the following commit:
 
-On Fri, Jul 05, 2024 at 04:31:34PM +0200, Thierry Reding wrote:
-> On Thu, Jul 04, 2024 at 02:24:49PM GMT, Maxime Ripard wrote:
-> > On Fri, Jun 28, 2024 at 04:42:35PM GMT, Thierry Reding wrote:
-> > > On Fri, Jun 28, 2024 at 03:08:46PM GMT, Maxime Ripard wrote:
-> > > > Hi,
-> > > > 
-> > > > On Fri, Jun 28, 2024 at 01:29:17PM GMT, Thierry Reding wrote:
-> > > > > On Tue, May 21, 2024 at 02:06:19PM GMT, Daniel Vetter wrote:
-> > > > > > On Thu, May 16, 2024 at 09:51:35AM -0700, John Stultz wrote:
-> > > > > > > On Thu, May 16, 2024 at 3:56 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > > > > > > > On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> > > > > > > > > But it makes me a little nervous to add a new generic allocation flag
-> > > > > > > > > for a feature most hardware doesn't support (yet, at least). So it's
-> > > > > > > > > hard to weigh how common the actual usage will be across all the
-> > > > > > > > > heaps.
-> > > > > > > > >
-> > > > > > > > > I apologize as my worry is mostly born out of seeing vendors really
-> > > > > > > > > push opaque feature flags in their old ion heaps, so in providing a
-> > > > > > > > > flags argument, it was mostly intended as an escape hatch for
-> > > > > > > > > obviously common attributes. So having the first be something that
-> > > > > > > > > seems reasonable, but isn't actually that common makes me fret some.
-> > > > > > > > >
-> > > > > > > > > So again, not an objection, just something for folks to stew on to
-> > > > > > > > > make sure this is really the right approach.
-> > > > > > > >
-> > > > > > > > Another good reason to go with full heap names instead of opaque flags on
-> > > > > > > > existing heaps is that with the former we can use symlinks in sysfs to
-> > > > > > > > specify heaps, with the latter we need a new idea. We haven't yet gotten
-> > > > > > > > around to implement this anywhere, but it's been in the dma-buf/heap todo
-> > > > > > > > since forever, and I like it as a design approach. So would be a good idea
-> > > > > > > > to not toss it. With that display would have symlinks to cma-ecc and cma,
-> > > > > > > > and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for a
-> > > > > > > > SoC where the display needs contig memory for scanout.
-> > > > > > > 
-> > > > > > > So indeed that is a good point to keep in mind, but I also think it
-> > > > > > > might re-inforce the choice of having ECC as a flag here.
-> > > > > > > 
-> > > > > > > Since my understanding of the sysfs symlinks to heaps idea is about
-> > > > > > > being able to figure out a common heap from a collection of devices,
-> > > > > > > it's really about the ability for the driver to access the type of
-> > > > > > > memory. If ECC is just an attribute of the type of memory (as in this
-> > > > > > > patch series), it being on or off won't necessarily affect
-> > > > > > > compatibility of the buffer with the device.  Similarly "uncached"
-> > > > > > > seems more of an attribute of memory type and not a type itself.
-> > > > > > > Hardware that can access non-contiguous "system" buffers can access
-> > > > > > > uncached system buffers.
-> > > > > > 
-> > > > > > Yeah, but in graphics there's a wide band where "shit performance" is
-> > > > > > defacto "not useable (as intended at least)".
-> > > > > > 
-> > > > > > So if we limit the symlink idea to just making sure zero-copy access is
-> > > > > > possible, then we might not actually solve the real world problem we need
-> > > > > > to solve. And so the symlinks become somewhat useless, and we need to
-> > > > > > somewhere encode which flags you need to use with each symlink.
-> > > > > > 
-> > > > > > But I also see the argument that there's a bit a combinatorial explosion
-> > > > > > possible. So I guess the question is where we want to handle it ...
-> > > > > 
-> > > > > Sorry for jumping into this discussion so late. But are we really
-> > > > > concerned about this combinatorial explosion in practice? It may be
-> > > > > theoretically possible to create any combination of these, but do we
-> > > > > expect more than a couple of heaps to exist in any given system?
-> > > > 
-> > > > I don't worry too much about the number of heaps available in a given
-> > > > system, it would indeed be fairly low.
-> > > > 
-> > > > My concern is about the semantics combinatorial explosion. So far, the
-> > > > name has carried what semantics we were supposed to get from the buffer
-> > > > we allocate from that heap.
-> > > > 
-> > > > The more variations and concepts we'll have, the more heap names we'll
-> > > > need, and with confusing names since we wouldn't be able to change the
-> > > > names of the heaps we already have.
-> > > 
-> > > What I was trying to say is that none of this matters if we make these
-> > > names opaque. If these names are contextual for the given system it
-> > > doesn't matter what the exact capabilities are. It only matters that
-> > > their purpose is known and that's what applications will be interested
-> > > in.
-> > 
-> > If the names are opaque, and we don't publish what the exact
-> > capabilities are, how can an application figure out which heap to use in
-> > the first place?
-> 
-> This would need to be based on conventions. The idea is to standardize
-> on a set of names for specific, well-known use-cases.
-> 
-> > > > > Would it perhaps make more sense to let a platform override the heap
-> > > > > name to make it more easily identifiable? Maybe this is a naive
-> > > > > assumption, but aren't userspace applications and drivers not primarily
-> > > > > interested in the "type" of heap rather than whatever specific flags
-> > > > > have been set for it?
-> > > > 
-> > > > I guess it depends on what you call the type of a heap. Where we
-> > > > allocate the memory from, sure, an application won't care about that.
-> > > > How the buffer behaves on the other end is definitely something
-> > > > applications are going to be interested in though.
-> > > 
-> > > Most of these heaps will be very specific, I would assume.
-> > 
-> > We don't have any specific heap upstream at the moment, only generic
-> > ones.
-> 
-> But we're trying to add more specific ones, right?
-> 
-> > > For example a heap that is meant to be protected for protected video
-> > > decoding is both going to be created in such a way as to allow that
-> > > use-case (i.e. it doesn't make sense for it to be uncached, for
-> > > example) and it's also not going to be useful for any other use-case
-> > > (i.e. there's no reason to use that heap for GPU jobs or networking,
-> > > or whatever).
-> > 
-> > Right. But also, libcamera has started to use dma-heaps to allocate
-> > dma-capable buffers and do software processing on it before sending it
-> > to some hardware controller.
-> > 
-> > Caches are critical here, and getting a non-cacheable buffer would be
-> > a clear regression.
-> 
-> I understand that. My point is that maybe we shouldn't try to design a
-> complex mechanism that allows full discoverability of everything that a
-> heap supports or is capable of. Instead if the camera has specific
-> requirements, it could look for a heap named "camera". Or if it can
-> share a heap with other multimedia devices, maybe call the heap
-> "multimedia".
-> 
-> The idea is that heaps for these use-cases are quite specific, so you
-> would likely not find an arbitrary number of processes try to use the
-> same heap.
+<snip>
+commit 282631cb2447318e2a55b41a665dbe8571c46d70
+Author: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Date:   Tue Jan 2 19:46:28 2024 +0100
 
-Yeah the idea to sort this out was to have symlinks in sysfs from the
-device to each heap. We could then have priorities for each such link, so
-that applications can pick the "best" heap that will work with all
-devices. Or also special links for special use-cases, like for a
-display+render drm device you might want to have separate links for the
-display and the render-only use-case.
+    mm: vmalloc: remove global purge_vmap_area_root rb-tree
+<snip>
 
-I think trying to encode this all into the name of a heap without linking
-it to the device is not going to work well in general.
+and it looks like a decision was wrong. We should restore this.
+Could you please test it:
 
-We still have that entire "make sysfs symlinks work for dma-buf heaps" on
-our todos, and that idea is almost as old as dma-buf itself :-/
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+<snip>
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 03b82fb8ecd3..6dc204b8495a 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2190,10 +2190,12 @@ static void purge_vmap_node(struct work_struct *work)
+ {
+ 	struct vmap_node *vn = container_of(work,
+ 		struct vmap_node, purge_work);
++	unsigned long resched_threshold;
+ 	struct vmap_area *va, *n_va;
+ 	LIST_HEAD(local_list);
+ 
+ 	vn->nr_purged = 0;
++	resched_threshold = lazy_max_pages() << 1;
+ 
+ 	list_for_each_entry_safe(va, n_va, &vn->purge_list, list) {
+ 		unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
+@@ -2210,6 +2212,9 @@ static void purge_vmap_node(struct work_struct *work)
+ 		atomic_long_sub(nr, &vmap_lazy_nr);
+ 		vn->nr_purged++;
+ 
++		if (atomic_long_read(&vmap_lazy_nr) < resched_threshold)
++			cond_resched();
++
+ 		if (is_vn_id_valid(vn_id) && !vn->skip_populate)
+ 			if (node_pool_add_va(vn, va))
+ 				continue;
+<snip>
+
+Thank you in advance!
+
+--
+Uladzislau Rezki
 
