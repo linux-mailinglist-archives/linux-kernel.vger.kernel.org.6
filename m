@@ -1,193 +1,149 @@
-Return-Path: <linux-kernel+bounces-242308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEE9928685
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:16:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FB89286A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95392874A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:16:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56FEAB27098
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8B513D276;
-	Fri,  5 Jul 2024 10:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8125E14D456;
+	Fri,  5 Jul 2024 10:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZLTGy9v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="hqHyXTfG"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1764E143C48
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 10:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CD214BFA3;
+	Fri,  5 Jul 2024 10:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720174581; cv=none; b=gKoGGtR5qvXp+dnIxA3Dl56nbISh7gJOJ/pVNpvKmtrVrlo677pfaOidpFB2zds2ahatD5Fyal3/lFPUxufqNIc0Zrnl7eCrtaeLucX71CWSa86/R0eHhogqzqH2RUK91YJRgzPir0WeMKys7uG2LYA74AU49xhGdxcRu2i7TRk=
+	t=1720174651; cv=none; b=MKpjHnrTDphMrCgeb8bUrMr69zJNhxic+0gGGXROMayuHG1PY20xN+GyYecQ6rjNSW1nAszFmGKFPUOGv9JTMNH/aOS0YwwP0Rhv5q5Ze4j6EeYK4+0eyQOE44a9ItwfK40QKHYeLdacdU+obVjw7oHixk+PL3q6X2MkI7YgOsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720174581; c=relaxed/simple;
-	bh=jHGNOsJS2+MlOkpIWkssmyx7/+mHWakhaoPwGNhk2f8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TaesGCzMndMI50aGkpoJ/RqF5ZBE4nBmtq/9zA4Pe6otnLT/aHGeeK6LPWVRQNP9vnhDf1MyZuAEfgBQdCJ0iqbrqSPUAvXmh5FtS8ZTbjyx8UTGyUkJv3+FxcYsGa1BjonYTNBX0p1l/VRK+HerpS9zMiILfvGuaEN5K3rYzKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZZLTGy9v; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720174578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8HhAj3uN2f5wqUuSvzkEv2Tp8Mprq+INTWt2qsAJxvw=;
-	b=ZZLTGy9vRnkdox7l7gTc9xg9GLs2/2eeYlysF2w9U0jXPMzF9BlWyzjuW/GfSzTqAGhHYh
-	tUGm97CwXpXoOThl9xyUWGqUiLnK900TVPC0jcxMW87lfBYWz7nXKXyaLkAQTd+K+T5210
-	SxljGtAgrI/aL7dtbkpZD2fO4u8LzTE=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-ZkSTwFKaNQSImpffkgHFCQ-1; Fri, 05 Jul 2024 06:16:17 -0400
-X-MC-Unique: ZkSTwFKaNQSImpffkgHFCQ-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52ea3c7dfdcso969063e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 03:16:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720174576; x=1720779376;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8HhAj3uN2f5wqUuSvzkEv2Tp8Mprq+INTWt2qsAJxvw=;
-        b=W6H/IQW29V+drbKxcz+GJQiWleebhcPJzdeWQZvgECs8863eXnxwaeyJWEfkSRiiy/
-         YWd+rvRk6u0E9voidDIcJl37pqFIxDDBx5X2SML69pubtblfkCQ79LTjIM4tA4uUJVF8
-         Zw29f5I+Ie+fcKZYyFchXCpJLqV5GMWhXN7sM1oMR02X94oa6MEfeKuBXsAKQH9djakB
-         hhgjnbX9pQswejodBDI4/mHWgd+Cc0O4vPUoBZawhRqqCIGoY31msqsSJEpX5lX5Li/m
-         q5fxF/uD3SzyFjiZzo82XjDXzHBhKQ0+tdamJxKLeBWdHKtD7YsIaXOFg6NILLcBBrLh
-         OMnA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+zMvaPc+X+KHJQNIwJcbEI8ckQike25iH7ZP5Qvie5aJk5QQUTQbPlYHC/RGTEZixacTtha3b4eG6HaZYaZLBgXSWEoa37OhRmx3Y
-X-Gm-Message-State: AOJu0YzKm2YGhhNiV/ToRQaesr0pro19tuMu5y7rGemv+4iB4sH1RFoM
-	RyR3S9GwJeOIMzFuQMdAIJ+ue3gAB087oL0zdw11/qB1b0NthoLcjwNbIOUMokggaQ5BdySnE7S
-	i/7AmXSC8Q2l/yjyIprsuQQJDWtfuXAsBFjgkIDRhC3KqgBDt0IaLXiSUq4Y5xQ==
-X-Received: by 2002:a05:6512:312a:b0:52c:ccb4:ec70 with SMTP id 2adb3069b0e04-52ea0632f20mr2856205e87.22.1720174575955;
-        Fri, 05 Jul 2024 03:16:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHr7D2FteQNEou0Sxfgna0BKaIEgBVar9F6VuRTAz61Bz68giJVx7Ma1fkOVReOmjhWHDaGqQ==
-X-Received: by 2002:a05:6512:312a:b0:52c:ccb4:ec70 with SMTP id 2adb3069b0e04-52ea0632f20mr2856185e87.22.1720174575493;
-        Fri, 05 Jul 2024 03:16:15 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c702:b500:3ed7:a1c7:447e:2279? (p200300cbc702b5003ed7a1c7447e2279.dip0.t-ipconnect.de. [2003:cb:c702:b500:3ed7:a1c7:447e:2279])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a0593e2asm3250680f8f.15.2024.07.05.03.16.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 03:16:15 -0700 (PDT)
-Message-ID: <1f10c189-73c3-45fd-b249-88884f3dc3a9@redhat.com>
-Date: Fri, 5 Jul 2024 12:16:14 +0200
+	s=arc-20240116; t=1720174651; c=relaxed/simple;
+	bh=yL8vbqpGaVdZ/q5htkingKWyLGSn43s+zG39Y7iYPV0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kJYm9COz8Vbp40LLM2g36Lyzi0JUadvQlFuNs8wXMKxGj4X1dMB47IITzdQb02OACmDAqNfZVr2tnQe/NC1Z0Oe+jRLh7xfJIxUAiULtMZgoEp2T78cizjSzN+wrMTGZU1e7O9obRTg1Q20yf6lAZ+JXIZV+yVDvOzUgG30cVBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=hqHyXTfG; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4659PDmF029505;
+	Fri, 5 Jul 2024 03:17:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=smTo6/e27jptEQSXRKsjOwtTW
+	LMEQkV9BJ0+ska/ZQc=; b=hqHyXTfGqIOpYuDhLZ80zCY8xEv3wauNvmtA2xUqt
+	AanrM3/hnVUUuUcTMhZ0SjpgSuX2toMnDnRNSgxy+jL+FR4EzYqveC6VVZY1fEJu
+	awK9cja/Hcy84R/9xMYK5oiL6L2AAB06Y130/4ATx/7UqpycNcmVTi+GmjMtyIx7
+	Zetd77aSSKfj4uXwlQy0qbUqbF7nzMID3GQzMkT3xIufJEeHYsVMmcatX1qxo68s
+	snDm3bxpeYotZ7u7quQJb45SpkGVqnT591sDayTxW+UpedjAuXhlWtFWctqQjCvn
+	v/ZiU75hVCshmS4zuMl0og00khB5R8OEJD9jtH66FOvxw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 406e6c04vu-4
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 03:17:17 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 5 Jul 2024 03:16:51 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 5 Jul 2024 03:16:51 -0700
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id CEFE63F7040;
+	Fri,  5 Jul 2024 03:16:47 -0700 (PDT)
+From: Geetha sowjanya <gakula@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
+        <sbhatta@marvell.com>, <hkelam@marvell.com>
+Subject: [net-next PATCH v8 08/11] octeontx2-pf: Configure VF mtu via representor
+Date: Fri, 5 Jul 2024 15:46:15 +0530
+Message-ID: <20240705101618.18415-9-gakula@marvell.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240705101618.18415-1-gakula@marvell.com>
+References: <20240705101618.18415-1-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] mm/memblock: introduce a new helper
- memblock_estimated_nr_pages()
-To: Mike Rapoport <rppt@kernel.org>, Wei Yang <richard.weiyang@gmail.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, oleg@redhat.com,
- mjguzik@gmail.com, tandersen@netflix.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240703005151.28712-1-richard.weiyang@gmail.com>
- <Zoe4XN-gKJnjJtzi@kernel.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zoe4XN-gKJnjJtzi@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 7FRWFL0wCkd45fUxVln9qxs2D_P9ocdY
+X-Proofpoint-ORIG-GUID: 7FRWFL0wCkd45fUxVln9qxs2D_P9ocdY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_06,2024-07-03_01,2024-05-17_01
 
-On 05.07.24 11:09, Mike Rapoport wrote:
-> On Wed, Jul 03, 2024 at 12:51:49AM +0000, Wei Yang wrote:
->> Instead of using raw memblock api, we wrap a new helper for user.
-> 
-> The changelog should be more elaborate and explain why this function is
-> needed.
->   
->> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
->> ---
->>   include/linux/memblock.h |  1 +
->>   mm/memblock.c            | 19 +++++++++++++++++++
->>   2 files changed, 20 insertions(+)
->>
->> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
->> index 40c62aca36ec..7d1c32b3dc12 100644
->> --- a/include/linux/memblock.h
->> +++ b/include/linux/memblock.h
->> @@ -486,6 +486,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
->>   
->>   phys_addr_t memblock_phys_mem_size(void);
->>   phys_addr_t memblock_reserved_size(void);
->> +unsigned long memblock_estimated_nr_pages(void);
->>   phys_addr_t memblock_start_of_DRAM(void);
->>   phys_addr_t memblock_end_of_DRAM(void);
->>   void memblock_enforce_memory_limit(phys_addr_t memory_limit);
->> diff --git a/mm/memblock.c b/mm/memblock.c
->> index e81fb68f7f88..c1f1aac0459f 100644
->> --- a/mm/memblock.c
->> +++ b/mm/memblock.c
->> @@ -1729,6 +1729,25 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
->>   	return memblock.reserved.total_size;
->>   }
->>   
->> +/**
->> + * memblock_estimated_nr_pages - return number of pages from memblock point of
->> + * view
-> 
-> This function returns the estimate for free pages, not the number of pages
-> in RAM.
-> 
-> How about memblock_estimated_nr_free_pages()?
+Adds support to manage the mtu configuration for VF through representor.
+On update of representor mtu a mbox notification is send
+to VF to update its mtu.
 
-I was just about to comment exactly that. Agreed!
+Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
+Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
+---
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c    |  5 +++++
+ .../net/ethernet/marvell/octeontx2/nic/rep.c    | 17 +++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+index cdd1f1321318..955ea941a53b 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+@@ -854,6 +854,11 @@ static int otx2_mbox_up_handler_rep_event_up_notify(struct otx2_nic *pf,
+ {
+ 	struct net_device *netdev = pf->netdev;
+ 
++	if (info->event == RVU_EVENT_MTU_CHANGE) {
++		netdev->mtu = info->evt_data.mtu;
++		return 0;
++	}
++
+ 	if (info->event == RVU_EVENT_PORT_STATE) {
+ 		if (info->evt_data.port_state) {
+ 			pf->flags |= OTX2_FLAG_PORT_UP;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+index aedcff57d96f..c37cbf440235 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+@@ -79,6 +79,22 @@ int rvu_event_up_notify(struct otx2_nic *pf, struct rep_event *info)
+ 	return 0;
+ }
+ 
++static int rvu_rep_change_mtu(struct net_device *dev, int new_mtu)
++{
++	struct rep_dev *rep = netdev_priv(dev);
++	struct otx2_nic *priv = rep->mdev;
++	struct rep_event evt = {0};
++
++	netdev_info(dev, "Changing MTU from %d to %d\n",
++		    dev->mtu, new_mtu);
++	dev->mtu = new_mtu;
++
++	evt.evt_data.mtu = new_mtu;
++	evt.pcifunc = rep->pcifunc;
++	rvu_rep_notify_pfvf(priv, RVU_EVENT_MTU_CHANGE, &evt);
++	return 0;
++}
++
+ static void rvu_rep_get_stats(struct work_struct *work)
+ {
+ 	struct delayed_work *del_work = to_delayed_work(work);
+@@ -226,6 +242,7 @@ static const struct net_device_ops rvu_rep_netdev_ops = {
+ 	.ndo_stop		= rvu_rep_stop,
+ 	.ndo_start_xmit		= rvu_rep_xmit,
+ 	.ndo_get_stats64	= rvu_rep_get_stats64,
++	.ndo_change_mtu		= rvu_rep_change_mtu,
+ };
+ 
+ static int rvu_rep_napi_init(struct otx2_nic *priv,
 -- 
-Cheers,
-
-David / dhildenb
+2.25.1
 
 
