@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-242060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBA4928324
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:51:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE2D928325
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550CA285A7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744A01F24887
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E08148848;
-	Fri,  5 Jul 2024 07:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7D7145A00;
+	Fri,  5 Jul 2024 07:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P+pXy+Pm"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYGVjNWf"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84E91487C6
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174351487F7
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720165764; cv=none; b=NxXq0ockqRqAj2zed6hDht4NSSA4r+F488oH+YbP1ah1ARdFNZBSA4BIFzn4EcQXE8yJT3E57O8y1qIkOBLPA6HnpcGUtQCx9wXSH7u1/E/Utt/0Vh7nOE99eI7SgSPMBGk2QJuXumjCqXppB5THohqLKNnFFlopVtziBe6iBFU=
+	t=1720165765; cv=none; b=j9gmU6epSfu48HW7yZmTLC6a1hSCjoqPfvk7qz4B7D8y8MfzF1Bk6Tjdt+Rsk8Y6MHX/AKj7Uwv3mTkfVUc9D+p5jJjy4DRGkjHB8Otoj2gOV8+fzyXsdqWqY+37IqepbKvSPSBHstHBZxdgCxYR0VT62D8IAknTEobUoV1AgRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720165764; c=relaxed/simple;
-	bh=ovbfKmCLQ8tQJku7TqJaIpcegQLVJ/qlt6pe+CLD2LA=;
+	s=arc-20240116; t=1720165765; c=relaxed/simple;
+	bh=aGU0i+e8LTqfCA2uX3KKKSQbgfrowWpA0IV+8zTsXwI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jMDoQIkDvYkoWxyKL74UKjfP50B89Ix9E9P4pchbtTfZRLOnnlSd4aP5BxPg/XvqCAbeHpa9cq+gRkTKWJ6JwN4nMcD4WU65DQl/yGmJnRqWMuoy05F8E6qu8XLl9K3+UeCX97j5wIr4STwU3wGmHvizWxxTtIWS5hMGluk6KWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P+pXy+Pm; arc=none smtp.client-ip=209.85.167.47
+	 MIME-Version; b=P510vfqMk3ISOkfo5rgwJfI73WqMnMtjDi5ENxubgdRPWUer+xUHhSXzyGBufYbVp42gXnXFSXW0gF7m4fw5L1jbyEIGje3Y+cGlcepFUUMt91ubWdJ/M1E1kdvz8pLUJy55K64APRpr9i+r2Q+VT1sxpTcrCAphHqIIjXkxlcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LYGVjNWf; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea79e6979so174424e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:49:22 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42565670e20so14958265e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:49:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720165761; x=1720770561; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720165762; x=1720770562; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VNhG8coS+s8cdVOrxBSzuNnMnI9yHdY2rEbzIVF31LY=;
-        b=P+pXy+PmWX1j8QFBQa7G1inEjgF7kNXCOsILXG+1WJ67/YsjCzXYxysuwaCNVzgJYu
-         Yslf0XEUO4uGdHUD7gupdZochRZ6KBb8/U0uHYnDknaAybIPigOJQSjV2LvfvICDYO1D
-         B5bx4u4bqNsT5PLNPcTN8nH9gelywnYpGnGwaJ0P+GUXgoVDVXs7puxNJHWBp9JxKwY8
-         35Nf9ZkYXj7jCwr4uFEB3BppnGd/Hx5fYJBCun90tjVs0Cwho+LYRb+Z227CE6rJZSWr
-         xh4jOfXDKEnKn892NO6zNwJSJ/WLlXi3SvJwNAmaBznDtk1kKQepXxSd7DdqXeZXeUID
-         d4tw==
+        bh=UZ/gbUJARlOgZBmBHD5nmD6UTdrTLHcLtrsmFiCucHU=;
+        b=LYGVjNWfSjalrrdq9mI0kAYHRaGXNBmW49BALVHNS0IXvizBxrJu0rfPnYDV1Agr/V
+         Dl4dO2gTVyO5hypS/sMOtAUgpOeM4U5QrAWs9bkyc33ZmMCkzV/g4W797gAImrKUpdyD
+         96gtcyi/bf8Wq/Da7qKaOn2L6rq3bg0eA/6a78nIiS63YzkDeBZsJi0SneCbHsI0wFai
+         FbWPlEVje7rolOupc9Mr848goU2tfJlc6aaptY+Dhs8+lP/SN29bAqxafJbj+Mxs3Mo5
+         Pcptr6kq54dTgo5OZpKFVTRHYP0ZvxLZ1KutSKYcmxnNo1aKopwuryKC9tJD+IqizPeg
+         DprQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720165761; x=1720770561;
+        d=1e100.net; s=20230601; t=1720165762; x=1720770562;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VNhG8coS+s8cdVOrxBSzuNnMnI9yHdY2rEbzIVF31LY=;
-        b=AjgmDmfDTm/TCuQedly+uHJKbtRDrQXRQQ/3AMUpmEGIOeZtwLwdvUUlUrsQ9IkGLV
-         fOwoXXYg73yYNqH4dPhV3+mLVQ+L035xMk7CrKLJC1rHPifBYv86nZEQ+k6q2g8XYfAN
-         Ab1h9dTfDlA2CkJ9/Yy/c4SBUl+ux9tjM4KfXdfkkmBtUCTiqxfza+9VheCe35iAq5Ny
-         blslcHo+pFKpWInqwpHD+gnHnoiJmERrCdFAmjVyJdyUq5oz0OReR5LRukcD531iAQo3
-         4qex1nkArzO58VVchZ6GwH1FWi+kVpi7gwi7RmNTPLLaylUaiqHjZ0M0iQTHyUyOt3Ii
-         uxlQ==
-X-Gm-Message-State: AOJu0Yx5iDKJlT9g8bIlvBrubNCjHxceKdWBdkD6rxdu3iuRGHrlNXU+
-	qB737i3b7LHTe0RsODAEOr2c9Y7mAGBwsHW0NmJ/8MBS/jQkasm+Hxm8wSMimpY=
-X-Google-Smtp-Source: AGHT+IHwqdZVL9KI2H+Vpv8rZZrjKcO3PVV8F4KUSuMpkLSOzHvWHI2Y0V9JCDC+UlWviaKXjRgvZg==
-X-Received: by 2002:ac2:5a50:0:b0:52c:dbc6:8eb0 with SMTP id 2adb3069b0e04-52ea0632ac0mr2966146e87.21.1720165761167;
-        Fri, 05 Jul 2024 00:49:21 -0700 (PDT)
+        bh=UZ/gbUJARlOgZBmBHD5nmD6UTdrTLHcLtrsmFiCucHU=;
+        b=I9J+6Qm67/kUOrQkR/u0RgH33FgVGzonVsyQ1HoD0faE4ldJx/yfxR7joZu5sAXqHv
+         KZw+NEeQZ9lP4NIe7DnFCPchejPN++yDJzuB0UEsrrYqgaAUPE/06cqhIucj/0X2Y0B9
+         Lt+F2SvfMSohEQOW/p2EiZLzikZFOVii7946nW78LPwHTSDSaQ4PchdDc0jtD/qEtsQC
+         CZToK5S5BeOnFUwYXWVz2uUYVwkn0OOjNeHC5r/qrMVLDTk62eM1a6k+0Mo4YIuvtm33
+         VG7PrwKVtYt0ZY+HUQbvTFHMhZR9Llvb5JxM09raBXALBT8yFTU8bEvbf99Ru9QIbtYD
+         H7eA==
+X-Gm-Message-State: AOJu0YzGxZxp7Xat2k1kdy4MFBW6lqk1d7QicQRNfPc/A/QoRoCkPMbB
+	j+8MtFwcHNhALcJDvbYNH31AYalmnWTaMYhH7SWVyq6l2GOR3PRLSsgF9QS3D3LwIrj7ApVbWpW
+	fgpE=
+X-Google-Smtp-Source: AGHT+IEGAhv5ohzGYPfo+pCsNxpMjkhF9JPexhSmyyNt4LZC4RgrzBuHHQ1HNc781kuamE2pIivy1A==
+X-Received: by 2002:a05:6000:25c:b0:367:8f89:f7c9 with SMTP id ffacd0b85a97d-3679f739cfbmr2754860f8f.33.1720165762603;
+        Fri, 05 Jul 2024 00:49:22 -0700 (PDT)
 Received: from srini-hackbase.lan ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8ed0sm20183521f8f.28.2024.07.05.00.49.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8ed0sm20183521f8f.28.2024.07.05.00.49.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 00:49:20 -0700 (PDT)
+        Fri, 05 Jul 2024 00:49:21 -0700 (PDT)
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Marek Vasut <marex@denx.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 13/15] nvmem: Document type attribute
-Date: Fri,  5 Jul 2024 08:48:50 +0100
-Message-Id: <20240705074852.423202-14-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 14/15] nvmem: Use sysfs_emit() for type attribute
+Date: Fri,  5 Jul 2024 08:48:51 +0100
+Message-Id: <20240705074852.423202-15-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240705074852.423202-1-srinivas.kandagatla@linaro.org>
 References: <20240705074852.423202-1-srinivas.kandagatla@linaro.org>
@@ -87,36 +87,31 @@ Content-Transfer-Encoding: 8bit
 
 From: Marek Vasut <marex@denx.de>
 
-Document a type attribute used by userspace to discern different types of
-NVMEM devices. The implementation is already present, the ABI document is
-missing, add it.
+Use sysfs_emit() instead of sprintf() to follow best practice per
+Documentation/filesystems/sysfs.rst
+"
+show() should only use sysfs_emit()...
+"
 
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Marek Vasut <marex@denx.de>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- Documentation/ABI/stable/sysfs-bus-nvmem | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/nvmem/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/stable/sysfs-bus-nvmem b/Documentation/ABI/stable/sysfs-bus-nvmem
-index 854bd11d72ac..3f0a95250aa8 100644
---- a/Documentation/ABI/stable/sysfs-bus-nvmem
-+++ b/Documentation/ABI/stable/sysfs-bus-nvmem
-@@ -20,3 +20,14 @@ Description:
- 		  ...
- 		  *
- 		  0001000
-+
-+What:		/sys/bus/nvmem/devices/.../type
-+Date:		November 2018
-+KernelVersion:	5.0
-+Contact:	Alexandre Belloni <alexandre.belloni@bootlin.com>
-+Description:
-+		This read-only attribute allows user to read the NVMEM
-+		device type. Supported types are "Unknown", "EEPROM",
-+		"OTP", "Battery backed", "FRAM".
-+		Note: This file is only present if CONFIG_NVMEM_SYSFS
-+		is enabled.
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index ec31c1fe9a99..89f632f91768 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -179,7 +179,7 @@ static ssize_t type_show(struct device *dev,
+ {
+ 	struct nvmem_device *nvmem = to_nvmem_device(dev);
+ 
+-	return sprintf(buf, "%s\n", nvmem_type_str[nvmem->type]);
++	return sysfs_emit(buf, "%s\n", nvmem_type_str[nvmem->type]);
+ }
+ 
+ static DEVICE_ATTR_RO(type);
 -- 
 2.25.1
 
