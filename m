@@ -1,96 +1,191 @@
-Return-Path: <linux-kernel+bounces-242196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896D29284D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C77AD9284DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA31B1C20AFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:11:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000871C24AB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3663E146A69;
-	Fri,  5 Jul 2024 09:11:51 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D043614659D;
+	Fri,  5 Jul 2024 09:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaIGm0F8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4CD145B21
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E9C13665A;
+	Fri,  5 Jul 2024 09:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720170710; cv=none; b=swv+ZBaD/X4xOqxmuU3Ib+bhwlMZsQ6G79JwUqNW4oLD0L2JhDOsjoZXr53qgEV5wgZv/q9+3GDySdlNqTvRgaYvvDfEVYX9LAsnBW7F+S87ukKyC8nVA/N2iyJvpYBefEev9q99NZHiP3c8Zp//VgpDu7WEc0mbs8fFFwvdK7o=
+	t=1720170769; cv=none; b=UwWED75UnfUYW3FA9FjkrVQrZvdblb3XItU8B7N2wz1a4lpOoQCxWsi1xjlq8ijZzOJRWSu+KWrrwv0EZrDvJpxzup9iVeXVKoNVFELrnmMV2gv7LJQoIIQ4gmnBemjwCxbQVFWCGK7AqCx2mK+gWAVMGORyP4Ac5oMWjNb4Z38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720170710; c=relaxed/simple;
-	bh=EZcrKg2HdRtyxUW9ZShduOq06Xb0EKs/BKL46PbHROE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rfEBhHd1ZsGh3PwybugZINsAP6sbpT7FKNd7eRtMeiqRb0Kn7ecBAIZO2L8XyHzt4E0zAEOJE6yEasMu6399eMdAubiInRW7guKXtNjKWC1nGqUNxuVXNSvimF8AXKoRCZkkNu2s2x43irXggKtNDHf4RbCbcs+1dD7Inr3kkhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [124.16.141.243])
-	by APP-05 (Coremail) with SMTP id zQCowAC3iSHIuIdmxGKmAQ--.42380S2;
-	Fri, 05 Jul 2024 17:11:38 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: Arnd Bergmann <arnd@arndb.de>,
-	soc@kernel.org,
-	Baolin Wang <baolin.wang7@gmail.com>,
-	Orson Zhai <orsonzhai@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [RESEND PATCH] MAINTAINERS: Move myself from SPRD Maintainer to Reviewer
-Date: Fri,  5 Jul 2024 17:11:33 +0800
-Message-Id: <20240705091133.3308539-1-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720170769; c=relaxed/simple;
+	bh=l/SSCVMHFCglN/nj5v34ooChPINWoqus1AdOICNnzOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XRrq8qPoj++vv0C4gNRmHIBAQvGsin8VrxwcdETYFv2QSvftpZ5mJDbvY0AYGgPeIuWmeKthF4XiH7Gv2tgzbGillQMzXzS6mtsOv9b1Ed8WqhdESiUlqCFbqPBtVLRbR80C0rxQoxeQM3fd7wB3j+pe+Jb58AQyM1lm0vCKkQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaIGm0F8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39897C116B1;
+	Fri,  5 Jul 2024 09:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720170768;
+	bh=l/SSCVMHFCglN/nj5v34ooChPINWoqus1AdOICNnzOY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GaIGm0F8+crTYalVfT7uh9DaNepZ58GmEF18MEbJpjvxhcgtzBAX3nhylOnLvwqzs
+	 0quUFsnblRn/xxnQ4aeycGW0GtnQk+qoEhNgyTjUgRjRVBB8ArI2/d0ysEWA58ZTgW
+	 kjxQkquwczdcQ6WQRk3oteFgfuoPd7bRzVOQ5MeDjtvofQkujYRvydpdmRDmjFAVo5
+	 jrvxTonkt7nnIiIcbT9vn7tJNi/l8wsAWt5w+UF3rBsd/JkNWdQ7NEEgyb7jzfH2C3
+	 bV6k/R0I/s5KCHvA3RWS00g+SyJin/t4A3QcInmV7mGwOmVlobxfBMqMQvOgb9hqP9
+	 IvmPjhnUBcs1g==
+Message-ID: <33a454e5-8a74-4e8b-9284-7b628a1a548b@kernel.org>
+Date: Fri, 5 Jul 2024 11:12:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAC3iSHIuIdmxGKmAQ--.42380S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtr4UAFykJFW5CF45Jw18Krg_yoW3trg_G3
-	WkXrWxWrWkJF9rA34kZF9rCa1Fv3yUWr4Fg3ZYqwn8Aay5ArykKFnFq3WxXw18Gr43KrZr
-	KF98AFZagr1avjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbF8YjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0
-	cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2Iq
-	xVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r
-	106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AK
-	xVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7
-	xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_
-	GrUvcSsGvfC2KfnxnUUI43ZEXa7IU86OJ5UUUUU==
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAgJB2aHhSy3QgAAs3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions for
+ Exynos Auto v920
+To: "sunyeal.hong" <sunyeal.hong@samsung.com>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+ <CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
+ <20240705021110.2495344-3-sunyeal.hong@samsung.com>
+ <8f4deb36-2a44-414a-9b9f-40b87bc7c949@kernel.org>
+ <01c401daceb1$d64e7450$82eb5cf0$@samsung.com>
+ <31778ed0-e4b5-4961-99a5-41ce44ddac26@kernel.org>
+ <01c601daceba$e5d32570$b1797050$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <01c601daceba$e5d32570$b1797050$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I've resigned from Unisoc (formerly Spreadtrum) and cannot access
-internal HW specifications any more, also cannot commit much
-time for maintaining sprd code, especially DTS.
+On 05/07/2024 11:08, sunyeal.hong wrote:
+> Hello Krzysztof Kozlowski,
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Friday, July 5, 2024 5:52 PM
+>> To: sunyeal.hong <sunyeal.hong@samsung.com>; 'Sylwester Nawrocki'
+>> <s.nawrocki@samsung.com>; 'Chanwoo Choi' <cw00.choi@samsung.com>; 'Alim
+>> Akhtar' <alim.akhtar@samsung.com>; 'Michael Turquette'
+>> <mturquette@baylibre.com>; 'Stephen Boyd' <sboyd@kernel.org>
+>> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
+>> kernel@vger.kernel.org
+>> Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions
+>> for Exynos Auto v920
+>>
+>> On 05/07/2024 10:03, sunyeal.hong wrote:
+>>>
+>>>> <form letter>
+>>>> Please use scripts/get_maintainers.pl to get a list of necessary
+>>>> people and lists to CC. It might happen, that command when run on an
+>>>> older kernel, gives you outdated entries. Therefore please be sure
+>>>> you base your patches on recent Linux kernel.
+>>>>
+>>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+>>>> people, so fix your workflow. Tools might also fail if you work on
+>>>> some ancient tree (don't, instead use mainline) or work on fork of
+>>>> kernel (don't, instead use mainline). Just use b4 and everything
+>>>> should be fine, although remember about `b4 prep --auto-to-cc` if you
+>>>> added new patches to the patchset.
+>>>>
+>>>> You missed at least devicetree list (maybe more), so this won't be
+>>>> tested by automated tooling. Performing review on untested code might
+>>>> be a waste of time.
+>>>>
+>>>> Please kindly resend and include all necessary To/Cc entries.
+>>>> </form letter>
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>> The mail list was created using get_maintainer.pl. If there is any
+>> problem, please let me know.
+>>>
+>>> ./scripts/get_maintainer.pl -f drivers/clk/samsung/
+>>
+>> That's not how you run the command. You ALWAYS (unless you are Linus) run
+>> it on the patches. ALWAYS. See submitting patches or numerous
+>> presentations how to contribute upstream.
+>>
+>> Read my form letter accurately, e.g. switch to b4.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Thank you for your quick and kind response.
+> I checked the difference in the mail list through "./scripts/get_maintainer.pl *.patch" and will reflect this.
+> 
+> Could you please answer additional questions I asked?
+> "Is your request to combine PATCH 0 and 1 correct? If correct, I will update it as requested."
+> 
+> The reason I'm asking this is that if you check checkpatch.pl, it says to classify patches as follows.
+> "DT binding docs and includes should be a separate patch. See: Documentation/devicetree/bindings/submitting-patches.rst"
+> PATCH0: Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> PATCH1: include/dt-bindings/clock/samsung,exynosautov920.h
 
-While I'm happy to help review the sprd drivers I wrote before.
+Separate from the drivers, not from each other! This does not make sense
+to keep them separate.
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Of course they must be squashed, I asked this in the first comment.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..d0d7711f05a2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2893,7 +2893,7 @@ F:	drivers/edac/altera_edac.[ch]
- ARM/SPREADTRUM SoC SUPPORT
- M:	Orson Zhai <orsonzhai@gmail.com>
- M:	Baolin Wang <baolin.wang7@gmail.com>
--M:	Chunyan Zhang <zhang.lyra@gmail.com>
-+R:	Chunyan Zhang <zhang.lyra@gmail.com>
- S:	Maintained
- F:	arch/arm64/boot/dts/sprd
- N:	sprd
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
