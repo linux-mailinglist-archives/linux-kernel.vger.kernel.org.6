@@ -1,151 +1,254 @@
-Return-Path: <linux-kernel+bounces-242495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE0D9288E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 143669288E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99AC128387E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC66282D62
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C171014A634;
-	Fri,  5 Jul 2024 12:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEFE14AD23;
+	Fri,  5 Jul 2024 12:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LZbUzGOc"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="CWx6Qxyk"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4641487D8;
-	Fri,  5 Jul 2024 12:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F5814A61A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 12:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720183422; cv=none; b=u1jlLa4TQ6whuovXU0DqUm3odkdfmfMKlDnWSJUQn1lOYoFa/3bDqMwdfso/SAKGRw9U2rjH6PKA93eIPMmQu4dE8gSzLyD+GtIEXTWh43vvwH8bB8c3dL3Wc+SYKbqkCQgaxasEZSTY7bGl4eCFUzv8lWOl4nLFVlq930+JcbE=
+	t=1720183478; cv=none; b=HoR0JAtyBvUxvThgIIP9kaPJSdABQZNe7lp4SvaeeGjgWzG8eGAL1gXVWWcErelevlxAXAqmXc/TuFwogzqdaGOgOLPpBEWeGublm8yJT6t4GoTq0ERoAPb/clfMOoPyHIcJvWX2MzYBLFNJ6jAJVsfw75agXP3jzdoBDB1crOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720183422; c=relaxed/simple;
-	bh=niwvqIE+h1cjh82f0pDykYGJvGh/UF7aodFDBImjDLw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=APumAnd2RS08vW0W4scMohzztVZOp2152/Ou229p/S/vbb8iHY8CXFCm6rehvvSouJ/qyeKdrOU/PZejFpYYIBfp91/JFl6Ff+S0wygU/6c9QY/rYnXRRJxSuRIpoSEby4K/EVCNa0EGtYv1B5qirmFXt7aZIZsiodCyOH5D4p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LZbUzGOc; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 664111C0002;
-	Fri,  5 Jul 2024 12:43:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720183418;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nlfsyrfrSV5hF7t1zqFMldKwtDb7AOHp12rdTPm/ZDs=;
-	b=LZbUzGOcsxUwbjpHB6/JsV9w0p0aBzEauJfj5XkdqIhKIQ5c6HCfvUxklLZUouSWc12ygK
-	WiVEc5tmdKjtaamzVE7SiHcWgB6ZHj6gqe0FyKcIhOkmQ6xcPQbsOtzx2sH1i7/fI0WaGK
-	6gAm66Ee7NuB3gQwI94M7e2DyemlNR5sMM7vKLBRBSCC9ntMV3xajxW0A2x4/I4BZbwdY9
-	VXHuMssMmCFm3L8Gfxc21snO+f4SrZVca8t1nvJoIqsxTmum+fA+VoZhJiHJ58RL3XuKTH
-	SF55iA0tj1WeXyLh0dqJCozh2NrpEV5Oc/VFlyS28AUsZ3tGs3PLXAgTkV92Wg==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Andrew Lunn
- <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 0/7] ARM: dts: marvell: orion / kirkwood: few cleanups
-In-Reply-To: <20240701-dts-marvell-cleanup-v1-0-4773bd20691a@linaro.org>
-References: <20240701-dts-marvell-cleanup-v1-0-4773bd20691a@linaro.org>
-Date: Fri, 05 Jul 2024 14:43:37 +0200
-Message-ID: <87ikxkj9fq.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1720183478; c=relaxed/simple;
+	bh=2VnZjseBtDW5O0hq1vK9Aj6FUxApMUCPPIzZyJbs9+0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=IEtkv39dtxaRZxFBSsC0S/Y/0KJWb6wTLB0Xa0e/mjlkOpej1SNZ1YjrX0z3ypjLeT3261c8QYP8Rnnwcorf10Lmr52x9uXMSSBwV8WBqthEcRZPCLMorknTHHDy/axjVxLlgxUOBDk2pg6Q2F5daP8M75SZH+ZPeJjMoq8oSoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=CWx6Qxyk; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38027so1949997a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 05:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1720183475; x=1720788275; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hKZB2Fgn4uFU68w4TD9tZKFRvd41j+1ZrAavfWI0H/M=;
+        b=CWx6Qxyk+Am94MeP3yeyvze3aj5KCLQhfz7iZ8fx0T9m01ouujxyP1juBvJe3LEmVm
+         0cxvKh9a2KrvQB0S5K0Z850NOWYb+93iHCN+UV8nkuU7jo1yVisWDoZLUe6EBH09Kg89
+         ZEizm8BoQMbzI6wOied3di/9s7STbqZOKFeh8BXJyQRGzAyXXkaD7vkMo3LQ0scbvRf8
+         OntNaiN/XOBgKl5+5uwk0SX77/Gu7EtyiQmfTR2TLQKrjFpPbCmEBKIh7WlHB9tcLNAz
+         v29nQX6kyCDKNrIwnk9FvULS2wC6OQsafy0psiYh/iddZXGn8Y/XSyRz/8KSWZ7ZoWlz
+         hpKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720183475; x=1720788275;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hKZB2Fgn4uFU68w4TD9tZKFRvd41j+1ZrAavfWI0H/M=;
+        b=T42qtkh2oel1y838mXIz0OL6oMbZ1I8FL9h8jwWo7kQPGOl967lwBbwkOKIpsrEm3l
+         haFhhDZbzHPXuE6lK+/I3f1hAW7cmoWNNCRhw+RhRJ5QQ8K7VUsNDos0Az5V3MObGXSS
+         vYE5bU9sxd9c6YgQkJpzd3QnEFlAP5Ltpm6e8xOVDof8v4EHmdB8kRMq5GJXpD5au1Zz
+         py0fj2B6NVLerqCVHMkitWgi/01Ws7AI7NCyTctdPeYXbSJPhFj6IxzugELKQqcLKzw1
+         4+tOSEGN77pfBW0snhJTrmrYQ2uDVnzaK62/ogj/h8CaYTmk7vM6CcLytPVgVUsYex/L
+         7gkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJn65Eiv1xHs4TBxT3moeK6sx6wt1/TLxCdJ7oxOjQ2L+sitdlXP2aqtZ3OZxi3TdJTY+tGkpTXvODfOXvYmG9AmFep3TcSKhv28XR
+X-Gm-Message-State: AOJu0YwLmipg5kpxDNZqzEKa9oeNLdlXNU9GxQYYjnPWF4mFqM918gnA
+	jEp6k5ZS9rXqYSrVvuIWJb2vktmjCQ9E3ZTqiWmD+3ZWZGjXJazjA51lCdlYyRw=
+X-Google-Smtp-Source: AGHT+IH+9WK0Botsjtq1BFzZXkU/n60QSw0IfXpvtq4tv7jxq5yAzdzaUCgwA9ITyxlvi6sLnyzRsA==
+X-Received: by 2002:a05:6402:358e:b0:58b:2d93:ad83 with SMTP id 4fb4d7f45d1cf-58e5b4a138bmr4156561a12.21.1720183475349;
+        Fri, 05 Jul 2024 05:44:35 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58fefca76d0sm541054a12.2.2024.07.05.05.44.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 05:44:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gregory.clement@bootlin.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Jul 2024 14:44:34 +0200
+Message-Id: <D2HM5EVCMBIU.1WTR6DUJH3GB6@fairphone.com>
+Cc: "Andy Gross" <agross@kernel.org>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Rob Herring" <robh+dt@kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Bhupesh Sharma" <bhupesh.linux@gmail.com>, "David
+ Heidelberg" <david@ixit.cz>, "Stephan Gerhold" <stephan@gerhold.net>,
+ <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFT] arm64: dts: qcom: sm8350: Reenable crypto &
+ cryptobam
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Konrad Dybcio" <konrad.dybcio@linaro.org>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@linaro.org>
+X-Mailer: aerc 0.17.0-0-g6ea74eb30457
+References: <20240108-sm8350-qce-v1-1-b7d586ff38af@fairphone.com>
+ <a5923bf7-0a05-43bd-b282-b45e5653ac4d@linaro.org>
+ <CY9E4ZCHOMWU.C18NR0H7V1QX@fairphone.com>
+ <CAA8EJppCAMXds5F4bgeb9VJSwph-+4ekVsJ=rGib5=RR5m0DPg@mail.gmail.com>
+ <CZ6FR855VPP7.3GHX4EO9WEZIH@fairphone.com>
+ <8eb45771-096a-443f-b017-3ec8bc4940ba@linaro.org>
+In-Reply-To: <8eb45771-096a-443f-b017-3ec8bc4940ba@linaro.org>
 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
-
-> Few cleanups reported by dtbs_check.
+On Wed Mar 27, 2024 at 10:34 PM CET, Konrad Dybcio wrote:
+> On 16.02.2024 11:36 AM, Luca Weiss wrote:
+> > On Mon Jan 8, 2024 at 11:45 PM CET, Dmitry Baryshkov wrote:
+> >> On Mon, 8 Jan 2024 at 16:23, Luca Weiss <luca.weiss@fairphone.com> wro=
+te:
+> >>>
+> >>> On Mon Jan 8, 2024 at 3:18 PM CET, Konrad Dybcio wrote:
+> >>>> On 8.01.2024 14:49, Luca Weiss wrote:
+> >>>>> When num-channels and qcom,num-ees is not provided in devicetree, t=
+he
+> >>>>> driver will try to read these values from the registers during prob=
+e but
+> >>>>> this fails if the interconnect is not on and then crashes the syste=
+m.
+> >>>>>
+> >>>>> So we can provide these properties in devicetree (queried after pat=
+ching
+> >>>>> BAM driver to enable the necessary interconnect) so we can probe
+> >>>>> cryptobam without reading registers and then also use the QCE as
+> >>>>> expected.
+> >>>>
+> >>>> This really feels a bit backwards.. Enable the resource to query the
+> >>>> hardware for numbers, so that said resource can be enabled, but
+> >>>> slightly later :/
+> >>>
+> >>> If you think adding interconnect support to driver and dtsi is better=
+,
+> >>> let me know.
+> >>
+> >> I'd say, adding the proper interconnect is a better option. Otherwise
+> >> we just depend on the QCE itself to set up the vote for us.
+> >=20
+> > Yes, currently we depend on that.
+> >=20
+> >>
+> >>>
+> >>> Stephan (+CC) mentioned it should be okay like this *shrug*
+> >>>
+> >>> For the record, this is the same way I got the values for sc7280[0] a=
+nd
+> >>> sm6350[1].
+> >>>
+> >>> [0] https://lore.kernel.org/linux-arm-msm/20231229-sc7280-cryptobam-f=
+ixup-v1-1-bd8f68589b80@fairphone.com/
+> >>> [1] https://lore.kernel.org/linux-arm-msm/20240105-sm6350-qce-v1-0-41=
+6e5c7319ac@fairphone.com/
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/d=
+ts/qcom/sm8350.dtsi
+> >>> index b46236235b7f..cd4dd9852d9e 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+> >>> @@ -1756,8 +1756,8 @@ cryptobam: dma-controller@1dc4000 {
+> >>>                         qcom,controlled-remotely;
+> >>>                         iommus =3D <&apps_smmu 0x594 0x0011>,
+> >>>                                  <&apps_smmu 0x596 0x0011>;
+> >>> -                       /* FIXME: Probing BAM DMA causes some abort a=
+nd system hang */
+> >>> -                       status =3D "fail";
+> >>> +                       interconnects =3D <&aggre2_noc MASTER_CRYPTO =
+0 &mc_virt SLAVE_EBI1 0>;
+> >>> +                       interconnect-names =3D "memory";
+> >>>                 };
+> >>>
+> >>>                 crypto: crypto@1dfa000 {
+> >>> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+> >>> index 5e7d332731e0..9de28f615639 100644
+> >>> --- a/drivers/dma/qcom/bam_dma.c
+> >>> +++ b/drivers/dma/qcom/bam_dma.c
+> >>> @@ -40,6 +40,7 @@
+> >>>  #include <linux/circ_buf.h>
+> >>>  #include <linux/clk.h>
+> >>>  #include <linux/dmaengine.h>
+> >>> +#include <linux/interconnect.h>
+> >>>  #include <linux/pm_runtime.h>
+> >>>
+> >>>  #include "../dmaengine.h"
+> >>> @@ -394,6 +395,7 @@ struct bam_device {
+> >>>         const struct reg_offset_data *layout;
+> >>>
+> >>>         struct clk *bamclk;
+> >>> +       struct icc_path *mem_path;
+> >>>         int irq;
+> >>>
+> >>>         /* dma start transaction tasklet */
+> >>> @@ -1206,6 +1208,7 @@ static int bam_init(struct bam_device *bdev)
+> >>>                 bdev->num_channels =3D val & BAM_NUM_PIPES_MASK;
+> >>>         }
+> >>>
+> >>> +       printk(KERN_ERR "%s:%d DBG num_ees=3D%u num_channels=3D%u\n",=
+ __func__, __LINE__, bdev->num_ees, bdev->num_channels);
+> >>>         /* Reset BAM now if fully controlled locally */
+> >>>         if (!bdev->controlled_remotely && !bdev->powered_remotely)
+> >>>                 bam_reset(bdev);
+> >>> @@ -1298,6 +1301,14 @@ static int bam_dma_probe(struct platform_devic=
+e *pdev)
+> >>>                 return ret;
+> >>>         }
+> >>>
+> >>> +       bdev->mem_path =3D devm_of_icc_get(bdev->dev, "memory");
+> >>> +       if (IS_ERR(bdev->mem_path))
+> >>> +               return PTR_ERR(bdev->mem_path);
+> >>> +
+> >>> +       ret =3D icc_set_bw(bdev->mem_path, 1, 1);
+> >>
+> >> Probably this needs some more sensible value.
+> >=20
+> > So downstream qcedev driver uses 384 for the interconnect. But this is
+> > crypto-specific and probably different BAMs have different minimum
+> > requirements?
+> >=20
+> > #define CRYPTO_AVG_BW			384
+> > #define CRYPTO_PEAK_BW			384
+> > https://github.com/xiaomi-sm8450-kernel/android_kernel_platform_msm-ker=
+nel/blob/lineage-20/drivers/crypto/msm/qce.h#L57
+> >=20
+> > Do you have any suggestion what to use here?
 >
-> Best regards,
-> Krzysztof
+> I'dve expected this to mean anything, but apparently not.
 >
-> ---
-
-Series applied on mvebu/dt
-
-Thanks,
-
-Gregory
-
-
-> Krzysztof Kozlowski (7):
->       ARM: dts: marvell: kirkwood: align GPIO keys node name with bindings
->       ARM: dts: marvell: kirkwood: drop incorrect address/size-cells in GPIO keys
->       ARM: dts: marvell: kirkwood: align LED node name with bindings
->       ARM: dts: marvell: orion: align GPIO keys node name with bindings
->       ARM: dts: marvell: orion: drop incorrect address/size-cells in GPIO keys
->       ARM: dts: marvell: orion5x-lswsgl: use 'gpios' property for LEDs
->       ARM: dts: marvell: orion: align LED node name with bindings
+> My immediate guess is that the 384 was the lowest magic value that didn't
+> result in the bus getting kicked offline.. 1 should be fine upstream due
+> to commit 91e045b93db7 ("interconnect: qcom: Fix small BW votes being
+> truncated to zero").
 >
->  .../dts/marvell/kirkwood-blackarmor-nas220.dts     |  6 +--
->  arch/arm/boot/dts/marvell/kirkwood-c200-v1.dts     |  8 +--
->  arch/arm/boot/dts/marvell/kirkwood-cloudbox.dts    |  8 ++-
->  arch/arm/boot/dts/marvell/kirkwood-d2net.dts       |  2 +-
->  arch/arm/boot/dts/marvell/kirkwood-dir665.dts      | 22 ++++----
->  arch/arm/boot/dts/marvell/kirkwood-dns320.dts      | 10 ++--
->  arch/arm/boot/dts/marvell/kirkwood-dns325.dts      | 10 ++--
->  arch/arm/boot/dts/marvell/kirkwood-dnskw.dtsi      |  8 ++-
->  arch/arm/boot/dts/marvell/kirkwood-dockstar.dts    |  4 +-
->  arch/arm/boot/dts/marvell/kirkwood-dreamplug.dts   |  6 +--
->  arch/arm/boot/dts/marvell/kirkwood-goflexnet.dts   | 20 ++++----
->  .../dts/marvell/kirkwood-guruplug-server-plus.dts  |  8 +--
->  arch/arm/boot/dts/marvell/kirkwood-ib62x0.dts      | 12 ++---
->  arch/arm/boot/dts/marvell/kirkwood-iconnect.dts    | 20 ++++----
->  .../boot/dts/marvell/kirkwood-iomega_ix2_200.dts   | 16 +++---
->  arch/arm/boot/dts/marvell/kirkwood-l-50.dts        | 20 ++++----
->  arch/arm/boot/dts/marvell/kirkwood-laplug.dts      |  6 +--
->  .../arm/boot/dts/marvell/kirkwood-linkstation.dtsi |  2 -
->  .../boot/dts/marvell/kirkwood-linksys-viper.dts    | 10 ++--
->  arch/arm/boot/dts/marvell/kirkwood-lsxl.dtsi       | 18 +++----
->  arch/arm/boot/dts/marvell/kirkwood-mplcec4.dts     | 12 ++---
->  .../boot/dts/marvell/kirkwood-mv88f6281gtw-ge.dts  | 12 ++---
->  arch/arm/boot/dts/marvell/kirkwood-netxbig.dtsi    |  8 ++-
->  arch/arm/boot/dts/marvell/kirkwood-ns2-common.dtsi |  6 +--
->  arch/arm/boot/dts/marvell/kirkwood-ns2lite.dts     |  2 +-
->  arch/arm/boot/dts/marvell/kirkwood-nsa310.dts      | 20 ++++----
->  arch/arm/boot/dts/marvell/kirkwood-nsa310a.dts     | 18 +++----
->  arch/arm/boot/dts/marvell/kirkwood-nsa310s.dts     |  8 ++-
->  arch/arm/boot/dts/marvell/kirkwood-nsa320.dts      | 18 +++----
->  arch/arm/boot/dts/marvell/kirkwood-nsa325.dts      | 18 +++----
->  .../boot/dts/marvell/kirkwood-nsa3x0-common.dtsi   |  8 ++-
->  .../boot/dts/marvell/kirkwood-openblocks_a6.dts    |  4 +-
->  .../boot/dts/marvell/kirkwood-openblocks_a7.dts    |  2 -
->  arch/arm/boot/dts/marvell/kirkwood-pogo_e02.dts    |  4 +-
->  .../dts/marvell/kirkwood-pogoplug-series-4.dts     |  8 ++-
->  .../boot/dts/marvell/kirkwood-sheevaplug-esata.dts |  2 +-
->  arch/arm/boot/dts/marvell/kirkwood-sheevaplug.dts  |  4 +-
->  arch/arm/boot/dts/marvell/kirkwood-synology.dtsi   | 58 +++++++++++-----------
->  arch/arm/boot/dts/marvell/kirkwood-t5325.dts       |  4 +-
->  arch/arm/boot/dts/marvell/kirkwood-ts219-6281.dts  |  6 +--
->  arch/arm/boot/dts/marvell/kirkwood-ts219-6282.dts  |  6 +--
->  arch/arm/boot/dts/marvell/kirkwood-ts419.dtsi      |  6 +--
->  .../dts/marvell/mvebu-linkstation-gpio-simple.dtsi |  2 -
->  .../boot/dts/marvell/orion5x-lacie-d2-network.dts  |  9 ++--
->  .../orion5x-lacie-ethernet-disk-mini-v2.dts        |  7 ++-
->  .../boot/dts/marvell/orion5x-linkstation-lschl.dts |  4 +-
->  arch/arm/boot/dts/marvell/orion5x-lswsgl.dts       | 25 +++++-----
->  .../marvell/orion5x-maxtor-shared-storage-2.dts    |  7 ++-
->  .../boot/dts/marvell/orion5x-netgear-wnr854t.dts   |  2 +-
->  .../arm/boot/dts/marvell/orion5x-rd88f5182-nas.dts |  2 +-
->  50 files changed, 230 insertions(+), 278 deletions(-)
-> ---
-> base-commit: 9c9a5aa3a60dc9e1e2448c29f346385914052642
-> change-id: 20240701-dts-marvell-cleanup-1c9fcf6ae439
+> >=20
+> > Also I'd assume that with pm_runtime suspended we'd need to clear the
+> > votes in the driver so we don't keep the interconnect alive
+> > unnecessarily?
 >
-> Best regards,
-> -- 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> My naive understanding is that the power should only be necessary when
+> the thing is in use, so early probe and pm-active sounds about sane..
+
+Bit of a late update on this, going through my inbox again:
+
+I don't think I'll work on implementing interconnect for the BAM driver,
+I neither really have the motivation to work on it, nor really any
+knowledge on crypto or BAM, or about some details of the hardware.
+
+So feel free to pick this patch to unbreak crypto on sm8350 (adding
+num-channels & qcom,num-ees is what's done on many other SoCs as well,
+sm8350 wouldn't be an outlier), or we wait for someone to pick up
+implementing icc for BAM.
+
+I'll remove this from my inbox now :)
+
+Regards
+Luca
+
+>
+> Konrad
+
 
