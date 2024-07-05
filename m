@@ -1,1280 +1,210 @@
-Return-Path: <linux-kernel+bounces-242326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D087B9286BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:25:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15529286BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667A5281CB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077301C22420
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97B0148304;
-	Fri,  5 Jul 2024 10:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374C1148823;
+	Fri,  5 Jul 2024 10:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIUEjVMO"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nec.com header.i=@nec.com header.b="OZ/uKcKw"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010055.outbound.protection.outlook.com [52.101.229.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F43A1474A8;
-	Fri,  5 Jul 2024 10:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720175119; cv=none; b=K8aF+v6ZQP8HmiopyfdgH9D6S6lrbr9gBiEgxOF1FLHVY+Fw9yukbMEa6sYnN7yp1WWkfWPVk4aeEdzBBJHoU02P1tHxcwje4Y0CQAbrYJ0f3k/IwmfXqO7ea+ddEiX2VOiCPH2AMUMn1oURGslUjTJwGPUrnBMnpUARCxhCZyU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720175119; c=relaxed/simple;
-	bh=K4DLcIy+remVc6j6HTT0aWOkOY4Q27Twydxxu00jeEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RiuiZclDdSiaxiFCvJZKHzcsHNgjMsGEv/R3BWpsnoHuxGxzJjhh4KT+XiYqAqtqEWWGulPDvaa8G4UmI9bfyVm/Ltub3cfg8fWV1rQ9ivplN7e8D/U3yI2KdtHkPcsuf0qs6eZ+3ZRhT39TqqSlp8j3vcbarIhKHbxCKysg2b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIUEjVMO; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-80fc4fe7a8eso756277241.1;
-        Fri, 05 Jul 2024 03:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720175115; x=1720779915; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=feml9E22xbNJafCyImHy1dKLPY5nA2LBdbksWhl3wgY=;
-        b=IIUEjVMOfEauM8+mrfImYN+buoIdkwPS2knc4evku2GbZW1w6zYLy4xngWeqvyNaMA
-         kFYlmtQuf9+D/GA1E5rUSdXcWgQIVnPGi7BwfVUVfELx2O2I7jOOaZzEPv2C58FJ699p
-         td12NTxAW26mu9eVM0jwzZbbtTHABl9fwGQnX8eoB9i7jvhLK9DWDYOBR21QRpjLqiWa
-         iLg1tq2AsO9Lf/hil53ByUP5CsnHp1mxrGIjQ6FKQsD+RjDaucM8WoO6h/UeQOnal/EC
-         UssthDFxojOh3SGRIDnahWGIf4vdjLgY8LMK49h9ttXBryiFUCRiNmgVcXS3W228JD6o
-         7diA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720175115; x=1720779915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=feml9E22xbNJafCyImHy1dKLPY5nA2LBdbksWhl3wgY=;
-        b=Z/zBZzCOu9T3wp5DTFyu3UGvkXzuAB8J+Jyfpqr3wB+I7dn5t/pYxyglkRQ8uva/rZ
-         QFu+s4dt4A7EUS6eJX6IAbdHhZdMOq1IV4Lt55O2lU6RgpxoTBpOEccP99fvtlb8uF9o
-         T4m2OfFtKZHqCvcaegyS0K+k5zHU31iSdzwtMn+i5m7r5/QLrjkTJw6wfzqJvv4wouNO
-         RfBlfIAYR/r5E5TxWAJN9pE9OPsL8UKYYzZZOHymNvd/Yn16PY95zp3+8B3N02N6XtBb
-         6P/HgqF+9CS3bKb73U5Ye7RhimK1PvqvB5IF47iUbZYGnqTVkFf5JQLEQrOjx+PFzjap
-         38fg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAp21twiETqxtu8Z+GY/xSpIWWsQroCO7lyRxSJO8xluP7+0G1HR/+EkqdPtFNqCCtmoa7XruK3jq2XOzwrEZWRFnAkKtlI0KcUTUtPdt/gINjPXQJjWzOsX+sS0BrHeK6BKWWrpFX
-X-Gm-Message-State: AOJu0YwRTeNtBMwMHFOAn/ds4iioPHsXcOKT0W+y5WEfmRIqpEZEizdF
-	m5Dn37CX8dJCQtoUjvsrLW1rD5sp6Gr7zAap/geslDNSBDe2VPN4cqRZ0E+3k73Ksn0RRHxKPk1
-	mt4ihFFaKtRogJTq4MRDqP98Al5g=
-X-Google-Smtp-Source: AGHT+IG5t3Yj9K0tzssSqw2UZsrrt0IBXbdolpiCxyjWaGoQP/MFRnY7e1LhiI1txoGVdETglioiBw4qRM0Tdg3tCz0=
-X-Received: by 2002:a67:ec0d:0:b0:48f:e9f5:2e37 with SMTP id
- ada2fe7eead31-48fef1db0d1mr2499455137.6.1720175114297; Fri, 05 Jul 2024
- 03:25:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5107014831D;
+	Fri,  5 Jul 2024 10:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720175126; cv=fail; b=imQAQ06bubklLZRubJRSOga8py4/BIkhcXXIHcZjvyDVM1JNDt9eb2gmqDTVimxdI/mQxYDPcykmUGOUFqBjvv3g2pSCx7OlpZA8QHpCYSklgeifokv2Y3rJuKfLbvXNeK+oOUX89aXtIfi9ybKVxNmMJiLuXoBrdOPIpe+Pcrg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720175126; c=relaxed/simple;
+	bh=HElkWa+8HWmbFpAUkDQCF+kaAijXM6HdMxW0fcmiByI=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=PnEJltVVBKHWqEWX9hsGAJHda4G7avLnryEnbE+GIb4BKnloHQmuppXFFhoIQ8TO4qKJ8SFkI+gCR1sa23AYMwxiV6kgpliz9L+XqHqBRAuMjEdfpkdjuLtyR2kRSZiwXLnJBifTy65kLiK5KaH5bHMOKtBP/dVNC0S1nxcZYXg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nec.com; spf=pass smtp.mailfrom=nec.com; dkim=pass (2048-bit key) header.d=nec.com header.i=@nec.com header.b=OZ/uKcKw; arc=fail smtp.client-ip=52.101.229.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nec.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dfwKRSnk/q3ROyaFmYrt9QQr4ytUTUdE8tgf08M/lNlNKe+SleihDx18pXVWUBvSpj3q5e/IoZ45U/UKGwAQiIjT5LAx9URxJ99i9WHmJA4lNvq5IbahhZuZwm6ArxHy60LR2h8sIiQOSNX98SCT0tL8TTfbgP9N1WF0qQBvMh8dgkjPXIOELVRV/EnF0bYew28AwNDOM1N9xF7kxgoKfKHKge/rdi/XE8DwCuW/8UTfCoN6QNZtkjJxZjBWWeAtc/An57qiM/CAZUtglBnrkpJ5iUESbaT+gd5RCg/DE4UV6GaWMPQxT1l9rgvms2KeVzKICklW8LW33N2FS7bBJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MuXf34PFJm/Um2clVlGKPtPU9DTUWMjdONesDuGY6lE=;
+ b=eBLTxRp19N0jgWGhC3nHcLLnfFQBMjuKGfaJtcdDpGythwrAlOjLWzFIQzNIorNmye/kdU3CuMEVuBasKwXsYldorHqVrGURy6KmWHDCrSFtscfNHY0woKFYbUbgHk8IqkNe4V4qxAPDCsRF801o+mC4E7CC07t7D/hpAF6l3wUQk/TUiSOlQ4jvqCPMnFy7KsCWIB3QE0rbNhf0g3qhx7IgauWN3WmJpQ0iXgI7b4v9b2Tf3dTF6D5duRWnmkbh22mX1eOuVd9VPQP03iKgmTvR2Y+BqiG2+tLEPI5XTM6a3HVA4G3nckDUzsptmI0Wg4oWEdangFEUG/lLldnbPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nec.com; dmarc=pass action=none header.from=nec.com; dkim=pass
+ header.d=nec.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nec.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MuXf34PFJm/Um2clVlGKPtPU9DTUWMjdONesDuGY6lE=;
+ b=OZ/uKcKwnsj0nf0aOTVugT2poDg9Vnql4snFFhMKdKiQUHXa6+8bS+KKZHWt/uBIVBVPSx+23K7L67/5DWPByemDB7vaNHz6m2mRakFSvMi4fYJmbe68GmWgtXp3wAE5kDUGqvkyNS2g1eCNa1IsWHxNjBKBUpyQ+eug/dCfR7C+k+vfKigScAEI0mLEKjeiN7boTNa/6fuxOvCjY4T1548Lh3lkPrbFjUhWh9K/GxHDIrBSzQhhseTu13Uv0l0BO3AnrsGPzKT2mj9nkyfEL2+1JvPoD2gp2U7UHA3OyADyrFYc1MFcnR66RL6V25IqU9tgE3Bxbtv3iEagvBnk6A==
+Received: from TYCPR01MB8389.jpnprd01.prod.outlook.com (2603:1096:400:15f::5)
+ by TYWPR01MB10806.jpnprd01.prod.outlook.com (2603:1096:400:2a6::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Fri, 5 Jul
+ 2024 10:25:20 +0000
+Received: from TYCPR01MB8389.jpnprd01.prod.outlook.com
+ ([fe80::29dd:6d4f:b2de:f254]) by TYCPR01MB8389.jpnprd01.prod.outlook.com
+ ([fe80::29dd:6d4f:b2de:f254%6]) with mapi id 15.20.7741.029; Fri, 5 Jul 2024
+ 10:25:20 +0000
+From: =?iso-2022-jp?B?Tk9NVVJBIEpVTklDSEkoGyRCTG5CPCEhPV8wbBsoQik=?=
+	<junichi.nomura@nec.com>
+To: "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+CC: "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
+	<lenb@kernel.org>, "james.morse@arm.com" <james.morse@arm.com>,
+	"bp@alien8.de" <bp@alien8.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+	=?iso-2022-jp?B?Tk9NVVJBIEpVTklDSEkoGyRCTG5CPCEhPV8wbBsoQik=?=
+	<junichi.nomura@nec.com>
+Subject: ACPI: APEI: ERST: Don't retry read when "Record Store Empty"
+Thread-Topic: ACPI: APEI: ERST: Don't retry read when "Record Store Empty"
+Thread-Index: AQHazsWjaDTSYuFPoEWjsVW52y1RuQ==
+Date: Fri, 5 Jul 2024 10:25:20 +0000
+Message-ID: <20240705102517.79689-1-junichi.nomura@nec.com>
+Accept-Language: ja-JP, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: git-send-email 2.45.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nec.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB8389:EE_|TYWPR01MB10806:EE_
+x-ms-office365-filtering-correlation-id: cbaa7bbf-aa7f-41ee-bf23-08dc9cdcc5e2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?TmZqRFQzeGMvZWNYajFoR05uNWZRMGFtQnBtZFBPaTVQWERtTFdaVUM3?=
+ =?iso-2022-jp?B?V1RQOEpXMEk2WFU1eUpiMlVPREh4OXNCYmNvM3NxVndjWlMvQ25ydUZZ?=
+ =?iso-2022-jp?B?TkRYMVZ5MEFKS3BzQndmNGZraHlnMzZId2lwYldialowQWZ5QlRFQUkv?=
+ =?iso-2022-jp?B?OEw3ODVSK2JuWis5WXJWR2Q4Z05pUWZPM3lxQ1BrMEh0WGdCeWJTK1Za?=
+ =?iso-2022-jp?B?Wk5VMUJLRTlxdXBGVGFQNEhDZXpZU0M0K1Q3MzlJRTJXZlZoei9HaW02?=
+ =?iso-2022-jp?B?endUUmZSYmhWLzBlVlhsM1V2aGJhQ2lmcDJzbjZQWFhHenlldHEyTjhX?=
+ =?iso-2022-jp?B?bmMwTjF2eHdlcnhZMjgwaEpUQ0tBN1cwdE1PUUJHa0VGa0dwc0tiK1Vm?=
+ =?iso-2022-jp?B?WGUzWGhqeVhMSXdlT0poeUZ2c1BrNEg0dThzVzU4NTJRUTR0UjRuTlhE?=
+ =?iso-2022-jp?B?b1IzU3pJU0VmNWhSU0NJc0NkSGNSaTd0SG16bFYzVU91Y3B3eWtGQmhi?=
+ =?iso-2022-jp?B?Rld0YWNTV284NWdsVzh0NFdNbUdhTE9CWGlvWE5xSW1xemFSenBpVHl3?=
+ =?iso-2022-jp?B?ZGVWQk1CYmthUGJUMVB4TGYxdFI5MWlVL2c3a2trMEc1Z2F0elNzRW1D?=
+ =?iso-2022-jp?B?VE5BeXVSd2dheDNJY1NBaHlYa0pmWUllb05PWjlxc2tLSnVza1R5OEpy?=
+ =?iso-2022-jp?B?VlVSRTJONXRjZ2RrRlQ4L3V4L3J3WlZYNktrMGFqR05LM1JVZDVqUzlW?=
+ =?iso-2022-jp?B?VHdpWWoySmdreTBORWR6cG4xcFBURWIzQ1ZxbmZ5Q3Y3REZFQWRPYllW?=
+ =?iso-2022-jp?B?cXFNRGozMTgrQVpHYWxzSlk4YUk1N2xLS1NiLzhxMlY5VlBwc3gwVkd3?=
+ =?iso-2022-jp?B?RHJCN2VRVEV2ZFQ1Uk9LR0V3NDc4VnZqUzViMGNVcHMwOGpobEhFZUMx?=
+ =?iso-2022-jp?B?WjRmUUoyWVI5Z2p1MmxIVG15T2laOUF6K2NNdXZ5aDNqdm00aHBLeXkw?=
+ =?iso-2022-jp?B?UlNLdlpQY1pNM294ZFBJVTdXMXdSK0wzc3BCQ0lpT2s2ZmVBRVMwM3px?=
+ =?iso-2022-jp?B?ZUttZVphWjBsMzNEVmEzaXJrL3RzVzBpcFoyUDRoOTZDTGhxMFRKai9K?=
+ =?iso-2022-jp?B?VzlIbXRDWEs5dDdmQ1JBcTV3aGJDL3RYbHhXTWMwRTdMd1UzZk1mZkJi?=
+ =?iso-2022-jp?B?Z2ZNOXloVXBxR0lOTGlUTFQ1UEtvenZjUit0NVYwS1Z2NTJXdkpBUjZW?=
+ =?iso-2022-jp?B?VTRQOUtQdDB6UVFJTDJad3lzV0Nzb1krNXM2emQ4Wnk4NWpoV3pBQTJu?=
+ =?iso-2022-jp?B?RWNPWTU2WkJyc0N0Z1BmZlBxUlcrV0JRalgxeEljRkcwdTFhcGlsZkg1?=
+ =?iso-2022-jp?B?dVBTcHFwT2ZBRE40ejZRRDlFd3lvTDZvMFBoTXFScTE0dk1UQXpoRVhB?=
+ =?iso-2022-jp?B?ZTd5ZGR2bDRTMFhhK2FLWThKbUtUanU4ekN0akxuaUI5WVA0UUZPRGN2?=
+ =?iso-2022-jp?B?aVdLOHVJc0t1ZnJHcXBTQ0p4aCt3aHZMcThrMWpPak1mVUp1S253Tnhq?=
+ =?iso-2022-jp?B?cm5OS0t0SDRONVBtSVJ0MjFRSE1yZ0tVbU1UN1FzMU0xakxUK0hwMkxO?=
+ =?iso-2022-jp?B?eE03ZzBPTDRpQWpDVEdFcVBXNG5NTVJnQ0xzZjJJTG1mMFp1ZmovSy9i?=
+ =?iso-2022-jp?B?Nkk1bVRZTUF3TnRCdzlFUEdtVWRwVXFXeXB1OTVGNVliYzBPYTc2cWc4?=
+ =?iso-2022-jp?B?T01YSmlTVW1KRkl5TFd3MHArTVN3ZjJKQ3VScTdwckg3eGlrTkZSV045?=
+ =?iso-2022-jp?B?ZEQ2cERvb3F5NllscEZMSnpZemdxZnVjUk5XWUZQaS9pNjMvK1RMOUgr?=
+ =?iso-2022-jp?B?QWJVY1ZMdndSWDZZaThnQWdsNzRvVFh1U2pKdnU1Y09KODFBeDdNbHk0?=
+ =?iso-2022-jp?B?bHV5ZTdpQ0pIWUYxQnRQcVhKZHJISmo2blp4Y2h4Qk1KRmNjcDNBd1hu?=
+ =?iso-2022-jp?B?TS9BUFp3STc2MHdkRnNmb21aTldJMkxpekVhVmhKNUl0UExOZFlIY2c1?=
+ =?iso-2022-jp?B?V3c9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB8389.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?NHVWRjIvK1FaU0xxK3dCa1NHLzN4MjgybFEvbzRrdndPSFJmc3dpdlFX?=
+ =?iso-2022-jp?B?YXJxS3YrRlU1R1JiYkloanB4WEFwNDFTR1phem1sc0c2cGw4TGlsMHAz?=
+ =?iso-2022-jp?B?bzVrZ0R5a2xIKzVncnZBVEhMbTdiYWQ2Nk9BRjBLckRMSzl2b3hKWnVM?=
+ =?iso-2022-jp?B?bVVTWW9QY0lCQjJXdWdQcmRZK3czNzh1QmRvVyszZ29JS09PV1ZPb3d1?=
+ =?iso-2022-jp?B?Vm1pQTUvNmZ5SE14WkdUM2tSTDBFcFA3ZEFXOGRSNWtuKzczWTVCdXJm?=
+ =?iso-2022-jp?B?MWhQOHViMDhYUElGR3hHZCtCY21EZnZhS0QzVWxkNDV1d3BaRlJRZnBC?=
+ =?iso-2022-jp?B?cTViUUd4SHQ2NnRyNFVNZlNoUHRMeXliL2tYbE9hdkxvdXdiSGk1dGhp?=
+ =?iso-2022-jp?B?TC92NlZtdW9QOGhMUm4vdUdmK1kzMzBlU3V2VDJQQ2Q2TmNEb25aYlhx?=
+ =?iso-2022-jp?B?VldtTHdqN1E1ZzZHemNOK0lqV05yTElVK05rUzdQS3ZKK3hRa3NBV25j?=
+ =?iso-2022-jp?B?eUlpcXZjaGRDeERBcmRabThvMFBSUXA5WFlIbzhVTG9kQW03QnhqSHdm?=
+ =?iso-2022-jp?B?QWlWTEhES3prRjZFUWczb2pKUWV4RU5wMVZ3cW5TU1Z1d3FLa0s5Nkt5?=
+ =?iso-2022-jp?B?eUNabStERDRjYzA0ditWZFNUM09jQW1PM0QzK3E2QVVrNXJ6V21EQjlO?=
+ =?iso-2022-jp?B?RUJSSWYxUVNGdkhPamNJb3E5S0E3RVE2eWF1dHVHeDk0RTBJMnR4M2lj?=
+ =?iso-2022-jp?B?WkZWM0dSMlBTTUhrc3NpMkZBS1ZPWGFmeUpEMC9pZTV0UHBlVWVOWExZ?=
+ =?iso-2022-jp?B?VDhHWVMwTGI2SlJZOXdIQUREZDZKTUVYV3Y5cktnekUzRjhlWFF1dllD?=
+ =?iso-2022-jp?B?eCtlRkNpZlIzS0psTGE5VU5nVjlBU0ZQMTBUbDdBT0xBWUpjQ1FadXBl?=
+ =?iso-2022-jp?B?cklDNU9xVHNNamo4bTg4eE1vaTJuZnU4SWYxVzFLZGZhNVdkRndaOG40?=
+ =?iso-2022-jp?B?UjM1N1B1UGszcjhibGg4OEF5T1VCTlVlaS9ESHpzQ2p3Z3VCTWNVejhC?=
+ =?iso-2022-jp?B?NUJzSWRZOENiaWYxblhzVEZaTnI5aEVGeG8wenNrWTg5NktrSTNMK1hL?=
+ =?iso-2022-jp?B?cmtPVlVreFUwN290NHBRd1dwVTRsdUN3QU1YbEFFeGpoajliSnlTVXUz?=
+ =?iso-2022-jp?B?cmJjejVKcVFoNldWQUZTUTlUQmwzWWN1T3ZibHp1aUpsNmMrb09IOHZJ?=
+ =?iso-2022-jp?B?QXEydUxEUkc4cWpUWGdYajhBRm9HVHVvNEw0TDZ5V0MzcXJQZ0FnTnFI?=
+ =?iso-2022-jp?B?R0wwblZoL1FXVkRTT0xqUnh4c3EvUW5DSFBZR2JRUWlraUI0NGhTNy9Q?=
+ =?iso-2022-jp?B?NVRKclNPbmk5c2xLM3pIRzJZYmZCK0RCRWdKbW9mZTVSRXREaFBNU2li?=
+ =?iso-2022-jp?B?b1FpWFpXNHdVSEg1cmg1VHBORSsxSXp6S0JrUnZCVTNBckdNNGdUaTFI?=
+ =?iso-2022-jp?B?a1R3WitXK09kbXNkVlNmT3JBdms2eDBhYjkxb0N0L1N3WE44L3F0UGV0?=
+ =?iso-2022-jp?B?ZnVoM0ZNZFBOR1hVWjJXVmZRZWptQnlEY0RGbFdsemZod1BDWDdkZWZG?=
+ =?iso-2022-jp?B?VVppUHhycUV5SlQzK3l4UVhQS01Ebk5kTm1keHZDdFd2WWc3aUZvek9F?=
+ =?iso-2022-jp?B?M0Q5M3BOdjQ5bHA4YTZwRzd1NkFHMm9nYVRHdk1jNGMvWGZXcDBDTzB3?=
+ =?iso-2022-jp?B?TWpXSmFoYm1qcVQzbkJHR083cVFwZFZLZ2llWi8zV2NRTGNJYUU2bmlE?=
+ =?iso-2022-jp?B?aGVxYlhySFM1YWxveERkYjZ3Kzc4QkczTml5a3E2YWtOSnNqMERiZGtD?=
+ =?iso-2022-jp?B?VVlzc1R0YW1VMFVUN3VRbmZhWE9vYm03WHpwMjZIMk5jVEtsYzNoMzNz?=
+ =?iso-2022-jp?B?NWEyR0FCWEx3RlJCVlhxNGtmSTVxcWg3cXpxbkNGdEVpT1F4Z05PeUZw?=
+ =?iso-2022-jp?B?WERKbmJKKzMydjJROURVRFF4Y3dUREZqQk9jNHdhNm5aUE1paGhEVGYy?=
+ =?iso-2022-jp?B?K3FlYWJUZ21KZHgrSzFPZks1RkxBUWlOckRBTUFFaWdNbjRMN0JkSE9K?=
+ =?iso-2022-jp?B?b2tEOWMvanQ1RU1mNllYUi9nRk1rYm1nS0duNk9sUlV0OWtTZkFpNXFY?=
+ =?iso-2022-jp?B?M0gyeWlBb2wwajQxZWlheEtydSsyRFhRNjd6M0x1cllRZnF1Q1lZcUIz?=
+ =?iso-2022-jp?B?Zk40K25sSVVHRHRUaGpFSGp1Nnh5d1FLNmVDRGo3Z3YzR1NzYldQMjBz?=
+ =?iso-2022-jp?B?NWpHNFp6dzFHRVlYdm0xMEh5T3hzRGNxZlE9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620104444.5862-1-victorshihgli@gmail.com> <bcd46d4c-fc60-430a-ba9b-4884f4428fea@intel.com>
-In-Reply-To: <bcd46d4c-fc60-430a-ba9b-4884f4428fea@intel.com>
-From: Victor Shih <victorshihgli@gmail.com>
-Date: Fri, 5 Jul 2024 18:25:02 +0800
-Message-ID: <CAK00qKAYwFV_Bz8n+KxxsEwRrfo-itZpv2+OyZHRfqU-dBWYAA@mail.gmail.com>
-Subject: Re: [PATCH V17 00/22] Add support UHS-II for GL9755 and GL9767
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
-	HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw, 
-	takahiro.akashi@linaro.org, dlunev@chromium.org, 
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nec.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB8389.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbaa7bbf-aa7f-41ee-bf23-08dc9cdcc5e2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2024 10:25:20.6055
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e67df547-9d0d-4f4d-9161-51c6ed1f7d11
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: R7Ds/VbqW6ao5Uy4V4BUQ9QRFnwvJoN5dvxwXYOwATE/1TEMwOQ4dsD57HjAKj1wmP5mAFvPDI9wE00ZoN6Pqw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10806
 
-On Sat, Jun 29, 2024 at 1:17=E2=80=AFAM Adrian Hunter <adrian.hunter@intel.=
-com> wrote:
->
-> On 20/06/24 13:44, Victor Shih wrote:
-> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> >
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 and GL9767
-> > UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#7:  for core
-> > patch#8-#20: for sdhci
-> > patch#21:    for GL9755
-> > patch#22:    for GL9767
-> >
-> > Changes in v17 (June. 20, 2024)
-> > * Rebase on latest mmc/next.
-> > * Drop patch#8 of uhs2 patches series v16.
-> > * Patch#11: Move the sdhci_uhs2_reset_cmd_data() to the other patch
-> >             it was used for the first time.
-> > * Patch#12: Export sdhci_uhs2_set_power() function.
-> > * Patch#16: Add new parameter to __sdhci_finish_data_common().
-> > * Patch#17: Add sdhci_uhs2_reset_cmd_data() and sdhci_uhs2_needs_reset(=
-) to
-> >             resolve the data error or cmd error.
-> > * Patch#21: Rname gl9755_overcurrent_event_enable() to
-> >             sdhci_gli_overcurrent_event_enable().
-> > * Patch#22: Use mmc_card_uhs2() to simplify the code in the
-> >             sdhci_gl9767_reset().
-> >             Use mmc_card_uhs2() to simplify the code in the
-> >             sdhci_gl9767_set_power().
-> >             Add sdhci_gli_overcurrent_event_enable() to
-> >             sdhci_gl9767_set_power().
->
-> The changes in V17 look fine.
->
-> I have no further comments for SDHCI at this stage.
->
-> AFAICT because SD-TRAN is used, CMD12 is OK to abort
-> data transfers if necessary.
->
-> Can you confirm that the current patchset is working
-> on your platform?
+"ERST: [Firmware Warn]: too many record IDs!" is logged on some platforms
+when there is no record.  That happens because erst_reader() retries read
+when erst_get_record_id_next() returns valid ID and erst_read_record()
+fails with -ENOENT.  On those platforms, ACPI_ERST_GET_RECORD_ID returns
+ID 0x0 even if record store is empty.  Reading record ID 0x0 on
+empty store fails with status code 0x4 (Record Store Empty).  However, both
+"Record Store Empty" and "Record Not Found" are translated to -ENOENT,
+the reader cannot distinguish between them and tries to read the next id,
+which is again 0x0, and repeat that until it fills up the record cache with
+invalid entries.
 
-Hi, Adrian
+While such firmware might be buggy, we could make the reading loop more
+robust by returning different error codes for "Record Not Found" and
+"Record Store Empty".
 
-Yes, please refer to the test data below.
+Signed-off-by: Jun'ichi Nomura <junichi.nomura@nec.com>
 
-Tests
-=3D=3D=3D=3D=3D
-Ran 'dd' command to evaluate the performance:
-(SanDisk UHS-II card on GL9755 controller)
-                             Read    Write
-UHS-II disabled (UHS-I): 84.8MB/s 50.0MB/s
-UHS-II enabled         :  199MB/s 76.9MB/s
-
-(SanDisk UHS-II card on GL9767 controller)
-                             Read    Write
-UHS-II disabled (UHS-I): 84.6MB/s 49.6MB/s
-UHS-II enabled         :  155MB/s 67.4MB/s
-
-Thanks, Victor Shih
-
->
-> In other respects you probably need to get some feedback
-> from Ulf.
->
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20240522110909=
-.10060-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v16 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 and GL9767
-> > UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#8:  for core
-> > patch#9-#21: for sdhci
-> > patch#22:    for GL9755
-> > patch#23:    for GL9767
-> >
-> > Changes in v16 (May. 22, 2024)
-> > * rebased to the linux-kernel-v6.9.0-rc2 in Ulf Hansson next branch.
-> > * according to the comments provided by Adrian Hunter to modify the
-> >   patches base on the [V14 00/21] Add support UHS-II for GL9755.
-> > * Patch#8: Separate the Error Recovery mechanism from patch#7 to patch#=
-8.
-> > * Patch#16: Remove irrelevant definition in the sdhci_calc_timeout_uhs2=
-().
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20240123062827=
-.8525-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v15 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 and GL9767
-> > UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#7:  for core
-> > patch#8-#20: for sdhci
-> > patch#21:    for GL9755
-> > patch#22:    for GL9767
-> >
-> > Changes in v15 (April. 22, 2024)
-> > * rebased to the linux-kernel-v6.9.0-rc2 in Ulf Hansson next branch.
-> > * according to the comments provided by Adrian Hunter to modify the
-> >   patches base on the [V14 00/21] Add support UHS-II for GL9755.
-> > * Patch#07: Move struct uhs2_command uhs2_cmd to struct mmc_request and
-> >             modify whatever other changers to make it work.
-> >             Refer the SD Host Controller Standard Specification
-> >             Section 3.10 to add Error Recovery mechanism to recover
-> >             the command error.
-> > * Patch#11: Refer the SD Host Controller Standard Specification
-> >             Section 3.10 to add reset command data mechanism.
-> > * Patch#15: Resolve merge conflicts and reduce unnecessary line breaks.
-> > * Patch#16: Adjust the parameters used in the __sdhci_uhs2_finish_comma=
-nd()
-> >             to match changes in the Patch#7.
-> > * Patch#21: Adjust gl9755_vendor_init() to the correct function.
-> > * Patch#22: Add gl9767 to support uhs2 function.
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20240123062827=
-.8525-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v14 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#7:  for core
-> > patch#8-#20: for sdhci
-> > patch#21:    for GL9755
-> >
-> > Changes in v14 (January. 23, 2024)
-> > * rebased to the linux-kernel-v6.7.0-rc4 in Ulf Hansson next branch.
-> > * according to the comments provided by Adrian Hunter to modify the
-> >   patches base on the [V13 00/21] Add support UHS-II for GL9755.
-> > * Patch#03: Move mmc_card_uhs2() to include/linux/mmc/host.h, so that
-> >             mmc_card_uhs2() can be available for host drivers.
-> > * Patch#10: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> >             sdhci_uhs2_dump_regs().
-> > * Patch#11: Since mmc_card_uhs2() is the same as sdhci_uhs2_mode(), so
-> >             drop sdhci_uhs2_mode() and use mmc_card_uhs2() instead of
-> >             sdhci_uhs2_mode().
-> > * Patch#13: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> >             sdhci_uhs2_set_timeout().
-> > * Patch#14: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> >             sdhci_uhs2_set_ios().
-> > * Patch#16: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> >             sdhci_uhs2_request().
-> > * Patch#17: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> >             sdhci_uhs2_complete_work(), sdhci_uhs2_irq() and
-> >             sdhci_uhs2_thread_irq().
-> > * Patch#18: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> >             __sdhci_uhs2_remove_host().
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20230915094351=
-.11120-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v13 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#7:  for core
-> > patch#8-#20: for sdhci
-> > patch#21:    for GL9755
-> >
-> > Changes in v13 (November. 17, 2023)
-> > * rebased to the linux-kernel-v6.7.0-rc1 in Ulf Hansson next branch.
-> > * according to the comments provided by Adrian Hunter to modify the
-> >   patches base on the [V12 00/23] Add support UHS-II for GL9755.
-> > * according to the comments provided by Ulf Hansson to modify the
-> >   patches base on the [V12 00/23] Add support UHS-II for GL9755.
-> > * Add new patch#6 to re-factoring the code.
-> > * Patch#7: Separate __mmc_go_idle() into one patch for re-factorring th=
-e code.
-> >            Move mmc_decode_scr declaration to sd.h.
-> >            Ues uhs2_sd_tran to stead MMC_UHS2_SD_TRAN.
-> >            Drop unnecessary comment.
-> > * Patch#11: Use ios timing to stead MMC_UHS2_SUPPORT for indicate the U=
-HS2 mode.
-> > * Patch#12: Drop use vmmc2.
-> >             Modify comment message.
-> > * Patch#13: Modify comment message.
-> > * Patch#14: Add judgment condition for power mode in the __sdhci_uhs2_s=
-et_ios().
-> >             Modify comment message.
-> > * Patch#15: Merge Patch#15, Patch#16 and Patch#17 of v12 version into P=
-atch#15 in v13 version.
-> >             Use definitions to simplify code.
-> >             Modify comment message.
-> > * Patch#16: Re-order function to avoid declaration.
-> >             Remove unnecessary function.
-> > * Patch#17: Re-order function to avoid declaration.
-> >             Remove unnecessary definitions.
-> > * Patch#18: Re-order function to avoid declaration.
-> >             Use vqmmc2 to stead vmmc2.
-> > * Patch#21: Ues uhs2_sd_tran to stead MMC_UHS2_SD_TRAN.
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20230915094351=
-.11120-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v12 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#6:  for core
-> > patch#7-#22: for sdhci
-> > patch#23:    for GL9755
-> >
-> > Changes in v12 (September. 15, 2023)
-> > * rebased to the linux-kernel-v6.6.0-rc1 in Ulf Hansson next branch.
-> > * according to the comments provided by Adrian Hunter to modify the
-> >   patches base on the [V11 00/23] Add support UHS-II for GL9755.
-> > * according to the comments provided by Ulf Hansson to modify the
-> >   patches base on the [V11 00/23] Add support UHS-II for GL9755.
-> > * Patch#5: Remove unused max_current_180_vdd2.
-> > * Patch#6: Use mmc_op_multi() to check DCMD which supports multi
-> >            read/write in mmc_uhs2_prepare_cmd().
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20230908095330=
-.12075-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v11 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#6:  for core
-> > patch#7-#22: for sdhci
-> > patch#23:    for GL9755
-> >
-> > Changes in v11 (September. 08, 2023)
-> > * rebased to the linux-kernel-v6.5.0-rc5 in Ulf Hansson next branch.
-> > * according to the comments provided by Adrian Hunter to modify the
-> >   patches base on the [V10 00/23] Add support UHS-II for GL9755.
-> > * Patch#18: Drop the check mmc_card_uhs2_hd_mode(host->mmc)
-> >             in sdhci_uhs2_set_transfer_mode().
-> > * Patch#20: Remove unused ocr_avail_uhs2.
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20230721101349=
-.12387-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v10 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#6:  for core
-> > patch#7-#22: for sdhci
-> > patch#23:    for GL9755
-> >
-> > Changes in v10 (August. 18, 2023)
-> > * rebased to the linux-kernel-v6.5.0-rc5 in Ulf Hansson next branch.
-> > * according to the comments provided by Ulf Hansson to modify the
-> >   patches base on the [V9 00/23] Add support UHS-II for GL9755.
-> > * Patch#2: Drop unnecessary definitions and code.
-> > * Patch#3: Modify the commit message.
-> > * Patch#4: Modify the commit message.
-> > * Patch#5: Drop unnecessary definitions.
-> > * Patch#6: Move some definitions of PatchV9[02/23] to PatchV10[06/23].
-> >            Move some definitions of PatchV9[05/23] to PatchV10[06/23].
-> >            Drop do_multi in the mmc_blk_rw_rq_prep().
-> >            Use tmode_half_duplex to instead of uhs2_tmode0_flag.
-> >            Move entire control of the tmode into mmc_uhs2_prepare_cmd()=
-.
-> > * Patch#11: Move some definitions of PatchV9[05/23] to PatchV10[11/23].
-> > * Patch#18: Use tmode_half_duplex to instead of uhs2_tmode0_flag
-> >             in sdhci_uhs2_set_transfer_mode().
-> > * Patch#20: Move some definitions of PatchV9[05/23] to PatchV10[20/23].
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20230721101349=
-.12387-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v9 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#6:  for core
-> > patch#7-#22: for sdhci
-> > patch#23:    for GL9755
-> >
-> > Changes in v9 (July. 21, 2023)
-> > * rebased to the linux-kernel-v6.5.0-rc1 in Ulf Hansson next branch.
-> > * according to the comments provided by Adrian Hunter to modify the
-> >   patches base on the [V8 00/23] Add support UHS-II for GL9755.
-> > * Patch#2: move sd_uhs2_operation definition of PatchV8[05/23]
-> >            to PatchV9[02/23] for avoid compilation errors.
-> >            move uhs2_control definition of PatchV8[05/23]
-> >            to PatchV9[02/23] for avoid compilation errors.
-> >            move mmc_host flags definition of PatchV8[05/23]
-> >            to PatchV9[02/23] for avoid compilation errors.
-> >            move mmc_host flags MMC_UHS2_SUPPORT definition of
-> >            PatchV8[05/23] to PatchV9[02/23] for avoid compilation error=
-s.
-> >            move mmc_host flags MMC_UHS2_SD_TRAN definition of
-> >            PatchV8[05/23] to PatchV9[02/23] for avoid compilation error=
-s.
-> > * Patch#7: Modify the commit message.
-> > * Patch#8: Modify the commit message.
-> > * Patch#11: Modify annotations in sdhci_get_vdd_value().
-> > * Patch#14: Simplity the turning_on_clk in sdhci_set_ios().
-> > * Patch#18: Modify the annotations in __sdhci_uhs2_send_command().
-> > * Patch#19: Cancel export state of sdhci_set_mrq_done() function.
-> > * Patch#23: Rename gl9755_pre_detect_init() to sdhci_gli_pre_detect_ini=
-t().
-> >             Rename gl9755_uhs2_reset_sd_tran() to
-> >             sdhci_gli_uhs2_reset_sd_tran().
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20230621100151=
-.6329-1-victorshihgli@gmail.com/
-> >
-> > ----------------- original cover letter from v8 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> >   Sequence[2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
-> >   [2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
-> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> >   Setting Register Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy
-> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
-1
-> >   Packet Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#6:  for core
-> > patch#7-#22: for sdhci
-> > patch#23:    for GL9755
-> >
-> > Changes in v8 (June. 21, 2023)
-> > * rebased to the linux-kernel-v6.4.0-rc6 in Ulf Hansson next branch.
-> > * fix most of checkpatch warnings/errors.
-> > * according to the comments provided by Adrian Hunter to modify the
-> >   patches base on the [V7 00/23] Add support UHS-II for GL9755.
-> > * Patch#6: Add MMC_UHS2_SUPPORT to be cleared in sd_uhs2_detect().
-> >            Modify return value in sd_uhs2_attach().
-> > * Patch#7: Use tabs instead of spaces.
-> > * Patch#8: Modify MODULE_LICENSE from "GPL v2" to "GPL".
-> > * Patch#10: Adjust the position of matching brackets.
-> > * Patch#11: Adjust the position of matching brackets.
-> >             Add the initial value of the pwr in sdhci_uhs2_set_power().
-> > * Patch#13: Initialization be combined with declaration and realigned
-> >             in sdhci_calc_timeout_uhs2().
-> >             Forward declare struct mmc_command in sdhci_uhs2.h.
-> > * Patch#14: Add the judgment formula for MMC_TIMING_SPEED_A_HD,
-> >             MMC_TIMING_SPEED_B and MMC_TIMING_SPEED_B_HD in
-> >             __sdhci_uhs2_set_ios().
-> >             Add the switch case for MMC_TIMING_SPEED_A_HD,
-> >             MMC_TIMING_SPEED_B and MMC_TIMING_SPEED_B_HD in
-> >             sdhci_get_preset_value().
-> >             mmc_opt_regulator_set_ocr() to instead of
-> >             mmc_regulator_set_ocr() in sdhci_uhs2_set_ios().
-> > * Patch#15: usleep_range() to instead of udelay() in
-> >             sdhci_uhs2_interface_detect().
-> >             read_poll_timeout() to instead of read_poll_timeout_atomic(=
-)
-> >             in sdhci_uhs2_interface_detect().
-> >             Modify return value in sdhci_uhs2_do_detect_init().
-> > * Patch#16: Remove unnecessary include file.
-> >             read_poll_timeout() to instead of read_poll_timeout_atomic(=
-)
-> >             in sdhci_uhs2_enable_clk().
-> >             Put the comment on the end and put the lines in descending
-> >             line length in sdhci_uhs2_enable_clk().
-> >             Modify return value in sdhci_uhs2_enable_clk().
-> > * Patch#17: Reorder the definitions and lose the parentheses in
-> >             sdhci_uhs2_set_config().
-> >             read_poll_timeout() to instead of read_poll_timeout_atomic(=
-)
-> >             in sdhci_uhs2_check_dormant().
-> > * Patch#18: Adjust the position of matching brackets in
-> >             sdhci_uhs2_send_command_retry().
-> >             Modify CameCase definition in __sdhci_uhs2_finish_command()=
-.
-> >             Modify error message in __sdhci_uhs2_finish_command().
-> >             sdhci_uhs2_send_command_retry() to instead of
-> >             sdhci_uhs2_send_command() in sdhci_uhs2_request().
-> >             Use sdhci_uhs2_mode() to simplify code in
-> >             sdhci_uhs2_request_atomic().
-> >             Add forward declaration for sdhci_send_command().
-> > * Patch#19: Forward declare struct mmc_request in sdhci_uhs2.h.
-> >             Remove forward declaration of sdhci_send_command().
-> >             Use mmc_dev() to simplify code in sdhci_request_done_dma().
-> > * Patch#20: Change return type to void for __sdhci_uhs2_add_host_v4().
-> >             Remove unused variables in __sdhci_uhs2_add_host_v4().
-> > * Patch#22: Add config select MMC_SDHCI_UHS2 in Kconfig.
-> > * Patch#23: Use sdhci_get_vdd_value() to simplify code in
-> >             gl9755_set_power().
-> >             Use read_poll_timeout_atomic() to simplify code in
-> >             sdhci_wait_clock_stable().
-> >             Use read_poll_timeout_atomic() to simplify code in
-> >             sdhci_gl9755_reset().
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20230331105546=
-.13607-1-victor.shih@genesyslogic.com.tw/
-> >
-> > ----------------- original cover letter from v7 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup Se=
-quence
-> >   [2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence=
-[2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include=
- Section
-> >   3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II Setting R=
-egister
-> >   Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy SD
-> >   compatibility and preserve Legacy SD infrastructures (Section 7.1.1 P=
-acket
-> >   Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#6:  for core
-> > patch#7-#22: for sdhci
-> > patch#23:    for GL9755
-> >
-> > Changes in v7 (Mar. 31, 2023)
-> > * rebased to the linux-kernel-v6.3.0-rc3 in Ulf Hansson next branch.
-> > * according to the guidance and overall architecture provided
-> >   by Ulf Hansson, Ben Chuang and Jason Lai to implement the
-> >   UHS-2 Core function based on the patches of the [V4,0/6]
-> >   Preparations to support SD UHS-II cards[5].
-> > * according to the guidance and comments provided by
-> >   Adrian Hunter, Ben Chuang and AKASHI Takahiro to implement
-> >   the UHS-2 Host function based on the patches of the
-> >   [RFC,v3.1,00/27] Add support UHS-II for GL9755[4].
-> > * implement the necessary function to let the UHS-2 Core/Host
-> >   work properly.
-> > * fix most of checkpatch warnings/errors.
-> > * according to the guidance and comments provided by
-> >   Adrian Hunter, Ben Chuang to implement the UHS-2
-> >   Host function based on the patches of the
-> >   [V5,00/26] Add support UHS-II for GL9755[6].
-> > * according to the guidance and comments provided by
-> >   Ulf Hanssion, Adrian Hunter, Ben Chuang to implement the UHS-2
-> >   Host function based on the patches of the
-> >   [V6,00/24] Add support UHS-II for GL9755[7].
-> > * The uhs2_post_attach_sd() function is no longer needed so drop
-> >   the V6 version of the Patch#22.
-> > * Modifies the usage of the flags used by the sdhci host for
-> >   MMC_UHS2_INITIALIZED.
-> > * Patch#1: Drop unnecessary bracket.
-> > * Patch#2: Drop sd_uhs2_set_ios function.
-> >            Used ->uhs2_control() callback for uhs2_set_ios
-> >            in sd_uhs2_power_up().
-> >            Used ->uhs2_control() callback for uhs2_set_ios
-> >            in sd_uhs2_power_off().
-> >            Drop MMC_TIMING_SD_UHS2 in favor of MMC_TIMING_UHS2_SPEED_A.
-> >            Modify sd_uhs2_legacy_init to avoid the
-> >            sd_uhs2_reinit cycle issue.
-> > * Patch#5: Drop unnecessary definitions.
-> > * Patch#6: Drop unnecessary function.
-> >            Drop uhs2_state in favor of ios->timing.
-> > * Patch#7: Reorder values and positions of definitions.
-> > * Patch#9: Used sdhci_uhs2_mode function to simplify.
-> > * Patch#11: Drop pwr variable in sdhci_uhs2_set_power function.
-> > * Patch#14: Modify some descriptions.
-> >             Drop unnecessary function.
-> > * Patch#15: Drop using uhs2_reset ops and use sdhci_uhs2_reset function
-> >             in the sdhci_do_detect_init function.
-> > * Patch#17: Drop unnecessary function.
-> > * Patch#18: Drop unnecessary whitespace changes.
-> >             Cancel the export state of some functions.
-> > * Patch#19: Drop unnecessary function.
-> >             Used sdhci_uhs2_mode function to simplify.
-> >             Modify some descriptions.
-> >             Cancel the export state of some functions.
-> > * Patch#20: Drop using __sdhci_uhs2_host function and use
-> >             __sdhci_add_host function in sdhci_uhs2_add_host function.
-> >             Cancel the export state of some functions.
-> > * Patch#23: Drop using uhs2_post_attach_sd function.
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/ben.chuang/linux-uhs2-gl9755.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20201106022726=
-.19831-1-takahiro.akashi@linaro.org/
-> > [5] https://patchwork.kernel.org/project/linux-mmc/cover/20220418115833=
-.10738-1-jasonlai.genesyslogic@gmail.com/
-> > [6] https://patchwork.kernel.org/project/linux-mmc/cover/20221019110647=
-.11076-1-victor.shih@genesyslogic.com.tw/
-> > [7] https://patchwork.kernel.org/project/linux-mmc/cover/20221213090047=
-.3805-1-victor.shih@genesyslogic.com.tw/
-> >
-> > ----------------- original cover letter from v6 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup Se=
-quence
-> >   [2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence=
-[2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include=
- Section
-> >   3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II Setting R=
-egister
-> >   Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy SD
-> >   compatibility and preserve Legacy SD infrastructures (Section 7.1.1 P=
-acket
-> >   Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#6:  for core
-> > patch#7-#23: for sdhci
-> > patch#24:    for GL9755
-> >
-> > Changes in v6 (Dec. 12, 2022)
-> > * rebased to the linux-kernel-v6.1.0-rc8 in Ulf Hansson next branch.
-> > * according to the guidance and overall architecture provided
-> >   by Ulf Hansson, Ben Chuang and Jason Lai to implement the
-> >   UHS-2 Core function based on the patches of the [V4,0/6]
-> >   Preparations to support SD UHS-II cards[5].
-> > * according to the guidance and comments provided by
-> >   Adrian Hunter, Ben Chuang and AKASHI Takahiro to implement
-> >   the UHS-2 Host function based on the patches of the
-> >   [RFC,v3.1,00/27] Add support UHS-II for GL9755[4].
-> > * implement the necessary function to let the UHS-2 Core/Host
-> >   work properly.
-> > * fix most of checkpatch warnings/errors.
-> > * according to the guidance and comments provided by
-> >   Adrian Hunter, Ben Chuang to implement the UHS-2
-> >   Host function based on the patches of the
-> >   [V5,00/26] Add support UHS-II for GL9755[6].
-> > * The uhs2_post_attach_sd() has implemented in Patch#6 and
-> >   Patch#17 so drop the V5 version of the Patch#23.
-> > * Modifies the usage of the flags used by the sdhci host for
-> >   MMC_UHS2_INITIALIZED.
-> > * Patch#5: Drop unused definitions and functions.
-> > * Patch#7: Rename definitions.
-> >            Use BIT() GENMASK() in some cases.
-> > * Patch#8: Merge V5 version of Patch[7] and Patch[9] into
-> >            V6 version of Patch[8].
-> > * Patch#9: Drop unnecessary function.
-> >            Rename used definitions.
-> > * Patch#10: Drop unnecessary function and simplify some code.
-> > * Patch#11: Drop unnecessary function.
-> >             Add new mmc_opt_regulator_set_ocr function.
-> > * Patch#13: Drop unnecessary function.
-> >             Use GENMASK() and FIELD_PREP() in some cases.
-> > * Patch#14: Drop unnecessary function.
-> >             Modify return value in some function.
-> >             Use GENMASK() and FIELD_PREP() in some cases.
-> > * Patch#15: Drop unnecessary function.
-> >             Rename used definitions.
-> >             Use GENMASK() and FIELD_GET() in some cases.
-> >             Wrap at 100 columns in some functions.
-> > * Patch#16: Drop unnecessary function.
-> > * Patch#17: Drop unnecessary function.
-> >             Drop the unnecessary parameter when call the DBG()
-> >             function.
-> >             Rename used definitions.
-> >             Cancel the export state of some functions.
-> >             Use GENMASK() and FIELD_PREP() in some cases.
-> > * Patch#18: Drop unnecessary function.
-> >             Add uhs2_dev_cmd function to simplify some functions.
-> >             Rename used definitions.
-> >             Cancel the export state of some functions.
-> >             Use GENMASK() and FIELD_PREP() in some cases.
-> > * Patch#19: Drop unnecessary function.
-> >             Add sdhci_uhs2_mode() in some functions.
-> >             Rename used definitions.
-> >             Cancel the export state of some functions.
-> > * Patch#20: Add new complete_work_fn/thread_irq_fn variables in
-> >             struct sdhci_host.
-> >             Use complete_work_fn/thread_irq_fn variables in
-> >             sdhci_alloc_host()/sdhci_uhs2_add_host().
-> >             Rename used definitions.
-> > * Patch[24]: Rename used definitions.
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/ben.chuang/linux-uhs2-gl9755.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20201106022726=
-.19831-1-takahiro.akashi@linaro.org/
-> > [5] https://patchwork.kernel.org/project/linux-mmc/cover/20220418115833=
-.10738-1-jasonlai.genesyslogic@gmail.com/
-> > [6] https://patchwork.kernel.org/project/linux-mmc/cover/20221019110647=
-.11076-1-victor.shih@genesyslogic.com.tw/
-> >
-> > ----------------- original cover letter from v5 -----------------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup Se=
-quence
-> >   [2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence=
-[2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include=
- Section
-> >   3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II Setting R=
-egister
-> >   Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy SD
-> >   compatibility and preserve Legacy SD infrastructures (Section 7.1.1 P=
-acket
-> >   Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#6:  for core
-> > patch#7-#25: for sdhci
-> > patch#26:    for GL9755
-> >
-> > Changes in v5 (Oct. 19, 2022)
-> > * rebased to the linux-kernel-v6.1-rc1 in Ulf Hansson next branch.
-> > * according to the guidance and overall architecture provided
-> >   by Ulf Hansson, Ben Chuang and Jason Lai to implement the
-> >   UHS-2 Core function based on the patches of the [V4,0/6]
-> >   Preparations to support SD UHS-II cards[5].
-> > * according to the guidance and comments provided by
-> >   Adrian Hunter, Ben Chuang and AKASHI Takahiro to implement
-> >   the UHS-2 Host function based on the patches of the
-> >   [RFC,v3.1,00/27] Add support UHS-II for GL9755[4].
-> > * implement the necessary function to let the UHS-2 Core/Host
-> >   work properly.
-> > * fix most of checkpatch warnings/errors
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/ben.chuang/linux-uhs2-gl9755.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> > [4] https://patchwork.kernel.org/project/linux-mmc/cover/20201106022726=
-.19831-1-takahiro.akashi@linaro.org/
-> > [5] https://patchwork.kernel.org/project/linux-mmc/cover/20220418115833=
-.10738-1-jasonlai.genesyslogic@gmail.com/
-> >
-> > ----------------- original cover letter from v3.1 -----------------
-> > This is an interim snapshot of our next version, v4, for enabling
-> > UHS-II on MMC/SD.
-> >
-> > It is focused on 'sdhci' side to address Adrian's comments regarding
-> > "modularising" sdhci-uhs2.c.
-> > The whole aim of this version is to get early feedback from Adrian (and
-> > others) on this issue. Without any consensus about the code structure,
-> > it would make little sense to go further ahead on sdhci side.
-> > (Actually, Adrian has made no comments other than "modularising" so far=
-.)
-> >
-> > I heavily reworked/refactored sdhci-uhs2.c and re-organised the patch
-> > set to meet what I believe Adrian expects; no UHS-II related code in
-> > Legacy (UHS-I) code or sdhci.c.
-> >
-> > Nevertheless, almost of all changes I made are trivial and straightforw=
-ard
-> > in this direction, and I believe that there is no logic changed since v=
-3
-> > except sdhci_uhs2_irq(), as ops->irq hook, where we must deal with UHS-=
-II
-> > command sequences in addition to UHS-II errors. So I added extra handli=
-ngs.
-> >
-> > I admit that there is plenty of room for improvements (for example,
-> > handling host->flags), but again the focal point here is how sdhci-uhs2=
-.c
-> > should be built as a module.
-> >
-> > Please review this series (particularly Patch#8-#26 and #27) from this
-> > viewpoint in the first place.
-> > (Ben is working on 'host' side but there is no change on 'host' side
-> > in this submission except a minor tweak.)
-> >
-> > Thanks,
-> > -Takahiro Akashi
-> >
-> > ------ original cover letter from v3 ------
-> > Summary
-> > =3D=3D=3D=3D=3D=3D=3D
-> > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility.
-> >
-> > About UHS-II, roughly deal with the following three parts:
-> > 1) A UHS-II detection and initialization:
-> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup Se=
-quence
-> >   [2]).
-> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence=
-[2]).
-> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include=
- Section
-> >   3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II Setting R=
-egister
-> >   Setup Sequence.
-> >
-> > 2) Send Legacy SD command through SD-TRAN
-> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
-acy SD
-> >   compatibility and preserve Legacy SD infrastructures (Section 7.1.1 P=
-acket
-> >   Types and Format Overview[3]).
-> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
-II
-> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
-.
-> >
-> > 3) UHS-II Interrupt
-> > - Except for UHS-II error interrupts, most interrupts share the origina=
-l
-> >   interrupt registers.
-> >
-> > Patch structure
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > patch#1-#7: for core
-> > patch#8-#17: for sdhci
-> > patch#18-#21: for GL9755
-> >
-> > Tests
-> > =3D=3D=3D=3D=3D
-> > Ran 'dd' command to evaluate the performance:
-> > (SanDisk UHS-II card on GL9755 controller)
-> >                              Read    Write
-> > UHS-II disabled (UHS-I): 88.3MB/s 60.7MB/s
-> > UHS-II enabled         :  206MB/s   80MB/s
-> >
-> > TODO
-> > =3D=3D=3D=3D
-> > - replace some define with BIT macro
-> >
-> > Reference
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [1] https://gitlab.com/ben.chuang/linux-uhs2-gl9755.git
-> > [2] SD Host Controller Simplified Specification 4.20
-> > [3] UHS-II Simplified Addendum 1.02
-> >
-> > Changes in v3 (Jul. 10, 2020)
-> > * rebased to v5.8-rc4
-> > * add copyright notice
-> > * reorganize the patch set and split some commits into smaller ones
-> > * separate uhs-2 headers from others
-> > * correct wrong spellings
-> > * fix most of checkpatch warnings/errors
-> > * remove all k[cz]alloc() from the code
-> > * guard sdhci-uhs2 specific code with
-> >       'if (IS_ENABLED(CONFIG_MMC_SDHCI_UHS2))'
-> > * make sdhci-uhs2.c as a module
-> > * trivial changes, including
-> >   - rename back sdhci-core.c to sdhci.c
-> >   - allow vendor code to disable uhs2 if v4_mode =3D=3D 0
-> >       in __sdhci_add_host()
-> >   - merge uhs2_power_up() into mmc_power_up()
-> >   - remove flag_uhs2 from mmc_attach_sd()
-> >   - add function descriptions to EXPORT'ed functions
-> >   - other minor code optimization
-> >
-> > Changes in v2 (Jan. 9, 2020)
-> > * rebased to v5.5-rc5
-> >
-> > Ben Chuang (1):
-> >   mmc: sdhci-uhs2: add pre-detect_init hook
-> >
-> > Ulf Hansson (4):
-> >   mmc: core: Cleanup printing of speed mode at card insertion
-> >   mmc: core: Prepare to support SD UHS-II cards
-> >   mmc: core: Announce successful insertion of an SD UHS-II card
-> >   mmc: core: Extend support for mmc regulators with a vqmmc2
-> >
-> > Victor Shih (17):
-> >   mmc: core: Add definitions for SD UHS-II cards
-> >   mmc: core: Add New function to re-factoring the code
-> >   mmc: core: Support UHS-II card control and access
-> >   mmc: sdhci: add UHS-II related definitions in headers
-> >   mmc: sdhci: add UHS-II module and add a kernel configuration
-> >   mmc: sdhci-uhs2: dump UHS-II registers
-> >   mmc: sdhci-uhs2: add reset function function
-> >   mmc: sdhci-uhs2: add set_power() to support vdd2
-> >   mmc: sdhci-uhs2: add set_timeout()
-> >   mmc: sdhci-uhs2: add set_ios()
-> >   mmc: sdhci-uhs2: add uhs2_control() to initialise the interface
-> >   mmc: sdhci-uhs2: add request() and others
-> >   mmc: sdhci-uhs2: add irq() and others
-> >   mmc: sdhci-uhs2: add add_host() and others to set up the driver
-> >   mmc: sdhci-pci: add UHS-II support framework
-> >   mmc: sdhci-pci-gli: enable UHS-II mode for GL9755
-> >   mmc: sdhci-pci-gli: enable UHS-II mode for GL9767
-> >
-> >  drivers/mmc/core/Makefile         |    2 +-
-> >  drivers/mmc/core/bus.c            |   38 +-
-> >  drivers/mmc/core/core.c           |   23 +-
-> >  drivers/mmc/core/core.h           |    1 +
-> >  drivers/mmc/core/mmc_ops.c        |   24 +-
-> >  drivers/mmc/core/mmc_ops.h        |    1 +
-> >  drivers/mmc/core/regulator.c      |   34 +
-> >  drivers/mmc/core/sd.c             |   10 +-
-> >  drivers/mmc/core/sd.h             |    5 +
-> >  drivers/mmc/core/sd_ops.c         |    9 +
-> >  drivers/mmc/core/sd_ops.h         |   13 +
-> >  drivers/mmc/core/sd_uhs2.c        | 1326 +++++++++++++++++++++++++++++
-> >  drivers/mmc/host/Kconfig          |   10 +
-> >  drivers/mmc/host/Makefile         |    1 +
-> >  drivers/mmc/host/sdhci-pci-core.c |   16 +-
-> >  drivers/mmc/host/sdhci-pci-gli.c  |  382 ++++++++-
-> >  drivers/mmc/host/sdhci-pci.h      |    3 +
-> >  drivers/mmc/host/sdhci-uhs2.c     | 1272 +++++++++++++++++++++++++++
-> >  drivers/mmc/host/sdhci-uhs2.h     |  190 +++++
-> >  drivers/mmc/host/sdhci.c          |  281 +++---
-> >  drivers/mmc/host/sdhci.h          |   75 +-
-> >  include/linux/mmc/card.h          |   36 +
-> >  include/linux/mmc/core.h          |   17 +
-> >  include/linux/mmc/host.h          |   80 ++
-> >  include/linux/mmc/sd_uhs2.h       |  240 ++++++
-> >  25 files changed, 3939 insertions(+), 150 deletions(-)
-> >  create mode 100644 drivers/mmc/core/sd_uhs2.c
-> >  create mode 100644 drivers/mmc/host/sdhci-uhs2.c
-> >  create mode 100644 drivers/mmc/host/sdhci-uhs2.h
-> >  create mode 100644 include/linux/mmc/sd_uhs2.h
-> >
->
+diff --git a/drivers/acpi/apei/erst.c b/drivers/acpi/apei/erst.c
+index bf65e3461531..ce186f8d7a15 100644
+--- a/drivers/acpi/apei/erst.c
++++ b/drivers/acpi/apei/erst.c
+@@ -95,6 +95,7 @@ static inline int erst_errno(int command_status)
+ 	case ERST_STATUS_NOT_ENOUGH_SPACE:
+ 		return -ENOSPC;
+ 	case ERST_STATUS_RECORD_STORE_EMPTY:
++		return -ENODATA;
+ 	case ERST_STATUS_RECORD_NOT_FOUND:
+ 		return -ENOENT;
+ 	default:=
 
