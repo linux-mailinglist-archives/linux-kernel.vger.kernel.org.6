@@ -1,153 +1,161 @@
-Return-Path: <linux-kernel+bounces-242381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EE692875A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:58:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2654D92875F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC56228584E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:58:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D14FB25D59
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6718B149C42;
-	Fri,  5 Jul 2024 10:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272DA1487D4;
+	Fri,  5 Jul 2024 10:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Du/Ae7VV"
-Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2153.outbound.protection.outlook.com [40.92.62.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WduAYMVO"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CBE1487E7;
-	Fri,  5 Jul 2024 10:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.153
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720177079; cv=fail; b=XJN2YApCykOll2442PA8O5UxLZFE1JbdeF/fZc9iYp4GV9T2e6EXCuYURhVAGEOtat4Ud4l1Pzo8Ehh4aQO0fnOSpVVBtDmQf/50icHXxJzs3GnoCkvj4Gz1G6In5iwzq4aPZmDc7enJqev2O6q6PmB5vJBYbLF/M1Pjp5tVTzw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720177079; c=relaxed/simple;
-	bh=/lYJeNCa440ckCAbiBKuMEotJOEQSOJMZumXJAtsNKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hdOaGYr9lA7hQOzGhQnXqmm6XEOe1Jongln0wlviCVTl/eFaLZ2Y675WTqsee2/s0y8UVokqfC8W4fYynxPjNvV+PtE0T7FSVAdg0Zo7s73ODlF+O908mRIphRBtS3SkZ1NNS1/BPqS7MsgvFAzBHjEZOJktd079uv3YtGHEHiI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Du/Ae7VV; arc=fail smtp.client-ip=40.92.62.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BdWMgKeUaUxPff52ILGjLCroaKn21mvNEITDaRKTnzQikquQJpVITvwRlwJ0KHkNVBcH+bzyyHpbFr0s3jJ0R73sWyrsffxCypOoIpxPWvliPB15RPNoJ5HToRD4RTt1SE2ALWWyymFgav6q++OzUfU9dk9jL+edseQ0LcA1i6RBxkpGYzOFJcScGesxvw23fw2VfbDHR4XJmZdsjoYamIJcnqnCvoxWSJD+LpmWNDud/CAREJnOF4LdfwMXApOM9MNH1ucTgo2WQ/CIK2BQNloeWpspbSyL+38f6u5H9i5C3q4GTqkMEVSXOldvy37744PBxRBh4CYofogZOfEkSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e/I3G0oq+GfXcfUIg6o292lWiODPBPYER2+MOKhmtzU=;
- b=M8lmEq1nggIyYoUcVx206aE4TyxZ0JBExsMLPvE/W4tanUQBBofN34VDRNmzJkgQTFfddCdTjlGLOQms5saQJT3hy7+OLwQMyWXC1y/wUumXH2EpAP//E0FNPPUpddQpWS99jI8q3m5DX6N+vQ/Md6KeF5jq//Re2iChQQy3MLzoysLstf5BxqHuKzDWPLXttngZd9iItxF0eJI8UZfEo2zg2MYWseq82JET4lnAlLUhvw+w/3jDesH+safVAT45N6eduYvXFO8tLex4ci6xhJSXR0tIuISsZXx9JJ8H6sb7OoiZkIQCCSzDfiL7LtlUFHYMM0Apu4Lnd/QM6k0J0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e/I3G0oq+GfXcfUIg6o292lWiODPBPYER2+MOKhmtzU=;
- b=Du/Ae7VVkOKlxqIKXChgzK0eo/q6kGXH+MBuf2rCIC/WhywPQv/xDKVusv8dHj4SWzVvfRlKVP+h6gmj58OqBhOTZEM3WlhMWmT8xhtxGRbjoefIlWkf09ru4H3y0LS7tq0uX8DvkvIOOS+JT+ARvqNOHIdOAW0ADHDB8SwWKLcJeK5uQTPnDCVgg5j6ilpOv44wwro45iISBySCk7gWMoiyYJwSuE2lkOkMGa9YwkCA6Gxvq1ek3vHXdTfC/TaEfzY+rJH5UdJeTb+9DxQWc397M0w1h+wqOLuI6y4v6VDwO2cgtxEEj6hO2OHjvXgqkFlgL1LtVyLP2nN4z1d3Pg==
-Received: from SY4P282MB2624.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:133::8) by
- SY6P282MB3992.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1db::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.28; Fri, 5 Jul 2024 10:57:53 +0000
-Received: from SY4P282MB2624.AUSP282.PROD.OUTLOOK.COM
- ([fe80::ed78:8dd5:170a:bd04]) by SY4P282MB2624.AUSP282.PROD.OUTLOOK.COM
- ([fe80::ed78:8dd5:170a:bd04%3]) with mapi id 15.20.7741.029; Fri, 5 Jul 2024
- 10:57:53 +0000
-From: "zheng.dongxiong" <zheng.dongxiong@outlook.com>
-To: manivannan.sadhasivam@linaro.org,
-	fancer.lancer@gmail.com,
-	vkoul@kernel.org
-Cc: dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"zheng.dongxiong" <zheng.dongxiong@outlook.com>
-Subject: [PATCH RESEND 2/2] damengine: dw-edma: Add msi wartermark configuration
-Date: Fri,  5 Jul 2024 18:57:35 +0800
-Message-ID:
- <SY4P282MB26243F37A69E54C2B469DFB2F9DF2@SY4P282MB2624.AUSP282.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1720176660.git.zheng.dongxiong@outlook.com>
-References: <cover.1720176660.git.zheng.dongxiong@outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [XLqajbpJrmCwqtYCPhMO5UX6jHzDlMNL]
-X-ClientProxiedBy: SG2PR01CA0146.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::26) To SY4P282MB2624.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:133::8)
-X-Microsoft-Original-Message-ID:
- <aa3b99cec40077d051c0063591017c4d12455ef0.1720176660.git.zheng.dongxiong@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD67A147C76;
+	Fri,  5 Jul 2024 10:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720177118; cv=none; b=WtmEM9Esodl/i2ArQFCgyk4Wlzwr/Yj7Xs/8+lSPUpdPfXToNd6Jz6P0LBqdiT8FZjuMFRvTe1A4X4r4O4WVoWFY4chKPN/6cUuM3Pj9qQO8spy7SWOO7z73/ddJyu+/FW0A4YCjvrZ+h8Zy2d2DlmZXMP0pKe8RwD6VkjNY+zQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720177118; c=relaxed/simple;
+	bh=ThH7VyxQBzVsWzr1OMwDIchNgG0E9g1V+IBpmoHjpPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ihxgxuWNXP/Yg3tJTdG+zPxE131M5+W7DajIE4NxeDztzRKscC/PdDnT/20s6VRrrXtEMrI61Bc4Y+7mL5yAuUlni4H6FvJm8wJMMvWAy2UFLaC6tzfTWX/vPR6Rx52IgRc+H2OHJXeZ++IMPBHpdwZAsUrrMFaJqEn3hzJHCHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WduAYMVO; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ebe785b234so15941011fa.1;
+        Fri, 05 Jul 2024 03:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720177115; x=1720781915; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=M5cYX7h/5q71cUj5uhgTYIT1TEl0rvDXujc5QHDmSrY=;
+        b=WduAYMVO3gtI17IgcPkt5OEeX+j03yNQSRDZIPhrp5AEx1KgaNTKNVLChePQa4wm/f
+         Z/iYjNPeX+9zHhft4vLCdKHWmUqSruhEF4aP5W3whfGkoYi7hj2QRc+JqkYLnqSlcArt
+         ESSw00cWd/1UGcXRiIBjuQ980i7uxYiA72fLfXXuzdwTkmnUMu7j86+fFAzsawmpzGct
+         L1AxKk3+An9VcvqP9a7vDjzoa8fi7lTGgyCSGFoea0wqfOI+0zQcCnZBnjq9HayaK3Dp
+         v1XvfvuJzGApBYCrzy2DxXpLv2c1VSiLGP+yb00cm/3+8aRfWsszFmYU2hvYjlYsicjZ
+         bCTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720177115; x=1720781915;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M5cYX7h/5q71cUj5uhgTYIT1TEl0rvDXujc5QHDmSrY=;
+        b=j/oJKFVKdXW1MRZDsLSozxRCHthw7HSedvvV9LX3VjO7yyb9P6DP65eangv2Q4gGb8
+         l9tmzEZvqeTxziA/TNiq72QykITR8lxBKVqRVTLZ3lQdsJtGSF1AkGwa+k0DO2t9MOcH
+         gx00YKu7MVPfk3jjOlP6ngp9d9j6zJhKNLLJy9el70HSFmK3DrHjnbN1LpTxjSCeaF4d
+         QoV5Jq3bD24A/34td3EDq3jmQ78q8LqAy6DVN/E3GW9IqIITHuNEr7a1EvaK+u+AJa5a
+         WkgUxOaCt6FQKoip8JOCze8QOUF6T5j8ZY/ksWo5eO/9Txe4B/f0VQAR+39ZEEXhbSuo
+         BOwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgjLkCB4PArwjYDqoERt9xhPqnLqhpDCq2p3vVAWP16+Sanw/abt+8TMf/nuklmHp++WT78RvpKyCuwU5HJN2CbhPbTl4R28SfCFrbFeYE6an+F5HkFAz4mkUsmVeyy2XvUAe2Jgsj83I=
+X-Gm-Message-State: AOJu0YzAF6ngBYiDQr5+yNjSCwllaoSA+AkaYslSrAzI38phe95OU46H
+	V9xiqMKV+3c8ho3suNeGk0615iAk/jiB6hCjbLTJ0an1Q3AojaiF
+X-Google-Smtp-Source: AGHT+IFcXNXrmZ46tuMkBOojgdrbsn++FiKIpXhilESW/oPoaYDY9JJAz6wSAjrdDU9KYXOlPPVHrA==
+X-Received: by 2002:a2e:a23c:0:b0:2ee:7d37:49bd with SMTP id 38308e7fff4ca-2ee8ed5aa4emr27855711fa.22.1720177114446;
+        Fri, 05 Jul 2024 03:58:34 -0700 (PDT)
+Received: from [192.168.42.202] (82-132-220-130.dab.02.net. [82.132.220.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3679f9783d0sm3449906f8f.9.2024.07.05.03.58.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 03:58:34 -0700 (PDT)
+Message-ID: <2ee7600f-f09c-41f3-87eb-15bc68734b29@gmail.com>
+Date: Fri, 5 Jul 2024 11:58:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SY4P282MB2624:EE_|SY6P282MB3992:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04bf034d-1bdc-4c13-8105-08dc9ce151a3
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|19110799003|461199028|3412199025|440099028|3430499032|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	ROa8xMVlh4o8Zf+mPmT+Zly5xvlvtSRzIdJBgjC5LYOc5Ma5XeEZVl55yH79TScXuv/hZ4EBKIavmxY3wOPZYY+gi8oSpn8Jpqkccid1aZZUpieY1IX0Kzj9ZqzGUTVc1H7CWr01iPOU+yuw9lOjGL85bmoXIyp/RoO+Sjo5KcAhqmYmZuVzL3QWHYE7qL0Q/Qegde46dX/hR7S/wkQQPbSufbUQKD/CP5dAku4VdcEeWHb5BwnNsiSAjYxOH/kPp/whNjFOTxRh8zuibi1CIJvc6rzQCzVRkHQGdNieTy3r+kF6+wPZMNI64x7nQfjzqBF7m5mLqPAPF/0/Iitjs7pgMUvpb3EafZnXHU+xkPFbbXDYQyvLi2TFEM1TZh1aSfDn96Vd5gWY1V+oae+nxX+QvXWo02huYqMp77a9HG6+Y79IGf99D66maBhqW2MV1BpMvU+l/KTw/49JrLHvDB6nNQbWXP2tQ7fnmiD+e9oT7s/RkpUhauArlN0Ge0eqz6OVJFMsipm0B6ThXrwUjEvxOsmgtS6+jzotm0BVaY/UF1bSmdK67wcpEOdD/XmA7wsm39PpyE4d4RvUKUM/6pL0yAyOcjU2lGg61BbyeLGh+JR5aslW/CzsSicee17TRSiUDkr5FMa5KTQvtjXQbVxTgsZIGLnGLSM039xasU/JoExv11BiWjwhm7DRp3jp
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BclTnbSlJjRH0QhOvE58GnRodoPPxAe2DXHjcldDKgLVlo7qwehVsCssUXNW?=
- =?us-ascii?Q?sphuLqlUpeKSkAJGonKG9XuGMTfc/5agdMXcIl+InbJf/YZcP2wRX6nhq4tD?=
- =?us-ascii?Q?Kd8Qlg6iz2Cm7jfQKeGaMt7PlcA07lbTbQFg3315TxgK9HEBeZsxcoeSu7w/?=
- =?us-ascii?Q?S905iQ98G9ZllR+Z6XY5rYuSXofWHMCR4wCL41kqGStidP6MGSpETaakxF72?=
- =?us-ascii?Q?mL4BCjG2NDskrEp8SEWxDnYXkaMS18sx8OvvPtCH50Q037A5EHetHRYqrOJ1?=
- =?us-ascii?Q?/EasgZ3Op9b2TacJzgSnoltAXcO8xfdNEhIO6l9UjROKol37ZPU9KSCdat3p?=
- =?us-ascii?Q?Rt7JrL7pVqnotQs7CmNDGRikz55tKJfRjDMIfgrAsbLGNWuoODSAjNkMBHIu?=
- =?us-ascii?Q?xh8QOvnzTjOrJP/i8YNmPMzc/kmfHP8CY4wMtvgdVJOX/pliuCTLdgjcXu43?=
- =?us-ascii?Q?BEtfhL68Z/BpAw04Wxl/t86NlDGi9eZS1Y0iEnSTE4EyAVCOn4rnVjCffShv?=
- =?us-ascii?Q?eI+tTqzldJqCitMnYWdMU7laZ+5KzXTWh7YDSeFGDAn3FHSLOSS5u6FGT3MD?=
- =?us-ascii?Q?9TplHR2vYr21IdtL4Wojf8B/OypXIrZiNIygRmZ5xYRyFRhfVedNomDnjwFi?=
- =?us-ascii?Q?/6bn01pkQXDu7CIyo0nD8tkwPiJruEf6qNTmyvlm5RWLllWR8eVIinXgJGdE?=
- =?us-ascii?Q?dxEDAGNVWGoFWa2jUv08ryc1FOOEprIVlOEGOucl/TyaUY4c3/D6HeaszC/9?=
- =?us-ascii?Q?0hf22IvU4DuJtSBWEefbE4zEirT4XqrR57GlfCMNUxV3VJwppdmOYXVCyLHX?=
- =?us-ascii?Q?zpJ+J9K79SdFz1Rk+FyBT2WPldfDGAS8q/0LH/mTMupTNn2cz3p+AZwKeSee?=
- =?us-ascii?Q?h8vcK1uPrpZvgxzVauWTaGb+qo1UvGtBfTocDdf2Mof4/9KSpNN7DyqUYekm?=
- =?us-ascii?Q?h5ZfaSOwT3OWITTwgA3cXLioygSHkiYuAhx1rvOoGLR5xxaFYIBx8oN60P7R?=
- =?us-ascii?Q?RohtavOE8bRcZKjCvgc1oGd6ldxC3ZZfafkdtObx30P9sAXWCZAMxYnrt6ss?=
- =?us-ascii?Q?xV2+vM+dUlNVVn797aLGV8Fl0BH2dMeAkNPVE3D8LolcgDn9YTTU2LooE1m3?=
- =?us-ascii?Q?iEfqvancr+HjfkNVBtfd3TjQJ3hoYhGdX6Ydcg5Q3KYO52zmjejRH2tRXNI7?=
- =?us-ascii?Q?RdmdQXB/Ev1Dmnb1M5iILdzPMW6bC5C9mGCOlrP1hIeX6dPY6B/CXpVEBfsF?=
- =?us-ascii?Q?iNXwmbNX98z/gipMhOT/?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04bf034d-1bdc-4c13-8105-08dc9ce151a3
-X-MS-Exchange-CrossTenant-AuthSource: SY4P282MB2624.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 10:57:53.3492
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY6P282MB3992
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+To: YangYang <yang.yang@vivo.com>, Ming Lei <ming.lei@redhat.com>,
+ Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20240703022807.642115-1-yang.yang@vivo.com>
+ <fbd3bebc-db09-4224-bdf9-b44304bf55b8@gmail.com>
+ <59c125f5-ff40-4a36-b095-b0dbf1a0a3fd@vivo.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <59c125f5-ff40-4a36-b095-b0dbf1a0a3fd@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-HDMA trigger wartermark interrupt, When use the RIE flag.
-PCIe RC will trigger AER, If msi wartermark addr is not configuration.
-This patch fix it by add msi wartermark configuration
+On 7/3/24 13:28, YangYang wrote:
+> On 2024/7/3 19:55, Pavel Begunkov wrote:
+>> On 7/3/24 03:28, Yang Yang wrote:
+>>> Configuration for sbq:
+>>>    depth=64, wake_batch=6, shift=6, map_nr=1
+>>>
+>>> 1. There are 64 requests in progress:
+>>>    map->word = 0xFFFFFFFFFFFFFFFF
+>>> 2. After all the 64 requests complete, and no more requests come:
+>>>    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
+>>> 3. Now two tasks try to allocate requests:
+>>>    T1:                                       T2:
+>>>    __blk_mq_get_tag                          .
+>>>    __sbitmap_queue_get                       .
+>>>    sbitmap_get                               .
+>>>    sbitmap_find_bit                          .
+>>>    sbitmap_find_bit_in_word                  .
+>>>    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
+>>>    sbitmap_deferred_clear                    __sbitmap_queue_get
+>>>    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
+>>>      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
+>>>        return false;                         __sbitmap_get_word -> nr=-1
+>>>      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
+>>>      atomic_long_andnot()                    /* map->cleared=0 */
+>>>                                                if (!(map->cleared))
+>>>                                                  return false;
+>>>                                       /*
+>>>                                        * map->cleared is cleared by T1
+>>>                                        * T2 fail to acquire the tag
+>>>                                        */
+>>>
+>>> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
+>>> up due to the wake_batch being set at 6. If no more requests come, T1
+>>> will wait here indefinitely.
+>>>
+>>> This patch achieves two purposes:
+>>> 1. Check on ->cleared and update on both ->cleared and ->word need to
+>>> be done atomically, and using spinlock could be the simplest solution.
+>>> So revert commit 661d4f55a794 ("sbitmap: remove swap_lock"), which
+>>> may cause potential race.
+>>>
+>>> 2. Add extra check in sbitmap_deferred_clear(), to identify whether
+>>> ->word has free bits.
+>>>
+>>> Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
+>>
+>> Is it blamed right? Considering that the revert alone doesn't fix
+>> the problem, it sounds like the 2nd step might need to be ported
+>> to kernels even without the blamed commit.
+>>
+> 
+> Got it. How would you feel about removing
+> "Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")" and modifying
+> the commit message as follows?
 
-Signed-off-by: zheng.dongxiong <zheng.dongxiong@outlook.com>
----
- drivers/dma/dw-edma/dw-hdma-v0-core.c | 3 +++
- 1 file changed, 3 insertions(+)
+We need a fixes tag, which commit caused it? Can it happen prior
+to ea86ea2cdced ("sbitmap: ammortize cost of clearing bits")?
 
-diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-index d77051d1e..c4d15a7a7 100644
---- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
-+++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-@@ -280,6 +280,9 @@ static void dw_hdma_v0_core_ch_config(struct dw_edma_chan *chan)
- 	/* MSI done addr - low, high */
- 	SET_CH_32(dw, chan->dir, chan->id, msi_stop.lsb, chan->msi.address_lo);
- 	SET_CH_32(dw, chan->dir, chan->id, msi_stop.msb, chan->msi.address_hi);
-+	/* MSI watermark addr - low, high */
-+	SET_CH_32(dw, chan->dir, chan->id, msi_watermark.lsb, chan->msi.address_lo);
-+	SET_CH_32(dw, chan->dir, chan->id, msi_watermark.msb, chan->msi.address_hi);
- 	/* MSI abort addr - low, high */
- 	SET_CH_32(dw, chan->dir, chan->id, msi_abort.lsb, chan->msi.address_lo);
- 	SET_CH_32(dw, chan->dir, chan->id, msi_abort.msb, chan->msi.address_hi);
+
+> This patch achieves two purposes:
+> 1. Check on ->cleared and update on both ->cleared and ->word need to
+> be done atomically, and using spinlock could be the simplest solution.
+> 2. Add extra check in sbitmap_deferred_clear(), to identify whether
+> ->word has free bits.
+> 
+> Thanks.
+
 -- 
-2.34.1
-
+Pavel Begunkov
 
