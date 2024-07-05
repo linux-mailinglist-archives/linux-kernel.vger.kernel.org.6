@@ -1,120 +1,164 @@
-Return-Path: <linux-kernel+bounces-242673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85087928B45
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:08:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B17C928B4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C6B285019
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DE601C23119
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DC016D33A;
-	Fri,  5 Jul 2024 15:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF7016DC08;
+	Fri,  5 Jul 2024 15:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g4tUJ4TJ"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="tz+hmpXt"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778A216C840
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720191888; cv=none; b=fD+RTvei8rYSqqiRWsaTs8Agw+q6wH8eqkoIq+CM/jILOR+Q5aUr/k811hCnSqkbMy1Mv3ncEJWsHQFR4b9dz5VtdDLOS4EQO0Ja+w2WH0ULibQN58Yo9mB2zyuNgHpldPRSiGjchn0S2/XLricFa3EDJ5hiLgg5HvzpkSFFfsE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720191888; c=relaxed/simple;
-	bh=03tw9GpUoktebYDiBRLN+yuStGO6NkuqpDICOb4/w2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pZUyPH4gPnxkX77aeL+m3kF/oYTGedcez04SeVsemaiuNIyxnILQ7MfkLFS84V0pz43lyOcQgM7808TODotEVQA4ucDUVgmnmHYjhOISEw71R8JO78MtaB+MzLXVkETuHCeLDXEDj6TACAh08Fu5JwSvwFCGFgMPfOk4UVM6IsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g4tUJ4TJ; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so1454525e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 08:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720191884; x=1720796684; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G1XUXoP8ZUsxacZi1Zifn4mKpe40fxK2AvpOT6WOw2Q=;
-        b=g4tUJ4TJ2SZ7cpYHpWAkxshY74kyN6C/kuBXneJs4v+E0WvYfRqupvxw7pMtWB1OXg
-         tI2AmXeZJIoGKNF7Y2UBVuk4EB8uWFJ8ulh6Oeoy6C3sp6r3O5UQ8dZCR9VoQYfpHlNb
-         J02JYx1LdcFOuK7o1Qq8Ii0r3QcBRz0bP6l10gEEK4MjYPgfjBcWRtlKo0bxrmTihj/K
-         bjBj5KmtbSEWf/pbOThLdrXKaMi5wEMmkoefdfkYp1dkjHkfvWwW33ogL4WgRj5fre3S
-         Xk1WDB6LdZ1x9WiSvdziIXK5H8UdQs0kj/DMUrow8Q1mnCUxaCvLbbTnuCIKNIoEfanl
-         sKLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720191884; x=1720796684;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G1XUXoP8ZUsxacZi1Zifn4mKpe40fxK2AvpOT6WOw2Q=;
-        b=fP0SAO48YWbMyGq3v4FkjomTPIRDMdUXrWDrRkC3XfpcsRKBXwdDitW7WAqrXEHffQ
-         4BfQ7XFrYfDm0ijHGzrB48M6ednKqMB+2giXU1v/dkKj6+CXW58On+54spIel10OB3N2
-         FPAqpescviLIH8FnTKk7dyl8DGhGqdOxZe60NU8CxC9R6LzRfJRuxwxXa9WK6jOiAqIN
-         oEYWdwiF/82BEe5Ro4ADwKI+8Xku7eF/SNQAUm63jPicU0KkTWSwOaQtw9F6Bjj9aQlS
-         QsvJaGcuUKROhoc2DFge6t1nfbhVmqS4sTXGR57I4OYaRSmvl99Px/++wlZ2jLRHzh0L
-         bczw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvG3YQIYaL++VLuy7mBvdUw2LD5N98oACZhTEGLF8iogq+oSLQYP/SbTD19BFE2YfA5DJG2BCs+1ea99s9Nq6H6nQ5TJqADk0uRhQC
-X-Gm-Message-State: AOJu0YxYkh4CTNPZWr41tzXcLXLJT635+OcsjhAKt9RczwyGwRDAjJ+k
-	uqyaYQGqkc5x+KHpWkU0uXmy3658qlFn1TbtzRYdt6xgMRQQATDbrrK90wwukMk=
-X-Google-Smtp-Source: AGHT+IGVnJDsTy2hKMNHtroOZv/CQszbYL1ewUUemzM1FxWCzTewJ9w1FvE1OscDzUKStDJwF4xYsg==
-X-Received: by 2002:a19:2d42:0:b0:52e:7df0:9a78 with SMTP id 2adb3069b0e04-52ea063274fmr4038493e87.32.1720191884560;
-        Fri, 05 Jul 2024 08:04:44 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab0b7fesm2848682e87.31.2024.07.05.08.04.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 08:04:44 -0700 (PDT)
-Date: Fri, 5 Jul 2024 18:04:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_jkona@quicinc.com, 
-	quic_imrashai@quicinc.com
-Subject: Re: [PATCH 6/8] clk: qcom: Add support for Display clock Controllers
- on SA8775P
-Message-ID: <ucgeexs6impgapot4a55cwzqy5kv374jkyhylojvpmstm7cf42@r4i5toizchn2>
-References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
- <20240612-sa8775p-mm-clock-controllers-v1-6-db295a846ee7@quicinc.com>
- <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
- <053e047b-7594-48bc-ac1b-2368c0c8f1cc@quicinc.com>
- <8b19c43e-6b13-4b09-9498-ee0b24749d3f@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4EA16C685;
+	Fri,  5 Jul 2024 15:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720191907; cv=pass; b=AHqA1P7dJkk2r0JUz4YsHcZnGMPkdqzy2+jeQpnly2ricjHlDP2Zou7jW7z7Ybwd+aGoNpYYAzTfoPOHXrkpkJAyk5ko5QbjXwfZuvussNp/yS1kwl+zdC8R3brli9wMXrwPz3HM86AJBa24eEy7y8mQoUArp4gktn93wLP52g0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720191907; c=relaxed/simple;
+	bh=HKSqxvF3CxgL10ACjEGWckPH1vvYFkiWNx3iwMo7AA8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qknMxEf6Zdul1Fh6tOKtR0bKIUBhJLL76Kgky14PS0sFSKd1pPTjPjf/wvQEQN4KXtRziGJsss8K2RSVBfeTgExiKxa2ubxwPq4SVMJXBLO1+ecGW5F9i63/8ymYdsQraYGu50lfmbzMVVgcgHRerJD5TPY1pk7Yfd0niaTuKTI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=tz+hmpXt; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WFxdK1ljHz49PwY;
+	Fri,  5 Jul 2024 18:04:52 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1720191896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I1T+P8FyFyyO/m0YF8++lEjDIL2XJa3WTUGx4ue/aE0=;
+	b=tz+hmpXtF1An88gQr0KIJGScQpFm9ckn28+DNI1w3j6Szh4QE25ZaWuBdev/21V5xPKvYv
+	9zZFbc9MLE1XhHARcQI6MRa9BLLXCFUglXSSiJFV7BjUUEJ8xZZ9q2eL8AbnB/Glgwsdjz
+	uBCE/xpB06MqFgvHhvr33FvOFMrYmrPfb9XGAOLb0FoUku+tzqGgZ678BTb5TjLvGh/07B
+	tJmDtzy/oXp+CjjLWvXth/WmIO14ScQsuZ4ooFE+OBqlLYZ7FnumaE+g0OodSt/Hvmenvy
+	RPUtuADcZcTiKCE2uZ7o1KEqmT9/r9APUxyNp6adyE48aV0IrMf9yLT6Iv54Tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1720191896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I1T+P8FyFyyO/m0YF8++lEjDIL2XJa3WTUGx4ue/aE0=;
+	b=vaXREb1LYrwVwE0h3MpNdszwKsXTcSaLnu4TdlVWLAcLEkOn/g5LgkKvolcVHh/hzz4auC
+	F+TbRHJln7ORldVNDcQ7Yq7a3kjInW+T6K7kP2xxqnz7zMhH6m+8/k0Hu8gg4eMCwH+ofJ
+	gDCy1swxqWthMbedsKeUooVDg25SiUgpn6RZSq/alr8bixgSpvVuXf/yrxZimEv0haMk3H
+	JiZLddFit1tdH5EQA4QTPO0cVKegJ4mZiEP54wh1cW3y57Njy7Sl2srSruc+EXBV6MiNFU
+	ZWVYPtMs4Ubg6qnnR2NCiy5RbfJV03e27YwtQbw5n8Qi/n6AqAKrZKB6qn8N3w==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1720191896; a=rsa-sha256;
+	cv=none;
+	b=T1mf1NkKLBvs1+EKIb8wizUNhUGJMm0UWU9rHP/XzyLr1iLHEEAL3v8xormQWi5kqTiKmN
+	cil9l5+OnPLreYdwbSjUdz1awdQozS84jb8YGru6VUtfrUjjSOg5HAimV3LXK9TZ7jV3++
+	qEcGaTGW86Rp9P6UfML7sGHAPrVPGTAozVpueotKdr7EU8lFzUop3XSrbm98cY3YB/galj
+	DJZYeQZtSXPnIS7zrLo3FrQdmbW3N49CqtQwgWlEokXNzaouaYLa/4czsHYlVc57cxVkIE
+	dAgxN4WiGIodm3JAcfJ383jzhx0T6eZQ6tnkusBxzdXQpnUwLJMpVlcqlNoCYA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b19c43e-6b13-4b09-9498-ee0b24749d3f@quicinc.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Jul 2024 18:04:52 +0300
+Message-Id: <D2HP4TX4S873.2OS2LXAWT58C4@iki.fi>
+Cc: "Thorsten Leemhuis" <regressions@leemhuis.info>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, <stable@vger.kernel.org>, "Peter Huewe"
+ <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>, <linux-kernel@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] tpm: Address !chip->auth in
+ tpm_buf_append_hmac_session*()
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Stefan Berger"
+ <stefanb@linux.ibm.com>, <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240703182453.1580888-1-jarkko@kernel.org>
+ <20240703182453.1580888-4-jarkko@kernel.org>
+ <c90ce151-c6e5-40c6-8d3d-ccec5a97d10f@linux.ibm.com>
+ <D2GJSLLC0LSF.2RP57L3ALBW38@kernel.org>
+ <bffebaaa-4831-459f-939d-adf531e4c78b@linux.ibm.com>
+ <D2HOI1829XOO.3ERITAWX9N5IC@kernel.org>
+In-Reply-To: <D2HOI1829XOO.3ERITAWX9N5IC@kernel.org>
 
-On Wed, Jul 03, 2024 at 11:17:01PM GMT, Taniya Das wrote:
-> 
-> 
-> On 6/21/2024 10:03 AM, Taniya Das wrote:
-> > > Please merge this into one to save on boilerplate, take a look
-> > > at dispcc-sc8280xp.c
-> > > 
-> > 
-> > I did take a look at the dispcc for SC8280XP before posting the series,
-> > but it kind of looked tricky to add fixes for a particular dispcc.
-> > Debugging could also be difficult in my opinion.
-> > Though I understand that we are trying to optimize by re-using few
-> > common structures/probe but from clocks side they are all redefined.
-> > That was the reason to keep them separate.
-> 
-> Konrad, are you good with the proposal to keep the two instance of display
-> clock controllers as separate drivers? As I looking to post
-> the next patch series, please let me know your comments.
+On Fri Jul 5, 2024 at 5:35 PM EEST, Jarkko Sakkinen wrote:
+> On Fri Jul 5, 2024 at 5:05 PM EEST, Stefan Berger wrote:
+> > The original thread here
+> >
+> > https://lore.kernel.org/linux-integrity/656b319fc58683e399323b880722434=
+467cf20f2.camel@kernel.org/T/#t
+> >
+> > identified the fact that tpm2_session_init() was missing for the ibmvtp=
+m=20
+> > driver. It is a non-zero problem for the respective platforms where thi=
+s=20
+> > driver is being used. The patched fixed the reported issue.
+>
+> All bugs needs to be fixed always before features are added. You are
+> free now to submit your change as a feature patch, which will be
+> reviewed and applied later on.
+>
+> > Now that you fixed it in v4 are you going to accept my original patch=
+=20
+> > with the Fixes tag since we will (likely) have an enabled feature in=20
+> > 6.10 that is not actually working when the ibmvtpm driver is being used=
+?
+>
+> There's no bug in tpm_ibmvtpm driver as it functions as well as in 6.9.
+>
+> I can review it earliest in the week 31, as feature patch. This was my
+> holiday week, and I came back only to fix the bug in the authentication
+> session patch set.
+>
+> > I do no think that this is true and its only tpm_ibmvtpm.c that need th=
+e=20
+> > call to tpm2_session_init. All drivers that use TPM_OPS_AUTO_STARTUP=20
+> > will run tpm_chip_register -> tpm_chip_bootstrap -> tpm_auto_startup ->=
+=20
+> > tpm2_auto_startup -> tpm2_sessions_init
+>
+> Right my bad. I overlooked the call sites and you're correct in that
+> for anything with that flag on, it will be called.
+>
+> It still changes nothing, as the commit you were pointing out in the
+> fixes tag does not implement initialization code, and we would not have
+> that flag in the first place, if it was mandatory [1].
+>
+> [1] It could be that it is mandatory perhaps, but that is a different
+> story. Then we would render the whole flag out. I think this was anyway
+> good insight, even if by unintentionally, and we can reconsider removing
+> it some day.
 
-I'd say, continue with the separate drivers.
+I should have rejected the patch set based on not validating chip->auth
+in opaque API that tpm2-sessions is, and it should not fail caller like
+that no matter how world outside of it is structured. It's a time-bomb
+like it is in the mainline because of this.  I missed that detail
+and your transcript exposed the bug.
 
--- 
-With best wishes
-Dmitry
+Working around an *identified* bug in the caller *is not* a bug fix.
+
+BR, Jarkko
 
