@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-242460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DC3928852
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:56:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921E2928857
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00BC1C2200B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:56:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF39BB22AA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A47014A0B5;
-	Fri,  5 Jul 2024 11:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0C614A0BF;
+	Fri,  5 Jul 2024 11:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkMbWpIt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JFkkYB4x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F9F146A96;
-	Fri,  5 Jul 2024 11:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B39E146A96;
+	Fri,  5 Jul 2024 11:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720180587; cv=none; b=OOGGmtJQezF/j/uCrdbRUeXoGV1/hiv/9BNPQ0eaWoTyhPvIaxdCV99YoGoRMue4bnPTlnSnpPP9HZWxtV9f6L0atmZpLcNA+tlfal2BIyRVxzS8+Tjl1Z3g2vI+c8y3Gh5x6YFMZCGZaSWigauNxgARMN3ooF4nEyKhxsIHkZI=
+	t=1720180715; cv=none; b=rQjdY2vfX+CKZ1Oh9Juv2ofRJWwfOWzHWBpJIixr9nh3ml8TEiz+FFo/uAHqjVYAx1/VqLTYl/D0HIJWkgRv98zdIiKfhqwZvYMjhPYis8n9zmZvc5CKRCEQlv702SJzWC/70r1AGw7qMBaZy6D7l6WjWB5OmKxgC8iPKae2oHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720180587; c=relaxed/simple;
-	bh=k/YHBLBWjOt0yIDrM6yiv0CQetE7GMAcVImDtUBMBxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqIuJPiDn6JuPD5BzLA78UcV1M8s1pAvLtSBZmNZFPsdRDz/G5Lvh6Nektwpag/pVBZZy9nCT+QJQzEgJoCS5c0Gx/Na7y02VRm+O2pzBZaZes4NOhOePFmrDUhNZJUNt621iBYfOUrNRX2M75eu+Kk2ipkvLBSe7yplEIPN1+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkMbWpIt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04384C116B1;
-	Fri,  5 Jul 2024 11:56:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720180587;
-	bh=k/YHBLBWjOt0yIDrM6yiv0CQetE7GMAcVImDtUBMBxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hkMbWpItLZJSOTvEyDYm8np8z5X33dTRcQMfLYT5zckTImLfyEhJgQKu7XVRsmiKM
-	 BJShWbtawbgYZ3PqRDt9qj9xJUyhbdmUgupic/iM3PRfWToLQ3RvEemhvcfLCSJGZi
-	 vsBlbLLbTgHnjNd+g4n6+2qYQKB5vhR724uhqHUF7fgzOfdWkz4MN2e8rnlJGu8QZD
-	 zlxgIgrwjmDAo8DLuSk94EyMwg/f6bEh500Tq0PiMDJFmOt/DRHS0oAHDswgtISM82
-	 bCGVv+/3P7mUnGQ8UKGuoX/xkllglo+domw1IQdWtRcp8IMQH9aqJgCGp7Bf55wZl/
-	 2CjxRA243CCCg==
-Date: Fri, 5 Jul 2024 13:56:24 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v2 1/4] i2c: smbus: only limit max banks to eight
-Message-ID: <ibxkewtaxywpabogm776h7ty3grjquravsuwhtjbe2k4j7vlw6@enzxsfkk326z>
-References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
- <20240627-piix4-spd-v2-1-617ce47b8ff4@weissschuh.net>
- <2mtehll54bpuozsjswynp2xron3dfxknsixnouovby2nxlnrun@3sxdqqbvfr22>
- <7a70c707-6a57-4f0b-a068-7efefd679088@t-8ch.de>
+	s=arc-20240116; t=1720180715; c=relaxed/simple;
+	bh=fWMVZ0gm+Bgakml5ZJ8UwTNTxYDzsvMS6AqPtXGEW5A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IeJCnMQe53M8AvJXJK6Cw3Cb1tDTi84mdDR+9xs+qAy5FYFBaMYLV9Htb4EDVMCMtPTuH6znLqRdeLXZ/ujZkWiQ/GnI/bWndMz3GyxtKu4Im39aiT4rucTp+r+1lBCD7dwA8IeaPy4sITrXxgRnVLW6CMT3ymyEYRVI3xC1g+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JFkkYB4x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4659l2I5013369;
+	Fri, 5 Jul 2024 11:58:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=bpC6HvErzFkRareH0SSb9B
+	2p2WLpvDYa6doJZOtKovc=; b=JFkkYB4x6XIK39dl3jEXZHAUT8zf79jxd8Hx75
+	K0dECbiBv+uezDjUqENw4EaURf6kmc3Jp1qqiarr4o7YcRyGpJ4fi74wXX6kBCby
+	fQYrs1c3MqXisgO0Wf/C96fippNEmVfbELmdhXDJfIDDOu8x7tt7gUisKHFxEIwN
+	C76hRsWF6yUVG9vXmlDqyCHLxngg5KjOXf9tmL/32VuwFqkZqGGRpMDS8M7FVnUd
+	yZumKvcyJ+d3xz/mK7tWvgYJxW+CBjLXwjOLOTglXmSPmL8IkEe4Vsvq4uMe3T+J
+	gZ3XYCETul5f3Rzw4BXzqBvqym1beDwC1wTjWwvk5y8Axhsw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 405dbe4fey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 11:58:29 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465BwSJj023555
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Jul 2024 11:58:28 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 5 Jul 2024 04:58:25 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH] arm64: dts: qcom: sc7280: Enable download mode register write
+Date: Fri, 5 Jul 2024 17:28:14 +0530
+Message-ID: <20240705115814.1422995-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7a70c707-6a57-4f0b-a068-7efefd679088@t-8ch.de>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: n1HJ2gaPbxmpfO-C5297CNmaHhGIKawH
+X-Proofpoint-GUID: n1HJ2gaPbxmpfO-C5297CNmaHhGIKawH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_08,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 clxscore=1011 suspectscore=0
+ impostorscore=0 mlxlogscore=747 mlxscore=0 priorityscore=1501 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407050088
 
-Hi Thomas,
+Enable download mode setting for sc7280 which can help collect
+ramdump for this SoC.
 
-On Fri, Jul 05, 2024 at 07:55:21AM GMT, Thomas Weiﬂschuh  wrote:
-> Jul 4, 2024 23:57:36 Andi Shyti <andi.shyti@kernel.org>:
-> > On Thu, Jun 27, 2024 at 07:48:11PM GMT, Thomas Weiﬂschuh wrote:
-> >> If there are less than eight slots in total,
-> >> only probe those.
-> >> Now the code matches the comment "..., then limit slots to 8".
-> >>
-> >> Fixes: 8821c8376993 ("i2c: smbus: Prepare i2c_register_spd for usage on muxed segments")
-> >> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> >
-> > I don't see the need for the Fixes here... was there a bug that
-> > has been fixed?
-> 
-> More addresses are probed than are possible.
-> Which is a change from the old behavior and also
-> contradicts the comment.
-> IMO it's a bug. Probably not a big one and I'm not sure if user-observable.
-> Surely nothing for stable.
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/sc7280.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-The Fixes tag means that you want the patch to be backported to
-stable kernels. Someone will take the effort of taking all the
-new "Fixes:" and port them to older kernels.
+diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+index fc9ec367e3a5..e17c4c2401ac 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+@@ -710,6 +710,7 @@
+ 	firmware {
+ 		scm: scm {
+ 			compatible = "qcom,scm-sc7280", "qcom,scm";
++			qcom,dload-mode = <&tcsr 0x13000>;
+ 		};
+ 	};
+ 
+-- 
+2.7.4
 
-We want this when patches fix crashes, deadlocks, memory leaks,
-security holes, misbehaviours, earthquakes and floodings.
-
-Andi
-
-> But I'm not hung up on it and will drop that tag in the next revision.
 
