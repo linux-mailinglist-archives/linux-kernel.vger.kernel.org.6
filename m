@@ -1,222 +1,939 @@
-Return-Path: <linux-kernel+bounces-241818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54967927FE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:52:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77407927FE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B731C2240D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:52:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9AC1F234C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A0D14F62;
-	Fri,  5 Jul 2024 01:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fQXKrb65"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736BB1CD02
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD628848A;
+	Fri,  5 Jul 2024 01:53:26 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F40634;
+	Fri,  5 Jul 2024 01:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720144328; cv=none; b=GmwhkwqGG31LvjeNuqSOKFd1HJmCB5ICczD25HXJw9QNiHL4ZQjL4cKzDiseX3MZ0SoyAxxkl+hbt4w/Xp7LrG7ihTj9ioL9rx9nfMcJMheE7yhrgfvSEZW+llM/bpeGf5y3BaNb1yD6XVIUBg51t3gMkX+0OuC9PRfw7EBQIew=
+	t=1720144405; cv=none; b=sntLlgahy7Fv8r3I4P5zARZXeu0lUQA0KINA+mjpTDY9MDiypHaQZM6XrI+BBarrAjkqo8wPIZXtCHCAAGUsteXsb0I8zV+LWMrcSUjUHbLfYqWu+mQKtp285n14+N7XPX4dA+vf1Nu6QmuGDcbD7J4+//NiDLlW7JHObHXx10w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720144328; c=relaxed/simple;
-	bh=nzRcGb+kyercVxowW3qU4f37WmP6FLfDsGdbdTsC+LQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G8OWT9I5sbphbMOp7AyattENF6z3eUqKQ/04v8753E6kHG8UhHG/k+ikCRER0w2j+o7teGBYn/LDIMSw0oyOeQksOEkwvhCM9BvWL6V6e+XEs57eG9MaVellJHLHVszGZm0NoUz03imStO9NuGsNYlpFyo35NCrbvvecij24oiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fQXKrb65; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720144325;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6b+7036jYxnuHPjtFREomtgUCm2YK6FRyPY3L2e2E5o=;
-	b=fQXKrb65PuiLI+qRvNKFwDqQT3hztyXNrsKfGOVVrVyB/LUsUTMIAPBPP2FalutNEzuEFI
-	kuXvGdJj+t4FqCeSrV3gDdz8M4d89V9qsvXFgmx4/mPFcxQxLn/bVhnP1yK/PAeXEMP82k
-	XvrPsdwbBLavjJYxXmDhPnMu8Vctmu4=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-639-Iqy0NFQZMyOTwW_qppYXdg-1; Thu, 04 Jul 2024 21:52:04 -0400
-X-MC-Unique: Iqy0NFQZMyOTwW_qppYXdg-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4465c3713daso15952581cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 18:52:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720144323; x=1720749123;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6b+7036jYxnuHPjtFREomtgUCm2YK6FRyPY3L2e2E5o=;
-        b=PV63pDXkTB9MhVbEmJ+vIqeez5oZBuHl90/V5XWaNkDEhE4gSMJYgRNGpJSL4BOkjo
-         2ddhZJJOjEVuZ5bjO0kI2hNrgIyvFOxxrQ96+XKak0x9OlD4GcIf9MSM/lDISpidPXw7
-         LhwjN/vsnXtYPwf062ApSBTe+grm+b8o8WJM8n3U90xYj+HG5r9o+9hxgwuxWLPjPBGx
-         V7iVokRWJOaQfB/300oHSCWPYMxkiDaY1CzIeRWa2abNnhQv5ZUAs2EeZXYp6mJNV0DG
-         dakbuOM6WKV904Ok2kNdRfTkSlcEGyOqK7N5fkvOYY5j+eczSCPnzI+hOZH3uMUSoX96
-         DwzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVln3On0nLbMtO9ekEoHC3QQnt1jN/INarhzgf1fPVXvdqMSLJqvP3+VPBJAo73xiurHCFo9/2vf+ScYsoo10V9fA8InEhlOy1ayE3V
-X-Gm-Message-State: AOJu0Yy8KiDxpIMmmG/zwHgMVyE9HuvSwU96xWaNALRW47fzDXhUaZfp
-	CBbtAvXGMwBc/NYLYtcupvOSP6a9ZpkfGRkQD3bvbKpRJg0Xl8HuUnJqZPcAwBHmCsrG9JUOmaF
-	9u4X56lNTrTF81Rzd6jKO6vur5gsD1gU5QiMYk0gPwbVpKbwKinH1jxyktQttig==
-X-Received: by 2002:a05:622a:130b:b0:446:4c01:1f7a with SMTP id d75a77b69052e-447cbef2255mr33005881cf.33.1720144323609;
-        Thu, 04 Jul 2024 18:52:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwQTFvpVzS+3s8lBQ6rQS5+T3aTA4dKQfRqaVDuOQPH25bn08nShvkBsGun9K/e5wY/OTeZA==
-X-Received: by 2002:a05:622a:130b:b0:446:4c01:1f7a with SMTP id d75a77b69052e-447cbef2255mr33005751cf.33.1720144323309;
-        Thu, 04 Jul 2024 18:52:03 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447d5843cd8sm825301cf.74.2024.07.04.18.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 18:52:03 -0700 (PDT)
-Message-ID: <f5e327770211f515701e2de7db03c85c1277efa8.camel@redhat.com>
-Subject: Re: [PATCH v2 32/49] KVM: x86: Remove all direct usage of
- cpuid_entry2_find()
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
- <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
- <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
- Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 04 Jul 2024 21:52:02 -0400
-In-Reply-To: <20240517173926.965351-33-seanjc@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-33-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1720144405; c=relaxed/simple;
+	bh=4u5JHKANCgNs52SLGbTnRi5Xs/83s17N5FWJFmbbwEM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pQi1OI1Y778mgUlCaFfuRO8zkQYOn7RSKtEayhOw8+Y4sKJ9ZMlZoNIjSLr22L42Vt6XZxqQMC3rqq6o88wqh1VxND8nRNZrCjxIoQVQhRilhptcc2mCbdUw+Gz29L8GhQu7H3ak1YlHyo9cxg0Bg7NGkExUQGxODRnh95WB6lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.10.34])
+	by gateway (Coremail) with SMTP id _____8AxDOsPUodmCiIBAA--.3458S3;
+	Fri, 05 Jul 2024 09:53:19 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.10.34])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxWcYOUodmNcQ7AA--.7167S2;
+	Fri, 05 Jul 2024 09:53:18 +0800 (CST)
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	tglx@linutronix.de,
+	jiaxun.yang@flygoat.com,
+	gaoliang@loongson.cn,
+	wangliupu@loongson.cn,
+	lvjianmin@loongson.cn,
+	zhangtianyang@loongson.cn,
+	yijun@loongson.cn,
+	mhocko@suse.com,
+	akpm@linux-foundation.org,
+	dianders@chromium.org,
+	maobibo@loongson.cn,
+	xry111@xry111.site,
+	zhaotianrui@loongson.cn,
+	nathan@kernel.org,
+	yangtiezhu@loongson.cn,
+	zhoubinbin@loongson.cn
+Cc: loongarch@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2 2/2] LoongArch: Add AVEC irqchip support
+Date: Fri,  5 Jul 2024 09:53:15 +0800
+Message-Id: <20240705015315.16541-1-zhangtianyang@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8BxWcYOUodmNcQ7AA--.7167S2
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9fXoWfuw17tr4DCrWrZw1xJw1UJwc_yoW5XFyUWo
+	WfXF1Yqw18Gr4IkrZ5twn0qFWjqry8CrZ8A3s3ZF4v9F4xArs8Kry7Kw1ayFy7G3WkGrZx
+	Cay7Wrn3Wayxtrn7l-sFpf9Il3svdjkaLaAFLSUrUUUUnb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
+	UjIYCTnIWjp_UUUYX7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
+	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_
+	WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+	xGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jz5lbUUUUU=
 
-On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> Convert all use of cpuid_entry2_find() to kvm_find_cpuid_entry{,index}()
-> now that cpuid_entry2_find() operates on the vCPU state, i.e. now that
-> there is no need to use cpuid_entry2_find() directly in order to pass in
-> non-vCPU state.
-> 
-> To help prevent unwanted usage of cpuid_entry2_find(), #undef
-> KVM_CPUID_INDEX_NOT_SIGNIFICANT, i.e. force KVM to use
-> kvm_find_cpuid_entry().
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/cpuid.c | 28 ++++++++++++++++------------
->  1 file changed, 16 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index d7390ade1c29..699ce4261e9c 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -189,6 +189,12 @@ struct kvm_cpuid_entry2 *kvm_find_cpuid_entry(struct kvm_vcpu *vcpu,
->  }
->  EXPORT_SYMBOL_GPL(kvm_find_cpuid_entry);
->  
-> +/*
-> + * cpuid_entry2_find() and KVM_CPUID_INDEX_NOT_SIGNIFICANT should never be used
-> + * directly outside of kvm_find_cpuid_entry() and kvm_find_cpuid_entry_index().
-> + */
-> +#undef KVM_CPUID_INDEX_NOT_SIGNIFICANT
-> +
->  static int kvm_check_cpuid(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_cpuid_entry2 *best;
-> @@ -198,8 +204,7 @@ static int kvm_check_cpuid(struct kvm_vcpu *vcpu)
->  	 * The existing code assumes virtual address is 48-bit or 57-bit in the
->  	 * canonical address checks; exit if it is ever changed.
->  	 */
-> -	best = cpuid_entry2_find(vcpu, 0x80000008,
-> -				 KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-> +	best = kvm_find_cpuid_entry(vcpu, 0x80000008);
->  	if (best) {
->  		int vaddr_bits = (best->eax & 0xff00) >> 8;
->  
-> @@ -211,7 +216,7 @@ static int kvm_check_cpuid(struct kvm_vcpu *vcpu)
->  	 * Exposing dynamic xfeatures to the guest requires additional
->  	 * enabling in the FPU, e.g. to expand the guest XSAVE state size.
->  	 */
-> -	best = cpuid_entry2_find(vcpu, 0xd, 0);
-> +	best = kvm_find_cpuid_entry_index(vcpu, 0xd, 0);
->  	if (!best)
->  		return 0;
->  
-> @@ -254,7 +259,7 @@ static struct kvm_hypervisor_cpuid kvm_get_hypervisor_cpuid(struct kvm_vcpu *vcp
->  	u32 base;
->  
->  	for_each_possible_hypervisor_cpuid_base(base) {
-> -		entry = cpuid_entry2_find(vcpu, base, KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-> +		entry = kvm_find_cpuid_entry(vcpu, base);
->  
->  		if (entry) {
->  			u32 signature[3];
-> @@ -301,7 +306,7 @@ static u64 cpuid_get_supported_xcr0(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_cpuid_entry2 *best;
->  
-> -	best = cpuid_entry2_find(vcpu, 0xd, 0);
-> +	best = kvm_find_cpuid_entry_index(vcpu, 0xd, 0);
->  	if (!best)
->  		return 0;
->  
-> @@ -312,7 +317,7 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_cpuid_entry2 *best;
->  
-> -	best = cpuid_entry2_find(vcpu, 1, KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-> +	best = kvm_find_cpuid_entry(vcpu, 1);
->  	if (best) {
->  		/* Update OSXSAVE bit */
->  		if (boot_cpu_has(X86_FEATURE_XSAVE))
-> @@ -323,22 +328,22 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
->  			   vcpu->arch.apic_base & MSR_IA32_APICBASE_ENABLE);
->  	}
->  
-> -	best = cpuid_entry2_find(vcpu, 7, 0);
-> +	best = kvm_find_cpuid_entry_index(vcpu, 7, 0);
->  	if (best && boot_cpu_has(X86_FEATURE_PKU) && best->function == 0x7)
->  		cpuid_entry_change(best, X86_FEATURE_OSPKE,
->  				   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
->  
-> -	best = cpuid_entry2_find(vcpu, 0xD, 0);
-> +	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 0);
->  	if (best)
->  		best->ebx = xstate_required_size(vcpu->arch.xcr0, false);
->  
-> -	best = cpuid_entry2_find(vcpu, 0xD, 1);
-> +	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 1);
->  	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
->  		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
->  		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
->  
->  	if (!kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT)) {
-> -		best = cpuid_entry2_find(vcpu, 0x1, KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-> +		best = kvm_find_cpuid_entry(vcpu, 0x1);
->  		if (best)
->  			cpuid_entry_change(best, X86_FEATURE_MWAIT,
->  					   vcpu->arch.ia32_misc_enable_msr &
-> @@ -352,8 +357,7 @@ static bool kvm_cpuid_has_hyperv(struct kvm_vcpu *vcpu)
->  #ifdef CONFIG_KVM_HYPERV
->  	struct kvm_cpuid_entry2 *entry;
->  
-> -	entry = cpuid_entry2_find(vcpu, HYPERV_CPUID_INTERFACE,
-> -				  KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-> +	entry = kvm_find_cpuid_entry(vcpu, HYPERV_CPUID_INTERFACE);
->  	return entry && entry->eax == HYPERV_CPUID_SIGNATURE_EAX;
->  #else
->  	return false;
+Introduce the advanced extended interrupt controllers. This feature will
+allow each core to have 256 independent interrupt vectors and MSI
+interrupts can be independently routed to any vector on any CPU.
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+Co-developed-by: Jianmin Lv <lvjianmin@loongson.cn>
+Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
+Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
+Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
+Co-developed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+---
+ arch/loongarch/Kconfig                    |   1 +
+ arch/loongarch/include/asm/cpu-features.h |   1 +
+ arch/loongarch/include/asm/cpu.h          |   2 +
+ arch/loongarch/include/asm/hw_irq.h       |  10 +
+ arch/loongarch/include/asm/irq.h          |  12 +-
+ arch/loongarch/include/asm/loongarch.h    |  20 +-
+ arch/loongarch/include/asm/smp.h          |   2 +
+ arch/loongarch/kernel/cpu-probe.c         |   3 +-
+ arch/loongarch/kernel/smp.c               |   5 +
+ drivers/irqchip/Makefile                  |   2 +-
+ drivers/irqchip/irq-loongarch-avec.c      | 440 ++++++++++++++++++++++
+ drivers/irqchip/irq-loongarch-cpu.c       |   4 +-
+ drivers/irqchip/irq-loongson-eiointc.c    |   3 +
+ drivers/irqchip/irq-loongson-pch-msi.c    |  43 ++-
+ 14 files changed, 538 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/irqchip/irq-loongarch-avec.c
 
-Best regards,
-	Maxim Levitsky
+Changes log:
+V0->V1:
+	1.Modified some formats and declarations
+	2.Removed kmalloc/kfree when adding affinity related data to pending_list,
+ 	  and used moving tag to replace the original behavior
+	3.Adjusted the process that enables AVEC interrupts, now it is at the end of all processes
+	4.Removed CPUHP related callbacks, now irq_matrix_online/irq_matrix_offline is completed in start_secondary/loongson_cpu_disable
+	5.Adjusted compatibility issues for CONFIG_ACPI
+	6.About question:
+	> irr = csr_read64(LOONGARCH_CSR_IRR0 + vector / 64);
+	> should be good enough, no? 
+	csr_read64 was built-in as __csrrd_d, it doesn't seem to support variables as parameters 
+	>>>>
+	drivers/irqchip/irq-loongarch-avec.c: In function ‘complete_irq_moving’:
+	./arch/loongarch/include/asm/loongarch.h:164:25: error: invalid argument to built-in function
+	  164 | #define csr_read64(reg) __csrrd_d(reg)
+	      |                         ^~~~~~~~~
+	drivers/irqchip/irq-loongarch-avec.c:170:23: note: in expansion of macro ‘csr_read64’
+	  170 |                 irr = csr_read64(LOONGARCH_CSR_IRR_BASE + vector / VECTORS_PER_REG);
+	      |                       ^~~~~~~~~~
+	>>>>
+	So we have temporarily retained the previous implementation.
+
+V1->V2:
+	Fixed up coding style. Made on/offline functions void
+	Added compatibility when CONFIG_SMP is turned off
+
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index e38139c576ee..a66e49b5a68c 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -83,6 +83,7 @@ config LOONGARCH
+ 	select GENERIC_ENTRY
+ 	select GENERIC_GETTIMEOFDAY
+ 	select GENERIC_IOREMAP if !ARCH_IOREMAP
++	select GENERIC_IRQ_MATRIX_ALLOCATOR
+ 	select GENERIC_IRQ_MULTI_HANDLER
+ 	select GENERIC_IRQ_PROBE
+ 	select GENERIC_IRQ_SHOW
+diff --git a/arch/loongarch/include/asm/cpu-features.h b/arch/loongarch/include/asm/cpu-features.h
+index 2eafe6a6aca8..16a716f88a5c 100644
+--- a/arch/loongarch/include/asm/cpu-features.h
++++ b/arch/loongarch/include/asm/cpu-features.h
+@@ -65,5 +65,6 @@
+ #define cpu_has_guestid		cpu_opt(LOONGARCH_CPU_GUESTID)
+ #define cpu_has_hypervisor	cpu_opt(LOONGARCH_CPU_HYPERVISOR)
+ #define cpu_has_ptw		cpu_opt(LOONGARCH_CPU_PTW)
++#define cpu_has_avecint		cpu_opt(LOONGARCH_CPU_AVECINT)
+ 
+ #endif /* __ASM_CPU_FEATURES_H */
+diff --git a/arch/loongarch/include/asm/cpu.h b/arch/loongarch/include/asm/cpu.h
+index 48b9f7168bcc..843f9c4ec980 100644
+--- a/arch/loongarch/include/asm/cpu.h
++++ b/arch/loongarch/include/asm/cpu.h
+@@ -99,6 +99,7 @@ enum cpu_type_enum {
+ #define CPU_FEATURE_GUESTID		24	/* CPU has GuestID feature */
+ #define CPU_FEATURE_HYPERVISOR		25	/* CPU has hypervisor (running in VM) */
+ #define CPU_FEATURE_PTW			26	/* CPU has hardware page table walker */
++#define CPU_FEATURE_AVECINT		27	/* CPU has avec interrupt */
+ 
+ #define LOONGARCH_CPU_CPUCFG		BIT_ULL(CPU_FEATURE_CPUCFG)
+ #define LOONGARCH_CPU_LAM		BIT_ULL(CPU_FEATURE_LAM)
+@@ -127,5 +128,6 @@ enum cpu_type_enum {
+ #define LOONGARCH_CPU_GUESTID		BIT_ULL(CPU_FEATURE_GUESTID)
+ #define LOONGARCH_CPU_HYPERVISOR	BIT_ULL(CPU_FEATURE_HYPERVISOR)
+ #define LOONGARCH_CPU_PTW		BIT_ULL(CPU_FEATURE_PTW)
++#define LOONGARCH_CPU_AVECINT		BIT_ULL(CPU_FEATURE_AVECINT)
+ 
+ #endif /* _ASM_CPU_H */
+diff --git a/arch/loongarch/include/asm/hw_irq.h b/arch/loongarch/include/asm/hw_irq.h
+index af4f4e8fbd85..772692e765c0 100644
+--- a/arch/loongarch/include/asm/hw_irq.h
++++ b/arch/loongarch/include/asm/hw_irq.h
+@@ -9,6 +9,16 @@
+ 
+ extern atomic_t irq_err_count;
+ 
++/*
++ * 256 vectors Map:
++ *
++ * 0 - 15: mapping legacy IPs, e.g. IP0-12.
++ * 16 - 255: mapping a vector for external IRQ.
++ *
++ */
++#define NR_VECTORS		256
++#define IRQ_MATRIX_BITS		NR_VECTORS
++#define NR_LEGACY_VECTORS	16
+ /*
+  * interrupt-retrigger: NOP for now. This may not be appropriate for all
+  * machines, we'll see ...
+diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/asm/irq.h
+index 480418bc5071..cf3b635a9b86 100644
+--- a/arch/loongarch/include/asm/irq.h
++++ b/arch/loongarch/include/asm/irq.h
+@@ -65,7 +65,7 @@ extern struct acpi_vector_group msi_group[MAX_IO_PICS];
+ #define LOONGSON_LPC_LAST_IRQ		(LOONGSON_LPC_IRQ_BASE + 15)
+ 
+ #define LOONGSON_CPU_IRQ_BASE		16
+-#define LOONGSON_CPU_LAST_IRQ		(LOONGSON_CPU_IRQ_BASE + 14)
++#define LOONGSON_CPU_LAST_IRQ		(LOONGSON_CPU_IRQ_BASE + 15)
+ 
+ #define LOONGSON_PCH_IRQ_BASE		64
+ #define LOONGSON_PCH_ACPI_IRQ		(LOONGSON_PCH_IRQ_BASE + 47)
+@@ -101,6 +101,16 @@ int pch_msi_acpi_init(struct irq_domain *parent,
+ 					struct acpi_madt_msi_pic *acpi_pchmsi);
+ int pch_pic_acpi_init(struct irq_domain *parent,
+ 					struct acpi_madt_bio_pic *acpi_pchpic);
++
++#ifdef CONFIG_ACPI
++int __init pch_msi_acpi_init_v2(struct irq_domain *parent,
++		struct acpi_madt_msi_pic *pch_msi_entry);
++int __init loongarch_avec_acpi_init(struct irq_domain *parent);
++void complete_irq_moving(void);
++void loongarch_avec_offline_cpu(unsigned int cpu);
++void loongarch_avec_online_cpu(unsigned int cpu);
++#endif
++
+ int find_pch_pic(u32 gsi);
+ struct fwnode_handle *get_pch_msi_handle(int pci_segment);
+ 
+diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
+index eb09adda54b7..16a910359977 100644
+--- a/arch/loongarch/include/asm/loongarch.h
++++ b/arch/loongarch/include/asm/loongarch.h
+@@ -72,7 +72,6 @@
+ #define  CPUCFG1_RPLV			BIT(23)
+ #define  CPUCFG1_HUGEPG			BIT(24)
+ #define  CPUCFG1_CRC32			BIT(25)
+-#define  CPUCFG1_MSGINT			BIT(26)
+ 
+ #define LOONGARCH_CPUCFG2		0x2
+ #define  CPUCFG2_FP			BIT(0)
+@@ -252,8 +251,8 @@
+ #define  CSR_ESTAT_EXC_WIDTH		6
+ #define  CSR_ESTAT_EXC			(_ULCAST_(0x3f) << CSR_ESTAT_EXC_SHIFT)
+ #define  CSR_ESTAT_IS_SHIFT		0
+-#define  CSR_ESTAT_IS_WIDTH		14
+-#define  CSR_ESTAT_IS			(_ULCAST_(0x3fff) << CSR_ESTAT_IS_SHIFT)
++#define  CSR_ESTAT_IS_WIDTH		15
++#define  CSR_ESTAT_IS			(_ULCAST_(0x7fff) << CSR_ESTAT_IS_SHIFT)
+ 
+ #define LOONGARCH_CSR_ERA		0x6	/* ERA */
+ 
+@@ -999,10 +998,18 @@
+ #define CSR_FWPC_SKIP_SHIFT		16
+ #define CSR_FWPC_SKIP			(_ULCAST_(1) << CSR_FWPC_SKIP_SHIFT)
+ 
++#define LOONGARCH_CSR_IRR0		0xa0
++#define LOONGARCH_CSR_IRR1		0xa1
++#define LOONGARCH_CSR_IRR2		0xa2
++#define LOONGARCH_CSR_IRR3		0xa3
++#define LOONGARCH_CSR_IRR_BASE		LOONGARCH_CSR_IRR0
++
++#define	LOONGARCH_CSR_ILR		0xa4
++
+ /*
+  * CSR_ECFG IM
+  */
+-#define ECFG0_IM		0x00001fff
++#define ECFG0_IM		0x00005fff
+ #define ECFGB_SIP0		0
+ #define ECFGF_SIP0		(_ULCAST_(1) << ECFGB_SIP0)
+ #define ECFGB_SIP1		1
+@@ -1045,6 +1052,7 @@
+ #define  IOCSRF_EIODECODE		BIT_ULL(9)
+ #define  IOCSRF_FLATMODE		BIT_ULL(10)
+ #define  IOCSRF_VM			BIT_ULL(11)
++#define  IOCSRF_AVEC			BIT_ULL(15)
+ 
+ #define LOONGARCH_IOCSR_VENDOR		0x10
+ 
+@@ -1055,6 +1063,7 @@
+ #define LOONGARCH_IOCSR_MISC_FUNC	0x420
+ #define  IOCSR_MISC_FUNC_TIMER_RESET	BIT_ULL(21)
+ #define  IOCSR_MISC_FUNC_EXT_IOI_EN	BIT_ULL(48)
++#define  IOCSR_MISC_FUNC_AVEC_EN	BIT_ULL(51)
+ 
+ #define LOONGARCH_IOCSR_CPUTEMP		0x428
+ 
+@@ -1375,9 +1384,10 @@ __BUILD_CSR_OP(tlbidx)
+ #define INT_TI		11	/* Timer */
+ #define INT_IPI		12
+ #define INT_NMI		13
++#define INT_AVEC	14
+ 
+ /* ExcCodes corresponding to interrupts */
+-#define EXCCODE_INT_NUM		(INT_NMI + 1)
++#define EXCCODE_INT_NUM		(INT_AVEC + 1)
+ #define EXCCODE_INT_START	64
+ #define EXCCODE_INT_END		(EXCCODE_INT_START + EXCCODE_INT_NUM - 1)
+ 
+diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
+index 278700cfee88..2399004596a3 100644
+--- a/arch/loongarch/include/asm/smp.h
++++ b/arch/loongarch/include/asm/smp.h
+@@ -69,9 +69,11 @@ extern int __cpu_logical_map[NR_CPUS];
+ #define ACTION_BOOT_CPU	0
+ #define ACTION_RESCHEDULE	1
+ #define ACTION_CALL_FUNCTION	2
++#define ACTION_CLEAR_VECT	3
+ #define SMP_BOOT_CPU		BIT(ACTION_BOOT_CPU)
+ #define SMP_RESCHEDULE		BIT(ACTION_RESCHEDULE)
+ #define SMP_CALL_FUNCTION	BIT(ACTION_CALL_FUNCTION)
++#define SMP_CLEAR_VECT		BIT(ACTION_CLEAR_VECT)
+ 
+ struct secondary_data {
+ 	unsigned long stack;
+diff --git a/arch/loongarch/kernel/cpu-probe.c b/arch/loongarch/kernel/cpu-probe.c
+index 55320813ee08..3b2e72e8f9bd 100644
+--- a/arch/loongarch/kernel/cpu-probe.c
++++ b/arch/loongarch/kernel/cpu-probe.c
+@@ -106,7 +106,6 @@ static void cpu_probe_common(struct cpuinfo_loongarch *c)
+ 		elf_hwcap |= HWCAP_LOONGARCH_CRC32;
+ 	}
+ 
+-
+ 	config = read_cpucfg(LOONGARCH_CPUCFG2);
+ 	if (config & CPUCFG2_LAM) {
+ 		c->options |= LOONGARCH_CPU_LAM;
+@@ -176,6 +175,8 @@ static void cpu_probe_common(struct cpuinfo_loongarch *c)
+ 		c->options |= LOONGARCH_CPU_EIODECODE;
+ 	if (config & IOCSRF_VM)
+ 		c->options |= LOONGARCH_CPU_HYPERVISOR;
++	if (config & IOCSRF_AVEC)
++		c->options |= LOONGARCH_CPU_AVECINT;
+ 
+ 	config = csr_read32(LOONGARCH_CSR_ASID);
+ 	config = (config & CSR_ASID_BIT) >> CSR_ASID_BIT_SHIFT;
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index 0dfe2388ef41..6dfedef306f3 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -234,6 +234,9 @@ static irqreturn_t loongson_ipi_interrupt(int irq, void *dev)
+ 		per_cpu(irq_stat, cpu).ipi_irqs[IPI_CALL_FUNCTION]++;
+ 	}
+ 
++	if (action & SMP_CLEAR_VECT)
++		complete_irq_moving();
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -388,6 +391,7 @@ int loongson_cpu_disable(void)
+ 	irq_migrate_all_off_this_cpu();
+ 	clear_csr_ecfg(ECFG0_IM);
+ 	local_irq_restore(flags);
++	loongarch_avec_offline_cpu(cpu);
+ 	local_flush_tlb_all();
+ 
+ 	return 0;
+@@ -566,6 +570,7 @@ asmlinkage void start_secondary(void)
+ 	 * early is dangerous.
+ 	 */
+ 	WARN_ON_ONCE(!irqs_disabled());
++	loongarch_avec_online_cpu(cpu);
+ 	loongson_smp_finish();
+ 
+ 	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 2df72b7b165b..de091a9f7c88 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -110,7 +110,7 @@ obj-$(CONFIG_LS1X_IRQ)			+= irq-ls1x.o
+ obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
+ obj-$(CONFIG_TI_SCI_INTA_IRQCHIP)	+= irq-ti-sci-inta.o
+ obj-$(CONFIG_TI_PRUSS_INTC)		+= irq-pruss-intc.o
+-obj-$(CONFIG_IRQ_LOONGARCH_CPU)		+= irq-loongarch-cpu.o
++obj-$(CONFIG_IRQ_LOONGARCH_CPU)		+= irq-loongarch-cpu.o irq-loongarch-avec.o
+ obj-$(CONFIG_LOONGSON_LIOINTC)		+= irq-loongson-liointc.o
+ obj-$(CONFIG_LOONGSON_EIOINTC)		+= irq-loongson-eiointc.o
+ obj-$(CONFIG_LOONGSON_HTPIC)		+= irq-loongson-htpic.o
+diff --git a/drivers/irqchip/irq-loongarch-avec.c b/drivers/irqchip/irq-loongarch-avec.c
+new file mode 100644
+index 000000000000..81dbccbea5a2
+--- /dev/null
++++ b/drivers/irqchip/irq-loongarch-avec.c
+@@ -0,0 +1,440 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2020-2024 Loongson Technologies, Inc.
++ */
++
++#include <linux/cpuhotplug.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqchip.h>
++#include <linux/irqchip/chained_irq.h>
++#include <linux/irqdomain.h>
++#include <linux/kernel.h>
++#include <linux/msi.h>
++#include <linux/radix-tree.h>
++#include <linux/spinlock.h>
++
++#include <asm/loongarch.h>
++#include <asm/setup.h>
++
++#define VECTORS_PER_REG		64
++#define ILR_INVALID_MASK	0x80000000UL
++#define ILR_VECTOR_MASK		0xffUL
++#define AVEC_MSG_OFFSET		0x100000
++
++static phys_addr_t msi_base_v2;
++static DEFINE_PER_CPU(struct irq_desc * [NR_VECTORS], irq_map);
++
++#ifdef CONFIG_SMP
++struct pending_list {
++	struct list_head	head;
++};
++
++static DEFINE_PER_CPU(struct pending_list, pending_list);
++#endif
++
++struct loongarch_avec_chip {
++	struct fwnode_handle	*fwnode;
++	struct irq_domain	*domain;
++	struct irq_matrix	*vector_matrix;
++	raw_spinlock_t		lock;
++};
++
++static struct loongarch_avec_chip loongarch_avec;
++
++struct loongarch_avec_data {
++	struct list_head	entry;
++	unsigned int		cpu;
++	unsigned int		vec;
++	unsigned int		prev_cpu;
++	unsigned int		prev_vec;
++	unsigned int		moving		: 1,
++				managed		: 1;
++};
++
++static struct cpumask intersect_mask;
++
++static int assign_irq_vector(struct irq_data *irqd, const struct cpumask *dest,
++			     unsigned int *cpu)
++{
++	return irq_matrix_alloc(loongarch_avec.vector_matrix, dest, false, cpu);
++}
++
++static inline void loongarch_avec_ack_irq(struct irq_data *d)
++{
++}
++
++static inline void loongarch_avec_unmask_irq(struct irq_data *d)
++{
++}
++
++static inline void loongarch_avec_mask_irq(struct irq_data *d)
++{
++}
++
++#ifdef CONFIG_SMP
++static inline void pending_list_init(int cpu)
++{
++	struct pending_list *plist = per_cpu_ptr(&pending_list, cpu);
++
++	INIT_LIST_HEAD(&plist->head);
++}
++
++static void loongarch_avec_sync(struct loongarch_avec_data *adata)
++{
++	struct pending_list *plist;
++
++	if (cpu_online(adata->prev_cpu)) {
++		plist = per_cpu_ptr(&pending_list, adata->prev_cpu);
++		list_add_tail(&adata->entry, &plist->head);
++		adata->moving = true;
++		mp_ops.send_ipi_single(adata->prev_cpu, ACTION_CLEAR_VECT);
++	}
++}
++
++static int loongarch_avec_set_affinity(struct irq_data *data, const struct cpumask *dest,
++				       bool force)
++{
++	struct loongarch_avec_data *adata;
++	unsigned int cpu, vector;
++	unsigned long flags;
++	int ret;
++
++	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
++	adata = irq_data_get_irq_chip_data(data);
++
++	if (adata->vec && cpu_online(adata->cpu) && cpumask_test_cpu(adata->cpu, dest)) {
++		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++		return 0;
++	}
++	if (adata->moving)
++		return -EBUSY;
++
++	cpumask_and(&intersect_mask, dest, cpu_online_mask);
++
++	ret = assign_irq_vector(data, &intersect_mask, &cpu);
++	if (ret < 0) {
++		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++		return ret;
++	}
++	vector = ret;
++	adata->cpu = cpu;
++	adata->vec = vector;
++	per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irq_data_to_desc(data);
++	loongarch_avec_sync(adata);
++
++	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++	irq_data_update_effective_affinity(data, cpumask_of(cpu));
++
++	return IRQ_SET_MASK_OK;
++}
++
++void complete_irq_moving(void)
++{
++	struct pending_list *plist = this_cpu_ptr(&pending_list);
++	struct loongarch_avec_data *adata, *tmp;
++	int cpu, vector, bias;
++	u64 irr;
++
++	raw_spin_lock(&loongarch_avec.lock);
++
++	list_for_each_entry_safe(adata, tmp, &plist->head, entry) {
++		cpu = adata->prev_cpu;
++		vector = adata->prev_vec;
++		bias = vector / VECTORS_PER_REG;
++		switch (bias) {
++		case 0:
++			irr = csr_read64(LOONGARCH_CSR_IRR0);
++		case 1:
++			irr = csr_read64(LOONGARCH_CSR_IRR1);
++		case 2:
++			irr = csr_read64(LOONGARCH_CSR_IRR2);
++		case 3:
++			irr = csr_read64(LOONGARCH_CSR_IRR3);
++		}
++
++		if (irr & (1UL << (vector % VECTORS_PER_REG))) {
++			mp_ops.send_ipi_single(cpu, ACTION_CLEAR_VECT);
++			continue;
++		}
++		list_del(&adata->entry);
++		irq_matrix_free(loongarch_avec.vector_matrix, cpu, vector, adata->managed);
++		this_cpu_write(irq_map[vector], NULL);
++		adata->prev_cpu = adata->cpu;
++		adata->prev_vec = adata->vec;
++		adata->moving = 0;
++	}
++	raw_spin_unlock(&loongarch_avec.lock);
++}
++
++void loongarch_avec_offline_cpu(unsigned int cpu)
++{
++	struct pending_list *plist = per_cpu_ptr(&pending_list, cpu);
++	unsigned long flags;
++
++	if (!loongarch_avec.vector_matrix)
++		return;
++
++	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
++	if (list_empty(&plist->head))
++		irq_matrix_offline(loongarch_avec.vector_matrix);
++	else
++		pr_warn("cpu %d advanced extioi is busy\n", cpu);
++	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++}
++
++void loongarch_avec_online_cpu(unsigned int cpu)
++{
++	unsigned long flags;
++
++	if (!loongarch_avec.vector_matrix)
++		return;
++
++	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
++
++	irq_matrix_online(loongarch_avec.vector_matrix);
++
++	pending_list_init(cpu);
++
++	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++}
++
++#else
++#define loongarch_avec_set_affinity		NULL
++#endif
++
++static void loongarch_avec_compose_msg(struct irq_data *d,
++		struct msi_msg *msg)
++{
++	struct loongarch_avec_data *avec_data;
++
++	avec_data = irq_data_get_irq_chip_data(d);
++
++	msg->address_hi = 0xfd;
++	msg->address_lo = ((avec_data->vec & 0xff) << 4) |
++			  ((cpu_logical_map(avec_data->cpu & 0xffff)) << 12);
++	msg->data = 0x0;
++
++}
++
++static struct irq_chip loongarch_avec_controller = {
++	.name			= "AVECINTC",
++	.irq_ack		= loongarch_avec_ack_irq,
++	.irq_mask		= loongarch_avec_mask_irq,
++	.irq_unmask		= loongarch_avec_unmask_irq,
++	.irq_set_affinity	= loongarch_avec_set_affinity,
++	.irq_compose_msi_msg	= loongarch_avec_compose_msg,
++};
++
++static void loongarch_avec_dispatch(struct irq_desc *desc)
++{
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	unsigned long vector;
++	struct irq_desc *d;
++
++	chained_irq_enter(chip, desc);
++	vector = csr_read64(LOONGARCH_CSR_ILR);
++	if (vector & ILR_INVALID_MASK)
++		return;
++
++	vector &= ILR_VECTOR_MASK;
++
++	d = this_cpu_read(irq_map[vector]);
++	if (d) {
++		generic_handle_irq_desc(d);
++	} else {
++		pr_warn("IRQ ERROR:Unexpected irq  occur on cpu %d[vector %ld]\n",
++			smp_processor_id(), vector);
++	}
++
++	chained_irq_exit(chip, desc);
++}
++
++static int loongarch_avec_alloc(struct irq_domain *domain, unsigned int virq,
++				unsigned int nr_irqs, void *arg)
++{
++	struct loongarch_avec_data *adata;
++	struct irq_data *irqd;
++	unsigned int cpu, vector, i, ret;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
++	for (i = 0; i < nr_irqs; i++) {
++		irqd = irq_domain_get_irq_data(domain, virq + i);
++		adata = kzalloc(sizeof(*adata), GFP_KERNEL);
++		if (!adata) {
++			raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++			return -ENOMEM;
++		}
++		ret = assign_irq_vector(irqd, cpu_online_mask, &cpu);
++		if (ret < 0) {
++			raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++			return ret;
++		}
++		vector = ret;
++		adata->prev_cpu = adata->cpu = cpu;
++		adata->prev_vec = adata->vec = vector;
++		adata->managed = irqd_affinity_is_managed(irqd);
++		irq_domain_set_info(domain, virq + i, virq + i, &loongarch_avec_controller,
++				adata, handle_edge_irq, NULL, NULL);
++		adata->moving = 0;
++		irqd_set_single_target(irqd);
++		irqd_set_affinity_on_activate(irqd);
++
++		per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irq_data_to_desc(irqd);
++	}
++	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++
++	return 0;
++}
++
++static void clear_free_vector(struct irq_data *irqd)
++{
++	struct loongarch_avec_data *adata = irq_data_get_irq_chip_data(irqd);
++	bool managed = irqd_affinity_is_managed(irqd);
++
++	per_cpu(irq_map, adata->cpu)[adata->vec] = NULL;
++	irq_matrix_free(loongarch_avec.vector_matrix, adata->cpu, adata->vec, managed);
++	adata->cpu = 0;
++	adata->vec = 0;
++#ifdef CONFIG_SMP
++	if (!adata->moving)
++		return;
++
++	per_cpu(irq_map, adata->prev_cpu)[adata->prev_vec] = 0;
++	irq_matrix_free(loongarch_avec.vector_matrix, adata->prev_cpu,
++			adata->prev_vec, adata->managed);
++	adata->prev_vec = 0;
++	adata->prev_cpu = 0;
++	adata->moving = 0;
++	list_del_init(&adata->entry);
++#endif
++}
++
++static void loongarch_avec_free(struct irq_domain *domain, unsigned int virq,
++		unsigned int nr_irqs)
++{
++	struct irq_data *d;
++	unsigned long flags;
++	unsigned int i;
++
++	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
++	for (i = 0; i < nr_irqs; i++) {
++		d = irq_domain_get_irq_data(domain, virq + i);
++		if (d) {
++			clear_free_vector(d);
++			irq_domain_reset_irq_data(d);
++
++		}
++	}
++
++	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
++}
++
++static const struct irq_domain_ops loongarch_avec_domain_ops = {
++	.alloc		= loongarch_avec_alloc,
++	.free		= loongarch_avec_free,
++};
++
++static int __init irq_matrix_init(void)
++{
++	int i;
++
++	loongarch_avec.vector_matrix = irq_alloc_matrix(NR_VECTORS, 0, NR_VECTORS - 1);
++	if (!loongarch_avec.vector_matrix)
++		return -ENOMEM;
++	for (i = 0; i < NR_LEGACY_VECTORS; i++)
++		irq_matrix_assign_system(loongarch_avec.vector_matrix, i, false);
++
++	irq_matrix_online(loongarch_avec.vector_matrix);
++
++	return 0;
++}
++
++static int __init loongarch_avec_init(struct irq_domain *parent)
++{
++	int ret = 0, parent_irq;
++	unsigned long tmp;
++
++	raw_spin_lock_init(&loongarch_avec.lock);
++
++	loongarch_avec.fwnode = irq_domain_alloc_named_fwnode("CORE_AVEC");
++	if (!loongarch_avec.fwnode) {
++		pr_err("Unable to allocate domain handle\n");
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	loongarch_avec.domain = irq_domain_create_tree(loongarch_avec.fwnode,
++			&loongarch_avec_domain_ops, NULL);
++	if (!loongarch_avec.domain) {
++		pr_err("core-vec: cannot create IRQ domain\n");
++		ret = -ENOMEM;
++		goto out_free_handle;
++	}
++
++	parent_irq = irq_create_mapping(parent, INT_AVEC);
++	if (!parent_irq) {
++		pr_err("Failed to mapping hwirq\n");
++		ret = -EINVAL;
++		goto out_remove_domain;
++	}
++	irq_set_chained_handler_and_data(parent_irq, loongarch_avec_dispatch, NULL);
++
++	ret = irq_matrix_init();
++	if (ret) {
++		pr_err("Failed to init irq matrix\n");
++		goto out_free_matrix;
++	}
++#ifdef CONFIG_SMP
++	pending_list_init(0);
++#endif
++	tmp = iocsr_read64(LOONGARCH_IOCSR_MISC_FUNC);
++	tmp |= IOCSR_MISC_FUNC_AVEC_EN;
++	iocsr_write64(tmp, LOONGARCH_IOCSR_MISC_FUNC);
++
++	return ret;
++
++out_free_matrix:
++	kfree(loongarch_avec.vector_matrix);
++out_remove_domain:
++	irq_domain_remove(loongarch_avec.domain);
++out_free_handle:
++	irq_domain_free_fwnode(loongarch_avec.fwnode);
++out:
++	return ret;
++}
++
++static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
++				     const unsigned long end)
++{
++	struct acpi_madt_msi_pic *pchmsi_entry = (struct acpi_madt_msi_pic *)header;
++
++	msi_base_v2 = pchmsi_entry->msg_address - AVEC_MSG_OFFSET;
++	return pch_msi_acpi_init_v2(loongarch_avec.domain, pchmsi_entry);
++}
++
++static inline int __init acpi_cascade_irqdomain_init(void)
++{
++	return acpi_table_parse_madt(ACPI_MADT_TYPE_MSI_PIC, pch_msi_parse_madt, 1);
++}
++
++int __init loongarch_avec_acpi_init(struct irq_domain *parent)
++{
++	int ret = 0;
++
++	ret = loongarch_avec_init(parent);
++	if (ret) {
++		pr_err("Failed to init irq domain\n");
++		return ret;
++	}
++
++	ret = acpi_cascade_irqdomain_init();
++	if (ret) {
++		pr_err("Failed to cascade IRQ domain\n");
++		return ret;
++	}
++
++	return ret;
++}
+diff --git a/drivers/irqchip/irq-loongarch-cpu.c b/drivers/irqchip/irq-loongarch-cpu.c
+index 9d8f2c406043..1ecac59925c6 100644
+--- a/drivers/irqchip/irq-loongarch-cpu.c
++++ b/drivers/irqchip/irq-loongarch-cpu.c
+@@ -138,7 +138,9 @@ static int __init acpi_cascade_irqdomain_init(void)
+ 	if (r < 0)
+ 		return r;
+ 
+-	return 0;
++	if (cpu_has_avecint)
++		r = loongarch_avec_acpi_init(irq_domain);
++	return r;
+ }
+ 
+ static int __init cpuintc_acpi_init(union acpi_subtable_headers *header,
+diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
+index c7ddebf312ad..1f9a30488137 100644
+--- a/drivers/irqchip/irq-loongson-eiointc.c
++++ b/drivers/irqchip/irq-loongson-eiointc.c
+@@ -359,6 +359,9 @@ static int __init acpi_cascade_irqdomain_init(void)
+ 	if (r < 0)
+ 		return r;
+ 
++	if (cpu_has_avecint)
++		return 0;
++
+ 	r = acpi_table_parse_madt(ACPI_MADT_TYPE_MSI_PIC, pch_msi_parse_madt, 1);
+ 	if (r < 0)
+ 		return r;
+diff --git a/drivers/irqchip/irq-loongson-pch-msi.c b/drivers/irqchip/irq-loongson-pch-msi.c
+index dd4d699170f4..1926857f9a41 100644
+--- a/drivers/irqchip/irq-loongson-pch-msi.c
++++ b/drivers/irqchip/irq-loongson-pch-msi.c
+@@ -16,7 +16,6 @@
+ #include <linux/slab.h>
+ 
+ static int nr_pics;
+-
+ struct pch_msi_data {
+ 	struct mutex	msi_map_lock;
+ 	phys_addr_t	doorbell;
+@@ -100,6 +99,17 @@ static struct irq_chip middle_irq_chip = {
+ 	.irq_compose_msi_msg	= pch_msi_compose_msi_msg,
+ };
+ 
++static struct irq_chip pch_msi_irq_chip_v2 = {
++	.name			= "MSI",
++	.irq_ack		= irq_chip_ack_parent,
++};
++
++static struct msi_domain_info pch_msi_domain_info_v2 = {
++	.flags		= MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
++			MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX,
++	.chip	= &pch_msi_irq_chip_v2,
++};
++
+ static int pch_msi_parent_domain_alloc(struct irq_domain *domain,
+ 					unsigned int virq, int hwirq)
+ {
+@@ -268,6 +278,9 @@ struct fwnode_handle *get_pch_msi_handle(int pci_segment)
+ {
+ 	int i;
+ 
++	if (cpu_has_avecint)
++		return pch_msi_handle[0];
++
+ 	for (i = 0; i < MAX_IO_PICS; i++) {
+ 		if (msi_group[i].pci_segment == pci_segment)
+ 			return pch_msi_handle[i];
+@@ -289,4 +302,32 @@ int __init pch_msi_acpi_init(struct irq_domain *parent,
+ 
+ 	return ret;
+ }
++
++int __init pch_msi_acpi_init_v2(struct irq_domain *parent,
++		struct acpi_madt_msi_pic *msi_entry)
++{
++	struct irq_domain *msi_domain;
++
++	if (pch_msi_handle[0])
++		return 0;
++
++	pch_msi_handle[0] = irq_domain_alloc_named_fwnode("msipic-v2");
++	if (!pch_msi_handle[0]) {
++		pr_err("Unable to allocate domain handle\n");
++		kfree(pch_msi_handle[0]);
++		return -ENOMEM;
++	}
++
++	msi_domain = pci_msi_create_irq_domain(pch_msi_handle[0],
++			&pch_msi_domain_info_v2,
++			parent);
++	if (!msi_domain) {
++		pr_err("Failed to create PCI MSI domain\n");
++		kfree(pch_msi_handle[0]);
++		return -ENOMEM;
++	}
++
++	pr_info("IRQ domain MSIPIC-V2 init done.\n");
++	return 0;
++}
+ #endif
+-- 
+2.20.1
 
 
