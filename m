@@ -1,148 +1,254 @@
-Return-Path: <linux-kernel+bounces-242785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5188C928D23
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:42:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA3D928D26
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AE21F23825
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D65A1C21174
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437D816D331;
-	Fri,  5 Jul 2024 17:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB0716B3BA;
+	Fri,  5 Jul 2024 17:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDCK5Frb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PsUqomQB"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AC1A955;
-	Fri,  5 Jul 2024 17:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746002F32
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 17:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720201313; cv=none; b=GGW1bibKWu2ipPj9P1OuaC8OPOab5DDP2x9aXHYqXwcypY5AO1Q3UikdMRyD6guNPXZYfl2CPl2jGZM7DG0R/jxmet2J4WaRysyXIBa8YZbCHK84D9wmQltauoX4U3MjYs2E8HeY3LLwZ/P9yPVuUaQ/sdjZwv8+FigLN8dGaB8=
+	t=1720201588; cv=none; b=LbaW2dk1BYPoO8cZWRWY/yDqjRPy1sSQfXXnu4v2sTaMKjlfY3UPPQCGpk8B3Pf7x9vyKdZXRUwJt58aJTAw7szq6NN7W1LzRbE+7NpLL2zErajZZLTJXWjrcra0Ll2yhXNWOCvqOHEiEUWTg5rzdfbB0vpMKkMQ5IS07pi0EIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720201313; c=relaxed/simple;
-	bh=8I1iPCnWsXy1kaAQNNh1PQHJzwUcwb7b8lCO9perBF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U07YHUr/+1W2U3wUTeFFDWFptLpOnxxz4/JuV1Z5snd7Vitygl4YCr4gxWicrReKepDwFCumgHPZR4d0qs5P/Upp6n/2bViufJ2JXkJFntbew+g3cv1aym+OsuAZwCTsPBspFCXURnUFzyS5SBeNOztAULORt9ysV4EdhkLyboE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDCK5Frb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D91C116B1;
-	Fri,  5 Jul 2024 17:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720201313;
-	bh=8I1iPCnWsXy1kaAQNNh1PQHJzwUcwb7b8lCO9perBF0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZDCK5FrbwNFFKKktxaZrRFvk4tGWB2IQkgWr645YgwnjbQ2EEn91+ItzdDIuuoBNX
-	 srLDzlClhbyrQvmbr3mQvwQgxlrRTM59ocwE0PqmB3gC2hKu0iNAHGQgUkHFBF7cOr
-	 FzARkoAsHmCyEAlXs0eMBRm9HaYrIedATWwa3fkJhD8E7Sjbi+OClB84i7v50KYprA
-	 gAOvQoKZd9gEcgA0GyaIOfyi5Uyr4ACqKg3T5m38pvQ1BMZjYxIv6agI1t7hSJ2o+6
-	 QH1EW6x7LdU2UTKlshBSqBxS89rIjggejHtx8jHPUnhqqn1bZV4K1psQ8SPPx2D30h
-	 IG19eh+c2eZPQ==
-Date: Fri, 5 Jul 2024 18:41:49 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: add ch341a usb2spi driver
-Message-ID: <aa3c79a0-ecbc-4f12-b540-6570350a7909@sirena.org.uk>
-References: <20240705145138.5827-1-jth@kernel.org>
+	s=arc-20240116; t=1720201588; c=relaxed/simple;
+	bh=ewV9U2+bKaqzzV4bH4ybymXSBXGTPTN+grBBtw8hsxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XgXYuReZqllg6w4VR/I+w54mQmEOF8JLkETYnFMAOtHJTmupuXYwiGEz0LJqwZS/3e0AJYJu+yZoq4mAN6OYC2M9X5/Kq03/tFqAPV8kAOrQlSUaulqqstSP0I3UZDNOdbMQ03gspoeLg1jF/f6jLt5J2liDQui4LdIiL8iyiJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PsUqomQB; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52e99060b0dso2030718e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 10:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1720201585; x=1720806385; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6jpSsjwDZQT2yUB92+8+PpFR1qTSiIBd1w6nGMTaY1w=;
+        b=PsUqomQBzI12C+lZH6ZhKCjHW046PddvcBBZu/obOwO/qfP9qXkZ7FkVlCOwNlwy64
+         Ecopkg4KZtR87RYxt0bQCHVfb40JS5bmhsxH/v0kTS9JzjYCy0tt/wWXpXOlVFeUjZmD
+         fEZxg+RHSCYG7vCLztZkXAGV5PU+hfJ4FbnOI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720201585; x=1720806385;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6jpSsjwDZQT2yUB92+8+PpFR1qTSiIBd1w6nGMTaY1w=;
+        b=RscJ0lBoSePEE4ZJ5wJ/Z64qS+DrGocrcvbYQjapqKKSYIIiDLTRkrdAn776822J+g
+         ZyU/VAeqn9uYtRTNQNJuVWM4p7g7J7HfI3rq0nzBEj2osk8Lv/la8P8rUA6koM9mWTRz
+         C7sshRTO2fC7MKKlANn42biWIqTpCnK0gVAVfQPicnuYtT4PaYsVL5HYSkdRv4Kjg1ua
+         M48fKHtXpJPPjKuZE0xdsxlDD03Hc1dsKh3/yD1+5lSWAZMkNgMY6buIosPaPFLPLP6q
+         31AUaYHfkNsKwvzkOzUkxItWT7N2YjHSsMZhz8RVe5PAuv/2T7HjM8542TGK/1tWzo5b
+         wyjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXahsSPfwqWasxM4shxU25myxN2/HmV19+tVrURo5nBWFnZtAHQadyRqtppK3Z8a1j3WlP2dfrDKpKZVf6VHmN4vcTbmtU/2C25Jo28
+X-Gm-Message-State: AOJu0YwN7VgaOnXtBLB1jAHO9cXC7URbzXNouu1wvgDzzYRe+lrc5nlE
+	uTqs+TFZ116AWUH9nZ67SnmVTOXnHpWvU3fgU3wSN1Yqca6pU+4Iu1kuGRmvu+dug0ya18SJsT4
+	aH2VuAJvOT2B3hLVVJmjiSXBZCw+VzJM5maIm
+X-Google-Smtp-Source: AGHT+IF4QofgfsHGNulPin5j9vSmFwW/MPiICsmjTVGRD95QtbOW39DLmRRaP+P50VJQX1fJdC/WzVH+W1BhoxQVwAM=
+X-Received: by 2002:ac2:410d:0:b0:52c:d5b3:1a6a with SMTP id
+ 2adb3069b0e04-52ea0636fcbmr3778176e87.28.1720201584620; Fri, 05 Jul 2024
+ 10:46:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YJkcTQnyOknOQtkM"
-Content-Disposition: inline
-In-Reply-To: <20240705145138.5827-1-jth@kernel.org>
-X-Cookie: Look ere ye leap.
+References: <20240703180300.42959-1-james.quinlan@broadcom.com>
+ <20240703180300.42959-5-james.quinlan@broadcom.com> <362a728f-5487-47da-b7b9-a9220b27d567@suse.de>
+In-Reply-To: <362a728f-5487-47da-b7b9-a9220b27d567@suse.de>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Fri, 5 Jul 2024 13:46:12 -0400
+Message-ID: <CA+-6iNynwxcBAbRQ18TfJXwCctf+Ok7DnFyjgv4wNasX9MjV1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 04/12] PCI: brcmstb: Use swinit reset if available
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000006b763f061c83a46b"
 
-
---YJkcTQnyOknOQtkM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--0000000000006b763f061c83a46b
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 05, 2024 at 04:51:37PM +0200, Johannes Thumshirn wrote:
+On Thu, Jul 4, 2024 at 8:56=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.de=
+> wrote:
+>
+> Hi Jim,
+>
+> On 7/3/24 21:02, Jim Quinlan wrote:
+> > The 7712 SOC adds a software init reset device for the PCIe HW.
+> > If found in the DT node, use it.
+> >
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > ---
+> >  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
+ller/pcie-brcmstb.c
+> > index 4104c3668fdb..69926ee5c961 100644
+> > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > @@ -266,6 +266,7 @@ struct brcm_pcie {
+> >       struct reset_control    *rescal;
+> >       struct reset_control    *perst_reset;
+> >       struct reset_control    *bridge;
+> > +     struct reset_control    *swinit;
+> >       int                     num_memc;
+> >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
+> >       u32                     hw_rev;
+> > @@ -1626,6 +1627,13 @@ static int brcm_pcie_probe(struct platform_devic=
+e *pdev)
+> >               dev_err(&pdev->dev, "could not enable clock\n");
+> >               return ret;
+> >       }
+> > +
+> > +     pcie->swinit =3D devm_reset_control_get_optional_exclusive(&pdev-=
+>dev, "swinit");
+> > +     if (IS_ERR(pcie->swinit)) {
+> > +             ret =3D dev_err_probe(&pdev->dev, PTR_ERR(pcie->swinit),
+> > +                                 "failed to get 'swinit' reset\n");
+> > +             goto clk_out;
+> > +     }
+> >       pcie->rescal =3D devm_reset_control_get_optional_shared(&pdev->de=
+v, "rescal");
+> >       if (IS_ERR(pcie->rescal)) {
+> >               ret =3D PTR_ERR(pcie->rescal);
+> > @@ -1637,6 +1645,17 @@ static int brcm_pcie_probe(struct platform_devic=
+e *pdev)
+> >               goto clk_out;
+> >       }
+> >
+> > +     ret =3D reset_control_assert(pcie->swinit);
+> > +     if (ret) {
+> > +             dev_err_probe(&pdev->dev, ret, "could not assert reset 's=
+winit'\n");
+> > +             goto clk_out;
+> > +     }
+> > +     ret =3D reset_control_deassert(pcie->swinit);
+> > +     if (ret) {
+> > +             dev_err(&pdev->dev, "could not de-assert reset 'swinit' a=
+fter asserting\n");
+> > +             goto clk_out;
+> > +     }
+>
+> why not call reset_control_reset(pcie->swinit) directly?
+Hi Stan,
 
-> --- a/drivers/spi/Kconfig
-> +++ b/drivers/spi/Kconfig
-> @@ -1198,6 +1198,12 @@ config SPI_AMD
->  	help
->  	  Enables SPI controller driver for AMD SoC.
-> =20
-> +config SPI_CH341
-> +	tristate "CH341 USB2SPI adapter"
-> +	depends on SPI_MASTER && USB
-> +	help
-> +	  Enables the SPI controller on the CH341a USB to serial chip
-> +
->  #
->  # Add new SPI master controllers in alphabetical order above this line
->  #
+There is no reset_control_reset() method defined for reset-brcmstb.c.
+The only reason I can
+think of for this is that it allows the callers of assert/deassert to
+insert a delay if desired.
 
-Like the comment says please keep these files sorted (I appreciate
-there's some things been missed).
+Regards,
+Jim Quinlan
+Broadcom STB/CM
+>
+> ~Stan
+> > +
+> >       ret =3D reset_control_reset(pcie->rescal);
+> >       if (ret) {
+> >               dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
 
-> +++ b/drivers/spi/spi-ch341.c
-> @@ -0,0 +1,236 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * QiHeng Electronics ch341a USB-to-SPI adapter driver
-> + *
-> + * Copyright (C) 2024 Johannes Thumshirn <jth@kernel.org>
+--0000000000006b763f061c83a46b
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Please make the entire comment block a C++ one so things look clearer.
-
-> +static void ch341_set_cs(struct spi_device *spi, bool is_high)
-> +{
-> +	struct ch341_spi_dev *ch341 =3D
-> +		spi_controller_get_devdata(spi->controller);
-> +
-> +	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
-> +	ch341->tx_buf[0] =3D CH341A_CMD_UIO_STREAM;
-> +	ch341->tx_buf[1] =3D CH341A_CMD_UIO_STM_OUT | (is_high ? 0x36 : 0x37);
-> +
-> +	if (is_high) {
-> +		ch341->tx_buf[2] =3D CH341A_CMD_UIO_STM_DIR | 0x3f;
-> +		ch341->tx_buf[3] =3D CH341A_CMD_UIO_STM_END;
-> +	} else {
-> +		ch341->tx_buf[2] =3D CH341A_CMD_UIO_STM_END;
-> +	}
-> +
-> +	(void)usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf,
-> +			   (is_high ? 4 : 3), NULL, CH341_DEFAULT_TIMEOUT);
-
-The cast to void here is very suspicious, what's it doing?
-
-> +static int ch341_config_stream(struct ch341_spi_dev *ch341, int speed)
-> +{
-> +	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
-> +	ch341->tx_buf[0] =3D CH341A_CMD_I2C_STREAM;
-> +	ch341->tx_buf[1] =3D CH341A_CMD_I2C_STM_SET | (speed & 0x7);
-> +	ch341->tx_buf[2] =3D CH341A_CMD_I2C_STM_END;
-> +
-> +	return usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf, 3,
-> +			    NULL, CH341_DEFAULT_TIMEOUT);
-
-No validation of speed?
-
---YJkcTQnyOknOQtkM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaIMFwACgkQJNaLcl1U
-h9Cwtgf7BMvZA7w/tsfTnVO2+yjWpaXeiRMisoqiU/aW8wohRiR+lVBAd0TXmGiH
-oOQhQFWRBEDwb6DO7sIMbdHeSG8gK8LOX/GPZ+561P8dmqTZ1l1t3vNSqJIil2WS
-I3CeLtXN4iU2UDsX6s/8tHWYQ20wUm/msDYyKP+Vp/nL7DYsqUAYJdEn+dOwOBCZ
-w4Be4ku31rwCRj/g0vTImlXkI4I7OrEdF10J4NDzcjA8JIrzuznm0wP0PK08qEhk
-yjeueew/He1k/a4oYbr/DNINJCDwDu8GsqXdKjwGwu57YBhIxeFd2joXLe8NjVYg
-/Pj/CzD0tYCcRbXPnP7t+pbv7LdSfA==
-=BHxi
------END PGP SIGNATURE-----
-
---YJkcTQnyOknOQtkM--
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCB2pIZc0u2yOxEN56qUi3caAvuARi7U
+XNtoOERiuSpt7zAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
+MDUxNzQ2MjVaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAJsZmlJZlCW98xC45xtFmRjg9p/kBAjHUuXTT3x6OFdtfYqMc
+lWXVlysGd3UQA5/idMfvXZXslWzxjGJk5j4UGHlKVjJJqWAgCUpjOPIofstqATymEjDVmEwmls7a
+0h0yhHE67yx5Px69X000tqXLWGzaM2bPV2hanY4vEQftZd8Umdmsw86S0LmqjJSnC6jisiZTGSq0
+Fg/3btRdIuKsbPkTeH5WeCMZLs7BwhKjCezUYaVfx6Eq08EV8yplZY/T212uXCFLRs0OMzTrNxGd
+V2AxVMUp9R/MBVycAaFaZ48O02tV+X44JFozg8wyl6rNsbDwB2Ijgn3udH6BrTfvqg==
+--0000000000006b763f061c83a46b--
 
