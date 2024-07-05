@@ -1,127 +1,154 @@
-Return-Path: <linux-kernel+bounces-242005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD06E928270
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:00:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7390F92826E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6533E2866A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:00:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D9761F26010
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3141448F1;
-	Fri,  5 Jul 2024 07:00:39 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780D2143C53;
+	Fri,  5 Jul 2024 07:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="fTYLQggZ";
+	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="hluCerhd"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510E0143C53;
-	Fri,  5 Jul 2024 07:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720162838; cv=none; b=A32lHsmdeDf07DAxafviH7Y0JzCCq+sC0z7IKBzBKT1pMt4H0t2JNPgLx2g0hpqxIuV8G8Cr2pTwrnR/Uev4kVtJsZIsjSoZDpstnP/z6JhMYpcvLfx28i0QeKnuAR026YW5snDSCa1Ralpq/ZVLBKlCDxbsxNMzX7b66nHPYRo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720162838; c=relaxed/simple;
-	bh=bOFk8R3sjMWU0W/yovems56xZAEkgJVdHq4/eiNM8gE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HkE5wAoESZcgWMlndoh00n4u5UReBPk+Ahv3pKJeHbmkVp8Szq7CpHbx3XDjS7asG6asp4fg3jQwKjY/0yAMrbGXQlXOTJTTj9wcHACSf6lMaUwygh0rJzZSB7+R8Sq3Z3Z5XeVlY1j5bhyDu/WFMWbv4g+8J1s5tE9w4YTS7iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 962E11A051D;
-	Fri,  5 Jul 2024 09:00:35 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4D1E61A0516;
-	Fri,  5 Jul 2024 09:00:35 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C43A5180222B;
-	Fri,  5 Jul 2024 15:00:33 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com
-Subject: [PATCH v2] Bluetooth: btnxpuart: Add system suspend and resume handlers
-Date: Fri,  5 Jul 2024 12:28:26 +0530
-Message-Id: <20240705065826.782059-1-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D313E45000;
+	Fri,  5 Jul 2024 07:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720162812; cv=pass; b=cznPl1+LfB6tdttUiq6nkHlOBKtYcK9dCqGF8KGH42w3/vaflEj60pitmiKf1oTvRjlVgT9HwyWhLz80jPcTtuhFtPS9ViKr0q6Ss1G6Z1GYN2Mpi1WETxsLCV67buPzjNVr5F6qphKEiDXiw70lx73LKTbUt4IWeS27+RuhwVg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720162812; c=relaxed/simple;
+	bh=QSIwoxIOy0G1ehWIbduiiJY4a1/LzlKM/BH7Nv72fzQ=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=trrF+rKsaUVXTl03uoZDoUitWMuuauoh+L2uDer5RwcFCiQXLU3Fo/I4074zktCRGjueH2xuwlJ15QbUM3RtCv/zHTdJwEMZZsHwBPq3RUBsfHGSvOkppgwP9Edm2PkB8M/exHnE9gB5IRucILiDTuy7BfjPSSUFLK0FedXqvk0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=fTYLQggZ; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=hluCerhd; arc=pass smtp.client-ip=85.215.255.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
+ARC-Seal: i=1; a=rsa-sha256; t=1720162762; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=ShMLVJWxdYJ6RyJ/MuaTH26WvWpoxpBTNnCbG/oXUyw4FrFnyBvfdLH5q5sPkdBrQy
+    RZqFA+AFUGteZeK28NylZYweTDHCl/p14d67A2eaY4FZuVssXvUBjmGjkl+UgJUzc78P
+    PWSAdg4SR3Yhi9byuyZzfLaQAZdAIOv8IUDQj9+G83RBEvQ4/VQeMiczIrsxVLUJ1bA6
+    G5YIVvC4l/a9BGo+LJ470LGUUCjmnTdg9OtWWn13m/upxK+61M64wsprHFezOvzoOazd
+    qK4wozy+l0aWwvm/p2nuDqtURLoCqewdgawqdBeQjjFcD9zv0HRH7GCnw/IJ/oVcfQ+7
+    sgOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1720162762;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:In-Reply-To:Cc:References:Message-Id:Date:Subject:From:Cc:Date:
+    From:Subject:Sender;
+    bh=gNL/fOXpQJrMQTPOsNrGaufWZIoIwwlUQi6VU5VoR4Y=;
+    b=Mxf0H92FaRlAXEcB3j/9CQlkBvI3maNmXYaZLIxlpoJYM/dgMA+MwQlnhUEgqToEcU
+    E9/GGz19xy3Thp8CVOkv6nQD+oeDFp+GX+rbdv6H11E9uzgGj7AXUDY7BH7NlBBoXrMq
+    ztB4aYASI+SlHTuB0x5toTDZFTpHU74SLLCWscRq6Uydw+iejilZk7A3Xa4lgGuYVSAb
+    qi3DdZ/xkBAbr+cm0FycsR2lWL+uEYBIdA1hKeRuRhS7cj3AXPr/APzHfMJIRRYhlx6C
+    29DCGSS9lQ94WzbX83Y9PKZRmpil8rKhAGRR7DgZ1vZMeG9YxSFiqYjObjjOi4mPm9fr
+    tXZA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1720162762;
+    s=strato-dkim-0002; d=xenosoft.de;
+    h=To:In-Reply-To:Cc:References:Message-Id:Date:Subject:From:Cc:Date:
+    From:Subject:Sender;
+    bh=gNL/fOXpQJrMQTPOsNrGaufWZIoIwwlUQi6VU5VoR4Y=;
+    b=fTYLQggZpwBTd5rl6H1yL2tSn+rpWdm2+QROMf24vMKEyUr3Y1sCPCBXgu4yyHs5QN
+    Z9r+AhlpC5bBDHHI3fNW6kgfDIRL1/53aSX4YUsMmFM7HRRn/uBxllcxd2kMvyt8JB9D
+    LrbpSoi9yTG++p3OwLOyLvnTYody1AR+jkziUqzGix8LB+iDqYbRlxEr1lU5JhivH6lP
+    woo0Aorvi7HX2MUDY8Yq65Ym7UC5qNoDUOMxwfTfRfGTM8Tv6XaViJItUiAxj9fgx+X7
+    AvrRFCdBoKWX/lPZnGhdLg4ppG62OWQiP0JDvIUDalOHm3sk5OLscm8wZRvO3ehnbQQE
+    V+ew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1720162762;
+    s=strato-dkim-0003; d=xenosoft.de;
+    h=To:In-Reply-To:Cc:References:Message-Id:Date:Subject:From:Cc:Date:
+    From:Subject:Sender;
+    bh=gNL/fOXpQJrMQTPOsNrGaufWZIoIwwlUQi6VU5VoR4Y=;
+    b=hluCerhd664fdOv5TIuixPwDRdZHSrNZMzjo9EM2L2+1zI2/oI2sZIwd+TvSfP5kKy
+    r6WGnoUvBhWQwmOKEkCg==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr6KxrfO5Oh7V7X5m0s3zACH4zKZqEV93ynRnNbNQ9EJ4O1StAee0="
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 50.5.0 AUTH)
+    with ESMTPSA id e083890656xLV6Z
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Fri, 5 Jul 2024 08:59:21 +0200 (CEST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Christian Zigotzky <chzigotzky@xenosoft.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives after the of/irq updates 2024-05-29
+Date: Fri, 5 Jul 2024 08:59:10 +0200
+Message-Id: <F30D5471-B68C-442B-A34C-6EA0C8232006@xenosoft.de>
+References: <ccf14173-9818-44ef-8610-db2900c67ae8@xenosoft.de>
+Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com,
+ DTML <devicetree@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
+ Matthew Leaman <matthew@a-eon.biz>,
+ Darren Stevens <darren@stevens-zone.net>,
+ Christian Zigotzky <info@xenosoft.de>
+In-Reply-To: <ccf14173-9818-44ef-8610-db2900c67ae8@xenosoft.de>
+To: Marc Zyngier <maz@kernel.org>
+X-Mailer: iPhone Mail (21F90)
 
-This adds handling for system suspend and resume. While the host enters
-suspend state, the driver will drive the chip into low power state.
+[snip]
 
-Similarly when system is resuming, the driver will wake up the chip.
+My earlier request for valuable debug information still stands. But
+while you're at it, can you please give the following hack a go?
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
----
-v2: Rename new suspend/resume function names to nxp_serdev_suspend and
-nxp_serdev_resume. (Luke Wang)
----
- drivers/bluetooth/btnxpuart.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+   M.
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index da18fd4f54f3..c5b40bba6bfa 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -1498,6 +1498,24 @@ static void nxp_serdev_remove(struct serdev_device *serdev)
- 	hci_free_dev(hdev);
- }
- 
-+static int nxp_serdev_suspend(struct device *dev)
-+{
-+	struct btnxpuart_dev *nxpdev = dev_get_drvdata(dev);
-+	struct ps_data *psdata = &nxpdev->psdata;
-+
-+	ps_control(psdata->hdev, PS_STATE_SLEEP);
-+	return 0;
-+}
-+
-+static int nxp_serdev_resume(struct device *dev)
-+{
-+	struct btnxpuart_dev *nxpdev = dev_get_drvdata(dev);
-+	struct ps_data *psdata = &nxpdev->psdata;
-+
-+	ps_control(data->hdev, PS_STATE_AWAKE);
-+	return 0;
-+}
-+
- static struct btnxpuart_data w8987_data __maybe_unused = {
- 	.helper_fw_name = NULL,
- 	.fw_name = FIRMWARE_W8987,
-@@ -1517,12 +1535,17 @@ static const struct of_device_id nxpuart_of_match_table[] __maybe_unused = {
- };
- MODULE_DEVICE_TABLE(of, nxpuart_of_match_table);
- 
-+static const struct dev_pm_ops nxp_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(nxp_serdev_suspend, nxp_serdev_resume)
-+};
-+
- static struct serdev_device_driver nxp_serdev_driver = {
- 	.probe = nxp_serdev_probe,
- 	.remove = nxp_serdev_remove,
- 	.driver = {
- 		.name = "btnxpuart",
- 		.of_match_table = of_match_ptr(nxpuart_of_match_table),
-+		.pm = &nxp_pm_ops,
- 	},
- };
- 
--- 
-2.34.1
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -282,8 +282,10 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phan=
+dle_args *out_irq)
+               oldimap =3D imap;
+             imap =3D of_irq_parse_imap_parent(oldimap, imaplen, out_irq);
+-            if (!imap)
+-                goto fail;
++            if (!imap) {
++                match =3D 0;
++                break;
++            }
+               match &=3D of_device_is_available(out_irq->np);
+             if (match)
+
+This may not be the final workaround even if it solves your boot
+problem, but will at least give us a hint at what is going wrong.
+
+I have the fuzzy feeling that we may be able to lob this broken system
+as part of the of_irq_imap_abusers[] array, which would solve things
+pretty "neatly".
+
+   M.
+
+- - - -
+
+We tested this patch yesterday and it solves the boot problem.
+
+Thanks
+
+- - - -
+
+I am sorry our tester was wrong and has reported, that this kernel doesn=E2=80=
+=99t boot.
+
+Link: https://forum.hyperion-entertainment.com/viewtopic.php?p=3D58627#p5862=
+7
+
+Sorry=
 
 
