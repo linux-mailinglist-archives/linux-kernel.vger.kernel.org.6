@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-241787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9B5927FA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:18:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C390927FA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB7D1F2240C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C824528357C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1B2FC11;
-	Fri,  5 Jul 2024 01:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E0814AB2;
+	Fri,  5 Jul 2024 01:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DYQYo2Gb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Imsxz6Or"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122A25C83
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EDD11718
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720142255; cv=none; b=vD+yR+5sJrue5a0/p8r7wjmcFMMPfMaYVbcfzx9ED5gVluVe8IIkEy5P6rsfZ+TKq0DvXo8a+iK/02aEf2DLLxEmV5z/aGTVKbazyxILbWsN46GYedcT8+iJ/inhNJZXxV4V82N8QBW2gEzUUJe2N0/mGwGYzJ4NRJ/c5LOFvzk=
+	t=1720142262; cv=none; b=YBx4t5lxZlspGHzLQW/PVWkAI/DmbC8EISDrOM8tKeGGR/eEXkPkr5sTm0pAuEBwCzCUYdiSaBcFedVMdc1h52xPGUROjqM6k55hstCzlRZo1W4j36HYifHVaW/vgepnzibCkHJnaHpvO7R1IJi6OkiNdd8v9zh3aT2Mgjgq83Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720142255; c=relaxed/simple;
-	bh=NyJgyRlBAEoSMEPPMIYFUyzmU1phXtkRstTCIkDHdlE=;
+	s=arc-20240116; t=1720142262; c=relaxed/simple;
+	bh=0jlmeq8iNWASLgWZu+Yime6G8pnfesdkddowuokoWFA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YHzh/aFi8d3SCKmOiCHavD24KvbPsxHtYyuV9BUdrwhq+jI6W9nO0SJvJZu0yYg5yvg+IAAPnnnpEfcSoX19sdoDouV5cFNJB+ED+s6aGo0i9PbVvysKcBwJAh4nWsAtejtOMwd7z4z4NlWnpK/9IkUj+kQZUZFO3xtlHtpgBkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DYQYo2Gb; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:MIME-Version; b=K29zvLKp/Un9ztg1d9t34zfDGiT9L7+zalzNR3gCbru2+pzU2gpx5sgg4/C5MMKWi1WCH8OzlLoThrQ5Yld63070F1R99UqHx3dyjrztNYqo5jgx5az1SflQhn3UMEjnI2+aSvcG6XboXEv2cs4fTAJO8FtEphOusBrDdNhxqUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Imsxz6Or; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720142253;
+	s=mimecast20190719; t=1720142259;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nbFCJLmi1kOokmQrYHjRd6cmp6875lN4UgTPLhI/iwI=;
-	b=DYQYo2Gbib2nU2p09kDGyWDNtxQuyn3fxbqhHM9Z7twAOAwCa2mHhC8HbLuzB8pjNtkPDO
-	daNQSNNfI8zAm7bsX5IzqLvKSwqzuHG/Fk1O17fA61r/Wdmlr+l5EufURZPv/9cZHiNg62
-	H74TqIldXhBwu+IT+yby6hiVg8NJrs0=
+	bh=LZdpqctZK0lnPgw4v/NwKvnGdyU7+XtXpVPHKpjWtEI=;
+	b=Imsxz6Or1KiqNtaL3qoCZj9ILZV/zSNaq8DLRW9156fh5JxsXU9lrTiLmOm/lihRxWpEuv
+	mMW0bjI96HHu22UST2TqcD4GNwkSjsIDqPdtjvYJJpfkYJYDxAfoG6sBpuAaXUMIDtrCp/
+	MhIlkhTHiefr3DLEWD5we2R09W0WOxo=
 Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
  [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-sgsBUeq4Ou-NJOVXoGbGMg-1; Thu, 04 Jul 2024 21:17:31 -0400
-X-MC-Unique: sgsBUeq4Ou-NJOVXoGbGMg-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79d5d9b99b0so205280485a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 18:17:31 -0700 (PDT)
+ us-mta-317-rgoOKL5APsm9V6MjtNioNw-1; Thu, 04 Jul 2024 21:17:38 -0400
+X-MC-Unique: rgoOKL5APsm9V6MjtNioNw-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79d58cde65eso144226285a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 18:17:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720142251; x=1720747051;
+        d=1e100.net; s=20230601; t=1720142258; x=1720747058;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nbFCJLmi1kOokmQrYHjRd6cmp6875lN4UgTPLhI/iwI=;
-        b=P88xeW8Ci1HmSK4LXGBFqHhgPliU4QVY/0/sQk2wkCoVY9DVxvG3W+icO+5gtt4Xzv
-         OoSSA+ioLspPfvlQUc5PpXLrgpNpEhVtIHue3csmmtih8F3mkAGxkmwrtUjOWAWsHvc2
-         p4m76i3MIj5KeC0RSRdeLXyEgqLMfV3xDbwZqTGqV363fWdyio8puS/jb7lUiAxp3XXG
-         Vh6iW9UDXylHnyUIrbd167H2ZSkhM+HNVozPX8JFXs/V9FawxQvdETzs7LTiGYdDxVYI
-         ka2SsAarDVk9g4KtcIUmBLkmo7puvdgWX7rC/VbXCBQb9leU2r5yxWLmTPk2jCHrygqb
-         qqrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEOskreR49rLx1Yejw7hEFNp6Hhwbd1eiKqO1yl/WbQuXQp45qX/0dS5XWs6UyAiiuGkBCQ21Rvnn//LOUe93xdGiC9p/REByMcpQG
-X-Gm-Message-State: AOJu0YyfK+TxLiOfd4QbQAlObvJyRJMvtfG0E2iywaec6tuTnxZst9Jl
-	y2NVyvrw4vARyknT08a8+g7XlOJaqRsAKfO6iPKS9Uc2MMNDmGltbJhP6D3LcNzFpFWV3DzWrSG
-	tGnZVkjMXg8hVpzYwiUk/DWKHHIb0iqsu+vrWqz86YZFcHqW14OyQPkv5LueH2A==
-X-Received: by 2002:a05:620a:2089:b0:795:5570:8b30 with SMTP id af79cd13be357-79eef39d236mr410602585a.13.1720142250885;
-        Thu, 04 Jul 2024 18:17:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFSjmtIkKmjYqqv68nWE8EsiwliqoHuytxQlZzMpfcqjgkuU8HG70oOOi+/VqByCFjRn7vD0g==
-X-Received: by 2002:a05:620a:2089:b0:795:5570:8b30 with SMTP id af79cd13be357-79eef39d236mr410600285a.13.1720142250598;
-        Thu, 04 Jul 2024 18:17:30 -0700 (PDT)
+        bh=LZdpqctZK0lnPgw4v/NwKvnGdyU7+XtXpVPHKpjWtEI=;
+        b=tPEKSAvO9GaK3Phb7Xja/bJA3pw0hEV6CFZ5bSQ1lsvs6s7dThRsMYdAPwD12EUylA
+         jnVXre8B7Wifo79Os1/zblQa9P+zr0oMtpcjx+g1AM8e38zGSjEkoRQABcX7IGLaIem0
+         8vT/DX2ZHC/jPOJORNoB6NowHL1x6LMYwFD+62WVS8MPpXK19NuXy5EvKGWWo5yl0/8x
+         h1FBLbY02GZr8VxWuo3fwOl7rDUT5gs5Rq8DM5KhXKC2WB7m/qXq7JW0WyeBBPYZnA7Q
+         Ts7xhiymC1kZjgyz0pAz9vKE9VlW7QQBPuf7vkEP7CDxf4Y9DmvAIekWivugGGs74oGa
+         U6DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVa7DSeLJYgiA8Xe8cKbs1SNBKdE0tmvvE8pcPyfQ5BAbNYpXPdUXu4i7hcQXamHNWIStCfpgGq+90c5gfrUQgaqE6NQLcJfnG7HM2J
+X-Gm-Message-State: AOJu0YwUCQt6Uls7Tc9Xj0v4qgEZVK4gvLRB7Cc5L7fT5RDM2L8Se2fc
+	cWC0fiesgC+GQFDIpKeVWcagcluAID5RIqWVCjDcFkfp2TSoL2nGxqb/FXhypcGdJT+UAn5tExJ
+	lAkhyyrBqdYz+G63e1QcSHl2oGjFV4gpzJvcezGY2iPe+Vuuj0uDCjOji1tpf/w==
+X-Received: by 2002:a05:620a:5343:b0:797:a485:28ef with SMTP id af79cd13be357-79eee193311mr293929985a.8.1720142257980;
+        Thu, 04 Jul 2024 18:17:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9n2tSZ8Hrz4jp8hEVRmgj4S+DhW2AV216ObXnCIpoWjvDsNTMJ4pjCYePPvQxIXv+Rhm/RA==
+X-Received: by 2002:a05:620a:5343:b0:797:a485:28ef with SMTP id af79cd13be357-79eee193311mr293928785a.8.1720142257695;
+        Thu, 04 Jul 2024 18:17:37 -0700 (PDT)
 Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d69307c42sm722027985a.122.2024.07.04.18.17.29
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d692f05dcsm730170385a.92.2024.07.04.18.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 18:17:30 -0700 (PDT)
-Message-ID: <7a2ff05bfa3f9a2c9b71ac5fbfd75ef50f0bbf9e.camel@redhat.com>
-Subject: Re: [PATCH v2 14/49] KVM: selftests: Update x86's KVM PV test to
- match KVM's disabling exits behavior
+        Thu, 04 Jul 2024 18:17:37 -0700 (PDT)
+Message-ID: <8fb52f51eb1ff52f5fe666806205cb77a98b6195.camel@redhat.com>
+Subject: Re: [PATCH v2 15/49] KVM: x86: Zero out PV features cache when the
+ CPUID leaf is not present
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
  <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
@@ -82,10 +82,10 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
  <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
  <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
  Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 04 Jul 2024 21:17:29 -0400
-In-Reply-To: <20240517173926.965351-15-seanjc@google.com>
+Date: Thu, 04 Jul 2024 21:17:36 -0400
+In-Reply-To: <20240517173926.965351-16-seanjc@google.com>
 References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-15-seanjc@google.com>
+	 <20240517173926.965351-16-seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
@@ -97,78 +97,30 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
 On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> Rework x86's KVM PV features test to align with KVM's new, fixed behavior
-> of not allowing userspace to disable HLT-exiting after vCPUs have been
-> created.  Rework the core testcase to disable HLT-exiting before creating
-> a vCPU, and opportunistically modify keep the paired VM+vCPU creation to
-> verify that KVM rejects KVM_CAP_X86_DISABLE_EXITS as expected.
+> Clear KVM's PV feature cache prior when processing a new guest CPUID so
+> that KVM doesn't keep a stale cache entry if userspace does KVM_SET_CPUID2
+> multiple times, once with a PV features entry, and a second time without.
 > 
+> Fixes: 66570e966dd9 ("kvm: x86: only provide PV features if enabled in guest's CPUID")
+> Cc: Oliver Upton <oliver.upton@linux.dev>
 > Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  .../selftests/kvm/x86_64/kvm_pv_test.c        | 33 +++++++++++++++++--
->  1 file changed, 30 insertions(+), 3 deletions(-)
+>  arch/x86/kvm/cpuid.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c b/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
-> index 2aee93108a54..1b805cbdb47b 100644
-> --- a/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
-> +++ b/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
-> @@ -139,6 +139,7 @@ static void test_pv_unhalt(void)
->  	struct kvm_vm *vm;
->  	struct kvm_cpuid_entry2 *ent;
->  	u32 kvm_sig_old;
-> +	int r;
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index f756a91a3f2f..be1c8f43e090 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -246,6 +246,8 @@ void kvm_update_pv_runtime(struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm_cpuid_entry2 *best = kvm_find_kvm_cpuid_features(vcpu);
 >  
->  	if (!(kvm_check_cap(KVM_CAP_X86_DISABLE_EXITS) & KVM_X86_DISABLE_EXITS_HLT))
->  		return;
-> @@ -152,19 +153,45 @@ static void test_pv_unhalt(void)
->  	TEST_ASSERT(vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
->  		    "Enabling X86_FEATURE_KVM_PV_UNHALT had no effect");
->  
-> -	/* Make sure KVM clears vcpu->arch.kvm_cpuid */
-> +	/* Verify KVM disallows disabling exits after vCPU creation. */
-> +	r = __vm_enable_cap(vm, KVM_CAP_X86_DISABLE_EXITS, KVM_X86_DISABLE_EXITS_HLT);
-> +	TEST_ASSERT(r && errno == EINVAL,
-> +		    "Disabling exits after vCPU creation didn't fail as expected");
+> +	vcpu->arch.pv_cpuid.features = 0;
 > +
-> +	kvm_vm_free(vm);
-> +
-> +	/* Verify that KVM clear PV_UNHALT from guest CPUID. */
-> +	vm = vm_create(1);
-> +	vm_enable_cap(vm, KVM_CAP_X86_DISABLE_EXITS, KVM_X86_DISABLE_EXITS_HLT);
-> +
-> +	vcpu = vm_vcpu_add(vm, 0, NULL);
-> +	TEST_ASSERT(!vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
-> +		    "vCPU created with PV_UNHALT set by default");
-> +
-> +	vcpu_set_cpuid_feature(vcpu, X86_FEATURE_KVM_PV_UNHALT);
-> +	TEST_ASSERT(!vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
-> +		    "PV_UNHALT set in guest CPUID when HLT-exiting is disabled");
-> +
-> +	/*
-> +	 * Clobber the KVM PV signature and verify KVM does NOT clear PV_UNHALT
-> +	 * when KVM PV is not present, and DOES clear PV_UNHALT when switching
-> +	 * back to the correct signature..
-> +	 */
->  	ent = vcpu_get_cpuid_entry(vcpu, KVM_CPUID_SIGNATURE);
->  	kvm_sig_old = ent->ebx;
->  	ent->ebx = 0xdeadbeef;
->  	vcpu_set_cpuid(vcpu);
->  
-> -	vm_enable_cap(vm, KVM_CAP_X86_DISABLE_EXITS, KVM_X86_DISABLE_EXITS_HLT);
-> +	vcpu_set_cpuid_feature(vcpu, X86_FEATURE_KVM_PV_UNHALT);
-> +	TEST_ASSERT(vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
-> +		    "PV_UNHALT cleared when using bogus KVM PV signature");
-> +
->  	ent = vcpu_get_cpuid_entry(vcpu, KVM_CPUID_SIGNATURE);
->  	ent->ebx = kvm_sig_old;
->  	vcpu_set_cpuid(vcpu);
->  
->  	TEST_ASSERT(!vcpu_cpuid_has(vcpu, X86_FEATURE_KVM_PV_UNHALT),
-> -		    "KVM_FEATURE_PV_UNHALT is set with KVM_CAP_X86_DISABLE_EXITS");
-> +		    "PV_UNHALT set in guest CPUID when HLT-exiting is disabled");
->  
->  	/* FIXME: actually test KVM_FEATURE_PV_UNHALT feature */
->  
+>  	/*
+>  	 * save the feature bitmap to avoid cpuid lookup for every PV
+>  	 * operation
 
 Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 
