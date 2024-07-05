@@ -1,117 +1,129 @@
-Return-Path: <linux-kernel+bounces-242713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B73928C0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44491928C0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7532B1C2466B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:04:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E352840F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6F516C694;
-	Fri,  5 Jul 2024 16:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21EE16CD14;
+	Fri,  5 Jul 2024 16:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="Q7RO3a22"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VCigcpwi"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0C016A93F;
-	Fri,  5 Jul 2024 16:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED69149C7F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720195475; cv=none; b=XI52DBdFfkPcLkrThbichj3yNEZJ45M5K/eNsqdkh9Ls3GBW4e99BXzLjRI7OGU+9M9N6OKg1lnSoB0MAoEtDmF/iluevpaAjgcxCvvQbvSZJlsL+rToO9GTg04y2scfklZxX6cmslZn75ejX0+wHCvEboaj1tQopbsD/ulNtW0=
+	t=1720195469; cv=none; b=XRRCm7dqjR43Kxyt9YaMtFXs02n22G/qGntcKyex2joKKhLv4c/KuLwr6pWYoSHIB2tF7ZKJUGW6TJ7vgpZbxexwggtGv4WLL9CBBFiOMuD+Xu6ykDQW+B92DahTC/52dgBdwNN5jt534FklODu4tb3Kkxm7L/LIUq/l4wzzclc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720195475; c=relaxed/simple;
-	bh=7SynWHHBuqFe3HgOFQJijIONqO1w8lyA7ZQo45G4wrA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sihUjTXIOyx7hLg7iiZwJ+cZS3f6kbnyAw+nK9dxxtlsixj8cUFCHMc6KJZQVJs2Mo8hFtFTBxSox4NjlGtiKfoDDTzAaxMBQb41TE64z7Vw7SefNjlq0sNkkPky+qTvW+dn921uY7ICl7lkcqpKNNzhqM30L/xd70gZ7ejfl/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=Q7RO3a22; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id BD16E100002;
-	Fri,  5 Jul 2024 19:04:10 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1720195450; bh=PSUhGWftozkwODPH+8H3q/nMrrK4aDrUh1tSE1Yvgqc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=Q7RO3a22IdmWNkaU7rZav/3RlxDylQPbgZzP/MP0lwGTUMmWi9tc5WPstaJ55hCa+
-	 KhfE+A8usfEm8QTzn5eUCnZAyE2A5JyjcPelL7SbH854C0ynVzXldksLWvK4rbazgA
-	 fFAysh3nCLBveXWdnRqStsfO595csAcQY+lgUWvv4vNq/IOwWEEpYr/TaKafBjE5N8
-	 FtOu5h+AW+eZRJyq5FoEUSzea0zNbPAO4Q4o0pbmmf8M0amEcQ9zft6FoCICp8L7Th
-	 HCMbDQ2IftFEIM6I5ZI3P0PPbsLQODR3kV08F2eFLhNimwLUOx9mxHry2VVAZIgM3C
-	 E/p0IWj4yYUcA==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Fri,  5 Jul 2024 19:03:26 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
- 19:03:05 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Siddharth Gupta <sidgup@codeaurora.org>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Bjorn Andersson
-	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rishabh
- Bhatnagar <rishabhb@codeaurora.org>, <linux-remoteproc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] remoteproc: Remove unneeded check in elf_strtbl_add()
-Date: Fri, 5 Jul 2024 19:02:52 +0300
-Message-ID: <20240705160252.9628-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1720195469; c=relaxed/simple;
+	bh=FNTBsX+63uIgnWKLXkG5pwYCpWKOxAZZwqQ8X2x73vU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcM0RIFzRx7L9zpR3yimlJ2EfKOuxg09EYyjuxMLP36dpQ4KItL2B/smGhmpuoLSDneFm53DtbmhnSiyAnzfHZ2IDbw6to8SJmgpIFOBmrwc0gRFzRc5QB3G8o53Qg3qh3VUF2ZHQR/+eDheKjP/Xy5EUG3UyX+aSL3ZIDmlXBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=VCigcpwi; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c927152b4bso1239348a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 09:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1720195467; x=1720800267; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J0j8hAyQWJjGjX5p48jR0ZeFa7oUdUxgMcRMAfmdz3I=;
+        b=VCigcpwiMEa87gj34MO+kStN38HY0QF0Wx5yxVrnKyFC69AY1ojtgXHqpGdaeNDUpm
+         rzuBqvjQW6TcidsPJ03K8/ovgUJ+WOdBNcLxgjnElbIMGWmz03lhDPvxwWIv7ZSZmKWj
+         1LO2T/gw14YwDLP8CxSpXjhvX1WqsL1E/+YbU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720195467; x=1720800267;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J0j8hAyQWJjGjX5p48jR0ZeFa7oUdUxgMcRMAfmdz3I=;
+        b=cdzTP8/UkbkcHuf1wJV6ELZ/dXL7lZV+TUl08N0XjVLcEsWcB8UtXNNFT4OPwKKfu+
+         cA5erxl3u0j/eDpY35YqFFNVl2cuQbeslwtxCBsQOgYU/FamIbzcYJu+HQl5iFo9Z4YF
+         Z+pemyoBQNLaEydQXxPsRQqdFthgVyc0LQfISinXHLfFbbthRWlq/KtsImtOMgp9E7xW
+         NKt/GyUr63nmaF9OFgs/5Bum4sowyNFpCd9IcrewpNrfNpXZ4g+z80yMURV89MIKl8Sd
+         f/rldhypmUw6OxWWx2GP3wrgTl/exoc68tISO3YF9Nbv4U0WfOB40uSXiDkA5IzILQsw
+         ZtaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlzK51JtZZxTOZ1GVzxH2iTQwni7Lb3R32+SrMhLkzVH1FQ6tRgpVo/ILoTI6WJJtSfDfa82eaWSraQ3VjTFk6KQgr42yhccHcaFP2
+X-Gm-Message-State: AOJu0YyCpaqVSSPPBgdLR7fJDtq/pPuviDOJ7Gj1zEQ1X1a+bagwGpy2
+	GyQZDWxtK1SGb6TyZ+pDWhPTbMSGoNIwH76eUnAeUUcAIE9zXfY9Z0W2ZVCF8A==
+X-Google-Smtp-Source: AGHT+IHgkOSaePxDDnJHq1U7KDyApbljJxbvMpXvGQArIGdlvWKuaNaFIdtcRXK3XVmYMcGfw2r45Q==
+X-Received: by 2002:a17:90b:11d4:b0:2c9:74cc:1c1b with SMTP id 98e67ed59e1d1-2c99c504127mr4043383a91.7.1720195467069;
+        Fri, 05 Jul 2024 09:04:27 -0700 (PDT)
+Received: from prme-hs2-i1009 ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a992c43sm3576853a91.30.2024.07.05.09.04.25
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Jul 2024 09:04:26 -0700 (PDT)
+Date: Fri, 5 Jul 2024 09:04:17 -0700
+From: Tim Merrifield <tim.merrifield@broadcom.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+	Xin Li <xin3.li@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Kai Huang <kai.huang@intel.com>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+	Brian Gerst <brgerst@gmail.com>, linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Ajay Kaher <ajay.kaher@broadcom.com>,
+	Alexey Makhalov <alexey.amakhalov@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, alex.james@broadcom.com,
+	doug.covelli@broadcom.com, jeffrey.sheldon@broadcom.com
+Subject: Re: [PATCH 0/2] Support userspace hypercalls for TDX
+Message-ID: <20240705160404.GA15452@prme-hs2-i1009>
+References: <cover.1720046911.git.tim.merrifield@broadcom.com>
+ <33874bf0-c115-4185-85ef-684794de3c8e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186342 [Jul 05 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/05 14:29:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/05 10:39:00 #25854340
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33874bf0-c115-4185-85ef-684794de3c8e@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-In elf_strtbl_add() pointer 'strtab', which value is a result of shifting
-after dereference of another pointer 'ehdr', is compared to NULL, which is
-useless.
 
-Fix this issue by removing unneeded check.
+Thanks for the response, Dave.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+On Wed, Jul 03, 2024 at 05:18:22PM -0700, Dave Hansen wrote:
+> 
+> Could we please be frank and transparent about what you actually want
+> here and how you expect this mechanism to be used?
+>
 
-Fixes: abc72b646066 ("remoteproc: coredump: Add minidump functionality")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/remoteproc/remoteproc_elf_helpers.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry for being unclear. open-vm-tools is currently broken on TDX and
+the intent here is to fix that. The idea is that versions of open-vm-tools
+that have been audited and restricted to certain hypercalls, would execute
+prctl to mark the process as capable of executing hypercalls.
+    
+> This inheritance model seems more suited to wrapping a tiny helper app
+> around an existing binary, a la:
+> 
+> 	prctl(ARCH_SET_COCO_USER_HCALL);
+> 	execve("/existing/binary/that/i/surely/did/not/audit", ...);
+> 
+> ... as opposed to something that you set in new versions of
+> open-vm-tools after an extensive audit and a bug fixing campaign to
+> clean up everything that the audit found.
 
-diff --git a/drivers/remoteproc/remoteproc_elf_helpers.h b/drivers/remoteproc/remoteproc_elf_helpers.h
-index e6de53a5000c..7c57fb553466 100644
---- a/drivers/remoteproc/remoteproc_elf_helpers.h
-+++ b/drivers/remoteproc/remoteproc_elf_helpers.h
-@@ -107,7 +107,7 @@ static inline unsigned int elf_strtbl_add(const char *name, void *ehdr, u8 class
- 	shdr = ehdr + elf_size_of_hdr(class) + shstrndx * elf_size_of_shdr(class);
- 	strtab = ehdr + elf_shdr_get_sh_offset(class, shdr);
- 	idx = index ? *index : 0;
--	if (!strtab || !name)
-+	if (!name)
- 		return 0;
- 
- 	ret = idx;
--- 
-2.30.2
-
+I understand the concern about inheritance. I chose prctl primarily
+because of some existing options that seemed similar, mainly speculation
+control. Is there an alternative approach that doesn't suffer from the
+inheritance issue?
 
