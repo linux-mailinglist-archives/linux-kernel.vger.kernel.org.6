@@ -1,237 +1,161 @@
-Return-Path: <linux-kernel+bounces-242014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A616392828A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:13:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEBE92829D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4B51F21036
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414361C24211
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D025144D0F;
-	Fri,  5 Jul 2024 07:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HcHFJx+7"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04C8145320;
+	Fri,  5 Jul 2024 07:20:04 +0000 (UTC)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075661448EF
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2977139D1B;
+	Fri,  5 Jul 2024 07:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720163598; cv=none; b=RpXapcd6GLCteTNZapex6Pt1kiiUgo5oNz0+9UgD5wBfZzkEBr0VN1x7gZeTwCI72Rip/c/Hcwb2jl04zv8PWUPmWIi8G9Y4VVzgMUnlAcLlHkHLJTlM+ZhHMauPGCPdH6E/ONQTU74vlABT/2jcTkgmLCvD9+q+nDgjXjsG+Wo=
+	t=1720164004; cv=none; b=LGowiwmzHuF8lQopT/Wrzlt/2WvILdSaGY5f/xr63Xzm/c/US1i35avnJcBws1DRFe57uQlR4myXNnfTZUy2x2Wv7s5roKojX0zsjUPEiUiF3+RzGDM3MKr8p5cILgizJVOQkfEIYt8pHPUpLsb9gOO75VWpGJpP0Kp3OwjKET0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720163598; c=relaxed/simple;
-	bh=X/Mwd6JBppsFn3Eh7Grst8vmhx2p+RhNWFlbhobvoB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWjqbYudU/MjLbye1WOIRJs963gAKrGZhJYp5/6MFiYPaL8WjQuSsWv+rvcleVTMEr5wEMEy8VrW24wrU+5NsEKtFFYfIrE6PA58FQGg7JvpZD2fUK7wYiNbzhY2ZqcyJbNpcGeikNMRtxMnAl31A+z5OzAkPLDhK+ih292OzNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HcHFJx+7; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c967e21888so926056a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:13:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720163596; x=1720768396; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9UlaHnzPtyEXqtP36rKl0mEwZt/UtIO8cSjkseqQwhQ=;
-        b=HcHFJx+7MSH2LVuJ4H88zTyH9Nr+NsXEE3smfTMbshxZvt7mNtSXXFzrioS0VDoSBt
-         HmQ6Dmg4PTmgAxBO4eIy1hsKBsnPzDSffAe8pISLs/XxVOSZ+E3Hb5ZfhauRq7s+mpWK
-         BItjlx134OzrL+UHY+K7ZSe5ZN2NfwMoam0hgejFpeaIY2woq4YU1Kf2/HHg3exbqzAZ
-         /f5dhQuFHvMSRQ2wdg+AXk9UE9TnDJrQz/vNCksBH3MI+/spapI5vKe3jMHD2v6T6/yS
-         2fxL6Metla5txCVKE3nu3Z8PmACn4ceLbaFNFCsUrKHWo9qhKHzm3pSBIrlX5kG2hinS
-         fNOg==
+	s=arc-20240116; t=1720164004; c=relaxed/simple;
+	bh=hrYys/hSWnTYJsfYNVQHw8oZRpFWHaSeNxp6S+CTrwo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KfSI+6x0gT06K8gavYGtdjZVUVOOSGiKk2EsAlypZUNas/0GRzYKBXCDGwSpmZS45hteL4/WBIsJaLKrH5ORLx+V9D+dXtfEKyJxzw/Lp6ahd5ezU+hWv0Akfh5HPE1YFy/94CBnQb+xfcTAvTJxbvsmwkkWWMt7u7kvxqLmgqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfef5980a69so1355209276.3;
+        Fri, 05 Jul 2024 00:20:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720163596; x=1720768396;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9UlaHnzPtyEXqtP36rKl0mEwZt/UtIO8cSjkseqQwhQ=;
-        b=CqfseX/i/W7UZJUkdzLAlFhA5g8biS0F2hyC8g6z3M/JMBtqd/XPZc8WGIgm6ec2dK
-         JHrAKvsExgdIdJ8TBMO8RXQKmYXInCTaAkfoEDXn7mIUHjbqw4YpicydJUmX+JEsfM1V
-         ytu1giJU7gUyRVh0Mav5TWHi4/Y7XblY7wvJDz4Y1HswTE9AnfJwz6nLN0M5fRrAaE6g
-         q/dhNdhUmHq/1T6UVXX+eLr0e34t2UQ8KvSnDUZXk2VH1M90kREp5h9KOPj19tvlQB6B
-         H3GQK4CyBLBeivAqjyzsLRiR+aQAwxSLqqhLQiGiRZqQpK94XFUtP3mfh+7l09tEngAP
-         Augw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/0mpIc0fD10x26gBx6O91TAhBmwYC9oF4SZkebZekAUrkZf28SxoZrGQy6ekxBGbqxXT1mxpkZJavN/soaOJlqmVYCIwS4J+vE/z3
-X-Gm-Message-State: AOJu0YyGYrrvPW+RzTpJX8UhUFo8uW/5VOXE/8eI4QVohR6k0tkvhb7v
-	LYFdRwRxsl8ZE2+8uVbsmRCx4cvJI9gaHShWA8/Y3kSEX+USfV2gfcswHI0NYSE=
-X-Google-Smtp-Source: AGHT+IH5aHOz4Xz8XpU3ZE30THlQncCFemTEtB6ZUBhrg25o2ezqr59OIP8uJxCM2R3MBsXUj7mCMg==
-X-Received: by 2002:a17:90a:bb0d:b0:2c9:69ce:cd5a with SMTP id 98e67ed59e1d1-2c99c53bcf2mr2675740a91.17.1720163596332;
-        Fri, 05 Jul 2024 00:13:16 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a970ce6sm2730567a91.18.2024.07.05.00.13.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 00:13:15 -0700 (PDT)
-Date: Fri, 5 Jul 2024 12:43:13 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: Re: [PATCH V3 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
-Message-ID: <20240705071313.ddl6geg72t4n7j3s@vireshk-i7>
-References: <20240705060650.243497-1-chenhuacai@loongson.cn>
- <20240705060650.243497-3-chenhuacai@loongson.cn>
+        d=1e100.net; s=20230601; t=1720164000; x=1720768800;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mQlRvdEIl3wW/T9tWerBdCapYf+E5WFW4Sl9gBRQc3I=;
+        b=KZvg8wCaXk4yDecd3ULRgiTgPhrQeuCM+JYP0BKEN8AuBM2SAg4lXFI7vZI+FGOnMa
+         1mfUG9GpjmTLtXmmgTxDn/Wzv0P6qRLTtg0U9/JtCmlgxmFxrAx1q9VXiDHdgnqsZbD5
+         rI2SCHX1CMdx+6/T8i1GzGBhswMkf1jlwa9r/8gUD57Lz98y4HgC2TyGSzdwMR0whI0N
+         4oAEDJHyJgESpPcXRw6oi461ZlXl1TwH7JcnNtsmP71bQxN54ycjTP+Bygp8TS4AIpSe
+         e9pR54I8k3Tjf9IeVDF7hZtU7FUTaFX6raJForsII9ETIcIHk7YyiDspb/HrAUifAw58
+         TYOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVa6uKtLPUtsYzNfGWSR5ezmMcwXlcsUveMARmRetvJbMdPzNNOKAC6AbvFQGpy1is8vYLFZYz6S39uSQG56VD65tTMg20c7uKXVPqtbkWZuQUF808UqOgTvXh+vb9LxO+iLyRvTZfSDGSE7AvopMRz5GV+CkxLCBIc3uYOLW5cKyIS57874zGFZudaX+gDqUr5SnC5YaiIalf8GlYohJQYkFvmGAdGvKtHBFgkNdwXQ+Z3FdgjhlKBx6UzN7FAXOKl
+X-Gm-Message-State: AOJu0Yz+y8qgO2XwLfNTIis0aF9mdjIdZNwyJ4+WEFEabnuWmnu3GTTp
+	wLDk+vMFJNiPXaXi5ohCVRlgNTUOnJGwj0Te/l+DTELuHLhdSXgtlEFRkNBC
+X-Google-Smtp-Source: AGHT+IEdn+yZNpYbqFWcod6LpgXMbCvrh3sPAXeeQuLwG6G/P623/Qckq+WZefCWwErV7FFkjqu8Ew==
+X-Received: by 2002:a05:690c:6ac1:b0:64b:313f:d7cb with SMTP id 00721157ae682-652d5ef9153mr45515107b3.22.1720163999739;
+        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9bf32efdsm27722627b3.123.2024.07.05.00.19.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6515b824117so11494207b3.3;
+        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWJjjFaLtdaAoJjiJEU+Ze07kQ5fEjatGeqDRl+zsBYroSrexw/cLT/JUy8ZgbjfDDHxlkjbmt+cB81CjQ1TT348a6fysTZh85sKRKA9+T/S4HT3eLecz4STYPJdZwzRyq9wPEXAa3+nsDygiCVgh0qEFibUpj84nrwYh52Shro6czGIVnhOHfLLdE7gRbEsfvITko0efYh4rfYHZqv4EfjlK819rbw2NEOsxgF01ZGQkrcqSumWeXGGNUC2vKD0elt
+X-Received: by 2002:a0d:e8cd:0:b0:643:ed61:11bb with SMTP id
+ 00721157ae682-652d5338f0dmr40312717b3.7.1720163999140; Fri, 05 Jul 2024
+ 00:19:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240705060650.243497-3-chenhuacai@loongson.cn>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com> <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
+In-Reply-To: <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Jul 2024 09:19:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
+Message-ID: <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
+Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05-07-24, 14:06, Huacai Chen wrote:
-> Some of LoongArch processors (Loongson-3 series) support DVFS, their
-> IOCSR.FEATURES has IOCSRF_FREQSCALE set. And they has a micro-core in
-> the package called SMC (System Management Controller), which can be
-> used to detect temperature, control fans, scale frequency and voltage,
-> etc.
-> 
-> The Loongson-3 CPUFreq driver is very simple now, it communicate with
-> SMC, get DVFS info, set target frequency from CPUFreq core, and so on.
-> 
-> There is a command list to interact with SMC, widely-used commands in
-> the CPUFreq driver include:
-> 
-> CMD_GET_VERSION: Get SMC firmware version.
-> 
-> CMD_GET_FEATURE: Get enabled SMC features.
-> 
-> CMD_SET_FEATURE: Enable SMC features, such as basic DVFS, BOOST.
-> 
-> CMD_GET_FREQ_LEVEL_NUM: Get the number of all frequency levels.
-> 
-> CMD_GET_FREQ_BOOST_LEVEL: Get the first boost frequency level.
-> 
-> CMD_GET_FREQ_LEVEL_INFO: Get the detail info of a frequency level.
-> 
-> CMD_GET_FREQ_INFO: Get the current frequency.
-> 
-> CMD_SET_FREQ_INFO: Set the target frequency.
-> 
-> In future we will add automatic frequency scaling, which is similar to
-> Intel's HWP (HardWare P-State).
-> 
-> Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
->  MAINTAINERS                         |   1 +
->  drivers/cpufreq/Kconfig             |  12 +
->  drivers/cpufreq/Makefile            |   1 +
->  drivers/cpufreq/loongson3_cpufreq.c | 395 ++++++++++++++++++++++++++++
->  4 files changed, 409 insertions(+)
->  create mode 100644 drivers/cpufreq/loongson3_cpufreq.c
+Hi Andi,
 
-I have made some changes while applying, can you please test these ?
+On Fri, Jul 5, 2024 at 12:42=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
+wrote:
+> > diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-rii=
+c.c
+> > index 83e4d5e14ab6..002b11b020fa 100644
+> > --- a/drivers/i2c/busses/i2c-riic.c
+> > +++ b/drivers/i2c/busses/i2c-riic.c
+> > @@ -113,6 +113,8 @@ struct riic_irq_desc {
+> >       char *name;
+> >  };
+> >
+> > +static const char * const riic_rpm_err_msg =3D "Failed to runtime resu=
+me";
+>
+> Please, don't do this. Much clearer to write the message
+> explicitly.
 
-diff --git a/drivers/cpufreq/loongson3_cpufreq.c b/drivers/cpufreq/loongson3_cpufreq.c
-index a530e4a56b78..cd3efdeeddd9 100644
---- a/drivers/cpufreq/loongson3_cpufreq.c
-+++ b/drivers/cpufreq/loongson3_cpufreq.c
-@@ -31,10 +31,10 @@ union smc_message {
- };
- 
- /* Command return values */
--#define CMD_OK				0  /* No error */
--#define CMD_ERROR			1  /* Regular error */
--#define CMD_NOCMD			2  /* Command does not support */
--#define CMD_INVAL			3  /* Invalid Parameter */
-+#define CMD_OK				0 /* No error */
-+#define CMD_ERROR			1 /* Regular error */
-+#define CMD_NOCMD			2 /* Command does not support */
-+#define CMD_INVAL			3 /* Invalid Parameter */
- 
- /* Version commands */
- /*
-@@ -173,7 +173,8 @@ static struct mutex cpufreq_mutex[MAX_PACKAGES];
- static struct cpufreq_driver loongson3_cpufreq_driver;
- static DEFINE_PER_CPU(struct loongson3_freq_data *, freq_data);
- 
--static inline int do_service_request(u32 id, u32 info, u32 cmd, u32 val, u32 extra)
-+static inline int
-+do_service_request(u32 id, u32 info, u32 cmd, u32 val, u32 extra)
- {
- 	int retries;
- 	unsigned int cpu = smp_processor_id();
-@@ -226,11 +227,13 @@ static unsigned int loongson3_cpufreq_get(unsigned int cpu)
- 	return ret * KILO;
- }
- 
--static int loongson3_cpufreq_target(struct cpufreq_policy *policy, unsigned int index)
-+static int
-+loongson3_cpufreq_target(struct cpufreq_policy *policy, unsigned int index)
- {
- 	int ret;
- 
--	ret = do_service_request(cpu_data[policy->cpu].core, FREQ_INFO_TYPE_LEVEL, CMD_SET_FREQ_INFO, index, 0);
-+	ret = do_service_request(cpu_data[policy->cpu].core,
-+			FREQ_INFO_TYPE_LEVEL, CMD_SET_FREQ_INFO, index, 0);
- 
- 	return (ret >= 0) ? 0 : ret;
- }
-@@ -255,14 +258,16 @@ static int configure_freq_table(int cpu)
- 	boost_level = ret;
- 
- 	freq_level = min(max_level, FREQ_MAX_LEVEL);
--	data = devm_kzalloc(&pdev->dev, struct_size(data, table, freq_level + 1), GFP_KERNEL);
-+	data = devm_kzalloc(&pdev->dev, struct_size(data, table, freq_level + 1),
-+			    GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
- 	data->def_freq_level = boost_level - 1;
- 
- 	for (i = 0; i < freq_level; i++) {
--		ret = do_service_request(cpu, FREQ_INFO_TYPE_FREQ, CMD_GET_FREQ_LEVEL_INFO, i, 0);
-+		ret = do_service_request(cpu, FREQ_INFO_TYPE_FREQ,
-+					 CMD_GET_FREQ_LEVEL_INFO, i, 0);
- 		if (ret < 0) {
- 			devm_kfree(&pdev->dev, data);
- 			return ret;
-@@ -290,6 +295,7 @@ static int loongson3_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 
- 	policy->cpuinfo.transition_latency = 10000;
- 	policy->freq_table = per_cpu(freq_data, cpu)->table;
-+
- 	policy->suspend_freq = policy->freq_table[per_cpu(freq_data, cpu)->def_freq_level].frequency;
- 	cpumask_copy(policy->cpus, topology_sibling_cpumask(cpu));
- 
-@@ -314,7 +320,8 @@ static int loongson3_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	int cpu = policy->cpu;
- 
--	loongson3_cpufreq_target(policy, per_cpu(freq_data, cpu)->def_freq_level);
-+	loongson3_cpufreq_target(policy, per_cpu(freq_data,
-+				 cpu)->def_freq_level);
- 
- 	return 0;
- }
-@@ -348,13 +355,14 @@ static int loongson3_cpufreq_probe(struct platform_device *pdev)
- 	int i, ret;
- 
- 	for (i = 0; i < MAX_PACKAGES; i++)
--		mutex_init(&cpufreq_mutex[i]);
-+		devm_mutex_init(&pdev->dev, &cpufreq_mutex[i]);
- 
- 	ret = do_service_request(0, 0, CMD_GET_VERSION, 0, 0);
- 	if (ret <= 0)
- 		return -EPERM;
- 
--	ret =  do_service_request(FEATURE_DVFS, 0, CMD_SET_FEATURE, FEATURE_DVFS_ENABLE | FEATURE_DVFS_BOOST, 0);
-+	ret = do_service_request(FEATURE_DVFS, 0, CMD_SET_FEATURE,
-+				 FEATURE_DVFS_ENABLE | FEATURE_DVFS_BOOST, 0);
- 	if (ret < 0)
- 		return -EPERM;
- 
+And the compiler will merge all identical strings, emitting
+just a single string.
 
--- 
-viresh
+>
+> > +
+> >  static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offse=
+t)
+> >  {
+> >       writeb(val, riic->base + riic->info->regs[offset]);
+> > @@ -133,10 +135,14 @@ static int riic_xfer(struct i2c_adapter *adap, st=
+ruct i2c_msg msgs[], int num)
+> >       struct riic_dev *riic =3D i2c_get_adapdata(adap);
+> >       struct device *dev =3D adap->dev.parent;
+> >       unsigned long time_left;
+> > -     int i;
+> > +     int i, ret;
+> >       u8 start_bit;
+> >
+> > -     pm_runtime_get_sync(dev);
+> > +     ret =3D pm_runtime_resume_and_get(dev);
+>
+> In principle I like the error message to be always checked and I
+
+s/message/condition/?
+
+> will always approve it. Whenever there is a return value, even
+> when we are sure it's always '0', it needs to be checked.
+>
+> I had lots of discussions in the past about this topic but I
+> haven't always found support. I'd love to have the ack from a
+> renesas maintainer here.
+
+I don't mind checking for the error here.
+
+>
+> > +     if (ret) {
+> > +             dev_err(dev, riic_rpm_err_msg);
+
+Do you need to print these error messages?
+AFAIU, this cannot happen anyway.
+Ultimately, I expect the device driver that requested the transfer to
+handle failures, and print a message when needed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
