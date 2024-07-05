@@ -1,91 +1,183 @@
-Return-Path: <linux-kernel+bounces-242434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA8F928800
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:32:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C1E928802
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88E13B22148
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:32:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E696E1F24930
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2C3149DF4;
-	Fri,  5 Jul 2024 11:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA411482F3;
+	Fri,  5 Jul 2024 11:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cOBxOY8+"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gUgvIRR8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86616A039
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC941494C2
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720179133; cv=none; b=Wd2xukt2DuXkdc38Y+i+DDXR3t5GSBO9/+LaRifZIiTIlh4HXEondUw3glhT7zMfJglo5J1TRyHFHcnphTSFqQrjdGQPXk/71i3XHnMJMY7buDTVY3o1m6vTX1c2DysHpWPvMgv6swVjKuBdHYr+AUCYCtqUumVrVKwYG69ZKTo=
+	t=1720179148; cv=none; b=D/YqW45M7yVMjul3HcU6lF1WoL5IhEBy23WF2Z7LM+5SVOL1DWg9/69+FSn3sI+wgik6gYfP23fO2v5Bpcb5hE0e1m/4cZ0JFknQRpBZuStok4aPHmS7kn6/cTfSw/yRxSF9Rzl5UkwT61+6ENjiklxAlrwxKSm3eoZJIukA6do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720179133; c=relaxed/simple;
-	bh=BiQR0pNXalU4Cz3nZtG+0m3JqCJnGGU3j8qUXAiG1sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WVR9pvuSI3SVYqww95xHEWc8j5SZ5xensNKpMxHA/tT/L6QefyydKl9+S6u41FIbpkTxhGA3wzxzI5DlRV7eirziqkr0u3osAqCxMNfd3eYGNiFg/LgPb2pgYe7KJbUp6vZ+WGMFS9YNpY46Obb7gCRUEGNSELkiFKzicJwHoqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cOBxOY8+; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C2832000C;
-	Fri,  5 Jul 2024 11:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720179123;
+	s=arc-20240116; t=1720179148; c=relaxed/simple;
+	bh=LuO94MjSEqAzZZ+OdQaO8GGVDhFrlkG2Ta2cSnC8spg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u5bQSgqcwE2TSrrxSgamrai7kkry71A2O6W3eFGkdZ2MyIQN/O8Mb9zEQrtwm5o0RmgrDLgYTA+7YOs87MsgwWsREaxO0jtrzoXhyt8SUoMS90hA5nQYswzbtWfHCsZJG/PUy+StOTnj+SK0baMKSqbRQ0Vy99w6jZBgtoQijVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gUgvIRR8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720179145;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZsViN59W6qMf/mS+MNMH3PMMvUGwpG61clKEaWdUd48=;
-	b=cOBxOY8+JvnXcaqpYardXjxv6JGoZAAHi9BSk1DJMLh6OtxUT0QiBTMYviE8ISc3OA+TTt
-	KHR4DmAeL0da+lyIAqpKcaLX15mbFKCA31+avHflmhs9KzOiRhhnDwzuyFbbsyI1dJK7uO
-	wxj3/0Ubx4/U11lKDTqddlIXJqttq7BEzdrm5KWB0BdAM8JnPgGlJVU01prpy6XJCnac+F
-	aOM9uMdr6Y1j+gr9OwZDCvnt++THPMJZlPIjZDjmfLvq35h4CP4g31qU2KTXAqk1yebEz9
-	AP58NYmPCFsOCMykZU2rWvo9/1MrDX7/DtpvBNWy/q1j0sFnqLvMDsMlNa6y7g==
-Date: Fri, 5 Jul 2024 13:32:01 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Cc: dan.carpenter@linaro.org, Richard Weinberger <richard@nod.at>, Vignesh
- Raghavendra <vigneshr@ti.com>, Vladimir Zapolskiy <vz@mleia.com>, Arnd
- Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>, Li Zetao
- <lizetao1@huawei.com>, linux-mtd@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: lpx32xx: Fix dma_request_chan() error
- checks
-Message-ID: <20240705133201.023cf3c7@xps-13>
-In-Reply-To: <20240705093851.18107-1-piotr.wojtaszczyk@timesys.com>
-References: <20240705093851.18107-1-piotr.wojtaszczyk@timesys.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	bh=jE6S85bFX7ia/r0z6WYFjOqpTUOd5eKCH2fyhxzh5mo=;
+	b=gUgvIRR8gVdtlctS4LSsyqkZ7dTrtf/F6bG6NvrRiJObq2+UWb3Ffbb2N318ru1vn6HmqP
+	kGPC95bN5FL7viWCZiPXXUkFmlazp1xt0rnBiRqT7N2Ec7zwMLGjuqnvaJpgTedGPYLaaM
+	sJ2V3bK8i5QmsKF9osHWAZ34PuUeTzg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-223-pmGbgBZDMcGfbXXA6KW5hQ-1; Fri, 05 Jul 2024 07:32:24 -0400
+X-MC-Unique: pmGbgBZDMcGfbXXA6KW5hQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4257c42f035so12036245e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 04:32:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720179143; x=1720783943;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jE6S85bFX7ia/r0z6WYFjOqpTUOd5eKCH2fyhxzh5mo=;
+        b=mi/DwXQs6k5oajvdMa+TuBbrq6I61wfIt3phinUlkxZqM6PTPgqe6ivYiS+IdsTv9i
+         53bQ+OyEUnIuGhRTQBLpDnmeqacJVIwGmh7kvnHgCFWDTTe0KXhMg2K0+4egmKZD7Hl9
+         5NO9Oug1jd0I321Jjq4WdzBtagE0f+dbEdvDm3gcno09aj3aA+LJJEcS5t1N3UZrJ3xk
+         2uRA5zmIdVYHTz4rTxA/VOn3WUr01y0zUc07iiGLEaKEfVu/RRyAJ4MeRmiGwiOE6zWF
+         UzIm67/AwGIa47hD8f67Sv45bW9SLl1xqAweDleqkyiGXmqDwLC3skL8l+lqBMOEOt5I
+         kGFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvEElGLZb6JlBKiRtyedFLO0KTXaZ0NR73+BuOcdvIGuyFGstCUnwrnwY0+qrQOjGpnpyWm5K2537t0UBELd8KOvZyNBTV4b8+oihw
+X-Gm-Message-State: AOJu0YxJBvLvbNrVkAqNtg+QfUnR8TQ6RAyp3JEVv5psqKFXkuXzv6NC
+	LSKRYKVsRC+DOLYQRMdMjwfYUiXc1/1oAjYfqhtVxyk+XXDFRN83UO0w9IJTKIWzBJzK9dLNeLF
+	6RpfeCUS8vzXlMfKhDKsBE+jmnU2YKxgipDkw4qVbOOyFUVTAgqvBHW/bWg1o7w==
+X-Received: by 2002:a05:600c:4b87:b0:426:59fc:cdec with SMTP id 5b1f17b1804b1-42659fccf3bmr4970855e9.21.1720179143038;
+        Fri, 05 Jul 2024 04:32:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwwu8Zih5RO6YSe8hQ4RBs6xd5L3lcOJBKw/I/nyz5x44QjIrLSHbrH1hqM8ht621bYpY3Cw==
+X-Received: by 2002:a05:600c:4b87:b0:426:59fc:cdec with SMTP id 5b1f17b1804b1-42659fccf3bmr4970545e9.21.1720179142584;
+        Fri, 05 Jul 2024 04:32:22 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1dda61sm58241895e9.19.2024.07.05.04.32.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 04:32:22 -0700 (PDT)
+Message-ID: <f0016987-4288-4adf-954d-665b35ae1bf1@redhat.com>
+Date: Fri, 5 Jul 2024 13:32:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH V3 8/8] cpufreq: Add Rust based cpufreq-dt driver
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>
+Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
+ Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+ rust-for-linux@vger.kernel.org,
+ Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+ Erik Schilling <erik.schilling@linaro.org>,
+ =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <cover.1719990273.git.viresh.kumar@linaro.org>
+ <b7df0c75cc07a451243b554fb2272c91cbe42dfe.1719990273.git.viresh.kumar@linaro.org>
+Content-Language: en-US
+From: Danilo Krummrich <dakr@redhat.com>
+Organization: RedHat
+In-Reply-To: <b7df0c75cc07a451243b554fb2272c91cbe42dfe.1719990273.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Piotr,
+Hi Viresh,
 
-piotr.wojtaszczyk@timesys.com wrote on Fri,  5 Jul 2024 11:38:47 +0200:
+On 7/3/24 09:14, Viresh Kumar wrote:
+> This commit adds a Rust based cpufreq-dt driver, which covers most of
+> the functionality of the existing C based driver. Only a handful of
+> things are left, like fetching platform data from cpufreq-dt-platdev.c.
+> 
+> This is tested with the help of QEMU for now and switching of
+> frequencies work as expected.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>   drivers/cpufreq/Kconfig        |  12 ++
+>   drivers/cpufreq/Makefile       |   1 +
+>   drivers/cpufreq/rcpufreq_dt.rs | 225 +++++++++++++++++++++++++++++++++
+>   3 files changed, 238 insertions(+)
+>   create mode 100644 drivers/cpufreq/rcpufreq_dt.rs
+> 
+> diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
+> new file mode 100644
+> index 000000000000..652458e7a3b9
+> --- /dev/null
+> +++ b/drivers/cpufreq/rcpufreq_dt.rs
 
-> The dma_request_chan() returns error pointer in case of error, while
-> dma_request_channel() returns NULL in case of error therefore different
-> error checks are needed for the two.
->=20
-> Fixes: 7326d3fb1ee3 ("mtd: rawnand: lpx32xx: Request DMA channels
-> using DT entries")
+<snip>
 
-Pleae don't split the commit title over two lines.
+> +
+> +type DeviceData = Box<cpufreq::Registration<CPUFreqDTDriver>>;
+> +
+> +impl platform::Driver for CPUFreqDTDriver {
+> +    type Data = Arc<DeviceData>;
+> +
+> +    define_of_id_table! {(), [
+> +        (of::DeviceId(b_str!("operating-points-v2")), None),
+> +    ]}
+> +
+> +    fn probe(_dev: &mut platform::Device, _id_info: Option<&Self::IdInfo>) -> Result<Self::Data> {
+> +        let drv = Arc::new(
+> +            cpufreq::Registration::<CPUFreqDTDriver>::register(
+> +                c_str!("cpufreq-dt"),
+> +                (),
+> +                cpufreq::flags::NEED_INITIAL_FREQ_CHECK | cpufreq::flags::IS_COOLING_DEV,
+> +                true,
+> +            )?,
+> +            GFP_KERNEL,
+> +        )?;
 
-Missing: Cc: stable.
+Putting the `cpufreq::Registration` into `Arc<DeviceData>` is unsafe from a
+lifetime point of view. Nothing prevents this `Arc` to out-live the
+`platform::Driver`.
 
-> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Instead, you should wrap `cpufreq::Registration` into `Devres`. See
+`drm::drv::Registration` for an example [1].
 
-Thanks,
-Miqu=C3=A8l
+[1] https://gitlab.freedesktop.org/drm/nova/-/blob/nova-next/rust/kernel/drm/drv.rs?ref_type=heads#L173
+
+> +
+> +        pr_info!("CPUFreq DT driver registered\n");
+> +
+> +        Ok(drv)
+> +    }
+> +}
+> +
+> +module_platform_driver! {
+> +    type: CPUFreqDTDriver,
+> +    name: "cpufreq_dt",
+> +    author: "Viresh Kumar <viresh.kumar@linaro.org>",
+> +    description: "Generic CPUFreq DT driver",
+> +    license: "GPL v2",
+> +}
+
 
