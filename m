@@ -1,272 +1,157 @@
-Return-Path: <linux-kernel+bounces-242782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA5B928D1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465E6928D21
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67165285102
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:40:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16061F234A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBBF16D335;
-	Fri,  5 Jul 2024 17:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D329516DC08;
+	Fri,  5 Jul 2024 17:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YuxOAW3l"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DuphthjM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AF716EB6B
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 17:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D96E16D335;
+	Fri,  5 Jul 2024 17:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720201197; cv=none; b=OKKBX5WFkFhfG7WqHy0Z5VodwD9JZqvM7SBrYF7lP8n156xfAag+i5zY0TKmpZ9NR/NK7aIO0ozcKSXT++TwJdrPiY5hOdNg0OTQymWHQgZvhaR2owbPZs3aH52s0giiEQyJ2vmkoKSLGfJyAW2kcJgfrdxBl39oBvLhHiwVak8=
+	t=1720201249; cv=none; b=LaOAftfDIOI9bqfkJHYC8QYO0Et9SnqPwasMQUuE4/4YCSb015a/JshwF0g8+BAfOKPSrkC9j+HwMaFvWkl0M1nZp98XwLo9QZ+SHyXkzawXdLQscsUclnzRNua/7B/mJF5SidC3ybcYGln8Tf+oMWtEOsT3aLWs0dXdYKNGGxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720201197; c=relaxed/simple;
-	bh=30Nh8qTVUoUkcFJjX80VwecXmqFO1XJsfJhv0NzYxKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iu7uW9G5bAXuhZFz/bIc5AItYLY1PpQypAsBxcBIBO3svcAaXb4MFY9GNDWQ87RYFc7p3ZTPK0UHuVSvQ/NLNoiljblva/TBlpU9aRnJq+ZJw9WNPO/nxGXWBA0x3/6Dy8cSi5K7vmYkgC7yQ3LcMFtdXzazK6KybMbvsSghp6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YuxOAW3l; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7f3d2f12d26so10672539f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 10:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720201194; x=1720805994; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=unIf05UCU5IyJnCAhTNm6VO5/me2/U4T6hsWUv5BnOM=;
-        b=YuxOAW3lcv5ib49BQwunRhmp1s3AVy+C0uSrjWVvDUnW5ENgNEVZxORe/LZvUWseBn
-         ZFR4jZCt3buOJzp6oSUBgyIdsViTWQ/ypwhUIcN5USt0ekZElUFYq/NJUFpOXI6Mh6BP
-         hhVZQ6jrOkGeycJTLAHhgpXk7xcaf+tGAwAW8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720201194; x=1720805994;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=unIf05UCU5IyJnCAhTNm6VO5/me2/U4T6hsWUv5BnOM=;
-        b=PJzjST3dMxxtniSfnsBbkTsaOVXk9HUZujUE5RaspCnt8OQxsBhBvXWMuaKfO01Zhh
-         iYO+acOqTRUrN+VjhKv594Xi94Q1o83SLOFaNd1amIV+Xf1csZ4ce31qa3JTp/J0cJIz
-         Z2KyHa4JN6mePdKHO6a5kG1c0EBpAwDAh5775r1LObne1ZBiLzzpLF78OJqna9g4kRlR
-         XkCd5XM9t09i+egq5A3BwHPe+Ybt6PRJpAld1VEo39sPMqZft/2SA9SK3zWHomUkDVkP
-         mIhoWPMeAevA/giM0mEbunyErK+SmANbtVJ4I/DkiR1e47PuFeXMFXhmU91U0Bgo27P0
-         ghZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjxn0svzCjSMAVuIU2+Up4q1Qhtejy4sD7jrfxQHASBDjYZQ62UfF1y7K1l23jqKFvggJOz3svZiRpCVKR+e0EinmF/nKAHz+jwryC
-X-Gm-Message-State: AOJu0YwlkXBrLywitt1RQFAP3/XR1ym3ulwETfmHdQpM+ncfG9wIzC2V
-	dbmXie+Hp5UtXpQ4szLQxx2iiYepGXWETpX+GEjOD+44+sy+4vh/RA7fHcteqlU=
-X-Google-Smtp-Source: AGHT+IEM4SS6hOlhpK8tPtz1YFddZheyjJwcf695tdvlnP1W0P9Zvopi9NDI6WLp+A8FUY/8ggO8Xw==
-X-Received: by 2002:a5d:8616:0:b0:7eb:2c45:4688 with SMTP id ca18e2360f4ac-7f66def7059mr523886739f.2.1720201194254;
-        Fri, 05 Jul 2024 10:39:54 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73dd4dfbsm4565041173.49.2024.07.05.10.39.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 10:39:53 -0700 (PDT)
-Message-ID: <85ce18a6-9783-427b-bfb4-64b82c0081cb@linuxfoundation.org>
-Date: Fri, 5 Jul 2024 11:39:53 -0600
+	s=arc-20240116; t=1720201249; c=relaxed/simple;
+	bh=YVERLXjAWTnjpgGoXP2vtWfh4hGbsd/kvEEuxew8fLE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qfi4HfeKlm5JCqoN2o3gfm+sDz2qMrMRefwHpYLLaRal/mCDkbMZ2a53xDrKseKiQNJTfewJ/lazqgKWnB+b22KuUUytpRjCq+rP2yF1u8BhxHMvWzQXj8RYV6Dvp+D/p6xZM94ImOUFREvml1YYW7wIsNHJZylrMuk0wVKhG2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DuphthjM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465GC8j0019670;
+	Fri, 5 Jul 2024 17:40:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=IsTw9wDSB4eye4Tak2+2kWKV
+	Lfa0j88qW0yeQi+xj9s=; b=DuphthjMaO0VGtZCXUE8tBrfjXk+4VXlZONjbp6I
+	tcYypuAv4XY0OyWgeg1fB+1SRzdyT7ep+9A5vYw6Vpg/78Li6aO++ILcZL2kxfgq
+	azBtBT36t9syRD8tZ11PDrqWqzeByA/LzgHn/4FXUAU0SFQzzD9/WxAK9AG24C1O
+	YJMLcSuxiLL6YOtlaNVOdVNdko4eCaucKji0h5UHWUx15OOInIfb/dQRdGD4VM1d
+	saz90zIolhaKAEhbfmbdJJA2DNsh8hj8dNfqOv0Ejo4JDGrWxmrIFODj3JTV0q+q
+	5ZmsQt7gtfQREl1koyl6/P++Bb4uC34ok0ovMO9fE4qGug==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406cww9nb8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 17:40:42 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465HefvH006784
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Jul 2024 17:40:41 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 5 Jul 2024 10:40:41 -0700
+Date: Fri, 5 Jul 2024 10:40:41 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] firmware: qcom: tzmem: blacklist more platforms for SHM
+ Bridge
+Message-ID: <20240705103820587-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240704-shmbridge-blacklist-v1-1-14b027b3b2dc@linaro.org>
+ <jdfuvgaty44kg3xm63l765eueoy66qp7yngmf67nxqh5oifuzq@7gbzytqn5cj7>
+ <16e542bc-b0bf-474f-b421-60e99f42a803@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftest: acct: Add selftest for the acct() syscall
-To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
- Shuah Khan <shuah@kernel.org>
-Cc: javiercarrascocruz@gmail.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240630-kselftest-acct-syscall-v2-1-b30bbe2a69cd@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240630-kselftest-acct-syscall-v2-1-b30bbe2a69cd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <16e542bc-b0bf-474f-b421-60e99f42a803@linaro.org>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: yIQh21gbAne2aQqeY_FdWHALG5LsxNDy
+X-Proofpoint-GUID: yIQh21gbAne2aQqeY_FdWHALG5LsxNDy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_12,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0
+ clxscore=1011 suspectscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407050128
 
-On 6/30/24 13:22, Abdulrasaq Lawani wrote:
-> Noticed that there was no selftest for the acct() syscall
-> which enables the kernel to record terminated processes
-> into a specified file.
+On Thu, Jul 04, 2024 at 06:36:23PM +0200, Neil Armstrong wrote:
+> On 04/07/2024 18:03, Bjorn Andersson wrote:
+> > On Thu, Jul 04, 2024 at 02:12:46PM GMT, Dmitry Baryshkov wrote:
+> > > The SHM bridge makes the Qualcomm RB3 and SM8150-HDK reset while probing
+> > > the RMTFS (in qcom_scm_assign_mem()). Blacklist the SHM Bridge on
+> > > corresponding platforms using SoC-level compat string. If later it's
+> > > found that the bad behaviour is limited just to the particular boards
+> > > rather than SoC, the compat strings can be adjusted.
+> > > 
+> > > Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > > Fixes: f86c61498a57 ("firmware: qcom: tzmem: enable SHM Bridge support")
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >   drivers/firmware/qcom/qcom_tzmem.c | 2 ++
+> > >   1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+> > > index 5d526753183d..c715729f071c 100644
+> > > --- a/drivers/firmware/qcom/qcom_tzmem.c
+> > > +++ b/drivers/firmware/qcom/qcom_tzmem.c
+> > > @@ -78,6 +78,8 @@ static bool qcom_tzmem_using_shm_bridge;
+> > >   /* List of machines that are known to not support SHM bridge correctly. */
+> > >   static const char *const qcom_tzmem_blacklist[] = {
+> > >   	"qcom,sc8180x",
+> > > +	"qcom,sdm845", /* reset in rmtfs memory assignment */
+> > > +	"qcom,sm8150", /* reset in rmtfs memory assignment */
+> > 
+> > What confidence do we have in that this list is now complete?
 > 
-> The acct() system call enables or disables process accounting.
-> If accounting is turned on, records for each terminating process
-> are appended to a specified filename as it terminates. An argument of NULL
-> causes accounting to be turned off.
+> AFAIK we don't but at least we're sure with this patch, it successfully boots on:
+> - db410c
+> - db820c
+> - rb3
+> - hdk8150
+> - rb5
+> - hdk8350
+> - hdk8450
+> - qrd8550
+> - hdk8550
+> - qrd8650
+> - hdk8650
 > 
-> This patch provides a test for the acct() syscall.
+> => https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/91268
 > 
-> References:
-> https://man7.org/linux/man-pages/man2/acct.2.html
+> Without this change it crashes on rb3 & hdk8150:
+> - https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/152722#L749
+> - https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/152723#L838
 > 
-> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-
-What does the test output look like?
-
-> ---
-> Changes in v2:
-> Add testcases to test error conditions.
-> Add kselftest function for reporting results.
+> Neil
 > 
-> - Link to v1: https://lore.kernel.org/r/20240622-kselftest-acct-syscall-v1-1-d270b5be8d37@gmail.com
-> ---
->   tools/testing/selftests/Makefile            |  1 +
->   tools/testing/selftests/acct/.gitignore     |  2 +
->   tools/testing/selftests/acct/Makefile       |  4 ++
->   tools/testing/selftests/acct/acct_syscall.c | 89 +++++++++++++++++++++++++++++
->   4 files changed, 96 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 9039f3709aff..45a58ef5ad92 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -1,4 +1,5 @@
->   # SPDX-License-Identifier: GPL-2.0
-> +TARGETS += acct
->   TARGETS += alsa
->   TARGETS += amd-pstate
->   TARGETS += arm64
-> diff --git a/tools/testing/selftests/acct/.gitignore b/tools/testing/selftests/acct/.gitignore
-> new file mode 100644
-> index 000000000000..8ab358d81bd2
-> --- /dev/null
-> +++ b/tools/testing/selftests/acct/.gitignore
-> @@ -0,0 +1,2 @@
-> +acct_syscall
-> +config
-> \ No newline at end of file
+> > 
+> > As Bartosz says, we booted RB3 successfully with an earlier version of
+> > this series, what changed?
+> > 
 
-What is this?
+Is it literally same device tested? I wonder if different firmware
+versions behave differently.
 
-> diff --git a/tools/testing/selftests/acct/Makefile b/tools/testing/selftests/acct/Makefile
-> new file mode 100644
-> index 000000000000..ff3e238c5634
-> --- /dev/null
-> +++ b/tools/testing/selftests/acct/Makefile
-> @@ -0,0 +1,4 @@
-> +TEST_GEN_PROGS := acct_syscall
-> +CFLAGS += -Wall
-> +
-> +include ../lib.mk
-> \ No newline at end of file
-> diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
-> new file mode 100644
-> index 000000000000..4fa00a88a1bd
-> --- /dev/null
-> +++ b/tools/testing/selftests/acct/acct_syscall.c
-> @@ -0,0 +1,89 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/* kselftest for acct() system call
-> + *  The acct() system call enables or disables process accounting.
-> + */
-> +
-> +#include <stdio.h>
-> +#include <errno.h>
-> +#include <string.h>
-> +#include <sys/wait.h>
-> +
-> +#include "../kselftest.h"
-> +
-> +int main(void)
-> +{
-> +	// Setting up kselftest framework
-> +	ksft_print_header();
-> +	ksft_set_plan(1);
-> +
-> +	// Create file to log closed processes
-> +	char filename[] = "process_log";
-
-Where does this file created?
-
-> +	FILE *fp;
-> +
-> +	fp = fopen(filename, "w");
-
-What happens if file creation fails?
-
-> +
-> +	int i = acct(filename);
-
-Chose a descriptive name for the variable e.g: ret
-
-> +
-> +	// Handle error conditions
-> +	if (i) {
-
-Is this the failure case - ret < 0 case - complete conditional.
-
-> +		switch (errno) {
-> +		case EPERM:
-> +			ksft_test_result_error("%s. Please run the test as root.\n",
-> +				strerror(errno));
-> +			break;
-> +
-> +		case EACCES:
-> +			ksft_test_result_error("Insufficient privilege.\n");
-> +			break;
-> +
-> +		case EIO:
-> +			ksft_test_result_error("Error writing to the file: %s.\n", filename);
-> +			break;
-> +
-> +		default:
-> +			ksft_test_result_error("%s.\n", strerror(errno));
-> +			break;
-> +		}
-> +
-> +		remove(filename);
-> +		fclose(fp);
-> +		ksft_finished();
-> +		return 1;
-> +	}
-> +
-> +	// Create child process and wait for it to terminate.
-> +	pid_t child_pid;
-> +
-> +	child_pid = fork();
-> +
-> +	if (child_pid < 0) {
-> +		ksft_test_result_error("Process failed\n");
-> +		ksft_finished();
-> +		return 1;
-> +	} else if (child_pid == 0) {
-> +		ksft_print_msg("Child process successfully created!\n");
-
-You don't need braces here since it it a single statement after the
-conditional.
-
-> +	} else {
-> +		wait(NULL);
-> +		fseek(fp, 0L, SEEK_END);
-> +		int sz = ftell(fp);
-> +
-> +		ksft_print_msg("Parent process successfully created!\n");
-> +
-> +		i = acct(NULL);
-> +
-> +		if (sz <= 0) {
-> +			ksft_test_result_fail("Terminated child process not logged");
-> +			ksft_exit_fail();
-> +			return 1;
-> +		}
-> +
-> +		ksft_test_result_pass("Successfully logged terminated process.\n");
-> +		remove(filename);
-> +		fclose(fp);
-> +		ksft_exit_pass();
-> +		return 0;
-> +	}
-> +
-> +	return 1;
-> +}
-> 
-> ---
-> base-commit: 50736169ecc8387247fe6a00932852ce7b057083
-> change-id: 20240622-kselftest-acct-syscall-2d90f7666b1e
-> 
-> Best regards,
-
-Please check coding guidelines and ruun checkpatch on this.
+- Elliot
 
 
