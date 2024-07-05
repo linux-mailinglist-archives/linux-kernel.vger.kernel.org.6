@@ -1,161 +1,112 @@
-Return-Path: <linux-kernel+bounces-242015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEBE92829D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3151A92829F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414361C24211
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8351C242B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04C8145320;
-	Fri,  5 Jul 2024 07:20:04 +0000 (UTC)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F8A144D3A;
+	Fri,  5 Jul 2024 07:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="phNk1xRH"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2977139D1B;
-	Fri,  5 Jul 2024 07:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF848139D1B;
+	Fri,  5 Jul 2024 07:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720164004; cv=none; b=LGowiwmzHuF8lQopT/Wrzlt/2WvILdSaGY5f/xr63Xzm/c/US1i35avnJcBws1DRFe57uQlR4myXNnfTZUy2x2Wv7s5roKojX0zsjUPEiUiF3+RzGDM3MKr8p5cILgizJVOQkfEIYt8pHPUpLsb9gOO75VWpGJpP0Kp3OwjKET0=
+	t=1720164039; cv=none; b=f67Q9TgPQVVYnr1T5fgwkcnnqPXkVM5eRkIuyu6DmwwOGtpFGhTbx/zAl0I6LGsY46CryvAdLseuSCHudrpjthFHTQ5ZhRupcjDaa57W1hjcgSLRZLQnq+U/1DHT0rgxfstZ3g71Hp+ymVB6fMFWorRJK5KBbYwx05eGcmGFufY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720164004; c=relaxed/simple;
-	bh=hrYys/hSWnTYJsfYNVQHw8oZRpFWHaSeNxp6S+CTrwo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KfSI+6x0gT06K8gavYGtdjZVUVOOSGiKk2EsAlypZUNas/0GRzYKBXCDGwSpmZS45hteL4/WBIsJaLKrH5ORLx+V9D+dXtfEKyJxzw/Lp6ahd5ezU+hWv0Akfh5HPE1YFy/94CBnQb+xfcTAvTJxbvsmwkkWWMt7u7kvxqLmgqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfef5980a69so1355209276.3;
-        Fri, 05 Jul 2024 00:20:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720164000; x=1720768800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mQlRvdEIl3wW/T9tWerBdCapYf+E5WFW4Sl9gBRQc3I=;
-        b=KZvg8wCaXk4yDecd3ULRgiTgPhrQeuCM+JYP0BKEN8AuBM2SAg4lXFI7vZI+FGOnMa
-         1mfUG9GpjmTLtXmmgTxDn/Wzv0P6qRLTtg0U9/JtCmlgxmFxrAx1q9VXiDHdgnqsZbD5
-         rI2SCHX1CMdx+6/T8i1GzGBhswMkf1jlwa9r/8gUD57Lz98y4HgC2TyGSzdwMR0whI0N
-         4oAEDJHyJgESpPcXRw6oi461ZlXl1TwH7JcnNtsmP71bQxN54ycjTP+Bygp8TS4AIpSe
-         e9pR54I8k3Tjf9IeVDF7hZtU7FUTaFX6raJForsII9ETIcIHk7YyiDspb/HrAUifAw58
-         TYOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVa6uKtLPUtsYzNfGWSR5ezmMcwXlcsUveMARmRetvJbMdPzNNOKAC6AbvFQGpy1is8vYLFZYz6S39uSQG56VD65tTMg20c7uKXVPqtbkWZuQUF808UqOgTvXh+vb9LxO+iLyRvTZfSDGSE7AvopMRz5GV+CkxLCBIc3uYOLW5cKyIS57874zGFZudaX+gDqUr5SnC5YaiIalf8GlYohJQYkFvmGAdGvKtHBFgkNdwXQ+Z3FdgjhlKBx6UzN7FAXOKl
-X-Gm-Message-State: AOJu0Yz+y8qgO2XwLfNTIis0aF9mdjIdZNwyJ4+WEFEabnuWmnu3GTTp
-	wLDk+vMFJNiPXaXi5ohCVRlgNTUOnJGwj0Te/l+DTELuHLhdSXgtlEFRkNBC
-X-Google-Smtp-Source: AGHT+IEdn+yZNpYbqFWcod6LpgXMbCvrh3sPAXeeQuLwG6G/P623/Qckq+WZefCWwErV7FFkjqu8Ew==
-X-Received: by 2002:a05:690c:6ac1:b0:64b:313f:d7cb with SMTP id 00721157ae682-652d5ef9153mr45515107b3.22.1720163999739;
-        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9bf32efdsm27722627b3.123.2024.07.05.00.19.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6515b824117so11494207b3.3;
-        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWJjjFaLtdaAoJjiJEU+Ze07kQ5fEjatGeqDRl+zsBYroSrexw/cLT/JUy8ZgbjfDDHxlkjbmt+cB81CjQ1TT348a6fysTZh85sKRKA9+T/S4HT3eLecz4STYPJdZwzRyq9wPEXAa3+nsDygiCVgh0qEFibUpj84nrwYh52Shro6czGIVnhOHfLLdE7gRbEsfvITko0efYh4rfYHZqv4EfjlK819rbw2NEOsxgF01ZGQkrcqSumWeXGGNUC2vKD0elt
-X-Received: by 2002:a0d:e8cd:0:b0:643:ed61:11bb with SMTP id
- 00721157ae682-652d5338f0dmr40312717b3.7.1720163999140; Fri, 05 Jul 2024
- 00:19:59 -0700 (PDT)
+	s=arc-20240116; t=1720164039; c=relaxed/simple;
+	bh=xLtifxE+kqcKNAFU+XOWtYqz1GUTgsTA2Jtf154doUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pjs9BwXSvkg8Oo9EU8J/0NcC/v2YyOpZ7HXgmpenyWJOhWVutOLdZe/pfTJO2OuHmzXgCNnUEPsNAv8GSO2pEwnk6lG5/wlZu8t8fzSqb1KjE6SGwP/vtYo4WlQJ2xRRxtjN+iT9lPmwl0cKUqAbsChHMRf9jrhraaZRGmpig1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=phNk1xRH; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mSoRdEvE9ngNNW/Fvl9r4sE1gC92uZ4xSa+Z+FECORo=; b=phNk1xRH8vSfNAwEeEb4OY6vyA
+	ZtkfLuMwyfvnFMOX6inCoxL93V43P7K6cstTM+xCzIwh6eHRyGPjQTcWPM9YiMz5o46DXkmL7Xul/
+	WwJlktjVAGjlASSYuRtxe3dUI6S4c8oPCsMz6czPit9nRn4fiLHm23nM5B3Xq9O5hgren3A4/eaJ1
+	zhRNXsOCq+kZ0227NJee/FSjN0OHaQT4CEFaM9z9S1rhiTpkNDB5ALUsR4xXjXELfRid0WvWUH70x
+	dYsrGzcgnBT0jRj/y4qIQhCzQKIUd1bjW/tFq9cROt4E2QAf8X3GN+E8IMjJ4YeaT3cTh1R33GSOV
+	cx4P4imA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sPdFD-0000000F8lp-2Ilh;
+	Fri, 05 Jul 2024 07:20:35 +0000
+Date: Fri, 5 Jul 2024 00:20:35 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Martin Oliveira <martin.oliveira@eideticom.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Artemy Kovalyov <artemyko@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Tejun Heo <tj@kernel.org>, John Hubbard <jhubbard@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Sloan <david.sloan@eideticom.com>
+Subject: Re: [PATCH v3 1/3] kernfs: remove page_mkwrite() from
+ vm_operations_struct
+Message-ID: <Zoeew3RMOoUIMHz9@infradead.org>
+References: <20240704163724.2462161-1-martin.oliveira@eideticom.com>
+ <20240704163724.2462161-2-martin.oliveira@eideticom.com>
+ <ZobVol_trCwtwjK4@casper.infradead.org>
+ <310071c8-04b7-4996-a496-614c2bdb8163@eideticom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com> <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
-In-Reply-To: <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jul 2024 09:19:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
-Message-ID: <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
-Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <310071c8-04b7-4996-a496-614c2bdb8163@eideticom.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Andi,
+On Thu, Jul 04, 2024 at 02:43:04PM -0600, Martin Oliveira wrote:
+> On 2024-07-04 11:02, Matthew Wilcox wrote:> Seems to me we should actually _handle_ that, not do something wrong.
+> > eg:
+> > 
+> >         if (vma->vm_ops) {
+> >                 if (vma->vm_ops->close)
+> >                         goto out_put;
+> >                 if (WARN_ON(vma->vm_ops->page_mkwrite))
+> >                         goto out_put;
+> >         }
+> 
+> Good point.
 
-On Fri, Jul 5, 2024 at 12:42=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
-wrote:
-> > diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-rii=
-c.c
-> > index 83e4d5e14ab6..002b11b020fa 100644
-> > --- a/drivers/i2c/busses/i2c-riic.c
-> > +++ b/drivers/i2c/busses/i2c-riic.c
-> > @@ -113,6 +113,8 @@ struct riic_irq_desc {
-> >       char *name;
-> >  };
-> >
-> > +static const char * const riic_rpm_err_msg =3D "Failed to runtime resu=
-me";
->
-> Please, don't do this. Much clearer to write the message
-> explicitly.
+Btw, sorry if I mislead you with my WARN_ON_ONCE suggestion.  That
+was always intended in addition to the error handling, not instead.
+(In fact there are very few reasons to use WARN_ON* without actually
+handling the error as well).
 
-And the compiler will merge all identical strings, emitting
-just a single string.
+> 
+> > or maybe this doesn't need to be a WARN at all?  After all, there
+> > isn't one for having a ->close method, so why is page_mkwrite special?
+> 
+> Hmm yeah, they should probably be treated the same.
+> 
+> Maybe ->close should be converted to WARN as well? It would be easier to
+> catch an error this way than chasing the EINVAL, but I'm OK either way.
 
->
-> > +
-> >  static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offse=
-t)
-> >  {
-> >       writeb(val, riic->base + riic->info->regs[offset]);
-> > @@ -133,10 +135,14 @@ static int riic_xfer(struct i2c_adapter *adap, st=
-ruct i2c_msg msgs[], int num)
-> >       struct riic_dev *riic =3D i2c_get_adapdata(adap);
-> >       struct device *dev =3D adap->dev.parent;
-> >       unsigned long time_left;
-> > -     int i;
-> > +     int i, ret;
-> >       u8 start_bit;
-> >
-> > -     pm_runtime_get_sync(dev);
-> > +     ret =3D pm_runtime_resume_and_get(dev);
->
-> In principle I like the error message to be always checked and I
+Yes, doing the same for ->close or anything unimplemented would be
+nice.  But it's not really in scope for this series.
 
-s/message/condition/?
+kernfs really should be using it's own ops instead of abusing
+file_operations, but that's even more out of scope..
 
-> will always approve it. Whenever there is a return value, even
-> when we are sure it's always '0', it needs to be checked.
->
-> I had lots of discussions in the past about this topic but I
-> haven't always found support. I'd love to have the ack from a
-> renesas maintainer here.
-
-I don't mind checking for the error here.
-
->
-> > +     if (ret) {
-> > +             dev_err(dev, riic_rpm_err_msg);
-
-Do you need to print these error messages?
-AFAIU, this cannot happen anyway.
-Ultimately, I expect the device driver that requested the transfer to
-handle failures, and print a message when needed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
