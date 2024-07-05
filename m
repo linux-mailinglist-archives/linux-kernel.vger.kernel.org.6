@@ -1,152 +1,320 @@
-Return-Path: <linux-kernel+bounces-242115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF74A9283B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A90849283BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DC31F2363E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:34:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9731F237FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698EE1422DD;
-	Fri,  5 Jul 2024 08:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03352146598;
+	Fri,  5 Jul 2024 08:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sZ5B+QWD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HhvpgReD"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c2N8wSTK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CBE45000
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1532C145FE4;
+	Fri,  5 Jul 2024 08:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720168463; cv=none; b=Ks9FbdwgI0eljCKk7Us2yMsNaMA/rC2rlO/sKh3ByY7zIcqFW5if4wYnY4BQ89/wgN8gD4eCF02/1C8Db8l56J2vuG6qopj4BFKsrd709XdcAs3NTakyaEu+Lwk9lEl6AnzRMevkh5J7UZ7CH28pmt16a6Q2n6ds58haIb3CuBU=
+	t=1720168522; cv=none; b=jAlYhe7t7KhKDm1UcdfPaH5ydSUY/jOnGX5Y+HhHdBtojph5b7cdNqJ6i9K8DQwMAa5nJF42l6ShOve0G04pKtUzprvNdZBgFuK6EDrHqdA1FD/+NydSsGYUBDYmzmTNi85Qu483Lo0INDUSCO4Ahg4j++KYbdwlPi9qG2stFNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720168463; c=relaxed/simple;
-	bh=wq1OXdw5fckgkdVticya1OorSX/AjNtS6uG+TrLLbi8=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=PEIh4hGtAmstUDvJ2oP0mY5vN2aE3K6C5qjgXqHV/Akcutosq9iXV7glNs9xya62PqrwauLFuJJxXp0lcG1T2HPyPadUtsxrPcFHcWnmIeue9n5N7NA5g5MuPaKB9IVYsI6SQuPYsoEZGTChyzylafUNiYdv6ztx+M2j9yNbv1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sZ5B+QWD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HhvpgReD; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id EBB651380468;
-	Fri,  5 Jul 2024 04:34:20 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 05 Jul 2024 04:34:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1720168460; x=1720254860; bh=Ujxz2Zg8MP
-	K4rDkoHZ0Q2RC3PicxQIwL5aImPfXn5GY=; b=sZ5B+QWD1VwTv45eGuGbZ9Ti08
-	CmGKc+1C+BD/9BTizdIpNgcawYFCbyDAl29kw1eyKg6+on8ZzRcJPFFyBjpff2Bm
-	Jm7Jgqcvkgx4u3aUsuqAkqbYTdr0budLYnVFe121NdrGmLhMVmN0L1Qry821aSfx
-	INbTdNJ5EzXgA4ECTo2g9efRJj92+SFau4V8/oiGC4QXt3ItHydjDvmPqfvt1YfI
-	aEDcXZnBqGIcZzGX4TYhMK24ApLyvRXbQUiY3mBHRXtXLJgAwguxKSc3R3ywCU49
-	WWadD/3V2e+gaDtcuViBUzokqRhjM3RiVNEbTg24ZHNo02a+QN7c3FaZqDJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720168460; x=1720254860; bh=Ujxz2Zg8MPK4rDkoHZ0Q2RC3Picx
-	QIwL5aImPfXn5GY=; b=HhvpgReDb7DLeu2TPzq2TmNF8Bs/WkMZ/KfDTfBAyCb6
-	PTNlTxOvCDNKdLJkyPZytbmQKm2bNZqGCqap4ANfPyseqcLII8NFwtz3GVR/lUVR
-	ac0OJbAZZZkI8AA8mSE1XYH2OZ0lPo/SlJ4ExETX9r/VL0U2EG4OkJ2zxmWnQI7l
-	5w7Fp3eNW+gXIQceZAqqI2wiQoFQm3o+UgoIxu5ncp8Lfj0CBtLpd7eAsswEiuht
-	nrX19DhMgu4hD3fBEmX6QxrSToLN8Q/zVwqlPpEFK/MP5logm5XVESa46MEgSjmz
-	ty/7BACmfTO2zKggYqE0tYIGTIzUQev47/aj942yBg==
-X-ME-Sender: <xms:DLCHZhlNjtvtH7Z3xHmyfg4Ny1Nqpb7P-Gw_cXRcBpaMEN27Oz-1RA>
-    <xme:DLCHZs1l3V0VRET-CFnQtdjKjz4knI_QyZzVhD2zZFYoQw_-AFWh0h8xRuDeFCMhk
-    4Vc6a1VwRWDJs21grw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddugddtiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
-    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:DLCHZnreFnfn9Ld29PLRlW76ta0NzDQhuwaqusqfgB_Oc622_2KADw>
-    <xmx:DLCHZhnC-Wn9unLSFgGlULPHhe1cCp7L44XTIeO7_eun-G_jOx4cuA>
-    <xmx:DLCHZv3eCV0brnQZZUooC_4HFndZiXy4idNR5jwbepiQ104ZMz_yjA>
-    <xmx:DLCHZgvcrfPDK_OXoTOfWCaVekxKE4QTr5-ALAwO7X6S_mvQ-XVHLw>
-    <xmx:DLCHZpoqfdYBYttA-ZLaJCaz9g23Xe4cBzk2wvTf4mPCmgKSJX0iJVlU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 79951B6008D; Fri,  5 Jul 2024 04:34:20 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1720168522; c=relaxed/simple;
+	bh=gf2Z6osiPRmJiRdRHwZubGcnWfc0XV+O1XIysU4R8HM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BSt3n+fvPZBjOb/JDkZQUyOtbv3v+YV4C1s0rWhCm70EzFGZndIikajPqSnOA5SxpG7Wd/trcH5Lqj18g0laLeYbbpmAn/CyH5AVp2AYjS1TG6AI0QncURo/v19LiiCF/DZGfAb1md/pcwJmP/GFXoFMBULHniUYJVjy5USsX40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c2N8wSTK; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720168521; x=1751704521;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=gf2Z6osiPRmJiRdRHwZubGcnWfc0XV+O1XIysU4R8HM=;
+  b=c2N8wSTKEq+Ts17+i4fSN8w1z/OzVwQ4OY7P/U6Es1xpaCugBsmjY/3C
+   0TefB1/JL5SyvQqqS18HxgXyM7QpIQClhaKje12DQF5jZcKKq1b/xnz44
+   aRxkybLJLKmekdTPc7DlDpMTlKDElA4/69k1xxIUDmEmpBTAQ56xVLVUD
+   NMFj7nefoarzRyut4AcK5Q4EsX1/dqSsfOqkTpLNT4jZxJjBePCTYkoV6
+   0J226RERMDNjnwEhqPaOpzvlc34olW8XY7hlLNRTMnjOXdGSHKXJkQV20
+   UBpjD1AszUHUKluAAPawadTAnRCV3qoOfynCzkWy5912thr4fkgjsXMSa
+   Q==;
+X-CSE-ConnectionGUID: C4hmoIpcTKaGmsDq/XYghw==
+X-CSE-MsgGUID: AVLTyq3qS8auey6aT9KMmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17560012"
+X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
+   d="scan'208";a="17560012"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 01:35:20 -0700
+X-CSE-ConnectionGUID: JWuVa9zHQ0WHVgPiYzImKA==
+X-CSE-MsgGUID: HVWb+hhKRSSdq+IVbnzHKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
+   d="scan'208";a="46758575"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 01:35:18 -0700
+Date: Fri, 5 Jul 2024 10:34:03 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Geethasowjanya Akula <gakula@marvell.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"edumazet@google.com" <edumazet@google.com>,
+	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
+	Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+	Hariprasad Kelam <hkelam@marvell.com>
+Subject: Re: [EXTERNAL] Re: [net-next PATCH v7 00/10] Introduce RVU
+ representors
+Message-ID: <Zoev+zu3WXyPZ8Hv@mev-dev.igk.intel.com>
+References: <20240628133517.8591-1-gakula@marvell.com>
+ <ZoUri0XggubbjQvg@mev-dev.igk.intel.com>
+ <CH0PR18MB4339D4A85FA97B2136BF7E1CCDDD2@CH0PR18MB4339.namprd18.prod.outlook.com>
+ <ZoZL7Hc5l3amIxIs@mev-dev.igk.intel.com>
+ <CH0PR18MB4339C05B5CC43E7005F2D469CDDE2@CH0PR18MB4339.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <cb2f5427-521c-40eb-90fd-f253b41d5422@app.fastmail.com>
-In-Reply-To: 
- <CAHk-=whabFzoT+iLSF1A-u-4fBvtLGMBvi67xUOqww7PGp2B8Q@mail.gmail.com>
-References: <ZobXdDCYBi8OM-Fo@zx2c4.com>
- <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
- <Zobf3fZOuvOJOGPN@zx2c4.com>
- <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
- <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com>
- <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
- <CAHk-=wgqD9h0Eb-n94ZEuK9SugnkczXvX497X=OdACVEhsw5xQ@mail.gmail.com>
- <Zobt_M91PEnVobML@zx2c4.com>
- <CAHk-=wh47WSNQYuSWqdu_8XeRzfpWbozzTDL6KtkGbSmLrWU4g@mail.gmail.com>
- <CAHmME9pgFXhSdWpTwt_x51pFu2Qm878dhcQjG9WhPXV_XFXm9w@mail.gmail.com>
- <CAHk-=wjCmw1L42W-o=pW7_i=nJK5r0_HFQTWD_agKWGt4hE7JQ@mail.gmail.com>
- <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
- <3a138dda-5351-41ac-8c91-f7295036729e@app.fastmail.com>
- <CAHk-=whabFzoT+iLSF1A-u-4fBvtLGMBvi67xUOqww7PGp2B8Q@mail.gmail.com>
-Date: Fri, 05 Jul 2024 10:32:54 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, "Jiri Olsa" <jolsa@kernel.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>, cgzones@googlemail.com,
- "Christian Brauner" <brauner@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: deconflicting new syscall numbers for 6.11
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CH0PR18MB4339C05B5CC43E7005F2D469CDDE2@CH0PR18MB4339.namprd18.prod.outlook.com>
 
-On Fri, Jul 5, 2024, at 00:07, Linus Torvalds wrote:
-> On Thu, 4 Jul 2024 at 14:45, Arnd Bergmann <arnd@arndb.de> wrote:
->>
->> It's not random, it's all the architectures: the ones that
->> don't have a syscall.tbl file are the ones that use the table
->> in include/uapi/asm-generic/unistd.h.
->
-> Ok.
->
-> I think it's bogus to reseve system calls for everybody even when it
-> makes no sense.
+On Thu, Jul 04, 2024 at 01:48:23PM +0000, Geethasowjanya Akula wrote:
+> 
+> 
+> >-----Original Message-----
+> >From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+> >Sent: Thursday, July 4, 2024 12:45 PM
+> >To: Geethasowjanya Akula <gakula@marvell.com>
+> >Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; kuba@kernel.org;
+> >davem@davemloft.net; pabeni@redhat.com; edumazet@google.com; Sunil
+> >Kovvuri Goutham <sgoutham@marvell.com>; Subbaraya Sundeep Bhatta
+> ><sbhatta@marvell.com>; Hariprasad Kelam <hkelam@marvell.com>
+> >Subject: Re: [EXTERNAL] Re: [net-next PATCH v7 00/10] Introduce RVU
+> >representors
+> >
+> >On Wed, Jul 03, 2024 at 02: 34: 03PM +0000, Geethasowjanya Akula wrote: > >
+> >> >-----Original Message----- > >From: Michal Swiatkowski
+> ><michal. swiatkowski@ linux. intel. com> > >Sent: Wednesday, July 3, 2024 4: 14
+> >PM 
+> >On Wed, Jul 03, 2024 at 02:34:03PM +0000, Geethasowjanya Akula wrote:
+> >>
+> >>
+> >> >-----Original Message-----
+> >> >From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+> >> >Sent: Wednesday, July 3, 2024 4:14 PM
+> >> >To: Geethasowjanya Akula <gakula@marvell.com>
+> >> >Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
+> >> >kuba@kernel.org; davem@davemloft.net; pabeni@redhat.com;
+> >> >edumazet@google.com; Sunil Kovvuri Goutham
+> ><sgoutham@marvell.com>;
+> >> >Subbaraya Sundeep Bhatta <sbhatta@marvell.com>; Hariprasad Kelam
+> >> ><hkelam@marvell.com>
+> >> >Subject: [EXTERNAL] Re: [net-next PATCH v7 00/10] Introduce RVU
+> >> >representors On Fri, Jun 28, 2024 at 07:05:07PM +0530, Geetha sowjanya
+> >wrote:
+> >> >> This series adds representor support for each rvu devices.
+> >> >> When switchdev mode is enabled, representor netdev is registered
+> >> >> for each rvu device. In implementation of representor model, one
+> >> >> NIX HW LF with multiple SQ and RQ is reserved, where each RQ and SQ
+> >> >> of the LF are mapped to a representor. A loopback channel is
+> >> >> reserved to support packet path between representors and VFs.
+> >> >> CN10K silicon supports 2 types of MACs, RPM and SDP. This patch set
+> >> >> adds representor support for both RPM and SDP MAC interfaces.
+> >> >>
+> >> >> - Patch 1: Refactors and exports the shared service functions.
+> >> >> - Patch 2: Implements basic representor driver.
+> >> >> - Patch 3: Add devlink support to create representor netdevs that
+> >> >>   can be used to manage VFs.
+> >> >> - Patch 4: Implements basec netdev_ndo_ops.
+> >> >> - Patch 5: Installs tcam rules to route packets between representor and
+> >> >> 	   VFs.
+> >> >> - Patch 6: Enables fetching VF stats via representor interface
+> >> >> - Patch 7: Adds support to sync link state between representors and VFs .
+> >> >> - Patch 8: Enables configuring VF MTU via representor netdevs.
+> >> >> - Patch 9: Add representors for sdp MAC.
+> >> >> - Patch 10: Add devlink port support.
+> >> >>
+> >> >> Command to create VF representor
+> >> >> #devlink dev eswitch set pci/0002:1c:00.0 mode switchdev VF
+> >> >> representors are created for each VF when switch mode is set
+> >> >> switchdev on representor PCI device
+> >> >
+> >> >Does it mean that VFs needs to be created before going to switchdev
+> >> >mode? (in legacy mode). Keep in mind that in both mellanox and ice
+> >> >driver assume that VFs are created after chaning mode to switchdev
+> >> >(mode can't be changed if VFs).
+> >> No. RVU representor driver implementation is similar to mellanox and ice
+> >drivers.
+> >> It assumes that VF gets created only after switchdev mode is enabled.
+> >> Sorry, if above commit description is confusing. Will rewrite it.
+> >>
+> >
+> >Ok, but why the rvu_rep_create() is called in switching mode to switchdev
+> >function? In this function you are creating netdevs, only for PF representor? It
+> >looks like it doesn't called from other context in this patchset, so where the
+> >port representor netdevs for VFs are created?
+> >
+> RVU representors for PF/VFs are created when switchdev mode is set, similar to the bnxt and nfp drivers.
+> rvu_rep_create() will create representors based on rep_cnt (which include both PFs and VFs count) 
+> 
 
-I see. Just to make sure: do you think it's ok to still
-reserve system call numbers everywhere if they are used
-on most architectures? I posted a series yesterday to
-convert include/asm-generic/uapi/unistd.h into the syscall.tbl
-format, and I did this change for clone3:
+Sorry, I don't understand now. You wrote in previous message that VFs
+should be created after switchdev mode is enabled. Now you are writting
+that they are created based on rep_cnt (so assuming VFs have been
+created before).
 
-https://lore.kernel.org/lkml/20240704143611.2979589-8-arnd@kernel.org/
+What is the correct order?
+# echo 1 x > sriov_numvfs
+# devlink dev eswitch set pci/0000:ca:00.0 mode switchdev 
+or 
+# devlink dev eswitch set pci/0000:ca:00.0 mode switchdev 
+# echo 1 x > sriov_numvfs
 
-The reasoning here is that we want this to be available
-everywhere but there are four architectures still missing
-it, and having the macro defined in the generated unistd.h
-avoids a special case.
+or you can create VFs before and after? From looking at the drivers code
+it looks like driver bnxt supports that.
 
-On the other hand, I left memfd_secret a special case since
-that one is only implemented on one architecture using the
-generic table.
- 
-> But it's also pretty moot, since I think the whole system call has to go away.
->
-> All it is is an odd wrapper around mmap() anyway, and it's a useful
-> enough thing *outside* of getrandom() that I pretty much guarantee it
-> will be used for other things than vgetrandom anyway.
+I am not familiar with nfp and bnxt driver but based on code in current
+kernel version it looks like nfp creates representor when switching mode
+only for physical and PF types, VF representor type is created when the
+VF is created. Bnxt support VF representor creation before and after
+switching mode. In ice port representors are created during VFs creation
+only.
 
-Right.
+I am not against your solution, only pointing that it can lead to some
+problems.
 
-    Arnd
+Thanks,
+Michal
+
+> Thanks,
+> Geetha.
+> 
+> >Thanks,
+> >Michal
+> >
+> >> >
+> >> >Different order can be problematic. For example (AFAIK) kubernetes
+> >> >scripts for switchdev assume that first is switching to switchdev and
+> >> >VFs creation is done after that.
+> >> >
+> >> >Thanks,
+> >> >Michal
+> >> >
+> >> >> # devlink dev eswitch set pci/0002:1c:00.0  mode switchdev # ip
+> >> >> link show
+> >> >> 25: r0p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN
+> >mode
+> >> >DEFAULT group default qlen 1000
+> >> >>     link/ether 32:0f:0f:f0:60:f1 brd ff:ff:ff:ff:ff:ff
+> >> >> 26: r1p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN
+> >mode
+> >> >DEFAULT group default qlen 1000
+> >> >>     link/ether 3e:5d:9a:4d:e7:7b brd ff:ff:ff:ff:ff:ff
+> >> >>
+> >> >> #devlink dev
+> >> >> pci/0002:01:00.0
+> >> >> pci/0002:02:00.0
+> >> >> pci/0002:03:00.0
+> >> >> pci/0002:04:00.0
+> >> >> pci/0002:05:00.0
+> >> >> pci/0002:06:00.0
+> >> >> pci/0002:07:00.0
+> >> >>
+> >> >> ~# devlink port
+> >> >> pci/0002:1c:00.0/0: type eth netdev r0p1v0 flavour pcipf controller
+> >> >> 0 pfnum 1 vfnum 0 external false splittable false
+> >> >> pci/0002:1c:00.0/1: type eth netdev r1p1v1 flavour pcivf controller
+> >> >> 0 pfnum 1 vfnum 1 external false splittable false
+> >> >> pci/0002:1c:00.0/2: type eth netdev r2p1v2 flavour pcivf controller
+> >> >> 0 pfnum 1 vfnum 2 external false splittable false
+> >> >> pci/0002:1c:00.0/3: type eth netdev r3p1v3 flavour pcivf controller
+> >> >> 0 pfnum 1 vfnum 3 external false splittable false
+> >> >>
+> >> >> -----------
+> >> >> v1-v2:
+> >> >>  -Fixed build warnings.
+> >> >>  -Address review comments provided by "Kalesh Anakkur Purayil".
+> >> >>
+> >> >> v2-v3:
+> >> >>  - Used extack for error messages.
+> >> >>  - As suggested reworked commit messages.
+> >> >>  - Fixed sparse warning.
+> >> >>
+> >> >> v3-v4:
+> >> >>  - Patch 2 & 3: Fixed coccinelle reported warnings.
+> >> >>  - Patch 10: Added devlink port support.
+> >> >>
+> >> >> v4-v5:
+> >> >>   - Patch 3: Removed devm_* usage in rvu_rep_create()
+> >> >>   - Patch 3: Fixed build warnings.
+> >> >>
+> >> >> v5-v6:
+> >> >>   - Addressed review comments provided by "Simon Horman".
+> >> >>   - Added review tag.
+> >> >>
+> >> >> v6-v7:
+> >> >>   - Rebased on top net-next branch.
+> >> >>
+> >> >> Geetha sowjanya (10):
+> >> >>   octeontx2-pf: Refactoring RVU driver
+> >> >>   octeontx2-pf: RVU representor driver
+> >> >>   octeontx2-pf: Create representor netdev
+> >> >>   octeontx2-pf: Add basic net_device_ops
+> >> >>   octeontx2-af: Add packet path between representor and VF
+> >> >>   octeontx2-pf: Get VF stats via representor
+> >> >>   octeontx2-pf: Add support to sync link state between representor and
+> >> >>     VFs
+> >> >>   octeontx2-pf: Configure VF mtu via representor
+> >> >>   octeontx2-pf: Add representors for sdp MAC
+> >> >>   octeontx2-pf: Add devlink port support
+> >> >>
+> >> >>  .../net/ethernet/marvell/octeontx2/Kconfig    |   8 +
+> >> >>  .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
+> >> >>  .../ethernet/marvell/octeontx2/af/common.h    |   2 +
+> >> >>  .../net/ethernet/marvell/octeontx2/af/mbox.h  |  74 ++
+> >> >>  .../net/ethernet/marvell/octeontx2/af/npc.h   |   1 +
+> >> >>  .../net/ethernet/marvell/octeontx2/af/rvu.c   |  11 +
+> >> >>  .../net/ethernet/marvell/octeontx2/af/rvu.h   |  30 +-
+> >> >>  .../marvell/octeontx2/af/rvu_debugfs.c        |  27 -
+> >> >>  .../marvell/octeontx2/af/rvu_devlink.c        |   6 +
+> >> >>  .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  81 ++-
+> >> >>  .../marvell/octeontx2/af/rvu_npc_fs.c         |   5 +
+> >> >>  .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   4 +
+> >> >>  .../ethernet/marvell/octeontx2/af/rvu_rep.c   | 464 ++++++++++++
+> >> >>  .../marvell/octeontx2/af/rvu_struct.h         |  26 +
+> >> >>  .../marvell/octeontx2/af/rvu_switch.c         |  20 +-
+> >> >>  .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +
+> >> >>  .../ethernet/marvell/octeontx2/nic/cn10k.c    |   4 +-
+> >> >>  .../ethernet/marvell/octeontx2/nic/cn10k.h    |   2 +-
+> >> >>  .../marvell/octeontx2/nic/otx2_common.c       |  56 +-
+> >> >>  .../marvell/octeontx2/nic/otx2_common.h       |  84 ++-
+> >> >>  .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++
+> >> >>  .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 305 +++++---
+> >> >>  .../marvell/octeontx2/nic/otx2_txrx.c         |  38 +-
+> >> >>  .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +-
+> >> >>  .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  19 +-
+> >> >> .../net/ethernet/marvell/octeontx2/nic/rep.c  | 684
+> >> >> ++++++++++++++++++ .../net/ethernet/marvell/octeontx2/nic/rep.h  |
+> >> >> 53 ++
+> >> >>  27 files changed, 1834 insertions(+), 227 deletions(-)  create
+> >> >> mode
+> >> >> 100644 drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
+> >> >>  create mode 100644
+> >> >> drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> >> >>  create mode 100644
+> >> >> drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+> >> >>
+> >> >> --
+> >> >> 2.25.1
+> >> >>
 
