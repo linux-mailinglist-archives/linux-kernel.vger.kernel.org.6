@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-241780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A98927F8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D85927F91
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1CCC1C21C18
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:08:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524BA1C229A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A5A2579;
-	Fri,  5 Jul 2024 01:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A121BF9C8;
+	Fri,  5 Jul 2024 01:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhsXGNnI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KMhlXA67"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE39FDDD4;
-	Fri,  5 Jul 2024 01:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0DEA955;
+	Fri,  5 Jul 2024 01:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720141714; cv=none; b=tzH1LIbb1b/EJ5cfSWzyevt1skMgQBYEJugBatcNcYvQT7KY13fo18TRsjeSmQYwVsz6rPmFDs8+MRxLQ/Ah/VESJA+AhxyBWrUw/kOEoidvTx+bT6UjldX6yckidFeEjsDAnunEje8nYRFl72/B7ps/Hq2A/59Qtjw+oNUY/bk=
+	t=1720141869; cv=none; b=rJpVaUAZPMdYZ8gfAEHyV0hjpaSXrp2PifRizM8cH7ecEk9t27J8nmbNaXx6mxIEkBsfh6uOqnc9y+kzv6zAMFkCc0h1Np5tlrKTj7PRi5Wkr51BZxrKSHEcy+j1gKpZRAPatxUBV1DUiFcdeAVdwfpOmLh22i7OTpVfvB1PHgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720141714; c=relaxed/simple;
-	bh=HXe0ywAFlOXtUCdSL6OqLY+vhisCdaCJNOQRsWkmYYE=;
+	s=arc-20240116; t=1720141869; c=relaxed/simple;
+	bh=VGpxTY3Cl7n8gTKacUWaqDgSMZp1Wy4BOGGFoP5h0MU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RoIT0E+975cua4mG2xtvmbvreEwz2IuY+OHJkCI1zLkFap+1OhpuHtSv6W36Owey7QHlRP3q1sbzFXypjmFGztsj6DvN2maMvrkzXlVYIysqcYSoVu6Omz1nWCmIyha9Sx8S+vG1kNpZdyhovXDSZ8MAumoypfM16eiqXwohD3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhsXGNnI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 597F5C3277B;
-	Fri,  5 Jul 2024 01:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720141714;
-	bh=HXe0ywAFlOXtUCdSL6OqLY+vhisCdaCJNOQRsWkmYYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QhsXGNnIQWRaMQi5EHMsvYD6Mk1fJQNl4KB0usxy+ekI8z9VXN8ExFaxK3qchpD+/
-	 NMZ/6B/KWmGwJ73TrkNfMB6QXKm31Qstz+5vlnWaZmThpw2D+it9tj7LQeyzNZUbEC
-	 MktYlS/4w1MaKwjyg3TVdDCBuNp+HW3qh2F2gXubgzE1N/ae/52/N+Yfg5jsYvUCy+
-	 O92qncv4bIUU3/MSE7LJFx5T0wIVO/ssg25V7YrnlknVoxvOc+BDXnn2Y9Kkgi0Mkk
-	 bl+UIhXpGjPAEkzI7kQUkxxI0HkDpa3oodmMY/LM+2+38T5+cE89Ku3Zrh8zkAsuuF
-	 DC2sTIkNr+mJA==
-Message-ID: <afefbd10-e680-47c3-bd18-b3f2aae35a15@kernel.org>
-Date: Fri, 5 Jul 2024 10:08:32 +0900
+	 In-Reply-To:Content-Type; b=We2vGF5/5Xs/4HRK67BIV7JMUMb2EuUcufbbDY/8/jys598op6bfn2kNw58tiLQxkETIw+9Y8mP1BGXehFVN73h34wegl+uNNLYAUZJr/ydeE/BDqaMUkm0Oe1f8l+2KGIYn3YRlfLUX66cZi9QQh5gSYlcTrmU3LhdIYdOkx9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KMhlXA67; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720141864; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hXZ31O+6OGHZHIC96Y9JGlHNNL0xhEUhHueZyNuerU4=;
+	b=KMhlXA67dAP26URXKKp1um/arly8mRYzzYQQRPlhfoauVz+xuAoCDEZQiFg52l5y9nGGhgNUzsXmU7/WhcJ/GQaL+QviKDor1gHzCZ+h33+VQMKWNCUadM3Pmqlz2O2Yj9WIUue0PaBF8Dy3vE+3FPXV87T2mzLGQoy04vtu81U=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0W9snHsr_1720141861;
+Received: from 30.97.56.65(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9snHsr_1720141861)
+          by smtp.aliyun-inc.com;
+          Fri, 05 Jul 2024 09:11:03 +0800
+Message-ID: <a46a766e-92f3-4dcf-b34f-cbeecc3b170b@linux.alibaba.com>
+Date: Fri, 5 Jul 2024 09:11:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +48,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dm-table:fix zone block_device not aligned with zonesize
-To: Mikulas Patocka <mpatocka@redhat.com>, Li Dong <lidong@vivo.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- "open list:DEVICE-MAPPER (LVM)" <dm-devel@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>, opensource.kernel@vivo.com
-References: <20240704151549.1365-1-lidong@vivo.com>
- <cd05398-cffa-f4ca-2ac3-74433be2316c@redhat.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <cd05398-cffa-f4ca-2ac3-74433be2316c@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2 24/24] mfd: sprd-sc27xx-spi: Constify struct regmap_bus
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Matti Vaittinen <mazziesaccount@gmail.com>, Xu Yilun <yilun.xu@intel.com>,
+ Tom Rix <trix@redhat.com>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+ Andy Shevchenko <andy@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Tim Harvey <tharvey@gateworks.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20240704-mfd-const-regmap_config-v2-0-0c8785b1331d@gmail.com>
+ <20240704-mfd-const-regmap_config-v2-24-0c8785b1331d@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240704-mfd-const-regmap_config-v2-24-0c8785b1331d@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/5/24 00:29, Mikulas Patocka wrote:
-> 
-> 
-> On Thu, 4 Jul 2024, Li Dong wrote:
-> 
->> For zone block devices, device_area_is_invalid may return an incorrect 
->> value.
->>
->> Failure log:
->> [   19.337657]: device-mapper: table: 254:56: len=836960256 not aligned to
->> h/w zone size 3244032 of sde
->> [   19.337665]: device-mapper: core: Cannot calculate initial queue limits
->> [   19.337667]: device-mapper: ioctl: unable to set up device queue for 
->> new table.
->>
->> Actually, the device's zone length is aligned to the zonesize.
->>
->> Fixes: 5dea271b6d87 ("dm table: pass correct dev area size to device_area_is_valid")
->> Signed-off-by: Li Dong <lidong@vivo.com>
->> ---
->>  drivers/md/dm-table.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
->> index 33b7a1844ed4..0bddae0bee3c 100644
->> --- a/drivers/md/dm-table.c
->> +++ b/drivers/md/dm-table.c
->> @@ -257,7 +257,7 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
->>  	if (bdev_is_zoned(bdev)) {
->>  		unsigned int zone_sectors = bdev_zone_sectors(bdev);
->>  
->> -		if (start & (zone_sectors - 1)) {
->> +		if (start % zone_sectors) {
->>  			DMERR("%s: start=%llu not aligned to h/w zone size %u of %pg",
->>  			      dm_device_name(ti->table->md),
->>  			      (unsigned long long)start,
->> @@ -274,7 +274,7 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
->>  		 * devices do not end up with a smaller zone in the middle of
->>  		 * the sector range.
->>  		 */
->> -		if (len & (zone_sectors - 1)) {
->> +		if (len % zone_sectors) {
->>  			DMERR("%s: len=%llu not aligned to h/w zone size %u of %pg",
->>  			      dm_device_name(ti->table->md),
->>  			      (unsigned long long)len,
->> -- 
->> 2.31.1.windows.1
-> 
-> Hi
-> 
-> This probably won't compile on 32-bit architectures because the operators 
-> for 64-bit divide and modulo don't work there.
-> 
-> Please, rework the patch using dm_sector_div64.
 
-This patch alone will not allow non power of 2 zone size drives to be supported
-as the block layer will reject such drive in the first place. This patch should
-be part of a larger series enabling such support. On its own, it is a NACK from
-me for this change.
 
--- 
-Damien Le Moal
-Western Digital Research
+On 2024/7/5 01:23, Javier Carrasco wrote:
+> `sprd_pmic_regmap` is not modified and can be declared as const to
+> move its data to a read-only section.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
+Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+> ---
+>   drivers/mfd/sprd-sc27xx-spi.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/sprd-sc27xx-spi.c b/drivers/mfd/sprd-sc27xx-spi.c
+> index 81e517cdfb27..7186e2108108 100644
+> --- a/drivers/mfd/sprd-sc27xx-spi.c
+> +++ b/drivers/mfd/sprd-sc27xx-spi.c
+> @@ -135,7 +135,7 @@ static int sprd_pmic_spi_read(void *context,
+>   	return 0;
+>   }
+>   
+> -static struct regmap_bus sprd_pmic_regmap = {
+> +static const struct regmap_bus sprd_pmic_regmap = {
+>   	.write = sprd_pmic_spi_write,
+>   	.read = sprd_pmic_spi_read,
+>   	.reg_format_endian_default = REGMAP_ENDIAN_NATIVE,
+> 
 
