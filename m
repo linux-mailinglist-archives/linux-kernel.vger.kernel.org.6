@@ -1,212 +1,195 @@
-Return-Path: <linux-kernel+bounces-242062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536A9928326
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:52:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D37928329
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC96B2848A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA09EB256FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFA01494A2;
-	Fri,  5 Jul 2024 07:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED33B1411FD;
+	Fri,  5 Jul 2024 07:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9ie3WvA"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZmHU9K3s"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C18148851
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23003144316
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720165767; cv=none; b=ENTOkDeOLIwa8MgHNLlyUgRcZNyYbrs7+Kt/D3uqUEeDgjJYo01NZ2KzTzfW66JgBvoQ4Q2y6vG4DNl/R1l/o+pNEQVUfSpCJ4bDIOkQFhGFikA3uCllocORuGvE1Xc8bCHZreB+zUVhUdRMd+HbSzl/hIft8Bd68l3wNZOpmvQ=
+	t=1720165845; cv=none; b=Tpo9nxpkIqvigfVUVDv0bX6N9ii4aTQ95OranE6Ytn7Ut/UhVGXkytQgZhaVQLTr60CbuwGHLI3XPEempXnQRmCwoG/Q8QBiufbHq7NUZofLZlEsVsW22+VKLvDR3287yW/FvOzXM38nWPXX6UAuZEHdLQ1GLf+0yEj1nJIYTcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720165767; c=relaxed/simple;
-	bh=4SVfiTT14IOGOJAh8Mvi9GxV+p3w36AIjeJIp5TDoyA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=D3OXkVLUnWIYoTf8FvKnn9+Ero58pV159yA2LmZrMcVZ61KEx2L4JCeFP37twEWKAZeOLGvaetW82hd7J0NV1ZJJfYzoYj4hyjSr35CdwXrUhmAhD5YxQBcemGXeBILVvPPLSW+4P0Kl3mlKXi1Kl/bQu05BfHDnug4q0yK6ibo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U9ie3WvA; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36799fb93baso917303f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:49:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720165764; x=1720770564; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3aEiM8GfYg6AtJ01v2ahAsrUKMYrAlMvvkF2JxRpick=;
-        b=U9ie3WvA8D9i+ZtX+SP/C1O75enysY2f8hnLS5hf5ecA4EuUVY3O1qNAPRYFVKYS3b
-         HiPcbN5ty3vWhAaP2Dnvk5GU/kBbqdr0em1Xm17LZTKFMHQ2N/jUM5FBuWBUQcTWyDm5
-         yH5+2/zWUiItSGDxlXfxYDtQGfISlzQYj6Bkq6qcttYBo/DotpTaixoqRmML/QMQl0U0
-         2jn8YMMzLJyxdzkJTLyEx4sT4KDvf3basrD+llwDkqDx0rz5wpVEZKH+5kcbdFAqLLGq
-         l+QLJks6oB7izEhAKXRPd8jIAoUz3+hJN6rtXBAWHkZW1zbhXJpFnmIcLAKhFBHs4+Lg
-         r1pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720165764; x=1720770564;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3aEiM8GfYg6AtJ01v2ahAsrUKMYrAlMvvkF2JxRpick=;
-        b=I98rCOZf3VHtX69SZtyz9pUy+XnEdXIQ3WvDMhf5M5xIfs7yJ2xg8oapTrXVEyWqHG
-         fgwYvn9CVGB/rMctw7OSuP7dVkyiw2t1EmB5nZfPyuCHQdmNhtBXFGpWHyYIBBWbe5PZ
-         zP/bTUfS8SnniObDv3uEwpbb2goAhCYpApYGbIKe9LeyyAHGxviCwLS67WpdU+xQaOCM
-         FOQ7eEjSMOOhTAwOWhKZA3g2t8/k08u5G9s2hZlPYQnixHYny8xNp+YN7GlrWR4ltb/S
-         uQywiT0neMruI+Lryc6ZQFGoPopBY2EK5L/jdgke6/zIPsuEuSLLUTWN/I8btQ6I1bct
-         1N6A==
-X-Gm-Message-State: AOJu0YxYTa2EgfoJjervM2BG4HtZZLNioiklxLxxMJZPR1323bE1b5zl
-	tXQNCITNIGoH2Az9dJ0G6bvYO5yQ6PhpJ/aWdbT1YIDlXv/UqFCmArpWRtsKd0vXu6nsuBeqApB
-	jivQ=
-X-Google-Smtp-Source: AGHT+IGopdLfGMm9uiNVdeVOpm8IKahWTLm2cGh7cyoXTR2UBAcZSt4pwuFufMVM+W4nm2jr8hJCRQ==
-X-Received: by 2002:a5d:4146:0:b0:367:958e:9821 with SMTP id ffacd0b85a97d-3679dd53cb3mr2598197f8f.29.1720165763842;
-        Fri, 05 Jul 2024 00:49:23 -0700 (PDT)
-Received: from srini-hackbase.lan ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8ed0sm20183521f8f.28.2024.07.05.00.49.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 00:49:22 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Marek Vasut <marex@denx.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 15/15] nvmem: core: Implement force_ro sysfs attribute
-Date: Fri,  5 Jul 2024 08:48:52 +0100
-Message-Id: <20240705074852.423202-16-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240705074852.423202-1-srinivas.kandagatla@linaro.org>
-References: <20240705074852.423202-1-srinivas.kandagatla@linaro.org>
+	s=arc-20240116; t=1720165845; c=relaxed/simple;
+	bh=MMVTLAVubIbYiEHwabXP4l+cQEWDqi9C2DuEC2dIrVc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=tO3AcjgHhNWqTvbzA/+AY+QfifKtq1RGe8+GgdXrQe3nRtDCP9Hi+OOxEDmRHh2fhiuXc9vTMJ63+HGmm7WI8OtXzzocCsHKk61S0W19CN/Bhio3PZLgJ2czbD12Wg1m1V+dvp7RyOSdFeljrHWqm1PqG6zhfESmxgAFLs8pIUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZmHU9K3s; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240705075039epoutp036fc202f263567b08498286cc88a08dff~fQbeD9kf71793717937epoutp03V
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:50:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240705075039epoutp036fc202f263567b08498286cc88a08dff~fQbeD9kf71793717937epoutp03V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720165839;
+	bh=csMb2MY47N1/AKiDIqhcJHPOZbKTKiqWJQiltE8sVvg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=ZmHU9K3sbqhjO1fn+KG9DGpahI/ROB6MAyDeqDAm4f4BrqqNtCqxYhIV+TBe2Yn4f
+	 FAAE2vIYlWjFQoM3gjh37D+HIfcbPJKyNEonAritSEkHqzh1og038cpi8bwxLgQeTt
+	 McMSEiEcuoFZJ0h7tt2Gwvb9fGw8xVN3FkYioX8Q=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20240705075038epcas2p411a2d139c67266058eb7b4928e1714bd~fQbdlGY1L2856628566epcas2p4A;
+	Fri,  5 Jul 2024 07:50:38 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.90]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WFm0G241Gz4x9Pr; Fri,  5 Jul
+	2024 07:50:38 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	05.CA.09806.EC5A7866; Fri,  5 Jul 2024 16:50:38 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240705075037epcas2p2b25139952de4e4ec5582d2942024c6d2~fQbcXaIKk2847628476epcas2p2Z;
+	Fri,  5 Jul 2024 07:50:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240705075037epsmtrp2807a1b8b494f8b913682028e7efacc16~fQbcWnp7R0839308393epsmtrp2_;
+	Fri,  5 Jul 2024 07:50:37 +0000 (GMT)
+X-AuditID: b6c32a47-c6bff7000000264e-a8-6687a5ceb545
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	60.1C.29940.DC5A7866; Fri,  5 Jul 2024 16:50:37 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240705075037epsmtip16a1929880f30fdc922968a609b0a2d01~fQbcHTMDT2267022670epsmtip1U;
+	Fri,  5 Jul 2024 07:50:37 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Jaewon Kim'" <jaewon02.kim@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>, "'Michael	Turquette'" <mturquette@baylibre.com>,
+	"'Stephen Boyd'" <sboyd@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <494ac55c-7bd0-79a9-8a56-21aaf0611f81@samsung.com>
+Subject: RE: [PATCH 2/5] dt-bindings: clock: add clock binding definitions
+ for Exynos Auto v920
+Date: Fri, 5 Jul 2024 16:50:36 +0900
+Message-ID: <01b801daceb0$05dd0df0$119729d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIPebKt0SL2hL1PGxWEYogtVpy49QFdVAxIAswtgRoCP1wtuLFLJS1A
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmqe65pe1pBhe6eSwezNvGZnH9y3NW
+	ix0NR1gtzp/fwG7xseceq8XlXXPYLGac38dkcfGUq8XhN+2sFv+ubWRx4PJ4f6OV3WPTqk42
+	j74tqxg9Pm+SC2CJyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy
+	8QnQdcvMAbpHSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeX
+	WmJlaGBgZApUmJCdMf/OCfaCxXwVu7b9ZW5gvMzdxcjJISFgIjGhbyJrFyMXh5DADkaJTWdn
+	soMkhAQ+MUr8u20NkfjGKLFiyVQ2mI6Tl5sZIRJ7GSWmtH1ig3BeMkrMeD+dEaSKTUBfYnX3
+	bbAOEYE9TBIL3taD2MwCaRIrTm0BW8EpYC/RducFC4gtLJAoMf3DFFYQm0VAReLOlxlgcV4B
+	S4mna7cwQ9iCEidnPmGBmCMvsf3tHGaIixQkfj5dxgqxy01i/7J7bBA1IhKzO9uYQY6TEFjK
+	ITFl2z8WiAYXif6t/6CahSVeHYc4SEJASuLzu71Qb+ZLTL7+lgmiuYFR4tq/bqgGe4lFZ34C
+	NXAAbdCUWL9LH8SUEFCWOHIL6jY+iY7Df9khwrwSHW1CEI1qEp+uXIYaIiNx7MQz5gmMSrOQ
+	fDYLyWezkHwwC2HXAkaWVYxiqQXFuempxUYFxvDITs7P3cQITqpa7jsYZ7z9oHeIkYmD8RCj
+	BAezkgiv1PvmNCHelMTKqtSi/Pii0pzU4kOMpsCwnsgsJZqcD0zreSXxhiaWBiZmZobmRqYG
+	5krivPda56YICaQnlqRmp6YWpBbB9DFxcEo1MMV927hr8unQ6arHb7zfcbBuybyVhyqZBGOO
+	sl7fbKO8VUDk2qvzbpt7K27znfq14/ycbfw8ZsWHOXmW/m+eKxW/I+6f+Ed1+3N5Hpcv6RmH
+	J0674W4ZeMZdcBfbhn3P74TOXHaaNVzdZ+evC7f45izpSN9VxLHE3ypVVmhTzIdDW/i5Xhz9
+	bfN/89OyFmO5njWz0pfoTQu6OLu9uT166eHzb2xPTn7jmb15R5h2f+IKha1OS6akvaz9oywk
+	ZCLXq9j+ZPrU7ze35szPfKBy8+nybM9C7cdTHy8UbHuq7bf9heqmpRm9mT8uXc4MSv2sc3XD
+	l3XOIV+FT6h8vj47MvdrVdQsV60Hhuu/z3leryldq8RSnJFoqMVcVJwIALPc5f0zBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJTvfs0vY0g12fOC0ezNvGZnH9y3NW
+	ix0NR1gtzp/fwG7xseceq8XlXXPYLGac38dkcfGUq8XhN+2sFv+ubWRx4PJ4f6OV3WPTqk42
+	j74tqxg9Pm+SC2CJ4rJJSc3JLEst0rdL4MqYf+cEe8Fivopd2/4yNzBe5u5i5OSQEDCROHm5
+	mbGLkYtDSGA3o8T5/guMEAkZiY0N/9khbGGJ+y1HWCGKnjNKbP+3nAkkwSagL7G6+zYbSEJE
+	4ACTxLMze5lBEswCGRKHrr1ng+j4wSjx48tBFpAEp4C9RNudF0A2B4ewQLxE71N7kDCLgIrE
+	nS8zwEp4BSwlnq7dwgxhC0qcnPmEBWKmtsTTm0+hbHmJ7W/nMENcpyDx8+kyVhBbRMBNYv+y
+	e2wQNSISszvbmCcwCs9CMmoWklGzkIyahaRlASPLKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0
+	veT83E2M4BjT0tzBuH3VB71DjEwcjIcYJTiYlUR4pd43pwnxpiRWVqUW5ccXleakFh9ilOZg
+	URLnFX/RmyIkkJ5YkpqdmlqQWgSTZeLglGpgmvfmcZhWzMtG37BH+qws6VfPbLp4/qPNDt6q
+	m4dlCj3cE97f25r4Z1pvY+KKrfOX/p7T2GYadeJnlqDXDA+ta7k5Rzefi5u8+36Pwf67cvfy
+	/v1eWVt3K0xcqrL17LNkr/1p4pc1n+xfkdMyteJRsY5/dt79pp+hazj+BES/vXxqQrpYrLx6
+	mq5UxpyQoI91D4OebZNJKWEPnluS/mKB7KbFSzwyAxgfab4qOCjhHXA4OqJdx9zCNb7lc2dY
+	366VlywsGA/vc/lRsHF72TKWWr9fEXkJNe5XPqk8+dF4xOWoweQ7Lxv67Q+qOvGzhj2Y+H3t
+	jNdv5u3u+F8Wu/Ouy+3JzJs/b+uoqJotWnSqUYmlOCPRUIu5qDgRAKWFqzcgAwAA
+X-CMS-MailID: 20240705075037epcas2p2b25139952de4e4ec5582d2942024c6d2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705021200epcas2p273ca089c2cb9882f121e864ec8407367
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+	<CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
+	<20240705021110.2495344-3-sunyeal.hong@samsung.com>
+	<494ac55c-7bd0-79a9-8a56-21aaf0611f81@samsung.com>
 
-From: Marek Vasut <marex@denx.de>
+Hello Jaewon,
 
-Implement "force_ro" sysfs attribute to allow users to set read-write
-devices as read-only and back to read-write from userspace. The choice
-of the name is based on MMC core 'force_ro' attribute.
+> -----Original Message-----
+> From: Jaewon Kim <jaewon02.kim@samsung.com>
+> Sent: Friday, July 5, 2024 12:08 PM
+> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Krzysztof Kozlowski
+> <krzk@kernel.org>; Sylwester Nawrocki <s.nawrocki@samsung.com>; Chanwoo
+> Choi <cw00.choi@samsung.com>; Alim Akhtar <alim.akhtar@samsung.com>;
+> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>
+> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions
+> for Exynos Auto v920
+> 
+> Hi Sunyeal,
+> 
+> 
+> On 7/5/24 11:11, Sunyeal Hong wrote:
+> > Add device tree clock binding definitions for below CMU blocks.
+> >
+> > - CMU_TOP
+> > - CMU_PERIC0
+> >
+> > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > ---
+> >   .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
+> >   1 file changed, 191 insertions(+)
+> >   create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+> >
+> > diff --git a/include/dt-bindings/clock/samsung,exynosautov920.h
+> b/include/dt-bindings/clock/samsung,exynosautov920.h
+> > new file mode 100644
+> > index 000000000000..bbddf7583e61
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/samsung,exynosautov920.h
+> > @@ -0,0 +1,191 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> > +/*
+> > + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
+> > + * Author: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > + *
+> > + * Device Tree binding constants for Exynos Auto V209 clock controller.
+> 
+> Typo : V209 -> V920
+> 
+> 
+> Thanks
+> 
+> Jaewon Kim
+> 
 
-This solves a situation where an AT24 I2C EEPROM with GPIO based nWP
-signal may have to be occasionally updated. Such I2C EEPROM device is
-usually set as read-only during most of the regular system operation,
-but in case it has to be updated in a controlled manner, it could be
-unlocked using this new "force_ro" sysfs attribute and then re-locked
-again.
+There was a typo for the SoC name. I will revise it as you mentioned. 
+Thank you.
 
-The "read-only" DT property and config->read_only configuration is
-respected and is used to set default state of the device, read-only
-or read-write, for devices which do implement .reg_write function.
-For devices which do not implement .reg_write function, the device
-is unconditionally read-only and the "force_ro" attribute is not
-visible.
-
-Signed-off-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- Documentation/ABI/stable/sysfs-bus-nvmem | 17 ++++++++++
- drivers/nvmem/core.c                     | 43 ++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
-
-diff --git a/Documentation/ABI/stable/sysfs-bus-nvmem b/Documentation/ABI/stable/sysfs-bus-nvmem
-index 3f0a95250aa8..aa89adf18bc5 100644
---- a/Documentation/ABI/stable/sysfs-bus-nvmem
-+++ b/Documentation/ABI/stable/sysfs-bus-nvmem
-@@ -1,3 +1,20 @@
-+What:		/sys/bus/nvmem/devices/.../force_ro
-+Date:		June 2024
-+KernelVersion:	6.11
-+Contact:	Marek Vasut <marex@denx.de>
-+Description:
-+		This read/write attribute allows users to set read-write
-+		devices as read-only and back to read-write from userspace.
-+		This can be used to unlock and relock write-protection of
-+		devices which are generally locked, except during sporadic
-+		programming operation.
-+		Read returns '0' or '1' for read-write or read-only modes
-+		respectively.
-+		Write parses one of 'YyTt1NnFf0', or [oO][NnFf] for "on"
-+		and "off", i.e. what kstrbool() supports.
-+		Note: This file is only present if CONFIG_NVMEM_SYSFS
-+		is enabled.
-+
- What:		/sys/bus/nvmem/devices/.../nvmem
- Date:		July 2015
- KernelVersion:	4.2
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 89f632f91768..12df7d037d37 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -184,7 +184,30 @@ static ssize_t type_show(struct device *dev,
- 
- static DEVICE_ATTR_RO(type);
- 
-+static ssize_t force_ro_show(struct device *dev, struct device_attribute *attr,
-+			     char *buf)
-+{
-+	struct nvmem_device *nvmem = to_nvmem_device(dev);
-+
-+	return sysfs_emit(buf, "%d\n", nvmem->read_only);
-+}
-+
-+static ssize_t force_ro_store(struct device *dev, struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct nvmem_device *nvmem = to_nvmem_device(dev);
-+	int ret = kstrtobool(buf, &nvmem->read_only);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(force_ro);
-+
- static struct attribute *nvmem_attrs[] = {
-+	&dev_attr_force_ro.attr,
- 	&dev_attr_type.attr,
- 	NULL,
- };
-@@ -285,6 +308,25 @@ static umode_t nvmem_bin_attr_is_visible(struct kobject *kobj,
- 	return nvmem_bin_attr_get_umode(nvmem);
- }
- 
-+static umode_t nvmem_attr_is_visible(struct kobject *kobj,
-+				     struct attribute *attr, int i)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct nvmem_device *nvmem = to_nvmem_device(dev);
-+
-+	/*
-+	 * If the device has no .reg_write operation, do not allow
-+	 * configuration as read-write.
-+	 * If the device is set as read-only by configuration, it
-+	 * can be forced into read-write mode using the 'force_ro'
-+	 * attribute.
-+	 */
-+	if (attr == &dev_attr_force_ro.attr && !nvmem->reg_write)
-+		return 0;	/* Attribute not visible */
-+
-+	return attr->mode;
-+}
-+
- static struct nvmem_cell *nvmem_create_cell(struct nvmem_cell_entry *entry,
- 					    const char *id, int index);
- 
-@@ -341,6 +383,7 @@ static const struct attribute_group nvmem_bin_group = {
- 	.bin_attrs	= nvmem_bin_attributes,
- 	.attrs		= nvmem_attrs,
- 	.is_bin_visible = nvmem_bin_attr_is_visible,
-+	.is_visible	= nvmem_attr_is_visible,
- };
- 
- static const struct attribute_group *nvmem_dev_groups[] = {
--- 
-2.25.1
+Sunyeal Hong
 
 
