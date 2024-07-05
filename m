@@ -1,118 +1,106 @@
-Return-Path: <linux-kernel+bounces-242101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2FF928388
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:17:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035C192838A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52FB71F218F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2511282E65
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818EE145B1B;
-	Fri,  5 Jul 2024 08:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BECA145B26;
+	Fri,  5 Jul 2024 08:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pDeUOnfX"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C54F2BD18;
-	Fri,  5 Jul 2024 08:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IGrkMXYM"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DE72BD18;
+	Fri,  5 Jul 2024 08:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720167463; cv=none; b=AGWhhPCEDr5dP99ZtJ7W49Zlri0sP3tpIlb8tNVXHC8kLfzMxoWt4blYHzLc9HDmtYpCsZKQKSUX96DKqcUx+dPykq7Mx0nKoxY6mXLVB93N28IrDyytPnzEtJjmgjd5SgmLFW6h5U+rZ88Bb9JIdQWTRyXhEqWZM+oQJVC0DDA=
+	t=1720167472; cv=none; b=rRGvibCtfZkG9WEyK5fhwZ241CALRf9BId/CHC5Y5p2U3BuR5L4k0RYryK1N8Mi13gcJV8ZpK0vqyazm3mY4oy7WZqUtNW1jsp6Ezez41hemTaqMp71+oaVKqPfnpabPh+59SrF/1S7QhGzo/B6ja29KaJD1A499gYNHws9tfq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720167463; c=relaxed/simple;
-	bh=Z+8whFJ3grQJ83XKO0yH93uOiE2mwA7zhToEaEIWdKU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U6VMzcCB3yK/Fz6ZBJzrSrpaTXcyefRQBbp/zjGyojrjgMXPqdw+e1VAiOg51ZINpZiB0FytOZWI2wdIqi0tFfj+Nmm9vBpJjU4DTKPvnl6zK0AXcx1ydiHL7DHiygYROv8CyW3htW08zro1ZX0UlQFWs3eQH6OyFlR+GwCgoF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pDeUOnfX; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 095570ae3aa711ef8b8f29950b90a568-20240705
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=gHtQXoO3gkfXq9fecupWc54bImQ5r1jPbo1pnWk/lX0=;
-	b=pDeUOnfX4wQ0qI9P5tV2NfM/sRga4RJT+vx3MZIeMxT63woIuRHs3Ftylr1EojqWc3PQq2yxKvqxgjDCGSvmVoXEAzUWRtFJp1c83n57IK/IVAsA5eLKR6ofTkvSo13ixtpghYgYrPB7fY98+uqnJMa1hj4Ol11vOOYF6lUts6k=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:0c23b54f-8060-46ac-9fd2-a6cd5cfbb233,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:ce6a20d1-436f-4604-ad9d-558fa44a3bbe,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 095570ae3aa711ef8b8f29950b90a568-20240705
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <ed.tsai@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 106142935; Fri, 05 Jul 2024 16:17:36 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 5 Jul 2024 01:17:34 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 5 Jul 2024 16:17:34 +0800
-From: <ed.tsai@mediatek.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	<brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <wsd_upstream@mediatek.com>, <chun-hung.wu@mediatek.com>,
-	<casper.li@mediatek.com>, Ed Tsai <ed.tsai@mediatek.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-unionfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-Subject: [PATCH 1/1] backing-file: covert to using fops->splice_write
-Date: Fri, 5 Jul 2024 16:16:39 +0800
-Message-ID: <20240705081642.12032-1-ed.tsai@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1720167472; c=relaxed/simple;
+	bh=N62di29Oedf7GoIGih7+uiyJQLoR834Yqg6nabF1rSI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cy8nwHu7x1jroX7FkERHKZBvYzI4rcvmzemZFTJm1ugjOFzu3d+hBy61AkHXIcL/64Tcb9P7YCwS17LoY9LizIqhMkFuK4dVTE9YAetVI6BpSHfydfm7hn/li1qaPFIsDz3SUFS29en+JYXT+uN6TA7LQ/1uFgYbRAqq19sUejY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IGrkMXYM; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=bLr8/
+	EeBth9+HcrumTkeLcx679O6m9o8qb++SNgq8HI=; b=IGrkMXYMUFegPJEDu9jR9
+	JuXacEhWUT0SPR6zarzhka6C71UtDF4kJIoQLw4u88wZEMFEOqhzdSb2guvleX1b
+	HUsgk2O+3mAgn9vOj5kQj+XfNOvSup8kpkinC3CEPktGKNrWRLOXw8UO8PZwfV4o
+	wfjQMsd+pikzZIQEG24j5w=
+Received: from localhost.localdomain (unknown [223.104.77.193])
+	by gzga-smtp-mta-g1-5 (Coremail) with SMTP id _____wD3vwoWrIdmYRHZBg--.27334S2;
+	Fri, 05 Jul 2024 16:17:27 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: johan@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH] USB: serial: option: add support for Foxconn T99W651
+Date: Fri,  5 Jul 2024 16:17:09 +0800
+Message-Id: <20240705081709.105496-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3vwoWrIdmYRHZBg--.27334S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJr1kCFy3Jr47uF4DAF4Dtwb_yoW8CrW8pF
+	n0yryavrWDWayrXFyDtrn3Zr95uan3K3ySgasrAw4aqFyfZrs7t3sFyFy8XF17Kr4rKrnF
+	vrs0yrWUKF1kJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRhNVhUUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRxkTZGV4KIaf7wAAsq
 
-From: Ed Tsai <ed.tsai@mediatek.com>
+T99W651 is a RNDIS based modem device. There are 3 serial ports
+need to be enumerated: Diag, NMEA and AT.
 
-Filesystems may define their own splice write. Therefore, use file
-fops instead of invoking iter_file_splice_write() directly.
+Test evidence as below:
+T:  Bus=01 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  6 Spd=480 MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0489 ProdID=e145 Rev=05.15
+S:  Manufacturer=QCOM
+S:  Product=SDXPINN-IDP _SN:93B562B2
+S:  SerialNumber=82e6fe26
+C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=ef(misc ) Sub=04 Prot=01 Driver=rndis_host
+I:  If#=0x1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
+I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=70 Driver=(none)
+I:  If#=0x6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
 
-Signed-off-by: Ed Tsai <ed.tsai@mediatek.com>
+0&1: RNDIS, 2:AT, 3:NMEA, 4:DIAG, 5:QDSS, 6:ADB
+QDSS is not a serial port.
+
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
 ---
- fs/backing-file.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/serial/option.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/backing-file.c b/fs/backing-file.c
-index 740185198db3..687a7fae7d25 100644
---- a/fs/backing-file.c
-+++ b/fs/backing-file.c
-@@ -280,13 +280,16 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
- 	if (WARN_ON_ONCE(!(out->f_mode & FMODE_BACKING)))
- 		return -EIO;
- 
-+	if (out->f_op->splice_write)
-+		return -EINVAL;
-+
- 	ret = file_remove_privs(ctx->user_file);
- 	if (ret)
- 		return ret;
- 
- 	old_cred = override_creds(ctx->cred);
- 	file_start_write(out);
--	ret = iter_file_splice_write(pipe, out, ppos, len, flags);
-+	ret = out->f_op->splice_write(pipe, out, ppos, len, flags);
- 	file_end_write(out);
- 	revert_creds(old_cred);
- 
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 178760bc7b92..4a43cec86db7 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -2294,6 +2294,8 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = RSVD(3) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x0489, 0xe0f0, 0xff),			/* Foxconn T99W373 MBIM */
+ 	  .driver_info = RSVD(3) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x0489, 0xe145, 0xff),			/* Foxconn T99W651 RNDIS */
++	  .driver_info = RSVD(5) | RSVD(6) },
+ 	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 (IOT version) */
+ 	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
+ 	{ USB_DEVICE(0x1782, 0x4d10) },						/* Fibocom L610 (AT mode) */
 -- 
-2.18.0
+2.25.1
 
 
