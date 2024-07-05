@@ -1,198 +1,185 @@
-Return-Path: <linux-kernel+bounces-242385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71640928768
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D908928766
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D14C282160
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1565F281D8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06DC149C42;
-	Fri,  5 Jul 2024 11:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B921487D4;
+	Fri,  5 Jul 2024 11:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFtDFdLJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="eTISJ4pZ"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2122.outbound.protection.outlook.com [40.107.20.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5731465A3;
-	Fri,  5 Jul 2024 11:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720177251; cv=none; b=C4pyrMJ9Z8t6wk9S5c08lvNS9Y1YCQDLZ6SwUpF392JPB17zqDKgbTeeuSdcrmwqvBRc/1bxnHR33heBMtBeu6eTKKmyLZTbccj0NOxw0j1WyH2qwywq+xAapJw4INHCw5VnJWeSkKwQzsbJ+ZjD+Yt9SHgNMWrYkD8huzQAY54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720177251; c=relaxed/simple;
-	bh=Fgt3RnGtwmO5wB3uewwZsYlqeRL9Q4dvJgMlsjigWf8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b7IKNPKZg+TcjFqzJDbawH8imXWcnsrVpr57dacZ+wysFLgbpp3CVRM6dvDORbEvrAmFUak+9RCG9U2wQW3LOqweNS3rZ6nHpaQv/h0IpKH9u6mPSbDrrRuExyDNQ8Pq3EUWR7yiNJWHClBrOvyD/Tr0th1b+c7G1XIdObGz1sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFtDFdLJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9695BC116B1;
-	Fri,  5 Jul 2024 11:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720177250;
-	bh=Fgt3RnGtwmO5wB3uewwZsYlqeRL9Q4dvJgMlsjigWf8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bFtDFdLJdRmvD9F9W42sJ63l9PJA+ADSBPMhYYGhWwbbo5N6VBjcZyctbbtaYGu8L
-	 3+cTV7GZZBh17NRGcFsm+9bumcNUjAdcmhemprwgTPG9VxfjTeOoa4uUxab3K9wsmm
-	 Mh0LfLofall1YnvJEwOlEKwsgAqYZ9O0RSL02l2SMZiNx6DANNBPHO/Bd7RUSE+QX/
-	 2dlxx8yZ3K7oT0ncdNxBfMapkQmAS+TqcoIM6SQKLXl0SBHcmJASt57vN0Zo7CrMmA
-	 gMBUnuWlRyw2JESv+bfxscF0i+Sl+JQ2MUvPDzNOtNEXYzSEcvuiKfEJX/1OjEYoBm
-	 hii88eyCQU/pA==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57cd26347d3so2077787a12.1;
-        Fri, 05 Jul 2024 04:00:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWvfRpY528aeUi8DX2BuLcKGfnxGLJOr8eiG4qIOHyLN65qDuF5n8UfmJNnaWcALzroCSVBDuR3hD6qV9fGDpr5agqxEGD4gF+0DXKwCJCxsAvjA1xiT9/6Oph+rtsbh8IHcH/MMVINqK4=
-X-Gm-Message-State: AOJu0YxNsJH8LJsXpN9RXtS+sGtdvvJjcai8jg5n5NwUSZjB4lim2LzQ
-	uXIzZmRuIs9baITdyYX6g3xpSV7DiJofzlIyLpPuiA+h/xtaeD3jqbGP50aUd0dSn3uD0vgPg6B
-	COn9qs+8gFOtY7qvtT3vmf1iVme8=
-X-Google-Smtp-Source: AGHT+IFuUSm9RlYCkmQLzKs9FUyEgaD5z0JbhqzUNvkEF0C7nb1RcZBZwuulQciVrer2M2tG71l2ufmovAY64qV1q1A=
-X-Received: by 2002:a17:906:c247:b0:a77:c548:6456 with SMTP id
- a640c23a62f3a-a77c54864b3mr189131966b.59.1720177249139; Fri, 05 Jul 2024
- 04:00:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0032C1465A3;
+	Fri,  5 Jul 2024 11:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.122
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720177244; cv=fail; b=CjcOzEP1SwNuKZ2WZIYWa/6k3jajX1mGgdKPgjlSTsBt8JpRv9YA8+EM5xLOB+9Au7H79eFLfBegYiP2czhXdCMrVIalS5ChT5ItidASs7Cfo3daj7MpZBiZn4Jov+M47Ts/tJ1iB5WbVGfKevvTM553WEgtq9HUomiFE/4f/Ko=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720177244; c=relaxed/simple;
+	bh=QtWkyR75vn4mCEW5GWB+CU1ijz9b/+TKfujmSRZsk34=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=i6MRlRVPhMuZyNorEFcBLfcPYv0ZVXBmLrKctGaEOBpAycjT0AFYatlzqlGkBoKLzsnuJDDL1B49zHQ0PkZ97GnvtnuHBOYe3u0K3ofClYnFlpQCu64pHVuIhu/wuNY4rkAUGEtOGZ2HQcV1id1kA9InTFAlTJivNslsExqdwe0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=eTISJ4pZ; arc=fail smtp.client-ip=40.107.20.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fsQ9/Ma2g1pBrlT21eXkN8NNQzX1R/Oc17ac0XyWq2lZOENFwMs/zAjuRUUgjFLVs6Z2A9N1NZFYKxF/7z2yLNGLQ34CWAwW1d/DQki105M0gTsYAFLucQftzhgqNJwfEa+2ncdtP3OvZpJlr9BURsqIBN73pOiuR9B8iFWx3GeqhFwUfFkgP9utPiNxrXEH43R2hD+Y2uElskT6yhs0DRKWqIoF7WniD9GlI+DDLlm2zVgSYcY9UaN9e+XJ98oofIUIgf6ILq7q76cWzOAwkhfqfJ+VD6DUqtj2m65dy3tv6/+etHT9AkN7Ws1asNEPZ3vfmmNu5rznviiFcNDC/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/W5xrRyzRCq6lQK/iek88rlSlUxVsoguTmLuOMQIgPY=;
+ b=R+ARkQkXMV13BcMALH3pWleJA5HH6NyE7cR+jWOgp5O+JXt/mBbLYvr9csd8f2+liOVHk26daf1ItInr/XD0y7YKaGMReR+cr5+NWB8ANyNaQTJbH4sLYAjOy9LqsLjgTARJCQT55hrMHgyq5wVE4QY4/RZz9SN/VbpfX8B7Qh16DHdruUSbiVSXxjBFUmI7HSSxryGNT4ozvQup6E5FlViGfXPuwmu5iSogE4oUaP00E1jYQhNYQ99ggSJBZc0JXxk9rIg6pQTlNt8z+037yVDbYGeM5p8w9+JC6jaY0ivedUKEUqRIR878vyoPe1jkxyB34a4aYG+mzRc8qmscxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/W5xrRyzRCq6lQK/iek88rlSlUxVsoguTmLuOMQIgPY=;
+ b=eTISJ4pZjiqj0ni2Fh+W9UpvZpUNofcxu/3aw8eyd2xw0sxi8CXA1ax/fpSfIrMizf37Oa6iopbUOnnqxhWLLo8whCwg1EsLknCWoNWRZIDjUjgQrTFSe0vts9WmUHF6Ef3D7Hz1ZZGrW8xK4AnMdGw8Qs0fsfRaZqsphVw1Rbg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AM9PR04MB8906.eurprd04.prod.outlook.com (2603:10a6:20b:409::9)
+ by AS8PR04MB8417.eurprd04.prod.outlook.com (2603:10a6:20b:3f9::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29; Fri, 5 Jul
+ 2024 11:00:37 +0000
+Received: from AM9PR04MB8906.eurprd04.prod.outlook.com
+ ([fe80::d379:5378:b1:cea]) by AM9PR04MB8906.eurprd04.prod.outlook.com
+ ([fe80::d379:5378:b1:cea%5]) with mapi id 15.20.7741.017; Fri, 5 Jul 2024
+ 11:00:37 +0000
+Message-ID: <9f4abd56-d095-4c51-b026-8a6640ce1e0a@cherry.de>
+Date: Fri, 5 Jul 2024 13:00:35 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/11] hwmon: (amc6821) Add support for pwm1_mode
+ attribute
+To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
+References: <20240704175207.2684012-1-linux@roeck-us.net>
+ <20240704175207.2684012-12-linux@roeck-us.net>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20240704175207.2684012-12-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA1P291CA0002.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:19::26) To AM9PR04MB8906.eurprd04.prod.outlook.com
+ (2603:10a6:20b:409::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
- <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com> <CAK-xaQa2NP0kfwQZoko-FUsSCbW31F1S48SJy8+94aSs7PCd3w@mail.gmail.com>
-In-Reply-To: <CAK-xaQa2NP0kfwQZoko-FUsSCbW31F1S48SJy8+94aSs7PCd3w@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 5 Jul 2024 12:00:11 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H6G43cb-k-efam8=ydR0L_MdEXvFtLf4T6uqakuS1FBiw@mail.gmail.com>
-Message-ID: <CAL3q7H6G43cb-k-efam8=ydR0L_MdEXvFtLf4T6uqakuS1FBiw@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Andrea Gelmini <andrea.gelmini@gmail.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8906:EE_|AS8PR04MB8417:EE_
+X-MS-Office365-Filtering-Correlation-Id: 756e3c78-0bac-44bf-ceca-08dc9ce1b369
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q0pmUjJaaFFxUFQzQUU0Qng0RlZJdTZBRTVOOCthUzdnQVlNSlk1U0VQd3NG?=
+ =?utf-8?B?SjZ1WmpkQkdIS0Vnc2FVQWdXbTBqVi80YXZjbWNCQ0dhcy9xeVFHcnlTQ2RD?=
+ =?utf-8?B?MUNHVjU1S1MrbEFSVHY3bmFsR2Z2REpRTGVVTDNyS0xjenM2NjJYTzVUZWcy?=
+ =?utf-8?B?TmhkTTkyNHM3ZlZIS1c4UzRNRlMxMVVlYWFvN0xpWGxiczlGeXduZTV5RmFv?=
+ =?utf-8?B?amdDQTRmMmVLbThtZ0thRzBrR1QxaTRDZ1B5cnAwUUl0NUhlUEZVYTZ3aTMy?=
+ =?utf-8?B?cE9FVnRyeit4dnNLekZhMTdadTErd2Z5bDVsT2Z3RzlzOHZQRnc4aGJaM1Bo?=
+ =?utf-8?B?SnRxcHg1akUwM1g0YTQ2WFVJWSsvSTU3aFRSQ0N6RGt4bndNOXgvVlJHRDB1?=
+ =?utf-8?B?SU5YYXJ2b1ZvNkpFdFNFLzg5YlpOd3RUNVoxanJSSVJtUXNscUdhaTJ1OFZM?=
+ =?utf-8?B?bE4zazlQSzZqK3F3YitJUDBLK2kxeGE5Ulhzc3RTeCt1c0drbDNESkppK25p?=
+ =?utf-8?B?T2NSRmpVY0RmU1puU2hHbndXOW9YOHdEbzViN1JUVC91VGpxaTI0R1hYNFVV?=
+ =?utf-8?B?RXZMSWp2akZqRlY5RU12cVBuWXBJL0RMbzJTSytsZXl1U09GT2M1ODJxZnYv?=
+ =?utf-8?B?cWRaMy9QSkhaWS96Mld2NEoxOEFkYUNrMW5KY2JXMEZuaVdrREpHS0lCb0hm?=
+ =?utf-8?B?cnJheXBGUW9yOTViSkRLMEF5RmprRXdMS0FXWDduanpldkxOcjV4WGdNREdQ?=
+ =?utf-8?B?S3J1SE1rUXpxQWIvNis5Z1dYZ0UrNGhQcUR6dEFvcG41S2lCajQ3M09JTll1?=
+ =?utf-8?B?dmNoNUFEMHFZQTlHTngwZXNNS2Y3SGJTMTc0OTVTcEZhUDhzOXEwVjd0aUox?=
+ =?utf-8?B?NlpsenptaEtlMTcwdEI4MHIvVXp3NFJqS1NwTWI2K0FPTVRQbUVZZ0QzbVlY?=
+ =?utf-8?B?bURlVjJoZDNkRXdlaHp5eDBUMFZPQlhrU1pBSEdSM2E5NDNHVXZaanAxM3lX?=
+ =?utf-8?B?WlZaMnZpZFovOSsyWng1aERrNzNNMkRtQUZDR0Z5czFjOXFjRGFIdExGWEZX?=
+ =?utf-8?B?c1ExcVNjQ0dKNzM1QVg2bUlSOHVTd3Q0M3pmOGJ1VWc5VXVZbWJOSDZOR2Z6?=
+ =?utf-8?B?ZzhkdHVJbVJsT2FWTmJRc256YXlvb1dLMUJtNXJiVDl6bUw4cWh6UkQ0QjFP?=
+ =?utf-8?B?YndKS1dPMW5ha2RBa2FzR1dzdjBtYVd5MWgvVDNobmlkZGx0TlRnVWhDRzBL?=
+ =?utf-8?B?YjNUM2c0cm1IVHNPbnZLTEtTUzA0NS9pWWFKWFlIaDJkTUhCYndGZnRYbmNq?=
+ =?utf-8?B?Qmpwc01LNWVXMWNJMU14K3FuQXVuVVhCTzQ3WXNORHA2U21YbHM1LzNqdVZZ?=
+ =?utf-8?B?RWt4SitCMmgrMzczQzFzWUwwa0UzdUhWMU13ZDVqUkJMd09yd2puNGQ1dVlG?=
+ =?utf-8?B?MGtvdHQzNEh3N0gxc2RHRE9JWmRhSE1tVEVXbWY3Q210OFpSRVRkV2NGL2pF?=
+ =?utf-8?B?M2UwWTYvbUp0bWs2c3R2b2VQVkhHSXdXaDFpd2tJV2QzN1FnTnU4U0Y0cVpR?=
+ =?utf-8?B?ZnRyR3hmMW9TV2tpYzNwNGFNOGtZN0xUWnh3UVkyR1lKZ2ZVK1MxTXVtOTlR?=
+ =?utf-8?B?Vmc4ejlsaThLY2lSaDBPYkJIZDFrc0hLcHM1dlBNZUZXaExRQVpDNE5wVVda?=
+ =?utf-8?B?MnhyL3pRSGJBWHhWalp3TURZZkl5RVRSWWxUd3c2TWdLT25DNWFGdXg2TEsr?=
+ =?utf-8?B?VXU2c3VVVytadkR0VHpFWHIzcThzbjY4bWU1NFFBRCtrSkFBVFpaMnFHbkIw?=
+ =?utf-8?B?MkpiR09BUzVnSytQRCt5QT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8906.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b1pvRkUxVHM2UzNuUWJCVTBWbUtyZ0VVRUFUTncwbUE5TXFSS2J2QUdWOFcy?=
+ =?utf-8?B?VUQrRDRub25sM2lrd1Fpb0orTXdNODBNREpKc245QUtLb2VTZG16bW41aFQv?=
+ =?utf-8?B?NWF3WVRscnkvTXJZYWNkUEN6K0RYZHRTd2pLUytzM0FlMU0zZDJLc2RPNFR2?=
+ =?utf-8?B?UWdOTVM4eU5mTHdsNllVbHlEZTVzTEtpN24veXloSDBESjh5YVVMRkRDNzl5?=
+ =?utf-8?B?d2dOVnkxQWFSZk80N2hPa0ZPY2xxZHhka3MrQXBDWDlTblpFdU8wakptS0x0?=
+ =?utf-8?B?NDA2KzZrdXF2QkFROEpZOW01akhEZCt0UzRKOFZWNHRqRmpIZ2FKS3hheWxL?=
+ =?utf-8?B?T0p3dHJ4MktodmZCZENhYlFZK3V0YzdRQ2ttdWYvYnVBOHBMam80aXltWkJ0?=
+ =?utf-8?B?OWxtK25UaENRd3pSYWZpMk9PbGs2ZG8zUWhDSlJkejVUNzRON1BTbEtLU3Vi?=
+ =?utf-8?B?aURHOHN1M2xzMTNaOG9xZG9pYld1VExPRUlCOWlELzFsRTIvTll0RHhGZXVU?=
+ =?utf-8?B?SFZSOXkraEFFWTRVcHdMYXgwMTJrNVZnbGI5dXFCNHVpeXNvZEo0aWx0WVEr?=
+ =?utf-8?B?em43cWo5Rk9yeDd3QnZtQ0tJVlo0NkpVTHJ3eFQyYnRQN1JUS05IVEg2UkdC?=
+ =?utf-8?B?blpxS2pIM1B1aDhZbWFzYnQ2Wm81c0hhVk9TcDVGcVptS1BEV0p0ekxFNlVO?=
+ =?utf-8?B?NGMyMkVoMi9nNHRRSTQya05tTVZraEtSZGRWTFhrRHJsdzQ2U2lzY0tsWWxz?=
+ =?utf-8?B?S1F4S1hCUDNHZmNKSndXVER2SUFlV0kySk5ISXl3NTMzbVhlcUUyNld6R2lU?=
+ =?utf-8?B?UWo2UW11cGg4VmZIaG9RdXhjQ3BhaEhvZk5vQzB4b1FXSFhkbjZFaEtDaE54?=
+ =?utf-8?B?WlpOSjJ3R3c3NWEvZTZ2QmZXa25ybHQxcFBNMmV2d1VtcUtST1dnZ1pMNjZk?=
+ =?utf-8?B?Rm0xSFFIbDNRSE56UFBEeHBKT0FrT3NlK3hsenJlT29OdEI0RnZteG0wVHRh?=
+ =?utf-8?B?ZXdURU5tejlHcmVTTHVSYmdHZHdNY0RER3JlR1pNMTVNaG5Ic2QwM1VURHZW?=
+ =?utf-8?B?Zzg3d3l4VnY2NCtWcXRZeTBIS016b0ZhbHZoS0NGK29lcUwzWFdZakZHOVNt?=
+ =?utf-8?B?bnM0bFpjMDdGR2NNaFpwMFRKYURyYi85cytJT3JFK0lRNmkweCtpekhUSmxO?=
+ =?utf-8?B?aVNWQktzSjl6Q1l3emoyaVh0WjNGaVdxU0Rrdi9Uc3Z0U3N4d3lGcy9PbWIr?=
+ =?utf-8?B?dnBWbzRFaEJuQm1TYThnM1loaVVyOHRaZHFQb1dpSHk0QTd4czA5dG5Wc2p3?=
+ =?utf-8?B?WVJVajRtcTgwMFpqZEQzRi9ZU0VUbU9oVjhDblJrK2JLaEhmb29sOWs3STN5?=
+ =?utf-8?B?eUMvWGlvT0RJQ2VGQnRpSGJnY2N3dXdmL3JKcmxMbk5qZ0psdTQ3SU5yeFg1?=
+ =?utf-8?B?SFBSbzBMUEt1RTUvZGdRTUVubzJ6eW9WQmNHQ2NsMlhFdnBUZE9BVGtCcDkv?=
+ =?utf-8?B?VCtKQnQ1MmdranBkYnNtUUtsdzJnbnVMQk9iaVJsbVV3bXBPR3o4U2lPQkgw?=
+ =?utf-8?B?cm9qZk83MUlTV1pwbEptUXlpMTcxcXk0eW50QWw1Mm1UeklYUy90cm8wbkJP?=
+ =?utf-8?B?akt0Y2lIQWFvVVNxbEwvcUVCQysvakhndW1OTVhpd2N5MGU4OGV1R3VRd1ZE?=
+ =?utf-8?B?WEJVQlJXZDdRWXlaNVQ3MVdCaVIrS0w2ektsanZSL3Vmb2YzZm5tZTZuTzEy?=
+ =?utf-8?B?QUdiTmlFQ1FHM1ovOHNHamhOaTcxczdwSkFHR2hsNDdTd3YrM1VRV0VSVVl0?=
+ =?utf-8?B?UktOSzZRYVhUNmJJTDBaRlc3QnhRZzRycTdHV1dVVU4wY2xBY1hJdEtxRzRi?=
+ =?utf-8?B?S3g5VEFQZVlaS0YvTHBDMi8wL1FPQ1h4YW0yUjBlQjROZDdIOElzbGdpR0s4?=
+ =?utf-8?B?REJOVTNabUFtVTNWSnBnUER4SWdqUStHYUtMbjlDNEI3WThwV3NyN29QOUhZ?=
+ =?utf-8?B?VXdiTUdNSTQ3ajNvUS9meDJLbUZlZSt0VVl3Q241UllSWm9NSDJuTW1wMzZW?=
+ =?utf-8?B?K2I4U2JFMWNobytab2hRUWliaG1FaU1EZ2xUTDdkZWMxNWx1NXprWUVWUkd5?=
+ =?utf-8?B?RkNkQzEvQXdoTy94UHF2K0FZcGVUcWRmN2lYc1pmNHo4S3NRTkdxQzRHbG5B?=
+ =?utf-8?B?SlE9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 756e3c78-0bac-44bf-ceca-08dc9ce1b369
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8906.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 11:00:37.3057
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sae/fCilqfGnYWrFPgd1WLVG2yvedeZV+EimOlq9PU4CsCNlNiP87KXgaUqpVVMiOTj44zeBZZSLHwGEFRUrBUg2HSPkA79M7Ik8k5iNbXc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8417
 
-On Thu, Jul 4, 2024 at 11:15=E2=80=AFPM Andrea Gelmini <andrea.gelmini@gmai=
-l.com> wrote:
->
-> Il giorno gio 4 lug 2024 alle ore 19:25 Filipe Manana
-> <fdmanana@kernel.org> ha scritto:
-> > 2) In some cases we get very large negative numbers for the number of
-> > extent maps to scan.
-> >     This shouldn't happen and either our own btrfs counter might have
-> > overflowed or some other bug,
->
-> Well, I was thinking about my specific odds, and I tried this:
-> a) kernel 6.6.36;
-> b) on spare partition nvme created a new shiny btrfs;
-> c) then mount it forcing compression;
-> d) multiple parallel cp of kernel and libreoffice src;
-> e) reboot with same rc6+branch already used;
-> f) tar of the new btrfs: no problem at all;
-> g) let it finish;
-> h) tar of /.snapshots: PSI memory skyrocket, and usual slowdown reading;
-> i) stop it;
-> l) again tar of the new btrfs: no problem
-> m) repeat a few times.
->
-> You can see the output here:
-> https://asciinema.org/a/rJpGWvXYH6IDBXWYhtJckkKWo
->
-> In the end you see I kill tar and let the PSI going down to zero, if
-> you are interested.
->
-> > Ok, so maybe I missed it, but I haven't kswapd0 in there, or nothing
-> > taking 100% CPU.
-> > Maybe it was just Mikhail running into that?
->
-> To have this effect and the extreme luggish response (I mean, click
-> something and it takes more than 30 seconds to react)
-> I need to work at least one day on my laptop. At this point also
-> cycling to virtual desktop takes a lot.
->
-> Thinking about my different use case:
-> a) i always suspend. I just reboot when change kernel. So, I can work
-> for weeks with same kernel. Suspend2RAM, not disk, btw;
-> b) months ago I let run beesd for a day.
->
-> > So I'm surprised that you get an unresponsive desktop.
-> Same point as before. In this case is not so luggish, but - i.e. - if
-> I click for screenlock it doesn't start immediately, it waits for a
-> little bit more than one second.
+Hi Guenter,
 
-Oh I see that on my main desktop which only uses ext4 and always has 2
-qemu vms usually running debian and opensuse.
-Sometimes even if the VMs aren't doing anything, but they used to be
-doing IO heavy testing, the desktop in the host gets unresponsive,
-clicking the screenlock often takes at least some 5 seconds, or
-changing workspaces takes a few seconds too, etc. Shouldn't happen in
-theory.
+On 7/4/24 7:52 PM, Guenter Roeck wrote:
+> AMC6821 supports configuring if a fan is DC or PWM controlled.
+> Add support for the pwm1_mode attribute to make it runtime configurable.
+> 
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
->
-> > Interestingly, here the memory PSI stays at 0% or very close to that,
-> > it never reaches anything close to the 60%.
->
-> You see the same thing with the last test with new btrfs partition.
-> New partition: ~0%
-> /.snapshots/: near 60%.
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 
-It could be due to heavy fragmentation, but that should only be too
-slow if you were using a spinning disk.
-I think somewhere you mentioned nvme or ssd.
-
-Removing the extent maps could cause extra reads of metadata and be slow.
-But the number of extent maps removed on every iteration is relatively
-small, and round-robin, so... it's strange that it causes such huge
-pressure and desktop unresponsiveness.
-We will know if that's the case with the 2nd test patch.
-
->
->
-> > With htop in parallel, the bpftrace script, and since my htop version
-> > doesn't show PSI information (probably an older version than yours), I
-> > kept monitoring PSI like this:
->
-> Well, mine is taken from here:
-> https://github.com/htop-dev/htop.git
-> Compiled with:
-> ./configure --enable-capabilities --enable-delayacct --enable-sensors
-> --enable-werror   --enable-affinity
-> And tweaked config file. If you want I can send it.
-
-Thanks, I'll have to try it eventually.
-
->
->
-> > So several different things to try here:
->
-> I stop here for the moment. I have to sleep.
-> In the weekend I do the rest and reply to you!
-
-Sure, take your time. It takes time patching and building kernels,
-plus the testing, etc.
-Many thanks for that!
-
->
-> > Thanks a lot to you and Mikhail, not just for the reporting but also
-> > to apply patches, compile a kernel, run the tests and do all those
-> > valuable observations which are all very time consuming.
->
-> My little contribution to free software!
->
-> Ciao,
-> Gelma
+Thanks!
+Quentin
 
