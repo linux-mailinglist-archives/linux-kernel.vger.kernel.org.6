@@ -1,119 +1,268 @@
-Return-Path: <linux-kernel+bounces-242480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6289288A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:23:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0189288A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2F57B24AB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4621F24B8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8862314885E;
-	Fri,  5 Jul 2024 12:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0EF13D243;
+	Fri,  5 Jul 2024 12:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZNG0+Z1x";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WXFGCH6t"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+v3ic4T"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA1513D243;
-	Fri,  5 Jul 2024 12:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3510D149DE3;
+	Fri,  5 Jul 2024 12:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720182226; cv=none; b=dWP3GQ8YHqVOTZesBWBvubpM17HGkpii/deT4hDxwh5+KMx0UBhbOHQmVpzn3IX5io09F35nhYj7Ep1E92xc6T26Dh5izY+VlxC7WQQMkoUyMBQ3sQapAVrYbxCioiPz/q+qfuvPNvujIR3JtWujSjJLcsuwQcA/sTHH2V1XRrA=
+	t=1720182267; cv=none; b=SZ1cX7crqpGiOVYB/Kk17bs8jwmM8+N48fld5qH6Phvgr0sDa67ZMfve6PTYHL51lB3zp/92o1kbAFXD438FfmtAniAWqxrabHcWvPfePzpOjg7MiqC9hYKgNPe9iLP28LvPtMQIFYv7wqDOTN3GlzvBClCW1fXn12mxY2T6bMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720182226; c=relaxed/simple;
-	bh=4XWOLzZTtH1fsJi6Y4mSeBKBITXTtuDOPNxPhYKQZj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWcjvxMKPNjxKllePoH5LP4V9py6YPD4+22uX/7EFzbJSzmoNxtxANq+ITRMyZYi6YT9+29w8YoRRP5EPCBNUElptWdWjliYcMM+Wpydelt+n+SM1tShJ0zL3eh3wK7TU30yE6OSzG+L50o1zF5rKeVrAxlxGimrh285MEzIGa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZNG0+Z1x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WXFGCH6t; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 5 Jul 2024 14:23:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720182215;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PmdQ9W5UznoY2Do+sTBd4x5mIEK/S3AKOxbdEub+S/I=;
-	b=ZNG0+Z1xvp3kLitxsJ0nPdD1HmNoWWTxwFdM9/02U2ENC5POTcN+0JsZxdLQoFiy2RvoV7
-	LtydAD0KZ742sPMF0ZgoBx6KzE2haIc8zyN4ur0BH3RsTeKspET0gRBcoCPxsbYwjmGv2i
-	9CM/UIFAkkmmuLLvVjjc4qxK3MveXRHUhi+ifM8m6dBvzpWwK/DtVUJT98GEm1zp9ihQIu
-	MpIzKSdv9ahT3J6qg06pBjvu7MY3b1SQOb0TQQuVRgZ4VTmyKZdR/YdIDKfyde0otQd0YS
-	KJk86zAICPGFVIph5Xa56Pd5EJTsrkBnaBHE8mCjTgaW0zZkd4oQbqDUwlX7LQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720182215;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PmdQ9W5UznoY2Do+sTBd4x5mIEK/S3AKOxbdEub+S/I=;
-	b=WXFGCH6tYwKk5WWS8LBYbtNuPfLcfMmSnPNUchURaoYED8eIpMiS8KxyWyZkaGHXsRHdJV
-	twrhik58moGSFFDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>,
-	Mike Galbraith <umgwanakikbuti@gmail.com>
-Subject: Re: [PATCH v2 1/3] zram: Replace bit spinlocks with a spinlock_t.
-Message-ID: <20240705122334.j8mJcj5V@linutronix.de>
-References: <20240620153556.777272-1-bigeasy@linutronix.de>
- <20240620153556.777272-2-bigeasy@linutronix.de>
- <27fb4f62-d656-449c-9f3c-5d0b61a88cca@intel.com>
- <20240704121908.GjH4p40u@linutronix.de>
- <801cac51-1bd3-4f79-8474-251a7a81ca08@intel.com>
+	s=arc-20240116; t=1720182267; c=relaxed/simple;
+	bh=qyZ4pgN9ODC0BjiNwh5o1P10S3yVrnbu2zdf6ekHKXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ioFLoodlQilZhOD/D4cyLdBOJIBL+3a0oTsw/8e+dxDWK/jUiM96JyM9zbt+xvvvv+7DA0mrusZyKZc/dQYikkABN5vtdRn0uiOBv6w5SCgI5UPRZWQWptTWKsF+0EOXSH8GOJJxzr+rZZGerZVYurHibD5lJOk1U/nN//HCCT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+v3ic4T; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77d85f7fa3so59365866b.0;
+        Fri, 05 Jul 2024 05:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720182264; x=1720787064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iabrIAMUEOTL61vdHDoYq/UZjIRy45Aj4kyep8lAuoI=;
+        b=K+v3ic4TJYHHoOlJj2Td1pvsqSpcD0xtpsE4tjqGeoM0KjgfxqPejUaF93Z9KmUQLZ
+         qk9Omrl5nvO9CbTROkkXRnto4Tg+1KXsbpvvyMO5oSLilcpi2IItdaQOt1e5k9Oe5s0I
+         EQM9dbG1IMeafZh+UOoUXWLzJAoY3UPr3KKViKYdRnKdlYO3kVrBn1eSGTQXB4HCd/gl
+         wOexYPpl+FcFd14J0XYqKtf9+3bD77HHy5XQ89uq4R0J7zeiz41av/LdMad2yqjUG9AT
+         7E6qfB+7epTGSHhFHJcuXMSqLE7kQU+ufq7I6eXAtW+mEGuwd2RsPpC32l2j1eBOB3tM
+         6Bxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720182264; x=1720787064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iabrIAMUEOTL61vdHDoYq/UZjIRy45Aj4kyep8lAuoI=;
+        b=X910fM1uzShga3vLKWiDw9gE74GlMpOuB0vtzQSERgbwqptOeSKXpdU4lktzsZ7QSj
+         1Hl4hZl2GK7FKj5+KjdKkpOZslooG2hr19ZqpeH/OIhGzcmaTfMYj696SO1El/L3fGb5
+         fdbMY8f7PSYenolzDsP+HcESre+FMd/PJ3bH28q/l2eJuy5cDqYMsQP4czkg2lDBmFi+
+         8XxqhwMerqc6Wx+FwATr5PVUdeegVPWfNE6easfRrA4zdEFpp+VFlyOMBZl9XtFJiBKe
+         ULPSuiGs5gmVckUzYYot5bMbnveFdk/Mlp4dm7TuHWT6+iQ0enAIi1us8oyGgzSacFFt
+         aang==
+X-Forwarded-Encrypted: i=1; AJvYcCXNPJoid+qBF8ivyEBSwm6ODd4tIh32qsvB0azEIgAI0elJI1m2VAXyDOx2hR2neM4ANFmWkOgMfhYd6AJYFnw+E2efg6NtIxYmfYqOpj+FaCwdAGjnI6BaL4Dq2Va7xjeiYkV7dtspeQjJHexjZG28f/atBNOeqtpbrvgs8d6dXtN+U/Iv
+X-Gm-Message-State: AOJu0YxijI75g36q909W2l9OiApvsSKdu/tPrAWldKhBIwVCjhopdRzM
+	RTX68/BNPIW0ukhGq19768tsTJQ/GGoofQe4TsyaU3QdT764O12r8bZ38kgWOF8p5RKs/L0ISTo
+	+nePL6I+c1HvMJSAhpThHn1udBYI=
+X-Google-Smtp-Source: AGHT+IEkwLYq9DV+FyUhDlmnP1mMXhabJ2ZHkHkFRFF3nDAXxGnMPurbx/i4zDvRg7nKq8uR0YUrjTeOGYI9xZwgGlU=
+X-Received: by 2002:a17:906:b751:b0:a6f:4287:f196 with SMTP id
+ a640c23a62f3a-a77bd99ec1bmr292931566b.2.1720182263880; Fri, 05 Jul 2024
+ 05:24:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240622182200.245339-1-animeshagarwal28@gmail.com> <268a722a-c2e8-42fe-9cae-104e3f082a0a@kernel.org>
+In-Reply-To: <268a722a-c2e8-42fe-9cae-104e3f082a0a@kernel.org>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Fri, 5 Jul 2024 15:24:10 +0300
+Message-ID: <CAEnQRZBXTkQCwAyy6i1k_hb5ts99p4Cd8bihLu7bz+4TfJm9wA@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: fsl,imx-audio-sgtl5000: Convert to dtschema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <801cac51-1bd3-4f79-8474-251a7a81ca08@intel.com>
 
-On 2024-07-05 14:02:22 [+0200], Alexander Lobakin wrote:
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Date: Thu, 4 Jul 2024 14:19:08 +0200
->=20
-> > On 2024-07-04 13:38:04 [+0200], Alexander Lobakin wrote:
-> >>> index 3acd7006ad2cc..036845cd4f25e 100644
-> >>> --- a/drivers/block/zram/zram_drv.c
-> >>> +++ b/drivers/block/zram/zram_drv.c
-> >>> @@ -57,19 +57,34 @@ static void zram_free_page(struct zram *zram, siz=
-e_t index);
-> >>>  static int zram_read_page(struct zram *zram, struct page *page, u32 =
-index,
-> >>>  			  struct bio *parent);
-> >>> =20
-> >>> +static void zram_meta_init_table_locks(struct zram *zram, size_t num=
-_pages)
-> >>> +{
-> >>> +	size_t index;
-> >>> +
-> >>> +	for (index =3D 0; index < num_pages; index++)
-> >>
-> >> Maybe declare @index right here?
-> >=20
-> > But why? Declarations at the top followed by code.=20
->=20
-> I meant
->=20
-> 	for (size_t index =3D 0; index < num_pages; index++)
->=20
-> It's allowed and even recommended for a couple years already.
+On Sun, Jun 23, 2024 at 10:08=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On 22/06/2024 20:21, Animesh Agarwal wrote:
+> > Convert the imx-audio-sgtl bindings to DT schema. Make bindings complet=
+e
+> > by adding audio-cpu property.
+>
+> On what basis? Who needs or uses audio-cpu? Driver? DTS? Both? If only
+> DTS, then is it needed? Maybe not?
+>
+> >
+> > Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> > Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> >  .../sound/fsl,imx-audio-sgtl5000.yaml         | 108 ++++++++++++++++++
+> >  .../bindings/sound/imx-audio-sgtl5000.txt     |  56 ---------
+> >  2 files changed, 108 insertions(+), 56 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx-aud=
+io-sgtl5000.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/sound/imx-audio-s=
+gtl5000.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl=
+5000.yaml b/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl5000.=
+yaml
+> > new file mode 100644
+> > index 000000000000..906dcecb73b7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl5000.ya=
+ml
+> > @@ -0,0 +1,108 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/sound/fsl,imx-audio-sgtl5000.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Freescale i.MX audio complex with SGTL5000 codec
+> > +
+> > +maintainers:
+> > +  - Animesh Agarwal <animeshagarwal28@gmail.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - fsl,imx25-pdk-sgtl5000
+> > +              - fsl,imx51-babbage-sgtl5000
+> > +              - fsl,imx53-m53evk-sgtl5000
+> > +              - tq,imx53-mba53-sgtl5000
+> > +              - fsl,imx53-cpuvo-sgtl5000
+> > +              - fsl,imx53-qsb-sgtl5000
+> > +              - karo,tx53-audio-sgtl5000
+>
+> Keep list ordered alphabetically.
+>
+> > +              - fsl,imx53-voipac-sgtl5000
+> > +              - fsl,imx6q-ba16-sgtl5000
+> > +              - fsl,imx6q-ventana-sgtl5000
+> > +              - fsl,imx-sgtl5000
+> > +              - fsl,imx6-armadeus-sgtl5000
+> > +              - fsl,imx6dl-nit6xlite-sgtl5000
+> > +              - fsl,imx6q-nitrogen6_max-sgtl5000
+> > +              - fsl,imx6q-nitrogen6_som2-sgtl5000
+> > +              - fsl,imx6q-nitrogen6x-sgtl5000
+> > +              - fsl,imx6-rex-sgtl5000
+> > +              - fsl,imx6q-sabrelite-sgtl5000
+> > +              - fsl,imx6-wandboard-sgtl5000
+>
+> None of these were in the old binding and commit msg mentions only
+> audio-cpu. From where do you get these?
+>
+>
+> > +          - const: fsl,imx-audio-sgtl5000
+> > +      - const: fsl,imx-audio-sgtl5000
+> > +
+> > +  model:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    description: The user-visible name of this sound complex.
+> > +
+> > +  audio-cpu:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description: The phandle of an CPU DAI controller
+> > +
+> > +  ssi-controller:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description: The phandle of the i.MX SSI controller.
+> > +
+> > +  audio-codec:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description: The phandle of the SGTL5000 audio codec.
+> > +
+> > +  audio-routing:
+> > +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> > +    description: |
+> > +      A list of the connections between audio components. Each entry i=
+s a pair
+> > +      of strings, the first being the connection's sink, the second be=
+ing the
+> > +      connection's source. Valid names could be:
+> > +
+> > +      Power supplies:
+> > +        * Mic Bias
+> > +
+> > +      SGTL5000 pins:
+> > +        * MIC_IN
+> > +        * LINE_IN
+> > +        * HP_OUT
+> > +        * LINE_OUT
+> > +
+> > +      Board connectors:
+> > +        * Mic Jack
+> > +        * Line In Jack
+> > +        * Headphone Jack
+> > +        * Line Out Jack
+> > +        * Ext Spk
+> > +
+> > +  mux-int-port:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description: The internal port of the i.MX audio muxer (AUDMUX).
+> > +    enum: [1, 2]
+>
+> default:
+>
+> > +
+> > +  mux-ext-port:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description: The external port of the i.MX audio muxer.
+> > +    enum: [3, 4, 5, 6]
+>
+> defaukt:
+>
+> > +
+> > +required:
+> > +  - compatible
+> > +  - model
+>
+> Several other properties were required. Why changing this? Please
+> explain in commit msg all changes done to the binding comparing to pure
+> conversion.
 
-I can't believe this=E2=80=A6
+I wonder how should we handle the case where 1 compatible string is
+found in 2 drivers.
 
->=20
-> Thanks,
-> Olek
+e.g
 
-Sebastian
+soc/fsl/fsl-asoc-card.c:        { .compatible =3D "fsl,imx-audio-sgtl5000",=
+ },
+soc/fsl/imx-sgtl5000.c: { .compatible =3D "fsl,imx-audio-sgtl5000", },
+
+
+Take for example audio-cpu propertyssi-controller which was only added
+in the newer soc/fsl/fsl-asoc-card.c driver. So this is required in
+the new driver unless
+the old binding "ssi-controller" is not present.
+
+Given the fact that there are already 10 years since this commit:
+
+commit 708b4351f08c08ea93f773fb9197bdd3f3b08273
+Author: Nicolin Chen <nicoleotsuka@gmail.com>
+Date:   Wed Jul 30 19:27:38 2014 +0800
+
+    ASoC: fsl: Add Freescale Generic ASoC Sound Card with ASRC support
+
+The driver is also compatible with the old Device Tree bindings of WM8962 a=
+nd
+    SGTL5000. So we may consider to remove those two drivers after
+this driver is
+    totally enabled. (It needs to be added into defconfig)
+
+I think we should send a patch to remove soc/fsl/imx-sgtl5000.c
+because I assume that by this point it's functionality
+was fully implemented in soc/fsl/fsl-asoc-card.c
+
+Thanks,
+Daniel.
 
