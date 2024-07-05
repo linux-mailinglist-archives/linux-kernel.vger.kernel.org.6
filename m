@@ -1,146 +1,162 @@
-Return-Path: <linux-kernel+bounces-242789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93243928D2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:53:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7361B928D28
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69FB1C21937
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:53:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80521285A3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F96416D9DA;
-	Fri,  5 Jul 2024 17:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C0016D4F8;
+	Fri,  5 Jul 2024 17:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vLPJ8Ots"
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KmAuRrDB"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7176135417
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 17:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEBC14A62F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 17:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720202010; cv=none; b=a9uVF694pj+Rhl8YiFKhgvBJ66C+mmwKwucYl5oNlnFVA0XAE24G7z412GffoR1GiFTuOX8tBcRzS/nTWTBSTiPUvCtxkFq9+U8YQ3FQI4hhIe8OMALeac6n8yyB+MiS1ucRmnz5ybpKJ2nb8kBHIRuUR1A3FeAjTRwTJwL65iw=
+	t=1720202009; cv=none; b=ke3nnUOFeK4lEHlel6r+Vw6Vh0I/gdsrcTracUaRq3lUNzENu8QERYd1LRA8RUTE/m87ZOaSX0EdUqXKGn5ECKvEHJ0Vdz+ZqlLEg/V+w5EEjidaJARol20QSWuDnKjyphkYG4fmIUTTXjk4sjUtHafpDXqGr0RCy1GMjhBSfJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720202010; c=relaxed/simple;
-	bh=1ovZsTEE4mGTjZJNE9Bn+x7nEz8rd0oYSMZQ7aLG7dE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxA0BG7o2MsgLGWFLRx7m6znwFLmwtf+Kpa2qNaxZOd9c7nlVwdb4nNRl0uqrSLNz9EIXvzxhXV0gcpMOg/hee5JTVEOyTN3siv85r3AiaxhC7RWcC1SkKhGVmJFXFCWTprv6rpnauvEJtFBCpzOE3Rqpj4MUep6b4MePBO+31U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vLPJ8Ots; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WG1Mk0nY6zGDF;
-	Fri,  5 Jul 2024 19:53:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720202002;
-	bh=EVA4xGWQR4aMmDX4txfboMVq0fyWNrcCv8C687hvy6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vLPJ8OtssQOlAqvXDFLxhWrIipCNWzJ6q15HW0SkxoQATmx3f9vwxO6gOmyBI0HrA
-	 4PSkXXW7A+42nK65h5f5pROfqbwAEkOnDtb09VPQhRvNKvA//vbxT1YWHTEfUB9nuq
-	 NcVdFfFqOavW6dvw976SzC/jNfIeam4utTzxBdMA=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WG1MY3F4nzGZx;
-	Fri,  5 Jul 2024 19:53:13 +0200 (CEST)
-Date: Fri, 5 Jul 2024 19:53:10 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240705.uch1saeNi6mo@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <202407041656.3A05153@keescook>
+	s=arc-20240116; t=1720202009; c=relaxed/simple;
+	bh=uyFT9HitKgqEW01zxE70/QdEA0bRn6fCTZf+R820kl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rW3a9URq6yTrPFDErMhcaCpe2wA/DEXCeiR/iVvRvIiZYzgmteCK7o+MaXzy9S1lLCjuURoWXtqZ2YNV1nWyVw72g7rkamLKlIUyN7oHW1hPsSW+LT3SeBhBNyW1joSqvuWnPwsK3BNlY39mZOveLyaOzTX7Ny+8g8EkaWSZwTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KmAuRrDB; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7f3c804daf7so8809939f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 10:53:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1720202007; x=1720806807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aOteYgqQJ+bgjXyE03h9KjUtRQZzhDobMs9njBVn+Zg=;
+        b=KmAuRrDB6E0FJn4fIBGDp7OrKam+i3ix7Fujcgij5dGsjZTdFSyPXTbJS/SJJPU7lZ
+         fVRk3c/VZhFMfTUYRdVD2DpOr51MGQxkpTWrSLqo86JIDzwaVFpxdkiGgcUJrPtZ+Hnl
+         ZSOy70MW6XjadhCsPMvuI7+HU0eqvgJKA6y5w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720202007; x=1720806807;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aOteYgqQJ+bgjXyE03h9KjUtRQZzhDobMs9njBVn+Zg=;
+        b=j/otXWCtzyVnAkc/kFr9RHJc2UZ+bdWxceBUTe5kOlET8KIoZ/cC4CJVc2NEZIh8Ze
+         101wOaL176Yc0Di30oeylgvZdiySWk4cdVhnPhf1t8uyvcMNS9HLZOd4Wk2iB+YuryAf
+         C7EpPwMu7KD5Mo2Dbvbc0oBLDv6wkpBKKUrvtxtPBzKA5V6ZWX9Kt4/bIga4XHyRDP+x
+         M40HNKucGbP4ezFb9bqGkXQqNy1H14wkrtVgmzc3BPuDkqqLpDL1I5LOhtDOxVxYL1N4
+         jgDDejN6j3Irbm2bdwqDXw8l9FDIAmX5ttH3sAG9Bxj5ABz+nmhmSNYtqtkXrkL29O7r
+         HMSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhf9W+uYvZwyYG+4RMssoSRumWPxH3U4pAfDPFLcjE+bLGgsQrLXhRvGwdSrcPctpLoJux3paoKeyilmb6WGFc43KENNpcxVuunSdk
+X-Gm-Message-State: AOJu0YzU4wfcxI61zDGel+Vu1wUJkkXtr8vh4Dy1DSRkVJudXO2iGke4
+	oWDA6pZnGpMSeg0CZbg6nHohAoHkSRZkqUxsZQbInGkP7K1aIN+AgwCDkbWdbo8=
+X-Google-Smtp-Source: AGHT+IHK4jmkVN706hYjIYQoimuJ3Ci3Gxn4jUrYR13K4WQUbZ0Trl+AvDCNQiX6/4Mz9j++jcnWfg==
+X-Received: by 2002:a05:6602:6103:b0:7f6:85d1:f81a with SMTP id ca18e2360f4ac-7f685d1fa0bmr38315939f.2.1720202007303;
+        Fri, 05 Jul 2024 10:53:27 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f6375116c3sm333608239f.30.2024.07.05.10.53.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 10:53:27 -0700 (PDT)
+Message-ID: <9b59fc84-2d78-4304-9f39-3a495e438af8@linuxfoundation.org>
+Date: Fri, 5 Jul 2024 11:53:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202407041656.3A05153@keescook>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] selftests/mm: remove partially duplicated "all:"
+ target in Makefile
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>,
+ Mark Brown <broonie@kernel.org>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Colin Ian King <colin.i.king@gmail.com>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240704023324.83564-1-jhubbard@nvidia.com>
+ <20240704023324.83564-3-jhubbard@nvidia.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240704023324.83564-3-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 04, 2024 at 05:04:03PM -0700, Kees Cook wrote:
-> On Thu, Jul 04, 2024 at 09:01:33PM +0200, Mickaël Salaün wrote:
-> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > allowed for execution.  The main use case is for script interpreters and
-> > dynamic linkers to check execution permission according to the kernel's
-> > security policy. Another use case is to add context to access logs e.g.,
-> > which script (instead of interpreter) accessed a file.  As any
-> > executable code, scripts could also use this check [1].
-> > 
-> > This is different than faccessat(2) which only checks file access
-> > rights, but not the full context e.g. mount point's noexec, stack limit,
-> > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > Since the use of AT_CHECK follows the exact kernel semantic as for a
-> > real execution, user space gets the same error codes.
+On 7/3/24 20:33, John Hubbard wrote:
+> There were a couple of errors here:
 > 
-> Nice! I much prefer this method of going through the exec machinery so
-> we always have a single code path for these kinds of checks.
+> 1. TEST_GEN_PROGS was incorrectly prepending $(OUTPUT) to each program
+> to be built. However, lib.mk already does that because it assumes "bare"
+> program names are passed in, so this ended up creating
+> $(OUTPUT)/$(OUTPUT)/file.c, which of course won't work as intended.
 > 
-> > Because AT_CHECK is dedicated to user space interpreters, it doesn't
-> > make sense for the kernel to parse the checked files, look for
-> > interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
-> > if the format is unknown.  Because of that, security_bprm_check() is
-> > never called when AT_CHECK is used.
+> 2. lib.mk was included before TEST_GEN_PROGS was set, which led to
+> lib.mk's "all:" target not seeing anything to rebuild.
 > 
-> I'd like some additional comments in the code that reminds us that
-> access control checks have finished past a certain point.
+> So nothing worked, which caused the author to force things by creating
+> an "all:" target locally--while still including ../lib.mk.
+> 
+> Fix all of this by including ../lib.mk at the right place, and removing
+> the $(OUTPUT) prefix to the programs to be built, and removing the
+> duplicate "all:" target.
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Where in the code? Just before the bprm->is_check assignment?
+Why does the summary say mm ?
 
-> 
-> [...]
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index 40073142288f..ea2a1867afdc 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -931,7 +931,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
-> >  		.lookup_flags = LOOKUP_FOLLOW,
-> >  	};
-> >  
-> > -	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-> > +	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_CHECK)) != 0)
-> >  		return ERR_PTR(-EINVAL);
-> >  	if (flags & AT_SYMLINK_NOFOLLOW)
-> >  		open_exec_flags.lookup_flags &= ~LOOKUP_FOLLOW;
-> [...]
-> > + * To avoid race conditions leading to time-of-check to time-of-use issues,
-> > + * AT_CHECK should be used with AT_EMPTY_PATH to check against a file
-> > + * descriptor instead of a path.
-> 
-> I want this enforced by the kernel. Let's not leave trivial ToCToU
-> foot-guns around. i.e.:
-> 
-> 	if ((flags & AT_CHECK) == AT_CHECK && (flags & AT_EMPTY_PATH) == 0)
->   		return ERR_PTR(-EBADF);
+  selftests/mm: remove partially duplicated "all:" target in Makefile
 
-There are valid use cases relying on pathnames. See Linus's comment:
-https://lore.kernel.org/r/CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com
+> ---
+>   tools/testing/selftests/vDSO/Makefile | 15 +++++++--------
+>   1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+> index d53a4d8008f9..209ede5de208 100644
+> --- a/tools/testing/selftests/vDSO/Makefile
+> +++ b/tools/testing/selftests/vDSO/Makefile
+> @@ -1,16 +1,15 @@
+>   # SPDX-License-Identifier: GPL-2.0
+> -include ../lib.mk
+> -
+>   uname_M := $(shell uname -m 2>/dev/null || echo not)
+>   ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+>   
+> -TEST_GEN_PROGS := $(OUTPUT)/vdso_test_gettimeofday $(OUTPUT)/vdso_test_getcpu
+> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_abi
+> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_clock_getres
+> +TEST_GEN_PROGS := vdso_test_gettimeofday
+> +TEST_GEN_PROGS += vdso_test_getcpu
+> +TEST_GEN_PROGS += vdso_test_abi
+> +TEST_GEN_PROGS += vdso_test_clock_getres
+>   ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+> -TEST_GEN_PROGS += $(OUTPUT)/vdso_standalone_test_x86
+> +TEST_GEN_PROGS += vdso_standalone_test_x86
+>   endif
+> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_correctness
+> +TEST_GEN_PROGS += vdso_test_correctness
+>   
+>   CFLAGS := -std=gnu99
+>   CFLAGS_vdso_standalone_test_x86 := -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
+> @@ -19,7 +18,7 @@ ifeq ($(CONFIG_X86_32),y)
+>   LDLIBS += -lgcc_s
+>   endif
+>   
+> -all: $(TEST_GEN_PROGS)
+> +include ../lib.mk
+>   $(OUTPUT)/vdso_test_gettimeofday: parse_vdso.c vdso_test_gettimeofday.c
+>   $(OUTPUT)/vdso_test_getcpu: parse_vdso.c vdso_test_getcpu.c
+>   $(OUTPUT)/vdso_test_abi: parse_vdso.c vdso_test_abi.c
+
+
+thanks,
+-- Shuah
 
