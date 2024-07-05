@@ -1,173 +1,432 @@
-Return-Path: <linux-kernel+bounces-242629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89F9928A9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:21:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4673B928AA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DC10B27061
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:21:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB9C1F26FBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A708615216D;
-	Fri,  5 Jul 2024 14:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B7116A94A;
+	Fri,  5 Jul 2024 14:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K8tSCCJu"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="zz/Tj5pg"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C48D16B39A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD20146A69
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720189276; cv=none; b=YAwuX6rVIGRlUvWK2P0vJ7HRmlIHa7px1rTKHLtuPOz0EnS1O+44VNHr4n+Mvb/6zBoN12kSZs0oFGDPN+yI3OTf7kkyFK91j+l/w5SMu8yQ3fodBmmqFUXRRtRJA6POD9wqeZGWZrCZCP4jTw8a0LMMbi3t9s7RNNjasCiaLDs=
+	t=1720189431; cv=none; b=uCozvf5mJsjAu88M+nNEQ9mjC23GyKYqdVQxjHaqQCawmbhFNy0OPXWqiYTx5jNwty6iypcvIM96g07XT8XqHqeZuLlfaqzOFyi8XkD/GdsuOaTuZiDy5vqWApYiBf0KTJ70/jacZFGbie25UWpfSsRovYyVUHwl5P87Lvfc7Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720189276; c=relaxed/simple;
-	bh=B6/NKTO7w9GO7UN/5d2CmkHyEASOH44vS00AdEQjRcw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N4un4uvMMJJWH53m8SpFa1+y+jy+1Bw61zkjXPs5S7GclchCzQv7mQ9IPctl8/B4tf1VypIxZm8teUcQLQmb9+t/4FgZYm9FaMqQm+DAQ9x7udipP8K/gWegAA+ocftdJB43YsPRl+4vCwyJ8yMKRichNqHnBUg9DDoJHE0SbOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K8tSCCJu; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720189273;
-	bh=B6/NKTO7w9GO7UN/5d2CmkHyEASOH44vS00AdEQjRcw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K8tSCCJuxIigCXGDl9w5gNLpXaP+vfXrDzluqKlAgZ91hsyowCRkGz7DyQLOJfmij
-	 kGNeLbeY9ThOM+zLaLPCUkM3f0d5s12hUHhx7oU/G3Qp5+ys1ijsN1yY11hQNXFcw6
-	 sFqAx/pJUWdjClpbOkY7GVfVJ8W1dZoE0/SF5/VOjmVyUzoJ/Gho57S4rNa1Xf2qWX
-	 3mf/iHcSp8kVANV2GU96IwoJBXTiK6LtB6YDACHfVtITb5fCQPDQi6zMaDVr04oI/P
-	 9o4gEvT8ZG30I0LYKaJandy4nPwe9ZsY0nHAxhwOXyjHqvC5L425HCgq6OUh5hCOKl
-	 TiwFJOd4PJIyw==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2E9F037813B9;
-	Fri,  5 Jul 2024 14:21:13 +0000 (UTC)
-From: Laura Nao <laura.nao@collabora.com>
-To: laura.nao@collabora.com
-Cc: kernel@collabora.com,
-	linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev,
-	mingo@kernel.org
-Subject: Re: [REGRESSION] next boot regression caused by RIP: 0010:usercopy_abort+0x74/0x76 kernel panic
-Date: Fri,  5 Jul 2024 16:21:30 +0200
-Message-Id: <20240705142130.928396-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240607151439.175035-1-laura.nao@collabora.com>
-References: <20240607151439.175035-1-laura.nao@collabora.com>
+	s=arc-20240116; t=1720189431; c=relaxed/simple;
+	bh=6B1rAOgRokr1VuehUKLFRuKgc9htcXW/gdaw56Lm6AE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=TkiGbETfwUn+Qlev3PtXPe4ukJBnLpxbEAyY69Gck7IC3814v4J5g/KtuYLn8ZntpqcsLgqIEC3PBs7V3OOoUdkv0+mCiLFwzaxP6uR8sVaT7dbe2iAqiIzwnWT3ClqfVXiMeUeqVAiJbN6v3XK4OCEfKvYOyX3powNXKC7G+JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=zz/Tj5pg; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e9f788e7bso1807228e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 07:23:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1720189426; x=1720794226; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EhHj49GZBv3zl/hokFRERQnZxwaRp5ZfuhjFNNzUNh8=;
+        b=zz/Tj5pgfHNze3iG4MF5q1uGfryJZlyhJO60SZQMizhmUwgyvPxh9+OjOP2f4qtpTa
+         XDutToNY6eGoIl0/4PdRQDBp2PeeKG37/V8TkLc5fGP64+pfMXCaAgbxGFq0MnJKUadX
+         MbcZ7dXOrfDJqIOaE06xF9ID9WaGymRJv8m1SdHuluJ6x0PL9jjRinXg+dc3cLZXaXFL
+         7KcaIlIsUzJAhOvRSS9CSVaCopa1CyEBvjZb9B9VGhXFQ2ZFtHbVMnHqCE4wD6YMTa21
+         0CSC8oeD1LVC+qtm7SPpOHqUQul/6YisdUXOVKhQDFK+YQY/I4vSU1kM0MMJ6jVFN5Zc
+         fIOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720189426; x=1720794226;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EhHj49GZBv3zl/hokFRERQnZxwaRp5ZfuhjFNNzUNh8=;
+        b=Kodl3xcgeK7dIM0xD81LqVmZKRlnsRQwiFIyiP//XFw12tEwxRGyUvMAhxvZwDusqY
+         PkQeHeLHHd9l1XwTSaJKzeFO2g96ucrfHFRm4kF2G4gocXB5HvHw4Rz/+DBq6ylCs7Yk
+         DAC5oydb8w8WgRQPyBTU816y9ndeHvHqs9rdKt18NiqalchOOZ8Ox3Q30pdBwhrY3Gkg
+         smp7p9F5JKeUK2ggnKyHSLg8DtckMIrXb7osXAjaqLdJ2gPLEQtb84GPHdFhD5Qjopk2
+         bt3pzIV6eVXl/ErOMXtDSAVp7G2yGlQ+aVuRhGUfvsYq7Frh5HljDihBO2UpiK+Y6EFl
+         hGow==
+X-Forwarded-Encrypted: i=1; AJvYcCW4/u0DV5xPB4SnlmB6OERbqtDzpx7D0et+gV3fhVQxB07IU0K1UwvX3qXPZ+3TG7LSuH5tmKmDeOWiOTgsgsPPKU5kX0jUoX9SF/Fx
+X-Gm-Message-State: AOJu0Yzp3gBBoqKkgrZBGbVkkFOCVG2iMznLqMfNSyEOKQh/VxcOp4nJ
+	UAP2sao8MtWpMC2zK4TJC6w/IPXEfrbM2L9Aq4QLP2c278s24EqTjP3TSLFO7Cd7gvqkCYORkUI
+	/
+X-Google-Smtp-Source: AGHT+IH/Vjd+6IBJc5fBd1nQSj01tTwzhRLpJTAG2Bm5+dEHblIvyY138m8h06tGQbQoierRc0bhLg==
+X-Received: by 2002:ac2:598e:0:b0:52e:9c63:5fe8 with SMTP id 2adb3069b0e04-52ea06b77camr3198699e87.54.1720189426415;
+        Fri, 05 Jul 2024 07:23:46 -0700 (PDT)
+Received: from localhost (2a02-a210-20ba-5a00-9ceb-707b-2d57-26f7.cable.dynamic.v6.ziggo.nl. [2a02:a210:20ba:5a00:9ceb:707b:2d57:26f7])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab3b0d0sm2847708e87.261.2024.07.05.07.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 07:23:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Jul 2024 16:23:44 +0200
+Message-Id: <D2HO9CAE81NA.3UIL5UZ1N5I4W@fairphone.com>
+Cc: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David
+ Collins" <quic_collinsd@quicinc.com>, "Subbaraman Narayanamurthy"
+ <quic_subbaram@quicinc.com>
+Subject: Re: [PATCH RESEND v3] leds: flash: leds-qcom-flash: limit LED
+ current based on thermal condition
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: <quic_fenglinw@quicinc.com>, <kernel@quicinc.com>,
+ <linux-arm-msm@vger.kernel.org>, "Pavel Machek" <pavel@ucw.cz>, "Lee Jones"
+ <lee@kernel.org>
+X-Mailer: aerc 0.17.0-0-g6ea74eb30457
+References: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
+In-Reply-To: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
 
-On 6/7/24 17:14, Laura Nao wrote:
-> Hello,
-> 
-> KernelCI has detected a boot regression affecting all AMD and Intel
-> Chromebooks in the Collabora LAVA lab, occurring between next-20240605
-> and next-20240606.
-> 
-> The following kernel panic has been reported in the logs. The trace
-> provided below is from an Acer Chromebook 317, with similar traces
-> observed on other devices:
-> 
-> [    5.944268] RIP: 0010:usercopy_abort+0x74/0x76
-> [    5.944276] Code: 0f 89 9f 51 48 0f 45 d6 49 c7 c3 ac c1 7c 9f 4c 89 d1 57 48 c7 c6 38 54 7b 9f 48 c7 c7 b5 c1 7c 9f 49 0f 45 f3 e8 b9 8c e4 ff <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00
-> [    5.944278] RSP: 0000:ffffb01e8001fb90 EFLAGS: 00010246
-> [    5.944280] RAX: 0000000000000068 RBX: 0000000000000d80 RCX: 0000000000000000
-> [    5.944281] RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> [    5.944282] RBP: 0000000000000000 R08: 0000000000000003 R09: 2079726f6d656d20
-> [    5.944284] R10: 79706f6372657375 R11: 79706f6372657375 R12: ffff8e7b400a8800
-> [    5.944285] R13: 0000000000000d80 R14: 0000000000000000 R15: 00000000ff879a40
-> [    5.944286] FS:  0000000000000000(0003) GS:ffff8e7bc0100000(0063) knlGS:00000000eca4d440
-> [    5.944288] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> [    5.944289] CR2: 00000000080e61d0 CR3: 0000000107002000 CR4: 0000000000350ef0
-> [    5.944290] Call Trace:
-> [    5.944293]  <TASK>
-> [    5.944295]  ? __die_body+0x1b/0x5d
-> [    5.944300]  ? die+0x31/0x4b
-> [    5.944303]  ? do_trap+0x7c/0xfe
-> [    5.944306]  ? usercopy_abort+0x74/0x76
-> [    5.944309]  ? usercopy_abort+0x74/0x76
-> [    5.944312]  ? do_error_trap+0x6f/0x99
-> [    5.944315]  ? usercopy_abort+0x74/0x76
-> [    5.944318]  ? exc_invalid_op+0x4e/0x65
-> [    5.944321]  ? usercopy_abort+0x74/0x76
-> [    5.944324]  ? asm_exc_invalid_op+0x16/0x20
-> [    5.944327]  ? usercopy_abort+0x74/0x76
-> [    5.944330]  __check_heap_object+0xcb/0x110
-> [    5.944334]  __check_object_size+0x181/0x26d
-> [    5.944336]  copy_from_buffer+0x43/0x66
-> [    5.944340]  copy_uabi_to_xstate+0x113/0x194
-> [    5.944343]  __fpu_restore_sig+0x3a3/0x4be
-> [    5.944347]  fpu__restore_sig+0x6c/0x83
-> [    5.944350]  ia32_restore_sigcontext+0x14e/0x16d
-> [    5.944354]  __do_compat_sys_sigreturn+0x7b/0xbc
-> [    5.944357]  do_int80_emulation+0xad/0xd3
-> [    5.944360]  ? handle_mm_fault+0x10e/0x199
-> [    5.944363]  ? exc_page_fault+0x27b/0x42f
-> [    5.944365]  ? fpregs_assert_state_consistent+0x22/0x47
-> [    5.944368]  ? clear_bhb_loop+0x45/0xa0
-> [    5.944370]  ? clear_bhb_loop+0x45/0xa0
-> [    5.944372]  ? clear_bhb_loop+0x45/0xa0
-> [    5.944374]  ? clear_bhb_loop+0x45/0xa0
-> [    5.944375]  ? clear_bhb_loop+0x45/0xa0
-> [    5.944377]  ? clear_bhb_loop+0xe/0xa0
-> [    5.944379]  asm_int80_emulation+0x16/0x20
-> [    5.944382] RIP: 0023:0xeca52579
-> [    5.944384] Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-> [    5.944386] RSP: 002b:00000000ff879cbc EFLAGS: 00000246
-> [    5.944387] RAX: 0000000000000060 RBX: 00000000ffffffff RCX: 00000000ff879d08
-> [    5.944389] RDX: 0000000000000000 RSI: 0000000009b111a0 RDI: 00000000ff879d08
-> [    5.944390] RBP: 00000000080d1801 R08: 0000000000000000 R09: 0000000000000000
-> [    5.944391] R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
-> [    5.944392] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> [    5.944393]  </TASK>
-> [    5.944394] Modules linked in:
-> [    5.944433] ---[ end trace 0000000000000000 ]---
-> [    6.287986] RIP: 0010:usercopy_abort+0x74/0x76
-> [    6.293033] Code: 0f 89 9f 51 48 0f 45 d6 49 c7 c3 ac c1 7c 9f 4c 89 d1 57 48 c7 c6 38 54 7b 9f 48 c7 c7 b5 c1 7c 9f 49 0f 45 f3 e8 b9 8c e4 ff <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00
-> [    6.313975] RSP: 0000:ffffb01e8001fb90 EFLAGS: 00010246
-> [    6.319810] RAX: 0000000000000068 RBX: 0000000000000d80 RCX: 0000000000000000
-> [    6.327780] RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> [    6.335744] RBP: 0000000000000000 R08: 0000000000000003 R09: 2079726f6d656d20
-> [    6.343710] R10: 79706f6372657375 R11: 79706f6372657375 R12: ffff8e7b400a8800
-> [    6.351678] R13: 0000000000000d80 R14: 0000000000000000 R15: 00000000ff879a40
-> [    6.359646] FS:  0000000000000000(0003) GS:ffff8e7bc0000000(0063) knlGS:00000000eca4d440
-> [    6.368680] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> [    6.375098] CR2: 00000000f322e480 CR3: 0000000107002000 CR4: 0000000000350ef0
-> [    6.383065] Kernel panic - not syncing: Fatal exception
-> [    6.388907] Kernel Offset: 0x1ba00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> 
-> The full kernel log is available on [1]. The config used was the
-> upstream x86_64 defconfig with a fragment applied on top [2].
-> 
-> The issue is still present on next-20240607.
-> 
-> I'm sending this report to track the regression while a fix is
-> identified. I'll investigate the issue/run a bisection and report back
-> with the results.
+On Fri Jul 5, 2024 at 9:55 AM CEST, Fenglin Wu via B4 Relay wrote:
+> From: Fenglin Wu <quic_fenglinw@quicinc.com>
 >
+> The flash module has status bits to indicate different thermal
+> conditions which are called as OTSTx. For each OTSTx status,
+> there is a recommended total flash current for all channels to
+> prevent the flash module entering into higher thermal level.
+> For example, the total flash current should be limited to 1000mA/500mA
+> respectively when the HW reaches the OTST1/OTST2 thermal level.
 
-Reverting this series fixes the issue first observed in next-20240606
-(CC Ingo):
-https://lore.kernel.org/all/20240605083557.2051480-1-mingo@kernel.org/
+Hi Fenglin,
 
-The issue is no longer present as of next-20240703, where the series was
-dropped. I'm marking this as resolved for now.
+Only semi-related to this patch, but I wanted to ask.
 
-Thanks,
+Since most phones with a flash also have a thermistor for the flash led,
+is there any plan to add support to be able to declare the flash led to
+be a "cooling-device" for the relevant thermal zone? That way from a
+Linux thermal API standpoint when the zone gets too hot that it can ask
+the driver to throttle the brightness or turn the LED off completely.
 
-Laura
+Right now the only action the kernel can take is with type 'critical' to
+just kill the entire system to mitigate the thermal situation.
 
-#regzbot link: https://lore.kernel.org/all/20240605083557.2051480-1-mingo@kernel.org/
-#regzbot resolve: not occurring on next-20240703
- 
+Regards
+Luca
+
+>
+> Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+> ---
+> Changes in v3:
+> - Fix coding style issues to address review comments in v2.
+> - Link to v2: https://lore.kernel.org/r/20240513-qcom_flash_thermal_derat=
+ing-v2-1-e41a07d0eb83@quicinc.com
+>
+> Changes in v2:
+> - Update thermal threshold level 2 register definition for mvflash_4ch_re=
+gs.
+>     Mvflash_4ch module thermal threshold level 2 configuration register
+>     offset is 0x78, not succeeding from thermal threshold level 1 registe=
+r 0x7a.
+>     Hence it is not appropriate to use REG_FIELD_ID to define thermal thr=
+eshold
+>     register fileds like mvflash_3ch. Update to use REG_FIELD instead.
+> - Link to v1: https://lore.kernel.org/r/20240509-qcom_flash_thermal_derat=
+ing-v1-1-1d5e68e5d71c@quicinc.com
+> ---
+>  drivers/leds/flash/leds-qcom-flash.c | 163 +++++++++++++++++++++++++++++=
++++++-
+>  1 file changed, 162 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/le=
+ds-qcom-flash.c
+> index 7c99a3039171..aa22686fafe0 100644
+> --- a/drivers/leds/flash/leds-qcom-flash.c
+> +++ b/drivers/leds/flash/leds-qcom-flash.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserv=
+ed.
+> + * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights =
+reserved.
+>   */
+> =20
+>  #include <linux/bitfield.h>
+> @@ -14,6 +14,9 @@
+>  #include <media/v4l2-flash-led-class.h>
+> =20
+>  /* registers definitions */
+> +#define FLASH_REVISION_REG		0x00
+> +#define FLASH_4CH_REVISION_V0P1		0x01
+> +
+>  #define FLASH_TYPE_REG			0x04
+>  #define FLASH_TYPE_VAL			0x18
+> =20
+> @@ -73,6 +76,16 @@
+> =20
+>  #define UA_PER_MA			1000
+> =20
+> +/* thermal threshold constants */
+> +#define OTST_3CH_MIN_VAL		3
+> +#define OTST1_4CH_MIN_VAL		0
+> +#define OTST1_4CH_V0P1_MIN_VAL		3
+> +#define OTST2_4CH_MIN_VAL		0
+> +
+> +#define OTST1_MAX_CURRENT_MA		1000
+> +#define OTST2_MAX_CURRENT_MA		500
+> +#define OTST3_MAX_CURRENT_MA		200
+> +
+>  enum hw_type {
+>  	QCOM_MVFLASH_3CH,
+>  	QCOM_MVFLASH_4CH,
+> @@ -98,6 +111,9 @@ enum {
+>  	REG_IRESOLUTION,
+>  	REG_CHAN_STROBE,
+>  	REG_CHAN_EN,
+> +	REG_THERM_THRSH1,
+> +	REG_THERM_THRSH2,
+> +	REG_THERM_THRSH3,
+>  	REG_MAX_COUNT,
+>  };
+> =20
+> @@ -111,6 +127,9 @@ static struct reg_field mvflash_3ch_regs[REG_MAX_COUN=
+T] =3D {
+>  	REG_FIELD(0x47, 0, 5),                  /* iresolution	*/
+>  	REG_FIELD_ID(0x49, 0, 2, 3, 1),         /* chan_strobe	*/
+>  	REG_FIELD(0x4c, 0, 2),                  /* chan_en	*/
+> +	REG_FIELD(0x56, 0, 2),			/* therm_thrsh1 */
+> +	REG_FIELD(0x57, 0, 2),			/* therm_thrsh2 */
+> +	REG_FIELD(0x58, 0, 2),			/* therm_thrsh3 */
+>  };
+> =20
+>  static struct reg_field mvflash_4ch_regs[REG_MAX_COUNT] =3D {
+> @@ -123,6 +142,8 @@ static struct reg_field mvflash_4ch_regs[REG_MAX_COUN=
+T] =3D {
+>  	REG_FIELD(0x49, 0, 3),			/* iresolution	*/
+>  	REG_FIELD_ID(0x4a, 0, 6, 4, 1),		/* chan_strobe	*/
+>  	REG_FIELD(0x4e, 0, 3),			/* chan_en	*/
+> +	REG_FIELD(0x7a, 0, 2),			/* therm_thrsh1 */
+> +	REG_FIELD(0x78, 0, 2),			/* therm_thrsh2 */
+>  };
+> =20
+>  struct qcom_flash_data {
+> @@ -130,9 +151,11 @@ struct qcom_flash_data {
+>  	struct regmap_field     *r_fields[REG_MAX_COUNT];
+>  	struct mutex		lock;
+>  	enum hw_type		hw_type;
+> +	u32			total_ma;
+>  	u8			leds_count;
+>  	u8			max_channels;
+>  	u8			chan_en_bits;
+> +	u8			revision;
+>  };
+> =20
+>  struct qcom_flash_led {
+> @@ -143,6 +166,7 @@ struct qcom_flash_led {
+>  	u32				max_timeout_ms;
+>  	u32				flash_current_ma;
+>  	u32				flash_timeout_ms;
+> +	u32				current_in_use_ma;
+>  	u8				*chan_id;
+>  	u8				chan_count;
+>  	bool				enabled;
+> @@ -172,6 +196,127 @@ static int set_flash_module_en(struct qcom_flash_le=
+d *led, bool en)
+>  	return rc;
+>  }
+> =20
+> +static int update_allowed_flash_current(struct qcom_flash_led *led, u32 =
+*current_ma, bool strobe)
+> +{
+> +	struct qcom_flash_data *flash_data =3D led->flash_data;
+> +	u32 therm_ma, avail_ma, thrsh[3], min_thrsh, sts;
+> +	int rc =3D 0;
+> +
+> +	mutex_lock(&flash_data->lock);
+> +	/*
+> +	 * Put previously allocated current into allowed budget in either of th=
+ese two cases:
+> +	 * 1) LED is disabled;
+> +	 * 2) LED is enabled repeatedly
+> +	 */
+> +	if (!strobe || led->current_in_use_ma !=3D 0) {
+> +		if (flash_data->total_ma >=3D led->current_in_use_ma)
+> +			flash_data->total_ma -=3D led->current_in_use_ma;
+> +		else
+> +			flash_data->total_ma =3D 0;
+> +
+> +		led->current_in_use_ma =3D 0;
+> +		if (!strobe)
+> +			goto unlock;
+> +	}
+> +
+> +	/*
+> +	 * Cache the default thermal threshold settings, and set them to the lo=
+west levels before
+> +	 * reading over-temp real time status. If over-temp has been triggered =
+at the lowest
+> +	 * threshold, it's very likely that it would be triggered at a higher (=
+default) threshold
+> +	 * when more flash current is requested. Prevent device from triggering=
+ over-temp condition
+> +	 * by limiting the flash current for the new request.
+> +	 */
+> +	rc =3D regmap_field_read(flash_data->r_fields[REG_THERM_THRSH1], &thrsh=
+[0]);
+> +	if (rc < 0)
+> +		goto unlock;
+> +
+> +	rc =3D regmap_field_read(flash_data->r_fields[REG_THERM_THRSH2], &thrsh=
+[1]);
+> +	if (rc < 0)
+> +		goto unlock;
+> +
+> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_3CH) {
+> +		rc =3D regmap_field_read(flash_data->r_fields[REG_THERM_THRSH3], &thrs=
+h[2]);
+> +		if (rc < 0)
+> +			goto unlock;
+> +	}
+> +
+> +	min_thrsh =3D OTST_3CH_MIN_VAL;
+> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_4CH)
+> +		min_thrsh =3D (flash_data->revision =3D=3D FLASH_4CH_REVISION_V0P1) ?
+> +			OTST1_4CH_V0P1_MIN_VAL : OTST1_4CH_MIN_VAL;
+> +
+> +	rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH1], min_t=
+hrsh);
+> +	if (rc < 0)
+> +		goto unlock;
+> +
+> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_4CH)
+> +		min_thrsh =3D OTST2_4CH_MIN_VAL;
+> +
+> +	/*
+> +	 * The default thermal threshold settings have been updated hence
+> +	 * restore them if any fault happens starting from here.
+> +	 */
+> +	rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH2], min_t=
+hrsh);
+> +	if (rc < 0)
+> +		goto restore;
+> +
+> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_3CH) {
+> +		rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH3], min_=
+thrsh);
+> +		if (rc < 0)
+> +			goto restore;
+> +	}
+> +
+> +	/* Read thermal level status to get corresponding derating flash curren=
+t */
+> +	rc =3D regmap_field_read(flash_data->r_fields[REG_STATUS2], &sts);
+> +	if (rc)
+> +		goto restore;
+> +
+> +	therm_ma =3D FLASH_TOTAL_CURRENT_MAX_UA / 1000;
+> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_3CH) {
+> +		if (sts & FLASH_STS_3CH_OTST3)
+> +			therm_ma =3D OTST3_MAX_CURRENT_MA;
+> +		else if (sts & FLASH_STS_3CH_OTST2)
+> +			therm_ma =3D OTST2_MAX_CURRENT_MA;
+> +		else if (sts & FLASH_STS_3CH_OTST1)
+> +			therm_ma =3D OTST1_MAX_CURRENT_MA;
+> +	} else {
+> +		if (sts & FLASH_STS_4CH_OTST2)
+> +			therm_ma =3D OTST2_MAX_CURRENT_MA;
+> +		else if (sts & FLASH_STS_4CH_OTST1)
+> +			therm_ma =3D OTST1_MAX_CURRENT_MA;
+> +	}
+> +
+> +	/* Calculate the allowed flash current for the request */
+> +	if (therm_ma <=3D flash_data->total_ma)
+> +		avail_ma =3D 0;
+> +	else
+> +		avail_ma =3D therm_ma - flash_data->total_ma;
+> +
+> +	*current_ma =3D min_t(u32, *current_ma, avail_ma);
+> +	led->current_in_use_ma =3D *current_ma;
+> +	flash_data->total_ma +=3D led->current_in_use_ma;
+> +
+> +	dev_dbg(led->flash.led_cdev.dev, "allowed flash current: %dmA, total cu=
+rrent: %dmA\n",
+> +					led->current_in_use_ma, flash_data->total_ma);
+> +
+> +restore:
+> +	/* Restore to default thermal threshold settings */
+> +	rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH1], thrsh=
+[0]);
+> +	if (rc < 0)
+> +		goto unlock;
+> +
+> +	rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH2], thrsh=
+[1]);
+> +	if (rc < 0)
+> +		goto unlock;
+> +
+> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_3CH)
+> +		rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH3], thrs=
+h[2]);
+> +
+> +unlock:
+> +	mutex_unlock(&flash_data->lock);
+> +	return rc;
+> +}
+> +
+>  static int set_flash_current(struct qcom_flash_led *led, u32 current_ma,=
+ enum led_mode mode)
+>  {
+>  	struct qcom_flash_data *flash_data =3D led->flash_data;
+> @@ -313,6 +458,10 @@ static int qcom_flash_strobe_set(struct led_classdev=
+_flash *fled_cdev, bool stat
+>  	if (rc)
+>  		return rc;
+> =20
+> +	rc =3D update_allowed_flash_current(led, &led->flash_current_ma, state)=
+;
+> +	if (rc < 0)
+> +		return rc;
+> +
+>  	rc =3D set_flash_current(led, led->flash_current_ma, FLASH_MODE);
+>  	if (rc)
+>  		return rc;
+> @@ -429,6 +578,10 @@ static int qcom_flash_led_brightness_set(struct led_=
+classdev *led_cdev,
+>  	if (rc)
+>  		return rc;
+> =20
+> +	rc =3D update_allowed_flash_current(led, &current_ma, enable);
+> +	if (rc < 0)
+> +		return rc;
+> +
+>  	rc =3D set_flash_current(led, current_ma, TORCH_MODE);
+>  	if (rc)
+>  		return rc;
+> @@ -703,6 +856,14 @@ static int qcom_flash_led_probe(struct platform_devi=
+ce *pdev)
+>  		flash_data->hw_type =3D QCOM_MVFLASH_4CH;
+>  		flash_data->max_channels =3D 4;
+>  		regs =3D mvflash_4ch_regs;
+> +
+> +		rc =3D regmap_read(regmap, reg_base + FLASH_REVISION_REG, &val);
+> +		if (rc < 0) {
+> +			dev_err(dev, "Failed to read flash LED module revision, rc=3D%d\n", r=
+c);
+> +			return rc;
+> +		}
+> +
+> +		flash_data->revision =3D val;
+>  	} else {
+>  		dev_err(dev, "flash LED subtype %#x is not yet supported\n", val);
+>  		return -ENODEV;
+>
+> ---
+> base-commit: ca66b10a11da3c445c9c0ca1184f549bbe9061f2
+> change-id: 20240507-qcom_flash_thermal_derating-260b1f3c757c
+>
+> Best regards,
+
 
