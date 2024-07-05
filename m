@@ -1,126 +1,233 @@
-Return-Path: <linux-kernel+bounces-241984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703D492822E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:39:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5ACF928233
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A148D1C229BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40D321F276A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453181448D4;
-	Fri,  5 Jul 2024 06:39:18 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031101442FC;
+	Fri,  5 Jul 2024 06:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S20Cmxoy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF32C13791C;
-	Fri,  5 Jul 2024 06:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720161557; cv=none; b=ABh8i86aJtHTijSQSj91XdEEvKWUwI0dDjH0aWOOlOcSwXWHsMl85iVJBkr+U7CmSlzxyQ8xdECbj1c7v/0PEohZpa64Hv17A78gpp3KldyHKWBPMtrJJOq2YZ8xUhYAh1cIuoZ1N8iTTDhWWlASn9tWdslZnxNqKt5FMRL8ejo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720161557; c=relaxed/simple;
-	bh=GzgqHGbWqTLMocgiuSblg7y8irfEU3WvGTYpGyhPPWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrqUOpyyIlIXX8T88q2xmA/nftGM1+DTonvUQ56S4NobD0ZNAtQSBm6KpA4vOZE0WboEM1uQ0ct81Dd+QH+dPYqXoXky6zBd1iDU8RhBByZFaCH5eI9YItBiH/eQV10SYtAlxrsAmzAuAuxzpaENgCGxM83egta2F6PcBDr4pvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B3F8468AA6; Fri,  5 Jul 2024 08:39:10 +0200 (CEST)
-Date: Fri, 5 Jul 2024 08:39:10 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, "Zeng, Oak" <oak.zeng@intel.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
-Message-ID: <20240705063910.GA12337@lst.de>
-References: <cover.1719909395.git.leon@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1645D67A0D;
+	Fri,  5 Jul 2024 06:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720161647; cv=fail; b=LhLgf/Z1Hbme4EkYdvadQoRNfsnpomEDQHa6Ub7NM+iI1xYWdT56HE354WPrTRki7pFU9vJswuyRLANcjqDXyN+D8JnEVS+DebKfI7A2qcoS/ZFW+DRKG2gSyiihv0msvP/zWVsUUQcjTUWRwEhE/a1L2ypHysnEz8ZJLgdb+VY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720161647; c=relaxed/simple;
+	bh=fduouayZ597Mvg4c9J4mRwG/kXthJp8+ZXyJwZvfAbU=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kXElQQXWtIoXEiBpnAKz0cBVblNeh6/oe2hrKm9APymaLm3DjI+6aPT8ikHWAphks+CcLkAyV6GQ9SG+Xyh8oF+yxFGWwPSFh78IbB2A8aeb6NRZZePyOEu9JONZyKX2XvygPKKNiII7RtKWq31Wpcu4UQKJKN8bx4UYaeoLyig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S20Cmxoy; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720161645; x=1751697645;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=fduouayZ597Mvg4c9J4mRwG/kXthJp8+ZXyJwZvfAbU=;
+  b=S20CmxoyQUlOAXo4CXa/p4RiIeU85XyvhauCW2oZbtVsmKUUKjDGR92j
+   T5bc/bRa7tRsyVqaOlgMnwqedl0ujbeJXCcc5jf9v2mYCOw1cOaW5gAu8
+   2wldru4WvsrUAdjGW5tSoMH7rQ4HJBrqyAhhD787Br+6ETmGYL/+IjK0k
+   Gq3AYUAyZnnIMyo5WiSXJVntiLprUQZQuMbXZvvE8bl8F9yfW+qk7nryn
+   M9ITBL2dMr269dDRLRVc5jfAw6RB5hZvgrEGEWjPp7JghdR8VjqzGOBW1
+   +ebG2SZ9UrD3ZRIfYEEcONbvyZl+ELkTiYbvwSnPE9rkEtpHW7FUaE8S5
+   Q==;
+X-CSE-ConnectionGUID: /SRxWB4eSa+00YDC+V35lw==
+X-CSE-MsgGUID: jE6oz7eOTi2r5A2VLegeMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="34985146"
+X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
+   d="scan'208";a="34985146"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 23:40:44 -0700
+X-CSE-ConnectionGUID: UMvomVJTQRiEHm0Uz5Palw==
+X-CSE-MsgGUID: TBF3+/eGQje3fEwyj/aWjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
+   d="scan'208";a="46902614"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Jul 2024 23:40:43 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 4 Jul 2024 23:40:42 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 4 Jul 2024 23:40:42 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 4 Jul 2024 23:40:42 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.175)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 4 Jul 2024 23:40:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YWfYhViUC2JXAeDU5L9jYQ5PFiGKanfb+6F1kL0m2wNQ6WNp0spkSKs80VZOghdA8WmQ3pV5wHeR8lFHMop7QG50dzZqL6M4jqgGt6pzbWpiC7Lgqjzg0oXNyNdIuPBqq/a7OitXU5nvwkUzhefLsDNRL4mROKsTIDyt/Qmvv/PV4v2cakNpTFToxQKRamD5kxSwdEG7hULY6Y/6bcKnQFwaFSvfI6R/tB+X89Q7jHPMJuu1ciabyHdU6X9l62AQyzqUpHDexSCRKZnv+eDjc2Rngppt+mEdze8+oQOA9zaQiQHeWwe3GbMqAb0kz5SMu7abe81dv3kZB0R1JloyPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CrlGu+1G58gb9MxitZd3OGchYalGm9Q8YmVEDI0hHgE=;
+ b=D6OUCtT4NESgoVYdCzD2H1AOTL8iqeikz7m5uqO8TLM3HafMWQ3Z1m6VD1egRc1L0PlYA0xzZgcUnGT9THQ6/FYdjPMiZUU/YLGPNvfinpb0KAreqLtUkkjJX+5Wcmjsru/wWv7rNiGb0Dh7tl8bxE+RUPKLZDTfK9JVbjtvpdbA1QxHsAMnzcXwsD5xUmphJIOx1Gi30+/shBnuWshvqK2khPI6Z4isEctvUHxSSGcOY+b9Ax+xjS56lqDi4jecrmq4E1pGEnyRdwZa2EecUmnuuqGhCiZLhIlVIMzLEZFzECu9HX3r/jAKzk3P6BoaX62pZzmGgZkfXECJeOlkLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by PH0PR11MB5782.namprd11.prod.outlook.com (2603:10b6:510:147::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29; Fri, 5 Jul
+ 2024 06:40:34 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%7]) with mapi id 15.20.7741.017; Fri, 5 Jul 2024
+ 06:40:34 +0000
+Message-ID: <bffbfd82-5949-4796-ba54-b679f608e346@intel.com>
+Date: Fri, 5 Jul 2024 08:40:27 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: networking: devlink: capitalise length value
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, <corbet@lwn.net>
+CC: <linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Jiri Pirko <jiri@resnulli.us>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+References: <20240705041935.2874003-1-chris.packham@alliedtelesis.co.nz>
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Content-Language: en-US
+In-Reply-To: <20240705041935.2874003-1-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR2P278CA0009.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:50::18) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1719909395.git.leon@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|PH0PR11MB5782:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7619b79-97f9-413a-4ffa-08dc9cbd5f97
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TkE4VzloTDBSU0g5V2dvVnNBTXhhVHI2ZGtPc05DUUVGMXcwNVpsOVk4TTYr?=
+ =?utf-8?B?WHhTemFLRHl3OHpLcXhXVnRMSDgyM004UWk0TU9XR0xDMlVsSWp2aWFCMnBm?=
+ =?utf-8?B?ekg5SzNaT1J2emk0bHkrSTI2Wlc0TlZOb0RlNDRnV1Rxc1pMZGd4a1BiOEty?=
+ =?utf-8?B?L1NLY04zTnVxSDcvL1daSWpwV0pNR2FTL2NIYU9LbWhKeitCRW9QVW1kRHg3?=
+ =?utf-8?B?amIwYStBem1rbkpFZlI2MWhPQU80aU9EWkVpOXZPQm40ZDU5NWhMZ0RtV0JU?=
+ =?utf-8?B?Y0E4ZEN1aEJtL0RmeEtRZXFMQzJqVjdhQWcxYVMzRTJXakRJNkFKMnI5SGRr?=
+ =?utf-8?B?a0I3ZElDMndrdENNQ2pOZG5Ba3ZaOUprVHcydFpDTnpNcFhRNmRwYjVob3pa?=
+ =?utf-8?B?cW1sQnRqY0ZhcTdMQkM4QmRWc1ZjRTlxazdkUzFKbm5WZEI2Y1h0SDZ6T3F6?=
+ =?utf-8?B?TnBUMGZ5WEIxMzJLcGVodVB1Q1dTWnErWGdmRFJKckRzMmRLdml2NHZwZUFZ?=
+ =?utf-8?B?VHZaMExXVEZLTUowZ253aHpXSXhaZ3graFlWS2tya1VjenFUSEl4MldjQmlZ?=
+ =?utf-8?B?UVpuK3RucDVNWnp3SE9FakE1M3pMY09QSFpUUEZSTDd5NWEvYWZYWnJSbloy?=
+ =?utf-8?B?cDlLN0QxMUVmb3BZd2VzUDhYNTFiTU80YlpOekM4V0xCbVFjWlpVRm41dGJE?=
+ =?utf-8?B?ZjBIK2QxOVNKNFJCbmFGMkQxUjIwWGFqMnN0Y1lVc2NQdng4S0NuYnRMd2RR?=
+ =?utf-8?B?akc5YVBqdHhvVDBOVEhOdnp6QXpqcmk0NHZMMks5NzAxR0s0aktIZGFONVhD?=
+ =?utf-8?B?ekptbEo2VFBCTWxkSWlEN1VobUJlMFRtZDVwdDBLZjdWUzhVVWdiWlcvdnRr?=
+ =?utf-8?B?OTl1c2ZGQTZhamNSYlFTTFZmQVNSSFlSODVzVUFrc0ZLaEJZeDB5ZGsrcFhD?=
+ =?utf-8?B?RXlYYXF1SkpLaVFvVkM0dCs5R3Z4Sm9mWDFQRGZRTUNSbXFwU0N0WlI3SkQ0?=
+ =?utf-8?B?dnlWWld4WVV4WHNrK3B6QTJrRVhWOU9zUzlnQlR4QThEREdneEkwN0YwYlda?=
+ =?utf-8?B?Qjc3aFRhaU4vQS9MbG9Tajc0ZWtoMlA4L1hyaHRsV0x3cllNUytZTjd1WnZM?=
+ =?utf-8?B?V0R4SWpTRHVPbFF4ZDFKalpZRmZESHNhanhHa0xJNWxOTktpMlZKaksyaCt5?=
+ =?utf-8?B?cjNjYkJ3RjJaajg0cy9UUkcvU2lGLzJYMktJNmV6VVVhOTVXbUwrUmJOTFJC?=
+ =?utf-8?B?WkFWUjAxMXRYYlJEbTdCYzFyTGJJcTV0UkdqbnZBblJxZ3lVM2VaaVg3R2xT?=
+ =?utf-8?B?MDlMamJDKzdxR2w3VFRwUUZublhMVU16bWUyVUI5OHdGOEFzWUU0aFk3M1hG?=
+ =?utf-8?B?b3VDSU1GYWlUUjB3Vm9tR1k2YzZGSHZTajEwbDA4eWRWNVZrYjRReXBuTlNu?=
+ =?utf-8?B?ZXhGUHIvKzZrWmxScnhzUFh0bG5LV2pzM0ZHQ0YvbkQ1Vmo2RDNkS21BR1Iv?=
+ =?utf-8?B?bmYycVFjWVd2d2J4U1JZMVdzazNZblN4eVVIZHh0b0lFSzJSdDZyOWpYR3o4?=
+ =?utf-8?B?Y2NBejdTQllaWjRJQWM3OFRmbmFUdkdmVzh3WmtsYnRQOGU3VDhTSzFrdmdT?=
+ =?utf-8?B?VVVVNlZjVHNVNHhPU25udWVtUDI3Z2ZVVlprajdEWWJiTnFRcjU3Vlo0Vnhr?=
+ =?utf-8?B?RmozbHdwSlZlcWpGT1hWbUFTMm5FSVVpTU9jbFB2ajNORVcrU3BVSlpvam9p?=
+ =?utf-8?B?SnZsRFlHMXFkTEppdHV4d0JhRWo3QlVyb2YvZHU0V0t0Zjl6Yy9NQ2ZNazAy?=
+ =?utf-8?B?U200ZzlRcENaUWUzSFJ0Zz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d3d3Ri9YMzhOcld4ZitURWEvOGpnaEw0VDl5UDBwa2wxUzFDaks4bDNxK2JE?=
+ =?utf-8?B?a1k3K3hneVd6Y0EzUDlLb1FpUGZLT0dqQXc3ZHpBRHhvS3BwUFVmUmFKVVhW?=
+ =?utf-8?B?MDJNR21DUjVORVFZblVMMklwUXpDdnhiQk5pTEoxdE03eENFRUlUaUg1UXpw?=
+ =?utf-8?B?TUxKOTRNR1d3M1gwdFQ2TVBtWWNPMDg3Zk10TERDa1JYZ1hLMWloeHhhUkJm?=
+ =?utf-8?B?dVZZNFRXUVFnK2tjR2NCc2hVY3NLK0d3Mkt3MTdyM2RtRnlSVWdvUWZocnJh?=
+ =?utf-8?B?SFRmMkJwWnZoK3NHL0N3eWhCY1pWVXp1aVlLeVFENVlGbmQvYmQzR2tZS3RR?=
+ =?utf-8?B?MDFJN0dvQXBlMmlpMi8vWDIyT1RISTQwM3lwdlNqV21QRWhiVzc2eURxUWxx?=
+ =?utf-8?B?eWp6SDN6bVhFaUJUVnV6QVcxdkh0L0lmNCtIVjVxbGZOMEdyL1diL0s5dDZ1?=
+ =?utf-8?B?eWJyQWhlOENaaWtkWmZ4VmEvQWJrRWZMdkVxK25oaVRHa0l4UWJ6U1U2cTZ1?=
+ =?utf-8?B?YnJTUWJMQVdqVnhMTFg3T3pnZk1IUGZsNnp5S1BNRlQyRGJKWFBLdkkrU2l5?=
+ =?utf-8?B?ZXJGTEZ5T1l3dVJWQS91ZkxJYk9nUWJSL2JuUFRkbUpweWtsaE9QdVY0NmQ1?=
+ =?utf-8?B?VWlyT0Z5V1ZQc0Zpc3dXQ3dJVHJuUzNvWkxaSXkrRVE2MlN2T3ZNVE5WdHYz?=
+ =?utf-8?B?ZHMyemZwajZVZUx4VldsM2NLLy9WR1BIOTdrSlM3TlpObk5Fb0ZGeHRDTXlp?=
+ =?utf-8?B?bytuWmZsK08zVWhwZFhKNitJRkRRYmNOdzdUT1VpNjFLalhPeXlia3lhVFFV?=
+ =?utf-8?B?QWVUWWFnT2Nmc1paakZMbEZUVmdBUWFnTzlOMXdpUUNrc2RydjkxNVI2N3Ja?=
+ =?utf-8?B?ZDVnaDNZaEM4YTNhU2U2YTc0QXBxRDh0U05rNGJiMjhjeVlVUEFJbU5pSWxW?=
+ =?utf-8?B?R2s4N01XSTlNVmQvalVrb20rWk10RFBISnovdW9LdUZURVJNM3p6eTJsY0RI?=
+ =?utf-8?B?NWhkeUsrTG00dFA4R1RFTk5wV0RKY0hPYlFNVW1FVEpaeW4xV2JHNDc4RWor?=
+ =?utf-8?B?Yi9tSmlIVVZJRWJCcFBraVQzQmp4bzduQ1pYRVRoaVM5aFFzeG1rd1FUNVdP?=
+ =?utf-8?B?bm93VUJaeG11MGNDcmx5ZzhBUGtMOUNWSHZkaFFzUEVxZ0F2VWpLQWlTdVRE?=
+ =?utf-8?B?bzQraTZyM0NOUjh6U3lSQmNCRGtnKzg1OUdmWjhVazVzeVQveDVBVGFMUFJF?=
+ =?utf-8?B?MkowNGZtZDhBVUVoTTlXOUEvbE5VNzVBcjA5TThFZCtYVldBa3JJK05IOHIx?=
+ =?utf-8?B?bjlkejFJc3d4NHJYcUZhWG1PUlM3dVp3UFNVSllKbUNMdDh1Wmg5TldjVWVC?=
+ =?utf-8?B?ZEljZ3haSFRoYmo5UDh0d2pDZnVXMVVjSzdVcFREZktQdkVwaXBBWWM5LzlV?=
+ =?utf-8?B?VWFXM3pQYnloVEZLYVlkZ2YrL09UV1dud2NBUXlnRkZKZnZYcVhFRmI5eDdo?=
+ =?utf-8?B?U1BHdDFlWkZ3NFZaZmpFKzVJWHZrTzJzVExDTGxFSzZtZFhKM2ZuTEVkaGQ2?=
+ =?utf-8?B?SGIwUnN3OUc0S2ZMY2U4Vnk3bUJZM25qUUVodXhNSmJPdzI1THA5S1pISHRK?=
+ =?utf-8?B?VTlMSTBQcSt2TDRRdUtvSEtzVFVBdHNpMjFhWXkyUk9ndzdzMTFIY1FHck1p?=
+ =?utf-8?B?VHU3SGRqSjRNV3BaaDVZU1VWQTA4Mk96UUZHVUF4UStuZ3F3RDhyZ0ltNXgx?=
+ =?utf-8?B?aXJ0S1VLT0NRZmpSdm1FbzlFZVBNQjZMSmcveTRYbGlLV2hrcm0wWDdPUlVX?=
+ =?utf-8?B?VHdPdjdYSUxnTkgrTFIycVZtNUhTdDlaYXBJL2cwY1hNTHRucjhOTytoTzhl?=
+ =?utf-8?B?Tzd4eTJTUjVRVGU0TDhwNGkzK1NIc0VZaUkwUFBwUTBOaGluZW40ZnVNYmVz?=
+ =?utf-8?B?S2lBdGF4dWY0U29zWlFBMytIT0JjWjN0ZmJ4elR4UlJLSUdPTmdJMzVMUi9S?=
+ =?utf-8?B?WVk3SWt4anZDUi9hV3lOMGxpaEVQSEpkaHZDV0xFcW04VFFmS2pQcmlwcFlU?=
+ =?utf-8?B?blMyWmlPdVBEVmVCeStFTlRiSmgxck9FcVNkSWpSK2xvSTh1L2IzMWUxSU1v?=
+ =?utf-8?B?WEFTZlgyY3pWV0dFa2NmMGhKYTl0WnB0eGtiV25QZ1poZ1c4SEhHZDJzRUZC?=
+ =?utf-8?B?bWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7619b79-97f9-413a-4ffa-08dc9cbd5f97
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 06:40:34.7965
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /8XePaMKMooWTBp1lDU/Cc5VRFAgPqGFNSN1/PHjL1HCW0fmXWfs/+SbEGbylGqXOszXIw4r4zoCh/HKrZiWCBDafTWrDs0zCnkKW8j2yHk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5782
+X-OriginatorOrg: intel.com
 
-Review from the NVMe driver consumer perspective.  I think if all these
-were implement we'd probably end up with less code than before the
-conversion.
+On 7/5/24 06:19, Chris Packham wrote:
+> Correct the example to match the help text from the devlink utility.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>   Documentation/networking/devlink/devlink-region.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/networking/devlink/devlink-region.rst b/Documentation/networking/devlink/devlink-region.rst
+> index 9232cd7da301..5d0b68f752c0 100644
+> --- a/Documentation/networking/devlink/devlink-region.rst
+> +++ b/Documentation/networking/devlink/devlink-region.rst
+> @@ -49,7 +49,7 @@ example usage
+>       $ devlink region show [ DEV/REGION ]
+>       $ devlink region del DEV/REGION snapshot SNAPSHOT_ID
+>       $ devlink region dump DEV/REGION [ snapshot SNAPSHOT_ID ]
+> -    $ devlink region read DEV/REGION [ snapshot SNAPSHOT_ID ] address ADDRESS length length
+> +    $ devlink region read DEV/REGION [ snapshot SNAPSHOT_ID ] address ADDRESS length LENGTH
+>   
+>       # Show all of the exposed regions with region sizes:
+>       $ devlink region show
 
-The split between dma_iova_attrs, dma_memory_type and dma_iova_state is
-odd.  I would have expected them to just be just a single object.  While
-talking about this I think the domain field in dma_iova_state should
-probably be a private pointer instead of being tied to the iommu.
-
-Also do we need the attrs member in the iova_attrs structure?  The
-"attrs" really are flags passed to the mapping routines that are
-per-operation and not persistent, so I'd expect them to be passed
-per-call and not stored in a structure.
-
-I'd also expect that the use_iova field to be in the mapping state
-and not separately provided by the driver.
-
-For nvme specific data structures I would have expected a dma_add/
-len pair in struct iod_dma_map, maybe even using a common type.
-
-Also the data structure split seems odd - I'd expect the actual
-mapping state and a small number (at least one) dma_addr/len pair
-to be inside the nvme_iod structure, and then only do the dynamic
-allocation if we need more of them because there are more segments
-and we are not using the iommu.
-
-If we had a common data structure for the dma_addr/len pairs
-dma_unlink_range could just take care of the unmap for the non-iommu
-case as well, which would be neat.  I'd also expect that
-dma_free_iova would be covered by it.
-
-I would have expected dma_link_range to return the dma_addr_t instead
-of poking into the iova structure in the callers.
-
-In __nvme_rq_dma_map the <= PAGE_SIZE case is pointless.  In the
-existing code the reason for it is to avoid allocating and mapping the
-sg_table, but that code is still left before we even get to this code.
-
-My suggestion above to only allocate the dma_addr/len pairs when there
-is more than 1 or a few of it would allow to trivially implement that
-suggestion using the normal API without having to keep that special
-case and the dma_len parameter around.
-
-If this addes a version of dma_map_page_atttrs that directly took
-the physical address as a prep patch the callers would not have to
-bother with page pointer manipulations and just work on physical
-addresses for both the iommu and no-iommu cases.  It would also help
-a little bit with the eventualy switch to store the physical address
-instead of page+offset in the bio_vec.  Talking about that, I've
-been wanting to add a bvec_phys helper for to convert the
-page_phys(bv.bv_page) + bv.bv_offset calculations.  This is becoming
-more urgent with more callers needing to that, I'll try to get it out
-to Jens ASAP so that it can make the 6.11 merge window.
-
-Can we make dma_start_range / dma_end_range simple no-ops for the
-non-iommu code to avoid boilerplate code in the callers to avoid
-boilerplate code in the callers to deal with the two cases?
+I don't see any other case for such correction in core devlink doc, so:
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
 
