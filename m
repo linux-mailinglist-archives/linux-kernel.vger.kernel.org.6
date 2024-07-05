@@ -1,164 +1,202 @@
-Return-Path: <linux-kernel+bounces-242147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A81928441
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:58:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8274B928448
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26051F2290C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:58:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE781C20D1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850C8145FED;
-	Fri,  5 Jul 2024 08:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HROtLVqi"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B715146595;
+	Fri,  5 Jul 2024 08:59:46 +0000 (UTC)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0F613B5A9
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731EB1448D4
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720169887; cv=none; b=uSI/sFU2pZO3tEZE8q2WtpTzPawi3Sz8pcj5SxQtvufW6zR/SGhLEocV3mJ46+sr1odb2I1W3NCv5OP25qm8d3LKqwBjwpdwuJLUVh7ocO9M867REJN93838lxHwisn/VM6rBZI4emM6CcdH64i6ckTR5wlSHAKj5K9N/dyveDE=
+	t=1720169985; cv=none; b=QEkMFQu9PgJmmWM5fE1MMceH11S+RxAfBA59v9xQ3tD0Hle4Q+YuYrsacmqSLRB+Kt9B2ma39+nTysPrKTxzGUrwI5h8miw7uXPkgzWgQ/OswJUqZZHl7ZYgFJvPCf9VN7qpXKJiqD5C7whReh9zk7xMbzEATfDcKFHYOwHD09o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720169887; c=relaxed/simple;
-	bh=hvG0GCOWi4THCguOysp1g8/zVPa9vVrWs5MMxbroZr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eUm8+yE6AHABvnrt/dqbHpx0wL2ohtZ/B2iKwQNp5xi281ePuIzQNusVAhDKPxY9aGHVDCL7QpdV3k3MMJXcpAFX48Mx31lGHqxCT/qRQ3+GUItcKgLy3cywruQd4LsUyJ0y+Zai1aIsuplBYgrzf/t8NJIowmwJFDrvD9TvoGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HROtLVqi; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720169882; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=/b2CH/0osx3Zqy3K9+ynEPiLNGlIv+mnOfWfcW761j4=;
-	b=HROtLVqiFcztkybnJQzBQhgU8h0QYOx8V5M6m9TDB8qFhrHFolKOjaqP4ZxgEo+xkCqQwSqL24lUzL0jY4zUHgso7T02dkgOBymdL5rnKg9Eqeq8UklZeGfYFZdbozYcSFOM9To4wiHRfllA4oM5InNRGl/W+Trf5/QC2ckVVec=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045220184;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W9uQFI._1720169879;
-Received: from 30.97.56.65(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9uQFI._1720169879)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Jul 2024 16:58:00 +0800
-Message-ID: <545e23ab-e40a-4f13-8167-c9aa85a34b19@linux.alibaba.com>
-Date: Fri, 5 Jul 2024 16:57:59 +0800
+	s=arc-20240116; t=1720169985; c=relaxed/simple;
+	bh=/pW678AZNupnImv2XGMH//9gBxSvMxccUKOYw+dT1QU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EdXiH5RL6buq7W6ei+lNba3rZVPq/Zk5xviAXGnd7MTJFNi1cbHtH+bCjbxrafpGAnHZ3VZd944RBmSl7sNn6EP0kFHwwV+irH7bWIijl2B9r1OfxEmo5jdldHxiujx7S/Fu7Rfr+UdqYsXJYonhRzEY+vpZEieA7FxNW/m/HBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpsz3t1720169919tj4nuro
+X-QQ-Originating-IP: GUDXbLmTXhOWsACCWmbvKzkKHGYBvUhK+PM62patSTg=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 05 Jul 2024 16:58:37 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16430579746846863616
+From: tuhaowen <tuhaowen@uniontech.com>
+To: gregkh@linuxfoundation.org
+Cc: alexander.deucher@amd.com,
+	huangbibo@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	tuhaowen@uniontech.com,
+	wangyuli@uniontech.com
+Subject: Re: Re: [PATCH] dev/parport: fix the array out-of-bounds risk
+Date: Fri,  5 Jul 2024 16:58:34 +0800
+Message-Id: <20240705085834.17224-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <2024070503-concert-mummify-dcbf@gregkh>
+References: <2024070503-concert-mummify-dcbf@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] mm: shmem: add mTHP support for anonymous shmem
-To: Ryan Roberts <ryan.roberts@arm.com>, Bang Li <libang.linux@gmail.com>,
- akpm@linux-foundation.org, hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
- ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <65796c1e72e51e15f3410195b5c2d5b6c160d411.1718090413.git.baolin.wang@linux.alibaba.com>
- <65c37315-2741-481f-b433-cec35ef1af35@arm.com>
- <475332ea-a80b-421c-855e-a663d1d5bfc7@linux.alibaba.com>
- <a3910f60-6e2e-4ede-b3f3-47d8dfe9f23b@gmail.com>
- <076550c4-0e8a-4344-9f8a-31ae9e1051b5@linux.alibaba.com>
- <96625631-ef7d-44a2-ad5f-f7beb64f0ed0@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <96625631-ef7d-44a2-ad5f-f7beb64f0ed0@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+
+On Fri, Jul 05, 2024 at 02:45:45PM +0800, Greg Kroah-Hartman wrote:
+
+> I'm not disputing that this change looks correct, I'm asking that you
+> redo it and properly check the array size when writing to it so as to
+> ensure that it really is correct in case our math is incorrect
+> somewhere.
+
+Thank you for your feedback. I have redone the change and 
+ensured that the array size is properly checked when writing to it. 
+Please find my updated patch below.
+
+Thanks,
+
+Haowen.Tu
 
 
+From cfdf8445987147f3a7e4f1232a8c6e8a271e4a6d Mon Sep 17 00:00:00 2001
+From: tuhaowen <tuhaowen@uniontech.com>
+Date: Mon, 27 May 2024 14:34:32 +0800
+Subject: [PATCH] dev/parport: fix the array out-of-bounds risk
 
-On 2024/7/5 16:42, Ryan Roberts wrote:
-> On 05/07/2024 04:01, Baolin Wang wrote:
->>
->>
->> On 2024/7/4 22:46, Bang Li wrote:
->>> Hi Bao lin,
->>>
->>> On 2024/7/4 19:15, Baolin Wang wrote:
->>>>
->>>>>> +
->>>>>> +    /*
->>>>>> +     * Only allow inherit orders if the top-level value is 'force', which
->>>>>> +     * means non-PMD sized THP can not override 'huge' mount option now.
->>>>>> +     */
->>>>>> +    if (shmem_huge == SHMEM_HUGE_FORCE)
->>>>>> +        return READ_ONCE(huge_shmem_orders_inherit);
->>>>>
->>>>> I vaguely recall that we originally discussed that trying to set 'force' on the
->>>>> top level control while any per-size controls were set to 'inherit' would be an
->>>>> error, and trying to set 'force' on any per-size control except the PMD-size
->>>>> would be an error?
->>>>
->>>> Right.
->>>>
->>>>> I don't really understand this logic. Shouldn't we just be looking at the
->>>>> per-size control settings (or the top-level control as a proxy for every
->>>>> per-size control that has 'inherit' set)?
->>>>
->>>> ‘force’ will apply the huge orders for anon shmem and tmpfs, so now we only
->>>> allow pmd-mapped THP to be forced. We should not look at per-size control
->>>> settings for tmpfs now (mTHP for tmpfs will be discussed in future).
->>>>
->>>>>
->>>>> Then for tmpfs, which doesn't support non-PMD-sizes yet, we just always use the
->>>>> PMD-size control for decisions.
->>>>>
->>>>> I'm also really struggling with the concept of shmem_is_huge() existing along
->>>>> side shmem_allowable_huge_orders(). Surely this needs to all be refactored into
->>>>> shmem_allowable_huge_orders()?
->>>>
->>>> I understood. But now they serve different purposes: shmem_is_huge() will be
->>>> used to check the huge orders for the top level, for *tmpfs* and anon shmem;
->>>> whereas shmem_allowable_huge_orders() will only be used to check the per-size
->>>> huge orders for anon shmem (excluding tmpfs now). However, as I plan to add
->>>> mTHP support for tmpfs, I think we can perform some cleanups.
->>>
->>> Please count me in, I'd be happy to contribute to the cleanup and enhancement
->>> process if I can.
->>
->> Good. If you have time, I think you can look at the shmem khugepaged issue from
->> the previous discussion [1], which I don't have time to look at now.
->>
->> "
->> (3) khugepaged
->>
->> khugepaged needs to handle larger folios properly as well. Until fixed,
->> using smaller THP sizes as fallback might prohibit collapsing a
->> PMD-sized THP later. But really, khugepaged needs to be fixed to handle
->> that.
->> "
-> 
-> khugepaged can already collapse "folios of any order less then PMD-size" to
-> PMD-size, for anon memory. Infact I modified the selftest to be able to test
-> that in commit 9f0704eae8a4 ("selftests/mm/khugepaged: enlighten for multi-size
-> THP"). I'd be surprised if khugepaged can't alreay handle the same for shmem?
+Fixed array out-of-bounds issues caused by sprintf
+by replacing it with snprintf for safer data copying,
+ensuring the destination buffer is not overflowed.
 
-I did not test this, but from the comment in hpage_collapse_scan_file(), 
-seems that compacting small mTHP into a single PMD-mapped THP is not 
-supported yet.
+Below is the stack trace I encountered during the actual issue:
 
-/*
-		 * TODO: khugepaged should compact smaller compound pages
-		 * into a PMD sized page
-		 */
-		if (folio_test_large(folio)) {
-			result = folio_order(folio) == HPAGE_PMD_ORDER &&
-					folio->index == start
-					/* Maybe PMD-mapped */
-					? SCAN_PTE_MAPPED_HUGEPAGE
-					: SCAN_PAGE_COMPOUND;
-			/*
-			 * For SCAN_PTE_MAPPED_HUGEPAGE, further processing
-			 * by the caller won't touch the page cache, and so
-			 * it's safe to skip LRU and refcount checks before
-			 * returning.
-			 */
-			break;
-		}
+[ 66.575408s] [pid:5118,cpu4,QThread,4]Kernel panic - not syncing: stack-protector:
+Kernel stack is corrupted in: do_hardware_base_addr+0xcc/0xd0 [parport]
+[ 66.575408s] [pid:5118,cpu4,QThread,5]CPU: 4 PID: 5118 Comm:
+QThread Tainted: G S W O 5.10.97-arm64-desktop #7100.57021.2
+[ 66.575439s] [pid:5118,cpu4,QThread,6]TGID: 5087 Comm: EFileApp
+[ 66.575439s] [pid:5118,cpu4,QThread,7]Hardware name: HUAWEI HUAWEI QingYun
+PGUX-W515x-B081/SP1PANGUXM, BIOS 1.00.07 04/29/2024
+[ 66.575439s] [pid:5118,cpu4,QThread,8]Call trace:
+[ 66.575469s] [pid:5118,cpu4,QThread,9] dump_backtrace+0x0/0x1c0
+[ 66.575469s] [pid:5118,cpu4,QThread,0] show_stack+0x14/0x20
+[ 66.575469s] [pid:5118,cpu4,QThread,1] dump_stack+0xd4/0x10c
+[ 66.575500s] [pid:5118,cpu4,QThread,2] panic+0x1d8/0x3bc
+[ 66.575500s] [pid:5118,cpu4,QThread,3] __stack_chk_fail+0x2c/0x38
+[ 66.575500s] [pid:5118,cpu4,QThread,4] do_hardware_base_addr+0xcc/0xd0 [parport]
 
-> Although the test will definitely want to be extended to test it.
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
+---
+ drivers/parport/procfs.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-Right.
+diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
+index bd388560ed59..27674a34ca3c 100644
+--- a/drivers/parport/procfs.c
++++ b/drivers/parport/procfs.c
+@@ -51,12 +51,12 @@ static int do_active_device(struct ctl_table *table, int write,
+ 
+        for (dev = port->devices; dev ; dev = dev->next) {
+                if(dev == port->cad) {
+-                       len += sprintf(buffer, "%s\n", dev->name);
++                       len += snprintf(buffer, 64, "%s\n", dev->name);
+                }
+        }
+ 
+        if(!len) {
+-               len += sprintf(buffer, "%s\n", "none");
++               len += snprintf(buffer, 64, "%s\n", "none");
+        }
+ 
+        if (len > *lenp)
+@@ -87,19 +87,19 @@ static int do_autoprobe(struct ctl_table *table, int write,
+        }
+ 
+        if ((str = info->class_name) != NULL)
+-               len += sprintf (buffer + len, "CLASS:%s;\n", str);
++               len += snprintf (buffer + len, 256 - len, "CLASS:%s;\n", str);
+ 
+        if ((str = info->model) != NULL)
+-               len += sprintf (buffer + len, "MODEL:%s;\n", str);
++               len += snprintf (buffer + len, 256 - len, "MODEL:%s;\n", str);
+ 
+        if ((str = info->mfr) != NULL)
+-               len += sprintf (buffer + len, "MANUFACTURER:%s;\n", str);
++               len += snprintf (buffer + len, 256 - len, "MANUFACTURER:%s;\n", str);
+ 
+        if ((str = info->description) != NULL)
+-               len += sprintf (buffer + len, "DESCRIPTION:%s;\n", str);
++               len += snprintf (buffer + len, 256 - len, "DESCRIPTION:%s;\n", str);
+ 
+        if ((str = info->cmdset) != NULL)
+-               len += sprintf (buffer + len, "COMMAND SET:%s;\n", str);
++               len += snprintf (buffer + len, 256 - len, "COMMAND SET:%s;\n", str);
+ 
+        if (len > *lenp)
+                len = *lenp;
+@@ -117,7 +117,7 @@ static int do_hardware_base_addr(struct ctl_table *table, int write,
+                                 void *result, size_t *lenp, loff_t *ppos)
+ {
+        struct parport *port = (struct parport *)table->extra1;
+-       char buffer[20];
++       char buffer[64];
+        int len = 0;
+ 
+        if (*ppos) {
+@@ -128,7 +128,7 @@ static int do_hardware_base_addr(struct ctl_table *table, int write,
+        if (write) /* permissions prevent this anyway */
+                return -EACCES;
+ 
+-       len += sprintf (buffer, "%lu\t%lu\n", port->base, port->base_hi);
++       len += snprintf (buffer, 64, "%lu\t%lu\n", port->base, port->base_hi);
+ 
+        if (len > *lenp)
+                len = *lenp;
+@@ -155,7 +155,7 @@ static int do_hardware_irq(struct ctl_table *table, int write,
+        if (write) /* permissions prevent this anyway */
+                return -EACCES;
+ 
+-       len += sprintf (buffer, "%d\n", port->irq);
++       len += snprintf (buffer, 20, "%d\n", port->irq);
+ 
+        if (len > *lenp)
+                len = *lenp;
+@@ -182,7 +182,7 @@ static int do_hardware_dma(struct ctl_table *table, int write,
+        if (write) /* permissions prevent this anyway */
+                return -EACCES;
+ 
+-       len += sprintf (buffer, "%d\n", port->dma);
++       len += snprintf (buffer, 20, "%d\n", port->dma);
+ 
+        if (len > *lenp)
+                len = *lenp;
+@@ -213,7 +213,7 @@ static int do_hardware_modes(struct ctl_table *table, int write,
+ #define printmode(x)                                                   \
+ do {                                                                   \
+        if (port->modes & PARPORT_MODE_##x)                             \
+-               len += sprintf(buffer + len, "%s%s", f++ ? "," : "", #x); \
++               len += snprintf(buffer + len, 40 - len, "%s%s", f++ ? "," : "", #x); \
+ } while (0)
+                int f = 0;
+                printmode(PCSPP);
+-- 
+2.20.1
+
 
