@@ -1,307 +1,113 @@
-Return-Path: <linux-kernel+bounces-242165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54070928485
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:03:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 136C1928472
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9F7B1F23A45
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F922843F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272E9146A7D;
-	Fri,  5 Jul 2024 09:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26845146583;
+	Fri,  5 Jul 2024 09:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XCAe/vfg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yJF9dsO2"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E0B1494B5;
-	Fri,  5 Jul 2024 09:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94431474D7
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720170104; cv=none; b=R7d3ShePzJywebpoAkCBvd+0urQ0Ogetk1bRrhmFcyNJIOb71mMRb9aPcxjvdFpc9UBbzgchkxWzvwkkaDErobA8LFOz5TqY5dqidtrpdBjhgLY6hHpDqgnXcjMfwgG08lTv9uba5yEFIb5vUp5HFS3gKti3h9geDOnseL3OyjU=
+	t=1720170090; cv=none; b=W+bqrY8cq2BketA24M9ARg3QW2PQm+2UMxNNHJ3pJVu0nQx9QMjLicGioTiUEDDVrTMZVvrdk54WfYWtEov0TNoP9wFIVIMF2C9p3RulyBVONYNirsNT6q0Hwtr45taczWUDCZV+ZpSFAPtCnri8KDU9yly/SW53q/rmvZZ2m+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720170104; c=relaxed/simple;
-	bh=doH3hx+JU3F/QLduutkMlWqB5OXqf1VorHmASnUiDzI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iAXuoSDCk9LD9vhTuuxtgyxwuEl36tgxhBM5/6zEwJ3OIfs/m/VpcYg0qBRJN1P0tWuhcxhad6oZmUiFiVq956xoFwOBj9iW8gHJh/O8d/bTgj8inX4dyVuZiV+UjGXZp9RNPtz/NdbnlS4N6/CC8XV3c/MocEjVn7xbhXE4gDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XCAe/vfg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 464N21SA023751;
-	Fri, 5 Jul 2024 09:01:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jFKzmUotHbJUVuaVB42pEWH4u/5IP7VbsvU44n6vwas=; b=XCAe/vfgzu8VRgSb
-	1jhtxlz+KH/lv0qhbwQdn/NEJTl7NyRCi/3N0uIYknm1iJR0D7snuHbC8Mhb05SD
-	L9GJ9fvGCZRSSTLFkt6s0jtmv3xHvmQKwmcgd/UN2/AjIG0iu/BTRRfezwYbPKV0
-	sghjAq0aclhM8OrZHWNAm1epKiSuhM3a6JjA/Q9SBCT8SG1Adb9jWwf6a7kqidW8
-	mk/yPYbWNaWABXts3tiXqfz3emMBO37EnfTsEiCg6U5AjIYwE724AunQy0WGuCsB
-	rwRqUOPNDny2AIj6TPx/6NYzbDDiMKiEIobW5dOVJ2lEhTXoL0aBfd0NFwTgcMBu
-	EusW6g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 405vxfhwgm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 09:01:32 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46591Uls002839
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 5 Jul 2024 09:01:30 GMT
-Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 5 Jul 2024 02:01:25 -0700
-From: Jie Gan <quic_jiegan@quicinc.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Mike Leach <mike.leach@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        James Clark <james.clark@arm.com>
-CC: Jinlong Mao <quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Tingwei Zhang
-	<quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        "Tao
- Zhang" <quic_taozha@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "Song
- Chai" <quic_songchai@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: [PATCH v2 4/4] arm64: dts: qcom: Add CCU and ETR nodes for SA8775p
-Date: Fri, 5 Jul 2024 17:00:49 +0800
-Message-ID: <20240705090049.1656986-5-quic_jiegan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240705090049.1656986-1-quic_jiegan@quicinc.com>
-References: <20240705090049.1656986-1-quic_jiegan@quicinc.com>
+	s=arc-20240116; t=1720170090; c=relaxed/simple;
+	bh=k0qVBklCOoP4+/R7I0j3kCnzNa//P7JSSrR/ztL9apQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CAj37skR779IQSG+HTeoqAVJAPxboF51sTxeyhLhoFwzAVMYnDBuv/QS9VwD2SDcVlG9HuWmvBwehFntL5Ya6Qs9A1il21lB/qC1WsZ0kpmW5gGqAVL4xeUzuu7KmHlafnOwDWVXjFotpqOjvpoTSILFHxgZWGo2cFkH/WlxQn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yJF9dsO2; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso13581321fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 02:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720170087; x=1720774887; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VPhHYpUsQgcCRmlLQq3hZc5zGjNgRA3rXYjA2LGa+90=;
+        b=yJF9dsO2vXxdHwYXFAXdzoeWcqiuQANhEIuI/yunvf4VPFTgtkWsOgQXM/HF914I49
+         fH9kXmWoo8r72RDsx0aaLBpsNZWjAeLi8uisGXb2mMRnhDt+ovXmfG1Xr+iuwGke0LoZ
+         fzyPqNx+B0OOB8HSrBscOlDyXi3hDyq2qd3TGyUZS1H1E7nJyj6UaFECVMINbAvSZpn1
+         NQMvC6B8SmSXcSUs8ZJoaEuuQPL8+Qq+zvlGRId0HUfVRW5mvIKtoOe87kQ62ibJ4KAb
+         9fPbRWUiWVsx9rXA0R8oD8Cxt28/UzCho56LWZjS1C02fiy/PxwzzchEKWyCQ0kVlwZA
+         wO4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720170087; x=1720774887;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VPhHYpUsQgcCRmlLQq3hZc5zGjNgRA3rXYjA2LGa+90=;
+        b=N4JqpVLnV3HNMlqkx2d9XBRFnJbbtgjJeiUqC8MMMWFaL+/IxaBTaLegG2cGw69T5j
+         vGIRC8iSNGKRkficJG/QqMr9fHL9p8RWU3ZO1lUyPyXM0Ppz3xvftN7DUxvV+I8/Qs71
+         6XEHhI4oexKw4feI9puBqwPz488SXa7TPFNlbiFJfnFFMBgVee/i9WmqNHEoKNEFuHLK
+         QGKDVUhVZe0OJU092GIXg56RafUAa2EZM5FsvLvGu8ggJvB57WunQkZ/vW53usPPS8TK
+         WCVCcVMuPmj4FKsxNNQflyX5LKUAuB4k3eqLk+NkJaU88E1AzPTzSXtMYYsES0uYGEpl
+         TIWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWohi9VcI/TNDwW9Md5oarDp9DNjl9GEtVSIAqbR2F7QG0xCJmqWoI4aJNMWzljAH2x7ThuEKWPutpu9K1XK1+LYbwqP5XiWSyEOgug
+X-Gm-Message-State: AOJu0Yzt1WMardp2h77YfbjuVLUa8bATbwja5uIsMboTITy2dc0IWf8L
+	iiTndAkWfkuylUn7hMMH/1mM6m0tXUBbpICmuMWtaiEKFT0a+GMqKh8Z8dEki+s=
+X-Google-Smtp-Source: AGHT+IFfKAMUyESiTj9ZH1wVd1tZ9VI7h8RYpOsIVHzCGwk5qX32mBZjImpUvDBGNxEPRTzxrgKq5g==
+X-Received: by 2002:a2e:b049:0:b0:2ee:8749:d49e with SMTP id 38308e7fff4ca-2ee8ed6b8f3mr28611291fa.10.1720170086744;
+        Fri, 05 Jul 2024 02:01:26 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c688:2842:8675:211])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d69d8sm53190495e9.19.2024.07.05.02.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 02:01:26 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: of: add polarity quirk for TSC2005
+Date: Fri,  5 Jul 2024 11:01:24 +0200
+Message-ID: <172017008185.10806.14182341575808451693.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ZoWXwYtwgJIxi-hD@google.com>
+References: <ZoWXwYtwgJIxi-hD@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IuTPZkbsn-aC-n-JyvWhbejFPnSGUf3U
-X-Proofpoint-ORIG-GUID: IuTPZkbsn-aC-n-JyvWhbejFPnSGUf3U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_05,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 adultscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407050067
 
-Add CCU and ETR device tree nodes to enable related functions.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 163 ++++++++++++++++++++++++++
- 1 file changed, 163 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 23f1b2e5e624..ef4df5e59ab3 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -1664,6 +1664,38 @@ ice: crypto@1d88000 {
- 			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
- 		};
- 
-+		ccu@4001000 {
-+			compatible = "qcom,coresight-ccu";
-+			reg = <0x0 0x4001000 0x0 0x1000>;
-+			reg-names = "ccu-base";
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					ccu_in0: endpoint {
-+						qcom,ccu-atid-offset = <0xf8>;
-+						remote-endpoint =
-+						<&etr0_out>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					ccu_in1: endpoint {
-+						qcom,ccu-atid-offset = <0x108>;
-+						remote-endpoint =
-+						<&etr1_out>;
-+					};
-+				};
-+			};
-+		};
-+
- 		stm: stm@4002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x0 0x4002000 0x0 0x1000>,
-@@ -1867,6 +1899,129 @@ qdss_funnel_in1: endpoint {
- 			};
- 		};
- 
-+		replicator@4046000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x4046000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			out-ports {
-+				port {
-+					qdss_rep_out0: endpoint {
-+						remote-endpoint =
-+						<&etr_rep_in>;
-+					};
-+				};
-+			};
-+
-+			in-ports {
-+				port {
-+					qdss_rep_in: endpoint {
-+						remote-endpoint =
-+						<&swao_rep_out0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc_etr: tmc@4048000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x4048000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04c0 0x00>;
-+
-+			arm,scatter-gather;
-+
-+			out-ports {
-+				port {
-+					etr0_out: endpoint {
-+						remote-endpoint =
-+						<&ccu_in0>;
-+					};
-+				};
-+			};
-+
-+			in-ports {
-+				port {
-+					etr0_in: endpoint {
-+						remote-endpoint =
-+						<&etr_rep_out0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		replicator@404e000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x404e000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			out-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					etr_rep_out0: endpoint {
-+						remote-endpoint =
-+						<&etr0_in>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					etr_rep_out1: endpoint {
-+						remote-endpoint =
-+						<&etr1_in>;
-+					};
-+				};
-+			};
-+
-+			in-ports {
-+				port {
-+					etr_rep_in: endpoint {
-+						remote-endpoint =
-+						<&qdss_rep_out0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc_etr1: tmc@404f000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x404f000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04a0 0x40>;
-+
-+			arm,scatter-gather;
-+			arm,buffer-size = <0x400000>;
-+
-+			out-ports {
-+				port {
-+					etr1_out: endpoint {
-+						remote-endpoint =
-+						<&ccu_in1>;
-+					};
-+				};
-+			};
-+
-+			in-ports {
-+				port {
-+					etr1_in: endpoint {
-+						remote-endpoint =
-+						<&etr_rep_out1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		funnel@4b04000 {
- 			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
- 			reg = <0x0 0x4b04000 0x0 0x1000>;
-@@ -1942,6 +2097,14 @@ out-ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 
-+				port@0 {
-+					reg = <0>;
-+					swao_rep_out0: endpoint {
-+						remote-endpoint =
-+						<&qdss_rep_in>;
-+					};
-+				};
-+
- 				port@1 {
- 					reg = <1>;
- 					swao_rep_out1: endpoint {
+On Wed, 03 Jul 2024 11:26:09 -0700, Dmitry Torokhov wrote:
+> DTS for Nokia N900 incorrectly specifies "active high" polarity for
+> the reset line, while the chip documentation actually specifies it as
+> "active low".  In the past the driver fudged gpiod API and inverted
+> the logic internally, but it was changed in d0d89493bff8.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] gpiolib: of: add polarity quirk for TSC2005
+      commit: f8d76c2c313c56d5cb894a243dff4550f048278d
+
+Best regards,
 -- 
-2.34.1
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
