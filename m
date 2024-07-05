@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-242922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34AE928EDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:37:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124A1928EDC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E390B23F3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE4F51F221FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42123178371;
-	Fri,  5 Jul 2024 21:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915C617839C;
+	Fri,  5 Jul 2024 21:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYZfVg6D"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPmutUTi"
 Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD46176FD8;
-	Fri,  5 Jul 2024 21:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA9C178362;
+	Fri,  5 Jul 2024 21:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720215365; cv=none; b=LsZSzuMpMDZQTChpuxtG1sbcVBjRgYcvU/XbLzZDr4qmJ7f1OxP0/nbs9XW2Q1JPv2zhGNgjymnwjrNJLE77kcnE1gGNiswJ+l8JROIZjsVglWUBZlmlVQhOyf5t4EBo+d3MGbwOIFHqygsGeNpuoJnH7XC1UXtONvBcKBwGOD0=
+	t=1720215366; cv=none; b=Fv3tIoSvOTQyymZY4L2xT+fwFkRz3wEnDf0Qxn8zR64VvdHSmQ/R/vG7WvHAK3hTQHwu0FHDGcWpCJUjq/iLU29FLx/dSjNbQOxF9+7wyQah9mASxoUH4TWzITg/CoEDIlBK+wiY0dqlrODltvEdtJzyCaABLa1VIS+PpwuNAYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720215365; c=relaxed/simple;
-	bh=SAmhcQbjtwIOu+cs6iIWljo4YO7jI8+2WPDEdvsVq3g=;
+	s=arc-20240116; t=1720215366; c=relaxed/simple;
+	bh=/RCAUbefpYKE/b8H1Gyrl9DlI9VbcqWbYyYJ3luPzm0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Vn3qL5N6RaO8sVSlTPWHx1YbcYXhP9eBO3LVV1m2LnPnmqkVXdBxTIDFmGIkx0fcY2FPB7o1kqj9BcaIJ1oZ6Z4w2TSlFjgF7UyasJVZ64bN+cAC9cMPmm+/gtPMLAWIbn7c11rWycH/0ysWf9y7LU1zOjUzsshpr5WLy5z2x94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYZfVg6D; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=F8uOszQGCI6E4k4CeHva97JgEA+VW/5D1PT4NFLxjBhJgUhB9LLpHX64J5qHp71utQ5Qst7PAqMHfK383NqyvQOUf+ak/CaDZIlhNmRYckz24fMXP3MikTMzS49RnDDTGmctCuqWaCrW/LiPhdGeXvgpHFeqEX9VG5uXyQhuyfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPmutUTi; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fb0d88fd25so14047275ad.0;
-        Fri, 05 Jul 2024 14:36:03 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f4a5344ec7so14898305ad.1;
+        Fri, 05 Jul 2024 14:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720215363; x=1720820163; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720215364; x=1720820164; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V0eDqHI/aYbcZ6krpcb9PXF52JNVTzTMcQbUahzMySU=;
-        b=UYZfVg6DpIVLZ2+OdqmstAzNtAeI4TqQtsIpNg+7M5Cgv56UYzCJiPoLsaP+EecPB4
-         nvsNKfqpQuifKz3DjAad7mROaeMJ4hhzUXcgBgWoQ5h9jHXzNsSle6v2f8TqJHJ4zqu8
-         HwMV155N3bW4EcYhUzrcTXMjmjmYw79FzkMseg1UvQCG/OhAvbI4zyjqmGNP9X9cyw2A
-         z3nmX1YmeyRNIeaDR8DrPRtP3ZFhfZ7vH4/MciD39HDiuzg4LKoaz29pcX6h20vYtV/t
-         7NTNyLa4OKweZzn3y7HxJu4Gbm9fTnSqnOajARf4RLXRW/AK4g7CJEBmJ8aqzIu/tBvt
-         6zKw==
+        bh=xoi1PhkWWlISEqPnYs4kDHO26DAH2dENmkm3aJvpzr8=;
+        b=mPmutUTiI9fp+WNxLwBQAIq7N4PTAqsICWF/coEeT5QwxFffbBlxijujizfdgFQ48e
+         S7n0zouFE0iGyTog63bXcjZDrrki+7//uGjCf4mo+CDnX/93H+wASO9mRfwZDgvPh2gY
+         vhcjySxYYgLecRji+IauqkPUnkTqedNKDLkK67Y3Tjr9A2MT2YZrYgRURixBD4ECN0LR
+         P4u1A8N3NYSRewRmrCFb6k0I96J1E1XuatjkxzeXiIajj/N/1XPkBqJleRk/axtWJ6Rt
+         41hLpHyVhZXPd78z1YZVrlQJkEz5wn+EIC6BWNFnbuUROIoVBYctLONW5KImxMz5LkOO
+         24sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720215363; x=1720820163;
+        d=1e100.net; s=20230601; t=1720215364; x=1720820164;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=V0eDqHI/aYbcZ6krpcb9PXF52JNVTzTMcQbUahzMySU=;
-        b=mvqtfNTU1kCJctXgxv5ewjXcQNoYmi9pAqYWWTV2sy85mlv13fVLRTlDRKCjPoTVMd
-         zWFGqBm+xOyQ2fLw5tzII8X/nPv0EwSbFKIft/M5bzFmmubz+aF7F2K68Bcju9QRes04
-         kmIZEE1swzHd1AiXL5bhnHzW/XjnwxGjJ8SsvYaa37tJsm4bjdQB+FTqIMDrVpIPpgbT
-         jhsjyOl9n6ufm72yTY/Q0sSXt1EcgGyGmDqpRax36BDFFBpGyeR5R3Px/UUpnM8QbwPN
-         StQZ3dvcDXm04PwiS2Lk73uftQ/Pe4sMJSBO8z021MCISibNQD5Lq42qZvMHMhiwH3Mb
-         H7Tw==
-X-Gm-Message-State: AOJu0YzMULwRIZfjrSMTUOItNGizN7d1AWnVRSUg+GIxWIY0TzGHM6FP
-	CnLakh/p4PalrY4YD0Monn4ZmVLfcx24zjDes78zSaRYNp/sK7Wo7p609w==
-X-Google-Smtp-Source: AGHT+IFXT4zhugoqs/V5KqMbb3VwTxlsTf9s9dRltFo/dDO6kgrP2ngtTA09S9Ci+x4tbfr5EdL9Ng==
-X-Received: by 2002:a17:902:e745:b0:1f6:3580:65c9 with SMTP id d9443c01a7336-1fb370a0fc4mr75415925ad.26.1720215362945;
-        Fri, 05 Jul 2024 14:36:02 -0700 (PDT)
+        bh=xoi1PhkWWlISEqPnYs4kDHO26DAH2dENmkm3aJvpzr8=;
+        b=Y4Ml7jKvyx2Sy5LuyoMii027YGZbcbYqnlk/4FI+2FBZm3pWSoiEuRfWMy4BaZwuwG
+         EWx1UpjPpVtYLH2R4n5pmdFscTjnaqCsOxl7nYb0b50YrfhC4PN1blOO1z0OIJ4O2NWc
+         7VGz2R9RScMP2pkmnIy9/TicnTTSOLMhBajjiEtNrp8r/nYAXWU1aRNeCZsVhSzqZ42y
+         RoX2F98roTOWQt6OwWfMFsvXrhiGAt1XoBW2elYOegBYf99hOhfB/yObhkzFgYPH7oou
+         uM7Iwrb0yuHe1f09kSpZwkgH/KgDYnEp3xAj0ENsq4urZlC0bQvGZD0UZcpOSZVIXizo
+         2qjA==
+X-Gm-Message-State: AOJu0Yytw6btGbUYLfE7ooMpuDD9oX0zoRUJ63VDV4hoUYVq1LsOKq+d
+	3P5MuzGI8jap5vEW6GtoQ5hHcaQBbypNxdkB70hk7AIeXSnxapatbWtdgg==
+X-Google-Smtp-Source: AGHT+IFTNAa+Lh4CNPsBYrsH/T85fKPSC0c4HWnYYq9D7QtjM5BD8ARohEjCm+EW3pG/KN9YTE1slw==
+X-Received: by 2002:a17:902:ec90:b0:1f7:1d71:25aa with SMTP id d9443c01a7336-1fb3701641cmr92193925ad.6.1720215364499;
+        Fri, 05 Jul 2024 14:36:04 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15992a0sm145199495ad.263.2024.07.05.14.36.02
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb29e29881sm42485595ad.299.2024.07.05.14.36.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 14:36:02 -0700 (PDT)
+        Fri, 05 Jul 2024 14:36:03 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
 From: Guenter Roeck <linux@roeck-us.net>
 To: linux-hwmon@vger.kernel.org
@@ -72,9 +72,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Farouk Bouabid <farouk.bouabid@cherry.de>,
 	Quentin Schulz <quentin.schulz@cherry.de>,
 	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v4 07/11] hwmon: (amc6821) Use BIT() and GENMASK()
-Date: Fri,  5 Jul 2024 14:35:43 -0700
-Message-Id: <20240705213547.1155690-8-linux@roeck-us.net>
+Subject: [PATCH v4 08/11] hwmon: (amc6821) Drop unnecessary enum chips
+Date: Fri,  5 Jul 2024 14:35:44 -0700
+Message-Id: <20240705213547.1155690-9-linux@roeck-us.net>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240705213547.1155690-1-linux@roeck-us.net>
 References: <20240705213547.1155690-1-linux@roeck-us.net>
@@ -86,118 +86,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use BIT() and GENMASK() for bit and mask definitions
-to help distinguish bit and mask definitions from other
-defines and to make the code easier to read.
+The driver only supports a single chip, so an enum
+to determine the chip type is unnecessary. Drop it.
 
 No functional change intended.
 
 Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
-v4: Fix subject (amc6821, not amc2821)
+v4: No change
 
-v3: Add Quentin's Reviewed-by: tag
+v3: No change
 
-v2: Fix definition of AMC6821_CONF1_FDRC1 in this patch
+v2: Add Quentin's Reviewed-by: tag
 
- drivers/hwmon/amc6821.c | 71 +++++++++++++++++++++--------------------
- 1 file changed, 36 insertions(+), 35 deletions(-)
+ drivers/hwmon/amc6821.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
-index bb20ccde5fea..546e79ce93b9 100644
+index 546e79ce93b9..295a9148779d 100644
 --- a/drivers/hwmon/amc6821.c
 +++ b/drivers/hwmon/amc6821.c
-@@ -8,6 +8,7 @@
-  * Copyright (C) 2007 Hans J. Koch <hjk@hansjkoch.de>
-  */
+@@ -36,8 +36,6 @@ module_param(pwminv, int, 0444);
+ static int init = 1; /*Power-on initialization.*/
+ module_param(init, int, 0444);
  
-+#include <linux/bits.h>
- #include <linux/err.h>
- #include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
-@@ -68,46 +69,46 @@ enum chips { amc6821 };
- #define AMC6821_REG_TACH_SETTINGL	0x1e
- #define AMC6821_REG_TACH_SETTINGH	0x1f
+-enum chips { amc6821 };
+-
+ #define AMC6821_REG_DEV_ID		0x3D
+ #define AMC6821_REG_COMP_ID		0x3E
+ #define AMC6821_REG_CONF1		0x00
+@@ -944,7 +942,7 @@ static int amc6821_probe(struct i2c_client *client)
+ }
  
--#define AMC6821_CONF1_START		0x01
--#define AMC6821_CONF1_FAN_INT_EN	0x02
--#define AMC6821_CONF1_FANIE		0x04
--#define AMC6821_CONF1_PWMINV		0x08
--#define AMC6821_CONF1_FAN_FAULT_EN	0x10
--#define AMC6821_CONF1_FDRC0		0x20
--#define AMC6821_CONF1_FDRC1		0x40
--#define AMC6821_CONF1_THERMOVIE		0x80
-+#define AMC6821_CONF1_START		BIT(0)
-+#define AMC6821_CONF1_FAN_INT_EN	BIT(1)
-+#define AMC6821_CONF1_FANIE		BIT(2)
-+#define AMC6821_CONF1_PWMINV		BIT(3)
-+#define AMC6821_CONF1_FAN_FAULT_EN	BIT(4)
-+#define AMC6821_CONF1_FDRC0		BIT(5)
-+#define AMC6821_CONF1_FDRC1		BIT(6)
-+#define AMC6821_CONF1_THERMOVIE		BIT(7)
+ static const struct i2c_device_id amc6821_id[] = {
+-	{ "amc6821", amc6821 },
++	{ "amc6821", 0 },
+ 	{ }
+ };
  
--#define AMC6821_CONF2_PWM_EN		0x01
--#define AMC6821_CONF2_TACH_MODE		0x02
--#define AMC6821_CONF2_TACH_EN		0x04
--#define AMC6821_CONF2_RTFIE		0x08
--#define AMC6821_CONF2_LTOIE		0x10
--#define AMC6821_CONF2_RTOIE		0x20
--#define AMC6821_CONF2_PSVIE		0x40
--#define AMC6821_CONF2_RST		0x80
-+#define AMC6821_CONF2_PWM_EN		BIT(0)
-+#define AMC6821_CONF2_TACH_MODE		BIT(1)
-+#define AMC6821_CONF2_TACH_EN		BIT(2)
-+#define AMC6821_CONF2_RTFIE		BIT(3)
-+#define AMC6821_CONF2_LTOIE		BIT(4)
-+#define AMC6821_CONF2_RTOIE		BIT(5)
-+#define AMC6821_CONF2_PSVIE		BIT(6)
-+#define AMC6821_CONF2_RST		BIT(7)
- 
--#define AMC6821_CONF3_THERM_FAN_EN	0x80
--#define AMC6821_CONF3_REV_MASK		0x0F
-+#define AMC6821_CONF3_THERM_FAN_EN	BIT(7)
-+#define AMC6821_CONF3_REV_MASK		GENMASK(3, 0)
- 
--#define AMC6821_CONF4_OVREN		0x10
--#define AMC6821_CONF4_TACH_FAST		0x20
--#define AMC6821_CONF4_PSPR		0x40
--#define AMC6821_CONF4_MODE		0x80
-+#define AMC6821_CONF4_OVREN		BIT(4)
-+#define AMC6821_CONF4_TACH_FAST		BIT(5)
-+#define AMC6821_CONF4_PSPR		BIT(6)
-+#define AMC6821_CONF4_MODE		BIT(7)
- 
--#define AMC6821_STAT1_RPM_ALARM		0x01
--#define AMC6821_STAT1_FANS		0x02
--#define AMC6821_STAT1_RTH		0x04
--#define AMC6821_STAT1_RTL		0x08
--#define AMC6821_STAT1_R_THERM		0x10
--#define AMC6821_STAT1_RTF		0x20
--#define AMC6821_STAT1_LTH		0x40
--#define AMC6821_STAT1_LTL		0x80
-+#define AMC6821_STAT1_RPM_ALARM		BIT(0)
-+#define AMC6821_STAT1_FANS		BIT(1)
-+#define AMC6821_STAT1_RTH		BIT(2)
-+#define AMC6821_STAT1_RTL		BIT(3)
-+#define AMC6821_STAT1_R_THERM		BIT(4)
-+#define AMC6821_STAT1_RTF		BIT(5)
-+#define AMC6821_STAT1_LTH		BIT(6)
-+#define AMC6821_STAT1_LTL		BIT(7)
- 
--#define AMC6821_STAT2_RTC		0x08
--#define AMC6821_STAT2_LTC		0x10
--#define AMC6821_STAT2_LPSV		0x20
--#define AMC6821_STAT2_L_THERM		0x40
--#define AMC6821_STAT2_THERM_IN		0x80
-+#define AMC6821_STAT2_RTC		BIT(3)
-+#define AMC6821_STAT2_LTC		BIT(4)
-+#define AMC6821_STAT2_LPSV		BIT(5)
-+#define AMC6821_STAT2_L_THERM		BIT(6)
-+#define AMC6821_STAT2_THERM_IN		BIT(7)
- 
- enum {IDX_TEMP1_INPUT = 0, IDX_TEMP1_MIN, IDX_TEMP1_MAX,
- 	IDX_TEMP1_CRIT, IDX_TEMP2_INPUT, IDX_TEMP2_MIN,
+@@ -953,7 +951,6 @@ MODULE_DEVICE_TABLE(i2c, amc6821_id);
+ static const struct of_device_id __maybe_unused amc6821_of_match[] = {
+ 	{
+ 		.compatible = "ti,amc6821",
+-		.data = (void *)amc6821,
+ 	},
+ 	{ }
+ };
 -- 
 2.39.2
 
