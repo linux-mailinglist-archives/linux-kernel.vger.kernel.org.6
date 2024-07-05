@@ -1,432 +1,143 @@
-Return-Path: <linux-kernel+bounces-242630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4673B928AA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:24:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20686928AA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB9C1F26FBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A051AB22C29
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B7116A94A;
-	Fri,  5 Jul 2024 14:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A3D16B38F;
+	Fri,  5 Jul 2024 14:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="zz/Tj5pg"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GomyGT6q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD20146A69
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F072F14885C
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720189431; cv=none; b=uCozvf5mJsjAu88M+nNEQ9mjC23GyKYqdVQxjHaqQCawmbhFNy0OPXWqiYTx5jNwty6iypcvIM96g07XT8XqHqeZuLlfaqzOFyi8XkD/GdsuOaTuZiDy5vqWApYiBf0KTJ70/jacZFGbie25UWpfSsRovYyVUHwl5P87Lvfc7Yc=
+	t=1720189463; cv=none; b=eNa9KVMJtVT1rNVwZygABx1IXOUEyCqxXUlrJVAaTSEWOXIqguOnuqajkQ6JiF9Wy73gAnAVWTDnxOnTYvkNftZ7OMGCacyB+YVK3EcsnEhVM6uj3VjeQ9aVd0lnO9mHFsjZGLd6aqHMKHtyIAWbxHO0Hz+QIvLquKdaJ1XvbLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720189431; c=relaxed/simple;
-	bh=6B1rAOgRokr1VuehUKLFRuKgc9htcXW/gdaw56Lm6AE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=TkiGbETfwUn+Qlev3PtXPe4ukJBnLpxbEAyY69Gck7IC3814v4J5g/KtuYLn8ZntpqcsLgqIEC3PBs7V3OOoUdkv0+mCiLFwzaxP6uR8sVaT7dbe2iAqiIzwnWT3ClqfVXiMeUeqVAiJbN6v3XK4OCEfKvYOyX3powNXKC7G+JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=zz/Tj5pg; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e9f788e7bso1807228e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 07:23:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1720189426; x=1720794226; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EhHj49GZBv3zl/hokFRERQnZxwaRp5ZfuhjFNNzUNh8=;
-        b=zz/Tj5pgfHNze3iG4MF5q1uGfryJZlyhJO60SZQMizhmUwgyvPxh9+OjOP2f4qtpTa
-         XDutToNY6eGoIl0/4PdRQDBp2PeeKG37/V8TkLc5fGP64+pfMXCaAgbxGFq0MnJKUadX
-         MbcZ7dXOrfDJqIOaE06xF9ID9WaGymRJv8m1SdHuluJ6x0PL9jjRinXg+dc3cLZXaXFL
-         7KcaIlIsUzJAhOvRSS9CSVaCopa1CyEBvjZb9B9VGhXFQ2ZFtHbVMnHqCE4wD6YMTa21
-         0CSC8oeD1LVC+qtm7SPpOHqUQul/6YisdUXOVKhQDFK+YQY/I4vSU1kM0MMJ6jVFN5Zc
-         fIOA==
+	s=arc-20240116; t=1720189463; c=relaxed/simple;
+	bh=ezE9cMK85xGULq2NDfyultVM78ZkLbyifJxcFeIVVd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b3F+3VH9qcVanS+kFO9YCpDmCKXmGa4O9LWVf+NMurIrX6pWCUL4AHUbvX+vGs0O9CgekBnkKatm6JQ8rn5uyiG04fZ7bE1QM/rQiiufe9aIF6K0Bk3xQWtuhI61gx5H4Yv3RWAhrMAbtqvP2iPONstcG94h88Oqj4AAsG4fgl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GomyGT6q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720189460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IqBTg61cVL77faXIzfdAxULAIPGMk1ZHXjVPHmfrZtE=;
+	b=GomyGT6q4Dkoew0pCRUYAoml9aFCdZYOXIEQEjz64CtThBXoFF7Mra3soyxFZs7BYZGnr4
+	vzGyfb+mUwBbgyhfR+bveNOh3TOMIFBnkRrYodstWMD/mhDtfkrnQteBVO2+kFcUWqNqxi
+	S8ghGxK+13S2T1g7QDuve6Z+12fHe3M=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-669-Q-DYbXsCOj2i2hmqJ27mRA-1; Fri, 05 Jul 2024 10:24:18 -0400
+X-MC-Unique: Q-DYbXsCOj2i2hmqJ27mRA-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-446405b39baso3463611cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 07:24:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720189426; x=1720794226;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EhHj49GZBv3zl/hokFRERQnZxwaRp5ZfuhjFNNzUNh8=;
-        b=Kodl3xcgeK7dIM0xD81LqVmZKRlnsRQwiFIyiP//XFw12tEwxRGyUvMAhxvZwDusqY
-         PkQeHeLHHd9l1XwTSaJKzeFO2g96ucrfHFRm4kF2G4gocXB5HvHw4Rz/+DBq6ylCs7Yk
-         DAC5oydb8w8WgRQPyBTU816y9ndeHvHqs9rdKt18NiqalchOOZ8Ox3Q30pdBwhrY3Gkg
-         smp7p9F5JKeUK2ggnKyHSLg8DtckMIrXb7osXAjaqLdJ2gPLEQtb84GPHdFhD5Qjopk2
-         bt3pzIV6eVXl/ErOMXtDSAVp7G2yGlQ+aVuRhGUfvsYq7Frh5HljDihBO2UpiK+Y6EFl
-         hGow==
-X-Forwarded-Encrypted: i=1; AJvYcCW4/u0DV5xPB4SnlmB6OERbqtDzpx7D0et+gV3fhVQxB07IU0K1UwvX3qXPZ+3TG7LSuH5tmKmDeOWiOTgsgsPPKU5kX0jUoX9SF/Fx
-X-Gm-Message-State: AOJu0Yzp3gBBoqKkgrZBGbVkkFOCVG2iMznLqMfNSyEOKQh/VxcOp4nJ
-	UAP2sao8MtWpMC2zK4TJC6w/IPXEfrbM2L9Aq4QLP2c278s24EqTjP3TSLFO7Cd7gvqkCYORkUI
-	/
-X-Google-Smtp-Source: AGHT+IH/Vjd+6IBJc5fBd1nQSj01tTwzhRLpJTAG2Bm5+dEHblIvyY138m8h06tGQbQoierRc0bhLg==
-X-Received: by 2002:ac2:598e:0:b0:52e:9c63:5fe8 with SMTP id 2adb3069b0e04-52ea06b77camr3198699e87.54.1720189426415;
-        Fri, 05 Jul 2024 07:23:46 -0700 (PDT)
-Received: from localhost (2a02-a210-20ba-5a00-9ceb-707b-2d57-26f7.cable.dynamic.v6.ziggo.nl. [2a02:a210:20ba:5a00:9ceb:707b:2d57:26f7])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab3b0d0sm2847708e87.261.2024.07.05.07.23.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 07:23:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720189458; x=1720794258;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IqBTg61cVL77faXIzfdAxULAIPGMk1ZHXjVPHmfrZtE=;
+        b=EUPzZVYBvxGRh14XJZRMFan31ree0kYbnj0/NYZ3MnmiAgoFnjl5cKwvNNW3oYG+QI
+         NMy7rFBQ8PrtX4hb/k7eKqOw5fcVRl6RcAAG9veyXzz9No+bvZ762k/dVv7W6VjC61BR
+         Q7wJ8PdNUWjgivYs2IwPKQf0nawPYf62d1wRmTEp2TBgilPiDfEMnaZQbFo46GkeWQjB
+         vxvN0AkujS0GdCWEtOLfkZf0dytSE2bItso8Na1rZ17PkribdXl2kgzF99ks9m4n9Vxi
+         I66yplsa/GBggVM/T/b60o/6KZL7QrxaErgrj3FsDg/k7Laph/b/NftDAh/glQh9sJKc
+         LzsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjB4OGbsedzjtYmxe0G+GmPdk9N89dp8cfSD+L+EjwvxqYpYzuF2GWUPb4vbxikVq20oUwDtlBqVih7zR7d06JecBBXqBrLX2y/JXJ
+X-Gm-Message-State: AOJu0YxhRMiNmj66Xv3FdRCX2wDulFkhnHE4a0t3NIb0/u6FQWePiwSj
+	vSLGUg+lsDJnagVD2fHTBDnsIQmXKH6V7FhlN+263z1E8UJeQIx3SbJY9mxUhU722DNTifzV0bk
+	83G0t6f50VgTEj2EvLd3B4mcg5sEvJs6AJUW8tB68QhwlgwwI4X/xxLO/A7fwaA==
+X-Received: by 2002:ac8:7c4b:0:b0:446:395a:37c9 with SMTP id d75a77b69052e-447cc1cd760mr50256861cf.4.1720189458367;
+        Fri, 05 Jul 2024 07:24:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKP4/uPX8iCeoUcNLMV3z8vBAByHvLymsXhgYIxVOYKgo8tVByPTMSYbiLBJ2KPlAF3hMSkQ==
+X-Received: by 2002:ac8:7c4b:0:b0:446:395a:37c9 with SMTP id d75a77b69052e-447cc1cd760mr50256521cf.4.1720189457935;
+        Fri, 05 Jul 2024 07:24:17 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4465149b579sm69523231cf.75.2024.07.05.07.24.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 07:24:17 -0700 (PDT)
+Date: Fri, 5 Jul 2024 10:24:14 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, david@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	david@fromorbit.com, Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
+Message-ID: <ZogCDpfSyCcjVXWH@x1n>
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 05 Jul 2024 16:23:44 +0200
-Message-Id: <D2HO9CAE81NA.3UIL5UZ1N5I4W@fairphone.com>
-Cc: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David
- Collins" <quic_collinsd@quicinc.com>, "Subbaraman Narayanamurthy"
- <quic_subbaram@quicinc.com>
-Subject: Re: [PATCH RESEND v3] leds: flash: leds-qcom-flash: limit LED
- current based on thermal condition
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: <quic_fenglinw@quicinc.com>, <kernel@quicinc.com>,
- <linux-arm-msm@vger.kernel.org>, "Pavel Machek" <pavel@ucw.cz>, "Lee Jones"
- <lee@kernel.org>
-X-Mailer: aerc 0.17.0-0-g6ea74eb30457
-References: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
-In-Reply-To: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
 
-On Fri Jul 5, 2024 at 9:55 AM CEST, Fenglin Wu via B4 Relay wrote:
-> From: Fenglin Wu <quic_fenglinw@quicinc.com>
->
-> The flash module has status bits to indicate different thermal
-> conditions which are called as OTSTx. For each OTSTx status,
-> there is a recommended total flash current for all channels to
-> prevent the flash module entering into higher thermal level.
-> For example, the total flash current should be limited to 1000mA/500mA
-> respectively when the HW reaches the OTST1/OTST2 thermal level.
+Hi, Alistair,
 
-Hi Fenglin,
-
-Only semi-related to this patch, but I wanted to ask.
-
-Since most phones with a flash also have a thermistor for the flash led,
-is there any plan to add support to be able to declare the flash led to
-be a "cooling-device" for the relevant thermal zone? That way from a
-Linux thermal API standpoint when the zone gets too hot that it can ask
-the driver to throttle the brightness or turn the LED off completely.
-
-Right now the only action the kernel can take is with type 'critical' to
-just kill the entire system to mitigate the thermal situation.
-
-Regards
-Luca
-
->
-> Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
+> Now that DAX is managing page reference counts the same as normal
+> pages there are no callers for vmf_insert_pXd functions so remove
+> them.
+> 
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
 > ---
-> Changes in v3:
-> - Fix coding style issues to address review comments in v2.
-> - Link to v2: https://lore.kernel.org/r/20240513-qcom_flash_thermal_derat=
-ing-v2-1-e41a07d0eb83@quicinc.com
->
-> Changes in v2:
-> - Update thermal threshold level 2 register definition for mvflash_4ch_re=
-gs.
->     Mvflash_4ch module thermal threshold level 2 configuration register
->     offset is 0x78, not succeeding from thermal threshold level 1 registe=
-r 0x7a.
->     Hence it is not appropriate to use REG_FIELD_ID to define thermal thr=
-eshold
->     register fileds like mvflash_3ch. Update to use REG_FIELD instead.
-> - Link to v1: https://lore.kernel.org/r/20240509-qcom_flash_thermal_derat=
-ing-v1-1-1d5e68e5d71c@quicinc.com
-> ---
->  drivers/leds/flash/leds-qcom-flash.c | 163 +++++++++++++++++++++++++++++=
-+++++-
->  1 file changed, 162 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/le=
-ds-qcom-flash.c
-> index 7c99a3039171..aa22686fafe0 100644
-> --- a/drivers/leds/flash/leds-qcom-flash.c
-> +++ b/drivers/leds/flash/leds-qcom-flash.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights =
-reserved.
->   */
-> =20
->  #include <linux/bitfield.h>
-> @@ -14,6 +14,9 @@
->  #include <media/v4l2-flash-led-class.h>
-> =20
->  /* registers definitions */
-> +#define FLASH_REVISION_REG		0x00
-> +#define FLASH_4CH_REVISION_V0P1		0x01
-> +
->  #define FLASH_TYPE_REG			0x04
->  #define FLASH_TYPE_VAL			0x18
-> =20
-> @@ -73,6 +76,16 @@
-> =20
->  #define UA_PER_MA			1000
-> =20
-> +/* thermal threshold constants */
-> +#define OTST_3CH_MIN_VAL		3
-> +#define OTST1_4CH_MIN_VAL		0
-> +#define OTST1_4CH_V0P1_MIN_VAL		3
-> +#define OTST2_4CH_MIN_VAL		0
-> +
-> +#define OTST1_MAX_CURRENT_MA		1000
-> +#define OTST2_MAX_CURRENT_MA		500
-> +#define OTST3_MAX_CURRENT_MA		200
-> +
->  enum hw_type {
->  	QCOM_MVFLASH_3CH,
->  	QCOM_MVFLASH_4CH,
-> @@ -98,6 +111,9 @@ enum {
->  	REG_IRESOLUTION,
->  	REG_CHAN_STROBE,
->  	REG_CHAN_EN,
-> +	REG_THERM_THRSH1,
-> +	REG_THERM_THRSH2,
-> +	REG_THERM_THRSH3,
->  	REG_MAX_COUNT,
->  };
-> =20
-> @@ -111,6 +127,9 @@ static struct reg_field mvflash_3ch_regs[REG_MAX_COUN=
-T] =3D {
->  	REG_FIELD(0x47, 0, 5),                  /* iresolution	*/
->  	REG_FIELD_ID(0x49, 0, 2, 3, 1),         /* chan_strobe	*/
->  	REG_FIELD(0x4c, 0, 2),                  /* chan_en	*/
-> +	REG_FIELD(0x56, 0, 2),			/* therm_thrsh1 */
-> +	REG_FIELD(0x57, 0, 2),			/* therm_thrsh2 */
-> +	REG_FIELD(0x58, 0, 2),			/* therm_thrsh3 */
->  };
-> =20
->  static struct reg_field mvflash_4ch_regs[REG_MAX_COUNT] =3D {
-> @@ -123,6 +142,8 @@ static struct reg_field mvflash_4ch_regs[REG_MAX_COUN=
-T] =3D {
->  	REG_FIELD(0x49, 0, 3),			/* iresolution	*/
->  	REG_FIELD_ID(0x4a, 0, 6, 4, 1),		/* chan_strobe	*/
->  	REG_FIELD(0x4e, 0, 3),			/* chan_en	*/
-> +	REG_FIELD(0x7a, 0, 2),			/* therm_thrsh1 */
-> +	REG_FIELD(0x78, 0, 2),			/* therm_thrsh2 */
->  };
-> =20
->  struct qcom_flash_data {
-> @@ -130,9 +151,11 @@ struct qcom_flash_data {
->  	struct regmap_field     *r_fields[REG_MAX_COUNT];
->  	struct mutex		lock;
->  	enum hw_type		hw_type;
-> +	u32			total_ma;
->  	u8			leds_count;
->  	u8			max_channels;
->  	u8			chan_en_bits;
-> +	u8			revision;
->  };
-> =20
->  struct qcom_flash_led {
-> @@ -143,6 +166,7 @@ struct qcom_flash_led {
->  	u32				max_timeout_ms;
->  	u32				flash_current_ma;
->  	u32				flash_timeout_ms;
-> +	u32				current_in_use_ma;
->  	u8				*chan_id;
->  	u8				chan_count;
->  	bool				enabled;
-> @@ -172,6 +196,127 @@ static int set_flash_module_en(struct qcom_flash_le=
-d *led, bool en)
->  	return rc;
->  }
-> =20
-> +static int update_allowed_flash_current(struct qcom_flash_led *led, u32 =
-*current_ma, bool strobe)
-> +{
-> +	struct qcom_flash_data *flash_data =3D led->flash_data;
-> +	u32 therm_ma, avail_ma, thrsh[3], min_thrsh, sts;
-> +	int rc =3D 0;
-> +
-> +	mutex_lock(&flash_data->lock);
-> +	/*
-> +	 * Put previously allocated current into allowed budget in either of th=
-ese two cases:
-> +	 * 1) LED is disabled;
-> +	 * 2) LED is enabled repeatedly
-> +	 */
-> +	if (!strobe || led->current_in_use_ma !=3D 0) {
-> +		if (flash_data->total_ma >=3D led->current_in_use_ma)
-> +			flash_data->total_ma -=3D led->current_in_use_ma;
-> +		else
-> +			flash_data->total_ma =3D 0;
-> +
-> +		led->current_in_use_ma =3D 0;
-> +		if (!strobe)
-> +			goto unlock;
-> +	}
-> +
-> +	/*
-> +	 * Cache the default thermal threshold settings, and set them to the lo=
-west levels before
-> +	 * reading over-temp real time status. If over-temp has been triggered =
-at the lowest
-> +	 * threshold, it's very likely that it would be triggered at a higher (=
-default) threshold
-> +	 * when more flash current is requested. Prevent device from triggering=
- over-temp condition
-> +	 * by limiting the flash current for the new request.
-> +	 */
-> +	rc =3D regmap_field_read(flash_data->r_fields[REG_THERM_THRSH1], &thrsh=
-[0]);
-> +	if (rc < 0)
-> +		goto unlock;
-> +
-> +	rc =3D regmap_field_read(flash_data->r_fields[REG_THERM_THRSH2], &thrsh=
-[1]);
-> +	if (rc < 0)
-> +		goto unlock;
-> +
-> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_3CH) {
-> +		rc =3D regmap_field_read(flash_data->r_fields[REG_THERM_THRSH3], &thrs=
-h[2]);
-> +		if (rc < 0)
-> +			goto unlock;
-> +	}
-> +
-> +	min_thrsh =3D OTST_3CH_MIN_VAL;
-> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_4CH)
-> +		min_thrsh =3D (flash_data->revision =3D=3D FLASH_4CH_REVISION_V0P1) ?
-> +			OTST1_4CH_V0P1_MIN_VAL : OTST1_4CH_MIN_VAL;
-> +
-> +	rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH1], min_t=
-hrsh);
-> +	if (rc < 0)
-> +		goto unlock;
-> +
-> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_4CH)
-> +		min_thrsh =3D OTST2_4CH_MIN_VAL;
-> +
-> +	/*
-> +	 * The default thermal threshold settings have been updated hence
-> +	 * restore them if any fault happens starting from here.
-> +	 */
-> +	rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH2], min_t=
-hrsh);
-> +	if (rc < 0)
-> +		goto restore;
-> +
-> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_3CH) {
-> +		rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH3], min_=
-thrsh);
-> +		if (rc < 0)
-> +			goto restore;
-> +	}
-> +
-> +	/* Read thermal level status to get corresponding derating flash curren=
-t */
-> +	rc =3D regmap_field_read(flash_data->r_fields[REG_STATUS2], &sts);
-> +	if (rc)
-> +		goto restore;
-> +
-> +	therm_ma =3D FLASH_TOTAL_CURRENT_MAX_UA / 1000;
-> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_3CH) {
-> +		if (sts & FLASH_STS_3CH_OTST3)
-> +			therm_ma =3D OTST3_MAX_CURRENT_MA;
-> +		else if (sts & FLASH_STS_3CH_OTST2)
-> +			therm_ma =3D OTST2_MAX_CURRENT_MA;
-> +		else if (sts & FLASH_STS_3CH_OTST1)
-> +			therm_ma =3D OTST1_MAX_CURRENT_MA;
-> +	} else {
-> +		if (sts & FLASH_STS_4CH_OTST2)
-> +			therm_ma =3D OTST2_MAX_CURRENT_MA;
-> +		else if (sts & FLASH_STS_4CH_OTST1)
-> +			therm_ma =3D OTST1_MAX_CURRENT_MA;
-> +	}
-> +
-> +	/* Calculate the allowed flash current for the request */
-> +	if (therm_ma <=3D flash_data->total_ma)
-> +		avail_ma =3D 0;
-> +	else
-> +		avail_ma =3D therm_ma - flash_data->total_ma;
-> +
-> +	*current_ma =3D min_t(u32, *current_ma, avail_ma);
-> +	led->current_in_use_ma =3D *current_ma;
-> +	flash_data->total_ma +=3D led->current_in_use_ma;
-> +
-> +	dev_dbg(led->flash.led_cdev.dev, "allowed flash current: %dmA, total cu=
-rrent: %dmA\n",
-> +					led->current_in_use_ma, flash_data->total_ma);
-> +
-> +restore:
-> +	/* Restore to default thermal threshold settings */
-> +	rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH1], thrsh=
-[0]);
-> +	if (rc < 0)
-> +		goto unlock;
-> +
-> +	rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH2], thrsh=
-[1]);
-> +	if (rc < 0)
-> +		goto unlock;
-> +
-> +	if (flash_data->hw_type =3D=3D QCOM_MVFLASH_3CH)
-> +		rc =3D regmap_field_write(flash_data->r_fields[REG_THERM_THRSH3], thrs=
-h[2]);
-> +
-> +unlock:
-> +	mutex_unlock(&flash_data->lock);
-> +	return rc;
-> +}
-> +
->  static int set_flash_current(struct qcom_flash_led *led, u32 current_ma,=
- enum led_mode mode)
->  {
->  	struct qcom_flash_data *flash_data =3D led->flash_data;
-> @@ -313,6 +458,10 @@ static int qcom_flash_strobe_set(struct led_classdev=
-_flash *fled_cdev, bool stat
->  	if (rc)
->  		return rc;
-> =20
-> +	rc =3D update_allowed_flash_current(led, &led->flash_current_ma, state)=
-;
-> +	if (rc < 0)
-> +		return rc;
-> +
->  	rc =3D set_flash_current(led, led->flash_current_ma, FLASH_MODE);
->  	if (rc)
->  		return rc;
-> @@ -429,6 +578,10 @@ static int qcom_flash_led_brightness_set(struct led_=
-classdev *led_cdev,
->  	if (rc)
->  		return rc;
-> =20
-> +	rc =3D update_allowed_flash_current(led, &current_ma, enable);
-> +	if (rc < 0)
-> +		return rc;
-> +
->  	rc =3D set_flash_current(led, current_ma, TORCH_MODE);
->  	if (rc)
->  		return rc;
-> @@ -703,6 +856,14 @@ static int qcom_flash_led_probe(struct platform_devi=
-ce *pdev)
->  		flash_data->hw_type =3D QCOM_MVFLASH_4CH;
->  		flash_data->max_channels =3D 4;
->  		regs =3D mvflash_4ch_regs;
-> +
-> +		rc =3D regmap_read(regmap, reg_base + FLASH_REVISION_REG, &val);
-> +		if (rc < 0) {
-> +			dev_err(dev, "Failed to read flash LED module revision, rc=3D%d\n", r=
-c);
-> +			return rc;
-> +		}
-> +
-> +		flash_data->revision =3D val;
->  	} else {
->  		dev_err(dev, "flash LED subtype %#x is not yet supported\n", val);
->  		return -ENODEV;
->
-> ---
-> base-commit: ca66b10a11da3c445c9c0ca1184f549bbe9061f2
-> change-id: 20240507-qcom_flash_thermal_derating-260b1f3c757c
->
-> Best regards,
+>  include/linux/huge_mm.h |   2 +-
+>  mm/huge_memory.c        | 165 +-----------------------------------------
+>  2 files changed, 167 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 9207d8e..0fb6bff 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
+>  		    unsigned long cp_flags);
+>  
+> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+>  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+>  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+
+There's a plan to support huge pfnmaps in VFIO, which may still make good
+use of these functions.  I think it's fine to remove them but it may mean
+we'll need to add them back when supporting pfnmaps with no memmap.
+
+Is it still possible to make the old API generic to both service the new
+dax refcount plan, but at the meantime working for pfn injections when
+there's no page struct?
+
+Thanks,
+
+-- 
+Peter Xu
 
 
