@@ -1,69 +1,65 @@
-Return-Path: <linux-kernel+bounces-242135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D02592841D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:50:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A1A928425
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E7671C22AC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:50:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69FDAB22B71
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F58145FEA;
-	Fri,  5 Jul 2024 08:50:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFBA14659E;
+	Fri,  5 Jul 2024 08:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KkX5JZ0o"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A0D143C67
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D96314600D
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720169413; cv=none; b=TVCsZdr0Tiero2HRemOIwoq/EVjF9rXj4QlcQLBev491JiEMupi/uYIjMhwc4niM+ZnqH6lAwEL7dLsf43KoPgfrZzjO6NfyL/4Igeq1NzWYcXEARPT1zy+dmHeHfNJ6FkhR+SlGzUa8of9CNbq/HIGSAOdn5Acn62LASkvnqak=
+	t=1720169492; cv=none; b=QliD09Z/Ppag/oi21Sz4OGlwZrK/15Iktgo3sSycQbF9w7WLTTL8jgFdTixBTh7t+RpSxy1WoApo7We1KVTffwHzvaezraxiROj+b2gY2EZcG7tsVGCLKN8nXrPye6SC8KN7jTC/UOnWNKSyC/hzQAwlnBST7oeWBa7acvdL6ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720169413; c=relaxed/simple;
-	bh=sHYfbCuq8SPanDuwXpeA1bZ2iDfcszHqoWHCl9HxScg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AT1L2qXAHQwtu/x+WadbBgxkhzZ4N61c9kVBMprm1FU2Tdtpth3f7Syyw6Ym27/p/ghy9tsb0ZBgQJNQtZZ5whsiSLDVch8sE8CLWzLgxAzjXDfgUyp24HyVdqkCgqC9kFMsjUc/7bpcVXhxiR4ENBabGjnQBbZoj5zfdRy1RYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPedi-0004Cu-AC; Fri, 05 Jul 2024 10:49:58 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPedg-007HqW-HM; Fri, 05 Jul 2024 10:49:56 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPedg-000Lbn-1U;
-	Fri, 05 Jul 2024 10:49:56 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Yuiko Oshino <yuiko.oshino@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: [PATCH net v3 1/1] net: phy: microchip: lan87xx: reinit PHY after cable test
-Date: Fri,  5 Jul 2024 10:49:54 +0200
-Message-Id: <20240705084954.83048-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720169492; c=relaxed/simple;
+	bh=yCAsEHezoCR+kKRNTiPiuuofe/EEkQpu1kEAAD/EnZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jz+YbLwWrhfmacKhV+jcYwzcGI0KPe3cZfREB6eSe8GV5BOb/ae/ED5x1/ur0k20qfdmRuc4mtZYqvCvtdS4lOmNZIEv1aG2yA8I/KsnhCtNaW7ar595Z/9uAUxN5n/Syhg3BCqQCtH9YnKJX/BcWZWnpjW5Fe9pTk06UoOzLCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KkX5JZ0o; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720169488;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2ZIuI/3g9f5a9v+/n87fy4Ud7Wmid1oVycdbOhxwppk=;
+	b=KkX5JZ0oxp5M5WRIrNQ2s0q9C22ser/wxsyQonVI9pJebpe79YmUDIkYC1R70MVhBgg9tT
+	Er6cQtKEWVfDDjGZRKIwpnfzK86Tw7tI/5ExicPYbXpT0IiXaSX8lEDZmK5iGDmR9Ua9/u
+	yYW7tbWv0rwuPQ4oEqSpFCIdy76UK5w=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-577-fcvxVuZoOsmA2XlaFqzf3g-1; Fri,
+ 05 Jul 2024 04:51:23 -0400
+X-MC-Unique: fcvxVuZoOsmA2XlaFqzf3g-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2BE5B195608F;
+	Fri,  5 Jul 2024 08:51:22 +0000 (UTC)
+Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.eng.rdu2.dc.redhat.com [10.6.68.74])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3E9F81955F65;
+	Fri,  5 Jul 2024 08:51:21 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [GIT PULL] KVM changes for Linux 6.10-rc7
+Date: Fri,  5 Jul 2024 04:51:20 -0400
+Message-ID: <20240705085120.659090-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,44 +67,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Reinit PHY after cable test, otherwise link can't be established on
-tested port. This issue is reproducible on LAN9372 switches with
-integrated 100BaseT1 PHYs.
+Linus,
 
-Fixes: 788050256c411 ("net: phy: microchip_t1: add cable test support for lan87xx phy")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
-changes v3:
-- add Reviewed-by: Michal Kubiak  and Florian Fainelli from v1 patch
-changes v2:
-- add Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-- drop microchip specific SQI fix
----
- drivers/net/phy/microchip_t1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index a838b61cd844b..a35528497a576 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -748,7 +748,7 @@ static int lan87xx_cable_test_report(struct phy_device *phydev)
- 	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A,
- 				lan87xx_cable_test_report_trans(detect));
- 
--	return 0;
-+	return phy_init_hw(phydev);
- }
- 
- static int lan87xx_cable_test_get_status(struct phy_device *phydev,
--- 
-2.39.2
+  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to 8ad209fc6448e1d7fff7525a8d40d2fb549f72d1:
+
+  Merge tag 'kvm-s390-master-6.10-1' of git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux into HEAD (2024-07-05 04:45:53 -0400)
+
+Things have definitely calmed down. :)
+
+Thanks,
+
+Paolo
+
+----------------------------------------------------------------
+s390: fix support for z16 systems.
+
+----------------------------------------------------------------
+Christian Borntraeger (1):
+      KVM: s390: fix LPSWEY handling
+
+Paolo Bonzini (1):
+      Merge tag 'kvm-s390-master-6.10-1' of git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux into HEAD
+
+ arch/s390/include/asm/kvm_host.h |  1 +
+ arch/s390/kvm/kvm-s390.c         |  1 +
+ arch/s390/kvm/kvm-s390.h         | 15 +++++++++++++++
+ arch/s390/kvm/priv.c             | 32 ++++++++++++++++++++++++++++++++
+ 4 files changed, 49 insertions(+)
 
 
