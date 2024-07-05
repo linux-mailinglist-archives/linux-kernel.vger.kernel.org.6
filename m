@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-242070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB073928338
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:54:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96AB928336
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91833286AA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:54:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E26CB2370C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC27145FED;
-	Fri,  5 Jul 2024 07:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DF8145A1D;
+	Fri,  5 Jul 2024 07:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fWkvueOw"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q9MBxORM"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925701459FD;
-	Fri,  5 Jul 2024 07:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D522A1442F0;
+	Fri,  5 Jul 2024 07:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720166054; cv=none; b=u68fj1MeN5xpw+Q5bIlJ5r1nIWpD2NmbVNlSP6wUofTX7cyoBNLJNKVmfsUv1M88zws2bLc+9heiAB+R17Nzewar8RLSLHupkf3TY9JHAS+4+O/lbc+LXs1lEI0MIngjrhApCxmcS7YLrUlJTUXsLicKR3o696sgYubW0QCBJYg=
+	t=1720166052; cv=none; b=hMlwSTomUxgVgh/3093j3MEFNtFt9gCWbmcD01jAAouNm9WOcX9la7Tr4udbQpCAcIhMVeNBKVL9B2Ngk3X8xNY3bxWVbaEnmfhKgVAbfZGtoxTjnm2MeQsNlAKgV/cQ+wSwkAdNFBKP7DgTML6aBPHO+ngxrbaWrkV32Vwin4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720166054; c=relaxed/simple;
-	bh=oo2/ZfPMt+FWha77yO+QS7iVUOjjLf4OZJnsxWDnnYo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=q4yFLb0TYIdgXrVyYIkmTNKLh93ezPmblDDe4MIyrfSGaIpv9Vu4DLeu5J23m5paI+7KkZndedLFIxa1ldPQ49oiPVdco7KfKSCBfcT8rQT/4Ma7pZMvD/DwwA9Rx3nLUapAfwbh18GI8RkQlb4LWM9KuQO+o5qBsApdLKbnL44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fWkvueOw; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1720166052; c=relaxed/simple;
+	bh=5OWW7SNa0nNrp39nyTHhqkbfg5MVC6mu3/hAnCEpYZY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J+W5I6Lxodby/y4Mcbdrdx25RMb7gcNhN7NnTC/tFxcfJYZX97e3ZAzGkofNNhdLjL+B+433TJCCBxnB4sS9F01YsL/YfhdNXExws0a2L9LFNyUhGwG9Q/kAzp+qQ5/73XJ+xXZnyDG4Q1OrhRdeJsCpXAFI4ycwl8f8m03Hk4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q9MBxORM; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720166052; x=1751702052;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oo2/ZfPMt+FWha77yO+QS7iVUOjjLf4OZJnsxWDnnYo=;
-  b=fWkvueOw+x468swlAT6vbqjZ8nvTB+RsGy+Pp3iQ/bHgLibj7rR6hvSv
-   GoEsqDtTFWF8jAmpAOSC/j5QNIgQyaFXzIBK8IAeAjpVBm48tbXfYwAAR
-   zFPJv9l4I65UhMbYlYpYuI2PIxk4J/YIFidPbmRvkXOgWd8nFMwE4iHck
-   uARwiRDy89d6EUTTmBUiQhqyE5Yta2qaMpl+qXFhmusuNXtMnHxFT4iIl
-   +PyXCtlHBz1jCdcZ0RcAFaHvgIUdf+OczPbBUQ3uIYpiwNSInQzZTn4U0
-   v60VEcEaMEPsU2uBrMyXHmNRX3761eBBYt3X+KfJbBHHsZTBjkYKMkiNW
-   A==;
-X-CSE-ConnectionGUID: XL+s8xEmTAqJEzFgg256GQ==
-X-CSE-MsgGUID: PHN5zXkBSFO6PW7OEvVj7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="34892873"
+  t=1720166050; x=1751702050;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5OWW7SNa0nNrp39nyTHhqkbfg5MVC6mu3/hAnCEpYZY=;
+  b=Q9MBxORMw82VN/Lfess9v17JoEj1HXwi+6JCc9HYKtgEAyefa0uWIFMF
+   e7bqoW7AQ4mnd6ET6ZxGjX+lZFk/sTQ2rcfJPgcsT6yh5qOYZ+Xwfrj/e
+   qjGPSYALWjNO1ZP4agXcruHYbjufXWlqcpOpfyrtTKvHjvxFlyOEo1jRh
+   l80T44c0jKZ6L5GSnhKRnYlVYkmIBRAu9S8Nt9HopRHpza2HsgCuDrt+0
+   xEMv/THzapN7Gu2Gdp9E3HNByUVBpiwMvbI5cR+aA5OCNF+G2ME02KGL8
+   BGtVatGNxY2z40NyP9WQoKEaj+p4H2LDvZNFH33EeIV7afTz8a6Cig9/y
+   Q==;
+X-CSE-ConnectionGUID: 64zhLc5bSEy3pt7Zh/ND6Q==
+X-CSE-MsgGUID: 8+ZXjVL5SWW+tRUKmO4MBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="34892875"
 X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="scan'208";a="34892873"
+   d="scan'208";a="34892875"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
   by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 00:53:42 -0700
-X-CSE-ConnectionGUID: IANxxJSMTfy4900/aewpDA==
-X-CSE-MsgGUID: dDsjS/9pRzaAksescHjzvw==
+X-CSE-ConnectionGUID: +dTIeSjVRxiOIrG7SjdfyA==
+X-CSE-MsgGUID: biB6J1XATHeOSubFTzNVuQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="scan'208";a="46918563"
+   d="scan'208";a="46918566"
 Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 00:53:42 -0700
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 00:53:43 -0700
 From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
 To: dave.hansen@linux.intel.com,
 	jarkko@kernel.org,
@@ -65,11 +66,14 @@ To: dave.hansen@linux.intel.com,
 	linux-sgx@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: mona.vij@intel.com,
-	kailun.qin@intel.com
-Subject: [PATCH v4 0/3] x86/sgx: Fix two data races in EAUG/EREMOVE flows
-Date: Fri,  5 Jul 2024 00:45:21 -0700
-Message-Id: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
+	kailun.qin@intel.com,
+	stable@vger.kernel.org
+Subject: [PATCH v4 1/3] x86/sgx: Split SGX_ENCL_PAGE_BEING_RECLAIMED into two flags
+Date: Fri,  5 Jul 2024 00:45:22 -0700
+Message-Id: <20240705074524.443713-2-dmitrii.kuvaiskii@intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
+References: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,100 +84,119 @@ Content-Type: text/plain; charset=UTF-8
 Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
 Content-Transfer-Encoding: 8bit
 
-SGX runtimes such as Gramine may implement EDMM-based lazy allocation of
-enclave pages and may support MADV_DONTNEED semantics [1]. The former
-implies #PF-based page allocation, and the latter implies the usage of
-SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl.
+SGX_ENCL_PAGE_BEING_RECLAIMED flag is set when the enclave page is being
+reclaimed (moved to the backing store). This flag however has two
+logical meanings:
 
-EDMM-based lazy allocation and MADV_DONTNEED semantics provide
-significant performance improvement for some workloads that run on
-Gramine. For example, a Java workload with a 16GB enclave size has
-approx. 57x improvement in total runtime. Thus, we consider it important
-to permit these optimizations in Gramine. However, we observed hangs of
-applications (Node.js, PyTorch, R, iperf, Blender, Nginx) when run on
-Gramine with EDMM, lazy allocation and MADV_DONTNEED features enabled.
+1. Don't attempt to load the enclave page (the page is busy).
+2. Don't attempt to remove the PCMD page corresponding to this enclave
+   page (the PCMD page is busy).
 
-We wrote a trivial stress test to reproduce the hangs observed in
-real-world applications. The test stresses #PF-based page allocation and
-SGX_IOC_ENCLAVE_REMOVE_PAGES flows in the SGX driver:
+To reflect these two meanings, split SGX_ENCL_PAGE_BEING_RECLAIMED into
+two flags: SGX_ENCL_PAGE_BUSY and SGX_ENCL_PAGE_PCMD_BUSY. Currently,
+both flags are set only when the enclave page is being reclaimed. A
+future commit will introduce a new case when the enclave page is being
+removed; this new case will set only the SGX_ENCL_PAGE_BUSY flag.
 
-/* repeatedly touch different enclave pages at random and mix with
- * madvise(MADV_DONTNEED) to stress EAUG/EREMOVE flows */
-static void* thread_func(void* arg) {
-    size_t num_pages = 0xA000 / page_size;
-    for (int i = 0; i < 5000; i++) {
-        size_t page = get_random_ulong() % num_pages;
-        char data = READ_ONCE(((char*)arg)[page * page_size]);
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+---
+ arch/x86/kernel/cpu/sgx/encl.c | 16 +++++++---------
+ arch/x86/kernel/cpu/sgx/encl.h | 10 ++++++++--
+ arch/x86/kernel/cpu/sgx/main.c |  4 ++--
+ 3 files changed, 17 insertions(+), 13 deletions(-)
 
-        page = get_random_ulong() % num_pages;
-        madvise(arg + page * page_size, page_size, MADV_DONTNEED);
-    }
-}
-
-addr = mmap(NULL, 0xA000, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0);
-pthread_t threads[16];
-for (int i = 0; i < 16; i++)
-    pthread_create(&threads[i], NULL, thread_func, addr);
-
-This test uncovers two data races in the SGX driver. The remaining
-patches describe and fix these races.
-
-I performed several stress tests to verify that there are no other data
-races (at least with the test program above):
-
-- On Icelake server with 128GB of PRM, without madvise(). This stresses
-  the first data race. A Gramine SGX test suite running in the
-  background for additional stressing. Result: 1,000 runs without hangs
-  (result without the first bug fix: hangs every time).
-- On Icelake server with 128GB of PRM, with madvise(). This stresses the
-  second data race. A Gramine SGX test suite running in the background
-  for additional stressing. Result: 1,000 runs without hangs (result
-  with the first bug fix but without the second bug fix: hangs approx.
-  once in 50 runs).
-- On Icelake server with 4GB of PRM, with madvise(). This additionally
-  stresses the enclave page swapping flows. Two Gramine SGX test suites
-  running in the background for additional stressing of swapping (I
-  observe 100% CPU utilization from ksgxd which confirms that swapping
-  happens). Result: 1,000 runs without hangs.
-
-v3 -> v4:
-- Added a preparatory patch to split the SGX_ENCL_PAGE_BEING_RECLAIMED
-  flag into two: SGX_ENCL_PAGE_BUSY and SGX_ENCL_PAGE_PCMD_BUSY
-  (split suggested by Dave Hansen [2])
-- No changes in the second patch (that fixes the first bug)
-- Trivial changes in the third patch (that fixes the second bug), now
-  that we have a preparatory patch; plus expanded a comment (as
-  suggested by Dave Hansen)
-
-v2 -> v3:
-- No changes in code itself
-- Improved commit message of the first patch (text suggested by Dave
-  Hansen); kept the CPU1 vs CPU2 diagram (as all reviewers liked it)
-- No changes in the commit message of the second patch
-
-v1 -> v2:
-- No changes in code itself
-- Expanded cover letter
-- Added CPU1 vs CPU2 race scenarios in commit messages
-
-[1] https://github.com/gramineproject/gramine/pull/1513
-[2] https://lore.kernel.org/all/1d405428-3847-4862-b146-dd57711c881e@intel.com/
-
-v1: https://lore.kernel.org/all/20240429104330.3636113-3-dmitrii.kuvaiskii@intel.com/
-v2: https://lore.kernel.org/all/20240515131240.1304824-1-dmitrii.kuvaiskii@intel.com/
-v3: https://lore.kernel.org/all/20240517110631.3441817-1-dmitrii.kuvaiskii@intel.com/
-
-Dmitrii Kuvaiskii (3):
-  x86/sgx: Split SGX_ENCL_PAGE_BEING_RECLAIMED into two flags
-  x86/sgx: Resolve EAUG race where losing thread returns SIGBUS
-  x86/sgx: Resolve EREMOVE page vs EAUG page data race
-
- arch/x86/kernel/cpu/sgx/encl.c  | 23 ++++++++++++-----------
- arch/x86/kernel/cpu/sgx/encl.h  | 10 ++++++++--
- arch/x86/kernel/cpu/sgx/ioctl.c |  7 +++++++
- arch/x86/kernel/cpu/sgx/main.c  |  4 ++--
- 4 files changed, 29 insertions(+), 15 deletions(-)
-
+diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+index 279148e72459..c0a3c00284c8 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.c
++++ b/arch/x86/kernel/cpu/sgx/encl.c
+@@ -46,10 +46,10 @@ static int sgx_encl_lookup_backing(struct sgx_encl *encl, unsigned long page_ind
+  * a check if an enclave page sharing the PCMD page is in the process of being
+  * reclaimed.
+  *
+- * The reclaimer sets the SGX_ENCL_PAGE_BEING_RECLAIMED flag when it
+- * intends to reclaim that enclave page - it means that the PCMD page
+- * associated with that enclave page is about to get some data and thus
+- * even if the PCMD page is empty, it should not be truncated.
++ * The reclaimer sets the SGX_ENCL_PAGE_PCMD_BUSY flag when it intends to
++ * reclaim that enclave page - it means that the PCMD page associated with that
++ * enclave page is about to get some data and thus even if the PCMD page is
++ * empty, it should not be truncated.
+  *
+  * Context: Enclave mutex (&sgx_encl->lock) must be held.
+  * Return: 1 if the reclaimer is about to write to the PCMD page
+@@ -77,8 +77,7 @@ static int reclaimer_writing_to_pcmd(struct sgx_encl *encl,
+ 		 * Stop when reaching the SECS page - it does not
+ 		 * have a page_array entry and its reclaim is
+ 		 * started and completed with enclave mutex held so
+-		 * it does not use the SGX_ENCL_PAGE_BEING_RECLAIMED
+-		 * flag.
++		 * it does not use the SGX_ENCL_PAGE_PCMD_BUSY flag.
+ 		 */
+ 		if (addr == encl->base + encl->size)
+ 			break;
+@@ -91,8 +90,7 @@ static int reclaimer_writing_to_pcmd(struct sgx_encl *encl,
+ 		 * VA page slot ID uses same bit as the flag so it is important
+ 		 * to ensure that the page is not already in backing store.
+ 		 */
+-		if (entry->epc_page &&
+-		    (entry->desc & SGX_ENCL_PAGE_BEING_RECLAIMED)) {
++		if (entry->epc_page && (entry->desc & SGX_ENCL_PAGE_PCMD_BUSY)) {
+ 			reclaimed = 1;
+ 			break;
+ 		}
+@@ -257,7 +255,7 @@ static struct sgx_encl_page *__sgx_encl_load_page(struct sgx_encl *encl,
+ 
+ 	/* Entry successfully located. */
+ 	if (entry->epc_page) {
+-		if (entry->desc & SGX_ENCL_PAGE_BEING_RECLAIMED)
++		if (entry->desc & SGX_ENCL_PAGE_BUSY)
+ 			return ERR_PTR(-EBUSY);
+ 
+ 		return entry;
+diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+index f94ff14c9486..11b09899cd92 100644
+--- a/arch/x86/kernel/cpu/sgx/encl.h
++++ b/arch/x86/kernel/cpu/sgx/encl.h
+@@ -22,8 +22,14 @@
+ /* 'desc' bits holding the offset in the VA (version array) page. */
+ #define SGX_ENCL_PAGE_VA_OFFSET_MASK	GENMASK_ULL(11, 3)
+ 
+-/* 'desc' bit marking that the page is being reclaimed. */
+-#define SGX_ENCL_PAGE_BEING_RECLAIMED	BIT(3)
++/* 'desc' bit indicating that the page is busy (e.g. being reclaimed). */
++#define SGX_ENCL_PAGE_BUSY	BIT(2)
++
++/*
++ * 'desc' bit indicating that PCMD page associated with the enclave page is
++ * busy (e.g. because the enclave page is being reclaimed).
++ */
++#define SGX_ENCL_PAGE_PCMD_BUSY	BIT(3)
+ 
+ struct sgx_encl_page {
+ 	unsigned long desc;
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 166692f2d501..e94b09c43673 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -204,7 +204,7 @@ static void sgx_encl_ewb(struct sgx_epc_page *epc_page,
+ 	void *va_slot;
+ 	int ret;
+ 
+-	encl_page->desc &= ~SGX_ENCL_PAGE_BEING_RECLAIMED;
++	encl_page->desc &= ~(SGX_ENCL_PAGE_BUSY | SGX_ENCL_PAGE_PCMD_BUSY);
+ 
+ 	va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
+ 				   list);
+@@ -340,7 +340,7 @@ static void sgx_reclaim_pages(void)
+ 			goto skip;
+ 		}
+ 
+-		encl_page->desc |= SGX_ENCL_PAGE_BEING_RECLAIMED;
++		encl_page->desc |= SGX_ENCL_PAGE_BUSY | SGX_ENCL_PAGE_PCMD_BUSY;
+ 		mutex_unlock(&encl_page->encl->lock);
+ 		continue;
+ 
 -- 
 2.43.0
 
