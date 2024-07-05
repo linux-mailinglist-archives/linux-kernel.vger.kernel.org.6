@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-242938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F5D928F51
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:22:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11772928F55
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E692863B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:22:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3837A1C22E4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026AA146D41;
-	Fri,  5 Jul 2024 22:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7F61459FF;
+	Fri,  5 Jul 2024 22:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R82FvL6J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="GB5Z5Bej"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF7512FF89;
-	Fri,  5 Jul 2024 22:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AD913A416
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 22:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720218138; cv=none; b=XKwUYQScvXCAPKHS01JggjTHzyIe00zFJC6t/Oxr61X8UrmBmioeM63mswqEs6BVJRSaMxWxh7SWmwyARx80fLkjJ4a/sZPPPhzxw5OGi7cp9yrWYG+mLr4eaoCgK4HEj18k5c+e5uPRMuUZ4UFKSKyDKKv8rmSCgkyjeh/fKRU=
+	t=1720218510; cv=none; b=Tw6SnNME2frJqSjoI3kEvPKwytSa1uJney+x1O39w92nOQvCutm275czJTv0FgrD3PqGNMvHcMsIgSR+CvBLZgDFom0CZm3gyCUbAopoA2bJ/R46OyJJxFaQX/xa1iPoAlBdarf8O7U7QWzYBcNJre/GiDAY8udt/2aDH3TubEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720218138; c=relaxed/simple;
-	bh=ENklnaGwg7gbVoxwnNN9rxnZRVBjkNfp1WlAFtAN+BM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=kJhAE6Tsh7RsCXuz86R9jFZyPNJ9phgU5vcrvLJoDmBBXj0i1rQFaeVmsULPVE1GErWw9CoufpBANMGdrij9cgpg9MRo5N307Yw1HGpI4L/DPchKmB2UR2EzYuthx3LfsZHv6nyOQDq1JPwkZwi1oHNfK5gePSrXbosMiAF2vdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R82FvL6J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7B9C116B1;
-	Fri,  5 Jul 2024 22:22:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720218138;
-	bh=ENklnaGwg7gbVoxwnNN9rxnZRVBjkNfp1WlAFtAN+BM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=R82FvL6Jp535Akx7VaoouTVyo3yZ0oGQHmxMZDd8FwAEPKBkSuOcmyJ9yJToPi+f9
-	 UFyV7ns+xPCXVNrONu4MLRJ+og/16DTLW2nn8UuBAWcIEwgWrhiYRfAE6UC5NF6fEW
-	 o8fn/hy3aBZgrLuJfjcZ5BJ5x9sR4unHadsjfrLzWnrBoQTX8zJnvSwCMdcBdRTRiw
-	 TXzP3JsHskW93BnEtYnD2cSp6iB3K3VR7Tey1BRNlrZeD9ilvydyOdUhlnBqXbDmwD
-	 sGTt5wEsH8n14WZh+M/G2uVc89lBBgwL/9yNfZMoGxCPo4ph3osIyWc0IRFrCqyTX9
-	 C3W/JiomT1p3A==
+	s=arc-20240116; t=1720218510; c=relaxed/simple;
+	bh=5ue+wY5EFTCDa/SLwCcR80f0/DdzCrYSEcPJdhD1g5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oVpCTw68a49SzF/vADttSZcQqKJYtQeTaB5IqWJquWacku2ORVoe7cUErAQHS2a3QNu1gYw6xFwlwmugSLIqb7rqS4trnxYPSzSAiAE+7tTgTUpTSI3FVSiu2/Bgy4cgIpXg3tBz/aks+qYW4a9iafZ4H3gGLCQ+x+DRcZ31Y18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=GB5Z5Bej; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [192.168.1.102] (76-224-187-148.lightspeed.sntcca.sbcglobal.net [76.224.187.148])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id E149C161F17;
+	Sat,  6 Jul 2024 00:28:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1720218506;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aYC2YRuBUI1QvLpokDSQ4OY136UY5NRmCx8TBd+ejTg=;
+	b=GB5Z5Bejj+hXPEZAfQppppK6tVw+pmeZto+KfI2TuSj/7K7piLSzyC++uwQrPcK2V7E4OL
+	C4mqC2xy6n1jV4YezyxuwKnGtEsL+GNt0HOHFakM0KNVePAUMWAQU2mY6f3DJHWleGmNHD
+	fsUo+rRLvyXGohVDRl4UWKIM7WTU358=
+Message-ID: <b67f3997-5110-4a22-9cbb-10b7fecf7ccc@ixit.cz>
+Date: Fri, 5 Jul 2024 15:28:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 06 Jul 2024 01:22:06 +0300
-Message-Id: <D2HYFLLXVYLS.ORASE7L62L3N@kernel.org>
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Kees Cook" <kees@kernel.org>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: "Al Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
- <brauner@kernel.org>, "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Paul Moore" <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Alejandro Colomar" <alx@kernel.org>, "Aleksa Sarai" <cyphar@cyphar.com>,
- "Andrew Morton" <akpm@linux-foundation.org>, "Andy Lutomirski"
- <luto@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>, "Casey Schaufler"
- <casey@schaufler-ca.com>, "Christian Heimes" <christian@python.org>,
- "Dmitry Vyukov" <dvyukov@google.com>, "Eric Biggers" <ebiggers@kernel.org>,
- "Eric Chiang" <ericchiang@google.com>, "Fan Wu"
- <wufan@linux.microsoft.com>, "Florian Weimer" <fweimer@redhat.com>, "Geert
- Uytterhoeven" <geert@linux-m68k.org>, "James Morris"
- <jamorris@linux.microsoft.com>, "Jan Kara" <jack@suse.cz>, "Jann Horn"
- <jannh@google.com>, "Jeff Xu" <jeffxu@google.com>, "Jonathan Corbet"
- <corbet@lwn.net>, "Jordan R Abrahams" <ajordanr@google.com>, "Lakshmi
- Ramasubramanian" <nramas@linux.microsoft.com>, "Luca Boccassi"
- <bluca@debian.org>, "Luis Chamberlain" <mcgrof@kernel.org>, "Madhavan T .
- Venkataraman" <madvenka@linux.microsoft.com>, "Matt Bobrowski"
- <mattbobrowski@google.com>, "Matthew Garrett" <mjg59@srcf.ucam.org>,
- "Matthew Wilcox" <willy@infradead.org>, "Miklos Szeredi"
- <mszeredi@redhat.com>, "Mimi Zohar" <zohar@linux.ibm.com>, "Nicolas
- Bouchinet" <nicolas.bouchinet@ssi.gouv.fr>, "Scott Shell"
- <scottsh@microsoft.com>, "Shuah Khan" <shuah@kernel.org>, "Stephen
- Rothwell" <sfr@canb.auug.org.au>, "Steve Dower" <steve.dower@python.org>,
- "Steve Grubb" <sgrubb@redhat.com>, "Thibaut Sautereau"
- <thibaut.sautereau@ssi.gouv.fr>, "Vincent Strubel"
- <vincent.strubel@ssi.gouv.fr>, "Xiaoming Ni" <nixiaoming@huawei.com>, "Yin
- Fengwei" <fengwei.yin@intel.com>, <kernel-hardening@lists.openwall.com>,
- <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-3-mic@digikod.net> <202407041711.B7CD16B2@keescook>
- <20240705.IeTheequ7Ooj@digikod.net> <202407051425.32AF9D2@keescook>
-In-Reply-To: <202407051425.32AF9D2@keescook>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v2 01/10] x86/Kconfig: enable X86_X2APIC by default and
+ improve help text
+To: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ linux-kernel@vger.kernel.org, mingo@redhat.com, rdunlap@infradead.org,
+ tglx@linutronix.de, x86@kernel.org, yinghai@kernel.org
+References: <20220911084711.13694-2-mat.jonczyk@o2.pl>
+ <d6a06044-4137-46d7-a755-050846d8988c@ixit.cz>
+ <332bd358-95cc-4343-bff8-cc6e8c62ff89@o2.pl>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+In-Reply-To: <332bd358-95cc-4343-bff8-cc6e8c62ff89@o2.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat Jul 6, 2024 at 12:44 AM EEST, Kees Cook wrote:
-> > As explained in the UAPI comments, all parent processes need to be
-> > trusted.  This meeans that their code is trusted, their seccomp filters
-> > are trusted, and that they are patched, if needed, to check file
-> > executability.
+Hello Mat,
+
+do you have ETA on v3?
+
+Thank you
+David
+
+On 15/02/2024 13:10, Mateusz Jończyk wrote:
+> W dniu 2.02.2024 o 15:08, David Heidelberg pisze:
+>> Hello Mat,
+>>
+>> any chance you would incorporate feedback and respin the series or/and at least X2APIC parts?
+>> For recent HW it becoming really necessary to have this option enabled.
+>>
+>> Thank you
+>> David
+>>
+> Hello,
 >
-> But we have launchers that apply arbitrary seccomp policy, e.g. minijail
-> on Chrome OS, or even systemd on regular distros. In theory, this should
-> be handled via other ACLs.
+> OK, I'll rebase, update and send the X2APIC patch. Can't give you an ETA though.
+>
+> I have mostly gave up kernel development, but you keep me motivated.
+>
+> Greetings,
+>
+> Mateusz
+>
+-- 
+David Heidelberg
 
-Or a regular web browser? AFAIK seccomp filtering was the tool to make
-secure browser tabs in the first place.
-
-BR, Jarkko
 
