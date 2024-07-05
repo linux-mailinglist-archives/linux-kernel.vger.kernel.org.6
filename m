@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-242283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496C3928620
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B154928626
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03CA1F22131
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40EA1285BC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D248167DA8;
-	Fri,  5 Jul 2024 09:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC26C148826;
+	Fri,  5 Jul 2024 09:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tzJNmsH5"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F1W8YXfp"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB941607A7
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4021607BD
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720173152; cv=none; b=SUhn6K3N00yzzCzVX3gUAn8nbH9o9Q4/fKiG8hf/IpIFzfXIV8wp/tM6rcjGmi5MYxDr2C5ve/buAibtiWNH81dcwLKLQFQNnXm7Rrs9ja/GBAs7ye69mgTI27GdoQ33ybSKMgER5q5/73S5ytuevizhq8EZqH374GC5mbCvWeo=
+	t=1720173153; cv=none; b=IkrAo8qDEGn1P6dQ+B1VQhRFh6beDyROuvrwrDQRehEfpXKRGf4svKilLfFOz9Fk7ZtYaT8sfdR1oLR6h3S0PENtPeWX4B47tWTm1X9yB8vZsowtgZfql1cxy1D73yCy01OeWI60gUXM99QOhswGP+g+7HeWKBEYJDJBgwXzEGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720173152; c=relaxed/simple;
-	bh=IKWqNRSn2TqsTvhE9YUkxh3RffPeZr4kiizlC1WJ2gI=;
+	s=arc-20240116; t=1720173153; c=relaxed/simple;
+	bh=v96r53csGO3DPv4xrCAiMuQ7NW/XqKvoTR8Ezj66dsU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=siAW8iefS+xmeJqB6exDZAnhoNMqD/I/R7TQM+5McHn2m5nz75pJFUkMhzoisxHas6gX2SEDi8mckXPVIfiJDbPv8CdSMT2YneAXcU4CLOB1sHe3Df9C1opQVu25xVnkjTa5EP+PRPmWWYTu6z74r23NwGe40StWNpJF49up+fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tzJNmsH5; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:To:Cc; b=Dn9h//I3p5IiEEJ/PTmc9P3sYIQq5K9+yWz5OdMYo4qGlTmGazDWll6Dytf/wG67hcq5li9GM5vCc+gGOtXJYpH9//+GePvCX4hQBBpf6ufenTG7gOCl942nE4FEJ1dzzRK6SjoG337cJ3njTJzNYfBVQVk/BuOtls5ESf4a9z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F1W8YXfp; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-425624255f3so9115435e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 02:52:30 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3679df4cb4cso900070f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 02:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720173149; x=1720777949; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720173150; x=1720777950; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MIlgI7ATvfa56t24WLZv2N3r+FaRSfcqNDIIELB3K9k=;
-        b=tzJNmsH52E+3W0pNdy3aYAwG/c9lPLXgn7tmiYxCdbPC3jiFx+NHAxXJNQ1S23/cqR
-         x7ju1TcRssCPlDHIlw/Smhjq8qbPCrWfwaOk004jtO9Dux2ZAyRzQ7myb+yvNVpiIX0n
-         sxw/mVsUo9eL7SYguVlWvFdU2IiHUfS0Sa6bTp1z3XobjGFQ1PwyinMJ1ljfDTBatH2g
-         lu6NgIWsuHstpdCuTfCESEJ2xpBDp1nAhLUk3XYBwsFFrZ5zQdy2rZoq06boGk5PrE0b
-         32gQWT636r85TatlBRhfVkWsD9ggXwrSSO40skTc8Exl6kW2zbDRW47PZXm/sW/IMdNV
-         ZCkw==
+        bh=DiKGCqGBEkNBKp19buJrLY0hlEyZbTBwZzmTA6yx1KQ=;
+        b=F1W8YXfpvFIRybOC1jkihRdbrXYLDevXbt9KDifc+hjaYrHHEpHrHIGqy4/WCGf65H
+         5dM01aifwGxgojm/F272uDUyqkqzA2w73SIdDCWFkToxyTBO7Tc6JUHfoktksHQZFWlz
+         ceG4e3Ovb5fm5HntgqGVjPXz9+mySJ1afLVHFjCndAaN3Ssfjmc4AFohwyev4RAgJPgS
+         2eNt1hu5hDCaJsB4h10hiYTcUv5zl0HdGFGpsL1JgMWBaEPIXPnabbNGZuUBln6OE7Yl
+         oJqCcn/ydMyhypElphB0WNWbstNkMgwC35LTisAZoAG6lZimTyEeaiaxKCvquMxjZ5eG
+         hrNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720173149; x=1720777949;
+        d=1e100.net; s=20230601; t=1720173150; x=1720777950;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MIlgI7ATvfa56t24WLZv2N3r+FaRSfcqNDIIELB3K9k=;
-        b=JjT3AQP+o8bNpBf6pW7pnKdgT31mq5sBopePv5ZVz7e6t4LsXhq6Z4aqe52g833Qx3
-         mWixDYoU3E/mAndsJ3vopD2rw4gFMfHqp1DfBqrDeqwnrQvl1Y9C6C4Q7ks9Qv3uk7ji
-         Ogku/p+9nLkxvtEaXo38ln4OOyFSpOY11Qi+SqHTNtTCMVPRmdUz8KhYPKBTRRxbYWcm
-         qt8fXio7aHHg2QqaOtz5//I4K+/1f9o5GXlqSVWNjT62CJiO/2sITerelnl+w4jJmlg9
-         YduUMNtyPsC3i+UUv005OA2sSEs+d2KuJ2m7uJaZ5djTxUf18Z/7HkGkBQTnh9W1+0qv
-         0N9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVKdi5becGkHZ2kHBJ0zTBlE2Cyhw1VRub+4wHnBux/6/1kv9x6lk2FK88klX+laYSaLdO6ziqP7xyrskHEub419wAjLstZBC7vyl2t
-X-Gm-Message-State: AOJu0YxOLfP5R7Xst/7tu4t2hHlm3M6V0kOri/uQOEvyKr84KmFuA88V
-	+1XlY51FQaIEAF7XGYulJgsDHiZ9PUmx7DNbE7+zAqw4nZ3wtAO31zxyAkxJd0c=
-X-Google-Smtp-Source: AGHT+IFYdBqLIR/9JTaFBXxYKpGPilE8OqK2LNR3FAi3qauVlnALpvoJQYHb02bjbWHRYQZYEu9JFQ==
-X-Received: by 2002:a05:600c:4f92:b0:421:811b:b83e with SMTP id 5b1f17b1804b1-4264b190342mr38378725e9.13.1720173148796;
-        Fri, 05 Jul 2024 02:52:28 -0700 (PDT)
+        bh=DiKGCqGBEkNBKp19buJrLY0hlEyZbTBwZzmTA6yx1KQ=;
+        b=Qf73x1u9WlwQlNq+1JRuhqb+WwQ6dvjVxv4+WSUckBodDinbqUlgiqJW0SGzq55M2t
+         cu2yASkIhLFtDgX+KWkkVddPUglr4Ax6qoXSp41D4RsleYvq7b+PgsK8DMzbfkziwfAx
+         AhLchhmflpIkTg3dILqCwt8weuJIFMuo/G26icn9zCb4XlGPBuUWSxod5XwHhtKGqvjT
+         VqKVx4YMDG9JCYMkBpML2+FnAI2tQeF0LOuSSNLeBYYSUCiUdssHHb2goT1OyeLNKFpb
+         B/uolGM82BwCUekhMDHlIgwuUYyJRqxzie5FoEtIH4iI66eRkeHp2YCNgIoXnUoqqojm
+         4fJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxHofQGv5MEXI07WgI0Jlb/058Uw/KkJAfZ0SeRcIKKDJHuzqCBHp4QFNppyAw1h0E2bkt6eieQMbupC6XtKG4IuFVTQ762pJnSbdd
+X-Gm-Message-State: AOJu0YzUrT43vlt+x0kccEs608O6Wib0bMQ5TQStGJH1i+Ofgbg50rM3
+	fuQCukYRM0/0vEgNu7EfGGyMPWwS4K7s4w/2AgN7tSgFHrHhDCm1HAc8+RA+m28=
+X-Google-Smtp-Source: AGHT+IHYmG0y89BYUT8vEw/rPou2Wxrzc7MA979LcnMLM0W/oRZ4IEsDq5fGw3QaLxwUE+6DoRA6Ww==
+X-Received: by 2002:adf:e58f:0:b0:367:9048:e952 with SMTP id ffacd0b85a97d-3679f6facc0mr3592566f8f.18.1720173150478;
+        Fri, 05 Jul 2024 02:52:30 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d1650sm55528995e9.2.2024.07.05.02.52.27
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d1650sm55528995e9.2.2024.07.05.02.52.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 02:52:28 -0700 (PDT)
+        Fri, 05 Jul 2024 02:52:30 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 05 Jul 2024 11:51:38 +0200
-Subject: [PATCH RESEND 19/22] dt-bindings: thermal: ti,am654: reference
+Date: Fri, 05 Jul 2024 11:51:39 +0200
+Subject: [PATCH RESEND 20/22] dt-bindings: thermal: ti,j72xx: reference
  thermal-sensor schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-dt-bindings-thermal-allof-v1-19-554061b52fbc@linaro.org>
+Message-Id: <20240705-dt-bindings-thermal-allof-v1-20-554061b52fbc@linaro.org>
 References: <20240705-dt-bindings-thermal-allof-v1-0-554061b52fbc@linaro.org>
 In-Reply-To: <20240705-dt-bindings-thermal-allof-v1-0-554061b52fbc@linaro.org>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
@@ -99,21 +99,21 @@ Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  Conor Dooley <conor.dooley@microchip.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1181;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1225;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=IKWqNRSn2TqsTvhE9YUkxh3RffPeZr4kiizlC1WJ2gI=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmh8I0O7SO6MI6c2V1rHwrBXfHjz7fayuCjb2vT
- 5QKRdVQc2eJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZofCNAAKCRDBN2bmhouD
- 129dEACM/HkC9ezNBuq2ZBGjirp82olHBKI4OVbJ44FpK6kq/5oyavQNNv67gqtmbfwg/+1ZfgT
- YmnKcEbPaJkGgTo4k3KgS0Xj0DMaW1N4/8uQs5Z5hf/Zw+00jqua2RzRe3K73g2qnBUklPFndd8
- LKWGCYDmTGc9Ff9Wu3djwXmslxZAwKUoZyjcePf96FAznTNekClRSLFF/hB1SwuEzRpVohjfC/b
- ROAqWk1gz3g4Z6GdGlwLdXvMv+l9/YveTMv9K5XlznFWOH7f2vqVGgS2YOV5GE2y04Qq0d/EanC
- 4bYllTtcVtNocx4BTsncBd5bd+xL1U1Z065kx80B6hwx/+GkQ6bEB2yS7/5Rm5f73hIMVwuYOVg
- ws9M+6hb2Y3igrkvicIEKMzUfnSp0HKbLKhP1eNdQa8qL6GN5O9bvc8vaLzLvdQ6LVhNz2rIv4H
- PQOYt9hmIB3IuYBLwVl1SMNoj2srEJEZfGUuNI1+8K7cv0v4AXTPJtsfn1KbecOc3l3VIME3HNr
- +Kh53D6zCQYbFJy1RR0wAbp4f1RUGnv7uYaves2Cs3h1pu+8KdRct/Gq0+qEYKi9IPvetsAcOR/
- hgkko8KvukQb96Jaq51+8fMGnAYvOnMi5HfJTPBO+fnb1JpRVHwZhJmg2DOW618OIAd6wLAFdm3
- NRAZlVl0Ki08abQ==
+ bh=v96r53csGO3DPv4xrCAiMuQ7NW/XqKvoTR8Ezj66dsU=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmh8I1/z6BRU3/RDJC8Xbgcy2VEpXbmcaRH/gDq
+ mIkZ8QIRNmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZofCNQAKCRDBN2bmhouD
+ 1/uvD/wJadFN1GRpR1hWwHsbh4K+sDkAXduqOrxZRwcvlwLx17tZOnFby7jQRrbipfXERDlCFs/
+ xZH7zWloJNAdi8CwbPcj+jYiSEeD9teFqhChIlLshTIvmfJ8tR4MJWizEr+koIoe2XXG4Io9WJ9
+ 6LwU443JAlf5eR+5jr3Q0LmzluMIglz70AhUYgLdZWm3lDmMdSAgCs3fnrCG8HqkHIuzePig2JL
+ h+JIfqND6tjmDd6p7D6h7lOBgWErIE5a0gAzsCaxYK1aL4acUMhb4zefZ3N8Xe+I3SCR0D4jVLC
+ JDINEcyIleVM9VRFQsPpqLvENvzTEsptt4dsfvcvwrvt2CqEgpmUaj1rhl7hXQ4ss7LNxOn1qIe
+ NQxV1w67W++8F+D4TlFCwBrjbWLlz6JnrqP942DTNoNuZX59saIH+rNuCjHpt7vDMQ/v2e54SoQ
+ UpuujUAMAwf6zCozSGEDTsNhTtFoE3M9aPhDQ8P+4iR1OQjwmMu4pYGDowh9CvP3YZOMjKW/MRO
+ JpMxOWAKWnHbsfoWCVQjeInjQF+R5HhgEl57whHYOpjKIGypZxg0ECn3+gAMtanY2Q7S8uIkydY
+ Gr950r9HZz/kfCG0CLZYzavj2qhZKkiJbOzLkA7TwfkRJ3cHx2wkHAEpDbilcOjGzdSj+EZflX8
+ awhUAdm5Ubnrr8g==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -124,23 +124,23 @@ common definition of '#thermal-sensor-cells' property.
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml | 5 +++--
+ Documentation/devicetree/bindings/thermal/ti,j72xx-thermal.yaml | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml b/Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
-index 7ed0abe9290f..16801aa78bc2 100644
---- a/Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
-@@ -9,6 +9,8 @@ title: Texas Instruments AM654 VTM (DTS)
- maintainers:
-   - Keerthy <j-keerthy@ti.com>
+diff --git a/Documentation/devicetree/bindings/thermal/ti,j72xx-thermal.yaml b/Documentation/devicetree/bindings/thermal/ti,j72xx-thermal.yaml
+index 171b3622ed84..82b77b9795a3 100644
+--- a/Documentation/devicetree/bindings/thermal/ti,j72xx-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/ti,j72xx-thermal.yaml
+@@ -22,6 +22,8 @@ description: |
+   Temp(C) = (-9.2627e-12) * x^4 + (6.0373e-08) * x^3 + \
+             (-1.7058e-04) * x^2 + (3.2512e-01) * x   + (-4.9003e+01)
  
 +$ref: thermal-sensor.yaml#
 +
  properties:
    compatible:
-     const: ti,am654-vtm
-@@ -26,9 +28,8 @@ required:
+     enum:
+@@ -64,9 +66,8 @@ required:
    - compatible
    - reg
    - power-domains
