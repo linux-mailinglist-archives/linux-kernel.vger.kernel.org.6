@@ -1,107 +1,122 @@
-Return-Path: <linux-kernel+bounces-242130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF680928400
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF2C928404
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4EA82821CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A8031F21F4E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DD5145B21;
-	Fri,  5 Jul 2024 08:45:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4DE1369B1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D79B145355;
+	Fri,  5 Jul 2024 08:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UQ8l0moI"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB42B4596E
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720169113; cv=none; b=SrwLCf8vDfAOM6NNLbm6/yUh9AZNs0QOXQ2zbx1RmhGg2hSEz+PmKoh9Cnwf1NF8vAzF1MRsKUmpKeXFjiKwi1i3cKj7JduXeIXbiAQWhRLcopd8s309vB67lOO/Byzly774mJcLG/+zexahKIS2fbSyR5J5q2ftTpvZS8P71SA=
+	t=1720169177; cv=none; b=p7FQgTs9Kcm30wKLX5I+DBHzAP9e7ijcXTkowWWucUmNfc47sCALymGcj8n3+FCnqKTQsw5tNxQ/amNlsnwMy7SH9reSRWJGgmsuhPP1KbFrgfjyiD+mZZVDkrVwDOJRutAXtXEU1UXcVCriL+PJFVePCJD4fmQz/GVDxMDPLAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720169113; c=relaxed/simple;
-	bh=2w7iHu1KEP5gDudvo5LuWqEuiJkAK+H6JXecn9APbZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IUd+H9n6wyr0M8qNr59bDme9PVQohguHVG+WWDCDuAuD8yv5xsmVj9c5NV2a47SSngm51/Ee2Efb/sA9u2QQ1E+gTGHYXTjqfR1NSAftxnHTDfOMeNqHbAW4xdZHBVLRvXwK9qWUzKuvtrcPqZ6jbc4Aw8tchOtktki/dmEX088=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CB3E367;
-	Fri,  5 Jul 2024 01:45:34 -0700 (PDT)
-Received: from [10.57.74.223] (unknown [10.57.74.223])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FAC73F762;
-	Fri,  5 Jul 2024 01:45:06 -0700 (PDT)
-Message-ID: <e826368d-499a-483b-8991-8c25aff88f00@arm.com>
-Date: Fri, 5 Jul 2024 09:45:05 +0100
+	s=arc-20240116; t=1720169177; c=relaxed/simple;
+	bh=rtrv43YpYECPvPw2sbM6bFO8Srxd3kG9PqB9jlbBqHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnEoHRaqkKAsL78tZnMEMuCL+Ahcr0LEQiynG1ihlaTW0qzzlH6CmrR6KxwWQMhc7uKFEYTitrJTsTvFT9J7SNQp5WtVeq2XxxHBFKbNn/akILen163B1SmUWUHYgf13KEg4X/PQ2kNEf9icdKZceGmoSvXsW34wYJMlKT22m2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UQ8l0moI; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-425624255f3so8687815e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 01:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720169174; x=1720773974; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vqe4KnkOYZvhw0LoLhK32nqj8NEoWKv+/VqzK0jL6Vs=;
+        b=UQ8l0moIW7bfcefnk4yrnk/culRaO6W1Vg8lwk+KlfO/ytpnYXkuB8hlRQUozMlmEt
+         SIygPZaB4jSDZM3LTUyCV9+RNut0MnGlA5+kJAoT1HKxWpe+boacTY0oRt7d3/VgveJ8
+         BJV21kWOBSL+1oaGInIV8GhAhoBiooLuTpkzGD+Pae2Kf7wov8zH/C25a9ga2wdyvCRx
+         BdEETEA+9/RCJwiw6qX5ztrsaxRhpzs9yIlMDI5ki3BBcSR4GJCbWIMsnZLTBkB5plDK
+         QGWepYbh65PjaYdXZ6IeTTcaOAJOeHDU+NCpuQxFLrZZSCSrDAmrMta4Vob9mvGCHZ8g
+         ebOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720169174; x=1720773974;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vqe4KnkOYZvhw0LoLhK32nqj8NEoWKv+/VqzK0jL6Vs=;
+        b=acJfw+ku0We4tx/z7HJ7/sa0DzS6wNvqtpWjm+e9G1IXVkQhmjOwo9gLqwquHzEcy2
+         FCnl26bm5sGRtefYwdqoC0UqPIsdU7XB7VjNGGxta+SZy/Mg1/z7RHg7BmhofNbhdzRx
+         QfXayTKDIT4XiEI5+4o2PpfDr34ZErpSSuRntO4aEM7zz6vWe8QIhSH45MO9YsDorhbr
+         ufwGfC4C/ioapDXesHrCTdDxvsjddRMQCedJUBuVaRgq15ZVT0qOBjNjOWBWKVV8EHYJ
+         sc1YCS+8xX9QW1uZIhNx/+kz8+nNHUkc1H9wTqb2LWYOwOTkrWDps+7ETbU9DDNzf1ux
+         SZiA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6cxreBFAiwkdMU6uYbk4dCV2c5cnygacagZwinqhvFIAt8ZkZVgoYaR74norXUq88udmsEyyqAxtTsQrCAe9h4HAPu0lECLMLDT4t
+X-Gm-Message-State: AOJu0Yx4iCyPBMh9333Xh8HmMTh5tv54cHylPU87NvbzpDeMa52v+vmx
+	CJkk6DFkKv2N4IR+J229EZyJIRGsnMCOD7s+qpWhK+GH/W+V3rB9fM8hlinHy4U=
+X-Google-Smtp-Source: AGHT+IHLaWHMsrIEkAGvMoO52ZSCdECYDkbf6R9gSoFbVCf+dsJ9hk2JLjnNeb/U+Qrngj9X8+Z9Iw==
+X-Received: by 2002:a05:600c:4f01:b0:425:6290:b11b with SMTP id 5b1f17b1804b1-4264b197124mr33304105e9.18.1720169174264;
+        Fri, 05 Jul 2024 01:46:14 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a25181asm53763085e9.30.2024.07.05.01.46.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 01:46:13 -0700 (PDT)
+Date: Fri, 5 Jul 2024 09:46:12 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: lee@kernel.org, jingoohan1@gmail.com, deller@gmx.de,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] backlight: l4f00242t03: Add check for spi_setup
+Message-ID: <20240705084612.GA110803@aspen.lan>
+References: <20240705083834.3006465-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/6] add mTHP support for anonymous shmem
-Content-Language: en-GB
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, wangkefeng.wang@huawei.com,
- ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <ZobtTmzj0AmNXcav@casper.infradead.org>
- <27beaa0e-697e-4e30-9ac6-5de22228aec1@redhat.com>
- <6d4c0191-18a9-4c8f-8814-d4775557383e@redhat.com>
- <Zob8xI-LWe9H_iJs@casper.infradead.org>
- <e08b8245-bc8c-4a18-a1e0-53a139258826@linux.alibaba.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <e08b8245-bc8c-4a18-a1e0-53a139258826@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705083834.3006465-1-nichen@iscas.ac.cn>
 
-On 05/07/2024 06:47, Baolin Wang wrote:
-> 
-> 
-> On 2024/7/5 03:49, Matthew Wilcox wrote:
->> On Thu, Jul 04, 2024 at 09:19:10PM +0200, David Hildenbrand wrote:
->>> On 04.07.24 21:03, David Hildenbrand wrote:
->>>>> shmem has two uses:
->>>>>
->>>>>     - MAP_ANONYMOUS | MAP_SHARED (this patch set)
->>>>>     - tmpfs
->>>>>
->>>>> For the second use case we don't want controls *at all*, we want the
->>>>> same heiristics used for all other filesystems to apply to tmpfs.
->>>>
->>>> As discussed in the MM meeting, Hugh had a different opinion on that.
->>>
->>> FWIW, I just recalled that I wrote a quick summary:
->>>
->>> https://lkml.kernel.org/r/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com
->>>
->>> I believe the meetings are recorded as well, but never looked at recordings.
->>
->> That's not what I understood Hugh to mean.  To me, it seemed that Hugh
->> was expressing an opinion on using shmem as shmem, not as using it as
->> tmpfs.
->>
->> If I misunderstood Hugh, well, I still disagree.  We should not have
->> separate controls for this.  tmpfs is just not that special.
+On Fri, Jul 05, 2024 at 04:38:34PM +0800, Chen Ni wrote:
+> Add check for the return value of spi_setup() and return the error
+> if it fails in order to catch the error.
+>
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  drivers/video/backlight/l4f00242t03.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/video/backlight/l4f00242t03.c b/drivers/video/backlight/l4f00242t03.c
+> index dd0874f8c7ff..a4e27adee8ac 100644
+> --- a/drivers/video/backlight/l4f00242t03.c
+> +++ b/drivers/video/backlight/l4f00242t03.c
+> @@ -166,6 +166,7 @@ static const struct lcd_ops l4f_ops = {
+>  static int l4f00242t03_probe(struct spi_device *spi)
+>  {
+>  	struct l4f00242t03_priv *priv;
+> +	int ret;
+>
+>  	priv = devm_kzalloc(&spi->dev, sizeof(struct l4f00242t03_priv),
+>  				GFP_KERNEL);
+> @@ -174,7 +175,9 @@ static int l4f00242t03_probe(struct spi_device *spi)
+>
+>  	spi_set_drvdata(spi, priv);
+>  	spi->bits_per_word = 9;
+> -	spi_setup(spi);
+> +	ret = spi_setup(spi);
+> +	if (ret < 0)
+> +		return ret;
 
-I wasn't at the meeting that's being referred to, but I thought we previously
-agreed that tmpfs *is* special because in some configurations its not backed by
-swap so is locked in ram?
+Good change but please add a dev_err_probe() here to match the other
+error paths in this function.
 
-> 
-> But now we already have a PMD-mapped THP control for tmpfs, and mTHP simply
-> extends this control to per-size.
-> 
-> IIUC, as David mentioned before, for tmpfs, mTHP should act like a huge order
-> filter which should be respected by the expected huge orders in the write() and
-> fallocate() paths. This would also solve the issue of allocating huge orders in
-> writable mmap() path for tmpfs, as well as unifying the interface.
-> 
-> Anyway, I will try to provide an RFC to discuss the mTHP for tmpfs approach.
 
+Daniel.
 
