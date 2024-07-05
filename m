@@ -1,140 +1,211 @@
-Return-Path: <linux-kernel+bounces-241913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCA1928120
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:00:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9DD928126
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36CC6B248C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D99D1C23CCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F3F61FD6;
-	Fri,  5 Jul 2024 04:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B697D61FF0;
+	Fri,  5 Jul 2024 04:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFYh9zvj"
-Received: from mail-ot1-f68.google.com (mail-ot1-f68.google.com [209.85.210.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ikRxYSp4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BBB81E;
-	Fri,  5 Jul 2024 04:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0872B9A4;
+	Fri,  5 Jul 2024 04:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720152038; cv=none; b=XM4POc7h58XVDC5930naz2SC+qFMkwu4o54OL8IOOqoVH+j6s5lRitbdbaiK39QAFm1/9ttCfSn+QaDamwtDUPldFYjQgH55BeRNMECSe7BofLlct0jb2IR0USqTyCLpKuTE5yR23iPqS90cPScBt7Jf9kTbl5jzKj/l2MIqVxI=
+	t=1720152167; cv=none; b=XT6aiJA2Jmp3zIUPre5kCTHs43kUlcPRqst+gfVzf0NaMnbp8qWFfwZP7/Un9qPLPzMRsYDCAAec3hsyQsJhSs23TLLzevqnIAIDv/AW8ZLA314qQStAk3nrzhBsXa/GaSb/mgG0HMXr9khW02oTMj0uuTlFVX0h7mysNrO8IJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720152038; c=relaxed/simple;
-	bh=WaumuGDGrorQizvhwn22mns7Wbc5Sh2UiLhtc9m1eCg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Csjnnort7cbI3RkcghyTSMfSz4K1odZZ1OERosyO5GyD4HUPLIyk+exKusAoxYrOtxJmADqUP/kweUfQRyVYeOGQK4Q/r58MrOdWzgmsj84ICgXtOVSMOWzRDiTgOJP/07gHHsvN5TjwU0QB4Icg56dR+ohWOwzn5aAhHOLpjtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFYh9zvj; arc=none smtp.client-ip=209.85.210.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f68.google.com with SMTP id 46e09a7af769-70211abf4cbso802238a34.3;
-        Thu, 04 Jul 2024 21:00:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720152036; x=1720756836; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vkEn4BlrQbhC1pOzdi5ltRctTkOQPmmbMk4HFASDkZk=;
-        b=CFYh9zvj48ZLxAEwqfL79ELsOs0RjA3MKaA1bn032Z1wmRAagnEluPS+pyOvz7AeXs
-         t+cuz/7pBY3mBnqRYp2/YCBZZguW/7Az+/ff60xbT1IfV0liSzJpIte3uL2sTOVyrOy/
-         fyO4jL7fXq13DToVGuGBl0/0/CcpuyNXUsgOj3CGyOQfV9rckn55TBpB40DsjRTFs8Hw
-         aQmaxjjeTyAq7bZ5xwcGlh/0Gem3BThnkFhx5icFsrN8f4JGq7B974Er14klSKF+eOwZ
-         LFtDePp4iOil/iUDe0EjECyyQAPFRUtFuXuuhRLL9Tn8ni8XsRHyqQeTi+1RcrkfRSWx
-         V4vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720152036; x=1720756836;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vkEn4BlrQbhC1pOzdi5ltRctTkOQPmmbMk4HFASDkZk=;
-        b=Zr889/SvVuCgk0xQeTe8LRkzmGXAovNwYFgEV7GVfsVdC8ib5Q3Vi1j1IBBTUemykp
-         rcvX1+Ea/5O3pNNyyYKxgZhmbR/mpIuw6hHBZZYaLOAsI6xcsrkTHAXGH6y9TOrX8xD6
-         Bnncg06hpZPS37X5EtWvK+03UCfSXiX4+hVa/xDpqqsVyfF+oN/yO8sk1E7e+2vkybGT
-         CYlxK85gVTrv0BxFH809EWpIWAgS5uKaXaiXNX8MRAje+QmvlBR2HXVRvDj5fwjrGOz1
-         ABmsh2JbFyH+eX3c7tinJm4g7T9W0NtR+rcr7dp7YAnmOx++PfvGTFLP/WrxMi8czsBC
-         f2ag==
-X-Forwarded-Encrypted: i=1; AJvYcCXEZgnlhPgQ+os4QETF8uWrweade5cQippcG8ZQoadfGb0zJjDRLZ1LA88zyGVmm2u0KHn88IVwjiQ2v3hu/cuM8NN8aWcqOWxGWul+1Q9POrGkXBj2Aus11MYFP3O+HKseBg/ler1qV3XAfov9t8Vxz+y8+UsT9/UhOUgswv6OASuBCfB3
-X-Gm-Message-State: AOJu0Yxyf+KnKzRTP4RY5SAX10cDxVSz/L75WUsDUYgKQ8EFuWu+240z
-	KBq5ogOFQo0LbT05klq3YqqB/l7zZUjHxGmGKTuXqRARUMJFiegm
-X-Google-Smtp-Source: AGHT+IEzVcTG/3nA8s2W+/eTJlO4NkviPp0EvCHcEHRkzD3jDNBYwIycFpwpA+78ZiLgpE6T2daCrg==
-X-Received: by 2002:a05:6871:548:b0:24f:eada:e32 with SMTP id 586e51a60fabf-25e2ba220f4mr3167869fac.17.1720152035861;
-        Thu, 04 Jul 2024 21:00:35 -0700 (PDT)
-Received: from localhost.localdomain ([166.111.236.150])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6afb54basm8809424a12.39.2024.07.04.21.00.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 21:00:35 -0700 (PDT)
-From: yyxRoy <yyxroy22@gmail.com>
-X-Google-Original-From: yyxRoy <979093444@qq.com>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	gregkh@linuxfoundation.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yyxRoy <979093444@qq.com>
-Subject: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE for in-window RSTs
-Date: Fri,  5 Jul 2024 12:00:13 +0800
-Message-Id: <20240705040013.29860-1-979093444@qq.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720152167; c=relaxed/simple;
+	bh=m8sDXWQhdLx8qYunvy9FkDtGiNW3BOgMl38gttLfKhU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bT1vIT3tfmF2uGxEtg2g6yQzUhsiPTDOV0xl0JDyDtP32dMmk/anTdJcL8wu5UMeuclB/bNIW8T5L0mnJAH4rBKyp1N9KYAmXUZdTcEDhGurmR43xIaXcHYHH20+eV3d+pP7M/gZTArJ+YjdBfVGVIKQzjGZhK2Kb7JWTl6ECkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ikRxYSp4; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720152166; x=1751688166;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=m8sDXWQhdLx8qYunvy9FkDtGiNW3BOgMl38gttLfKhU=;
+  b=ikRxYSp47gpDoisSCS6ixHP/fdfCWr7vxl2H7VLV8ZYxWHh+FbKzljTe
+   hbirmqiamEN3Cio+0zC169JbG33qgKiSUD8p3ejTRQqolbkzXemdvb+gm
+   BgeU2ZgEL0zYXSlP038ahEKjWhTGJ9SCcAHQZ59Xb7YF2SraC4MGLBRZ6
+   IzG83vtdP+euNtEcdTFCm1JJJQlTk49/CYCg8hfrK7q6ln65BdRvrY7ZC
+   RXm1NlL9idmBfsG9hWx+ilZM/KCV1PplSIGPK4KC1CFwH2mBCC+FN10JD
+   L1ZgIi+mU2k3bYFoMZq+npdgrUZFyBbID9fjYHGBV8cLO9J+8t9O9fXR/
+   Q==;
+X-CSE-ConnectionGUID: FVDKWwtnQ02APWxuQaEbRQ==
+X-CSE-MsgGUID: glZwV+HORXWtFjbZmYtreg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17567860"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17567860"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 21:02:45 -0700
+X-CSE-ConnectionGUID: dKAQETkESJ+ZNXas/UCzgA==
+X-CSE-MsgGUID: ad3sMxfnRYWhvYIkJkKiLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="46779530"
+Received: from ipu5-build.bj.intel.com (HELO [10.238.232.136]) ([10.238.232.136])
+  by fmviesa009.fm.intel.com with ESMTP; 04 Jul 2024 21:02:42 -0700
+Subject: Re: [PATCH v1 3/3] staging: media: ipu3: Stop streaming in inverse
+ order of starting
+To: Max Staudt <mstaudt@chromium.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ricardo Ribalda <ribalda@chromium.org>
+References: <20240620145820.3910239-1-mstaudt@chromium.org>
+ <20240620145820.3910239-4-mstaudt@chromium.org>
+ <e6ff8ad5-933d-fbbb-0c4b-ae19c65e8439@linux.intel.com>
+ <4e01aa78-497e-477e-a5c1-951cfb1df907@chromium.org>
+From: Bingbu Cao <bingbu.cao@linux.intel.com>
+Message-ID: <594c28e3-67f6-bb80-4751-ae6dc9f34c7c@linux.intel.com>
+Date: Fri, 5 Jul 2024 12:03:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4e01aa78-497e-477e-a5c1-951cfb1df907@chromium.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-With previous commit https://github.com/torvalds/linux/commit/be0502a
-("netfilter: conntrack: tcp: only close if RST matches exact sequence")
-to fight against TCP in-window reset attacks, current version of netfilter
-will keep the connection state in ESTABLISHED, but lower the timeout to
-that of CLOSE (10 seconds by default) for in-window TCP RSTs, and wait for
-the peer to send a challenge ack to restore the connection timeout
-(5 mins in tests).
+Max,
 
-However, malicious attackers can prevent incurring challenge ACKs by
-manipulating the TTL value of RSTs. The attacker can probe the TTL value
-between the NAT device and itself and send in-window RST packets with
-a TTL value to be decreased to 0 after arriving at the NAT device.
-This causes the packet to be dropped rather than forwarded to the
-internal client, thus preventing a challenge ACK from being triggered.
-As the window of the sequence number is quite large (bigger than 60,000
-in tests) and the sequence number is 16-bit, the attacker only needs to
-send nearly 60,000 RST packets with different sequence numbers
-(i.e., 1, 60001, 120001, and so on) and one of them will definitely
-fall within in the window.
+On 7/5/24 9:54 AM, Max Staudt wrote:
+> Hi Bingbu,
+> 
+> Thanks for your review! Replies inline...
+> 
+> 
+> On 7/4/24 4:03 PM, Bingbu Cao wrote:
+>>> diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c b/drivers/staging/media/ipu3/ipu3-v4l2.c
+>>> index 3ff390b04e1a..e7aee7e3db5b 100644
+>>> --- a/drivers/staging/media/ipu3/ipu3-v4l2.c
+>>> +++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
+>>> @@ -535,29 +535,51 @@ static void imgu_vb2_stop_streaming(struct vb2_queue *vq)
+>>>           container_of(vq, struct imgu_video_device, vbq);
+>>>       int r;
+>>>       unsigned int pipe;
+>>> +    bool stop_streaming = false;
+>>>   +    /* Verify that the node had been setup with imgu_v4l2_node_setup() */
+>>>       WARN_ON(!node->enabled);
+>>>         pipe = node->pipe;
+>>>       dev_dbg(dev, "Try to stream off node [%u][%u]", pipe, node->id);
+>>> -    imgu_pipe = &imgu->imgu_pipe[pipe];
+>>> -    r = v4l2_subdev_call(&imgu_pipe->imgu_sd.subdev, video, s_stream, 0);
+>>> -    if (r)
+>>> -        dev_err(&imgu->pci_dev->dev,
+>>> -            "failed to stop subdev streaming\n");
+>>
+>> I guess the subdev streams API can help us on this, but current fix
+>> looks fine for me.
+> 
+> I don't understand what you're referring to, since your comment is in relation to a block of existing code that I have merely shuffled around. Could you please elaborate?
 
-Therefore we can't simply lower the connection timeout to 10 seconds
-(rather short) upon receiving in-window RSTs. With this patch, netfilter
-will lower the connection timeout to that of CLOSE only when it receives
-RSTs with exact sequence numbers (i.e., old_state != new_state).
+I guess the real problem is the subdev s_stream cannot be called multiple
+times, please correct me if I am wrong as I have not touch IPU3 for long
+time. :)
 
-Signed-off-by: yyxRoy <979093444@qq.com>
----
- net/netfilter/nf_conntrack_proto_tcp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+You can ignore my previous comment - 's_stream' is fine here.
 
-diff --git a/net/netfilter/nf_conntrack_proto_tcp.c b/net/netfilter/nf_conntrack_proto_tcp.c
-index ae493599a..d06259407 100644
---- a/net/netfilter/nf_conntrack_proto_tcp.c
-+++ b/net/netfilter/nf_conntrack_proto_tcp.c
-@@ -1280,7 +1280,8 @@ int nf_conntrack_tcp_packet(struct nf_conn *ct,
- 	if (ct->proto.tcp.retrans >= tn->tcp_max_retrans &&
- 	    timeouts[new_state] > timeouts[TCP_CONNTRACK_RETRANS])
- 		timeout = timeouts[TCP_CONNTRACK_RETRANS];
--	else if (unlikely(index == TCP_RST_SET))
-+	else if (unlikely(index == TCP_RST_SET) &&
-+		 old_state != new_state)
- 		timeout = timeouts[TCP_CONNTRACK_CLOSE];
- 	else if ((ct->proto.tcp.seen[0].flags | ct->proto.tcp.seen[1].flags) &
- 		 IP_CT_TCP_FLAG_DATA_UNACKNOWLEDGED &&
+> 
+> 
+>>>   +    /*
+>>> +     * When the first node of a streaming setup is stopped, the entire
+>>> +     * pipeline needs to stop before individual nodes are disabled.
+>>> +     * Perform the inverse of the initial setup.
+>>> +     *
+>>> +     * Part 1 - s_stream on the entire pipeline
+>>
+>> stream on or off? it is a little confusing.
+> 
+> I meant that s_stream(off) is called "on the entire pipeline".
+> 
+> Thanks, I'll rephrase this in v2 :)
+
+:)
+
+> 
+> 
+>>> +     */
+>>>       mutex_lock(&imgu->streaming_lock);
+>>> -    /* Was this the first node with streaming disabled? */
+>>>       if (imgu->streaming) {
+>>>           /* Yes, really stop streaming now */
+>>>           dev_dbg(dev, "IMGU streaming is ready to stop");
+>>>           r = imgu_s_stream(imgu, false);
+>>>           if (!r)
+>>>               imgu->streaming = false;
+>>> +        stop_streaming = true;
+>>>       }
+>>> -
+>>>       mutex_unlock(&imgu->streaming_lock);
+>>>   +    /* Part 2 - s_stream on subdevs
+>>> +     *
+>>> +     * If we call s_stream multiple times, Linux v6.7's call_s_stream()
+>>> +     * WARNs and aborts. Thus, disable all pipes at once, and only once.
+>>> +     */
+>>> +    if (stop_streaming) {
+>>
+>>> +        for_each_set_bit(pipe, imgu->css.enabled_pipes,
+>>> +                 IMGU_MAX_PIPE_NUM) {
+>>> +            imgu_pipe = &imgu->imgu_pipe[pipe];
+>>> +
+>>> +            r = v4l2_subdev_call(&imgu_pipe->imgu_sd.subdev,
+>>> +                         video, s_stream, 0);
+>>> +            if (r)
+>>> +                dev_err(&imgu->pci_dev->dev,
+>>> +                    "failed to stop subdev streaming\n");
+>>> +        }
+>>
+>> Is it possible to move this loop into 'if (imgu->streaming)' above?
+> 
+> The point of separating the loop from 'if (imgu->streaming)', and why the stop_streaming variable exists, is to keep the loop out of the mutex's hot path. This follows the code in imgu_vb2_start_streaming(), as mentioned in the commit message.
+> 
+> Is it safe to do this work with the mutex taken?
+> 
+> Is there any need to do this work with the mutex taken?
+> 
+> Should the streamoff path really be different from the streamon path?
+> 
+> Does this mean that the streamon path should also have this happen with the mutex taken?
+
+Just a nit, stop_stream and s_stream only happen after imgu_s_stream(), so I
+think they can be together and no need 'stop_streaming'. I think the mutex
+is mainly for imgu_s_stream, subdev stream on/off should work without it.
+It depends on you. :)
+
+It'll be better that others who is still working on IPU3 devices can review.
+
+Besides,
+Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
+> 
+> 
+> 
+> Thanks,
+> 
+> Max
+> 
+> 
+
 -- 
-2.34.1
-
+Best regards,
+Bingbu Cao
 
