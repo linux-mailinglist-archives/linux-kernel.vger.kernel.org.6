@@ -1,172 +1,123 @@
-Return-Path: <linux-kernel+bounces-241792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50CB1927FAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:19:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51CE927FB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73BB11C21CAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:19:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CC71F222F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60E87404E;
-	Fri,  5 Jul 2024 01:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F382612E40;
+	Fri,  5 Jul 2024 01:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f6U3xTnm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UNwDwHMI"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1669F9C8
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3202F9C9
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720142286; cv=none; b=LD55lzHut7SLezOUU+nGiMpc+YNx4uuTQfGjEqw0gh9EjGim+Jnyeh025oKxMbBaulrNRf7v1mrM3oz4DAvld3m0uEQTFnbloNSc3HNcTWEGGcokKnpE3msC/xWyNy5Mm173qEikL4f0BaXjY1o4+f9e1NEt8r2ti20I2hV79XU=
+	t=1720142339; cv=none; b=RIhB1xDZJoTvO218B5VvQA/ovzBwBUSwR1bctEo3vzHZ1U08Y0spNZfe3To8BeQnkWGmSf20D0jBfpYPcSaNFTLC+UEgGkr1Q1dKbcKBw3n63eOi20tY/c4fw3wCTeOazl6qhX7EE+gKPWR8njcVSl8TEKroV7K/JSulJwecPPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720142286; c=relaxed/simple;
-	bh=EXG0vdXn9rII3D+KCAP3vDlEC4rngHU/vCdatspHQu4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YkyGXJHoL8zFFBZUmf2tQewWbc6oLJwIhnByGCiMKLL7Lg7/1YNTMDzSDoQ4yxDFZam5yaE6bnb3OJG2EZtah4ko/rkgDYm9NzZOauZku6NYuTAl4ptWKndQskD2ohbKcnyirp0qbamivvVUVcokb4aJ0Zrv0plzVW9E2rocFF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f6U3xTnm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720142283;
+	s=arc-20240116; t=1720142339; c=relaxed/simple;
+	bh=t1/aYkpV7V9HCTNO0YMUZAFhVFpbLpd/1zvnFvlw1jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=izF+j9yUkz6PCpLViRdTdDdsupwUL8pRAP+J8IePYoO0BF6U4Z+I89Rmb42yoUx4OfjrKgdGPrKiwQ/Qto6T6jBSZzoXkA60eHPjj6IpnC+kk27D9zPE3hOwqPSexoaKmePTjPIUIY9L3cuO7KCP7iFKxuwlgCADmoiDOg5qxRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UNwDwHMI; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: lizhi.xu@windriver.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720142333;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=o1GmW0SxxDLUHNaUVBUQTGEySUGPhjAywrfZJc9ozqE=;
-	b=f6U3xTnmR/LudmNTpO20doMawotucNeiRGHCM7FgSZi6VuSPTV9M9x7d/alJdZSMk8Yc1N
-	nLb7HyKxUNnwzRL9LHpFReOZrOXY+e5DSaUNAN7A4wwap6NMPw9GhSVP43f3zSGTnvb2w6
-	pLA9QYBe+mFBAqr/0sjIoVAoSxM2Ews=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-510-JDyMJHggOueXMZJNd5LZ3g-1; Thu, 04 Jul 2024 21:18:01 -0400
-X-MC-Unique: JDyMJHggOueXMZJNd5LZ3g-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-79d5b5010a5so141810185a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 18:18:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720142281; x=1720747081;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o1GmW0SxxDLUHNaUVBUQTGEySUGPhjAywrfZJc9ozqE=;
-        b=JfYu9G7Yu8j3YjrUTZfxQ6Z8vyFSqbkVLdUgLrrPV6Fso/BYU3lRadlSLJPFMDEx02
-         8Qwh6ZwKQMukKgRA3oojsdeqmi3+vdVql1MF/s4IEolKvpz2aTaD8nX0SxPRMdmYyDa2
-         i4icEdrsuQzjmH793sME5jQbfSIZza6wwa69p+Y9+4egAM917W+dUroRhH3MFW+IFL9G
-         WHN6F/McQDyDrdLqNKJ/WAnmc+pQ1H8/wTwiBdeaaYvZKEX/8SblsD9s3y8E+V1LEwOU
-         N1sCBImMjveEEGiTYbWPCvHjryUo4ELlytLc8gIV7AWcxKRtLWIhJGngW9ZeJJtsDMBf
-         wA3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWslxB7qO/JWKWMKxRAaBxCdeI7yuGeAyEB9U/bveXq6w5DX4k+RM9jFZyfJcSn6GAzf8IlOqo+mai4c6k3EFusptLZ/fjzNFzbv4u1
-X-Gm-Message-State: AOJu0Yy+8FJ+xtrONyoYfA0qttfUrSHruqx6tWU0j8CLWTbYFqclPN6M
-	GhClRX/PKFNZrlCgF5/Pw7TgBkaCYNiezanosN3PNzWgpMp5MCoBCvPXCgsFNrgQMWFGaf1NCEL
-	C2gh4yVWS6cumYoeS2jGa5LoPoD5KecIR8noawG6wgqfVvqKb/gv5oCs/TnByiQ==
-X-Received: by 2002:a05:620a:468e:b0:79d:7793:ee3a with SMTP id af79cd13be357-79eee1de29bmr432421185a.15.1720142280864;
-        Thu, 04 Jul 2024 18:18:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEK+3SG/MyXuNkvivY7dc3fj4eTvFPVjp1qSbuGQ9/Sojl5UK7crDBNQQMI0cZq9lKR5ID9Xw==
-X-Received: by 2002:a05:620a:468e:b0:79d:7793:ee3a with SMTP id af79cd13be357-79eee1de29bmr432418785a.15.1720142280544;
-        Thu, 04 Jul 2024 18:18:00 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79ef26f843dsm65413685a.136.2024.07.04.18.17.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 18:18:00 -0700 (PDT)
-Message-ID: <5c7025e6558d9344e10cda6ccc3614e1cdc1b43b.camel@redhat.com>
-Subject: Re: [PATCH v2 18/49] KVM: x86: Account for max supported CPUID leaf
- when getting raw host CPUID
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
- <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
- <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
- Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 04 Jul 2024 21:17:59 -0400
-In-Reply-To: <20240517173926.965351-19-seanjc@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-19-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	bh=85/6LBuQAaBN+mbTKPEBbYAV1KKnq1MLct+EJMapHB0=;
+	b=UNwDwHMIfH48SxXAlMZ/K4dQ2RmOVMo/oyPConYD4nti+49XDlCjWs8dWEWqsb5y060RK7
+	DKX8C4nzPXvQQLynMSWO50EmFx+PGPn1pjQPuJRiUe+DMKBwI12cJseCEClUU73LxQjUTG
+	r7RksZLiFEosEyL6h3kUIeiOXv/ArLY=
+X-Envelope-To: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Date: Thu, 4 Jul 2024 21:18:49 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com, 
+	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] bcachefs: fix hung in bch2_fs_read_only_work
+Message-ID: <npvjcsr62mknglu6fp222ga7zmsqzewtrbiuvpuup2s5omu77y@ef6vk35ubzpi>
+References: <000000000000d4c7f4061a080a7a@google.com>
+ <20240701143606.3904202-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701143606.3904202-1-lizhi.xu@windriver.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> Explicitly zero out the feature word in kvm_cpu_caps if the word's
-> associated CPUID function is greater than the max leaf supported by the
-> CPU.  For such unsupported functions, Intel CPUs return the output from
-> the last supported leaf, not all zeros.
+On Mon, Jul 01, 2024 at 10:36:06PM GMT, Lizhi Xu wrote:
+> Error logs:
+> [ T5078] invalid journal entry, version=1.7: mi_btree_bitmap type=btree_keys in superblock: k->u64s 0, shutting down
+> [ T5078] invalid journal entry, version=1.7: mi_btree_bitmap type=btree_keys in superblock: k->u64s 0, shutting down
+> [ T5078] invalid journal entry, version=1.7: mi_btree_bitmap type=btree_keys in superblock: k->u64s 0, shutting down
 > 
-> Practically speaking, this is likely a benign bug, as KVM uses the raw
-> host CPUID to mask the kernel's computed capabilities, and the kernel does
-> perform max leaf checks when populating boot_cpu_data.  The only way KVM's
-> goof could be problematic is if the kernel force-set a feature in a leaf
-> that is completely unsupported, _and_ the max supported leaf happened to
-> return a value with '1' the same bit position.  Which is theoretically
-> possible, but extremely unlikely.  And even if that did happen, it's
-> entirely possible that KVM would still provide the correct functionality;
-> the kernel did set the capability after all.
+> When hit -BCH_ERR_fsck_errors_not_fixed in journal_entry_err, it will make
+> journal_entry_btree_keys_validate output too many same error log, and it will block
+> bch2_fs_start to release state_lock.
 > 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Reported-and-tested-by: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 > ---
->  arch/x86/kvm/cpuid.c | 29 ++++++++++++++++++++++++-----
->  1 file changed, 24 insertions(+), 5 deletions(-)
+>  fs/bcachefs/journal_io.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index a51e48663f53..77625a5477b1 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -571,18 +571,37 @@ int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
->  	return 0;
->  }
->  
-> +static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
-> +{
-> +	struct kvm_cpuid_entry2 entry;
-> +	u32 base;
-> +
-> +	/*
-> +	 * KVM only supports features defined by Intel (0x0), AMD (0x80000000),
-> +	 * and Centaur (0xc0000000).  WARN if a feature for new vendor base is
-> +	 * defined, as this and other code would need to be updated.
-> +	 */
-> +	base = cpuid.function & 0xffff0000;
-> +	if (WARN_ON_ONCE(base && base != 0x80000000 && base != 0xc0000000))
-> +		return 0;
-> +
-> +	if (cpuid_eax(base) < cpuid.function)
-> +		return 0;
-> +
-> +	cpuid_count(cpuid.function, cpuid.index,
-> +		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
-> +
-> +	return *__cpuid_entry_get_reg(&entry, cpuid.reg);
-> +}
-> +
->  /* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
->  static __always_inline void __kvm_cpu_cap_mask(unsigned int leaf)
->  {
->  	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
-> -	struct kvm_cpuid_entry2 entry;
->  
->  	reverse_cpuid_check(leaf);
->  
-> -	cpuid_count(cpuid.function, cpuid.index,
-> -		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
-> -
-> -	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, cpuid.reg);
-> +	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);
->  }
->  
->  static __always_inline
+> diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
+> index 492426c8d869..67c3f09162e4 100644
+> --- a/fs/bcachefs/journal_io.c
+> +++ b/fs/bcachefs/journal_io.c
+> @@ -415,6 +415,8 @@ static int journal_entry_btree_keys_validate(struct bch_fs *c,
+>  					       flags|BCH_VALIDATE_journal);
+>  		if (ret == FSCK_DELETED_KEY)
+>  			continue;
+> +		else if (ret == -BCH_ERR_fsck_errors_not_fixed)
+> +			break;
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-Best regards,
-	Maxim Levitsky
+Actually, this is wrong: we need to return the error
 
+
+commit b2879202fa55861d05088bbffdb529cf5d5ba7f8
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Thu Jul 4 21:18:06 2024 -0400
+
+    bcachefs: Fix missing error check in journal_entry_btree_keys_validate()
+    
+    Closes: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
+    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+
+diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
+index 40ed7a619594..7a833a3f1c63 100644
+--- a/fs/bcachefs/journal_io.c
++++ b/fs/bcachefs/journal_io.c
+@@ -415,6 +415,8 @@ static int journal_entry_btree_keys_validate(struct bch_fs *c,
+ 					       flags|BCH_VALIDATE_journal);
+ 		if (ret == FSCK_DELETED_KEY)
+ 			continue;
++		else if (ret)
++			return ret;
+ 
+ 		k = bkey_next(k);
+ 	}
 
