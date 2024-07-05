@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-241988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22228928238
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:41:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D7392823E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1714282947
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:41:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81A61C21744
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811AF143C7E;
-	Fri,  5 Jul 2024 06:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74241442EA;
+	Fri,  5 Jul 2024 06:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htQMBLJM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWtxvFhK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A853B17995;
-	Fri,  5 Jul 2024 06:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2272617995;
+	Fri,  5 Jul 2024 06:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720161705; cv=none; b=egbwMe6uOTknmtGQa/1yjOPCg5AN5Sy1RtW7SISaQEHGkiAoGp3cUjDZ49obZP40vk1vMTY/jYxXYAT3H+qFVSp/D6W8rDY5gLV7+dImZPOW0Q5zmDIHIjxG+HHl/wosZg+73zW7fjpwh3Qr4T5Jjd5AnfQcBqAyXf3fGOL/nog=
+	t=1720161777; cv=none; b=f9HHTN00ezY3a/o3lTapTAapUNU6P8ObewLsU2rCpz0D2hcJ4n6yM1yBuY92AKEBKNu8cAU/zqO6UUXHNpv01ywGe6VQN5YTq4I6PDVyHMiR8Ujzr23qgKhUfcGoQM03oqiQxSP+All/HePqMbUTNcqUlolqyoF4Vf0DdFhVTJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720161705; c=relaxed/simple;
-	bh=IUNDAaCN5RHJlIMvrJJ5nvZomQN3XaAt+G7STwUCXwY=;
+	s=arc-20240116; t=1720161777; c=relaxed/simple;
+	bh=3feq3zy3LVhoVZsBE7lgjmWvun/vCEETaM4I0T5bAsE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mH6hIJWfIWMOyLKlEJKfMUHxuouzyyyN29iytVkfyrbpOGZ31K32sS8h3eCNVSWvoHzakkD8Dn5B2h3uMdUrwBrNFR1DyFnEYO8bQ/CxKcG8t2+L4V1eXqnHp6XupXYfh5PDrfz6EMPzyBWi+xrr+vjVtq8fikjvb0vbzDLpvgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htQMBLJM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 266DDC116B1;
-	Fri,  5 Jul 2024 06:41:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=sSu/NzhMHwihdGktSg2vmD7unn+zAP99MhHwX1aUmzYLqraOzK83WjbtyKAXxD8PvQTF3hS/l5MW7mfqhimwo1XpZl9U54M7DgBErvudS/OckxyHvrPzdOQcj0pqerh9IlpOjMYeJXQP0KUwP37671OVdMAILMXneSJFyCkBtPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWtxvFhK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC65C116B1;
+	Fri,  5 Jul 2024 06:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720161705;
-	bh=IUNDAaCN5RHJlIMvrJJ5nvZomQN3XaAt+G7STwUCXwY=;
+	s=k20201202; t=1720161776;
+	bh=3feq3zy3LVhoVZsBE7lgjmWvun/vCEETaM4I0T5bAsE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=htQMBLJM7RU5dV0veSrOFZwnspPSrkqz/8DuVxPZ/7CmyHwYlpMlNOONcLIuWnhOj
-	 o+qTmRCM6wrvRi2Q2UfOVomLwfLDgPtiqxb1LxegPMVHClcc29fpIXmp3QX+Vy/ym/
-	 23xANj6HF9Yf5rKLrOPx0+f8U599oz2winrUJ0x9YpUqNNAMam0eFrXMauyCHMvtaY
-	 6z9h538ew6W9rnX1+NFkWs0eBlVs5nIMGSgiNS/sa9hsdZ1mQsYku6zPFzEwqyg9dD
-	 AyYDJzMfwQQ+IL3V99pZXgVRmKUkXiKBnl7rZ8fx+XoYKx5rkk9sM8C8olgCi45G1n
-	 53jAAAsRDd/Ww==
-Message-ID: <10a1cf5c-8e35-487c-b236-48cedbfefa8f@kernel.org>
-Date: Fri, 5 Jul 2024 08:41:36 +0200
+	b=lWtxvFhKBNBI6sTvVWOJic2sNbVLE8nxM5E7IGDSKsifJ6FRaLweEQn3KVu031Kbh
+	 mI8O+5kOJKC2/bWkmgtv+IYS1UNV6USv1LwuzcR1kw+7BFLFyVNiRieCx30RHHGUVW
+	 2zDvtAg2mqwl6HvP5gW2Mg7qqEMSOZcqFP+NWYu7Rn3a+BIfoufT0GjkzvIeBbHvbv
+	 qREnX6kThjY907YEUvPQezEYgZvPWO7DHq4CwOhZ3nbJPGPv+Zo6OR+K43yW0E+rCa
+	 7dzDzkeumg2G2VwgiZGY1MYC/uUBjaguDFNkP9jKtyf4C+sXDRTOgwvL3oaEhmTFYf
+	 2tzBN5LYNmCuQ==
+Message-ID: <ac8fd558-b41e-4c7f-9431-1f308a6a9e23@kernel.org>
+Date: Fri, 5 Jul 2024 08:42:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/9] dt-bindings: interrupt-controller:
- realtek,rtl-intc: Add rtl9300-intc
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, daniel.lezcano@linaro.org, paulburton@kernel.org,
- peterz@infradead.org, mail@birger-koblitz.de, bert@biot.com,
- john@phrozen.org, sander@svanheule.net
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com
-References: <20240705021520.2737568-1-chris.packham@alliedtelesis.co.nz>
- <20240705021520.2737568-7-chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH 2/7] ARM: dts: microchip: at91-sama5d2_ptc_ek: Align the
+ eeprom nodename
+To: Andrei Simion <andrei.simion@microchip.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240704151411.69558-1-andrei.simion@microchip.com>
+ <20240704151411.69558-3-andrei.simion@microchip.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,84 +103,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240705021520.2737568-7-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20240704151411.69558-3-andrei.simion@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/07/2024 04:15, Chris Packham wrote:
-> Add a compatible string for the interrupt controller found on the
-> rtl930x SoCs. The interrupt controller has registers for VPE1 so these
-> are added as a second reg cell.
+On 04/07/2024 17:14, Andrei Simion wrote:
+> Aling the eeprom nodename according to device tree specification
+> and at24.yaml.
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 > ---
+>  arch/arm/boot/dts/microchip/at91-sama5d2_ptc_ek.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Notes:
->     Changes in v3:
->     - Add reg::minItems where required
->     Changes in v3:
->     - Use items to describe the regs property
->     Changes in v2:
->     - Set reg:maxItems to 2 to allow for VPE1 registers on the rtl9300. Add
->       a condition to enforce the old limit on other SoCs.
->     - Connor and Krzysztof offered acks on v1 but I think the changes here
->       are big enough to void those.
-> 
->  .../realtek,rtl-intc.yaml                     | 20 ++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/realtek,rtl-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/realtek,rtl-intc.yaml
-> index fb5593724059..f36aaab73c01 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/realtek,rtl-intc.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/realtek,rtl-intc.yaml
-> @@ -25,6 +25,7 @@ properties:
->        - items:
->            - enum:
->                - realtek,rtl8380-intc
-> +              - realtek,rtl9300-intc
->            - const: realtek,rtl-intc
->        - const: realtek,rtl-intc
->          deprecated: true
-> @@ -35,7 +36,10 @@ properties:
->      const: 1
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama5d2_ptc_ek.dts b/arch/arm/boot/dts/microchip/at91-sama5d2_ptc_ek.dts
+> index 200b20515ab1..e4ae60ef5f8a 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama5d2_ptc_ek.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sama5d2_ptc_ek.dts
+> @@ -231,7 +231,7 @@ i2c1: i2c@fc028000 {
+>  				scl-gpios = <&pioA PIN_PC7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>  				status = "okay";
 >  
->    reg:
-> -    maxItems: 1
-> +    minItems: 1
-> +    items:
-> +      - description: vpe0 registers
-> +      - description: vpe1 registers
->  
->    interrupts:
->      minItems: 1
-> @@ -71,6 +75,20 @@ allOf:
->      else:
->        required:
->          - interrupts
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: realtek,rtl9300-intc
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 1
+> -				at24@50 {
+> +				eeprom@50 {
 
-Hm? Why?
+Just squash these all into one commit. This is just naming,
+non-functional change so creating 7 patches for this is just huge churn.
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
-
-> +          maxItems: 2
 Best regards,
 Krzysztof
 
