@@ -1,176 +1,195 @@
-Return-Path: <linux-kernel+bounces-242170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CF592849B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:05:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E7B92849C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA5B287662
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:05:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F835288949
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96329146A66;
-	Fri,  5 Jul 2024 09:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EAC147C82;
+	Fri,  5 Jul 2024 09:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FY9VJR4R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="uWteXpQn"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD9B14658F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720170190; cv=none; b=ajqN4wEk3b0DuNrbYsU4ECuFAMBLj1SkNEfMq23IrEDU8V+uGbFFxz9P9oxNbMEXCEMRXS4+rrN+dIrZkOlkQNIwSMwm4lCq4Erv6drTqKfOuffLLVTDMeOosXhsQYxIBWO970v9ET+EIye5Ydb/zb1NDVY5oGd9PE+cTd2OzkM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720170190; c=relaxed/simple;
-	bh=S+yZBBMaErmw6DxMq6ezVGMcwsBMDJlIzMt8qM3pLmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RchAKi05U6wYk2DNURE2XmqM+O6fw3H4+Vm6xiWetv+ttWFDEIXrPdsik/ueDZeTWgd1k0r28Ga60ZCEYUYELaH1DdavQl8wY/RU3On8p3De79K2Sf+uTJCiKSOhgGjfDdMTonM4UT6EVw7raxWrTM5BoLF4qDjBnHOtoWh1dNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FY9VJR4R; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720170188;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6751474CE;
+	Fri,  5 Jul 2024 09:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720170202; cv=pass; b=PXvdbJTngx7ADnCfX3/zD/zjkhiHYUKAOztXGH86e3eW2gvoMG1+iaoYFZh/wOgyg5xapuXNEFN+YWA6szigJmfccJ0Yt19z8nhbP3eiegoxicNSiYH5CGM/OjNkkbsOpwWFSnQg5XXj43yo6nTkrr6kin3HVs9naKpfewlcgv8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720170202; c=relaxed/simple;
+	bh=8+MPIa+QFHPojOhG4/PGXoi1NyXjFwgbs1AXRxKS0wY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=HoabqRHsq8o9O5/WCaAhIJZVXJp061hMRrW1aFMdN0OJdzyJVdY8zfwa8YONkFTBB6AC7zYNf2RroUwRBYiy4AZlMlITlyolY5Az3kUIuoYUts+HGQ9VpalpN2ZA8GwR0LROrkn8aeat6PFRD+JAVG0RUxItVtQBdIJXT0FI9aI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=uWteXpQn; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4WFnc341WyzyV4;
+	Fri,  5 Jul 2024 12:03:15 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1720170195;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RdjIc9xIHusxwhl4uGZCL9GY0NsWTTtgrjbZIGPRauM=;
-	b=FY9VJR4RNKW1YU0MEZjGMPLPEYHn4P/hkDOT5QwSN1A3WJ9IbsP1qxUAF897qhiATv3Z72
-	PyPJx1krVWbcEu0bjGjd5ojZFrEHxCWTOerhkmqHkRzAuGGs6AMMdlLbDn9whJ7VJeYaVN
-	T2mhA6BvwjRAJkroeEnXOCXunRtoJ/o=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-ZL48YTUaMsKfgFi1sKqAsQ-1; Fri, 05 Jul 2024 05:03:06 -0400
-X-MC-Unique: ZL48YTUaMsKfgFi1sKqAsQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42566e8a9efso14820225e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 02:03:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720170185; x=1720774985;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RdjIc9xIHusxwhl4uGZCL9GY0NsWTTtgrjbZIGPRauM=;
-        b=B00kqpOBH8b+QW9u6yPkaNYnhGQS5mNiSWYqiMpTB31qSxM0KrP4mqCJFS8EHiHUTF
-         xcq0Lhs2akIs5LKmMXb1o8/KSLWR4jClBv3wWqm2/Q2qwgaEZDLe1CiJyMwnX6GHdlOI
-         f2dF5tFFr4MO6rU2FVjeOzzqc91zYFx7pLyKfKJu7xuar06hrCAdgeNKSHdptaKYiasg
-         GwUp++vMmrCnlKL+AX0od6fKKq6GS32dsBOY1EmepykaB7KpOSf5NRvES3SOsLVJ34p2
-         O0CCA2Q9sSBB9reajAQ0CdpJoOt0wYLvQGSDVTRtTDdl1hP/DjEk69/sxr43+k9/61So
-         VRkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaIX7t0r5dR0RGj+oaJLsD2hWLnT3StB3eprA6IrFhm96yU6A4gybDqJXCVvXqdyjiISBIY+G03RzdLiliIUVYVyVJwuvYYauliNck
-X-Gm-Message-State: AOJu0Yx4O+bDvglbL7dvGNRl7u6b6CPdg49xIdN50uk1U3eIR4S05wTO
-	3uG4hmO86xcXyPJWuMKc1lFSUYicFYiutD3/qCTC6IE4SYkriEivHBtRC8thntqEbzRlKp9LQ3U
-	WWXO4tgWumn5MzookFdS4m4hQWdViMUHqqbxsP+Sgzj4y28H5yUVipYLCp0U48g==
-X-Received: by 2002:a05:600c:358b:b0:425:81bd:e5ee with SMTP id 5b1f17b1804b1-4264a3d0174mr34741315e9.16.1720170185079;
-        Fri, 05 Jul 2024 02:03:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHG7HuYDewT5rgVP8ciStxZZRgcN71a98Q3TT9JcRhL70UgC/NwhuRtW3SoEWLIedQiRBVGbA==
-X-Received: by 2002:a05:600c:358b:b0:425:81bd:e5ee with SMTP id 5b1f17b1804b1-4264a3d0174mr34741055e9.16.1720170184615;
-        Fri, 05 Jul 2024 02:03:04 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c702:b500:3ed7:a1c7:447e:2279? (p200300cbc702b5003ed7a1c7447e2279.dip0.t-ipconnect.de. [2003:cb:c702:b500:3ed7:a1c7:447e:2279])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca6dbsm53895175e9.38.2024.07.05.02.03.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 02:03:04 -0700 (PDT)
-Message-ID: <30bc19a0-4cd3-420e-92a9-7b3c97d6ad2c@redhat.com>
-Date: Fri, 5 Jul 2024 11:03:03 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=NRIxFmX0HciWT3BKUxdDL60Eb2XNEjrelJv/a0Vvjik=;
+	b=uWteXpQnrzHA6P+W1eJKNT+ShroPCR3xpFCSBn2nzz+KdSnoNqCQJTlEVVQW0XoJihHGuc
+	0rKkipYAgVmNPC07DxR3YTdjtug709wxYlLSX5QF+6WJjPQrRaz1Zt7pWENMP2CLfw8Jwq
+	4jQQJ2UNVfg/Jksc6KQ/5Yj5PUVKA0c=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1720170195; a=rsa-sha256; cv=none;
+	b=Kgelw//WEm3nAyguMYWtLc/hFBxO5DBMKkwQHqprb77WrmhERKTUBq40TrqYEifCxbPpK8
+	RtKehDbyvMJZew3UxsHQ+s6zPGCeh1FVyf+yZf3u9gbKeIZOl3aBiSw0iwSHEsP3+doKKm
+	oIyumwlIFPJqxsojmGIVNnKc+LmKvZw=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1720170195;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NRIxFmX0HciWT3BKUxdDL60Eb2XNEjrelJv/a0Vvjik=;
+	b=OiDA3IDYx3viKr2IYnrNQrZHUUxFHEpRcHg1g+BuWFfANO3Caj84bRnz9HwvhYkgRcLuci
+	0is0UD21aaKL6AsPvHfUmwAtjnqU9QwDD53QXoziICP1WYY8MvYL28665YyEDI8DVFY/Ev
+	s68hK/aOXOd5q6oSfMCEC7U9Ol3Dr3E=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mm: use zonelist_zone() to get zone
-To: Wei Yang <richard.weiyang@gmail.com>, akpm@linux-foundation.org,
- masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, Mike Rapoport <rppt@kernel.org>
-References: <20240702234008.19101-1-richard.weiyang@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240702234008.19101-1-richard.weiyang@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Jul 2024 12:03:15 +0300
+Message-Id: <D2HHFYB7GY0D.4VKDG5GEMUS2@iki.fi>
+Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>
+Subject: Re: [PATCH v4 0/3] x86/sgx: Fix two data races in EAUG/EREMOVE
+ flows
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>,
+ <dave.hansen@linux.intel.com>, <jarkko@kernel.org>, <kai.huang@intel.com>,
+ <haitao.huang@linux.intel.com>, <reinette.chatre@intel.com>,
+ <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
 
-On 03.07.24 01:40, Wei Yang wrote:
-> Instead of accessing zoneref->zone directly, use zonelist_zone() like
-> other places for consistency.
-> 
-> No functional change.
-> 
-> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> CC: Mike Rapoport (IBM) <rppt@kernel.org>
-> ---
->   include/linux/mmzone.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index cb7f265c2b96..a34a74f5b113 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -1690,7 +1690,7 @@ static inline struct zoneref *first_zones_zonelist(struct zonelist *zonelist,
->   			zone = zonelist_zone(z))
->   
->   #define for_next_zone_zonelist_nodemask(zone, z, highidx, nodemask) \
-> -	for (zone = z->zone;	\
-> +	for (zone = zonelist_zone(z);	\
->   		zone;							\
->   		z = next_zones_zonelist(++z, highidx, nodemask),	\
->   			zone = zonelist_zone(z))
+On Fri Jul 5, 2024 at 10:45 AM EEST, Dmitrii Kuvaiskii wrote:
+> SGX runtimes such as Gramine may implement EDMM-based lazy allocation of
+> enclave pages and may support MADV_DONTNEED semantics [1]. The former
+> implies #PF-based page allocation, and the latter implies the usage of
+> SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl.
+>
+> EDMM-based lazy allocation and MADV_DONTNEED semantics provide
+> significant performance improvement for some workloads that run on
+> Gramine. For example, a Java workload with a 16GB enclave size has
+> approx. 57x improvement in total runtime. Thus, we consider it important
+> to permit these optimizations in Gramine. However, we observed hangs of
+> applications (Node.js, PyTorch, R, iperf, Blender, Nginx) when run on
+> Gramine with EDMM, lazy allocation and MADV_DONTNEED features enabled.
+>
+> We wrote a trivial stress test to reproduce the hangs observed in
+> real-world applications. The test stresses #PF-based page allocation and
+> SGX_IOC_ENCLAVE_REMOVE_PAGES flows in the SGX driver:
+>
+> /* repeatedly touch different enclave pages at random and mix with
+>  * madvise(MADV_DONTNEED) to stress EAUG/EREMOVE flows */
+> static void* thread_func(void* arg) {
+>     size_t num_pages =3D 0xA000 / page_size;
+>     for (int i =3D 0; i < 5000; i++) {
+>         size_t page =3D get_random_ulong() % num_pages;
+>         char data =3D READ_ONCE(((char*)arg)[page * page_size]);
+>
+>         page =3D get_random_ulong() % num_pages;
+>         madvise(arg + page * page_size, page_size, MADV_DONTNEED);
+>     }
+> }
+>
+> addr =3D mmap(NULL, 0xA000, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0)=
+;
+> pthread_t threads[16];
+> for (int i =3D 0; i < 16; i++)
+>     pthread_create(&threads[i], NULL, thread_func, addr);
+>
+> This test uncovers two data races in the SGX driver. The remaining
+> patches describe and fix these races.
+>
+> I performed several stress tests to verify that there are no other data
+> races (at least with the test program above):
+>
+> - On Icelake server with 128GB of PRM, without madvise(). This stresses
+>   the first data race. A Gramine SGX test suite running in the
+>   background for additional stressing. Result: 1,000 runs without hangs
+>   (result without the first bug fix: hangs every time).
+> - On Icelake server with 128GB of PRM, with madvise(). This stresses the
+>   second data race. A Gramine SGX test suite running in the background
+>   for additional stressing. Result: 1,000 runs without hangs (result
+>   with the first bug fix but without the second bug fix: hangs approx.
+>   once in 50 runs).
+> - On Icelake server with 4GB of PRM, with madvise(). This additionally
+>   stresses the enclave page swapping flows. Two Gramine SGX test suites
+>   running in the background for additional stressing of swapping (I
+>   observe 100% CPU utilization from ksgxd which confirms that swapping
+>   happens). Result: 1,000 runs without hangs.
+>
+> v3 -> v4:
+> - Added a preparatory patch to split the SGX_ENCL_PAGE_BEING_RECLAIMED
+>   flag into two: SGX_ENCL_PAGE_BUSY and SGX_ENCL_PAGE_PCMD_BUSY
+>   (split suggested by Dave Hansen [2])
+> - No changes in the second patch (that fixes the first bug)
+> - Trivial changes in the third patch (that fixes the second bug), now
+>   that we have a preparatory patch; plus expanded a comment (as
+>   suggested by Dave Hansen)
+>
+> v2 -> v3:
+> - No changes in code itself
+> - Improved commit message of the first patch (text suggested by Dave
+>   Hansen); kept the CPU1 vs CPU2 diagram (as all reviewers liked it)
+> - No changes in the commit message of the second patch
+>
+> v1 -> v2:
+> - No changes in code itself
+> - Expanded cover letter
+> - Added CPU1 vs CPU2 race scenarios in commit messages
+>
+> [1] https://github.com/gramineproject/gramine/pull/1513
+> [2] https://lore.kernel.org/all/1d405428-3847-4862-b146-dd57711c881e@inte=
+l.com/
+>
+> v1: https://lore.kernel.org/all/20240429104330.3636113-3-dmitrii.kuvaiski=
+i@intel.com/
+> v2: https://lore.kernel.org/all/20240515131240.1304824-1-dmitrii.kuvaiski=
+i@intel.com/
+> v3: https://lore.kernel.org/all/20240517110631.3441817-1-dmitrii.kuvaiski=
+i@intel.com/
+>
+> Dmitrii Kuvaiskii (3):
+>   x86/sgx: Split SGX_ENCL_PAGE_BEING_RECLAIMED into two flags
+>   x86/sgx: Resolve EAUG race where losing thread returns SIGBUS
+>   x86/sgx: Resolve EREMOVE page vs EAUG page data race
+>
+>  arch/x86/kernel/cpu/sgx/encl.c  | 23 ++++++++++++-----------
+>  arch/x86/kernel/cpu/sgx/encl.h  | 10 ++++++++--
+>  arch/x86/kernel/cpu/sgx/ioctl.c |  7 +++++++
+>  arch/x86/kernel/cpu/sgx/main.c  |  4 ++--
+>  4 files changed, 29 insertions(+), 15 deletions(-)
 
-Should we do the same in movable_only_nodes as well to be consistent in 
-that file?
+Piling this to my TODO folder, on holiday up until week 31.
 
--- 
-Cheers,
+Happened to see this as I'm doing some last bit release stuff for 6.10
+(unrelated to SGX).
 
-David / dhildenb
-
+BR, Jarkko
 
