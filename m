@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-242552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375A99289B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:32:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918919289D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93C328A2EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4775C1F21BCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4128014D447;
-	Fri,  5 Jul 2024 13:31:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EB914659D;
-	Fri,  5 Jul 2024 13:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1CA15FA7B;
+	Fri,  5 Jul 2024 13:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="eALgaQeH"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443DB155A25;
+	Fri,  5 Jul 2024 13:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720186275; cv=none; b=syISishtu6lts2Ld/QqeC3XIpiYQRO2aR1dq3JIkQ2Dl162hZxWflfFxVIKper5pkOK5s/jbTvzPj4NPrVpfIuN2nyWtp5+QYXbh7TogsNqj+aKROH+1FTjCHvwwOfVWKMltg3VtHStqvMaaNSP5UVgR3Ac4I6lT2e6JxQriNmc=
+	t=1720186461; cv=none; b=tGI/V/Fj3UssVQWC8YeqtoQMRGZkB9fMWARoJrXTN1Huwn8qDZnVHg7YhupCL0jCUjTxUiehteVUIMHP7bxoqyA9+22QByUxQEDmWBwkZPOYiU4JrbXJRxDHbyUXcdkYqHW1KQWlv/vEY1FVzAWqwdeXvAt/9o3EOrk89L2LFR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720186275; c=relaxed/simple;
-	bh=xCug+VBhHtQMhds5DcaiOaD1U8IKIttktt/mKzhQHRk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jHm+J9gHKcEYu04QQjuBFgu4WvEdJ649aYvdG/OOR9RCH2yinyMgalOqrdFSgfSQ10FS7tKkcPOvVQ/EPxUYNn5YKIMfKIhni/CbQmAhvh3DTEEcfEyGr9j4GilwofwRokrfagkz7N6/3vu8ck5Dud2gjt71294nvto2wjDGpcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA57E367;
-	Fri,  5 Jul 2024 06:31:37 -0700 (PDT)
-Received: from [10.57.74.223] (unknown [10.57.74.223])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07DCA3F762;
-	Fri,  5 Jul 2024 06:31:09 -0700 (PDT)
-Message-ID: <1e0e89ea-3130-42b0-810d-f52da2affe51@arm.com>
-Date: Fri, 5 Jul 2024 14:31:08 +0100
+	s=arc-20240116; t=1720186461; c=relaxed/simple;
+	bh=Ut2thkfTCY+dzcyEc4GpL/dIubksO+vlTjNGrJChsok=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZBuLvH5SwVnDgTht3hnNrqPkJPFAyFzLx9wkAvSxAZTcURHcsZz9D3mTIPW7EZFVT1/Mqcsj48MDwgkNkuUr953ZXO8xKGYiz2/22LYtWCAdHLmFG98I/tFzWEOZdh1DIk6j9sxvx9oV65MuvtBagWurgDL2NKKDTrWifM7keYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=eALgaQeH; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1720186451;
+	bh=Ut2thkfTCY+dzcyEc4GpL/dIubksO+vlTjNGrJChsok=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eALgaQeHRk7+sykJRDVvA9e1JB4i/aKBBNB2IzOeE+oCcbPm4dxF9stDkwPKoolem
+	 lnp98Z5gMjaNbgbfY7lp5xl5datEBUypPLPaQN5fACGrW9wP34EKq596iRihNN8Yii
+	 nA9TvEoY7gfKJxe7JUNIZ/KuU9kCVdXGOVKB+NUsh+AzjdXpCHN1zmNuhVOfvQYmA/
+	 Isf1ZPZYvPbQIowHM3Jr0oDvAYsETgdePw337ceCa64kxCrX1ZnmrOiUXGgTxsHhHR
+	 23MyhIMANaNB7zxO4OCs0jQ8MnzLFaveQsw1ZBnGdoeUjnk+vxiE2xgmht08AAIqqF
+	 5WTjWuo/A+jzg==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id E574960078;
+	Fri,  5 Jul 2024 13:34:09 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 4601B20474A; Fri, 05 Jul 2024 13:33:49 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Davide Caratti <dcaratti@redhat.com>,
+	Ilya Maximets <i.maximets@ovn.org>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Ratheesh Kannoth <rkannoth@marvell.com>,
+	Florian Westphal <fw@strlen.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 00/10] flower: rework TCA_FLOWER_KEY_ENC_FLAGS usage
+Date: Fri,  5 Jul 2024 13:33:36 +0000
+Message-ID: <20240705133348.728901-1-ast@fiberby.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Dave Chinner <david@fromorbit.com>
-Cc: Matthew Wilcox <willy@infradead.org>, chandan.babu@oracle.com,
- djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
- linux-mm@kvack.org, john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
- hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org, gost.dev@samsung.com,
- cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
- Zi Yan <zi.yan@sent.com>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
- <Zoa9rQbEUam467-q@casper.infradead.org>
- <Zocc+6nIQzfUTPpd@dread.disaster.area>
- <Zoc2rCPC5thSIuoR@casper.infradead.org>
- <Zod3ZQizBL7MyWEA@dread.disaster.area>
- <20240705132418.gk7oeucdisat3sq5@quentin>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240705132418.gk7oeucdisat3sq5@quentin>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/07/2024 14:24, Pankaj Raghav (Samsung) wrote:
->>> I suggest you handle it better than this.  If the device is asking for a
->>> blocksize > PMD_SIZE, you should fail to mount it.
->>
->> That's my point: we already do that.
->>
->> The largest block size we support is 64kB and that's way smaller
->> than PMD_SIZE on all platforms and we always check for bs > ps 
->> support at mount time when the filesystem bs > ps.
->>
->> Hence we're never going to set the min value to anything unsupported
->> unless someone makes a massive programming mistake. At which point,
->> we want a *hard, immediate fail* so the developer notices their
->> mistake immediately. All filesystems and block devices need to
->> behave this way so the limits should be encoded as asserts in the
->> function to trigger such behaviour.
-> 
-> I agree, this kind of bug will be encountered only during developement 
-> and not during actual production due to the limit we have fs block size
-> in XFS.
-> 
->>
->>> If the device is
->>> asking for a blocksize > PAGE_SIZE and CONFIG_TRANSPARENT_HUGEPAGE is
->>> not set, you should also decline to mount the filesystem.
->>
->> What does CONFIG_TRANSPARENT_HUGEPAGE have to do with filesystems
->> being able to use large folios?
->>
->> If that's an actual dependency of using large folios, then we're at
->> the point where the mm side of large folios needs to be divorced
->> from CONFIG_TRANSPARENT_HUGEPAGE and always supported.
->> Alternatively, CONFIG_TRANSPARENT_HUGEPAGE needs to selected by the
->> block layer and also every filesystem that wants to support
->> sector/blocks sizes larger than PAGE_SIZE.  IOWs, large folio
->> support needs to *always* be enabled on systems that say
->> CONFIG_BLOCK=y.
-> 
-> Why CONFIG_BLOCK? I think it is enough if it comes from the FS side
-> right? And for now, the only FS that needs that sort of bs > ps 
-> guarantee is XFS with this series. Other filesystems such as bcachefs 
-> that call mapping_set_large_folios() only enable it as an optimization
-> and it is not needed for the filesystem to function.
-> 
-> So this is my conclusion from the conversation:
-> - Add a dependency in Kconfig on THP for XFS until we fix the dependency
->   of large folios on THP
+This series reworks the recently added TCA_FLOWER_KEY_ENC_FLAGS
+attribute, to be more like TCA_FLOWER_KEY_FLAGS, and use the unused
+u32 flags field in FLOW_DISSECTOR_KEY_ENC_CONTROL, instead of adding
+a new flags field as FLOW_DISSECTOR_KEY_ENC_FLAGS.
 
-THP isn't supported on some arches, so isn't this effectively saying XFS can no
-longer be used with those arches, even if the bs <= ps? I think while pagecache
-large folios depend on THP, you need to make this a mount-time check in the FS?
+I have defined the new FLOW_DIS_F_* and TCA_FLOWER_KEY_FLAGS_*
+flags to co-exist with the existing flags, so the meaning
+of the flags field in struct flow_dissector_key_control is not
+depending on the context it is used in. If we run out of bits
+then we can always split them up later, if we really want to.
+Future flags might also be valid in both contexts.
 
-But ideally, MAX_PAGECACHE_ORDER would be set to 0 for
-!CONFIG_TRANSPARENT_HUGEPAGE so you can just check against that and don't have
-to worry about THP availability directly.
+iproute2 RFC patch: (needs update of uAPI headers)
+https://lore.kernel.org/897379f1850a50d8c320ca3facd06c5f03943bac.1719506876.git.dcaratti@redhat.com/
 
-Willy; Why is MAX_PAGECACHE_ORDER set to 8 when THP is disabled currently?
+---
+Changelog:
 
-> - Add a BUILD_BUG_ON(XFS_MAX_BLOCKSIZE > MAX_PAGECACHE_ORDER)
-> - Add a WARN_ON_ONCE() and clamp the min and max value in
->   mapping_set_folio_order_range() ?
-> 
-> Let me know what you all think @willy, @dave and @ryan.
-> 
-> --
-> Pankaj
+v2:
+- Refactor flower control flag definitions
+  (requested by Jakub and Alexander)
+- Add Tested-by from Davide Caratti on patch 3-10.
+
+v1: https://lore.kernel.org/20240703104600.455125-1-ast@fiberby.net/
+- Change netlink attribute type from NLA_U32 to NLA_BE32.
+- Ensure that the FLOW_DISSECTOR_KEY_ENC_CONTROL
+  is also masked for non-IP.
+- Fix preexisting typo in kdoc for struct flow_dissector_key_control
+  (all suggested by Davide)
+
+RFC: https://lore.kernel.org/20240611235355.177667-1-ast@fiberby.net/
+
+Asbjørn Sloth Tønnesen (10):
+  net/sched: flower: refactor tunnel flag definitions
+  net/sched: flower: define new tunnel flags
+  net/sched: cls_flower: prepare fl_{set,dump}_key_flags() for ENC_FLAGS
+  net/sched: cls_flower: add policy for TCA_FLOWER_KEY_FLAGS
+  flow_dissector: prepare for encapsulated control flags
+  flow_dissector: set encapsulated control flags from tun_flags
+  net/sched: cls_flower: add tunnel flags to fl_{set,dump}_key_flags()
+  net/sched: cls_flower: rework TCA_FLOWER_KEY_ENC_FLAGS usage
+  flow_dissector: cleanup FLOW_DISSECTOR_KEY_ENC_FLAGS
+  flow_dissector: set encapsulation control flags for non-IP
+
+ include/net/flow_dissector.h |  30 ++++----
+ include/net/ip_tunnels.h     |  12 ---
+ include/uapi/linux/pkt_cls.h |  11 ++-
+ net/core/flow_dissector.c    |  50 ++++++------
+ net/sched/cls_flower.c       | 142 ++++++++++++++++++++---------------
+ 5 files changed, 135 insertions(+), 110 deletions(-)
+
+-- 
+2.45.2
 
 
