@@ -1,191 +1,233 @@
-Return-Path: <linux-kernel+bounces-242291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBF9928644
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:00:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A693928649
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF271C22A9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:00:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFA81B21724
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFFF1474BF;
-	Fri,  5 Jul 2024 09:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DA9144D0F;
+	Fri,  5 Jul 2024 10:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yAoXZZ1u"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mw15iaPA"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A884E144D34
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5DE13A252
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 10:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720173597; cv=none; b=axo4BXf9/zd3YQj9znXv8xp/GPakRRXnvTjwcNOrV0dkEvpzIJDWhFzLJeKUDC0S8RBVfAX7x5Wa49xsg/Juky9pXjlWYTdXe+pPrYK9ZhUH1aHXgc8IU3A4jguqesIWw9iU8EAptxt6YDJs3Da0l4U5p9W/SPYnQJ1Kvywlqis=
+	t=1720173764; cv=none; b=Uu1H5QlhyqZZybg4bBXg4j+s88lMRQG3cpm8hG3iaFdYNhYEfFuk5OfwIwDzpGSe5T8W96BJFM6a56ReGOxl8fS1S0oViMjEk7fES7MizE3UVEsp8pwhTYN2LlxXT77MLrW98ZkjsjMIuPke3EBvSpv3YvwcfyWEScKymB9a9Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720173597; c=relaxed/simple;
-	bh=GiYUjtk5jqkJuRnspZKD0m3fDH6rJZmY+pPgjRPO41g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=eziWqN+IO2VpYkbmu7A5TPDMvmvu8V+Iktyy0AXL3yE2REOGacs+tlj0VtbYFK+5dvLPjCmNKBHbIpQVPiLb1VUaHit4+rS6WVVq2/KFELgjMQ/JehEVfcS/7TmkQbZAtPkxUHtjCznbFbEDABcUotSnOwHqZX0ktC2DTzGSuAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yAoXZZ1u; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-58bac81f40bso2064126a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 02:59:55 -0700 (PDT)
+	s=arc-20240116; t=1720173764; c=relaxed/simple;
+	bh=VpEC18WUS2pi0rbhY63paAhDgl3ajWS7nUpdMUcN5Gc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=f1hQF0LnB4XZ81sI4gQ9wIG3h/RYlOnjbsovAe0n9KPdbz+a7803h7RfSApF1dTrE+2xVIhpvQpWSLpxs4WsDTOOUsUnWI+JJABgNsi3JisVAmSBTvamjsGd8zHMtCOmHpDDa1BRxhh8fTMD0nXXxqgeH7qzS2J0CPKizYGz74U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mw15iaPA; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70af81e8439so1150734b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 03:02:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720173594; x=1720778394; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SKgtgRZLEfAbMpFmEcwxpU/wSTAQbwavUN4ozRaHrMk=;
-        b=yAoXZZ1uW5Ch/dkd0VPR1euvPCbEvvpA2HWzu3Eg0Z5vJVum14x+rJM6vhhsRYd/fp
-         EyCD+S+qaad92XH/G4s/jItiXYyy+Qbh59qeUjQqU5zCBtzJXJzPsWtC8UOBIAj/foBb
-         X3liL1EVfhd51WP01I/rrEhgpckyhAoxFX7Wh6F4d7CT96dXOVMYfEZOm3C5fXd9P14a
-         QkagvPE0ix9BKOMLYqauN5XrVfJM++X6LRla3HvBZSnceLxuwior8Rcddz7OxDIN4iAh
-         RBZk8RtlCsipkczec54UMG65oSapUA70Yo9TbKSUCrBQ25j/qAphcoQDQGlIpEHSIIIk
-         pHsA==
+        d=gmail.com; s=20230601; t=1720173763; x=1720778563; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ueZlpVq6cMGd2O6TPcbGvjQRFl2p51IxcfO3kFZ+XLY=;
+        b=mw15iaPA9g7ch1C2jBPaGKIALZag5FR8vYq2HVysmCsCGVi0fawZHj8bg5ggm0FI9j
+         OwGHBSvkaeHIRgZF+/ScqeAg+mhHmWLBqzejbWy5ItzAIOveDtJJ8Ed4p79QRtxzx3mf
+         wF5zrPdxtdKZWRo8+E3wzHL06DMYJM+2yMSK4e3Jccu4opcwtQnKuNYGH0wNzs2qVsNm
+         dd868SWn8HOujCB/d1APdrhTgNp/NVeEXPuNmMH61Twkmoq7OO/AqVMwnmsR3kNzMpzu
+         m/VsACAoqffyyQTmxvX5A4lNFQ8pz00z9J2ny6XQ9aY5GE0y9xyEEpGY4JPmxhGgcHTJ
+         NW7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720173594; x=1720778394;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SKgtgRZLEfAbMpFmEcwxpU/wSTAQbwavUN4ozRaHrMk=;
-        b=GX8TioXrCXvQVwHGHxm6Sq7awjXDGTuAvn6d/IUJ5akgiIUdrPSc/zMIFeOHSrgdjA
-         P0yB8pRTnw6QDp1u4EVdO3jAro1DLp+wCTvBP7GlieRpYRmpuQIF1tjIXN3rW8ZMTBE2
-         c3axO1pK/BYTcsc4TNqNIim1uFIkNjfQu6qk8kXEXiDSUnxlchE5CWXh5PpHJ8Da1FIl
-         7jswFAljd9uqoCWpbeJYExLDzpa1RIjAqqdSoks7zAfWhurcR5jDP2Wb2TF9qSIghMb6
-         n1r/m30wAJi93/eUVEtMV9RvMSv150E147vqM5bzI5x//CWUERDncmiViCUBvlHgVbyZ
-         hY7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVsglG805+oLWig2Jq1e7K04oS3GQ+rpDTw6h0/bEWbI3PAWG7J1dXzQm8i7TslGXEmCiHzetSsE0Blfdz1D8sLWq3pJhXyM8qHmOoF
-X-Gm-Message-State: AOJu0YzdGmW6O8DRNE7MShgnflMy6o/xv7+c4O6E8+nqz4y1fGeu11qs
-	QyKlxHhU9bYowkjmQiOQhFamesamMoTys7DzmHBEe1mIlGELpNbL/u5aLZ6Oojs=
-X-Google-Smtp-Source: AGHT+IHeO8PiPw+P+aoHjk5QKEI+tmy/UZRo1wPdFqzdJBo7Ecrn+FfD66pUENyi3PB68lhTzHpeIg==
-X-Received: by 2002:a17:906:695:b0:a74:914b:ffb2 with SMTP id a640c23a62f3a-a77ba727b76mr277580666b.72.1720173593936;
-        Fri, 05 Jul 2024 02:59:53 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1d201sm657867666b.9.2024.07.05.02.59.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 02:59:53 -0700 (PDT)
-Message-ID: <f207b481-f530-4f54-a482-218908869050@linaro.org>
-Date: Fri, 5 Jul 2024 11:59:51 +0200
+        d=1e100.net; s=20230601; t=1720173763; x=1720778563;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ueZlpVq6cMGd2O6TPcbGvjQRFl2p51IxcfO3kFZ+XLY=;
+        b=dnYhuEXJPHViGfHL+oA3bK5tnSsCs0XImcgntIvS3zn9BjP23TWqROkntviAO2XE8P
+         Jwio8LHrdMXotrVBLDRR6BcRiji8Yoc3vyfB/k4/Z7FZQHWUyAnhvYaoQJf9DTIeqaTw
+         o1RRKsIiAGWQWoG94X7rmFZyRtePFOLZ4J0hVf6UKW2ZIsU7h/dogZYGQRZ01t3eU0Fo
+         S+8NPspb4fNDOVd1sfpY+MNvzrVTyewRPgf4EiNypIq/D5/kvEG4jVfmdxiNpGIEhD/o
+         VOR5HyUN2lwfWQjzuZyVvopeWPwkRX/6oR7htn+bFV7+g698Tdi5G9oclJ2cGunExIqP
+         4WFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwLKkA6gwql/T5qWA9tACuaDlvoI1YC30TlxmaxVseR2ZS9NuHYxKZm7xEZ8TFBNXensbl71jA/IgEYAhykVbLSPMhZdsK6lDdMV1P
+X-Gm-Message-State: AOJu0Yy9/stl017+uayxLBKRnN7Qly9V+0fSskPJK3OljapjSHZrmHxw
+	vCht9dzKI44bU/Rl7KQSwLewnoPT4kibxivjDhPThpIj/Tqh2R4q
+X-Google-Smtp-Source: AGHT+IGth6g00ULdqwjQ5OsB/b6tcPIphe8A+dcZteytrm1KA6ipJ415LiZeDcSQljJ2azzErnFegA==
+X-Received: by 2002:a05:6a00:846:b0:705:b0aa:a6bf with SMTP id d2e1a72fcca58-70b00914f13mr4569613b3a.2.1720173762453;
+        Fri, 05 Jul 2024 03:02:42 -0700 (PDT)
+Received: from pop-os.. ([2401:4900:1cd7:818f:d731:f6bd:8194:7763])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804c835absm13623750b3a.220.2024.07.05.03.02.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 03:02:42 -0700 (PDT)
+From: Akshay Behl <akshaybehl231@gmail.com>
+To: airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: Akshay Behl <akshaybehl231@gmail.com>,
+	Xinhui.Pan@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	sunpeng.li@amd.com,
+	alexander.deucher@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/amd/display: Docs improvement in /dc/inc/hw/mpc.h
+Date: Fri,  5 Jul 2024 15:31:26 +0530
+Message-Id: <20240705100125.353231-1-akshaybehl231@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240704092039.31264-1-akshaybehl231@gmail.com>
+References: <20240704092039.31264-1-akshaybehl231@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] drm/sti: hdmi: drop driver owner assignment
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240330203831.87003-1-krzysztof.kozlowski@linaro.org>
- <20240330205722.93801-1-krzysztof.kozlowski@linaro.org>
- <20240527144700.GC713992@gnbcxd0016.gnb.st.com>
- <77b4e4ad-2b1e-4b6d-bc3b-0c7b339bc295@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <77b4e4ad-2b1e-4b6d-bc3b-0c7b339bc295@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/06/2024 15:18, Krzysztof Kozlowski wrote:
-> On 27/05/2024 16:47, Alain Volmat wrote:
->> Hi Krzysztof,
->>
->> thanks for your patch, sorry for the delay.
->>
->> On Sat, Mar 30, 2024 at 09:57:21PM +0100, Krzysztof Kozlowski wrote:
->>> Core in platform_driver_register() already sets the .owner, so driver
->>> does not need to.  Whatever is set here will be anyway overwritten by
->>> main driver calling platform_driver_register().
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> ---
->>>
->>> I forgot two drivers.
->>>  drivers/gpu/drm/sti/sti_hdmi.c | 1 -
->>>  1 file changed, 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
->>> index 500936d5743c..b0d84440a87b 100644
->>> --- a/drivers/gpu/drm/sti/sti_hdmi.c
->>> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
->>> @@ -1485,7 +1485,6 @@ static void sti_hdmi_remove(struct platform_device *pdev)
->>>  struct platform_driver sti_hdmi_driver = {
->>>  	.driver = {
->>>  		.name = "sti-hdmi",
->>> -		.owner = THIS_MODULE,
->>>  		.of_match_table = hdmi_of_match,
->>>  	},
->>>  	.probe = sti_hdmi_probe,
->>> -- 
->>> 2.34.1
->>>
->>
->> Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-> 
-> What does this ack mean? You are the maintainer, so what is supposed to
-> happen now? If maintainer does not take patches, then the DRM STI looks
-> orphaned.
+After making the required changes
 
-+Cc Neil, Dmitry,
+This patch fixes some of the warnings while building kernel Docs:
+./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'read_mpcc_state' not described in 'mpc_funcs'
+./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'mpc_init_single_inst' not described in 'mpc_funcs'
+./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'get_mpcc_for_dpp_from_secondary' not described in 'mpc_funcs'
+./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'get_mpcc_for_dpp' not described in 'mpc_funcs'
+./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'wait_for_idle' not described in 'mpc_funcs'
+./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'assert_mpcc_idle_before_connect' not described in 'mpc_funcs'
 
-I pinged and pinged and wanted some sort of clarification here but one
-month passed and nothing was clarified.
+by adding descriptions to these struct members
 
-I could be understanding the DRM process wrong, but if no one picks up
-trivial cleanups for 1.5 months, then to me subsystem is orphaned. I
-will send respective MAINTAINERS update.
+Signed-off-by: Akshay Behl <akshaybehl231@gmail.com>
+---
+ drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h | 84 ++++++++++++++++++++-
+ 1 file changed, 83 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
+index 34a398f23fc6..d2bea0a9699d 100644
+--- a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
++++ b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
+@@ -282,6 +282,21 @@ struct mpcc_state {
+  * struct mpc_funcs - funcs
+  */
+ struct mpc_funcs {
++	/**
++	 * @read_mpcc_state:
++	 *
++	 * Read current state of a specified MPCC instance
++	 *
++	 * Parameters:
++	 *
++	 * - [in/out] mpc  - MPC context.
++	 * - [in] mpcc_inst - integer representing specific MPC instance
++	 * - [in/out] mpcc_state - MPCC state struct where read information will be stored
++	 *
++	 * Return:
++	 *
++	 * void
++	 */
+ 	void (*read_mpcc_state)(
+ 			struct mpc *mpc,
+ 			int mpcc_inst,
+@@ -352,6 +367,21 @@ struct mpc_funcs {
+ 	 * void
+ 	 */
+ 	void (*mpc_init)(struct mpc *mpc);
++
++	/**
++	 * @mpc_init_single_inst:
++	 *
++	 * Reset the MPCC HW status of a single MPCC physical instance.
++	 *
++	 * Parameters:
++	 *
++	 * - [in/out] mpc - MPC context.
++	 * - [in] mpcc_id - The MPCC physical instance to use for blending.
++	 *
++	 * Return:
++	 *
++	 * void
++	 */
+ 	void (*mpc_init_single_inst)(
+ 			struct mpc *mpc,
+ 			unsigned int mpcc_id);
+@@ -448,17 +478,69 @@ struct mpc_funcs {
+ 			struct mpc *mpc,
+ 			struct mpc_tree *tree,
+ 			struct mpcc *mpcc);
+-
++	/**
++	 * @get_mpcc_for_dpp_from_secondary:
++	 *
++	 * Retrieve a specified MPCC struct from the 'secondary' MPC tree using the provided DPP id.
++	 *
++	 * Parameters:
++	 * - [in/out] tree - MPC tree structure that will be searched.
++	 * - [in]     dpp_id - DPP input for the MPCC.
++	 *
++	 * Return:
++	 *
++	 * struct mpcc* - MPCC that matched the input params
++	 */
+ 	struct mpcc* (*get_mpcc_for_dpp_from_secondary)(
+ 			struct mpc_tree *tree,
+ 			int dpp_id);
+ 
++	/**
++	 * @get_mpcc_for_dpp:
++	 *
++	 * Retrieve a specified MPCC struct from the MPC tree using the provided DPP id.
++	 *
++	 * Parameters:
++	 * - [in/out] tree - MPC tree structure that will be searched.
++	 * - [in]     dpp_id - DPP input for the MPCC.
++	 *
++	 * Return:
++	 *
++	 * struct mpcc* - MPCC that matched the input params
++	 */
++
+ 	struct mpcc* (*get_mpcc_for_dpp)(
+ 			struct mpc_tree *tree,
+ 			int dpp_id);
+ 
++	/**
++	 * @wait_for_idle:
++	 *
++	 * Wait for a specific MPCC instance to become idle
++	 *
++	 * Parameters:
++	 * - [in/out] mpc  - MPC context.
++	 * - [in]     id - ID of the MPCC instance to wait for
++	 *
++	 * Return:
++	 *
++	 * void
++	 */
+ 	void (*wait_for_idle)(struct mpc *mpc, int id);
+ 
++	/**
++	 * @assert_mpcc_idle_before_connect:
++	 *
++	 * Assert that the specific MPCC instance is ideal before attempting to connect.
++	 *
++	 * Parameters:
++	 * - [in/out] mpc  - MPC context.
++	 * - [in]     mpcc_id - ID of the MPCC instance to check for
++	 *
++	 * Return:
++	 *
++	 * void
++	 */
+ 	void (*assert_mpcc_idle_before_connect)(struct mpc *mpc, int mpcc_id);
+ 
+ 	void (*init_mpcc_list_from_hw)(
+-- 
+2.34.1
 
 
