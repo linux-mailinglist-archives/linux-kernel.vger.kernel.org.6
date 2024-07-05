@@ -1,226 +1,173 @@
-Return-Path: <linux-kernel+bounces-242949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF047928F76
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:10:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4962928F7B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D0F2846D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:10:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F98B22BC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937DD1487F6;
-	Fri,  5 Jul 2024 23:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F27916A934;
+	Fri,  5 Jul 2024 23:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdJGOwVx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="me8hNNEe"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6D113D608;
-	Fri,  5 Jul 2024 23:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA4D1369B0
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 23:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720220996; cv=none; b=pDmVyxjPjKb7hatTuYgJ7lLSVAWwiF6ZFSPoEgmYwJYU4jAWZHG6HzEDho3Lsr6WpaGtu2l7VPzKeUFjChOvbSv0bCiUcTlfoW3z3c1plsiU7ma/VHE++5JaA8Is1Khs+IWftYR+LbNHWeMo/gKBbk9RVjCifywbOZ7N1Pf9wGo=
+	t=1720221045; cv=none; b=GwWBhcZTXLt6sYmSZUDW9y+vDwchzrjX6sY7N+U+kbOIZtgOvm2J9gjjjqYkVUD2aet62TrAzD+66ZbcDcSojw8IJevHZSsX9t1o2uA/+vYunEqKVCgi8wRSJjmjx7xILUVVNopyX5NFaoWdDePoOnpEZF3MBjPyIbBZ+b8SUZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720220996; c=relaxed/simple;
-	bh=/afWkT3diQaULeNGYyQ3tiVGSL/Fhl+aZ4/fZZDMk9c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qD6ekBvx48aK3ReAKW4N7ipWci5PEMk3KtEpAsi+rPrxiT6gB1U0HAykyWOB5Sng6fCxYZ9432dJ30IMTMGhIbjQd2sGiFYrjCBuAj8lA8JaitbHS9EsVco+6KlIC5APa8RYyAHGHdrmEBfYniBIvDpgmfJZx+v8yfpABasndjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdJGOwVx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB3AC116B1;
-	Fri,  5 Jul 2024 23:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720220996;
-	bh=/afWkT3diQaULeNGYyQ3tiVGSL/Fhl+aZ4/fZZDMk9c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HdJGOwVxSjGJnLpZT/wO4eZ3FfhcNY2E9u6Qn0SzgN1CgKqiWCBSQBOaLwbkHbEeR
-	 2Br7yS0j05Ove5ZJFrUo//7W0oa7Vzlu5a6ETcyJs4zcJL8+jObK1qBLgU+jh+UtiI
-	 Bb2d0NPL53wkUBlaRa3/WcAsCWBfcEb7jhB6h52oEcXJF5/YqvCE20j+RTR9DS4aIB
-	 BR/2xEXdMcCxaD2SXDusvWeGC5B1SfJhLaOYk5gynDeW9zA3n/U3FfnKNI04OA3Bgo
-	 PnOoELIBvviWr0j05ICysSXR6VA44s9+M/xOTd+NC5wfXbzdchwzJUGxZHHzu8GdCh
-	 efs/Pl2R24KLw==
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a75131ce948so250042866b.2;
-        Fri, 05 Jul 2024 16:09:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVdx5nvoFTt7AfCkp83ffUIWXMj1sl4VTx2e7xVGyaVPdl6y2ZgxeKC1YoLszzR3lgBhN+XzD7RF9bD1vnttXPgEGV1qnuZAnGehqU1SBtElXQwSlewaGY6oTUFyBwpb+HjfR8Tp9STh8=
-X-Gm-Message-State: AOJu0YzD5ZYqwxhdmxqU+1eUg8wUAjYFg2nQrg7SSTzdMqFc5rwK4+rs
-	1ELRuDqRAu+qEw69PVc9qWdl4Tf8LBGcYYnCQkRRvfrVEDsaqfFmGjYS/WWPFJ4F3lF78i9x02+
-	nfU/Ee50ZaZcovxgH5UrYdICMILE=
-X-Google-Smtp-Source: AGHT+IHBICGkT7g/ZDelEWQHHQyEaLSVOtC9as5w/GSZSbNdXWnpSIMaSqpBB+qOyOo9LHryGDCySfTPt2SETHlYLXI=
-X-Received: by 2002:a17:906:40d0:b0:a72:5bb9:b140 with SMTP id
- a640c23a62f3a-a77ba7123abmr363137466b.54.1720220994932; Fri, 05 Jul 2024
- 16:09:54 -0700 (PDT)
+	s=arc-20240116; t=1720221045; c=relaxed/simple;
+	bh=4CEqD7VmRndX/qN6v0TFl5xl7rdwJo23W+D2nNPbChY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=haYCj7qlD3+DFWG0TP1tpaz/vhEAFGsrulAT1fteewq6L+xx3cjZeGKS/DYiEE7AGzb5c2D2oLYudkpt2M25XEkKHrtI9hqU8MBQ/AL0if31a6sE/H84VUo3murZrnKiOFtf4i2rLxjeD6z3lp7pDTX4caDqbYOXkIvuR+OrURw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=me8hNNEe; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: matttbe@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720221040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EYSTaBvET+7Y92pC4W26UTSlgkepbfTnQLMrMemfNbQ=;
+	b=me8hNNEesaK3JInhevdUm0hR3gV8oybY6jYc26r6lfTHDKE9vrBfNkSMKvP4W2oU+nvRZ6
+	BHj5L+4KLS/ywY4cbb88o1ZyRNGsZs2ILYOGuQBH8bPxktRYXPvxBHj5c5j81IOSQLgSPI
+	+97Vo9G+TKKCxFWTGjHImfVxTcQ+rQQ=
+X-Envelope-To: andrii@kernel.org
+X-Envelope-To: eddyz87@gmail.com
+X-Envelope-To: mykolal@fb.com
+X-Envelope-To: ast@kernel.org
+X-Envelope-To: daniel@iogearbox.net
+X-Envelope-To: song@kernel.org
+X-Envelope-To: yonghong.song@linux.dev
+X-Envelope-To: john.fastabend@gmail.com
+X-Envelope-To: kpsingh@kernel.org
+X-Envelope-To: sdf@google.com
+X-Envelope-To: haoluo@google.com
+X-Envelope-To: jolsa@kernel.org
+X-Envelope-To: davem@davemloft.net
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: hawk@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: bpf@vger.kernel.org
+X-Envelope-To: linux-kselftest@vger.kernel.org
+X-Envelope-To: tanggeliang@kylinos.cn
+X-Envelope-To: mptcp@lists.linux.dev
+X-Envelope-To: martineau@kernel.org
+X-Envelope-To: geliang@kernel.org
+X-Envelope-To: shuah@kernel.org
+Message-ID: <90e916e8-ec4e-447b-8ee6-eb247f3a72ad@linux.dev>
+Date: Fri, 5 Jul 2024 16:10:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
- <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com> <CABXGCsM4tCH1wHtH0awV8J4eXWL57daMEbbuq_a_vSCEgQDqUQ@mail.gmail.com>
-In-Reply-To: <CABXGCsM4tCH1wHtH0awV8J4eXWL57daMEbbuq_a_vSCEgQDqUQ@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Sat, 6 Jul 2024 00:09:17 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H54-NXwzAenDde9djjqm30KkaqGdp6ABCZC57WTYpV_5A@mail.gmail.com>
-Message-ID: <CAL3q7H54-NXwzAenDde9djjqm30KkaqGdp6ABCZC57WTYpV_5A@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Andrea Gelmini <andrea.gelmini@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH bpf-next v3 2/3] selftests/bpf: Add mptcp pm_nl_ctl link
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Geliang Tang <tanggeliang@kylinos.cn>,
+ mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, Shuah Khan <shuah@kernel.org>
+References: <20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-0-ebdc2d494049@kernel.org>
+ <20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-2-ebdc2d494049@kernel.org>
+ <08f925cd-e267-4a6b-84b1-792515c4e199@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <08f925cd-e267-4a6b-84b1-792515c4e199@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jul 5, 2024 at 7:36=E2=80=AFPM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
->
-> On Thu, Jul 4, 2024 at 10:25=E2=80=AFPM Filipe Manana <fdmanana@kernel.or=
-g> wrote:
-> >
-> > So several different things to try here:
-> >
-> > 1) First let's check that the problem is really a consequence of the sh=
-rinker.
-> >     Try this patch:
-> >
-> >     https://gist.githubusercontent.com/fdmanana/b44abaade0000d28ba0e1e1=
-ae3ac4fee/raw/5c9bf0beb5aa156b893be2837c9244d035962c74/gistfile1.txt
-> >
-> >     This disables the shrinker. This is just to confirm if I'm looking
-> > in the right direction, if your problem is the same as Mikhail's and
-> > double check his bisection.
->
-> [1]
-> I can't check it because the patch is unapplyable on top of 661e504db04c.
-> > git apply debug-1.patch
-> error: patch failed: fs/btrfs/super.c:2410
-> error: fs/btrfs/super.c: patch does not apply
-> > cat debug-1.patch
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index f05cce7c8b8d..06c0db641d18 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -2410,8 +2410,10 @@ static const struct super_operations btrfs_super_o=
-ps =3D {
->         .statfs         =3D btrfs_statfs,
->         .freeze_fs      =3D btrfs_freeze,
->         .unfreeze_fs    =3D btrfs_unfreeze,
-> +       /*
->         .nr_cached_objects =3D btrfs_nr_cached_objects,
->         .free_cached_objects =3D btrfs_free_cached_objects,
-> +       */
->  };
->
->  static const struct file_operations btrfs_ctl_fops =3D {
->
->
->
-> > 2) Then drop that patch that disables the shrinker.
-> >      With all the previous 4 patches applied, apply this one on top of =
-them:
-> >
-> >      https://gist.githubusercontent.com/fdmanana/9cea16ca56594f8c7e20b6=
-7dc66c6c94/raw/557bd5f6b37b65d210218f8da8987b74bfe5e515/gistfile1.txt
-> >
-> >      The goal here is to see if the extent map eviction done by the
-> > shrinker is making reads from other tasks too slow, and check if
-> > that's what0s making your system unresponsive.
-> >
->
-> [2]
-> 6.10.0-rc6-661e504db04c-test2
-> up  1:00
-> root         269 15.5  0.0      0     0 ?        R    10:23   9:20 [kswap=
-d0]
-> up  2:02
-> root         269 21.6  0.0      0     0 ?        S    10:23  26:27 [kswap=
-d0]
-> up  3:10
-> root         269 25.2  0.0      0     0 ?        R    10:23  48:11 [kswap=
-d0]
-> up  4:04
-> root         269 29.0  0.0      0     0 ?        S    10:23  71:12 [kswap=
-d0]
-> up  5:04
-> root         269 26.8  0.0      0     0 ?        R    10:23  81:47 [kswap=
-d0]
-> up  6:07
-> root         269 27.9  0.0      0     0 ?        R    10:23 102:40 [kswap=
-d0]
-> dmesg attached below as 6.10.0-rc6-661e504db04c-test2.zip
->
-> > 3) Then drop the patch from step 2), and on top of the previous 4
-> > patches from my git tree, apply this one:
-> >
-> >      https://gist.githubusercontent.com/fdmanana/a7c9c2abb69c978cf5b80c=
-2f784243d5/raw/b4cca964904d3ec15c74e36ccf111a3a2f530520/gistfile1.txt
-> >
-> >      This is just to confirm if we do have concurrent calls to the
-> > shrinker, as the tracing seems to suggest, and where the negative
-> > numbers come from.
-> >      It also helps to check if not allowing concurrent calls to it, by
-> > skipping if it's already running, helps making the problems go away.
->
-> [3]
-> 6.10.0-rc6-661e504db04c-test3
-> up  1:00
-> root         269 18.6  0.0      0     0 ?        S    17:09  11:12 [kswap=
-d0]
-> up  2:00
-> root         269 23.7  0.0      0     0 ?        R    17:09  28:30 [kswap=
-d0]
-> up  3:00
-> root         269 27.0  0.0      0     0 ?        S    17:09  48:47 [kswap=
-d0]
-> up  4:00
-> root         269 28.8  0.0      0     0 ?        S    17:09  69:10 [kswap=
-d0]
-> up  5:00
-> root         269 32.0  0.0      0     0 ?        S    17:09  96:17 [kswap=
-d0]
-> up  6:00
-> root         269 29.7  0.0      0     0 ?        S    17:09 107:12 [kswap=
-d0]
-> dmesg attached below as 6.10.0-rc6-661e504db04c-test3.zip
->
-> As we can see, the time of kswapd0 has increased significantly. It was
-> 30 min in 6 hours it became 100 min. That is, it became three times
-> worse even with proposed patches (1-4).
+On 7/4/24 3:48 AM, Matthieu Baerts wrote:
+>> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+>> index e0b3887b3d2d..204269d0b5b8 100644
+>> --- a/tools/testing/selftests/bpf/Makefile
+>> +++ b/tools/testing/selftests/bpf/Makefile
+>> @@ -144,7 +144,7 @@ TEST_GEN_PROGS_EXTENDED = test_skb_cgroup_id_user \
+>>   	flow_dissector_load test_flow_dissector test_tcp_check_syncookie_user \
+>>   	test_lirc_mode2_user xdping test_cpp runqslower bench bpf_testmod.ko \
+>>   	xskxceiver xdp_redirect_multi xdp_synproxy veristat xdp_hw_metadata \
+>> -	xdp_features bpf_test_no_cfi.ko
+>> +	xdp_features bpf_test_no_cfi.ko mptcp_pm_nl_ctl
+> On the BPF CI, we have such errors:
+> 
+>     mptcp_pm_nl_ctl.c:20:10: fatal error: 'linux/mptcp.h' file not found
+>       20 | #include "linux/mptcp.h"
+>          |          ^~~~~~~~~~~~~~~
+> 
+> On my side, I don't have any issue, because the compiler uses the
+> mptcp.h file from the system: /usr/include/linux/mptcp.h
+> 
+> I suppose that's not OK on the BPF CI, as it looks like it doesn't have
+> this file there, probably because it still uses Ubuntu 20.04 as base,
+> which doesn't include this file in the linux-libc-dev package.
+> 
+> When I look at how this 'mptcp_pm_nl_ctl' tool -- and all the other
+> programs from that list -- is compiled (V=1), I see that the following
+> "-I" options are given:
+> 
+>    -I${PWD}/tools/testing/selftests/bpf
+>    -I${BUILD}//tools/include
+>    -I${BUILD}/include/generated
+>    -I${PWD}/tools/lib
+>    -I${PWD}/tools/include
+>    -I${PWD}/tools/include/uapi
+>    -I${BUILD}/
+> 
+> It will then not look at -I${PWD}/usr/include or the directory generated
+> with:
+> 
+>    make headers_install INSTALL_HDR_PATH=(...)
 
-Can you try the following two branches based on 6.10-rc6?
+It sounds like the tools/testing/selftests/net/mptcp/Makefile is looking at this 
+include path, so it works?
 
-1)  https://git.kernel.org/pub/scm/linux/kernel/git/fdmanana/linux.git/log/=
-?h=3Dtest1_em_shrinker_6.10
+iiu the bpf/Makefile correctly, it has the bpftool "make" compiled and installed 
+at tools/testing/selftests/bpf/tools/sbin/. May be directly compile the 
+pm_nl_ctl by "make tools/testing/selftests/net/mptcp/"?
 
-2)  https://git.kernel.org/pub/scm/linux/kernel/git/fdmanana/linux.git/log/=
-?h=3Dtest2_em_shrinker_6.10
+> 
+> I guess that's why people have duplicated files in 'tools/include/uapi',
+> but I also understood from Jakub that it is not a good idea to continue
+> to do so.
+> 
+> What would be the best solution to avoid a copy? A symlink still looks
+> like a workaround.
+> 
+> In the other selftests, KHDR_INCLUDES is used to be able to include the
+> path containing the UAPI headers. So if someone built the headers in a
 
-Even if the first one makes things good, also try the second one please.
+Meaning KHDR_INCLUDES should be used and -I${PWD}/tools/include/uapi can be 
+retired? I haven't looked into the details. I quickly tried but it fails in my 
+environment.
 
-The first just includes some changes for the next merge window (for
-6.11) that might help speedup things.
-The second just has a change that would be simple to add to 6.10 and
-we'll probably always want it or some variation of it.
+> seperated directory -- INSTALL_HDR_PATH=(...) -- KHDR_INCLUDES can be
+> overridden to look there, instead of ${KERNEL_SRC}/usr/include. Would it
+> be OK to do that? Would it work for the CI without extra changes? Or do
+> you still prefer a copy/symlink to 'tools/include/uapi' instead?
 
-Thanks!
+> 
+> Cheers,
+> Matt
 
->
-> --
-> Best Regards,
-> Mike Gavrilov.
 
