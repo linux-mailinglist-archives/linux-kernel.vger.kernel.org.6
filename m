@@ -1,166 +1,162 @@
-Return-Path: <linux-kernel+bounces-242576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2211928A0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:45:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D785B928A11
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503D22886B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03461C23ECA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E948155CB2;
-	Fri,  5 Jul 2024 13:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A566E149E13;
+	Fri,  5 Jul 2024 13:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="niGFGSvp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="f+Y/vTZN"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401FF14EC7C;
-	Fri,  5 Jul 2024 13:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948C3146000
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 13:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720187111; cv=none; b=cfkLMeUPHDfMV2vYbNPLSGPxadjNomVccM4mAhnWM43Y7Lck/uJieJITQthTMowGuIO8LeJrPQ0ZkZO/nREnVsnF2RUPSjtb4cvtG/CHuMQwjYZAeOmPOWo5xFEZPiPsRNWQJU+4dAfHMCeSQJA35+qT1ZSbqdXGmdbZ4+VlV3o=
+	t=1720187146; cv=none; b=dXZlbh+KoQ5BdoF0X4JU62lRwtEezM9XXLH6P0UV761/rGi9KVI61Xg0m2rhJT74rXKL4dPX4Vr8TolD8k7mavYTE7RYvfQFFuTwQhBxt7rLlpPz8Bd4k8UDKxDdcglCfwh0WvLoFFPcRabrFHo+1HjuLvMx1Iu0KYSRG6peoHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720187111; c=relaxed/simple;
-	bh=0w8gvKjTu4tdLutH6R1DbAV/uEOlEmQguROzVLf15Us=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JiR0gWMpDxNmY0e8Vm9TtoA7OfZyTsL59s8Ya06lxp2kX4lYa7+CQ1XRxY5G5wPICg1CMwxpMKy0xJsR/iejggJMY4MEpIOHCUYBfMgRV+cnvNUFo3TIGQ0IihWLD04WS8Giv/hlzRV1UuqmCflND79F38bKRwdjrHkqUnrRo/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=niGFGSvp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B039BC116B1;
-	Fri,  5 Jul 2024 13:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720187111;
-	bh=0w8gvKjTu4tdLutH6R1DbAV/uEOlEmQguROzVLf15Us=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=niGFGSvpUROr4Y+0qkweYq6nbGjtzNOQX4itzKYWRN0TJYMDwD6Mj0hK4XZd31PHr
-	 ADMjYJz32dgy3g3xCj4TyOiCaB9BbcCCwRIXFbWQAiCK7mc3XAdsamGpCODduW/JtL
-	 S6UJWaAuldVUH/P/c/m1zYIjNQwdnLiUa/ihXnX8aqEvizUpoAZleOE59uwsSC+JaZ
-	 sDgzEfd9zwzEPi1BcwL2AWFrmq3R8f2581PZsVhmjnay4ijIuC7tsysNnp3bz3cFpY
-	 ilGn7TPvrkqBcxq+xDo8BGZ+y2ldZha7i2MZ0Fu+GshGHxid3KxcP6l+N9u9ajaqzw
-	 7AeZP4A0uBckw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Fri, 05 Jul 2024 15:44:53 +0200
-Subject: [PATCH bpf-next 2/2] selftests/bpf: amend for wrong
- bpf_wq_set_callback_impl signature
+	s=arc-20240116; t=1720187146; c=relaxed/simple;
+	bh=7A1k1EfHL/jocMPKw9kKnbTXg1KbbhvRYYVQMx5RpkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgKQDyugJPXHodGHtZ1sDjW5Z7d2xKxor/qV+AP3pc+dRhEFr5lXx3Icexu5JcFSj5Ii9dbke9VG4ZU1/CZwqM1oELuQOI40OufEsPXEzvVSTbn78lg9q0RJDbH7YFff9KctPiuiZjsPT+6CxxWoT9IFnOvnF/HT7odwWGeJvD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=f+Y/vTZN reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DB80940E0219;
+	Fri,  5 Jul 2024 13:45:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id iWQfI35M3fgp; Fri,  5 Jul 2024 13:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1720187136; bh=ETa9ojvzSrCJIdF91NsPivt4AXrAVEFmWH8RJlMijgw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f+Y/vTZNI1War0i3fFMn7RN0oLEOYL2CdN5qmfEKmJlft2qcHwLrmqAwyni8OY8De
+	 HYDsVhq00XBtv48dlM2uL9jxhCXr5eSdQd4FtnCDv1XvIlkDkKaTyVTBnjDPniSPT0
+	 BJ9ypo1f6VfyAqb8iG9Wwb0EWpxYtXYkrWwVT1iDHgBi4KPlDEOmDgi/6bQk0WOWtg
+	 ypqBvWC53s5Ev4Zo9jTmWRngPV8T4bo3WWagVWEoKWsz+WxeovVRAXVfyLvbmMPxbX
+	 k+XpWCtaZaBjrv55mUcqHJ27Jp7eqzHmrBTpvpzabRAAB+X8fHr5SBdJChOCP30fNw
+	 vbOg+NpXRjCBsV0x7nmDOLOSws73s6rQrx1Yls7cJnNTblaYqUM04mbzlFRAbhbSU0
+	 sjRCiz58164Zk+MOLfDe0kyHlRMgHuu5u6JgyUxhS/KHJfgjq1xdnplTJiH6w96E4A
+	 jP8cOecUGAx+61FqMoOSZXo6VBPkEvJZun1jWsadfYkN99pzEpcvh25eCgzE9uECdg
+	 FVtiUVcxO5Aj8s+xEiTTQhrqKOj9qi8ghkA/YiqbJMh3Ly5g/AGM6phAXCeqw4GZRB
+	 SkQvrLZs5cNollDJ2n896SBkwRkJnQEhYKBLoiMLrf4tu1u+Ue5KPH8yZH83Dxyc1A
+	 /J1cn+Csapd9OQzpFhXcQhaQ=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0EA4B40E0185;
+	Fri,  5 Jul 2024 13:45:23 +0000 (UTC)
+Date: Fri, 5 Jul 2024 15:45:17 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, dave.hansen@intel.com, xin@zytor.com,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+	nik.borisov@suse.com, houwenlong.hwl@antgroup.com,
+	Juergen Gross <jgross@suse.com>
+Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
+Message-ID: <20240705134517.GAZof47bcaL5i2b4ju@fat_crate.local>
+References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
+ <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base>
+ <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com>
+ <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com>
+ <20240703161705.GAZoV5gQIgtORQeHdQ@fat_crate.local>
+ <DE8FD8AA-35C6-4E51-B1E0-CE9586892CB3@zytor.com>
+ <20240705094418.GAZofAcvelmnRzbkoG@fat_crate.local>
+ <cda57e5f-acf5-414c-8faa-d2496c02ced9@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-fix-wq-v1-2-91b4d82cd825@kernel.org>
-References: <20240705-fix-wq-v1-0-91b4d82cd825@kernel.org>
-In-Reply-To: <20240705-fix-wq-v1-0-91b4d82cd825@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720187099; l=3534;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=0w8gvKjTu4tdLutH6R1DbAV/uEOlEmQguROzVLf15Us=;
- b=lAPZdY5puQJIW7UV/1AUcyD5sKak0ZlKALEl1x3U4dmG+Owm2K/da9Y7ZpDqfeYHnQy4jnwLe
- gOipma6E+S0Anqp2RYp/Lel36KVkxn5z/wUDuuCTYHh4/9x2s9gUTHi
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cda57e5f-acf5-414c-8faa-d2496c02ced9@citrix.com>
+Content-Transfer-Encoding: quoted-printable
 
-See the previous patch: the API was wrong, we were provided the pointer
-to the value, not the actual struct bpf_wq *.
+On Fri, Jul 05, 2024 at 11:30:16AM +0100, Andrew Cooper wrote:
+> You cite perf.=C2=A0 Look at the disassembly of the two approaches...
+>=20
+> cpu_feature_enabled() might give you warm fuzzy feelings that you've
+> eekd out every ounce of performance, but it's an absolute disaster at a
+> code generation level by forcing the compiler to lay out both side and
+> preventing any kind of CSE.=C2=A0 As I've reported before, count the nu=
+mber
+> of RDPKRU instructions in trivial-looking xsave handling functions for =
+a
+> glimpse of the practical consequences.
 
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
- tools/testing/selftests/bpf/bpf_experimental.h  | 2 +-
- tools/testing/selftests/bpf/progs/wq.c          | 8 ++++----
- tools/testing/selftests/bpf/progs/wq_failures.c | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+Yes, I do cite perf because what you have above is not saying: "yes, this=
+ is
+a fast path and doing an alternative is warranted." If that is the case, =
+sure,
+by all means. If not, make the C readable and ignore code generation. Who
+cares.
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index eede6fc2ccb4..828556cdc2f0 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -552,7 +552,7 @@ extern void bpf_iter_css_destroy(struct bpf_iter_css *it) __weak __ksym;
- extern int bpf_wq_init(struct bpf_wq *wq, void *p__map, unsigned int flags) __weak __ksym;
- extern int bpf_wq_start(struct bpf_wq *wq, unsigned int flags) __weak __ksym;
- extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
--		int (callback_fn)(void *map, int *key, struct bpf_wq *wq),
-+		int (callback_fn)(void *map, int *key, void *value),
- 		unsigned int flags__k, void *aux__ign) __ksym;
- #define bpf_wq_set_callback(timer, cb, flags) \
- 	bpf_wq_set_callback_impl(timer, cb, flags, NULL)
-diff --git a/tools/testing/selftests/bpf/progs/wq.c b/tools/testing/selftests/bpf/progs/wq.c
-index 49e712acbf60..e5ac0df59b86 100644
---- a/tools/testing/selftests/bpf/progs/wq.c
-+++ b/tools/testing/selftests/bpf/progs/wq.c
-@@ -53,7 +53,7 @@ __u32 ok;
- __u32 ok_sleepable;
- 
- static int test_elem_callback(void *map, int *key,
--		int (callback_fn)(void *map, int *key, struct bpf_wq *wq))
-+		int (callback_fn)(void *map, int *key, void *value))
- {
- 	struct elem init = {}, *val;
- 	struct bpf_wq *wq;
-@@ -84,7 +84,7 @@ static int test_elem_callback(void *map, int *key,
- }
- 
- static int test_hmap_elem_callback(void *map, int *key,
--		int (callback_fn)(void *map, int *key, struct bpf_wq *wq))
-+		int (callback_fn)(void *map, int *key, void *value))
- {
- 	struct hmap_elem init = {}, *val;
- 	struct bpf_wq *wq;
-@@ -114,7 +114,7 @@ static int test_hmap_elem_callback(void *map, int *key,
- }
- 
- /* callback for non sleepable workqueue */
--static int wq_callback(void *map, int *key, struct bpf_wq *work)
-+static int wq_callback(void *map, int *key, void *value)
- {
- 	bpf_kfunc_common_test();
- 	ok |= (1 << *key);
-@@ -122,7 +122,7 @@ static int wq_callback(void *map, int *key, struct bpf_wq *work)
- }
- 
- /* callback for sleepable workqueue */
--static int wq_cb_sleepable(void *map, int *key, struct bpf_wq *work)
-+static int wq_cb_sleepable(void *map, int *key, void *value)
- {
- 	bpf_kfunc_call_test_sleepable();
- 	ok_sleepable |= (1 << *key);
-diff --git a/tools/testing/selftests/bpf/progs/wq_failures.c b/tools/testing/selftests/bpf/progs/wq_failures.c
-index 4cbdb425f223..25b51a72fe0f 100644
---- a/tools/testing/selftests/bpf/progs/wq_failures.c
-+++ b/tools/testing/selftests/bpf/progs/wq_failures.c
-@@ -28,14 +28,14 @@ struct {
- } lru SEC(".maps");
- 
- /* callback for non sleepable workqueue */
--static int wq_callback(void *map, int *key, struct bpf_wq *work)
-+static int wq_callback(void *map, int *key, void *value)
- {
- 	bpf_kfunc_common_test();
- 	return 0;
- }
- 
- /* callback for sleepable workqueue */
--static int wq_cb_sleepable(void *map, int *key, struct bpf_wq *work)
-+static int wq_cb_sleepable(void *map, int *key, void *value)
- {
- 	bpf_kfunc_call_test_sleepable();
- 	return 0;
+> Anyway, none of this is the complicated aspect.=C2=A0 The complicated i=
+ssue
+> is the paravirt wrmsr().
+>=20
+> TGLX's complaint is that everyone turns on CONFIG_PARAVIRT, and the
+> paravirt hook for wmsr() is a code generation disaster WRT parameter
+> handling.=C2=A0 I agree that it's not great, although it's got nothing =
+on the
+> damage done by cpu_feature_enabled().
+>=20
+>=20
+> But, seeing as I've got everyone's attention, I'll repeat my proposal
+> for fixing this nicely, in the hope of any feedback on the 3rd posting.=
+..
+>=20
+> The underlying problem is that parameter setup for the paravirt wrmsr()
+> follows a C calling convention, so the index/data are manifested into
+> %rdi/%rsi.=C2=A0 Then, the out-line "native" hook shuffles the index/da=
+ta
+> back into %ecx/%edx/%eax, and this cost is borne in all kernels.
 
--- 
-2.44.0
+A handful of reg ops per a WRMSRNS? Meh, same argument as above. But...
 
+> Instead, the better way would be to have a hook with a non-standard
+> calling convention which happens to match the WRMSR instruction.
+>=20
+> That way, the native, and simple paravirt paths inline to a single
+> instruction with no extraneous parameter shuffling, and the shuffling
+> cost is borne by PARAVIRT_XXL only, where a reg/reg move is nothing
+> compared to the hypercall involved.
+>=20
+> The only complication is the extable #GP hook, but that's fine to place
+> at the paravirt site as long as the extable handler confirms the #GP
+> came from a WRMSR{NS,} and not a branch.
+
+... yes, I'd gladly review patches which address that and make the whole =
+deal
+cleaner. I'm still sceptical those handful of regs shuffling ops would ma=
+tter
+in any benchmark but sure, if it can be done in a cleaner way, why not...
+
+Unless I'm missing some use case where that overhead really matters. Then=
+ by
+all means...
+
+Thx.
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
