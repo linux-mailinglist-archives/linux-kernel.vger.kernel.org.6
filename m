@@ -1,166 +1,262 @@
-Return-Path: <linux-kernel+bounces-241976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1A8928218
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:30:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DED92821C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D02671F26228
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:30:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6201B24528
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33822143C75;
-	Fri,  5 Jul 2024 06:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A35143C7B;
+	Fri,  5 Jul 2024 06:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZQA68Ysd"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA45143C6C;
-	Fri,  5 Jul 2024 06:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gRhvcLb3"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24025143C5B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 06:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720161009; cv=none; b=JqIKxTF/enLd26tZD+Tflh4VUoF37CAOIiTcQJGBDu4RB3VNTdzlubsnZVltM2TZSBXuTq7iwlhElRJRr1osVKDr8isuYly/INMa3R0eUpTK0N0riAMPg9AmLS3s7DPSlrxlFP5D0w2PQhd/HGt44xrXSub+kL/YR1IMpAwpD94=
+	t=1720161037; cv=none; b=FmtRltg08N+oKXZPGsSVMFox9A/W036axNIBeLb0FeSqVn3/lKkp3FvzA5bHXhMhCqCa5awk6oe6JvvfCY1JoJ4TWoLMX0pKHLf/Ydmpfu0tptHvZc7cg/PYfbNSw+toVslv1kj44fBW6fkJIrVg9E3emEoPF+ZXe9ehRD/LlWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720161009; c=relaxed/simple;
-	bh=izJ3y+NkTJsJ80bDCgRyTE8U6iYt3auKIsi7LoIzQKc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hbC3IzwZpnD4PonlGKAqkW9pG/zMFyOzRwHw74akaVa+HWUYCTPmnj5gNImNdghltFK636Webz/06SbLr8iWrTkw0uK7dZWYrCao01x/5ygKTwA2a8iDHm8UqGAQH/CKNN6o1DP1mvwIJzH341FLg7RSoYviN6G9Mmo7o65cIPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZQA68Ysd; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720161008; x=1751697008;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=izJ3y+NkTJsJ80bDCgRyTE8U6iYt3auKIsi7LoIzQKc=;
-  b=ZQA68Ysd5tenckhsS/PSFuZhs38iJbQmMQJIHwIPBRUHeV/114xmgmqO
-   hnh/zwkNDT5KJPs7zneK4ektOfv/X17nd9HWXO3zrJmmQr+1095ooSfce
-   RNRx20UtAh0u+iTlMPCjQM99yN+cOqESnaIFPKPfvY2uI83gseh34L+2Q
-   +/T4SJfFKZWcDwA2H2tm8AZO3LABQaoqqdUQU1GXH2EEOEBEusaN5wESv
-   9/B3nGxQ3R3oHYzJXMDhvm0ye7OkZcD/Z6LAEVPm+vBPddN0X2gmb2bGv
-   YPXG5PrhxoFQqjL6+xSAB0o2BduzaB7eBNGzVN1HqnS/D5YCr2airVnvN
-   g==;
-X-CSE-ConnectionGUID: gdsRTikOT2O4QUp3P+IObg==
-X-CSE-MsgGUID: lqjWRQYaSmmt33bLQNGuLA==
-X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="asc'?scan'208";a="28877280"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Jul 2024 23:30:06 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 4 Jul 2024 23:29:23 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 4 Jul 2024 23:29:19 -0700
-Date: Fri, 5 Jul 2024 07:28:58 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: =?utf-8?B?5byg54yb?= <zhangmeng.kevin@spacemit.com>
-CC: Yixun Lan <dlan@gentoo.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Conor
- Dooley <conor@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
-	<jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-serial@vger.kernel.org>, Inochi
- Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, Yangyu Chen
-	<cyy@cyyself.name>
-Subject: Re: [PATCH v3 08/11] riscv: dts: add initial SpacemiT K1 SoC device
- tree
-Message-ID: <20240705-moneybags-showpiece-a21262d4e2aa@wendy>
-References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
- <20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org>
- <21b192b47649688e2400e3968e28905bba186d51.f11b05e2.052c.43d9.be00.bc0a5da97b9c@feishu.cn>
+	s=arc-20240116; t=1720161037; c=relaxed/simple;
+	bh=c+EkhjaiwBg9PfY5EaSjMQac2IkjnFQ778b6wqWH9QA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P9pyDBZdx7XUBMxoKBzNxPEgOT8vej2PmVqVMlAAtRCvyENw0TZYuv0cPIVJ6tPHpB96kCqEUYB7OiuSHGo1RpwTst2TSXF0wMFy8Rbu+F27+JBX6Tr5z/yvUEfVMT4ccst0lydRKWFH+v3MUXieHRNqwxVUk6Z8MsiMttBqPWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gRhvcLb3; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=mNQun
+	qrILf+NqiwFMuOtQI8MYyYs8KBvDgiTEVQhXOQ=; b=gRhvcLb39dZTPRF2atguv
+	ttA91ySmFE3qgd6xe1xs1MUzNM7cBrAnQWuFnZXzcrrC7Okhqb5eP/4a0GTVKLOT
+	cbXPKz9kqQOQ9lxvnegeljxou9Vf2ukrDN7fP3IsqXCBxCGLw0vn4gQMjpMIj5SP
+	5JCEEPm0RX0jSOE28zwPxU=
+Received: from localhost.localdomain (unknown [139.227.195.66])
+	by gzga-smtp-mta-g2-0 (Coremail) with SMTP id _____wDnL_DlkodmBufFBg--.53685S2;
+	Fri, 05 Jul 2024 14:29:58 +0800 (CST)
+From: Ping Gan <jacky_gam_2001@163.com>
+To: sagi@grimberg.me,
+	hch@lst.de,
+	kch@nvidia.com,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: ping.gan@dell.com
+Subject: Re: [PATCH 0/2] nvmet: support polling task for RDMA and TCP 
+Date: Fri,  5 Jul 2024 14:28:59 +0800
+Message-Id: <20240705062900.15228-1-jacky_gam_2001@163.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <61d73b28-c818-4a20-97b8-8a95b4c46c05@grimberg.me>
+References: <61d73b28-c818-4a20-97b8-8a95b4c46c05@grimberg.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="r5FHo/hUFI/U0wLN"
-Content-Disposition: inline
-In-Reply-To: <21b192b47649688e2400e3968e28905bba186d51.f11b05e2.052c.43d9.be00.bc0a5da97b9c@feishu.cn>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnL_DlkodmBufFBg--.53685S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Ar1Utr4xCF48Cr4DtrWfuFg_yoWxCw1Upr
+	W5JF47tr4DJr1Yyr1Utw4DZr17Kw15Jr1UXr1rJryUJw1qv347Jr4Utry5CFykGr1xtr15
+	tFyDJF9xZr1jyw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U4a0dUUUUU=
+X-CM-SenderInfo: 5mdfy55bjdzsisqqiqqrwthudrp/1tbiEAkTKWXAlxwkYgAAsL
 
---r5FHo/hUFI/U0wLN
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 7/4/24 13:35, Ping Gan wrote:
+>>> On 7/4/24 11:10, Ping Gan wrote:
+>>>>> On 02/07/2024 13:02, Ping Gan wrote:
+>>>>>>> On 01/07/2024 10:42, Ping Gan wrote:
+>>>>>>>>> Hey Ping Gan,
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 26/06/2024 11:28, Ping Gan wrote:
+>>>>>>>>>> When running nvmf on SMP platform, current nvme target's RDMA
+>>>>>>>>>> and
+>>>>>>>>>> TCP use kworker to handle IO. But if there is other high
+>>>>>>>>>> workload
+>>>>>>>>>> in the system(eg: on kubernetes), the competition between the
+>>>>>>>>>> kworker and other workload is very radical. And since the
+>>>>>>>>>> kworker
+>>>>>>>>>> is scheduled by OS randomly, it's difficult to control OS
+>>>>>>>>>> resource
+>>>>>>>>>> and also tune the performance. If target support to use
+>>>>>>>>>> delicated
+>>>>>>>>>> polling task to handle IO, it's useful to control OS resource
+>>>>>>>>>> and
+>>>>>>>>>> gain good performance. So it makes sense to add polling task
+>>>>>>>>>> in
+>>>>>>>>>> rdma-rdma and rdma-tcp modules.
+>>>>>>>>> This is NOT the way to go here.
+>>>>>>>>>
+>>>>>>>>> Both rdma and tcp are driven from workqueue context, which are
+>>>>>>>>> bound
+>>>>>>>>> workqueues.
+>>>>>>>>>
+>>>>>>>>> So there are two ways to go here:
+>>>>>>>>> 1. Add generic port cpuset and use that to direct traffic to
+>>>>>>>>> the
+>>>>>>>>> appropriate set of cores
+>>>>>>>>> (i.e. select an appropriate comp_vector for rdma and add an
+>>>>>>>>> appropriate
+>>>>>>>>> steering rule
+>>>>>>>>> for tcp).
+>>>>>>>>> 2. Add options to rdma/tcp to use UNBOUND workqueues, and
+>>>>>>>>> allow
+>>>>>>>>> users
+>>>>>>>>> to
+>>>>>>>>> control
+>>>>>>>>> these UNBOUND workqueues cpumask via sysfs.
+>>>>>>>>>
+>>>>>>>>> (2) will not control interrupts to steer to other workloads
+>>>>>>>>> cpus,
+>>>>>>>>> but
+>>>>>>>>> the handlers may
+>>>>>>>>> run on a set of dedicated cpus.
+>>>>>>>>>
+>>>>>>>>> (1) is a better solution, but harder to implement.
+>>>>>>>>>
+>>>>>>>>> You also should look into nvmet-fc as well (and nvmet-loop for
+>>>>>>>>> that
+>>>>>>>>> matter).
+>>>>>>>> hi Sagi Grimberg,
+>>>>>>>> Thanks for your reply, actually we had tried the first advice
+>>>>>>>> you
+>>>>>>>> suggested, but we found the performance was poor when using
+>>>>>>>> spdk
+>>>>>>>> as initiator.
+>>>>>>> I suggest that you focus on that instead of what you proposed.
+>>>>>>> What is the source of your poor performance?
+>>>>>> Before these patches, we had used linux's RPS to forward the
+>>>>>> packets
+>>>>>> to a fixed cpu set for nvmet-tcp. But when did that we can still
+>>>>>> not
+>>>>>> cancel the competition between softirq and workqueue since nvme
+>>>>>> target's
+>>>>>> kworker cpu core bind on socket's cpu which is from skb. Besides
+>>>>>> that
+>>>>>> we found workqueue's wait latency was very high even we enabled
+>>>>>> polling
+>>>>>> on nvmet-tcp by module parameter idle_poll_period_usecs. So when
+>>>>>> initiator
+>>>>>> is polling mode, the target of workqueue is the bottleneck. Below
+>>>>>> is
+>>>>>> work's wait latency trace log of our test on our cluster(per node
+>>>>>> uses
+>>>>>> 4 numas 96 cores, 192G memory, one dual ports mellanox
+>>>>>> CX4LX(25Gbps
+>>>>>> X
+>>>>>> 2)
+>>>>>> ethernet adapter and randrw 1M IO size) by RPS to 6 cpu cores.
+>>>>>> And
+>>>>>> system's CPU and memory were used about 80%.
+>>>>> I'd try a simple unbound CPU case, steer packets to say cores
+>>>>> [0-5]
+>>>>> and
+>>>>> assign
+>>>>> the cpumask of the unbound workqueue to cores [6-11].
+>>>> Okay, thanks for your guide.
+>>>>
+>>>>>> ogden-brown:~ #/usr/share/bcc/tools/wqlat -T -w nvmet_tcp_wq 1 2
+>>>>>> 01:06:59
+>>>>>>     usecs               : count     distribution
+>>>>>>      0 -> 1          : 0        |                              |
+>>>>>>      2 -> 3          : 0        |                              |
+>>>>>>      4 -> 7          : 0        |                              |
+>>>>>>      8 -> 15         : 3        |                              |
+>>>>>>     16 -> 31         : 10       |                              |
+>>>>>>     32 -> 63         : 3        |                              |
+>>>>>>     64 -> 127        : 2        |                              |
+>>>>>>    128 -> 255        : 0        |                              |
+>>>>>>    256 -> 511        : 5        |                              |
+>>>>>>    512 -> 1023       : 12       |                              |
+>>>>>>   1024 -> 2047       : 26       |*                             |
+>>>>>>   2048 -> 4095       : 34       |*                             |
+>>>>>>   4096 -> 8191       : 350      |************                  |
+>>>>>>   8192 -> 16383      : 625      |******************************|
+>>>>>>  16384 -> 32767      : 244      |*********                     |
+>>>>>>  32768 -> 65535      : 39       |*                             |
+>>>>>>
+>>>>>> 01:07:00
+>>>>>>     usecs               : count     distribution
+>>>>>>      0 -> 1          : 1        |                              |
+>>>>>>      2 -> 3          : 0        |                              |
+>>>>>>      4 -> 7          : 4        |                              |
+>>>>>>      8 -> 15         : 3        |                              |
+>>>>>>     16 -> 31         : 8        |                              |
+>>>>>>     32 -> 63         : 10       |                              |
+>>>>>>     64 -> 127        : 3        |                              |
+>>>>>>    128 -> 255        : 6        |                              |
+>>>>>>    256 -> 511        : 8        |                              |
+>>>>>>    512 -> 1023       : 20       |*                             |
+>>>>>>   1024 -> 2047       : 19       |*                             |
+>>>>>>   2048 -> 4095       : 57       |**                            |
+>>>>>>   4096 -> 8191       : 325      |****************              |
+>>>>>>   8192 -> 16383      : 647      |******************************|
+>>>>>>  16384 -> 32767      : 228      |***********                   |
+>>>>>>  32768 -> 65535      : 43       |**                            |
+>>>>>>  65536 -> 131071     : 1        |                              |
+>>>>>>
+>>>>>> And the bandwidth of a node is only 3100MB. While we used the
+>>>>>> patch
+>>>>>> and enable 6 polling task, the bandwidth can be 4000MB. It's a
+>>>>>> good
+>>>>>> improvement.
+>>>>> I think you will see similar performance with unbound workqueue
+>>>>> and
+>>>>> rps.
+>>>> Yes, I remodified the nvmet-tcp/nvmet-rdma code for supporting
+>>>> unbound
+>>>> workqueue, and in same prerequisites of above to run test, and
+>>>> compared
+>>>> the result of unbound workqueue and polling mode task. And I got a
+>>>> good
+>>>> performance for unbound workqueue. For unbound workqueue TCP we got
+>>>> 3850M/node, it's almost equal to polling task. And also tested
+>>>> nvmet-rdma
+>>>> we get 5100M/node for unbound workqueue RDMA versus 5600M for
+>>>> polling
+>>>> task,
+>>>> seems the diff is very small. Anyway, your advice is good.
+>>> I'm a bit surprised that you see ~10% delta here. I would look into
+>>> what
+>>> is the root-cause of
+>>> this difference. If indeed the load is high, the overhead of the
+>>> workqueue mgmt should be
+>>> negligible. I'm assuming you used IB_POLL_UNBOUND_WORKQUEUE ?
+>> Yes, we used IB_POLL_UNBOUND_WORKQUEUE to create ib CQ. And I
+>> observed
+>> 3% CPU
+>> usage of unbound workqueue versus 6% of polling task.
+>>
+>>>>    Do you think
+>>>> we
+>>>> should submit the unbound workqueue patches for nvmet-tcp and
+>>>> nvmet-rdma
+>>>> to upstream nvmet?
+>>> For nvmet-tcp, I think there is merit to split socket processing
+>>> from
+>>> napi context. For nvmet-rdma
+>>> I think the only difference is if you have multiple CQs assigned
+>>> with
+>>> the same comp_vector.
+>>>
+>>> How many queues do you have in your test?
+>> We used 24 IO queues to nvmet-rdma target. I think this may also be
+>> related to workqueue's wait latency. We still see some several ms
+>> wait
+>> latency for unbound workqueue of RMDA. You can see below trace log.
+>
+> What is the queue size of each? what rdma device are you using?
 
-On Fri, Jul 05, 2024 at 01:55:43PM +0800, =E5=BC=A0=E7=8C=9B wrote:
-
-> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0=C2=A0 riscv,isa =3D "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond=
-_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpm=
-f_sstc_svinval_svnapot_svpbmt";
-> Linux 6.7 kernel modifies the definition of the "riscv, isa" property, an=
-d describes the extended features in the "riscv, isa-extensions". So, can t=
-he definition of "riscv, isa" be simplified here?
-> Defined as =EF=BC=9A=C2=A0 riscv,isa =3D "rv64imafdcv";
-
-No, they should match, other than vendor extensions. Not every project
-supports the new property.
-
-> This message and any attachment are confidential and may be privileged or=
- otherwise protected from disclosure. If you are not an intended recipient =
-of this message, please delete it and any attachment from your system and n=
-otify the sender immediately by reply e-mail. Unintended recipients should =
-not use, copy, disclose or take any action based on this message or any inf=
-ormation contained in this message. Emails cannot be guaranteed to be secur=
-e or error free as they can be intercepted, amended, lost or destroyed, and=
- you should take full responsibility for security checking.=20
-> =20
-> =E6=9C=AC=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E4=BB=BB=E4=BD=95=E9=99=84=
-=E4=BB=B6=E5=85=B7=E6=9C=89=E4=BF=9D=E5=AF=86=E6=80=A7=E8=B4=A8=EF=BC=8C=E5=
-=B9=B6=E5=8F=AF=E8=83=BD=E5=8F=97=E5=85=B6=E4=BB=96=E4=BF=9D=E6=8A=A4=E6=88=
-=96=E4=B8=8D=E5=85=81=E8=AE=B8=E8=A2=AB=E6=8A=AB=E9=9C=B2=E7=BB=99=E7=AC=AC=
-=E4=B8=89=E6=96=B9=E3=80=82=E5=A6=82=E9=98=81=E4=B8=8B=E8=AF=AF=E6=94=B6=E5=
-=88=B0=E6=9C=AC=E9=82=AE=E4=BB=B6=EF=BC=8C=E6=95=AC=E8=AF=B7=E7=AB=8B=E5=8D=
-=B3=E4=BB=A5=E5=9B=9E=E5=A4=8D=E7=94=B5=E5=AD=90=E9=82=AE=E4=BB=B6=E7=9A=84=
-=E6=96=B9=E5=BC=8F=E9=80=9A=E7=9F=A5=E5=8F=91=E4=BB=B6=E4=BA=BA=EF=BC=8C=E5=
-=B9=B6=E5=B0=86=E6=9C=AC=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E4=BB=BB=E4=BD=
-=95=E9=99=84=E4=BB=B6=E4=BB=8E=E9=98=81=E4=B8=8B=E7=B3=BB=E7=BB=9F=E4=B8=AD=
-=E4=BA=88=E4=BB=A5=E5=88=A0=E9=99=A4=E3=80=82=E5=A6=82=E9=98=81=E4=B8=8B=E5=
-=B9=B6=E9=9D=9E=E6=9C=AC=E9=82=AE=E4=BB=B6=E5=86=99=E6=98=8E=E4=B9=8B=E6=94=
-=B6=E4=BB=B6=E4=BA=BA=EF=BC=8C=E6=95=AC=E8=AF=B7=E5=88=87=E5=8B=BF=E4=BD=BF=
-=E7=94=A8=E3=80=81=E5=A4=8D=E5=88=B6=E3=80=81=E6=8A=AB=E9=9C=B2=E6=9C=AC=E9=
-=82=AE=E4=BB=B6=E6=88=96=E5=85=B6=E4=BB=BB=E4=BD=95=E5=86=85=E5=AE=B9=EF=BC=
-=8C=E4=BA=A6=E8=AF=B7=E5=88=87=E5=8B=BF=E4=BE=9D=E6=9C=AC=E9=82=AE=E4=BB=B6=
-=E6=88=96=E5=85=B6=E4=BB=BB=E4=BD=95=E5=86=85=E5=AE=B9=E8=80=8C=E9=87=87=E5=
-=8F=96=E4=BB=BB=E4=BD=95=E8=A1=8C=E5=8A=A8=E3=80=82=E7=94=B5=E5=AD=90=E9=82=
-=AE=E4=BB=B6=E6=97=A0=E6=B3=95=E4=BF=9D=E8=AF=81=E6=98=AF=E4=B8=80=E7=A7=8D=
-=E5=AE=89=E5=85=A8=E5=92=8C=E4=B8=8D=E4=BC=9A=E5=87=BA=E7=8E=B0=E4=BB=BB=E4=
-=BD=95=E5=B7=AE=E9=94=99=E7=9A=84=E9=80=9A=E4=BF=A1=E6=96=B9=E5=BC=8F=EF=BC=
-=8C=E5=8F=AF=E8=83=BD=E4=BC=9A=E8=A2=AB=E6=8B=A6=E6=88=AA=E3=80=81=E4=BF=AE=
-=E6=94=B9=E3=80=81=E4=B8=A2=E5=A4=B1=E6=88=96=E6=8D=9F=E5=9D=8F=EF=BC=8C=E6=
-=94=B6=E4=BB=B6=E4=BA=BA=E9=9C=80=E8=87=AA=E8=A1=8C=E8=B4=9F=E8=B4=A3=E5=81=
-=9A=E5=A5=BD=E5=AE=89=E5=85=A8=E6=A3=80=E6=9F=A5=E3=80=82
-
-Please fix your mail client/system to not append this. Such footers are
-incompatible with kernel development.
+All the queue's IO size is 1M and queue depth is 32. The rdma deive is
+Mellanox CX4LX dual ports bonding. And in poll task we used
+IB_POLL_DIRECT
+to create CQ versus IB_POLL_UNBOUND_WORKQUEUE for workqueue.
 
 Thanks,
-Conor.
+Ping
 
---r5FHo/hUFI/U0wLN
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoeSmgAKCRB4tDGHoIJi
-0sF4AQDCX4JI0M03jibGYAqEQ7wU9mHU2p/KBPLAZdO4LNHmkwD/W7rLzQrOADWi
-aweZNUwFUrpe1QE1vQc/UoM1xw3llAU=
-=GiR5
------END PGP SIGNATURE-----
-
---r5FHo/hUFI/U0wLN--
 
