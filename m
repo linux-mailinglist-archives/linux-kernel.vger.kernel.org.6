@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-241895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854659280D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECDF9280D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5231F250EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 933791F250A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CAB225A2;
-	Fri,  5 Jul 2024 02:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8E83A8CB;
+	Fri,  5 Jul 2024 03:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="UkYE2oxv"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VBeSt32j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5061225AE
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1B424B28;
+	Fri,  5 Jul 2024 03:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720148383; cv=none; b=RdreX+vJttHX7yk9durE69UYIBRECxQyEKSJw74Q9koSkUeBGNxBySx12oByq8lgq93JYlQ7W2B5kOlqyAnDi1t5ewrDl6rGLcrdWXgwuttv8LNX0xspDKLtlJIZZNH07xNOXSYNFx8GG5bLnopgk38dUf12oDkCCxyTzL3zYxc=
+	t=1720148428; cv=none; b=cf4Gr81MhIQApoxet4nDx7tYjuE7Wy1lOgnZ7IuHPKGobiKdmpgTzq8rQ/nRZZc4xYPBbxjooGXlhx8UqoQHY5qw7XAIU+fhgsk+dsDN+8SRzeLsPQtQCdkyzFOGpe6aqBcr1jUqT9a6Tv918ITlRVPGDam0aNyTqsozVFuANE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720148383; c=relaxed/simple;
-	bh=2Oiuvj7EbyooIILDkmRlNFGc8GCiYvx6AdilmGgLqFg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=tNugezM/kWhzUS2lc1D1j/wGJFG4LCkrxdpwPLde+fWCMFTyl+ELB1kWN7rvNf71mcnA288YKlhAeXua3a6gIW0puCSNn1u5rzUPw0zMddt9CdEpf3YJ4CDikNcZPPjI3teZ0n+j3qsLOxly2usOuO5dlNaeZSAQv4mCQNo/8dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=UkYE2oxv reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4652xEh11674870
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 4 Jul 2024 19:59:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4652xEh11674870
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1720148356;
-	bh=OVCOj6R0uUEzf1Owbcu+39qs+xwwUg7cr2XF4X6ej2E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=UkYE2oxvZHzMxBZJBABsVgGWGZk54lKrD5bH4lsQFOFQcS29wDe+ySmbAI1iGrc2t
-	 c62eXgyjrtMFJ2xviowD2VnUi2IXBQAjn8xwXqL4w4T7qPYrVHVwSyM7ugeZ1fchqM
-	 FtifWXmFhJSnbTvqYwPe1cZG3rFhpKqkZ7M1xhaUv5NYMM9d/70UfL8heq8MfY9Ywm
-	 bZIX3bA6fXGTKv8VG8QymO7qvoJeUeMItC5H830sb++9yXJyVh4xij4xJ2EiaPWPLn
-	 X/GtitpxTjz/t+DoTWVQswnEgBvG6Lx5m/WwXipfwVV3NLzT5Kup1nM4ogorcldXg8
-	 weQzPv7a5bi5Q==
-Date: Thu, 04 Jul 2024 19:59:13 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: David Polakovic <email@dpolakovic.space>,
-        Alexander Lobakin <aleksander.lobakin@intel.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Lobakin <alexandr.lobakin@intel.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: Re: proposition for fixing Y292B bug
-User-Agent: K-9 Mail for Android
-In-Reply-To: <d88861a6-ccd9-3fe5-67e0-b50a72ca1e51@dpolakovic.space>
-References: <3be3235a-dea7-a5ca-b5ea-4047bdeb695d@dpolakovic.space> <ZoFgga45QCh2uA0i@archie.me> <9e3b638d-76f2-8520-2a24-7de0cd0bc149@dpolakovic.space> <ZoJx5GaBDHg7nayw@archie.me> <cef39a6f-426d-4c4d-950e-edbbe5e95acf@intel.com> <d88861a6-ccd9-3fe5-67e0-b50a72ca1e51@dpolakovic.space>
-Message-ID: <848ADF85-6138-4D56-8DDD-E327B8AFC5EC@zytor.com>
+	s=arc-20240116; t=1720148428; c=relaxed/simple;
+	bh=FMMqsuxbmm40KqOqln2jI8V0GzRXHS9cPlxEjc+3CjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r0N30gNowZWbDmWWl6l//QoiLBNxKDG8iTd9yOeWc/4vaKX1v4ievm9XY/HJI3CIgVU8Y1blQzetkaY+Px/Nbne4fEoDak4JSLZOoBeEUWJVaCSKJGmQHJXzW2uhE+kJlP0kGz+Jfx8dKvabkAX42lQMOr5Pk8FltuJWEOFJkzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VBeSt32j; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720148427; x=1751684427;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FMMqsuxbmm40KqOqln2jI8V0GzRXHS9cPlxEjc+3CjI=;
+  b=VBeSt32jWW6xdYqzbDROo63GKlO3eNJuNL+9WN8+llHfC/JyzoyEmlWY
+   R8riseyOEyS8iCsFvkBHQZmEROse9+RL1xeL45ck97BswxUQ84l+ghn2+
+   wsUmIuJt2uJXiJAnGXKQyT3PM7EscNBhj44XLnTKjRLoqovDBaBBjeslV
+   1fsSNVQ3/kap5KevRyPdd44O0Aer3ZJavwNtvLRMyWPRr+WveJcxCoviC
+   vMXlZzGyYoMvRajLg/HHTm3+iov+9mJImqoGcaBezJSi1RfNkMysGzZs3
+   qGKZrnX6chui+o800iEmCkrOqv0vQ3YBjNN6mYHG7iah6ykxvy0ccR+HS
+   g==;
+X-CSE-ConnectionGUID: 2HfAP6I7R/+wpFuaOlDteg==
+X-CSE-MsgGUID: p/FbjV7KR6C1j6XtXtWZlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17644496"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="17644496"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 20:00:26 -0700
+X-CSE-ConnectionGUID: msur0iLoTqeARkg/MuKINw==
+X-CSE-MsgGUID: lo+ytsjFTAm3QMI0YnZ/YA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="51353451"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.241.187]) ([10.124.241.187])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 20:00:23 -0700
+Message-ID: <5c3c81dc-ec15-4f7a-9807-a308082c9fc8@linux.intel.com>
+Date: Fri, 5 Jul 2024 11:00:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] x86/virt/tdx: Exclude memory region hole within CMR
+ as TDMR's reserved area
+To: "Huang, Kai" <kai.huang@intel.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Hansen, Dave" <dave.hansen@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "peterz@infradead.org" <peterz@infradead.org>, "hpa@zytor.com"
+ <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>,
+ "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>
+References: <cover.1718538552.git.kai.huang@intel.com>
+ <cfbed1139887416b6fe0d130883dbe210e97d598.1718538552.git.kai.huang@intel.com>
+ <7809a177-e170-46f5-b463-3713b79acf22@suse.com>
+ <717ba4c65ba9f1243facfcced207404c910f2410.camel@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <717ba4c65ba9f1243facfcced207404c910f2410.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On July 3, 2024 8:29:58 AM PDT, David Polakovic <email@dpolakovic=2Espace> =
-wrote:
->On 7/1/24 15:31, Alexander Lobakin wrote:
->> From: Bagas Sanjaya <bagasdotme@gmail=2Ecom>
->> Date: Mon, 1 Jul 2024 16:07:48 +0700
->>=20
->>> On Sun, Jun 30, 2024 at 05:27:24PM +0200, David Polakovic wrote:
->>>> Thanks for reply=2E
->>> Please don't top-post on LKML, reply inline with appropriate context
->>> instead=2E
->>>=20
->>>> My proposed solution was to create this BigInt datatype, which
->>>> stores the value in array=2E The functions for division, multiplicati=
-on,
->>>> addition, subtraction and comparison could be stored in separate
->>>> "=2Eh" library for manipulation with BigInt datatype=2E The paper spe=
-aks
->>>> more in detail=2E
->> IRRC there is big integer type somewhere in either lib/ or crypto/,
->> I don't remember exactly=2E It's used only for crypto tho=2E
->>=20
->>>> And yes, this truly is an userspace solution, but for kernel space
->>>> implementation I have zero to none experience=2E Therefore I wrote
->>>> here=2E
->>> There was a proposal for adding 128-bit unsigned integer (see [1])=2E
->>> The signed counterpart should be analogous=2E
->> I have generic 128-bit integer API/infra for the kernel in my internal
->> repo=2E I've been planning to upstream it for a couple years already, b=
-ut
->> every time couldn't find a slot to do that=2E
->> I can upload it to my open GitHub, so that maybe someone else who needs
->> it could pick it up?
->>=20
->>> Thanks=2E
->>>=20
->>> [1]: https://lore=2Ekernel=2Eorg/lkml/20220722145514=2E767592-1-alexan=
-dr=2Elobakin@intel=2Ecom/
->> Thanks,
->> Olek
+
+
+On 6/19/2024 9:23 AM, Huang, Kai wrote:
+[...]
+>
+>> furthermore the alignement checks
+>> suggest it's actually some sanity checking function. Furthermore if we
+>> have:"
+>>
+>> ORDINARY_CMR,EMPTY_CMR,ORDINARY_CMR
+>>
+>> (Is such a scenario even possible), in this case we'll ommit also the
+>> last ordinary cmr region?
+> It cannot happen.
+>
+> The fact is:
+>
+> 1) CMR base/size are 4KB aligned.  This is architectural behaviour.
+> 2) TDX architecturally supports 32 CMRs maximumly;
+Do you think it's worth a comment to the definition of TDX_MAX_CMRS that 
+the number is architectural?
+
+> 3) In practice, TDX can just report the 'NUM_CMRS' metadata field as 32,
+> but there can be empty/null CMRs following valid CMRs.
+> 4) A empty/null CMR between valid CMRs cannot happen.
 >
 >
->I am not sure if I don't understand your solution, but extending the
->memory designation from 64 to 128 bits, is another temporary
->solution, which will again overflow one day=2E
->
->The sole reason why I was proposing the new "BigInt" type was to
->store each digit of the time_c as separate element of array, which
->could be resized (added one digit) as needed=2E The only limit would
->then be the physical amount of memory in the machine=2E
->
->dpo
->
-
-So now you are worried about the Y5e30 problem?!
-
-You realize that you are now talking the orders of magnitude of time for w=
-hich:=20
-
-"	The estimated time until most or all of the remaining 1=E2=80=9310% of s=
-tellar remnants not ejected from galaxies fall into their galaxies' central=
- supermassive black holes=2E By this point, with binary stars having fallen=
- into each other, and planets into their stars, via emission of gravitation=
-al radiation, only solitary objects (stellar remnants, brown dwarfs, ejecte=
-d planetary-mass objects, black holes) will remain in the universe=2E"
-
-I genuinely thought this whole thread was a practical joke=2E=2E=2E
 
