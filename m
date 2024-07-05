@@ -1,205 +1,149 @@
-Return-Path: <linux-kernel+bounces-242296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DC9928659
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:05:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 666CF928666
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B22F284B9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:05:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7931B210AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E96146A69;
-	Fri,  5 Jul 2024 10:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFA7146A62;
+	Fri,  5 Jul 2024 10:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IfU3jKQt"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TqssU6fG"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B643213B5BB;
-	Fri,  5 Jul 2024 10:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C4413B5BB;
+	Fri,  5 Jul 2024 10:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720173896; cv=none; b=RkDlx2C9W6SV13IMy+L5tXkvd2TrG/Yz7m/Lv17+2MsYddXtRddNnfHq4bOfGVJZx6q+b1VxesWtmE4lds0+442C2TXVuP1Jaq9YiGm7al+DpPBlIelPZhMXpuel7Up6SaStTJ5MaW/95kXjRzh7wYIWBEIdHxEYXmH0GtlSOg8=
+	t=1720174115; cv=none; b=lFGJpHy4hIOidqdb4BVgi2FZaloMkEVkpF5p0FjXtg7i/CqdSzeJHDDBKDAxJbH7KQ1ZsdGZcGzr4WXdPdGCQtaQQ4WHP+IMcQj82PoMJ7Bih/ZZ/rYb+dgcnqVlIQclJXIjZq5J0SBdTtlaN3FaZf51jPXH9dxclMS7BZR1Lcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720173896; c=relaxed/simple;
-	bh=F7nUwAR8SeYGFj74FbaBXKFyLdvn5T8izhlRdu/CSvE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qKIcOw88E45+BioX8d88FYDvuvQ7UMfKviEieQS1tkSl5VkST/Zm2+zTosxW9GQNW7d+eE7Bs5n1Gr4o9qmtlMsqiw9II0BYoIJTBuyT0tTIIl8boOkdUBFdBYh30C6RI0COOYDMXUZ4KCrcDT3a6vt4EZoWFXXCiqV2dhNWEYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IfU3jKQt; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720173890; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=YZdiToWG6qpYt+f0otSLNv0meCfVIiY67seAf3aZq88=;
-	b=IfU3jKQtgvr56xK+ZeiV6EKZktynjTjsLDbK3K3r2g5FwQ92fnWoM2qgsnX09GBpaWRfmn1pfwzXxuWUqyfripZcVmtjGBd00cmZbVowLy7KoQKKQIA+ure2n7vITI05RcUrDudEutqy5IECDcdvZxAIl+tnYhxDohC+GhQyKNA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023225041;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0W9ubLef_1720173889;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W9ubLef_1720173889)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Jul 2024 18:04:50 +0800
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] fuse: make foffset alignment opt-in for optimum backend performance
-Date: Fri,  5 Jul 2024 18:04:49 +0800
-Message-Id: <20240705100449.60891-1-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
+	s=arc-20240116; t=1720174115; c=relaxed/simple;
+	bh=kP3QeFnDIFukQzzLmnBwW3AvNzEX33OvNmR/mRSuSKY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgCKl1aP0Gx5SEWi4eYAV1YT6UiFrCz+CjerUmCTuF5wkmRbd4JxmiiOWhB1k6THrCoiP15tZCvCy32UwjWbxL4ctubO36FFW+okU6ApYNVY92XvOMu2q/QC6+Wwfr6SX1rkGafh6zcncqDfSD2+Ah6lVaP+u2O1biDRBAUSenQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TqssU6fG; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 465A8NjV042760;
+	Fri, 5 Jul 2024 05:08:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1720174103;
+	bh=X0TWfqISVSqoER+zfdbU+LKPndrXxzn6J1t1M6cfB1Q=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=TqssU6fGcplUwTRFTwLmmeFfBfOrzCl7RhMpUafKPqCHvBCwj4G81hx/OekqOAOng
+	 ZFuGoHDqVEOrrFiY8+O4YLNVATIT0VuYdSteS1hEzeQ8rImZOckKPfZS0zL7m6Gl5p
+	 CCtJ3jzVAb3exn9XUI1lcMJpL1cH2dzknl+0U488=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 465A8NVi029913
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 5 Jul 2024 05:08:23 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 5
+ Jul 2024 05:08:22 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 5 Jul 2024 05:08:23 -0500
+Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 465A8M5t115201;
+	Fri, 5 Jul 2024 05:08:22 -0500
+Date: Fri, 5 Jul 2024 15:38:21 +0530
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Beleswar Padhi
+	<b-padhi@ti.com>
+Subject: Re: [PATCH v2 0/5] Add bootph-all property for J7 boards
+Message-ID: <20240705100821.p24a52g2xrlw7kfq@uda0497581>
+References: <20240705-b4-upstream-bootph-all-v2-0-9007681ed7d8@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240705-b4-upstream-bootph-all-v2-0-9007681ed7d8@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Sometimes the file offset alignment needs to be opt-in to achieve the
-optimum performance at the backend store.
+Hi all,
 
-For example when ErasureCode [1] is used at the backend store, the
-optimum write performance is achieved when the WRITE request is aligned
-with the stripe size of ErasureCode.  Otherwise a non-aligned WRITE
-request needs to be split at the stripe size boundary.  It is quite
-costly to handle these split partial requests, as firstly the whole
-stripe to which the split partial request belongs needs to be read out,
-then overwrite the read stripe buffer with the request, and finally write
-the whole stripe back to the persistent storage.
+On 11:56-20240705, Manorit Chawdhry wrote:
+> The idea of this series is to add bootph-all and bootph-pre-ram property
+> in all the leaf nodes wherever required and cleanup any other places where
+> bootph-all/bootph-pre-ram exist in the parent nodes as well.
+> 
+> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+> ---
+> Changes in v2:
+> 
+> * Aniket
+> - Change wkup_vtm0 bootph-all to bootph-pre-ram
+> - Add bootph-all explicitly to dmsc/sms nodes as otherwise the boards
+>   don't boot
+> 
+> - Cleanup more nodes along with some testing with u-boot.
 
-Thus the backend store can suffer severe performance degradation when
-WRITE requests can not fit into one stripe exactly.  The write performance
-can be 10x slower when the request is 256KB in size given 4MB stripe size.
-Also there can be 50% performance degradation in theory if the request
-is not stripe boundary aligned.
+Here is the u-boot patch with the cleanup that I have tried [0] and here
+is the corresponding boot log for that [1].
 
-Besides, the conveyed test indicates that, the non-alignment issue
-becomes more severe when decreasing fuse's max_ratio, maybe partly
-because the background writeback now is more likely to run parallelly
-with the dirtier.
+[0]: https://github.com/manorit2001/u-boot/tree/b4/upstream/j7/remove-bootph
+[1]: https://gist.github.com/manorit2001/da42b634fabb662a48728927cdcb1acc
 
-fuse's max_ratio	ratio of aligned WRITE requests
-----------------	-------------------------------
-70			99.9%
-40			74%
-20			45%
-10			20%
+Regards,
+Manorit
 
-With the patched version, which makes the alignment constraint opt-in
-when constructing WRITE requests, the ratio of aligned WRITE requests
-increases to 98% (previously 20%) when fuse's max_ratio is 10.
-
-[1] https://lore.kernel.org/linux-fsdevel/20240124070512.52207-1-jefflexu@linux.alibaba.com/T/#m9bce469998ea6e4f911555c6f7be1e077ce3d8b4
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
- fs/fuse/file.c            | 4 ++++
- fs/fuse/fuse_i.h          | 6 ++++++
- fs/fuse/inode.c           | 9 +++++++++
- include/uapi/linux/fuse.h | 9 ++++++++-
- 4 files changed, 27 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index f39456c65ed7..f9b477016c2e 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2246,6 +2246,10 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct page *page,
- 	if (ap->num_pages == data->max_pages && !fuse_pages_realloc(data))
- 		return true;
- 
-+	/* Reached alignment */
-+	if (fc->opt_alignment && !(page->index % fc->opt_alignment_pages))
-+		return true;
-+
- 	return false;
- }
- 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index f23919610313..5963571b394c 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -860,6 +860,9 @@ struct fuse_conn {
- 	/** Passthrough support for read/write IO */
- 	unsigned int passthrough:1;
- 
-+	/* Foffset alignment required for optimum performance */
-+	unsigned int opt_alignment:1;
-+
- 	/** Maximum stack depth for passthrough backing files */
- 	int max_stack_depth;
- 
-@@ -917,6 +920,9 @@ struct fuse_conn {
- 	/** IDR for backing files ids */
- 	struct idr backing_files_map;
- #endif
-+
-+	/* The foffset alignment in PAGE_SIZE */
-+	unsigned int opt_alignment_pages;
- };
- 
- /*
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 99e44ea7d875..9266b22cce8e 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1331,6 +1331,15 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 			}
- 			if (flags & FUSE_NO_EXPORT_SUPPORT)
- 				fm->sb->s_export_op = &fuse_export_fid_operations;
-+
-+			/* fallback to default if opt_alignment <= PAGE_SHIFT */
-+			if (flags & FUSE_OPT_ALIGNMENT) {
-+				if (arg->opt_alignment > PAGE_SHIFT) {
-+					fc->opt_alignment = 1;
-+					fc->opt_alignment_pages = 1 <<
-+						(arg->opt_alignment - PAGE_SHIFT);
-+				}
-+			}
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index d08b99d60f6f..2c6ad1577591 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -217,6 +217,9 @@
-  *  - add backing_id to fuse_open_out, add FOPEN_PASSTHROUGH open flag
-  *  - add FUSE_NO_EXPORT_SUPPORT init flag
-  *  - add FUSE_NOTIFY_RESEND, add FUSE_HAS_RESEND init flag
-+ *
-+ *  7.41
-+ *  - add opt_alignment to fuse_init_out, add FUSE_OPT_ALIGNMENT init flag
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -421,6 +424,8 @@ struct fuse_file_lock {
-  * FUSE_NO_EXPORT_SUPPORT: explicitly disable export support
-  * FUSE_HAS_RESEND: kernel supports resending pending requests, and the high bit
-  *		    of the request ID indicates resend requests
-+ * FUSE_OPT_ALIGNMENT: init_out.opt_alignment contains log2(byte alignment) for
-+ *		       foffset alignment for optimum write performance
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -463,6 +468,7 @@ struct fuse_file_lock {
- #define FUSE_PASSTHROUGH	(1ULL << 37)
- #define FUSE_NO_EXPORT_SUPPORT	(1ULL << 38)
- #define FUSE_HAS_RESEND		(1ULL << 39)
-+#define FUSE_OPT_ALIGNMENT	(1ULL << 40)
- 
- /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
- #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
-@@ -893,7 +899,8 @@ struct fuse_init_out {
- 	uint16_t	map_alignment;
- 	uint32_t	flags2;
- 	uint32_t	max_stack_depth;
--	uint32_t	unused[6];
-+	uint32_t	opt_alignment;
-+	uint32_t	unused[5];
- };
- 
- #define CUSE_INIT_INFO_MAX 4096
--- 
-2.19.1.6.gb485710b
-
+> - Fix build errors
+> - Link to v1: https://lore.kernel.org/r/20240507-b4-upstream-bootph-all-v1-0-c6d52651856f@ti.com
+> 
+> ---
+> Manorit Chawdhry (5):
+>       arm64: dts: ti: k3-j721s2*: Add bootph-* properties
+>       arm64: dts: ti: k3-j784s4*: Remove bootph properties from parent nodes
+>       arm64: dts: ti: k3-am68*: Add bootph-* properties
+>       arm64: dts: ti: k3-j721e*: Add bootph-* properties
+>       arm64: dts: ti: k3-j7200*: Add bootph-* properties
+> 
+>  arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts   | 10 ++++++++++
+>  arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi         |  2 ++
+>  .../boot/dts/ti/k3-j7200-common-proc-board.dts     | 23 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/ti/k3-j7200-main.dtsi          |  2 ++
+>  arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi    | 11 +++++++++++
+>  arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi        |  7 +++++++
+>  .../boot/dts/ti/k3-j721e-common-proc-board.dts     | 20 +++++++++++++++++++
+>  arch/arm64/boot/dts/ti/k3-j721e-main.dtsi          |  2 ++
+>  arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi    | 10 ++++++++++
+>  arch/arm64/boot/dts/ti/k3-j721e-sk.dts             | 18 +++++++++++++++++
+>  arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi        |  5 +++++
+>  .../boot/dts/ti/k3-j721s2-common-proc-board.dts    | 14 +++++++++++++
+>  arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi         |  2 ++
+>  arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi   | 12 +++++++++++
+>  arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi       |  2 ++
+>  arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           |  9 +--------
+>  arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi   |  7 ++++---
+>  17 files changed, 145 insertions(+), 11 deletions(-)
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240430-b4-upstream-bootph-all-8d47b72bc0fd
+> 
+> Best regards,
+> -- 
+> Manorit Chawdhry <m-chawdhry@ti.com>
+> 
 
