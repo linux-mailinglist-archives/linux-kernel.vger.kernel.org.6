@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-241990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A39D928241
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:43:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDE9928243
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77C71F27FD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:43:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 623FFB2213A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFEA1448C6;
-	Fri,  5 Jul 2024 06:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42941448E8;
+	Fri,  5 Jul 2024 06:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="b8QcIczu"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k09VDRLJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F6C143890;
-	Fri,  5 Jul 2024 06:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B7F144304;
+	Fri,  5 Jul 2024 06:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720161799; cv=none; b=P26a/cQQ7eVU3DliglXqoTIfc4BYmcVk4ogfdbWGuBucIJDZW2k0VZeB8QqZvoIIscEMRNqOMBg2c4snd5TOQ0/Vss4X1j7IMta8lGiqU0xRBAEMWguNSQJbwUfif5LS5+bBSh/mZJmYzMEuHHfha2mY2x6Wp5LH3nuexw9XHzk=
+	t=1720161822; cv=none; b=VPdiYqv9VNoQHKk48DBh06PKCsdkETNCO+CiXku5X7QlepYTRHL1FSk5BgYzoGw5c86E9JFujnlSp/uIyGS1n7gIT5WaZyRYLjnnpeQcdr0Nx3127DzACnMoV3UOJ2v+WwxC0lQF60rKgqD+oMEPE29gcz8rsKuhEdeBoVNWXQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720161799; c=relaxed/simple;
-	bh=8qoHFSRKhHhJ8qBwr1oPNZA0QMdxUS4HBp4ofdLFHaM=;
+	s=arc-20240116; t=1720161822; c=relaxed/simple;
+	bh=QD1D5JV0h4f+hBJGgiwwPNrcVD1k51TIRByFDxQWr68=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=azK0Z8pXfexeepJzaoLYcxwPsDirdpoqWSjyLwsY3onYM3mCYKn/ar6SLO4GRiUuXTaF9SvpmKgSuvzGCFuiAsiwtgRjS4NTN/SKaya2Yy1XmWJ7KhH9Ly/X82UDYB9Dcfl8n2kmCPtvBauUI7fjkHIiBucv7AkvhAZaGPK9XEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=b8QcIczu; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720161793; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=2LPcby+iS6BBEYNZnz/2U/NNFAHgLJPj1zgzlJlT1Js=;
-	b=b8QcIczuEMZaUyOfj06MNPb/b0nU/xVUx/Zc/dSB17ShJMB5GrWLANXE65FmQE08Y5fHGRlwkgMkG/3KkiW2Xl/YTF4/auXRsEl7by12J/+Lgy253CSlnG2t3fvn/yR6AEJDFZNLos0Q3MvXe3ODi7w98aLE+OSYgXagE6imCEs=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R571e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W9txrXV_1720161791;
-Received: from 30.246.181.6(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0W9txrXV_1720161791)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Jul 2024 14:43:12 +0800
-Message-ID: <e5e4db6f-079c-45e7-b079-ef2a6851dd29@linux.alibaba.com>
-Date: Fri, 5 Jul 2024 14:43:11 +0800
+	 In-Reply-To:Content-Type; b=kv2ggucL0j/V8NQBC7op6vgrK7nJKGS0v9fm93T/4r5i86kywe3pBOnl8CSLWUfXszd2ixwptk0d60ahdh/LP9ntY9sw6Ad9VO6DuVqgDaIcbljhJjdvI90wdfL73IjGR8pxOIR3SUWLDJh/Nwc3P36LEgqFcDrAcf2tNNTZNbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k09VDRLJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA5DC32786;
+	Fri,  5 Jul 2024 06:43:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720161821;
+	bh=QD1D5JV0h4f+hBJGgiwwPNrcVD1k51TIRByFDxQWr68=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k09VDRLJKN3NM3x2EJisjhzWkrGBNW+YZV/xB9rmi08nNsHTAv/NEpU71v0a7n2tP
+	 fibqVVGcbqBaRzLayPL/GwPYWC/G6XZshAZ7ZIFI40u/7dl3F5cqf9SAg6Tl+ay9uk
+	 yrpNdAcuJmUctE7ZIobooKcK+zpmHMXODrsWTUj6164a83e1cH/2TByJbQtYDWKF7M
+	 ctfPJoYuJv1beByjrNTW3OVgSWZ8O8l6dEMmXHujP6J6PMkW1WOXUR+U9jxb4o5NNz
+	 UkY6ZGhG7XTuu32EQNNDuXgy8kPHzlvdp80IeHsCnKCBmoOeyd/oBh7Ei+19ckggC8
+	 6AzGo+L+SwYBQ==
+Message-ID: <c4b23da5-10fc-476e-8acc-8ba0815f5def@kernel.org>
+Date: Fri, 5 Jul 2024 08:43:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,60 +49,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: lib/mpi: delete unnecessary condition
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, Mimi Zohar
- <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <6686bed3.4a0a0220.6aa45.6c34@mx.google.com>
+Subject: Re: [PATCH 3/7] ARM: dts: microchip: at91-sama5d34ek: Align the
+ eeprom nodename
+To: Andrei Simion <andrei.simion@microchip.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240704151411.69558-1-andrei.simion@microchip.com>
+ <20240704151411.69558-4-andrei.simion@microchip.com>
 Content-Language: en-US
-From: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <6686bed3.4a0a0220.6aa45.6c34@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240704151411.69558-4-andrei.simion@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On 04/07/2024 17:14, Andrei Simion wrote:
+> Align the eeprom nodename according to device tree specification
+> and at24.yaml.
+> 
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 
-On 2024/7/4 23:25, Dan Carpenter wrote:
-> We checked that "nlimbs" is non-zero in the outside if statement so delete
-> the duplicate check here.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Squash.
+
 > ---
+>  arch/arm/boot/dts/microchip/sama5d34ek.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/sama5d34ek.dts b/arch/arm/boot/dts/microchip/sama5d34ek.dts
+> index bffd61397cb5..18943b873fff 100644
+> --- a/arch/arm/boot/dts/microchip/sama5d34ek.dts
+> +++ b/arch/arm/boot/dts/microchip/sama5d34ek.dts
+> @@ -36,7 +36,7 @@ i2c0: i2c@f0014000 {
+>  			i2c1: i2c@f0018000 {
+>  				status = "okay";
+>  
+> -				24c256@50 {
+> +				eeprom@50 {
 
+What about other names? Why not fixing everything at once?
 
-Reviewed-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-
-
->   lib/crypto/mpi/mpi-bit.c | 10 ++++------
->   1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/lib/crypto/mpi/mpi-bit.c b/lib/crypto/mpi/mpi-bit.c
-> index 070ba784c9f1..e08fc202ea5c 100644
-> --- a/lib/crypto/mpi/mpi-bit.c
-> +++ b/lib/crypto/mpi/mpi-bit.c
-> @@ -212,12 +212,10 @@ void mpi_rshift(MPI x, MPI a, unsigned int n)
->   			return;
->   		}
->   
-> -		if (nlimbs) {
-> -			for (i = 0; i < x->nlimbs - nlimbs; i++)
-> -				x->d[i] = x->d[i+nlimbs];
-> -			x->d[i] = 0;
-> -			x->nlimbs -= nlimbs;
-> -		}
-> +		for (i = 0; i < x->nlimbs - nlimbs; i++)
-> +			x->d[i] = x->d[i+nlimbs];
-> +		x->d[i] = 0;
-> +		x->nlimbs -= nlimbs;
->   
->   		if (x->nlimbs && nbits)
->   			mpihelp_rshift(x->d, x->d, x->nlimbs, nbits);
-
-
-Cheers,
-
-Tianjia
+Best regards,
+Krzysztof
 
 
