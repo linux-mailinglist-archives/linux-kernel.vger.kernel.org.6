@@ -1,183 +1,240 @@
-Return-Path: <linux-kernel+bounces-241924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614CD928158
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:06:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE678928161
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1981C23C7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251BF285B98
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BAA13541B;
-	Fri,  5 Jul 2024 05:05:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE25335C0;
-	Fri,  5 Jul 2024 05:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B6E12FF96;
+	Fri,  5 Jul 2024 05:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oioKgYYF"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6C21C6A0
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 05:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720155957; cv=none; b=tg329HPUGyNccrKzJuUENzDByMoZp2YNhc8v8hEITN3naODzL/qdn01l4qqo3WzrmtDYf8nvh33jjyZn/KsxMEGw6VkUzZWNbkZuWE8fN+NEVTxtZz0k+7iLT+Bu3Kw9g4atbuA5iE7eQcMkrTRymLr7xJjZZBkaDSo86jjfTkc=
+	t=1720156622; cv=none; b=jsRmewwKPUTnW0KjUjzMPNPAExoTmWn91pXCW6VEAVarzkU6mWFtkXPIw6asI7LxQRSIplEVi21e1Y+POUdSSH9jWkLQVtn/cXh5n1FtLH0BdRt5bAvbz6EE4Cu4Dcudqkcz3fRYVbh2fTNQTUw0LyPtio9otw2hYFnU66Rzi+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720155957; c=relaxed/simple;
-	bh=cMMrd4R0LOJOM1zRLuRFlhObo/jo8pYbo4hcL/x/EU0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=RwCSJxpAa10JQibm5M5pj45MS/EMgRUc/QSUpGHl7gATfT6fIQkhtXBOrDKmr8sDPOOkXy8gLxJFBk2qTBmnM3Vquhdu81N/b2zB83/vnReLeOft0o29MtDrvd1gQ/Jlx6aExPPK2nUUgCmkEp18nven3XhFV2SisPJ/YuTqYRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxvfAxf4dmdCoBAA--.3836S3;
-	Fri, 05 Jul 2024 13:05:53 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxmsYuf4dmYu47AA--.8023S3;
-	Fri, 05 Jul 2024 13:05:52 +0800 (CST)
-Subject: Re: [PATCH v4 2/3] LoongArch: KVM: Add LBT feature detection function
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Xuerui Wang <kernel@xen0n.name>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240626063239.3722175-1-maobibo@loongson.cn>
- <9c7d242e-660b-8d39-b69e-201fd0a4bfbf@loongson.cn>
- <CAAhV-H4wwrYyMYpL1u5Z3sFp6EeW4eWhGbBv0Jn9XYJGXgwLfg@mail.gmail.com>
- <059d66e4-dd5d-0091-01d9-11aaba9297bd@loongson.cn>
- <CAAhV-H41B3_dLgTQGwT-DRDbb=qt44A_M08-RcKfJuxOTfm3nw@mail.gmail.com>
- <7e6a1dbc-779a-4669-4541-c5952c9bdf24@loongson.cn>
- <CAAhV-H7jY8p8eY4rVLcMvVky9ZQTyZkA+0UsW2JkbKYtWvjmZg@mail.gmail.com>
- <81dded06-ad03-9aed-3f07-cf19c5538723@loongson.cn>
- <CAAhV-H520i-2N0DUPO=RJxtU8Sn+eofQAy7_e+rRsnNdgv8DTQ@mail.gmail.com>
- <0e28596c-3fe9-b716-b193-200b9b1d5516@loongson.cn>
- <CAAhV-H6vgb1D53zHoe=BJD1crB9jcdZy7RM-G0YY0UD+ubDi4g@mail.gmail.com>
- <bdcc9ec4-31a8-1438-25c0-be8ba7f49ed0@loongson.cn>
- <ecb6df72-543c-4458-ba27-0ef8340c1eb3@flygoat.com>
- <554b10e8-a7ab-424a-f987-ea679859a220@loongson.cn>
- <01eb9efd-ca7a-4d4c-a29d-cfc2f6cfbb86@app.fastmail.com>
- <9316cde1-26d0-54d5-43c3-1284288c685f@loongson.cn>
- <4cfc5292-6f1a-4409-b229-2433e18f012f@app.fastmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <a2f1b226-addf-673a-13c6-907021fc2bc2@loongson.cn>
-Date: Fri, 5 Jul 2024 13:05:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1720156622; c=relaxed/simple;
+	bh=eV/nkZdyqZdInofMqMPDmfgFsJ/TeERWl7Ba9KOUmS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oTUrd881j3tU29cAJLh5kG+kybtVAm+lbqHHBISUk8m92rzVecbrGoxmKergIUYI5IxCkrFs+6FhhxDZJtkvKC/OQA65E+3QAEzfyF7GysjrfemFonQeeWQzq+ukqS6utfXj6LM6Gk1UknQxzNOBRkzcYH+YdiLru2+OKITtq4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oioKgYYF; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-8100ff277f0so388659241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 22:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720156618; x=1720761418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1HMKJv3AgpJkT4V8tfr5qb7gG27gguNgb92GAH47WIc=;
+        b=oioKgYYFPGfQhPjQIvsyA7rn5bO6/0EnzZLHh0MOylh1PE13LXNK7dBX3Avzz6cobe
+         c/f8brVOn0iFQ6VAigRjUnwvmJs9hq6dWWSsfQELrRrahwQjDFvaQbYfLg/hjj6DkxVD
+         4H/7L78JkeWrxb1wv8gw6O/g7yAfrVKejCU+NtGlQ+eE0cV/PYKfjtJuyWLcpwxXaSVy
+         Iuc2laJNdpwDXiYpWE6G2Bm2Ub1Z54BVJYVz4IbijuBGijMeS0xD0W28Bi/+e9RcaYjC
+         BjLkrcQ0PqpEC0NTOZzj8P85d6afx+n52ov+PbsNYFTGTrNx9pbtTKizAsKdbC+qcmKG
+         1D4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720156618; x=1720761418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1HMKJv3AgpJkT4V8tfr5qb7gG27gguNgb92GAH47WIc=;
+        b=Q0m2hnwiaoq5k1FgEanXTSeLrTb2oDEIP1YTekE97S+NzG/GTxF8TORck9oiUrKR6h
+         kUh7NR0HEldjZpUjpDqEb24RZqRjoSw9KrjECytUrkuxx2l7MFppZkOjPMz8ME7aQrSr
+         /+j/xor57GJly7p7xRqjFL5IZHprDfyK2at9T30oL7I0bml/eybq0JlQOFOEr5SAiK0L
+         Q7iEsYBq2WcT5baid5VdinL2mwPSyOcnMnpl5qkLL7X3TbnJOMCBMAP217g7bOGxChuh
+         0t0ubf6u+0Na5tTiTN8hVTxEZ53B0U6+JSovt9G11/z0ml/0U+iicUTO9eIT83N3isKD
+         Aazg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtd+7uV45rauHbsAxrLBrUqG7pr6qxo/lv1ulSAQnRODLZPkTm9ZZPI03Jmd9JHmGdmpfoj5CvtAZvcSjgCRscExEY0KX/5GN+IHTP
+X-Gm-Message-State: AOJu0Yy5owt99BylPyP14FTA8itXoa355q/X+t3hUr3EaKwCDxJHtx+t
+	XOVgYABCYZ48RFXUlH5uZEb/GLqUX8E4au4tUL6ebOYX8EJWcFfpzmuaUnDiQ1GFOwfiGHKLOM+
+	BTkx37FhLDr0nxi7zFc+RCRlbEz7K7O3W7tH+hg==
+X-Google-Smtp-Source: AGHT+IHjWh2hS9NmXKggVNHBGdL8yXRhq6f6T+0l/r+u4P93qIEaL8OXkoLp5kLhkFi2eygzh9RpeY03jYDK8twIAHk=
+X-Received: by 2002:a05:6122:400e:b0:4eb:5d5d:6add with SMTP id
+ 71dfb90a1353d-4f2f3f97b3emr4087711e0c.13.1720156617842; Thu, 04 Jul 2024
+ 22:16:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <4cfc5292-6f1a-4409-b229-2433e18f012f@app.fastmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8BxmsYuf4dmYu47AA--.8023S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxur15JF15tryUJry8uw1kXrc_yoW5ur15pa
-	48KFWY9F4DtryIy3y8ta1xWr1vy3s2yw4aqryrKrykGFn8GFyDZF1YkF4F93WUXrW8Z340
-	vF40qFyxuas8uFgCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
-	14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
-	vfC2KfnxnUUI43ZEXa7IU8vApUUUUUU==
+References: <20240704094505.095988824@linuxfoundation.org>
+In-Reply-To: <20240704094505.095988824@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 5 Jul 2024 10:46:46 +0530
+Message-ID: <CA+G9fYswG=vrfp1SFmhsbM2Qno=WchrdyFzgEvhoAKVuyOS29w@mail.gmail.com>
+Subject: Re: [PATCH 5.10 000/284] 5.10.221-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, clang-built-linux <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 4 Jul 2024 at 15:18, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.10.221 release.
+> There are 284 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 06 Jul 2024 09:44:13 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.10.221-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-On 2024/7/5 下午12:09, Jiaxun Yang wrote:
-> 
-> 
-> 在2024年7月5日七月 上午11:46，maobibo写道：
->> On 2024/7/5 上午11:19, Jiaxun Yang wrote:
->>>
->>>
->>> 在2024年7月5日七月 上午9:21，maobibo写道：
->>> [...]
->>>>> for you.
->>>> On the other hand, can you list benefits or disadvantage of approaches
->>>> on different architecture?
->>>
->>> So the obvious benefit of scratch vCPU would be maintaining consistency and simpleness
->>> for UAPI.
->> I do not find the simpleness, for the same feature function, both VM
->> feature and CPU feature is define as follows.  Do you think it is for
->> simple :)
-> 
-> So they made a mistake here :-(
-> 
-> We don't even need vCPU flag, just probing CPUCFG bits is sufficient.
-> 
-> Note that in Arm's case, some CPU features have system dependencies, that's why
-> they need to be entitled twice.
-> 
-> For us, we don't have such burden.
-> 
-> If Arm doesn't set a good example here, please check RISC-V's CONFIG reg on dealing
-> ISA extensions. We don't even need such register because our CPUCFG can perfectly
-> describe ISA status.
-> 
->>
->> VM CAPBILITY:
->>       KVM_CAP_ARM_PTRAUTH_ADDRESS
->>       KVM_CAP_ARM_PTRAUTH_GENERIC
->>       KVM_CAP_ARM_EL1_32BIT
->>       KVM_CAP_ARM_PMU_V3
->>       KVM_CAP_ARM_SVE
->>       KVM_CAP_ARM_PSCI
->>       KVM_CAP_ARM_PSCI_0_2
->>
->> CPU:
->>       KVM_ARM_VCPU_POWER_OFF
->>       KVM_ARM_VCPU_EL1_32BIT
->>       KVM_ARM_VCPU_PSCI_0_2
->>       KVM_ARM_VCPU_PMU_V3
->>       KVM_ARM_VCPU_SVE
->>       KVM_ARM_VCPU_PTRAUTH_ADDRESS
->>       KVM_ARM_VCPU_PTRAUTH_GENERIC
->>       KVM_ARM_VCPU_HAS_EL2
->>
->> Also why scratch vcpu is created and tested on host cpu type rather than
->> other cpu type?  It wastes much time for host cpu type to detect capability.
-> 
-> To maximize supported features, on Arm there is KVM_ARM_VCPU_INIT ioctl.
-> For us that's unnecessary, our kernel does not need to be aware of CPU type,
-> only CPUCFG bits are necessary. RISC-V is following the same convention.
-> 
->>>
->>> It can also maximum code reuse probabilities in other user space hypervisor projects.
->>>
->>> Also, it can benefit a potential asymmetrical system. I understand that it won't appear
->>> in near future, but we should always be prepared, especially in UAPI design.
->> If for potential asymmetrical system, however there is only one scratch
->> vcpu. is that right? how does only one scratch vcpu detect ASMP
->> capability, and it is not bind to physical cpu to detect ASMP capability.
->>
->> In generic big.little is HMP rather than ASMP, are you agree.
-> 
-> So I was talking about emulating asymmetrical guest. Each guest CPU should have
-> it's own copy of properties. That's the lesson learnt.
-For ASMP there may be problem if instruction set is different. However I 
-think it is a little far from now with LoongArch.
-> 
-> [...]
-> 
-> Anyway I'm just trying to help out here, feel free to go ahead without taking my advice.
-It is really nice to talk with you , hope more people taking part in 
-community from my heart.
-> 
-> I've seen so many pitfalls on all other arches and I don't want them to repeat on LoongArch.
-> But sometimes people only learn from mistakes.
-Different arch has different history, LoongArch should take pitfalls 
-again, it is normal rules just from my thoughts, only that it is new and 
-has no much burden now.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Regards
-Bibo Mao
+NOTE:
+clang-nightly builds failed due to following errors.
+  scripts/lld-version.sh: 18: arithmetic expression: expecting EOF:
+"10000 * 19 + 100 * 0 + 0,"
+  init/Kconfig:65: syntax error
+  init/Kconfig:64: invalid statement
+   - https://storage.tuxsuite.com/public/linaro/lkft/builds/2imFeC8AXBH72Ay=
+uJQzpKgizG4t/
 
+## Build
+* kernel: 5.10.221-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 6db6c4ec363bf8c7cfbc8ce2aa96d56be3bec0dd
+* git describe: v5.10.220-285-g6db6c4ec363b
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
+.220-285-g6db6c4ec363b
+
+## Test Regressions (compared to v5.10.220-291-g4d0fada143ed)
+
+## Metric Regressions (compared to v5.10.220-291-g4d0fada143ed)
+
+## Test Fixes (compared to v5.10.220-291-g4d0fada143ed)
+
+## Metric Fixes (compared to v5.10.220-291-g4d0fada143ed)
+
+## Test result summary
+total: 219123, pass: 182165, fail: 3108, skip: 33676, xfail: 174
+
+## Build Summary
+* arc: 10 total, 10 passed, 0 failed
+* arm: 204 total, 202 passed, 2 failed
+* arm64: 58 total, 56 passed, 2 failed
+* i386: 46 total, 44 passed, 2 failed
+* mips: 44 total, 44 passed, 0 failed
+* parisc: 6 total, 0 passed, 6 failed
+* powerpc: 46 total, 46 passed, 0 failed
+* riscv: 18 total, 18 passed, 0 failed
+* s390: 18 total, 18 passed, 0 failed
+* sh: 20 total, 20 passed, 0 failed
+* sparc: 12 total, 12 passed, 0 failed
+* x86_64: 50 total, 48 passed, 2 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-timers
+* kselftest-timesync-off
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
