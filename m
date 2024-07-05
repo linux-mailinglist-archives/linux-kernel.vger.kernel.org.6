@@ -1,87 +1,180 @@
-Return-Path: <linux-kernel+bounces-242110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4099283A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:24:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D0B9283A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B85D1C23B1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:24:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1D41F22D88
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93713145FF9;
-	Fri,  5 Jul 2024 08:24:38 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04800145A0E;
-	Fri,  5 Jul 2024 08:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1AB145B23;
+	Fri,  5 Jul 2024 08:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p72nLYYa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4248613D276;
+	Fri,  5 Jul 2024 08:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720167878; cv=none; b=mVqvp95kVq3/HOWqeaJRVowZ+EPcHYyTOwhkxzPduc0DnAhMEWlUbeR1X6zP9IKbFt6M8cuVkOEalLt37nkp/pakKFS8MWH4Sh8MNLiaVM3KLhWvffamOpTCgXGOORxs0ZxYFExJN4RynN/AqzaZ7ml/vDvfhDn40Dws0nJJDvw=
+	t=1720168101; cv=none; b=CVbec5DwoVpJ004Q3OcoReQRjQw3w8p3WDvNdbmDfcRba/65Kmycwh6OSLYvn5pV7f3ApO0Nq6AwvPoolZLn+qrs0EFhWIgR0BqLLCgqcC39lMubRT9K++r5DqKBpTKOJYdOO0je0aqy35bEXAcyjQ/R9zQupHTLHZHXrlO5tB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720167878; c=relaxed/simple;
-	bh=BuEZFqk/1LWdUpNXNejOfOHGoX/xRTCByI4h9dJMzmU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rQz1pznO9VOqUGHE0e74K7XGw4edAfABhdpZJ8EnE+qw3jtZhWYHGGPc3poZ5JGf23hGPxdDzdY+cddQfDAPLXcQ4BB3i924NsIBoDeRjEzpjNlrWCyQ265guK0bEcrfGZ0ZXYoM8AObiE3NucwPWVfwMAFluA8rwdo+63qgK7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee56687adb8b94-06b94;
-	Fri, 05 Jul 2024 16:24:24 +0800 (CST)
-X-RM-TRANSID:2ee56687adb8b94-06b94
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain.localdomain (unknown[10.54.5.252])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea6687adb6346-0f58c;
-	Fri, 05 Jul 2024 16:24:23 +0800 (CST)
-X-RM-TRANSID:2eea6687adb6346-0f58c
-From: Liu Jing <liujing@cmss.chinamobile.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liujing@cmss.chinamobile.com
-Subject: [PATCH] selftests/net: missing close function in randomize function
-Date: Fri,  5 Jul 2024 16:24:21 +0800
-Message-Id: <20240705082421.7061-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1720168101; c=relaxed/simple;
+	bh=scqZPC5wO4m0aCmMMW3d4hxG0BVZgv+1Scylw50NJeQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rTO5jYEoMV3VLGmgZlvI45UeR/lKmtETNUBwW5wb5+hU1WvaWivnrwISh7iZxlUrkMRxSCTn6jjWmZ8MuGpgv7eQICC/O6VT9l/ym7eLBsmmFzpuKZKBxsxKocA7O1O1ySSaH15ktdhOx0vDOFLJTkij+GuG+OXaMSijBF59Cwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p72nLYYa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7E61C4AF0C;
+	Fri,  5 Jul 2024 08:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720168100;
+	bh=scqZPC5wO4m0aCmMMW3d4hxG0BVZgv+1Scylw50NJeQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=p72nLYYaqrTeBYJpENa6BI2NQ4zdl6osq7j38dmH3D02nPdiSHuwPLfQApA09Yih1
+	 aW92hvslFgm6IXq3MBklRLigB1mZF/8rK5NBAwMS3cXTJDIPhuhB1Mw/jje8lU1Uf+
+	 8d38d9/xFQo82+69IWdQ90NWSw6fvuUJp2YpOYoVvCTdiDWZLqn6XpPPFmS6MwVRFC
+	 Fqj+HFzaQzJIk+ZjNX5SukLm0yGBrCYF5YPW1QjamXCJy9ebgXBEyAG8oUV289wKw9
+	 buDsNRlSjsbIWq2W2gY+bmFAhZI4Nh2QI4xgagtP7F4yomEA+Cx8t+niD1ytEVkwys
+	 dXebjxeE4+TvQ==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77abe5c709so168897866b.2;
+        Fri, 05 Jul 2024 01:28:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXmLeG2zOVlE4XEcRMICaBxLtD9giCk/XheKfybMxVXFH/8sqhaPbStsvkjPok2dsF1HLuvsTT9EBuvzQ6X4rXMYe3WTxbs6aV3RpBS7TMyB7j1kofui17eKJvs110GqlGuLBzFrcI=
+X-Gm-Message-State: AOJu0YyyANeWqUnSY1uz+0Loaa6UnSjvs+F8tR2NwhpQ0p4XfJAnivGz
+	hjk4A6WDPVP3RPTB9bLD5o19jJjnPgGuIdczEnmLAc+/tAGKqMdQuFMKsifEyLbECMO7AdCoP3H
+	+90Dw1JxiBmmCQTZDBflgjhNvozE=
+X-Google-Smtp-Source: AGHT+IGah1K+v5YHUGFSEIZOI8yyQ+ZJW4cZA61Xt/1RDCkQrBl8XYkuZYWtxCGtiwzPHsVLtaGQKFNuzSvcrSOJohk=
+X-Received: by 2002:a17:906:1c13:b0:a77:c002:e4ac with SMTP id
+ a640c23a62f3a-a77c002eafbmr204243166b.0.1720168099392; Fri, 05 Jul 2024
+ 01:28:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240705060650.243497-1-chenhuacai@loongson.cn>
+ <20240705060650.243497-3-chenhuacai@loongson.cn> <20240705071313.ddl6geg72t4n7j3s@vireshk-i7>
+ <CAAhV-H5q5hv2sA7EAm1D1nmbG-VGPzc4kpTnHMDSFuFiTKEH7A@mail.gmail.com> <20240705081723.6y23ts757aunwyhi@vireshk-i7>
+In-Reply-To: <20240705081723.6y23ts757aunwyhi@vireshk-i7>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 5 Jul 2024 16:28:07 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H47OkbiA9awcCVwj4Jz-_o65rCSx++gU+OARhM+XSqLtQ@mail.gmail.com>
+Message-ID: <CAAhV-H47OkbiA9awcCVwj4Jz-_o65rCSx++gU+OARhM+XSqLtQ@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, "Rafael J . Wysocki" <rafael@kernel.org>, loongarch@lists.linux.dev, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-in randomize function, there is a open function, but there is no
-close function in the randomize, which is easy to cause memory leaks.
+On Fri, Jul 5, 2024 at 4:17=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.or=
+g> wrote:
+>
+> On 05-07-24, 15:34, Huacai Chen wrote:
+> > It seems except changing mutex_init to devm_mutex_init, all other
+> > changes are line breaks? If so, I think additional tests are
+> > unnecessary. :)
+>
+> Yeah, I just wanted to make sure the build passes and I have not
+> introduced a stupid bug.
+>
+> > But now long lines (> 80 columns) are accepted by checkpatch.pl. Even
+> > with --strict, only > 100 columns are warned.
+> >
+> > Especially for the change in loongson3_cpufreq_cpu_exit(), there is
+> > only 82 columns and I think that line can keep as the original state.
+> > And if possible, I also want the devm_kzalloc() line keep as original.
+>
+> Fair enough. I am still hung on 80 columns I believe, but I shouldn't
+> be as the kernel has moved on :)
+>
+> New diff (Prototype of exit() callback has changed in my tree, so a
+> change for that too).
+>
+> diff --git a/drivers/cpufreq/loongson3_cpufreq.c b/drivers/cpufreq/loongs=
+on3_cpufreq.c
+> index a530e4a56b78..5f79b6de127c 100644
+> --- a/drivers/cpufreq/loongson3_cpufreq.c
+> +++ b/drivers/cpufreq/loongson3_cpufreq.c
+> @@ -31,10 +31,10 @@ union smc_message {
+>  };
+>
+>  /* Command return values */
+> -#define CMD_OK                         0  /* No error */
+> -#define CMD_ERROR                      1  /* Regular error */
+> -#define CMD_NOCMD                      2  /* Command does not support */
+> -#define CMD_INVAL                      3  /* Invalid Parameter */
+> +#define CMD_OK                         0 /* No error */
+> +#define CMD_ERROR                      1 /* Regular error */
+> +#define CMD_NOCMD                      2 /* Command does not support */
+> +#define CMD_INVAL                      3 /* Invalid Parameter */
+>
+>  /* Version commands */
+>  /*
+> @@ -230,7 +230,8 @@ static int loongson3_cpufreq_target(struct cpufreq_po=
+licy *policy, unsigned int
+>  {
+>         int ret;
+>
+> -       ret =3D do_service_request(cpu_data[policy->cpu].core, FREQ_INFO_=
+TYPE_LEVEL, CMD_SET_FREQ_INFO, index, 0);
+> +       ret =3D do_service_request(cpu_data[policy->cpu].core,
+> +                                FREQ_INFO_TYPE_LEVEL, CMD_SET_FREQ_INFO,=
+ index, 0);
+>
+>         return (ret >=3D 0) ? 0 : ret;
+>  }
+> @@ -310,13 +311,11 @@ static int loongson3_cpufreq_cpu_init(struct cpufre=
+q_policy *policy)
+>         return 0;
+>  }
+>
+> -static int loongson3_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+> +static void loongson3_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+>  {
+>         int cpu =3D policy->cpu;
+>
+>         loongson3_cpufreq_target(policy, per_cpu(freq_data, cpu)->def_fre=
+q_level);
+> -
+> -       return 0;
+>  }
+>
+>  static int loongson3_cpufreq_cpu_online(struct cpufreq_policy *policy)
+> @@ -348,13 +347,14 @@ static int loongson3_cpufreq_probe(struct platform_=
+device *pdev)
+>         int i, ret;
+>
+>         for (i =3D 0; i < MAX_PACKAGES; i++)
+> -               mutex_init(&cpufreq_mutex[i]);
+> +               devm_mutex_init(&pdev->dev, &cpufreq_mutex[i]);
+>
+>         ret =3D do_service_request(0, 0, CMD_GET_VERSION, 0, 0);
+>         if (ret <=3D 0)
+>                 return -EPERM;
+>
+> -       ret =3D  do_service_request(FEATURE_DVFS, 0, CMD_SET_FEATURE, FEA=
+TURE_DVFS_ENABLE | FEATURE_DVFS_BOOST, 0);
+> +       ret =3D do_service_request(FEATURE_DVFS, 0, CMD_SET_FEATURE,
+> +                                FEATURE_DVFS_ENABLE | FEATURE_DVFS_BOOST=
+, 0);
+>         if (ret < 0)
+>                 return -EPERM;
+>
+>
+> Applied the patch. You need to take 1/2 through the arch specific
+> tree. Thanks.
+OK, thank you very much.
 
-Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
----
- tools/testing/selftests/net/tcp_mmap.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/testing/selftests/net/tcp_mmap.c b/tools/testing/selftests/net/tcp_mmap.c
-index 4fcce5150850..ab305e262d0a 100644
---- a/tools/testing/selftests/net/tcp_mmap.c
-+++ b/tools/testing/selftests/net/tcp_mmap.c
-@@ -438,6 +438,7 @@ static void randomize(void *target, size_t count)
- 		perror("read /dev/urandom");
- 		exit(1);
- 	}
-+	close(urandom);
- }
- 
- int main(int argc, char *argv[])
--- 
-2.33.0
-
-
-
+Huacai
+>
+> --
+> viresh
+>
 
