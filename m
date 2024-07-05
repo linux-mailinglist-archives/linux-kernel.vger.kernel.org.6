@@ -1,81 +1,51 @@
-Return-Path: <linux-kernel+bounces-242742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B08928C75
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:48:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF5C8928C79
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48481F24D29
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6864C28497E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490F016D30D;
-	Fri,  5 Jul 2024 16:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3425816D33E;
+	Fri,  5 Jul 2024 16:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XrzlpYRI"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="xXzvN6ut"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272F816A956
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD71114E2D6;
+	Fri,  5 Jul 2024 16:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720198129; cv=none; b=eZ9Qz9XaL5nGbK4esjQPAipm82rLf5lmmYdZmwAtfhjJcdtNIuApUMbO6EdwnSCJlM/Lwn8xZ8vD4ch7BgafjE3g851nSnSx0vTPJmaelEpjIyAbVWxlyNv662qb33QhG5Xl3Q5h6q5OZc5DrmP7XQ2fvxm69o+qndqqSCDooX4=
+	t=1720198252; cv=none; b=um0UVOEZyJEzbdV4yWPvvWwF0N4D6lNI+Z8tykIbFsg1fmkNLaFzcW5YffIlFRai9zCbxxlAOlUg4VUZh+CmADYEj9hFbKjIpVKGxvTPXRidEbk5WrS/AB3PuuQZBUUw/6hjMTucQJgudMRSUrlMCvTaMmt+5ICOAS2PYe5/ZTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720198129; c=relaxed/simple;
-	bh=pfBpWEMmzVFUDopMkHG1PutRvRZVFo9BARNRDYrFXtE=;
+	s=arc-20240116; t=1720198252; c=relaxed/simple;
+	bh=THpNz3GdpyxXNx1U0XkxvQAwQ4nBLkZO77Oiih/WhTg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eTVGYTvCsvlRZcMtSG0GThvlW8wFIltH2O7NmV0Euf4vb5ACYMLI9ZPZZBUvVcjpmNkcGSV6ILEYUcnSVvKC6EyH0zFnJR/X97HBPVMqXvf/h5Cwu0g/FMNBH2MTafkqQfwbjo6ImQIGX7hK4r1ufuMTabMYSJFleiowXgK8vQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XrzlpYRI; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465GRR9t007184;
-	Fri, 5 Jul 2024 16:48:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=a
-	IdtEz/ceNHX6TjIUu0L4V6JPzYwy3OzJfwnmxjuk0o=; b=XrzlpYRI4fC2mqV/+
-	Hkb8AcHue/X4i2kwMa/+2r5dwVdVI/8iH6aBT+ZbI94P1LCALGM19s/hU3U1vbdd
-	bfIAidjDunLgbhlSRj8buSLNbTrXAndkQal83vjHWBlPW5N6tEOg7kY5ecEcthn8
-	vLt3rykROTJUarmMZDC7xhgxujjYVx0Z9qjR+FO5c8lBfc+Kcc23HJeG9nVHquFv
-	JWlx62Yc3FhcuBsq0Cbs3Y7tgaNeolgWPRFTRCulK3AmQGv2DZtETFNOO97L853C
-	ddJDcIYYnYw7b4oAqgC/x5zNmMyUe/eUYHucuvvqROLQ//1ZCf37VJDoz8gvNRhV
-	cc+8Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 406j6a0by8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 16:48:19 +0000 (GMT)
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 465GmIcH006669;
-	Fri, 5 Jul 2024 16:48:18 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 406j6a0by6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 16:48:18 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 465E8Mss026393;
-	Fri, 5 Jul 2024 16:48:17 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402wkqees2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 16:48:17 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 465GmED411993614
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Jul 2024 16:48:16 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 361FC58062;
-	Fri,  5 Jul 2024 16:48:14 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CFDCC58068;
-	Fri,  5 Jul 2024 16:48:08 +0000 (GMT)
-Received: from [9.179.4.203] (unknown [9.179.4.203])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  5 Jul 2024 16:48:08 +0000 (GMT)
-Message-ID: <ed11cb24-acc6-4d1d-a559-0708cdc4786b@linux.ibm.com>
-Date: Fri, 5 Jul 2024 22:18:01 +0530
+	 In-Reply-To:Content-Type; b=ViX4hYCCaLLQUYftFZ1COJ8ernuck3bbER1TTGQF9NdBVIImoaEzc/tPb7rhBWs11sV5mIm7/qEQMgWaseKEPppDGnuo69stcLWscQp+TLY3Cp7ad/jnuhBFC5dDXIjNbf82R5pw3d3RYLT+mOWCghMkLn3+jVw1T2Z/zG/NrVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=xXzvN6ut; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=TyacVIb4lVynekdoUcj7ogqnStFwwVkSIvRUoiyphBs=;
+	t=1720198250; x=1720630250; b=xXzvN6ut7wjhDjaTqHrpihXcS0h08eFqCerIr/jGl0b8GlY
+	9PsoOhnCgzT5v2qlp+uSrHVBSBjCNsA0niChWV++QLu79tWJUvBbA1NMIHgW+e1TP0GHG0iP7mC9S
+	b6TPE77NMkUPEa80d1eRsqmBCh6tfU84BqYto+gCvheen+v2nfmF3GpoRbi2DzQLO0JXcsny0i7eq
+	vzVGTdzo6RmJHfVnteTgOHXSXirxnYCvO/75StDJXThKc+7IMUW+0AR79bzfdVPUWR3W/S2UCYhZ4
+	2e4XroF6mPZKD8QABig4UkcHuOmMVkPMVtkqJQ9+4wZlVYCXSjwgU2XDVoJ90jbQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sPm8u-0004M8-T7; Fri, 05 Jul 2024 18:50:40 +0200
+Message-ID: <0b96edcc-6b5f-447f-8023-440427a9fff2@leemhuis.info>
+Date: Fri, 5 Jul 2024 18:50:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,70 +53,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/hugetlbfs/inode.c: Ensure
- generic_hugetlb_get_unmapped_area() returns higher address than mmap_min_addr
-To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tony Battersby
- <tonyb@cybernetics.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        jj@black.fi.intel.com
-References: <20240705071150.84972-1-donettom@linux.ibm.com>
- <n5jwq5uq3hrgu3ksyg34tjtl3hw5izpc5s5lac4pkjfjt2tf22@co5rgjcznsma>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <n5jwq5uq3hrgu3ksyg34tjtl3hw5izpc5s5lac4pkjfjt2tf22@co5rgjcznsma>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: e1000e regressions reg. suspend and resume (was: Re: [GIT PULL]
+ Networking for v6.10-rc7)
+To: torvalds@linux-foundation.org
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pabeni@redhat.com,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Jakub Kicinski <kuba@kernel.org>
+References: <20240704153350.960767-1-kuba@kernel.org>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <20240704153350.960767-1-kuba@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: B5HTZE9k8iN5lvA3x2_wO1SGwrYIw4QR
-X-Proofpoint-ORIG-GUID: BaRYynCNqe_F5ZTnlMl55fvDEov7zx1V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_12,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- phishscore=0 priorityscore=1501 clxscore=1011 spamscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 mlxlogscore=771 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407050118
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1720198250;c7cb92f7;
+X-HE-SMSGID: 1sPm8u-0004M8-T7
 
-
-On 7/5/24 17:53, Kirill A . Shutemov wrote:
-> On Fri, Jul 05, 2024 at 02:11:50AM -0500, Donet Tom wrote:
->> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
->> index 412f295acebe..428fd2f0e4c4 100644
->> --- a/fs/hugetlbfs/inode.c
->> +++ b/fs/hugetlbfs/inode.c
->> @@ -228,7 +228,7 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
->>   
->>   	if (len & ~huge_page_mask(h))
->>   		return -EINVAL;
->> -	if (len > TASK_SIZE)
->> +	if (len > mmap_end - mmap_min_addr)
->>   		return -ENOMEM;
->>   
->>   	if (flags & MAP_FIXED) {
->> @@ -240,7 +240,7 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
->>   	if (addr) {
->>   		addr = ALIGN(addr, huge_page_size(h));
->>   		vma = find_vma(mm, addr);
->> -		if (mmap_end - len >= addr &&
->> +		if (mmap_end - len >= addr && addr >= mmap_min_addr &&
->>   		    (!vma || addr + len <= vm_start_gap(vma)))
->>   			return addr;
->>   	}
-> There's more difference with generic_get_unmapped_area() than what you are
-> fixing. I think we also need vm_end_gap() here.
-Thank you for your comment. I will add this change and send V2.
-
--Donet
+On 04.07.24 17:33, Jakub Kicinski wrote:
+> 
+> The following changes since commit fd19d4a492af77b1e8fb0439781a3048d1d1f554:
+> 
+>   Merge tag 'net-6.10-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-06-27 10:05:35 -0700)
+> 
+> [...] 
 >
-> Hugetlb code duplication is annoying.
->
+> There's one fix for power management with Intel's e1000e here,
+> Thorsten tells us there's another problem that started in v6.9.
+> We're trying to wrap that up but I don't think it's blocking.
+
+Linus, in the scope of the topics I recently brought up on the ksummit
+list I'd really like to know how you feel about the particular situation
+Jakub hinted at avove, as I wonder if you would have preferred to see
+the culprits reverted weeks ago.
+
+I agree with Jakub that the problem might not qualify as "blocking", as
+it seems to only affect users with certain ethernet chips. But OTOH it's
+not one, but two stacked regressions -- and one is in proper releases
+for a few weeks already now. And both afaics could have been solved
+weeks ago by quick reverts (while reintroducing an old(?) problem the
+first of the two culprits tried to fix); the author of the second
+culprit even submitted a revert weeks ago and suggested to revert the
+other change, too.
+
+That was the long story short, here are the details.
+
+The first culprit is 861e8086029e00 ("e1000e: move force SMBUS from
+enable ulp function to avoid PHY loss issue") [v6.9-rc3, v6.8.5,
+v6.6.26]. Due to it ethernet after a suspend and resume did not work
+anymore for some users. This is something that bothers people, as
+https://lore.kernel.org/all/ZmfcJsyCB6M3wr84@pirotess/ shows.
+
+This regression was something the second culprit bfd546a552e140
+("e1000e: move force SMBUS near the end of enable_ulp function")
+[v6.10-rc2] tried to fix. Since two days after that rc was out it's
+known that this change causes some systems to not even enter suspend.
+For details see https://bugzilla.kernel.org/show_bug.cgi?id=218936 and
+https://bugzilla.kernel.org/show_bug.cgi?id=218940 . Side note: commit
+bfd546a552e140 nearly entered stable kernels as well, but I told Greg
+about the problem, who then decided to wait:
+https://lore.kernel.org/all/2024061406-refreeze-flatfoot-f33a@gregkh/
+
+It quickly became known that both regression can be fixed with reverts;
+the author of bfd546a552e140 even submitted one and suggested to revert
+861e8086029e00 as well:
+https://lore.kernel.org/all/20240610013222.12082-1-hui.wang@canonical.com/
+https://lore.kernel.org/all/20240611062416.16440-1-hui.wang@canonical.com/
+
+But another developer wanted to fix the root cause. The last version of
+the patch to do so is from 2024-06-20 afaics:
+https://lore.kernel.org/all/20240620063645.4151337-1-vitaly.lifshits@intel.com/
+The discussion about it stalled until I pointed the -net maintainers to
+it two days ago in private, as afterwards there was one more reply.
+
+All that makes me wonder if both commits should have been reverted in
+mainline weeks ago; yes, sure, the problem that 861e8086029e00 tried to
+fix would be back. But it's Fixes: tag points to a change to 4.2-rc1, so
+maybe that would not be that bad (hard to say without knowing more about
+what motivated the development of that change).
+
+That way Greg then could have reverted 861e8086029e00 as well to resolve
+this in 6.9.y and 6.6.y (the latter contains this commit since
+2024-04-10 and thus likely also shows the regression that bfd546a552e140
+was meant to fix).
+
+Ciao, Thorsten
 
