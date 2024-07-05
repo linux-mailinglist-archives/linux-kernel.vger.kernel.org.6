@@ -1,216 +1,133 @@
-Return-Path: <linux-kernel+bounces-242069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD3A928337
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:54:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873FB92833B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148FB28631B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:54:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4026B28760F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE2A145B14;
-	Fri,  5 Jul 2024 07:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC83A144D2B;
+	Fri,  5 Jul 2024 07:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jiXSWns7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="hed19GzU";
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="aHya3fCO"
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35013144D01;
-	Fri,  5 Jul 2024 07:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8688B144D01
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720166052; cv=none; b=GRVA6HE7re/0pzV0NeQagF4l6p8PlbavD+Z554uj9PT5OoQ6iz9pjzVlIwDW9+Rw52fVP/uz1N3GALedV9S63HPiyrwgcNEyqld82+wcuP47l6HMSbSlJ5yDUKtmWQTzJPHR4HSAGZQQnCf4Nf3fsz/97KSFhfNE5XMQoJFXDb4=
+	t=1720166097; cv=none; b=t54sI3Kic7eOHWWuD1ZFKkJQk8u1RVnhx/YGnD3qF32Ap9PjPFEDhszLKu5imyul8PJ1UFZL6WEsk/umNt09dINn2zEZ5FLrgTIpot7IHUh8cp7Ht+C7vPAe71B3UBB3BC6iBrWbtr+QRYvLwOfa1YP3a6go0oVY1SQHMcEOuoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720166052; c=relaxed/simple;
-	bh=/HURQ9P7Vc7T3PAxMwL3oaZWdqdQeeykS7R4xZmGSKg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gRKoa85iP7L0CK3X09FLAsMB2/GgjQW12/65rWv9ZpOdYNxdi9nIDT+kN9RTbB4kzTK30BLIOVwHiJ318NccikEboR44ZwJ5QvNLZ532xBN6JhBinDWX13iTuY1eYbV+zrEaTgdaAbkO9ZzThTqm9XB6FvX/GFCvbsS2ED1aLJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jiXSWns7; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720166051; x=1751702051;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/HURQ9P7Vc7T3PAxMwL3oaZWdqdQeeykS7R4xZmGSKg=;
-  b=jiXSWns7L2hZeZ+UCUofvfygaMq5xz62X+/imgeYXWd7kCUWoSw/ZqsZ
-   cyPQwIjdSu1dI1rpkoh7FqqG4HSKwV611CLH37L4qK27In+aDbeakdBGC
-   cyMsczNHEf/4hDa5isQRtJmMLz33DrEbtfhCtIpHnTU0OL5KNZF/0ksJe
-   pOUZH+dpXTO/JyBF3Ro/tekUPVvmVXgWfW9R9ttQr0uIhi6EFT1BwoVc6
-   XhNNS66s7Xj4RuWL7RauyyYx2opcEZkYSMliSAd0dls5Or34RuK1rzb7P
-   mkRu2Iwlczb4o3jpHJr0M7kK0Q3aF8WbUHdVzLPmSwXyIV7tGwuMsxBcA
-   w==;
-X-CSE-ConnectionGUID: LkWUS+2jTHKq0ccP4Q5d6A==
-X-CSE-MsgGUID: i+r4djDjR1+vk+S0AnbKzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="34892880"
-X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="scan'208";a="34892880"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 00:53:42 -0700
-X-CSE-ConnectionGUID: tZahdZq+T3Oz49DbNqUNHw==
-X-CSE-MsgGUID: +UmtMMtrRa+qoAGmJw7l3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="scan'208";a="46918572"
-Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 00:53:43 -0700
-From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
-To: dave.hansen@linux.intel.com,
-	jarkko@kernel.org,
-	kai.huang@intel.com,
-	haitao.huang@linux.intel.com,
-	reinette.chatre@intel.com,
-	linux-sgx@vger.kernel.org,
+	s=arc-20240116; t=1720166097; c=relaxed/simple;
+	bh=Zcn/Nzvief9hDSm9R3roNLbz8nhgsBIFBjts3uENqUA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EGUph+RL9qdv3ojBu/TrvNAqs7+W1ijxQtsDvYE5ckZ88XKZDKGiKZnjsf7FZEvH8hrdzxzLAnmaB7YIEoq9xNVX9nnR2xHbvG2ZRxLcjDDBdBD0JFE3W7MXlH8b4uIbseWg/uSV5s/sU3No4ZDRIdRqlAmIXkVfhFA/8x7eqAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=hed19GzU; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=aHya3fCO; arc=none smtp.client-ip=35.74.137.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=atmark-techno.com;
+	s=gw2_bookworm; t=1720165738;
+	bh=Zcn/Nzvief9hDSm9R3roNLbz8nhgsBIFBjts3uENqUA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hed19GzUhUKmqfZsEZylBqRhJ61R0T8VA/vZaEAn39+PgKmzPpTt/Q8ppNVSwf3zC
+	 yuvya6qAoZ5bhHyzVqV/RPkNCqEpkwfreUZ26SZAoBzhH+UJYtRTgxXG7s/yar9nNC
+	 S6exc8Urhle9yL1cCd8JA+SOwhh/IED/xwNhYc+pyCcOYO9vBEm/xm5Iv6n7muX4NX
+	 3vWNpi6XhauFuCqFVvy7diFcuFFeswWNnOMgCw0Cys6rYuNuNkM5pcR2WXgWT5E/US
+	 LJqD/9CpN3Fo5q/AcEZvbavN9W/1StMnAw58nJJX9Gxk8CjOACVl1gx5qWAtfGU9y6
+	 rneHXoaeiGuKg==
+Received: from gw2.atmark-techno.com (localhost [127.0.0.1])
+	by gw2.atmark-techno.com (Postfix) with ESMTP id 306AC837
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:48:58 +0900 (JST)
+Authentication-Results: gw2.atmark-techno.com;
+	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=aHya3fCO;
+	dkim-atps=neutral
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+	by gw2.atmark-techno.com (Postfix) with ESMTPS id AC1487CD
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:48:57 +0900 (JST)
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-5c228d9f0dcso1453185eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atmark-techno.com; s=google; t=1720165736; x=1720770536; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MxuoJkWGHRJwetZg4ul9+B1wriVthDVUa7T5nkwMGhI=;
+        b=aHya3fCOHJI770GjykCWs3NGOQhbV6OVCG+XD+ltz//zbtAqenNHqU21GkTzSuHoNc
+         E7auSQeXZ5FQ5ENb6asThYNJKWjDE2a5fusO228w5HaK+YRt2NHTqRECuFktUhIr3+ew
+         sV6bzCxwU1Sxye47uzyAlpt3BgDYs0pLr7BhbgG6iZOxrdnXFYAj28ncYitUyODxwjbS
+         mpeiEmpTditD9fe8tqkNeW4zNpYNgGUIOkP9jOmlm9isA4CX2VZeqSi5hKXYODYkTh1Y
+         358TJm7ZAoWMCTYnpnXB9IN9Zyv7vyR8o9IO3CjR2oQREj0/RydbcRDlj2NKJVhh9u0B
+         JJXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720165736; x=1720770536;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MxuoJkWGHRJwetZg4ul9+B1wriVthDVUa7T5nkwMGhI=;
+        b=mcdz3PwyLvvWF2VnHEnJIUC/gmP53XVVaTKq1/DN5/cFe0MyNVUNWGwDH0wPZilUR/
+         4zoB8RfcL+zkC+o+B/V/t12u+PJqT4nrnIL9dL/5F/JB54w+pZ1qbM1PoDNdfTW//XPe
+         ADtNi7LGD70huu5iWup2Okl03wbci+06mIpM4CUnVfFC0E72ti/CZrpnIMnnYDNOF8+1
+         OFO/zXMlVSGwKwAHtdHbIzHgPoh6zGnHGzNgZLUN1ZcruoobA8eTyInyGKAZ0tu3TyR3
+         TKlkrqE8D2BFW+ktUgPdzz2hXcScHN/LmbarjA6gVMNjoyYhckP1yn3dNPJjX9B/x235
+         KR3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXXMJE3zXzGPZL6j4fLNcRK7u5hheMqVRz3GdBjBfNRbr0CQEBmTga5pGzMx5b3eq7PXqHcxBl/nSDVTPyplvFpPHyy2MRFO5Cjl1ZM
+X-Gm-Message-State: AOJu0YySIpNcvWGZK4UvqrSWP06NAtiNeuOLDfbgCjtLSh4kADpVpmIt
+	vrmA7eBdKWxjMskyYfvHcBFuvG9ZOZKxJgHQ7bPOzAqWhs6ggHk9h5+jkSMw4n9DV5aZe2N3ShK
+	A6ySlLfWk5W/tgAKWK4bIJb4sFe82c2uQ6NngTkU22I8SYvsXCGGF9AcBGEKChgA=
+X-Received: by 2002:a05:6358:88b:b0:1a6:3016:1ed1 with SMTP id e5c5f4694b2df-1aa98c91efbmr363979855d.27.1720165736373;
+        Fri, 05 Jul 2024 00:48:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFE5s3uc9pyQVZG0Iv0PjBELyaYmcSwHMDmZ7dZ7QPbAPFWUW3qf344zw9phzABBwv0qcny/w==
+X-Received: by 2002:a05:6358:88b:b0:1a6:3016:1ed1 with SMTP id e5c5f4694b2df-1aa98c91efbmr363978955d.27.1720165736013;
+        Fri, 05 Jul 2024 00:48:56 -0700 (PDT)
+Received: from pc-0182.atmarktech (162.198.187.35.bc.googleusercontent.com. [35.187.198.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6d400fadsm10578206a12.91.2024.07.05.00.48.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Jul 2024 00:48:55 -0700 (PDT)
+Received: from [::1] (helo=pc-0182.atmark.tech)
+	by pc-0182.atmarktech with esmtp (Exim 4.96)
+	(envelope-from <dominique.martinet@atmark-techno.com>)
+	id 1sPdgc-00FBmu-02;
+	Fri, 05 Jul 2024 16:48:54 +0900
+From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Songyang Li <leesongyang@outlook.com>
+Cc: Dominique Martinet <dominique.martinet@atmark-techno.com>,
+	linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: mona.vij@intel.com,
-	kailun.qin@intel.com,
-	stable@vger.kernel.org
-Subject: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data race
-Date: Fri,  5 Jul 2024 00:45:24 -0700
-Message-Id: <20240705074524.443713-4-dmitrii.kuvaiskii@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
-References: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
+Subject: [PATCH] MIPS: Octeron: remove source file executable bit
+Date: Fri,  5 Jul 2024 16:48:30 +0900
+Message-Id: <20240705074831.3620158-1-dominique.martinet@atmark-techno.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
 Content-Transfer-Encoding: 8bit
 
-Two enclave threads may try to add and remove the same enclave page
-simultaneously (e.g., if the SGX runtime supports both lazy allocation
-and MADV_DONTNEED semantics). Consider some enclave page added to the
-enclave. User space decides to temporarily remove this page (e.g.,
-emulating the MADV_DONTNEED semantics) on CPU1. At the same time, user
-space performs a memory access on the same page on CPU2, which results
-in a #PF and ultimately in sgx_vma_fault(). Scenario proceeds as
-follows:
+This does not matter the least, but there is no other .[ch] file in the
+repo that is executable, so clean this up.
 
-/*
- * CPU1: User space performs
- * ioctl(SGX_IOC_ENCLAVE_REMOVE_PAGES)
- * on enclave page X
- */
-sgx_encl_remove_pages() {
-
-  mutex_lock(&encl->lock);
-
-  entry = sgx_encl_load_page(encl);
-  /*
-   * verify that page is
-   * trimmed and accepted
-   */
-
-  mutex_unlock(&encl->lock);
-
-  /*
-   * remove PTE entry; cannot
-   * be performed under lock
-   */
-  sgx_zap_enclave_ptes(encl);
-                                 /*
-                                  * Fault on CPU2 on same page X
-                                  */
-                                 sgx_vma_fault() {
-                                   /*
-                                    * PTE entry was removed, but the
-                                    * page is still in enclave's xarray
-                                    */
-                                   xa_load(&encl->page_array) != NULL ->
-                                   /*
-                                    * SGX driver thinks that this page
-                                    * was swapped out and loads it
-                                    */
-                                   mutex_lock(&encl->lock);
-                                   /*
-                                    * this is effectively a no-op
-                                    */
-                                   entry = sgx_encl_load_page_in_vma();
-                                   /*
-                                    * add PTE entry
-                                    *
-                                    * *BUG*: a PTE is installed for a
-                                    * page in process of being removed
-                                    */
-                                   vmf_insert_pfn(...);
-
-                                   mutex_unlock(&encl->lock);
-                                   return VM_FAULT_NOPAGE;
-                                 }
-  /*
-   * continue with page removal
-   */
-  mutex_lock(&encl->lock);
-
-  sgx_encl_free_epc_page(epc_page) {
-    /*
-     * remove page via EREMOVE
-     */
-    /*
-     * free EPC page
-     */
-    sgx_free_epc_page(epc_page);
-  }
-
-  xa_erase(&encl->page_array);
-
-  mutex_unlock(&encl->lock);
-}
-
-Here, CPU1 removed the page. However CPU2 installed the PTE entry on the
-same page. This enclave page becomes perpetually inaccessible (until
-another SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl). This is because the page is
-marked accessible in the PTE entry but is not EAUGed, and any subsequent
-access to this page raises a fault: with the kernel believing there to
-be a valid VMA, the unlikely error code X86_PF_SGX encountered by code
-path do_user_addr_fault() -> access_error() causes the SGX driver's
-sgx_vma_fault() to be skipped and user space receives a SIGSEGV instead.
-The userspace SIGSEGV handler cannot perform EACCEPT because the page
-was not EAUGed. Thus, the user space is stuck with the inaccessible
-page.
-
-Fix this race by forcing the fault handler on CPU2 to back off if the
-page is currently being removed (on CPU1). This is achieved by
-setting SGX_ENCL_PAGE_BUSY flag right-before the first mutex_unlock() in
-sgx_encl_remove_pages(). Upon loading the page, CPU2 checks whether this
-page is busy, and if yes then CPU2 backs off and waits until the page is
-completely removed. After that, any memory access to this page results
-in a normal "allocate and EAUG a page on #PF" flow.
-
-Fixes: 9849bb27152c ("x86/sgx: Support complete page removal")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+Fixes: 29b83a64df3b ("MIPS: Octeon: Add PCIe link status check")
+Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
 ---
- arch/x86/kernel/cpu/sgx/ioctl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+(Noticed this when reviewing the latest stable release, as the mode
+change line stood out in my viewer)
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 5d390df21440..02441883401d 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -1141,7 +1141,14 @@ static long sgx_encl_remove_pages(struct sgx_encl *encl,
- 		/*
- 		 * Do not keep encl->lock because of dependency on
- 		 * mmap_lock acquired in sgx_zap_enclave_ptes().
-+		 *
-+		 * Releasing encl->lock leads to a data race: while CPU1
-+		 * performs sgx_zap_enclave_ptes() and removes the PTE entry
-+		 * for the enclave page, CPU2 may attempt to load this page
-+		 * (because the page is still in enclave's xarray). To prevent
-+		 * CPU2 from loading the page, mark the page as busy.
- 		 */
-+		entry->desc |= SGX_ENCL_PAGE_BUSY;
- 		mutex_unlock(&encl->lock);
- 
- 		sgx_zap_enclave_ptes(encl, addr);
+ arch/mips/pci/pcie-octeon.c | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ mode change 100755 => 100644 arch/mips/pci/pcie-octeon.c
+
+diff --git a/arch/mips/pci/pcie-octeon.c b/arch/mips/pci/pcie-octeon.c
+old mode 100755
+new mode 100644
 -- 
-2.43.0
+2.39.2
+
 
 
