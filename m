@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-242696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5705D928B9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:24:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9746928B9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C04B21F2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:24:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55191C20E42
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADF116C692;
-	Fri,  5 Jul 2024 15:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D7F16B75F;
+	Fri,  5 Jul 2024 15:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OL7Nxx1z"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="J9dWrh77"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D44C16C685;
-	Fri,  5 Jul 2024 15:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AD61487C1
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720193065; cv=none; b=RqOBTlLnvP7JP8diuatmb9wmTNeh7/X4nw4Jdh29Qi6jAyiPEn6fbB2PvhiQxPKLG7kKV/wMaZHssojjoZZuK8LnoHExmMemZiHKDekGSRZ9yTb2cHfg///7XwyLZnBfTt651u7COQ90ESXRbF3+pBlgEO1k23pN+k9lUjg/OQM=
+	t=1720193239; cv=none; b=alp9ls/q91mxKtmmLow4IhiZ7UoZ5rJsGcWX3NQvwiOEEnWquOHocoGhzHJupJhGkrPMD1P4MdGefdUHI9xcyAnDLU0yYHqAO5fRMhN0zaXH0KZndmhGIRM17J+9K1gzVEwOwYmfiBdVssX28o1f+VMDj5T5Kmak0lQeh8Xtdh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720193065; c=relaxed/simple;
-	bh=6msf+6zQ7jQp5WB6fG+2Y/R5/2ibEiQRwNrsG6fD0tM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YHKkLJATEXi/KyhkWp5VRZR/wR58TBGC/iYxcWs/Wy41iAIJuHQnCZ0NgzxLXcYztkceyYTeq2cclEjBfhprab0WEqzyDjy3g8fthyr3kYv6BGOx4jZJxogUUUg6sI3GpJKmqZxmQJxMWBdNCyA3v4XfMoTkEDD4d2cDyJLHfYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OL7Nxx1z; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8AFA7C0002;
-	Fri,  5 Jul 2024 15:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720193061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VMVflziC1aehBJf4VTjlbQPH2LpM9ezvmYf2pbzh65s=;
-	b=OL7Nxx1zP1SzNXRZ9t2/CTWdNHOcU2FY1TxN46d4gqsX3w73Cd6cmMb8QZ9kQruPrACgHW
-	s9gwRa5IuDYTAOrumyqOY3AcvyGVad0Dxsx3rYgNxEfCcFuoM3kwiGgZlfmMR5PKfzkWYc
-	M033MIo+s/dr582KlrKDvYVlivF+SAw65HQrwnMD7gjLXsBv9xfjTpm04G2UfuruASPNOI
-	3iUSH8jkQGlgWIuUrBgAPn8B46zsKeKQFt+Ca6EcIlaXJ8zA1MFNmesoO0579VO5dOyRFc
-	+disElGQ8OvsMMuepTrwgL1AVoRMj0hh8BRY8MtKORL6TrjS1pMYhoznZ3W5DA==
-Message-ID: <6b5459fd-2873-4c26-b986-882413b8d95b@bootlin.com>
-Date: Fri, 5 Jul 2024 17:24:19 +0200
+	s=arc-20240116; t=1720193239; c=relaxed/simple;
+	bh=/6h0p2NgdVes3zAAuz2TDWC+uOXxK+yalypQWRlvkR4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=LFDscWeGgLOjyDhD8W8C8k4JxQzCd6Ob1vjbi9eN/5ZM4mwsoizev9yyAIkYjDru2K+wunlF5r8ME4FRj/oTkbrSWSqRzvpSWpLhLGcWZQibsQCaBxkj/JrW6xbCEFNqxUdCJz161SD7UEXz9o9k9W944150X/tfB9f38IbX8MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=J9dWrh77; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720193177; x=1720797977; i=markus.elfring@web.de;
+	bh=6JnxrUOlqbH2mNGsHeA7Vvi/lieV8ve4eKCHNY22ByE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=J9dWrh77ExL55IHtoHg9UexxBIB1DbtXtNZWyZx2CcLCm7ZAopRT05QVgDrwgI4i
+	 Fx1WVsR63xBJGTn8w4XU69mpiYeJqTT++7Eqbqd+AtsQc7Fi1t53WBZGph2XgEnb/
+	 FslclELTR7MABLKKWpQaANZcel5SqO6ltpBEDr63L9EZcvD/lorqWhsJTdUbvjy7E
+	 BBVKLn+36Z1ygzoecQ5RoB4IFcEqYsMYEsnLNPXBScYIAnRrSrhokGtfWAvdWUj0e
+	 /1rqvOupHoCZsU7tOEqKwQK82xhok/S75A9a403RBUrp/6yQlrtuAdQX/35L0clrA
+	 1Tj/t1wg0Rfw6xu3CQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0qvH-1sE7ky2rP3-013FjJ; Fri, 05
+ Jul 2024 17:26:17 +0200
+Message-ID: <e3dc918e-07df-4fd1-b69a-9650a246ff7c@web.de>
+Date: Fri, 5 Jul 2024 17:26:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,113 +56,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
- Add Sophgo SARADC binding documentation
-To: Conor Dooley <conor@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com>
- <20240705-sg2002-adc-v2-1-83428c20a9b2@bootlin.com>
- <20240705-unaired-pesticide-4135eaa04212@spud>
-Content-Language: en-US
-From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-In-Reply-To: <20240705-unaired-pesticide-4135eaa04212@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.bonnefille@bootlin.com
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Vladimir Zapolskiy <vz@mleia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Li Zetao <lizetao1@huawei.com>,
+ Yangtao Li <frank.li@vivo.com>
+References: <20240705093851.18107-1-piotr.wojtaszczyk@timesys.com>
+Subject: Re: [PATCH] mtd: rawnand: lpx32xx: Fix dma_request_chan() error
+ checks
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240705093851.18107-1-piotr.wojtaszczyk@timesys.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lNOiipqr4XlYK+cmZBteRE8mMPYw/wCeZ+u14Ww6uOWGO9szABd
+ FxzXJYVNM934Ocz33GU+zcYxPubpf+O0CjTdlrfb0dUoSVLRjLQ06CXqr+uWimHZ9npuX5o
+ BedgALtHx3GvG8kHwEBuOgC9UIzpNN3vx9N2BQkQxJFyvRd74s5R7l2LelgxzxLzG7V8M/q
+ BRw6CGbfF+KEaRYChm/Zw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UOTWRfcKhgQ=;RZsdVvtSLb0xq/AQHD6GuOMZe1v
+ yHkjXhczTksARmriX/0/1KrtpAQcngmT8mLglKUiSyqa5kxX5iTVBWBzI/2hf2/jN8DhGt2oQ
+ foZTPsKoozTi1KSkyDId+oIOsogAJo7Z9O+mOmF5oeAOl12NcthBQ3EXtlt+KfFdzqiwhRYtN
+ +y8jVpktVXr0pW4BdTwcVyTuBel5Us2QcZFFtgHxUqzlEBBpGyhyXAuMkcT7SuMMZOmrXCbGd
+ a3N6/xIXb4MydUcTb3VuDNR6aXKoRjiNciOXOwbwGkHuw6G7kq6oZe+Mlxbkwof+uwd29W2Tf
+ wBhNcVAd1UuHAsR2KPNEmfNJ1HUo9z1TiPOt2aiVv9yhDk5dlWMG+I2V94oPjowHt/wjVBHiu
+ 6cGxt7PwuVFfrVMY4MymUbkA2u6TDJqQxmnFFqHNlYL4/oz+VXmQdCwH6SWvBgOCmDlO2tybi
+ TLrbDUzTU5HugnSLSp3afdbgg2UejdgVgMl9j08BidPFcitaOO761grOSdHZrFvicc3uUy/Kg
+ a+G6ataG7Gj3FgQBHW0vM7TD4TAt4W8FARDhAsOgPrwsQrza74gTnwCdM3G8E5rDtmkxT5r6B
+ ByYGltDJsYfRdZzGPwWJ6od2gY3Etbj1ZiKUb3TYdlGENOWyd8sqyt4Yt3QPhuNbBFl4cQ4xH
+ 8HBytZdxvD9i/q0HY+0rzn7YJF9xAKnAzC17MEFmIqcHPC4TI6hr0W0L+vdkyqc+t7S/W6PrX
+ 2cVfHFKp/8nCLhD1nw5kEKWJGz0CP1DNkmhegUX80OXmgdcO9wN9WSX8ciKT9XZsiRS6mzJ+2
+ XBKW4XxjaPYea1g7KshKf89Q3HSES+UZ7rM/3iqK94Xh8=
+
+=E2=80=A6
+> dma_request_channel() returns NULL in case of error =E2=80=A6
+
+* I find this information not relevant here because such a function
+  is not called at the affected source code places.
+
+* Please improve such a change description with imperative wordings.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n94
 
 
+> Fixes: 7326d3fb1ee3 ("mtd: rawnand: lpx32xx: Request DMA channels
+> using DT entries")
 
-On 7/5/24 5:01 PM, Conor Dooley wrote:
-> On Fri, Jul 05, 2024 at 03:42:23PM +0200, Thomas Bonnefille wrote:
->> The Sophgo SARADC is a Successive Approximation ADC that can be found in
->> the Sophgo SoC.
->>
->> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->> ---
->>   .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 63 ++++++++++++++++++++++
->>   1 file changed, 63 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
->> new file mode 100644
->> index 000000000000..31bd8ac6dfa5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
->> @@ -0,0 +1,63 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-saradc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title:
->> +  Sophgo CV18XX SoC series 3 channels Successive Approximation Analog to
->> +  Digital Converters
->> +
->> +maintainers:
->> +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->> +
->> +description:
->> +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - items:
->> +          - enum:
->> +              - sophgo,cv1800b-saradc
->> +          - const: sophgo,cv18xx-saradc
-> 
-> I don't think the fallback here makes sense. If there's other devices
-> with a compatible programming model added later, we can fall back to the
-> cv1800b.
-> 
-
-Ok I'll do that, I wasn't sure if it was a good practice to fallback on 
-another SoC specific compatible.
-
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    description:
->> +      SARADC will use the presence of this clock to determine if the controller
->> +      needs to be explicitly clocked by it (Active domain) or if it is part of
->> +      the No-Die Domain, along with the RTC, which does not require explicit
->> +      clocking.
-> 
-> What does "explicit clocking" mean? Is it clocked directly (or via
-> dividers) by a clock on the board or another source?
-> 
-
-It means that, if a clock is provided, the driver will work in "Active 
-Domain" and will use the clock generator of the SoC to get the right 
-clock signal.
-
-However if no clock is provided, the controller will work in "No-Die" 
-domain (Always On) and use the RTCSYS subsystem to get its clock signal.
-
-Indeed "explicitly clocked" may not be the right word to describe that, 
-maybe some thing like that is better :
-
-"SARADC will use the presence of this clock to determine if the 
-controller needs to use the clock generator to get its clock signal 
-(Active domain) or if it is part of the No-Die Domain, along with the 
-RTC, and does not require the clock generator."
+Please omit a line break from the tag summary.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n145
 
 Regards,
-Thomas
+Markus
 
