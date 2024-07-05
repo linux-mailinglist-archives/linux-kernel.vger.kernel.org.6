@@ -1,97 +1,72 @@
-Return-Path: <linux-kernel+bounces-241853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D855928054
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:20:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB69928056
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE2E1F2267A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:20:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 944791F2323C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEADF1BC4F;
-	Fri,  5 Jul 2024 02:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEDA2BB10;
+	Fri,  5 Jul 2024 02:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Va8zm7vo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InxUReRC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB26014AB2;
-	Fri,  5 Jul 2024 02:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC0F26AD3;
+	Fri,  5 Jul 2024 02:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720146031; cv=none; b=l3C0i7DOPYiUJu4wi8ZcSB5EoFApS8H/OR/MZlTzXpAJAtlPvtrpoGFnLBA/ARZ/mg5eQafccDorZilQUA4Wzqxg782eetD6lSPwrmE6qSjGhTHTuJBKqitEYPsLlOMm1NnedkRj2c4Eli/8t8RKEamdYSSF5Pi2Omptxjbzx5g=
+	t=1720146036; cv=none; b=WIkYFqCIM6JHslI4V7q567TgA5CCuNm2HPiO7OIX1r/x+5/bVdblVSXl1i3pXKwx/LTVZFvORVGqGPuOV+7D/XACrRBWV77rFZK8V9ndbsUh7e4iT91BdzM6gfMMALyM/EXCE2UZ0c8mCY+rItcuqbJDKipFVdWsMcnLFjC/Wjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720146031; c=relaxed/simple;
-	bh=QWd9ons4AXRKjTGh2DaZWE33fQe8DJP7zwUjzNaLr7o=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oc1+QiTMq0zGrVBqFUwzjg0IxlihyNcH3tFbNAJAjy87ZfRcGtDwJ9HR/TdEoQh4vOV7ReCBfWcF9KhC5ApaEHHi+JRB6FeuSuktX/MpLTfniLsNxYJNsBrYZvpLq0m3Gir/2IYE3dU4UkfSm4SlIc1QIpMZH1fBVXNUTSwUiqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Va8zm7vo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7C284C32781;
-	Fri,  5 Jul 2024 02:20:30 +0000 (UTC)
+	s=arc-20240116; t=1720146036; c=relaxed/simple;
+	bh=tvLRJDCk+E1jX++mHsoM7UErsMPtSUXq6zUTe386MfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bphbESBPBdF/G1s5xoWCMQaIwL0cDqmAf28uqueujJ/MJPZPw7I1t7RPovleTZdaxyyxNP31LWArk11VN2b2jwQsV56xy+qDP9g88k9zrJc3G6PF3Qp8apoxjrEnA4ktQNgCa7G0Dc460MfLapC9uYw5o9zPs7wipH+r/o92yEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InxUReRC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D0CCC3277B;
+	Fri,  5 Jul 2024 02:20:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720146030;
-	bh=QWd9ons4AXRKjTGh2DaZWE33fQe8DJP7zwUjzNaLr7o=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Va8zm7voHc4ONfHmF7lhOXFaqvIdKiUSEB+drBOoEnFzCRRph0FHqsgubj4LP0sgI
-	 P1i7QY+9DUhT/mWvupdu1eQO3UJ6JUGuDPgQQ7GT0b4AlzEhMyCfNQzUoI8LWkeRpg
-	 8LChJBQ9lh5M6RCFh2xFuG5fu0WpJnKxGRs+ljNBGyyHXkc7qADRruYpWLOLFQFKQ6
-	 a9T2tdIlLvDIw0P1OGHZkR4BFQurlRWRMxNRNF4f/XhiknjLn7V1LBVDUFoYP69eA0
-	 FH1uWwMTQIgP3qgJn7Nt2Kg8fe821ZgyYl1S1C3cx7mEXDRm/9yZ2xNbwu5Yogl/AJ
-	 L1nD+3tmh78SQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 68C6DC43446;
-	Fri,  5 Jul 2024 02:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1720146036;
+	bh=tvLRJDCk+E1jX++mHsoM7UErsMPtSUXq6zUTe386MfI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=InxUReRCjF5pntZkgg/36WwAcHOj+59o2648G31tqAqh9cjxrnzQ5ydgi8+i1svMN
+	 /ShHuNnoj0Alq+ZXLbK4swQeqDp3UvWUoIrGOUO1FaDM76Ytqnw1E+mv+B720MLxb9
+	 aHbvEFXRwLncQFMHFJhWj0gAxpPOkJYICIWmrw0eWYmhQ0X7IF32NvepwsJvKTrzC2
+	 rV6SUdFN94zZ0+5OwUBrrwWzg3aoi+GUb1wRjRwXI103S5BWF0iY5y112UxFeJai7B
+	 KwvIzg0xazESknu4JvNrlWMXVxSuJg4gruyX71v9zqVUVRgCDp6bpHDN7bbDta2Ub4
+	 0geq6BhoKZKSw==
+Date: Thu, 4 Jul 2024 19:20:34 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Christian Eggers <ceggers@arri.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Juergen Beisert <jbe@pengutronix.de>, Stefan Roese
+ <sr@denx.de>, Juergen Borleis <kernel@pengutronix.de>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 2/2] dsa: lan9303: consistent naming for PHY address
+ parameter
+Message-ID: <20240704192034.23304ee8@kernel.org>
+In-Reply-To: <20240703145718.19951-2-ceggers@arri.de>
+References: <20240703145718.19951-1-ceggers@arri.de>
+	<20240703145718.19951-2-ceggers@arri.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] dt-bindings: net: Define properties at top-level
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172014603042.16848.6916818330068048606.git-patchwork-notify@kernel.org>
-Date: Fri, 05 Jul 2024 02:20:30 +0000
-References: <20240703195827.1670594-2-robh@kernel.org>
-In-Reply-To: <20240703195827.1670594-2-robh@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: fancer.lancer@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- lorenzo@kernel.org, nbd@nbd.name, alexandre.torgue@foss.st.com,
- peppe.cavallaro@st.com, joabreu@synopsys.com, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Wed, 3 Jul 2024 16:57:18 +0200 Christian Eggers wrote:
+> Name it 'addr' instead of 'port' or 'phy'.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed,  3 Jul 2024 13:58:27 -0600 you wrote:
-> Convention is DT schemas should define all properties at the top-level
-> and not inside of if/then schemas. That minimizes the if/then schemas
-> and is more future proof.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> v2:
->  - Drop the parts already applied from Serge
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2] dt-bindings: net: Define properties at top-level
-    https://git.kernel.org/netdev/net-next/c/390b14b5e9f6
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Unfortunately the fix has narrowly missed today's PR.
+Please resend this for net-next in a week+.
 
