@@ -1,189 +1,196 @@
-Return-Path: <linux-kernel+bounces-241813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7C5927FDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE7C927FDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 504171C21E6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB0C1C21DE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C0BF9C9;
-	Fri,  5 Jul 2024 01:48:42 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6292572;
-	Fri,  5 Jul 2024 01:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C538C12B77;
+	Fri,  5 Jul 2024 01:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWYLNnSZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A1279D3;
+	Fri,  5 Jul 2024 01:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720144121; cv=none; b=sjfFtCc/A41XQfurlwa56v+OGUK8A68EiV1yw62uw7PUtrGFWUohg+9s7yJS+uNTq5cUmtju2jEPhspds4FQxQbcmYlHdQklmnY1ky7H8NoCWNFAEtXQZxcPw+7Se+qLD6D15FeI2q3inPZdyB/mIC4t9T0F2yaFpk2FRrWl6dE=
+	t=1720144267; cv=none; b=PpjjxvjgU7iOmWtI7YmZbCOSQ5QsvNFFrITLd6NE7O7lYyF+iIsPw/rwx5yTFatMcvshibgPUp8uy9HPyIQMiB6uXisHUxWoT9kZbW3ZBQJe4D+RlGeDTnf0lbgvIvo2ZSE6qczIXFMDJ9gNBUMISfckbQxzqqFjOcC6ya61FIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720144121; c=relaxed/simple;
-	bh=i5Z1mggwFXAbkKpfaMKNhZLavFaVMMioMdMYnhUy4pM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RAESPVdjPwUhudZVeBF4X6pyZqkEJwvWH/ViyTycd120SKnHM0UtHkF4i8VxhV7/kcbBOwseXMAc/N/sOlu9E4d3XumQ5Kowklif+cqpQZT9iAxgCUp4P1CZRKpNlEod8SDCWnf3yR4kZA1bfxQQdxU0vJqKCsXMhTxntnwEKGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8Ax0PH1UIdmmSEBAA--.3832S3;
-	Fri, 05 Jul 2024 09:48:37 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxJMX0UIdmxsI7AA--.62506S2;
-	Fri, 05 Jul 2024 09:48:36 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	corbet@lwn.net,
-	alexs@kernel.org,
-	siyanteng@loongson.cn
-Cc: loongarch@lists.linux.dev,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1720144267; c=relaxed/simple;
+	bh=CRRfXqrbQs7tLcrxZpfuE5Kh1RIwcGT87Lps4lI9koU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbBYOaErqFDN/mh1pti2znfUygoEPuGHytvD6YpSoJURJnyllEVuwkQm9MP/1CvyzqJRtlDWZenyfmc0nlphMop4cb9IEh1+cV92ULkqmz7aidIDWk7//kmujEFj1pzKQh6ln3E+UKGXODvFEsHkkCYAx9ufCXajlDn+ghlFIls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWYLNnSZ; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720144264; x=1751680264;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=CRRfXqrbQs7tLcrxZpfuE5Kh1RIwcGT87Lps4lI9koU=;
+  b=IWYLNnSZVCro8PlEsvNuvfTA8fz7bYy3XIloLaCvrQ5nYNA+meHOn2Og
+   C4lTjR/3NLQBY0U88EY/ydBpX3YhdIf5L61Wbo4MXQxDcRsAEdX624KPN
+   tUgZDQGrc2Lt0eoIe21JyD5pDO1ecvk5sIXI57MJp3PnOrqk7OtqOHtXG
+   CX8nHdP+/uKtYdGKrAJMbCSveuaRS85cypNxJsqVwqS2YrQYZxXUCt0OV
+   AxOXuLBGC36e1QeQ8FsXEctZ/IQdNdLy1QsJi66fWSImfm/TFkJUb/Gj5
+   J3DDHif2U3Sh7+qFicABOBW6JNMGbKPEvjbmmteWm6w7Nhm6bnC5KufG3
+   w==;
+X-CSE-ConnectionGUID: NIBPJVoxQL2l7WhcOxyOaQ==
+X-CSE-MsgGUID: J94FQyDgQeqEgXXInLVVqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="21239041"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="21239041"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 18:51:04 -0700
+X-CSE-ConnectionGUID: wGr7m+PyRo+lra4tO7HwPw==
+X-CSE-MsgGUID: Fawo+R7ISN+VwmUeHScWeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="46699156"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 04 Jul 2024 18:50:59 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sPY6D-000RlE-27;
+	Fri, 05 Jul 2024 01:50:57 +0000
+Date: Fri, 5 Jul 2024 09:50:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: [PATCH V2 1/2][RESEND] docs: Add advanced extended IRQ model description
-Date: Fri,  5 Jul 2024 09:48:35 +0800
-Message-Id: <20240705014835.15931-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v2 4/4] clk: eyeq: add driver
+Message-ID: <202407050921.S41aCBdD-lkp@intel.com>
+References: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8CxJMX0UIdmxsI7AA--.62506S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxCFy8Gr17WryfWr4xXrW3twc_yoWrZrW3pr
-	ZxCryIqF18Gry5Xr1UJr18Wr13G3Z3J3WDtF1xtry8Xr1DAr1Dtr1UtrykJFy7G34rAF1j
-	qFWrJw4UJw1UJwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUk529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
-	XwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0xuctUUUUU==
+In-Reply-To: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
 
-From 3C6000, Loongarch began to support advanced extended
-interrupt mode, in which each CPU has an independent interrupt
-vector number.This will enhance the architecture's ability
-to support modern devices
+Hi Th�o,
 
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
----
- .../arch/loongarch/irq-chip-model.rst         | 33 +++++++++++++++++
- .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 +++++++++++++++++--
- 2 files changed, 67 insertions(+), 3 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
-index 7988f4192363..a90c78c8e5bb 100644
---- a/Documentation/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/arch/loongarch/irq-chip-model.rst
-@@ -85,6 +85,39 @@ to CPUINTC directly::
-     | Devices |
-     +---------+
- 
-+Advanced Extended IRQ model
-+===========================
-+
-+In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt go
-+to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, PCH-MSI interrupts go to AVEC,
-+and then go to CPUINTC, Other devices interrupts go to PCH-PIC/PCH-LPC and gathered
-+by EIOINTC, and then go to CPUINTC directly::
-+
-+ +-----+     +--------------------------+     +-------+
-+ | IPI | --> |           CPUINTC        | <-- | Timer |
-+ +-----+     +--------------------------+     +-------+
-+              ^        ^             ^
-+              |        |             |
-+      +--------+  +---------+ +---------+     +-------+
-+      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
-+      +--------+  +---------+ +---------+     +-------+
-+           ^            ^
-+           |            |
-+         +---------+  +---------+
-+         | PCH-MSI |  | PCH-PIC |
-+         +---------+  +---------+
-+            ^          ^       ^
-+            |          |       |
-+    +---------+ +---------+ +---------+
-+    | Devices | | PCH-LPC | | Devices |
-+    +---------+ +---------+ +---------+
-+                     ^
-+                     |
-+                +---------+
-+                | Devices |
-+                +---------+
-+
-+
- ACPI-related definitions
- ========================
- 
-diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-index f1e9ab18206c..b54567380c90 100644
---- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-@@ -9,9 +9,8 @@
- LoongArch的IRQ芯片模型（层级关系）
- ==================================
- 
--目前，基于LoongArch的处理器（如龙芯3A5000）只能与LS7A芯片组配合工作。LoongArch计算机
--中的中断控制器（即IRQ芯片）包括CPUINTC（CPU Core Interrupt Controller）、LIOINTC（
--Legacy I/O Interrupt Controller）、EIOINTC（Extended I/O Interrupt Controller）、
-+LoongArch计算机中的中断控制器（即IRQ芯片）包括CPUINTC（CPU Core Interrupt Controller）、
-+LIOINTC（Legacy I/O Interrupt Controller）、EIOINTC（Extended I/O Interrupt Controller）、
- HTVECINTC（Hyper-Transport Vector Interrupt Controller）、PCH-PIC（LS7A芯片组的主中
- 断控制器）、PCH-LPC（LS7A芯片组的LPC中断控制器）和PCH-MSI（MSI中断控制器）。
- 
-@@ -87,6 +86,38 @@ PCH-LPC/PCH-MSI，然后被EIOINTC统一收集，再直接到达CPUINTC::
-     | Devices |
-     +---------+
- 
-+高级扩展IRQ模型
-+=======================
-+
-+在这种模型里面，IPI（Inter-Processor Interrupt）和CPU本地时钟中断直接发送到CPUINTC，
-+CPU串口（UARTs）中断发送到LIOINTC，PCH-MSI中断发送到AVEC，而后通过AVEC送达CPUINTC，而
-+其他所有设备的中断则分别发送到所连接的PCH-PIC/PCH-LPC，然后由EIOINTC统一收集，再直
-+接到达CPUINTC::
-+
-+ +-----+     +--------------------------+     +-------+
-+ | IPI | --> |           CPUINTC        | <-- | Timer |
-+ +-----+     +--------------------------+     +-------+
-+              ^        ^             ^
-+              |        |             |
-+      +--------+  +---------+ +---------+     +-------+
-+      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
-+      +--------+  +---------+ +---------+     +-------+
-+              ^        ^
-+              |        |
-+      +---------+  +-------------+
-+      | PCH-MSI |  |   PCH-PIC   |
-+      +---------+  +-------------+
-+            ^          ^       ^
-+            |          |       |
-+    +---------+ +---------+ +---------+
-+    | Devices | | PCH-LPC | | Devices |
-+    +---------+ +---------+ +---------+
-+                     ^
-+                     |
-+                +---------+
-+                | Devices |
-+                +---------+
-+
- ACPI相关的定义
- ==============
- 
+[auto build test ERROR on f2661062f16b2de5d7b6a5c42a9a5c96326b8454]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Th-o-Lebrun/Revert-dt-bindings-clock-mobileye-eyeq5-clk-add-bindings/20240704-211515
+base:   f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+patch link:    https://lore.kernel.org/r/20240703-mbly-clk-v2-4-fe8c6199a579%40bootlin.com
+patch subject: [PATCH v2 4/4] clk: eyeq: add driver
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20240705/202407050921.S41aCBdD-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240705/202407050921.S41aCBdD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407050921.S41aCBdD-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/clk/clk-eyeq.c:30:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/clk/clk-eyeq.c:30:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/clk/clk-eyeq.c:30:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/clk/clk-eyeq.c:264:9: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     264 |                 val = readq(priv->base + pll->reg64);
+         |                       ^
+   drivers/clk/clk-eyeq.c:724:9: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     724 |                 val = readq(base + pll->reg64);
+         |                       ^
+   6 warnings and 2 errors generated.
+
+
+vim +/readq +264 drivers/clk/clk-eyeq.c
+
+   249	
+   250	static void eqc_probe_init_plls(struct device *dev, struct eqc_priv *priv)
+   251	{
+   252		const struct eqc_match_data *data = priv->data;
+   253		unsigned long mult, div, acc;
+   254		const struct eqc_pll *pll;
+   255		struct clk_hw *hw;
+   256		unsigned int i;
+   257		u32 r0, r1;
+   258		u64 val;
+   259		int ret;
+   260	
+   261		for (i = 0; i < data->pll_count; i++) {
+   262			pll = &data->plls[i];
+   263	
+ > 264			val = readq(priv->base + pll->reg64);
+   265			r0 = val;
+   266			r1 = val >> 32;
+   267	
+   268			ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
+   269			if (ret) {
+   270				dev_warn(dev, "failed parsing state of %s\n", pll->name);
+   271				priv->cells->hws[pll->index] = ERR_PTR(ret);
+   272				continue;
+   273			}
+   274	
+   275			hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
+   276					dev->of_node, pll->name, "ref", 0, mult, div, acc);
+   277			priv->cells->hws[pll->index] = hw;
+   278			if (IS_ERR(hw))
+   279				dev_warn(dev, "failed registering %s: %pe\n", pll->name, hw);
+   280		}
+   281	}
+   282	
+
 -- 
-2.20.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
