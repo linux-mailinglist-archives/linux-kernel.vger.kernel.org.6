@@ -1,157 +1,130 @@
-Return-Path: <linux-kernel+bounces-242835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190BC928DBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:20:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3458928DC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B2D1C22347
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7711F2287E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1D816D331;
-	Fri,  5 Jul 2024 19:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908B816CD0B;
+	Fri,  5 Jul 2024 19:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBwILHie"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OZONzqWk"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8D718AF4;
-	Fri,  5 Jul 2024 19:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB6018AF4
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 19:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720207237; cv=none; b=NsmI3I1/q2Az1leaEyV8TjqAw0otld6k31Kc0FD33+L5l9yf0STLDQN0LLxDWeFE2b3ss1o5gGm5zIvkQ5qV51p8OpjFdWDILAdx+WdH+pCTj8z2OgpIHGJ4KpNBHa5+PXvuOlgFbXu/+bDTjBZZlfJF4x2VFbKqoh+ZyF7UCK4=
+	t=1720207297; cv=none; b=UfvF4/34vojndkHiwTHrvJOjKmTm9yR/U2jVBbEFcs0ksVRChh9U1pOx33mCwER2QRXXSBUwwvKI4tWnzHCtHoixjPgQrbX+mQVlSGhVw+jXiHctBbmrcYRLGUw8Xkfkh/58wV5xXNjkBfLGggz6rq/Bls/PMpVqzpoocdU3s2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720207237; c=relaxed/simple;
-	bh=HchELO8nLBln8sfZVXM5+tcXKtpO4xsgC76A+YN3J8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=IBStLihpRUAhHvBeh5n0meSW/IwTuF+tVNoty1RAq/j+j/UpdWirytmfCTnGhAnM9ua0fQeY21QzUMPP3cwgnJO2me42D2CYLb8Crm9o059bwzs38VnojfE/xlBfWgYj3BjUxf6qE1qA0NxQsqBCbyfxODIUxf75NejRl6KLop8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBwILHie; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6141BC116B1;
-	Fri,  5 Jul 2024 19:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720207236;
-	bh=HchELO8nLBln8sfZVXM5+tcXKtpO4xsgC76A+YN3J8g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=kBwILHieC1Z6CJbKtY8lqZJUEsArAzL7hXxABbptIQwOhgNlWFXh9w8DeirvYXyYC
-	 d/e80w4K5Dvyuiq7djURjha6yprVRBwnwpuepZYwjO8hHPM4Eky4Fw87WTZV84eHMP
-	 j0QhW0xQ3idturpI38gYhlFARaO67tsFjbB+/1NZdtNNA9MdhRNhsSLS7OI2G4YpCq
-	 M8rGgPPJ1aauE62olyF3L8DBMukj7fzZrNetCy92bKy21NAesRhcP9SBPDkJfsLuAR
-	 dbSAp5iZtsVPGzpSCf/kxV6fF3oF2gCaMSEPQxnppoB/Oknp5hhM8vAr2BoX8qsVDf
-	 3KayVZCxp5rRQ==
-Date: Fri, 5 Jul 2024 14:20:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Amit Machhiwal <amachhiw@linux.ibm.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
-	Lizhi Hou <lizhi.hou@amd.com>, Vaibhav Jain <vaibhav@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-	Kowshik Jois B S <kowsjois@linux.ibm.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH] PCI: Fix crash during pci_dev hot-unplug on pseries KVM
- guest
-Message-ID: <20240705192034.GA73447@bhelgaas>
+	s=arc-20240116; t=1720207297; c=relaxed/simple;
+	bh=PRXnaV7MIMwf++Wdfw7SOpGoIAw3Fr8eBVKEQVN+eqU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P+7nans//IqaJsawT0ysL9zPdSNlIgRtbHLJGVo/OB9rrdRX99HdR255e6x9NvTwliVkh5X+K5SzJklJBTMxyCB96JP9lWvHD51knWKc8LtOv2GFJJTgXSUMo3Gc4pYRS/+4siigLfOqbsCEhIEOyv/PK1G+0oql0sUyPqTO2MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OZONzqWk; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58c2e5e8649so4454630a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 12:21:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720207294; x=1720812094; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mLOgGG6O0l8XWVdtptUbe8WUTKcreUEv0SAn+ce8BwM=;
+        b=OZONzqWkV3KSpQkbo6lab2TNmbjKlnQH6/jNZFkB9RACyIDD6pL+QYQkqvQvN80KSP
+         lTFD9K5ZDD1Gmt0bYzMD65icKJF8oKtmSYEqpn7wh/0knjhWzdcpqfZ52o2yFLt7xHv/
+         yYpy57QCDzKjtd4zDiswDMuDyhfH9MnWxkggs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720207294; x=1720812094;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mLOgGG6O0l8XWVdtptUbe8WUTKcreUEv0SAn+ce8BwM=;
+        b=AsR1Ps3nu/An9uh15heKQVegJZzQ1UrbfWkcAzTYmVVev9tEqdySw7GDqE74NPHQ/t
+         EU4Uma3lB/a/G+RPi5oD/YYnFgq++7TTUXBySrQcfXdSZ+7kBFhPAY/sr2My/Ooz1GE6
+         bcCgTknNAOpUWqo/chiATqzpYbvbfw8NeSxt+JvHM31+5JT6HGinXlLZx0Hn+1viGN77
+         z9vj2VCDvDEr85NM8xP6e1G1E3rSP2I5Egu0fW9lwbzBY4t8Z9x/9I2D1fIrIGZUmmAA
+         U9uQjBEnWKaHHsRQ/zlopgjlRdkSsLDC1vMTOUR5oBopwFQpEIPbJpqXYHibUgivtkfQ
+         61RA==
+X-Forwarded-Encrypted: i=1; AJvYcCWghkykBJjo5DMqJ3+UCTkHov1IEuqSX/wXdE9UQWeHy9OI5Sk6D+z+15gV7Gri+mA2+9jBMHrtRGCIQw4gKxk77dqH8jmcifPLu8bC
+X-Gm-Message-State: AOJu0YypdTtlDjZ22p2XYR07RILNnJqVZDDYImL2Pjd8jfym4mkHWWIc
+	5FVdA1OFGF2D0HNVdH28rBuNt5n/FB3hw0SQ7SUxhlpO+BYAm72rP1iquB0lM/4qvQlMWlVKqRy
+	gnM0=
+X-Google-Smtp-Source: AGHT+IHpKWolX5pxxTxat/osFdROW3LfI91vtf83kyI82DRdd+7i8VIu6uW/EtQqDkyifmKRIHmyTg==
+X-Received: by 2002:a17:906:17db:b0:a77:cd4f:e4f1 with SMTP id a640c23a62f3a-a77cd4fe87dmr220396566b.27.1720207293625;
+        Fri, 05 Jul 2024 12:21:33 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77b8eb56c1sm155903266b.176.2024.07.05.12.21.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 12:21:33 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a77bf336171so289355666b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 12:21:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXs3kgBJ/MsXsNRSxRXj34bGHZjQrJnrfgoCMLwcPicF4IqKdxsW8u0YjcLQgr03GUvYO3TiwGLKZWYF0lKhEs1be0aovuiCR+6T+b6
+X-Received: by 2002:a17:907:96a5:b0:a77:ce4c:8c9c with SMTP id
+ a640c23a62f3a-a77ce4c8ee6mr278446666b.8.1720207292581; Fri, 05 Jul 2024
+ 12:21:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703141634.2974589-1-amachhiw@linux.ibm.com>
+References: <CAHk-=wgqD9h0Eb-n94ZEuK9SugnkczXvX497X=OdACVEhsw5xQ@mail.gmail.com>
+ <Zobt_M91PEnVobML@zx2c4.com> <CAHk-=wh47WSNQYuSWqdu_8XeRzfpWbozzTDL6KtkGbSmLrWU4g@mail.gmail.com>
+ <CAHmME9pgFXhSdWpTwt_x51pFu2Qm878dhcQjG9WhPXV_XFXm9w@mail.gmail.com>
+ <CAHk-=wjCmw1L42W-o=pW7_i=nJK5r0_HFQTWD_agKWGt4hE7JQ@mail.gmail.com>
+ <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
+ <ZogcxjLv3NAeQYvA@zx2c4.com> <CAHk-=whRpLyY+U9mkKo8O=2_BXNk=7sjYeObzFr3fGi0KLjLJw@mail.gmail.com>
+ <ZogzJCb66vwxwSLN@zx2c4.com> <CAHk-=wgH=d8MUzJ32QNW_=KDQz7U5g_1Mm9sR9zB1iNUpxft7Q@mail.gmail.com>
+ <ZohB6uPAVX03Sc96@zx2c4.com>
+In-Reply-To: <ZohB6uPAVX03Sc96@zx2c4.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 5 Jul 2024 12:21:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgC5tWThswb1EO5W75wWL-OhB0fqrnF9nR+Fnsgjp-NfA@mail.gmail.com>
+Message-ID: <CAHk-=wgC5tWThswb1EO5W75wWL-OhB0fqrnF9nR+Fnsgjp-NfA@mail.gmail.com>
+Subject: Re: deconflicting new syscall numbers for 6.11
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com, 
+	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
 
-[+cc Lukas, FYI]
+On Fri, 5 Jul 2024 at 11:56, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> And if we want to exceed that size in the future, then what? Just seems
+> like hard coding it locks us in.
 
-On Wed, Jul 03, 2024 at 07:46:34PM +0530, Amit Machhiwal wrote:
-> With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
-> of a PCI device attached to a PCI-bridge causes following kernel Oops on
-> a pseries KVM guest:
-> 
->  RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
->  Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
->  BUG: Unable to handle kernel data access on read at 0x10ec00000048
->  Faulting instruction address: 0xc0000000012d8728
->  Oops: Kernel access of bad area, sig: 11 [#1]
->  LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA pSeries
-> <snip>
->  NIP [c0000000012d8728] __of_changeset_entry_invert+0x10/0x1ac
->  LR [c0000000012da7f0] __of_changeset_revert_entries+0x98/0x180
->  Call Trace:
->  [c00000000bcc3970] [c0000000012daa60] of_changeset_revert+0x58/0xd8
->  [c00000000bcc39c0] [c000000000d0ed78] of_pci_remove_node+0x74/0xb0
->  [c00000000bcc39f0] [c000000000cdcfe0] pci_stop_bus_device+0xf4/0x138
->  [c00000000bcc3a30] [c000000000cdd140] pci_stop_and_remove_bus_device_locked+0x34/0x64
->  [c00000000bcc3a60] [c000000000cf3780] remove_store+0xf0/0x108
->  [c00000000bcc3ab0] [c000000000e89e04] dev_attr_store+0x34/0x78
->  [c00000000bcc3ad0] [c0000000007f8dd4] sysfs_kf_write+0x70/0xa4
->  [c00000000bcc3af0] [c0000000007f7248] kernfs_fop_write_iter+0x1d0/0x2e0
->  [c00000000bcc3b40] [c0000000006c9b08] vfs_write+0x27c/0x558
->  [c00000000bcc3bf0] [c0000000006ca168] ksys_write+0x90/0x170
->  [c00000000bcc3c40] [c000000000033248] system_call_exception+0xf8/0x290
->  [c00000000bcc3e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
-> <snip>
-> 
-> A git bisect pointed this regression to be introduced via [1] that added
-> a mechanism to create device tree nodes for parent PCI bridges when a
-> PCI device is hot-plugged.
-> 
-> The Oops is caused when `pci_stop_dev()` tries to remove a non-existing
-> device-tree node associated with the pci_dev that was earlier
-> hot-plugged and was attached under a pci-bridge. The PCI dev header
-> `dev->hdr_type` being 0, results a conditional check done with
-> `pci_is_bridge()` into false. Consequently, a call to
-> `of_pci_make_dev_node()` to create a device node is never made. When at
-> a later point in time, in the device node removal path, a memcpy is
-> attempted in `__of_changeset_entry_invert()`; since the device node was
-> never created, results in an Oops due to kernel read access to a bad
-> address.
-> 
-> To fix this issue the patch updates `pci_stop_dev()` to ensure that a
-> call to `of_pci_remove_node()` is only made for pci-bridge devices.
-> 
-> [1] commit 407d1a51921e ("PCI: Create device tree node for bridge")
-> 
-> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
-> Reported-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
-> Tested-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
-> Signed-off-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+KISS. Keep It Simple Stupid. Make a sane decision. Stick with it.
 
-Thanks for the patch and testing!  Would like a reviewed-by from
-Lizhi.
+This is *not* something where things will change radically over the years.
 
-> ---
->  drivers/pci/remove.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-> index d749ea8250d6..4e51c64af416 100644
-> --- a/drivers/pci/remove.c
-> +++ b/drivers/pci/remove.c
-> @@ -22,7 +22,8 @@ static void pci_stop_dev(struct pci_dev *dev)
->  		device_release_driver(&dev->dev);
->  		pci_proc_detach_device(dev);
->  		pci_remove_sysfs_dev_files(dev);
-> -		of_pci_remove_node(dev);
-> +		if (pci_is_bridge(dev))
-> +			of_pci_remove_node(dev);
+But what this *is* is something where we want to actively avoid
+overcomplicating things.
 
-IIUC, this basically undoes the work that was done by
-of_pci_make_dev_node().
+If saying "the state size is fixed at 256 bytes" means that ten years
+from now, we won't be updating to some super-duper fancy new algorithm
+that wants to keep a huge state size - then that's a GOOD thing.
 
-The call of of_pci_make_dev_node() from pci_bus_add_device() was added
-by 407d1a51921e and is conditional on pci_is_bridge(), so it makes
-sense to me that the remove needs a similar condition.
+We are software ENGINEERS. That means that we make sane decisions and
+live with real life limits.
 
->  		pci_dev_assign_added(dev, false);
->  	}
-> 
-> base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
-> -- 
-> 2.45.2
-> 
+We know that we don't have infinite entropy, and we understand that we
+can't even know how much entropy we do have.  At some point, you just
+have to put your foot down.
+
+Leave the people who have theoretical concerns behind. They can damn
+well do their own thing. We should not care.
+
+If somebody is unhappy with the result, let them go make their own
+random number generator.
+
+We've used the current chacha state for what, a decade now? Just let it be.
+
+                Linus
 
