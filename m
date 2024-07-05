@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-242172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF4B92849F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:05:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726D19284B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46DB2288710
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296AC1F261A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8447148319;
-	Fri,  5 Jul 2024 09:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0BF14A614;
+	Fri,  5 Jul 2024 09:05:39 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCBA146595;
-	Fri,  5 Jul 2024 09:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C7E146D45
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720170219; cv=none; b=PvHs8TpOGarB5rFvhj7OyKA6RhoFXVyYsTpEQIAes7apeQCFV5WZtwXdvlYWxkScYNmiBxomOsXJCiyKKMq5uFj8xvYYoBIa3zKYgnEqdBpwoxc7NZM1neBJdaylS/yCZK8k0ISBVokA9WtpThRKtHOx6ThFcqnM88fxaRgPTBc=
+	t=1720170338; cv=none; b=YMUPxcLgnJ4dPfW9rLSQbfNQ0o25csjPOYVGtP8wHiJD3PYr/dgJCChf9ok4jniJoIuChReRqlsLCIQDst6TTMVTf8NVhY28cX5ozn+JCCZpvWt33c3EmuhxpSAjebok6+zVyVnY0Iw4VfLXKZSfubCk8k6FE33syHz90Kmb2Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720170219; c=relaxed/simple;
-	bh=yNvAgV4SPQTtkN8fNXBGOMuGF0J3NFl0Do+tQqT3Igs=;
+	s=arc-20240116; t=1720170338; c=relaxed/simple;
+	bh=WHM0l8SQlVHLJPeygTRX+Ny3kv2F6lCiNQ0GTGJDmLc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B7imWMB2zKN5iVnlkdIwAe4hkiZvkGP+0bdWgH80NcM/eFO0T9Bp6HdDwheFIXzDBeT8DOechzei69mJK7zJNN8Lq9PdT7frCgXPQ6tZBQzGgt/w3dlpawW5I70b5XiidyjahduP1PL4z6J/kisCCnd/PT9CbTggPZCCECWJC/4=
+	 In-Reply-To:Content-Type; b=aHI2oU6IteRgidrR+yOm8so7pxolyMox+bFdqbkimJtTvKmEoGHUcbVOxPcLWHTOGrZ+jEBn/q6UgH/mmfVo6M4CGYg/PrfGufpDZkXyv9iGJ6/Ri+SpK2moCItNkwXtzxYdYVY7Ok+V8M1pZw50Z3BGhlUj6f62BCTjszBFQJg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5AD8367;
-	Fri,  5 Jul 2024 02:04:01 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9179367;
+	Fri,  5 Jul 2024 02:06:01 -0700 (PDT)
 Received: from [10.57.74.223] (unknown [10.57.74.223])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 813DD3F762;
-	Fri,  5 Jul 2024 02:03:33 -0700 (PDT)
-Message-ID: <03b9ea6c-a3c4-41e8-ad47-4e82344da419@arm.com>
-Date: Fri, 5 Jul 2024 10:03:31 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23B9E3F762;
+	Fri,  5 Jul 2024 02:05:33 -0700 (PDT)
+Message-ID: <8df9636e-1816-46d2-9f5b-e3029848655d@arm.com>
+Date: Fri, 5 Jul 2024 10:05:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,105 +41,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
+Subject: Re: [PATCH v5 4/6] mm: shmem: add mTHP support for anonymous shmem
 Content-Language: en-GB
-To: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
- akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- yang@os.amperecomputing.com, linux-mm@kvack.org, john.g.garry@oracle.com,
- linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
- mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
- linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
- <Zoa9rQbEUam467-q@casper.infradead.org>
- <Zocc+6nIQzfUTPpd@dread.disaster.area>
- <Zoc2rCPC5thSIuoR@casper.infradead.org>
- <Zod3ZQizBL7MyWEA@dread.disaster.area>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Bang Li <libang.linux@gmail.com>, akpm@linux-foundation.org, hughd@google.com
+Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
+ ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+ <65796c1e72e51e15f3410195b5c2d5b6c160d411.1718090413.git.baolin.wang@linux.alibaba.com>
+ <65c37315-2741-481f-b433-cec35ef1af35@arm.com>
+ <475332ea-a80b-421c-855e-a663d1d5bfc7@linux.alibaba.com>
+ <a3910f60-6e2e-4ede-b3f3-47d8dfe9f23b@gmail.com>
+ <076550c4-0e8a-4344-9f8a-31ae9e1051b5@linux.alibaba.com>
+ <96625631-ef7d-44a2-ad5f-f7beb64f0ed0@arm.com>
+ <545e23ab-e40a-4f13-8167-c9aa85a34b19@linux.alibaba.com>
 From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Zod3ZQizBL7MyWEA@dread.disaster.area>
+In-Reply-To: <545e23ab-e40a-4f13-8167-c9aa85a34b19@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/07/2024 05:32, Dave Chinner wrote:
-> On Fri, Jul 05, 2024 at 12:56:28AM +0100, Matthew Wilcox wrote:
->> On Fri, Jul 05, 2024 at 08:06:51AM +1000, Dave Chinner wrote:
->>>>> It seems strange to silently clamp these? Presumably for the bs>ps usecase,
->>>>> whatever values are passed in are a hard requirement? So wouldn't want them to
->>>>> be silently reduced. (Especially given the recent change to reduce the size of
->>>>> MAX_PAGECACHE_ORDER to less then PMD size in some cases).
->>>>
->>>> Hm, yes.  We should probably make this return an errno.  Including
->>>> returning an errno for !IS_ENABLED() and min > 0.
+On 05/07/2024 09:57, Baolin Wang wrote:
+> 
+> 
+> On 2024/7/5 16:42, Ryan Roberts wrote:
+>> On 05/07/2024 04:01, Baolin Wang wrote:
 >>>
->>> What are callers supposed to do with an error? In the case of
->>> setting up a newly allocated inode in XFS, the error would be
->>> returned in the middle of a transaction and so this failure would
->>> result in a filesystem shutdown.
+>>>
+>>> On 2024/7/4 22:46, Bang Li wrote:
+>>>> Hi Bao lin,
+>>>>
+>>>> On 2024/7/4 19:15, Baolin Wang wrote:
+>>>>>
+>>>>>>> +
+>>>>>>> +    /*
+>>>>>>> +     * Only allow inherit orders if the top-level value is 'force', which
+>>>>>>> +     * means non-PMD sized THP can not override 'huge' mount option now.
+>>>>>>> +     */
+>>>>>>> +    if (shmem_huge == SHMEM_HUGE_FORCE)
+>>>>>>> +        return READ_ONCE(huge_shmem_orders_inherit);
+>>>>>>
+>>>>>> I vaguely recall that we originally discussed that trying to set 'force'
+>>>>>> on the
+>>>>>> top level control while any per-size controls were set to 'inherit' would
+>>>>>> be an
+>>>>>> error, and trying to set 'force' on any per-size control except the PMD-size
+>>>>>> would be an error?
+>>>>>
+>>>>> Right.
+>>>>>
+>>>>>> I don't really understand this logic. Shouldn't we just be looking at the
+>>>>>> per-size control settings (or the top-level control as a proxy for every
+>>>>>> per-size control that has 'inherit' set)?
+>>>>>
+>>>>> ‘force’ will apply the huge orders for anon shmem and tmpfs, so now we only
+>>>>> allow pmd-mapped THP to be forced. We should not look at per-size control
+>>>>> settings for tmpfs now (mTHP for tmpfs will be discussed in future).
+>>>>>
+>>>>>>
+>>>>>> Then for tmpfs, which doesn't support non-PMD-sizes yet, we just always
+>>>>>> use the
+>>>>>> PMD-size control for decisions.
+>>>>>>
+>>>>>> I'm also really struggling with the concept of shmem_is_huge() existing along
+>>>>>> side shmem_allowable_huge_orders(). Surely this needs to all be refactored
+>>>>>> into
+>>>>>> shmem_allowable_huge_orders()?
+>>>>>
+>>>>> I understood. But now they serve different purposes: shmem_is_huge() will be
+>>>>> used to check the huge orders for the top level, for *tmpfs* and anon shmem;
+>>>>> whereas shmem_allowable_huge_orders() will only be used to check the per-size
+>>>>> huge orders for anon shmem (excluding tmpfs now). However, as I plan to add
+>>>>> mTHP support for tmpfs, I think we can perform some cleanups.
+>>>>
+>>>> Please count me in, I'd be happy to contribute to the cleanup and enhancement
+>>>> process if I can.
+>>>
+>>> Good. If you have time, I think you can look at the shmem khugepaged issue from
+>>> the previous discussion [1], which I don't have time to look at now.
+>>>
+>>> "
+>>> (3) khugepaged
+>>>
+>>> khugepaged needs to handle larger folios properly as well. Until fixed,
+>>> using smaller THP sizes as fallback might prohibit collapsing a
+>>> PMD-sized THP later. But really, khugepaged needs to be fixed to handle
+>>> that.
+>>> "
 >>
->> I suggest you handle it better than this.  If the device is asking for a
->> blocksize > PMD_SIZE, you should fail to mount it.
+>> khugepaged can already collapse "folios of any order less then PMD-size" to
+>> PMD-size, for anon memory. Infact I modified the selftest to be able to test
+>> that in commit 9f0704eae8a4 ("selftests/mm/khugepaged: enlighten for multi-size
+>> THP"). I'd be surprised if khugepaged can't alreay handle the same for shmem?
+> 
+> I did not test this, but from the comment in hpage_collapse_scan_file(), seems
+> that compacting small mTHP into a single PMD-mapped THP is not supported yet.
+> 
+> /*
+>          * TODO: khugepaged should compact smaller compound pages
+>          * into a PMD sized page
+>          */
+>         if (folio_test_large(folio)) {
+>             result = folio_order(folio) == HPAGE_PMD_ORDER &&
+>                     folio->index == start
+>                     /* Maybe PMD-mapped */
+>                     ? SCAN_PTE_MAPPED_HUGEPAGE
+>                     : SCAN_PAGE_COMPOUND;
+>             /*
+>              * For SCAN_PTE_MAPPED_HUGEPAGE, further processing
+>              * by the caller won't touch the page cache, and so
+>              * it's safe to skip LRU and refcount checks before
+>              * returning.
+>              */
+>             break;
+>         }
 
-A detail, but MAX_PAGECACHE_ORDER may be smaller than PMD_SIZE even on systems
-with CONFIG_TRANSPARENT_HUGEPAGE as of a fix that is currently in mm-unstable:
-
-	#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-	#define PREFERRED_MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-	#else
-	#define PREFERRED_MAX_PAGECACHE_ORDER	8
-	#endif
-
-	/*
-	 * xas_split_alloc() does not support arbitrary orders. This implies no
-	 * 512MB THP on ARM64 with 64KB base page size.
-	 */
-	#define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
-	#define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER,
-					    PREFERRED_MAX_PAGECACHE_ORDER)
-
-But that also implies that the page cache can handle up to order-8 without
-CONFIG_TRANSPARENT_HUGEPAGE so sounds like there isn't a dependcy on
-CONFIG_TRANSPARENT_HUGEPAGE in this respect?
-
-
+OK, so the functionality is missing just for shmem/file-backed collapse. Got it.
+Sorry for the noise.
 
 > 
-> That's my point: we already do that.
+>> Although the test will definitely want to be extended to test it.
 > 
-> The largest block size we support is 64kB and that's way smaller
-> than PMD_SIZE on all platforms and we always check for bs > ps 
-> support at mount time when the filesystem bs > ps.
-> 
-> Hence we're never going to set the min value to anything unsupported
-> unless someone makes a massive programming mistake. At which point,
-> we want a *hard, immediate fail* so the developer notices their
-> mistake immediately. All filesystems and block devices need to
-> behave this way so the limits should be encoded as asserts in the
-> function to trigger such behaviour.
-> 
->> If the device is
->> asking for a blocksize > PAGE_SIZE and CONFIG_TRANSPARENT_HUGEPAGE is
->> not set, you should also decline to mount the filesystem.
-> 
-> What does CONFIG_TRANSPARENT_HUGEPAGE have to do with filesystems
-> being able to use large folios?
-> 
-> If that's an actual dependency of using large folios, then we're at
-> the point where the mm side of large folios needs to be divorced
-> from CONFIG_TRANSPARENT_HUGEPAGE and always supported.
-> Alternatively, CONFIG_TRANSPARENT_HUGEPAGE needs to selected by the
-> block layer and also every filesystem that wants to support
-> sector/blocks sizes larger than PAGE_SIZE.  IOWs, large folio
-> support needs to *always* be enabled on systems that say
-> CONFIG_BLOCK=y.
-> 
-> I'd much prefer the former occurs, because making the block layer
-> and filesystems dependent on an mm feature they don't actually use
-> is kinda weird...
-> 
-> -Dave.
-> 
+> Right.
 
 
