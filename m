@@ -1,120 +1,143 @@
-Return-Path: <linux-kernel+bounces-242750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A905928C8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:59:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93104928C90
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FFF21F23D0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:59:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7821C24911
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCF416D4EB;
-	Fri,  5 Jul 2024 16:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913C216DEA4;
+	Fri,  5 Jul 2024 16:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LglkokbF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwiOfBew"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7092F5E;
-	Fri,  5 Jul 2024 16:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F002F5E;
+	Fri,  5 Jul 2024 16:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720198729; cv=none; b=mhnz5PGSJ/1HGw6ez1yui6RS1foUObt+zU7NhBtn5wL/brrTWIzhkcuGP/Ba+4n/qwkIf/UzQL9aHVnysvKddLYJaLkZIfdMN0jeGSWEhK3/MVaTbcEBd3J1Y5KjFELK5y8Uu51/h4Xze75TwegPS0OVQFQkx8OBgz1b0Zkuhcs=
+	t=1720198733; cv=none; b=LG0IRjViMcpIbeizkpeerJk7pIkWbQLQK+OJrzwPxHkB6hEEOThIuvdM7LScaYLdkvBur71zYU7m34OxfLuNmpEdfRIBnCGC/lhX+tMb4FRd0CQlGGfUIiepwlCvgqvYv1Hs3AZC6eAwjA/a+xv1uYoGGfllMqMYaovqUzIdAqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720198729; c=relaxed/simple;
-	bh=oOHv5vKH1IZynVlCLLK+KNAq96qbLhSgisVIUWyYrEw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xb25doHsC0MsFT7b6lxPQTdWogWcvWnrEXnDXL55cUQimnrRa8MsuVntGmE5RvS9VK1TlWIO2O7yw4BTBb3JRHAP8jwOhL/ABhzB0mzh8S/HeRBpLIcZ5p+yXsmNRgi+Ni7G4mK6S2Z6pOk+f0PLMoZYE5gE9sk/12zcMjdgM9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LglkokbF; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720198727; x=1751734727;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oOHv5vKH1IZynVlCLLK+KNAq96qbLhSgisVIUWyYrEw=;
-  b=LglkokbFeKZDd1CrkI9XuvBc079rCovaDgiABCmfugHQQR4qOv4KczjX
-   kvTFsz6eA7oKgrEcfuJrhv2M2MEPTnIZLm1C1mql+mkDQo4R+FSkDOSe+
-   q3KilVjPlK9JIneSpdxlYq5a2y1GHvw45AwcM9Bsn1MBSNzbBWOUJZmpz
-   99pj4l7g/lNcCwirWpaEGXajTVOI25TdTlICYCGUy/SGZXZbgRxnmQEhF
-   R+pF5/dcqJ6k2ktxHDx8VDB9wbx/muNAk9w2x8VcPDmil9RyHpdHVl2Wt
-   KFqlvLFbs48tgjuG4nTUTRcAnf8cr5OTBOB9UmyTtwTye3wyUiYWttlMw
-   g==;
-X-CSE-ConnectionGUID: kqdKHJTJTCSrB4uEbmCZVg==
-X-CSE-MsgGUID: nu4+wcVfRbmT5EfvpC1ezA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="28649331"
-X-IronPort-AV: E=Sophos;i="6.09,185,1716274800"; 
-   d="scan'208";a="28649331"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 09:58:46 -0700
-X-CSE-ConnectionGUID: TFZusHLnTp+7M7CpwAdY1w==
-X-CSE-MsgGUID: XPBUW+DgTyi4UrXnOfwS9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,185,1716274800"; 
-   d="scan'208";a="51518219"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.38.162]) ([10.247.38.162])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 09:58:43 -0700
-Message-ID: <5dbb95b5-96c1-4bbc-a4e0-c0616efa7ac2@linux.intel.com>
-Date: Sat, 6 Jul 2024 00:58:40 +0800
+	s=arc-20240116; t=1720198733; c=relaxed/simple;
+	bh=8FCxqMkEPkGSY0x+vVfNdaj4SPYYSyIOaGsFsTYl6l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HovwZaebIX6FUEklnTG7+7NWydDb6iegyfjS9CYPWPUjcN4OPMuU2a53oB3+8d0HWenOJ2ti9Pa3xg3NrHHEL8QpZA3nOrjeLEuDvfiKhPWEY2sZDM9CiatJBkAGAN39SGAK+aSkXCniKhMog+5ODuQKVVap6GsGExm56quWQxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwiOfBew; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B088C116B1;
+	Fri,  5 Jul 2024 16:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720198733;
+	bh=8FCxqMkEPkGSY0x+vVfNdaj4SPYYSyIOaGsFsTYl6l0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pwiOfBew1KTAlG8mZbyx9t5n+tohGisfPZGmnXhSyH4joGzfGQOB6SI0iZbx647eb
+	 GsRwO250fwwB6gQzz0VMJFWa9FzhfTZQmYvi2KDXtWzFmYcQftgqemuztSwo2DxWQz
+	 TuNhS9QGD3rMNV86aQF9jrV7mTcR4gIepSSUV0qKLr72mUloxtChOH4shoPSt2c/4I
+	 hnpHWkQ6FNq6EXntTXJUI/41RvOuGy/29GbulzTvwbcLetrI3hz/x/AKa7yJhngd3s
+	 ja1ARyq8Yy1O+AP5KmB/biWYaD5FyGse8rI8kEqWI1NZK2/Yre33sj9WzkYzxX+Sms
+	 /xsdf+hVpiPbw==
+Date: Fri, 5 Jul 2024 09:58:51 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: Re: [PATCH 2/3] modpost: remove self-definitions of R_ARM_* macros
+Message-ID: <20240705165851.GB987634@thelio-3990X>
+References: <20240704134812.1511315-1-masahiroy@kernel.org>
+ <20240704134812.1511315-2-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-net v1 1/4] igc: Fix qbv_config_change_errors logics
-To: Simon Horman <horms@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- richardcochran@gmail.com
-References: <20240702040926.3327530-1-faizal.abdul.rahim@linux.intel.com>
- <20240702040926.3327530-2-faizal.abdul.rahim@linux.intel.com>
- <20240703150830.GO598357@kernel.org>
-Content-Language: en-US
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-In-Reply-To: <20240703150830.GO598357@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704134812.1511315-2-masahiroy@kernel.org>
 
+On Thu, Jul 04, 2024 at 10:47:56PM +0900, Masahiro Yamada wrote:
+> Commit f5983dab0ead ("modpost: define more R_ARM_* for old
+> distributions") added self-definitions for the R_ARM_* macros to fix
+> build errors on CentOS 7.
+> 
+> RHEL/CentOS 7 were retired at the end of June.
+> 
+> Remove all the R_ARM_* definitions (except for R_ARM_THM_CALL), which
+> should be available in recent distributions.
+> 
+> Glibc added most of R_ARM_* macros in 2013. [1]
+> 
+> [1]: https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=08cbd996d33114ca50644d060fbe3a08260430fb
 
->> diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ethernet/intel/igc/igc_tsn.c
->> index 22cefb1eeedf..02dd41aff634 100644
->> --- a/drivers/net/ethernet/intel/igc/igc_tsn.c
->> +++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
->> @@ -78,6 +78,17 @@ void igc_tsn_adjust_txtime_offset(struct igc_adapter *adapter)
->>   	wr32(IGC_GTXOFFSET, txoffset);
->>   }
->>   
->> +bool igc_tsn_is_taprio_activated_by_user(struct igc_adapter *adapter)
->> +{
->> +	struct igc_hw *hw = &adapter->hw;
->> +
->> +	if ((rd32(IGC_BASET_H) || rd32(IGC_BASET_L)) &&
->> +	    adapter->taprio_offload_enable)
->> +		return true;
->> +	else
->> +		return false;
-> 
-> As per my response to patch 2/4, I think something like this is a bit
-> nicer:
-> 
-> (Completely untested!)
-> 
-> 	return (rd32(IGC_BASET_H) || rd32(IGC_BASET_L)) &&
-> 		adapter->taprio_offload_enable;
-> 
-> 
+So did musl by virtue of a glibc elf.h update:
 
-Will update, thanks.
+https://git.musl-libc.org/cgit/musl/commit/?id=268375c1c017c0bdefeed1a330811e433c4dfaef
 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+
+I can't imagine this will need to be reverted but in case it does, would
+it make sense to place patch 3 before this one (such that it is just
+renaming R_ARM_THM_CALL to R_ARM_THM_PC22) so that fix remains around
+and the revert can be easy?
+
+Regardless:
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
+> ---
+> 
+>  scripts/mod/modpost.c | 30 ------------------------------
+>  1 file changed, 30 deletions(-)
+> 
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 11731fc62140..e9aae1b7ff77 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -1168,39 +1168,9 @@ static Elf_Addr addend_386_rel(uint32_t *location, unsigned int r_type)
+>  	return (Elf_Addr)(-1);
+>  }
+>  
+> -#ifndef R_ARM_CALL
+> -#define R_ARM_CALL	28
+> -#endif
+> -#ifndef R_ARM_JUMP24
+> -#define R_ARM_JUMP24	29
+> -#endif
+> -
+>  #ifndef	R_ARM_THM_CALL
+>  #define	R_ARM_THM_CALL		10
+>  #endif
+> -#ifndef	R_ARM_THM_JUMP24
+> -#define	R_ARM_THM_JUMP24	30
+> -#endif
+> -
+> -#ifndef R_ARM_MOVW_ABS_NC
+> -#define R_ARM_MOVW_ABS_NC	43
+> -#endif
+> -
+> -#ifndef R_ARM_MOVT_ABS
+> -#define R_ARM_MOVT_ABS		44
+> -#endif
+> -
+> -#ifndef R_ARM_THM_MOVW_ABS_NC
+> -#define R_ARM_THM_MOVW_ABS_NC	47
+> -#endif
+> -
+> -#ifndef R_ARM_THM_MOVT_ABS
+> -#define R_ARM_THM_MOVT_ABS	48
+> -#endif
+> -
+> -#ifndef	R_ARM_THM_JUMP19
+> -#define	R_ARM_THM_JUMP19	51
+> -#endif
+>  
+>  static int32_t sign_extend32(int32_t value, int index)
+>  {
+> -- 
+> 2.43.0
+> 
 
