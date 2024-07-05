@@ -1,132 +1,117 @@
-Return-Path: <linux-kernel+bounces-241931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8CC292817A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:43:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6B092817D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5863B1F23A54
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E328C1F25630
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E5113AA3E;
-	Fri,  5 Jul 2024 05:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8408175B;
+	Fri,  5 Jul 2024 05:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SkzykjS9"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CA527452
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 05:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCGEe5FQ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59827224F2;
+	Fri,  5 Jul 2024 05:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720158175; cv=none; b=KyziBt8AHvfbT+jtHGcIlZogUSoPNWHEEBBf+BddTDh/m22z3KDayxye9E8yXjI/pNzBK6VIg5TwlUT/74pb3iEpB+XQ4oamBHRzHRW6K0iBf4Cxfd+d1M40O9iFZlQUnko1zC/i19ijQctHHICBT2/oidCPXNboXdgt0+vDbIo=
+	t=1720158431; cv=none; b=k7Z8WdvvXCN/gQEVkGdYwZB5gMt5ch/jGoMmc7K4Uk2p78jR5MKC+vyz9DKS4qT/gUq6Pdp8UD1RRT93pQJONuEva6qT1O1iv05poYx0OaXhpen2shwTJW/ICgA2I7I3nTs8X2AUWH4W22hqvolNjWkhgRmw5IZJ9plubnN+D9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720158175; c=relaxed/simple;
-	bh=D2CaOKLjDicObH/UYL/bOaq/31sdiPp3nDqbdUbrhik=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YaTmrH4gzomwVFo1mPHi9oWNCLpQbL+VEBBeG1lKYMTqyhh6C5q8mOK/C1NiBgEdA0fFwpEji/tTj8PPmfWXtHG28tLLeCN+UMZX0+2WSDqSqkRgeIr2WstKhpm2ne91E0tqb92YiQ4n5vRNvzmJ/VmWG4wN/7c99aU988ixCDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SkzykjS9; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=WU9Xk
-	pHQSFZFyURpC0fKV0A+o6oFRCwaYuNVIHRBkfQ=; b=SkzykjS9QQ+tUqFKRnmHT
-	jcag7IPlKb9/H6Ku8JyFCqHGBHpMN6GJmc256hCWy9to0HGMmp6fPAQ80o5uyqud
-	tcg5UPkfRdGNbrVFtjSd7mML7B1s5vEoPr9RjdjxxkHG9ICdbuc2Tm6ljB/DIV0I
-	X5zbbdRHO8ra9XUQhZCEnI=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wDn71iMh4dm9rOsBg--.2278S2;
-	Fri, 05 Jul 2024 13:41:33 +0800 (CST)
-From: Peilin He <peilinhe2020@163.com>
-To: peterz@infradead.org
-Cc: bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	fan.yu9@zte.com.cn,
-	he.peilin@zte.com.cn,
-	jiang.kun2@zte.com.cn,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	liu.chun2@zte.com.cn,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	rostedt@goodmis.org,
-	tu.qiang35@zte.com.cn,
-	vincent.guittot@linaro.org,
-	xu.xin16@zte.com.cn,
-	yang.yang29@zte.com.cn,
-	zhang.yunkai@zte.com.cn
-Subject: Re: Re: [PATCH linux-next v2] sched/core: Add WARN() to check overflow in migrate_disable()
-Date: Fri,  5 Jul 2024 05:41:32 +0000
-Message-Id: <20240705054132.108523-1-peilinhe2020@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240704134716.GU11386@noisy.programming.kicks-ass.net>
-References: <20240704134716.GU11386@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1720158431; c=relaxed/simple;
+	bh=dG6ZMs8GKA1J4eYx/XekQpH1Qlq8VEqAMdF2BpfTFZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KGQ7eYtF1I3IE0WWZtY0sj6Sz2U4z/UzKkbK/3F0TPbksY03AtHrmxV8DOS0njRYTPypfszYq2Vm7kLK9svZa58c+dun6H0Utsc2hJSEdBH7z3+7yPH8F6E9LAlcJL02t1qlLyieuSlyZoDsg3LKMld6yHI6d+1SsypMQGk4mNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCGEe5FQ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ea7bdde68so48408e87.0;
+        Thu, 04 Jul 2024 22:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720158427; x=1720763227; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=krCoQNWgWkCVZVoxoVGgCyGHNoVnIgHcNNfQdbjzvpY=;
+        b=HCGEe5FQaT2FZAzS/UkUPoM9F/fsUjeFNKhWeTSYvzKxUJfv4mNOWA4XbXNGmQuKtW
+         wItfTzP8sBJa//20nr51Jl8shcucfFtBdkFLzTyZNWv6ZIfPYikq9MMxvb82ut29Pwpv
+         gzDFenb1JlfgZ879f7k9iJDSf2wG8zxqz4zdaytrvzdeDhtV+kepMLDeBr3M4lRPyjxJ
+         F4NO7npyfKbzK5OjQKCBYa5nmrELBULfV84gpbMI9Ki/IiejVI6C+M989iQuaxlu50vT
+         kmSbVolNWPox730EpTQ6heTacNatlczG6P+OXvg9TFch8s7xFi+F8BPwkyZ1FCig2GPt
+         ZW5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720158427; x=1720763227;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=krCoQNWgWkCVZVoxoVGgCyGHNoVnIgHcNNfQdbjzvpY=;
+        b=fFjawCJvcH9k2FpOZyBBs3S8boFbPPIQcvYl+zue78BDISgB9+gNGw0nKSRR6iy5D3
+         E1L8EFnkjVG6ssViskIiWhn0KVATD/nQPxJGngO2EJMQ++oHCAx0XYtgwoPliCe0byaJ
+         wpPRN9QFM072OIHsEWhKqzbxQ6wUMFbTX0EFAm1yRuJ+sI84RfN4f4M2FztTnYQOpwqe
+         azW4fP07kBTEvXhruN700TAk5WrCalDM5UqrxtJGu1Y5R5/jEM7mrkTvOrYLMFaaw7T8
+         Ae0S1wJeKdOBwW8Tffzw202HlhMvYIP23EoRmblx/Lvu/M0QwComB//RHsgqyN5zEX7s
+         oeoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWH8agXDIixm6PnGDxLXELuBDoGHYcoQ1s+8yg130bDRHJvSaauoe1Ye1ZTHtnMBsIWXyZ8vH20kBfR0BVvbfUuVF+jfowUor3nYWhrlN23Q0E742RVZtVW575oWFxfRjEcLJ/pMblOO7HwbLPV
+X-Gm-Message-State: AOJu0YzLgLGp4sRa7lJnyKwRXb356mr03LnPvQAHu1qSb1ySaTJyFXnj
+	QYSvRcapXvM6yQwqfiyZPzTxTAWaNsVI5AXUJYSxiEfDHCIvqS+M
+X-Google-Smtp-Source: AGHT+IE0GNtMf6UPdNr/wI7vJffg6XXW+NaZoazh2xsk3bgg+N44sIBTRgrRFUK3BkppBbWWLLfcqQ==
+X-Received: by 2002:ac2:4e8c:0:b0:52e:9b9f:9377 with SMTP id 2adb3069b0e04-52ea062a94dmr2196831e87.21.1720158426713;
+        Thu, 04 Jul 2024 22:47:06 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ea378eaa7sm220262e87.300.2024.07.04.22.47.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 22:47:06 -0700 (PDT)
+Message-ID: <3a90ebea-e0b1-47d9-8fff-cf75429b2696@gmail.com>
+Date: Fri, 5 Jul 2024 08:47:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn71iMh4dm9rOsBg--.2278S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AFyDJw4UtF4rZry7Gw45Jrb_yoW8XFW3pr
-	Z3t34xGFZrXF42y3W5AFWUGFs5u3ykK3ySganrurW0yFZ8JrsYvwnYgFn5WFnaqryDKw1S
-	vFy7t3W7Ar4vvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UK1v-UUUUU=
-X-CM-SenderInfo: xshlzxhqkhjiisq6il2tof0z/xtbBchETsWWXwCRmHwAAsu
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/24] mfd: rohm-bd71828: Constify read-only regmap
+ structs
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Xu Yilun <yilun.xu@intel.com>,
+ Tom Rix <trix@redhat.com>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+ Andy Shevchenko <andy@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Tim Harvey <tharvey@gateworks.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20240704-mfd-const-regmap_config-v2-0-0c8785b1331d@gmail.com>
+ <20240704-mfd-const-regmap_config-v2-13-0c8785b1331d@gmail.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240704-mfd-const-regmap_config-v2-13-0c8785b1331d@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> How about we do something like this?
->
-> ---
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 7a5ea8fc8abb..06a559532ed6 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2237,6 +2237,12 @@ void migrate_disable(void)
->  
->      if (p->migration_disabled) {
->          p->migration_disabled++;
-> +#ifdef CONFIG_DEBUG_PREEMPT
-> +        /*
-> +         * Warn about overflow half-way through the range.
-> +         */
-> +        WARN_ON_ONCE((s16)p->migration_disabled < 0);
-> +#endif
->          return;
->      }
+On 7/4/24 20:23, Javier Carrasco wrote:
+> The regmap_irq and regmap_irq_chip structs are not modified and can be
+> declared as const to move their data to a read-only section.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Agreed, converting p->migration_disabled to a signed number 
-will detect overflow occurrences earlier than our current method.
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-> @@ -2254,14 +2260,20 @@ void migrate_enable(void)
->          .flags     = SCA_MIGRATE_ENABLE,
->      };
->  
-> +#ifdef CONFIG_DEBUG_PREEMPT
-> +    /*
-> +     * Check both overflow from migrate_disable() and superfluous
-> +     * migrate_enable().
-> +     */
-> +    if (WARN_ON_ONCE((s16)p->migration_disabled <= 0))
-> +        return;
-> +#endif
-> +
->      if (p->migration_disabled > 1) {
->          p->migration_disabled--;
->          return;
->      }
->  
-> -    if (WARN_ON_ONCE(!p->migration_disabled))
-> -        return;
-> -
->      /*
->       * Ensure stop_task runs either before or after this, and that
->       * __set_cpus_allowed_ptr(SCA_MIGRATE_ENABLE) doesn't schedule().
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
 
-Agreed, similarly checking for overflow in p->migration_disabled 
-within migrate_enable is fine, but placing WARN_ON_ONCE inside 
-the CONFIG_DEBUG_PREEMPT macro may cause return logic deviations. 
-It is recommended to support WARN_ON_ONCE as a standard feature.
-The fix will be reflected in version v3.
+~~ When things go utterly wrong vim users can always type :help! ~~
 
 
