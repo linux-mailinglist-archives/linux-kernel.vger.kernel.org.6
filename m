@@ -1,131 +1,158 @@
-Return-Path: <linux-kernel+bounces-241759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64CB927F40
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:11:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F613927F47
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222481F22CBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:11:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4BC283565
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC3D81E;
-	Fri,  5 Jul 2024 00:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D7723BF;
+	Fri,  5 Jul 2024 00:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="2VA3ggtW"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+I+DgSs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DE67F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 00:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1917A18D;
+	Fri,  5 Jul 2024 00:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720138261; cv=none; b=tQlSjJVomBfJNECPX7tE4vHEH0MLu13RLU/7a0XgAtjsTn1YyKZa99tNT6H8gTpIGHoJq0gp2jl3TBr5fqQnmH/S69doGORc9CQTcFvfKlSMUtt82v4CaDfURZ0Ug0t/l6M7zEzT3ngHmttQMXlD+qgVDgWkAZxN+fASdazTyLI=
+	t=1720138389; cv=none; b=omzS4A4Jrw0ZQo6Fr341brmxfz3PtzMjBqHVFcfbNVj02/Wti0cj8Lh2lV9syoODRB+yLeNywEcov91KAYub+ymYCG/9rG30cUEMswEFU7EHquMxgCWjo3xzpdLSRAE40MC3m0XP3e3oJlRAyOnxByEFmfdXDCNAUThWoMqnxr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720138261; c=relaxed/simple;
-	bh=nP53y8Am6VhQFBiejVxO9FDtAVOQlqSyg9MYgijUSLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g1+LNMM03nfO200rWgvQife2LoJ9mWcnof5GDZx/pli44qZTT90rorx/1gnK8GVZICMXleQ18Ofk5IAZWvDm1UqILC/vjkGaWcFfDk0CYSuSwxQIkZgqiiHSjWNn4WH/Z2Mc0ktY6uinzdyBV3C/8PiJsl99K9bI+0BC5T3osCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=2VA3ggtW; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so13062331fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 17:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1720138257; x=1720743057; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lwAGi3M2PI5hOF0tUUvcLHpg+uLTNB+d46/mvMXrNlQ=;
-        b=2VA3ggtWDvcc5GCRc4czd450DplKyskTRCpcpKBk9vHBNVmdhNbQlFlolqu1sgC/5Z
-         ktM3AUsi48i09esdDoU9Kr443FJ3XQS6LIH7A74xqqQzla/J252VN8q7q6io0hIDQjB9
-         xZmsiTkca9FL09RabvXZRB84xnCl+fm2LV5v/ZduoHMggnWkQ2O87czz2ZCTFFbNCm3K
-         FZ9gnhCQZ66/tIF6JFHFGzpEzBXiXe+1q9xaHV0905pRWPnS9SIfLcAhGMWdMPqq1iU2
-         lhecxFSzdwxcQz9+Acrb1bgzJrHQXbXPLJihhcFyQVoTe6Y6ylCJ8byGIq90D6AuYfJx
-         vzsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720138257; x=1720743057;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lwAGi3M2PI5hOF0tUUvcLHpg+uLTNB+d46/mvMXrNlQ=;
-        b=JFKchlKDucI8Kgb7QX+Po/Hcdtk39pmJrNAc/0BmSeq2C/9zjZh9QsuXZAInwwPAy5
-         bJNzpuNQqN8xm5cujSDmdQQOWecIpwCnGipmin13x8SmB0tDZq1Q16cvYQ86AL0EkW1m
-         ylZ9PH1d+BdR40jKFlCQ2IMK/5D7JxsWQZIAVAH1WUBP671kZaKilBua7kAdlbclk6JH
-         /GkZhTkWpJHc/qmdPLnBfa/iXkpdeGIO4uCiB9Q3loehA9XECI5hLwOcRNcC8E+qFKtX
-         uhiu3xUpLB4G2SfJ5jc77XeaOriiD26t47HwQs6LIOBYW3B4q+Ca2Sxj40965oqTIgKo
-         B/Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVszt2rGjN2c7Zu1wu/CW+iTjQGXEkCCevXAjd9NAzSu4QkRCf+xblX8llJyTm8RmtiFOkRbpTjcQNFbTBHpQYRYDh9TMYzE+xP7Z+a
-X-Gm-Message-State: AOJu0YwqT1I5s9iCR0yni5erB8bqAHPOW9bSAYCnt+0qn/x+Z3jctWxg
-	jKOxzumfB8Ea7qrOFdm+i6A3gTesgw0YEkfgNqRShUe/2ZlrxzrMIDrnI7vDJoQ=
-X-Google-Smtp-Source: AGHT+IFEfRcZxHwC3R8SifjjyD31CxKc/yiPtXAwWtwIxWcILp/Ghg4JqhPcawNH0ens0qkn6yPu0A==
-X-Received: by 2002:a05:651c:1713:b0:2ee:8407:2f58 with SMTP id 38308e7fff4ca-2ee8ed5ede3mr19931381fa.17.1720138257005;
-        Thu, 04 Jul 2024 17:10:57 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a1805e53sm1998558f8f.22.2024.07.04.17.10.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 17:10:56 -0700 (PDT)
-Date: Fri, 5 Jul 2024 01:10:55 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, christian.loehle@arm.com,
-	vincent.donnefort@arm.com, ke.wang@unisoc.com, di.shen@unisoc.com,
-	linux-kernel@vger.kernel.org, Quentin Perret <qperret@google.com>
-Subject: Re: [PATCH V2 1/2] sched/fair: Prevent cpu_busy_time from exceeding
- actual_cpu_capacity
-Message-ID: <20240705001055.khior3se6ypklbqx@airbuntu>
-References: <20240624082011.4990-1-xuewen.yan@unisoc.com>
- <20240624082011.4990-2-xuewen.yan@unisoc.com>
- <CAKfTPtB=Yk8Bp4sSanr4fCdyWA9PVROM+uiWsQSh+QjFpKb+Aw@mail.gmail.com>
- <CAB8ipk-yAoX5EJ975ZVKfgZP7rP-vzuc3bLVr6yiLtMv26Lxjw@mail.gmail.com>
- <CAKfTPtDuuF8XX3gbsjF_Vgys2UtbzwtaX9QFgA-3kZ7+eqk02w@mail.gmail.com>
- <c4eaadcd-e563-41cf-b174-cd0fb4453c6f@arm.com>
+	s=arc-20240116; t=1720138389; c=relaxed/simple;
+	bh=/x2so69rPNKLWYz+x3ROF/ISz3M+ZqXy/UOlggfPEVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DbMYvZf7cVRCB7QM5tKUK+2VK+YdUZQEjwWkuOd7O7BLnh5nBh92+xbOJOCsKIK5TJ/y1pVG8QxNzHsiQXyRBoqQ6ZBzEvLta9+gkseVnGRsd8uwQ/vSJiNPxLEisihuJOual7xA7m53ggMtUPYGOu4ifcLp9DRPF95zQFbqx3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+I+DgSs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B2CC4AF0B;
+	Fri,  5 Jul 2024 00:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720138388;
+	bh=/x2so69rPNKLWYz+x3ROF/ISz3M+ZqXy/UOlggfPEVs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H+I+DgSsOlrDFwT2M8NvZatKKRu8/CGGJDf4hQO9Lb97WBwpNI9qoErPiaTIa9W7s
+	 z7F0Gu0VAyv6KjMxlKEBMVwrCMAwMCjW4eDg8PngZP4BwYX4Q5dA8yuCS2470GhBuI
+	 IGJ5AiIRPbEP5t8KEWim0H8B/srWsPQFocJhhevMsPwb7SSqtLGZ8GpMA5GJIFtGna
+	 LLanA9CgXWvYr+nSAfPUPL/WllUBFdhCPcBdRUvaBdPK9VO0bxDS4SjMDvdrUsUJEQ
+	 bWB6+rRC7LxC7MDn+jbKMQVRBRPZHZzJ6h/O/VyOxIR/f4KGH6hDJYML8pnWNRqMMn
+	 fKP5QKIS2DL3Q==
+Message-ID: <54a30f2a-99f5-486a-9d9d-d8e2b1007c6c@kernel.org>
+Date: Fri, 5 Jul 2024 09:13:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c4eaadcd-e563-41cf-b174-cd0fb4453c6f@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Non-power-of-2 zone size
+To: Mikulas Patocka <mpatocka@redhat.com>, Li Dong <lidong@vivo.com>,
+ Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ "open list:DEVICE-MAPPER (LVM)" <dm-devel@lists.linux.dev>,
+ open list <linux-kernel@vger.kernel.org>, opensource.kernel@vivo.com,
+ linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+References: <20240704151549.1365-1-lidong@vivo.com>
+ <cd05398-cffa-f4ca-2ac3-74433be2316c@redhat.com>
+ <c4ee654e-3120-e1a9-80b6-cb7073aa5c1a@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <c4ee654e-3120-e1a9-80b6-cb7073aa5c1a@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 07/04/24 19:01, Pierre Gondois wrote:
-
-> I thought the EAS was comparing instantaneous power and not energy,
-> i.e. how the energy computation is done:
+On 7/5/24 04:00, Mikulas Patocka wrote:
 > 
->   *             ps->power * cpu_max_freq
->   *   cpu_nrg = ------------------------ * cpu_util           (3)
->   *               ps->freq * scale_cpu
 > 
-> cpu_nrg should have the same dimension as ps->power (i.e. energy/s).
->  From this PoV, the energy computation should not take into account how
-> much time a task is expected to run. But it might be a side discussion,
+>> On Thu, 4 Jul 2024, Li Dong wrote:
+>>
+>>> For zone block devices, device_area_is_invalid may return an incorrect 
+>>> value.
+>>>
+>>> Failure log:
+>>> [   19.337657]: device-mapper: table: 254:56: len=836960256 not aligned to
+>>> h/w zone size 3244032 of sde
+>>> [   19.337665]: device-mapper: core: Cannot calculate initial queue limits
+>>> [   19.337667]: device-mapper: ioctl: unable to set up device queue for 
+>>> new table.
+>>>
+>>> Actually, the device's zone length is aligned to the zonesize.
+>>>
+>>> Fixes: 5dea271b6d87 ("dm table: pass correct dev area size to device_area_is_valid")
+>>> Signed-off-by: Li Dong <lidong@vivo.com>
+>>> ---
+>>>  drivers/md/dm-table.c | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+>>> index 33b7a1844ed4..0bddae0bee3c 100644
+>>> --- a/drivers/md/dm-table.c
+>>> +++ b/drivers/md/dm-table.c
+>>> @@ -257,7 +257,7 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+>>>  	if (bdev_is_zoned(bdev)) {
+>>>  		unsigned int zone_sectors = bdev_zone_sectors(bdev);
+>>>  
+>>> -		if (start & (zone_sectors - 1)) {
+>>> +		if (start % zone_sectors) {
+>>>  			DMERR("%s: start=%llu not aligned to h/w zone size %u of %pg",
+>>>  			      dm_device_name(ti->table->md),
+>>>  			      (unsigned long long)start,
+>>> @@ -274,7 +274,7 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+>>>  		 * devices do not end up with a smaller zone in the middle of
+>>>  		 * the sector range.
+>>>  		 */
+>>> -		if (len & (zone_sectors - 1)) {
+>>> +		if (len % zone_sectors) {
+>>>  			DMERR("%s: len=%llu not aligned to h/w zone size %u of %pg",
+>>>  			      dm_device_name(ti->table->md),
+>>>  			      (unsigned long long)len,
+>>> -- 
+>>> 2.31.1.windows.1
+> 
+> I grepped the kernel for bdev_zone_sectors and there are more assumptions 
+> that bdev_zone_sectors is a power of 2.
+> 
+> drivers/md/dm-zone.c:           sector_t mask = bdev_zone_sectors(disk->part0) - 1
+> drivers/nvme/target/zns.c:      if (get_capacity(bd_disk) & (bdev_zone_sectors(ns->bdev) - 1))
+> drivers/nvme/target/zns.c:      if (sect & (bdev_zone_sectors(req->ns->bdev) - 1)) {
+> fs/zonefs/super.c:      sbi->s_zone_sectors_shift = ilog2(bdev_zone_sectors(sb->s_bdev));
+> fs/btrfs/zoned.c:       return (sector_t)zone_number << ilog2(bdev_zone_sectors(bdev));
+> fs/btrfs/zoned.c:	zone_info->zone_size_shift = ilog2(zone_info->zone_size);
+> include/linux/blkdev.h: return sector & (bdev_zone_sectors(bdev) - 1);
+> fs/f2fs/super.c:	if (nr_sectors & (zone_sectors - 1))
+> 
+> So, if we want to support non-power-of-2 zone size, we need some 
+> systematic fix. Now it appears that Linux doesn't even attempt to support 
+> disks non-power-of-2 zone size.
 
-I had this discussion with Quentin recently as I indicated in another reply on
-this thread I think we do have inaccuracies here in terms of how we try to
-represent the running time (or busy time) of the cpu/pd.
+Correct. We currently do not support zoned devices with a zone size that is not
+a power of 2 number of LBAs. Such drives are rejected by the block layer. So I
+am surprised that Li could even reach a DM error. It means that his kernel was
+already patched to accept zoned drives with a zone size that is not a power of 2.
 
-AFAIU this is supposed to be computing energy, but we don't explicitly multiply
-with any time value and there's an assumed time multiplication with
-unspecified period. Maybe it's PELT HF, maybe it's something else. But I think
-we do have sources of inaccuracies here, but I need to analyse and dig more.
+> I added Damien Le Moal so that he can help with testing disks with 
+> non-power-of-2 zone size (if WD is actually making them).
 
-The cpu_util/cpu_cap, or sum_util/pd->cap is assumed to represent the
-percentage of time we are busy during this unspecified period
+No, I do not have such drive. The vast majority of zoned device users today are
+SMR HDD users, and in that space, no one wants a non power of 2 zone size drive.
+As far as I know, the main push is from zoned-UFS users for Android, as Pankaj
+mentioned.
 
-	cpu_nrg = ps->power x (cpu_util/cpu_cap) * T
+As you rightly guessed, and as Pankaj confirmed, supporting non power of 2 zone
+size drives requires a lot more changes than just the fix Li sent for DM. Pankaj
+initial patch set that did not make it upstream (but is in Android) would need
+to be reworked given the extensive changes that happened since then (zone write
+locking replaced with zone write plugging, queue limits changes, etc).
 
-where T is a constant value of some period, hence it is omitted from all
-calculations. I'm of course thinking this is not best; but sure keeps it
-a 'simple energy model' :)
+-- 
+Damien Le Moal
+Western Digital Research
 
-I'm not looking in this area at the moment, but if someone is, it'd be great to
-consider the impact of this properly.
 
