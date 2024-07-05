@@ -1,103 +1,79 @@
-Return-Path: <linux-kernel+bounces-242426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C65E9287E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:25:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8FA9287EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01911C22448
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:25:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E981F1F222C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487A6149C51;
-	Fri,  5 Jul 2024 11:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271C7149C57;
+	Fri,  5 Jul 2024 11:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JajDcWBb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMY2NsS5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1721474A4;
-	Fri,  5 Jul 2024 11:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7141474C9;
+	Fri,  5 Jul 2024 11:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720178708; cv=none; b=aP/GSL8lrGmmC4f9IHoRy/A4A1goMCQn+ac+yvvqi8zKeVGYtqevC1jiKRj6AylwgHaOa5uJ5HtzJnUyKlplgqPY+nYDfthS17QsCs15pct+UgkZobcn1UjqMaQa4umxb0JTudv16BmE2Hag7lFQ6ZLqJwU+/aGM/VTQv6qe6c4=
+	t=1720178805; cv=none; b=fA829jnQhS9PHvsccypZT3l/Q36vqMgyiavOhgzCMWa19lJce07s22IAo3ksVJu+jQ5PlzXRoIvf2eMeHKxAvRLDZVTX+STEhmVHT4IQrOtijMzAy3ckbwVWfP9OnO4RLSZjxBaqw6ZrBMKmqA69C48IzXDLpsnzV7QqV0TwSPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720178708; c=relaxed/simple;
-	bh=zL5UUf2rkWrONcbOjBn83uC70xqxiAQyDDUJsHOHsDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PYiKTtPNI59Ta3JMq/jzHFouVLnXsWGB/woCqq6+5veUSCUiJH4ofhIjWZU7/dGWT3ohc1QP+0zbpxHEs69nH835IQo6HVTx5PDOUaGBcHakYzIWrL/m0eQXeGnpsqYzcXlB6JmC6CoDbDXBrflliScpRjXvNSw48ig1YIRZ8mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JajDcWBb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5916AC116B1;
-	Fri,  5 Jul 2024 11:25:06 +0000 (UTC)
+	s=arc-20240116; t=1720178805; c=relaxed/simple;
+	bh=yl5XDJkF2mnEPH4zD2PEULxDkOPHGf+X7s1caWCPjhY=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=quNvXTmhqQYza5B+crj4y4wz5QGR236sNS4HXUNAyGvw+AjNbkd3CAyIKS9Z6KO13JlWtxy9BjTFOwH0X0LcK6rloLwBSw1/eJcARK6dmnYG1iXKKH17wZzTp708+Ef2SWAQfYxsxQKsIip3JTiTbSKLGtMpy49aXbDtEP4y38Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMY2NsS5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 751FDC116B1;
+	Fri,  5 Jul 2024 11:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720178708;
-	bh=zL5UUf2rkWrONcbOjBn83uC70xqxiAQyDDUJsHOHsDQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JajDcWBbQaWDymEAoQxk7KNr7A7ds2MRAtRX3kPJl8DLJHNsXwiR9ddtSy+HXRW30
-	 FKhK+vaaJcJZy9w9DCwXTr9brYqFR+YMlmjrMwxt8g5JfLDmg/FhSbCVabLkszvj2i
-	 4t85IXZkCbNvuosNctIDV9RSmkXEtPI0Qi3WutCEdGlKm75psFaYna/8I7qDqH4Yjx
-	 YOpW9faSUmPnTvss4WT/gbKbbG8i+fZm5NJTVAMzeVrl2Mgw/+UZrLylwUKrmTWUx8
-	 DCrYY12yfv4dS30Tbv4W360xxwabRn9ohKXHIpEoF7sD3fJJkwqLweBNdYBDtoYr/d
-	 e6hNklBJlSRPQ==
-Date: Fri, 5 Jul 2024 12:25:03 +0100
-From: Will Deacon <will@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com
-Subject: Re: [PATCH 0/4] riscv: uaccess: optimizations
-Message-ID: <20240705112502.GC9231@willie-the-truck>
-References: <20240625040500.1788-1-jszhang@kernel.org>
- <4d8e0883-6a8c-4eb5-bf61-604e2b98356a@app.fastmail.com>
- <CAHk-=wjDrx1XW1oEuUap=MN+Ku_FqFXQAwDJhyC5Q1CJkgBbFA@mail.gmail.com>
- <CAHk-=wiv=9zGSwsu+=tKNgDg8oBUJn_25OEy_0wqO+rvz7p8wg@mail.gmail.com>
+	s=k20201202; t=1720178805;
+	bh=yl5XDJkF2mnEPH4zD2PEULxDkOPHGf+X7s1caWCPjhY=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=rMY2NsS5nigIKmNbS4DxsqjjBdla8LJ6TDcCVhIhj3FbW61V/3gFaXUW3CjO9+8NF
+	 qYoUNNORvvvmpqXjv2SwZuHhHuldEX5zXPPDPiYt00CJ1BG4JG1CSwaGP023gsz1ml
+	 3rGDA4H/Usn46787110+PzyvTfIO7pbnx89HJ3UBpomhLaxYD99t4qp0PcyKSFDPTy
+	 mZdufRCyvJm2cLGAVx4Xe1VkZnawX9TPEa2ktFTZ/SNufbS33iC0J1I3rT5miXDIBE
+	 CYKveKNVXD6QTjTWyHQQBZmXPf64kjEO1AW1EbysanTgEYubBfraXOX7VsMLNZQ8p7
+	 I2/xV5PGlj1ww==
+Message-ID: <f509590f5b9721368382dd82a142e965@kernel.org>
+Date: Fri, 05 Jul 2024 11:26:42 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v6] drm/display: split DSC helpers from DP helpers
+In-Reply-To: <20240704-panel-sw43408-fix-v6-1-3ea1c94bbb9b@linaro.org>
+References: <20240704-panel-sw43408-fix-v6-1-3ea1c94bbb9b@linaro.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>, "Alex Deucher" <alexander.deucher@amd.com>,
+ =?utf-8?b?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>, "David Airlie" <airlied@gmail.com>, "Jani Nikula" <jani.nikula@linux.intel.com>, "Jessica
+ Zhang" <quic_jesszhan@quicinc.com>, "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marijn Suijten" <marijn.suijten@somainline.org>, "Maxime
+ Ripard" <mripard@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Rob
+ Clark" <robdclark@gmail.com>, "Rodrigo Vivi" <rodrigo.vivi@intel.com>, "Sean
+ Paul" <sean@poorly.run>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Tvrtko
+ Ursulin" <tursulin@ursulin.net>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiv=9zGSwsu+=tKNgDg8oBUJn_25OEy_0wqO+rvz7p8wg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, Jun 30, 2024 at 09:59:36AM -0700, Linus Torvalds wrote:
-> On Tue, 25 Jun 2024 at 11:12, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > But yes, it would be lovely if we did things as "implement the
-> > low-level accessor functions and we'll wrap them for the generic case"
-> > rather than have every architecture have to do the wrapping..
+On Thu, 4 Jul 2024 22:17:08 +0300, Dmitry Baryshkov wrote:
+> Currently the DRM DSC functions are selected by the
+> DRM_DISPLAY_DP_HELPER Kconfig symbol. This is not optimal, since the DSI
+> code (both panel and host drivers) end up selecting the seemingly
+> irrelevant DP helpers. Split the DSC code to be guarded by the separate
+> DRM_DISPLAY_DSC_HELPER Kconfig symbol.
 > 
-> Btw, to do that _well_, we need to expand on the user access functions
-> a bit more.
+> [ ... ]
 
-[...]
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-> Will/Catalin - would that
-> 
->         src = masked_user_access_begin(src);
-> 
-> work on arm64? The code does do something like that with
-> __uaccess_mask_ptr() already, but at least currently it doesn't do the
-> "avoid conditional entirely", the masking is just in _addition_ to the
-> access_ok().
-
-I think we'd need to go back to our old __uaccess_mask_ptr()
-implementation, where kernel addresses end up being forced to NULL. In
-other words, revert 2305b809be93 ("arm64: uaccess: simplify
-uaccess_mask_ptr()"). If we then want to drop the access_ok() entirely,
-we'd probably want to use an address that lives between the two TTBRs
-(i.e. in the "guard region" you mentioned above), just in case somebody
-has fscked around with /proc/sys/vm/mmap_min_addr.
-
-Will
+Thanks!
+Maxime
 
