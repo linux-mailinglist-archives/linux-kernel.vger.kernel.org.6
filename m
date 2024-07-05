@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-242916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFDF928ECE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:36:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE56928ED0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF2EDB22588
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F265E1F222C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051AA15D5C1;
-	Fri,  5 Jul 2024 21:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937B916DC04;
+	Fri,  5 Jul 2024 21:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFkntxOv"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lACSADsK"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D8F13B783;
-	Fri,  5 Jul 2024 21:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E153145B3B;
+	Fri,  5 Jul 2024 21:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720215356; cv=none; b=crBBbydt+3S28u0UfGJiftEjuoS3Wl+v8wTawr7wGPxfMGG/PQR/Ytuo2oOW8o7SpJicNUN7+0XkDwCesPavpSpyNV6EE7FFd/8BI/XUpEpv7MOTicIHxmRRPnDOvvY6eWzaDSFb7icGLoi24Yj61kFQsNWLjTee57rY6RwREDQ=
+	t=1720215357; cv=none; b=iQeC3fPnmAedcwi+W5xRRCb7BD6kdJ0INVpEAIViFqEd9/vI8S9b+8g56akx+doLk7ww86zy+rQYNtMqA7fCZ2UNJiNIyF+W3OlCjUphKU7BNCCIwMiU2fykbLn2SiaJHivaCR55oZBFOnYfGo9+ddTlnU0VaT9U5vO6ojTp/rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720215356; c=relaxed/simple;
-	bh=nMmGCkFkawD3qpcgT+kAZqHgBnG04XtKQCOIPlWxfJk=;
+	s=arc-20240116; t=1720215357; c=relaxed/simple;
+	bh=t32ubQd4OEBe7g6pwt9rfdIRcJfqxzvrKZI1tmn7TjY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ojBf0wy3VjfHuDw0e8lS3m68QyETAtWy9I7yLYxONgtPIcOSsHs4WfjBtuCYH+K9WJ5S0FoAbE+wL/MjaZg3B0Z7v5mzMPpaWc0N4o3yGP71jr5kPqGZcVGqkYfcxEZnAV+zqWEfYLBRfGPyrnuQ/DsiYMTGaoYY03Ys9idbcXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFkntxOv; arc=none smtp.client-ip=209.85.215.173
+	 MIME-Version; b=tknDZlg1hIvCO7mIvfxVve8xKQNNAOLW/bUAbV0C0ETDg8cYkzdUqEt/Zx2+L7Z/RoRExScWqpl2jQermESctP04yIEkQQ0kjZ8kxh6dNayGkQKbX1LfJK9GaH+kgokdYZBjLCpF3p8iOEHy+1zT8ZnkX9q6kiZSpPAaL4e4aDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lACSADsK; arc=none smtp.client-ip=209.85.210.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-75a6c290528so1248045a12.1;
-        Fri, 05 Jul 2024 14:35:54 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-700cc388839so1371722a34.0;
+        Fri, 05 Jul 2024 14:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720215353; x=1720820153; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720215355; x=1720820155; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xhGA4b3HBsESI2DmdUEadllBxv4uzhGArQdW7Mp+9Hc=;
-        b=CFkntxOvZ7vvDriYZRR/zhK4Wicj+IBnaA+z6G2IEwfqSgHBKtYvUeJ5giqS6dRIHe
-         B0gihYVHh4MVrMDyEM+rSzf3vxAjSCAIOT1OP+R87Nff8pKBuU6X5uNVs7F5WnzIUTf5
-         KJXmCO7BgOJQSjuBZ4iNnoBVSBi9BrlyRhz4h4M2AfJQPrzIPPUrKwXxUd6UCSuPh6rQ
-         lQxEAkWd5AMbq6f7e5gREtl4wMeFjHxwPj3rpkI27L4R13Ge5RpTcxsTO7IoJwK41ctR
-         qlceKTMrWSIMzu4xMDoch45+2RZ1LQ/GJGniUKdqXzuJjd4LecrklVggj7fqQ0Fe91Fq
-         1Leg==
+        bh=zx6XwWAqVCmr7zhKaI4PNYIx6ePypUUY6x6wa+exXio=;
+        b=lACSADsK2Vv5BxnZJGtde1w3Du9ToJEc+VStyXTANNKZv9uwHCMg4wmFsv6zXGjcYY
+         sw+4H91ZzlxNf9MB/gKEHvP7WTj9AJ/qISevHrVP76MEd40tiOzeND68hxeQUKYQ8ipI
+         krCDYdfjOiXbg+RGz16XXJRfm7ic4mSZFfZP0E8YtQE3cFaLNJqMvam1kF+u3ULb9IpU
+         CaMKWNju4rT68QllYkNqy++f6NvHIvyL/DI48n5hvA9FomxeZyfOwRhVQoIDa30EBO0B
+         hJE1vovN6tw8hIAfjwl9ypM9YnpjlJSnoG/xhSUse/V7ihr8H6POq+QOWpxALX25X9mx
+         6qcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720215353; x=1720820153;
+        d=1e100.net; s=20230601; t=1720215355; x=1720820155;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=xhGA4b3HBsESI2DmdUEadllBxv4uzhGArQdW7Mp+9Hc=;
-        b=q+IEni8RIiyQqdyblF4XCMRiqJZ0V0pXprGVcNz9pM/wfCO6YUXmnoSBMrBjina/hG
-         H7PNmc7qB/b6UmXyJCqa1ZaQNv8tcPsCS+fn43dfQ4BnvpyJyenQrsW5YjNS9zIPWhr6
-         4LUd9v3K40tRZEwyUjdRWTyBVVU1BKfbOQr0v8/ii8/76CmtVD5+N+tEaO33DHJc69By
-         9oJq0b3rUbWwymkkXDfgBKV6Kw4YSt9JROl96zoYLU5z7Rrzk0mPyJ43gNZqU8HGVnoh
-         vKYbdu/WZqWMeOqQgkTAoJR7EDhzyq4RqX8zI4PtqMNd5Bxkbu/kmfh6JS79SsanWynj
-         q4MQ==
-X-Gm-Message-State: AOJu0Yxq0e/iWGp+MEjfmGb1/T7i8IZGZYs71zhoi1/R1oECmtyKbeA9
-	YrzVECJsbbtWqLh60UF7AGSaYzo0wB7hYY3vG/urDbbL1/2CB8o4S0Fcfw==
-X-Google-Smtp-Source: AGHT+IEcgAmqlqEFwCNAN9kXhM5qUyNO0DhBNWHwsOQv4Ads/EZNgfOAfQKl7uN9RbM4WjXv4ie5IQ==
-X-Received: by 2002:a05:6a21:2c15:b0:1bd:2214:e92f with SMTP id adf61e73a8af0-1c0cc746bffmr5289362637.14.1720215353275;
-        Fri, 05 Jul 2024 14:35:53 -0700 (PDT)
+        bh=zx6XwWAqVCmr7zhKaI4PNYIx6ePypUUY6x6wa+exXio=;
+        b=kecv0yKrZ8CfkWZOkmEsNsyaDkqrtC75pc/qvy2DaGc7bTPa0jwNf7sPRiqu7+Xchu
+         73EVgU01Dxrpc9Ny4geXmGuP2Kt4R6P2XDQIor0kZRW3qHEr25lvm6aAIX7K+oGMLnrS
+         wDBQ1l78CKgIAkeVnxSVSGXHxqLyDZXRUD9OvNwQGExcZ55dDT9rYDg7SC5gbXpa/get
+         p3sTSKBJBaZflQi3lsTyn+Dpk5JAJYK0fUCH5g0qSejR9MdXy4Bnc4lx1GRj33sGyNrK
+         Zc5aEuGmwvAaHN1mLt2qLu1MGm3VnVcB1bKsWQs3gR4iKarItVBxa7AkPgQUWFb6MZ32
+         Q2zw==
+X-Gm-Message-State: AOJu0YwF82F9JvuqYnhPbXnKlkrDmwtqW8bLBzqhD6nWNaSICG7FTUu5
+	gD/gTV++udwg2kqaBpVm2UtlKFg0UEY4SWpwfF95gI88p0w0AGYCvKAjXQ==
+X-Google-Smtp-Source: AGHT+IEB6A+D2U1IwB0rRKY3xnOZwbgB/e4q5i7Vz/2Wtr/aqak9nXJs0oLrDdcb03mW9S26MHa3Yg==
+X-Received: by 2002:a05:6358:441d:b0:1a2:4601:9197 with SMTP id e5c5f4694b2df-1aa98c76322mr490962955d.24.1720215354806;
+        Fri, 05 Jul 2024 14:35:54 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a956260sm3827724a91.19.2024.07.05.14.35.52
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080295d1f4sm14960436b3a.91.2024.07.05.14.35.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 14:35:52 -0700 (PDT)
+        Fri, 05 Jul 2024 14:35:54 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
 From: Guenter Roeck <linux@roeck-us.net>
 To: linux-hwmon@vger.kernel.org
@@ -72,9 +72,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Farouk Bouabid <farouk.bouabid@cherry.de>,
 	Quentin Schulz <quentin.schulz@cherry.de>,
 	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v4 01/11] hwmon: (amc6821) Stop accepting invalid pwm values
-Date: Fri,  5 Jul 2024 14:35:37 -0700
-Message-Id: <20240705213547.1155690-2-linux@roeck-us.net>
+Subject: [PATCH v4 02/11] hwmon: (amc6821) Make reading and writing fan speed limits consistent
+Date: Fri,  5 Jul 2024 14:35:38 -0700
+Message-Id: <20240705213547.1155690-3-linux@roeck-us.net>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240705213547.1155690-1-linux@roeck-us.net>
 References: <20240705213547.1155690-1-linux@roeck-us.net>
@@ -86,71 +86,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pwm value range is well defined from 0..255. Don't accept any values
-outside this range.
+The default value of the maximum fan speed limit register is 0,
+essentially translating to an unlimited fan speed. When reading
+the limit, a value of 0 is reported in this case. However, writing
+a value of 0 results in writing a value of 0xffff into the register,
+which is inconsistent.
 
-This changes the valid range of pwm1_auto_point2_pwm from 0..254 to 0..255,
-meaning it can now be equivalent to not only pwm1_auto_point1_pwm (which is
-always 0) but also to pwm1_auto_point3_pwm (which is always 255). While
-that may not be practical, there seems to be no technical reason for
-preventing a user from doing it.
+To solve the problem, permit writing a limit of 0 for the maximim fan
+speed, effectively translating to "no limit". Write 0 into the register
+if a limit value of 0 is written. Otherwise limit the range to
+<1..6000000> and write 1..0xffff into the register. This ensures that
+reading and writing from and to a limit register return the same value
+while at the same time not changing reported values when reading the
+speed or limits.
+
+While at it, restrict fan limit writes to non-negative numbers; writing
+a negative limit does not make sense and should be reported instead of
+being corrected.
 
 Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
 v4: No change
 
-v3: Change valid range of  pwm1_auto_point2_pwm from [0..254] to
-    [0, 255]
-    Add Quentin's Reviewed-by: tag
+v3: Add Quentin's Reviewed-by: tag
 
-v2: Use kstrtou8() instead of kstrtol() where possible.
-    Limit range of pwm1_auto_point_pwm to 0..254 in patch 1
-    instead of limiting it later, and do not accept invalid
-    values for the attribute.
+v2: Do not accept negative fan speed values
+    Display fan speed and speed limit as 0 if register value is 0
+    (instead of 6000000), as in original code.
+    Only permit writing 0 (unlimited) for the maximum fan speed.
 
- drivers/hwmon/amc6821.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/hwmon/amc6821.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
-index 9b02b304c2f5..dc35e9b21f91 100644
+index dc35e9b21f91..8e3cc33d8073 100644
 --- a/drivers/hwmon/amc6821.c
 +++ b/drivers/hwmon/amc6821.c
-@@ -355,13 +355,13 @@ static ssize_t pwm1_store(struct device *dev,
+@@ -616,15 +616,20 @@ static ssize_t fan_store(struct device *dev, struct device_attribute *attr,
  {
  	struct amc6821_data *data = dev_get_drvdata(dev);
  	struct i2c_client *client = data->client;
 -	long val;
++	unsigned long val;
+ 	int ix = to_sensor_dev_attr(attr)->index;
 -	int ret = kstrtol(buf, 10, &val);
-+	u8 val;
-+	int ret = kstrtou8(buf, 10, &val);
++	int ret = kstrtoul(buf, 10, &val);
  	if (ret)
  		return ret;
- 
- 	mutex_lock(&data->update_lock);
--	data->pwm1 = clamp_val(val , 0, 255);
-+	data->pwm1 = val;
- 	i2c_smbus_write_byte_data(client, AMC6821_REG_DCY, data->pwm1);
- 	mutex_unlock(&data->update_lock);
- 	return count;
-@@ -558,13 +558,15 @@ static ssize_t pwm1_auto_point_pwm_store(struct device *dev,
- 	struct amc6821_data *data = dev_get_drvdata(dev);
- 	struct i2c_client *client = data->client;
- 	int dpwm;
--	long val;
--	int ret = kstrtol(buf, 10, &val);
-+	u8 val;
-+	int ret;
+-	val = 1 > val ? 0xFFFF : 6000000/val;
 +
-+	ret = kstrtou8(buf, 10, &val);
- 	if (ret)
- 		return ret;
++	/* The minimum fan speed must not be unlimited (0) */
++	if (ix == IDX_FAN1_MIN && !val)
++		return -EINVAL;
++
++	val = val > 0 ? 6000000 / clamp_val(val, 1, 6000000) : 0;
  
  	mutex_lock(&data->update_lock);
--	data->pwm1_auto_point_pwm[1] = clamp_val(val, 0, 254);
-+	data->pwm1_auto_point_pwm[1] = val;
- 	if (i2c_smbus_write_byte_data(client, AMC6821_REG_DCY_LOW_TEMP,
- 			data->pwm1_auto_point_pwm[1])) {
+-	data->fan[ix] = (u16) clamp_val(val, 1, 0xFFFF);
++	data->fan[ix] = clamp_val(val, 0, 0xFFFF);
+ 	if (i2c_smbus_write_byte_data(client, fan_reg_low[ix],
+ 			data->fan[ix] & 0xFF)) {
  		dev_err(&client->dev, "Register write error, aborting.\n");
 -- 
 2.39.2
