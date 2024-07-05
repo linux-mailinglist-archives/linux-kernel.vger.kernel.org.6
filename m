@@ -1,165 +1,154 @@
-Return-Path: <linux-kernel+bounces-242943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BFB928F61
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:45:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4B1928F64
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE411F23131
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:45:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6654FB2393B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A1D146A71;
-	Fri,  5 Jul 2024 22:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2B1145A0B;
+	Fri,  5 Jul 2024 22:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OLFzEhrT"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="S0Qjqjnw"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8921C693
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 22:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132FC1C693
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 22:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720219543; cv=none; b=rj0/xDs3/xejV4mr7Asojh1mo7BbI7uYw8ak4nylbYL8DCwKDk1qLRnFnzp/GufnpVGnTwSMFJsPr1Tc9vCqbNZMcZ2omRGuyioeXbvA1DA1uVoN+SY5CrBIvncyd2trQKoI5zk+0BMeZ37i2fNIWj9x/Yt6TQisYShAX9EneLs=
+	t=1720219735; cv=none; b=e6g/Xd1APpoa97caee6//KbO3az7QljqYst/qJ9Sv8Z04U71sdw5V7qqIUf9L4VLEUGiJWz3P6I5tecHfBN6K0Tto2oRr1Sl0BbjtiIPkQ+uZC+Me2B/OMPlXXf3XMem7oTI1q8aBwKfGMkGZw5o7IulCFrKRtt/APr0DGeFxNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720219543; c=relaxed/simple;
-	bh=J2u1qHCiKCA3RfsyCI2pggoYFpbeaiFVXegTV/9f4hI=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=WQVADvOooi5Vn4gvzBU/b0GVNHEu/ysfoXFZ9n+5tFq1E3n/eP5CccsxI/WV4c/9W/+KmHUNhJ2oJpoaHJ/vnIgF5lFeH1y/ZLkMtQb7Nj6XZd5250pSguwSCjvJm3+5nA2WzQOv6VJ4aoiCRNGwGl56ToRqabQ7nK+y7Nm0SZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OLFzEhrT; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7f653005b54so4628539f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 15:45:41 -0700 (PDT)
+	s=arc-20240116; t=1720219735; c=relaxed/simple;
+	bh=40fim1v5ajB0EWEeShPJTTuP9vv/eTRePe4Dy9duJh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TotIum18EAh0q3qf1k+Q68qKQUhcfhAUUCXaVbug29EaJ3ypvcsVoQ4M6Z/Rt4dpk5D9NFqm8tMfxlblhQwUbt0QmTsP0lu62xYV6LXowy8FsVG6gScy7gUj5VHxGgsQ5dkdPgs8IDGikGP1xQViPXvCRwjwY1/EOK9p5w/n+84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=S0Qjqjnw; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d05e0017aso2560557a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 15:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720219540; x=1720824340; darn=vger.kernel.org;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XPMYfJWmf3WNCz84K05Te7W0yqGn9oyU7AN35KIwYek=;
-        b=OLFzEhrTE6L9HUJZfU0NgoXaZ9Pa7O0tEZjN/ttgVEdvpijgDuFM3euIpEprE/+m02
-         9f8B5CZX6iHygVjZMPKV9xYCHcK9JGZR/9K7ohuO2cg4ZKICOzQKp7lUwMN66cFxNhiD
-         gTJjqntesu7eGpm69lU1JrEaz+hoaobehuy+c=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720219731; x=1720824531; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E5pF0Ef7WMMa4lOz8mxyXD3GneBeoClSehGi66bM130=;
+        b=S0Qjqjnww4D8sudqFOylm8p7ddoIY9NS2s9ChlO5+vI4tBsW0YchOCvu/l2RWH4M6U
+         Myz2lXvO60jF4W8wYQkAPE5Ow7m5bJX0dHAp9EK+wyJekdl5Xop9PfT4MNLoZ5sWiTEE
+         hQb1AxlT6pgewd2TnJQmdJ8qA4nkQdrLwr1gnyTyqx8XpMV9E9qDVPqPdX0U7rSZr61g
+         KkJFJ+zubIgnkqaPmg3t8zknXYnvK/LWK8Wcf+CQxWEE7b6ziSZtb2KQ4XI++3Sr7Gec
+         hgdJrOybQyJ1q8cauh/E2aWHwbt0N7zs6zVcih2IZOUoD/t90URlABpleIK6ngv9605h
+         ZxCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720219540; x=1720824340;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XPMYfJWmf3WNCz84K05Te7W0yqGn9oyU7AN35KIwYek=;
-        b=CXRCwLgrklMndDDuFN3Y4WH0XXvrB/r3skldaMNdCB/ovkl6LdLSogv7pksSOAzYI9
-         HuTCscii26rsBAciytjGKWwJOqIcLlRasXBUNG//FOLJ2AB9sZlkrjoIiCSyi6caIXvy
-         t6jIyDSYV4i0VMEDoOrTNxWfs+HuveF5hWEme7BkfNX967nNt0nR7pMvqEI7tcPqawNr
-         AQPZcu2oFSWDWRaQOGyGUB2Jz08GrpzOOFWjxIFCqEkVGKZhuxiVIB6mI3CUT0k0lkt0
-         zXTSi5LrOHBbz/ncyt2GzRcWMnBgEMhjlC8PqdBpoANVF34c6ZmVKoMjw812tzMMIfL7
-         74Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrVE0lJ1wDeiYU9KuSKNM03r3pfv0B611zjIZfmo9sW4XMkZePi5amVyUQoxLhtpeSYdZz5ZrkqTpzzs9apc1s9CTzsvTsLeXCfvXq
-X-Gm-Message-State: AOJu0YwXc9kq4ciIJB9a9kUf3IhQkyRMOXQVz+3LxjjOaoKMBcJEwwKp
-	Gh8BjpLJCaoADlUOIjV5ahKxjb3x3dyP5ItWMIpcljcwGr/c1kbvgGh5AnJGBT8=
-X-Google-Smtp-Source: AGHT+IFiOtWsyaxb1z0ZzXLScuB6n4UhuXRTJth4ktjjKG0Ac43ITwVD9tXgNdHw5GjyVxL8f3BU/A==
-X-Received: by 2002:a05:6602:6183:b0:7f8:bfcd:db3e with SMTP id ca18e2360f4ac-7f8bfcddd04mr3425139f.0.1720219540586;
-        Fri, 05 Jul 2024 15:45:40 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73bb374dsm4604825173.36.2024.07.05.15.45.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 15:45:39 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------boPeTQlb4MMG8ACs0OicDOlH"
-Message-ID: <00aaf29c-e638-4161-90fa-49eff270598e@linuxfoundation.org>
-Date: Fri, 5 Jul 2024 16:45:39 -0600
+        d=1e100.net; s=20230601; t=1720219731; x=1720824531;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E5pF0Ef7WMMa4lOz8mxyXD3GneBeoClSehGi66bM130=;
+        b=htFAMNtBnsRLUlqmNuUYRegxg7oUISfUctxLvdJFDpX3Dy7YununzmDb/pWpmVGM0N
+         WQWPqyWAVdp3/05pv5iXgmRuTqJYUO08hgtYy6jJp3faJocz6O+pKzJMU7oI0ugnxJbI
+         CRmVIHz5q21quVDqIDAQTH3LhJYsjxSyfMkymHDQoGL9yonTqO8nbJpJrD7O7qs0Dgt/
+         kRngyMYBf+Wn/+n50xKhyDzFE44ToxXh9TGfo/4woPjR7CLONWS7Re7ilsP4SgjYx9wM
+         7Ru9LXcfcGcecAPHXLrTKcF+pyG4PbNmePB79c+mnetTc+NTLEWxibeiCh+UyaVMFMUf
+         N7Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCKWg3JvmHN+U7QS5MCvTYC9E51ycOBBufIOw04kMMoou6Bbf5hQe9rSOtYovEjxQ7RsXLuJxIjDXmgZotLMrJa9e+yP+64lBFGEVa
+X-Gm-Message-State: AOJu0YxK0W4VedilGYjkrFlo4gwQZxXAnKsTConKt3yBrLIWjB0mkXPb
+	C5SOuLDZXVHWxLYVur7FDupaFgRxg/1Q+y1v+YVITZ0GIfhn2uVx/gR2UZd73BFi4aOENj//3Am
+	+3zY=
+X-Google-Smtp-Source: AGHT+IERi2Ye2QmrvRDXzlts/Gxk8iJON7puvXr1O4BNvzlYYxkYOGzuxjmL8eiQZoHA789a6HXkoQ==
+X-Received: by 2002:a05:6402:2106:b0:57c:6188:875a with SMTP id 4fb4d7f45d1cf-58e5c73066emr4417332a12.26.1720219731385;
+        Fri, 05 Jul 2024 15:48:51 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:5898:1844:403c:d2d6])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58eeabbf108sm1956125a12.93.2024.07.05.15.48.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 15:48:50 -0700 (PDT)
+Date: Sat, 6 Jul 2024 00:48:49 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: dmitry.torokhov@gmail.com, Jonathan.Cameron@huawei.com, 
+	broonie@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-spi@vger.kernel.org
+Subject: Re: [PATCH] Input: pxspad - add check for spi_setup
+Message-ID: <5uzgfsbupxt3p4hlvi6atdzdamcuci2u3k7zl2zic5qrphl6yn@duygfftdrnh6>
+References: <20240705082057.3006342-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Thomas Renninger <trenn@suse.de>, Shuah Khan <skhan@linuxfoundation.org>,
- shuah <shuah@kernel.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] cpupower second update for Linux 6.11-rc1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tdaa4krfgm4lletw"
+Content-Disposition: inline
+In-Reply-To: <20240705082057.3006342-1-nichen@iscas.ac.cn>
 
-This is a multi-part message in MIME format.
---------------boPeTQlb4MMG8ACs0OicDOlH
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi Rafael,
+--tdaa4krfgm4lletw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please pull the following cpupower second update for Linux 6.11-rc1.
+Hello,
 
-This cpupower second update for Linux 6.11-rc1 consists of
+[Cc +=3D linux-spi]
 
--- fix to install cpupower library in standard librray intall
-    location - /usr/lib
--- disable direct build of cpupower bench as it can only be
-    built from the cpupower main makefile.
+On Fri, Jul 05, 2024 at 04:20:57PM +0800, Chen Ni wrote:
+> Add check for the return value of spi_setup() and return the error
+> if it fails in order to catch the error.
 
-diff is attached.
+Does this fix a real-world problem, or did you notice this using a
+linter or by just reading through the driver?
 
-thanks,
--- Shuah
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  drivers/input/joystick/psxpad-spi.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/input/joystick/psxpad-spi.c b/drivers/input/joystick=
+/psxpad-spi.c
+> index c47fc5f34bd0..5b53d43c797a 100644
+> --- a/drivers/input/joystick/psxpad-spi.c
+> +++ b/drivers/input/joystick/psxpad-spi.c
+> @@ -344,7 +344,11 @@ static int psxpad_spi_probe(struct spi_device *spi)
+>  	/* (PlayStation 1/2 joypad might be possible works 250kHz/500kHz) */
+>  	spi->controller->min_speed_hz =3D 125000;
+>  	spi->controller->max_speed_hz =3D 125000;
+> -	spi_setup(spi);
+> +	err =3D spi_setup(spi);
+> +	if (err < 0) {
+> +		dev_err(&spi->dev, "failed to set up spi: %d\n", err);
+> +		return err;
 
-----------------------------------------------------------------
-The following changes since commit 3e1f12c26646eb0ad67d3eaefd32f765997da6a8:
+Please consider using dev_err_probe() in such cases. It allows for a
+more compact error path and emits the error code in a human readable
+way.
 
-   cpupower: Change the var type of the 'monitor' subcommand display mode (2024-06-20 10:08:08 -0600)
+Apart from that: spi_setup() is inconsistent as it emits error messages
+for some error paths but not for all. Probably the better change is to
+make spi_setup() consistent here. I suggest to add error messages to the
+error paths that currently don't have a message and drop this patch.
 
-are available in the Git repository at:
+Best regards
+Uwe
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-6.11-rc1-2
+--tdaa4krfgm4lletw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-for you to fetch changes up to 3a5bb5066f4c7170e850b930e84b1075e25f8e90:
+-----BEGIN PGP SIGNATURE-----
 
-   cpupower: fix lib default installation path (2024-07-02 15:30:32 -0600)
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaIeE4ACgkQj4D7WH0S
+/k4vugf9HAZcsvtG4nBfFgPQc4vN4LUOZADh7N+fRQOCIO6kaNJzhly2KkpfE3Y/
+p8exypdWK23N2c2N60E4+BhJx/re/KWmrDewwHzMoSWFEDbrFuVxU2BkGrumZ6sp
+Z4BigMQZd8kVtaFGWWbNFipf6aswnYn3JdivWY39nmeuko8zDpI6fwsIz0A2shNE
+2V47+1FAG7frbpWBe0EEURdc0f+k5tNgBE3rb/Nxazl3Y8/Mq7SZIxKwKsTzYtFx
+4rgKg9JAS3CstyQENaq1t/Q8SqpfkdW6rm1vnNVniNQ5xR++kNgm3a7Mxb2BTr/L
+huvWYSgtPHR0GUlHVkhweqI3010ZJQ==
+=OvXB
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-linux-cpupower-6.11-rc1-2
-
-This cpupower second update for Linux 6.11-rc1 consists of
-
--- fix to install cpupower library in standard librray intall
-    location - /usr/lib
--- disable direct build of cpupower bench as it can only be
-   built from the cpupower main makefile.
-
-----------------------------------------------------------------
-Roman Storozhenko (2):
-       cpupower: Disable direct build of the 'bench' subproject
-       cpupower: fix lib default installation path
-
-  tools/power/cpupower/Makefile       | 10 +---------
-  tools/power/cpupower/bench/Makefile |  5 +++++
-  2 files changed, 6 insertions(+), 9 deletions(-)
-----------------------------------------------------------------
---------------boPeTQlb4MMG8ACs0OicDOlH
-Content-Type: text/x-patch; charset=UTF-8;
- name="linux-cpupower-6.11-rc1-2.diff"
-Content-Disposition: attachment; filename="linux-cpupower-6.11-rc1-2.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL01ha2VmaWxlIGIvdG9vbHMvcG93
-ZXIvY3B1cG93ZXIvTWFrZWZpbGUKaW5kZXggY2QwMjI1YTMxMmI0Li42YzAyZjQwMTA2OWUg
-MTAwNjQ0Ci0tLSBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL01ha2VmaWxlCisrKyBiL3Rvb2xz
-L3Bvd2VyL2NwdXBvd2VyL01ha2VmaWxlCkBAIC02Nyw2ICs2Nyw3IEBAIExBTkdVQUdFUyA9
-IAkJCWRlIGZyIGl0IGNzIHB0IGthCiBiaW5kaXIgPz0JL3Vzci9iaW4KIHNiaW5kaXIgPz0J
-L3Vzci9zYmluCiBtYW5kaXIgPz0JL3Vzci9tYW4KK2xpYmRpciA/PQkvdXNyL2xpYgogaW5j
-bHVkZWRpciA/PQkvdXNyL2luY2x1ZGUKIGxvY2FsZWRpciA/PQkvdXNyL3NoYXJlL2xvY2Fs
-ZQogZG9jZGlyID89ICAgICAgIC91c3Ivc2hhcmUvZG9jL3BhY2thZ2VzL2NwdXBvd2VyCkBA
-IC05NCwxNSArOTUsNiBAQCBSQU5MSUIgPSAkKENST1NTKXJhbmxpYgogSE9TVENDID0gZ2Nj
-CiBNS0RJUiA9IG1rZGlyCiAKLSMgNjRiaXQgbGlicmFyeSBkZXRlY3Rpb24KLWluY2x1ZGUg
-Li4vLi4vc2NyaXB0cy9NYWtlZmlsZS5hcmNoCi0KLWlmZXEgKCQoSVNfNjRfQklUKSwgMSkK
-LWxpYmRpciA/PQkvdXNyL2xpYjY0Ci1lbHNlCi1saWJkaXIgPz0JL3Vzci9saWIKLWVuZGlm
-Ci0KICMgTm93IHdlIHNldCB1cCB0aGUgYnVpbGQgc3lzdGVtCiAjCiAKZGlmZiAtLWdpdCBh
-L3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2JlbmNoL01ha2VmaWxlIGIvdG9vbHMvcG93ZXIvY3B1
-cG93ZXIvYmVuY2gvTWFrZWZpbGUKaW5kZXggYTRiOTAyZjllMWM0Li4zNGU1ODk0NDc2ZWIg
-MTAwNjQ0Ci0tLSBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2JlbmNoL01ha2VmaWxlCisrKyBi
-L3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2JlbmNoL01ha2VmaWxlCkBAIC0xLDQgKzEsOSBAQAog
-IyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMAoraWZlcSAoJChNQUtFTEVWRUwp
-LDApCiskKGVycm9yIFRoaXMgTWFrZWZpbGUgaXMgbm90IGludGVuZGVkIHRvIGJlIHJ1biBz
-dGFuZGFsb25lLCBidXQgb25seSBhcyBhIHBhcnQgXAorb2YgdGhlICBtYWluIG9uZSBpbiB0
-aGUgcGFyZW50IGRpcikKK2VuZGlmCisKIE9VVFBVVCA6PSAuLwogaWZlcSAoIiQob3JpZ2lu
-IE8pIiwgImNvbW1hbmQgbGluZSIpCiBpZm5lcSAoJChPKSwpCg==
-
---------------boPeTQlb4MMG8ACs0OicDOlH--
+--tdaa4krfgm4lletw--
 
