@@ -1,94 +1,82 @@
-Return-Path: <linux-kernel+bounces-242567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779249289E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:41:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851C29289E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EBF41C22F6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:41:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014121F252E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC4514C5BD;
-	Fri,  5 Jul 2024 13:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A17F14B973;
+	Fri,  5 Jul 2024 13:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Sy7nOoI2"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJgm9eYG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AB913C8F9
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 13:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F6C149DF7
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 13:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720186893; cv=none; b=s2C4lkXySjpSxt5Q6malXnbcMDTBf/WtYZKA/Tg8vlam09xmGTvhyuRVa9SsJMyzUCF59Z/le7jDVEtmAtm1TQtz6CCSvUCZ9nO6V1ele7gYqVQQ25cKG7hKXNVRMkupbgNPUKqA/Qv8mA/aos60YRUgisopRIQtKj3KANkQqPc=
+	t=1720186910; cv=none; b=OjBtlE+PMJDyD4wGuAg6YAkCxA6BzHvrlclZWZLKSYYopXeH81V9616j8tnD3PIu0pMZ+Hawpp2dII/dp1w7955M5k6NR/EFdl10Wdqlzy0yA8q9ngQZzzcNhvgWm1Xm5/eXXuzCh57VkZ7dXU2QUe+YyTAlzG2mJ6X6PvUkiEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720186893; c=relaxed/simple;
-	bh=Hw6BEA+vksiXlfFVzP4dQJP4Y0NRaZ5ETGsxIyCGigo=;
+	s=arc-20240116; t=1720186910; c=relaxed/simple;
+	bh=thZNfYC8uPof+gGtq8OfZdddZaeF5427/D5+IHIKChc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ay9xci1UcEqsvDiuzkm8TaErMb8Uc4d+Rc5pZy4k57gjVr984OZuz+rFP0Pzsf+M14GE9ek00cipfvIvK8vRqaspzzKiFUP2YLDC6bFYq/YBFQzJGt9007ljbVRqzTtz5mPhizxOc5eI2lBkBJa8IREPoqiwFQVgw1kvMWUQk4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Sy7nOoI2; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35f0d49a9ebso27598f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 06:41:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1720186889; x=1720791689; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hYq4Ghm/qD4X8g59+rt7/AyXTOqvB29s1gzm0udAON4=;
-        b=Sy7nOoI2BkIySzxHpsFRKIjmQQNcdelhuEJIDmWdmfX703HpFFS++sECpiuAJ6k0cJ
-         OXdjOs2w61SbB1PPrtk/bIVGyLvZPhYYx7I+0rWNHBGtrMyniyy2Cg4H5v/WyjJcXFgT
-         bm/PBkkMjOm6fCqh4F/u8kmM2UiXUpZDPCOVo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720186889; x=1720791689;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hYq4Ghm/qD4X8g59+rt7/AyXTOqvB29s1gzm0udAON4=;
-        b=sMug1FzsnSDtole9g+rgTiajMK1q0OF9amHGCtPPdZXPdpZs4LoFC30LnYb1a0i4OQ
-         O3xYlZlC4txwQcqPxEYfe4AQVPV46dypxILx8lpoFk2WePH9PBQbXVbYMbo0z5MociDQ
-         5kIt8iSNjD+fMXSYwHOEdiVPlA2LSpD7QLSScsLy09Qffk6WIryrJSv8VbMHsjw2lFiW
-         eJF2oeYtR4G1W/Z5DqjK4HnOzn5LEWiQjJW4kmYTlpJs5gBBuV+UW+UcgS+PKhKAIM89
-         ROMll+xHA0gLCfHTN3PRtrePkXRg9gywifkUqRwiDvrWcJfnXc6acen+eL0AZvbv7Mmc
-         hiXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWS+Vuo0MdafEHfZb9F5Xnzu46Ynesu+kehZh4EfJkGV+IF0cNvbJe07AZ9abxuvCy+YSCk8AXaS8Z91Y+TKzXTn1SrEFYEg+WgdXPS
-X-Gm-Message-State: AOJu0YwAz8cRJ2TugHUalGdDyixL3WW8vyeNL7T2bEG1IIkERf/VLdiO
-	jLe1paRyc++lMNfL/ocTb5RF1lgTUD3op1Hn59lD8moyEX4It55o/H4gED7rE+8=
-X-Google-Smtp-Source: AGHT+IHy5I71tFmzj8hG6kRNj6VGoN9oGdPL1jjZSB9TbVRv2dFuN5Re/aCUVhXZIMsk78oJMav84A==
-X-Received: by 2002:a5d:5f84:0:b0:367:2da6:aa1b with SMTP id ffacd0b85a97d-3679de74a63mr3125952f8f.7.1720186889172;
-        Fri, 05 Jul 2024 06:41:29 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a0522ea3sm3762365f8f.27.2024.07.05.06.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 06:41:28 -0700 (PDT)
-Date: Fri, 5 Jul 2024 15:41:26 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: drm/sti: mark it as Odd Fixes
-Message-ID: <Zof4Bp82iu7hZsSZ@phenom.ffwll.local>
-Mail-Followup-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-References: <20240705100356.16760-1-krzysztof.kozlowski@linaro.org>
- <ZofW1v4uEFo9GscF@phenom.ffwll.local>
- <20240705-hysterical-beluga-of-courtesy-38b2e2@houat>
- <ff8b84c9-5bef-4cb9-a10b-b3bb1a017366@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7RWacj+qa3Q+4XHpCfU5AyDv7GD4xBKP8pnl20UH9GwuqYY842aIAg3N/8FD+SgxW/gQQb8COFgx75s3soxsMueXFkaFM4Kz9gqStYOgpOnmz8zlXlxHELorC2Dsnd3TN1uWaA33lr0YY/PS/jQKVXlOYy6sHSPjdpgHUb9fJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJgm9eYG; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720186909; x=1751722909;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=thZNfYC8uPof+gGtq8OfZdddZaeF5427/D5+IHIKChc=;
+  b=UJgm9eYGJkEq78IApomXcW7kjpW2zx45GU5eRieAPw3lJrPNdyxZDzx0
+   h/DxFfZUM1oROMOX0B5avNDkXDtaQi7vq7uCaSEl5lDtqGz1cEmbporLq
+   B8mvxpgzcp3N1Jy0sw9wAwiYs3b5W+LTNrsW8MVuDb44hD+n5Omao03+t
+   ExxfZ2wqVyqsqiTzYCV/DUBwjGvLLnluOYwQnln1k0Enq0XiwWtQkAwWU
+   zXfuusYnnd2cb+MifqIHhdjXQWTZIDhlg2uTQfS1b3uKCBt4VLsmQr1W+
+   LXtPMTfgBGpQ2KygK3bQzM3FAney7dQSRe6huJDEgGk29xgr0gNe0JQpZ
+   A==;
+X-CSE-ConnectionGUID: vduXcoC6Qb+FEKE0BkqqXg==
+X-CSE-MsgGUID: kO59hVvKSYOvTzVPGEvscw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="21249296"
+X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
+   d="scan'208";a="21249296"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 06:41:48 -0700
+X-CSE-ConnectionGUID: UevxvWyYTG2PP6AGyswH4Q==
+X-CSE-MsgGUID: 2hTyJIfTRpO7KhNrmdxPFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
+   d="scan'208";a="52068164"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 05 Jul 2024 06:41:44 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sPjC2-000SQq-0h;
+	Fri, 05 Jul 2024 13:41:42 +0000
+Date: Fri, 5 Jul 2024 21:41:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, minchan@kernel.org,
+	willy@infradead.org, senozhatsky@chromium.org, david@redhat.com,
+	42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>,
+	nphamcs@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Alex Shi <alexs@kernel.org>
+Subject: Re: [PATCH v2 01/20] mm/zsmalloc: add zpdesc memory descriptor for
+ zswap.zpool
+Message-ID: <202407052121.e5LTYhXc-lkp@intel.com>
+References: <20240703040613.681396-2-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,47 +85,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff8b84c9-5bef-4cb9-a10b-b3bb1a017366@linaro.org>
-X-Operating-System: Linux phenom 6.8.9-amd64 
+In-Reply-To: <20240703040613.681396-2-alexs@kernel.org>
 
-On Fri, Jul 05, 2024 at 01:33:38PM +0200, Krzysztof Kozlowski wrote:
-> On 05/07/2024 13:22, Maxime Ripard wrote:
-> > On Fri, Jul 05, 2024 at 01:19:50PM GMT, Daniel Vetter wrote:
-> >> On Fri, Jul 05, 2024 at 12:03:56PM +0200, Krzysztof Kozlowski wrote:
-> >>> Patches to STI DRM are not being picked up, so even though there is
-> >>> maintainer activity, it seems that these drivers are not being actively
-> >>> looked at.  Reflect this in maintainer status.
-> >>
-> >> Note that since the driver is in drm-misc, other committers can also pick
-> >> up patches and push them. Both Neil and Dimtry have commit rights and
-> >> should be able to pick up your patches for you, if they get stuck.
-> > 
-> > I've applied the patches.
-> > 
-> > I don't think we should merge this one though, a one-off mishap can happen.
-> 
-> Sure.
-> 
-> Folks, maybe then pattern in maintainers should be somehow changed or grew?
-> 
-> The recommendation to all submitters is to use get_maintainers.pl. b4
-> also does it. In this particular case, using get_maintainers.pl or b4
-> will result in patches not being picked up.
+Hi,
 
-I think get_maintainers.pl is correct: You get the driver maintainer, plus
-drm-misc maintainers as official fallback, plus Dave&me as fallback of
-last resorts. So all correct.
+kernel test robot noticed the following build errors:
 
-What's special with the commit rights model is that other committers that
-work all over the subsystem can also pick up the patches for you, so that
-the drm-misc mainters don't become a bottleneck. But the ideal person
-there are drm-misc committers who work in your team or company, or someone
-else where you have some goodwill credits to spend with and ask them for a
-favour. And there's just no way to model that and make sure the script
-gives you the right suggestions.
--Sima
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/alexs-kernel-org/mm-zsmalloc-add-zpdesc-memory-descriptor-for-zswap-zpool/20240703-182314
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240703040613.681396-2-alexs%40kernel.org
+patch subject: [PATCH v2 01/20] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
+config: i386-buildonly-randconfig-004-20240705 (https://download.01.org/0day-ci/archive/20240705/202407052121.e5LTYhXc-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240705/202407052121.e5LTYhXc-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407052121.e5LTYhXc-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from mm/zsmalloc.c:65:
+>> mm/zpdesc.h:48:1: error: no member named 'memcg_data' in 'page'
+      48 | ZPDESC_MATCH(memcg_data, memcg_data);
+         | ^            ~~~~~~~~~~
+   mm/zpdesc.h:40:16: note: expanded from macro 'ZPDESC_MATCH'
+      40 |         static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
+         |                       ^                     ~~
+   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^                        ~~~~~~
+   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                                  ^~~~
+   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   In file included from mm/zsmalloc.c:65:
+>> mm/zpdesc.h:48:1: error: no member named 'memcg_data' in 'zpdesc'
+      48 | ZPDESC_MATCH(memcg_data, memcg_data);
+         | ^                        ~~~~~~~~~~
+   mm/zpdesc.h:40:45: note: expanded from macro 'ZPDESC_MATCH'
+      40 |         static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
+         |                                                    ^                       ~~
+   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^                        ~~~~~~
+   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                                  ^~~~
+   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   2 errors generated.
+
+
+vim +48 mm/zpdesc.h
+
+     9	
+    10	/*
+    11	 * struct zpdesc -	Memory descriptor for zpool memory, now is for zsmalloc
+    12	 * @flags:		Page flags, PG_private: identifies the first component page
+    13	 * @lru:		Indirectly used by page migration
+    14	 * @mops:		Used by page migration
+    15	 * @next:		Next zpdesc in a zspage in zsmalloc zpool
+    16	 * @handle:		For huge zspage in zsmalloc zpool
+    17	 * @zspage:		Pointer to zspage in zsmalloc
+    18	 * @memcg_data:		Memory Control Group data.
+    19	 *
+    20	 * This struct overlays struct page for now. Do not modify without a good
+    21	 * understanding of the issues.
+    22	 */
+    23	struct zpdesc {
+    24		unsigned long flags;
+    25		struct list_head lru;
+    26		struct movable_operations *mops;
+    27		union {
+    28			/* Next zpdescs in a zspage in zsmalloc zpool */
+    29			struct zpdesc *next;
+    30			/* For huge zspage in zsmalloc zpool */
+    31			unsigned long handle;
+    32		};
+    33		struct zspage *zspage;
+    34		unsigned long _zp_pad_1;
+    35	#ifdef CONFIG_SLAB_OBJ_EXT
+    36		unsigned long memcg_data;
+    37	#endif
+    38	};
+    39	#define ZPDESC_MATCH(pg, zp) \
+    40		static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
+    41	
+    42	ZPDESC_MATCH(flags, flags);
+    43	ZPDESC_MATCH(lru, lru);
+    44	ZPDESC_MATCH(mapping, mops);
+    45	ZPDESC_MATCH(index, next);
+    46	ZPDESC_MATCH(index, handle);
+    47	ZPDESC_MATCH(private, zspage);
+  > 48	ZPDESC_MATCH(memcg_data, memcg_data);
+    49	#undef ZPDESC_MATCH
+    50	static_assert(sizeof(struct zpdesc) <= sizeof(struct page));
+    51	
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
