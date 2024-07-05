@@ -1,92 +1,130 @@
-Return-Path: <linux-kernel+bounces-242464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A00928860
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9718F928863
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7698E283A77
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DDEC2836B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2AE14A4D9;
-	Fri,  5 Jul 2024 12:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D13149C50;
+	Fri,  5 Jul 2024 12:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8KCx9+W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Sj4uwBKg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AF81487FE;
-	Fri,  5 Jul 2024 12:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E534C14A09C;
+	Fri,  5 Jul 2024 12:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720181059; cv=none; b=c8kisZpNDRhKkiOHLOATB5eGN/LkVBh1noue5XsgE+FLaC7LRQDWYdPKNfG+7PZ1s9krkrEi1HA0fkMUx0ai6N21g8jpBwwgUbMTgCaB6m0tpdyziA2WAqRqrCXnXrNT2xUdgB4CHJzxsgD4anrGCZOokbJXovxtxE8h9le00pI=
+	t=1720181218; cv=none; b=eVj0bNiKAFZEQbm6ezta30HCGvT61/QYW54osKz+hPX6hjiIkwejCFdZe3Nqq22juzsZm5yi31czX4OHu1lJU5ba1g8pes4noOm2aDGrTSrvfzpaqH2//0Y83YFLIwf14YE+lUWEtHAfJZ8EQzRpG1uMCo+6N8xGowTV78l9l0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720181059; c=relaxed/simple;
-	bh=1oUR9Y0C1q+vdr3FNHCBM/69qcTQYNHIa5X5pQnwP20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5CNEDrfBtrsjHjyreLWzLMXv6lAX75mSBlMTKbS+VmqwqdgbBoONPeiB6YBxD5a7A3uIfeHK6y7kZFkC5nxKrIW9s4Hf3e4A6IQ/364SyN4ptCKooxwlGKLoPO2iogX1Qv9mlmyABipk/8J4vrsSU5dZEfp8evt3oTQlcSPotA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8KCx9+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3417DC116B1;
-	Fri,  5 Jul 2024 12:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720181059;
-	bh=1oUR9Y0C1q+vdr3FNHCBM/69qcTQYNHIa5X5pQnwP20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N8KCx9+Wf1Y2ccoBaDCuzUe7bHZhyzChrmfBgJ9WoUkmGKnGBWTXfxT2Kogr3DWrb
-	 bCA6dllwLH53jIQRJn+j9P21TBMJg8FVaFv5MKfxDcUWfpnJapTw0RGEc9XVNUEgN1
-	 a7VZCEl7FmrYOY1fG/BbHcixlbFJz29YohawGP19e92YQNpel/S5VHkBnk71iJDxSa
-	 qND0y9oeJZrrGlPImOIEmIMwLBM+rzzTRS3VDZrJM5s9VrAj5gGPxB3Jg1jClHAd7K
-	 H5hrKTl2ZivEQ68TK6RQO3Y6aOExQNXfsRg4pE+x5R4VPVO453qbhh0AjqVbW2+g6D
-	 CNNPyCSJIhKSw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sPhfq-000000007PG-00h2;
-	Fri, 05 Jul 2024 14:04:22 +0200
-Date: Fri, 5 Jul 2024 14:04:21 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2 0/2] USB: serial: garmin_gps: annotate struct
- garmin_packet with __counted_by
-Message-ID: <ZofhReiVQ3k8IaFy@hovoldconsulting.com>
-References: <20240619-garmin_gps_counted_by-v2-0-f82f10ebbf28@gmail.com>
+	s=arc-20240116; t=1720181218; c=relaxed/simple;
+	bh=7iBAjExAUAIYqd8nG01Zv+lqqXRulBi/l0Q0xw3pJH8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WZB6xW4Du2kw/yJ1EmKwOiKqggv9rN34uSvCdHEPDsPKUU7MCqQHdmhUKEtkz4txuDuzTZGH0jXgjYgSrMjTyJP4AoNV5uFMTHYKAzq2n86IaCO80BcP6DXg3s+qHFJQmDVj3j6ta5LeBN5GWR0k8B+KcuyGxEfWfcnN3eHt2Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Sj4uwBKg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465A5CnV001485;
+	Fri, 5 Jul 2024 12:06:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=d7vbZXuZP+HYltVaOitCay
+	fQt73hu6DkMIV7yXlUA3g=; b=Sj4uwBKg2JgfKOyhxWs/tvw6dAWSmrn9/1mSHQ
+	1tG9Z/w+/lw0Q3jXM8OBZ4hiQ8EH+EK2ohAnrop7oJIm0j54jkIXwAErbmfKwTV7
+	5sZ6DzhgnNSZpRCTF06ROG8ebpIrjInNl558s4bfwI+KSLainubdBMhWnm5covQW
+	iygJtL2kyYNkk6ZUPXTswbPXk1oqkxp+16KYEZW5z/8OUueo5sD+IbFJRoLZv1kh
+	7HKfRNNWjsvs6yv3gCU5/w1gp1vcHMilfdHtAyKIlkeQf2CHWh5DB9lMUrI3uFoj
+	7Rkvn3vOJjPQNBpGx7hnpYT5se97FAMMUGNjEZ6AwcS5qmCQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yr9egcx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 12:06:53 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465C6qCu023304
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Jul 2024 12:06:52 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 5 Jul 2024 05:06:50 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Mukesh
+ Ojha" <quic_mojha@quicinc.com>
+Subject: [PATCH ] firmware: qcom: scm: Disable SDI and write no dump to download mode register
+Date: Fri, 5 Jul 2024 17:36:23 +0530
+Message-ID: <20240705120623.1424931-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619-garmin_gps_counted_by-v2-0-f82f10ebbf28@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FoIOjUBAd_hI0xKFA-yxaucyMkKQTjdH
+X-Proofpoint-ORIG-GUID: FoIOjUBAd_hI0xKFA-yxaucyMkKQTjdH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_08,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ mlxlogscore=999 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407050090
 
-On Wed, Jun 19, 2024 at 09:42:43PM +0200, Javier Carrasco wrote:
-> The size is assigned before the first reference to the flexible array
-> (see pkt_add()), which allows for a straightforward annotation without
-> further modifications.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
-> Changes in v2:
-> - Use struct_size to calculate the size of pkt.
-> - Link to v1: https://lore.kernel.org/r/20240619-garmin_gps_counted_by-v1-1-d8d816f085d9@gmail.com
-> 
-> ---
-> Javier Carrasco (2):
->       USB: serial: garmin_gps: annotate struct garmin_packet with __counted_by
->       USB: serial: garmin_gps: use struct_size to allocate pkt
+SDI is enabled for most of the Qualcomm SoCs and as per commit
+ff4aa3bc9825 ("firmware: qcom_scm: disable SDI if required")
+it was recommended to disable SDI by mentioning it in device tree
 
-Now applied (after adding parentheses to struct_size() in the summary).
+However, for some cases download mode tcsr register already configured
+from boot firmware to collect dumps and in such cases if download
+mode is set to zero(nodump mode) from kernel side and SDI is disabled
+via means of mentioning it in device tree we could end up with dump
+collection.
 
-Johan
+To disable complete dump collection mode, SDI and dload mode register
+need to be set no dump mode.
+
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ drivers/firmware/qcom/qcom_scm.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 00c379a3cceb..2e10f75a9cfd 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -1954,14 +1954,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ 	 * will cause the boot stages to enter download mode, unless
+ 	 * disabled below by a clean shutdown/reboot.
+ 	 */
+-	if (download_mode)
+-		qcom_scm_set_download_mode(true);
+-
++	qcom_scm_set_download_mode(download_mode ? true : false);
+ 
+ 	/*
+ 	 * Disable SDI if indicated by DT that it is enabled by default.
+ 	 */
+-	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled"))
++	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled") || !download_mode)
+ 		qcom_scm_disable_sdi();
+ 
+ 	ret = of_reserved_mem_device_init(__scm->dev);
+-- 
+2.34.1
+
 
