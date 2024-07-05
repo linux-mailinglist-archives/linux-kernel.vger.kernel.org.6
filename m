@@ -1,237 +1,156 @@
-Return-Path: <linux-kernel+bounces-241921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567CB928148
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:42:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3511492814D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844D2285F75
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:42:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1AAE1F23873
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEFF13AD31;
-	Fri,  5 Jul 2024 04:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49658565E;
+	Fri,  5 Jul 2024 04:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ch7LrKfQ"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEQOGGJs"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1E313A241
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 04:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545812AE6A;
+	Fri,  5 Jul 2024 04:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720154539; cv=none; b=ChPSUeKJKU871bdF3JojovPd9oNaRTYNk+8KsBQkPbAsebHQpNiPxIyw98MW/7J0CtsPXglmfZTpKqFGPCTh6D3QQfzMmDjURrSM0JAmbRaTQyXFzyyM5f5HooQ10Be2FvFFbSk9SQe0ivpEO33kdfbNAhw06vw4T0bRt/7l6m4=
+	t=1720155251; cv=none; b=nEMuMB55YxulO0RpUofOfKCJsG/NHdPzRl5etXtzfX97Q6HQgwnCLtrjdm1rvxu2qcf+0eE78d2izQPxBCWEaAd/JBnehKhfEf6Yt0Gl4ha4YT9raBbJ9qhUyeuE71wCX6TVC4pjeMeVgQAxr7yd4EfOYpZlDhNYkCkfnC174SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720154539; c=relaxed/simple;
-	bh=E6Xe8odyO9uwNBbWgmQEsel+IwoXCFV6ivzwPIjoZ0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=pbdI3LLxlVx7GxZ/tL8CxbUr/0IZediF/fJAyrCTUUOP1IiOx/EPBlNX6ylAerlKgHYilW0ZKK55q8r89yUpQQqiUTuIn/m+zqOydlngOI5Ld2//Gaaq70u7p4sV9o9PqLIQT5gAWUUVeRBj3uga7BA1Q1GFTsmBEcEPRdU0RUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ch7LrKfQ; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240705044215epoutp040add9bd3a33ecba2a1c2dd047a9ebe30~fN2_8XIdn1249912499epoutp04r
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 04:42:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240705044215epoutp040add9bd3a33ecba2a1c2dd047a9ebe30~fN2_8XIdn1249912499epoutp04r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720154535;
-	bh=iT2LYSmHr7hAnZonc/K+mtRa73bNTB7yrF0e6PtAh2Q=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Ch7LrKfQw/GtimOXT6davMdKVOSpX52FDBDaRaC9rk6LqN/fyrX8FNm2lMOddBqCF
-	 O4hSNP5RDlEw9xeQNPv5nsUgcEgJFObB+BxYRtM0HUHkK5E+H0dRhnSI0qkcQ8E6W4
-	 LbX4MgS6cfRaNXPnmgLoCqy/OauHl0+deXccv42s=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20240705044215epcas2p497083bf1d9121cefdcfacc9fb3eedc89~fN2_cjWH71289412894epcas2p4o;
-	Fri,  5 Jul 2024 04:42:15 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.102]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WFgpt48Htz4x9QH; Fri,  5 Jul
-	2024 04:42:14 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	93.9A.09848.6A977866; Fri,  5 Jul 2024 13:42:14 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240705044214epcas2p4265b3a19c9117548d04786cce7ee3de0~fN29Z7Oi91730417304epcas2p4K;
-	Fri,  5 Jul 2024 04:42:14 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240705044214epsmtrp1d001e6ad800ca57dfd416248842f2865~fN29ZMOvY2699826998epsmtrp1b;
-	Fri,  5 Jul 2024 04:42:14 +0000 (GMT)
-X-AuditID: b6c32a45-1c7ff70000002678-87-668779a63fac
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	91.3D.07412.5A977866; Fri,  5 Jul 2024 13:42:13 +0900 (KST)
-Received: from [10.229.8.168] (unknown [10.229.8.168]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240705044213epsmtip265734f2011839f859d206a31182dcdc0~fN29GCDy92509025090epsmtip2V;
-	Fri,  5 Jul 2024 04:42:13 +0000 (GMT)
-Message-ID: <9c105dbb-f443-d96a-3071-6a8ebca0f84d@samsung.com>
-Date: Fri, 5 Jul 2024 13:41:56 +0900
+	s=arc-20240116; t=1720155251; c=relaxed/simple;
+	bh=E2jAy5I7N+o8z5conGKpYZF1bx37yHfwltgnD/ccXOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GKU0vWuaShFBJz6rzJzJ6qRo8HktNlB1CbKggYYj/NyuE5GmXuRvB2b25zSNdDgE/NoxdhivVgKVrSMl3iKWMGVLvFlEMNUZiH/Yd4o0/hNAxvbIyRwHCn8y0YKpIhthDxvnyjHQ/b8UpWLBJNJ8Q/Pd0NoOsxaIJwtzLFV+A44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEQOGGJs; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52e7693c369so1668461e87.3;
+        Thu, 04 Jul 2024 21:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720155247; x=1720760047; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lQ8Be9g2pzsTx6g6CtiD+JiLK1AMOdko7+ZfugSfQzo=;
+        b=jEQOGGJsQsLNX9gxZWmNxMG1UaRHO2iPfbQIjkE0ik3UUzgzTtNpPSJBwRTfm6+Fyz
+         0aKfNLtdzimcpkcqzSc6wOMU0r/pAqWvRzco4N8alG6BjSzNMSxjZAUkGDFaXmeUdpyg
+         x5b7kJzppL72RKhv2aN+8Ic0ZCbgi93bTXfcaeRwClVK5L3qXbIBvTp8cOcmxiY1P+3a
+         xRFAHzuZ6935ZwTq1B/8y0HDWQcQeni7o3QaFU2gZ6PZOKhO3DW50KPGiEcPoPPKOArK
+         gM/HjmeFU7hThqlL+KUrMZVVogy4AbyhwKnjeO6rJ9qssNC1iJgz6mxl03scBvJfBZG7
+         WTBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720155247; x=1720760047;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lQ8Be9g2pzsTx6g6CtiD+JiLK1AMOdko7+ZfugSfQzo=;
+        b=mdpUgP4ucgylVo4LuPGInB3uYDtcbqGjN/u7w39SzDoxV7jG2G4hCjZIMGYfAz5FGN
+         R6AdL/MP7EC0Xq1k02ad4T71rDOCdGlqD1NZ/EQkFwvjul/tHZ+bwZs1yNd595WCZor/
+         Cf0DmigvVHoztKfnZkrkYiYlxM0531sCqIlBU4507KuLe8qktbsjSpPfKUHnjLqXpOUu
+         h4D5+eB0jk752aA1rxya5ileDlMPUhgdz4GoKBI4HFl7JiHBBw0MZQuYnJi6ctyHOxPu
+         bvRopsCXR2Xbf5tvh9QD4e+1uzXvZbDKu1vReHWN+LbSR/cx+SlBJBfZtqkTHce/Qsr6
+         AM4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXop3oKdwiQH0c6ESuIe+RjEWhQU3LiDDeIh8urE/VKsQz2xZxvv13PGX2+oGJCN0N+08T6kspQ4Vhq6xg5e7XOgDBtEECCd5iQCRFc1Rm3bt6Ng9XFM6IVuTX5cq63vc1vMOCfikKfQO2hGYoW
+X-Gm-Message-State: AOJu0YzBEULIGmQpNx0MzC6OmvS2A+KtNMic8B5+bcrpARRePF1DkUEK
+	eQ4/GkAkkULShvUe2V47xS9uIerFj+GDk8v8mI8XYddds4VEZ8gW
+X-Google-Smtp-Source: AGHT+IGj44uGCh9JIY4RYcfQemCEKLBK5WUZyizfBrWxRR2/ZppG5Hpmnmc4T+lCs23rpz8eZdLjpg==
+X-Received: by 2002:ac2:5a5c:0:b0:52e:a008:8f39 with SMTP id 2adb3069b0e04-52ea06f55f7mr2523055e87.59.1720155246515;
+        Thu, 04 Jul 2024 21:54:06 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab3b255sm2669892e87.260.2024.07.04.21.54.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 21:54:05 -0700 (PDT)
+Message-ID: <62e4ee02-9b71-4281-b2b4-fd99c55ec585@gmail.com>
+Date: Fri, 5 Jul 2024 07:54:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
-	Thunderbird/102.11.0
-Subject: Re: [PATCH 3/5] arm64: dts: exynos: add initial CMU clock nodes in
- Exynos Auto v920
-To: Sunyeal Hong <sunyeal.hong@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-In-Reply-To: <20240705021110.2495344-4-sunyeal.hong@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/24] mfd: rohm-bd9576: Constify read-only regmap
+ structs
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Xu Yilun <yilun.xu@intel.com>,
+ Tom Rix <trix@redhat.com>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+ Andy Shevchenko <andy@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Tim Harvey <tharvey@gateworks.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20240704-mfd-const-regmap_config-v2-0-0c8785b1331d@gmail.com>
+ <20240704-mfd-const-regmap_config-v2-6-0c8785b1331d@gmail.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240704-mfd-const-regmap_config-v2-6-0c8785b1331d@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmqe6yyvY0g9ZmWYsH87axWVz/8pzV
-	4vz5DewWH3vusVpc3jWHzWLG+X1MFhdPuVocftPOavHv2kYWi6Zl65kcuDze32hl99i0qpPN
-	o2/LKkaPz5vkAliism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVc
-	fAJ03TJzgO5RUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYF+gVJ+YWl+al6+Wl
-	llgZGhgYmQIVJmRntMxZxFYwTaLi54sZLA2MZ4W6GDk5JARMJP7+ucfWxcjFISSwg1Hi+o2v
-	jCAJIYFPjBKfmlghEt8YJU5M+sYE07Hywj8miMReRonbv5axQnS8ZpS4+csCxOYVsJO41LKG
-	BcRmEVCR+DfzGjtEXFDi5MwnYHFRgWiJ1mX32UBsYYE4iRtLNzKCDBURWMAkcX7XXrChzAIJ
-	EksOf2CDsMUlbj2ZD3YFm4C2xPf1i8FqOAUcJA60HWGHqJGX2P52DjPIIAmBqRwSy2/vAJrK
-	AeS4SCw/LQPxgbDEq+Nb2CFsKYmX/W1Qdr5E25UzUHaNxMYFlxghbHuJRWd+soOMYRbQlFi/
-	Sx9iorLEkVssEFv5JDoO/2WHCPNKdLRBA1dN4v7Uc2wQtozEpCMroUHoIbFjyizmCYyKs5AC
-	ZRaSH2ch+WUWwt4FjCyrGMVSC4pz01OLjQoM4VGdnJ+7iRGcULVcdzBOfvtB7xAjEwfjIUYJ
-	DmYlEV6p981pQrwpiZVVqUX58UWlOanFhxhNgVEzkVlKNDkfmNLzSuINTSwNTMzMDM2NTA3M
-	lcR577XOTRESSE8sSc1OTS1ILYLpY+LglGpgYmxgPSBvEP9r4bmtwVfyhUVN3RfE3IrVVSvb
-	o9TAnLaDt0ZFN6b1mNy7gqjwn62CXpcSY1J3b/RKC7F43iPpGfd2TlrxYwH3Fb+/7NX/ePv+
-	M+/Vm/7r/F50Lq3z1g/lqBu731iskq45u5bv0WWXeR9ZVBNXys5dPZk1i+PRUl6n4wo2+8wu
-	dC/eEf5O59iE5NMiJ8MtpuhFNj0vUFE+e9z/u2agX0ZktahOclZ+TLW8a+4abz55u8OyTvtM
-	JKyk7houn7SzSPYbe+s519fvRF9N3vboqut9/69b/xlNb5dh3ei191Hg9uLQr64rkrQZ5j3/
-	zrRpip7Zlasiq0Kz3nP6Lp33q8PeX8zghqqhEktxRqKhFnNRcSIAUbYejTEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42LZdlhJXndpZXuawclr5hYP5m1js7j+5Tmr
-	xfnzG9gtPvbcY7W4vGsOm8WM8/uYLC6ecrU4/Kad1eLftY0sFk3L1jM5cHm8v9HK7rFpVSeb
-	R9+WVYwenzfJBbBEcdmkpOZklqUW6dslcGW0zFnEVjBNouLnixksDYxnhboYOTkkBEwkVl74
-	x9TFyMUhJLCbUaJhxg9GiISMxPJnfWwQtrDE/ZYjrCC2kMBLRomTh5xAbF4BO4lLLWtYQGwW
-	ARWJfzOvsUPEBSVOznwCFhcViJZY/fkCWK+wQJzEjaUbGUGWiQgsYpKYt6QNrIFZIEHi/tbd
-	bBALTjJK9B6QgIiLS9x6Mp8JxGYT0Jb4vn4x2CBOAQeJA21HoHrNJLq2djFC2PIS29/OYZ7A
-	KDQLyR2zkIyahaRlFpKWBYwsqxglUwuKc9Nzkw0LDPNSy/WKE3OLS/PS9ZLzczcxgiNJS2MH
-	4735//QOMTJxMB5ilOBgVhLhlXrfnCbEm5JYWZValB9fVJqTWnyIUZqDRUmc13DG7BQhgfTE
-	ktTs1NSC1CKYLBMHp1QDE8fGrCk75tyPEzu6OcGBsd/hVpVPSctKXZMjijwrFJvfH147nSV2
-	+rSVZ6Oak6JO2155vNszVX/vp6irm7JOT2/3rTl0KlQsUnqnyJn2CZOZdvauj2X5uLlWxep6
-	o8ZB/jxXV4G3S2YLXl4fs0B34/2uW3HXzdfreB84U7/NMiBL6e0K416js2/Vf1vdd5/XL5l+
-	rbg3bYvUS/UQ5ua1XyfIGj4VcVLQf6nIG+YTL7BuxralIjxaDiyLX/dkTjR4tLLX+tGE7ycT
-	VK2W/7vFu4lf4uip0zMrU0yvCaXwn5b6LLwz2i/uWm7vCbFtaYmXg6cErVEvP6rOy/B0MyNn
-	9fSDpnG7q1enrY+St+cXVWIpzkg01GIuKk4EAGxo1mETAwAA
-X-CMS-MailID: 20240705044214epcas2p4265b3a19c9117548d04786cce7ee3de0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240705021212epcas2p169cdc84203e007c7a25bb53f41fc61a0
-References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
-	<CGME20240705021212epcas2p169cdc84203e007c7a25bb53f41fc61a0@epcas2p1.samsung.com>
-	<20240705021110.2495344-4-sunyeal.hong@samsung.com>
 
-Hi Sunyeal,
+On 7/4/24 20:23, Javier Carrasco wrote:
+> `bd957x_regmap`, `bd9576_irqs` and `bd9576_irq_chip` are not modified
+> and can be declared as const to move its data to a read-only section.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-On 7/5/24 11:11, Sunyeal Hong wrote:
-> Add cmu_top, cmu_peric0 clock nodes and
-> switch USI clocks instead of dummy fixed-rate-clock.
->
-> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+Thanks! Much appreciated.
+
 > ---
->   .../arm64/boot/dts/exynos/exynosautov920.dtsi | 40 +++++++++++++------
->   1 file changed, 27 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index c1c8566d74f5..1659c0a375c9 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -6,6 +6,7 @@
->    *
->    */
+>   drivers/mfd/rohm-bd9576.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mfd/rohm-bd9576.c b/drivers/mfd/rohm-bd9576.c
+> index 3a9f61961721..17323ae39803 100644
+> --- a/drivers/mfd/rohm-bd9576.c
+> +++ b/drivers/mfd/rohm-bd9576.c
+> @@ -57,7 +57,7 @@ static const struct regmap_access_table volatile_regs = {
+>   	.n_yes_ranges = ARRAY_SIZE(volatile_ranges),
+>   };
 >   
-> +#include <dt-bindings/clock/samsung,exynosautov920.h>
->   #include <dt-bindings/interrupt-controller/arm-gic.h>
->   #include <dt-bindings/soc/samsung,exynos-usi.h>
+> -static struct regmap_config bd957x_regmap = {
+> +static const struct regmap_config bd957x_regmap = {
+>   	.reg_bits = 8,
+>   	.val_bits = 8,
+>   	.volatile_table = &volatile_regs,
+> @@ -65,7 +65,7 @@ static struct regmap_config bd957x_regmap = {
+>   	.cache_type = REGCACHE_MAPLE,
+>   };
 >   
-> @@ -38,17 +39,6 @@ xtcxo: clock {
->   		clock-output-names = "oscclk";
->   	};
+> -static struct regmap_irq bd9576_irqs[] = {
+> +static const struct regmap_irq bd9576_irqs[] = {
+>   	REGMAP_IRQ_REG(BD9576_INT_THERM, 0, BD957X_MASK_INT_MAIN_THERM),
+>   	REGMAP_IRQ_REG(BD9576_INT_OVP, 0, BD957X_MASK_INT_MAIN_OVP),
+>   	REGMAP_IRQ_REG(BD9576_INT_SCP, 0, BD957X_MASK_INT_MAIN_SCP),
+> @@ -76,7 +76,7 @@ static struct regmap_irq bd9576_irqs[] = {
+>   	REGMAP_IRQ_REG(BD9576_INT_SYS, 0, BD957X_MASK_INT_MAIN_SYS),
+>   };
 >   
-> -	/*
-> -	 * FIXME: Keep the stub clock for serial driver, until proper clock
-> -	 * driver is implemented.
-> -	 */
-> -	clock_usi: clock-usi {
-> -		compatible = "fixed-clock";
-> -		#clock-cells = <0>;
-> -		clock-frequency = <200000000>;
-> -		clock-output-names = "usi";
-> -	};
-> -
->   	cpus: cpus {
->   		#address-cells = <2>;
->   		#size-cells = <0>;
-> @@ -182,6 +172,28 @@ chipid@10000000 {
->   			reg = <0x10000000 0x24>;
->   		};
->   
-> +		cmu_peric0: clock-controller@10800000 {
-> +			compatible = "samsung,exynosautov920-cmu-peric0";
-> +			reg = <0x10800000 0x8000>;
-> +			#clock-cells = <1>;
-> +
-> +			clocks = <&xtcxo>,
-> +				 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
-> +				 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
-> +			clock-names = "oscclk",
-> +				      "dout_clkcmu_peric0_noc",
-> +				      "dout_clkcmu_peric0_ip";
-> +		};
-> +
-> +		cmu_top: clock-controller@11000000 {
-> +			compatible = "samsung,exynosautov920-cmu-top";
-> +			reg = <0x11000000 0x8000>;
-> +			#clock-cells = <1>;
-> +
-> +			clocks = <&xtcxo>;
-> +			clock-names = "oscclk";
-> +		};
-> +
->   		gic: interrupt-controller@10400000 {
->   			compatible = "arm,gic-v3";
->   			#interrupt-cells = <3>;
-> @@ -213,7 +225,8 @@ usi_0: usi@108800c0 {
->   			#address-cells = <1>;
->   			#size-cells = <1>;
->   			ranges;
-> -			clocks = <&clock_usi>, <&clock_usi>;
-> +			clocks = <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>,
-> +				 <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>;
+> -static struct regmap_irq_chip bd9576_irq_chip = {
+> +static const struct regmap_irq_chip bd9576_irq_chip = {
+>   	.name = "bd9576_irq",
+>   	.irqs = &bd9576_irqs[0],
+>   	.num_irqs = ARRAY_SIZE(bd9576_irqs),
+> 
 
-it seems that the clocks have been switched.
-CLK_DOUT_PERIC0_USI00_USI is ipclk and CLK_MOUT_PERIC0_NOC_USER is pclk of USI.
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
 
-  
-
->   			clock-names = "pclk", "ipclk";
->   			status = "disabled";
->   
-> @@ -224,7 +237,8 @@ serial_0: serial@10880000 {
->   				interrupts = <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH>;
->   				pinctrl-names = "default";
->   				pinctrl-0 = <&uart0_bus>;
-> -				clocks = <&clock_usi>, <&clock_usi>;
-> +				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
-> +					 <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
->   				clock-names = "uart", "clk_uart_baud0";
->   				samsung,uart-fifosize = <256>;
->   				status = "disabled";
-
-Thanks
-Jaewon Kim
+~~ When things go utterly wrong vim users can always type :help! ~~
 
 
