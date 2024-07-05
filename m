@@ -1,228 +1,187 @@
-Return-Path: <linux-kernel+bounces-242686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F10928B70
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 286A1928B72
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D431C24220
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:16:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7E71C2463C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9405616D30E;
-	Fri,  5 Jul 2024 15:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7028516D9AA;
+	Fri,  5 Jul 2024 15:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="OyXB+XHu"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hCeQYlnA"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1A516CD00
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF561487D8
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720192484; cv=none; b=JwydI/AI0WHZvh/pYa59E1EPplTr2eM72eQOWVDRzfBbrohy1pLxkMPREUAv8WXCMjrG7fu11c+UDyPj6jjOGv/7rwJvdEj1QZwSuGa7pmuTfx6naZNFwBs7k+PH6PbZuBEGJgerRaFFx/bJLPWcgE3vvHDsbXBrZJD6ZksgRA0=
+	t=1720192511; cv=none; b=ANB/1p8FPmGvGTowAYbJ3tJRo5JMljECa6gJeEw5pFSoUO1nXRA+yJEGxl7DCAxG8L/RJdrKjsjNmiONUFR8E75H9ms6Celp5bpahZ+pjjYiMChrWvWuoZR3rfTQJOInKTCmH8i36i/Udr5RZF3Oiksg5p3C62FoDqk7D0Jjso4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720192484; c=relaxed/simple;
-	bh=Rjlq4dX4IpqRTW8Ul3XgLuaaKOqQ40fAHqLrl/T0Tjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=G72tW/RJRziVhiVYYZQPr3gfz7W2ABwVmnhdpIQWKDdKwMS6ZHK+nEjOn6qDEfJzBVEFXmqCg3ggYYzT285sSpWHOyrrXk7UsGUHDFEr1gHropM1kl2wK+z69WkrKUJOQ9ld4e1ksA9PaU13qZHQilgO68CDJBHLcZjaHxCnZvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=OyXB+XHu; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee92fe5fdcso1555731fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 08:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1720192481; x=1720797281; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sY3Bk5gxpl8CBAzjGC4Q5ufFUhr18OlzUViMV+Tpk6Q=;
-        b=OyXB+XHusV0Jh7GHFoeG0FdwmzVcw7AIM1ue7/PlLZNJkL+aGqt14nSPH7Oj/Taa4d
-         LKGVNd5a5yYQjeo7lUJIucsOf8ID62B5rPQ0+knWczhrYBaVjnMnZJhmzTm/jZGQv9hO
-         dvKlMLTWYLGASLaciiCSnn1CR/0Rx44ZZAKdo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720192481; x=1720797281;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sY3Bk5gxpl8CBAzjGC4Q5ufFUhr18OlzUViMV+Tpk6Q=;
-        b=WgBfvkxNqUQL7SvT1B/J6ai+Pcpim8+lkRy6DYjjBCU/C3uHJsQysbAzaLxkdKDnYu
-         FwBo9e44V20hv7YqH7Me5vzoWi2Rw63iO78oAqx5bzg04rzCqdi398FjtDueuR3cPMP5
-         zJQD/s7C8nOGH2XFT6QlGeCLZyH0aFpBSQQg6OzGZBj4bqDOW7BBUpMnZ+9atfHnbwz1
-         WJ60Ft+22VI0Ys5Xn6Dbyia97IhR7dBT8btzgvFnxwpi0LJsQ+Km9UoNTz9gi0tr1HCQ
-         a2ru9j4FpwYd/PyLZS8N0+F89QXHyl292ZxqbMRklGA5YzpNG5YKrDZRbaO/TyPgJSgm
-         oeOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWX7G0tmnduaL4aAYElQZLGSp/jfhf/kNT/lky6DvCALQTMrhhJnS2F4ThgJe/456gu5OnPO+RO9QFLrhF+Q9DBmoeDJMlJfUmpFmYg
-X-Gm-Message-State: AOJu0YzRmDyQR6IFj091W75u3tYbiUX3vYoXBMu7rPm/NVYmknNjBSYv
-	Ps3GaaYddwb8Z+o6h5/cTu9QKkQB3OizDwe5AgXRqt6WVg78NPnvHBkXSXp8IGB6pDeAwYv+AOy
-	yG+Q=
-X-Google-Smtp-Source: AGHT+IGs8Ho/KWgUMyRlrMRcWi0P3DmQIACNh3RTD/PyyzOhyfwljzyw2Z8tMfSfoepNS97p/7uHqg==
-X-Received: by 2002:a2e:9089:0:b0:2ee:87d8:c937 with SMTP id 38308e7fff4ca-2ee8ec4e32cmr33330071fa.0.1720192480745;
-        Fri, 05 Jul 2024 08:14:40 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d5116sm67180705e9.10.2024.07.05.08.14.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 08:14:40 -0700 (PDT)
-Date: Fri, 5 Jul 2024 17:14:38 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Airlie <airlied@gmail.com>,
-	DRI Development <dri-devel@lists.freedesktop.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [PULL] drm-fixes for v6.10
-Message-ID: <ZogN3gNPBVb29Vgl@phenom.ffwll.local>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Airlie <airlied@gmail.com>,
-	DRI Development <dri-devel@lists.freedesktop.org>,
-	LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1720192511; c=relaxed/simple;
+	bh=I5qnt7eNv1oH86ZEyuQAkRUZ7jxEDsUS86Git0ulbT4=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=P9SDYAK5i+pLTd1nHGCrolgam7Pyuq2DvYXM9owUrBq+vEsm4aB+sWVT2vq2RmTHIHoo6vfLuQYiRqNdcb7cKTUq5ib7F0+2jtzStlFb+hcS0neKZBvRGlVYY1UWxF0YvaiuMCxcNcujbegU5e6PKY1/eTBFoyN26xLbPk5g3Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hCeQYlnA; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 465FEnOf063250;
+	Fri, 5 Jul 2024 10:14:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1720192490;
+	bh=pxHBl3JxTXfLPHWST+yT08WLecjyDtqhyPWFl2R9XO4=;
+	h=Date:From:To:CC:Subject;
+	b=hCeQYlnApfCGv1yMDgLVIO+jdF8nGiRkSylgvC8PI2y8bbSDQrg7Tf3hVjiHFMzNh
+	 u6lxW2NiJbEGQwN/D1O5hkbHOkwDNB5y5i2InU9FPONa8NIz97rUZYtlCTu9CFleq5
+	 BgNRsl9Mw0lvMgCiUt4zOOZ0DvTX68oodumG7cSc=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 465FEnSe011599
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 5 Jul 2024 10:14:49 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 5
+ Jul 2024 10:14:49 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 5 Jul 2024 10:14:49 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 465FEnXB027305;
+	Fri, 5 Jul 2024 10:14:49 -0500
+Date: Fri, 5 Jul 2024 10:14:49 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Arnd <arnd@arndb.de>, Olof <olof@lixom.net>, SoC <soc@kernel.org>
+CC: <arm@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tony
+ Lindgren <tony@atomide.com>
+Subject: [GIT PULL] soc: ti: Driver updates for v6.11
+Message-ID: <20240705151449.s4rngkehjn73favn@stream>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ds5cc3igitvhtjwr"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Operating-System: Linux phenom 6.9.7-amd64 
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Linus,
+--ds5cc3igitvhtjwr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Dave is on vacations, should be back next week. Just small fixes all over
-here, all quiet as it should.
+Hi,
 
-Cheers, Sima
+Please pull:
 
-drm-fixes-2024-07-05:
-drm-fixes for v6.10-rc7
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-drivers:
-- amd: mostly amdgpu display fixes + radeon vm NULL deref fix
-- xe: migration error handling + typoed register name in gt setup
-- i915: usb-c fix to shut up warnings on MTL+
-- panthor: fix sync-only jobs + ioctl validation fix to not EINVAL
-  wrongly
-- panel quirks
-- nouveau: NULL deref in get_modes
-
-drm core:
-- fbdev big endian fix for the dma memory backed variant
-
-drivers/firmware:
-- fix sysfb refcounting
-
-Cheers, Daniel
-
-The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
-
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
 are available in the Git repository at:
 
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-07-05
+  https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git tags/ti-driv=
+er-soc-for-v6.11
 
-for you to fetch changes up to 3c6f5afd91cfacba9f43fd388f2d88c85195ae32:
+for you to fetch changes up to b87a1cbb3385a806f8abfd9b8a2191e4c6620347:
 
-  Merge tag 'amd-drm-fixes-6.10-2024-07-03' of https://gitlab.freedesktop.org/agd5f/linux into drm-fixes (2024-07-05 12:54:14 +0200)
-
-----------------------------------------------------------------
-drm-fixes for v6.10-rc7
-
-drivers:
-- amd: mostly amdgpu display fixes + radeon vm NULL deref fix
-- xe: migration error handling + typoed register name in gt setup
-- i915: usb-c fix to shut up warnings on MTL+
-- panthor: fix sync-only jobs + ioctl validation fix to not EINVAL
-  wrongly
-- panel quirks
-- nouveau: NULL deref in get_modes
-
-drm core:
-- fbdev big endian fix for the dma memory backed variant
-
-drivers/firmware:
-- fix sysfb refcounting
+  dt-bindings: soc: ti: Move ti,j721e-system-controller.yaml to soc/ti (202=
+4-07-01 08:09:27 -0500)
 
 ----------------------------------------------------------------
-Alex Deucher (1):
-      drm/amdgpu/atomfirmware: silence UBSAN warning
+TI SoC driver updates for v6.11
 
-Alvin Lee (1):
-      drm/amd/display: Account for cursor prefetch BW in DML1 mode support
+- Update TISCI protocol URL link  which was dead
+- socinfo: Add j721E SR 2.0 detection support
+- MAINTAINER list additions: ti,pruss.yaml and ti,j721e-system-controller.y=
+aml
+- pm33xx: log statement improvement
+- knav_qmss: minor data structure optimization
 
-Boris Brezillon (2):
-      drm/panthor: Don't check the array stride on empty uobj arrays
-      drm/panthor: Fix sync-only jobs
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      soc: ti: knav_qmss: Constify struct knav_range_ops
 
-Daniel Vetter (4):
-      Merge tag 'drm-intel-fixes-2024-07-02' of https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
-      Merge tag 'drm-xe-fixes-2024-07-04' of https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-      Merge tag 'drm-misc-fixes-2024-07-04' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Merge tag 'amd-drm-fixes-6.10-2024-07-03' of https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+MD Danish Anwar (1):
+      MAINTAINERS: Add entry for ti,pruss.yaml to TI KEYSTONE MULTICORE NAV=
+IGATOR DRIVERS
 
-Fangzhi Zuo (1):
-      drm/amd/display: Update efficiency bandwidth for dcn351
+Neha Malcom Francis (1):
+      soc: ti: k3-socinfo: Add J721E SR2.0
 
-Imre Deak (1):
-      drm/i915/display: For MTL+ platforms skip mg dp programming
+Richard Genoud (2):
+      dt-bindings: ti: fix TISCI protocol URL link
+      firmware: ti_sci: fix TISCI protocol URL link
 
-John Schoenick (1):
-      drm: panel-orientation-quirks: Add quirk for Valve Galileo
+Roger Quadros (1):
+      dt-bindings: soc: ti: Move ti,j721e-system-controller.yaml to soc/ti
 
-Ma Ke (1):
-      drm/nouveau: fix null pointer dereference in nouveau_connector_get_modes
+Vasyl Gomonovych (1):
+      soc: ti: pm33xx: Fix missing newlines in log statements
 
-Matt Roper (1):
-      drm/xe/mcr: Avoid clobbering DSS steering
+ Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml            | 2 =
++-
+ Documentation/devicetree/bindings/clock/ti,sci-clk.yaml               | 2 =
++-
+ Documentation/devicetree/bindings/reset/ti,sci-reset.yaml             | 2 =
++-
+ Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml           | 2 =
++-
+ .../bindings/{mfd =3D> soc/ti}/ti,j721e-system-controller.yaml          | =
+4 ++--
+ MAINTAINERS                                                           | 1 +
+ drivers/firmware/ti_sci.h                                             | 2 =
++-
+ drivers/soc/ti/k3-socinfo.c                                           | 2 =
++-
+ drivers/soc/ti/knav_qmss.h                                            | 2 =
++-
+ drivers/soc/ti/knav_qmss_acc.c                                        | 2 =
++-
+ drivers/soc/ti/knav_qmss_queue.c                                      | 2 =
++-
+ drivers/soc/ti/pm33xx.c                                               | 4 =
+++--
+ 12 files changed, 14 insertions(+), 13 deletions(-)
+ rename Documentation/devicetree/bindings/{mfd =3D> soc/ti}/ti,j721e-system=
+-controller.yaml (96%)
 
-Matthew Auld (1):
-      drm/xe: fix error handling in xe_migrate_update_pgtables
+--=20
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5=
+ 849D 1736 249D
 
-Matthew Schwartz (1):
-      drm: panel-orientation-quirks: Add labels for both Valve Steam Deck revisions
+--ds5cc3igitvhtjwr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Pierre-Eric Pelloux-Prayer (1):
-      drm/radeon: check bo_va->bo is non-NULL before using it
+-----BEGIN PGP SIGNATURE-----
 
-Roman Li (1):
-      drm/amd/display: Fix array-index-out-of-bounds in dml2/FCLKChangeSupport
+iQIzBAABCgAdFiEE+KKGk1TrgjIXoxo03bWEnRc2JJ0FAmaIDd8ACgkQ3bWEnRc2
+JJ2zTg/9HgAcxzlVJjtsVovpga3vZTtcSOb9RvdNrKMrERe0TwEBzUA7dFnj0lLy
+xPQKGEorhrCHc/50j/VeSkgGbPtLaOGhjpzxn7bUqBR+9BTlviBqn7nDujCl6fW5
+INt2hlKbMm+l6LTX7/CTUWBBRaoC2AqibGtU4ZSWFzWA/G5UAABXK3E2OhgSFPiw
+FfNVIDzSzwHw4kDTPIUMdnCKue0UfCFMF/JyCqXYt4wd0SuWEqDnT/s+e0qm/kwO
++LAOyrcjjCDS1vKc21ayhSz9T05WsHwJnGtlWgd9WHTE+lumsYoZMU7eoc78aE4E
+YuQJO3nIJVLSTCtQ9jn7A+y20/hSV8GsqxXPmxKQAxxhQdFoR6VdB2bkwKGMwtRX
+5p9a/MfJRfPxDdQzU0THHsAN2YegUUEEBsTsulkUfSWh/hBtMsfYrMM55d0DHdte
+mo6y+xtuCbzP4etIvyFzrWq45OYrsd2+mX1iUu1+LUYPTC1eR+A38OXIfd4D89CU
+3+RohINUHJmEQ/qF96M0o1WvbcL2OvMxFOjpuNqCb8IarYT24krW3V017CIYo1eU
+2a0y6/8n74Y2EmH+alDSCmRSEMwzw3SkSLCLhaKWF34Jm/Zr2jbgtl4ynXqsbMUE
+t1EU39z+Vf3ioGdwLQhSBFYQ9E+9gEvJ4gvI82/dQLItTXCropU=
+=HovR
+-----END PGP SIGNATURE-----
 
-Thomas Hellström (1):
-      drm/ttm: Always take the bo delayed cleanup path for imported bos
-
-Thomas Huth (1):
-      drm/fbdev-generic: Fix framebuffer on big endian devices
-
-Thomas Zimmermann (1):
-      firmware: sysfb: Fix reference count of sysfb parent device
-
-Tom Chung (3):
-      drm/amd/display: Reset freesync config before update new state
-      drm/amd/display: Add refresh rate range check
-      drm/amd/display: Fix refresh rate range for some panel
-
- drivers/firmware/sysfb.c                           | 12 +++--
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 53 +++++++++++++++++++++-
- .../amd/display/dc/dml/dcn32/display_mode_vba_32.c |  3 ++
- .../amd/display/dc/dml2/dml2_translation_helper.c  |  1 +
- drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c   |  2 +-
- drivers/gpu/drm/amd/include/atomfirmware.h         |  2 +-
- drivers/gpu/drm/drm_fbdev_generic.c                |  3 +-
- drivers/gpu/drm/drm_panel_orientation_quirks.c     |  9 +++-
- drivers/gpu/drm/i915/display/intel_ddi.c           |  3 ++
- drivers/gpu/drm/nouveau/nouveau_connector.c        |  3 ++
- drivers/gpu/drm/panthor/panthor_drv.c              |  6 +--
- drivers/gpu/drm/panthor/panthor_sched.c            | 44 +++++++++++++-----
- drivers/gpu/drm/radeon/radeon_gem.c                |  2 +-
- drivers/gpu/drm/ttm/ttm_bo.c                       |  1 +
- drivers/gpu/drm/xe/xe_gt_mcr.c                     |  6 +--
- drivers/gpu/drm/xe/xe_migrate.c                    |  8 ++--
- include/uapi/drm/panthor_drm.h                     |  5 ++
- 17 files changed, 132 insertions(+), 31 deletions(-)
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+--ds5cc3igitvhtjwr--
 
