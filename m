@@ -1,126 +1,150 @@
-Return-Path: <linux-kernel+bounces-242827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCB1928DA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:56:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23299928DA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705881C21F07
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:56:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A177CB225CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD2116EB49;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9D016DEB3;
 	Fri,  5 Jul 2024 18:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZyA44XUk"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n0w4D5h9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ADF15B992
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 18:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D185465B;
+	Fri,  5 Jul 2024 18:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720205760; cv=none; b=hWzRRxydr1R9/AWGb2GQe3P/XiFNBpvyKeFrEP3K7U//6fynrwU84720AYrq8tu74V+iWUN8z3PJrGLSnxbOVgmvhQGA3TJAhaXlAOAyuHUTA7qBhO/xUAnAlbSrYxpw4Sm3Hu4QAo6rnY2pqWxAidtbJPLCSMBTbGX/jLEH0Ds=
+	t=1720205760; cv=none; b=aXbQeBmB2nNtPO9APBBTkE7gdFW/IQlR94cJoedDOEHefFlh6HG83knQgQd6Y81w5/EBQzFhqKoEdmw3lzu8d//ZkIk7ZrCvCtchLcjSTIEzXB0mKTpfQu8bDx/qs+pbpC4bE7ymQ96R4Xh96XBNwtgFoGQMguGg1WBxygv34qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720205760; c=relaxed/simple;
-	bh=crLFsjy3aYw8IUr9kg3Bgeau9zFg4Rj+PWHrP/Wxqog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJzupnQQz+MQLVVdNp366CqGUGiRl8ZnQYxTo7jbSOpi1DYIFzTmzGqfhQ/ZadoRkrQnuUdYInPgo7RwHvEbidA0pL8wZ3ZLAt9fL5VmMBiWcud9Nn6LMEeDAMrsegKpvCjFg+zH1sKI1ls1JJt2/u9LwFP/6FWKXfajPPaxULw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZyA44XUk; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-75e15a48d6aso1245209a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 11:55:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1720205759; x=1720810559; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RaVLjoHzTdUX4sBfGSImQvpT2vm1WoW6FtbAHmtzZVw=;
-        b=ZyA44XUkTBy2wspGeN0CbzbOfluATp2aBoRFTejTKi5vk9bWQI2878jOxxW7A4vDhr
-         PJQ8JJuBiQ91PJ+B/zDyKO3MHNmZ5OjsNwx3Huh7FjPldrB6CpHDxkOpehgesZiOP83t
-         aRFlGMEwXRE18RZUMwvXMMk5ozeZBmPoixRuA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720205759; x=1720810559;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RaVLjoHzTdUX4sBfGSImQvpT2vm1WoW6FtbAHmtzZVw=;
-        b=HHFOkWV8tZDkQlX+NiRml/YeqsmkqQCoNSOh1l4xN8qDuDt4O5U+LJ2IYjuQKVTkHd
-         a62xU3aqVRpECiQ3UPWuQ6056FrBI5fj4rLPSc6W8dZJXf2IEr3mQKunkJ8GMZ7DUZul
-         w66Q++GqIASGmMydqSGV2c7pDhdC9AmZDmjKNLcAwSmO0uM5ULhJuUKdkImlXM13RcQ9
-         wIgTpvkl7UEJtH3H++uj/sPPuXZJ7AlY6FUp5kcwasNzQcNdwggeh3/ej8N87Ylm+x/D
-         D159TH6RRhH4HcBL4rlrp00mq90LIpuJo+hH4/NIk5bdJELnJDg/j1uEKtd208EM2i8z
-         nxtA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6Slh11XcUBNObGPZ3PoOf9fuHPOTRjSTjnYEhziYU4Y42Fu3i449oPhp/KrBYKeGUNKYR43YCDM6tkeqrqW9gnI52h0flS4E9rZfZ
-X-Gm-Message-State: AOJu0Ywvps7sTYOY+0vosm9WdZxzo/8lqp4FacCL7GT5HV9BarNrXSS7
-	dc3FYkhtr0GrVmBApPnBY2hK8SYE3vxJ9lpPUwbzzE3RrniJY135Rk2/HDGjTA==
-X-Google-Smtp-Source: AGHT+IEZDDQ1xVg8ajrF910XkrCyc3T3zygzrPPfal/9dd33RTK+teUfJ40f9RPfqO1AZQzPqLGOmg==
-X-Received: by 2002:a05:6a21:6f01:b0:1c0:defa:b68e with SMTP id adf61e73a8af0-1c0defab8e3mr2032690637.39.1720205758826;
-        Fri, 05 Jul 2024 11:55:58 -0700 (PDT)
-Received: from prme-hs2-i1009 ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb4f6884b6sm15663335ad.48.2024.07.05.11.55.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Jul 2024 11:55:58 -0700 (PDT)
-Date: Fri, 5 Jul 2024 11:55:39 -0700
-From: Tim Merrifield <tim.merrifield@broadcom.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-	Xin Li <xin3.li@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Kai Huang <kai.huang@intel.com>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Brian Gerst <brgerst@gmail.com>, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	virtualization@lists.linux.dev, alex.james@broadcom.com,
-	doug.covelli@broadcom.com, jeffrey.sheldon@broadcom.com
-Subject: Re: [PATCH 0/2] Support userspace hypercalls for TDX
-Message-ID: <20240705185529.GA16769@prme-hs2-i1009>
-References: <cover.1720046911.git.tim.merrifield@broadcom.com>
- <20240704130505.GT11386@noisy.programming.kicks-ass.net>
+	bh=7seUvFVoyQmIN5FBQZbQICDn3NQ9rwhq9ufulaQsPoI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aUb/vRHDeiFgIZVlA19d0QgEMzYBdqStFKGbb7gAQhqhnfyjV79CDsSZrINcios7l1QoxWbuszJJlsGQBaLnJlmOuR6rhnZ/kC/VS6Il8bo50/cLz52FbiAlKVX4BPMAc604j2H5udgTVvAx/ZElVgIHAqkYlGS+x+7Bf7AMLsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n0w4D5h9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465A6GCL005913;
+	Fri, 5 Jul 2024 18:55:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=LvqhVjitbKaxqla5Sc6GP9c7
+	xklkshXFW2zL5IvkQ8s=; b=n0w4D5h9YZyMvTQQZBEHJ4BO9dFnVVTv0Q980PiT
+	S5SbsTFmNczBT/FbmI0qsapDlEZYn19gf5TriQxqNU471mZH6GqPH/LeZYzVYvN3
+	XfncN9XpLwlOQs61E2nA1FDbRPLnTrRyHzQX5HfCFnGWiKdHzUp03wrhtApk+kmN
+	1mgpb1GjkbylTCQ3InNp3+0SjWoJ3cqdwHES8ZRsKJ5yJ6GY5rbGtN7VP7lXRTAN
+	+U5hty1EN7s6BYnJVg3N/2vVpHRLjubkIAdPYplZ9pUoH+5J5Jsd/NoLEcsM+oVv
+	mexmX/mZqP1gMM1DpmG6Oa0qeOGEkchh9nUb1I/o7679xw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 405dbe5cyf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 18:55:54 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465Itrco019587
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Jul 2024 18:55:53 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 5 Jul 2024 11:55:53 -0700
+Date: Fri, 5 Jul 2024 11:55:52 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH ] firmware: qcom: scm: Disable SDI and write no dump to
+ download mode register
+Message-ID: <20240705113813958-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240705120623.1424931-1-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240704130505.GT11386@noisy.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20240705120623.1424931-1-quic_mojha@quicinc.com>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: SrCogPNrF7C6ri7cvUzyS2L24Pp70gcp
+X-Proofpoint-GUID: SrCogPNrF7C6ri7cvUzyS2L24Pp70gcp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_14,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 clxscore=1015 suspectscore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407050137
 
-On Thu, Jul 04, 2024 at 03:05:05PM +0200, Peter Zijlstra wrote:
-> And how are we to ascertain the software using these hooks is deemed
-> secure? What security risks are there for the kernel if a malicious
-> userspace process asks for these rights?
+On Fri, Jul 05, 2024 at 05:36:23PM +0530, Mukesh Ojha wrote:
+> SDI is enabled for most of the Qualcomm SoCs and as per commit
+> ff4aa3bc9825 ("firmware: qcom_scm: disable SDI if required")
+> it was recommended to disable SDI by mentioning it in device tree
 > 
-> The kernel must assume malice on the part of userspace.
+> However, for some cases download mode tcsr register already configured
+> from boot firmware to collect dumps and in such cases if download
+> mode is set to zero(nodump mode) from kernel side and SDI is disabled
+                     ^^^^^^^^^^^^^
+that's not what download_mode=0 does currently, but it's what you're
+proposing it should be doing. I think that proposal is reasonable, but
+can you call out in the commit text that the current behavior of
+download_mode=0 is nop.
 
-Thanks, Peter.
-   
-I don't believe there are any additional security risks for the kernel
-itself being introduced here. The kernel is only responsible for
-copying to and from userspace registers for the hypercall, and
-executing the TDCALL. A similar approach already exists for AMD SEV
-(see vc_handle_vmmcall), which does not restrict VMMCALL in the way
-that TDX restricts VMCALL.
+> via means of mentioning it in device tree we could end up with dump
+> collection.
+> 
+> To disable complete dump collection mode, SDI and dload mode register
+> need to be set no dump mode.
+> 
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
-In the case of a malicious binary running in a TDX VM, if it wants to
-communicate with the untrusted hypervisor or other software outside
-of the TD, there are several existing mechanisms it could use, not
-just a VMCALL. I guess the point here is that if the userspace
-program is malicious, is anything gained by restricting VMCALL?
+Should this be?
 
-This patchset really only handles the case where a trusted guest
-wants to limit access to VMCALL to binaries that self identify as
-hardened against potential host attacks.
+Fixes: ff4aa3bc9825 ("firmware: qcom_scm: disable SDI if required")
+
+> ---
+>  drivers/firmware/qcom/qcom_scm.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 00c379a3cceb..2e10f75a9cfd 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -1954,14 +1954,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+>  	 * will cause the boot stages to enter download mode, unless
+>  	 * disabled below by a clean shutdown/reboot.
+>  	 */
+> -	if (download_mode)
+> -		qcom_scm_set_download_mode(true);
+> -
+> +	qcom_scm_set_download_mode(download_mode ? true : false);
+
+Just: qcom_scm_set_download_mode(download_mode);
+
+>  
+>  	/*
+>  	 * Disable SDI if indicated by DT that it is enabled by default.
+>  	 */
+> -	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled"))
+> +	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled") || !download_mode)
+
+
+>  		qcom_scm_disable_sdi();
+>  
+>  	ret = of_reserved_mem_device_init(__scm->dev);
+> -- 
+> 2.34.1
+> 
+> 
 
