@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-241779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C842927F8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:06:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A98927F8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21FE01F256DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:06:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1CCC1C21C18
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5B7D27A;
-	Fri,  5 Jul 2024 01:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A5A2579;
+	Fri,  5 Jul 2024 01:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EujO5cZ4"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhsXGNnI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20647B65A;
-	Fri,  5 Jul 2024 01:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE39FDDD4;
+	Fri,  5 Jul 2024 01:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720141604; cv=none; b=o6aab9jyLuIhA7R5j+sPCF5aINw97CQJ3VmpoPLlvaymsr0i+OLK09vDBhFVZHnmWKI7M7tFxuUPb5jCRvq5rKG/DPRhOBmbOOwmieMklVZCFEvEUV/LRJ/Xr/8otgOH2LKmVFcbfy0Lpoddjb4TBgZDAzhtKxDwZWxPW5i8DrE=
+	t=1720141714; cv=none; b=tzH1LIbb1b/EJ5cfSWzyevt1skMgQBYEJugBatcNcYvQT7KY13fo18TRsjeSmQYwVsz6rPmFDs8+MRxLQ/Ah/VESJA+AhxyBWrUw/kOEoidvTx+bT6UjldX6yckidFeEjsDAnunEje8nYRFl72/B7ps/Hq2A/59Qtjw+oNUY/bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720141604; c=relaxed/simple;
-	bh=TYhAkvtDwkswGAizxiAdL8hwFy8gEaaAvescvij+s7Y=;
+	s=arc-20240116; t=1720141714; c=relaxed/simple;
+	bh=HXe0ywAFlOXtUCdSL6OqLY+vhisCdaCJNOQRsWkmYYE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RcpVEfI8DhAqr0AbJ3rFVCLwyio6fJZNrn0EJskRgAczkfVzr5WT87bLdZqyrp5iqsQtJbBKTAti3EZzFG/sy8roRWJjDAAngLuzGJb07N5oe+JJSrZDuQ38qPetxRBY+lrfRms0cMOarQ9HYyg9zQ43gU+cfjVTTWy+4ZwqPFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EujO5cZ4; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720141592; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=4cfuS0iFnw0ne37rW+9HGtwOGkcB1qYjsLKyHH5WycE=;
-	b=EujO5cZ4pe4EyEKIPYsENEve2UW9JJEBSlgLCHZxEZyA9VB4yVa7xbBGuHoISjgDjVv4oBaB2uYKIjHfsVNXVAYvj5WkKudpNGRTXr1ZO2MxgST9aVZFpiThsRII92mgi5DDkBg2P4LCsKBEKTn4tK2unysVjxBj1VOMq8cNKKI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0W9snGSw_1720141591;
-Received: from 30.97.56.65(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9snGSw_1720141591)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Jul 2024 09:06:32 +0800
-Message-ID: <819eac21-9661-4b13-a988-f8f4b736513d@linux.alibaba.com>
-Date: Fri, 5 Jul 2024 09:06:31 +0800
+	 In-Reply-To:Content-Type; b=RoIT0E+975cua4mG2xtvmbvreEwz2IuY+OHJkCI1zLkFap+1OhpuHtSv6W36Owey7QHlRP3q1sbzFXypjmFGztsj6DvN2maMvrkzXlVYIysqcYSoVu6Omz1nWCmIyha9Sx8S+vG1kNpZdyhovXDSZ8MAumoypfM16eiqXwohD3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhsXGNnI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 597F5C3277B;
+	Fri,  5 Jul 2024 01:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720141714;
+	bh=HXe0ywAFlOXtUCdSL6OqLY+vhisCdaCJNOQRsWkmYYE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QhsXGNnIQWRaMQi5EHMsvYD6Mk1fJQNl4KB0usxy+ekI8z9VXN8ExFaxK3qchpD+/
+	 NMZ/6B/KWmGwJ73TrkNfMB6QXKm31Qstz+5vlnWaZmThpw2D+it9tj7LQeyzNZUbEC
+	 MktYlS/4w1MaKwjyg3TVdDCBuNp+HW3qh2F2gXubgzE1N/ae/52/N+Yfg5jsYvUCy+
+	 O92qncv4bIUU3/MSE7LJFx5T0wIVO/ssg25V7YrnlknVoxvOc+BDXnn2Y9Kkgi0Mkk
+	 bl+UIhXpGjPAEkzI7kQUkxxI0HkDpa3oodmMY/LM+2+38T5+cE89Ku3Zrh8zkAsuuF
+	 DC2sTIkNr+mJA==
+Message-ID: <afefbd10-e680-47c3-bd18-b3f2aae35a15@kernel.org>
+Date: Fri, 5 Jul 2024 10:08:32 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,42 +49,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Cleanup Spreadtum/Unisoc ARM64 DT
-To: Stanislav Jakubek <stano.jakubek@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1720112081.git.stano.jakubek@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <cover.1720112081.git.stano.jakubek@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] dm-table:fix zone block_device not aligned with zonesize
+To: Mikulas Patocka <mpatocka@redhat.com>, Li Dong <lidong@vivo.com>
+Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ "open list:DEVICE-MAPPER (LVM)" <dm-devel@lists.linux.dev>,
+ open list <linux-kernel@vger.kernel.org>, opensource.kernel@vivo.com
+References: <20240704151549.1365-1-lidong@vivo.com>
+ <cd05398-cffa-f4ca-2ac3-74433be2316c@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <cd05398-cffa-f4ca-2ac3-74433be2316c@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/7/5 01:41, Stanislav Jakubek wrote:
-> This series contains various minor cleanups for Spreadtum/Unisoc ARM64
-> DeviceTrees.
-
-Thanks. All look good to me. For the whole series:
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> Stanislav Jakubek (3):
->    arm64: dts: sprd: rename SDHCI nodes to mmc
->    arm64: dts: sprd: reorder clock-names after clocks
->    arm64: dts: sprd: move/add SPDX license to top of the file
+On 7/5/24 00:29, Mikulas Patocka wrote:
 > 
->   arch/arm64/boot/dts/sprd/sc2731.dtsi          |  3 +-
->   arch/arm64/boot/dts/sprd/sc9836-openphone.dts |  3 +-
->   arch/arm64/boot/dts/sprd/sc9836.dtsi          |  3 +-
->   arch/arm64/boot/dts/sprd/sc9860.dtsi          |  3 +-
->   arch/arm64/boot/dts/sprd/sc9863a.dtsi         |  8 ++--
->   arch/arm64/boot/dts/sprd/sharkl64.dtsi        |  3 +-
->   arch/arm64/boot/dts/sprd/sp9860g-1h10.dts     |  3 +-
->   arch/arm64/boot/dts/sprd/ums512.dtsi          |  4 +-
->   arch/arm64/boot/dts/sprd/whale2.dtsi          | 43 ++++++++++---------
->   9 files changed, 35 insertions(+), 38 deletions(-)
 > 
+> On Thu, 4 Jul 2024, Li Dong wrote:
+> 
+>> For zone block devices, device_area_is_invalid may return an incorrect 
+>> value.
+>>
+>> Failure log:
+>> [   19.337657]: device-mapper: table: 254:56: len=836960256 not aligned to
+>> h/w zone size 3244032 of sde
+>> [   19.337665]: device-mapper: core: Cannot calculate initial queue limits
+>> [   19.337667]: device-mapper: ioctl: unable to set up device queue for 
+>> new table.
+>>
+>> Actually, the device's zone length is aligned to the zonesize.
+>>
+>> Fixes: 5dea271b6d87 ("dm table: pass correct dev area size to device_area_is_valid")
+>> Signed-off-by: Li Dong <lidong@vivo.com>
+>> ---
+>>  drivers/md/dm-table.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+>> index 33b7a1844ed4..0bddae0bee3c 100644
+>> --- a/drivers/md/dm-table.c
+>> +++ b/drivers/md/dm-table.c
+>> @@ -257,7 +257,7 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+>>  	if (bdev_is_zoned(bdev)) {
+>>  		unsigned int zone_sectors = bdev_zone_sectors(bdev);
+>>  
+>> -		if (start & (zone_sectors - 1)) {
+>> +		if (start % zone_sectors) {
+>>  			DMERR("%s: start=%llu not aligned to h/w zone size %u of %pg",
+>>  			      dm_device_name(ti->table->md),
+>>  			      (unsigned long long)start,
+>> @@ -274,7 +274,7 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+>>  		 * devices do not end up with a smaller zone in the middle of
+>>  		 * the sector range.
+>>  		 */
+>> -		if (len & (zone_sectors - 1)) {
+>> +		if (len % zone_sectors) {
+>>  			DMERR("%s: len=%llu not aligned to h/w zone size %u of %pg",
+>>  			      dm_device_name(ti->table->md),
+>>  			      (unsigned long long)len,
+>> -- 
+>> 2.31.1.windows.1
+> 
+> Hi
+> 
+> This probably won't compile on 32-bit architectures because the operators 
+> for 64-bit divide and modulo don't work there.
+> 
+> Please, rework the patch using dm_sector_div64.
+
+This patch alone will not allow non power of 2 zone size drives to be supported
+as the block layer will reject such drive in the first place. This patch should
+be part of a larger series enabling such support. On its own, it is a NACK from
+me for this change.
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
