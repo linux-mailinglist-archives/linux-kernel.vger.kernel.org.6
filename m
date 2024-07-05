@@ -1,116 +1,176 @@
-Return-Path: <linux-kernel+bounces-241822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0ED927FF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 804D3927FC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017B71F23595
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BB4F1F22A6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511BF12B87;
-	Fri,  5 Jul 2024 01:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7BFFC11;
+	Fri,  5 Jul 2024 01:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="boSIrp0j"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iG6MNBns"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B9D634
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FBF3D6A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720144674; cv=none; b=bk6mYbQ8Xbl0l2+eem7j5J/60Rc8YBylfP6hf+hWwo2szP2mTAC7AAhPhpZsa/JYrOQq0UkRHaJOazsHrQJgpyuRGu0GrMv/mgELXwYrLzAopInQeLbj9RMUoUonnqhY08Dg0ON/Bh1OudPVU/oNqG8Q+e17TxaHM6JGUiVYNGc=
+	t=1720142745; cv=none; b=uzLHoHjPb5h4OCYGjwPXgFPrV271rbR1ow4jE5z8e7Q53ZZLwuhIsuUF2BhepysNvuqZ07tC8Tryz5QzKek/mBBLyI2UlNPg3E09OJeHbjWHAZp+ja+EOpQScDhXPWVBsHsVjfDqUoxA49muF9R9eNtiwPWv48U1kQfKoqj5paQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720144674; c=relaxed/simple;
-	bh=gzm09+Hms/HlJOhtQ3OuBQp/2ViO/rBhTfvoKv1YULA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AyoF34SBJie3xop+WDlVQWtYCujuTOwfsYOpv1biwl6exqho8FHCJ/MAAlsSrDc8gDSuiYqeF5740CearVLeeJ91AcCNo0o0oJZpBt8r7Q6AQi+ZIo4AdwZ3enoOHpFLBTiz3jo8LwQBUQn9I45754wfXsfKOJhgFr2EBT+eKnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=boSIrp0j; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=jHvlEXaRyA3bpgUlkw1AFojmqIyREXUTTF5JQR72VEw=; b=boSIrp0jsZKUDH4Q
-	UYfjpoVGX9wtBTFsDfrslweT3vAP4T/r9wcec0Rd5uPBgsTzMKEvAZ2Z+mKZfWLznbTofvfoGALoF
-	v3UlPYkcvCS1FGADu1T9ZoMi/pFJEZnjq9QYgir2sbAqpbpXmXKO0qtOXao1SYQQ/YcNr6hkliyqq
-	Xcli8hpzDG+QX2jgxHxyLxAWmNnn5/VGay5w3ME1Eop+NmqsR+wTR0xy1IsssZUuJFS/0GVjAC2tF
-	2p9va1lATSfpwaKBbyRnOdIuD/gNBSM47zWb7zK+yQlvjt7WoWFgMssDvRvfqFstR89fCisoJ/Nkx
-	HN7gVhPQF3PIq7ao7g==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sPXh0-00A76q-0X;
-	Fri, 05 Jul 2024 01:24:54 +0000
-Date: Fri, 5 Jul 2024 01:24:54 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: jassisinghbrar@gmail.com, rrice@broadcom.com
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mailbox: bcm-pdc: remove unused struct 'pdc_dma_map'
-Message-ID: <ZodLZl8oQSmsUoN2@gallifrey>
-References: <20240523203741.201099-1-linux@treblig.org>
- <ZmTEqs2PKZZW_mYT@gallifrey>
+	s=arc-20240116; t=1720142745; c=relaxed/simple;
+	bh=Ho+mlu7dwciZ6Q1Dx4nGdHTGlTibYuPSyRWLoE9raII=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KaTHwFpK9Sd/ZlxyCWdFiM74doWMAsf9/5oywnLJhqytqt0NcBszMQhmInTQbDdM6SLRsssL+N274VteNBNvz2ru+EuIuOxwEjXFN/zMMqEN5YW86fIePUm+7mJ2u6dr/Ld5u36z6/2Od3hIGQRUkTy0WAxZZXxW2BFYEvQTs8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iG6MNBns; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720142742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=puZHXeuAThZypm5I/tU/VxCkiNM58sSfmRKMsMa3kvE=;
+	b=iG6MNBnshqYD54ieXdVgrZV1Df0mVKs6ZAfRXQTC93YRPLmF00Qaq+jlaHPqjlBBYtbS7E
+	UDwg/u34cTE9xcEv1zPIQhab4QvdJ1a/Y6VyRjuY+VPEPEbB7RBHF0uR+JGM4/D6myFZgw
+	KPH6NYNnmnY7tGXOwow71tI5LyGzzzw=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-407-KY8Wbv2tMwy1__eTCH9Nkw-1; Thu, 04 Jul 2024 21:25:41 -0400
+X-MC-Unique: KY8Wbv2tMwy1__eTCH9Nkw-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b5e0b5c9eeso13629296d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 18:25:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720142740; x=1720747540;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=puZHXeuAThZypm5I/tU/VxCkiNM58sSfmRKMsMa3kvE=;
+        b=Aukl1bfnG4Rbdr1lE4Oo5heVppyef6pVL7tUEk+TGTAn9QPc6h/Lfa9Bww9w5LCZXr
+         Su7gt7u8KsgSEuXgiwk+NorYBWbzKR0uPxEfohx39mmLUBffLl1qVttkUGXXMAaGmWq7
+         069aGqz8otrRoT0Cdmy3ubq/DuaXVG/Ic0FFUPGfSNz7ll3TscvHRr3cNgff9vyLxUMS
+         CqbmdGxccnjS2CxRrgOxwjjBvbOE4T5y6ZbpvtScjgsbnlrYMuTuVyt5izEFnHf/ZD4D
+         mIGVyfau5ile882niZ4dzE5OsWG9Sv2TIywhdjWhGoV07OtwA6kygXGID2I9STcZ0TF+
+         Kl9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVMmrVfrKD27mrIutsxcEJYT3YjaT2F14IF6lfgMpmKe0dKUsQR5WjIM7xcUtL1goX6bot9Kw+3NYZtCRs6jDn6l57gnIG5zhUZgz4L
+X-Gm-Message-State: AOJu0YwF98oTyOEo1C8uCy/bfdrd8qf3EjuR8eb9zBOHgzXFepLs5IXl
+	fc/oYQnP3qSOON0ZUvWgA1klQUCJQauRQEXxIwsfXyDeK4KwTYjcn9J4Ww/BWWEtdCxkOFrUujP
+	/eQYMYKoFL3SDALhnsvu9JdGC5XgAEiB82DJ6Mi1YAOb6sQ+eaFIxT8DumXBkvw==
+X-Received: by 2002:ad4:5ba4:0:b0:6b5:e099:4d69 with SMTP id 6a1803df08f44-6b5ecfb9422mr31683276d6.26.1720142740557;
+        Thu, 04 Jul 2024 18:25:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEF2U1YD+6q18JF3TqogZJNBg0f79mJvZ/g7DB4yQv9lBC9AAPfmiWQZkt3CycumfSymUOXQ==
+X-Received: by 2002:ad4:5ba4:0:b0:6b5:e099:4d69 with SMTP id 6a1803df08f44-6b5ecfb9422mr31683186d6.26.1720142740270;
+        Thu, 04 Jul 2024 18:25:40 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e5f2b77sm69034896d6.92.2024.07.04.18.25.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 18:25:40 -0700 (PDT)
+Message-ID: <43ef06aca700528d956c8f51101715df86f32a91.camel@redhat.com>
+Subject: Re: [PATCH v2 22/49] KVM: x86: Add a macro to precisely handle
+ aliased 0x1.EDX CPUID features
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
+ <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
+ <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
+ Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
+Date: Thu, 04 Jul 2024 21:25:39 -0400
+In-Reply-To: <20240517173926.965351-23-seanjc@google.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+	 <20240517173926.965351-23-seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <ZmTEqs2PKZZW_mYT@gallifrey>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 01:24:39 up 57 days, 12:38,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 7bit
 
-* Dr. David Alan Gilbert (linux@treblig.org) wrote:
-> * linux@treblig.org (linux@treblig.org) wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'pdf_dma_map' has been unused since the original
-> > commit a24532f8d17b ("mailbox: Add Broadcom PDC mailbox driver").
-> > 
-> > Remove it.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
+> Add a macro to precisely handle CPUID features that AMD duplicated from
+> CPUID.0x1.EDX into CPUID.0x8000_0001.EDX.  This will allow adding an
+> assert that all features passed to kvm_cpu_cap_init() match the word being
+> processed, e.g. to prevent passing a feature from CPUID 0x7 to CPUID 0x1.
 > 
-> Ping
+> Because the kernel simply reuses the X86_FEATURE_* definitions from
+> CPUID.0x1.EDX, KVM's use of the aliased features would result in false
+> positives from such an assert.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/cpuid.c | 24 +++++++++++++++++-------
+>  1 file changed, 17 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 5e3b97d06374..f2bd2f5c4ea3 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -88,6 +88,16 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
+>  	F(name);						\
+>  })
+>  
+> +/*
+> + * Aliased Features - For features in 0x8000_0001.EDX that are duplicates of
+> + * identical 0x1.EDX features, and thus are aliased from 0x1 to 0x8000_0001.
+> + */
+> +#define AF(name)								\
+> +({										\
+> +	BUILD_BUG_ON(__feature_leaf(X86_FEATURE_##name) != CPUID_1_EDX);	\
+> +	feature_bit(name);							\
+> +})
+> +
+>  /*
+>   * Magic value used by KVM when querying userspace-provided CPUID entries and
+>   * doesn't care about the CPIUD index because the index of the function in
+> @@ -758,13 +768,13 @@ void kvm_set_cpu_caps(void)
+>  	);
+>  
+>  	kvm_cpu_cap_init(CPUID_8000_0001_EDX,
+> -		F(FPU) | F(VME) | F(DE) | F(PSE) |
+> -		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
+> -		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SYSCALL) |
+> -		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
+> -		F(PAT) | F(PSE36) | 0 /* Reserved */ |
+> -		F(NX) | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
+> -		F(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGES) | F(RDTSCP) |
+> +		AF(FPU) | AF(VME) | AF(DE) | AF(PSE) |
+> +		AF(TSC) | AF(MSR) | AF(PAE) | AF(MCE) |
+> +		AF(CX8) | AF(APIC) | 0 /* Reserved */ | F(SYSCALL) |
+> +		AF(MTRR) | AF(PGE) | AF(MCA) | AF(CMOV) |
+> +		AF(PAT) | AF(PSE36) | 0 /* Reserved */ |
+> +		F(NX) | 0 /* Reserved */ | F(MMXEXT) | AF(MMX) |
+> +		AF(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGES) | F(RDTSCP) |
+>  		0 /* Reserved */ | X86_64_F(LM) | F(3DNOWEXT) | F(3DNOW)
+>  	);
+>  
 
-Ping^2
+Hi,
 
-> 
-> > ---
-> >  drivers/mailbox/bcm-pdc-mailbox.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> > 
-> > diff --git a/drivers/mailbox/bcm-pdc-mailbox.c b/drivers/mailbox/bcm-pdc-mailbox.c
-> > index 242e7504a628..a873672a9082 100644
-> > --- a/drivers/mailbox/bcm-pdc-mailbox.c
-> > +++ b/drivers/mailbox/bcm-pdc-mailbox.c
-> > @@ -158,10 +158,6 @@ enum pdc_hw {
-> >  	PDC_HW		/* PDC/MDE hardware (i.e. Northstar 2, Pegasus) */
-> >  };
-> >  
-> > -struct pdc_dma_map {
-> > -	void *ctx;          /* opaque context associated with frame */
-> > -};
-> > -
-> >  /* dma descriptor */
-> >  struct dma64dd {
-> >  	u32 ctrl1;      /* misc control bits */
-> > -- 
-> > 2.45.1
-> > 
-> -- 
->  -----Open up your eyes, open up your mind, open up your code -------   
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> \        dave @ treblig.org |                               | In Hex /
->  \ _________________________|_____ http://www.treblig.org   |_______/
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+What if we defined the aliased features instead.
+Something like this:
+
+#define __X86_FEATURE_8000_0001_ALIAS(feature) \
+	(feature + (CPUID_8000_0001_EDX - CPUID_1_EDX) * 32)
+
+#define KVM_X86_FEATURE_FPU_ALIAS	__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_FPU)
+#define KVM_X86_FEATURE_VME_ALIAS	__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_VME)
+
+And then just use for example the 'F(FPU_ALIAS)' in the CPUID_8000_0001_EDX
+
+
+Best regards,
+	Maxim Levitsky
+
 
