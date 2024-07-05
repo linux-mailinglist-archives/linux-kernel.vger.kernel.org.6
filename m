@@ -1,80 +1,187 @@
-Return-Path: <linux-kernel+bounces-242324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5E29286AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:21:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6069286A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5661028146E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:21:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBEA0B21A24
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BD4148857;
-	Fri,  5 Jul 2024 10:18:23 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E9614658F;
-	Fri,  5 Jul 2024 10:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D275148FEC;
+	Fri,  5 Jul 2024 10:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAtYpGwB"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D233F14659F;
+	Fri,  5 Jul 2024 10:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720174703; cv=none; b=NNM9GjfZWoMGDpeUafb5q2DYWV4441OU8++CpXqxkdprM8kjrppAJnUgIwMeMC81QwkWGDV0+3Mue8CLlaxDdUIyRakFps6qlQdIMnELuyvZVjjEW5sFPJNQ4GRn+56wonIImltTGd57Dy85H6LiVc5L19iTbma3f8b0ImEmxg4=
+	t=1720174701; cv=none; b=TXk/SfOWzke4+pcahRH/jPMXKdymAsLkL7EctMICJ1dVYkYUO7iYE37PpfYfuvwneTbmQuAo4LpXDZSJ9UW3MRYuzPeZojjfIBrUB7z/sunQBK6N6DdR664r1qZpMEQFgZusoGxlqMcmV0zoNWGMFonybHrPHRjmb9BcALYHvhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720174703; c=relaxed/simple;
-	bh=Hwul11NZsyd+DScj1E92lgwl/APxMNe0JTVvacK0Fak=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Sc7dC9n7S+BjIN9KImxFXLV59Df39kF6cHUImxSo+NqhE1UiaYdu5Ek4vEV3UvkxZRvMwNhuLZgqo6nvPXtKUIYR6QoD857KHEQWHleA+n3EvEAE5yePS/ACbPkFgWCIPlUkc2B2+6ky/zLLg7eHKkQ0Vevf+C73ICcnQlqwLv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id E3DCF92009C; Fri,  5 Jul 2024 12:18:14 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id DD96792009B;
-	Fri,  5 Jul 2024 11:18:14 +0100 (BST)
-Date: Fri, 5 Jul 2024 11:18:14 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Arnd Bergmann <arnd@kernel.org>
-cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-    Masahiro Yamada <masahiroy@kernel.org>, 
-    Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-    Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-    Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-    Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, 
-    Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-    Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
-    Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, 
-    Stafford Horne <shorne@gmail.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Rich Felker <dalias@libc.org>, 
-    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Andreas Larsson <andreas@gaisler.com>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Mark Rutland <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
-    linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-    linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
-    linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 00/17] arch: convert everything to syscall.tbl
-In-Reply-To: <20240704143611.2979589-1-arnd@kernel.org>
-Message-ID: <alpine.DEB.2.21.2407050323400.38148@angie.orcam.me.uk>
-References: <20240704143611.2979589-1-arnd@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1720174701; c=relaxed/simple;
+	bh=p0wKucMNP2ESwZy6HwLX9yMbUOXNi1BiG2FPMbS/Mes=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KXvDQKTFecPAzm6s/bjYb8cZxnkpR5zrpQJUauESqszOFacAtQOc+Oa+WtBVmqJmfBeHoFM0IC6iZV5P7MCQGGGPnwq41d5hFobP+8HihWcNSRYtkK+9dLC0qJaJP1m4Rme63Tofcp8pGjeIKQoQkQJAlhoGUZvs/+YDwSFM61c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAtYpGwB; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ee794ebffbso23960871fa.1;
+        Fri, 05 Jul 2024 03:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720174698; x=1720779498; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=43NgL66AZcBZsA04MV0R2l/SVAIXfdD44CFW558QA6o=;
+        b=AAtYpGwBJrsg4UUanIXUwFrwFAyoEoy/Cg1OgEhOjjY2D/6AhAGSNk+3s3y/Skn7AK
+         jhpYPH/FowbLUt7I37KbBQClmOohuxY0tpln1XhZDXZU7vNBoPM0gUK7va0ObJ8yqj+5
+         1gZvL+P3/v3YLqMx3LXI6qLn9PXOdI3yZTpbhr+k6NJ4krLmuZu08mNp1mZBwZd3nCyJ
+         CkkC0vzV23/MPwtR/gwP+YnSqHYZ8ffBLa5kivdV+gkbXHc07zgk64g4E5ToM26T7dOH
+         zaXKS+kW88h6nSQWY8LA+KshQ4JR33PPXSYk5xKg+v5Qw2quCcWeHcdkIJcB4PGD05YM
+         9fiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720174698; x=1720779498;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=43NgL66AZcBZsA04MV0R2l/SVAIXfdD44CFW558QA6o=;
+        b=t730ddj5OCgn7JsM89K6cCFsGLjpCRoUqGA2Hgrkaf+6DiaIUkFMAh4H5DZ5tG2xTv
+         ZLTN8Z2d1fXCNUDW/jd8zMbFYhhsi1v/PBHl1yVBq6J59yU24zTlnxp1YR4S9I6b4ptf
+         haxI45UNtT1wsNnwKdk16V4xZcweiuQNkGCK9lzz2dGetA1CyY2g8K1+RVjN4Etw9bFY
+         i9Xn/36IEFZiUyg5D4ex6LwsyTx1T8nmK4z2xBPy8h9ypbNclxERHOQyl40ub0HEyMyA
+         uhArUhCat13anNwmnN9paf13m28KlxjoW9t0jnYKOF6GBOkZxyZ6VM8mnE8T2hgWR/iC
+         0igg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGlm7SBwPg1HuqoEzcOi7u9va9eW7qT3oFxuNYurvK2buUbAoR+5qbYIUXYycyXEO/mIM7S17ZSQt9ZWZrVLakd4BogyAy7OhrAQmc
+X-Gm-Message-State: AOJu0Yw31tRW5/znZNPvvVANUMXvxTZP7AQ7t/pow6V2gZCyk2ZvuI+X
+	SYS2yPjiMhfDY2Uut6Q6gfMbRORpu+jf4z5Wxe8oLeqxL3OscC2Z
+X-Google-Smtp-Source: AGHT+IEUMDlt94QW/JlVMXt/5txcvz0TQfnqYGXAzmvYCAIPb5YY2MFEUWa0HhdkwQhkDkSI9fSweA==
+X-Received: by 2002:a2e:a605:0:b0:2ee:7d6d:2ce3 with SMTP id 38308e7fff4ca-2ee8ed904a4mr30571031fa.13.1720174697464;
+        Fri, 05 Jul 2024 03:18:17 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:359b:e801:d44:32b3:6924:10d1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a76841c4ffcsm267590866b.41.2024.07.05.03.18.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 03:18:17 -0700 (PDT)
+Message-ID: <e1de64478918e495ccdcbcb5ad5bae0e48d45808.camel@gmail.com>
+Subject: Re: [PATCH v4 1/8] iio: add read scale and offset services to iio
+ backend framework
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+ fabrice.gasnier@foss.st.com,  Nuno Sa <nuno.sa@analog.com>, Jonathan
+ Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 05 Jul 2024 12:18:16 +0200
+In-Reply-To: <20240704155338.2387858-2-olivier.moysan@foss.st.com>
+References: <20240704155338.2387858-1-olivier.moysan@foss.st.com>
+	 <20240704155338.2387858-2-olivier.moysan@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 
-On Thu, 4 Jul 2024, Arnd Bergmann wrote:
+On Thu, 2024-07-04 at 17:53 +0200, Olivier Moysan wrote:
+> Add iio_backend_read_scale() and iio_backend_read_offset() services
+> to read channel scale and offset from an IIO backbend device.
+>=20
+> Also add a read_raw callback which replicates the read_raw callback of
+> the IIO framework, and is intended to request miscellaneous channel
+> attributes from the backend device.
+> Both scale and offset helpers use this callback.
+>=20
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> ---
+> =C2=A0drivers/iio/industrialio-backend.c | 34 +++++++++++++++++++++++++++=
++++
+> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 9 +++++++-
+> =C2=A02 files changed, 42 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
+o-
+> backend.c
+> index efe05be284b6..4e0ff6e6e9d4 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -357,6 +357,40 @@ int devm_iio_backend_request_buffer(struct device *d=
+ev,
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL_NS_GPL(devm_iio_backend_request_buffer, IIO_BACKEND);
+> =C2=A0
+> +/**
+> + * iio_backend_read_scale - Request channel scale from the IIO backend.
+> + * @back:	Backend device
+> + * @chan:	IIO channel reference
+> + * @scale:	returned scale value
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_read_scale(struct iio_backend *back,
+> +			=C2=A0=C2=A0 struct iio_chan_spec const *chan, int *scale)
+> +{
+> +	return iio_backend_op_call(back, read_raw, chan, scale, NULL,
+> +				=C2=A0=C2=A0 IIO_CHAN_INFO_SCALE);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_read_scale, IIO_BACKEND);
+> +
+> +/**
+> + * iio_backend_read_offset - Request channel offset from the IIO backend=
+.
+> + * @back:	Backend device
+> + * @chan:	IIO channel reference
+> + * @offset:	returned offset value
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_read_offset(struct iio_backend *back,
+> +			=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan, int *offset)
+> +{
+> +	return iio_backend_op_call(back, read_raw, chan, offset, NULL,
+> +				=C2=A0=C2=A0 IIO_CHAN_INFO_OFFSET);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_read_offset, IIO_BACKEND);
+> +
 
->  arch/alpha/include/asm/unistd.h               |   1 +
+Hi Olivier,
 
- This seems out of sync with the actual changes, any idea what happened 
-here?
+Not exactly what I had in mind :). My thinking was to have:
 
-  Maciej
+int iio_backend_read_raw(struct iio_backend *back,
+			 struct iio_chan_spec const *chan, int *val, int *val2,
+                         long mask)
+{
+	return iio_backend_op_call(back, read_raw, chan, val, val2, mask);
+}
+EXPORT_SYMBOL_NS_GPL(iio_backend_read_raw, IIO_BACKEND);
+
+Then, on backend.h
+
+static inline int iio_backend_read_scale(struct iio_backend *back, struct
+iio_chan_spec const *chan, int *val, int val2)
+{
+	return iio_backend_read_raw(..., IIO_CHAN_INFO_SCALE);
+}
+
+Advantage is that we only need to export one symbol from the framework. But=
+ the most
+important piece I don't really agree in the patch is assuming NULL for val2=
+ (even
+more in scale where often we use both vals). So I think it already makes se=
+nse to
+expose the API with two int's even if you don't need them for your usecase.
+
+- Nuno S=C3=A1
+
+
 
