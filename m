@@ -1,137 +1,84 @@
-Return-Path: <linux-kernel+bounces-242225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912F8928525
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:34:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C765C92852A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4408C1F243CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB38288EBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DBA146A71;
-	Fri,  5 Jul 2024 09:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D34C146D55;
+	Fri,  5 Jul 2024 09:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6rLgX99"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2AC135A69;
-	Fri,  5 Jul 2024 09:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="StEScppJ"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41972146A8D;
+	Fri,  5 Jul 2024 09:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172042; cv=none; b=FOxUrFVU22uLv7EJYwY8CmGk1pE+5e5n5MtvDA24QAKFOqNRZFZzgwTK9ehhoF2mrDfejNO5L46etlvPll4/Xc8cG0D5H9DgZfGBjJiVTTIt+z6LzYwVR5Kd040G1QYvp/biZGe79Uq/J5WaKpBqHdOX24d3qjnskQVjfr4ch1k=
+	t=1720172073; cv=none; b=aAWWGv6zFu0v/rOQyz+Q8hdDoQjpGOxGdfsyTxB18BjhlJW9c/PY1q39CL+o/AfPQuH5Uf+RPud7j0sHUcXeJWnzOpib3LnspoFMO4QQp+YqGQXHdlJ6MmglHvEknV+eWSxvOHLKWkv8SctfpegGd9OZatsIWkp+4ehRGhqiH5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172042; c=relaxed/simple;
-	bh=//R3KJ2TmEUALF2xuwB2dmF10o7ZvOnc4OH75BUi3nA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NuYMBOFYFe+Xz8oEWQgKqNh/EcDx3xbU8kAM8bIXjdkJX9gOoLfLLZRrTwQSQv+KChMRAVypaeRTvU6L6k9bTvKP9D/ynG/oEfZfvYUdy7xizvg8p5n9N+FfWtamuLbmKNNG4O/H0aTN+mnwvzoFUYHbwsDu6sV0Q9e/nBoBrig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6rLgX99; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675E4C4AF0B;
-	Fri,  5 Jul 2024 09:34:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720172042;
-	bh=//R3KJ2TmEUALF2xuwB2dmF10o7ZvOnc4OH75BUi3nA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P6rLgX99HiBLWg81cA1IJQWfn1CzGaskGIxlxDIjwiZsBxaSXYsKV7zmUHipLEqC5
-	 V9lRTIeVyZVzUIgF33Z9vpN2oLoE3j/GzVAKhiDMoIkLU6hTU+qxIkEZnp4H2kQnDM
-	 VI9WIHsc9JCiv+XQRhHUhBm1IZdVOYmfomT8ga9bdB+LcWuP3IPJHGdO/GFfR1eleC
-	 zXCcgA5pp2AIv+FIpaGoj61m8oo2JmbjQLYFvQprwnp3yrBjjCokh8EyOaZsXJICAB
-	 nHlXvdvXpUnXl8oFnQ6dFSJmkMbKhzEHxbIXLepIzDDWwqSVgUqPtaLoO4Kq8mETzN
-	 rmdaBR7CMtjXw==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111b0so1039734a12.3;
-        Fri, 05 Jul 2024 02:34:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVovcJFmeHd6ryRCdnLQgEU6fQkYj/HH3afYNf5klUg2feoMwmACgqzbXpLCTP+NLLpWuZLE8SCGtH8t/JB7Ii9ohFHXXQSDDOfraZcHmIDIIYxPNN9kKBsVQtmtZoZQ3HP
-X-Gm-Message-State: AOJu0YwEDpKXJAH3JmJWjcW2Wzoqr52Nj+gSzB8wnKj6qsmFKHKQtWxy
-	SCFeKNPx072Ed0QINXt7CeADLEpEzx/jNnWWqWtZtqOTRNOuZTbitZ5EHVyUvZMvJwgk065M73q
-	CILmDjuv19FYJIYjnBi84FNe3BsI=
-X-Google-Smtp-Source: AGHT+IFb2JnXJEpZ/8ZNLh3sUIwAnpsOHgPBjHuN17UBwVrsYs5tsKVu3GpfDIgPIRcizOeSQcGzoENl7XHq7IPf16s=
-X-Received: by 2002:a05:6402:4312:b0:58f:44fa:a2b9 with SMTP id
- 4fb4d7f45d1cf-58f44faa6c8mr1770485a12.16.1720172040928; Fri, 05 Jul 2024
- 02:34:00 -0700 (PDT)
+	s=arc-20240116; t=1720172073; c=relaxed/simple;
+	bh=TyCpmJTsMwpWUgraY8TFXsGwR6zitGR5vj88e/4zNvc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=gFYl5bb69/ulKFk3jfQDUmTcdXZNIMG2BzBNtWtB9VBSKAsj5D8/ooYE01OqvtVuw8kgSo2jeyLc8Wra14leNDZDe2X3xh0wYlgQ6bUzoMmSMk5YW9bIDXfPB0PG+5tli//iUPp/tyA1+h9LVdOkVjKaTAAYQLTa1U/wnJ0ZqBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=StEScppJ reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=NkLiOAdGhP0gtq/Mz/ex6V68WcmHTlmWQUzNDpbGy6E=; b=S
+	tEScppJb3DUafOyVMmnb+2KmHTPeeT73WrN4Wa6t3F7IN/Ioym0KZOLLDszhOsCe
+	XqZ+SXsGMXsBY+28Rp2rWJ+qqTd+GB6wpKza+UkjNcA5X9StI5idarRse1MGX8La
+	BiqoskT2+Gkv2yEVoqg3c/IkXMbG0jDxC1rfALPEVo=
+Received: from slark_xiao$163.com ( [223.104.68.157] ) by
+ ajax-webmail-wmsvr-40-111 (Coremail) ; Fri, 5 Jul 2024 17:34:06 +0800 (CST)
+Date: Fri, 5 Jul 2024 17:34:06 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Johan Hovold" <johan@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re:Re: Re: [PATCH] USB: serial: option: add support for Foxconn
+ T99W651
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <Zoe7RT7o39C7iXmA@hovoldconsulting.com>
+References: <20240705081709.105496-1-slark_xiao@163.com>
+ <Zoe3qBwWG33AZaU9@hovoldconsulting.com>
+ <5b098485.965d.190822996fc.Coremail.slark_xiao@163.com>
+ <Zoe7RT7o39C7iXmA@hovoldconsulting.com>
+X-NTES-SC: AL_Qu2ZAv2cvUgv4CaeZekfmk8Sg+84W8K3v/0v1YVQOpF8jDjp+j0MYERlA2nE9/KtDiu+jT6xbAlu2slFYrRcX6QNzL/M27ior+29Gi0TLoeIlg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624071422.3473789-1-maobibo@loongson.cn>
-In-Reply-To: <20240624071422.3473789-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 5 Jul 2024 17:33:48 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4FSKo2+go0aW_4-a06q2FA4cNL_ksSNZoKzd=r+TSykw@mail.gmail.com>
-Message-ID: <CAAhV-H4FSKo2+go0aW_4-a06q2FA4cNL_ksSNZoKzd=r+TSykw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] LoongArch: KVM: VM migration enhancement
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, 
-	Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, WANG Rui <wangrui@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <43cc2529.9d61.190823e694a.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3v0sOvodmMYUeAA--.26709W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiow0TZGVOEPiVBAAGsN
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Series applied, thanks.
-
-Huacai
-
-On Mon, Jun 24, 2024 at 3:14=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> This patchset is to solve VM migration issues, the first six patches are
-> mmu relative, the last patch is relative with vcpu interrupt status.
->
-> It fixes potential issue about tlb flush of secondary mmu and huge page
-> selection etc. Also it hardens LoongArch kvm mmu module.
->
-> With this patchset, VM successfully migrates on my 3C5000 Dual-Way
-> machine with 32 cores.
->  1. Pass to migrate when unixbench workload runs with 32 vcpus, for
-> some unixbench testcases there is much IPI sending.
->  2. Pass to migrate with kernel compiling with 8 vcpus in VM
->  3. Fail to migrate with kernel compiling with 32 vcpus in VM, since
-> there is to much memory writing operation, also there will be file
-> system inode inconsistent error after migration.
->
-> ---
-> v2 ... v3:
->  1. Merge patch 7 into this patchset since it is relative with VM
-> migration bugfix.
->  2. Sync pending interrupt when getting ESTAT register, SW ESTAT
-> register is read after vcpu_put().
->  3. Add notation about smp_wmb() when update pmd entry, to elimate
-> checkpatch warning.
->  4. Remove unnecessary modification about function kvm_pte_huge()
-> in patch 2.
->  5. Add notation about secondary mmu tlb since it is firstly used here.
->
-> v1 ... v2:
->  1. Combine seperate patches into one patchset, all are relative with
-> migration.
->  2. Mark page accessed without mmu_lock still, however with page ref
-> added
-> ---
-> Bibo Mao (7):
->   LoongArch: KVM: Delay secondary mmu tlb flush until guest entry
->   LoongArch: KVM: Select huge page only if secondary mmu supports it
->   LoongArch: KVM: Discard dirty page tracking on readonly memslot
->   LoongArch: KVM: Add memory barrier before update pmd entry
->   LoongArch: KVM: Add dirty bitmap initially all set support
->   LoongArch: KVM: Mark page accessed and dirty with page ref added
->   LoongArch: KVM: Sync pending interrupt when getting ESTAT from user
->     mode
->
->  arch/loongarch/include/asm/kvm_host.h |  5 ++
->  arch/loongarch/include/asm/kvm_mmu.h  |  2 +-
->  arch/loongarch/kvm/main.c             |  1 +
->  arch/loongarch/kvm/mmu.c              | 67 ++++++++++++++++++++-------
->  arch/loongarch/kvm/tlb.c              |  5 +-
->  arch/loongarch/kvm/vcpu.c             | 29 ++++++++++++
->  6 files changed, 86 insertions(+), 23 deletions(-)
->
->
-> base-commit: 50736169ecc8387247fe6a00932852ce7b057083
-> --
-> 2.39.3
->
->
+CkF0IDIwMjQtMDctMDUgMTc6MjI6MTMsICJKb2hhbiBIb3ZvbGQiIDxqb2hhbkBrZXJuZWwub3Jn
+PiB3cm90ZToKPk9uIEZyaSwgSnVsIDA1LCAyMDI0IGF0IDA1OjExOjIyUE0gKzA4MDAsIFNsYXJr
+IFhpYW8gd3JvdGU6Cj4KPj4gSSBoYXZlIGEgY29uY2VybiBhYm91dCB0aGUgdGVzdCByZXN1bHQg
+b2YgInVzYi1kZXZpY2VzIiBpbiBVYnVudHUKPj4gMjIuMDQuIERvIHlvdSBrbm93IHdoeSBpdCB3
+b3VsZG4ndCBzaG93IG91ciBkZXZpY2VzIGFueSBtb3JlPyAKPgo+Tm8sIHNvcnJ5LCBubyBpZGVh
+LiBFdmVyeXRoaW5nIHNlZW1zIHRvIHdvcmsgaGVyZSB3aXRoIHRoZSBsYXRlc3QKPnVzYnV0aWxz
+LTAxNy4KPgo+SXMgaXQganVzdCB5b3VyIGRldmljZXMgdGhhdCBubyBsb25nZXIgc2hvdyB1cCBv
+ciBkb2Vzbid0IGl0IHdvcmsgYXQKPmFsbD8KPgpBIGxvdCBvZiBkZXZpY2VzIG1pc3NlZCBpbiBV
+YnVudHUgMjIuMDQsIGVzcGVjaWFsbHkgZm9yIG1vZGVtIGRldmljZXMuCk5vdGhpbmcgd291bGQg
+YmUgcHJpbnRlZCBmb3IgbW9kZW0gZGV2aWNlcy4KCj5QZXJoYXBzIGEgY2hhbmdlIGxpa2UgdGhp
+cyBvbmUgY291bGQgYmUgaW52b2x2ZWQ6Cj4KPglodHRwczovL2dpdGh1Yi5jb20vZ3JlZ2toL3Vz
+YnV0aWxzL2NvbW1pdC8zYjc5ZTljODY2YTE3ZjBhNTE3OGIzYjBiZWU2M2ZhYjU5YTAwMDNhCQo+
+Cj5JIHN1Z2dlc3QgeW91IHRyeSBhbiBvbGRlciB2ZXJzaW9uIGZpcnN0IGFuZCB0aGVuIGVpdGhl
+ciBmaWxlIGEgYnVnIG9uCj5naXRodWIgb3IgdG8gVWJ1bnR1Lgo+Cj5Kb2hhbgoKSSB3aWxsIGNo
+ZWNrIG1vcmUgZGV0YWlscyAuIFRoYW5rcyBmb3IgdGhhdCEK
 
