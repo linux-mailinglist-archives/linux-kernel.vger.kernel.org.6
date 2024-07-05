@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-242013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CAA928288
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:12:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A616392828A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54CFCB24923
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4B51F21036
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDE61448FA;
-	Fri,  5 Jul 2024 07:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D025144D0F;
+	Fri,  5 Jul 2024 07:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhDWa+HZ"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HcHFJx+7"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463771F61C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075661448EF
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720163570; cv=none; b=GRQxmOHKsGfiiSEtiug0dolMFQsVGKr4JuAU+HITnHR86hq1XIvNnCCbasankF9TtIAZkqH4I+4C1g7jEzA5phkjMD4GRNFVJz9f4AH7YNnpUsrUaGtd68d15qB593OH8l4RG/GeAtjpUP/7A031q52jxXjs4Oq0PQ0ySZjC6vo=
+	t=1720163598; cv=none; b=RpXapcd6GLCteTNZapex6Pt1kiiUgo5oNz0+9UgD5wBfZzkEBr0VN1x7gZeTwCI72Rip/c/Hcwb2jl04zv8PWUPmWIi8G9Y4VVzgMUnlAcLlHkHLJTlM+ZhHMauPGCPdH6E/ONQTU74vlABT/2jcTkgmLCvD9+q+nDgjXjsG+Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720163570; c=relaxed/simple;
-	bh=iv2ERwCzCiB2gd80xhoDKXfrPwpuGkjxdijGT/Gdy3E=;
+	s=arc-20240116; t=1720163598; c=relaxed/simple;
+	bh=X/Mwd6JBppsFn3Eh7Grst8vmhx2p+RhNWFlbhobvoB0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bf68L+sz3e3guCQiDY6ZONFfvNLTPev8lQrbP/adhv6tgYvissRRiSk308ppz8WyZ7s8FE3ezMMwav0JL60nnIjERF+QxxRvmJUpSJjImPJVhQl8wSjV0Z65iedQ316PX+M523eRxPqKZO8qm8HPD4bwvE/LMf8YXpZ5oQ+AT6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhDWa+HZ; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so2308929a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:12:48 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWjqbYudU/MjLbye1WOIRJs963gAKrGZhJYp5/6MFiYPaL8WjQuSsWv+rvcleVTMEr5wEMEy8VrW24wrU+5NsEKtFFYfIrE6PA58FQGg7JvpZD2fUK7wYiNbzhY2ZqcyJbNpcGeikNMRtxMnAl31A+z5OzAkPLDhK+ih292OzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HcHFJx+7; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c967e21888so926056a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720163567; x=1720768367; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qBowXacvCBPq8+HeU6bAJH+gmUcBy4EmRD/T8EkAqIY=;
-        b=HhDWa+HZ6hYzizFJBBBQO5q7UdJ+b1gZJFEjSLbZ6qVJyxwCgKPhkjNRqzqWIwBxE0
-         TEQW6XKiakDOSsA+CDTmno8TqPGk42UVfYTxPd9O6Mcj2iXRinsNGAhv63QYGEctfo8w
-         t1SnN6uhaMe7UFoavXpNNqXuG3u6Kfd2FE7MQsui0w5qa7guZQkVdUWP1orAzh6Ib2tV
-         CqyU0v2Opcs1DL05r7bEoGuWRj48PshUG8kmdGqy1Qvn4FZTqc7ty/gvDdQtch4zepxv
-         VlzBEt6LcKDiMfwscdfcu1/mG1ZoCNVDTGYdZb2Bndpm+B1coPTB/Obloo/1qxja0qUu
-         VJ+w==
+        d=linaro.org; s=google; t=1720163596; x=1720768396; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9UlaHnzPtyEXqtP36rKl0mEwZt/UtIO8cSjkseqQwhQ=;
+        b=HcHFJx+7MSH2LVuJ4H88zTyH9Nr+NsXEE3smfTMbshxZvt7mNtSXXFzrioS0VDoSBt
+         HmQ6Dmg4PTmgAxBO4eIy1hsKBsnPzDSffAe8pISLs/XxVOSZ+E3Hb5ZfhauRq7s+mpWK
+         BItjlx134OzrL+UHY+K7ZSe5ZN2NfwMoam0hgejFpeaIY2woq4YU1Kf2/HHg3exbqzAZ
+         /f5dhQuFHvMSRQ2wdg+AXk9UE9TnDJrQz/vNCksBH3MI+/spapI5vKe3jMHD2v6T6/yS
+         2fxL6Metla5txCVKE3nu3Z8PmACn4ceLbaFNFCsUrKHWo9qhKHzm3pSBIrlX5kG2hinS
+         fNOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720163567; x=1720768367;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qBowXacvCBPq8+HeU6bAJH+gmUcBy4EmRD/T8EkAqIY=;
-        b=e/2G7UoAp59FVBGqxIdro46FKmzRE4qCZ0vE9xE/gvW5Swz42HQFPUJIBa6yaLdVpX
-         M0n+TL7+WUexYGjeUPvxsSnOLTwL8RZborcM/BG069iVeA8jCnioq2y0vqE5LKO16eQu
-         3OXTT5ZkgFBa3CyHj3VQZiTPdNRmzvq1OzdaoOXwRNbdjIgN37DbT95Zw5aH0oJ0HAHQ
-         e44+f98DFbr0Y8+MKlVjSzm+TdJKcNvRBKBx6BvMop5+sX1NEwUsUSCIviiIbCP8Jfky
-         VAxT5xvkFHJID4EZ+yZzWvHIC5BRYp6BuERLlCdZCVGhbaGYX029R7GP56ghxgOOoKKr
-         jeqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQa2u/RAXLuNtPoXxASBbgfn6CKLfFFSzP428a3dwttT/Nhs3UOMZ5Tj4JAVmRk3KP7yv47GowGXYLWgPkWOgiOO8T7BzrCGcmVE9H
-X-Gm-Message-State: AOJu0YwoBEnx/h96IuB0mb6/TnNnWbC/KjI3j3R/Rh0H5mJ/w68Fp9NL
-	lVMyb+6Lael3UL0kkvGE9ePOwtEHB9/8gbU3g2P1phOWAOwWcso3
-X-Google-Smtp-Source: AGHT+IGbgcTijE9L+vJOhQbgm9TMODvfV1FQxBa++ZNxzLCfaLSJFpwi6EABsOb3uGWlKoHa6Ow87w==
-X-Received: by 2002:a05:6402:4305:b0:57c:6a05:afd0 with SMTP id 4fb4d7f45d1cf-58e7b6ef9d4mr2812851a12.14.1720163567296;
-        Fri, 05 Jul 2024 00:12:47 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58e88a6c067sm1528408a12.38.2024.07.05.00.12.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Jul 2024 00:12:46 -0700 (PDT)
-Date: Fri, 5 Jul 2024 07:12:46 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>
-Subject: Re: [Patch v3] x86/head/64: remove redundant check on
- level2_kernel_pgt's _PAGE_PRESENT bit
-Message-ID: <20240705071246.wzl224vveysrunzc@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240523123539.14260-1-richard.weiyang@gmail.com>
+        d=1e100.net; s=20230601; t=1720163596; x=1720768396;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9UlaHnzPtyEXqtP36rKl0mEwZt/UtIO8cSjkseqQwhQ=;
+        b=CqfseX/i/W7UZJUkdzLAlFhA5g8biS0F2hyC8g6z3M/JMBtqd/XPZc8WGIgm6ec2dK
+         JHrAKvsExgdIdJ8TBMO8RXQKmYXInCTaAkfoEDXn7mIUHjbqw4YpicydJUmX+JEsfM1V
+         ytu1giJU7gUyRVh0Mav5TWHi4/Y7XblY7wvJDz4Y1HswTE9AnfJwz6nLN0M5fRrAaE6g
+         q/dhNdhUmHq/1T6UVXX+eLr0e34t2UQ8KvSnDUZXk2VH1M90kREp5h9KOPj19tvlQB6B
+         H3GQK4CyBLBeivAqjyzsLRiR+aQAwxSLqqhLQiGiRZqQpK94XFUtP3mfh+7l09tEngAP
+         Augw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/0mpIc0fD10x26gBx6O91TAhBmwYC9oF4SZkebZekAUrkZf28SxoZrGQy6ekxBGbqxXT1mxpkZJavN/soaOJlqmVYCIwS4J+vE/z3
+X-Gm-Message-State: AOJu0YyGYrrvPW+RzTpJX8UhUFo8uW/5VOXE/8eI4QVohR6k0tkvhb7v
+	LYFdRwRxsl8ZE2+8uVbsmRCx4cvJI9gaHShWA8/Y3kSEX+USfV2gfcswHI0NYSE=
+X-Google-Smtp-Source: AGHT+IH5aHOz4Xz8XpU3ZE30THlQncCFemTEtB6ZUBhrg25o2ezqr59OIP8uJxCM2R3MBsXUj7mCMg==
+X-Received: by 2002:a17:90a:bb0d:b0:2c9:69ce:cd5a with SMTP id 98e67ed59e1d1-2c99c53bcf2mr2675740a91.17.1720163596332;
+        Fri, 05 Jul 2024 00:13:16 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a970ce6sm2730567a91.18.2024.07.05.00.13.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 00:13:15 -0700 (PDT)
+Date: Fri, 5 Jul 2024 12:43:13 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: Re: [PATCH V3 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
+Message-ID: <20240705071313.ddl6geg72t4n7j3s@vireshk-i7>
+References: <20240705060650.243497-1-chenhuacai@loongson.cn>
+ <20240705060650.243497-3-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,59 +86,152 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240523123539.14260-1-richard.weiyang@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20240705060650.243497-3-chenhuacai@loongson.cn>
 
-May I ask what else I should do?
+On 05-07-24, 14:06, Huacai Chen wrote:
+> Some of LoongArch processors (Loongson-3 series) support DVFS, their
+> IOCSR.FEATURES has IOCSRF_FREQSCALE set. And they has a micro-core in
+> the package called SMC (System Management Controller), which can be
+> used to detect temperature, control fans, scale frequency and voltage,
+> etc.
+> 
+> The Loongson-3 CPUFreq driver is very simple now, it communicate with
+> SMC, get DVFS info, set target frequency from CPUFreq core, and so on.
+> 
+> There is a command list to interact with SMC, widely-used commands in
+> the CPUFreq driver include:
+> 
+> CMD_GET_VERSION: Get SMC firmware version.
+> 
+> CMD_GET_FEATURE: Get enabled SMC features.
+> 
+> CMD_SET_FEATURE: Enable SMC features, such as basic DVFS, BOOST.
+> 
+> CMD_GET_FREQ_LEVEL_NUM: Get the number of all frequency levels.
+> 
+> CMD_GET_FREQ_BOOST_LEVEL: Get the first boost frequency level.
+> 
+> CMD_GET_FREQ_LEVEL_INFO: Get the detail info of a frequency level.
+> 
+> CMD_GET_FREQ_INFO: Get the current frequency.
+> 
+> CMD_SET_FREQ_INFO: Set the target frequency.
+> 
+> In future we will add automatic frequency scaling, which is similar to
+> Intel's HWP (HardWare P-State).
+> 
+> Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>  MAINTAINERS                         |   1 +
+>  drivers/cpufreq/Kconfig             |  12 +
+>  drivers/cpufreq/Makefile            |   1 +
+>  drivers/cpufreq/loongson3_cpufreq.c | 395 ++++++++++++++++++++++++++++
+>  4 files changed, 409 insertions(+)
+>  create mode 100644 drivers/cpufreq/loongson3_cpufreq.c
 
-On Thu, May 23, 2024 at 12:35:39PM +0000, Wei Yang wrote:
->Remove a redundant check on kernel code's PMD _PAGE_PRESENT attribute
->before fix up.
->
->Current process looks like this:
->
->    pmd in [0, _text)
->        unset _PAGE_PRESENT
->    pmd in [_text, _end]
->        if (_PAGE_PRESENT)
->            fix up delta
->    pmd in (_end, 512)
->        unset _PAGE_PRESENT
->
->level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
->redundant
->
->Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
->CC: Thomas Gleixner <tglx@linutronix.de>
->CC: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->CC: Ingo Molnar <mingo@kernel.org>
->CC: Steve Wahl <steve.wahl@hpe.com>
->
->---
->v3: refine the change log per kirill's comment
->v2: adjust the change log to emphasize the redundant check
->---
-> arch/x86/kernel/head64.c | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
->
->diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
->index a817ed0724d1..bac33ec19aa2 100644
->--- a/arch/x86/kernel/head64.c
->+++ b/arch/x86/kernel/head64.c
->@@ -260,8 +260,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
-> 
-> 	/* fixup pages that are part of the kernel image */
-> 	for (; i <= pmd_index((unsigned long)_end); i++)
->-		if (pmd[i] & _PAGE_PRESENT)
->-			pmd[i] += load_delta;
->+		pmd[i] += load_delta;
-> 
-> 	/* invalidate pages after the kernel image */
-> 	for (; i < PTRS_PER_PMD; i++)
->-- 
->2.34.1
+I have made some changes while applying, can you please test these ?
+
+diff --git a/drivers/cpufreq/loongson3_cpufreq.c b/drivers/cpufreq/loongson3_cpufreq.c
+index a530e4a56b78..cd3efdeeddd9 100644
+--- a/drivers/cpufreq/loongson3_cpufreq.c
++++ b/drivers/cpufreq/loongson3_cpufreq.c
+@@ -31,10 +31,10 @@ union smc_message {
+ };
+ 
+ /* Command return values */
+-#define CMD_OK				0  /* No error */
+-#define CMD_ERROR			1  /* Regular error */
+-#define CMD_NOCMD			2  /* Command does not support */
+-#define CMD_INVAL			3  /* Invalid Parameter */
++#define CMD_OK				0 /* No error */
++#define CMD_ERROR			1 /* Regular error */
++#define CMD_NOCMD			2 /* Command does not support */
++#define CMD_INVAL			3 /* Invalid Parameter */
+ 
+ /* Version commands */
+ /*
+@@ -173,7 +173,8 @@ static struct mutex cpufreq_mutex[MAX_PACKAGES];
+ static struct cpufreq_driver loongson3_cpufreq_driver;
+ static DEFINE_PER_CPU(struct loongson3_freq_data *, freq_data);
+ 
+-static inline int do_service_request(u32 id, u32 info, u32 cmd, u32 val, u32 extra)
++static inline int
++do_service_request(u32 id, u32 info, u32 cmd, u32 val, u32 extra)
+ {
+ 	int retries;
+ 	unsigned int cpu = smp_processor_id();
+@@ -226,11 +227,13 @@ static unsigned int loongson3_cpufreq_get(unsigned int cpu)
+ 	return ret * KILO;
+ }
+ 
+-static int loongson3_cpufreq_target(struct cpufreq_policy *policy, unsigned int index)
++static int
++loongson3_cpufreq_target(struct cpufreq_policy *policy, unsigned int index)
+ {
+ 	int ret;
+ 
+-	ret = do_service_request(cpu_data[policy->cpu].core, FREQ_INFO_TYPE_LEVEL, CMD_SET_FREQ_INFO, index, 0);
++	ret = do_service_request(cpu_data[policy->cpu].core,
++			FREQ_INFO_TYPE_LEVEL, CMD_SET_FREQ_INFO, index, 0);
+ 
+ 	return (ret >= 0) ? 0 : ret;
+ }
+@@ -255,14 +258,16 @@ static int configure_freq_table(int cpu)
+ 	boost_level = ret;
+ 
+ 	freq_level = min(max_level, FREQ_MAX_LEVEL);
+-	data = devm_kzalloc(&pdev->dev, struct_size(data, table, freq_level + 1), GFP_KERNEL);
++	data = devm_kzalloc(&pdev->dev, struct_size(data, table, freq_level + 1),
++			    GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+ 	data->def_freq_level = boost_level - 1;
+ 
+ 	for (i = 0; i < freq_level; i++) {
+-		ret = do_service_request(cpu, FREQ_INFO_TYPE_FREQ, CMD_GET_FREQ_LEVEL_INFO, i, 0);
++		ret = do_service_request(cpu, FREQ_INFO_TYPE_FREQ,
++					 CMD_GET_FREQ_LEVEL_INFO, i, 0);
+ 		if (ret < 0) {
+ 			devm_kfree(&pdev->dev, data);
+ 			return ret;
+@@ -290,6 +295,7 @@ static int loongson3_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 
+ 	policy->cpuinfo.transition_latency = 10000;
+ 	policy->freq_table = per_cpu(freq_data, cpu)->table;
++
+ 	policy->suspend_freq = policy->freq_table[per_cpu(freq_data, cpu)->def_freq_level].frequency;
+ 	cpumask_copy(policy->cpus, topology_sibling_cpumask(cpu));
+ 
+@@ -314,7 +320,8 @@ static int loongson3_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+ {
+ 	int cpu = policy->cpu;
+ 
+-	loongson3_cpufreq_target(policy, per_cpu(freq_data, cpu)->def_freq_level);
++	loongson3_cpufreq_target(policy, per_cpu(freq_data,
++				 cpu)->def_freq_level);
+ 
+ 	return 0;
+ }
+@@ -348,13 +355,14 @@ static int loongson3_cpufreq_probe(struct platform_device *pdev)
+ 	int i, ret;
+ 
+ 	for (i = 0; i < MAX_PACKAGES; i++)
+-		mutex_init(&cpufreq_mutex[i]);
++		devm_mutex_init(&pdev->dev, &cpufreq_mutex[i]);
+ 
+ 	ret = do_service_request(0, 0, CMD_GET_VERSION, 0, 0);
+ 	if (ret <= 0)
+ 		return -EPERM;
+ 
+-	ret =  do_service_request(FEATURE_DVFS, 0, CMD_SET_FEATURE, FEATURE_DVFS_ENABLE | FEATURE_DVFS_BOOST, 0);
++	ret = do_service_request(FEATURE_DVFS, 0, CMD_SET_FEATURE,
++				 FEATURE_DVFS_ENABLE | FEATURE_DVFS_BOOST, 0);
+ 	if (ret < 0)
+ 		return -EPERM;
+ 
 
 -- 
-Wei Yang
-Help you, Help me
+viresh
 
