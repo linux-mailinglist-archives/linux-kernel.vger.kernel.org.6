@@ -1,140 +1,215 @@
-Return-Path: <linux-kernel+bounces-242089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D6292835F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:02:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A469928362
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62D4D1C24106
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359CF282FAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABA413C9C8;
-	Fri,  5 Jul 2024 08:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A3313C83A;
+	Fri,  5 Jul 2024 08:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cWy83NW/"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NQ1sO/8s"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0427013B5B9
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F052613B7BC
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720166564; cv=none; b=r3lU5Rde8iuP0nICIBcmIGu5NqJktVDXe5UduP3clanqgLTRFuOWDCXTuYyWgUHPE3bz/0NLce6Pna7fs2g8q/ZYu38f0R91b3gNCmRlWh/h8WWufSLla5PhgCQI+KUrRjwoSlnOwvb6pt8prq44DsGj/XdBiVSUJxxA8kHvAd0=
+	t=1720166622; cv=none; b=ReDjMXkhnwS75zEBhc8R4sYT/2Sg+Y/NzLZnIHpfIEG1YQBoh4lQ43yQ8r/Nd5e64qcXqlpWwutWUgfI29+13+h/KEg42alFCsnL/JA3NRkG+m/ahMF3W4o3sUA/jdQffmxNSzJIKA6odcOlh1qciKH3mQJfatZejQ4Ldfe1l9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720166564; c=relaxed/simple;
-	bh=bXpHTK+EyIsqSD7SgLtjIw2t3RaxB8rU2+ilna057xs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bAhr0ZXDVqkjDMV6EKi+HK7wg3wIq8+8wx40X5EjYy/xIOabvpRzR1Dc9SNLB0rMVZ5oQAVS1faZOAFtKw9wsycH8lcj10QHhxDYxPMWcYU0cOR6/CdO+mMFtt/gYSY+huL6XVEY59M1P78KBKEds7g1tIeR0ezOcChyUxw3HR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cWy83NW/; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35f06861ae6so811517f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 01:02:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720166561; x=1720771361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OsWVg2gQk7KmhjHH+trDWs7bq+X2IqikQ1jZ7TWj51s=;
-        b=cWy83NW/3XVb9Z/xXn4mklSQWPddEPBr+BkC/AOiCTudi143aWKw19gnfHVJ1LPHGh
-         R6OlFNpj6QNFpXwuHCLX2sos5F7uFanps+J6w1rmGgBd5h1/HdpwuuBqm654GFIMXeBE
-         L7Bujr3LI9v6UjizKCeWidgUB/ewvxNZoECyWR48uetjQ/P8DsshBdgdVPofrP3Z1UkO
-         xD9hIwz4BfYHYvg72H75og6CK1+o+K4HtF47/X6eJbZ7wJ3yuSxhH5VowuZ5qLAWmZYn
-         mCtoguhJNxl9z8ei/9uUdmPAVeUV7fLcvh/HLfQTCkT6MRdYc3u7bvVV/+i/HmewSOcI
-         VqKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720166561; x=1720771361;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OsWVg2gQk7KmhjHH+trDWs7bq+X2IqikQ1jZ7TWj51s=;
-        b=P9eA/sqp00NY0csZYj4S2UpSlsAQx/bLotIKUmxgjZAi5vDaZ7S0pVl8E/HN6BSxX5
-         bqoVRZfafkAC/y8Q9QFtwSDhxxyktwfqQrCIQTPY4D7UdhwiqdYZceEPMfJN6Mzd/n66
-         OgmTQ6V+BjvyOlpEOwAuUFqpYZSNDElO1hDQKQe8X5TdxdinR6w+GmbUlj5XO4joIGwq
-         PRA5JF5po0HxRdQsA4jcZvKy1lzstJACHhKtTipfLP22xfjYWlrNUksM+wy1m32o18LQ
-         Aq3J6Kl7X4f80FkNL4ZclfGZHcshFmqL+ydfdJvHDl2FAzqGh+DevdVPpTDLGEeuQC+r
-         siVQ==
-X-Gm-Message-State: AOJu0Yyf+1kB0mT5eU7evW4ALjB/1sX9IQbcVzG1H/xtKsSWthMCeRrp
-	3BgWPaC5BlA8/yKZrrEdBNc91TOtTtAOMzW4PbVLD2dlP7ZrnIn2K18udbe6Qnk=
-X-Google-Smtp-Source: AGHT+IGmKJYy55PSIaJjEW7HBnPMhYROa8AQUDbLx0YR3SeIyFrrSqsQ9kDUR9qIvDuJoCSbm/e04A==
-X-Received: by 2002:a5d:6149:0:b0:367:9bc3:cded with SMTP id ffacd0b85a97d-3679dd72b21mr2354768f8f.60.1720166561434;
-        Fri, 05 Jul 2024 01:02:41 -0700 (PDT)
-Received: from srini-hackbase.lan ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a103d00sm20263703f8f.99.2024.07.05.01.02.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 01:02:40 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Amit Vadhavana <av2082000@gmail.com>,
-	"Ricardo B . Marliere" <ricardo@marliere.net>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/1] slimbus: Fix struct and documentation alignment in stream.c
-Date: Fri,  5 Jul 2024 09:02:34 +0100
-Message-Id: <20240705080234.424587-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240705080234.424587-1-srinivas.kandagatla@linaro.org>
-References: <20240705080234.424587-1-srinivas.kandagatla@linaro.org>
+	s=arc-20240116; t=1720166622; c=relaxed/simple;
+	bh=xI8EjAgxQ51VE0UmpIjmIWdiuSCttU6JpamLphCVgGY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ryi+4QX7a13BT6f8x/bYZLE+NKVQMj1sbC9MMMAch8DimNR7Qtnv63gwmROYLmULpOhzkMTLyR+aFpS+1rXb04ZX2M79HQMCbuDgAmrYB4EMP166/kGQmS42aWXloGNanDY2r0fGgvdJ59ztvC5dnGq21Ks7JAF5qiTZN4kIND8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NQ1sO/8s; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240705080338epoutp02776e7d54124435f389842e5671d0f326~fQmzcZ8FT0498404984epoutp02k
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:03:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240705080338epoutp02776e7d54124435f389842e5671d0f326~fQmzcZ8FT0498404984epoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720166618;
+	bh=xI8EjAgxQ51VE0UmpIjmIWdiuSCttU6JpamLphCVgGY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=NQ1sO/8s7AaJ6ZR3SCWO1KJvhglZqSRaj/meeb5xlWkJQAbXKANQdrLQdUnv/JBky
+	 KQLUbBhY6GZX+Q3d+O9I5NP3PbQ1WMR7JsmR+7S0o0QuuyjsQRRlWmKu+OXeQaD94S
+	 fX2fGyvvBDq7emnNpqeE1Rt7X0Y/v3yhzfNPy0fk=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240705080337epcas2p1a1519a7e1d3ea5f4976424f7d291977e~fQmy6jFUD2599925999epcas2p1O;
+	Fri,  5 Jul 2024 08:03:37 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.97]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WFmHF0DTyz4x9Px; Fri,  5 Jul
+	2024 08:03:37 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C5.32.09806.8D8A7866; Fri,  5 Jul 2024 17:03:36 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240705080336epcas2p22b09e94f85e163e03e039326f3831b39~fQmyByE-b1251712517epcas2p2H;
+	Fri,  5 Jul 2024 08:03:36 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240705080336epsmtrp1d51c502eba07a2f8052bd4df673cae7b~fQmyBEKuF1316813168epsmtrp1g;
+	Fri,  5 Jul 2024 08:03:36 +0000 (GMT)
+X-AuditID: b6c32a47-ecbfa7000000264e-fc-6687a8d8a8f0
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	08.9F.19057.8D8A7866; Fri,  5 Jul 2024 17:03:36 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240705080336epsmtip22780df60491d052dde1c7481a941c4c7~fQmxz518B1579315793epsmtip21;
+	Fri,  5 Jul 2024 08:03:36 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Sylwester Nawrocki'"
+	<s.nawrocki@samsung.com>, "'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Alim
+ Akhtar'" <alim.akhtar@samsung.com>, "'Michael Turquette'"
+	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <8f4deb36-2a44-414a-9b9f-40b87bc7c949@kernel.org>
+Subject: RE: [PATCH 2/5] dt-bindings: clock: add clock binding definitions
+ for Exynos Auto v920
+Date: Fri, 5 Jul 2024 17:03:35 +0900
+Message-ID: <01c401daceb1$d64e7450$82eb5cf0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1793; i=srinivas.kandagatla@linaro.org; h=from:subject; bh=ObzdssiadOLjjFbY8y71dd7CaLTdaITN7HGkzCnITOM=; b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmh6ialOpjk2Ns3qynGkp6TcjfxSsMItanuZZh1 Fa796Pxkr2JATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZoeomgAKCRB6of1ZxzRV NxIcCACQhmv9/MLHnz3cZ24iqMawgn2IlaVK2QLEeEzh/pB3C8DXCW5voP0dCZiQJXc2GqCZTQg ncHVI2Y2maiYbrZXx0mku4LepzhccV952c3jmGHvUKaGR/XL3SKrmzXM3iOWm1bQFgGPO67HB+S JIM2iN1CepaK9XErCcXWwSkvdgORgyOHmzVwcWivesO8sytgy+mv+M+gA9uu7ZopG+Y7S2l71VQ /eh9NuW44J4T7CB47M9ViOkbB1hWAfsZZHvuTDQ9zcWOrncqwevxM0X12f6wtozGP0PAgY1rKcf 250rS78dBDMmDwGKs4Xo1xBJttcx65eDzvZe7GfMYTh7T4dq
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp; fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIPebKt0SL2hL1PGxWEYogtVpy49QFdVAxIAswtgRoBIrCNybFUDUGw
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmhe6NFe1pBs+emFo8mLeNzeL6l+es
+	FufPb2C3+Nhzj9Xi8q45bBYzzu9jsrh4ytXi8Jt2Vot/1zayOHB6vL/Ryu6xaVUnm0ffllWM
+	Hp83yQWwRGXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl
+	5gCdoqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMC/QK07MLS7NS9fLSy2xMjQw
+	MDIFKkzIzjj36CZ7wQKxipX3TzA2MJ4U6mLk5JAQMJG41TOdvYuRi0NIYAejRNvh/1DOJ0aJ
+	9W1nGCGcb4wS826vY4JpWXf9EAtEYi+jxN7pB8ESQgIvGSX+b7cFsdkE9CVWd99mAykSEehn
+	kpj3/AcrSIJZIE1ixakt7CA2p4CdxMJDzcwgtrBAosT0D1PAalgEVCSeHfsPNpRXwFLi9Jz1
+	jBC2oMTJmU9YIOZoSyxb+JoZ4iIFiZ9Pl4H1igi4SVydvYIRokZEYnZnGzPIERICMzkkNi9o
+	hXrBReLNyxeMELawxKvjEAdJCEhJvOxvg7LzJSZff8sE0dzAKHHtXzfUNnuJRWd+AhVxAG3Q
+	lFi/Sx/ElBBQljhyC+o2PomOw3/ZIcK8Eh1t0LBWk/h05TLUEBmJYyeeMU9gVJqF5LNZSD6b
+	heSDWQi7FjCyrGIUSy0ozk1PLTYqMIbHdnJ+7iZGcDLVct/BOOPtB71DjEwcjIcYJTiYlUR4
+	pd43pwnxpiRWVqUW5ccXleakFh9iNAWG9URmKdHkfGA6zyuJNzSxNDAxMzM0NzI1MFcS573X
+	OjdFSCA9sSQ1OzW1ILUIpo+Jg1Oqganj9Ob72/OO1u2/vYrrEEvlvTU8DOl8u+ucjy1U2Njs
+	FLoz+uiylefe2+ycqKqpum+/323N2v4ESZ2+pF9r+ky/GubMF2rs2bDs7LaJ834E3/9XkZjR
+	Xxv4df+dSdvX+by+brax709tpeSiJxblpRuMJLI9BJ5LCDxr7Xzx/bppot4i76OGTaLR7698
+	Zv2+9r+5Z1/NlgfBP1LPHnVXEeD19H7izeDze7nPj/xowY7g7WyfvUujDubvsXlSwd3Ou2Dy
+	3jDf4NZDv56+slY9VCXLcK6xbpVD0SGlKTV/LXmnS796PHfNsaVLVpwpfrW3NvaD+oO56UwG
+	d26L/OzyVeCQDvuzoibl+8yD/cxNtbOVWIozEg21mIuKEwEfUhO4LwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJXvfGivY0g+5fohYP5m1js7j+5Tmr
+	xfnzG9gtPvbcY7W4vGsOm8WM8/uYLC6ecrU4/Kad1eLftY0sDpwe72+0sntsWtXJ5tG3ZRWj
+	x+dNcgEsUVw2Kak5mWWpRfp2CVwZH36sYC74L1oxZfJN9gbGeUJdjJwcEgImEuuuH2LpYuTi
+	EBLYzSix8ecvVoiEjMTGhv/sELawxP2WI6wQRc8ZJSZcPwqWYBPQl1jdfZsNJCEiMJlJ4ujO
+	nYwgCWaBDIlD196zQXR8Z5SY/7yNGSTBKWAnsfBQM5DNwSEsEC/R+9QeJMwioCLx7Nh/JhCb
+	V8BS4vSc9YwQtqDEyZlPWCBmaks8vfkUzl628DUzxHUKEj+fLgO7WkTATeLq7BVQN4hIzO5s
+	Y57AKDwLyahZSEbNQjJqFpKWBYwsqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxgiNL
+	S2sH455VH/QOMTJxMB5ilOBgVhLhlXrfnCbEm5JYWZValB9fVJqTWnyIUZqDRUmc99vr3hQh
+	gfTEktTs1NSC1CKYLBMHp1QDU3x2qLBk9rs+Rt079X7RbjMFrpsX9IV+stlu8GKrws4K2RNP
+	Eh4u/bs3/cYEnv1N30oj26bsrz0SJa0Vu27h9Nv5Ojp2tTX/MoInP9PUjv/gHNrmx65pGLPk
+	vLJ8Si+rcmR+0YaXl1+/nbbQwvjr5q447/XSV5pWsL22dXKeJS1vNJ83jXNt9vmN9Stmsc6b
+	MvNln5pozSOhmMgdCwID1XhVzNJZg+aus93AUZ6kPCV7lu8vu5RJ7z/mvimumn7lmfvKfyty
+	xTZ9K76qM8Hca8npuTN8/d8ub90+dfaZ8Cpbi6J6oze8spvmTCp+FddosyjXfa5IZvOcj4XS
+	glI2h4K+Xv9RuSRw3qqgV4F2SizFGYmGWsxFxYkATG0XbhsDAAA=
+X-CMS-MailID: 20240705080336epcas2p22b09e94f85e163e03e039326f3831b39
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705021200epcas2p273ca089c2cb9882f121e864ec8407367
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+	<CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
+	<20240705021110.2495344-3-sunyeal.hong@samsung.com>
+	<8f4deb36-2a44-414a-9b9f-40b87bc7c949@kernel.org>
 
-From: Amit Vadhavana <av2082000@gmail.com>
+Hello Krzysztof Kozlowski,
 
-The placement of the `segdist_codes` array documentation was corrected
-to conform with kernel documentation guidelines. The `@segdist_codes`
-was placed incorrectly within the struct `segdist_code` documentation
-block, which led to a potential misinterpretation of the code structure.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Friday, July 5, 2024 3:03 PM
+> To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Sylwester Nawrocki
+> <s.nawrocki=40samsung.com>; Chanwoo Choi <cw00.choi=40samsung.com>; Alim
+> Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
+> <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org; lin=
+ux-
+> kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH 2/5=5D dt-bindings: clock: add clock binding defini=
+tions
+> for Exynos Auto v920
+>=20
+> On 05/07/2024 04:11, Sunyeal Hong wrote:
+> > Add device tree clock binding definitions for below CMU blocks.
+> >
+> > - CMU_TOP
+> > - CMU_PERIC0
+> >
+> > Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
+>=20
+> Headers are part of bindings patch.
+>=20
 
-The `segdist_codes` array documentation was moved outside the struct
-block, and a separate comment block was provided for it. This change
-ensures that clarity and proper alignment with kernel documentation
-standards are maintained.
+Is your request to combine PATCH 0 and 1 correct? If correct, I will update=
+ it as requested.
 
-A kernel-doc warning was addressed:
-    ./drivers/slimbus/stream.c:49: warning: Excess struct member 'segdist_codes' description in 'segdist_code'
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older kerne=
+l,
+> gives you outdated entries. Therefore please be sure you base your patche=
+s
+> on recent Linux kernel.
+>=20
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be fine,
+> although remember about =60b4 prep --auto-to-cc=60 if you added new patch=
+es to
+> the patchset.
+>=20
+> You missed at least devicetree list (maybe more), so this won't be tested
+> by automated tooling. Performing review on untested code might be a waste
+> of time.
+>=20
+> Please kindly resend and include all necessary To/Cc entries.
+> </form letter>
+>=20
+> Best regards,
+> Krzysztof
 
-Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
-Reviewed-by: Ricardo B. Marliere <ricardo@marliere.net>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/slimbus/stream.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+The mail list was created using get_maintainer.pl. If there is any problem,=
+ please let me know.
 
-diff --git a/drivers/slimbus/stream.c b/drivers/slimbus/stream.c
-index 1d6b38657917..863ab3075d7e 100644
---- a/drivers/slimbus/stream.c
-+++ b/drivers/slimbus/stream.c
-@@ -18,15 +18,17 @@
-  *		and the first slot of the next  consecutive Segment.
-  * @segdist_code: Segment Distribution Code SD[11:0]
-  * @seg_offset_mask: Segment offset mask in SD[11:0]
-- * @segdist_codes: List of all possible Segmet Distribution codes.
-  */
--static const struct segdist_code {
-+struct segdist_code {
- 	int ratem;
- 	int seg_interval;
- 	int segdist_code;
- 	u32 seg_offset_mask;
- 
--} segdist_codes[] = {
-+};
-+
-+/* segdist_codes - List of all possible Segment Distribution codes. */
-+static const struct segdist_code segdist_codes[] = {
- 	{1,	1536,	0x200,	 0xdff},
- 	{2,	768,	0x100,	 0xcff},
- 	{4,	384,	0x080,	 0xc7f},
--- 
-2.25.1
+./scripts/get_maintainer.pl -f drivers/clk/samsung/
+Krzysztof Kozlowski <krzk=40kernel.org> (maintainer:SAMSUNG SOC CLOCK DRIVE=
+RS)
+Sylwester Nawrocki <s.nawrocki=40samsung.com> (maintainer:SAMSUNG SOC CLOCK=
+ DRIVERS)
+Chanwoo Choi <cw00.choi=40samsung.com> (maintainer:SAMSUNG SOC CLOCK DRIVER=
+S)
+Alim Akhtar <alim.akhtar=40samsung.com> (reviewer:SAMSUNG SOC CLOCK DRIVERS=
+)
+Michael Turquette <mturquette=40baylibre.com> (maintainer:COMMON CLK FRAMEW=
+ORK)
+Stephen Boyd <sboyd=40kernel.org> (maintainer:COMMON CLK FRAMEWORK)
+linux-samsung-soc=40vger.kernel.org (open list:SAMSUNG SOC CLOCK DRIVERS)
+linux-clk=40vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+linux-kernel=40vger.kernel.org (open list)
+
+Thanks,
+Sunyeal Hong
 
 
