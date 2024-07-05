@@ -1,104 +1,153 @@
-Return-Path: <linux-kernel+bounces-242255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDD6928564
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:45:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F673928567
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540F0283E16
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A682282410
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F02A144D34;
-	Fri,  5 Jul 2024 09:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1624147C82;
+	Fri,  5 Jul 2024 09:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="J5ZIUpf4"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmjEmk8q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC921474BC
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9F0146D45;
+	Fri,  5 Jul 2024 09:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172692; cv=none; b=uPlS7fijgG0FRgxbt/IiueTCGaTg8zQIMFj5irXYQ9fNZj7t/NIIpSIDwejQFfXsASkVJKDlG9cEizw3DghbAPypfPUBqCMvQnrGiCsZmOdO8bCQNeH6mcC9q+Y1O7lULeNXuEO/kaZMQ9R3q59D4u/ln/gJyf+YNqfiYkZ2vOs=
+	t=1720172727; cv=none; b=BTvG10kNB+C10/vgk9bOMav8j2xLbCu+kXcA2sKjAHT0lvsOxivArFQ4rWfjgwZC/qmyNuzUGqNOewDIOVineV5l7VZayMdZ5Zq16iD4IbYLHSGj6dPqtZ9f3lkhjEa5xhZ9DQvsdnWREBjjyfDfxvlqHqRXdDq0XDeWZaw0WGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172692; c=relaxed/simple;
-	bh=lDh5K9l6F6IqotxOROFxBJCL7+4RhQ2yBeqZ84vPBxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rCMFHffj+Oxep4DGrulHg7j3rTaM3hdske5sfvbWVdV26lwMKC+YZz7foAmhhm5uQZ3f3WrnPRyy2Vdd65q7TlejAFqZJzUBhw/vUDL/nOoWy0vDg/3Jg1xrlBq5CL36gTKIatL/ne5YaMbazWjoK4t3t5wye9+CtShQroA3dE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=J5ZIUpf4; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8BFD640E019D;
-	Fri,  5 Jul 2024 09:44:40 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id rV0xTw0_VluY; Fri,  5 Jul 2024 09:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720172677; bh=nlMX/xEHcaDFMWQAf9/kZ4Lf/pqM1/eeNiwGBYDS+zs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J5ZIUpf4Cr6uDm2J7MpRSAqkue73CCSGhOwCOivzBE8sXPuVeleyAZDTGuWYXLj0w
-	 KgXeH3NKEBbPgMX8ESE8tXmL6Oe9hLZBGr2c1JchCs9JG5wCHVZZEU/yvX++nd0a2L
-	 Ow4sNDxlIKYgj23gpYUjCYhL1L9h8MHRfvzRfRVOoUOhZvvzfK6xYEcsBIcr2YdT+L
-	 RmefkM1GfKznsGyUvgWFHTl8mcemXVsS31m7uA2BSi2+WE+hO4k8i0sj4ILAMbkmEO
-	 Xl/sbKnZBbSR38h2k0n7GO95wN2vF/WAToPXhWIuHWBEfxT76/aHwA1MhG7NBwnmSA
-	 e9fAxBivchmrsrlWfZoYYrMkqTkmsFwOM8Lw1oW+vIgMHce6KMQWHo7G1b0RcliQPk
-	 a98IWhWb3hp3evy6y6zs37+nghlA6ut1xzQSDWmbW0iX0CuRPvnHFGQw/s+/Fx2AVE
-	 LHRhBmv3ZDcYff3GLbwYVnE9K9jCtx2PZJyVioCQVk/4NVE8EXGEuM1kHSGHXrQ7S8
-	 H16VW05JL9CJxjHLeyBgYNYNNuuNDGEIV6B16vfnz9mwkB6lk55L6ZU9xH6GX2JyCT
-	 gMwxt+kli6N/VSvayVQbzYjE5Dvesm+ouKnVDawtpOhXxbbpx8Yo3BD3jsNe8cNAWT
-	 a/7ct6AxYnLuQxF2q8PcF7Y4=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CF48440E0187;
-	Fri,  5 Jul 2024 09:44:24 +0000 (UTC)
-Date: Fri, 5 Jul 2024 11:44:18 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>, dave.hansen@intel.com,
-	xin@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	peterz@infradead.org, nik.borisov@suse.com,
-	houwenlong.hwl@antgroup.com
-Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
-Message-ID: <20240705094418.GAZofAcvelmnRzbkoG@fat_crate.local>
-References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
- <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base>
- <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com>
- <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com>
- <20240703161705.GAZoV5gQIgtORQeHdQ@fat_crate.local>
- <DE8FD8AA-35C6-4E51-B1E0-CE9586892CB3@zytor.com>
+	s=arc-20240116; t=1720172727; c=relaxed/simple;
+	bh=frGlIKAT1dBQamK3hrm7nlyGSfk0wKGWy6qgMoho1Go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qv8wlCN/u34NM4Ha09JMCAhWrzQKrri/rFB206jWHw62gqSi/vM+FD/DA+EWTB16qAQm6ilxEzcqeYFgKEd4X/0WPxwoANZrIK4y2ohCVjX1thzKXqMeYGWimi4ScZq2KUhN3oaj1vZ2zovD7FIHfgo5vYL9kysH3wEFZ1affYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmjEmk8q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC8DEC32781;
+	Fri,  5 Jul 2024 09:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720172726;
+	bh=frGlIKAT1dBQamK3hrm7nlyGSfk0wKGWy6qgMoho1Go=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HmjEmk8q+boavLnh5eijeqX6BB29MyjznDpYJ4KYRZcSi6b80eBzHdXfmXHhklXG2
+	 1CC0DP6yFIefErS/a0iNQgzrUAKhxuH0qst77N0LtGKPFizE83ZFPSgzpmPAbYAOT2
+	 XT754oE0XRMFex9WQIyd1OIJBZoSAuYLeVO5vmguBGMAxbCp4nyOHmPhgnKs3t9o/k
+	 4DGsPwuvKZ258jtwdPSo+jmXyonKaqXaPhNlvMGNLeCUUvHw7F7GzZg+2pG4QGedoc
+	 CDk5Pl5vER+eR+tzTcc/cyXiZrygRUPuhvAOT0lsgd7KF2/T0P8brZvy0CezWAlPmi
+	 mI0iQUdjcmbiw==
+Message-ID: <b16d1ace-b113-47e2-9c48-7c89d122e2a9@kernel.org>
+Date: Fri, 5 Jul 2024 11:45:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DE8FD8AA-35C6-4E51-B1E0-CE9586892CB3@zytor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] ARM: dts: microchip: at91-sama5d34ek: Align the
+ eeprom nodename
+To: Andrei.Simion@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
+ alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240704151411.69558-1-andrei.simion@microchip.com>
+ <20240704151411.69558-4-andrei.simion@microchip.com>
+ <c4b23da5-10fc-476e-8acc-8ba0815f5def@kernel.org>
+ <aecc9240-8a19-47bf-b42a-e74690d8315f@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <aecc9240-8a19-47bf-b42a-e74690d8315f@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 04, 2024 at 07:45:00PM -0700, H. Peter Anvin wrote:
-> Except that that would be more cleanly spelled wrmsrns()... let's just
-> abstract the whole thing away and let the user use wrmsrns() whenever
-> serialization is not necessary.
+On 05/07/2024 11:31, Andrei.Simion@microchip.com wrote:
+> On 05.07.2024 09:43, Krzysztof Kozlowski wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On 04/07/2024 17:14, Andrei Simion wrote:
+>>> Align the eeprom nodename according to device tree specification
+>>> and at24.yaml.
+>>>
+>>> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+>>
+>> Squash.
+>>
+> 
+> I will squash.
+> 
+>>> ---
+>>>  arch/arm/boot/dts/microchip/sama5d34ek.dts | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/microchip/sama5d34ek.dts b/arch/arm/boot/dts/microchip/sama5d34ek.dts
+>>> index bffd61397cb5..18943b873fff 100644
+>>> --- a/arch/arm/boot/dts/microchip/sama5d34ek.dts
+>>> +++ b/arch/arm/boot/dts/microchip/sama5d34ek.dts
+>>> @@ -36,7 +36,7 @@ i2c0: i2c@f0014000 {
+>>>                       i2c1: i2c@f0018000 {
+>>>                               status = "okay";
+>>>
+>>> -                             24c256@50 {
+>>> +                             eeprom@50 {
+>>
+>> What about other names? Why not fixing everything at once?
+>>
+> 
+> There are 149 dts+dtsi files. I would like to fix them step by step. (lots to check)
 
-Just don't make it more complex and unreadable than it has to be.
+I meant, if doing cosmetic changes like this to these files, why not
+fixing other names? Some of the work is automatic.
 
-cpu_feature_enabled() already is patching things for optimal perf so even if
-PeterZ prefers the alternative, I say it is ugly and, more importantly,
-unnecessary.
+Best regards,
+Krzysztof
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
