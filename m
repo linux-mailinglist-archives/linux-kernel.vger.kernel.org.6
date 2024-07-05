@@ -1,120 +1,151 @@
-Return-Path: <linux-kernel+bounces-242289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E23692863C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:59:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54205928639
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EFFE1C209B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FDA1F21AB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98DD149C54;
-	Fri,  5 Jul 2024 09:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="M0q9qHrH"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1F1147C76;
-	Fri,  5 Jul 2024 09:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F380514831F;
+	Fri,  5 Jul 2024 09:54:44 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C901474A8;
+	Fri,  5 Jul 2024 09:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720173333; cv=none; b=ro/LZWucG1PYZco3fzQhGi4IlDrLopPq5RbVaCQW5JNQkEwu91LDEdIJPVxsbsh3npnIUX6KLoF+xazC1uufC00bHW5K947srhWMqiULTrTMzSFXquQdzRKE6YpSNYvnpvJa4zuWgBuWOm/uHPe5e68vLorses+Yb86uVOHnnkE=
+	t=1720173284; cv=none; b=TAhxlO9EghyiEH/n9w0q/uGFzIUhoYdwkn4G5pZr/p42NyL25HoveIQKWo/GDBtCzP9p7r0nH0BrWqCdAG5ggwhH0JhXz47aUwIYngI4RGoCaWUeAUPMkIqiAYkOMwqUGMmjbKn28n7Cxb7zT3vJ7ZPUgjqhO31ntvpMIDpqPiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720173333; c=relaxed/simple;
-	bh=Yho17kScQAH4kxO+Iyzl0TcHqzGMqYsT+gGg1+0OAwY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A9d+ZfG3IdidRhyXPysUso+VEUXM379f+rhEpS5bzJfEqVesZWh0mc/NXm2yV+sehSK+EnubfIZaRTYwnRECarDE/AcX528vQ/KW3tBBfv3wULnCsg5wJYIDeHmbE8ybHFl7kIMo/T05h9NVzflw/XYbxN1w0e8ScEwJLvZz/7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=M0q9qHrH; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 6B505100004;
-	Fri,  5 Jul 2024 12:55:06 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1720173306; bh=9spCCaZBRNUk30iyOOynqh1AiXgGYZ5RAnraipmqhPM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=M0q9qHrHKuYcclmNyUIbV2EfxcREEr10gk+a9mb2573YLZw/RdY+FyPbB4INTJiac
-	 Hr2INKNAQ4M6D4kOpwlttKOBS3zSiLwPCt6Odhk49Q0TftCkfkXFIW+3x8exS6Y4//
-	 Mqf7PAvXsWoYg3X/NEzbEWDLqx2J8SJKYw1DIfQjPDXYgtrrN3Jcx0o+TD1FC2+NAy
-	 52YsLkQq2ouAUXk9D9umAb+hp6rNOJN6/66LkXvWpXD+f68RuZrq0pVBST9Ja/nKON
-	 y62VEZrDRNHNVqAFHtG9yh/1tyOPU5cxTtUUe/qiElyYrA0A+gf1kH93GHqrGBo0B1
-	 st+0g5ozVwYqg==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Fri,  5 Jul 2024 12:53:49 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
- 12:53:30 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Sunil Goutham <sgoutham@marvell.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Linu Cherian
-	<lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob
-	<jerinj@marvell.com>, hariprasad <hkelam@marvell.com>, Subbaraya Sundeep
-	<sbhatta@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH net] octeontx2-af: Fix incorrect value output on error path in rvu_check_rsrc_availability()
-Date: Fri, 5 Jul 2024 12:53:17 +0300
-Message-ID: <20240705095317.12640-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1720173284; c=relaxed/simple;
+	bh=Mnn7zavjIlCH9dW09Rh11nsxEbN2bWK5P4Os5AVfCFo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ja0y0l/bduEirF2Tvrc40nMwpwnV5NKs8Vuu2V2lOaUQScFvZyUnWzFdOEO+xaez3nV0ji3RERMKoTWYJbVKuLWkXYsm41CyHFHoBu6nJQoSqee6ab3GBaJdqcNOvX1A3G2mAAn0YzhTv63+6PzQxOC+BPPIwCXH5Neq/SwLmrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8DxzfDYwodmCUIBAA--.4208S3;
+	Fri, 05 Jul 2024 17:54:32 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxfcfVwodmrDU8AA--.9067S3;
+	Fri, 05 Jul 2024 17:54:31 +0800 (CST)
+Subject: Re: [PATCH v3 0/7] LoongArch: KVM: VM migration enhancement
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ WANG Rui <wangrui@loongson.cn>
+References: <20240624071422.3473789-1-maobibo@loongson.cn>
+ <CAAhV-H4FSKo2+go0aW_4-a06q2FA4cNL_ksSNZoKzd=r+TSykw@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <f8229023-dc94-449a-5f74-02296b3ae56f@loongson.cn>
+Date: Fri, 5 Jul 2024 17:54:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <CAAhV-H4FSKo2+go0aW_4-a06q2FA4cNL_ksSNZoKzd=r+TSykw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186342 [Jul 05 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/05 09:22:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/05 03:12:00 #25860202
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-CM-TRANSID:AQAAf8DxfcfVwodmrDU8AA--.9067S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxAF18Gw4DuFy8tr4xZr1kWFX_yoW5GF1UpF
+	Wfuan8KF4DGr43Gwnag342gr90vw1xCryaqF9ayry8CrZ0yFyUtrW7taykuFyrG3yrA3W0
+	qrWFywnY93WUA3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
+	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j0
+	sjUUUUUU=
 
-In rvu_check_rsrc_availability() in case of invalid SSOW req, an incorrect
-data is printed to error log. 'req->sso' value is printed instead of
-'req->ssow'. Looks like "copy-paste" mistake.
 
-Fix this mistake by replacing 'req->sso' with 'req->ssow'.
+Huacai,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Thanks for the carefulness and efforts.
 
-Fixes: 746ea74241fa ("octeontx2-af: Add RVU block LF provisioning support")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards
+Bibo Mao
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-index ff78251f92d4..5f661e67ccbc 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-@@ -1643,7 +1643,7 @@ static int rvu_check_rsrc_availability(struct rvu *rvu,
- 		if (req->ssow > block->lf.max) {
- 			dev_err(&rvu->pdev->dev,
- 				"Func 0x%x: Invalid SSOW req, %d > max %d\n",
--				 pcifunc, req->sso, block->lf.max);
-+				 pcifunc, req->ssow, block->lf.max);
- 			return -EINVAL;
- 		}
- 		mappedlfs = rvu_get_rsrc_mapcount(pfvf, block->addr);
--- 
-2.30.2
+On 2024/7/5 下午5:33, Huacai Chen wrote:
+> Series applied, thanks.
+> 
+> Huacai
+> 
+> On Mon, Jun 24, 2024 at 3:14 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> This patchset is to solve VM migration issues, the first six patches are
+>> mmu relative, the last patch is relative with vcpu interrupt status.
+>>
+>> It fixes potential issue about tlb flush of secondary mmu and huge page
+>> selection etc. Also it hardens LoongArch kvm mmu module.
+>>
+>> With this patchset, VM successfully migrates on my 3C5000 Dual-Way
+>> machine with 32 cores.
+>>   1. Pass to migrate when unixbench workload runs with 32 vcpus, for
+>> some unixbench testcases there is much IPI sending.
+>>   2. Pass to migrate with kernel compiling with 8 vcpus in VM
+>>   3. Fail to migrate with kernel compiling with 32 vcpus in VM, since
+>> there is to much memory writing operation, also there will be file
+>> system inode inconsistent error after migration.
+>>
+>> ---
+>> v2 ... v3:
+>>   1. Merge patch 7 into this patchset since it is relative with VM
+>> migration bugfix.
+>>   2. Sync pending interrupt when getting ESTAT register, SW ESTAT
+>> register is read after vcpu_put().
+>>   3. Add notation about smp_wmb() when update pmd entry, to elimate
+>> checkpatch warning.
+>>   4. Remove unnecessary modification about function kvm_pte_huge()
+>> in patch 2.
+>>   5. Add notation about secondary mmu tlb since it is firstly used here.
+>>
+>> v1 ... v2:
+>>   1. Combine seperate patches into one patchset, all are relative with
+>> migration.
+>>   2. Mark page accessed without mmu_lock still, however with page ref
+>> added
+>> ---
+>> Bibo Mao (7):
+>>    LoongArch: KVM: Delay secondary mmu tlb flush until guest entry
+>>    LoongArch: KVM: Select huge page only if secondary mmu supports it
+>>    LoongArch: KVM: Discard dirty page tracking on readonly memslot
+>>    LoongArch: KVM: Add memory barrier before update pmd entry
+>>    LoongArch: KVM: Add dirty bitmap initially all set support
+>>    LoongArch: KVM: Mark page accessed and dirty with page ref added
+>>    LoongArch: KVM: Sync pending interrupt when getting ESTAT from user
+>>      mode
+>>
+>>   arch/loongarch/include/asm/kvm_host.h |  5 ++
+>>   arch/loongarch/include/asm/kvm_mmu.h  |  2 +-
+>>   arch/loongarch/kvm/main.c             |  1 +
+>>   arch/loongarch/kvm/mmu.c              | 67 ++++++++++++++++++++-------
+>>   arch/loongarch/kvm/tlb.c              |  5 +-
+>>   arch/loongarch/kvm/vcpu.c             | 29 ++++++++++++
+>>   6 files changed, 86 insertions(+), 23 deletions(-)
+>>
+>>
+>> base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+>> --
+>> 2.39.3
+>>
+>>
 
 
