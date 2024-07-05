@@ -1,110 +1,242 @@
-Return-Path: <linux-kernel+bounces-242343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041C89286E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C9F9286EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5201286ACB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C08AE282ADD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8B3149002;
-	Fri,  5 Jul 2024 10:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA2F148826;
+	Fri,  5 Jul 2024 10:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CL6VGoNN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rf1f2e40";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4Hvik/o2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406D514883F;
-	Fri,  5 Jul 2024 10:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A415522313;
+	Fri,  5 Jul 2024 10:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720175907; cv=none; b=JAVxgJHMHD4Ef5DC1mceK/9s3eYFB2eo3UptDs0nZuMYhtKt0QgWEG/rirvaMf+dkqYlSeEzCpExDtJcUFB58Oa7O3+Bv8UQlq1frSunegt3kudm4mYdJYMP89iEXg+tfxtpcU4yUO3RkzWKLxkkmzy2rmviv3llZ0pQFcWYVnA=
+	t=1720175975; cv=none; b=oazU1/AU6EGhHidKWtv5BWQAK5WJ9zIjJpF9eNjptYfWTK+hn8rWoQ5WIrUJIVAh83g0mK95xw6V3yd/Dm7si4mqW8qLvnhUuJcwPpoyKEA4HT4CEyMV8hrQHu4FvKYYMnPTKjFrA/mv1PnmYtE8UEGYGXJkVJzozStMZnEn6HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720175907; c=relaxed/simple;
-	bh=iEZnnK2AWEZC7uLR/+qs4jJV3guyk9LlQ+WyeybrVD4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ekzgxN90WVCHXrxYHMhvF+tqVNOwq0fIS+pEX3KylMKVKAXrNizBKLNh3rzeNcmUin7JiQ0yUqYfBn7o9BqTZmVpF9KaZCi+8RfhjGywJepsP7IsoN5hvp3H6Q/8t+zDEags3XHR1eR9/xaHzpfqGKJ5ZCBdxXdgdjCrZ3LH3S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CL6VGoNN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C250C4AF0A;
-	Fri,  5 Jul 2024 10:38:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720175905;
-	bh=iEZnnK2AWEZC7uLR/+qs4jJV3guyk9LlQ+WyeybrVD4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=CL6VGoNNt6O8bFsCs8v7dbqhjV3s08CrZNbSKLf0mM9Cx7BGdFX53D5biTYjhbKfp
-	 q6o44TcbT8cjcB1WJoDv9nkJZQRl0DY3tc41H7lSCvKLmZ4IC/7VRud3jQzyfOYfUw
-	 FN64NAxlEgyZyDCXcqKyz+OvczfjJc7bhpZiRXHBxTSVVgQ76z6+V/MoWHV9Z0wDEq
-	 s9HmjSnD9UVfzlOTMf64Pz6ODnKOIn/PbNwqQMbLhEw9MjOSho5iPS3sJX3KcTg54I
-	 GTyDgseZ0CKALh3Drjz6PrtsXLcE6aAdfe6rIw3lVC7tWoL6202G8KKaEn6MHPqc2E
-	 N17GbQFOZTOrg==
-Date: Fri, 05 Jul 2024 04:38:24 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1720175975; c=relaxed/simple;
+	bh=xx/iXhdnMcMeu42vvxLQvR6u1PLDs0h9EQj+jxb0oII=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GMrKS5zOI3ExWiDiKCJHqZ/vDBap5/YNr+AECGdLWntFBdGPL2CwvRaORR+dGlGTJZVyUI1SxJxodLkgV9GaLjMtH+Io3PFlmD1Ei+3wOU9fL9qxBNVqn33mbvlbxaReQxkZekg6tosKznsK273Bs8BSXHvwJtDUvuDsaCQgLf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rf1f2e40; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4Hvik/o2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Florian Kauer <florian.kauer@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720175971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ShxsTHt1keFbzwb179iWJMWKlP8VZz8CCQNUg1KVQts=;
+	b=Rf1f2e40NMk9h1adpFVVyrtKgt7fygDdrswuWY45TKG1ZLsIfsrHLt3kIuNZktls2MG6OC
+	lg0jEvJ8nbN60dldQcCswnpFXpbCL9nPJEU4i2bq454MdZ9jCTyiyEUiyuHX7wA6xAWgwL
+	+87HY7NedY4y9vtxcvQ18iAEyDpaltgZJNrNq/E9AopqDZRXIAarcHImRZAMpkOZSIr8x/
+	Aadc+ry86YmtDs09+CT+M+upqwaR/1KNGgUiU6G4y4MJ3XVk8JdYaJvHSRlkiIEAz6EgaL
+	LrOe2edlbRMiCeI0BVY+X3RrMzla5C0YAOcxzNtHY4C8P5AOHH1MaSC57hBKUA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720175971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ShxsTHt1keFbzwb179iWJMWKlP8VZz8CCQNUg1KVQts=;
+	b=4Hvik/o20U/SecpmUM+UXTPQpKhPwx1nFudt/7TEC6t9ZY8Chv4EWS7Z0wnzIr5u/7lsEP
+	0XthIRrtdSpMDOCw==
+To: toke@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com
+Cc: Florian Kauer <florian.kauer@linutronix.de>,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	hawk@kernel.org,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@google.com,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xdp-newbies@vger.kernel.org
+Subject: [PATCH] bpf: provide map key to BPF program after redirect
+Date: Fri,  5 Jul 2024 12:38:53 +0200
+Message-Id: <20240705103853.21235-1-florian.kauer@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jie Gan <quic_jiegan@quicinc.com>
-Cc: Trilok Soni <quic_tsoni@quicinc.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Tingwei Zhang <quic_tingweiz@quicinc.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Mike Leach <mike.leach@linaro.org>, linux-kernel@vger.kernel.org, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Song Chai <quic_songchai@quicinc.com>, Leo Yan <leo.yan@linaro.org>, 
- Jinlong Mao <quic_jinlmao@quicinc.com>, Rob Herring <robh+dt@kernel.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- devicetree@vger.kernel.org, coresight@lists.linaro.org, 
- Tao Zhang <quic_taozha@quicinc.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- James Clark <james.clark@arm.com>, 
- Yuanfang Zhang <quic_yuanfang@quicinc.com>, linux-arm-msm@vger.kernel.org
-In-Reply-To: <20240705090049.1656986-3-quic_jiegan@quicinc.com>
-References: <20240705090049.1656986-1-quic_jiegan@quicinc.com>
- <20240705090049.1656986-3-quic_jiegan@quicinc.com>
-Message-Id: <172017590340.2933768.7232556209802046646.robh@kernel.org>
-Subject: Re: [PATCH v2 2/4] dt-bindings: arm: Add binding document for
- Coresight Control Unit device.
+Content-Transfer-Encoding: 8bit
 
+Both DEVMAP as well as CPUMAP provide the possibility
+to attach BPF programs to their entries that will be
+executed after a redirect was performed.
 
-On Fri, 05 Jul 2024 17:00:47 +0800, Jie Gan wrote:
-> Add binding document for Coresight Control Unit device.
-> 
-> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
-> ---
->  .../bindings/arm/qcom,coresight-ccu.yaml      | 87 +++++++++++++++++++
->  1 file changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
-> 
+With BPF_F_BROADCAST it is in also possible to execute
+BPF programs for multiple clones of the same XDP frame
+which is, for example, useful for establishing redundant
+traffic paths by setting, for example, different VLAN tags
+for the replicated XDP frames.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Currently, this program itself has no information about
+the map entry that led to its execution. While egress_ifindex
+can be used to get this information indirectly and can
+be used for path dependent processing of the replicated frames,
+it does not work if multiple entries share the same egress_ifindex.
 
-yamllint warnings/errors:
+Therefore, extend the xdp_md struct with a map_key
+that contains the key of the associated map entry
+after performing a redirect.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml: unevaluatedProperties: Missing additionalProperties/unevaluatedProperties constraint
+See
+https://lore.kernel.org/xdp-newbies/5eb6070c-a12e-4d4c-a9f0-a6a6fafa41d1@linutronix.de/T/#u
+for the discussion that led to this patch.
 
-doc reference errors (make refcheckdocs):
+Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
+---
+ include/net/xdp.h        |  3 +++
+ include/uapi/linux/bpf.h |  2 ++
+ kernel/bpf/devmap.c      |  6 +++++-
+ net/core/filter.c        | 18 ++++++++++++++++++
+ 4 files changed, 28 insertions(+), 1 deletion(-)
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240705090049.1656986-3-quic_jiegan@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/include/net/xdp.h b/include/net/xdp.h
+index e6770dd40c91..e70f4dfea1a2 100644
+--- a/include/net/xdp.h
++++ b/include/net/xdp.h
+@@ -86,6 +86,7 @@ struct xdp_buff {
+ 	struct xdp_txq_info *txq;
+ 	u32 frame_sz; /* frame size to deduce data_hard_end/reserved tailroom*/
+ 	u32 flags; /* supported values defined in xdp_buff_flags */
++	u64 map_key; /* set during redirect via a map */
+ };
+ 
+ static __always_inline bool xdp_buff_has_frags(struct xdp_buff *xdp)
+@@ -175,6 +176,7 @@ struct xdp_frame {
+ 	struct net_device *dev_rx; /* used by cpumap */
+ 	u32 frame_sz;
+ 	u32 flags; /* supported values defined in xdp_buff_flags */
++	u64 map_key; /* set during redirect via a map */
+ };
+ 
+ static __always_inline bool xdp_frame_has_frags(struct xdp_frame *frame)
+@@ -257,6 +259,7 @@ void xdp_convert_frame_to_buff(struct xdp_frame *frame, struct xdp_buff *xdp)
+ 	xdp->data_meta = frame->data - frame->metasize;
+ 	xdp->frame_sz = frame->frame_sz;
+ 	xdp->flags = frame->flags;
++	xdp->map_key = frame->map_key;
+ }
+ 
+ static inline
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 35bcf52dbc65..7dbb0f2a236c 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -6455,6 +6455,8 @@ struct xdp_md {
+ 	__u32 rx_queue_index;  /* rxq->queue_index  */
+ 
+ 	__u32 egress_ifindex;  /* txq->dev->ifindex */
++
++	__u64 map_key; /* set during redirect via a map in xdp_buff */
+ };
+ 
+ /* DEVMAP map-value layout
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index da1fec906b96..fac3e8a6c51e 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -574,6 +574,8 @@ static int dev_map_enqueue_clone(struct bpf_dtab_netdev *obj,
+ 	if (!nxdpf)
+ 		return -ENOMEM;
+ 
++	nxdpf->map_key = obj->idx;
++
+ 	bq_enqueue(obj->dev, nxdpf, dev_rx, obj->xdp_prog);
+ 
+ 	return 0;
+@@ -670,8 +672,10 @@ int dev_map_enqueue_multi(struct xdp_frame *xdpf, struct net_device *dev_rx,
+ 	}
+ 
+ 	/* consume the last copy of the frame */
+-	if (last_dst)
++	if (last_dst) {
++		xdpf->map_key = last_dst->idx;
+ 		bq_enqueue(last_dst->dev, xdpf, dev_rx, last_dst->xdp_prog);
++	}
+ 	else
+ 		xdp_return_frame_rx_napi(xdpf); /* dtab is empty */
+ 
+diff --git a/net/core/filter.c b/net/core/filter.c
+index f1c37c85b858..7762a6d6900f 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -4394,10 +4394,12 @@ static __always_inline int __xdp_do_redirect_frame(struct bpf_redirect_info *ri,
+ 			err = dev_map_enqueue_multi(xdpf, dev, map,
+ 						    flags & BPF_F_EXCLUDE_INGRESS);
+ 		} else {
++			xdpf->map_key = ri->tgt_index;
+ 			err = dev_map_enqueue(fwd, xdpf, dev);
+ 		}
+ 		break;
+ 	case BPF_MAP_TYPE_CPUMAP:
++		xdpf->map_key = ri->tgt_index;
+ 		err = cpu_map_enqueue(fwd, xdpf, dev);
+ 		break;
+ 	case BPF_MAP_TYPE_UNSPEC:
+@@ -4407,6 +4409,7 @@ static __always_inline int __xdp_do_redirect_frame(struct bpf_redirect_info *ri,
+ 				err = -EINVAL;
+ 				break;
+ 			}
++			xdpf->map_key = ri->tgt_index;
+ 			err = dev_xdp_enqueue(fwd, xdpf, dev);
+ 			break;
+ 		}
+@@ -9022,6 +9025,16 @@ static bool xdp_is_valid_access(int off, int size,
+ 	case offsetof(struct xdp_md, data_end):
+ 		info->reg_type = PTR_TO_PACKET_END;
+ 		break;
++	case offsetof(struct xdp_md, map_key):
++		if (prog->expected_attach_type != BPF_XDP_DEVMAP &&
++		    prog->expected_attach_type != BPF_XDP_CPUMAP) {
++			return false;
++		}
++
++		if (size != sizeof(__u64))
++			return false;
++
++		return true;
+ 	}
+ 
+ 	return __is_valid_xdp_access(off, size);
+@@ -10116,6 +10129,11 @@ static u32 xdp_convert_ctx_access(enum bpf_access_type type,
+ 		*insn++ = BPF_LDX_MEM(BPF_W, si->dst_reg, si->dst_reg,
+ 				      offsetof(struct net_device, ifindex));
+ 		break;
++	case offsetof(struct xdp_md, map_key):
++		*insn++ = BPF_LDX_MEM(BPF_FIELD_SIZEOF(struct xdp_buff, map_key),
++				      si->dst_reg, si->src_reg,
++				      offsetof(struct xdp_buff, map_key));
++		break;
+ 	}
+ 
+ 	return insn - insn_buf;
+-- 
+2.39.2
 
 
