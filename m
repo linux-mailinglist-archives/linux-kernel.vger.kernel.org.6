@@ -1,207 +1,124 @@
-Return-Path: <linux-kernel+bounces-241900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7FE39280E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:19:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF069280E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D475B2348D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B22C7284EE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D9038F86;
-	Fri,  5 Jul 2024 03:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A252A374D9;
+	Fri,  5 Jul 2024 03:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="hsALHIgm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sQBACcDF"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="0IKqpZJg"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EDF1B950;
-	Fri,  5 Jul 2024 03:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A2014AA0
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 03:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720149574; cv=none; b=Zgz5FehLWrgmh0mjhu5rLdoiILIluwxuu8AfbSfmCD4kitdOFm498rWkPsWa6l6E6ej+xL2mAX9U6YZM0nYCMyZLSs9dPlIeZikL1ZYs5Tvu3oqmtmnghDCzunF9BEzryct7Gd9LQsHB6+UNWVk5n5Qc8DifwQabghCWrm2/OTA=
+	t=1720149662; cv=none; b=fMX7u1DbTEopr2GF34UGpzvMpQ5UiDnRabaRGQadU/8+Gec7xAG6PUaVcekiqZ0jhFaJxpg+9HTnf28K/vg2Wmt2N8OmOp9smwHMyjr5pFP5kS/LQgV+4ZVTvjeuxB4a1ZMV6ArBMcOHWSGZJZ+KGDptRQA/di0kLw/99WSUW6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720149574; c=relaxed/simple;
-	bh=+wTwNpg8TcTjbHythgWMvLOXcf15T1T2vdbdDsv15Eo=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=WwVe0hy2fIef7yv9Hyw6+PgjYiHk463KCH8jrUp/DLC1krjrjoD14ygmHP3Bh1y/Mc0SeEJeGNliflxU1DP82FlYp31rdZrdrFB2dPlcAmipRsOuQwVq4wi04guRoBWFHeQhEc7d02qI4pzYkx70bQR0Gy3LBd9iuIcmzMFORVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=hsALHIgm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sQBACcDF; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id E3F7A1140212;
-	Thu,  4 Jul 2024 23:19:31 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Thu, 04 Jul 2024 23:19:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1720149571;
-	 x=1720235971; bh=YpqySUb+a4hGbNyz/m8SXRAbP72Db2DhOeFYdzoNiIk=; b=
-	hsALHIgmuWtvnCQ1d3Sgnrf2znx2l0XG2RRxjuRWL8QeNDh7KQBR7q5DL/ly/nyv
-	no+XmfmyhCUS7Qz7m+wwisWK4LFhXj0OXwmBV6Sg+W77dZuk3qaMSVUSOc/d/wWc
-	cSyF77EdDWYlxmVfVI4/iYn3M6sszZgP5lNUrOTgmdvBPr+qJlYMNb0uCOSkgrR9
-	A+1X7rCquuiHFoet6SqIfeAgzagS61z+0+D0/GDDfUfS2fscPlliz5tX8LLDAUhr
-	YdlrPfZPVaJBoK7Bh9LWbyVmgydii2jSsIYXvoKLaIyF9xnwNnnwtFU3e7+Zf2AJ
-	TyoKH0heJedK9Iwr/D833A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720149571; x=
-	1720235971; bh=YpqySUb+a4hGbNyz/m8SXRAbP72Db2DhOeFYdzoNiIk=; b=s
-	QBACcDFZUAU+vOChb6LlDVPhM6xr9y4QOEZo4IuOpp1FAV+IP+2kPQuzfO1d4x8Z
-	3ps7rB4RkmjFfRnpLROvteBxZieBH+PK0mKVooJc8aquQsWU9OT25RPQe64Dk5qM
-	22sNoi+f8zJQoDjvXhkysHxR1t/efsV+OmPskaCoYHGtBesEteVp7ewtIwEyBHE4
-	rpPJSlPmpUHBS69nSEpCvDqdBEERxKxXPl5siQcEZzpVKkAQgSxeLxtPK4Idm/0A
-	6p+siXLb77CnZ9bnl2Ub1OgzdSTiQQSRIoT+Oy3aD9S09j3kXxDlukMHW4xVdVJ+
-	LHXDsrzoKoJMWm3VC7SkQ==
-X-ME-Sender: <xms:QmaHZoIfeq3ppTADQcJm2SzZeqv63xLcz2mZQMkeZeZfpUAPrcbKzw>
-    <xme:QmaHZoJSHKWPICYHoR5u3n1ySZ_7diOdqSDuqjNG4kfD1nD9IlnSZNVLHxAiw0mj2
-    yL4yFjC02M_apknTaA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtgdeilecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
-    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
-    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:QmaHZotFaIIlbINwjLculLxVZUEQHn0SlHY3XOpqW7JU8mbtJxGnuw>
-    <xmx:QmaHZlbq5x-UoajqeF0gLUDLvYmXfBv6KEXsDqQO_wDCM3R_p4Yk6A>
-    <xmx:QmaHZvbO08lN3d_6jobNEvFTNx7IydaOiq2oAn-Tk1gvT3JI7mHhfw>
-    <xmx:QmaHZhC_ztpfqxkMJ2NUqtqO0ouaNJDLtY6DKgi2wBzuCPg7UX38SQ>
-    <xmx:Q2aHZkNplrJKCKsO_YYDBjgsjBLr99yY1fsmTFM6xpknu8VxjaQajd3R>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 8993336A0074; Thu,  4 Jul 2024 23:19:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1720149662; c=relaxed/simple;
+	bh=8w+l88N0ay0DP5baXPiAOfw5yIbPXiW0S1kxxDfJ4g4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MbaTg6kFD6xvjj8853YK3ZiaD/hbxbQaPGYZQh3bj1HEJC3PcnkI+0qLKDFyJBsGFVqMUE0ERAfqUfauWC6lsJT3ZYRVJUQNgXS6yLnj3VqbBZmP02PGgjYymk92fmh0fp4wB2RidxDRwdgk/hs3mE4rXfDq44hR1gxw+M2vx3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=0IKqpZJg; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7021702f3f1so738475a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 20:20:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1720149658; x=1720754458; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4m+wLWb9gkModAj2RkagVThSSmZ6lzDQL2hRBJ4sn6M=;
+        b=0IKqpZJgEb7zOeNHrzFg5EsrBTOwXBkYI3lFEDC7H5ErkPQCNXEVfbxNANom4bKzkz
+         LwF33hkfzuyNTocdvzd+ipL9jtKJarKJym91341V/BNQAH2/4+iS1aMrEfFA4f9NelPM
+         vzWU9zPBAIIGdfzjaScIgKZvB2BjUZMNev6yA8zQBsgiqsZULLZiNnhL5jguW+N9b2Hv
+         m4D+8kWUWyjOfypQiT0rvBzb8jDW8FmNdc7iJUhp9Sms+AqR94AmpktwfqlB3gPLG0SC
+         MTc1VQsPgAOdRYABuk3AO4OpviYbb8maZfCUAiSc75IOL5XnlLVg0IIE0UQpIeT6zDiv
+         x0zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720149658; x=1720754458;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4m+wLWb9gkModAj2RkagVThSSmZ6lzDQL2hRBJ4sn6M=;
+        b=UflfFBbwLdVSR7+M8mXkXUeWnx8VicPyepyI4cNlFvWOW3t+wrP/XD3/qr4uPHGWPg
+         8j8fW1UZKbUPMRH0NCz1WqbcIvpQNKCei0kG6QJ/L8Gibuzis/al7UMGTx7YZT5yTJoH
+         xcOw0//Smy4zEqQerE5S+dHFoviAqvVJHvylyUJlM8+z/48KQ6TdRPQQ6kYCRsBzVHky
+         Wne+LXvrL9b3Ql4SI0egPXZZMVznt8wiurqbcJiHgacZmOutXqwVMhRP2xFXlSk9qdQq
+         CrDcA6WZorYVbyqU5MFcX3z/ZOrBVSjBWPdUIvE2aupCJiAW+EjCbM1dDsM3NVtaBVyG
+         SEYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWksUv44uBJNef4Gng2YE4DOdhUhyewnYJ0LirYcPRKSY0LayJUcTDQmU3elFXUw9hDLi1/B1Wxo57Tl5xo1u4Gmuwhxs3GRViaHi17
+X-Gm-Message-State: AOJu0YwtmSgN1m+3ygWYr5Kx76IoAK1rUR/Qm2ZgsxDYph5kkyVeypw7
+	wP5xcg2YKw2yiLLH15GvkmpOnPHde8+wi27f47bLS3KLhX9d2g/I+FU/LxJRnao=
+X-Google-Smtp-Source: AGHT+IFn2XdhgB88bdLcHkqaGNa+vFp/NLHEl4eeGjUKhR5UGYOLVChbMaJJftp5OFbUBLt+g2QsXg==
+X-Received: by 2002:a9d:7382:0:b0:701:f4b0:bef9 with SMTP id 46e09a7af769-7034a74cdebmr3575073a34.14.1720149657296;
+        Thu, 04 Jul 2024 20:20:57 -0700 (PDT)
+Received: from echken.smartx.com ([103.172.41.204])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70afaa8126dsm2433163b3a.197.2024.07.04.20.20.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 20:20:56 -0700 (PDT)
+From: echken <chengcheng.luo@smartx.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	echken <chengcheng.luo@smartx.com>
+Subject: [PATCH] Support for segment offloading on software interfaces for packets from virtual machine guests without the SKB_GSO_UDP_L4 flag.
+Date: Fri,  5 Jul 2024 03:20:48 +0000
+Message-Id: <20240705032048.110896-1-chengcheng.luo@smartx.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <01eb9efd-ca7a-4d4c-a29d-cfc2f6cfbb86@app.fastmail.com>
-In-Reply-To: <554b10e8-a7ab-424a-f987-ea679859a220@loongson.cn>
-References: <20240626063239.3722175-1-maobibo@loongson.cn>
- <20240626063239.3722175-3-maobibo@loongson.cn>
- <CAAhV-H4O8QNb61xkErd9y_1tK_70=Y=LNqzy=9Ny5EQK1XZJaQ@mail.gmail.com>
- <79dcf093-614f-2737-bb03-698b0b3abc57@loongson.cn>
- <CAAhV-H5bQutcLcVaHn-amjF6_NDnCf2BFqqnGSRT_QQ_6q6REg@mail.gmail.com>
- <9c7d242e-660b-8d39-b69e-201fd0a4bfbf@loongson.cn>
- <CAAhV-H4wwrYyMYpL1u5Z3sFp6EeW4eWhGbBv0Jn9XYJGXgwLfg@mail.gmail.com>
- <059d66e4-dd5d-0091-01d9-11aaba9297bd@loongson.cn>
- <CAAhV-H41B3_dLgTQGwT-DRDbb=qt44A_M08-RcKfJuxOTfm3nw@mail.gmail.com>
- <7e6a1dbc-779a-4669-4541-c5952c9bdf24@loongson.cn>
- <CAAhV-H7jY8p8eY4rVLcMvVky9ZQTyZkA+0UsW2JkbKYtWvjmZg@mail.gmail.com>
- <81dded06-ad03-9aed-3f07-cf19c5538723@loongson.cn>
- <CAAhV-H520i-2N0DUPO=RJxtU8Sn+eofQAy7_e+rRsnNdgv8DTQ@mail.gmail.com>
- <0e28596c-3fe9-b716-b193-200b9b1d5516@loongson.cn>
- <CAAhV-H6vgb1D53zHoe=BJD1crB9jcdZy7RM-G0YY0UD+ubDi4g@mail.gmail.com>
- <bdcc9ec4-31a8-1438-25c0-be8ba7f49ed0@loongson.cn>
- <ecb6df72-543c-4458-ba27-0ef8340c1eb3@flygoat.com>
- <554b10e8-a7ab-424a-f987-ea679859a220@loongson.cn>
-Date: Fri, 05 Jul 2024 11:19:09 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Bibo Mao" <maobibo@loongson.cn>, "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Tianrui Zhao" <zhaotianrui@loongson.cn>,
- "Xuerui Wang" <kernel@xen0n.name>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] LoongArch: KVM: Add LBT feature detection function
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+When running virtual machines on a host, and the guest uses a kernel
+version below v6.2 (without commit https://
+github.com/torvalds/linux/commit/860b7f27b8f78564ca5a2f607e0820b2d352a562),
+ the UDP packets emitted from the guest do not include the SKB_GSO_UDP_L4
+flag in their skb gso_type. Therefore, UDP packets from such guests always
+bypass the __udp_gso_segment during the udp4_ufo_fragment process and go
+directly to software segmentation prematurely. When the guest sends UDP
+packets significantly larger than the MSS, and there are software
+interfaces in the data path, such as Geneve, this can lead to substantial
+additional performance overhead.
 
+Signed-off-by: echken <chengcheng.luo@smartx.com>
+---
+ net/ipv4/udp_offload.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-=E5=9C=A82024=E5=B9=B47=E6=9C=885=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8A=E5=
-=8D=889:21=EF=BC=8Cmaobibo=E5=86=99=E9=81=93=EF=BC=9A
-[...]
->> for you.
-> On the other hand, can you list benefits or disadvantage of approaches=20
-> on different architecture?
+diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
+index 59448a2dbf2c..6aa5a97d8bde 100644
+--- a/net/ipv4/udp_offload.c
++++ b/net/ipv4/udp_offload.c
+@@ -402,6 +402,13 @@ static struct sk_buff *udp4_ufo_fragment(struct sk_buff *skb,
+ 	if (unlikely(skb->len <= mss))
+ 		goto out;
+ 
++	if (skb_gso_ok(skb, features | NETIF_F_GSO_ROBUST)) {
++		/* Packet is from an untrusted source, reset gso_segs. */
++		skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(skb->len - sizeof(*uh),
++							 mss);
++		return NULL;
++	}
++
+ 	/* Do software UFO. Complete and fill in the UDP checksum as
+ 	 * HW cannot do checksum of UDP packets sent as multiple
+ 	 * IP fragments.
+-- 
+2.34.1
 
-So the obvious benefit of scratch vCPU would be maintaining consistency =
-and simpleness
-for UAPI.
-
-It can also maximum code reuse probabilities in other user space hypervi=
-sor projects.
-
-Also, it can benefit a potential asymmetrical system. I understand that =
-it won't appear
-in near future, but we should always be prepared, especially in UAPI des=
-ign.
-
->
-> Or you post patch about host cpu support, I list its disadvantage. Or =
-I=20
-> post patch about host cpu support with scheduled time, then we talk=20
-> about it. Is that fair for you?
-
-I'm not committed to development work, I can try, but I can't promise.
-
-Regarding the fairness, IMO that's not how community works. If you obser=
-ve reviewing
-process happening all the place, it's always about addressing other's co=
-ncern.
-
-Still, it's up to maintainers to decide what's reasonable, I'm just tryi=
-ng to help.
-
->
-> It is unfair that you list some approaches and let others spend time t=
-o=20
-> do, else you are my top boss :)
-
-I mean, I'm just trying to make some progress here. I saw you have some =
-disagreement
-with Huacai.
-
-I know QEMU side implementation better than Huacai, so I'm trying to pro=
-pose a solution
-that would address Huacai's concern and may work for you.
-
->>=20
->> I understand you may have some plans in your mind, please elaborate s=
-o=20
->> we can smash
->> them together. That's how community work.
->>=20
->>>
->>> For host cpu type or migration feature detection, I have no idea now=
-,=20
->>> also I do not think it will be big issue for me, I will do it with=20
->>> scheduled time. Of source, welcome Jiaxun and you to implement host=20
->>> cpu type or migration feature detection.
->>=20
->> My concern is if you allow CPU features to have "auto" property you a=
-re=20
->> risking create
->> inconsistency among migration.=C2=A0Once you've done that it's pretty=
- hard to=20
->> get rid of it.
->>=20
->> Please check how RISC-V dealing with CPU features at QMP side.We are =
-working on
->>=20
->> I'm not meant to hinder your development work, but we should always=20
->> think ahead.
-> Yes, it is potential issue and we will solve it. Another potential iss=
-ue=20
-> is that PV features may different on host, you cannot disable PV=20
-> features directly.  The best way is that you post patch about it, then=20
-> we can talk about together, else it may be kindly reminder, also may b=
-e=20
-> waste of time, everyone is busy working for boss :)
-
-Sigh, so you meant you submitted something known to be problematic?
-
---=20
-- Jiaxun
 
