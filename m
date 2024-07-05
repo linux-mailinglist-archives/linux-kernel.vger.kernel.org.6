@@ -1,133 +1,102 @@
-Return-Path: <linux-kernel+bounces-242818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3937928D8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:30:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E79A928D90
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E41951C2162E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:30:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56131B23A46
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C2716D4F8;
-	Fri,  5 Jul 2024 18:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B1516CD3D;
+	Fri,  5 Jul 2024 18:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CnsJFfhY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMpSRWpa"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE268225AE;
-	Fri,  5 Jul 2024 18:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593C8225AE;
+	Fri,  5 Jul 2024 18:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720204242; cv=none; b=Oe+ww9e7oGp7PSqUcrjKPZYfnh2T0tf0HVQWBuPkiHpLmNonKFyDCQ2mLDrlrLP9+t8BXuc33uLscQCFkv7N0lmspQLKhXKnW0vRWJrUtSGWP0wm87KSNI89Y802393uKSHSIycOrQefQF2+yAgukMyo93XIG8OBJovspy1l07Y=
+	t=1720204396; cv=none; b=YlSp/Lh0h59LYL4/epOj5e4JL8EwmvIUgM6qjjb3QfO/t3sZAstDAfmKNVciFfxuTvo7d+R6FAJS2mq48lHX8g4+EHV7pWGnQt2X3YoneJL8nRlJ9CnykFNx4WB3Y2faUJm1hQi1kd1PAxylaAjkScwaf2NLs6rB3O7obv2A6mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720204242; c=relaxed/simple;
-	bh=TAwceALXuD7x1GkKj9vKLJfp4GnQLkF/WuMmrQY9WyI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DKKY6U+zMSjnSF2cSp88Xl5xgyCi7OpCU+Ag3tuzI0VnZAP9htEn6lbFYbY5jqqr2cHy9xdK84CSFQKWGeO0jVXvkCFWGxWdhA8v8Z4iC5XW4hHq7E6YvkdqNtNCmvUHkXYPpbynIu/mUfDT3frLCFfEY8sDJ62m8cacMIZp/rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CnsJFfhY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4659bQQs018290;
-	Fri, 5 Jul 2024 18:30:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=HUi/pTY/uAf3d3IqhkIiGEVl
-	5QfvpQSUQ8D/mfOlKlA=; b=CnsJFfhYU5Y3GL9TAnbnkkozib5UFuY0yQk4AJ4R
-	zHtbO0W3DnGw3hoJECpP2HP2Z8IeGGrnQtlSbxcunlYhulZMeKdJVbOEvTH97QKe
-	Q7//ifzF3aq5SMdXZthy/jiCEmvVOvJxAmEVZhB9H4w9QTkyq8kavylPS9n8ajEG
-	8+dLBz/RwOwop7uFGKkJtf/WoaRQ/fTCcruIbDZU2JiKk0Ys5CJgRzvMQzY0zIJK
-	Wm2eiUsPAEsF0B0uF63keJf6ccu8RhvRjCOP1B3CfsRNPMNRf4u4lJg0CeUFyXOQ
-	jG8TG4D5txSr0qSvrNrXT4wIjfwMVZMgdbPeF/lZcmN+QA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kcts67m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 18:30:37 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465IUaST024703
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 5 Jul 2024 18:30:36 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 5 Jul 2024 11:30:36 -0700
-Date: Fri, 5 Jul 2024 11:30:35 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-CC: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p: Add TCSR halt register
- space
-Message-ID: <20240705112957248-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240705153252.1571814-1-quic_mojha@quicinc.com>
- <20240705153252.1571814-2-quic_mojha@quicinc.com>
+	s=arc-20240116; t=1720204396; c=relaxed/simple;
+	bh=ZJVpS3eTCYHPlanUuEV6FHfgPUA4HZshmIRT/LJbahU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRlfMysY4jbngUeNLpXVPF57GjmglrMNguYY/4AACKUp6CJZ/oz2tlxhQZa+69sA/fHCgS7P/ozUhIC9nFpSiiNSHwb0IRuehWOWfiJuL2m+hFCuNoo53giTI3qHpS08Bw9Ooy4FmyAkjwXnNK8aM574JOZUTwVSpbUuN3yB6bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMpSRWpa; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fb4a332622so6141415ad.2;
+        Fri, 05 Jul 2024 11:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720204394; x=1720809194; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=brZpNyF6HgASJsElFndUGdwTOe58aOIX7QAQUfe35iY=;
+        b=DMpSRWpagJ9gbDOPDvj6AEFypO8WVaNMdI7tfexHnH7O6Kf3ep76bjQ5/DGJWit7e4
+         6yOAWU2TNtyqC4zUkX3VfnvMRU4wFpxI1d9DskxoJiwKhyww8KdB9DOCmI8mWv2Eub/N
+         gN5KC/pIRdXj6q7DRIv8VyUfyeRi5yDtNEkjACqXY8rc3DJhnBabMioWUUb0rBNkoNTj
+         HkX5dCg69GrvLjTFK/2KqhAer4fRtpNtd1mVs7JKUpnQo+UujQtsEv1Qpqs2MHflf0u3
+         dmr1tGhsgpml3f5hnYgKbBazGxUSoBst7ENWZlPbMkArApgMNeRPOdiPIj4yPoSyiTyM
+         vNeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720204394; x=1720809194;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=brZpNyF6HgASJsElFndUGdwTOe58aOIX7QAQUfe35iY=;
+        b=KnEHxU6b7j42SrvGiBkXE7CBytavb2tS9AyFjRMMJ34Tzi3+LznYrO0udwPLT0HkDo
+         UmdJYQL+tnB1Nd0ZytdgoFVDgrQZa+X6VrXzEwaFsVXtLUeLeMLSr/Rf6U5PlXHI9mWN
+         fc5XuEQkAoynBKCsjR48dfxgPZAo37oFXqYxTu/nBdBJvv1Tf2gVuOFzxK9M3wel9UP6
+         0L34lNQUMBN3hULDbhYe7RJdxbd6xm1i0tXXOq8jtzMrDaKdwB6IdR1cnwCRa7glTNa9
+         IRLBIhqe2SShDdsnluA57KnCnCF6H0/rwVk8jpgFlG/pyvG1NbZnM9iCdLcHTCpr8QEU
+         E7Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUfeVqV3EyfExBJTYByg94rOS89wktxpmNbD42He2V4mGBuCrAnSqen0DeWGvCueZZZ8AVd+1BBwzKHsTBnQHtOwyiblyo/F/MKuNZkuYsD3TkBsUYtwFQoiiTExuMB7wks3lduQ==
+X-Gm-Message-State: AOJu0YyBl2UE2uA0ywBdxLDlcgBKpQKciHZX9b1G795I+mj24zLs3D5l
+	HUxH9n9e5hoqxqjFwBGrIcr393DEzc32GaxYw00Lo1NaQ1tRvRG8
+X-Google-Smtp-Source: AGHT+IFiwsw8aGWhG4oepNtiCh/TzP7BuWR7b/iV6umlvNBDzxYen6db6Z9UF4SoCKJtZ4CG8yQFhA==
+X-Received: by 2002:a17:902:f605:b0:1fb:358a:2f65 with SMTP id d9443c01a7336-1fb358a32a0mr38147625ad.37.1720204394550;
+        Fri, 05 Jul 2024 11:33:14 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb1e6db215sm50278865ad.164.2024.07.05.11.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 11:33:14 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 5 Jul 2024 08:33:12 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Chen Ridong <chenridong@huawei.com>
+Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 -next] cgroup/rstat: add force idle show helper
+Message-ID: <Zog8aHU7s2CrrkXF@slm.duckdns.org>
+References: <20240704140119.1423196-1-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240705153252.1571814-2-quic_mojha@quicinc.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jdI4osVg0EHkxi3nPBxiU4bEiXnPgHKw
-X-Proofpoint-ORIG-GUID: jdI4osVg0EHkxi3nPBxiU4bEiXnPgHKw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_14,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxlogscore=614 priorityscore=1501 impostorscore=0
- suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407050135
+In-Reply-To: <20240704140119.1423196-1-chenridong@huawei.com>
 
-On Fri, Jul 05, 2024 at 09:02:52PM +0530, Mukesh Ojha wrote:
-> Enable download mode for sa8775p which can help collect
-> ramdump for this SoC.
+On Thu, Jul 04, 2024 at 02:01:19PM +0000, Chen Ridong wrote:
+> In the function cgroup_base_stat_cputime_show, there are five
+> instances of #ifdef, which makes the code not concise.
+> To address this, add the function cgroup_force_idle_show
+> to make the code more succinct.
 > 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 
-Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
+Applied to cgroup/for-6.11.
 
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 23f1b2e5e624..a46d00b1ddda 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -221,6 +221,7 @@ eud_in: endpoint {
->  	firmware {
->  		scm {
->  			compatible = "qcom,scm-sa8775p", "qcom,scm";
-> +			qcom,dload-mode = <&tcsr 0x13000>;
->  			memory-region = <&tz_ffi_mem>;
->  		};
->  	};
-> @@ -2824,6 +2825,11 @@ tcsr_mutex: hwlock@1f40000 {
->  			#hwlock-cells = <1>;
->  		};
->  
-> +		tcsr: syscon@1fc0000 {
-> +			compatible = "qcom,sa8775p-tcsr", "syscon";
-> +			reg = <0x0 0x1fc0000 0x0 0x30000>;
-> +		};
-> +
->  		gpucc: clock-controller@3d90000 {
->  			compatible = "qcom,sa8775p-gpucc";
->  			reg = <0x0 0x03d90000 0x0 0xa000>;
-> -- 
-> 2.34.1
-> 
-> 
+Thanks.
+
+-- 
+tejun
 
