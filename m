@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-242697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9746928B9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:27:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BA4928B9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55191C20E42
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1521C213F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D7F16B75F;
-	Fri,  5 Jul 2024 15:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2293316CD0A;
+	Fri,  5 Jul 2024 15:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="J9dWrh77"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9FP9MSA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AD61487C1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FC316A94F;
+	Fri,  5 Jul 2024 15:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720193239; cv=none; b=alp9ls/q91mxKtmmLow4IhiZ7UoZ5rJsGcWX3NQvwiOEEnWquOHocoGhzHJupJhGkrPMD1P4MdGefdUHI9xcyAnDLU0yYHqAO5fRMhN0zaXH0KZndmhGIRM17J+9K1gzVEwOwYmfiBdVssX28o1f+VMDj5T5Kmak0lQeh8Xtdh0=
+	t=1720193247; cv=none; b=nlItAr2rroZROK1h7YQ+y2LgaqN8oZGOhyWiZGY/PQDh82VM86XxD9E4E+TATWpj4D7cHUSv25Y588Ss7o+F2N+hsCqO1D7HDHc6EeBeinQXjE52m4rdap4ZYQPJhrpycxko+6oOKiph3K0m1sZQY92JqHnPKNmT1CBXPdMiDe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720193239; c=relaxed/simple;
-	bh=/6h0p2NgdVes3zAAuz2TDWC+uOXxK+yalypQWRlvkR4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LFDscWeGgLOjyDhD8W8C8k4JxQzCd6Ob1vjbi9eN/5ZM4mwsoizev9yyAIkYjDru2K+wunlF5r8ME4FRj/oTkbrSWSqRzvpSWpLhLGcWZQibsQCaBxkj/JrW6xbCEFNqxUdCJz161SD7UEXz9o9k9W944150X/tfB9f38IbX8MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=J9dWrh77; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720193177; x=1720797977; i=markus.elfring@web.de;
-	bh=6JnxrUOlqbH2mNGsHeA7Vvi/lieV8ve4eKCHNY22ByE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=J9dWrh77ExL55IHtoHg9UexxBIB1DbtXtNZWyZx2CcLCm7ZAopRT05QVgDrwgI4i
-	 Fx1WVsR63xBJGTn8w4XU69mpiYeJqTT++7Eqbqd+AtsQc7Fi1t53WBZGph2XgEnb/
-	 FslclELTR7MABLKKWpQaANZcel5SqO6ltpBEDr63L9EZcvD/lorqWhsJTdUbvjy7E
-	 BBVKLn+36Z1ygzoecQ5RoB4IFcEqYsMYEsnLNPXBScYIAnRrSrhokGtfWAvdWUj0e
-	 /1rqvOupHoCZsU7tOEqKwQK82xhok/S75A9a403RBUrp/6yQlrtuAdQX/35L0clrA
-	 1Tj/t1wg0Rfw6xu3CQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0qvH-1sE7ky2rP3-013FjJ; Fri, 05
- Jul 2024 17:26:17 +0200
-Message-ID: <e3dc918e-07df-4fd1-b69a-9650a246ff7c@web.de>
-Date: Fri, 5 Jul 2024 17:26:15 +0200
+	s=arc-20240116; t=1720193247; c=relaxed/simple;
+	bh=293ScHg6dX/n+ot2SYdQNqDyAVHAPFtaqM2zrDuwcv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3aT8IAlJ8tdChowqH7CEuTWWGYMu0unoIPyIegHM8nscTQpE9BAtvqVghgCa84JKhAksjGSimadRnJ6d2UdDBAEU9yBYCRx/rtvD+mM1Fm9vE6p5GKiOpmZ2C38L4WEGm2Vew/dfaiF58zb1ftHtpV1410JqoBkfORUluSt0N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9FP9MSA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C35C116B1;
+	Fri,  5 Jul 2024 15:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720193246;
+	bh=293ScHg6dX/n+ot2SYdQNqDyAVHAPFtaqM2zrDuwcv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u9FP9MSA3B0NehidQL4z1aVZ6ykOFX706cXsvFxi3vnOFdxwvaWcdaBm8XYb00mJE
+	 CB8+5rLVm2/7sFIxoKSCzQdwuYig8ozO2UVOU1Z7iVl3iL1Vx1mSa3kREGAEmFAy1s
+	 ENoEKat0IgjUGHjGzUCWE2ZGaDlDrzpVxpUDhJWD03UvPJ5luubcbS/GpzKw6gzWit
+	 O9WeswdkP+YwBYH3eG497P7yqcFiPYXjhhC+o0IBtWOnONz+z/oa3YYiXR/+xfEujv
+	 kaKra6NC4TfBJWTs8U9yA12L3y2xEfDeL4+BNC5uURk1s9zZxBH7W8y63OhVksJfGb
+	 cpTzvXfgb44ig==
+Date: Fri, 5 Jul 2024 16:27:21 +0100
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v9 4/6] iommu/arm-smmu-v3: Add CS_NONE quirk for
+ CONFIG_TEGRA241_CMDQV
+Message-ID: <20240705152721.GA9485@willie-the-truck>
+References: <cover.1718228494.git.nicolinc@nvidia.com>
+ <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
+ <20240702174307.GB4740@willie-the-truck>
+ <ZoREzIAqzyamQBWL@Asurada-Nvidia>
+ <20240702184942.GD5167@willie-the-truck>
+ <ZoRZP4k1A3G7nH9q@Asurada-Nvidia>
+ <ZoReq/kNi368x79q@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Vladimir Zapolskiy <vz@mleia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Li Zetao <lizetao1@huawei.com>,
- Yangtao Li <frank.li@vivo.com>
-References: <20240705093851.18107-1-piotr.wojtaszczyk@timesys.com>
-Subject: Re: [PATCH] mtd: rawnand: lpx32xx: Fix dma_request_chan() error
- checks
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240705093851.18107-1-piotr.wojtaszczyk@timesys.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lNOiipqr4XlYK+cmZBteRE8mMPYw/wCeZ+u14Ww6uOWGO9szABd
- FxzXJYVNM934Ocz33GU+zcYxPubpf+O0CjTdlrfb0dUoSVLRjLQ06CXqr+uWimHZ9npuX5o
- BedgALtHx3GvG8kHwEBuOgC9UIzpNN3vx9N2BQkQxJFyvRd74s5R7l2LelgxzxLzG7V8M/q
- BRw6CGbfF+KEaRYChm/Zw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UOTWRfcKhgQ=;RZsdVvtSLb0xq/AQHD6GuOMZe1v
- yHkjXhczTksARmriX/0/1KrtpAQcngmT8mLglKUiSyqa5kxX5iTVBWBzI/2hf2/jN8DhGt2oQ
- foZTPsKoozTi1KSkyDId+oIOsogAJo7Z9O+mOmF5oeAOl12NcthBQ3EXtlt+KfFdzqiwhRYtN
- +y8jVpktVXr0pW4BdTwcVyTuBel5Us2QcZFFtgHxUqzlEBBpGyhyXAuMkcT7SuMMZOmrXCbGd
- a3N6/xIXb4MydUcTb3VuDNR6aXKoRjiNciOXOwbwGkHuw6G7kq6oZe+Mlxbkwof+uwd29W2Tf
- wBhNcVAd1UuHAsR2KPNEmfNJ1HUo9z1TiPOt2aiVv9yhDk5dlWMG+I2V94oPjowHt/wjVBHiu
- 6cGxt7PwuVFfrVMY4MymUbkA2u6TDJqQxmnFFqHNlYL4/oz+VXmQdCwH6SWvBgOCmDlO2tybi
- TLrbDUzTU5HugnSLSp3afdbgg2UejdgVgMl9j08BidPFcitaOO761grOSdHZrFvicc3uUy/Kg
- a+G6ataG7Gj3FgQBHW0vM7TD4TAt4W8FARDhAsOgPrwsQrza74gTnwCdM3G8E5rDtmkxT5r6B
- ByYGltDJsYfRdZzGPwWJ6od2gY3Etbj1ZiKUb3TYdlGENOWyd8sqyt4Yt3QPhuNbBFl4cQ4xH
- 8HBytZdxvD9i/q0HY+0rzn7YJF9xAKnAzC17MEFmIqcHPC4TI6hr0W0L+vdkyqc+t7S/W6PrX
- 2cVfHFKp/8nCLhD1nw5kEKWJGz0CP1DNkmhegUX80OXmgdcO9wN9WSX8ciKT9XZsiRS6mzJ+2
- XBKW4XxjaPYea1g7KshKf89Q3HSES+UZ7rM/3iqK94Xh8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZoReq/kNi368x79q@Asurada-Nvidia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-=E2=80=A6
-> dma_request_channel() returns NULL in case of error =E2=80=A6
+On Tue, Jul 02, 2024 at 01:10:19PM -0700, Nicolin Chen wrote:
+> On Tue, Jul 02, 2024 at 12:47:14PM -0700, Nicolin Chen wrote:
+> > @@ -345,6 +345,11 @@ static void arm_smmu_cmdq_build_sync_cmd(u64 *cmd, struct arm_smmu_device *smmu,
+> >  		FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH) |
+> >  		FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
+> >  
+> > +	if (cmdq->type == TEGRA241_VCMDQ) {
+> > +		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_NONE);
+> > +		return;
+> > +	}
+> > +
+> > 	if (!(smmu->options & ARM_SMMU_OPT_MSIPOLL)) {
+> > 		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
+> > 		return;
+> > @@ -690,7 +695,8 @@ static int arm_smmu_cmdq_poll_until_sync(struct arm_smmu_device *smmu,
+> >  					struct arm_smmu_cmdq *cmdq,
+> >  					struct arm_smmu_ll_queue *llq)
+> >  {
+> > -	if (smmu->options & ARM_SMMU_OPT_MSIPOLL)
+> > +	if (smmu->options & ARM_SMMU_OPT_MSIPOLL &&
+> > +	    cmdq->type != TEGRA241_VCMDQ) {
+> >  		return __arm_smmu_cmdq_poll_until_msi(smmu, cmdq, llq);
+> >  
+> > --------------------------------------------------------------
+> > 
+> > Would you prefer this one? I feel CMDQ_QUIRK_SYNC_CS_NONE_ONLY
+> > is more general looking though..
+> 
+> And we would need some additional lines of comments for the two
+> pieces above, explaining why TEGRA241_VCMDQ type needs the first
+> one while bypasses the second one. Again, it feels even worse :(
 
-* I find this information not relevant here because such a function
-  is not called at the affected source code places.
+I hacked the code around a bit this afternoon. Please can you see if:
 
-* Please improve such a change description with imperative wordings.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n94
+https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-nicolin/grace-vcmdq-wip
 
+does roughly what you need?
 
-> Fixes: 7326d3fb1ee3 ("mtd: rawnand: lpx32xx: Request DMA channels
-> using DT entries")
-
-Please omit a line break from the tag summary.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n145
-
-Regards,
-Markus
+Will
 
