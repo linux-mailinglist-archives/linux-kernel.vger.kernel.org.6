@@ -1,209 +1,132 @@
-Return-Path: <linux-kernel+bounces-242192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBB99284CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:10:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1249284D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9601928BBCC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:10:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD3611F22275
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD9314659B;
-	Fri,  5 Jul 2024 09:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11D01465A4;
+	Fri,  5 Jul 2024 09:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRutSGIS"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNiCsAyD"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E338A145FFF;
-	Fri,  5 Jul 2024 09:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668B713665A;
+	Fri,  5 Jul 2024 09:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720170614; cv=none; b=pgU8o88j1wtQ40C/vEnc/8N/tnQlK2jJgw54YfAFuj/R8fJyzO9n445E0bOQvxEh1NA2B71NbqNe6jF4UBLUyp0nqgut29aFgKe7zLsfsmxk41YruSTqs3Iui7ifB2bGymmmd7IE7VdSEKwLmvoNMtWhbNjyx+vzXrn8NJvHsS8=
+	t=1720170684; cv=none; b=l0poGgJ96wvu9wcgyKDYf2mikNRwBjCgfzx4IPCUZ2Q8H9e0l2k4UVoxbK3osFx+gOWWD1gj1UgaEHPvz7mntc/sZ61yadSWdkkbP9HSI40SBaIGHE+fbFT4IzQknyWPX/vJN8M7+/XeGSEYsgVMU8fVmmnf1WVQHwuC9ZKqpCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720170614; c=relaxed/simple;
-	bh=yvWnOud31vMnL+yTpzImfuL4uRHqnLCe9HNtiuwZ1sw=;
+	s=arc-20240116; t=1720170684; c=relaxed/simple;
+	bh=QIcPI42a2XmJ67V08YpOuVNPZ2MunvlkVsGdZitSm5I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VffPDTjLAoa6trE0aSg2esgcYBnw/wWvkkFwAkUMGDSyB4Tdlxf2gYGuKfpAbBPx9ZxNog90lzDNYV9SYhlhuHrvJA2sGtJdh6zKfBc+4KhY+ktZ1ywf/TWdNgxE9ub1vle8a3r2N6ncs2VuMHCkVGNn+7WkNSp5qNQfSmWnUGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRutSGIS; arc=none smtp.client-ip=209.85.219.175
+	 To:Cc:Content-Type; b=S85XKNHLt/JxTse/DGo0ds35iQLrOKo11PkKBwC7SSprIr2bo43ULeCYuax3SHyl7t714opzxegHNucar6KnyjLQs4WHvuu4R4CzX2YZsnZFdj5WOz+0k0X2ett+kptOjNwowHyFi9+Ski7ZOMHhqLJ1gqNhrdQvImim8Bq+5nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNiCsAyD; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e03a9f7c6a6so1535047276.3;
-        Fri, 05 Jul 2024 02:10:12 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-58e76294858so2401277a12.0;
+        Fri, 05 Jul 2024 02:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720170612; x=1720775412; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TbTjYoqT6FWGIQEqL+1/VmCoqw7h+aX+VZ3OMKuTKbE=;
-        b=TRutSGIS2xUL36whrPwuLK0Lxq2mW73dh+5ykcq504Gu9hFjVTeNrpbzjhF9ZAR9Qw
-         dKuF5A+Fie++FzxVT/xIx2pveZtzxN8XOcrnpuGuFxWlovark/4hrT3d6UxYvL0wlYEs
-         kM9yl3azA0zkp9k2AXfM9iefUw5UCtBCsqdTi5k2332U++I6PtQY3HPRv88+hj5xXo85
-         7/KNTSYuIuVLQJ4q9PKO+hL3FHFeETX9Ugl1FJlm6s0HKeJdGhtosagU5QEH9XJNeUu1
-         cv1VqTXlYT3zu14PT8bOqLw7+YfnJxjzM049KK112ONUL+jUs1gp/hUVTJ9Mt0P87bXk
-         diFg==
+        d=gmail.com; s=20230601; t=1720170681; x=1720775481; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tFVTuWApmF08b6diV6/k3QYObKt2iVbPWZ1EGAddbk4=;
+        b=UNiCsAyD9hsgVawtysSXnrq22T4FyV90hKDBKg2482l0rOfnTlhKhjXek2vvZkJllO
+         eZPIrqfWX0ZtE0vBg4yCHecGTuE6RjkJU+tsBvK2ITUdbrwADitfxMdENiZANxP+8DL/
+         839EenaF9c1iLbbph6FNr5m/vJKmG/Fv54NKJqbtQck1ilK97L9Ff2PxOV4bGnUEjU/j
+         WIG5A+xMwKNwBxVleuO4fRBkFJEOO/K6g1UUyU5nkeIJ/Wf4tAZ0OMdS9HGbmgDibG9z
+         Sc1McL7cEcO1a6GBSrm4cyBX4VQjig9doDAbmYoEmjFzXcKsYGJgGHtitzovmsY768mP
+         UUZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720170612; x=1720775412;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TbTjYoqT6FWGIQEqL+1/VmCoqw7h+aX+VZ3OMKuTKbE=;
-        b=p1lGJbiTq+n7NZVbSSJs2WDMbNOxCJJy+q3ztzL7MGI/OEwAq5KVRGgcRgrToyv0KZ
-         bgQWsX+hqEQp1b1eIc6tyVhQ90YoqJnoBlDjqX5X3qw+ZS6+VCx0pl54TV8U0f1cRlg7
-         HqkC5obnMtRPzGlGPezU9UDG5suCDO4ZfcHtzsvIAG4tF33zonc3DTxjqLvFLgGOr2e8
-         hOvpdakFoJoBuKfeZ/JDMdGaZSWGd0RsOiX17dLbgC990OWT+9xf/61Ddyv/Qr1XkZfp
-         ljtRz4brwKjh7a1BFwoGOaDpurl990Wbl5jszWSuYr4JBlwRXGIS4dw71zFCx8OxB54Y
-         t0bA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxCi3vqtP0B7gVl4gqt8fkrEA4OvKfUiIc7+ko5g9JlGsAcgJpPjrR448pFtr3SduKJCaKEXPZSq53G5x6PIjdJEz2zCEJJLMmFopXF7LmDOH7dDvPeRv1h6vfXMf5KPJKdi9+2wXl5xm/xA2JqA==
-X-Gm-Message-State: AOJu0Yxo8XjW2qypJ6uV2FEADlDv8ZIyKjw0jpLh9UKuVAZYNKkfrOId
-	BhN+1scWbTPWevs5n7ILFBry6En7nDxxyLw1V5zLQ9U7294Eqbm6a3AfMX0VqbRYt4hDCbVaqrh
-	aGcIaPCBr+nGRDbNClzw8ADElZ3k=
-X-Google-Smtp-Source: AGHT+IF10SX9Is8KfqoXRmKr52l6S+2MkCurZKQwZ6hQKrSUSUMvfFOa7ZVx/lpBAlCdINxFF6x1IOf1Xk3/u/P+F4U=
-X-Received: by 2002:a25:dc54:0:b0:dca:c369:fac2 with SMTP id
- 3f1490d57ef6-e03c1976135mr4174021276.3.1720170611618; Fri, 05 Jul 2024
- 02:10:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720170681; x=1720775481;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tFVTuWApmF08b6diV6/k3QYObKt2iVbPWZ1EGAddbk4=;
+        b=hO1Wq0k55qRRtrBzvi+U1ZG0eUcc9xAyXZ7Bvgl6nLpp9Rx+sV6XLSLnYWZ4J+Ry9q
+         VW/VZEeH7Qz5BcvvOiuUrRvSSzRn8l+3bDk0loVD6WCA/LQyDClk+ZD2wKtAKV0f2sry
+         kpeEQKgU4MoBAnDNh3sciyTgXb4BVHSUK1xqk+BiwzY8R5mGUTZLFe4fcx/KtJaompGA
+         8OiRqE3e97SeQDcfaDh8LQTqiEGixO+eWtBvSliTfgr5AR4edtM2CcNi0bR0gCs3uo6/
+         MRfsBtoCOapmzZCF4I60IEV0iyLGiaaitvLVuGTf51IaaXEYS7eGZa66IRbsKMxyGmSC
+         b8GA==
+X-Forwarded-Encrypted: i=1; AJvYcCVj1wkqq7ZdRFCnf2x6PE1W6NiNd7rI5HzXSPoWSMonKeMw3ZLw+Jy3QRnihS5azWgAbDFu50F5w8TQX3OeWcVJUCM9ehHrG2d7geXKpq0+169HRAFSYPDPzheL0t1DoaTheyu7RSdwcfBMkbqsgqqHY2sk8ifL/hd1aNtRVQaPCG5gJw==
+X-Gm-Message-State: AOJu0YxE4OKmLU8U2a4yvvMQJS94NTAmd4nJgYJxK61IkEfWVaJnWgvY
+	E/HReTPuMt8q1dwrO5Ri33iPeL/vbGDDvquiJ6V2XwQOY541THPPTa6CnPBJj/YADR4IGLOfkyH
+	Re1IbbH5o0nvcAd9ZDFr/0tJOSmY=
+X-Google-Smtp-Source: AGHT+IES48Ua4k077GMXI81WDVe5sTbjVgDZ5/aHC4u0ds3E3f/Es91e9OxI3B0qRmmnO+D/15fo0gyY/p1G3e8/rwo=
+X-Received: by 2002:a05:6402:2710:b0:57d:4692:ba54 with SMTP id
+ 4fb4d7f45d1cf-58e7ad25580mr3260066a12.6.1720170680522; Fri, 05 Jul 2024
+ 02:11:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704124354.904540-1-howardchu95@gmail.com> <Zob9c18uzVA__jPi@x1>
-In-Reply-To: <Zob9c18uzVA__jPi@x1>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Fri, 5 Jul 2024 17:10:02 +0800
-Message-ID: <CAH0uvoi5d4A9KaC9KHN8v2SRV+ttHnjVPhunoK0Nvnvq5yTo-g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] perf trace: Augment enum arguments with BTF
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org, 
-	kan.liang@linux.intel.com, namhyung@kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240701121355.262259-2-kanakshilledar@gmail.com>
+ <20240701121355.262259-5-kanakshilledar@gmail.com> <20240703-juice-refreeze-62c468a56ea5@spud>
+ <ZobU6K/R3pfHrK9c@x1> <Zobhkf5qr13rKcWH@x1>
+In-Reply-To: <Zobhkf5qr13rKcWH@x1>
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+Date: Fri, 5 Jul 2024 14:41:08 +0530
+Message-ID: <CAGLn_=siEF=srN1NLgi1i_EocnQH1HRpCPyTpv+bivQ123iq-w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] riscv: dts: thead: add basic spi node
+To: Drew Fustini <drew@pdp7.com>
+Cc: Drew Fustini <pdp7pdp7@gmail.com>, Conor Dooley <conor@kernel.org>, 
+	Serge Semin <fancer.lancer@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello Arnaldo,
+> > > > --- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+> > > > +++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+> > > > @@ -17,6 +17,7 @@ aliases {
+> > > >           gpio1 = &gpio1;
+> > > >           gpio2 = &gpio2;
+> > > >           gpio3 = &gpio3;
+> > > > +         spi0 = &spi0;
+> > >
+> > > "spi" would sort after "serial".
+> > >
+> > > >           serial0 = &uart0;
+> > > >           serial1 = &uart1;
+> > > >           serial2 = &uart2;
 
-Thanks for the review and improvements.
+> > > I'm pretty sceptical about adding more of these fixed clocks, rather
+> > > than waiting for the clock driver. Drew, what do you think? Should we
+> > > just add one more to your fixup list or would you rather delay? Guess it
+> > > depends on how long more you think that clock driver is likely to take.
+> >
+> > I think the clk driver [1] is in good shape but it has not been reviewed
+> > by the clk maintainer yet. Thus it is hard to predict any timeline for
+> > it getting merged.
+> >
+> > SPI support doesn't require any driver changes so I'd be inclined to
+> > allow the fixed clock in this case. It will be simple to change it over
+> > to a real clock once the clk driver is upstream.
+> >
+> > Acked-by: Drew Fustini <drew@pdp7.com>
 
-On Fri, Jul 5, 2024 at 3:52=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
->
-> On Thu, Jul 04, 2024 at 08:43:46PM +0800, Howard Chu wrote:
-> > Changes in v4:
-> >
-> > - Fix landlock workload's build error.
->
-> Can you please take a look at what is at:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf_trace=
--btf_enum
+Alright! I do the suggested edits and send a new patch.
 
-I think it looks good. I don't know the side effects of a fixed
-landlock_add_rule syscall number but I'm sure you've taken all
-circumstances into consideration.
+> > Thanks,
+> > Drew
+>
+> Sorry, I meant to include the link to the most recent clk series:
+> https://lore.kernel.org/linux-riscv/20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com/
+>
+> -Drew
 
->
-> ?
->
-> I have it building on my set of containers, so far:
->
-> perfbuilder@number:~$ export BUILD_TARBALL=3Dhttp://192.168.86.42/perf/pe=
-rf-6.10.0-rc3.tar.xz
-> perfbuilder@number:~$ time dm
->    1    97.75 almalinux:8                   : Ok   gcc (GCC) 8.5.0 202105=
-14 (Red Hat 8.5.0-22) , clang version 17.0.6 (Red Hat 17.0.6-1.module_el8.1=
-0.0+3757+fc27b834) flex 2.6.1
->    2    99.92 almalinux:9                   : Ok   gcc (GCC) 11.4.1 20231=
-218 (Red Hat 11.4.1-3) , clang version 17.0.6 (AlmaLinux OS Foundation 17.0=
-.6-5.el9) flex 2.6.4
->    3   116.11 alpine:3.15                   : Ok   gcc (Alpine 10.3.1_git=
-20211027) 10.3.1 20211027 , Alpine clang version 12.0.1 flex 2.6.4
->    4   115.06 alpine:3.16                   : Ok   gcc (Alpine 11.2.1_git=
-20220219) 11.2.1 20220219 , Alpine clang version 13.0.1 flex 2.6.4
->    5    97.46 alpine:3.17                   : Ok   gcc (Alpine 12.2.1_git=
-20220924-r4) 12.2.1 20220924 , Alpine clang version 15.0.7 flex 2.6.4
->    6: alpine:3.18
->
-> And that is what I'm planning to have merged into perf-tools-next, for
-> 6.12, as soon as the next merge window closes.
-
-:)
-
->
-> Tomorrow I'll not be able to participate on the perf-tools Office hours,
-> I=C2=B4ll be starting a two week long vacation, I'll be able to reply to =
-some
-> messages occasionally and if needed do any GSoC procedure step.
-
-Got it, Enjoy.
-
-Thanks,
-Howard
->
-> Best regards,
->
-> - Arnaldo
->
-> > Changes in v3:
-> >
-> > - Add trace__btf_scnprintf() helper function
-> > - Remove is_enum memeber in struct syscall_arg_fmt, replace it with
-> > btf_is_enum()
-> > - Add syscall_arg_fmt__cache_btf_enum() to cache btf_type only
-> > - Resolve NO_LIBBPF=3D1 build error
-> > - Skip BTF augmentation test if landlock_add_rule syscall and LIBBPF ar=
-e not
-> > available
-> > - Rename landlock.c workload, add a comment to landlock.c workload
-> > - Change the way of skipping 'enum ' prefix
-> > - Add type_name member to struct syscall_arg
-> >
-> > Changes in v2:
-> >
-> > - Add trace_btf_enum regression test, and landlock workload
-> >
-> > v1:
-> >
-> > In this patch, BTF is used to turn enum value to the corresponding
-> > enum variable name. There is only one system call that uses enum value
-> > as its argument, that is `landlock_add_rule()`.
-> >
-> > Enum arguments of non-syscall tracepoints can also be augmented, for
-> > instance timer:hrtimer_start and timer:hrtimer_init's 'mode' argument.
-> >
-> >
-> >
-> > Arnaldo Carvalho de Melo (2):
-> >   perf trace: Introduce trace__btf_scnprintf()
-> >   perf trace: Remove arg_fmt->is_enum, we can get that from the BTF typ=
-e
-> >
-> > Howard Chu (6):
-> >   perf trace: Fix iteration of syscall ids in syscalltbl->entries
-> >   perf trace: BTF-based enum pretty printing for syscall args
-> >   perf trace: Augment non-syscall tracepoints with enum arguments with
-> >     BTF
-> >   perf trace: Filter enum arguments with enum names
-> >   perf test: Add landlock workload
-> >   perf test trace_btf_enum: Add regression test for the BTF augmentatio=
-n
-> >     of enums in 'perf trace'
-> >
-> >  tools/perf/builtin-trace.c               | 229 ++++++++++++++++++++---
-> >  tools/perf/tests/builtin-test.c          |   1 +
-> >  tools/perf/tests/shell/trace_btf_enum.sh |  61 ++++++
-> >  tools/perf/tests/tests.h                 |   1 +
-> >  tools/perf/tests/workloads/Build         |   2 +
-> >  tools/perf/tests/workloads/landlock.c    |  38 ++++
-> >  tools/perf/trace/beauty/beauty.h         |   1 +
-> >  tools/perf/util/syscalltbl.c             |   7 +
-> >  tools/perf/util/syscalltbl.h             |   1 +
-> >  9 files changed, 317 insertions(+), 24 deletions(-)
-> >  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
-> >  create mode 100644 tools/perf/tests/workloads/landlock.c
-> >
-> > --
-> > 2.45.2
+Thanks and Regards,
+Kanak Shilledar
 
