@@ -1,106 +1,83 @@
-Return-Path: <linux-kernel+bounces-242589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D16928A32
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:53:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FDE928A30
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426802845E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:53:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3063C1C22573
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1D2155310;
-	Fri,  5 Jul 2024 13:53:25 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A277315216D;
+	Fri,  5 Jul 2024 13:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8FXjAu5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFA71459E8;
-	Fri,  5 Jul 2024 13:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85AD1459E8;
+	Fri,  5 Jul 2024 13:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720187605; cv=none; b=gNu8UWMMtFNLD5t41BAwXkvnmcRR8pxemBXFZCi/rndJbxEBX4VWb6fyGEeg3jIHiyooVbw7MGwxop7kYjrCZLHoT8kAFGmgxsmQvf0q/In6UgBvzLCXKLoICch05F18tOpu+KtfEdo30XfgHJlBpe+6rTary5R+PR7vaP7/NOY=
+	t=1720187599; cv=none; b=CFelfRbC1cSDefVfm/C2HDqo53t9O+Nn0mF6sPbO3AXLOvGwrT7EyOjMEaH/g/2s5m7eM/8dXTu3o4g7lCFWmuP9+8JnWkZwaMXk0UwH/mXZmpIR3BuHjcX/hMxkpSS1Dtqj4fDZGXvlB8y9+/BGwJHBULjlQfFyUcBtYYZ+280=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720187605; c=relaxed/simple;
-	bh=sm118sAxchGuKFASZW6P4OZONsrrpdlZZiLkYDBahYU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PBPI6FyN3HzQbP4C1bwqPT6783rNV5frh8yzJLhVXzRPh9bRL5I8aYbMdgh8iJWdR3IB83fzNg8sfJ2FE1WCEdzpBTnlSdQzdj8/dIgIn4ukcCLt2ge0KWK9TDK6M6IwfTiwmTfU4BLwx+5hcQiirrodO57up3vHKFBnisabKcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465DfQnK032117;
-	Fri, 5 Jul 2024 06:52:53 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 405jp1hfp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 05 Jul 2024 06:52:53 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 5 Jul 2024 06:52:52 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 5 Jul 2024 06:52:50 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <dvyukov@google.com>
-CC: <almaz.alexandrovich@paragon-software.com>, <linux-kernel@vger.kernel.org>,
-        <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-        <syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
-Date: Fri, 5 Jul 2024 21:52:50 +0800
-Message-ID: <20240705135250.3587041-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CACT4Y+ZWjUE6-q1YF=ZaPjKgGZBw4JLD1v2DphSgCAVf1RzE8g@mail.gmail.com>
-References: <CACT4Y+ZWjUE6-q1YF=ZaPjKgGZBw4JLD1v2DphSgCAVf1RzE8g@mail.gmail.com>
+	s=arc-20240116; t=1720187599; c=relaxed/simple;
+	bh=iBo2NAMKixoHqt5brl0uZYpx2bTHZNyB5uFZzugwEy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZuzvG2z2ndPUieUJfGxVtlNBLLlRFJxH8EpX9LaGWFoZ6kAcSKraneEYKRD8HfjWAogifhko7nZ1hLg9CvTAnCN6BTaQkCKBP6TMNegdO1MO5HB5e02YM/4Tk+Ly6tnXHvc5VU7ofLZ4Sypqc/lfj2fiuyLPu58XwoqJO4qzZHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8FXjAu5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE4A3C116B1;
+	Fri,  5 Jul 2024 13:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720187598;
+	bh=iBo2NAMKixoHqt5brl0uZYpx2bTHZNyB5uFZzugwEy8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f8FXjAu56BtjY10grqgpqfpORdCuT2fjGTzg3au6vdXaECIIlBU8noeHMrvI4+HRX
+	 uZWM0dwiYiiuQctbLftxLXFu9qI3p1AKRuekQTtm8PpFUQpiwHWIfUArTetFhNTR6X
+	 X+bpyfFbtlihRnnikyYLm3K83/DIACrykV6meSCTEFuuhLz0P3T8WcVFHL6Z63h9n3
+	 qzBd9p0bSGDv8lNSC0msELTeF+4PGwttQEgpb7li/nNSUMKKrcuCV2dijWq0g8Pbau
+	 wW/VqVm3hKw2yWV9AwE2JsCmb/woQfaH4owYkXzJJCM3tmQ+V086wiyedN2r9jfjIX
+	 0xMARLrC9IjMw==
+Date: Fri, 5 Jul 2024 06:53:16 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B
+ Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+ <shuah@kernel.org>, =?UTF-8?B?QWRyacOhbg==?= Moreno <amorenoz@redhat.com>,
+ Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net-next 0/3] selftests: openvswitch: Address some
+ flakes in the CI environment
+Message-ID: <20240705065316.6886f2ba@kernel.org>
+In-Reply-To: <f7th6d4ne3r.fsf@redhat.com>
+References: <20240702132830.213384-1-aconole@redhat.com>
+	<20240705062851.36694176@kernel.org>
+	<f7th6d4ne3r.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: mYGhZTdY-0RCetm-QbEqRWmKnBK1oLTg
-X-Proofpoint-ORIG-GUID: mYGhZTdY-0RCetm-QbEqRWmKnBK1oLTg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_09,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1011 lowpriorityscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=760 spamscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2406140001 definitions=main-2407050099
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 4 Jul 2024 15:44:02 +0200, Dmitry Vyukov wrote: 
-> > index 53629b1f65e9..a435df98c2b1 100644
-> > --- a/fs/ntfs3/record.c
-> > +++ b/fs/ntfs3/record.c
-> > @@ -243,14 +243,14 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
-> >                 off += asize;
-> >         }
+On Fri, 05 Jul 2024 09:49:12 -0400 Aaron Conole wrote:
+> > The results look solid on normal builds now, but with a debug kernel
+> > the test is failing consistently:
 > >
-> > -       asize = le32_to_cpu(attr->size);
-> > -
-> >         /* Can we use the first field (attr->type). */
-> >         if (off + 8 > used) {
-> >                 static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
-> >                 return NULL;
-> >         }
-> >
-> > +       asize = le32_to_cpu(attr->size);
-> > +
-> >         if (attr->type == ATTR_END) {
-> >                 /* End of enumeration. */
-> >                 return NULL;
+> > https://netdev.bots.linux.dev/contest.html?executor=vmksft-net-dbg&test=openvswitch-sh  
 > 
-> Hi Lizhi,
+> Yes - it shows a test case issue with the upcall and psample tests.
 > 
-> I don't see this fix mailed as a patch. Do you plan to submit it officially?
-Hi Dmitry Vyukov,
-Here: https://lore.kernel.org/all/20240202033334.1784409-1-lizhi.xu@windriver.com
+> Adrian and I discussed the correct approach would be using a wait_for
+> instead of just sleeping, because it seems the dbg environment might be
+> too racy.  I think he is working on a follow up to submit after the
+> psample work gets merged - we were hoping not to hold that patch series
+> up with more potential conflicts or merge issues if that's okay.
 
---
-Lizhi
+Makes sense, thanks!
 
