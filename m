@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-242695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B036928B98
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:23:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5705D928B9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC071C20D9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:23:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C04B21F2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CA516C685;
-	Fri,  5 Jul 2024 15:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADF116C692;
+	Fri,  5 Jul 2024 15:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="maj+Npc0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OL7Nxx1z"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D7A14A62E;
-	Fri,  5 Jul 2024 15:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D44C16C685;
+	Fri,  5 Jul 2024 15:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720193004; cv=none; b=gDtJ0Y4zqb744WLNAt+Txu3bcLyy774iC4LrYeY48EryUUak0qqUEIfcq3LIzBKpj0Ugm51gy1XzCLYmF9ch1ZkPpenG/q6Qg8AqiWyvC+GBZ+ZRciyhcv3mXzishzj4s3tem+O1VI2+zePXK012z9sZ4ZnB7eIiFJ8EbXK8ZwU=
+	t=1720193065; cv=none; b=RqOBTlLnvP7JP8diuatmb9wmTNeh7/X4nw4Jdh29Qi6jAyiPEn6fbB2PvhiQxPKLG7kKV/wMaZHssojjoZZuK8LnoHExmMemZiHKDekGSRZ9yTb2cHfg///7XwyLZnBfTt651u7COQ90ESXRbF3+pBlgEO1k23pN+k9lUjg/OQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720193004; c=relaxed/simple;
-	bh=vMGT4AZjWRF1Ju5kXvo191g8lbBZ1bFe0vECnmqaQAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X9KqaOWo4u8GU2QjDLHMXOb2OGH+bAwq6cmV7ATtD125dSn0/UxjAPoHBZfqCuNjwU9IeUws1cf55Iqezri2yBUcB2Ec4D7jBQe+mbgd5KvBWk8NZyjx8y7Bw0KCYJbD6zjK75a2pmHTpXTY4eiLVr9wqRK2veRxLt2jQCLbQ5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=maj+Npc0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4659bVWH012943;
-	Fri, 5 Jul 2024 15:23:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YxEIK2I8gW9X589r/yuYkg4MIfn7+vy7CW4LLUIvbrs=; b=maj+Npc0yFZMyePz
-	oHfRR7ctvMKSpzb1as5ATTcFSuCxqlWM6hvdbrgFMN4uiXHDXrrLR8g29TCZtc3u
-	5XpXaX6RJANz3PB9jbauSrJUTG/AKypTiZrZ8/6BHTldfodCHLeXWwnhnFpmApLi
-	Bnq+R74wNPyHySZFkxy9SPNUwu58DTXYATTXGuwP7fviiTLZVwqszjF4B5UmymVO
-	TFMeO0BY02URHPNhzn5U6NDk4bLAxd3zrS88J9AOAlo3nLyqMc2mnajWKLggb6Sj
-	hsZLY3witvaficWmotawaaZgn6YyftYSuFKtyA54c5sa2EjyAVGBj9p3AVgtjR9N
-	KpaobQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yr9eyhd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 15:23:09 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465FN8XW013861
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 5 Jul 2024 15:23:08 GMT
-Received: from [10.239.133.211] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
- 08:23:03 -0700
-Message-ID: <5ee373ed-abef-4611-a355-44668a85d0a7@quicinc.com>
-Date: Fri, 5 Jul 2024 23:23:00 +0800
+	s=arc-20240116; t=1720193065; c=relaxed/simple;
+	bh=6msf+6zQ7jQp5WB6fG+2Y/R5/2ibEiQRwNrsG6fD0tM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YHKkLJATEXi/KyhkWp5VRZR/wR58TBGC/iYxcWs/Wy41iAIJuHQnCZ0NgzxLXcYztkceyYTeq2cclEjBfhprab0WEqzyDjy3g8fthyr3kYv6BGOx4jZJxogUUUg6sI3GpJKmqZxmQJxMWBdNCyA3v4XfMoTkEDD4d2cDyJLHfYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OL7Nxx1z; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8AFA7C0002;
+	Fri,  5 Jul 2024 15:24:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720193061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VMVflziC1aehBJf4VTjlbQPH2LpM9ezvmYf2pbzh65s=;
+	b=OL7Nxx1zP1SzNXRZ9t2/CTWdNHOcU2FY1TxN46d4gqsX3w73Cd6cmMb8QZ9kQruPrACgHW
+	s9gwRa5IuDYTAOrumyqOY3AcvyGVad0Dxsx3rYgNxEfCcFuoM3kwiGgZlfmMR5PKfzkWYc
+	M033MIo+s/dr582KlrKDvYVlivF+SAw65HQrwnMD7gjLXsBv9xfjTpm04G2UfuruASPNOI
+	3iUSH8jkQGlgWIuUrBgAPn8B46zsKeKQFt+Ca6EcIlaXJ8zA1MFNmesoO0579VO5dOyRFc
+	+disElGQ8OvsMMuepTrwgL1AVoRMj0hh8BRY8MtKORL6TrjS1pMYhoznZ3W5DA==
+Message-ID: <6b5459fd-2873-4c26-b986-882413b8d95b@bootlin.com>
+Date: Fri, 5 Jul 2024 17:24:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,102 +53,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: arm:
- qcom,coresight-static-replicator: Add property for source filtering
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Jie Gan <quic_jiegan@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Mike Leach <mike.leach@linaro.org>, <coresight@lists.linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Yuanfang Zhang
-	<quic_yuanfang@quicinc.com>,
-        James Clark <james.clark@arm.com>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Tingwei Zhang
-	<quic_tingweiz@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Song Chai <quic_songchai@quicinc.com>, Leo Yan
-	<leo.yan@linaro.org>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>, <devicetree@vger.kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20240705085152.9063-1-quic_taozha@quicinc.com>
- <20240705085152.9063-2-quic_taozha@quicinc.com>
- <172017590249.2933726.1790899873101654561.robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
+ Add Sophgo SARADC binding documentation
+To: Conor Dooley <conor@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+ Inochi Amaoto <inochiama@outlook.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com>
+ <20240705-sg2002-adc-v2-1-83428c20a9b2@bootlin.com>
+ <20240705-unaired-pesticide-4135eaa04212@spud>
 Content-Language: en-US
-From: Tao Zhang <quic_taozha@quicinc.com>
-In-Reply-To: <172017590249.2933726.1790899873101654561.robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+In-Reply-To: <20240705-unaired-pesticide-4135eaa04212@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4IqDtG7AUMEyBqwuX_WO3utuJKlT_XC2
-X-Proofpoint-ORIG-GUID: 4IqDtG7AUMEyBqwuX_WO3utuJKlT_XC2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_11,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- bulkscore=0 impostorscore=0 malwarescore=0 spamscore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407050111
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
 
-On 7/5/2024 6:38 PM, Rob Herring (Arm) wrote:
-> On Fri, 05 Jul 2024 16:51:50 +0800, Tao Zhang wrote:
->> Add a new property "filter_src" to label the source corresponding
->> to the output connection for a static replicator. By combining
->> a funnel and a static replicator in devicetree, a new device that
->> supports multi-port input and multi-port output is implemented.
->> In order to match the output port with the input port and
->> successfully build the trace path, add this new property to
->> indicate the data source corresponding to this output port.
+
+On 7/5/24 5:01 PM, Conor Dooley wrote:
+> On Fri, Jul 05, 2024 at 03:42:23PM +0200, Thomas Bonnefille wrote:
+>> The Sophgo SARADC is a Successive Approximation ADC that can be found in
+>> the Sophgo SoC.
 >>
->> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+>> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 >> ---
->>   .../arm/arm,coresight-static-replicator.yaml   | 18 +++++++++++++++++-
->>   1 file changed, 17 insertions(+), 1 deletion(-)
+>>   .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 63 ++++++++++++++++++++++
+>>   1 file changed, 63 insertions(+)
 >>
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> yamllint warnings/errors:
->
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml: ^port@[01]$: Missing additionalProperties/unevaluatedProperties constraint
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml: endpoint: Missing additionalProperties/unevaluatedProperties constraint
->
-> doc reference errors (make refcheckdocs):
->
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240705085152.9063-2-quic_taozha@quicinc.com
->
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
+>> new file mode 100644
+>> index 000000000000..31bd8ac6dfa5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
+>> @@ -0,0 +1,63 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-saradc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title:
+>> +  Sophgo CV18XX SoC series 3 channels Successive Approximation Analog to
+>> +  Digital Converters
+>> +
+>> +maintainers:
+>> +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+>> +
+>> +description:
+>> +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - enum:
+>> +              - sophgo,cv1800b-saradc
+>> +          - const: sophgo,cv18xx-saradc
+> 
+> I don't think the fallback here makes sense. If there's other devices
+> with a compatible programming model added later, we can fall back to the
+> cv1800b.
+> 
 
-Yes, I didn't see this errors in running 'make dt_binding_check', I will 
-re-run this check
+Ok I'll do that, I wasn't sure if it was a good practice to fallback on 
+another SoC specific compatible.
 
-according to your suggestion.
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    description:
+>> +      SARADC will use the presence of this clock to determine if the controller
+>> +      needs to be explicitly clocked by it (Active domain) or if it is part of
+>> +      the No-Die Domain, along with the RTC, which does not require explicit
+>> +      clocking.
+> 
+> What does "explicit clocking" mean? Is it clocked directly (or via
+> dividers) by a clock on the board or another source?
+> 
 
+It means that, if a clock is provided, the driver will work in "Active 
+Domain" and will use the clock generator of the SoC to get the right 
+clock signal.
 
-Best,
+However if no clock is provided, the controller will work in "No-Die" 
+domain (Always On) and use the RTCSYS subsystem to get its clock signal.
 
-Tao
+Indeed "explicitly clocked" may not be the right word to describe that, 
+maybe some thing like that is better :
 
->
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
->
+"SARADC will use the presence of this clock to determine if the 
+controller needs to use the clock generator to get its clock signal 
+(Active domain) or if it is part of the No-Die Domain, along with the 
+RTC, and does not require the clock generator."
+
+Regards,
+Thomas
 
