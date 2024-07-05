@@ -1,236 +1,151 @@
-Return-Path: <linux-kernel+bounces-242956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F3F4928F8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:29:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EA9928F8D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77A791C20D5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71171F23036
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B631148FE4;
-	Fri,  5 Jul 2024 23:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F7514901B;
+	Fri,  5 Jul 2024 23:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="VxuyEC6Y"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="27T/u9DY"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B44145A0E;
-	Fri,  5 Jul 2024 23:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0BA148FF2;
+	Fri,  5 Jul 2024 23:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720222153; cv=none; b=PStr64Vv22fLUjSozmm9ijiabBYLl1G89YDOJLJueacyZHIkOBm/46ipbn0rQ3mx95M016iperfgdO546W4V+hFtvwx0Ori4SUAYz82r4G0ciRfTP5l5v5D5bEr7e0EkckGuAhTaQd1XRt/jbUmYi7/axTVt32vpq+ldgxv64QA=
+	t=1720222211; cv=none; b=XaEZPoDM57TCj+a1zKwOTVlf0LYCuhmbWu9RYTyEwusMknkNrhRAqqKN2sCkJAcCR5iR1a/PJgKCs42W1YBEsLnrbk9PsYeqi/djj+hN27kwdMihTPJffMD86AOGoThHaz1TXMxHMgIgm8J8BlUmc8BFAw3QAM7OtFIzXW5tzn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720222153; c=relaxed/simple;
-	bh=B0D2OJ2RYoZ35gmbJ+It72kP6PlKoxma9WkmF6H1qmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prb9wkjZTx4BZwLhGBqVHg0qZNO4gbvr5e+6so2ckbbmjwyDpAOyERhLkdt9+PndPogjZWC0Q2fBLUhfgeOxoonFrrVUdjYh1ND01MjpQIQlcuekETDsxyoM8jGoP3a4WuaVK+s9czwrPS8+m0Qtdir/lbsRuJKXqfDLl7N7IEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=VxuyEC6Y; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1720222138; x=1720826938; i=quwenruo.btrfs@gmx.com;
-	bh=abKSkO0vfpGjY7lu92zfZV1FnQJk5DZDKam7BVpzvPY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VxuyEC6YOS6WE+dvhtdQSXwAIAdvQnP6wkQ5NkyPyyx2Qe7QFh5TxPKZHOgaRRm9
-	 4qKKOCsaMHQ0JmvXvI3YTPTXrS8XxK8UenqrKVmqucMX7xfPh88CEkFLEVvAalKXh
-	 sw6e4lX9m4B4irBRQzsC6iKDzKmYw88b2wZaJ4Lo6XYsp3nl2eiL0gRqlDEFRFsGL
-	 rlFbqgZDd3EjP2QMr3NIT2bgYnXVNt8tpydm6+T4xPaI5DenExvlpUvLBAxi9quY/
-	 FOXychkBxOI2JUzwQSD9/f+IDVY5DxC55HdW/o0it2/iHQL15LF709Z/WBztqO4V/
-	 0aw8wE51CAL6z5n6YA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1M4s0t-1sRo2H0rHL-00Fp0k; Sat, 06
- Jul 2024 01:28:58 +0200
-Message-ID: <29cd4e79-de21-41ea-8241-2706d37fe4ae@gmx.com>
-Date: Sat, 6 Jul 2024 08:58:54 +0930
+	s=arc-20240116; t=1720222211; c=relaxed/simple;
+	bh=hEAYBzWA0a0y+dYKFS2DJxhMUVWhROyH3K3JrHLkUkE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=czdJrnI5lOm/ny8ZmuGNqKJ0XuvuUIuqLJt3vNDKQoO7XA/+fZwkiCnDx3sJXAt2XhtbhkpECoVMQKRpyby8FO5ij1aiskIoCA2iSu5G7wZ1+PQpV3HiSFD3URpRTc1X5akJfSWP2TATDBkPyjw/QTyU9Cl354RLn5P+wAXeOBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=27T/u9DY; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720222207;
+	bh=hEAYBzWA0a0y+dYKFS2DJxhMUVWhROyH3K3JrHLkUkE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=27T/u9DYfK0YwmBN1J13WMc/2Jg0yeXBDGXeFWWf7RhQQGz+Jt5pyzAqId/xdvVb/
+	 h5rJqbOocNvgES8PO7eVKQmPNzcy0zO2gixJJu7yXNnaTSjQ70gHxbVlEuWgvqJBWX
+	 BM1SAMVtMlmH92LSEB4Dl0y5wlvm1gxXVUcqyxJh96x4WEd9q3KhnvUf3HnslmE8qd
+	 V709B9A7626OsTy/f/NWxWKj6YoiyyR3qWUkyB8plA4aGmU3yWE0ohrSjwGs6sT0nI
+	 No8Mv66AuCFXdUj8wmaACpGIdjWuaDbqRwinFjLp/xf8K/WXYwl0OmuC7ldjwdcLUX
+	 lNeRRoQ95N2Fg==
+Received: from [192.168.1.238] (tango.collaboradmins.com [167.235.144.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C80363780BDB;
+	Fri,  5 Jul 2024 23:30:06 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v2 0/3] kselftest: Add test to report device log errors
+Date: Fri, 05 Jul 2024 19:29:53 -0400
+Message-Id: <20240705-dev-err-log-selftest-v2-0-163b9cd7b3c1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/7] btrfs: don't hold dev_replace rwsem over whole of
- btrfs_map_block
-To: Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Johannes Thumshirn <johannes.thumshirn@wdc.com>
-References: <20240705-b4-rst-updates-v4-0-f3eed3f2cfad@kernel.org>
- <20240705-b4-rst-updates-v4-5-f3eed3f2cfad@kernel.org>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <20240705-b4-rst-updates-v4-5-f3eed3f2cfad@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wmDCLOCHARycJNMJ4Yj6uwfpLNjh+SAtDDDWcEVsnC0aCzuMBO0
- N7xjAJ7MTQkBP5xElYAENAC0YKkm3dWqbaGTbOUEG+HOW17UdWp4UiSwKggRKHIlSfepbW6
- bIS7Lnbopy4RmYfjyh+y8Z7dvo6+tmovZnx9ow8TyTiOiDLA+e6wTXWE7H9xkUIEcddAkUk
- todphm7dcWscmHyE9D0aA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9CYoSiTcWXM=;1eaGSu7Xa1fc7wC9Fg+qpb28Qjs
- wdeDX5gmXPGtsvvAHkNKcBrFUUTSt7qvrcbcHvN+hlcj1hrXnSbH52eKYA54MgvaB8NbzkyKp
- S0SnPeZac5oqkR2B517L1qsIUfhA1MzDC/4Mu/u0pqKlogYM9Ybxw7x8wh2S0imbJWuTQVKNC
- IYfHmN2W46mMGe6OjjBNnLkNGP1NKhzlknlgJVI7TK21yvqErXbX6ODIGAGv1i4994Y7WTDbO
- D+brdXX2WwVl40GQOCqbxA91SrckFJc2Td0oQsZ8xGrcxnDnHOjJkfigS4SAnwi2wGVN4ExoM
- TsurKtvt44r48IuqTpceoq/XCP3tDNLZRJzOwWG/ZWTNtIYuk8O1/UR0IGykA+hfRX7R9xQ1t
- ovb6aSskH/0mnl3Sv+V6APnicQumWDcUX+qb7WhTSjqJjTJQmCjuHq4jjfkdAt+Ct2ah/bFEc
- ZenWYNK74sSX0/8q08LRxfXn22nUq3FeeIfNlqy1+xlUUlEejNL6EUt/0dTsK2FN0Mhm4yNT/
- 2D9bsi42vVTfj3GH3rcj8yMh+qvub0IPOkp6A2aA13srnCKqB7f/aixb0720T4sE2zlBZzCMm
- Rsj7LUbBrUuAmRu+lclOa8eiXG4lGzTo/AHKLYBwhMzbc5mW5YBoedf5RTdOiS90HcpnVU1Y4
- XP4r0jbHEKhOiJaSDqiseawj7Wz0DnO6HNVIbT8AXNE4GTDVKz23AC9qbv6H3wr1f4oM+H2wb
- TDM3JZYM27JDOOxM7SzfuVmqyCrivH+Cned38XKkWYnjhfkYUK1g3OX0zU86p0kAvADqpGYIm
- Tgw7mirspebZG/KXHyIualu9LLYRq6QW41I1uPIOR74RY=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPGBiGYC/22NQQ6CMBBFr0Jm7Zi2IqAr72FYQDuFJpWaKWk0p
+ He3krhz+V7y398gEjuKcK02YEouurAUUIcK9DwsE6EzhUEJVYtaSTSUkJjRhwkjebtSXFF19jx
+ 2VrfaCCjTJ5N1rz177wvPLq6B3/tLkl/7C57+B5NEgc1FaNnW0jTdeNPB+2EMPBx1eECfc/4Aw
+ ueGqrwAAAA=
+To: Shuah Khan <shuah@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernelci@lists.linux.dev, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.0
 
+Log errors are the most widely used mechanism for reporting issues in
+the kernel. When an error is logged using the device helpers, eg
+dev_err(), it gets metadata attached that identifies the subsystem and
+device where the message is coming from. This series makes use of that
+metadata in a new test to report which devices logged errors.
 
+The first two patches move a test and a helper script to keep things
+organized before this new test is added in the third patch.
 
-=E5=9C=A8 2024/7/6 00:43, Johannes Thumshirn =E5=86=99=E9=81=93:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Don't hold the dev_replace rwsem for the entirety of btrfs_map_block().
->
-> It is only needed to protect
-> a) calls to find_live_mirror() and
-> b) calling into handle_ops_on_dev_replace().
->
-> But there is no need to hold the rwsem for any kind of set_io_stripe()
-> calls.
->
-> So relax taking the dev_replace rwsem to only protect both cases and che=
-ck
-> if the device replace status has changed in the meantime, for which we h=
-ave
-> to re-do the find_live_mirror() calls.
->
-> This fixes a deadlock on raid-stripe-tree where device replace performs =
-a
-> scrub operation, which in turn calls into btrfs_map_block() to find the
-> physical location of the block.
->
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+It is expected that there might be many false-positive error messages
+throughout the drivers code which will be reported by this test. By
+having this test in the first place and working through the results we
+can address those occurrences by adjusting the loglevel of the messages
+that turn out to not be real errors that require the user's attention.
+It will also motivate additional error messages to be introduced in the
+code to detect real errors where they turn out to be missing, since
+it will be possible to detect said issues automatically.
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
+As an example, below you can see the test result for
+mt8192-asurada-spherion. The single standing issue has been investigated
+and will be addressed in an EC firmware update [1]:
 
-Thanks,
-Qu
-> ---
->   fs/btrfs/volumes.c | 28 +++++++++++++++++-----------
->   1 file changed, 17 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index fcedc43ef291..4209419244a1 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -6650,14 +6650,9 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
-, enum btrfs_map_op op,
->   	max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
->   	*length =3D min_t(u64, map->chunk_len - map_offset, max_len);
->
-> +again:
->   	down_read(&dev_replace->rwsem);
->   	dev_replace_is_ongoing =3D btrfs_dev_replace_is_ongoing(dev_replace);
-> -	/*
-> -	 * Hold the semaphore for read during the whole operation, write is
-> -	 * requested at commit time but must wait.
-> -	 */
-> -	if (!dev_replace_is_ongoing)
-> -		up_read(&dev_replace->rwsem);
->
->   	switch (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
->   	case BTRFS_BLOCK_GROUP_RAID0:
-> @@ -6695,6 +6690,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info,=
- enum btrfs_map_op op,
->   			   "stripe index math went horribly wrong, got stripe_index=3D%u, n=
-um_stripes=3D%u",
->   			   io_geom.stripe_index, map->num_stripes);
->   		ret =3D -EINVAL;
-> +		up_read(&dev_replace->rwsem);
->   		goto out;
->   	}
->
-> @@ -6710,6 +6706,8 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info,=
- enum btrfs_map_op op,
->   		 */
->   		num_alloc_stripes +=3D 2;
->
-> +	up_read(&dev_replace->rwsem);
-> +
->   	/*
->   	 * If this I/O maps to a single device, try to return the device and
->   	 * physical block information on the stack instead of allocating an
-> @@ -6782,6 +6780,18 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
-, enum btrfs_map_op op,
->   		goto out;
->   	}
->
-> +	/*
-> +	 * Check if something changed the dev_replace state since
-> +	 * we've checked it for the last time and if redo the whole
-> +	 * mapping operation.
-> +	 */
-> +	down_read(&dev_replace->rwsem);
-> +	if (dev_replace_is_ongoing !=3D
-> +	    btrfs_dev_replace_is_ongoing(dev_replace)) {
-> +		up_read(&dev_replace->rwsem);
-> +		goto again;
-> +	}
-> +
->   	if (op !=3D BTRFS_MAP_READ)
->   		io_geom.max_errors =3D btrfs_chunk_max_errors(map);
->
-> @@ -6789,6 +6799,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info,=
- enum btrfs_map_op op,
->   	    op !=3D BTRFS_MAP_READ) {
->   		handle_ops_on_dev_replace(bioc, dev_replace, logical, &io_geom);
->   	}
-> +	up_read(&dev_replace->rwsem);
->
->   	*bioc_ret =3D bioc;
->   	bioc->num_stripes =3D io_geom.num_stripes;
-> @@ -6796,11 +6807,6 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
-, enum btrfs_map_op op,
->   	bioc->mirror_num =3D io_geom.mirror_num;
->
->   out:
-> -	if (dev_replace_is_ongoing) {
-> -		lockdep_assert_held(&dev_replace->rwsem);
-> -		/* Unlock and let waiting writers proceed */
-> -		up_read(&dev_replace->rwsem);
-> -	}
->   	btrfs_free_chunk_map(map);
->   	return ret;
->   }
->
+TAP version 13
+1..1
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `model_name' property: -6
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `energy_full_design' property: -6
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+ power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+not ok 1 +power_supply:sbs-8-000b
+ Totals: pass:0 fail:1 xfail:0 xpass:0 skip:0 error:0
+
+[1] https://lore.kernel.org/all/cf4d8131-4b63-4c7a-9f27-5a0847c656c4@notapiano
+
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v2:
+- Rebased onto next-20240703
+- Link to v1: https://lore.kernel.org/r/20240423-dev-err-log-selftest-v1-0-690c1741d68b@collabora.com
+
+---
+Nícolas F. R. A. Prado (3):
+      kselftest: devices: Move discoverable devices test to subdirectory
+      kselftest: Move ksft helper module to common directory
+      kselftest: devices: Add test to detect device error logs
+
+ tools/testing/selftests/Makefile                   |  4 +-
+ tools/testing/selftests/devices/Makefile           |  4 -
+ .../testing/selftests/devices/error_logs/Makefile  |  3 +
+ .../devices/error_logs/test_device_error_logs.py   | 85 ++++++++++++++++++++++
+ tools/testing/selftests/devices/probe/Makefile     |  4 +
+ .../{ => probe}/boards/Dell Inc.,XPS 13 9300.yaml  |  0
+ .../{ => probe}/boards/google,spherion.yaml        |  0
+ .../{ => probe}/test_discoverable_devices.py       |  7 +-
+ .../selftests/{devices => kselftest}/ksft.py       |  0
+ 9 files changed, 101 insertions(+), 6 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240421-dev-err-log-selftest-28f5b8fc7cd0
+
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
