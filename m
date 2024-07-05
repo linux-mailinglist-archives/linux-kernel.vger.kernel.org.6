@@ -1,217 +1,194 @@
-Return-Path: <linux-kernel+bounces-242776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E232B928D0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB96928D13
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 119591C21DB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CA71C22673
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5F616D9A4;
-	Fri,  5 Jul 2024 17:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+GP2NpY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0B916D9A4;
+	Fri,  5 Jul 2024 17:37:16 +0000 (UTC)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A4881E;
-	Fri,  5 Jul 2024 17:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A831F94C;
+	Fri,  5 Jul 2024 17:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720200473; cv=none; b=jQ36da4Zvzcya1ZCH9R6IFzWW1FBrHCMQ6Lk9BBEs0DXX/7Goqu06h5509O1REWw9f0apq++C5mKxCl1hnpc+J1oTeY7yG7WyOhqBkYEdh0xf+qoy3lurd1n+oKvsyrMeShzaWXbLvTOmni9i9IlnJ2as9ZX6o9P7J/8v1pCHxA=
+	t=1720201036; cv=none; b=LJr3ZhrZZIdJxST+moKYAXCmqHsjKSUG08MYuTXOYtnnhLJCHRVyci2DCz3jhFHqkxUUy2r+iraaDTyTsIbQh13MXEKwNSjD6aaUYUlM2J2yCjDepzxlELvmW0tTvvXSp4DzO12mHzjL7XYzJRKAxYnjMIHtaaBAAZRiqyx7EU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720200473; c=relaxed/simple;
-	bh=UFVPAqRzqVT/p6Fkd12jSpwFaK0O3pMzpk6h3778Y08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSkOQnOleMyADWofUhuEL1pGZSlo5RUckyXbd7fBIwyQMzrgjc2wd8xATdLfWyl7UIHIuXySE8jdLvKiBufTcNjRQM6AtomxUrRWBaW4lCgOarzGcv8aYaXr0hTzpPgsQgOf1YGgscvs6GK5C29SME+tSDlsFrHBaSJwLc8zrOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+GP2NpY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC732C116B1;
-	Fri,  5 Jul 2024 17:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720200473;
-	bh=UFVPAqRzqVT/p6Fkd12jSpwFaK0O3pMzpk6h3778Y08=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r+GP2NpY0ut/WIX+ybo8MYYpHvTp8h6a8vetEwsE/CbsZlhV+S991AWIZQb+Jg+40
-	 Xub3zFx2IpPojnRyBNL0MkZVtnDZt1V/zZhl2sEeONoOWw7jyoGc9lHYogye7A1WBo
-	 AUHbhFUiJizR4/QRRv0a+vBtq65BJGzTWnCT2Szffa42qipZHQBkX0x4WA8bnciHcB
-	 UPLGQqqHEWbqWMA7tm9Mn/iIcyaFG654UF2ohEHfnpUJ+60mEL8CkilSUEoc8wGBlu
-	 bIOKp4D2LiBLowXpcxchn5BGGI1OhqAU8JU1YXF57oGQbB9lLjEY0fx8VJDrSuQL0R
-	 KLTiruSZV+s+A==
-Date: Fri, 5 Jul 2024 10:27:50 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 01/10] riscv: Implement cmpxchg32/64() using Zacas
-Message-ID: <20240705172750.GF987634@thelio-3990X>
-References: <20240626130347.520750-2-alexghiti@rivosinc.com>
- <202407041157.odTZAYZ6-lkp@intel.com>
+	s=arc-20240116; t=1720201036; c=relaxed/simple;
+	bh=e7YSaWF77rgGetEEK69jDsfRDfe3JVxLuUMxZ6fGYo4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cFvDWp4WEYD/t/L6XCQTtRFVfr/Gp5LCYAfZ7oTbzpypUOvoCFehMe8tDgSCdaieqNmJoDV810pgSVsPMNZRwEbVSBUEiJmmvzxHeHYOG3u2PDUOEYwX8b1DLTOMqjhoMDaYA8ugQx13G+VihLDghRugrfALaODNP0KrnLGXbzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-650469f59d7so17168207b3.2;
+        Fri, 05 Jul 2024 10:37:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720201032; x=1720805832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WE2siGt7Dsk8wnjgDVkLAR9HwluMfAZE92CRWcBjgLU=;
+        b=e4L8fslLGhV2Scy83UaecVGtd/qcZqe3L+/caTX213ILYJiof940DWiwEzOIANfC9L
+         +8p1J5qzZhN0QcoUbxkzmm6QsyfegsUUdJ299DWi9B4Ksw+gdBz5xv3jrFU0bgD54R19
+         FcVmvTa55xlVcFCVXNA/QOKQNX7zppN5MwTZhbyDqIdf8hwMZpI8pAjOLLxilKY3ju7+
+         yxrZQRagijo6CStX8dQx2RQmkCdfdn+E04ZPjqFAFB9szMFjnNknP3dfgKnHmgLYJS1p
+         vVemqrXzK9qW+wyTOVUTXoyGdR9LcdMgMA4GvabxjoyZZQXHyMjasn4ziV2nRKL/Q4bq
+         FETg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/Qzpa1U6vzIySOMlvAngwpobSMqCvWKgDTnkyl740ztNtmhly+IbeiOpwPLq8faD0ECEr1Atl4dJvOkWZpVAsgdKrcA02xbJGiBcsw1i14ILcl1RTFDeWIP8uR8YRmvbdRE7pguMTufka8ErbJ8CV5meH8v2KqpNiPKh91azJU0KkqQ==
+X-Gm-Message-State: AOJu0Yz6SnfYNUOYpQr9x1DlWficLpk6gzteY6Y10JmnTazPzoKnJhtH
+	iO6ek/K05Id7ZTbuN/r0h2Une/kfAQYQdVh1mx8IEF1buKyQRwkW7RUwcgcb
+X-Google-Smtp-Source: AGHT+IFsURydJ8bx983Oho8WbV+F978ix/P1z2fX+H6fep6L4vK7Qce6qob2qieivPBy46+l5/3yow==
+X-Received: by 2002:a05:690c:45c5:b0:64a:e7ec:f45 with SMTP id 00721157ae682-652d80377b1mr66844477b3.40.1720201032299;
+        Fri, 05 Jul 2024 10:37:12 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6533c12b0a9sm5031457b3.81.2024.07.05.10.37.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 10:37:12 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-df481bf6680so1753905276.3;
+        Fri, 05 Jul 2024 10:37:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVcNIuf+fnqBJqE+kcjdE6cOOiRqBAwuPcSLSu7b3I8dcgeoPoDJ1RBFOovgE2i4hVEZMokkE8NIdQEjd65dMKCf8Ua5F/nssUoFA8P2SE+ib69mfnVYlqpR+FOIqQe3NUQuqwE6iNofWe1m85S0pbdv0ghqyBO5IY7WjG4D0EJlYZhnw==
+X-Received: by 2002:a05:690c:ec4:b0:64a:c3b0:3874 with SMTP id
+ 00721157ae682-652d8531072mr62065267b3.47.1720201031887; Fri, 05 Jul 2024
+ 10:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202407041157.odTZAYZ6-lkp@intel.com>
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-7-9e6c148bf5f0@beagleboard.org>
+ <4e23ec81-b278-4f2b-815d-64ed9390ca55@ti.com> <D2AZ0QKTPY3B.1I48GLI90XD0P@kernel.org>
+ <5b2cd46e-8a51-f145-8876-55b12a6d62d1@linux-m68k.org> <ca2d7d4b-c22d-4d14-a216-8c19073e4189@ti.com>
+In-Reply-To: <ca2d7d4b-c22d-4d14-a216-8c19073e4189@ti.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Jul 2024 19:36:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV_VFSJO-J=sfPGDyzKqF1nRXZ6wr7hgyHh01yiYC_Wvg@mail.gmail.com>
+Message-ID: <CAMuHMdV_VFSJO-J=sfPGDyzKqF1nRXZ6wr7hgyHh01yiYC_Wvg@mail.gmail.com>
+Subject: Re: [PATCH v5 7/7] dts: ti: k3-am625-beagleplay: Add mikroBUS
+To: Andrew Davis <afd@ti.com>
+Cc: Michael Walle <mwalle@kernel.org>, Ayush Singh <ayush@beagleboard.org>, 
+	Mark Brown <broonie@kernel.org>, Vaishnav M A <vaishnav@beagleboard.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	jkridner@beagleboard.org, robertcnelson@beagleboard.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 04, 2024 at 11:38:46AM +0800, kernel test robot wrote:
-> Hi Alexandre,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on soc/for-next]
-> [also build test ERROR on linus/master v6.10-rc6 next-20240703]
-> [cannot apply to arnd-asm-generic/master robh/for-next tip/locking/core]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Alexandre-Ghiti/riscv-Implement-cmpxchg32-64-using-Zacas/20240627-034946
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-> patch link:    https://lore.kernel.org/r/20240626130347.520750-2-alexghiti%40rivosinc.com
-> patch subject: [PATCH v2 01/10] riscv: Implement cmpxchg32/64() using Zacas
-> config: riscv-randconfig-002-20240704 (https://download.01.org/0day-ci/archive/20240704/202407041157.odTZAYZ6-lkp@intel.com/config)
-> compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240704/202407041157.odTZAYZ6-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407041157.odTZAYZ6-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> kernel/sched/core.c:11873:7: error: cannot jump from this asm goto statement to one of its possible targets
->                    if (try_cmpxchg(&pcpu_cid->cid, &lazy_cid, MM_CID_UNSET))
->                        ^
->    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded from macro 'try_cmpxchg'
->            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
->            ^
->    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded from macro 'raw_try_cmpxchg'
->            ___r = raw_cmpxchg((_ptr), ___o, (_new)); \
->                   ^
->    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded from macro 'raw_cmpxchg'
->    #define raw_cmpxchg arch_cmpxchg
->                        ^
->    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'arch_cmpxchg'
->            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
->            ^
->    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_arch_cmpxchg'
->                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,      \
->                    ^
->    arch/riscv/include/asm/cmpxchg.h:144:3: note: expanded from macro '__arch_cmpxchg'
->                    asm goto(ALTERNATIVE("nop", "j %[zacas]", 0,            \
->                    ^
->    kernel/sched/core.c:11840:7: note: possible target of asm goto statement
->            if (!try_cmpxchg(&pcpu_cid->cid, &cid, lazy_cid))
->                 ^
->    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded from macro 'try_cmpxchg'
->            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
->            ^
->    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded from macro 'raw_try_cmpxchg'
->            ___r = raw_cmpxchg((_ptr), ___o, (_new)); \
->                   ^
->    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded from macro 'raw_cmpxchg'
->    #define raw_cmpxchg arch_cmpxchg
->                        ^
->    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'arch_cmpxchg'
->            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
->            ^
->    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_arch_cmpxchg'
->                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,      \
->                    ^
->    arch/riscv/include/asm/cmpxchg.h:161:10: note: expanded from macro '__arch_cmpxchg'
->                                                                            \
->                                                                            ^
->    kernel/sched/core.c:11872:2: note: jump exits scope of variable with __attribute__((cleanup))
->            scoped_guard (irqsave) {
->            ^
->    include/linux/cleanup.h:169:20: note: expanded from macro 'scoped_guard'
->            for (CLASS(_name, scope)(args),                                 \
->                              ^
->    kernel/sched/core.c:11840:7: error: cannot jump from this asm goto statement to one of its possible targets
->            if (!try_cmpxchg(&pcpu_cid->cid, &cid, lazy_cid))
->                 ^
->    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded from macro 'try_cmpxchg'
->            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
->            ^
->    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded from macro 'raw_try_cmpxchg'
->            ___r = raw_cmpxchg((_ptr), ___o, (_new)); \
->                   ^
->    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded from macro 'raw_cmpxchg'
->    #define raw_cmpxchg arch_cmpxchg
->                        ^
->    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'arch_cmpxchg'
->            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
->            ^
->    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_arch_cmpxchg'
->                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,      \
->                    ^
->    arch/riscv/include/asm/cmpxchg.h:144:3: note: expanded from macro '__arch_cmpxchg'
->                    asm goto(ALTERNATIVE("nop", "j %[zacas]", 0,            \
->                    ^
->    kernel/sched/core.c:11873:7: note: possible target of asm goto statement
->                    if (try_cmpxchg(&pcpu_cid->cid, &lazy_cid, MM_CID_UNSET))
->                        ^
->    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded from macro 'try_cmpxchg'
->            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
->            ^
->    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded from macro 'raw_try_cmpxchg'
->            ___r = raw_cmpxchg((_ptr), ___o, (_new)); \
->                   ^
->    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded from macro 'raw_cmpxchg'
->    #define raw_cmpxchg arch_cmpxchg
->                        ^
->    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'arch_cmpxchg'
->            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
->            ^
->    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_arch_cmpxchg'
->                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,      \
->                    ^
->    arch/riscv/include/asm/cmpxchg.h:161:10: note: expanded from macro '__arch_cmpxchg'
->                                                                            \
->                                                                            ^
->    kernel/sched/core.c:11872:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
->            scoped_guard (irqsave) {
->            ^
->    include/linux/cleanup.h:169:20: note: expanded from macro 'scoped_guard'
->            for (CLASS(_name, scope)(args),                                 \
->                              ^
->    2 errors generated.
+Hi Andrew,
 
-Ugh, this is an unfortunate interaction with clang's jump scope analysis
-and asm goto in LLVM releases prior to 17 :/
+On Fri, Jul 5, 2024 at 6:34=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
+> On 7/5/24 3:01 AM, Geert Uytterhoeven wrote:
+> > On Thu, 27 Jun 2024, Michael Walle wrote:
+> >> On Thu Jun 27, 2024 at 7:07 PM CEST, Andrew Davis wrote:
+> >>>> +    mikrobus_boards {
+> >>>> +        thermo_click: thermo-click {
+> >>>> +            compatible =3D "maxim,max31855k", "mikrobus-spi";
+> >>>
+> >>> I might be missing something, but your solution cannot possibly be
+> >>> to list every click board that could be connected (all 1500+ of them)
+> >>> to every mikroBUS connector on every device's DT file..
+> >>>
+> >>> Each click board should have a single DTSO overlay file to describe t=
+he
+> >>> click board, one per click board total. And then that overlay should
+> >>> apply cleanly to any device that has a mikroBUS interface.
+> >>>
+> >>> Which means you have not completely solved the fundamental problem of
+> >>> abstracting the mikroBUS connector in DT. Each of these click device =
+child
+> >>> nodes has to be under the parent connector node. Which means a phandl=
+e
+> >>> to the parent node, which is not generically named. For instance
+> >>> if my board has 2 connectors, I would have mikrobus0 and mikrobus1,
+> >>> the click board's overlay would look like this:
+> >>>
+> >>> /dts-v1/;
+> >>> /plugin/;
+> >>>
+> >>> &mikrobus0 {
+> >
+> > Let's use just "&mikrobus" instead...
+> >
+> >>>     status =3D "okay";
+> >>>
+> >>>     mikrobus_board {
+> >>>         thermo-click {
+> >>>             compatible =3D "maxim,max31855k", "mikrobus-spi";
+> >>>             spi-max-frequency =3D <1000000>;
+> >>>             pinctrl-apply =3D "spi_default";
+> >>>         };
+> >>>     };
+> >>> };
+> >>
+> >> If there should only be one DT overlay per click board, how would
+> >> you apply that to to different connectors?
+> >
+> > You teach fdtoverlay[*] to translate anchors, e.g.
+> >
+> >      fdtoverlay -i base.dtb -o final.dtb \
+> >             -t mikrobus=3Dmikrobus0 click1.dtbo \
+> >             -t mikrobus=3Dmikrobus1 click2.dtbo
+> >
+>
+> This basic idea is where I started also, the result is we end
+> up needing a huge number of "anchor" points. And they would
+> also be board specific. So we would want to store all these
+> anchor points in a file, and what better file than another
+> DT file.
 
-https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomment-1645979992
+Why wouldn't a single anchor point suffice?
+For Mikrobus, the anchor point should have well-known subnodes
+like "spi", "i2c", ... which would take care of the translation.
 
-Unfortunately, 'if (0)' does not prevent this (the analysis runs early
-in the front end as far as I understand it), we would need to workaround
-this with full preprocessor guards...
+> Putting all the translations in a DT file to allow the DT overlay
+> to become generic is the core idea of this series[0] (looks like
+> you already found it, linking for other following along).
+>
+> And as you note, the symbol table trick allows us to do this
+> without teaching fdtoverlay anything new, so it should work
+> as-is today for any project already supporting overlays.
 
-Another alternative would be to require LLVM 17+ for RISC-V, which may
-not be the worst alternative, since I think most people doing serious
-work with clang will probably be living close to tip of tree anyways
-because of all the extension work that goes on upstream.
+Yes, and it sounds cool!
 
-I am open to other thoughts though.
+> > I believe the Raspberry Pi people already have something like that.
+> >
+> > The mikrobus node handles all other translations (e.g. mapping from
+> > Mikrobus pins to GPIO numbers), so you do not have to handle these
+> > explicitly when adding an overlay.
+>
+> This part seems to still be an open item. For pinmux we can name
+> the pinmux nodes such that their phandles are resolved on overlay
+> application. For Pin number/name to GPIO number we have "gpio-names",
+> and the names can also be generic. But for Interrupts and a couple
+> others, we are still missing a good way to provide a generic mapping
+> from pin name to number.
 
-Cheers,
-Nathan
+Isn't that the purpose of nexus nodes in the DT spec?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
