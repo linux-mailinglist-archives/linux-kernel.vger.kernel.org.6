@@ -1,52 +1,60 @@
-Return-Path: <linux-kernel+bounces-242404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB75C928798
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:13:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9AD392879C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193881C22C7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:13:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E185282F32
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F22149DFD;
-	Fri,  5 Jul 2024 11:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9E61494C8;
+	Fri,  5 Jul 2024 11:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnqZ032C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="OaLZGqp6";
+	dkim=pass (1024-bit key) header.d=xanderlent.com header.i=@xanderlent.com header.b="U+wAFR2I"
+Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1CF148FF3;
-	Fri,  5 Jul 2024 11:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103F1148FF3
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720178008; cv=none; b=uTe+Fr2flgMl4+zVaaosg7oGKDnJrfj0gXqwOf15cqI5rawJcsnFIZjZcQZYqzoBwCZQwd9+8boEQSEF7PmmpPZu3SghR/gAbnNh9CN+uFW6x21tJxGZNPIxuZ08SYRKzpsh5mI7dMNcAJRzY1fK6D9Ea07Q7NXCRdKjacvtQ54=
+	t=1720178087; cv=none; b=tAdODNCy1lDT2WQJqb11vzzgKsdpIyU3m9K2EFyHs9KKEyV6GrDk+EKpaWBj5Ufw26ChZezP1tQYIKjSRl0j/A49OsldeIx3Jl6FoVgvcXzYTgvv2dhJgtyCAM48M0aCnlIJIoXFf33hAiaJ8pF/0cetUyjAreo72UJYwWyHgQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720178008; c=relaxed/simple;
-	bh=RqdSmw7cEjVnEde07wAs3Ofz+DufcwRJcjjwmoIh+DI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IAdzJukxNAlxAdjz8qXFp2BzbgsdqQ/7MqP8qXgHg1NuGVr22JtMvndmqmm0ItpsEBZy6T9ssfFupmD32dkn5SxJQ8kSTS6wllu9c5jG0oW3rk8qlh28J0pBTdoOINWJz0R8vCWQRowaosB2iSXRMNwRhAZQBlStjW9InQRZJGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnqZ032C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7395BC4AF0E;
-	Fri,  5 Jul 2024 11:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720178008;
-	bh=RqdSmw7cEjVnEde07wAs3Ofz+DufcwRJcjjwmoIh+DI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lnqZ032C/+hbYaWqvDGSW5IUziCA9s93uX/uoF4YSyVasbwWkpBREKDuj2j0nCsDF
-	 Cpcruy+KTOGjKQlQOIO5H5iYZS0dQwv4e71HjOyDJFYg98NhbVbUGNHdoBLYLCQo33
-	 XgOi5bT77b/6wYNRPN1hBzUdZzZfXIR7kwJ3XkB550nB3ZlxdHPfcGrRqG2YEpWX+q
-	 G6Pj+MwvxEUwmOITgMW/GUaVFp0pU18wrOLt3WDPo98z0J2TiQ1oXx5HHe/4vRLSHd
-	 tSiNs6FbZTGHZNQhbq20ZWh6PDToLlwIpWK1DTRBQz0u7ruSibR56aHo+KOAhnQQ/L
-	 z8DrDFSySYNjQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F12C3814E;
-	Fri,  5 Jul 2024 11:13:28 +0000 (UTC)
-From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
-Date: Fri, 05 Jul 2024 19:13:27 +0800
-Subject: [PATCH 3/3] MAINTAINERS: Add an entry for Amlogic WCN power
- sequence
+	s=arc-20240116; t=1720178087; c=relaxed/simple;
+	bh=vqmCrZQzc6VxA7DOYVHFH11+oLx5Qm2ZRQliQz36DNo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=q5AfnugtHUD3ZxDBu2YJ1YPe+ntgrZsJJWZNMFZ6jqL3GX7e1SfXa9pzeOW94JFYHxDgir09IehfMtxtW4Iqv1V+qqzuqgIbPKknfKUNs8iV626mXD0YPELqRGK4/F52eCybxXdS1MPyohjgRV6y2r8rG9VJV7IqX/LOOr13nSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xanderlent.com; spf=pass smtp.mailfrom=xanderlent.com; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=OaLZGqp6; dkim=pass (1024-bit key) header.d=xanderlent.com header.i=@xanderlent.com header.b=U+wAFR2I; arc=none smtp.client-ip=64.147.108.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xanderlent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xanderlent.com
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id DAA3E288DB;
+	Fri,  5 Jul 2024 07:14:44 -0400 (EDT)
+	(envelope-from lx@xanderlent.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=from:date
+	:subject:mime-version:content-type:content-transfer-encoding
+	:message-id:to:cc; s=sasl; bh=vqmCrZQzc6VxA7DOYVHFH11+oLx5Qm2ZRQ
+	liQz36DNo=; b=OaLZGqp6+BQ94x2hpIg3YHLW5oqj7tUoYxuAIe+vIzO5RjqXMX
+	Z6WKQozfy6ut05OXXmWbP8EMhhNkCe66CQkDKTYfQ0L1XK06uG7dY64ha1ageztO
+	vYPJV6yyYDhVUpdASiP/kaMsAtgeZcayrc+jVyRrjCeLkG1Hw+Y1bDvgw=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id D23B9288DA;
+	Fri,  5 Jul 2024 07:14:44 -0400 (EDT)
+	(envelope-from lx@xanderlent.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=xanderlent.com;
+ h=from:date:subject:mime-version:content-type:content-transfer-encoding:message-id:to:cc; s=2021-09.pbsmtp; bh=vqmCrZQzc6VxA7DOYVHFH11+oLx5Qm2ZRQliQz36DNo=; b=U+wAFR2IFIEJEoc7kYJNMj9VSnr4+7zD2D5OfX6nfqmY0iOULx62YgnbIqXiwazkTfgrem5eGTS+gfdM9eNo7KbEB+xQDs8rXjGXDNfx9D1wsS1J6q9W4FQN7Ib7WPhGgLXXMXg5XAi0igvuAi0cKyq8nSSdiYi2MPFiRjWGYwk=
+Received: from ultralight.local (unknown [172.58.228.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 9C756288D9;
+	Fri,  5 Jul 2024 07:14:43 -0400 (EDT)
+	(envelope-from lx@xanderlent.com)
+From: "Alexander F. Lent" <lx@xanderlent.com>
+Date: Fri, 05 Jul 2024 07:14:22 -0400
+Subject: [PATCH] accel/ivpu: Add missing MODULE_FIRMWARE metadata
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,57 +63,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-pwrseq-v1-3-31829b47fc72@amlogic.com>
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
-In-Reply-To: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Yang Li <yang.li@amlogic.com>
-X-Mailer: b4 0.13-dev-f0463
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720178006; l=844;
- i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
- bh=2LQ5HRplZ2LlSPyzOYDNeeV7S6poY56OZ7f06ODqzXY=;
- b=PCOpuH5dGrWwfCdZFsAqjetcT/FPX1SeagmqXMJ1KkeEskEll8W9pctua+mg06NS6v906tdIe
- ZHNfuK9mBtKAWpdnStmTqHBzAOQcsh5Bw3Gr2cb8ti1WB8p1+NCLIvG
-X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
- pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
-X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
- auth_id=180
-X-Original-From: Yang Li <yang.li@amlogic.com>
-Reply-To: yang.li@amlogic.com
+Message-Id: <20240705-fix-ivpu-firmware-metadata-v1-1-704b73852d92@xanderlent.com>
+X-B4-Tracking: v=1; b=H4sIAI3Vh2YC/3XMQQ6CQAyF4auQrm0yDgSMVzEuOrRKF4ykA2hCu
+ DvVvbv3Jy/fBkVMpcC12sBk1aKv7HE+VdAPlJ+Cyt4QQ2xCFxp86Ad1nRYfNr7JBEeZiWkmrDn
+ ExG3o2guDA5OJv3/47e6dqAgmo9wPX/K/BPt+AEgE7j+ZAAAA
+To: "Alexander F. Lent" <lx@xanderlent.com>, 
+ Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>, 
+ Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>, 
+ Oded Gabbay <ogabbay@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+ Daniel Vetter <daniel.vetter@ffwll.ch>, 
+ Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>, 
+ Krystian Pradzynski <krystian.pradzynski@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720178083; l=2131;
+ i=lx@xanderlent.com; s=20240705; h=from:subject:message-id;
+ bh=vqmCrZQzc6VxA7DOYVHFH11+oLx5Qm2ZRQliQz36DNo=;
+ b=ul5+mUGLzximeBukKpfIKpzmVK7XfVt6U6onPbARLu17HW0SOtnn/lpd3am72T7GBgh5wItNl
+ J7wnYPEj+ohAUgcESw6lLLiDx26C0Y89JVVg7YT2dkgOoNsAtis8Fpw
+X-Developer-Key: i=lx@xanderlent.com; a=ed25519;
+ pk=T7WKAI9F1J7lcthsLG4aBF+wzehTsa3GPyzJkh5is3k=
+X-Pobox-Relay-ID:
+ C82E6A86-3ABF-11EF-BD6B-965B910A682E-45904678!pb-smtp2.pobox.com
 
-From: Yang Li <yang.li@amlogic.com>
+Modules that load firmware from various paths at runtime must declare
+those paths at compile time, via the MODULE_FIRMWARE macro, so that the
+firmware paths are included in the module's metadata.
 
-Add an entry for Amlogic WCN power sequence.
+The accel/ivpu driver loaded firmware but lacked this metadata,
+preventing dracut from correctly locating firmware files.
 
-Signed-off-by: Yang Li <yang.li@amlogic.com>
+Fixes: 9ab43e95f922 ("accel/ivpu: Switch to generation based FW names")
+Fixes: 02d5b0aacd05 ("accel/ivpu: Implement firmware parsing and booting")
+Signed-off-by: Alexander F. Lent <lx@xanderlent.com>
 ---
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/accel/ivpu/ivpu_fw.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dcb37b635f2c..0773f7040341 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1174,6 +1174,14 @@ F:	Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
- F:	drivers/perf/amlogic/
- F:	include/soc/amlogic/
+diff --git a/drivers/accel/ivpu/ivpu_fw.c b/drivers/accel/ivpu/ivpu_fw.c
+index 1457300828bf..51792a00b7e3 100644
+--- a/drivers/accel/ivpu/ivpu_fw.c
++++ b/drivers/accel/ivpu/ivpu_fw.c
+@@ -48,16 +48,26 @@ static char *ivpu_firmware;
+ module_param_named_unsafe(firmware, ivpu_firmware, charp, 0644);
+ MODULE_PARM_DESC(firmware, "NPU firmware binary in /lib/firmware/..");
  
-+AMLOGIC WCN POWER SEQUENCING
-+M:	Yang Li <yang.li@amlogic.com>
-+L:	linux-pm@vger.kernel.org
-+S:	Maintained
-+W:	http://www.amlogic.com
-+F:	Documentation/devicetree/bindings/power/amlogic,w1552-pwrseq.yaml
-+F:	drivers/power/sequencing/pwrseq-aml-wcn.c
++#define IVPU_FW_PATH_37XX_BIN		"vpu_37xx.bin"
++#define IVPU_FW_PATH_37XX_V0_BIN	"intel/vpu/vpu_37xx_v0.0.bin"
++#define IVPU_FW_PATH_40XX_BIN		"vpu_40xx.bin"
++#define IVPU_FW_PATH_40XX_V0_BIN	"intel/vpu/vpu_40xx_v0.0.bin"
 +
- AMPHENOL CHIPCAP 2 HUMIDITY-TEMPERATURE IIO DRIVER
- M:	Javier Carrasco <javier.carrasco.cruz@gmail.com>
- L:	linux-hwmon@vger.kernel.org
+ static struct {
+ 	int gen;
+ 	const char *name;
+ } fw_names[] = {
+-	{ IVPU_HW_37XX, "vpu_37xx.bin" },
+-	{ IVPU_HW_37XX, "intel/vpu/vpu_37xx_v0.0.bin" },
+-	{ IVPU_HW_40XX, "vpu_40xx.bin" },
+-	{ IVPU_HW_40XX, "intel/vpu/vpu_40xx_v0.0.bin" },
++	{ IVPU_HW_37XX, IVPU_FW_PATH_37XX_BIN },
++	{ IVPU_HW_37XX, IVPU_FW_PATH_37XX_V0_BIN },
++	{ IVPU_HW_40XX, IVPU_FW_PATH_40XX_BIN },
++	{ IVPU_HW_40XX, IVPU_FW_PATH_40XX_V0_BIN },
+ };
+ 
++MODULE_FIRMWARE(IVPU_FW_PATH_37XX_BIN);
++MODULE_FIRMWARE(IVPU_FW_PATH_37XX_V0_BIN);
++MODULE_FIRMWARE(IVPU_FW_PATH_40XX_BIN);
++MODULE_FIRMWARE(IVPU_FW_PATH_40XX_V0_BIN);
++
+ static int ivpu_fw_request(struct ivpu_device *vdev)
+ {
+ 	int ret = -ENOENT;
 
+---
+base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
+change-id: 20240704-fix-ivpu-firmware-metadata-3d02bd60768d
+
+Best regards,
 -- 
-2.42.0
-
+Alexander F. Lent <lx@xanderlent.com>
 
 
