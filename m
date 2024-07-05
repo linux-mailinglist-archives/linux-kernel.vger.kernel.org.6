@@ -1,398 +1,126 @@
-Return-Path: <linux-kernel+bounces-242578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDE1928A13
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:46:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9417D928A16
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCB81F2169F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7F361C24367
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FCF14D2B5;
-	Fri,  5 Jul 2024 13:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC6D152E0E;
+	Fri,  5 Jul 2024 13:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Vw02SvY2"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmV1Fl1n"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA108149DE4
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 13:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C311A149DE4;
+	Fri,  5 Jul 2024 13:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720187198; cv=none; b=dkIl/tWkDotiTgiF5NUr+8fZ1UMTqBTejaQkfWoK3jRefzexX+6IUIhrUp7uvgl4wDgWh//XmRaCfJKAUrrXyW/Sm14ptiQTcwMzL1T8q+jCSP9kZ+vzWGYAC1I2PtBd5+8TVuOkdTPU8liwoWGuWUl6Lopls4+ArWXQ59ICpqk=
+	t=1720187209; cv=none; b=HHUB7s3SZnII3YZG2PgIXC0/UDKmMVpXPkn7Ls9X7pUPs78ICYh1p0xPjOIozDnRs3YOf3ROQwfcFtU9y0Lg0On4f/Wj4BqueMNtmoO3XtO0Ij0MyoNCA4vTha3aP/xIzoiHfE2weF/VJavRFahtf0Av3rgcN0JjUIhaOhcoatI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720187198; c=relaxed/simple;
-	bh=H41/QVobDRUt3UCZd9bYxapvX64v+UpmpxENiWV6leU=;
+	s=arc-20240116; t=1720187209; c=relaxed/simple;
+	bh=l+1Y1+caxhVchzhr4BCyG+RAbZ2ux/UMlynAtjvAZC0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CpIg0AN7KeFpjCnCfODsldm6nGn5jfss8z3ru6P5STg1qnSU8nP9k1kuzwJd4XCiLc4qp3uVd1CQoP6BdsCswoN1KgqgKO0kQ70DeCJauyqvMFG6m8OYccNH8LA3CAIoohp0nXTH0EuuEV9NNJ037o6Xp+0Pd3DicPSMlzuGdC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Vw02SvY2; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea2ce7abaso1704580e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 06:46:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=gVqiMySFTL6qzFoVALmwXzSNSdZVW9GA0H6gfdcvj1my8ReBBxmJbozkPnXUlTpxumK2QO/Vn9gaX5XPGrTQCDdXw7uh96suwct4wDCIpHxZRCP557uPIWMLXNqVro0DLM9oMtmdRx/r7ZnKGduveQ1VtVY96hpTjLDCaBqHkLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AmV1Fl1n; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c8e422c40cso1077504a91.2;
+        Fri, 05 Jul 2024 06:46:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720187195; x=1720791995; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720187207; x=1720792007; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rosnYyYrEz/8I1grVSmaLMftXU+a2KtyJAYICqi7Yx0=;
-        b=Vw02SvY2GJry3LOvXQUvaVu+zdEsiWvrbwhkG7LsU04/uyOj8PIneTOVKt5/gohsuM
-         pC8Scm4vu3jtTheNRgoacJ8qeskHhSUg3iDUND7bzUeQH+SShef4Uga4k7bwj6yTpcWS
-         8mxBMUbbx/4wT5NJlNTX5xVgov+wfdc7X/EB6nwbr2po81emKshrlutX+gxuVvga2UAe
-         xgv32Xyqb56Dbblzd6PzWYQ7HzpWC83oWCB7uM2AIhiJJuYNcwWUrm/Ja1TxMTsKSzXK
-         LPlnyt3jYvbjGuWZN7tQszX9jYfNzhVTv5WC5N0R7pDGlP3DiKhBimkmfKT89w0pHT3S
-         5CkQ==
+        bh=l+1Y1+caxhVchzhr4BCyG+RAbZ2ux/UMlynAtjvAZC0=;
+        b=AmV1Fl1nwcrV8oELAiQx/rij0+1/82Ra3n4cNRQsdFMwBZLbbUU/WG/CzRZwfdkj9Y
+         ju70Ws0JNaOjncBJ+EdOEjKXE8WhepY7/t8DwHN4NsAaDBn6iJ1aC23GUYDscFDuOw7h
+         4yvGwLSMFt0gzO2mhDSF5LSiVTFvVCXx4Ji7W5I9oqbDps/zx/6k553NZq8r7BuOwAXv
+         eIlFpUaCuDXxIKcTXyR8nijqxZ1FwOeY/N3Vw2/NmJ5dGFPXy/ugYWSFANKC6pgiYF2K
+         O5r8DisXjpoo5Az8hiUZmHzRzlIFHPRD3XzKzWfqxwLG5meMDfkvq1s9VC7K/z/hBjfV
+         imXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720187195; x=1720791995;
+        d=1e100.net; s=20230601; t=1720187207; x=1720792007;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rosnYyYrEz/8I1grVSmaLMftXU+a2KtyJAYICqi7Yx0=;
-        b=q3/zhrqZ6LPpD7dOb6DXIytT56CA0GSfN9Wl3P+zxT3KMfebjkF7m4schH4bd6fViD
-         R1h27Qb5gcbX6nAjNAOnbwHynKv3WlIQQiQo7Fwxn1uqB+jlmpTOfL10isHQMDcf4J2j
-         K4eOqDWAXmRFJZckeZm4eBpLFA9vTbDueYQf99S9J+aDpYR+D1bkFodPZMISBZbpIZwQ
-         dgvhLjQDGDBsNXePmXK2+rtZnOEO2zWrvJmOG6rikj0r71lWYgf1TZ2G1pApwMt18V2l
-         FMBMNUgXxIBbztCCsbaQNicijmbW+/OBxw9Gz2CplVnkLWbZ/g3KmetnUhQOXUnZnz33
-         fhjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmXZ5C1TEwG8TpqJXJCT8hqdILeF77SECqHnHIKcmQQcHbSykFT1u9kWNLEoYFSs9sVy1Uqfbyi7dRsxXqwS7fgrYdiKzDxtgTZSjb
-X-Gm-Message-State: AOJu0Yx3CCy0OhJky7UW7WHsENyiHpVHVB/XkJn00znib52QuOlOWC29
-	ipc07gkj9u5BFA9KSk/5K0Su00Oep4imyJNeysC3On+YOnlQuR3CJ3KNdWI4jEeYt+JSu3PiSks
-	1tyKLBhmc6kob/zAIeio+bCTPEec12CN24sD7kw==
-X-Google-Smtp-Source: AGHT+IGFtaZLcKpk9WnyWUbqrexO6LMGZ7oxIvyiXRjOv1dtSZqOgTzlknrAacjU7SDBMuCr2tIXZMV4hVpg3lYpG6E=
-X-Received: by 2002:a19:434c:0:b0:52e:7f18:176b with SMTP id
- 2adb3069b0e04-52ea061a90dmr3411655e87.11.1720187194997; Fri, 05 Jul 2024
- 06:46:34 -0700 (PDT)
+        bh=l+1Y1+caxhVchzhr4BCyG+RAbZ2ux/UMlynAtjvAZC0=;
+        b=l9GDcPEG1vCkboMlc3/E7SPqHrk1lzh2ufygI8OPg3kzcRs34Vp6nDJrjmxp9XCvkY
+         lyQ5CdDeXyV4cQorsVZrhcpopARFVyThg0cC//1Hfm+G/A/Ot9vED36KIq0T+iuj7RF9
+         widploej1/e28mcQHnvZ9ZE6Tx2NNay1lzEMInIH8rZefnWNeL4oqOAQfWIz5V/SwSnw
+         iXTYfQb2MHOuq5cuAwDV3aBu1F6qFDOLlo7fkb7h8eas3rHN+AbdbiU28ZjvX+pxMWas
+         eF7HZtAxBJc9zmv287Tc+QCtidaKlet4CkaChjSkCz79LNhqnFwSoWxkQn7Fj4v7XBxt
+         hDvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZd+Dfnkl1KiE2subm962X6togtSO2oKKARglLkL0PNEyEjfEjTQhMM37ZkN8eXKl8+MsREtRxPqxatFqZx6SXn9h7USEqtglKg4DgLBxnlJ8NBZ8C0qY3uEnXLGiczSXgKDDcp3GsHQ6pFlxa7cTxneulWai6pEhgzTc7JDu7gJvDYsnHJsI/5QWBkG09UC1GAqXcpOi06GkrjU6PBxg9WBY=
+X-Gm-Message-State: AOJu0YwzGqZjwnJl9Hv6Paf53WoQDnsnPSIBZ5P/gh4oTkIdGBnlrD+2
+	vEE0t8JZiCbLIcdL8qqPqDOWF98gscLW6NNudwn1W1Nar7KxQtA8o9tzz3b8S4LLX8THtuNnrE7
+	Z1Z/WK6+XH7mKx91aLpeYwTNCNOY=
+X-Google-Smtp-Source: AGHT+IGn9pRs0VGDTMIiD7gHdJZujUU/p8nn7qMARSQbH4hdHR+SWMvpQUQdYXZvJ5a7xvLZzY8hKk5A4Nt/5wtWCgc=
+X-Received: by 2002:a17:90a:d795:b0:2c8:f3b4:425 with SMTP id
+ 98e67ed59e1d1-2c99c6a3198mr3417780a91.23.1720187207178; Fri, 05 Jul 2024
+ 06:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com> <20240705-pwrseq-v1-2-31829b47fc72@amlogic.com>
-In-Reply-To: <20240705-pwrseq-v1-2-31829b47fc72@amlogic.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 5 Jul 2024 15:46:24 +0200
-Message-ID: <CAMRc=MeZvHV-iOSTcaki=+8_j2Uqm_qpY3b1V15o9K0zefy+hw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] power: sequenceing: Add power sequence for Amlogic
- WCN chips
-To: yang.li@amlogic.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20240701183625.665574-1-ojeda@kernel.org> <20240701183625.665574-14-ojeda@kernel.org>
+ <ZoeQVYda-AZN6PYy@gpd> <2qwdfogh6jd5uixxjzlagmtfvnykk3x4ztqrn4j2v6qoref5rx@ooj6gq27bq4z>
+ <CANiq72n6bYt0AKNxad2+gjwHKQ1RiDxAbjm-2u20L8TcSZE-9Q@mail.gmail.com> <huatx5giw7r357zeecxngkqboiq3lfqndjjrcivxllurqpjvbi@4y5ejgwxhztm>
+In-Reply-To: <huatx5giw7r357zeecxngkqboiq3lfqndjjrcivxllurqpjvbi@4y5ejgwxhztm>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 5 Jul 2024 15:46:35 +0200
+Message-ID: <CANiq72=A-PZ6LoUiVQuOvN2hMVvd5pJ42OKPW61FXNrnYU+WBg@mail.gmail.com>
+Subject: Re: [PATCH 13/13] docs: rust: quick-start: add section on Linux distributions
+To: =?UTF-8?Q?Fabian_Gr=C3=BCnbichler?= <debian@fabian.gruenbichler.email>
+Cc: Andrea Righi <righi.andrea@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Jan Alexander Steffens <heftig@archlinux.org>, =?UTF-8?Q?Johannes_L=C3=B6thberg?= <johannes@kyriasis.com>, 
+	Josh Stone <jistone@redhat.com>, Randy Barlow <randy@electronsweatshop.com>, 
+	Anna Figueiredo Gomes <navi@vlhl.dev>, Matoro Mahri <matoro_gentoo@matoro.tk>, 
+	Ryan Scheel <ryan.havvy@gmail.com>, figsoda <figsoda@pm.me>, 
+	=?UTF-8?Q?J=C3=B6rg_Thalheim?= <joerg@thalheim.io>, 
+	Theodore Ni <43ngvg@masqt.com>, Winter <nixos@winter.cafe>, William Brown <wbrown@suse.de>, 
+	Xiaoguang Wang <xiaoguang.wang@suse.com>, Zixing Liu <zixing.liu@canonical.com>, 
+	Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org, linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 5, 2024 at 1:13=E2=80=AFPM Yang Li via B4 Relay
-<devnull+yang.li.amlogic.com@kernel.org> wrote:
+On Fri, Jul 5, 2024 at 3:09=E2=80=AFPM Fabian Gr=C3=BCnbichler
+<debian@fabian.gruenbichler.email> wrote:
 >
-> From: Yang Li <yang.li@amlogic.com>
->
-> Add power sequence for Bluetooth and Wi-Fi respectively, including chip_e=
-n
-> pull-up and bt_en pull-up, and generation of the 32.768 clock.
->
-> Signed-off-by: Yang Li <yang.li@amlogic.com>
-> ---
->  drivers/power/sequencing/Kconfig          |   7 +
->  drivers/power/sequencing/Makefile         |   1 +
->  drivers/power/sequencing/pwrseq-aml-wcn.c | 209 ++++++++++++++++++++++++=
-++++++
->  3 files changed, 217 insertions(+)
->
-> diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/=
-Kconfig
-> index c9f1cdb66524..65d3b2c20bfb 100644
-> --- a/drivers/power/sequencing/Kconfig
-> +++ b/drivers/power/sequencing/Kconfig
-> @@ -26,4 +26,11 @@ config POWER_SEQUENCING_QCOM_WCN
->           this driver is needed for correct power control or else we'd ri=
-sk not
->           respecting the required delays between enabling Bluetooth and W=
-LAN.
->
-> +config POWER_SEQUENCING_AML_WCN
-> +       tristate "Amlogic WCN family PMU driver"
-> +       default m if ARCH_MESON
-> +       help
-> +         Say Y here to enable the power sequencing driver for Amlogic
-> +         WCN Bluetooth/WLAN chipsets.
-> +
->  endif
-> diff --git a/drivers/power/sequencing/Makefile b/drivers/power/sequencing=
-/Makefile
-> index 2eec2df7912d..32706daf8f0f 100644
-> --- a/drivers/power/sequencing/Makefile
-> +++ b/drivers/power/sequencing/Makefile
-> @@ -4,3 +4,4 @@ obj-$(CONFIG_POWER_SEQUENCING)          +=3D pwrseq-core.=
-o
->  pwrseq-core-y                          :=3D core.o
->
->  obj-$(CONFIG_POWER_SEQUENCING_QCOM_WCN)        +=3D pwrseq-qcom-wcn.o
-> +obj-$(CONFIG_POWER_SEQUENCING_AML_WCN) +=3D pwrseq-aml-wcn.o
-> diff --git a/drivers/power/sequencing/pwrseq-aml-wcn.c b/drivers/power/se=
-quencing/pwrseq-aml-wcn.c
-> new file mode 100644
-> index 000000000000..6f5bfcf60b9c
-> --- /dev/null
-> +++ b/drivers/power/sequencing/pwrseq-aml-wcn.c
-> @@ -0,0 +1,209 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-> +/*
-> + * Copyright (C) 2024 Amlogic, Inc. All rights reserved
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/gpio.h>
+> right now it is updated whenever its rdeps (firefox and chromium in
+> stable) need newer versions. once e.g. a stable Debian kernel has
+> similar requirements, I guess the same would apply there. I am not sure
+> upstream kernel development on Debian stable would be enough of an
+> argument to update it (or provide similar packages), but I am not a
+> member of the teams that would make that decision.
 
-Please see line 5 in this file.
+That is reasonable.
 
-> +#include <linux/of_gpio.h>
+> as discussed off-list, -backports might be a better place for providing
+> more recent toolchain packages on Debian stable, and independent from
+> this thread, I have pondered providing them there in the past already.
+> backports would only ship one version as well though, and at most the
+> one in testing (so it would also be affected by the freeze period, just
+> like unstable and testing).
 
-You don't need this either.
+I imagine that could be useful for some (kernel or not) developers on
+stable, even with the freeze period.
 
-> +#include <linux/platform_device.h>
-> +#include <linux/pwrseq/provider.h>
-> +#include <linux/string.h>
-> +#include <linux/types.h>
-> +
-> +struct pwrseq_aml_wcn_ctx {
-> +       struct pwrseq_device *pwrseq;
-> +       int bt_enable_gpio;
-> +       int chip_enable_gpio;
-> +       struct clk *lpo_clk;
-> +       unsigned int pwr_count;
-> +};
-> +
-> +static DEFINE_MUTEX(pwrseq_lock);
-> +
+Thanks!
 
-Why is this global?
-
-> +static int pwrseq_aml_wcn_chip_enable(struct pwrseq_device *pwrseq)
-> +{
-> +       struct pwrseq_aml_wcn_ctx *ctx =3D pwrseq_device_get_drvdata(pwrs=
-eq);
-> +       int err;
-> +
-> +       mutex_lock(&pwrseq_lock);
-
-Please use guard() from linux/cleanup.h.
-
-> +       if (ctx->pwr_count =3D=3D 0) {
-> +               gpio_request(ctx->chip_enable_gpio, "chip-enable-gpios");
-> +               gpio_direction_output(ctx->chip_enable_gpio, 1);
-> +               gpio_free(ctx->chip_enable_gpio);
-
-Not only are these legacy APIs but they are also used wrong. You
-almost never want to release the GPIO after setting the direction as
-someone else may grab it and use it.
-
-> +
-> +               if (!IS_ERR(ctx->lpo_clk)) {
-> +                       err =3D clk_prepare_enable(ctx->lpo_clk);
-> +                       if (err) {
-> +                               mutex_unlock(&pwrseq_lock);
-> +                               return err;
-> +                       }
-> +               }
-> +       }
-> +
-> +       ctx->pwr_count++;
-> +       mutex_unlock(&pwrseq_lock);
-> +       return 0;
-> +}
-> +
-> +static int pwrseq_aml_wcn_chip_disable(struct pwrseq_device *pwrseq)
-> +{
-> +       struct pwrseq_aml_wcn_ctx *ctx =3D pwrseq_device_get_drvdata(pwrs=
-eq);
-> +
-> +       mutex_lock(&pwrseq_lock);
-> +       if (--ctx->pwr_count =3D=3D 0) {
-> +               gpio_request(ctx->chip_enable_gpio, "chip-enable-gpios");
-> +               gpio_direction_output(ctx->chip_enable_gpio, 0);
-> +               gpio_free(ctx->chip_enable_gpio);
-> +
-> +               if (!IS_ERR(ctx->lpo_clk))
-> +                       clk_disable_unprepare(ctx->lpo_clk);
-> +       }
-> +
-> +       mutex_unlock(&pwrseq_lock);
-> +       return 0;
-> +}
-> +
-> +static const struct pwrseq_unit_data pwrseq_aml_wcn_chip_power_unit_data=
- =3D {
-> +       .name =3D "chip-enable",
-> +       .enable =3D pwrseq_aml_wcn_chip_enable,
-> +       .disable =3D pwrseq_aml_wcn_chip_disable,
-> +};
-> +
-> +static const struct pwrseq_unit_data *pwrseq_aml_wcn_unit_deps[] =3D {
-> +       &pwrseq_aml_wcn_chip_power_unit_data,
-> +       NULL
-> +};
-> +
-> +static int pwrseq_aml_wcn_bt_enable(struct pwrseq_device *pwrseq)
-> +{
-> +       struct pwrseq_aml_wcn_ctx *ctx =3D pwrseq_device_get_drvdata(pwrs=
-eq);
-> +
-> +       gpio_request(ctx->bt_enable_gpio, "bt-enable-gpios");
-> +       gpio_direction_output(ctx->bt_enable_gpio, 1);
-> +       gpio_free(ctx->bt_enable_gpio);
-> +
-> +       /* wait 100ms for bluetooth controller power on  */
-> +       msleep(100);
-> +
-> +       return 0;
-> +}
-> +
-> +static int pwrseq_aml_wcn_bt_disable(struct pwrseq_device *pwrseq)
-> +{
-> +       struct pwrseq_aml_wcn_ctx *ctx =3D pwrseq_device_get_drvdata(pwrs=
-eq);
-> +
-> +       gpio_request(ctx->bt_enable_gpio, "bt-enable-gpios");
-> +       gpio_direction_output(ctx->bt_enable_gpio, 0);
-> +       gpio_free(ctx->bt_enable_gpio);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct pwrseq_unit_data pwrseq_aml_wcn_bt_unit_data =3D {
-> +       .name =3D "bluetooth-enable",
-> +       .deps =3D pwrseq_aml_wcn_unit_deps,
-> +       .enable =3D pwrseq_aml_wcn_bt_enable,
-> +       .disable =3D pwrseq_aml_wcn_bt_disable,
-> +};
-> +
-> +static const struct pwrseq_unit_data pwrseq_aml_wcn_wlan_unit_data =3D {
-> +       .name =3D "wlan-enable",
-> +       .deps =3D pwrseq_aml_wcn_unit_deps,
-> +};
-> +
-> +static const struct pwrseq_target_data pwrseq_aml_wcn_bt_target_data =3D=
- {
-> +       .name =3D "bluetooth",
-> +       .unit =3D &pwrseq_aml_wcn_bt_unit_data,
-> +};
-> +
-> +static const struct pwrseq_target_data pwrseq_aml_wcn_wlan_target_data =
-=3D {
-> +       .name =3D "wlan",
-> +       .unit =3D &pwrseq_aml_wcn_wlan_unit_data,
-> +};
-> +
-> +static const struct pwrseq_target_data *pwrseq_aml_wcn_targets[] =3D {
-> +       &pwrseq_aml_wcn_bt_target_data,
-> +       &pwrseq_aml_wcn_wlan_target_data,
-> +       NULL
-> +};
-> +
-> +static int pwrseq_aml_wcn_match(struct pwrseq_device *pwrseq,
-> +                                struct device *dev)
-> +{
-> +       struct device_node *dev_node =3D dev->of_node;
-> +
-> +       if (!of_property_present(dev_node, "amlogic,wcn-pwrseq"))
-> +               return 0;
-> +
-
-You must never reference the notion of power sequencing in the DT.
-Please take a look at the pwrseq-qcom-wcn driver where we model the
-PMU with its regulators and then parse them in match() to figure out
-if we have the right thing or not.
-
-> +       return 1;
-> +}
-> +
-> +static int pwrseq_aml_wcn_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct pwrseq_aml_wcn_ctx *ctx;
-> +       struct pwrseq_config config;
-> +
-> +       ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +       if (!ctx)
-> +               return -ENOMEM;
-> +
-> +       ctx->bt_enable_gpio =3D of_get_named_gpio(dev->of_node,
-> +                                              "amlogic,bt-enable-gpios",=
- 0);
-> +       if (!gpio_is_valid(ctx->bt_enable_gpio))
-> +               return dev_err_probe(dev, ctx->bt_enable_gpio,
-> +                               "Failed to get the bt enable GPIO");
-> +
-> +       ctx->chip_enable_gpio =3D of_get_named_gpio(dev->of_node,
-> +                                              "amlogic,chip-enable-gpios=
-", 0);
-
-You don't need the OF variant. Use the regular devm_gpiod_get(). You
-also forgot to release it but the devres variant will take care of it.
-
-> +       if (!gpio_is_valid(ctx->chip_enable_gpio))
-> +               return dev_err_probe(dev, ctx->bt_enable_gpio,
-> +                                       "Failed to get the chip enable GP=
-IO");
-
-Wat
-
-> +
-> +       ctx->lpo_clk =3D devm_clk_get_optional(dev, NULL);
-> +       if (IS_ERR(ctx->lpo_clk))
-> +               return dev_err_probe(dev, PTR_ERR(ctx->lpo_clk),
-> +                               "Failed to get the clock source");
-> +
-> +       memset(&config, 0, sizeof(config));
-> +
-> +       config.parent =3D dev;
-> +       config.owner =3D THIS_MODULE;
-> +       config.drvdata =3D ctx;
-> +       config.match =3D pwrseq_aml_wcn_match;
-> +       config.targets =3D pwrseq_aml_wcn_targets;
-> +
-> +       ctx->pwr_count =3D 0;
-> +       ctx->pwrseq =3D devm_pwrseq_device_register(dev, &config);
-> +       if (IS_ERR(ctx->pwrseq))
-> +               return dev_err_probe(dev, PTR_ERR(ctx->pwrseq),
-> +                                    "Failed to register the power sequen=
-cer\n");
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id pwrseq_aml_wcn_of_match[] =3D {
-> +       { .compatible =3D "amlogic,w155s2-pwrseq" },
-> +       { /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, pwrseq_aml_wcn_of_match);
-> +
-> +static struct platform_driver pwrseq_aml_wcn_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "pwrseq-aml_wcn",
-> +               .of_match_table =3D pwrseq_aml_wcn_of_match,
-> +       },
-> +       .probe =3D pwrseq_aml_wcn_probe,
-> +};
-> +module_platform_driver(pwrseq_aml_wcn_driver);
-> +
-> +MODULE_AUTHOR("Yang Li <yang.li@amlogic.com>");
-> +MODULE_DESCRIPTION("Amlogic WCN PMU power sequencing driver");
-> +MODULE_LICENSE("GPL");
->
-> --
-> 2.42.0
->
->
-
-Bart
+Cheers,
+Miguel
 
