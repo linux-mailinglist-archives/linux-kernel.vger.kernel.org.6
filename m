@@ -1,188 +1,126 @@
-Return-Path: <linux-kernel+bounces-241811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA3A927FD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:42:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1980E927FD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 197181C2184E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB611F23304
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8C3101F2;
-	Fri,  5 Jul 2024 01:41:55 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C31833DD;
-	Fri,  5 Jul 2024 01:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C260110A2B;
+	Fri,  5 Jul 2024 01:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="OuohWKXA"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AE97F;
+	Fri,  5 Jul 2024 01:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720143714; cv=none; b=LTS4MZ2SVVBh48LwzVqvZLcWgfN9FTsc1lpC59PxI3EXf5o02ONB37S8qbAx6Ig/8DRHNgFwa/O0tMUwBop2I5elVJobobyKab8BEi4C9fSKv4VL5nVg53Rli5s8zS7SJCcpCXV2L4CPXgoRYD1QtzIspGQwHLtZiXEdeBBHM5g=
+	t=1720143974; cv=none; b=YLWGQdUENqQs2kwObl2WFMKKkZ69LmHXLT6LZvckG27G/oi48XkEjHKOqrMyZObBmyb4UWUywHHTBuYNDBPslaHeG76cR0kqfrJkCT+wjOJZq81mFj2XJc+/8lKJ0Fcn1KQ3pcmIJOSSWWoxPTHc7nCfLdCMzvfVHsd9PmqO98o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720143714; c=relaxed/simple;
-	bh=W9sjv8d6kmkNuqYduzOoNs3ODRPG9F3zv56JdhCF8vc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MKyZbxKEzIRspwK398UdLrxcnmrk05NVy0XYSo2AjOc0SMV8mcvzLqGNGtm/G2PJGwZHDfL7V4e9JPZxfj/qC3CM2qTRcKM2E5shOOYgotkV9BcfKC2BSvMisUv/Pjp9wJULQK5IN4lS7avbLOV11+kVcbwQCbgZuwKxbIJ3dNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8BxL_FdT4dm3CABAA--.3951S3;
-	Fri, 05 Jul 2024 09:41:49 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx28ZcT4dm_cA7AA--.7061S2;
-	Fri, 05 Jul 2024 09:41:49 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	corbet@lwn.net,
-	alexs@kernel.org,
-	siyanteng@loongson.cn
-Cc: loongarch@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: [PATCH 1/2] docs: Add advanced extended IRQ model description
-Date: Fri,  5 Jul 2024 09:41:44 +0800
-Message-Id: <20240705014144.14750-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1720143974; c=relaxed/simple;
+	bh=ld8o8FaaAiwbAi0R3l/MkFRMfIc/UxNHZGvhFpzf54U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LrayYYfFk/6zb3dGxkJa4kePSejLAWg7aqMjOKNG1n0tZj+794+AZj3fSYpLTxcUF1TXh/KYKPUq4PAVRZKJ9g291X38oBPccpyUAC7r5qIHZJkpIcbvOrdK5vHbJlsa4A2gPEu8s6z/7+bgfl8Fj3OHkwWUQmnVcZ8VFZ31ltY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=fail (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=OuohWKXA reason="key not found in DNS"; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4651jmcP74086069, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1720143948; bh=ld8o8FaaAiwbAi0R3l/MkFRMfIc/UxNHZGvhFpzf54U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-ID:Content-Transfer-Encoding:MIME-Version;
+	b=OuohWKXAR0uR5LjRgJT7881DQ1V2B3MXscEoV0BJS5Xqc+CVeF2aqsJW9Y0+g7mE3
+	 lue4ubZKxwaIjHrrwmh2HIwYnal5jUs7enjZwXkkUkOm55RuEDm+u5u5ZcFmjJ4fO7
+	 BEerM75yZd5/KGlvVQcHeWgieCRhr32GvAfP1AeFgfxY9n9Jlp+wfHutCYyW+dlRLq
+	 YhGuepifBdumwIYQGqRxDV0hVM0yDX8CUT0b6WlI3jc+cYDj4ti7B9QnhfxeqZOwLU
+	 /2QOzK80PFxwyoG3RQIk/APn+gh8p5gZxPmnbpcoqge8xl+E083weXQ+GfQteFyh7O
+	 X9ibwPELXtz4g==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 4651jmcP74086069
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 5 Jul 2024 09:45:48 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 5 Jul 2024 09:45:48 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 5 Jul 2024 09:45:47 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Fri, 5 Jul 2024 09:45:47 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "marcin.slusarz@gmail.com" <marcin.slusarz@gmail.com>
+CC: "tpkuester@gmail.com" <tpkuester@gmail.com>,
+        "kvalo@kernel.org"
+	<kvalo@kernel.org>,
+        "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mslusarz@renau.com" <mslusarz@renau.com>
+Subject: Re: [PATCH] wifi: rtw88: schedule rx work after everything is set up
+Thread-Topic: [PATCH] wifi: rtw88: schedule rx work after everything is set up
+Thread-Index: AQHasFekMjDEF5R7/k+0650S2/2b8bGrUuCQgACfb4CAAAQJAIA7HOaA
+Date: Fri, 5 Jul 2024 01:45:47 +0000
+Message-ID: <96a46df7c4c49b2b033bc7cd8d5cad3306db8ca6.camel@realtek.com>
+References: <13e848c1544245e6aef4b89c3f38daf0@realtek.com>
+	 <20240528110246.477321-1-marcin.slusarz@gmail.com>
+In-Reply-To: <20240528110246.477321-1-marcin.slusarz@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+user-agent: Evolution 3.36.1-2 
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FB1B320DBC41034B9F67D7044D7B3289@realtek.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Bx28ZcT4dm_cA7AA--.7061S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxCFy8Gr17WryfWr4xXrW3twc_yoWrZryDpr
-	ZxCryIqF18Gry5Xr17Jr18Wr13G3Z3J3WDtF1xtry8Xr1kAr1Utr1UtrykJFy7G34rAF1j
-	qFyrJw1UJw1UJwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU=
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-From 3C6000, Loongarch began to support advanced extended
-interrupt mode, in which each CPU has an independent interrupt
-vector number.This will enhance the architecture's ability
-to support modern devices
-
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
----
- .../arch/loongarch/irq-chip-model.rst         | 33 +++++++++++++++++
- .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 +++++++++++++++++--
- 2 files changed, 67 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
-index 7988f4192363..369df16b48d0 100644
---- a/Documentation/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/arch/loongarch/irq-chip-model.rst
-@@ -85,6 +85,39 @@ to CPUINTC directly::
-     | Devices |
-     +---------+
- 
-+Advanced Extended IRQ model
-+===========================
-+
-+In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt go
-+to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, MSI interrupts go to AVEC,
-+and then go to CPUINTC, Other devices interrupts go to PCH-PIC/PCH-LPC and gathered
-+by EIOINTC, and then go to CPUINTC directly::
-+
-+ +-----+     +--------------------------+     +-------+
-+ | IPI | --> |           CPUINTC        | <-- | Timer |
-+ +-----+     +--------------------------+     +-------+
-+              ^        ^             ^
-+              |        |             |
-+      +--------+  +---------+ +---------+     +-------+
-+      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
-+      +--------+  +---------+ +---------+     +-------+
-+           ^            ^
-+           |            |
-+         +---------+  +---------+
-+         | PCH-MSI |  | PCH-PIC |
-+         +---------+  +---------+
-+            ^          ^       ^
-+            |          |       |
-+    +---------+ +---------+ +---------+
-+    | Devices | | PCH-LPC | | Devices |
-+    +---------+ +---------+ +---------+
-+                     ^
-+                     |
-+                +---------+
-+                | Devices |
-+                +---------+
-+
-+
- ACPI-related definitions
- ========================
- 
-diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-index f1e9ab18206c..15965e191cd1 100644
---- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-@@ -9,9 +9,8 @@
- LoongArch的IRQ芯片模型（层级关系）
- ==================================
- 
--目前，基于LoongArch的处理器（如龙芯3A5000）只能与LS7A芯片组配合工作。LoongArch计算机
--中的中断控制器（即IRQ芯片）包括CPUINTC（CPU Core Interrupt Controller）、LIOINTC（
--Legacy I/O Interrupt Controller）、EIOINTC（Extended I/O Interrupt Controller）、
-+LoongArch计算机中的中断控制器（即IRQ芯片）包括CPUINTC（CPU Core Interrupt Controller）、
-+LIOINTC（Legacy I/O Interrupt Controller）、EIOINTC（Extended I/O Interrupt Controller）、
- HTVECINTC（Hyper-Transport Vector Interrupt Controller）、PCH-PIC（LS7A芯片组的主中
- 断控制器）、PCH-LPC（LS7A芯片组的LPC中断控制器）和PCH-MSI（MSI中断控制器）。
- 
-@@ -87,6 +86,38 @@ PCH-LPC/PCH-MSI，然后被EIOINTC统一收集，再直接到达CPUINTC::
-     | Devices |
-     +---------+
- 
-+高级扩展IRQ模型
-+=======================
-+
-+在这种模型里面，IPI（Inter-Processor Interrupt）和CPU本地时钟中断直接发送到CPUINTC，
-+CPU串口（UARTs）中断发送到LIOINTC，MSI中断发送到AVEC，而后通过AVEC送达CPUINTC，而
-+其他所有设备的中断则分别发送到所连接的PCH-PIC/PCH-LPC，然后由EIOINTC统一收集，再直
-+接到达CPUINTC::
-+
-+ +-----+     +--------------------------+     +-------+
-+ | IPI | --> |           CPUINTC        | <-- | Timer |
-+ +-----+     +--------------------------+     +-------+
-+              ^        ^             ^
-+              |        |             |
-+      +--------+  +---------+ +---------+     +-------+
-+      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
-+      +--------+  +---------+ +---------+     +-------+
-+              ^        ^
-+              |        |
-+      +---------+  +-------------+
-+      | PCH-MSI |  |   PCH-PIC   |
-+      +---------+  +-------------+
-+            ^          ^       ^
-+            |          |       |
-+    +---------+ +---------+ +---------+
-+    | Devices | | PCH-LPC | | Devices |
-+    +---------+ +---------+ +---------+
-+                     ^
-+                     |
-+                +---------+
-+                | Devices |
-+                +---------+
-+
- ACPI相关的定义
- ==============
- 
--- 
-2.20.1
-
+T24gVHVlLCAyMDI0LTA1LTI4IGF0IDEzOjAyICswMjAwLCBNYXJjaW4gxZpsdXNhcnogd3JvdGU6
+DQo+IA0KPiBGcm9tOiBNYXJjaW4gxZpsdXNhcnogPG1zbHVzYXJ6QHJlbmF1LmNvbT4NCj4gDQo+
+IFJpZ2h0IG5vdyBpdCdzIHBvc3NpYmxlIHRvIGhpdCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2Ug
+aW4NCj4gcnR3X3J4X2ZpbGxfcnhfc3RhdHVzIG9uIGh3IG9iamVjdCBhbmQvb3IgaXRzIGZpZWxk
+cyBiZWNhdXNlDQo+IGluaXRpYWxpemF0aW9uIHJvdXRpbmUgY2FuIHN0YXJ0IGdldHRpbmcgVVNC
+IHJlcGxpZXMgYmVmb3JlDQo+IHJ0d19kZXYgaXMgZnVsbHkgc2V0dXAuDQo+IA0KPiBUaGUgc3Rh
+Y2sgdHJhY2UgbG9va3MgbGlrZSB0aGlzOg0KPiANCj4gcnR3X3J4X2ZpbGxfcnhfc3RhdHVzDQo+
+IHJ0dzg4MjFjX3F1ZXJ5X3J4X2Rlc2MNCj4gcnR3X3VzYl9yeF9oYW5kbGVyDQo+IC4uLg0KPiBx
+dWV1ZV93b3JrDQo+IHJ0d191c2JfcmVhZF9wb3J0X2NvbXBsZXRlDQo+IC4uLg0KPiB1c2Jfc3Vi
+bWl0X3VyYg0KPiBydHdfdXNiX3J4X3Jlc3VibWl0DQo+IHJ0d191c2JfaW5pdF9yeA0KPiBydHdf
+dXNiX3Byb2JlDQo+IA0KPiBTbyB3aGlsZSB3ZSBkbyB0aGUgYXN5bmMgc3R1ZmYgcnR3X3VzYl9w
+cm9iZSBjb250aW51ZXMgYW5kIGNhbGxzDQo+IHJ0d19yZWdpc3Rlcl9odywgd2hpY2ggZG9lcyBh
+bGwga2luZHMgb2YgaW5pdGlhbGl6YXRpb24gKGUuZy4NCj4gdmlhIGllZWU4MDIxMV9yZWdpc3Rl
+cl9odykgdGhhdCBydHdfcnhfZmlsbF9yeF9zdGF0dXMgcmVsaWVzIG9uLg0KPiANCj4gRml4IHRo
+aXMgYnkgbW92aW5nIHRoZSBmaXJzdCB1c2Jfc3VibWl0X3VyYiBhZnRlciBldmVyeXRoaW5nDQo+
+IGlzIHNldCB1cC4NCj4gDQo+IEZvciBtZSwgdGhpcyBidWcgbWFuaWZlc3RlZCBhczoNCj4gWyAg
+ICA4Ljg5MzE3N10gcnR3Xzg4MjFjdSAxLTE6MS4yOiBiYW5kIHdyb25nLCBwYWNrZXQgZHJvcHBl
+ZA0KPiBbICAgIDguOTEwOTA0XSBydHdfODgyMWN1IDEtMToxLjI6IGh3LT5jb25mLmNoYW5kZWYu
+Y2hhbiBOVUxMIGluIHJ0d19yeF9maWxsX3J4X3N0YXR1cw0KPiBiZWNhdXNlIEknbSB1c2luZyBM
+YXJyeSdzIGJhY2twb3J0IG9mIHJ0dzg4IGRyaXZlciB3aXRoIHRoZSBOVUxMDQo+IGNoZWNrcyBp
+biBydHdfcnhfZmlsbF9yeF9zdGF0dXMuDQo+IA0KPiBSZXBvcnRlZC1ieTogVGltIEsgPHRwa3Vl
+c3RlckBnbWFpbC5jb20+DQo+IENsb3NlczogDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xp
+bnV4LXdpcmVsZXNzL0NBK3Nob1dRN1A0OWpoUWFzb2ZEY1RkUWhpdWFyUFRqWUVEYS0tTmlWVng0
+OTRXY3VRd0BtYWlsLmdtYWlsLmNvbS8NCg0KQ2hhbmdlIENsb3NlcyB0byBMaW5rIGR1cmluZyBj
+b21taXR0aW5nIGJlY2F1c2Ugb2Ygbm8gQUNLIGZyb20gVGltLg0KDQo+IFNpZ25lZC1vZmYtYnk6
+IE1hcmNpbiDFmmx1c2FyeiA8bXNsdXNhcnpAcmVuYXUuY29tPg0KPiBDYzogUGluZy1LZSBTaGlo
+IDxwa3NoaWhAcmVhbHRlay5jb20+DQo+IENjOiBMYXJyeSBGaW5nZXIgPExhcnJ5LkZpbmdlckBs
+d2Zpbmdlci5uZXQ+DQo+IENjOiBLYWxsZSBWYWxvIDxrdmFsb0BrZXJuZWwub3JnPg0KPiBDYzog
+bGludXgtd2lyZWxlc3NAdmdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5r
+ZXJuZWwub3JnDQo+IA0KDQoxIHBhdGNoKGVzKSBhcHBsaWVkIHRvIHJ0dy1uZXh0IGJyYW5jaCBv
+ZiBydHcuZ2l0LCB0aGFua3MuDQoNCmFkYzUzOTc4NGM5OCB3aWZpOiBydHc4ODogdXNiOiBzY2hl
+ZHVsZSByeCB3b3JrIGFmdGVyIGV2ZXJ5dGhpbmcgaXMgc2V0IHVwDQoNCi0tLQ0KaHR0cHM6Ly9n
+aXRodWIuY29tL3Brc2hpaC9ydHcuZ2l0DQoNCg==
 
