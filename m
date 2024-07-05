@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-242770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBD4928CF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:13:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC05928CF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4E9282C3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA14A1F2606D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DB316D9C0;
-	Fri,  5 Jul 2024 17:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E235016B741;
+	Fri,  5 Jul 2024 17:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQSdstOt"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsTmswnq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A19916B3BA;
-	Fri,  5 Jul 2024 17:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D887145B10;
+	Fri,  5 Jul 2024 17:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720199614; cv=none; b=rXo7WdJ8yqHhiC7bIQb1zC81O6lk6aaYfqtk9qN5KapI9pn2TZl4kPMsjUtwAw+QW0WlLVeNgDaHR7bmc0EEYFYBaY14bPMFbnVQZgOuKwAFMO1CKbwOPoikTNEQlPzNZ1u1tMBLtagQND91hut6Pwwa8zQ8J8ISiSDkS84tydE=
+	t=1720199757; cv=none; b=KhudSyTFEO3uDaSIJpXRdsDgefNS2FrFY0U6xehAxBwHKGISK6SauiRid/bgMLfeMlZTEvQuCAxDvYakucBJoIOlbD/nV6eDF6n3Gez1wWeTIzWqOAO/s7WAijm1zBXhQq+98geQucVjqf2ONIVm1oFgTVdoZLk6T28jT3H8QSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720199614; c=relaxed/simple;
-	bh=VGVomkM/rYHhvPwoV2bSDwfdJBUjSxyszcJm5AMp2fQ=;
+	s=arc-20240116; t=1720199757; c=relaxed/simple;
+	bh=cANfSeFPR/KCm7xUKPG0KOFYYkm6VqitRNLMMx7oG14=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apxl1vQ5z4BCrIEVthAL+IYEulz8J2JGtWdKKHn+ABY2QKjLuS43lLedfy9I1cy6nTUWDuci8lZ0atk9sjj+CyX+OYevGLCyFuA9yabFiFO4sAlxS787glYnFIcdZqoMj3f5pMzlsSqYIIvpYistM93H7ic0dPUz7lCxnst5SZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NQSdstOt; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fb4fa1bb34so4844665ad.0;
-        Fri, 05 Jul 2024 10:13:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720199612; x=1720804412; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jVFbWqs/ujGoWS6V+Wtmkt0OqRspry6ZAA+kHzk0dpg=;
-        b=NQSdstOtTF9ZZMGADBw8fYWGmyUt9hHlPiIaNiwVzDTvFLRxK5vzNiNgQ+zMqYOO5T
-         OOCmnLfUheCLM11LKYzx+O3Raltm/Hc7uta419CXzmZ19mP0cw7fQF0CV+n884WDEz33
-         v6mCioBVPJTRRfQXlSpU0h5GG94dYT8+7xZUb57MJD2pTBZ1Ft9NLE2o8yltvB4AU8Ml
-         oovdOI7j/BKiFE1dTybrShnEutPN1g3HTpVzE3rA5bgOnUcP6D+AWweE25oqgwzS1anV
-         1nRcCcBMLnrH0D+eQkAQOw+QSVFRu6gkK9fzYRK39Wua6cTR8N7FuIotmrtvURNe6r+n
-         QyUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720199612; x=1720804412;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jVFbWqs/ujGoWS6V+Wtmkt0OqRspry6ZAA+kHzk0dpg=;
-        b=dfFiUYBDJg4quF/H+KmHp9LimyCG2gHxGZpDVN25wERQpJONECTE6F34pi0OKLgWnQ
-         Rua9cIgoIDYLIyRlXwZxmKSdZub3Q0jZBmNYMReYcYDLOCM3lzVc1Bytk0KMCoIZ0rtB
-         bsJITTM7j/ervg3QrYLRQhTxJPZgOnbA3Q8ulZPbwM45PFWBXbfBXUJHbAldK6wzti8o
-         p4KaNVIQokMm4+BHpOP2GWJxni9Ac5uTmXlVtnNwBIHq4KHjPWVzbdk3HvyGDcLffx3C
-         1KjbIe5v1Vg4YLhXkUIVMhmEikvCdoHGlJZC20FSRZjERA1BEN7M40bFHNN4SZGLAzBD
-         qgZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFev5TZSaFIQu6TqcZaJotj0D85WvghgKcq54FBcgHPu7co3jp9n+/yCW2S+0S2cLeECwTq009CN8U+htnm/9Gbg60MsNf50hMcAaW/7kqnr4Twf1wFxNprk/Dm2mPbBzmDvZDCD1WXxrpHN2SORCn7sV1dkgAyxMzzbIU2HosSRA5
-X-Gm-Message-State: AOJu0YxjmjxkKFgM8nXqVBxINglY3zn3I3hvbOE+vttswycvf1gr/3LC
-	EmY0HcSHb6UTVII8EUl5bfrym268Ev2Hib+evwwTIHLiZAapi17O
-X-Google-Smtp-Source: AGHT+IH31dSGm35koHtTUahNqqOpbaEin66n8iLUwVNuXlEOt+qvmQRWPJFKWZW/d4uoEwNBfCOkVQ==
-X-Received: by 2002:a17:902:6805:b0:1fb:3474:9527 with SMTP id d9443c01a7336-1fb34749830mr30241585ad.25.1720199612155;
-        Fri, 05 Jul 2024 10:13:32 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb57299335sm10136725ad.128.2024.07.05.10.13.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 10:13:31 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 5 Jul 2024 07:13:30 -1000
-From: Tejun Heo <tj@kernel.org>
-To: "boy.wu" <boy.wu@mediatek.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Boris Burkov <boris@bur.io>, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, iverlin.wang@mediatek.com
-Subject: Re: [PATCH] blk-cgroup: add spin_lock for u64_stats_update
-Message-ID: <Zogpum23mjHZC8yO@slm.duckdns.org>
-References: <20240705075544.11315-1-boy.wu@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HoSJqhCLQS6i9/FGUs3CPDMvm6GW0GpY4qdvAHzvxIToAswoiJEMvzUookXsU7Q2iMbLz4aYySFGsTIDDAgo/mknDcKD1aU04w9WjnTMQIw9mP82dxg2rAGzI40L8j37bwwsj3dZC3Qw//B/Q2U/RK4DHaeYUrycdNEQyuoKSLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsTmswnq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9CE8C116B1;
+	Fri,  5 Jul 2024 17:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720199756;
+	bh=cANfSeFPR/KCm7xUKPG0KOFYYkm6VqitRNLMMx7oG14=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JsTmswnqQuNIJd0WL3eoFCisnQdFwGPb7HhwrtLqkbEoCehKYD6t4CqEy6xYcVTPt
+	 PnyYECAEUfyHNLwgumidiZFmV5e/hLTwhNhTn7TlMieNMxKC03ZdMGzJh/1wfsSDvj
+	 PMh6pq7Yoo9RV6iBop8uOWkZLnOUe3GzJdLcBu2yAC3D1Fc82TSALWkUelzl8byxVY
+	 LqhshdxKDFNJy8OILLipGOSkAcncXfDLmp+A16OHbgWC9qYUJcxZ90XwgJHddfuIi4
+	 0389dgHe5V04d3ladOocqswFSK8xYNp6Q5aD8jgirbwtkI6MTGCEBDNMy8/UO7P9co
+	 FTYyUwJ0RugkQ==
+Date: Fri, 5 Jul 2024 10:15:54 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, minchan@kernel.org,
+	willy@infradead.org, senozhatsky@chromium.org, david@redhat.com,
+	42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>,
+	nphamcs@gmail.com, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 17/20] mm/zsmalloc: convert get/set_first_obj_offset()
+ to take zpdesc
+Message-ID: <20240705171554.GE987634@thelio-3990X>
+References: <20240703040613.681396-18-alexs@kernel.org>
+ <202407052102.qbT7nLMK-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,26 +65,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240705075544.11315-1-boy.wu@mediatek.com>
+In-Reply-To: <202407052102.qbT7nLMK-lkp@intel.com>
 
-Hello,
-
-On Fri, Jul 05, 2024 at 03:55:44PM +0800, boy.wu wrote:
-> From: Boy Wu <boy.wu@mediatek.com>
+On Fri, Jul 05, 2024 at 10:43:41PM +0800, kernel test robot wrote:
+> kernel test robot noticed the following build warnings:
 > 
-> In 32bit SMP systems, if the system is stressed on the sys node
-> by processes, it may cause blkcg_fill_root_iostats to have a concurrent
+> [auto build test WARNING on akpm-mm/mm-everything]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/alexs-kernel-org/mm-zsmalloc-add-zpdesc-memory-descriptor-for-zswap-zpool/20240703-182314
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+> patch link:    https://lore.kernel.org/r/20240703040613.681396-18-alexs%40kernel.org
+> patch subject: [PATCH v2 17/20] mm/zsmalloc: convert get/set_first_obj_offset() to take zpdesc
+> config: i386-randconfig-002-20240705 (https://download.01.org/0day-ci/archive/20240705/202407052102.qbT7nLMK-lkp@intel.com/config)
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240705/202407052102.qbT7nLMK-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407052102.qbT7nLMK-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> mm/zsmalloc.c:471:12: warning: function 'is_first_zpdesc' is not needed and will not be emitted [-Wunneeded-internal-declaration]
+>      471 | static int is_first_zpdesc(struct zpdesc *zpdesc)
+>          |            ^~~~~~~~~~~~~~~
+>    1 warning generated.
 
-What is sys node?
+I am not sure why the robot thinks that this change introduced this
+warning, I think it has been present since patch 2 of this series.
 
-> problem on the seqlock in u64_stats_update, which will cause a deadlock 
-> on u64_stats_fetch_begin in blkcg_print_one_stat.
+The warning occurs when CONFIG_DEBUG_VM is disabled because
+is_first_zpdesc() is used with VM_BUG_ON_PAGE, which ultimately
+evaluates to BUILD_BUG_ON_INVALID() / sizeof(), so is_first_zpdesc() is
+only used in a compile time context for this configuration. Perhaps this
+can just be marked as __maybe_unused?
 
-I'm not following the scenario. Can you please detail the scenario where
-this leads to deadlocks?
-
-Thanks.
-
--- 
-tejun
+Cheers,
+Nathan
 
