@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-242199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77AD9284DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:12:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738049284E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000871C24AB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:12:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2808D28DEE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D043614659D;
-	Fri,  5 Jul 2024 09:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaIGm0F8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E9C13665A;
-	Fri,  5 Jul 2024 09:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884C514659D;
+	Fri,  5 Jul 2024 09:13:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0338513665A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720170769; cv=none; b=UwWED75UnfUYW3FA9FjkrVQrZvdblb3XItU8B7N2wz1a4lpOoQCxWsi1xjlq8ijZzOJRWSu+KWrrwv0EZrDvJpxzup9iVeXVKoNVFELrnmMV2gv7LJQoIIQ4gmnBemjwCxbQVFWCGK7AqCx2mK+gWAVMGORyP4Ac5oMWjNb4Z38=
+	t=1720170795; cv=none; b=N+iN7Nkc22qGl7WooDVhjvJTn8gHEyw3poO8nc2IztPp811ox1EPuz9disGaPeRj1mRdImUjewsb3xjZwkyxI0Y8oW44SSIaQ9Y6rcgwXvSeR7CWEtF5QVkWhx1yHQk/mpQ1o+8B7tvxJeQEHVM3APDdb7uF8loWciMKebhYczY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720170769; c=relaxed/simple;
-	bh=l/SSCVMHFCglN/nj5v34ooChPINWoqus1AdOICNnzOY=;
+	s=arc-20240116; t=1720170795; c=relaxed/simple;
+	bh=HG9ZkdgE7pSY045N6ZYHW+Jsdvm0IIq0KWQCw3uFPsI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRrq8qPoj++vv0C4gNRmHIBAQvGsin8VrxwcdETYFv2QSvftpZ5mJDbvY0AYGgPeIuWmeKthF4XiH7Gv2tgzbGillQMzXzS6mtsOv9b1Ed8WqhdESiUlqCFbqPBtVLRbR80C0rxQoxeQM3fd7wB3j+pe+Jb58AQyM1lm0vCKkQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaIGm0F8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39897C116B1;
-	Fri,  5 Jul 2024 09:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720170768;
-	bh=l/SSCVMHFCglN/nj5v34ooChPINWoqus1AdOICNnzOY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GaIGm0F8+crTYalVfT7uh9DaNepZ58GmEF18MEbJpjvxhcgtzBAX3nhylOnLvwqzs
-	 0quUFsnblRn/xxnQ4aeycGW0GtnQk+qoEhNgyTjUgRjRVBB8ArI2/d0ysEWA58ZTgW
-	 kjxQkquwczdcQ6WQRk3oteFgfuoPd7bRzVOQ5MeDjtvofQkujYRvydpdmRDmjFAVo5
-	 jrvxTonkt7nnIiIcbT9vn7tJNi/l8wsAWt5w+UF3rBsd/JkNWdQ7NEEgyb7jzfH2C3
-	 bV6k/R0I/s5KCHvA3RWS00g+SyJin/t4A3QcInmV7mGwOmVlobxfBMqMQvOgb9hqP9
-	 IvmPjhnUBcs1g==
-Message-ID: <33a454e5-8a74-4e8b-9284-7b628a1a548b@kernel.org>
-Date: Fri, 5 Jul 2024 11:12:42 +0200
+	 In-Reply-To:Content-Type; b=gUG9+SSkek68ho3S+c1EMYcyI+SLO72J/qV9yeYR7DW6nxlhnkQEFzERBvsK7KOtR2S9F7LT/xIBH2nGeVVTJGGQlNilF8SLBp4xX/m9FvdlOsKREronaRPaD/PkY8rPnWfduZzIRMxV/B4PLzmMVdePs5umL8JjKhRyih6MNRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A4C3367;
+	Fri,  5 Jul 2024 02:13:37 -0700 (PDT)
+Received: from [10.57.74.223] (unknown [10.57.74.223])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 366AF3F762;
+	Fri,  5 Jul 2024 02:13:09 -0700 (PDT)
+Message-ID: <8d3804ad-14c8-4041-8f52-58fd9dd8d4b4@arm.com>
+Date: Fri, 5 Jul 2024 10:13:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,143 +41,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions for
- Exynos Auto v920
-To: "sunyeal.hong" <sunyeal.hong@samsung.com>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Chanwoo Choi' <cw00.choi@samsung.com>,
- 'Alim Akhtar' <alim.akhtar@samsung.com>,
- 'Michael Turquette' <mturquette@baylibre.com>,
- 'Stephen Boyd' <sboyd@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
- <CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
- <20240705021110.2495344-3-sunyeal.hong@samsung.com>
- <8f4deb36-2a44-414a-9b9f-40b87bc7c949@kernel.org>
- <01c401daceb1$d64e7450$82eb5cf0$@samsung.com>
- <31778ed0-e4b5-4961-99a5-41ce44ddac26@kernel.org>
- <01c601daceba$e5d32570$b1797050$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <01c601daceba$e5d32570$b1797050$@samsung.com>
+Subject: Re: [PATCH v5 0/6] add mTHP support for anonymous shmem
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, hughd@google.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
+ ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+ <ZobtTmzj0AmNXcav@casper.infradead.org>
+ <27beaa0e-697e-4e30-9ac6-5de22228aec1@redhat.com>
+ <6d4c0191-18a9-4c8f-8814-d4775557383e@redhat.com>
+ <Zob8xI-LWe9H_iJs@casper.infradead.org>
+ <e08b8245-bc8c-4a18-a1e0-53a139258826@linux.alibaba.com>
+ <e826368d-499a-483b-8991-8c25aff88f00@arm.com>
+ <32f04739-0cd0-4a9e-9419-c5a13c333c28@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <32f04739-0cd0-4a9e-9419-c5a13c333c28@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/07/2024 11:08, sunyeal.hong wrote:
-> Hello Krzysztof Kozlowski,
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Friday, July 5, 2024 5:52 PM
->> To: sunyeal.hong <sunyeal.hong@samsung.com>; 'Sylwester Nawrocki'
->> <s.nawrocki@samsung.com>; 'Chanwoo Choi' <cw00.choi@samsung.com>; 'Alim
->> Akhtar' <alim.akhtar@samsung.com>; 'Michael Turquette'
->> <mturquette@baylibre.com>; 'Stephen Boyd' <sboyd@kernel.org>
->> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
->> kernel@vger.kernel.org
->> Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions
->> for Exynos Auto v920
->>
->> On 05/07/2024 10:03, sunyeal.hong wrote:
+On 05/07/2024 09:59, David Hildenbrand wrote:
+> On 05.07.24 10:45, Ryan Roberts wrote:
+>> On 05/07/2024 06:47, Baolin Wang wrote:
 >>>
->>>> <form letter>
->>>> Please use scripts/get_maintainers.pl to get a list of necessary
->>>> people and lists to CC. It might happen, that command when run on an
->>>> older kernel, gives you outdated entries. Therefore please be sure
->>>> you base your patches on recent Linux kernel.
->>>>
->>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
->>>> people, so fix your workflow. Tools might also fail if you work on
->>>> some ancient tree (don't, instead use mainline) or work on fork of
->>>> kernel (don't, instead use mainline). Just use b4 and everything
->>>> should be fine, although remember about `b4 prep --auto-to-cc` if you
->>>> added new patches to the patchset.
->>>>
->>>> You missed at least devicetree list (maybe more), so this won't be
->>>> tested by automated tooling. Performing review on untested code might
->>>> be a waste of time.
->>>>
->>>> Please kindly resend and include all necessary To/Cc entries.
->>>> </form letter>
->>>>
->>>> Best regards,
->>>> Krzysztof
 >>>
->>> The mail list was created using get_maintainer.pl. If there is any
->> problem, please let me know.
->>>
->>> ./scripts/get_maintainer.pl -f drivers/clk/samsung/
+>>> On 2024/7/5 03:49, Matthew Wilcox wrote:
+>>>> On Thu, Jul 04, 2024 at 09:19:10PM +0200, David Hildenbrand wrote:
+>>>>> On 04.07.24 21:03, David Hildenbrand wrote:
+>>>>>>> shmem has two uses:
+>>>>>>>
+>>>>>>>      - MAP_ANONYMOUS | MAP_SHARED (this patch set)
+>>>>>>>      - tmpfs
+>>>>>>>
+>>>>>>> For the second use case we don't want controls *at all*, we want the
+>>>>>>> same heiristics used for all other filesystems to apply to tmpfs.
+>>>>>>
+>>>>>> As discussed in the MM meeting, Hugh had a different opinion on that.
+>>>>>
+>>>>> FWIW, I just recalled that I wrote a quick summary:
+>>>>>
+>>>>> https://lkml.kernel.org/r/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com
+>>>>>
+>>>>> I believe the meetings are recorded as well, but never looked at recordings.
+>>>>
+>>>> That's not what I understood Hugh to mean.  To me, it seemed that Hugh
+>>>> was expressing an opinion on using shmem as shmem, not as using it as
+>>>> tmpfs.
+>>>>
+>>>> If I misunderstood Hugh, well, I still disagree.  We should not have
+>>>> separate controls for this.  tmpfs is just not that special.
 >>
->> That's not how you run the command. You ALWAYS (unless you are Linus) run
->> it on the patches. ALWAYS. See submitting patches or numerous
->> presentations how to contribute upstream.
->>
->> Read my form letter accurately, e.g. switch to b4.
->>
->> Best regards,
->> Krzysztof
+>> I wasn't at the meeting that's being referred to, but I thought we previously
+>> agreed that tmpfs *is* special because in some configurations its not backed by
+>> swap so is locked in ram?
 > 
-> Thank you for your quick and kind response.
-> I checked the difference in the mail list through "./scripts/get_maintainer.pl *.patch" and will reflect this.
+> There are multiple things to that, like:
 > 
-> Could you please answer additional questions I asked?
-> "Is your request to combine PATCH 0 and 1 correct? If correct, I will update it as requested."
+> * Machines only having limited/no swap configured
+> * tmpfs can be configured to never go to swap
+> * memfd/tmpfs files getting used purely for mmap(): there is no real
+>   difference to MAP_ANON|MAP_SHARE besides the processes we share that
+>   memory with.
 > 
-> The reason I'm asking this is that if you check checkpatch.pl, it says to classify patches as follows.
-> "DT binding docs and includes should be a separate patch. See: Documentation/devicetree/bindings/submitting-patches.rst"
-> PATCH0: Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-> PATCH1: include/dt-bindings/clock/samsung,exynosautov920.h
+> Especially when it comes to memory waste concerns and access behavior in some
+> cases, tmpfs behaved much more like anonymous memory. But there are for sure
+> other use cases where tmpfs is not that special.
+> 
+> My opinion is that we need to let people configure orders (if you feel like it,
+> configure all), but *select* the order to allocate based on readahead
+> information -- in contrast to anonymous memory where we start at the highest
+> order and don't have readahead information available.
 
-Separate from the drivers, not from each other! This does not make sense
-to keep them separate.
+That approach is exactly what I proposed to start playing with yesterday [1] for
+regular pagecache folio allocations too :)
 
-Of course they must be squashed, I asked this in the first comment.
+[1] https://lore.kernel.org/linux-mm/bdde4008-60db-4717-a6b5-53d77ab76bdb@arm.com/
 
-Best regards,
-Krzysztof
+> 
+> Maybe we need different "order allcoation" logic for read/write vs. fault, not
+> sure.
+> 
+> But I don't maintain that code, so I can only give stupid suggestions and repeat
+> what I understood from the meeting with Hugh and Kirill :)
+> 
 
 
