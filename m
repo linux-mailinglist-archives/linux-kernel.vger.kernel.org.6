@@ -1,193 +1,187 @@
-Return-Path: <linux-kernel+bounces-242564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308D29289DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:37:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B489289E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 537931C23CCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17C51F21320
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E640A14D420;
-	Fri,  5 Jul 2024 13:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436D214C59C;
+	Fri,  5 Jul 2024 13:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DBwN7dch"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAWhIf5v"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF581459E8
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 13:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56352B9B9;
+	Fri,  5 Jul 2024 13:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720186474; cv=none; b=sQi4dR3+7N+Szh5Go0/ZyyOA+Z/VdOfHblIfWioSVRXB7VatvqeOiAp70PFGAffsykXhbXXzIXMzwT3oyMcheJbRq57Jl2ZbaANKPade2xZXyVSkrBEylSdoCdb0wF4ia2gwTcv8vvrCo2vwUH1iiGPSGt6Uh0ngVvOEHShMLo0=
+	t=1720186699; cv=none; b=FlRa+v6zKjU8sJeXGcyKRvZtDDetqvI3DqKESL6iw13se0WYrncpUAbLgbIyImzQ3lIQUF26gboo9UvMv14SXubgGCVtK4lnLh2g0UK1kWMbdanevElAljyUhES6T3ifOO+NjCsT5U0Oc2yNEKGfouvrhU6I9n4GzsROo6AUgBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720186474; c=relaxed/simple;
-	bh=/WWUk8xgbMeoX+XMjmJKMzm4jVM0QnM4PPaAAtS6ETg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EdGjnT4WuG0BUgDT6RWmwkRWd37IOJLwRV4KRmUPlOcpLY6USdZ072xrxIsOMkF4Xd7KaUdqPrzyWm+6EFU86/J9XBYDmHErP7kO4obDpDyphy4lS6XBaW+57rwR5X7igl/vOUablJ5+lTRvuSxVUFrWXlNfGViWFiu47E10o+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DBwN7dch; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52e991fb456so1575590e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 06:34:30 -0700 (PDT)
+	s=arc-20240116; t=1720186699; c=relaxed/simple;
+	bh=cWnCrmUJRexOSMDRTpVlcG2Z7kBl2f9gCMlUA9djuec=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQWfBdC2QrPQAWG/XegHrW4pC59rDeCZC0mkeCv7T1T37nUwdSDfmqWzSyjPiMT4J5A4vXSBcfjHhpszcazSUF9UtAJwjdub3o0Z/pbUvzS7/qknkBrJ5XONl1eNMHGQfYQL+1fVMgJMPUQ6FnK942rETEwSTF4PzzOCU9gNohE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UAWhIf5v; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77baa87743so188904566b.3;
+        Fri, 05 Jul 2024 06:38:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720186469; x=1720791269; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+7lziJDkz8ksR4dmlddeHMdYw7zMgC8DIyGzxNLyJTo=;
-        b=DBwN7dchrM3Uhg+n02ERwvcj+HPkIr+eeN3Y0hVvZU+poqph18SqrUpsRb5dSvPXLP
-         Bl8bNTdNMs/SuoDAoRBr34bDHcresooRAlZ+WI4Z6SF3N6br9Jwyie3873hslJPTC8it
-         XI8TC8TvKqf0slKrVdh1Glb9oUi7fSWUcEaM52pS7/jP7I7Bs11b5DxPaxGn2xXcaH/p
-         D5LTJcH+d1K8VHnMEzisIELFthjn/kqnKQs1eEABc/BEZ8iafqaKpFnsUULTDsuErzoj
-         W9uYmuXDn4S8V82szriUbBspjQ3g5iX133Lc9WTmfo9usHFeIdvyjfV7sL3110MaU3y5
-         JHhQ==
+        d=gmail.com; s=20230601; t=1720186696; x=1720791496; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7426fshMzR6GNFPcqwrx5x2skuuMIJBYu2mYPgY4MrU=;
+        b=UAWhIf5v3A9Wd7HdAf+IJXKxXtkwBRgH4/QKqO7ge9kAYipwwjmJYMObO1mIjSsGiP
+         y4O12m5dmoU3FrcAhxM4i/Dq2kNUOlSm7+G9Kz7c8+OEiyj6ErgLx+GJfaXK6y/dhabn
+         AuJ3Ja9JaiUJXQu9nPukuHYKqCS2ghfptX60ooAy8ZvYCuy7zaQ9kGhHqZdgHyUaPEMH
+         7DXZsLt/89dKO7wptW7sXUPKYD1A8gw25BhziBQOhTRR2ukapJeSUdM+z7GlYrpTOpcw
+         /Ru3qyk67XgE2qgxGZDbAcCoLwbIh0JaLUyYVPPK+7GpeNNrov3eFZJjemuNfbq3UMPm
+         NVlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720186469; x=1720791269;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+7lziJDkz8ksR4dmlddeHMdYw7zMgC8DIyGzxNLyJTo=;
-        b=R3nOxd0ZwlOQAxYoFtRUkuzT4ztKAmI2Dh+T+XMNUccZQ0j1/JAwFxOAObLidS68BB
-         ArTspK4/fzzxa4KNST2GqUZMYKXD9+NFxYhhVkB5ZUukTh62vHwJl2+n+OBKW9OfJt3m
-         TsY9g73tvIhsvqDgFfWmro7Af5G6rOoKOdV3Ksnfo2MKWZnbIZ0nOpLdxTlp+lR0sGH5
-         YgUs+4BJzUh9ylIiwnsnuFSh1Kjov0ruvJMCYtsVeBWYC9h2NQdrAJ0xXovt4iBmeBNE
-         KV2EnSCyYk/whDPk1Wsf/TnclWgqjSROVn5nOOfv/QFDWAthsx41tQ8flQaaAHfx8K0M
-         IgUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXF4YdIGzKpU9RAig7bt0QnXVvPAkCv97tI7pzsZsEKD7LHs3iooblV00QExU+As74jIDejwG9AzHcs9hP3L3yshLhTLVWrOrKFIiRR
-X-Gm-Message-State: AOJu0YxO6UB1/xURlhLKWR6sW4peDVk0HS644HuluaYOljo1o1X9EBag
-	m3lA9ORXDlXpolKTqs2KgnBrU7gSbiG2PC5DdPC5MFIv9xCvnMN4ADFopB1BNAjz2APP4kPtK6U
-	lm8jwJzR6WoJ+2j3HXhCDntVAGgDi1cQiC9+Mgg==
-X-Google-Smtp-Source: AGHT+IH002bET0sLDg515bzQ4elXCWBoy5idHfanq8GGKi/meSChCtgNax2EBm7zNVr+Mq15wxISI8Af7tGceGvs1Lk=
-X-Received: by 2002:a05:6512:3694:b0:52c:ebf6:9a87 with SMTP id
- 2adb3069b0e04-52ea0e00c5emr1457812e87.26.1720186469286; Fri, 05 Jul 2024
- 06:34:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720186696; x=1720791496;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7426fshMzR6GNFPcqwrx5x2skuuMIJBYu2mYPgY4MrU=;
+        b=Q/icKXLFKe4vWOnP3xfrZ/aFhL1MBoGq6uvQ5qAriXeYNKc3LQCbP3tT0CSH/qSuWP
+         M3Su6/jPQ0rapgeLYrh956AkUYy6bqaPPz/lpnci45WEJQaTP0TqB9+lpubQSqgphxEL
+         zsk3QidmRhuq17XYCIVXyqanKSZtDmF5Yg8zfhYK3wU5RFpM1FGTpeBi3V900++/UH0V
+         wFdSU8n4Z1Y8n/HA034uluE86QOWmCy5PHxbhLvvnrZM/j3ZgXrY0OkNM/s4czrUADln
+         iAYM6/Wi8LAMHWLlE9LwwdAONj4Qo+dD7Stgvojqt+knX0dxlQHSdoqOgkvHQZs4FIOI
+         ZWCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXX2MnwD+wLyXXioztR1StWQPk3GTtpttL39Cejyy7abL+VWmf4XDICNId0OWiVwxg3FjppczzJns6rR9EaZbfPLybBP7zj+i2Zra97EcoJ994ZPex0SMmbDbxJLQj6TWrmWkfKkMjzpAGiY02jcL57pLqPfUL5vYAmXSnNG/L17XuHGQue
+X-Gm-Message-State: AOJu0Yz62bQhwEtZ+U+hxYMjsQmBzB8jekSb7UlNzjm2WrRRYYsdBEcu
+	PJ1uPC8nDk/wyHKCQyI2qZaN3Rctjde+aBpoLSje0KMWZvFVi+Ky
+X-Google-Smtp-Source: AGHT+IFRWiSaf/g0RePwmmAb5dJSgEwZk2F7I0MEWkE5X70RByhGeHc0/LLOtqYgynN4RfFSwzEKnQ==
+X-Received: by 2002:a17:907:969e:b0:a72:b34f:e15b with SMTP id a640c23a62f3a-a77ba70d6b7mr419519866b.57.1720186695932;
+        Fri, 05 Jul 2024 06:38:15 -0700 (PDT)
+Received: from krava (net-93-65-242-193.cust.vodafonedsl.it. [93.65.242.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1b555sm676111966b.5.2024.07.05.06.38.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 06:38:15 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 5 Jul 2024 15:38:12 +0200
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
+Message-ID: <Zof3RIqSl6TgaVKq@krava>
+References: <20240701164115.723677-1-jolsa@kernel.org>
+ <20240701164115.723677-2-jolsa@kernel.org>
+ <20240703085533.820f90544c3fc42edf79468d@kernel.org>
+ <CAEf4Bzbn+jky3hb+tUwmDCUgUmgCBxL5Ru_9G5SO3=uTWpi=kA@mail.gmail.com>
+ <ZoV3rRUHEdvTmJjG@krava>
+ <CAEf4BzYKVbCEGupX47fwM0XSzwwmXs+0sVpcAdp3poFLkjMA6Q@mail.gmail.com>
+ <20240705173544.9ef034c30ae93c52164ecc1b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com> <20240705-pwrseq-v1-1-31829b47fc72@amlogic.com>
-In-Reply-To: <20240705-pwrseq-v1-1-31829b47fc72@amlogic.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 5 Jul 2024 15:34:18 +0200
-Message-ID: <CAMRc=Me+Fd_Kjgm0u0JhUatVEp=XS71xys82snAimpw2U5MQTw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: power: Add power sequence for Amloigc
- WCN chips
-To: yang.li@amlogic.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705173544.9ef034c30ae93c52164ecc1b@kernel.org>
 
-On Fri, Jul 5, 2024 at 1:13=E2=80=AFPM Yang Li via B4 Relay
-<devnull+yang.li.amlogic.com@kernel.org> wrote:
->
-> From: Yang Li <yang.li@amlogic.com>
->
-> Add binding document to introduce power sequence of
-> Amlogic WCN chips.
->
+On Fri, Jul 05, 2024 at 05:35:44PM +0900, Masami Hiramatsu wrote:
 
-Hi! Thanks for the interest in this new subsystem.
+SNIP
 
-> Signed-off-by: Yang Li <yang.li@amlogic.com>
-> ---
->  .../bindings/power/amlogic,w155s2-pwrseq.yaml      | 62 ++++++++++++++++=
-++++++
->  1 file changed, 62 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/power/amlogic,w155s2-pwrse=
-q.yaml b/Documentation/devicetree/bindings/power/amlogic,w155s2-pwrseq.yaml
-> new file mode 100644
-> index 000000000000..f99a775fcf9b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/amlogic,w155s2-pwrseq.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/amlogic,w155s2-pwrseq.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic power sequence for WCN chips
-> +
-> +maintainers:
-> +  - Yang Li <yang.li@amlogic.com>
-> +
-> +description:
-> +  The Amlogic WCN chip contains discrete modules for WLAN and Bluetooth.=
- Power on
-> +  Bluetooth and Wi-Fi respectively, including chip_en pull-up and bt_en =
-pull-up,
-> +  and generation of the 32.768KHz clock.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: amlogic,w155s2-pwrseq
-> +      - items:
-> +          - enum:
-> +              - amlogic,w265s1-pwrseq
-> +              - amlogic,w265p1-pwrseq
-> +              - amlogic,w265s2-pwrseq
-> +          - const: amlogic,w155s2-pwrseq
+> > > > > Also, if we can set session enabled by default, and skip ret_handler by handler's
+> > > > > return value, it is more simpler. (If handler returns a specific value, skip ret_handler)
+> > > >
+> > > > you mean derive if it's a session or not by both handler and
+> > > > ret_handler being set? I guess this works fine for BPF side, because
+> > > > there we never had them both set. If this doesn't regress others, I
+> > > > think it's OK. We just need to make sure we don't unnecessarily
+> > > > allocate session state for consumers that don't set both handler and
+> > > > ret_handler. That would be a waste.
+> > >
+> > > hum.. so the current code installs return uprobe if there's ret_handler
+> > > defined in consumer and also the entry 'handler' needs to return 0
+> > >
+> > > if entry 'handler' returns 1 the uprobe is unregistered
+> > >
+> > > we could define new return value from 'handler' to 'not execute the
+> > > 'ret_handler' and have 'handler' return values:
+> > >
+> > >   0 - execute 'ret_handler' if defined
+> > >   1 - remove the uprobe
+> > >   2 - do NOT execute 'ret_handler'  // this current triggers WARN
+> > >
+> > > we could delay the allocation of 'return_instance' until the first
+> > > consumer returns 0, so there's no perf regression
+> > >
+> > > that way we could treat all consumers the same and we wouldn't need
+> > > the session flag..
+> > >
+> > > ok looks like good idea ;-) will try that
+> > 
+> > Just please double check that we don't pass through 1 or 2 as a return
+> > result for BPF uprobes/multi-uprobes, so that we don't have any
+> > accidental changes of behavior.
+> 
+> Agreed. BTW, even if the uprobe is removed, the ret_handler should be called?
+> I think both 1 and 2 case, we should skip ret_handler.
 
-The name is wrong. There's no such device as 'pwrseq'. There's most
-likely some kind of a Power Management Unit and the compatible string
-must reflect this.
+do you mean what happens when the uretprobe is installed and its consumer
+is unregistered before it's triggered?
 
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: clock provided to the controller (32.768KHz)
-> +
-> +  clock-names:
-> +    items:
-> +      - const: ext_clock
-> +
-> +  amlogic,chip-enable-gpios:
-> +    maxItems: 1
-> +    description: gpio specifier used to enable chipset
+I think it won't get executed, because the consumer is removed right away,
+even if the uprobe object stays because the return_instance holds ref to it
 
-Why not simply: chip-enable-gpios or even enable-gpios?
+> 
+> > > > > >
+> > > > > >  #ifdef CONFIG_UPROBES
+> > > > > > @@ -80,6 +83,12 @@ struct uprobe_task {
+> > > > > >       unsigned int                    depth;
+> > > > > >  };
+> > > > > >
+> > > > > > +struct session_consumer {
+> > > > > > +     __u64           cookie;
+> > > > >
+> > > > > And this cookie looks not scalable. If we can pass a data to handler, I would like to
+> > > > > reuse it to pass the target function parameters to ret_handler as kretprobe/fprobe does.
+> > > > >
+> > > > >         int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs, void *data);
+> > > > >
+> > > > > uprobes can collect its uc's required sizes and allocate the memory (shadow stack frame)
+> > > > > at handler_chain().
+> > > >
+> > > > The goal here is to keep this simple and fast. I'd prefer to keep it
+> > > > small and fixed size, if possible. I'm thinking about caching and
+> > > > reusing return_instance as one of the future optimizations, so if we
+> > > > can keep this more or less fixed (assuming there is typically not more
+> > > > than 1 or 2 consumers per uprobe, which seems realistic), this will
+> > > > provide a way to avoid excessive memory allocations.
+> 
+> Hmm, so you mean user will allocate another "data map" and use cookie as
+> a key to access the data? That is possible but sounds a bit redundant.
+> If such "data map" allocation is also provided, it is more useful.
 
-> +
-> +  amlogic,bt-enable-gpios:
-> +    maxItems: 1
-> +    description: gpio specifier used to enable BT
-> +
+is the argument only about the size of the shared data?
 
-Same here: should be simply bt-enable-gpios.
+we can make it configurable.. for bpf user we will probably stick to
+8 bytes to match the kprobe session and to be compatible with existing
+helpers accessing the cookie
 
-Bart
-
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - clock-names
-> +  - amlogic,chip-enable-gpios
-> +  - amlogic,bt-enable-gpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    wcn_pwrseq {
-> +        compatible =3D "amlogic,w155s2-pwrseq";
-> +        clocks =3D <&extclk>;
-> +        clock-names =3D "ext_clock";
-> +        amlogic,chip-enable-gpios =3D <&gpio 7 GPIO_ACTIVE_HIGH>;
-> +        amlogic,bt-enable-gpios =3D <&gpio 17 GPIO_ACTIVE_HIGH>;
-> +    };
->
-> --
-> 2.42.0
->
->
+jirka
 
