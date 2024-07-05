@@ -1,228 +1,104 @@
-Return-Path: <linux-kernel+bounces-242256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38185928565
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDD6928564
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23FB282D1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:45:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540F0283E16
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E71D14883F;
-	Fri,  5 Jul 2024 09:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F02A144D34;
+	Fri,  5 Jul 2024 09:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHeZThlS"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="J5ZIUpf4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A421474C9
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC921474BC
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172701; cv=none; b=uNMl5yO8wb6bxsBB5nhaN7WWaZ90DuACMug8498mJOKCYC0OSVgj2mfLP3JrgMV0U0msJ1yc/XOlQDKC58HpzAgWIHaNaIAySs7zYBg5mnElF5EAwJViLvSNqPJbyEgBeC27lVtn8NDeNFxYFIYxTVCU4N2yxPgl68PsKWMTvNE=
+	t=1720172692; cv=none; b=uPlS7fijgG0FRgxbt/IiueTCGaTg8zQIMFj5irXYQ9fNZj7t/NIIpSIDwejQFfXsASkVJKDlG9cEizw3DghbAPypfPUBqCMvQnrGiCsZmOdO8bCQNeH6mcC9q+Y1O7lULeNXuEO/kaZMQ9R3q59D4u/ln/gJyf+YNqfiYkZ2vOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172701; c=relaxed/simple;
-	bh=FV7Hb3Zi3h+YeAbjXib05YhdBZnagBJwJlVNV3BIqiA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jbly0lWFjnQzX6wdd0A6h0n2Eurb2r5nZl9qaHwChzQ3aggkx+0vnPy4G4jr7a/TT0qs0FNlqfPBJ5rr+hmZLHML+5uBRzTrXrbqjrkKOTPyxOOilhIj4dDmcszWVUsNRnOWlNO8vUMVYdQ/wETXmgGw5wJIYyz8xDraVXcBXn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHeZThlS; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fb1c918860so16530715ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 02:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720172699; x=1720777499; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TbMZKC8DIqM8ieSD0r5HNg9/jzslem7r4bfvqOdWMpA=;
-        b=JHeZThlSV8cMnK5zFVObYZSs+MiJuyJrLb0RxHLXOMICY4aW7GiGpMt6eXmRA4FUsK
-         p3flrgTCY2vanIl6UWJIVwR5+3tY+8v05kBe1KB3EzKVa8PACPq70/l7IELjjRCPMgQT
-         sCmWbkVMONJPc5qFrSPMGWsoxleoLedrRjkTvJbqDxzgDFm9Yz0ueVUQb75hoQ5VLRKe
-         3jdiAJkwFJAB0tIZe7nixsHsdunfof2MJzQYratT/uYZg8Pewss2Lp+3VVKhlVSEFXd4
-         Z/rYgDvK5KZIlzBJW1qTwExRkr7LwyGIO0qMFCTGBY3pi7KEmVA9v0CvI82ofjphPtAR
-         msPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720172699; x=1720777499;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TbMZKC8DIqM8ieSD0r5HNg9/jzslem7r4bfvqOdWMpA=;
-        b=QgB0jLG2sIBk5p0y9QPhgai21bfN13122oJ0NpqA0aWUJugzo8L6pl8XRYzBdWpiSv
-         2Ddmn1xSfMGOSk/oz9C0sSJYeqO8ZNtWdx/Us7BVdUSjEs4xm8+CtIMCjOy483ltnIgL
-         98pe+jInaV1Hzj79IuwsCWOQuJQQHADWC/s6N8N9iEk5CRx2RODdVObHCuDgbVtCBmAA
-         PtY4uNBPFnUwCZkCaEjck+jqva+XJeWNWtkn12gq5OChgHIHgHOAL27RUhIRNuXIUwVX
-         Hme4I7s/ROw7QSltVxzutidapdO0ZYpnhwS9RbJ2yWlzRCikc8oYQdcr4CwzZezqPutu
-         tJgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVD56dnNLOkHqXJ8lZPiDOWCfvrEmzDNy+PIjgHd1+9x71NaW0MJCO3nWCKvJuBayDGxzSltq5pt+fVv5qGmprqqBelwLTAMePaZW73
-X-Gm-Message-State: AOJu0Yy0qv5mSQYzqq8hAMeCXL7eoEZzOGCTW4+2QwAAODEJvEfwyAM8
-	SEAPLMysbAB3r4eB1OnyxJDocHx2fef3dyP+j9svMqEzQmcq/NqGN0CVt/RtiGc=
-X-Google-Smtp-Source: AGHT+IFIOsO9JRujFXsVZsOxpIb8GSdE6GdOogexRlOCDz74s6RB/DEiJp4bpjlHZiMAjnGmY8T55Q==
-X-Received: by 2002:a17:902:ce8a:b0:1fb:3263:2e60 with SMTP id d9443c01a7336-1fb37046126mr53036475ad.13.1720172698820;
-        Fri, 05 Jul 2024 02:44:58 -0700 (PDT)
-Received: from pop-os.. ([2401:4900:1cd7:818f:d731:f6bd:8194:7763])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256df35sm13570682b3a.64.2024.07.05.02.44.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 02:44:58 -0700 (PDT)
-From: Akshay Behl <akshaybehl231@gmail.com>
-To: 
-Cc: Akshay Behl <akshaybehl231@gmail.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/amd/display: Docs improvement in /dc/inc/hw/mpc.h
-Date: Fri,  5 Jul 2024 15:13:44 +0530
-Message-Id: <20240705094342.351894-1-akshaybehl231@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <e17781fa-438d-4806-ae45-eb1239759f43@amd.com>
-References: <e17781fa-438d-4806-ae45-eb1239759f43@amd.com>
+	s=arc-20240116; t=1720172692; c=relaxed/simple;
+	bh=lDh5K9l6F6IqotxOROFxBJCL7+4RhQ2yBeqZ84vPBxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCMFHffj+Oxep4DGrulHg7j3rTaM3hdske5sfvbWVdV26lwMKC+YZz7foAmhhm5uQZ3f3WrnPRyy2Vdd65q7TlejAFqZJzUBhw/vUDL/nOoWy0vDg/3Jg1xrlBq5CL36gTKIatL/ne5YaMbazWjoK4t3t5wye9+CtShQroA3dE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=J5ZIUpf4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8BFD640E019D;
+	Fri,  5 Jul 2024 09:44:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id rV0xTw0_VluY; Fri,  5 Jul 2024 09:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1720172677; bh=nlMX/xEHcaDFMWQAf9/kZ4Lf/pqM1/eeNiwGBYDS+zs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J5ZIUpf4Cr6uDm2J7MpRSAqkue73CCSGhOwCOivzBE8sXPuVeleyAZDTGuWYXLj0w
+	 KgXeH3NKEBbPgMX8ESE8tXmL6Oe9hLZBGr2c1JchCs9JG5wCHVZZEU/yvX++nd0a2L
+	 Ow4sNDxlIKYgj23gpYUjCYhL1L9h8MHRfvzRfRVOoUOhZvvzfK6xYEcsBIcr2YdT+L
+	 RmefkM1GfKznsGyUvgWFHTl8mcemXVsS31m7uA2BSi2+WE+hO4k8i0sj4ILAMbkmEO
+	 Xl/sbKnZBbSR38h2k0n7GO95wN2vF/WAToPXhWIuHWBEfxT76/aHwA1MhG7NBwnmSA
+	 e9fAxBivchmrsrlWfZoYYrMkqTkmsFwOM8Lw1oW+vIgMHce6KMQWHo7G1b0RcliQPk
+	 a98IWhWb3hp3evy6y6zs37+nghlA6ut1xzQSDWmbW0iX0CuRPvnHFGQw/s+/Fx2AVE
+	 LHRhBmv3ZDcYff3GLbwYVnE9K9jCtx2PZJyVioCQVk/4NVE8EXGEuM1kHSGHXrQ7S8
+	 H16VW05JL9CJxjHLeyBgYNYNNuuNDGEIV6B16vfnz9mwkB6lk55L6ZU9xH6GX2JyCT
+	 gMwxt+kli6N/VSvayVQbzYjE5Dvesm+ouKnVDawtpOhXxbbpx8Yo3BD3jsNe8cNAWT
+	 a/7ct6AxYnLuQxF2q8PcF7Y4=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CF48440E0187;
+	Fri,  5 Jul 2024 09:44:24 +0000 (UTC)
+Date: Fri, 5 Jul 2024 11:44:18 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, dave.hansen@intel.com,
+	xin@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	peterz@infradead.org, nik.borisov@suse.com,
+	houwenlong.hwl@antgroup.com
+Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
+Message-ID: <20240705094418.GAZofAcvelmnRzbkoG@fat_crate.local>
+References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com>
+ <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base>
+ <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com>
+ <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com>
+ <20240703161705.GAZoV5gQIgtORQeHdQ@fat_crate.local>
+ <DE8FD8AA-35C6-4E51-B1E0-CE9586892CB3@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DE8FD8AA-35C6-4E51-B1E0-CE9586892CB3@zytor.com>
 
-- After making the required changes
+On Thu, Jul 04, 2024 at 07:45:00PM -0700, H. Peter Anvin wrote:
+> Except that that would be more cleanly spelled wrmsrns()... let's just
+> abstract the whole thing away and let the user use wrmsrns() whenever
+> serialization is not necessary.
 
-This patch fixes some of the warnings while building kernel Docs:
-./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'read_mpcc_state' not described in 'mpc_funcs'
-./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'mpc_init_single_inst' not described in 'mpc_funcs'
-./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'get_mpcc_for_dpp_from_secondary' not described in 'mpc_funcs'
-./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'get_mpcc_for_dpp' not described in 'mpc_funcs'
-./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'wait_for_idle' not described in 'mpc_funcs'
-./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning: Function parameter or struct member 'assert_mpcc_idle_before_connect' not described in 'mpc_funcs'
+Just don't make it more complex and unreadable than it has to be.
 
-by adding descriptions to these struct members
+cpu_feature_enabled() already is patching things for optimal perf so even if
+PeterZ prefers the alternative, I say it is ugly and, more importantly,
+unnecessary.
 
-Signed-off-by: Akshay Behl <akshaybehl231@gmail.com>
----
- drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h | 84 ++++++++++++++++++++-
- 1 file changed, 83 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
-index 34a398f23fc6..d2bea0a9699d 100644
---- a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
-+++ b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
-@@ -282,6 +282,21 @@ struct mpcc_state {
-  * struct mpc_funcs - funcs
-  */
- struct mpc_funcs {
-+	/**
-+	 * @read_mpcc_state:
-+	 *
-+	 * Read current state of a specified MPCC instance
-+	 *
-+	 * Parameters:
-+	 *
-+	 * - [in/out] mpc  - MPC context.
-+	 * - [in] mpcc_inst - integer representing specific MPC instance
-+	 * - [in/out] mpcc_state - MPCC state struct where read information will be stored
-+	 *
-+	 * Return:
-+	 *
-+	 * void
-+	 */
- 	void (*read_mpcc_state)(
- 			struct mpc *mpc,
- 			int mpcc_inst,
-@@ -352,6 +367,21 @@ struct mpc_funcs {
- 	 * void
- 	 */
- 	void (*mpc_init)(struct mpc *mpc);
-+
-+	/**
-+	 * @mpc_init_single_inst:
-+	 *
-+	 * Reset the MPCC HW status of a single MPCC physical instance.
-+	 *
-+	 * Parameters:
-+	 *
-+	 * - [in/out] mpc - MPC context.
-+	 * - [in] mpcc_id - The MPCC physical instance to use for blending.
-+	 *
-+	 * Return:
-+	 *
-+	 * void
-+	 */
- 	void (*mpc_init_single_inst)(
- 			struct mpc *mpc,
- 			unsigned int mpcc_id);
-@@ -448,17 +478,69 @@ struct mpc_funcs {
- 			struct mpc *mpc,
- 			struct mpc_tree *tree,
- 			struct mpcc *mpcc);
--
-+	/**
-+	 * @get_mpcc_for_dpp_from_secondary:
-+	 *
-+	 * Retrieve a specified MPCC struct from the 'secondary' MPC tree using the provided DPP id.
-+	 *
-+	 * Parameters:
-+	 * - [in/out] tree - MPC tree structure that will be searched.
-+	 * - [in]     dpp_id - DPP input for the MPCC.
-+	 *
-+	 * Return:
-+	 *
-+	 * struct mpcc* - MPCC that matched the input params
-+	 */
- 	struct mpcc* (*get_mpcc_for_dpp_from_secondary)(
- 			struct mpc_tree *tree,
- 			int dpp_id);
- 
-+	/**
-+	 * @get_mpcc_for_dpp:
-+	 *
-+	 * Retrieve a specified MPCC struct from the MPC tree using the provided DPP id.
-+	 *
-+	 * Parameters:
-+	 * - [in/out] tree - MPC tree structure that will be searched.
-+	 * - [in]     dpp_id - DPP input for the MPCC.
-+	 *
-+	 * Return:
-+	 *
-+	 * struct mpcc* - MPCC that matched the input params
-+	 */
-+
- 	struct mpcc* (*get_mpcc_for_dpp)(
- 			struct mpc_tree *tree,
- 			int dpp_id);
- 
-+	/**
-+	 * @wait_for_idle:
-+	 *
-+	 * Wait for a specific MPCC instance to become idle
-+	 *
-+	 * Parameters:
-+	 * - [in/out] mpc  - MPC context.
-+	 * - [in]     id - ID of the MPCC instance to wait for
-+	 *
-+	 * Return:
-+	 *
-+	 * void
-+	 */
- 	void (*wait_for_idle)(struct mpc *mpc, int id);
- 
-+	/**
-+	 * @assert_mpcc_idle_before_connect:
-+	 *
-+	 * Assert that the specific MPCC instance is ideal before attempting to connect.
-+	 *
-+	 * Parameters:
-+	 * - [in/out] mpc  - MPC context.
-+	 * - [in]     mpcc_id - ID of the MPCC instance to check for
-+	 *
-+	 * Return:
-+	 *
-+	 * void
-+	 */
- 	void (*assert_mpcc_idle_before_connect)(struct mpc *mpc, int mpcc_id);
- 
- 	void (*init_mpcc_list_from_hw)(
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
