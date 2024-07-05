@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-242096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1111928376
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0CF0928378
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D953280CD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:13:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA631F25D58
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFB01459F3;
-	Fri,  5 Jul 2024 08:13:11 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E001459E8;
+	Fri,  5 Jul 2024 08:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HoldbA2P"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7A1143C64;
-	Fri,  5 Jul 2024 08:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E9514533A;
+	Fri,  5 Jul 2024 08:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720167190; cv=none; b=pU5gJaomtE37KY7x4YTOPNXCZXtClwmTHR6vm3Mg4euyc/5bqBP68X8bzUfQYY+djMiUhGMNiTf3vJSgtJX7FnoTdoJ52glGtN3+nL/Y/QOS8LwyMNWiLZ2Z482SCZR4KGT0gOyrPjyQ3CKwiEz8g8pXsHXiRv6shL38B5n4dUo=
+	t=1720167200; cv=none; b=sGbv9ptEKG2Ww+jKdweWLuhCfZ9oA5oK+dQCzucDEJGcvetJMBFlEy9rwL4F97UXin05pZp2ecx0lsULD+bZeFk3Xdo1nY1UAeKYDIBqzsMmJoSF8dfcjs5XUqbnbg3JFpFct+L3B77xQ40C+Aw5BWazHahw1ce/h/dkRcDxd6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720167190; c=relaxed/simple;
-	bh=r8RsOl90vUmFb3iH2mDrRyejM11RkeHxvGCGNnKIo5U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WXgBuO9bGtfSUONsGIiVqr7y5ENzUOgXIjr/kymPH3hsoFXs5HYqwA9b8TyyhJp4bDW5Oqe3nblPyuoYG9ie818nspc7G2cZlxIo9g56XMnZVlsL1s5rCiffXsMQMGzztfS/CCgy2oObEuMmkTG4LI808IlrXxNZB/aHzE3zhDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-650866942aeso13016347b3.0;
-        Fri, 05 Jul 2024 01:13:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720167188; x=1720771988;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ipFWrtbP2pnadKQDEjq7tVSKBPDnD8noGTMoh58siUs=;
-        b=uVnfIwjbgmgIwz2TgLsoRKEP+mDpvBHI5l/DL1UhOvzAikOPkANoJrHMm9Sophe56a
-         pMuzJ+ksGJGSbG9EQctyoLUVEbiHDCXHpLuoXWnaZBTpmNFbxJzKdTIHwgi0bLInF4Cc
-         hEpyRAXNLbogMUooNqelYUl392dPHaaNba/A1Qw1K4qboic1yizCH6GMT0lVlMeaxbpN
-         ZC1Nk8c3o9MbmzbswwC448i/4l8dZM/1II7Xhwb4S+G73J/7JwjVXWP1Y8HoBSlHqIj+
-         RVwUXlJGurNSe/Ax3Z6MytTC0Lk7SxYli8zg5mpqVpoXRoHLdHDdfs4mtBlvipRVLFmE
-         WOZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWASXcyQo3Em++vhPerPFTkIn7Bs8mJX+0gQuLb/7m7DiP0hC3SRrQCD1hFgcrCFyK1jRbSNZoucz/8eTzOAPyTr9G8qHq1G29VJatifWnKnXnXlq+IAF39oqCbKFXy/3dcFAxkmnJWm3RB/Avq/Rq464SSfBWQWhHUTHbKHM3dein5HGjcJWhVNUL/06FanmJSK5OdEN9rYbU8+NAVnTZqI6dTGY/x8AY6SKlw0AGPerVvhTRZPiJd6HhPUZnyz7MAh2BUvQ==
-X-Gm-Message-State: AOJu0Yxv7C5EUWUBGyoEj0OlZMUOV38ZoLp6nLOMi1L7JlJmhewo6eOW
-	QwdAHEZ0Oi95r4efjckkReIpspvxzDvtu0oOWiQofXhRoBVkPGy9GNBa7GFz
-X-Google-Smtp-Source: AGHT+IE5w6dodX6tkNdpYo2JcOIQFCoBaWvJ3qj0W+78A8aPmU0fAixL3wQKsWOqabg+jcNHcrGYNg==
-X-Received: by 2002:a0d:ea0d:0:b0:61a:e4ef:51d with SMTP id 00721157ae682-652d61e9c9dmr39923847b3.9.1720167188342;
-        Fri, 05 Jul 2024 01:13:08 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9ba5a2e7sm27802817b3.80.2024.07.05.01.13.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 01:13:08 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6504101cfd6so12313287b3.3;
-        Fri, 05 Jul 2024 01:13:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWEXA0Z7eKZyJwrR4v8wVZLcf0Cj9LlgAmdcgphSbZE+xmcYZSi9s2HFwI5UVUusKBaQtpv3xv5ItuVKPwoO026FIEkhZnaFRWtwrjzBAQ2RsigT2FexW4IjaRTOVN+kX5Cldv44AEtWPvBuo8G2lqBTpS5mGJEf9DTvQCZ4OFVGaKp07wZZZLc1IdcvBJWHfKTeRkF/Cs9ecWANVar8UGkiEPzKgZ07fXx/SvuZf8nvvs2eCyqLK9wvfYcS9tgMPgV7Vockg==
-X-Received: by 2002:a81:431f:0:b0:633:8b49:f97c with SMTP id
- 00721157ae682-652d842fd27mr38728927b3.37.1720167188020; Fri, 05 Jul 2024
- 01:13:08 -0700 (PDT)
+	s=arc-20240116; t=1720167200; c=relaxed/simple;
+	bh=AgHhyMmoeUtAdP6SOZU4iVITltEbZQrn++sF+5ZO118=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UqMlsyBbeqwLSsEiJJKfiqyL+7YVMmNSAu6T+9bfHkfylJ2ZUEl0zgBAo4CSPZ9A3ttZSkgi328z8XFU7ArKpQT80M/Hjf7Fue8p/H4TrAyAAmsCv4Cu4Tpcn3XO53TMRn8jhONgpddkstjikVFDAGVC4g3Gi4PPCDyzIw20BT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HoldbA2P; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720167197;
+	bh=AgHhyMmoeUtAdP6SOZU4iVITltEbZQrn++sF+5ZO118=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=HoldbA2PudjyKSW+lmdADb7c71gZmV2dnVkpuATZTY5f9OsRhA9ZaDyGRMo56yHtD
+	 HLmFX2TjcqRri2gD0tVolXWVevWBlh0TbZibKdJ1XC6P/B276vvIRjjia/IqNEharA
+	 7U+iTkFNEesgGNNMh31TiZoOQbHfI5ml4ji7pwmI6hCsR0GRVgNqZoKeiP7pwm0i6w
+	 N3GR5oZTYMbd3GmdoGm5fJnuGKLGTxhb4e8v3eTkHimFdX1OxE/fgbq3yh3BPEjkgY
+	 AM0gM8Fb5LGrpNQaG8puXUdBsFxymchJStwIMyl5AbkkZa+IYmtIzM7w91m/OdSptJ
+	 kn9e382/4Glfw==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E063E378219E;
+	Fri,  5 Jul 2024 08:13:10 +0000 (UTC)
+Message-ID: <03195dcd-e689-421d-bcf5-4134c1f18990@collabora.com>
+Date: Fri, 5 Jul 2024 13:13:08 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704143611.2979589-1-arnd@kernel.org> <20240704143611.2979589-8-arnd@kernel.org>
-In-Reply-To: <20240704143611.2979589-8-arnd@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jul 2024 10:12:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV-JtJWixt8J45rhZbpb7S90EDhp=x5iGGBhmUZyyQSnw@mail.gmail.com>
-Message-ID: <CAMuHMdV-JtJWixt8J45rhZbpb7S90EDhp=x5iGGBhmUZyyQSnw@mail.gmail.com>
-Subject: Re: [PATCH 07/17] clone3: drop __ARCH_WANT_SYS_CLONE3 macro
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Vineet Gupta <vgupta@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Christian Brauner <brauner@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>,
+ Mark Brown <broonie@kernel.org>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Colin Ian King <colin.i.king@gmail.com>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 2/3] selftests/mm: remove partially duplicated "all:"
+ target in Makefile
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+References: <20240704023324.83564-1-jhubbard@nvidia.com>
+ <20240704023324.83564-3-jhubbard@nvidia.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240704023324.83564-3-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 4, 2024 at 4:38=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> When clone3() was introduced, it was not obvious how each architecture
-> deals with setting up the stack and keeping the register contents in
-> a fork()-like system call, so this was left for the architecture
-> maintainers to implement, with __ARCH_WANT_SYS_CLONE3 defined by those
-> that already implement it.
->
-> Five years later, we still have a few architectures left that are missing
-> clone3(), and the macro keeps getting in the way as it's fundamentally
-> different from all the other __ARCH_WANT_SYS_* macros that are meant
-> to provide backwards-compatibility with applications using older
-> syscalls that are no longer provided by default.
->
-> Address this by reversing the polarity of the macro, adding an
-> __ARCH_BROKEN_SYS_CLONE3 macro to all architectures that don't
-> already provide the syscall, and remove __ARCH_WANT_SYS_CLONE3
-> from all the other ones.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 7/4/24 7:33 AM, John Hubbard wrote:
+> There were a couple of errors here:
+> 
+> 1. TEST_GEN_PROGS was incorrectly prepending $(OUTPUT) to each program
+> to be built. However, lib.mk already does that because it assumes "bare"
+> program names are passed in, so this ended up creating
+> $(OUTPUT)/$(OUTPUT)/file.c, which of course won't work as intended.
+> 
+> 2. lib.mk was included before TEST_GEN_PROGS was set, which led to
+> lib.mk's "all:" target not seeing anything to rebuild.
+> 
+> So nothing worked, which caused the author to force things by creating
+> an "all:" target locally--while still including ../lib.mk.
+> 
+> Fix all of this by including ../lib.mk at the right place, and removing
+> the $(OUTPUT) prefix to the programs to be built, and removing the
+> duplicate "all:" target.
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
->  arch/m68k/include/asm/unistd.h                 | 1 -
+> ---
+>  tools/testing/selftests/vDSO/Makefile | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+> index d53a4d8008f9..209ede5de208 100644
+> --- a/tools/testing/selftests/vDSO/Makefile
+> +++ b/tools/testing/selftests/vDSO/Makefile
+> @@ -1,16 +1,15 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -include ../lib.mk
+> -
+>  uname_M := $(shell uname -m 2>/dev/null || echo not)
+>  ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+>  
+> -TEST_GEN_PROGS := $(OUTPUT)/vdso_test_gettimeofday $(OUTPUT)/vdso_test_getcpu
+> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_abi
+> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_clock_getres
+> +TEST_GEN_PROGS := vdso_test_gettimeofday
+> +TEST_GEN_PROGS += vdso_test_getcpu
+> +TEST_GEN_PROGS += vdso_test_abi
+> +TEST_GEN_PROGS += vdso_test_clock_getres
+>  ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+> -TEST_GEN_PROGS += $(OUTPUT)/vdso_standalone_test_x86
+> +TEST_GEN_PROGS += vdso_standalone_test_x86
+>  endif
+> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_correctness
+> +TEST_GEN_PROGS += vdso_test_correctness
+>  
+>  CFLAGS := -std=gnu99
+>  CFLAGS_vdso_standalone_test_x86 := -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
+> @@ -19,7 +18,7 @@ ifeq ($(CONFIG_X86_32),y)
+>  LDLIBS += -lgcc_s
+>  endif
+>  
+> -all: $(TEST_GEN_PROGS)
+> +include ../lib.mk
+>  $(OUTPUT)/vdso_test_gettimeofday: parse_vdso.c vdso_test_gettimeofday.c
+>  $(OUTPUT)/vdso_test_getcpu: parse_vdso.c vdso_test_getcpu.c
+>  $(OUTPUT)/vdso_test_abi: parse_vdso.c vdso_test_abi.c
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+BR,
+Muhammad Usama Anjum
 
