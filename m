@@ -1,221 +1,165 @@
-Return-Path: <linux-kernel+bounces-241808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D81A927FCE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:34:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C0A927FCF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EDC1F24AA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:34:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F491F24E09
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3281E10A24;
-	Fri,  5 Jul 2024 01:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10A7EEDD;
+	Fri,  5 Jul 2024 01:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIOR+9Xc"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="E4tBQQYo"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79A7ECF;
-	Fri,  5 Jul 2024 01:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAC4320E
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720143269; cv=none; b=Bz0ilDa/f01vO7iZ/C9ZTB/kBGCeCjlsYeUAyFTFdnEV5OetUjF9FU8+jhSOSx+J+2myroZHB2KLuwrXSJOg5lX4mMP3NsuISvaun6O9dyFLB4yEj2szm4JX6O0wNHdf5cbiSHr+FltCRV7u3lMt5MoWVmv1z0CJri19RroI8XE=
+	t=1720143396; cv=none; b=UEp935Kmvi75XHTX3sjynFgrmymlp55FAmkuCfs+cSZuj2M+lNwgB+iXt6j2Rx5VidKQ4NGF9acVk0wgkM6lGu5Aj3SUQJ6NAz7uFZRAsI7Uz4xlrfUATGd7dgUGgWEAY58pvht8OZcLHuGoStfQuVavQhPeDccclma2WX/XEBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720143269; c=relaxed/simple;
-	bh=CkmYUB+Wb0PVAVfXRxDHlsvFmu+OM+8wtTiAsHFpwPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R6O84KnJK8vjyiYwDIXLI+4ODv1iZbmZSAzoJ8OFFowBQ1IbeZ0RylHcuw3F5Ql8qOuCTP8QepayL1ZtjdF3KtFY/ZoVIRQaYJYAF6ibnuiwU9WbZnrr87g7fh8Jrm6jjooIszybTyhx5NTz6uju/JGCclhrQsUgeYBWXEPwF0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIOR+9Xc; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee4ab4076bso18116051fa.0;
-        Thu, 04 Jul 2024 18:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720143266; x=1720748066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wnvA9qdYRI8IFnTgozQAGatw1H+Gapz2OYIN09IDyec=;
-        b=TIOR+9XcTvJMWfGT8E9Ux9W/+WNW9hWdEbY2NxmEiz6LuLMvaRh9vMyyCG39eEumGb
-         Oy3SW56FKP9+XCGjG5sqW5d3t+ZNYWDig4tmr5KOChuiS4fZKk/OJohhbowPvAS08liE
-         P1k7hoBrTCxTnQMdkXc1jpWxGYtOkJ9DdR66eBgXIi9oywj2oRdX9g9023WAh9SoZfX1
-         b1GfACKBwuUYQLUY/brPr5COGCmS8fsv3pd66P8TxyE5O7OEdD8vm0S2wlM7b1/I/2rM
-         2O5tK7lPFx22r7Usrs6hmtS2ajiG7F/aN2bfl3g+3Mgg9xjM/w5lDVjnu8cf8te7ayry
-         kLFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720143266; x=1720748066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wnvA9qdYRI8IFnTgozQAGatw1H+Gapz2OYIN09IDyec=;
-        b=b3XGz53n6+kwQhYdCHK54srLIiJUa5n77Sct93hcj5dx9+RTgjXns2MvdE+PPKDy23
-         1Xrxo2CH32RvtWrCZAcbahFDpRDmXQQva8P5DZrwpO425jzTFLYTejmJ4cGDhm4T8gFc
-         zv2vxx0xdH/qvmwGwL6uPbfBMDrP3GooKRCxi2IBfU638/HjVPIzF4RjXAnXz9RB0bVI
-         2fLC3mXCkoE/dppl8mXl2UxG1ej2RNpL+MQwZGozwvh/7Xli6UhV37/KEPD9LYh+sqaD
-         kPdMsFGgBCmNoYpsM/31GbwDavL3xKQDsBM0TVyQHkJC22fdZlFGcCCdzzKxY5XEz6Gi
-         yX5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVzjplzDPta4ruSHlSGOhrBJTj/fWFhAl3WvRxnx/eHl87WzfEe+AUt3tMJUROwZ9naJIju3GLxgsiRE7taD+UFzOBi48qvAJB1BbphDBhXjTWjUWZHUtsOlj+YP1pIn0eJZHA8Ij/0WrFMUHaI
-X-Gm-Message-State: AOJu0YzbJK+4zp1ERlIfLxRMxieWyKLSSUBYWVBPK3IEC8Pxi0woFgh8
-	WmiEgp6nYcAJANXr9692ooUJpiAqvsWtdOOKLbVwcMGD3Nd2B/Wp/cTzF597V2i2yHuqcSvy/CM
-	PRA+N5OKufiHr2V+b/V06u20yjrs=
-X-Google-Smtp-Source: AGHT+IE4vKywFszF27KWciwCz3YLJq1WM+m0xB8siGXi2m2TTkznG5lADS5x5zLGA2oCtnl87N3iz7FaIsYNhTUfhGk=
-X-Received: by 2002:a2e:3506:0:b0:2ec:266:f59e with SMTP id
- 38308e7fff4ca-2ee8f309a57mr8880561fa.24.1720143265433; Thu, 04 Jul 2024
- 18:34:25 -0700 (PDT)
+	s=arc-20240116; t=1720143396; c=relaxed/simple;
+	bh=g0J64IFCUepalmS25gCFEzy9g5XYD/RDb3yWNgLTxzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bqk+W4533amXW1ScoRJelGudZ5f3IvoRRiQSZFXQf8/n/2B+kLvrRPXagFddd3S8bGH0/oUUnQk92c+psBksirxIKfxu1mhZzqeGGK91/IC5nRm2sITPUwCbpUmnX9Iu/wWn+4H66yRVBbDki5PhcNyh3eN19ZymQM+M70MpctE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=E4tBQQYo; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=U/fSEFDhL867FmA5P4TRpE0BvznP9AMV6QFUlc6SsjI=; b=E4tBQQYoE7giVlwq
+	zoPKww5Ep+92KkECGEBNhL67Ko+etSlt23ox/u9iNLN50XiP67dDTOAXc2hkEe8TKb04J3VmpVQ6x
+	mXPwRdJAYSCNJYxmmvYMHq6covWRZJ6+2EY8aCC4HuMNiIFXi6X1j32atmcbbPDqTpj9Z3kVvDQWW
+	UtxebIytThFxQsW/5sl3LQ/l2WLCcsAkzo9E190dIiBcUg1k5KyCa6wM8ue9syUVnZIVpoWhSeTx3
+	fgw6jrJlD/RjRS8JJtyAxxa5suskIGEyFDuJeb2U4BI/LwEz+PNWGVs6u8+OQX44Wx75Pgv9Slyqk
+	uNLHFjzHC5jo5KJ8vQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sPXsE-00A7BQ-0i;
+	Fri, 05 Jul 2024 01:36:30 +0000
+Date: Fri, 5 Jul 2024 01:36:30 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: mporter@kernel.crashing.org, alex.bou9@gmail.com
+Cc: linux-kernel@vger.kernel.org, rdunlap@infradead.org
+Subject: Re: [PATCH] rapidio: removse some dead defines
+Message-ID: <ZodOHvh6tD9NN2f1@gallifrey>
+References: <20240528002515.211366-1-linux@treblig.org>
+ <ZmrzhW4_ANIfbOYk@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705011525.402650-1-nobuaki.tsunashima@infineon.com>
-In-Reply-To: <20240705011525.402650-1-nobuaki.tsunashima@infineon.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 4 Jul 2024 21:34:10 -0400
-Message-ID: <CABBYNZLo2P5VLFJ0XahNyh8CeOAA6rg1WTWpMx3WRqhYby3uOQ@mail.gmail.com>
-Subject: Re: [PATCH v5] Bluetooth: btbcm: Apply HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER
- to CYW4373
-To: Nobuaki Tsunashima <nobuaki.tsunashima@infineon.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <ZmrzhW4_ANIfbOYk@gallifrey>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 01:35:59 up 57 days, 12:50,  1 user,  load average: 0.01, 0.01, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Hi Nobuaki,
+* Dr. David Alan Gilbert (linux@treblig.org) wrote:
+> * linux@treblig.org (linux@treblig.org) wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > 'mport_dma_buf', 'rio_mport_dma_map' and 'MPORT_MAX_DMA_BUFS' were
+> > added in the original
+> > commit e8de370188d0 ("rapidio: add mport char device driver")
+> > but never used.
+> > 
+> > 'rio_cm_work' was unused since the original
+> > commit b6e8d4aa1110 ("rapidio: add RapidIO channelized messaging
+> > driver")
+> > but never used.
+> > 
+> > Remove them.
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> 
+> Ping?
 
-On Thu, Jul 4, 2024 at 9:16=E2=80=AFPM Nobuaki Tsunashima
-<nobuaki.tsunashima@infineon.com> wrote:
->
-> From: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
->
-> CYW4373 ROM FW has an issue that it claims LE_Read_Transmit_Power command
-> as supported in a response of Read_Local_Supported_Command command but
-> rejects the LE_Read_Transmit_Power command with "Unknown HCI Command"
-> status. Because Bluetooth driver of kernel 5.11 added sending the
-> LE_Read_Transmit_Power command in initialize phase, hci up fails due to t=
-he
-> issue.
->
-> Especially in USB i/f case, it would be difficult to download patch FW th=
-at
-> includes its fix unless hci is up.
->
-> The driver already contains infrastructure to apply the quirk for the
-> issue, but currently it only supports DMI based matching. Add support to
-> match by chip id and baseline FW version to detect CYW4373 ROM FW build
-> in generic system.
->
-> Fixes: 7c395ea521e6 ("Bluetooth: Query LE tx power on startup")
-> Signed-off-by: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
-> ---
-> V4 -> V5: Use skb_pull_data() to access skb->data as safer manner.
-> V3 -> V4: Fix a few coding style warnings and refine comments for clarify=
-.
-> V2 -> V3: Fix a few coding style warnings and change the subject as more =
-specific.
-> V1 -> V2: Fix several coding style warnings.
->
->  drivers/bluetooth/btbcm.c | 41 +++++++++++++++++++++++++++++++++++++--
->  drivers/bluetooth/btusb.c |  4 ++++
->  2 files changed, 43 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-> index 0a5445ac5e1b..dd7262a8dc8e 100644
-> --- a/drivers/bluetooth/btbcm.c
-> +++ b/drivers/bluetooth/btbcm.c
-> @@ -437,16 +437,53 @@ static const struct dmi_system_id disable_broken_re=
-ad_transmit_power[] =3D {
->         { }
->  };
->
-> +struct bcm_chip_version_table {
-> +       u8 chip_id;                     /* Chip ID */
-> +       u16 baseline;           /* Baseline version of patch FW */
-> +};
-> +#define BCM_ROMFW_BASELINE_NUM 0xFFFF
-> +static const struct bcm_chip_version_table disable_broken_read_transmit_=
-power_by_chip_ver[] =3D {
-> +       { 0x87, BCM_ROMFW_BASELINE_NUM }                /* CYW4373/4373E =
-*/
-> +};
+Ping^2
 
-Can we have a little less verbose names? e.g. broken_read_tx_power and
-btbcm_broken_read_tx_power sounds a lot better imo.
-
-> +static bool btbcm_is_disable_broken_read_tx_power_by_chip_ver(u8 chip_id=
-, u16 baseline)
-> +{
-> +       int i;
-> +       size_t table_size =3D ARRAY_SIZE(disable_broken_read_transmit_pow=
-er_by_chip_ver);
-> +       const struct bcm_chip_version_table *entry =3D
-> +                                               &disable_broken_read_tran=
-smit_power_by_chip_ver[0];
-> +
-> +       for (i =3D 0 ; i < table_size ; i++, entry++)     {
-> +               if ((chip_id =3D=3D entry->chip_id) && (baseline =3D=3D e=
-ntry->baseline))
-> +                       return true;
-> +       }
-> +
-> +       return false;
-> +}
-> +
->  static int btbcm_read_info(struct hci_dev *hdev)
->  {
->         struct sk_buff *skb;
-> +       u8 *chip_id;
-> +       u16 *baseline;
->
->         /* Read Verbose Config Version Info */
->         skb =3D btbcm_read_verbose_config(hdev);
->         if (IS_ERR(skb))
->                 return PTR_ERR(skb);
-> -
-> -       bt_dev_info(hdev, "BCM: chip id %u", skb->data[1]);
-> +       skb_pull_data(skb, 1);
-> +       chip_id =3D skb_pull_data(skb, sizeof(*chip_id));
-> +       skb_pull_data(skb, 1);
-> +       baseline =3D skb_pull_data(skb, sizeof(*baseline));
-> +
-> +       if (chip_id) {
-> +               bt_dev_info(hdev, "BCM: chip id %u", *chip_id);
-> +
-> +               if (baseline) {
-> +                       /* Check Chip ID and disable broken Read LE Min/M=
-ax Tx Power */
-> +                       if (btbcm_is_disable_broken_read_tx_power_by_chip=
-_ver(*chip_id, *baseline))
-> +                               set_bit(HCI_QUIRK_BROKEN_READ_TRANSMIT_PO=
-WER, &hdev->quirks);
-> +               }
-> +       }
->         kfree_skb(skb);
->
->         return 0;
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index d31edad7a056..52561c8d8828 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -142,6 +142,10 @@ static const struct usb_device_id btusb_table[] =3D =
-{
->         { USB_VENDOR_AND_INTERFACE_INFO(0x04ca, 0xff, 0x01, 0x01),
->           .driver_info =3D BTUSB_BCM_PATCHRAM },
->
-> +       /* Cypress devices with vendor specific id */
-> +       { USB_VENDOR_AND_INTERFACE_INFO(0x04b4, 0xff, 0x01, 0x01),
-> +         .driver_info =3D BTUSB_BCM_PATCHRAM },
-> +
->         /* Broadcom devices with vendor specific id */
->         { USB_VENDOR_AND_INTERFACE_INFO(0x0a5c, 0xff, 0x01, 0x01),
->           .driver_info =3D BTUSB_BCM_PATCHRAM },
-> --
-> 2.25.1
->
-
-
---=20
-Luiz Augusto von Dentz
+> Dave
+> 
+> > ---
+> >  drivers/rapidio/devices/rio_mport_cdev.c | 20 --------------------
+> >  drivers/rapidio/rio_cm.c                 |  6 ------
+> >  2 files changed, 26 deletions(-)
+> > 
+> > diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+> > index 27afbb9d544b..5c83741c3005 100644
+> > --- a/drivers/rapidio/devices/rio_mport_cdev.c
+> > +++ b/drivers/rapidio/devices/rio_mport_cdev.c
+> > @@ -97,18 +97,6 @@ module_param(dbg_level, uint, S_IWUSR | S_IWGRP | S_IRUGO);
+> >  MODULE_PARM_DESC(dbg_level, "Debugging output level (default 0 = none)");
+> >  #endif
+> >  
+> > -/*
+> > - * An internal DMA coherent buffer
+> > - */
+> > -struct mport_dma_buf {
+> > -	void		*ib_base;
+> > -	dma_addr_t	ib_phys;
+> > -	u32		ib_size;
+> > -	u64		ib_rio_base;
+> > -	bool		ib_map;
+> > -	struct file	*filp;
+> > -};
+> > -
+> >  /*
+> >   * Internal memory mapping structure
+> >   */
+> > @@ -131,14 +119,6 @@ struct rio_mport_mapping {
+> >  	struct file *filp;
+> >  };
+> >  
+> > -struct rio_mport_dma_map {
+> > -	int valid;
+> > -	u64 length;
+> > -	void *vaddr;
+> > -	dma_addr_t paddr;
+> > -};
+> > -
+> > -#define MPORT_MAX_DMA_BUFS	16
+> >  #define MPORT_EVENT_DEPTH	10
+> >  
+> >  /*
+> > diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
+> > index 9135227301c8..97287e838ce1 100644
+> > --- a/drivers/rapidio/rio_cm.c
+> > +++ b/drivers/rapidio/rio_cm.c
+> > @@ -198,12 +198,6 @@ struct cm_peer {
+> >  	struct rio_dev *rdev;
+> >  };
+> >  
+> > -struct rio_cm_work {
+> > -	struct work_struct work;
+> > -	struct cm_dev *cm;
+> > -	void *data;
+> > -};
+> > -
+> >  struct conn_req {
+> >  	struct list_head node;
+> >  	u32 destid;	/* requester destID */
+> > -- 
+> > 2.45.1
+> > 
+> -- 
+>  -----Open up your eyes, open up your mind, open up your code -------   
+> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+> \        dave @ treblig.org |                               | In Hex /
+>  \ _________________________|_____ http://www.treblig.org   |_______/
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
