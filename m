@@ -1,128 +1,269 @@
-Return-Path: <linux-kernel+bounces-242701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDAF928BC2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:33:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C68928BD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A621F23B1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999BC1C21738
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696A916D339;
-	Fri,  5 Jul 2024 15:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBB7148FE3;
+	Fri,  5 Jul 2024 15:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZveL7eWh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lf29z5tZ"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6920F16C6AE;
-	Fri,  5 Jul 2024 15:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F5F14B06B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720193605; cv=none; b=AweLrTMr27zbpiytF3KpuWqBXxVZ297C67smjYVk38M0WPq6p3c0Bm5p+fKTkSIGqZ9NKIKiDjW3ttkcuD/auihoJN7Z5TG7t6082xcekvvpXwCdcf1mwj2TP3Y8GtY1suhFNaOlW/jDKcialR1xJgaxFMxuIbfp54NbChM+0To=
+	t=1720193738; cv=none; b=I+8g7/E4JFivfJUMbdKFTi3l6v1ewv/pPMosIAYqmlyB30bUGnJdyPJpnRKe9SF/mO3pIEEqRm/cAuGfjTffhwEAOfxW4G3JAwo285HX3HmXzP1S1OCvlm6VwvLdR5kmoMqlUvt5SKnb+Co3Skq/XUIjyUCdalzRp3DqNGhSDj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720193605; c=relaxed/simple;
-	bh=IM6Jslzn6iIt9JE7+HMKRD1xm1cEZQ9v/I7mj2clcBQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ahk/su/dEbU1PQ+49+twvwsRAy6kwDz3vZLJ+N17W0jonReyH8EqeY1rsxZglabSmguZHuIDhCc+JZY64Jtow1ejCqB4LsUZquNJVpd9aslst2CH+GOvwizvA2pWPYQqVnh4zs9XfdowZQqzalj61rHLvQPO24j63jmi4vBi94o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZveL7eWh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4659mUHB000447;
-	Fri, 5 Jul 2024 15:33:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QyaG8tnnBUJVRH0luMb/FZ4A84rWe60qAZCFcFgfXVk=; b=ZveL7eWhbAIgCmih
-	3yd+EaO2yVPS+h6Vb/uQ2uzCmIFHjePzzho3vAny9JygImaavfMmApDYVDgTQQ2G
-	42nxrE8kUAGno94fGob/kvHacr+Md2iCmoVpP/6TufIC0BTO5W3fQOiuLrUxu1j/
-	dA1CKDEpMHgLP/MoqO6TaD6IYbePQKNR7ig/2CydsAjEmDmZA8CcZIKHfBOUDajF
-	5xrGu81UN5+H5SDczRRSNDjLGyvOKOgyOU85VWy2N8Z0yIFSVrMhWe5YtXM6BZgN
-	/v6bs6xfB5pTEjO/h5D68wINhD/QumpEgL17v8G2r5EtSqKd1mjuA1ThxH9n3BoJ
-	chN7ww==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 405cg2d3kt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 15:33:15 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465FXFq8029589
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 5 Jul 2024 15:33:15 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 5 Jul 2024 08:33:11 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: [PATCH 2/2] arm64: dts: qcom: sa8775p: Add TCSR halt register space
-Date: Fri, 5 Jul 2024 21:02:52 +0530
-Message-ID: <20240705153252.1571814-2-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240705153252.1571814-1-quic_mojha@quicinc.com>
-References: <20240705153252.1571814-1-quic_mojha@quicinc.com>
+	s=arc-20240116; t=1720193738; c=relaxed/simple;
+	bh=sMQ1un7wRnduIdXmdxXJBYlSB5U5KZzM85nm28qm3O4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3xmDGj3uYRZA8uwhXFiVzlmIK1CrpRWoNyBUleyTgnsUIvRSqQFnS7dBVa1ezoiRTDGYUzaS9w7c0CW2XvoMhpVljwQyhagPJRhTpTtm6xaGFGkuuqPAl9sDcz28bSGwd1BmW3iYBTsW+6651M0oRmuWmQ95ciBFFaui80gxyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=lf29z5tZ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-424a3d36c28so1961075e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 08:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1720193735; x=1720798535; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKIOErnN4ZSBK93fEaGuNPtZhO0OBRfZiH5pNgGd0zQ=;
+        b=lf29z5tZyj6esZh8whoSm5U/7EFRbQ+2HcjwSYebg4bFd9gIN8mZoPX2UF7C1aWh0g
+         Vs0PDuIbCjYmegX51Q0eer5hUsZMb8ROsn62PRNlTsZIJlKMMRHxmj5TsNuTIk31Ra/C
+         nZrtMUiqXGKHXllF7hmVXhqtT4A4QJL64Ju4c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720193735; x=1720798535;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YKIOErnN4ZSBK93fEaGuNPtZhO0OBRfZiH5pNgGd0zQ=;
+        b=ic+lFNRQiCuhsU8ig3ckIg1YlceqwHTpRBULJk+5DWhyVkeJqEAc3EO4gab0GcfZqj
+         Ab/F0NwiDzbJo5OZxvqzIkGbFhncdcx43D8oKUyJtJfpkFRL098IIjIgg82EDvctAxPT
+         gULUs5rLChXhhSnsZXbW5WJe1f8Sfm2sNzjzOiAyOhBH7cknTJ1RV4gKoMgpXCLycpHj
+         rRIOoH/m29PQDlfLKi5fljKxhWZjxWX4xso7yfNtHjNKZ/hPk0jww6ETL/pe5++8pg0Z
+         qBKq7pC4vd+LO7OdoiEamC6RSn+G8DtSW/Coi9m2oV8gWkJ8UM73Qu6ZgbbnXb6AIh4v
+         rbZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCqNCLMfjT4hpowUxmAHuUJjQmVwPUhADQYYUReo3MGw0dFu4ePDvWOZtdMYtSt18B18sUoBGub5/99S12ZADd/a0dx9cDXvEgMmbl
+X-Gm-Message-State: AOJu0Yzaj8V3MZgQxVVVBPSLG1Vd/eq0YeK9lvInMVJWD6y0gwB4qRbE
+	/kyyl9uc3yynWPLy8+fvWnupWEid9yuQRHIDki8DjUCY8/7XS0tHX1rh6hwRuHs=
+X-Google-Smtp-Source: AGHT+IGsJ1mkZ0D80/UjIJ9jqd/HQtwk88TIn27ewYuZuyXXRnv9JvlWXptYv3VuFI8J6TfR4dnNdg==
+X-Received: by 2002:a05:600c:1c9f:b0:425:7ac6:96f7 with SMTP id 5b1f17b1804b1-4264a35297dmr36017775e9.0.1720193735231;
+        Fri, 05 Jul 2024 08:35:35 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca492sm67724735e9.34.2024.07.05.08.35.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 08:35:34 -0700 (PDT)
+Date: Fri, 5 Jul 2024 17:35:32 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Maxime Ripard <mripard@kernel.org>, John Stultz <jstultz@google.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
+ related-flags
+Message-ID: <ZogSxHFPt8SpOa0w@phenom.ffwll.local>
+Mail-Followup-To: Thierry Reding <thierry.reding@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	John Stultz <jstultz@google.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
+ <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
+ <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
+ <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
+ <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
+ <qy7aczeu6kumv5utemoevi7omp5ryq55zmgzxh5hrz5orf2osp@wypg66awof4n>
+ <20240628-resilient-resolute-rook-0fc531@houat>
+ <3e37rhrcqogix5obsu2gq7jar7bcoamx4bbd376az5z3zdkwvm@jstirwdl5efm>
+ <20240704-therapeutic-maroon-coucal-f61a63@houat>
+ <wapv4gl2se34tq3isycb7bui5xi3x6kxjqtyz24qhjipnkbuqu@sv4w2crksuq5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WzrANnNNPMxR2odFokrEOJoPxIdAqtbv
-X-Proofpoint-ORIG-GUID: WzrANnNNPMxR2odFokrEOJoPxIdAqtbv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_11,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 spamscore=0 mlxscore=0 bulkscore=0 mlxlogscore=716
- malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407050112
+In-Reply-To: <wapv4gl2se34tq3isycb7bui5xi3x6kxjqtyz24qhjipnkbuqu@sv4w2crksuq5>
+X-Operating-System: Linux phenom 6.9.7-amd64 
 
-Enable download mode for sa8775p which can help collect
-ramdump for this SoC.
+Just figured I'll jump in on one detail here.
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Fri, Jul 05, 2024 at 04:31:34PM +0200, Thierry Reding wrote:
+> On Thu, Jul 04, 2024 at 02:24:49PM GMT, Maxime Ripard wrote:
+> > On Fri, Jun 28, 2024 at 04:42:35PM GMT, Thierry Reding wrote:
+> > > On Fri, Jun 28, 2024 at 03:08:46PM GMT, Maxime Ripard wrote:
+> > > > Hi,
+> > > > 
+> > > > On Fri, Jun 28, 2024 at 01:29:17PM GMT, Thierry Reding wrote:
+> > > > > On Tue, May 21, 2024 at 02:06:19PM GMT, Daniel Vetter wrote:
+> > > > > > On Thu, May 16, 2024 at 09:51:35AM -0700, John Stultz wrote:
+> > > > > > > On Thu, May 16, 2024 at 3:56 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > > > > > > > On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
+> > > > > > > > > But it makes me a little nervous to add a new generic allocation flag
+> > > > > > > > > for a feature most hardware doesn't support (yet, at least). So it's
+> > > > > > > > > hard to weigh how common the actual usage will be across all the
+> > > > > > > > > heaps.
+> > > > > > > > >
+> > > > > > > > > I apologize as my worry is mostly born out of seeing vendors really
+> > > > > > > > > push opaque feature flags in their old ion heaps, so in providing a
+> > > > > > > > > flags argument, it was mostly intended as an escape hatch for
+> > > > > > > > > obviously common attributes. So having the first be something that
+> > > > > > > > > seems reasonable, but isn't actually that common makes me fret some.
+> > > > > > > > >
+> > > > > > > > > So again, not an objection, just something for folks to stew on to
+> > > > > > > > > make sure this is really the right approach.
+> > > > > > > >
+> > > > > > > > Another good reason to go with full heap names instead of opaque flags on
+> > > > > > > > existing heaps is that with the former we can use symlinks in sysfs to
+> > > > > > > > specify heaps, with the latter we need a new idea. We haven't yet gotten
+> > > > > > > > around to implement this anywhere, but it's been in the dma-buf/heap todo
+> > > > > > > > since forever, and I like it as a design approach. So would be a good idea
+> > > > > > > > to not toss it. With that display would have symlinks to cma-ecc and cma,
+> > > > > > > > and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for a
+> > > > > > > > SoC where the display needs contig memory for scanout.
+> > > > > > > 
+> > > > > > > So indeed that is a good point to keep in mind, but I also think it
+> > > > > > > might re-inforce the choice of having ECC as a flag here.
+> > > > > > > 
+> > > > > > > Since my understanding of the sysfs symlinks to heaps idea is about
+> > > > > > > being able to figure out a common heap from a collection of devices,
+> > > > > > > it's really about the ability for the driver to access the type of
+> > > > > > > memory. If ECC is just an attribute of the type of memory (as in this
+> > > > > > > patch series), it being on or off won't necessarily affect
+> > > > > > > compatibility of the buffer with the device.  Similarly "uncached"
+> > > > > > > seems more of an attribute of memory type and not a type itself.
+> > > > > > > Hardware that can access non-contiguous "system" buffers can access
+> > > > > > > uncached system buffers.
+> > > > > > 
+> > > > > > Yeah, but in graphics there's a wide band where "shit performance" is
+> > > > > > defacto "not useable (as intended at least)".
+> > > > > > 
+> > > > > > So if we limit the symlink idea to just making sure zero-copy access is
+> > > > > > possible, then we might not actually solve the real world problem we need
+> > > > > > to solve. And so the symlinks become somewhat useless, and we need to
+> > > > > > somewhere encode which flags you need to use with each symlink.
+> > > > > > 
+> > > > > > But I also see the argument that there's a bit a combinatorial explosion
+> > > > > > possible. So I guess the question is where we want to handle it ...
+> > > > > 
+> > > > > Sorry for jumping into this discussion so late. But are we really
+> > > > > concerned about this combinatorial explosion in practice? It may be
+> > > > > theoretically possible to create any combination of these, but do we
+> > > > > expect more than a couple of heaps to exist in any given system?
+> > > > 
+> > > > I don't worry too much about the number of heaps available in a given
+> > > > system, it would indeed be fairly low.
+> > > > 
+> > > > My concern is about the semantics combinatorial explosion. So far, the
+> > > > name has carried what semantics we were supposed to get from the buffer
+> > > > we allocate from that heap.
+> > > > 
+> > > > The more variations and concepts we'll have, the more heap names we'll
+> > > > need, and with confusing names since we wouldn't be able to change the
+> > > > names of the heaps we already have.
+> > > 
+> > > What I was trying to say is that none of this matters if we make these
+> > > names opaque. If these names are contextual for the given system it
+> > > doesn't matter what the exact capabilities are. It only matters that
+> > > their purpose is known and that's what applications will be interested
+> > > in.
+> > 
+> > If the names are opaque, and we don't publish what the exact
+> > capabilities are, how can an application figure out which heap to use in
+> > the first place?
+> 
+> This would need to be based on conventions. The idea is to standardize
+> on a set of names for specific, well-known use-cases.
+> 
+> > > > > Would it perhaps make more sense to let a platform override the heap
+> > > > > name to make it more easily identifiable? Maybe this is a naive
+> > > > > assumption, but aren't userspace applications and drivers not primarily
+> > > > > interested in the "type" of heap rather than whatever specific flags
+> > > > > have been set for it?
+> > > > 
+> > > > I guess it depends on what you call the type of a heap. Where we
+> > > > allocate the memory from, sure, an application won't care about that.
+> > > > How the buffer behaves on the other end is definitely something
+> > > > applications are going to be interested in though.
+> > > 
+> > > Most of these heaps will be very specific, I would assume.
+> > 
+> > We don't have any specific heap upstream at the moment, only generic
+> > ones.
+> 
+> But we're trying to add more specific ones, right?
+> 
+> > > For example a heap that is meant to be protected for protected video
+> > > decoding is both going to be created in such a way as to allow that
+> > > use-case (i.e. it doesn't make sense for it to be uncached, for
+> > > example) and it's also not going to be useful for any other use-case
+> > > (i.e. there's no reason to use that heap for GPU jobs or networking,
+> > > or whatever).
+> > 
+> > Right. But also, libcamera has started to use dma-heaps to allocate
+> > dma-capable buffers and do software processing on it before sending it
+> > to some hardware controller.
+> > 
+> > Caches are critical here, and getting a non-cacheable buffer would be
+> > a clear regression.
+> 
+> I understand that. My point is that maybe we shouldn't try to design a
+> complex mechanism that allows full discoverability of everything that a
+> heap supports or is capable of. Instead if the camera has specific
+> requirements, it could look for a heap named "camera". Or if it can
+> share a heap with other multimedia devices, maybe call the heap
+> "multimedia".
+> 
+> The idea is that heaps for these use-cases are quite specific, so you
+> would likely not find an arbitrary number of processes try to use the
+> same heap.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 23f1b2e5e624..a46d00b1ddda 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -221,6 +221,7 @@ eud_in: endpoint {
- 	firmware {
- 		scm {
- 			compatible = "qcom,scm-sa8775p", "qcom,scm";
-+			qcom,dload-mode = <&tcsr 0x13000>;
- 			memory-region = <&tz_ffi_mem>;
- 		};
- 	};
-@@ -2824,6 +2825,11 @@ tcsr_mutex: hwlock@1f40000 {
- 			#hwlock-cells = <1>;
- 		};
- 
-+		tcsr: syscon@1fc0000 {
-+			compatible = "qcom,sa8775p-tcsr", "syscon";
-+			reg = <0x0 0x1fc0000 0x0 0x30000>;
-+		};
-+
- 		gpucc: clock-controller@3d90000 {
- 			compatible = "qcom,sa8775p-gpucc";
- 			reg = <0x0 0x03d90000 0x0 0xa000>;
+Yeah the idea to sort this out was to have symlinks in sysfs from the
+device to each heap. We could then have priorities for each such link, so
+that applications can pick the "best" heap that will work with all
+devices. Or also special links for special use-cases, like for a
+display+render drm device you might want to have separate links for the
+display and the render-only use-case.
+
+I think trying to encode this all into the name of a heap without linking
+it to the device is not going to work well in general.
+
+We still have that entire "make sysfs symlinks work for dma-buf heaps" on
+our todos, and that idea is almost as old as dma-buf itself :-/
+-Sima
 -- 
-2.34.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
