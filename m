@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-242505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD4A928903
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:51:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACD69288F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE951C2119C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:51:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D724BB219D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D141B14D43D;
-	Fri,  5 Jul 2024 12:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E2C14A616;
+	Fri,  5 Jul 2024 12:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fDxWzmg3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PQxtIIzm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JJcHS+pp"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12879149C4C;
-	Fri,  5 Jul 2024 12:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06861E867;
+	Fri,  5 Jul 2024 12:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720183865; cv=none; b=roWCDqe2ktIwai6Xs0YHlAA661jvQCdXVGzg0cyWdp2XspdKbZBeFSWUvYUeUtSyNSM6HJ2x4E4mwA7ZTcV3QnirSuibW2Grt/dCPjECnRdZUdrWZh6FQQO0Zz7iSj/yiTjWuRZNcwXV8Z24C7U8+Ks+vQgou/iZcYhfaHxr8BI=
+	t=1720183791; cv=none; b=mMS0eaLzNr8RbnlxO+RdOxlpsrn/CxEgFZCOndJ1RLWUoXi0UIc54hopw6kh8BVRLXEnIvlt1DqNFsz9KCpaqJ2nCQZCfSWsqDiPv4bWzrZlN737hO6lbQ/S6x/Hi8dcNtxPeYCZHiBfYlVztCu4+w51vP0h0CSmjZsQhqCEE88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720183865; c=relaxed/simple;
-	bh=Tg+HfrYUbcTf4m66IXzTHsNS/XoVI55Nli/4Xak15iE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D6Am0C0hStCkuHgXfDrVwADrkpBgqOqIeRi7tj7ufxN0W4PMNPEE1Gl3zYuFZHtLfsKGvO5LF/UbbZ9g2NnX68buqtQrLetG/FA8G/ewUACoA70m0dFN0FxaMnkWEwN7gpy3pFkVaaciM7OEGpXElzpRkDR1xxJjBBNMVr+O2Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fDxWzmg3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PQxtIIzm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720183861;
+	s=arc-20240116; t=1720183791; c=relaxed/simple;
+	bh=D4tjuDbhWgyOTIWHN/OgVNFB7Aucn44YcNtzcZ384EA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ronulOSJ7PQlb2ym6C8t6GTZPt5CQnL4xDJxeZW/k417zU6gaEsWopILnDI1vcPulfN8ykqeGxr640AS+m/o7VuLmzjPhQ4lTojpajUQ6ThgP6fcH3BzGxZxv16uPFGKJ8ajBv7NfM6i84DlCUltVwVLGkqTfs9zLPwGoiPoEms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JJcHS+pp; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D852AFF802;
+	Fri,  5 Jul 2024 12:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720183782;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rsG//7rYWfTYC6on5Th6BnejVdtNYOCn5Z8HIMJ/YeQ=;
-	b=fDxWzmg3YY81rEeuzXL27xU06qWVtKUxjjFZrGY1Dbf0zv0PI7gQ3eRupdJdEuICO4NXVZ
-	PK/nTwT9PD0bcSbaRMmx19CNqP6LqfqsJjMKh4B6zXmEgHRtAghA+4XkDvrlpSanZN5zDY
-	oAIUvXXYG8T6fafDYuIu2tlnEiUeGSYgXfioylQJARJdZlNk4hGERYhSP8RRPChXOIg1R6
-	VrOPGW+vHA3tbqFRcPSLFBPOD/hQNOjxD+TC/Ltg5r4r4/8RSSYIWoAO518HKxuWWzhsRZ
-	cTuWtgXsbs/rSNm40iogbtsvoBb+lAY5qAhyXxzzBB+PQfkqmqUWY9jGliKitg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720183861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rsG//7rYWfTYC6on5Th6BnejVdtNYOCn5Z8HIMJ/YeQ=;
-	b=PQxtIIzmgXyoxV6rzhzILNTiKI1nRtHPWw2n1dzhwBCg+lF4R1TY1YNZwCNz1uEHbBxqmc
-	FGfu9sfhQMomfZBQ==
-To: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Mike Galbraith <umgwanakikbuti@gmail.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v3 3/3] zram: Shrink zram_table_entry::flags.
-Date: Fri,  5 Jul 2024 14:49:16 +0200
-Message-ID: <20240705125058.1564001-4-bigeasy@linutronix.de>
-In-Reply-To: <20240705125058.1564001-1-bigeasy@linutronix.de>
-References: <20240705125058.1564001-1-bigeasy@linutronix.de>
+	bh=Kw/k0lzZ2dQGrpiFuHsnrurwkGYwwFuaLcGW35wbvbs=;
+	b=JJcHS+ppkqtOM4SsJIsRd/WOiZkwnWGNA1mWxYW9ey1k9Cf/5/wbfWSSTZkwXuGuUbORfm
+	8SQbX9L2hoi0coBOkY+Pwn5IKUAfqm8FZQfDUvsO1OpMP9lDM9WI5FTmTIOcFUX0Sx6dWq
+	thXVfKcnhL9D0erS+XXYF2yLvDFlb31/LgEXDyLqrpJXXujGFWMnYjJEAtKEtgmnXD2UMY
+	FXR0zvrGdnanpjli6dE6/xwctHD06OCcA81NqNkeKCHRsIZylVmss2g9WKrwgrnmIMLiL2
+	9MuNdD8XZyhlNTX/rW8pAPI6NYMDOeKFJA7UfkDPUr2JX2mpghQ0pzZuzVwRmg==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Andrew Lunn
+ <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 2/2] arm64: dts: armada-3720: align LED node name with
+ bindings
+In-Reply-To: <20240701150340.560243-2-krzysztof.kozlowski@linaro.org>
+References: <20240701150340.560243-1-krzysztof.kozlowski@linaro.org>
+ <20240701150340.560243-2-krzysztof.kozlowski@linaro.org>
+Date: Fri, 05 Jul 2024 14:49:41 +0200
+Message-ID: <875xtkj95m.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-GND-Sasl: gregory.clement@bootlin.com
 
-The zram_table_entry::flags member is of type long and uses 8 bytes on a
-64bit architecture. With a PAGE_SIZE of 256KiB we have PAGE_SHIFT of 18
-which in turn leads to __NR_ZRAM_PAGEFLAGS =3D 27. This still fits in an
-ordinary integer.
-By reducing it the size of `flags' to four bytes, the size of the struct
-goes back to 16 bytes. The padding between the lock and ac_time (if
-enabled) is also gone.
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
 
-Make zram_table_entry::flags an unsigned int and update the build test
-to reflect the change.
+> Bindings expect the LED node names to follow certain pattern, see
+> dtbs_check warnings:
+>
+>   armada-3720-gl-mv1000.dtb: leds: 'power', 'vpn', 'wan' do not match any of the regexes: '(^led-[0-9a-f]$|led)', 'pinctrl-[0-9]+'
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/block/zram/zram_drv.c | 3 ++-
- drivers/block/zram/zram_drv.h | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Applied on mvebu/dt64
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index e683a9fc68b6c..dde45a084733f 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -2410,9 +2410,10 @@ static void destroy_devices(void)
-=20
- static int __init zram_init(void)
- {
-+	struct zram_table_entry zram_te;
- 	int ret;
-=20
--	BUILD_BUG_ON(__NR_ZRAM_PAGEFLAGS > BITS_PER_LONG);
-+	BUILD_BUG_ON(__NR_ZRAM_PAGEFLAGS > sizeof(zram_te.flags) * 8);
-=20
- 	ret =3D cpuhp_setup_state_multi(CPUHP_ZCOMP_PREPARE, "block/zram:prepare",
- 				      zcomp_cpu_up_prepare, zcomp_cpu_dead);
-diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index 262fa960a0783..531cefc666682 100644
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@ -66,7 +66,7 @@ struct zram_table_entry {
- 		unsigned long handle;
- 		unsigned long element;
- 	};
--	unsigned long flags;
-+	unsigned int flags;
- 	spinlock_t lock;
- #ifdef CONFIG_ZRAM_TRACK_ENTRY_ACTIME
- 	ktime_t ac_time;
---=20
-2.45.2
+Thanks,
 
+Gregory
+> ---
+>  arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts b/arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts
+> index 07c14bf04b83..56930f2ce481 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts
+> @@ -57,17 +57,17 @@ switch {
+>  	leds {
+>  		compatible = "gpio-leds";
+>  
+> -		vpn {
+> +		led-vpn {
+>  			label = "green:vpn";
+>  			gpios = <&gpionb 11 GPIO_ACTIVE_LOW>;
+>  		};
+>  
+> -		wan {
+> +		led-wan {
+>  			label = "green:wan";
+>  			gpios = <&gpionb 12 GPIO_ACTIVE_LOW>;
+>  		};
+>  
+> -		led_power: power {
+> +		led_power: led-power {
+>  			label = "green:power";
+>  			gpios = <&gpionb 13 GPIO_ACTIVE_LOW>;
+>  			default-state = "on";
+> -- 
+> 2.43.0
 
