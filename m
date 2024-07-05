@@ -1,153 +1,104 @@
-Return-Path: <linux-kernel+bounces-241782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928CD927F92
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:14:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521FC927F96
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6633C1C21BA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9BC3B221C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F79FC11;
-	Fri,  5 Jul 2024 01:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5930101F2;
+	Fri,  5 Jul 2024 01:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KIpBx7qT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fX0LSpee"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EB6C2E9
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629F51FDA;
+	Fri,  5 Jul 2024 01:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720142045; cv=none; b=JkP1qKSisWL7Tf1bLj/vD4sDP30RQFSs2TIUYJnHufUVonOCHEYNupANmxHb3FEy0pCHQE+eAvqkO3kppTlwMyY+yScBs5xlrFzgK6T+5NfPQBplJkaG9sBtISGdhlKpHReRoylSWtFZdC1DLz0/N2UGfKq+U8mtOnarn4vtpF4=
+	t=1720142110; cv=none; b=N4Zv2cgiHpsGL+oVm7NNKfcTl2GToCFffSOb4swAAJKlfsZSbrElog1F867yC5ccwauTUVB7WUGVCWRJ2rS1gz4XI6nPta6ElBnk4q704JVMQPiuR/Ni5fnP/blEQ2K3Z+d1+2ytZuGkbtAgLmwbLPnV9YNng4M614TX9faIrCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720142045; c=relaxed/simple;
-	bh=WSUYdgdvlbIjxgToRT9MdraNcveYiMlnCw77XKrXm/Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qs9n23ep6Y875ZmQrUo6d3PZzD5TaPt9dV05+K2tnSsFv9K8IRaV3HznA6SkgSBfqZmvOnyivFr4nuq2kD4hwtopOgVIrrDwa3WyoZPQ/AVkK+77DwK5pgaE1uj5UqOqQoKSlpvsJC7VMndQn5p/NtjxKoajGoXeL4nmBZ+b1Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KIpBx7qT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720142043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FI6LHDXh1nqZUQ6s2eQuana3Xv1d8SYwPxqgJWCuIoM=;
-	b=KIpBx7qT5Q5+dwXMrV0CeldzTMN8zPzMK1uN6Dz/nnKzyd/GJOGB00zfkrkElpGq40FNNU
-	4NMsV6kSZ14zjpvPrnVTeQb2iUEtlX/zBHpZ9TuG7aiyGU763GhZXN0bOA0Sr5zY04RGdE
-	joNw3CEKDm3bvyTGgsMmLR9ARCvpTEs=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-642-39nFRglCMJmgpUbS3sX-zw-1; Thu, 04 Jul 2024 21:14:01 -0400
-X-MC-Unique: 39nFRglCMJmgpUbS3sX-zw-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79d9ee5e460so127376385a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 18:14:01 -0700 (PDT)
+	s=arc-20240116; t=1720142110; c=relaxed/simple;
+	bh=x4nEAQ7b6/TWXyXgB9wGBJ+8zigiSwfnUL6grPIcrwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EznH/7paLNmVo6o7ZdwJUqosQm5cLAi0yh2fsVP+z2+yqMJFXN0Fd0gctSzzBDXYfo+WT7RMGiXgURx3DMUTA61Ap10zl9NxJ3iiqvJwKWiIwCOXvxBoLARoGLkiYFOHAVRMHIFqIyFQuYPX30pBLG81Xltv9U3yusSa4NBG43Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fX0LSpee; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f6a837e9a3so6118995ad.1;
+        Thu, 04 Jul 2024 18:15:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720142107; x=1720746907; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7wvXbEhzCKn5OcOH7K7UNIRxOnmz2N20qR1Phd4d5b0=;
+        b=fX0LSpeewT2JPgQRwve0S1FHoOTbZ9OYFjrLAf9FzDXpYw8+tgKB/nRL3ukAWksBeQ
+         cJniW0Rs+zR8vWs/CgNnoBOsPZCshlwgSO+ZL6oQ6mJrXTvIMTuNXsMOS7NR/M78RETJ
+         PBQWhdtAZYcHT5N4S8GMJtcYSRMzPLbgICt9yYeNgQURDTattA9QqYCb3wpuJP9CdlsL
+         KyXR3K85bNb3Dhiw0T9nUBRCDBA2vyO+FjobKDnikKKfMF4MtXjjxS8d88bZ8zXPijUD
+         5I/Mt6z8HmP0rSX/oQM3O7pD/cKyYHD8lLP8ufA2jvonAhFTKDlXI3CBX0KioXy7guV+
+         3eGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720142041; x=1720746841;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FI6LHDXh1nqZUQ6s2eQuana3Xv1d8SYwPxqgJWCuIoM=;
-        b=hrHjn8vbuqv+8XwDRIlIAidwohFHlLGkUJCYzrxqVlU970J6DF02P7d+Mew/RGFy04
-         yOx0SJK5BcCIi5PTu/sdFMIDDFUxvyivyQR36w5Skp+QPlPCUptOPWye/kGdll6fnFSP
-         Z31umJmDimcG9MnE1RMKyh+0+K4qNKQ5r3ifywkHWXao6AqspCVuN2oFrnMFhjAgsdmB
-         IwIRWDvk/ODGMUin4R/GjSCnPd5Qw25lcH2Y0ToL+1K/9p/QqDl7o6JrYYTfpK9AV+9x
-         ngOhC5pIK0SfcKftDval/NlxY0VbcpOxzhvzB4+SVR5lNwcb25eOJgsHpU2oSX5rRtHJ
-         Wb9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVwO85rNZKRMNZSZ1iNkPdN/nBKtaloo2ccfmJXUZ+yrKyIuJ5n8e3EjcliwvXGJPtHSAcltgYG4lQXrIJBnIL0XSNqZq+YTKG5Qks5
-X-Gm-Message-State: AOJu0YyodSlVch/ZaXO3I4K5ySW7m/fmyVclvuStlgz3ZLVmdaGivQep
-	B+NF8NHZ9cpVCuxOuJ5RcrKvtdAi3SmiGM3zJq56ngoMWuJknrsnx9vIORAcUQH7LXXpBsEfHXD
-	xaKTTe6jsiMeRrxUwzqm85SHM+01APQt0MMtBQMEErJiOHxW0MvaFD5nmTmco9A==
-X-Received: by 2002:a05:620a:2117:b0:79e:f5ea:7e52 with SMTP id af79cd13be357-79ef5ea7fd8mr45390785a.34.1720142041458;
-        Thu, 04 Jul 2024 18:14:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6j4UHorXW0deXy8o9AEiZWLhXPfQZKfnFnVR3eLZS5oVcvb/cg8ctdvtdm12OyduvCzTNbA==
-X-Received: by 2002:a05:620a:2117:b0:79e:f5ea:7e52 with SMTP id af79cd13be357-79ef5ea7fd8mr45389285a.34.1720142041086;
-        Thu, 04 Jul 2024 18:14:01 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d6926472asm724712785a.7.2024.07.04.18.14.00
+        d=1e100.net; s=20230601; t=1720142107; x=1720746907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7wvXbEhzCKn5OcOH7K7UNIRxOnmz2N20qR1Phd4d5b0=;
+        b=BQ4mydY787v5F2mBNQeJhlL8ClIMWpR59guze7uBrEFnbPwIoVfxy3CAXa7jQZTCOq
+         6tKwgM9MTZPRnFYwEXHuA6Q7exqyTOF/C/hrbLIs5gW4YzwldQVwM40YDsKF2eXafdX+
+         ug78Q1R8XBa43RlgWdxSQ1SRX0/L1Uu7HbzufZhP/fVi1Tdd71ABdGPNvt7VCXY+jZK0
+         5s/sUgFgxgDdVn2/stf5OIWEh7b0q2N+Dk4/FAa+cKwr08WChGOBj9+pbkeKbIKiyPIH
+         OXm3V1hIFik8o4uPam4QkYp5LLYwVWIO+Lh/emoxuu+4VPedpzm9TCoNfTnT1kwcnazr
+         PBDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVHmJGivNShoUBC0zdWOaVMEJeW8DrntYlCSBh691Y54EDy2EReOs3Rr0aebeX4wmbNXPtcpknR4SahNQmL5rWnc3IcLwHgs+6wf1ZW+jKJZDSdWvzCrFc4GOshJ9dEs4VrhRijGB+ihmbkJ0RK1odnWgLVFZPMd2FYWBP9Nh7BIPFkRKAwBhRTK4=
+X-Gm-Message-State: AOJu0YzzhGfnYDS3QTenLn04ybLx8xGVh4kfmZJ5v0geGJ9JffBE2kqf
+	pM76OTKQ/IoVtoCTsJ8kI/u5eV3k4LI/95PvcWfFSZFzcLzidvM9LJmNIA==
+X-Google-Smtp-Source: AGHT+IGN2hOzzJNvDE3eZIK5E2GMzoNH/XyxROd+JLpuvF+R8xOkV9bvFNV4mhcdrAASVj1yWj3pcw==
+X-Received: by 2002:a17:902:e744:b0:1f9:e3e8:456b with SMTP id d9443c01a7336-1fb33e12804mr27126685ad.4.1720142107399;
+        Thu, 04 Jul 2024 18:15:07 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb3b83e89csm15623335ad.56.2024.07.04.18.15.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 18:14:00 -0700 (PDT)
-Message-ID: <ccbed564392478b3a5bb51b650a102ca474ba7e0.camel@redhat.com>
-Subject: Re: [PATCH v2 10/49] KVM: x86: Drop now-redundant MAXPHYADDR and
- GPA rsvd bits from vCPU creation
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
- <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
- <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
- Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 04 Jul 2024 21:13:59 -0400
-In-Reply-To: <20240517173926.965351-11-seanjc@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-11-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+        Thu, 04 Jul 2024 18:15:06 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 4 Jul 2024 18:15:05 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (ltc2991) re-order conditions to fix off by one
+ bug
+Message-ID: <275932cb-9549-4cbe-9f7a-acb19378905e@roeck-us.net>
+References: <Zoa9Y_UMY4_ROfhF@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zoa9Y_UMY4_ROfhF@stanley.mountain>
 
-On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> Drop the manual initialization of maxphyaddr and reserved_gpa_bits during
-> vCPU creation now that kvm_arch_vcpu_create() unconditionally invokes
-> kvm_vcpu_after_set_cpuid(), which handles all such CPUID caching.
+On Thu, Jul 04, 2024 at 10:18:59AM -0500, Dan Carpenter wrote:
+> LTC2991_T_INT_CH_NR is 4.  The st->temp_en[] array has LTC2991_MAX_CHANNEL
+> (4) elements.  Thus if "channel" is equal to LTC2991_T_INT_CH_NR then we
+> have read one element beyond the end of the array.  Flip the conditions
+> around so that we check if "channel" is valid before using it as an array
+> index.
 > 
-> None of the helpers between the existing code in kvm_arch_vcpu_create()
-> and the call to kvm_vcpu_after_set_cpuid() consume maxphyaddr or
-> reserved_gpa_bits (though auditing vmx_vcpu_create() and svm_vcpu_create()
-> isn't exactly easy).  And even if that weren't the case, KVM _must_
-> refresh any affected state during kvm_vcpu_after_set_cpuid(), e.g. to
-> correctly handle KVM_SET_CPUID2.  In other words, this can't introduce a
-> new bug, only expose an existing bug (of which there don't appear to be
-> any).
+> Fixes: 2b9ea4262ae9 ("hwmon: Add driver for ltc2991")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
+Applied.
 
-IMHO the change is not as bulletproof as claimed:
-
-If some code does access the uninitialized state (e.g vcpu->arch.maxphyaddr which
-will be zero, I assume), in between these calls, then even though
-later the correct CPUID will be set and should override the incorrect state set earlier, 
-the problem *is* that the mentioned code will
-have to deal with non architecturally possible value (e.g maxphyaddr == 0)
-which might cause a bug in it.
-
-Of course such code currently doesn't exist, so it works but
-it can fail in the future.
-
-How about we move the call to kvm_vcpu_after_set_cpuid upward? 
-
-Best regards,
-	Maxim Levitsky
-
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/x86.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 2f6dda723005..bb34891d2f0a 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12190,9 +12190,6 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->  		goto free_emulate_ctxt;
->  	}
->  
-> -	vcpu->arch.maxphyaddr = cpuid_query_maxphyaddr(vcpu);
-> -	vcpu->arch.reserved_gpa_bits = kvm_vcpu_reserved_gpa_bits_raw(vcpu);
-> -
->  	vcpu->arch.pat = MSR_IA32_CR_PAT_DEFAULT;
->  
->  	kvm_async_pf_hash_reset(vcpu);
-
-
+Thanks,
+Guenter
 
