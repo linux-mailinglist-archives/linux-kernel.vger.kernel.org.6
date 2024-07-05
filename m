@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-241826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6FF928004
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:04:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DCD928008
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BD61F23329
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:04:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9751C2256F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE881B963;
-	Fri,  5 Jul 2024 02:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F61D14AA0;
+	Fri,  5 Jul 2024 02:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HRf05Co9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="fvWn2H+T"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C941B950
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A171B950;
+	Fri,  5 Jul 2024 02:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720145075; cv=none; b=ZzYZZirMMZWh/cCnYQvK98n0kKPm2V4vA3ZLzfFVhe/uVhcW3f1x2omz0DzdZPdsmgmNCl6Nxu8b3V9dElERRkhUNwZQU5PdaeBjtR+LifLzndIk7GW21fwCAo4Dmrn75shzrGhQPWr4c/KzHZ/LFQHyDeIlGDMMWAjqDxOLwc8=
+	t=1720145168; cv=none; b=FzKHSZ0F6Ek0SFWRis44z3x1d5n9ktiNUwd6PIDjaTRqaUuJKTdwWqjo7E1uoYhDMPSDzZc22fsPFwjQsahIRPKGze/e6isLznY5FBWpYGYEMj4x/bJnk/Ju2LOCNlwujMsYXzI0X76NivkNCXetMnDGwFF6wKqVgjniAa1swGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720145075; c=relaxed/simple;
-	bh=WTmA+XgWzRdUkRAteZOvT4+kv9CoJ3bbmb+9WOsOj8Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cZHXcsHeccZAcSGFw85Hxz6Uvq1vFLVcda8HcownwmFirYfRuZ+yQrZ/7w98McnNzHG+va1kiLHfoxTlsYxgcbRn1ZCbUMnfvCSOtOYdjArlqUFZCA6E+08THBTihZmHlMPStUrHGJdqQ/KTUcb0t6jUNjt5etNHcTUguMw6d+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HRf05Co9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720145072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7sipDhsIgWKuCcOQ9yCWrWbG6HZRi2UbYDjeBYr3i0=;
-	b=HRf05Co9neU1MXpXk/OopCltQrKvI/K1mpbceoeI/FmkiiuzeDOkr1cS1fM8Q0tSJ/U7C/
-	NJEWjIio5InDRmtjSJECzOFh0uV2fINlnFEqWwWqnWfzau/SqMtX5ecQaEIXGST2jdzwKk
-	1PW1Pxb8EadNzN/ru4fn/3ooarZo0ks=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-12-NC_hwUIfOaOxsBQwT7B_Ng-1; Thu, 04 Jul 2024 22:04:30 -0400
-X-MC-Unique: NC_hwUIfOaOxsBQwT7B_Ng-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4464a6a2f23so15710791cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 19:04:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720145070; x=1720749870;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y7sipDhsIgWKuCcOQ9yCWrWbG6HZRi2UbYDjeBYr3i0=;
-        b=OTFzVyBR7Z8SzVoF4/juNe0bbgeNnw+e2JtBfAVzblPK14T1td9sWmvzzd7evT4lK7
-         dnOM07LHZOmdhtmlVqXu6yio+j1bZwy/IDBhOWLC+JaWz1d0OXhBgtSOUF/Imj0Scz/u
-         wBhML1FI4wtY1HEJwBHmKCL6guKC44n/8JLbsA8hJ3WIrXGqZWcQCjQ0wmtIe6cz+MD6
-         1wzCYVVElC+8HQsqQJRkloIbW+BeG7AOgBQu5pqN/lBWw0d01MNCN/st8Jj0H5bGYzVP
-         zdRO9KTNhSrgfHMR9miKukNcnzpqwIlnevVGomeLR6xvVMmMhcLrD2WilolVhK+iETA+
-         bd7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnkAFaTCHy5dgJ2xo0vGLtgD9QDCkTg41/VSZJsYGJKSnLshxztUb3+04JfU4g0X5OAUGmeYNvIL7LZNSeop+G+7NwnySQFnC9Dd8i
-X-Gm-Message-State: AOJu0YwIErTmm3/tdFuLG5ruKI1NxJv1c67slgZdk1mRhiwOnW5/14Dn
-	Wk/9C4ZjdvDVG986pxWIl6GXaT16R66/5QTAjcVsHXk36FrPzSSEE/Q9ufasNgjunJ1EG/n6t3f
-	itvkexgHqfV4U+NpSX0RptWlSDjNxh1Wbpq8krEauGY+pkydZ4y1eneUcdwquXQ==
-X-Received: by 2002:a05:622a:586:b0:445:624:22ed with SMTP id d75a77b69052e-447cbec70e2mr48614261cf.9.1720145070160;
-        Thu, 04 Jul 2024 19:04:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG39LIe8kAoYIDbOQNf9DgLvUvhbcD9nDFSlJCJmAlaf/1jbCEPU6kYB7PDh5wrylOpXHT4ew==
-X-Received: by 2002:a05:622a:586:b0:445:624:22ed with SMTP id d75a77b69052e-447cbec70e2mr48614081cf.9.1720145069864;
-        Thu, 04 Jul 2024 19:04:29 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4465149bad4sm64915461cf.65.2024.07.04.19.04.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 19:04:29 -0700 (PDT)
-Message-ID: <6f17f9620409dbfaa153332b934563405f5fab00.camel@redhat.com>
-Subject: Re: [PATCH v2 34/49] KVM: x86: Advertise HYPERVISOR in
- KVM_GET_SUPPORTED_CPUID
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
- <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
- <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
- Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 04 Jul 2024 22:04:28 -0400
-In-Reply-To: <20240517173926.965351-35-seanjc@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-35-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1720145168; c=relaxed/simple;
+	bh=Pb3NJouw4vk9PNYWD40KEFnW2e3GX2Bd4h7TAepauvU=;
+	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
+	 Content-Type:Message-ID:Date; b=hW16jvvRRuMhRHIRzf4TCxNNYGkCq0T8RpoiTniKbUdm9KlIu+sBp2d2agBMkJKWoZ4M1YfA6aAiJyv5DwFOFD5ang1MIlce5odzO+bCuFSFMODcq0YuuJuw3IS6mR5V3FD00S8IXN/tpoptA6x3iL/z8pCxJGUqmQ6glcyRyOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=fail (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=fvWn2H+T reason="key not found in DNS"; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46524wPM24099883, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1720145098; bh=Pb3NJouw4vk9PNYWD40KEFnW2e3GX2Bd4h7TAepauvU=;
+	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
+	 Content-Type:Message-ID:Date;
+	b=fvWn2H+TW1RKKEgsMqTP1AW9uAnHzLViPF84l/CUGgyn9V5zuYrdQQFdGgFPG8rdH
+	 ezxOymAhT6cW+9Ld9CjVlVeZuxkD2TiXg49fgB3PjpFzsVEFyJzipGXSCYjkfnDVqT
+	 LaNSf6pqQ/pis2y6FSOJEYP4PNsEkyPO1d4tbvLS8Y+jcmQUombKpuXMe9w+hzWgHD
+	 WBPskzzpmYzIL3k2mYvlC2Tei0IakX4iNPf0FbKIfscb6QP686ELFrWUmswVFMiiF4
+	 MDoI0UeQwhDEN8ktSpcrEpG3qlBRRVnTurzCc+DP9v5H3Ec2QWJ/Gf1a1VS4mFnr0F
+	 8A0NUfzWp6Miw==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46524wPM24099883
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 5 Jul 2024 10:04:58 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 5 Jul 2024 10:04:58 +0800
+Received: from [127.0.1.1] (172.21.69.94) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 5 Jul
+ 2024 10:04:58 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Aleksandr Mishin <amishin@t-argos.ru>, Ping-Ke Shih <pkshih@realtek.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Kalle Valo <kvalo@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH net] wifi: rtw89: Fix array index mistake in rtw89_sta_info_get_iter()
+In-Reply-To: <20240703210510.11089-1-amishin@t-argos.ru>
+References: <20240703210510.11089-1-amishin@t-argos.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Message-ID: <865e1d0b-72fd-4c9f-8160-07b205681a10@RTEXMBS04.realtek.com.tw>
+Date: Fri, 5 Jul 2024 10:04:58 +0800
+X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> Unconditionally advertise "support" for the HYPERVISOR feature in CPUID,
-> as the flag simply communicates to the guest that's it's running under a
-> hypervisor.
+Aleksandr Mishin <amishin@t-argos.ru> wrote:
+
+> In rtw89_sta_info_get_iter() 'status->he_gi' is compared to array size.
+> But then 'rate->he_gi' is used as array index instead of 'status->he_gi'.
+> This can lead to go beyond array boundaries in case of 'rate->he_gi' is
+> not equal to 'status->he_gi' and is bigger than array size. Looks like
+> "copy-paste" mistake.
 > 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/cpuid.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Fix this mistake by replacing 'rate->he_gi' with 'status->he_gi'.
 > 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index d1f427284ccc..de898d571faa 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -681,7 +681,8 @@ void kvm_set_cpu_caps(void)
->  		F(PCID) | 0 /* Reserved, DCA */ | F(XMM4_1) |
->  		F(XMM4_2) | EMUL_F(X2APIC) | F(MOVBE) | F(POPCNT) |
->  		EMUL_F(TSC_DEADLINE_TIMER) | F(AES) | F(XSAVE) |
-> -		0 /* OSXSAVE */ | F(AVX) | F(F16C) | F(RDRAND)
-> +		0 /* OSXSAVE */ | F(AVX) | F(F16C) | F(RDRAND) |
-> +		EMUL_F(HYPERVISOR)
->  	);
->  
->  	kvm_cpu_cap_init(CPUID_1_EDX,
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
 
-This makes sense.
+1 patch(es) applied to rtw-next branch of rtw.git, thanks.
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+85099c7ce4f9 wifi: rtw89: Fix array index mistake in rtw89_sta_info_get_iter()
 
-Best regards,
-	Maxim Levitsky
-
+---
+https://github.com/pkshih/rtw.git
 
 
