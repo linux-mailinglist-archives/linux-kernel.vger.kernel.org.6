@@ -1,97 +1,107 @@
-Return-Path: <linux-kernel+bounces-242129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840F99283F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:43:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF680928400
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400D3282244
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4EA82821CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805C7145FED;
-	Fri,  5 Jul 2024 08:43:10 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2786914533A;
-	Fri,  5 Jul 2024 08:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DD5145B21;
+	Fri,  5 Jul 2024 08:45:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4DE1369B1
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720168990; cv=none; b=e6iVpyKpTaEvNhnvOfA2AJ6RPX+53J+dKB4+NZ/5G+3Sm7FzCa64spRGOQstT/51ZrdG3pVoKYETASrFCtVSRnkcLGYCaUcZyOf1VibFI2XklWzigG9SbjmUbUJet7zYIxZOf8BwQmyN4Kd5LiC0gyiuW5flXVKyPM++FZx+0Zw=
+	t=1720169113; cv=none; b=SrwLCf8vDfAOM6NNLbm6/yUh9AZNs0QOXQ2zbx1RmhGg2hSEz+PmKoh9Cnwf1NF8vAzF1MRsKUmpKeXFjiKwi1i3cKj7JduXeIXbiAQWhRLcopd8s309vB67lOO/Byzly774mJcLG/+zexahKIS2fbSyR5J5q2ftTpvZS8P71SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720168990; c=relaxed/simple;
-	bh=xCm1e7A/omFtTbcPrO3v/wflEg7UUQPBc4Qaj2aezx4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=liD42ENt3xSy3MK5gaaPKZohsFv7TyYjKLqgMJvXjkVEhlvRB8YcfqB8Zsso6tAMcNtVMB+qYo5wvAMb75P1RiB2Y4mLbA7JSG/mqByoVMCMsx0wE2kp7dsO7uJKGCVdhcv9B8KJGzs5xH5dUD6vyMaeV1Gy/IP+pv152HDtMtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowADnuSEWsodmjoKlAQ--.42801S2;
-	Fri, 05 Jul 2024 16:43:02 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: jic23@kernel.org,
-	lars@metafoo.de
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] iio: dac: ti-dac7311: Add check for spi_setup
-Date: Fri,  5 Jul 2024 16:42:50 +0800
-Message-Id: <20240705084250.3006527-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720169113; c=relaxed/simple;
+	bh=2w7iHu1KEP5gDudvo5LuWqEuiJkAK+H6JXecn9APbZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IUd+H9n6wyr0M8qNr59bDme9PVQohguHVG+WWDCDuAuD8yv5xsmVj9c5NV2a47SSngm51/Ee2Efb/sA9u2QQ1E+gTGHYXTjqfR1NSAftxnHTDfOMeNqHbAW4xdZHBVLRvXwK9qWUzKuvtrcPqZ6jbc4Aw8tchOtktki/dmEX088=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CB3E367;
+	Fri,  5 Jul 2024 01:45:34 -0700 (PDT)
+Received: from [10.57.74.223] (unknown [10.57.74.223])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FAC73F762;
+	Fri,  5 Jul 2024 01:45:06 -0700 (PDT)
+Message-ID: <e826368d-499a-483b-8991-8c25aff88f00@arm.com>
+Date: Fri, 5 Jul 2024 09:45:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/6] add mTHP support for anonymous shmem
+Content-Language: en-GB
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
+ ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+ <ZobtTmzj0AmNXcav@casper.infradead.org>
+ <27beaa0e-697e-4e30-9ac6-5de22228aec1@redhat.com>
+ <6d4c0191-18a9-4c8f-8814-d4775557383e@redhat.com>
+ <Zob8xI-LWe9H_iJs@casper.infradead.org>
+ <e08b8245-bc8c-4a18-a1e0-53a139258826@linux.alibaba.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <e08b8245-bc8c-4a18-a1e0-53a139258826@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADnuSEWsodmjoKlAQ--.42801S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw4xAr4xAr47uFy8GF18uFg_yoW3CFX_Cr
-	1xZwnrX34F9F47Gr45Ar1SvrWFyrWYvFWF9F1vqrWfGFy3AFy8ArW8ZF47Ar48uryvyan8
-	Wr4YgrWruF4fCjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbI8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
-	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6x
-	CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY
-	02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r12
-	6r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	fUjwI6DUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Add check for the return value of spi_setup() and return the error
-if it fails in order to catch the error.
+On 05/07/2024 06:47, Baolin Wang wrote:
+> 
+> 
+> On 2024/7/5 03:49, Matthew Wilcox wrote:
+>> On Thu, Jul 04, 2024 at 09:19:10PM +0200, David Hildenbrand wrote:
+>>> On 04.07.24 21:03, David Hildenbrand wrote:
+>>>>> shmem has two uses:
+>>>>>
+>>>>>     - MAP_ANONYMOUS | MAP_SHARED (this patch set)
+>>>>>     - tmpfs
+>>>>>
+>>>>> For the second use case we don't want controls *at all*, we want the
+>>>>> same heiristics used for all other filesystems to apply to tmpfs.
+>>>>
+>>>> As discussed in the MM meeting, Hugh had a different opinion on that.
+>>>
+>>> FWIW, I just recalled that I wrote a quick summary:
+>>>
+>>> https://lkml.kernel.org/r/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com
+>>>
+>>> I believe the meetings are recorded as well, but never looked at recordings.
+>>
+>> That's not what I understood Hugh to mean.  To me, it seemed that Hugh
+>> was expressing an opinion on using shmem as shmem, not as using it as
+>> tmpfs.
+>>
+>> If I misunderstood Hugh, well, I still disagree.  We should not have
+>> separate controls for this.  tmpfs is just not that special.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/iio/dac/ti-dac7311.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+I wasn't at the meeting that's being referred to, but I thought we previously
+agreed that tmpfs *is* special because in some configurations its not backed by
+swap so is locked in ram?
 
-diff --git a/drivers/iio/dac/ti-dac7311.c b/drivers/iio/dac/ti-dac7311.c
-index 7f89d2a52f49..8e8a8ab0ebf6 100644
---- a/drivers/iio/dac/ti-dac7311.c
-+++ b/drivers/iio/dac/ti-dac7311.c
-@@ -249,7 +249,11 @@ static int ti_dac_probe(struct spi_device *spi)
- 
- 	spi->mode = SPI_MODE_1;
- 	spi->bits_per_word = 16;
--	spi_setup(spi);
-+	ret = spi_setup(spi);
-+	if (ret < 0) {
-+		dev_err(dev, "spi_setup failed\n");
-+		return ret;
-+	}
- 
- 	indio_dev->info = &ti_dac_info;
- 	indio_dev->name = spi_get_device_id(spi)->name;
--- 
-2.25.1
+> 
+> But now we already have a PMD-mapped THP control for tmpfs, and mTHP simply
+> extends this control to per-size.
+> 
+> IIUC, as David mentioned before, for tmpfs, mTHP should act like a huge order
+> filter which should be respected by the expected huge orders in the write() and
+> fallocate() paths. This would also solve the issue of allocating huge orders in
+> writable mmap() path for tmpfs, as well as unifying the interface.
+> 
+> Anyway, I will try to provide an RFC to discuss the mTHP for tmpfs approach.
 
 
