@@ -1,153 +1,333 @@
-Return-Path: <linux-kernel+bounces-242257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F673928567
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64335928569
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A682282410
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E513E281A5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1624147C82;
-	Fri,  5 Jul 2024 09:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D8F145B29;
+	Fri,  5 Jul 2024 09:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmjEmk8q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="iFwx702B"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2042.outbound.protection.outlook.com [40.107.117.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9F0146D45;
-	Fri,  5 Jul 2024 09:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172727; cv=none; b=BTvG10kNB+C10/vgk9bOMav8j2xLbCu+kXcA2sKjAHT0lvsOxivArFQ4rWfjgwZC/qmyNuzUGqNOewDIOVineV5l7VZayMdZ5Zq16iD4IbYLHSGj6dPqtZ9f3lkhjEa5xhZ9DQvsdnWREBjjyfDfxvlqHqRXdDq0XDeWZaw0WGw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172727; c=relaxed/simple;
-	bh=frGlIKAT1dBQamK3hrm7nlyGSfk0wKGWy6qgMoho1Go=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qv8wlCN/u34NM4Ha09JMCAhWrzQKrri/rFB206jWHw62gqSi/vM+FD/DA+EWTB16qAQm6ilxEzcqeYFgKEd4X/0WPxwoANZrIK4y2ohCVjX1thzKXqMeYGWimi4ScZq2KUhN3oaj1vZ2zovD7FIHfgo5vYL9kysH3wEFZ1affYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmjEmk8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC8DEC32781;
-	Fri,  5 Jul 2024 09:45:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720172726;
-	bh=frGlIKAT1dBQamK3hrm7nlyGSfk0wKGWy6qgMoho1Go=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HmjEmk8q+boavLnh5eijeqX6BB29MyjznDpYJ4KYRZcSi6b80eBzHdXfmXHhklXG2
-	 1CC0DP6yFIefErS/a0iNQgzrUAKhxuH0qst77N0LtGKPFizE83ZFPSgzpmPAbYAOT2
-	 XT754oE0XRMFex9WQIyd1OIJBZoSAuYLeVO5vmguBGMAxbCp4nyOHmPhgnKs3t9o/k
-	 4DGsPwuvKZ258jtwdPSo+jmXyonKaqXaPhNlvMGNLeCUUvHw7F7GzZg+2pG4QGedoc
-	 CDk5Pl5vER+eR+tzTcc/cyXiZrygRUPuhvAOT0lsgd7KF2/T0P8brZvy0CezWAlPmi
-	 mI0iQUdjcmbiw==
-Message-ID: <b16d1ace-b113-47e2-9c48-7c89d122e2a9@kernel.org>
-Date: Fri, 5 Jul 2024 11:45:20 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06B26F09C
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720172830; cv=fail; b=adrjLOVwJBdv4mN2UViLGHNDu7J08uroFHQ2Q6ZV2EdbeZ5koga/PqziDdVURhSyJuT5mpQjDT5l7y+YFHqjZO+uDT0B8Y0e95KFpt4WbMulX/wL3KEtVcVszUDSR4I0DMXBM7uum3jKHe2kSj/Xue6Dk8gT7Nx5lIB5DAxi0oo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720172830; c=relaxed/simple;
+	bh=KL5txLz4d68xT0Zr2KCCRx9+P7YfrkNMcNRyqWDpj5U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cQNNgnqEXbOn2CdxJkuVI3JMbfhDttOJ1wQeXCshvoTtVn6vfeL4im8gKCtxzMtoAnsVGdv/eUtOL/RlBvnnk22Jn4oXc/UnJjht7kStFUGRzgPBS5353cIK2w61uT62HX5OUGCamBytOeD60zU/pJD7dnfVgoORoGSruko7xTk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=iFwx702B; arc=fail smtp.client-ip=40.107.117.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iYRdNU5lQtTFxjagQAa45ejCcGta2XpfNxyIwpwMLMvSN2XeD0GFnrnsfN5y97wpeLox9mnT016W43b6lEH7FhXo4SVmBq2BzNZb6Wxbu2OLXHECo4hp+u631uk7U1hoGygqu+NQgSTFPGWb44uYBRR7Z2Bmm8dRmCQdVGZ0pHBNwtTv4wiVM14l8gzdx5/yX5DMSq37fFGlGYaOhgpWz67uedKd232M/li9UCLwMSp2dbI+eSjspdH5E4M1jAs8ZSlBm/BSsHPVOz+oPDGdDmEj7VKDHDCnr7naupwpNr4xYSPN4UjnP7vToFTdSKjXNO+U11YySiLdZoqXNIAi3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6AeyS1YGXun5k78Brcj11zEowrTKYVPh2u3tv9kMGtw=;
+ b=gIMX2qc58O31sNJSYc10G9yORXVMyJnF/HFizdYiJhRtkvXvhV8R3U2aJxNdOnCsU1N3SfBzn/mrEYG1yNQVekm/jXA5im6g9UtoARPZBxTH/uaCxdHCyAQd244kwdeMH8G9zcgTebFrWn/cI3+Q2LWG1zu8/zxtq8raH9MCyvVJn0yFktjMltVqYSgdiJSkTqIBDLPXwje64vf/tEMhQUh2iuyZpqg8rSLna4Z6mbPAYNpgHrPzLLe+Xw8vrFMPV+l/2JrIjCayGt7KBYzLLscyELJCjZUQSB6SvaexrxcSQoyHt1saJrp6e+dSKMJVgjiWqO4UIOBNS1UhjC1nYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6AeyS1YGXun5k78Brcj11zEowrTKYVPh2u3tv9kMGtw=;
+ b=iFwx702BOiXNGpmfLhIAMTLKoagWQi7PLwKWs7ewX8F16FC7TUlNKJl6OViaeZw6dGJK0h65xmo8c7wPmZhuEfp9XzNWMQrC/XFs/rMYAGR6UoFqLFKMIMvg2aLqQOVqYQi8cCHuoSyt+9GbLrTna6GGatNBPsfvXpJ9vgdE2f996U4OZ/gMuRmHeTEG07Gtl4V3wwKXQEs55i/28TiRd4geQCWoUbnDGMvOxb+3515G2/gi/jZUHIICvoAKUvRjqpYo0y0HdW65OJ/NLPASTGmRAV8oJO9AEcAyGFOcODJuLqKh11KihAd1qzhosm/Qh/rsNWNcrec/Lf/jRqY65w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by TYSPR06MB6625.apcprd06.prod.outlook.com (2603:1096:400:47d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Fri, 5 Jul
+ 2024 09:47:03 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%6]) with mapi id 15.20.7741.029; Fri, 5 Jul 2024
+ 09:47:02 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: bo.wu@vivo.com,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH v2] f2fs:Add write priority option based on zone UFS
+Date: Fri,  5 Jul 2024 17:46:41 +0800
+Message-Id: <20240705094641.13451-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240702062952.28859-1-liaoyuanhong@vivo.com>
+References: <20240702062952.28859-1-liaoyuanhong@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR02CA0062.apcprd02.prod.outlook.com
+ (2603:1096:404:e2::26) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] ARM: dts: microchip: at91-sama5d34ek: Align the
- eeprom nodename
-To: Andrei.Simion@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240704151411.69558-1-andrei.simion@microchip.com>
- <20240704151411.69558-4-andrei.simion@microchip.com>
- <c4b23da5-10fc-476e-8acc-8ba0815f5def@kernel.org>
- <aecc9240-8a19-47bf-b42a-e74690d8315f@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <aecc9240-8a19-47bf-b42a-e74690d8315f@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYSPR06MB6625:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0414de78-7c4a-4f5f-c529-08dc9cd76bc5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WrhN28s9hAMapXu47s7B66L2qKeHCyhYFOcdX7w4ku5ni3mqQIIkzoEP/20r?=
+ =?us-ascii?Q?N8iowNUpNN3Phgj6yYKlerEiitMF3y2gyQTPLxRSHkdCudf/bqSihe92gL5E?=
+ =?us-ascii?Q?8p2C6s01bh1JzFJNqGC/aSYY9XX79CLhZzCgCUSAyJyZulv3st3jFO7ll50j?=
+ =?us-ascii?Q?KrG+e6dqY2R00+t1lZPGOSYO8IuIq5DsLuoAEzXg0ahy1Fnf8W69rC3bS3bS?=
+ =?us-ascii?Q?WjpGyN004nkG8P/cX9XMmHOGvXoDCkYwsnYd/nCsYlL1bJWeBoOU/Pat6e+V?=
+ =?us-ascii?Q?dQVeRrJ4oZ0XKWFi1SX3gU9m5bVKUOIdckX1GjiUk8fQHRUWvh36wQUaCSuN?=
+ =?us-ascii?Q?ijKrU5sri/VjOArMHQb6BtB9ccpolL5+QjkrgYPdvBRWiVJDNwAXVw84f3wQ?=
+ =?us-ascii?Q?IrI3z2U8ZNqMy8eXmlq+HzqE4+1a+BLhxp+KMWL8lV8Jp0t5fZSfgTxzQiLO?=
+ =?us-ascii?Q?u96Alcfe3DCiDjziPdIQEIDNbAa5GX702CMTNrwCuYfNiM+tkDq3J5RNbZ4/?=
+ =?us-ascii?Q?UkR879c/qSXUX3Y76UnScMOPoQrj76ub821CY7A69fi90cig+Qb89ANY1Lid?=
+ =?us-ascii?Q?KuLKPpyoeJiZbRWuDz++/QAskyF3DgYtnG36WpkHWX3fsg0i5To9OW86w2oo?=
+ =?us-ascii?Q?nYtZAdFct79eM/zDbYl0pOSkbyitzQFlbNDqOESDcPI0zwq+s0EVhEIKYLn4?=
+ =?us-ascii?Q?ea2ijM5P36uj/Qq92hBHY52JWYZOTH0B1DqeKl9rZsdGraz+RXPsd64pnUZn?=
+ =?us-ascii?Q?EZdZAsu9qkz0aDvGjDfU9aAl1m1aa3RDt2x41ZRAC/ZQgL3mSMmSWSQoa2k3?=
+ =?us-ascii?Q?bLEJzJkCiq3WVsVEsnei4lLyu/YzIclwvy3qyrJPwHJeclD05pu9QP36xFVd?=
+ =?us-ascii?Q?q+1IXNYjwbcc6pWGOjWS/uRpijxD1yRRli1KjbfewSGHG1OgLOIopxw3KaH7?=
+ =?us-ascii?Q?JjvCbj5lAvOUqHsIas9R7fXLu1sj2hLxlrqCn8JDUo3epsMs9jRmO4UamV0V?=
+ =?us-ascii?Q?GBa46nJsPypqLjEFL2MagNrOlTiv/LV+2oIFSRgHkFtz4mKOqUT9J4quSPN4?=
+ =?us-ascii?Q?+mFMzf08FRhqaKdlLxk8QURlEscHg68BkpqbXt86CHlYFwgAluU3FVDqfpld?=
+ =?us-ascii?Q?pTeh9Ag4Ear0r2RySYxkLjGeunimO0rGE18gt681UdITAZYMVTExo5ira+f0?=
+ =?us-ascii?Q?qcKbdLXA5KY5HWfsZ9PNzDpZZsMrSRX1IAcn11hCnFYJnjBG0l/Lls8VS16U?=
+ =?us-ascii?Q?u0QxHJ9vHfZAwQ7qeP7yO9Wq/8KvgJvMaHhZZHEM19exxBl0W8vEn0L8HnXg?=
+ =?us-ascii?Q?2OLDqOWFPhrgyuUCh+O7KHfLHuzPffWcY9hK4HJwQv3RGEQ4YayanCRgjhhK?=
+ =?us-ascii?Q?XlqzoGFHuCDKiW/+KgcpDPwrNDzwLTu///AP//8197qmc/PANQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VfEK6juiZ1vTyBL8ZzfeOpaYa63VCU4AzknbA5tOysjXkFzvc+7zUo0vrTef?=
+ =?us-ascii?Q?KH42EnIcmxOLeLIBoJSO8auUpTm77LeeVmYtvqyP752G+8ccsdSQjvcjn8WJ?=
+ =?us-ascii?Q?+1IPHgLeqZHwiVgPMXMHampib85yO1ZRVZ+HcPyRnmT35OLyJl6dm29tF/qj?=
+ =?us-ascii?Q?9is0dp7OpJ9tkp+ossEgBjdY7b+t1XxfcPgGrSk8l947YuDmpvRRSOQPZLNv?=
+ =?us-ascii?Q?atw3+2DfpHeinOfp5LrPxibjk4jyijL/fbwuJu5P2xQaYYGAAQKPqmOLGCN/?=
+ =?us-ascii?Q?NkJMRXyU5YpFSaLpNp5FP7ijhTXEPmCZ45t+p+VAQq4sSGYM9V1XkAJsToyY?=
+ =?us-ascii?Q?hlXmZcNTsr2dUf9nlIgSW2U8CRH75Q84wgvGU6JguTJTyrIrsjsRGfJpTQU7?=
+ =?us-ascii?Q?BpeT0dDdOtmXvyxQb63GJKrGxUozfi7Nk0yACEyWPW1fWLbQvN1UAnIPXdnl?=
+ =?us-ascii?Q?7TBQY0IsU7kEhWss41KGhZXzk0o9zvBZ1y9cxVvhM46S6F+Ro/9Omlh9GXSG?=
+ =?us-ascii?Q?pdU/Ysk5eRGluZ6rsD1+xr5y7LK2P+EVWVIBrxDVSRl0OAGMgiNZfPitXtgd?=
+ =?us-ascii?Q?zcDs1Zs+z5F1HYUInbQcxOs3++mz0C17m3RHuv6J6dhw3Lr8TOuPF8NUf1Sq?=
+ =?us-ascii?Q?a0wrf6nNGQv4bfntXB7dfyh+lRwA9mfYAcVI3lTJV65cxiSBNxmdxxC1AdAI?=
+ =?us-ascii?Q?yDM90Okfv2oIUhTR3AtfWsj4C78V3SvG++nj1N9npsUKkTDz62TTuJxwUsok?=
+ =?us-ascii?Q?SNaC6AAjOyIlfgzgLabmUD2+VOlqBIyOpD0Aa/V/Mb3ROBAEm1mGVapmrWY0?=
+ =?us-ascii?Q?W14x4O44HQsDK6+Hbxgftp7k/v9VaoOfeVbNvDvRQTbLVGu8CWHXfCUdaIQ7?=
+ =?us-ascii?Q?7t9XPp7pLgLSukroGqwWRftuhvwMbhHGCd0sAuTXkTWIeXnLxgzcb9KODQbk?=
+ =?us-ascii?Q?RjgWlw45DYUuakxrFUVMBc6BkuAmoQxH+IP6wD4M70UNVqQfY7A3doGfpZW2?=
+ =?us-ascii?Q?sa3qlzaHGgv/uTlMLbjePf1CDD8A6ymesMtMA9HC4cPz2zKFx9fgMmhUcN0V?=
+ =?us-ascii?Q?bqZp8H512Hd4ca3GmAxljRNAL5iCE/v+XX0TLf0yJDPtzgjW0JDdSjpRyh2Q?=
+ =?us-ascii?Q?GOdfxrxQTNE+3pDhMEzHBmV/D64hmegimvrvjJETtkqnLV3RXrtHre0RxMdU?=
+ =?us-ascii?Q?H07bjIu/kaLYCf3TODDcgzWutHgaJvAjxta6grXSYvSQHj9QvJnfgelFCcxI?=
+ =?us-ascii?Q?hZug1vgwgXi9/UNzrNSDcoo+tvIIYL7B3rFvXU8Z29rB9vKezxtc99bLhgS0?=
+ =?us-ascii?Q?GnHh6hAhoVqtGL/4OO6c9InURZEdg51JZDrSw/RwXhrg59K/Cx3iWFwpW8MN?=
+ =?us-ascii?Q?4qXY1TwaoosLf2mATv7E2Qel+qr5/46uYUidIooNrgeKOilGU8JV/asMgnVC?=
+ =?us-ascii?Q?MIWIFOALSiafa/bVJagX6nmylI/qxpXYdIPQh/DSslV6qItT8QTQFY1Jsx5n?=
+ =?us-ascii?Q?NfCM6G0RXakd74xC4ycF3nNVXiJegSGzMsmRE8CkPzuXfXntOvBZd8fpSBjZ?=
+ =?us-ascii?Q?FqINFhJ7z4Ou4dUOt3jq84zi6iNEZ6jtgY2Aj0bf?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0414de78-7c4a-4f5f-c529-08dc9cd76bc5
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 09:47:02.2486
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0IQag3uSCyaPiEZ6SFMyKdstBFOK0GB9NEQAE3HS3Gfw1p5gPOkaoAAZe5jT7OITCfka1C1PurmHkP1jn1Nzag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6625
 
-On 05/07/2024 11:31, Andrei.Simion@microchip.com wrote:
-> On 05.07.2024 09:43, Krzysztof Kozlowski wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 04/07/2024 17:14, Andrei Simion wrote:
->>> Align the eeprom nodename according to device tree specification
->>> and at24.yaml.
->>>
->>> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
->>
->> Squash.
->>
-> 
-> I will squash.
-> 
->>> ---
->>>  arch/arm/boot/dts/microchip/sama5d34ek.dts | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm/boot/dts/microchip/sama5d34ek.dts b/arch/arm/boot/dts/microchip/sama5d34ek.dts
->>> index bffd61397cb5..18943b873fff 100644
->>> --- a/arch/arm/boot/dts/microchip/sama5d34ek.dts
->>> +++ b/arch/arm/boot/dts/microchip/sama5d34ek.dts
->>> @@ -36,7 +36,7 @@ i2c0: i2c@f0014000 {
->>>                       i2c1: i2c@f0018000 {
->>>                               status = "okay";
->>>
->>> -                             24c256@50 {
->>> +                             eeprom@50 {
->>
->> What about other names? Why not fixing everything at once?
->>
-> 
-> There are 149 dts+dtsi files. I would like to fix them step by step. (lots to check)
+Currently, we are using a mix of traditional UFS and zone UFS to support 
+some functionalities that cannot be achieved on zone UFS alone. However, 
+there are some issues with this approach. There exists a significant 
+performance difference between traditional UFS and zone UFS. Under normal 
+usage, we prioritize writes to zone UFS. However, in critical conditions 
+(such as when the entire UFS is almost full), we cannot determine whether 
+data will be written to traditional UFS or zone UFS. This can lead to 
+significant performance fluctuations, which is not conducive to 
+development and testing. To address this, we have added an option 
+zlu_io_enable under sys with the following three modes:
+1) zlu_io_enable == 0:Normal mode, prioritize writing to zone UFS;
+2) zlu_io_enable == 1:Zone UFS only mode, only allow writing to zone UFS;
+3) zlu_io_enable == 2:Traditional UFS priority mode, prioritize writing to 
+traditional UFS.
 
-I meant, if doing cosmetic changes like this to these files, why not
-fixing other names? Some of the work is automatic.
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+Signed-off-by: Wu Bo <bo.wu@vivo.com>
+---
+v2:
+	-Change name to blkzone_alloc_policy,
+	-Update manual of f2fs sysfs entry,
+	-Use macro instead of magic number,
+	-Initialize it w/ default policy in f2fs_scan_devices,
+	-Add validation check,
+	-Merged the ifdef PROFIG-BLK-DEV_ZONED area.
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs | 14 ++++++++++++++
+ fs/f2fs/f2fs.h                          |  6 ++++++
+ fs/f2fs/segment.c                       | 25 ++++++++++++++++++++++++-
+ fs/f2fs/super.c                         |  1 +
+ fs/f2fs/sysfs.c                         | 11 +++++++++++
+ 5 files changed, 56 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index cad6c3dc1f9c..3500920ab7ce 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -763,3 +763,17 @@ Date:		November 2023
+ Contact:	"Chao Yu" <chao@kernel.org>
+ Description:	It controls to enable/disable IO aware feature for background discard.
+ 		By default, the value is 1 which indicates IO aware is on.
++
++What:		/sys/fs/f2fs/<disk>/blkzone_alloc_policy
++Date:		July 2024
++Contact:	"Yuanhong Liao" <liaoyuanhong@vivo.com>
++Description:	The zone UFS we are currently using consists of two parts:
++		conventional zones and sequential zones. It can be used to control which part
++		to prioritize for writes, with a default value of 0.
++
++		========================  =========================================
++		value					  description
++		blkzone_alloc_policy = 0  Prioritize writing to sequential zones
++		blkzone_alloc_policy = 1  Only allow writing to sequential zones
++		blkzone_alloc_policy = 2  Prioritize writing to conventional zones
++		========================  =========================================
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f7ee6c5e371e..29b0e8897e81 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -134,6 +134,10 @@ typedef u32 nid_t;
+ 
+ #define COMPRESS_EXT_NUM		16
+ 
++#define PRIOR_SEQUENTIAL		0
++#define ONLY_SEQUENTIAL			1
++#define PRIOR_CONVENTIONAL		2
++
+ /*
+  * An implementation of an rwsem that is explicitly unfair to readers. This
+  * prevents priority inversion when a low-priority reader acquires the read lock
+@@ -1555,6 +1559,8 @@ struct f2fs_sb_info {
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+ 	unsigned int max_open_zones;		/* max open zone resources of the zoned device */
++	/* For adjust the priority writing position of data in zone UFS */
++	unsigned int blkzone_alloc_policy;		/* data write mode */
+ #endif
+ 
+ 	/* for node-related operations */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 4db1add43e36..7b8dc255836b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2686,17 +2686,40 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 			goto got_it;
+ 	}
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
+ 	/*
+ 	 * If we format f2fs on zoned storage, let's try to get pinned sections
+ 	 * from beginning of the storage, which should be a conventional one.
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
+-		segno = pinning ? 0 : max(first_zoned_segno(sbi), *newseg);
++		/* Prioritize writing to conventional zones */
++		if (sbi->blkzone_alloc_policy == PRIOR_CONVENTIONAL)
++			segno = 0;
++		else
++			segno = pinning ? 0 : max(first_zoned_segno(sbi), *newseg);
+ 		hint = GET_SEC_FROM_SEG(sbi, segno);
+ 	}
++#endif
+ 
+ find_other_zone:
+ 	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
++
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (secno >= MAIN_SECS(sbi) && f2fs_sb_has_blkzoned(sbi)) {
++		/* Write only to sequential zones */
++		if (sbi->blkzone_alloc_policy == ONLY_SEQUENTIAL) {
++			hint = GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi));
++			secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
++		} else
++			secno = find_first_zero_bit(free_i->free_secmap,
++								MAIN_SECS(sbi));
++		if (secno >= MAIN_SECS(sbi)) {
++			ret = -ENOSPC;
++			goto out_unlock;
++		}
++	}
++#endif
++
+ 	if (secno >= MAIN_SECS(sbi)) {
+ 		secno = find_first_zero_bit(free_i->free_secmap,
+ 							MAIN_SECS(sbi));
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4a1bc8f40f9a..d5b0b7b141ce 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4229,6 +4229,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 	sbi->aligned_blksize = true;
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	sbi->max_open_zones = UINT_MAX;
++	sbi->blkzone_alloc_policy = PRIOR_SEQUENTIAL;
+ #endif
+ 
+ 	for (i = 0; i < max_devices; i++) {
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index fee7ee45ceaa..359a12f84060 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -627,6 +627,15 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 	}
+ #endif
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (!strcmp(a->attr.name, "blkzone_alloc_policy")) {
++		if (t < PRIOR_SEQUENTIAL || t > PRIOR_CONVENTIONAL)
++			return -EINVAL;
++		sbi->blkzone_alloc_policy = t;
++		return count;
++	}
++#endif
++
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	if (!strcmp(a->attr.name, "compr_written_block") ||
+ 		!strcmp(a->attr.name, "compr_saved_block")) {
+@@ -1033,6 +1042,7 @@ F2FS_SBI_GENERAL_RW_ATTR(warm_data_age_threshold);
+ F2FS_SBI_GENERAL_RW_ATTR(last_age_weight);
+ #ifdef CONFIG_BLK_DEV_ZONED
+ F2FS_SBI_GENERAL_RO_ATTR(unusable_blocks_per_sec);
++F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
+ 
+ /* STAT_INFO ATTR */
+@@ -1187,6 +1197,7 @@ static struct attribute *f2fs_attrs[] = {
+ #endif
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	ATTR_LIST(unusable_blocks_per_sec),
++	ATTR_LIST(blkzone_alloc_policy),
+ #endif
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	ATTR_LIST(compr_written_block),
+-- 
+2.25.1
 
 
