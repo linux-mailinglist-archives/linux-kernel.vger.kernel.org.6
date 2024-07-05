@@ -1,140 +1,151 @@
-Return-Path: <linux-kernel+bounces-242493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EE99288DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:42:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE0D9288E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4436B23EB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99AC128387E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F4A14AD20;
-	Fri,  5 Jul 2024 12:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C171014A634;
+	Fri,  5 Jul 2024 12:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U7Ns89rD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LZbUzGOc"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F405149E0A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 12:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4641487D8;
+	Fri,  5 Jul 2024 12:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720183316; cv=none; b=Txax3VOBKJRkaCc4+4c/J/7m06fSBIOSCJ8SFn09IhomOkq7iMu2nP7KG5ZN7YhYaFTQdW5wDLxLcykF8XAPQmjVaNAmAD0VeuFydUaLp+2Q3J2xlBG4PAZT0lWXpyBsNZ5YMaVn84+9b0V9YOpt3xGcUwxlH/oZ28VbW+nO618=
+	t=1720183422; cv=none; b=u1jlLa4TQ6whuovXU0DqUm3odkdfmfMKlDnWSJUQn1lOYoFa/3bDqMwdfso/SAKGRw9U2rjH6PKA93eIPMmQu4dE8gSzLyD+GtIEXTWh43vvwH8bB8c3dL3Wc+SYKbqkCQgaxasEZSTY7bGl4eCFUzv8lWOl4nLFVlq930+JcbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720183316; c=relaxed/simple;
-	bh=0VkwOEYNEGTePOxeBzMH5nAzeX1LMR2wiTaFcPC5G8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkcQASdADm3tcIEo6aE5bsa5/Ntca8RwH/t2Sr2jUWTIOZSPzJbkyScxWBiYjxeLCd19fNvUnEv/hTyFAn/rB0tIisEfNFr+5BSdS6exwXzb3VyvJTjZhfhjgWmW7+YRd+ihRpu+jspSPdhs4kIH5q/fc6btLu1w9qRdmzznQj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U7Ns89rD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720183313;
+	s=arc-20240116; t=1720183422; c=relaxed/simple;
+	bh=niwvqIE+h1cjh82f0pDykYGJvGh/UF7aodFDBImjDLw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=APumAnd2RS08vW0W4scMohzztVZOp2152/Ou229p/S/vbb8iHY8CXFCm6rehvvSouJ/qyeKdrOU/PZejFpYYIBfp91/JFl6Ff+S0wygU/6c9QY/rYnXRRJxSuRIpoSEby4K/EVCNa0EGtYv1B5qirmFXt7aZIZsiodCyOH5D4p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LZbUzGOc; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 664111C0002;
+	Fri,  5 Jul 2024 12:43:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720183418;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IUmdoRcwxF0vtGDq5CApO6vlw3HSpxN+XRrrWd5A6/0=;
-	b=U7Ns89rDjXZfdBRrFoJA5fNqUet0mulb8Wr2gCgsmPX/K2MLDkE/jf+ggDLvGSczlMTWRm
-	GPfbGFncWmoOECi80IpDlELpDCB4Slro+ri4mbkCs6bs873C5GDHVmJTe3ufLDgjH/BCz/
-	882sAOclsAXaCmV4SNtAAVm1tz0TKVM=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-hw7AewvSNIqz0IDBA7tUng-1; Fri, 05 Jul 2024 08:41:51 -0400
-X-MC-Unique: hw7AewvSNIqz0IDBA7tUng-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a77baa2fc0dso65923266b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 05:41:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720183310; x=1720788110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IUmdoRcwxF0vtGDq5CApO6vlw3HSpxN+XRrrWd5A6/0=;
-        b=CmJ8FzjlKAtSMlBiebtLuM0kEfNLtLbimyDApEPnNrtRZMlIt5CNDlrIt3klYOtF6W
-         +s5l56OdJteN5OXz8Bwk8xLqMQuKNf9/fdY/rMr7qMBaLYIea6PoYZgHsmYDKOjYDCPv
-         iskTK2qYsYTvfQnfQqTJzBmUlooHmiPm12q4xyZQoH7UTlpYOm9js+Sjzi5HY12CU7+t
-         mnGiqWWsZTG7L593rBiG0j6iEbgqiZTdDI7uqgs7w1TpfY+G8EILfBj0LczBq7IAQFTa
-         q9N2nvApY2eiC73HjrizxV/eJhLwiRkgT1GUwWFk7eRKxjmjiRpd99O6AW98sUWJFqG1
-         cwhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQXLouhZWEgOEHnbwfIiZC/P/6xy1QYKVXDGYvi13PHO337ftXW8Qj+VnHfHFegHyrrrrCIfpJTIWKEA7iEaN1hTOP65Y1VTYkcXdB
-X-Gm-Message-State: AOJu0Yy4z/FTT7WrJPnTCxQ3J/Zi42O8sYM+mGKTHpm7gpNnugtSidwy
-	qjzZaLCdOFEeL4073d6OsVRkNbmQ8bFcs3lunXhjttiQVWkaxTnkfJpJ4JZPps4xM0BAqhRLoWJ
-	5kT9+VPyFHSaTVPWQ3H9X4wtobXTSvXsTL7VAt7jc+qIgbwrf9eSxztQQrR14IA==
-X-Received: by 2002:a05:6402:26cc:b0:579:73b7:b4cc with SMTP id 4fb4d7f45d1cf-58e5994df08mr4069645a12.2.1720183310545;
-        Fri, 05 Jul 2024 05:41:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHKvFDzwRQlV+iTOvh4/L4b/Nx5EKEO6E1JE+809E/tI6VMgbL/Y6rWpOPm+MTM4DSqhdFdnQ==
-X-Received: by 2002:a05:6402:26cc:b0:579:73b7:b4cc with SMTP id 4fb4d7f45d1cf-58e5994df08mr4069621a12.2.1720183309878;
-        Fri, 05 Jul 2024 05:41:49 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.218.209])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58eb85cc1bcsm1692664a12.94.2024.07.05.05.41.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 05:41:49 -0700 (PDT)
-Date: Fri, 5 Jul 2024 14:41:43 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>
-Cc: virtualization@lists.linux.dev, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>
-Subject: Re: [PATCH] vdpa_sim_blk: add `capacity` module parameter
-Message-ID: <25fehn7xgvqyqgd6zcscsjazzfhktyjrazffyrtbp2oibnhkey@ggobdyv4zxkf>
-References: <20240705112821.144819-1-sgarzare@redhat.com>
- <20240705073017-mutt-send-email-mst@kernel.org>
+	bh=nlfsyrfrSV5hF7t1zqFMldKwtDb7AOHp12rdTPm/ZDs=;
+	b=LZbUzGOcsxUwbjpHB6/JsV9w0p0aBzEauJfj5XkdqIhKIQ5c6HCfvUxklLZUouSWc12ygK
+	WiVEc5tmdKjtaamzVE7SiHcWgB6ZHj6gqe0FyKcIhOkmQ6xcPQbsOtzx2sH1i7/fI0WaGK
+	6gAm66Ee7NuB3gQwI94M7e2DyemlNR5sMM7vKLBRBSCC9ntMV3xajxW0A2x4/I4BZbwdY9
+	VXHuMssMmCFm3L8Gfxc21snO+f4SrZVca8t1nvJoIqsxTmum+fA+VoZhJiHJ58RL3XuKTH
+	SF55iA0tj1WeXyLh0dqJCozh2NrpEV5Oc/VFlyS28AUsZ3tGs3PLXAgTkV92Wg==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Andrew Lunn
+ <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 0/7] ARM: dts: marvell: orion / kirkwood: few cleanups
+In-Reply-To: <20240701-dts-marvell-cleanup-v1-0-4773bd20691a@linaro.org>
+References: <20240701-dts-marvell-cleanup-v1-0-4773bd20691a@linaro.org>
+Date: Fri, 05 Jul 2024 14:43:37 +0200
+Message-ID: <87ikxkj9fq.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240705073017-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On Fri, Jul 05, 2024 at 07:30:51AM GMT, Michael S. Tsirkin wrote:
->On Fri, Jul 05, 2024 at 01:28:21PM +0200, Stefano Garzarella wrote:
->> The vDPA block simulator always allocated a 128 MiB ram-disk, but some
->> filesystems (e.g. XFS) may require larger minimum sizes (see
->> https://issues.redhat.com/browse/RHEL-45951).
->>
->> So to allow us to test these filesystems, let's add a module parameter
->> to control the size of the simulated virtio-blk devices.
->> The value is mapped directly to the `capacity` field of the virtio-blk
->> configuration space, so it must be expressed in sector numbers of 512
->> bytes.
->>
->> The default value (0x40000) is the same as the previous value, so the
->> behavior without setting `capacity` remains unchanged.
->>
->> Before this patch or with this patch without setting `capacity`:
->>   $ modprobe vdpa-sim-blk
->>   $ vdpa dev add mgmtdev vdpasim_blk name blk0
->>   virtio_blk virtio6: 1/0/0 default/read/poll queues
->>   virtio_blk virtio6: [vdb] 262144 512-byte logical blocks (134 MB/128 MiB)
->>
->> After this patch:
->>   $ modprobe vdpa-sim-blk capacity=614400
->>   $ vdpa dev add mgmtdev vdpasim_blk name blk0
->>   virtio_blk virtio6: 1/0/0 default/read/poll queues
->>   virtio_blk virtio6: [vdb] 614400 512-byte logical blocks (315 MB/300 MiB)
->>
->> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
+
+> Few cleanups reported by dtbs_check.
 >
->What a hack. Cindy was working on adding control over config
->space, why can't that be used?
+> Best regards,
+> Krzysztof
+>
+> ---
 
-If it can be used easily with virtio-blk device too, it will be great.
-@Cindy do you plan to support that changes for a virtio-blk device too?
-
-In the mean time, for the simulator I thought that this change was fine.
-It's just used for testing and debugging...
-
-My main question is how to use that when we have `shared_backend` set to 
-true, since we use that setting to test for example live migration. In 
-that case, how do we handle the size of the shared ramdisk between 
-devices?
+Series applied on mvebu/dt
 
 Thanks,
-Stefano
 
+Gregory
+
+
+> Krzysztof Kozlowski (7):
+>       ARM: dts: marvell: kirkwood: align GPIO keys node name with bindings
+>       ARM: dts: marvell: kirkwood: drop incorrect address/size-cells in GPIO keys
+>       ARM: dts: marvell: kirkwood: align LED node name with bindings
+>       ARM: dts: marvell: orion: align GPIO keys node name with bindings
+>       ARM: dts: marvell: orion: drop incorrect address/size-cells in GPIO keys
+>       ARM: dts: marvell: orion5x-lswsgl: use 'gpios' property for LEDs
+>       ARM: dts: marvell: orion: align LED node name with bindings
+>
+>  .../dts/marvell/kirkwood-blackarmor-nas220.dts     |  6 +--
+>  arch/arm/boot/dts/marvell/kirkwood-c200-v1.dts     |  8 +--
+>  arch/arm/boot/dts/marvell/kirkwood-cloudbox.dts    |  8 ++-
+>  arch/arm/boot/dts/marvell/kirkwood-d2net.dts       |  2 +-
+>  arch/arm/boot/dts/marvell/kirkwood-dir665.dts      | 22 ++++----
+>  arch/arm/boot/dts/marvell/kirkwood-dns320.dts      | 10 ++--
+>  arch/arm/boot/dts/marvell/kirkwood-dns325.dts      | 10 ++--
+>  arch/arm/boot/dts/marvell/kirkwood-dnskw.dtsi      |  8 ++-
+>  arch/arm/boot/dts/marvell/kirkwood-dockstar.dts    |  4 +-
+>  arch/arm/boot/dts/marvell/kirkwood-dreamplug.dts   |  6 +--
+>  arch/arm/boot/dts/marvell/kirkwood-goflexnet.dts   | 20 ++++----
+>  .../dts/marvell/kirkwood-guruplug-server-plus.dts  |  8 +--
+>  arch/arm/boot/dts/marvell/kirkwood-ib62x0.dts      | 12 ++---
+>  arch/arm/boot/dts/marvell/kirkwood-iconnect.dts    | 20 ++++----
+>  .../boot/dts/marvell/kirkwood-iomega_ix2_200.dts   | 16 +++---
+>  arch/arm/boot/dts/marvell/kirkwood-l-50.dts        | 20 ++++----
+>  arch/arm/boot/dts/marvell/kirkwood-laplug.dts      |  6 +--
+>  .../arm/boot/dts/marvell/kirkwood-linkstation.dtsi |  2 -
+>  .../boot/dts/marvell/kirkwood-linksys-viper.dts    | 10 ++--
+>  arch/arm/boot/dts/marvell/kirkwood-lsxl.dtsi       | 18 +++----
+>  arch/arm/boot/dts/marvell/kirkwood-mplcec4.dts     | 12 ++---
+>  .../boot/dts/marvell/kirkwood-mv88f6281gtw-ge.dts  | 12 ++---
+>  arch/arm/boot/dts/marvell/kirkwood-netxbig.dtsi    |  8 ++-
+>  arch/arm/boot/dts/marvell/kirkwood-ns2-common.dtsi |  6 +--
+>  arch/arm/boot/dts/marvell/kirkwood-ns2lite.dts     |  2 +-
+>  arch/arm/boot/dts/marvell/kirkwood-nsa310.dts      | 20 ++++----
+>  arch/arm/boot/dts/marvell/kirkwood-nsa310a.dts     | 18 +++----
+>  arch/arm/boot/dts/marvell/kirkwood-nsa310s.dts     |  8 ++-
+>  arch/arm/boot/dts/marvell/kirkwood-nsa320.dts      | 18 +++----
+>  arch/arm/boot/dts/marvell/kirkwood-nsa325.dts      | 18 +++----
+>  .../boot/dts/marvell/kirkwood-nsa3x0-common.dtsi   |  8 ++-
+>  .../boot/dts/marvell/kirkwood-openblocks_a6.dts    |  4 +-
+>  .../boot/dts/marvell/kirkwood-openblocks_a7.dts    |  2 -
+>  arch/arm/boot/dts/marvell/kirkwood-pogo_e02.dts    |  4 +-
+>  .../dts/marvell/kirkwood-pogoplug-series-4.dts     |  8 ++-
+>  .../boot/dts/marvell/kirkwood-sheevaplug-esata.dts |  2 +-
+>  arch/arm/boot/dts/marvell/kirkwood-sheevaplug.dts  |  4 +-
+>  arch/arm/boot/dts/marvell/kirkwood-synology.dtsi   | 58 +++++++++++-----------
+>  arch/arm/boot/dts/marvell/kirkwood-t5325.dts       |  4 +-
+>  arch/arm/boot/dts/marvell/kirkwood-ts219-6281.dts  |  6 +--
+>  arch/arm/boot/dts/marvell/kirkwood-ts219-6282.dts  |  6 +--
+>  arch/arm/boot/dts/marvell/kirkwood-ts419.dtsi      |  6 +--
+>  .../dts/marvell/mvebu-linkstation-gpio-simple.dtsi |  2 -
+>  .../boot/dts/marvell/orion5x-lacie-d2-network.dts  |  9 ++--
+>  .../orion5x-lacie-ethernet-disk-mini-v2.dts        |  7 ++-
+>  .../boot/dts/marvell/orion5x-linkstation-lschl.dts |  4 +-
+>  arch/arm/boot/dts/marvell/orion5x-lswsgl.dts       | 25 +++++-----
+>  .../marvell/orion5x-maxtor-shared-storage-2.dts    |  7 ++-
+>  .../boot/dts/marvell/orion5x-netgear-wnr854t.dts   |  2 +-
+>  .../arm/boot/dts/marvell/orion5x-rd88f5182-nas.dts |  2 +-
+>  50 files changed, 230 insertions(+), 278 deletions(-)
+> ---
+> base-commit: 9c9a5aa3a60dc9e1e2448c29f346385914052642
+> change-id: 20240701-dts-marvell-cleanup-1c9fcf6ae439
+>
+> Best regards,
+> -- 
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
