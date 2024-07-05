@@ -1,357 +1,105 @@
-Return-Path: <linux-kernel+bounces-242253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEA392855F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:44:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A22928562
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6219282A9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8CE28379F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A0E149C42;
-	Fri,  5 Jul 2024 09:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTshqfOv"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95E81487D6;
+	Fri,  5 Jul 2024 09:43:46 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53241494DC;
-	Fri,  5 Jul 2024 09:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096F8146A8D;
+	Fri,  5 Jul 2024 09:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172609; cv=none; b=NrmyEMa4GTQecK34KGpcMaXwOzi6RwgDqez9jblRyUHRjaC4YR6qFxIQl6rf1QebpKSDJ+T4ZZ5vs6HOlX3U3a4T2+loY4QznJ4b4hrrVNpbPc0lWpp1U8+8jXOFhajL0NZgE/fsG5WtcjqM6wW4xEXk6Ur9J22A9UvUF98AqfY=
+	t=1720172626; cv=none; b=QKMmYpzDwJsaLVl1uf2SAi8D9GZEw1BfOErtElPbwx/t9ixdunmVVXl7xAsIoXCUq/EYhNOLpNiYL5/M4bHEr2YO1ScHGwruqqdKz/aAZQ1X/xkoHgLH0pe+/nlXEsDMV3bQCYDZwRd5NuIJCHZ6uBWz3hed6dQpn2tZsKUWKOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172609; c=relaxed/simple;
-	bh=9LVGdFIrTGDbjOh+XA8Z0YC/ZXcuGb1K9vsLn965MHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mmiJ62QDBa03uNfW05kJ3/fuGzAppz4sPugYljRKe+F3+ZfeuRbOK4GZRk0aIwTbkQbBeB4FXk+M5Ku3TKIC6V0pr4McQh+WDWoU39tbSehTBUsGo8HZTlpcN+LEcD4qeYJvem5sGiIveXZkuHd0VXkIg/hSZR9EGBZUKMRSuv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTshqfOv; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-75c3acf90f0so854151a12.2;
-        Fri, 05 Jul 2024 02:43:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720172607; x=1720777407; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jFnq702W1wouPPtmwM6wErXmz26QeU/F3Y7O+wXoTK0=;
-        b=nTshqfOv3uEdt4evhoAWi62geGaClDD9hfzlgFy0rud1DIyGaUVr9JxpwJrDN7ci5f
-         hxTIE3QZLkQk2R+FXHptwYSQK6xptS2oH03upzlrdB5dxGQ7vtzW5cblTLXJQmy4RDVZ
-         fS5sF0utIzATLYuK16JkP5DMtLdW+GRg3DnmNb4EjK7wp9CK9xQ/hNyY2tk6ZLnFQO/w
-         LzqHJnFoSKJ6ilVpdnVyfeFfX3/CjKTEaSq1xxkxe9s8U7gEziw6/SyJWa2KR8juktJr
-         lc7ma9a4a/UcDMHN1+Ptmsba7P2P5/XwjfG8abvuzTVQJv7ZO+YLlriZbXYKMzzpLSXN
-         pljw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720172607; x=1720777407;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jFnq702W1wouPPtmwM6wErXmz26QeU/F3Y7O+wXoTK0=;
-        b=tQf46H0HpkSEH5Ejd49HwmgQxgL2gv3Zzf6bOH3gL1OYLI2OeXM87mYfRSGLINo3ry
-         NpJL1z/p6CZdKF96qvg0t/Ui1byjnJS3Ph+BVfBz0DTqlSSRdEKegHL18meVHMLw3kbZ
-         Vw4VS1/+g11R02dhClVTwiwPMcPmBFkhwYUKGyt2/wqoNZM9rc0KNfZtVoueVtkJXQuH
-         15wKpe4aBwveOBQwazLFvW33hTA2MOJpBOkogJmi2PQrpkORafnVfKvXxlALfEXQ63YA
-         R8GCmMHKqcfpBr3TYOw4YdG2+hZtiDeiSBlkFtlBfJLwGpofAfFO1EudbbcAiJmjAnE/
-         sgWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLD2EjpXmLqN0M0nJmRAIt5dU8y5cnQQR/XAxqibyPKPdttUZpMXIYtLWAYYSQUAYeQ3o1r8Wp7/APJ9NQpC/GtLMx/Zl9v7ilQkB3cxEhUXmyuF0obcubaEQ5WNSMSxZSJYOYHRCOZ3z0ZyJPOg==
-X-Gm-Message-State: AOJu0Yyt/VASyJBNw4xz0zoQ4FVjxku5i5PyPSsqzwZlMy/KO9YMvvdU
-	iIxEpwmHf8pY1GAGocODWThc8KmXVQA0SKQ8MhmkssqVgOQesb+t
-X-Google-Smtp-Source: AGHT+IGe2OCJaquwbP/OchP9XmBylQc7QiFzIbAEjbHOCU9+P+bDhi8+i+8I+UPNZ1t8iGvJeG3fgw==
-X-Received: by 2002:a05:6a20:9189:b0:1bf:d90:4665 with SMTP id adf61e73a8af0-1c0cc75d552mr3571074637.36.1720172607039;
-        Fri, 05 Jul 2024 02:43:27 -0700 (PDT)
-Received: from localhost.localdomain ([120.229.49.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a9cd133sm2958138a91.38.2024.07.05.02.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 02:43:26 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: adrian.hunter@intel.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	kan.liang@linux.intel.com,
-	namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH v5 8/8] perf trace: Remove arg_fmt->is_enum, we can get that from the BTF type
-Date: Fri,  5 Jul 2024 17:43:00 +0800
-Message-ID: <20240705094300.585156-9-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240705094300.585156-1-howardchu95@gmail.com>
-References: <20240705094300.585156-1-howardchu95@gmail.com>
+	s=arc-20240116; t=1720172626; c=relaxed/simple;
+	bh=En2qOjPD1WZPJVdH9mcRoOPC7p3aqmF+PJMGB9P3eV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BjQTt1oYUWNECAgqqb1clwMf6ft4Nrm7FlzIH1j5ryKvMQnoSzK6CqaJTDic8nTQGRkVZZHWH21ogfiWOEtKUeZnFITGNesJ6T0OT2/H4Ga0zj9vuCAlftfAdj6V44HNN7jBaJrNUeMkd1lnkfMVxOE0wBBxYjx2zyBk9ApJQT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1sPfTZ-0008HZ-0e; Fri, 05 Jul 2024 11:43:33 +0200
+Date: Fri, 5 Jul 2024 11:43:33 +0200
+From: Florian Westphal <fw@strlen.de>
+To: yyxRoy <yyxroy22@gmail.com>
+Cc: pablo@netfilter.org, kadlec@netfilter.org, gregkh@linuxfoundation.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yyxRoy <979093444@qq.com>
+Subject: Re: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE
+ for in-window RSTs
+Message-ID: <20240705094333.GB30758@breakpoint.cc>
+References: <20240705040013.29860-1-979093444@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705040013.29860-1-979093444@qq.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+yyxRoy <yyxroy22@gmail.com> wrote:
+> With previous commit https://github.com/torvalds/linux/commit/be0502a
+> ("netfilter: conntrack: tcp: only close if RST matches exact sequence")
+> to fight against TCP in-window reset attacks, current version of netfilter
+> will keep the connection state in ESTABLISHED, but lower the timeout to
+> that of CLOSE (10 seconds by default) for in-window TCP RSTs, and wait for
+> the peer to send a challenge ack to restore the connection timeout
+> (5 mins in tests).
+> 
+> However, malicious attackers can prevent incurring challenge ACKs by
+> manipulating the TTL value of RSTs. The attacker can probe the TTL value
+> between the NAT device and itself and send in-window RST packets with
+> a TTL value to be decreased to 0 after arriving at the NAT device.
+> This causes the packet to be dropped rather than forwarded to the
+> internal client, thus preventing a challenge ACK from being triggered.
+> As the window of the sequence number is quite large (bigger than 60,000
+> in tests) and the sequence number is 16-bit, the attacker only needs to
+> send nearly 60,000 RST packets with different sequence numbers
+> (i.e., 1, 60001, 120001, and so on) and one of them will definitely
+> fall within in the window.
+> 
+> Therefore we can't simply lower the connection timeout to 10 seconds
+> (rather short) upon receiving in-window RSTs. With this patch, netfilter
+> will lower the connection timeout to that of CLOSE only when it receives
+> RSTs with exact sequence numbers (i.e., old_state != new_state).
 
-This is to pave the way for other BTF types, i.e. we try to find BTF
-type then use things like btf_is_enum(btf_type) that we cached to find
-the right strtoul and scnprintf routines.
+This effectively ignores most RST packets, which will clog up the
+conntrack table (established timeout is 5 days).
 
-For now only enum is supported, all the other types simple return zero
-for scnprintf which makes it have the same behaviour as when BTF isn't
-available, i.e. fallback to no pretty printing. Ditto for strtoul.
+I don't think there is anything sensible that we can do here.
 
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~#
+Also, one can send train with data packet + rst and we will hit
+the immediate close conditional:
 
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
-Tested-by: Howard Chu <howardchu95@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lore.kernel.org/r/20240624181345.124764-9-howardchu95@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c       | 101 +++++++++++++++++--------------
- tools/perf/trace/beauty/beauty.h |   1 +
- 2 files changed, 56 insertions(+), 46 deletions(-)
+   /* Check if rst is part of train, such as
+    *   foo:80 > bar:4379: P, 235946583:235946602(19) ack 42
+    *   foo:80 > bar:4379: R, 235946602:235946602(0)  ack 42
+    */
+    if (ct->proto.tcp.last_index == TCP_ACK_SET &&
+        ct->proto.tcp.last_dir == dir &&
+        seq == ct->proto.tcp.last_end)
+            break;
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index d9104fc4f61f..488c2cedc110 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -111,7 +111,6 @@ struct syscall_arg_fmt {
- 	const char *name;
- 	u16	   nr_entries; // for arrays
- 	bool	   show_zero;
--	bool	   is_enum;
- #ifdef HAVE_LIBBPF_SUPPORT
- 	const struct btf_type *type;
- #endif
-@@ -910,33 +909,46 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
- #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
- 
- #ifdef HAVE_LIBBPF_SUPPORT
--static int syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
-+static void syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
- {
- 	int id;
- 
--	// Already cached?
--	if (arg_fmt->type != NULL)
--		return 0;
--
- 	type = strstr(type, "enum ");
- 	if (type == NULL)
--		return -1;
-+		return;
- 
- 	type += 5; // skip "enum " to get the enumeration name
- 
- 	id = btf__find_by_name(btf, type);
- 	if (id < 0)
--		return -1;
-+		return;
- 
- 	arg_fmt->type = btf__type_by_id(btf, id);
--	return arg_fmt->type == NULL ? -1 : 0;
- }
- 
- static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_arg *arg, u64 *val)
-+{
-+	const struct btf_type *bt = arg->fmt->type;
-+	struct btf *btf = arg->trace->btf;
-+	struct btf_enum *be = btf_enum(bt);
-+
-+	for (int i = 0; i < btf_vlen(bt); ++i, ++be) {
-+		const char *name = btf__name_by_offset(btf, be->name_off);
-+		int max_len = max(size, strlen(name));
-+
-+		if (strncmp(name, bf, max_len) == 0) {
-+			*val = be->val;
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static bool syscall_arg__strtoul_btf_type(char *bf, size_t size, struct syscall_arg *arg, u64 *val)
- {
- 	const struct btf_type *bt;
--	char *type = arg->parm;
--	struct btf_enum *be;
-+	char *type = arg->type_name;
- 	struct btf *btf;
- 
- 	trace__load_vmlinux_btf(arg->trace);
-@@ -945,20 +957,19 @@ static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_
- 	if (btf == NULL)
- 		return false;
- 
--	if (syscall_arg_fmt__cache_btf_enum(arg->fmt, btf, type) < 0)
--		return false;
-+	if (arg->fmt->type == NULL) {
-+		// See if this is an enum
-+		syscall_arg_fmt__cache_btf_enum(arg->fmt, btf, type);
-+	}
- 
-+	// Now let's see if we have a BTF type resolved
- 	bt = arg->fmt->type;
--	be = btf_enum(bt);
--	for (int i = 0; i < btf_vlen(bt); ++i, ++be) {
--		const char *name = btf__name_by_offset(btf, be->name_off);
--		int max_len = max(size, strlen(name));
-+	if (bt == NULL)
-+		return false;
- 
--		if (strncmp(name, bf, max_len) == 0) {
--			*val = be->val;
--			return true;
--		}
--	}
-+	// If it is an enum:
-+	if (btf_is_enum(arg->fmt->type))
-+		return syscall_arg__strtoul_btf_enum(bf, size, arg, val);
- 
- 	return false;
- }
-@@ -978,23 +989,23 @@ static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf *btf, c
- 	return 0;
- }
- 
--static size_t trace__btf_enum_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
--					size_t size, int val, char *type)
--{
--	if (syscall_arg_fmt__cache_btf_enum(arg_fmt, trace->btf, type) < 0)
--		return 0;
--
--	return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
--}
--
- static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
- 				   size_t size, int val, char *type)
- {
- 	if (trace->btf == NULL)
- 		return 0;
- 
--	if (arg_fmt->is_enum)
--		return trace__btf_enum_scnprintf(trace, arg_fmt, bf, size, val, type);
-+	if (arg_fmt->type == NULL) {
-+		// Check if this is an enum and if we have the BTF type for it.
-+		syscall_arg_fmt__cache_btf_enum(arg_fmt, trace->btf, type);
-+	}
-+
-+	// Did we manage to find a BTF type for the syscall/tracepoint argument?
-+	if (arg_fmt->type == NULL)
-+		return 0;
-+
-+	if (btf_is_enum(arg_fmt->type))
-+		return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
- 
- 	return 0;
- }
-@@ -1007,14 +1018,14 @@ static size_t trace__btf_scnprintf(struct trace *trace __maybe_unused, struct sy
- 	return 0;
- }
- 
--static bool syscall_arg__strtoul_btf_enum(char *bf __maybe_unused, size_t size __maybe_unused,
-+static bool syscall_arg__strtoul_btf_type(char *bf __maybe_unused, size_t size __maybe_unused,
- 					  struct syscall_arg *arg __maybe_unused, u64 *val __maybe_unused)
- {
- 	return false;
- }
- #endif // HAVE_LIBBPF_SUPPORT
- 
--#define STUL_BTF_ENUM syscall_arg__strtoul_btf_enum
-+#define STUL_BTF_TYPE syscall_arg__strtoul_btf_type
- 
- #define STRARRAY(name, array) \
- 	  { .scnprintf	= SCA_STRARRAY, \
-@@ -1887,7 +1898,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			continue;
- 
- 		len = strlen(field->name);
--		arg->is_enum = false;
- 
- 		if (strcmp(field->type, "const char *") == 0 &&
- 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
-@@ -1915,8 +1925,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			 */
- 			arg->scnprintf = SCA_FD;
- 		} else if (strstr(field->type, "enum") && use_btf != NULL) {
--			*use_btf = arg->is_enum = true;
--			arg->strtoul = STUL_BTF_ENUM;
-+			*use_btf = true;
-+			arg->strtoul = STUL_BTF_TYPE;
- 		} else {
- 			const struct syscall_arg_fmt *fmt =
- 				syscall_arg_fmt__find_by_name(field->name);
-@@ -2236,10 +2246,13 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 			/*
- 			 * Suppress this argument if its value is zero and show_zero
- 			 * property isn't set.
-+			 *
-+			 * If it has a BTF type, then override the zero suppression knob
-+			 * as the common case is for zero in an enum to have an associated entry.
- 			 */
- 			if (val == 0 && !trace->show_zeros &&
- 			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].show_zero) &&
--			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].is_enum))
-+			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].strtoul == STUL_BTF_TYPE))
- 				continue;
- 
- 			printed += scnprintf(bf + printed, size - printed, "%s", printed ? ", " : "");
-@@ -2942,7 +2955,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
- 		val = syscall_arg_fmt__mask_val(arg, &syscall_arg, val);
- 
- 		/* Suppress this argument if its value is zero and show_zero property isn't set. */
--		if (val == 0 && !trace->show_zeros && !arg->show_zero && !arg->is_enum)
-+		if (val == 0 && !trace->show_zeros && !arg->show_zero && arg->strtoul != STUL_BTF_TYPE)
- 			continue;
- 
- 		printed += scnprintf(bf + printed, size - printed, "%s", printed ? ", " : "");
-@@ -3910,14 +3923,10 @@ static int trace__expand_filter(struct trace *trace, struct evsel *evsel)
- 				struct syscall_arg syscall_arg = {
- 					.trace = trace,
- 					.fmt   = fmt,
-+					.type_name = type,
-+					.parm = fmt->parm,
- 				};
- 
--				if (fmt->is_enum) {
--					syscall_arg.parm = type;
--				} else {
--					syscall_arg.parm = fmt->parm;
--				}
--
- 				if (fmt->strtoul(right, right_size, &syscall_arg, &val)) {
- 					char *n, expansion[19];
- 					int expansion_lenght = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
-diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
-index 78d10d92d351..3ed11e18ee2d 100644
---- a/tools/perf/trace/beauty/beauty.h
-+++ b/tools/perf/trace/beauty/beauty.h
-@@ -113,6 +113,7 @@ struct syscall_arg {
- 	struct thread *thread;
- 	struct trace  *trace;
- 	void	      *parm;
-+	char	      *type_name;
- 	u16	      len;
- 	u8	      idx;
- 	u8	      mask;
--- 
-2.45.2
+So even if we'd make this change it doesn't prevent remote induced
+resets.
 
+Conntrack cannot validate RSTs precisely due to lack of information,
+only the endpoints can do this.
 
