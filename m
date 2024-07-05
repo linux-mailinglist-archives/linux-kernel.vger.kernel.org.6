@@ -1,106 +1,202 @@
-Return-Path: <linux-kernel+bounces-242951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA420928F7D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:11:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A06928F7F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 916242847DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:11:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F3462848AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C717614A60C;
-	Fri,  5 Jul 2024 23:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB7F1482F4;
+	Fri,  5 Jul 2024 23:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJaGgKwE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="RH18t34m"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11ED0145B12;
-	Fri,  5 Jul 2024 23:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B239B3A8CB;
+	Fri,  5 Jul 2024 23:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720221055; cv=none; b=omvVrhBtsAkWgD3avtKBjmzPYQV2h1WS+WWNgFw9sOK7Rgla6mkAcI51Gzx7NT/W5Wa/rFcj3aO1rv7as5z6iJMtDzGeZKY0FGWHMCIi0EB49KPN+HahpAkys/GYZoqZC9Q7Z+8O1PbF7UOD1d5AUTp2VnGXt4sH6qaJQtGC0MU=
+	t=1720221588; cv=none; b=pASHStHbB5OcvQccbfkIMKxU66M8tGCKyaGWSByMu+8CWOVXHOnSvIXwSq8RjGriUuNtPCWtNDOnNoZQqAUINTIoKBfsKAaosfxmh6X4ZrMJkTWXGJr7azQN0zZ0Ov2xJjkd4ugxqLY02y2zX/CSoDdQi2Y/LKhey+1FnnDjIDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720221055; c=relaxed/simple;
-	bh=xS7VcBK27sfR8bV43BCjPhUhK+xwxmamXbp7tcVxbE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m4TQS5yO01Z3ahaA5fbEQ7xdukcDWgYmIGePu94GJM4FDM6THeHy59tlN1Z6K7TbTTVDU6eX2mi27J2koN11PcNsmaRG6Wdp7an2rKnDodQibDbDBuXCvFomGUlqZZY1T43uoC4IPKcWs9HgYDdGfiQx+OP4ZBuNQeWBNVNjPHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJaGgKwE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BBEEC116B1;
-	Fri,  5 Jul 2024 23:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720221054;
-	bh=xS7VcBK27sfR8bV43BCjPhUhK+xwxmamXbp7tcVxbE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dJaGgKwEv7m9AUO5+9/KlAbm+lSmetXgHFTo3EP3/UOrcNyr6HtuZZtqZ0KcQOXDg
-	 Si49IU7A0exScQD2PHzAuQ5Enkok09M2c4pSafl5l9Q2vondxxxLfuw6aImzYHgZ+r
-	 6CINML8fU7DzMYPip4qb6QZmFnIlUetu+1QSS5LuhmSlCoGuCPQ2eJNrIR26t7njwU
-	 xO2V/b/GkP/OJLwtvDRtwJPXjyMm8nVfb8Wn/5Cs3VQZZ16NnPtwuPvU8pB5ngSKA4
-	 1tGSv/snfiH/GChZ4GzQRFbgtpEInUPh5PXB+/fGzuTpJeKCLtzjg7rZBVHPRWrm/1
-	 oPrgSW+vWW0bQ==
-Date: Fri, 5 Jul 2024 16:10:54 -0700
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jiri Olsa <jolsa@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <202407051604.377EA59@keescook>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
- <CAEf4BzZaTNTDauJYaES-q40UpvcjNyDSfSnuU+DkSuAPSuZ8Qw@mail.gmail.com>
- <20240703081042.GM11386@noisy.programming.kicks-ass.net>
- <CAEf4BzY9zi7pKmSmrCAqJ2GowZmCZ0EnZfA5f8YvxHRk2Pj8Zw@mail.gmail.com>
- <202407031330.F9016C60B@keescook>
- <20240705071036.GW11386@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1720221588; c=relaxed/simple;
+	bh=wd3o2UiFtRW0GhIK5ovjLNqt6QHxcm7lu6zWI/tTOsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h1O7mtW/ui534Jgaip4Hzr1FhrRSZdPJmMzW0kaGrNqIc+SdtwWjqosz4z506UtuzujAfjFjhGURxM9MJxj3Pvzekmlti8lm+ExN8SkfV/6eHUVWHG5UpY6r+BAEvDsk0voBqx/I4pbNL5tUmP0lq80zDB+MU1EUjAZJbEuvMME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=RH18t34m; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1720221573; x=1720826373; i=quwenruo.btrfs@gmx.com;
+	bh=yXR7tbO7KPHj+ZgW/+Rr2FCRBXpUlZOIJVkAlRHid/A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RH18t34m8FE5c5glncFlphCffXNPgW6EUWdZbvA/nz1zSVxWWTilEuLF7maMgV31
+	 Xbg+kSdchZKofuSACX7ZDElk4q2VIx9F1RuY068pwiL9umcx/IMglMuvbPeKYaO09
+	 Ln1hjR08PPnMXFeyG1NS39yzHwHXKq1czqos4jASMnFbisjhogWB1ro3bPgMkqu0S
+	 uQrvFhH5iNjXe2tMtUo0m5Hg7wdT/oyocs8ommri3ZZWhVv4nHBdzeQfio2pVHYMT
+	 CWlE+mvZrdH2McpQkbopp8v1Z0usf43l4eSV4XolMfZ9FA9TjG4oiji7CIQEGZFj9
+	 EBGOVn1E+gt40FBxKA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1M3UV8-1sQQB50bYo-002gN6; Sat, 06
+ Jul 2024 01:19:33 +0200
+Message-ID: <e51d0042-ec10-4a50-bd76-3d3d3cbc9bfc@gmx.com>
+Date: Sat, 6 Jul 2024 08:49:28 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240705071036.GW11386@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] btrfs: replace stripe extents
+To: Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <20240705-b4-rst-updates-v4-0-f3eed3f2cfad@kernel.org>
+ <20240705-b4-rst-updates-v4-1-f3eed3f2cfad@kernel.org>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <20240705-b4-rst-updates-v4-1-f3eed3f2cfad@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:U7gqOFCiBOICmvU9aWrhgOX+lUid0sVZrzhKM17SG1YM3j3pAq6
+ aXgxhLU2DSHuxsT+IqCN3MdgDRLQGg55xD1EdCbl+N0B/SAwWyBpUcYoG4Qu348ei1iUaIG
+ 1LprDrUtANOahhxugequ5Io7krj7s4BFkWVj0H3aia1CqoCoz0T/xdgV6Mn97QQICk72rqV
+ 0qTYq+eyTMXLiYAPXezHw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:I9BFu9wFrxY=;J7tjGf0Hcmoh0o4ccZmT1iTrOsz
+ daXFRG/Wu6xdTFRQ2PNAqcvrYY3qasWwAvg+bFrFPfHbrNLQHtu9dwtmrlG4y+S9cVllRf+A6
+ WaSdmmOUGi2xo8voh29meXiHYmjQumaWf4ylllvglG6/kV5OJ144DB0BkFhaHjHTPf6yBe1mn
+ j99J0ty4XKpjzNG4jkbMZTRfN7d8gNNAnYKzShLy5IaSqCK8X5Rb2kxjkQw09bRuvvcIhCSCi
+ Ino+BSNsw3TSP4D4L2oZtddtDDoeYQMM4uWTs6g/xunNVSuQ0RAJ7sI7WJWmx8N+cN7YyIdAd
+ tWOo3omaioHJdB2MgrSB6Lid1FpwR1kxTp9EE7eg34Q2EQWdSkQJ5KYKWvrGRTQ6ZAD/2pDSn
+ ScppUxad3Z0PJwcQaWWyvR62qLutdWWWQ/63Ceq6HCuuCYH09WmIMSPP7tSIPXHpuHHkvRUT+
+ BuR6GQJSr8D8ozHwkrMkt4/L17u6Ej9vH2oK5XYMS3nyec8asCda4C8dXvtPHpA3kQ8Jns4+y
+ AQLTf5sjNUz4vlAXBHC7wjVTSxZMzIgSivu6YFbaKlkUBBjdn3jnKIlRAARy7VDMxhseUIVTD
+ hqfaUKUUViYxfOgjH00N52bS1CLmdtYWJ4/z0DWtGXimzngBG3kJgNxlrPzbGQSeQQUF/AScW
+ mfukmcfRJgzgWb0Oj3Y1DstgApzTP7syzXKbBRgg5pRRP6YwmCB22tsCWY2wvOrILkaxlPGR8
+ 6SxGUDGsVsA0uJNG9ekG8UCtJx2lUB3sGnm3mKUgEZ+RgoNTzknwTQjIBp0wbrvTN6vgavZ4X
+ Iq/3cymsTC9KOsOCoQZzz1xwhXfPPHCZkYmrSUjSTksos=
 
-On Fri, Jul 05, 2024 at 09:10:36AM +0200, Peter Zijlstra wrote:
-> On Wed, Jul 03, 2024 at 01:36:19PM -0700, Kees Cook wrote:
-> 
-> > Yes, please use struct_size_t(). This is exactly what it was designed for.
-> 
-> Kees, please, just let up, not going to happen. I'm getting really fed
-> up having to endlessly repeat what a piece of shite struct_size() is.
 
-I mean, okay, but the wrapper in the patch is basically the same thing.
-*shrug*
 
-> Put your time and effort into doing a proper language extension so we
-> can go and delete all that __builtin_*_overflow() based garbage.
+=E5=9C=A8 2024/7/6 00:43, Johannes Thumshirn =E5=86=99=E9=81=93:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> If we can't insert a stripe extent in the RAID stripe tree, because
+> the key that points to the specific position in the stripe tree is
+> already existing, we have to remove the item and then replace it by a
+> new item.
+>
+> This can happen for example on device replace operations.
 
-We are! That's in the future. Today, we have a saturating wrapper that
-provides type checking for the calculation's operands, and is in common
-use through-out the kernel. These are all things that the open-coded
-does not provide, so I continue to see it as an improvement over what
-else is available right now.
+In that case, can we just modify the targeted dev stripe?
 
-I got asked for my opinion about whether to use struct_size() or not. In
-my opinion, this is a good place for it. I know you don't agree with me,
-but that wasn't the question. :)
+Or do we have other call sites that can lead to such conflicts?
 
--Kees
+As I'm not that confident if such replace behavior would mask some real
+problems.
 
--- 
-Kees Cook
+Thanks,
+Qu
+
+>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>   fs/btrfs/raid-stripe-tree.c | 36 ++++++++++++++++++++++++++++++++++++
+>   1 file changed, 36 insertions(+)
+>
+> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
+> index e6f7a234b8f6..3b32e96c33fc 100644
+> --- a/fs/btrfs/raid-stripe-tree.c
+> +++ b/fs/btrfs/raid-stripe-tree.c
+> @@ -73,6 +73,39 @@ int btrfs_delete_raid_extent(struct btrfs_trans_handl=
+e *trans, u64 start, u64 le
+>   	return ret;
+>   }
+>
+> +static int replace_raid_extent_item(struct btrfs_trans_handle *trans,
+> +				    struct btrfs_key *key,
+> +				    struct btrfs_stripe_extent *stripe_extent,
+> +				    const size_t item_size)
+> +{
+> +	struct btrfs_fs_info *fs_info =3D trans->fs_info;
+> +	struct btrfs_root *stripe_root =3D fs_info->stripe_root;
+> +	struct btrfs_path *path;
+> +	int ret;
+> +
+> +	path =3D btrfs_alloc_path();
+> +	if (!path)
+> +		return -ENOMEM;
+> +
+> +	ret =3D btrfs_search_slot(trans, stripe_root, key, path, -1, 1);
+> +	if (ret)
+> +		goto err;
+> +
+> +	ret =3D btrfs_del_item(trans, stripe_root, path);
+> +	if (ret) {
+> +		ret =3D (ret =3D=3D 1) ? -ENOENT : ret;
+> +		goto err;
+> +	}
+> +
+> +	btrfs_free_path(path);
+> +
+> +	return btrfs_insert_item(trans, stripe_root, key, stripe_extent,
+> +				 item_size);
+> + err:
+> +	btrfs_free_path(path);
+> +	return ret;
+> +}
+> +
+>   static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *tra=
+ns,
+>   					struct btrfs_io_context *bioc)
+>   {
+> @@ -112,6 +145,9 @@ static int btrfs_insert_one_raid_extent(struct btrfs=
+_trans_handle *trans,
+>
+>   	ret =3D btrfs_insert_item(trans, stripe_root, &stripe_key, stripe_ext=
+ent,
+>   				item_size);
+> +	if (ret =3D=3D -EEXIST)
+> +		ret =3D replace_raid_extent_item(trans, &stripe_key,
+> +					       stripe_extent, item_size);
+>   	if (ret)
+>   		btrfs_abort_transaction(trans, ret);
+>
+>
 
