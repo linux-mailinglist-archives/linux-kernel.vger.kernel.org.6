@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-242816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49914928D7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE17928D82
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3D81F21EE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9141D1F22B10
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308AE13DB88;
-	Fri,  5 Jul 2024 18:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F94316D32C;
+	Fri,  5 Jul 2024 18:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYq5yMIj"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6h4ROaN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B614224F2;
-	Fri,  5 Jul 2024 18:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6271314B075;
+	Fri,  5 Jul 2024 18:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720204055; cv=none; b=PvYWzxkrHk4ILEQhWo6PXUDCGUamWrg/s0b8NTSwzgi6dpaZU05gR1XEAXeCSQPlahSSyzMr5ZbRTVPy2xn2xqFBM9CQQ9yactzg60ge3KGiA5gpw6Yrx85cx0SinqBa5UuyUvOZTmH98QdX492+dAvXEQEsFyfkMF7hokRLWNk=
+	t=1720204086; cv=none; b=GfEKeJfgJrDNK0k271jmTTbFC251yQTvL3WbTSIZuoTGpd10UkS3z22rZk19AqGh7rkL9BpbG0/u8UcInWvQKYh/EhtGOP3Qh6NUG/EP2c1jqOYGSmHbf2sXplsfY1jPVo8MASodX8444fQEoOYH8me3RwGPWDSaV0qjGM/drmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720204055; c=relaxed/simple;
-	bh=3CKUzJWdEdDG484sR92q8TI7bVIXY1L5RBfx/b2yB/c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XMNqIWkq7U8ZBBDruM3Wr8HOZZHA0aZbiX6LuFbTah+SF6zSVLt0OX0xDvqnw+isHv1wVGGzEUowdtAawAUPHk1EAYUBcCPtgVyU+yXRIz/uSb6dAxbfkd7s4fYnq2E8WfhIjlWz7dj3UucaBfWMv9TmmLh1TB1dmMnnKGiBsCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cYq5yMIj; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4256788e13bso12919115e9.2;
-        Fri, 05 Jul 2024 11:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720204052; x=1720808852; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Nh4IMQ6aMf8qqnXQqtk5t+twjcO4FX7On9IGuSSAOg=;
-        b=cYq5yMIjZ8mWTGInI0ZzROlz7Jn5k0zqMyowWQrtjJ94k0DJTtMudtIJOGnD9xTtin
-         gHMf8ija0dxFfJ9Kf4KIULZfs6ZZO2B7gg1ZJKLphF2j+4RaNraLTe+YW0JuW5V3/aV3
-         f1Ob5IJ3zyu1NzFZGCyWgZYSVYoZhj2QY0RUyKUG2mXNE+YkaQ/9TDtQfthi6BTvB1Nl
-         N/VWATOTY8g2VMOaOVkjoFedTRuQrMSXFhlkOVkKKSOAL3acEj9Y/C/AWUYcpX3DyuMU
-         LYCsz0TJQUGd5dUZasWisUwSKCKd9Mvorrv8b4EX8dsQ7ZLjt8JEiXbHnbWUNXFw+uAT
-         gokA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720204052; x=1720808852;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Nh4IMQ6aMf8qqnXQqtk5t+twjcO4FX7On9IGuSSAOg=;
-        b=BzNdDbrWNmB264NLo/u6X0ibeDMsaRipm9Dwn4nqo2xboAZlumJ4OPuKYP2cP4X/UB
-         +nbRFECD67MFGbk8c9hdNpY4EaZ1dlOu31WS8GMGb71rMLUcLBalUWwpLTVZKxhiqB8r
-         slwKwbNgM2CDufAnmWDSbcbXNSiSeT7QTaRGoTQ8OhkQ+p8a7cZOUmQYATLS002QlB2e
-         6qQtrFDXOO+aAKjQekH0MK1J31UviOH4AHo8zxmvDlMmzzEHkWn07GYV2ct7wzA0y1fl
-         dOfVBoLNqrBogaPSlDyaz6invmQdl6d4s0g3KlyCYR/ta3rs0SFb4bvEq1RWKRwiPVH8
-         h2yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnFw5lBkeUNauKUajxL19CwjBET5bhJZpbj6poGdazZqbYSD/WMg4HLlSq5wzEGvr+4tTAm5MWQEgQbwDAT9SfCykJT8DOmJ06jdhv
-X-Gm-Message-State: AOJu0Ywj+refz9koc0JDGDyuAtb0oouHPFZDFPHmF0Z3KGCw3vIc7gPP
-	/Gi8OdrIu0zE9LND15GOHJCBNxMDykf9nkOnkU4rZQzqaaNgSoT6cBGEN8lc
-X-Google-Smtp-Source: AGHT+IFjGnRKr8+rJVJupa3E4KyVyJghp/1UMCw8OjEsQrZgrRqh/kcSldLTMQaK2MCEwsKLBC+JHg==
-X-Received: by 2002:a5d:4f06:0:b0:367:326b:f257 with SMTP id ffacd0b85a97d-3679dd5459bmr3994466f8f.33.1720204051943;
-        Fri, 05 Jul 2024 11:27:31 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-4adb-3312-ca75-bf55.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:4adb:3312:ca75:bf55])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a103d00sm21606055f8f.99.2024.07.05.11.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 11:27:30 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Fri, 05 Jul 2024 20:27:28 +0200
-Subject: [PATCH] hwmon: (gsc-hwmon) constify read-only struct regmap_bus
+	s=arc-20240116; t=1720204086; c=relaxed/simple;
+	bh=KmcElzmESUIp0MlELsh9o4w4XilOqKmLaFJjxt90rE8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aTorCeu8RXg/WDZ4K+ApRqtbiKklMw3/VKPE2qygPfWdwfJRAFsiqPPqAx7ThPcE+MvFCoVC7FeTfKsfRRJsNF56t9XARO4Gxkgkya/sDf6HqKtRwSQERsnxeWlR72cT6NjTvEiOZR6rMjYXnFAdYlsfc7J7Ie9K4FfQGLK08j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6h4ROaN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791DAC4AF07;
+	Fri,  5 Jul 2024 18:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720204085;
+	bh=KmcElzmESUIp0MlELsh9o4w4XilOqKmLaFJjxt90rE8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=R6h4ROaNUpRDGTTQQZoqX6QawFmfSQAYU/GSM4Vh9/Yw8h9o1n6/w6lUspzJRe1nk
+	 Y3pU/C9z76LYIfANKBvu6N0FkbBZC3+adqjD6p8/a+ZvbyFJTeReIYmGWCZLbb0uVI
+	 NBNhdhz8AgCM6kP9tmMLXvQ6W3jayrYBL1a5AND4/tCjcsEg+AP6xUzJoFB7LhUYxB
+	 qEVZIjAxqVe0MQ+gRe/yBn64BbOEhXiRqTZnQJcym0fKkH5UtkbzdymaGlT0c4vN6Y
+	 EjXWrwgah6nJfBUx6SZFzlY6PwM4lFzIZArq7mijYP+kI83NFOmeY55TQ1PfvhJWeH
+	 Zu9ElDZb7ROvg==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>
+Subject: Re: [PATCH v2 7/7] tools: add skeleton code for userland testing of VMA logic
+Date: Fri,  5 Jul 2024 11:28:01 -0700
+Message-Id: <20240705182801.95577-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <7989012e4f17074d3b94803dcebb8c3d1365ca1d.1720121068.git.lorenzo.stoakes@oracle.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-hwmon-const-regmap-v1-1-7cde543ba818@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAA87iGYC/x3MTQqAIBBA4avErBvQ6Ae6SrQwHXUWaWhUIN09a
- fkt3iuQKTFlmJsCiS7OHEOFbBvQXgVHyKYaOtH1YhID+nuPAXUM+cREblcHKmnJSmE3Mw5QwyO
- R5eefLuv7fsclirBkAAAA
-To: Tim Harvey <tharvey@gateworks.com>, Jean Delvare <jdelvare@suse.com>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720204050; l=1032;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=3CKUzJWdEdDG484sR92q8TI7bVIXY1L5RBfx/b2yB/c=;
- b=ncwd+dZQFblPN5HIfl6JjHy3N4DYGB7QB775/atanC1bMMMqmaz5MoTAnhqQ5lhJM7xdwx8eX
- sS8vPQNMnQTCjCx78Eo/ZAyLBbtv8b1R7F7jwXAgMx+RojyiiDV/7mx
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Transfer-Encoding: 8bit
 
-`gsc_hwmon_regmap_bus` is not modified and can be declared as const to
-move its data to a read-only section.
+Hi Lorenzo,
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-I missed this one when converting regmap_config to const. After this
-conversion, all read-only regmap_* structs in hwmon are declared as
-const.
----
- drivers/hwmon/gsc-hwmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu,  4 Jul 2024 20:28:02 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-diff --git a/drivers/hwmon/gsc-hwmon.c b/drivers/hwmon/gsc-hwmon.c
-index 0f2147699c91..cb2f01dc4326 100644
---- a/drivers/hwmon/gsc-hwmon.c
-+++ b/drivers/hwmon/gsc-hwmon.c
-@@ -39,7 +39,7 @@ struct gsc_hwmon_data {
- 	struct hwmon_chip_info chip;
- };
- 
--static struct regmap_bus gsc_hwmon_regmap_bus = {
-+static const struct regmap_bus gsc_hwmon_regmap_bus = {
- 	.reg_read = gsc_read,
- 	.reg_write = gsc_write,
- };
+> Establish a new userland VMA unit testing implementation under
+> tools/testing which utilises existing logic providing maple tree support in
+> userland utilising the now-shared code previously exclusive to radix tree
+> testing.
+> 
+> This provides fundamental VMA operations whose API is defined in mm/vma.h,
+> while stubbing out superfluous functionality.
+> 
+> This exists as a proof-of-concept, with the test implementation functional
+> and sufficient to allow userland compilation of vma.c, but containing only
+> cursory tests to demonstrate basic functionality.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240705-hwmon-const-regmap-a1fef10fbd65
+I haven't had a time to review this, and I don't think I will get the time soon
+(don't wait for me).  But, I was able to build and run it as below, thanks to
+the fast runtime of the test ;)
 
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+    $ cd tools/testing/vma
+    $ make
+    [...]
+    $ ./vma
+    4 tests run, 4 passed, 0 failed.
 
+So, FWIW,
+
+Tested-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
+[...]
 
