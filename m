@@ -1,116 +1,189 @@
-Return-Path: <linux-kernel+bounces-241980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C01E928220
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:31:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F599928223
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9A8CB26041
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:31:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF831F26E24
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E11613BAC4;
-	Fri,  5 Jul 2024 06:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzXTkml6"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA631442EF;
+	Fri,  5 Jul 2024 06:34:25 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5315E143C75;
-	Fri,  5 Jul 2024 06:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C3C13B78F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 06:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720161049; cv=none; b=PF0vxgBo53Q1yPbX+ylhUCtPDk7mYeVaya6hydksEIYg3DqJRtk4DlFJmnQBTGsbGxss/dBzYq79vRtfgVmbau/1x8n9yQxsHyMqEA7R372VKxX3RSRV8aBJsn+PbN851lZ0QtZxv9m9Ky565EPk3jjADElRwawXkV/vK+yu5hA=
+	t=1720161264; cv=none; b=gmPufCNm5m6Kj92Wg6myC9LvutmJB2/ab1jjoY94AeUeZhp2d5upPEIH7K9RQoM2csLYYX1iLnAFMfDxJ1a7Jao2vUxy17rtyLp93ORk5CdhgQGJR/CBzSAGlg9PzfunVvPVFkVf72uUDseiVjX5KB2UAWyVWgcfnJQEI0ZNLuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720161049; c=relaxed/simple;
-	bh=3y1kYHHnYGzeD6Wz0nY/wCVLnjXbc4LLizc2QWYCsb4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NPV3CxccwKAHPadFeyMiw95U1AwB23jdVEHdt2EpnvvZn7jp9ueOfY8uDn+whQdFUxHvhrEOdaE7yvdXYVUeUqacwbSIWZOhgM8cdv5V///IobXSuo9yNdtMLwL4ynlWmfcXoUQ7fssC7r1g6xifLihqanhkHiN8HFeWj5/J8jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UzXTkml6; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-64f4fd64773so14528217b3.0;
-        Thu, 04 Jul 2024 23:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720161047; x=1720765847; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jQbhl45iOUg0QGUWvg2xNxmieezt2A1bnLf0za/XLZY=;
-        b=UzXTkml6U5AX+Noheu83kZ037zujHa3W75ZQoxr1ysdzDNul9qDxvtG6LnXeUEAc18
-         AGd0FuX2X6nORsd84lihreTFA0U2JSyaxHL0iYRF0tnQavS2eWCla1HN5ySx88TqPNxP
-         pjmAq7F5Q8Y2CTlijTFl+Vqubb+Uwb4FNfghEBRZQSCaGDzHJJNXn4IAQXyOGG/5IVqO
-         G2/ZkUYvMzzE80oQfjmSCk8iKcLspn1jIe1WeliH10LfzpQ5ij1RM20nvnE4DBamB9ty
-         pJkHhD4rRzVU4EXaB0j/ZgG6T0SDL6DpcDr8KRRUcL/hs78Q40FHs+IAJgUNSP1+hz0D
-         SEbg==
+	s=arc-20240116; t=1720161264; c=relaxed/simple;
+	bh=85Es58jzRms7gGzAuuYOZ6vgzuUrUwVycYLN/X+iT3o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sKIOUcVrHYYtwZmaEANstSnQ3fVKysQjZlubB74Z54VkuyCPY4n6IDEL/1P+hzB5MabCJwPowELtuGDW6mGzeLfUM9SLBZWseiUHnulFP/AAnS/UnIo/ikxpTkef15aaaTHJXnLuFUlIFJKVAcb0httqRpiOwGOdu5+Dd1fLoYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f4e270277cso180997239f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 23:34:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720161047; x=1720765847;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jQbhl45iOUg0QGUWvg2xNxmieezt2A1bnLf0za/XLZY=;
-        b=ff1esDXeRXVqVJtdMiKYDvQQa7/tUXVuN59cfk/iaJmG0Wh3hmJpKaU+PioAKv/wBf
-         6Q/oTAczQET6zqcBecmh7r5J2wEL+OpIOaIc/EecPVxzOjHOwBhjIWZY7/YwkhL/cxoV
-         xaVhajrR/tQYwWI8THbsroD54J3a59OYC6avFjIbmtRHnN5wOXjwth2Uk4rV3CyuRkDU
-         BRVcibFwAOcvGNw9srSK6zq0JNq6J13m3rt5jcYGbc0V985hxKnBz5VHS5bnb0nw/Czx
-         fXL/RE1P1/IKS3FgTUBACmIBc+73rTTkxB+4YLC7EGlMLBhcIvR5MSKGlIiAE3mS28v4
-         AW8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUucihKmKpSZWM+H0G2cX1aIuFeLDiM6nz45U5HwACfJBI4rD6Ds/1aglhKtaKFE6E3YBuaH6bvD00qeB94Z4ztQ7HLmxazWx0gSZFEnqPHZXLurEWeJgbg22I20HOh8zbrUcn6BvBXTzg=
-X-Gm-Message-State: AOJu0YxSq+C85B9FpdQ4bOL5xwGgQXMCZZWeUmK4ep2a5O8dDDhvvWgy
-	0lul0WGgzLrn4Ia3RK7IKmijHPmyXFV6jEcyvwfMaVns11ywC8gC82pA8zI5ulz2JZ8AOOvtHAW
-	Opvv+gAhStJagAr9dgg1jH7r3QH0=
-X-Google-Smtp-Source: AGHT+IEb2d4TYFx4dcPUM/2H6DuAxz2Xagt477hoH4hD4d6CeTKaXtpWV6ii11wwbYejeouG4e95xSVT7l9Y54yfW1k=
-X-Received: by 2002:a05:690c:3382:b0:627:d92a:bdc0 with SMTP id
- 00721157ae682-652d7683982mr46295877b3.36.1720161047227; Thu, 04 Jul 2024
- 23:30:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720161262; x=1720766062;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qmwBaO/n15LUxmQZN3FFPDmzpBVBWqHutkbJ10gUEEU=;
+        b=eWJFlf1yOBg6ZeMpLL36GAvkKm/LqHMgFOYvBWRNEzScYP9Q5YjbrCcuDTQBLmLIHq
+         4OwkRWg+THo7hYyK4JIylNvrkYHbw9HcT4MFA7nL4vRXzYhzlZtgr0LQNGfLSEN1nAnh
+         3JY2Yka5DfAlLDj8BYcktR17Dd3KZTbgPigMeTnMUEI1Edf7dMKoJrRS40+85M1/fQYP
+         LkpUHoH5G0yqVzmzyle7/PGmUJM6hwcH4z2XXyDOlqazk3NlSDX90wK+K5A4eBU8Dy1v
+         HcPu0B5anm0mn3ExxwzAlekWYGYMHZAt/bkBlMmsrASfgnwyqYBu7MbDx6SwwD0RiTAu
+         CkHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAmljOpEY3q4ZDf5/P0q0Z/lPuzuQswWuCGkEuy7AX6nMMDMXxmpZHSneghnZ8ovhBfBMDmSfBxGTt1OA/yVH54aAteIHQhmoNhSQj
+X-Gm-Message-State: AOJu0Ywxw3d8V5yRmNuMplA+KEwf3Ix93KLO7VmUgwHSx51Lsy8B8bYx
+	u5c3ssrtNv4XQdR9VskqJaPtDzKxTNsUDW7ysZCkNj+nS7gYsOUIfIeTJoHen0ED1kjzPXvmY7Q
+	+O7h4uFCstDoVC9yGADZQViLK/vUQ2cR9y3flXJF+r00GeYkbKnDJMT8=
+X-Google-Smtp-Source: AGHT+IFdRzcPV6uGugz7sSwHdnfjiuWtXM06p4xdJFyJKwULHmEagLqf+0Y5Iux5mmzLN1CcXeW9kktxQis8mZbS6ifBd7NE+3Ut
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com> <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
-In-Reply-To: <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
-From: Andrea Gelmini <andrea.gelmini@gmail.com>
-Date: Fri, 5 Jul 2024 08:30:31 +0200
-Message-ID: <CAK-xaQYwgOKkeD4HvMtNqNqqchW4aS2gtvzGJ-yKwfE6uaUYng@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
+X-Received: by 2002:a05:6638:22cb:b0:4b9:ad94:2074 with SMTP id
+ 8926c6da1cb9f-4bf6bd341c1mr239454173.3.1720161262181; Thu, 04 Jul 2024
+ 23:34:22 -0700 (PDT)
+Date: Thu, 04 Jul 2024 23:34:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fd3017061c7a405c@google.com>
+Subject: [syzbot] [net?] [bpf?] general protection fault in xdp_do_generic_redirect
+From: syzbot <syzbot+380f7022f450dd776e64@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	edumazet@google.com, haoluo@google.com, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	pabeni@redhat.com, sdf@fomichev.me, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-Il giorno gio 4 lug 2024 alle ore 19:25 Filipe Manana
-<fdmanana@kernel.org> ha scritto:
-> 1) First let's check that the problem is really a consequence of the shrinker.
->     Try this patch:
->
->     https://gist.githubusercontent.com/fdmanana/b44abaade0000d28ba0e1e1ae3ac4fee/raw/5c9bf0beb5aa156b893be2837c9244d035962c74/gistfile1.txt
->
->     This disables the shrinker. This is just to confirm if I'm looking
-> in the right direction, if your problem is the same as Mikhail's and
-> double check his bisection.
+Hello,
 
-Ok, so, I confirm. With this change, just a little bit of PSI memory
-sometime (<3%), but no skyrocket. Also, tar at full speed.
+syzbot found the following issue on:
 
-Now, I'm going to prepare the btrfs image to send you.
+HEAD commit:    0b58e108042b Add linux-next specific files for 20240703
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15de4eb9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ed034204f2e40e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=380f7022f450dd776e64
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-The other steps later.
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d079762feae/disk-0b58e108.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e53996c8d8c2/vmlinux-0b58e108.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a0bf21cdd844/bzImage-0b58e108.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+380f7022f450dd776e64@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000007: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000038-0x000000000000003f]
+CPU: 0 UID: 0 PID: 8647 Comm: syz.3.1455 Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
+RIP: 0010:xdp_do_generic_redirect+0x7e/0x8f0 net/core/filter.c:4525
+Code: 3c 01 00 74 12 48 89 df e8 9f 26 90 f8 48 b8 00 00 00 00 00 fc ff df 48 89 5c 24 48 48 8b 1b 4c 8d 73 38 4d 89 f7 49 c1 ef 03 <41> 0f b6 04 07 84 c0 0f 85 37 06 00 00 41 8b 2e 89 ee 83 e6 02 31
+RSP: 0018:ffffc900094777f8 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 1ffff1100fd9f6c0
+RDX: ffffc900042a9000 RSI: 0000000000001ab7 RDI: 0000000000001ab8
+RBP: ffffc900094779b0 R08: 0000000000000005 R09: ffffffff89601c5e
+R10: 0000000000000003 R11: ffff88807ecf9e00 R12: ffffc90009477b60
+R13: 1ffff9200128ef1c R14: 0000000000000038 R15: 0000000000000007
+FS:  00007fa9faca56c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020011000 CR3: 000000002c750000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_xdp_generic+0x884/0xb90 net/core/dev.c:5138
+ tun_get_user+0x2805/0x4560 drivers/net/tun.c:1924
+ tun_chr_write_iter+0x113/0x1f0 drivers/net/tun.c:2048
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa9f9f7475f
+Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 29 8c 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 7c 8c 02 00 48
+RSP: 002b:00007fa9faca5010 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fa9fa103f60 RCX: 00007fa9f9f7475f
+RDX: 000000000000fdef RSI: 0000000020001540 RDI: 00000000000000c8
+RBP: 00007fa9f9fe4aa1 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000000000fdef R11: 0000000000000293 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fa9fa103f60 R15: 00007fff952046f8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
+RIP: 0010:xdp_do_generic_redirect+0x7e/0x8f0 net/core/filter.c:4525
+Code: 3c 01 00 74 12 48 89 df e8 9f 26 90 f8 48 b8 00 00 00 00 00 fc ff df 48 89 5c 24 48 48 8b 1b 4c 8d 73 38 4d 89 f7 49 c1 ef 03 <41> 0f b6 04 07 84 c0 0f 85 37 06 00 00 41 8b 2e 89 ee 83 e6 02 31
+RSP: 0018:ffffc900094777f8 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 1ffff1100fd9f6c0
+RDX: ffffc900042a9000 RSI: 0000000000001ab7 RDI: 0000000000001ab8
+RBP: ffffc900094779b0 R08: 0000000000000005 R09: ffffffff89601c5e
+R10: 0000000000000003 R11: ffff88807ecf9e00 R12: ffffc90009477b60
+R13: 1ffff9200128ef1c R14: 0000000000000038 R15: 0000000000000007
+FS:  00007fa9faca56c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020011000 CR3: 000000002c750000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	3c 01                	cmp    $0x1,%al
+   2:	00 74 12 48          	add    %dh,0x48(%rdx,%rdx,1)
+   6:	89 df                	mov    %ebx,%edi
+   8:	e8 9f 26 90 f8       	call   0xf89026ac
+   d:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  14:	fc ff df
+  17:	48 89 5c 24 48       	mov    %rbx,0x48(%rsp)
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	4c 8d 73 38          	lea    0x38(%rbx),%r14
+  23:	4d 89 f7             	mov    %r14,%r15
+  26:	49 c1 ef 03          	shr    $0x3,%r15
+* 2a:	41 0f b6 04 07       	movzbl (%r15,%rax,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 37 06 00 00    	jne    0x66e
+  37:	41 8b 2e             	mov    (%r14),%ebp
+  3a:	89 ee                	mov    %ebp,%esi
+  3c:	83 e6 02             	and    $0x2,%esi
+  3f:	31                   	.byte 0x31
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
