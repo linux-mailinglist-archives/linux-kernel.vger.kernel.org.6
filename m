@@ -1,556 +1,140 @@
-Return-Path: <linux-kernel+bounces-242494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1989288DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:42:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EE99288DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944B2281F32
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:42:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4436B23EB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0EB14B086;
-	Fri,  5 Jul 2024 12:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F4A14AD20;
+	Fri,  5 Jul 2024 12:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CMjsnnSy"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U7Ns89rD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FFE146D76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F405149E0A
 	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 12:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720183316; cv=none; b=m4UYk1trN3syBrKlN1mlrZ+JxJRjzVEfnVQKKcPcCE3wVTeFXWvziAlGMeGHHlV7b6VC1pIr3fTqu+j17vJwGbYJ12Xg1Qidr5ALZBGXDoY/ZcvgccIon6JaONPFZNJvLgVxifUACbYQZ98bm3MlzSsZXmrOF2HwHhDamFcuYuY=
+	t=1720183316; cv=none; b=Txax3VOBKJRkaCc4+4c/J/7m06fSBIOSCJ8SFn09IhomOkq7iMu2nP7KG5ZN7YhYaFTQdW5wDLxLcykF8XAPQmjVaNAmAD0VeuFydUaLp+2Q3J2xlBG4PAZT0lWXpyBsNZ5YMaVn84+9b0V9YOpt3xGcUwxlH/oZ28VbW+nO618=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720183316; c=relaxed/simple;
-	bh=/H+4jkGrYyEgl6IeKRx9uVdcJAyU5cCfGpov4sECtq4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i+iagqa5BtdivKDMj80IgxDhVrwxf8KsUPPg8iCG9+oG9BhOb2bWnWM9IpBZzW+yJBU4QfWIEvAd4TS8WlHJ98Zesii7NFP51xn28FMFwdQb5LWuhn7TId/Di5yDu3do9Oe/aVkyml+qaVGkQP3LSv3aOU1Iy5s0QpK5O66lEMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CMjsnnSy; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fb3cf78fcaso8370465ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 05:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720183313; x=1720788113; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=makRKvY1ZzmZLuFxR7OxiDcC7Ot8fAF1urKYVFggErg=;
-        b=CMjsnnSyqtFR4DHH18TgdEIFDqloCd6CQlth326oXECRXWYb+ZEa7mgNTaxRkxZkGd
-         FoC1/nW7CApsRa6dQXsPp8lE26j7pGncux9Ck6pd4a8Dyz7c+i7CMmU1jxwuywtdrSYJ
-         Zq2DxDdxhYB+0jL7MZAQWp9l9HRCZN8G2717Xz6EeXOtwv/XuWt5GGIcDDm79p9vfViS
-         ivmJlBr5M3E2pUkvRsdV0Gki2XCxvmC5mcASwoB3FVlQIr11bhsDVa2ggeBL1SubPDZq
-         Y1z1s8jJXrJhJ8QLNFHYnz53miqNhPBj9dUPsS7U19d7Mpe1i6+xzV7hADpQS70wjcH9
-         iEUA==
+	bh=0VkwOEYNEGTePOxeBzMH5nAzeX1LMR2wiTaFcPC5G8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KkcQASdADm3tcIEo6aE5bsa5/Ntca8RwH/t2Sr2jUWTIOZSPzJbkyScxWBiYjxeLCd19fNvUnEv/hTyFAn/rB0tIisEfNFr+5BSdS6exwXzb3VyvJTjZhfhjgWmW7+YRd+ihRpu+jspSPdhs4kIH5q/fc6btLu1w9qRdmzznQj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U7Ns89rD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720183313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IUmdoRcwxF0vtGDq5CApO6vlw3HSpxN+XRrrWd5A6/0=;
+	b=U7Ns89rDjXZfdBRrFoJA5fNqUet0mulb8Wr2gCgsmPX/K2MLDkE/jf+ggDLvGSczlMTWRm
+	GPfbGFncWmoOECi80IpDlELpDCB4Slro+ri4mbkCs6bs873C5GDHVmJTe3ufLDgjH/BCz/
+	882sAOclsAXaCmV4SNtAAVm1tz0TKVM=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-662-hw7AewvSNIqz0IDBA7tUng-1; Fri, 05 Jul 2024 08:41:51 -0400
+X-MC-Unique: hw7AewvSNIqz0IDBA7tUng-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a77baa2fc0dso65923266b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 05:41:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720183313; x=1720788113;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=makRKvY1ZzmZLuFxR7OxiDcC7Ot8fAF1urKYVFggErg=;
-        b=WjG05PKjdwRowgTK47a/fINieEPdzr+4l+ofuscOc/B+/tJ2CTkBCtd8ParF7KFrs5
-         eiv404XTW4nkjCxy7wavd70zhwF8rbkFZgai3okULaSmC8oPaUywpdVILXW7GRiKOsCf
-         hTY6m9kJxQOE4zOX2JoaB79P35GXLaFOlACNWm/Fo+OvJJWdVfEyHCo6J60aHKvspvL/
-         tmpByqHscpFG9mTlktRATuNk4m+P0mUmSRWOHD+tcjvihWoRDjF7nMGTbEBimpoP/YT7
-         QKHdQAMtFf355aMVWBB1EHHiWYKBwtcnewwcqBQAuJ9pMZHhmRwUq+fmjkhjazX8eKHY
-         hphA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEHXE0PiyCpvtkHmoC82Hdooc8Qh20iPNraQ8sV+rwy7oZHSL+qapy3XyFqzAZ6gpBhLczuS3jwW6Z6bTN5YNbZyEMoyNhw3Zj9VLF
-X-Gm-Message-State: AOJu0YwjAqJwuRgPRPy82DLfTGnSYP66HDxthJ43KlM7dEe8M/RFnFQa
-	FMRvTRxFv8GXCgRYbLSB4GvkKR+0tfULQgQfwu9d45Zw0MhD7zBkJfeAYeyKkYv4dEjabEpn0r1
-	60gJPqgk1zCMBbGsypHAZ8h27Nfl3Hl1EMXMILKrI0lnUKuEG
-X-Google-Smtp-Source: AGHT+IHBBnBRenNmYsaiZhYTb7shVAI1VtgJP37gWYtfrnmNKAqv1YYfVLtF64vh6GmJh6eoVy+gsvonRPqBB33t2iY=
-X-Received: by 2002:a17:90a:c38e:b0:2c9:63e9:8461 with SMTP id
- 98e67ed59e1d1-2c99c502d58mr3520674a91.2.1720183312970; Fri, 05 Jul 2024
- 05:41:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720183310; x=1720788110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IUmdoRcwxF0vtGDq5CApO6vlw3HSpxN+XRrrWd5A6/0=;
+        b=CmJ8FzjlKAtSMlBiebtLuM0kEfNLtLbimyDApEPnNrtRZMlIt5CNDlrIt3klYOtF6W
+         +s5l56OdJteN5OXz8Bwk8xLqMQuKNf9/fdY/rMr7qMBaLYIea6PoYZgHsmYDKOjYDCPv
+         iskTK2qYsYTvfQnfQqTJzBmUlooHmiPm12q4xyZQoH7UTlpYOm9js+Sjzi5HY12CU7+t
+         mnGiqWWsZTG7L593rBiG0j6iEbgqiZTdDI7uqgs7w1TpfY+G8EILfBj0LczBq7IAQFTa
+         q9N2nvApY2eiC73HjrizxV/eJhLwiRkgT1GUwWFk7eRKxjmjiRpd99O6AW98sUWJFqG1
+         cwhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQXLouhZWEgOEHnbwfIiZC/P/6xy1QYKVXDGYvi13PHO337ftXW8Qj+VnHfHFegHyrrrrCIfpJTIWKEA7iEaN1hTOP65Y1VTYkcXdB
+X-Gm-Message-State: AOJu0Yy4z/FTT7WrJPnTCxQ3J/Zi42O8sYM+mGKTHpm7gpNnugtSidwy
+	qjzZaLCdOFEeL4073d6OsVRkNbmQ8bFcs3lunXhjttiQVWkaxTnkfJpJ4JZPps4xM0BAqhRLoWJ
+	5kT9+VPyFHSaTVPWQ3H9X4wtobXTSvXsTL7VAt7jc+qIgbwrf9eSxztQQrR14IA==
+X-Received: by 2002:a05:6402:26cc:b0:579:73b7:b4cc with SMTP id 4fb4d7f45d1cf-58e5994df08mr4069645a12.2.1720183310545;
+        Fri, 05 Jul 2024 05:41:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHKvFDzwRQlV+iTOvh4/L4b/Nx5EKEO6E1JE+809E/tI6VMgbL/Y6rWpOPm+MTM4DSqhdFdnQ==
+X-Received: by 2002:a05:6402:26cc:b0:579:73b7:b4cc with SMTP id 4fb4d7f45d1cf-58e5994df08mr4069621a12.2.1720183309878;
+        Fri, 05 Jul 2024 05:41:49 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.218.209])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58eb85cc1bcsm1692664a12.94.2024.07.05.05.41.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 05:41:49 -0700 (PDT)
+Date: Fri, 5 Jul 2024 14:41:43 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>
+Cc: virtualization@lists.linux.dev, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>
+Subject: Re: [PATCH] vdpa_sim_blk: add `capacity` module parameter
+Message-ID: <25fehn7xgvqyqgd6zcscsjazzfhktyjrazffyrtbp2oibnhkey@ggobdyv4zxkf>
+References: <20240705112821.144819-1-sgarzare@redhat.com>
+ <20240705073017-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619031250.2936087-1-tj@kernel.org> <20240619031250.2936087-3-tj@kernel.org>
- <ZnM2ywDVRZbrN6OC@slm.duckdns.org>
-In-Reply-To: <ZnM2ywDVRZbrN6OC@slm.duckdns.org>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 5 Jul 2024 14:41:41 +0200
-Message-ID: <CAKfTPtBPObGdcaQF5nKqr4042f-+5obTMm_S6S+=3_Ct33ZMyw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] sched_ext: Add cpuperf support
-To: Tejun Heo <tj@kernel.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
-	void@manifault.com, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	mingo@redhat.com, peterz@infradead.org, David Vernet <dvernet@meta.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240705073017-mutt-send-email-mst@kernel.org>
 
-On Wed, 19 Jun 2024 at 21:52, Tejun Heo <tj@kernel.org> wrote:
+On Fri, Jul 05, 2024 at 07:30:51AM GMT, Michael S. Tsirkin wrote:
+>On Fri, Jul 05, 2024 at 01:28:21PM +0200, Stefano Garzarella wrote:
+>> The vDPA block simulator always allocated a 128 MiB ram-disk, but some
+>> filesystems (e.g. XFS) may require larger minimum sizes (see
+>> https://issues.redhat.com/browse/RHEL-45951).
+>>
+>> So to allow us to test these filesystems, let's add a module parameter
+>> to control the size of the simulated virtio-blk devices.
+>> The value is mapped directly to the `capacity` field of the virtio-blk
+>> configuration space, so it must be expressed in sector numbers of 512
+>> bytes.
+>>
+>> The default value (0x40000) is the same as the previous value, so the
+>> behavior without setting `capacity` remains unchanged.
+>>
+>> Before this patch or with this patch without setting `capacity`:
+>>   $ modprobe vdpa-sim-blk
+>>   $ vdpa dev add mgmtdev vdpasim_blk name blk0
+>>   virtio_blk virtio6: 1/0/0 default/read/poll queues
+>>   virtio_blk virtio6: [vdb] 262144 512-byte logical blocks (134 MB/128 MiB)
+>>
+>> After this patch:
+>>   $ modprobe vdpa-sim-blk capacity=614400
+>>   $ vdpa dev add mgmtdev vdpasim_blk name blk0
+>>   virtio_blk virtio6: 1/0/0 default/read/poll queues
+>>   virtio_blk virtio6: [vdb] 614400 512-byte logical blocks (315 MB/300 MiB)
+>>
+>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
 >
-> sched_ext currently does not integrate with schedutil. When schedutil is the
-> governor, frequencies are left unregulated and usually get stuck close to
-> the highest performance level from running RT tasks.
->
-> Add CPU performance monitoring and scaling support by integrating into
-> schedutil. The following kfuncs are added:
->
-> - scx_bpf_cpuperf_cap(): Query the relative performance capacity of
->   different CPUs in the system.
->
-> - scx_bpf_cpuperf_cur(): Query the current performance level of a CPU
->   relative to its max performance.
->
-> - scx_bpf_cpuperf_set(): Set the current target performance level of a CPU.
->
-> This gives direct control over CPU performance setting to the BPF scheduler.
-> The only changes on the schedutil side are accounting for the utilization
-> factor from sched_ext and disabling frequency holding heuristics as it may
-> not apply well to sched_ext schedulers which may have a lot weaker
-> connection between tasks and their current / last CPU.
->
-> With cpuperf support added, there is no reason to block uclamp. Enable while
-> at it.
->
-> A toy implementation of cpuperf is added to scx_qmap as a demonstration of
-> the feature.
->
-> v2: Ignore cpu_util_cfs_boost() when scx_switched_all() in sugov_get_util()
->     to avoid factoring in stale util metric. (Christian)
->
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Christian Loehle <christian.loehle@arm.com>
-> ---
->  kernel/sched/cpufreq_schedutil.c         |   12 ++
->  kernel/sched/ext.c                       |   83 +++++++++++++++++-
->  kernel/sched/ext.h                       |    9 +
->  kernel/sched/sched.h                     |    1
->  tools/sched_ext/include/scx/common.bpf.h |    3
->  tools/sched_ext/scx_qmap.bpf.c           |  142 ++++++++++++++++++++++++++++++-
->  tools/sched_ext/scx_qmap.c               |    8 +
->  7 files changed, 252 insertions(+), 6 deletions(-)
->
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -197,8 +197,10 @@ unsigned long sugov_effective_cpu_perf(i
->
->  static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
->  {
-> -       unsigned long min, max, util = cpu_util_cfs_boost(sg_cpu->cpu);
-> +       unsigned long min, max, util = scx_cpuperf_target(sg_cpu->cpu);
->
-> +       if (!scx_switched_all())
-> +               util += cpu_util_cfs_boost(sg_cpu->cpu);
+>What a hack. Cindy was working on adding control over config
+>space, why can't that be used?
 
-I don't see the need for this. If fair is not used, this returns zero
+If it can be used easily with virtio-blk device too, it will be great.
+@Cindy do you plan to support that changes for a virtio-blk device too?
 
->         util = effective_cpu_util(sg_cpu->cpu, util, &min, &max);
->         util = max(util, boost);
->         sg_cpu->bw_min = min;
-> @@ -330,6 +332,14 @@ static bool sugov_hold_freq(struct sugov
->         unsigned long idle_calls;
->         bool ret;
->
-> +       /*
-> +        * The heuristics in this function is for the fair class. For SCX, the
-> +        * performance target comes directly from the BPF scheduler. Let's just
-> +        * follow it.
-> +        */
-> +       if (scx_switched_all())
-> +               return false;
+In the mean time, for the simulator I thought that this change was fine.
+It's just used for testing and debugging...
 
+My main question is how to use that when we have `shared_backend` set to 
+true, since we use that setting to test for example live migration. In 
+that case, how do we handle the size of the shared ramdisk between 
+devices?
 
-> +
->         /* if capped by uclamp_max, always update to be in compliance */
->         if (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
->                 return false;
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -16,6 +16,8 @@ enum scx_consts {
->         SCX_EXIT_BT_LEN                 = 64,
->         SCX_EXIT_MSG_LEN                = 1024,
->         SCX_EXIT_DUMP_DFL_LEN           = 32768,
-> +
-> +       SCX_CPUPERF_ONE                 = SCHED_CAPACITY_SCALE,
->  };
->
->  enum scx_exit_kind {
-> @@ -3520,7 +3522,7 @@ DEFINE_SCHED_CLASS(ext) = {
->         .update_curr            = update_curr_scx,
->
->  #ifdef CONFIG_UCLAMP_TASK
-> -       .uclamp_enabled         = 0,
-> +       .uclamp_enabled         = 1,
->  #endif
->  };
->
-> @@ -4393,7 +4395,7 @@ static int scx_ops_enable(struct sched_e
->         struct scx_task_iter sti;
->         struct task_struct *p;
->         unsigned long timeout;
-> -       int i, ret;
-> +       int i, cpu, ret;
->
->         mutex_lock(&scx_ops_enable_mutex);
->
-> @@ -4442,6 +4444,9 @@ static int scx_ops_enable(struct sched_e
->
->         atomic_long_set(&scx_nr_rejected, 0);
->
-> +       for_each_possible_cpu(cpu)
-> +               cpu_rq(cpu)->scx.cpuperf_target = SCX_CPUPERF_ONE;
-> +
->         /*
->          * Keep CPUs stable during enable so that the BPF scheduler can track
->          * online CPUs by watching ->on/offline_cpu() after ->init().
-> @@ -5836,6 +5841,77 @@ __bpf_kfunc void scx_bpf_dump_bstr(char
->  }
->
->  /**
-> + * scx_bpf_cpuperf_cap - Query the maximum relative capacity of a CPU
-> + * @cpu: CPU of interest
-> + *
-> + * Return the maximum relative capacity of @cpu in relation to the most
-> + * performant CPU in the system. The return value is in the range [1,
-> + * %SCX_CPUPERF_ONE]. See scx_bpf_cpuperf_cur().
-> + */
-> +__bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu)
-> +{
-> +       if (ops_cpu_valid(cpu, NULL))
-> +               return arch_scale_cpu_capacity(cpu);
-> +       else
-> +               return SCX_CPUPERF_ONE;
-> +}
-> +
-> +/**
-> + * scx_bpf_cpuperf_cur - Query the current relative performance of a CPU
-> + * @cpu: CPU of interest
-> + *
-> + * Return the current relative performance of @cpu in relation to its maximum.
-> + * The return value is in the range [1, %SCX_CPUPERF_ONE].
-> + *
-> + * The current performance level of a CPU in relation to the maximum performance
-> + * available in the system can be calculated as follows:
-> + *
-> + *   scx_bpf_cpuperf_cap() * scx_bpf_cpuperf_cur() / %SCX_CPUPERF_ONE
-> + *
-> + * The result is in the range [1, %SCX_CPUPERF_ONE].
-> + */
-> +__bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu)
-> +{
-> +       if (ops_cpu_valid(cpu, NULL))
-> +               return arch_scale_freq_capacity(cpu);
-> +       else
-> +               return SCX_CPUPERF_ONE;
-> +}
-> +
-> +/**
-> + * scx_bpf_cpuperf_set - Set the relative performance target of a CPU
-> + * @cpu: CPU of interest
-> + * @perf: target performance level [0, %SCX_CPUPERF_ONE]
-> + * @flags: %SCX_CPUPERF_* flags
-> + *
-> + * Set the target performance level of @cpu to @perf. @perf is in linear
-> + * relative scale between 0 and %SCX_CPUPERF_ONE. This determines how the
-> + * schedutil cpufreq governor chooses the target frequency.
-> + *
-> + * The actual performance level chosen, CPU grouping, and the overhead and
-> + * latency of the operations are dependent on the hardware and cpufreq driver in
-> + * use. Consult hardware and cpufreq documentation for more information. The
-> + * current performance level can be monitored using scx_bpf_cpuperf_cur().
-> + */
-> +__bpf_kfunc void scx_bpf_cpuperf_set(u32 cpu, u32 perf)
-> +{
-> +       if (unlikely(perf > SCX_CPUPERF_ONE)) {
-> +               scx_ops_error("Invalid cpuperf target %u for CPU %d", perf, cpu);
-> +               return;
-> +       }
-> +
-> +       if (ops_cpu_valid(cpu, NULL)) {
-> +               struct rq *rq = cpu_rq(cpu);
-> +
-> +               rq->scx.cpuperf_target = perf;
-> +
-> +               rcu_read_lock_sched_notrace();
-> +               cpufreq_update_util(cpu_rq(cpu), 0);
-> +               rcu_read_unlock_sched_notrace();
-> +       }
-> +}
-> +
-> +/**
->   * scx_bpf_nr_cpu_ids - Return the number of possible CPU IDs
->   *
->   * All valid CPU IDs in the system are smaller than the returned value.
-> @@ -6045,6 +6121,9 @@ BTF_ID_FLAGS(func, scx_bpf_destroy_dsq)
->  BTF_ID_FLAGS(func, scx_bpf_exit_bstr, KF_TRUSTED_ARGS)
->  BTF_ID_FLAGS(func, scx_bpf_error_bstr, KF_TRUSTED_ARGS)
->  BTF_ID_FLAGS(func, scx_bpf_dump_bstr, KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap)
-> +BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur)
-> +BTF_ID_FLAGS(func, scx_bpf_cpuperf_set)
->  BTF_ID_FLAGS(func, scx_bpf_nr_cpu_ids)
->  BTF_ID_FLAGS(func, scx_bpf_get_possible_cpumask, KF_ACQUIRE)
->  BTF_ID_FLAGS(func, scx_bpf_get_online_cpumask, KF_ACQUIRE)
-> --- a/kernel/sched/ext.h
-> +++ b/kernel/sched/ext.h
-> @@ -48,6 +48,14 @@ int scx_check_setscheduler(struct task_s
->  bool task_should_scx(struct task_struct *p);
->  void init_sched_ext_class(void);
->
-> +static inline u32 scx_cpuperf_target(s32 cpu)
-> +{
-> +       if (scx_enabled())
-> +               return cpu_rq(cpu)->scx.cpuperf_target;
-> +       else
-> +               return 0;
-> +}
-> +
->  static inline const struct sched_class *next_active_class(const struct sched_class *class)
->  {
->         class++;
-> @@ -89,6 +97,7 @@ static inline void scx_pre_fork(struct t
->  static inline int scx_fork(struct task_struct *p) { return 0; }
->  static inline void scx_post_fork(struct task_struct *p) {}
->  static inline void scx_cancel_fork(struct task_struct *p) {}
-> +static inline u32 scx_cpuperf_target(s32 cpu) { return 0; }
->  static inline bool scx_can_stop_tick(struct rq *rq) { return true; }
->  static inline void scx_rq_activate(struct rq *rq) {}
->  static inline void scx_rq_deactivate(struct rq *rq) {}
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -743,6 +743,7 @@ struct scx_rq {
->         u64                     extra_enq_flags;        /* see move_task_to_local_dsq() */
->         u32                     nr_running;
->         u32                     flags;
-> +       u32                     cpuperf_target;         /* [0, SCHED_CAPACITY_SCALE] */
->         bool                    cpu_released;
->         cpumask_var_t           cpus_to_kick;
->         cpumask_var_t           cpus_to_kick_if_idle;
-> --- a/tools/sched_ext/include/scx/common.bpf.h
-> +++ b/tools/sched_ext/include/scx/common.bpf.h
-> @@ -42,6 +42,9 @@ void scx_bpf_destroy_dsq(u64 dsq_id) __k
->  void scx_bpf_exit_bstr(s64 exit_code, char *fmt, unsigned long long *data, u32 data__sz) __ksym __weak;
->  void scx_bpf_error_bstr(char *fmt, unsigned long long *data, u32 data_len) __ksym;
->  void scx_bpf_dump_bstr(char *fmt, unsigned long long *data, u32 data_len) __ksym __weak;
-> +u32 scx_bpf_cpuperf_cap(s32 cpu) __ksym __weak;
-> +u32 scx_bpf_cpuperf_cur(s32 cpu) __ksym __weak;
-> +void scx_bpf_cpuperf_set(s32 cpu, u32 perf) __ksym __weak;
->  u32 scx_bpf_nr_cpu_ids(void) __ksym __weak;
->  const struct cpumask *scx_bpf_get_possible_cpumask(void) __ksym __weak;
->  const struct cpumask *scx_bpf_get_online_cpumask(void) __ksym __weak;
-> --- a/tools/sched_ext/scx_qmap.bpf.c
-> +++ b/tools/sched_ext/scx_qmap.bpf.c
-> @@ -69,6 +69,18 @@ struct {
->  };
->
->  /*
-> + * If enabled, CPU performance target is set according to the queue index
-> + * according to the following table.
-> + */
-> +static const u32 qidx_to_cpuperf_target[] = {
-> +       [0] = SCX_CPUPERF_ONE * 0 / 4,
-> +       [1] = SCX_CPUPERF_ONE * 1 / 4,
-> +       [2] = SCX_CPUPERF_ONE * 2 / 4,
-> +       [3] = SCX_CPUPERF_ONE * 3 / 4,
-> +       [4] = SCX_CPUPERF_ONE * 4 / 4,
-> +};
-> +
-> +/*
->   * Per-queue sequence numbers to implement core-sched ordering.
->   *
->   * Tail seq is assigned to each queued task and incremented. Head seq tracks the
-> @@ -95,6 +107,8 @@ struct {
->  struct cpu_ctx {
->         u64     dsp_idx;        /* dispatch index */
->         u64     dsp_cnt;        /* remaining count */
-> +       u32     avg_weight;
-> +       u32     cpuperf_target;
->  };
->
->  struct {
-> @@ -107,6 +121,8 @@ struct {
->  /* Statistics */
->  u64 nr_enqueued, nr_dispatched, nr_reenqueued, nr_dequeued;
->  u64 nr_core_sched_execed;
-> +u32 cpuperf_min, cpuperf_avg, cpuperf_max;
-> +u32 cpuperf_target_min, cpuperf_target_avg, cpuperf_target_max;
->
->  s32 BPF_STRUCT_OPS(qmap_select_cpu, struct task_struct *p,
->                    s32 prev_cpu, u64 wake_flags)
-> @@ -313,6 +329,29 @@ void BPF_STRUCT_OPS(qmap_dispatch, s32 c
->         }
->  }
->
-> +void BPF_STRUCT_OPS(qmap_tick, struct task_struct *p)
-> +{
-> +       struct cpu_ctx *cpuc;
-> +       u32 zero = 0;
-> +       int idx;
-> +
-> +       if (!(cpuc = bpf_map_lookup_elem(&cpu_ctx_stor, &zero))) {
-> +               scx_bpf_error("failed to look up cpu_ctx");
-> +               return;
-> +       }
-> +
-> +       /*
-> +        * Use the running avg of weights to select the target cpuperf level.
-> +        * This is a demonstration of the cpuperf feature rather than a
-> +        * practical strategy to regulate CPU frequency.
-> +        */
-> +       cpuc->avg_weight = cpuc->avg_weight * 3 / 4 + p->scx.weight / 4;
-> +       idx = weight_to_idx(cpuc->avg_weight);
-> +       cpuc->cpuperf_target = qidx_to_cpuperf_target[idx];
-> +
-> +       scx_bpf_cpuperf_set(scx_bpf_task_cpu(p), cpuc->cpuperf_target);
-> +}
-> +
->  /*
->   * The distance from the head of the queue scaled by the weight of the queue.
->   * The lower the number, the older the task and the higher the priority.
-> @@ -422,8 +461,9 @@ void BPF_STRUCT_OPS(qmap_dump_cpu, struc
->         if (!(cpuc = bpf_map_lookup_percpu_elem(&cpu_ctx_stor, &zero, cpu)))
->                 return;
->
-> -       scx_bpf_dump("QMAP: dsp_idx=%llu dsp_cnt=%llu",
-> -                    cpuc->dsp_idx, cpuc->dsp_cnt);
-> +       scx_bpf_dump("QMAP: dsp_idx=%llu dsp_cnt=%llu avg_weight=%u cpuperf_target=%u",
-> +                    cpuc->dsp_idx, cpuc->dsp_cnt, cpuc->avg_weight,
-> +                    cpuc->cpuperf_target);
->  }
->
->  void BPF_STRUCT_OPS(qmap_dump_task, struct scx_dump_ctx *dctx, struct task_struct *p)
-> @@ -492,11 +532,106 @@ void BPF_STRUCT_OPS(qmap_cpu_offline, s3
->         print_cpus();
->  }
->
-> +struct monitor_timer {
-> +       struct bpf_timer timer;
-> +};
-> +
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_ARRAY);
-> +       __uint(max_entries, 1);
-> +       __type(key, u32);
-> +       __type(value, struct monitor_timer);
-> +} monitor_timer SEC(".maps");
-> +
-> +/*
-> + * Print out the min, avg and max performance levels of CPUs every second to
-> + * demonstrate the cpuperf interface.
-> + */
-> +static void monitor_cpuperf(void)
-> +{
-> +       u32 zero = 0, nr_cpu_ids;
-> +       u64 cap_sum = 0, cur_sum = 0, cur_min = SCX_CPUPERF_ONE, cur_max = 0;
-> +       u64 target_sum = 0, target_min = SCX_CPUPERF_ONE, target_max = 0;
-> +       const struct cpumask *online;
-> +       int i, nr_online_cpus = 0;
-> +
-> +       nr_cpu_ids = scx_bpf_nr_cpu_ids();
-> +       online = scx_bpf_get_online_cpumask();
-> +
-> +       bpf_for(i, 0, nr_cpu_ids) {
-> +               struct cpu_ctx *cpuc;
-> +               u32 cap, cur;
-> +
-> +               if (!bpf_cpumask_test_cpu(i, online))
-> +                       continue;
-> +               nr_online_cpus++;
-> +
-> +               /* collect the capacity and current cpuperf */
-> +               cap = scx_bpf_cpuperf_cap(i);
-> +               cur = scx_bpf_cpuperf_cur(i);
-> +
-> +               cur_min = cur < cur_min ? cur : cur_min;
-> +               cur_max = cur > cur_max ? cur : cur_max;
-> +
-> +               /*
-> +                * $cur is relative to $cap. Scale it down accordingly so that
-> +                * it's in the same scale as other CPUs and $cur_sum/$cap_sum
-> +                * makes sense.
-> +                */
-> +               cur_sum += cur * cap / SCX_CPUPERF_ONE;
-> +               cap_sum += cap;
-> +
-> +               if (!(cpuc = bpf_map_lookup_percpu_elem(&cpu_ctx_stor, &zero, i))) {
-> +                       scx_bpf_error("failed to look up cpu_ctx");
-> +                       goto out;
-> +               }
-> +
-> +               /* collect target */
-> +               cur = cpuc->cpuperf_target;
-> +               target_sum += cur;
-> +               target_min = cur < target_min ? cur : target_min;
-> +               target_max = cur > target_max ? cur : target_max;
-> +       }
-> +
-> +       cpuperf_min = cur_min;
-> +       cpuperf_avg = cur_sum * SCX_CPUPERF_ONE / cap_sum;
-> +       cpuperf_max = cur_max;
-> +
-> +       cpuperf_target_min = target_min;
-> +       cpuperf_target_avg = target_sum / nr_online_cpus;
-> +       cpuperf_target_max = target_max;
-> +out:
-> +       scx_bpf_put_cpumask(online);
-> +}
-> +
-> +static int monitor_timerfn(void *map, int *key, struct bpf_timer *timer)
-> +{
-> +       monitor_cpuperf();
-> +
-> +       bpf_timer_start(timer, ONE_SEC_IN_NS, 0);
-> +       return 0;
-> +}
-> +
->  s32 BPF_STRUCT_OPS_SLEEPABLE(qmap_init)
->  {
-> +       u32 key = 0;
-> +       struct bpf_timer *timer;
-> +       s32 ret;
-> +
->         print_cpus();
->
-> -       return scx_bpf_create_dsq(SHARED_DSQ, -1);
-> +       ret = scx_bpf_create_dsq(SHARED_DSQ, -1);
-> +       if (ret)
-> +               return ret;
-> +
-> +       timer = bpf_map_lookup_elem(&monitor_timer, &key);
-> +       if (!timer)
-> +               return -ESRCH;
-> +
-> +       bpf_timer_init(timer, &monitor_timer, CLOCK_MONOTONIC);
-> +       bpf_timer_set_callback(timer, monitor_timerfn);
-> +
-> +       return bpf_timer_start(timer, ONE_SEC_IN_NS, 0);
->  }
->
->  void BPF_STRUCT_OPS(qmap_exit, struct scx_exit_info *ei)
-> @@ -509,6 +644,7 @@ SCX_OPS_DEFINE(qmap_ops,
->                .enqueue                 = (void *)qmap_enqueue,
->                .dequeue                 = (void *)qmap_dequeue,
->                .dispatch                = (void *)qmap_dispatch,
-> +              .tick                    = (void *)qmap_tick,
->                .core_sched_before       = (void *)qmap_core_sched_before,
->                .cpu_release             = (void *)qmap_cpu_release,
->                .init_task               = (void *)qmap_init_task,
-> --- a/tools/sched_ext/scx_qmap.c
-> +++ b/tools/sched_ext/scx_qmap.c
-> @@ -116,6 +116,14 @@ int main(int argc, char **argv)
->                        nr_enqueued, nr_dispatched, nr_enqueued - nr_dispatched,
->                        skel->bss->nr_reenqueued, skel->bss->nr_dequeued,
->                        skel->bss->nr_core_sched_execed);
-> +               if (__COMPAT_has_ksym("scx_bpf_cpuperf_cur"))
-> +                       printf("cpuperf: cur min/avg/max=%u/%u/%u target min/avg/max=%u/%u/%u\n",
-> +                              skel->bss->cpuperf_min,
-> +                              skel->bss->cpuperf_avg,
-> +                              skel->bss->cpuperf_max,
-> +                              skel->bss->cpuperf_target_min,
-> +                              skel->bss->cpuperf_target_avg,
-> +                              skel->bss->cpuperf_target_max);
->                 fflush(stdout);
->                 sleep(1);
->         }
->
+Thanks,
+Stefano
+
 
