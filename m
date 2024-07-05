@@ -1,200 +1,145 @@
-Return-Path: <linux-kernel+bounces-242012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB73928287
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:12:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CAA928288
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14CE1F24469
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:12:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54CFCB24923
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABA21448FA;
-	Fri,  5 Jul 2024 07:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDE61448FA;
+	Fri,  5 Jul 2024 07:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="J0HDYNGL"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhDWa+HZ"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BAC1F61C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463771F61C
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720163554; cv=none; b=Nv289mH903LP/IOfvMAlj7dpHABUSQmcpUnVrQE2cuRu1jOhXxBxB6yDG5F9X4CcdgbxBqI7jOAoflN/o4ZJqa4oMqWpmq5QjAzz+BsMkPMzLcHM3PD2sZZDjjUdKIrxhJ06bR4YHFabTJ2VrLTLce7XWWX0zOipbKBEWhbgLZM=
+	t=1720163570; cv=none; b=GRQxmOHKsGfiiSEtiug0dolMFQsVGKr4JuAU+HITnHR86hq1XIvNnCCbasankF9TtIAZkqH4I+4C1g7jEzA5phkjMD4GRNFVJz9f4AH7YNnpUsrUaGtd68d15qB593OH8l4RG/GeAtjpUP/7A031q52jxXjs4Oq0PQ0ySZjC6vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720163554; c=relaxed/simple;
-	bh=g7MxzlQeM41sI3NQa8YFeYUMuOcxjWMopjix9W7F2F0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KmDBK3erJAOczMQ99jIB9ju92PQaQRHffjhH1w/11jDfRcLXeZB9Ywjt2obSJR45w+9JEbFi0hgmyQHF2x3nPnV3JDB1G/3eIyhsPeXjc0UXd2/k7Gegdds4suGYdzHW44fBrASROOcR4fKrGnGTvAFmSYJ864gEfxiDrFa8P48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=J0HDYNGL; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4656QikE000604;
-	Fri, 5 Jul 2024 07:12:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=pRQBcVVboMVQutaQ1jmQY6cco5
-	Sa2Hjod70KHYWESSw=; b=J0HDYNGLdYgASyYnofttTTN8hRjbug0aIYwFp5s9hg
-	cvN5iBleliBjFbwBSkFfu4VFluap2o/LbF3EJ03v016k8TQm6dDAMO8HmUSOdI7C
-	nUsbPffJpiJ+g41h26qE+VexxdMzxCcTTVUzCYiHxH8Znbp9t5BlkWnZTG7TamCW
-	4hhb0WBykEU4Fczi0FGxoJMx05yAmMsLk7priZHog+bU2MZ2XL9q5/LXuq7tEY8c
-	MipBuGqSjiQ0c6L5L+osb5cR8hXZ4SmmgXfm29f+QgVBMuSJT5OgMVqfkb/gFmad
-	CNjhvHPDWtwVkjwWht/m5VzxWl764+gAFLiiwOnLeyFA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 406b5ag53c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 07:12:02 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4657C1Cs003717;
-	Fri, 5 Jul 2024 07:12:02 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 406b5ag538-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 07:12:01 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4653XFdw029195;
-	Fri, 5 Jul 2024 07:12:00 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402x3nc66v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 07:12:00 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4657BunC21234118
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Jul 2024 07:11:58 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6F28A2004B;
-	Fri,  5 Jul 2024 07:11:56 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E26E20043;
-	Fri,  5 Jul 2024 07:11:54 +0000 (GMT)
-Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  5 Jul 2024 07:11:53 +0000 (GMT)
-From: Donet Tom <donettom@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Muchun Song <muchun.song@linux.dev>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tony Battersby <tonyb@cybernetics.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        Donet Tom <donettom@linux.ibm.com>
-Subject: [PATCH] fs/hugetlbfs/inode.c: Ensure generic_hugetlb_get_unmapped_area() returns higher address than mmap_min_addr
-Date: Fri,  5 Jul 2024 02:11:50 -0500
-Message-ID: <20240705071150.84972-1-donettom@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1720163570; c=relaxed/simple;
+	bh=iv2ERwCzCiB2gd80xhoDKXfrPwpuGkjxdijGT/Gdy3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bf68L+sz3e3guCQiDY6ZONFfvNLTPev8lQrbP/adhv6tgYvissRRiSk308ppz8WyZ7s8FE3ezMMwav0JL60nnIjERF+QxxRvmJUpSJjImPJVhQl8wSjV0Z65iedQ316PX+M523eRxPqKZO8qm8HPD4bwvE/LMf8YXpZ5oQ+AT6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhDWa+HZ; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so2308929a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:12:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720163567; x=1720768367; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qBowXacvCBPq8+HeU6bAJH+gmUcBy4EmRD/T8EkAqIY=;
+        b=HhDWa+HZ6hYzizFJBBBQO5q7UdJ+b1gZJFEjSLbZ6qVJyxwCgKPhkjNRqzqWIwBxE0
+         TEQW6XKiakDOSsA+CDTmno8TqPGk42UVfYTxPd9O6Mcj2iXRinsNGAhv63QYGEctfo8w
+         t1SnN6uhaMe7UFoavXpNNqXuG3u6Kfd2FE7MQsui0w5qa7guZQkVdUWP1orAzh6Ib2tV
+         CqyU0v2Opcs1DL05r7bEoGuWRj48PshUG8kmdGqy1Qvn4FZTqc7ty/gvDdQtch4zepxv
+         VlzBEt6LcKDiMfwscdfcu1/mG1ZoCNVDTGYdZb2Bndpm+B1coPTB/Obloo/1qxja0qUu
+         VJ+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720163567; x=1720768367;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qBowXacvCBPq8+HeU6bAJH+gmUcBy4EmRD/T8EkAqIY=;
+        b=e/2G7UoAp59FVBGqxIdro46FKmzRE4qCZ0vE9xE/gvW5Swz42HQFPUJIBa6yaLdVpX
+         M0n+TL7+WUexYGjeUPvxsSnOLTwL8RZborcM/BG069iVeA8jCnioq2y0vqE5LKO16eQu
+         3OXTT5ZkgFBa3CyHj3VQZiTPdNRmzvq1OzdaoOXwRNbdjIgN37DbT95Zw5aH0oJ0HAHQ
+         e44+f98DFbr0Y8+MKlVjSzm+TdJKcNvRBKBx6BvMop5+sX1NEwUsUSCIviiIbCP8Jfky
+         VAxT5xvkFHJID4EZ+yZzWvHIC5BRYp6BuERLlCdZCVGhbaGYX029R7GP56ghxgOOoKKr
+         jeqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQa2u/RAXLuNtPoXxASBbgfn6CKLfFFSzP428a3dwttT/Nhs3UOMZ5Tj4JAVmRk3KP7yv47GowGXYLWgPkWOgiOO8T7BzrCGcmVE9H
+X-Gm-Message-State: AOJu0YwoBEnx/h96IuB0mb6/TnNnWbC/KjI3j3R/Rh0H5mJ/w68Fp9NL
+	lVMyb+6Lael3UL0kkvGE9ePOwtEHB9/8gbU3g2P1phOWAOwWcso3
+X-Google-Smtp-Source: AGHT+IGbgcTijE9L+vJOhQbgm9TMODvfV1FQxBa++ZNxzLCfaLSJFpwi6EABsOb3uGWlKoHa6Ow87w==
+X-Received: by 2002:a05:6402:4305:b0:57c:6a05:afd0 with SMTP id 4fb4d7f45d1cf-58e7b6ef9d4mr2812851a12.14.1720163567296;
+        Fri, 05 Jul 2024 00:12:47 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58e88a6c067sm1528408a12.38.2024.07.05.00.12.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 05 Jul 2024 00:12:46 -0700 (PDT)
+Date: Fri, 5 Jul 2024 07:12:46 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>
+Subject: Re: [Patch v3] x86/head/64: remove redundant check on
+ level2_kernel_pgt's _PAGE_PRESENT bit
+Message-ID: <20240705071246.wzl224vveysrunzc@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240523123539.14260-1-richard.weiyang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 7xL22XUaxd0RtczpMHp9W9I0o08bZ7zO
-X-Proofpoint-ORIG-GUID: dwdz3dUsdfw1_XqqRJX1qMvD6o-kHuMl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_03,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 impostorscore=0
- mlxlogscore=921 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2407050049
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523123539.14260-1-richard.weiyang@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-generic_hugetlb_get_unmapped_area() was returning an address less
-than mmap_min_addr if the mmap argument addr, after alignment, was
-less than mmap_min_addr, causing mmap to fail.
+May I ask what else I should do?
 
-This is because current generic_hugetlb_get_unmapped_area() code does
-not take into account mmap_min_addr.
+On Thu, May 23, 2024 at 12:35:39PM +0000, Wei Yang wrote:
+>Remove a redundant check on kernel code's PMD _PAGE_PRESENT attribute
+>before fix up.
+>
+>Current process looks like this:
+>
+>    pmd in [0, _text)
+>        unset _PAGE_PRESENT
+>    pmd in [_text, _end]
+>        if (_PAGE_PRESENT)
+>            fix up delta
+>    pmd in (_end, 512)
+>        unset _PAGE_PRESENT
+>
+>level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
+>redundant
+>
+>Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+>CC: Thomas Gleixner <tglx@linutronix.de>
+>CC: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>CC: Ingo Molnar <mingo@kernel.org>
+>CC: Steve Wahl <steve.wahl@hpe.com>
+>
+>---
+>v3: refine the change log per kirill's comment
+>v2: adjust the change log to emphasize the redundant check
+>---
+> arch/x86/kernel/head64.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>
+>diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+>index a817ed0724d1..bac33ec19aa2 100644
+>--- a/arch/x86/kernel/head64.c
+>+++ b/arch/x86/kernel/head64.c
+>@@ -260,8 +260,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+> 
+> 	/* fixup pages that are part of the kernel image */
+> 	for (; i <= pmd_index((unsigned long)_end); i++)
+>-		if (pmd[i] & _PAGE_PRESENT)
+>-			pmd[i] += load_delta;
+>+		pmd[i] += load_delta;
+> 
+> 	/* invalidate pages after the kernel image */
+> 	for (; i < PTRS_PER_PMD; i++)
+>-- 
+>2.34.1
 
-This patch ensures that generic_hugetlb_get_unmapped_area() always returns
-an address that is greater than mmap_min_addr.
-
-How to reproduce
-================
-
- #include <stdio.h>
- #include <stdlib.h>
- #include <sys/mman.h>
- #include <unistd.h>
-
- #define HUGEPAGE_SIZE (16 * 1024 * 1024)
-
- int main() {
-
-    void *addr = mmap((void *)-1, HUGEPAGE_SIZE,
-                 PROT_READ | PROT_WRITE,
-                 MAP_SHARED | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (addr == MAP_FAILED) {
-        perror("mmap");
-        exit(EXIT_FAILURE);
-    }
-
-    snprintf((char *)addr, HUGEPAGE_SIZE, "Hello, Huge Pages!");
-
-    printf("%s\n", (char *)addr);
-
-    if (munmap(addr, HUGEPAGE_SIZE) == -1) {
-        perror("munmap");
-        exit(EXIT_FAILURE);
-    }
-
-    return 0;
- }
-
-Result without fix
-==================
- # cat /proc/meminfo |grep -i HugePages_Free
- HugePages_Free:       20
- # ./test
- mmap: Permission denied
- #
-
-Result with fix
-===============
- # cat /proc/meminfo |grep -i HugePages_Free
- HugePages_Free:       20
- # ./test
- Hello, Huge Pages!
- #
-
-Reported-by Pavithra Prakash <pavrampu@linux.vnet.ibm.com>
-Signed-off-by: Donet Tom <donettom@linux.ibm.com>
----
- fs/hugetlbfs/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 412f295acebe..428fd2f0e4c4 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -228,7 +228,7 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 
- 	if (len & ~huge_page_mask(h))
- 		return -EINVAL;
--	if (len > TASK_SIZE)
-+	if (len > mmap_end - mmap_min_addr)
- 		return -ENOMEM;
- 
- 	if (flags & MAP_FIXED) {
-@@ -240,7 +240,7 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 	if (addr) {
- 		addr = ALIGN(addr, huge_page_size(h));
- 		vma = find_vma(mm, addr);
--		if (mmap_end - len >= addr &&
-+		if (mmap_end - len >= addr && addr >= mmap_min_addr &&
- 		    (!vma || addr + len <= vm_start_gap(vma)))
- 			return addr;
- 	}
 -- 
-2.43.5
-
+Wei Yang
+Help you, Help me
 
