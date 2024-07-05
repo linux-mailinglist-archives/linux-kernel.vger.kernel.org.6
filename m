@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-241857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7934A92805C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:23:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6A292805D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA1661C236B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAAAD1C23BAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49BB208A7;
-	Fri,  5 Jul 2024 02:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B88614292;
+	Fri,  5 Jul 2024 02:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E+DjN0Xm"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eBFgZiam"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15FF3D55D
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B611C6A0
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720146152; cv=none; b=agoS71trnF9iWJ+zZ1KcXwG+PG3sQbEyiOxpJjwmN0Eec90tyhdYiyQhNkqK1l84FnIushNnf3AZFYi9pCivyPqZO6I+WgJMdsqZzVbrpCdb7mBfLeAxXVvF24iogvFhytoABU6x5g0zi/R39R5BEyMgy0M8nruAPxZ2jv5xkY8=
+	t=1720146158; cv=none; b=I0VxXU5qdJKnf3+MxR9YYf4muuY/35yCe/2jYJYM97R8tcZjO5L6x+ktQDM53C6XSBvTdwodwyt4AGcAIFUIbFhA5l8xLHip36juXVqkEiFyafXcboNlOVfC5Ay2KZRDjocRnqitOkdFszuhhyVeY9rjmgTYQAtSlMYb1v53v3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720146152; c=relaxed/simple;
-	bh=NapZZUDRrPOjOD7hmeC6ooeeQO+UVoWf3ur+giJO5Qo=;
+	s=arc-20240116; t=1720146158; c=relaxed/simple;
+	bh=iP4PTnc+JwqINZP62JEJfVsRzgiEnD/hVYcU9FxHyW0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dOihBXi+lGHhUXjco3W4IeLUTWWp7hfHzlxXTQI8uSVEgDJ2heTr7DtNYhm2sGaoX2lP8VdJ9lOLyHGFRAi/0MIN+XKpBkllmM3dxb1QNdERqGXpn2U/sFsciAFY8yCveevqJwcfHiiaxjB4QwfcckVIqi9jTqnvTytj0IfRvtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E+DjN0Xm; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:MIME-Version; b=tnQsV3DRuEI4an+LjFrmfDGCyaKkS2pfZxvNsB09Q0yJ/md2pkWdxYwOP3GKiyscSzH2Zvr6gZC7mBnq/pLn97mg2Q/+21/JagZ8tZon86PbB3F7FB7rIu3xk1bFUQtbaooWmI6qkIURoI+koP/ny7o9WtdQoNmJ6tNk/79RkFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eBFgZiam; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720146150;
+	s=mimecast20190719; t=1720146156;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tjyYkaA/WHaUDnxoizRMJYe279ct6UcqrvUL0yfxjPU=;
-	b=E+DjN0Xmze0ma+8GIxc/RicFzD6mRF7pcYu8mKKd5T52PecQwpxd2chO7Yw2/CnmNkhvO4
-	V85CP933SqJWndQqK8qeEn2nUbx7cZza5vqoy5i9jYmScofKjPetAF1JT6/jVHqQkrmy+X
-	mtBPSGmUoULrZaL0K+sk9OfpmrynXg8=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Q7szSx4tLcUjlj9JqAzakCICbYrgWRQ4USIrs5Qy/W0=;
+	b=eBFgZiamhpXHAxuN4Uj9ZA3bZa7KYm2S8f5r3w6aDInt5j3vF8krgWis9I09Nq3l+dQLGJ
+	Rj1zX1axlfGMdOe+9naBNaiyM3XZa+LBgP15p6uPqzXewSjjwJQwlHFwplip8ymUjdTYW5
+	Ys5rZP+/uovJDGmWijCZpseZPKgCElk=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-257-pqQBdMdRPP2_mV7yGQYKgw-1; Thu, 04 Jul 2024 22:22:27 -0400
-X-MC-Unique: pqQBdMdRPP2_mV7yGQYKgw-1
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-651006802ebso17571107b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 19:22:27 -0700 (PDT)
+ us-mta-493-67rASjbpNMKARgmtiYSz6A-1; Thu, 04 Jul 2024 22:22:35 -0400
+X-MC-Unique: 67rASjbpNMKARgmtiYSz6A-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6b5de5ae24cso13423316d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 19:22:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720146147; x=1720750947;
+        d=1e100.net; s=20230601; t=1720146154; x=1720750954;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tjyYkaA/WHaUDnxoizRMJYe279ct6UcqrvUL0yfxjPU=;
-        b=mV5lrpKLv/WnSrenDkLsFCMExbSz9B2D8+IkqHOR+HhQod/5fghdy0FsYwOBesk2gX
-         TW9zMJ/S8cmQB9OGjhd5lccVfC+PF2zBH6FhbY8WDA5r4MbVPSYSR7WBtI97bh+3kBNl
-         uL2MJswc5pJM54JYRFcRG6MPefgMYSDsWt9fHwlcqgo+GowFdE91VTfkXRb9NaMiK+pl
-         de7SEnjOdnlGsoYfb9zK8V9GUSyO69Qs74ve0tUnSiFfBFstK9P50yUPsC0AEfSzAr4g
-         KkisiDckvaOqEedJ/+zOUfKGyLsKjOtNDbwHKERBMjMTz639V6IUapmxstUN/I7k5M6t
-         z0kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLN3qmf6ABg6dofDSU0o63qTdvntVU1EbIK3iGTb3vp6IXPULp2NCGkKNMIRPrg+c9fxE7DmEudKBxihTel8iQvCf1Sb0HK+ZFLhby
-X-Gm-Message-State: AOJu0YxsdQTS/ZdY7vtqumNXsxSNv+W1YkaoxrYUwQIcc9Ck2AHP+1lx
-	Wqh7gUFQxodFUwKYgEwdeJlu+zsVoI+0c6Uu1kSo6hHsqr7fwS1pdDQJSp7Pl4ixcUXouq2yLra
-	GTlgPufcNZjVuF8ugMBZ/6LEW/0VkPosJto3BEwleeyjR8wInKIC1RA+Nntxakg==
-X-Received: by 2002:a81:8388:0:b0:64b:69f0:f8ed with SMTP id 00721157ae682-652d8036fbdmr31922417b3.51.1720146147244;
-        Thu, 04 Jul 2024 19:22:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLgnTKFCfkEiR+QoUwT2JIVvTCvhP6onUBXVZAlhfg+gaU00wMZsc+aVt5WRSkm7f9Rp2w7A==
-X-Received: by 2002:a81:8388:0:b0:64b:69f0:f8ed with SMTP id 00721157ae682-652d8036fbdmr31922287b3.51.1720146146972;
-        Thu, 04 Jul 2024 19:22:26 -0700 (PDT)
+        bh=Q7szSx4tLcUjlj9JqAzakCICbYrgWRQ4USIrs5Qy/W0=;
+        b=o/rnspWEQOVDooH3JyM0482kOyW0AyQriF/dbEi3MBpDuZVzZeaB5fzjGP83VCJSrL
+         6TB19IZzg2ETLE+lMJbjvsqzovIRJekbpy81Y9ZRoZT7cWBI7Y5a2pKzKJJT4nLxGFW3
+         7ti8x3GvrBZgHoA5HxNq8oJnoasgu1Rl3dDUSR9dTyUj02DeD0f06KYEApmv9llBLN8O
+         TzavxWZeobZaP+X95umH4WMqCqi0oaHS5EoaqKjNe0MSM+xXR/3kppMmSGssI1pSbvtF
+         2A6pmsrTkuhq4MDv9Bz7AFnr7lenfMk56IvCYc/lLxPHHoYkE6nUvWvCVrRCRGh+xIiP
+         2zMw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8XVjmehjULbYyFUEEhiAzUbLzYY11n2BVtwlv10jIABQAxpxsOyrQLoQPEy4GLwliOKZYYSMz1NyGM8x6QT3//PO09ca+uEsUCRw2
+X-Gm-Message-State: AOJu0Yy/2qXqKV4IKvqp5ERwX4JXexVUCe4ksJd0rpktBEedWQ/PMl17
+	2d6/YKTITcIyDYtsWndpfIuU99gud/TxK87XSHcivF17dxUyusz6g+8I6u6HcnTA8Augi9LvKeP
+	6j7N+49fmyGD1tqmCfGHxI2XR58jXBNkJpRcY72OWzHCTwIPG+dq7tKXEWLDFsQ==
+X-Received: by 2002:ad4:5c41:0:b0:6b5:e006:11ae with SMTP id 6a1803df08f44-6b5ecfa7b1amr47128686d6.22.1720146154664;
+        Thu, 04 Jul 2024 19:22:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4kbA/ede2RPQS5+pjM2192rg6QuAOX6Y2+jKIqVrkNbdROoUJYoeZzed5aZNbNVR6IXzYfg==
+X-Received: by 2002:ad4:5c41:0:b0:6b5:e006:11ae with SMTP id 6a1803df08f44-6b5ecfa7b1amr47128396d6.22.1720146154383;
+        Thu, 04 Jul 2024 19:22:34 -0700 (PDT)
 Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d69308142sm731282385a.117.2024.07.04.19.22.26
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e564455sm68955926d6.42.2024.07.04.19.22.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 19:22:26 -0700 (PDT)
-Message-ID: <f8e58280c31e7f37c36277928b48a3e4bde5d795.camel@redhat.com>
-Subject: Re: [PATCH v2 42/49] KVM: x86: Drop unnecessary check that
- cpuid_entry2_find() returns right leaf
+        Thu, 04 Jul 2024 19:22:34 -0700 (PDT)
+Message-ID: <d51310e1a43a1310f8b910f0a2fd7ef0ba886e4a.camel@redhat.com>
+Subject: Re: [PATCH v2 43/49] KVM: x86: Update OS{XSAVE,PKE} bits in guest
+ CPUID irrespective of host support
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
  <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
@@ -82,10 +82,10 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
  <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
  <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
  Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 04 Jul 2024 22:22:25 -0400
-In-Reply-To: <20240517173926.965351-43-seanjc@google.com>
+Date: Thu, 04 Jul 2024 22:22:33 -0400
+In-Reply-To: <20240517173926.965351-44-seanjc@google.com>
 References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-43-seanjc@google.com>
+	 <20240517173926.965351-44-seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
@@ -97,31 +97,43 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
 On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> Drop an unnecessary check that kvm_find_cpuid_entry_index(), i.e.
-> cpuid_entry2_find(), returns the correct leaf when getting CPUID.0x7.0x0
-> to update X86_FEATURE_OSPKE.  cpuid_entry2_find() never returns an entry
-> for the wrong function.  And not that it matters, but cpuid_entry2_find()
-> will always return a precise match for CPUID.0x7.0x0 since the index is
-> significant.
+> When making runtime CPUID updates, change OSXSAVE and OSPKE even if their
+> respective base features (XSAVE, PKU) are not supported by the host.  KVM
+> already incorporates host support in the vCPU's effective reserved CR4 bits.
+> I.e. OSXSAVE and OSPKE can be set if and only if the host supports them.
 > 
-> No functional change intended.
+> And conversely, since KVM's ABI is that KVM owns the dynamic OS feature
+> flags, clearing them when they obviously aren't supported and thus can't
+> be enabled is arguably a fix.
 > 
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 > Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  arch/x86/kvm/cpuid.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/x86/kvm/cpuid.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
 > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 258c5fce87fc..8256fc657c6b 100644
+> index 8256fc657c6b..552e65ba5efa 100644
 > --- a/arch/x86/kvm/cpuid.c
 > +++ b/arch/x86/kvm/cpuid.c
-> @@ -351,7 +351,7 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
+> @@ -336,10 +336,8 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
+>  
+>  	best = kvm_find_cpuid_entry(vcpu, 1);
+>  	if (best) {
+> -		/* Update OSXSAVE bit */
+> -		if (boot_cpu_has(X86_FEATURE_XSAVE))
+> -			cpuid_entry_change(best, X86_FEATURE_OSXSAVE,
+> -					   kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE));
+> +		cpuid_entry_change(best, X86_FEATURE_OSXSAVE,
+> +				   kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE));
+>  
+>  		cpuid_entry_change(best, X86_FEATURE_APIC,
+>  			   vcpu->arch.apic_base & MSR_IA32_APICBASE_ENABLE);
+> @@ -351,7 +349,7 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
 >  	}
 >  
 >  	best = kvm_find_cpuid_entry_index(vcpu, 7, 0);
-> -	if (best && boot_cpu_has(X86_FEATURE_PKU) && best->function == 0x7)
-> +	if (best && boot_cpu_has(X86_FEATURE_PKU))
+> -	if (best && boot_cpu_has(X86_FEATURE_PKU))
+> +	if (best)
 >  		cpuid_entry_change(best, X86_FEATURE_OSPKE,
 >  				   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
 >  
