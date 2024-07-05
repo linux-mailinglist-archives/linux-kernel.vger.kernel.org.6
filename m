@@ -1,161 +1,103 @@
-Return-Path: <linux-kernel+bounces-242482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40BC9288AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:26:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A409288AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314FB1C22B03
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:26:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC59B286849
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9EF14A60C;
-	Fri,  5 Jul 2024 12:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B3214A08B;
+	Fri,  5 Jul 2024 12:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MbNH/85Z"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbj2Kxom"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A47C13D243;
-	Fri,  5 Jul 2024 12:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055C13D243;
+	Fri,  5 Jul 2024 12:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720182396; cv=none; b=BfZlvJIXYy0nDuySYl7cEKyoDeOFyW/1ox2Xg+d5JoximEHHwBrp2rqLD32J8UytnDBZqatIfu5n/q3UdYxJhyK/Ak4eadJiTcP5Vmhqoc3qFxfwBCPFmvHXcawRVXvZSzvl2oEAJ9gumPLO34ypuBzXKcK4HdFRvBzT1igkpOw=
+	t=1720182432; cv=none; b=kboTJpCR/hdgbWKLkrryzz8jLZZj7cOGdn/0h8auwzaW69AYMyUk589HlIhUchJzywhyU9QnIwMXUE9dCMW5GyfYFOchhXNeZQISoNrabEusbF7HXixcdo2/QpLmSPcUFlrFCtAowxlpJWeAXl9dIxvq5uH5GjMrii7tZFp1dfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720182396; c=relaxed/simple;
-	bh=4cGnOhuIoomBwrD24hVQFlP9MtQb5SmqGxpFHWYkwpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F3A0UsSUijnUXfsbgotUcjLdLSzsg8awn6HvdOKSpXXe/yO6GTdqcT3jsfhTOnqyI7WcZlBxVDBm6UpsNmA/XEqaOV7faxEKKJfVNKBWe03QM04yiY9Bd6LdtGlwUfwLUurzUMFiLTE7GGG/ptj7EYOK4eb9+rm8v5Qof3Jvnqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MbNH/85Z; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720182391;
-	bh=aZeNuP2pelRkI3CSCXzaDUpVS59Y3c8MYTsNt4sB4jk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MbNH/85ZZAmLzPqUmW/KoPjNcWSQUJa5m1sHj4DwaD/Ggp9suzqFFsesZCl9i0j5X
-	 JVbctaMNgLWgMP/bGFHZqDnj1IIW7hvpR/uRbno/OxJjv1QanWSpH6FOaOZijgz61I
-	 Zol9kCM1ZW6mji0n8O+R1b+o7ClH1Hw814x1Io/hCwfnpz69tRzqI7rZiXaVALAkYH
-	 T3sq1bsZYZYctf/nMILRfaHpInxI0sVxnTAUiuwQNJmPn/d69H+rS8STQtquhj6Rls
-	 OlFggb8LXFVlFRXHsXFhyjRXI1cYJKQCr2Kg8lNrw5PZ+p+UV/XRyjr/zyRRxJicY0
-	 Im6zX8yemoKDQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WFt6K6cs3z4wbh;
-	Fri,  5 Jul 2024 22:26:17 +1000 (AEST)
-Date: Fri, 5 Jul 2024 22:26:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Masahiro
- Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas@fjasle.eu>, Vineet Gupta <vgupta@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Guo Ren
- <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Dinh Nguyen
- <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, Stefan Kristiansson
- <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Rich Felker
- <dalias@libc.org>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Christian Brauner
- <brauner@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
- loongarch@lists.linux.dev, linux-openrisc@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 03/17] um: don't generate asm/bpf_perf_event.h
-Message-ID: <20240705222616.017b1593@canb.auug.org.au>
-In-Reply-To: <20240704143611.2979589-4-arnd@kernel.org>
-References: <20240704143611.2979589-1-arnd@kernel.org>
-	<20240704143611.2979589-4-arnd@kernel.org>
+	s=arc-20240116; t=1720182432; c=relaxed/simple;
+	bh=sIWevVUKkb7FOCasj7mQTl9nMdE+rJH3P8UkJXqyiYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oMh95qMPjsKonBSn068C7JPKA45LGHc6pgWxyMsUnyxFWC5MbeuYK//Ay61+FuZ+MWvXNX/ajUTaC4hFnRe348FAda1u7MI7t+z34oQ4ONcX/kwI9hUgBKH1KjbW90FqZprUHDCOW+ETDM5te+OWCeWty33mr0LYPRQ3564JSwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbj2Kxom; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ee844bb5d7so2487051fa.0;
+        Fri, 05 Jul 2024 05:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720182429; x=1720787229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sIWevVUKkb7FOCasj7mQTl9nMdE+rJH3P8UkJXqyiYg=;
+        b=nbj2KxomoIf1w0Ft8nqQRzefIixtER9pCecqC9JwtdOZxFfik/ii+P9J4pE2ydEtw8
+         UJfx97toyH2fo8V7g8xccpQ1HIE2gQDPD4XgXOOc89qPrus+a/UlU79cdPWRVdVbRNcx
+         p8VQ+DnqG6uwSTWG6jtc7J/rVkOKx9R4frJN4IfXm6Te8CSIsiL8zr95QpLOfG6pctl8
+         DR0hYdyQLCKHExA8krfU3fkWiDyie1jggyfP3u9I3PJGU3QfSNE37lZMUfmP4qOkdS/R
+         FL2WU+X98tUKCPJCzEpURqkCNzyaKz5K8KvJt/yt5rOvcqak1X0arMie2bY7r3OiHI/V
+         BRvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720182429; x=1720787229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sIWevVUKkb7FOCasj7mQTl9nMdE+rJH3P8UkJXqyiYg=;
+        b=gYg7Z6MnnPQqQw0DCEDPrgvZZFez3kOQKrrTJBOlamjOxpENMbjjYkyPzW9dWBxnRR
+         AKiI6iCfVC0zufKaQQI3kNNxlw7fsr6YHXRe0FOmgXcpesDTLhClUxOUmV+F0ipIkDfE
+         yVMMK6K4+1QABzsv7rULLXP19okcKVeh1/ht3GycJ0sFhKNaIcOv/B4DIrgZJhjGGJLR
+         6fHnAQAWCs5fZGaSDBBrqIrc6dJTibLqzO4llvub39nkTZscsMZAKVZLMuV6Y7eDGvsA
+         RjffSeto/eIlorFbfw+rrH1CoeXuAnYPOffvcUjZoGK3h1YNNrBXWh7UGk8BTNw+CpOD
+         pOVA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/hPMFXEaSImiv4F3Xg4tYodhyktTwO3UbsEroDpnDa2ihjkZsfbBHHYWO2SyrClCBILw9YjJlI1MvaEsi9iFK9aLYTAqGOhOlR00ebJuTzZ0s1wjKFjgZN3shyHGycjB+Zj35P8/3ug==
+X-Gm-Message-State: AOJu0YwVekKh5xJ4sCRSPwUBEiXfpL3vReZVofIfSQFXAH/wLfbLF343
+	x0zx5oOAE9+Ho3g70ea4G6aChOKIkGbMOkVQExPDr9sJ81eARtEn16SsmA8PifU5+SMZvlx6Xe2
+	w2hOPA3F+F6m/GDFR00fEo4wF+JJHAw==
+X-Google-Smtp-Source: AGHT+IE8OV1AeVxu2SX0O/PkjN0a38BZTc66Pul7Ij78t5Gphi3uH38+dmdzatGgs+bEAS/I8hEOBqE62yBpxruHbxw=
+X-Received: by 2002:a2e:8183:0:b0:2ee:4a99:6a3a with SMTP id
+ 38308e7fff4ca-2ee8ed9589fmr29383411fa.2.1720182428647; Fri, 05 Jul 2024
+ 05:27:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IAaJheb.p6.1G=gRNPNGj_e";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/IAaJheb.p6.1G=gRNPNGj_e
-Content-Type: text/plain; charset=US-ASCII
+References: <20240705-bspimx8m-3180-v2-1-dc1a7e1689be@phytec.de>
+In-Reply-To: <20240705-bspimx8m-3180-v2-1-dc1a7e1689be@phytec.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 5 Jul 2024 09:26:56 -0300
+Message-ID: <CAOMZO5BEHoAycqQehddA_d03nrKkNnbcTAkq=VXww0d6HRHFdQ@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: freescale: imx8mp-phycore: Add no-eth overlay
+To: Benjamin Hahn <B.Hahn@phytec.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	upstream@lists.phytec.de, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+Hi Benjamin,
 
-On Thu,  4 Jul 2024 16:35:57 +0200 Arnd Bergmann <arnd@kernel.org> wrote:
+On Fri, Jul 5, 2024 at 9:14=E2=80=AFAM Benjamin Hahn <B.Hahn@phytec.de> wro=
+te:
 >
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> If we start validating the existence of the asm-generic side of
-> generated headers, this one causes a warning:
->=20
-> make[3]: *** No rule to make target 'arch/um/include/generated/asm/bpf_pe=
-rf_event.h', needed by 'all'.  Stop.
->=20
-> The problem is that the asm-generic header only exists for the uapi
-> variant, but arch/um has no uapi headers and instead uses the x86
-> userspace API.
->=20
-> Add a custom file with an explicit redirect to avoid this.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Add a devicetree overlay to disable ethernet for boards where it is not
+> populated.
+>
+> Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
 > ---
->  arch/um/include/asm/Kbuild           | 1 -
->  arch/um/include/asm/bpf_perf_event.h | 3 +++
->  2 files changed, 3 insertions(+), 1 deletion(-)
->  create mode 100644 arch/um/include/asm/bpf_perf_event.h
->=20
-> diff --git a/arch/um/include/asm/Kbuild b/arch/um/include/asm/Kbuild
-> index 6fe34779291a..6c583040537c 100644
-> --- a/arch/um/include/asm/Kbuild
-> +++ b/arch/um/include/asm/Kbuild
-> @@ -1,5 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -generic-y +=3D bpf_perf_event.h
->  generic-y +=3D bug.h
->  generic-y +=3D compat.h
->  generic-y +=3D current.h
-> diff --git a/arch/um/include/asm/bpf_perf_event.h b/arch/um/include/asm/b=
-pf_perf_event.h
-> new file mode 100644
-> index 000000000000..0a30420c83de
-> --- /dev/null
-> +++ b/arch/um/include/asm/bpf_perf_event.h
-> @@ -0,0 +1,3 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#include <asm-generic/bpf_perf_event.h>
+> Changes in v2:
+> - Remove the compatible from the overlay
 
-Just wondering if that file should have some explanatory comment in it
-to prevent it being cleaned up in a few years ... or at least to
-explain why it causes the above error when removed.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/IAaJheb.p6.1G=gRNPNGj_e
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaH5mgACgkQAVBC80lX
-0GxvyAgAnvriHKpdKWTfcYd3ec6OiQntfWfgTjPlWVORKO3a85cAPDy3acHNxKoW
-6Bfh4LWjBSmmqSTbP6rIFpInGlZedDil+cHdDALd7D/dBOCwUJkG1oB7aY7A1HkA
-hPQhv7pLSbZkhJ3M0TurrRsFbO9QR1RFnxIxPRPy4gEkjPGnLJ0H1gqh11s5irVU
-WGCviIF/qU3Xkj6DjtzAS1lY7y0BGec3kvR02WhKHvoh7SJrquU5M1i5qzLpuw82
-0xowL25d77AbRzea52VD6Sv2H614Q8hfDtDQB6rTGdz6Bo7Pu6F50S3NfYe0Uu5y
-zmTMyLek7tdd4FU+Gs4HcQFuJNsSeQ==
-=SXsw
------END PGP SIGNATURE-----
-
---Sig_/IAaJheb.p6.1G=gRNPNGj_e--
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
