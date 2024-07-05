@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-241955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC599281BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:10:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A5D9281BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7C3AB230B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6FEB1F234E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA82014388D;
-	Fri,  5 Jul 2024 06:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1035813F42D;
+	Fri,  5 Jul 2024 06:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="yoI0vWtd"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="rId0vQOX"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA82132103
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 06:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D67033C7
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 06:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720159812; cv=none; b=Tzccr/+6qqtaXgant7kvcjRANMjvr5DeNuuogEMG4keLDITfgV6Qs0Oc3a0I7BIhu3pMJhO+UNsYandzB6eVSZ+H6JUiAPp9/Io5oGapReileJG3KXR1dlFZm4XMnkHEvO56+JqDrgT8xAQpyT2hlOP3e0tat237PMivFTzEk4w=
+	t=1720159871; cv=none; b=kMpiyZjTv5+ZGJ2d9+MhYObO4mM+QPTKkXD2Olk9MD+YUoS3gZZMzCOTrW85fHZcgUxXTxy5aAd6xpVI6P4MRlORB3Z5vDKaqjJ3wJFQNaK7bCaQ0afBrt8ydkEntRCKEGlUHoRQGFGHiMMd+UAKSQ9LsAdNNuPEZ4O+1BDYvrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720159812; c=relaxed/simple;
-	bh=W+qamwsHuyOBrSd6E6yy7gGaZxUWsVukqdHyod550SY=;
+	s=arc-20240116; t=1720159871; c=relaxed/simple;
+	bh=5Y1VF2DsIyZIsAYkOQ/CH3Ph6m1nG4HQkTV4KqMjdWs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cd52ReKOxaIBCCTDnUxk5uDDgCbTMmwyR4n1mfw7hYJHqY41cb5qn/78ZeSU/ek01QsgvHZ1hjTojYo7xSLnKws5wnxGztirRrh7I3E02lB9MZeYW5sPMR90zNVs82bMl3qpK66KexohQMSdch22KCjLMfFa9I2jLZuMD5rcaI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=yoI0vWtd; arc=none smtp.client-ip=209.85.221.50
+	 MIME-Version; b=ThoLEt7EK8XhyuEmJP4sjy/e9/oa/gTJJOqGbbdH/nZpEOmXIO/WUcl6D6hu87wq445L+V/CdTPO/NCsvh95p7lXKaot8eV/TXD9eFPvTRmra2LKfuUHorMoo0VUMBCZ80ZgWm0qY3CjSqYT/c6HMQOr6LSKKzZYVChfZq/b9kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=rId0vQOX; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367ab50a07aso157533f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 23:10:07 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea79e6979so79438e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 23:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720159806; x=1720764606; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720159867; x=1720764667; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rOD2jtdAtfNII56GP5rqsRV5KAthLbsUXOQKU9980nY=;
-        b=yoI0vWtdAf2AolvOLzrTOsWksWc2xC9H3Xn+mfrO3SP8SCFUz1Wt5hXkg4o8Assl3q
-         vxbblN9rZ5iNxQDAG7De79y6AK21m3ee+DcnbMMLd8cV2kJpjEy+6o6AGusRzgEX5qDB
-         gPXHpPLgtzpfXY52/TenmkEO1kOiT/N0E1LDWjQ2QTs97A9WadavhKtqrmv0Avgpfobv
-         VK+wrf6//dgvTagN4vDm1aOJWjwm9aUHJQQfwjiYDFNtHpjyXymP/pMkB10WleQbYCk6
-         Kx/wsQK+JAa1CgqGqOaewLbOQB6cc+SWq3H1PtUEHw9qp+p9029PWi4MxTZpBgw2O3L8
-         Llbw==
+        bh=5QeNckosVxjolkEFvOsh5sX+5l80S9ypJGm7bOhl6bY=;
+        b=rId0vQOX7mHv8wexP1aysKp21EJ6hNWYVaRMoUDNmzOZrvL56oolw1ehgHW5f7Wkp8
+         y1dc+inSa0ncuJouiiWy3Pb38/IWZ0i6Fv5wVeuG/pH5GZkSwuVLH+hAWmqvXS54Rmcw
+         nQiZRpAGioor5ShodOitEkbMc5tfAQEqs6X0RLpvuwtkhELdbfMWBcQ7ANmRmdm/Pf/U
+         E1wxnROHvkze1Bcfts8nC0gtdUm1ZDBF0N7cuvY7dOrUhNv1ZnQ8O5U6Nmd5O9Ty+TWQ
+         l6FWOtGBVouNyGZwrOsHZunuxEV3dlezu3QKJRfZJMgOejmvNZoZZWxEMYOLygqpcaIJ
+         99Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720159806; x=1720764606;
+        d=1e100.net; s=20230601; t=1720159867; x=1720764667;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rOD2jtdAtfNII56GP5rqsRV5KAthLbsUXOQKU9980nY=;
-        b=RoyrUB/u7CdIw5scob/6tRW5OMVs0854//1taUoV3LjtfSVD5NWg3op7CYlycmUccZ
-         y8PxBlUkt8mtjJOQmqOO8NKx70oXkirEriqHdF12zNBn5GXO81K5XJhq7rlc0KUJtsKw
-         0fPefn+IQkYyGodLmM3SmSPcVIPYK+vrEJS3mh2v6dqJfFI7sf6bkYRu0Ws9J0OxT67v
-         cXx89P//WxOw3ESeVzPP9xhaASPCLH01SOcjh747SCO+wCH7YbIgsMW04VV+mRxu+L5Z
-         i/zS4SFFSC4LlWjODulV9l8pE/dKutbJWyJtC6HsofYHkxfrn8KcaDcU979YUKy2EQxt
-         oBhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRV4xoscLCuswGQ+a4TEhJiOeDNdtWOzhUdFnFxWAGMcSK4z0P49xMPYPkHc/6/+adeDCX5gcfZ1CyMlTMTTROf0LTI1kRc4sgBhwj
-X-Gm-Message-State: AOJu0Yzh/RxCcpPJIRLwDBH0VG9hSW66Vvsb6c2bncacfbY3WjcJzL9O
-	jItt+Y/nL4PKIHyQtZhsP21A4V1GnPHF4N4+AhLSjvX1WlZ76NCe9C0Wq2vMmgk=
-X-Google-Smtp-Source: AGHT+IGSC+YguDLIlW5OOjetUrmmUspzykknqUgbL5edv3k5thftEFlmWv4eaRYhBjzCWN1bS4fzfQ==
-X-Received: by 2002:a5d:410b:0:b0:367:89a7:da5e with SMTP id ffacd0b85a97d-3679dd2997amr2862491f8f.19.1720159806299;
-        Thu, 04 Jul 2024 23:10:06 -0700 (PDT)
+        bh=5QeNckosVxjolkEFvOsh5sX+5l80S9ypJGm7bOhl6bY=;
+        b=oktkVs0Q8Rf+uCjr1rFeAJkXfMz4lmD+dIw4NlpXw/eJV8Bbi54N2NrvYp2gcS0vg+
+         r1TNnzfeC6jhH4YwRDBpwt5BnLUGm9llwl9eK8Foou2dYaLNUla44MzYvIUXO+MMDI/+
+         DdJyA/NY/Tr7kZiksBPRDszy42pDH2gHGEip+m0tujBy2qm+R+arBCcAwym4vBnJ5Jsi
+         XP9grCaOpq41wDI9nV6foHpFEdt0XpJ43cFAP8CZNIi9FNFFuAyTrf97xDZezA9d4U4R
+         0C99k5ikwYd42FnVHvJAx9k+YgOlvA17pAnn2OXtI4t7I7iPQZWFZZ/Pu0uNpppAeHHc
+         +OFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgQPA8/A1biS5QwwQ8LbdlvGZGCu9NLzmoqQBTjImsCctHANLbUKkdLkjL63muJvcyfWqtaEE+Z2Dj1GY8un7lDcspiBavq4JGvvh1
+X-Gm-Message-State: AOJu0Yz1+g4pDShzlASm1GDf2IT0gN+u14nQSy+hyfYwxSBbG+x3fXXy
+	i3OIoTT1FWghB50AY32khF4BBjeZEcIVenSrznNr5LtKMRu5ld6Z0Nk7wiW9yA4=
+X-Google-Smtp-Source: AGHT+IHjkb8qjpcNsRKkVyx2hr2qJJKQ78xjRcgB3qu4zXgwtDuMcYcJHWND0BLXH2C/nnodAxjlzQ==
+X-Received: by 2002:a19:8c48:0:b0:52c:e180:4eba with SMTP id 2adb3069b0e04-52ea06f7cbbmr2294130e87.62.1720159867137;
+        Thu, 04 Jul 2024 23:11:07 -0700 (PDT)
 Received: from alex-rivos.ba.rivosinc.com (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a40a6d4bsm1709446f8f.51.2024.07.04.23.10.05
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d16b0sm47050405e9.7.2024.07.04.23.11.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 23:10:05 -0700 (PDT)
+        Thu, 04 Jul 2024 23:11:06 -0700 (PDT)
 From: Alexandre Ghiti <alexghiti@rivosinc.com>
 To: Vladimir Isaev <vladimir.isaev@syntacore.com>,
 	Roman Artemev <roman.artemev@syntacore.com>,
@@ -76,9 +76,9 @@ To: Vladimir Isaev <vladimir.isaev@syntacore.com>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH v2 1/2] riscv: vdso: Prevent gcc from inserting calls to memset()
-Date: Fri,  5 Jul 2024 08:09:01 +0200
-Message-Id: <20240705060902.113294-2-alexghiti@rivosinc.com>
+Subject: [PATCH v2 2/2] riscv: Check that vdso does not contain any dynamic relocations
+Date: Fri,  5 Jul 2024 08:09:02 +0200
+Message-Id: <20240705060902.113294-3-alexghiti@rivosinc.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240705060902.113294-1-alexghiti@rivosinc.com>
 References: <20240705060902.113294-1-alexghiti@rivosinc.com>
@@ -90,29 +90,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-gcc is smart enough to insert a call to memset() in
-riscv_vdso_get_cpus(), which generates a dynamic relocation.
-
-So prevent gcc from doing that by using the
--fno-tree-loop-distribute-patterns option.
+Like other architectures, use the common cmd_vdso_check to make sure of
+that.
 
 Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
- arch/riscv/kernel/vdso/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/kernel/vdso/Makefile | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
-index f7ef8ad9b550..c7e40bf36371 100644
+index c7e40bf36371..b5c73084e554 100644
 --- a/arch/riscv/kernel/vdso/Makefile
 +++ b/arch/riscv/kernel/vdso/Makefile
-@@ -18,6 +18,7 @@ obj-vdso = $(patsubst %, %.o, $(vdso-syms)) note.o
+@@ -45,7 +45,7 @@ $(obj)/vdso.o: $(obj)/vdso.so
  
- ccflags-y := -fno-stack-protector
- ccflags-y += -DDISABLE_BRANCH_PROFILING
-+ccflags-y += -fno-tree-loop-distribute-patterns
+ # link rule for the .so file, .lds has to be first
+ $(obj)/vdso.so.dbg: $(obj)/vdso.lds $(obj-vdso) FORCE
+-	$(call if_changed,vdsold)
++	$(call if_changed,vdsold_and_check)
+ LDFLAGS_vdso.so.dbg = -shared -S -soname=linux-vdso.so.1 \
+ 	--build-id=sha1 --hash-style=both --eh-frame-hdr
  
- ifneq ($(c-gettimeofday-y),)
-   CFLAGS_vgettimeofday.o += -fPIC -include $(c-gettimeofday-y)
+@@ -65,7 +65,8 @@ include/generated/vdso-offsets.h: $(obj)/vdso.so.dbg FORCE
+ # actual build commands
+ # The DSO images are built using a special linker script
+ # Make sure only to export the intended __vdso_xxx symbol offsets.
+-quiet_cmd_vdsold = VDSOLD  $@
+-      cmd_vdsold = $(LD) $(ld_flags) -T $(filter-out FORCE,$^) -o $@.tmp && \
++quiet_cmd_vdsold_and_check = VDSOLD  $@
++      cmd_vdsold_and_check = $(LD) $(ld_flags) -T $(filter-out FORCE,$^) -o $@.tmp && \
+                    $(OBJCOPY) $(patsubst %, -G __vdso_%, $(vdso-syms)) $@.tmp $@ && \
+-                   rm $@.tmp
++                   rm $@.tmp && \
++                   $(cmd_vdso_check)
 -- 
 2.39.2
 
