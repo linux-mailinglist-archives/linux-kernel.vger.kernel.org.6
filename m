@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-242143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05ECE92843A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:53:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227BA92842D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8278BB2217B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:53:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93DE1B233D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A6F1474A6;
-	Fri,  5 Jul 2024 08:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34BA145FEA;
+	Fri,  5 Jul 2024 08:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VYWtVMDE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vg7Gnau4"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB03146A9D;
-	Fri,  5 Jul 2024 08:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815DF13C809
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720169573; cv=none; b=t/u/YIPti44xEoRRpvcrqNeWrsNqum2F47nYn1SVuS21LuIMgPeplhcI32nIlShWFqxdRLpvxHkNMgWLmoxQi9CcMNDBq5Qe0nH/w5UOopH89am+zLsxBz434hht+mvwG0r2n5VpsU6x4KCQ9ft2z5T+nsXX2yENqBYzQoTzI4U=
+	t=1720169560; cv=none; b=OA0Hyjm1Bs98sRVGMMRcwDaVi0AI4ORp9SMg6AWJIW81Dv4Jc6xo4ZAj/iJM5MgBPsr4jK+7qMJb/dkqpWDXFhTMr3ztcKkn4dFmZ28y3Onj1OvOvNh20x72cSxlsDwnFZxT4i4EufVD6WrxxeS3a2qQBc45/0ZFCN5OF4gVg6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720169573; c=relaxed/simple;
-	bh=1EDXJsRapLfRsQyZ9e6wT9u++sCHv++Wzgq/ubLI0uY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G1NMFlwKc7K3HhK6vkgfHm8msbtjWSXF+35JRmJ6CmK6tK7vInC+X+ZriZF1OO6kS88VRfS5eugpNrF0NQ9YSMQjC5oBNozsIiMwJoAZ0bDbw6hr59yt/BMaC1yOY84/73rYYAKLtjbhWlCnuXRKW8mZ4sjZyxsshSv88Zlm5nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VYWtVMDE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4657xhTY020994;
-	Fri, 5 Jul 2024 08:52:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=qb1XPLFu+Q4nDgDk4YaRZrbQ
-	xukeJ6QWiQb1Jo1xbS4=; b=VYWtVMDEPNkxgAcT7Zzjv3jP5ZtIPUQ9YH8GGwlj
-	OU619eZdJyDjEYNVxLWcvzGXlgG9Vnq5RLJIMsxxIComcnsFGg6oLUMW6Th8TnUm
-	J0ysxf6rtz9+X0QX6tJ2uwWZqytkVsNc1jY2pLT3i1fp/Sn6Ea0eaMY1KmYLmx/D
-	jK7dAMGEAvjS1Qw+I1i7N5LejoGaPZSlPrW7XhTFn9EOCE/Sd1fustB1nMAhVQjb
-	H33iFtrzmjeNsr0Dv9vYuYnNSjr41Mt7SE/qiSSM/lbllPujD0AGlo+Y60qKKkpu
-	2q3L4BWsXczn9koi+NY7pfezXyj9Xoz2eklwHl5p+viUMw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406cww84p5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 08:52:40 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4658qd5X020074
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 5 Jul 2024 08:52:39 GMT
-Received: from taozha2-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 5 Jul 2024 01:52:35 -0700
-From: Tao Zhang <quic_taozha@quicinc.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Mike Leach <mike.leach@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        James Clark <james.clark@arm.com>
-CC: Tao Zhang <quic_taozha@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Tingwei Zhang
-	<quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Song Chai <quic_songchai@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        Jie Gan <quic_jiegan@quicinc.com>
-Subject: [PATCH v1 3/3] coresight-tpda: Optimize the function of reading element size
-Date: Fri, 5 Jul 2024 16:51:52 +0800
-Message-ID: <20240705085152.9063-4-quic_taozha@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240705085152.9063-1-quic_taozha@quicinc.com>
-References: <20240705085152.9063-1-quic_taozha@quicinc.com>
+	s=arc-20240116; t=1720169560; c=relaxed/simple;
+	bh=nN7bsChoKD+VcXCEBRcLG7JH8o73GTocHnqeU92nWaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PALhGkMV66i5H1ulyhMeXj4s6mFD6niRU2xqjMO/XovNy0Y4P690WNMetTBMTRFUrThWVvEQlJ91V3p8+cULhac3W+LwuwNIn7boKBR45dVtPXZ0r4YhDDYufI9T6X58qVAOlCrefut3faSGJjFemJHaMNHxF+UTVkWUuIsNSXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vg7Gnau4; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so19448351fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 01:52:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720169557; x=1720774357; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tm8BTCx8h7cfKJSdK68vXadL7NHJYI5R7P++Unzvos4=;
+        b=vg7Gnau4B7aeRV4B91DU+9LD65EBJ+OgP94cwEFPb8thm0VGtqMEEUi+zSWhI5pS9F
+         GGg4GNP1MOJ4DDT1k3eT3nE548SAKWBqXTn7HVP4jIAdG+B9QJj6c4h9qjeI/jw4t3aj
+         6gmXdVyB+LTZd7A20tvo3QuHUcWjY935HllqKVgHxdplvugTUwyMMOEvBzMYp69JvdQE
+         KTTsUJfmcOoTb3W27gfZsRqc4I4IbyN0EcbTuXzHHxjemk2ZkO2tMQfN7O1RIi4h2qXo
+         XDRgvrZDKWgcIudZDGLUraeAB9JcRDD872J2NW8YaVsPpj8bR1cbEk359fmZ3zIdY+L+
+         QZHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720169557; x=1720774357;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tm8BTCx8h7cfKJSdK68vXadL7NHJYI5R7P++Unzvos4=;
+        b=MesyQvR/Agvgg7RB1D9WQlZoplsxGe36zI3syg9TxSjlbYssIQaAcA74EvwAU/lROx
+         MhbKB+u8KYK999APUEHhZIv7z+KFE40WZ5uG+iLgL9uXEHI0QoOPqgWwS7+o49qVQGG/
+         09ZacOGS62CPb8SNdyeKYblS+tVDaKHUeqAuQJ1m8C4UphQdasbdnY8Qlk+7HA3VfkAp
+         02Vm8tgFv11YexTLlXmcj/8c67tElJwg5p6V2WxJssOh/MKOZEUyCxjtt0a7KMH9y58n
+         qQc15ibqD61MR/oe9TGBPLQbwE9z2g/xoE4YJz77uqEmJIGP0sqCH9sdfeK/jAqfM0sa
+         rWOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2CkV5LFtuOs7mCejmw5Ma2nzgwB9Jf4XUJhStO4rBHYq5Lj/m/KK837+0hhbbgAu1OhL+2871EpI8n1JY/EH2OlR3HNI6KIMLdvXa
+X-Gm-Message-State: AOJu0YxcAWwEBbUCgwFyocFuPM0iv9zqQ/nEl/U9QQvM9lP15MwZAa4z
+	/qcYInGq1r4UkX/NCd6kcZEKLemnCQ9KPxzuyoQubweRW6d+DH0n216JZOJbrkKdzEbjwArcF0S
+	tmSNGRCvM0DB8gxMQ2iF4OgQAwbVqvkisAmnDGQ==
+X-Google-Smtp-Source: AGHT+IEyStM8bjx9bavuGPC5GSUaOWfxD2PnzW5v4/QvDQ8yynppqbpSFxWdpusnNU1frPjGzXjLFnAHphiwhd3Laxk=
+X-Received: by 2002:a2e:9515:0:b0:2ec:5843:2fb8 with SMTP id
+ 38308e7fff4ca-2ee8ee0e795mr32501771fa.42.1720169556609; Fri, 05 Jul 2024
+ 01:52:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: IWBEDZdVDVJhSUPY8anBbxp0wzffX-Av
-X-Proofpoint-GUID: IWBEDZdVDVJhSUPY8anBbxp0wzffX-Av
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_05,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0
- clxscore=1015 suspectscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407050066
+References: <ZoWXwYtwgJIxi-hD@google.com>
+In-Reply-To: <ZoWXwYtwgJIxi-hD@google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 5 Jul 2024 10:52:25 +0200
+Message-ID: <CACRpkdY2S+G+u88P3x8emeq3-hEiRP89VbwM2TyRBd956Ro9BQ@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: of: add polarity quirk for TSC2005
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sebastian Reichel <sre@kernel.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since the new funnel device supports multi-port output scenarios,
-there may be more than one TPDM connected to one TPDA. In this
-way, when reading the element size of the TPDM, TPDA driver needs
-to find the expected TPDM corresponding to the filter source.
-When TPDA finds a TPDM or a filter source from a input connection,
-it will read the Devicetree to get the expected TPDM's element
-size.
+On Wed, Jul 3, 2024 at 8:26=E2=80=AFPM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
----
- drivers/hwtracing/coresight/coresight-tpda.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
-index 52b0201090fb..fc5a4e46cf5d 100644
---- a/drivers/hwtracing/coresight/coresight-tpda.c
-+++ b/drivers/hwtracing/coresight/coresight-tpda.c
-@@ -110,9 +110,12 @@ static int tpda_get_element_size(struct tpda_drvdata *drvdata,
- 		    csdev->pdata->in_conns[i]->dest_port != inport)
- 			continue;
- 
--		if (coresight_device_is_tpdm(in)) {
-+		if (coresight_device_is_tpdm(in)
-+		    || csdev->pdata->in_conns[i]->filter_src_dev) {
- 			if (drvdata->dsb_esize || drvdata->cmb_esize)
- 				return -EEXIST;
-+			if (csdev->pdata->in_conns[i]->filter_src_dev)
-+				in = csdev->pdata->in_conns[i]->filter_src_dev;
- 			rc = tpdm_read_element_size(drvdata, in);
- 			if (rc)
- 				return rc;
-@@ -124,7 +127,6 @@ static int tpda_get_element_size(struct tpda_drvdata *drvdata,
- 		}
- 	}
- 
--
- 	return rc;
- }
- 
--- 
-2.17.1
+> DTS for Nokia N900 incorrectly specifies "active high" polarity for
+> the reset line, while the chip documentation actually specifies it as
+> "active low".  In the past the driver fudged gpiod API and inverted
+> the logic internally, but it was changed in d0d89493bff8.
+>
+> Fixes: d0d89493bff8 ("Input: tsc2004/5 - switch to using generic device p=
+roperties")
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+> OTOH if this was indeed broken, then it was broken for ~7 years
+> (d0d89493bff8 went in 4.11-rc1), so maybe the best way is not to worry
+> about compatibility with old DTS, update
+> arch/arm/boot/dts/ti/omap/omap3-n900.dts in the tree and call it a day.
+
+I think anybody using the n900 wll be updating DTS and kernel in tandem
+so yeah. But I think it's nice that we do both since you anyway made
+the patch, it doesn't hurt.
+
+Yours,
+Linus Walleij
 
