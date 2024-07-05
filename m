@@ -1,42 +1,74 @@
-Return-Path: <linux-kernel+bounces-242001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B00928264
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:56:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B501D928268
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98A91C23D1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E760E1C23708
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0491448DE;
-	Fri,  5 Jul 2024 06:56:47 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BB81448F1;
+	Fri,  5 Jul 2024 06:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m/bU58LA"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B60481CE;
-	Fri,  5 Jul 2024 06:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A2613AA2A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 06:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720162607; cv=none; b=fCb0UAiX9p8/NVtx0c5cSiBiEjserq1PYVLodb35aiYHh78Vx5T1GaBSqUt50FjnAlTuMHYuVxJUF97Gj6+8zFCA/dF7NzWzIbakti8Y7oUV8pM52cvWI2hF2NJik21Vmxh0Retq0ANwYT77Cm35iDB6lKoYuwBc2H4RrynZjKg=
+	t=1720162669; cv=none; b=luTDy8dGnjbxjYEQ3UZsDrGkdcSmVFHW+ZiKOk7d8CyTr12Ew/rqqrdEAeVDjnrNWi4eQZHFts/tHSrnweDM4LXSO2hFty/KKo41+9MTL8VpS1iYGVqgsAzlIgeP7TRxVftea7Bh246YBD17r5byc33/v7GLCnpMQIoeyJshNqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720162607; c=relaxed/simple;
-	bh=iVxEblD9TtA3Zf9oR6ZntTdkcB11Qbd8DxyUqZeTznA=;
+	s=arc-20240116; t=1720162669; c=relaxed/simple;
+	bh=JnX0yRXMzS9wa68mPGB2tFMXMwPT7CAyUJr8mT2G5Vk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lc84IpPBduoO4p2eis4ROOPzRy6vc1XzUQMLcFoI4q3NitzCRUyR6FkNRLnfaH6suBQuDP4IIHmmtcTQvjE0twG5UYZ7qXRWLvZox4oilm9MmYyc19vYUpbJgk/Z60lnE8bzoJ8MOUcROuL09hBv2E92cL6EIxdJXSW+QgUE5Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af14a.dynamic.kabel-deutschland.de [95.90.241.74])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8B5E061E64862;
-	Fri,  5 Jul 2024 08:55:47 +0200 (CEST)
-Message-ID: <b30307fd-4417-4220-a3ac-e3e80f23105e@molgen.mpg.de>
-Date: Fri, 5 Jul 2024 08:55:45 +0200
+	 In-Reply-To:Content-Type; b=gu3/GejRVkFcWBh+KkgoVpluQtZHKCkSFSJJxJyrdjj5/EnfbeGdTf5r4sDmIGi2hJhfqkv5dXVJXAkuwiAalU6VuMOnXjxxZA+C8UDpleH76w5e2ELi+v28X/e56dLf9vChPsc+00r4BjMWzomhHkzeMi1AJ67/167iioMqEyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m/bU58LA; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42562e4b5d1so8988205e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 23:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720162665; x=1720767465; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=TvJAwy+dBBbtp8Job56ITR8f7xuPPHkzySNnk1vKhj0=;
+        b=m/bU58LAjzYKF48Kk/XEqdcXjKyUR3V34kNMNFvPePSh3wCRSXGvL3mOHda/sh8sWz
+         XHtNbMt7hDbezm9Uw/LDtXL4xzVtqG3iuQFUrwyN00/0jYx952wAmfGelwcK+MMAxMiO
+         UjM8no9W4gf/FrJwDuB0M30L/ua3dltsnVO5nH+/Uj9qoPN8GuVZSmFow7Ic3GuH2M0k
+         ON5UlNQrN2yQF/9McJEV7OMPx4LAVvhc4XnC3eboF523zg37prYz9vpE0nHslLFFmm+1
+         oEvBmeJsWWmhQAR0CUfpA1lS/w+K5R1S0/1zMLPblYtvWe/b9SPXd+nJQyZblJ1zNxPp
+         Tyvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720162665; x=1720767465;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TvJAwy+dBBbtp8Job56ITR8f7xuPPHkzySNnk1vKhj0=;
+        b=EiAzhTqzopXpMj9F5l3V84MQXiTWifXMFANqMpwZotek5rdoGBRdz3Mp4DVuVon+DW
+         vdeNCz8KdK/Em68jkY81yH8j3K5eZfNijzFgbhKkbMvayRoRmJL4j/92Wy61eZ0GdETS
+         rIanWYtub5l/uqg4jXaJ25+XKARsf9x0TsAbvyAwmeEtaxidj83EUA5G7KGpb3nt3zj8
+         0D+PFRmFKbydYGjg4+TPyFOHe1kdIsSTEqTYAtsNfMCydGyDLGNsU7T3srJPB7yA22K2
+         O3pv/O4aAxbNskrViHRmK1+mL353Oqwcgu1LQ8qry3ASYUBR0d+dp/NJw+bdn7269XCa
+         4wmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgOt5Qg5o1JXDb1p+3Q/r53PGUmiPriIxeK6P8xublmXB6NFrPQADiP6JFTtZfB0ZvjUlO8nGyCS7mAFayfMn+ARdj0/VL71ptCdJW
+X-Gm-Message-State: AOJu0YxHs0ZJx9wzyUtVsqmBKX1J4gO/g2NiY3g7U2RGsXuXCiX8T3wx
+	p72jD0oNYvCGa1OKZ+hmxxr1Dn1M3o2DPBCEXF38iRYIVUqVK4qzcZcXgj6SSgo=
+X-Google-Smtp-Source: AGHT+IFIg4WnLn3LIK26q8YQ2ok+z3+hntbTxn/cdI9+Kim0dYAFwCDDulkY710R84hEz0Fu6pQFPA==
+X-Received: by 2002:a05:600c:158b:b0:424:9516:bfcf with SMTP id 5b1f17b1804b1-4264a3d9797mr28459255e9.3.1720162665254;
+        Thu, 04 Jul 2024 23:57:45 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d6435sm48389275e9.15.2024.07.04.23.57.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 23:57:44 -0700 (PDT)
+Message-ID: <52ef47d0-8344-4367-b0ee-32e9471bc64e@linaro.org>
+Date: Fri, 5 Jul 2024 08:57:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,165 +76,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
-To: Baochen Qiang <quic_bqiang@quicinc.com>
-Cc: Kalle Valo <kvalo@kernel.org>, James Prestwood <prestwoj@gmail.com>,
- linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
- LKML <linux-kernel@vger.kernel.org>, Chun Wu <chunwu@qti.qualcomm.com>
-References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
- <1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com> <87iky7mvxt.fsf@kernel.org>
- <37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com> <875xu6mtgh.fsf@kernel.org>
- <f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
- <082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de>
- <462c97dc-f366-4f75-9327-04d9424b819a@quicinc.com>
+Subject: Re: [PATCH v2 7/8] dt-bindings: interconnect: qcom: msm8939: Fix
+ example
+To: Adam Skladowski <a39.skl@gmail.com>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Georgi Djakov <djakov@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240704200327.8583-1-a39.skl@gmail.com>
+ <20240704200327.8583-8-a39.skl@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <462c97dc-f366-4f75-9327-04d9424b819a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240704200327.8583-8-a39.skl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dear Baochen,
-
-
-Am 05.07.24 um 04:47 schrieb Baochen Qiang:
-
-> On 6/26/2024 5:12 PM, Paul Menzel wrote:
-
->> Am 26.06.24 um 10:53 schrieb Baochen Qiang:
->>
->>> On 6/18/2024 6:33 PM, Kalle Valo wrote:
->>>> + baochen
->>>>
->>>> James Prestwood <prestwoj@gmail.com> writes:
->>
->>>>> On 6/17/24 8:27 AM, Kalle Valo wrote:
->>>>>> James Prestwood writes:
->>
->>>>>>> On 6/16/24 6:10 AM, Paul Menzel wrote:
-
->>>>>>>> Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when
->>>>>>>> connecting to a public WiFi:
->>>>>>>>
->>>>>>>>        ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 mcs 9
->>>>>>>
->>>>>>> This has been reported/discussed [1]. It was hinted that there was a
->>>>>>> firmware fix for this, but none that I tried got rid of it. I got fed
->>>>>>> up enough with the logs filling up with this I patched our kernel to
->>>>>>> remove the warning. AFAICT it appears benign (?). Removing the warning
->>>>>>> was purely "cosmetic" so other devs stopped complaining about it :)
->>>>>>>
->>>>>>> [1] https://www.mail-archive.com/ath10k@lists.infradead.org/msg13406.html
->>>>>>
->>>>>> More reliable link to the discussion:
->>>>>>
->>>>>> https://lore.kernel.org/ath10k/76a816d983e6c4d636311738396f97971b5523fb.1612915444.git.skhan@linuxfoundation.org/
->>>>>>
->>>>>> I think we should add this workaround I mentioned in 2021:
->>>>>>
->>>>>>       "If the firmware still keeps sending invalid rates we should add a
->>>>>>        specific check to ignore the known invalid values, but not all of
->>>>>>        them."
->>>>>>
->>>>>>       https://lore.kernel.org/ath10k/87h7mktjgi.fsf@codeaurora.org/
->>>>>>
->>>>>> I guess that would be mcs == 7 and rate == 1440?
->>>>>
->>>>> I think its more than this combination (Paul's are different).
->>>>
->>>> Good point.
->>>>
->>>>> So how many combinations are we willing to add here? Seems like that
->>>>> could get out of hand if there are more than a few invalid
->>>>> combinations.
->>>>
->>>> Yeah, but there haven't been that many different values reported yet,
->>>> right? And I expect that ath10k user base will just get smaller in the
->>>> future so the chances are that we will get less reports.
->>>>
->>>>> Would we also want to restrict the workaround to specific
->>>>> hardware/firmware?
->>>>
->>>> Good idea, limiting per hardware would be simple to implement using
->>>> hw_params. Of course we could even limit this per firmware version using
->>>> enum ath10k_fw_features, but not sure if that's worth all the extra work.
->>>>
->>>> Baochen, do you know more about this firmware bug? Any suggestions?
->>>
->>> OK, there are two issues here:
->>>
->>> 1. invalid HT rate: "ath10k_pci 0000:02:00.0: invalid ht params rate 1440 100kbps nss 2 mcs 7".
->>>
->>> As commented by Wen quite some time ago, this has been fixed from
->>> firmware side, and firmware newer than [ver:241] has the fix
->>> included.
->> This is the issue from 2021, correct?
->>
->>> 2. invaid VHT rate: "ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 mcs 9".
->>>
->>> After checking with firmware team, I thought this is because there is
->>> a mismatch in rate definition between host and firmware: In host, the
->>> rate for 'nss 2 mcs 9' is defined as {1560, 1733}, see
->>> supported_vht_mcs_rate_nss2[]. While in firmware this is defined as
->>> {1730, 1920}. So seems we can update host definition to avoid this
->>> issue.
->> Looking through the logs since May 2024, I have four different logs:
->>
->> 1.  invalid vht params rate 878 100kbps nss 3 mcs 2
+On 04/07/2024 22:02, Adam Skladowski wrote:
+> For now example list snoc_mm as children of bimc which is obviously
+> not valid, drop snoc and snoc_mm and leave bimc alone.
 > 
-> which chip are you using when you hit this nss 3 issue? QCA6174
-> firmware does not support NSS 3 so really weird.
-
-This is all from the same device Dell XPS 13 9360 with QCA6174 and 
-firmware 288.
-
-```
-Mai 20 12:07:09 abreu kernel: Linux version 6.9.0-09705-g08b269af52c0 
-(build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 13.2.0-23) 13.2.0, 
-GNU ld (GNU Binutils for Debian) 2.
-42) #147 SMP PREEMPT_DYNAMIC Mon May 20 07:33:23 CEST 2024
-[…]
-Mai 20 12:07:11 abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver 
-WLAN.RM.4.4.1-00288- api 6 features wowlan,ignore-otp,mfp crc32 bf907c7c
-[…]
-Mai 20 15:37:55 abreu wpa_supplicant[613]: wlp58s0: Trying to associate 
-with e2:b3:70:83:01:af (SSID='public' freq=5500 MHz)
-[…]
-Mai 20 15:37:55 abreu kernel: wlp58s0: authenticate with 
-e2:b3:70:83:01:af (local address=9c:b6:d0:d1:6a:b1)
-Mai 20 15:37:55 abreu kernel: wlp58s0: send auth to e2:b3:70:83:01:af 
-(try 1/3)
-Mai 20 15:37:55 abreu kernel: wlp58s0: authenticated
-Mai 20 15:37:55 abreu kernel: wlp58s0: associate with e2:b3:70:83:01:af 
-(try 1/3)
-Mai 20 15:37:55 abreu kernel: wlp58s0: RX AssocResp from 
-e2:b3:70:83:01:af (capab=0x1501 status=0 aid=4)
-[…]
-Mai 20 15:39:29 abreu wpa_supplicant[613]: wlp58s0: 
-CTRL-EVENT-SIGNAL-CHANGE above=1 signal=-55 noise=-97 txrate=300000
-[…]
-Mai 20 15:54:44 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
-params rate 878 100kbps nss 3 mcs 2
-```
-
-It was some public WiFi in some restaurant. No idea, what hardware they 
-use. Maybe you can deduce this from the MAC address.
-
->> 2.  invalid vht params rate 960 100kbps nss 1 mcs 9
->> 3.  invalid vht params rate 1730 100kbps nss 2 mcs 9
->> 4.  invalid vht params rate 1920 100kbps nss 2 mcs 9
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+>  .../bindings/interconnect/qcom,msm8939.yaml         | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
 > 
-> OK, these are due to mismatch between host and QCA6174 firmware, we
-> can update host to fix them.
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+> index fd15ab5014fb..3aed8b77f35d 100644
+> --- a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+> @@ -56,19 +56,8 @@ examples:
+>    - |
+>      #include <dt-bindings/clock/qcom,rpmcc.h>
+>  
+> -    snoc: interconnect@580000 {
+> -        compatible = "qcom,msm8939-snoc";
 
-Nice. If there would be a test framework to test this, so I do not have 
-to search for a Cisco network, that’d be great.
+The one correct example would be the snoc, because it is the most
+complete, but well...
 
->> I believe it’s only happening with Cisco networks. I am happy to test a patch.
-
-[…]
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
-Kind regards,
+Best regards,
+Krzysztof
 
-Paul
 
