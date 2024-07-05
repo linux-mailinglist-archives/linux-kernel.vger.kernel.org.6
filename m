@@ -1,121 +1,178 @@
-Return-Path: <linux-kernel+bounces-241767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCAE927F64
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:35:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552EB927F72
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B674A1F23D25
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB111F23C68
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACBB63C8;
-	Fri,  5 Jul 2024 00:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8176E9474;
+	Fri,  5 Jul 2024 00:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cKwADU5a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BNLusUNL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29715367
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 00:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57895C83
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 00:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720139741; cv=none; b=JOrs2oMRGgmoKGMXMOgaZ5wl7I9oLlb23/3Dkz2iZBJY1FDGsCW5aJrRpOf1Jno8RYvOWXtBVJCdxyJJ4ZTd8Ark1HA13jAPzxuKQ+8KG9cQLNS2WCTis+Yy4miFW/JwcbNT0T4/Qn7oftwEd4KkrSm27cM/XH1e8UWs6Xpb0TY=
+	t=1720140497; cv=none; b=iexdmItV8QEtIvTCt/FJdHj/3uEG8a7IHcqT32lf06thZCNhZlu9oE8pSSgIizAKKWoDtIgIXdZQsGunSpQgVDjXt0p9/IfqTbW5UWwcB+8kwumI4f54PoFTlC30AzsQRlvUIsBqV5WSFIgRwWfBqgIEvaSx5GFXyLee7BNXBuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720139741; c=relaxed/simple;
-	bh=p8OOfhn+XPTMTyv4z0em8hyAMi9nfYqi2VUXqoaHQPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=F8zmADI297E7ALaSLSiGZzTC0U2NLg+cG6iHxzV3JqT6LPdadLbycYeLK3iI2jSCd6Dbl27BlWKtPyMbwfA7+uQprKJy9yJPW9UmLJ06HwQKiX9KScu5/j27IPZqGKa1shdg1ynT2NWHIq4DrzVJbEYILpwZSksMneBc3f+myEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cKwADU5a; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720139740; x=1751675740;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=p8OOfhn+XPTMTyv4z0em8hyAMi9nfYqi2VUXqoaHQPI=;
-  b=cKwADU5aS36U9GGszjHieCj3t3B70+EhjkTilxTvAhpuKJDFBkciuQbs
-   rYMYHnglhGACpBOWnR1SgQjwhTIJ52rEG4tiPl1NGUJEfEPPxb1TuVutq
-   F82cW57QSBtDBHEeLjIGbG4ewleq6Wsh9I1uq+N7bAmu6LgN85DoAyBES
-   1+6zix/C3W81O2APflXFqz2Mx9SR52CQqz/6fcp4btQI8sEUnZYg8RbBZ
-   leW/S7apbMYkaJheiijZqB0f9/Taz3eoD7b6h5PjvQOU8cMMc/Z+29zRu
-   cdlk0TWaHJxEGmwaboPTY33c+Xis6yYFKdfeuZgOxmF+nY50xJ+XwzJwQ
-   w==;
-X-CSE-ConnectionGUID: 3vFx7fdKSni9AbAHn9Lamg==
-X-CSE-MsgGUID: 3XVePlkMQ+uYlzTksiV49g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="28823102"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="28823102"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 17:35:39 -0700
-X-CSE-ConnectionGUID: pLi5glCgTKKP2TlN9M2qWQ==
-X-CSE-MsgGUID: yF0MbkPxRfOGFq0I/RLYAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="77867362"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 04 Jul 2024 17:35:37 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sPWvG-000RhK-2x;
-	Fri, 05 Jul 2024 00:35:34 +0000
-Date: Fri, 5 Jul 2024 08:35:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: mm/slub.c:2077:1: error: unused function 'prepare_slab_obj_exts_hook'
-Message-ID: <202407050845.zNONqauD-lkp@intel.com>
+	s=arc-20240116; t=1720140497; c=relaxed/simple;
+	bh=UCYavsOYlDJtoPoG3lzm2cK4S3yoWAf+mGlSkpNPZC8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jFXw44eNHue+Hop8lRWCLNOQMC4btb+4e5IFcYl8F5xNX9z2OGQRDehgiN1g8RatpJez1QavKP39f/1pkAnWLKoapbdAGlJ38o8oZM5slNpeybFKU1HySXC6pjq90uczNIm6C4ZZuDmauE/yaf7YReJ1Qsy4L/MNSCDeS2w71YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BNLusUNL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720140493;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1taNz8T2VLQRBGglDYc9q5xdZlahhRSOV1YwKJ4I0vQ=;
+	b=BNLusUNLuAzV7fC0WM6dQSn5bmZUr00MgCHObiFGPsh9M8QL70zbegiEpvjXhkdrncIFAF
+	BdiKZXfEnIBPRr4ltouIS8lIToWlGBIdbsZds1xo6lY9IueDDVRtt6dR701NvMffonNYhM
+	1lQsopV2AAW1lqz/WlxbIc3ifbjfe0U=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-j4pq1SzwMaaxv4l82zPg6g-1; Thu, 04 Jul 2024 20:48:12 -0400
+X-MC-Unique: j4pq1SzwMaaxv4l82zPg6g-1
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e03a544b9c8so1821896276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 17:48:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720140491; x=1720745291;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1taNz8T2VLQRBGglDYc9q5xdZlahhRSOV1YwKJ4I0vQ=;
+        b=JbQofGxeiiKlPzexARSTeScd1fPr5en/T8Kinc1AN3p0GXDJ/NDp6GgYbQdlcCuMJC
+         1+LjtTvY+D+dUR1GpHAcXxdwYEHr0CN9T1zLzUWqvD3xcexvqi8mVvP9nYkarTYcwC0S
+         9UFpvX4nuhjD+N9QPwTL6qzTNluzQ7NsKNFTmziYynLNXDhYEhyOBZg92j2/8WK7FJpg
+         BlawGvS4DXMFWUb4R/+BNWF7wSBVPpT6jKYHV06m6g0Kh+B2utyt/bqloKui83F77z+y
+         VQ+/pthPLfJ4vDZnGXVO+IcTTLVMM8YYfFEYhoZfB9QDmEzm2T/jHx2gkGUnLX+Eq9BF
+         L5Og==
+X-Forwarded-Encrypted: i=1; AJvYcCXQkb2oh67k/NhYg1NaVOYYvZX8ZlxqRuqK2UesmankwtPDWmOtrHr2tiVqxJigZBCgtsy0hXRlvS7KYZI1eQv83D9psUYoiKsIVasj
+X-Gm-Message-State: AOJu0YxAQlq9hkGLNz/il4vo8hwt+IowaaJfQAlZNx6f24OAIMeL2D2R
+	NNw9pQbrC3dtwh8bYcRFL7QTRGMT2S5Phm4TwmcOVwhfpTrDbT2c2oATO25d9uHLxkK1GkdfMrq
+	0hJDhjlBnRGipM4AVFMV1LjaA/uyTCclyAGlRGV+hd5rbIhquCqGUUQ+QEAxmiA==
+X-Received: by 2002:a25:ade8:0:b0:e03:a248:7dd3 with SMTP id 3f1490d57ef6-e03c196966fmr3345504276.23.1720140491689;
+        Thu, 04 Jul 2024 17:48:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLtTb8qCSDdsaN2DhQVTPgfPMllt0+iLg2fNvdycLvwNeGaSGnRSg7IVAaPsOWTpmD0ep1qg==
+X-Received: by 2002:a25:ade8:0:b0:e03:a248:7dd3 with SMTP id 3f1490d57ef6-e03c196966fmr3345486276.23.1720140491395;
+        Thu, 04 Jul 2024 17:48:11 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e5f7e1esm68415876d6.98.2024.07.04.17.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 17:48:11 -0700 (PDT)
+Message-ID: <62cbd606f6d636445fd1352ae196a0973c362170.camel@redhat.com>
+Subject: Re: [PATCH v2 01/49] KVM: x86: Do all post-set CPUID processing
+ during vCPU creation
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
+ <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
+ <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
+ Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
+Date: Thu, 04 Jul 2024 20:48:10 -0400
+In-Reply-To: <20240517173926.965351-2-seanjc@google.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+	 <20240517173926.965351-2-seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   661e504db04c6b7278737ee3a9116738536b4ed4
-commit: b4601d096aac8ed26afa88ef8b249975b0530ca1 mm/slab: fix 'variable obj_exts set but not used' warning
-date:   10 days ago
-config: x86_64-sof-customedconfig-amd-defconfig (https://download.01.org/0day-ci/archive/20240705/202407050845.zNONqauD-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240705/202407050845.zNONqauD-lkp@intel.com/reproduce)
+On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
+> During vCPU creation, process KVM's default, empty CPUID as if userspace
+> set an empty CPUID to ensure consistent and correct behavior with respect
+> to guest CPUID.  E.g. if userspace never sets guest CPUID, KVM will never
+> configure cr4_guest_rsvd_bits, and thus create divergent, incorrect, guest-
+> visible behavior due to letting the guest set any KVM-supported CR4 bits
+> despite the features not being allowed per guest CPUID.
+> 
+> Note!  This changes KVM's ABI, as lack of full CPUID processing allowed
+> userspace to stuff garbage vCPU state, e.g. userspace could set CR4 to a
+> guest-unsupported value via KVM_SET_SREGS.  But it's extremely unlikely
+> that this is a breaking change, as KVM already has many flows that require
+> userspace to set guest CPUID before loading vCPU state.  E.g. multiple MSR
+> flows consult guest CPUID on host writes, and KVM_SET_SREGS itself already
+> relies on guest CPUID being up-to-date, as KVM's validity check on CR3
+> consumes CPUID.0x7.1 (for LAM) and CPUID.0x80000008 (for MAXPHYADDR).
+> 
+> Furthermore, the plan is to commit to enforcing guest CPUID for userspace
+> writes to MSRs, at which point bypassing sregs CPUID checks is even more
+> nonsensical.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/cpuid.c | 2 +-
+>  arch/x86/kvm/cpuid.h | 1 +
+>  arch/x86/kvm/x86.c   | 1 +
+>  3 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index f2f2be5d1141..2b19ff991ceb 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -335,7 +335,7 @@ static bool kvm_cpuid_has_hyperv(struct kvm_cpuid_entry2 *entries, int nent)
+>  #endif
+>  }
+>  
+> -static void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+> +void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm_lapic *apic = vcpu->arch.apic;
+>  	struct kvm_cpuid_entry2 *best;
+> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> index 23dbb9eb277c..0a8b561b5434 100644
+> --- a/arch/x86/kvm/cpuid.h
+> +++ b/arch/x86/kvm/cpuid.h
+> @@ -11,6 +11,7 @@
+>  extern u32 kvm_cpu_caps[NR_KVM_CPU_CAPS] __read_mostly;
+>  void kvm_set_cpu_caps(void);
+>  
+> +void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu);
+>  void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu);
+>  void kvm_update_pv_runtime(struct kvm_vcpu *vcpu);
+>  struct kvm_cpuid_entry2 *kvm_find_cpuid_entry_index(struct kvm_vcpu *vcpu,
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index d750546ec934..7adcf56bd45d 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -12234,6 +12234,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+>  	kvm_xen_init_vcpu(vcpu);
+>  	kvm_vcpu_mtrr_init(vcpu);
+>  	vcpu_load(vcpu);
+> +	kvm_vcpu_after_set_cpuid(vcpu);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407050845.zNONqauD-lkp@intel.com/
+This makes me a bit nervous. At this point the vcpu->arch.cpuid_entries is NULL,
+but so is vcpu->arch.cpuid_nent so it sort of works but is one mistake away from crash.
 
-All errors (new ones prefixed by >>):
+Maybe we should add some protection to this, e.g empty zero cpuid or something like that.
 
->> mm/slub.c:2077:1: error: unused function 'prepare_slab_obj_exts_hook' [-Werror,-Wunused-function]
-    2077 | prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 error generated.
+Best regards,
+	Maxim Levitsky
 
 
-vim +/prepare_slab_obj_exts_hook +2077 mm/slub.c
+>  	kvm_set_tsc_khz(vcpu, vcpu->kvm->arch.default_tsc_khz);
+>  	kvm_vcpu_reset(vcpu, false);
+>  	kvm_init_mmu(vcpu);
 
-0bedcc66d2a43a Vlastimil Babka    2023-10-03  2075  
-4b8736964640fe Suren Baghdasaryan 2024-03-21  2076  static inline struct slabobj_ext *
-4b8736964640fe Suren Baghdasaryan 2024-03-21 @2077  prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
-3450a0e5a6fc4c Vlastimil Babka    2023-11-13  2078  {
-4b8736964640fe Suren Baghdasaryan 2024-03-21  2079  	return NULL;
-4b8736964640fe Suren Baghdasaryan 2024-03-21  2080  }
-3450a0e5a6fc4c Vlastimil Babka    2023-11-13  2081  
 
-:::::: The code at line 2077 was first introduced by commit
-:::::: 4b8736964640fe160724e7135dc62883bddcdace mm/slab: add allocation accounting into slab allocation and free paths
 
-:::::: TO: Suren Baghdasaryan <surenb@google.com>
-:::::: CC: Andrew Morton <akpm@linux-foundation.org>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
