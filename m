@@ -1,174 +1,139 @@
-Return-Path: <linux-kernel+bounces-242744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CC0928C7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:52:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A62928C82
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D041C23375
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CBDE1F24C5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115ED16D33C;
-	Fri,  5 Jul 2024 16:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FCA16D4C4;
+	Fri,  5 Jul 2024 16:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IW0tPlR+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pi6FKv0J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401D713A88B;
-	Fri,  5 Jul 2024 16:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8603816ABC6;
+	Fri,  5 Jul 2024 16:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720198344; cv=none; b=L1cMvHVWgumtaiUsqf7dtqvU7gsUqsoIOSvKvMin3NtLDL+S30SG5R1FqChvLb/57Uy2vixHCRGJ1CjSZbF9av0/pgWuT3zD8koa9vyRBxd0gIrCq4h5V5vthgsa9Nsn5y+QO4qQ0+2TyGizIq9uGLkeYnYHirtjy79EdGKOCkg=
+	t=1720198357; cv=none; b=p/CQT331D6TWeYXI7zk8JOxOyYUbJD70anNBhPdsZsO2nzsOA3azODyiAnz4abac2Rbd7BLLAULped5Pf2S6hndLkLbLt8yjdRgQYatFTwJEFwW8n8hu8KrDE05FF9+VqFYzMmlYNAZ87ICb+W70PP0/wfrjGMKrvYNefa/CIKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720198344; c=relaxed/simple;
-	bh=U+TV3vLj/FyrjVFqViUNzlZIdGi+09fonAZB5klvcWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2y5ucVHz66uY9aZ4725kJUAMYDg3QM/VfnKZ3HIK7AUgJh4NctiVE0W/GvCdoYQEVCttYc8FWuomKKJ2DAMzx4+SCQGr9cFJo0FRhjE5umvug8VMnYKwNSdo9/7gZnd7hOC4OqXAWRPMkK9LaP5jKjYMlubfTkAdoXl14lApDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IW0tPlR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71914C116B1;
-	Fri,  5 Jul 2024 16:52:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720198343;
-	bh=U+TV3vLj/FyrjVFqViUNzlZIdGi+09fonAZB5klvcWQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IW0tPlR+1AYOyf1sdQNoZMIvQfZRxAYrlvITUWwS6UxP5flpYQzofefp5qZlsfqMo
-	 O56fr0u8QpAQQNfBhzp3cOWeV4GR/kBAVmGExyY9fXhXwxPNxrHo+GDShvaKz8f7xz
-	 EnxzAAmR/496R0NqvELi2T52cExMOJQgbhheQ47IAO44Y0Q0XOHs1nkw7uYR6R3EXc
-	 0+dfZtjpxjyYSkBiYaNGMW9jauyNhv/uEcRGz7DJ6ffZXyTkQ5W2BJcJCN54DYUUk5
-	 BnOt/ksxB3VAeuUMFZdXgA8NzSk77dkIzaAycFFq+8DcwXRI6Wm2c8ILYY4gfRx+2g
-	 Dgy0yFhexb/GA==
-Date: Fri, 5 Jul 2024 09:52:21 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-doc@vger.kernel.org,
-	workflows@vger.kernel.org
-Subject: Re: [PATCH 1/3] kbuild: raise the minimum GNU Make requirement to 4.0
-Message-ID: <20240705165221.GA987634@thelio-3990X>
-References: <20240704134812.1511315-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1720198357; c=relaxed/simple;
+	bh=bVhBpudNHtT6aZemL1Hlw4OKJZa6uNcfbc/AzBjAcHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jy3fNEyDsy2+YARo54mA5+zxSX+xyqusXYLZnTgqHdtC2meoPFWN7XLFLLXM5ckUMc0EQkkZm/6FzeMVQ4KqEu+nFwa6/7r3klbmcoeIgEUmhpXehiTr7WVf94wMOeeiOhnrrXPPgnE0Q5nSVTO/uNBI6nDacJhf34lA/PcOJFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pi6FKv0J; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720198356; x=1751734356;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bVhBpudNHtT6aZemL1Hlw4OKJZa6uNcfbc/AzBjAcHA=;
+  b=Pi6FKv0JOkvg1xopoD1P4TDWmuRetftcNBcAXbGWwMdCd4XEBUIB9xRB
+   kTQ/J0yfsGP4MehaYsY0nwfLtsT9vCdBCZc8t+Fh305aap0QlpJlOR8kY
+   qP8OaGuQj+tM/lvepFKIk1ALgdZ6nFqrp7sqeXH6H1cAO6KwTehm67ULQ
+   ZJGgPwV5cUmK7R58QKmP5wHYsXquRCdm1HmS3y98FocM1I07oljXUTLDy
+   rV/bQlufVF5UhlXOjBLiJmuZB80VUYq/qzRyRKjUIp9+sNS+1UK3zyEHa
+   nNgGe5cJL4xXG4Ewnpt0Q9EZ5nU3ZieDF5irCxOebCmVAnt9dBtYcJJHw
+   w==;
+X-CSE-ConnectionGUID: 7dO4p0AwQAikYjv4imS/AQ==
+X-CSE-MsgGUID: NQN5glWYR/OuiJpHfBDbug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17628324"
+X-IronPort-AV: E=Sophos;i="6.09,185,1716274800"; 
+   d="scan'208";a="17628324"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 09:52:35 -0700
+X-CSE-ConnectionGUID: BPtgV7+XSzyw7zOf+zxruw==
+X-CSE-MsgGUID: 3AUomb7nSEuFS8hAk75H7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,185,1716274800"; 
+   d="scan'208";a="47659166"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.38.162]) ([10.247.38.162])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 09:52:32 -0700
+Message-ID: <89ffac90-0293-4621-8178-99120af354ef@linux.intel.com>
+Date: Sat, 6 Jul 2024 00:52:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704134812.1511315-1-masahiroy@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-net v1 2/4] igc: Fix reset adapter logics when tx mode
+ change
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240702040926.3327530-1-faizal.abdul.rahim@linux.intel.com>
+ <20240702040926.3327530-3-faizal.abdul.rahim@linux.intel.com>
+ <20240703150318.GN598357@kernel.org>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <20240703150318.GN598357@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 04, 2024 at 10:47:55PM +0900, Masahiro Yamada wrote:
-> RHEL/CentOS 7, popular distributions that install GNU Make 3.82, reached
-> EOM/EOL on June 30, 2024. While you may get extended support, it is a
-> good time to raise the minimum GNU Make version.
-> 
-> The new requirement, GNU Make 4.0, was released in October, 2013.
 
-Seems reasonable. If someone gets bit by this, I think they can just
-build make from scratch if they really need to keep building on this
-distribution.
+>> ---
+>>   drivers/net/ethernet/intel/igc/igc_tsn.c | 26 +++++++++++++++++++++---
+>>   1 file changed, 23 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ethernet/intel/igc/igc_tsn.c
+>> index 02dd41aff634..61f047ebf34d 100644
+>> --- a/drivers/net/ethernet/intel/igc/igc_tsn.c
+>> +++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
+>> @@ -49,6 +49,13 @@ static unsigned int igc_tsn_new_flags(struct igc_adapter *adapter)
+>>   	return new_flags;
+>>   }
+>>   
+>> +static bool igc_tsn_is_tx_mode_in_tsn(struct igc_adapter *adapter)
+>> +{
+>> +	struct igc_hw *hw = &adapter->hw;
+>> +
+>> +	return (bool)(rd32(IGC_TQAVCTRL) & IGC_TQAVCTRL_TRANSMIT_MODE_TSN);
+> 
+> Perhaps it is more a question of taste than anything else.
+> But my preference, FIIW, is to avoid casts.
+> And I think in this case using !! is a common pattern.
+> 
+> (Completely untested!)
+> 
+> 	return !!(rd32(IGC_TQAVCTRL) & IGC_TQAVCTRL_TRANSMIT_MODE_TSN);
+> 
 
-> I did not touch the Makefiles under tools/ because I do not know the
-> requirements for building tools. I do not find any GNU Make version
-> checks under tools/.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Sure, will update.
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+>> +
+>> +	if ((any_tsn_enabled && !igc_tsn_is_tx_mode_in_tsn(adapter)) ||
+>> +	    (!any_tsn_enabled && igc_tsn_is_tx_mode_in_tsn(adapter)))
+>> +		return true;
+>> +	else
+>> +		return false;
+> 
+> Likewise, this is probably more a matter of taste than anything else.
+> But I think this could be expressed as:
+> 
+> (Completely untested!)
+> 
+> 	return (any_tsn_enabled && !igc_tsn_is_tx_mode_in_tsn(adapter)) ||
+> 		(!any_tsn_enabled && igc_tsn_is_tx_mode_in_tsn(adapter));
+> 
+> Similarly in the previous patch of this series.
+> 
 
-> ---
-> 
->  Documentation/process/changes.rst |  4 ++--
->  Makefile                          | 22 +++-------------------
->  scripts/Kbuild.include            |  2 +-
->  3 files changed, 6 insertions(+), 22 deletions(-)
-> 
-> diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-> index 5685d7bfe4d0..415ac8eeb46c 100644
-> --- a/Documentation/process/changes.rst
-> +++ b/Documentation/process/changes.rst
-> @@ -33,7 +33,7 @@ GNU C                  5.1              gcc --version
->  Clang/LLVM (optional)  13.0.1           clang --version
->  Rust (optional)        1.78.0           rustc --version
->  bindgen (optional)     0.65.1           bindgen --version
-> -GNU make               3.82             make --version
-> +GNU make               4.0              make --version
->  bash                   4.2              bash --version
->  binutils               2.25             ld -v
->  flex                   2.5.35           flex --version
-> @@ -111,7 +111,7 @@ It depends on ``libclang``.
->  Make
->  ----
->  
-> -You will need GNU make 3.82 or later to build the kernel.
-> +You will need GNU make 4.0 or later to build the kernel.
->  
->  Bash
->  ----
-> diff --git a/Makefile b/Makefile
-> index 06aa6402b385..c90d408c825e 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -11,8 +11,8 @@ NAME = Baby Opossum Posse
->  # Comments in this file are targeted only to the developer, do not
->  # expect to learn how to build the kernel reading this file.
->  
-> -ifeq ($(filter undefine,$(.FEATURES)),)
-> -$(error GNU Make >= 3.82 is required. Your Make version is $(MAKE_VERSION))
-> +ifeq ($(filter output-sync,$(.FEATURES)),)
-> +$(error GNU Make >= 4.0 is required. Your Make version is $(MAKE_VERSION))
->  endif
->  
->  $(if $(filter __%, $(MAKECMDGOALS)), \
-> @@ -93,15 +93,7 @@ endif
->  
->  # If the user is running make -s (silent mode), suppress echoing of
->  # commands
-> -# make-4.0 (and later) keep single letter options in the 1st word of MAKEFLAGS.
-> -
-> -ifeq ($(filter 3.%,$(MAKE_VERSION)),)
-> -short-opts := $(firstword -$(MAKEFLAGS))
-> -else
-> -short-opts := $(filter-out --%,$(MAKEFLAGS))
-> -endif
-> -
-> -ifneq ($(findstring s,$(short-opts)),)
-> +ifneq ($(findstring s,$(firstword -$(MAKEFLAGS))),)
->  quiet=silent_
->  override KBUILD_VERBOSE :=
->  endif
-> @@ -201,14 +193,6 @@ ifneq ($(words $(subst :, ,$(abs_srctree))), 1)
->  $(error source directory cannot contain spaces or colons)
->  endif
->  
-> -ifneq ($(filter 3.%,$(MAKE_VERSION)),)
-> -# 'MAKEFLAGS += -rR' does not immediately become effective for GNU Make 3.x
-> -# We need to invoke sub-make to avoid implicit rules in the top Makefile.
-> -need-sub-make := 1
-> -# Cancel implicit rules for this Makefile.
-> -$(this-makefile): ;
-> -endif
-> -
->  export sub_make_done := 1
->  
->  endif # sub_make_done
-> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-> index faf37bafa3f8..ed8a7493524b 100644
-> --- a/scripts/Kbuild.include
-> +++ b/scripts/Kbuild.include
-> @@ -68,7 +68,7 @@ kbuild-file = $(or $(wildcard $(src)/Kbuild),$(src)/Makefile)
->  # Read a file, replacing newlines with spaces
->  #
->  # Make 4.2 or later can read a file by using its builtin function.
-> -ifneq ($(filter-out 3.% 4.0 4.1, $(MAKE_VERSION)),)
-> +ifneq ($(filter-out 4.0 4.1, $(MAKE_VERSION)),)
->  read-file = $(subst $(newline),$(space),$(file < $1))
->  else
->  read-file = $(shell cat $1 2>/dev/null)
-> -- 
-> 2.43.0
-> 
+Will update, your suggestion is better, lesser parenthesis.
+Thanks.
 
