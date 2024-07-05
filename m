@@ -1,96 +1,211 @@
-Return-Path: <linux-kernel+bounces-241873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114F592808F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:46:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22037928091
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA54284573
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:46:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 459591C22FB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BBF15ACB;
-	Fri,  5 Jul 2024 02:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ABB1D559;
+	Fri,  5 Jul 2024 02:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="dadl1uBV"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DxJeqADe"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6381A31
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A66ECF;
+	Fri,  5 Jul 2024 02:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720147568; cv=none; b=tTjR+AkqQ64gvOg4V4UCifb/cOT3I/hFetjhXwW/Df8SbT26hztv7oAjNiXQHj9Xct66sAnKvH5G//GY8JO3Wsv6JSFep4rish0DyXFhFI68bNKGXknw8aNBvm4jNsXPlTgTS5bG/VQSj9m/6TPkXsXM9Mf94Y4plOJrjjooG0Y=
+	t=1720147668; cv=none; b=kue08TT+XtlqxpP8kosxor6zdCbKD6e3cbC8PdVbNxJ5zRa5nLUkUnmxXzrenjxVD+W21OK95OX+hJc4m1bP2rlM6jEPIxAwv5od6em9Qok9QKPsZCfQfC3BBnFH7xy3kHuULJoe0VplP30ckJpni+viAawM2JuvDSfag6nFSm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720147568; c=relaxed/simple;
-	bh=uhsLLjzzLMDnpEbbLQn/ddyOf+pwmWtUEhgnUqLy2o0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=sKEYYiTjVq3Ixhjhs2rK9vVADDheNtcYrKmGELnq1zBNkeXDazgyE8BOkAXi3pm6ioZUHpyhUAfWMz7Y3YQDKRHD15cJ1iN+vK9z2glgOd+Z4wns6/3O5/CS2wXwrAm+wzl615tErvvNAaLglhzZGW1xxd3xmyZBLahlCn93ZwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=dadl1uBV; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4652j2B71671599
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 4 Jul 2024 19:45:02 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4652j2B71671599
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1720147503;
-	bh=X4+c3iaUpE5Y2eBCVYeMl/06x86TxOxdbMscHX9f/rA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=dadl1uBVgOGbWXVpBM83xEt51qOvS+OnInqW8mTHpTyzB5Y8w8UBmH1AJDKqeUgP+
-	 JIfObt+YZXF3bSiu6+dQUzyxGUiVGDRaQgOBFHx5k+2ncajO/y+09Z15p291RwfZNE
-	 oziu18rxYC60UrTVGSzd8rJuhgkXA5Fqj9upCOcLPrZvan1nttndK6ObDSV1JJ5hck
-	 0V2VEBAu4VV9Y2/fBNXDrlkVE9IkVXceEGtVgIE35bSd9RxfnunRNo2McNrKXWRVp5
-	 isp4K/78L7pTaYCaHIf21BCCh7nF4UVWzS2MPsDjTtLl3mBHC90C9zUWCXDq7gwfwX
-	 zgecxYQBh2MnQ==
-Date: Thu, 04 Jul 2024 19:45:00 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Andrew Cooper <andrew.cooper3@citrix.com>, dave.hansen@intel.com,
-        xin@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-        peterz@infradead.org, nik.borisov@suse.com,
-        houwenlong.hwl@antgroup.com
-Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240703161705.GAZoV5gQIgtORQeHdQ@fat_crate.local>
-References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com> <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base> <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com> <AD99CE51-62B3-494D-9107-7C9093126138@zytor.com> <20240703161705.GAZoV5gQIgtORQeHdQ@fat_crate.local>
-Message-ID: <DE8FD8AA-35C6-4E51-B1E0-CE9586892CB3@zytor.com>
+	s=arc-20240116; t=1720147668; c=relaxed/simple;
+	bh=f0McIqjsWBQADUx1xWkaQx3X8DzvB7aDmb+NakTDKx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EOxEH8PNn6QwPWA8SUP/6EUeI2jjPE9fCJJvzdgRzmYsHmU4aloo8oKkX/tmak7V+ThF5QJBy5qqRNN1mheMUvx1UCQCN6g8PUHqJeFNw63AQd/8ujHdvBxSA+AjfaMvhWpE/H3uMdJqwuarNuXtgDbk8ApwAFQzGFNlLP2l198=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DxJeqADe; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 464NlTE7007685;
+	Fri, 5 Jul 2024 02:47:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MZDju9pB+4L/qZTGVDF9DmV7kuGMW2ssXwY+xyjksLs=; b=DxJeqADehu2qXYAx
+	Gen8gvxX/Di9nYDs7XpHcsYrYNuSOGbs0i7mRfgGQ7md8Pl2e2ywlCxy+zW5KwSO
+	Zu4N9kjHSPS/6xRczmvKnWFMYmCK/erM9EsqMkX0NKDA4+J2AAw9HC2XQwZ9grWt
+	cjDEspjuq/+PcjoNnkodZHIsQoBYowm8szoXxz4O1nBc5n5vM1Y+87fyCY5+73K2
+	C4ntd/LGx/NyiCIDeze2Qkclf4bGlTfYtzGjkpiMs18v5ZWJXgyQ2gkub5x8eS/Y
+	eCT4sN+OAtSqKM5EB8yCWWNYZVXxjXPFntmXuUSZPMc3WbtHHWr+H56Y96fx8fiX
+	xpQqHA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4052yhmbr8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 02:47:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4652lRUN009032
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Jul 2024 02:47:27 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 4 Jul 2024
+ 19:47:25 -0700
+Message-ID: <462c97dc-f366-4f75-9327-04d9424b819a@quicinc.com>
+Date: Fri, 5 Jul 2024 10:47:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: Kalle Valo <kvalo@kernel.org>, James Prestwood <prestwoj@gmail.com>,
+        <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>,
+        LKML
+	<linux-kernel@vger.kernel.org>,
+        Chun Wu <chunwu@qti.qualcomm.com>
+References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
+ <1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com> <87iky7mvxt.fsf@kernel.org>
+ <37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com> <875xu6mtgh.fsf@kernel.org>
+ <f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
+ <082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: d_cU7cvgqZOAhIQCxRLfHpClzKdsHIhk
+X-Proofpoint-GUID: d_cU7cvgqZOAhIQCxRLfHpClzKdsHIhk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-04_21,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 impostorscore=0 clxscore=1011
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407050019
 
-On July 3, 2024 9:17:05 AM PDT, Borislav Petkov <bp@alien8=2Ede> wrote:
->On Wed, Jul 03, 2024 at 09:06:55AM -0700, H=2E Peter Anvin wrote:
->> I believe tglx declared to use them unconditionally since FRED depends =
-on
->> WRMSRNS (and the kernel enforces that=2E)
->>=20
->> Using an alternative would make wrmsrns() a more useful construct in
->> general, though=2E
->
->We can't use them unconditionally and we don't need an alternative just f=
-or
->that - a simple
->
->	if (cpu_feature_enabled(X86_FEATURE_WRMSRNS))
->		wrmsrns()
->	else
->		wrmsr()
->
->would be perfectly fine=2E
->
 
-Except that that would be more cleanly spelled wrmsrns()=2E=2E=2E let's ju=
-st abstract the whole thing away and let the user use wrmsrns() whenever se=
-rialization is not necessary=2E
+
+On 6/26/2024 5:12 PM, Paul Menzel wrote:
+> Dear Baochen,
+> 
+> 
+> Thank you for your reply.
+> 
+> Am 26.06.24 um 10:53 schrieb Baochen Qiang:
+> 
+>> On 6/18/2024 6:33 PM, Kalle Valo wrote:
+>>> + baochen
+>>>
+>>> James Prestwood <prestwoj@gmail.com> writes:
+> 
+>>>> On 6/17/24 8:27 AM, Kalle Valo wrote:
+>>>>> James Prestwood writes:
+> 
+>>>>>> On 6/16/24 6:10 AM, Paul Menzel wrote:
+> 
+>>>>>>> Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when
+>>>>>>> connecting to a public WiFi:
+>>>>>>>
+>>>>>>>       ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 mcs 9
+>>>>>>
+>>>>>> This has been reported/discussed [1]. It was hinted that there was a
+>>>>>> firmware fix for this, but none that I tried got rid of it. I got fed
+>>>>>> up enough with the logs filling up with this I patched our kernel to
+>>>>>> remove the warning. AFAICT it appears benign (?). Removing the warning
+>>>>>> was purely "cosmetic" so other devs stopped complaining about it :)
+>>>>>>
+>>>>>> [1] https://www.mail-archive.com/ath10k@lists.infradead.org/msg13406.html
+>>>>>
+>>>>> More reliable link to the discussion:
+>>>>>
+>>>>> https://lore.kernel.org/ath10k/76a816d983e6c4d636311738396f97971b5523fb.1612915444.git.skhan@linuxfoundation.org/
+>>>>>
+>>>>> I think we should add this workaround I mentioned in 2021:
+>>>>>
+>>>>>      "If the firmware still keeps sending invalid rates we should add a
+>>>>>       specific check to ignore the known invalid values, but not all of
+>>>>>       them."
+>>>>>
+>>>>>      https://lore.kernel.org/ath10k/87h7mktjgi.fsf@codeaurora.org/
+>>>>>
+>>>>> I guess that would be mcs == 7 and rate == 1440?
+>>>>
+>>>> I think its more than this combination (Paul's are different).
+>>>
+>>> Good point.
+>>>
+>>>> So how many combinations are we willing to add here? Seems like that
+>>>> could get out of hand if there are more than a few invalid
+>>>> combinations.
+>>>
+>>> Yeah, but there haven't been that many different values reported yet,
+>>> right? And I expect that ath10k user base will just get smaller in the
+>>> future so the chances are that we will get less reports.
+>>>
+>>>> Would we also want to restrict the workaround to specific
+>>>> hardware/firmware?
+>>>
+>>> Good idea, limiting per hardware would be simple to implement using
+>>> hw_params. Of course we could even limit this per firmware version using
+>>> enum ath10k_fw_features, but not sure if that's worth all the extra work.
+>>>
+>>> Baochen, do you know more about this firmware bug? Any suggestions?
+>>
+>> OK, there are two issues here:
+>>
+>> 1. invalid HT rate: "ath10k_pci 0000:02:00.0: invalid ht params rate 1440 100kbps nss 2 mcs 7".
+>>
+>> As commented by Wen quite some time ago, this has been fixed from
+>> firmware side, and firmware newer than [ver:241] has the fix
+>> included.
+> This is the issue from 2021, correct?
+> 
+>> 2. invaid VHT rate: "ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 mcs 9".
+>>
+>> After checking with firmware team, I thought this is because there is
+>> a mismatch in rate definition between host and firmware: In host, the
+>> rate for 'nss 2 mcs 9' is defined as {1560, 1733}, see
+>> supported_vht_mcs_rate_nss2[]. While in firmware this is defined as
+>> {1730, 1920}. So seems we can update host definition to avoid this
+>> issue.
+> Looking through the logs since May 2024, I have four different logs:
+> 
+> 1.  invalid vht params rate 878 100kbps nss 3 mcs 2
+which chip are you using when you hit this nss 3 issue? QCA6174 firmware does not support NSS 3 so really weird.
+
+> 2.  invalid vht params rate 960 100kbps nss 1 mcs 9
+> 3.  invalid vht params rate 1730 100kbps nss 2 mcs 9
+> 4.  invalid vht params rate 1920 100kbps nss 2 mcs 9
+OK, these are due to mismatch between host and QCA6174 firmware, we can update host to fix them.
+
+> 
+> I believe it’s only happening with Cisco networks. I am happy to test a patch.
+> 
+> By the way, is the firmware version logged by Linux?
+> 
+>     ath10k_pci 0000:3a:00.0: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
+>     ath10k_pci 0000:3a:00.0: kconfig debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
+>     ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4.1-00288- api 6 features wowlan,ignore-otp,mfp crc32 bf907c7c
+>     ath10k_pci 0000:3a:00.0: board_file api 2 bmi_id N/A crc32 d2863f91
+>     ath10k_pci 0000:3a:00.0: htt-ver 3.87 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
+> 
+> Is it 4.4.1-00288? How can I find the file in `/lib/firmware/`?
+> 
+> 
+> Kind regards,
+> 
+> Paul
 
