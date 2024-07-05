@@ -1,98 +1,155 @@
-Return-Path: <linux-kernel+bounces-242244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704FD928552
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:42:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC53D928554
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD9C1F24891
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECFCB1C23658
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092D8146D7C;
-	Fri,  5 Jul 2024 09:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DC51474B5;
+	Fri,  5 Jul 2024 09:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GP0atmwu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqDOF8X0"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49826146A8D
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691E4144D34;
+	Fri,  5 Jul 2024 09:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172542; cv=none; b=knU4J+KtRnFuBjeQw5PnpnCjdKK9Sk2ak92SmlJbOrGUgLUSHSxILdW2FxHTklbPYCtqmSkh13pfP4KgifcsJnfSw3Q+L5DaA58ZTBtMkEjE3oQ3gh6U+HwPxwXEwcVbF9IVPe+v5xyWMN4oGYWtq1jUoxOajM+KFAouIYOa7jE=
+	t=1720172571; cv=none; b=IDZAl/6LHeBa/abmc+Wpz5ToLBLSf+wpiPFtoCq4YNMBflMo33Pw3pMENc7F5RaCvMy5cELsDq2/z9GqUszIpWY71pfS1Zd2AuIhPRZ1EATK45hv+M2WQzJymQ24u5ft4G0VcUkxcXE/DVCMH6jbHyf25qNQ8v5WH4lVGsBO94I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172542; c=relaxed/simple;
-	bh=Lh+w/2dBdW+n7UwNayV6mIOdMGjyzUOrp9uaxha2w0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aelfOSacrhgjfhAFQyj0BvNoIVZ54Xptg79TAU18AjiMr6o0gnSt4v2AzcNHgLahLoTdni9V9lNpFkZpy1KYsxCA55WsT/6gmfetvjADjJ5R3xsO25ZkYbIe+UKvqaW4/kFwfhAYfbBwbMMmgwaQFmpvIdHMNqyUNe+nrBHWQH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GP0atmwu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D40AC116B1;
-	Fri,  5 Jul 2024 09:42:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720172541;
-	bh=Lh+w/2dBdW+n7UwNayV6mIOdMGjyzUOrp9uaxha2w0I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GP0atmwueKM9WMMz9d9e97JvDe3vGLDQdtQvO3t/uU/qgmo6VYBRsvnz8XyEHR5Ii
-	 WTHqeMrxbEAMs81EuFGCaK6I40SNa9nMEZ9ICHB0sb+lgEGSJypKu/JHHPqUemnVZi
-	 eaIc5YdmBOhxffc1n8afsHdAZzgfxgmi9bjSicYo=
-Date: Fri, 5 Jul 2024 11:42:19 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: tuhaowen <tuhaowen@uniontech.com>
-Cc: alexander.deucher@amd.com, huangbibo@uniontech.com,
-	linux-kernel@vger.kernel.org, sudipm.mukherjee@gmail.com,
-	wangyuli@uniontech.com
-Subject: Re: Re: [PATCH] dev/parport: fix the array out-of-bounds risk
-Message-ID: <2024070523-singer-dweller-f1bb@gregkh>
-References: <2024070503-concert-mummify-dcbf@gregkh>
- <20240705085834.17224-1-tuhaowen@uniontech.com>
+	s=arc-20240116; t=1720172571; c=relaxed/simple;
+	bh=rTvNpJokC0lG2aO9D2Q7qgzGqbzrym7I10xGbDEqtQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YP+4LPo34LGjv/FxQvmQnOL5KzeTnjdAhireQjYnuDaS+CXXoSde8EKbKRcyQsO7OvKT/GDIMEV8VImwKkZRvH2Ba12sJ217Bn6ykh25GTJ7tcw5d0JUW6cmySkj4VkHYI1v3CyFJztzQ11fKx0bKYTEp0ku1+kdrijWqu4klME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BqDOF8X0; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70b0e9ee7bcso305123b3a.1;
+        Fri, 05 Jul 2024 02:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720172570; x=1720777370; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qW+kigcKFLfW1wvMQ24dxSV2zZqmDDqCX6hcBun385k=;
+        b=BqDOF8X0s0X6I1ox7XjvUiKTm8I8ukZmshRrlHYoHVQKGBmVsP57AZrTnYQqqooLwF
+         UyIN8zI8sfwTpRQBspd5SlBgHM/YiDlPlukz+lNcr3GLI4uIMa8ZbcZHHwdgx3o+QzAy
+         EQjduomtvAKynn/eQAdoPcKCpi7bIAQuBA2IBYzGm7SYVy75aAe9wZxlG2d3HBfQoH9b
+         jIqgZMI0v4I53ZY+QactDo4N+cCRcR7T7dTeYbXWzKt5GuXFH5PwVQAfE9pR0LseErxD
+         h2d405R687Y87d76K/nFfalx4rDJLUfcZB1j6Bs2Kic3n57ZVF51xnNcziP1TclqNyrJ
+         Mdeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720172570; x=1720777370;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qW+kigcKFLfW1wvMQ24dxSV2zZqmDDqCX6hcBun385k=;
+        b=aaD4SlNvcMe8dSysIPopgUXUxrrBAArvqHNitIL3mKp/Q/SS3eMzHLmi5+O69Dya7U
+         Oe8Z9ue/2lA8tvJlcfPONQc3qGZ5w3xzi9FBQaE1mUdHXIcQZMZCUmjbayYjXIrsR4FD
+         O9o/I3QDMR9HNZdj0kmTfaGz2kJUNNKomFYvvGsDqojinO1cTVQ30sqA3KbkwiRvFdb3
+         +bQrTmOVbJFC//L9GQR3iT31H/oTJOUYX++Bk5b7KLvX9Ui+G4hvtWAn5r0DbOAX4lUg
+         D/TEW1J4Kuw+iAnEaIAzNOwTKU0xnqAQfmiguGpy39lK432779+tmLnfrdYsaRdEi+I5
+         8T3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXW3WX9Q7qEzsQFyoTkoWUhBMyemG/i9gsFP3yfHqFxIdrt1Brht/n+K3wWp2HH9HxRrMKMKCafRC5laBvB4Qo1+zV/UDdfwkpDp4dgo34pY6yYiXIdSjFexzR/W4gWfyfcF241+u1DTnQCjYndpw==
+X-Gm-Message-State: AOJu0YwHeUF+Tc5S9iGz4kDRj8mROVnWZgAAuolEmULriHVxJ8KXm34i
+	rpgfE7zZJ6IlxhwhqK4+FRbkFDMqHUWi881d9xM5/gIezaVNqphN
+X-Google-Smtp-Source: AGHT+IGIIDmof9plM75cbzvPSgKJDOhze3lOAZjJF4Yz6URnqy+t30gr6BKtaQ8riYJFmraMVK8Cqw==
+X-Received: by 2002:a05:6a20:7344:b0:1be:d703:bc47 with SMTP id adf61e73a8af0-1c0cc8f66eamr5563951637.49.1720172569643;
+        Fri, 05 Jul 2024 02:42:49 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.49.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a9cd133sm2958138a91.38.2024.07.05.02.42.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 02:42:49 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: acme@kernel.org
+Cc: adrian.hunter@intel.com,
+	irogers@google.com,
+	jolsa@kernel.org,
+	kan.liang@linux.intel.com,
+	namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/8] perf trace: Augment enum arguments with BTF
+Date: Fri,  5 Jul 2024 17:42:52 +0800
+Message-ID: <20240705094300.585156-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240705085834.17224-1-tuhaowen@uniontech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 05, 2024 at 04:58:34PM +0800, tuhaowen wrote:
-> On Fri, Jul 05, 2024 at 02:45:45PM +0800, Greg Kroah-Hartman wrote:
-> 
-> > I'm not disputing that this change looks correct, I'm asking that you
-> > redo it and properly check the array size when writing to it so as to
-> > ensure that it really is correct in case our math is incorrect
-> > somewhere.
-> 
-> Thank you for your feedback. I have redone the change and 
-> ensured that the array size is properly checked when writing to it. 
-> Please find my updated patch below.
-> 
-> Thanks,
-> 
-> Haowen.Tu
-> 
-> 
-> >From cfdf8445987147f3a7e4f1232a8c6e8a271e4a6d Mon Sep 17 00:00:00 2001
-> From: tuhaowen <tuhaowen@uniontech.com>
-> Date: Mon, 27 May 2024 14:34:32 +0800
-> Subject: [PATCH] dev/parport: fix the array out-of-bounds risk
+Changes in v5:
 
-Sorry, we can't take inline patches like this, please read the
-documentation for how to submit a new version of a patch.
+- Use hardcoded landlock structs and macros for landlock.c workload to
+make this build in older systems.
 
-But, some comments below:
+Changes in v4:
 
->         for (dev = port->devices; dev ; dev = dev->next) {
->                 if(dev == port->cad) {
-> -                       len += sprintf(buffer, "%s\n", dev->name);
-> +                       len += snprintf(buffer, 64, "%s\n", dev->name);
+- Fix landlock workload's build error.
 
-Don't use magic numbers here and everywhere else, use sizeof() to
-compute these properly everywhere.
+Changes in v3:
 
-thanks,
+- Add trace__btf_scnprintf() helper function
+- Remove is_enum memeber in struct syscall_arg_fmt, replace it with 
+btf_is_enum()
+- Add syscall_arg_fmt__cache_btf_enum() to cache btf_type only
+- Resolve NO_LIBBPF=1 build error
+- Skip BTF augmentation test if landlock_add_rule syscall and LIBBPF are not
+available
+- Rename landlock.c workload, add a comment to landlock.c workload
+- Change the way of skipping 'enum ' prefix
+- Add type_name member to struct syscall_arg
 
-greg k-h
+Changes in v2:
+
+- Add trace_btf_enum regression test, and landlock workload
+
+v1:
+
+In this patch, BTF is used to turn enum value to the corresponding
+enum variable name. There is only one system call that uses enum value
+as its argument, that is `landlock_add_rule()`.
+
+Enum arguments of non-syscall tracepoints can also be augmented, for
+instance timer:hrtimer_start and timer:hrtimer_init's 'mode' argument.
+
+
+Arnaldo Carvalho de Melo (2):
+  perf trace: Introduce trace__btf_scnprintf()
+  perf trace: Remove arg_fmt->is_enum, we can get that from the BTF type
+
+Howard Chu (6):
+  perf trace: Fix iteration of syscall ids in syscalltbl->entries
+  perf trace: BTF-based enum pretty printing for syscall args
+  perf trace: Augment non-syscall tracepoints with enum arguments with
+    BTF
+  perf trace: Filter enum arguments with enum names
+  perf test: Add landlock workload
+  perf test trace_btf_enum: Add regression test for the BTF augmentation
+    of enums in 'perf trace'
+
+ tools/perf/builtin-trace.c               | 229 ++++++++++++++++++++---
+ tools/perf/tests/builtin-test.c          |   1 +
+ tools/perf/tests/shell/trace_btf_enum.sh |  61 ++++++
+ tools/perf/tests/tests.h                 |   1 +
+ tools/perf/tests/workloads/Build         |   2 +
+ tools/perf/tests/workloads/landlock.c    |  66 +++++++
+ tools/perf/trace/beauty/beauty.h         |   1 +
+ tools/perf/util/syscalltbl.c             |   7 +
+ tools/perf/util/syscalltbl.h             |   1 +
+ 9 files changed, 345 insertions(+), 24 deletions(-)
+ create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
+ create mode 100644 tools/perf/tests/workloads/landlock.c
+
+-- 
+2.45.2
+
 
