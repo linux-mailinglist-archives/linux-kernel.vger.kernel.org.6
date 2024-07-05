@@ -1,596 +1,193 @@
-Return-Path: <linux-kernel+bounces-242316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5497792869B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:18:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEE9928685
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7823C1C22F70
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:18:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95392874A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706A214A0BD;
-	Fri,  5 Jul 2024 10:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8B513D276;
+	Fri,  5 Jul 2024 10:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="VIFg3z26"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZLTGy9v"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1528E149002;
-	Fri,  5 Jul 2024 10:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1764E143C48
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 10:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720174643; cv=none; b=quh4OHkkkVtveV5dqmptQzuqjmAUDHUhcgR++o+42QgSOzJ1jsrWLdG1WGVBDjpelAIF8UolBaMsECJ/oQOxGLw1xP1mHvS3RLqW9aojnTXbX6AXQT4eFtN92Ghwu0Q2d1BpwkQS0P4a18pbAMdCvgyUf3s6PRXydfNWOKYuJvA=
+	t=1720174581; cv=none; b=gKoGGtR5qvXp+dnIxA3Dl56nbISh7gJOJ/pVNpvKmtrVrlo677pfaOidpFB2zds2ahatD5Fyal3/lFPUxufqNIc0Zrnl7eCrtaeLucX71CWSa86/R0eHhogqzqH2RUK91YJRgzPir0WeMKys7uG2LYA74AU49xhGdxcRu2i7TRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720174643; c=relaxed/simple;
-	bh=3VG6nFn5j60EngbvRSmhPdB81/WRD7bPw+eO3UaCzWk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WmSZGLUsKTFwVef5EDE2d11UEFYZ6QqWd3yixz7citOuw9KIOrI6mtypXcS97NQ3BQ4D+2RXUbjM8/xHVMhcbTwabFxEAMt2tQUL8U9GxzC4hfgMpgWSR+bF6zDwnc2fmCnCzO2mmcY/IY+Grnz1SbRdNSxIK8WAXzinq1aJwZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=VIFg3z26; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4659PDmA029505;
-	Fri, 5 Jul 2024 03:17:15 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=RuYCBA1lLC30VwUfGPKH2zmKE
-	UP5RJVNon+MiiBTD0I=; b=VIFg3z26UIYCo4ci5fzDswSNhwApsRRZqBMGU7+Pg
-	6erJcIs82xb+G1kjI6Ew05Ggrf+EqZJqdV3U6c8YZP7DDP6yA1pINJcrh1Dw3vye
-	CQVf6iA+xTmrXJldx/wJ2s+EJdwhN8G4RZXUwdLmgYFE3WBeT/WkPLIG8d+/jQBc
-	1SUTZeEPjBzZIruVlzYK5Ul19gadN91QdgepgLE/7D4uUmLTW+NJBkM7AyMYqTWd
-	Y/2aL4wsNHmeMGSNtL02YufB856P6PlsTT2Z1gWrm7ohj/F0QKJIE5PBjBSrj2Ku
-	5vycuriBlcCFaZLaab29PfEU6MnPPJTRbRUSFN5EZgSaw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 406e6c04vu-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 03:17:14 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 5 Jul 2024 03:16:47 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 5 Jul 2024 03:16:47 -0700
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id 4DCBC3F7040;
-	Fri,  5 Jul 2024 03:16:44 -0700 (PDT)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
-        <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: [net-next PATCH v8 07/11] octeontx2-pf: Add support to sync link state between representor and VFs
-Date: Fri, 5 Jul 2024 15:46:14 +0530
-Message-ID: <20240705101618.18415-8-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240705101618.18415-1-gakula@marvell.com>
-References: <20240705101618.18415-1-gakula@marvell.com>
+	s=arc-20240116; t=1720174581; c=relaxed/simple;
+	bh=jHGNOsJS2+MlOkpIWkssmyx7/+mHWakhaoPwGNhk2f8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TaesGCzMndMI50aGkpoJ/RqF5ZBE4nBmtq/9zA4Pe6otnLT/aHGeeK6LPWVRQNP9vnhDf1MyZuAEfgBQdCJ0iqbrqSPUAvXmh5FtS8ZTbjyx8UTGyUkJv3+FxcYsGa1BjonYTNBX0p1l/VRK+HerpS9zMiILfvGuaEN5K3rYzKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZZLTGy9v; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720174578;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8HhAj3uN2f5wqUuSvzkEv2Tp8Mprq+INTWt2qsAJxvw=;
+	b=ZZLTGy9vRnkdox7l7gTc9xg9GLs2/2eeYlysF2w9U0jXPMzF9BlWyzjuW/GfSzTqAGhHYh
+	tUGm97CwXpXoOThl9xyUWGqUiLnK900TVPC0jcxMW87lfBYWz7nXKXyaLkAQTd+K+T5210
+	SxljGtAgrI/aL7dtbkpZD2fO4u8LzTE=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-ZkSTwFKaNQSImpffkgHFCQ-1; Fri, 05 Jul 2024 06:16:17 -0400
+X-MC-Unique: ZkSTwFKaNQSImpffkgHFCQ-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52ea3c7dfdcso969063e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 03:16:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720174576; x=1720779376;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8HhAj3uN2f5wqUuSvzkEv2Tp8Mprq+INTWt2qsAJxvw=;
+        b=W6H/IQW29V+drbKxcz+GJQiWleebhcPJzdeWQZvgECs8863eXnxwaeyJWEfkSRiiy/
+         YWd+rvRk6u0E9voidDIcJl37pqFIxDDBx5X2SML69pubtblfkCQ79LTjIM4tA4uUJVF8
+         Zw29f5I+Ie+fcKZYyFchXCpJLqV5GMWhXN7sM1oMR02X94oa6MEfeKuBXsAKQH9djakB
+         hhgjnbX9pQswejodBDI4/mHWgd+Cc0O4vPUoBZawhRqqCIGoY31msqsSJEpX5lX5Li/m
+         q5fxF/uD3SzyFjiZzo82XjDXzHBhKQ0+tdamJxKLeBWdHKtD7YsIaXOFg6NILLcBBrLh
+         OMnA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+zMvaPc+X+KHJQNIwJcbEI8ckQike25iH7ZP5Qvie5aJk5QQUTQbPlYHC/RGTEZixacTtha3b4eG6HaZYaZLBgXSWEoa37OhRmx3Y
+X-Gm-Message-State: AOJu0YzKm2YGhhNiV/ToRQaesr0pro19tuMu5y7rGemv+4iB4sH1RFoM
+	RyR3S9GwJeOIMzFuQMdAIJ+ue3gAB087oL0zdw11/qB1b0NthoLcjwNbIOUMokggaQ5BdySnE7S
+	i/7AmXSC8Q2l/yjyIprsuQQJDWtfuXAsBFjgkIDRhC3KqgBDt0IaLXiSUq4Y5xQ==
+X-Received: by 2002:a05:6512:312a:b0:52c:ccb4:ec70 with SMTP id 2adb3069b0e04-52ea0632f20mr2856205e87.22.1720174575955;
+        Fri, 05 Jul 2024 03:16:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHr7D2FteQNEou0Sxfgna0BKaIEgBVar9F6VuRTAz61Bz68giJVx7Ma1fkOVReOmjhWHDaGqQ==
+X-Received: by 2002:a05:6512:312a:b0:52c:ccb4:ec70 with SMTP id 2adb3069b0e04-52ea0632f20mr2856185e87.22.1720174575493;
+        Fri, 05 Jul 2024 03:16:15 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c702:b500:3ed7:a1c7:447e:2279? (p200300cbc702b5003ed7a1c7447e2279.dip0.t-ipconnect.de. [2003:cb:c702:b500:3ed7:a1c7:447e:2279])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a0593e2asm3250680f8f.15.2024.07.05.03.16.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 03:16:15 -0700 (PDT)
+Message-ID: <1f10c189-73c3-45fd-b249-88884f3dc3a9@redhat.com>
+Date: Fri, 5 Jul 2024 12:16:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-GUID: nbyvkJRDuwKAkt60cWDdeIeOxXEST0QF
-X-Proofpoint-ORIG-GUID: nbyvkJRDuwKAkt60cWDdeIeOxXEST0QF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_06,2024-07-03_01,2024-05-17_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] mm/memblock: introduce a new helper
+ memblock_estimated_nr_pages()
+To: Mike Rapoport <rppt@kernel.org>, Wei Yang <richard.weiyang@gmail.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, oleg@redhat.com,
+ mjguzik@gmail.com, tandersen@netflix.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240703005151.28712-1-richard.weiyang@gmail.com>
+ <Zoe4XN-gKJnjJtzi@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zoe4XN-gKJnjJtzi@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Implements the below requirement mentioned
-in the representors documentation.
+On 05.07.24 11:09, Mike Rapoport wrote:
+> On Wed, Jul 03, 2024 at 12:51:49AM +0000, Wei Yang wrote:
+>> Instead of using raw memblock api, we wrap a new helper for user.
+> 
+> The changelog should be more elaborate and explain why this function is
+> needed.
+>   
+>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+>> ---
+>>   include/linux/memblock.h |  1 +
+>>   mm/memblock.c            | 19 +++++++++++++++++++
+>>   2 files changed, 20 insertions(+)
+>>
+>> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+>> index 40c62aca36ec..7d1c32b3dc12 100644
+>> --- a/include/linux/memblock.h
+>> +++ b/include/linux/memblock.h
+>> @@ -486,6 +486,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
+>>   
+>>   phys_addr_t memblock_phys_mem_size(void);
+>>   phys_addr_t memblock_reserved_size(void);
+>> +unsigned long memblock_estimated_nr_pages(void);
+>>   phys_addr_t memblock_start_of_DRAM(void);
+>>   phys_addr_t memblock_end_of_DRAM(void);
+>>   void memblock_enforce_memory_limit(phys_addr_t memory_limit);
+>> diff --git a/mm/memblock.c b/mm/memblock.c
+>> index e81fb68f7f88..c1f1aac0459f 100644
+>> --- a/mm/memblock.c
+>> +++ b/mm/memblock.c
+>> @@ -1729,6 +1729,25 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
+>>   	return memblock.reserved.total_size;
+>>   }
+>>   
+>> +/**
+>> + * memblock_estimated_nr_pages - return number of pages from memblock point of
+>> + * view
+> 
+> This function returns the estimate for free pages, not the number of pages
+> in RAM.
+> 
+> How about memblock_estimated_nr_free_pages()?
 
-"
-The representee's link state is controlled through the
-representor. Setting the representor administratively UP
-or DOWN should cause carrier ON or OFF at the representee.
-"
+I was just about to comment exactly that. Agreed!
 
-This patch enables
-- Reflecting the link state of representor based on the VF state and
- link state of VF based on representor.
-- On VF interface up/down a notification is sent via mbox to representor
-  to update the link state.
-  eg: ip link set eth0 up/down  will disable carrier on/off
-       of the corresponding representor(r0p1) interface.
-- On representor interface up/down will cause the link state update of VF.
-  eg: ip link set r0p1 up/down  will disable carrier on/off
-       of the corresponding representee(eth0) interface.
-
-Signed-off-by: Harman Kalra <hkalra@marvell.com>
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- .../net/ethernet/marvell/octeontx2/af/mbox.h  |  25 ++++
- .../net/ethernet/marvell/octeontx2/af/rvu.h   |  11 ++
- .../ethernet/marvell/octeontx2/af/rvu_nix.c   |   6 +
- .../ethernet/marvell/octeontx2/af/rvu_rep.c   | 127 ++++++++++++++++++
- .../marvell/octeontx2/nic/otx2_common.h       |   2 +
- .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |  30 +++++
- .../net/ethernet/marvell/octeontx2/nic/rep.c  |  76 +++++++++++
- .../net/ethernet/marvell/octeontx2/nic/rep.h  |   3 +
- 8 files changed, 280 insertions(+)
-
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-index 6d9dbded8c94..bc18cf301751 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-@@ -147,6 +147,7 @@ M(SET_VF_PERM,		0x00b, set_vf_perm, set_vf_perm, msg_rsp)	\
- M(PTP_GET_CAP,		0x00c, ptp_get_cap, msg_req, ptp_get_cap_rsp)	\
- M(GET_REP_CNT,		0x00d, get_rep_cnt, msg_req, get_rep_cnt_rsp)	\
- M(ESW_CFG,		0x00e, esw_cfg, esw_cfg_req, msg_rsp)	\
-+M(REP_EVENT_NOTIFY,     0x00f, rep_event_notify, rep_event, msg_rsp) \
- /* CGX mbox IDs (range 0x200 - 0x3FF) */				\
- M(CGX_START_RXTX,	0x200, cgx_start_rxtx, msg_req, msg_rsp)	\
- M(CGX_STOP_RXTX,	0x201, cgx_stop_rxtx, msg_req, msg_rsp)		\
-@@ -384,12 +385,16 @@ M(CPT_INST_LMTST,	0xD00, cpt_inst_lmtst, cpt_inst_lmtst_req, msg_rsp)
- #define MBOX_UP_MCS_MESSAGES						\
- M(MCS_INTR_NOTIFY,	0xE00, mcs_intr_notify, mcs_intr_info, msg_rsp)
- 
-+#define MBOX_UP_REP_MESSAGES						\
-+M(REP_EVENT_UP_NOTIFY,	0xEF0, rep_event_up_notify, rep_event, msg_rsp) \
-+
- enum {
- #define M(_name, _id, _1, _2, _3) MBOX_MSG_ ## _name = _id,
- MBOX_MESSAGES
- MBOX_UP_CGX_MESSAGES
- MBOX_UP_CPT_MESSAGES
- MBOX_UP_MCS_MESSAGES
-+MBOX_UP_REP_MESSAGES
- #undef M
- };
- 
-@@ -1573,6 +1578,26 @@ struct esw_cfg_req {
- 	u64 rsvd;
- };
- 
-+struct rep_evt_data {
-+	u8 port_state;
-+	u8 vf_state;
-+	u16 rx_mode;
-+	u16 rx_flags;
-+	u16 mtu;
-+	u64 rsvd[5];
-+};
-+
-+struct rep_event {
-+	struct mbox_msghdr hdr;
-+	u16 pcifunc;
-+#define RVU_EVENT_PORT_STATE		BIT_ULL(0)
-+#define RVU_EVENT_PFVF_STATE		BIT_ULL(1)
-+#define RVU_EVENT_MTU_CHANGE		BIT_ULL(2)
-+#define RVU_EVENT_RX_MODE_CHANGE	BIT_ULL(3)
-+	u16 event;
-+	struct rep_evt_data evt_data;
-+};
-+
- struct flow_msg {
- 	unsigned char dmac[6];
- 	unsigned char smac[6];
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-index 776dd92910f0..f65ece839d88 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-@@ -513,6 +513,11 @@ struct rvu_switch {
- 	u16 start_entry;
- };
- 
-+struct rep_evtq_ent {
-+	struct list_head node;
-+	struct rep_event event;
-+};
-+
- struct rvu {
- 	void __iomem		*afreg_base;
- 	void __iomem		*pfreg_base;
-@@ -598,6 +603,11 @@ struct rvu {
- 	int			rep_cnt;
- 	u16			*rep2pfvf_map;
- 	u8			rep_mode;
-+	struct			work_struct rep_evt_work;
-+	struct			workqueue_struct *rep_evt_wq;
-+	struct list_head	rep_evtq_head;
-+	/* Representor event lock */
-+	spinlock_t		rep_evtq_lock;
- };
- 
- static inline void rvu_write64(struct rvu *rvu, u64 block, u64 offset, u64 val)
-@@ -1046,4 +1056,5 @@ void rvu_mcs_exit(struct rvu *rvu);
- int rvu_rep_pf_init(struct rvu *rvu);
- int rvu_rep_install_mcam_rules(struct rvu *rvu);
- void rvu_rep_update_rules(struct rvu *rvu, u16 pcifunc, bool ena);
-+int rvu_rep_notify_pfvf_state(struct rvu *rvu, u16 pcifunc, bool enable);
- #endif /* RVU_H */
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-index 5b3e4e59afcb..41546277b9c3 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-@@ -380,6 +380,9 @@ static int nix_interface_init(struct rvu *rvu, u16 pcifunc, int type, int nixlf,
- 		cgx_set_pkind(rvu_cgx_pdata(cgx_id, rvu), lmac_id, pkind);
- 		rvu_npc_set_pkind(rvu, pkind, pfvf);
- 
-+		if (rvu->rep_mode)
-+			rvu_rep_notify_pfvf_state(rvu, pcifunc, true);
-+
- 		break;
- 	case NIX_INTF_TYPE_LBK:
- 		vf = (pcifunc & RVU_PFVF_FUNC_MASK) - 1;
-@@ -516,6 +519,9 @@ static void nix_interface_deinit(struct rvu *rvu, u16 pcifunc, u8 nixlf)
- 
- 	/* Disable DMAC filters used */
- 	rvu_cgx_disable_dmac_entries(rvu, pcifunc);
-+
-+	if (rvu->rep_mode)
-+		rvu_rep_notify_pfvf_state(rvu, pcifunc, false);
- }
- 
- #define NIX_BPIDS_PER_LMAC	8
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
-index 6bc867dea42e..404700cdfcdd 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
-@@ -13,6 +13,124 @@
- #include "rvu.h"
- #include "rvu_reg.h"
- 
-+#define M(_name, _id, _fn_name, _req_type, _rsp_type)			\
-+static struct _req_type __maybe_unused					\
-+*otx2_mbox_alloc_msg_ ## _fn_name(struct rvu *rvu, int devid)		\
-+{									\
-+	struct _req_type *req;						\
-+									\
-+	req = (struct _req_type *)otx2_mbox_alloc_msg_rsp(		\
-+		&rvu->afpf_wq_info.mbox_up, devid, sizeof(struct _req_type), \
-+		sizeof(struct _rsp_type));				\
-+	if (!req)							\
-+		return NULL;						\
-+	req->hdr.sig = OTX2_MBOX_REQ_SIG;				\
-+	req->hdr.id = _id;						\
-+	return req;							\
-+}
-+
-+MBOX_UP_REP_MESSAGES
-+#undef M
-+
-+static int rvu_rep_up_notify(struct rvu *rvu, struct rep_event *event)
-+{
-+	struct rep_event *msg;
-+	int pf;
-+
-+	pf = rvu_get_pf(event->pcifunc);
-+
-+	mutex_lock(&rvu->mbox_lock);
-+	msg = otx2_mbox_alloc_msg_rep_event_up_notify(rvu, pf);
-+	if (!msg) {
-+		mutex_unlock(&rvu->mbox_lock);
-+		return -ENOMEM;
-+	}
-+
-+	msg->hdr.pcifunc = event->pcifunc;
-+	msg->event = event->event;
-+
-+	memcpy(&msg->evt_data, &event->evt_data, sizeof(struct rep_evt_data));
-+
-+	otx2_mbox_wait_for_zero(&rvu->afpf_wq_info.mbox_up, pf);
-+
-+	otx2_mbox_msg_send_up(&rvu->afpf_wq_info.mbox_up, pf);
-+
-+	mutex_unlock(&rvu->mbox_lock);
-+	return 0;
-+}
-+
-+static void rvu_rep_wq_handler(struct work_struct *work)
-+{
-+	struct rvu *rvu = container_of(work, struct rvu, rep_evt_work);
-+	struct rep_evtq_ent *qentry;
-+	struct rep_event *event;
-+	unsigned long flags;
-+
-+	do {
-+		spin_lock_irqsave(&rvu->rep_evtq_lock, flags);
-+		qentry = list_first_entry_or_null(&rvu->rep_evtq_head,
-+						  struct rep_evtq_ent,
-+						  node);
-+		if (qentry)
-+			list_del(&qentry->node);
-+
-+		spin_unlock_irqrestore(&rvu->rep_evtq_lock, flags);
-+		if (!qentry)
-+			break; /* nothing more to process */
-+
-+		event = &qentry->event;
-+
-+		rvu_rep_up_notify(rvu, event);
-+		kfree(qentry);
-+	} while (1);
-+}
-+
-+int rvu_mbox_handler_rep_event_notify(struct rvu *rvu, struct rep_event *req,
-+				      struct msg_rsp *rsp)
-+{
-+	struct rep_evtq_ent *qentry;
-+
-+	qentry = kmalloc(sizeof(*qentry), GFP_ATOMIC);
-+	if (!qentry)
-+		return -ENOMEM;
-+
-+	qentry->event = *req;
-+	spin_lock(&rvu->rep_evtq_lock);
-+	list_add_tail(&qentry->node, &rvu->rep_evtq_head);
-+	spin_unlock(&rvu->rep_evtq_lock);
-+	queue_work(rvu->rep_evt_wq, &rvu->rep_evt_work);
-+	return 0;
-+}
-+
-+int rvu_rep_notify_pfvf_state(struct rvu *rvu, u16 pcifunc, bool enable)
-+{
-+	struct rep_event *req;
-+	int pf;
-+
-+	if (!is_pf_cgxmapped(rvu, rvu_get_pf(pcifunc)))
-+		return 0;
-+
-+	pf = rvu_get_pf(rvu->rep_pcifunc);
-+
-+	mutex_lock(&rvu->mbox_lock);
-+	req = otx2_mbox_alloc_msg_rep_event_up_notify(rvu, pf);
-+	if (!req) {
-+		mutex_unlock(&rvu->mbox_lock);
-+		return -ENOMEM;
-+	}
-+
-+	req->hdr.pcifunc = rvu->rep_pcifunc;
-+	req->event |= RVU_EVENT_PFVF_STATE;
-+	req->pcifunc = pcifunc;
-+	req->evt_data.vf_state = enable;
-+
-+	otx2_mbox_wait_for_zero(&rvu->afpf_wq_info.mbox_up, pf);
-+	otx2_mbox_msg_send_up(&rvu->afpf_wq_info.mbox_up, pf);
-+
-+	mutex_unlock(&rvu->mbox_lock);
-+	return 0;
-+}
-+
- #define RVU_LF_RX_STATS(reg) \
- 		rvu_read64(rvu, blkaddr, NIX_AF_LFX_RX_STATX(nixlf, reg))
- 
-@@ -247,6 +365,15 @@ int rvu_rep_install_mcam_rules(struct rvu *rvu)
- 			}
- 		}
- 	}
-+
-+	/* Initialize the wq for handling REP events */
-+	INIT_LIST_HEAD(&rvu->rep_evtq_head);
-+	INIT_WORK(&rvu->rep_evt_work, rvu_rep_wq_handler);
-+	rvu->rep_evt_wq = alloc_workqueue("rep_evt_wq", 0, 0);
-+	if (!rvu->rep_evt_wq) {
-+		dev_err(rvu->dev, "REP workqueue allocation failed\n");
-+		return -ENOMEM;
-+	}
- 	return 0;
- }
- 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-index d297138c356e..bddec8b35ef7 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-@@ -441,6 +441,7 @@ struct otx2_nic {
- #define OTX2_FLAG_ADPTV_INT_COAL_ENABLED BIT_ULL(16)
- #define OTX2_FLAG_TC_MARK_ENABLED		BIT_ULL(17)
- #define OTX2_FLAG_REP_MODE_ENABLED		 BIT_ULL(18)
-+#define OTX2_FLAG_PORT_UP			BIT_ULL(19)
- 	u64			flags;
- 	u64			*cq_op_addr;
- 
-@@ -1126,4 +1127,5 @@ u16 otx2_select_queue(struct net_device *netdev, struct sk_buff *skb,
- int otx2_get_txq_by_classid(struct otx2_nic *pfvf, u16 classid);
- void otx2_qos_config_txschq(struct otx2_nic *pfvf);
- void otx2_clean_qos_queues(struct otx2_nic *pfvf);
-+int rvu_event_up_notify(struct otx2_nic *pf, struct rep_event *info);
- #endif /* OTX2_COMMON_H */
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index fb7f8d3dae78..cdd1f1321318 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -519,6 +519,7 @@ static void otx2_pfvf_mbox_up_handler(struct work_struct *work)
- 
- 		switch (msg->id) {
- 		case MBOX_MSG_CGX_LINK_EVENT:
-+		case MBOX_MSG_REP_EVENT_UP_NOTIFY:
- 			break;
- 		default:
- 			if (msg->rc)
-@@ -832,6 +833,9 @@ static void otx2_handle_link_event(struct otx2_nic *pf)
- 	struct cgx_link_user_info *linfo = &pf->linfo;
- 	struct net_device *netdev = pf->netdev;
- 
-+	if (pf->flags & OTX2_FLAG_PORT_UP)
-+		return;
-+
- 	pr_info("%s NIC Link is %s %d Mbps %s duplex\n", netdev->name,
- 		linfo->link_up ? "UP" : "DOWN", linfo->speed,
- 		linfo->full_duplex ? "Full" : "Half");
-@@ -844,6 +848,30 @@ static void otx2_handle_link_event(struct otx2_nic *pf)
- 	}
- }
- 
-+static int otx2_mbox_up_handler_rep_event_up_notify(struct otx2_nic *pf,
-+						    struct rep_event *info,
-+						    struct msg_rsp *rsp)
-+{
-+	struct net_device *netdev = pf->netdev;
-+
-+	if (info->event == RVU_EVENT_PORT_STATE) {
-+		if (info->evt_data.port_state) {
-+			pf->flags |= OTX2_FLAG_PORT_UP;
-+			netif_carrier_on(netdev);
-+			netif_tx_start_all_queues(netdev);
-+		} else {
-+			pf->flags &= ~OTX2_FLAG_PORT_UP;
-+			netif_tx_stop_all_queues(netdev);
-+			netif_carrier_off(netdev);
-+		}
-+		return 0;
-+	}
-+#ifdef CONFIG_RVU_ESWITCH
-+	rvu_event_up_notify(pf, info);
-+#endif
-+	return 0;
-+}
-+
- int otx2_mbox_up_handler_mcs_intr_notify(struct otx2_nic *pf,
- 					 struct mcs_intr_info *event,
- 					 struct msg_rsp *rsp)
-@@ -913,6 +941,7 @@ static int otx2_process_mbox_msg_up(struct otx2_nic *pf,
- 	}
- MBOX_UP_CGX_MESSAGES
- MBOX_UP_MCS_MESSAGES
-+MBOX_UP_REP_MESSAGES
- #undef M
- 		break;
- 	default:
-@@ -1975,6 +2004,7 @@ int otx2_open(struct net_device *netdev)
- 	}
- 
- 	pf->flags &= ~OTX2_FLAG_INTF_DOWN;
-+	pf->flags &= ~OTX2_FLAG_PORT_UP;
- 	/* 'intf_down' may be checked on any cpu */
- 	smp_wmb();
- 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-index d4e90b13db71..aedcff57d96f 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-@@ -28,6 +28,57 @@ MODULE_DESCRIPTION(DRV_STRING);
- MODULE_LICENSE("GPL");
- MODULE_DEVICE_TABLE(pci, rvu_rep_id_table);
- 
-+static int rvu_rep_get_repid(struct otx2_nic *priv, u16 pcifunc)
-+{
-+	int rep_id;
-+
-+	for (rep_id = 0; rep_id < priv->rep_cnt; rep_id++)
-+		if (priv->rep_pf_map[rep_id] == pcifunc)
-+			return rep_id;
-+	return -EINVAL;
-+}
-+
-+static int rvu_rep_notify_pfvf(struct otx2_nic *priv, u16 event,
-+			       struct rep_event *data)
-+{
-+	struct rep_event *req;
-+
-+	mutex_lock(&priv->mbox.lock);
-+	req = otx2_mbox_alloc_msg_rep_event_notify(&priv->mbox);
-+	if (!req) {
-+		mutex_unlock(&priv->mbox.lock);
-+		return -ENOMEM;
-+	}
-+	req->event = event;
-+	req->pcifunc = data->pcifunc;
-+
-+	memcpy(&req->evt_data, &data->evt_data, sizeof(struct rep_evt_data));
-+	otx2_sync_mbox_msg(&priv->mbox);
-+	mutex_unlock(&priv->mbox.lock);
-+	return 0;
-+}
-+
-+static void rvu_rep_state_evt_handler(struct otx2_nic *priv,
-+				      struct rep_event *info)
-+{
-+	struct rep_dev *rep;
-+	int rep_id;
-+
-+	rep_id = rvu_rep_get_repid(priv, info->pcifunc);
-+	rep = priv->reps[rep_id];
-+	if (info->evt_data.vf_state)
-+		rep->flags |= RVU_REP_VF_INITIALIZED;
-+	else
-+		rep->flags &= ~RVU_REP_VF_INITIALIZED;
-+}
-+
-+int rvu_event_up_notify(struct otx2_nic *pf, struct rep_event *info)
-+{
-+	if (info->event & RVU_EVENT_PFVF_STATE)
-+		rvu_rep_state_evt_handler(pf, info);
-+	return 0;
-+}
-+
- static void rvu_rep_get_stats(struct work_struct *work)
- {
- 	struct delayed_work *del_work = to_delayed_work(work);
-@@ -78,6 +129,9 @@ static void rvu_rep_get_stats64(struct net_device *dev,
- {
- 	struct rep_dev *rep = netdev_priv(dev);
- 
-+	if (!(rep->flags & RVU_REP_VF_INITIALIZED))
-+		return;
-+
- 	stats->rx_packets = rep->stats.rx_frames;
- 	stats->rx_bytes = rep->stats.rx_bytes;
- 	stats->rx_dropped = rep->stats.rx_drops;
-@@ -132,16 +186,38 @@ static netdev_tx_t rvu_rep_xmit(struct sk_buff *skb, struct net_device *dev)
- 
- static int rvu_rep_open(struct net_device *dev)
- {
-+	struct rep_dev *rep = netdev_priv(dev);
-+	struct otx2_nic *priv = rep->mdev;
-+	struct rep_event evt = {0};
-+
-+	if (!(rep->flags & RVU_REP_VF_INITIALIZED))
-+		return 0;
-+
- 	netif_carrier_on(dev);
- 	netif_tx_start_all_queues(dev);
-+
-+	evt.event = RVU_EVENT_PORT_STATE;
-+	evt.evt_data.port_state = 1;
-+	evt.pcifunc = rep->pcifunc;
-+	rvu_rep_notify_pfvf(priv, RVU_EVENT_PORT_STATE, &evt);
- 	return 0;
- }
- 
- static int rvu_rep_stop(struct net_device *dev)
- {
-+	struct rep_dev *rep = netdev_priv(dev);
-+	struct otx2_nic *priv = rep->mdev;
-+	struct rep_event evt = {0};
-+
-+	if (!(rep->flags & RVU_REP_VF_INITIALIZED))
-+		return 0;
-+
- 	netif_carrier_off(dev);
- 	netif_tx_disable(dev);
- 
-+	evt.event = RVU_EVENT_PORT_STATE;
-+	evt.pcifunc = rep->pcifunc;
-+	rvu_rep_notify_pfvf(priv, RVU_EVENT_PORT_STATE, &evt);
- 	return 0;
- }
- 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
-index 5d39bf636655..0cefa482f83c 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
-@@ -36,6 +36,8 @@ struct rep_dev {
- 	struct delayed_work stats_wrk;
- 	u16 rep_id;
- 	u16 pcifunc;
-+#define RVU_REP_VF_INITIALIZED		BIT_ULL(0)
-+	u8 flags;
- };
- 
- static inline bool otx2_rep_dev(struct pci_dev *pdev)
-@@ -45,4 +47,5 @@ static inline bool otx2_rep_dev(struct pci_dev *pdev)
- 
- int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack);
- void rvu_rep_destroy(struct otx2_nic *priv);
-+int rvu_event_up_notify(struct otx2_nic *pf, struct rep_event *info);
- #endif /* REP_H */
 -- 
-2.25.1
+Cheers,
+
+David / dhildenb
 
 
