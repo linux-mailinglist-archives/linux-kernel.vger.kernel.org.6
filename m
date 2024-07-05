@@ -1,220 +1,211 @@
-Return-Path: <linux-kernel+bounces-241875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80906928092
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC294928098
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E8D1C21717
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4421C20A54
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564141C290;
-	Fri,  5 Jul 2024 02:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E71219ED;
+	Fri,  5 Jul 2024 02:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ao/zklQQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ak7hr3or";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XmiNeA7A"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AED219ED
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720147712; cv=none; b=hesfIZxIZ6Fwd3lIkQ6JsBVdOGeZ7+Rd2i9YHG81oFl1Gnf6coSPlcdxZ8FSfJErydm3HTz5DYJI9CNUx4eSM6y/9mW8V/0RmAyixVpKPTdLVFinq4sg9efBBDHiBDq97Ld9TkNj7teE1QdLWaiMfvNKBfQC7ffzHYhSDLDWYEk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720147712; c=relaxed/simple;
-	bh=3l/nDkTEuLQCAmReuSFbK+H5QoQlegddQFe774aFXiA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VZK6JLyPkYY3NCL5pQtG/X0UL/oOze3rIUZ8np8HlM9u1IijRS4AJGHpSljKsFxixdv7H4EWSPcpJbjDKNkmvQ+cjsgY+WA8769IgkV2xEDuamO9mj0rTk8/ccOZ/ey3zusHTUy7/u2WKU5RIwHQb0OdnuWcdgXQNf79miGnNww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ao/zklQQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720147709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2PIztTC41X3SqpITk7EO4e8WG4gHXfiYx/21IOkrtDk=;
-	b=ao/zklQQPOF1VI25mkiPXl0wzIdLzMwMDGaMIqNdNuQUELkjfzjxd7QqUxql9gzwts46wZ
-	N7qGCb6HBB1nSNPnJF2McNuzBSV5iSkUky4RTFUeaTdoP+sE8ynylx8LfrmP63Ot3fQj9l
-	AQ2ZeJUICHFrKN05kvXwYxoH2oFVgfI=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-cNVh5ARXMu-UOI9AJlhpww-1; Thu, 04 Jul 2024 22:48:28 -0400
-X-MC-Unique: cNVh5ARXMu-UOI9AJlhpww-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b5e486dbd6so16765106d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 19:48:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720147708; x=1720752508;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2PIztTC41X3SqpITk7EO4e8WG4gHXfiYx/21IOkrtDk=;
-        b=OINiJ5gTIY+PASNkbEQ5P1zNUhYWFT7SyFEhJJoHsabvqOIUc+tCvqOJujWtnFMtbh
-         lsaN5Tah+7441DCO3CFrTGszKixeYB/XDOHBkDWRvIofCMuSANEhyAYCJCAz5dm4TV70
-         JHJg9dXy8GWLGVmJLNR6Zr8t6CrqhPXczzBWYWJGP8JPYmUrSALrnG1xbfyAX8qeELMy
-         GdUsRSAjuOZkyZAAhFpth2EttRFgMco/GJztUID8MewnupRqQOUMg2bKSlK8r2NqcrVQ
-         i7M17Xu+ViLltUzJPXG/TW7T58OoxNwVOrzSRJjnHDPhqUE5sOwanc9TUnmWgbP4oHiy
-         IPYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZVRa9Q9Z7FCVb3j9PjZ5/laDhWaNfTK7n1ksgPgMBzMmRQvZ3ZU5vCQ+5/T6IbwkIwidhsZq6XjraRt86dPsWSP4jcVwEIbE1B/Lh
-X-Gm-Message-State: AOJu0YzRYpaAoh3kjyPh3luSKse/7M/PgOZ3D6+BWFwuaAcDnLqaoYkJ
-	KtYKTKvlv3n207huk3KD8k2Fmd7eMdgKfQaOj6OknHuyaQbVwBheJyQ8m6dm8/IK2latkFyNzUG
-	CYUIjsMTYmfaOsO9S2bbJoDyAJSy6/6C8gvpfXoIEx3FtPq0Jj7caCZQ9JHZc1wPQSonyeQ==
-X-Received: by 2002:a05:6214:1bc7:b0:6b5:9439:f048 with SMTP id 6a1803df08f44-6b5ecf8ac28mr37106646d6.19.1720147707998;
-        Thu, 04 Jul 2024 19:48:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQ/S6tPBwjVySOrVqy0W45xFpjJZKhw/JesQX4ihyGag/zigRZaDY6AUleexB2pxZ5dZtR5A==
-X-Received: by 2002:a05:6214:1bc7:b0:6b5:9439:f048 with SMTP id 6a1803df08f44-6b5ecf8ac28mr37106526d6.19.1720147707696;
-        Thu, 04 Jul 2024 19:48:27 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5f9d42de5sm705516d6.15.2024.07.04.19.48.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 19:48:27 -0700 (PDT)
-Message-ID: <73ab1d49f1dfffe42ab2a8625ca6c2de0f06d3ad.camel@redhat.com>
-Subject: Re: [PATCH 1/1] KVM: selftests: pmu_counters_test: increase
- robustness of LLC cache misses
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 04 Jul 2024 22:48:26 -0400
-In-Reply-To: <Zn2ker_KZ7Fk-7W1@google.com>
-References: <20240621204305.1730677-1-mlevitsk@redhat.com>
-	 <20240621204305.1730677-2-mlevitsk@redhat.com>
-	 <Zn2ker_KZ7Fk-7W1@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03877367;
+	Fri,  5 Jul 2024 02:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720147754; cv=fail; b=niZkweGlZiSZ7YBQ3qv7C94gu0k9SihIN/wLIh8VYv0YjCpSXtN9KzhuUoPixK2qvvJ4q8Moyysl5+HeJ1XjM6m8WO1F9ee4/Y940Z53vELC9tT2gnIT6fANXiAf/w59CeO8yJpg3jHybXClENe2kRq9wVd3xvLFZGa7vhZr4Ig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720147754; c=relaxed/simple;
+	bh=Aj64S0GQrPqYP6qpYs6aHrYeGsHR0cSYaHNTX7G+hLs=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=Fpu3c9o9KFkmBYnCn1dqDygk/A+T89vSomjuZfwKV+XnbjONu4CQge6T8HTrzPRWo37savK4WlXyPDZhvvRK37kyS+tzB7QGg59EjzNX0Kh9zqZ76QoUHQdhIr3QV0m4tce0CqS4lpRxa2cEz9jyEausGTPyUAtqI7Sz449OTNc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ak7hr3or; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XmiNeA7A; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 464DoowA032193;
+	Fri, 5 Jul 2024 02:49:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
+	:cc:subject:from:in-reply-to:message-id:references:date
+	:content-type:mime-version; s=corp-2023-11-20; bh=rCbp4FFeU/MqwE
+	MlE1FjNmsiOz3psDM/DJ1VLAMbntU=; b=Ak7hr3or6cbHsz8c78QRZvaaf/Q/R+
+	lZtzP08zGE/6aKyNL/UG8G4yxG+ey5brG7hXyJE0/JjnDhoyxxptRHrEu5nSthhm
+	hnstek8w2Z9+QbiehFOtiE51DyDfqu4QNn9xj5criYcncYdoDv/CjSwdjtQNCM6s
+	8+e5qwX7BtbYv2hp3OaqJJjvnU4vI2l6/Dq7kAmtanTvKMU+uKI/lioB3mkDb4Kt
+	PzGRBEOEsrCZt+KpM3fKY5d+dvhUwJbNR6yD0J5GPZDX3X8gXAXkQl2KSAjZ+UAR
+	k0lP98UBO7izhV+gk11zODFtsLhVTKutpttN11+/qGeb4lz//+xDbyQg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 402a59as70-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 05 Jul 2024 02:49:04 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 464MqmZc021495;
+	Fri, 5 Jul 2024 02:49:03 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4028qgy70m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 05 Jul 2024 02:49:03 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DgV24ghybVwHpbY/NYGgfcEbNTuIqot7Iyaw3iCn0JJND+E5F9fXhKQygFklHgvCH0zrpERYYyoJVyPSU0o9MsQ+i18QvL4wRM5xbpMFHPpcYi+ZUlgBbs9TixCu385YUFYOc5K/f0+YzP2mMJ7g03BcEfWQWGeeaws4zVyGW7Gt/E55+ZSd2+6oVQQnU5F4Mooz3X9cXARNf5V4o2K8do3hMPJbIHtjXxsVdcg7HQXIMQc6N3tE7/E9y+aXlF3AmmxUkBC+DPZ+ictZmXdfrEtVNpDT7ssFnnLSlhuJghDQ0i8gl26abMXSvYvzPDgHvSz1QRzhVnQO0AKOdHqF5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rCbp4FFeU/MqwEMlE1FjNmsiOz3psDM/DJ1VLAMbntU=;
+ b=HMjO2FVXHmAU7oOOiHqtyBP/OKJ0cPGbzCCCdsiFDMrlOT/8kbKHiJmHTK/6JMEMXIjsskFE3A5/xP2gHtbEXzkHdJJdUqbkExlV0elUfUkwIpIDWkWmk6mNuRRngeG0OGxL0hgO2jS6auBGKjflZED1AJnudzkZYhEVC5iMaja1vSST0KwdtEESMuNlp8wVNTemG/Yss497aIODTyjFhQ9Q1ssEmEnwc4NfYVQoY6ssdiX8ypYEiTskBPcoQMzY4evT95GK5EfmbPg3zWMwCG2BIA+pGWAjjEPgeHLh98lJfRY85dxLuuQuWRTXPjOFP3usUG7kaKmsrzqSiUsf+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rCbp4FFeU/MqwEMlE1FjNmsiOz3psDM/DJ1VLAMbntU=;
+ b=XmiNeA7AtLPeW3k03K+TPRN73Gsozr0PqV1U9Ar9HPtqICsCfT8hAErLy77awXVljprifVpA+kdJQpt5pmkVjOITbznlXH6S5QNizjSO88UhwFIwKtGABV6a6MKamwtKTbGx3pj8NgegH5tYm5xIx9pRd47ElIucExnYfXipz6s=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by CH0PR10MB4874.namprd10.prod.outlook.com (2603:10b6:610:c5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29; Fri, 5 Jul
+ 2024 02:49:01 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7719.029; Fri, 5 Jul 2024
+ 02:49:01 +0000
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin
+ K. Petersen" <martin.petersen@oracle.com>,
+        Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>,
+        Alim Akhtar
+ <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van
+ Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+        quic_pragalla@quicinc.com, quic_nitirawa@quicinc.com
+Subject: Re: [PATCH V2 0/2] Suspend clk scaling when there is no request
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240627083756.25340-1-quic_rampraka@quicinc.com> (Ram Prakash
+	Gupta's message of "Thu, 27 Jun 2024 14:07:54 +0530")
+Organization: Oracle Corporation
+Message-ID: <yq18qygblkd.fsf@ca-mkp.ca.oracle.com>
+References: <20240627083756.25340-1-quic_rampraka@quicinc.com>
+Date: Thu, 04 Jul 2024 22:48:58 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BL0PR05CA0011.namprd05.prod.outlook.com
+ (2603:10b6:208:91::21) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-
-On Thu, 2024-06-27 at 10:42 -0700, Sean Christopherson wrote:
-> On Fri, Jun 21, 2024, Maxim Levitsky wrote:
-> > Currently this test does a single CLFLUSH on its memory location
-> > but due to speculative execution this might not cause LLC misses.
-> > 
-> > Instead, do a cache flush on each loop iteration to confuse the prediction
-> > and make sure that cache misses always occur.
-> > 
-> > Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
-> > ---
-> >  .../selftests/kvm/x86_64/pmu_counters_test.c  | 20 +++++++++----------
-> >  1 file changed, 9 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> > index 96446134c00b7..ddc0b7e4a888e 100644
-> > --- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> > +++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> > @@ -14,8 +14,8 @@
-> >   * instructions that are needed to set up the loop and then disabled the
-> >   * counter.  1 CLFLUSH/CLFLUSHOPT/NOP, 1 MFENCE, 2 MOV, 2 XOR, 1 WRMSR.
-> >   */
-> > -#define NUM_EXTRA_INSNS		7
-> > -#define NUM_INSNS_RETIRED	(NUM_BRANCHES + NUM_EXTRA_INSNS)
-> > +#define NUM_EXTRA_INSNS		5
-> > +#define NUM_INSNS_RETIRED	(NUM_BRANCHES * 2 + NUM_EXTRA_INSNS)
-> 
-> The comment above is stale.  I also think it's worth adding a macro to capture
-> that the '2' comes from having two instructions in the loop body (three, if we
-> keep the MFENCE).
-
-True, my mistake.
-
-> 
-> >  static uint8_t kvm_pmu_version;
-> >  static bool kvm_has_perf_caps;
-> > @@ -133,9 +133,8 @@ static void guest_assert_event_count(uint8_t idx,
-> >   * doesn't need to be clobbered as the input value, @pmc_msr, is restored
-> >   * before the end of the sequence.
-> >   *
-> > - * If CLFUSH{,OPT} is supported, flush the cacheline containing (at least) the
-> > - * start of the loop to force LLC references and misses, i.e. to allow testing
-> > - * that those events actually count.
-> > + * If CLFUSH{,OPT} is supported, flush the cacheline containing the CLFUSH{,OPT}
-> > + * instruction on each loop iteration to ensure that LLC cache misses happen.
-> >   *
-> >   * If forced emulation is enabled (and specified), force emulation on a subset
-> >   * of the measured code to verify that KVM correctly emulates instructions and
-> > @@ -145,10 +144,9 @@ static void guest_assert_event_count(uint8_t idx,
-> >  #define GUEST_MEASURE_EVENT(_msr, _value, clflush, FEP)				\
-> >  do {										\
-> >  	__asm__ __volatile__("wrmsr\n\t"					\
-> > -			     clflush "\n\t"					\
-> > -			     "mfence\n\t"					\
-> 
-> Based on your testing, it's probably ok to drop the mfence, but I don't see any
-> reason to do so.  It's not like that mfence meaningfully affects the runtime, and
-> anything easy/free we can do to avoid flaky tests is worth doing.
-
-Hi,
-
-I just didn't want to add another instruction to the loop, since in theory
-that will slow the test down.
-
-
-From PRM:
-
-"Executions of the CLFLUSH instruction are ordered with respect to each other and with respect to writes, locked
-read-modify-write instructions, and fence instructions. 1 They are not ordered with respect to executions of
-CLFLUSHOPT and CLWB. Software can use the SFENCE instruction to order an execution of CLFLUSH relative to one
-of those operations."
-
-Plus there is note that:
-
-"Earlier versions of this manual specified that executions of the CLFLUSH instruction were ordered only by the MFENCE instruction.
-All processors implementing the CLFLUSH instruction also order it relative to the other operations enumerated above."
-
-Here we have an instruction fetch and cache flush, and it is not clear if MFENCE orders two operations.
-Thus it is not clear if MFENCE helps or not.
-
-I honestly would have preferred a cache flush on data memory, followed by a read from it, except
-that this also sometimes doesn't work (maybe I made some mistake, maybe it is possible to make it work, don't know)
-
-But overall I don't object keeping it.
-
-
-> 
-> I'll post and apply a v2, with a prep patch to add a NUM_INSNS_PER_LOOP macro and
-> keep the MFENCE (I'll be offline all of next week, and don't want to push anything
-> to -next tomorrow, even though the risk of breaking anything is minimal).
-
-Sounds good.
-
-Best regards,
-	Maxim Levitsky
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|CH0PR10MB4874:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4cd2eedd-eed0-4c13-7fa4-08dc9c9d0646
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?f3Ily36+mpahbBXuWdyZ39tHMZqbJBbtFELu64kC6OlsgM3WGMh8iX01iPQw?=
+ =?us-ascii?Q?tUlF7oqV5guA0DIymmjCJi+XpyweOxPlyPNlcB/gocqnXYGeNNLPxAq0XI+5?=
+ =?us-ascii?Q?gMiAppPbt0EpEhTGysqcbOY/n/H1yeLVf0Ag9Gwk/3L/SwEdH5Ch0URsejaY?=
+ =?us-ascii?Q?NTdBQ/iz6dPdtYuUi6GJ4hagHx5hahpJN0hlvxHos1pN3h1lL3SGOfZ9N7WA?=
+ =?us-ascii?Q?HGmin0mTjI6oiL35dotnUMYkvwSn54kvUejJYoO+RNvSZFYVjy2JeKhOTI49?=
+ =?us-ascii?Q?GWXL99wW9mNuxD3Z3YgMZzKHv7qLuCb5QAptm/x5ixy6qI249GzMh6+8q3Zl?=
+ =?us-ascii?Q?rs3o86TJJomXcfWI8zkYeBU5Ovd9duJkE+Cp7isFKtAECeWAKqm1uqyyu1QL?=
+ =?us-ascii?Q?C/NJMzOE8Oudob/hgtSsf60FuWAzlfjSh8iqAvfegLTOguZKHyA56BWBBL1I?=
+ =?us-ascii?Q?Os7peCaD7mpy4oI7pldJRmZQ8YaPe2vbkXqUmPW2Lqj+pgasxOWzYwLhy/Yk?=
+ =?us-ascii?Q?6gmEInuXuYL7EaHNhg3oKMVbo7m3/1C1DxNGpSk2vygf1+18iKXeytx4Zsqq?=
+ =?us-ascii?Q?u860PswUG9fo4Xf9Gdhn2SHlQ/lS0ttyvDj3x16sEX4GUXiXOrSmU6/9UKBb?=
+ =?us-ascii?Q?jxvn1tuqjbynMCniWF7H1QyRN3SyHAb7ddeo1GzdRA8/lXlV22MepuxsqpKc?=
+ =?us-ascii?Q?HrSUi7RRAxaEH1nsUhKdumrfsm2YBKwXWaMEbU9E0M1qgtG8F8m25wZg185d?=
+ =?us-ascii?Q?YY/XnFK79fs6DXbCI7/dgqA8gTwz80+ZK9BkLdvRjkxcFK6wwTf7hwkQItVC?=
+ =?us-ascii?Q?5UXtxwCDiZaPe51zHpI6yerZfCuEo7qquIpepzJD4dBw4OG0aIMYqgr3MjQs?=
+ =?us-ascii?Q?FGV1zB8rcGbh4UjcpXORpoHUclIE/kxcQ22BDU87nAq1Uusx75rk1fsdhHd8?=
+ =?us-ascii?Q?l5PW0id+NEQQ9/uAYSjRBRpq/Uan0zzhioLyrjGhHoc1zEJhEvH1cM2Jd4a6?=
+ =?us-ascii?Q?GLl8r5p/YbVo9O0B1AymhdJGYDWMuYabnS53X8NECB4yX8dyqyLAj6Xb3OFs?=
+ =?us-ascii?Q?aklsMYqgPrGFnQk8A08MT05O5fNOr5oC9NjP7jWNOPicghKd+dacqLT4OORP?=
+ =?us-ascii?Q?D32BcaAg32HgKWxN3aXX61wP1YprA4QXfDnyp0QFNC2Drnnw/RJKMJT3bM94?=
+ =?us-ascii?Q?vGTHg6CPVOPw+PImHGxxslKZGpJqvQSpw2JbIQUk2Zr17WOQkCDnNN0yv0MC?=
+ =?us-ascii?Q?RZoKq5/qv4sBGd5t9sPgLniGDVwy186OgzqVRaRaKGQtHqZGbWM9omNXVpxo?=
+ =?us-ascii?Q?xGRLVjHgYVCeHu8Qy5I3mjo6fBgPQsWsb7az3ymBdlkJ/g=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?LcaSLJuxzLSqVJGB6l6CBsivHIGT0AdnARfxYrtti4b8JikvFtQowGVExc7u?=
+ =?us-ascii?Q?xnS4Jl5xAhA5NZqTWtt25oIrO/rA4CvzYAUDwXYgoPWFYd6sepBkJFXVLYy6?=
+ =?us-ascii?Q?vSs2pR6jCTK+V8WD2X+Uv5IEBfHjJd+Ndpk2cdKDqPYE1N0mNVQed53b6z/I?=
+ =?us-ascii?Q?eQuV6tFSdb5ShPVfoQRMvH0tFoX3aEb7h+CQGGOQVUDyhoK5JHIExu0N7pTk?=
+ =?us-ascii?Q?4tY0N/LXQI2zrO+1ba1uAUB2/OtXB7bHsKxfVV5KP2nH5loKYWOI4L1Soq9p?=
+ =?us-ascii?Q?CgG7Y75rGkz6dcDrIrEUGjFQKr1jW7/PSCucd4mHds+3WoD4RRTFn87/n/hE?=
+ =?us-ascii?Q?k22xcAfAjavYXzbyA1aeUi51f08YNdSJSZOzmLNYfvip6p0W9zFxbc6VJvQd?=
+ =?us-ascii?Q?nncvnN9VtNjWKrFmc+2dxEsSpo71bkGCzY2e8tDa+axwPbWvxIoE4ahDtyy1?=
+ =?us-ascii?Q?G3YWHP8+8H2xR0n2e3AdENb4kZMDDqtKcAiCqAbLFrgLJdWk9U38bO3EYJRa?=
+ =?us-ascii?Q?GfoGLDT4Qfyza4xcB3fH0R9rYWBm0Q+M0i97i7LhAPnPa2LJTnPyW8auZz6W?=
+ =?us-ascii?Q?q5tT3VpDDHnae0ltYsxDilc5nzdMhjWJPsfHq2+DUpvv3lB6lh1CToBLj6yn?=
+ =?us-ascii?Q?ygVVjDdPTA5ZMTvZjZWQkn/BdA66zmfMDIDMBMva1UPovDxZlhbdH3wIZn1T?=
+ =?us-ascii?Q?MaZaggxMh8cMUSqPDmHvpmzjxTAJyFmqWkoQxERXipHi3jv63MplcLornByP?=
+ =?us-ascii?Q?JAd67jNTVH0PmeKW7qS1S54wjPZAcRN5WeNoFqdM53dxaZZR1wMaklL0neE9?=
+ =?us-ascii?Q?XSnCkSL6CLYQAmz1Klyi4lrOzuoRft1Aym98r/LWNmXo7OGNVePHIecpLMxJ?=
+ =?us-ascii?Q?zficUo1krFqu9Jxuv4h4WbkbBAHErzYxyURsr9swgLZQYvfJ4d74nK5gBkmo?=
+ =?us-ascii?Q?hw1S3nsODQJXjXN13O/p6nJbR9uiDSc/FuL6B2Yao0DLZvrRVa94OSNvqB4s?=
+ =?us-ascii?Q?k8FhPODd5JlYfcXPe3RimLNxIz8+uI0lmZuc+2iX5zn6KwAgm+iNbWYDskm3?=
+ =?us-ascii?Q?Ol4tJoiljko2NsmtEKjGeyHOr3QQnNKTwoFYA2tdCyTnUy6aJDLinUauuVfn?=
+ =?us-ascii?Q?CAHLvXd69SxIdLiqsc4AHTrTOXEyEdLIcl1hmNhAB6Z8fdMy5rMaSaMBubKr?=
+ =?us-ascii?Q?98lAyhMmia08X8/icvcrnHvRCjRRkXQZHvdfEfD/fyBd+UsAAH/cUgz61/44?=
+ =?us-ascii?Q?UTFG3iv+Oju60cYlcdBA06U3+la/1lC139W3v44OjhflfkrqnY0g6dpuEo41?=
+ =?us-ascii?Q?dWk7ehu4Y2oAd4Cc8GtYp3MIAjpnYr1hl0pQw3pT09As1pu5KIqdeY6AW8io?=
+ =?us-ascii?Q?CSZM2bWXyQjRjUPFuYGqakyREUpIryY3NuWGGr+EEtdH4wYBuKwUYvKP0RY/?=
+ =?us-ascii?Q?TagyrIRfnubPgA7v0QrpXDPN4kDe4g2O0H8MXT8ol1SJL96Qx01I8GsFgTP+?=
+ =?us-ascii?Q?MUX5BBuVfEFzXE+uw/DGy7kgaJ1asopK5HIJyPs/TmZXmf14zDEnwWnYa6si?=
+ =?us-ascii?Q?dL+nEsOP1ITobf+fKK1SCakKxIjH6h3+8O7As0ULbe0fl5BfOe/rXRcXiCuW?=
+ =?us-ascii?Q?uw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	lARidyHcjcduwySDhvbGW455kHmgqLmF+LNtcD/f4aMxSh35gtIdUGAqbx9++BytdIP48u0+/g4EuXyJNhupbHCcEfGfMa7wJQLrsrKy3bl4G5rH05FC7Z+FsU2MgZP17yDe/WboGTiI6/9Ae2nyW2ui5Oz09eyQtanyUqUO0zz/6SaytQeGn6tHg1zPbi8ou7dnoj//s47swG5UrN9rFtQR2MiEWwEFo0eSkexDgcaEWes7dLjuOdSFtOm/fFojrH+FflZktrj7cVxLQCrdevE1BaA6KBVfDB3CbepQU1jbHN2+J6oPHJQ9S6jWUG18tJN6rEb2F590RiEsezEE778HfDB1UCymVKX98M6pzUx2x4G6l1AikKFwEMpzUSF9wAZYQGfGAKHz7/BMVlO5vexx9ERSSzm/dvzkhePvXOgIk4A/1jIgMHpvAXyunCqdMDs0f/0tYck0pTA9LgdifL4UW1U4hIQUYr0st4EqUBgkKMbi9XvKJE6NRYKUooIFohhjuY0aRWSA5tN2kkYUe5WL9MPHtUiOibbcXOg4TD+wVXugquSGwrMj3y+bBIsNDeFlXnsPldC5gTpHxskxatcmSbFw3ZP3fDultbKwwhs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cd2eedd-eed0-4c13-7fa4-08dc9c9d0646
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 02:49:00.9669
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rMXrVMCLsDDdPQC6Z9BXGctO4/ofiHF/EMbcjIwru7U8rAxawzwSXd60R8kTM+HBbs+AxL9Hyti69Lc2RiXU72NGrgUCPEXyqSbAqlgsDMw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4874
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-04_21,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 mlxlogscore=795 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407050019
+X-Proofpoint-GUID: HiIRdU3bsbN1u-a5GVW6L3x5t2cX6jNw
+X-Proofpoint-ORIG-GUID: HiIRdU3bsbN1u-a5GVW6L3x5t2cX6jNw
 
 
-> 
-> > -			     "1: mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
-> > -			     FEP "loop .\n\t"					\
-> > +			     " mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
-> > +			     "1: " clflush "\n\t"				\
-> > +			     FEP "loop 1b\n\t"					\
-> >  			     FEP "mov %%edi, %%ecx\n\t"				\
-> >  			     FEP "xor %%eax, %%eax\n\t"				\
-> >  			     FEP "xor %%edx, %%edx\n\t"				\
-> > @@ -163,9 +161,9 @@ do {										\
-> >  	wrmsr(pmc_msr, 0);							\
-> >  										\
-> >  	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
-> > -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt 1f", FEP);	\
-> > +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
-> >  	else if (this_cpu_has(X86_FEATURE_CLFLUSH))				\
-> > -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush 1f", FEP);	\
-> > +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush .", FEP);	\
-> >  	else									\
-> >  		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "nop", FEP);		\
-> >  										\
-> > -- 
-> > 2.26.3
-> > 
+Ram,
 
+> Currently ufs clk scaling is getting suspended only when the clks are
+> scaled down, but next when high load is generated its adding a huge
+> amount of latency in scaling up the clk and complete the request post
+> that.
 
+Applied to 6.11/scsi-staging, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
