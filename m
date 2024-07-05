@@ -1,100 +1,211 @@
-Return-Path: <linux-kernel+bounces-242716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89510928C1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:10:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5393D928C25
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F0841C22214
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEC362864AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2727116CD3D;
-	Fri,  5 Jul 2024 16:10:14 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F8416C6B3;
+	Fri,  5 Jul 2024 16:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fIM+LCB3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A93148FFB
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02CC16A399
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720195813; cv=none; b=h63MH01Z8MBCe1v43ZVMXwTs1bEvaJFRVNJ1To0uNmW+afytZr0bvl0AuXuos6svQqfmlXAicNEu3BxOC32YpRD/JzsPUytMNspq4t3pUxFeM3NP/ACt/kB25oLKiOWvXH6kJ4MX32YmHcKtkY4Be86yCld9m6Zjcy/NpTfFp3Y=
+	t=1720196300; cv=none; b=k9hHb7yPitjez23r+qaNLHsSElCs80g2ggLNgnLrF6juasy8/NzjtXSyv9puNvSw6W2KJLkcF9Sj17g0W7/7RrBiH5dgfjniODB4DcZ8/7ZKRLYCa51UwbEW/6ds/FRNjF+bNOD71kL+NNKaiezlAHy3rUpI1yaSLQR73NrPvVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720195813; c=relaxed/simple;
-	bh=dfBRawcr2glCEAMpyVpqh9p8zTcVwCn3sIfnaGnucac=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ryXUodWS3I9AAOUijRDf4n7WHCq+7s35ZNL/h2wxMbjE0Io2IQyirUMmQmvMXjKAzfR6zrzXcm5RPLlpYLI3lpj5Trfh15GdGNfMlzclXaZJC1q+owp9m0D3L6DEG3nfn8G/JxZbg7DwW7n46ZYX5L1xd5cmQDHt/I6+OVHihnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f3c9711ce9so203720339f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 09:10:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720195811; x=1720800611;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dfBRawcr2glCEAMpyVpqh9p8zTcVwCn3sIfnaGnucac=;
-        b=ahc3J+73i9ulQbzRotWtV9+kz7+4HYXcOW1YT7b6dNxrcRWKAceHQmF5qreY46lU8n
-         ZBVSVaTrNnzuuNTd6R3mF4u2vAS/gIWjFK4OnHNCSA6eUWhECQ4f63vQEwR+XxE/60Yk
-         p856F/ZQQ2bi0mL3oIoW6tlNxtdU/e3d9srCIO1tM3ur7dVqzQJ1B274aIcuA/V8Jqjr
-         eM/BwvAxN0yrkhxCZcvIR2GfYrhzwePWEc/7YVs7/MfYw6YrkR3cE0/aDukV2Tit/+OT
-         G4ypVulzMZH+/h22Jm3kPY96200gGbGn3D5SZVEqZjRjBV+GOdRanAWaKUigQ2MBpuEL
-         3lbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpLoCQa8yHY7jTK5feuM25J1BMBOqgCaNAnP79dbYAt81zsoKnInilFLpFzqKBWtj78bZQhzmyrGmRNAm3LmIvgatkObMzAV5X6Z/j
-X-Gm-Message-State: AOJu0YyXBqQBQmWcJ3wsH6xvhiY1L4kS+z4Q4AoCGIwchving0gKsATF
-	B9SRFeGyC82Zd+OxnDZ0GAjbVztozWU8OQ0iYRQjQHgnmWraqJOBk+UJqnVQDXje2UHFG6URzHd
-	FNvL0cJb5StGosXCCqAZXfKbB5L2/LgWe3YHIHciUh1PF32xMghyeCkM=
-X-Google-Smtp-Source: AGHT+IGSb7TpnqwSGCGG28cxOnmiYIYpNyGtivf/GP/iiw46L6LH7vg1rhVfG7Dg4wxZ2pDxT68+pEWQYfQW0zHeNj5kV1nBtByR
+	s=arc-20240116; t=1720196300; c=relaxed/simple;
+	bh=IWpBjUokMdn/Ngo/69Tqn6Juhm7vdRge77p2EqIS6Q0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTBP0zshxW3xgr+6/UdeX68vfMB5tzwfzS4W5VkrM9gOQcCBI9F0T4pma0asWChy3tHgH9Ofrer0kNzLeCOmDTRk521az3j5k0MAg7QZx71KwVAoaHRpHswsTdhZYvE4/XdrvuLubIvZBNGZW8NCFVJ1dFkhPLmNrmSKY6NNIs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=fIM+LCB3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F963C116B1;
+	Fri,  5 Jul 2024 16:18:19 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fIM+LCB3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720196297;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCqVVLW8PLBZR8elFJ+ozu9ss6exYxAGVAohwCOoV5Q=;
+	b=fIM+LCB3i+uOx+CVoe+p6ZC+Dh6EEjnNvVklOM9GE/MMHHy3xAOK3peTvCcA2gSB2jf6H7
+	7IY61d86BlYVwGqdWtJDPSNe+yuyJOOQguL8uwpY5Fw2WpMx92p9HmEj+uYAtnTtnfb6UI
+	H0lRDdAT19CFxjdwUAthxJK3+q0Z+Vg=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2b2e034c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 5 Jul 2024 16:18:17 +0000 (UTC)
+Date: Fri, 5 Jul 2024 18:18:14 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com,
+	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
+Subject: Re: deconflicting new syscall numbers for 6.11
+Message-ID: <ZogcxjLv3NAeQYvA@zx2c4.com>
+References: <Zobf3fZOuvOJOGPN@zx2c4.com>
+ <CAHk-=whf2Pb8fSmUsLRSn6CnYvQoyUkLikKpFDWN_xnTJqix=A@mail.gmail.com>
+ <CAHmME9pm+ZE2_qf1DNxukB6ufPrjTAsnwin05-VX_gS03Yq-ag@mail.gmail.com>
+ <CAHk-=whTjdO6szgRKp51ZeDLDmA1+YYSbg+vEUt9OsxTMDUtjQ@mail.gmail.com>
+ <CAHk-=wgqD9h0Eb-n94ZEuK9SugnkczXvX497X=OdACVEhsw5xQ@mail.gmail.com>
+ <Zobt_M91PEnVobML@zx2c4.com>
+ <CAHk-=wh47WSNQYuSWqdu_8XeRzfpWbozzTDL6KtkGbSmLrWU4g@mail.gmail.com>
+ <CAHmME9pgFXhSdWpTwt_x51pFu2Qm878dhcQjG9WhPXV_XFXm9w@mail.gmail.com>
+ <CAHk-=wjCmw1L42W-o=pW7_i=nJK5r0_HFQTWD_agKWGt4hE7JQ@mail.gmail.com>
+ <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:da06:0:b0:376:46d5:6596 with SMTP id
- e9e14a558f8ab-3839b57598cmr1242545ab.4.1720195811576; Fri, 05 Jul 2024
- 09:10:11 -0700 (PDT)
-Date: Fri, 05 Jul 2024 09:10:11 -0700
-In-Reply-To: <0000000000006fd14305f00bdc84@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004b19f7061c824c9c@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_do_writepages
-From: syzbot <syzbot+d1da16f03614058fdc48@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+Hi Linus,
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+On Thu, Jul 04, 2024 at 02:07:41PM -0700, Linus Torvalds wrote:
+> On Thu, 4 Jul 2024 at 12:19, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Bah. I guess I'll have to walk through the patch series once again.
 
-#syz fix: exact-commit-title
+Thanks for having a look. I really appreciate it.
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
+> Ok, I went through it once. First comments:
+> 
+> The system call additions look really random. You don't add them to
+> all architectures, but the ones you *do* add them to seem positively
+> pointless:
+> 
+>  - I don't think you should introduce the system all on 32-bit
+> architectures, and that includes as a compat call on 64-bit.
+> 
+>     The VM_DROPPABLE infrastructure doesn't even exist on 32-bit, and
+> while that might not be technically a requirement, it does seem to
+> argue against doing this on 32-bit architectures. Plus nobody sane
+> cares.
+> 
+>     You didn't even enable it on 32-bit x86 in the vdso, so why did
+> you enable it as a syscall?
+> 
+>  - even 64-bit architectures don't necessarily have anything like a
+> vdso, eg alpha.
+> 
+> It looks like you randomly just picked the architectures that have a
+> syscall.tbl file, rather than architectures where this made sense. I
+> thin kyou should drop all of them except possibly arm64, s390 and
+> powerpc.
 
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
+The first versions of my series actually only enabled it on x86.
+(Somebody also wrote an arm64 implementation of all this already, but
+that's for later.) But after I posted that, people (Arnd, I think?) told
+me I should add it to all architectures to "reserve" the number. That
+was a lot of annoying busy work to do, but I did it, and not just random
+archs, but *all* of them.
 
----
-[1] I expect the commit to be present in:
+I'd be happy to revert all this and just enable it on x86. I'll do that
+for the v+1 patch. It's less work for me and would make this series one
+patch less.
 
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+But there might be a conversation to have (that I think you've begun
+with Arnd) about what the expectations are for this, because the "enable
+it on all of them" seems to be something I've heard on more than one
+occasion.
 
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
 
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+> I'm very ambivalent about the VM_DROPPABLE code.
+> 
+> On one hand, it's something we've discussed many times, and I don't
+> hate it. On the other hand, the discussions have always been about
+> actually exposing it to user space as a MAP_DROPPABLE so that user
+> space can do caching.
+> 
+> In fact, I'm almost certain that *because* you didn't expose it to
+> mmap(), people will now then instead mis-use vgetrandom_alloc()
+> instead to allocate random MAP_DROPPABLE pages. That is going to be a
+> nightmare.
 
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+VM_DROPPABLE *is* actually a very useful feature. Or it at least seems
+like it could be one. One can imagine various database caches that do a
+memory vs cpu trade off using it. (But, to be clear, I've never actually
+spoken with database developers about it.)
 
-The full list of 10 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+There are some other improvements for it I have in mind that I was
+considering posting in some time when this work here has settled.
+
+And then, indeed, it'd make sense to eventually expose this properly to
+mmap() and let people use it. (Or if you want to do that in reverse,
+adding it to mmap() first, so that people don't misuse
+vgetrandom_alloc(), that's fine.)
+
+
+> And that nightmare has to be avoided. Which in turn means that I think
+> vgetrandom_alloc() has to go, and you just need to expose
+> MAP_DROPPABLE instead that obly works for private anonymous mappings,
+> and make sure glibc uses that.
+> 
+> Because as your patch series stands now, the semantics are unacceptable.
+> 
+> This is a non-starter. When I see a new system call where my reaction
+> is not just "this should have been just a mmap()", but then
+> immediately followed by "Oh, and people will mis-use this as a cool
+> mmap", I'm not merging that system call.
+> 
+> So I don't hate VM_DROPPABLE per se, but the interface is simply not
+> ok. vgetrandom_alloc() absolutely *has* to go, and needs to just be a
+> user-space wrapper around regular mmap.
+
+So I'm not wedded to adding a syscall for this and am pretty open to
+other ways of doing it, but I actually think given the requirements,
+this kind of makes sense. I was talking about this problem with tglx or
+with Greg a while back, kind of frustrated, and one of them suggested,
+"well just make it a syscall; that's what those are for," and it
+immediately made sense, and so that's what I've done. Here are the
+requirements:
+
+- The "mechanism" needs to return allocated memory to userspace that can
+  be chunked up on a per-thread basis, with no state straddling pages,
+  which means it also needs to return the size of each state, and the
+  number of states that were allocated.
+
+- The size of each state might change kernel version to kernel version.
+
+- In an effort to match the behaviors of syscall getrandom() as much as
+  possible, it needs to be mapped with various flags (the ones in the
+  current vgetrandom_alloc() implementation).
+
+- Which flags are needed might change kernel version to kernel version.
+
+- Future memory tagging CPU extensions might allow us to prevent the
+  memory from being accessed unless the accesses are coming from vDSO
+  code, which would avoid heartbleed-like bugs. This is very appealing.
+
+So, the memory that's returned, and the parameters about it are sort of
+tied to the actual [v]getrandom() implementation. That sounds to me like
+this should be done by a function that the kernel is in charge of. Hence
+the syscall. (Or a vDSO function, but then it wouldn't correspond with
+an equivalent syscall, which might not be appealing to tglx, and it
+starts to smell like "library code" which we really don't want.)
+
+Given this, it seemed like a syscall was the cleanest most cromulent
+solution. But if you have other suggestions, I'm open to it.
+
+Maybe, though, the best way of assuaging your concerns would be to
+expose MAP_DROPPABLE in mmap() in the same series as the rest, so that
+there *isn't* a chance that vgetrandom_alloc() will be abused when
+people realize it's a handy feature to have.
+
+Thoughts?
+
+Jason
 
