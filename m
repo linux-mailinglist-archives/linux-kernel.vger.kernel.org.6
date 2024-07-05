@@ -1,149 +1,201 @@
-Return-Path: <linux-kernel+bounces-241764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFFA927F57
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:24:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEC6927F5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E241D1C21B2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:24:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2DF6B2235A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3977525D;
-	Fri,  5 Jul 2024 00:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F264B79EF;
+	Fri,  5 Jul 2024 00:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bJqFuOe/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBFh2ZfD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5045D17F5;
-	Fri,  5 Jul 2024 00:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22801610B;
+	Fri,  5 Jul 2024 00:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720139083; cv=none; b=hYGLnzE7nBk1u/DS4++uSjLnEC44MAsSQg1qyNWUYBPu0sh+b6uixt6C3WsSUdM3y+HOO+O/ax2JjcLaDr+cm6uUjTiBXtBVyNNU/HYQL4Hly4XruHFg/JHUrsEBK3AHz8niL9url9kjY/nHTUjkKXTy4aem+wziNymYtn23BJE=
+	t=1720139205; cv=none; b=P+Nr4hCOsRJKYlwci5nr4L/2XIYDj9qflbYrG4GgZ2B5nmlgT7uMoEGETGXflUdmeH2mgcK59c6hdJ1B+Igq0O8UW75dS50zWTFuGdOI8cDIWmFvkc1U/WpSj4LaQSaRvWlkGWfpnUM6XNKb3TXEclIUEd+n+WhKIBmUfRitZhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720139083; c=relaxed/simple;
-	bh=jMgU/ldtR+ELFwjG824hgDWZhrXbeGkg9FUM7GIABp0=;
+	s=arc-20240116; t=1720139205; c=relaxed/simple;
+	bh=tPnohE8ELn/fF8yAnZ9jEcnE2U6Gja9o2X+CTMtZiJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ikd40MTpEPds0m3AgdORw2AxAFwn6dJKz/NBZNRoY0YClmPLV1qClztQlApLYjP22u2DkFxJGL0mkHeMA9M7N/5l4Ze9VScmZIIXc+SKLRzmy9Gtt0+NXXullTlMdQLxjET5idwpmIvgSS4wi1dZhSzF5XZtbRTRk0co5BzL//w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bJqFuOe/; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720139082; x=1751675082;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jMgU/ldtR+ELFwjG824hgDWZhrXbeGkg9FUM7GIABp0=;
-  b=bJqFuOe/y7i0KIl9m9Nd9VpHkr/E1ABalWF5V6QLD5NIHFkil9SxF4YU
-   tqmtxJ8Oc9sf+KZ9Gp2ZqlfoeEb/CO2xxuMnLN1/iE/kUXu1JDdGMSXbj
-   WmnN05u+fiFusQTvVoZAEHy0KN2xuVHq3ds3Ljr4UyhqlB34BUYrg0WH1
-   4GHgQBuYWqjUGPNJs4wmTfkUqvW3Ez+y1DJla/45xTBCz3J8HrNXlMUwA
-   g9UD0JEtdAqea8ZNi4isaYjGfeZUthgk06qPVQlNQ7f4zqd6X58H9tE+f
-   VqSfqhsEnZveC7jdA6biu8MReb31GAQhHvNUIHzaHokTFIEOjEwxkZsHH
-   w==;
-X-CSE-ConnectionGUID: 2KmN6b56SkWR/z0OznOWVQ==
-X-CSE-MsgGUID: nMxPpuY6R7Spnk12ZFEFqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="34966790"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="34966790"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 17:24:41 -0700
-X-CSE-ConnectionGUID: tUE5TypWSZehOIoWstmt6Q==
-X-CSE-MsgGUID: UtUTH6htRceS04V0IsWpYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="47158352"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 04 Jul 2024 17:24:37 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sPWkc-000Rgq-1f;
-	Fri, 05 Jul 2024 00:24:34 +0000
-Date: Fri, 5 Jul 2024 08:23:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
-	intel-wired-lan@lists.osuosl.org
-Cc: oe-kbuild-all@lists.linux.dev, willemb@google.com,
-	Wojciech Drewek <wojciech.drewek@intel.com>,
-	dwaipayanray1@gmail.com,
-	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Igor Bagnucki <igor.bagnucki@intel.com>, joe@perches.com,
-	edumazet@google.com, netdev@vger.kernel.org, apw@canonical.com,
-	lukas.bulwahn@gmail.com, akpm@linux-foundation.org,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Subject: Re: [Intel-wired-lan] [PATCH iwl-next v1 3/6] ice: add Tx hang
- devlink health reporter
-Message-ID: <202407050857.OSYEyokn-lkp@intel.com>
-References: <20240703125922.5625-4-mateusz.polchlopek@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sek4g+T9WVM0QUaeIzpxTOTga3HonQK6gKLoWJnng1fBJv5bHlm8UWPfdxHUsd0qxmc+z+la5Gpf7vXFYWgxrjFj4zgX3yItnV9KIF9HZig2sbWsi/j/ASNJAoLpQ2gljkoC/hZtGwrVPpEluTBHubtYxWl36NxbKZWqPXDW/aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBFh2ZfD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5D8FC3277B;
+	Fri,  5 Jul 2024 00:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720139204;
+	bh=tPnohE8ELn/fF8yAnZ9jEcnE2U6Gja9o2X+CTMtZiJA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=LBFh2ZfDzn8TLZqXkxaYjImMxl3RiCU/ZfbkwkeB1lcBArHTlNxMG/Zizwlm7bgCX
+	 XaAhT/l9oVyWrEiNk5TN4Oc2oyiZLf9rqBO/+47dY/FxiJZ/bNWB2FpqDDCa7xEItg
+	 7PEkwNOrLVN2ZzqtZt8q1G+giW/lsir5CsKlHAWQllDR89wCG6AT/cGiezkQ6izj6e
+	 jetCrPoXBfPB9egvPm1//YLKEpkA3E65x3vUnPZUFDMhrT6lzYnlu6TIU4NUk4/42v
+	 LB3kOGpiu3u5aSWOb2ySuwLXNYHUWgpuputxlfSkGCDZBJ+9jJ6mPkHsCGd8L5uvjp
+	 Em1RcFJBqoLew==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4996FCE09D9; Thu,  4 Jul 2024 17:26:44 -0700 (PDT)
+Date: Thu, 4 Jul 2024 17:26:44 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Leonardo Bras <leobras@redhat.com>,
+	Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH rcu 6/9] rcu: Add rcutree.nocb_patience_delay to reduce
+ nohz_full OS jitter
+Message-ID: <f0791427-7e81-4930-b825-399b91dd8509@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+ <20240604222355.2370768-6-paulmck@kernel.org>
+ <ZoV6bTj0xvGopEao@localhost.localdomain>
+ <99721e1b-8752-4381-af2d-526f9b5c325c@paulmck-laptop>
+ <ZocfrlMurvbl-JbY@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240703125922.5625-4-mateusz.polchlopek@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZocfrlMurvbl-JbY@pavilion.home>
 
-Hi Mateusz,
+On Fri, Jul 05, 2024 at 12:18:22AM +0200, Frederic Weisbecker wrote:
+> Le Wed, Jul 03, 2024 at 10:25:57AM -0700, Paul E. McKenney a écrit :
+> > On Wed, Jul 03, 2024 at 06:21:01PM +0200, Frederic Weisbecker wrote:
+> > > Le Tue, Jun 04, 2024 at 03:23:52PM -0700, Paul E. McKenney a écrit :
+> > > > If a CPU is running either a userspace application or a guest OS in
+> > > > nohz_full mode, it is possible for a system call to occur just as an
+> > > > RCU grace period is starting.  If that CPU also has the scheduling-clock
+> > > > tick enabled for any reason (such as a second runnable task), and if the
+> > > > system was booted with rcutree.use_softirq=0, then RCU can add insult to
+> > > > injury by awakening that CPU's rcuc kthread, resulting in yet another
+> > > > task and yet more OS jitter due to switching to that task, running it,
+> > > > and switching back.
+> > > > 
+> > > > In addition, in the common case where that system call is not of
+> > > > excessively long duration, awakening the rcuc task is pointless.
+> > > > This pointlessness is due to the fact that the CPU will enter an extended
+> > > > quiescent state upon returning to the userspace application or guest OS.
+> > > > In this case, the rcuc kthread cannot do anything that the main RCU
+> > > > grace-period kthread cannot do on its behalf, at least if it is given
+> > > > a few additional milliseconds (for example, given the time duration
+> > > > specified by rcutree.jiffies_till_first_fqs, give or take scheduling
+> > > > delays).
+> > > > 
+> > > > This commit therefore adds a rcutree.nocb_patience_delay kernel boot
+> > > > parameter that specifies the grace period age (in milliseconds)
+> > > > before which RCU will refrain from awakening the rcuc kthread.
+> > > > Preliminary experiementation suggests a value of 1000, that is,
+> > > > one second.  Increasing rcutree.nocb_patience_delay will increase
+> > > > grace-period latency and in turn increase memory footprint, so systems
+> > > > with constrained memory might choose a smaller value.  Systems with
+> > > > less-aggressive OS-jitter requirements might choose the default value
+> > > > of zero, which keeps the traditional immediate-wakeup behavior, thus
+> > > > avoiding increases in grace-period latency.
+> > > > 
+> > > > [ paulmck: Apply Leonardo Bras feedback.  ]
+> > > > 
+> > > > Link: https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
+> > > > 
+> > > > Reported-by: Leonardo Bras <leobras@redhat.com>
+> > > > Suggested-by: Leonardo Bras <leobras@redhat.com>
+> > > > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > Reviewed-by: Leonardo Bras <leobras@redhat.com>
+> > > > ---
+> > > >  Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+> > > >  kernel/rcu/tree.c                               | 10 ++++++++--
+> > > >  kernel/rcu/tree_plugin.h                        | 10 ++++++++++
+> > > >  3 files changed, 26 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > > > index 500cfa7762257..2d4a512cf1fc6 100644
+> > > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > > @@ -5018,6 +5018,14 @@
+> > > >  			the ->nocb_bypass queue.  The definition of "too
+> > > >  			many" is supplied by this kernel boot parameter.
+> > > >  
+> > > > +	rcutree.nocb_patience_delay= [KNL]
+> > > > +			On callback-offloaded (rcu_nocbs) CPUs, avoid
+> > > > +			disturbing RCU unless the grace period has
+> > > > +			reached the specified age in milliseconds.
+> > > > +			Defaults to zero.  Large values will be capped
+> > > > +			at five seconds.  All values will be rounded down
+> > > > +			to the nearest value representable by jiffies.
+> > > > +
+> > > >  	rcutree.qhimark= [KNL]
+> > > >  			Set threshold of queued RCU callbacks beyond which
+> > > >  			batch limiting is disabled.
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > index 35bf4a3736765..408b020c9501f 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -176,6 +176,9 @@ static int gp_init_delay;
+> > > >  module_param(gp_init_delay, int, 0444);
+> > > >  static int gp_cleanup_delay;
+> > > >  module_param(gp_cleanup_delay, int, 0444);
+> > > > +static int nocb_patience_delay;
+> > > > +module_param(nocb_patience_delay, int, 0444);
+> > > > +static int nocb_patience_delay_jiffies;
+> > > >  
+> > > >  // Add delay to rcu_read_unlock() for strict grace periods.
+> > > >  static int rcu_unlock_delay;
+> > > > @@ -4344,11 +4347,14 @@ static int rcu_pending(int user)
+> > > >  		return 1;
+> > > >  
+> > > >  	/* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
+> > > > -	if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
+> > > > +	gp_in_progress = rcu_gp_in_progress();
+> > > > +	if ((user || rcu_is_cpu_rrupt_from_idle() ||
+> > > > +	     (gp_in_progress &&
+> > > > +	      time_before(jiffies, READ_ONCE(rcu_state.gp_start) + nocb_patience_delay_jiffies))) &&
+> > > > +	    rcu_nohz_full_cpu())
+> > > 
+> > > The rcu_nohz_full_cpu() test should go before anything in order to benefit from
+> > > the static key in tick_nohz_full_cpu().
+> > 
+> > That has had the wrong order since forever.  ;-)
+> > 
+> > But good to fix.  I will queue a separate patch for Neeraj to consider
+> > for the v6.12 merge window.
+> > 
+> > > And since it only applies to nohz_full, should it be called
+> > > nohz_full_patience_delay ?
+> > > 
+> > > Or do we want to generalize it to all nocb uses
+> > > (which means only rely on rcu_is_cpu_rrupt_from_idle() if not nohz_full). Not
+> > > sure if that would make sense...
+> > 
+> > I don't believe that this makes sense except for nohz_full guest OSes.
+> > 
+> > I am good with nohz_full_patience_delay_jiffies.  (Or did you really
+> > want to drop "_jiffies", and if so, did you also want some other units?)
 
-kernel test robot noticed the following build warnings:
+And this was me being confused.  The internal variable ends in _jiffies,
+but the kernel boot parameter does not, just as before.
 
-[auto build test WARNING on tnguy-next-queue/dev-queue]
+> > Last chance to object to the name.  ;-)
+> 
+> A bit long but I don't have a better proposal :-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Polchlopek/checkpatch-don-t-complain-on-_Generic-use/20240704-184910
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tnguy/next-queue.git dev-queue
-patch link:    https://lore.kernel.org/r/20240703125922.5625-4-mateusz.polchlopek%40intel.com
-patch subject: [Intel-wired-lan] [PATCH iwl-next v1 3/6] ice: add Tx hang devlink health reporter
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240705/202407050857.OSYEyokn-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240705/202407050857.OSYEyokn-lkp@intel.com/reproduce)
+We could make a longer one so that this one would look good by comparison?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407050857.OSYEyokn-lkp@intel.com/
+> > And next time we go through the patches a bit longer before the merge
+> > window!
+> 
+> My bad, I overlooked that one when it was posted.
 
-All warnings (new ones prefixed by >>):
+Only fair, I should have gotten to your seconds series sooner as well.
 
-   drivers/net/ethernet/intel/ice/devlink/devlink_health.c: In function 'ice_tx_hang_reporter_dump':
->> drivers/net/ethernet/intel/ice/devlink/devlink_health.c:76:43: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-      76 |         ice_fmsg_put_ptr(fmsg, "dma-ptr", (void *)event->tx_ring->dma);
-         |                                           ^
-
-
-vim +76 drivers/net/ethernet/intel/ice/devlink/devlink_health.c
-
-    60	
-    61	static int ice_tx_hang_reporter_dump(struct devlink_health_reporter *reporter,
-    62					     struct devlink_fmsg *fmsg, void *priv_ctx,
-    63					     struct netlink_ext_ack *extack)
-    64	{
-    65		struct ice_tx_hang_event *event = priv_ctx;
-    66	
-    67		devlink_fmsg_obj_nest_start(fmsg);
-    68		ICE_DEVLINK_FMSG_PUT_FIELD(fmsg, event, head);
-    69		ICE_DEVLINK_FMSG_PUT_FIELD(fmsg, event, intr);
-    70		ICE_DEVLINK_FMSG_PUT_FIELD(fmsg, event, vsi_num);
-    71		ICE_DEVLINK_FMSG_PUT_FIELD(fmsg, event, queue);
-    72		ICE_DEVLINK_FMSG_PUT_FIELD(fmsg, event, next_to_clean);
-    73		ICE_DEVLINK_FMSG_PUT_FIELD(fmsg, event, next_to_use);
-    74		devlink_fmsg_put(fmsg, "irq-mapping", event->tx_ring->q_vector->name);
-    75		ice_fmsg_put_ptr(fmsg, "desc-ptr", event->tx_ring->desc);
-  > 76		ice_fmsg_put_ptr(fmsg, "dma-ptr", (void *)event->tx_ring->dma);
-    77		devlink_fmsg_binary_pair_put(fmsg, "desc", event->tx_ring->desc,
-    78					     size_mul(event->tx_ring->count,
-    79						      sizeof(struct ice_tx_desc)));
-    80		devlink_fmsg_obj_nest_end(fmsg);
-    81	
-    82		return 0;
-    83	}
-    84	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+							Thanx, Paul
 
