@@ -1,60 +1,72 @@
-Return-Path: <linux-kernel+bounces-242797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC41928D49
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:04:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E86928D4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1614F1F26348
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1D921C212DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A196D16CD0B;
-	Fri,  5 Jul 2024 18:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E3716D4F8;
+	Fri,  5 Jul 2024 18:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ip5XSHDu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1QdsoZl"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E198A1F94C;
-	Fri,  5 Jul 2024 18:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7071B963;
+	Fri,  5 Jul 2024 18:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720202678; cv=none; b=NHwL/TDJivnAAgyHZd7pSbTExzV2mRIEFLg54oLV8VYNeyjkzcksb5Npx3ISonQHFJC2xnJ/qbgAtJEkFNy8CZJSF8/FMhXPCcIvDFn8hC+/fhUt1MWtYLUdn3Yk4TEZhlk+l+GehjmUrQASBYbhcxarGEr95x44u8ax8uOVrYs=
+	t=1720202791; cv=none; b=suB4oxr/ZWHRHDcN+z1dL4l8DU/iY7XQTSwezEm90qr+Ua2VyQcnjzxdM0kfWRQI01MQ7QLICkhT/ALBHtJ7mIjoLKeNd6Qx+Vau/3Ui9Y1Ci2QfMISNmJn/lPKcS/HJqeqQ907iBUZB1py1piB8Fx826L9jOyOZfqWFH7U7Z5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720202678; c=relaxed/simple;
-	bh=JhcO/S986tnJdQ3SRzEjJmm8DfbFGwXOf9yb4qYwoe8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WZYbPaRVR3nttcosUbJZPSw0NQcDmjcyGX3SVVYr5kR/JzMgB8N2wHUs5VA1XdMlRXeOeNlBUXQU+MrrumKlljUuY2dm21dm7w5iE0O81wLp8X4Nd3jwF0l7LVS422b57HrRiPVn3fONhG8HqEYqyR+Xq+RygSh6olOetqoRi1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ip5XSHDu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D57C116B1;
-	Fri,  5 Jul 2024 18:04:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720202677;
-	bh=JhcO/S986tnJdQ3SRzEjJmm8DfbFGwXOf9yb4qYwoe8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ip5XSHDupl/D3tuEGkIZiJlUCMwnjkRigsPAJcMnSFCwOCyxtvHZNshmyqmzfcP9v
-	 ldHM2/JKIk5WB4jXuGtW/l6ga5156auzj+von3J4vOINJjfi0QWCAJ2YZl8da6mZKw
-	 3Un7IlOoGd61ge3fNzP+PvBFQwcrY46OfetlS6dQKgqYVxu1txD6Eyj88yH8JTUUh4
-	 z/nTBB2/qCZK508E6eApKuoglF829knbJViDTKKUlwEdfdAaFHWY5biH9lhATq9DJH
-	 maiuaVVrwqsN80QkdPAuuupzvo/356RWGNsswfexSdv12BH/HUe+huXe5Kf1XU2wp2
-	 JtAK8NmMNQOlg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <ZobxoobZvA8k3pyi@standask-GA-A55M-S2HP>
-References: <ZobxoobZvA8k3pyi@standask-GA-A55M-S2HP>
-Subject: Re: [PATCH] dt-bindings: regulator: sprd,sc2731-regulator: convert
- to YAML
-Message-Id: <172020267547.58822.12771637622982215899.b4-ty@kernel.org>
-Date: Fri, 05 Jul 2024 19:04:35 +0100
+	s=arc-20240116; t=1720202791; c=relaxed/simple;
+	bh=S42tmQAfsWpBuBgVlpigJEKMpxvlDGgN7ZeqHMnQRNQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UwM8XFV6XNF/WKN1cWmW8N0TC9GyfNftWrihLlKoe2NDsIwU5lBG50n/OyRWZrIYKAEENAoaxpDq/UzKZsxP0RcpINaz4gFkP632pB+Gw2b/lCCei+OoxXLiAOOnEERnSJ97EldYeD1B1cuTCFyANZfGqo5N9zpJzXuzN7yXYvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1QdsoZl; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42567ddf099so13055975e9.3;
+        Fri, 05 Jul 2024 11:06:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720202788; x=1720807588; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ka4a536LSADJMceJfJvpco1a/Lo++oGKUYho3/0+38k=;
+        b=D1QdsoZlx39PcWIKA5y+oEOCUH8L34zIephDxvy7VOKU+mFaFzXjV90J1ualjrzsha
+         xoFYRZteqjacaB7a+L+OOmZdhQGZM9UFXH+w9/ITqkj6yj+u0QyDr8FWgVSTmhiYbQhY
+         jIczdVRyjjH53FQ0Rhc0u8dBYA5T5LlEGWPgALI5EuUVezR8THmLXWNwwHmEULZsHURB
+         Dacg+083VPhBrdb0Zs6PZKBAA03Cc0LaCKMeLv+xHqBYQu5tkl2ppojnZCz7J/cV0x69
+         dk09noWdaCNRln2sucGwYyKwKx2voZutUanoEl0sZQwhXSzq3ncfR+uAnIpEi9gL8QGV
+         ecCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720202788; x=1720807588;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ka4a536LSADJMceJfJvpco1a/Lo++oGKUYho3/0+38k=;
+        b=Lo3zMkyL73uvc88Y44rA12VbgXMP9hDaOUzRG4nVOrkxz5gV8FzxRH2gq/DvhhA4Xe
+         nYcCDxACfsggZOPb6xriVmO6UMJ4W7CTl80akaXdDIBaJg3jTV5YYkabBfcEbNVh4yvq
+         P99qFgrVi2RBobOmmVISElJxMD+DuYfUn59Oi14kSMlDiLRJN9T/lAWtDBo86+DBsV64
+         eFY0YCM/CFGwR5bGiDRzj3j9Rg5GXB1KUI40kCJ23TFbScf7JcK9F41QYeqY56UmYK6L
+         FvXlhUjsl4kvxBw8YDA9lI24LOS3uytgHSk/DVhO4OAfil4OrPD3nPVaxOl/GY9v/bqG
+         fxiA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6TNpP5eBoNKWBY6EQkKUfM1/+LqYmiBP6KAmF7c093HNNJ/dCM0cYIaJpgIzHeLbEFKYenslZvZhcKkBYrJhgPDonasdZ2UXA1hmz
+X-Gm-Message-State: AOJu0YwlLHs377ooBnRX4KLxn7q0nCxKv5oZHkR4SEHIHJ/U0QPDGd84
+	IQ6xllrFb2i3z5AJM0knP9MnNzypi6/pchUFAgsG5Cw2LmQaFc9z
+X-Google-Smtp-Source: AGHT+IGYE4H44Y+75PoJJVK24dXPFWlZRlmubvUmZgbi4bJEVh2/Vv9TJrxzG1JhoT+SkUQVScA9oQ==
+X-Received: by 2002:a05:600c:5788:b0:426:5cee:4abc with SMTP id 5b1f17b1804b1-4265cee4afamr6061275e9.20.1720202788040;
+        Fri, 05 Jul 2024 11:06:28 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-4adb-3312-ca75-bf55.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:4adb:3312:ca75:bf55])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a28d3dasm71533715e9.46.2024.07.05.11.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 11:06:27 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Fri, 05 Jul 2024 20:06:25 +0200
+Subject: [PATCH] i2c: designware: Constify read-only struct regmap_config
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,45 +75,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Message-Id: <20240705-i2c-designware-platdrv-const-regmap_config-v1-1-8c82cc63df15@gmail.com>
+X-B4-Tracking: v=1; b=H4sIACA2iGYC/x3N0QrCMAxA0V8ZeTZQO8vAXxGR2KY1oF1JxiaM/
+ bvFx/Ny7w7GKmxwHXZQXsVkrh3n0wDxRbUwSuoG7/zFTS6g+IiJTUrdSBnbm5akK8a52oLK5UP
+ t0ZGlYHjGiWgMefQOerApZ/n+Z7f7cfwAshpl2XwAAAA=
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720202787; l=1065;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=S42tmQAfsWpBuBgVlpigJEKMpxvlDGgN7ZeqHMnQRNQ=;
+ b=toALZGLNxZb7QYzJ/lnsL22UjXQKAyalvcd9KJAJfIX4qo5NryY3e1QBzvLqyG8o9DOu+SwpM
+ WbyL2fL3G+gBQ/vvxkIsOUDZ/+r3BrEHrMMe7Zpy3rCoJ0KMINymX7v
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Thu, 04 Jul 2024 21:01:54 +0200, Stanislav Jakubek wrote:
-> Convert the Spreadtrum SC2731 regulator bindings to DT schema.
-> 
-> Change during conversion:
->   - switch compatible from sprd,sc27xx-regulator to sprd,sc2731-regulator,
->     same as the only in-tree user has done back in 2019 [1]
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/arm64/boot/dts/sprd/sc2731.dtsi?h=v6.9&id=0419a75b1808dda225b17ba1509f195f23c0db88
-> 
-> [...]
+`bt1_i2c_cfg` is not modified and can be declared as const to
+move its data to a read-only section.
 
-Applied to
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+ drivers/i2c/busses/i2c-designware-platdrv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 29aac9c87368..df3dc1e8093e 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -101,7 +101,7 @@ static int bt1_i2c_write(void *context, unsigned int reg, unsigned int val)
+ 		BT1_I2C_CTL_GO | BT1_I2C_CTL_WR | (reg & BT1_I2C_CTL_ADDR_MASK));
+ }
+ 
+-static struct regmap_config bt1_i2c_cfg = {
++static const struct regmap_config bt1_i2c_cfg = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
 
-Thanks!
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240705-i2c-designware-platdrv-const-regmap_config-5bc7aa35f320
 
-[1/1] dt-bindings: regulator: sprd,sc2731-regulator: convert to YAML
-      commit: 6070471088b9db1f7e2aee4b648ce53fdbb3e5aa
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
