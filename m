@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-242883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1ED2928E56
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:47:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C624B928E5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB7C287826
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:47:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70621C24905
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A77144D25;
-	Fri,  5 Jul 2024 20:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7541914535B;
+	Fri,  5 Jul 2024 20:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HDoBY2uv"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEcFcFI6"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653BA364A1;
-	Fri,  5 Jul 2024 20:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E255208A7;
+	Fri,  5 Jul 2024 20:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720212449; cv=none; b=bQuoEqEO+BboA/fTGsdeCc+6lfBSCok/HkGnSVScj4n+sNUTZGKvqXIITyBxh/CVySvy5i3v/31E4fEMXd8myjbdKURX9mcmQuUyOh2kBVla7Cbit21eXAB4vnk0/NBlG0vsraBTKjE3nGHLOoakki5tAr+2Z7kyVb1z2MkNVxY=
+	t=1720212875; cv=none; b=mtVilQUnQFT31gXenEuTep2dR6AfvIqbIK4GdEYX6ABsmEpk8cmCSE0JIot8frSbbWbzUgta9byHMM6iGi2Gai7/0mQBiVNdbV7Nnf98j+j7P4C0wZYUAQWN1I0GoCxccOiNCdJDGwzU4F+XGnOkXCB8GQxLoQeer/v7UFNcx0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720212449; c=relaxed/simple;
-	bh=eMozeeNDGgbnk37xu6KniIO54Iq7u9MW21qt2w/Xsx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=buwWTRtct0M10Yo6ee/SLaDJSpcRJfD0FHoZs3jVmjmxjzdjplNHmgXFYdhO2GIPYrUK5hBz/OOBdx2kMkRp9HhOpo6MJ7RvDYNIX8TK9uUquhIP6ZC9S5G7dUhbT1g95vX8uqKud/EszQVrJ+hU+M4XS64iHatIXjEjk8IVmT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HDoBY2uv; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=PvCy3PrwhnpHfh2tEhiH0ARV1O+qOmWrJCIYLoSkR0g=; b=HDoBY2uv5BE+KAv1dfieKfCWAs
-	mBqV1FcMGoX5ZwQhjkeHTPLXewaSb+bbFZQf4rCdoL8BOc+GwM+ZslUHEkPsxx5w22fv/o94agik1
-	h/Tfw9JbxalAMZY/aaHTPpRJfzkE5H3X84QPpUZ2ArtLy5Uh3+iruV4RpWAsaVSDtUoTObQRRzzYE
-	eIITusz9xgvb5gdVp+1dc7d7O8nI98ALyZYhwZKx2TN4YEhgUXTupScMvJ9Y7wvVj936rUSUhr8tl
-	wGxHJMuYcXsvS02HdAZ6YrI+de+VlhQvw/NUE8QR+d9dwxv9BI2Byj5euPmdLG6MgEflS+zkSNCBy
-	3+If0Svw==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sPpq1-0000000GoN0-1UGv;
-	Fri, 05 Jul 2024 20:47:25 +0000
-Message-ID: <f7c62def-cba4-46bf-aeda-829d2c378ee3@infradead.org>
-Date: Fri, 5 Jul 2024 13:47:24 -0700
+	s=arc-20240116; t=1720212875; c=relaxed/simple;
+	bh=2I6tlGLYky5rxRRydJ1VhSeXacy67dc3oRDvst05vCA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oD/FS6541AuSPtthLw/YEbvQxMHLXll323nexx4JIkxHT8qes4lbYQTV1daBr2PZr7Nap7GLm3thO5aQa9T2makYrZvkB+tmXilFGRKtNKHWC1ejxL9EcjUMvKbmj/KCqBQBxVpw+FL1REbpSeOBzkKetiCIuJbQC9HJEnyw4fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEcFcFI6; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-701b0b0be38so1569866b3a.0;
+        Fri, 05 Jul 2024 13:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720212874; x=1720817674; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Hd8PCDgMueMORbsxMdk25xl5YXQAP04XADlFMfIBmTg=;
+        b=CEcFcFI6iAWwc2wRvbKWo1CJ4fLoaMX8DeSolpeFTykliNA/3Iu6j2v+K+nZSc/jPJ
+         aE3p3rVf+C72ypccPnB7qSCymm3Ruk3RhFInogXIVQvsOj1jLBHf7n3qUMWgfT2maHvM
+         yKPGHrpfQvO+RI2+W9AHEdgyGMEqQWD7/FFyPFJUmy+wNngbzk0Bg0JJxIgwXWTdaUKD
+         7NWDBui4Y7aO4ZNDbpzUOdoXtKnJy1NPMVkTfZHjpRMlOLl8VWazegeKHKZ455HaTRau
+         VfDIb49MrTx8JhUithphwfXrIHyNeX9dGHkJyHKYDaGnItUR72Ps9bBzkhGZQ+aeMmJl
+         alKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720212874; x=1720817674;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hd8PCDgMueMORbsxMdk25xl5YXQAP04XADlFMfIBmTg=;
+        b=MaAvJUnVfiAfQteoTpqg/yz7c50nsZRj90CD1W4N1kB6vuKo3duCDg2JDMYNj/az65
+         14SQMjl1La9kmIqsWG51/nYFYipSJ8Q2F1LHEjAn4Ur0RN6ERIHoDSXkBbRsrF/CAp5A
+         yyu4ZCRMYcnZdobmkFSGXfXMjm18GfRKsEYaUBgggLxI6QZWKPt2iF7IQEsHjYPwGEpA
+         hFtbTG/WaxojX+1Wc4ZJF1n3pRkHA1L6yMtA7xR/vOR/ojdG3ulTB5Kej4vVKvQijUGu
+         UxutcTkvVciC6JPwv1e2csp6cKBqCGyNpt6h6JgE0cPdsTcmb9qiY6Fbu7xs/+H9roP4
+         y2tw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1EF/t1iVB35x7pBMTqFVIn0Zfr0F/rHs4cLRhIRggWhLnRnV9hZzizSmoYiXy1xD6N9cQfDwJrU+nWsJDta3IbTvohBe+dj3knoxQOhZpfXGOSWugva2aeLWo9EA9FbSY9UHSpe5Eh9LSGI0J
+X-Gm-Message-State: AOJu0YycRrdWh37V621+1a36ShrKLImKZ/wV+wxDCqa0ALHNuhnJm5WT
+	qMOMnvQ+TfqkMun0j8KvR2W64y/dpaJ9PsK7JibN9KG42/iVsqFc
+X-Google-Smtp-Source: AGHT+IEPXB6ygUd16BDckadJNd0JfyBudXpraNukf45fIl/vUH5puKR2pY77kOTf66iIQ+8369EMpg==
+X-Received: by 2002:a05:6a00:882:b0:70a:f3de:3ff with SMTP id d2e1a72fcca58-70b00951416mr6010816b3a.14.1720212873706;
+        Fri, 05 Jul 2024 13:54:33 -0700 (PDT)
+Received: from [192.168.0.31] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b135ee722sm1172899b3a.11.2024.07.05.13.54.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 13:54:33 -0700 (PDT)
+Message-ID: <9742abda93ae2d90148f54b585adc825e55a1a38.camel@gmail.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: amend for wrong
+ bpf_wq_set_callback_impl signature
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Benjamin Tissoires <bentiss@kernel.org>, Alexei Starovoitov
+ <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,  Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>,  Mykola Lysenko <mykolal@fb.com>, Shuah Khan
+ <shuah@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Date: Fri, 05 Jul 2024 13:54:27 -0700
+In-Reply-To: <20240705-fix-wq-v1-2-91b4d82cd825@kernel.org>
+References: <20240705-fix-wq-v1-0-91b4d82cd825@kernel.org>
+	 <20240705-fix-wq-v1-2-91b4d82cd825@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] firmware: imx: adds miscdev
-To: Pankaj Gupta <pankaj.gupta@nxp.com>, Jonathan Corbet <corbet@lwn.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20240705-imx-se-if-v4-0-52d000e18a1d@nxp.com>
- <20240705-imx-se-if-v4-5-52d000e18a1d@nxp.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240705-imx-se-if-v4-5-52d000e18a1d@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+On Fri, 2024-07-05 at 15:44 +0200, Benjamin Tissoires wrote:
+> See the previous patch: the API was wrong, we were provided the pointer
+> to the value, not the actual struct bpf_wq *.
+>=20
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> ---
 
+Would it make sense to update one of the tests, so that it checks the
+specific value put in the map?
+E.g. extend struct elem:
 
-On 7/5/24 6:52 AM, Pankaj Gupta wrote:
-> diff --git a/Documentation/ABI/testing/se-cdev b/Documentation/ABI/testing/se-cdev
-> new file mode 100644
-> index 000000000000..97a5b2ca115d
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/se-cdev
-> @@ -0,0 +1,43 @@
-> +What:		/dev/<se>_mu[0-9]+_ch[0-9]+
-> +Date:		May 2024
-> +KernelVersion:	6.8
-> +Contact:	linux-imx@nxp.com, pankaj.gupta@nxp.com
-> +Description:
-> +		NXP offers multiple hardware IP(s) for  secure enclaves like EdgeLock-
+struct elem {
+	int answer_to_the_ultimate_question;
+	struct bpf_wq w;
+};
 
-		                                     ^^^ one space only
+And put something in there?
 
-> +		Enclave(ELE), SECO. The character device file descriptors
-> +		/dev/<se>_mu*_ch* are the interface between user-space NXP's secure-
-
-Please use "userspace" or "user space".
-
-> +		enclave shared library and the kernel driver.
-> +
-> +		The ioctl(2)-based ABI is defined and documented in
-> +		[include]<linux/firmware/imx/ele_mu_ioctl.h>
-
-End the line above with a period.
-
-> +		 ioctl(s) are used primarily for:
-> +			- shared memory management
-> +			- allocation of I/O buffers
-> +			- getting mu info
-> +			- setting a dev-ctx as receiver to receive all the commands from FW
-> +			- getting SoC info
-> +			- send command and receive command response
-> +
-> +		The following file operations are supported:
-> +
-> +		open(2)
-> +		  Currently the only useful flags are O_RDWR.
-> +
-> +		read(2)
-> +		  Every read() from the opened character device context is waiting on
-> +		  wait_event_interruptible, that gets set by the registered mailbox callback
-> +		  function, indicating a message received from the firmware on message-
-> +		  unit.
-> +
-> +		write(2)
-> +		  Every write() to the opened character device context needs to acquire
-> +		  mailbox_lock before sending message on to the message unit.
-> +
-> +		close(2)
-> +		  Stops and frees up the I/O contexts that were associated
-> +		  with the file descriptor.
-> +
-> +Users:		https://github.com/nxp-imx/imx-secure-enclave.git,
-> +		https://github.com/nxp-imx/imx-smw.git
-> +		crypto/skcipher,
-> +		drivers/nvmem/imx-ocotp-ele.c
-
--- 
-~Randy
+[...]
 
