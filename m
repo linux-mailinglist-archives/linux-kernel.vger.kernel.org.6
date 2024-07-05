@@ -1,154 +1,179 @@
-Return-Path: <linux-kernel+bounces-242138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA638928428
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EED3928430
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85FAD281B9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367192820EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7283914600D;
-	Fri,  5 Jul 2024 08:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E9E13C809;
+	Fri,  5 Jul 2024 08:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQvfWC36"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jUBM0O8R"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A100B145FE0;
-	Fri,  5 Jul 2024 08:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288FC145FFF;
+	Fri,  5 Jul 2024 08:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720169504; cv=none; b=AJqp9Wk+TdQTLzU/jKCzoNPzdNYMbX9Y52y5Fuo9IkTva0h+dSCSlEnpUkj8r2nAfvhfHZjFbdNDCo5kFGFtVyngT/X4EuUL2CBmcgg2n9da5NKH8NUtW4+Tdg+EOIrZ81UVuhDx3SYlekzu3M56MlzVDXwDO+OLdrdftPtq82I=
+	t=1720169562; cv=none; b=kxcGyNr7N5kIpt7c8OKdrJL8wBqpbGzGjGNP/gX3c52xcjmFUXXcHUdQfrC7uUMMQSKAdaa7oTpllBMXSLcB3rE1qNIO6lDSBRmhg/sVbQSwUHKNDodtWA6V93LO8DnpvHkI2veOa2mfnJISGxgrzgFlEznQ4XzL999CzHmLbkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720169504; c=relaxed/simple;
-	bh=dQ5AnLTlTbUKWBiHqk3Dtw/86b4E3MmIzdNFGDLYa2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f4cbH4zahzGbF0OvbG1cusX0dAPW2jsiSD5CC55XQM2cV3rYcAR4H+1QVQvWAkQy7ZbB89855j5z1de60xpfebMUfwy+ylZF+bJ0Lq1d769wsV2PkbjyKitiFaCIU34T6oUU5Rul8wvYvO4GGF0aMPlp1gg4LczY01SFGLmoTkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQvfWC36; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92DEAC116B1;
-	Fri,  5 Jul 2024 08:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720169504;
-	bh=dQ5AnLTlTbUKWBiHqk3Dtw/86b4E3MmIzdNFGDLYa2E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kQvfWC36abuTRmrWOySTTlnFpfGN0VDxsic+Zao3hmF1kFVdBvJhgl9l7SoVrilHh
-	 llKdh0RsnPnslpBpqIKEdQI5tZOZrnSca4yJWuq4z7etf4IgJMgz/M/Ohu5QN0gk6G
-	 JZGhZmNGEn2uj/7YgSsMCIU7EPhLTGMQWOQYg42yCrd9trgGiYZd+OguzArYGJmbm8
-	 9dYo5xurWz2wr+uuuR7J56jiQTI/ckG2Vn1fNuQDrN0hJKL6P/HpR7CeCdYkNsvYl0
-	 CA6t5VcZJr4wyim8IbrQCqH8Cq9UnKJb82Gw/ui9/rghwPaNqYUovV2fKBV1YPCb1O
-	 gvvG65qdaDjGA==
-Message-ID: <31778ed0-e4b5-4961-99a5-41ce44ddac26@kernel.org>
-Date: Fri, 5 Jul 2024 10:51:39 +0200
+	s=arc-20240116; t=1720169562; c=relaxed/simple;
+	bh=tNFKfuk5Ymyt8xk9GhZ2T11xYTpUmsgjx3Rqz+ObP2g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tUPFoMbahzmEp/qgIF1gsqJ8Yg/ByGXbWpsKn6s8gvJvhQjEv0IaQE5JGxi5pDSrepHEcR5YlidWl2k25FKRrigMikMFKJ6SrBVGDF3hxurii5LhdyUTllqBVD4EXidQRqaa8GfX9pDRk9csvCSEhSR4rb8eJfSzwLGAQjv6yAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jUBM0O8R; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 464Nid1K026603;
+	Fri, 5 Jul 2024 08:52:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=Sg+a5AmYrZODA6buMyIBZVZhyNMtazQcn/qad/A8YnE=; b=jU
+	BM0O8R1YF3sYtyqUYGaXSuN/CNnkIrwpPgdh6f9A+IaiugGoqHWKJq5vStNCczM3
+	BN+WXiLRim4wThvx2gejIA2vgC8EgeEKHR/S4EvZn+P0XvmW8Y9NmdHURn3m6mZw
+	I12guzaAnPBQp5IN5FEfagSoX7f545LDvtAx+F/c3XSNjB7Ooohz9H1VFNuOwnOU
+	AnDtYMVSXDa1VQa6fiWR/Vpe/Qb8bA6OQdC63fRDQjkYyKJcLUaE+GF8U0BL4QUR
+	neCaGz6/i94gd5NunJ0sQk5LOZcit13AZGeTOR4lhymDru4RINpV9qgd5LafwMHL
+	2yOVJF1Fl8CCkesnzAPA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 405dbe3r13-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 08:52:26 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4658qPig019633
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Jul 2024 08:52:25 GMT
+Received: from taozha2-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 5 Jul 2024 01:52:20 -0700
+From: Tao Zhang <quic_taozha@quicinc.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Mike Leach <mike.leach@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        James Clark <james.clark@arm.com>
+CC: Tao Zhang <quic_taozha@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Tingwei Zhang
+	<quic_tingweiz@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Song Chai <quic_songchai@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        Jie Gan <quic_jiegan@quicinc.com>
+Subject: [PATCH v1 0/3] Add source filtering for multi-port output
+Date: Fri, 5 Jul 2024 16:51:49 +0800
+Message-ID: <20240705085152.9063-1-quic_taozha@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions for
- Exynos Auto v920
-To: "sunyeal.hong" <sunyeal.hong@samsung.com>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Chanwoo Choi' <cw00.choi@samsung.com>,
- 'Alim Akhtar' <alim.akhtar@samsung.com>,
- 'Michael Turquette' <mturquette@baylibre.com>,
- 'Stephen Boyd' <sboyd@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
- <CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
- <20240705021110.2495344-3-sunyeal.hong@samsung.com>
- <8f4deb36-2a44-414a-9b9f-40b87bc7c949@kernel.org>
- <01c401daceb1$d64e7450$82eb5cf0$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <01c401daceb1$d64e7450$82eb5cf0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uWUFv2iMHS_yCMLb3UsUwAt8tRg8SDZa
+X-Proofpoint-GUID: uWUFv2iMHS_yCMLb3UsUwAt8tRg8SDZa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_05,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 clxscore=1011 suspectscore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407050066
 
-On 05/07/2024 10:03, sunyeal.hong wrote:
-> 
->> <form letter>
->> Please use scripts/get_maintainers.pl to get a list of necessary people
->> and lists to CC. It might happen, that command when run on an older kernel,
->> gives you outdated entries. Therefore please be sure you base your patches
->> on recent Linux kernel.
->>
->> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
->> people, so fix your workflow. Tools might also fail if you work on some
->> ancient tree (don't, instead use mainline) or work on fork of kernel
->> (don't, instead use mainline). Just use b4 and everything should be fine,
->> although remember about `b4 prep --auto-to-cc` if you added new patches to
->> the patchset.
->>
->> You missed at least devicetree list (maybe more), so this won't be tested
->> by automated tooling. Performing review on untested code might be a waste
->> of time.
->>
->> Please kindly resend and include all necessary To/Cc entries.
->> </form letter>
->>
->> Best regards,
->> Krzysztof
-> 
-> The mail list was created using get_maintainer.pl. If there is any problem, please let me know.
-> 
-> ./scripts/get_maintainer.pl -f drivers/clk/samsung/
+In our hardware design, by combining a funnel and a replicator, it
+implement a hardware device with one-to-one correspondence between
+output ports and input ports. The programming usage on this device
+is the same as funnel. The software uses a funnel and a static
+replicator to implement the driver of this device. Since original
+funnels only support a single output connection and original
+replicator only support a single input connection, the code needs
+to be modified to support this new feature. The following is a
+typical topology diagram of multi-port output mechanism.
+|----------|     |---------|     |----------|   |---------|
+|  TPDM 0  |     | Source0 |     | Source 1 |   | TPDM 1  |
+|----------|     |---------|     |----------|   |---------|
+      |                |                |             |
+      |                |                |             |
+      |      --------- |                |             |
+      |      |                          |             |
+      |      |                          |             |
+      |      |                          |             |
+   \-------------/ ----------------------             |
+    \  Funnel 0 /  |                                  |
+     -----------   |     ------------------------------
+          |        |     |
+          |        |     |
+        \------------------/
+         \    Funnel 1    /     ----|
+          \--------------/          |
+                  |                 |----> Combine a funnel and a
+                  |                 |      static replicator
+          /-----------------\       |
+         /    replicator 0   \  ----|
+        /---------------------\
+             |     |      |
+             |     |      |-----------|
+             |     |---------|        |
+             |               |TPDM0   |TPDM1
+             |            \-----------------/
+             |             \   TPDA 0      /
+             |              \-------------/
+             |                    |
+             |                    |
+             |Source0/1           |
+          \-------------------------------/
+           \           Funnel 2          /
+            \---------------------------/
 
-That's not how you run the command. You ALWAYS (unless you are Linus)
-run it on the patches. ALWAYS. See submitting patches or numerous
-presentations how to contribute upstream.
+Changes in V1:
+1. Add a static replicator connect to a funnel to implement the
+correspondence between the output ports and the input ports on
+funnels.
+-- Suzuki K Poulose
+2. Add filter_src_dev and filter_src_dev phandle to
+"coresight_connection" struct, and populate them if there is one.
+-- Suzuki K Poulose
+3. To look at the phandle and then fixup/remove the filter_src
+device in fixup/remove connections.
+-- Suzuki K Poulose
+4. When TPDA reads DSB/CMB element size, it is implemented by
+looking up filter src device in the connections.
+-- Suzuki K Poulose
 
-Read my form letter accurately, e.g. switch to b4.
+Tao Zhang (3):
+  dt-bindings: arm: qcom,coresight-static-replicator: Add property for
+    source filtering
+  coresight: Add source filtering for multi-port output
+  coresight-tpda: Optimize the function of reading element size
 
-Best regards,
-Krzysztof
+ .../arm/arm,coresight-static-replicator.yaml  | 18 +++-
+ drivers/hwtracing/coresight/coresight-core.c  | 89 ++++++++++++++++---
+ .../hwtracing/coresight/coresight-platform.c  | 13 +++
+ drivers/hwtracing/coresight/coresight-tpda.c  |  6 +-
+ include/linux/coresight.h                     |  5 ++
+ 5 files changed, 115 insertions(+), 16 deletions(-)
+
+-- 
+2.17.1
 
 
