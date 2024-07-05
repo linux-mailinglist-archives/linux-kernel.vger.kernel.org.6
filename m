@@ -1,90 +1,79 @@
-Return-Path: <linux-kernel+bounces-242914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E70928EC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:23:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E419928ECC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178971F23C6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:23:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB937283A83
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BD316D9A4;
-	Fri,  5 Jul 2024 21:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5224314534C;
+	Fri,  5 Jul 2024 21:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WgYWxWAb"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QzOvqLMl"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF5813C9DE;
-	Fri,  5 Jul 2024 21:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78F213A26F;
+	Fri,  5 Jul 2024 21:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720214559; cv=none; b=T5l2ocLlZQMyme/vtz+I/XW5S5hvZ5dmyVI53wNoHaNrkIzuXgRk5Qyag+vTa3EYXfYX0nU91ge5+r7simlZNYkuZNjteRJk6Dv1QUC/ZJR2DlQ0jCFTGUj98esH/dY7isDc0o5ddoPqQLyMLiuBVQeBgHGMR1dLMS78jO2PjPY=
+	t=1720215354; cv=none; b=oNg2bw0WjM62FJF1fj5WezpmdysrDZnFQYsLxz00Y8m0GFEM4rHY4d4xe4SySoGEFenVTvJ8CaaG6WlAN6fPZt8holhizw3JGiwU9HKwtpIIM/3YnfEI80lZSEoDITKET6W59skxFCNNUSIOTEVNWCSYPmZi5mLsxZsLv3fSUS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720214559; c=relaxed/simple;
-	bh=L0pa+ASgYRvONHqMPgOIaKPjkxUMXzz5JmdhJ3C+zZk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=guc8ob4BC4lqcYqL7zes+VbXGWX7Os9MDk6gVyYAZmq2PspXAoqHhcQULsQvmmzneNFbDF4UDgG3SDt2O8tgfaFR29MkGggr8QTYayedNNKTCoj6Lro0WOdghzs4xRYCSY8YPUzCf033qM4MTH1M3EDd5hu8o9xDfoRL9wYOhZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WgYWxWAb; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1720215354; c=relaxed/simple;
+	bh=Um1h6EoS/sb6kyAPI51bGstSuv9tRS/e4iekDFg154Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V9Y5QUEHuPw+fhFMUk1NipOfPu/rpqy9ShGg92PdhuwUIgNIgXTWrk6CoRAVeIAbKd8pC//Jdzu2fquTns5JvRfvMK9NPhR8gGJz3qMgcx9zQRlfb9Fa2c5CZweC5gpnWYmEbAuiQadmfQekKOXCXLuMUK/84yDh2QTIeHC1bwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QzOvqLMl; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b04cb28acso1310391b3a.0;
-        Fri, 05 Jul 2024 14:22:37 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b05260c39so1259074b3a.0;
+        Fri, 05 Jul 2024 14:35:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720214557; x=1720819357; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XwAF8+6oQayFkR41Q8MjfYalt/kzwwy3b6NOpJMFL58=;
-        b=WgYWxWAbQzt0yLD/+ZOl3oOIQS87ZwBoFZGKjP2iYTyrkDh+uJblgl/5D+1bEVJhgA
-         /54l4/AWoOVcK3RqHDzONTjRSFTkAt+Eme+h8jD/G2yqz2bVc3Bd/d8eQXlOJQ0E87U9
-         nBCoVvJZVT9E+J4x1RdYXP1aJkJeo3ym770tMUVSQrGUozAXUTfy8ew1hEboF6OLPAV3
-         xb6he1vQMG2dgAYmqRYqjV+QiFHPyBz+t9zOtn8AUiXSsvV8NYSUI9PFqsr76l0vHhZM
-         /CjqEDb4xp/RmJEahMpzjCys+7FseWXcCKPAAeTMhE++PuWy1/fMVDdH3xG/XaOullxo
-         P33A==
+        d=gmail.com; s=20230601; t=1720215352; x=1720820152; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=huiDgYX7n2q2oAeLwVpk0wvSvb2Dq0R+9xq4JPm30eM=;
+        b=QzOvqLMlqybGFIP8Id5uU1BL0NLA8tuWrSPs2n1G+tZNOE3aWQnDR8stM0HjKCFseo
+         2A+Eo6IPoYlVNmHtLZQ4uxUL2Q6YAo5gpHWIW62wSIqF6MvUezW6hOGwYUCgo2rQ9A5I
+         SRyDuzV9rGi2SxI+3a1nJuLKAw/43877xdpFgu7OC53F/jxWn97pzLA/fHdtmDMCPyeE
+         cNYc/CLitxh3vaZn4lWr6NNS514Bkg3/7DV3ERFAHP0pfLBWEa412xX9CfWZ6EiTTTuD
+         g/aBX0L2nCTI1sttG/59MSaNc+d81FTpvhuZ72Fw7vcZafJIKQZcmobuzCPz0cAfmECC
+         ut6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720214557; x=1720819357;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XwAF8+6oQayFkR41Q8MjfYalt/kzwwy3b6NOpJMFL58=;
-        b=Ui45qXqedjDbZFIIyelm1VU/m770Bv1yPs1MutQyuuOBDEqX91337tiTs+5JYdncyK
-         tuABtCI6qz5OiM8Fx3fPZal1YzggYXBFNvTkP2ESELvudozbs/sYwngmZOKC7ZiNkFTD
-         Mn1hXMhiorZbt1M4zvsehjqgsg2T7LLor6xIiwEe2lzPXaQ7FJ4szQOEWa3dC94ZQW1/
-         3a8dT9tT7hd3ZqG6jADcdNd12VLiW+FdxlVLMqxsDo/x2jXDBAfj6egsFJcjJJRyaFTO
-         KwEY6gojumdqxN3Dcf/W4Bolk8aM9bVSe4FJv7v5bcoqJUwx68YZd1A9BoO79G9T6E1h
-         zOlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVtjKXNQ/JtFnkgKfpNI8WJHipILpsmNc+o9NCzGcgsoU6emxoVZMOljiKB/lIGfOo/y5AjENgeSBHAe2ur63KZ0WnjUU81fGN0TJZ6zPvzpIKEjs9LYfFtj+EZbHO1e5M9Nv+l4PNHafbFluvCwUPF2EqkLD2Ebf33/oJ0BBVQErKbXChII6neLxO
-X-Gm-Message-State: AOJu0Ywrwy4gxeIy/ImgzGYE0C0FAHjpg5yeWawEPCz3aCR8rUCePAj0
-	9DzJkd4q2ufQCaZJA6gUoE8yNiPGJGTWIWXJXHRO1xSXqZy3jefN
-X-Google-Smtp-Source: AGHT+IEHKBP4ZHXvKMfTXUMD/6/Pg/HUUZBKKhSdKnbKczuLUardtiIMYvOIQoszQuegJ1s3C9JAEQ==
-X-Received: by 2002:a05:6a00:2d8a:b0:708:41c4:8849 with SMTP id d2e1a72fcca58-70b01b320a5mr7013983b3a.9.1720214556886;
-        Fri, 05 Jul 2024 14:22:36 -0700 (PDT)
-Received: from tahera-OptiPlex-5000.uc.ucalgary.ca ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802566511sm14507529b3a.75.2024.07.05.14.22.36
+        d=1e100.net; s=20230601; t=1720215352; x=1720820152;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=huiDgYX7n2q2oAeLwVpk0wvSvb2Dq0R+9xq4JPm30eM=;
+        b=HlhKpDpnLDZ10mm1cgXPaa7PytjnSguxI06IAhLUcGxJfrQBi547yWkQxbs+L2PXYq
+         hbhvOSb1qTTf4ZN4FAWZsLF3gGfJpqGqVachO8E2Pjl9qMPLTdLKzSTuKXHOPsG4ZAkZ
+         Uvbn+QNnOOYjGFrxmi/D3WMPUPIVc4XjN3tXsW61T/Q2YqWiK2IhTshS6xO2jlLhkeUt
+         8zmtvR17WaLvGdQyfSV7RbJxDMp6DmfuvgORDQ/MMylM484/oosjzZmELAK4ARIXc9s5
+         c93a5CDJ6UHF4n/KXYLSnr0xYaU0Bb2mba4H7OsrjZ99/9azij0A2oSEx6F/xGNkdVQN
+         IqtA==
+X-Gm-Message-State: AOJu0Yy2DPxhDTX6lAYu/HURVRaOMPqYlATJmFIkpb4vy+7fPjLC4MoS
+	a0YnjaQ5mAl+irDzpq+s7/hwAko84w8hJgMnMp3Lv0V9cZfOpi+t8uidJQ==
+X-Google-Smtp-Source: AGHT+IEtGgaGA7N904KiAd92aiM9pBCk9d0DknOSi5axFLxbIBKucA4YYAJwKTu4qbEoh725fH9pRw==
+X-Received: by 2002:aa7:88d3:0:b0:702:6dc7:2368 with SMTP id d2e1a72fcca58-70b009569fdmr4583337b3a.12.1720215351709;
+        Fri, 05 Jul 2024 14:35:51 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802667c59sm14482253b3a.86.2024.07.05.14.35.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 14:22:36 -0700 (PDT)
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: mic@digikod.net,
-	gnoack@google.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com,
-	jannh@google.com,
-	outreachy@lists.linux.dev,
-	netdev@vger.kernel.org
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
-Subject: [PATCH v1 2/2] Landlock: Signal scoping tests
-Date: Fri,  5 Jul 2024 15:21:43 -0600
-Message-Id: <70756a7b4ed5bd32f2d881aa1a0d1e7760ce4215.1720213293.git.fahimitahera@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <36958dbc486e1f975f4d4ecdfa51ae65c2c4ced0.1720213293.git.fahimitahera@gmail.com>
-References: <36958dbc486e1f975f4d4ecdfa51ae65c2c4ced0.1720213293.git.fahimitahera@gmail.com>
+        Fri, 05 Jul 2024 14:35:50 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Farouk Bouabid <farouk.bouabid@cherry.de>,
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v4 00/11] hwmon: (amc6821) Various improvements
+Date: Fri,  5 Jul 2024 14:35:36 -0700
+Message-Id: <20240705213547.1155690-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,251 +82,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
----
- .../testing/selftests/landlock/ptrace_test.c  | 216 ++++++++++++++++++
- 1 file changed, 216 insertions(+)
+Cleanup and modernize the amc2821 driver.
 
-diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-index a19db4d0b3bd..e092b67f8b67 100644
---- a/tools/testing/selftests/landlock/ptrace_test.c
-+++ b/tools/testing/selftests/landlock/ptrace_test.c
-@@ -17,6 +17,8 @@
- #include <sys/wait.h>
- #include <unistd.h>
- 
-+#include <signal.h>
-+
- #include "common.h"
- 
- /* Copied from security/yama/yama_lsm.c */
-@@ -25,6 +27,8 @@
- #define YAMA_SCOPE_CAPABILITY 2
- #define YAMA_SCOPE_NO_ATTACH 3
- 
-+static sig_atomic_t signaled;
-+
- static void create_domain(struct __test_metadata *const _metadata)
- {
- 	int ruleset_fd;
-@@ -436,4 +440,216 @@ TEST_F(hierarchy, trace)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
-+static void create_sig_domain(struct __test_metadata *const _metadata)
-+{
-+	int ruleset_fd;
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.scoped = LANDLOCK_SCOPED_SIGNAL,
-+	};
-+
-+	ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	EXPECT_LE(0, ruleset_fd)
-+	{
-+		TH_LOG("Failed to create a ruleset: %s", strerror(errno));
-+	}
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+}
-+
-+static void scope_signal_handler(int sig, siginfo_t *info, void *ucontext)
-+{
-+	if (sig == SIGHUP || sig == SIGURG || sig == SIGTSTP || sig == SIGTRAP)
-+		signaled = 1;
-+
-+	// signal process group
-+	//kill(-(t->pid), SIGKILL);
-+}
-+
-+/* clang-format off */
-+FIXTURE(signal_scoping) {};
-+/* clang-format on */
-+
-+FIXTURE_VARIANT(signal_scoping)
-+{
-+	const int sig;
-+	const bool domain_both;
-+	const bool domain_parent;
-+	const bool domain_child;
-+};
-+
-+/* Default Action: Terminate*/
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(signal_scoping, deny_with_forked_domain) {
-+	/* clang-format on */
-+	.sig = SIGHUP,
-+	.domain_both = true,
-+	.domain_parent = true,
-+	.domain_child = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(signal_scoping, allow_with_forked_domain) {
-+	/* clang-format on */
-+	.sig = SIGHUP,
-+	.domain_both = false,
-+	.domain_parent = true,
-+	.domain_child = false,
-+};
-+
-+/* Default Action: Ignore*/
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(signal_scoping, deny_with_forked_domain_SIGURG) {
-+	/* clang-format on */
-+	.sig = SIGURG,
-+	.domain_both = true,
-+	.domain_parent = true,
-+	.domain_child = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(signal_scoping, allow_with_forked_domain_SIGURG) {
-+	/* clang-format on */
-+	.sig = SIGURG,
-+	.domain_both = false,
-+	.domain_parent = true,
-+	.domain_child = false,
-+};
-+
-+/* Default Action: Stop*/
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(signal_scoping, deny_with_forked_domain_SIGTSTP) {
-+	/* clang-format on */
-+	.sig = SIGTSTP,
-+	.domain_both = true,
-+	.domain_parent = true,
-+	.domain_child = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(signal_scoping, allow_with_forked_domain_SIGTSTP) {
-+	/* clang-format on */
-+	.sig = SIGTSTP,
-+	.domain_both = false,
-+	.domain_parent = true,
-+	.domain_child = false,
-+};
-+
-+/* Default Action: Coredump*/
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(signal_scoping, deny_with_forked_domain_SIGTRAP) {
-+	/* clang-format on */
-+	.sig = SIGTRAP,
-+	.domain_both = true,
-+	.domain_parent = true,
-+	.domain_child = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(signal_scoping, allow_with_forked_domain_SIGTRAP) {
-+	/* clang-format on */
-+	.sig = SIGTRAP,
-+	.domain_both = false,
-+	.domain_parent = true,
-+	.domain_child = false,
-+};
-+
-+FIXTURE_SETUP(signal_scoping)
-+{
-+}
-+
-+FIXTURE_TEARDOWN(signal_scoping)
-+{
-+}
-+
-+TEST_F(signal_scoping, test_signal)
-+{
-+	pid_t child;
-+	pid_t parent = getpid();
-+	int status;
-+	bool can_signal;
-+	int pipe_child[2], pipe_parent[2];
-+	//char buf_parent;
-+
-+	struct sigaction action = {
-+		.sa_sigaction = scope_signal_handler,
-+		.sa_flags = SA_SIGINFO,
-+
-+	};
-+
-+	can_signal = !variant->domain_child;
-+
-+	//sigemptyset(&act.sa_mask);
-+
-+	ASSERT_LE(0, sigaction(variant->sig, &action, NULL))
-+	{
-+		TH_LOG("ERROR in sigaction %s", strerror(errno));
-+	}
-+
-+	if (variant->domain_both) {
-+		create_sig_domain(_metadata);
-+		if (!__test_passed(_metadata))
-+			/* Aborts before forking. */
-+			return;
-+	}
-+	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-+	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (child == 0) {
-+		char buf_child;
-+		int err;
-+
-+		ASSERT_EQ(0, close(pipe_parent[1]));
-+		ASSERT_EQ(0, close(pipe_child[0]));
-+
-+		if (variant->domain_child)
-+			create_sig_domain(_metadata);
-+
-+		/* Waits for the parent to be in a domain, if any. */
-+		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
-+
-+		//err = raise(SIGHUP);
-+		err = kill(parent, variant->sig);
-+		if (can_signal) {
-+			ASSERT_EQ(0, err);
-+		} else {
-+			ASSERT_EQ(EPERM, errno)
-+			{
-+				TH_LOG("Invalid error cached: %s",
-+				       strerror(errno));
-+			}
-+		}
-+		_exit(_metadata->exit_code);
-+		return;
-+	}
-+
-+	ASSERT_EQ(0, close(pipe_child[1]));
-+	ASSERT_EQ(0, close(pipe_parent[0]));
-+	if (variant->domain_parent)
-+		create_sig_domain(_metadata);
-+
-+	/* Signals that the parent is in a domain, if any. */
-+	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-+
-+	if (can_signal) {
-+		ASSERT_EQ(-1, pause());
-+		ASSERT_EQ(EINTR, errno);
-+		ASSERT_EQ(1, signaled);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+
-+	if (WIFEXITED(status)) {
-+		TH_LOG("Exited with code %d:", WEXITSTATUS(status));
-+		if (!can_signal)
-+			ASSERT_NE(1, signaled);
-+	}
-+
-+	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-+	    WEXITSTATUS(status) != EXIT_SUCCESS)
-+		_metadata->exit_code = KSFT_FAIL;
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.34.1
+Summary of changes:
 
+- Stop accepting invalid pwm values.
+- Improve consistency of reading vs. writing fan speed limits
+- Rename fan1_div to fan1_pulses
+- Add support for fan1_target and pwm1_enable mode 4
+- Reorder include files, drop unnecessary ones
+- Use tabs for column alignment in defines
+- Use BIT() and GENMASK()
+- Drop unnecessary enum chips
+- Convert to use regmap
+- Convert to with_info API
+- Add support for pwm1_mode attribute
+
+v4:
+- Added Quentin's Reviewed-by: tag to patch 11/11
+- Various improvements in regmap conversion see patch 9/11 for details
+- Fixed subject of two patches
+
+v3:
+- Added Quentin's Reviewed-by: tag to several patches
+- Change valid range of pwm1_auto_point2_pwm from [0..254] to
+  [0, 255]
+- Various improvements of regmap conversion
+- Fix register when writing pwm1_mode
+
+v2:
+- Use kstrtou8() instead of kstrtol() where possible
+- Limit range of pwm1_auto_point_pwm to 0..254 in patch 1
+  instead of limiting it later, and do not accept invalid
+  values for the attribute
+- Do not accept negative fan speed values
+- Display fan speed and speed limit as 0 if register value is 0
+  (instead of 6000000), as in original code
+- Only permit writing 0 (unlimited) for the maximum fan speed
+- Add Reviewed-by: tags where given
+- Fix definition of AMC6821_CONF1_FDRC1 in patch 7/10
+- Use sign_extend32() instead of odd type cast
+- Drop remaining spurious debug message in patch 9 instead of patch 10
+- Add missing "select REGMAP_I2C" to Kconfig
+- Change misleading variable name from 'mask' to 'mode'
+- Use sysfs_emit instead of sprintf everywhere
+- Add support for pwm1_mode attribute
+
+----------------------------------------------------------------
+Guenter Roeck (11):
+      hwmon: (amc6821) Stop accepting invalid pwm values
+      hwmon: (amc6821) Make reading and writing fan speed limits consistent
+      hwmon: (amc6821) Rename fan1_div to fan1_pulses
+      hwmon: (amc6821) Add support for fan1_target and pwm1_enable mode 4
+      hwmon: (amc6821) Reorder include files, drop unnecessary ones
+      hwmon: (amc6821) Use tabs for column alignment in defines
+      hwmon: (amc6821) Use BIT() and GENMASK()
+      hwmon: (amc6821) Drop unnecessary enum chips
+      hwmon: (amc6821) Convert to use regmap
+      hwmon: (amc6821) Convert to with_info API
+      hwmon: (amc6821) Add support for pwm1_mode attribute
+
+ Documentation/hwmon/amc6821.rst |    7 +-
+ drivers/hwmon/Kconfig           |    1 +
+ drivers/hwmon/amc6821.c         | 1401 ++++++++++++++++++++-------------------
+ 3 files changed, 708 insertions(+), 701 deletions(-)
 
