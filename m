@@ -1,130 +1,154 @@
-Return-Path: <linux-kernel+bounces-242465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9718F928863
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:07:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA4F92886A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DDEC2836B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:07:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3435BB216EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D13149C50;
-	Fri,  5 Jul 2024 12:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEE314A4CC;
+	Fri,  5 Jul 2024 12:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Sj4uwBKg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEavjuUz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E534C14A09C;
-	Fri,  5 Jul 2024 12:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2451494C9;
+	Fri,  5 Jul 2024 12:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720181218; cv=none; b=eVj0bNiKAFZEQbm6ezta30HCGvT61/QYW54osKz+hPX6hjiIkwejCFdZe3Nqq22juzsZm5yi31czX4OHu1lJU5ba1g8pes4noOm2aDGrTSrvfzpaqH2//0Y83YFLIwf14YE+lUWEtHAfJZ8EQzRpG1uMCo+6N8xGowTV78l9l0c=
+	t=1720181370; cv=none; b=EJGVRWhuqxKhpsOp0w6d+/Tjx4zcIlEGGGGAXltER0jWGB0Bmal1DnyjZsCdHZXAWseZuLVW8ODx+Jd5N/fqCpndkoynnkDdmyaCM0NBmRbdoz9ax1QUoG7Jfqy/izcg1Nq2ZDtUWqZEd96UHVKjyeRhr+ITV4VeyYWDz4YxJos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720181218; c=relaxed/simple;
-	bh=7iBAjExAUAIYqd8nG01Zv+lqqXRulBi/l0Q0xw3pJH8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WZB6xW4Du2kw/yJ1EmKwOiKqggv9rN34uSvCdHEPDsPKUU7MCqQHdmhUKEtkz4txuDuzTZGH0jXgjYgSrMjTyJP4AoNV5uFMTHYKAzq2n86IaCO80BcP6DXg3s+qHFJQmDVj3j6ta5LeBN5GWR0k8B+KcuyGxEfWfcnN3eHt2Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Sj4uwBKg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465A5CnV001485;
-	Fri, 5 Jul 2024 12:06:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=d7vbZXuZP+HYltVaOitCay
-	fQt73hu6DkMIV7yXlUA3g=; b=Sj4uwBKg2JgfKOyhxWs/tvw6dAWSmrn9/1mSHQ
-	1tG9Z/w+/lw0Q3jXM8OBZ4hiQ8EH+EK2ohAnrop7oJIm0j54jkIXwAErbmfKwTV7
-	5sZ6DzhgnNSZpRCTF06ROG8ebpIrjInNl558s4bfwI+KSLainubdBMhWnm5covQW
-	iygJtL2kyYNkk6ZUPXTswbPXk1oqkxp+16KYEZW5z/8OUueo5sD+IbFJRoLZv1kh
-	7HKfRNNWjsvs6yv3gCU5/w1gp1vcHMilfdHtAyKIlkeQf2CHWh5DB9lMUrI3uFoj
-	7Rkvn3vOJjPQNBpGx7hnpYT5se97FAMMUGNjEZ6AwcS5qmCQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yr9egcx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 12:06:53 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465C6qCu023304
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 5 Jul 2024 12:06:52 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 5 Jul 2024 05:06:50 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Mukesh
- Ojha" <quic_mojha@quicinc.com>
-Subject: [PATCH ] firmware: qcom: scm: Disable SDI and write no dump to download mode register
-Date: Fri, 5 Jul 2024 17:36:23 +0530
-Message-ID: <20240705120623.1424931-1-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720181370; c=relaxed/simple;
+	bh=t8+W4Z4NsMZbk0E9xXKyLFJHQHRBhJ9ib2DEibKFdy0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XWgosTpBUq1JhgDs82LU5n0SWZ6AkdzaNZBusP05zUyyn7PJhHB1IjRGIeWwVupY74vSRShonypEyAZ7X2k+681C8uAcKcZDqeca/1hSv7Kd/vAVNls1E2AsAV9vjsO/bOW6RQhFaYeBNHWLUWQMtkpX2v6HzhHWSV/8Id/w5DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEavjuUz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D10DC116B1;
+	Fri,  5 Jul 2024 12:09:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720181370;
+	bh=t8+W4Z4NsMZbk0E9xXKyLFJHQHRBhJ9ib2DEibKFdy0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GEavjuUzRfvg6Zjh/g4vEGVxZ3lPzVadYLqrc7qG+naGefOzOoSzIFLlAhG6VKCVV
+	 RWOGOponasDvAfFl8Q1PazRNCYkRh2pLHtf4gJ31QtgwJcJC0EqZ8NvdP7e3qnsU76
+	 O6uDZXfS4OMOMC2G3OjKkVdJnc2U4zPj+ImqJ/pa+5qolvGDygixUhu3vhCLf0DuA4
+	 ObiApRrMaNIA5ySen8g5sCueCheQImv5RL36LUCC9AmezqIBCDHSIfX2ebsGskVmm9
+	 Ut6or6mn1RoHIWVWPV1ACYJf4X4GzwtSK3tSDmef6EiPwdJBwQee2RpLAh7cZI4bai
+	 ah/baQ9vSGrQQ==
+From: Benjamin Tissoires <bentiss@kernel.org>
+Date: Fri, 05 Jul 2024 14:09:25 +0200
+Subject: [PATCH] HID: samples: fix the 2 struct_ops definitions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FoIOjUBAd_hI0xKFA-yxaucyMkKQTjdH
-X-Proofpoint-ORIG-GUID: FoIOjUBAd_hI0xKFA-yxaucyMkKQTjdH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_08,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- bulkscore=0 impostorscore=0 malwarescore=0 spamscore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407050090
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240705-for-6-11-bpf-v1-1-1960e3165c9e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAHTih2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcwNT3bT8Il0zXUND3aSCNN1EYxPL1LRkA4uUNAsloJaCotS0zAqwcdG
+ xtbUASXe8914AAAA=
+To: Jiri Kosina <jikos@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Benjamin Tissoires <bentiss@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720181369; l=2906;
+ i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=t8+W4Z4NsMZbk0E9xXKyLFJHQHRBhJ9ib2DEibKFdy0=;
+ b=FKZZ3YsTYtUib50z4596Y99G4Aejdq4FoeS3EcKpJEdgXTWPOzobjF410DDv5ltMla3Rtp+Nj
+ S7SYiT6riR9D5maQZ4IGAnFl0l2zrjb1WZ+naLHtzvlgHVlBqysJ63M
+X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
+ pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
 
-SDI is enabled for most of the Qualcomm SoCs and as per commit
-ff4aa3bc9825 ("firmware: qcom_scm: disable SDI if required")
-it was recommended to disable SDI by mentioning it in device tree
+Turns out that this is not compiling anymore because the hid_bpf_ops
+struct_ops definition had a change during the revisions.
 
-However, for some cases download mode tcsr register already configured
-from boot firmware to collect dumps and in such cases if download
-mode is set to zero(nodump mode) from kernel side and SDI is disabled
-via means of mentioning it in device tree we could end up with dump
-collection.
-
-To disable complete dump collection mode, SDI and dload mode register
-need to be set no dump mode.
-
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Fixes: e342d6f6f7d8 ("HID: samples: convert the 2 HID-BPF samples into struct_ops")
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
 ---
- drivers/firmware/qcom/qcom_scm.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ samples/hid/hid_mouse.bpf.c        | 8 ++++----
+ samples/hid/hid_surface_dial.bpf.c | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-index 00c379a3cceb..2e10f75a9cfd 100644
---- a/drivers/firmware/qcom/qcom_scm.c
-+++ b/drivers/firmware/qcom/qcom_scm.c
-@@ -1954,14 +1954,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
- 	 * will cause the boot stages to enter download mode, unless
- 	 * disabled below by a clean shutdown/reboot.
- 	 */
--	if (download_mode)
--		qcom_scm_set_download_mode(true);
--
-+	qcom_scm_set_download_mode(download_mode ? true : false);
+diff --git a/samples/hid/hid_mouse.bpf.c b/samples/hid/hid_mouse.bpf.c
+index bd901fa855c9..f7f722dcf56d 100644
+--- a/samples/hid/hid_mouse.bpf.c
++++ b/samples/hid/hid_mouse.bpf.c
+@@ -67,7 +67,7 @@ static int hid_x_event(struct hid_bpf_ctx *hctx)
+ 	return 0;
+ }
  
- 	/*
- 	 * Disable SDI if indicated by DT that it is enabled by default.
- 	 */
--	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled"))
-+	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled") || !download_mode)
- 		qcom_scm_disable_sdi();
+-SEC("struct_ops/device_event")
++SEC("struct_ops/hid_device_event")
+ int BPF_PROG(hid_event, struct hid_bpf_ctx *hctx, enum hid_report_type type)
+ {
+ 	int ret = hid_y_event(hctx);
+@@ -79,7 +79,7 @@ int BPF_PROG(hid_event, struct hid_bpf_ctx *hctx, enum hid_report_type type)
+ }
  
- 	ret = of_reserved_mem_device_init(__scm->dev);
+ 
+-SEC("struct_ops/rdesc_fixup")
++SEC("struct_ops/hid_rdesc_fixup")
+ int BPF_PROG(hid_rdesc_fixup, struct hid_bpf_ctx *hctx)
+ {
+ 	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 4096 /* size */);
+@@ -121,8 +121,8 @@ int BPF_PROG(hid_rdesc_fixup, struct hid_bpf_ctx *hctx)
+ 
+ SEC(".struct_ops.link")
+ struct hid_bpf_ops mouse_invert = {
+-	.rdesc_fixup = (void *)hid_rdesc_fixup,
+-	.device_event = (void *)hid_event,
++	.hid_rdesc_fixup = (void *)hid_rdesc_fixup,
++	.hid_device_event = (void *)hid_event,
+ };
+ 
+ char _license[] SEC("license") = "GPL";
+diff --git a/samples/hid/hid_surface_dial.bpf.c b/samples/hid/hid_surface_dial.bpf.c
+index d8d0fb07391f..527d584812ab 100644
+--- a/samples/hid/hid_surface_dial.bpf.c
++++ b/samples/hid/hid_surface_dial.bpf.c
+@@ -10,7 +10,7 @@
+ #define HID_UP_BUTTON		0x0009
+ #define HID_GD_WHEEL		0x0038
+ 
+-SEC("struct_ops/device_event")
++SEC("struct_ops/hid_device_event")
+ int BPF_PROG(hid_event, struct hid_bpf_ctx *hctx)
+ {
+ 	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 9 /* size */);
+@@ -101,7 +101,7 @@ int set_haptic(struct haptic_syscall_args *args)
+ }
+ 
+ /* Convert REL_DIAL into REL_WHEEL */
+-SEC("struct_ops/rdesc_fixup")
++SEC("struct_ops/hid_rdesc_fixup")
+ int BPF_PROG(hid_rdesc_fixup, struct hid_bpf_ctx *hctx)
+ {
+ 	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 4096 /* size */);
+@@ -132,8 +132,8 @@ int BPF_PROG(hid_rdesc_fixup, struct hid_bpf_ctx *hctx)
+ 
+ SEC(".struct_ops.link")
+ struct hid_bpf_ops surface_dial = {
+-	.rdesc_fixup = (void *)hid_rdesc_fixup,
+-	.device_event = (void *)hid_event,
++	.hid_rdesc_fixup = (void *)hid_rdesc_fixup,
++	.hid_device_event = (void *)hid_event,
+ };
+ 
+ char _license[] SEC("license") = "GPL";
+
+---
+base-commit: f58e7f404da44c94e46bfe657b8707195aebd25a
+change-id: 20240705-for-6-11-bpf-a349efc08df8
+
+Best regards,
 -- 
-2.34.1
+Benjamin Tissoires <bentiss@kernel.org>
 
 
