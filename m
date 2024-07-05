@@ -1,268 +1,172 @@
-Return-Path: <linux-kernel+bounces-242939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F12928F54
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:25:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30014928F46
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4D95B24FB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:25:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C471A1F22BEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAA1146A79;
-	Fri,  5 Jul 2024 22:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABF6146A98;
+	Fri,  5 Jul 2024 22:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="yeT9dNlH"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ateYmM30"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A8713A26F;
-	Fri,  5 Jul 2024 22:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABEF1F61C;
+	Fri,  5 Jul 2024 22:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720218310; cv=none; b=O+fFfxSyN7X0rnphR1a5zR/oOeYowNENjhXtBnYYEdkYFRJUXguvyKxGpSvPw+JJi5RGnRIBNSb90Ne8TvYbP7Dv6MjsT2IIa74davP5v94VJakgcD4Tdftnri0jSchcTEpLpqbSatcRC7rLav994PioM7TSJu6S5YuFm+XRIxo=
+	t=1720217701; cv=none; b=PivYLJlcBObmlgbzM9sso5T46sSwu4NQSeDdSXL7e8ftN7TN6CWf1a4+eghmJoM2z50dNGUffu/jMTZ310CQVJd19XMzB2JSExC4OH/1khVga+9Hgfrko12cYZ2bFB+FaeSJWEa2iKU5FH5LqIqEBMNhRfXt0mULLWydIyH9YcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720218310; c=relaxed/simple;
-	bh=d1yZIouSBqqxapBWs13uhJKBC/eMQZms7oI5ikpU1pI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GYQLuf2firSX1Wir5MT4bdu/iRRX48aKCRVx22ORqMTQ160+ONzG453x4Ge/ZfWP5ytbBJcRMOC3KtvqXRr1OR5KcKRNY3/H0fuJJGr4+cy/hh6dPfDCJb/fY6FdXuoOPNjHwhVPGYVCqnA3vQXROUDUW1EkJ2Dwgg5T6m8fyEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=yeT9dNlH; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from newone.attlocal.net (76-224-187-148.lightspeed.sntcca.sbcglobal.net [76.224.187.148])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 89CEC161864;
-	Sat,  6 Jul 2024 00:15:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1720217753;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/5iA57uBQQ3o9hvM8vAkCuG7sA783V6Sv/iGfXjUAyM=;
-	b=yeT9dNlHqmtzsP6g0TztmDKwksy6uvd5oO7DFqUtbZY6ldSORIr3sTKKuVzSeduKrHBeq2
-	8AJ1vY5sp022hjIx18+aKU6sXD8qAKLtq6JS/9zqz5nBww3Nfnta8YtvzLiPrz5Y6f07yE
-	Qg1wYsP+eEhgm9CgfkoXi4xexKvCess=
-From: David Heidelberg <david@ixit.cz>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Heidelberg <david@ixit.cz>
-Cc: iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v7] dt-bindings: iommu: Convert msm,iommu-v0 to yaml
-Date: Fri,  5 Jul 2024 15:14:54 -0700
-Message-ID: <20240705221520.109540-1-david@ixit.cz>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720217701; c=relaxed/simple;
+	bh=SVwKUEhXY0y9MdMKKoNIIKa8wmlSCl53FpiTZ02iho0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hrpHqzJ3jA1hi+o7QWpeiRnb91FT6Tb4hNFi4fJ7w7df+Ux2stB2SOOYH3VwqE6k7Kn1SW0ccQlNfS9AyBUBN6M7GM46DFYMuiEs/hNrN6ZW/G4HT3uXI5FPBs0phuUlVf93XZkFXyjgnuQ82vFisP3PnlE5IZ3llPQxW351wOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ateYmM30; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee90f56e31so18053071fa.0;
+        Fri, 05 Jul 2024 15:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720217698; x=1720822498; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbZSgvWAZL89H1u2kfo90wtZhi/ofTOBJgtdtCGP7uA=;
+        b=ateYmM3054O+zdNg+icAvLxXS1qIc7g16mfvN4EwwyVL0cnDX/xOyQlNTn50+CMLl4
+         uYhDfnezIvzEt5Tf5TvBG8geFtTYtWYqZ5D1wUSYpRXnQhV4idKgCOBBuYTFMHDaJIgA
+         n1/jPJnuxdjJJ7DD9GJIE3kvJn20u951bT9XG3WJXS9tH4VQv96NTeL6a1T7B96EDaSZ
+         CIUllUtHuZGubH6nxgYx+aqv3D75qU7xXVHrFrEDGp9hN6Huio30e+oBnK94QzUhasAL
+         JpBGmksU0lfgesm0QYyoXeHdvhPLsKt37lhaX8tpap/B8J9NLMoBZcXyYcRybhKezCz0
+         Ur3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720217698; x=1720822498;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HbZSgvWAZL89H1u2kfo90wtZhi/ofTOBJgtdtCGP7uA=;
+        b=pQA/rgVMmhlKWPUS4P0ILJbJ5J6xyYaR+/JpdX+8AX3AcVp1KGa09Nk5oUC1T3Y6Fu
+         OwWlEKAq12JeMpLXlS16rH0ps2Rq4Z6liF28uazIF6uKBKVKJ/xCnFK4a97UBe4yeSrl
+         bH1BzZ3+ZNZs+5O2lHz+jAhu/Dy/aIUNl6iwJ1c+nvHuXVDoHrtSw3qmmerLvVAP5Pdd
+         lgxg6WGWkp3L367uDPmMHUA3WKzQw8azfdnztz7YNw2F2nENh7x8TviIoFp+6StP/xCt
+         H+Jqklo+2ZOLD1SCx4FsHSi6kYU+KBnWvoK7BeRsmiKz3XmGy0liGJ6PIw54vGCbzgnB
+         eThQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9wPzHrD4IlqHmqYGINnrSM1ZJZqnRPjY+3UrUFrOtRKzeTuLXGefffzTLpskXcx3Gtv/sSjQI283Luixc1gmKbXUH8qujnf6WjVbboqGCRpaGRYvH7mLrSuh4AiP+M5m6HtX1pO7JZA==
+X-Gm-Message-State: AOJu0Yxyuea2Tqi9nIKuh2cTr/GB6/grmCaRrZv70TUOw8MmbvSdCBZ1
+	rZolYgoF4BqUwEHFquOwppr8Ugvh27v+qdo03puPPlRYWEsbMH2ztZfGhw==
+X-Google-Smtp-Source: AGHT+IHujXea6fk0Hm2p6NmdQ5o0QiM+FnvvAjiennjXgwxQYW8qgNxh4EQjbnFUMFmNm0H4oEUlHA==
+X-Received: by 2002:a05:6512:3127:b0:52c:b479:902d with SMTP id 2adb3069b0e04-52ea0622c8cmr4193269e87.4.1720217697610;
+        Fri, 05 Jul 2024 15:14:57 -0700 (PDT)
+Received: from mobilestation ([95.79.85.201])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e9fc8ab79sm628431e87.187.2024.07.05.15.14.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 15:14:57 -0700 (PDT)
+Date: Sat, 6 Jul 2024 01:14:55 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Paul Burton <paulburton@kernel.org>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] MIPS: IPI Improvements
+Message-ID: <bd5wxmax7leuww6rwocafiktwynqvbca4plknod4hsiifezsfu@ooojfjci5ajf>
+References: <20240705-b4-mips-ipi-improvements-v2-0-2d50b56268e8@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705-b4-mips-ipi-improvements-v2-0-2d50b56268e8@flygoat.com>
 
-Convert Qualcomm IOMMU v0 implementation to yaml format.
+Hi Jiaxun
 
-iommus part being ommited for the other bindings, as mdp4 one.
+On Fri, Jul 05, 2024 at 10:16:52PM +0800, Jiaxun Yang wrote:
+> Hi all,
+> 
+> This series improved general handling to MIPS IPI interrupts, made
+> IPI numbers scalable, and switch to IPI-MUX for all GERNERIC_IPI
+> users on mux.
+> 
+> It is a prerequisite for enabling IRQ_WORK for MIPS.
+> 
+> It has been tested on MIPS Boston I6500, malta CoreFPGA3 47K MT/
+> interAPtiv MPF, Loongson-2K, Cavium CN7130 (EdgeRouter 4), and an
+> unannounced interaptiv UP MT platform with EIC.
+> 
+> I don't really know broadcom platforms and SGI platforms well so
+> changes to those platforms are kept minimal (no functional change).
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
-v7:
- - change maintainer to myself
- - define NCB range (thx @Rob)
-v6:
- - clean iommu-cells description (thx @Robin)
-v5:
- - updated example (thx @Konrad)
- - ordering of requirements + dropped > and | and reformatted (thx @Konrad)
-v4:
- - renamed to qcom,apq8064-iommu as Rob requested
- - changed title to Qualcomm APQ8064 IOMMU
- - dropped quotes around URLs
- - dropped mdp node
- - dropped unused mdp_port0 label
+Performed a boot-up and some smoke multi-threaded tests on a SoC with
+2x MIPS P5600 cores and MIPS GIC. No immediate problem was found. So
 
-v3:
- - I kept the name as -v0, since we have other binding -v1 and it look
-   good, I can change thou in v4 if requested.
- - dropped non-existent smmu_clk part (and adjusted example, which was
-   using it)
- - dropped iommu description
- - moved iommu-cells description to the property #iommu-cells
+Tested-by: Serge Semin <fancer.lancer@gmail.com>
 
-v2:
- - fix wrong path in binding $id
- - comment qcom,mdp4 node example (we don't want to validate it yet)
-Signed-off-by: David Heidelberg <david@ixit.cz>
+-Serge(y)
 
- .../bindings/iommu/msm,iommu-v0.txt           | 64 ---------------
- .../bindings/iommu/qcom,apq8064-iommu.yaml    | 78 +++++++++++++++++++
- 2 files changed, 78 insertions(+), 64 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/iommu/msm,iommu-v0.txt
- create mode 100644 Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
-
-diff --git ./Documentation/devicetree/bindings/iommu/msm,iommu-v0.txt ./Documentation/devicetree/bindings/iommu/msm,iommu-v0.txt
-deleted file mode 100644
-index 20236385f26e..000000000000
---- ./Documentation/devicetree/bindings/iommu/msm,iommu-v0.txt
-+++ /dev/null
-@@ -1,64 +0,0 @@
--* QCOM IOMMU
--
--The MSM IOMMU is an implementation compatible with the ARM VMSA short
--descriptor page tables. It provides address translation for bus masters outside
--of the CPU, each connected to the IOMMU through a port called micro-TLB.
--
--Required Properties:
--
--  - compatible: Must contain "qcom,apq8064-iommu".
--  - reg: Base address and size of the IOMMU registers.
--  - interrupts: Specifiers for the MMU fault interrupts. For instances that
--    support secure mode two interrupts must be specified, for non-secure and
--    secure mode, in that order. For instances that don't support secure mode a
--    single interrupt must be specified.
--  - #iommu-cells: The number of cells needed to specify the stream id. This
--		  is always 1.
--  - qcom,ncb:	  The total number of context banks in the IOMMU.
--  - clocks	: List of clocks to be used during SMMU register access. See
--		  Documentation/devicetree/bindings/clock/clock-bindings.txt
--		  for information about the format. For each clock specified
--		  here, there must be a corresponding entry in clock-names
--		  (see below).
--
--  - clock-names	: List of clock names corresponding to the clocks specified in
--		  the "clocks" property (above).
--		  Should be "smmu_pclk" for specifying the interface clock
--		  required for iommu's register accesses.
--		  Should be "smmu_clk" for specifying the functional clock
--		  required by iommu for bus accesses.
--
--Each bus master connected to an IOMMU must reference the IOMMU in its device
--node with the following property:
--
--  - iommus: A reference to the IOMMU in multiple cells. The first cell is a
--	    phandle to the IOMMU and the second cell is the stream id.
--	    A single master device can be connected to more than one iommu
--	    and multiple contexts in each of the iommu. So multiple entries
--	    are required to list all the iommus and the stream ids that the
--	    master is connected to.
--
--Example: mdp iommu and its bus master
--
--                mdp_port0: iommu@7500000 {
--			compatible = "qcom,apq8064-iommu";
--			#iommu-cells = <1>;
--			clock-names =
--			    "smmu_pclk",
--			    "smmu_clk";
--			clocks =
--			    <&mmcc SMMU_AHB_CLK>,
--			    <&mmcc MDP_AXI_CLK>;
--			reg = <0x07500000 0x100000>;
--			interrupts =
--			    <GIC_SPI 63 0>,
--			    <GIC_SPI 64 0>;
--			qcom,ncb = <2>;
--		};
--
--		mdp: qcom,mdp@5100000 {
--			compatible = "qcom,mdp";
--			...
--			iommus = <&mdp_port0 0
--				  &mdp_port0 2>;
--		};
-diff --git ./Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml ./Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
-new file mode 100644
-index 000000000000..9f83f851e61a
---- /dev/null
-+++ ./Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
-@@ -0,0 +1,78 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+
-+$id: http://devicetree.org/schemas/iommu/qcom,apq8064-iommu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm APQ8064 IOMMU
-+
-+maintainers:
-+  - David Heidelberg <david@ixit.cz>
-+
-+description:
-+  The MSM IOMMU is an implementation compatible with the ARM VMSA short
-+  descriptor page tables. It provides address translation for bus masters
-+  outside of the CPU, each connected to the IOMMU through a port called micro-TLB.
-+
-+properties:
-+  compatible:
-+    const: qcom,apq8064-iommu
-+
-+  clocks:
-+    items:
-+      - description: interface clock for register accesses
-+      - description: functional clock for bus accesses
-+
-+  clock-names:
-+    items:
-+      - const: smmu_pclk
-+      - const: iommu_clk
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description: Specifiers for the MMU fault interrupts.
-+    minItems: 1
-+    items:
-+      - description: non-secure mode interrupt
-+      - description: secure mode interrupt (for instances which supports it)
-+
-+  "#iommu-cells":
-+    const: 1
-+    description: Each IOMMU specifier describes a single Stream ID.
-+
-+  qcom,ncb:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: The total number of context banks in the IOMMU.
-+    minimum: 1
-+    maximum: 4
-+
-+required:
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - qcom,ncb
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,mmcc-msm8960.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    iommu@7500000 {
-+            compatible = "qcom,apq8064-iommu";
-+            reg = <0x07500000 0x100000>;
-+            interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&clk SMMU_AHB_CLK>,
-+                     <&clk MDP_AXI_CLK>;
-+            clock-names = "smmu_pclk",
-+                          "iommu_clk";
-+            #iommu-cells = <1>;
-+            qcom,ncb = <2>;
-+    };
--- 
-2.45.2
-
+> 
+> Please review.
+> Thanks
+> 
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> Changes in v2:
+> - Build warning fixes
+> - Massage commit messages
+> - Link to v1: https://lore.kernel.org/r/20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com
+> 
+> ---
+> Jiaxun Yang (10):
+>       MIPS: smp: Make IPI interrupts scalable
+>       MIPS: smp: Manage IPI interrupts as percpu_devid interrupts
+>       MIPS: smp: Provide platform IPI virq & domain hooks
+>       MIPS: Move mips_smp_ipi_init call after prepare_cpus
+>       MIPS: smp: Implement IPI stats
+>       irqchip: irq-mips-gic: Switch to ipi_mux
+>       MIPS: Implement get_mips_sw_int hook
+>       MIPS: GIC: Implement get_sw_int hook
+>       irqchip: irq-mips-cpu: Rework software IRQ handling flow
+>       MIPS: smp-mt: Rework IPI functions
+> 
+>  arch/mips/Kconfig                     |   2 +
+>  arch/mips/cavium-octeon/smp.c         | 111 ++++++------------
+>  arch/mips/fw/arc/init.c               |   1 -
+>  arch/mips/generic/irq.c               |  15 +++
+>  arch/mips/include/asm/ipi.h           |  71 ++++++++++++
+>  arch/mips/include/asm/irq.h           |   1 +
+>  arch/mips/include/asm/irq_cpu.h       |   3 +
+>  arch/mips/include/asm/mips-gic.h      |  10 ++
+>  arch/mips/include/asm/octeon/octeon.h |   2 +
+>  arch/mips/include/asm/smp-ops.h       |   8 +-
+>  arch/mips/include/asm/smp.h           |  42 +++----
+>  arch/mips/kernel/irq.c                |  21 ++++
+>  arch/mips/kernel/smp-bmips.c          |  43 ++++---
+>  arch/mips/kernel/smp-cps.c            |   2 +
+>  arch/mips/kernel/smp-mt.c             |  70 +++++++++++
+>  arch/mips/kernel/smp.c                | 213 +++++++++++++++++++++-------------
+>  arch/mips/loongson64/smp.c            |  52 +++++----
+>  arch/mips/mm/c-octeon.c               |   3 +-
+>  arch/mips/sgi-ip27/ip27-smp.c         |  15 ++-
+>  arch/mips/sgi-ip30/ip30-smp.c         |  15 ++-
+>  arch/mips/sibyte/bcm1480/smp.c        |  19 +--
+>  arch/mips/sibyte/sb1250/smp.c         |  13 ++-
+>  drivers/irqchip/Kconfig               |   2 +-
+>  drivers/irqchip/irq-mips-cpu.c        | 180 ++++++++--------------------
+>  drivers/irqchip/irq-mips-gic.c        | 213 +++++++++++++---------------------
+>  25 files changed, 596 insertions(+), 531 deletions(-)
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240616-b4-mips-ipi-improvements-f8c86b1dc677
+> 
+> Best regards,
+> -- 
+> Jiaxun Yang <jiaxun.yang@flygoat.com>
+> 
 
