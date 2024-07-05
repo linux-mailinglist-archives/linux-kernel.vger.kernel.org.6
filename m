@@ -1,87 +1,91 @@
-Return-Path: <linux-kernel+bounces-242432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B219287FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:31:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE98B9287FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9293E1F24B29
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:31:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1DD1C22BFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C180414A09A;
-	Fri,  5 Jul 2024 11:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60196149DE2;
+	Fri,  5 Jul 2024 11:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aO1LUb3p"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gr37/KRK"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6621C148304
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F0C142E76
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720179082; cv=none; b=DnUK5Iz/GOnf7gI2za3rUi1pkgwxZLqm3jwdLSBDcigSHVfYuxl5/wp2X35MZR9/tozni5cqDgd0srmgzhlBz6d9PnqJeIb22UzBtpiTn7xpseUIegtM1LgvV2UtvxbTQtBRdi7m0ZoiLwgstuLVt6AsMkyN97mM5yjHlf4ynvQ=
+	t=1720179098; cv=none; b=EvFQYJ1HGirob6a6rEeuij28e3gPXkvy0kkHtUGKtzxhTu21UB+kg3WAbPsttKNYpPzR6fRm7T9syBGaQuSCEA+8BWswXI/x1terEumvRO0RZklMBYxaq2+diImidkKR1qzdJZtNVpF2KaIdMECnlTQFvAaz8SG8DH86W/8goqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720179082; c=relaxed/simple;
-	bh=hPHreMrDt1doXkKIFfOnokfWoTTGR/eEdk8FJb3tsIk=;
+	s=arc-20240116; t=1720179098; c=relaxed/simple;
+	bh=AVrKPszl2rRrwwzdGoDSi4jkGIviSvziWQqJlFjpGxQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XOhaFZVYpOs74YbKE3uv5IQMBlQVvKlMhifpBjr0CehbvJE53zZ++7oTO0Aaf1EMSGEYXT16NFh0Qw24VFVZzTG9YAUQo7/KAkTbVqrKAyw0Zs07XlJL4dYcl0cZzc+qYTB4svsv4vKwZOz7bQ3g64ewQ/KZ9NI6axlke/wgIbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aO1LUb3p; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52ea3e499b1so969724e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 04:31:20 -0700 (PDT)
+	 MIME-Version; b=ocCCUfWkMmH4xUUnCHtA8NFO1Xs00IzXJjMnHuFaM3amLeJ3/gQjFAQO1D4EymTifLRFsa2SykpHTMWX2G6783XYo+r6FP4j2PXrYz6uw8rqkqmzzNqvIzy5XJPMJF0G1mvt59Pjp8A8PKIoVCfuI4Sd/ZVPJv+O3wsAjlYabP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gr37/KRK; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f9fb3ca81bso9406385ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 04:31:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720179078; x=1720783878; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720179097; x=1720783897; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=peeNZCDuyoda2DYpfs5bkgO4H7nlJlel4Yeo4yaX2aw=;
-        b=aO1LUb3pdRnseVxQg2tcjLyD8kGPA76n2adwf9WQtS0FasZ9lPfLi2kE2953XpwoEr
-         PcUyvOu09kuXefCjSzSwUTr1qLxHOxJ+C8tAWblLomlZW8ouTxGeWEtz6Gk2loWpfQLZ
-         eSeMdzxBD4joNhBLflWHOMtlhcWeBacwotzDYuMS/+jt0q5dZRpQcYBmJrIKdTwnbIrN
-         aXwEBf87IJiFGeJ+tISv3ev+rcqeLosp6gQtVJ/bGwyeS6pPCqVrXG3u1IWjbCgnGmt4
-         MtFG27pu5tb4UJd9BKV89yR9SvlllWDVS+v4uPQB6lRa3W4BkVpYxMmWUEj7eT/0fyFs
-         yuDQ==
+        bh=4tXpMesFOysqjQmdIZBXmi/S8232psTHkbVyhmtrB5Q=;
+        b=Gr37/KRKYRQdEh69vz+rPmw33Sn3Vn4K/ifWyXQ+cYA48DSHpRVPb5QWBdlrBKcyW3
+         8Q9DVWS3zhEUU+QGe4ouSndVNg2vyJIbg3ALdav/saOtEZkkx/3q4gy7QMmr4GU5ZGxT
+         n5SIbzBGr40WGLECh9/Q96TdowT25pyAsKxLiHxE3MhXGfE525biy12JRlC6dnJElKGd
+         F3i8kxyCmIQXihiwxTBxdPum2D+f6GLVUc70WYRlCw+Tln+NZyLKAjGTtZhRBw8Dwv4o
+         49h12mI6Cr5aX5sifAhVd84zEEomSuvwERSk8IBEKM70iV65Dyv3d6S4FsRKzlM3+9S6
+         iUHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720179078; x=1720783878;
+        d=1e100.net; s=20230601; t=1720179097; x=1720783897;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=peeNZCDuyoda2DYpfs5bkgO4H7nlJlel4Yeo4yaX2aw=;
-        b=uPmNWYqW4Y8hHfOlcoy8lO7FUTt1GnzZG7K5rlkXRN8BTofZ8ba2p7oRAyAgb/Qky5
-         63xB8zPLArrzR14+8b/7SMLrWRS2t1P6TimAnaTnhXlHBhgDvUU7itmOKSt/iByZqG2o
-         P1U7b07LXbypc57RejFVE8vxn3vFq7Qinefc4radnbNRUTnhJ4MuVvWFX9I0VdJZ6oZA
-         gXj4ZhcDw47gg2gypYnhI4AuzBWPK1TBgsni7mzlaeoJBtqkrkkA1qGugRooSk0VDxpj
-         jgpK9qqCMlJq/RlPYvUmobUMp3jZjpPWbZSnWVjH2BB+is/IOKjCgG/ugJroW+vHPJiO
-         IaZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEemeMRjpnRMgTafnMi4/vQIMhOrQ0kBKnRSOs5B9MQ+7U+I+Lpq+b7YjYknqpRyD3q/EQkaPRBg+Ed8PEQ9aO8pZb6BzolCvvxh0S
-X-Gm-Message-State: AOJu0YxYDDsS6omL4QU8E+oi9qO734iFnYtgbQCdcFPju3CWb0qakXJD
-	rdCzrv1xffpZT77Ce/+PBjwOy84k6I1BX6JiQXs46ftE+Fsh1+2o9tx8QuA3m9c=
-X-Google-Smtp-Source: AGHT+IG87fGjXF+TaN2rAGmYDwXmCBV4e70dP7HYgoU/5vS+jGGZ87IXfHT7BTxzfN8kyxOo+KkYcg==
-X-Received: by 2002:a05:6512:3ca8:b0:52c:8abe:51fb with SMTP id 2adb3069b0e04-52ea061f4e1mr4207586e87.10.1720179078543;
-        Fri, 05 Jul 2024 04:31:18 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fc942sm58090725e9.42.2024.07.05.04.31.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 04:31:17 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sebastian Reichel <sre@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-pm@vger.kernel.org,
+        bh=4tXpMesFOysqjQmdIZBXmi/S8232psTHkbVyhmtrB5Q=;
+        b=vklBG+JTlBBv4HADpVBTyDVZWhI2fgJVgRjstRDCdXHS/RCpzUdFow07CCdkQv6c8r
+         5n4ese7zDNPo65T3GsCDokmjO7LpN1wEA7uYCQur6tYrXbmEqHfKkyfRYdx3EwSsuHSm
+         5Lb+HuvZ8FqWCG1Nnx9j20Gd0Q2cIJpEueEX5nJ5sd2anDReDJhcJGeIA0aGOzGPcGpA
+         6c+WxmbSVIxraysNq6VyJZya+wqNEj2bEYm/YEKhpgFKOqsqOa9CvQauFY5rSk+17SAg
+         nZ/GEqQ9jduGLDDgLeOCVIbvljueeo8nj/LwYqSUddESZ3xrN0qq+dSCWLg/9/GgM4uG
+         maKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWZ5Lz4nsaFyb/Lj483Y3D27DY0zNSTaAbS01lNVvGV5GDi37QfUTuRItGmFZd6FNdJcIDZ/vkhjx/v9O6Y35vIfoWAd+84hUL+ClZ
+X-Gm-Message-State: AOJu0YwDGtakkRa52XZQ3Eka91k4OCaOOQrzdZ5OJDwMNO1TSXvoL+Oo
+	sM65e7PWmn2pQk6zI9JWclTBcllH+nmgQar6EnrY1Xtk1ofVsC3X
+X-Google-Smtp-Source: AGHT+IETeKs74PjP9sc9Th/Pog9gWp8PldcnmgzKsxBrqPmYCfbWxc8MuoSqX2HCLAXoT528Vs9D+g==
+X-Received: by 2002:a17:902:6805:b0:1fb:3474:9527 with SMTP id d9443c01a7336-1fb34749830mr24634745ad.25.1720179096537;
+        Fri, 05 Jul 2024 04:31:36 -0700 (PDT)
+Received: from EBJ9932692.tcent.cn ([43.129.202.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb167c6a34sm49698415ad.241.2024.07.05.04.31.33
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 05 Jul 2024 04:31:35 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: akpm@linux-foundation.org
+Cc: ioworker0@gmail.com,
+	21cnbao@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	david@redhat.com,
+	dj456119@gmail.com,
+	libang.li@antgroup.com,
 	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] power: supply: twl4030_charger: correct comparision with old current
-Date: Fri,  5 Jul 2024 13:31:13 +0200
-Message-ID: <20240705113113.42851-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240705113113.42851-1-krzysztof.kozlowski@linaro.org>
-References: <20240705113113.42851-1-krzysztof.kozlowski@linaro.org>
+	linux-mm@kvack.org,
+	mingzhe.yang@ly.com,
+	ryan.roberts@arm.com,
+	shy828301@gmail.com,
+	ziy@nvidia.com
+Subject: Re: [PATCH v3 1/2] mm: add per-order mTHP split counters
+Date: Fri,  5 Jul 2024 19:31:19 +0800
+Message-ID: <20240705113119.82210-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <CAK1f24=wK9Gpt71NtVCyM1RRQF0MDmhm4MViVj_gPx_+ywks7w@mail.gmail.com>
+References: <CAK1f24=wK9Gpt71NtVCyM1RRQF0MDmhm4MViVj_gPx_+ywks7w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,31 +94,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Driver reads existing current value from two 8-bit registers, but then
-compares only one of them with the new 16-bit value.  clang W=1 is also
-not happy:
+Hi Andrew,
 
-  twl4030_charger.c:243:16: error: variable 'cur_reg' set but not used [-Werror,-Wunused-but-set-variable]
+Could you please fold the following changes into this patch?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/power/supply/twl4030_charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 993f0dd2a1ed..f8b5cbd4dd71 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3266,7 +3266,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 		i_mmap_unlock_read(mapping);
+ out:
+ 	xas_destroy(&xas);
+-	if (order >= HPAGE_PMD_ORDER)
++	if (order == HPAGE_PMD_ORDER)
+ 		count_vm_event(!ret ? THP_SPLIT_PAGE : THP_SPLIT_PAGE_FAILED);
+ 	count_mthp_stat(order, !ret ? MTHP_STAT_SPLIT : MTHP_STAT_SPLIT_FAILED);
+ 	return ret;
 
-diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
-index 7b9b0b3e164e..f3f1a0862e93 100644
---- a/drivers/power/supply/twl4030_charger.c
-+++ b/drivers/power/supply/twl4030_charger.c
-@@ -363,7 +363,7 @@ static int twl4030_charger_update_current(struct twl4030_bci *bci)
- 	if (status < 0)
- 		return status;
- 	cur_reg |= oldreg << 8;
--	if (reg != oldreg) {
-+	if (reg != cur_reg) {
- 		/* disable write protection for one write access for
- 		 * BCIIREF */
- 		status = twl_i2c_write_u8(TWL_MODULE_MAIN_CHARGE, 0xE7,
--- 
-2.43.0
-
+Thanks,
+Lance
 
