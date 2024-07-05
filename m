@@ -1,149 +1,259 @@
-Return-Path: <linux-kernel+bounces-242352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650D7928704
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54BA3928708
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0CB2837A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:44:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0767D282D65
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581EB148826;
-	Fri,  5 Jul 2024 10:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09672147C76;
+	Fri,  5 Jul 2024 10:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TqmhA/5d"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A9F13C8F9;
-	Fri,  5 Jul 2024 10:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xfIKMMmS"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607B514430B;
+	Fri,  5 Jul 2024 10:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720176282; cv=none; b=mN8W1Layj3gdhIQkEBsQOHqphccMXz0/K9yEACtSnLoW3hhHkX3f9MjAaamq9e6YX1YqH00wKZ2aGa9VU+LNMsZRFM/QNv4qxZwhrMgXArfxdJ0sRQ3YMSs1aJkN3jEaoc9QrO+kDyzf5JLdcgdVooPSk7CPQsbbeCEa/TQ3L7M=
+	t=1720176491; cv=none; b=eMu1EogdyYgP++dLzWQozAbTYMc4ezjJZEktZrTqRTkYBAJMXwhK71zQ8fNZXwrgLOSKUqxsh5dPu3xMFeBXqtm7FgA1nCWUTIiNeWvo0T8fmd5adQWBbwySezK86c9H2bA0apXkKh6mXStUC3NJK1JSj+Jm/lrOUsPXgYIHang=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720176282; c=relaxed/simple;
-	bh=ZpjXXPZ8qVUIBIolYv7O+9WBJ4v+A/hx7t2YGbTwshU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D9FSM+hmqoOi4s4aD8WiVLwoJDH2h5wUeL2kl80XrcQ3tB75e46AKB7fanu2YgUO+IM0XKhDIh5Gm1jGmRz/DRT8ouUrS/L609cExATfBFMkNIMsJ+phxo7OfCkDzm3ARtk2zNGtiwC928RauMeeAHd9ZmdSC+2cjvCNl1IeRY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TqmhA/5d; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=RUOJ1
-	0eaGUze/yBhI0ONWdyqGscp0Lrf+4xt2Q4q/u8=; b=TqmhA/5dpL7RyrhdvkPTI
-	WkYOuTI/JQ2w8b5snfjSFS0KJjsHKqEFIMZpU3RWsypFGrOo8gsSBDs7VydZNyGO
-	AOGtK3550w6N2oFFa2VFEr+bCcjWB7GOXmBXwlGyDW6y85SQXpPkenikP+/XfDtZ
-	+yEgOgcJ7axoIIbZKi2SGc=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wD3v2hjzodm7nZVAQ--.39915S4;
-	Fri, 05 Jul 2024 18:43:49 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	corbet@lwn.net,
-	usama.anjum@collabora.com,
-	avagin@google.com
-Cc: linux-mm@kvack.org,
-	vbabka@suse.cz,
-	svetly.todorov@memverge.com,
-	ran.xiaokai@zte.com.cn,
-	ryan.roberts@arm.com,
-	ziy@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] kpageflags: detect isolated KPF_THP folios
-Date: Fri,  5 Jul 2024 10:43:43 +0000
-Message-Id: <20240705104343.112680-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720176491; c=relaxed/simple;
+	bh=Ab1xlzhy1Ig+pGrZFHN6XUqu6zwAS58NZW5eVj9hP/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gy1MLPL4j0joAkeO5rhEuAOK7862Vw1/+C/VXbUp4oBA5snRnFJLPUs39yhOPZR2D/A55w8LjK24PLyARuOEGSD81yn0gsI4UFFRW/ngG1xWXG2a3t0q92ILZI8MTCvxGJ5ZbDtkkCsMy2OZ1AM6vijwO9x/4Ok5/0AqUrGqABY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xfIKMMmS; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: huangjunxian6@hisilicon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720176484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hmdqLmpJIiwpuWarBamAIOeZDRcEU1Leayh1fhTIwLo=;
+	b=xfIKMMmSjzQ1iV6/6j20050eGS01jS7IlRCf0krdEgG1FOVinIMbefSrHn3ypbKwOhzj4Q
+	h5jRDHGyC7qBhIungDa7464VEicJJe+pV0tNQcFIYauy3Sk6x6z1PlQ53TBjmDdyCiiVoa
+	gAi2wF0PiOlrnjfw6MI/ToT8Td/bk5s=
+X-Envelope-To: jgg@ziepe.ca
+X-Envelope-To: leon@kernel.org
+X-Envelope-To: linux-rdma@vger.kernel.org
+X-Envelope-To: linuxarm@huawei.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <aa0acabe-567a-45d9-ad0a-69e85e6c300a@linux.dev>
+Date: Fri, 5 Jul 2024 18:47:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH for-rc 3/9] RDMA/hns: Fix soft lockup under heavy CEQE
+ load
+To: Junxian Huang <huangjunxian6@hisilicon.com>, jgg@ziepe.ca, leon@kernel.org
+Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+ linux-kernel@vger.kernel.org
+References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
+ <20240705085937.1644229-4-huangjunxian6@hisilicon.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20240705085937.1644229-4-huangjunxian6@hisilicon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3v2hjzodm7nZVAQ--.39915S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAw18KFW5GrW8Kr4xXw4fXwb_yoW5Ary5pa
-	98Ga42vr4kJ3ZxJry8JrnFyr1YkrZxWFWjka4akw1SvFnxZryvgF1xK34Fka4aqFyxAay0
-	vFWqgF1fua4jyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6q2_UUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMwYTTGXAmSSQlQAAs3
+X-Migadu-Flow: FLOW_OUT
 
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+在 2024/7/5 16:59, Junxian Huang 写道:
+> CEQEs are handled in interrupt handler currently. This may cause the
+> CPU core staying in interrupt context too long and lead to soft lockup
+> under heavy load.
+> 
+> Handle CEQEs in tasklet and set an upper limit for the number of CEQE
+> handled by a single call of tasklet.
 
-When folio is isolated, the PG_lru bit is cleared. So the PG_lru
-check in stable_page_flags() will miss this kind of isolated folios.
-Use folio_test_large_rmappable() instead to also include isolated folios.
+https://patchwork.kernel.org/project/linux-rdma/cover/20240621050525.3720069-1-allen.lkml@gmail.com/
 
-Since pagecache supports large folios and the introduction of mTHP,
-the semantics of KPF_THP have been expanded, now it indicates
-not only PMD-sized THP. Update related documentation to clearly state
-that KPF_THP indicates multiple order THPs.
+In the above link, it seems that tasklet is not good enough. The tasklet 
+is marked deprecated and has some design flaws. It is being replace BH 
+workqueue.
 
-v1:
-  https://lore.kernel.org/lkml/20240626024924.1155558-3-ranxiaokai627@163.com/
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
----
- Documentation/admin-guide/mm/pagemap.rst |  4 ++--
- fs/proc/page.c                           | 21 +++++++++------------
- 2 files changed, 11 insertions(+), 14 deletions(-)
+So directly use workqueue instead of tasklet?
 
-diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-index f5f065c67615..0a8a4decdb72 100644
---- a/Documentation/admin-guide/mm/pagemap.rst
-+++ b/Documentation/admin-guide/mm/pagemap.rst
-@@ -118,7 +118,7 @@ Short descriptions to the page flags
- 21 - KSM
-     Identical memory pages dynamically shared between one or more processes.
- 22 - THP
--    Contiguous pages which construct transparent hugepages.
-+    Contiguous pages which construct THP of any size and mapped by any granularity.
- 23 - OFFLINE
-     The page is logically offline.
- 24 - ZERO_PAGE
-@@ -252,7 +252,7 @@ Following flags about pages are currently supported:
- - ``PAGE_IS_PRESENT`` - Page is present in the memory
- - ``PAGE_IS_SWAPPED`` - Page is in swapped
- - ``PAGE_IS_PFNZERO`` - Page has zero PFN
--- ``PAGE_IS_HUGE`` - Page is THP or Hugetlb backed
-+- ``PAGE_IS_HUGE`` - Page is PMD-mapped THP or Hugetlb backed
- - ``PAGE_IS_SOFT_DIRTY`` - Page is soft-dirty
- 
- The ``struct pm_scan_arg`` is used as the argument of the IOCTL.
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 2fb64bdb64eb..76f2a412aa93 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -148,19 +148,16 @@ u64 stable_page_flags(const struct page *page)
- 		u |= 1 << KPF_COMPOUND_TAIL;
- 	if (folio_test_hugetlb(folio))
- 		u |= 1 << KPF_HUGE;
--	/*
--	 * We need to check PageLRU/PageAnon
--	 * to make sure a given page is a thp, not a non-huge compound page.
--	 */
--	else if (folio_test_large(folio)) {
--		if ((k & (1 << PG_lru)) || is_anon)
--			u |= 1 << KPF_THP;
--		else if (is_huge_zero_folio(folio)) {
--			u |= 1 << KPF_ZERO_PAGE;
--			u |= 1 << KPF_THP;
--		}
--	} else if (is_zero_pfn(page_to_pfn(page)))
-+	else if (folio_test_large(folio) &&
-+	         folio_test_large_rmappable(folio)) {
-+		/* Note: we indicate any THPs here, not just PMD-sized ones */
-+		u |= 1 << KPF_THP;
-+	} else if (is_huge_zero_folio(folio)) {
- 		u |= 1 << KPF_ZERO_PAGE;
-+		u |= 1 << KPF_THP;
-+	} else if (is_zero_pfn(page_to_pfn(page))) {
-+		u |= 1 << KPF_ZERO_PAGE;
-+	}
- 
- 	/*
- 	 * Caveats on high order pages: PG_buddy and PG_slab will only be set
--- 
-2.15.2
+Zhu Yanjun
 
+> 
+> Fixes: a5073d6054f7 ("RDMA/hns: Add eq support of hip08")
+> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+> ---
+>   drivers/infiniband/hw/hns/hns_roce_device.h |  1 +
+>   drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 88 ++++++++++++---------
+>   2 files changed, 53 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+> index 05005079258c..5a2445f357ab 100644
+> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
+> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+> @@ -717,6 +717,7 @@ struct hns_roce_eq {
+>   	int				shift;
+>   	int				event_type;
+>   	int				sub_type;
+> +	struct tasklet_struct		tasklet;
+>   };
+>   
+>   struct hns_roce_eq_table {
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> index ff135df1a761..f73de06a3ca5 100644
+> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> @@ -6146,33 +6146,11 @@ static struct hns_roce_ceqe *next_ceqe_sw_v2(struct hns_roce_eq *eq)
+>   		!!(eq->cons_index & eq->entries)) ? ceqe : NULL;
+>   }
+>   
+> -static irqreturn_t hns_roce_v2_ceq_int(struct hns_roce_dev *hr_dev,
+> -				       struct hns_roce_eq *eq)
+> +static irqreturn_t hns_roce_v2_ceq_int(struct hns_roce_eq *eq)
+>   {
+> -	struct hns_roce_ceqe *ceqe = next_ceqe_sw_v2(eq);
+> -	irqreturn_t ceqe_found = IRQ_NONE;
+> -	u32 cqn;
+> -
+> -	while (ceqe) {
+> -		/* Make sure we read CEQ entry after we have checked the
+> -		 * ownership bit
+> -		 */
+> -		dma_rmb();
+> -
+> -		cqn = hr_reg_read(ceqe, CEQE_CQN);
+> -
+> -		hns_roce_cq_completion(hr_dev, cqn);
+> -
+> -		++eq->cons_index;
+> -		ceqe_found = IRQ_HANDLED;
+> -		atomic64_inc(&hr_dev->dfx_cnt[HNS_ROCE_DFX_CEQE_CNT]);
+> -
+> -		ceqe = next_ceqe_sw_v2(eq);
+> -	}
+> +	tasklet_schedule(&eq->tasklet);
+>   
+> -	update_eq_db(eq);
+> -
+> -	return IRQ_RETVAL(ceqe_found);
+> +	return IRQ_HANDLED;
+>   }
+>   
+>   static irqreturn_t hns_roce_v2_msix_interrupt_eq(int irq, void *eq_ptr)
+> @@ -6183,7 +6161,7 @@ static irqreturn_t hns_roce_v2_msix_interrupt_eq(int irq, void *eq_ptr)
+>   
+>   	if (eq->type_flag == HNS_ROCE_CEQ)
+>   		/* Completion event interrupt */
+> -		int_work = hns_roce_v2_ceq_int(hr_dev, eq);
+> +		int_work = hns_roce_v2_ceq_int(eq);
+>   	else
+>   		/* Asynchronous event interrupt */
+>   		int_work = hns_roce_v2_aeq_int(hr_dev, eq);
+> @@ -6551,6 +6529,34 @@ static int hns_roce_v2_create_eq(struct hns_roce_dev *hr_dev,
+>   	return ret;
+>   }
+>   
+> +static void hns_roce_ceq_task(struct tasklet_struct *task)
+> +{
+> +	struct hns_roce_eq *eq = from_tasklet(eq, task, tasklet);
+> +	struct hns_roce_ceqe *ceqe = next_ceqe_sw_v2(eq);
+> +	struct hns_roce_dev *hr_dev = eq->hr_dev;
+> +	int ceqe_num = 0;
+> +	u32 cqn;
+> +
+> +	while (ceqe && ceqe_num < hr_dev->caps.ceqe_depth) {
+> +		/* Make sure we read CEQ entry after we have checked the
+> +		 * ownership bit
+> +		 */
+> +		dma_rmb();
+> +
+> +		cqn = hr_reg_read(ceqe, CEQE_CQN);
+> +
+> +		hns_roce_cq_completion(hr_dev, cqn);
+> +
+> +		++eq->cons_index;
+> +		++ceqe_num;
+> +		atomic64_inc(&hr_dev->dfx_cnt[HNS_ROCE_DFX_CEQE_CNT]);
+> +
+> +		ceqe = next_ceqe_sw_v2(eq);
+> +	}
+> +
+> +	update_eq_db(eq);
+> +}
+> +
+>   static int __hns_roce_request_irq(struct hns_roce_dev *hr_dev, int irq_num,
+>   				  int comp_num, int aeq_num, int other_num)
+>   {
+> @@ -6582,21 +6588,24 @@ static int __hns_roce_request_irq(struct hns_roce_dev *hr_dev, int irq_num,
+>   			 j - other_num - aeq_num);
+>   
+>   	for (j = 0; j < irq_num; j++) {
+> -		if (j < other_num)
+> +		if (j < other_num) {
+>   			ret = request_irq(hr_dev->irq[j],
+>   					  hns_roce_v2_msix_interrupt_abn,
+>   					  0, hr_dev->irq_names[j], hr_dev);
+> -
+> -		else if (j < (other_num + comp_num))
+> +		} else if (j < (other_num + comp_num)) {
+> +			tasklet_setup(&eq_table->eq[j - other_num].tasklet,
+> +				      hns_roce_ceq_task);
+>   			ret = request_irq(eq_table->eq[j - other_num].irq,
+>   					  hns_roce_v2_msix_interrupt_eq,
+>   					  0, hr_dev->irq_names[j + aeq_num],
+>   					  &eq_table->eq[j - other_num]);
+> -		else
+> +		} else {
+>   			ret = request_irq(eq_table->eq[j - other_num].irq,
+>   					  hns_roce_v2_msix_interrupt_eq,
+>   					  0, hr_dev->irq_names[j - comp_num],
+>   					  &eq_table->eq[j - other_num]);
+> +		}
+> +
+>   		if (ret) {
+>   			dev_err(hr_dev->dev, "request irq error!\n");
+>   			goto err_request_failed;
+> @@ -6606,12 +6615,16 @@ static int __hns_roce_request_irq(struct hns_roce_dev *hr_dev, int irq_num,
+>   	return 0;
+>   
+>   err_request_failed:
+> -	for (j -= 1; j >= 0; j--)
+> -		if (j < other_num)
+> +	for (j -= 1; j >= 0; j--) {
+> +		if (j < other_num) {
+>   			free_irq(hr_dev->irq[j], hr_dev);
+> -		else
+> -			free_irq(eq_table->eq[j - other_num].irq,
+> -				 &eq_table->eq[j - other_num]);
+> +			continue;
+> +		}
+> +		free_irq(eq_table->eq[j - other_num].irq,
+> +			 &eq_table->eq[j - other_num]);
+> +		if (j < other_num + comp_num)
+> +			tasklet_kill(&eq_table->eq[j - other_num].tasklet);
+> +	}
+>   
+>   err_kzalloc_failed:
+>   	for (i -= 1; i >= 0; i--)
+> @@ -6632,8 +6645,11 @@ static void __hns_roce_free_irq(struct hns_roce_dev *hr_dev)
+>   	for (i = 0; i < hr_dev->caps.num_other_vectors; i++)
+>   		free_irq(hr_dev->irq[i], hr_dev);
+>   
+> -	for (i = 0; i < eq_num; i++)
+> +	for (i = 0; i < eq_num; i++) {
+>   		free_irq(hr_dev->eq_table.eq[i].irq, &hr_dev->eq_table.eq[i]);
+> +		if (i < hr_dev->caps.num_comp_vectors)
+> +			tasklet_kill(&hr_dev->eq_table.eq[i].tasklet);
+> +	}
+>   
+>   	for (i = 0; i < irq_num; i++)
+>   		kfree(hr_dev->irq_names[i]);
 
 
