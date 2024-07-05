@@ -1,84 +1,139 @@
-Return-Path: <linux-kernel+bounces-241939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5B892818F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:55:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53217928192
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878B5281845
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:55:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07B741F233A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041CD13C833;
-	Fri,  5 Jul 2024 05:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7F913CA93;
+	Fri,  5 Jul 2024 05:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="GELMxgwE"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTh2IZz9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D05ECF;
-	Fri,  5 Jul 2024 05:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67963ECF;
+	Fri,  5 Jul 2024 05:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720158927; cv=none; b=hHqSqhq3KNrLQEbaGQ7dgVFA/IOtGPdQR7r664wZTuJ70eHIrfiZFhEmX+m0tSRmelYTWlz+OG+ZfkR8ezdJd3uHlMqGIK7Bl8LuEC5z4n6xa5a/pspctupo1y8Tr/dlg3erFPP/maxQ83CO5sFK+Hb18J5eFua5JScjCoazu8c=
+	t=1720158988; cv=none; b=Z2ecyIjc8hDE4LiMGmtdBv5eECP4b/XTdc0twi7+Ez8ImOFEhjKO3G6yrOHxQYk3J4AJdkd7ZvRCw8DGaO9IdyZEFm3TI7z7zRF9OdRh5WCBCcB/QfevAylPVT5ojN/61AN6MYtjcD5A85P1PfMMZq/tRHsUxVwd33ot3UvNKQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720158927; c=relaxed/simple;
-	bh=yBjUpiLHFhuvNCJwIz+g9sl6kQXM/SRhv0EaMyOZAls=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=MmcEeX/c+daKRe4BHXuMca3axb38j0fMCCBEzOq5tmyfXJL5SiL94DotLrdOoUBdWoclP/deOcr3uZxs5WM2/La1kUlupmJzH1a4XHlWk72eMSwYVXKYYBSDo40RtZe3tp27prxjhPU+uBkUfK6cA31TAKvwTOaLJaVqStENO1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=GELMxgwE; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1720158922; bh=yBjUpiLHFhuvNCJwIz+g9sl6kQXM/SRhv0EaMyOZAls=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=GELMxgwEA04D7EMaWgbLWJyHCcuwc5BCLb828QP1wsF7pQET8tjFF6o1JhzF3H0VM
-	 bHRi+u5lrjCeXFc7U6NrLyzynx+IpJ8BucFcV289WZz8poWbhpMwPX4KJWZjWdR22E
-	 mkicgdG1WJ1cIkHQonjKC+T7iCYBmTOiRASYYeaw=
-Date: Fri, 5 Jul 2024 07:55:21 +0200 (GMT+02:00)
-From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh_?= <thomas@t-8ch.de>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <7a70c707-6a57-4f0b-a068-7efefd679088@t-8ch.de>
-In-Reply-To: <2mtehll54bpuozsjswynp2xron3dfxknsixnouovby2nxlnrun@3sxdqqbvfr22>
-References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net> <20240627-piix4-spd-v2-1-617ce47b8ff4@weissschuh.net> <2mtehll54bpuozsjswynp2xron3dfxknsixnouovby2nxlnrun@3sxdqqbvfr22>
-Subject: Re: [PATCH v2 1/4] i2c: smbus: only limit max banks to eight
+	s=arc-20240116; t=1720158988; c=relaxed/simple;
+	bh=O3YROixhUyz6kowuZHNpZqzBynzf2ADG2bO8GSIbfW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JoGAdAmS8gmM1AlcAKbIe+C2hl6/Zoz6hnTvC80TumB63fxjJsmyvbuHxqk0ZczRQXsTgt/L5L6+Tvvy47sN5aIDlNe0luUdPWts0sceETVS6k2sFrnxh/xfAUhTTOcTXEpwkIt1/yx1zqRKI52BonNxdyNEorUKibUvR+aGcIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTh2IZz9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D9EEC116B1;
+	Fri,  5 Jul 2024 05:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720158987;
+	bh=O3YROixhUyz6kowuZHNpZqzBynzf2ADG2bO8GSIbfW4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CTh2IZz9CrTK44dthE8QEj1Qc/MwRwfj9tJr0/BEMvjHfEM8hKfMAvsIiPVIOatik
+	 XuVRNIkKi0euthpXGVkSVXH6HcB8ijcaM9QaXPfMJ+8DJL6kOHtj/X9ZbGOJUPdDqu
+	 B6wpB0NCYwq60B2g0pdyCJwQqvohS4mx1o9j1kf70w/SMzNEcqe2jpYqk2MCp2n7NO
+	 D/shSAx5gcs6EuC7EroD/xJoYsGC2qUmjqpa5uyK3zZEAWb9ocm8olGPy2EQACPlsv
+	 d7i4DiBHYf33gyPhJOq2vV4N3Fy1IzpOMeQUfhM4tPFrxpTA2R9nwG1mbw2Ji+r2pU
+	 SS7JknnaubT7Q==
+Message-ID: <0516a900-0911-47f3-888e-57d014986e3b@kernel.org>
+Date: Fri, 5 Jul 2024 07:56:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] power: supply: core: return -EAGAIN on uninitialized read
+ temp
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Sebastian Reichel <sre@kernel.org>, Rhyland Klein <rklein@nvidia.com>,
+ Anton Vorontsov <cbouatmailru@gmail.com>, Jenny TC <jenny.tc@intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <20240704-topic-sm8x50-upstream-fix-battmgr-temp-tz-warn-v1-1-9d66d6f6efde@linaro.org>
+ <a50eb87a-4dcc-4272-b897-fb8170bfe58b@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <a50eb87a-4dcc-4272-b897-fb8170bfe58b@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <7a70c707-6a57-4f0b-a068-7efefd679088@t-8ch.de>
+Content-Transfer-Encoding: 7bit
 
-Jul 4, 2024 23:57:36 Andi Shyti <andi.shyti@kernel.org>:
-
-> Hi Thomas,
->
-> On Thu, Jun 27, 2024 at 07:48:11PM GMT, Thomas Wei=C3=9Fschuh wrote:
->> If there are less than eight slots in total,
->> only probe those.
->> Now the code matches the comment "..., then limit slots to 8".
+On 04/07/2024 18:41, Daniel Lezcano wrote:
+> On 04/07/2024 10:52, Neil Armstrong wrote:
+>> If the thermal core tries to update the temperature from an
+>> uninitialized power supply, it will swawn the following warning:
+>> thermal thermal_zoneXX: failed to read out thermal zone (-19)
 >>
->> Fixes: 8821c8376993 ("i2c: smbus: Prepare i2c_register_spd for usage on =
-muxed segments")
->> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
->
-> I don't see the need for the Fixes here... was there a bug that
-> has been fixed?
+>> But reading from an uninitialized power supply should not be
+>> considered as a fatal error, but the thermal core expects
+>> the -EAGAIN error to be returned in this particular case.
+>>
+>> So convert -ENODEV as -EAGAIN to express the fact that reading
+>> temperature from an uninitialized power supply shouldn't be
+>> a fatal error, but should indicate to the thermal zone it should
+>> retry later.
+>>
+>> It notably removes such messages on Qualcomm platforms using the
+>> qcom_battmgr driver spawning warnings until the aDSP firmware
+>> gets up and the battery manager reports valid data.
+> 
+> Is it possible to have the aDSP firmware ready first ?
 
-More addresses are probed than are possible.
-Which is a change from the old behavior and also
-contradicts the comment.
-IMO it's a bug. Probably not a big one and I'm not sure if user-observable.
-Surely nothing for stable.
+I don't think so. ADSP firmware is a file, so as every firmware it can
+be loaded from rootfs, not initramfs (unlike this driver), or even missing.
 
-But I'm not hung up on it and will drop that tag in the next revision.
+Best regards,
+Krzysztof
+
 
