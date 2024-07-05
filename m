@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-242097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0CF0928378
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:13:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C1F928381
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA631F25D58
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A19281C2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E001459E8;
-	Fri,  5 Jul 2024 08:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HoldbA2P"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEF5145B1B;
+	Fri,  5 Jul 2024 08:16:12 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E9514533A;
-	Fri,  5 Jul 2024 08:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2E414533A;
+	Fri,  5 Jul 2024 08:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720167200; cv=none; b=sGbv9ptEKG2Ww+jKdweWLuhCfZ9oA5oK+dQCzucDEJGcvetJMBFlEy9rwL4F97UXin05pZp2ecx0lsULD+bZeFk3Xdo1nY1UAeKYDIBqzsMmJoSF8dfcjs5XUqbnbg3JFpFct+L3B77xQ40C+Aw5BWazHahw1ce/h/dkRcDxd6I=
+	t=1720167371; cv=none; b=O7m78Y52EMyaOoF/cqbY89nP/mEU5lrCSavcQYg0LsV/jo1urq+HPfJdpFMvvhvFfRsns1eXeWaBBBRYYDJslz9AuKb6VhVopNG5oQtv+vc1CnTzx6BBMN2BERSIeECHohHTlEgWIAcbq3MVU6pDv7sY4nQpQFCDAPG75VGOS3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720167200; c=relaxed/simple;
-	bh=AgHhyMmoeUtAdP6SOZU4iVITltEbZQrn++sF+5ZO118=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UqMlsyBbeqwLSsEiJJKfiqyL+7YVMmNSAu6T+9bfHkfylJ2ZUEl0zgBAo4CSPZ9A3ttZSkgi328z8XFU7ArKpQT80M/Hjf7Fue8p/H4TrAyAAmsCv4Cu4Tpcn3XO53TMRn8jhONgpddkstjikVFDAGVC4g3Gi4PPCDyzIw20BT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HoldbA2P; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720167197;
-	bh=AgHhyMmoeUtAdP6SOZU4iVITltEbZQrn++sF+5ZO118=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=HoldbA2PudjyKSW+lmdADb7c71gZmV2dnVkpuATZTY5f9OsRhA9ZaDyGRMo56yHtD
-	 HLmFX2TjcqRri2gD0tVolXWVevWBlh0TbZibKdJ1XC6P/B276vvIRjjia/IqNEharA
-	 7U+iTkFNEesgGNNMh31TiZoOQbHfI5ml4ji7pwmI6hCsR0GRVgNqZoKeiP7pwm0i6w
-	 N3GR5oZTYMbd3GmdoGm5fJnuGKLGTxhb4e8v3eTkHimFdX1OxE/fgbq3yh3BPEjkgY
-	 AM0gM8Fb5LGrpNQaG8puXUdBsFxymchJStwIMyl5AbkkZa+IYmtIzM7w91m/OdSptJ
-	 kn9e382/4Glfw==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E063E378219E;
-	Fri,  5 Jul 2024 08:13:10 +0000 (UTC)
-Message-ID: <03195dcd-e689-421d-bcf5-4134c1f18990@collabora.com>
-Date: Fri, 5 Jul 2024 13:13:08 +0500
+	s=arc-20240116; t=1720167371; c=relaxed/simple;
+	bh=uPcQJaet8uo7JXwMefSOrhwff2O9EQUpwFCRhUEMN6M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HosuVaj4zFi899VtbUqk/OvEqiRfSTT5L38v6TP0L8igEIJ3WcmmVGqOeutcPnXn4uNtGlGMZjacbV2IYXfOUQfpbZ5+bFDDZa+jYBDLXrn0t07jjcO5WMgFq4xiXscFTw7TwF0vUe1yFbE6cCn4OgSLESGcC289eM7/rryx3Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4658FKPJ089846;
+	Fri, 5 Jul 2024 16:15:20 +0800 (+08)
+	(envelope-from Dongliang.Cui@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WFmR03dk1z2KGTdQ;
+	Fri,  5 Jul 2024 16:10:20 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 5 Jul 2024 16:15:18 +0800
+From: Dongliang Cui <dongliang.cui@unisoc.com>
+To: <linkinjeon@kernel.org>, <sj1557.seo@samsung.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <niuzhiguo84@gmail.com>, <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>,
+        <dongliang.cui@unisoc.com>, Zhiguo Niu <zhiguo.niu@unisoc.com>
+Subject: [PATCH] exfat: check disk status during buffer write
+Date: Fri, 5 Jul 2024 16:15:14 +0800
+Message-ID: <20240705081514.1901580-1-dongliang.cui@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, Thomas Gleixner
- <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>,
- Mark Brown <broonie@kernel.org>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Colin Ian King <colin.i.king@gmail.com>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 2/3] selftests/mm: remove partially duplicated "all:"
- target in Makefile
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-References: <20240704023324.83564-1-jhubbard@nvidia.com>
- <20240704023324.83564-3-jhubbard@nvidia.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240704023324.83564-3-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 4658FKPJ089846
 
-On 7/4/24 7:33 AM, John Hubbard wrote:
-> There were a couple of errors here:
-> 
-> 1. TEST_GEN_PROGS was incorrectly prepending $(OUTPUT) to each program
-> to be built. However, lib.mk already does that because it assumes "bare"
-> program names are passed in, so this ended up creating
-> $(OUTPUT)/$(OUTPUT)/file.c, which of course won't work as intended.
-> 
-> 2. lib.mk was included before TEST_GEN_PROGS was set, which led to
-> lib.mk's "all:" target not seeing anything to rebuild.
-> 
-> So nothing worked, which caused the author to force things by creating
-> an "all:" target locally--while still including ../lib.mk.
-> 
-> Fix all of this by including ../lib.mk at the right place, and removing
-> the $(OUTPUT) prefix to the programs to be built, and removing the
-> duplicate "all:" target.
-> 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+We found that when writing a large file through buffer write,
+if the disk is inaccessible, exFAT does not return an error
+normally, which leads to the writing process not stopping properly.
 
-> ---
->  tools/testing/selftests/vDSO/Makefile | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-> index d53a4d8008f9..209ede5de208 100644
-> --- a/tools/testing/selftests/vDSO/Makefile
-> +++ b/tools/testing/selftests/vDSO/Makefile
-> @@ -1,16 +1,15 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -include ../lib.mk
-> -
->  uname_M := $(shell uname -m 2>/dev/null || echo not)
->  ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
->  
-> -TEST_GEN_PROGS := $(OUTPUT)/vdso_test_gettimeofday $(OUTPUT)/vdso_test_getcpu
-> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_abi
-> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_clock_getres
-> +TEST_GEN_PROGS := vdso_test_gettimeofday
-> +TEST_GEN_PROGS += vdso_test_getcpu
-> +TEST_GEN_PROGS += vdso_test_abi
-> +TEST_GEN_PROGS += vdso_test_clock_getres
->  ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
-> -TEST_GEN_PROGS += $(OUTPUT)/vdso_standalone_test_x86
-> +TEST_GEN_PROGS += vdso_standalone_test_x86
->  endif
-> -TEST_GEN_PROGS += $(OUTPUT)/vdso_test_correctness
-> +TEST_GEN_PROGS += vdso_test_correctness
->  
->  CFLAGS := -std=gnu99
->  CFLAGS_vdso_standalone_test_x86 := -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
-> @@ -19,7 +18,7 @@ ifeq ($(CONFIG_X86_32),y)
->  LDLIBS += -lgcc_s
->  endif
->  
-> -all: $(TEST_GEN_PROGS)
-> +include ../lib.mk
->  $(OUTPUT)/vdso_test_gettimeofday: parse_vdso.c vdso_test_gettimeofday.c
->  $(OUTPUT)/vdso_test_getcpu: parse_vdso.c vdso_test_getcpu.c
->  $(OUTPUT)/vdso_test_abi: parse_vdso.c vdso_test_abi.c
+To easily reproduce this issue, you can follow the steps below:
 
+1. format a device to exFAT and then mount (with a full disk erase)
+2. dd if=/dev/zero of=/exfat_mount/test.img bs=1M count=8192
+3. eject the device
+
+You may find that the dd process does not stop immediately and may
+continue for a long time.
+
+We compared it with the FAT, where FAT would prompt an EIO error and
+immediately stop the dd operation.
+
+The root cause of this issue is that when the exfat_inode contains the
+ALLOC_NO_FAT_CHAIN flag, exFAT does not need to access the disk to
+look up directory entries or the FAT table (whereas FAT would do)
+every time data is written. Instead, exFAT simply marks the buffer as
+dirty and returns, delegating the writeback operation to the writeback
+process.
+
+If the disk cannot be accessed at this time, the error will only be
+returned to the writeback process, and the original process will not
+receive the error, so it cannot be returned to the user side.
+
+Therefore, we think that when writing files with ALLOC_NO_FAT_CHAIN,
+it is necessary to continuously check the status of the disk.
+
+When the disk cannot be accessed normally, an error should be returned
+to stop the writing process.
+
+Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+ fs/exfat/exfat_fs.h | 5 +++++
+ fs/exfat/inode.c    | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index ecc5db952deb..c5f5a7a8b672 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -411,6 +411,11 @@ static inline unsigned int exfat_sector_to_cluster(struct exfat_sb_info *sbi,
+ 		EXFAT_RESERVED_CLUSTERS;
+ }
+ 
++static inline bool exfat_check_disk_error(struct block_device *bdev)
++{
++	return blk_queue_dying(bdev_get_queue(bdev));
++}
++
+ static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
+ 		unsigned int clus)
+ {
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index dd894e558c91..efd02c1c83a6 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -147,6 +147,11 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+ 	*clu = last_clu = ei->start_clu;
+ 
+ 	if (ei->flags == ALLOC_NO_FAT_CHAIN) {
++		if (exfat_check_disk_error(sb->s_bdev)) {
++			exfat_fs_error(sb, "device inaccessiable!\n");
++			return -EIO;
++		}
++
+ 		if (clu_offset > 0 && *clu != EXFAT_EOF_CLUSTER) {
+ 			last_clu += clu_offset - 1;
+ 
 -- 
-BR,
-Muhammad Usama Anjum
+2.25.1
+
 
