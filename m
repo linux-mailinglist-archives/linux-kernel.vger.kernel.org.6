@@ -1,154 +1,103 @@
-Return-Path: <linux-kernel+bounces-242466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA4F92886A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:09:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE518928870
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3435BB216EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:09:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEAC41C2258B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEE314A4CC;
-	Fri,  5 Jul 2024 12:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEavjuUz"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3819A14A4DC;
+	Fri,  5 Jul 2024 12:10:31 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2451494C9;
-	Fri,  5 Jul 2024 12:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DD51494C9;
+	Fri,  5 Jul 2024 12:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720181370; cv=none; b=EJGVRWhuqxKhpsOp0w6d+/Tjx4zcIlEGGGGAXltER0jWGB0Bmal1DnyjZsCdHZXAWseZuLVW8ODx+Jd5N/fqCpndkoynnkDdmyaCM0NBmRbdoz9ax1QUoG7Jfqy/izcg1Nq2ZDtUWqZEd96UHVKjyeRhr+ITV4VeyYWDz4YxJos=
+	t=1720181430; cv=none; b=tb44f4EfJbr9fRe2QAhnRiWCssEjN+t7ChGsV0CfforaEs4QTaWcwtxoQUNnwX0pLNyBHctRsp3D+X9SVL4+rJSVDR7ua0kYwgO70Skd4Fw4BlsXX1cLxqJVzpf8hVWPKpPASupgxI4KtIAXZfADbq2vCMiDhq9pXydVwz19S0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720181370; c=relaxed/simple;
-	bh=t8+W4Z4NsMZbk0E9xXKyLFJHQHRBhJ9ib2DEibKFdy0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XWgosTpBUq1JhgDs82LU5n0SWZ6AkdzaNZBusP05zUyyn7PJhHB1IjRGIeWwVupY74vSRShonypEyAZ7X2k+681C8uAcKcZDqeca/1hSv7Kd/vAVNls1E2AsAV9vjsO/bOW6RQhFaYeBNHWLUWQMtkpX2v6HzhHWSV/8Id/w5DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEavjuUz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D10DC116B1;
-	Fri,  5 Jul 2024 12:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720181370;
-	bh=t8+W4Z4NsMZbk0E9xXKyLFJHQHRBhJ9ib2DEibKFdy0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=GEavjuUzRfvg6Zjh/g4vEGVxZ3lPzVadYLqrc7qG+naGefOzOoSzIFLlAhG6VKCVV
-	 RWOGOponasDvAfFl8Q1PazRNCYkRh2pLHtf4gJ31QtgwJcJC0EqZ8NvdP7e3qnsU76
-	 O6uDZXfS4OMOMC2G3OjKkVdJnc2U4zPj+ImqJ/pa+5qolvGDygixUhu3vhCLf0DuA4
-	 ObiApRrMaNIA5ySen8g5sCueCheQImv5RL36LUCC9AmezqIBCDHSIfX2ebsGskVmm9
-	 Ut6or6mn1RoHIWVWPV1ACYJf4X4GzwtSK3tSDmef6EiPwdJBwQee2RpLAh7cZI4bai
-	 ah/baQ9vSGrQQ==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Fri, 05 Jul 2024 14:09:25 +0200
-Subject: [PATCH] HID: samples: fix the 2 struct_ops definitions
+	s=arc-20240116; t=1720181430; c=relaxed/simple;
+	bh=swj0FZd/2MnH7/jWGtvEcuYjMWoU4dnzcswcpFkNC8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tls2eNdLZVIEkYo+VKOrkIdXa2Iw/f0Wfxdrq8Z8yWkw7VsNX8fDIXqhSgVZVLvPJ55Yd68VQXM5GZ8IMNkaQAH0goN54kfJGVT2Dgziug/mYLU95lcRUO7gcq8B7h26+DETP9mX248IVabW7InOZSfX5mDZrNkLhjusw8PU1EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84A48C116B1;
+	Fri,  5 Jul 2024 12:10:24 +0000 (UTC)
+Date: Fri, 5 Jul 2024 13:10:21 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, Dinh Nguyen <dinguyen@kernel.org>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Stafford Horne <shorne@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 09/17] arm64: convert unistd_32.h to syscall.tbl format
+Message-ID: <ZofirWrl3nAuOQb_@arm.com>
+References: <20240704143611.2979589-1-arnd@kernel.org>
+ <20240704143611.2979589-10-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-for-6-11-bpf-v1-1-1960e3165c9e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAHTih2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDcwNT3bT8Il0zXUND3aSCNN1EYxPL1LRkA4uUNAsloJaCotS0zAqwcdG
- xtbUASXe8914AAAA=
-To: Jiri Kosina <jikos@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720181369; l=2906;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=t8+W4Z4NsMZbk0E9xXKyLFJHQHRBhJ9ib2DEibKFdy0=;
- b=FKZZ3YsTYtUib50z4596Y99G4Aejdq4FoeS3EcKpJEdgXTWPOzobjF410DDv5ltMla3Rtp+Nj
- S7SYiT6riR9D5maQZ4IGAnFl0l2zrjb1WZ+naLHtzvlgHVlBqysJ63M
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704143611.2979589-10-arnd@kernel.org>
 
-Turns out that this is not compiling anymore because the hid_bpf_ops
-struct_ops definition had a change during the revisions.
+On Thu, Jul 04, 2024 at 04:36:03PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> This is a straight conversion from the old asm/unistd32.h into the
+> format used by 32-bit arm and most other architectures, calling scripts
+> to generate the asm/unistd32.h header and a new asm/syscalls32.h headers.
+> 
+> I used a semi-automated text replacement method to do the conversion,
+> and then used 'vimdiff' to synchronize the whitespace and the (unused)
+> names of the non-compat syscalls with the arm version.
+> 
+> There are two differences between the generated syscalls names and the
+> old version:
+> 
+>  - the old asm/unistd32.h contained only a __NR_sync_file_range2
+>    entry, while the arm32 version also defines
+>    __NR_arm_sync_file_range with the same number. I added this
+>    duplicate back in asm/unistd32.h.
+> 
+>  - __NR__sysctl was removed from the arm64 file a while ago, but
+>    all the tables still contain it. This should probably get removed
+>    everywhere but I added it here for consistency.
+> 
+> On top of that, the arm64 version does not contain any references to
+> the 32-bit OABI syscalls that are not supported by arm64. If we ever
+> want to share the file between arm32 and arm64, it would not be
+> hard to add support for both in one file.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Fixes: e342d6f6f7d8 ("HID: samples: convert the 2 HID-BPF samples into struct_ops")
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
- samples/hid/hid_mouse.bpf.c        | 8 ++++----
- samples/hid/hid_surface_dial.bpf.c | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/samples/hid/hid_mouse.bpf.c b/samples/hid/hid_mouse.bpf.c
-index bd901fa855c9..f7f722dcf56d 100644
---- a/samples/hid/hid_mouse.bpf.c
-+++ b/samples/hid/hid_mouse.bpf.c
-@@ -67,7 +67,7 @@ static int hid_x_event(struct hid_bpf_ctx *hctx)
- 	return 0;
- }
- 
--SEC("struct_ops/device_event")
-+SEC("struct_ops/hid_device_event")
- int BPF_PROG(hid_event, struct hid_bpf_ctx *hctx, enum hid_report_type type)
- {
- 	int ret = hid_y_event(hctx);
-@@ -79,7 +79,7 @@ int BPF_PROG(hid_event, struct hid_bpf_ctx *hctx, enum hid_report_type type)
- }
- 
- 
--SEC("struct_ops/rdesc_fixup")
-+SEC("struct_ops/hid_rdesc_fixup")
- int BPF_PROG(hid_rdesc_fixup, struct hid_bpf_ctx *hctx)
- {
- 	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 4096 /* size */);
-@@ -121,8 +121,8 @@ int BPF_PROG(hid_rdesc_fixup, struct hid_bpf_ctx *hctx)
- 
- SEC(".struct_ops.link")
- struct hid_bpf_ops mouse_invert = {
--	.rdesc_fixup = (void *)hid_rdesc_fixup,
--	.device_event = (void *)hid_event,
-+	.hid_rdesc_fixup = (void *)hid_rdesc_fixup,
-+	.hid_device_event = (void *)hid_event,
- };
- 
- char _license[] SEC("license") = "GPL";
-diff --git a/samples/hid/hid_surface_dial.bpf.c b/samples/hid/hid_surface_dial.bpf.c
-index d8d0fb07391f..527d584812ab 100644
---- a/samples/hid/hid_surface_dial.bpf.c
-+++ b/samples/hid/hid_surface_dial.bpf.c
-@@ -10,7 +10,7 @@
- #define HID_UP_BUTTON		0x0009
- #define HID_GD_WHEEL		0x0038
- 
--SEC("struct_ops/device_event")
-+SEC("struct_ops/hid_device_event")
- int BPF_PROG(hid_event, struct hid_bpf_ctx *hctx)
- {
- 	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 9 /* size */);
-@@ -101,7 +101,7 @@ int set_haptic(struct haptic_syscall_args *args)
- }
- 
- /* Convert REL_DIAL into REL_WHEEL */
--SEC("struct_ops/rdesc_fixup")
-+SEC("struct_ops/hid_rdesc_fixup")
- int BPF_PROG(hid_rdesc_fixup, struct hid_bpf_ctx *hctx)
- {
- 	__u8 *data = hid_bpf_get_data(hctx, 0 /* offset */, 4096 /* size */);
-@@ -132,8 +132,8 @@ int BPF_PROG(hid_rdesc_fixup, struct hid_bpf_ctx *hctx)
- 
- SEC(".struct_ops.link")
- struct hid_bpf_ops surface_dial = {
--	.rdesc_fixup = (void *)hid_rdesc_fixup,
--	.device_event = (void *)hid_event,
-+	.hid_rdesc_fixup = (void *)hid_rdesc_fixup,
-+	.hid_device_event = (void *)hid_event,
- };
- 
- char _license[] SEC("license") = "GPL";
-
----
-base-commit: f58e7f404da44c94e46bfe657b8707195aebd25a
-change-id: 20240705-for-6-11-bpf-a349efc08df8
-
-Best regards,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
-
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
