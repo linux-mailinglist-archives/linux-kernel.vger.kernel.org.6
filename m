@@ -1,333 +1,278 @@
-Return-Path: <linux-kernel+bounces-242258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64335928569
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1898692856B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E513E281A5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:47:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3462281A77
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D8F145B29;
-	Fri,  5 Jul 2024 09:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096541474D9;
+	Fri,  5 Jul 2024 09:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="iFwx702B"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2042.outbound.protection.outlook.com [40.107.117.42])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZE0Jjlel"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06B26F09C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172830; cv=fail; b=adrjLOVwJBdv4mN2UViLGHNDu7J08uroFHQ2Q6ZV2EdbeZ5koga/PqziDdVURhSyJuT5mpQjDT5l7y+YFHqjZO+uDT0B8Y0e95KFpt4WbMulX/wL3KEtVcVszUDSR4I0DMXBM7uum3jKHe2kSj/Xue6Dk8gT7Nx5lIB5DAxi0oo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172830; c=relaxed/simple;
-	bh=KL5txLz4d68xT0Zr2KCCRx9+P7YfrkNMcNRyqWDpj5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cQNNgnqEXbOn2CdxJkuVI3JMbfhDttOJ1wQeXCshvoTtVn6vfeL4im8gKCtxzMtoAnsVGdv/eUtOL/RlBvnnk22Jn4oXc/UnJjht7kStFUGRzgPBS5353cIK2w61uT62HX5OUGCamBytOeD60zU/pJD7dnfVgoORoGSruko7xTk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=iFwx702B; arc=fail smtp.client-ip=40.107.117.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iYRdNU5lQtTFxjagQAa45ejCcGta2XpfNxyIwpwMLMvSN2XeD0GFnrnsfN5y97wpeLox9mnT016W43b6lEH7FhXo4SVmBq2BzNZb6Wxbu2OLXHECo4hp+u631uk7U1hoGygqu+NQgSTFPGWb44uYBRR7Z2Bmm8dRmCQdVGZ0pHBNwtTv4wiVM14l8gzdx5/yX5DMSq37fFGlGYaOhgpWz67uedKd232M/li9UCLwMSp2dbI+eSjspdH5E4M1jAs8ZSlBm/BSsHPVOz+oPDGdDmEj7VKDHDCnr7naupwpNr4xYSPN4UjnP7vToFTdSKjXNO+U11YySiLdZoqXNIAi3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6AeyS1YGXun5k78Brcj11zEowrTKYVPh2u3tv9kMGtw=;
- b=gIMX2qc58O31sNJSYc10G9yORXVMyJnF/HFizdYiJhRtkvXvhV8R3U2aJxNdOnCsU1N3SfBzn/mrEYG1yNQVekm/jXA5im6g9UtoARPZBxTH/uaCxdHCyAQd244kwdeMH8G9zcgTebFrWn/cI3+Q2LWG1zu8/zxtq8raH9MCyvVJn0yFktjMltVqYSgdiJSkTqIBDLPXwje64vf/tEMhQUh2iuyZpqg8rSLna4Z6mbPAYNpgHrPzLLe+Xw8vrFMPV+l/2JrIjCayGt7KBYzLLscyELJCjZUQSB6SvaexrxcSQoyHt1saJrp6e+dSKMJVgjiWqO4UIOBNS1UhjC1nYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6AeyS1YGXun5k78Brcj11zEowrTKYVPh2u3tv9kMGtw=;
- b=iFwx702BOiXNGpmfLhIAMTLKoagWQi7PLwKWs7ewX8F16FC7TUlNKJl6OViaeZw6dGJK0h65xmo8c7wPmZhuEfp9XzNWMQrC/XFs/rMYAGR6UoFqLFKMIMvg2aLqQOVqYQi8cCHuoSyt+9GbLrTna6GGatNBPsfvXpJ9vgdE2f996U4OZ/gMuRmHeTEG07Gtl4V3wwKXQEs55i/28TiRd4geQCWoUbnDGMvOxb+3515G2/gi/jZUHIICvoAKUvRjqpYo0y0HdW65OJ/NLPASTGmRAV8oJO9AEcAyGFOcODJuLqKh11KihAd1qzhosm/Qh/rsNWNcrec/Lf/jRqY65w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TYSPR06MB6625.apcprd06.prod.outlook.com (2603:1096:400:47d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Fri, 5 Jul
- 2024 09:47:03 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%6]) with mapi id 15.20.7741.029; Fri, 5 Jul 2024
- 09:47:02 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: bo.wu@vivo.com,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH v2] f2fs:Add write priority option based on zone UFS
-Date: Fri,  5 Jul 2024 17:46:41 +0800
-Message-Id: <20240705094641.13451-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240702062952.28859-1-liaoyuanhong@vivo.com>
-References: <20240702062952.28859-1-liaoyuanhong@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR02CA0062.apcprd02.prod.outlook.com
- (2603:1096:404:e2::26) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2D4144D34
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720172839; cv=none; b=kjGmTRVR2MMp7JxJj7bgrjwEfKzCzY+oI5uG6A76l/HFV8AVk0nov0VQvEGv+HKGetQ1RuIMRJk1STDp0I+hpl7nZgbjrhQ8nlZ6QU9tQO8YORv5QbxPeAo4/+CkVvvu52cfQJqUJ/NuodDBgNEr23j2preNY9wv/iBxfx6bnH8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720172839; c=relaxed/simple;
+	bh=SNVIq8IzEq/+ixojpoOnQcqrIQtEdZaAPkEwmaEt8/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=IelGstnh8oS9SL3/BAZN84/8knwvxCa7qFBKkuGXov2vO3UmPenDy6YMKlqUD9cG1UYHQHAQ7BHuO4qsQVlp/74bCKR4CaotwY5t0ILW+M7SvCkMmVUQ/VYr7zXcw28jHWyLRQsGPmpGbMRmvnlrXT6+HUHbQiJMyXJqYjYOi1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZE0Jjlel; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240705094715epoutp01ae6302d77c0e39f08a51767fd0e474f9~fSBRu4Li10279202792epoutp01c
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:47:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240705094715epoutp01ae6302d77c0e39f08a51767fd0e474f9~fSBRu4Li10279202792epoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720172835;
+	bh=7hc5/Ebz+qisnzZvFIi0bERvrPY/X5FNJfe7LrCQvt0=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ZE0JjlelrQGOXDOc0N6mOpV4Cq5SLI8Eo5LnUvrfzMZPQ/rP283wrT9VCdyqJwH0V
+	 okC4QM2bCWDHvhBdom9H8Cl2s3+/9ZtfuXH0eT8WLC0/tSugWbQvY7rwhuKKXAZCsR
+	 CxivUyG9xGroWRsZywQbSSKGC6WFawcuPziXTtkY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20240705094714epcas2p35ee03825b0f502c44fd0949d3ca05a08~fSBRCaKql2339523395epcas2p3F;
+	Fri,  5 Jul 2024 09:47:14 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.92]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WFpZn6v0gz4x9Q1; Fri,  5 Jul
+	2024 09:47:13 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9C.F0.09485.121C7866; Fri,  5 Jul 2024 18:47:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240705094713epcas2p332450ad4dae04cd2fa599994c7956c29~fSBPzzBco1873818738epcas2p3p;
+	Fri,  5 Jul 2024 09:47:13 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240705094713epsmtrp23c0002a7d4d994b458bbdffd07d94add~fSBPyzKuO0969009690epsmtrp2k;
+	Fri,  5 Jul 2024 09:47:13 +0000 (GMT)
+X-AuditID: b6c32a46-f3bff7000000250d-86-6687c121bfdc
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	36.2C.18846.021C7866; Fri,  5 Jul 2024 18:47:13 +0900 (KST)
+Received: from [10.229.8.168] (unknown [10.229.8.168]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240705094712epsmtip1d0be6d4a507a0b0d376e8e996576570c~fSBPjTUmS2580925809epsmtip1T;
+	Fri,  5 Jul 2024 09:47:12 +0000 (GMT)
+Message-ID: <c1891fb7-748b-62ad-a115-ee143fd05784@samsung.com>
+Date: Fri, 5 Jul 2024 18:46:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYSPR06MB6625:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0414de78-7c4a-4f5f-c529-08dc9cd76bc5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WrhN28s9hAMapXu47s7B66L2qKeHCyhYFOcdX7w4ku5ni3mqQIIkzoEP/20r?=
- =?us-ascii?Q?N8iowNUpNN3Phgj6yYKlerEiitMF3y2gyQTPLxRSHkdCudf/bqSihe92gL5E?=
- =?us-ascii?Q?8p2C6s01bh1JzFJNqGC/aSYY9XX79CLhZzCgCUSAyJyZulv3st3jFO7ll50j?=
- =?us-ascii?Q?KrG+e6dqY2R00+t1lZPGOSYO8IuIq5DsLuoAEzXg0ahy1Fnf8W69rC3bS3bS?=
- =?us-ascii?Q?WjpGyN004nkG8P/cX9XMmHOGvXoDCkYwsnYd/nCsYlL1bJWeBoOU/Pat6e+V?=
- =?us-ascii?Q?dQVeRrJ4oZ0XKWFi1SX3gU9m5bVKUOIdckX1GjiUk8fQHRUWvh36wQUaCSuN?=
- =?us-ascii?Q?ijKrU5sri/VjOArMHQb6BtB9ccpolL5+QjkrgYPdvBRWiVJDNwAXVw84f3wQ?=
- =?us-ascii?Q?IrI3z2U8ZNqMy8eXmlq+HzqE4+1a+BLhxp+KMWL8lV8Jp0t5fZSfgTxzQiLO?=
- =?us-ascii?Q?u96Alcfe3DCiDjziPdIQEIDNbAa5GX702CMTNrwCuYfNiM+tkDq3J5RNbZ4/?=
- =?us-ascii?Q?UkR879c/qSXUX3Y76UnScMOPoQrj76ub821CY7A69fi90cig+Qb89ANY1Lid?=
- =?us-ascii?Q?KuLKPpyoeJiZbRWuDz++/QAskyF3DgYtnG36WpkHWX3fsg0i5To9OW86w2oo?=
- =?us-ascii?Q?nYtZAdFct79eM/zDbYl0pOSkbyitzQFlbNDqOESDcPI0zwq+s0EVhEIKYLn4?=
- =?us-ascii?Q?ea2ijM5P36uj/Qq92hBHY52JWYZOTH0B1DqeKl9rZsdGraz+RXPsd64pnUZn?=
- =?us-ascii?Q?EZdZAsu9qkz0aDvGjDfU9aAl1m1aa3RDt2x41ZRAC/ZQgL3mSMmSWSQoa2k3?=
- =?us-ascii?Q?bLEJzJkCiq3WVsVEsnei4lLyu/YzIclwvy3qyrJPwHJeclD05pu9QP36xFVd?=
- =?us-ascii?Q?q+1IXNYjwbcc6pWGOjWS/uRpijxD1yRRli1KjbfewSGHG1OgLOIopxw3KaH7?=
- =?us-ascii?Q?JjvCbj5lAvOUqHsIas9R7fXLu1sj2hLxlrqCn8JDUo3epsMs9jRmO4UamV0V?=
- =?us-ascii?Q?GBa46nJsPypqLjEFL2MagNrOlTiv/LV+2oIFSRgHkFtz4mKOqUT9J4quSPN4?=
- =?us-ascii?Q?+mFMzf08FRhqaKdlLxk8QURlEscHg68BkpqbXt86CHlYFwgAluU3FVDqfpld?=
- =?us-ascii?Q?pTeh9Ag4Ear0r2RySYxkLjGeunimO0rGE18gt681UdITAZYMVTExo5ira+f0?=
- =?us-ascii?Q?qcKbdLXA5KY5HWfsZ9PNzDpZZsMrSRX1IAcn11hCnFYJnjBG0l/Lls8VS16U?=
- =?us-ascii?Q?u0QxHJ9vHfZAwQ7qeP7yO9Wq/8KvgJvMaHhZZHEM19exxBl0W8vEn0L8HnXg?=
- =?us-ascii?Q?2OLDqOWFPhrgyuUCh+O7KHfLHuzPffWcY9hK4HJwQv3RGEQ4YayanCRgjhhK?=
- =?us-ascii?Q?XlqzoGFHuCDKiW/+KgcpDPwrNDzwLTu///AP//8197qmc/PANQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VfEK6juiZ1vTyBL8ZzfeOpaYa63VCU4AzknbA5tOysjXkFzvc+7zUo0vrTef?=
- =?us-ascii?Q?KH42EnIcmxOLeLIBoJSO8auUpTm77LeeVmYtvqyP752G+8ccsdSQjvcjn8WJ?=
- =?us-ascii?Q?+1IPHgLeqZHwiVgPMXMHampib85yO1ZRVZ+HcPyRnmT35OLyJl6dm29tF/qj?=
- =?us-ascii?Q?9is0dp7OpJ9tkp+ossEgBjdY7b+t1XxfcPgGrSk8l947YuDmpvRRSOQPZLNv?=
- =?us-ascii?Q?atw3+2DfpHeinOfp5LrPxibjk4jyijL/fbwuJu5P2xQaYYGAAQKPqmOLGCN/?=
- =?us-ascii?Q?NkJMRXyU5YpFSaLpNp5FP7ijhTXEPmCZ45t+p+VAQq4sSGYM9V1XkAJsToyY?=
- =?us-ascii?Q?hlXmZcNTsr2dUf9nlIgSW2U8CRH75Q84wgvGU6JguTJTyrIrsjsRGfJpTQU7?=
- =?us-ascii?Q?BpeT0dDdOtmXvyxQb63GJKrGxUozfi7Nk0yACEyWPW1fWLbQvN1UAnIPXdnl?=
- =?us-ascii?Q?7TBQY0IsU7kEhWss41KGhZXzk0o9zvBZ1y9cxVvhM46S6F+Ro/9Omlh9GXSG?=
- =?us-ascii?Q?pdU/Ysk5eRGluZ6rsD1+xr5y7LK2P+EVWVIBrxDVSRl0OAGMgiNZfPitXtgd?=
- =?us-ascii?Q?zcDs1Zs+z5F1HYUInbQcxOs3++mz0C17m3RHuv6J6dhw3Lr8TOuPF8NUf1Sq?=
- =?us-ascii?Q?a0wrf6nNGQv4bfntXB7dfyh+lRwA9mfYAcVI3lTJV65cxiSBNxmdxxC1AdAI?=
- =?us-ascii?Q?yDM90Okfv2oIUhTR3AtfWsj4C78V3SvG++nj1N9npsUKkTDz62TTuJxwUsok?=
- =?us-ascii?Q?SNaC6AAjOyIlfgzgLabmUD2+VOlqBIyOpD0Aa/V/Mb3ROBAEm1mGVapmrWY0?=
- =?us-ascii?Q?W14x4O44HQsDK6+Hbxgftp7k/v9VaoOfeVbNvDvRQTbLVGu8CWHXfCUdaIQ7?=
- =?us-ascii?Q?7t9XPp7pLgLSukroGqwWRftuhvwMbhHGCd0sAuTXkTWIeXnLxgzcb9KODQbk?=
- =?us-ascii?Q?RjgWlw45DYUuakxrFUVMBc6BkuAmoQxH+IP6wD4M70UNVqQfY7A3doGfpZW2?=
- =?us-ascii?Q?sa3qlzaHGgv/uTlMLbjePf1CDD8A6ymesMtMA9HC4cPz2zKFx9fgMmhUcN0V?=
- =?us-ascii?Q?bqZp8H512Hd4ca3GmAxljRNAL5iCE/v+XX0TLf0yJDPtzgjW0JDdSjpRyh2Q?=
- =?us-ascii?Q?GOdfxrxQTNE+3pDhMEzHBmV/D64hmegimvrvjJETtkqnLV3RXrtHre0RxMdU?=
- =?us-ascii?Q?H07bjIu/kaLYCf3TODDcgzWutHgaJvAjxta6grXSYvSQHj9QvJnfgelFCcxI?=
- =?us-ascii?Q?hZug1vgwgXi9/UNzrNSDcoo+tvIIYL7B3rFvXU8Z29rB9vKezxtc99bLhgS0?=
- =?us-ascii?Q?GnHh6hAhoVqtGL/4OO6c9InURZEdg51JZDrSw/RwXhrg59K/Cx3iWFwpW8MN?=
- =?us-ascii?Q?4qXY1TwaoosLf2mATv7E2Qel+qr5/46uYUidIooNrgeKOilGU8JV/asMgnVC?=
- =?us-ascii?Q?MIWIFOALSiafa/bVJagX6nmylI/qxpXYdIPQh/DSslV6qItT8QTQFY1Jsx5n?=
- =?us-ascii?Q?NfCM6G0RXakd74xC4ycF3nNVXiJegSGzMsmRE8CkPzuXfXntOvBZd8fpSBjZ?=
- =?us-ascii?Q?FqINFhJ7z4Ou4dUOt3jq84zi6iNEZ6jtgY2Aj0bf?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0414de78-7c4a-4f5f-c529-08dc9cd76bc5
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 09:47:02.2486
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0IQag3uSCyaPiEZ6SFMyKdstBFOK0GB9NEQAE3HS3Gfw1p5gPOkaoAAZe5jT7OITCfka1C1PurmHkP1jn1Nzag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6625
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+	Thunderbird/102.11.0
+Subject: Re: [PATCH 1/5] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+ bindings
+To: Sunyeal Hong <sunyeal.hong@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+In-Reply-To: <20240705021110.2495344-2-sunyeal.hong@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmua7iwfY0g4ltZhYP5m1js7j+5Tmr
+	xfnzG9gtPvbcY7W4vGsOm8WM8/uYLC6ecrU4/Kad1eLftY0sFk3L1jM5cHm8v9HK7rFpVSeb
+	R9+WVYwenzfJBbBEZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5
+	+AToumXmAN2jpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwL9ArTswtLs1L18tL
+	LbEyNDAwMgUqTMjOmDP/P3PBOdWK+U1NzA2MW2W6GDk5JARMJGZcXsfexcjFISSwg1HiydQd
+	UM4nRonzXV+YQarAnLvr5boYOcA63nzXhqjZySjR2nyZCcJ5zSix9P9CFpAGXgE7iT9rXzOB
+	2CwCKhILZj1jhIgLSpyc+QSsRlQgWqJ12X02EFtYIETiwIufjCCDRAQWMEmc37WXFSTBLJAg
+	seTwBzYIW1zi1pP5YEPZBLQlvq9fDFbDKeAgcfTeMqh6eYntb+cwgwySEJjKIdGyZwszxKMu
+	Ek3XPzJB2MISr45vYYewpSQ+v9vLBmHnS7RdOQMVr5HYuOASI4RtL7HozE92kPeZBTQl1u/S
+	h4SEssSRWywQa/kkOg7/ZYcI80p0tAlBNKpJ3J96Dmq4jMSkIyuhDvCQmL53AesERsVZSKEy
+	C8mTs5A8Mwth7wJGllWMYqkFxbnpqcVGBUbwuE7Oz93ECE6pWm47GKe8/aB3iJGJg/EQowQH
+	s5IIr9T75jQh3pTEyqrUovz4otKc1OJDjKbAuJnILCWanA9M6nkl8YYmlgYmZmaG5kamBuZK
+	4rz3WuemCAmkJ5akZqemFqQWwfQxcXBKNTDpd4r2i159kOByvz7njuhPtvPz8q+s8lh6nS1t
+	3WufW7kVjdU1VkVS34REY5neZ7hMutZ1Njdqe3/LYY+Fa3U+duZyle1wnrR65rKgiA/cFb1P
+	J33ez+j/Pvfnzdr6GMmayUt2u9efUk003jON2efzQu5Xsz7cbKvaGsl0bcnFybu6bPV0W84+
+	MD3XIPTX+vD+pqMa2Uz1imwTl937dl+w4fmWbXrJ3nfX1m/onn2KxXvvAuZNua4ZTGlPWnpC
+	5DxLwvUj9Hb96Sy/MY/9RfHjI7Ee+m37r15le9H3p+O8xLEYLpZcq5agHqXrdlr/csuWfQ0Q
+	D8wy/nlp6t/W7+ZqL51mmIimb5mrV94S36vEUpyRaKjFXFScCACOdnq5MgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsWy7bCSnK7iwfY0g12zmS0ezNvGZnH9y3NW
+	i/PnN7BbfOy5x2pxedccNosZ5/cxWVw85Wpx+E07q8W/axtZLJqWrWdy4PJ4f6OV3WPTqk42
+	j74tqxg9Pm+SC2CJ4rJJSc3JLEst0rdL4MqYM/8/c8E51Yr5TU3MDYxbZboYOTgkBEwk3nzX
+	7mLk4hAS2M4ocbnrCGMXIydQXEZi+bM+NghbWOJ+yxFWiKKXjBKnZu9lAknwCthJ/Fn7Gsxm
+	EVCRWDDrGSNEXFDi5MwnLCC2qEC0xOrPF1hBbGGBEIkDL34yggwSEVjEJDFvSRs7SIJZIEHi
+	/tbdbBAbTjJKbJxzgQkiIS5x68l8MJtNQFvi+/rFYJM4BRwkjt5bxgpRYybRtbWLEcKWl9j+
+	dg7zBEahWUgOmYVk1CwkLbOQtCxgZFnFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERxDWkE7
+	GJet/6t3iJGJg/EQowQHs5IIr9T75jQh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJ
+	JanZqakFqUUwWSYOTqkGpl2NO8tzVhvs4HSyfurKISK35oq6IfMtUY+itetrYoXYAm7sfiWW
+	mR15jMFX53WxV2vPzGxdQVP9e9kPj1v2CXc++NQzsaBr//5Lple/GMcq3a/VM4uWXV/ww6Or
+	mme5NVNZAX/thcc1k9K0RHK22c9/Grk76vN2ruWVM3KUi32usn65qf6Xs9kpRCX3UG7wplPz
+	N/qdUbktbRnIptqTe0v9Y7HwfD4hIcVbfu0arFVMmwq3LeER+p5Qc1ds6o7PpW/qLfM4DZ7e
+	vjSRtWT1mp02i8rSdzF+XP/+9pTm+fWP/edWPwtV/PZusYu098KlB6def7HR2TDz6PoPX7MY
+	LUv1jmfskzuzYdkO/62zlViKMxINtZiLihMB4HpyxBADAAA=
+X-CMS-MailID: 20240705094713epcas2p332450ad4dae04cd2fa599994c7956c29
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705021148epcas2p2f460d561d647a3f02ee01b3ad8979706
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+	<CGME20240705021148epcas2p2f460d561d647a3f02ee01b3ad8979706@epcas2p2.samsung.com>
+	<20240705021110.2495344-2-sunyeal.hong@samsung.com>
 
-Currently, we are using a mix of traditional UFS and zone UFS to support 
-some functionalities that cannot be achieved on zone UFS alone. However, 
-there are some issues with this approach. There exists a significant 
-performance difference between traditional UFS and zone UFS. Under normal 
-usage, we prioritize writes to zone UFS. However, in critical conditions 
-(such as when the entire UFS is almost full), we cannot determine whether 
-data will be written to traditional UFS or zone UFS. This can lead to 
-significant performance fluctuations, which is not conducive to 
-development and testing. To address this, we have added an option 
-zlu_io_enable under sys with the following three modes:
-1) zlu_io_enable == 0:Normal mode, prioritize writing to zone UFS;
-2) zlu_io_enable == 1:Zone UFS only mode, only allow writing to zone UFS;
-3) zlu_io_enable == 2:Traditional UFS priority mode, prioritize writing to 
-traditional UFS.
+Hi Sunyeal,
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
-v2:
-	-Change name to blkzone_alloc_policy,
-	-Update manual of f2fs sysfs entry,
-	-Use macro instead of magic number,
-	-Initialize it w/ default policy in f2fs_scan_devices,
-	-Add validation check,
-	-Merged the ifdef PROFIG-BLK-DEV_ZONED area.
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 14 ++++++++++++++
- fs/f2fs/f2fs.h                          |  6 ++++++
- fs/f2fs/segment.c                       | 25 ++++++++++++++++++++++++-
- fs/f2fs/super.c                         |  1 +
- fs/f2fs/sysfs.c                         | 11 +++++++++++
- 5 files changed, 56 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index cad6c3dc1f9c..3500920ab7ce 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -763,3 +763,17 @@ Date:		November 2023
- Contact:	"Chao Yu" <chao@kernel.org>
- Description:	It controls to enable/disable IO aware feature for background discard.
- 		By default, the value is 1 which indicates IO aware is on.
-+
-+What:		/sys/fs/f2fs/<disk>/blkzone_alloc_policy
-+Date:		July 2024
-+Contact:	"Yuanhong Liao" <liaoyuanhong@vivo.com>
-+Description:	The zone UFS we are currently using consists of two parts:
-+		conventional zones and sequential zones. It can be used to control which part
-+		to prioritize for writes, with a default value of 0.
-+
-+		========================  =========================================
-+		value					  description
-+		blkzone_alloc_policy = 0  Prioritize writing to sequential zones
-+		blkzone_alloc_policy = 1  Only allow writing to sequential zones
-+		blkzone_alloc_policy = 2  Prioritize writing to conventional zones
-+		========================  =========================================
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f7ee6c5e371e..29b0e8897e81 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -134,6 +134,10 @@ typedef u32 nid_t;
- 
- #define COMPRESS_EXT_NUM		16
- 
-+#define PRIOR_SEQUENTIAL		0
-+#define ONLY_SEQUENTIAL			1
-+#define PRIOR_CONVENTIONAL		2
-+
- /*
-  * An implementation of an rwsem that is explicitly unfair to readers. This
-  * prevents priority inversion when a low-priority reader acquires the read lock
-@@ -1555,6 +1559,8 @@ struct f2fs_sb_info {
- #ifdef CONFIG_BLK_DEV_ZONED
- 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
- 	unsigned int max_open_zones;		/* max open zone resources of the zoned device */
-+	/* For adjust the priority writing position of data in zone UFS */
-+	unsigned int blkzone_alloc_policy;		/* data write mode */
- #endif
- 
- 	/* for node-related operations */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4db1add43e36..7b8dc255836b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2686,17 +2686,40 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 			goto got_it;
- 	}
- 
-+#ifdef CONFIG_BLK_DEV_ZONED
- 	/*
- 	 * If we format f2fs on zoned storage, let's try to get pinned sections
- 	 * from beginning of the storage, which should be a conventional one.
- 	 */
- 	if (f2fs_sb_has_blkzoned(sbi)) {
--		segno = pinning ? 0 : max(first_zoned_segno(sbi), *newseg);
-+		/* Prioritize writing to conventional zones */
-+		if (sbi->blkzone_alloc_policy == PRIOR_CONVENTIONAL)
-+			segno = 0;
-+		else
-+			segno = pinning ? 0 : max(first_zoned_segno(sbi), *newseg);
- 		hint = GET_SEC_FROM_SEG(sbi, segno);
- 	}
-+#endif
- 
- find_other_zone:
- 	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
-+
-+#ifdef CONFIG_BLK_DEV_ZONED
-+	if (secno >= MAIN_SECS(sbi) && f2fs_sb_has_blkzoned(sbi)) {
-+		/* Write only to sequential zones */
-+		if (sbi->blkzone_alloc_policy == ONLY_SEQUENTIAL) {
-+			hint = GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi));
-+			secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
-+		} else
-+			secno = find_first_zero_bit(free_i->free_secmap,
-+								MAIN_SECS(sbi));
-+		if (secno >= MAIN_SECS(sbi)) {
-+			ret = -ENOSPC;
-+			goto out_unlock;
-+		}
-+	}
-+#endif
-+
- 	if (secno >= MAIN_SECS(sbi)) {
- 		secno = find_first_zero_bit(free_i->free_secmap,
- 							MAIN_SECS(sbi));
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4a1bc8f40f9a..d5b0b7b141ce 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4229,6 +4229,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 	sbi->aligned_blksize = true;
- #ifdef CONFIG_BLK_DEV_ZONED
- 	sbi->max_open_zones = UINT_MAX;
-+	sbi->blkzone_alloc_policy = PRIOR_SEQUENTIAL;
- #endif
- 
- 	for (i = 0; i < max_devices; i++) {
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index fee7ee45ceaa..359a12f84060 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -627,6 +627,15 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 	}
- #endif
- 
-+#ifdef CONFIG_BLK_DEV_ZONED
-+	if (!strcmp(a->attr.name, "blkzone_alloc_policy")) {
-+		if (t < PRIOR_SEQUENTIAL || t > PRIOR_CONVENTIONAL)
-+			return -EINVAL;
-+		sbi->blkzone_alloc_policy = t;
-+		return count;
-+	}
-+#endif
-+
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	if (!strcmp(a->attr.name, "compr_written_block") ||
- 		!strcmp(a->attr.name, "compr_saved_block")) {
-@@ -1033,6 +1042,7 @@ F2FS_SBI_GENERAL_RW_ATTR(warm_data_age_threshold);
- F2FS_SBI_GENERAL_RW_ATTR(last_age_weight);
- #ifdef CONFIG_BLK_DEV_ZONED
- F2FS_SBI_GENERAL_RO_ATTR(unusable_blocks_per_sec);
-+F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
- #endif
- 
- /* STAT_INFO ATTR */
-@@ -1187,6 +1197,7 @@ static struct attribute *f2fs_attrs[] = {
- #endif
- #ifdef CONFIG_BLK_DEV_ZONED
- 	ATTR_LIST(unusable_blocks_per_sec),
-+	ATTR_LIST(blkzone_alloc_policy),
- #endif
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	ATTR_LIST(compr_written_block),
--- 
-2.25.1
+On 7/5/24 11:11, Sunyeal Hong wrote:
+> Add dt-schema for Exynos Auto v920 SoC clock controller.
+>
+> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> ---
+>   .../clock/samsung,exynosautov920-clock.yaml   | 115 ++++++++++++++++++
+>   1 file changed, 115 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> new file mode 100644
+> index 000000000000..3e5e408c8336
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: https://protect2.fireeye.com/v1/url?k=804ccde6-e1c7d8c9-804d46a9-74fe485cbfe7-c44fcfa897bd4340&q=1&e=65af0c33-026a-42d4-92cd-09b6c91c9bfb&u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fclock%2Fsamsung%2Cexynosautov920-clock.yaml%23
+> +$schema: https://protect2.fireeye.com/v1/url?k=8a40f68c-ebcbe3a3-8a417dc3-74fe485cbfe7-63f39e48f537ca7e&q=1&e=65af0c33-026a-42d4-92cd-09b6c91c9bfb&u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+> +
+> +title: Samsung Exynos Auto v920 SoC clock controller
+> +
+> +maintainers:
+> +  - Sunyeal Hong <sunyeal.hong@samsung.com>
+> +  - Chanwoo Choi <cw00.choi@samsung.com>
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +
+> +description: |
+> +  Exynos Auto v920 clock controller is comprised of several CMU units, generating
+> +  clocks for different domains. Those CMU units are modeled as separate device
+> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
+> +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI (32768 Hz).
+> +  The external OSCCLK must be defined as fixed-rate clock in dts.
+> +
+> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> +  dividers; all other clocks of function blocks (other CMUs) are usually
+> +  derived from CMU_TOP.
+> +
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All clocks available for usage
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'include/dt-bindings/clock/samsung,exynosautov920.h' header.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,exynosautov920-cmu-top
+> +      - samsung,exynosautov920-cmu-peric0
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-top
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-peric0
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: dout_clkcmu_peric0_noc
+> +            - const: dout_clkcmu_peric0_ip
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock controller node for CMU_PERIC0
+> +  - |
+> +    #include <dt-bindings/clock/samsung,exynosautov920.h>
+> +
+> +    cmu_peric0: clock-controller@10800000 {
+> +        compatible = "samsung,exynosautov920-cmu-peric0";
+> +        reg = <0x10800000 0x8000>;
+> +        #clock-cells = <1>;
+> +
+> +        clocks = <&xtcxo>,
+> +                 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
+> +                 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
+> +        clock-names = "oscclk",
+> +                      "dout_clkcmu_peric0_noc",
+> +                      "dout_clkcmu_peric0_ip";
+
+There was a review with clock name.
+Please consider modifying the clock-name by referring to the review below.
+https://lore.kernel.org/linux-samsung-soc/20231220150726.GA223267-robh@kernel.org/
+
+> +    };
+> +
+> +...
+
+Thanks
+Jaewon Kim
 
 
