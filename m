@@ -1,91 +1,131 @@
-Return-Path: <linux-kernel+bounces-242093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E33F92836A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:11:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6413F92836C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A445B214A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192E61F25705
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E1B13C8F3;
-	Fri,  5 Jul 2024 08:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD56F13C907;
+	Fri,  5 Jul 2024 08:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m+iYVyTe"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k0R4d9k1"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E91481AB
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB47481AB;
+	Fri,  5 Jul 2024 08:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720167074; cv=none; b=KsadiXFI80S/cIla21efV+7sVVqC0xZCEMQNEkZiMjvif3g0A7shXkijCUjJDll2ObVcrUha1yD+GWjO3Uk21HHga2F8q4oMYuye0FiZ31Nf6e+wjgvTuECKHN9TPXheRkA/mxgDE1R4/ROK7k/X4RCsbyBBxk7ScCEo8lf7Bpk=
+	t=1720167115; cv=none; b=YX+yZq2ESTbUs8PKzyuIEmciVaZb3LwzEZUDGhYQ3oZyjO6MPpq9uZfRycersNjnqSqKiiBI8E9cvWwkKVHobqdfBJAc5neZ++jskXx0bPqtg8WTnpRY7nqvDUtbgq5asYDDG/K9z2NOg71OEtF1t77LHH0LgTy1mbNEdNF0f4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720167074; c=relaxed/simple;
-	bh=gBqPfmddrH/OaT/vComJkfGDX4lFxIXlD55M1/sZb0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFe53pyD3+Tgq0sVnpwnqaml9yDmaTNSSK0Ph//7W554KaiAxOgf7iyHpDGgg2Qw4kVIQg2/ZkjK7OBHn4wfhZRdsoa1JfDkVUlxTFVDMCkt4jgabnzGaNMG/g/p+xItV+zxglg+Ekij5ppLLgOyeKl3W+Mna4AqV1Imp7tzHEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m+iYVyTe; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fTspDeJXWYWa25zTECERqTETokK/MNLva0Gqhr5gqqY=; b=m+iYVyTey7Jm9MaPKUbsk91cox
-	w6+heyZqJrc8j4c/eSjQPBxqZLL9ngfPG5t/wPhdWihp2CNPzt+HOY26+s1ZRV9rEs0AoPe/F09yX
-	j8r8naa+k/YLGcQtfYFJSnMv8fgy/txqh+Cxv2TF8k68cUMiVhDBBdwdD9xVACK8HW/3RDFIbdXCB
-	7MQMf0/Ey+gOj7awGCWyuZ1M2x8+rBhMQRsP9G+4TegfS9cQ/PEB8l4wO9WENnZjBvZjCBPoGMge+
-	nRPZBB0OfrbGESrd/T5kHrecbca87MFyA5lgMxgflJen4S7PD2h4poF2ITQh+uU9Me3xu1hbch5jq
-	bJ9n3u0g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sPe1t-0000000AJ0T-0vz7;
-	Fri, 05 Jul 2024 08:10:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B6F493005AF; Fri,  5 Jul 2024 10:10:52 +0200 (CEST)
-Date: Fri, 5 Jul 2024 10:10:52 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	oleg@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
-	tandersen@netflix.com, bigeasy@linutronix.de,
-	vincent.whitchurch@axis.com, kunyu@nfschina.com, ardb@kernel.org,
-	linux-kernel@vger.kernel.org, liam.howlett@oracle.com,
-	syzbot+a941018a091f1a1f9546@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [RFC] Signaling overhead on RT tasks is causing RCU stall
-Message-ID: <20240705081052.GA11386@noisy.programming.kicks-ass.net>
-References: <20240705075622.925325-2-radoslaw.zielonek@gmail.com>
+	s=arc-20240116; t=1720167115; c=relaxed/simple;
+	bh=Aj0m6t8GDqsHhAgXUzxgI6F12Xfm6vOntSjq+v8Fu+k=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JdSn8LZ3gpJB4VbUOxEQ+p+JfoFlxNXBzhteAvn7OEtXkRQ65M2giNsBD55rBsWILKEt1zuu0T1SIulXVEiM5SODmvri5N5/lQjh3JBWEdilPzTUpAWrHIEicl5hAMdpRCRWYUNEmOksaL9HPnrGJHsy53sWc/NhUdNseD678wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k0R4d9k1; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720167111;
+	bh=Aj0m6t8GDqsHhAgXUzxgI6F12Xfm6vOntSjq+v8Fu+k=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=k0R4d9k1T8mdsROZzkU9HtEXYxYzZe6bMlgmgkz+5WdFxt3rkdS2zx88DTZGS+Vap
+	 j+V3KLRGy/SKofIaLWaRExYjrWTANIwdAjaYiBBFuZot3PP2YzLaGGMRxb5g0MHZqU
+	 x6Ots4XX8Owe4bhA3i1AcbaLPlox5YJB3Pd6oURIwj8nQY0lNgkXPwdnmWc0jrGTG6
+	 bJcwaMqrxM8yJwKJQsL87449QRIIwiC3GekKEHOp2iNIJ50GUKKaW0Ycw7dfhjF/lQ
+	 z9r+fdyWOy/lS2dobpgpwSubfHkYUhMtKsqwdOx9mbBZo+Atz+WWv1RpYF4Mkocsit
+	 TUjkTo7i17Nuw==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 454AA37810FB;
+	Fri,  5 Jul 2024 08:11:48 +0000 (UTC)
+Message-ID: <b5c4d39c-a993-4929-af95-013e767fcdb1@collabora.com>
+Date: Fri, 5 Jul 2024 13:11:45 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240705075622.925325-2-radoslaw.zielonek@gmail.com>
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
+Subject: Re: [PATCH v3] selftests/timers: remove unused irqcount variable
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+References: <20240704024202.84726-1-jhubbard@nvidia.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240704024202.84726-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 05, 2024 at 09:56:23AM +0200, Radoslaw Zielonek wrote:
-> Hello,
+On 7/4/24 7:42 AM, John Hubbard wrote:
+> When building with clang, via:
 > 
-> I'm working on syzbot bug: rcu detected stall in validate_mm
-> https://syzkaller.appspot.com/bug?extid=a941018a091f1a1f9546.
-> I have analyzed this issue and here is what I found:
+>     make LLVM=1 -C tools/testing/selftest
 > 
-> When too many signals are sent to the RT task, the overhead becomes very high.
-> The task cannot perform its job and as a consquenece the rt_runtime (0.95s)
-> is not reached even after hundreds of seconds.
+> ...clang warns about an unused irqcount variable. clang is correct: the
+> variable is incremented and then ignored.
+> 
+> Fix this by deleting the irqcount variable.
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-I'm having trouble parsing this. What overhead becomes high? Is the task
-spending time in-kernel? Because if the task is spending time in-user
-handling all its signals, it should accumulate runtime just fine.
+> ---
+> 
+> Changes since v2:
+> 
+> 1) Rebased onto Linux 6.10-rc6+
+> 
+> Changes since the first version:
+> 
+> 1) Rebased onto Linux 6.10-rc1
+> 
+> thanks,
+> John Hubbard
+> 
+>  tools/testing/selftests/timers/rtcpie.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/timers/rtcpie.c b/tools/testing/selftests/timers/rtcpie.c
+> index 4ef2184f1558..7c07edd0d450 100644
+> --- a/tools/testing/selftests/timers/rtcpie.c
+> +++ b/tools/testing/selftests/timers/rtcpie.c
+> @@ -29,7 +29,7 @@ static const char default_rtc[] = "/dev/rtc0";
+>  
+>  int main(int argc, char **argv)
+>  {
+> -	int i, fd, retval, irqcount = 0;
+> +	int i, fd, retval;
+>  	unsigned long tmp, data, old_pie_rate;
+>  	const char *rtc = default_rtc;
+>  	struct timeval start, end, diff;
+> @@ -120,7 +120,6 @@ int main(int argc, char **argv)
+>  
+>  			fprintf(stderr, " %d",i);
+>  			fflush(stderr);
+> -			irqcount++;
+>  		}
+>  
+>  		/* Disable periodic interrupts */
+> 
+> base-commit: 8a9c6c40432e265600232b864f97d7c675e8be52
 
-That is, your analysis seems to leave out / gloss over the important
-bit.
+-- 
+BR,
+Muhammad Usama Anjum
 
