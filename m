@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-241935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E3A928183
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19338928186
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A71C1C227F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:50:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA341C22872
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812CE4CB28;
-	Fri,  5 Jul 2024 05:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C4D13C669;
+	Fri,  5 Jul 2024 05:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="kTSkqkyX"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihRNNYPO"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8006A13A88A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 05:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BD013A869;
+	Fri,  5 Jul 2024 05:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720158642; cv=none; b=RpE1Gg2JAA1SvooOIb0p/qkexP0rvI/DLAnelqVqNAK1ZZ0HihtYIykyU0ICJGk7M3URxAhCNwVJT0YPcRgWs5vE4TRs3GPfiOy3zN5uTKDgFkd1bEkNBcJZDeZxvtuwMT2ekEAt3OGy6/IbpipRvFuzHjFq0toensuJe0Xfp2o=
+	t=1720158656; cv=none; b=KCJXDtJC2y3auJrjAoUDEkcsB+RSont9ht/NL+/0pOGY9G2bRm3V+rmTWLzzxQvogCqOEHuJYbQ02OKkDiXlyCDKU7w8VE0VwnOuX1ohX1OwmBhRA5CKqf38iwo5qqoQl8G+XmlOpKauQVT9b5CkJ2ZXrxe8U1kn3+OxrdhslTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720158642; c=relaxed/simple;
-	bh=2wYzthuZ8kDfQUIPG5TCWw/ONYN+ILCr79+g50WweIc=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=fW256sEHxDqMd26LbpV3SPMdjL9wyyHUSjkwCjBTlRGL91qpF6y5Tl4Cncu0PvoG4nppXj+thbUaxlDbDNxK4U6dezOsYkehM/FYsMmp1eEBucRzIj/Pk5NnpsmIWhQm20GkF+TB2rkCshlhjXJGeuJbHHlgl7LEfzbdThK4i5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=kTSkqkyX; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id P0DksWvSUxs4FPbq5sm2PA; Fri, 05 Jul 2024 05:50:33 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id Pbq4sQpDgDweaPbq4sVMrh; Fri, 05 Jul 2024 05:50:32 +0000
-X-Authority-Analysis: v=2.4 cv=BcYT0at2 c=1 sm=1 tr=0 ts=668789a8
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8BM4xLTM5nKzOUQdiIzCZ4Dp7kjQR2h1ogwZ6shdbRs=; b=kTSkqkyXfKYj59Hu3ZSjwBPVXR
-	gbV1mx8qgzfjh2pkia36pSyyt8xaO0j6CG8E3TAH0YbpEXkOqBe+CezB1048RZuMv9mHB6CE7YhC1
-	XgBANAYIg5V3K7Ux27u6ERkYSZv6selWowp4EDGvXjKbaCWoV/gNkt8BcbtrRShaOjmf5v80dJVV2
-	Ksfyh7qblOIvX4NCkLSSg6bPj0BR0ekKDDBitWmRZwiH4ncHwoUzOWCe4lClpS5Z1dgv886487a9u
-	pzXML45AHwg+7KzAue+IyF/F4aE8lmxkb/gVLN2PETuoKmUW281Rws9VZ1eQgIQ24vm23F3b46A5Q
-	0okfvUsg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47186 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sPbq2-002jJs-0Q;
-	Thu, 04 Jul 2024 23:50:30 -0600
-Subject: Re: [PATCH 5.15 000/356] 5.15.162-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240703102913.093882413@linuxfoundation.org>
-In-Reply-To: <20240703102913.093882413@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <2f59541f-d238-5072-0e71-9b40ea1638f0@w6rz.net>
-Date: Thu, 4 Jul 2024 22:50:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1720158656; c=relaxed/simple;
+	bh=JrLj91YPVZpy2XkIrYFYm75kBGBGgkOBeCe9zPn1RlU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TyT2TYjoCoFwVLDLqdi90fsKQrZOKpuhm2bjtgq2U30VzuIiGNi062K50vHoOrciGNbE1H1t2A/GCOYRXyT7XTKP6GUNWPSH2c+bIS0A+IGp//v2QQ/Ai0cS0mrlIk8d71cs4oPn3kh2lqNKH+JwgTFiVAZTT0AdUxWdJtVLa/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihRNNYPO; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so15418781fa.0;
+        Thu, 04 Jul 2024 22:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720158652; x=1720763452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tbiPVN/BaSDz+daEINbCMF5/eDCLCv2CP3RxKuEyuuY=;
+        b=ihRNNYPOioYPJddJC6O9E4vd9nGqxz4xnMlDUMl+CM0ztiXBazDpELnOrXRQWE3g32
+         F9HVXDN1Be/ACsK21+QnUzjlLP86y4zUqnMwexNtL45ucvfeuCEqaq5KDTmRGBK+Gn3f
+         CtxJozmh9WlSf1PpdENsZfg8bs3pUWdjM48e9WyKufM3C79KEdam2BzfRqOFZ6pJyhpj
+         A5ebDL0HYxv9nKTBJd3Qclb5Krj+ZVqINAO0H1IJVPll4huw4c0CKmpextmeh/N/Uvcr
+         N1DQEHTtkUAZrjm75C8/HPPY1KoilfKTKqDpNayvLh9pHSjxsO2ID3k1X/EN058p8k47
+         Lncw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720158652; x=1720763452;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tbiPVN/BaSDz+daEINbCMF5/eDCLCv2CP3RxKuEyuuY=;
+        b=WcNly0YOECsvf63zHjspLKa8ga6FH3396kiPgU3ReCqE2NEQasY+aXA0e35g2YbgQQ
+         PLIb+Svh5nXN3NrhjfD6Yh1nL3L5ChgsQWtCgqzfNB0lZgo6UpuTByxq1LA3NrUpsBpg
+         fNvsr0ihKQOlny1iQP2PxPOTGgN20NrfcHPLiyGlGD2uAuy3cpuPT6m30j+ikPEeXJ2A
+         5vQwmF1RENA/SKXSNyhC7Nw5wLrb4jqxac4atLM5L/Ob8hRN7cxkQwZPc13h4Jmh6QfW
+         /ngJybz6nPP5wkRcB8OlG72K4SoZYXMrs0Q2+JrcyY0Coui6+FVHlwJBRgpP0xDwhfxD
+         74ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3tuCrbj5Fdx1sQssxhHedMVpTdMfFCKze3v5s+bZ2sCtHXc17uEV9aT2o+2TRkOBTNqZdRxlQAcudep9LSctWmfBZFUJA7ym47RhoVYb+LGKbjPd/k5p/+s5xs5SR58nm1D0vTE15M/+7iJr9
+X-Gm-Message-State: AOJu0YxXu6qWpAJ23JpuNOr15lYe8/7ZQanO0KLZxVGit8VL2HvQsweq
+	cGmnDimRm9PG9eAUs0qjBTcGVIQMueKuKkmHKs3NK5GTaKNXfnf0
+X-Google-Smtp-Source: AGHT+IEpL0Mf1EKOoiMjLyxqd9bytkbdSwdDuZnIv53bLozrxliwMa2PYXZdfQHo1c1KgldzxRAFXQ==
+X-Received: by 2002:a05:651c:19a2:b0:2ea:e98e:4399 with SMTP id 38308e7fff4ca-2ee8ee01aa7mr30757671fa.36.1720158651428;
+        Thu, 04 Jul 2024 22:50:51 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee8cabf202sm5086491fa.99.2024.07.04.22.50.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 22:50:50 -0700 (PDT)
+Message-ID: <20ce567c-d3be-47e1-8e73-749756204b43@gmail.com>
+Date: Fri, 5 Jul 2024 08:50:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/24] mfd: bd9571mwv: Constify struct regmap_irq_chip
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Xu Yilun <yilun.xu@intel.com>,
+ Tom Rix <trix@redhat.com>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+ Andy Shevchenko <andy@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Tim Harvey <tharvey@gateworks.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20240704-mfd-const-regmap_config-v2-0-0c8785b1331d@gmail.com>
+ <20240704-mfd-const-regmap_config-v2-9-0c8785b1331d@gmail.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240704-mfd-const-regmap_config-v2-9-0c8785b1331d@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sPbq2-002jJs-0Q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:47186
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJIUA/whBFuYE19LEeybbL5OEjSRvFIwW8pOHuFa9T6+iBpA8IUBzG9eUHAXxFKHv5P6qTqYd+S+39uQ+C5puD22jBAB5/XMWqF5sjkbpyw7nmXiusRR
- ygZvraMmSucJHsnsskrDxDGiptiqsvBBkq2cexFtyb3XwHWW/AA/GJF482pVn1UqpV7Gcghs/LxFPOlEZEPqCp+owyx8aQQiR0A=
 
-On 7/3/24 3:35 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.162 release.
-> There are 356 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 05 Jul 2024 10:28:09 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.162-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 7/4/24 20:23, Javier Carrasco wrote:
+> `bd9571mwv_irq_chip` and `bd9574mwf_irq_chip` are not modified and can
+> be declared as const to move their data to a read-only section.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Tested-by: Ron Economos <re@w6rz.net>
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
 
 
