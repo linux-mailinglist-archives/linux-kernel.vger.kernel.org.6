@@ -1,122 +1,78 @@
-Return-Path: <linux-kernel+bounces-242367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B8692872B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F944928727
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF7C1284EE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:54:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC97284F69
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324D8149C6A;
-	Fri,  5 Jul 2024 10:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD822148FFC;
+	Fri,  5 Jul 2024 10:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KCZluO5A"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csVwHVGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0489414830F;
-	Fri,  5 Jul 2024 10:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD93148823;
+	Fri,  5 Jul 2024 10:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720176836; cv=none; b=J8SzQUn0rreRu/WefHlHjXK8JWCYR0v/5EbAyWxEEvM1uF3SNg7Nqq0mcNDOD1UnHkbCCd2pkiQ5mdkqRAnD9F9R5acbK5HJw+TWA0jLTzmN8QStk7VoJAOapFnCRXJwGuym2RielhjChyvMv/oI4K0abvuCjx3K5eijunjl8qs=
+	t=1720176828; cv=none; b=VDCNDDdbbRVwtU/t9PLqmZnujzezCnjDOU7aUeqoY58ay4/B70OpiJU6sQHyFdk7YJGCCeCraEqZmSUTUPcxBvCKxJv2+o5MdeHJZ0EeUBv0RVT2iqhuYdo3ALdP4AT2mrb8Tc0MJk+YQKpZCmGAO2YmYwF3c0ZCcFYOPR8lmEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720176836; c=relaxed/simple;
-	bh=2stfKDi4zdLvWSg/XyKFLqH4vN1cPEdc4pHKpXnEJco=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TRvdNZS59nOnYb1LVmQ+Vr8YFkyt8M8drl584kFJ0ArBrG+kHQF5pk6FazT5bSmYX+UVWKmRNQfxS0Nvq6cvZ/mE/DNBjqqpfNluaVAefL532kVMYORsfGw/vZF5e4kAu42soC/LSNveCKqXiTrWOiWHQwcnYpsZuHd2+t2TbVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KCZluO5A; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so1866405a12.0;
-        Fri, 05 Jul 2024 03:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720176833; x=1720781633; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fa49I3iE1wQ4SthXXa3RTe18/oZxwxjdSbyZ7Or2N3o=;
-        b=KCZluO5AAkj1CudQ0s2CxYdLG8gfS00mX0y0GNwGCPAU4FCC3yXCcot/+NqtyHepBm
-         YJJL4Duo8EOdv6G8XqF6guOlPATkPB8oXppTP4niXhcFU6+erP9Vd05KsOpH/4dAl9Sh
-         R3gGxn0EbBfdiIOziuMxxlwy5y21c0eCpju371Ao64j7R88tSP2Od9LHvMPL86ot6zLJ
-         AUyy1eV2yo7T82GCJRHPZrJuYbLeoX8PvObQJbIf2xE0Dq+2xEz4BCcYljLcMcHKPXEz
-         xeoxNtQZ15m45LBV6EGLwuggVpZHK9E/eDvqBQ4y8LXwm2YNW5kQkBW1e4ggrPGp0Wdn
-         +zvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720176833; x=1720781633;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fa49I3iE1wQ4SthXXa3RTe18/oZxwxjdSbyZ7Or2N3o=;
-        b=EyC9N3BceivqSTyXuKm/H/+6QPx6mAvlbQ1Pq6TKLu/O2PsWTmtQAM83X0Q/2V/0wz
-         O2aRSvsbC5XgJXiujlRURJZd1aYpeNXSqbZ7v8a+P2B0Qj0KT74RKfeuakQyPNlF2WFf
-         ugsk+4058HK2DU6So+LOXe4q8gx6IFgkLNaY7tx4PlCJ0TSwfrycnTWEirpZ4MbdVqm2
-         CX6hUGrmldVSmE99ghcDw/t2onGF9ZEDL19iM+CW3znJjVKGNI9ScqAWHl0E4H4GpLQi
-         xgC/JXBXjMwlqdrYKJuWqkFuz0pYyeYGvWQxQMPLld070fzMnljRe5XXcY2kWH+N1/BC
-         JM3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXGjs2Oqf6jO+Lxd2aT5l9TM0+GH8gDOtELN9pdLEyxn5VTEBBsBo9sV8vDUXbkQc3Yd7oapLEhChWYylhWIgTkgelEjrSoLrM/SP+I
-X-Gm-Message-State: AOJu0Yy6ihREpq6XiM2Sbuf4iD4y2CluX03bquU+QRu0jVdTT77LtO3C
-	AsyrtVRXMrmAbFOF/PqdeJaOSHez1U+yxGHkvcna6eIF9OxIzSGHuDSi7i5i
-X-Google-Smtp-Source: AGHT+IE0Or0HaCZJV2Sl7bbJ0tkXljV6cpf/PiySAqOIlOMK9IhOLdcrJLAgeFlczk3qarrFehBhBA==
-X-Received: by 2002:a17:906:1b51:b0:a77:c13c:2170 with SMTP id a640c23a62f3a-a77c13c2275mr198373266b.77.1720176833221;
-        Fri, 05 Jul 2024 03:53:53 -0700 (PDT)
-Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1bbcbsm670756266b.36.2024.07.05.03.53.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 03:53:52 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Fri, 05 Jul 2024 12:53:50 +0200
-Subject: [PATCH 1/2] media: i2c: tvp5150: Constify struct regmap_config
+	s=arc-20240116; t=1720176828; c=relaxed/simple;
+	bh=deZ5CVzki2dlQ1nDscybgPumpHVNxsbMWwIchAdcmkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xqjsp6Yp9zx2Ho+dQcJKzS6TaHEpSh6NPk+p3iLJtcfJRi1ENTEB6CSCUBZmBGVY+W9YG6dw5LAQDGv+MBro7jt8x3qOoSL3FbxetolIPIa+WpXM1Wcx68tYEKof9+zb5x0LpooQFfX6LrQFM4g6uNWHagLaFPFiIVhB0/zsvtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csVwHVGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DA67C4AF0F;
+	Fri,  5 Jul 2024 10:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720176827;
+	bh=deZ5CVzki2dlQ1nDscybgPumpHVNxsbMWwIchAdcmkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=csVwHVGT0qIEKP81HIkI7H373oS6WdQcSDvc17RPERcwdxU9p8otnjJYWtaFaWiW/
+	 ljzgwPGF7Ud6Su2g0NSnLya6NlNkMc9HBMZjqZt9H93OKRwRYR7f11E1DLuFGobzET
+	 BY23GCTRXouM2+HWjATQ73JiPue6gbjLdE3U1UMfHmrJEtREl9cl65BUsjf1l4BbTO
+	 eeXQhXl/hOmntyMp3qMnzKni6Gpg41NN+MxN1FOut5AYCnBP5cEL8xwYLNVSTGHTw6
+	 5yIxn1JpFQYHRgqnzVYyS2loXL+YtfH7h7TsR70VDx0QAZJHWqtBFrFLoETIiaCJzE
+	 67PPORvysyQ7g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sPgZa-000000006nP-1sJC;
+	Fri, 05 Jul 2024 12:53:50 +0200
+Date: Fri, 5 Jul 2024 12:53:50 +0200
+From: Johan Hovold <johan@kernel.org>
+To: vanillanwang <vanillanwang@163.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: option: add Rolling RW350-GL variants
+Message-ID: <ZofQvjc0T6RXFOMz@hovoldconsulting.com>
+References: <20240531024012.29805-1-vanillanwang@163.com>
+ <Zn0SY4nQzESrQ4xw@hovoldconsulting.com>
+ <5273fe7a.9647.190823077a9.Coremail.vanillanwang@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-media-const-regmap_config-v1-1-56881442bb30@gmail.com>
-References: <20240705-media-const-regmap_config-v1-0-56881442bb30@gmail.com>
-In-Reply-To: <20240705-media-const-regmap_config-v1-0-56881442bb30@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Michael Tretter <m.tretter@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720176831; l=781;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=2stfKDi4zdLvWSg/XyKFLqH4vN1cPEdc4pHKpXnEJco=;
- b=c2fFWb7PWWA26Ukmz3bsWMhGOG+jrdensjvPrqXq3Coyl526WnuMF9wAqUZJuQbF4JIjDBjpj
- bb/KcjY4sKHANs7Ulf/gVjTQfrej+SAF3DhRkyP76d2jIwzjk/wlJ7C
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5273fe7a.9647.190823077a9.Coremail.vanillanwang@163.com>
 
-`tvp5150_config` is not modified and can be declared as const to
-move its data to a read-only section.
+On Fri, Jul 05, 2024 at 05:18:52PM +0800, vanillanwang wrote:
+> >Can you be more specific about the other interface?
+> 
+> Hi Johan:
+> On usbmode=64, the ports are: 
+> 
+>   MBIM(MI0)+GNSS(MI2)+AP log(MI3) + AP META(MI4) + ADB(MI5) + MD AT(MI6) + MD META(MI7) + NPT(MI8) + Debug(MI9).
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/media/i2c/tvp5150.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok, thanks, I'll amend the commit message with this.
 
-diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-index 64b91aa3c82a..3205ecd60281 100644
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -1812,7 +1812,7 @@ static const struct regmap_access_table tvp5150_readable_table = {
- 	.n_yes_ranges = ARRAY_SIZE(tvp5150_readable_ranges),
- };
- 
--static struct regmap_config tvp5150_config = {
-+static const struct regmap_config tvp5150_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = 0xff,
-
--- 
-2.40.1
-
+Johan
 
