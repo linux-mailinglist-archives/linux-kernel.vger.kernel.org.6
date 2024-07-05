@@ -1,46 +1,73 @@
-Return-Path: <linux-kernel+bounces-241933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9B192817E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CE5928181
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB1D285DD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:47:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30700285B7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4243F73469;
-	Fri,  5 Jul 2024 05:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA2513AD31;
+	Fri,  5 Jul 2024 05:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VmvVsvFH"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cakBE4R3"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C714225CB
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 05:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1F013ADA;
+	Fri,  5 Jul 2024 05:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720158465; cv=none; b=KLlSsyd/HoeB7PoLr4edvfXF+ua8n2D/KjnEscxphDNaMqc+62EfAV5iE6K99sXK2IfOm/xm77YrwvSQbY+tRib6OEgF0a0IZ1UXuoYqfNKBA6PtcuhJIuw7pYzF6n6+DVCFXbz3nYBqIoLaP2hjgqtzmGoMgd2sjQwHorkjz2s=
+	t=1720158536; cv=none; b=juvcfxKx+YjVFasiyvakFzlF0BxEoTJj0TYNo5qL4dp7qBm+QV7fDrQlqWMD3pAbV8LVwOLjwBbvAx5Cxq7mO6YHiJoCB97SBVyHETEugfSTw5veQ9BenR9UNpiQC99IUiji0++29nNKZDGOv2gl5zxX/gICEx/yEIV4UbWTbys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720158465; c=relaxed/simple;
-	bh=+Mq9I+DXkuvzGrQQfmuECJOhm2fF8qxp45ga50csDXk=;
+	s=arc-20240116; t=1720158536; c=relaxed/simple;
+	bh=2xXlsoTymeXdtVXdGZypDHiA+INDaREfHMbB8LwbGHA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gI0VsYkyX34zEkHgmkr2Ikoxxoq68i1JF5WXe0w8lE0Q72qr59UdE92NhMAHHaamIa6Ke96dyXYV/cJaYYnysz66nlIz9k630ah7eGhGbqcllvnxxpvZLNxPUH5ltQg20Yr5eJlosl3HpapPacYwWj3wSOjkQtVHpbv8sx9vTgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VmvVsvFH; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720158460; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=aTMIFrktR6P6sKfiFco3hO79I2IAEdcVXmBy69Wcmgk=;
-	b=VmvVsvFHFK3fz3lFcs3RWcLKgoYFloz+yiRMxTUxDG4VRJEylxhxcH1ArV5btAXzrR6mGfctb2xV+b3oGIM4zEBCGAckWkij2lAOx2xZTaZU80lmaPIx9FzR3Iz9EKOPi7R3/HrK6iGqmm7eoRbqiRBCQJRn1Ej68B8e7N48M84=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W9tt65s_1720158457;
-Received: from 30.97.56.65(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9tt65s_1720158457)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Jul 2024 13:47:38 +0800
-Message-ID: <e08b8245-bc8c-4a18-a1e0-53a139258826@linux.alibaba.com>
-Date: Fri, 5 Jul 2024 13:47:37 +0800
+	 In-Reply-To:Content-Type; b=D9wmlIE+Yjz2DOhyL2UO9Fqd0xF/7Uc3PSv6l4MK/nsoqvjp0iEcgLMBE/0y0jcL5MBmQOd4jxiZao6I9JNlkH2WgLgMV66o+ZcB0ZxrFMN5yrp/M9LunPYst0MiWkgrgZBCxSv51NnLjSnr/lX3UwKdEoNKXze+avGclEueqOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cakBE4R3; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ee92f7137bso5899351fa.1;
+        Thu, 04 Jul 2024 22:48:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720158534; x=1720763334; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WdzePDvp+BZunFZcEzbg9ryWVygXOO8G3bu/1oy3U1g=;
+        b=cakBE4R38xWQp6pj5zFrJf8Z5pBHUhY2m5+N1e/DywJa+mOD0z2UfRpyCgdLyj9Crz
+         GroO3U8wETPjirnW61XsZnlrE56kKFJTalyN8WDbBBfx24PYTelMdKzSitbizFbO2LE2
+         kkVutpC14lm7VZD7BuMtW3WcLbce7xSq97vNzJM7kD43Od8V4VErI/iphlaGguAnCL9Y
+         hLYxN8nb91rfRlxeVaP+Z42jcHDNHvdTh6hQpgnV4fg/f3a0I6JfGe+lsiPUzyUHw96c
+         AcNLjE3NOemHwuVUd75eXXNDR4DzEfWouGL3UohA+go/wA7aNGDtq19i9J90er9ocNzL
+         x1AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720158534; x=1720763334;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WdzePDvp+BZunFZcEzbg9ryWVygXOO8G3bu/1oy3U1g=;
+        b=uDDOeynOL7ukOP9IX3J2yBC531DFpIRJl74IAJTPbjdZIIVF0kaS6FD7ErV+cRbtN7
+         rykNF5tGLM68dUk4lmZDI07HQXXr0s0Hj21dKYDfh9Ls+9kioUBRed0Wx61MVRHm7Lre
+         6fUWHG9q6aYApfvCDVh+qaY0Dnve+MUDt0bw8qgBRjhYvLLAoSmrT9Fl1jT7FZ/qm3jy
+         KWk183MnqBG8XJqebz9ISu2h2+BvZZbKj6JMvID2DvaYiccmqIOGVaSYK97XbQEIE/CZ
+         VQu/YMw1B6lUyIcCs+UzbR9uMVkDl/J0b8OrcdRfsOrKbJUKG00VkgzTRzaaYRR+4qTa
+         rAqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVURozB12So5kuHZKOq8kjImP5kG0fJcgNQi/nYyd/iJPYGwnHa13JO/EFyS4ZrIM9o+4IvV4llDA4E+kxIYSx5l/6HrCEfnBKXPehVI7wM8UFNVpCvWvvaa9TxrnbJcqA4rT4YtvD84geLbvWH
+X-Gm-Message-State: AOJu0YzYuQtA24cnhOvEI4XICOaJCO6nY5JKIpqHI0CFDbesfh4eSnXv
+	RaRkLD4fg0bW4zWw4z2d7lXGX5FJw9ufnya2gdMPoMDm9CpvEakD
+X-Google-Smtp-Source: AGHT+IHy5HQfUA8D7qIJnq8EpH5PvPiRX2gESm+xurT8dL43q61PTzq7H+k6IGRQkbVSwzLIZRkh4g==
+X-Received: by 2002:a2e:8183:0:b0:2ec:52da:6070 with SMTP id 38308e7fff4ca-2ee8edff093mr26391741fa.42.1720158533029;
+        Thu, 04 Jul 2024 22:48:53 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee51695feasm25657891fa.131.2024.07.04.22.48.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jul 2024 22:48:52 -0700 (PDT)
+Message-ID: <c487772e-08c6-4b30-af27-b32d6f5f176f@gmail.com>
+Date: Fri, 5 Jul 2024 08:48:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,59 +75,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/6] add mTHP support for anonymous shmem
-To: Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, wangkefeng.wang@huawei.com,
- ying.huang@intel.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
- shy828301@gmail.com, ziy@nvidia.com, ioworker0@gmail.com,
- da.gomez@samsung.com, p.raghav@samsung.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <ZobtTmzj0AmNXcav@casper.infradead.org>
- <27beaa0e-697e-4e30-9ac6-5de22228aec1@redhat.com>
- <6d4c0191-18a9-4c8f-8814-d4775557383e@redhat.com>
- <Zob8xI-LWe9H_iJs@casper.infradead.org>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <Zob8xI-LWe9H_iJs@casper.infradead.org>
+Subject: Re: [PATCH v2 14/24] mfd: rohm-bd718x7: Constify struct
+ regmap_irq_chip
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Xu Yilun <yilun.xu@intel.com>,
+ Tom Rix <trix@redhat.com>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+ Andy Shevchenko <andy@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Tim Harvey <tharvey@gateworks.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20240704-mfd-const-regmap_config-v2-0-0c8785b1331d@gmail.com>
+ <20240704-mfd-const-regmap_config-v2-14-0c8785b1331d@gmail.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240704-mfd-const-regmap_config-v2-14-0c8785b1331d@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/7/5 03:49, Matthew Wilcox wrote:
-> On Thu, Jul 04, 2024 at 09:19:10PM +0200, David Hildenbrand wrote:
->> On 04.07.24 21:03, David Hildenbrand wrote:
->>>> shmem has two uses:
->>>>
->>>>     - MAP_ANONYMOUS | MAP_SHARED (this patch set)
->>>>     - tmpfs
->>>>
->>>> For the second use case we don't want controls *at all*, we want the
->>>> same heiristics used for all other filesystems to apply to tmpfs.
->>>
->>> As discussed in the MM meeting, Hugh had a different opinion on that.
->>
->> FWIW, I just recalled that I wrote a quick summary:
->>
->> https://lkml.kernel.org/r/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com
->>
->> I believe the meetings are recorded as well, but never looked at recordings.
+On 7/4/24 20:23, Javier Carrasco wrote:
+> `bd718xx_irq_chip` is not modified and can be declared as const to
+> move its data to a read-only section.
 > 
-> That's not what I understood Hugh to mean.  To me, it seemed that Hugh
-> was expressing an opinion on using shmem as shmem, not as using it as
-> tmpfs.
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+> ---
+>   drivers/mfd/rohm-bd718x7.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> If I misunderstood Hugh, well, I still disagree.  We should not have
-> separate controls for this.  tmpfs is just not that special.
+> diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+> index 7755a4c073bf..25e494a93d48 100644
+> --- a/drivers/mfd/rohm-bd718x7.c
+> +++ b/drivers/mfd/rohm-bd718x7.c
+> @@ -60,7 +60,7 @@ static const struct regmap_irq bd718xx_irqs[] = {
+>   	REGMAP_IRQ_REG(BD718XX_INT_STBY_REQ, 0, BD718XX_INT_STBY_REQ_MASK),
+>   };
+>   
+> -static struct regmap_irq_chip bd718xx_irq_chip = {
+> +static const struct regmap_irq_chip bd718xx_irq_chip = {
+>   	.name = "bd718xx-irq",
+>   	.irqs = bd718xx_irqs,
+>   	.num_irqs = ARRAY_SIZE(bd718xx_irqs),
+> 
 
-But now we already have a PMD-mapped THP control for tmpfs, and mTHP 
-simply extends this control to per-size.
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
 
-IIUC, as David mentioned before, for tmpfs, mTHP should act like a huge 
-order filter which should be respected by the expected huge orders in 
-the write() and fallocate() paths. This would also solve the issue of 
-allocating huge orders in writable mmap() path for tmpfs, as well as 
-unifying the interface.
+~~ When things go utterly wrong vim users can always type :help! ~~
 
-Anyway, I will try to provide an RFC to discuss the mTHP for tmpfs approach.
 
