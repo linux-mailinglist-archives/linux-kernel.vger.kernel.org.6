@@ -1,142 +1,171 @@
-Return-Path: <linux-kernel+bounces-241898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8C09280D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 543389280DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CEB31F2571D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498251F21D9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7264249654;
-	Fri,  5 Jul 2024 03:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30961CFBD;
+	Fri,  5 Jul 2024 03:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="R+eDdP3D"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="be6+zIDF"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB794405F8
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 03:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B0A14AA0
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 03:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720148484; cv=none; b=Er9ZS6KXpJiRqXmIYEyiUwmnPMqTbcR0gdowGTO4jVXxFIeerq+kAAvSt+Di6AZr77I2Oqvyu8kcH/dNx+VY9uQsRgf7nJ4N82W9WuJFmtP2NzckQoa85UiaqdAVFkwnJsAHW1u1w1aycNILyJfQHYaCTt2AyoxEKLr70gh/clA=
+	t=1720148874; cv=none; b=BFbbWpS8THSOLiemyPvAAORTUT23Ue2KJG28VehWJ/q1Cdi3jYseOjDTaCYe7ENlX1qqaVVlaODhCt4y08mZUynlPDPP8tF4FU0kQjPfRUtMvuauWcAK+zQH6eHo39Sagto8nBWNayS13KLmlJu1cEfFZoF2xvKqP+LvdJRHixk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720148484; c=relaxed/simple;
-	bh=Rby4W6dT5vYCFMwd+iCGfbKcFb0WKw73+FI15LqfUj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fQyuyS9HBYZLaV/sKnCZKQVe5n8aeZMkdR1hJwMD6F8JPfLNEBcCFzY8N7AC2faZJn5WDe6nC+IyNHvfINYI1jhqLxxPhexImKarfeDphqAymAHEYGf0Me05cLdPmRa05wFmOZNBnO9Rfz4TEgq8hIFiALLJgmkyjDvqRAPY1oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=R+eDdP3D; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720148474; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=RXHUr7dIEjsbQruRykvzvbQCHWUjTYhMyKV4za3Jfiw=;
-	b=R+eDdP3DAc7LhtfsB8hgGws+ruccWiJVX6vZzNgs39tICAAfFe1kxhUsd5F3VC/YAhQ0mclpmx7qDEQE05UefMmYV9xtRqS2sClSl9yJ5H9M1GvR2BBzrUU1RfnoOlCweE49O2ldWE+A8Bjqs+SV1sPFaYgGb8zTpEabqcF5+ms=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W9tBVtX_1720148471;
-Received: from 30.97.56.65(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9tBVtX_1720148471)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Jul 2024 11:01:13 +0800
-Message-ID: <076550c4-0e8a-4344-9f8a-31ae9e1051b5@linux.alibaba.com>
-Date: Fri, 5 Jul 2024 11:01:11 +0800
+	s=arc-20240116; t=1720148874; c=relaxed/simple;
+	bh=B8I00wah1b1RjJ14IHjpTpKot9oqn+yYV05RMahbZ+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=O1aCsBbeRLXVuAZDvu6tDGA0IZ4WNXhRSvH+M1om9PZg38oRVrNOSfxWBle3fpXfykRqZBMcQEdZz+9cjBDQIgruGCP5tPCL/xSt4qQ8BQ6rk/zBc5S0TEurCHDtuE7d+HwhUaS096TNoE9IanlGwxClz7UMjkDaID+a3oBU9LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=be6+zIDF; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240705030750epoutp03541545ffd87922afc6283f01ca186984~fMkizgxXw0984509845epoutp03R
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 03:07:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240705030750epoutp03541545ffd87922afc6283f01ca186984~fMkizgxXw0984509845epoutp03R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720148870;
+	bh=97qCgmshFC+7o4y8RJVAn1bwJb4Z9ejodBb+8YgwA4M=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=be6+zIDFHosmKLOcJSn2TTNyXmBB8Zye9L8QV8X9ZOvoXX3WfeW7vuXWBFE63ZhPu
+	 Q6nDDchst6fN9RJRUP3jwjQ7pCrlrKYrAundwcCzxKh0bVe+bRerbiRAWz1xDRRdzn
+	 V9Sx4ak7SWUzh1j3civO7uRK53rCW/u4XQ2E0vuc=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240705030749epcas2p18081f08de4eb300e3d2a3027e11fed31~fMkiTUqDE2357623576epcas2p1W;
+	Fri,  5 Jul 2024 03:07:49 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WFdjx4RLZz4x9Pr; Fri,  5 Jul
+	2024 03:07:49 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	71.9B.56241.58367866; Fri,  5 Jul 2024 12:07:49 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240705030749epcas2p2636f10f34f3642de34475987c724f9f8~fMkhcOOwU2175321753epcas2p2D;
+	Fri,  5 Jul 2024 03:07:49 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240705030749epsmtrp27ce6e2517d7276df4f44161c1c3e0fc3~fMkhaoMVC0827608276epsmtrp22;
+	Fri,  5 Jul 2024 03:07:49 +0000 (GMT)
+X-AuditID: b6c32a43-c03fd7000000dbb1-18-66876385da6f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	17.35.07412.48367866; Fri,  5 Jul 2024 12:07:48 +0900 (KST)
+Received: from [10.229.8.168] (unknown [10.229.8.168]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240705030748epsmtip216096e6674c2c9f1aef16948eeec7252~fMkhHNXD90097100971epsmtip22;
+	Fri,  5 Jul 2024 03:07:48 +0000 (GMT)
+Message-ID: <494ac55c-7bd0-79a9-8a56-21aaf0611f81@samsung.com>
+Date: Fri, 5 Jul 2024 12:07:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] mm: shmem: add mTHP support for anonymous shmem
-To: Bang Li <libang.linux@gmail.com>, Ryan Roberts <ryan.roberts@arm.com>,
- akpm@linux-foundation.org, hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
- ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <65796c1e72e51e15f3410195b5c2d5b6c160d411.1718090413.git.baolin.wang@linux.alibaba.com>
- <65c37315-2741-481f-b433-cec35ef1af35@arm.com>
- <475332ea-a80b-421c-855e-a663d1d5bfc7@linux.alibaba.com>
- <a3910f60-6e2e-4ede-b3f3-47d8dfe9f23b@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <a3910f60-6e2e-4ede-b3f3-47d8dfe9f23b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+	Thunderbird/102.11.0
+Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions
+ for Exynos Auto v920
+Content-Language: en-US
+To: Sunyeal Hong <sunyeal.hong@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+In-Reply-To: <20240705021110.2495344-3-sunyeal.hong@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmmW5rcnuawZorChYP5m1js7j+5Tmr
+	xfnzG9gtPvbcY7W4vGsOm8WM8/uYLC6ecrU4/Kad1eLftY0sFk3L1jM5cHm8v9HK7rFpVSeb
+	R9+WVYwenzfJBbBEZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5
+	+AToumXmAN2jpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwL9ArTswtLs1L18tL
+	LbEyNDAwMgUqTMjOmH/1BnvBZ/aKhcsOMDcw7mbrYuTkkBAwkfh89xhrFyMXh5DADkaJGdc2
+	skM4nxglTr5+zwzhfGOU6LnRwQTT8urTbRaIxF5GiRNzuqGc14wSkw7sYgGp4hWwk9jwfimY
+	zSKgInF3/01GiLigxMmZT8DiogLREq3L7oMdIiyQKPFx/36wOLOAuMStJ/OZQIaKCCxgkji/
+	ay8rRCJBYsnhD2ANbALaEt/XLwaLcwo4SDw99xSqWV5i+9s5YHdLCEzlkLj+6i0jxN0uEq2X
+	LkPZwhKvjm9hh7ClJD6/2wsNjnyJtitnoOI1EhsXXIKqt5dYdOYnUJwDaIGmxPpd+iCmhICy
+	xJFbUGv5JDoO/2WHCPNKdLQJQTSqSdyfeg5quIzEpCMrmSBKPCROnS2dwKg4CylQZiF5fhaS
+	X2YhrF3AyLKKUSy1oDg3PTXZqMAQHtnJ+bmbGMFJVct5B+OV+f/0DjEycTAeYpTgYFYS4ZV6
+	35wmxJuSWFmVWpQfX1Sak1p8iNEUGDUTmaVEk/OBaT2vJN7QxNLAxMzM0NzI1MBcSZz3Xuvc
+	FCGB9MSS1OzU1ILUIpg+Jg5OqQYmy49afjbv1G/x5ot+KjmSEB2rbBqzyUC1tzx4cqBXx4NH
+	smzHfTt1egwDg66d9L72fF+8WsJ9x6Jp/GfdxVvcn+j8chBdkdn3O4Df/tCD22fesk4/3MV5
+	+WpCYs5bbZe0w4fapz9TeLF7o9sa0T91ocf47V5b7+bqOMFumKdVun29jE9MX0v79ZjYT+HG
+	B4OP/HJcMXHTZQ2zbyVF1+cLXOURLPhg+mSp7+SGg0sv/+ou4d6cPqPOgyNo03UT/pudNVu9
+	CtsWLDhZ/TN88dzUJfOeLVA8cC5s36Zf/g0r6uINdAXPek+eUxt/1UE29llg9qLrGY1r5m/+
+	8CjyttJ0H1OJwyl/U0T6Em+Iv4hRYinOSDTUYi4qTgQAXNe5GjMEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42LZdlhJXrcluT3N4PRDM4sH87axWVz/8pzV
+	4vz5DewWH3vusVpc3jWHzWLG+X1MFhdPuVocftPOavHv2kYWi6Zl65kcuDze32hl99i0qpPN
+	o2/LKkaPz5vkAliiuGxSUnMyy1KL9O0SuDLmX73BXvCZvWLhsgPMDYy72boYOTkkBEwkXn26
+	zQJiCwnsZpRY0pAGEZeRWP6sD6pGWOJ+yxHWLkYuoJqXjBIP385kAknwCthJbHi/FKyZRUBF
+	4u7+m4wQcUGJkzOfgMVFBaIlVn++ANTMwSEskCix+FwgSJhZQFzi1pP5TCAzRQQWMUnMW9LG
+	DpFIkLi/FeQ4kGUnGSWOXlsPdgWbgLbE9/WLWUFsTgEHiafnnrJANJhJdG3tYoSw5SW2v53D
+	PIFRaBaSO2YhWTgLScssJC0LGFlWMUqmFhTnpucmGxYY5qWW6xUn5haX5qXrJefnbmIER5KW
+	xg7Ge/P/6R1iZOJgPMQowcGsJMIr9b45TYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv4YzZKUIC
+	6YklqdmpqQWpRTBZJg5OqQYm53K51JYDUvESb1Ts7m/aLrJXKHBqqVTtnQlMh83vK2toMjTq
+	FYm3rb+YcPr0ya8v969ZzFFbGqXM3rphOU/NG6aeHQ/5uwzCL+pxp+nqLL/U9t2kYY/5mYvW
+	vAvbagS7FU6/jBNSdnjTn5FVOmd9crShjGr3uUMCSlE+jw2vRjfO7JxziOnmG8ZI0fBSlvOl
+	bl3Cmveb657Efj0VXbP0yhq9ywEJd16IhZ9N+HhF+ZTxg133fQp8dLsYf4gej/3x40Fjx68D
+	ac2VyvZ6dRwi3+T21jBuDLRQ465RMJhydbbwvvOnn2xNqf82NVng/nWvwNQXsRE/f/hz6Kie
+	FfStiM8Lq6m2197Ae+CfuBJLcUaioRZzUXEiAMV6Aw8TAwAA
+X-CMS-MailID: 20240705030749epcas2p2636f10f34f3642de34475987c724f9f8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705021200epcas2p273ca089c2cb9882f121e864ec8407367
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+	<CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
+	<20240705021110.2495344-3-sunyeal.hong@samsung.com>
+
+Hi Sunyeal,
 
 
+On 7/5/24 11:11, Sunyeal Hong wrote:
+> Add device tree clock binding definitions for below CMU blocks.
+>
+> - CMU_TOP
+> - CMU_PERIC0
+>
+> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> ---
+>   .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
+>   1 file changed, 191 insertions(+)
+>   create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+>
+> diff --git a/include/dt-bindings/clock/samsung,exynosautov920.h b/include/dt-bindings/clock/samsung,exynosautov920.h
+> new file mode 100644
+> index 000000000000..bbddf7583e61
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/samsung,exynosautov920.h
+> @@ -0,0 +1,191 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
+> + * Author: Sunyeal Hong <sunyeal.hong@samsung.com>
+> + *
+> + * Device Tree binding constants for Exynos Auto V209 clock controller.
 
-On 2024/7/4 22:46, Bang Li wrote:
-> Hi Bao lin,
-> 
-> On 2024/7/4 19:15, Baolin Wang wrote:
->>
->>>> +
->>>> +    /*
->>>> +     * Only allow inherit orders if the top-level value is 'force', 
->>>> which
->>>> +     * means non-PMD sized THP can not override 'huge' mount option 
->>>> now.
->>>> +     */
->>>> +    if (shmem_huge == SHMEM_HUGE_FORCE)
->>>> +        return READ_ONCE(huge_shmem_orders_inherit);
->>>
->>> I vaguely recall that we originally discussed that trying to set 
->>> 'force' on the
->>> top level control while any per-size controls were set to 'inherit' 
->>> would be an
->>> error, and trying to set 'force' on any per-size control except the 
->>> PMD-size
->>> would be an error?
->>
->> Right.
->>
->>> I don't really understand this logic. Shouldn't we just be looking at 
->>> the
->>> per-size control settings (or the top-level control as a proxy for every
->>> per-size control that has 'inherit' set)?
->>
->> ‘force’ will apply the huge orders for anon shmem and tmpfs, so now we 
->> only allow pmd-mapped THP to be forced. We should not look at per-size 
->> control settings for tmpfs now (mTHP for tmpfs will be discussed in 
->> future).
->>
->>>
->>> Then for tmpfs, which doesn't support non-PMD-sizes yet, we just 
->>> always use the
->>> PMD-size control for decisions.
->>>
->>> I'm also really struggling with the concept of shmem_is_huge() 
->>> existing along
->>> side shmem_allowable_huge_orders(). Surely this needs to all be 
->>> refactored into
->>> shmem_allowable_huge_orders()?
->>
->> I understood. But now they serve different purposes: shmem_is_huge() 
->> will be used to check the huge orders for the top level, for *tmpfs* 
->> and anon shmem; whereas shmem_allowable_huge_orders() will only be 
->> used to check the per-size huge orders for anon shmem (excluding tmpfs 
->> now). However, as I plan to add mTHP support for tmpfs, I think we can 
->> perform some cleanups. 
-> 
-> Please count me in, I'd be happy to contribute to the cleanup and 
-> enhancement
-> process if I can.
+Typo : V209 -> V920
 
-Good. If you have time, I think you can look at the shmem khugepaged 
-issue from the previous discussion [1], which I don't have time to look 
-at now.
 
-"
-(3) khugepaged
+Thanks
 
-khugepaged needs to handle larger folios properly as well. Until fixed,
-using smaller THP sizes as fallback might prohibit collapsing a
-PMD-sized THP later. But really, khugepaged needs to be fixed to handle
-that.
-"
+Jaewon Kim
 
-[1] 
-https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/T/#u
 
