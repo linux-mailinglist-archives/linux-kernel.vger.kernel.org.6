@@ -1,117 +1,136 @@
-Return-Path: <linux-kernel+bounces-242127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8B29283D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:40:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004DF9283EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8139F1C218CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:40:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0723289BA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA5D145B39;
-	Fri,  5 Jul 2024 08:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Is00ut/C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4DE14533A;
-	Fri,  5 Jul 2024 08:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36AD145B23;
+	Fri,  5 Jul 2024 08:42:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF161422DD
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720168834; cv=none; b=De+iKxN2nwII8fJ5FKV/7Od25B3ERQd35QpugXVXJmMCYktuHgRQ3OnGeX5D7IQuJCTs9e0MSZa59N9IIgsTMr99NJZitVaqnTUw+9hJHyIkiDkEGRoMitssXpVFjIc5r8zJ4cjnkbOp/tRZt25E94v6W5w0EywuUSPxBoMwW0Q=
+	t=1720168975; cv=none; b=ntXC2xJXDeJvk59wvarSMS7XSrjWVseFE5zCII+ea/4wB4hSH8Aj88Yx8YOWgvLY1WiQ3gqfNo7YuA6RrKEmk7QNFZre9v3k3MN5KMx4SUh/pAHsM7khp8WtI+HcGqb55jCNxLM6xGFs3T28p963TXd81tjyaDty82yUjoraEmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720168834; c=relaxed/simple;
-	bh=OU3txpXlAr+kHFnOZsdCg4voKyQR5vbHID+NPrutMTE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=awaUCd0/er6bzoW2YutcirTqHMhrhxuM3wiY/73mDk1mO1t7WW8KaWoyjN4uNTDPgffHKpxg60xHhntXjdxXUx8U58WYkQC0grvynzjLmz7AViZ9vASlKy4qVnee1NstPoBD4CYJm5w8FGQnUtfmgZLbG7ho7sBIeZKr2P9SNQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Is00ut/C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A0A2EC4AF07;
-	Fri,  5 Jul 2024 08:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720168833;
-	bh=OU3txpXlAr+kHFnOZsdCg4voKyQR5vbHID+NPrutMTE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Is00ut/C/U0cgysRENfLJWYQvyyj8uAvLaUOF5+A3Q2iDk8Fsdt88NmoV9BOjrlmE
-	 6llJBbjZDr5ZaSfXfu+gzUfChVH+bkO7/hRX526fYXOgDWFW+gn0w1KwLs7xvIA5/0
-	 Q1MnI6Y/7t6SJ6ZxkmCC35jUJvbbKde35c/2mF+QzYFZdeFsu/McR7AHtq22Apn9Bh
-	 /rPeVCed4Vw4bC9qHgD8iD7eMkUA8oWLze/KcUfKcr2usmnlPB2aZ5LzTOmp6zEvCE
-	 dniUviqrS9tku3YGddOvOJnL1Pa+rm6xqRswNhIle1kO0S2Z/4f93PlipLmQjFW6ep
-	 OZNot3Bnigj9g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 89DC0C43332;
-	Fri,  5 Jul 2024 08:40:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720168975; c=relaxed/simple;
+	bh=eizjPo3aNLKcojOvFJGbEOKqmNTs9eAlTe3QwrkuoAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SdYoimgzKRwPIihtsZkEnNH5ohs+SiqP7nMX4B9Qj78a41/M3pIUyMRu9MumfRdYKMhpdwJTvLlrjW/iKGaFKBPpsxi5GC4ahdge1ajpRj3FhEdw6LTninnMszHobEUcjgdgbpiVhTAX+8BnF4sgZvRa5Jsk09vkg5JatiyiQj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFE8B367;
+	Fri,  5 Jul 2024 01:43:16 -0700 (PDT)
+Received: from [10.57.74.223] (unknown [10.57.74.223])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24AE93F762;
+	Fri,  5 Jul 2024 01:42:49 -0700 (PDT)
+Message-ID: <96625631-ef7d-44a2-ad5f-f7beb64f0ed0@arm.com>
+Date: Fri, 5 Jul 2024 09:42:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/6] mm: shmem: add mTHP support for anonymous shmem
+Content-Language: en-GB
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Bang Li <libang.linux@gmail.com>, akpm@linux-foundation.org, hughd@google.com
+Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
+ ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+ <65796c1e72e51e15f3410195b5c2d5b6c160d411.1718090413.git.baolin.wang@linux.alibaba.com>
+ <65c37315-2741-481f-b433-cec35ef1af35@arm.com>
+ <475332ea-a80b-421c-855e-a663d1d5bfc7@linux.alibaba.com>
+ <a3910f60-6e2e-4ede-b3f3-47d8dfe9f23b@gmail.com>
+ <076550c4-0e8a-4344-9f8a-31ae9e1051b5@linux.alibaba.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <076550c4-0e8a-4344-9f8a-31ae9e1051b5@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v4 00/10] net: pcs: xpcs: Add memory-mapped device
- support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172016883356.17061.13176667406325533525.git-patchwork-notify@kernel.org>
-Date: Fri, 05 Jul 2024 08:40:33 +0000
-References: <20240701182900.13402-1-fancer.lancer@gmail.com>
-In-Reply-To: <20240701182900.13402-1-fancer.lancer@gmail.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, Jose.Abreu@synopsys.com,
- olteanv@gmail.com, f.fainelli@gmail.com, maxime.chevallier@bootlin.com,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- quic_scheluve@quicinc.com, quic_abchauha@quicinc.com, ahalaney@redhat.com,
- jiawenwu@trustnetic.com, mengyuanlou@net-swift.com, tmaimon77@gmail.com,
- openbmc@lists.ozlabs.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Mon,  1 Jul 2024 21:28:31 +0300 you wrote:
-> The main goal of this series is to extend the DW XPCS device support in
-> the kernel. Particularly the patchset adds a support of the DW XPCS
-> device with the MCI/APB3 IO interface registered as a platform device. In
-> order to have them utilized by the DW XPCS core the fwnode-based DW XPCS
-> descriptor creation procedure has been introduced. Finally the STMMAC
-> driver has been altered to support the DW XPCS passed via the 'pcs-handle'
-> property.
+On 05/07/2024 04:01, Baolin Wang wrote:
 > 
-> [...]
+> 
+> On 2024/7/4 22:46, Bang Li wrote:
+>> Hi Bao lin,
+>>
+>> On 2024/7/4 19:15, Baolin Wang wrote:
+>>>
+>>>>> +
+>>>>> +    /*
+>>>>> +     * Only allow inherit orders if the top-level value is 'force', which
+>>>>> +     * means non-PMD sized THP can not override 'huge' mount option now.
+>>>>> +     */
+>>>>> +    if (shmem_huge == SHMEM_HUGE_FORCE)
+>>>>> +        return READ_ONCE(huge_shmem_orders_inherit);
+>>>>
+>>>> I vaguely recall that we originally discussed that trying to set 'force' on the
+>>>> top level control while any per-size controls were set to 'inherit' would be an
+>>>> error, and trying to set 'force' on any per-size control except the PMD-size
+>>>> would be an error?
+>>>
+>>> Right.
+>>>
+>>>> I don't really understand this logic. Shouldn't we just be looking at the
+>>>> per-size control settings (or the top-level control as a proxy for every
+>>>> per-size control that has 'inherit' set)?
+>>>
+>>> ‘force’ will apply the huge orders for anon shmem and tmpfs, so now we only
+>>> allow pmd-mapped THP to be forced. We should not look at per-size control
+>>> settings for tmpfs now (mTHP for tmpfs will be discussed in future).
+>>>
+>>>>
+>>>> Then for tmpfs, which doesn't support non-PMD-sizes yet, we just always use the
+>>>> PMD-size control for decisions.
+>>>>
+>>>> I'm also really struggling with the concept of shmem_is_huge() existing along
+>>>> side shmem_allowable_huge_orders(). Surely this needs to all be refactored into
+>>>> shmem_allowable_huge_orders()?
+>>>
+>>> I understood. But now they serve different purposes: shmem_is_huge() will be
+>>> used to check the huge orders for the top level, for *tmpfs* and anon shmem;
+>>> whereas shmem_allowable_huge_orders() will only be used to check the per-size
+>>> huge orders for anon shmem (excluding tmpfs now). However, as I plan to add
+>>> mTHP support for tmpfs, I think we can perform some cleanups. 
+>>
+>> Please count me in, I'd be happy to contribute to the cleanup and enhancement
+>> process if I can.
+> 
+> Good. If you have time, I think you can look at the shmem khugepaged issue from
+> the previous discussion [1], which I don't have time to look at now.
+> 
+> "
+> (3) khugepaged
+> 
+> khugepaged needs to handle larger folios properly as well. Until fixed,
+> using smaller THP sizes as fallback might prohibit collapsing a
+> PMD-sized THP later. But really, khugepaged needs to be fixed to handle
+> that.
+> "
 
-Here is the summary with links:
-  - [net-next,v4,01/10] net: pcs: xpcs: Move native device ID macro to linux/pcs/pcs-xpcs.h
-    https://git.kernel.org/netdev/net-next/c/f37bee950888
-  - [net-next,v4,02/10] net: pcs: xpcs: Split up xpcs_create() body to sub-functions
-    https://git.kernel.org/netdev/net-next/c/03b3be07c69a
-  - [net-next,v4,03/10] net: pcs: xpcs: Convert xpcs_id to dw_xpcs_desc
-    https://git.kernel.org/netdev/net-next/c/71b200b388ef
-  - [net-next,v4,04/10] net: pcs: xpcs: Convert xpcs_compat to dw_xpcs_compat
-    https://git.kernel.org/netdev/net-next/c/410232ab3c07
-  - [net-next,v4,05/10] net: pcs: xpcs: Introduce DW XPCS info structure
-    https://git.kernel.org/netdev/net-next/c/bcac735cf653
-  - [net-next,v4,06/10] dt-bindings: net: Add Synopsys DW xPCS bindings
-    https://git.kernel.org/netdev/net-next/c/664690eb08f7
-  - [net-next,v4,07/10] net: pcs: xpcs: Add Synopsys DW xPCS platform device driver
-    https://git.kernel.org/netdev/net-next/c/f6bb3e9d98c2
-  - [net-next,v4,08/10] net: pcs: xpcs: Add fwnode-based descriptor creation method
-    https://git.kernel.org/netdev/net-next/c/9cad7275463a
-  - [net-next,v4,09/10] net: stmmac: Create DW XPCS device with particular address
-    https://git.kernel.org/netdev/net-next/c/351066bad6ad
-  - [net-next,v4,10/10] net: stmmac: Add DW XPCS specified via "pcs-handle" support
-    https://git.kernel.org/netdev/net-next/c/357768c7e792
+khugepaged can already collapse "folios of any order less then PMD-size" to
+PMD-size, for anon memory. Infact I modified the selftest to be able to test
+that in commit 9f0704eae8a4 ("selftests/mm/khugepaged: enlighten for multi-size
+THP"). I'd be surprised if khugepaged can't alreay handle the same for shmem?
+Although the test will definitely want to be extended to test it.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Thanks,
+Ryan
 
+> 
+> [1]
+> https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/T/#u
 
 
