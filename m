@@ -1,83 +1,116 @@
-Return-Path: <linux-kernel+bounces-242588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FDE928A30
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:53:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8839928A36
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3063C1C22573
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654451F23139
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A277315216D;
-	Fri,  5 Jul 2024 13:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3721A15B0E1;
+	Fri,  5 Jul 2024 13:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8FXjAu5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pzb/0vwI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85AD1459E8;
-	Fri,  5 Jul 2024 13:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD57B1459E8;
+	Fri,  5 Jul 2024 13:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720187599; cv=none; b=CFelfRbC1cSDefVfm/C2HDqo53t9O+Nn0mF6sPbO3AXLOvGwrT7EyOjMEaH/g/2s5m7eM/8dXTu3o4g7lCFWmuP9+8JnWkZwaMXk0UwH/mXZmpIR3BuHjcX/hMxkpSS1Dtqj4fDZGXvlB8y9+/BGwJHBULjlQfFyUcBtYYZ+280=
+	t=1720187748; cv=none; b=OnDLHzLCPUHaBsXM94nS2tWECfOemXvTxCi0sGc0KeBQJHANcTj/JL8nfPVbBFMDawm+zQ/w1b0XLyOgoh9XFeajEu0taarZO5cYDXBwK1NxDz/ccePrxwRbz43Yj+kJileT9pJf/hV0dDS2E8e6lijkJd8enlVkQ5EhJUroHwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720187599; c=relaxed/simple;
-	bh=iBo2NAMKixoHqt5brl0uZYpx2bTHZNyB5uFZzugwEy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZuzvG2z2ndPUieUJfGxVtlNBLLlRFJxH8EpX9LaGWFoZ6kAcSKraneEYKRD8HfjWAogifhko7nZ1hLg9CvTAnCN6BTaQkCKBP6TMNegdO1MO5HB5e02YM/4Tk+Ly6tnXHvc5VU7ofLZ4Sypqc/lfj2fiuyLPu58XwoqJO4qzZHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8FXjAu5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE4A3C116B1;
-	Fri,  5 Jul 2024 13:53:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720187598;
-	bh=iBo2NAMKixoHqt5brl0uZYpx2bTHZNyB5uFZzugwEy8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f8FXjAu56BtjY10grqgpqfpORdCuT2fjGTzg3au6vdXaECIIlBU8noeHMrvI4+HRX
-	 uZWM0dwiYiiuQctbLftxLXFu9qI3p1AKRuekQTtm8PpFUQpiwHWIfUArTetFhNTR6X
-	 X+bpyfFbtlihRnnikyYLm3K83/DIACrykV6meSCTEFuuhLz0P3T8WcVFHL6Z63h9n3
-	 qzBd9p0bSGDv8lNSC0msELTeF+4PGwttQEgpb7li/nNSUMKKrcuCV2dijWq0g8Pbau
-	 wW/VqVm3hKw2yWV9AwE2JsCmb/woQfaH4owYkXzJJCM3tmQ+V086wiyedN2r9jfjIX
-	 0xMARLrC9IjMw==
-Date: Fri, 5 Jul 2024 06:53:16 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, dev@openvswitch.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B
- Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
- <shuah@kernel.org>, =?UTF-8?B?QWRyacOhbg==?= Moreno <amorenoz@redhat.com>,
- Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next 0/3] selftests: openvswitch: Address some
- flakes in the CI environment
-Message-ID: <20240705065316.6886f2ba@kernel.org>
-In-Reply-To: <f7th6d4ne3r.fsf@redhat.com>
-References: <20240702132830.213384-1-aconole@redhat.com>
-	<20240705062851.36694176@kernel.org>
-	<f7th6d4ne3r.fsf@redhat.com>
+	s=arc-20240116; t=1720187748; c=relaxed/simple;
+	bh=2GtyDYiumgocbV0k0KJwyssg+IUPuxXvh+oveXpe29I=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=q+1muz6hDxHLBnRHMVmt9hA6oe8i0+pRqLXsWTf3bzJ7RV3rwWBA9Se70qJKBNK8HuibnB7c/nui8Vji+7PiKJvore87qf31jhdLQDhnvDSqFJskw5BcnJT1a6DFfnavactm3XkZaWzx5fHR2U1cu8XikHN0nIWP7C/PC10rlKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pzb/0vwI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465BGY5T011649;
+	Fri, 5 Jul 2024 13:55:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=4IEXmRQWMzUA
+	0qFO7X/W1K+lHS8lisstFRYAcBoTS7M=; b=Pzb/0vwI+FCnirVPKF8jbA0PwLum
+	bq6T1yqBZsk87ZJDN6DdDVmKvz742cBVKx8RTtoUdUIY4JRVEFiWWOGuPiudqAs1
+	GWzJCoUZcxsqUQcX59TxXQRY8GuGyCmUR2wJnb/knAbowZjt1aql4MS2vOclnYbd
+	6ZOuYNVxGpZ+n9mReiCfXhF8iuC/ZPQz4gD+VH5wyUUzmfjFfhdcceoZOdleMsdL
+	K0Ts8KebulErmtSbQZ8aHd6sBzZR8GKuAQSAY5K8bhNeJDh9FeVWLLqWoaFxFX9t
+	02TW6SXSl8AALmgLmW/tw3r30vJsWF45yMRrVHY2Xr0jJizIg9L6pHWoUA==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402996xg5f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 13:55:42 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTP id 465DtclV001986;
+	Fri, 5 Jul 2024 13:55:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 402bbm4nnj-1;
+	Fri, 05 Jul 2024 13:55:38 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 465DtcG4001981;
+	Fri, 5 Jul 2024 13:55:38 GMT
+Received: from hu-sgudaval-hyd.qualcomm.com (hu-msarkar-hyd.qualcomm.com [10.213.111.194])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 465DtcEx001980;
+	Fri, 05 Jul 2024 13:55:38 +0000
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3891782)
+	id 692A0DA0; Fri,  5 Jul 2024 19:25:37 +0530 (+0530)
+From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+To: manivannan.sadhasivam@linaro.org, fancer.lancer@gmail.com,
+        vkoul@kernel.org
+Cc: quic_shazhuss@quicinc.com, quic_nitegupt@quicinc.com,
+        quic_ramkri@quicinc.com, quic_nayiluri@quicinc.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Mrinmay Sarkar <quic_msarkar@quicinc.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Fix unmasking interrupt bit and remove watermark interrupt enablement 
+Date: Fri,  5 Jul 2024 19:25:31 +0530
+Message-Id: <1720187733-5380-1-git-send-email-quic_msarkar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vA6QavletGmcoGhVd5583M8bxidqUXOl
+X-Proofpoint-ORIG-GUID: vA6QavletGmcoGhVd5583M8bxidqUXOl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_09,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 clxscore=1011 mlxlogscore=574
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407050099
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Fri, 05 Jul 2024 09:49:12 -0400 Aaron Conole wrote:
-> > The results look solid on normal builds now, but with a debug kernel
-> > the test is failing consistently:
-> >
-> > https://netdev.bots.linux.dev/contest.html?executor=vmksft-net-dbg&test=openvswitch-sh  
-> 
-> Yes - it shows a test case issue with the upcall and psample tests.
-> 
-> Adrian and I discussed the correct approach would be using a wait_for
-> instead of just sleeping, because it seems the dbg environment might be
-> too racy.  I think he is working on a follow up to submit after the
-> psample work gets merged - we were hoping not to hold that patch series
-> up with more potential conflicts or merge issues if that's okay.
+This patch series reset STOP_INT_MASK and ABORT_INT_MASK bit and unmask
+these interrupt for HDMA.
 
-Makes sense, thanks!
+and also remove enablement of local watermark interrupt enable(LWIE)
+and remote watermarek interrupt enable(RWIE) bit to avoid unnecessary
+watermark interrupt event.
+
+Testing
+-------
+
+Tested on Qualcomm SA8775P Platform.
+
+Mrinmay Sarkar (2):
+  dmaengine: dw-edma: Add fix to unmask the interrupt bit for HDMA
+  dmaengine: dw-edma: Add change to remove watermark interrupt
+    enablement
+
+ drivers/dma/dw-edma/dw-hdma-v0-core.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
+
+-- 
+2.7.4
+
 
