@@ -1,127 +1,194 @@
-Return-Path: <linux-kernel+bounces-242798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E86928D4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:06:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5E7928D52
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1D921C212DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:06:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB4F3B24AE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E3716D4F8;
-	Fri,  5 Jul 2024 18:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1QdsoZl"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C07216E88D;
+	Fri,  5 Jul 2024 18:07:09 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7071B963;
-	Fri,  5 Jul 2024 18:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F061B963;
+	Fri,  5 Jul 2024 18:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720202791; cv=none; b=suB4oxr/ZWHRHDcN+z1dL4l8DU/iY7XQTSwezEm90qr+Ua2VyQcnjzxdM0kfWRQI01MQ7QLICkhT/ALBHtJ7mIjoLKeNd6Qx+Vau/3Ui9Y1Ci2QfMISNmJn/lPKcS/HJqeqQ907iBUZB1py1piB8Fx826L9jOyOZfqWFH7U7Z5E=
+	t=1720202828; cv=none; b=JROGI2Pe4oMYwoNCj/SykV701vLEpTTxR5XtjB1xtnfTF5L67cDiBj5Pj0lrBwYF/wtEKYAiTy+85yJtosnBAQf8AbJQHR5pyWLQhAGsPoH0wQ1hyng3e2IagiNBzPcD9J/C4DZz3VaFrIILMwFzQ0bV8wxiPc3tnjLhTLKly2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720202791; c=relaxed/simple;
-	bh=S42tmQAfsWpBuBgVlpigJEKMpxvlDGgN7ZeqHMnQRNQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UwM8XFV6XNF/WKN1cWmW8N0TC9GyfNftWrihLlKoe2NDsIwU5lBG50n/OyRWZrIYKAEENAoaxpDq/UzKZsxP0RcpINaz4gFkP632pB+Gw2b/lCCei+OoxXLiAOOnEERnSJ97EldYeD1B1cuTCFyANZfGqo5N9zpJzXuzN7yXYvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1QdsoZl; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42567ddf099so13055975e9.3;
-        Fri, 05 Jul 2024 11:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720202788; x=1720807588; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ka4a536LSADJMceJfJvpco1a/Lo++oGKUYho3/0+38k=;
-        b=D1QdsoZlx39PcWIKA5y+oEOCUH8L34zIephDxvy7VOKU+mFaFzXjV90J1ualjrzsha
-         xoFYRZteqjacaB7a+L+OOmZdhQGZM9UFXH+w9/ITqkj6yj+u0QyDr8FWgVSTmhiYbQhY
-         jIczdVRyjjH53FQ0Rhc0u8dBYA5T5LlEGWPgALI5EuUVezR8THmLXWNwwHmEULZsHURB
-         Dacg+083VPhBrdb0Zs6PZKBAA03Cc0LaCKMeLv+xHqBYQu5tkl2ppojnZCz7J/cV0x69
-         dk09noWdaCNRln2sucGwYyKwKx2voZutUanoEl0sZQwhXSzq3ncfR+uAnIpEi9gL8QGV
-         ecCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720202788; x=1720807588;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ka4a536LSADJMceJfJvpco1a/Lo++oGKUYho3/0+38k=;
-        b=Lo3zMkyL73uvc88Y44rA12VbgXMP9hDaOUzRG4nVOrkxz5gV8FzxRH2gq/DvhhA4Xe
-         nYcCDxACfsggZOPb6xriVmO6UMJ4W7CTl80akaXdDIBaJg3jTV5YYkabBfcEbNVh4yvq
-         P99qFgrVi2RBobOmmVISElJxMD+DuYfUn59Oi14kSMlDiLRJN9T/lAWtDBo86+DBsV64
-         eFY0YCM/CFGwR5bGiDRzj3j9Rg5GXB1KUI40kCJ23TFbScf7JcK9F41QYeqY56UmYK6L
-         FvXlhUjsl4kvxBw8YDA9lI24LOS3uytgHSk/DVhO4OAfil4OrPD3nPVaxOl/GY9v/bqG
-         fxiA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6TNpP5eBoNKWBY6EQkKUfM1/+LqYmiBP6KAmF7c093HNNJ/dCM0cYIaJpgIzHeLbEFKYenslZvZhcKkBYrJhgPDonasdZ2UXA1hmz
-X-Gm-Message-State: AOJu0YwlLHs377ooBnRX4KLxn7q0nCxKv5oZHkR4SEHIHJ/U0QPDGd84
-	IQ6xllrFb2i3z5AJM0knP9MnNzypi6/pchUFAgsG5Cw2LmQaFc9z
-X-Google-Smtp-Source: AGHT+IGYE4H44Y+75PoJJVK24dXPFWlZRlmubvUmZgbi4bJEVh2/Vv9TJrxzG1JhoT+SkUQVScA9oQ==
-X-Received: by 2002:a05:600c:5788:b0:426:5cee:4abc with SMTP id 5b1f17b1804b1-4265cee4afamr6061275e9.20.1720202788040;
-        Fri, 05 Jul 2024 11:06:28 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-4adb-3312-ca75-bf55.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:4adb:3312:ca75:bf55])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a28d3dasm71533715e9.46.2024.07.05.11.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 11:06:27 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Fri, 05 Jul 2024 20:06:25 +0200
-Subject: [PATCH] i2c: designware: Constify read-only struct regmap_config
+	s=arc-20240116; t=1720202828; c=relaxed/simple;
+	bh=Oc/jgpqXPZQsOpR4owl6eghnOaQJB98ynfgwFW5b0+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pTqHljNtLRF6VoNHGsCtDo4voDsfq3KjLgt8KIRCYumG7D5bARuhjj7K/oDkMXzsp+jWBf4fq/br5Wv43TE3EwR5FfFnabPUd/U+Ca2H6rnUWXx9Bc5lfGwAfIengT0c2BUS5CUSbivDAXfcXZfGXZhhldPYOFuXo2EvUhLx+fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1470CC116B1;
+	Fri,  5 Jul 2024 18:07:05 +0000 (UTC)
+Date: Fri, 5 Jul 2024 14:07:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+ <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Jonathan
+ Corbet <corbet@lwn.net>, Dave Chinner <david@fromorbit.com>, Andi Kleen
+ <ak@linux.intel.com>, Christoph Hellwig <hch@infradead.org>,
+ kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 2/9] fs: tracepoints around multigrain timestamp
+ events
+Message-ID: <20240705140703.711d816b@rorschach.local.home>
+In-Reply-To: <20240705-mgtime-v3-2-85b2daa9b335@kernel.org>
+References: <20240705-mgtime-v3-0-85b2daa9b335@kernel.org>
+	<20240705-mgtime-v3-2-85b2daa9b335@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-i2c-designware-platdrv-const-regmap_config-v1-1-8c82cc63df15@gmail.com>
-X-B4-Tracking: v=1; b=H4sIACA2iGYC/x3N0QrCMAxA0V8ZeTZQO8vAXxGR2KY1oF1JxiaM/
- bvFx/Ny7w7GKmxwHXZQXsVkrh3n0wDxRbUwSuoG7/zFTS6g+IiJTUrdSBnbm5akK8a52oLK5UP
- t0ZGlYHjGiWgMefQOerApZ/n+Z7f7cfwAshpl2XwAAAA=
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720202787; l=1065;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=S42tmQAfsWpBuBgVlpigJEKMpxvlDGgN7ZeqHMnQRNQ=;
- b=toALZGLNxZb7QYzJ/lnsL22UjXQKAyalvcd9KJAJfIX4qo5NryY3e1QBzvLqyG8o9DOu+SwpM
- WbyL2fL3G+gBQ/vvxkIsOUDZ/+r3BrEHrMMe7Zpy3rCoJ0KMINymX7v
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-`bt1_i2c_cfg` is not modified and can be declared as const to
-move its data to a read-only section.
+On Fri, 05 Jul 2024 13:02:36 -0400
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/i2c/busses/i2c-designware-platdrv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/include/trace/events/timestamp.h b/include/trace/events/timestamp.h
+> new file mode 100644
+> index 000000000000..a004e5572673
+> --- /dev/null
+> +++ b/include/trace/events/timestamp.h
+> @@ -0,0 +1,109 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM timestamp
+> +
+> +#if !defined(_TRACE_TIMESTAMP_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_TIMESTAMP_H
+> +
+> +#include <linux/tracepoint.h>
+> +#include <linux/fs.h>
+> +
+> +TRACE_EVENT(inode_set_ctime_to_ts,
+> +	TP_PROTO(struct inode *inode,
+> +		 struct timespec64 *ctime),
+> +
+> +	TP_ARGS(inode, ctime),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(dev_t,			dev)
+> +		__field(ino_t,			ino)
+> +		__field(u32,			gen)
 
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 29aac9c87368..df3dc1e8093e 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -101,7 +101,7 @@ static int bt1_i2c_write(void *context, unsigned int reg, unsigned int val)
- 		BT1_I2C_CTL_GO | BT1_I2C_CTL_WR | (reg & BT1_I2C_CTL_ADDR_MASK));
- }
- 
--static struct regmap_config bt1_i2c_cfg = {
-+static const struct regmap_config bt1_i2c_cfg = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
+It's best to keep the above 4 byte word below 8 byte words, otherwise,
+it will likely create a 4 byte hole in between.
 
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240705-i2c-designware-platdrv-const-regmap_config-5bc7aa35f320
+> +		__field(time64_t,		ctime_s)
+> +		__field(u32,			ctime_ns)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->dev		= inode->i_sb->s_dev;
+> +		__entry->ino		= inode->i_ino;
+> +		__entry->gen		= inode->i_generation;
+> +		__entry->ctime_s	= ctime->tv_sec;
+> +		__entry->ctime_ns	= ctime->tv_nsec;
+> +	),
+> +
+> +	TP_printk("ino=%d:%d:%ld:%u ctime=%lld.%u",
+> +		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
+> +		__entry->ctime_s, __entry->ctime_ns
+> +	)
+> +);
+> +
+> +TRACE_EVENT(ctime_ns_xchg,
+> +	TP_PROTO(struct inode *inode,
+> +		 u32 old,
+> +		 u32 new,
+> +		 u32 cur),
+> +
+> +	TP_ARGS(inode, old, new, cur),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(dev_t,				dev)
+> +		__field(ino_t,				ino)
+> +		__field(u32,				gen)
+> +		__field(u32,				old)
+> +		__field(u32,				new)
+> +		__field(u32,				cur)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->dev		= inode->i_sb->s_dev;
+> +		__entry->ino		= inode->i_ino;
+> +		__entry->gen		= inode->i_generation;
+> +		__entry->old		= old;
+> +		__entry->new		= new;
+> +		__entry->cur		= cur;
+> +	),
+> +
+> +	TP_printk("ino=%d:%d:%ld:%u old=%u:%c new=%u cur=%u:%c",
+> +		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
+> +		__entry->old & ~I_CTIME_QUERIED, __entry->old & I_CTIME_QUERIED ? 'Q' : '-',
+> +		__entry->new,
+> +		__entry->cur & ~I_CTIME_QUERIED, __entry->cur & I_CTIME_QUERIED ? 'Q' : '-'
+> +	)
+> +);
+> +
+> +TRACE_EVENT(fill_mg_cmtime,
+> +	TP_PROTO(struct inode *inode,
+> +		 struct timespec64 *ctime,
+> +		 struct timespec64 *mtime),
+> +
+> +	TP_ARGS(inode, ctime, mtime),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(dev_t,			dev)
+> +		__field(ino_t,			ino)
+> +		__field(u32,			gen)
 
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Same here.
+
+-- Steve
+
+> +		__field(time64_t,		ctime_s)
+> +		__field(time64_t,		mtime_s)
+> +		__field(u32,			ctime_ns)
+> +		__field(u32,			mtime_ns)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->dev		= inode->i_sb->s_dev;
+> +		__entry->ino		= inode->i_ino;
+> +		__entry->gen		= inode->i_generation;
+> +		__entry->ctime_s	= ctime->tv_sec;
+> +		__entry->mtime_s	= mtime->tv_sec;
+> +		__entry->ctime_ns	= ctime->tv_nsec;
+> +		__entry->mtime_ns	= mtime->tv_nsec;
+> +	),
+> +
+> +	TP_printk("ino=%d:%d:%ld:%u ctime=%lld.%u mtime=%lld.%u",
+> +		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino, __entry->gen,
+> +		__entry->ctime_s, __entry->ctime_ns,
+> +		__entry->mtime_s, __entry->mtime_ns
+> +	)
+> +);
+> +#endif /* _TRACE_TIMESTAMP_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
+> 
 
 
