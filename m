@@ -1,109 +1,217 @@
-Return-Path: <linux-kernel+bounces-242775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AEC928D05
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:25:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E232B928D0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F415283B3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:25:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 119591C21DB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB59D16D338;
-	Fri,  5 Jul 2024 17:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5F616D9A4;
+	Fri,  5 Jul 2024 17:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fb5IRLF1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+GP2NpY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B20F81E;
-	Fri,  5 Jul 2024 17:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A4881E;
+	Fri,  5 Jul 2024 17:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720200336; cv=none; b=KeuDT3gVuLSlNn/1TkgV4TXYgWq3+g4roRMQto6DE1etM9mmWdSuld3n2h0ewrmFl7QuXpUWCvKogElqf9bFd5OGw2itvnH1SM1InvB1TQtKnBPYPkQ2uWGcf6mSBE5D+2tHnJHLKhC6AL0oHrZZvBpKQ/JVDfN3YKiol/j8mpI=
+	t=1720200473; cv=none; b=jQ36da4Zvzcya1ZCH9R6IFzWW1FBrHCMQ6Lk9BBEs0DXX/7Goqu06h5509O1REWw9f0apq++C5mKxCl1hnpc+J1oTeY7yG7WyOhqBkYEdh0xf+qoy3lurd1n+oKvsyrMeShzaWXbLvTOmni9i9IlnJ2as9ZX6o9P7J/8v1pCHxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720200336; c=relaxed/simple;
-	bh=oZtDZlzppPlYNNFWRwu0OzDYCMqR7kJRLTTKrnrJubM=;
+	s=arc-20240116; t=1720200473; c=relaxed/simple;
+	bh=UFVPAqRzqVT/p6Fkd12jSpwFaK0O3pMzpk6h3778Y08=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=te7AQW3Ww/yv23SRxiSOlf9DPkpYoVhdLntLAm+AJzA+j8EHprznjKnU5NxPwRgX/0zphOx6AOdWHulN1CWkBMs+z0xol2LOJhtgr4zcAuBjDv1Ug76tXMaCbREljU+ESGye7LEYdBl5znF6aUdcqhU71M4W1ZYhve/iwzVkBck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fb5IRLF1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93479C116B1;
-	Fri,  5 Jul 2024 17:25:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSkOQnOleMyADWofUhuEL1pGZSlo5RUckyXbd7fBIwyQMzrgjc2wd8xATdLfWyl7UIHIuXySE8jdLvKiBufTcNjRQM6AtomxUrRWBaW4lCgOarzGcv8aYaXr0hTzpPgsQgOf1YGgscvs6GK5C29SME+tSDlsFrHBaSJwLc8zrOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+GP2NpY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC732C116B1;
+	Fri,  5 Jul 2024 17:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720200335;
-	bh=oZtDZlzppPlYNNFWRwu0OzDYCMqR7kJRLTTKrnrJubM=;
+	s=k20201202; t=1720200473;
+	bh=UFVPAqRzqVT/p6Fkd12jSpwFaK0O3pMzpk6h3778Y08=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fb5IRLF1k5eW0Ls5EDnMKjxLYSsfc/91S607mw4rkfjrftrBbXD19aoL/E1Rqs6cs
-	 F4n9CKHoYA4sP0M876KFpscQSGcO9Vy4m+vkndKl47U6Wf72LMHHCGRUd+K9QNTP/E
-	 4Rzm0rIy/aX5K6WuVFGaRFQwn3QSLSjwvgps4ss3mSUFI2kYMbCJ2pS7Tp251v9hUs
-	 Som1vay13TY2Y2KHoM6ODXkYRwSnexA9hYDSdE7pgjy9VK3eCxXLOp85va63AII0RE
-	 ijyKJSR0FgayBtx95SyjapO3O5aq07bxINkLmO77B+JHrdjHXdDqo7hsWDOEWamk3U
-	 XTQu8+Axergyg==
-Date: Fri, 5 Jul 2024 18:25:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 3/4] KVM: arm64: Fix FFR offset calculation for pKVM
- host state save and restore
-Message-ID: <f1b357b6-b1c5-4d4e-a597-9fb2ff144627@sirena.org.uk>
-References: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
- <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-3-b6898ab23dc4@kernel.org>
- <868qyg3r6i.wl-maz@kernel.org>
+	b=r+GP2NpY0ut/WIX+ybo8MYYpHvTp8h6a8vetEwsE/CbsZlhV+S991AWIZQb+Jg+40
+	 Xub3zFx2IpPojnRyBNL0MkZVtnDZt1V/zZhl2sEeONoOWw7jyoGc9lHYogye7A1WBo
+	 AUHbhFUiJizR4/QRRv0a+vBtq65BJGzTWnCT2Szffa42qipZHQBkX0x4WA8bnciHcB
+	 UPLGQqqHEWbqWMA7tm9Mn/iIcyaFG654UF2ohEHfnpUJ+60mEL8CkilSUEoc8wGBlu
+	 bIOKp4D2LiBLowXpcxchn5BGGI1OhqAU8JU1YXF57oGQbB9lLjEY0fx8VJDrSuQL0R
+	 KLTiruSZV+s+A==
+Date: Fri, 5 Jul 2024 10:27:50 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 01/10] riscv: Implement cmpxchg32/64() using Zacas
+Message-ID: <20240705172750.GF987634@thelio-3990X>
+References: <20240626130347.520750-2-alexghiti@rivosinc.com>
+ <202407041157.odTZAYZ6-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AfCAYV/OLD8b47zA"
-Content-Disposition: inline
-In-Reply-To: <868qyg3r6i.wl-maz@kernel.org>
-X-Cookie: Look ere ye leap.
-
-
---AfCAYV/OLD8b47zA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <202407041157.odTZAYZ6-lkp@intel.com>
 
-On Fri, Jul 05, 2024 at 02:27:01PM +0100, Marc Zyngier wrote:
-> On Thu, 04 Jul 2024 18:28:18 +0100,
-> Mark Brown <broonie@kernel.org> wrote:
+On Thu, Jul 04, 2024 at 11:38:46AM +0800, kernel test robot wrote:
+> Hi Alexandre,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on soc/for-next]
+> [also build test ERROR on linus/master v6.10-rc6 next-20240703]
+> [cannot apply to arnd-asm-generic/master robh/for-next tip/locking/core]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Alexandre-Ghiti/riscv-Implement-cmpxchg32-64-using-Zacas/20240627-034946
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+> patch link:    https://lore.kernel.org/r/20240626130347.520750-2-alexghiti%40rivosinc.com
+> patch subject: [PATCH v2 01/10] riscv: Implement cmpxchg32/64() using Zacas
+> config: riscv-randconfig-002-20240704 (https://download.01.org/0day-ci/archive/20240704/202407041157.odTZAYZ6-lkp@intel.com/config)
+> compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240704/202407041157.odTZAYZ6-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407041157.odTZAYZ6-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> kernel/sched/core.c:11873:7: error: cannot jump from this asm goto statement to one of its possible targets
+>                    if (try_cmpxchg(&pcpu_cid->cid, &lazy_cid, MM_CID_UNSET))
+>                        ^
+>    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded from macro 'try_cmpxchg'
+>            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+>            ^
+>    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded from macro 'raw_try_cmpxchg'
+>            ___r = raw_cmpxchg((_ptr), ___o, (_new)); \
+>                   ^
+>    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded from macro 'raw_cmpxchg'
+>    #define raw_cmpxchg arch_cmpxchg
+>                        ^
+>    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'arch_cmpxchg'
+>            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
+>            ^
+>    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_arch_cmpxchg'
+>                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,      \
+>                    ^
+>    arch/riscv/include/asm/cmpxchg.h:144:3: note: expanded from macro '__arch_cmpxchg'
+>                    asm goto(ALTERNATIVE("nop", "j %[zacas]", 0,            \
+>                    ^
+>    kernel/sched/core.c:11840:7: note: possible target of asm goto statement
+>            if (!try_cmpxchg(&pcpu_cid->cid, &cid, lazy_cid))
+>                 ^
+>    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded from macro 'try_cmpxchg'
+>            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+>            ^
+>    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded from macro 'raw_try_cmpxchg'
+>            ___r = raw_cmpxchg((_ptr), ___o, (_new)); \
+>                   ^
+>    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded from macro 'raw_cmpxchg'
+>    #define raw_cmpxchg arch_cmpxchg
+>                        ^
+>    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'arch_cmpxchg'
+>            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
+>            ^
+>    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_arch_cmpxchg'
+>                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,      \
+>                    ^
+>    arch/riscv/include/asm/cmpxchg.h:161:10: note: expanded from macro '__arch_cmpxchg'
+>                                                                            \
+>                                                                            ^
+>    kernel/sched/core.c:11872:2: note: jump exits scope of variable with __attribute__((cleanup))
+>            scoped_guard (irqsave) {
+>            ^
+>    include/linux/cleanup.h:169:20: note: expanded from macro 'scoped_guard'
+>            for (CLASS(_name, scope)(args),                                 \
+>                              ^
+>    kernel/sched/core.c:11840:7: error: cannot jump from this asm goto statement to one of its possible targets
+>            if (!try_cmpxchg(&pcpu_cid->cid, &cid, lazy_cid))
+>                 ^
+>    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded from macro 'try_cmpxchg'
+>            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+>            ^
+>    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded from macro 'raw_try_cmpxchg'
+>            ___r = raw_cmpxchg((_ptr), ___o, (_new)); \
+>                   ^
+>    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded from macro 'raw_cmpxchg'
+>    #define raw_cmpxchg arch_cmpxchg
+>                        ^
+>    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'arch_cmpxchg'
+>            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
+>            ^
+>    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_arch_cmpxchg'
+>                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,      \
+>                    ^
+>    arch/riscv/include/asm/cmpxchg.h:144:3: note: expanded from macro '__arch_cmpxchg'
+>                    asm goto(ALTERNATIVE("nop", "j %[zacas]", 0,            \
+>                    ^
+>    kernel/sched/core.c:11873:7: note: possible target of asm goto statement
+>                    if (try_cmpxchg(&pcpu_cid->cid, &lazy_cid, MM_CID_UNSET))
+>                        ^
+>    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded from macro 'try_cmpxchg'
+>            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+>            ^
+>    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded from macro 'raw_try_cmpxchg'
+>            ___r = raw_cmpxchg((_ptr), ___o, (_new)); \
+>                   ^
+>    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded from macro 'raw_cmpxchg'
+>    #define raw_cmpxchg arch_cmpxchg
+>                        ^
+>    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'arch_cmpxchg'
+>            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
+>            ^
+>    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_arch_cmpxchg'
+>                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,      \
+>                    ^
+>    arch/riscv/include/asm/cmpxchg.h:161:10: note: expanded from macro '__arch_cmpxchg'
+>                                                                            \
+>                                                                            ^
+>    kernel/sched/core.c:11872:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
+>            scoped_guard (irqsave) {
+>            ^
+>    include/linux/cleanup.h:169:20: note: expanded from macro 'scoped_guard'
+>            for (CLASS(_name, scope)(args),                                 \
+>                              ^
+>    2 errors generated.
 
-> > When saving and restoring the SVE state for the host we configure the
-> > hardware for the maximum VL it supports, but when calculating offsets in
-> > memory we use the maximum usable VL for the host. Since these two values
-> > may not be the same this may result in data corruption.  We can just
-> > read the current VL from the hardware with an instruction so do that
-> > instead of a saved value, we need to correct the value and this makes
-> > the consistency obvious.
+Ugh, this is an unfortunate interaction with clang's jump scope analysis
+and asm goto in LLVM releases prior to 17 :/
 
-> Which value are we correcting?
+https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomment-1645979992
 
-The vector length used when laying out the storage, especially in the
-case where the hardware VL is larger than the largest VL used by Linux.
+Unfortunately, 'if (0)' does not prevent this (the analysis runs early
+in the front end as far as I understand it), we would need to workaround
+this with full preprocessor guards...
 
---AfCAYV/OLD8b47zA
-Content-Type: application/pgp-signature; name="signature.asc"
+Another alternative would be to require LLVM 17+ for RISC-V, which may
+not be the worst alternative, since I think most people doing serious
+work with clang will probably be living close to tip of tree anyways
+because of all the extension work that goes on upstream.
 
------BEGIN PGP SIGNATURE-----
+I am open to other thoughts though.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaILIkACgkQJNaLcl1U
-h9D8QAf+OR5lhqAIeMFQwoQmGlSwN9wJuxSiB0cEHlYSv8g6mrLz39UDh27uN6el
-xYGyB3cKhDi8aRBd26hOyvrdf1slTKD3nHrTxr+asDG/6AJLoah+9EoDcCYkJk8z
-1fGiH3C12kDNuRD62Szv3TVS0elJOkjgQWYU8dFWdb9jEZiPJpnsLALSEt2lhr+5
-X2T9T6DifnxalpOXVJJhitoT2PQHfuwRgZJWCLxjyjFZQ26ax8yWxyTmj+9Wrpdp
-+gICJKM1AOeTPbkcT2lNCZAKVpQBlLiYBND+vuFuYi5MDRiGR0dTqAnCxo2uRPqJ
-PHj6RSngJ+s1Re3qWCtQLBEuvNz2Mw==
-=YeVv
------END PGP SIGNATURE-----
-
---AfCAYV/OLD8b47zA--
+Cheers,
+Nathan
 
