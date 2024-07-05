@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-242645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89EAC928AC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC41928ACB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EAE1C22832
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47BCD283F83
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D1E16B391;
-	Fri,  5 Jul 2024 14:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B49D16C6A0;
+	Fri,  5 Jul 2024 14:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zz09jFgr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="edn+Xqdj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FBA14B064;
-	Fri,  5 Jul 2024 14:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C16716C444;
+	Fri,  5 Jul 2024 14:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720190110; cv=none; b=N1qqiSp3ESJIbF0VHNJR4c+kavV/kximYrvFwn3PEDrp/Aps0fLCFASJ0rDEiy7fIesFi3OiIGpOsU5cQO0+PXMk+W2G40HXRQiDz7IpyV8DdcLvJvb4fRoTV9jD1yPzEASLD+wrsXCgb/ukkIfyX1IF3I7wVBS1Q4E1dzlYCfA=
+	t=1720190113; cv=none; b=L/vAGw4Dq7GBkRZbjdV7HEQl9WL0o0aksApKhGWIHmK8dXQcri9woRS0/e6DBkTqSn/x4204FuO8tTOMnqXwX5tO+XkOlrDhFcQ/84LHrS3EpilwY/ALLOt2LDBSCbZTyTTeFKPqVH2ow4FDdH/Piz1twRwiN18KUAbMJp3C+PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720190110; c=relaxed/simple;
-	bh=GlyV+PKxk3INjRd4XTmHLYzsltHLCVxsPbrtr/5mliM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mLfyTV1ouD8rlYBf6uouPey02FuvP/sLh4NsLx4ea2OOyceKjKY2ueiGmR/O3fIY6yrYQ4cpnBbW/WztasdqM2MnUoPbbOlIGCZWeP237NwaHenZzm8Wi1cGq8Q+4qPz2ZYKFHUGg18LGMWLmDvlEzLo6oXejxdndU3wUfmxia8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zz09jFgr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4659LwnY026217;
-	Fri, 5 Jul 2024 14:35:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=/fg4kmevgVaH7YcHhAfj13
-	+1uVNJjgC6q3Q0YteaxMk=; b=Zz09jFgrv9H8giImXJWQFfvwtcF99pQKPOSW1R
-	lU1CBQxwPttHf6VbFxsrfWk7YdWwCh1RQlnR/d36NMsTLX91wa671sz2EohUGL+R
-	4LckB8bqZgi22fK+6oPV0rRhYq5qUXkYTOExggyAkc5BXt9JsR4Tz01MXcJobIMt
-	za3jbDLsOUWa29S9C8dv2akT4mfhfdQv1QUvAsgjNgUUi5fqlzKtAzMcd0870KjP
-	e7zAJ9MBO9aaDOJmPfiGr7ThrUIj460g4k8xMKtLkUz9vxoZE/O1W5QNUpCdULdu
-	O6+I9jjXOH0k9OXGBa5V1Dw1xG2zrnMq1rAs0l+XazdWk/1A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4054ndx2xg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jul 2024 14:35:05 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465EZ4rZ024818
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 5 Jul 2024 14:35:04 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 5 Jul 2024 07:35:01 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: [PATCH v2] arm64: dts: qcom: sc7280: Enable download mode register write
-Date: Fri, 5 Jul 2024 20:04:43 +0530
-Message-ID: <20240705143443.1491956-1-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720190113; c=relaxed/simple;
+	bh=VlgJjr/VJ8dDWRH6EvR9EdtJ5JA7lCef8hi6JrtfQS8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=VrgX+lcJrFc5u46wnhSBWPMcZkk0di5eVjst8heZJAp2jshHKpTaSl3AOBaBESbdLz+MWIE0mwGsILk8WoBd8JC/C3iYcZkn2kMN5KOspNeEkDhzJYwOc6VzQ6CQynLSW8hgSr8kZAspQ7JHBd54y+68LfLJ7oM9b7E40wMqaU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=edn+Xqdj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 372DFC116B1;
+	Fri,  5 Jul 2024 14:35:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720190112;
+	bh=VlgJjr/VJ8dDWRH6EvR9EdtJ5JA7lCef8hi6JrtfQS8=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=edn+XqdjyRhZIT10+kvJqkewRhmj36TYqAUa7hBTubTpeLGRKMVjxvUOfz29hTQNj
+	 NsZysK0UETcD4CyLM203NsBKWl1fG0Xuu/F9eOxz5rDJ2t+38GPYtCfwq4ZqHEmNkD
+	 RF18SHslTejZvy2p5Q3gIWZCaXtQZX8XhQuMZwOKprhb5n/t2/kuLKm4I6TMbLaSz/
+	 HkrHjG6H+NrlwrDJFsQOzqE1oCUfUNyT5vmA2z5G22wUg0/NB6ILqERnyXianUEPZY
+	 MNsrhzzsIo5bgf5yuPp4zHd1TUPjNg9jOf7vOGjue/UpHIQhU+uh0iQI7uViNvTOQe
+	 rnliuSEqqEW1A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mp1YcA1S51jWO7YSb7Yh_lbYOWZdqF2D
-X-Proofpoint-ORIG-GUID: mp1YcA1S51jWO7YSb7Yh_lbYOWZdqF2D
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-05_10,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- phishscore=0 impostorscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015 mlxlogscore=779
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407050104
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Jul 2024 17:35:05 +0300
+Message-Id: <D2HOI1829XOO.3ERITAWX9N5IC@kernel.org>
+Subject: Re: [PATCH v2 3/3] tpm: Address !chip->auth in
+ tpm_buf_append_hmac_session*()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>
+Cc: "Thorsten Leemhuis" <regressions@leemhuis.info>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, <stable@vger.kernel.org>, "Peter Huewe"
+ <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>, <linux-kernel@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240703182453.1580888-1-jarkko@kernel.org>
+ <20240703182453.1580888-4-jarkko@kernel.org>
+ <c90ce151-c6e5-40c6-8d3d-ccec5a97d10f@linux.ibm.com>
+ <D2GJSLLC0LSF.2RP57L3ALBW38@kernel.org>
+ <bffebaaa-4831-459f-939d-adf531e4c78b@linux.ibm.com>
+In-Reply-To: <bffebaaa-4831-459f-939d-adf531e4c78b@linux.ibm.com>
 
-Enable download mode setting for sc7280 which can help collect
-ramdump for this SoC.
+On Fri Jul 5, 2024 at 5:05 PM EEST, Stefan Berger wrote:
+> The original thread here
+>
+> https://lore.kernel.org/linux-integrity/656b319fc58683e399323b88072243446=
+7cf20f2.camel@kernel.org/T/#t
+>
+> identified the fact that tpm2_session_init() was missing for the ibmvtpm=
+=20
+> driver. It is a non-zero problem for the respective platforms where this=
+=20
+> driver is being used. The patched fixed the reported issue.
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
-Change in v2:
- - Wrong tcsr phandle, it should be tcsr_2.
+All bugs needs to be fixed always before features are added. You are
+free now to submit your change as a feature patch, which will be
+reviewed and applied later on.
 
- arch/arm64/boot/dts/qcom/sc7280.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> Now that you fixed it in v4 are you going to accept my original patch=20
+> with the Fixes tag since we will (likely) have an enabled feature in=20
+> 6.10 that is not actually working when the ibmvtpm driver is being used?
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 06d0e59e7125..3d8410683402 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -711,6 +711,7 @@ memory@80000000 {
- 	firmware {
- 		scm: scm {
- 			compatible = "qcom,scm-sc7280", "qcom,scm";
-+			qcom,dload-mode = <&tcsr_2 0x13000>;
- 		};
- 	};
- 
--- 
-2.34.1
+There's no bug in tpm_ibmvtpm driver as it functions as well as in 6.9.
 
+I can review it earliest in the week 31, as feature patch. This was my
+holiday week, and I came back only to fix the bug in the authentication
+session patch set.
+
+> I do no think that this is true and its only tpm_ibmvtpm.c that need the=
+=20
+> call to tpm2_session_init. All drivers that use TPM_OPS_AUTO_STARTUP=20
+> will run tpm_chip_register -> tpm_chip_bootstrap -> tpm_auto_startup ->=
+=20
+> tpm2_auto_startup -> tpm2_sessions_init
+
+Right my bad. I overlooked the call sites and you're correct in that
+for anything with that flag on, it will be called.
+
+It still changes nothing, as the commit you were pointing out in the
+fixes tag does not implement initialization code, and we would not have
+that flag in the first place, if it was mandatory [1].
+
+[1] It could be that it is mandatory perhaps, but that is a different
+story. Then we would render the whole flag out. I think this was anyway
+good insight, even if by unintentionally, and we can reconsider removing
+it some day.
+
+BR, Jarkko
 
