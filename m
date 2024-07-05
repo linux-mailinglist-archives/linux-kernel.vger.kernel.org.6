@@ -1,487 +1,222 @@
-Return-Path: <linux-kernel+bounces-242946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39D5928F6C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F7D928F72
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5933F286A1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C33283E2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 22:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AAC1482EA;
-	Fri,  5 Jul 2024 22:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219AE16A399;
+	Fri,  5 Jul 2024 22:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNTlWAw2"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fLofhqMJ"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2058.outbound.protection.outlook.com [40.107.223.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188372AD39;
-	Fri,  5 Jul 2024 22:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720219799; cv=none; b=SmsAKuJHjbsOQtfq0w+Gnz0SYEKadxFstm9FwurF5UmONzyj94Nb2lu5q/BPn26YlLTC8ug3mN7/0MVk5FkhVw2DCOtNtrxtCyvcst5SLvKHWOrxAuqQzs4BU/BliDZ1SYxB5dFm0o5ItGO1m4BvL2cxupbpjpH37/43wQIm8OU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720219799; c=relaxed/simple;
-	bh=Lyw6cxE1x3aUiLd6sJIV/kCTV3lqLRy8hkPd2040/es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBvxtAibov6Rxf7M+lh7EIl1dhrTe81eSt6+8VJeic9pgoB+ik7Kpjlu/DX6BpLWLuHkWIxS3Hn5yslxT/SS9ebSWi5HVIvuHDiP9Fa3bsED4t7WbC5sadGHpBF6H6nkwxWe9XGhrbVbjLzn7Enrmi2w8peB3nEp7AD/oP0/XGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNTlWAw2; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25e397c51b2so801125fac.3;
-        Fri, 05 Jul 2024 15:49:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720219796; x=1720824596; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MZvvLgBS6bDUd1BF7bdmLHmHQbQkQFs7zJpwYTA0a/8=;
-        b=fNTlWAw22/noz+ROMpC/Gy0z5abER6fr73vfbmNYk6rZYd1zCpmlYfM75EAkjzM/Q6
-         O21l8S09BEyAkFcvNjhUXF2YAm1/c7OBzQhOGGqQyfk0Os1gD70ogHN/XDvjv03OHG+5
-         FJUoHe8LyQSgzCMTdl+Gi4QfjiuOmaaMX20nma3wLeuBL4TPS9gTQp4VRfI96ZSGgmAh
-         /sb8ZT19Jb0aF2dGZyfzhMRDn5J5d7N+IOG9Abs3UezLBcBz0PM1y33sZ4pEvv9e9fAZ
-         G1BSB5N3a8MR+kU4+uRdNcB1Qt2gPWWQoh9y1tEEALGNVkjjS1KusuDz5bl+8GjfhkAP
-         y/rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720219796; x=1720824596;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MZvvLgBS6bDUd1BF7bdmLHmHQbQkQFs7zJpwYTA0a/8=;
-        b=JnHwlWYGeBnqlSI1teAv/lUyVgrm44+gEqohU/RxiH0wbAfAMFWPFPiKeyg50tSqN2
-         /dAuBP7TdxpZ9egC9kT80F5NKZgzgHyk3pCle6dv630WvafViuMSZUFlvXbYBGw43iz2
-         6fPgrrHPrR10tsXp79jQMm40a3I/Yp4EQzGUiQg+XHBxDt/BORb8su/xP+PHrO2j2Dtu
-         xXCVcqQ9MG1zgwCRFN2e0DJRfUDjFohJmJSolUUEYxd9TtH3YuDFfOc+6w4G5G5FX0sb
-         A3wNgkgAJSxXAa8460uTIPnRV8EpnPe/pujW5lHlalYGOIL2LbqZfw49PM+1LYjbV5Lj
-         35+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUIv/8i40ruUX8/tQcjt8J3FBWt72EXJ9t5pYiJdXGjH/Ehw8vfWLkp3nPxVHZOUO4kN+LdrY8jHzN+XYP44BMHetLJ
-X-Gm-Message-State: AOJu0YxaOzkepF8DFJyeVNGP6oEM8lWFdWyz/vGoG3uGJNKhalLEYmbB
-	BPS7vNBlsxbhmvxOrfImnm69rkbeCkruLuZI1YnCKD3V16bwFZuCmbcwDg==
-X-Google-Smtp-Source: AGHT+IHNSXtyJQSzTNTgoLNCdtOEKrFf3zKZZwNajpnlJTkD4FHpfAYdK8P0V3nMQOQZykIXxUWSuA==
-X-Received: by 2002:a05:6870:c094:b0:25e:4de:8026 with SMTP id 586e51a60fabf-25e2bf90ddemr5259730fac.51.1720219795853;
-        Fri, 05 Jul 2024 15:49:55 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708043b70a6sm14497013b3a.150.2024.07.05.15.49.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 15:49:55 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 5 Jul 2024 12:49:54 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	David Vernet <void@manifault.com>, kernel-team@meta.com
-Subject: [PATCH v4 sched_ext/for-6.11 2/2] sched_ext: Implement DSQ iterator
-Message-ID: <Zoh4kp7-jAFZXhe6@slm.duckdns.org>
-References: <Zn9oEjsm_1aWb35J@slm.duckdns.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3F5145A0B;
+	Fri,  5 Jul 2024 22:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720219994; cv=fail; b=srsut9LfrLHyGEFgazuppBFlbjvWPd88qkaCuwaVHs+TR7LsY7QVtVyZavltLl6QQoUShzNlbyAphHQWbvVKpyh+kbIjYgE3rTgNDi5vw2sTTuEXsGr59dnboXzP8WGDkAzsljB3AnHha/8odybm5nsBp+rwSEX3YfG9q3D4VTI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720219994; c=relaxed/simple;
+	bh=4ejWxWKsAmkFtGAqMmBv5O0WoWxkiXoggkTY2HGzNGc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=UuaU/w1LsrsZbqpNeN4Dfgj0MNKHW0CcPju45OHEdenkNJ5+L4B1GmBb6XQZVV1rNUfyVbH29XCt9lG4dTxftrydgxMuEKymJjSuwm6F2OOdo5mtxtJOfLqIeXCyxOBoBLFQ+WbNFjvBs3e3b3k3EeVmqx0Q+Enld9XGIwktRWs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fLofhqMJ; arc=fail smtp.client-ip=40.107.223.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BZjZMRov1MuKOM9K3WJR/PwDca9NH7iUX09jL/B05cZ75cuEUDM1PqbZszrOf9fXLlBktBxUK9p/VMec1IDBDyzobxhu6QiUVve2gRcE1DdgKsVZxOg1bq5+tjELdZCDO7WJ0ZZBDkEibmrDF38Fqhm+HOFEzsA40HF6c8wf5oviaEmg5Mf3Lfe4K10kIXYYKsgU+G1kaGWmyB3WZo2vePenE+Uh4MpFyWJ4WdZSifBQga0QI0Z4vuvN9XhK8GmeXhhGqk7rnqza+fyV5ucKYFiG1msRGTyunsgVTAz3sxi6FOgdT+eZT4h+4yhU4TsajR4BCDC3j714LMKWgNMC5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4ejWxWKsAmkFtGAqMmBv5O0WoWxkiXoggkTY2HGzNGc=;
+ b=K5hdMisStNfChJ7FJrTwSISvtUScY7zmveP6czwZiluUZQ/q9vmCagCXJvPWfTpjUMcRTr+bzsQfzGkvgFySsFIk7VLa+etMoYFVhka78Fgf03wygx7FkqxNZ8PD8jyz2ofDAlFDVyaeP0L58xqMMECbZY7GAU7s7QqfJUbgirSaRUSOlHUTuRGhwX3uKTDeZH2ujA1YJX3xYw6zg3EioMIBc95QCD9N7mH5DutPPf2j+5cX5pGIZozGU0gQy1r8KIXYe6P1okTm/QrSZtnyR7ilVyMkUrABdzuODFNcYu0xxTLqqGiReZYRQR8RMoBCSINvoLdte3cChXXsgFq2nQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ejWxWKsAmkFtGAqMmBv5O0WoWxkiXoggkTY2HGzNGc=;
+ b=fLofhqMJYjPyutEnitf2NkcCfjmzIswZiG0fTFY03JctHEBY5udt3BqHTf3fuEFynVccpzFRhUZ2KpuFDJuum3wJ2oYL1NhLcdVqxbtcAqtjgYoQJNMkqZ4WGlykalGxO459wA3nPIbsyvhKPx0IV1xtX8D7/Qj6qUUGTXWca8ewZWB8AGtk++/K1BpGkk0TZuI7LBVEjzKAFlVncD3fQ9cMDFFAuOOl7HOSnnBUodx3TtNtdqpDWMArzWsa/LSGHHPBli3BaMzzYNhCC6ZKkmubrusYsHlaq/LqWUdO6FVfPopY/6+wNwrQeIgEExsJvulI8ud9TOr9z/qWdWp3JQ==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by SJ2PR12MB7822.namprd12.prod.outlook.com (2603:10b6:a03:4ca::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Fri, 5 Jul
+ 2024 22:53:06 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.7741.027; Fri, 5 Jul 2024
+ 22:53:06 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: Christoph Hellwig <hch@lst.de>, Leon Romanovsky <leon@kernel.org>
+CC: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy
+	<robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Keith Busch <kbusch@kernel.org>, "Zeng, Oak"
+	<oak.zeng@intel.com>, Chaitanya Kulkarni <chaitanyak@nvidia.com>, Sagi
+ Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>, Logan
+ Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>, Shameer
+ Kolothum <shameerali.kolothum.thodi@huawei.com>, Kevin Tian
+	<kevin.tian@intel.com>, Alex Williamson <alex.williamson@redhat.com>, Marek
+ Szyprowski <m.szyprowski@samsung.com>, =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?=
+	<jglisse@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>
+Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
+Thread-Topic: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
+Thread-Index: AQHazF+htO0U/r7i6UGE17elces3prHkfuAAgABWr4CAAD4zAIADr7CA
+Date: Fri, 5 Jul 2024 22:53:06 +0000
+Message-ID: <a7f1c69a-bbaf-4263-b2c2-3c92d65522c2@nvidia.com>
+References: <cover.1719909395.git.leon@kernel.org>
+ <20240703054238.GA25366@lst.de> <20240703105253.GA95824@unreal>
+ <20240703143530.GA30857@lst.de>
+In-Reply-To: <20240703143530.GA30857@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|SJ2PR12MB7822:EE_
+x-ms-office365-filtering-correlation-id: 21b83523-1016-4b92-df13-08dc9d453bfd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?d3NYUC9UaDBMZVRVYUhXOEFNYkxhSzdMdExUT1RRZkl6L2tzQTlWTmcxZ0J0?=
+ =?utf-8?B?NDZPNzVwVVJrSjRvZ1VraTZpZ0M3a1k2TzdwN0ZCWExpZWpRbHJYbXhJYmJx?=
+ =?utf-8?B?bjJBQnhSaDhMclJTS2FFR0lQWGFPeENCd2JNUmpvZ3dVVmQwMHhFZzhKMzNj?=
+ =?utf-8?B?Nmh0aW9Ld3hDaWVkTncvaDRRTEJPd1FsMXVWQlMzeW92ZGwwNk5PLzhXcXpp?=
+ =?utf-8?B?WGFRSVNRSHlSTTJGZ2NPd2lIekI3QkloT2ROTFJZdk9qYXVlZzRDVUw3dEpG?=
+ =?utf-8?B?Yyt3b3BQMURGOTVVSExKZTFsSENnSUY3eXdQNWpSMDhBUnByRXR2a1R3MHht?=
+ =?utf-8?B?OTZuVWc2Ulltd2s1VTZEUFNjZVA5aEVXeTZaRkNHSVB6MW1QbktUV0QxZThO?=
+ =?utf-8?B?MU5qS3RLbm5WT3dremswVjdQR0JHQzVaTXMxclprOS94VHNaeDZ0RzlOTXpT?=
+ =?utf-8?B?clhZd21WOVhTdS96Ly9jUnBIYmJWV2MrK005QmZrTWRKeFllaXRBZ2xpTENu?=
+ =?utf-8?B?SDY4M0FDbVpNVkQ5UkZmcjBQSTZiMlZXU1M1RkVpdzRNckRUZy9PanJ2TUJ3?=
+ =?utf-8?B?R0txaytqRXFHTmxTNVhNM0ltelVJYS8wYUVWL2NRaW5TVXZYZHFEcUVpQklp?=
+ =?utf-8?B?WDJJOFRUdFdYaEVSbkJHdFRwa2QrTGZtV1oyVGMvN051ZkVyQ29HQ0xMeW1u?=
+ =?utf-8?B?TlI5aHZVZ3VUWEhET2ljSmF0Mko5Q2dIMFZpcFM3TG1hcUNVQnZyVjFNNDVn?=
+ =?utf-8?B?WXV1aXVMTVhSMElxNTd4UDUwSkxJN1ZydWZOYkswSEJaaGQ4clRicWE2S1By?=
+ =?utf-8?B?UWs5a016djM2ZS9vSlNzMEhQeit1empiNG9pR3A3aXNHQ1ZvdHlmRm52U0pa?=
+ =?utf-8?B?VEtwbksramd6V2N1ZkdpMDh6cEczMnJGWGFzR24rUmtZUWxwcm5hMkNOcHBz?=
+ =?utf-8?B?U3ZTampJemtXcFlxMW1wdFBzSFl1Y2RsY3VlSitUM1J2WEhMdy9FK0F3VnRU?=
+ =?utf-8?B?UnNsNVlnUURKbkZ1U0VGSGdkU0FiWUZucFUrRzJ4L203clpQS3Z4cjg3Q1dS?=
+ =?utf-8?B?Ky9qN25ZS3N6b2wyYXJxYzRvRXNlRkd3dWJJa2pVb1BRNkpjbGtFMHduQjcr?=
+ =?utf-8?B?aDhWNU81YTZiZTR4akttUzNZT1ZGNTdOMXlRYTdpU05CKzJqdnVBVGVST0Fh?=
+ =?utf-8?B?ZEplRTE2dUlpbTNrMjlpakNqaGZFenFva0pxbjZHTUtNT2V5aFRTVWNtVzcz?=
+ =?utf-8?B?R01SakJBbHRFbTB6cEZpeTZzRkVMRXZDeFBiUVpSYkpwVHdCa01BN3ZGc1dU?=
+ =?utf-8?B?d3JwUTVzeTF4KzNHdTUvenAvTWFlRnBuRHRlSWxSb29zd2JGSDVZdThENGVG?=
+ =?utf-8?B?cE00Um9LMkJJUUUyZHpXSlZ5dkwyQ2w2WG1rN2lhTkptVUR0UW15S3ppcWxw?=
+ =?utf-8?B?TzNxaDZ3ZUJoZkwxR2hqUEpsMEJiNU1yOTNVVEwwMThhU0d5ZUw0WFJvZkNG?=
+ =?utf-8?B?RGplTk9zTHVqZ2wrK3VwZGgycjlPa3JuWlNVcWpFc1EwOEMycFdKZHdmNHV1?=
+ =?utf-8?B?MG9jQS9vUnBzYlY0TE9TRVoyMFhnQVJEZjYwM3gyN0lZQkhPSEErTU5Na0lh?=
+ =?utf-8?B?d1FZbXBTdGFONlVrNWF0dzVIbmcvZEoxYXo2emk5cko4bTJOU1piejQ0amw2?=
+ =?utf-8?B?c1VxVXlacnVGTm1yaFVCUmNuV2ZpQkszVCtjd0dQeW1rVEVHR2FkTHRuT3Nu?=
+ =?utf-8?B?MFF2UDdleGk1M0ZBL3ZCSHlxY1NMSUZIS3NiTS9Jdzk4ZmdXYWtsYVpXaTM2?=
+ =?utf-8?B?TCtZZXNQN0JTTEk4bjdiVElRU3ExRitWSlE4R1BTODd4S01wTDNYSjc2eGpm?=
+ =?utf-8?B?NzdGc0FCM2RReHdzZElacVRRVGtvdFpGbG9BMjNwZ05SalE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VDJkVWIzZWt4MmVSKzkwR1BBTTlaNVN1SFpWSG5GTWhaWE9SdW1rS3AwbWJK?=
+ =?utf-8?B?d3pwOGxZK2RSTGNJdHlMZ3JnUFI5dk12K2JwaXd0RTJlVkh4cmx3OEhPTUs4?=
+ =?utf-8?B?WE1rZkliVWZrWmlmOEtvYnFQZmJQNmNVTFIzUjdYRDBlMnhOTGFTZFUzK1d0?=
+ =?utf-8?B?MWdkRWRPWG1yQk4vdWVjblBmaEdHUVpWbHJYNmRDVHV1V1BaY0wrUVVrS1di?=
+ =?utf-8?B?WHQrcFM0UkZoN2tmay9nNlN3UVRrTVVNS3YvY2hSdWhqOGcwY2RScTkzYzIw?=
+ =?utf-8?B?NHZpL1l5M1ZONmdKbHVUNStXd0EyaVd5eXNSRXd6czZKdit2Z1hpNzgvZER6?=
+ =?utf-8?B?c1AyNU1Qci8zK1h0Yi9JQzYwQXZZVUdFSldoSTg2RHNjL1Z4YmRwWTMxb3g4?=
+ =?utf-8?B?ejV5dW10Zk1MY2UwdURDekVzTTFzcmdvKzF1NjJuR2hrZ1pYZzBOT0QvODRK?=
+ =?utf-8?B?Y3R2TkxaVmdmc0RZVHRNZkxUSjRlb2tqRUFLNWxKSWNRZERaMjExNUtpQmlO?=
+ =?utf-8?B?bHdwL0J5Nys2VW1mREFuNkMyY2hsL2doWjZqTTVDNllsekpTOUI1RzVrbDBB?=
+ =?utf-8?B?aCs2RUpQRHVueUxBd0xObmxYc1hqNXNCcGdQeStxYXJzZmdMYThDckRmQmpr?=
+ =?utf-8?B?Vm1wMmEyYXVYU21ITTBPc2U1T0RKdjdtZ0NLVkhQTTJRazFyWXBXdDRwSlFZ?=
+ =?utf-8?B?UjY0NEFOc3VlUERvMGdVWjIxMEgwWUpxbk5JUGl5SC91MDNCWWQ0OHpoYkZG?=
+ =?utf-8?B?RCtiOWdwMHRKc2xRbjVMTEQ3dVJiM3NvZmhEa3AvdndPRkVtdk9CNnd2dllX?=
+ =?utf-8?B?ekhTeE80YS9lN0MxUlFhV3Q0NE56bG12WU4xb29oTnJOSEMzMmI5NUR0VWRw?=
+ =?utf-8?B?dThtTDJOQ1ZMRnhpVzhHL1gxUXcrWlRpVW0yUTNlMStzdWx6ckdqNEh1MW5U?=
+ =?utf-8?B?L1U3U2NjL1hDL1BmY29uL0JXMjRTbkVVcEIvaVN0bzhqZWJmN1BYbVNDTG9y?=
+ =?utf-8?B?T0FpK2VQakVCbnJXRXppRU10SlUvZmdsZXdlenlMdHJQbnk4TmlySDUzYkRr?=
+ =?utf-8?B?cnlSUW9kY3k1NU5XaFU4b0tYR2wzdkg5cE1NNFVMK1BvTjVPNkc0Zm1YTHNy?=
+ =?utf-8?B?Vys0QlF0Y0JLZTdidXFEUjRVTko4Y1UxTFUzU2xkSjN6bXAraWlxQmFNR0FT?=
+ =?utf-8?B?bkIrenBpSXhkSUdLcDNodlBSc2RKQmdsUkFJenJqdFVCM0VzcUZUb3oreXhQ?=
+ =?utf-8?B?MmJ4YnVpVUkvNkdRT3RmdW93N0V3MVhyb20yRnNBRTdIWWNwaWszVUlodzNs?=
+ =?utf-8?B?NHl3ZHVzRDV1WUVTV0VrTFJsRUpRV25Sak1rYklLRGZOOXM2UU5NemtlUWUz?=
+ =?utf-8?B?MnY3NmNCSGt0RC9SWUlQcVpXeDY0SFhhTnF0ajdacENuQkYxWEpqTWwvVjQy?=
+ =?utf-8?B?ZnUrTGw3WG9CSklvaWNFcGlDYkVvYXlZbHNNVndScjZOb3VrMmtjSGlEWk04?=
+ =?utf-8?B?TmsvVEp2Rnp6MmxYQ0Z5YzE4alViWllLSzZiUWhwWXZiVWk0c2xWRUxucWhV?=
+ =?utf-8?B?R1RxWDBrWVk2Qk4raUFhWmhhTjdjN1pDSThKN0JMdlFPZUpDckgrM0MzS3lo?=
+ =?utf-8?B?OEpBNmdBUHp3a1hrOUFBc3lFcUxEeCtuM29RQmJJaTAyeDJDVzh1MDZQMjhw?=
+ =?utf-8?B?VUtHUFVwc2tWYzVGV2VzYWEzT2xGTjloNjRGMER1UDNKOGhONnovWXRHc3Zq?=
+ =?utf-8?B?Z3pMNnc1R2YyU1M1SzR1U0RkU0o0d28rcWpIb3ZCVkgrMXVTM1B6b0xWTWxv?=
+ =?utf-8?B?UVdYWmlDZlNESkdpLzVuU214TnlFcEt0bnZaeW1vcGY1L3ExQUFUdEJMTzB1?=
+ =?utf-8?B?VmtPdnZJODRLMU1Eb3p1TFA3U1hLNmJGY0RZYXlleElFR3pFbkN5N05mclBH?=
+ =?utf-8?B?NFFZdjIyQ2FJR0R2K2tTOGh6OE12cGl4VGZVbG5vdDNOa3ptMXhKeDBkeGRJ?=
+ =?utf-8?B?Slljdno0d1pLeTVsd04xRnNSUHdhbGUxdFZXOWJrdUJkTm5udTNFc25sS2J5?=
+ =?utf-8?B?aFJqU0p6U1BNL0xGRHNCTkhWdEVwSVhGck8rYXYwRUg4Ym9KZU5LM2F5S1Ri?=
+ =?utf-8?B?Y1E1ZVIwM2VrWHhBVEYzQjg4RUlIMVpOQkVwUGVZc09MRTIxa2tPdk12d05R?=
+ =?utf-8?Q?CSuqlpNb5Fl0htKknSy0CujoGJxtbymdjpaDTcQz24EL?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9B8C068E920D594CA84292023EBE3B6E@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn9oEjsm_1aWb35J@slm.duckdns.org>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21b83523-1016-4b92-df13-08dc9d453bfd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2024 22:53:06.4069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: E5WR6RD41uwzVjiXkQEdSI/vZ/HpgHrk/wiweuQ0W1gP3JX9Bfdm3SEBKeHrNuN+l+cAycWABq+3PWcY68zn8g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7822
 
-DSQs are very opaque in the consumption path. The BPF scheduler has no way
-of knowing which tasks are being considered and which is picked. This patch
-adds BPF DSQ iterator.
-
-- Allows iterating tasks queued on a DSQ in the dispatch order or reverse
-  from anywhere using bpf_for_each(scx_dsq) or calling the iterator kfuncs
-  directly.
-
-- Has ordering guarantee where only tasks which were already queued when the
-  iteration started are visible and consumable during the iteration.
-
-scx_qmap is updated to implement periodic dumping of the shared DSQ.
-
-v4: - bpf_iter_scx_dsq_new() declaration in common.bpf.h was using the wrong
-      type for the last argument (bool rev instead of u64 flags). Fix it.
-
-v3: - Alexei pointed out that the iterator is too big to allocate on stack.
-      Added a prep patch to reduce the size of the cursor. Now
-      bpf_iter_scx_dsq is 48 bytes and bpf_iter_scx_dsq_kern is 40 bytes on
-      64bit.
-
-    - u32_before() comparison factored out.
-
-v2: - scx_bpf_consume_task() is separated out into a separate patch.
-
-    - DSQ seq and iter flags don't need to be u64. Use u32.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: David Vernet <dvernet@meta.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: bpf@vger.kernel.org
----
- include/linux/sched/ext.h                |    3 
- kernel/sched/ext.c                       |  187 ++++++++++++++++++++++++++++++-
- tools/sched_ext/include/scx/common.bpf.h |    3 
- tools/sched_ext/scx_qmap.bpf.c           |   25 ++++
- tools/sched_ext/scx_qmap.c               |    8 -
- 5 files changed, 222 insertions(+), 4 deletions(-)
-
---- a/include/linux/sched/ext.h
-+++ b/include/linux/sched/ext.h
-@@ -61,6 +61,7 @@ struct scx_dispatch_q {
- 	struct list_head	list;	/* tasks in dispatch order */
- 	struct rb_root		priq;	/* used to order by p->scx.dsq_vtime */
- 	u32			nr;
-+	u32			seq;	/* used by BPF iter */
- 	u64			id;
- 	struct rhash_head	hash_node;
- 	struct llist_node	free_node;
-@@ -123,6 +124,7 @@ enum scx_kf_mask {
- 
- struct scx_dsq_list_node {
- 	struct list_head	node;
-+	bool			is_bpf_iter_cursor;
- };
- 
- /*
-@@ -133,6 +135,7 @@ struct sched_ext_entity {
- 	struct scx_dispatch_q	*dsq;
- 	struct scx_dsq_list_node dsq_list;	/* dispatch order */
- 	struct rb_node		dsq_priq;	/* p->scx.dsq_vtime order */
-+	u32			dsq_seq;
- 	u32			dsq_flags;	/* protected by DSQ lock */
- 	u32			flags;		/* protected by rq lock */
- 	u32			weight;
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -926,6 +926,11 @@ static u32 highest_bit(u32 flags)
- 	return ((u64)1 << bit) >> 1;
- }
- 
-+static bool u32_before(u32 a, u32 b)
-+{
-+	return (s32)(a - b) < 0;
-+}
-+
- /*
-  * scx_kf_mask enforcement. Some kfuncs can only be called from specific SCX
-  * ops. When invoking SCX ops, SCX_CALL_OP[_RET]() should be used to indicate
-@@ -1066,6 +1071,73 @@ static __always_inline bool scx_kf_allow
- 	return true;
- }
- 
-+/**
-+ * nldsq_next_task - Iterate to the next task in a non-local DSQ
-+ * @dsq: user dsq being interated
-+ * @cur: current position, %NULL to start iteration
-+ * @rev: walk backwards
-+ *
-+ * Returns %NULL when iteration is finished.
-+ */
-+static struct task_struct *nldsq_next_task(struct scx_dispatch_q *dsq,
-+					   struct task_struct *cur, bool rev)
-+{
-+	struct list_head *list_node;
-+	struct scx_dsq_list_node *dsq_lnode;
-+
-+	lockdep_assert_held(&dsq->lock);
-+
-+	if (cur)
-+		list_node = &cur->scx.dsq_list.node;
-+	else
-+		list_node = &dsq->list;
-+
-+	/* find the next task, need to skip BPF iteration cursors */
-+	do {
-+		if (rev)
-+			list_node = list_node->prev;
-+		else
-+			list_node = list_node->next;
-+
-+		if (list_node == &dsq->list)
-+			return NULL;
-+
-+		dsq_lnode = container_of(list_node, struct scx_dsq_list_node,
-+					 node);
-+	} while (dsq_lnode->is_bpf_iter_cursor);
-+
-+	return container_of(dsq_lnode, struct task_struct, scx.dsq_list);
-+}
-+
-+#define nldsq_for_each_task(p, dsq)						\
-+	for ((p) = nldsq_next_task((dsq), NULL, false); (p);			\
-+	     (p) = nldsq_next_task((dsq), (p), false))
-+
-+
-+/*
-+ * BPF DSQ iterator. Tasks in a non-local DSQ can be iterated in [reverse]
-+ * dispatch order. BPF-visible iterator is opaque and larger to allow future
-+ * changes without breaking backward compatibility. Can be used with
-+ * bpf_for_each(). See bpf_iter_scx_dsq_*().
-+ */
-+enum scx_dsq_iter_flags {
-+	/* iterate in the reverse dispatch order */
-+	SCX_DSQ_ITER_REV		= 1U << 0,
-+
-+	__SCX_DSQ_ITER_ALL_FLAGS	= SCX_DSQ_ITER_REV,
-+};
-+
-+struct bpf_iter_scx_dsq_kern {
-+	struct scx_dsq_list_node	cursor;
-+	struct scx_dispatch_q		*dsq;
-+	u32				dsq_seq;
-+	u32				flags;
-+} __attribute__((aligned(8)));
-+
-+struct bpf_iter_scx_dsq {
-+	u64				__opaque[6];
-+} __attribute__((aligned(8)));
-+
- 
- /*
-  * SCX task iterator.
-@@ -1415,7 +1487,7 @@ static void dispatch_enqueue(struct scx_
- 		 * tested easily when adding the first task.
- 		 */
- 		if (unlikely(RB_EMPTY_ROOT(&dsq->priq) &&
--			     !list_empty(&dsq->list)))
-+			     nldsq_next_task(dsq, NULL, false)))
- 			scx_ops_error("DSQ ID 0x%016llx already had FIFO-enqueued tasks",
- 				      dsq->id);
- 
-@@ -1447,6 +1519,10 @@ static void dispatch_enqueue(struct scx_
- 			list_add_tail(&p->scx.dsq_list.node, &dsq->list);
- 	}
- 
-+	/* seq records the order tasks are queued, used by BPF DSQ iterator */
-+	dsq->seq++;
-+	p->scx.dsq_seq = dsq->seq;
-+
- 	dsq_mod_nr(dsq, 1);
- 	p->scx.dsq = dsq;
- 
-@@ -2109,7 +2185,7 @@ retry:
- 
- 	raw_spin_lock(&dsq->lock);
- 
--	list_for_each_entry(p, &dsq->list, scx.dsq_list.node) {
-+	nldsq_for_each_task(p, dsq) {
- 		struct rq *task_rq = task_rq(p);
- 
- 		if (rq == task_rq) {
-@@ -5697,6 +5773,110 @@ __bpf_kfunc void scx_bpf_destroy_dsq(u64
- 	destroy_dsq(dsq_id);
- }
- 
-+/**
-+ * bpf_iter_scx_dsq_new - Create a DSQ iterator
-+ * @it: iterator to initialize
-+ * @dsq_id: DSQ to iterate
-+ * @flags: %SCX_DSQ_ITER_*
-+ *
-+ * Initialize BPF iterator @it which can be used with bpf_for_each() to walk
-+ * tasks in the DSQ specified by @dsq_id. Iteration using @it only includes
-+ * tasks which are already queued when this function is invoked.
-+ */
-+__bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
-+				     u64 flags)
-+{
-+	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
-+
-+	BUILD_BUG_ON(sizeof(struct bpf_iter_scx_dsq_kern) >
-+		     sizeof(struct bpf_iter_scx_dsq));
-+	BUILD_BUG_ON(__alignof__(struct bpf_iter_scx_dsq_kern) !=
-+		     __alignof__(struct bpf_iter_scx_dsq));
-+
-+	if (flags & ~__SCX_DSQ_ITER_ALL_FLAGS)
-+		return -EINVAL;
-+
-+	kit->dsq = find_non_local_dsq(dsq_id);
-+	if (!kit->dsq)
-+		return -ENOENT;
-+
-+	INIT_LIST_HEAD(&kit->cursor.node);
-+	kit->cursor.is_bpf_iter_cursor = true;
-+	kit->dsq_seq = READ_ONCE(kit->dsq->seq);
-+	kit->flags = flags;
-+
-+	return 0;
-+}
-+
-+/**
-+ * bpf_iter_scx_dsq_next - Progress a DSQ iterator
-+ * @it: iterator to progress
-+ *
-+ * Return the next task. See bpf_iter_scx_dsq_new().
-+ */
-+__bpf_kfunc struct task_struct *bpf_iter_scx_dsq_next(struct bpf_iter_scx_dsq *it)
-+{
-+	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
-+	bool rev = kit->flags & SCX_DSQ_ITER_REV;
-+	struct task_struct *p;
-+	unsigned long flags;
-+
-+	if (!kit->dsq)
-+		return NULL;
-+
-+	raw_spin_lock_irqsave(&kit->dsq->lock, flags);
-+
-+	if (list_empty(&kit->cursor.node))
-+		p = NULL;
-+	else
-+		p = container_of(&kit->cursor, struct task_struct, scx.dsq_list);
-+
-+	/*
-+	 * Only tasks which were queued before the iteration started are
-+	 * visible. This bounds BPF iterations and guarantees that vtime never
-+	 * jumps in the other direction while iterating.
-+	 */
-+	do {
-+		p = nldsq_next_task(kit->dsq, p, rev);
-+	} while (p && unlikely(u32_before(kit->dsq_seq, p->scx.dsq_seq)));
-+
-+	if (p) {
-+		if (rev)
-+			list_move_tail(&kit->cursor.node, &p->scx.dsq_list.node);
-+		else
-+			list_move(&kit->cursor.node, &p->scx.dsq_list.node);
-+	} else {
-+		list_del_init(&kit->cursor.node);
-+	}
-+
-+	raw_spin_unlock_irqrestore(&kit->dsq->lock, flags);
-+
-+	return p;
-+}
-+
-+/**
-+ * bpf_iter_scx_dsq_destroy - Destroy a DSQ iterator
-+ * @it: iterator to destroy
-+ *
-+ * Undo scx_iter_scx_dsq_new().
-+ */
-+__bpf_kfunc void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it)
-+{
-+	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
-+
-+	if (!kit->dsq)
-+		return;
-+
-+	if (!list_empty(&kit->cursor.node)) {
-+		unsigned long flags;
-+
-+		raw_spin_lock_irqsave(&kit->dsq->lock, flags);
-+		list_del_init(&kit->cursor.node);
-+		raw_spin_unlock_irqrestore(&kit->dsq->lock, flags);
-+	}
-+	kit->dsq = NULL;
-+}
-+
- __bpf_kfunc_end_defs();
- 
- static s32 __bstr_format(u64 *data_buf, char *line_buf, size_t line_size,
-@@ -6118,6 +6298,9 @@ BTF_KFUNCS_START(scx_kfunc_ids_any)
- BTF_ID_FLAGS(func, scx_bpf_kick_cpu)
- BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued)
- BTF_ID_FLAGS(func, scx_bpf_destroy_dsq)
-+BTF_ID_FLAGS(func, bpf_iter_scx_dsq_new, KF_ITER_NEW | KF_RCU_PROTECTED)
-+BTF_ID_FLAGS(func, bpf_iter_scx_dsq_next, KF_ITER_NEXT | KF_RET_NULL)
-+BTF_ID_FLAGS(func, bpf_iter_scx_dsq_destroy, KF_ITER_DESTROY)
- BTF_ID_FLAGS(func, scx_bpf_exit_bstr, KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, scx_bpf_error_bstr, KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, scx_bpf_dump_bstr, KF_TRUSTED_ARGS)
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -39,6 +39,9 @@ u32 scx_bpf_reenqueue_local(void) __ksym
- void scx_bpf_kick_cpu(s32 cpu, u64 flags) __ksym;
- s32 scx_bpf_dsq_nr_queued(u64 dsq_id) __ksym;
- void scx_bpf_destroy_dsq(u64 dsq_id) __ksym;
-+int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id, u64 flags) __ksym __weak;
-+struct task_struct *bpf_iter_scx_dsq_next(struct bpf_iter_scx_dsq *it) __ksym __weak;
-+void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it) __ksym __weak;
- void scx_bpf_exit_bstr(s64 exit_code, char *fmt, unsigned long long *data, u32 data__sz) __ksym __weak;
- void scx_bpf_error_bstr(char *fmt, unsigned long long *data, u32 data_len) __ksym;
- void scx_bpf_dump_bstr(char *fmt, unsigned long long *data, u32 data_len) __ksym __weak;
---- a/tools/sched_ext/scx_qmap.bpf.c
-+++ b/tools/sched_ext/scx_qmap.bpf.c
-@@ -36,6 +36,7 @@ const volatile u32 stall_user_nth;
- const volatile u32 stall_kernel_nth;
- const volatile u32 dsp_inf_loop_after;
- const volatile u32 dsp_batch;
-+const volatile bool print_shared_dsq;
- const volatile s32 disallow_tgid;
- const volatile bool suppress_dump;
- 
-@@ -604,10 +605,34 @@ out:
- 	scx_bpf_put_cpumask(online);
- }
- 
-+/*
-+ * Dump the currently queued tasks in the shared DSQ to demonstrate the usage of
-+ * scx_bpf_dsq_nr_queued() and DSQ iterator. Raise the dispatch batch count to
-+ * see meaningful dumps in the trace pipe.
-+ */
-+static void dump_shared_dsq(void)
-+{
-+	struct task_struct *p;
-+	s32 nr;
-+
-+	if (!(nr = scx_bpf_dsq_nr_queued(SHARED_DSQ)))
-+		return;
-+
-+	bpf_printk("Dumping %d tasks in SHARED_DSQ in reverse order", nr);
-+
-+	bpf_rcu_read_lock();
-+	bpf_for_each(scx_dsq, p, SHARED_DSQ, SCX_DSQ_ITER_REV)
-+		bpf_printk("%s[%d]", p->comm, p->pid);
-+	bpf_rcu_read_unlock();
-+}
-+
- static int monitor_timerfn(void *map, int *key, struct bpf_timer *timer)
- {
- 	monitor_cpuperf();
- 
-+	if (print_shared_dsq)
-+		dump_shared_dsq();
-+
- 	bpf_timer_start(timer, ONE_SEC_IN_NS, 0);
- 	return 0;
- }
---- a/tools/sched_ext/scx_qmap.c
-+++ b/tools/sched_ext/scx_qmap.c
-@@ -20,7 +20,7 @@ const char help_fmt[] =
- "See the top-level comment in .bpf.c for more details.\n"
- "\n"
- "Usage: %s [-s SLICE_US] [-e COUNT] [-t COUNT] [-T COUNT] [-l COUNT] [-b COUNT]\n"
--"       [-d PID] [-D LEN] [-p] [-v]\n"
-+"       [-P] [-d PID] [-D LEN] [-p] [-v]\n"
- "\n"
- "  -s SLICE_US   Override slice duration\n"
- "  -e COUNT      Trigger scx_bpf_error() after COUNT enqueues\n"
-@@ -28,6 +28,7 @@ const char help_fmt[] =
- "  -T COUNT      Stall every COUNT'th kernel thread\n"
- "  -l COUNT      Trigger dispatch infinite looping after COUNT dispatches\n"
- "  -b COUNT      Dispatch upto COUNT tasks together\n"
-+"  -P            Print out DSQ content to trace_pipe every second, use with -b\n"
- "  -d PID        Disallow a process from switching into SCHED_EXT (-1 for self)\n"
- "  -D LEN        Set scx_exit_info.dump buffer length\n"
- "  -S            Suppress qmap-specific debug dump\n"
-@@ -62,7 +63,7 @@ int main(int argc, char **argv)
- 
- 	skel = SCX_OPS_OPEN(qmap_ops, scx_qmap);
- 
--	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:d:D:Spvh")) != -1) {
-+	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:Pd:D:Spvh")) != -1) {
- 		switch (opt) {
- 		case 's':
- 			skel->rodata->slice_ns = strtoull(optarg, NULL, 0) * 1000;
-@@ -82,6 +83,9 @@ int main(int argc, char **argv)
- 		case 'b':
- 			skel->rodata->dsp_batch = strtoul(optarg, NULL, 0);
- 			break;
-+		case 'P':
-+			skel->rodata->print_shared_dsq = true;
-+			break;
- 		case 'd':
- 			skel->rodata->disallow_tgid = strtol(optarg, NULL, 0);
- 			if (skel->rodata->disallow_tgid < 0)
+T24gNy8zLzI0IDA3OjM1LCBDaHJpc3RvcGggSGVsbHdpZyB3cm90ZToNCj4gT24gV2VkLCBKdWwg
+MDMsIDIwMjQgYXQgMDE6NTI6NTNQTSArMDMwMCwgTGVvbiBSb21hbm92c2t5IHdyb3RlOg0KPj4g
+T24gV2VkLCBKdWwgMDMsIDIwMjQgYXQgMDc6NDI6MzhBTSArMDIwMCwgQ2hyaXN0b3BoIEhlbGx3
+aWcgd3JvdGU6DQo+Pj4gSSBqdXN0IHRyaWVkIHRvIGJvb3QgdGhpcyBvbiBteSB1c3VhbCBxZW11
+IHRlc3Qgc2V0dXAgd2l0aCBlbXVsYXRlZA0KPj4+IG52bWUgZGV2aWNlcywgYW5kIGl0IGRlYWQt
+bG9vcHMgd2l0aCBtZXNzYWdlcyBsaWtlIHRoaXMgZmFpcmx5IGxhdGUNCj4+PiBpbiB0aGUgYm9v
+dCBjeWNsZToNCj4+Pg0KPj4+IFsgICA0My44MjY2MjddIGlvbW11OiB1bmFsaWduZWQ6IGlvdmEg
+MHhmZmY3ZTAwMCBwYSAweDAwMDAwMDAxMGJlMzM2NTAgc2l6ZSAweDEwMDAgbWluX3BhZ2VzeiAw
+eDEwMDANCj4+PiBbICAgNDMuODI2OTgyXSBkbWFfbWFwcGluZ19lcnJvciAtMTINCj4+Pg0KPj4+
+IHBhc3NpbmcgaW50ZWxfaW9tbXU9b2ZmIGluc3RlYWQgb2YgaW50ZWxfaW9tbXU9b24gKGV4cGVj
+dGVkbHkpIG1ha2VzDQo+Pj4gaXQgZ28gYXdheS4NCj4+IENhbiB5b3UgcGxlYXNlIHNoYXJlIHlv
+dXIga2VybmVsIGNvbW1hbmQgbGluZSBhbmQgcWVtdT8NCj4+IE9uIG15IGFuZCBDaGFpdGFueWEg
+c2V0dXBzIGl0IHdvcmtzIGZpbmUuDQo+IHFlbXUtc3lzdGVtLXg4Nl82NCBcDQo+ICAgICAgICAg
+IC1ub2dyYXBoaWMgXA0KPiAJLWVuYWJsZS1rdm0gXA0KPiAJLW0gNmcgXA0KPiAJLXNtcCA0IFwN
+Cj4gCS1jcHUgaG9zdCBcDQo+IAktTSBxMzUsa2VybmVsLWlycWNoaXA9c3BsaXQgXA0KPiAJLWtl
+cm5lbCBhcmNoL3g4Ni9ib290L2J6SW1hZ2UgXA0KPiAJLWFwcGVuZCAicm9vdD0vZGV2L3ZkYSBj
+b25zb2xlPXR0eVMwLDExNTIwMG44IGludGVsX2lvbW11PW9uIiBcDQo+ICAgICAgICAgIC1kZXZp
+Y2UgaW50ZWwtaW9tbXUsaW50cmVtYXA9b24gXA0KPiAJLWRldmljZSBpb2gzNDIwLG11bHRpZnVu
+Y3Rpb249b24sYnVzPXBjaWUuMCxpZD1wb3J0OS0wLGFkZHI9OS4wLGNoYXNzaXM9MCBcCQ0KPiAg
+ICAgICAgICAtYmxvY2tkZXYgZHJpdmVyPWZpbGUsY2FjaGUuZGlyZWN0PW9uLG5vZGUtbmFtZT1y
+b290LGZpbGVuYW1lPS9ob21lL2hjaC9pbWFnZXMvYm9va3dvcm0uaW1nIFwNCj4gCS1ibG9ja2Rl
+diBkcml2ZXI9aG9zdF9kZXZpY2UsY2FjaGUuZGlyZWN0PW9uLG5vZGUtbmFtZT10ZXN0LGZpbGVu
+YW1lPS9kZXYvbnZtZTBuMXA0IFwNCj4gCS1kZXZpY2UgdmlydGlvLWJsayxkcml2ZT1yb290IFwN
+Cj4gCS1kZXZpY2UgbnZtZSxkcml2ZT10ZXN0LHNlcmlhbD0xMjM0DQo+DQoNCkkgdHJpZWQgdG8g
+cmVwcm9kdWNlIHRoaXMgaXNzdWUgc29tZWhvdyBpdCBpcyBub3QgcmVwcm9kdWNpYmxlLg0KDQpJ
+J2xsIHRyeSBhZ2FpbiBvbiBMZW9uJ3Mgc2V0dXAgb24gbXkgU2F0dXJkYXkgbmlnaHQsIHRvIGZp
+eCB0aGF0DQpjYXNlLg0KDQotY2sNCg0KDQoNCg==
 
