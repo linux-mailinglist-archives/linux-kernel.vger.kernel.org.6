@@ -1,57 +1,48 @@
-Return-Path: <linux-kernel+bounces-242388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B60192876E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2287928774
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01DDA1F28216
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 206BD1C23DDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E37B149DE4;
-	Fri,  5 Jul 2024 11:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Snts7QGu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79BB1494C2;
+	Fri,  5 Jul 2024 11:02:31 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6045E149C59;
-	Fri,  5 Jul 2024 11:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0008214830E;
+	Fri,  5 Jul 2024 11:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720177293; cv=none; b=Xbg4U+7qgybG+9JMxYcwTQKsLeJvUOkOmMj+9Oq21QZn1FX1PKbJ5jE2Nxbb4fWolrF1lQ0JFewLtjuYmKnMEfxz/psNK6fl9YernafN8wS8b3v3mAFeQVR4lzbLC2z147ZbZVjWwiHDsCJ2sftdLIM1ceyu2uRO5jZTqGvllpQ=
+	t=1720177351; cv=none; b=DzBrP5WZy0YoslgkoUFONrVFrwWw68jMSDgkl2tDofKmaLBqs/ARL3/Dba7tV+rwGZtsRNOboc04kkAss+/4FD+UAoZNcg82gDxnfPcKBke7qYe8vTxEuSmsPXnvr1jgu39HlPbvilVvRv+UCeowYel0MoymwwJjSXQgDsjlYZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720177293; c=relaxed/simple;
-	bh=EhVybWgGeHW8VqFy+izcO3+7vqNtnv4UC1PQgr1iIpE=;
+	s=arc-20240116; t=1720177351; c=relaxed/simple;
+	bh=C+sa5eNWeY59YLL1mRSNYf1QD+iGhlpRvG2MnIJsyBs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJd6HdKxDr6JE2Zjm3yiRVLkwizbh51f60XYBAWhOv+kSHbC/vWzPS4cKwo6ry++oGhfcX5mB2ewFb7hORy2g+oxYGrVfRWeKXbPYKS0W44NO8x9puEWWys8qkkEpSLgPU8M6UMranXMGanbrhsAGfPBi8kgPoCBra4Cs8bF5TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Snts7QGu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E806DC116B1;
-	Fri,  5 Jul 2024 11:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720177292;
-	bh=EhVybWgGeHW8VqFy+izcO3+7vqNtnv4UC1PQgr1iIpE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Snts7QGuZAPwkv83dy0VrmrGWCBdEnQpAtgyF+iWkpzmQm/ckgJSMaesuhQRvRFrl
-	 tS+5jD25dvg0dqE90Fg9ZOrTfMfMzpeRrGPKYKuaZRC0jbz09gQw9FZDmfQs/eXD4b
-	 SVILwn3zjg/rKb4j6akHxS+o3OFJkWqhz+msPc/nVkvAORq/HPHz3TviAFNOIdgVYB
-	 DQqY5HIjGWkVgllF7Du3FQ7Vc/cwEJlWOkIUhAczU8nmt1p9vLocC1zDnh735FfCmj
-	 1Oqm+9qul8vMWihNViyYgVg1rpQXMopqYASBxw8Us5bInxMnuF36CHG6EkdkTiheda
-	 OZWzYw8jx5+Uw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sPgh5-000000002UP-38FG;
-	Fri, 05 Jul 2024 13:01:35 +0200
-Date: Fri, 5 Jul 2024 13:01:35 +0200
-From: Johan Hovold <johan@kernel.org>
-To: linux@treblig.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: spcp8x5: remove unused struct
- 'spcp8x5_usb_ctrl_arg'
-Message-ID: <ZofSj98X-uEr-Awj@hovoldconsulting.com>
-References: <20240529234722.130609-1-linux@treblig.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnawdPYj/qpbuQbPzxns3HkJp5s4w3jNJ9wIBFtf9tDNINh8tWGF3c8Imemt5kZ7G7fjTRElVL4HETlvzgGCji2OwsN/qH18MBsSGyz9M6sydAMQOw53mMFFHlW0eknVmxicGFRUaxMi6rqrYV+m3H3wmo3zuz/v4Y8cjmTm2zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1sPghm-0000R9-Oe; Fri, 05 Jul 2024 13:02:18 +0200
+Date: Fri, 5 Jul 2024 13:02:18 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
+Subject: Re: [PATCH nf] netfilter: nf_tables: unconditionally flush pending
+ work before notifier
+Message-ID: <20240705110218.GA1616@breakpoint.cc>
+References: <20240704105418.GA31039@breakpoint.cc>
+ <20240705104821.3202-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,19 +51,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529234722.130609-1-linux@treblig.org>
+In-Reply-To: <20240705104821.3202-1-hdanton@sina.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, May 30, 2024 at 12:47:22AM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hillf Danton <hdanton@sina.com> wrote:
+> > 				lock trans mutex returns
+> >   				flush work
+> >   				free A
+> >   				unlock trans mutex
+> > 
+> If your patch is correct, it should survive a warning.
 > 
-> 'spcp8x5_usb_ctrl_arg' has been unused since the original
-> commit 619a6f1d1423 ("USB: add usb-serial spcp8x5 driver").
+> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  1c5fc27bc48a
 > 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> --- x/net/netfilter/nf_tables_api.c
+> +++ y/net/netfilter/nf_tables_api.c
+> @@ -11552,9 +11552,10 @@ static int nft_rcv_nl_event(struct notif
+>  
+>  	gc_seq = nft_gc_seq_begin(nft_net);
+>  
+> -	if (!list_empty(&nf_tables_destroy_list))
+> -		nf_tables_trans_destroy_flush_work();
+> +	nf_tables_trans_destroy_flush_work();
+>  again:
+> +	WARN_ON(!list_empty(&nft_net->commit_list));
+> +
 
-Now applied, thanks.
+You could officially submit this patch to nf-next, this
+is a slow path and the transaction list must be empty here.
 
-Johan
+I think this change might be useful as it also documents
+this requirement.
 
