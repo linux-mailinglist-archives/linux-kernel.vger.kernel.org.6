@@ -1,149 +1,124 @@
-Return-Path: <linux-kernel+bounces-242298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666CF928666
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:08:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4FA928667
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7931B210AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 299961C21A47
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFA7146A62;
-	Fri,  5 Jul 2024 10:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5348F146A62;
+	Fri,  5 Jul 2024 10:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TqssU6fG"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N90T8mU2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C4413B5BB;
-	Fri,  5 Jul 2024 10:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F3413B5BB
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 10:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720174115; cv=none; b=lFGJpHy4hIOidqdb4BVgi2FZaloMkEVkpF5p0FjXtg7i/CqdSzeJHDDBKDAxJbH7KQ1ZsdGZcGzr4WXdPdGCQtaQQ4WHP+IMcQj82PoMJ7Bih/ZZ/rYb+dgcnqVlIQclJXIjZq5J0SBdTtlaN3FaZf51jPXH9dxclMS7BZR1Lcs=
+	t=1720174142; cv=none; b=qT2IIg5cikgzAgamuZtgG/l0Zs8ItPO2WmJ64/Uq6uoWljzBFzF9+q5sgeG6J6XCIuxJSlURlCE/z21w3XMBgN2Nu+0HdXpjFBwv4HsDsSSyx/gzL7uwW8+SbB3Vw/8wGjIOr7DIrLymwIZn64em/IPy1oo36tR8IULvPc1A/TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720174115; c=relaxed/simple;
-	bh=kP3QeFnDIFukQzzLmnBwW3AvNzEX33OvNmR/mRSuSKY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YgCKl1aP0Gx5SEWi4eYAV1YT6UiFrCz+CjerUmCTuF5wkmRbd4JxmiiOWhB1k6THrCoiP15tZCvCy32UwjWbxL4ctubO36FFW+okU6ApYNVY92XvOMu2q/QC6+Wwfr6SX1rkGafh6zcncqDfSD2+Ah6lVaP+u2O1biDRBAUSenQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TqssU6fG; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 465A8NjV042760;
-	Fri, 5 Jul 2024 05:08:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720174103;
-	bh=X0TWfqISVSqoER+zfdbU+LKPndrXxzn6J1t1M6cfB1Q=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=TqssU6fGcplUwTRFTwLmmeFfBfOrzCl7RhMpUafKPqCHvBCwj4G81hx/OekqOAOng
-	 ZFuGoHDqVEOrrFiY8+O4YLNVATIT0VuYdSteS1hEzeQ8rImZOckKPfZS0zL7m6Gl5p
-	 CCtJ3jzVAb3exn9XUI1lcMJpL1cH2dzknl+0U488=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 465A8NVi029913
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 5 Jul 2024 05:08:23 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 5
- Jul 2024 05:08:22 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 5 Jul 2024 05:08:23 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 465A8M5t115201;
-	Fri, 5 Jul 2024 05:08:22 -0500
-Date: Fri, 5 Jul 2024 15:38:21 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-        Beleswar Padhi
-	<b-padhi@ti.com>
-Subject: Re: [PATCH v2 0/5] Add bootph-all property for J7 boards
-Message-ID: <20240705100821.p24a52g2xrlw7kfq@uda0497581>
-References: <20240705-b4-upstream-bootph-all-v2-0-9007681ed7d8@ti.com>
+	s=arc-20240116; t=1720174142; c=relaxed/simple;
+	bh=7j9Jdm5VU4/OltxbB0ueSTNWYCdjR9qDN9hVuUIh/wM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VDhvcptjMXZUJsQkR6s32jma5HDqIg4gu8ontkI0Axc8U0EeraRAp+D6y1fgeQnIBBRddaB28ev/yL5fXHaPBLX9xO0S6SyysLt0hkjcd1nFDkbayFhAQ82RP5mFox4ONpOOHpEZPUBmw7RIGL7UfLUzC8Y/jTnNcm2VNZtZqYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N90T8mU2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720174139;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=7JyxCBbKfIShbwa9o4YlOtIGgflnmKtyw69jVRYJDY4=;
+	b=N90T8mU22ePi1GPSniBaeFera/BhCmg8+i7z3H8Urb9m9DZKlLoeM8+hjg+sE2YyE4+/gN
+	aGIUprf19IPW03jK40qRIc08HCKNehpftYBpNIpAi6bexioGiIIbPWV9Ng+G9X8oE3bHzj
+	A5sQ+Wbl5asM9yq/FhjCgQUp7ifLyEE=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-BFrRDDXjNhWCKVnsXMg9Hg-1; Fri, 05 Jul 2024 06:08:58 -0400
+X-MC-Unique: BFrRDDXjNhWCKVnsXMg9Hg-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52e98693f43so1582924e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 03:08:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720174136; x=1720778936;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7JyxCBbKfIShbwa9o4YlOtIGgflnmKtyw69jVRYJDY4=;
+        b=jIeqYLk9yGmh6kJGwYOhAb7ECVdA/+QuBtDQDAMGF82VDVImRyNPEWSRIJpTLeC4gY
+         +2R6cAsnk727VatVfzp2iIjScMtEhRWhlp4QMSVwNSpAGtJhlGP1J+QewsqKxtdmqhxZ
+         1HVTjJsr++PeeaR1jo+5np6GqHeGggFxRs9auzKFWVRusk91a9ciBTn27ZE87dmqNBBL
+         cAyoFmfKXrttQozFcIoM2Kxfcx2p+4wPkYb++KbrkA7w2c7qYceDDZXYNNa/W1kf+Mwj
+         vqDXPucEOVjeVUW0WbFvCPm2Dzkase0MREZxSvTGnXantO0Vw0ZCmAuhuEYgysx8sofx
+         Reiw==
+X-Gm-Message-State: AOJu0YwVZr2ePqYoNWXbDG3nNfIzZc3yMm5/ED+SMnXfUd4yr320EQD9
+	BVp6UfENefSKiLEhPTf/x1r78OZygG5wLLOT0DpI/WaVH4u3+D/QXy6X9TPc2mCMG0/JJkNoHrG
+	FHp04YOeJtY5we2gYILkQciDlfMKuDQtk+o0GaiLU11ANXLTWu/+iGyVdTzyPPFUzgeyIDftEIR
+	PN5vzHjhkLmBiW/U2RlkJGy3uIWHsZfhwhDOWc/Ss=
+X-Received: by 2002:a05:6512:3710:b0:52c:e11e:d493 with SMTP id 2adb3069b0e04-52ea062a2c3mr2688697e87.26.1720174136299;
+        Fri, 05 Jul 2024 03:08:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgFd4g48bCQMW2Bugknj1/Y3kp1VD/efPxZsNviOCYRskjptI8viNo1gD4BP8d6pPRFp6A3A==
+X-Received: by 2002:a05:6512:3710:b0:52c:e11e:d493 with SMTP id 2adb3069b0e04-52ea062a2c3mr2688673e87.26.1720174135600;
+        Fri, 05 Jul 2024 03:08:55 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1f0:a185:2de6:83fc:7632:9788])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a112b3f0sm3064111f8f.19.2024.07.05.03.08.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 03:08:55 -0700 (PDT)
+Date: Fri, 5 Jul 2024 06:08:51 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>
+Subject: [PATCH 0/2] virtio-balloon: make it spec compliant
+Message-ID: <cover.1720173841.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240705-b4-upstream-bootph-all-v2-0-9007681ed7d8@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
+X-Mutt-Fcc: =sent
 
-Hi all,
+Currently, if VIRTIO_BALLOON_F_FREE_PAGE_HINT is off but
+VIRTIO_BALLOON_F_REPORTING is on, then the reporting vq
+gets number 3 while spec says it's number 4.
+It happens to work because the qemu virtio pci driver
+is *also* out of spec.
 
-On 11:56-20240705, Manorit Chawdhry wrote:
-> The idea of this series is to add bootph-all and bootph-pre-ram property
-> in all the leaf nodes wherever required and cleanup any other places where
-> bootph-all/bootph-pre-ram exist in the parent nodes as well.
-> 
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> ---
-> Changes in v2:
-> 
-> * Aniket
-> - Change wkup_vtm0 bootph-all to bootph-pre-ram
-> - Add bootph-all explicitly to dmsc/sms nodes as otherwise the boards
->   don't boot
-> 
-> - Cleanup more nodes along with some testing with u-boot.
+To fix:
+1. add vq4 as per spec
+2. to help out the buggy qemu driver, if finding vqs fail,
+try with vq3 as reporting.
 
-Here is the u-boot patch with the cleanup that I have tried [0] and here
-is the corresponding boot log for that [1].
+Fixes: b0c504f15471 ("virtio-balloon: add support for providing free page reports to host")
+Cc: "Alexander Duyck" <alexander.h.duyck@linux.intel.com>
+Reported-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-[0]: https://github.com/manorit2001/u-boot/tree/b4/upstream/j7/remove-bootph
-[1]: https://gist.github.com/manorit2001/da42b634fabb662a48728927cdcb1acc
+Michael S. Tsirkin (2):
+  virtio_balloon: add work around for out of spec QEMU
+  virtio: fix vq # for balloon
 
-Regards,
-Manorit
+ arch/um/drivers/virtio_uml.c           |  4 ++--
+ drivers/remoteproc/remoteproc_virtio.c |  4 ++--
+ drivers/s390/virtio/virtio_ccw.c       |  4 ++--
+ drivers/virtio/virtio_balloon.c        | 19 +++++++++++++++++--
+ drivers/virtio/virtio_mmio.c           |  4 ++--
+ drivers/virtio/virtio_pci_common.c     |  8 ++++----
+ drivers/virtio/virtio_vdpa.c           |  4 ++--
+ 7 files changed, 31 insertions(+), 16 deletions(-)
 
-> - Fix build errors
-> - Link to v1: https://lore.kernel.org/r/20240507-b4-upstream-bootph-all-v1-0-c6d52651856f@ti.com
-> 
-> ---
-> Manorit Chawdhry (5):
->       arm64: dts: ti: k3-j721s2*: Add bootph-* properties
->       arm64: dts: ti: k3-j784s4*: Remove bootph properties from parent nodes
->       arm64: dts: ti: k3-am68*: Add bootph-* properties
->       arm64: dts: ti: k3-j721e*: Add bootph-* properties
->       arm64: dts: ti: k3-j7200*: Add bootph-* properties
-> 
->  arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts   | 10 ++++++++++
->  arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi         |  2 ++
->  .../boot/dts/ti/k3-j7200-common-proc-board.dts     | 23 ++++++++++++++++++++++
->  arch/arm64/boot/dts/ti/k3-j7200-main.dtsi          |  2 ++
->  arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi    | 11 +++++++++++
->  arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi        |  7 +++++++
->  .../boot/dts/ti/k3-j721e-common-proc-board.dts     | 20 +++++++++++++++++++
->  arch/arm64/boot/dts/ti/k3-j721e-main.dtsi          |  2 ++
->  arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi    | 10 ++++++++++
->  arch/arm64/boot/dts/ti/k3-j721e-sk.dts             | 18 +++++++++++++++++
->  arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi        |  5 +++++
->  .../boot/dts/ti/k3-j721s2-common-proc-board.dts    | 14 +++++++++++++
->  arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi         |  2 ++
->  arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi   | 12 +++++++++++
->  arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi       |  2 ++
->  arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           |  9 +--------
->  arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi   |  7 ++++---
->  17 files changed, 145 insertions(+), 11 deletions(-)
-> ---
-> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-> change-id: 20240430-b4-upstream-bootph-all-8d47b72bc0fd
-> 
-> Best regards,
-> -- 
-> Manorit Chawdhry <m-chawdhry@ti.com>
-> 
+-- 
+MST
+
 
