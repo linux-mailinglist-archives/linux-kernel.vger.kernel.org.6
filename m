@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-242347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A8B9286F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:41:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D5E9286F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5ED282B10
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0C91F2238C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE11F1494B1;
-	Fri,  5 Jul 2024 10:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A76E148848;
+	Fri,  5 Jul 2024 10:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OkPR04q3"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tog5x2NA"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842B9148840
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 10:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06F4148FF9
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 10:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720176060; cv=none; b=Gv4JMbpWd7/KCBKn28OiSzNj/qZjwajZpCgzKuMv91k/ie3Y2o64G1JqNM5uH1NO5GLRxSYuSKRyaiqUHOHqB/LGBxGvrR+xELjPvUu4wHYQkfCCc2PKbvnrSaDhGf3MetEAa8jUHdLScQMYV+0CjPi6joaEDLVqAsN2Mv7KO6Y=
+	t=1720176061; cv=none; b=q0k+bR42Ex4aFhAP4ssCK9A8LGN54matrTdLeWVMW/7kgn9mV7Wleb9wq2jJhlGk/JepHthKDZu7Cjja3VKy0IAinBKaE1KMtz15bvRnwMlGBVZtjjXCIxSBXH4pVwCRXy6do74JlHjXNBhHYTXycN9K/KKOs2V7gIvXxn225rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720176060; c=relaxed/simple;
-	bh=QARo7BUFibdiwmopTR5ANV4tiDr14JhYaFByIK5Byzw=;
+	s=arc-20240116; t=1720176061; c=relaxed/simple;
+	bh=p8oWdKJIvI/s9h6AmtHd1y9/mEFkDnWkbWLkspoDv58=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MCA0/lMbkrk63IpQLgOdl7ehxD2Ua5jYmRELRb9+TOdiZLQSsbaRSxPuVikfgmvZMRED/D7uMqaEVdY7FmtnyuDr27XhJ/YkKzQ4vuEcCoGd7GzVH9xVRtktCgGMukg39YbRJR7cy5Ej958/L1+lOWbdnMZ0YwezcaNj22EWSoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OkPR04q3; arc=none smtp.client-ip=209.85.167.47
+	 In-Reply-To:To:Cc; b=Z4RdQt6ZMG9OLWmeqxCOK1uD9TU+6tvliWmVb/dgTTZx+mbmwKapaZdf25eogd6RSh/DRntoJMw1hAnvEIWlE0xR542Gejcl+QiTYh4Z5F2PADB0ta6E9i4Jqlvk1pMaegKQvUyljWhofYnw3fHLYxf1729dGBmiS5ATclQyH4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tog5x2NA; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e9c6b5a62so1595915e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 03:40:58 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-36796aee597so874086f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 03:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720176057; x=1720780857; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720176058; x=1720780858; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1eXR3A0Apjdz/ufMLdA1641K3n5tF+YJ5/SI81Vd25s=;
-        b=OkPR04q3uzKpLOs1blTtyQ6XFY/LmLXMEOvahGuwDm8A7XlIyzjibpMQildKXWVIy0
-         TMFG/L7V94LlFSoNkU4SU02dmn753XhqCnSAjx7ilmhbt1LFCrE4dyGanMB+mJq3cWz8
-         ayGdqzfSuxipg2RUA75qr44z0U7J3MEVPhBIGD8O8Cwq43lV9RMVf+kGsvprzIGrQ5Pb
-         OvNn6lYldJaQo0xAF/PFKaQ78ul8Zz+9xr23VeoXXLDdeLDa9jai7R2NJGsacepGGrG2
-         p845++lBETRX7Dt5CLKCjMMTkwCVGEaOMJ26LHVMrXzQuepj70R5kfpkwYxB0IA3aq78
-         onwg==
+        bh=O7oWBhtqk3xwW6JyxZwaMMLkFEk7F/Zbtq+Lnku9XgY=;
+        b=Tog5x2NALYnHmcso3U533v4FSLGzHqEAnqN58d4BAiyJ9nIqu/fHU+mB1lD5H7ItwI
+         icFR9v4oCU/5AYdnK51IV02LciYmeyE2ipYaa69XFntMOz4RFBlZOVF2RNxx88nj65/C
+         L0ssJOPV0JQqGgaa6iL3/u/Z5yQ3r7mvuwyBdREkey79Ib56JpiNMkuFrYbtjFspe1k0
+         S0610MV+Pe/wSjbmF+QGjFcxBuylRLiqQ2epkanC51bU904zEl/tP/zAP69b0OdpfNM9
+         MDGO5BRG1zecXl5FWavpgP75IIp4rKgBaS25nHWUoDmuYjF4QU377jVrCDmzlTZbAln9
+         eNcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720176057; x=1720780857;
+        d=1e100.net; s=20230601; t=1720176058; x=1720780858;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1eXR3A0Apjdz/ufMLdA1641K3n5tF+YJ5/SI81Vd25s=;
-        b=fzavNhHgkRC9ha6oFXRKFF4PME7csDWIx6UZunjzOAC2b7sVGTQgsxMgA59vfKlc7C
-         f2nI7cJdwhL6ZuuY2ruh2xyc0f/jrIAnaqjzPtbkl4fwDoxnc4pEu1ijgMVDvS91PB1P
-         fpEdfB8mVY70RJvQ9oEehXNGav2GJ4LUIV9qFIAQ1SiHH/3Z32VxrDcWw95UAyNs+jP+
-         W2WYsWccWXZropDBggyNIMInajc29E2tHkBKJqI7Np7g2mhTSp3crzVykr56gGep3JHO
-         QBckAZGXdmyQ7QjYz/0WrFUZzr9C8xd9EbgVk3ECHiRfhRgTVY3qQp3ProPE/NCgmyjT
-         JPiA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9690k4+Qi1Wy6yhvQ1eSHE7LIkSF2c7bpz2C829d8XibDWxPC+t6vYIdnBeONEMQRwHH63Pfu/iG1Q8X7CT57QdWj+yRbyU98n60r
-X-Gm-Message-State: AOJu0YzeZIVAtZQzINPZc49W3VJ+dc0DYeW4vluszKKLtMU6tZk69+rq
-	SWxmFTQJP9IaMvIUuAG9EHDUp9HszcG+zorw5QR7RCkqGR/wyqXXJnDW4FxaZxI=
-X-Google-Smtp-Source: AGHT+IEuhBIHVHatXqi8z2wyYNIT9Lh+Ls2S9+zIz61+j9staS9hXEuX+FfBkFJ8fOmyILywkwPT4Q==
-X-Received: by 2002:ac2:5e6a:0:b0:52e:9b92:4999 with SMTP id 2adb3069b0e04-52ea0636e2fmr2584439e87.2.1720176056640;
-        Fri, 05 Jul 2024 03:40:56 -0700 (PDT)
+        bh=O7oWBhtqk3xwW6JyxZwaMMLkFEk7F/Zbtq+Lnku9XgY=;
+        b=PEViwLOSnYcO12XvG5jfjarRdM1glHShetUorQC9ucLOc9wDVYPlv/ArOMbUuF2WE0
+         p9FvUlfuJpiES+WAmfdXR3Ep3gEmSw3LdcUATMfr2NgmInxY5d0UoJiciIjyKepq1vvv
+         FFEnHV+B4rURA58eU7BOVeOXz2WBudiuw1Fovo8Y11N5N4Qv3ZHLSjI7AgARZN+zHvS6
+         KIQNWp5BpvSRp1WsY29FTawokkIsMUl4ngI++Q9yw0cKyYz3EpdhmJFzEkAO3U2Mj4Z2
+         v/1hgeaAWQEQ1mkFYoL7NIpD2TSygYq/RnD/DTrGmJTYdUjiyuRNzoT0xscNVxjiIfM2
+         AtnA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9H515ZhRlhSvqJmL7m0SS0Yo11HO6EPp4Kozu35qOBIregznpn3h2FAQ3EWIhF0akm2dIwrRJ+y1PqA2lCfhk2w8ZgC+pllnwiUg5
+X-Gm-Message-State: AOJu0YzBD9Rcr1W2pHm7oFaeSn3pXmTb41vHN1zTbN98KRXvAbVKWndj
+	h/6vboRaYsfJK55gWZbKHk9HHdrbNWrfI0h3cSJaSqFJa6jId4se3CsQIQG3QqA=
+X-Google-Smtp-Source: AGHT+IHPMMzu5kdlcoZYnKj2xBCDHrdAzNmKY1tb0qjEiMJJj0RsjyKrxPl+gMGzYZqJroN4prirIQ==
+X-Received: by 2002:adf:e68a:0:b0:35f:11c5:5c74 with SMTP id ffacd0b85a97d-3679dd34d4bmr3095033f8f.36.1720176058373;
+        Fri, 05 Jul 2024 03:40:58 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36789d5ec1csm8680446f8f.37.2024.07.05.03.40.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36789d5ec1csm8680446f8f.37.2024.07.05.03.40.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 03:40:55 -0700 (PDT)
+        Fri, 05 Jul 2024 03:40:57 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 05 Jul 2024 12:40:45 +0200
-Subject: [PATCH 2/6] iio: adc: ad7280a: simplify with cleanup.h
+Date: Fri, 05 Jul 2024 12:40:46 +0200
+Subject: [PATCH 3/6] iio: adc: at91: simplify with cleanup.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-cleanup-h-iio-v1-2-77114c7e84c5@linaro.org>
+Message-Id: <20240705-cleanup-h-iio-v1-3-77114c7e84c5@linaro.org>
 References: <20240705-cleanup-h-iio-v1-0-77114c7e84c5@linaro.org>
 In-Reply-To: <20240705-cleanup-h-iio-v1-0-77114c7e84c5@linaro.org>
 To: Dan Robertson <dan@dlrobertson.com>, 
@@ -91,21 +91,21 @@ Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1441;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1335;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=QARo7BUFibdiwmopTR5ANV4tiDr14JhYaFByIK5Byzw=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmh82uDOsWBkZE1MS94UeFMZdoWUjtORN8+1Oef
- iInuGL8Z3eJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZofNrgAKCRDBN2bmhouD
- 11beD/98CTFr2lTq/EVP4vRTt2IiXlvOrBvBMcJmJPzXzLJ8bIkeaqjo06OJLaIDRQZYBNPnVuh
- iCB2ROEzC7zxYyVsUR/0PLtX3CUYblcKXaJRB2eUx5EnKv2muKesTT1f8imdJLzkdd+yt5A/pqZ
- ttpJvI70vmv7h0XO0Lu+kjHrXA3dtkGsRIfvIKaFNs261+GuLAKylmm89b7TraS72nPGqu103En
- iaTXldI75WXk97F7pU5M8adFpOoZ4BjRUtjgvY7nfQOzJ+dGhFcyLRPg187QTHs1SiYEaIIRZCl
- kozqwrmXIU3ST2+IfKoCE609dvgGWzi43Aq9g3nHvV3JmXdo9WjXbER/iQlSDIHx6L69gUYlD14
- WsrYJX3w8jqpNmeXQY6z2RBjMRMJu6lrrETwaTNlpbBp3bnXPyKqsuOAwSP9k8o/orNrGU1goof
- R7znoCoTfOU+/wFgaBKBWhvGMiTZhSiAJf8Ai0TQ04VuEBYYOUik4LBgaDyf5UziepsKEbPw2FP
- IrYwDIvRTRujbE096pInBQS5Qg9tu7N5ZYXPy8zFL/d+qotPVgUmSr1q3yH5a59Bid6jgB6hvmc
- 6DsuaNdFpC1fBtjgUFZ9viCxxX80G7AFRkWHz1LEYU9RgLeQRecmLe9LBr4K6XyMoG2J0n+HOnv
- EtHG2o0AIPzSVRg==
+ bh=p8oWdKJIvI/s9h6AmtHd1y9/mEFkDnWkbWLkspoDv58=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmh82v0r6Jh34sMwY1mn3FW86/CEhm6tM4W7RnL
+ uiEVj4Vr+mJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZofNrwAKCRDBN2bmhouD
+ 1/3TD/9Na/SvzzL4bKKGkbGVC3TdFpp+yHgCyH52qQr8o7KQlHBEJKaH1jYv9NZmWAfRjEp/6WM
+ DX8l8spwS2QfhfjRD61w2RJxeNHKpMOhfRUVIL3iBAHrwDkv2wUlIi6iYH421pgx8LKaMK7Oadh
+ ZI8wacXDVGz0RHyrdOt5dYKeE/bzhdXMc6PD3z/VfdipVRtAkyUqdkqaof9EW1cm24JddMncVl7
+ GgUa2VE6T9e59sqS3YfaM3QfvlZsxRdPFfGHba5PyoE4dUv0ppeTyKzWouv9GySZayvSnNVDQmd
+ Sncvw4nm/LyKQKKIpLpjRv6t8r4aKWGastRB8/Xkq/6CaeR9geqf8/cepA6LiNsd5XqtTMgyCy0
+ x/tyceFDPl7QQaZXKGuD4CbscN2FxQyZYNsxx1YGEopceTWnUa09mmhHCGKCnCJplvXIlHGa2F+
+ fHZj0Z9dGL0kS8rP5ZdeEAZ+213jyU+fzDu9kapEegaH/3ycs+i/+6roOFLOONLTdJi3kbfykKl
+ HwM/9WrCzw2ruPd5Kx1vu51mz7IU9QgbsKj9QqfhRRoxvK/9bKdWhvOLBSkz4ofs8CbE1zpJSFi
+ eiARICHKU25nhyGaKKZUWQRdrUnt1N6n1Z5Xv7340vFdMMvK5C58k/NoPAoimRL1HlKPrF7Pery
+ tEe0GOCnirntzpw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -114,51 +114,48 @@ make the code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/iio/adc/ad7280a.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/iio/adc/at91_adc.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7280a.c b/drivers/iio/adc/ad7280a.c
-index d4a4e15c8244..7bfa090da4df 100644
---- a/drivers/iio/adc/ad7280a.c
-+++ b/drivers/iio/adc/ad7280a.c
+diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+index eb501e3c86a5..7bcda203436b 100644
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
 @@ -7,6 +7,7 @@
  
- #include <linux/bitfield.h>
- #include <linux/bits.h>
+ #include <linux/bitmap.h>
+ #include <linux/bitops.h>
 +#include <linux/cleanup.h>
- #include <linux/crc8.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -803,16 +804,16 @@ static irqreturn_t ad7280_event_handler(int irq, void *private)
- {
- 	struct iio_dev *indio_dev = private;
- 	struct ad7280_state *st = iio_priv(indio_dev);
--	unsigned int *channels;
- 	int i, ret;
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+@@ -543,22 +544,18 @@ static int at91_adc_get_trigger_value_by_name(struct iio_dev *idev,
+ 	int i;
  
--	channels = kcalloc(st->scan_cnt, sizeof(*channels), GFP_KERNEL);
-+	unsigned int *channels __free(kfree) = kcalloc(st->scan_cnt, sizeof(*channels),
-+						       GFP_KERNEL);
- 	if (!channels)
- 		return IRQ_HANDLED;
+ 	for (i = 0; i < st->caps->trigger_number; i++) {
+-		char *name = kasprintf(GFP_KERNEL,
+-				"%s-dev%d-%s",
+-				idev->name,
+-				iio_device_id(idev),
+-				triggers[i].name);
++		char *name __free(kfree) = kasprintf(GFP_KERNEL, "%s-dev%d-%s",
++						     idev->name,
++						     iio_device_id(idev),
++						     triggers[i].name);
+ 		if (!name)
+ 			return -ENOMEM;
  
- 	ret = ad7280_read_all_channels(st, st->scan_cnt, channels);
- 	if (ret < 0)
--		goto out;
-+		return IRQ_HANDLED;
- 
- 	for (i = 0; i < st->scan_cnt; i++) {
- 		unsigned int val;
-@@ -852,9 +853,6 @@ static irqreturn_t ad7280_event_handler(int irq, void *private)
+ 		if (strcmp(trigger_name, name) == 0) {
+-			kfree(name);
+ 			if (triggers[i].value == 0)
+ 				return -EINVAL;
+ 			return triggers[i].value;
  		}
+-
+-		kfree(name);
  	}
  
--out:
--	kfree(channels);
--
- 	return IRQ_HANDLED;
- }
- 
+ 	return -EINVAL;
 
 -- 
 2.43.0
