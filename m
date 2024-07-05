@@ -1,158 +1,120 @@
-Return-Path: <linux-kernel+bounces-242569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C499289F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019EC9289FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57B3FB24738
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332311C24178
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6241514E2;
-	Fri,  5 Jul 2024 13:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B3D155314;
+	Fri,  5 Jul 2024 13:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bpWpiZWt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Cw5RLp4F"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6D214C5BD
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 13:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A0115381B;
+	Fri,  5 Jul 2024 13:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720186950; cv=none; b=in1uho+pUhIwaBmRjlU75hDRba3I5oPQzlBnG+C1lQtTvZu4ctGtz/txK6ZynMq4YdesbdKg3m8Q71QJL3XYw7paHos49O5O1CQpMzX2zv7t495eUtNkz5OtR6cquNdeIGzyTGl6SKbNTXZtsswG0DPVrxCOHPeJVag9Blsh+WQ=
+	t=1720186955; cv=none; b=fplvmlTADMWw7ttqz9pCbfwuJb01U7wZnKzOpMT/6hujs1h2v6ayPFwEjvxa7NunkU8jAWprlhFUdUdCSGDjdQ6Ox9qsr7lLUDiCtQdSERYCV5TDBLC4lYTds5iry4jtBP8LWcJtcL674rz3V10req1OpSAn+8lidskMPOeEjNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720186950; c=relaxed/simple;
-	bh=xAiLtazfBXSZFhUCuJv5iLA8GUS2Erahe3O/6nbCjGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wa3CVq2SsTgfEgeIb0eML4GLp90PnJhy0hhbEYci7MN2Kh8k03k1PP6tCbyDHvBj6ZUZejRBApz+IzYI9M/Uopmwcn0zNNLNK0sGWCe/avbYdm+2KYVyZCnlvSf9mpQl+aG1DLLJ9MBuR6uQ1R41HfUjB5AEFGSchWMGFmMG7RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bpWpiZWt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720186947;
+	s=arc-20240116; t=1720186955; c=relaxed/simple;
+	bh=FuIt2mgdC/w2VF87WTNDHG4Qzlpt8NFpqXuuHcEXahE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JWJUr/4DtO3xuVMvBI/Sr7XSYD6S9E9xKllANumGNUSnMMmJnIYYplJWIweNET7vmB+r0sKSHFvx29S8yq2MTGNjvfIAE5VlXh5MeqEdIEOLeF2rh4qpkDihzw/roh5HlGEe3QQN4eGGewlRR7M/etXe7CkULTUVVvoZFHpPdJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Cw5RLp4F; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 17F8F24000A;
+	Fri,  5 Jul 2024 13:42:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720186951;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lNWQiXa5WTonO6VnFXHoZW4uvs/niJejriJYafDuJeE=;
-	b=bpWpiZWtGij1UUtfdU8lo/VBPlZfJZBgH5ziz7t0RvheZGq/0IgI/1AS3c2TAMF6Ivp+yZ
-	siXFJZMR9y4pIWaaRPvJEePB0u4N/HkuekY66gXr00j9aCtjCUNjouYubmr9RdTtAqNFMj
-	JcxJ+Kog6hrcDU48UmIjUmN+P3ob5d0=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653--3CPj9ldMTKWe8BuAR4hDw-1; Fri, 05 Jul 2024 09:42:25 -0400
-X-MC-Unique: -3CPj9ldMTKWe8BuAR4hDw-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79efed0e796so25753585a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 06:42:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720186945; x=1720791745;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lNWQiXa5WTonO6VnFXHoZW4uvs/niJejriJYafDuJeE=;
-        b=I5FanM28zs3d1OwFcvkGN7zPHwv1U+dNRtxGrchzWNKu3xTUHjDBRnny8tDRY+Vn/x
-         R5tAPo07DZKvu3qTHo9VnR75yJIgzWV6vtQD2ByHgQpVvVzfIutIT85wzFsIIeKpZO4N
-         6kG1xfAZa/s3qxj1xvKeMPNGsFQ/YzlOVxeYTr+x0cJcoaNaEBeHRHPytfZhBDsxWbdz
-         pes8+dcfVm1++G3Yy6vzxvz52V9N1wwt8MHO9Az9sYQVW7fN8FO3ROAD64j90n3y9LSq
-         8MoGd9JdHySX3tAvVO0X4i9GjmLCFHxI0WglbvPEpKZwUmFrzhyUFiTT/+ghx24R08bc
-         aL9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVMBRNY4b9XnXtFB2cZUANoxRIqujZBGkaZKbgTRai42QEWUe636UeLu/HqrU93aBBeb/tgE8eD77kSdbj9RDHYGX3dqRMiuljoQt6H
-X-Gm-Message-State: AOJu0Yw1K7Qg8DdntmZbrhVmcIirNyCL6WSkTtyZjgnqSqTm81xQxupa
-	saXTYfA/8WCE35N9nczzU0FKrgm4btduvVpW4XS3KmfpywG77FQ1UbUlnpaFjPSZFXR0XD54ZwG
-	WHG8bEf0LQZPmlRj4MD5JdjwuW7Zb+wpETISIWXykoiNq7EkwEdQtgraABGwknQ==
-X-Received: by 2002:a05:620a:13d2:b0:79d:7e5a:d044 with SMTP id af79cd13be357-79eef4c0f06mr737795785a.28.1720186944970;
-        Fri, 05 Jul 2024 06:42:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzRoLCo4GeRRFCdesL0t0J6Xc2rhP3ZGCRDtPGGaxotQxYNzT1wzmgDzK5ccFskQ+43Nbdxg==
-X-Received: by 2002:a05:620a:13d2:b0:79d:7e5a:d044 with SMTP id af79cd13be357-79eef4c0f06mr737789985a.28.1720186944583;
-        Fri, 05 Jul 2024 06:42:24 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::b])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d69299b81sm773174785a.71.2024.07.05.06.42.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 06:42:24 -0700 (PDT)
-Date: Fri, 5 Jul 2024 08:42:19 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org, 
-	konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	djakov@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	jassisinghbrar@gmail.com, herbert@gondor.apana.org.au, davem@davemloft.net, 
-	manivannan.sadhasivam@linaro.org, will@kernel.org, joro@8bytes.org, conor@kernel.org, 
-	tglx@linutronix.de, amitk@kernel.org, thara.gopinath@gmail.com, 
-	linus.walleij@linaro.org, wim@linux-watchdog.org, linux@roeck-us.net, rafael@kernel.org, 
-	viresh.kumar@linaro.org, vkoul@kernel.org, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com, robimarko@gmail.com, 
-	bartosz.golaszewski@linaro.org, kishon@kernel.org, quic_wcheng@quicinc.com, 
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, agross@kernel.org, 
-	gregkh@linuxfoundation.org, quic_tdas@quicinc.com, robin.murphy@arm.com, 
-	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
-	quic_rjendra@quicinc.com, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
-	otto.pflueger@abscue.de, luca@z3ntu.xyz, neil.armstrong@linaro.org, abel.vesa@linaro.org, 
-	bhupesh.sharma@linaro.org, alexandre.torgue@foss.st.com, peppe.cavallaro@st.com, 
-	joabreu@synopsys.com, netdev@vger.kernel.org, lpieralisi@kernel.org, kw@linux.com, 
-	bhelgaas@google.com, krzysztof.kozlowski@linaro.org, u.kleine-koenig@pengutronix.de, 
-	dmitry.baryshkov@linaro.org, quic_cang@quicinc.com, danila@jiaxyga.com, 
-	quic_nitirawa@quicinc.com, mantas@8devices.com, athierry@redhat.com, 
-	quic_kbajaj@quicinc.com, quic_bjorande@quicinc.com, quic_msarkar@quicinc.com, 
-	quic_devipriy@quicinc.com, quic_tsoni@quicinc.com, quic_rgottimu@quicinc.com, 
-	quic_shashim@quicinc.com, quic_kaushalk@quicinc.com, quic_tingweiz@quicinc.com, 
-	quic_aiquny@quicinc.com, srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, linux-crypto@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	iommu@lists.linux.dev, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel@quicinc.com
-Subject: Re: [PATCH 29/47] dt-bindings: net: qcom,ethqos: add description for
- qcs9100
-Message-ID: <gt35pxlulfowpbca3sb6nf5ble4lhq3kolmjyc275vtdcmeixx@gkctewz6tbwv>
-References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
- <20240703025850.2172008-30-quic_tengfan@quicinc.com>
- <u5ekupjqvgoehkl76pv7ljyqqzbnnyh6ci2dilfxfkcdvdy3dp@ehdujhkul7ow>
- <f4162b7f-d957-4dd6-90a0-f65c1cbc213a@quicinc.com>
- <add1bdda-2321-4c47-91ef-299f99385bc8@lunn.ch>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JtwzpnUYYLiQKZg/jJnBbMWEqzibWxNiVuSjlyYpAZY=;
+	b=Cw5RLp4FJg6Rqepr1HHf4VkotJhfK6s52fJlBwvwkYsT6kWUWUOOH7DAgB14RKFh+P5kEz
+	wEDMSCgVi5FMXvdpmv7E0/mBGMPHNSR+5KYUzpxBAPo9fVtwvy4PmYCTF9kI/8dJh1A6KV
+	F9i1Guu0CquF7hJZTdokkfvlDVXNup0vTZTIT34IIgnbKClmOKH/dgxv9IcTeWD9ncWGdh
+	9Za/zNq4s4pIuWDCQ3r60nQc94TD3mF9OksZVuzDFpWhB5UAc6UDM0oYoAjlPPzJs6uFQO
+	YCPCFyAfABMkYJiZxEdPtiyZp53Q2KKdI7dSx+J3YtgCJvmMm8LNBzGzXGalFw==
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Subject: [PATCH v2 0/3] Add SARADC support on Sophgo SoC
+Date: Fri, 05 Jul 2024 15:42:22 +0200
+Message-Id: <20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <add1bdda-2321-4c47-91ef-299f99385bc8@lunn.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD74h2YC/03MQQ6CMBCF4auQWVtTRmjVlfcwLEoZYBJtSUsaD
+ endrbhx+b/kfRtECkwRrtUGgRJH9q4EHiqws3ETCR5KA0psZItaxAmlRGEGKy7Y9GeFdjiNCOW
+ wBBr5tWP3rvTMcfXhvdup/q4/Rpf/H5NqIYWxSpHUyuhW3Xrv1we7o/VP6HLOH7N9gOymAAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+ Inochi Amaoto <inochiama@outlook.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+X-Mailer: b4 0.14.0
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On Thu, Jul 04, 2024 at 06:03:14PM GMT, Andrew Lunn wrote:
-> On Thu, Jul 04, 2024 at 09:13:59AM +0800, Tengfei Fan wrote:
-> > 
-> > 
-> > On 7/3/2024 11:09 PM, Andrew Halaney wrote:
-> > > On Wed, Jul 03, 2024 at 10:58:32AM GMT, Tengfei Fan wrote:
-> > > > Add the compatible for the MAC controller on qcs9100 platforms. This MAC
-> > > > works with a single interrupt so add minItems to the interrupts property.
-> > > > The fourth clock's name is different here so change it. Enable relevant
-> > > > PHY properties. Add the relevant compatibles to the binding document for
-> > > > snps,dwmac as well.
-> > > 
-> > > This description doesn't match what was done in this patch, its what
-> > > Bart did when he made changes to add the sa8775 changes. Please consider
-> > > using a blurb indicating that this is the same SoC as sa8775p, just with
-> > > different firmware strategies or something along those lines?
-> > 
-> > I will update this commit message as you suggested.
-> 
-> Hi Andrew, Tengfei
-> 
-> Please trim emails when replying to just the needed context.
-> 
+This patchset adds initial ADC support for Sophgo SoC. This driver can
+work with or without interrupt and in "Active" and "No-Die" domains
+depending on if a clock is provided.
 
-Sorry, I'm always a little guilty of this. In this case I didn't trim
-since the patch was small and trimming the diff out would then make it
-tough to see how my comment about the description relates to the body of
-the patch. But I'll try and trim when appropriate. Just replying here to
-explain myself as this isn't the first time I've been suggested to trim
-more aggressively and I don't want folks to think I'm completely ignoring them.
+Link: https://github.com/sophgo/sophgo-doc/releases/download/sg2002-trm-v1.0/sg2002_trm_en.pdf
 
-Thanks,
-Andrew
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+---
+Changes in v2:
+- Drop modifications in MAINTAINERS file
+- Rename the ADC from "sophgo-adc" to "sophgo-cv18xx-adc" to avoid
+  conflict with ADCs available in future Sophgo SoCs.
+- Reorder nodes in DT to match DTS coding style
+- Switch from including <linux/of.h> to <linux/mod_devicetable.h>
+- Use scoped_guard instead of mutex_lock/unlock
+- Check IRQ Status in the handler
+- Change IIO device name
+- Use devm_clk_get_optional_enabled instead of a clock variable
+- Init completion before the IRQ request
+- Removed unnecessary iio_info structure in the private data of the
+  driver
+- Use SoC specific compatible in the bindings and device trees
+- Link to v1: https://lore.kernel.org/r/20240702-sg2002-adc-v1-0-ac66e076a756@bootlin.com
+
+---
+Thomas Bonnefille (3):
+      dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml: Add Sophgo SARADC binding documentation
+      iio: adc: sophgo-saradc: Add driver for Sophgo SARADC
+      riscv: dts: sophgo: Add SARADC configuration
+
+ .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     |  63 +++++++
+ arch/riscv/boot/dts/sophgo/cv1800b.dtsi            |   8 +
+ arch/riscv/boot/dts/sophgo/cv18xx.dtsi             |  14 ++
+ drivers/iio/adc/Kconfig                            |  10 ++
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/sophgo-cv18xx-adc.c                | 195 +++++++++++++++++++++
+ 6 files changed, 291 insertions(+)
+---
+base-commit: d20f6b3d747c36889b7ce75ee369182af3decb6b
+change-id: 20240527-sg2002-adc-924b862cd3f2
+
+Best regards,
+-- 
+Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 
 
