@@ -1,185 +1,240 @@
-Return-Path: <linux-kernel+bounces-242360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1DA928719
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:51:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB0F92871C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A231F2245A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B0D281DF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673A61494B1;
-	Fri,  5 Jul 2024 10:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D92148832;
+	Fri,  5 Jul 2024 10:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTGgEA5H"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L1NGrAF7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08641148844;
-	Fri,  5 Jul 2024 10:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3894131736;
+	Fri,  5 Jul 2024 10:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720176693; cv=none; b=XAs55txlRRbKjPKdh47G/P5HgH8qnktO+LUbsB69QdD/96hrE6gcpKcWYr3rDYV8gwx9/c7cSgMteiYyg0a8md1SR/t6gsjHPdmt6RnsOJFZvTMnTanHc4UKyVSKBLSRh138vb3ejG7/KmSrBjJuTZ4+QW32UsvpY9o33xvxnmw=
+	t=1720176744; cv=none; b=kECopPfc8XKrcL0LPiUfOyLzuAekmS54hc9Etjh8VbsuPUSawnflR899nhi8hBNwnkOGWG+4Kr4UUnTn1Ny0tYPj6rDHoUqG3Oq/ZP0dQSuRx/2hNJjDpXSaZ1b1OcH6SchauuvlZxjvZlOLwFzq8YTKd0vGXbOakUXzXXCRDvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720176693; c=relaxed/simple;
-	bh=AJORAJt9fiLAKgFuj43ReMllSSzMOpQ76O1O1Hy/3gA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GwCABQJ0iX82mvEgz/kKM8L1rfQlOVVG5CXK3uEF1SQlgCKQsOQ6nX0sD8iCFFLcQTgIonCg06F6u8xPuu5XgtMa4NFbS5f7atctc8DTeWkp8aFHMOGi22zUAL7V5qV8ka/w8ZYdO1B9OHgWSly4ygonYRwSbGGdKQy5xeQtr9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTGgEA5H; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-367963ea053so1136518f8f.2;
-        Fri, 05 Jul 2024 03:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720176690; x=1720781490; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AJORAJt9fiLAKgFuj43ReMllSSzMOpQ76O1O1Hy/3gA=;
-        b=BTGgEA5HqmAOdW3KHJI6pwysUG2UuaWHjI373dcJjUmYvlB1uTN/u2Wyosco6nL3q2
-         Dfvah/yDQ6gNtqTacMAjie6ZOTNB8F+r2T6K+5dgFvcwUthjreoVuHzuPSKr4szRaDeR
-         KUyv4xnMC3PjvP1c/GOhdsWQEVFDdkZfTGmKKDFGlKnW6wQgDYpo/NJVHMV5gqVotS6d
-         NG7nN7DqjVmawnFzfkt2cRnVU8iA3xxhgjFWRZytJrnZFBQt3MpVAJl+5zf29ecotjIg
-         CkXcb2Z+9006HxjAzESM6Krx5IC8DOZvTuONTWWCFc3USInPE3ruI042A3C7/t81/U8J
-         73gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720176690; x=1720781490;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AJORAJt9fiLAKgFuj43ReMllSSzMOpQ76O1O1Hy/3gA=;
-        b=gBz6/NyBy4JxLmVslp+6iERYRNwo9uHBkDttJKzrpIxlIpxql1Dc+msi1GYkfRWX2Y
-         LWeiw1xU3XGCmC+R7dhv0N/9uCi1b/INE4Bxqkha07+si/ia5+fGm9PJZzidE7RSO+aF
-         QrjCv3hgAQ2Ey9Rg4A9r03rCYH3iO94pytlPHZc6drPN7eSGSzuq8KpvBJ4CPvgB9T27
-         5dOzIGM/FkzQ7QtLKHJGiyrQU/LBrFeX5iUSmU0NthdXORMl44AcfhfWTGvB6s2qlmKy
-         oK/Uqf5ZJ+J6XELoNLc8nX+0i98Gpd29YDrz6hbCNBJs/3+cXA9c9hZw+JrW/w8BYhQK
-         kuEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXX1XhWkx0gs1bvpd+SYoujBkM08G3Eq8WEiTX8eO5QM3jfh1Yh/l6IyIvmSJveEL/IQESU2khYVvj8hV+FmNg0LbHCV7sG2N3xbjqtGdg4pxSYwTpfcRHJwnbGAeukHmc1F/FSxul5Yq1kEvyx/6W7Gp17n3XT+ozgMFD6HypTNY82Me29M2j+dQ89TneA2nClqKppwmD91IgTv4LvIBJpA2XnEb8iIV8VeVWIsL4WP0fxam30bQB/bSlP9xSKMRFRpJ9gD0JDrdtzq8ul5UBDi1cPJG1
-X-Gm-Message-State: AOJu0Yzl71BNvTMhF7AoIv8lXWhfrNmJlqArrN8UhV6vdmeu1L6Q+C3M
-	9WwaTu6POTo69lL6K1QIzxfyW7xFkmXn51wuxsLhf5+xlXV8Vy2z
-X-Google-Smtp-Source: AGHT+IG34mbke5IJo5cR/e8+OiQhSsIhfKjKH4QYsroO50LYMy0yaGverM7QDVIx2MHrrvn7/LDdLQ==
-X-Received: by 2002:a5d:4ace:0:b0:366:e9f9:3d1b with SMTP id ffacd0b85a97d-3679dd10557mr3837762f8f.9.1720176689607;
-        Fri, 05 Jul 2024 03:51:29 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367938a6e97sm6252663f8f.109.2024.07.05.03.51.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 03:51:29 -0700 (PDT)
-Date: Fri, 5 Jul 2024 12:51:27 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krishna Yarlagadda <kyarlagadda@nvidia.com>, 
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jonathanh@nvidia.com, krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net, 
-	andi.shyti@kernel.org, wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org, 
-	adrian.hunter@intel.com, digetx@gmail.com, ldewangan@nvidia.com, mkumard@nvidia.com
-Subject: Re: [RFC PATCH V2 04/12] dt-bindings: misc: tegra-i2c: config
- settings
-Message-ID: <qg7epd5xmwefp7kimlgummlktnonrd3pd7obnq3chgzrceg3lv@t4iyccqn2zdt>
-References: <20240701151231.29425-1-kyarlagadda@nvidia.com>
- <20240701151231.29425-5-kyarlagadda@nvidia.com>
- <20240701174227.GA148633-robh@kernel.org>
- <hqlckp6hxvxwkkbiagdb5pm4eo5efu55hwuupdal6lojxj2xu5@5zibskqdbdju>
- <CAL_Jsq+hzbHKeKM9UnJ=VK8_rKs5HJpZRGH2YYWAvjtf9SbPRw@mail.gmail.com>
+	s=arc-20240116; t=1720176744; c=relaxed/simple;
+	bh=g8LoQHoRed5zz5I9HwkdWN/n9jtSeXbb8AEura7xChE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H6U5qPqoc/Ga/DUapKcYbPftUSNtjZ+FJHXUSLeS0s+5g6oAloaogIc23m/e4VxyWIKYhowx915r4cuanNSqb2GqaoFYJIQwGovqKBTcHS164avzTfoUt3An0R/WVKntAhdnUZb6o4inDh6AZhXNA2FjCoPlkWDtrU1BRkXZ4l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L1NGrAF7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4659nmmK019469;
+	Fri, 5 Jul 2024 10:51:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vV7WKNqKvNgemIkPR9GZ68xW1u4zL1TG81X9HLZ+FHQ=; b=L1NGrAF7EvuHETsK
+	7pT7Wo7iI4+W5J2w0IgA4TT93Yplp/op42JPNqXf4dhN0vTx1czLrdO/jg54ALqC
+	JcGu2F0MFFQexjeOSAyFimkyAZQRpXmtaDYiNvFsR7ZRH7J5LErCozfMkLXveDfH
+	vep24C4+GhUGFI2SQzk4zAKT/S7+ssz2on65PFL/ftHeVp0aJ30bojQy/9CRbjLd
+	7NXKaJJNFXqiSoRdiT4qdabAv2AJ0mDI61vi/G3niPhzUAR15qej1RRQnyDTIBsJ
+	JItJqeZawfPrwY5HTpeqXchpo15pvli6BL9T2KGjHNS1hhRK2wlf70yHPpobkRX0
+	xNtaKg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402abtwntj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 10:51:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 465Appha019368
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Jul 2024 10:51:51 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
+ 03:51:49 -0700
+Message-ID: <ceddb62b-61dd-44c9-babd-cd375c5a147d@quicinc.com>
+Date: Fri, 5 Jul 2024 18:51:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2yfry5sotijauhey"
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+hzbHKeKM9UnJ=VK8_rKs5HJpZRGH2YYWAvjtf9SbPRw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: Kalle Valo <kvalo@kernel.org>, James Prestwood <prestwoj@gmail.com>,
+        <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>,
+        LKML
+	<linux-kernel@vger.kernel.org>,
+        Chun Wu <chunwu@qti.qualcomm.com>
+References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
+ <1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com> <87iky7mvxt.fsf@kernel.org>
+ <37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com> <875xu6mtgh.fsf@kernel.org>
+ <f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
+ <082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de>
+ <462c97dc-f366-4f75-9327-04d9424b819a@quicinc.com>
+ <b30307fd-4417-4220-a3ac-e3e80f23105e@molgen.mpg.de>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <b30307fd-4417-4220-a3ac-e3e80f23105e@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rg1MTPe4QVEOxcKSbw92swn7r98a5fyx
+X-Proofpoint-ORIG-GUID: rg1MTPe4QVEOxcKSbw92swn7r98a5fyx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_06,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407050080
 
 
---2yfry5sotijauhey
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 03, 2024 at 02:21:04PM GMT, Rob Herring wrote:
-> On Tue, Jul 2, 2024 at 4:29=E2=80=AFAM Thierry Reding <thierry.reding@gma=
-il.com> wrote:
-> >
-> > On Mon, Jul 01, 2024 at 11:42:27AM GMT, Rob Herring wrote:
-> > > On Mon, Jul 01, 2024 at 08:42:22PM +0530, Krishna Yarlagadda wrote:
-> > > > I2C interface timing registers are configured using config setting
-> > > > framework. List available field properties for Tegra I2C controller=
-s.
-> > >
-> > > How is I2C bus timing parameters specific to NVIDIA? Just because you
-> > > have more controls? No. That's no reason to invent a whole new way to
-> > > specify parameters. Extend what's already there and make it work for
-> > > anyone.
-> >
-> > This may be applicable to a subset of this, and yes, maybe we can find
-> > generalizations for some of these parameters.
-> >
-> > However, we're also looking for feedback specifically on these config
-> > nodes that go beyond individual timing parameters. For example in the
-> > case of I2C, how should parameters for different operating modes be
-> > described?
->=20
-> Like what? It all looks like timing to me.
+On 7/5/2024 2:55 PM, Paul Menzel wrote:
+> Dear Baochen,
+> 
+> 
+> Am 05.07.24 um 04:47 schrieb Baochen Qiang:
+> 
+>> On 6/26/2024 5:12 PM, Paul Menzel wrote:
+> 
+>>> Am 26.06.24 um 10:53 schrieb Baochen Qiang:
+>>>
+>>>> On 6/18/2024 6:33 PM, Kalle Valo wrote:
+>>>>> + baochen
+>>>>>
+>>>>> James Prestwood <prestwoj@gmail.com> writes:
+>>>
+>>>>>> On 6/17/24 8:27 AM, Kalle Valo wrote:
+>>>>>>> James Prestwood writes:
+>>>
+>>>>>>>> On 6/16/24 6:10 AM, Paul Menzel wrote:
+> 
+>>>>>>>>> Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when
+>>>>>>>>> connecting to a public WiFi:
+>>>>>>>>>
+>>>>>>>>>        ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 mcs 9
+>>>>>>>>
+>>>>>>>> This has been reported/discussed [1]. It was hinted that there was a
+>>>>>>>> firmware fix for this, but none that I tried got rid of it. I got fed
+>>>>>>>> up enough with the logs filling up with this I patched our kernel to
+>>>>>>>> remove the warning. AFAICT it appears benign (?). Removing the warning
+>>>>>>>> was purely "cosmetic" so other devs stopped complaining about it :)
+>>>>>>>>
+>>>>>>>> [1] https://www.mail-archive.com/ath10k@lists.infradead.org/msg13406.html
+>>>>>>>
+>>>>>>> More reliable link to the discussion:
+>>>>>>>
+>>>>>>> https://lore.kernel.org/ath10k/76a816d983e6c4d636311738396f97971b5523fb.1612915444.git.skhan@linuxfoundation.org/
+>>>>>>>
+>>>>>>> I think we should add this workaround I mentioned in 2021:
+>>>>>>>
+>>>>>>>       "If the firmware still keeps sending invalid rates we should add a
+>>>>>>>        specific check to ignore the known invalid values, but not all of
+>>>>>>>        them."
+>>>>>>>
+>>>>>>>       https://lore.kernel.org/ath10k/87h7mktjgi.fsf@codeaurora.org/
+>>>>>>>
+>>>>>>> I guess that would be mcs == 7 and rate == 1440?
+>>>>>>
+>>>>>> I think its more than this combination (Paul's are different).
+>>>>>
+>>>>> Good point.
+>>>>>
+>>>>>> So how many combinations are we willing to add here? Seems like that
+>>>>>> could get out of hand if there are more than a few invalid
+>>>>>> combinations.
+>>>>>
+>>>>> Yeah, but there haven't been that many different values reported yet,
+>>>>> right? And I expect that ath10k user base will just get smaller in the
+>>>>> future so the chances are that we will get less reports.
+>>>>>
+>>>>>> Would we also want to restrict the workaround to specific
+>>>>>> hardware/firmware?
+>>>>>
+>>>>> Good idea, limiting per hardware would be simple to implement using
+>>>>> hw_params. Of course we could even limit this per firmware version using
+>>>>> enum ath10k_fw_features, but not sure if that's worth all the extra work.
+>>>>>
+>>>>> Baochen, do you know more about this firmware bug? Any suggestions?
+>>>>
+>>>> OK, there are two issues here:
+>>>>
+>>>> 1. invalid HT rate: "ath10k_pci 0000:02:00.0: invalid ht params rate 1440 100kbps nss 2 mcs 7".
+>>>>
+>>>> As commented by Wen quite some time ago, this has been fixed from
+>>>> firmware side, and firmware newer than [ver:241] has the fix
+>>>> included.
+>>> This is the issue from 2021, correct?
+>>>
+>>>> 2. invaid VHT rate: "ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 mcs 9".
+>>>>
+>>>> After checking with firmware team, I thought this is because there is
+>>>> a mismatch in rate definition between host and firmware: In host, the
+>>>> rate for 'nss 2 mcs 9' is defined as {1560, 1733}, see
+>>>> supported_vht_mcs_rate_nss2[]. While in firmware this is defined as
+>>>> {1730, 1920}. So seems we can update host definition to avoid this
+>>>> issue.
+>>> Looking through the logs since May 2024, I have four different logs:
+>>>
+>>> 1.  invalid vht params rate 878 100kbps nss 3 mcs 2
+>>
+>> which chip are you using when you hit this nss 3 issue? QCA6174
+>> firmware does not support NSS 3 so really weird.
+> 
+> This is all from the same device Dell XPS 13 9360 with QCA6174 and firmware 288.
+> 
+> ```
+> Mai 20 12:07:09 abreu kernel: Linux version 6.9.0-09705-g08b269af52c0 (build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 13.2.0-23) 13.2.0, GNU ld (GNU Binutils for Debian) 2.
+> 42) #147 SMP PREEMPT_DYNAMIC Mon May 20 07:33:23 CEST 2024
+> […]
+> Mai 20 12:07:11 abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4.1-00288- api 6 features wowlan,ignore-otp,mfp crc32 bf907c7c
+> […]
+> Mai 20 15:37:55 abreu wpa_supplicant[613]: wlp58s0: Trying to associate with e2:b3:70:83:01:af (SSID='public' freq=5500 MHz)
+> […]
+> Mai 20 15:37:55 abreu kernel: wlp58s0: authenticate with e2:b3:70:83:01:af (local address=9c:b6:d0:d1:6a:b1)
+> Mai 20 15:37:55 abreu kernel: wlp58s0: send auth to e2:b3:70:83:01:af (try 1/3)
+> Mai 20 15:37:55 abreu kernel: wlp58s0: authenticated
+> Mai 20 15:37:55 abreu kernel: wlp58s0: associate with e2:b3:70:83:01:af (try 1/3)
+> Mai 20 15:37:55 abreu kernel: wlp58s0: RX AssocResp from e2:b3:70:83:01:af (capab=0x1501 status=0 aid=4)
+> […]
+> Mai 20 15:39:29 abreu wpa_supplicant[613]: wlp58s0: CTRL-EVENT-SIGNAL-CHANGE above=1 signal=-55 noise=-97 txrate=300000
+> […]
+> Mai 20 15:54:44 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht params rate 878 100kbps nss 3 mcs 2
+> ```
+> 
+> It was some public WiFi in some restaurant. No idea, what hardware they use. Maybe you can deduce this from the MAC address.
+Then it is QCA6174 definitely.
 
-The problem here isn't the individual properties but rather how to group
-them. More generally the problem is that we have a set of settings that
-need to be applied in different variants. Yes, they are all timings, but
-the values differ based on what mode a given controller operates at.
+Checked with firmware team and just know that, the TX rate info is generated by firmware directly but for RX rate it is from phy side. From firmware TX rate generation code seems NSS 3 is an impossible value, so it might be an RX rate generated by phy side. But I could not tell for now since the log is not complete. Paul, could you enable full ath10k log and try to reproduce? With full log we can check whether it is a RX rate issue,
+> 
+>>> 2.  invalid vht params rate 960 100kbps nss 1 mcs 9
+>>> 3.  invalid vht params rate 1730 100kbps nss 2 mcs 9
+>>> 4.  invalid vht params rate 1920 100kbps nss 2 mcs 9
+>>
+>> OK, these are due to mismatch between host and QCA6174 firmware, we
+>> can update host to fix them.
+Kalle, the root cause to these three warnings are clear now and if you agree I can submit patches to fix them. Or I can also wait until the NSS 3 issue is clear.
 
-Take for example I2C where we have things like start-hold time or stop-
-setup time, which we could describe in a more generic way (i.e. leave
-out the vendor prefix). However, depending on the mode that the I2C
-controller runs at (could be standard mode, fast mode or fastplus mode)
-these values need to be adjusted.
-
-So it's the same set of properties but with different values for each
-different operating mode. As far as I can tell there's no good construct
-to describe this in DT currently.
-
-> > Would you agree with something along the lines provided in this series?
->=20
-> When there are multiple users/vendors of it, maybe.
->=20
-> In general, it goes against the DT design of properties for foo go in
-> foo's node. This looks more like how ACPI does things where it's add
-> another table for this new thing we need.
-
-Well, that's what Krishna had proposed in the first version of the
-series, which you guys rejected. The problem with that is that we cannot
-easily group these settings using nodes because subnodes of I2C
-controllers are considered to be clients by default. This applies to SPI
-and other busses as well.
-
-This approach avoids these issues and can be more easily optimized since
-settings could be shared between multiple instances of the controllers.
-I have a slight preference of putting this into the controllers' device
-tree nodes, but I can't think of a good way of avoiding the above child
-node problem other than what we had in v1.
-
-Thierry
-
---2yfry5sotijauhey
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmaH0C8ACgkQ3SOs138+
-s6ElSBAAm6OJyI/B+iIOpmlkdlzG7L2zx/a8cXmzetbdsb5pIpZW1oED1gURbiYJ
-YLp50cUtKcBt+sQWpmf0FWUOCJaoN/151zj4ECK4ptlWRdoaiLm+mC9kG4du+ppz
-p5OSGjhHqva85PR4D1jQLOxPZOY2fDyA5tg4HpdoN9TzgrpZtFRawAUJun5f3lXL
-XdyXai7qCiYrGTAOHthRSzp/HyROYmYqZkku2cNsudgJa1KDlit5VvQzv2JJDA9/
-7mVLHI29v4Fj+OpFgiVnXUDtGLkeUBLCkcNOsKQP9NuTHt6dDMlTCv4BKCA+epIT
-mQeYkYkzyT2FpFWiQqPRsaMzJmNArjGgX2vBSsciU5o9VwF8+a+pYg+s7PiwT1aw
-4hz8HA7MpQeUWktOoaIY0pLrw7D0zCHAsVaRvq4uEOvdFPlefYyo12jP8fLgLK8s
-5I2+Z2qDYuJYPFW87Mco9AjopJe+J25a2L/weVUdyj8a5QvAjrPyiOaS+A6ycnnb
-aaKCL3XEWHyIwC95R2QBXqa0bnCiL8eqIyUF7Mwjg6khLJW4pETth9E5eKCPaq9i
-RWKwlvlGKkIedXqFJ/hchK54treZG14Tcdc3Jpm8ky59zZQWQ19zQMJwsfYThwFQ
-kkL+pOqr/LWSgdrIKDUhZalHjT83nQxOD/cWXs6nww1+M5eeV54=
-=6Nt4
------END PGP SIGNATURE-----
-
---2yfry5sotijauhey--
+> 
+> Nice. If there would be a test framework to test this, so I do not have to search for a Cisco network, that’d be great.
+> 
+>>> I believe it’s only happening with Cisco networks. I am happy to test a patch.
+> 
+> […]
+> 
+> 
+> Kind regards,
+> 
+> Paul
 
