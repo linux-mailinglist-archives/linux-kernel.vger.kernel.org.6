@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-241795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50F7927FB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:20:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA274927FB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C64B51C216B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:20:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52344B21CEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFA8FC11;
-	Fri,  5 Jul 2024 01:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="dScaGYx/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD1510A24;
-	Fri,  5 Jul 2024 01:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A551CFC11;
+	Fri,  5 Jul 2024 01:21:26 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9119D3FEC;
+	Fri,  5 Jul 2024 01:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720142389; cv=none; b=lo8Yf+fu39A8zQa0bf/5Chrp2svBDU3+M1NV/9OqlSkHQ6/E6ChuZBZaB7d43i2SQ6vp9lEIMtvmrnb4kity18FurAVzBJUdPZ28Do9XAs+VwJXMMFv1ZXQ/SoTp3+dH5lvHEGTVnJuYA2Jl7RMox7X+RY1671D+u2O6nqojs3c=
+	t=1720142486; cv=none; b=W3tXOOXUzT7gCDT56XMSg6LgBubJ/z8tn12hruoalpJKm2aU8y7n5siLUDiOQ6ke3FBEnU/om/BFtw7hLHWeS67twHi91VLFkJ/D2JHKZAZ30+B50tXj6kPUellQPnVh1FQaAa50n5IAT05j2SbnlJ/63azZCDgnH1s0JG/togA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720142389; c=relaxed/simple;
-	bh=4jXA60CwTqUR5bZu5hr9dmdPy/sOO2/oK1vX+xklF5o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kmFleZq+dhCzi5wYYjUMlgHtcj6fqwD2+ekd0QnqWWpv4wSoznYrLL9dqUWNvz6W2oEdioz6qnXNXNC1PWZf371gTGgOKR11Tq1VjcZ1hS2XNyqU3ZKYrnQH8ZhSx3LcxbwugMqOSz5Yr+2U75i/djWlJ3BU8c28Nhx2unJ6frY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=dScaGYx/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1720142382;
-	bh=UCMaIVTnGE08WOL8bGCywK+Z7TDVAMtL/zyKNBMfqBk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=dScaGYx/VAT1PxfoDVsug+gCtBq4YJ4QfRBfg7DW04HpffBYfKmUJHAruupwwMsWr
-	 GNYcEBSFfTl/llWg1f8VT1LwAU/H1dVxv6OcCPQLAkUwzCbA70fo+FcimqPKJ17YGV
-	 wK2VO3TdDquqcngJsKeg4bCN1NWoT/sBJbKt9c9tVeNSVhDcWeZG9yicBKCFn9x8bm
-	 /wxenOnMKvQEudhsKzijOqw5Rv0DGEPUhbWLrTAEbc3+7aGvg5qNzIfKs4VP8EkHFP
-	 xTdd0jdhCobAWneOQdFmCEYpjGKyRusmZY8J/w8VJepbBHSU4V7Fh/6yLH2v2/rXHN
-	 S8QgFt72S/IBQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WFbK93fn5z4w2F;
-	Fri,  5 Jul 2024 11:19:40 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christian Zigotzky <chzigotzky@xenosoft.de>, Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com, DTML
- <devicetree@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, linuxppc-dev
- <linuxppc-dev@lists.ozlabs.org>, mad skateman <madskateman@gmail.com>,
- "R.T.Dickinson" <rtd2@xtra.co.nz>, Matthew Leaman <matthew@a-eon.biz>,
- Darren Stevens <darren@stevens-zone.net>, Christian Zigotzky
- <info@xenosoft.de>
-Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
- after the of/irq updates 2024-05-29
-In-Reply-To: <dfc7ec00-5216-4590-9347-ee10cd1e8380@xenosoft.de>
-References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
- <86zfqzhgys.wl-maz@kernel.org>
- <ccf14173-9818-44ef-8610-db2900c67ae8@xenosoft.de>
- <874j95jrur.fsf@mail.lhotse>
- <3baff554-e8f6-42b0-b931-207175a4d8fd@xenosoft.de>
- <dfc7ec00-5216-4590-9347-ee10cd1e8380@xenosoft.de>
-Date: Fri, 05 Jul 2024 11:19:39 +1000
-Message-ID: <87o77ciqj8.fsf@mail.lhotse>
+	s=arc-20240116; t=1720142486; c=relaxed/simple;
+	bh=5X/6jbJu4QtfpBJLnuys4Wu3vTFIuA7T4od907taK24=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=F3ESlz9Ga2gu0D80nIRBrn605ozIPCKTgUzoC/Bxhw4hDtvscWsyA6zY5MiJuAe9uXaxyIW0MMdxdtxXEVX1RJlSK56uAfamV4HvrFgEk05wltKPTZGE7LdivUQ9DiK3xqR/PwBZOADxGtvrdPXUzOIt7wm1KyQ/FjFk66YQmdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Cx7+uRSodm2x8BAA--.3399S3;
+	Fri, 05 Jul 2024 09:21:21 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxJMWOSodmQbw7AA--.62450S3;
+	Fri, 05 Jul 2024 09:21:20 +0800 (CST)
+Subject: Re: [PATCH v4 2/3] LoongArch: KVM: Add LBT feature detection function
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240626063239.3722175-1-maobibo@loongson.cn>
+ <20240626063239.3722175-3-maobibo@loongson.cn>
+ <CAAhV-H4O8QNb61xkErd9y_1tK_70=Y=LNqzy=9Ny5EQK1XZJaQ@mail.gmail.com>
+ <79dcf093-614f-2737-bb03-698b0b3abc57@loongson.cn>
+ <CAAhV-H5bQutcLcVaHn-amjF6_NDnCf2BFqqnGSRT_QQ_6q6REg@mail.gmail.com>
+ <9c7d242e-660b-8d39-b69e-201fd0a4bfbf@loongson.cn>
+ <CAAhV-H4wwrYyMYpL1u5Z3sFp6EeW4eWhGbBv0Jn9XYJGXgwLfg@mail.gmail.com>
+ <059d66e4-dd5d-0091-01d9-11aaba9297bd@loongson.cn>
+ <CAAhV-H41B3_dLgTQGwT-DRDbb=qt44A_M08-RcKfJuxOTfm3nw@mail.gmail.com>
+ <7e6a1dbc-779a-4669-4541-c5952c9bdf24@loongson.cn>
+ <CAAhV-H7jY8p8eY4rVLcMvVky9ZQTyZkA+0UsW2JkbKYtWvjmZg@mail.gmail.com>
+ <81dded06-ad03-9aed-3f07-cf19c5538723@loongson.cn>
+ <CAAhV-H520i-2N0DUPO=RJxtU8Sn+eofQAy7_e+rRsnNdgv8DTQ@mail.gmail.com>
+ <0e28596c-3fe9-b716-b193-200b9b1d5516@loongson.cn>
+ <CAAhV-H6vgb1D53zHoe=BJD1crB9jcdZy7RM-G0YY0UD+ubDi4g@mail.gmail.com>
+ <bdcc9ec4-31a8-1438-25c0-be8ba7f49ed0@loongson.cn>
+ <ecb6df72-543c-4458-ba27-0ef8340c1eb3@flygoat.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <554b10e8-a7ab-424a-f987-ea679859a220@loongson.cn>
+Date: Fri, 5 Jul 2024 09:21:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <ecb6df72-543c-4458-ba27-0ef8340c1eb3@flygoat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8CxJMWOSodmQbw7AA--.62450S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kry8ZF4rWFy8Ww1UZw1xtFc_yoW8KFy3pa
+	yFka1S9F4DAr48AwnrAw4xWw4Skw4rta13Jrn8GryDJ398Xry2vr92kayruF9rCr1Sg34j
+	vF42y3sakFZ8ZagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UU
+	UUU==
 
-Christian Zigotzky <chzigotzky@xenosoft.de> writes:
-> On 04.07.24 20:27, Christian Zigotzky wrote:
->> On 04.07.24 13:53, Michael Ellerman wrote:
->>> Christian Zigotzky <chzigotzky@xenosoft.de> writes:
-...
+
+
+On 2024/7/5 上午3:44, Jiaxun Yang wrote:
+> 
+> 
+> On 2024/7/4 09:35, maobibo wrote:
+>> In another thread I found that Jiaxun said he has a solution to make
+>>> LBT be a vcpu feature and still works well. However, that may take
+>>> some time and is too late for 6.11.
 >>>
->>> Instead of that patch, can you try the one below. AFAICS the device tree
->>> fixups done in early boot mean the interrupt-map is not needed, and also
->>> has the wrong content, so if we can remove it entirely that might avoid
->>> the problems in the parsing code.
->>>
->>> I don't know if your firmware actually implements those methods, I
->>> couldn't find anything online to confirm or deny it. Seems the only
->>> option is to test it.
-...
->
-> Unfortunately, the kernel 6.10-rc6 doesn't compile with your patch. "rc" 
-> is undeclared.
+>>> But we have another choice now: just remove the UAPI and vm.c parts in
+>>> this series, let the LBT main parts be upstream in 6.11, and then
+>>> solve other problems after 6.11. Even if Jiaxun's solution isn't
+>>> usable, we can still use this old vm feature solution then.
+> 
+> IMO this is the best approach to make some progress.
+> 
+>>
+>> I am sure it is best if it is VM feature for LBT feature detection, 
+>> LSX/LASX feature detection uses CPU feature, we can improve it later.
+> 
+> Please justify the reason, we should always be serious on UAPI design 
+> choices.
+> I don't really understand why the approach worked so well on Arm & 
+> RISC-V is not working
+> for you.
+On the other hand, can you list benefits or disadvantage of approaches 
+on different architecture?
 
-Right, I had some debug code that I removed before posting.
+Or you post patch about host cpu support, I list its disadvantage. Or I 
+post patch about host cpu support with scheduled time, then we talk 
+about it. Is that fair for you?
 
-This version should compile :}
+It is unfair that you list some approaches and let others spend time to 
+do, else you are my top boss :)
+> 
+> I understand you may have some plans in your mind, please elaborate so 
+> we can smash
+> them together. That's how community work.
+> 
+>>
+>> For host cpu type or migration feature detection, I have no idea now, 
+>> also I do not think it will be big issue for me, I will do it with 
+>> scheduled time. Of source, welcome Jiaxun and you to implement host 
+>> cpu type or migration feature detection.
+> 
+> My concern is if you allow CPU features to have "auto" property you are 
+> risking create
+> inconsistency among migration. Once you've done that it's pretty hard to 
+> get rid of it.
+> 
+> Please check how RISC-V dealing with CPU features at QMP side.
+> 
+> I'm not meant to hinder your development work, but we should always 
+> think ahead.
+Yes, it is potential issue and we will solve it. Another potential issue 
+is that PV features may different on host, you cannot disable PV 
+features directly.  The best way is that you post patch about it, then 
+we can talk about together, else it may be kindly reminder, also may be 
+waste of time, everyone is busy working for boss :)
 
-cheers
+Regards
+Bibo Mao
+> 
+> Thanks
+> - Jiaxun
+>>
 
-diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-index fbb68fc28ed3..965d58c54fab 100644
---- a/arch/powerpc/kernel/prom_init.c
-+++ b/arch/powerpc/kernel/prom_init.c
-@@ -3123,6 +3123,7 @@ static void __init fixup_device_tree_pasemi(void)
- 	u32 interrupts[2], parent, rval, val = 0;
- 	char *name, *pci_name;
- 	phandle iob, node;
-+	int rc;
- 
- 	/* Find the root pci node */
- 	name = "/pxp@0,e0000000";
-@@ -3138,6 +3139,14 @@ static void __init fixup_device_tree_pasemi(void)
- 
- 	prom_setprop(iob, name, "interrupt-controller", &val, 0);
- 
-+	prom_printf("nemo: deleting interrupt-map properties\n");
-+	rc = call_prom("interpret", 1, 1,
-+		      " s\" /pxp@0,e0000000\" find-device"
-+		      " s\" interrupt-map\" delete-property"
-+		      " s\" interrupt-map-mask\" delete-property"
-+		      " device-end");
-+	prom_printf("nemo: interpret returned %d\n", rc);
-+
- 	pci_name = "/pxp@0,e0000000/pci@11";
- 	node = call_prom("finddevice", 1, 1, ADDR(pci_name));
- 	parent = ADDR(iob);
 
