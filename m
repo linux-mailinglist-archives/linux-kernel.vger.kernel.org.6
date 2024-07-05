@@ -1,172 +1,173 @@
-Return-Path: <linux-kernel+bounces-242603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F3F928A58
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD16928A5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F018B1F21628
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:02:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D1C1F24B06
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFED9168490;
-	Fri,  5 Jul 2024 14:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA8A15B99F;
+	Fri,  5 Jul 2024 14:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZiO/YbMh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MycqSrtm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281EB14A0BC
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B33F153803
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720188173; cv=none; b=We7HTQ07aMQhxwyiPbpBBxqGSZo81U0qGUsu9foZ5hFsqflwaPI5X1jxqKc6RaJtaEL25dD1gePNiv9GYo2oX+JY/KMIz6rzi4yFtwWzF3rNmpK+a5iqzzKidUBCAbq+twM+8GUoBMVDbGY5UIcbbUU1n4ynAS/R4gunsVXfWZM=
+	t=1720188202; cv=none; b=E0gI5wnjL8gmAAJldkCbkIiYctpF3tNcQGO1lQPO8g8uAzFt/EYmCZNWlk27oJGL2Xclul9Tqf1YL/1d5qvHnogsLcnsPXvQV0EIUUaoXUJjkyDrQEj+uqzgb3lUWKbTvRd7h8DAC+QZBL6N+4RF/dXwj4f02lGxA1SmJ2z76dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720188173; c=relaxed/simple;
-	bh=Ey1kRqQMEA9yWomml3zQYIK4tI58rc7XAbEtt0BRUMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rC0ODjGgjxA4Z/XVgz2IzMaUEumX5sdc5/0yA1XmwXf2t4WCkcH3jVEJYBQ191Ly2O7X8w92OkvirjShTRlNZ/MZ6/AjIgHoUW94HaAwfyutkOV1ShmzcXYAe04sQqeXRoE/4hr/U3ZeVZzKwDLYVImzh8u9NXcZY3aK5RMNKX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZiO/YbMh; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720188171; x=1751724171;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Ey1kRqQMEA9yWomml3zQYIK4tI58rc7XAbEtt0BRUMU=;
-  b=ZiO/YbMh7Y714lF1ZnyykNdgtZwISdj278dFKwAa/IYGB1HVpMz7hVuo
-   KgvBZuR2OAvLdvMOBi1jzgSVR65QJzksduGiy2FndWNizzTFoWAu2OOla
-   XO5mtRrpnoDZPgDZfNwiAymcdoovqAVFCXkfwQOellUpqqlfVgQRjNTMl
-   wI7pikUOMRBnLpDLSaHDPcGoR5HCDIreu4i4mSWXkJFzzgwWiB15wls/v
-   6UEOCKo3IcIkx16t+6eq0RiEHF9yAulV+5EYeanK5Ndvvw4GF98vtJUFo
-   AA9Mn70UXJcyC5aMDJOgjyg90MDgoFNd3EzaQ2E2z55EV6swuTvpLIMg0
-   g==;
-X-CSE-ConnectionGUID: ibnutjzUT+SjaqHUfPawBQ==
-X-CSE-MsgGUID: x3CRdOIMTSODlDVEOyfK9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17614471"
-X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="scan'208";a="17614471"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 07:02:50 -0700
-X-CSE-ConnectionGUID: i4huqPTzQh+odbRjHbOcRQ==
-X-CSE-MsgGUID: fIi+5rV6TeOAKVZhGxFuNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="scan'208";a="51309171"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 05 Jul 2024 07:02:47 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sPjWO-000SRc-2e;
-	Fri, 05 Jul 2024 14:02:44 +0000
-Date: Fri, 5 Jul 2024 22:02:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, minchan@kernel.org,
-	willy@infradead.org, senozhatsky@chromium.org, david@redhat.com,
-	42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>,
-	nphamcs@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Alex Shi <alexs@kernel.org>
-Subject: Re: [PATCH v2 01/20] mm/zsmalloc: add zpdesc memory descriptor for
- zswap.zpool
-Message-ID: <202407052114.eLXLN20k-lkp@intel.com>
-References: <20240703040613.681396-2-alexs@kernel.org>
+	s=arc-20240116; t=1720188202; c=relaxed/simple;
+	bh=l4a1ERMOuqXBaLFWS+gfiLgokGjRYBYVwSGMCa+ialE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FBF0Oer723gQieNoB0r2gb5f+vr3VOU53ROGonu45nV5E7S6qKMz06P71gwgdL1zH9pncagKeHlKqeBc9y+SzAfyoViP00W/g38lzZP7F5XwjgFvbzB2zYzjpeBlh3l0DnmuW/q+S/G9JIx8gXkUsrLyCXAq1r7DudnUgNbABgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MycqSrtm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720188200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tcFyaq/x3BT52iyZhmpXyGxuAICYLbboWOWxjG0cb0I=;
+	b=MycqSrtmgPi7Qqg4KUxVtv02mSheSArpVUlJAPwDRfSB5EWhTf+qkB6gHGeYg4HS43/gR0
+	sWojRHcwBA7Atw3okJfzxdW44Z2OXi6SaI90pFBq95tuVfh4s6imSgS9pAcGGa4B/NTkpB
+	8eHt1Y2sqblkRyfdVdEf3c+zv66lxf0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-564-Nin9Yu5GNOeg2o02xJcBHw-1; Fri, 05 Jul 2024 10:03:18 -0400
+X-MC-Unique: Nin9Yu5GNOeg2o02xJcBHw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4256718144dso17552845e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 07:03:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720188197; x=1720792997;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tcFyaq/x3BT52iyZhmpXyGxuAICYLbboWOWxjG0cb0I=;
+        b=cYbdnCerk3qg+MiVVTS2Eclmb/kERXW7BfQJPro3UuYANNV+QTrY1KRAQoy9er349z
+         qTZs0xRKoFM3GrNTkNIUrFVNsUVXi6qlwqgNfyRhDZ7tAX0Q0H7uvfVr7NpFu+7v1SUt
+         kJOfapEWz/bkhwYWc3L067GSCGP/AJYmRT91zZ3aiVF+hnEp+C6Im7mIM0S9eGj6bhEO
+         saFyvGo3X6og3xal6fQV6SxDKGJA9pWeLB5ZMWZWR+fuBdcuMZlh2Gb1W7Gh2RC+f7Ka
+         HLmDEahZUE/TwCk69lGctHcfXSlN9Wj4k5evvwaYfwSxweecqNO5wSlC4Viy6lLnkuhb
+         Et3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXTi0BfJLpWs/HvgAuQ0wMjG70GSyl3jkjK4g/xNCLYvikIZ378V3wD2JYr11koRjLyHflxCiStsxxHdPrlxu/DkLZWl/Cl3hTCDTMe
+X-Gm-Message-State: AOJu0YxlXg/7hBR2LWQYgjc9Y66A6AxBzTAMugOVdKL6mIrqYtHJY+wJ
+	f1G+3XkQj0Sfs+UnDYB/JeKkkCXaTEeTT6rgNT+c0m7ipy5Vf08EkVNg5SdHDu06RPXYV0sx5O2
+	HJFYZ7okZSLxMTH05ISUxwEHrIpjIVo5fnsC8NQ2XIzxRG+VTX3bDmSS4pOVpSQ==
+X-Received: by 2002:a05:600c:3b0f:b0:425:63b9:ae2c with SMTP id 5b1f17b1804b1-4264a3f3080mr39699945e9.27.1720188197478;
+        Fri, 05 Jul 2024 07:03:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLP0Y16Pr3AIIKxriH+7I8UOU7YRcbiBw1n4dgPEZPtVME9hnXFSCpZehbQPgJaJAlIq4dFQ==
+X-Received: by 2002:a05:600c:3b0f:b0:425:63b9:ae2c with SMTP id 5b1f17b1804b1-4264a3f3080mr39699685e9.27.1720188197060;
+        Fri, 05 Jul 2024 07:03:17 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c702:b500:3ed7:a1c7:447e:2279? (p200300cbc702b5003ed7a1c7447e2279.dip0.t-ipconnect.de. [2003:cb:c702:b500:3ed7:a1c7:447e:2279])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca5casm64150655e9.32.2024.07.05.07.03.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 07:03:16 -0700 (PDT)
+Message-ID: <8e9da8da-20f5-4316-a449-5544d9883c1e@redhat.com>
+Date: Fri, 5 Jul 2024 16:03:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703040613.681396-2-alexs@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kpageflags: detect isolated KPF_THP folios
+To: ran xiaokai <ranxiaokai627@163.com>, akpm@linux-foundation.org,
+ corbet@lwn.net, usama.anjum@collabora.com, avagin@google.com
+Cc: linux-mm@kvack.org, vbabka@suse.cz, svetly.todorov@memverge.com,
+ ran.xiaokai@zte.com.cn, ryan.roberts@arm.com, ziy@nvidia.com,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ yangge1116 <yangge1116@126.com>
+References: <20240705104343.112680-1-ranxiaokai627@163.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240705104343.112680-1-ranxiaokai627@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+> -	} else if (is_zero_pfn(page_to_pfn(page)))
+> +	else if (folio_test_large(folio) &&
+> +	         folio_test_large_rmappable(folio)) {
+> +		/* Note: we indicate any THPs here, not just PMD-sized ones */
+> +		u |= 1 << KPF_THP;
+> +	} else if (is_huge_zero_folio(folio)) {
+>   		u |= 1 << KPF_ZERO_PAGE;
+> +		u |= 1 << KPF_THP;
+> +	} else if (is_zero_pfn(page_to_pfn(page))) {
 
-kernel test robot noticed the following build errors:
+We should also directly switch to "is_zero_folio(folio)" here
 
-[auto build test ERROR on akpm-mm/mm-everything]
+> +		u |= 1 << KPF_ZERO_PAGE;
+> +	}
+>   
+>   	/*
+>   	 * Caveats on high order pages: PG_buddy and PG_slab will only be set
 
-url:    https://github.com/intel-lab-lkp/linux/commits/alexs-kernel-org/mm-zsmalloc-add-zpdesc-memory-descriptor-for-zswap-zpool/20240703-182314
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240703040613.681396-2-alexs%40kernel.org
-patch subject: [PATCH v2 01/20] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
-config: i386-buildonly-randconfig-001-20240705 (https://download.01.org/0day-ci/archive/20240705/202407052114.eLXLN20k-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240705/202407052114.eLXLN20k-lkp@intel.com/reproduce)
+Especially relevant in context of:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407052114.eLXLN20k-lkp@intel.com/
+https://lkml.kernel.org/r/1720075944-27201-1-git-send-email-yangge1116@126.com
 
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/module.h:12,
-                    from mm/zsmalloc.c:40:
->> include/linux/stddef.h:16:33: error: 'struct page' has no member named 'memcg_data'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   mm/zpdesc.h:40:9: note: in expansion of macro 'static_assert'
-      40 |         static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
-         |         ^~~~~~~~~~~~~
-   mm/zpdesc.h:40:23: note: in expansion of macro 'offsetof'
-      40 |         static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
-         |                       ^~~~~~~~
-   mm/zpdesc.h:48:1: note: in expansion of macro 'ZPDESC_MATCH'
-      48 | ZPDESC_MATCH(memcg_data, memcg_data);
-         | ^~~~~~~~~~~~
->> include/linux/stddef.h:16:33: error: 'struct zpdesc' has no member named 'memcg_data'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   mm/zpdesc.h:40:9: note: in expansion of macro 'static_assert'
-      40 |         static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
-         |         ^~~~~~~~~~~~~
-   mm/zpdesc.h:40:52: note: in expansion of macro 'offsetof'
-      40 |         static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
-         |                                                    ^~~~~~~~
-   mm/zpdesc.h:48:1: note: in expansion of macro 'ZPDESC_MATCH'
-      48 | ZPDESC_MATCH(memcg_data, memcg_data);
-         | ^~~~~~~~~~~~
->> include/linux/stddef.h:16:33: error: expression in static assertion is not an integer
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   mm/zpdesc.h:40:9: note: in expansion of macro 'static_assert'
-      40 |         static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
-         |         ^~~~~~~~~~~~~
-   mm/zpdesc.h:40:23: note: in expansion of macro 'offsetof'
-      40 |         static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
-         |                       ^~~~~~~~
-   mm/zpdesc.h:48:1: note: in expansion of macro 'ZPDESC_MATCH'
-      48 | ZPDESC_MATCH(memcg_data, memcg_data);
-         | ^~~~~~~~~~~~
-
-
-vim +16 include/linux/stddef.h
-
-6e2182874324727 Richard Knutsson 2006-09-30  14  
-^1da177e4c3f415 Linus Torvalds   2005-04-16  15  #undef offsetof
-14e83077d55ff4b Rasmus Villemoes 2022-03-23 @16  #define offsetof(TYPE, MEMBER)	__builtin_offsetof(TYPE, MEMBER)
-3876488444e7123 Denys Vlasenko   2015-03-09  17  
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+
+David / dhildenb
+
 
