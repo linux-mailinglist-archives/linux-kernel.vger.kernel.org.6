@@ -1,202 +1,132 @@
-Return-Path: <linux-kernel+bounces-242928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6021A928EEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:44:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A4D928EF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 23:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15D08287DB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:44:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 532FFB22191
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 21:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06556149DF7;
-	Fri,  5 Jul 2024 21:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287C1465B0;
+	Fri,  5 Jul 2024 21:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmA/MqpH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="muGtsAxj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6AA13A26F;
-	Fri,  5 Jul 2024 21:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBBA13A416;
+	Fri,  5 Jul 2024 21:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720215845; cv=none; b=eQCFpxFd2n5N1apNiJtD+Zh7g87N1mcFrYBPhfn7Tewuk7DZnNywXHE9lHKymLWFalW/ZQ6cfUu3nNTjj0mkocUsTO/cKbiNe0Wp+MeZ+TAYIV9b8Bx409GGwRDCKb9epu88AGPWw4j4Kc2+Cdrh1ttR++8Mb/HqxqJNp1MJwaM=
+	t=1720216035; cv=none; b=i5h4CGUjhVoXmSMr8u1OjY6ak50qL++W4NqYH06R9bkN1zTEXU6P6Q5R58XUkP7v9bSNn8p5Z4qR/9rfihccYlxiQlhmtuJW54lg/x2Y2n8C4GV6dN0kw9ZGt2ThfuHilv9h6IyMSvvVIXepKlC01Gfr6Fh0GY4W6Ipvd4MjIH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720215845; c=relaxed/simple;
-	bh=C8dzzeBxki3NVPz5SLBDhzLlRbF8DdRlaoB+upRLStw=;
+	s=arc-20240116; t=1720216035; c=relaxed/simple;
+	bh=DO9YI6U87/AdMasnKM6dLVn1EA/TZFiL2Gbj0GMnUZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HTxdwk/sRf5kGVbWBqii6pElGRbi243a0NM+YURMSudguBOInN6jS4UO7YKzzq9kvlPS8c3I/eUoHZxMF/BsqtOm23lL/peQGfU+OhNV6YVMS1d9kSi2YGxS213CZxaHdRYZf8Ba3gZ36HXO3rbf6TfFAFOdo2a+4Swmo5XVCyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmA/MqpH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84822C116B1;
-	Fri,  5 Jul 2024 21:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720215844;
-	bh=C8dzzeBxki3NVPz5SLBDhzLlRbF8DdRlaoB+upRLStw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YmA/MqpHvxbBzpbTc6a2FOvrfPb4OIVnkRcyMZqvqh9C/IaHKhfDEwkLDMfqBAZKE
-	 lLtV3XmpRZnW5tCPDKPkoKOTWVowP8K7NRpKAJ9LHi4T1ILYDGiF7MIuMLER2u6091
-	 FVOyYCqnGEDEIZPcXEnF0Se3zIMDxqtuouIkG8VyS/ktA3M28+mc/apOcH+XZsMcbb
-	 /v9pBelPJJAnQaPCu1em+kb7npPHZmTbUi3yhMXToh60NEfdZeAMBSBzCpoUp7hgI7
-	 Wu7FElBENaUT6HJ8lrykCAzO484DugOXOBEuhZNCIKND8xqN1dc1p1TW7fbg9L0Wyz
-	 Hc+0YX7HazBiA==
-Date: Fri, 5 Jul 2024 14:44:03 -0700
-From: Kees Cook <kees@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
-	Alejandro Colomar <alx@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Chiang <ericchiang@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Luca Boccassi <bluca@debian.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Steve Dower <steve.dower@python.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-	Xiaoming Ni <nixiaoming@huawei.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Message-ID: <202407051425.32AF9D2@keescook>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-3-mic@digikod.net>
- <202407041711.B7CD16B2@keescook>
- <20240705.IeTheequ7Ooj@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=naRjHi2m2UN/FwpUvCRPpkgnfqthl9PkjWQvpRFOz5uv5e8d7RpDQgXTW4QwCksEQejeKasLv/yGCZ5Me7YaxSWCo/g7QtnqI7Z3DlPRS6KTP3ibkBAW26rabo19Xe407lg31ug9V6jj2GDdjVHLX2q8GbiDRy0q2InzJkQ5D+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=muGtsAxj; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720216032; x=1751752032;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DO9YI6U87/AdMasnKM6dLVn1EA/TZFiL2Gbj0GMnUZ4=;
+  b=muGtsAxjD/Igzsv+LCo4NmSKZsOQBFuEN/zhBlUgW7htJV0jzxntUk1n
+   ErLXjna8TRyItrOO7220YNMTLsgwhb8BQmc58FE8ylXfqy3sR61BNf5z5
+   wHiRl2V2l4D2WaDfj8nOPLxYJWI3EESI6VzyASIglba4dtwbPuFQQ4QgP
+   ltgfYCklIA74gyTIWJKtYL7gimXIgCZQUzlM3PEyAGJywHrn+BmUwO4aD
+   1sdh8Exh5WUwEzQyvL6F+VO+yjPJu0q3uO90HjW3Q/TdrDdAxLZUS3YRa
+   mhqmW+6s/kkw6RQ1QxIu8UoYRqkBnCMv8Vn+WZ+luTurqcZO2HxVg+l3M
+   A==;
+X-CSE-ConnectionGUID: R1hVL9B+Th2ROvAZOc2gjQ==
+X-CSE-MsgGUID: xPvJ/cayRli9vmG2aQVOPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="40018474"
+X-IronPort-AV: E=Sophos;i="6.09,186,1716274800"; 
+   d="scan'208";a="40018474"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 14:47:12 -0700
+X-CSE-ConnectionGUID: aIZrDO3KQ0C9qQiMHrZZJA==
+X-CSE-MsgGUID: OxqEUSBdR2KL+507Z7R3SA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,186,1716274800"; 
+   d="scan'208";a="47040794"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 05 Jul 2024 14:47:09 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sPqlm-000Svc-39;
+	Fri, 05 Jul 2024 21:47:06 +0000
+Date: Sat, 6 Jul 2024 05:46:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sunyeal Hong <sunyeal.hong@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: Re: [PATCH 5/5] clk: samsung: add top clock support for Exynos Auto
+ v920 SoC
+Message-ID: <202407060546.Zqh1m0PR-lkp@intel.com>
+References: <20240705021110.2495344-6-sunyeal.hong@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240705.IeTheequ7Ooj@digikod.net>
+In-Reply-To: <20240705021110.2495344-6-sunyeal.hong@samsung.com>
 
-On Fri, Jul 05, 2024 at 07:54:16PM +0200, Mickaël Salaün wrote:
-> On Thu, Jul 04, 2024 at 05:18:04PM -0700, Kees Cook wrote:
-> > On Thu, Jul 04, 2024 at 09:01:34PM +0200, Mickaël Salaün wrote:
-> > > Such a secure environment can be achieved with an appropriate access
-> > > control policy (e.g. mount's noexec option, file access rights, LSM
-> > > configuration) and an enlighten ld.so checking that libraries are
-> > > allowed for execution e.g., to protect against illegitimate use of
-> > > LD_PRELOAD.
-> > > 
-> > > Scripts may need some changes to deal with untrusted data (e.g. stdin,
-> > > environment variables), but that is outside the scope of the kernel.
-> > 
-> > If the threat model includes an attacker sitting at a shell prompt, we
-> > need to be very careful about how process perform enforcement. E.g. even
-> > on a locked down system, if an attacker has access to LD_PRELOAD or a
-> 
-> LD_PRELOAD should be OK once ld.so will be patched to check the
-> libraries.  We can still imagine a debug library used to bypass security
-> checks, but in this case the issue would be that this library is
-> executable in the first place.
+Hi Sunyeal,
 
-Ah yes, that's fair: the shell would discover the malicious library
-while using AT_CHECK during resolution of the LD_PRELOAD.
+kernel test robot noticed the following build warnings:
 
-> > seccomp wrapper (which you both mention here), it would be possible to
-> > run commands where the resulting process is tricked into thinking it
-> > doesn't have the bits set.
-> 
-> As explained in the UAPI comments, all parent processes need to be
-> trusted.  This meeans that their code is trusted, their seccomp filters
-> are trusted, and that they are patched, if needed, to check file
-> executability.
+[auto build test WARNING on krzk/for-next]
+[also build test WARNING on pinctrl-samsung/for-next krzk-dt/for-next linus/master v6.10-rc6 next-20240703]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-But we have launchers that apply arbitrary seccomp policy, e.g. minijail
-on Chrome OS, or even systemd on regular distros. In theory, this should
-be handled via other ACLs.
+url:    https://github.com/intel-lab-lkp/linux/commits/Sunyeal-Hong/dt-bindings-clock-add-Exynos-Auto-v920-SoC-CMU-bindings/20240705-195227
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240705021110.2495344-6-sunyeal.hong%40samsung.com
+patch subject: [PATCH 5/5] clk: samsung: add top clock support for Exynos Auto v920 SoC
+config: arm64-randconfig-003-20240706 (https://download.01.org/0day-ci/archive/20240706/202407060546.Zqh1m0PR-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240706/202407060546.Zqh1m0PR-lkp@intel.com/reproduce)
 
-> > But this would be exactly true for calling execveat(): LD_PRELOAD or
-> > seccomp policy could have it just return 0.
-> 
-> If an attacker is allowed/able to load an arbitrary seccomp filter on a
-> process, we cannot trust this process.
-> 
-> > 
-> > While I like AT_CHECK, I do wonder if it's better to do the checks via
-> > open(), as was originally designed with O_MAYEXEC. Because then
-> > enforcement is gated by the kernel -- the process does not get a file
-> > descriptor _at all_, no matter what LD_PRELOAD or seccomp tricks it into
-> > doing.
-> 
-> Being able to check a path name or a file descriptor (with the same
-> syscall) is more flexible and cover more use cases.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407060546.Zqh1m0PR-lkp@intel.com/
 
-If flexibility costs us reliability, I think that flexibility is not
-a benefit.
+All warnings (new ones prefixed by >>):
 
-> The execveat(2)
-> interface, including current and future flags, is dedicated to file
-> execution.  I then think that using execveat(2) for this kind of check
-> makes more sense, and will easily evolve with this syscall.
+>> drivers/clk/samsung/clk-exynosautov920.c:1131:40: warning: unused variable 'peric0_gate_clks' [-Wunused-const-variable]
+   static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
+                                          ^
+   1 warning generated.
 
-Yeah, I do recognize that is feels much more natural, but I remain
-unhappy about how difficult it will become to audit a system for safety
-when the check is strictly per-process opt-in, and not enforced by the
-kernel for a given process tree. But, I think this may have always been
-a fiction in my mind. :)
 
-> > And this thinking also applies to faccessat() too: if a process can be
-> > tricked into thinking the access check passed, it'll happily interpret
-> > whatever. :( But not being able to open the fd _at all_ when O_MAYEXEC
-> > is being checked seems substantially safer to me...
-> 
-> If attackers can filter execveat(2), they can also filter open(2) and
-> any other syscalls.  In all cases, that would mean an issue in the
-> security policy.
+vim +/peric0_gate_clks +1131 drivers/clk/samsung/clk-exynosautov920.c
 
-Hm, as in, make a separate call to open(2) without O_MAYEXEC, and pass
-that fd back to the filtered open(2) that did have O_MAYEXEC. Yes, true.
-
-I guess it does become morally equivalent.
-
-Okay. Well, let me ask about usability. Right now, a process will need
-to do:
-
-- should I use AT_CHECK? (check secbit)
-- if yes: perform execveat(AT_CHECK)
-
-Why not leave the secbit test up to the kernel, and then the program can
-just unconditionally call execveat(AT_CHECK)?
-
-Though perhaps the issue here is that an execveat() EINVAL doesn't
-tell the program if AT_CHECK is unimplemented or if something else
-went wrong, and the secbit prctl() will give the correct signal about
-AT_CHECK availability?
+  1130	
+> 1131	static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
+  1132	};
+  1133	
 
 -- 
-Kees Cook
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
