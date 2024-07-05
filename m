@@ -1,135 +1,214 @@
-Return-Path: <linux-kernel+bounces-242533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FDE928982
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:24:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC72928988
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BD2AB22E28
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:24:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9471F26395
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F08314BF9B;
-	Fri,  5 Jul 2024 13:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0178514D456;
+	Fri,  5 Jul 2024 13:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ujpc489k"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O2yUNiD+"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E42913C8F9;
-	Fri,  5 Jul 2024 13:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC6D146D7E;
+	Fri,  5 Jul 2024 13:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720185876; cv=none; b=sTi9RZjYR1tRdc91ILtZo4U6zgm41O/1PWeYAbGQDOOtvi5aYR7/1eSteVC7jmpV8k2UDVryB8zoiA2rbxjJWyqGNV7jcm8Pm0sYzLzR47U0zqOVfzIJI4/fh6ykUCp+gJtW+zGg8Gzj6F2swYmKDEQdvRhGdKm8dzYUshHaAzw=
+	t=1720186034; cv=none; b=NwjQvIyMdfMqIKQH+CGVVDCD0QapGf4+jnokO96Ms9N9RcTTKu0UPRD3SeyHeQwmaCnqPuoXpiIJSqzceNw9dy8hdmcfaI9xH0t07MsTB2uy3bmilDQMG9v208Gj8OApCeJVJWqpwXdSsoPzYDy3qN2KqtuBY3nWIz3CVJ3zhJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720185876; c=relaxed/simple;
-	bh=j6OTkQpixN6EN4w4Np+abspGbdF/cicBV7CtNtP5MGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFB/KsEexwLtrlQY8Ecclg9coyxMMwu6NW1VpP4CpJkhJxF0grbNYhAWbXJ2AGrCDaXRhLCS3/7zPDe8voxPjdUTuU1+J0ZqNb+3hRbNXHGanbmqxcAGlvxV/KSEFgbdBPFPUyLSTq/DIQPYN032nMPi44j9YmeQVcejATwI4No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ujpc489k; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WFvPN028Wz9t4r;
-	Fri,  5 Jul 2024 15:24:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1720185864;
+	s=arc-20240116; t=1720186034; c=relaxed/simple;
+	bh=nJbuph+RUzwgbDfHIwZskIFi+IW19h7mWMR5gIT2MOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JYMpAoJMl73nxPjZYAE0SDi9C7KpGu4dLSc4dPPVfg1MF2Y8zf9TTupKZ7ZbVL5FzKNAgLEtyv268uC8QAUnaoKK7HfO8hPGMeamVNJS+bZmgy1g8dgnSgqjnEV9UEPXGChMviCABW5gCwHZUP95nLXSCPtlvs6Ldxxb0J/nZ9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O2yUNiD+; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D720F1C000C;
+	Fri,  5 Jul 2024 13:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720186029;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RI1x0wJ1+JJTcTJDJ2YPYh/0aofRmdFfu4awl092hi0=;
-	b=ujpc489kYfI5CnIfvxBb+PVX93H2UwcqFo/dVZ0+jF/MDJqF1XaxxKsGD8BWyLb0BPjMLn
-	FvwRySW+vd9W8jSoW4cOnd8qEU5Yp9xa7amLTb8sAhXfxXM9ZOJWraBLgjhStd9PzhC+Ej
-	scDeEQRviHNvwIccuzMF/R9X0ep9yfdc0F8Oe9haOh6DrDYGSsK+8wh50sVSl7VtjjfaAP
-	7K+rmK/Y3ANFUjZ6dkmZh21tYlObAQbH+q9BWVegwWy4ukxKKz4wnd4SHz5wsa7N19EKji
-	FovQIf6lKk+VOLB+EPtbw9tOrfZMjm1eBKkJNYGBCdsyGPQomt9JR7rLCNs8Gg==
-Date: Fri, 5 Jul 2024 13:24:18 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Message-ID: <20240705132418.gk7oeucdisat3sq5@quentin>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
- <Zoa9rQbEUam467-q@casper.infradead.org>
- <Zocc+6nIQzfUTPpd@dread.disaster.area>
- <Zoc2rCPC5thSIuoR@casper.infradead.org>
- <Zod3ZQizBL7MyWEA@dread.disaster.area>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E2m+9eJRnfx2USMOVWoWK4kDvrhAJh9qV1ylRE1YWS0=;
+	b=O2yUNiD+54pfHbHMSe+Se5ljmvJwWh6yxafH2zvEY3e1YONEcRmuZNxHXJZPSHXhCix46X
+	EwEv1A7y0s45brRgcMsD8KYniALs3L8IApxd6GhYrwXx2ytKKC02Tr23ek9yjRMeuqJGN5
+	l4HTq3ia9Bve40QTN/lpDjiOAZJ3zUGYQXNyZMSqvWO+O9d08jMTkV2U8uWhNeM9+/iuTO
+	l2nga7n3KVngcneqNjn19BWNqkddK75fdid+AE6wDeJCmOAkZUBvYGwfSNKdXYCEidfdWI
+	BNM9fvcENd9aXetilMqPKAEwR/HXA4JZCjbSmi7asEpVxqcdGRGbma8m2IQU6w==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH net-next v16 00/14] Introduce PHY listing and link_topology tracking
+Date: Fri,  5 Jul 2024 15:26:51 +0200
+Message-ID: <20240705132706.13588-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zod3ZQizBL7MyWEA@dread.disaster.area>
-X-Rspamd-Queue-Id: 4WFvPN028Wz9t4r
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-> > I suggest you handle it better than this.  If the device is asking for a
-> > blocksize > PMD_SIZE, you should fail to mount it.
-> 
-> That's my point: we already do that.
-> 
-> The largest block size we support is 64kB and that's way smaller
-> than PMD_SIZE on all platforms and we always check for bs > ps 
-> support at mount time when the filesystem bs > ps.
-> 
-> Hence we're never going to set the min value to anything unsupported
-> unless someone makes a massive programming mistake. At which point,
-> we want a *hard, immediate fail* so the developer notices their
-> mistake immediately. All filesystems and block devices need to
-> behave this way so the limits should be encoded as asserts in the
-> function to trigger such behaviour.
+Hello everyone,
 
-I agree, this kind of bug will be encountered only during developement 
-and not during actual production due to the limit we have fs block size
-in XFS.
+This is V16 of the phy_link_topology series, aiming at improving support
+for multiple PHYs being attached to the same MAC.
 
-> 
-> > If the device is
-> > asking for a blocksize > PAGE_SIZE and CONFIG_TRANSPARENT_HUGEPAGE is
-> > not set, you should also decline to mount the filesystem.
-> 
-> What does CONFIG_TRANSPARENT_HUGEPAGE have to do with filesystems
-> being able to use large folios?
-> 
-> If that's an actual dependency of using large folios, then we're at
-> the point where the mm side of large folios needs to be divorced
-> from CONFIG_TRANSPARENT_HUGEPAGE and always supported.
-> Alternatively, CONFIG_TRANSPARENT_HUGEPAGE needs to selected by the
-> block layer and also every filesystem that wants to support
-> sector/blocks sizes larger than PAGE_SIZE.  IOWs, large folio
-> support needs to *always* be enabled on systems that say
-> CONFIG_BLOCK=y.
+There are 2 changes in V16 compared to V15 :
 
-Why CONFIG_BLOCK? I think it is enough if it comes from the FS side
-right? And for now, the only FS that needs that sort of bs > ps 
-guarantee is XFS with this series. Other filesystems such as bcachefs 
-that call mapping_set_large_folios() only enable it as an optimization
-and it is not needed for the filesystem to function.
+ - In patch 4, the sfp_get_name() helper was moved around to better
+   match the structure of the file. Russell, I've added a Suggested-by
+   tag from you, as I used a description paragraph verbatim from your
+   last review.
 
-So this is my conclusion from the conversation:
-- Add a dependency in Kconfig on THP for XFS until we fix the dependency
-  of large folios on THP
-- Add a BUILD_BUG_ON(XFS_MAX_BLOCKSIZE > MAX_PAGECACHE_ORDER)
-- Add a WARN_ON_ONCE() and clamp the min and max value in
-  mapping_set_folio_order_range() ?
+ - Patches 7 and 8 were reworked so that we don't report the phy id in
+   the netlink command PHY_GET, as this is inconsistent between C22 and
+   C45, and C45 wasn't even supported.
 
-Let me know what you all think @willy, @dave and @ryan.
+All other patches are left unchanged from V15, besides a net-next
+rebase.
 
---
-Pankaj
+As a remainder, here's what the PHY listings would look like :
+ - eth0 has a 88x3310 acting as media converter, and an SFP module with
+   an embedded 88e1111 PHY
+ - eth2 has a 88e1510 PHY
+
+# ethtool --show-phys *
+
+PHY for eth0:
+PHY index: 1
+Driver name: mv88x3310
+PHY device name: f212a600.mdio-mii:00
+Downstream SFP bus name: sfp-eth0
+Upstream type: MAC
+
+PHY for eth0:
+PHY index: 2
+Driver name: Marvell 88E1111
+PHY device name: i2c:sfp-eth0:16
+Upstream type: PHY
+Upstream PHY index: 1
+Upstream SFP name: sfp-eth0
+
+PHY for eth2:
+PHY index: 1
+Driver name: Marvell 88E1510
+PHY device name: f212a200.mdio-mii:00
+Upstream type: MAC
+
+Ethtool patches : https://github.com/minimaxwell/ethtool/tree/mc/topo-v16
+
+Link to V15: https://lore.kernel.org/netdev/20240703140806.271938-1-maxime.chevallier@bootlin.com/
+Link to V14: https://lore.kernel.org/netdev/20240701131801.1227740-1-maxime.chevallier@bootlin.com/
+Link to V13: https://lore.kernel.org/netdev/20240607071836.911403-1-maxime.chevallier@bootlin.com/
+Link to v12: https://lore.kernel.org/netdev/20240605124920.720690-1-maxime.chevallier@bootlin.com/
+Link to v11: https://lore.kernel.org/netdev/20240404093004.2552221-1-maxime.chevallier@bootlin.com/
+Link to V10: https://lore.kernel.org/netdev/20240304151011.1610175-1-maxime.chevallier@bootlin.com/
+Link to V9: https://lore.kernel.org/netdev/20240228114728.51861-1-maxime.chevallier@bootlin.com/
+Link to V8: https://lore.kernel.org/netdev/20240220184217.3689988-1-maxime.chevallier@bootlin.com/
+Link to V7: https://lore.kernel.org/netdev/20240213150431.1796171-1-maxime.chevallier@bootlin.com/
+Link to V6: https://lore.kernel.org/netdev/20240126183851.2081418-1-maxime.chevallier@bootlin.com/
+Link to V5: https://lore.kernel.org/netdev/20231221180047.1924733-1-maxime.chevallier@bootlin.com/
+Link to V4: https://lore.kernel.org/netdev/20231215171237.1152563-1-maxime.chevallier@bootlin.com/
+Link to V3: https://lore.kernel.org/netdev/20231201163704.1306431-1-maxime.chevallier@bootlin.com/
+Link to V2: https://lore.kernel.org/netdev/20231117162323.626979-1-maxime.chevallier@bootlin.com/
+Link to V1: https://lore.kernel.org/netdev/20230907092407.647139-1-maxime.chevallier@bootlin.com/
+
+More discussions on specific issues that happened in 6.9-rc:
+
+https://lore.kernel.org/netdev/20240412104615.3779632-1-maxime.chevallier@bootlin.com/
+https://lore.kernel.org/netdev/20240429131008.439231-1-maxime.chevallier@bootlin.com/
+https://lore.kernel.org/netdev/20240507102822.2023826-1-maxime.chevallier@bootlin.com/
+
+Maxime Chevallier (14):
+  net: phy: Introduce ethernet link topology representation
+  net: sfp: pass the phy_device when disconnecting an sfp module's PHY
+  net: phy: add helpers to handle sfp phy connect/disconnect
+  net: sfp: Add helper to return the SFP bus name
+  net: ethtool: Allow passing a phy index for some commands
+  netlink: specs: add phy-index as a header parameter
+  net: ethtool: Introduce a command to list PHYs on an interface
+  netlink: specs: add ethnl PHY_GET command set
+  net: ethtool: plca: Target the command to the requested PHY
+  net: ethtool: pse-pd: Target the command to the requested PHY
+  net: ethtool: cable-test: Target the command to the requested PHY
+  net: ethtool: strset: Remove unnecessary check on genl_info
+  net: ethtool: strset: Allow querying phy stats by index
+  Documentation: networking: document phy_link_topology
+
+ Documentation/netlink/specs/ethtool.yaml      |  58 ++++
+ Documentation/networking/ethtool-netlink.rst  |  51 +++
+ Documentation/networking/index.rst            |   1 +
+ .../networking/phy-link-topology.rst          | 121 +++++++
+ MAINTAINERS                                   |   1 +
+ drivers/net/phy/Makefile                      |   2 +-
+ drivers/net/phy/marvell-88x2222.c             |   2 +
+ drivers/net/phy/marvell.c                     |   2 +
+ drivers/net/phy/marvell10g.c                  |   2 +
+ drivers/net/phy/phy_device.c                  |  48 +++
+ drivers/net/phy/phy_link_topology.c           | 105 ++++++
+ drivers/net/phy/phylink.c                     |   3 +-
+ drivers/net/phy/qcom/at803x.c                 |   2 +
+ drivers/net/phy/qcom/qca807x.c                |   2 +
+ drivers/net/phy/sfp-bus.c                     |  26 +-
+ include/linux/netdevice.h                     |   4 +-
+ include/linux/phy.h                           |   6 +
+ include/linux/phy_link_topology.h             |  82 +++++
+ include/linux/sfp.h                           |   8 +-
+ include/uapi/linux/ethtool.h                  |  16 +
+ include/uapi/linux/ethtool_netlink.h          |  20 ++
+ net/core/dev.c                                |  15 +
+ net/ethtool/Makefile                          |   3 +-
+ net/ethtool/cabletest.c                       |  35 +-
+ net/ethtool/netlink.c                         |  66 +++-
+ net/ethtool/netlink.h                         |  33 ++
+ net/ethtool/phy.c                             | 308 ++++++++++++++++++
+ net/ethtool/plca.c                            |  30 +-
+ net/ethtool/pse-pd.c                          |  30 +-
+ net/ethtool/strset.c                          |  27 +-
+ 30 files changed, 1057 insertions(+), 52 deletions(-)
+ create mode 100644 Documentation/networking/phy-link-topology.rst
+ create mode 100644 drivers/net/phy/phy_link_topology.c
+ create mode 100644 include/linux/phy_link_topology.h
+ create mode 100644 net/ethtool/phy.c
+
+-- 
+2.45.1
+
 
