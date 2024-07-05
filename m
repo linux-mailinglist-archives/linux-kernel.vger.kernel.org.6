@@ -1,265 +1,180 @@
-Return-Path: <linux-kernel+bounces-242740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 047F4928C6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E493928C69
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49A62B24761
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:45:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AFB3B24761
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C5213A88B;
-	Fri,  5 Jul 2024 16:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB5E16C42C;
+	Fri,  5 Jul 2024 16:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e1bygSiH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0HRefP9"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8D41C2AF;
-	Fri,  5 Jul 2024 16:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EABB2F32
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720197927; cv=none; b=S5VSHc5vnxBNch/xltwmb6UMv4T1/oansCdOcXgqNX0y60e/ajxTJf5fSCBG0jH81AoSyC6AZSvZudOdt8S43y8Um8mdsuQ7mKfE2Cu2o8OzbWgZVuvYhWBU5lYSce9wBhLiSjOHUK87qqN0Z6SC9PompWxYAsQW2hyVbfQTCI8=
+	t=1720197840; cv=none; b=Xp90PISDQNjxySrJRp2MzuhjGsJehKFMKigYtTJ5ORrxbc0tbC75c5KuLFZXBnG05/dHl1jTRV1G0Oum1FzTeaerhcoIxHfCp4FAs9l5eiG79aXmujwwDYSJxchoVAwGm75LZtQEWYbzBq9dDlwYnB9bXW2YU5CglVxv1T7UQjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720197927; c=relaxed/simple;
-	bh=OD8+iNTIFkahsNCwhbTydhgfhD6SOrrUCh7L173p4eg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EPCWXhzS7QJIzYmr6s1GWzBdT0LQ2f4gM0pnT5I8KRmTzeaceRBm1aCjrEqnKsK+IXXdCbrxjbQKxlaxNmW25LbTXSVoMRL17EhpUtqGmFH5Aj1JieRpAV8ZVjNaofhmCmN6Z4wfQhdfFhM4mmZNUspiFC5fRq5ECESEKAQuKQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e1bygSiH; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720197925; x=1751733925;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=OD8+iNTIFkahsNCwhbTydhgfhD6SOrrUCh7L173p4eg=;
-  b=e1bygSiHht/X7DFeE+mvArqhZ7DUOs7hLCGBcn3/vtONWU548qQHagHm
-   mNf3NpdrsDennhBR1W6rdJVyBqwxeDhBc/mkCABjZ8/LGRxUSPYMDsCc7
-   xHizE0PZDNRh6FxaRXzM4b84iGxnzvrJwNXh93Hy7jNpNPN6nVeIKh+9m
-   cwqeOsCNX94jhadDNOUmotd1QDK9Z5120hvDBDSnlJMA1UQsB72AhhpiQ
-   V+PwkyWRagFSz5/Hss2gDXZXb8xnX65VhB33VnLE4ScgVocLhVm83DqXH
-   8bzuK8BdL5jgPvETUEUvJPJ9UgKjshEwQBY/9T0zhOYi2UYPh0xAxzZxy
-   w==;
-X-CSE-ConnectionGUID: NYCpU5puQdW+RcvOTffzMQ==
-X-CSE-MsgGUID: hc5719fpSl2NGODBO1S6ng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="40005223"
-X-IronPort-AV: E=Sophos;i="6.09,185,1716274800"; 
-   d="scan'208";a="40005223"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 09:45:25 -0700
-X-CSE-ConnectionGUID: DwxpxFj6TXSvrIiAJrIqXA==
-X-CSE-MsgGUID: EhoeIemwQLuww1Tva0dPaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,185,1716274800"; 
-   d="scan'208";a="77663354"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 05 Jul 2024 09:45:22 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sPm3j-000ScG-1L;
-	Fri, 05 Jul 2024 16:45:19 +0000
-Date: Sat, 6 Jul 2024 00:41:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v2 4/4] clk: eyeq: add driver
-Message-ID: <202407060044.YQzDGVPu-lkp@intel.com>
-References: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
+	s=arc-20240116; t=1720197840; c=relaxed/simple;
+	bh=iPqi9oX8Pg+KoXl3Dj7ioxuGItMxwCEJOz2c4ptlEr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GK8/phgfSci1XWQQNW28Ci/NH7QGsEhHNTcHpv2jyk6mBc6GJwQ5ey924bEKo6+L8Rs6NAlMozxXKa0M+n8/0RdQhLp8PK3Ry9BpxGOnYgHDnIfbL/f6l14XzVyDM6hFTjiX9OAyiI5OM2ybV0uGP0zZhqN3jvYWxTtCx9+TJHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c0HRefP9; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77b4387302so235381166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 09:43:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720197837; x=1720802637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZJenFuhYTgsk0Co2eVcbS7MuCtTS3fgyqVgRI/D0SG4=;
+        b=c0HRefP9S3EGtTk0LiCE1BRzTy94lysH5HfMe72dP9aYyVerxr6cD+8R9BPqXgYXMs
+         EgvLAlf1WqUoxPBAdGVON7NCE7cvXvEHswvlfGQxzmaho3ntftAbSt5aCdC+DRyXsO6P
+         Uwo5Okf6w94nwp1NJY7mjzpMNL/efav93LjSouXqkfVrCH1yNkTQGPmQ5rG3wprPtBOb
+         uZhhq8gT5l0HXhAC5njjc8wi3LooKQEcyr0ulDP426MbTsSyLPA/KmYPhLtVOH9ygZhJ
+         3/pkheFIlxHKDxiB6VCMqviW+GeSDY6dzrsbcObYemYIf3LrftMiExIRRv/bjNU9KyKE
+         Y6zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720197837; x=1720802637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZJenFuhYTgsk0Co2eVcbS7MuCtTS3fgyqVgRI/D0SG4=;
+        b=oVF3n5tnkcqNDntSDs1lT1GruW6bfPOladfnlvbcjJxmETltvbcGZA+dFFahamaWUU
+         SHZdL6BDmDRJLaJJNNqB4qR4R+fUTMZy7e5PLPNy0i9ZVl5YvV+Ifd2z1yFL5YjjtU9F
+         XT6gTYd4ZR6hG6D2ZdB7ZDI9+M40I18crL/ddW1ag/UtymtYywh8Ps214Y1jrpEuXdSF
+         TwCY/0o+UPI6pkDx/N/yXjeCF5uvyEyX8Rpg5shMx9gFQ+q8ts/jVIVohsn5m1dDqPbH
+         xmtew0HxOTNhgV5LeJiqjJZ8sFOo2kvZwoNoN73fcriABRxzyWtWyQIRrfivMTYQWP11
+         4liw==
+X-Gm-Message-State: AOJu0YxZA7u3xYn98a1Ps4q/k69t/2WA4fWc/e3De5sF4sIFArV4tE+B
+	BuAcQ9qX8MVsJXQtu6V8se4CcjpBNqrQmOnF2ixpacYLezNf8NaESj6RyTpPpuJWzRNxbLc0C3m
+	1aWZPDNtZuiG+O8etrn0OS0TN5qg=
+X-Google-Smtp-Source: AGHT+IGcaZiB45U0dGEbln18cDiJd3sDca+NpmXy0yPlfGtDlVRVgn7AC9FOVqrMmcrnP05WjpdOAvlQdl8HbklmSXc=
+X-Received: by 2002:a17:906:17c4:b0:a72:9963:eb8e with SMTP id
+ a640c23a62f3a-a77ba46f9aamr317906466b.28.1720197836518; Fri, 05 Jul 2024
+ 09:43:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
+References: <20240614040133.24967-1-jason-jh.lin@mediatek.com>
+ <20240614040133.24967-3-jason-jh.lin@mediatek.com> <CABb+yY2bwj2BcdJLGe1ZYwCrnXL3LtcePMb=wQPaBKorBSs2yA@mail.gmail.com>
+ <fc92d51cc6e55301c081ea2d589e1ba6cdd295ee.camel@mediatek.com>
+ <CABb+yY1L+YGjf6O9UgPYkS2gWAdo=7QoojSAUNWC_8o7XtZQSg@mail.gmail.com>
+ <1f815ff8-2b7a-48de-8b47-0bc9b3cb67ab@collabora.com> <CABb+yY1Yy8o3ofAiC-uV+gDrO3QDTWz3_XTUMai_2uyrnj-VrQ@mail.gmail.com>
+ <b7ebc021d391452eaf2149976ea2d53fba3d89fc.camel@mediatek.com>
+ <CABb+yY3+pnuXDK_jZMDYOAzahdSZ5iig51VqzM=FFHrFpK+9LA@mail.gmail.com>
+ <4e5d4362-4940-4ba0-95aa-627b82e21e41@collabora.com> <CABb+yY3eXvJRUq7MOqB8QZ9N4aiuogaUCTfP7MerKdNbAbLkvw@mail.gmail.com>
+ <895af04e45d286c38d01f48b29ad41598b7dadb7.camel@mediatek.com>
+ <CABb+yY1EZOsKUR7WUX0Ni0Ukbqz0+yRHswiu07tNXtY1A1gNUQ@mail.gmail.com>
+ <d6f0e7072ec0e89e573e5720fb2b9c621eb9154c.camel@mediatek.com>
+ <CABb+yY0+fFw7Bg578DFEdrigVFgf4-v3qo2JVruEa3ExtvRsMg@mail.gmail.com>
+ <092d917b4cae2762317a8739c874855554ae913f.camel@mediatek.com>
+ <CABb+yY2-KWYORo_-ZWafyM0VJnh8-2wefvCpeDsK204qB0TchQ@mail.gmail.com> <3f655bc4e1e60cd5e0dfc9baa018553fa8892826.camel@mediatek.com>
+In-Reply-To: <3f655bc4e1e60cd5e0dfc9baa018553fa8892826.camel@mediatek.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Fri, 5 Jul 2024 11:43:45 -0500
+Message-ID: <CABb+yY2zBY_3nEYajdhRNfwb+bPMpFOvbXrqY+jM9rB6qbjJNQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mailbox: mtk-cmdq: Move pm_runimte_get and put to
+ mbox_chan_ops API
+To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	=?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>, 
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Théo,
+On Fri, Jul 5, 2024 at 1:11=E2=80=AFAM Jason-JH Lin (=E6=9E=97=E7=9D=BF=E7=
+=A5=A5)
+<Jason-JH.Lin@mediatek.com> wrote:
+>
+> [snip]
+>
+> > You may disable one to make it easy to capture.
+> > Make sure your kernel prints have timestamps.
+> > Over your patchset, apply the following diff and execute your
+> > usecase.
+> > Then share
+> >  $ dmesg | grep Jason
+> >
+> > diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> > index bafcc7b0c0b8d..90c0620c0ae63 100644
+> > --- a/drivers/mailbox/mailbox.c
+> > +++ b/drivers/mailbox/mailbox.c
+> > @@ -284,6 +284,7 @@ int mbox_send_message(struct mbox_chan *chan,
+> > void *mssg)
+> >  {
+> >   int t;
+> >
+> > + printk("Jason %s: %p\n", __func__, (void *)chan);
+> >   if (!chan || !chan->cl)
+> >   return -EINVAL;
+> >
+> > diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c
+> > b/drivers/mailbox/mtk-cmdq-mailbox.c
+> > index 02cef3eee35a5..6436e1b22f353 100644
+> > --- a/drivers/mailbox/mtk-cmdq-mailbox.c
+> > +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+> > @@ -317,6 +317,7 @@ static int cmdq_runtime_resume(struct device
+> > *dev)
+> >  {
+> >   struct cmdq *cmdq =3D dev_get_drvdata(dev);
+> >
+> > + printk("Jason %s: %p\n", __func__, (void *)dev);
+> >   return clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
+> >  }
+> >
+> > @@ -324,6 +325,7 @@ static int cmdq_runtime_suspend(struct device
+> > *dev)
+> >  {
+> >   struct cmdq *cmdq =3D dev_get_drvdata(dev);
+> >
+> > + printk("Jason %s: %p\n", __func__, (void *)dev);
+> >   clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
+> >   return 0;
+> >  }
+> >
+> > Thanks
+>
+> It seems CMDQ driver is not suspend over 100ms.
+>
+here are the time deltas in milli-seconds
+10 6005 52 85 304 59 27 203 29 24 25 38 33 57 34 20 41 28 36 48 71 35
+21 45 51 22 30 46 46 23 16 16 16 16 16 17 17 31 16 19 31 16 16 17 16
+16 16 32 17 32 17 30 21 16 32 18 30 28 25 29 24 31 27 16 17 19 34 30
+15 33 16 35 35 29 18 31 16 16 16 16 17 33 35 33 39 20 21 14 34 49 22
+42 32 13 21 24 9 130 23 32 35 31 32 16 18 31 36 37 26 14 68 76 111 515
+452 64 484 487 497 501 507 161 336 516 486 495 504 495 504 501 500 495
+507 495 499 505 496 502 501 502 500 495 501 507 499 499 496 506 501
+498 507 490 504 496 501 506 413 28 207 31731 34550 3784 30 23
 
-kernel test robot noticed the following build errors:
+For detlas <100 we don't expect suspend because your set
+autosuspend_delay to 100ms.
+For deltas >100 you should have seen suspend. Apparently the changes
+you want in the api still don't help you.
 
-[auto build test ERROR on f2661062f16b2de5d7b6a5c42a9a5c96326b8454]
+Also I see messages are being submitted on 4 channels, but only for
+the  '000000000a4d37b5' channel cmdq_mbox_send_data is ever called.
+Unless you selectively printk only for that channel, your driver has
+some even fundamental problems.  Maybe trace without your patch and
+with pm_runtime_xxx commented out (to avoid stack dump).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Th-o-Lebrun/Revert-dt-bindings-clock-mobileye-eyeq5-clk-add-bindings/20240704-211515
-base:   f2661062f16b2de5d7b6a5c42a9a5c96326b8454
-patch link:    https://lore.kernel.org/r/20240703-mbly-clk-v2-4-fe8c6199a579%40bootlin.com
-patch subject: [PATCH v2 4/4] clk: eyeq: add driver
-config: s390-randconfig-r132-20240705 (https://download.01.org/0day-ci/archive/20240706/202407060044.YQzDGVPu-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240706/202407060044.YQzDGVPu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407060044.YQzDGVPu-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   drivers/clk/clk-eyeq.c: In function 'eqc_init':
->> drivers/clk/clk-eyeq.c:679:62: warning: dereferencing 'void *' pointer
-     679 |         early_data = of_match_node(eqc_early_match_table, np)->data;
-         |                                                              ^~
->> drivers/clk/clk-eyeq.c:679:62: error: request for member 'data' in something not a structure or union
-   drivers/clk/clk-eyeq.c: At top level:
->> drivers/clk/clk-eyeq.c:653:34: warning: 'eqc_early_match_table' defined but not used [-Wunused-const-variable=]
-     653 | static const struct of_device_id eqc_early_match_table[] = {
-         |                                  ^~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/data +679 drivers/clk/clk-eyeq.c
-
-   652	
- > 653	static const struct of_device_id eqc_early_match_table[] = {
-   654		{
-   655			.compatible = "mobileye,eyeq5-olb",
-   656			.data = &eqc_eyeq5_early_match_data,
-   657		},
-   658		{
-   659			.compatible = "mobileye,eyeq6h-central-olb",
-   660			.data = &eqc_eyeq6h_central_early_match_data,
-   661		},
-   662		{
-   663			.compatible = "mobileye,eyeq6h-west-olb",
-   664			.data = &eqc_eyeq6h_west_early_match_data,
-   665		},
-   666		{}
-   667	};
-   668	MODULE_DEVICE_TABLE(of, eqc_early_match_table);
-   669	
-   670	static void __init eqc_init(struct device_node *np)
-   671	{
-   672		const struct eqc_early_match_data *early_data;
-   673		unsigned int nb_clks = 0;
-   674		struct eqc_priv *priv;
-   675		void __iomem *base;
-   676		unsigned int i;
-   677		int ret;
-   678	
- > 679		early_data = of_match_node(eqc_early_match_table, np)->data;
-   680	
-   681		/* No reason to early init this clock provider. Delay until probe. */
-   682		if (!early_data || early_data->early_pll_count == 0)
-   683			return;
-   684	
-   685		priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-   686		if (!priv) {
-   687			ret = -ENOMEM;
-   688			goto err;
-   689		}
-   690	
-   691		priv->np = np;
-   692		priv->early_data = early_data;
-   693	
-   694		nb_clks = early_data->early_pll_count + early_data->nb_late_clks;
-   695		priv->cells = kzalloc(struct_size(priv->cells, hws, nb_clks), GFP_KERNEL);
-   696		if (!priv->cells) {
-   697			ret = -ENOMEM;
-   698			goto err;
-   699		}
-   700	
-   701		priv->cells->num = nb_clks;
-   702	
-   703		/*
-   704		 * Mark all clocks as deferred; some are registered here, the rest at
-   705		 * platform device probe.
-   706		 */
-   707		for (i = 0; i < nb_clks; i++)
-   708			priv->cells->hws[i] = ERR_PTR(-EPROBE_DEFER);
-   709	
-   710		/* Offsets (reg64) of early PLLs are relative to OLB block. */
-   711		base = of_iomap(np, 0);
-   712		if (!base) {
-   713			ret = -ENODEV;
-   714			goto err;
-   715		}
-   716	
-   717		for (i = 0; i < early_data->early_pll_count; i++) {
-   718			const struct eqc_pll *pll = &early_data->early_plls[i];
-   719			unsigned long mult, div, acc;
-   720			struct clk_hw *hw;
-   721			u32 r0, r1;
-   722			u64 val;
-   723	
-   724			val = readq(base + pll->reg64);
-   725			r0 = val;
-   726			r1 = val >> 32;
-   727	
-   728			ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
-   729			if (ret) {
-   730				pr_err("failed parsing state of %s\n", pll->name);
-   731				goto err;
-   732			}
-   733	
-   734			hw = clk_hw_register_fixed_factor_with_accuracy_fwname(NULL,
-   735					np, pll->name, "ref", 0, mult, div, acc);
-   736			priv->cells->hws[pll->index] = hw;
-   737			if (IS_ERR(hw)) {
-   738				pr_err("failed registering %s: %pe\n", pll->name, hw);
-   739				ret = PTR_ERR(hw);
-   740				goto err;
-   741			}
-   742		}
-   743	
-   744		/* When providing a single clock, require no cell. */
-   745		if (nb_clks == 1)
-   746			ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, priv->cells->hws[0]);
-   747		else
-   748			ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, priv->cells);
-   749		if (ret) {
-   750			pr_err("failed registering clk provider: %d\n", ret);
-   751			goto err;
-   752		}
-   753	
-   754		spin_lock(&eqc_list_slock);
-   755		list_add_tail(&priv->list, &eqc_list);
-   756		spin_unlock(&eqc_list_slock);
-   757	
-   758		return;
-   759	
-   760	err:
-   761		/*
-   762		 * We are doomed. The system will not be able to boot.
-   763		 *
-   764		 * Let's still try to be good citizens by freeing resources and print
-   765		 * a last error message that might help debugging.
-   766		 */
-   767	
-   768		if (priv && priv->cells) {
-   769			of_clk_del_provider(np);
-   770	
-   771			for (i = 0; i < early_data->early_pll_count; i++) {
-   772				const struct eqc_pll *pll = &early_data->early_plls[i];
-   773				struct clk_hw *hw = priv->cells->hws[pll->index];
-   774	
-   775				if (!IS_ERR_OR_NULL(hw))
-   776					clk_hw_unregister_fixed_factor(hw);
-   777			}
-   778	
-   779			kfree(priv->cells);
-   780		}
-   781	
-   782		kfree(priv);
-   783	
-   784		pr_err("failed clk init: %d\n", ret);
-   785	}
-   786	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-jassi
 
