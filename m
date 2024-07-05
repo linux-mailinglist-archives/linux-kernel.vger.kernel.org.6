@@ -1,80 +1,88 @@
-Return-Path: <linux-kernel+bounces-241937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C2B928188
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8E992818C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B655C1C2276B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 639881F22F7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1865013C669;
-	Fri,  5 Jul 2024 05:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="pQLGmpve"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D69B13C669;
+	Fri,  5 Jul 2024 05:53:58 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC72D4CB28;
-	Fri,  5 Jul 2024 05:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DDB33C7
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 05:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720158726; cv=none; b=INWU+S4I1VieLa6uJ/TOzYoxzbqkw/SW05CwNk6rsNxH6jd9Tof2BqQg4kyD+c9IoJjmyBvois8nUeVW3CWjs9mvH5VvpPoXt19UJGv5v2VXptBEHWsNnMgQjhhW/d7NZ/K0SDG6rOuFieEBb6ndreClK1lriVRiYV5XxjS2f1g=
+	t=1720158838; cv=none; b=BlvCSBQhXSLtF09PDmhdPFcbChf4cd8lwZb/cgXw5lMzPRfxskHZOGa5IhttFKRvRO4cdQimDhCylKoX2ZOgncDmFBkXz2PYBaCR4rnVLhedwb1tCoM0TB3wsk2Qdx4GASfTANeRBz7NfAle7xuTx7kSNwDR1MkrH5Yl7OjthjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720158726; c=relaxed/simple;
-	bh=b4Y/AqHq1YzIqPDwhQ681I6YPdm5OfPgQY/LQ8WA+6M=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Z8UyC6VNIHmnzD0A4VF6SwwQKRFu8MPp9RfgxRkA7ZEGAHCruHPWNzIn27M4aogrG5a0eJbKDxdc8zFMZ6DjQXs6MPyP7Zk1o5I/iaHyMCjuKjn99JhAIyTTjoNhk1adD1RHxASbpYdhcoN5mEjzH1p8LSV5iE/RG4l2M9gfNu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=pQLGmpve; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1720158720; bh=b4Y/AqHq1YzIqPDwhQ681I6YPdm5OfPgQY/LQ8WA+6M=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=pQLGmpvei5KqZUF9ZCKSm9BPn5xE9FYZTxgsa6OsKoMHjeYPU3RAaQjBmUkGw406/
-	 BkvWqYo5SRy9NEpgQKk8qsCrr2avQxdgBlbmrdrCKO2D7i36fFYnIFi8R0XpwkK0qo
-	 Jsa40xoe0Jb3tfeHdSJT8071f+KFKOuNIZFkwyII=
-Date: Fri, 5 Jul 2024 07:51:59 +0200 (GMT+02:00)
-From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh_?= <thomas@t-8ch.de>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <a86cac1d-6159-46c8-96d9-4c372a7956c2@t-8ch.de>
-In-Reply-To: <g5bg74ewkto5kdky7q2ystfxmsu73bm4zdpnx6buanbcompady@vnyrwpaajbka>
-References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net> <g5bg74ewkto5kdky7q2ystfxmsu73bm4zdpnx6buanbcompady@vnyrwpaajbka>
-Subject: Re: [PATCH v2 0/4] i2c: smbus cleanups and SPD support for piix4
+	s=arc-20240116; t=1720158838; c=relaxed/simple;
+	bh=sDdIt+1e4X/ZeqtH4M9EzPekqb8Iba0mCp/wkm7O2+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bs5mmffyY9EUmNg56e98yIc5S+4KEoRxVwHOqYfxhv43Yn9Bb6XjXO1Lj3AIX3yKex0gYz6e2jvyEcVIurjZ1TiLB19nwzP0iac0apy9iaBEjof7G85ewG2H20n48qA7HbgK3mjqf2yjJqeZZ9tRr5VcgZpdQqgp0uOiYGDIWN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 366F940006;
+	Fri,  5 Jul 2024 05:53:45 +0000 (UTC)
+Message-ID: <adce9444-a6c4-4747-afec-d70af4a396d3@ghiti.fr>
+Date: Fri, 5 Jul 2024 07:53:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <a86cac1d-6159-46c8-96d9-4c372a7956c2@t-8ch.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: vdso: do not strip debugging info for vdso.so.dbg
+Content-Language: en-US
+To: Changbin Du <changbin.du@huawei.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240611040947.3024710-1-changbin.du@huawei.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240611040947.3024710-1-changbin.du@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Jul 4, 2024 23:56:45 Andi Shyti <andi.shyti@kernel.org>:
+Hi Changbin,
 
-> Hi Thomas,
+On 11/06/2024 06:09, Changbin Du wrote:
+> The vdso.so.dbg is a debug version of vdso and could be used for debugging
+> purpose. For example, perf-annotate requires debugging info to show source
+> lines. So let's keep its debugging info.
 >
-> ...
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
+> ---
+>   arch/riscv/kernel/vdso/Makefile | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
->> Thomas Wei=C3=9Fschuh (4):
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i2c: smbus: only limit max banks to eight
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i2c: smbus: probe SPDs on a best-effort b=
-asis
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i2c: smbus: drop warning about muxed segm=
-ents requirement
->
-> These three patches are shuffling around the code,
-> adding/removing/moving the same bits. Can we squash them to a
-> single patch?
+> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
+> index f7ef8ad9b550..960feb1526ca 100644
+> --- a/arch/riscv/kernel/vdso/Makefile
+> +++ b/arch/riscv/kernel/vdso/Makefile
+> @@ -45,7 +45,7 @@ $(obj)/vdso.o: $(obj)/vdso.so
+>   # link rule for the .so file, .lds has to be first
+>   $(obj)/vdso.so.dbg: $(obj)/vdso.lds $(obj-vdso) FORCE
+>   	$(call if_changed,vdsold)
+> -LDFLAGS_vdso.so.dbg = -shared -S -soname=linux-vdso.so.1 \
+> +LDFLAGS_vdso.so.dbg = -shared -soname=linux-vdso.so.1 \
+>   	--build-id=sha1 --hash-style=both --eh-frame-hdr
+>   
+>   # strip rule for the .so file
 
-IMO they are doing different things, but I'll squash them for the next subm=
-ission.
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
+
 
