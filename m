@@ -1,205 +1,221 @@
-Return-Path: <linux-kernel+bounces-241807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D1C927FCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:33:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D81A927FCE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7953B1C21413
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EDC1F24AA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77E12B77;
-	Fri,  5 Jul 2024 01:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3281E10A24;
+	Fri,  5 Jul 2024 01:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cd7m5fRn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIOR+9Xc"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C03F7492
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79A7ECF;
+	Fri,  5 Jul 2024 01:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720143172; cv=none; b=UAAdtpZJR4Nnraj9+mUaSJBtnNa2igAtJ7E3kv/yn62FOo88ynEaEzaPibMUa8I9g7m4HFj0gFsCO3hsmYkeGH/QuuJtOwXBvl64l6QG42Dy6ZXqo11jhVvOqSPVbJevhYdSc82kq72jcWUcA56kRdDdw6e73JvGwN+X6Hn9NmU=
+	t=1720143269; cv=none; b=Bz0ilDa/f01vO7iZ/C9ZTB/kBGCeCjlsYeUAyFTFdnEV5OetUjF9FU8+jhSOSx+J+2myroZHB2KLuwrXSJOg5lX4mMP3NsuISvaun6O9dyFLB4yEj2szm4JX6O0wNHdf5cbiSHr+FltCRV7u3lMt5MoWVmv1z0CJri19RroI8XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720143172; c=relaxed/simple;
-	bh=joi/ZbQF5UZJT83oRi4Qzjkbop2NvPgJmoAyIcaK1aY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SsibH0C2KF/xQb/2UtmM1EY4eSdmUZlbjwGojBcPqNjEl/a2tBLKqZm5WhQ7Th/A5eRb0deao1Fy2hEzJpP10bTaKc61ki6w8wk5p5TdgCy/smwthFz/L/qB/7XI9kj4ctL6VfzzRmpNMeujr5wFuzGDCBw7BTEzytU/vX8E9/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cd7m5fRn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720143169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9TRW1LftiMp3tODMlxbNr5xLzrk/cXFTqGoijSSTc2U=;
-	b=Cd7m5fRnS0wx/zrPrroCs9M8enlY4YIsSIHMYPs3IC3pEFfBV65rjuqipJyW6nfTbWcL2V
-	35qyTpT4gtWwwgnj+TeBzYSFPTIcbkZZooTgjiaZ1MVZe0yR2zzbbzFKM6s5w3w2sISPu7
-	jDUWmzzyIEyNtrVC6BPUNv4qRIXQDeE=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-_OxDvkEyN9i_xBkvdfxf7Q-1; Thu, 04 Jul 2024 21:32:47 -0400
-X-MC-Unique: _OxDvkEyN9i_xBkvdfxf7Q-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-79d79340a11so93290685a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 18:32:47 -0700 (PDT)
+	s=arc-20240116; t=1720143269; c=relaxed/simple;
+	bh=CkmYUB+Wb0PVAVfXRxDHlsvFmu+OM+8wtTiAsHFpwPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R6O84KnJK8vjyiYwDIXLI+4ODv1iZbmZSAzoJ8OFFowBQ1IbeZ0RylHcuw3F5Ql8qOuCTP8QepayL1ZtjdF3KtFY/ZoVIRQaYJYAF6ibnuiwU9WbZnrr87g7fh8Jrm6jjooIszybTyhx5NTz6uju/JGCclhrQsUgeYBWXEPwF0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIOR+9Xc; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee4ab4076bso18116051fa.0;
+        Thu, 04 Jul 2024 18:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720143266; x=1720748066; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wnvA9qdYRI8IFnTgozQAGatw1H+Gapz2OYIN09IDyec=;
+        b=TIOR+9XcTvJMWfGT8E9Ux9W/+WNW9hWdEbY2NxmEiz6LuLMvaRh9vMyyCG39eEumGb
+         Oy3SW56FKP9+XCGjG5sqW5d3t+ZNYWDig4tmr5KOChuiS4fZKk/OJohhbowPvAS08liE
+         P1k7hoBrTCxTnQMdkXc1jpWxGYtOkJ9DdR66eBgXIi9oywj2oRdX9g9023WAh9SoZfX1
+         b1GfACKBwuUYQLUY/brPr5COGCmS8fsv3pd66P8TxyE5O7OEdD8vm0S2wlM7b1/I/2rM
+         2O5tK7lPFx22r7Usrs6hmtS2ajiG7F/aN2bfl3g+3Mgg9xjM/w5lDVjnu8cf8te7ayry
+         kLFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720143167; x=1720747967;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9TRW1LftiMp3tODMlxbNr5xLzrk/cXFTqGoijSSTc2U=;
-        b=AfwAosQdCKKeoYudcQD2tpS0wDtonfcJZGmwhlIpW31z1TMxWAo6SdbOHO2TT+dVin
-         T/EJYEk8SVJZGTtIDAGJKVXAM8n3gtZ7yOQlVSEPgHO/bIa2VIvwQ5sNzHo9TJFwOBkR
-         4BmCNXr0SeQj+ipAiB1TEO7Jn9Yv3FG0gvRx+qFFm42T3S9ePYbdwHRlWes6QVUyo1kL
-         CMgDUuXe8Nh7QM43CG7uZE4hKYGf/PGweKI9aFM+Cv0MYfLv7RjDUvVPCrBF3iKxaFiY
-         n0p5eElVi8QItWlXfywy8DhegOF5ky70Bi5t4F7g1GAFm1T4qgQHkkivN7bneDDPOE6x
-         welQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN2umN+Qn08hb7RHDqod+6fA1y5RMA0kskqdwGRNPz7HpGxlHNF9H16fo59tEHrhhAizb+gN1QPiQLtd++AgXxgOe2iIroopgfbDAJ
-X-Gm-Message-State: AOJu0Yyj5XSC14TKWZa0aCvUoE2tqS+GqcpQXaabXmuZjtXzue4gFme/
-	/YbaEgJdfG+Z7ixusd8B2ZkZKAks/c54NLckZaygqOrOvrygizHbWMJjDq6DRSA+K7CX06G94wE
-	VwgUBSppqHfJjRFPVgYglRKZEFjljRqKNlS5C1VJ++m7cjdKpyIge6yZMmewaeA==
-X-Received: by 2002:a05:620a:811b:b0:79d:5972:a7f8 with SMTP id af79cd13be357-79eee25829bmr306761785a.75.1720143167393;
-        Thu, 04 Jul 2024 18:32:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElOWQWtUQoswvp12eWueS3hzOEJ5cWZPvfmYg/2dq2gbq+H8DOUCmhwsXMFzGo2GrWneHE+w==
-X-Received: by 2002:a05:620a:811b:b0:79d:5972:a7f8 with SMTP id af79cd13be357-79eee25829bmr306760685a.75.1720143167061;
-        Thu, 04 Jul 2024 18:32:47 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d6927961csm726200885a.41.2024.07.04.18.32.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 18:32:46 -0700 (PDT)
-Message-ID: <8dfa84f39a718f82c23c11fbe02e4710351cbf73.camel@redhat.com>
-Subject: Re: [PATCH v2 28/49] KVM: x86: Clear PV_UNHALT for !HLT-exiting
- only when userspace sets CPUID
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
- <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
- <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
- Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 04 Jul 2024 21:32:45 -0400
-In-Reply-To: <20240517173926.965351-29-seanjc@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-29-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+        d=1e100.net; s=20230601; t=1720143266; x=1720748066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wnvA9qdYRI8IFnTgozQAGatw1H+Gapz2OYIN09IDyec=;
+        b=b3XGz53n6+kwQhYdCHK54srLIiJUa5n77Sct93hcj5dx9+RTgjXns2MvdE+PPKDy23
+         1Xrxo2CH32RvtWrCZAcbahFDpRDmXQQva8P5DZrwpO425jzTFLYTejmJ4cGDhm4T8gFc
+         zv2vxx0xdH/qvmwGwL6uPbfBMDrP3GooKRCxi2IBfU638/HjVPIzF4RjXAnXz9RB0bVI
+         2fLC3mXCkoE/dppl8mXl2UxG1ej2RNpL+MQwZGozwvh/7Xli6UhV37/KEPD9LYh+sqaD
+         kPdMsFGgBCmNoYpsM/31GbwDavL3xKQDsBM0TVyQHkJC22fdZlFGcCCdzzKxY5XEz6Gi
+         yX5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVzjplzDPta4ruSHlSGOhrBJTj/fWFhAl3WvRxnx/eHl87WzfEe+AUt3tMJUROwZ9naJIju3GLxgsiRE7taD+UFzOBi48qvAJB1BbphDBhXjTWjUWZHUtsOlj+YP1pIn0eJZHA8Ij/0WrFMUHaI
+X-Gm-Message-State: AOJu0YzbJK+4zp1ERlIfLxRMxieWyKLSSUBYWVBPK3IEC8Pxi0woFgh8
+	WmiEgp6nYcAJANXr9692ooUJpiAqvsWtdOOKLbVwcMGD3Nd2B/Wp/cTzF597V2i2yHuqcSvy/CM
+	PRA+N5OKufiHr2V+b/V06u20yjrs=
+X-Google-Smtp-Source: AGHT+IE4vKywFszF27KWciwCz3YLJq1WM+m0xB8siGXi2m2TTkznG5lADS5x5zLGA2oCtnl87N3iz7FaIsYNhTUfhGk=
+X-Received: by 2002:a2e:3506:0:b0:2ec:266:f59e with SMTP id
+ 38308e7fff4ca-2ee8f309a57mr8880561fa.24.1720143265433; Thu, 04 Jul 2024
+ 18:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20240705011525.402650-1-nobuaki.tsunashima@infineon.com>
+In-Reply-To: <20240705011525.402650-1-nobuaki.tsunashima@infineon.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 4 Jul 2024 21:34:10 -0400
+Message-ID: <CABBYNZLo2P5VLFJ0XahNyh8CeOAA6rg1WTWpMx3WRqhYby3uOQ@mail.gmail.com>
+Subject: Re: [PATCH v5] Bluetooth: btbcm: Apply HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER
+ to CYW4373
+To: Nobuaki Tsunashima <nobuaki.tsunashima@infineon.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> Now that KVM disallows disabling HLT-exiting after vCPUs have been created,
-> i.e. now that it's impossible for kvm_hlt_in_guest() to change while vCPUs
-> are running, apply KVM's PV_UNHALT quirk only when userspace is setting
-> guest CPUID.
-> 
-> Opportunistically rename the helper to make it clear that KVM's behavior
-> is a quirk that should never have been added.  KVM's documentation
-> explicitly states that userspace should not advertise PV_UNHALT if
-> HLT-exiting is disabled, but for unknown reasons, commit caa057a2cad6
-> ("KVM: X86: Provide a capability to disable HLT intercepts") didn't stop
-> at documenting the requirement and also massaged the incoming guest CPUID.
-> 
-> Unfortunately, it's quite likely that userspace has come to rely on KVM's
-> behavior, i.e. the code can't simply be deleted.  The only reason KVM
-> doesn't have an "official" quirk is that there is no known use case where
-> disabling the quirk would make sense, i.e. letting userspace disable the
-> quirk would further increase KVM's burden without any benefit.
+Hi Nobuaki,
 
-Makes sense overall.
-
-
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Thu, Jul 4, 2024 at 9:16=E2=80=AFPM Nobuaki Tsunashima
+<nobuaki.tsunashima@infineon.com> wrote:
+>
+> From: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
+>
+> CYW4373 ROM FW has an issue that it claims LE_Read_Transmit_Power command
+> as supported in a response of Read_Local_Supported_Command command but
+> rejects the LE_Read_Transmit_Power command with "Unknown HCI Command"
+> status. Because Bluetooth driver of kernel 5.11 added sending the
+> LE_Read_Transmit_Power command in initialize phase, hci up fails due to t=
+he
+> issue.
+>
+> Especially in USB i/f case, it would be difficult to download patch FW th=
+at
+> includes its fix unless hci is up.
+>
+> The driver already contains infrastructure to apply the quirk for the
+> issue, but currently it only supports DMI based matching. Add support to
+> match by chip id and baseline FW version to detect CYW4373 ROM FW build
+> in generic system.
+>
+> Fixes: 7c395ea521e6 ("Bluetooth: Query LE tx power on startup")
+> Signed-off-by: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
 > ---
->  arch/x86/kvm/cpuid.c | 26 +++++++++-----------------
->  1 file changed, 9 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 4ad01867cb8d..93a7399dc0db 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -287,18 +287,17 @@ static struct kvm_cpuid_entry2 *kvm_find_kvm_cpuid_features(struct kvm_vcpu *vcp
->  					     vcpu->arch.cpuid_nent, base);
->  }
->  
-> -static void kvm_update_pv_runtime(struct kvm_vcpu *vcpu)
-> +static u32 kvm_apply_cpuid_pv_features_quirk(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_cpuid_entry2 *best = kvm_find_kvm_cpuid_features(vcpu);
->  
-> -	vcpu->arch.pv_cpuid.features = 0;
-> +	if (!best)
-> +		return 0;
->  
-> -	/*
-> -	 * save the feature bitmap to avoid cpuid lookup for every PV
-> -	 * operation
-> -	 */
-> -	if (best)
-> -		vcpu->arch.pv_cpuid.features = best->eax;
-> +	if (kvm_hlt_in_guest(vcpu->kvm))
-> +		best->eax &= ~(1 << KVM_FEATURE_PV_UNHALT);
+> V4 -> V5: Use skb_pull_data() to access skb->data as safer manner.
+> V3 -> V4: Fix a few coding style warnings and refine comments for clarify=
+.
+> V2 -> V3: Fix a few coding style warnings and change the subject as more =
+specific.
+> V1 -> V2: Fix several coding style warnings.
+>
+>  drivers/bluetooth/btbcm.c | 41 +++++++++++++++++++++++++++++++++++++--
+>  drivers/bluetooth/btusb.c |  4 ++++
+>  2 files changed, 43 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+> index 0a5445ac5e1b..dd7262a8dc8e 100644
+> --- a/drivers/bluetooth/btbcm.c
+> +++ b/drivers/bluetooth/btbcm.c
+> @@ -437,16 +437,53 @@ static const struct dmi_system_id disable_broken_re=
+ad_transmit_power[] =3D {
+>         { }
+>  };
+>
+> +struct bcm_chip_version_table {
+> +       u8 chip_id;                     /* Chip ID */
+> +       u16 baseline;           /* Baseline version of patch FW */
+> +};
+> +#define BCM_ROMFW_BASELINE_NUM 0xFFFF
+> +static const struct bcm_chip_version_table disable_broken_read_transmit_=
+power_by_chip_ver[] =3D {
+> +       { 0x87, BCM_ROMFW_BASELINE_NUM }                /* CYW4373/4373E =
+*/
+> +};
+
+Can we have a little less verbose names? e.g. broken_read_tx_power and
+btbcm_broken_read_tx_power sounds a lot better imo.
+
+> +static bool btbcm_is_disable_broken_read_tx_power_by_chip_ver(u8 chip_id=
+, u16 baseline)
+> +{
+> +       int i;
+> +       size_t table_size =3D ARRAY_SIZE(disable_broken_read_transmit_pow=
+er_by_chip_ver);
+> +       const struct bcm_chip_version_table *entry =3D
+> +                                               &disable_broken_read_tran=
+smit_power_by_chip_ver[0];
 > +
-> +	return best->eax;
->  }
->  
->  /*
-> @@ -320,7 +319,6 @@ static void __kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu, struct kvm_cpuid_e
->  				       int nent)
+> +       for (i =3D 0 ; i < table_size ; i++, entry++)     {
+> +               if ((chip_id =3D=3D entry->chip_id) && (baseline =3D=3D e=
+ntry->baseline))
+> +                       return true;
+> +       }
+> +
+> +       return false;
+> +}
+> +
+>  static int btbcm_read_info(struct hci_dev *hdev)
 >  {
->  	struct kvm_cpuid_entry2 *best;
-> -	struct kvm_hypervisor_cpuid kvm_cpuid;
->  
->  	best = cpuid_entry2_find(entries, nent, 1, KVM_CPUID_INDEX_NOT_SIGNIFICANT);
->  	if (best) {
-> @@ -347,13 +345,6 @@ static void __kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu, struct kvm_cpuid_e
->  		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
->  		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
->  
-> -	kvm_cpuid = __kvm_get_hypervisor_cpuid(entries, nent, KVM_SIGNATURE);
-> -	if (kvm_cpuid.base) {
-> -		best = __kvm_find_kvm_cpuid_features(entries, nent, kvm_cpuid.base);
-> -		if (kvm_hlt_in_guest(vcpu->kvm) && best)
-> -			best->eax &= ~(1 << KVM_FEATURE_PV_UNHALT);
-> -	}
+>         struct sk_buff *skb;
+> +       u8 *chip_id;
+> +       u16 *baseline;
+>
+>         /* Read Verbose Config Version Info */
+>         skb =3D btbcm_read_verbose_config(hdev);
+>         if (IS_ERR(skb))
+>                 return PTR_ERR(skb);
 > -
->  	if (!kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT)) {
->  		best = cpuid_entry2_find(entries, nent, 0x1, KVM_CPUID_INDEX_NOT_SIGNIFICANT);
->  		if (best)
-> @@ -425,7 +416,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
->  	vcpu->arch.guest_supported_xcr0 =
->  		cpuid_get_supported_xcr0(vcpu->arch.cpuid_entries, vcpu->arch.cpuid_nent);
->  
-> -	kvm_update_pv_runtime(vcpu);
-> +	vcpu->arch.pv_cpuid.features = kvm_apply_cpuid_pv_features_quirk(vcpu);
->  
->  	vcpu->arch.is_amd_compatible = guest_cpuid_is_amd_or_hygon(vcpu);
->  	vcpu->arch.maxphyaddr = cpuid_query_maxphyaddr(vcpu);
-> @@ -508,6 +499,7 @@ static int kvm_set_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid_entry2 *e2,
->  		 * stale data is ok because KVM will reject the change.
->  		 */
->  		kvm_update_cpuid_runtime(vcpu);
-> +		kvm_apply_cpuid_pv_features_quirk(vcpu);
->  
->  		r = kvm_cpuid_check_equal(vcpu, e2, nent);
->  		if (r)
+> -       bt_dev_info(hdev, "BCM: chip id %u", skb->data[1]);
+> +       skb_pull_data(skb, 1);
+> +       chip_id =3D skb_pull_data(skb, sizeof(*chip_id));
+> +       skb_pull_data(skb, 1);
+> +       baseline =3D skb_pull_data(skb, sizeof(*baseline));
+> +
+> +       if (chip_id) {
+> +               bt_dev_info(hdev, "BCM: chip id %u", *chip_id);
+> +
+> +               if (baseline) {
+> +                       /* Check Chip ID and disable broken Read LE Min/M=
+ax Tx Power */
+> +                       if (btbcm_is_disable_broken_read_tx_power_by_chip=
+_ver(*chip_id, *baseline))
+> +                               set_bit(HCI_QUIRK_BROKEN_READ_TRANSMIT_PO=
+WER, &hdev->quirks);
+> +               }
+> +       }
+>         kfree_skb(skb);
+>
+>         return 0;
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index d31edad7a056..52561c8d8828 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -142,6 +142,10 @@ static const struct usb_device_id btusb_table[] =3D =
+{
+>         { USB_VENDOR_AND_INTERFACE_INFO(0x04ca, 0xff, 0x01, 0x01),
+>           .driver_info =3D BTUSB_BCM_PATCHRAM },
+>
+> +       /* Cypress devices with vendor specific id */
+> +       { USB_VENDOR_AND_INTERFACE_INFO(0x04b4, 0xff, 0x01, 0x01),
+> +         .driver_info =3D BTUSB_BCM_PATCHRAM },
+> +
+>         /* Broadcom devices with vendor specific id */
+>         { USB_VENDOR_AND_INTERFACE_INFO(0x0a5c, 0xff, 0x01, 0x01),
+>           .driver_info =3D BTUSB_BCM_PATCHRAM },
+> --
+> 2.25.1
+>
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 
-Best regards,
-	Maxim Levitsky
-
-
-
-
+--=20
+Luiz Augusto von Dentz
 
