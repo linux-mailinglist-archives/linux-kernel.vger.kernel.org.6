@@ -1,86 +1,135 @@
-Return-Path: <linux-kernel+bounces-242565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F439289E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:38:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FDE928982
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4F21F250AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:38:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BD2AB22E28
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFE11514F1;
-	Fri,  5 Jul 2024 13:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F08314BF9B;
+	Fri,  5 Jul 2024 13:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNsXabrs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ujpc489k"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1F914F102
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 13:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E42913C8F9;
+	Fri,  5 Jul 2024 13:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720186641; cv=none; b=JuIQj7pB5J1Pw9YgmY9NFphHXS66X4q+Cz6BSW//postO7QBCwyIaG6U5/TiAADI73hH77bM4ryVsiajV/0Jnu/ZdcHRe1IHIuMVsS3XnZktzoV46Fz/DtSjJrQpk3in6H0L2/C/9NwekSEQq7qkfZJeyoGT+G2jX+BXBO8t4/U=
+	t=1720185876; cv=none; b=sTi9RZjYR1tRdc91ILtZo4U6zgm41O/1PWeYAbGQDOOtvi5aYR7/1eSteVC7jmpV8k2UDVryB8zoiA2rbxjJWyqGNV7jcm8Pm0sYzLzR47U0zqOVfzIJI4/fh6ykUCp+gJtW+zGg8Gzj6F2swYmKDEQdvRhGdKm8dzYUshHaAzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720186641; c=relaxed/simple;
-	bh=bW7SJuoSHC50Ot48nvepYpmST048P10fAOtJVbkOwyc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O7kkqGaF397NI1cr2eX7YLlfwqKaUrAf1lX+lE91wzRqjHrll2gexsYjtgOOBNofGtT+62H4Rk+uQCC6pDs+VcgNG8RTpGnthNjqOhCsJ4uomaszke1PmWCjrC1zAwddROcPdhAb9mOzZ8o1lAhJLocTZzYWie6JuRnswzfWc1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNsXabrs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8882BC116B1;
-	Fri,  5 Jul 2024 13:37:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720186640;
-	bh=bW7SJuoSHC50Ot48nvepYpmST048P10fAOtJVbkOwyc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TNsXabrs0ShnwnZTHeRTublv86zHKP2tctDSOXhpV5JHiYkfIquIjJJ/uSOabXsgH
-	 r6WWm4zWABnBro+nEL26vAVfoCEFaZyxrKMUyPVy9hgb0aspNOX2ObU5ElrfF5EZ/H
-	 kvDmCeaZZH+RpayjjJS3YJIYxosHkWP1ybEuR76B5oY8GDd/KSlLxe44r1Zbc5OT1Y
-	 bGKaMlmQtjuBNPU6Jm0MBfQYf+qzOkJwrRBcczWWAB/61gWLNSB0aEk/3R2KVc8+Qi
-	 LB7aHVmDqL3urthn8xe+JHynjTsUMmdYia8B+PMtuvrp+5dZJ155uGDlKm7IAOF5im
-	 15i4Yan94IOBA==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: select ARCH_USE_SYM_ANNOTATIONS
-Date: Fri,  5 Jul 2024 21:23:08 +0800
-Message-ID: <20240705132308.1469-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720185876; c=relaxed/simple;
+	bh=j6OTkQpixN6EN4w4Np+abspGbdF/cicBV7CtNtP5MGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFB/KsEexwLtrlQY8Ecclg9coyxMMwu6NW1VpP4CpJkhJxF0grbNYhAWbXJ2AGrCDaXRhLCS3/7zPDe8voxPjdUTuU1+J0ZqNb+3hRbNXHGanbmqxcAGlvxV/KSEFgbdBPFPUyLSTq/DIQPYN032nMPi44j9YmeQVcejATwI4No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ujpc489k; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WFvPN028Wz9t4r;
+	Fri,  5 Jul 2024 15:24:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1720185864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RI1x0wJ1+JJTcTJDJ2YPYh/0aofRmdFfu4awl092hi0=;
+	b=ujpc489kYfI5CnIfvxBb+PVX93H2UwcqFo/dVZ0+jF/MDJqF1XaxxKsGD8BWyLb0BPjMLn
+	FvwRySW+vd9W8jSoW4cOnd8qEU5Yp9xa7amLTb8sAhXfxXM9ZOJWraBLgjhStd9PzhC+Ej
+	scDeEQRviHNvwIccuzMF/R9X0ep9yfdc0F8Oe9haOh6DrDYGSsK+8wh50sVSl7VtjjfaAP
+	7K+rmK/Y3ANFUjZ6dkmZh21tYlObAQbH+q9BWVegwWy4ukxKKz4wnd4SHz5wsa7N19EKji
+	FovQIf6lKk+VOLB+EPtbw9tOrfZMjm1eBKkJNYGBCdsyGPQomt9JR7rLCNs8Gg==
+Date: Fri, 5 Jul 2024 13:24:18 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
+Message-ID: <20240705132418.gk7oeucdisat3sq5@quentin>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-2-kernel@pankajraghav.com>
+ <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
+ <Zoa9rQbEUam467-q@casper.infradead.org>
+ <Zocc+6nIQzfUTPpd@dread.disaster.area>
+ <Zoc2rCPC5thSIuoR@casper.infradead.org>
+ <Zod3ZQizBL7MyWEA@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zod3ZQizBL7MyWEA@dread.disaster.area>
+X-Rspamd-Queue-Id: 4WFvPN028Wz9t4r
 
-After commit 76329c693924 ("riscv: Use SYM_*() assembly macros instead
-of deprecated ones"), riscv has been to the new style SYM_ assembler
-annotations. So select ARCH_USE_SYM_ANNOTATIONS to ensure the
-deprecated macros such as ENTRY(), END(), WEAK() and so on are not
-available and we don't regress.
+> > I suggest you handle it better than this.  If the device is asking for a
+> > blocksize > PMD_SIZE, you should fail to mount it.
+> 
+> That's my point: we already do that.
+> 
+> The largest block size we support is 64kB and that's way smaller
+> than PMD_SIZE on all platforms and we always check for bs > ps 
+> support at mount time when the filesystem bs > ps.
+> 
+> Hence we're never going to set the min value to anything unsupported
+> unless someone makes a massive programming mistake. At which point,
+> we want a *hard, immediate fail* so the developer notices their
+> mistake immediately. All filesystems and block devices need to
+> behave this way so the limits should be encoded as asserts in the
+> function to trigger such behaviour.
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- arch/riscv/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+I agree, this kind of bug will be encountered only during developement 
+and not during actual production due to the limit we have fs block size
+in XFS.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 0525ee2d63c7..c51b32a8ddff 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -62,6 +62,7 @@ config RISCV
- 	select ARCH_USE_CMPXCHG_LOCKREF if 64BIT
- 	select ARCH_USE_MEMTEST
- 	select ARCH_USE_QUEUED_RWLOCKS
-+	select ARCH_USE_SYM_ANNOTATIONS
- 	select ARCH_USES_CFI_TRAPS if CFI_CLANG
- 	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH if MMU
- 	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
--- 
-2.43.0
+> 
+> > If the device is
+> > asking for a blocksize > PAGE_SIZE and CONFIG_TRANSPARENT_HUGEPAGE is
+> > not set, you should also decline to mount the filesystem.
+> 
+> What does CONFIG_TRANSPARENT_HUGEPAGE have to do with filesystems
+> being able to use large folios?
+> 
+> If that's an actual dependency of using large folios, then we're at
+> the point where the mm side of large folios needs to be divorced
+> from CONFIG_TRANSPARENT_HUGEPAGE and always supported.
+> Alternatively, CONFIG_TRANSPARENT_HUGEPAGE needs to selected by the
+> block layer and also every filesystem that wants to support
+> sector/blocks sizes larger than PAGE_SIZE.  IOWs, large folio
+> support needs to *always* be enabled on systems that say
+> CONFIG_BLOCK=y.
 
+Why CONFIG_BLOCK? I think it is enough if it comes from the FS side
+right? And for now, the only FS that needs that sort of bs > ps 
+guarantee is XFS with this series. Other filesystems such as bcachefs 
+that call mapping_set_large_folios() only enable it as an optimization
+and it is not needed for the filesystem to function.
+
+So this is my conclusion from the conversation:
+- Add a dependency in Kconfig on THP for XFS until we fix the dependency
+  of large folios on THP
+- Add a BUILD_BUG_ON(XFS_MAX_BLOCKSIZE > MAX_PAGECACHE_ORDER)
+- Add a WARN_ON_ONCE() and clamp the min and max value in
+  mapping_set_folio_order_range() ?
+
+Let me know what you all think @willy, @dave and @ryan.
+
+--
+Pankaj
 
