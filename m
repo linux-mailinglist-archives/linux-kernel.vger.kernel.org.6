@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-242048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09134928318
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36548928319
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B188E286119
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:49:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6694C1C244F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 07:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EA914535E;
-	Fri,  5 Jul 2024 07:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2DD143C7B;
+	Fri,  5 Jul 2024 07:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QHWCx0/T"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IUxLonHM"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B07132103
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0F1144D34
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 07:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720165748; cv=none; b=UQQubH/r0XVSgckgvS3LpgV2o1ICBnmJm2cp3wTG6c0s6YpYJO9rdCXWyBrVMGiAJh52GWsxZU+LdL7JS8SSW/3Icas00qkk7zQ/JdTQvD3XeOecJQ0EDMyNWz6Fflin6VO43Jlp1o2p3zrfzDJlnk4kPUCHGNRfiCzMshPlw0U=
+	t=1720165749; cv=none; b=BFn8qFujrDYpZljS16MKoiP8cy2MBp2afIkYDdG07bedtMlufvIkLsm/aiH9vFfgjV4w4VBLITuOcEW7yAYVv8fT8FZ4WjHgj4BLPgcdltSBpjBCLSbwx2PRcldo7P08f+8upr0hj8FOfafkkg3n/T+Tm9eVW9gRxBHvpYJu+2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720165748; c=relaxed/simple;
-	bh=daq+S2dia4dvwaxxlF3p0Tm8Gbg6T+UWn0zRTunJAGo=;
+	s=arc-20240116; t=1720165749; c=relaxed/simple;
+	bh=S6d604IG2mTD5lZ+KcjBXZf8uuMI+0RjXIt2ej9rZ+E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XnqOa6qSj3cac99iOmfp0gKRX25kQOmpWBQL19pDiyfpgR///vlJ5us9F+ZOB9heMOlZTZiEIGv9kyFxVABx8IM8CU6g/nhEZxXndMPEkmC7+gAlkIPpY10TnSLCVTgK7JNmx26bejJrDpkLlQ5TbJB8UJ6QGHSwZBHYhv2m0A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QHWCx0/T; arc=none smtp.client-ip=209.85.167.50
+	 MIME-Version:Content-Type; b=A9A+YrSiMLWYrgwPaJPG/bTLgP+8AOtmpjA0vQg/DvtkV71D1/u5eXP32OP/+VVm1ak0W5AiPZV6Bgv0wpgHYkV90VmKYovFNKQLffBsTUt9X25ga7QeYSd8VZ1ej38uj7ihdgqn4NrXjYxPbrgjeXn9TjKGkUmUMQCv4EwVSzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IUxLonHM; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so601275e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:49:06 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-367ab50a07aso200793f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 00:49:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720165745; x=1720770545; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720165746; x=1720770546; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4hxM1M3BJm3U77Yss4ewZ2FyzicKkx3LrbIUqysOnDo=;
-        b=QHWCx0/TszFe7rm92KMEsr7Xw+JreblhA1q/tP63Hh+cryM3XvoZjY2BaZNT6g5W/x
-         EbpByYmlD1GuURLKSq1jQYkhENTScBatldibOJhK2fA3+/PlfOANGuOVmj33qHbNS68T
-         YstsUXRSwOcyC4NMchWXuoBNgwa7D1anOg+6SSaBNy5C18mRC2AfMfekkkKJBgG2ZDyv
-         KpJRlrkN5MLsLCHWAXi3anbF16q2aKDp1lV9KMgDf5Uo1toyAQ7pOsUXdEtK1/lLuSfV
-         CSpk/BQY5VL2vy0Wp4IHGl6nTr1ZlJRD0w7ipbr99NnYgVYp2Ie/eV24b6ml1tHBnEKk
-         4Ybg==
+        bh=vj6UtouVx1MTU9jfUS4bHZt6H9ZKaI1C8AYps64ki9I=;
+        b=IUxLonHMnR7kzWT1X26HBYaTzJD41H87OV4D5gey32jZmMe58zaQLwqFi5eObFMuCo
+         esKu3p9Mp63o1+XgodxW7rKyuMk170ZoUCKvhojPA/fkKIEW46rfQAgwrTvA3u/IMt/0
+         uo6rH1AfAjDZ0mv7/GS7jj8i7/tWZZ47dAQkq5H+5CoqDtX2AnNTpBy1oDBgJvBLNDFd
+         Jyr8VheeL1DHMU0BYrjIOLx0ZDnaMcUIg83y+3t0OnbkOpvUmBAv4F52WjrkypDDWazl
+         lxdjspyIj9tqJ8fDZ0XT1ok5gZWH2ikVudGeBDUqeXCkojisiVg98rU00tKBTFb4ffQA
+         tqsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720165745; x=1720770545;
+        d=1e100.net; s=20230601; t=1720165746; x=1720770546;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4hxM1M3BJm3U77Yss4ewZ2FyzicKkx3LrbIUqysOnDo=;
-        b=F0ptH9WLyZpebVBUCsrgPOO9v57T234z8w5/yzBKvc9yQJD/PPYVSsMFFNAbonbiDw
-         Y/ggAdSbBxo+4hNGKSoPMAhtKFrJ7z4cXgtgVf5o/zx5dNAwgjoTSHVio/gD5+hYOkEz
-         bz6MpDA/ttD6FY2Lpmgr+XpYa0rc+EJSgu9d33urlf7+942esHeMivL1NYflreswkj6f
-         lEH8XYpH+ZNShouQ94Wb1R/WsUinz+/TyztUrGvZJ3c995eDq3yXZfpOvLS3ueheOU8e
-         ecEGxcj9yq900Tg13hWi47BZDdabIKHfz+Lk6I4sFCRNMxssrMu+bKnEkm0bf3e9O/df
-         v+2Q==
-X-Gm-Message-State: AOJu0YxDnP2Ksn0s/82y9sgSrs9bVshraLSt54ne0zy+m25l6U9BP/OE
-	KZVi1Sy0hKDsrHTpKxvbSAfEwdFv+UHdRSYexDqjaaCoZWw5Tk/8mzpsJlqOxpc=
-X-Google-Smtp-Source: AGHT+IGFFsvtj4M3Le6TCSXOus3PbV3V5LQWtu+m/+/n2Gcfa1vJ5/K452PpGYyI8u+0c9NX5VtOvA==
-X-Received: by 2002:a05:6512:219:b0:52e:9d2c:1c86 with SMTP id 2adb3069b0e04-52ea0636ae0mr2575937e87.14.1720165744897;
-        Fri, 05 Jul 2024 00:49:04 -0700 (PDT)
+        bh=vj6UtouVx1MTU9jfUS4bHZt6H9ZKaI1C8AYps64ki9I=;
+        b=CLiNuB5ORDlISwYTbpk8ZV0ABEqA0zKBC7pZahLiXqhYvoQSC7RwlmztrKhz7sz7ZP
+         x5FN2oaKrqkg8AFTfjy/cySks0jznMfuy7OD/Cc8dkicpcSmS0MysJnzsf/ZI69kypb+
+         PUdOMluphu7p4/WtHxgHDbH0JYlEaCUxJxcNZQjaSEo1D58XDHu3b0v/tcLZQ/P6EqD9
+         5dHWeubcjuh+w+u1znlTYkcjjBkm0OFyR397iMzfmGREkqSz71BpNPEGIogdweb/V0c5
+         T2laetyiLnNk3DJ0Z2lar6TyOgBam5J6c+2Hk5Ma/fE12ze8Z5JPnr9vGE/NuMfpIzYw
+         WP3w==
+X-Gm-Message-State: AOJu0YxPWFvFRD+od32nbSNqaXZpiehUgKl9/NEpEV17mGu4Zvw/auFR
+	pNPFttV4gMgFXackuZ+FZpIhLz8CX3tTr+IZTNJbVnU/dgEd4ETIAlh9uJlXBuU=
+X-Google-Smtp-Source: AGHT+IHUfSHjIenPIsLmiZISgCUW10Zj1hDNIZLU1RNZdx4r4I0a7J4PQmUaYRuSWHrMyOuHkJRaHA==
+X-Received: by 2002:adf:e902:0:b0:367:8a00:fac3 with SMTP id ffacd0b85a97d-3679dd33660mr2648533f8f.30.1720165746263;
+        Fri, 05 Jul 2024 00:49:06 -0700 (PDT)
 Received: from srini-hackbase.lan ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8ed0sm20183521f8f.28.2024.07.05.00.49.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8ed0sm20183521f8f.28.2024.07.05.00.49.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 00:49:03 -0700 (PDT)
+        Fri, 05 Jul 2024 00:49:05 -0700 (PDT)
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 01/15] nvmem: add missing MODULE_DESCRIPTION() macros
-Date: Fri,  5 Jul 2024 08:48:38 +0100
-Message-Id: <20240705074852.423202-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 02/15] dt-bindings: nvmem: mediatek: efuse: add support for MT7981
+Date: Fri,  5 Jul 2024 08:48:39 +0100
+Message-Id: <20240705074852.423202-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240705074852.423202-1-srinivas.kandagatla@linaro.org>
 References: <20240705074852.423202-1-srinivas.kandagatla@linaro.org>
@@ -85,55 +87,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem-apple-efuses.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_brcm_nvram.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_u-boot-env.o
+Add compatible for MT7981 SoC.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/apple-efuses.c | 1 +
- drivers/nvmem/brcm_nvram.c   | 1 +
- drivers/nvmem/u-boot-env.c   | 1 +
- 3 files changed, 3 insertions(+)
+ Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/nvmem/apple-efuses.c b/drivers/nvmem/apple-efuses.c
-index d3d49d22338b..1d1bf84a099f 100644
---- a/drivers/nvmem/apple-efuses.c
-+++ b/drivers/nvmem/apple-efuses.c
-@@ -78,4 +78,5 @@ static struct platform_driver apple_efuses_driver = {
- module_platform_driver(apple_efuses_driver);
- 
- MODULE_AUTHOR("Sven Peter <sven@svenpeter.dev>");
-+MODULE_DESCRIPTION("Apple SoC eFuse driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/nvmem/brcm_nvram.c b/drivers/nvmem/brcm_nvram.c
-index 5cdf339cfbec..3d8c87835f4d 100644
---- a/drivers/nvmem/brcm_nvram.c
-+++ b/drivers/nvmem/brcm_nvram.c
-@@ -253,5 +253,6 @@ static int __init brcm_nvram_init(void)
- subsys_initcall_sync(brcm_nvram_init);
- 
- MODULE_AUTHOR("Rafał Miłecki");
-+MODULE_DESCRIPTION("Broadcom I/O-mapped NVRAM support driver");
- MODULE_LICENSE("GPL");
- MODULE_DEVICE_TABLE(of, brcm_nvram_of_match_table);
-diff --git a/drivers/nvmem/u-boot-env.c b/drivers/nvmem/u-boot-env.c
-index befbab156cda..936e39b20b38 100644
---- a/drivers/nvmem/u-boot-env.c
-+++ b/drivers/nvmem/u-boot-env.c
-@@ -249,5 +249,6 @@ static struct platform_driver u_boot_env_driver = {
- module_platform_driver(u_boot_env_driver);
- 
- MODULE_AUTHOR("Rafał Miłecki");
-+MODULE_DESCRIPTION("U-Boot environment variables support module");
- MODULE_LICENSE("GPL");
- MODULE_DEVICE_TABLE(of, u_boot_env_of_match_table);
+diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+index cf5f9e22bb7e..a773101d8538 100644
+--- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
++++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+@@ -28,6 +28,7 @@ properties:
+           - enum:
+               - mediatek,mt7622-efuse
+               - mediatek,mt7623-efuse
++              - mediatek,mt7981-efuse
+               - mediatek,mt7986-efuse
+               - mediatek,mt8173-efuse
+               - mediatek,mt8183-efuse
 -- 
 2.25.1
 
