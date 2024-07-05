@@ -1,139 +1,225 @@
-Return-Path: <linux-kernel+bounces-241762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A421C927F52
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:21:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74B8927F54
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536B12823C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3400D1F23008
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 00:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281D84C6F;
-	Fri,  5 Jul 2024 00:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BA4468E;
+	Fri,  5 Jul 2024 00:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EeLQxX93"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="dU5MprSN"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53754ED9;
-	Fri,  5 Jul 2024 00:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638937E9
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 00:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720138855; cv=none; b=C8HXHbjLOPd5NR4HWL2o9e+EWoIYCy0ubNIk2hOA25lU0r5wixOJ0TYdpbitn8qUFS8DC5crpbtGGt61r56dAq+G79Usype9ZqhEnculbY6h4bISDMYPWi+6laqt+lGTssfTDzQcreLEdGfCtAIpOgLs62bdeFfXSanlQxMcWWg=
+	t=1720138931; cv=none; b=FlvzgVQlAGDHZD7PrWLe+AXTCkR/Yb717f1VW8TK4nnFLI4xwB96OrTeAvWtbShy9tx+1sJDlsr3eaQluqOXa17BTCvtk4/g5XfriysFS4FaIB9/MDaqd3mVF1kj2rSoeVhBrEAcS0+LXbRa+I+3Q1AmXkdJ6x8SQn0nWtkU9fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720138855; c=relaxed/simple;
-	bh=Oq0qSOcFVxMRjjIYivTKOa/gblUHRyuTwRuZfJl9GqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E5zr49c/6i+FEG21/hqjHw+TCQDhybQHYkz+tPzcwHYYv0+gvrFdGKP+UDoOh8JQIUPQbZ9PjnejO39RXgzzF4cJRatRW7TyAWfc77sPBbkESFCkoagxb41o14Kwu/tycgDAyDZdefvhlGzdbL4bzttW8w5663RCN9dK/Dx7MZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EeLQxX93; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF29C3277B;
-	Fri,  5 Jul 2024 00:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720138854;
-	bh=Oq0qSOcFVxMRjjIYivTKOa/gblUHRyuTwRuZfJl9GqE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EeLQxX93ulsLzM58FwsZoR5u7Zu5hZQBo784+Ywo5+WFRErNTJf7Hw3nZkzmSDTmP
-	 pmIfezJ86yDA73T627vkl3zroPqfH8JLv2tbjEvQAzGzjLSlCdVsjhJkMdV932qBXC
-	 A3VYbSDFWgWzHHmubdPekhNQ3UQ4rTbgTq7ue5YpCl/0wy6lK/xMZ2Uire3wflddky
-	 MierFDA6f8x94B+14E6P8kHo8YfJ1O/cf13fJG+1800kz/dLY8Sgn5r30nKTx0ysDH
-	 uNpUOHHVXdSpE0nF7kzSHOUmcmP33aOv2QPJn3ctVZnDmX0OntQu8XQUkwkUc32SjS
-	 w+w5O9gQC+Kaw==
-Message-ID: <cce2627f-c02f-4699-81a2-3cd9a1f2d74b@kernel.org>
-Date: Fri, 5 Jul 2024 09:20:52 +0900
+	s=arc-20240116; t=1720138931; c=relaxed/simple;
+	bh=HsjJxtfbTQPyq2x16Lmy4FQUwXd3PsjDgfeN6E6NqeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=stkNrR5jZsnHwaK0o+QzaBsOS9Mp6hQRQcIfQjEYugGiM+vB597iDoRk9NfbVg/8aaTznvJ0Pq+mYKovzREmubin6gq3/YA8o9YxAxSpQT4/UfVC2tW5JusciowgNR08+FfvGUiuUZg9qWCV0A2P2INWcQEJ4Fh4zyIblAN1lE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=dU5MprSN; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee91d9cb71so7285701fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 17:22:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1720138927; x=1720743727; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o623ORWAvJBn7up0k1SQlLqfsLuDL+TsI3SsUtdwat0=;
+        b=dU5MprSN+e6OqVNoAjJ7f9yfrSBR0x+ZT01MX3Wym4FmnwAGRdFOjnkbGYxEexCFw7
+         XFqZrhZAoGNfl5Y5+7hopypEFohno4IcdDZp0l7tALr13WoZaieHU2HwWTCYcT+GNc5Q
+         upGmh0ETFq03bFfqk+MIOdKXTtIvxnBrYA/tD+zvzF81yWFMD+8ACHVfNLkrmWFtWzm+
+         UejlaAukjCLr6CNSi38kP6lsVFAqgK0xfaYeyRvi1I9YCMkOXFky7SZ9H0x3v/CgDg9K
+         AaWqWFlPzfpjZiNPmYCMVoo4Odkkv0SWgHU1XK8LyTXmwXCInJn8gEVcXQhddHcyA0gu
+         ii3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720138927; x=1720743727;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o623ORWAvJBn7up0k1SQlLqfsLuDL+TsI3SsUtdwat0=;
+        b=oS1hxSxrLxFBAbvcBwcYG9dK6fE+FZB+YSwop5I32j20F+Jyi7Ti6Se4actxMe3rcD
+         YE+E4b9uyPacygZlVajad3TScFQpW+elOQIO2onfn5iZEt8tg3jCyCp+qFi3DdBb9Wk2
+         jReYhvKodS4Zj5cX79UkM5kS2PetESvNpea6R2A12+6lIEoMV4qCQuu5x4llqVhVBsas
+         cQtT69gbfOS5FeOHhJ08yFQ5p1VGg/pz9Nn0KI0zyq5ZsoQ5c5sx9bNVfTKWAXQHoCia
+         lVdWKuQuxXk3nUAvFMxpAEe3d7nZoAk0npQXYE54LYjxad2gkVP5f+fNiMCpT9rbIWv7
+         8cIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFBBGegm4jP1H3nMgaVIQWBK21iEavuqB0kA2QbY4jbys0eqcHX11G53HeGD2wX0N8U48zlGn4UiULhd5x+ATBlPTypTtv3H+A6Q7j
+X-Gm-Message-State: AOJu0Yz9bRhC/3YdVTQJuAzmyygswI36cDrmNduyRhYSXCL3dkk3NSO1
+	T3GD97KTYKVMO9s049/So75aSuWNyqG9QT30NJH7971QLmUyuQ8JDY6YzPWuzpU=
+X-Google-Smtp-Source: AGHT+IEeRPhPPavqMDdDaq2qhDtdIIeK9qTXoeIeONH0nAK74rQfQAtjU9/ED0inVF5J5QTVsnkzIw==
+X-Received: by 2002:a2e:b0d1:0:b0:2ec:57c7:c740 with SMTP id 38308e7fff4ca-2ee8edffcc2mr20270911fa.39.1720138927355;
+        Thu, 04 Jul 2024 17:22:07 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a251ef5sm40491345e9.36.2024.07.04.17.22.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 17:22:06 -0700 (PDT)
+Date: Fri, 5 Jul 2024 01:22:05 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Hongyan Xia <hongyan.xia2@arm.com>,
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] sched: Consolidate cpufreq updates
+Message-ID: <20240705002205.nnrgq7savzvsoqgl@airbuntu>
+References: <20240619201409.2071728-1-qyousef@layalina.io>
+ <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
+ <20240628015200.vw75huo53redgkzf@airbuntu>
+ <d510f41a-1225-46d9-a2d7-ff9e6ff599d2@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: ata: ahci-fsl-qoriq: add
- fsl,ls1046a-ahci and fsl,ls1012a-ahci
-To: Frank Li <Frank.li@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)"
- <linux-ide@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- imx@lists.linux.dev
-References: <20240625205752.4007067-1-Frank.Li@nxp.com>
- <327d6dd1-3f31-4b49-96f0-afd754eae086@kernel.org>
- <ZoRm/Lwqb4KGCeUx@lizhi-Precision-Tower-5810>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <ZoRm/Lwqb4KGCeUx@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d510f41a-1225-46d9-a2d7-ff9e6ff599d2@arm.com>
 
-On 7/3/24 05:45, Frank Li wrote:
-> On Wed, Jun 26, 2024 at 10:17:55AM +0200, Krzysztof Kozlowski wrote:
->> On 25/06/2024 22:57, Frank Li wrote:
->>> Add compatible string 'fsl,ls1046a-ahci' and 'fsl,ls1012a-ahci' compatible
->>> string. Allow 'fsl,ls1012a-ahci' fallback to 'fsl,ls1043a-ahci'.
->>>
->>> ls1046a ahci ecc disable bit is difference with other chips.
->>>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>>  .../devicetree/bindings/ata/fsl,ahci.yaml     | 19 ++++++++++++-------
->>>  1 file changed, 12 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
->>> index 162b3bb5427ed..a244bc603549d 100644
->>> --- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
->>> +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
->>> @@ -11,13 +11,18 @@ maintainers:
->>>  
->>>  properties:
->>>    compatible:
->>> -    enum:
->>> -      - fsl,ls1021a-ahci
->>> -      - fsl,ls1043a-ahci
->>> -      - fsl,ls1028a-ahci
->>> -      - fsl,ls1088a-ahci
->>> -      - fsl,ls2080a-ahci
->>> -      - fsl,lx2160a-ahci
->>> +    oneOf:
->>> +      - items:
->>> +          - const: fsl,ls1012a-ahci
->>> +          - const: fsl,ls1043a-ahci
->>> +      - enum:
->>> +          - fsl,ls1021a-ahci
->>> +          - fsl,ls1043a-ahci
->>> +          - fsl,ls1046a-ahci
->>
->> Where is the driver change for this?
->>
->> Your commit does not explain why you are doing it and without driver
->> change adding new support it is not obvious. This probably applies to
->> all your patches.
+On 07/04/24 12:12, Dietmar Eggemann wrote:
+> On 28/06/2024 03:52, Qais Yousef wrote:
+> > On 06/25/24 14:58, Dietmar Eggemann wrote:
+> > 
+> >>> @@ -4917,6 +4927,84 @@ static inline void __balance_callbacks(struct rq *rq)
+> >>>  
+> >>>  #endif
+> >>>  
+> >>> +static __always_inline void
+> >>> +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
+> >>> +{
+> >>> +#ifdef CONFIG_CPU_FREQ
+> >>> +	if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
+> >>> +		/* Sugov just did an update, don't be too aggressive */
+> >>> +		return;
+> >>> +	}
+> >>> +
+> >>> +	/*
+> >>> +	 * RT and DL should always send a freq update. But we can do some
+> >>> +	 * simple checks to avoid it when we know it's not necessary.
+> >>> +	 *
+> >>> +	 * iowait_boost will always trigger a freq update too.
+> >>> +	 *
+> >>> +	 * Fair tasks will only trigger an update if the root cfs_rq has
+> >>> +	 * decayed.
+> >>> +	 *
+> >>> +	 * Everything else should do nothing.
+> >>> +	 */
+> >>> +	switch (current->policy) {
+> >>> +	case SCHED_NORMAL:
+> >>> +	case SCHED_BATCH:
+> >>
+> >> What about SCHED_IDLE tasks?
+> > 
+> > I didn't think they matter from cpufreq perspective. These tasks will just run
+> > at whatever the idle system is happen to be at and have no specific perf
+> > requirement since they should only run when the system is idle which a recipe
+> > for starvation anyway?
 > 
-> I think I missed ls1012a and ls1021a.  Commit message is wrong. This is
-> for legancy platorm. 
+> Not sure we talk about the same thing here? idle_sched_class vs.
+> SCHED_IDLE policy (FAIR task with a tiny weight of WEIGHT_IDLEPRIO).
+
+Yes I am referring to SCHED_IDLE policy too. What is your expectation? AFAIK
+the goal of this policy to run when there's nothing else needs running.
+
 > 
-> Basic try to eliminate the CHECK_DTBS warning. ls1012a use
+> >>> +		if (unlikely(current->in_iowait)) {
+> >>> +			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
+> >>> +			return;
+> >>> +		}
+> >>> +
+> >>> +#ifdef CONFIG_SMP
+> >>> +		if (unlikely(rq->cfs.decayed)) {
+> >>> +			rq->cfs.decayed = false;
+> >>> +			cpufreq_update_util(rq, 0);
+> >>> +			return;
+> >>> +		}
+> >>> +#else
+> >>> +		cpufreq_update_util(rq, 0);
+> >>> +#endif
+> >>
+> >> We can have !CONFIG_SMP and CONFIG_FAIR_GROUP_SCHED systems. Does this
+> >> mean on those systems we call cpufreq_update_util() for each cfs_rq of
+> >> the hierarchy where on CONFIG_SMP we only do this for the root cfs_rq?
+> > 
+> > No. This is called on context switch only and hierarchy doesn't matter here. We
+> > just do it unconditionally for UP since we only track the decayed at cfs_rq
+> > level and I didn't think it's worth trying to make it at rq level.
 > 
-> "fsl,ls1012a-ahci", "fsl,ls1043a-ahci". There are two methods, 
-> 1. change binding doc to allow "fsl,ls1012a-ahci", "fsl,ls1043a-ahci"
+> OK, I see. The call in __update_cpufreq_ctx_switch() plus
+> (task_tick_fair() and check_preempt_wakeup_fair()) are not related to a
+> cfs_rq, but rather to the rq and/or task directly.
+> 
+> Currently we have the thing in update_load_avg() for !CONFIG_SMP and
+> there we use cfs_rq_util_change() which only calls cpufreq_update_util()
+> for root cfs_rq but this clearly has a cfs_rq context.
+> 
+> >> [...]
+> >>
+> >>> @@ -4744,8 +4716,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+> >>>  	if (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
+> >>>  		__update_load_avg_se(now, cfs_rq, se);
+> >>>  
+> >>> -	decayed  = update_cfs_rq_load_avg(now, cfs_rq);
+> >>> -	decayed |= propagate_entity_load_avg(se);
+> >>> +	cfs_rq->decayed |= update_cfs_rq_load_avg(now, cfs_rq);
+> >>> +	cfs_rq->decayed |= propagate_entity_load_avg(se);
+> >>>  
+> >>>  	if (!se->avg.last_update_time && (flags & DO_ATTACH)) {
+> >>>  
+> >>> @@ -4766,11 +4738,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+> >>>  		 */
+> >>>  		detach_entity_load_avg(cfs_rq, se);
+> >>>  		update_tg_load_avg(cfs_rq);
+> >>> -	} else if (decayed) {
+> >>> -		cfs_rq_util_change(cfs_rq, 0);
+> >>> -
+> >>> -		if (flags & UPDATE_TG)
+> >>> -			update_tg_load_avg(cfs_rq);
+> >>> +	} else if (cfs_rq->decayed && (flags & UPDATE_TG)) {
+> >>> +		update_tg_load_avg(cfs_rq);
+> >>>  	}
+> >>>  }
+> >>
+> >> You set cfs_rq->decayed for each taskgroup level but you only reset it
+> >> for the root cfs_rq in __update_cpufreq_ctx_switch() and task_tick_fair()?
+> > 
+> > Yes. We only care about using it for root level. Tracking the information at
+> > cfs_rq level is the most natural way to do it as this is what update_load_avg()
+> > is acting on.
+> 
+> But IMHO this creates an issue with those non-root cfs_rq's within
 
-But then shouldn't you also change the drivers/ata/ahci_qoriq.c to add ls1012a
-as a compatible ?
+I am not seeing the issue, could you expand on what is it?
 
-> 2. remove "fsl,ls1012a-ahci".
+> update_load_avg() itself. They will stay decayed after cfs_rq->decayed
+> has been set to 1 once and will never be reset to 0. So with UPDATE_TG
+> update_tg_load_avg() will then always be called on those non-root
+> cfs_rq's all the time.
 
-I am not sure if that is acceptable since there is one device tree using it out
-there already.
-
-I am no DT expert, but I think (1) with the driver change is the right approach.
-Krzysztof ?
-
--- 
-Damien Le Moal
-Western Digital Research
-
+We could add a check to update only the root cfs_rq. But what do we gain? Or
+IOW, what is the harm of unconditionally updating cfs_rq->decayed given that we
+only care about the root cfs_rq? I see more if conditions and branches which
+I am trying to avoid.
 
