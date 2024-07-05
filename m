@@ -1,274 +1,448 @@
-Return-Path: <linux-kernel+bounces-242236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0441292853E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:37:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F8C92853F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791771F24D64
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:37:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417631C23C87
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 09:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCD2147C9B;
-	Fri,  5 Jul 2024 09:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64228146D76;
+	Fri,  5 Jul 2024 09:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hvuHufjq";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="UYdyLWV1"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CP2VETSC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8341482E1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 09:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172201; cv=fail; b=jr0svrfnmumrwrRhPHi7GeMPrkJetyb+kry9Rk4HJiH9fmbzl5Pkv7h1DTBJa8Tqpd2lNEjWQ8uitmPZuMCZFeqQwXtmnhIZLglqigLebnPEcUNOdt434rEo3ohOxrqgITJ51cGkcb0YsnrjpXaOp5+PT+8UNzQxhAqVx2XSGQM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172201; c=relaxed/simple;
-	bh=3qVc+WNvvDlhJPyp6D3AEDvBCZH3NJV1nDBgH/6fp38=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qdsktOrsYH2hNGqxv26mvyOqWvVNxzN1V6nOP/q8b6i7pJv6ZNNLo1VA0K0J2DTVK+kRRNJRGd8AgswYIZfVuHMJMtAB2DbfcKY3DhXO6plgbtAlAuXWYoS0EPhBgNnWlciG7znSHSGId+cDdiNb/sr7IOzpxVKywwesaBmkm5w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hvuHufjq; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=UYdyLWV1; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 11d1fa803ab211ef99dc3f8fac2c3230-20240705
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=3qVc+WNvvDlhJPyp6D3AEDvBCZH3NJV1nDBgH/6fp38=;
-	b=hvuHufjqkJBiIPFB/7CKkQ0y66Sh4aMo3MzyqmRACPIaFXxf2aKdMSb0g0Gd7mKq+eJ1PS67ruy/5HJc9aQiFVSd4iLcIQ39WCgBsM4SJp1B+oClonIvgJ7TaW+R5l+GOJs1C9OQKxNDKsPzKHxBuwlXU4QrBRRKXPoh07Fh0Pg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:8c5943c9-f9a5-4ac0-ae44-4a918e38838b,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:1656fed4-0d68-4615-a20f-01d7bd41f0bb,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 11d1fa803ab211ef99dc3f8fac2c3230-20240705
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1174796753; Fri, 05 Jul 2024 17:36:34 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 5 Jul 2024 02:36:33 -0700
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 5 Jul 2024 17:36:33 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TbrT4/KvTM+78GW771WMfMgj5yisD9Vphb7tZ/ATr7abj9DaOHYyqjK7tlv7qQasnExZYe0GA5pSfMdUh+1tcjHDe8cGE8mfpYPD95cV7i5dUmY1Vq3sIvbiNQJ64u/AEduGgr7h4Hziy4hWhawy7sk+ItnngaH3NOd1e1bhdYBfm5WaFJlYiKe8J1vo3QuVXUNp90DuboUiOk5Bn/gGyfNf2NWahKI0UDI4WvCSYKql2l54UxWPJF/85bIbDLWwT8IGbzFK9FQweDGLRDwh6DtWsLq9jW851Qbs4ly1Lw7CreBMkRTbe5gGqTzQBhnzL/FzxDWWZ7AvUt73oPIaVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3qVc+WNvvDlhJPyp6D3AEDvBCZH3NJV1nDBgH/6fp38=;
- b=QFLJTGsSvtmXW2CvoQiaIvbR0mMDe9b05D/0B60uUOlxoDtBOlTXATJgJHTWR43sjncUs3MBSVBinaEiCXhfcJXKg5lIM9YRCb658q/Y/clkdwyxJ3P4t8/EpeUqtr0zY1agbbQU5O8OpoZf3E0m6xvEqznywcI4LXEz0/QGK4OoBThMZSja1syq7yHtefdpby+p5dVWxQaf44nvaZGjS9jNtpDbZKYkvAz0nhkAG8CK6eZyfuxFJFNXhXT7eT7oYEm9YNs2luQaQ2KBiRgeMxIzzpcs3mVl6ifZUtsvKcYqHvl0PoMGJKp/HLkFn1Wtl++HBAX4UOuLimpby1MXyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3qVc+WNvvDlhJPyp6D3AEDvBCZH3NJV1nDBgH/6fp38=;
- b=UYdyLWV12rPFI24YCa/UwlaJ5s/Mx/UY8sUxNqyeJmSCCyU+uz0Y7odKJiqRRtFs9CM2OqDNiBjAO8nPjGei+8H91FeGZLRYpJ09jKgCq21SLKtivmP0ZB4/JHtP2lMdK4W4a/lrUUmBhJZBC5P0rmq+o/ZMAaG5PoeqSws9oJ8=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by KL1PR03MB7902.apcprd03.prod.outlook.com (2603:1096:820:fa::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.30; Fri, 5 Jul
- 2024 09:36:31 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%6]) with mapi id 15.20.7719.029; Fri, 5 Jul 2024
- 09:36:31 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	=?utf-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
-	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
-	"angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/5] drm/mediatek: Support "None" blending in Mixer
-Thread-Topic: [PATCH 2/5] drm/mediatek: Support "None" blending in Mixer
-Thread-Index: AQHawm4CehGZ7j4H80uVSodFizERF7HhNh2AgASsKoCAAhZ/gA==
-Date: Fri, 5 Jul 2024 09:36:31 +0000
-Message-ID: <485bdfc093eb34527e74051c643eb7f1ecccb999.camel@mediatek.com>
-References: <20240620-blend-v1-0-72670072ca20@mediatek.com>
-	 <20240620-blend-v1-2-72670072ca20@mediatek.com>
-	 <5374029c58dbb4e2c23f86e74eabbde7b2ae7b78.camel@mediatek.com>
-	 <278a57fc81fb803ffc65d4805c321cce4b6952d2.camel@mediatek.com>
-In-Reply-To: <278a57fc81fb803ffc65d4805c321cce4b6952d2.camel@mediatek.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|KL1PR03MB7902:EE_
-x-ms-office365-filtering-correlation-id: c6ed8d5b-7da2-4232-286e-08dc9cd5f413
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?dVp5NkJKMk5nRXhqS2tMMkJZZytCQTlxQjBYY2hFTEFNNTVEMlpMMnlpWjRr?=
- =?utf-8?B?UzRhazhpcGxQOTBMZ0RGNFpGZTJxclRML1RVdk5UNG8zUnJ0dUxDNFZMVmtD?=
- =?utf-8?B?T29wUGhpTjZYSGFTVXNEMzVNUU4vNHNoeWtyVHZQajdReEMrc1lxc0tQRDk1?=
- =?utf-8?B?Y3kzcGowZjN6aHdyS2l5bW54UHJMQjlpbGxMcjVlUlYrY2lGR0JuQUZIT3lT?=
- =?utf-8?B?YUFOVk5kVzdWdkZRTGJvN2FIbnF6ZnpubncrWEo1Qk0wT3UrenVsdDhCMjRk?=
- =?utf-8?B?NmlWVjNaeng2RzNBaEo1T21pZHl0ek4vOGN4MkJRdlQ0ZXNMSWRZYWNsMnhB?=
- =?utf-8?B?OVlsTXRGZzlYZlMyZXQ2SU1EYjRmMmNRWVcwaGpKWUovdDU4ajB4YVFrVFh3?=
- =?utf-8?B?UHJXT1lncjM0WlArVnNEVUJUOG56SlU2MG5mOVk3eFZPWUxLdEJRVVN3bjRR?=
- =?utf-8?B?M3BJWncxV2VxWS9mZkxKVHFpT0cwZDdBL0F5SllJSmtiYnBUeDI1Z2xzS1Js?=
- =?utf-8?B?ODRuMHNRQ0NGdHJSblRWYnlkYUtXdzJURktrYUhpRXI1MXVweDl5ckhJR2ZY?=
- =?utf-8?B?NWNMdUNiVXQ0d09OK3hhTWRQZHhnRmZuWEdMTVJmR2JKYjJFZnRWeHdZT1pz?=
- =?utf-8?B?dVplZllUcHpQQlBZL25xMEFEendwbGk1c3JiVk8rcmhkMjJUVmFpbFEyMzl4?=
- =?utf-8?B?ZER5dEtjbDVzUEhwZmxCcWFFTFY2UXpSUHFPbXZ3Y2lMdSszMnlLRDhLeVN1?=
- =?utf-8?B?RHNIakVRbHRUZ1YrMTlYd280SXBWd0toZXVvOXlRUzNSQ3FreVcxN2FrUXlT?=
- =?utf-8?B?MGsvcHRYVHNFWklkcUJnbWZicUppcmRjYXhabnBwWkdNUjhjay9pOGNvQmx3?=
- =?utf-8?B?ZXVmTXlHd080RW9iU3FETWtvRWhyVU9leVdxbUIzcTNOR3d2QmNURE0rbkUv?=
- =?utf-8?B?VDBQVDlIZlhDWjgwbGtlTFdiY1hkVXlsNlE1eFVRekNPM05lOUwwVHlWYmJm?=
- =?utf-8?B?L0NTTHdGaVFnWFVNSjEreStKb2FaeWdxYkZsTTNGaDhtaHh1a0ZDaVpqOVhw?=
- =?utf-8?B?bFYvMlpZeUhDbTZOTTFQSXFxSlNhS3FxQkYwQU5zaHJvb2dxTUthRGdjbm05?=
- =?utf-8?B?Y1hIb1QyMGtKaGJPOS82Nm9abmQxNUtlUS9wNHJueXJGTnR3emxlRVJ3OE5i?=
- =?utf-8?B?MEkyMlJ4RmttVUlQbDh6NzFNSjdQb1BTcndkMldxc2Iwelk4bFB2TU44VDlF?=
- =?utf-8?B?RDludVBsSm55M1VnNmt3M1FONTBKc0VjcngwWmVFR2NNYkhvYzVzRkFLbnFp?=
- =?utf-8?B?UTlGRC93MG5Qam5Oa3JLQUljT2J5VHd6YmIwaW11bUUwUXRqaDZ6cnZHaXRl?=
- =?utf-8?B?SUhvdjZqT1FFcFNJWUJZRDJtV3RLNUpsb09ScGh0NG5zdWVQaVpJUzBqZE8r?=
- =?utf-8?B?SElUcFgrK3UrV2MxbmlGZjJxYmhBbzVZVXpraDdKQkVkMWR0ZlRGMXRsZEM1?=
- =?utf-8?B?eU4zOVNjWTFQeUtuTHpFWEZJdldTSEJ2bEl3RkppZzJYWkFhb0RYN2wrOVlv?=
- =?utf-8?B?RzBrZHU0TXp0TERHZW5xZjhIelA3RWU5Qk1yMjAwd0hGWVlPeEZ5YmZkV0Fv?=
- =?utf-8?B?MUVlQWc1SWRNQlovL0NXSXNpQWhnUzNCaWdJeUFhWmNLeEZNaHcvbUMvZndL?=
- =?utf-8?B?azdvaW1zcUVTV0l6OTBFUExVZVd0dExpRkJoM0ZpVWVDMXc1b3dYZlBsd0Fw?=
- =?utf-8?B?bkVTVks0N1FLbzB1RFlZcThBRW9xandhVnMwazJ4TFFOSEI0amlHNDdyMjkr?=
- =?utf-8?B?bC9kSzE1WmxJR2tjUU81cUNGTCtNMldTUlVHbFM2b0VVaUZONkRzVUN5N08y?=
- =?utf-8?B?OVRkMmxKblFoZ01YSG9YYWIwNWFRekp5bmZBVWsxdGVzMGc9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ejFSZThSdVY1RVFWK0cxZ1I1N2lHdkNoN1ROSTZsYzBraXNKQkwxZmhMeUJW?=
- =?utf-8?B?RVl3R3ZkbmdsUXgwYlBtTkQ4SzBWZ2I5VzdHTkI0V0REa3p0VCtaZDlFUWNy?=
- =?utf-8?B?Rm5ObTJVbG9OZEVlWCtKb2w3SWd3OVNGdm84MUx2OVQ5QkVaZ3N1Z0F1U2lp?=
- =?utf-8?B?Z2F6S3U0Kzc2OFpFUkNpOTJtRCtQQWRCRmNZMXNpdExrZklOUk9wVStqd29i?=
- =?utf-8?B?Ky9iQmcwb2M2dmVQdU0vRTMwMk4wN2hZZENUanZHZURZU3lNNmdreUVvWG13?=
- =?utf-8?B?UUlNVUlBMXFhUDRmcm1uSUYvQWZGTGNETlhjRmpoZlNZd2lIYWw4L2RWSlFN?=
- =?utf-8?B?MnpHcW9mbjkrV3grUUUwN1kvd3JaMHN3WE5kaXd4cGRTMHZsNmYrSXNNTHpE?=
- =?utf-8?B?bldwT0NUdlBXTTQwRmJQMnh4MnNpR3JWbVl0WGlFMC9EakJBWm12SGE0a0NB?=
- =?utf-8?B?cFFybzEwbzVmbkxYTUlZM3VCQnJVSElUNWp4ZlFDTkZzQmF4d1BxUzY1RTFm?=
- =?utf-8?B?a1dYWi9GUjZXcGRBcEdBS2hoZ3FKTGUzeWhGTUlQRlZ1MjQrcUJ4QVdlaG5J?=
- =?utf-8?B?SmpKS1hWR0trMUFsS3FKRmFjTWlVY3MzblU1T2ZITkljZUE3ZUtXWHEzUjgz?=
- =?utf-8?B?SDYwdTl6V1g1aTlpZUVtSTdOblR1UmF3RytUK1pISlQ1V0MwR0RId0pWbDB0?=
- =?utf-8?B?N1dvc3RLRnFUbEIvT3BFZzlvQTR0SkZpbVFzTG1BUVZrbFlxeElWbTdvUENH?=
- =?utf-8?B?anU2czgyQ2FLTXRhUXpUUTBQRVNHYlZ4ektuVm90M2s5V3A5dzhFNkFzK0wx?=
- =?utf-8?B?N3RkOWNTbFdHM2RkK3VOUlpvN1hVK25ZZi9jazRBaGNnYVFzYlhDZ3cwZ09Q?=
- =?utf-8?B?dnoxczRHYS9ZMVBZcm1LS1NNdWtBWW9pbldHRHIrc0cyMk85T05vSXp2aVhU?=
- =?utf-8?B?ekpraUxWdkl6eHBKWmJ3eEtkVEJ4dTRJd24vYW9CV21FYU9VOWVBdHFkeXhK?=
- =?utf-8?B?Mlo3U0hYZFl3U1NHZ1BhUys5ZHRFQ3VLV0JFeWliL0VDRWdEbFAxa3NLSUht?=
- =?utf-8?B?dStzdXNJdkVxcEg0TWRFTHE4d1Q5VXowTjY2L3krTGRWVmovMTRHbHNFVmFI?=
- =?utf-8?B?a1p2TFhjWDNZdHN1RFRYT3FCckRlWkZrbFFrSXFFc1pwVG1ETDZNVmhCUmtx?=
- =?utf-8?B?S0FJYWZVTTZueDRmbGVQajJlVG90WXZlbDZFWjdMaWViRU15VGZjOWc5ZXRM?=
- =?utf-8?B?S3VTa0hZdmhOSDU2K0dnR0N0S3pCbXZ0a09ha0VlOFBBdkF3amk3NThkRzMz?=
- =?utf-8?B?VjhlOUR4NFVxVFMzektRK3RjOTQwcW5oemFZQzViOEcvZkZ6eGdVaXVkNFpZ?=
- =?utf-8?B?S3Z5cjdHa3dZaHd4RGNKN3BMQytmaC84S1k0VGw2OGVXM2IwQlBjbG5QdHd0?=
- =?utf-8?B?K2RCbWxVRDgzZ2lOU1RZaE5ERnR2c0xhQnNsSHZ5TGFaQTVqZy91cVVTYVQ0?=
- =?utf-8?B?Y2ZPT3U4NW16RHFrTWFyVHdQcmM1eVJCVnFkeGhrc2w1V1h5SWFIek5PckhL?=
- =?utf-8?B?K1VkV3NnYzZtdHQ2d2hNZ3h2SUMzNU1qTTNsdHF2MlV2N3U5TUZSVmJMWkdR?=
- =?utf-8?B?azVzWGpwZU9xMC9La2U1RFlXNmcvY3U0aTY1RXhzeGRCOVhBeENEZnBFQ2ZK?=
- =?utf-8?B?dm5qa3drQ0FpdUtjNjFLeDBCYnJwVmZMVXBHQm9UTjdLTU5GVGlndUkrU05O?=
- =?utf-8?B?UXZmdTJHTXJNREthS2pkUjBwYUlBU01rdFpJQTFGU1oxNzYyVVpWaUFIV29Z?=
- =?utf-8?B?YlNUcERxcUxZVE1QS1UwSUZBNmlrMnJGb3BuT0tJS0FOcnlTeFFENnI1Qm92?=
- =?utf-8?B?NzNvelBFMFo1V0NITGVQVGVnOVFzeHp3N0ZYbnpoc09DYWFtZENlc2dYc3ZJ?=
- =?utf-8?B?b1FQdGROTWJ2S3NYKzUrdkpmRWlyTGYwU2lSUXJyaEh1TXFZNGRwYVc3Mnh3?=
- =?utf-8?B?NVZhUGF2RW5nS2twY0JhakVQL0F5ZUZNR3NrZ3JKWHlmNGdORjFuUThqRCtk?=
- =?utf-8?B?cy9OMFJhc25vVTVDZkFyL2paMVFvc2NObnBEQVlNT0Uyb0lGYm1EeWRqKy9h?=
- =?utf-8?Q?XhdQqyN7FA6JudfZ1IdjRGDOE?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9DD4579E8FE4FB47B59BC9DD81A4DC5D@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA6613958F;
+	Fri,  5 Jul 2024 09:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720172294; cv=none; b=uzlPTZriJFa16Viv3j9vIFRCgjx28Ufg8KI46i1O7vwXcHu1X2P4i6sP2AUlGb1Ny0iUHn7IXNkfnEW659oGMrvkqaF6QMlELiduCac7CghgMTLOdb6WNjQM+6BpzTniAFvd6CQK8iQp1S/FUxiH/mp02V9mO0LKNafeBmkkKEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720172294; c=relaxed/simple;
+	bh=FMcEoxCi8WXEv4E49B88O6NuYPduZfIlmGxqcapk8f0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b1zlRexij2JNB/aVU/Om8ePp3iUUJGhJwqUwa58FwOVNw1uBrhxadBv84ZLUfk82dX2l6qVgVny+QR20GW2KNDf7R2QYfZ5RrmzwwChscyqYrCHcmo0YpKFTnkBSNBgQFMUxlrXcdwJi806oRrT0avkvr6WZsMz0lOdrzfcYfpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CP2VETSC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A62EFC4AF0A;
+	Fri,  5 Jul 2024 09:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720172293;
+	bh=FMcEoxCi8WXEv4E49B88O6NuYPduZfIlmGxqcapk8f0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CP2VETSCrQFpLUWVoLrHiVNBKQeWowyKSDapIA55BFd0iQBvrPjg74P5VB/t4dvlo
+	 r7N+4IT8vzohgD2hpkfzWDNGuQdSK6EUtU2AgXT2DBHzNEy7YwAxUcHHXlaoPuhNBn
+	 dMb7D908vzsQ3LKtQk8CWJgK4TeBYlr3arBkLAF2ER+8rTN5dYk8fotpfByLg6TeaP
+	 0HsmUizxDxGsgn5PU+4z78zIdo80IfukCoDs1ufm+awkvtg478pZoTS/yuUbReAKJv
+	 qW8/Lhfvj1P2Okg8CRDlbaVpUn7ptJMgo6vkiLfaymgWBJM3gx9ol3XR+IgxE3lMdW
+	 cx0lWUQPSVVqQ==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a724a8097deso176333066b.1;
+        Fri, 05 Jul 2024 02:38:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWK9NQKkgqzKiOIbozidhrq1tkPLn2pLyD1JbHM3ezdkOk6afcbuWy8U/nGA1dUcZRC4cjZ6ijORXZg4R4LrsMob+iuOnj/z/3Ca7LQKzAYmFpwrFPWS+2hNv8GcMnXgqIzYanzZ1yvOECCE9y8Yg==
+X-Gm-Message-State: AOJu0YzSZPIWWycr2xPDvWgYDzFdRDzYtyTZrG043zoHeuhch5vPEBFh
+	TwQvYVgexpTdoCG+udk+zfLWhX9TZ/bAflmwBl3dyZmaWaiKPJs35DTW7hfVtUPbMbwcfY9psfN
+	pENpTtAAQ5u+TbN4Yhh/kTZxkjF0=
+X-Google-Smtp-Source: AGHT+IFPEz5Z64bP/NBrbn0I+EgtKz9X87B7IaPM5wpAjlZLf15LkqXjdqVzYcavH34qTIjVjg9PqtGAu086jBhROV4=
+X-Received: by 2002:a17:907:94d0:b0:a77:a403:f260 with SMTP id
+ a640c23a62f3a-a77ba44c776mr321068066b.4.1720172292172; Fri, 05 Jul 2024
+ 02:38:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6ed8d5b-7da2-4232-286e-08dc9cd5f413
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2024 09:36:31.6379
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CD3bwF2/hcfmTI3E68jKJmbWoPOtR0Ye/o/fb/runQj8gvE72DLwFPD+6DXPhtcY1aCwurBE5IB75paDhaXK4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7902
+References: <20240411121047.2005033-1-maobibo@loongson.cn> <db839f86-6749-e15b-a084-d8a4a6735f1c@loongson.cn>
+ <CAAhV-H4MucyKrQdxBtoh7PJZDiWo1kB-9TP2L-x0tw8vh=ypNQ@mail.gmail.com> <83ae11b8-69af-eaf8-8768-dc6d55cdcd90@loongson.cn>
+In-Reply-To: <83ae11b8-69af-eaf8-8768-dc6d55cdcd90@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 5 Jul 2024 17:38:00 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7V9crTHnMdHgpZTW_h8vMCz3VJANLmveUsZu6zeoNmHA@mail.gmail.com>
+Message-ID: <CAAhV-H7V9crTHnMdHgpZTW_h8vMCz3VJANLmveUsZu6zeoNmHA@mail.gmail.com>
+Subject: Re: [PATCH v3] perf kvm: Add kvm-stat for loongarch64
+To: maobibo <maobibo@loongson.cn>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ian Rogers <irogers@google.com>, 
+	Ming Wang <wangming01@loongson.cn>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGksIFNoYXduOg0KDQpPbiBUaHUsIDIwMjQtMDctMDQgYXQgMDE6NDMgKzAwMDAsIFNoYXduIFN1
-bmcgKOWui+WtneismSkgd3JvdGU6DQo+IEhpIENLLA0KPiANCj4gT24gTW9uLCAyMDI0LTA3LTAx
-IGF0IDAyOjIyICswMDAwLCBDSyBIdSAo6IOh5L+K5YWJKSB3cm90ZToNCj4gPiBIaSwgU2hhd246
-DQo+ID4gDQo+ID4gT24gVGh1LCAyMDI0LTA2LTIwIGF0IDAxOjI3ICswODAwLCBIc2lhbyBDaGll
-biBTdW5nIHZpYSBCNCBSZWxheQ0KPiA+IHdyb3RlOg0KPiA+ID4gIAkgDQo+ID4gPiBFeHRlcm5h
-bCBlbWFpbCA6IFBsZWFzZSBkbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cw0K
-PiA+ID4gdW50aWwgeW91IGhhdmUgdmVyaWZpZWQgdGhlIHNlbmRlciBvciB0aGUgY29udGVudC4N
-Cj4gPiA+ICBGcm9tOiBIc2lhbyBDaGllbiBTdW5nIDxzaGF3bi5zdW5nQG1lZGlhdGVrLmNvbT4N
-Cj4gPiA+IA0KPiA+ID4gU3VwcG9ydCAiTm9uZSIgYWxwaGEgYmxlbmRpbmcgbW9kZSBvbiBNZWRp
-YVRlaydzIGNoaXBzLg0KPiA+ID4gDQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBIc2lhbyBDaGllbiBT
-dW5nIDxzaGF3bi5zdW5nQG1lZGlhdGVrLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZlcnMv
-Z3B1L2RybS9tZWRpYXRlay9tdGtfZXRoZHIuYyB8IDEzICsrKysrKysrKystLS0NCj4gPiA+ICAx
-IGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gPiA+IA0K
-PiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZXRoZHIuYw0K
-PiA+ID4gYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2V0aGRyLmMNCj4gPiA+IGluZGV4
-IDM2MDIxY2I4ZGY2Mi4uNDhiNzE0OTk0NDkyIDEwMDY0NA0KPiA+ID4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL21lZGlhdGVrL210a19ldGhkci5jDQo+ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
-bWVkaWF0ZWsvbXRrX2V0aGRyLmMNCj4gPiA+IEBAIC0zLDYgKzMsNyBAQA0KPiA+ID4gICAqIENv
-cHlyaWdodCAoYykgMjAyMSBNZWRpYVRlayBJbmMuDQo+ID4gPiAgICovDQo+ID4gPiAgDQo+ID4g
-PiArI2luY2x1ZGUgPGRybS9kcm1fYmxlbmQuaD4NCj4gPiA+ICAjaW5jbHVkZSA8ZHJtL2RybV9m
-b3VyY2MuaD4NCj4gPiA+ICAjaW5jbHVkZSA8ZHJtL2RybV9mcmFtZWJ1ZmZlci5oPg0KPiA+ID4g
-ICNpbmNsdWRlIDxsaW51eC9jbGsuaD4NCj4gPiA+IEBAIC0zNSw2ICszNiw3IEBADQo+ID4gPiAg
-I2RlZmluZSBNSVhfU1JDX0wwX0VOQklUKDApDQo+ID4gPiAgI2RlZmluZSBNSVhfTF9TUkNfQ09O
-KG4pKDB4MjggKyAweDE4ICogKG4pKQ0KPiA+ID4gICNkZWZpbmUgTk9OX1BSRU1VTFRJX1NPVVJD
-RSgyIDw8IDEyKQ0KPiA+ID4gKyNkZWZpbmUgUFJFTVVMVElfU09VUkNFKDMgPDwgMTIpDQo+ID4g
-PiAgI2RlZmluZSBNSVhfTF9TUkNfU0laRShuKSgweDMwICsgMHgxOCAqIChuKSkNCj4gPiA+ICAj
-ZGVmaW5lIE1JWF9MX1NSQ19PRkZTRVQobikoMHgzNCArIDB4MTggKiAobikpDQo+ID4gPiAgI2Rl
-ZmluZSBNSVhfRlVOQ19EQ00wMHgxMjANCj4gPiA+IEBAIC0xNzUsNyArMTc3LDEzIEBAIHZvaWQg
-bXRrX2V0aGRyX2xheWVyX2NvbmZpZyhzdHJ1Y3QgZGV2aWNlDQo+ID4gPiAqZGV2LCB1bnNpZ25l
-ZCBpbnQgaWR4LA0KPiA+ID4gIGFscGhhX2NvbiB8PSBzdGF0ZS0+YmFzZS5hbHBoYSAmIE1JWEVS
-X0FMUEhBOw0KPiA+ID4gIH0NCj4gPiA+ICANCj4gPiA+IC1pZiAoc3RhdGUtPmJhc2UuZmIgJiYg
-IXN0YXRlLT5iYXNlLmZiLT5mb3JtYXQtPmhhc19hbHBoYSkgew0KPiA+ID4gK2lmIChzdGF0ZS0+
-YmFzZS5waXhlbF9ibGVuZF9tb2RlID09IERSTV9NT0RFX0JMRU5EX1BJWEVMX05PTkUpDQo+ID4g
-PiArYWxwaGFfY29uIHw9IFBSRU1VTFRJX1NPVVJDRTsNCj4gPiA+ICtlbHNlDQo+ID4gPiArYWxw
-aGFfY29uIHw9IE5PTl9QUkVNVUxUSV9TT1VSQ0U7DQo+ID4gDQo+ID4gQ292ZXJhZ2UgbW9kZSBp
-cyBhbiBhbHJlYWR5IHN1cHBvcnQgbW9kZSwgYnV0IHRoaXMgcGF0Y2ggbW9kaWZ5DQo+ID4gYWxw
-aGFfY29uIGZvciBjb3ZlcmFnZSBtb2RlLg0KPiA+IFNvIHRoaXMgaXMgYSBidWcgZml4Pw0KPiAN
-Cj4gSW4gb3JlZGVyIHRvIHJlcGxhY2UgdGhlIGRlZmF1bHQgc2V0dGluZyB0aGF0IGlzIHNldCBp
-bg0KPiBtdGtfZXRoZHJfY29uZmlnKCksIHdlIGNoYW5nZSBtdGtfZGRwX3dyaXRlX21hc2soKSB0
-byBtdGtfZGRwX3dyaXRlKCksDQo+IGFuZCB0aGlzIGNoYW5nZSB3aWxsIGFsc28gcmVzZXQgTk9O
-X1BSRU1VTFRJX1NPVVJDRSBiaXQgdGhhdCB3YXMNCj4gYXNzaWduZWQgaW4gbXRrX2V0aGRyX2Nv
-bmZpZygpLiBUaGVyZWZvcmUsIHdlIG11c3Qgc3RpbGwgc2V0DQo+IE5PTl9QUkVNVUxUSV9TT1VS
-Q0UgYml0IGlmIHRoZSBibGVuZCBtb2RlIGlzIG5vdA0KPiBEUk1fTU9ERV9CTEVORF9QSVhFTF9O
-T05FLg0KDQpBZGQgdGhpcyBpbmZvcm1hdGlvbiBpbiBjb21taXQgbWVzc2FnZSBzbyBvdGhlcnMg
-d291bGQgbm90IGJlIGNvbmZ1c2VkLg0KDQpSZWdhcmRzLA0KQ0sNCg0KPiANCj4gUmVnYXJkcywN
-Cj4gU2hhd24NCj4gDQo+ID4gDQo+ID4gUmVnYXJkcywNCj4gPiBDSw0KPiA+IA0KPiA+ID4gKw0K
-PiA+ID4gK2lmICgoc3RhdGUtPmJhc2UuZmIgJiYgIXN0YXRlLT5iYXNlLmZiLT5mb3JtYXQtPmhh
-c19hbHBoYSkgfHwNCj4gPiA+ICsgICAgc3RhdGUtPmJhc2UucGl4ZWxfYmxlbmRfbW9kZSA9PSBE
-Uk1fTU9ERV9CTEVORF9QSVhFTF9OT05FKSB7DQo+ID4gPiAgLyoNCj4gPiA+ICAgKiBNaXhlciBk
-b2Vzbid0IHN1cHBvcnQgQ09OU1RfQkxEIG1vZGUsDQo+ID4gPiAgICogdXNlIGEgdHJpY2sgdG8g
-bWFrZSB0aGUgb3V0cHV0IGVxdWl2YWxlbnQNCj4gPiA+IEBAIC0xOTEsOCArMTk5LDcgQEAgdm9p
-ZCBtdGtfZXRoZHJfbGF5ZXJfY29uZmlnKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiA+IHVuc2ln
-bmVkIGludCBpZHgsDQo+ID4gPiAgbXRrX2RkcF93cml0ZShjbWRxX3BrdCwgcGVuZGluZy0+aGVp
-Z2h0IDw8IDE2IHwgYWxpZ25fd2lkdGgsDQo+ID4gPiAmbWl4ZXItPmNtZHFfYmFzZSwNCj4gPiA+
-ICAgICAgICBtaXhlci0+cmVncywgTUlYX0xfU1JDX1NJWkUoaWR4KSk7DQo+ID4gPiAgbXRrX2Rk
-cF93cml0ZShjbWRxX3BrdCwgb2Zmc2V0LCAmbWl4ZXItPmNtZHFfYmFzZSwgbWl4ZXItPnJlZ3Ms
-DQo+ID4gPiBNSVhfTF9TUkNfT0ZGU0VUKGlkeCkpOw0KPiA+ID4gLW10a19kZHBfd3JpdGVfbWFz
-ayhjbWRxX3BrdCwgYWxwaGFfY29uLCAmbWl4ZXItPmNtZHFfYmFzZSwgbWl4ZXItDQo+ID4gPiA+
-IHJlZ3MsIE1JWF9MX1NSQ19DT04oaWR4KSwNCj4gPiA+IA0KPiA+ID4gLSAgIDB4MWZmKTsNCj4g
-PiA+ICttdGtfZGRwX3dyaXRlKGNtZHFfcGt0LCBhbHBoYV9jb24sICZtaXhlci0+Y21kcV9iYXNl
-LCBtaXhlci0+cmVncywgDQo+ID4gPiBNSVhfTF9TUkNfQ09OKGlkeCkpOw0KPiA+ID4gIG10a19k
-ZHBfd3JpdGVfbWFzayhjbWRxX3BrdCwgQklUKGlkeCksICZtaXhlci0+Y21kcV9iYXNlLCBtaXhl
-ci0NCj4gPiA+ID4gcmVncywgTUlYX1NSQ19DT04sDQo+ID4gPiANCj4gPiA+ICAgICBCSVQoaWR4
-KSk7DQo+ID4gPiAgfQ0KPiA+ID4gDQo+ID4gPiAtLSANCj4gPiA+IEdpdC0xNDYpDQo+ID4gPiAN
-Cj4gPiA+IA0KPiA+ID4gDQo=
+Applied, thanks.
+
+Huacai
+
+On Fri, May 10, 2024 at 9:47=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote=
+:
+>
+>
+>
+> On 2024/5/8 =E4=B8=8B=E5=8D=889:02, Huacai Chen wrote:
+> > On Tue, May 7, 2024 at 2:11=E2=80=AFPM maobibo <maobibo@loongson.cn> wr=
+ote:
+> >>
+> >> Hi Peter/Ian/Huacai,
+> >>
+> >> This patch stays one month without response, I know you are busy and
+> >> look through thousands of patch every day.
+> >>
+> >> Just one question, who has permission to merge perf kvm patch for
+> >> LoongArch. Is it LoongArch maintainer or perf kvm maintainer?
+> > It should probably go to perf tree, but if it is allowed, maybe I can
+> > try to merge into LoongArch tree.
+>
+>   tools/perf/arch/loongarch/Makefile        |   1 +
+>   tools/perf/arch/loongarch/util/Build      |   2 +
+>   tools/perf/arch/loongarch/util/header.c   |  88 ++++++++++++++
+>   tools/perf/arch/loongarch/util/kvm-stat.c | 135 ++++++++++++++++++++++
+>
+> All the modification is LoongArch specific, there will be much
+> appreciated if it can reviewed and merged.
+>
+> Regards
+> Bibo Mao
+>
+> >
+> >
+> > Huacai
+> >>
+> >> Regards
+> >> Bibo Mao
+> >>
+> >>
+> >> On 2024/4/11 =E4=B8=8B=E5=8D=888:10, Bibo Mao wrote:
+> >>> Add support for 'perf kvm stat' on loongarch64 platform, now only
+> >>> kvm exit event is supported.
+> >>>
+> >>> Here is example output about "perf kvm --host stat report" command
+> >>>
+> >>>      Event name   Samples   Sample%     Time (ns)   Time%   Mean Time=
+ (ns)
+> >>>       Mem store     83969    51.00%     625697070   8.00%            =
+ 7451
+> >>>        Mem read     37641    22.00%     112485730   1.00%            =
+ 2988
+> >>>       Interrupt     15542     9.00%      20620190   0.00%            =
+ 1326
+> >>>           Iocsr     15207     9.00%      94296190   1.00%            =
+ 6200
+> >>>       Hypercall      4873     2.00%      12265280   0.00%            =
+ 2516
+> >>>            Idle      3713     2.00%    6322055860  87.00%          17=
+02681
+> >>>             FPU      1819     1.00%       2750300   0.00%            =
+ 1511
+> >>>          Ifecth       502     0.00%       1341740   0.00%            =
+ 2672
+> >>>      Mem modify       324     0.00%        602240   0.00%            =
+ 1858
+> >>>          Cpucfg        55     0.00%         77610   0.00%            =
+ 1411
+> >>>             Csr        12     0.00%         19690   0.00%            =
+ 1640
+> >>>            LASX         3     0.00%          4870   0.00%            =
+ 1623
+> >>>             LSX         2     0.00%          2100   0.00%            =
+ 1050
+> >>>
+> >>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >>> ---
+> >>> v2 --- v3:
+> >>>     1. Add NULL check with cpuid in function get_cpuid()
+> >>>     2. Add example output from /proc/cpuinfo before function get_cpui=
+d()
+> >>> v1 --- v2:
+> >>>     1. Add child_ops for kvm exit event, split kvm:kvm_exit_gspr even=
+ts
+> >>> into cpucfg/csr/iocsr/idle child events by decoding detailed gspr
+> >>> instruction.
+> >>>     2. Remove some exception code type which does not happen in curre=
+nt
+> >>> kvm implementation, such as meomry NR/NX/priviledge exception.
+> >>> ---
+> >>>    tools/perf/arch/loongarch/Makefile        |   1 +
+> >>>    tools/perf/arch/loongarch/util/Build      |   2 +
+> >>>    tools/perf/arch/loongarch/util/header.c   |  88 ++++++++++++++
+> >>>    tools/perf/arch/loongarch/util/kvm-stat.c | 135 ++++++++++++++++++=
+++++
+> >>>    4 files changed, 226 insertions(+)
+> >>>    create mode 100644 tools/perf/arch/loongarch/util/header.c
+> >>>    create mode 100644 tools/perf/arch/loongarch/util/kvm-stat.c
+> >>>
+> >>> diff --git a/tools/perf/arch/loongarch/Makefile b/tools/perf/arch/loo=
+ngarch/Makefile
+> >>> index 3992a67a87d9..c89d6bb6b184 100644
+> >>> --- a/tools/perf/arch/loongarch/Makefile
+> >>> +++ b/tools/perf/arch/loongarch/Makefile
+> >>> @@ -4,6 +4,7 @@ PERF_HAVE_DWARF_REGS :=3D 1
+> >>>    endif
+> >>>    PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET :=3D 1
+> >>>    PERF_HAVE_JITDUMP :=3D 1
+> >>> +HAVE_KVM_STAT_SUPPORT :=3D 1
+> >>>
+> >>>    #
+> >>>    # Syscall table generation for perf
+> >>> diff --git a/tools/perf/arch/loongarch/util/Build b/tools/perf/arch/l=
+oongarch/util/Build
+> >>> index d776125a2d06..b12d374d7096 100644
+> >>> --- a/tools/perf/arch/loongarch/util/Build
+> >>> +++ b/tools/perf/arch/loongarch/util/Build
+> >>> @@ -1,5 +1,7 @@
+> >>> +perf-y +=3D header.o
+> >>>    perf-y +=3D perf_regs.o
+> >>>
+> >>>    perf-$(CONFIG_DWARF)     +=3D dwarf-regs.o
+> >>>    perf-$(CONFIG_LOCAL_LIBUNWIND) +=3D unwind-libunwind.o
+> >>>    perf-$(CONFIG_LIBDW_DWARF_UNWIND) +=3D unwind-libdw.o
+> >>> +perf-$(CONFIG_LIBTRACEEVENT) +=3D kvm-stat.o
+> >>> diff --git a/tools/perf/arch/loongarch/util/header.c b/tools/perf/arc=
+h/loongarch/util/header.c
+> >>> new file mode 100644
+> >>> index 000000000000..a4ed732b49c6
+> >>> --- /dev/null
+> >>> +++ b/tools/perf/arch/loongarch/util/header.c
+> >>> @@ -0,0 +1,88 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0-only
+> >>> +/*
+> >>> + * Implementation of get_cpuid().
+> >>> + *
+> >>> + * Author: Nikita Shubin <n.shubin@yadro.com>
+> >>> + */
+> >>> +
+> >>> +#include <stdio.h>
+> >>> +#include <stdlib.h>
+> >>> +#include <api/fs/fs.h>
+> >>> +#include <errno.h>
+> >>> +#include "util/debug.h"
+> >>> +#include "util/header.h"
+> >>> +
+> >>> +/*
+> >>> + * Output example from /proc/cpuinfo
+> >>> + *   CPU Family              : Loongson-64bit
+> >>> + *   Model Name              : Loongson-3C5000
+> >>> + *   CPU Revision            : 0x11
+> >>> + */
+> >>> +#define CPUINFO_MODEL        "Model Name"
+> >>> +#define CPUINFO              "/proc/cpuinfo"
+> >>> +static char *_get_field(const char *line)
+> >>> +{
+> >>> +     char *line2, *nl;
+> >>> +
+> >>> +     line2 =3D strrchr(line, ' ');
+> >>> +     if (!line2)
+> >>> +             return NULL;
+> >>> +
+> >>> +     line2++;
+> >>> +     nl =3D strrchr(line, '\n');
+> >>> +     if (!nl)
+> >>> +             return NULL;
+> >>> +
+> >>> +     return strndup(line2, nl - line2);
+> >>> +}
+> >>> +
+> >>> +static char *__get_cpuid(void)
+> >>> +{
+> >>> +     char *line, *model, *cpuid;
+> >>> +     unsigned long line_sz;
+> >>> +     FILE *file;
+> >>> +
+> >>> +     file =3D fopen(CPUINFO, "r");
+> >>> +     if (file =3D=3D NULL)
+> >>> +             return cpuid;
+> >>> +
+> >>> +     line =3D model =3D cpuid =3D NULL;
+> >>> +     while (getline(&line, &line_sz, file) !=3D -1) {
+> >>> +             if (strncmp(line, CPUINFO_MODEL, strlen(CPUINFO_MODEL))=
+)
+> >>> +                     continue;
+> >>> +
+> >>> +             model =3D _get_field(line);
+> >>> +             if (!model)
+> >>> +                     goto free;
+> >>> +             break;
+> >>> +     }
+> >>> +
+> >>> +     if (model && (asprintf(&cpuid, "%s", model) < 0))
+> >>> +             cpuid =3D NULL;
+> >>> +
+> >>> +free:
+> >>> +     fclose(file);
+> >>> +     free(model);
+> >>> +     return cpuid;
+> >>> +}
+> >>> +
+> >>> +int get_cpuid(char *buffer, size_t sz)
+> >>> +{
+> >>> +     char *cpuid =3D __get_cpuid();
+> >>> +     int ret =3D 0;
+> >>> +
+> >>> +     if (!cpuid)
+> >>> +             return EINVAL;
+> >>> +
+> >>> +     if (sz >=3D strlen(cpuid))
+> >>> +             scnprintf(buffer, sz, "%s", cpuid);
+> >>> +     else
+> >>> +             ret =3D ENOBUFS;
+> >>> +     free(cpuid);
+> >>> +     return ret;
+> >>> +}
+> >>> +
+> >>> +char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+> >>> +{
+> >>> +     return __get_cpuid();
+> >>> +}
+> >>> diff --git a/tools/perf/arch/loongarch/util/kvm-stat.c b/tools/perf/a=
+rch/loongarch/util/kvm-stat.c
+> >>> new file mode 100644
+> >>> index 000000000000..cc50adb0835a
+> >>> --- /dev/null
+> >>> +++ b/tools/perf/arch/loongarch/util/kvm-stat.c
+> >>> @@ -0,0 +1,135 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0
+> >>> +#include <errno.h>
+> >>> +#include <memory.h>
+> >>> +#include <errno.h>
+> >>> +#include "util/kvm-stat.h"
+> >>> +#include "util/parse-events.h"
+> >>> +#include "util/debug.h"
+> >>> +#include "util/evsel.h"
+> >>> +#include "util/evlist.h"
+> >>> +#include "util/pmus.h"
+> >>> +
+> >>> +#define LOONGARCH_EXCEPTION_INT              0
+> >>> +#define LOONGARCH_EXCEPTION_PIL              1
+> >>> +#define LOONGARCH_EXCEPTION_PIS              2
+> >>> +#define LOONGARCH_EXCEPTION_PIF              3
+> >>> +#define LOONGARCH_EXCEPTION_PME              4
+> >>> +#define LOONGARCH_EXCEPTION_FPD              15
+> >>> +#define LOONGARCH_EXCEPTION_SXD              16
+> >>> +#define LOONGARCH_EXCEPTION_ASXD     17
+> >>> +#define LOONGARCH_EXCEPTION_GSPR     22
+> >>> +#define  LOONGARCH_EXCEPTION_CPUCFG  100
+> >>> +#define  LOONGARCH_EXCEPTION_CSR     101
+> >>> +#define  LOONGARCH_EXCEPTION_IOCSR   102
+> >>> +#define  LOONGARCH_EXCEPTION_IDLE    103
+> >>> +#define  LOONGARCH_EXCEPTION_OTHERS  104
+> >>> +#define LOONGARCH_EXCEPTION_HVC              23
+> >>> +
+> >>> +#define loongarch_exception_type                             \
+> >>> +     {LOONGARCH_EXCEPTION_INT,  "Interrupt" },               \
+> >>> +     {LOONGARCH_EXCEPTION_PIL,  "Mem read" },                \
+> >>> +     {LOONGARCH_EXCEPTION_PIS,  "Mem store" },               \
+> >>> +     {LOONGARCH_EXCEPTION_PIF,  "Ifecth" },                  \
+> >>> +     {LOONGARCH_EXCEPTION_PME,  "Mem modify" },              \
+> >>> +     {LOONGARCH_EXCEPTION_FPD,  "FPU" },                     \
+> >>> +     {LOONGARCH_EXCEPTION_SXD,  "LSX" },                     \
+> >>> +     {LOONGARCH_EXCEPTION_ASXD, "LASX" },                    \
+> >>> +     {LOONGARCH_EXCEPTION_GSPR, "Privilege Error" },         \
+> >>> +     {LOONGARCH_EXCEPTION_HVC,  "Hypercall" },               \
+> >>> +     {LOONGARCH_EXCEPTION_CPUCFG, "Cpucfg" },                \
+> >>> +     {LOONGARCH_EXCEPTION_CSR,    "Csr" },                   \
+> >>> +     {LOONGARCH_EXCEPTION_IOCSR,  "Iocsr" },                 \
+> >>> +     {LOONGARCH_EXCEPTION_IDLE,   "Idle" },                  \
+> >>> +     {LOONGARCH_EXCEPTION_OTHERS, "Others" }
+> >>> +
+> >>> +define_exit_reasons_table(loongarch_exit_reasons, loongarch_exceptio=
+n_type);
+> >>> +
+> >>> +const char *vcpu_id_str =3D "vcpu_id";
+> >>> +const char *kvm_exit_reason =3D "reason";
+> >>> +const char *kvm_entry_trace =3D "kvm:kvm_enter";
+> >>> +const char *kvm_reenter_trace =3D "kvm:kvm_reenter";
+> >>> +const char *kvm_exit_trace =3D "kvm:kvm_exit";
+> >>> +const char *kvm_events_tp[] =3D {
+> >>> +     "kvm:kvm_enter",
+> >>> +     "kvm:kvm_reenter",
+> >>> +     "kvm:kvm_exit",
+> >>> +     "kvm:kvm_exit_gspr",
+> >>> +     NULL,
+> >>> +};
+> >>> +
+> >>> +static bool event_end(struct evsel *evsel,
+> >>> +             struct perf_sample *sample __maybe_unused,
+> >>> +             struct event_key *key __maybe_unused)
+> >>> +{
+> >>> +     /*
+> >>> +      * LoongArch kvm is different with other architectures
+> >>> +      *
+> >>> +      * There is kvm:kvm_reenter or kvm:kvm_enter event adjacent wit=
+h
+> >>> +      * kvm:kvm_exit event.
+> >>> +      *   kvm:kvm_reenter means returning to guest immediately
+> >>> +      *   kvm:kvm_enter   means returning to vmm and then to guest
+> >>> +      */
+> >>> +     return evsel__name_is(evsel, kvm_entry_trace) ||
+> >>> +             evsel__name_is(evsel, kvm_reenter_trace);
+> >>> +}
+> >>> +
+> >>> +static void event_gspr_get_key(struct evsel *evsel,
+> >>> +                     struct perf_sample *sample,
+> >>> +                     struct event_key *key)
+> >>> +{
+> >>> +     unsigned int insn;
+> >>> +
+> >>> +     key->key =3D LOONGARCH_EXCEPTION_OTHERS;
+> >>> +     insn =3D evsel__intval(evsel, sample, "inst_word");
+> >>> +     switch (insn >> 24) {
+> >>> +     case 0:
+> >>> +             /* cpucfg inst trap */
+> >>> +             if ((insn >> 10) =3D=3D 0x1b)
+> >>> +                     key->key =3D LOONGARCH_EXCEPTION_CPUCFG;
+> >>> +             break;
+> >>> +     case 4:
+> >>> +             /* csr inst trap */
+> >>> +             key->key =3D LOONGARCH_EXCEPTION_CSR;
+> >>> +             break;
+> >>> +     case 6:
+> >>> +             /* iocsr inst trap */
+> >>> +             if ((insn >> 15) =3D=3D 0xc90)
+> >>> +                     key->key =3D LOONGARCH_EXCEPTION_IOCSR;
+> >>> +             else if ((insn >> 15) =3D=3D 0xc91)
+> >>> +                     /* idle inst trap */
+> >>> +                     key->key =3D LOONGARCH_EXCEPTION_IDLE;
+> >>> +             break;
+> >>> +     default:
+> >>> +             key->key =3D LOONGARCH_EXCEPTION_OTHERS;
+> >>> +             break;
+> >>> +     }
+> >>> +}
+> >>> +
+> >>> +static struct child_event_ops child_events[] =3D {
+> >>> +     { .name =3D "kvm:kvm_exit_gspr", .get_key =3D event_gspr_get_ke=
+y },
+> >>> +     { NULL, NULL },
+> >>> +};
+> >>> +
+> >>> +static struct kvm_events_ops exit_events =3D {
+> >>> +     .is_begin_event =3D exit_event_begin,
+> >>> +     .is_end_event =3D event_end,
+> >>> +     .child_ops =3D child_events,
+> >>> +     .decode_key =3D exit_event_decode_key,
+> >>> +     .name =3D "VM-EXIT"
+> >>> +};
+> >>> +
+> >>> +struct kvm_reg_events_ops kvm_reg_events_ops[] =3D {
+> >>> +     { .name =3D "vmexit", .ops =3D &exit_events, },
+> >>> +     { NULL, NULL },
+> >>> +};
+> >>> +
+> >>> +const char * const kvm_skip_events[] =3D {
+> >>> +     NULL,
+> >>> +};
+> >>> +
+> >>> +int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __mayb=
+e_unused)
+> >>> +{
+> >>> +     kvm->exit_reasons_isa =3D "loongarch64";
+> >>> +     kvm->exit_reasons =3D loongarch_exit_reasons;
+> >>> +     return 0;
+> >>> +}
+> >>>
+> >>> base-commit: 2c71fdf02a95b3dd425b42f28fd47fb2b1d22702
+> >>>
+> >>
+>
 
