@@ -1,121 +1,129 @@
-Return-Path: <linux-kernel+bounces-242815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B76D928D7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:25:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49914928D7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBA181C2197E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3D81F21EE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D085313D2BB;
-	Fri,  5 Jul 2024 18:25:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5818224F2
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 18:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308AE13DB88;
+	Fri,  5 Jul 2024 18:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYq5yMIj"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B614224F2;
+	Fri,  5 Jul 2024 18:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720203903; cv=none; b=mGr79+CfDgquyRtQJmYawZI8F0vmemVDMb0cRbyP9rpPSoynOMlxXkcPJuLQJ7+qnQxm2YIzCZ+45eYZ7dNnym0MCBzhKLmwks6qOneF4lXS0XkZbpqU1OigtX7mGS1aTglN6a4x5F2mP9aHRyTzd5ODkE1wDGsTtI1NVaG8DeI=
+	t=1720204055; cv=none; b=PvYWzxkrHk4ILEQhWo6PXUDCGUamWrg/s0b8NTSwzgi6dpaZU05gR1XEAXeCSQPlahSSyzMr5ZbRTVPy2xn2xqFBM9CQQ9yactzg60ge3KGiA5gpw6Yrx85cx0SinqBa5UuyUvOZTmH98QdX492+dAvXEQEsFyfkMF7hokRLWNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720203903; c=relaxed/simple;
-	bh=xr8QZU6ctkVkEXnZa8uSzs/Y75a3rxwCLycz0IHu4og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVXxQm58MOp9/IbkGsjNN1QE6LQWuXLiVdQjOZmB7d159F5hCCRgvFvHZt+q4iFzw8wH9vVwhSpv7ZROq3Ncz4s51dNYufBiOCgVRkS9TczMC7srtQYZyZoOIEVOGqx/HpwLxbrbHElwGt8mjTxQ/wEAVtScg/YSfZqKINGmcfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3AF8DA7;
-	Fri,  5 Jul 2024 11:25:24 -0700 (PDT)
-Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF7EB3F73B;
-	Fri,  5 Jul 2024 11:24:58 -0700 (PDT)
-Date: Fri, 5 Jul 2024 19:24:56 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
-	anshuman.khandual@arm.com, david@redhat.com,
-	scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-Message-ID: <Zog6eFF1zDl4IRHX@arm.com>
-References: <20240626191830.3819324-1-yang@os.amperecomputing.com>
- <Zn7q3oL1AE8jdM-g@arm.com>
- <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
- <Zn7xs6OYZz4dyA8a@arm.com>
- <200c5d06-c551-4847-adaf-287750e6aac4@os.amperecomputing.com>
- <ZoMG6n4hQp5XMhUN@arm.com>
- <1689cd26-514a-4d72-a1bd-b67357aab3e0@os.amperecomputing.com>
- <ZoZzhf9gGQxADLFM@arm.com>
- <b0315df9-b122-46cd-12b2-7704d4a4392e@gentwo.org>
+	s=arc-20240116; t=1720204055; c=relaxed/simple;
+	bh=3CKUzJWdEdDG484sR92q8TI7bVIXY1L5RBfx/b2yB/c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XMNqIWkq7U8ZBBDruM3Wr8HOZZHA0aZbiX6LuFbTah+SF6zSVLt0OX0xDvqnw+isHv1wVGGzEUowdtAawAUPHk1EAYUBcCPtgVyU+yXRIz/uSb6dAxbfkd7s4fYnq2E8WfhIjlWz7dj3UucaBfWMv9TmmLh1TB1dmMnnKGiBsCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cYq5yMIj; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4256788e13bso12919115e9.2;
+        Fri, 05 Jul 2024 11:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720204052; x=1720808852; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Nh4IMQ6aMf8qqnXQqtk5t+twjcO4FX7On9IGuSSAOg=;
+        b=cYq5yMIjZ8mWTGInI0ZzROlz7Jn5k0zqMyowWQrtjJ94k0DJTtMudtIJOGnD9xTtin
+         gHMf8ija0dxFfJ9Kf4KIULZfs6ZZO2B7gg1ZJKLphF2j+4RaNraLTe+YW0JuW5V3/aV3
+         f1Ob5IJ3zyu1NzFZGCyWgZYSVYoZhj2QY0RUyKUG2mXNE+YkaQ/9TDtQfthi6BTvB1Nl
+         N/VWATOTY8g2VMOaOVkjoFedTRuQrMSXFhlkOVkKKSOAL3acEj9Y/C/AWUYcpX3DyuMU
+         LYCsz0TJQUGd5dUZasWisUwSKCKd9Mvorrv8b4EX8dsQ7ZLjt8JEiXbHnbWUNXFw+uAT
+         gokA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720204052; x=1720808852;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6Nh4IMQ6aMf8qqnXQqtk5t+twjcO4FX7On9IGuSSAOg=;
+        b=BzNdDbrWNmB264NLo/u6X0ibeDMsaRipm9Dwn4nqo2xboAZlumJ4OPuKYP2cP4X/UB
+         +nbRFECD67MFGbk8c9hdNpY4EaZ1dlOu31WS8GMGb71rMLUcLBalUWwpLTVZKxhiqB8r
+         slwKwbNgM2CDufAnmWDSbcbXNSiSeT7QTaRGoTQ8OhkQ+p8a7cZOUmQYATLS002QlB2e
+         6qQtrFDXOO+aAKjQekH0MK1J31UviOH4AHo8zxmvDlMmzzEHkWn07GYV2ct7wzA0y1fl
+         dOfVBoLNqrBogaPSlDyaz6invmQdl6d4s0g3KlyCYR/ta3rs0SFb4bvEq1RWKRwiPVH8
+         h2yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnFw5lBkeUNauKUajxL19CwjBET5bhJZpbj6poGdazZqbYSD/WMg4HLlSq5wzEGvr+4tTAm5MWQEgQbwDAT9SfCykJT8DOmJ06jdhv
+X-Gm-Message-State: AOJu0Ywj+refz9koc0JDGDyuAtb0oouHPFZDFPHmF0Z3KGCw3vIc7gPP
+	/Gi8OdrIu0zE9LND15GOHJCBNxMDykf9nkOnkU4rZQzqaaNgSoT6cBGEN8lc
+X-Google-Smtp-Source: AGHT+IFjGnRKr8+rJVJupa3E4KyVyJghp/1UMCw8OjEsQrZgrRqh/kcSldLTMQaK2MCEwsKLBC+JHg==
+X-Received: by 2002:a5d:4f06:0:b0:367:326b:f257 with SMTP id ffacd0b85a97d-3679dd5459bmr3994466f8f.33.1720204051943;
+        Fri, 05 Jul 2024 11:27:31 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-4adb-3312-ca75-bf55.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:4adb:3312:ca75:bf55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a103d00sm21606055f8f.99.2024.07.05.11.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 11:27:30 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Fri, 05 Jul 2024 20:27:28 +0200
+Subject: [PATCH] hwmon: (gsc-hwmon) constify read-only struct regmap_bus
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0315df9-b122-46cd-12b2-7704d4a4392e@gentwo.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240705-hwmon-const-regmap-v1-1-7cde543ba818@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAA87iGYC/x3MTQqAIBBA4avErBvQ6Ae6SrQwHXUWaWhUIN09a
+ fkt3iuQKTFlmJsCiS7OHEOFbBvQXgVHyKYaOtH1YhID+nuPAXUM+cREblcHKmnJSmE3Mw5QwyO
+ R5eefLuv7fsclirBkAAAA
+To: Tim Harvey <tharvey@gateworks.com>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720204050; l=1032;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=3CKUzJWdEdDG484sR92q8TI7bVIXY1L5RBfx/b2yB/c=;
+ b=ncwd+dZQFblPN5HIfl6JjHy3N4DYGB7QB775/atanC1bMMMqmaz5MoTAnhqQ5lhJM7xdwx8eX
+ sS8vPQNMnQTCjCx78Eo/ZAyLBbtv8b1R7F7jwXAgMx+RojyiiDV/7mx
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Fri, Jul 05, 2024 at 10:05:29AM -0700, Christoph Lameter (Ampere) wrote:
-> On Thu, 4 Jul 2024, Catalin Marinas wrote:
-> > It could be worked around with a new flavour of get_user() that uses the
-> > non-T LDR instruction and the user mapping is readable by the kernel
-> > (that's the case with EPAN, prior to PIE and I think we can change this
-> > for PIE configurations as well). But it adds to the complexity of this
-> > patch when the kernel already offers a MADV_POPULATE_WRITE solution.
-> 
-> The use of MADV_POPULATE_WRITE here is arch specific and not a general
-> solution. It requires specialized knowledge and research before someone can
-> figure out that this particular trick is required on Linux ARM64 processors.
-> The builders need to detect this special situation in the build process and
-> activate this workaround.
+`gsc_hwmon_regmap_bus` is not modified and can be declared as const to
+move its data to a read-only section.
 
-Not really, see this OpenJDK commit:
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+I missed this one when converting regmap_config to const. After this
+conversion, all read-only regmap_* structs in hwmon are declared as
+const.
+---
+ drivers/hwmon/gsc-hwmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://github.com/openjdk/jdk/commit/a65a89522d2f24b1767e1c74f6689a22ea32ca6a
+diff --git a/drivers/hwmon/gsc-hwmon.c b/drivers/hwmon/gsc-hwmon.c
+index 0f2147699c91..cb2f01dc4326 100644
+--- a/drivers/hwmon/gsc-hwmon.c
++++ b/drivers/hwmon/gsc-hwmon.c
+@@ -39,7 +39,7 @@ struct gsc_hwmon_data {
+ 	struct hwmon_chip_info chip;
+ };
+ 
+-static struct regmap_bus gsc_hwmon_regmap_bus = {
++static const struct regmap_bus gsc_hwmon_regmap_bus = {
+ 	.reg_read = gsc_read,
+ 	.reg_write = gsc_write,
+ };
 
-There's nothing about arm64 in there and it looks like the code prefers
-MADV_POPULATE_WRITE if THPs are enabled (which is the case in all
-enterprise distros). I can't tell whether the change was made to work
-around the arm64 behaviour, there's no commit log (it was contributed by
-Ampere).
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240705-hwmon-const-regmap-a1fef10fbd65
 
-There's a separate thread with the mm folk on the THP behaviour for
-pmd_none() vs pmd mapping the zero huge page but it is more portable for
-OpenJDK to use madvise() than guess the kernel behaviour and touch small
-pages or a single large pages. Even if one claims that atomic_add(0) is
-portable across operating systems, the OpenJDK code was already treating
-Linux as a special case in the presence of THP.
-
-> It would be much simpler to just merge the patch and be done with it.
-> Otherwise this issue will continue to cause uncountably many hours of
-> anguish for sysadmins and developers all over the Linux ecosystem trying to
-> figure out what in the world is going on with ARM.
-
-People will be happy until one enables execute-only ELF text sections in
-a distro and all that opcode parsing will add considerable overhead for
-many read faults (those with a writeable vma).
-
-I'd also like to understand (probably have to re-read the older threads)
-whether the overhead is caused mostly by the double fault or the actual
-breaking of a THP. For the latter, the mm folk are willing to change the
-behaviour so that pmd_none() and pmd to the zero high page are treated
-similarly (i.e. allocate a huge page on write fault). If that's good
-enough, I'd rather not merge this patch (or some form of it) and wait
-for a proper fix in hardware in the future.
-
-Just to be clear, there are still potential issues to address (or
-understand the impact of) in this patch with exec-only mappings and
-the performance gain _after_ the THP behaviour changed in the mm code.
-We can make a call once we have more data but, TBH, my inclination is
-towards 'no' given that OpenJDK already support madvise() and it's not
-arm64 specific.
-
+Best regards,
 -- 
-Catalin
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
