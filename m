@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-242717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25597928C1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:10:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89510928C1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D542D284BBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:10:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F0841C22214
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD07616D331;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2727116CD3D;
 	Fri,  5 Jul 2024 16:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QUHccMjB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C022B9B9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A93148FFB
 	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720195814; cv=none; b=O/1jnanvuNjRvulMXyEMTRofI/9LBgOQY1vR8ZNcWq5U+rcEwbQ0wWVzoaW76bhF1yKaGcOKet3DwJ5PsrAMh11Iqqis0TRsGns1C3mJ9G7drURnwf7RBL6Adw+/ZgCF3h2rvRI/wipkK/7JoZZwU5ozOIed1srOO/lOZ4bZoe4=
+	t=1720195813; cv=none; b=h63MH01Z8MBCe1v43ZVMXwTs1bEvaJFRVNJ1To0uNmW+afytZr0bvl0AuXuos6svQqfmlXAicNEu3BxOC32YpRD/JzsPUytMNspq4t3pUxFeM3NP/ACt/kB25oLKiOWvXH6kJ4MX32YmHcKtkY4Be86yCld9m6Zjcy/NpTfFp3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720195814; c=relaxed/simple;
-	bh=Dt14CO6nqTeJOKkkPfWE85lOabdCJ0iOs4fa/9fzW6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3iJS53x35bRCAQVIfxT2fNvjzU1xkXeVHSyLkH12nzvhX3dzksJJM4q9St606iHNBdVhX6h9r3sTYU2h6qMN1Om7B0At9k0R1m6Wko/i0yVvBuoK2OkiS4OfR3NXnEv6yEvFD+sTrhs4NA37iPukQvqzI9SOhyAHC+DCVYt/kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QUHccMjB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720195811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dt14CO6nqTeJOKkkPfWE85lOabdCJ0iOs4fa/9fzW6Y=;
-	b=QUHccMjBARhreafaT6XGpASKZjwXuqhcWbV6EUtCX3uuc4wQ2/2NwT8yH2jE4i+pAkrY0+
-	xGXr0rg9CXekSnp1JNqP4ERepYZsAl1lVNduAwGOdGqY/4idSummY9T+4MMLJ+jSd3HNi8
-	TIPeb2Q2OmI23KJCLl8gl6LsyUM96j4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-230-hSyND49yNdatSSZMFY85Ug-1; Fri,
- 05 Jul 2024 12:10:05 -0400
-X-MC-Unique: hSyND49yNdatSSZMFY85Ug-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D35E5196CDF1;
-	Fri,  5 Jul 2024 16:10:01 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.9])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 923C61955F3B;
-	Fri,  5 Jul 2024 16:09:53 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  5 Jul 2024 18:08:26 +0200 (CEST)
-Date: Fri, 5 Jul 2024 18:08:17 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Rachel Menge <rachelmenge@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Wei Fu <fuweid89@gmail.com>, apais@linux.microsoft.com,
-	Sudhanva Huruli <Sudhanva.Huruli@microsoft.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>,
-	Mike Christie <michael.christie@oracle.com>,
-	Joel Granados <j.granados@samsung.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH] zap_pid_ns_processes: don't send SIGKILL to sub-threads
-Message-ID: <20240705160816.GC18551@redhat.com>
-References: <1386cd49-36d0-4a5c-85e9-bc42056a5a38@linux.microsoft.com>
- <20240608154835.GD7947@redhat.com>
- <87msnpov2z.fsf@email.froward.int.ebiederm.org>
- <20240613150001.GB18218@redhat.com>
+	s=arc-20240116; t=1720195813; c=relaxed/simple;
+	bh=dfBRawcr2glCEAMpyVpqh9p8zTcVwCn3sIfnaGnucac=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ryXUodWS3I9AAOUijRDf4n7WHCq+7s35ZNL/h2wxMbjE0Io2IQyirUMmQmvMXjKAzfR6zrzXcm5RPLlpYLI3lpj5Trfh15GdGNfMlzclXaZJC1q+owp9m0D3L6DEG3nfn8G/JxZbg7DwW7n46ZYX5L1xd5cmQDHt/I6+OVHihnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f3c9711ce9so203720339f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 09:10:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720195811; x=1720800611;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dfBRawcr2glCEAMpyVpqh9p8zTcVwCn3sIfnaGnucac=;
+        b=ahc3J+73i9ulQbzRotWtV9+kz7+4HYXcOW1YT7b6dNxrcRWKAceHQmF5qreY46lU8n
+         ZBVSVaTrNnzuuNTd6R3mF4u2vAS/gIWjFK4OnHNCSA6eUWhECQ4f63vQEwR+XxE/60Yk
+         p856F/ZQQ2bi0mL3oIoW6tlNxtdU/e3d9srCIO1tM3ur7dVqzQJ1B274aIcuA/V8Jqjr
+         eM/BwvAxN0yrkhxCZcvIR2GfYrhzwePWEc/7YVs7/MfYw6YrkR3cE0/aDukV2Tit/+OT
+         G4ypVulzMZH+/h22Jm3kPY96200gGbGn3D5SZVEqZjRjBV+GOdRanAWaKUigQ2MBpuEL
+         3lbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpLoCQa8yHY7jTK5feuM25J1BMBOqgCaNAnP79dbYAt81zsoKnInilFLpFzqKBWtj78bZQhzmyrGmRNAm3LmIvgatkObMzAV5X6Z/j
+X-Gm-Message-State: AOJu0YyXBqQBQmWcJ3wsH6xvhiY1L4kS+z4Q4AoCGIwchving0gKsATF
+	B9SRFeGyC82Zd+OxnDZ0GAjbVztozWU8OQ0iYRQjQHgnmWraqJOBk+UJqnVQDXje2UHFG6URzHd
+	FNvL0cJb5StGosXCCqAZXfKbB5L2/LgWe3YHIHciUh1PF32xMghyeCkM=
+X-Google-Smtp-Source: AGHT+IGSb7TpnqwSGCGG28cxOnmiYIYpNyGtivf/GP/iiw46L6LH7vg1rhVfG7Dg4wxZ2pDxT68+pEWQYfQW0zHeNj5kV1nBtByR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613150001.GB18218@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Received: by 2002:a92:da06:0:b0:376:46d5:6596 with SMTP id
+ e9e14a558f8ab-3839b57598cmr1242545ab.4.1720195811576; Fri, 05 Jul 2024
+ 09:10:11 -0700 (PDT)
+Date: Fri, 05 Jul 2024 09:10:11 -0700
+In-Reply-To: <0000000000006fd14305f00bdc84@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004b19f7061c824c9c@google.com>
+Subject: Re: [syzbot] kernel BUG in ext4_do_writepages
+From: syzbot <syzbot+d1da16f03614058fdc48@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On 06/13, Oleg Nesterov wrote:
->
-> Well, if SIGNAL_GROUP_EXIT is set we do not care if this process was
-> killed or not. It (the whole thread group) is going to exit, that is all.
+This bug is marked as fixed by commit:
+ext4: fix race condition between buffer write and page_mkwrite
 
-OOPS. I forgot again that you removed SIGNAL_GROUP_COREDUMP and thus
-we can't rely on SIGNAL_GROUP_EXIT in this case.
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-I still think this was not right, but it is too late to complain.
+#syz fix: exact-commit-title
 
-Andrew, please drop this patch.
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
 
-Currently zap_pid_ns_processes() kills the coredumping tasks, with this
-patch it doesn't.
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
 
-Oleg.
+---
+[1] I expect the commit to be present in:
 
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 10 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
