@@ -1,170 +1,105 @@
-Return-Path: <linux-kernel+bounces-242693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6C4928B81
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:19:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C511928B93
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA98E1C2158C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:19:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456271F2206F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B936D16B72D;
-	Fri,  5 Jul 2024 15:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971D316C688;
+	Fri,  5 Jul 2024 15:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPnn0MJm"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o95CgpEL"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D91487D8;
-	Fri,  5 Jul 2024 15:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C52816A92B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 15:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720192749; cv=none; b=laA44izNH3uIda8Lnz66w5u5b1RqUb+9w3CsLBA9s8/c46Xcy3avDdluzyeL5UGiwkxs/10Jn5o1bZmd+rbXXZagsD2gQMBPFZ6SOmHvbFllQvlzLOIALu5Zdg14bc8Ie4/PWG5vOl7SZH7sb/LtsRXkEmCqR0Msc8q8sf9FWfU=
+	t=1720192963; cv=none; b=cDHGURs1UrQ2sWi3mT24IIlrkK9IMAdbyMaisjziEvZyE0Y1zzzVHT7Q64WFdQr/M58hCy7GpHLvlaPxsfnlRZBwn1qqrKiXX6mnbEyEqvu5VMQ4kmN5MR9XLlg02nFvOGguhRzvzoetRFyvmSEKI28jzkfib5Lv9OCb+ZN6qTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720192749; c=relaxed/simple;
-	bh=RFnFLxpFbGDtT10Dk/Tdh98X48tsX08DjcEQXQCwsG8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dUJd5KYN1XvndxZxdqsS1ej+lenrljRsT3WhhH3w5Qag24Fitj8x+ZVUjBtCzBwXjB7AiN85YB1LjftGkLhTj1v9dVACDFKeVvgN6e+JqsIDy26S2W2dANxXhj35pMOi1VjL7qQigY69aBkkICAWqNKjc2Za2S2xVrVdNqkE0y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPnn0MJm; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-702294d6265so1118505a34.1;
-        Fri, 05 Jul 2024 08:19:07 -0700 (PDT)
+	s=arc-20240116; t=1720192963; c=relaxed/simple;
+	bh=trJVAE+RoP6EF8CN/xKUOAM8YNg3UOFcO1h7+fE37nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=isMTXVXazAlT3uH74MYI57otVxKQ6opAbm5NpyitR/CAkumG2jmz0100s+boa0u3STD3RdjoCeY5BQIxzablTKuo4jJylkwtL99n2FYiZZsNrai1XdopfUrUbdBhHPgxC5DQN/IcBogNr3omwctnnwmCJh5NV6ONCj/LxhTIAXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o95CgpEL; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ea34ffcdaso1311882e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 08:22:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720192747; x=1720797547; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xfgcjToHDms+e/xA2Hsd4lyRapgO6QBy6Yt2Qi/WJcY=;
-        b=iPnn0MJmzNKMM84I8BiQzyiFvBpR76Z1/AtVWz/Ab3wY0fPT+7xHpqpxYWXgG7cBQU
-         /f3Y3FvXqL+5ZJpG7dLCJOXcn8XXJUCgPq8DC25bQAEm0q7PzPmsuYBI57nZse20HxgE
-         FyWwWeG4AY+32RaiQK10bRp1KYd6GAf0lI1/irJgVe+qUURwd/HLhCddIShpMeaD6+wK
-         Th9X+VpHDA/+Tm0joNgXt5wRi6bAh3g1CKLEMui+VD584OrX4WmPBHRuD17mj5wMwLjr
-         2CSzHCVoKgSf01bSwDnLzY90n8tOj5WuEJ8zLhD7rLYmK+hbqGmQYdHAl9rRy5OXFijE
-         AObA==
+        d=linaro.org; s=google; t=1720192959; x=1720797759; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kmz4n3surT4p/OHHh6hdGsaM434nVMtYZWz8qb8y2SQ=;
+        b=o95CgpELKoEDhtNHxvAsAQuDSpccE1y2pGTOr3mIckfDfGWtdMadf6sTMelf7wDeJ6
+         VTY+bCgjAspUSHwl1WNLCv8VwN7qx39MKa6ZVgHB+L+hab9PIzzgtOcCRiLdhTtoroYf
+         nehamwYDHxwI0tj8Ueu0j9au7KsWmt1be82c8WLPB2IEaAeoX1hdZHXj5pW0QlL9A07l
+         AkQxCFCKsx2GrFgVPZBWPqV1txlURW1v2WHKuLbQXEuj8cJ77zC0Pm/ppMthaeepxLJA
+         jfJLb8Xx1VfKnGsghu+/eIgO76Bu4DWx+4pqMKhXSxsycPjLyhTGOn59aC8GtZTalnL+
+         E2vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720192747; x=1720797547;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xfgcjToHDms+e/xA2Hsd4lyRapgO6QBy6Yt2Qi/WJcY=;
-        b=Ul5gkvxVdeHFgUvuvRsdcE5+haNdfG0VgjGaL1OcmAkE8Dtzmtgo4lWhAMBlWwemfG
-         ywSBoGdPtUD2Dupr4bI4kVjCrCxdpM03zRGHD6yy/yggxpe9wvd4R4mn5kH6i5bnExke
-         tvWWIkAy6TCJusGoSOjQG6DDbhPogQFeW7Ari8PNwX8d4IJUuaVMMOfvU5uVJ6SHp2uU
-         O1B9Z9KCdCX1ZfS2OEbCpYv6pHU3Ouf0y1y7Uom5nQPB2sai/1hjFZCyuNHtWSX6CgRt
-         CfUbgJvfdY1gWBzFbsWEMAIR+080zdPkp8dF54zYyc+WJqPxS7aqkWdoVd19A9k8rCDt
-         GpsA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ExtXTkcTBgBkGq3xw1Kr+8+Jq5WQhrctwLIJFl80Ypr1yaT/FUjO0GMmtNRrLHYRXo6f00wtZOZ18/Wfie60f4KQ+0YATWLTf/lia6THFG2yGQU10OD6j27EZC4XhJRJ9HeI
-X-Gm-Message-State: AOJu0YzT8q2NBILhGB8VqTWbiHnXBVzQyuhU2h324NKVVb39cy1CNWPa
-	zpCvC/fUS+T623G3ExmyCpEu624hXi8K1n/2Wt9kcqLx8hlSm0Vt
-X-Google-Smtp-Source: AGHT+IGj09BYI4AoXFXbl4HIMN5eYqJfhUFpuaRzrTu+XlgaJmIgRV2oGaVo/F6rlNg9FL3H+RKRQg==
-X-Received: by 2002:a05:6358:6f0f:b0:1a5:2f55:c47b with SMTP id e5c5f4694b2df-1aa98c2430emr514351355d.10.1720192746611;
-        Fri, 05 Jul 2024 08:19:06 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6c7f72a7sm11087720a12.63.2024.07.05.08.19.03
+        d=1e100.net; s=20230601; t=1720192959; x=1720797759;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kmz4n3surT4p/OHHh6hdGsaM434nVMtYZWz8qb8y2SQ=;
+        b=ldM/kUKnpaDi4/r5HCBdUAbgRQFShU2ufVhO4HrdgJQweEXPSGg9mqtxcBd4v6PpIt
+         aAicP3FQhHJV2aWBVziBhUk22WLRIXHEh2RzAifwH0HOb/9M4U4LtoacuTQG1Ab1Yld3
+         McIWr77vnFO/7Cu/llPLyMEROQY8pNwKZpGrqHw/I+SlGrYO9zdkhRKtC3BaiPilyPt2
+         jyWi23emgbd6rAgZhTWH8qaqQ39ws6pSQlsiuAMGZoRsi85gruEYnyKcl8sm9I73ziWU
+         CFqCgarZnxr1V3fmZJUVoA9oSfHCD3f0LOutHwqVWcG0GYecvbY0kyeFxuoI96xrIds+
+         RDCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzdP8gvYlGkKjhqjLW9j6g5bAC2u9EANJbkJhT6wAtDCVC9fp+a8hNiPnKRKVbcV7AvEdHyfJp3pgid+nXIUqHuo6lNU1xw7FblKJo
+X-Gm-Message-State: AOJu0YyjRAs88RdNX44PxSzyScSSgWdwlwUp+BQBsgmk5EStN1tLHnDG
+	+gGmnq1M24I6cCxkjyXxiucEFrGioTQs2m3XW8HJrbH3QO9pq3oKVrQfbb/pfPg=
+X-Google-Smtp-Source: AGHT+IFsOPop7NoEBw9W62eV4h2oCjhPQSgPNuUyP622wEHU5yauItIykX1Sp7uujTy9ASdfeCs+YA==
+X-Received: by 2002:ac2:424a:0:b0:52e:9ecd:3465 with SMTP id 2adb3069b0e04-52ea06e3b9dmr3233467e87.57.1720192959393;
+        Fri, 05 Jul 2024 08:22:39 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ea268bf31sm497432e87.110.2024.07.05.08.22.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 08:19:05 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: edumazet@google.com
-Cc: aha310510@gmail.com,
-	davem@davemloft.net,
-	jiri@resnulli.us,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	michal.kubiak@intel.com,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH net] team: Fix ABBA deadlock caused by race in team_del_slave
-Date: Sat,  6 Jul 2024 00:19:00 +0900
-Message-Id: <20240705151900.94546-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CANn89iKbP4r+uAkHiz8_pdMB9XWoyRWR0NJ7ZuNCOr+LiFr9zg@mail.gmail.com>
-References: <CANn89iKbP4r+uAkHiz8_pdMB9XWoyRWR0NJ7ZuNCOr+LiFr9zg@mail.gmail.com>
+        Fri, 05 Jul 2024 08:22:38 -0700 (PDT)
+Date: Fri, 5 Jul 2024 18:22:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	ansuelsmth@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: kpss-xcc: Return of_clk_add_hw_provider to
+ transfer the error
+Message-ID: <eeekgt77qzq2hgh4xes2gnsuwjftt2movz75uosllhqtir3xyl@zcpx35q6zvpe>
+References: <20240704073606.1976936-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704073606.1976936-1-nichen@iscas.ac.cn>
 
-> >
-> > Thanks for your comment. I rewrote the patch based on those comments.
-> > This time, we modified it to return an error so that resources are not
-> > modified when a race situation occurs. We would appreciate your
-> > feedback on what this patch would be like.
-> >
-> > > Thanks,
-> > > Michal
-> > >
-> > >
-> >
-> > Regards,
-> > Jeongjun Park
-> >
-> > ---
-> >  drivers/net/team/team_core.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-> > index ab1935a4aa2c..43d7c73b25aa 100644
-> > --- a/drivers/net/team/team_core.c
-> > +++ b/drivers/net/team/team_core.c
-> > @@ -1972,7 +1972,8 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
-> >         struct team *team = netdev_priv(dev);
-> >         int err;
-> >
-> > -       mutex_lock(&team->lock);
-> > +       if (!mutex_trylock(&team->lock))
-> > +               return -EBUSY;
-> >         err = team_port_add(team, port_dev, extack);
-> >         mutex_unlock(&team->lock);
-> >
-> > @@ -1987,7 +1988,8 @@ static int team_del_slave(struct net_device *dev, struct net_device *port_dev)
-> >         struct team *team = netdev_priv(dev);
-> >         int err;
-> >
-> > -       mutex_lock(&team->lock);
-> > +       if (!mutex_trylock(&team->lock))
-> > +               return -EBUSY;
-> >         err = team_port_del(team, port_dev);
-> >         mutex_unlock(&team->lock);
-> >
-> > --
->
-> Failing team_del_slave() is not an option. It will add various issues.
+On Thu, Jul 04, 2024 at 03:36:06PM GMT, Chen Ni wrote:
+> Return of_clk_add_hw_provider() in order to transfer the error if it
+> fails.
+> 
+> Fixes: 09be1a39e685 ("clk: qcom: kpss-xcc: register it as clk provider")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  drivers/clk/qcom/kpss-xcc.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
 
-Thank you for comment. 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
-So, how about briefly releasing the lock before calling dev_open()
-in team_port_add() and then locking it again? dev_open() does not use
-&team, so disabling it briefly will not cause any major problems.
-
-Regards,
-Jeongjun Park
-
----
- drivers/net/team/team_core.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-index ab1935a4aa2c..245566a1875d 100644
---- a/drivers/net/team/team_core.c
-+++ b/drivers/net/team/team_core.c
-@@ -1213,7 +1213,9 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
- 		goto err_port_enter;
- 	}
- 
-+	mutex_unlock(&team->lock);
- 	err = dev_open(port_dev, extack);
-+	mutex_lock(&team->lock);
- 	if (err) {
- 		netdev_dbg(dev, "Device %s opening failed\n",
- 			   portname);
---
+-- 
+With best wishes
+Dmitry
 
