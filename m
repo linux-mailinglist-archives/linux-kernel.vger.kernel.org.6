@@ -1,96 +1,94 @@
-Return-Path: <linux-kernel+bounces-242566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B489289E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:38:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779249289E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17C51F21320
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:38:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EBF41C22F6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436D214C59C;
-	Fri,  5 Jul 2024 13:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC4514C5BD;
+	Fri,  5 Jul 2024 13:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAWhIf5v"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Sy7nOoI2"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56352B9B9;
-	Fri,  5 Jul 2024 13:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AB913C8F9
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 13:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720186699; cv=none; b=FlRa+v6zKjU8sJeXGcyKRvZtDDetqvI3DqKESL6iw13se0WYrncpUAbLgbIyImzQ3lIQUF26gboo9UvMv14SXubgGCVtK4lnLh2g0UK1kWMbdanevElAljyUhES6T3ifOO+NjCsT5U0Oc2yNEKGfouvrhU6I9n4GzsROo6AUgBg=
+	t=1720186893; cv=none; b=s2C4lkXySjpSxt5Q6malXnbcMDTBf/WtYZKA/Tg8vlam09xmGTvhyuRVa9SsJMyzUCF59Z/le7jDVEtmAtm1TQtz6CCSvUCZ9nO6V1ele7gYqVQQ25cKG7hKXNVRMkupbgNPUKqA/Qv8mA/aos60YRUgisopRIQtKj3KANkQqPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720186699; c=relaxed/simple;
-	bh=cWnCrmUJRexOSMDRTpVlcG2Z7kBl2f9gCMlUA9djuec=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQWfBdC2QrPQAWG/XegHrW4pC59rDeCZC0mkeCv7T1T37nUwdSDfmqWzSyjPiMT4J5A4vXSBcfjHhpszcazSUF9UtAJwjdub3o0Z/pbUvzS7/qknkBrJ5XONl1eNMHGQfYQL+1fVMgJMPUQ6FnK942rETEwSTF4PzzOCU9gNohE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UAWhIf5v; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77baa87743so188904566b.3;
-        Fri, 05 Jul 2024 06:38:17 -0700 (PDT)
+	s=arc-20240116; t=1720186893; c=relaxed/simple;
+	bh=Hw6BEA+vksiXlfFVzP4dQJP4Y0NRaZ5ETGsxIyCGigo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ay9xci1UcEqsvDiuzkm8TaErMb8Uc4d+Rc5pZy4k57gjVr984OZuz+rFP0Pzsf+M14GE9ek00cipfvIvK8vRqaspzzKiFUP2YLDC6bFYq/YBFQzJGt9007ljbVRqzTtz5mPhizxOc5eI2lBkBJa8IREPoqiwFQVgw1kvMWUQk4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Sy7nOoI2; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35f0d49a9ebso27598f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 06:41:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720186696; x=1720791496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7426fshMzR6GNFPcqwrx5x2skuuMIJBYu2mYPgY4MrU=;
-        b=UAWhIf5v3A9Wd7HdAf+IJXKxXtkwBRgH4/QKqO7ge9kAYipwwjmJYMObO1mIjSsGiP
-         y4O12m5dmoU3FrcAhxM4i/Dq2kNUOlSm7+G9Kz7c8+OEiyj6ErgLx+GJfaXK6y/dhabn
-         AuJ3Ja9JaiUJXQu9nPukuHYKqCS2ghfptX60ooAy8ZvYCuy7zaQ9kGhHqZdgHyUaPEMH
-         7DXZsLt/89dKO7wptW7sXUPKYD1A8gw25BhziBQOhTRR2ukapJeSUdM+z7GlYrpTOpcw
-         /Ru3qyk67XgE2qgxGZDbAcCoLwbIh0JaLUyYVPPK+7GpeNNrov3eFZJjemuNfbq3UMPm
-         NVlA==
+        d=ffwll.ch; s=google; t=1720186889; x=1720791689; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hYq4Ghm/qD4X8g59+rt7/AyXTOqvB29s1gzm0udAON4=;
+        b=Sy7nOoI2BkIySzxHpsFRKIjmQQNcdelhuEJIDmWdmfX703HpFFS++sECpiuAJ6k0cJ
+         OXdjOs2w61SbB1PPrtk/bIVGyLvZPhYYx7I+0rWNHBGtrMyniyy2Cg4H5v/WyjJcXFgT
+         bm/PBkkMjOm6fCqh4F/u8kmM2UiXUpZDPCOVo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720186696; x=1720791496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7426fshMzR6GNFPcqwrx5x2skuuMIJBYu2mYPgY4MrU=;
-        b=Q/icKXLFKe4vWOnP3xfrZ/aFhL1MBoGq6uvQ5qAriXeYNKc3LQCbP3tT0CSH/qSuWP
-         M3Su6/jPQ0rapgeLYrh956AkUYy6bqaPPz/lpnci45WEJQaTP0TqB9+lpubQSqgphxEL
-         zsk3QidmRhuq17XYCIVXyqanKSZtDmF5Yg8zfhYK3wU5RFpM1FGTpeBi3V900++/UH0V
-         wFdSU8n4Z1Y8n/HA034uluE86QOWmCy5PHxbhLvvnrZM/j3ZgXrY0OkNM/s4czrUADln
-         iAYM6/Wi8LAMHWLlE9LwwdAONj4Qo+dD7Stgvojqt+knX0dxlQHSdoqOgkvHQZs4FIOI
-         ZWCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXX2MnwD+wLyXXioztR1StWQPk3GTtpttL39Cejyy7abL+VWmf4XDICNId0OWiVwxg3FjppczzJns6rR9EaZbfPLybBP7zj+i2Zra97EcoJ994ZPex0SMmbDbxJLQj6TWrmWkfKkMjzpAGiY02jcL57pLqPfUL5vYAmXSnNG/L17XuHGQue
-X-Gm-Message-State: AOJu0Yz62bQhwEtZ+U+hxYMjsQmBzB8jekSb7UlNzjm2WrRRYYsdBEcu
-	PJ1uPC8nDk/wyHKCQyI2qZaN3Rctjde+aBpoLSje0KMWZvFVi+Ky
-X-Google-Smtp-Source: AGHT+IFRWiSaf/g0RePwmmAb5dJSgEwZk2F7I0MEWkE5X70RByhGeHc0/LLOtqYgynN4RfFSwzEKnQ==
-X-Received: by 2002:a17:907:969e:b0:a72:b34f:e15b with SMTP id a640c23a62f3a-a77ba70d6b7mr419519866b.57.1720186695932;
-        Fri, 05 Jul 2024 06:38:15 -0700 (PDT)
-Received: from krava (net-93-65-242-193.cust.vodafonedsl.it. [93.65.242.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1b555sm676111966b.5.2024.07.05.06.38.14
+        d=1e100.net; s=20230601; t=1720186889; x=1720791689;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hYq4Ghm/qD4X8g59+rt7/AyXTOqvB29s1gzm0udAON4=;
+        b=sMug1FzsnSDtole9g+rgTiajMK1q0OF9amHGCtPPdZXPdpZs4LoFC30LnYb1a0i4OQ
+         O3xYlZlC4txwQcqPxEYfe4AQVPV46dypxILx8lpoFk2WePH9PBQbXVbYMbo0z5MociDQ
+         5kIt8iSNjD+fMXSYwHOEdiVPlA2LSpD7QLSScsLy09Qffk6WIryrJSv8VbMHsjw2lFiW
+         eJF2oeYtR4G1W/Z5DqjK4HnOzn5LEWiQjJW4kmYTlpJs5gBBuV+UW+UcgS+PKhKAIM89
+         ROMll+xHA0gLCfHTN3PRtrePkXRg9gywifkUqRwiDvrWcJfnXc6acen+eL0AZvbv7Mmc
+         hiXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWS+Vuo0MdafEHfZb9F5Xnzu46Ynesu+kehZh4EfJkGV+IF0cNvbJe07AZ9abxuvCy+YSCk8AXaS8Z91Y+TKzXTn1SrEFYEg+WgdXPS
+X-Gm-Message-State: AOJu0YwAz8cRJ2TugHUalGdDyixL3WW8vyeNL7T2bEG1IIkERf/VLdiO
+	jLe1paRyc++lMNfL/ocTb5RF1lgTUD3op1Hn59lD8moyEX4It55o/H4gED7rE+8=
+X-Google-Smtp-Source: AGHT+IHy5I71tFmzj8hG6kRNj6VGoN9oGdPL1jjZSB9TbVRv2dFuN5Re/aCUVhXZIMsk78oJMav84A==
+X-Received: by 2002:a5d:5f84:0:b0:367:2da6:aa1b with SMTP id ffacd0b85a97d-3679de74a63mr3125952f8f.7.1720186889172;
+        Fri, 05 Jul 2024 06:41:29 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a0522ea3sm3762365f8f.27.2024.07.05.06.41.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 06:38:15 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 5 Jul 2024 15:38:12 +0200
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <Zof3RIqSl6TgaVKq@krava>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
- <20240703085533.820f90544c3fc42edf79468d@kernel.org>
- <CAEf4Bzbn+jky3hb+tUwmDCUgUmgCBxL5Ru_9G5SO3=uTWpi=kA@mail.gmail.com>
- <ZoV3rRUHEdvTmJjG@krava>
- <CAEf4BzYKVbCEGupX47fwM0XSzwwmXs+0sVpcAdp3poFLkjMA6Q@mail.gmail.com>
- <20240705173544.9ef034c30ae93c52164ecc1b@kernel.org>
+        Fri, 05 Jul 2024 06:41:28 -0700 (PDT)
+Date: Fri, 5 Jul 2024 15:41:26 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: drm/sti: mark it as Odd Fixes
+Message-ID: <Zof4Bp82iu7hZsSZ@phenom.ffwll.local>
+Mail-Followup-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240705100356.16760-1-krzysztof.kozlowski@linaro.org>
+ <ZofW1v4uEFo9GscF@phenom.ffwll.local>
+ <20240705-hysterical-beluga-of-courtesy-38b2e2@houat>
+ <ff8b84c9-5bef-4cb9-a10b-b3bb1a017366@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,89 +97,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240705173544.9ef034c30ae93c52164ecc1b@kernel.org>
+In-Reply-To: <ff8b84c9-5bef-4cb9-a10b-b3bb1a017366@linaro.org>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On Fri, Jul 05, 2024 at 05:35:44PM +0900, Masami Hiramatsu wrote:
-
-SNIP
-
-> > > > > Also, if we can set session enabled by default, and skip ret_handler by handler's
-> > > > > return value, it is more simpler. (If handler returns a specific value, skip ret_handler)
-> > > >
-> > > > you mean derive if it's a session or not by both handler and
-> > > > ret_handler being set? I guess this works fine for BPF side, because
-> > > > there we never had them both set. If this doesn't regress others, I
-> > > > think it's OK. We just need to make sure we don't unnecessarily
-> > > > allocate session state for consumers that don't set both handler and
-> > > > ret_handler. That would be a waste.
-> > >
-> > > hum.. so the current code installs return uprobe if there's ret_handler
-> > > defined in consumer and also the entry 'handler' needs to return 0
-> > >
-> > > if entry 'handler' returns 1 the uprobe is unregistered
-> > >
-> > > we could define new return value from 'handler' to 'not execute the
-> > > 'ret_handler' and have 'handler' return values:
-> > >
-> > >   0 - execute 'ret_handler' if defined
-> > >   1 - remove the uprobe
-> > >   2 - do NOT execute 'ret_handler'  // this current triggers WARN
-> > >
-> > > we could delay the allocation of 'return_instance' until the first
-> > > consumer returns 0, so there's no perf regression
-> > >
-> > > that way we could treat all consumers the same and we wouldn't need
-> > > the session flag..
-> > >
-> > > ok looks like good idea ;-) will try that
+On Fri, Jul 05, 2024 at 01:33:38PM +0200, Krzysztof Kozlowski wrote:
+> On 05/07/2024 13:22, Maxime Ripard wrote:
+> > On Fri, Jul 05, 2024 at 01:19:50PM GMT, Daniel Vetter wrote:
+> >> On Fri, Jul 05, 2024 at 12:03:56PM +0200, Krzysztof Kozlowski wrote:
+> >>> Patches to STI DRM are not being picked up, so even though there is
+> >>> maintainer activity, it seems that these drivers are not being actively
+> >>> looked at.  Reflect this in maintainer status.
+> >>
+> >> Note that since the driver is in drm-misc, other committers can also pick
+> >> up patches and push them. Both Neil and Dimtry have commit rights and
+> >> should be able to pick up your patches for you, if they get stuck.
 > > 
-> > Just please double check that we don't pass through 1 or 2 as a return
-> > result for BPF uprobes/multi-uprobes, so that we don't have any
-> > accidental changes of behavior.
+> > I've applied the patches.
+> > 
+> > I don't think we should merge this one though, a one-off mishap can happen.
 > 
-> Agreed. BTW, even if the uprobe is removed, the ret_handler should be called?
-> I think both 1 and 2 case, we should skip ret_handler.
-
-do you mean what happens when the uretprobe is installed and its consumer
-is unregistered before it's triggered?
-
-I think it won't get executed, because the consumer is removed right away,
-even if the uprobe object stays because the return_instance holds ref to it
-
+> Sure.
 > 
-> > > > > >
-> > > > > >  #ifdef CONFIG_UPROBES
-> > > > > > @@ -80,6 +83,12 @@ struct uprobe_task {
-> > > > > >       unsigned int                    depth;
-> > > > > >  };
-> > > > > >
-> > > > > > +struct session_consumer {
-> > > > > > +     __u64           cookie;
-> > > > >
-> > > > > And this cookie looks not scalable. If we can pass a data to handler, I would like to
-> > > > > reuse it to pass the target function parameters to ret_handler as kretprobe/fprobe does.
-> > > > >
-> > > > >         int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs, void *data);
-> > > > >
-> > > > > uprobes can collect its uc's required sizes and allocate the memory (shadow stack frame)
-> > > > > at handler_chain().
-> > > >
-> > > > The goal here is to keep this simple and fast. I'd prefer to keep it
-> > > > small and fixed size, if possible. I'm thinking about caching and
-> > > > reusing return_instance as one of the future optimizations, so if we
-> > > > can keep this more or less fixed (assuming there is typically not more
-> > > > than 1 or 2 consumers per uprobe, which seems realistic), this will
-> > > > provide a way to avoid excessive memory allocations.
+> Folks, maybe then pattern in maintainers should be somehow changed or grew?
 > 
-> Hmm, so you mean user will allocate another "data map" and use cookie as
-> a key to access the data? That is possible but sounds a bit redundant.
-> If such "data map" allocation is also provided, it is more useful.
+> The recommendation to all submitters is to use get_maintainers.pl. b4
+> also does it. In this particular case, using get_maintainers.pl or b4
+> will result in patches not being picked up.
 
-is the argument only about the size of the shared data?
+I think get_maintainers.pl is correct: You get the driver maintainer, plus
+drm-misc maintainers as official fallback, plus Dave&me as fallback of
+last resorts. So all correct.
 
-we can make it configurable.. for bpf user we will probably stick to
-8 bytes to match the kprobe session and to be compatible with existing
-helpers accessing the cookie
-
-jirka
+What's special with the commit rights model is that other committers that
+work all over the subsystem can also pick up the patches for you, so that
+the drm-misc mainters don't become a bottleneck. But the ideal person
+there are drm-misc committers who work in your team or company, or someone
+else where you have some goodwill credits to spend with and ask them for a
+favour. And there's just no way to model that and make sure the script
+gives you the right suggestions.
+-Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
