@@ -1,150 +1,111 @@
-Return-Path: <linux-kernel+bounces-241965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CE89281FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:26:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB274928205
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F102F1F247F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92EA51F240A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 06:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEAA13C8FB;
-	Fri,  5 Jul 2024 06:26:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BB91369AE
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 06:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DE51448F3;
+	Fri,  5 Jul 2024 06:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SH43FUj8"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93C8143C75;
+	Fri,  5 Jul 2024 06:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720160766; cv=none; b=PQ+lcuncLcvtvqKUJcBL06qQDECOST2iG+i6bpeemUXArpZ33Ci+/GHfvFxHaeRba88fDsvg2ypjT+iUROZ4vohYKETdyH59nf7W7widBUxVK82eUUMsKrxPhSE/L8hUSB/WibMuLQMqsIqPpbtcKBwoIUO0+wySQmP6TrJI5rM=
+	t=1720160815; cv=none; b=fMRAxx8P55hz0tYT7Vde3h1BcWEcYjM/v+DFI5vniOTaw5AqPI7kN4C2ZoVUjC0YXmwadSxxRyjzU/NE38pCsrlXCHDrwubew/9AGX6O40UpWSzVuUOzib5FA2ZRAYEN1jSt/ss7E947ccIQSTtmyxGknesfZZiAcIGaf4P3gu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720160766; c=relaxed/simple;
-	bh=rwTpQEZIDPDIz2vaYtx5AxMI0dNatWjs5WMqm8E08jw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JjjhulUP8q9kSw5Pv2slLsNuKJ8YqNDSsTB1CTTwJd9D+YFOHhdAvaqb+qNtd3sXZVGOi1q2AlotovWZhW1RexTYvUfQ3CvDM+jpMRbI8pqjkuhreUdSiBq8ss05+9c7x+fFS2kgsOn9n5OfS/z9mG7UDFbpnPNDeuYB2XrIZoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74D28367;
-	Thu,  4 Jul 2024 23:26:28 -0700 (PDT)
-Received: from [192.168.178.110] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 126263F766;
-	Thu,  4 Jul 2024 23:26:00 -0700 (PDT)
-Message-ID: <66f2ef35-cbc0-4205-96f1-c857efb6f9cd@arm.com>
-Date: Fri, 5 Jul 2024 08:25:59 +0200
+	s=arc-20240116; t=1720160815; c=relaxed/simple;
+	bh=EMdvsRtHPHQyGahTe0wLT9ajkOMWh7BnJ8WxOakQ/54=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hJvDCfFq0h4ODkYjpav/QadAVbTmJOk8o/qlpkENWDBsIm6R/sg0TzumIuXS6rEylTN+X778zzQ5YBYUqfyXM1+ahOs8yjIKEPuflq890BB+QXnvMUHNssoKA1BF9IajRTbnhvfxMUUIUTnNM2n5DQA/uVN4/+8I75cLWJykLnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SH43FUj8; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720160812;
+	bh=EMdvsRtHPHQyGahTe0wLT9ajkOMWh7BnJ8WxOakQ/54=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SH43FUj8/X+MQs5YQH/C5zbdIlujSz6/TZrnNxvKvr6qz8T9yqWSN0SyicD18qN/j
+	 7dMWfFpQoP93RhHzB5TRqMK2XaLArMul5DnXEFZatm1wgNvaW8NgxL13rQzTxfmQ96
+	 mXOGEVNrZdbQxJzL/PoYsBzJ4g5V3SGMHwREDMDM3K5FLCHg47UN+8BohXLCh7LMha
+	 vnC1eIpCavROJ4+or9a5w2Fqn66O8ZRb21kVmNLZugUNC2bPsFJ5IvsIbX3d65Ft1L
+	 LSTq1/EzdhK8Swizc33kQEP7onT7LujmPuXuFtyZikL8r3im2LI2ujkRp92XJklv1u
+	 adzlgnr0nSIrg==
+Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ehristev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5F14437820FE;
+	Fri,  5 Jul 2024 06:26:51 +0000 (UTC)
+From: Eugen Hristev <eugen.hristev@collabora.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Cc: jack@suse.cz,
+	adilger.kernel@dilger.ca,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	krisman@suse.de,
+	kernel@collabora.com,
+	shreeya.patel@collabora.com,
+	Eugen Hristev <eugen.hristev@collabora.com>
+Subject: [PATCH 0/2] fs/dcache: fix cache inconsistency on case-insensitive lookups
+Date: Fri,  5 Jul 2024 09:26:19 +0300
+Message-Id: <20240705062621.630604-1-eugen.hristev@collabora.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] sched/fair: Use actual_cpu_capacity everywhere in
- util_fits_cpu()
-To: Qais Yousef <qyousef@layalina.io>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
- vschneid@redhat.com, christian.loehle@arm.com, vincent.donnefort@arm.com,
- ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
- linux-kernel@vger.kernel.org
-References: <20240624082011.4990-1-xuewen.yan@unisoc.com>
- <20240624082011.4990-3-xuewen.yan@unisoc.com>
- <20240628012832.37swdtxr4ds2kkp7@airbuntu>
- <CAKfTPtALDtnbPmq4401oLKzcEDurLKuCyqyNKOb1oYLAVJ2P4A@mail.gmail.com>
- <20240703115407.y6tjelkpq5njkzjy@airbuntu>
- <CAKfTPtCNEa+pAbo1br_1SDSn8=x67YMCi_jytpjUMHv7a9xMKA@mail.gmail.com>
- <20240704235652.n2wtpwck43umh4dq@airbuntu>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240704235652.n2wtpwck43umh4dq@airbuntu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/07/2024 01:56, Qais Yousef wrote:
-> On 07/03/24 16:54, Vincent Guittot wrote:
->> On Wed, 3 Jul 2024 at 13:54, Qais Yousef <qyousef@layalina.io> wrote:
->>>
->>> On 07/02/24 15:25, Vincent Guittot wrote:
->>>
->>>>>>        *
->>>>>>        * Only exception is for HW or cpufreq pressure since it has a direct impact
->>>>>>        * on available OPP of the system.
->>>>>> @@ -5011,7 +5011,7 @@ static inline int util_fits_cpu(unsigned long util,
->>>>>>        * For uclamp_max, we can tolerate a drop in performance level as the
->>>>>>        * goal is to cap the task. So it's okay if it's getting less.
->>>>>>        */
->>>>>> -     capacity_orig = arch_scale_cpu_capacity(cpu);
->>>>>> +     capacity_actual = get_actual_cpu_capacity(cpu);
->>>>>>
->>>>>>       /*
->>>>>>        * We want to force a task to fit a cpu as implied by uclamp_max.
->>>>>> @@ -5039,7 +5039,7 @@ static inline int util_fits_cpu(unsigned long util,
->>>>>>        *     uclamp_max request.
->>>>>>        *
->>>>>>        *   which is what we're enforcing here. A task always fits if
->>>>>> -      *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
->>>>>> +      *   uclamp_max <= capacity_actual. But when uclamp_max > capacity_actual,
->>>>>>        *   the normal upmigration rules should withhold still.
->>>>>>        *
->>>>>>        *   Only exception is when we are on max capacity, then we need to be
->>>>>> @@ -5050,8 +5050,8 @@ static inline int util_fits_cpu(unsigned long util,
->>>>>>        *     2. The system is being saturated when we're operating near
->>>>>>        *        max capacity, it doesn't make sense to block overutilized.
->>>>>>        */
->>>>>> -     uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
->>>>>> -     uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
->>>>>> +     uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
->>>>>
->>>>> We should use capacity_orig here. We are checking if the CPU is the max
->>>>> capacity CPU.
->>>>
->>>> I was also wondering what would be the best choice there. If we
->>>> consider that we have only one performance domain with all max
->>>> capacity cpus then I agree that we should keep capacity_orig as we
->>>> can't find a better cpu that would fit. But is it always true that all
->>>> max cpu are tied to the same perf domain ?
+Hello,
 
-This should be the case. Perf domains follow Frequency Domains (FD). So
-even if we have the most powerful CPUs in 2 different FDs, only the CPUs
-in the FD with the higher max OPP get SCHED_CAPACITY_SCALE assigned,
-i.e. only they become big CPUs.
+This is an attempt to go back to this old patch series here :
 
->>> Hmm I could be not thinking straight today. But the purpose of this check is to
->>> ensure overutilized can trigger for the common case where a task will always
->>> fit the max capacity cpu (whether it's on a single pd or multiple ones). For
->>> that corner case fits_capacity() should be the only fitness check otherwise
->>> overutilized will never trigger by default.
->>
->> Ok, so I messed up several use cases but in fact both are similar ...
->>
->> if capacity_actual != SCHED_CAPACITY_SCALE and uclamp_max ==
->> SCHED_CAPACITY_SCALE
->> then uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) &&
->> (uclamp_max == SCHED_CAPACITY_SCALE) is false
->> and uclamp_max_fits = !uclamp_max_fits && (uclamp_max <=
->> capacity_actual); is also false because (uclamp_max <=
->> capacity_actual) is always false
->>
->> if capacity_actual == SCHED_CAPACITY_SCALE and uclamp_max ==
->> SCHED_CAPACITY_SCALE
->> then we are the same as with capacity_orig
-> 
-> Right. The condition is becoming less readable, but you're right it doesn't
-> change functionality.
+https://lore.kernel.org/lkml/cover.1632909358.git.shreeya.patel@collabora.com/
 
-+1. 'capacity_actual < SCHED_CAPACITY_SCALE' on big CPUs just make them
-non-big CPUs.
+First patch fixes a possible hang when d_add_ci is called from a filesystem's
+lookup function (like xfs is doing)
+d_alloc_parallel -> lookup -> d_add_ci -> d_alloc_parallel
 
-> Xuewen, could you put something in the commit message please to remind us in
-> the future that we thought about this and it is fine?
-> 
-> Thanks!
-> 
-> --
-> Qais Yousef
+Second patch solves the issue of having the dcache saving the entry with
+the same case as it's being looked up instead of saving the real file name
+from the storage.
+Please check above thread for motivation on why this should be changed.
+
+Some further old discussions here as well:
+https://patchwork.ozlabs.org/project/linux-ext4/patch/20180924215655.3676-20-krisman@collabora.co.uk/
+
+I am not sure whether this is the right way to fix this, but I think
+I have considered all cases discussed in previous threads.
+
+Thank you for your review and consideration,
+Eugen
+
+
+Eugen Hristev (2):
+  fs/dcache: introduce d_alloc_parallel_check_existing
+  ext4: in lookup call d_add_ci if there is a case mismatch
+
+ fs/dcache.c            | 29 +++++++++++++++++++++++------
+ fs/ext4/namei.c        | 13 +++++++++++++
+ include/linux/dcache.h |  4 ++++
+ 3 files changed, 40 insertions(+), 6 deletions(-)
+
+-- 
+2.34.1
 
 
