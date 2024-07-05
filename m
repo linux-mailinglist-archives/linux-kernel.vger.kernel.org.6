@@ -1,80 +1,200 @@
-Return-Path: <linux-kernel+bounces-242550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43929289AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151879289B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 15:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58835289B38
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3E1289F6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB7D152184;
-	Fri,  5 Jul 2024 13:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE04214D28E;
+	Fri,  5 Jul 2024 13:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCZlwsTq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B42TsceU"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3C314AD2B;
-	Fri,  5 Jul 2024 13:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E60F14C58A;
+	Fri,  5 Jul 2024 13:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720186134; cv=none; b=k1hsveAmtyyY18+xrMKiQ/oIeGDwKkO/R8ccjK6HXFNrxGLpM+iw9VbRsOF4QDoiS5LAmH8JyfyKB/DfGXwE3dzvVxJHUFxkhxm/unXuMaHBHADGfNvmY/Y3lGu3sBeMS5FMHKaYgdKGpxhAgW8y6i24r5mwqSzrRHP8w4DnGoE=
+	t=1720186182; cv=none; b=ly2ymMXC0v8GKWzzIQbG+gakg+8skjXzKj9EQJgFoF3MpeMpbwrYSgryuCdwPiCHNLSND8i+LyuwzcwZRLtC5StWETOyNNarFilqhj/92+PheW177fyEKQHSWbCCPw2memGT5mphp9QlZwoPYgtv6RaRVaxZBypiLrA+cjnVXJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720186134; c=relaxed/simple;
-	bh=jt7f+2jmTHEmIKfo0UmDvt8VtgDT12rAndwW8ol4AmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HXf54KxhCHPDEQ1S6rAE+kQiEhocWKXoiSnDBcdqNGI+aql0fQzbqU5UrBx8mI0USrE0MLg7dEPdIZhF4eJ4nx5cVZVZCAYOlBehLAZ25Z5Dgaz/Ad16JWFuKnxjQgi+uAS/90MAq+/LDJBw3QIDNikTsI3/x7/tiGlOO+A/Xjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kCZlwsTq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1278C116B1;
-	Fri,  5 Jul 2024 13:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720186133;
-	bh=jt7f+2jmTHEmIKfo0UmDvt8VtgDT12rAndwW8ol4AmQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kCZlwsTqn32bGdE5Vd5t8ZaMOodTg+L130TkoXAmV4EaQ0AeLQN7yBcOWVbJ+W2Z0
-	 OovMF+EygBrpSwOewtdlqpUIstxsP7wcl0mTdSTqzJo3dJBLSMeKFprvyiFaF8Zj3Z
-	 KSxjtsVj4mcgM8mrn5QbznjmmtKpORYKTEWUV9HC7pts75elGyHZb2HmPtigVPWewE
-	 bcQiDrQS/QED8Aj+AKFOw4M0LTLRd+D+SBvpaysUGdkKUlO3lI2pNnl+QJQ+v4r/fd
-	 Slzg1JiwC3rB+CPJErSmoqRUswwsobzGxqdS7WpxCCaXGYPS7VKCTX+f8uw8HiiebO
-	 IQMfi25lw1Q4w==
-Date: Fri, 5 Jul 2024 06:28:51 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, dev@openvswitch.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B
- Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
- <shuah@kernel.org>, =?UTF-8?B?QWRyacOhbg==?= Moreno <amorenoz@redhat.com>,
- Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next 0/3] selftests: openvswitch: Address some
- flakes in the CI environment
-Message-ID: <20240705062851.36694176@kernel.org>
-In-Reply-To: <20240702132830.213384-1-aconole@redhat.com>
-References: <20240702132830.213384-1-aconole@redhat.com>
+	s=arc-20240116; t=1720186182; c=relaxed/simple;
+	bh=Sn5s59O/NdJNCUezWqX1qa1IHRrl5kIcmolOISDixU4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ach7Xl0J+vjMkkFIU/bzapD6Os0YQUBhqGwHBvL0Uw8J1gcR2sK7OemrAXH7hyNP7F+blPZfONQZ0r5mxkKA/hQVavdjiRxVaUE600tD7WItrOjX98y3tFQtP4yh3tri74OmjiZt8SZeJbtnCuzT5QDqNquDQP0YtiLdhzEwZ1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B42TsceU; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ea3e499b1so1126358e87.3;
+        Fri, 05 Jul 2024 06:29:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720186178; x=1720790978; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=aw0j1Lviadpf2ZsL4nF7pPLS0qZe4Z8jYOAWk2mW/4c=;
+        b=B42TsceUiAcgKTmDwcKBlhIFP1VTD4zIipRqJ2TviXd58KpCfHUT+ImlOFL/5ubtvU
+         APVDaskkkKiDk6uOqiumuOILk+7CYKgclwCk/ydSQaqAdzD7yVNOO901N9ImgbGoX1K5
+         iYexIjmyDetcGinC5ZfJ2RqbwhplRX5OePBqLd3AeR+YULDAcf8Sm6rZ3NKIzvRhQVIE
+         qJBLpaGXniSqka/r53VMs59hjZPs1rcM5wWrAhpl2enQerjNj+CIgks8NZH9gas4PHZL
+         ZUPWKHlSxwZ2hHhU0smPU0SgLBnIFUJhoW/gpxa0okSIUbVO3JrMhyFXsi6BefpCvFl8
+         58uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720186178; x=1720790978;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aw0j1Lviadpf2ZsL4nF7pPLS0qZe4Z8jYOAWk2mW/4c=;
+        b=X8xfdp3HfefiHlrv1ZitH0ThWSZpSW3M7RWd06sSDVUhR6rcn1LP7XM/eOQxeLvI5Y
+         9n0yhuEPk709Hl/f9uq+6ECg2Px0YlBony3xRXsm/JDL1gA05zT9zOmeHbkw6NG7iycV
+         OOjFYC05YLeob5k++7iAW5YaKqVfVF/ab0QKCbhdXRdEigOo7S4nM3wToXdrkBp28/Fy
+         cN67dN+SyuUXy/H7TfmQwucEwOOAshGG3W7gGSFLslwpqg4dkf0r/iZaD/RCt1ODPw2u
+         Tze2yGTjqtQkSKdRQrS2OJgL+jgHQVWjcWGqZ7WB4gBGti0O9+zru7zsdxiCo0dtKKxk
+         JRYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLdmMkjSoeeGJCdE7Srapj8rpwJ0Xi9gQo33nzMM2e1TktBvAMNBCViksHI9OR/uBVFtj92VfW6wmmVVZ/b1Qge9LnNN/Lqr8Nrcuz0qk8hcPqypf/nlfZi6PJBLAE0Ifh1R/BxB8sMDXbGbMkn7f9xf6+Vrmyj1XcjtyTXjKIYavqBnED
+X-Gm-Message-State: AOJu0Yx83+EckxkNoS1rnTJ3OYJijlzV3PNmNEP4V0kKD22juOoAbMJy
+	Lu9g87d/rT3wXC9IYd/Mc6psOAh+MvRd0Uz4pJiFzuxWWn33p1p1NYY/0pdx
+X-Google-Smtp-Source: AGHT+IHhHwPUMPvwQX6weNqntFkxeQjtYYCA77JffkZg73dPIGdqMUoP7TGNBZEzxDpnYuDesfo4Bg==
+X-Received: by 2002:ac2:484a:0:b0:52c:a88b:9992 with SMTP id 2adb3069b0e04-52ea06bca79mr3236891e87.52.1720186178173;
+        Fri, 05 Jul 2024 06:29:38 -0700 (PDT)
+Received: from krava (net-93-65-242-193.cust.vodafonedsl.it. [93.65.242.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324f069sm9875701a12.33.2024.07.05.06.29.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 06:29:37 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 5 Jul 2024 15:29:34 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
+Message-ID: <Zof1PiQOI0kex_xY@krava>
+References: <20240701164115.723677-1-jolsa@kernel.org>
+ <20240701164115.723677-2-jolsa@kernel.org>
+ <CAEf4BzZaTNTDauJYaES-q40UpvcjNyDSfSnuU+DkSuAPSuZ8Qw@mail.gmail.com>
+ <ZoWGrGYdyaimB_zF@krava>
+ <CAEf4BzbfKE1cWWXfWnWN510pai8Aq_W6J-WSLSAyGO_=rZWX_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbfKE1cWWXfWnWN510pai8Aq_W6J-WSLSAyGO_=rZWX_Q@mail.gmail.com>
 
-On Tue,  2 Jul 2024 09:28:27 -0400 Aaron Conole wrote:
-> These patches aim to make using the openvswitch testsuite more reliable.
-> These should address the major sources of flakiness in the openvswitch
-> test suite allowing the CI infrastructure to exercise the openvswitch
-> module for patch series.  There should be no change for users who simply
-> run the tests (except that patch 3/3 does make some of the debugging a bit
-> easier by making some output more verbose).
+On Wed, Jul 03, 2024 at 02:48:28PM -0700, Andrii Nakryiko wrote:
+> On Wed, Jul 3, 2024 at 10:13 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Tue, Jul 02, 2024 at 01:51:28PM -0700, Andrii Nakryiko wrote:
+> >
+> > SNIP
+> >
+> > > >  #ifdef CONFIG_UPROBES
+> > > > @@ -80,6 +83,12 @@ struct uprobe_task {
+> > > >         unsigned int                    depth;
+> > > >  };
+> > > >
+> > > > +struct session_consumer {
+> > > > +       __u64           cookie;
+> > > > +       unsigned int    id;
+> > > > +       int             rc;
+> > >
+> > > you'll be using u64 for ID, right? so this struct will be 24 bytes.
+> >
+> > yes
+> >
+> > > Maybe we can just use topmost bit of ID to store whether uretprobe
+> > > should run or not? It's trivial to mask out during ID comparisons
+> >
+> > actually.. I think we could store just consumers that need to be
+> > executed in return probe so there will be no need for 'rc' value
+> 
+> ah, nice idea. NULL would mean we have session uprobe, but for this
+> particular run we "disabled" uretprobe part of it. Great. And for
+> non-session uprobes we just won't have session_consumer at all, right?
 
-Hi Aaron!
+hm, I think we don't need to add both session or non-session consumer
+if it's not supposed to run.. let's see
 
-The results look solid on normal builds now, but with a debug kernel
-the test is failing consistently:
+> 
+> [...]
+> 
+> > > > +static struct session_consumer *
+> > > > +session_consumer_next(struct return_instance *ri, struct session_consumer *sc,
+> > > > +                     int session_id)
+> > > > +{
+> > > > +       struct session_consumer *next;
+> > > > +
+> > > > +       next = sc ? sc + 1 : &ri->sessions[0];
+> > > > +       next->id = session_id;
+> > >
+> > > it's kind of unexpected that "session_consumer_next" would actually
+> > > set an ID... Maybe drop int session_id as input argument and fill it
+> > > out outside of this function, this function being just a simple
+> > > iterator?
+> >
+> > yea, I was going back and forth on what to have in that function
+> > or not, to keep the change minimal, but makes sense, will move
+> >
+> 
+> great, thanks
+> 
+> > >
+> > > > +       return next;
+> > > > +}
+> > > > +
+> 
+> [...]
+> 
+> > >
+> > > > +               } else if (uc->ret_handler) {
+> > > >                         need_prep = true;
+> > > > +               }
+> > > >
+> > > >                 remove &= rc;
+> > > >         }
+> > > >
+> > > > +       /* no removal if there's at least one session consumer */
+> > > > +       remove &= !uprobe->sessions_cnt;
+> > >
+> > > this is counter (not error, not pointer), let's stick to ` == 0`, please
+> > >
+> > > is this
+> > >
+> > > if (uprobe->sessions_cnt != 0)
+> > >    remove = 0;
+> >
+> > yes ;-) will change
+> >
+> 
+> Thanks, I feel bad for being the only one to call this out, but I find
+> all these '!<some_integer_variable>` constructs extremely unintuitive
+> and hard to reason about quickly. It's only pointers and error cases
+> that are more or less intuitive. Everything else, including
+> !strcmp(...) is just mind bending and exhausting... Perhaps I'm just
+> not a kernel engineer enough :)
 
-https://netdev.bots.linux.dev/contest.html?executor=vmksft-net-dbg&test=openvswitch-sh
+heh I was going for minimal change.. but it's intrusive enough already,
+so let's keep it at least readable
+
+jirka
 
