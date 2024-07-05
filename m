@@ -1,204 +1,244 @@
-Return-Path: <linux-kernel+bounces-241880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691B89280A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B81099280BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E39B2843F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3412875D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AB01E494;
-	Fri,  5 Jul 2024 02:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B836C38F86;
+	Fri,  5 Jul 2024 02:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OMtwfk8z";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JjSucv9B"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="flpCj6gC"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF4815ACB;
-	Fri,  5 Jul 2024 02:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720148047; cv=fail; b=jwEWSibgyhTxtKCJk35VO+h6nfoiwxIQoeWU6zKxwd1AZ198SAMpZJolpIZgJoHdNDx37kJnDlDOTs+//tRhWfer/nmRruFJmWRrn8VyRJde2oZU2R6uMTTbIhkaBonC71eyQF6jpYqJt8ahF6sGiLnmC5yzdlriadh2RSHjlz8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720148047; c=relaxed/simple;
-	bh=8+/y/CYtvLXQHZp80OgYtGRl1apKDkiZd9Biy9SRvFM=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=K1cWttrNm6ecfNGbZ5e09/X+H4SfXX6pMbWdwliaDeUqeEbgr9p31PTx1sO/omM+RomV+4jS6zK7mtAoP+gwIJBJUg9du+zLyCkAyahJkDXTe4qwhqiJAnOsH5E4uwCUs969XVtIhpAPZC1lxC+BiOBEUGfcxzYajrVgZP29sfA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OMtwfk8z; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JjSucv9B; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 464DxCFi025836;
-	Fri, 5 Jul 2024 02:54:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
-	:cc:subject:from:in-reply-to:message-id:references:date
-	:content-type:mime-version; s=corp-2023-11-20; bh=RfWrE4kTtwRTU5
-	Gj2TFAU/Ze5mjuECjouRkaCIjLWBQ=; b=OMtwfk8zLjSCW6tjFxH0xD19NYby9o
-	kpTV0oh82dtLmr57ktc/ZRAr7sBGLhDdEXvJRYCDlkR/u4298pfQwg+8b7Ad8rCY
-	pJnPAsi38ACT+mY3JfI0X4KtUpSB+tzO6b32Gkvk+4soyCy5wfuOwqUUdmdKo6Ai
-	dT6OnQbuf7C12K+7vBn/+sS18mym6BFioSZevx5e2Bl7J+sEUqOSNV2eISBCdESb
-	j9JN4n8BvfEidfKuIYghZDhUJLfW/4rP/y3BOH92jDGSehM9iFKyhYFr/rCNXS98
-	1UJM+YKRIG95M5BjEGcPCEXLmOfyN5oUhV4Apw0WOxWEqfO52XjaR6zw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40296b31qy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 05 Jul 2024 02:54:02 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4651ttIo010935;
-	Fri, 5 Jul 2024 02:54:01 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2171.outbound.protection.outlook.com [104.47.58.171])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4028qawvdc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 05 Jul 2024 02:54:01 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K10UdWlePiT0XucO271p+CRwS7qyeE4SMAP5U0+8IoV5L7Q7+Fhv3ap2eY6/UjRPeqih2Hjyafyt7x/J8vM36HvVyZcU4KuqBmBtyijN9YfrbltRSRHddN0PoXeOpV+vpDeJBbrs3md5CiIfzaXsxaAIIL9jfWmfkPxrGZgnROqMjMRs6ihnZhDn1x/P5b8fPxj9ecUeDqpNOOq1tYvru/JMiYlXTLVXUdAn2BmCAtXG+gT6UCO1VYtlq3NQ4TUUPLYBYo/tP4x5s/SK/pH4b96doJT/JSdVw+b1hb13LN27RZmf4bhaNdtzFylKVaLrAUZTMmdHxhStJy+WnrBQvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RfWrE4kTtwRTU5Gj2TFAU/Ze5mjuECjouRkaCIjLWBQ=;
- b=N47tWxlxFL9Cp2Tt/iJ3yhr1Hu+LQk7kSnAVJlC/MM/+jTxJjjzl4PQMwYZT7yxjwMV7lULyMnlc1fDBBS8sNpiFoucqwW1IwY51UYJYezBk46m4qZk0c4bJiRb+sCqtFd31qSINlHnwlYVuKm0nJTQ9O1EmgG8vpf9itcYiU4Q+RuF4gOsTEoADmP0wQKYc3vPWe5Nj8OEofg+z/rgNd5BLJgUfBm41FRGLyfqMCwL+Nbadj/ZydUAnHgBKow9uSNKKSs98ufT9WWiF2zHjTvBzL+KyaTqsCyGcfRUiqacyZwUSbPeFkjYYE38PIcIb9h2XlikBCM6KyWtp/wXdng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RfWrE4kTtwRTU5Gj2TFAU/Ze5mjuECjouRkaCIjLWBQ=;
- b=JjSucv9BirYO6FnPWK45loVYyo61Xd46gyegQAtl8dVH7bLoEkqQ/aRqR6V6yK+ppEbhdYCJMn8OrTcvidw3cgMOsL+jd2WfjKSnt7B+7F3ELFx4X9JPPDDkbmf8KRY1eUr4mN5VgUZusGqhMogqVIcp0yeNroBIi3i+ybf8nWQ=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by LV3PR10MB8106.namprd10.prod.outlook.com (2603:10b6:408:27f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.25; Fri, 5 Jul
- 2024 02:53:59 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7719.029; Fri, 5 Jul 2024
- 02:53:59 +0000
-To: TJ Adams <tadamsjr@google.com>
-Cc: Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "James E . J . Bottomley"
- <James.Bottomley@HansenPartnership.com>,
-        "Martin K . Petersen"
- <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Igor Pylypiv <ipylypiv@google.com>
-Subject: Re: [PATCH v2 0/2] small pm80xx driver fixes
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20240627155924.2361370-1-tadamsjr@google.com> (TJ Adams's
-	message of "Thu, 27 Jun 2024 15:59:22 +0000")
-Organization: Oracle Corporation
-Message-ID: <yq1wmm0a6rm.fsf@ca-mkp.ca.oracle.com>
-References: <20240627155924.2361370-1-tadamsjr@google.com>
-Date: Thu, 04 Jul 2024 22:53:55 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0116.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:192::13) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B60F28E8
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720148219; cv=none; b=nM7Cbe7bbkS74FhxuswtCDlP/RQ8PQ01BVnxC2VUokYcMfznF6sNxAjjSL+hJF9ksvX6oY/2F/NIq3DwtUtjXkHziItOgFxPVCzeKgrbbWltEzrF9cVz2pKIl7WyPMwBKS8XKaKxRX2ouWtF7YHgTC5ZLtDehSGIccW0p1sAHhQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720148219; c=relaxed/simple;
+	bh=XYv0+VYf6McStPWvE5b2s336YXWELv45BHLgBltfOPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MyX4W7A9fluDpg+PCKSi8D2Dtfz8N2fb2J7vV6Ht3dvclr2mL3L0QEh4zLX6IOV0vRTXq/BvgjZnkEMg4KVsRg79n6nDNjj19vkDpnJ0Qb51mTsxN0xJlALNVuoBHC/gmRygTjQxXzEzPAD0CNah2F4Hjbu3pjsb36QccgSzDKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=flpCj6gC; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720148214; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=H5wWlHmE+5CveVCmekjDDbfDTQ7zE9+BBH3gjzdxt8w=;
+	b=flpCj6gCVkpzf6iNSerQZsp6dCsQd51Zdox+2z7EaMHqHiyiBZA7wfUsg41DqLyGHE9EC/n8pEznrLYKhdRKIqWnksrbzyLmWsUF1dKGRA1YyYwBySIfX28RodwEfKFfrU+vVQ5gpKjKRc4qtD/IfKV4Nf6tTaADvxZxj9dsY/w=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023225041;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W9tBU8V_1720148211;
+Received: from 30.97.56.65(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9tBU8V_1720148211)
+          by smtp.aliyun-inc.com;
+          Fri, 05 Jul 2024 10:56:53 +0800
+Message-ID: <4d8ee659-58ff-4dab-833e-84400bde932a@linux.alibaba.com>
+Date: Fri, 5 Jul 2024 10:56:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|LV3PR10MB8106:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5bbda5d7-48e5-4fb2-0805-08dc9c9db84e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?akQV/JeoYO1cV4q19QqL0dIkXgba3snIX8orA9yEeuBvhsnTQwwqw43jFeg2?=
- =?us-ascii?Q?B8iThLCaiv1PUUi1BRzNiGW+gV1RYZydl5PD1f1DEChRR55+D06NfN1VZhDO?=
- =?us-ascii?Q?3PwiEyfduS3oEAFqutXlfXnG3VWAZ6XAzXSJ1RZCoVskMAVdn71vK00mpuCo?=
- =?us-ascii?Q?xskcmG1ex0gs2RWCnMlssyDuYRMIW77ogoGJctqVUL3OGN2WI+E1vqfw2i6+?=
- =?us-ascii?Q?ZyfHywqw9Bx3rFR2T99Shz8uprxq1GimqRriBg7AJCgnCrUdM87TDcFNlELi?=
- =?us-ascii?Q?x+nrpuywT3O8AIe4zSp7rYctjOephD9rx8KEAf2HbBa/1gSjmPjucDugUBY5?=
- =?us-ascii?Q?iay1PkmAQY2Xe8B5Oq+fBc1MdcHxjxsxShooXkh9oHyY3ylPrqFIaTJfNIud?=
- =?us-ascii?Q?WCGUeD0zQnSBjqodHZNpq/rb2gIgAZdbl7VPMv5Sc/j83We4M1aoA34Y5Icu?=
- =?us-ascii?Q?12nnNeA6Dnjk+0xJ1Sq01TLT2Pv4g3Zb+uuHKe33Ixy3sxZfEde2RctUMQZt?=
- =?us-ascii?Q?wcaAqjiFwKOvu3CLDifGlwd8HgdBuHrEGGahWjmboJ7HSilhRoZiSMq3ULrt?=
- =?us-ascii?Q?NlKsJlO2HzvEN+eYFL/lQFGw7NNDOeEdzd+7utBRcv85sVIOFGNysVqRnk+/?=
- =?us-ascii?Q?zn8TWgSuiHZxcC5WheDwls/6wq4T0f/TYD5p0DtXjL83vRhbxamj+4OitDYH?=
- =?us-ascii?Q?mGnJXWyNWii7jBMKJVFUNZn25S+E+YW08cbZMCKEiqU+EXf//zTzmD3lH0Yp?=
- =?us-ascii?Q?A8wKo+sdeyLINJPWNi1BKX+x7fh5I2JcPvLobhzKnl+nPYedOvUfpbyaaeLY?=
- =?us-ascii?Q?px7TNeikbsirOQfjuDaO/CVEunWgRRemHdaqxVkogQeVSo15NCJ7XHtdNKXw?=
- =?us-ascii?Q?0akVLNYu27GQca4HMR5U5k6FH9mXkkgIG3R+S53xyk2vY6Y0yAhF4SUykJPL?=
- =?us-ascii?Q?GgG7YvUJT5qOUS42U9f/S6PljCc8MdU6K/7b27iAX0Fp0O1NysJNSgBRDjzq?=
- =?us-ascii?Q?16LcQGHU2kq3RROS9EqmKTKEZTPcqFbTOnFLduAVVFtemEhaqsK0RHhLFD8y?=
- =?us-ascii?Q?CeGSl1xsP1k0kAqP1+J7XwVgZxpE7OiTx15dAieegQzooaa4lBIiTFes2fVG?=
- =?us-ascii?Q?vexi9gt/ZUQbLFRdRM5+xrL/bWAzb9lkwH2ZkX1VLSUUa6uDjX7U2na4GXhd?=
- =?us-ascii?Q?F7zJcKR+bOb1aqQDO3zs+b6ppPjlvQLdSYiO6i+w8188t+ODDWMe8RJ+AMNA?=
- =?us-ascii?Q?mh/llMAg1iyoyTPUXRfoOPEf4ya+0fb9qmvHDr/O6mdJWTvj3IybuYwTh7BA?=
- =?us-ascii?Q?ZzNdHo+C8TwA0r453ldYqfKpo9/aTm8+bQkejb1qe0gKXA=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?pQzC8FkQ6RkKVxM2epc1IWecgnIchQtSJF5M7vriBJObM1D8PcLyTEL4ilG7?=
- =?us-ascii?Q?n0sXExyLown9vXR6oCadfLC5w2x9jjFI2LrxvCr2HzNrOqjybjLktAgalLkg?=
- =?us-ascii?Q?qX1Yw7ZP/OWCjyUxgHkYeQACjhGoMCaA1A8pIGw8CUeYeFQuDTtz9gSI/jYh?=
- =?us-ascii?Q?1WZ+q3dJQpOMsQCWff2ljtoCekFbDr57c9xL8z+cO8cBgeyEvAQnVT5n0pAL?=
- =?us-ascii?Q?oE10B/FcDqN8bk6hMlLmoDVajHtzYnsGCBylZEjMOr0ReAney9L0bVkxLb52?=
- =?us-ascii?Q?m7q0QMUV1J7QIhgIciuBzQn2a8vrEOyhK6Jg4x4FWyVXJhdUtt4ua1GaOYtC?=
- =?us-ascii?Q?phU51JJBG6VF1pur3K9cG7qDtkUqMkRW2/9ez05hmFaD+Kod3VbruZVJZKHV?=
- =?us-ascii?Q?A7Xiz7+YdMIWAnNk0/yRWyr8gmkTWJ5UEaTRAcBFllhmjLXCrVMaLK3mm84y?=
- =?us-ascii?Q?c43iByoskW3cslFJttSdQGtEsWD/6Mrk1/mvzA88yAODG+UqDr+CFIi17IzV?=
- =?us-ascii?Q?/rfxum62OXvbTsgiDqwiA4bjnLxItn5gE515vjrx/kDKeGdspi5De7VFnU/a?=
- =?us-ascii?Q?6rpuBwmeex1XxFMqmt0C3f0WrMKzx9CwyQVsWxWcw4memTj2ZPECfxVibN0U?=
- =?us-ascii?Q?cgu8mksTCqhWImpQFRSwsncjCtS85SUcyySbUU6H9hAc71DInFAEReCT5oq3?=
- =?us-ascii?Q?1FwRQTOFeEwdwYexuE9e+JaY1zLYn1OoEP9nWBXHkjXa07PtESpsqd7SCSGu?=
- =?us-ascii?Q?hggI7Y9fPUSrrpK3JhIlJq1Dm/eMZa3OPgEB2emXJ3rf1Xzdp2Z6I+Us6bx9?=
- =?us-ascii?Q?fdOQTPUitiT4ezGIhFDS2kGxMepNMc9ncf30f0OK66E+psG30EWjP0qavitP?=
- =?us-ascii?Q?nkIhWUR3Inqt7/RkBV98DrPOELTjSJwPHUiL8to8Nzo7iREGRoAvaZSsMCtq?=
- =?us-ascii?Q?Lj1fvKkwpaSmGOwEMCu59cfHyfgisaZdKoxg4B0gd73UENpMrHVgn89xAp/B?=
- =?us-ascii?Q?b0/2zPoHP9Qgcf8RlxRRiueb5REMpmx7FerfGPfFYbdZzAD8ijtJSflfpUds?=
- =?us-ascii?Q?IR4k6LVIst7/YRKt8lAO5zPJSM8AOvByZO4Eq4eXFAzKu/Pf6PKEr9SqeNB0?=
- =?us-ascii?Q?W4zdbPxTvTlAdO5ScakSiRvpsPfcPrr/cJaFazhRWXguNGdE+BEJ7VmSTgtU?=
- =?us-ascii?Q?SQi2XaBpxMHtDpJmKrAASM5wJKCUoFOp9S3Ujov8thLyLhXJ6j+duTcXZVQJ?=
- =?us-ascii?Q?/5Vc/Vo6eisvbr2ThPTmtTPI6LYCZ5y5xPyY7CRtZ2vsY8WrmoDp2eWXOKEL?=
- =?us-ascii?Q?Wx/62jkTnEKk/t2BKGtaU+mEEptMQoDg5jN42jr0oNc5xER/OJoHJmGDw+YU?=
- =?us-ascii?Q?N7ISOhTenPFSGbaklgPN5+ZySnvkg00WtnylQOaefYLf5a5CdbGERZUnOC4n?=
- =?us-ascii?Q?ySoCr6mQqiimWM9Fq65dEhbTWcLjfhpgKil1V/GaBeSQBmtyufM4pb25bTGK?=
- =?us-ascii?Q?7UZvsD5Q4Nnsey+B6vdczsMaoWZkEMWaxxuwal0i46BDqOr8nAfC+KMoNdLY?=
- =?us-ascii?Q?OO0LMfEfIX0OkjqUah1q5vNpn8QgX40nBO7PrgZ3MGAqymkq/7hpPDZaWkpR?=
- =?us-ascii?Q?Kw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	S7xNTXxx3TgZbCcrzO2/qSx9auZ/+KisdeOpCMyox1OKd1T+pMTn2CYogVjp8YIqlpledLFKwzKhw4upRtcdlpa8GiXeV0nFEYTBfIUWnlGkO3v8m68CKV2GGmKekWC3zSbmbKFAWMPBiLJDWNBkDUhufgf1n/+Q+GnzNQ805NDK5odfFYXMDO3+rhvI3CZADr6I94rIBtUcBGMqQ55HqfvXR3ksPDacRPWiD44mIn79HzNyO256PA1uPNSVNYbnz/QNJu+e3dJ9IoewTX2gfEb/Bqpxt+2PFCDIO4o1mvBK+v4Jec2RJximM0EMbv+dxlGdyLez2FWsycQfgCaYa7+kqSoDh6p3gR4egrw8anIMEo+RVr+KM/PbrF+Wj03VhetkcpHQtgU/9eXdZtv6TxzK4na1bRrimaGE7aB9QZrNrqWS1eAhjvmuAwPP/vCvUKmE6c4PvScboUGbalv5VwRiE7H5TrKuaMx1G8sPKZrGLWGYfcAdoo2YE5EcNKH4fm0q73mvTYoMPsK8vROxoKZPOmloWOB2TGGLGgq+cPmkaq/GrbW5l8mYHhCQACX8a5wwsdoCopqNwa7C8PWXHo5bKvrztsO+tkjD60tUTLk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5bbda5d7-48e5-4fb2-0805-08dc9c9db84e
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 02:53:59.6503
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uWBHjAE3/wuQRXBH0XAUMuVNKAibzzTnJqq2q22Loxe39UbbQsuS4WCBuZItojkubAq3D0jGnslPx82SQqbpBDetdjXGjqY3pRHLYuR0LpI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8106
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-04_21,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=693 phishscore=0
- spamscore=0 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2406180000 definitions=main-2407050020
-X-Proofpoint-GUID: mdBOQPbyOLL9Ii6Z-m-62uJzgExZMbm7
-X-Proofpoint-ORIG-GUID: mdBOQPbyOLL9Ii6Z-m-62uJzgExZMbm7
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/6] mm: shmem: add mTHP support for anonymous shmem
+To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
+ ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+ <65796c1e72e51e15f3410195b5c2d5b6c160d411.1718090413.git.baolin.wang@linux.alibaba.com>
+ <65c37315-2741-481f-b433-cec35ef1af35@arm.com>
+ <475332ea-a80b-421c-855e-a663d1d5bfc7@linux.alibaba.com>
+ <b33b94bb-38c7-4b54-bdd3-51dec0535438@arm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <b33b94bb-38c7-4b54-bdd3-51dec0535438@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-TJ,
 
-> These are 2 small patches to prevent a kernel crash and change some
-> logs' levels. V1 consisted of 3 patches. One patch is being dropped so
-> it can be reworked and sent separately.
+On 2024/7/4 21:58, Ryan Roberts wrote:
+> On 04/07/2024 12:15, Baolin Wang wrote:
+>>
+>>
+>> On 2024/7/4 01:25, Ryan Roberts wrote:
+>>> On 11/06/2024 11:11, Baolin Wang wrote:
+>>>> Commit 19eaf44954df adds multi-size THP (mTHP) for anonymous pages, that
+>>>> can allow THP to be configured through the sysfs interface located at
+>>>> '/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/enabled'.
+>>>>
+>>>> However, the anonymous shmem will ignore the anonymous mTHP rule
+>>>> configured through the sysfs interface, and can only use the PMD-mapped
+>>>> THP, that is not reasonable. Users expect to apply the mTHP rule for
+>>>> all anonymous pages, including the anonymous shmem, in order to enjoy
+>>>> the benefits of mTHP. For example, lower latency than PMD-mapped THP,
+>>>> smaller memory bloat than PMD-mapped THP, contiguous PTEs on ARM architecture
+>>>> to reduce TLB miss etc. In addition, the mTHP interfaces can be extended
+>>>> to support all shmem/tmpfs scenarios in the future, especially for the
+>>>> shmem mmap() case.
+>>>>
+>>>> The primary strategy is similar to supporting anonymous mTHP. Introduce
+>>>> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
+>>>> which can have almost the same values as the top-level
+>>>> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
+>>>> additional "inherit" option and dropping the testing options 'force' and
+>>>> 'deny'. By default all sizes will be set to "never" except PMD size,
+>>>> which is set to "inherit". This ensures backward compatibility with the
+>>>> anonymous shmem enabled of the top level, meanwhile also allows independent
+>>>> control of anonymous shmem enabled for each mTHP.
+>>>>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>
+>>> [...]
+>>>
+>>> Hi Baolin,
+>>>
+>>> I'm currently trying to fix a bug where khugepaged is not started if only shmem
+>>> is enabled for THP. See discussion at [1]. It's been broken like this forever.
+>>>
+>>> Assuming anon and shmem THP are initially both disabled:
+>>>
+>>> # echo never > /sys/kernel/mm/transparent_hugepage/shmem_enabled
+>>> # echo never > /sys/kernel/mm/transparent_hugepage/enabled
+>>> <khugepaged is stopped here>
+>>>
+>>> Then shemem THP is enabled:
+>>>
+>>> # echo always > /sys/kernel/mm/transparent_hugepage/shmem_enabled
+>>> <khugepaged is not started, this is a bug>
+>>
+>> Thanks Ryan. Yes, this is a real problem.
+>>
+>>> As part of investigating the fix, I stumbled upon this patch, which I remember
+>>> reviewing an early version of but I've been out for a while and missed the
+>>> latter versions. See below for comments and questions; the answers to which will
+>>> help me figure out how to fix the above...
+>>>
+>>> [1]
+>>> https://lore.kernel.org/linux-mm/20240702144617.2291480-1-ryan.roberts@arm.com/
+>>>
+>>>
+>>>>    +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>> +static unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>>>> +                struct vm_area_struct *vma, pgoff_t index,
+>>>> +                bool global_huge)
+>>>> +{
+>>>> +    unsigned long mask = READ_ONCE(huge_shmem_orders_always);
+>>>> +    unsigned long within_size_orders =
+>>>> READ_ONCE(huge_shmem_orders_within_size);
+>>>> +    unsigned long vm_flags = vma->vm_flags;
+>>>> +    /*
+>>>> +     * Check all the (large) orders below HPAGE_PMD_ORDER + 1 that
+>>>> +     * are enabled for this vma.
+>>>> +     */
+>>>> +    unsigned long orders = BIT(PMD_ORDER + 1) - 1;
+>>>> +    loff_t i_size;
+>>>> +    int order;
+>>>> +
+>>>> +    if ((vm_flags & VM_NOHUGEPAGE) ||
+>>>> +        test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+>>>> +        return 0;
+>>>> +
+>>>> +    /* If the hardware/firmware marked hugepage support disabled. */
+>>>> +    if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED))
+>>>> +        return 0;
+>>>> +
+>>>> +    /*
+>>>> +     * Following the 'deny' semantics of the top level, force the huge
+>>>> +     * option off from all mounts.
+>>>> +     */
+>>>> +    if (shmem_huge == SHMEM_HUGE_DENY)
+>>>> +        return 0;
+>>>
+>>> I don't quite get this, I don't think its the desirable behaviour. This is
+>>> saying that if the top-level shemem_enabled control is set to 'deny', then all
+>>> mTHP sizes, regardless of their control's setting are disabled?
+>>>
+>>> The anon controls don't work like that; you can set the top-level control to
+>>> anything you like, but its only consumed if the per-size controls are
+>>> inheriting it.
+>>
+>> IMO, 'deny' option is not similar like 'never' option.
+>>
+>>>
+>>> So for the deny case, wouldn't it be better to allow that as an option on all
+>>> the per-size controls (and implicitly let it be inherrited from the top-level)?
+>>
+>>  From 'deny' option's semantics:
+>> "disables huge on shm_mnt and all mounts, for emergency use;"
+> 
+> Right. Today, tmpfs only supports PMD-sized THP. So for all per-size controls
+> except the PMD-size control, 'deny' and 'never' would be the same practically
+> speaking. For the PMD-size control, 'deny' would disable THP for both anon shmem
+> and all tmpfs mounts, whereas 'never' would only disable THP for anon shmem.
+> When tmpfs gains mTHP support, 'deny' in the other per-size controls would also
+> disable that size for the tmpfs mounts.
 
-Applied to 6.11/scsi-staging, thanks!
+Not really. We will not add 'deny' and 'force' testing option for each 
+per-size mTHP control as suggested by Hugh in the previous MM meeting[1].
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+[1] 
+https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/T/#u
+
+> I disagree with the current implementation where setting it up so that a
+> top-level 'deny' overrides whatever is in the per-size controls simply because
+> it's different to the model implemented for anon THP. That's my 2 cents. If
+> nobody else agrees then that ok - I'll fix the above bug according to the
+> current model.
+
+I remember we have customers who use the 'deny' option to forcibly turn 
+off the huge page option for all mounts (including shm_mnt). But if 
+shmem/tmpfs uses mTHP and users set 'deny', they cannot force all huge 
+orders off and they must also do 'echo never > 
+/sys/kernel/mm/transparent_hugepage/hugepages-XXXkB/shmem_enabled' to 
+disable all huge orders option, which breaks the previous user habits, IMHO.
+
+In additon, I do not think this creates a difference with the anon mTHP 
+model, as anon mTHP does not have these shmem special 'deny' and 'force' 
+options for testing purposes. In my view, the current 'deny' option 
+fulfills the semantic definition of 'For use in emergencies, to force 
+the *huge* option off from all mounts'.
+>> It is usually used for testing to shut down all huge pages from the old ages.
+>> Moreover, mTHP interfaces will be used as a huge order filter to support tmpfs,
+>> so I think it will make life easier to disable all huge orders for testing or
+>> emergency use, as well as to maintain the original semantics.>
+>>>> +
+>>>> +    /*
+>>>> +     * Only allow inherit orders if the top-level value is 'force', which
+>>>> +     * means non-PMD sized THP can not override 'huge' mount option now.
+>>>> +     */
+>>>> +    if (shmem_huge == SHMEM_HUGE_FORCE)
+>>>> +        return READ_ONCE(huge_shmem_orders_inherit);
+>>>
+>>> I vaguely recall that we originally discussed that trying to set 'force' on the
+>>> top level control while any per-size controls were set to 'inherit' would be an
+>>> error, and trying to set 'force' on any per-size control except the PMD-size
+>>> would be an error?
+>>
+>> Right.
+>>
+>>> I don't really understand this logic. Shouldn't we just be looking at the
+>>> per-size control settings (or the top-level control as a proxy for every
+>>> per-size control that has 'inherit' set)?
+>>
+>> ‘force’ will apply the huge orders for anon shmem and tmpfs, so now we only
+>> allow pmd-mapped THP to be forced. We should not look at per-size control
+>> settings for tmpfs now (mTHP for tmpfs will be discussed in future).
+> 
+> But why not just maintain per-size controls and refactor tmpfs to just look at
+> the PMD-size THP control for now. It can ignore the other sizes. That's much
+> simpler and cleaner IMHO.
+
+As I said above, 'force' and 'deny' option will not be added for 
+per-size controls.
 
