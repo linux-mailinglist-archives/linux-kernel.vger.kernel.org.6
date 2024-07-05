@@ -1,155 +1,144 @@
-Return-Path: <linux-kernel+bounces-242412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008249287B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:19:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8B09287B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1161F217C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66DF9282500
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F7C1494A8;
-	Fri,  5 Jul 2024 11:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BE61494C2;
+	Fri,  5 Jul 2024 11:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xjbh6szX"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="en8u6fjI"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1A21482F2
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87260147C9B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720178369; cv=none; b=ciJDZhs9pdk2jUK++roIwYuxONGKbdYR/q+5ApLA0OvLirKokuIGdAuw/S3guCmTzJ5JBzGQhynucPo2LavoMbopGmWhH98NjRxQ4uWX4L+JjPwM8qQtBvmu9WUEnv6TxmMUYfbIM/SrJbcBuKGEhDyMAE9dU8s3J9jfXX5XuWg=
+	t=1720178396; cv=none; b=Rz/b4/7T//NYu2BvzevRK/ycAle8HU+bpHL69PPFUyZiiQFTES2iRgWiitR8A/hJhNV+zghFm8XdurhwU7l+jfkOYAdm0TXoBakCCJ/plms0LeavHOAWbJmEc6V1efOkl0HKG9KwH+4mmyJ6XtHcMQ4UpXUp3FV2ufFe6kwoxao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720178369; c=relaxed/simple;
-	bh=sHk7T/cpGTeagAnGnHNdbkgqMl1ekUfrbhJPQkwsvVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oBn+lEkVFUDOxB8ZJZPpL4tOg5t4n+0zC6b2G63QlElLMRmskvcIeTf6ys5dFk+6scQWQcbAQT/Is2jd31zP9pDFrmLzCgjjjH2ZJ/vgq2OrHaZ1uEJPB79tbTjdfuFuu4dNOkQL3iwGERZzZa0uJhzhRj7jwq0/v0sZ9FpsKHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xjbh6szX; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57cc30eaf0aso1010666a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 04:19:27 -0700 (PDT)
+	s=arc-20240116; t=1720178396; c=relaxed/simple;
+	bh=Z9mXRU/ZC358TSn9Mju3iFWA7QFL/Zj5dSI3IHvRpN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CEDsYt68h9Mjn62aIOWuAbKX/1VYRWnI+x7SC6dw9uuIRdtvIXgRNPPkBwPJL2/oOwAC19I/XbnjJOtcYAe37mL1EEyDsxgsQVzjgVUZABynZGxJYZQQnL5SUK+O/blRnSoozmiSQ4EE9JGoTzOMDT03l4kU48G9mnqtYlHKfLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=en8u6fjI; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4212b102935so1627115e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 04:19:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720178366; x=1720783166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5CZbNI7VdWEztIyeBdO2rOowUpdrgoXYkMXWl+mjWHU=;
-        b=Xjbh6szXDnsky6DQTjaNyIO9ZK835J2MXfiTCYR5TsQzPqUN0d4YotS8S5uVn2WqTq
-         C9oMXQgCWoDnPL5Bdst6B6iBRUslMfPiFiQK/3JuUTklDhcP6X5iGprIY10OUsYJdIig
-         PcKvnOEmtV2/mZpeMIQl04Affr7Ow1sG5jw8nSAOMkhbhQDcvDvI33Rqps2GxGNV8oN5
-         7wz/bapLZe+Vyu6K3Em3+Rdsmh71zQtiI+hj4D34S+ZP/moT2UYipZCOywnjK2lPwvLc
-         dz4t5n45i4uqbdjMywbPUtdJIoB9afHRMa4kP+22ZaTRjOV8bfvBu1HWE1VGqC6PiMQ+
-         xfuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720178366; x=1720783166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=ffwll.ch; s=google; t=1720178393; x=1720783193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5CZbNI7VdWEztIyeBdO2rOowUpdrgoXYkMXWl+mjWHU=;
-        b=FjJD4jzEfEfxeStiAwdO4yevV+iF8UOvhprg1RIzNxUGdZyCzXT4oXDdCVn8cvlWUv
-         Y4+c4QW3gLGJvVf6LSVqR5WIB++pD/o10Im6zbeCdTcKyfXhjloon0CXpFFkIX0EdgTU
-         lYJLn4xrCKyCUJgYAHhJZvPLpcQGUSLe4VR2Dfu87UyeizdSy2nmVTeArGnb1p3F3d9w
-         ncuwYAxCl3zD01JF3SFh9Tj71BfqdeVVqiIPt/UzRPSG39p45QWbgWFxXUy4h1v3iNfM
-         PYnCQWSe+1OeMzjTb/8ip1YOEIJcrB4mwvO/EL+g8HCdWnv+8yK/UarvXbj1GFf4p2Ru
-         YQRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlAZu+FiuSIY9BeuVSWvoyvlR517bpcEJ8brBmODuPitqGCTHtmCdIobln6xzcOkcovRwetnE5FTCHxu7rOYKhkadMB4cDo0rBd1mK
-X-Gm-Message-State: AOJu0Yx53At7kEstwoUzFs/hZk38MW4hMvOkw9dmcZztvnEau1qiEwhH
-	DziLj1TIjIdHjU5RpMax2uOvm3SKpAHFXLgIdf977fp6xoZFpbutxTEvbY6Ojmll2XWuO6DGVn/
-	/d63YU1BYJpCMRpH+EAe+1iOranxny2pW4BCOwA==
-X-Google-Smtp-Source: AGHT+IFuQBhaGGxL/7iPZB5mR3yB+SEInlItazwA2fUnSsOJoCQYdPSoBCpVWEN8lB9iEBUd6vWHIY/YD6fRusQ2vbE=
-X-Received: by 2002:a05:6402:4408:b0:57c:671d:8455 with SMTP id
- 4fb4d7f45d1cf-58e59f27147mr3947638a12.14.1720178366341; Fri, 05 Jul 2024
- 04:19:26 -0700 (PDT)
+        bh=mRlQ8AlnLhBKW/e+W7V++lZYUKpnkva2hJ++8rdmz4E=;
+        b=en8u6fjIFJTo4bOmYr3ZaEkwgVpKBemRt941L0eqUwtVGxfQVRpIkVswDOHf/jBH6+
+         yIgpzS6TtuzpltgWe1oLAUbAzoo66tGnaM1Xdp6ctE8vhvDRHWIHyoe1JyLtdGMO08EF
+         +GAtYpyOgp438Mx3e8jGgSubvjpPX/BTRu8kY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720178393; x=1720783193;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mRlQ8AlnLhBKW/e+W7V++lZYUKpnkva2hJ++8rdmz4E=;
+        b=TxaRzOrwNtNW4392eKKI3tb7KkKVXKP1R/KmZ/mh0Mexm4ZUMY/mS98WV+yFj+bN6c
+         0jLavsajYRCEr/+sCljt2UDaHyp4Vxx+GBtl8i6hWXo3jcCwjmXa8FXN3tSH19QlC7+W
+         jYdALRGFshcv0w23G1HcyD3v4D7GSf8cLefTJ4G3K7nUmk/8JaZP8aNaDiNkx05c2Gao
+         Q5ZDLLGpy/vHXmbKrnE4KeOUvoOVjZYGHyTwWyuIi+sdHeZuiunijUZYMbkKNIhf7hCg
+         mIOzl9Lpc5xgvWHXEs9vVUn2wuTBeDlG10q85RZuBjt9DVN0u5JcSmEIDTIggngzgiQ0
+         F4YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrffVWXqNyFLs3FmxMOpvkwV8ngFaFsw0W7SadpY/6YhRQA4T3xJAEhAJU3MNvQ3Bs/Zh2PIRDiZkHFoFWvK1InDMD1pisERlBGiU1
+X-Gm-Message-State: AOJu0Yxu9Ku0YWm+d8UX5wZmpqgJMn1CnDtf9LKtQzFNim7HGQuHkI+z
+	awbcSYg7EYg/nKKWrTi0EFMV+2dLneokoCQxaJdYLsvcqYzMj76ethvzrgsGjN0=
+X-Google-Smtp-Source: AGHT+IECr35g0yFQB00KYk1wD2jMjl5S+5iSXH9l6xSpc5QI9GNI/J64xxachpK9QXdoYxj2ZKUHZQ==
+X-Received: by 2002:a5d:6d8f:0:b0:366:ea51:be79 with SMTP id ffacd0b85a97d-3679dd73cfamr3178927f8f.6.1720178392888;
+        Fri, 05 Jul 2024 04:19:52 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367947ddebfsm6221414f8f.34.2024.07.05.04.19.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 04:19:52 -0700 (PDT)
+Date: Fri, 5 Jul 2024 13:19:50 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alain Volmat <alain.volmat@foss.st.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: drm/sti: mark it as Odd Fixes
+Message-ID: <ZofW1v4uEFo9GscF@phenom.ffwll.local>
+Mail-Followup-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240705100356.16760-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704012905.42971-1-ioworker0@gmail.com> <20240704012905.42971-2-ioworker0@gmail.com>
- <677fc803-0bb9-48dc-a1ff-3ca1fb0dea15@redhat.com> <CAGsJ_4xX1cqKHU0eEsT=k0YDYKPs2m82bCkggdJyA1iwG4vXrg@mail.gmail.com>
- <3aef2bc6-c889-4a9a-b35d-f10ca8a5796a@redhat.com> <CAK1f24=M0i_Wisf9NHGcyo4wJ90a5QYefm=+rck5XAXMg1QNJQ@mail.gmail.com>
- <c9c98cbf-711c-4755-ae99-fb13aeb51381@redhat.com>
-In-Reply-To: <c9c98cbf-711c-4755-ae99-fb13aeb51381@redhat.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Fri, 5 Jul 2024 19:19:15 +0800
-Message-ID: <CAK1f24=wK9Gpt71NtVCyM1RRQF0MDmhm4MViVj_gPx_+ywks7w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] mm: add per-order mTHP split counters
-To: David Hildenbrand <david@redhat.com>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, dj456119@gmail.com, 
-	ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com, 
-	libang.li@antgroup.com, baolin.wang@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Mingzhe Yang <mingzhe.yang@ly.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705100356.16760-1-krzysztof.kozlowski@linaro.org>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On Fri, Jul 5, 2024 at 6:56=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 05.07.24 12:48, Lance Yang wrote:
-> > Hi David and Barry,
-> >
-> > Thanks a lot for paying attention!
-> >
-> > On Fri, Jul 5, 2024 at 6:14=E2=80=AFPM David Hildenbrand <david@redhat.=
-com> wrote:
-> >>
-> >> On 05.07.24 12:12, Barry Song wrote:
-> >>> On Fri, Jul 5, 2024 at 9:08=E2=80=AFPM David Hildenbrand <david@redha=
-t.com> wrote:
-> >>>>
-> >>>>> @@ -3253,8 +3259,9 @@ int split_huge_page_to_list_to_order(struct p=
-age *page, struct list_head *list,
-> >>>>>                 i_mmap_unlock_read(mapping);
-> >>>>>     out:
-> >>>>>         xas_destroy(&xas);
-> >>>>> -     if (is_thp)
-> >>>>> +     if (order >=3D HPAGE_PMD_ORDER)
-> >>>>
-> >>>> We likely should be using "=3D=3D HPAGE_PMD_ORDER" here, to be safe =
-for the
-> >>>> future.
-> >>>
-> >>> I feel this might need to be separate since all other places are usin=
-g
-> >>> folio_test_pmd_mappable() ?
-> >>
-> >> Likely, but as you are moving away from this ... this counter here doe=
-s
-> >> and will always only care about HPAGE_PMD_ORDER.
-> >
-> > I appreciate the different opinions on whether we should use
-> > ">=3D HPAGE_PMD_ORDER" or "=3D=3D" for this check.
-> >
-> > In this context, let's leave it as is and stay consistent with
-> > folio_test_pmd_mappable() by using ">=3D HPAGE_PMD_ORDER",
-> > what do you think?
->
-> I don't think it's a good idea to add more wrong code that is even
-> harder to grep (folio_test_pmd_mappable would give you candidates that
-> might need attention). But I don't care too much. Maybe someone here can
-> volunteer to clean up these instances to make sure we check PMD-size and
-> not PMD-mappable for these counters that are for PMD-sized folios only,
-> even in the future with larger folios?
+On Fri, Jul 05, 2024 at 12:03:56PM +0200, Krzysztof Kozlowski wrote:
+> Patches to STI DRM are not being picked up, so even though there is
+> maintainer activity, it seems that these drivers are not being actively
+> looked at.  Reflect this in maintainer status.
 
-Thanks for clarifying! Yes, agreed. We should ensure we check PMD-size,
-not PMD-mappable here, especially as we consider large folios in the future=
-.
+Note that since the driver is in drm-misc, other committers can also pick
+up patches and push them. Both Neil and Dimtry have commit rights and
+should be able to pick up your patches for you, if they get stuck.
+-Sima
 
-So, let's use "=3D=3D HPAGE_PMD_ORDER" here ;)
+> 
+> Link: https://lore.kernel.org/all/77b4e4ad-2b1e-4b6d-bc3b-0c7b339bc295@linaro.org/
+> Link: https://lore.kernel.org/all/f207b481-f530-4f54-a482-218908869050@linaro.org/
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c8e16a649a0e..f284cb8db544 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7595,7 +7595,7 @@ F:	drivers/gpu/drm/rockchip/
+>  DRM DRIVERS FOR STI
+>  M:	Alain Volmat <alain.volmat@foss.st.com>
+>  L:	dri-devel@lists.freedesktop.org
+> -S:	Maintained
+> +S:	Odd Fixes
+>  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>  F:	Documentation/devicetree/bindings/display/st,stih4xx.txt
+>  F:	drivers/gpu/drm/sti
+> -- 
+> 2.43.0
+> 
 
-Thanks,
-Lance
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
