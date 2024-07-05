@@ -1,126 +1,175 @@
-Return-Path: <linux-kernel+bounces-242363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159FD92871D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F37928725
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 12:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDD981F2221F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E83F1F22AD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937B5148823;
-	Fri,  5 Jul 2024 10:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE19148844;
+	Fri,  5 Jul 2024 10:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTiCzEkf"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+BJXgsR"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59213131736
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 10:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4C7147C9A;
+	Fri,  5 Jul 2024 10:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720176753; cv=none; b=mM9ou4moRDccHFLFMKtaAWIBUwMfEfAd4e4Sb/K53B75di1cxNw/CupA4qTDRvmzLxhBfFZPOTrjgDpurotNxslBsx7Dcy8bCf72isN0/W2vuuintu5SAi7bZnh713FNt1wwXjiB9K14Aq+22DrDsbEHcRI7JrFPb72rG7ARVls=
+	t=1720176827; cv=none; b=XfY6GtL1cffLU5xaAljVZ1YDqPhHQ/pvOLVhJEN7PT7FM32AP3tPaXuisiMA6iFOxng6OdZzhCHBAmBbkT/VY9/1F7EGS2i786w6q402t23F9S3tLG/aZRScsKXpX0WbLzyrPDOQTwY4TYA56W4r9LcLfsVrS4yKB711p98M0IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720176753; c=relaxed/simple;
-	bh=QGBRDjKMNtYW16xiDTuPGbfVeQ8d/jHQ8QxJN+a3RL0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pek/uGvjqVRcS0JFyDfF4g56F4gKmml3PUJC31H8D+I1LxzSCwyl8ec9307qIseZ8Ex/6RGOC31exStOq2J0JVVO4qI4mHeghGhRa8JW3oHyU+1FM157qS1/6PkaQTOsY5Jw6FvgKkcWPNJBL0tHhMZziM4Y3uaAcFZbJLy9FKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTiCzEkf; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1720176827; c=relaxed/simple;
+	bh=qKkyA/OEiarq3Cu5dnyZolNDKQ7uDzU+/xEe4OWVAHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iqWsRrg2Dsi9E0xuDIACFY/CAubVGBCvAsXMfBdpn31Yx52LoFjktGF5pIoKAcsAeb2JBji3KT/BrqAofW2vyVFJS3adzOd3RN4HaDOTlbvwr3SVt+Q1F4/wwJo7Pi35Haq1G3zjpod/msw42tIMFVTf505nbYCsXGR2O5Wr9J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+BJXgsR; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso2000083a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 03:52:32 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebe785b234so15885621fa.1;
+        Fri, 05 Jul 2024 03:53:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720176751; x=1720781551; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qUMoAQufaagpNr6tV8PaGVo5aWiUuvCiezV1z2Z0uUs=;
-        b=CTiCzEkfvlAjaN1GRI0f0Gj6GElXlcNzk7p4388crkiPMiMRb5zDGDrGstxt5XTRKJ
-         lhmlMWaJalvV4Ee7bgyBhDgGjCX6+zYBojEBUgbj+GCd/ySfT6BdbZxjr1QrQTnI9907
-         wsytF1L7EUl6juX+wFf6UWvSxST1UetR+TswARJUl0UNdCLtw/StDSFscTmaW6NVwvlJ
-         naE1CpxyyVPqt1fOOUDWoq+Bxz5hsfzkR6RuKimI1SsvAtqCiqF34BTiGLwvBZi84/yh
-         gHA7uYKJo4G+Vs1iSxKwMxpZLnVCgqRwbfGCNIyndV0/8Pdt5GunFe7WAcYN/Q9CmFQd
-         Ishg==
+        d=gmail.com; s=20230601; t=1720176824; x=1720781624; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QRAjEbKy41y922PAz0ZWcE1W0/5JX1SMyg6UmO5aenw=;
+        b=k+BJXgsRs0hqzwiJ47vHJPWqGlLdZznGrYRVVtxiJe4VK44C2FCXY+ySAiPAZB6HUq
+         uhwz0+SmWZNfW/RwsP/k28MpJJ/sUPOUPsqHt6I/VKefTefWmLNIupyylTLJzLMv5ax9
+         sGhliCtNC55RWgTwvGtEBBuOWRUyqbY0u25uSQkrutDJqiUMTpgLt+21eil0Gq7LgSWr
+         uATSvP8xVlkBxDzkGyG6RfMxoBA1eq1LkWNzc+ZCVhq4YLHQM70PN+/oPm+S2zMFhZKk
+         MWYhvu7F6+1lqoeBPH07VF7YAExTeL+FZI6znXusrn1iZDZEsu8btKhUN8CmuUGKL7R2
+         pdLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720176751; x=1720781551;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qUMoAQufaagpNr6tV8PaGVo5aWiUuvCiezV1z2Z0uUs=;
-        b=Sbvsf5t4AshpIPVSpsImlX3W6nO1CS2zytNldFS88LTRoLxRswpa2NDZ6y3NixWChl
-         p10UtoslRSu8xKA1jmbSprbNDOpJhx+40xstHtw7ucVclEh19Bo+0SWkpt3PQn7jxk4p
-         hpv6aWipNBSrl5F1ZeOQnwPgzflqBgBafoYMuAXF4rCI/eL+QnxZytRReUX0wrciS0ga
-         NAdWG+/nUpOsbRHYkmEaK/HCUyZsUrLf6dMneHK+c/XB4x4s/ePqz7YBqiI8LNV7vr1/
-         ky9WKQZy7gpcEGbMy68DAezYc2E9Fl6dEiC3P5a/QDAqoj1bXNyW5v5Gk68+1XWu31iM
-         TWpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXj3Doi0SvZPhYypEGnuY/UZrP1+VRrS6uw8fwZBWWJQ5zm0L0GIMsdQdgz9+gBx+2O6Y5Et80m1sEOhdsDT4BynTc36TL8JVWaoc7j
-X-Gm-Message-State: AOJu0Yz2+Q+iGRbMwcfPBlrt7k7iMDAk6iw02GqtX3rXVpP8jtCmoRyY
-	D/m1Ym0oyXpBVHDmVTjyEAL3dxIDnN4J3hgvo3ARRtdlPQeH+Mj2
-X-Google-Smtp-Source: AGHT+IGz6P3IZ+lNYkgQEuRvSKBL2zU7f1M3XQaaJLj384xS+BDm6WQRyO/zk84MF+4SGrNS6bpf9g==
-X-Received: by 2002:a05:6402:2792:b0:57c:ad11:e759 with SMTP id 4fb4d7f45d1cf-58e5c82651fmr3577891a12.28.1720176750597;
-        Fri, 05 Jul 2024 03:52:30 -0700 (PDT)
-Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58cd108c84bsm3388452a12.47.2024.07.05.03.52.29
+        d=1e100.net; s=20230601; t=1720176824; x=1720781624;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QRAjEbKy41y922PAz0ZWcE1W0/5JX1SMyg6UmO5aenw=;
+        b=PqFVEUUuNcYCIQ4G0/J6XJvMXXS5CrfaL+6A3Ysr9hhEoh8oWbmvBZbXZnPW/WNgE6
+         d8o2CQZtDWF3KjlwQVMBgnDw2qTLlvWE/rHY5xv36wjsMlaVazrd9sCXShvQ3FwlqFUc
+         2sdoG9HzmfhOGX7gIx33yxgx+1Ba4yAk3JpHwlhtVE3h6LR813Y5jl6pjZtLejdjhaxn
+         2z1iu4bHCs47PMEkx/8w04d9EF+eGw45onAgrxvz68FObJFlDUV4Te7OIl45MEozkYFl
+         9U6mW8XiQ6f4SRwYcMEfZq6w2j7ErGrV4+LyOuBBvN61VQER2g+ZRc+zGu7Qp+BgOCyU
+         ro7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUbdOW7KKN0YFJ4U1WPB1UdoyI+MVbfKg8tPSmTYdeGk1lHtiYVdVTcAahxh9WvOltHOpuUCIvfNqalmBpM67uDsLc5LsxQyUTkcH+A8fSsENX2tF+KFBT7wWm/9UGJoSiopH8P9qY3PIMfUxN6hEm2BCSqAojUztgCeUgZgq0/82esQ==
+X-Gm-Message-State: AOJu0Yx54EaKRYqkqqbg4X8xA87qza71VELzjrITMKptNvIK9SV7bCJz
+	RWDnKEl0V9JvFJhktL6wYfHs2tJmf6fJS4YrggFJJIHWykLVWYft
+X-Google-Smtp-Source: AGHT+IG5pFX0JIHydFbn7F5mxXoV40dw5fYJcQcTUdqsM7K2J71rrBdal1dyjN8jzCdEAeAaud77tg==
+X-Received: by 2002:a2e:7405:0:b0:2ec:18e5:e686 with SMTP id 38308e7fff4ca-2ee8edd3240mr27830661fa.33.1720176823243;
+        Fri, 05 Jul 2024 03:53:43 -0700 (PDT)
+Received: from fedora ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee855d0c99sm8161071fa.90.2024.07.05.03.53.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 03:52:29 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Fri, 05 Jul 2024 12:52:27 +0200
-Subject: [PATCH] soc: sunxi: sram: Constify struct regmap_config
+        Fri, 05 Jul 2024 03:53:42 -0700 (PDT)
+Date: Fri, 5 Jul 2024 13:53:35 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] ROHM BU27034NUC to ROHM BU27034ANUC
+Message-ID: <cover.1720176341.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240705-sunxi-sram-const-regmap_config-v1-1-1b997cd65d0f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGrQh2YC/x3NwQqDMAyA4VeRnBeIujLZq4whtY01B6skKoL47
- is7fpf/v8BYhQ3e1QXKh5gsuaB+VBAmnxOjxGJoqHnSixzank9BUz9jWLJtqJxmv/YFoySM5GI
- 9DOS6NkCJrMqjnP/B53vfP9onwXZwAAAA
-To: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720176749; l=962;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=QGBRDjKMNtYW16xiDTuPGbfVeQ8d/jHQ8QxJN+a3RL0=;
- b=r5tzq+6aAPquOFfO7J4X47CgE39TP7rvi6Y8WaiEAh+P4TeODlAZtxWdekKB0R/nk+cF8LLsL
- oWauLmKrxmtB5ukdVXaIJnRBpUQK/jhtBxcdBdXPcLoYNzsv3vRH0SO
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1ujrdyYBASYRGAsW"
+Content-Disposition: inline
 
-`sunxi_sram_regmap_config` is not modified and can be declared as const
-to move its data to a read-only section.
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/soc/sunxi/sunxi_sram.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--1ujrdyYBASYRGAsW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
-index 71cc377b5e24..2781a091a6a6 100644
---- a/drivers/soc/sunxi/sunxi_sram.c
-+++ b/drivers/soc/sunxi/sunxi_sram.c
-@@ -344,7 +344,7 @@ static void sunxi_sram_unlock(void *_lock)
- 	spin_unlock(lock);
- }
- 
--static struct regmap_config sunxi_sram_regmap_config = {
-+static const struct regmap_config sunxi_sram_regmap_config = {
- 	.reg_bits       = 32,
- 	.val_bits       = 32,
- 	.reg_stride     = 4,
+As discussed here:
+https://lore.kernel.org/all/ff8d6d14-6b48-4347-8525-e05eeb9721ff@gmail.com/
+
+The ROHM BU27034NUC was cancelled before it entered mass-production. A
+replacement was developed and named to BU27034ANUC. (Note the added
+'A' in the model name). The BU27034ANUC has several changes that make
+the old BU27034NUC driver unusable with it. I was told the old BU27034NUC
+should not be encountered anywhere.
+
+Hence, this series converts the rohm-bu27034.c to support the new
+BU27034ANUC instead of the obsoleted BU27034NUC. Additionally, the
+series adds a read-only entry for the HARDWAREGAIN to help understanding
+what part of the scale is contributed by the gain, and what by the
+integration time. This is useful when figuring out why some transitions
+=66rom one 'scale' to other are failing.
+
+Revision history:
+	v1 =3D> v2:
+		- Split the one large patch to patches 3 - 6 for easier
+		  review. (Please let me know if you wish me to squash
+		  them to one).
+		- Introduce new compatible for the BU27034ANUC and drop
+		  the old one.
+		- Add styling fixes as suggested by Jonathan
+		- Fix the lux calculation coefficient selection logic
+	link to v1:
+		https://lore.kernel.org/all/cover.1718013518.git.mazziesaccount@gmail.com/
 
 ---
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240705-sunxi-sram-const-regmap_config-d05d1bb0583c
 
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Matti Vaittinen (7):
+  dt-bindings: iio: BU27034 =3D> BU27034ANUC
+  dt-bindings: iio: rename bu27034 file
+  bu27034: ROHM BU27034NUC to BU27034ANUC
+  bu27034: ROHM BU27034NUC to BU27034ANUC drop data2
+  bu27034: ROHM BU27034ANUC correct gains and times
+  bu27034: ROHM BU27034ANUC correct lux calculation
+  iio: bu27034: Add a read only HWARDWAREGAIN
 
+ ...ohm,bu27034.yaml =3D> rohm,bu27034anuc.yaml} |  11 +-
+ drivers/iio/light/rohm-bu27034.c              | 343 +++++-------------
+ 2 files changed, 89 insertions(+), 265 deletions(-)
+ rename Documentation/devicetree/bindings/iio/light/{rohm,bu27034.yaml =3D>=
+ rohm,bu27034anuc.yaml} (66%)
+
+
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+--=20
+2.45.1
+
+
+--=20
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =3D]=20
+
+--1ujrdyYBASYRGAsW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmaH0KoACgkQeFA3/03a
+ocUnVQf/bvXCL868Vs3MaXAPXghCzM5LKfB8ZqJjbwtLrzJhnTDvB8b48dqDPdB9
+g8XvVwpTnPPEjER1KLgpSTuwARGsdhylm21VYBDY8+7qv4X0ftzyIJw8CUnrjTqM
+WwaUsK4LX/aLTvT9Dy7FNwpY2p9srtiVwFtUE0iG7VIAjLhQ1RW71ezrixHjCWlv
+8DSowKVepUQ7/M5zC1yDDuVeTsFkymnCtmGcxxL++TZ2vQzKkIO/35u2njCEI5aj
+pwydo546WvVkhK4tTIG9TcW9oxdCeEXFhZbkl7IvPH77CYkeYY/hFWt2dxclBe33
+QvZ8SIcv94hp6vKNxz5D0wcbwg+y3w==
+=2JSA
+-----END PGP SIGNATURE-----
+
+--1ujrdyYBASYRGAsW--
 
