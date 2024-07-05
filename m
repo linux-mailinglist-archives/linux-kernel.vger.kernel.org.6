@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-241863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C40F928068
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:26:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A274F92806A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5D31C22FD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:26:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D74328161F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDA8175AA;
-	Fri,  5 Jul 2024 02:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90CD17995;
+	Fri,  5 Jul 2024 02:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ILDKTncc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="an/64KTL"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756F01643D
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942A8219FC
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 02:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720146369; cv=none; b=hDU6QsVhBwVpRsQfoubiTl9ZzDUnKSA6grsQk/L2aWUzPnafnkLGgsXrDirm7I6D/AGgeQD2CeXMNbr620sQ+w9OXX+irwwCcVrS/vZ0D/5+SrPNOxh56JRS27bjiub73qtbQoJ5xw92gr/+l6dZ6W+IhFKQLcCjDHRKwzwTZg0=
+	t=1720146378; cv=none; b=kNtxwam9pJu34fhldnsSJ7amuaVWuifk8nyvKeyEpOMht788K72T9VZg0e5wH13GYED5y85GZJoCLwgjE236ynQSdiOotx2NnsW8JtR5xdHRyyjGmqnfLBr39vqmnjFiM/OiEvHp5Ll4bGI7dvQCCP2EGnd6UmzMPsCbPJ/7EEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720146369; c=relaxed/simple;
-	bh=rYJ++bZa0yA7ojMloercr3EzmWnX61lwyq1O/PwAfbg=;
+	s=arc-20240116; t=1720146378; c=relaxed/simple;
+	bh=VI6uYP43VrCE5BVgAqM1izsxwt2f74U2UGKYfXHejVo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EAAnCqpJkERjz3CEhggnPK6oyKms72sqm9sQU568XIT53fGAiufSL3Duzg/Gnd/L9AWb9GX7qrOlPBWy7JyYkQYkOu0oI7LFNBtVkItTQKs37NHEWM5eJzHO3J6oGMA9wrjwg8Kjmfxmc8AVhVSJAEEhIvp3IALY7NVO7u+rJ+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ILDKTncc; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:MIME-Version; b=fzPhavNe40h1Zo44BCnuxE8PyS9kLvMqyk3u3aRCSMYyTrAEKTOFw7VOlSf88+kfJoXunlUJQUp03NVYplhaUghYJ4RNNKBN44qrSsswNt/BaINYbrmoAGwpHrn1T+cJtE++0BJYcvWtgqPy0tTsvPkRxAHsnUbc7i7Zn7ow07U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=an/64KTL; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720146366;
+	s=mimecast20190719; t=1720146375;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2D8qhNLzDbP+EEHFtyIRTsK/xaD/vUNpkVgaMqqlnoY=;
-	b=ILDKTnccyjGY3GlFrIwDjHCLXyC5IbRm0G0xScj0m4KhaLRa3TN9c3jZ0QeFU9s2Fk6c9p
-	jOWYRbadFIlVPVk7apX5GwawNlKZC8NRQRfkAIEPdonEXh0lCiw4ev07jJsXUWhAtIpSso
-	8xb3xJi+0ZOAnhurQbu8K2Wz5YPY4bs=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=b7skmqPFDAkxHjvcg2f8mSug2SFsFPGybHobLUjeio4=;
+	b=an/64KTL092zjXot5Wj7o5i8Yl9JVrKm7PXgn8ROs4pLraKI7lWJm8W6t5i/lFZLBfoNAq
+	N6L6SsCC73ldLF/+AqKUrp9SOf/FoMQ81lcIqCm8wsNWg6JQj5iSmMVKyz1pX/ItcA+L2c
+	IKD5hkBtV0CDdzSAPUSKti2kFnuOSlc=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-85-rkalWVKMOJS4mpOCIUiFAw-1; Thu, 04 Jul 2024 22:26:05 -0400
-X-MC-Unique: rkalWVKMOJS4mpOCIUiFAw-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4465a29c965so19555451cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 19:26:05 -0700 (PDT)
+ us-mta-433-ny9pwWNUMVerogt8xlozng-1; Thu, 04 Jul 2024 22:26:14 -0400
+X-MC-Unique: ny9pwWNUMVerogt8xlozng-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b5f37aae55so5744096d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Jul 2024 19:26:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720146364; x=1720751164;
+        d=1e100.net; s=20230601; t=1720146373; x=1720751173;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2D8qhNLzDbP+EEHFtyIRTsK/xaD/vUNpkVgaMqqlnoY=;
-        b=i5P7DbieyCErqycif84AUrKHvclYwQMhPUnyJBmugtk4J2RZ8e3G1bg+KX0hmdq44r
-         mTmc4ea7tD6MiCH3aH/ZQrfl5Q4lOHOKm5q7qwygi83SArVXGX7/rLJljFuK2cDqPbb2
-         rhfdBqAewNSptnJymMarIX8uHqtSiN/IIZbDKs8bxZnk2ZTcT1S9kll0JsJXfITNp8e0
-         3ebnT+0czspBw0t1w/hJB/FPVe+LrugIwb1+Jk/WvZFQ6UBs6yXFF/v859VsYP9kAn5X
-         5YG1cpshXfhM/a9c6mVIxsSnVMlggSIhI8doFBPU3L+zw0tfmeRmKqlgUYGfEMLWOhYr
-         vKLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWi1jVqRh2dk7TH6eImv/1oXVvDmH3DZgCyezcYZaXP2n3jCVQj3BHNy/U4uyvQEnb8tSdZ93NyYr1m5IpTF7EAIKfLe/ja2cEfAuUx
-X-Gm-Message-State: AOJu0YySP2v/k3KUpBeNm2mLcERwKli+q1jvHoR7Adry81ptSc9+TlZM
-	4ovnHsgOgOu3A17yC+XosVatD8r34DDkfD9/4ozxO6lZT1VM2VDxyq7wVqJA/FPrMItY0EVcjVS
-	s3pJ8qe3ds3TfWeoPjS3dmMuq0HUwVor7YNdmUjxM2CpLP+izneXOsNJnpVeAXA==
-X-Received: by 2002:a05:622a:1445:b0:444:f6d2:be89 with SMTP id d75a77b69052e-447cce878bcmr57375831cf.5.1720146364616;
-        Thu, 04 Jul 2024 19:26:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFAVNN2j3ROliZOTWzuYp/UeB1ud6wiWQz8FpAPeEJr12P4ax65uTSkWLAQX0+lJrZFMhA1Vw==
-X-Received: by 2002:a05:622a:1445:b0:444:f6d2:be89 with SMTP id d75a77b69052e-447cce878bcmr57375651cf.5.1720146364274;
-        Thu, 04 Jul 2024 19:26:04 -0700 (PDT)
+        bh=b7skmqPFDAkxHjvcg2f8mSug2SFsFPGybHobLUjeio4=;
+        b=fO6E8xrxdgQP4DseVA2KpNigfhtdw+JLgWkLt1U9SXxLUywLdK5ZzAmiPGIuYDELk1
+         8LibTKN92Hsl1awUNhZKcsne/vdT9iHJKOTi6ZL5sxk1kT6599RHT3/KfARVDWQ13N+b
+         iLwmU5n64n+DnrJ9rTxatcl0niPLiCRkVCmAthMBISyT6yKTo1Eska6B8WBvQ6fAZ+GA
+         G1/GJt5/8ukji3Cl+UsJFerOJjUQSiM9yMh2kM7IW3dpt+vhB2rCRAVbws2kSd2b8Emp
+         1ge0SLFDYiP49clvvR447Og32cn/aA2+3HCkX+0peEKrhjYwX6f9MCQkAWTrMXmAf9SY
+         8zJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZitbawgwZLrc3c2IFninpyla727xfV7gOh3rSG9ift5br3y26X1PJaOWpg8vAsCKXRb88Y1tbJl4ziR6ZJB7bGRIE18oLYcmeOg+H
+X-Gm-Message-State: AOJu0YxJ9PAXYkyMWKLduJDGtSChyQKIKVWhWEazwErwsLOuDzPaq4NJ
+	JIfIZAyCA5DEh7msC/mFMiUKuzTBEFGfnmNZ7zkOLxK0AF7HWuGaVu5+BS6OMFdksKLvhl9Qdno
+	BmolZEYAJi7dICiajg1sBe8Qhi8FPlXO1omvGLZ+sTGkZBg02WeMMEqF+Q5m4ssTL9nvJlw==
+X-Received: by 2002:a05:6214:19ca:b0:6b4:fc6f:17ba with SMTP id 6a1803df08f44-6b5ed1d7658mr43946176d6.33.1720146373671;
+        Thu, 04 Jul 2024 19:26:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEqI7IRFDsn77qjda0I38S1/gkfCdQdiN4hn+6CwUqbAFzPHngy7jEHUMC30UiL0vIeUWvCZA==
+X-Received: by 2002:a05:6214:19ca:b0:6b4:fc6f:17ba with SMTP id 6a1803df08f44-6b5ed1d7658mr43946046d6.33.1720146373385;
+        Thu, 04 Jul 2024 19:26:13 -0700 (PDT)
 Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4465149d530sm65325471cf.77.2024.07.04.19.26.03
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5a705bc83sm65249216d6.131.2024.07.04.19.26.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 19:26:04 -0700 (PDT)
-Message-ID: <2d554577722d30605ecd0f920f4777129fff3951.camel@redhat.com>
-Subject: Re: [PATCH v2 44/49] KVM: x86: Update guest cpu_caps at runtime for
- dynamic CPUID-based features
+        Thu, 04 Jul 2024 19:26:13 -0700 (PDT)
+Message-ID: <eafcee4f973d3d76bb43c8ee8d59461a14574157.camel@redhat.com>
+Subject: Re: [PATCH v2 45/49] KVM: x86: Shuffle code to prepare for dropping
+ guest_cpuid_has()
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
  <pbonzini@redhat.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>
@@ -82,10 +82,10 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Hou Wenlong
  <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, Oliver Upton
  <oliver.upton@linux.dev>, Binbin Wu <binbin.wu@linux.intel.com>, Yang
  Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 04 Jul 2024 22:26:03 -0400
-In-Reply-To: <20240517173926.965351-45-seanjc@google.com>
+Date: Thu, 04 Jul 2024 22:26:12 -0400
+In-Reply-To: <20240517173926.965351-46-seanjc@google.com>
 References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-45-seanjc@google.com>
+	 <20240517173926.965351-46-seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
@@ -97,96 +97,68 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
 On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> When updating guest CPUID entries to emulate runtime behavior, e.g. when
-> the guest enables a CR4-based feature that is tied to a CPUID flag, also
-> update the vCPU's cpu_caps accordingly.  This will allow replacing all
-> usage of guest_cpuid_has() with guest_cpu_cap_has().
+> Move the implementations of guest_has_{spec_ctrl,pred_cmd}_msr() down
+> below guest_cpu_cap_has() so that their use of guest_cpuid_has() can be
+> replaced with calls to guest_cpu_cap_has().
 > 
-> Note, this relies on kvm_set_cpuid() taking a snapshot of cpu_caps before
-> invoking kvm_update_cpuid_runtime(), i.e. when KVM is updating CPUID
-> entries that *may* become the vCPU's CPUID, so that unwinding to the old
-> cpu_caps is possible if userspace tries to set bogus CPUID information.
+> No functional change intended.
 > 
-> Note #2, none of the features in question use guest_cpu_cap_has() at this
-> time, i.e. aside from settings bits in cpu_caps, this is a glorified nop.
-> 
-> Cc: Yang Weijiang <weijiang.yang@intel.com>
-> Cc: Robert Hoo <robert.hoo.linux@gmail.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 > Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  arch/x86/kvm/cpuid.c | 28 +++++++++++++++++++---------
->  1 file changed, 19 insertions(+), 9 deletions(-)
+>  arch/x86/kvm/cpuid.h | 30 +++++++++++++++---------------
+>  1 file changed, 15 insertions(+), 15 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 552e65ba5efa..1424a9d4eb17 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -330,28 +330,38 @@ static u64 cpuid_get_supported_xcr0(struct kvm_vcpu *vcpu)
->  	return (best->eax | ((u64)best->edx << 32)) & kvm_caps.supported_xcr0;
+> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> index 60da304db4e4..7be56fa62342 100644
+> --- a/arch/x86/kvm/cpuid.h
+> +++ b/arch/x86/kvm/cpuid.h
+> @@ -168,21 +168,6 @@ static inline int guest_cpuid_stepping(struct kvm_vcpu *vcpu)
+>  	return x86_stepping(best->eax);
 >  }
 >  
-> +static __always_inline void kvm_update_feature_runtime(struct kvm_vcpu *vcpu,
-> +						       struct kvm_cpuid_entry2 *entry,
-> +						       unsigned int x86_feature,
-> +						       bool has_feature)
+> -static inline bool guest_has_spec_ctrl_msr(struct kvm_vcpu *vcpu)
+> -{
+> -	return (guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL) ||
+> -		guest_cpuid_has(vcpu, X86_FEATURE_AMD_STIBP) ||
+> -		guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS) ||
+> -		guest_cpuid_has(vcpu, X86_FEATURE_AMD_SSBD));
+> -}
+> -
+> -static inline bool guest_has_pred_cmd_msr(struct kvm_vcpu *vcpu)
+> -{
+> -	return (guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL) ||
+> -		guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBPB) ||
+> -		guest_cpuid_has(vcpu, X86_FEATURE_SBPB));
+> -}
+> -
+>  static inline bool supports_cpuid_fault(struct kvm_vcpu *vcpu)
+>  {
+>  	return vcpu->arch.msr_platform_info & MSR_PLATFORM_INFO_CPUID_FAULT;
+> @@ -301,4 +286,19 @@ static inline bool kvm_vcpu_is_legal_cr3(struct kvm_vcpu *vcpu, unsigned long cr
+>  	return kvm_vcpu_is_legal_gpa(vcpu, cr3);
+>  }
+>  
+> +static inline bool guest_has_spec_ctrl_msr(struct kvm_vcpu *vcpu)
 > +{
-> +	cpuid_entry_change(entry, x86_feature, has_feature);
-> +	guest_cpu_cap_change(vcpu, x86_feature, has_feature);
+> +	return (guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL) ||
+> +		guest_cpuid_has(vcpu, X86_FEATURE_AMD_STIBP) ||
+> +		guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS) ||
+> +		guest_cpuid_has(vcpu, X86_FEATURE_AMD_SSBD));
 > +}
 > +
->  void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_cpuid_entry2 *best;
->  
->  	best = kvm_find_cpuid_entry(vcpu, 1);
->  	if (best) {
-> -		cpuid_entry_change(best, X86_FEATURE_OSXSAVE,
-> -				   kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE));
-> +		kvm_update_feature_runtime(vcpu, best, X86_FEATURE_OSXSAVE,
-> +					   kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE));
->  
-> -		cpuid_entry_change(best, X86_FEATURE_APIC,
-> -			   vcpu->arch.apic_base & MSR_IA32_APICBASE_ENABLE);
-> +		kvm_update_feature_runtime(vcpu, best, X86_FEATURE_APIC,
-> +					   vcpu->arch.apic_base & MSR_IA32_APICBASE_ENABLE);
->  
->  		if (!kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT))
-> -			cpuid_entry_change(best, X86_FEATURE_MWAIT,
-> -					   vcpu->arch.ia32_misc_enable_msr &
-> -					   MSR_IA32_MISC_ENABLE_MWAIT);
-> +			kvm_update_feature_runtime(vcpu, best, X86_FEATURE_MWAIT,
-> +						   vcpu->arch.ia32_misc_enable_msr &
-> +						   MSR_IA32_MISC_ENABLE_MWAIT);
->  	}
->  
->  	best = kvm_find_cpuid_entry_index(vcpu, 7, 0);
->  	if (best)
-> -		cpuid_entry_change(best, X86_FEATURE_OSPKE,
-> -				   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
-> +		kvm_update_feature_runtime(vcpu, best, X86_FEATURE_OSPKE,
-> +					   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
+> +static inline bool guest_has_pred_cmd_msr(struct kvm_vcpu *vcpu)
+> +{
+> +	return (guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL) ||
+> +		guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBPB) ||
+> +		guest_cpuid_has(vcpu, X86_FEATURE_SBPB));
+> +}
 > +
->  
->  	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 0);
->  	if (best)
+>  #endif
 
-
-I am not 100% sure that we need to do this.
-
-Runtime cpuid changes are a hack that Intel did back then,
-due to various reasons, These changes don't really change the feature set
-that CPU supports, but merly as you like to say 'massage' the output of
-the CPUID instruction to make the unmodified OS happy usually.
-
-Thus it feels to me that CPU caps should not include the dynamic features, and neither
-KVM should use the value of these as a source for truth, but rather the underlying
-source of the truth (e.g CR4).
-
-But if you insist, I don't really have a very strong reason to object this.
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 
 Best regards,
 	Maxim Levitsky
-
-
 
 
