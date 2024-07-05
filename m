@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-241896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECDF9280D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:01:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF0E9280D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 05:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 933791F250A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:01:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17DE9B23E23
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8E83A8CB;
-	Fri,  5 Jul 2024 03:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA07D5FEE5;
+	Fri,  5 Jul 2024 03:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VBeSt32j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="f+0magwH"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1B424B28;
-	Fri,  5 Jul 2024 03:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEB726AD3
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 03:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720148428; cv=none; b=cf4Gr81MhIQApoxet4nDx7tYjuE7Wy1lOgnZ7IuHPKGobiKdmpgTzq8rQ/nRZZc4xYPBbxjooGXlhx8UqoQHY5qw7XAIU+fhgsk+dsDN+8SRzeLsPQtQCdkyzFOGpe6aqBcr1jUqT9a6Tv918ITlRVPGDam0aNyTqsozVFuANE4=
+	t=1720148453; cv=none; b=DtmjTtY6wyV9kkpzBJzbv7S8swxlcKGpzZew5cps6eqDWi148YJshLFEFrCM413sWlbW0nSeiTSI1mS60EKXjo7Jgz5Y9GUkFqFs6Ms4PAXYpAfJLYvgFfZL7Fawvvk+DCdWSGo7zpe0dYowLevEm0tF0bIonxT+PSZsisjtmec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720148428; c=relaxed/simple;
-	bh=FMMqsuxbmm40KqOqln2jI8V0GzRXHS9cPlxEjc+3CjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r0N30gNowZWbDmWWl6l//QoiLBNxKDG8iTd9yOeWc/4vaKX1v4ievm9XY/HJI3CIgVU8Y1blQzetkaY+Px/Nbne4fEoDak4JSLZOoBeEUWJVaCSKJGmQHJXzW2uhE+kJlP0kGz+Jfx8dKvabkAX42lQMOr5Pk8FltuJWEOFJkzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VBeSt32j; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720148427; x=1751684427;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FMMqsuxbmm40KqOqln2jI8V0GzRXHS9cPlxEjc+3CjI=;
-  b=VBeSt32jWW6xdYqzbDROo63GKlO3eNJuNL+9WN8+llHfC/JyzoyEmlWY
-   R8riseyOEyS8iCsFvkBHQZmEROse9+RL1xeL45ck97BswxUQ84l+ghn2+
-   wsUmIuJt2uJXiJAnGXKQyT3PM7EscNBhj44XLnTKjRLoqovDBaBBjeslV
-   1fsSNVQ3/kap5KevRyPdd44O0Aer3ZJavwNtvLRMyWPRr+WveJcxCoviC
-   vMXlZzGyYoMvRajLg/HHTm3+iov+9mJImqoGcaBezJSi1RfNkMysGzZs3
-   qGKZrnX6chui+o800iEmCkrOqv0vQ3YBjNN6mYHG7iah6ykxvy0ccR+HS
-   g==;
-X-CSE-ConnectionGUID: 2HfAP6I7R/+wpFuaOlDteg==
-X-CSE-MsgGUID: p/FbjV7KR6C1j6XtXtWZlw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17644496"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="17644496"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 20:00:26 -0700
-X-CSE-ConnectionGUID: msur0iLoTqeARkg/MuKINw==
-X-CSE-MsgGUID: lo+ytsjFTAm3QMI0YnZ/YA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="51353451"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.241.187]) ([10.124.241.187])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 20:00:23 -0700
-Message-ID: <5c3c81dc-ec15-4f7a-9807-a308082c9fc8@linux.intel.com>
-Date: Fri, 5 Jul 2024 11:00:20 +0800
+	s=arc-20240116; t=1720148453; c=relaxed/simple;
+	bh=JiJY+j6TyfBV9LR9ycgqUi+s3rgLJnFnQqqJZj6khuY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j6oBWvwC0ewcUjh2md+lMIC43KIrWfa/9NBi9YG3Bv9QJouMJq+UJugCphPSEj6De1gbg6NjVR2ckMezjtN+XtI/wyRnje2BAdFyT2jWIrkkcI+QBglaCk1Zk35FyIekkCHWyMoCqPB/1wgWE0JLmXYGb3Vd3ZHk6+H5eg1tqoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=f+0magwH; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 4CCCD2C01D5;
+	Fri,  5 Jul 2024 15:00:49 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1720148449;
+	bh=zJySgUg5KnNtBOK7uwX7TCw7Zzzq8wJpmdXhs5nEk7I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=f+0magwHpL2OOLtrVrykxqerhRCQYet1UYpaJElC/3DEQG4WQGgpACml20paHoggc
+	 Dg4HEMN2UlB2wom/Ttt2rfs9VsmWcRYjLanEriHJ8+d+2Nm/6cKJ9iveEOoH06Z5Zf
+	 PTiTy1bTqxdss9DATnbRX3LqNLXVv3FekWjjDGBd5M4KtMhMUd0MDinHex3lrgX/Cr
+	 /2wxHnH0wSKLtUeSHr60xQO805UWuJbgqOtiXB0HE7tGg/7ShNRAAbeQcuo9+AnlOn
+	 mfK8VSeOl9ULl5hyoKdOUf3IBGCuTRMdXqNDc+pvNyU2uZjtQPa+06bx1eL2Q9SjXn
+	 2qk7Kz5J8iPPw==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B668761e10000>; Fri, 05 Jul 2024 15:00:49 +1200
+Received: from elliota2-dl.ws.atlnz.lc (elliota-dl.ws.atlnz.lc [10.33.23.28])
+	by pat.atlnz.lc (Postfix) with ESMTP id 18FC013ED5B;
+	Fri,  5 Jul 2024 15:00:49 +1200 (NZST)
+Received: by elliota2-dl.ws.atlnz.lc (Postfix, from userid 1775)
+	id 136623C0681; Fri,  5 Jul 2024 15:00:49 +1200 (NZST)
+From: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+To: davem@davemloft.net
+Cc: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Tobias Waldekranz <tobias@waldekranz.com>,
+	bridge@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: bridge: mst: Check vlan state for egress decision
+Date: Fri,  5 Jul 2024 15:00:40 +1200
+Message-ID: <20240705030041.1248472-1-elliot.ayrey@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] x86/virt/tdx: Exclude memory region hole within CMR
- as TDMR's reserved area
-To: "Huang, Kai" <kai.huang@intel.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "Hansen, Dave" <dave.hansen@intel.com>, "bp@alien8.de" <bp@alien8.de>,
- "x86@kernel.org" <x86@kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>, "hpa@zytor.com"
- <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "seanjc@google.com" <seanjc@google.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>
-References: <cover.1718538552.git.kai.huang@intel.com>
- <cfbed1139887416b6fe0d130883dbe210e97d598.1718538552.git.kai.huang@intel.com>
- <7809a177-e170-46f5-b463-3713b79acf22@suse.com>
- <717ba4c65ba9f1243facfcced207404c910f2410.camel@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <717ba4c65ba9f1243facfcced207404c910f2410.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=668761e1 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=4kmOji7k6h8A:10 a=JXkHKJOXY2Ndxws4tuMA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
+If a port is blocking in the common instance but forwarding in an MST
+instance, traffic egressing the bridge will be dropped because the
+state of the common instance is overriding that of the MST instance.
 
+Fix this by temporarily forcing the port state to forwarding when in
+MST mode to allow checking the vlan state via br_allowed_egress().
+This is similar to what happens in br_handle_frame_finish() when
+checking ingress traffic, which was introduced in the change below.
 
-On 6/19/2024 9:23 AM, Huang, Kai wrote:
-[...]
->
->> furthermore the alignement checks
->> suggest it's actually some sanity checking function. Furthermore if we
->> have:"
->>
->> ORDINARY_CMR,EMPTY_CMR,ORDINARY_CMR
->>
->> (Is such a scenario even possible), in this case we'll ommit also the
->> last ordinary cmr region?
-> It cannot happen.
->
-> The fact is:
->
-> 1) CMR base/size are 4KB aligned.  This is architectural behaviour.
-> 2) TDX architecturally supports 32 CMRs maximumly;
-Do you think it's worth a comment to the definition of TDX_MAX_CMRS that 
-the number is architectural?
+Fixes: ec7328b59176 ("net: bridge: mst: Multiple Spanning Tree (MST) mode=
+")
+Signed-off-by: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+---
+ net/bridge/br_forward.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> 3) In practice, TDX can just report the 'NUM_CMRS' metadata field as 32,
-> but there can be empty/null CMRs following valid CMRs.
-> 4) A empty/null CMR between valid CMRs cannot happen.
->
->
+diff --git a/net/bridge/br_forward.c b/net/bridge/br_forward.c
+index d97064d460dc..911b37a38a32 100644
+--- a/net/bridge/br_forward.c
++++ b/net/bridge/br_forward.c
+@@ -22,10 +22,16 @@ static inline int should_deliver(const struct net_bri=
+dge_port *p,
+ 				 const struct sk_buff *skb)
+ {
+ 	struct net_bridge_vlan_group *vg;
++	u8 state;
++
++	if (br_mst_is_enabled(p->br))
++		state =3D BR_STATE_FORWARDING;
++	else
++		state =3D p->state;
+=20
+ 	vg =3D nbp_vlan_group_rcu(p);
+ 	return ((p->flags & BR_HAIRPIN_MODE) || skb->dev !=3D p->dev) &&
+-		p->state =3D=3D BR_STATE_FORWARDING && br_allowed_egress(vg, skb) &&
++		state =3D=3D BR_STATE_FORWARDING && br_allowed_egress(vg, skb) &&
+ 		nbp_switchdev_allowed_egress(p, skb) &&
+ 		!br_skb_isolated(p, skb);
+ }
 
