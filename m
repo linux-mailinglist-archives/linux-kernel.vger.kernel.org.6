@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-242394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B120928780
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:06:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BD5928783
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78AF1C210C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5337286C9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABA4148FE3;
-	Fri,  5 Jul 2024 11:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9DA1487E7;
+	Fri,  5 Jul 2024 11:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkuSKhMd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhbsqzDg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9C813665A;
-	Fri,  5 Jul 2024 11:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7096413665A;
+	Fri,  5 Jul 2024 11:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720177604; cv=none; b=YN1f1iOHTKHYOZ3GjuMs7Rihw5DBiAWObR8kkrPjC0gWlatD5Qq1CuoEriuUcN6ts5dIcOOXZEzxuMoWPXXxwZfmkmTR+pZ5oRmNAIFtJb08f9rLo0s+Dr9EUTJuuxYxv8AJxo6OdtmHOc80Mm6gdFOfY93hi+6QQXM3UYFHpN4=
+	t=1720177675; cv=none; b=osySNTGG4v9w1GVy3sWKulDBix5T4lsbnysBWtsGwVQ3gdcXOL50Up0/DDZZtRRFW9GvbO9utPMJPdYZkupnOQc35tAkSnGol0IWjKbjVSFxBJ3VdpSra9b3++cXrqBJ/cBaMXwXdS+W6U5C+gbZ8MwlGEh6nNQaNCBEVJU+otQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720177604; c=relaxed/simple;
-	bh=8+WZaP3nhTCnIc1AsENbtDY0K0ju2lbrz8eZmgxBEWs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ueW0E+Ixm0pi7DT98qregxBV2MSfn2iwTPVG2C9LjGa/RAtqut75oa8tKqeJgIVUCeoBYw2U33Ck58v4kiz97v4dtBVu1lCXoehLr7P4L3vKP/L6FRFmJYnzi8Jz/mJSu1GKMY0gKJU9Fu+XkobP3Mg0iwyibGS9qmm2nLeuQnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkuSKhMd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB17C32781;
-	Fri,  5 Jul 2024 11:06:43 +0000 (UTC)
+	s=arc-20240116; t=1720177675; c=relaxed/simple;
+	bh=sBt65f4Hf0k3TzKERrmMvOBm6cmevdehMYOf8Ymnjj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hL+7su8eaD0EaItj3ZYzpUig6/KU6dbeITo+j/3WtaD/ZmtQmMzvS38aHZvCd4k/c+KO81UvBYrN8iXhpY+3nRsyQlg7oz5vlbFlchQMYcAfxflRNSQgU/2AH8/XYhHzPmkiapnKI6GvlcvbJPyjiXXq8sVJYIcJ9oQSyySGai4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhbsqzDg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B950C116B1;
+	Fri,  5 Jul 2024 11:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720177603;
-	bh=8+WZaP3nhTCnIc1AsENbtDY0K0ju2lbrz8eZmgxBEWs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bkuSKhMd/s1M3jLIO5uXA38ScJC4HgzeApnoM5clKKZCYo7ifptsB+wzGZjU7w5xp
-	 YeoEm3oS+aF/P3gmmt4sltJoNAGcmRReYglcyl3vk+a6I5QAOrbMiAFvtE/9FaLB6h
-	 QC4Gxw/PvgvSU8So6P3I7R5ZkRiMvButtyCV+BAStu1WVbfNTsrDQfIEArRiL+BajF
-	 xfj9+OmTSBQuvFRN02Kh9sYRsAYwTZXW7jbR2jHR+ek+jv4uwm9Z8D3EsMVkBpqfNQ
-	 IwSbVlHarIP8UNQPW7dVMttofHu/JQ7/xgZi95yBuByQPg6HstXnNoGa/RphPSg30W
-	 T36vHHWZLfPnA==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso129919266b.0;
-        Fri, 05 Jul 2024 04:06:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWwQlweXfgr6Xycl4QwF11Ui4iTfbF/LRfMgbZUrHltSQjvp3GxeYRJtJlwPzfqp0ppgjYpExQgQu5QoSwuPdaIwSzO4XMlukcO0SaGJuxMZ/wJYBi8XbYLOiOm6cCWZZTpc43YjAJ+kYk=
-X-Gm-Message-State: AOJu0YwI1cFvbhPO+TYMFE4O2urzWSPALsp1qOBfvkK8HzF8g5choJa2
-	mkWUbqn8gj7tu9D+SJSt15OjKpfGxqvUXLHDrGdpNH540k4/sQqJ49e68vsA6/IvPPrL4rjxj53
-	xXg6MUFs7xjuBkToluvbSwfPbF3s=
-X-Google-Smtp-Source: AGHT+IH64c+v1szNlZ0nWhKoen4VTG9k6IK/Oj+q+L+IPrB+lOM0thHysuOIn7Ff3Wm2h1RYlJynnym5RR6NAAryEa0=
-X-Received: by 2002:a17:906:34d3:b0:a6f:b58f:ae3c with SMTP id
- a640c23a62f3a-a77ba468a2amr307138466b.26.1720177601984; Fri, 05 Jul 2024
- 04:06:41 -0700 (PDT)
+	s=k20201202; t=1720177675;
+	bh=sBt65f4Hf0k3TzKERrmMvOBm6cmevdehMYOf8Ymnjj8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uhbsqzDgem2RIW9aYbV1FncW+hT3pY4I9ae35c5JZ8rqQvthK6ponowFvhIEjT6j2
+	 W0hPPpxVvi6UIAsjzdaVI66+EFUMkd5XTAYXYOgnzuGy3pMq7lWzcayyVqtrpsbByO
+	 vdbPwRlgCs40xVds7OAdapU+D3VqMu4/SUPmF0Xjb0q2cuPi8NFbon6AcFDv96UZRq
+	 l2nv5TSU/uHXjKaq4+PAAfGIxVSJNWSbWAkwN2fbpJyznvtnVtynU6jgFhouiUy+hg
+	 9dk0BSSazPD1a4TKh5WVZrHYBWz5fBW8jgZ/TeYUAw5VkPdOhnnezu5MYcOuB1jfXv
+	 sP/sTzwauNKew==
+Date: Fri, 5 Jul 2024 12:07:48 +0100
+From: Will Deacon <will@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
+	ardb@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, james.morse@arm.com,
+	vdonnefort@google.com, mark.rutland@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com,
+	shahuang@redhat.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v7 2/6] arm64: ptdump: Expose the attribute parsing
+ functionality
+Message-ID: <20240705110747.GA9231@willie-the-truck>
+References: <20240621123230.1085265-1-sebastianene@google.com>
+ <20240621123230.1085265-3-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
- <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com> <CAK-xaQYwgOKkeD4HvMtNqNqqchW4aS2gtvzGJ-yKwfE6uaUYng@mail.gmail.com>
-In-Reply-To: <CAK-xaQYwgOKkeD4HvMtNqNqqchW4aS2gtvzGJ-yKwfE6uaUYng@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 5 Jul 2024 12:06:04 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H7MP7HQbyMpGgRrG+rejQX+5Hc7ipPNPN_tjbaUzNBNGQ@mail.gmail.com>
-Message-ID: <CAL3q7H7MP7HQbyMpGgRrG+rejQX+5Hc7ipPNPN_tjbaUzNBNGQ@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Andrea Gelmini <andrea.gelmini@gmail.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621123230.1085265-3-sebastianene@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, Jul 5, 2024 at 7:30=E2=80=AFAM Andrea Gelmini <andrea.gelmini@gmail=
-.com> wrote:
->
-> Il giorno gio 4 lug 2024 alle ore 19:25 Filipe Manana
-> <fdmanana@kernel.org> ha scritto:
-> > 1) First let's check that the problem is really a consequence of the sh=
-rinker.
-> >     Try this patch:
-> >
-> >     https://gist.githubusercontent.com/fdmanana/b44abaade0000d28ba0e1e1=
-ae3ac4fee/raw/5c9bf0beb5aa156b893be2837c9244d035962c74/gistfile1.txt
-> >
-> >     This disables the shrinker. This is just to confirm if I'm looking
-> > in the right direction, if your problem is the same as Mikhail's and
-> > double check his bisection.
->
-> Ok, so, I confirm. With this change, just a little bit of PSI memory
-> sometime (<3%), but no skyrocket. Also, tar at full speed.
+On Fri, Jun 21, 2024 at 12:32:26PM +0000, Sebastian Ene wrote:
+> Reuse the descriptor parsing functionality to keep the same output format
+> as the original ptdump code. In order for this to happen, move the state
+> tracking objects into a common header.
+> 
+> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> ---
+>  arch/arm64/include/asm/ptdump.h | 41 ++++++++++++++++++++++++++++++++-
+>  arch/arm64/mm/ptdump.c          | 37 ++---------------------------
+>  2 files changed, 42 insertions(+), 36 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+> index 5b1701c76d1c..c550b2afcab7 100644
+> --- a/arch/arm64/include/asm/ptdump.h
+> +++ b/arch/arm64/include/asm/ptdump.h
+> @@ -9,6 +9,7 @@
+>  
+>  #include <linux/mm_types.h>
+>  #include <linux/seq_file.h>
+> +#include <linux/ptdump.h>
+>  
+>  struct addr_marker {
+>  	unsigned long start_address;
+> @@ -21,14 +22,52 @@ struct ptdump_info {
+>  	unsigned long			base_addr;
+>  };
+>  
+> +struct prot_bits {
+> +	u64		mask;
+> +	u64		val;
+> +	const char	*set;
+> +	const char	*clear;
+> +};
+> +
+> +struct pg_level {
+> +	const struct prot_bits *bits;
+> +	char name[4];
+> +	int num;
+> +	u64 mask;
+> +};
+> +
+> +/*
+> + * The page dumper groups page table entries of the same type into a single
+> + * description. It uses pg_state to track the range information while
+> + * iterating over the pte entries. When the continuity is broken it then
+> + * dumps out a description of the range.
+> + */
+> +struct pg_state {
+> +	struct ptdump_state ptdump;
+> +	struct seq_file *seq;
+> +	const struct addr_marker *marker;
+> +	const struct mm_struct *mm;
+> +	unsigned long start_address;
+> +	int level;
+> +	u64 current_prot;
+> +	bool check_wx;
+> +	unsigned long wx_pages;
+> +	unsigned long uxn_pages;
+> +};
 
-Ok, so the bisection is reliable and it means you are experiencing the
-same problem that Mikhail reported.
+Minor nit, but if we're moving these structure definitions into the
+header then I'd be inclined to give them some more specific names (e.g.
+prefix them with 'ptdump_'). Granted, this header isn't used widely, but
+it's included by arch/arm64/mm/mmu.c and claiming 'struct prot_bits' is
+a bit over-reaching imo!
 
->
-> Now, I'm going to prepare the btrfs image to send you.
-
-That might not be necessary, not sure how it would help, the 2nd patch
-to try would confirm if it's any fragmentation causing too many slow
-reads after extent map eviction.
-So save yourself some time for now because making the image is likely slow.
-
->
-> The other steps later.
-
-Thanks!
+Will
 
