@@ -1,226 +1,351 @@
-Return-Path: <linux-kernel+bounces-242811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FB4928D71
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:17:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F77F928D73
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 20:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A8F41C2166C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:17:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB76285662
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073F016EB53;
-	Fri,  5 Jul 2024 18:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB9014A62F;
+	Fri,  5 Jul 2024 18:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLPsR7qd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFVoLoHl"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E969C262A8;
-	Fri,  5 Jul 2024 18:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3715224F2;
+	Fri,  5 Jul 2024 18:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720203400; cv=none; b=k8TlCyQHl1WLpdhknTg095cw5SbqyvHgZ/fEppTK5aMZbMQRbJIsGQnM6WODetVTAxZeQgVgun4j3uNT2Y40xN6iG5IfqVNaEu3U2z9s29zrv+UNxPCuowGFviwdBSAVxTy0qzQDtNr40eNefCdtKkrzKr+2xknlRNih+A3k/wM=
+	t=1720203645; cv=none; b=MxG1kJ7mGkmYlJtJ5SZmP2jE7hS5Ree+rwV3+s1YSzj4jWIAiU0Nd6pN0Q6KUJYJVCPy34fO9sfvoQ49tdRO51SOt//a8GWykOzfwZ03PbixO9GLKQK1fEwiJ2mc8exi37KGOWpO0pJorHkJeeHcl/cYcS605Wh6ehdA6N4VxSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720203400; c=relaxed/simple;
-	bh=Bb5YnOqTQcdobdzl7rj7W0NcvDf4NfDGtBSkHIO+W6w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y/PtC3bGEzlS3wzTLmPRAEEnS1PllDTTCYaBbCdBhiDxAHNC7TEehpOP7YpBHZzvO5n1PHfpqTB2B+NatMwnA772gSToh3NZ0kE4yc3rAotK/hoH/Tx6IahePoOguPu5gqOI2pjlSbe8h91xoNiN3yL/wEFTr47ATOzSu42REEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLPsR7qd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 102CCC116B1;
-	Fri,  5 Jul 2024 18:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720203399;
-	bh=Bb5YnOqTQcdobdzl7rj7W0NcvDf4NfDGtBSkHIO+W6w=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=aLPsR7qd6mwWpjFUGCb0nwvuwTVkmMS20f5hAZiWMd4QCcYinMZ/r1W5ELsmgp5vx
-	 emKp/PejOwirkxKuck8UVQJyPxiHu/dET4c/vCdeUoiOiPC0ysq5uD5iQtqtzA8hrT
-	 dmoikSOL1gvXvanXIVqgdBW55KxEBUt4XzW3j19rNE0B1Bbz8wFjGiylVmHqoXkzwj
-	 bLlbfn0k2uv3rProwmqRKgAIt1str9zBcQUCKtkHPd1lNK0wFTwYzuJnKpjyGRFZS5
-	 aig1U5Ej04DkG7JgGz7pADhdvyvewTZNU+zUFeHnLrUwSfnh5xED4ldUdIdw0IRb8X
-	 JXn4dr/pltKUg==
-Message-ID: <89658a8eb54acf4dc46da6dbb05c2007c5b8179a.camel@kernel.org>
-Subject: Re: [PATCH v3 2/9] fs: tracepoints around multigrain timestamp
- events
-From: Jeff Layton <jlayton@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong"
- <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Jonathan
- Corbet <corbet@lwn.net>, Dave Chinner <david@fromorbit.com>, Andi Kleen
- <ak@linux.intel.com>, Christoph Hellwig <hch@infradead.org>,
- kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-  linux-doc@vger.kernel.org
-Date: Fri, 05 Jul 2024 14:16:35 -0400
-In-Reply-To: <20240705140703.711d816b@rorschach.local.home>
-References: <20240705-mgtime-v3-0-85b2daa9b335@kernel.org>
-	 <20240705-mgtime-v3-2-85b2daa9b335@kernel.org>
-	 <20240705140703.711d816b@rorschach.local.home>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1720203645; c=relaxed/simple;
+	bh=uoFta6I8JPEygP73SjhomFnEOfSYhfgZEMEDcLP8pzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMhMYFDycVZiPxoACucsAizIfoEkUK34BebTQOxLAFyNhDZmZTmA9K3GTCMECM/pa1jOh/5UUIn8jjZ34SZ65dA5PngOypGsOO8+f67pHMfmgABquGVIOEIp6dRlkldnLg2j0OZfOlM3I3KON8U3I0AMkiHKdU0NMa/83rWhSLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFVoLoHl; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-79efec89c80so31990285a.2;
+        Fri, 05 Jul 2024 11:20:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720203642; x=1720808442; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qa2FKn5XaUbae5dervtOKaOQ5T7PPgluvtVwBz/Khpk=;
+        b=jFVoLoHlSH1iW1YufxiLeDwhHQLTRLGwaLP0YmEdYHqIvCm4Luml9BYq+0dFvRtf1C
+         ydPydH95s0lZBZnDZei3KlYyqOBr0YjD4aBfGATcc/Q0DYM2gtMYMF31HUpmfWriSerA
+         8OSZFpxBIW+RQt9IYNQYJmCwCb4rfskD6VKX/RNI34xkgyOOFhpw27SzDU9j71GpKPrc
+         SCVK1rt8k/mgGUvPbEdUMCVZHcw2kkw6LBSoqUmxylI5KCImO/4u9EQ8ajSd6Y3YCP4h
+         kD6F+yJCDz3WCqmFDU2R7JEMYZ7hDb6KfBJ1iNrcvBXMtHYfV1HS426Fq4JYdy3AMN3b
+         5OKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720203642; x=1720808442;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qa2FKn5XaUbae5dervtOKaOQ5T7PPgluvtVwBz/Khpk=;
+        b=jC9WUM2HbFBat72PERHH0+zq37Qx155HIvZGDQUMhfLZSxBD07tSztEOLt6E/WVZxY
+         atYEwV21zCqMhp66onl9SHcrt8vghRBZwQR+4K6VDme6nZmeQrX1MKnFy9OUsjEvjOMA
+         c7U8O6FrollONtNTyZL7TTPn7Bj5dnNjgZwQGG9/NzqKL9L0xo4jTeCspDI6DY3x1Ghq
+         oaPoUYP2+QGCzPD6ZLh1t5IstUDSRoaysJoEGDt0bKlHxDkSWl6i9OXQKbFxiC1Uw1m9
+         bmA8Xr4ycGKnG7/Bo6OCdgtKlZdn/OQhqIKybv43/jX8QB2lK6Zt/gNx/1VVORJadecZ
+         8CMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmQERVHsZPKGGO2yQPSLn9E35p/p1BdMD+kySObjtOpGsMZEQBGznuQXoyZIbd+6MgC1TmmJVCtrgx8HoZe38b19X16GgntYYhXKg90IYHG8K4uBH/1wW+FGDkn78YvQE9JCam3XqV+5zeiQjOmMCWcThotwDhj+enkkjAJfbZ9DjFEhCYVg==
+X-Gm-Message-State: AOJu0Yz9XCWmVBJKFDV5WOzlWodxMBwM9YIv+UHsnQ6OyTVwjDJdMf6D
+	hZ+/CEk+tWEEI6wrIUOMFiThZeVuFGjNax/OrfUEWnqY83dxQCsj
+X-Google-Smtp-Source: AGHT+IFDKsjpOV3WQSl9h1CBLDGosKsTmrRJo2jd0bi0Yz7lnea06PF/6yZ0BzDR9C2JzwCJOs0/0w==
+X-Received: by 2002:a05:620a:210d:b0:79d:78d3:3b30 with SMTP id af79cd13be357-79eee20d17emr546711485a.15.1720203642359;
+        Fri, 05 Jul 2024 11:20:42 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79effcdaf12sm14489285a.60.2024.07.05.11.20.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 11:20:41 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 0A52B1200043;
+	Fri,  5 Jul 2024 14:20:41 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 05 Jul 2024 14:20:41 -0400
+X-ME-Sender: <xms:eDmIZmT7ToBaR3_9QCLn04uMTGXzuqexQdxJPIpF7o_sof_ZMCgb9A>
+    <xme:eDmIZrz9olf5dAUmGrzHR6wK5WETGAov2cC_e_BdB6Zxat0QzE-wnBLwXGXuMPsnU
+    aPom1zDcMm_L51M-A>
+X-ME-Received: <xmr:eDmIZj1JDanEtDewDY2ezSm_-DQprmQS6HOLZ8bjGF1qrQwuHnD9GQBdhgFVWw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddugdduvdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhepgeeljefgffegvdetkefhueffgeegfeefleekiedvveejgfejheeivdff
+    ieetvedtnecuffhomhgrihhnpehpohhinhhtvghrrdhsrghfvghthienucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhht
+    phgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqd
+    gsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:eDmIZiBplJk3Yu6HS5-x5kRMBmfMF3e7ZgBZg1NNHvumWCNOGSgfyQ>
+    <xmx:eDmIZvhGZ6CqfQYwxfxrTs3WwOuaoLpFjvLSxwBxf1MtOOl5qFA1YQ>
+    <xmx:eDmIZuqjQhMvyvTa8O-eZiDzwx5T7RzJ0Q8CHynkvUJTNWR14jFmKQ>
+    <xmx:eDmIZiiY-YyHoyrUqvZVwp3IWq7_ThJF9rQyUVa7tEvCmkKR7Vr-6A>
+    <xmx:eTmIZuSFikJ3s98ZpWPIJ40WD9S0aHdhh_xBfzpZK4jM2n7RETOT7ATd>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 5 Jul 2024 14:20:40 -0400 (EDT)
+Date: Fri, 5 Jul 2024 11:19:33 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V3 1/8] rust: Add initial bindings for OPP framework
+Message-ID: <Zog5NYptZRaqbUBz@boqun-archlinux>
+References: <cover.1719990273.git.viresh.kumar@linaro.org>
+ <fe8e9a96b29122876346fc98a6a9ede7e4f28707.1719990273.git.viresh.kumar@linaro.org>
+ <ZoVvn0QCSR8y4HQJ@Boquns-Mac-mini.home>
+ <20240705110228.qqhhynbwwuwpcdeo@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240705110228.qqhhynbwwuwpcdeo@vireshk-i7>
 
-On Fri, 2024-07-05 at 14:07 -0400, Steven Rostedt wrote:
-> On Fri, 05 Jul 2024 13:02:36 -0400
-> Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> > diff --git a/include/trace/events/timestamp.h
-> > b/include/trace/events/timestamp.h
-> > new file mode 100644
-> > index 000000000000..a004e5572673
-> > --- /dev/null
-> > +++ b/include/trace/events/timestamp.h
-> > @@ -0,0 +1,109 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#undef TRACE_SYSTEM
-> > +#define TRACE_SYSTEM timestamp
-> > +
-> > +#if !defined(_TRACE_TIMESTAMP_H) ||
-> > defined(TRACE_HEADER_MULTI_READ)
-> > +#define _TRACE_TIMESTAMP_H
-> > +
-> > +#include <linux/tracepoint.h>
-> > +#include <linux/fs.h>
-> > +
-> > +TRACE_EVENT(inode_set_ctime_to_ts,
-> > +	TP_PROTO(struct inode *inode,
-> > +		 struct timespec64 *ctime),
-> > +
-> > +	TP_ARGS(inode, ctime),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__field(dev_t,			dev)
-> > +		__field(ino_t,			ino)
-> > +		__field(u32,			gen)
->=20
-> It's best to keep the above 4 byte word below 8 byte words,
-> otherwise,
-> it will likely create a 4 byte hole in between.
->=20
+On Fri, Jul 05, 2024 at 04:32:28PM +0530, Viresh Kumar wrote:
+> Hi Boqun,
+> 
+> On 03-07-24, 08:34, Boqun Feng wrote:
+> > On Wed, Jul 03, 2024 at 12:44:26PM +0530, Viresh Kumar wrote:
+> > > +/// Operating performance point (OPP).
+> > > +///
+> > > +/// # Invariants
+> > > +///
+> > > +/// The pointer stored in `Self` is non-null and valid for the lifetime of the ARef instance. In
+> > > +/// particular, the ARef instance owns an increment on underlying object´s reference count.
+> > 
+> > Since you use `ARef` pattern now, you may want to rewrite this
+> > "invariants".
+> 
+> I copied it from the device's documentation. What all details should I
+> be writing here ? A link to some other implementation would be useful.
+> 
 
-Thanks, I'll fix up both!
+"Invariants" defines "what's a valid instance of a type", so here I
+think you could drop the "# Invariants" section at all, unless you need
+to use some of the invariants of fields in `dev_mp_opp` as a
+justification for safety. For example if you have a pointer in
+`dev_mp_opp`, and it's always pointing to a valid `T`, and in one method
+of `OPP`, you need to dereference the pointer.
 
-> > +		__field(time64_t,		ctime_s)
-> > +		__field(u32,			ctime_ns)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__entry->dev		=3D inode->i_sb->s_dev;
-> > +		__entry->ino		=3D inode->i_ino;
-> > +		__entry->gen		=3D inode->i_generation;
-> > +		__entry->ctime_s	=3D ctime->tv_sec;
-> > +		__entry->ctime_ns	=3D ctime->tv_nsec;
-> > +	),
-> > +
-> > +	TP_printk("ino=3D%d:%d:%ld:%u ctime=3D%lld.%u",
-> > +		MAJOR(__entry->dev), MINOR(__entry->dev), __entry-
-> > >ino, __entry->gen,
-> > +		__entry->ctime_s, __entry->ctime_ns
-> > +	)
-> > +);
-> > +
-> > +TRACE_EVENT(ctime_ns_xchg,
-> > +	TP_PROTO(struct inode *inode,
-> > +		 u32 old,
-> > +		 u32 new,
-> > +		 u32 cur),
-> > +
-> > +	TP_ARGS(inode, old, new, cur),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__field(dev_t,				dev)
-> > +		__field(ino_t,				ino)
-> > +		__field(u32,				gen)
-> > +		__field(u32,				old)
-> > +		__field(u32,				new)
-> > +		__field(u32,				cur)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__entry->dev		=3D inode->i_sb->s_dev;
-> > +		__entry->ino		=3D inode->i_ino;
-> > +		__entry->gen		=3D inode->i_generation;
-> > +		__entry->old		=3D old;
-> > +		__entry->new		=3D new;
-> > +		__entry->cur		=3D cur;
-> > +	),
-> > +
-> > +	TP_printk("ino=3D%d:%d:%ld:%u old=3D%u:%c new=3D%u cur=3D%u:%c",
-> > +		MAJOR(__entry->dev), MINOR(__entry->dev), __entry-
-> > >ino, __entry->gen,
-> > +		__entry->old & ~I_CTIME_QUERIED, __entry->old &
-> > I_CTIME_QUERIED ? 'Q' : '-',
-> > +		__entry->new,
-> > +		__entry->cur & ~I_CTIME_QUERIED, __entry->cur &
-> > I_CTIME_QUERIED ? 'Q' : '-'
-> > +	)
-> > +);
-> > +
-> > +TRACE_EVENT(fill_mg_cmtime,
-> > +	TP_PROTO(struct inode *inode,
-> > +		 struct timespec64 *ctime,
-> > +		 struct timespec64 *mtime),
-> > +
-> > +	TP_ARGS(inode, ctime, mtime),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__field(dev_t,			dev)
-> > +		__field(ino_t,			ino)
-> > +		__field(u32,			gen)
->=20
-> Same here.
->=20
-> -- Steve
->=20
-> > +		__field(time64_t,		ctime_s)
-> > +		__field(time64_t,		mtime_s)
-> > +		__field(u32,			ctime_ns)
-> > +		__field(u32,			mtime_ns)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__entry->dev		=3D inode->i_sb->s_dev;
-> > +		__entry->ino		=3D inode->i_ino;
-> > +		__entry->gen		=3D inode->i_generation;
-> > +		__entry->ctime_s	=3D ctime->tv_sec;
-> > +		__entry->mtime_s	=3D mtime->tv_sec;
-> > +		__entry->ctime_ns	=3D ctime->tv_nsec;
-> > +		__entry->mtime_ns	=3D mtime->tv_nsec;
-> > +	),
-> > +
-> > +	TP_printk("ino=3D%d:%d:%ld:%u ctime=3D%lld.%u mtime=3D%lld.%u",
-> > +		MAJOR(__entry->dev), MINOR(__entry->dev), __entry-
-> > >ino, __entry->gen,
-> > +		__entry->ctime_s, __entry->ctime_ns,
-> > +		__entry->mtime_s, __entry->mtime_ns
-> > +	)
-> > +);
-> > +#endif /* _TRACE_TIMESTAMP_H */
-> > +
-> > +/* This part must be outside protection */
-> > +#include <trace/define_trace.h>
-> >=20
->=20
+> > > +impl Drop for OPP {
+> > 
+> > I don't think you need the `drop` implementation here, since it should
+> > be already handled by `impl AlwaysRefCounted`,
+> 
+> Right.
+> 
+> > could you try to a doc
+> > test for this? Something like:
+> > 
+> > 	let opp: ARef<OPP> = <from a raw dev_pm_opp ponter whose refcount is 1>
+> > 	drop(opp);
+> 
+> I now tested it with a kernel test to see what's going on internally
+> 
+> > IIUC, this will result double-free with the current implementation.
+> 
+> Quite the opposite actually. I am getting double get and a single put :)
+> 
+> Thanks a lot for pointing me to this direction as I have found that my
+> implementation was incorrect. This is how I understand it, I can be
+> wrong since I am okayish with Rust:
+> 
+> - What's getting returned from `from_raw_opp/from_raw_opp_owned` is a
+>   reference: `<&'a Self>`.
+> 
+> - Since this is a reference, when it gets out of scope, nothing
+>   happens. i.e. the `drop()` fn of `struct OPP` never gets called for
+>   the OPP object, as there is no real OPP object, but just a
+>   reference.
+> 
+> - When this gets converted to an `ARef` object (implicit typecasting),
+>   we increment the count. And when that gets dropped, we decrement it.
+>   But Apart from an `ARef` object, only the reference to the OPP gets
+>   dropped and hence again, drop() doesn't get called.
+> 
+> - The important part here is that `from_raw_opp()` shouldn't be
+>   incrementing the refcount, as drop() will never get called. And
+>   since we reach here from the C implementation, the OPP will remain
+>   valid for the function call.
+> 
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Right. I wasn't aware that you didn't return a `ARef<OPP>`, which mean
+the return value won't handle the refcounting automatically (and because
+of that, the refcount shouldn't be increased.)
+
+> - On the other hand, I can't return <&'a Self> from
+>   from_raw_opp_owned() anymore. In this case the OPP core has already
+>   incremented the refcount of the OPP (while it searched the OPP on
+>   behalf of the Rust code). Whatever is returned here, must drop the
+>   refcount when it goes out of scope. Also the returned OPP reference
+>   can live for a longer period of time in this case, since the call
+>   originates from the Rust side. So, it needs to be an explicit
+>   conversion to ARef which won't increment the refcount, but just
+>   decrement when the ARef gets out of scope.
+> 
+
+I think you got it correct ;-) The takeaway is: there are different
+types of pointers/references, 1) if users only use a `struct dev_pm_opp
+*` shortly and the scope can be told at compile time, you can provide a
+`&OPP`, 2) if the scope of usage is somewhat dynamic, and the users
+should descrease the refcount after use it, the API should return a
+`ARef<OPP>`. And since the refcount inc/dec are already maintained in
+`ARef<_>`, `OPP::drop` shouldn't touch the refcount anymore.
+
+Also as you already noticed, calling `into` on a `&OPP` will give a
+`ARef<OPP>`, which includes an increment of the refcount, and usually
+should be used when the users want to switch to long-term usage after a
+quick short-term use (e.g. do a quick check of the status and decide
+some more work is needed, and maybe need to transfer the ownership of
+the pointer to a workqueue or something).
+
+> Here is the diff that I need:
+> 
+> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
+> index aaf220e6aeac..a99950b4d835 100644
+> --- a/rust/kernel/opp.rs
+> +++ b/rust/kernel/opp.rs
+> @@ -692,7 +692,7 @@ pub fn opp_from_freq(
+>          })?;
+>  
+>          // SAFETY: The `ptr` is guaranteed by the C code to be valid.
+> -        Ok(unsafe { OPP::from_raw_opp_owned(ptr)?.into() })
+> +        unsafe { OPP::from_raw_opp_owned(ptr) }
+>      }
+>  
+>      /// Finds OPP based on level.
+> @@ -718,7 +718,7 @@ pub fn opp_from_level(&self, mut level: u32, stype: SearchType) -> Result<ARef<O
+>          })?;
+>  
+>          // SAFETY: The `ptr` is guaranteed by the C code to be valid.
+> -        Ok(unsafe { OPP::from_raw_opp_owned(ptr)?.into() })
+> +        unsafe { OPP::from_raw_opp_owned(ptr) }
+>      }
+>  
+>      /// Finds OPP based on bandwidth.
+> @@ -743,7 +743,7 @@ pub fn opp_from_bw(&self, mut bw: u32, index: i32, stype: SearchType) -> Result<
+>          })?;
+>  
+>          // SAFETY: The `ptr` is guaranteed by the C code to be valid.
+> -        Ok(unsafe { OPP::from_raw_opp_owned(ptr)?.into() })
+> +        unsafe { OPP::from_raw_opp_owned(ptr) }
+>      }
+>  
+>      /// Enable the OPP.
+> @@ -834,31 +834,33 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+>  }
+>  
+>  impl OPP {
+> -    /// Creates a reference to a [`OPP`] from a valid pointer.
+> +    /// Creates an owned reference to a [`OPP`] from a valid pointer.
+>      ///
+>      /// # Safety
+>      ///
+> -    /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
+> -    /// returned [`OPP`] reference.
+> -    pub unsafe fn from_raw_opp_owned<'a>(ptr: *mut bindings::dev_pm_opp) -> Result<&'a Self> {
+> -        // SAFETY: The caller guarantees that the pointer is not dangling
+> -        // and stays valid for the duration of 'a. The cast is okay because
+> -        // `OPP` is `repr(transparent)`.
+> -        Ok(unsafe { &*ptr.cast() })
+> +    /// The caller must ensure that `ptr` is valid and OPP's refcount is incremented. The refcount
+> +    /// will be decremented by `dec_ref` when the ARef object is dropped.
+
+Usually the second sentense "The refcount ..." won't need to be put in
+the safety requirement, as it just describes how ARef works.
+
+> +    pub unsafe fn from_raw_opp_owned(ptr: *mut bindings::dev_pm_opp) -> Result<ARef<Self>> {
+> +        let ptr = ptr::NonNull::new(ptr).ok_or(ENODEV)?;
+> +
+> +        // SAFETY: The safety requirements guarantee the validity of the pointer.
+> +        //
+> +        // INVARIANT: The refcount is already incremented by the C API that returned the pointer,
+> +        // and we pass ownership of the refcount to the new `ARef<OPP>`.
+
+You can probably drop the "INVARIANT", as it's an invariant of `ARef`
+which already guarantees since the safety requirement of
+`ARef::from_raw()` meets. At least you can write them as "normal"
+comments.
+
+> +        Ok(unsafe { ARef::from_raw(ptr.cast()) })
+>      }
+>  
+>      /// Creates a reference to a [`OPP`] from a valid pointer.
+>      ///
+>      /// # Safety
+>      ///
+> -    /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
+> -    /// returned [`OPP`] reference.
+> +    /// The caller must ensure that `ptr` is valid and remains valid for the duration of 'a. The
+> +    /// refcount is not updated by the Rust API unless the returned reference is converted to an
+> +    /// ARef object.
+
+Again you could drop the second sentence, or you can put it somewhere
+outside the "Safety" section, if you want to.
+
+>      pub unsafe fn from_raw_opp<'a>(ptr: *mut bindings::dev_pm_opp) -> Result<&'a Self> {
+> -        let opp = unsafe { Self::from_raw_opp_owned(ptr) }?;
+> -
+> -        // Take an extra reference to the OPP since the caller didn't take it.
+> -        opp.inc_ref();
+> -        Ok(opp)
+> +        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
+> +        // duration of 'a. The cast is okay because `OPP` is `repr(transparent)`.
+> +        Ok(unsafe { &*ptr.cast() })
+>      }
+>  
+>      #[inline]
+> @@ -910,10 +912,3 @@ pub fn is_turbo(&self) -> bool {
+>          unsafe { bindings::dev_pm_opp_is_turbo(self.as_raw()) }
+>      }
+>  }
+> -
+> -impl Drop for OPP {
+> -    fn drop(&mut self) {
+> -        // SAFETY: The safety requirements guarantee that the refcount is nonzero.
+> -        unsafe { bindings::dev_pm_opp_put(self.as_raw()) }
+> -    }
+> -}
+> 
+> Makes sense ?
+> 
+
+Yep, looks good to me!
+
+Regards,
+Boqun
+
+> -- 
+> viresh
 
