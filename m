@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-242773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D3F928CFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:16:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC48E928D02
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 19:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EA3BB20765
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:16:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D537B23E38
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 17:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C701016D9A4;
-	Fri,  5 Jul 2024 17:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5254916D4F6;
+	Fri,  5 Jul 2024 17:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="U5vDbHkE"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWK+TGoR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEBA145B10
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 17:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955F713CFA8;
+	Fri,  5 Jul 2024 17:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720199796; cv=none; b=uaX4mlQSRr551NCRyemOmHI0zw7u2aplQtwnD/kbEh4H4J2Gyuxoo2JFc5XP7x/3+UUDcka3bGjs0l5PmW/NJfM9c/51uZ22E10RVMmeq2iqiQxZ8/jGYYI8K478Oz/IOiEssQU2x41Ku7jT7GbJZyWqMSd7cE825/M5+kjS4Eo=
+	t=1720199938; cv=none; b=DkhKPgp5Nr6JUEhht9F17mMFdp76RaNNE/LVZ+jsyv4gf5ZEz5KJlRRGucl0fsowezyZ/R5LvNl3hbSbpC5y2MY0B8d7XXRpNHR2ZybrOMRx8tZb4Y3kZ4wU/aMlL/JPYxqYTTLREMRfy5XFOVaiGTFDmWi1zbo81SvUhijzJLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720199796; c=relaxed/simple;
-	bh=WLqzSHMkCJXQQkmwdalJfco9pPxwz6kJETfVla9fejY=;
-	h=Date:Subject:CC:From:To:Message-ID; b=drY1rLjdGP6DtvR7lPtEMC7atPZ2hyC4azvl4jWievRxq+t0vgxwZPfpupz+j0k/vNb39usmN1NoW8fuJhbS2SB5sNeHlU5Yg9Afw6zSmDo3rfOq8iklwNajMGnV6Ow61gMh+NEH6Rkz+/pQD7W0y4DM/UPV3ID5XOa0WxKVXYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=U5vDbHkE; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fa9f540f45so11999705ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 10:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720199793; x=1720804593; darn=vger.kernel.org;
-        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=in/LzK8J9JA83I2h0HE4VR8w3YECSYGz8kwTmF46sLA=;
-        b=U5vDbHkEujOHpLMFnwhS6VsLqoC5vG6JkB9Vbiy3NFiVuvuYCCn2k2RmvGR931uJuf
-         oCWFSje+1MAHURaxZIz1+cIyU3NBYKx87NBv92CD2Ewmiu2f69TBAkhYoFQRKx4lHwrw
-         rfwPEQxMt4+Pheym0auhEd0f4CXjfDdradC5DTchheGZR6ct8xim67gwfOEp38ckiCBu
-         IYfRwrajlfa9AGmZM/zzbBWGhvWiaGo5rSS5dTrBLhcopeWNc2I+9YN5doebp4RtXBfN
-         Xs4qmyyK52r5zFp4j3XZ0hAMTwPVq/KjhF/K/UpW3m7NhBI/ssDp7OPU6FRpfcerFHbr
-         b8AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720199793; x=1720804593;
-        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=in/LzK8J9JA83I2h0HE4VR8w3YECSYGz8kwTmF46sLA=;
-        b=VsH+z+YjhSxx1EIzI59MkiW+y4mooPtDknqAGMk7XVKcu93pwT2IG2NgMqBYxNDqnw
-         GeaB5LGQI4qyB9Bm+sH1W+2Q9J1qyLoJB1lCsr3liL4VFrixMVseRlEXRc2OO5tvMrs8
-         yOjT5AzN5eE7ChRxXpdaIdMxU71qdC1FVZHqoz5XW8BCVnuD42zV6mnq6FhBosIJ6uIh
-         9C1CuZWWM5HBFyvU4u6fY95bE16mstAOsBdfqZwCUPzCgBiqub3Q2mTiC/BIi+T8el0D
-         dWehg6ejU2eMjzKhjPZbBoV3E54kLmUzFBCMM1V+kQtATVfJ4tkLkCgarF+NU27YnIvB
-         CMWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqOTSCzFBaar8i+skMClp9okCO/tu1sBgxVq2sOH3ri4oKDkxi/ERORHWn7l+xQt7DGlBsGTvmDJQnkrh/zjqxaBVihHE3hubOQs40
-X-Gm-Message-State: AOJu0YwrGPJBExEki90J/MxtV8UQisPCoX4I5+CuA99FH1WYLrmzhZbz
-	y+vew+rKgSeuQYOCpbL4NXiOvCDAdW7GPLSn5PfRs6ns4N0/yM1Yf+xjOs3gfvuppVNEyPf+U64
-	q
-X-Google-Smtp-Source: AGHT+IFNDYa52WmZ4834HkFwpR9ug9L4dA+Zn5lnn4mA6g/te+8GNddBhZT6WVVzJ8roKd9SC1D8Rg==
-X-Received: by 2002:a17:902:c951:b0:1fb:29f3:c7d4 with SMTP id d9443c01a7336-1fb33ee5d27mr36230245ad.51.1720199792856;
-        Fri, 05 Jul 2024 10:16:32 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb5962888csm6993355ad.61.2024.07.05.10.16.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 10:16:32 -0700 (PDT)
-Date: Fri, 05 Jul 2024 10:16:32 -0700 (PDT)
-X-Google-Original-Date: Fri, 05 Jul 2024 10:16:16 PDT (-0700)
-Subject: [GIT PULL] RISC-V Fixes for 6.10-rc7
-CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-c0537cb4-d700-4259-889e-c87f011e931b@palmer-ri-x1c9>
+	s=arc-20240116; t=1720199938; c=relaxed/simple;
+	bh=1ituLkOnC1WTd8BmbU85n2/gdw3Sgu9chR+b8QtLOL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3BvX3iM0z/m83Ub6VR5TWKPdxu7VlS7lWvDqTUEgPQqzQEhgmefb3p/XFEmXIP7ebATTPHcGctDxyX0K1esPTH7xUJ604d7TXjuj8GBJKm4eqg2s1yOgZx+Ua3+wj+Idedl5Gpt7MYH4jao/dSH0sMqkMCwuvBDidGyZTXrco4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWK+TGoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA25FC116B1;
+	Fri,  5 Jul 2024 17:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720199938;
+	bh=1ituLkOnC1WTd8BmbU85n2/gdw3Sgu9chR+b8QtLOL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YWK+TGoR6MVqxQCW1zcXJpb2GwT2/RhOuNMoFSAk+X0rrZlFRugJigCYDbffQnUNW
+	 XWVwbQefZHUnrALHlzSxXuewRrvKn1GyKg/Eurx24TeoPIJqrY0w4nlxuhgSCSsZ8p
+	 nqS1lztQuytmIgRUO4n3BcYlnn8CylQq4FWxtoduCa09bMoYnXIbkGaIno003peroT
+	 iYwpaf/crdUL+dtbeI+AqLDn/2pd/Y9H/2F34W4MoHEMep5xLzJNooJ3ebNlXse0Qr
+	 j1JySWiQDe07/g9AFBqWagaoyAK6cT0cqpWwp0gYBvFLGUM9h8WmelBAT58Z2ZSDfR
+	 QBZqH9uAJ/czg==
+Date: Fri, 5 Jul 2024 18:18:50 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 0/4] KVM: arm64: Fix underallocation of storage for
+ SVE state
+Message-ID: <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
+References: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
+ <86a5iw3ri2.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="U5p+oewpuxta8YH0"
+Content-Disposition: inline
+In-Reply-To: <86a5iw3ri2.wl-maz@kernel.org>
+X-Cookie: Look ere ye leap.
 
-The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
 
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+--U5p+oewpuxta8YH0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-are available in the Git repository at:
+On Fri, Jul 05, 2024 at 02:20:05PM +0100, Marc Zyngier wrote:
+> Mark Brown <broonie@kernel.org> wrote:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.10-rc7
+> > As observed during review the pKVM support for saving host SVE state is
+> > broken if an asymmetric system has VLs larger than the maximum shared
+> > VL, fix this by discovering then using the maximum VL for allocations
+> > and using RDVL during the save/restore process.
 
-for you to fetch changes up to c562ba719df570c986caf0941fea2449150bcbc4:
+> I really don't see why we need such complexity here.
 
-  riscv: kexec: Avoid deadlock in kexec crash path (2024-07-03 13:11:30 -0700)
+> Fuad did post something[1] that did the trick with a far less invasive
+> change, and it really feels like we are putting the complexity at the
+> wrong place.
 
-----------------------------------------------------------------
-RISC-V Fixes for 6.10-rc7
+> So what's wrong with that approach? I get that you want to shout about
+> secondary CPUs, but that's an orthogonal problem.
 
-* A fix for the CMODX example in therecently added icache flushing
-  prctl().
-* A fix to the perf driver to avoid corrupting event data on counter
-  overflows when external overflow handlers are in use.
-* A fix to clear all hardware performance monitor events on boot, to
-  avoid dangling events firmware or previously booted kernels from
-  triggering spuriously.
-* A fix to the perf event probing logic to avoid erroneously reporting
-  the presence of unimplemented counters.  This also prevents some
-  implemented counters from being reported.
-* A build fix for the vector sigreturn selftest on clang.
-* A fix to ftrace, which now requires the previously optional index
-  argument to ftrace_graph_ret_addr().
-* A fix to avoid deadlocking if kexec crash handling triggers in an
-  interrupt context.
+As I've said from a clarity/fragility point of view I'm not happy with
+configuring the vector length to one value then immediately doing things
+that assume another value, even if everything is actually lined up
+in a way that works.  Having uncommented code where you have to go and
+check correctness when you see it isn't great, seeing an inconsistency
+just raises alarm bells.  It is much clearer to write the code in a way
+that makes it obvious that the VL we are using is the one the hardware
+is using, for the host save/restore reading the actual VL back seemed
+like the most straightforward way to do that.
 
-----------------------------------------------------------------
-Atish Patra (1):
-      drivers/perf: riscv: Do not update the event data if uptodate
+A similar thing applies with the enumeration code - like I said in reply
+to one of Fuad's postings I originally wrote something that's basically
+the same as the patch Faud posted but because it is not consistent with
+the surrounding code in how it approaches things it was just raising
+questions about if the new code was missing something, or if there was
+some problem that should be addressed in the existing code.  Rather than
+write an extensive changelog and/or comments covering these
+considerations it seemed more better to just write the code in a
+consistent manner so the questions aren't prompted.  Keeping the
+approach consistent is a bit more code right now but makes the result
+much easier to reason about.
 
-Charlie Jenkins (2):
-      documentation: Fix riscv cmodx example
-      riscv: selftests: Fix vsetivli args for clang
+The late CPUs thing is really just an answer to the initial "why is this
+different, what might we have missed?" question rather than a particular
+goal itself.  Adding a warning is as much about documenting the handling
+of late CPUs as it is about highlighting any unfortunate implementation
+choices we run into.
 
-Palmer Dabbelt (1):
-      Merge patch series "Assorted fixes in RISC-V PMU driver"
+Basically it's maintainability concerns, especially with the enumeration
+code.
 
-Puranjay Mohan (1):
-      riscv: stacktrace: fix usage of ftrace_graph_ret_addr()
+--U5p+oewpuxta8YH0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Samuel Holland (2):
-      drivers/perf: riscv: Reset the counter to hpmevent mapping while starting cpus
-      perf: RISC-V: Check standard event availability
+-----BEGIN PGP SIGNATURE-----
 
-Song Shuai (1):
-      riscv: kexec: Avoid deadlock in kexec crash path
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaIKvoACgkQJNaLcl1U
+h9A7Zwf/f+n4dM8+OgqZHibhjB9e9RE3NquJ4DqHhCAvYwl8b4vB3y8KAvv1uL19
+42PvcWTcg28wAmt9BR2eF05J0mOZXToD0He2aNaNQKoSF1gG7ayBM7KzVqfh9qMF
+aaZDUnkD3jvlf39WvsKWnmD06+fG15bovccYLNlATl5AXVsve1gT3znNTp+dL+Wj
+TY4pcyGbDTdsaGTjdDlEldvJ3D3uMncRHRhGX7nBIzHLb4GqSwYiMXBSOtir94y6
+oAPbwPU8RKPSa3Mb9Zrsj5/SG6fn3NoOKvqyOeQGR6g54V7GpL/ltsEsplA9/AOI
+PFxv7rPneFxb8D8sXVDCOJ0kQMtnug==
+=/oWC
+-----END PGP SIGNATURE-----
 
- Documentation/arch/riscv/cmodx.rst                 |  4 +-
- arch/riscv/kernel/machine_kexec.c                  | 10 +----
- arch/riscv/kernel/stacktrace.c                     |  3 +-
- arch/riscv/kvm/vcpu_pmu.c                          |  2 +-
- drivers/perf/riscv_pmu.c                           |  2 +-
- drivers/perf/riscv_pmu_sbi.c                       | 44 ++++++++++++++++++++--
- .../testing/selftests/riscv/sigreturn/sigreturn.c  |  2 +-
- 7 files changed, 49 insertions(+), 18 deletions(-)
+--U5p+oewpuxta8YH0--
 
