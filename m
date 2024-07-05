@@ -1,97 +1,117 @@
-Return-Path: <linux-kernel+bounces-242438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0126928807
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A1C92880C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 13:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17F11C21578
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:34:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131661C212B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 11:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6757149C50;
-	Fri,  5 Jul 2024 11:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC08149DEA;
+	Fri,  5 Jul 2024 11:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="X/kPI/uT"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="OCjZowWY"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455051482F3
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 11:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206411482F3;
+	Fri,  5 Jul 2024 11:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720179274; cv=none; b=Xz65+hT0KCdEb//0ZMWk3Nlo5yM1Lbk2aoFlj+1V6/eFs9bncEAATLLgtMZuQeUHHDOkfUVGjYckrD05SZ2XpVriqbtMjn/RqjPNjTqr7UCtXtSib/5vbzSdbm3z84XagG9bdi6IYsgSJ0pbtqPFDQJ1ugqSlDYFdx4xLlVDges=
+	t=1720179388; cv=none; b=Bt0/r5TX0Gizh2QNd4AdXXQhaH24UpBInqkF8CJ1QR6MaexuCD47z+6Lj0Lmde3vpWS3k0f/u+IIJbE9PMybNT92Un7JiCEOSZeIqn9CqLR5UYN3xlX1YUKHnx1r4I2bi5g4eNp1ldvi1UaHPdk9aee7IZgqmM6ppcZh082MK1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720179274; c=relaxed/simple;
-	bh=lhrm2MbbpVMIVTtJ3vPKAgoCAUidNLDiXziAT9NgCjo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=AntnG2bIU8In2EezfyAquqXOHtcCQkxWXOTZaXJhwR1IDLkE0hf5Xg69sPhk/syLar+A6KEjuDgFdyqMe5VwpSebHeNq0iUCKZRNWXpwgdtDp4TGv/DMcY9JQFn+mFYyUHlGSfN84kvkXPHB3lhNUk+OYzPBBnwniDp8+SGu0wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=X/kPI/uT; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 465BXrGR1831654
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 5 Jul 2024 04:33:53 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 465BXrGR1831654
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1720179234;
-	bh=lhrm2MbbpVMIVTtJ3vPKAgoCAUidNLDiXziAT9NgCjo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=X/kPI/uTWdH/24zjjjuKr/lDPalYxpr+wKgPJTWhOh0m6mIOEqg6niEHbKtz5ZXl+
-	 Si/5hSqcJCjYDR0b17+nP3oHXsg9e5LVRbtxQCSamR/cNPmQxUICrytjTdWpz+yKk6
-	 ybBzKBQNGLpeyUCQtIWdFARkujPxvzHG9KH1HNucx5yi8UjEaxFH+YkizoOhM6GH0r
-	 ZHiJrOuV7adJd59btrYOG8cYHSi8OUY2QjWYPf+6aN4ntursPiDfJg1DynBOs7d0ha
-	 mM3XyPpnNU2U58dVEIefERRGhXmnRNjLJGqnMIg8fKmL0yh9QnXowJGIYECz4heUfx
-	 2B97dFSBJTEdQ==
-Date: Fri, 05 Jul 2024 04:33:53 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-CC: Borislav Petkov <bp@alien8.de>, dave.hansen@intel.com, xin@zytor.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, nik.borisov@suse.com,
-        houwenlong.hwl@antgroup.com
-Subject: Re: [PATCH v1 2/4] x86/fred: Write to FRED MSRs with wrmsrns()
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240705092805.GC11386@noisy.programming.kicks-ass.net>
-References: <9063b0fe-e8f3-44ff-b323-b2b6c338690f@intel.com> <172002205406.3280081.14523962650685954182@Ubuntu-2204-jammy-amd64-base> <15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com> <20240705092805.GC11386@noisy.programming.kicks-ass.net>
-Message-ID: <2EEA5074-7A1A-4C12-9FC4-36FB5110FF93@zytor.com>
+	s=arc-20240116; t=1720179388; c=relaxed/simple;
+	bh=aA6UMx8bvIXjhEaoc3nKBlWMNp5+O3VwjJAQjwXbQ20=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Uc+FHRIHp5ymO8eX7WdGGmy0KyiTVSnQG3Ou59oJZazBKzkb2E6bZKDnO/kqShsPQle0UVkOgm5ytaBw5MirZ2nawV+4Cs+Rf8Ilmwa3tLmT41LaPWJ9Li98fNEVHFtjwlnOOCUOo8h8tvkHoir028B0J+rFGAwNl/j/IHwYyEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=OCjZowWY; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id C393C100003;
+	Fri,  5 Jul 2024 14:36:03 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1720179363; bh=fukh/qCjpOhKPdOYyMdzZj28hZQbEnqAxEmvW5BRgK8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=OCjZowWYV37LAF5SYn/KmciBh1pRlgFDyH2CTIyYDdB/Zokip7QhupzE976GPXDIj
+	 EV547UkCqBjs6dRLbhhL5SUEDc2Yjs2h5H0dra1T33lUHDeDj6MuJ/7arLRkZlTQ6E
+	 iVG+szzVWGMNycYWytMxMv8Es5YaUC6vSNFl7oA8Q1N64ieA29qPaIg2h/UahURC7m
+	 SDNJZg9lIhzkvUN29IS3w5Duibs6lhApx+G7vUWlrBvcgUZbi0C/4XHb0U2naMCErL
+	 SO6GH60DX13LajkgMeIdVQNk56IE6C49/EmW+r61C9pKF1W0JfBU+Uu1517ypV9xAm
+	 8heQZvwQoKSgw==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Fri,  5 Jul 2024 14:35:08 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
+ 14:34:48 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Rajmohan Mani <rajmohan.mani@intel.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
+	<andy@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Sakari
+ Ailus <sakari.ailus@linux.intel.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] ACPI / PMIC: Remove unneeded check in tps68470_pmic_opregion_probe()
+Date: Fri, 5 Jul 2024 14:34:34 +0300
+Message-ID: <20240705113434.17249-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186342 [Jul 05 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/05 10:17:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/05 10:39:00 #25854340
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On July 5, 2024 2:28:05 AM PDT, Peter Zijlstra <peterz@infradead=2Eorg> wro=
-te:
->On Wed, Jul 03, 2024 at 05:00:53PM +0100, Andrew Cooper wrote:
->
->> /* Non-serialising WRMSR, when available=2E=C2=A0 Falls back to a seria=
-lising WRMSR=2E */
->> static inline void wrmsrns(uint32_t msr, uint32_t lo, uint32_t hi)
->> {
->> =C2=A0=C2=A0=C2=A0 /*
->> =C2=A0=C2=A0=C2=A0=C2=A0 * WRMSR is 2 bytes=2E=C2=A0 WRMSRNS is 3 bytes=
-=2E=C2=A0 Pad WRMSR with a redundant CS
->> =C2=A0=C2=A0=C2=A0=C2=A0 * prefix to avoid a trailing NOP=2E
->> =C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0 alternative_input("=2Ebyte 0x2e; wrmsr",
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "=2Ebyte 0x0f,0x0=
-1,0xc6", X86_FEATURE_WRMSRNS,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "c" (msr), "a" (l=
-o), "d" (hi));
->> }
->
->FWIW, I favour this variant=2E
+In tps68470_pmic_opregion_probe() pointer 'dev' is compared to NULL which
+is useless.
 
-We normally use DS as the padding prefix=2E
+Fix this issue by removing unneeded check.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: e13452ac3790 ("ACPI / PMIC: Add TI PMIC TPS68470 operation region driver")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/acpi/pmic/tps68470_pmic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/pmic/tps68470_pmic.c b/drivers/acpi/pmic/tps68470_pmic.c
+index ebd03e472955..f8de8d0a528b 100644
+--- a/drivers/acpi/pmic/tps68470_pmic.c
++++ b/drivers/acpi/pmic/tps68470_pmic.c
+@@ -376,7 +376,7 @@ static int tps68470_pmic_opregion_probe(struct platform_device *pdev)
+ 	struct tps68470_pmic_opregion *opregion;
+ 	acpi_status status;
+ 
+-	if (!dev || !tps68470_regmap) {
++	if (!tps68470_regmap) {
+ 		dev_warn(dev, "dev or regmap is NULL\n");
+ 		return -EINVAL;
+ 	}
+-- 
+2.30.2
+
 
