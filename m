@@ -1,296 +1,222 @@
-Return-Path: <linux-kernel+bounces-242714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E552A928C10
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:05:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D62928C17
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B84D284B69
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B6B1C245E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC43716C694;
-	Fri,  5 Jul 2024 16:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4645116CD14;
+	Fri,  5 Jul 2024 16:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=stonybrook.edu header.i=@stonybrook.edu header.b="gEzQrEzK"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fwU1U70d";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="0QMaXETJ"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B2416D305
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 16:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720195498; cv=none; b=qmu+i56mwCXsmKr1qqL+49CKifE9541yUgT66IOkNNHyAiujB58ehoFmK5Yk6tZKyu85Qb28Gl2r0U9UgHP2PZ9brBjlk92Zs6YurO/dqPW+FOvzUMPX8we/hUstPfdGh2UDaX7nK0PYJ7nmKgrQjHDBFgAWrmQkCj4F67FtSBU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720195498; c=relaxed/simple;
-	bh=A7vRwgFOsfEUebToLjineE1Yc3bFRMBP0j8O4H6ho2A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=moIG1RDoG+Ek+k/p+42D9ShUh1woDivTDKYdomMbCfjWzwBe6TtkmAfDTn/3bR9cVOho95zHEoP0cu+RtynnlByS9SLOYIpdg2o6K74aApOLvIKVJSs2a11Xd2WjhSMPiVWiy9YQjL8j6JNRN2tId1tfWTidBd3rX+daPjrKjeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs.stonybrook.edu; spf=pass smtp.mailfrom=cs.stonybrook.edu; dkim=pass (1024-bit key) header.d=stonybrook.edu header.i=@stonybrook.edu header.b=gEzQrEzK; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs.stonybrook.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.stonybrook.edu
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c5362c7c0bso1203808a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 09:04:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E0413A88B;
+	Fri,  5 Jul 2024 16:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720195619; cv=fail; b=EfWpXUpAYuN/vwfmQvZoLWvM1dge2i/J7yyB7w7NcZzk3js5BK78cvV8NzZU/GOG6R0YWhSKUuovY25WKfFcTyU1TOSVe3TVGg39qFENRBhsKSmi0duw9gBvPOOTCjsaugjoybkGosj2lLFZNmzbAr6n9yGF7O4I7cviLl6x7fE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720195619; c=relaxed/simple;
+	bh=K4KExWRtlfo9sREMkP5s/LN/Lir9919QFhBJ1LeVfTk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Bsdn+GgB0s8qxHj2cX/W3iKWtmu6OPhThA7InjKxn/DNoUxRvW2XYWz1kxup3BrJ9dPnyTetY77HDwkQszxEdCgryJgZBX41fzKHHruY31R6ueioWs2W7FzL01cT8NGvkRWDDZw8kIOQmEeDlZbQd9POS8V63/sPYAmbn4DXbC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fwU1U70d; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=0QMaXETJ; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465FBVDU007925;
+	Fri, 5 Jul 2024 16:06:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=4R4uH3hTAykTo8RQTfV3WLTPm5MRZMdxN6EQA7OLl7U=; b=
+	fwU1U70dpiCcz2XAg5K0GwxS4gpz28wv1rLqiHCxoV/gIydPFMinRhoox13mrnjo
+	LIBNDGI9FUcBYwzDgTVt7x1RkFCMlmgqTpl09FFX5Ep57BCAnwy76FA8GKJrtTlt
+	D2ufnIMMcS950p3m1fmd8Rm51d4oOJ889olm7Q4UMUwxMN5e9Ku1Gk1Rx/vIqWFK
+	3P/ljRswPqPxySDSXQrVmxXAb8jO6dD+lVQBFEd8dbesNvCrHgPHkFH+AyDB1jma
+	0LTlUcL1Rqe8gBjOLL3Bu9IekHEv/NMNhPZa0I4Myj/SMUmjyidDS5joNdGzK/aE
+	jc9AVLJ+qJ5YYZ5gZnGZtw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 402aacmagv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 05 Jul 2024 16:06:38 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 465ELVBR035759;
+	Fri, 5 Jul 2024 16:06:37 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4028qb9258-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 05 Jul 2024 16:06:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m0Wjt87IUZTQiC48v0dYoMO4kZrU/I5cwKAcINU6UGy0WOSEZzxv6Tjra0KBHLA46RpwiDumywh7i/+zgJ2QyhSLqx2wiGJhtFJINIBhy8QNafolHmOtun9duk4AfkUdL2QHi7RuIf2T2Wx4cV9ftDTFjHUjukwHqPWZX+GgLJ0eQ5nO/sAnJ0WCwJ98ab+kGgKnWCtSxAZncVyodyfPIQOJwSh6uY/BAoNLs2kmz7byulRzXXYk02v+/nFHOHHw1PK9tzniQ1C04I4ru2PCjIhTAzVl1ZdJw34IG2S5iocUgYXdGBcdNseeRYrIUCmwDM8alA4ObceWgxa67uoGYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4R4uH3hTAykTo8RQTfV3WLTPm5MRZMdxN6EQA7OLl7U=;
+ b=PtHtKdYIR1hWyvkuXVvztMAdCB8xGJwJQlJWEljjDWRM/a9CCqwXscn4h+VFBxtMX+LuArWHEe/Y3dfcVuNjwMqlhEX4eWmx5WvNw4aY2j7HBb1FA4Fn7KarbAThDS7o7V0rm7Rx7TsP5kCXu7HdFLBE9RLIwuMjdDGEqY99rWIYP0tGMGF1cV3E/omlY8bYJbRYD0nr+E0YyowG5aftrL/+GaZTOB8AyMBC4R/wOmflZctN6jNdSraiujOfSRDSvybvVdMLa5RkS3VP1UV6svT+AAqYlkvcC16vRN+xsQ7WZjq7LJtdAwyCyag2Oh2/YcqmIwhIglmY9WbKKP4yeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=stonybrook.edu; s=sbu-gmail; t=1720195495; x=1720800295; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EAsDQcwFqcOG+OHrLbp0rlGGqsOI2p/Z6Dqyj+5xrT0=;
-        b=gEzQrEzKlZysEUJ14zXOVtITWhU6o/S5eFFMmqsQ+ddlyvRdHCS6KvnFLSol1nHVUu
-         WBYx0bTxFSfJzPTjaOL0gqWU8yU+Lbqe7Ug8tsaj9Hm7gEKtaifxXU4tjiknwBcV07Hh
-         2KemKNXK7zETG3LrGPQRXZKnxcJv3TNVTwG7I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720195495; x=1720800295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EAsDQcwFqcOG+OHrLbp0rlGGqsOI2p/Z6Dqyj+5xrT0=;
-        b=YEZuy+tf8GyeSS2+Gz1I3KOgozVhGZtfnTqrY3rWZLMvc90SywkWrUEgXVpeGj/f7J
-         kI68LudymVggSCBGTLQhN67DIyIoz9+3DwxhV/JIls+dyxFrHmRkPkq84vyNVrY0i/qS
-         pF+8Hscz1DDSoxqjB1Z2KfnwjDVjPvM92Bai+NIS0R9MJdKBt87YhzEkB0VGbG/ZcpwX
-         F6YRKtBJtYmFGotB79nDpGDVtQLrxuQFo8XxMwQ1jyb2yI9ozh4u2/rjq7bEyNE4Vz+l
-         kIkH6FMgIlejJGyX0EYqKpUMmXt307MVViq4cn/K14uPzTNNq7RoKYVEYTY4bB5+EDqA
-         4nxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZsMUWAy7aTyealcOIeNwt8WgxMsMU3oO8Yq08w/nJmbrIcDDXOskAgrn8VPGzyNK+f+WYyPTctHiHh4Epz7MQlp/s6/oUbWZJCR6h
-X-Gm-Message-State: AOJu0YwALD2Hp5vU1HzbiEa41nRNAV8gqkKd9BQOBRuWRPxHEl7AD4J5
-	ZElCCZjEjdAeTbTR0IfvD0X7nLj+Q7cUzIbMMOIcd0LCi+fGAJ/6yntZcxVi8UiqoGv0CTYG3i+
-	AcG/T/pwPd0FCrTNN1t8HLtgBaRgwZ53okMDS1A==
-X-Google-Smtp-Source: AGHT+IEAj8cFT2o4AnDZG/0KaR0qprPVAquRKAP3SMVvSE29S3977oqdBTIdayMNqU8kHDoIvey3FiZuDitfdYHgT5Y=
-X-Received: by 2002:a17:90a:e501:b0:2c2:dee2:ed41 with SMTP id
- 98e67ed59e1d1-2c99c57df01mr3474714a91.19.1720195495259; Fri, 05 Jul 2024
- 09:04:55 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4R4uH3hTAykTo8RQTfV3WLTPm5MRZMdxN6EQA7OLl7U=;
+ b=0QMaXETJwCEC65s0F20MZIjjAdHXAZFZBur37eoteBTQIxlX4EGIFlVjf5aNpmTp5CLgVENQfBv585aF/mh7Dlw8p1tI2zPh2+e21BFMOX79Ye9VQ8B+D8uKnK82xE/c2HGG7fte8fNzwzP0ef47tcMiYWVPG1WK6MjgG4t8ZS0=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CYXPR10MB7974.namprd10.prod.outlook.com (2603:10b6:930:da::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.31; Fri, 5 Jul
+ 2024 16:06:34 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.7741.025; Fri, 5 Jul 2024
+ 16:06:34 +0000
+Message-ID: <e7cb798f-6a3e-4406-9aae-e9c4b54135fa@oracle.com>
+Date: Fri, 5 Jul 2024 17:06:29 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] Validate logical block size in blk_validate_limits()
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: axboe@kernel.dk, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+        eperezma@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
+        hare@suse.de, kbusch@kernel.org, hch@lst.de,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux.dev
+References: <20240705115127.3417539-1-john.g.garry@oracle.com>
+ <20240705112922-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240705112922-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM9P192CA0028.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21d::33) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALXmgOG=E7Yk+j7KY5w_OVMFQ5S69XX+0BkW_V0kZngCTkj54g@mail.gmail.com>
- <4c9d4c00-1811-4100-89e7-5064e8bdc0ab@oracle.com>
-In-Reply-To: <4c9d4c00-1811-4100-89e7-5064e8bdc0ab@oracle.com>
-From: Divyaank Tiwari <dtiwari@cs.stonybrook.edu>
-Date: Fri, 5 Jul 2024 12:04:44 -0400
-Message-ID: <CALXmgOG9-uyQaELJQwkAajrtMpJezLbPYpKnwnFOiA6rjZzC1w@mail.gmail.com>
-Subject: Re: fs/jfs: Reproduction of kernel oops bug in JFS
-To: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	brauner@kernel.org, jack@suse.cz, axboe@kernel.dk, jinpu.wang@ionos.com, 
-	dchinner@redhat.com, lizhi.xu@windriver.com, johannes.thumshirn@wdc.com, 
-	Yifei Liu <yifeliu@cs.stonybrook.edu>, Erez Zadok <ezk@cs.stonybrook.edu>, 
-	Scott Smolka <sas@cs.stonybrook.edu>, Geoff Kuenning <geoff@cs.hmc.edu>, shaggy@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CYXPR10MB7974:EE_
+X-MS-Office365-Filtering-Correlation-Id: e225d205-0cc1-4c72-67ea-08dc9d0c7141
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?VVNOUkRIQlFzTkhYSW1VY3p2L0F5NCtoc0VFZC9ET3FyUC8rZloxaDlLbGVM?=
+ =?utf-8?B?RUZjb0RvL3J1eEkxM1Q4V213N2dwK0VVV3pXaHhLYitqcnUrTUd4SVY0R09x?=
+ =?utf-8?B?cG1VSDBGVlR3NkRLUjN1NWt0cW51ZzFXWWJpQjhLekRwc2k1eDAybURhakd2?=
+ =?utf-8?B?SWpGMXZsOUdYVHNHQXZINHhyMG5ON1h4SHZkY01xeTBEU0tWaWxoMlF0d3Bl?=
+ =?utf-8?B?YitVUitIays5V3dHUi9hYWtjV2R3V29HMTFVaDJsbnlwdGYraUVoMzczUmx4?=
+ =?utf-8?B?Q2xObWpiaFovVmt1ay9hSTE0QXczMmx5d3NZQUtxTnJjckx0UkdVazVJTGRy?=
+ =?utf-8?B?anRSZXYvZEFrTWdJOGV3UEI1NVY0WEZpZmorQ3Vla2tMWU9XRWNEc0VQTnZU?=
+ =?utf-8?B?bnV3RUY5SlFTY3dQamoycFdaVXFPeSs4TmFkL0RSWmtZU2tIREYyK0ozUmhS?=
+ =?utf-8?B?MXJCRitMU1NtTmJwZEM3Z3JmejBFb3dJYkFqdndLQlhRVDhvSWxEcTNwVTZY?=
+ =?utf-8?B?UXdNMkpzRldVSU9BQklENytxWTF5d0k4b25rQ0hhNjZGS3dBeERlTHNNNXdJ?=
+ =?utf-8?B?L3kwemFwVktYMmNjdmFRUm5nRVRTaSttREFYWDY3MGZNN21pejI0bTF2S24r?=
+ =?utf-8?B?Q2drYWJpYXNzZHJ4c1pxNnlOV1l1QVBUL0V0Znk5VHpQUEJieERSRXdsdGYw?=
+ =?utf-8?B?ZFdzai9ibmZwSmZoYk53a2R3eWxVeUZoTmN0OXZSVE9MME9yR0lRVDhYRCtn?=
+ =?utf-8?B?dStUbi9pV3ZrVkJ1eGNGcFlSVnRaUHRzdFljSmd2b1VlNU83RlY4ZnpUVzlo?=
+ =?utf-8?B?MzBIRDlOb0QzUnlzc24xU1B5UVcwZWlHVnhFNTR5THN2RXRmNU9qT1BGTGlY?=
+ =?utf-8?B?OGxsUHdTV0lLQzdHWGM2QkF6bk13ZGIyMXhNUVRrMFQ0VDIwd1dqbGEzV1hr?=
+ =?utf-8?B?VlJzVUgyR0sxVmU4OUVNSGlFeWpEZFVHbWJTVUl1aDdWMGZhalIzb3hsOXFk?=
+ =?utf-8?B?ZFhhSmRtZytZMm1ic2h4bm16d2tNZk5udFpyL3p3VVBCK05oYzZXa2FpVjlx?=
+ =?utf-8?B?ZDRlNlRFUXZOYndHR1dKNnlwZEN1U2tHVmJNZkNBeDdtVkY2QXUwSXBUaUpi?=
+ =?utf-8?B?bmhNOWJZdWE4ODJuUVFxZzVYSjMvVGRieXhtdVRzZlZXbUhrZjd5VGhiMHg2?=
+ =?utf-8?B?c0loako0RWNkVFZ2SmovQ0YrOGZ3aC9meEoybGEvVUhmcTlrTDFPb0dMS0ly?=
+ =?utf-8?B?TytsYnV1cklDbDRQaXRpQURJUEZBbmxrZ2luemw4elVsUnpEbDE5ZTNiU011?=
+ =?utf-8?B?elZ6OGFReGkxQmhsNWorMnFmcDJ3aElXaEJJeDlBV0dlbSt3K09zSGNQOUVm?=
+ =?utf-8?B?OUowTGRSbzJteVpVZXdWNXBGYmI3cWE1K2xqT2V3TDZyNGRkRkQ5SlNyOENT?=
+ =?utf-8?B?cHZuNTlTQ1F4U2xReWJkdWV6ZCsxSk9DTkxCVUVUa2pqMitRZ0lZaFNPaHJT?=
+ =?utf-8?B?alFaN0xIR0lpTXVCbnhyRGtvYVJCRHF5M1ZrcGh5eUxpcThUaUF1WGo5MjZJ?=
+ =?utf-8?B?eHBjaXVkQlU2bnVESkRsbGh3TnVEV3FLTDl4cHJvZ3o0ZHpJV1F4elpVRDVQ?=
+ =?utf-8?B?NERlc3czNmxOeXJsS1IvcFF4RlVTZWF5czdMeHNUUVpCanhCaVhwbU5Gak5L?=
+ =?utf-8?B?aFcyY0NlSzhhUDEzNjROeDUzWGVPZmZ6SEdyVzlKRkVqN1RUMWYwNU1wSnFJ?=
+ =?utf-8?Q?hTKL54p+QMnn2hdMvg=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?aTJOOXQrai8rRGNyeWw1cUN4SGZzQXZEeGtScU5MWHV0blQ1Si9lSzkzdnNQ?=
+ =?utf-8?B?N2VQcjhzUVVscXRjdlRwOE53RG1jNm5pUVV1T3NxL1JvbXhOUWdIa2wrem5C?=
+ =?utf-8?B?OXdCRWZkclJsQ3djWk9JZXo5cDhRUVZpY1FHL2FqVmlxUW1tSHB1d0lDcjRY?=
+ =?utf-8?B?LzQ3RTh6SndJVmM0RUJreVlIREtLcDVIa0ZLY1RSUGVBUW9FYXlCNlZVY3Fy?=
+ =?utf-8?B?bWt2dEg1eHJFSm5pY0gvbXY4SWxTUXVyazJoUmduNkk4dW9GTHhjYVFXSjhT?=
+ =?utf-8?B?enhyR2ZDZU9mam91V0drMDEvT3MxeUMxNTR0RTdVanBOeHJoTFp5aFBMSHNC?=
+ =?utf-8?B?NForR2NBQis1Y1J5SERTOFludlU0WU4zK0xZdkRiWUtKZXBDSFRIbEhGY0tv?=
+ =?utf-8?B?WmI5anhkSVJGUGg5emtyUGVhclgzbm43RkRHWklCY0dDejdpbEJ6eSt4cXd5?=
+ =?utf-8?B?N0xBZ1NUMTFsb05ZNlhVSjQ3RWQ5ZzhPTnVKZUIvVnlZdXV1VFBnWFhCVVQr?=
+ =?utf-8?B?MFRib3BXM1VrTEtaTVpyNDVHTEtHaGtYYzFvVjNDZEFaZ2QrZy9wUzVUT29s?=
+ =?utf-8?B?TmpkYTZrUWZ2UUUwVmc4RXRtcWg1UFBvNklYTW42dm81NzVFZ01EQ000dFNY?=
+ =?utf-8?B?YUFmQnY5Z2FhUlN5Yk96L2czZFkrdTF1ZjNtWnErM0lIWkx2M1hEdktZY1d6?=
+ =?utf-8?B?aXJnL0VBOEhXOEMzZmRWNG03OXByYkZ5NzJud1VjTWxSZ3N1U25zdGN3YU9L?=
+ =?utf-8?B?VmdtZENuQ25kdWhHb2lUM1NSVU1Yc3RNNGphK1ZBbjVsUGVFWHIyV09UdVlJ?=
+ =?utf-8?B?S1lNRmpCcE5RaWxPQW1LeHRONUJ6c0t6amt2WDUwSWV4MFpNN2hMWEtuWVhN?=
+ =?utf-8?B?N2h6R0JqeUZsWmxZTSsvZ2RjUEQrZVZxSEx1TVRFT2RLZUdlR2taQzVXUGlB?=
+ =?utf-8?B?ek1YTHZVY1JZTG1MTEdTYitldHdhVUhsVElSUjZDdXNCdU5XQnQyam42QXVL?=
+ =?utf-8?B?UEE1ZzFpR004eTBtck1jMHBjYkhJWnNPOVFjOGlJUExTZDUvc1NMMGFER3dv?=
+ =?utf-8?B?SStGU3B3cDlMaGZZbVVjUE9wTFg5ZWxvZElPYjRTTVQvT1l6SDdpYXNtLzV5?=
+ =?utf-8?B?RzVzUGZtOFVOTSs2NFRQSEZUa1F1OUJVM2ZVa3AyNXk5b0RSbi8xUENTOXdL?=
+ =?utf-8?B?TlJ6cE1wbHJJSHRQRHNQNE80UzVtT2JaVW02UXhYRzJHQ2VUSnliOERCL1Yv?=
+ =?utf-8?B?Y3VkeGZaTldTRHcyUFY2V3J4Y1hGRnNiSHpsV0lyeWtjc3dTWmhyQ0ExZzhp?=
+ =?utf-8?B?WlBWRWVoTVo1dW82czVLRDlxVm9XRXN5YWVib3hXb3VJdG5YdWtCd09zRjRU?=
+ =?utf-8?B?aERWQnpPMXlqdU54L1ZWenZFN1lqSTR2eTR1N0s4NzZjck5uckdzWitvbHdZ?=
+ =?utf-8?B?RzQ1OHVjamVueUlNTWthbnhNSjlKMVZZUmFBR3A2NzNYc242YU5XMi9rZUJG?=
+ =?utf-8?B?WksxOVhlKzRSdVMrNUd0RWRUejhRT0Q3RWxKMUpyNVVZNFN1a0pqME10T2tk?=
+ =?utf-8?B?d1MwMy9NL3UxR2pRTDBYVkdVMHRIc1pkRHMxaC8wRXdPak9SUVZpVHlLUGJZ?=
+ =?utf-8?B?ZkY4eENNcFBWREprdEdQcmJzWGN1T0RYTW1vR2xNL3QrZVBGRmNaYlVNallR?=
+ =?utf-8?B?Z2MxZVY3V0l6NEQ2V3Bwb0FjRXBwcTRoNkpQWk5NemRuOFZvWTdMYmphY3R3?=
+ =?utf-8?B?NnFWZm11NHVCR3JoMUlFYjRzU3JFMVJlcFUzeUVmbHpIeXEwNWNMdHFNN1dy?=
+ =?utf-8?B?Zk8yS29QcngzRnptTlBKVjVZQWI0OGhYTlBUV0llK3YzaTJzUDk2TThrNEc1?=
+ =?utf-8?B?dXB5OC8yV0kwMmVMWm15WEttSy9xSGEwS2tiblkxa20raWNpa0FVcEVmREUz?=
+ =?utf-8?B?UERRSXFnM1hmcFFDaERuaG9VdDNreEJ0Y2x5VER0VjhnblhDM0ptdi9zRFBn?=
+ =?utf-8?B?OXNSM3dnUnRLeVZDUXl2aWdyVnBTOVZnWXhWbHNReTZ0cHVicEdqUUd4TUZO?=
+ =?utf-8?B?UGYvdVpoemNTeFkvL3FhVTZ0dVVaRWN1YmFVWVJ0NFpidnBrYThXNldMTVBL?=
+ =?utf-8?B?STVweFZ4NlpiMkY3akJGcHBwMW15bTE5MFUvQUtFVGEyYTFkNCtpVVdUNjBn?=
+ =?utf-8?B?REE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	N9+MAu6wsAe4xOWnF6zI/3kszz//NcDZV/jNKj0vhGoYMIGfpHEttk5nti5KTfGKnWPZmhAFudvPZbHDr7URRVUtM5hpyXNNgTwPT0fcnVnN5PzU5BGYtdT9soK/ECc5YQXWs0hhfJ0nadx9GQe1NWTDASua/WZs/twEJyOXc/A7dFiEEnPOEVkrbM62r1vMh3iYF0vzWfEvd4SI4K8+4SDVIAFxUvfaMcjfw+ZwXmuItkKAPbeiGKShehrqgwEbozn+4iEQfWj9mDzgJjSWj4Z7Q+SH4fAfduH7lyq0Q0c0DnFTUU5jHU7LODnlEbp0cFyEHBXvcVH0WxJbAOXGWJvUJV1wwzDz4RuPeXyJ0ZKa/AOQZapLzsHFpUDvkT+tW4I2X1PJF3t4qKGqHbcM82/xJ7sSXC9U0SlvcuAuSIbmYeECnoiWm+U8D5kPbPae9ZgKDMV+hrqsCG4pHBT1VtKv1XrbmnX452fbjMZsPFyKbm+Ht/K/PzZiZc5o85icejlmDX5uENlEaisxzZ4j8IXHny4vumct/VSdy8BTZxdHjQj4DJi8vegNFWEO/vgr1fq7g7YGbO2ZNWG7vSpTyX9lgL9g0S/AZFUHCQyYvrg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e225d205-0cc1-4c72-67ea-08dc9d0c7141
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 16:06:34.7165
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m4Ux0Qhdy1A47kZDKg+QZvvFURQ4T4szGbNRuTowElm3mFLTMTG/NdwrWMsB4smJsGUDoUAO1nQPjvYYR+Rw1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR10MB7974
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_11,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407050116
+X-Proofpoint-GUID: FBmK-OCwkwlm-Frsx1ZkdGK8RH4USdsj
+X-Proofpoint-ORIG-GUID: FBmK-OCwkwlm-Frsx1ZkdGK8RH4USdsj
 
-Thank you for your prompt response, Dave.
+On 05/07/2024 16:29, Michael S. Tsirkin wrote:
+>> [0]https://urldefense.com/v3/__https://lore.kernel.org/linux-block/10b3e3fe-6ad5-4e0e-b822-f51656c976ee@oracle.com/__;!!ACWV5N9M2RV99hQ!LzUcadOhRalf0I9KR0o_PEx2_Igd2az2Mpv6IdBkLGXLb4E5G9NHZFpm89oJbvJuJbdRQ4W2E2Y6Hg$  
+>> [1]https://urldefense.com/v3/__https://lore.kernel.org/linux-block/Zl4dxaQgPbw19Irk@kbusch-mbp.dhcp.thefacebook.com/__;!!ACWV5N9M2RV99hQ!LzUcadOhRalf0I9KR0o_PEx2_Igd2az2Mpv6IdBkLGXLb4E5G9NHZFpm89oJbvJuJbdRQ4Wqz9meMA$  
+> virtio bits:
+> 
+> Acked-by: Michael S. Tsirkin<mst@redhat.com>
+> 
+> I assume this everything will go in gother with block patches?
 
-We understand that you may not have the necessary bandwidth to
-investigate this immediately, and we appreciate your acknowledgment of
-the issue. To assist in debugging, our group can provide you with VMs
-pre-installed with our Replayer for testing, among other resources.
-While our previous patch, which swapped the order of kfree and
-mutex_unlock, may not be a definitive fix as you indicated, we hope it
-can at least offer some insight into the nature of the bug.
-
-Thank you once again for your response and your continued support.
-
-Best regards,
-
-File Systems and Storage Lab (FSL)
-Stony Brook University
-
-On Mon, Jul 1, 2024 at 4:40=E2=80=AFPM Dave Kleikamp <dave.kleikamp@oracle.=
-com> wrote:
->
-> I appreciate the time and effort you've put into this so far.
->
-> Though I'm the only maintainer of jfs, I still don't have a lot of time
-> right now to put into investigating this. I will keep track of the issue
-> and try to find the time to look into it, but I can't promise how soon
-> that will be.
->
-> Again, thanks! I do appreciate the effort.
->
-> Shaggy
->
-> On 7/1/24 2:54PM, Divyaank Tiwari wrote:
-> > On 10th April, 2024 we submitted a patch to the JFS mailing list for
-> > the lmLogOpen() function in the jfs_logmgr.c file. The patch moved a
-> > NULL pointer dereference of a log pointer in the txEnd() function in
-> > jfs_txnmgr.c, from being before a mutex_unlock to after the
-> > mutex_unlock, effectively postponing a kernel oops. This was confirmed
-> > by us through our file system Model Checking tool, Metis (Link:
-> > https://github.com/sbu-fsl/Metis). (Reference to our older patch:
-> > https://lkml.org/lkml/2024/4/10/1396.)
-> >
-> > In response to that patch, Dave Kleikamp informed us that while the
-> > above patch looked completely safe, it was unclear whether it fixed
-> > anything, as releasing the lock shouldn't leave any references to the
-> > sbi->log data structure. (We noted that all other instances of kfree
-> > of that log pointer happened before the mutex unlock; hence we felt
-> > our patch was at least partially =E2=80=9Ccorrect.=E2=80=9D) He clarifi=
-ed that calling
-> > kfree() is unrelated to the value of sbi->log (which would be the
-> > cause of the NULL dereference issue). Lastly, the patch might only
-> > alter the timing by holding the lock longer, but since nothing should
-> > reference the log anymore, holding the lock while calling kfree() may
-> > not prevent a use-after-free issue. Regarding Dave's previous inquiry
-> > about our experiments, we confirmed that we are not using an external
-> > journal for JFS, nor does any file system share a journal.
-> >
-> > Although we have still not been able to pinpoint the exact source of
-> > the aforementioned bug, we have developed a program that can reproduce
-> > it with high probability on the latest release of Linux Kernel
-> > (v6.9.4). This program, which we call a  Replayer, is open-sourced,
-> > and we have extensively documented its usage. (Link to the repository:
-> > https://github.com/sbu-fsl/Metis-Replayer/tree/main.)
-> >
-> > To briefly summarize our Replayer: from an execution of Metis that
-> > caused a kernel oops in JFS, we first extracted two logs=E2=80=94one
-> > containing a sequence of all operations up to that point and the other
-> > listing the relative paths of the initial files and directories in the
-> > mounted file system. We wrote a simple script, setup_jfs.sh, to create
-> > a JFS file system on a 16 MiB ramdisk. (A ramdisk has a much faster
-> > I/O rate than a regular device.)  Our Replayer (replay.c), implemented
-> > in about 700 lines of C code, pre-populates the files and directories
-> > and then executes each operation from the sequence log
-> > (jfs_op_sequence.log) line by line.
-> >
-> > We suspect the bug is a race of sorts.  Specifically, the Replayer
-> > always unmounts and remounts JFS in between EACH file system operation
-> > (present in the sequence file generated by Metis, while model checking
-> > a file system).    We are unable to reproduce this bug without the
-> > pair of unmount+mount in between each file system operation.  Hence
-> > our suspicion is that the bug is a race between (1) some file system
-> > operation adding a record to the log, while (2) the file system is
-> > being unmounted and the txn log is being shut-down.
-> >
-> > Due to the bug's nondeterministic nature, we have found that running
-> > all operations (823,178 in total) from the log file in a loop for 500
-> > iterations, results in a high probability of reproducing the bug
-> > within a day. In our experiments, we encountered the bug after about
-> > 60-300 iterations. Correspondingly, the time taken to trigger the bug
-> > ranged from about 9 to 75 hours (on our VM). For reference, our
-> > repository includes a dmesg trace (dmesg_jfs_kernel_oops_trace.txt,
-> > reproduced below) captured when the kernel crash was triggered during
-> > one of our experiments using our replayer.
-> >
-> > Jun 22 03:56:08 hostname kernel: BUG: kernel NULL pointer dereference,
-> > address: 00000000000000a4
-> > Jun 22 03:56:08 hostname kernel: #PF: supervisor write access in kernel=
- mode
-> > Jun 22 03:56:08 hostname kernel: #PF: error_code(0x0002) - not-present =
-page
-> > Jun 22 03:56:08 hostname kernel: PGD 0 P4D 0
-> > Jun 22 03:56:08 hostname kernel: Oops: 0002 [#1] PREEMPT SMP NOPTI
-> > Jun 22 03:56:08 hostname kernel: CPU: 3 PID: 582 Comm: jfsCommit Not
-> > tainted 6.9.4 #1
-> > Jun 22 03:56:08 hostname kernel: Hardware name: VMware, Inc. VMware
-> > Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00
-> > 11/12/2020
-> > Jun 22 03:56:08 hostname kernel: RIP: 0010:txEnd+0x8d/0x1e0 [jfs]
-> > Jun 22 03:56:08 hostname kernel: Code: 03 01 0f 85 88 00 00 00 83 3d
-> > ae af 00 00 03 7f 6a 66 83 7b 28 00 0f 85 3b 01 00 00 8b 05 bb 16 01
-> > 00 66 89 43 28 41 0f b7 c5 <41> 83 ac 24 a4 00 00 00 01 89 05 a4 16 01
-> > 00 75 14 f0 41 80 64 24
-> > Jun 22 03:56:08 hostname kernel: RSP: 0018:ffffaf9300adbe50 EFLAGS: 000=
-10246
-> > Jun 22 03:56:08 hostname kernel: RAX: 0000000000000008 RBX:
-> > ffffaf9301213500 RCX: 0000000000000000
-> > Jun 22 03:56:08 hostname kernel: RDX: 0000000000000000 RSI:
-> > 0000000000000246 RDI: ffffaf9301213530
-> > Jun 22 03:56:08 hostname kernel: RBP: ffffaf9300adbe68 R08:
-> > 0000000000000000 R09: ffff94c3ffba3640
-> > Jun 22 03:56:08 hostname kernel: R10: 0000000000000001 R11:
-> > 0000000000000000 R12: 0000000000000000
-> > Jun 22 03:56:08 hostname kernel: R13: 0000000000000008 R14:
-> > ffff9485d28cbcf0 R15: ffffaf9301213500
-> > Jun 22 03:56:08 hostname kernel: FS:  0000000000000000(0000)
-> > GS:ffff94c3ffb80000(0000) knlGS:0000000000000000
-> > Jun 22 03:56:08 hostname kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
-> > 0000000080050033
-> > Jun 22 03:56:08 hostname kernel: CR2: 00000000000000a4 CR3:
-> > 00000001d7f1c004 CR4: 0000000000770ef0
-> > Jun 22 03:56:08 hostname kernel: PKRU: 55555554
-> > Jun 22 03:56:08 hostname kernel: Call Trace:
-> > Jun 22 03:56:08 hostname kernel:  <TASK>
-> > Jun 22 03:56:08 hostname kernel:  ? show_regs+0x6d/0x80
-> > Jun 22 03:56:08 hostname kernel:  ? __die+0x29/0x70
-> > Jun 22 03:56:08 hostname kernel:  ? page_fault_oops+0x151/0x520
-> > Jun 22 03:56:08 hostname kernel:  ? do_user_addr_fault+0x325/0x6b0
-> > Jun 22 03:56:08 hostname kernel:  ? exc_page_fault+0x7c/0x190
-> > Jun 22 03:56:08 hostname kernel:  ? asm_exc_page_fault+0x2b/0x30
-> > Jun 22 03:56:08 hostname kernel:  ? txEnd+0x8d/0x1e0 [jfs]
-> > Jun 22 03:56:08 hostname kernel:  jfs_lazycommit+0x292/0x380 [jfs]
-> > Jun 22 03:56:08 hostname kernel:  ? __pfx_default_wake_function+0x10/0x=
-10
-> > Jun 22 03:56:08 hostname kernel:  ? __pfx_jfs_lazycommit+0x10/0x10 [jfs=
-]
-> > Jun 22 03:56:08 hostname kernel:  kthread+0xf5/0x130
-> > Jun 22 03:56:08 hostname kernel:  ? __pfx_kthread+0x10/0x10
-> > Jun 22 03:56:08 hostname kernel:  ret_from_fork+0x3d/0x60
-> > Jun 22 03:56:08 hostname kernel:  ? __pfx_kthread+0x10/0x10
-> > Jun 22 03:56:08 hostname kernel:  ret_from_fork_asm+0x1a/0x30
-> > Jun 22 03:56:08 hostname kernel:  </TASK>
-> > Jun 22 03:56:08 hostname kernel: Modules linked in: tls brd
-> > vsock_loopback vmw_vsock_virtio_transport_common intel_rapl_msr
-> > intel_rapl_common vmw_vsock_vmci_transport vsock sunrpc
-> > intel_uncore_frequency_common binfmt_misc nfit rapl vmw_balloon joydev
-> > input_leds serio_raw vmw_vmci mac_hid sch_fq_codel dm_multipath
-> > scsi_dh_rdac scsi_dh_emc jfs scsi_dh_alua nls_ucs2_utils msr
-> > efi_pstore ip_tables x_tables autofs4 btrfs blake2b_generic raid10
-> > raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor
-> > raid6_pq libcrc32c raid1 raid0 vmwgfx drm_ttm_helper ttm
-> > drm_kms_helper crct10dif_pclmul crc32_pclmul ghash_clmulni_intel
-> > sha512_ssse3 sha256_ssse3 drm sha1_ssse3 ahci mptspi psmouse mptscsih
-> > mptbase vmxnet3 i2c_piix4 libahci scsi_transport_spi pata_acpi
-> > aesni_intel crypto_simd cryptd [last unloaded: brd]
-> > Jun 22 03:56:08 hostname kernel: CR2: 00000000000000a4
-> > Jun 22 03:56:08 hostname kernel: ---[ end trace 0000000000000000 ]---
-> > Jun 22 03:56:08 hostname kernel: RIP: 0010:txEnd+0x8d/0x1e0 [jfs]
-> > Jun 22 03:56:08 hostname kernel: Code: 03 01 0f 85 88 00 00 00 83 3d
-> > ae af 00 00 03 7f 6a 66 83 7b 28 00 0f 85 3b 01 00 00 8b 05 bb 16 01
-> > 00 66 89 43 28 41 0f b7 c5 <41> 83 ac 24 a4 00 00 00 01 89 05 a4 16 01
-> > 00 75 14 f0 41 80 64 24
-> > Jun 22 03:56:08 hostname kernel: RSP: 0018:ffffaf9300adbe50 EFLAGS: 000=
-10246
-> > Jun 22 03:56:08 hostname kernel: RAX: 0000000000000008 RBX:
-> > ffffaf9301213500 RCX: 0000000000000000
-> > Jun 22 03:56:08 hostname kernel: RDX: 0000000000000000 RSI:
-> > 0000000000000246 RDI: ffffaf9301213530
-> > Jun 22 03:56:08 hostname kernel: RBP: ffffaf9300adbe68 R08:
-> > 0000000000000000 R09: ffff94c3ffba3640
-> > Jun 22 03:56:08 hostname kernel: R10: 0000000000000001 R11:
-> > 0000000000000000 R12: 0000000000000000
-> > Jun 22 03:56:08 hostname kernel: R13: 0000000000000008 R14:
-> > ffff9485d28cbcf0 R15: ffffaf9301213500
-> > Jun 22 03:56:08 hostname kernel: FS:  0000000000000000(0000)
-> > GS:ffff94c3ffb80000(0000) knlGS:0000000000000000
-> > Jun 22 03:56:08 hostname kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
-> > 0000000080050033
-> > Jun 22 03:56:08 hostname kernel: CR2: 00000000000000a4 CR3:
-> > 00000001d7f1c004 CR4: 0000000000770ef0
-> > Jun 22 03:56:08 hostname kernel: PKRU: 55555554
-> > Jun 22 03:56:08 hostname kernel: note: jfsCommit[582] exited with irqs =
-disabled
-> > Jun 22 03:56:08 hostname kernel: note: jfsCommit[582] exited with
-> > preempt_count 1
-> > Jun 22 03:56:32 hostname kernel: watchdog: BUG: soft lockup - CPU#6
-> > stuck for 26s! [replay:257577]
-> >
-> > Further details about setting up the environment and conducting the
-> > experiment are available in our repository=E2=80=99s README. We hope th=
-at our
-> > replayer will assist the JFS maintainers in debugging and resolving
-> > this kernel oops bug.
-> >
-> > Note: All of our experiments were performed on Linux kernels v6.6.1 and=
- v6.9.4
-> >
-> > Signed-off-by: Divyaank Tiwari <dtiwari@cs.stonybrook.edu>
-> > Signed-off-by: Yifei Liu <yifeliu@cs.stonybrook.edu>
-> > Signed-off-by: Erez Zadok <ezk@cs.stonybrook.edu>
-> > Signed-off-by: Scott Smolka <sas@cs.stonybrook.edu>
-> > Signed-off-by: Geoff Kuenning <geoff@cs.hmc.edu>
+That would make sense. I hope that Jens is happy to pick them up. I'll 
+send a v2 soon, addressing comments from Christoph.
 
