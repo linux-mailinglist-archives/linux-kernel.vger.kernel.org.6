@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-242134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E1392840F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:48:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D02592841D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69EDD1F22B02
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:48:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E7671C22AC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9972C145FE0;
-	Fri,  5 Jul 2024 08:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Hlq1n32j"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF92144D0E
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F58145FEA;
+	Fri,  5 Jul 2024 08:50:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A0D143C67
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 08:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720169308; cv=none; b=GKN94LjtJofwH3qvyRsW1IHfsDUzagAU7r+mXU3eF1+0BSvxqX7Xg9RvebwxV40QsJFxa7BPfW7T97L6bdV8DLum3tEebirbfwmFQ4h40arYF5OJ65mVvUL1J54cjt9BZyqMaD0BeWxbBXdpmV2XT6qUX9D9vAEPFUavyU0btqY=
+	t=1720169413; cv=none; b=TVCsZdr0Tiero2HRemOIwoq/EVjF9rXj4QlcQLBev491JiEMupi/uYIjMhwc4niM+ZnqH6lAwEL7dLsf43KoPgfrZzjO6NfyL/4Igeq1NzWYcXEARPT1zy+dmHeHfNJ6FkhR+SlGzUa8of9CNbq/HIGSAOdn5Acn62LASkvnqak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720169308; c=relaxed/simple;
-	bh=PCmILhZnkmWNVnAzRrSpjrEtBVCWY+tUa92/0HxNRTY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=s0FQ0yroOIrj2VUto8a7kRuFZXgV8dA5Lwhhqf66VLvXPTqb8WMmU+F8l7X+Xi28hRsKMLNv1vlLZpxuaXJB1QVBluSfM0b1hpMJlh6R+e3uMyomA6TXIeRhAe8T3JuE3zjx5ngafNufxqLtsEh5uoortYfAy5y5xHtnR9Bo3rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Hlq1n32j; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5041D20B7001;
-	Fri,  5 Jul 2024 01:48:26 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5041D20B7001
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1720169306;
-	bh=0thq+BQ0rfesnQgGZNqX21vsSZLDMUtxpzXR/g19MkA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Hlq1n32jWKC7p4bjqM7cmiqf/I6OSmhHULQEiJkMsf1mEvii7LEFZW79TtyfaeVyK
-	 q4jMMfD46cunsQDKMcKm5PRlB+BZvg043PhxeTRMaYHtQHhKtjHPAU45GPiB0txZHs
-	 CLR3i2kVQbYOTxwHJGmxzOFWKQ7EfYbdWoJmSmQE=
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: ssengar@microsoft.com,
-	wei.liu@kernel.org
-Subject: [PATCH] mm/vmstat: Defer the refresh_zone_stat_thresholds after all CPUs bringup
-Date: Fri,  5 Jul 2024 01:48:21 -0700
-Message-Id: <1720169301-21002-1-git-send-email-ssengar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1720169413; c=relaxed/simple;
+	bh=sHYfbCuq8SPanDuwXpeA1bZ2iDfcszHqoWHCl9HxScg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AT1L2qXAHQwtu/x+WadbBgxkhzZ4N61c9kVBMprm1FU2Tdtpth3f7Syyw6Ym27/p/ghy9tsb0ZBgQJNQtZZ5whsiSLDVch8sE8CLWzLgxAzjXDfgUyp24HyVdqkCgqC9kFMsjUc/7bpcVXhxiR4ENBabGjnQBbZoj5zfdRy1RYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPedi-0004Cu-AC; Fri, 05 Jul 2024 10:49:58 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPedg-007HqW-HM; Fri, 05 Jul 2024 10:49:56 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPedg-000Lbn-1U;
+	Fri, 05 Jul 2024 10:49:56 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Yuiko Oshino <yuiko.oshino@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: [PATCH net v3 1/1] net: phy: microchip: lan87xx: reinit PHY after cable test
+Date: Fri,  5 Jul 2024 10:49:54 +0200
+Message-Id: <20240705084954.83048-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-refresh_zone_stat_thresholds function has two loops which is expensive for
-higher number of CPUs and NUMA nodes.
+Reinit PHY after cable test, otherwise link can't be established on
+tested port. This issue is reproducible on LAN9372 switches with
+integrated 100BaseT1 PHYs.
 
-Below is the rough estimation of total iterations done by these loops
-based on number of NUMA and CPUs.
-
-Total number of iterations: nCPU * 2 * Numa * mCPU
-Where:
- nCPU = total number of CPUs
- Numa = total number of NUMA nodes
- mCPU = mean value of total CPUs (e.g., 512 for 1024 total CPUs)
-
-For the system under test with 16 NUMA nodes and 1024 CPUs, this
-results in a substantial increase in the number of loop iterations
-during boot-up when NUMA is enabled:
-
-No NUMA = 1024*2*1*512  =   1,048,576 : Here refresh_zone_stat_thresholds
-takes around 224 ms total for all the CPUs in the system under test.
-16 NUMA = 1024*2*16*512 =  16,777,216 : Here refresh_zone_stat_thresholds
-takes around 4.5 seconds total for all the CPUs in the system under test.
-
-Calling this for each CPU is expensive when there are large number
-of CPUs along with multiple NUMAs. Fix this by deferring
-refresh_zone_stat_thresholds to be called later at once when all the
-secondary CPUs are up. Also, register the DYN hooks to keep the
-existing hotplug functionality intact.
-
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Fixes: 788050256c411 ("net: phy: microchip_t1: add cable test support for lan87xx phy")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 ---
- mm/vmstat.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+changes v3:
+- add Reviewed-by: Michal Kubiak  and Florian Fainelli from v1 patch
+changes v2:
+- add Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+- drop microchip specific SQI fix
+---
+ drivers/net/phy/microchip_t1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 6e3347789eb2..5c0df62238d9 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -31,6 +31,7 @@
+diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
+index a838b61cd844b..a35528497a576 100644
+--- a/drivers/net/phy/microchip_t1.c
++++ b/drivers/net/phy/microchip_t1.c
+@@ -748,7 +748,7 @@ static int lan87xx_cable_test_report(struct phy_device *phydev)
+ 	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A,
+ 				lan87xx_cable_test_report_trans(detect));
  
- #include "internal.h"
- 
-+static int vmstat_late_init_done;
- #ifdef CONFIG_NUMA
- int sysctl_vm_numa_stat = ENABLE_NUMA_STAT;
- 
-@@ -2107,7 +2108,8 @@ static void __init init_cpu_node_state(void)
- 
- static int vmstat_cpu_online(unsigned int cpu)
- {
--	refresh_zone_stat_thresholds();
-+	if (vmstat_late_init_done)
-+		refresh_zone_stat_thresholds();
- 
- 	if (!node_state(cpu_to_node(cpu), N_CPU)) {
- 		node_set_state(cpu_to_node(cpu), N_CPU);
-@@ -2139,6 +2141,14 @@ static int vmstat_cpu_dead(unsigned int cpu)
- 	return 0;
+-	return 0;
++	return phy_init_hw(phydev);
  }
  
-+static int __init vmstat_late_init(void)
-+{
-+	refresh_zone_stat_thresholds();
-+	vmstat_late_init_done = 1;
-+
-+	return 0;
-+}
-+late_initcall(vmstat_late_init);
- #endif
- 
- struct workqueue_struct *mm_percpu_wq;
+ static int lan87xx_cable_test_get_status(struct phy_device *phydev,
 -- 
-2.34.1
+2.39.2
 
 
