@@ -1,123 +1,129 @@
-Return-Path: <linux-kernel+bounces-241794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51CE927FB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50F7927FB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 03:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CC71F222F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:20:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C64B51C216B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 01:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F382612E40;
-	Fri,  5 Jul 2024 01:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFA8FC11;
+	Fri,  5 Jul 2024 01:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UNwDwHMI"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="dScaGYx/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3202F9C9
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 01:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD1510A24;
+	Fri,  5 Jul 2024 01:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720142339; cv=none; b=RIhB1xDZJoTvO218B5VvQA/ovzBwBUSwR1bctEo3vzHZ1U08Y0spNZfe3To8BeQnkWGmSf20D0jBfpYPcSaNFTLC+UEgGkr1Q1dKbcKBw3n63eOi20tY/c4fw3wCTeOazl6qhX7EE+gKPWR8njcVSl8TEKroV7K/JSulJwecPPo=
+	t=1720142389; cv=none; b=lo8Yf+fu39A8zQa0bf/5Chrp2svBDU3+M1NV/9OqlSkHQ6/E6ChuZBZaB7d43i2SQ6vp9lEIMtvmrnb4kity18FurAVzBJUdPZ28Do9XAs+VwJXMMFv1ZXQ/SoTp3+dH5lvHEGTVnJuYA2Jl7RMox7X+RY1671D+u2O6nqojs3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720142339; c=relaxed/simple;
-	bh=t1/aYkpV7V9HCTNO0YMUZAFhVFpbLpd/1zvnFvlw1jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izF+j9yUkz6PCpLViRdTdDdsupwUL8pRAP+J8IePYoO0BF6U4Z+I89Rmb42yoUx4OfjrKgdGPrKiwQ/Qto6T6jBSZzoXkA60eHPjj6IpnC+kk27D9zPE3hOwqPSexoaKmePTjPIUIY9L3cuO7KCP7iFKxuwlgCADmoiDOg5qxRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UNwDwHMI; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: lizhi.xu@windriver.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720142333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85/6LBuQAaBN+mbTKPEBbYAV1KKnq1MLct+EJMapHB0=;
-	b=UNwDwHMIfH48SxXAlMZ/K4dQ2RmOVMo/oyPConYD4nti+49XDlCjWs8dWEWqsb5y060RK7
-	DKX8C4nzPXvQQLynMSWO50EmFx+PGPn1pjQPuJRiUe+DMKBwI12cJseCEClUU73LxQjUTG
-	r7RksZLiFEosEyL6h3kUIeiOXv/ArLY=
-X-Envelope-To: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Thu, 4 Jul 2024 21:18:49 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com, 
-	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix hung in bch2_fs_read_only_work
-Message-ID: <npvjcsr62mknglu6fp222ga7zmsqzewtrbiuvpuup2s5omu77y@ef6vk35ubzpi>
-References: <000000000000d4c7f4061a080a7a@google.com>
- <20240701143606.3904202-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1720142389; c=relaxed/simple;
+	bh=4jXA60CwTqUR5bZu5hr9dmdPy/sOO2/oK1vX+xklF5o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kmFleZq+dhCzi5wYYjUMlgHtcj6fqwD2+ekd0QnqWWpv4wSoznYrLL9dqUWNvz6W2oEdioz6qnXNXNC1PWZf371gTGgOKR11Tq1VjcZ1hS2XNyqU3ZKYrnQH8ZhSx3LcxbwugMqOSz5Yr+2U75i/djWlJ3BU8c28Nhx2unJ6frY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=dScaGYx/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1720142382;
+	bh=UCMaIVTnGE08WOL8bGCywK+Z7TDVAMtL/zyKNBMfqBk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=dScaGYx/VAT1PxfoDVsug+gCtBq4YJ4QfRBfg7DW04HpffBYfKmUJHAruupwwMsWr
+	 GNYcEBSFfTl/llWg1f8VT1LwAU/H1dVxv6OcCPQLAkUwzCbA70fo+FcimqPKJ17YGV
+	 wK2VO3TdDquqcngJsKeg4bCN1NWoT/sBJbKt9c9tVeNSVhDcWeZG9yicBKCFn9x8bm
+	 /wxenOnMKvQEudhsKzijOqw5Rv0DGEPUhbWLrTAEbc3+7aGvg5qNzIfKs4VP8EkHFP
+	 xTdd0jdhCobAWneOQdFmCEYpjGKyRusmZY8J/w8VJepbBHSU4V7Fh/6yLH2v2/rXHN
+	 S8QgFt72S/IBQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WFbK93fn5z4w2F;
+	Fri,  5 Jul 2024 11:19:40 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Christian Zigotzky <chzigotzky@xenosoft.de>, Marc Zyngier <maz@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com, DTML
+ <devicetree@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, linuxppc-dev
+ <linuxppc-dev@lists.ozlabs.org>, mad skateman <madskateman@gmail.com>,
+ "R.T.Dickinson" <rtd2@xtra.co.nz>, Matthew Leaman <matthew@a-eon.biz>,
+ Darren Stevens <darren@stevens-zone.net>, Christian Zigotzky
+ <info@xenosoft.de>
+Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
+ after the of/irq updates 2024-05-29
+In-Reply-To: <dfc7ec00-5216-4590-9347-ee10cd1e8380@xenosoft.de>
+References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
+ <86zfqzhgys.wl-maz@kernel.org>
+ <ccf14173-9818-44ef-8610-db2900c67ae8@xenosoft.de>
+ <874j95jrur.fsf@mail.lhotse>
+ <3baff554-e8f6-42b0-b931-207175a4d8fd@xenosoft.de>
+ <dfc7ec00-5216-4590-9347-ee10cd1e8380@xenosoft.de>
+Date: Fri, 05 Jul 2024 11:19:39 +1000
+Message-ID: <87o77ciqj8.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701143606.3904202-1-lizhi.xu@windriver.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-On Mon, Jul 01, 2024 at 10:36:06PM GMT, Lizhi Xu wrote:
-> Error logs:
-> [ T5078] invalid journal entry, version=1.7: mi_btree_bitmap type=btree_keys in superblock: k->u64s 0, shutting down
-> [ T5078] invalid journal entry, version=1.7: mi_btree_bitmap type=btree_keys in superblock: k->u64s 0, shutting down
-> [ T5078] invalid journal entry, version=1.7: mi_btree_bitmap type=btree_keys in superblock: k->u64s 0, shutting down
-> 
-> When hit -BCH_ERR_fsck_errors_not_fixed in journal_entry_err, it will make
-> journal_entry_btree_keys_validate output too many same error log, and it will block
-> bch2_fs_start to release state_lock.
-> 
-> Reported-and-tested-by: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->  fs/bcachefs/journal_io.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
-> index 492426c8d869..67c3f09162e4 100644
-> --- a/fs/bcachefs/journal_io.c
-> +++ b/fs/bcachefs/journal_io.c
-> @@ -415,6 +415,8 @@ static int journal_entry_btree_keys_validate(struct bch_fs *c,
->  					       flags|BCH_VALIDATE_journal);
->  		if (ret == FSCK_DELETED_KEY)
->  			continue;
-> +		else if (ret == -BCH_ERR_fsck_errors_not_fixed)
-> +			break;
+Christian Zigotzky <chzigotzky@xenosoft.de> writes:
+> On 04.07.24 20:27, Christian Zigotzky wrote:
+>> On 04.07.24 13:53, Michael Ellerman wrote:
+>>> Christian Zigotzky <chzigotzky@xenosoft.de> writes:
+...
+>>>
+>>> Instead of that patch, can you try the one below. AFAICS the device tree
+>>> fixups done in early boot mean the interrupt-map is not needed, and also
+>>> has the wrong content, so if we can remove it entirely that might avoid
+>>> the problems in the parsing code.
+>>>
+>>> I don't know if your firmware actually implements those methods, I
+>>> couldn't find anything online to confirm or deny it. Seems the only
+>>> option is to test it.
+...
+>
+> Unfortunately, the kernel 6.10-rc6 doesn't compile with your patch. "rc" 
+> is undeclared.
 
-Actually, this is wrong: we need to return the error
+Right, I had some debug code that I removed before posting.
 
+This version should compile :}
 
-commit b2879202fa55861d05088bbffdb529cf5d5ba7f8
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Thu Jul 4 21:18:06 2024 -0400
+cheers
 
-    bcachefs: Fix missing error check in journal_entry_btree_keys_validate()
-    
-    Closes: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
-    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
-index 40ed7a619594..7a833a3f1c63 100644
---- a/fs/bcachefs/journal_io.c
-+++ b/fs/bcachefs/journal_io.c
-@@ -415,6 +415,8 @@ static int journal_entry_btree_keys_validate(struct bch_fs *c,
- 					       flags|BCH_VALIDATE_journal);
- 		if (ret == FSCK_DELETED_KEY)
- 			continue;
-+		else if (ret)
-+			return ret;
+diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+index fbb68fc28ed3..965d58c54fab 100644
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -3123,6 +3123,7 @@ static void __init fixup_device_tree_pasemi(void)
+ 	u32 interrupts[2], parent, rval, val = 0;
+ 	char *name, *pci_name;
+ 	phandle iob, node;
++	int rc;
  
- 		k = bkey_next(k);
- 	}
+ 	/* Find the root pci node */
+ 	name = "/pxp@0,e0000000";
+@@ -3138,6 +3139,14 @@ static void __init fixup_device_tree_pasemi(void)
+ 
+ 	prom_setprop(iob, name, "interrupt-controller", &val, 0);
+ 
++	prom_printf("nemo: deleting interrupt-map properties\n");
++	rc = call_prom("interpret", 1, 1,
++		      " s\" /pxp@0,e0000000\" find-device"
++		      " s\" interrupt-map\" delete-property"
++		      " s\" interrupt-map-mask\" delete-property"
++		      " device-end");
++	prom_printf("nemo: interpret returned %d\n", rc);
++
+ 	pci_name = "/pxp@0,e0000000/pci@11";
+ 	node = call_prom("finddevice", 1, 1, ADDR(pci_name));
+ 	parent = ADDR(iob);
 
