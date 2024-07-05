@@ -1,195 +1,137 @@
-Return-Path: <linux-kernel+bounces-242735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FA7928C5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF49928C67
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 18:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFC7284D6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926281F22D88
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E626016C87A;
-	Fri,  5 Jul 2024 16:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CE316D4EB;
+	Fri,  5 Jul 2024 16:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VPRVRd2O"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="WCqWs5G9"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3ED22083;
-	Fri,  5 Jul 2024 16:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171BD149DEF;
+	Fri,  5 Jul 2024 16:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720197282; cv=none; b=NycsE1j5me8oyn5N1/eFl+y/Cq2H+//VMNg3mKaJcBffpwuWdyj7rEOC0TCttA0pzoIM+c3iSw08hx7SRIWZWHn0IkQsmkV+C1XagPR5lfINFs4T6gdga8BUAEyxkEDv4Z5+oW8mYdzIelsEZnA4rnVn3Scvk4Yxd06osVare4U=
+	t=1720197504; cv=none; b=lIoeUHvEnJ+cKGl7xab360p7DT8Y+5eAtfTGLkZGoUCHsBstoO66aBOK4zXDNKWpYn+X4nA6XdurdFnmmt7srUz45rAR3trQtDTOOnafY/lK9D+lqp1Y2qzO6OpdkRGtYXKqgaI+9qR/1YZU4btWGWCW2qsPUNkDJ+cHvFx7dTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720197282; c=relaxed/simple;
-	bh=4RxVKpu7aLmNuCfUq7vwPdBqh7m8Xjan9uzVGMAMblg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cewzEXWgk1dy6Kl9DcEB1iFXc0f2K4LM+NJ5vUctcsJ7nL6zfL+9CppRzoqp2fXtur2FN278WsE9T1DX5LoNG0od5SOzh8UYuizEUCzqJHBf5YomTC4OMStEHIuL60NIY2YXnLGq4MmkdePtEbvk2GzAX2MMPnAkJg34btEtUnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VPRVRd2O; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 465GYGWS001066;
-	Fri, 5 Jul 2024 11:34:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720197256;
-	bh=7+MmV/AK8xd7ornr1O1boj8x2ZOEG1OgD7+3rx0WBvw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VPRVRd2Orwe1QVlKfndwfJXqrfg3VIHYD3xqJBgoEL32CsuuqwwvtdVP1wt/eu9lp
-	 VM7PI+iGfTojK3ogCpW3gpQdPONUQ+Q6qZQSHuS1kUplInk3OhHK0mGGMHb5jK1CiI
-	 9SZIxtOjrzkZRpQEkPsN2pYhF7bA0hY6ASWF04VU=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 465GYGjw129475
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 5 Jul 2024 11:34:16 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 5
- Jul 2024 11:34:15 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 5 Jul 2024 11:34:15 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 465GYEiY090112;
-	Fri, 5 Jul 2024 11:34:14 -0500
-Message-ID: <ca2d7d4b-c22d-4d14-a216-8c19073e4189@ti.com>
-Date: Fri, 5 Jul 2024 11:34:14 -0500
+	s=arc-20240116; t=1720197504; c=relaxed/simple;
+	bh=xq+v2dQwSE3AVf5BhabhYvPbecI04ixjFZd9xxG8bYU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yz9FtSZR8uR+mwUIAPNRBIy9UAEZaI15bzEGLc3/xQ7TW+3pt+V8tExqWsWSYPibSw8xh31PEfGRU/hq8bEL9ZUHeQoznwIrD3kelfxXHeiJPfkdxFTKlmPLwdlXKReJgstBm8JdKjPgzoaTfeK3GeTnhIpxiodyXyTsh8YA3r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=WCqWs5G9; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 88AC9100002;
+	Fri,  5 Jul 2024 19:38:02 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1720197482; bh=s+XlZT7Zau6TfDZLEbOwy3xPtGFBs9GZzuVmW0T8wrc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=WCqWs5G9OjmuaIJuFPb2XKbdhfiBWqQmmy4zZlEiypH3kqWGlAyi62lgTBJXYB6OD
+	 ZKvz3TA7DYr9CH4EFXumApiQuFQH4Zj6fPV8F0on2/F+fMZep+79jKcDh5PSuyoxg4
+	 FdvLjlzk5IPvDbo/3ScBccRMFbEWxHOis7n+i+ySqNpzWMy1WHOlSDrkWU+HWPmxj9
+	 6mljpmwFq8ViLQp1oGjSaMMOzgmCbEwZxVgvqcZ7t4WUPeAGpF2EueKMwEUBzTRGA4
+	 qoIjkrd001ytwaMiCoUH/F7xsP6lOeuOcNuHhmXoUQMH0rPvWYDKtDXjsRbY0vgBT4
+	 VdMpoShmJMP3Q==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Fri,  5 Jul 2024 19:36:53 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
+ 19:36:33 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Jesse Brandeburg
+	<jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH net] ice: Adjust memory overrun in ice_sched_add_root_node() and ice_sched_add_node()
+Date: Fri, 5 Jul 2024 19:36:20 +0300
+Message-ID: <20240705163620.12429-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/7] dts: ti: k3-am625-beagleplay: Add mikroBUS
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Walle
-	<mwalle@kernel.org>
-CC: Ayush Singh <ayush@beagleboard.org>, Mark Brown <broonie@kernel.org>,
-        Vaishnav M A <vaishnav@beagleboard.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Derek Kiernan <derek.kiernan@amd.com>,
-        Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Andrew Lunn
-	<andrew@lunn.ch>,
-        <jkridner@beagleboard.org>, <robertcnelson@beagleboard.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-7-9e6c148bf5f0@beagleboard.org>
- <4e23ec81-b278-4f2b-815d-64ed9390ca55@ti.com>
- <D2AZ0QKTPY3B.1I48GLI90XD0P@kernel.org>
- <5b2cd46e-8a51-f145-8876-55b12a6d62d1@linux-m68k.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <5b2cd46e-8a51-f145-8876-55b12a6d62d1@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186342 [Jul 05 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/05 14:29:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/05 10:39:00 #25854340
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 7/5/24 3:01 AM, Geert Uytterhoeven wrote:
->      Hi Michael,
-> 
-> On Thu, 27 Jun 2024, Michael Walle wrote:
->> On Thu Jun 27, 2024 at 7:07 PM CEST, Andrew Davis wrote:
->>>> +    mikrobus_boards {
->>>> +        thermo_click: thermo-click {
->>>> +            compatible = "maxim,max31855k", "mikrobus-spi";
->>>
->>> I might be missing something, but your solution cannot possibly be
->>> to list every click board that could be connected (all 1500+ of them)
->>> to every mikroBUS connector on every device's DT file..
->>>
->>> Each click board should have a single DTSO overlay file to describe the
->>> click board, one per click board total. And then that overlay should
->>> apply cleanly to any device that has a mikroBUS interface.
->>>
->>> Which means you have not completely solved the fundamental problem of
->>> abstracting the mikroBUS connector in DT. Each of these click device child
->>> nodes has to be under the parent connector node. Which means a phandle
->>> to the parent node, which is not generically named. For instance
->>> if my board has 2 connectors, I would have mikrobus0 and mikrobus1,
->>> the click board's overlay would look like this:
->>>
->>> /dts-v1/;
->>> /plugin/;
->>>
->>> &mikrobus0 {
-> 
-> Let's use just "&mikrobus" instead...
-> 
->>>     status = "okay";
->>>
->>>     mikrobus_board {
->>>         thermo-click {
->>>             compatible = "maxim,max31855k", "mikrobus-spi";
->>>             spi-max-frequency = <1000000>;
->>>             pinctrl-apply = "spi_default";
->>>         };
->>>     };
->>> };
->>
->> If there should only be one DT overlay per click board, how would
->> you apply that to to different connectors?
-> 
-> You teach fdtoverlay[*] to translate anchors, e.g.
-> 
->      fdtoverlay -i base.dtb -o final.dtb \
->             -t mikrobus=mikrobus0 click1.dtbo \
->             -t mikrobus=mikrobus1 click2.dtbo
-> 
+In ice_sched_add_root_node() and ice_sched_add_node() there are calls to
+devm_kcalloc() in order to allocate memory for array of pointers to
+'ice_sched_node' structure. But in this calls there are 'sizeof(*root)'
+instead of 'sizeof(root)' and 'sizeof(*node)' instead of 'sizeof(node)'.
+So memory is allocated for structures instead pointers. This lead to
+significant memory overrun.
+Looks like it was done for "coverity[suspicious_sizeof] workaround".
 
-This basic idea is where I started also, the result is we end
-up needing a huge number of "anchor" points. And they would
-also be board specific. So we would want to store all these
-anchor points in a file, and what better file than another
-DT file.
+Adjust memory overrun by correcting devm_kcalloc() parameters.
 
-Putting all the translations in a DT file to allow the DT overlay
-to become generic is the core idea of this series[0] (looks like
-you already found it, linking for other following along).
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-And as you note, the symbol table trick allows us to do this
-without teaching fdtoverlay anything new, so it should work
-as-is today for any project already supporting overlays.
+Fixes: dc49c7723676 ("ice: Get MAC/PHY/link info and scheduler topology")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/net/ethernet/intel/ice/ice_sched.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> I believe the Raspberry Pi people already have something like that.
-> 
-> The mikrobus node handles all other translations (e.g. mapping from
-> Mikrobus pins to GPIO numbers), so you do not have to handle these
-> explicitly when adding an overlay.
+diff --git a/drivers/net/ethernet/intel/ice/ice_sched.c b/drivers/net/ethernet/intel/ice/ice_sched.c
+index ecf8f5d60292..d8b6054f3436 100644
+--- a/drivers/net/ethernet/intel/ice/ice_sched.c
++++ b/drivers/net/ethernet/intel/ice/ice_sched.c
+@@ -28,9 +28,8 @@ ice_sched_add_root_node(struct ice_port_info *pi,
+ 	if (!root)
+ 		return -ENOMEM;
+ 
+-	/* coverity[suspicious_sizeof] */
+ 	root->children = devm_kcalloc(ice_hw_to_dev(hw), hw->max_children[0],
+-				      sizeof(*root), GFP_KERNEL);
++				      sizeof(root), GFP_KERNEL);
+ 	if (!root->children) {
+ 		devm_kfree(ice_hw_to_dev(hw), root);
+ 		return -ENOMEM;
+@@ -186,10 +185,9 @@ ice_sched_add_node(struct ice_port_info *pi, u8 layer,
+ 	if (!node)
+ 		return -ENOMEM;
+ 	if (hw->max_children[layer]) {
+-		/* coverity[suspicious_sizeof] */
+ 		node->children = devm_kcalloc(ice_hw_to_dev(hw),
+ 					      hw->max_children[layer],
+-					      sizeof(*node), GFP_KERNEL);
++					      sizeof(node), GFP_KERNEL);
+ 		if (!node->children) {
+ 			devm_kfree(ice_hw_to_dev(hw), node);
+ 			return -ENOMEM;
+-- 
+2.30.2
 
-This part seems to still be an open item. For pinmux we can name
-the pinmux nodes such that their phandles are resolved on overlay
-application. For Pin number/name to GPIO number we have "gpio-names",
-and the names can also be generic. But for Interrupts and a couple
-others, we are still missing a good way to provide a generic mapping
-from pin name to number.
-
-Andrew
-
-[0] https://lore.kernel.org/linux-arm-kernel/20240702164403.29067-1-afd@ti.com/
-
-> 
-> [*] And anything else that handles overlays (U-Boot, out-of-tree
->      OF_CONFIGFS, ...)
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                  -- Linus Torvalds
 
