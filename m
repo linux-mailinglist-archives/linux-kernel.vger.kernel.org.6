@@ -1,173 +1,242 @@
-Return-Path: <linux-kernel+bounces-242604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD16928A5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8812D928A60
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 16:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D1C1F24B06
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:03:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F521F21AC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 14:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA8A15B99F;
-	Fri,  5 Jul 2024 14:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF4B16A37C;
+	Fri,  5 Jul 2024 14:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MycqSrtm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r51Ul7A7"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B33F153803
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Jul 2024 14:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FE814A62E;
+	Fri,  5 Jul 2024 14:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720188202; cv=none; b=E0gI5wnjL8gmAAJldkCbkIiYctpF3tNcQGO1lQPO8g8uAzFt/EYmCZNWlk27oJGL2Xclul9Tqf1YL/1d5qvHnogsLcnsPXvQV0EIUUaoXUJjkyDrQEj+uqzgb3lUWKbTvRd7h8DAC+QZBL6N+4RF/dXwj4f02lGxA1SmJ2z76dY=
+	t=1720188370; cv=none; b=DVJBY/HxRzcLw2iTG4i0Yux3lnVjGKl8nS/ylKhRZWQWFdy42HROiTT+QmgENeGxazXjgmy1XXxvJTE3oH3bpCwnOY7UsJOcBKWBOhPeKaBSiHI+8cwbgljRukzbLBp87A8eIYlvNEqrSauSot5cr0HLdeXqxIBANeT2kQJ0oEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720188202; c=relaxed/simple;
-	bh=l4a1ERMOuqXBaLFWS+gfiLgokGjRYBYVwSGMCa+ialE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FBF0Oer723gQieNoB0r2gb5f+vr3VOU53ROGonu45nV5E7S6qKMz06P71gwgdL1zH9pncagKeHlKqeBc9y+SzAfyoViP00W/g38lzZP7F5XwjgFvbzB2zYzjpeBlh3l0DnmuW/q+S/G9JIx8gXkUsrLyCXAq1r7DudnUgNbABgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MycqSrtm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720188200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tcFyaq/x3BT52iyZhmpXyGxuAICYLbboWOWxjG0cb0I=;
-	b=MycqSrtmgPi7Qqg4KUxVtv02mSheSArpVUlJAPwDRfSB5EWhTf+qkB6gHGeYg4HS43/gR0
-	sWojRHcwBA7Atw3okJfzxdW44Z2OXi6SaI90pFBq95tuVfh4s6imSgS9pAcGGa4B/NTkpB
-	8eHt1Y2sqblkRyfdVdEf3c+zv66lxf0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-564-Nin9Yu5GNOeg2o02xJcBHw-1; Fri, 05 Jul 2024 10:03:18 -0400
-X-MC-Unique: Nin9Yu5GNOeg2o02xJcBHw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4256718144dso17552845e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 07:03:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720188197; x=1720792997;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tcFyaq/x3BT52iyZhmpXyGxuAICYLbboWOWxjG0cb0I=;
-        b=cYbdnCerk3qg+MiVVTS2Eclmb/kERXW7BfQJPro3UuYANNV+QTrY1KRAQoy9er349z
-         qTZs0xRKoFM3GrNTkNIUrFVNsUVXi6qlwqgNfyRhDZ7tAX0Q0H7uvfVr7NpFu+7v1SUt
-         kJOfapEWz/bkhwYWc3L067GSCGP/AJYmRT91zZ3aiVF+hnEp+C6Im7mIM0S9eGj6bhEO
-         saFyvGo3X6og3xal6fQV6SxDKGJA9pWeLB5ZMWZWR+fuBdcuMZlh2Gb1W7Gh2RC+f7Ka
-         HLmDEahZUE/TwCk69lGctHcfXSlN9Wj4k5evvwaYfwSxweecqNO5wSlC4Viy6lLnkuhb
-         Et3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXTi0BfJLpWs/HvgAuQ0wMjG70GSyl3jkjK4g/xNCLYvikIZ378V3wD2JYr11koRjLyHflxCiStsxxHdPrlxu/DkLZWl/Cl3hTCDTMe
-X-Gm-Message-State: AOJu0YxlXg/7hBR2LWQYgjc9Y66A6AxBzTAMugOVdKL6mIrqYtHJY+wJ
-	f1G+3XkQj0Sfs+UnDYB/JeKkkCXaTEeTT6rgNT+c0m7ipy5Vf08EkVNg5SdHDu06RPXYV0sx5O2
-	HJFYZ7okZSLxMTH05ISUxwEHrIpjIVo5fnsC8NQ2XIzxRG+VTX3bDmSS4pOVpSQ==
-X-Received: by 2002:a05:600c:3b0f:b0:425:63b9:ae2c with SMTP id 5b1f17b1804b1-4264a3f3080mr39699945e9.27.1720188197478;
-        Fri, 05 Jul 2024 07:03:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLP0Y16Pr3AIIKxriH+7I8UOU7YRcbiBw1n4dgPEZPtVME9hnXFSCpZehbQPgJaJAlIq4dFQ==
-X-Received: by 2002:a05:600c:3b0f:b0:425:63b9:ae2c with SMTP id 5b1f17b1804b1-4264a3f3080mr39699685e9.27.1720188197060;
-        Fri, 05 Jul 2024 07:03:17 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c702:b500:3ed7:a1c7:447e:2279? (p200300cbc702b5003ed7a1c7447e2279.dip0.t-ipconnect.de. [2003:cb:c702:b500:3ed7:a1c7:447e:2279])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca5casm64150655e9.32.2024.07.05.07.03.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 07:03:16 -0700 (PDT)
-Message-ID: <8e9da8da-20f5-4316-a449-5544d9883c1e@redhat.com>
-Date: Fri, 5 Jul 2024 16:03:15 +0200
+	s=arc-20240116; t=1720188370; c=relaxed/simple;
+	bh=zOSrsIqDgw6nsS4xTIr0H79y6qZFeeth/rCwIFXjYVE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KfRs6KoAe+GUMkH4CoIkAotXUEOhUD/ZSeE0Tc+XT6J4uHUAaGTDpSt9DEoollRHYQfKIHekilDisZQyLdpagQljNbBcATmWvwBc3MFYABkPGGzZzU7e0tsFELzFyD4rF9yoKP+OnKlUIZo33DU3F8Mm9/fPaBL86lvmLXWBNZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r51Ul7A7; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 465DwaYE022369;
+	Fri, 5 Jul 2024 14:05:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	jswmdaZpgdwezGBmtgUlt8LtKnBHchYGQHSMWl7LaB0=; b=r51Ul7A7DR2WMDgw
+	F+YWbtgX2ZScu2gdxz9yGLB2ZSf8+y6ldMA4yVXg5Ebg1I0pAK1Zcv2sH+IIOduN
+	Qu3BILfuhnOrqpaHXK5zwDfUsOepZCKGPQ+GZ5XyVnpRGn7aT72pUi4F5iwNdeRz
+	ePa/ja/eGSV78c9+v8O1FROlnNraoFpgyHh8n3d78fv+SemopU8SnGLsOvoyyvR/
+	+CA5kbe7mrCpfLope2VnnW5akk9cnL27GbPoKw+HwIaBKIXXoP+u1ZTwRJiq6dCs
+	MoAou3gqUzj9Vk7Nt4+T9wTIrHl/UbtDNxIMvLqN0+bjYAZdAmcq5wMcowxJwnzi
+	YDlW5w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 406j6b00jj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 14:05:44 +0000 (GMT)
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 465E5hhS001371;
+	Fri, 5 Jul 2024 14:05:43 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 406j6b00je-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 14:05:43 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 465CwfXH024085;
+	Fri, 5 Jul 2024 14:05:42 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 402ya3wdre-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Jul 2024 14:05:42 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 465E5eXQ13566630
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 5 Jul 2024 14:05:42 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 38DAD5806A;
+	Fri,  5 Jul 2024 14:05:40 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E212058056;
+	Fri,  5 Jul 2024 14:05:38 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  5 Jul 2024 14:05:38 +0000 (GMT)
+Message-ID: <bffebaaa-4831-459f-939d-adf531e4c78b@linux.ibm.com>
+Date: Fri, 5 Jul 2024 10:05:38 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] tpm: Address !chip->auth in
+ tpm_buf_append_hmac_session*()
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+        Linus Torvalds <torvalds@linux-foundation.org>, stable@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20240703182453.1580888-1-jarkko@kernel.org>
+ <20240703182453.1580888-4-jarkko@kernel.org>
+ <c90ce151-c6e5-40c6-8d3d-ccec5a97d10f@linux.ibm.com>
+ <D2GJSLLC0LSF.2RP57L3ALBW38@kernel.org>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <D2GJSLLC0LSF.2RP57L3ALBW38@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: qclVOdl1N7Mzp5Z8e73-uIgvKncococf
+X-Proofpoint-ORIG-GUID: xQJxZA9UF3u8kVvQaJujMma6uFYtArgU
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kpageflags: detect isolated KPF_THP folios
-To: ran xiaokai <ranxiaokai627@163.com>, akpm@linux-foundation.org,
- corbet@lwn.net, usama.anjum@collabora.com, avagin@google.com
-Cc: linux-mm@kvack.org, vbabka@suse.cz, svetly.todorov@memverge.com,
- ran.xiaokai@zte.com.cn, ryan.roberts@arm.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- yangge1116 <yangge1116@126.com>
-References: <20240705104343.112680-1-ranxiaokai627@163.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240705104343.112680-1-ranxiaokai627@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-05_09,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407050099
 
-> -	} else if (is_zero_pfn(page_to_pfn(page)))
-> +	else if (folio_test_large(folio) &&
-> +	         folio_test_large_rmappable(folio)) {
-> +		/* Note: we indicate any THPs here, not just PMD-sized ones */
-> +		u |= 1 << KPF_THP;
-> +	} else if (is_huge_zero_folio(folio)) {
->   		u |= 1 << KPF_ZERO_PAGE;
-> +		u |= 1 << KPF_THP;
-> +	} else if (is_zero_pfn(page_to_pfn(page))) {
+On 7/4/24 02:41, Jarkko Sakkinen wrote:
+> On Thu Jul 4, 2024 at 4:56 AM EEST, Stefan Berger wrote:
+>>
+>>
+>> On 7/3/24 14:24, Jarkko Sakkinen wrote:
+>>> Unless tpm_chip_bootstrap() was called by the driver, !chip->auth can
+>>
+>> Doesn't tpm_chip_register() need to be called by all drivers? This
+>> function then calls tpm_chip_bootstrap().
+>>
+>>> cause a null derefence in tpm_buf_hmac_session*().  Thus, address
+>>> !chip->auth in tpm_buf_hmac_session*() and remove the fallback
+>>> implementation for !TCG_TPM2_HMAC.
+>>>
+>>> Cc: stable@vger.kernel.org # v6.9+
+>>> Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+>>> Closes: https://lore.kernel.org/linux-integrity/20240617193408.1234365-1-stefanb@linux.ibm.com/
+>>> Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
+>>> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>
+>> I applied this series now but it doesn't solve the reported problem. The
+> 
+> It fixes the issues of which symptoms was shown by your transcript:
+> 
+> [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM error 0x01C4
+> [    2.987140] ima: Error Communicating to TPM chip, result: -14
+> 
+> Your original thread identified zero problems, so thus your claim here
+> is plain untrue.
 
-We should also directly switch to "is_zero_folio(folio)" here
+The original thread here
 
-> +		u |= 1 << KPF_ZERO_PAGE;
-> +	}
->   
->   	/*
->   	 * Caveats on high order pages: PG_buddy and PG_slab will only be set
+https://lore.kernel.org/linux-integrity/656b319fc58683e399323b880722434467cf20f2.camel@kernel.org/T/#t
 
-Especially relevant in context of:
+identified the fact that tpm2_session_init() was missing for the ibmvtpm 
+driver. It is a non-zero problem for the respective platforms where this 
+driver is being used. The patched fixed the reported issue.
 
-https://lkml.kernel.org/r/1720075944-27201-1-git-send-email-yangge1116@126.com
+> 
+> Before the null derefence is fixed all other patches related are
+> blocked, including ibm_tpmvtpm patches, because it would be insane
+> to accept them when there is known memory corruption bug, which
+> this patch set fixes.
+> 
+> What is so difficult to understand in this?
+> 
+>> error message is gone but the feature can still be enabled
+>> (CONFIG_TCG_TPM2_HMAC=y) but is unlikely actually doing what it is
+>> promising to do with this config option. So you either still have to
+>> apply my patch, James's patch, or your intended "depends on
+>> !TCG_IBMVTPM" patch.
+> 
+> Well this somewhat misleading imho...
+> 
+> None of the previous patches, including your, do nothing to fix the null
+> derefence bug and that is the *only* bug we care about ATM. With these
+> fixes drivers that do not call tpm_chip_bootstrap() will be fully
+> working still but without encryption.
+> 
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Now that you fixed it in v4 are you going to accept my original patch 
+with the Fixes tag since we will (likely) have an enabled feature in 
+6.10 that is not actually working when the ibmvtpm driver is being used?
 
--- 
-Cheers,
+Original patch:
 
-David / dhildenb
+https://lore.kernel.org/linux-integrity/656b319fc58683e399323b880722434467cf20f2.camel@kernel.org/T/#t
 
+> There's five drivers which would require update for that:
+> 
+> drivers/char/tpm/tpm_ftpm_tee.c:        pvt_data->chip->flags |= TPM_CHIP_FLAG_TPM2;
+> drivers/char/tpm/tpm_i2c_nuvoton.c:             chip->flags |= TPM_CHIP_FLAG_TPM2;
+> drivers/char/tpm/tpm_ibmvtpm.c:         chip->flags |= TPM_CHIP_FLAG_TPM2;
+> drivers/char/tpm/tpm_tis_i2c_cr50.c:    chip->flags |= TPM_CHIP_FLAG_TPM2;
+> drivers/char/tpm/tpm_vtpm_proxy.c:              proxy_dev->chip->flags |= TPM_CHIP_FLAG_TPM2;
+
+I do no think that this is true and its only tpm_ibmvtpm.c that need the 
+call to tpm2_session_init. All drivers that use TPM_OPS_AUTO_STARTUP 
+will run tpm_chip_register -> tpm_chip_bootstrap -> tpm_auto_startup -> 
+tpm2_auto_startup -> tpm2_sessions_init
+
+$ grep AUTO_START *.c
+tpm_crb.c:      .flags = TPM_OPS_AUTO_STARTUP,
+tpm_ftpm_tee.c: .flags = TPM_OPS_AUTO_STARTUP,
+tpm_i2c_atmel.c:        .flags = TPM_OPS_AUTO_STARTUP,
+tpm_i2c_infineon.c:     .flags = TPM_OPS_AUTO_STARTUP,
+tpm_i2c_nuvoton.c:      .flags = TPM_OPS_AUTO_STARTUP,
+tpm-interface.c:        if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
+tpm_tis_core.c: .flags = TPM_OPS_AUTO_STARTUP,
+tpm_tis_i2c_cr50.c:     .flags = TPM_OPS_AUTO_STARTUP,
+tpm_vtpm_proxy.c:       .flags = TPM_OPS_AUTO_STARTUP,
+
+All the above drivers are also calling tpm_chip_register.
+
+tpm_atmel.c:    rc = tpm_chip_register(chip);
+tpm-chip.c: * tpm_chip_register() - create a character device for the 
+TPM chip
+tpm-chip.c:int tpm_chip_register(struct tpm_chip *chip)
+tpm-chip.c:EXPORT_SYMBOL_GPL(tpm_chip_register);
+tpm-chip.c: * cleans up all the resources reserved by tpm_chip_register().
+tpm_crb.c:      rc = tpm_chip_register(chip);
+tpm_ftpm_tee.c: rc = tpm_chip_register(pvt_data->chip);
+tpm_ftpm_tee.c:         dev_err(dev, "%s: tpm_chip_register failed with 
+rc=%d\n",
+tpm_i2c_atmel.c:        return tpm_chip_register(chip);
+tpm_i2c_infineon.c:     return tpm_chip_register(chip);
+tpm_i2c_nuvoton.c:      return tpm_chip_register(chip);
+tpm_ibmvtpm.c:  return tpm_chip_register(chip);
+tpm_infineon.c:         rc = tpm_chip_register(chip);
+tpm_nsc.c:      rc = tpm_chip_register(chip);
+tpm_tis_core.c: rc = tpm_chip_register(chip);
+tpm_tis_i2c_cr50.c:     return tpm_chip_register(chip);
+tpm_vtpm_proxy.c:       rc = tpm_chip_register(proxy_dev->chip);
+xen-tpmfront.c: return tpm_chip_register(priv->chip)
+
+
+   Stefan
+
+> 
+> 
+> BR, Jarkko
 
