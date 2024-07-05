@@ -1,111 +1,158 @@
-Return-Path: <linux-kernel+bounces-242104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736D4928390
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7D0928393
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 10:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DBB81F21CF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:19:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16E031F21D21
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 08:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2964D1428E4;
-	Fri,  5 Jul 2024 08:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OEL/t+hv"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1719B145B18;
+	Fri,  5 Jul 2024 08:20:08 +0000 (UTC)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77C941A81;
-	Fri,  5 Jul 2024 08:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427DA41A81;
+	Fri,  5 Jul 2024 08:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720167553; cv=none; b=S1D/jvCI1If1sAncGlZumPyb184MahoYRjqplPJfIXrAxn8x8NIrvn2pXYoHqmb+quNv9NLjzTIPg2QyNGBPvJ6qJuafuNZRJkNwzS2PWI3VdaqVoWIS9yqIamQC7rs5bydRlacMyjB8+dAtlQgH7DRAXcyC9Bakpqzt8nYdQ8w=
+	t=1720167607; cv=none; b=JFxL90DX/hIlun3JN8lo627Y2OKWkaBKmCLh44RjyQR2dJaH+KWze3pYxnIUI5QAEv93NrY834eBK9lAoTJd/rroADJnpp9SVRpsgt9SQK/2sMolbSjuJH/0cnxSA23Kj6IgESR6xJUgucZBknAzuu+d6MenzURRIxi1VTKC8Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720167553; c=relaxed/simple;
-	bh=7aOpINCPvg0vvhmXw5cCeNQkCVwgJmM7bESdDQA1b1s=;
+	s=arc-20240116; t=1720167607; c=relaxed/simple;
+	bh=jFGRbdA7tKtx3QnHJW0WGtj8O5GZzjYMpM3YNyHn9yg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mfx/P43Uee2iWjaYVZxOP3UlF7DyDhrXPHtRznGczAmkfGsXL3wtQER5QKPQaDmwnPEIx/oSOPEkUZyB+q7H4Sd/fQ4P+mvcBdgOTTs6/T0T8f6ZLSvkEClCF+kJjFNy2OYs/yVq5/EW0N/zR3gQY8I5cv43Bk6d7+7p//4EK50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OEL/t+hv; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=Smuv1nv3HwG7+yxNYGSvQOosiUKal3yVX0+BK6Nt2f30yY4sT5ypfCuWCZaqzqS2NsWAIm0N1SMMNmZO3PJQ1fjIIs9u3U79OyrrKKtRqNGtfK4S1K8hRi/iSh0+VprZ0urH87F81FLk8r6bZKQfbp3o2w9JK6yBK0n++dn368w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5c46b040b53so617172eaf.2;
-        Fri, 05 Jul 2024 01:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720167551; x=1720772351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7aOpINCPvg0vvhmXw5cCeNQkCVwgJmM7bESdDQA1b1s=;
-        b=OEL/t+hvwbHWLi71XeQ31OrBJGOk+Hb9xrYx6E5I89gGIHAcdpq+hRwLdwQTWjxhAa
-         NRo1JFi80ztR8kdTfct+sAhgzlhmRWrmCwRAf9GtGR+/bdxd2BamdZurkY++uHMYHxG1
-         Xrcyzg+a81s9lJ7m8rmx40w74FozKYW5P80XtoW7VS5nOYY0FxgIyaRQLeN5bKH/l+wb
-         YTtrIhD/zQNUZMd5oXKkicmMPD0IZYLvwt4edBRwUkeKdzAmC8g945tbioLbiiMKhevZ
-         Soq6Ip3Sn7+MGnk8x1rbZDxLMPdtXypq4pNACvIgbRLl/CySDsEsEST5OO4MEGWGTZxX
-         BzyA==
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e02748b2402so1430623276.0;
+        Fri, 05 Jul 2024 01:20:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720167551; x=1720772351;
+        d=1e100.net; s=20230601; t=1720167604; x=1720772404;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7aOpINCPvg0vvhmXw5cCeNQkCVwgJmM7bESdDQA1b1s=;
-        b=g8M3+6pJs7u1tsA7kY+2wKBoJhcV7P83vC8Xo7ilozMMdI4Qb2rXfhWHtqZeyIwmJD
-         9scq23b54XA2UagKuqcXfc2d/hx/qZChSNjKOu1gHDrQrJ5H6nQwqdxriEakFeXfb0N/
-         V0GOjEWfLKKZvj7tkDf7QZVVAVy24aS1BwkImEjWmLdW6FCdF716q6c01w9oLoDKyljT
-         rICrWdpqfVv/y8kBkaD2CF7J5PGuRD8QZo8N5treilkNWZCwgt19s3OGleDUBs6sVQvr
-         R81LcHuBMEbYDx6BiKMEqLSmR4vW4JDvqr5Ri+u9G6vYRzfA+EcmZ5hShZALrLVMOOmx
-         MJ4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXS8hpyJOpgYDAjjAra14VTYtymz0U6RsVxxrYeDVTb4PkTX3lgDt9KH9s214CpCrkj+GsK5SWoGVH8VfNas3QGUC5wIV1AsX9h+f0BRllGqibSpNJn9+yVk2+ePGcgGCSbtDAvtk3+
-X-Gm-Message-State: AOJu0Yynbk5fUEib4SuLHVFbJghVbAJW6X34sBBU8o3VUDWQlU9zldpS
-	py4rf2jA8vmfmeZyTS0cpk6IoXU1Fd05SON8n/CV7poU9m99M64lVgmH0ZICE3ZB9S48BBWK5lr
-	zegkAeoirWwUNbrJXTkVhtqi/dUtKpYZyfBc=
-X-Google-Smtp-Source: AGHT+IF7TQYmBewryyeNp0kMG78rpCTiJk8CpOGAeEyfetzcR10PwWd8fDG9RsTKXb21fuuzCAs8erbEfbxRCO472vQ=
-X-Received: by 2002:a4a:af02:0:b0:5c4:2c2a:2358 with SMTP id
- 006d021491bc7-5c646f63b94mr4137659eaf.6.1720167550895; Fri, 05 Jul 2024
- 01:19:10 -0700 (PDT)
+        bh=oaxw+yU3olE39ZGuCHYEWF5pYVtM1aOWdXpgzSzRbkk=;
+        b=qgrcfEKWDGtd+LWak7z9B6yi/fP3Fh/abkj2wgMujpM002rbMDsHj0HrnqKnyukIWw
+         g6fjKpXoykdouwQ42H1XnKTIKzmZKdQs5X/Vt3B0KgHOWdohLmMujgdSLInOcdQ0L5T3
+         h82bBjhPpdmAVb3o12jJqbt8Hm2bJ7UxGdBc1KeXWuWKljEnGhEyur53K9eMPWf6+7N1
+         3wZGSPwLP9zyMC7cDBhMRvh59sgGL6O4FGV8jD5iFeAwTXxui/F/xlyC5vmExZBrLEGr
+         jU16dPra6BqKlBbD6H9pKAox/hVqeQR9gW3mmur+G6ycBQa2UzxhlxGpQ7rxFjFTgjJ+
+         OpMg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5c8bgB0xlmT6CAXk6lbTt+9CFNsx0oPGb9/uCxLdSUUO0flL8QiUyG5DUCAXpMd97V48Yui5S4U6/r1lCQB69HbgxxaQaTpvupTsNkDQFh299eO/lJuIedGUCXnySFmPuSSg50FjJlqbA2R2kYPszBIm5OAlkVrPP/AgtonepfRQw2g==
+X-Gm-Message-State: AOJu0Yy81NXBlxZm1r+gjOsv1UuqXXm6RC0LAojJhp7UxuqUVvz84Em2
+	rVx8L4uO2rtPylaOnHQuxvj5vqMf4uOii6KWDuo2ParfbyVsNu4C5SOOsjGN
+X-Google-Smtp-Source: AGHT+IEDkJQHLzg8ELxnp1+X1e66rvylg9Ll+/vvp3XPjosCkpZq4WVo58/Mb6bv7u7Pumi9ejSGhg==
+X-Received: by 2002:a81:b65c:0:b0:62c:c5ed:234e with SMTP id 00721157ae682-652d8037339mr38162367b3.36.1720167604486;
+        Fri, 05 Jul 2024 01:20:04 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-654861c4e33sm250997b3.29.2024.07.05.01.20.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 01:20:04 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-65240d22f7cso12219467b3.0;
+        Fri, 05 Jul 2024 01:20:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVAKD3J1QvQ9YanZWG1ykWA/oromOWoaW8k86MG0cPvymExZsQh7z9XlHjqB19RFwLSQOFoZWPPoV/IOknfljPbnnhc0GEHUb0/Y0htC/immIoxrNkZ3skx4PupmwcFKJ0gmkMhPlSD94H2Y45hP0GvlKw7066RN9wTHPKxXg9Zl6hTtg==
+X-Received: by 2002:a05:690c:80f:b0:627:ddf0:9e7f with SMTP id
+ 00721157ae682-652d8037794mr38128577b3.39.1720167603850; Fri, 05 Jul 2024
+ 01:20:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705022842.51451-1-wodemia@linux.alibaba.com>
-In-Reply-To: <20240705022842.51451-1-wodemia@linux.alibaba.com>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Fri, 5 Jul 2024 16:18:44 +0800
-Message-ID: <CAD-N9QUPWrAaT-7UjibcKR7=L_etmGF4qy0voO8u3W+wk6G0nA@mail.gmail.com>
-Subject: Re: [PATCH v1] zh_CN/admin-guide: one typo fix
-To: Tao Zou <wodemia@linux.alibaba.com>
-Cc: Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-7-9e6c148bf5f0@beagleboard.org>
+ <4e23ec81-b278-4f2b-815d-64ed9390ca55@ti.com> <D2AZ0QKTPY3B.1I48GLI90XD0P@kernel.org>
+ <5b2cd46e-8a51-f145-8876-55b12a6d62d1@linux-m68k.org>
+In-Reply-To: <5b2cd46e-8a51-f145-8876-55b12a6d62d1@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Jul 2024 10:19:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXvxXZUE0LwCYPt3HyuQTvM6Rus_RidJ24Ttd_4e_m-HQ@mail.gmail.com>
+Message-ID: <CAMuHMdXvxXZUE0LwCYPt3HyuQTvM6Rus_RidJ24Ttd_4e_m-HQ@mail.gmail.com>
+Subject: Re: [PATCH v5 7/7] dts: ti: k3-am625-beagleplay: Add mikroBUS
+To: Michael Walle <mwalle@kernel.org>
+Cc: Andrew Davis <afd@ti.com>, Ayush Singh <ayush@beagleboard.org>, Mark Brown <broonie@kernel.org>, 
+	Vaishnav M A <vaishnav@beagleboard.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	jkridner@beagleboard.org, robertcnelson@beagleboard.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-T24gRnJpLCBKdWwgNSwgMjAyNCBhdCAxMDoyOeKAr0FNIFRhbyBab3UgPHdvZGVtaWFAbGludXgu
-YWxpYmFiYS5jb20+IHdyb3RlOg0KPg0KPiBGaXggb25lIGNoaW5lc2UgdHlwbyBlcnJvci4NCj4N
-Cj4gU2lnbmVkLW9mZi1ieTogVGFvIFpvdSA8d29kZW1pYUBsaW51eC5hbGliYWJhLmNvbT4NCg0K
-UmV2aWV3ZWQtYnk6IERvbmdsaWFuZyBNdSA8ZHptOTFAaHVzdC5lZHUuY24+DQoNCj4gLS0tDQo+
-IFRoZSBwcmV2aW91cyB0cmFuc2xhdGlvbiBwYXRjaCB2NCBoYXMgYWxyZWFkeSBiZWVuIGFwcGll
-ZCwgYW5kIHRoZSBjaGFuZ2VzIGZyb20gdjQgdG8gdjUgd2VyZSBtaXNzZWQuDQo+IFRoaXMgcGF0
-Y2ggaXMgb25lIHR5cG9maXgsIGFuZCBpbmNsdWRlcyB0aGUgY2hhbmdlcyBmcm9tIHY0IHRvIHY1
-Lg0KPg0KPiAgRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vYWRtaW4tZ3VpZGUvbnVt
-YXN0YXQucnN0IHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRl
-bGV0aW9uKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96
-aF9DTi9hZG1pbi1ndWlkZS9udW1hc3RhdC5yc3QgYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9u
-cy96aF9DTi9hZG1pbi1ndWlkZS9udW1hc3RhdC5yc3QNCj4gaW5kZXggYzBmNTRkOWE2YjA1Li40
-ZDk4MTdiOTE4NzAgMTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3po
-X0NOL2FkbWluLWd1aWRlL251bWFzdGF0LnJzdA0KPiArKysgYi9Eb2N1bWVudGF0aW9uL3RyYW5z
-bGF0aW9ucy96aF9DTi9hZG1pbi1ndWlkZS9udW1hc3RhdC5yc3QNCj4gQEAgLTEzLDcgKzEzLDcg
-QEAgTnVtYeetlueVpeWRveS4rS/mnKrlkb3kuK3nu5/orqENCj4NCj4gIOaJgOacieaVsOaNruea
-hOWNleS9jemDveaYr+mhtemdouOAguW3qOmhteacieeLrOeri+eahOiuoeaVsOWZqOOAgg0KPg0K
-PiAtbnVtYV9oaXTjgIFudW1hX21pc3PlkoxudW1hX2ZvcmVpZ27orqHmlbDlmajlj43lupTkuobo
-v5vnqIvmmK/lkKbog73lpJ/lnKjku5bku6zlgY/lpb3nmoToioLngrnkuIrliIbphY3lhoXlrZjj
-gIINCj4gK251bWFfaGl044CBbnVtYV9taXNz5ZKMbnVtYV9mb3JlaWdu6K6h5pWw5Zmo5Y+N5pig
-5LqG6L+b56iL5piv5ZCm6IO95aSf5Zyo5LuW5Lus5YGP5aW955qE6IqC54K55LiK5YiG6YWN5YaF
-5a2Y44CCDQo+ICDlpoLmnpzov5vnqIvmiJDlip/lnKjlgY/lpb3nmoToioLngrnkuIrliIbphY3l
-hoXlrZjliJnlnKjlgY/lpb3nmoToioLngrnkuIrlop7liqBudW1hX2hpdOiuoeaVsO+8jOWQpuWI
-meWcqOWBj+WlveeahOiKgueCueS4iuWing0KPiAg5YqgbnVtYV9mb3JlaWdu6K6h5pWw5ZCM5pe2
-5Zyo5a6e6ZmF5YaF5a2Y5YiG6YWN55qE6IqC54K55LiK5aKe5YqgbnVtYV9taXNz6K6h5pWw44CC
-DQo+DQo+IC0tDQo+IDIuMzkuMyAoQXBwbGUgR2l0LTE0NikNCj4NCj4NCg==
+On Fri, Jul 5, 2024 at 10:01=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+> On Thu, 27 Jun 2024, Michael Walle wrote:
+> > On Thu Jun 27, 2024 at 7:07 PM CEST, Andrew Davis wrote:
+> >>> +   mikrobus_boards {
+> >>> +           thermo_click: thermo-click {
+> >>> +                   compatible =3D "maxim,max31855k", "mikrobus-spi";
+> >>
+> >> I might be missing something, but your solution cannot possibly be
+> >> to list every click board that could be connected (all 1500+ of them)
+> >> to every mikroBUS connector on every device's DT file..
+> >>
+> >> Each click board should have a single DTSO overlay file to describe th=
+e
+> >> click board, one per click board total. And then that overlay should
+> >> apply cleanly to any device that has a mikroBUS interface.
+> >>
+> >> Which means you have not completely solved the fundamental problem of
+> >> abstracting the mikroBUS connector in DT. Each of these click device c=
+hild
+> >> nodes has to be under the parent connector node. Which means a phandle
+> >> to the parent node, which is not generically named. For instance
+> >> if my board has 2 connectors, I would have mikrobus0 and mikrobus1,
+> >> the click board's overlay would look like this:
+> >>
+> >> /dts-v1/;
+> >> /plugin/;
+> >>
+> >> &mikrobus0 {
+>
+> Let's use just "&mikrobus" instead...
+>
+> >>      status =3D "okay";
+> >>
+> >>      mikrobus_board {
+> >>              thermo-click {
+> >>                      compatible =3D "maxim,max31855k", "mikrobus-spi";
+
+Max31855k is an SPI device, so its device node should be under an "spi"
+subnode (with proper #{address,size}-cells) of the mikrobus connector,
+and use a suitable unit-address and "reg" property, pointing to the
+right SPI chip select.
+
+> >>                      spi-max-frequency =3D <1000000>;
+
+This belongs to the "spi" subnode, not the Max31855k device node.
+
+> >>                      pinctrl-apply =3D "spi_default";
+
+This belongs to the mikrobus connector node.
+
+> >>              };
+> >>      };
+> >> };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
