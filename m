@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-241866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-241867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE05D92806E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:29:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E313A928071
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 04:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BCB91C230CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:29:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53A33B2174B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Jul 2024 02:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E8317995;
-	Fri,  5 Jul 2024 02:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC4D1B806;
+	Fri,  5 Jul 2024 02:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lgi3PM2D"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESQVLWuu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B883233;
-	Fri,  5 Jul 2024 02:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAC71862;
+	Fri,  5 Jul 2024 02:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720146538; cv=none; b=b7Omf7dUZb6Uz3ItWM930digG5GI4gZzsvBIrNdZHDssjBkDiMQZMXBk6Wo5EfqkKlvrDq91ZOl2UR38JIeDWmhQShFf+WkPT/sxI/lhE4FX8KDM+RCNy7027coLbwk1DVA9vPYL5Wy7hKowHOzDbLDFVM3AO7V8BVMtX3EK+U4=
+	t=1720146628; cv=none; b=JzOljMVk6/blsN0+mWCqkfIWDZ7Bg9COjeCzxThEHq47OnEeFz5OVGw9+Z2VREdodMVcdo/L1sH7mCq8cRm6KUOfaDJJl9WRzKw238L4Fay77DpOXBwkT1zWM96ovOZAFvBC2a0RSuHrVKCORVdEiy04W2l8r+ZqQvpIYCtJTuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720146538; c=relaxed/simple;
-	bh=yEAwiDifltp4+CfLq5oQvdbDHPwMoz5Qf7jeWGu+ZjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jiWQzqADbUN/M3YnoFIBvdlvivjtacHsxscespJT9PPGfG1lCkq0GjxS2sT8GbNkuDjVICmDMTZZOtzzQc4fAm7FiajidNhi+BT/CCAVPytqXchdhVY5LhKo2jpoLX98oKUlEVzEco8bwVfv/aGTam7WMROn8PGoL7K5IFLQyl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lgi3PM2D; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720146526; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=yezpDgfalefPHn3TMzBR/EZX/+s15HPSuCQzMIVwVuw=;
-	b=lgi3PM2DbLBYjdLWVbAbpSjDr/2Nwii7DzL2mpRCQOERoM+XS/iUWhk42TWP9rQVsUaJ4I0cAuv3/G0m6n9BnUIM8VwvTo0TLQbiMzkv3t5OY9NJL0jgkhKjiMiOYA4DoH/oTTUwIDqOEu3pBTRZueJBmxphxmHEwh1jAdB6qtA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023225041;MF=wodemia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W9t-z9._1720146524;
-Received: from localhost.localdomain(mailfrom:wodemia@linux.alibaba.com fp:SMTPD_---0W9t-z9._1720146524)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Jul 2024 10:28:46 +0800
-From: Tao Zou <wodemia@linux.alibaba.com>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Tao Zou <wodemia@linux.alibaba.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] zh_CN/admin-guide: one typo fix
-Date: Fri,  5 Jul 2024 10:28:41 +0800
-Message-Id: <20240705022842.51451-1-wodemia@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1720146628; c=relaxed/simple;
+	bh=OG0jnfMsrsYkJOEeq2fiGpITMFALAP84+mvUjCJLqS4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=H87QGj9g1rWM0s02vQ8TfIl3kW1ZZHf3If4WEu9TZxkcLNXft4F1FiTr4AhLdj25N/uZEATQv7eaNrtRnZhPLhpH7okX7ymppK13MFSnebikyAy8azitN422U/gVzRKH9HHNhHMGdDMnqfUOb1vIHevM6QCLqYQ/WgyzzZHj0WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESQVLWuu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4F5FEC4AF07;
+	Fri,  5 Jul 2024 02:30:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720146628;
+	bh=OG0jnfMsrsYkJOEeq2fiGpITMFALAP84+mvUjCJLqS4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ESQVLWuuele1+yAJBvxJNgxlEpJREWBHgwJm4egu6ooaV+ecJt5h7LgVXt/65yUM1
+	 0WOY0KPdZNgq+fHHm/WRFq/k6Y8J/ymF7nkXyxiocfmfDSROlCNXACFfHqecEt8Moh
+	 z0EU0UvJr7TdnIXIAfP5E5kNrKoRMa2PRGJ4kAcVhbR8VR1dC2/qeJLYNui390YaMb
+	 RyVsgyXgN89d+bMaq7LbUfVZMuK6jPO8r/fhTeg7k0mur25hPCsCn1AlGlZK/IIpWJ
+	 yOsyycBYJQ8jgYy42Z/9ZNJc0+UFBgdFmztf1IsWkyMxIt3ee0ti7Kdw2jPFGhv4kg
+	 8c5HeO2cbFZrQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 409B9C433A2;
+	Fri,  5 Jul 2024 02:30:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 1/2] dsa: lan9303: Fix mapping between DSA port number and
+ PHY address
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172014662826.21730.5141774575339835700.git-patchwork-notify@kernel.org>
+Date: Fri, 05 Jul 2024 02:30:28 +0000
+References: <20240703145718.19951-1-ceggers@arri.de>
+In-Reply-To: <20240703145718.19951-1-ceggers@arri.de>
+To: Christian Eggers <ceggers@arri.de>
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ jbe@pengutronix.de, sr@denx.de, kernel@pengutronix.de,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix one chinese typo error.
+Hello:
 
-Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
----
-The previous translation patch v4 has already been appied, and the changes from v4 to v5 were missed.
-This patch is one typofix, and includes the changes from v4 to v5.
- 
- Documentation/translations/zh_CN/admin-guide/numastat.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/Documentation/translations/zh_CN/admin-guide/numastat.rst b/Documentation/translations/zh_CN/admin-guide/numastat.rst
-index c0f54d9a6b05..4d9817b91870 100644
---- a/Documentation/translations/zh_CN/admin-guide/numastat.rst
-+++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
-@@ -13,7 +13,7 @@ Numa策略命中/未命中统计
- 
- 所有数据的单位都是页面。巨页有独立的计数器。
- 
--numa_hit、numa_miss和numa_foreign计数器反应了进程是否能够在他们偏好的节点上分配内存。
-+numa_hit、numa_miss和numa_foreign计数器反映了进程是否能够在他们偏好的节点上分配内存。
- 如果进程成功在偏好的节点上分配内存则在偏好的节点上增加numa_hit计数，否则在偏好的节点上增
- 加numa_foreign计数同时在实际内存分配的节点上增加numa_miss计数。
- 
+On Wed, 3 Jul 2024 16:57:17 +0200 you wrote:
+> The 'phy' parameter supplied to lan9303_phy_read/_write was sometimes a
+> DSA port number and sometimes a PHY address. This isn't a problem as
+> long as they are equal.  But if the external phy_addr_sel_strap pin is
+> wired to 'high', the PHY addresses change from 0-1-2 to 1-2-3 (CPU,
+> slave0, slave1).  In this case, lan9303_phy_read/_write must translate
+> between DSA port numbers and the corresponding PHY address.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,1/2] dsa: lan9303: Fix mapping between DSA port number and PHY address
+    https://git.kernel.org/netdev/net/c/0005b2dc43f9
+  - [net,2/2] dsa: lan9303: consistent naming for PHY address parameter
+    (no matching commit)
+
+You are awesome, thank you!
 -- 
-2.39.3 (Apple Git-146)
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
