@@ -1,57 +1,73 @@
-Return-Path: <linux-kernel+bounces-243159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5385892929A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:37:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5339292A8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18DC32825BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:37:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF231C20F70
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D932A6F06B;
-	Sat,  6 Jul 2024 10:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B3D73478;
+	Sat,  6 Jul 2024 10:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="WwetU0sB"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFDuRnHJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874745695
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 10:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415FC487B0;
+	Sat,  6 Jul 2024 10:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720262228; cv=none; b=Dzk60LaMmsGFtQP+uYtMtll8/6Ah+8BeYSUJwZEIUJ3QhkuVAp8NSRS2p/K2YY3PsPtUfSuYtbWWO7cfOOmIRoH0Umj7eJVqce4Xjl4C2B9yQxG2o0DOlQeP00T2dUMG/UM6PBccMrU+hihCphOpi36jMohkBhOLs53PjoitDqA=
+	t=1720263257; cv=none; b=Yd9LGa1mEQ+pStGPeKEejwUQmqnJqxexPGcicgbPCKScsJdC7fS2BsiX8pmxjoN/YkPM+rJ1e6nOCwyfTvbaWaSdXxP/c1DFYy6DsmCqClHE2Su/Mfc+hxZUJ3ixdS8U61UjYM+hKbkacumISo0cCktbMOd+F/X9/rj/srz4eS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720262228; c=relaxed/simple;
-	bh=ak1MiwVC7DL5GRpVTZ3qPO0dgRlceI+xALCMmMuK+qc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NaPF+FUarAwjKIKuYHm73wLtI+gyEL6EPRvjgr/8iE6LXaMnd0GDZLGcEUT/bAMMZLzS6TXpUs6BVMmbxBozw636u4+uR818q1RHjU4kpMCH5QD9Sh+eqVuUNHygdrpdMZz2CGEcNUNScJ2VlAxbLhRPfwgS/agajFrerPzubbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=WwetU0sB; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1720262224; x=1720521424;
-	bh=d5zWGPfRfblVjg4t2TgxqrBDoVfb2JhIB/PRQhpwxG0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=WwetU0sBDX5/tk3aKV+0U0UyZF7p+4xdrMdXiCacXK38rHVR5waLzxou97chgMW5+
-	 LWRYs7+HZ7SDz/2Z3xiobIYRXYtd+p6vIErSgn0LloIQ5yozyHPcjila37nKnsz1et
-	 ZYLTdoLU24MuUCorlFuxqLqJfQnBZhvYtXyH3mSd418o08Y/V1TcyggRqlpdlUEer3
-	 iLtDwqdlzh6Frvix8sASanyC/YTDStw4nCM83wtbA78a1lne3+vu6csRtGbcPewfTX
-	 2+Jx+LHO9T/6qXEBZGFZSLjqHYTk1JUsAJd4oiuexusgYabL1NQqNxNqY9mwHCwGEP
-	 C3nVwXNysZAUg==
-Date: Sat, 06 Jul 2024 10:37:00 +0000
-To: Danilo Krummrich <dakr@redhat.com>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 04/20] rust: alloc: implement `Allocator` for `Kmalloc`
-Message-ID: <033c72ba-fb31-4eff-b98c-5c5d35057280@proton.me>
-In-Reply-To: <20240704170738.3621-5-dakr@redhat.com>
-References: <20240704170738.3621-1-dakr@redhat.com> <20240704170738.3621-5-dakr@redhat.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: fe3bbef5f705ba42d091a458c33063a8d756b426
+	s=arc-20240116; t=1720263257; c=relaxed/simple;
+	bh=Ttgueic0OcfhmSuHeW8NTeEojBfeKUJurNp/5wA3sm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4v8EheUT6Q1uNoEQW0vjtkLA+rrdnUgyhTrgeXfjX2cAoX3SndL6A1PMQbTSIRtugM8h/kfyg9PRjUgdZUjKBGXE+QS3FpRQQ5HjqCU7xBCrtRn443tkVZQTUr56C3ltjoqMjvzdmtEskgv6HA3jQqrSrQkAljpqsBY33E9d0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFDuRnHJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC8AC2BD10;
+	Sat,  6 Jul 2024 10:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720263256;
+	bh=Ttgueic0OcfhmSuHeW8NTeEojBfeKUJurNp/5wA3sm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZFDuRnHJFUMEvcoo0y7z2mRgH7o7pSkmt2D6KY0xZTnTBWPuVPmIlSUYtXfvGTquQ
+	 7Pps6uBJLlAN+j96Juc26hu+baujQc9CZFNe7XALsKEmur8SU0dJTKOeeOhShl/P7+
+	 Uuk88TrxDAN5bT7xKhifI/auM1qANEjUQyHeXuM5khPmGwJ+HNegwzK/bZb2GeWRTK
+	 K8mnnEeyTMQeWzmYCnLr1dl035dxdpYdcMKv4jdNRb6OWrCnqHRtwQPstblx7omazZ
+	 sEpkwrdqo/nW/C5tE43IVpTgVkqYm9e++v4Ds6GtMEn/1+8CbN/09NeZAzsG/hU95T
+	 NMj5RmM9MjlLw==
+Date: Sat, 6 Jul 2024 18:40:07 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>,
+	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>
+Subject: Re: [PATCH v3 08/11] riscv: dts: add initial SpacemiT K1 SoC device
+ tree
+Message-ID: <ZokfBzjvwN0IUQIX@xhacker>
+References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
+ <20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org>
+ <Zoanxksn0nio4MPg@xhacker>
+ <20240705063839.GA3042186@ofsar>
+ <ZojEEAdUwxPJwqIS@xhacker>
+ <20240706050556.GA3590714@ofsar>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,67 +75,153 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20240706050556.GA3590714@ofsar>
 
-On 04.07.24 19:06, Danilo Krummrich wrote:
-> @@ -48,20 +57,54 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, n=
-ew_layout: Layout, flags: F
->      }
->  }
->=20
-> +unsafe impl Allocator for Kmalloc {
-> +    unsafe fn realloc(
-> +        &self,
-> +        old_ptr: *mut u8,
-> +        _old_size: usize,
-> +        layout: Layout,
-> +        flags: Flags,
-> +    ) -> Result<NonNull<[u8]>, AllocError> {
-> +        let size =3D aligned_size(layout);
-> +
-> +        // SAFETY: `src` is guaranteed to point to valid memory with a s=
-ize of at least
-> +        // `old_size`, which was previously allocated with this `Allocat=
-or` or NULL.
-> +        let raw_ptr =3D unsafe {
-> +            // If `size =3D=3D 0` and `old_ptr !=3D NULL` `krealloc()` f=
-rees the memory behind the
-> +            // pointer.
-> +            bindings::krealloc(old_ptr.cast(), size, flags.0).cast()
-> +        };
-> +
-> +        let ptr =3D if size =3D=3D 0 {
-> +            NonNull::dangling()
-> +        } else {
-> +            NonNull::new(raw_ptr).ok_or(AllocError)?
-> +        };
-> +
-> +        Ok(NonNull::slice_from_raw_parts(ptr, size))
-> +    }
-> +}
-> +
->  unsafe impl GlobalAlloc for Kmalloc {
+On Sat, Jul 06, 2024 at 05:05:56AM +0000, Yixun Lan wrote:
+> 
+> On 12:12 Sat 06 Jul     , Jisheng Zhang wrote:
+> > On Fri, Jul 05, 2024 at 06:38:39AM +0000, Yixun Lan wrote:
+> > > 
+> > > On 21:46 Thu 04 Jul     , Jisheng Zhang wrote:
+> > > > On Wed, Jul 03, 2024 at 02:55:11PM +0000, Yixun Lan wrote:
+> > > > > From: Yangyu Chen <cyy@cyyself.name>
+> > > > > 
+> > > > > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
+> > > > > 
+> > > > > Key features:
+> > > > > - 4 cores per cluster, 2 clusters on chip
+> > > > > - UART IP is Intel XScale UART
+> > > > > 
+> > > > > Some key considerations:
+> > > > > - ISA string is inferred from vendor documentation[2]
+> > > > > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
+> > > > > - No coherent DMA on this board
+> > > > >     Inferred by taking vendor ethernet and MMC drivers to the mainline
+> > > > >     kernel. Without dma-noncoherent in soc node, the driver fails.
+> > > > > - No cache nodes now
+> > > > >     The parameters from vendor dts are likely to be wrong. It has 512
+> > > > >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
+> > > > >     When the size of the cache line is 64B, it is a directly mapped
+> > > > >     cache rather than a set-associative cache, the latter is commonly
+> > > > >     used. Thus, I didn't use the parameters from vendor dts.
+> > > > > 
+> > > > > Currently only support booting into console with only uart, other
+> > > > > features will be added soon later.
+> > > > > 
+> > > > > Link: https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1_datasheet [1]
+> > > > > Link: https://developer.spacemit.com/#/documentation?token=BWbGwbx7liGW21kq9lucSA6Vnpb [2]
+> > > > > Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/boot/dts/spacemit/k1-x.dtsi [3]
+> > > > > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> > > > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > > > > ---
+> > > > >  arch/riscv/boot/dts/spacemit/k1.dtsi | 376 +++++++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 376 insertions(+)
+> > > > > 
+> > > > > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > > > new file mode 100644
+> > > > > index 0000000000000..a076e35855a2e
+> > > > > --- /dev/null
+> > > > > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > > > @@ -0,0 +1,376 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> > > > > +/*
+> > > > > + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+> > > > > + */
+> > > > > +
+> > > > > +/dts-v1/;
+> > > > > +/ {
+> > > > > +	#address-cells = <2>;
+> > > > > +	#size-cells = <2>;
+> > > > > +	model = "SpacemiT K1";
+> > > > > +	compatible = "spacemit,k1";
+> > > > > +
+> > > > > +
+...
+> > > > > +	soc {
+> > > > > +		compatible = "simple-bus";
+> > > > > +		interrupt-parent = <&plic>;
+> > > > > +		#address-cells = <2>;
+> > > > > +		#size-cells = <2>;
+> > > > > +		dma-noncoherent;
+> > > > > +		ranges;
+> > > > > +
+> > > > > +		uart0: serial@d4017000 {
+> > > > > +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> > > > 
+> > > > no, this is not a correct hw modeling. The doc on spacemit says
+> > > > all the uart support 64 bytes FIFO, declaring xscale only makes
+> > > > use of 32 bytes FIFO.
+> > > yes, I also noticed it's 64 bytes FIFO
+> > > 
+> > > > 
+> > > > IIRC, 8250_pxa is a xscale uart with 64 bytes FIFO, so this should be
+> > > > "mrvl,pxa-uart" or "mrvl,mmp-uart"
+> > > 
+> > > 
+> > > for mrvl,pxa-uart, I think you imply to use drivers/tty/serial/8250/8250_pxa.c,
+> > > which turn out doesn't work on k1 SoC, for the record, we need to adjust
+> > 
+> > Really? I just tried "mrvl,pxa-uart" with rc6, it works perfectly, and the FIFO
+> > in the driver logic is 64bytes now. Am I misssing something or you never tried it?
+> > 
+> Ok, I realised it's the clock issue
+> 
+> still, I'm not fully convinced about using "mrvl,pxa-uart",
+> e.g this driver hardcoded tz_loadsz to 32, not sure if K1 suffer same problem
+> 5208e7ced520 ("serial: 8250_pxa: Configure tx_loadsz to match FIFO IRQ level")
 
-Since you remove `alloc` entirely at the end of this series, do we even
-need this?
-If not, it would be best to just leave the implementation as-is until a
-patch removes it entirely.
+I believe the problem commit 5208e7ced520 tries to solve is: the
+mmp|pxa-uart only support threshold up to 32Bytes, tz_loadsz will be
+fifo size by default, this will cause probleme with 64Bytes FIFO.
 
----
-Cheers,
-Benno
+> 
+> also, what's the preference when choosing driver between 8250_pxa.c vs 8250_of.c?
 
->      unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-> -        // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero=
- size by the function safety
-> -        // requirement.
-> -        unsafe { krealloc_aligned(ptr::null_mut(), layout, GFP_KERNEL) }
-> +        let this: &dyn Allocator =3D self;
-> +
-> +        match this.alloc(layout, GFP_KERNEL) {
-> +            Ok(ptr) =3D> ptr.as_ptr().cast(),
-> +            Err(_) =3D> ptr::null_mut(),
-> +        }
->      }
+Good question. I have no preference. But there are two problems with
+8250_of, I have sent out patches[1][2] to address them.
 
+After these two patches, both the earlycon and uart FIFO logic work too
+with below dts properties:
+		uart0: serial@d4017000 {
+			compatible = "mrvl,mmp-uart";
+			...
+                        reg-shift = <2>;
+                        reg-io-width = <4>;
+                        tx-threshold = <32>;
+                        fifo-size = <64>;
+                        no-loopback-test;
+			...
+		}
+
+Link: https://lore.kernel.org/linux-riscv/20240706082928.2238-1-jszhang@kernel.org/ [1]
+Link: https://lore.kernel.org/linux-riscv/20240706101856.3077-1-jszhang@kernel.org/ [2]
+
+> it occur to me that 8250_pxa.c is more specially tailored for pxa hardware, while
+> 8250_of.c is more generic.. besides, should we consider one more step if we want to
+
+there's a work around for Erratum #74 in 8250_pxa, while I believe the
+Errata doesn't exisit in K1, so from this PoV it seems 8250_of is
+better, no?
+
+> support DMA mode in the future (vendor uart driver has DMA support)?
+
+Adding dma engine support to 8250_of is doable.
+
+> 
+> 
+> > >  drivers/tty/serial/8250/Kconfig to enable the driver for ARCH_SPACEMIT,
+> > >  and change uart compatible to "spacemit,k1-uart", "mrvl,pxa-uart"
+> > > 
+> > > for mrvl,mmp-uart, I see two choices, one using 8250_pxa.c which has same result
+> > > as mrvl,pxa-uart, another choice would using the driver of 8250_of.c 
+> > > and it work as same as "intel,xscale-uart", I don't see any difference..
+> > > 
+> > > P.S: there is possibly a side problem that "mrvl,mmp-uart" from 8250_of.c doesn't 
+> > > really compatile with "mrvl,mmp-uart" from 8250_pxa.c, but I think it's another story
+> 
+> -- 
+> Yixun Lan (dlan)
+> Gentoo Linux Developer
+> GPG Key ID AABEFD55
 
