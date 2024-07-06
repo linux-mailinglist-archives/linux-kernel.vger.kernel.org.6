@@ -1,182 +1,162 @@
-Return-Path: <linux-kernel+bounces-243342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0089294EB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 19:38:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29A59294EF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 19:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C19AB21BF3
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC181C20C8B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9834213C690;
-	Sat,  6 Jul 2024 17:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF53E13C812;
+	Sat,  6 Jul 2024 17:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D6W+Z9z7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XLEGXMu9"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6062757FC;
-	Sat,  6 Jul 2024 17:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6255757FC
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 17:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720287481; cv=none; b=AP4etG4hqsA/KMeiDv69LinGnEXwGJ+7OwLzZ4B4zH1OIEnhDAfnlYJvdz8F0WWRec6LTBl03v12MLIOUVdbgRqtvNLAtelIH02tJUZRy/0wrhPiVbu8IqV43fGh9SjKlmsoNFR0ZQHBPQdPhOsZaimEoUeb3KppGzJKci6cjZc=
+	t=1720287605; cv=none; b=QJFbjnS0gm8ctc+RI5O+10g3Ovw9fLJlIGTx8LVKZrFSjwXwg1kfyQtTIgzBIjVeQaidHTF0tpjbFzZg54JrljOWACvKxFMC1aJb6uxSXP3fH2KKd+KFWKz01OdCvaRf8lrT35aRbofvcJmyMJEweShF+uSXy5MCEMdwlKIxGwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720287481; c=relaxed/simple;
-	bh=G8HAvOUQlBzu7G/UjupxOn5yO3GOMwZPT+ciOrnoizg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WEugX5Yvfdsk3SG+odjW1jvxE2VBexnsTR2Cas9rxFKJgQETJq8Z5j+okBQFBNCP+Xp/bTlfUFlYv2zqEc4+0ZZrZ2Bm6co8CBDAAGzOgt9N3w1raTxDLkMZ7hdlyq/51OOoE5rxojDTYZQGuvXzdhYaiCOCf1q/iy0sAiMDjSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D6W+Z9z7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50494C4AF0A;
-	Sat,  6 Jul 2024 17:38:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720287481;
-	bh=G8HAvOUQlBzu7G/UjupxOn5yO3GOMwZPT+ciOrnoizg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=D6W+Z9z7t5b1kMOTrKieOgN8eP330WS1YFeQOs3l9n2oxJLeRH4JxSEKJBIA5p/AS
-	 gixphbw2tD7EYiB+T6aTT2xd2ZgTEr4Tpgm39Q+UV+2fPP6LZvzLvkX7kfR69ZXyAM
-	 IAncBuIcT7mP7YJ+thvdiJINz255wtrX7tUaBbBJ1XiHDwNSrufLkYynWQxUGoNKTp
-	 1MPIQhXP230ksGQP4GZcZw1mXVdg/wsDpZHTMLYiYwYrbQKfY/aG0djIRSUETXUvJ1
-	 smay4fENmOsNdLACqj3D1TsCy5/eMSV0UafNUYp//hbu4wp9DBSOdujpqzlNuP0kZ6
-	 9v8IaJE3H2AvA==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77e2f51496so72720166b.0;
-        Sat, 06 Jul 2024 10:38:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWeITYL2SJC0ueuTfwifXr9OIG2zbE9EN1FOEK3qsgftUKgOZINilJil4sLyuyl98+OVOq7S8uHZxxt337lRQKebNqTI9GQLUklbxCsSskpIiZ95pnDD53qIyaWfw7SuLeiFvFFqiUF240=
-X-Gm-Message-State: AOJu0Yx8xRsSeReTF9EwmWOHT6QJSwov+BOSg5WjuQ2XhdV4Am83ulEN
-	5joIUVCpBe+kMTM4IhZQQP8AalXHZ2Z8PUh4o8NfSx5cmWwcg0GxJMJgy0HSDQmLd2xT4g82zYC
-	YUUigb99lDsMDpHHEKInstOzJ0io=
-X-Google-Smtp-Source: AGHT+IFJnEIjQr2TMHx6R9QnPx1HaevVsaLMROke+LS5GWjcZlwwSzJKRYzqL7AWu3WJFj0TJ7SauUVWWPUfhZv4oyk=
-X-Received: by 2002:a17:907:72d0:b0:a77:c84b:5a60 with SMTP id
- a640c23a62f3a-a77c84b5b74mr467337266b.26.1720287479897; Sat, 06 Jul 2024
- 10:37:59 -0700 (PDT)
+	s=arc-20240116; t=1720287605; c=relaxed/simple;
+	bh=K7/5S3Zqv2W8qdrNqOS6SWkrmCLz+5aP6vwqLcb5BLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=upn7Wf1u4v7ctHsBNHIrAG6J95mUhxh0pYuEYPWmWa6RuFRjdLIUkWhqcejnuvgw6Q/mUsQFYSkjifo7nQrr7UenfgmNQOfAo8dgm4to6UjLPJHZIuVFqNB/935+Yvm1bzuUtNC1UxY77w7Vq8P2/pInrePdP0IPoODP9csqHSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XLEGXMu9; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fb457b53c8so13992635ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 10:40:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720287603; x=1720892403; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+w1HhCtOPF6+jQjVe2f79xd5RcxOFhfFM5UmLnkLxcg=;
+        b=XLEGXMu9mAzJRha7s0vx6wQnX8lZhbRxYW2lXioss/ZRJOLUUiY0DDl1jiTBL62W/V
+         Ycjb+VxiaU5KISo7qWfzQ5LH2OwrN6HFIZZW65r5DJ7mh7I6ttQyr5bjy2I3UzLw8GC5
+         MR4jTt4KrRsof0NmHWQ5pGPvr/utEKgDaH57LTvjD6tArjE71efkDRe4WfrnTT3xq/SU
+         voWgmOCb19R08LZa14xyWMNhqveCZFT4hXGVjoYREB/DTmHlvk9okgXIDiqVbzywyFI6
+         vrNm6CeK2XRO/9PeAegILo4Ib4PwMJXqSkrbgzESNtz69QfoqhdEcTebRoQsHyZh1n+E
+         UVLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720287603; x=1720892403;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+w1HhCtOPF6+jQjVe2f79xd5RcxOFhfFM5UmLnkLxcg=;
+        b=kE427yfIDR0oA8OmagH+AEQYIjkETbkINPknsMcFmYGEiuQF4d6vKSDGJR6EToFo6E
+         BQU7Nx/CJ4EIqUBxe0x9t+4sMx/cYUlQgYhUU5PStL58SqedCYCrSjG/aDP2JyRYZcoD
+         Upq46jW0F1lmbO5Cwpx1P53gJmddAeZqdTyFTSGcM2Vd2djDVDKDtmbJ1q0IIBL4F6zm
+         f8/sh465+2M30sstLWlpF+x3M0DlPkRe1Zdo9Il+CzU2qtnOHTV9EgzJN0OiiYiu3iyM
+         QcN88GsVPrwtGz+yqaFwsvIFmTX45NTk/JMPsclXbuvG65HBu1SN/4n3y6E2lYAsqCc0
+         WddA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG3yH7169+gqqNbdbFqJzvWIBFBU6ElYsE+jBk01rT4IjSyZ6eRy9sir0f0OpCR3ZIh7Hz5/d4TPeBpZD17/4fbnmzlrSwTifyO/kP
+X-Gm-Message-State: AOJu0YyS5J0uL+nFGL9HQmDbBYyLdFCq4YlcilahRz7ycGZllDRzaw+J
+	BuahSLdS3VzsZOeL3qJnxROlJpMVzxb6VDLqLzBIXc8Jtmr3Co0ra67EK5foJQ==
+X-Google-Smtp-Source: AGHT+IFfAmOh1vpybFa6ASP3tIwymsHJN+q/v+qmk1RVhTTsF5OCIrWZZWApJcwuyin0gArdkk3Wrw==
+X-Received: by 2002:a17:902:d4cd:b0:1f6:e20f:86b4 with SMTP id d9443c01a7336-1fb33f36fc1mr68382145ad.61.1720287603063;
+        Sat, 06 Jul 2024 10:40:03 -0700 (PDT)
+Received: from thinkpad ([220.158.156.249])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb14faa241sm70616845ad.110.2024.07.06.10.39.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Jul 2024 10:40:02 -0700 (PDT)
+Date: Sat, 6 Jul 2024 23:09:54 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org, Jason Liu <jason.hui.liu@nxp.com>
+Subject: Re: [PATCH v6 02/10] PCI: imx6: Fix i.MX8MP PCIe EP's occasional
+ failure to trigger MSI
+Message-ID: <20240706173954.GB3980@thinkpad>
+References: <20240617-pci2_upstream-v6-0-e0821238f997@nxp.com>
+ <20240617-pci2_upstream-v6-2-e0821238f997@nxp.com>
+ <20240629130525.GC5608@thinkpad>
+ <ZoL2W1Blrhzf19oM@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
- <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
- <CAK-xaQaesuU-TjDQcXgbjoNbZa0Y2qLHtSu5efy99EUDVnuhUg@mail.gmail.com> <CAK-xaQbcpzvH1uGiDa04g1NrQsBMnyH2z-FPC4CdS=GDfRCsLg@mail.gmail.com>
-In-Reply-To: <CAK-xaQbcpzvH1uGiDa04g1NrQsBMnyH2z-FPC4CdS=GDfRCsLg@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Sat, 6 Jul 2024 18:37:22 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H63GexJexkDxSz9Av_s=XyYotJqLqjUubZmuU7vynaQNQ@mail.gmail.com>
-Message-ID: <CAL3q7H63GexJexkDxSz9Av_s=XyYotJqLqjUubZmuU7vynaQNQ@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Andrea Gelmini <andrea.gelmini@gmail.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZoL2W1Blrhzf19oM@lizhi-Precision-Tower-5810>
 
-On Sat, Jul 6, 2024 at 1:07=E2=80=AFPM Andrea Gelmini <andrea.gelmini@gmail=
-.com> wrote:
->
-> Il giorno sab 6 lug 2024 alle ore 02:11 Andrea Gelmini
-> <andrea.gelmini@gmail.com> ha scritto:
-> > For the moment it seems we have a winner!
->
-> I confirm this, but I forgot to add this (a lot of these):
+On Mon, Jul 01, 2024 at 02:32:59PM -0400, Frank Li wrote:
+> On Sat, Jun 29, 2024 at 06:35:25PM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, Jun 17, 2024 at 04:16:38PM -0400, Frank Li wrote:
+> > > From: Richard Zhu <hongxing.zhu@nxp.com>
+> > > 
+> > > Correct occasional MSI triggering failures in i.MX8MP PCIe EP by apply 64KB
+> > > hardware alignment requirement.
+> > > 
+> > > MSI triggering fail if the outbound MSI memory region (ep->msi_mem) is not
+> > > aligned to 64KB.
+> > > 
+> > > In dw_pcie_ep_init():
+> > > 
+> > > ep->msi_mem = pci_epc_mem_alloc_addr(epc, &ep->msi_mem_phys,
+> > > 				     epc->mem->window.page_size);
+> > > 
+> > 
+> > So this is an alignment restriction w.r.t iATU. In that case, we should be
+> > passing 'pci_epc_features::align' instead?
+> 
+> pci_epc_features::align already set.
+> 
+> pci_epc_mem_alloc_addr(
+> 	...
+> 	align_size = ALIGN(size, mem->window.page_size);
+> 	order = pci_epc_mem_get_order(mem, align_size);
+> 	...
+> }
+> 
+> but pci_epc_mem_alloc_addr() align to page_size, instead of
+> pci_epc_features::align.
+> 
 
-Oh, those I added on purpose to confirm what the bpftrace logs
-suggested: concurrent calls into the shrinker.
+'window.page_size' is set to what is passed as 'page_size' argument to
+pci_epc_mem_init(). In this case, 'ep->page_size' is passed which corresponds to
+size of pages that can be allocated within the memory window.
 
+Default value of 'ep->page_size' is PAGE_SIZE which is most likely 4K. So if
+your hardware cannot allocate 4K pages within the memory window, then it
+doesn't support splitting this OB region into 4K pages.
 
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm firefox-bin nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm firefox-bin nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
-> [sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-> shrinker already running, comm cc1plus nr_to_scan 2
->
-> Just for the record, compiling LibreOffice.
->
-> In the meanwhile running restic (full backup to force read
-> everything), no sluggish at all.
+But this has nothing to do with alignment AFAIU since epc_features::align is
+used for IB memory. This 'page_size' argument was introduced for some TI SoC
+that doesn't handle PAGE_SIZE splitting of OB memory window. Reference:
 
-That's great!
+52c9285d4745 ("PCI: endpoint: Add support for configurable page size")
 
-So I've been working on a proper approach following all those test
-results from you and Mikhail, and I would like to ask you both to try
-this branch:
+Can you check if your SoC also suffers from the same limitation? If so, then you
+should modify the commit message to make it clear.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/fdmanana/linux.git/log/?h=
-=3Dtest3_em_shrinker_6.10
+- Mani
 
-Again, this is based on 6.10-rc6 plus 3 fixes for this issue you're both ha=
-ving.
-
-Can you guys test that branch?
-
-Thank you a lot for all the time spent on this!
+-- 
+மணிவண்ணன் சதாசிவம்
 
