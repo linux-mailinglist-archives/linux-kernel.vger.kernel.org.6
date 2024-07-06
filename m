@@ -1,147 +1,98 @@
-Return-Path: <linux-kernel+bounces-243075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03AB929127
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:31:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A823A929129
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA7D283B34
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411371F21F48
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E7C1B949;
-	Sat,  6 Jul 2024 05:31:12 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAE312E71;
-	Sat,  6 Jul 2024 05:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28B818040;
+	Sat,  6 Jul 2024 05:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oPTTeg1k"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F72BEC0;
+	Sat,  6 Jul 2024 05:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720243872; cv=none; b=MpRc6Q3BjYlQ10mT9ws4d5TVaBMP/GsyYefdZrAMWZL+nPttB7HLdRKUoVKJNn4m6sVRB9ZodZKzrdO3STDQFGBSB3pZUeVdxN+WMsq2OhaDRmfH7+I2XwiIHdP/t/Ysx1ixfu+28Z/TUEVQFT91s+cMmeclYeLNsqf9gGjpJDI=
+	t=1720244924; cv=none; b=lD/7D7nTPouOnJAYADs+TiQ4nOLb54RgfD0uYSdxXbSaYjMirRScbVtNDtAPECu+1zdr0H2MLOQPtlVJkw5xuqKT897lWBcu83OKV7EFT9wmn2nHDViDHWj+CHaKts2nc6vtPWBRphrGMeHIreylPSl6dsznPvmqFEmmyXHvxxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720243872; c=relaxed/simple;
-	bh=JCaKO6KprrFJGJuHb5RqFx23OktrqlNQhBzSvQ8fYVE=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FCKHRr0Sr/ym4idYkSuSa55G0GQatCp0YsMYrdSsOlsiGueIn4s9lWh1gymFXBVdpj02P90QpO5QZIWjU/DZ+LlCv24bSTv6SxpsZBVtbyktM9MD/soxwKrsI6KT9+Ah1mr6tH3AXMoj/6v3y4xEra7ZYCdVFJFCRw/ghlV6MIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxK_Ca1ohm6IIBAA--.4671S3;
-	Sat, 06 Jul 2024 13:31:06 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxTceX1ohm2RA9AA--.10907S3;
-	Sat, 06 Jul 2024 13:31:04 +0800 (CST)
-Subject: Re: [PATCH v2 1/3] perf: Add perf_event_attr::bp_priv
-To: Will Deacon <will@kernel.org>
-References: <20240621073910.8465-1-yangtiezhu@loongson.cn>
- <20240621073910.8465-2-yangtiezhu@loongson.cn>
- <20240705103413.GA8971@willie-the-truck>
-Cc: Mark Rutland <mark.rutland@arm.com>, Russell King
- <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
- Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <7522fc14-aacc-a8e3-3258-9064d7e2936f@loongson.cn>
-Date: Sat, 6 Jul 2024 13:31:03 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1720244924; c=relaxed/simple;
+	bh=I1k9ZsyGzCHSfLPR0X93qOviMBHDCU6ThhhGWNjEZR4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YCZUC6zRrjw/LYqkEjykVis0Ai8YxjK3wi/wgSaRGjGZh781AXDzTq7iKXyXkTVngh1I+n3URY2irNEtTLiG/2CZHtAquMhB7NO1rQTnZh+v2AKQrjId05KwZ+NRU0gDnR/+Ctmsd5Opa4OYem3DeLAbOeGYZuYX97fIQ7UQxjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oPTTeg1k; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720244912; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
+	bh=IziIWjLNMd2iMDJrrsmtrIogq2CTxxl3TSSYNG2sKOE=;
+	b=oPTTeg1k7ZNoGhiqdNximKgTseTcrUWPTHXGo0Ob2tva4ecU1ucHvh5UQzj4r6lYrrLlQo+Nd3GZr2OWjVHFFOREQCMA3jRNCz8JX9mIlHtCoBf0dvZcQXxhphKz/IUNXQWgiUtYj8oSq0mAqkD56glR4N5LoHyiD2wGFCkv6rQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=wodemia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W9wXMmc_1720244911;
+Received: from smtpclient.apple(mailfrom:wodemia@linux.alibaba.com fp:SMTPD_---0W9wXMmc_1720244911)
+          by smtp.aliyun-inc.com;
+          Sat, 06 Jul 2024 13:48:32 +0800
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20240705103413.GA8971@willie-the-truck>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:AQAAf8AxTceX1ohm2RA9AA--.10907S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxCF4ftw4xGFWUtF4rGr4Utrc_yoW5GFWfpw
-	s8CFn5KrWkJr43W3ZIk3W7Zr15WwsxKr4UW3y7W34jyF4ak3sYg3Wvgr1a9Fn5Crs7ZFWF
-	v34qqryDCayj9FXCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
-	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48J
-	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcveHDUUUU
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH v1] zh_CN/admin-guide: one typo fix
+From: Tao Zou <wodemia@linux.alibaba.com>
+In-Reply-To: <87frsoauc2.fsf@meer.lwn.net>
+Date: Sat, 6 Jul 2024 13:48:30 +0800
+Cc: Dongliang Mu <mudongliangabcd@gmail.com>,
+ Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>,
+ linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AD0611D8-1892-41FE-B29B-9EEA4E07F9C2@linux.alibaba.com>
+References: <20240705022842.51451-1-wodemia@linux.alibaba.com>
+ <CAD-N9QUPWrAaT-7UjibcKR7=L_etmGF4qy0voO8u3W+wk6G0nA@mail.gmail.com>
+ <7E195EE5-F38E-4F32-ACA5-A36D79E66037@linux.alibaba.com>
+ <87frsoauc2.fsf@meer.lwn.net>
+To: Jonathan Corbet <corbet@lwn.net>
+X-Mailer: Apple Mail (2.3774.600.62)
 
 
+2024=E5=B9=B47=E6=9C=885=E6=97=A5 20:37=EF=BC=8CJonathan Corbet =
+<corbet@lwn.net> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Tao Zou <wodemia@linux.alibaba.com> writes:
+>=20
+>> 2024=E5=B9=B47=E6=9C=885=E6=97=A5 16:18=EF=BC=8CDongliang Mu =
+<mudongliangabcd@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>>>=20
+>>> On Fri, Jul 5, 2024 at 10:29=E2=80=AFAM Tao Zou =
+<wodemia@linux.alibaba.com> wrote:
+>>>>=20
+>>>> Fix one chinese typo error.
+>>>>=20
+>>>> Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
+>>>=20
+>>> Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+>>>=20
+>> Thanks a lot,  I will pick up your review tag.
+>=20
+> No need unless there are other changes you need to make; it'll get
+> picked up when I apply the patch.
+>=20
+> Thanks,
+>=20
+> jon
 
-On 07/05/2024 06:34 PM, Will Deacon wrote:
-> On Fri, Jun 21, 2024 at 03:39:08PM +0800, Tiezhu Yang wrote:
->> Add a member "bp_priv" at the end of the uapi struct perf_event_attr
->> to make a bridge between ptrace and hardware breakpoint.
->>
->> This is preparation for later patch on some archs such as ARM, ARM64
->> and LoongArch which have privilege level of breakpoint.
->>
->> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
->> ---
->>  include/uapi/linux/perf_event.h | 3 +++
->>  kernel/events/hw_breakpoint.c   | 1 +
->>  2 files changed, 4 insertions(+)
->>
->> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
->> index 3a64499b0f5d..f9f917e854e6 100644
->> --- a/include/uapi/linux/perf_event.h
->> +++ b/include/uapi/linux/perf_event.h
->> @@ -379,6 +379,7 @@ enum perf_event_read_format {
->>  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
->>  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
->>  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
->> +#define PERF_ATTR_SIZE_VER9	144	/* add: bp_priv */
->>
->>  /*
->>   * Hardware event_id to monitor via a performance monitoring event:
->> @@ -522,6 +523,8 @@ struct perf_event_attr {
->>  	__u64	sig_data;
->>
->>  	__u64	config3; /* extension of config2 */
->> +
->> +	__u8	bp_priv; /* privilege level of breakpoint */
->>  };
->
-> Why are we extending the user ABI for this? Perf events already have the
-> privilege encoded (indirectly) by the exclude_{user,kernel,hv} fields in
-> 'struct perf_event_attr'.
+Get it. Thanks for your explanation. =20
 
-IMO, add bp_priv is to keep consistent with the other fields
-bp_type, bp_addr and bp_len, the meaning of bp_priv field is
-explicit and different with exclude_{user,kernel,hv} fields.
-Additionally, there is only 1 bit for exclude_{user,kernel,hv},
-but bp_priv field has at least 2 bit according to the explanation
-of Arm Reference Manual. At last, the initial aim is to remove
-the check condition to assign the value of hw->ctrl.privilege.
-
-https://developer.arm.com/documentation/ddi0487/latest/
-
-1. D23: AArch64 System Register Descriptions (Page 8562)
-    D23.3.11 DBGWCR<n>_EL1, Debug Watchpoint Control Registers, n = 0 - 63
-    PAC, bits [2:1]
-    Privilege of access control. Determines the Exception level or 
-levels at which a Watchpoint debug
-    event for watchpoint n is generated.
-
-2. G8: AArch32 System Register Descriptions (Page 12334)
-    G8.3.26 DBGWCR<n>, Debug Watchpoint Control Registers, n = 0 - 15
-    PAC, bits [2:1]
-    Privilege of access control. Determines the Exception level or 
-levels at which a Watchpoint debug
-    event for watchpoint n is generated.
-
-Thanks,
-Tiezhu
-
+Tao Zou.=
 
