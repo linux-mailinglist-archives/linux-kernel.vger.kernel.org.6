@@ -1,112 +1,200 @@
-Return-Path: <linux-kernel+bounces-243406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2879295E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:26:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDEAE9295E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7020281B84
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:26:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECD351C20BAF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECAB43AC3;
-	Sat,  6 Jul 2024 23:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B24A13790B;
+	Sat,  6 Jul 2024 23:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="QEbND5Cu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LtAFVVc9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E970D208BA
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 23:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AACF45BF3;
+	Sat,  6 Jul 2024 23:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720308378; cv=none; b=S37c8bxRvex7nC6osA9u9360Xxt+sVMw/sovKXBFLxzcH5yqTsGIV0yxUbu7iDLW/RCBhS/1z9ZJ61duNiD/unEPu/l+CMJJow9INn8dFip3M2BlsYW3JSB1e7prxyTbe47P5SW2Vhj8Dxsn+WiG5/N00Ajn+YYUJHbGcAGyOhg=
+	t=1720308508; cv=none; b=B0lOwXRKhvEx4hjdX/bTKWz93CtWjpiG0Ymjffi4LeOv967YOC9201ESSHeaHmaik51U8huuENiKew/3f15jvGSdJPSxkpPCzKKn1pOQrukZAUcA8Tlt9LFKhLoop43thIYi7+zAxgzWiI17EDUKi7asTa/S80Ov7B6lxMWSsqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720308378; c=relaxed/simple;
-	bh=sX1BZ9AgLzzn2az8RZNnCqCxvpTqfrEHESYZ0g452wc=;
+	s=arc-20240116; t=1720308508; c=relaxed/simple;
+	bh=KKo+oGs4TSAe84B4lLvyAQD2Yu0uFJMI3pTFZWerumM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASpuLJ0AkxGMhX7HmUalAfrizb3L7ZxxfjR/4RnG+vPX/nxxbLUGS8i7RjIxS0BQ3b22bbr1762tIJaKNUgF+TzSy9HJxZzoSTwWVxc+bqFsFSjXQxXII4jewORSJM2UbYpATXIZ/7PNVfPzoY0PKftkLZbo+ywy3jUvNmQ8WDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=QEbND5Cu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5D7CC2BD10;
-	Sat,  6 Jul 2024 23:26:16 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="QEbND5Cu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720308374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B83bxoRfCAFI+JIVmqyQu1wlzNm60i+mjr8CbGA6YZQ=;
-	b=QEbND5CuTCLZriPzVNm1RGqIA0vL8EYv78qcqkQKXYH+AWuozIjAWaIfnKYj/G04vOgT8K
-	/5MaAnvLrm1o2MdQoB/SEBZPoNKyPs3JmhuWYXI8bKbeyaudvl5VB0sdHrOydkuZiNHecM
-	thxPbWnU3sR3+mO9lQH2i+bhrIdyy8o=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a7c61a4f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sat, 6 Jul 2024 23:26:13 +0000 (UTC)
-Date: Sun, 7 Jul 2024 01:26:11 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com,
-	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
-Subject: Re: deconflicting new syscall numbers for 6.11
-Message-ID: <ZonSk0OOD66BdB-S@zx2c4.com>
-References: <ZogcxjLv3NAeQYvA@zx2c4.com>
- <CAHk-=whRpLyY+U9mkKo8O=2_BXNk=7sjYeObzFr3fGi0KLjLJw@mail.gmail.com>
- <ZogzJCb66vwxwSLN@zx2c4.com>
- <CAHk-=wgH=d8MUzJ32QNW_=KDQz7U5g_1Mm9sR9zB1iNUpxft7Q@mail.gmail.com>
- <ZohB6uPAVX03Sc96@zx2c4.com>
- <CAHk-=wgC5tWThswb1EO5W75wWL-OhB0fqrnF9nR+Fnsgjp-NfA@mail.gmail.com>
- <CAHk-=wjwU6o4QExra5qNzBxtX5NwTfaX8ytZKk8BFtOng6zqSQ@mail.gmail.com>
- <ZoiLzzM94m_sjfVK@zx2c4.com>
- <ZoinidZQY6hU99XT@zx2c4.com>
- <CAHk-=wg0qkgpNtm_OL-evArZxenQyJtk4BG0fVPGYqoooP6+Cw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SAdwvZyULWK6FMXVdivkACWv0T6QcCKoNGxAo5PPdgayBpxJvjsXTZXJI48KEZ4iF9lpRMblI7KalzckTmQ9GKhKSIE8op25kuaeeHAamjydJVSQkWI10pdFBRDoOVh8RCcz0s6VcasnLvqfq17bugOH/s4SwtMfZfDxhFSnyAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LtAFVVc9; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720308506; x=1751844506;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KKo+oGs4TSAe84B4lLvyAQD2Yu0uFJMI3pTFZWerumM=;
+  b=LtAFVVc9oQ9TYYB595lSx5624xyobtEGQXTkE72IZC1ZP+uPJAcc/8ho
+   Fp+7Z90bLd+1dHuRLWFuRmp9Ew2fzermxPZEK9lhBYiSdfKyUoL+wDmpI
+   IbTU7PY918a191+LQpHZrWsfz+pFII9qaFa1rCtMgxSgrqJnhdoyBWakz
+   m/go3b4OcGK+LajBczZbPRcNjsRQXsfBoSvHts7qB3TPXAr14nWK0CRU3
+   LLscBG5HjBHp2FQJ4qJwpBMveTP+ZwL7ppkIVKyT3M1LnWKxxRuve9t2y
+   /YbngZrUj9rpjBFu6KWCq7fuzI941mX7jR9AYX0bMQtJf6Yvl/bPw4el2
+   A==;
+X-CSE-ConnectionGUID: pHiW6EWaSoyNDOeJCq4GXg==
+X-CSE-MsgGUID: C2C2CCkCT42/3nnr5x9kRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="21317109"
+X-IronPort-AV: E=Sophos;i="6.09,188,1716274800"; 
+   d="scan'208";a="21317109"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 16:28:25 -0700
+X-CSE-ConnectionGUID: 89uIwiqsRbS9b7F/jfaP2A==
+X-CSE-MsgGUID: dp1IKG+zTt+nmFQzyBu1Vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,188,1716274800"; 
+   d="scan'208";a="46930242"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 06 Jul 2024 16:28:20 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sQEpF-000UOo-23;
+	Sat, 06 Jul 2024 23:28:17 +0000
+Date: Sun, 7 Jul 2024 07:27:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+	Rocky Liao <quic_rjliao@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 2/6] Bluetooth: hci_qca: schedule a devm action for
+ disabling the clock
+Message-ID: <202407070754.L1XER9qH-lkp@intel.com>
+References: <20240705-hci_qca_refactor-v1-2-e2442121c13e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wg0qkgpNtm_OL-evArZxenQyJtk4BG0fVPGYqoooP6+Cw@mail.gmail.com>
+In-Reply-To: <20240705-hci_qca_refactor-v1-2-e2442121c13e@linaro.org>
 
-Hi Linus,
+Hi Bartosz,
 
-On Fri, Jul 05, 2024 at 07:56:03PM -0700, Linus Torvalds wrote:
-> On Fri, 5 Jul 2024 at 19:10, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> >
-> >     https://git.zx2c4.com/linux-rng/log/
-> 
-> So we already expose VM_WIPEONFORK and VM_DONTDUMP using madvise().
-> Exposing them at mmap creation time with MMAP_xyz sounds fine.
-> 
-> However, I do note that both the pre-existing VM_WIPEONFORK - and the
-> new VM_DROPPABLE - needs to be limited to anonymous private mappings
-> only.
-> 
-> You did that for VM_DROPPABLE, but not for VM_WIPEONFORK.
+kernel test robot noticed the following build warnings:
 
-Good catch, thanks. I'll look over all of that again closely too.
+[auto build test WARNING on 0b58e108042b0ed28a71cd7edf5175999955b233]
 
-> Anyway, that patch looks largely fine to me apart from that note, but
-> I do think you want to check it with the mm people on linux-mm.
+url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/dt-bindings-bluetooth-qualcomm-describe-the-inputs-from-PMU-for-wcn7850/20240706-055822
+base:   0b58e108042b0ed28a71cd7edf5175999955b233
+patch link:    https://lore.kernel.org/r/20240705-hci_qca_refactor-v1-2-e2442121c13e%40linaro.org
+patch subject: [PATCH 2/6] Bluetooth: hci_qca: schedule a devm action for disabling the clock
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20240707/202407070754.L1XER9qH-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240707/202407070754.L1XER9qH-lkp@intel.com/reproduce)
 
-They'll certainly be on the list of recipients for the v+1 series when I
-post it (hopefully shortly).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407070754.L1XER9qH-lkp@intel.com/
 
-> > The selftest code is the largest part of it. There's no more syscall. I
-> > think it should be much more to your liking and seems like an alright
-> > set of compromises. Hopefully that's a bit closer to the mark.
-> 
-> From a "look through the patches" standpoint, this did look more
-> palatable to me, but I also would have had an easier time with looking
-> at the patches if the self-tests were separate commits.
+All warnings (new ones prefixed by >>):
 
-Okay, will do. I think you've got some selftest makefile fixes from
-John/Shuah that'll be sent your way if they haven't already for 6.10
-that I'll rebase on so that there isn't an annoying merge conflict.
-https://lore.kernel.org/all/d99a1e3b-1893-4fac-bf05-bcb60ca7f89c@linuxfoundation.org/
+   In file included from drivers/bluetooth/hci_qca.c:23:
+   In file included from include/linux/devcoredump.h:12:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2229:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/bluetooth/hci_qca.c:23:
+   In file included from include/linux/devcoredump.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/bluetooth/hci_qca.c:23:
+   In file included from include/linux/devcoredump.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/bluetooth/hci_qca.c:23:
+   In file included from include/linux/devcoredump.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/bluetooth/hci_qca.c:2499:2: warning: label at end of compound statement is a C23 extension [-Wc23-extensions]
+    2499 |         }
+         |         ^
+   8 warnings generated.
 
-Jason
+
+vim +2499 drivers/bluetooth/hci_qca.c
+
+05ba533c5c1155 Thierry Escande                2018-03-29  2478  
+05ba533c5c1155 Thierry Escande                2018-03-29  2479  static void qca_serdev_remove(struct serdev_device *serdev)
+05ba533c5c1155 Thierry Escande                2018-03-29  2480  {
+05ba533c5c1155 Thierry Escande                2018-03-29  2481  	struct qca_serdev *qcadev = serdev_device_get_drvdata(serdev);
+054ec5e94a46b0 Venkata Lakshmi Narayana Gubba 2020-09-10  2482  	struct qca_power *power = qcadev->bt_power;
+05ba533c5c1155 Thierry Escande                2018-03-29  2483  
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2484  	switch (qcadev->btsoc_type) {
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2485  	case QCA_WCN3988:
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2486  	case QCA_WCN3990:
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2487  	case QCA_WCN3991:
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2488  	case QCA_WCN3998:
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2489  	case QCA_WCN6750:
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2490  	case QCA_WCN6855:
+e0c1278ac89b03 Neil Armstrong                 2023-08-16  2491  	case QCA_WCN7850:
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2492  		if (power->vregs_on) {
+c2d7827338618a Balakrishna Godavarthi         2018-08-22  2493  			qca_power_shutdown(&qcadev->serdev_hu);
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2494  			break;
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2495  		}
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2496  		fallthrough;
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2497  
+691d54d0f7cb14 Neil Armstrong                 2023-08-16  2498  	default:
+691d54d0f7cb14 Neil Armstrong                 2023-08-16 @2499  	}
+fa9ad876b8e0eb Balakrishna Godavarthi         2018-08-03  2500  
+fa9ad876b8e0eb Balakrishna Godavarthi         2018-08-03  2501  	hci_uart_unregister_device(&qcadev->serdev_hu);
+05ba533c5c1155 Thierry Escande                2018-03-29  2502  }
+05ba533c5c1155 Thierry Escande                2018-03-29  2503  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
