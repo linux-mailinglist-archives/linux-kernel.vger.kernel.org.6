@@ -1,147 +1,81 @@
-Return-Path: <linux-kernel+bounces-243252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540F8929398
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:35:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CEF892939C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A691F21DC0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446EA1C20DE2
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4CA38DE8;
-	Sat,  6 Jul 2024 12:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EBD82D6D;
+	Sat,  6 Jul 2024 12:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aaKOB4ok"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E6mHXN/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E236912B143
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 12:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60F923BE;
+	Sat,  6 Jul 2024 12:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720269300; cv=none; b=FnQasRm+iaCgvhvobY9UeVvSusXLVbHFcEuqVXKE8N9+yKliDWRDagCVRvKQZ+zucL2h6KIiCT77eRzmchCKzDAsgitNkWvIj/FbTOIeQol6jaz2whirg1QfGBaxDLFwJsd3enMfU7S7f35j403GI0w2jDe2BX1OZnScZoYAqdc=
+	t=1720269412; cv=none; b=nCEgxN3LCvWhbFkc1p8+G7s2l5+HpGDqPAvB0maJ6cAiECTgFiJpUf8vwRwQ1h9wnlT/WgTTBbg2hQpkFVXZoA77ehF2CvFQ0gIOlEo0bwJqm0Xvc9ni32B0z5tFYUNyE06Ryk7p/tASB9QYsqu/LcqWHIbAPnZUQ3ze+7/8V+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720269300; c=relaxed/simple;
-	bh=N8qxiNxOzTF7l2a5E7y2OOw3RhrWWstM6g44ep0jE7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bzNuvBXyhYNT7bd4jXifo2BnhRxIrk0gdoUqCvw9OGGsqySZNjK0Bgjufucw5q2VpL0yR0kJ4MUCd/Qptqllxa6DZjjXarrf192vsohb9DiYbTAtcTlpSZDM26ljlGELCMdm8kEIAL7ZGTW3fGRyeci6C9oNsij3/ds4oDQaMnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aaKOB4ok; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77e85cb9b4so18481166b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 05:34:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720269297; x=1720874097; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=08Kw+l4O9PQ6vVBW6VIbYgR+1zWbPaA4afAxHHCGvu4=;
-        b=aaKOB4ok0OoKsU8nm6DjxpyPRa6o0BuAHfxi5u0w1Yjak8NNhXrQ+Ttq22bPZt5djd
-         yf8jUZfNd4uE9/CrftsBvtpq1Mplq7GyRF6L+yIcCJkq/h3rLhz2lgkJDzC3TOJk1e9h
-         LQvp3rhUrpa79I2kt/9+P/P6So81EHN1FXWR7snYMOG1xA9TxDsVCdHa4DKr9NPbH1Us
-         pzdgEt3MlavKz7Mvh+0hTNrxKyiXtNitHxzh7/u4T8/duvTNs9NmeECV3ul6aBWwVexd
-         zRTRuagHCSshhks3c6yNLQJGQG08HNgl2WLiIgwYQWVV4ow0YXYxyT+oU20oZY0g9ffx
-         ZxgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720269297; x=1720874097;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=08Kw+l4O9PQ6vVBW6VIbYgR+1zWbPaA4afAxHHCGvu4=;
-        b=VkBnFSzBPF3PegC0f6GSlFbrblT6s3lWrkTYVC6BE9qXn566r0+LbGZWzXhEThdmY2
-         k6eysGI+Yz7YippJijEH5833pXXfkMyV5t70LmT1n/yMrk+Hrn5qZh69hj/BxFjx/VXA
-         qJFV7aZ5RtCilsKA4UBzaWB5TiBvbU8Y883mz7rpLAtlKROl5eglYwzygEsgQg5zjZQ5
-         fq0MlRSQj3o9cfCwXB0x8vpO/6moiR+oZrDYVvyS0mKIBYB++ujUZo+WQe8bh7XAqdng
-         jI54OBXUgjggNj5s98dTH7I78433X7XTBSR6NW5BYf2m1Ua+XKEAPkrt9c8n4okc3sNf
-         mx0w==
-X-Gm-Message-State: AOJu0YxkpURfdNo50liERGpLVD11ccW1CCZGXZ7UcOeBhEVLvE/ZV285
-	1msc+g/nca69sh+wBxRr8Sl2w1fx8WV9EA3RBGOD2E+tTtna2oPbofgCTSeu+tE=
-X-Google-Smtp-Source: AGHT+IE9STNKNGTITDsmx9SEfaoEH9cr8oUJZP6k1jkdzI+oKS5bOvRwVpzbbyKMLhZyJ4dq0yK7Xw==
-X-Received: by 2002:a17:906:c116:b0:a72:b361:41df with SMTP id a640c23a62f3a-a77ba72958amr530089566b.73.1720269297074;
-        Sat, 06 Jul 2024 05:34:57 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77c3925a96sm177284766b.120.2024.07.06.05.34.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Jul 2024 05:34:56 -0700 (PDT)
-Message-ID: <d17ed113-9293-4286-ad75-4ce2c98e4d12@linaro.org>
-Date: Sat, 6 Jul 2024 14:34:53 +0200
+	s=arc-20240116; t=1720269412; c=relaxed/simple;
+	bh=lxra33GzXUDZrV4YFPw6xGWJtMtZEXzprX662gKlxKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=USphTaxGttG9VWV0Bvvp9AULYn7KUGlqoHBG3ZOb0Bc2zeNrEdmn9no0FaWmJtgPuC75VwlICjhwur2/NulH8ta2qkZ7tLePa8JO66AcQuW/yxPopIMr6hPk8YxC+wW4loi78Ur4W7BPfle8j405VzBKB0kJBUUiDn67NnawHOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E6mHXN/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E753CC2BD10;
+	Sat,  6 Jul 2024 12:36:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720269412;
+	bh=lxra33GzXUDZrV4YFPw6xGWJtMtZEXzprX662gKlxKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E6mHXN/tWSyNaaVN4pIwuNQLV65SA0Txuwn/0ThSxm1pECwIWAn9cC9T5/GV/Xvsv
+	 kdLx9FcZDMP+4BeGXPzkWcVKwrVwBCPhHilyp4CkHjYZg5ytmmIvVJpt82R3zg++VF
+	 WJu+nuNQLl5VZdttrUNs5s0wFFviUgokqiuxny5Q=
+Date: Sat, 6 Jul 2024 14:36:44 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "oneukum@suse.com" <oneukum@suse.com>,
+	"stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+	Kerem Karabay <kekrby@gmail.com>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"usb-storage@lists.one-eyed-alien.net" <usb-storage@lists.one-eyed-alien.net>
+Subject: Re: [PATCH v3 1/2] USB: core: add 'shutdown' callback to usb_driver
+Message-ID: <2024070612-squealer-wackiness-c885@gregkh>
+References: <58227E2C-1886-40AD-8F80-7C618EF2D8F2@live.com>
+ <7AAC1BF4-8B60-448D-A3C1-B7E80330BE42@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Disable SS instances in parkmode for Gen-1 targets
-To: Krishna Kurapati <quic_kriskura@quicinc.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Baruch Siach <baruch@tkos.co.il>, Kathiravan T <quic_kathirav@quicinc.com>,
- Sivaprakash Murugesan <sivaprak@codeaurora.org>,
- Andy Gross <andy.gross@linaro.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Douglas Anderson <dianders@chromium.org>, Stephen Boyd
- <swboyd@chromium.org>, Iskren Chernev <me@iskren.info>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
- Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com
-References: <20240704152848.3380602-1-quic_kriskura@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240704152848.3380602-1-quic_kriskura@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7AAC1BF4-8B60-448D-A3C1-B7E80330BE42@live.com>
 
-On 4.07.2024 5:28 PM, Krishna Kurapati wrote:
-> For targets that have only USB3 Gen-1 DWC3 controllers, it is recommended
-> to disable SS instance in park mode to avoid HC died error when working
-> in host mode in situations where the controller is stressed out:
+On Sat, Jul 06, 2024 at 12:03:23PM +0000, Aditya Garg wrote:
+> From: Kerem Karabay <kekrby@gmail.com>
 > 
->  xhci-hcd.12.auto: xHCI host not responding to stop endpoint command
->  xhci-hcd.12.auto: xHCI host controller not responding, assume dead
->  xhci-hcd.12.auto: HC died; cleaning up
+> Currently there is no standardized method for USB drivers to handle
+> shutdown events. This patch simplifies running code on shutdown for USB
+> devices by adding a shutdown callback to usb_driver.
+> 
+> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
 
-Thanks for looking into this!
+Where did Kerem do this work?  Any reason why they aren't submitting
+these themselves?  Not that this is a problem, just trying to figure out
+what went wrong with the development process here.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+thanks,
 
-Konrad
+greg k-h
 
