@@ -1,162 +1,189 @@
-Return-Path: <linux-kernel+bounces-243072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB4B929121
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:17:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2956F929124
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55BFB22E06
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45062842E8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234E518645;
-	Sat,  6 Jul 2024 05:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE5E18B1A;
+	Sat,  6 Jul 2024 05:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/FXWOz3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CZK3I+0E"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BC1847A;
-	Sat,  6 Jul 2024 05:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A683B847A;
+	Sat,  6 Jul 2024 05:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720243054; cv=none; b=thDLesqz4RWpVUASEfdm8LfBy8SqJH95XFlbgyxqZO6oj7jbZgXWKZ1AztSqUA+iKL+6pM2+8D5dbT+z2aAWHlKIKF/++qTukDHgiIcWATQMvOCIlJpFahNN3iLKsmwlskehrKkt3YBnWkrNepyGaffwpE3UyJQZ91yVetBJHB8=
+	t=1720243366; cv=none; b=a3TVWw/mT7LLDUxiYJMJ/+89f1uwTf1ZMoP0AGap1Kn8GqyZBeYMu3Vb0+49bC6TiXM3FU/37xcycpintPP4quQLYUOctyaDnsZk6Mg5GTBHtM6qMrI/TVI19HfxiYulLSAZKrXaYN9Zo10ExNAs+C6iMSUhOR+3nrkcinHoY+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720243054; c=relaxed/simple;
-	bh=RFvdfc5SP26/erCYWy3Bh1P2+7EZnv+hwzsSCZjL4tM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E9bLVjvlHknfQYtAqH7VPIQjUugJU94r2h/Y8R/dQyxYVFOKVWeiMJ8qwWX39NCjzpyOmqqjvxnT/1blVKicKlbv7xpU+v41/Knu7RvIo8lafE9+CC4ODzUfesm5cZBnvevY1zNgf33ioDXtNIjvMfyCC/W9temgAnNkkTKTQww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/FXWOz3; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720243052; x=1751779052;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RFvdfc5SP26/erCYWy3Bh1P2+7EZnv+hwzsSCZjL4tM=;
-  b=f/FXWOz3aFi+XPpF4fFdjEY1a/SMkoWotMhUJM7p9SXibOLj2AMQ9/CL
-   4Q5vbf+erwHjYrKE0wV5aLvgixDt5CRoHHrkYmUkqqxxQHwH/VmTFMBAY
-   rQ6jk8kXASaMVUdyp/Rjtsol8cj1yBJ3NJMX4FX5mWE7Nvxbicis8rcvJ
-   FAK8qwi+e4of3+mDU7HdDjheDK61t0hAbvYA2wBdEWurrY6HGqH6wS4o7
-   LGgumt31TnF2hq3vZz9Fmkem4OP9YnSBoJBPBdm5TrwGZwUZmZv4UhvvK
-   RLbz59FLcrtO9u4T8MCx8uHeJKaWFolfd+TLg34BT/Xffk0tir+6PUEtE
-   Q==;
-X-CSE-ConnectionGUID: D/jfyn4zS3a7AUhv8JA/xw==
-X-CSE-MsgGUID: 6/3SWh8xSRCPPDPVcqCNyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="28192540"
-X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
-   d="scan'208";a="28192540"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 22:17:32 -0700
-X-CSE-ConnectionGUID: YVCQsgiNSwWQjpuk1p5tAw==
-X-CSE-MsgGUID: CZdNPP4XSZaL+D5Sv3OlhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
-   d="scan'208";a="51626836"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 05 Jul 2024 22:17:27 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sPxnZ-000TLE-11;
-	Sat, 06 Jul 2024 05:17:25 +0000
-Date: Sat, 6 Jul 2024 13:16:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Subject: Re: [PATCH v2 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo
- SARADC
-Message-ID: <202407061311.ZEmwMY8m-lkp@intel.com>
-References: <20240705-sg2002-adc-v2-2-83428c20a9b2@bootlin.com>
+	s=arc-20240116; t=1720243366; c=relaxed/simple;
+	bh=rmxLVa8uCp6DHXJ0HoO/miegT4CBhHRwl9IrK3u8KqM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Rvo0WHGaPAId/+yH8YDnyX1yytkpnxH4tOlMgizAn0NsA3nOMeLetKGr4nhGT/bKbpfBioMIJMY5GoZFos1UIlViy1qcwc/9grsGa3/64sQz3TNgpXj74GhoRqdj/YdPJkzQdrMwZKGv0ZO5O+XDPWZpiRqjtBlh4uY/olDu0Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CZK3I+0E; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4662sLul020013;
+	Sat, 6 Jul 2024 05:22:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9Z8c5/BRJkcuDvXowiIkvzSl0gmaQinmIo2MJaNQ7yo=; b=CZK3I+0EGzUevD4O
+	CqqtuAKD15xfhdJfivqoekRmZpgP4VaAoTxwHKSBocNKEorYdSn1Cz7kRIPEs68i
+	F+ENRmnWewa5FRcqX+VUFj2X4PJ+9n/cKrKg5HMjYmpWL54Eh27tKKDhH/XZ4uJO
+	l3SGbkthoo+PsQNBwjrpVu4uwfBAulXVwhZdEeIKpa9fK2pizJU5liFnGZpoMNuc
+	a9noA1yaXyPyn1R0jWbVyxKBM7V2m4BepCErowu7vIwwksH1w6eO3SFmUddtZDSH
+	4F977RIN5CyQsALwWSNaulf1YLJmSOqBiroIU5nrOcc0M7bPOa52DIzyb/fSXPLy
+	9rCEcQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwg4qt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 06 Jul 2024 05:22:33 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4665MWLj003340
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 6 Jul 2024 05:22:32 GMT
+Received: from [10.239.133.211] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
+ 22:22:28 -0700
+Message-ID: <8b7a9bcf-6660-47bc-adc7-4e9a26548f29@quicinc.com>
+Date: Sat, 6 Jul 2024 13:22:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240705-sg2002-adc-v2-2-83428c20a9b2@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: arm:
+ qcom,coresight-static-replicator: Add property for source filtering
+From: Tao Zhang <quic_taozha@quicinc.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: Jie Gan <quic_jiegan@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Mike Leach <mike.leach@linaro.org>, <coresight@lists.linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Yuanfang Zhang
+	<quic_yuanfang@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Tingwei Zhang
+	<quic_tingweiz@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Song Chai <quic_songchai@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>, <devicetree@vger.kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+References: <20240705085152.9063-1-quic_taozha@quicinc.com>
+ <20240705085152.9063-2-quic_taozha@quicinc.com>
+ <172017590249.2933726.1790899873101654561.robh@kernel.org>
+ <5ee373ed-abef-4611-a355-44668a85d0a7@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <5ee373ed-abef-4611-a355-44668a85d0a7@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uHQIVaWhrqKDXw_jWvZWn--wnlvgQALI
+X-Proofpoint-ORIG-GUID: uHQIVaWhrqKDXw_jWvZWn--wnlvgQALI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-06_02,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407060038
 
-Hi Thomas,
 
-kernel test robot noticed the following build warnings:
+On 7/5/2024 11:23 PM, Tao Zhang wrote:
+>
+> On 7/5/2024 6:38 PM, Rob Herring (Arm) wrote:
+>> On Fri, 05 Jul 2024 16:51:50 +0800, Tao Zhang wrote:
+>>> Add a new property "filter_src" to label the source corresponding
+>>> to the output connection for a static replicator. By combining
+>>> a funnel and a static replicator in devicetree, a new device that
+>>> supports multi-port input and multi-port output is implemented.
+>>> In order to match the output port with the input port and
+>>> successfully build the trace path, add this new property to
+>>> indicate the data source corresponding to this output port.
+>>>
+>>> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+>>> ---
+>>>   .../arm/arm,coresight-static-replicator.yaml   | 18 
+>>> +++++++++++++++++-
+>>>   1 file changed, 17 insertions(+), 1 deletion(-)
+>>>
+>> My bot found errors running 'make dt_binding_check' on your patch:
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml: 
+>> ^port@[01]$: Missing additionalProperties/unevaluatedProperties 
+>> constraint
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml: 
+>> endpoint: Missing additionalProperties/unevaluatedProperties constraint
+>>
+>> doc reference errors (make refcheckdocs):
+>>
+>> See 
+>> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240705085152.9063-2-quic_taozha@quicinc.com
+>>
+>> The base for the series is generally the latest rc1. A different 
+>> dependency
+>> should be noted in *this* patch.
+>>
+>> If you already ran 'make dt_binding_check' and didn't see the above
+>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>> date:
+>>
+>> pip3 install dtschema --upgrade
+>
+> Yes, I didn't see this errors in running 'make dt_binding_check', I 
+> will re-run this check
+>
+> according to your suggestion.
+>
+>
+> Best,
+>
+> Tao
 
-[auto build test WARNING on d20f6b3d747c36889b7ce75ee369182af3decb6b]
+After upgrading dtschema and installing 'yamllint', I saw the above 
+errors in running
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Bonnefille/dt-bindings-iio-adc-sophgo-cv18xx-saradc-yaml-Add-Sophgo-SARADC-binding-documentation/20240706-040736
-base:   d20f6b3d747c36889b7ce75ee369182af3decb6b
-patch link:    https://lore.kernel.org/r/20240705-sg2002-adc-v2-2-83428c20a9b2%40bootlin.com
-patch subject: [PATCH v2 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo SARADC
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240706/202407061311.ZEmwMY8m-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240706/202407061311.ZEmwMY8m-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407061311.ZEmwMY8m-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/iio/adc/sophgo-cv18xx-adc.c:85:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-      85 |                 struct cv18xx_adc *saradc = iio_priv(indio_dev);
-         |                 ^
-   1 warning generated.
+'dt_binding_check'. I will fix them and update in the next patch series.
 
 
-vim +85 drivers/iio/adc/sophgo-cv18xx-adc.c
+Best,
 
-    78	
-    79	static int cv18xx_adc_read_raw(struct iio_dev *indio_dev,
-    80					  struct iio_chan_spec const *chan,
-    81					  int *val, int *val2, long mask)
-    82	{
-    83		switch (mask) {
-    84		case IIO_CHAN_INFO_RAW:
-  > 85			struct cv18xx_adc *saradc = iio_priv(indio_dev);
-    86			u32 sample;
-    87			int ret;
-    88	
-    89			scoped_guard(mutex, &saradc->lock) {
-    90				cv18xx_adc_start_measurement(saradc, chan->scan_index);
-    91				ret = cv18xx_adc_wait(saradc);
-    92				if (ret < 0)
-    93					return ret;
-    94	
-    95				sample = readl(saradc->regs + CV18XX_ADC_CH_RESULT_REG(chan->scan_index));
-    96			}
-    97			if (!(sample & CV18XX_ADC_CH_VALID))
-    98				return -ENODATA;
-    99	
-   100			*val = sample & CV18XX_ADC_CH_RESULT;
-   101			return IIO_VAL_INT;
-   102		case IIO_CHAN_INFO_SCALE:
-   103			*val = 3300;
-   104			*val2 = 12;
-   105			return IIO_VAL_FRACTIONAL_LOG2;
-   106		default:
-   107			return -EINVAL;
-   108		}
-   109	}
-   110	
+Tao
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+>>
+>> Please check and re-submit after running the above command yourself. 
+>> Note
+>> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+>> your schema. However, it must be unset to test all examples with your 
+>> schema.
+>>
+> _______________________________________________
+> CoreSight mailing list -- coresight@lists.linaro.org
+> To unsubscribe send an email to coresight-leave@lists.linaro.org
 
