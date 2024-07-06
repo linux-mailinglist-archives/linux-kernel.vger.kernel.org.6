@@ -1,191 +1,137 @@
-Return-Path: <linux-kernel+bounces-243148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA35C92927E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:21:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF08929282
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3FA1F2238E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:21:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0941C20E34
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C67A95B;
-	Sat,  6 Jul 2024 10:21:44 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A6061FCE;
+	Sat,  6 Jul 2024 10:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0SVvUcQ"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CA16A33F
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 10:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FBF4778B;
+	Sat,  6 Jul 2024 10:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720261303; cv=none; b=K4pB+KYn4G8Lqv+ksJ5biJythO8n685iyLtHrSA8MqvJusgRAc6NUizlWvCgWMGqy4hpZy0rD27Nhr3BIf/3j0UrzWd3PUIAgMhzp0+HbnAjW619HjW5f+n6A9bsm9gU83QMgBhITSNqeP3roNEFkz4hWtYVdmFFzQLTi8t/fX8=
+	t=1720261455; cv=none; b=gy+MJROPIDYmFjhhrUrpn5gs0B1+QufiaRTHh4wqhCirKE4GI2ujcCW+iTltVNv621xMsNKKev6O+jhQdaqAjVvyxIBlzPhbh47oaxCpWQOj5/fn4+NXe8ITTJiwVyEN79i4xNHYyvj+wEpn8Cw5hMxcfHP3UwFxEhQy3QMV1Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720261303; c=relaxed/simple;
-	bh=m47OFla1xhiDRWHLY56h0X8Ez6N1SU1edNZi4xBXe58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iHHUxIS5D64zk6/gFNDYI5Yd3hxDGrmiMLvjLc2u8Rh6Yw8X7+HUUD2kjah+lETQrQZcYpZ0aRHZTA8ko9NMPYK0CoEL0E+PIw1oZ8XQ0PDPalRVNMxm1v7eWksHGzj6osao9a38abPcWEFt4fpq6NHS+FzyGSrCGA64UjWDjek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WGRG71MN5zdgWb;
-	Sat,  6 Jul 2024 18:19:59 +0800 (CST)
-Received: from kwepemm600011.china.huawei.com (unknown [7.193.23.229])
-	by mail.maildlp.com (Postfix) with ESMTPS id B65DE180AE3;
-	Sat,  6 Jul 2024 18:21:37 +0800 (CST)
-Received: from [10.67.111.121] (10.67.111.121) by
- kwepemm600011.china.huawei.com (7.193.23.229) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 6 Jul 2024 18:21:36 +0800
-Message-ID: <2eda33ba-b0ee-498c-979a-e35ae1f41ba4@huawei.com>
-Date: Sat, 6 Jul 2024 18:21:36 +0800
+	s=arc-20240116; t=1720261455; c=relaxed/simple;
+	bh=v7fyDVZ4Zen5Kc42NhGyOL1GP4zenYzvdS/sloF7BMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HUo6myP0B28IEEKe210Ex37gWm++ezQXoFfe0kxr6DrowTYQgVRAIG/+rUYPbiQ/YMnzhOkjcsiJz/U/M7JYffSC8d6PhzQiI53XJTNCRWhec4RdqV2SFUGjNiB8sbH++Eyd4qQSJBgpprB6ZcgyRFKvzef8EJieCsM6zTzejzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0SVvUcQ; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f4c7b022f8so16653915ad.1;
+        Sat, 06 Jul 2024 03:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720261453; x=1720866253; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wukxN0PIXiJkpvJy8jm2igAsjxWST6oYyCh6lRk67BQ=;
+        b=R0SVvUcQkzURDNzAi4GqwLQ471aHL2JCrxUq+53W+ANTgTXwc4HkpiD15iL/d6tbrV
+         2b1g7u7gA5sPcVItI9WBFN50Pb+mluIMuWFF1tV2EkAhC/9txo7OB9OtPY66KAhF2NoN
+         0zEhQheIon6VwrjK38KcCFDi2qIn8E7nUn/PqBw25hu8M0NhLs3AW4nKGy+Gh0WUKzqO
+         auI/9lHGH4Avj29mL6TzP5eHdOPCsfSJjkY3rinyC696emGEi38OZVIDfYso6C2p78Ej
+         m32TJmXGzrXXVSshHzbYdGEC3vfZIvTuc6h8mvaSchGpdDEHgh/9e6wQE97Ia5lSF5uX
+         Ig/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720261453; x=1720866253;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wukxN0PIXiJkpvJy8jm2igAsjxWST6oYyCh6lRk67BQ=;
+        b=ix7b3A41B/PjyHkXubWy7aOATth67Rv2B7aYadXNg6pl61Xn0sQiZ6ljvmM01W7lTg
+         VizzLU8C3ItOhHtKU0SE1HijK3ZktTg8mKO8ZsvkOCeBd2hp3LsiDl74d9CQuUiv24vl
+         ev4CR0HC2ZDpU2C5zp3qsX04K/4sOygU0V4dC5Veg7jMkQBDlpvLydyTKl5RHYvrWS6U
+         GAkz/+OfFRG+WP5IhdRHh9NwlnH47Y57mANLWI/BwWO1PcQnFFtNQzkvg0E3HlJrrwnh
+         n29Ck/mX4nvBPlStIUJQjqoHpAzIurp61/3pPQ3BI0xUhRR5X2w1Hxn0kbjzlnUn4NK5
+         5t/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBfIW2YEqWVDdQn1JZAvkfz1GtRmnsMNa8s4/IIZT/Y8bLbzNEwYR2jYb+Zp01r2oh1Z7hgHyygtcRUUrB/JMM7GAkpIJTbxR5Yw==
+X-Gm-Message-State: AOJu0YwHG4kRbY9+WlIHAEg9312spU/A/B7jXYMQYKeTBATfodpA8Wd6
+	LeatLe3RysH/lkdok1MAEoBRc22wU1MJl37RZr+6N4d9UGJ4ScZ+aOPJ93wthnk=
+X-Google-Smtp-Source: AGHT+IGRVGt0AwBNkvSk99WrI8NjrmtZs3O2g4U++wOVairspqjrDCMDgAyi3brqtmPuxNpVtbT3UQ==
+X-Received: by 2002:a17:902:ecc6:b0:1fb:5808:73af with SMTP id d9443c01a7336-1fb5808756fmr27183725ad.61.1720261453365;
+        Sat, 06 Jul 2024 03:24:13 -0700 (PDT)
+Received: from noel.flets-west.jp ([2405:6586:4480:a10:167:9818:d778:5c14])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb67e04f64sm9126625ad.214.2024.07.06.03.24.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Jul 2024 03:24:12 -0700 (PDT)
+From: Hironori KIKUCHI <kikuchan98@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Hironori KIKUCHI <kikuchan98@gmail.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 0/5] drm/panel: st7701: Add Anbernic RG28XX panel support
+Date: Sat,  6 Jul 2024 19:23:31 +0900
+Message-ID: <20240706102338.99231-1-kikuchan98@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: Fix "external abort on non-linefetch" kernel panic
- caused by userspace
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Suren Baghdasaryan
-	<surenb@google.com>, Linus Walleij <linus.walleij@linaro.org>, Catalin
- Marinas <catalin.marinas@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <wangfangpeng1@huawei.com>,
-	<zhangxun38@huawei.com>, <yangzhuohao1@huawei.com>
-References: <20240706032005.122654-1-wanglinhui@huawei.com>
- <ZojxN5iOHhGAt3A5@shell.armlinux.org.uk>
-From: wanglinhui <wanglinhui@huawei.com>
-In-Reply-To: <ZojxN5iOHhGAt3A5@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600011.china.huawei.com (7.193.23.229)
 
-The original problem is that the device address is mapped through UIO.
-Then something unexpected happens that causes an unaligned access to the 
-device address.
-For simplicity, I used /dev/mem for testing.
+Add support for the display panel of the Anbernic RG28XX, a handheld
+gaming device from Anbernic. "RG28XX" is the actual name of the device.
 
-Yes, it's a privileged operation. But I don't think it should crash the 
-kernel.
-It would be more better to have the process exit on an exception signal. 
-What do you think?
+This panel is driven by a variant of the ST7701 driver IC internally,
+and is connected via an RGB parallel interface for image transmission and
+an SPI interface for configuration.
 
-And the coredump file can be obtained when the process exits.
-In this way, more information can be obtained to fix the bug.
+Since the current code of the panel driver for ST7701 variants only
+supports MIPI DSI as the configuration interface, add support for SPI
+as well.
 
-在 2024/7/6 15:24, Russell King (Oracle) 写道:
-> On Sat, Jul 06, 2024 at 11:20:05AM +0800, wanglinhui wrote:
->> 0x16800000 is a peripheral physical address that supports only
->> 4-byte-aligned access.
->>
->> Use /dev/mem to enable the user space to access 0x16800000. Then userspace
->> unexpectedly tried to read four bytes from 0x16800001 (actually access
->> its virtual address), which caused the kernel to trigger an
->> "external abort on non-linefetch" panic:
->>
->>    Unhandled fault: external abort on non-linefetch (0x1018) at 0x0100129b
->>    [0100129b] *pgd=85038831, *pte=16801703, *ppte=16801e33
->>    Internal error: : 1018 [#1] SMP ARM
->>    ...
->>    CPU: 2 PID: xxxx Comm: xxxx Tainted: G           O      5.10.0 #1
->>    Hardware name: Hisilicon A9
->>    PC is at do_alignment_ldrstr+0xb8/0x100
->>    LR is at 0xc1f203fc
->>    psr: 200f0313
->>    sp : c7081ed4  ip : 00000008  fp : 00000011
->>    r10: b42250c8  r9 : c7081f0c  r8 : c7081fb0
->>    r7 : 0100129b  r6 : 00000004  r5 : 00000000  r4 : e5908000
->>    r3 : 00000000  r2 : c7081f0c  r1 : 200f0210  r0 : 0100129b
->>    Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
->>    Control: 1ac5387d  Table: 82c3c04a  DAC: 55555555
->>    Process LcnNCoreTask (pid: 4049, stack limit = 0x14066b0e)
->>    Call trace:
->>      do_alignment_ldrstr
->>      --do_alignment
->>      ----do_DataAbort
->>      ------__dabt_usr
->>
->> It triggers a data abort exception twice. The first time occurs when
->> an unaligned address is accessed in user mode. The second time occurs
->> when the peripheral address is actually accessed in kernel mode,
->> and it crashes the kernel. However, the code location for the second
->> data abort is as follows:
->>
->>    ```
->>    #define __get8_unaligned_check(ins, val, addr, err) \
->>    	__asm__(\
->>     ARM("1: "ins" %1, [%2], #1\n") \ <-- Second data abort is triggered here
->>     THUMB("1: "ins" %1, [%2]\n") \
->>     THUMB(" add %2, %2, #1\n") \
->>    	"2:\n" \
->>    	" .pushsection .text.fixup,\"ax\"\n" \
->>    ```
->>
->> It is an exception table entry that can be fixed up.
->>
->> There is another test that indicates that
->> "external abort on non-linefetch" needs to be fixed up.
->>
->> Similarly, use /dev/mem to map 0x16800000 to the user space.
->> Pass 0x16800001 (actually passes its virtual address) to the
->> kernel via the write() system call and write 1 byte.
->> It also causes the kernel to trigger an
->> "external abort on non-linefetch" panic:
->>
->>    Unhandled fault: external abort on non-linefetch (0x1018) at 0xb6f95000
->>    [b6f95000] *pgd=83fb6831, *pte=16800783, *ppte=16800e33
->>    Internal error: : 1018 [#1] SMP ARM
->>    ...
->>    CPU: 1 PID: xxxx Comm: xxxx Tainted: G           O      5.10.0 #1
->>    Hardware name: Hisilicon A9
->>    PC is at __get_user_1+0x14/0x20
->>    LR is at iov_iter_fault_in_readable+0x7c/0x198
->>    psr: 800b0213
->>    sp : c195be18  ip : 00000001  fp : c35a2478
->>    r10: c06b5260  r9 : 00000000  r8 : c356fee0
->>    r7 : ffffe000  r6 : b6f95000  r5 : 00000001  r4 : c195bf10
->>    r3 : b6f95000  r2 : f7f95000  r1 : beffffff  r0 : b6f95000
->>    Call trace looks like:
->>      __get_user_1
->>      --iov_iter_fault_in_readable
->>      ----generic_perform_write
->>      ------__generic_file_write_iter
->>      --------generic_file_write_iter
->>
->> The location of the instruction that triggers the data abort
->> is as follows:
->>    ```
->>    ENTRY(__get_user_1)
->>    	check_uaccess r0, 1, r1, r2, __get_user_bad
->>    1: TUSER(ldrb) r2, [r0] <-- Data abort is triggered here
->>    	mov r0, #0
->>    	ret lr
->>    ENDPROC(__get_user_1)
->>    _ASM_NOKPROBE(__get_user_1)
->>    ```
->> It is also an exception table entry that can be fixed up.
->>
->> Address passed in from user space should not crash the kernel.
->> Therefore, fixup_exception() is added to fix up such exception.
-> NAK because:
->
-> 1) you're using /dev/mem which requires privileges - you're holding
->     the gun, pointing it at your foot.
->
-> 2) you're performing an unaligned access to a device which is
->     architecturally not permitted - you're pulling the trigger.
->
-> It's not surprising that the result is you've shot yourself in the
-> foot!
->
-> If you access /dev/mem, then you need to know what you're doing and
-> you must access it according to the requirements of the memory space
-> you are accessing, otherwise undefined behaviour will occur - not
-> only architecturally, but also by the kernel.
->
+v3:
+  - Split commits
+  - Remove unnecessary changes
+  - Change Kconfig dependency and adjust for it
+  - Fix incorrect device variable in st7701_get_modes()
+
+v2:
+  - Update dt-bindings
+  - Rename DSI_CMD* macros to ST7701_CMD*
+  - Rename ST7701_DSI macro to ST7701_WRITE
+  - Fix incorrect dev_err_probe() usage
+  - Remove GPIOD_FLAGS_BIT_NONEXCLUSIVE flag
+  - Remove st7701_remove() and st7701_spi_remove()
+  - Call drm_panel_disable() and drm_panel_unprepare() on cleanup
+
+Hironori KIKUCHI (5):
+  drm/panel: st7701: Rename macros
+  drm/panel: st7701: Decouple DSI and DRM parts
+  dt-bindings: display: st7701: Add Anbernic RG28XX panel
+  drm/panel: st7701: Add support for SPI for configuration
+  drm/panel: st7701: Add Anbernic RG28XX panel support
+
+ .../display/panel/sitronix,st7701.yaml        |   69 +-
+ drivers/gpu/drm/panel/Kconfig                 |    3 +-
+ drivers/gpu/drm/panel/panel-sitronix-st7701.c | 1074 ++++++++++-------
+ 3 files changed, 734 insertions(+), 412 deletions(-)
+
+-- 
+2.45.2
+
 
