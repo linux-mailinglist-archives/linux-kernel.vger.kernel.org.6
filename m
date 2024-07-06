@@ -1,140 +1,292 @@
-Return-Path: <linux-kernel+bounces-243408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848939295E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84479295E9
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5A4D1C20C4D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:29:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB0861C20D4D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F5E481BA;
-	Sat,  6 Jul 2024 23:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEF454F95;
+	Sat,  6 Jul 2024 23:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="MGu/4hdM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E3v8TGv8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A26B1386A7
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 23:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AA01C68C;
+	Sat,  6 Jul 2024 23:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720308535; cv=none; b=sUWPVb842JZeIVn0I4S5/FwaIN4T9nEcwnZNKu6li5H2034/CA7oNr2DiUQWjjNppp0DSiC3w9gY6AfIIqIm+xfO1Ng3wBWugJEHHSNFd/SSkNtURbQwEfAitJCJD8bW/5/oph/2NhuEW1lkj/Fd25NnYaZGpy1G0vOihuB5t6E=
+	t=1720308600; cv=none; b=GnvDBK1P3xD3r2AqryHQpvmtEWblMEy8NWGsp94IFhYQ+TUT/AkyiKhy7WY1NMdX960CqUSXU2t1zviRkglvh86huhHqF36Y9/9cCE9rKgogB32vHrDcJAtYzf94sgJQA0EFKDR6EtZgFwgabFdg1CAZdJN1S7qsurc/TZ466q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720308535; c=relaxed/simple;
-	bh=NqM8u/B8IpPzeM7YoTPCwbh+0lHUk3qGxl88MC2YW2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TJWU6ymzaWTx/LL5NdQNfRyl6ArhXWG+2ouTQnMHdh7qDNO5ZL7ggf1qvvZ+Uqj2pxKgIo9TZWT0mGrxe6nXBfIxOM2JopTbLxGHG2x/mdJe18Ez69wYZVUpAMT6zD4zwittC/UQq01rP5LaSAIKKhoJVbzJP/JUTt3RjD0Vz8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=MGu/4hdM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1720308531;
-	bh=MZPrrz50Q58iHN+nAhEHGrx3MePXgnyuTKmR8fmWfbE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MGu/4hdMEq1NfRSrcEM5BBzs52X1JsfoSUUAH8Ghd/LxT95qE/s8hpDIOoCYaaUDx
-	 /u/V/s0Zo1fx1BZkBzwfO3r6x1vBmBDnZg5RQeu6TrmmLS1blJ/TxHZdBpIfEtMCti
-	 Z/JDW9VqrdC7o98vIDmsQhE/TIaITFGyj0lBPutAVZ0E4HO4Iimm1fYgn0DSKpctrL
-	 Rh03tpgPNKg0behZHP23t/78uUs7mH2t5giXo0ApIMuiVaMPW+bnFGZBaQpaQBiUHo
-	 yal2y8bgas+KhoEmpuNEsW94ayLWciiTrl3RgYBYM5LoIHUETLRaKesFVcf2yEmsgb
-	 m1R6deEBdTc7w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WGmmL75HJz4xNg;
-	Sun,  7 Jul 2024 09:28:50 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: anjalik@linux.ibm.com, ganeshgr@linux.ibm.com, jinglin.wen@shingroup.cn,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- npiggin@gmail.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.10-4 tag
-Date: Sun, 07 Jul 2024 09:28:50 +1000
-Message-ID: <87wmly2j7x.fsf@mail.lhotse>
+	s=arc-20240116; t=1720308600; c=relaxed/simple;
+	bh=b1J3qOQUCblCQUe1IWFDwaBj0J1Z6jlI22jwB9oryXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TIVMpftSz4kP7AF8zgsAAfY+6qpq+jO/q1MUNGHffANArMR0Buoui/0qmDKrJlR/2CzA0STnC645yXiTdhnDRkWVwkVlzhwoqHU7ygdrAh6T1gqx8TU8QJyIk3tZQKNGEuvbAv6dn4pUou14xG7kAUx1/yW01BDUHUV0uzk9Wng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E3v8TGv8; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720308599; x=1751844599;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=b1J3qOQUCblCQUe1IWFDwaBj0J1Z6jlI22jwB9oryXk=;
+  b=E3v8TGv8Vh02FBvdCGFYnQT7DzHr/0Ha060tIkrkgGDjohCK7M5RDIT2
+   t49xlXSz8LEnKiypRtSl64gdlx/M9C4fNqgirIZrI+49LaL7dUqJjhAiI
+   LJbBpILRqfv+mxp9PWNW9e8+QqrZDpyQFVdM1FEvCXHek4BD4OFAIDHBx
+   OUXFIDYXRaw/MH2v/Y/M7UQGbFQDGvEjHD6jXHYZTknDdqUOIg4itbNit
+   W4oBBbq6Be34QsIJ5MrRa4ARrp5rSMBX4CNfSnpNdU5Bf8m+MzjdPgYId
+   SxFaSWqgbxXLIA7a3Hq1zgJFPAh/7VyUWbJUMmxcxBi9046SAXWJzZM/R
+   g==;
+X-CSE-ConnectionGUID: Tfrh5TJEQburT8zyGAkNOg==
+X-CSE-MsgGUID: /y3i4FwyTF23VLEI/UJPrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="42971632"
+X-IronPort-AV: E=Sophos;i="6.09,188,1716274800"; 
+   d="scan'208";a="42971632"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 16:29:58 -0700
+X-CSE-ConnectionGUID: j/wsvDsFS8W/BrtgKHBAPg==
+X-CSE-MsgGUID: NR+8lhEIR3OdusMrzv7PKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,188,1716274800"; 
+   d="scan'208";a="78294715"
+Received: from fl31ca102ks0602.deacluster.intel.com (HELO gnr-bkc.deacluster.intel.com) ([10.75.133.163])
+  by fmviesa001.fm.intel.com with ESMTP; 06 Jul 2024 16:29:57 -0700
+From: weilin.wang@intel.com
+To: weilin.wang@intel.com,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Perry Taylor <perry.taylor@intel.com>,
+	Samantha Alt <samantha.alt@intel.com>,
+	Caleb Biggers <caleb.biggers@intel.com>
+Subject: [RFC PATCH v16 0/8] TPEBS counting mode support
+Date: Sat,  6 Jul 2024 19:29:47 -0400
+Message-ID: <20240706232956.304944-1-weilin.wang@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+From: Weilin Wang <weilin.wang@intel.com>
 
-Hi Linus,
+Changes in v16:
+ - Update tpebs bash test code and variable name.
+ - Add a check to ensure only use "-C" option when cpumap is not "-1" when
+ forking "perf record".
 
-Please pull some more powerpc fixes for 6.10:
+Changes in v15:
+ - Revert changes added for python import test failure in v14 because the code
+ works correctly with the new python build code.
+ - Update the command line option to --record-tpebs.
 
-The following changes since commit a986fa57fd81a1430e00b3c6cf8a325d6f894a63:
+Changes in v14:
+ - Fix the python import test failure. We cannot support PYTHON_PERF because it
+ will trigger a chain of dependency issues if we add intel-tpebs.c to it. So,
+ only enable tpebs functions in evsel and evlist when PYTHON_PERF is not
+ defined.
+ - Fix shellcheck warning for the tpebs test.
 
-  KVM: PPC: Book3S HV: Prevent UAF in kvm_spapr_tce_attach_iommu_group() (2024-06-16 10:20:11 +1000)
+Changes in v13:
+ - Add document for the command line option and fix build error in non-x86_64.
+ - Update example with non-zero retire_latency value when tpebs recording is
+ enabled.
+ - Add tpebs_stop() back to tpebs_set_evsel() because in hybrid platform, when
+ the forked perf record is not killed, the reader thread does not get any
+ sampled data from the PIPE. As a result, tpebs_set_evesel() will always return
+ zero on retire_latency values. This does not happen on my test GNR machine.
+ Since -I is not supported yet, I think we should add tpebs_stop() to ensure
+ correctness for now. More investigation is required here when we work on
+ supporting -I mode.
+ - Rebase code on top of perf-tools-next.
 
-are available in the git repository at:
+Changes in v12:
+ - Update MTL metric JSON file to include E-Core TMA3.6 changes.
+ - Update comments and code for better code quality. Keep tpebs_start() and
+ tpebs_delete() at evsel level for now and add comments on these functions with
+ more details about potential future changes. Remove tpebs_stop() call from
+ tpebs_set_evsel(). Simplify the tpebs_start() and tpebs_stop()/tpebs_delete()
+ interfaces. Also fixed the bugs on not freed "new" pointer and the incorrect
+ variable value assignment to val instead of counter->val.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.10-4
+Changes in v11:
+ - Make retire_latency evsels not opened for counting. This works correctly now
+ with the code Namhyung suggested that adjusting group read size when
+ retire_latency evsels included in the group.
+ - Update retire_latency value assignment using rint() to reduce precision loss
+ while keeping code generic.
+ - Fix the build error caused by not used variable in the test.
 
-for you to fetch changes up to 8b7f59de92ac65aa21c7d779274dbfa577ae2d2c:
+Other changes in v10:
+ - Change perf record fork from perf stat to evsel. All the major operations
+ like tpebs start, stop, read_evsel should directly work through evsel.
+ - Make intel-tpebs x86_64 only. This change is cross-compiled to arm64.
+ - Put tpebs code to intel-tepbs and simplify intel-tpebs APIs to minimum number
+of functions and variables. Update funtion name and variable names to use
+consistent prefix. Also improve error handling.
+ - Integrate code patch from Ian for the :R parser.
+ - Update MTL metrics to TMA 4.8.
 
-  selftests/powerpc: Fix build with USERCFLAGS set (2024-07-06 22:10:14 +1000)
+V9: https://lore.kernel.org/all/20240521173952.3397644-1-weilin.wang@intel.com/
 
-- ------------------------------------------------------------------
-powerpc fixes for 6.10 #4
+Changes in v9:
+ - Update the retire_latency result print and metric calculation method. Plugin
+the value to evsel so that no special code is required.
+ - Update --control:fifo to use pipe instead of named pipe.
+ - Add test for TPEBS counting mode.
+ - Update Document with more details.
 
- - Fix unnecessary copy to 0 when kernel is booted at address 0.
+Changes in v8:
+ - In this revision, the code is updated to base on Ian's patch on R modifier
+parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@google.com/
+After this change, there is no special code required for R modifier in
+metricgroup.c and metricgroup.h files.
 
- - Fix usercopy crash when dumping dtl via debugfs.
+Caveat of this change:
+  Ideally, we will need to add special handling to skip counting events with R
+modifier in evsel. Currently, this is not implemented so the event with :R will
+be both counted and sampled. Usually, in a metric formula that uses retire_latency,
+it would already require to count the event. As a result, we will endup count the
+same event twice. This should be able to be handled properly when we finalize our
+design on evsel R modifier support.
 
- - Avoid possible crash when PCI hotplug races with error handling.
-
- - Fix kexec crash caused by scv being disabled before other CPUs call-in.
-
- - Fix powerpc selftests build with USERCFLAGS set.
-
-Thanks to: Anjali K, Ganesh Goudar, Gautam Menghani, Jinglin Wen, Nicholas
-Piggin, Sourabh Jain, Srikar Dronamraju, Vishal Chourasia.
-
-- ------------------------------------------------------------------
-Anjali K (1):
-      powerpc/pseries: Whitelist dtl slub object for copying to userspace
-
-Ganesh Goudar (1):
-      powerpc/eeh: avoid possible crash when edev->pdev changes
-
-Jinglin Wen (1):
-      powerpc/64s: Fix unnecessary copy to 0 when kernel is booted at address 0
-
-Michael Ellerman (1):
-      selftests/powerpc: Fix build with USERCFLAGS set
-
-Nicholas Piggin (1):
-      powerpc/pseries: Fix scv instruction crash with kexec
+ - Move TPEBS specific code out from main perf stat code to separate files in
+util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
+ - Use --control:fifo to ack perf stat from forked perf record instead of sleep(2) [Namhyung]
+ - Add introductions about TPEBS and R modifier in Documents. [Namhyung]
 
 
- arch/powerpc/kernel/eeh_pe.c             |  7 +++++--
- arch/powerpc/kernel/head_64.S            |  5 +++--
- arch/powerpc/kexec/core_64.c             | 11 +++++++++++
- arch/powerpc/platforms/pseries/kexec.c   |  8 --------
- arch/powerpc/platforms/pseries/pseries.h |  1 -
- arch/powerpc/platforms/pseries/setup.c   |  5 ++---
- tools/testing/selftests/powerpc/flags.mk |  5 +----
- 7 files changed, 22 insertions(+), 20 deletions(-)
------BEGIN PGP SIGNATURE-----
+Changes in v7:
+ - Update code and comments for better code quality [Namhyung]
+ - Add a separate commit for perf data [Namhyung]
+ - Update retire latency print function to improve alignment [Namhyung]
 
-iQIzBAEBCAAdFiEEJFGtCPCthwEv2Y/bUevqPMjhpYAFAmaJ0hYACgkQUevqPMjh
-pYB1uBAAhxsR3VV+XLbJTkhEARgUdzZt+8AMk4oc7dzPx1xUIavXJqaMGdoCGDcu
-0atvYlyel2CAFHbjRkaIzOxg2ZUtXdOvio4udeFvb48DCnaaH0WsOdG70OIThtX0
-Zl+lkRgRy5SM1KPJUa+o9ygvi90ZNbOV358h/ar9l4O7EULmOqZwlZYAhlEYr25B
-MtvX6ZONGOgl5SxVr9+55vLm0/g97OzuGmi343XHEdHjBhH5HkcKi8Z5XkwYFGOt
-cExZFVtWnayM+PsUkympt3o5Zchb+oc1EUAJWUILQJQMHx89atc9Q0pxZyi7XXA/
-tT8mq0O78+iZbK1UuQ3qgE1/YPrHCdX8Glo0AmGoSem8P41HlWyamK28U4aK6VWd
-iqJCb25EZmKs5uo4Z0F10jswjc9QOgFftzgM74GCLkZ74vx3ubw9vKacRb/SkdLi
-vQz0M0Gh73tqwfjN0W3gRwWblCim3kCoHVBb8CmiB0YeDoq7nu2+ow94WFrhlvs+
-/HFOQ5NgnMhjzytmeAzWOk0s/xOXPCwbrEUjfRxRg5cZCWXUuO6XmeO547pZy2Ke
-JwBWO+Hi9b5jwC/5LEQZ3wJ2rjSCJwDKT8MwqvcSSsEXvpGvsjMCi4mTqVVlbRkQ
-qz/lv0PozyavP/AUPamX0wZ0k5df/XDkX1qxoxyG/x1HXlwDhJ4=
-=7pyj
------END PGP SIGNATURE-----
+Changes in v6:
+ - Update code and add comments for better code quality [Namhyung]
+ - Remove the added fd var and directly pass the opened fd to data.file.fd [Namhyung]
+ - Add kill() to stop perf record when perf stat exists early [Namhyung]
+ - Add command opt check to ensure only start perf record when -a/-C given [Namhyung]
+ - Squash commits [Namhyung]
+
+Changes in v5:
+ - Update code and add comments for better code quality [Ian]
+
+Changes in v4:
+ - Remove uncessary debug print and update code and comments for better
+readability and quality [Namhyung]
+ - Update mtl metric json file with consistent TmaL1 and TopdownL1 metricgroup
+
+Changes in v3:
+ - Remove ':' when event name has '@' [Ian]
+ - Use 'R' as the modifier instead of "retire_latency" [Ian]
+
+Changes in v2:
+ - Add MTL metric file
+ - Add more descriptions and example to the patch [Arnaldo]
+
+Here is an example of running perf stat to collect a metric that uses
+retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL system.
+
+In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES sample.
+Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_latency value
+are all 0.
+
+./perf stat -M tma_dtlb_store -a -- sleep 1
+
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.000 MB - ]
+
+ Performance counter stats for 'system wide':
+
+       181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  tma_dtlb_store
+         3,195,608      cpu_core/topdown-retiring/
+        40,156,649      cpu_core/topdown-mem-bound/
+         3,550,925      cpu_core/topdown-bad-spec/
+       117,571,818      cpu_core/topdown-fe-bound/
+        57,118,087      cpu_core/topdown-be-bound/
+            69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
+             4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
+        30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
+        30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
+           168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
+              0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
+
+       1.003105924 seconds time elapsed
+
+v1:
+TPEBS is one of the features provided by the next generation of Intel PMU.
+Please refer to Section 8.4.1 of "Intel® Architecture Instruction Set Extensions
+Programming Reference" [1] for more details about this feature.
+
+This set of patches supports TPEBS in counting mode. The code works in the
+following way: it forks a perf record process from perf stat when retire_latency
+of one or more events are used in a metric formula. Perf stat would send a
+SIGTERM signal to perf record before it needs the retire latency value for
+metric calculation. Perf stat will then process sample data to extract the
+retire latency data for metric calculations. Currently, the code uses the
+arithmetic average of retire latency values.
+
+[1] https://www.intel.com/content/www/us/en/content-details/812218/intel-architecture-instruction-set-extensions-programming-reference.html?wapkw=future%20features
+
+
+
+
+Ian Rogers (1):
+  perf parse-events: Add a retirement latency modifier
+
+Weilin Wang (7):
+  perf data: Allow to use given fd in data->file.fd
+  perf stat: Fork and launch perf record when perf stat needs to get
+    retire latency value for a metric.
+  perf stat: Plugin retire_lat value from sampled data to evsel
+  perf vendor events intel: Add MTL metric json files
+  perf stat: Add command line option for enabling tpebs recording
+  perf Document: Add TPEBS to Documents
+  perf test: Add test for Intel TPEBS counting mode
+
+ tools/perf/Documentation/perf-list.txt        |    1 +
+ tools/perf/Documentation/perf-stat.txt        |    8 +
+ tools/perf/Documentation/topdown.txt          |   30 +
+ tools/perf/arch/x86/util/evlist.c             |    6 +
+ tools/perf/builtin-stat.c                     |    8 +
+ .../arch/x86/meteorlake/metricgroups.json     |  142 +
+ .../arch/x86/meteorlake/mtl-metrics.json      | 2535 +++++++++++++++++
+ .../perf/tests/shell/test_stat_intel_tpebs.sh |   18 +
+ tools/perf/util/Build                         |    1 +
+ tools/perf/util/data.c                        |    7 +-
+ tools/perf/util/evlist.c                      |    2 +
+ tools/perf/util/evsel.c                       |   81 +-
+ tools/perf/util/evsel.h                       |    6 +
+ tools/perf/util/intel-tpebs.c                 |  409 +++
+ tools/perf/util/intel-tpebs.h                 |   35 +
+ tools/perf/util/parse-events.c                |    2 +
+ tools/perf/util/parse-events.h                |    1 +
+ tools/perf/util/parse-events.l                |    3 +-
+ 18 files changed, 3291 insertions(+), 4 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/metricgroups.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/mtl-metrics.json
+ create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
+ create mode 100644 tools/perf/util/intel-tpebs.c
+ create mode 100644 tools/perf/util/intel-tpebs.h
+
+--
+2.43.0
+
 
