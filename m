@@ -1,193 +1,302 @@
-Return-Path: <linux-kernel+bounces-243173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F139292BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662CD9292C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19A1282A2C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87FBD1C20F86
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654A480600;
-	Sat,  6 Jul 2024 11:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90887764E;
+	Sat,  6 Jul 2024 11:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VgU8qung"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CpjSu7bD"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197A177F15
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9999E58ABF
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720264433; cv=none; b=CpfL+ELzjv49LTaGVSttbIyhRum73a168pQ85Eltc8qfCZBtdAXRgC5LQtrAAG3onthYecghgAZh7t7VXON43tc++YlJRqrmJtWs/nLtgZ8Fx7Bt797jSDNDM6TEGXuDkTAN5ganK2RklyV6vchEnGPGBxjTpgCE4Bgzu/ZEvCQ=
+	t=1720264891; cv=none; b=M0TGgQs0yCe1jtzAKhy+5qCOs6SyRdzh5AGHv6qwKyWa+/3B1YlukC6xMeKuJgABTfmZlhmznwG9Nwd4kl8MFfaoasKfrwZCfInpx5+z5KQBoqLO+byZlYjN4lsihjfcykkFob0JJ2hCJvhpVmC4uwtD+jNIviie8Fvv4WtqUN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720264433; c=relaxed/simple;
-	bh=xwPo/8yNRDZw9B0/2bqVanEnQ9fyVSXpmnx0NEjQuFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhLEUXupRHKJBlsyDRHGoIJCx5ZKtPpwEnZspgWEnwECuX1YZFKY6N0x/yYelTth4NmGcy839nFD5FirT/VhzwO3BALQbsv6FjBWgAH0exy6yBq+x1g/g4XasQGSigOdPKQ1gqKyBLDFQckGAmVZYA0Yyf4i/NTwVyhOcuHYIN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VgU8qung; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720264430;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Pc+ghM1IGnVK60OdMJPrFWjFdR/3X7MPMFaJLrjd08=;
-	b=VgU8qungVMpCuCcr1RLxnRSSM9uOYUgf9Zl/XaK1wrFbojUOWgeXqYw66km6HUrIGuBJbs
-	kVIwTOcZSEdvnvH+RpnYWkeel8hoPCDYHKOT0iBVrrddyBYr02Efn8JGqp7b6NoEk302IE
-	aXz0iTbmH5TVXH9XZm8CzQb4RqySFoY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-164-aC3tbNKRO1qwvBs7nZWU-g-1; Sat, 06 Jul 2024 07:13:48 -0400
-X-MC-Unique: aC3tbNKRO1qwvBs7nZWU-g-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3679aa0ee0aso1557110f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 04:13:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720264427; x=1720869227;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Pc+ghM1IGnVK60OdMJPrFWjFdR/3X7MPMFaJLrjd08=;
-        b=km20kXATClesYbULgLe0UPwvZx0vAeZPestHHa3Do+GKGsPe492rYfaF4+uwuBcOdi
-         fncevf2Zq+OS1+zv2k05vDgQVVrJPhpc7svC4GUPhfoOOmPG4hnfdXF7ZBNdANkkK50f
-         W4feLyJ+b1nPJ/pNACxsH9Q3BPn3LangD3KuCXdRCuiVUxiOzQfkH9AbXvUjofAypPBN
-         umTW3K3AnxU3Byo4d0dgnhQSDZwKTTda5vnanmfUEo8BBHWsXAxiDSOJ7YRMt4mzXQNb
-         8IdVRuQ3mkw8HGEAeMaAPPFzZOmbBf925DP2xmleDItB1r1CJTgef1sNwu+U9BsNiK6p
-         e+5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU7TjiEyVFBGaoYm0LG5gRvq8dCiD/uRPXS1yaciP+6XEF1cOuMxfms93NPnDss3+rRe0qStEQ5Rd1cbiFu99D1Xmwc7ZmwhoRJV3Hz
-X-Gm-Message-State: AOJu0YwYo6T4b/o1l7Kb+hDWvjUcqN3tJmhWGNUGOUTRU0phM5ouG5uE
-	nXVEuCyjMcCq0icgfSncuG/t4+x4rTV9uXPaBmw9BT1KiTng+GFtsA7jm0hSa0pHwFBGZPyqGAY
-	lO56+2cMHPqIOx1VrI6GbLn+nenmdyA7rE2F9I3Ni/WI12CrcB9H1dYfpnbb/9A==
-X-Received: by 2002:adf:e248:0:b0:367:88e8:fed1 with SMTP id ffacd0b85a97d-3679dd27817mr4098110f8f.25.1720264427176;
-        Sat, 06 Jul 2024 04:13:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGk/gWmNdk0i/OIcjict+BJuPcLjlkZaZen7ujO3zcNrCw23lTLaMsPr7sHVxgvuMFi/ABCCQ==
-X-Received: by 2002:adf:e248:0:b0:367:88e8:fed1 with SMTP id ffacd0b85a97d-3679dd27817mr4098091f8f.25.1720264426784;
-        Sat, 06 Jul 2024 04:13:46 -0700 (PDT)
-Received: from pollux.localdomain ([2a02:810d:4b3f:ee94:701e:8fb8:a84f:6308])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca62bsm93272425e9.35.2024.07.06.04.13.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 04:13:46 -0700 (PDT)
-Date: Sat, 6 Jul 2024 13:13:44 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
-	boris.brezillon@collabora.com, lina@asahilina.net,
-	mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 07/20] rust: alloc: implement `Vmalloc` allocator
-Message-ID: <Zokm6M48WunoEohV@pollux.localdomain>
-References: <20240704170738.3621-1-dakr@redhat.com>
- <20240704170738.3621-8-dakr@redhat.com>
- <596c6446-eca4-46a8-91c5-e71e92c61062@proton.me>
+	s=arc-20240116; t=1720264891; c=relaxed/simple;
+	bh=y5FWZNeQ6JmRQs1l/30Vbm4yrsGahRyVcyvb/wVZIfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UAShefwm+z5SXNqBfhu7gK/YX1/LdcUH5wLhi1vdB++BcZxbKVZbCLq+J7ndW8truCvH/tlCRLPENvPB9LwiK+AWdwvsm/l0QlJR4nEYsgROV+HFh1LmoktmAS7n1Qz6GaXUyXPEDK/z7c0AVg5QNVhy9XM/rrU4YCydAgsUA3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CpjSu7bD; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=4xGv2GdsCln4go
+	c80LSZXUrBL6qxxalWNHk5CsLBJ1w=; b=CpjSu7bDPwZrTYB4DnXqHNJrzzOV0i
+	ll8uIcabyZjRJJv8IN4yPeOtXpO4cU3QOhP76TyKvJMMzxzWe7wr6Y8Gfi1EOJAl
+	eYaKXSKfSh434zAyHAlKzS3YiYx+9JKmXA5Z4dH8SJCoxnqURGaAyztFVBvyi1yd
+	2c/2c5x2P3YnhmZAJ159dGcqaiJS0bS6wqjht7xK0Bj8rjBLCVh+cZ/DSRHm9TfF
+	wR6Q+GUBV9AvnC5iTsch/LEkT1PCX7RbFkTTasFpYCXqwNoLS7gYY0t9kNWTlFrw
+	SSpGB+37KfH9i4bF3oug8fwFzqzeaLHCrle0xWnEiN2tyJJ+LMS5P9kQ==
+Received: (qmail 3809341 invoked from network); 6 Jul 2024 13:21:21 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:21 +0200
+X-UD-Smtp-Session: l3s3148p1@BOAqYZIcotJQT+F6
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ajay Gupta <ajayg@nvidia.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Andrew Lunn <andrew@lunn.ch>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	asahi@lists.linux.dev,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Baruch Siach <baruch@tkos.co.il>,
+	=?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <bence98@sch.bme.hu>,
+	Benson Leung <bleung@chromium.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	chrome-platform@lists.linux.dev,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Conghui Chen <conghui.chen@intel.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Hans Hu <hanshu@zhaoxin.com>,
+	Hector Martin <marcan@marcan.st>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jean Delvare <jdelvare@suse.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jochen Friedrich <jochen@scram.de>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	linux-actions@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michael Shych <michaelsh@nvidia.com>,
+	openbmc@lists.ozlabs.org,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Peter Korsgaard <peter@korsgaard.com>,
+	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Robert Richter <rric@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Scott Branden <sbranden@broadcom.com>,
+	Stefan Roese <sr@denx.de>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thor Thayer <thor.thayer@linux.intel.com>,
+	Till Harbaum <till@harbaum.org>,
+	Vadim Pasternak <vadimp@nvidia.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	virtualization@lists.linux.dev,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Yicong Yang <yangyicong@hisilicon.com>
+Subject: [PATCH v2 00/60] i2c: reword first drivers according to newest specification
+Date: Sat,  6 Jul 2024 13:20:00 +0200
+Message-ID: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <596c6446-eca4-46a8-91c5-e71e92c61062@proton.me>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 06, 2024 at 10:41:28AM +0000, Benno Lossin wrote:
-> On 04.07.24 19:06, Danilo Krummrich wrote:
-> > @@ -112,6 +118,55 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
-> >      }
-> >  }
-> > 
-> > +unsafe impl Allocator for Vmalloc {
-> > +    unsafe fn realloc(
-> > +        &self,
-> > +        src: *mut u8,
-> > +        old_size: usize,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> > +    ) -> Result<NonNull<[u8]>, AllocError> {
-> > +        let mut size = aligned_size(layout);
-> > +
-> > +        let dst = if size == 0 {
-> > +            // SAFETY: `src` is guaranteed to be previously allocated with this `Allocator` or NULL.
-> > +            unsafe { bindings::vfree(src.cast()) };
-> > +            NonNull::dangling()
-> > +        } else if size <= old_size {
-> > +            size = old_size;
-> > +            NonNull::new(src).ok_or(AllocError)?
-> > +        } else {
-> > +            // SAFETY: `src` is guaranteed to point to valid memory with a size of at least
-> > +            // `old_size`, which was previously allocated with this `Allocator` or NULL.
-> > +            let dst = unsafe { bindings::__vmalloc_noprof(size as u64, flags.0) };
-> > +
-> > +            // Validate that we actually allocated the requested memory.
-> > +            let dst = NonNull::new(dst.cast()).ok_or(AllocError)?;
-> > +
-> > +            if !src.is_null() {
-> > +                // SAFETY: `src` is guaranteed to point to valid memory with a size of at least
-> > +                // `old_size`; `dst` is guaranteed to point to valid memory with a size of at least
-> > +                // `size`.
-> > +                unsafe {
-> > +                    core::ptr::copy_nonoverlapping(
-> > +                        src,
-> > +                        dst.as_ptr(),
-> > +                        core::cmp::min(old_size, size),
-> > +                    )
-> > +                };
-> > +
-> > +                // SAFETY: `src` is guaranteed to be previously allocated with this `Allocator` or
-> > +                // NULL.
-> > +                unsafe { bindings::vfree(src.cast()) }
-> > +            }
-> > +
-> > +            dst
-> > +        };
-> 
-> If we had not a single realloc, but shrink/grow/free/alloc, then we
-> would not need these checks here, I personally would prefer that, what
-> do you guys think? 
+Start changing the wording of the I2C main header wrt. the newest I2C
+v7 and SMBus 3.2 specifications and replace "master/slave" with more
+appropriate terms. This first step renames the members of struct
+i2c_algorithm. Once all in-tree users are converted, the anonymous union
+will go away again. All this work will also pave the way for finally
+seperating the monolithic header into more fine-grained headers like
+"i2c/clients.h" etc. So, this is not a simple renaming-excercise but
+also a chance to update the I2C core to recent Linux standards.
 
-Yeah, but look at `Kmalloc`, you'd have these checks in `Kmalloc`'s shrink/grow
-functions instead, since `krealloc()` already behaves this way.
+Changes since v1:
 
-Personally, I don't see much value in `shrink` and `grow`. I think
-implementations end up calling into some `realloc` with either `new < old` or
-`new > old` anyway.
+* changed wording according to the terminology we agreed on and defined
+  upstream. That means consistent use of "controller/target", and no
+  more "host/client". I added "local/remote target" where necessary.
+* added tags which I kept despite some changes in wording. The approach
+  and code changes (if necessary) did not change.
+* rebased to Andi's for-next branch
+* this series only contains patches which convert the drivers fully. If
+  all goes well, no more updates for them are needed. The previous
+  series converted all users of "master_xfer". But to avoid tons of
+  incremental patches to one driver, I will incrementally improve i2c.h
+  and see which drivers can be fully converted step-by-step.
+* do not mention I3C specs in commit messages, not really relevant here
 
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > +
-> > +        Ok(NonNull::slice_from_raw_parts(dst, size))
-> > +    }
-> > +}
-> > +
-> >  #[global_allocator]
-> >  static ALLOCATOR: Kmalloc = Kmalloc;
-> > 
-> > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-> > index 3a0abe65491d..b2d7db492ba6 100644
-> > --- a/rust/kernel/alloc/allocator_test.rs
-> > +++ b/rust/kernel/alloc/allocator_test.rs
-> > @@ -7,6 +7,7 @@
-> >  use core::ptr::NonNull;
-> > 
-> >  pub struct Kmalloc;
-> > +pub type Vmalloc = Kmalloc;
-> > 
-> >  unsafe impl Allocator for Kmalloc {
-> >      unsafe fn realloc(
-> > --
-> > 2.45.2
-> > 
-> 
+Please note that I am not super strict with the 80 char limit. And, as
+agreed, I did not convert occasions where old terminology is used in
+register names or bits etc. or in function names outside of the I2C
+realm.
+
+The outcome is that before this series 115 drivers use old terminology,
+after this only 54. Hooray.
+
+And a comment to all janitors: Do not convert I2C drivers outside of
+drivers/i2c yet. Let us first gain experience here and present the
+well-tested results of what we figured out to other maintainers then.
+This ensures they have to deal with way less patch revisions.
+
+Thanks and happy hacking!
+
+
+Wolfram Sang (60):
+  i2c: reword i2c_algorithm according to newest specification
+  i2c: ali15x3: reword according to newest specification
+  i2c: altera: reword according to newest specification
+  i2c: au1550: reword according to newest specification
+  i2c: bcm-kona: reword according to newest specification
+  i2c: bcm2835: reword according to newest specification
+  i2c: brcmstb: reword according to newest specification
+  i2c: cht-wc: reword according to newest specification
+  i2c: cp2615: reword according to newest specification
+  i2c: cros-ec-tunnel: reword according to newest specification
+  i2c: davinci: reword according to newest specification
+  i2c: digicolor: reword according to newest specification
+  i2c: diolan-u2c: reword according to newest specification
+  i2c: dln2: reword according to newest specification
+  i2c: fsi: reword according to newest specification
+  i2c: gpio: reword according to newest specification
+  i2c: highlander: reword according to newest specification
+  i2c: hisi: reword according to newest specification
+  i2c: hix5hd2: reword according to newest specification
+  i2c: i801: reword according to newest specification
+  i2c: ibm_iic: reword according to newest specification
+  i2c: iop3xx: reword according to newest specification
+  i2c: isch: reword according to newest specification
+  i2c: jz4780: reword according to newest specification
+  i2c: kempld: reword according to newest specification
+  i2c: ljca: reword according to newest specification
+  i2c: lpc2k: reword according to newest specification
+  i2c: ls2x: reword according to newest specification
+  i2c: mlxcpld: reword according to newest specification
+  i2c: mpc: reword according to newest specification
+  i2c: mt7621: reword according to newest specification
+  i2c: mv64xxx: reword according to newest specification
+  i2c: ocores: reword according to newest specification
+  i2c: octeon: reword according to newest specification
+  i2c: opal: reword according to newest specification
+  i2c: owl: reword according to newest specification
+  i2c: pasemi: reword according to newest specification
+  i2c: piix4: reword according to newest specification
+  i2c: powermac: reword according to newest specification
+  i2c: pxa-pci: reword according to newest specification
+  i2c: riic: reword according to newest specification
+  i2c: rk3x: reword according to newest specification
+  i2c: robotfuzz-osif: reword according to newest specification
+  i2c: rzv2m: reword according to newest specification
+  i2c: sis5595: reword according to newest specification
+  i2c: sprd: reword according to newest specification
+  i2c: stm32f4: reword according to newest specification
+  i2c: sun6i-p2wi: reword according to newest specification
+  i2c: taos-evm: reword according to newest specification
+  i2c: tegra-bpmp: reword according to newest specification
+  i2c: thunderx-pcidrv: reword according to newest specification
+  i2c: tiny-usb: reword according to newest specification
+  i2c: uniphier-f: reword according to newest specification
+  i2c: uniphier: reword according to newest specification
+  i2c: viperboard: reword according to newest specification
+  i2c: viai2c: reword according to newest specification
+  i2c: nvidia-gpu: reword according to newest specification
+  i2c: virtio: reword according to newest specification
+  i2c: cpm: reword according to newest specification
+  i2c: st: reword according to newest specification
+
+ drivers/i2c/busses/i2c-ali15x3.c         |  2 +-
+ drivers/i2c/busses/i2c-altera.c          |  4 +-
+ drivers/i2c/busses/i2c-au1550.c          | 15 +++----
+ drivers/i2c/busses/i2c-bcm-kona.c        | 13 +++---
+ drivers/i2c/busses/i2c-bcm2835.c         | 10 ++---
+ drivers/i2c/busses/i2c-brcmstb.c         | 11 +++--
+ drivers/i2c/busses/i2c-cht-wc.c          |  8 ++--
+ drivers/i2c/busses/i2c-cp2615.c          |  8 ++--
+ drivers/i2c/busses/i2c-cpm.c             |  4 +-
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c  |  4 +-
+ drivers/i2c/busses/i2c-davinci.c         | 17 ++++---
+ drivers/i2c/busses/i2c-digicolor.c       |  6 +--
+ drivers/i2c/busses/i2c-diolan-u2c.c      |  2 +-
+ drivers/i2c/busses/i2c-dln2.c            |  4 +-
+ drivers/i2c/busses/i2c-fsi.c             | 56 ++++++++++++------------
+ drivers/i2c/busses/i2c-gpio.c            |  8 ++--
+ drivers/i2c/busses/i2c-highlander.c      |  2 +-
+ drivers/i2c/busses/i2c-hisi.c            |  8 ++--
+ drivers/i2c/busses/i2c-hix5hd2.c         |  6 +--
+ drivers/i2c/busses/i2c-i801.c            | 12 ++---
+ drivers/i2c/busses/i2c-ibm_iic.c         | 27 +++++-------
+ drivers/i2c/busses/i2c-iop3xx.c          | 15 +++----
+ drivers/i2c/busses/i2c-isch.c            |  2 +-
+ drivers/i2c/busses/i2c-jz4780.c          |  4 +-
+ drivers/i2c/busses/i2c-kempld.c          |  4 +-
+ drivers/i2c/busses/i2c-ljca.c            | 20 ++++-----
+ drivers/i2c/busses/i2c-lpc2k.c           | 10 ++---
+ drivers/i2c/busses/i2c-ls2x.c            | 11 +++--
+ drivers/i2c/busses/i2c-mlxcpld.c         | 14 +++---
+ drivers/i2c/busses/i2c-mpc.c             |  4 +-
+ drivers/i2c/busses/i2c-mt7621.c          | 26 +++++------
+ drivers/i2c/busses/i2c-mv64xxx.c         | 12 ++---
+ drivers/i2c/busses/i2c-nvidia-gpu.c      |  7 ++-
+ drivers/i2c/busses/i2c-ocores.c          |  8 ++--
+ drivers/i2c/busses/i2c-octeon-core.c     |  6 +--
+ drivers/i2c/busses/i2c-octeon-core.h     |  4 +-
+ drivers/i2c/busses/i2c-octeon-platdrv.c  |  2 +-
+ drivers/i2c/busses/i2c-opal.c            | 10 ++---
+ drivers/i2c/busses/i2c-owl.c             | 12 ++---
+ drivers/i2c/busses/i2c-pasemi-core.c     |  6 +--
+ drivers/i2c/busses/i2c-piix4.c           |  2 +-
+ drivers/i2c/busses/i2c-powermac.c        | 14 +++---
+ drivers/i2c/busses/i2c-pxa-pci.c         |  2 +-
+ drivers/i2c/busses/i2c-riic.c            |  8 ++--
+ drivers/i2c/busses/i2c-rk3x.c            | 20 ++++-----
+ drivers/i2c/busses/i2c-robotfuzz-osif.c  |  4 +-
+ drivers/i2c/busses/i2c-rzv2m.c           | 12 ++---
+ drivers/i2c/busses/i2c-sis5595.c         |  2 +-
+ drivers/i2c/busses/i2c-sprd.c            | 16 +++----
+ drivers/i2c/busses/i2c-st.c              |  8 ++--
+ drivers/i2c/busses/i2c-stm32f4.c         |  8 ++--
+ drivers/i2c/busses/i2c-sun6i-p2wi.c      | 20 ++++-----
+ drivers/i2c/busses/i2c-taos-evm.c        |  2 +-
+ drivers/i2c/busses/i2c-tegra-bpmp.c      |  4 +-
+ drivers/i2c/busses/i2c-thunderx-pcidrv.c |  2 +-
+ drivers/i2c/busses/i2c-tiny-usb.c        |  6 +--
+ drivers/i2c/busses/i2c-uniphier-f.c      | 26 +++++------
+ drivers/i2c/busses/i2c-uniphier.c        | 15 +++----
+ drivers/i2c/busses/i2c-viai2c-common.c   |  2 +-
+ drivers/i2c/busses/i2c-viai2c-wmt.c      |  8 ++--
+ drivers/i2c/busses/i2c-viai2c-zhaoxin.c  | 12 ++---
+ drivers/i2c/busses/i2c-viperboard.c      | 10 ++---
+ drivers/i2c/busses/i2c-virtio.c          |  2 +-
+ include/linux/i2c.h                      | 24 +++++++---
+ 64 files changed, 313 insertions(+), 320 deletions(-)
+
+-- 
+2.43.0
 
 
