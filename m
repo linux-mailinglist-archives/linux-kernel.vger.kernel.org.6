@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-243053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6B09290FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:01:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58AE9290FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A84A1F23321
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:01:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92B01C2237E
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD43A17BD3;
-	Sat,  6 Jul 2024 04:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B08137905;
+	Sat,  6 Jul 2024 04:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WZEDpYpS"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xa5I97Cu"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C571D12B17C
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 04:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51411798F
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 04:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720241850; cv=none; b=t4Yk0FT6VnOyB2vkrBFGDyXoc9nR9pQG4KO6xkuJT8aYpqsI9LKPd+me3Wt7qfRVwldfAWreuascYtJMBb8Pups59pa6dT5LOXhHTjU0BEvEWoLiqB8YH21tmRftyO8h/xyjQE1SJ8+RSo74myPXUCMsDvVeKGNoNvg+BN9PoXQ=
+	t=1720241853; cv=none; b=JoATPdBXyOMTRr0iFUx/tbJUEfEFh4agrARqMAQPuu0tb38yw+gLmM6ao9hsa3IOJytOa0JHryq7Lv+vLBUXQhWl0Ay+6f8LnUo64FJwkg60wkujmoskkwNYfgVbo1CDUbtMaqLX5illvfhy2gg1nrPw4attEe5Sh6Yv2waZ3yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720241850; c=relaxed/simple;
-	bh=HzeaU/l84JP69XEkeHwGz11Ln21m1tk3zMDEPKfzAt8=;
+	s=arc-20240116; t=1720241853; c=relaxed/simple;
+	bh=L2Gcc+69KbVEQSiGHyprfdVL0pj130tzcqDGo3Q89HM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VDdgM0o7y81EPirVbqVKjgbzKqoUveUkfYreuT8AThoMh0AwPCr0ywWgqaQEDfuvR9Ivao6k2VEOmbYPHwlLoEI+Pcck0YjI7G7Lz3aDFeW+ZYrki0CzflIPXTf0jaBBB2EHT00kAxuhUNt2UTg/Wf5DqfnnhBbeo2frjSTE6mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WZEDpYpS; arc=none smtp.client-ip=209.85.219.179
+	 MIME-Version; b=W33xs4DV7B031MiVL5xMblX/o6/YpXz8TpcZWEpBsCUL0qtxdFHMB8MexZvqd12tr5It89Ex2fM5Uo0Hh/znesR0iG4BJ5Ue/R5EqZB/QFirgbJPDBhCizAaBNL85ctmErAkDy+8yKGVam/zKwhoPjy1HtbvQIjy5cY/uH6MPQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Xa5I97Cu; arc=none smtp.client-ip=209.85.167.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e035ecb35ffso2104150276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 21:57:28 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d9272287easo22944b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 21:57:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720241848; x=1720846648; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1720241850; x=1720846650; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tH44H1TVzwAUobTzGL/ZANlz+pOfAMXef1PqW4dbSJQ=;
-        b=WZEDpYpSY1F0lcAnlzCF7WlbLWnh3MlA1DdZOrWhtEfXfVrCWax3H9kWvqEtGQCsrS
-         IBWmogAdcxVcHwtS/I8HOC9JIyes4rLCODaca7hXhvWSRS7ur32YQXiyL/SLeyc5g+PD
-         t+Xe2XV8XvDxPnAxI160GjbYQA7FMiFuvafgw=
+        bh=dBmFIhK8b0BisVXRZ6adNXiV3CpDA7ZfhLmwF/BBLjw=;
+        b=Xa5I97Cu1SGAzefgmRZJCgKv0u06XMc7q9FhO6ERHioRR7G9dJW5hihUYiy+/9jvgn
+         pqNv4zb1+XieAWk2e6CoI63Kq/lFA5GPajFk94H2DZVQsgRwegkCvxlkfCx3bx1BErtX
+         jPU8qTvbFSFgK1mUSpceGU4+n7jd8FMoQsY7E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720241848; x=1720846648;
+        d=1e100.net; s=20230601; t=1720241850; x=1720846650;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tH44H1TVzwAUobTzGL/ZANlz+pOfAMXef1PqW4dbSJQ=;
-        b=w+TlEI9hyElnNWcMpF2SdqvTvVRduIDdFQEsf72Ia0umBQPHNRnGUeWB3fmc6gGmgs
-         YR9reE4pffRLoBfKjtptKxW29Mfhj1JO/zpHQfuYA+yyGsnB9Rvft1zQqfRC9PVyAeqo
-         AqdQM21hWS38WgVC9i6JQtNhMXNYW15QTkHvedxUECdyqu7FjkST/UkU4Gt2CapmYovS
-         nFtcLj5m2kpguKcf0ooNNACffqzv6XA0c+hsmOKzVCXUXvAJcLAFMlq/9mJ6d8RlRzZL
-         mDLydsWOBsOo1LPpRy5i5feQFxlh9tG66gon4uxqiU1RWgeOu6Ec/0Q8bmvWM5ImtviS
-         ByuA==
-X-Gm-Message-State: AOJu0YyaHEUGwVFi/qk5OJcWa6S1xFUPsUENtvbsZ335bOAt5u//fzyO
-	x+x5Y4DY6mJERXeKVh7zuU75xH0W7mcIJagNTabOTiqGWfNllne4JhEINPZ9uA==
-X-Google-Smtp-Source: AGHT+IHAkGII32UrL24EsLKuvJnI3yDPAlt44SMYXQKHtOowtgYRy3I1lOMgE6pU+D5tGMvsZ5DR0Q==
-X-Received: by 2002:a25:9246:0:b0:e03:ab72:fe71 with SMTP id 3f1490d57ef6-e03c1933997mr6310661276.10.1720241847684;
-        Fri, 05 Jul 2024 21:57:27 -0700 (PDT)
+        bh=dBmFIhK8b0BisVXRZ6adNXiV3CpDA7ZfhLmwF/BBLjw=;
+        b=L1PYf/GCbpAPO+lsQsLNuaDahmgjgdercfMmIH+nOg7L4GmKz2nRBU97zSzBVSe/TQ
+         e7Gib7rJMPOqlYVaNPrI/Z2m9jyElPz+oCOgF/74J6d8GDzIXKM2cUHfwT83a7srSjjL
+         kLedMMHMFRkVw+68nLZZ7tGIQtdTAQLHnteAqBegow1dCrfa53H7UY4Wfk/0fbIoWBy+
+         rMpq9zrxcTkpA+p7cArV/BzLfZMo1jY7XT/DOfy2c31tWlMF6CWpBYjJbP5GgOnYg7i3
+         bXlfI9aOLe7/fGBZEfVPEGBYxQ2K4XWqVTPzjiU2PR2KGXp7q1hZ6LPXlB63uDWKn4bU
+         8dGA==
+X-Gm-Message-State: AOJu0Yzrzih9zKjGUjAWoUHFS6AAHOVlknBhENqx2swYxNV3EhyTKiGN
+	LTyf0mBSznlroLNi+xvm5UUNXYzTLVMdniNZKu6DFobV3iKvVfMMO46Zp/P80w==
+X-Google-Smtp-Source: AGHT+IGTaW0yf8ZENERQz4X/gzjXja9OvACJSQ+Wu1P7ALjd/vNDHqPFmfDeaX9D0WDn+7K7WdIJQQ==
+X-Received: by 2002:a05:6808:1449:b0:3d6:2e22:a09b with SMTP id 5614622812f47-3d914eae85amr9465636b6e.37.1720241849872;
+        Fri, 05 Jul 2024 21:57:29 -0700 (PDT)
 Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:88a7:e7d7:713d:ff09])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7623cd854b2sm2784104a12.38.2024.07.05.21.57.26
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7623cd854b2sm2784104a12.38.2024.07.05.21.57.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 21:57:27 -0700 (PDT)
+        Fri, 05 Jul 2024 21:57:29 -0700 (PDT)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Minchan Kim <minchan@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv5 17/23] zram: introduce zcomp_req structure
-Date: Sat,  6 Jul 2024 13:56:19 +0900
-Message-ID: <20240706045641.631961-18-senozhatsky@chromium.org>
+Subject: [PATCHv5 18/23] zram: introduce zcomp_ctx structure
+Date: Sat,  6 Jul 2024 13:56:20 +0900
+Message-ID: <20240706045641.631961-19-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 In-Reply-To: <20240706045641.631961-1-senozhatsky@chromium.org>
 References: <20240706045641.631961-1-senozhatsky@chromium.org>
@@ -81,368 +81,624 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Encapsulate compression/decompression data in zcomp_req
-structure.
+Keep run-time driver data (scratch buffers, etc.) in
+zcomp_ctx structure.  This structure is allocated per-CPU
+because drivers (backends) need to modify its content
+during requests execution.
+
+We will split mutable and immutable driver data, this is
+a preparation path.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/backend_842.c     | 17 ++++++++---------
- drivers/block/zram/backend_deflate.c | 26 +++++++++++---------------
- drivers/block/zram/backend_lz4.c     | 15 +++++++--------
- drivers/block/zram/backend_lz4hc.c   | 13 ++++++-------
- drivers/block/zram/backend_lzo.c     | 12 ++++++------
- drivers/block/zram/backend_lzorle.c  | 13 ++++++-------
- drivers/block/zram/backend_zstd.c    | 15 +++++++--------
- drivers/block/zram/zcomp.c           | 23 ++++++++++++++++-------
- drivers/block/zram/zcomp.h           | 15 ++++++++++-----
- 9 files changed, 77 insertions(+), 72 deletions(-)
+ drivers/block/zram/backend_842.c     | 39 ++++++--------------
+ drivers/block/zram/backend_deflate.c | 46 +++++++++++++-----------
+ drivers/block/zram/backend_lz4.c     | 36 ++++++++++---------
+ drivers/block/zram/backend_lz4hc.c   | 36 ++++++++++---------
+ drivers/block/zram/backend_lzo.c     | 17 +++++----
+ drivers/block/zram/backend_lzorle.c  | 17 +++++----
+ drivers/block/zram/backend_zstd.c    | 54 +++++++++++++++-------------
+ drivers/block/zram/zcomp.c           | 16 +++++----
+ drivers/block/zram/zcomp.h           | 23 ++++++++----
+ 9 files changed, 149 insertions(+), 135 deletions(-)
 
 diff --git a/drivers/block/zram/backend_842.c b/drivers/block/zram/backend_842.c
-index 9193391626a9..1df0de5a9863 100644
+index 1df0de5a9863..8364837d300d 100644
 --- a/drivers/block/zram/backend_842.c
 +++ b/drivers/block/zram/backend_842.c
-@@ -38,25 +38,24 @@ static void *create_842(struct zcomp_params *params)
- 	return NULL;
+@@ -7,51 +7,32 @@
+ 
+ #include "backend_842.h"
+ 
+-struct sw842_ctx {
+-	void *mem;
+-};
+-
+-static void destroy_842(void *ctx)
++static void destroy_842(struct zcomp_ctx *ctx)
+ {
+-	struct sw842_ctx *zctx = ctx;
+-
+-	kfree(zctx->mem);
+-	kfree(zctx);
++	kfree(ctx->context);
  }
  
--static int compress_842(void *ctx, const unsigned char *src, size_t src_len,
--			unsigned char *dst, size_t *dst_len)
-+static int compress_842(void *ctx, struct zcomp_req *req)
+-static void *create_842(struct zcomp_params *params)
++static int create_842(struct zcomp_params *params, struct zcomp_ctx *ctx)
  {
- 	struct sw842_ctx *zctx = ctx;
--	unsigned int dlen = *dst_len;
-+	unsigned int dlen = req->dst_len;
+-	struct sw842_ctx *ctx;
+-
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return NULL;
+-
+-	ctx->mem = kmalloc(SW842_MEM_COMPRESS, GFP_KERNEL);
+-	if (!ctx->mem)
+-		goto error;
+-
+-	return ctx;
+-
+-error:
+-	destroy_842(ctx);
+-	return NULL;
++	ctx->context = kmalloc(SW842_MEM_COMPRESS, GFP_KERNEL);
++	if (!ctx->context)
++		return -ENOMEM;
++	return 0;
+ }
+ 
+-static int compress_842(void *ctx, struct zcomp_req *req)
++static int compress_842(struct zcomp_ctx *ctx, struct zcomp_req *req)
+ {
+-	struct sw842_ctx *zctx = ctx;
+ 	unsigned int dlen = req->dst_len;
  	int ret;
  
--	ret = sw842_compress(src, src_len, dst, &dlen, zctx->mem);
-+	ret = sw842_compress(req->src, req->src_len, req->dst, &dlen,
-+			     zctx->mem);
+ 	ret = sw842_compress(req->src, req->src_len, req->dst, &dlen,
+-			     zctx->mem);
++			     ctx->context);
  	if (ret == 0)
--		*dst_len = dlen;
-+		req->dst_len = dlen;
+ 		req->dst_len = dlen;
  	return ret;
  }
  
--static int decompress_842(void *ctx, const unsigned char *src, size_t src_len,
--			  unsigned char *dst, size_t dst_len)
-+static int decompress_842(void *ctx, struct zcomp_req *req)
+-static int decompress_842(void *ctx, struct zcomp_req *req)
++static int decompress_842(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
--	unsigned int dlen = dst_len;
-+	unsigned int dlen = req->dst_len;
+ 	unsigned int dlen = req->dst_len;
  
--	return sw842_decompress(src, src_len, dst, &dlen);
-+	return sw842_decompress(req->src, req->src_len, req->dst, &dlen);
- }
- 
- struct zcomp_ops backend_842 = {
 diff --git a/drivers/block/zram/backend_deflate.c b/drivers/block/zram/backend_deflate.c
-index 415ab55f8aeb..19bb61369eb0 100644
+index 19bb61369eb0..63a29c26d64c 100644
 --- a/drivers/block/zram/backend_deflate.c
 +++ b/drivers/block/zram/backend_deflate.c
-@@ -74,9 +74,7 @@ static void *deflate_create(struct zcomp_params *params)
- 	return NULL;
+@@ -17,9 +17,12 @@ struct deflate_ctx {
+ 	s32 level;
+ };
+ 
+-static void deflate_destroy(void *ctx)
++static void deflate_destroy(struct zcomp_ctx *ctx)
+ {
+-	struct deflate_ctx *zctx = ctx;
++	struct deflate_ctx *zctx = ctx->context;
++
++	if (!zctx)
++		return;
+ 
+ 	if (zctx->cctx.workspace) {
+ 		zlib_deflateEnd(&zctx->cctx);
+@@ -32,51 +35,52 @@ static void deflate_destroy(void *ctx)
+ 	kfree(zctx);
  }
  
--static int deflate_compress(void *ctx, const unsigned char *src,
--			    size_t src_len, unsigned char *dst,
--			    size_t *dst_len)
-+static int deflate_compress(void *ctx, struct zcomp_req *req)
+-static void *deflate_create(struct zcomp_params *params)
++static int deflate_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
  {
- 	struct deflate_ctx *zctx = ctx;
- 	struct z_stream_s *deflate;
-@@ -87,22 +85,20 @@ static int deflate_compress(void *ctx, const unsigned char *src,
+-	struct deflate_ctx *ctx;
++	struct deflate_ctx *zctx;
+ 	size_t sz;
+ 	int ret;
+ 
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return NULL;
++	zctx = kzalloc(sizeof(*zctx), GFP_KERNEL);
++	if (!zctx)
++		return -ENOMEM;
+ 
++	ctx->context = zctx;
+ 	if (params->level != ZCOMP_PARAM_NO_LEVEL)
+-		ctx->level = params->level;
++		zctx->level = params->level;
+ 	else
+-		ctx->level = Z_DEFAULT_COMPRESSION;
++		zctx->level = Z_DEFAULT_COMPRESSION;
+ 
+ 	sz = zlib_deflate_workspacesize(-DEFLATE_DEF_WINBITS, MAX_MEM_LEVEL);
+-	ctx->cctx.workspace = vzalloc(sz);
+-	if (!ctx->cctx.workspace)
++	zctx->cctx.workspace = vzalloc(sz);
++	if (!zctx->cctx.workspace)
+ 		goto error;
+ 
+-	ret = zlib_deflateInit2(&ctx->cctx, ctx->level, Z_DEFLATED,
++	ret = zlib_deflateInit2(&zctx->cctx, zctx->level, Z_DEFLATED,
+ 				-DEFLATE_DEF_WINBITS, DEFLATE_DEF_MEMLEVEL,
+ 				Z_DEFAULT_STRATEGY);
  	if (ret != Z_OK)
- 		return -EINVAL;
+ 		goto error;
  
--	deflate->next_in = (u8 *)src;
--	deflate->avail_in = src_len;
--	deflate->next_out = (u8 *)dst;
--	deflate->avail_out = *dst_len;
-+	deflate->next_in = (u8 *)req->src;
-+	deflate->avail_in = req->src_len;
-+	deflate->next_out = (u8 *)req->dst;
-+	deflate->avail_out = req->dst_len;
+ 	sz = zlib_inflate_workspacesize();
+-	ctx->dctx.workspace = vzalloc(sz);
+-	if (!ctx->dctx.workspace)
++	zctx->dctx.workspace = vzalloc(sz);
++	if (!zctx->dctx.workspace)
+ 		goto error;
  
- 	ret = zlib_deflate(deflate, Z_FINISH);
- 	if (ret != Z_STREAM_END)
- 		return -EINVAL;
+-	ret = zlib_inflateInit2(&ctx->dctx, -DEFLATE_DEF_WINBITS);
++	ret = zlib_inflateInit2(&zctx->dctx, -DEFLATE_DEF_WINBITS);
+ 	if (ret != Z_OK)
+ 		goto error;
  
--	*dst_len = deflate->total_out;
-+	req->dst_len = deflate->total_out;
+-	return ctx;
++	return 0;
+ 
+ error:
+ 	deflate_destroy(ctx);
+-	return NULL;
++	return -EINVAL;
+ }
+ 
+-static int deflate_compress(void *ctx, struct zcomp_req *req)
++static int deflate_compress(struct zcomp_ctx *ctx, struct zcomp_req *req)
+ {
+-	struct deflate_ctx *zctx = ctx;
++	struct deflate_ctx *zctx = ctx->context;
+ 	struct z_stream_s *deflate;
+ 	int ret;
+ 
+@@ -98,9 +102,9 @@ static int deflate_compress(void *ctx, struct zcomp_req *req)
  	return 0;
  }
  
--static int deflate_decompress(void *ctx, const unsigned char *src,
--			      size_t src_len, unsigned char *dst,
--			      size_t dst_len)
-+static int deflate_decompress(void *ctx, struct zcomp_req *req)
+-static int deflate_decompress(void *ctx, struct zcomp_req *req)
++static int deflate_decompress(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
- 	struct deflate_ctx *zctx = ctx;
+-	struct deflate_ctx *zctx = ctx;
++	struct deflate_ctx *zctx = ctx->context;
  	struct z_stream_s *inflate;
-@@ -114,10 +110,10 @@ static int deflate_decompress(void *ctx, const unsigned char *src,
- 	if (ret != Z_OK)
- 		return -EINVAL;
+ 	int ret;
  
--	inflate->next_in = (u8 *)src;
--	inflate->avail_in = src_len;
--	inflate->next_out = (u8 *)dst;
--	inflate->avail_out = dst_len;
-+	inflate->next_in = (u8 *)req->src;
-+	inflate->avail_in = req->src_len;
-+	inflate->next_out = (u8 *)req->dst;
-+	inflate->avail_out = req->dst_len;
- 
- 	ret = zlib_inflate(inflate, Z_SYNC_FLUSH);
- 	if (ret != Z_STREAM_END)
 diff --git a/drivers/block/zram/backend_lz4.c b/drivers/block/zram/backend_lz4.c
-index 90801a7a8f75..cb623f16604e 100644
+index cb623f16604e..1ff6b1a6b5ae 100644
 --- a/drivers/block/zram/backend_lz4.c
 +++ b/drivers/block/zram/backend_lz4.c
-@@ -41,26 +41,25 @@ static void *lz4_create(struct zcomp_params *params)
- 	return NULL;
+@@ -10,40 +10,44 @@ struct lz4_ctx {
+ 	s32 level;
+ };
+ 
+-static void lz4_destroy(void *ctx)
++static void lz4_destroy(struct zcomp_ctx *ctx)
+ {
+-	struct lz4_ctx *zctx = ctx;
++	struct lz4_ctx *zctx = ctx->context;
++
++	if (!zctx)
++		return;
+ 
+ 	vfree(zctx->mem);
+ 	kfree(zctx);
  }
  
--static int lz4_compress(void *ctx, const unsigned char *src, size_t src_len,
--			unsigned char *dst, size_t *dst_len)
-+static int lz4_compress(void *ctx, struct zcomp_req *req)
+-static void *lz4_create(struct zcomp_params *params)
++static int lz4_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
  {
- 	struct lz4_ctx *zctx = ctx;
+-	struct lz4_ctx *ctx;
++	struct lz4_ctx *zctx;
+ 
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return NULL;
++	zctx = kzalloc(sizeof(*zctx), GFP_KERNEL);
++	if (!zctx)
++		return -ENOMEM;
+ 
++	ctx->context = zctx;
+ 	if (params->level != ZCOMP_PARAM_NO_LEVEL)
+-		ctx->level = params->level;
++		zctx->level = params->level;
+ 	else
+-		ctx->level = LZ4_ACCELERATION_DEFAULT;
++		zctx->level = LZ4_ACCELERATION_DEFAULT;
+ 
+-	ctx->mem = vmalloc(LZ4_MEM_COMPRESS);
+-	if (!ctx->mem)
++	zctx->mem = vmalloc(LZ4_MEM_COMPRESS);
++	if (!zctx->mem)
+ 		goto error;
+ 
+-	return ctx;
++	return 0;
+ error:
+ 	lz4_destroy(ctx);
+-	return NULL;
++	return -EINVAL;
+ }
+ 
+-static int lz4_compress(void *ctx, struct zcomp_req *req)
++static int lz4_compress(struct zcomp_ctx *ctx, struct zcomp_req *req)
+ {
+-	struct lz4_ctx *zctx = ctx;
++	struct lz4_ctx *zctx = ctx->context;
  	int ret;
  
--	ret = LZ4_compress_fast(src, dst, src_len, *dst_len,
--				zctx->level, zctx->mem);
-+	ret = LZ4_compress_fast(req->src, req->dst, req->src_len,
-+				req->dst_len, zctx->level, zctx->mem);
- 	if (!ret)
- 		return -EINVAL;
--	*dst_len = ret;
-+	req->dst_len = ret;
+ 	ret = LZ4_compress_fast(req->src, req->dst, req->src_len,
+@@ -54,7 +58,7 @@ static int lz4_compress(void *ctx, struct zcomp_req *req)
  	return 0;
  }
  
--static int lz4_decompress(void *ctx, const unsigned char *src,
--			  size_t src_len, unsigned char *dst, size_t dst_len)
-+static int lz4_decompress(void *ctx, struct zcomp_req *req)
+-static int lz4_decompress(void *ctx, struct zcomp_req *req)
++static int lz4_decompress(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
  	int ret;
  
--	ret = LZ4_decompress_safe(src, dst, src_len, dst_len);
-+	ret = LZ4_decompress_safe(req->src, req->dst, req->src_len,
-+				  req->dst_len);
- 	if (ret < 0)
- 		return -EINVAL;
- 	return 0;
 diff --git a/drivers/block/zram/backend_lz4hc.c b/drivers/block/zram/backend_lz4hc.c
-index 30de6ec511a5..a2314e4c7e9a 100644
+index a2314e4c7e9a..0daab12836de 100644
 --- a/drivers/block/zram/backend_lz4hc.c
 +++ b/drivers/block/zram/backend_lz4hc.c
-@@ -41,26 +41,25 @@ static void *lz4hc_create(struct zcomp_params *params)
- 	return NULL;
+@@ -10,40 +10,44 @@ struct lz4hc_ctx {
+ 	s32 level;
+ };
+ 
+-static void lz4hc_destroy(void *ctx)
++static void lz4hc_destroy(struct zcomp_ctx *ctx)
+ {
+-	struct lz4hc_ctx *zctx = ctx;
++	struct lz4hc_ctx *zctx = ctx->context;
++
++	if (!zctx)
++		return;
+ 
+ 	vfree(zctx->mem);
+ 	kfree(zctx);
  }
  
--static int lz4hc_compress(void *ctx, const unsigned char *src, size_t src_len,
--			  unsigned char *dst, size_t *dst_len)
-+static int lz4hc_compress(void *ctx, struct zcomp_req *req)
+-static void *lz4hc_create(struct zcomp_params *params)
++static int lz4hc_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
  {
- 	struct lz4hc_ctx *zctx = ctx;
+-	struct lz4hc_ctx *ctx;
++	struct lz4hc_ctx *zctx;
+ 
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return NULL;
++	zctx = kzalloc(sizeof(*zctx), GFP_KERNEL);
++	if (!zctx)
++		return -ENOMEM;
+ 
++	ctx->context = zctx;
+ 	if (params->level != ZCOMP_PARAM_NO_LEVEL)
+-		ctx->level = params->level;
++		zctx->level = params->level;
+ 	else
+-		ctx->level = LZ4HC_DEFAULT_CLEVEL;
++		zctx->level = LZ4HC_DEFAULT_CLEVEL;
+ 
+-	ctx->mem = vmalloc(LZ4HC_MEM_COMPRESS);
+-	if (!ctx->mem)
++	zctx->mem = vmalloc(LZ4HC_MEM_COMPRESS);
++	if (!zctx->mem)
+ 		goto error;
+ 
+-	return ctx;
++	return 0;
+ error:
+ 	lz4hc_destroy(ctx);
+-	return NULL;
++	return -EINVAL;
+ }
+ 
+-static int lz4hc_compress(void *ctx, struct zcomp_req *req)
++static int lz4hc_compress(struct zcomp_ctx *ctx, struct zcomp_req *req)
+ {
+-	struct lz4hc_ctx *zctx = ctx;
++	struct lz4hc_ctx *zctx = ctx->context;
  	int ret;
  
--	ret = LZ4_compress_HC(src, dst, src_len, *dst_len,
-+	ret = LZ4_compress_HC(req->src, req->dst, req->src_len, req->dst_len,
- 			      zctx->level, zctx->mem);
- 	if (!ret)
- 		return -EINVAL;
--	*dst_len = ret;
-+	req->dst_len = ret;
+ 	ret = LZ4_compress_HC(req->src, req->dst, req->src_len, req->dst_len,
+@@ -54,7 +58,7 @@ static int lz4hc_compress(void *ctx, struct zcomp_req *req)
  	return 0;
  }
  
--static int lz4hc_decompress(void *ctx, const unsigned char *src,
--			    size_t src_len, unsigned char *dst, size_t dst_len)
-+static int lz4hc_decompress(void *ctx, struct zcomp_req *req)
+-static int lz4hc_decompress(void *ctx, struct zcomp_req *req)
++static int lz4hc_decompress(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
  	int ret;
  
--	ret = LZ4_decompress_safe(src, dst, src_len, dst_len);
-+	ret = LZ4_decompress_safe(req->src, req->dst, req->src_len,
-+				  req->dst_len);
- 	if (ret < 0)
- 		return -EINVAL;
- 	return 0;
 diff --git a/drivers/block/zram/backend_lzo.c b/drivers/block/zram/backend_lzo.c
-index c903c15610f8..48d3f051c258 100644
+index 48d3f051c258..699e8ef147a8 100644
 --- a/drivers/block/zram/backend_lzo.c
 +++ b/drivers/block/zram/backend_lzo.c
-@@ -16,21 +16,21 @@ static void lzo_destroy(void *ctx)
- 	kfree(ctx);
+@@ -6,26 +6,29 @@
+ 
+ #include "backend_lzo.h"
+ 
+-static void *lzo_create(struct zcomp_params *params)
++static int lzo_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
+ {
+-	return kzalloc(LZO1X_MEM_COMPRESS, GFP_KERNEL);
++	ctx->context = kzalloc(LZO1X_MEM_COMPRESS, GFP_KERNEL);
++	if (!ctx->context)
++		return -ENOMEM;
++	return 0;
  }
  
--static int lzo_compress(void *ctx, const unsigned char *src, size_t src_len,
--			unsigned char *dst, size_t *dst_len)
-+static int lzo_compress(void *ctx, struct zcomp_req *req)
+-static void lzo_destroy(void *ctx)
++static void lzo_destroy(struct zcomp_ctx *ctx)
+ {
+-	kfree(ctx);
++	kfree(ctx->context);
+ }
+ 
+-static int lzo_compress(void *ctx, struct zcomp_req *req)
++static int lzo_compress(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
  	int ret;
  
--	ret = lzo1x_1_compress(src, src_len, dst, dst_len, ctx);
-+	ret = lzo1x_1_compress(req->src, req->src_len, req->dst,
-+			       &req->dst_len, ctx);
+ 	ret = lzo1x_1_compress(req->src, req->src_len, req->dst,
+-			       &req->dst_len, ctx);
++			       &req->dst_len, ctx->context);
  	return ret == LZO_E_OK ? 0 : ret;
  }
  
--static int lzo_decompress(void *ctx, const unsigned char *src, size_t src_len,
--			  unsigned char *dst, size_t dst_len)
-+static int lzo_decompress(void *ctx, struct zcomp_req *req)
+-static int lzo_decompress(void *ctx, struct zcomp_req *req)
++static int lzo_decompress(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
  	int ret;
- 
--	ret = lzo1x_decompress_safe(src, src_len, dst, &dst_len);
-+	ret = lzo1x_decompress_safe(req->src, req->src_len,
-+				    req->dst, &req->dst_len);
- 	return ret == LZO_E_OK ? 0 : ret;
- }
  
 diff --git a/drivers/block/zram/backend_lzorle.c b/drivers/block/zram/backend_lzorle.c
-index 3622625abfd9..4638431326c2 100644
+index 4638431326c2..48e4d4dc8437 100644
 --- a/drivers/block/zram/backend_lzorle.c
 +++ b/drivers/block/zram/backend_lzorle.c
-@@ -16,22 +16,21 @@ static void lzorle_destroy(void *ctx)
- 	kfree(ctx);
+@@ -6,26 +6,29 @@
+ 
+ #include "backend_lzorle.h"
+ 
+-static void *lzorle_create(struct zcomp_params *params)
++static int lzorle_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
+ {
+-	return kzalloc(LZO1X_MEM_COMPRESS, GFP_KERNEL);
++	ctx->context = kzalloc(LZO1X_MEM_COMPRESS, GFP_KERNEL);
++	if (!ctx->context)
++		return -ENOMEM;
++	return 0;
  }
  
--static int lzorle_compress(void *ctx, const unsigned char *src, size_t src_len,
--			   unsigned char *dst, size_t *dst_len)
-+static int lzorle_compress(void *ctx, struct zcomp_req *req)
+-static void lzorle_destroy(void *ctx)
++static void lzorle_destroy(struct zcomp_ctx *ctx)
+ {
+-	kfree(ctx);
++	kfree(ctx->context);
+ }
+ 
+-static int lzorle_compress(void *ctx, struct zcomp_req *req)
++static int lzorle_compress(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
  	int ret;
  
--	ret = lzorle1x_1_compress(src, src_len, dst, dst_len, ctx);
-+	ret = lzorle1x_1_compress(req->src, req->src_len, req->dst,
-+				  &req->dst_len, ctx);
+ 	ret = lzorle1x_1_compress(req->src, req->src_len, req->dst,
+-				  &req->dst_len, ctx);
++				  &req->dst_len, ctx->context);
  	return ret == LZO_E_OK ? 0 : ret;
  }
  
--static int lzorle_decompress(void *ctx, const unsigned char *src,
--			     size_t src_len, unsigned char *dst,
--			     size_t dst_len)
-+static int lzorle_decompress(void *ctx, struct zcomp_req *req)
+-static int lzorle_decompress(void *ctx, struct zcomp_req *req)
++static int lzorle_decompress(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
  	int ret;
- 
--	ret = lzo1x_decompress_safe(src, src_len, dst, &dst_len);
-+	ret = lzo1x_decompress_safe(req->src, req->src_len,
-+				    req->dst, &req->dst_len);
- 	return ret == LZO_E_OK ? 0 : ret;
- }
  
 diff --git a/drivers/block/zram/backend_zstd.c b/drivers/block/zram/backend_zstd.c
-index a9808abcf5f2..7e7e4af620fc 100644
+index 7e7e4af620fc..1cc3a4a1f265 100644
 --- a/drivers/block/zram/backend_zstd.c
 +++ b/drivers/block/zram/backend_zstd.c
-@@ -67,27 +67,26 @@ static void *zstd_create(struct zcomp_params *params)
- 	return NULL;
+@@ -16,60 +16,64 @@ struct zstd_ctx {
+ 	s32 level;
+ };
+ 
+-static void zstd_destroy(void *ctx)
++static void zstd_destroy(struct zcomp_ctx *ctx)
+ {
+-	struct zstd_ctx *zctx = ctx;
++	struct zstd_ctx *zctx = ctx->context;
++
++	if (!zctx)
++		return;
+ 
+ 	vfree(zctx->cctx_mem);
+ 	vfree(zctx->dctx_mem);
+ 	kfree(zctx);
  }
  
--static int zstd_compress(void *ctx, const unsigned char *src, size_t src_len,
--			 unsigned char *dst, size_t *dst_len)
-+static int zstd_compress(void *ctx, struct zcomp_req *req)
+-static void *zstd_create(struct zcomp_params *params)
++static int zstd_create(struct zcomp_params *params, struct zcomp_ctx *ctx)
  {
- 	struct zstd_ctx *zctx = ctx;
++	struct zstd_ctx *zctx;
+ 	zstd_parameters prm;
+-	struct zstd_ctx *ctx;
+ 	size_t sz;
+ 
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return NULL;
++	zctx = kzalloc(sizeof(*zctx), GFP_KERNEL);
++	if (!zctx)
++		return -ENOMEM;
+ 
++	ctx->context = zctx;
+ 	if (params->level != ZCOMP_PARAM_NO_LEVEL)
+-		ctx->level = params->level;
++		zctx->level = params->level;
+ 	else
+-		ctx->level = zstd_default_clevel();
++		zctx->level = zstd_default_clevel();
+ 
+-	prm = zstd_get_params(ctx->level, PAGE_SIZE);
+-	ctx->cprm = zstd_get_params(ctx->level, PAGE_SIZE);
++	prm = zstd_get_params(zctx->level, PAGE_SIZE);
++	zctx->cprm = zstd_get_params(zctx->level, PAGE_SIZE);
+ 	sz = zstd_cctx_workspace_bound(&prm.cParams);
+-	ctx->cctx_mem = vzalloc(sz);
+-	if (!ctx->cctx_mem)
++	zctx->cctx_mem = vzalloc(sz);
++	if (!zctx->cctx_mem)
+ 		goto error;
+ 
+-	ctx->cctx = zstd_init_cctx(ctx->cctx_mem, sz);
+-	if (!ctx->cctx)
++	zctx->cctx = zstd_init_cctx(zctx->cctx_mem, sz);
++	if (!zctx->cctx)
+ 		goto error;
+ 
+ 	sz = zstd_dctx_workspace_bound();
+-	ctx->dctx_mem = vzalloc(sz);
+-	if (!ctx->dctx_mem)
++	zctx->dctx_mem = vzalloc(sz);
++	if (!zctx->dctx_mem)
+ 		goto error;
+ 
+-	ctx->dctx = zstd_init_dctx(ctx->dctx_mem, sz);
+-	if (!ctx->dctx)
++	zctx->dctx = zstd_init_dctx(zctx->dctx_mem, sz);
++	if (!zctx->dctx)
+ 		goto error;
+ 
+-	return ctx;
++	return 0;
+ 
+ error:
+ 	zstd_destroy(ctx);
+-	return NULL;
++	return -EINVAL;
+ }
+ 
+-static int zstd_compress(void *ctx, struct zcomp_req *req)
++static int zstd_compress(struct zcomp_ctx *ctx, struct zcomp_req *req)
+ {
+-	struct zstd_ctx *zctx = ctx;
++	struct zstd_ctx *zctx = ctx->context;
  	size_t ret;
  
--	ret = zstd_compress_cctx(zctx->cctx, dst, *dst_len,
--				 src, src_len, &zctx->cprm);
-+	ret = zstd_compress_cctx(zctx->cctx, req->dst, req->dst_len,
-+				 req->src, req->src_len, &zctx->cprm);
- 	if (zstd_is_error(ret))
- 		return -EINVAL;
--	*dst_len = ret;
-+	req->dst_len = ret;
+ 	ret = zstd_compress_cctx(zctx->cctx, req->dst, req->dst_len,
+@@ -80,9 +84,9 @@ static int zstd_compress(void *ctx, struct zcomp_req *req)
  	return 0;
  }
  
--static int zstd_decompress(void *ctx, const unsigned char *src, size_t src_len,
--			   unsigned char *dst, size_t dst_len)
-+static int zstd_decompress(void *ctx, struct zcomp_req *req)
+-static int zstd_decompress(void *ctx, struct zcomp_req *req)
++static int zstd_decompress(struct zcomp_ctx *ctx, struct zcomp_req *req)
  {
- 	struct zstd_ctx *zctx = ctx;
+-	struct zstd_ctx *zctx = ctx;
++	struct zstd_ctx *zctx = ctx->context;
  	size_t ret;
  
--	ret = zstd_decompress_dctx(zctx->dctx, dst, dst_len, src, src_len);
-+	ret = zstd_decompress_dctx(zctx->dctx, req->dst, req->dst_len,
-+				   req->src, req->src_len);
- 	if (zstd_is_error(ret))
- 		return -EINVAL;
- 	return 0;
+ 	ret = zstd_decompress_dctx(zctx->dctx, req->dst, req->dst_len,
 diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
-index eacead28cc2b..defb04a25d52 100644
+index defb04a25d52..1964e6195b4b 100644
 --- a/drivers/block/zram/zcomp.c
 +++ b/drivers/block/zram/zcomp.c
-@@ -118,22 +118,31 @@ void zcomp_stream_put(struct zcomp *comp)
- int zcomp_compress(struct zcomp *comp, struct zcomp_strm *zstrm,
- 		   const void *src, unsigned int *dst_len)
- {
--	/* The dst buffer should always be 2 * PAGE_SIZE */
--	size_t dlen = 2 * PAGE_SIZE;
-+	struct zcomp_req req = {
-+		.src = src,
-+		.dst = zstrm->buffer,
-+		.src_len = PAGE_SIZE,
-+		.dst_len = 2 * PAGE_SIZE,
-+	};
- 	int ret;
+@@ -45,23 +45,25 @@ static struct zcomp_ops *backends[] = {
  
--	ret = comp->ops->compress(zstrm->ctx, src, PAGE_SIZE,
--				  zstrm->buffer, &dlen);
-+	ret = comp->ops->compress(zstrm->ctx, &req);
- 	if (!ret)
--		*dst_len = dlen;
-+		*dst_len = req.dst_len;
- 	return ret;
+ static void zcomp_strm_free(struct zcomp *comp, struct zcomp_strm *zstrm)
+ {
+-	if (zstrm->ctx)
+-		comp->ops->destroy_ctx(zstrm->ctx);
++	comp->ops->destroy_ctx(&zstrm->ctx);
+ 	vfree(zstrm->buffer);
+-	zstrm->ctx = NULL;
+ 	zstrm->buffer = NULL;
  }
  
- int zcomp_decompress(struct zcomp *comp, struct zcomp_strm *zstrm,
- 		     const void *src, unsigned int src_len, void *dst)
+ static int zcomp_strm_init(struct zcomp *comp, struct zcomp_strm *zstrm)
  {
--	return comp->ops->decompress(zstrm->ctx, src, src_len,
--				     dst, PAGE_SIZE);
-+	struct zcomp_req req = {
-+		.src = src,
-+		.dst = dst,
-+		.src_len = src_len,
-+		.dst_len = PAGE_SIZE,
-+	};
+-	zstrm->ctx = comp->ops->create_ctx(comp->params);
++	int ret;
 +
-+	return comp->ops->decompress(zstrm->ctx, &req);
++	ret = comp->ops->create_ctx(comp->params, &zstrm->ctx);
++	if (ret)
++		return ret;
+ 
+ 	/*
+ 	 * allocate 2 pages. 1 for compressed data, plus 1 extra for the
+ 	 * case when compressed size is larger than the original one
+ 	 */
+ 	zstrm->buffer = vzalloc(2 * PAGE_SIZE);
+-	if (!zstrm->ctx || !zstrm->buffer) {
++	if (!zstrm->buffer) {
+ 		zcomp_strm_free(comp, zstrm);
+ 		return -ENOMEM;
+ 	}
+@@ -126,7 +128,7 @@ int zcomp_compress(struct zcomp *comp, struct zcomp_strm *zstrm,
+ 	};
+ 	int ret;
+ 
+-	ret = comp->ops->compress(zstrm->ctx, &req);
++	ret = comp->ops->compress(&zstrm->ctx, &req);
+ 	if (!ret)
+ 		*dst_len = req.dst_len;
+ 	return ret;
+@@ -142,7 +144,7 @@ int zcomp_decompress(struct zcomp *comp, struct zcomp_strm *zstrm,
+ 		.dst_len = PAGE_SIZE,
+ 	};
+ 
+-	return comp->ops->decompress(zstrm->ctx, &req);
++	return comp->ops->decompress(&zstrm->ctx, &req);
  }
  
  int zcomp_cpu_up_prepare(unsigned int cpu, struct hlist_node *node)
 diff --git a/drivers/block/zram/zcomp.h b/drivers/block/zram/zcomp.h
-index 3639c36fb9a9..963c1e80830c 100644
+index 963c1e80830c..ebab7dbca68d 100644
 --- a/drivers/block/zram/zcomp.h
 +++ b/drivers/block/zram/zcomp.h
-@@ -21,12 +21,17 @@ struct zcomp_strm {
- 	void *ctx;
+@@ -13,12 +13,20 @@ struct zcomp_params {
+ 	s32 level;
  };
  
--struct zcomp_ops {
--	int (*compress)(void *ctx, const unsigned char *src, size_t src_len,
--			unsigned char *dst, size_t *dst_len);
-+struct zcomp_req {
-+	const unsigned char *src;
-+	const size_t src_len;
-+
-+	unsigned char *dst;
-+	size_t dst_len;
++/*
++ * Run-time driver context - scratch buffers, etc. It is modified during
++ * request execution (compression/decompression), cannot be shared, so
++ * it's in per-CPU area.
++ */
++struct zcomp_ctx {
++	void *context;
 +};
++
+ struct zcomp_strm {
+-	/* The members ->buffer and ->tfm are protected by ->lock. */
+ 	local_lock_t lock;
+-	/* compression/decompression buffer */
++	/* compression buffer */
+ 	void *buffer;
+-	void *ctx;
++	struct zcomp_ctx ctx;
+ };
  
--	int (*decompress)(void *ctx, const unsigned char *src, size_t src_len,
--			  unsigned char *dst, size_t dst_len);
-+struct zcomp_ops {
-+	int (*compress)(void *ctx, struct zcomp_req *req);
-+	int (*decompress)(void *ctx, struct zcomp_req *req);
+ struct zcomp_req {
+@@ -30,11 +38,12 @@ struct zcomp_req {
+ };
  
- 	void *(*create_ctx)(struct zcomp_params *params);
- 	void (*destroy_ctx)(void *ctx);
+ struct zcomp_ops {
+-	int (*compress)(void *ctx, struct zcomp_req *req);
+-	int (*decompress)(void *ctx, struct zcomp_req *req);
++	int (*compress)(struct zcomp_ctx *ctx, struct zcomp_req *req);
++	int (*decompress)(struct zcomp_ctx *ctx, struct zcomp_req *req);
+ 
+-	void *(*create_ctx)(struct zcomp_params *params);
+-	void (*destroy_ctx)(void *ctx);
++	int (*create_ctx)(struct zcomp_params *params,
++			  struct zcomp_ctx *ctx);
++	void (*destroy_ctx)(struct zcomp_ctx *ctx);
+ 
+ 	const char *name;
+ };
 -- 
 2.45.2.803.g4e1b14247a-goog
 
