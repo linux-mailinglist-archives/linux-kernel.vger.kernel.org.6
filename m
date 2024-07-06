@@ -1,103 +1,195 @@
-Return-Path: <linux-kernel+bounces-243117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2137E929203
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:43:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46060929209
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 895F4B21CFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:43:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBCC1C215FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE074D8A2;
-	Sat,  6 Jul 2024 08:43:07 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949D54C3D0;
+	Sat,  6 Jul 2024 08:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhSI9A16"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F661C69D;
-	Sat,  6 Jul 2024 08:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0E022EF2
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 08:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720255387; cv=none; b=qT3C2T4JUh6lWYftLOvzvpPYQDIZ4n6XK++K2ykFwCzdkeYQXuL+mMJ7AAfBsPbFW5czR4GY7FV9XsClOIHMWh1ify1GuIgsK84PCCpBILTxcxTNVnvsIKvvwDNnYrXu4A9CXv+1O0HiGfn6Veg1NT8mo6cETQx2toMsXoaj1Vc=
+	t=1720255998; cv=none; b=F9178B2exbYETtJz+Pz/At/g2BgZkdkrCgEv0XEx5m8B/Q3+CZvHEoh2KW4AaxRyq7zU5P0Mo22XyhttuADcye/i01HE64vYzXRZ4PFzu08ICyAr/qaFd1hH/D9OyEhzZ+clkQhH/XIRGxIIAgukk/mFXw1KllG4Q6El8gMWUNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720255387; c=relaxed/simple;
-	bh=qtKywlXV9eQoI3XMxuo7EO/3+LdGfDeUhwh6jA9mgRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uYra/MLvV0PyH12MWu0p79HYNwkop44T6GlfmXTgt3JGUUOJyz2iKOBrLfL6CfC3vWNfUOiLrSaY10+Ssim+85JqdxOxaM0p6YNV/grcldPifxcadLNQ1ywHeH/Bovj/d9mMz84nBexhTZhm1jWd0mduNFpEwCvryXGBGNhj+F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 5BD83100DA1D9;
-	Sat,  6 Jul 2024 10:43:00 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id EBE8E5505F; Sat,  6 Jul 2024 10:42:59 +0200 (CEST)
-Date: Sat, 6 Jul 2024 10:42:59 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	caleb.connolly@linaro.org, bhelgaas@google.com,
-	amit.pundir@linaro.org, neil.armstrong@linaro.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] pci: bus: only call of_platform_populate() if CONFIG_OF
- is defined
-Message-ID: <ZokDkyfn2Xt2Ki-i@wunner.de>
-References: <20240703091535.3531-1-spasswolf@web.de>
- <CAMRc=Md=PnpHVGGO6Nb_efVZ0a3cMxWbLvYmkka5Wznks70drw@mail.gmail.com>
+	s=arc-20240116; t=1720255998; c=relaxed/simple;
+	bh=yGiFlwK+Xw/rrB/nlj2FnyAjmvDNJoEUvBd9S/bCJLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a0IT9tbK1JyOIr9jq/i2ttbOgjKW+tNbdxQWT7tXSF9kmlqjFm4f9PU0VDr0QxAnJOp6BO1WOIDDTthEt+Ml2mWWaxm0K/A4rh83CJeXIVJRtfDqoOvl2U5bv+646+/JGUQ9kxO3NrxCloM03wpLmNo6Kbc+ITcK76xE2nLsbJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhSI9A16; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14BC4C4AF0B
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 08:53:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720255998;
+	bh=yGiFlwK+Xw/rrB/nlj2FnyAjmvDNJoEUvBd9S/bCJLI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BhSI9A16bLMe9YSe1H8wp1vwkos56XbslHfaDu7KDcAiTmXNU4R3ZAbHNvtVpysa5
+	 lshn5WQF0g1239KDsl+T0akFABftBdajYkpgJjd302E6KHVyDWycDCTkNFkTXRfMVq
+	 bMTU5u3hrcoifLJvrydu8f78TY0bpGFEwJo2YMu/cW4dZGtq7yxVQnopQzoYR2KsFF
+	 S8nojOJfTCz+98nXlblspfJKD3+vmDMiQz4hwAP/8UIGLDJRPhWgfrweKdet6vcRsF
+	 MnSrrTwmMOBODnU3lNTzRwYGKzxdB24xPtOYVpUICxoo1URDZWRYI9STWF2XaBZp/M
+	 MmU12dqImn25Q==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77e85cb9b4so9894366b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 01:53:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVz1JDHR3PeCBlKkYklUAsNyt4mgSQ4ZfNgXsHO85FVvnUMuoOrT+3nW9ZlWmS/BP1jw+FCxaSv7X403PejY2Rou39azCefUMdHR/J/
+X-Gm-Message-State: AOJu0Yzwsl+Q3LJLvlE60JI/45CVNJqd1VOJHln3rRSD7dJNv0679zqy
+	XCF5VhVcS0e9Ck2JcY0EkHshWjTfu2tAJoxdMtoFQO4+a/0eAUr5aEmwzBlKxodkxTx51B2omci
+	sPqn7S/LouTAqrHuv9YPoFjTjkj4voFsYzPP2
+X-Google-Smtp-Source: AGHT+IG6qm2LEVFPDInWtM8uLwi7DUyNLBYYlcj/M9Ftz1Yp5Blf0TQ/9w9jf2A+wl/ieaHJzuQUlPFaKvDk+XKulEg=
+X-Received: by 2002:a17:906:f1d0:b0:a77:deb2:8af8 with SMTP id
+ a640c23a62f3a-a77deb2b909mr113538966b.77.1720255976572; Sat, 06 Jul 2024
+ 01:52:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Md=PnpHVGGO6Nb_efVZ0a3cMxWbLvYmkka5Wznks70drw@mail.gmail.com>
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+In-Reply-To: <20240704190137.696169-2-mic@digikod.net>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Sat, 6 Jul 2024 16:52:42 +0800
+X-Gmail-Original-Message-ID: <CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com>
+Message-ID: <CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 03, 2024 at 11:32:05AM +0200, Bartosz Golaszewski wrote:
-> On Wed, Jul 3, 2024 at 11:15 AM Bert Karwatzki <spasswolf@web.de> wrote:
-> > If of_platform_populate() is called when CONFIG_OF is not defined this
-> > leads to spurious error messages of the following type:
-> >  pci 0000:00:01.1: failed to populate child OF nodes (-19)
-> >  pci 0000:00:02.1: failed to populate child OF nodes (-19)
-> >
-> > Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nodes of the port node")
-> > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-> > ---
-> >  drivers/pci/bus.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> > index e4735428814d..b363010664cd 100644
-> > --- a/drivers/pci/bus.c
-> > +++ b/drivers/pci/bus.c
-> > @@ -350,6 +350,7 @@ void pci_bus_add_device(struct pci_dev *dev)
-> >
-> >         pci_dev_assign_added(dev, true);
-> >
-> > +#ifdef CONFIG_OF
-> >         if (pci_is_bridge(dev)) {
+On Fri, Jul 5, 2024 at 3:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+>
+> Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> allowed for execution.  The main use case is for script interpreters and
+> dynamic linkers to check execution permission according to the kernel's
+> security policy. Another use case is to add context to access logs e.g.,
+> which script (instead of interpreter) accessed a file.  As any
+> executable code, scripts could also use this check [1].
+>
 
-Per section 21 of Documentation/process/coding-style.rst,
-IS_ENABLED() is strongly preferred to #ifdef.
+Can you give a worked-out example of how this is useful?
+
+I assume the idea is that a program could open a file, then pass the
+fd to execveat() to get the kernel's idea of whether it's permissible
+to execute it.  And then the program would interpret the file, which
+is morally like executing it.  And there would be a big warning in the
+manpage that passing a *path* is subject to a TOCTOU race.
+
+This type of usage will do the wrong thing if LSM policy intends to
+lock down the task if the task were to actually exec the file.  I
+personally think this is a mis-design (let the program doing the
+exec-ing lock itself down, possibly by querying a policy, but having
+magic happen on exec seems likely to do the wrong thing more often
+that it does the wright thing), but that ship sailed a long time ago.
+
+So maybe what's actually needed is a rather different API: a way to
+check *and perform* the security transition for an exec without
+actually execing.  This would need to be done NO_NEW_PRIVS style for
+reasons that are hopefully obvious, but it would permit:
+
+fd =3D open(some script);
+if (do_exec_transition_without_exec(fd) !=3D 0)
+  return;  // don't actually do it
+
+// OK, we may have just lost privileges.  But that's okay, because we
+meant to do that.
+// Make sure we've munmapped anything sensitive and erased any secrets
+from memory,
+// and then interpret the script!
+
+I think this would actually be straightforward to implement in the
+kernel -- one would need to make sure that all the relevant
+no_new_privs checks are looking in the right place (as the task might
+not actually have no_new_privs set, but LSM_UNSAFE_NO_NEW_PRIVS would
+still be set), but I don't see any reason this would be
+insurmountable, nor do I expect there would be any fundamental
+problems.
 
 
-> There's a better (less ifdeffery) fix on the list that I'll pick up
-> later today[1].
-> 
-> [1] https://lore.kernel.org/lkml/20240702180839.71491-1-superm1@kernel.org/T/
+> This is different than faccessat(2) which only checks file access
+> rights, but not the full context e.g. mount point's noexec, stack limit,
+> and all potential LSM extra checks (e.g. argv, envp, credentials).
+> Since the use of AT_CHECK follows the exact kernel semantic as for a
+> real execution, user space gets the same error codes.
+>
+> With the information that a script interpreter is about to interpret a
+> script, an LSM security policy can adjust caller's access rights or log
+> execution request as for native script execution (e.g. role transition).
+> This is possible thanks to the call to security_bprm_creds_for_exec().
+>
+> Because LSMs may only change bprm's credentials, use of AT_CHECK with
+> current kernel code should not be a security issue (e.g. unexpected role
+> transition).  LSMs willing to update the caller's credential could now
+> do so when bprm->is_check is set.  Of course, such policy change should
+> be in line with the new user space code.
+>
+> Because AT_CHECK is dedicated to user space interpreters, it doesn't
+> make sense for the kernel to parse the checked files, look for
+> interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
+> if the format is unknown.  Because of that, security_bprm_check() is
+> never called when AT_CHECK is used.
+>
+> It should be noted that script interpreters cannot directly use
+> execveat(2) (without this new AT_CHECK flag) because this could lead to
+> unexpected behaviors e.g., `python script.sh` could lead to Bash being
+> executed to interpret the script.  Unlike the kernel, script
+> interpreters may just interpret the shebang as a simple comment, which
+> should not change for backward compatibility reasons.
+>
+> Because scripts or libraries files might not currently have the
+> executable permission set, or because we might want specific users to be
+> allowed to run arbitrary scripts, the following patch provides a dynamic
+> configuration mechanism with the SECBIT_SHOULD_EXEC_CHECK and
+> SECBIT_SHOULD_EXEC_RESTRICT securebits.
 
-That other fix doesn't feel very robust as it depends on
-of_platform_populate() never returning -ENODEV in the
-CONFIG_OF=y case.
+Can you explain what those bits do?  And why they're useful?
 
-Thanks,
+>
+> This is a redesign of the CLIP OS 4's O_MAYEXEC:
+> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d=
+6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+> This patch has been used for more than a decade with customized script
+> interpreters.  Some examples can be found here:
+> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=3DO_MA=
+YEXEC
 
-Lukas
+This one at least returns an fd, so it looks less likely to get
+misused in a way that adds a TOCTOU race.
 
