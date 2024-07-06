@@ -1,150 +1,196 @@
-Return-Path: <linux-kernel+bounces-243271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0897F9293DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:41:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345A79293DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B7B21C21191
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:41:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE231282B99
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F601369BC;
-	Sat,  6 Jul 2024 13:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59DE135A79;
+	Sat,  6 Jul 2024 13:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3QUkE3W"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LYLEM4PD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA082757EA;
-	Sat,  6 Jul 2024 13:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFC71CA9E;
+	Sat,  6 Jul 2024 13:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720273297; cv=none; b=oHJbQlR9Jab2NrwElzKfgC9D/253dZswugU8uzbifEIuFUquZKP0graAprk5BfexG16SMAcXZz8RGkATW3iTqFPv1dGglfhjcWdRX6yxlFT20wtMwWHHFMIcTZVNS8V+TK3wB4TFYyBJYuzL0Ttyn+X3gaglHurp+qunbpZ78ow=
+	t=1720273454; cv=none; b=PvU8He+Fo1MnN8dMwU2a7XHMgqhB7oQ+F9kbNGKPT+0tHY6ykuhkU/aTwbfEaVgOFLQV1aVW7tUuQ1+Dz02wBfSWkVb18KIrY00CbgH09m7wmkt2g/mbn2/2Bck1j/jo6vUB1N8piSo8f04z3kkXzHXZQVOogEkRzn4GX7wa0XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720273297; c=relaxed/simple;
-	bh=tpCfZvqW9yvz1Mou1k19Lf7SlicdQ3FqOCMPrEm8fKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Td0/4ianOsgfOs0ZDtXm8AWdZUN3gabxUi01Mj8UGPfjQaLT6ZkYwI+8IOZBS69/MAFNkX3tVAcj83eBTSNHbAk66iQohmiqrjSsFY8OEb13OKCF9nZnFo3iNRxpMfSLegsK2icsh/7uLhCpJ7NIZO7GCf/ky0Eii/pAu7HuVJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C3QUkE3W; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77c9d3e593so179742666b.0;
-        Sat, 06 Jul 2024 06:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720273294; x=1720878094; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tpCfZvqW9yvz1Mou1k19Lf7SlicdQ3FqOCMPrEm8fKo=;
-        b=C3QUkE3WsT6MpIt8UFXyRgo65yqe82zcg8y9HqjZHOQyeL7vt/EovnI/Hf2p7iPfkK
-         HmJGO2d737Ox/v3Z0NC7+ykt9VbRAO8ZkWK6YPphhOCJo+3wpSFGXorfwo1AFnvRWq4N
-         6T1QhM+THizQ4Y5rT1cooo09QTr00zxcUd0uW7i1rcKIIVKadKHS/9n0K3Ick7m6ZOxg
-         3JXUfu0V4PPLxXsOlQTOI7qrbzWDbF61M0XzV6QPGOeCtdvOvvyJJsEwlV51PTmD+0Up
-         tOedLHgsuHBdXQCYEwc6CG6/aMwz6S9xmDNas5sVSi+KvPIVuY6LBi37vvocIq8042h8
-         /GGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720273294; x=1720878094;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tpCfZvqW9yvz1Mou1k19Lf7SlicdQ3FqOCMPrEm8fKo=;
-        b=geVVwDyVTiGID0U7PD5U+t0it9zsGK3k8DWVREkIdvM64jDL3gK+AQ35Kb7i9+ufbS
-         8M3tDDJN3FpIb1T0l+0/9XM7LANfn5z/i7LIt1wpFKFwxnH4p/SQbQCYFbUWaMOez6i6
-         WgilZ9Z2wOB7Y15ntXcIBO7MB1UEPV6PE4pHHS4LAr5Kvly3Q4gwtY3m5kqkgGD7v6I4
-         hkizgpNvZprYqZeF2VfKpXu48NuCV2AagvzfJdn7Mv1aYUdDVN868vrNSsD5Dyhtb3ID
-         P9MqOlExR7Vrj+i2nPD26BtQzRxI5If+MI6upf8e3lUNvt9PlFtQEU9QrWAveWAuCtpZ
-         XcOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpUxTIw0A1Jl5vrFOXjTylfJkfBd+kMwRMHK0GRQPniG6BoqTjZLRzay8Eu2Mc0VefV4EZ7Va/ux820h/7XTgYQa7hOAn6uQaNXPTeURs4tsnRODm3GL/3ZGoalypxgTxce42QKqaLk1IWnJK50iwV64HxxOwISjLxvqJIomPWd4rIRjMem871SvYMA5B8uMxY+McwefIiiAnPrRJEQVIL+Q==
-X-Gm-Message-State: AOJu0YxA9OlxfaMl09axa+UJBA/YhzlXp/gwijeA+17xJXFr58DSG86Y
-	28DQCj+VhmLcJ70VIZ0zvBr9lwhwatKXwjsJydBevmSJ88rOkemZ
-X-Google-Smtp-Source: AGHT+IE0ZemeIlvOgoNhCkacJ61zvRUuBkEL0wi6xZgy1jnf1+/l/KIsA+BVHMf2hMT1fUew2XvFzQ==
-X-Received: by 2002:a17:906:5293:b0:a6f:b67d:959e with SMTP id a640c23a62f3a-a77ba71188cmr379032566b.53.1720273293897;
-        Sat, 06 Jul 2024 06:41:33 -0700 (PDT)
-Received: from [192.168.1.13] (bzc167.neoplus.adsl.tpnet.pl. [83.30.48.167])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77e1ff678fsm66100066b.137.2024.07.06.06.41.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Jul 2024 06:41:33 -0700 (PDT)
-Message-ID: <5bb295b8-a79f-48ea-800c-3176c2402021@gmail.com>
-Date: Sat, 6 Jul 2024 15:41:30 +0200
+	s=arc-20240116; t=1720273454; c=relaxed/simple;
+	bh=QJcHcX/QvZow96GFmJaUaP8YM+2ojba68Fwc4yozaBQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=BISwhfzP2pzLm8ggHRWMDvFo/66Ne0RqEMrhHzjYiDGAAoe8fGTOulxAwZTdwCOs7yXON8xYeK7gEt6aEgFAVhC9RXEBHUqoJ/tsU48yWTfoEtlA7QTOd+GxLpI43VgkwKnjlaHbYPgVjoEhozOcwOM4bMGjDrTZIQFcfqZCdzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LYLEM4PD; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720273453; x=1751809453;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=QJcHcX/QvZow96GFmJaUaP8YM+2ojba68Fwc4yozaBQ=;
+  b=LYLEM4PD+fwi/ZDST9qzFij6EWEPcrGelO9L/VIwunOU9tHLGEsAQeDT
+   Z+eba1lx+RfqBvRTcJIMV3b0UVhWR20BicOPr6oNhNz9HXxHydThR/WLN
+   KH8/HXgLmVlv8utE8eVljMe8IIihX6ByygmaXel9gNnex13u39/dKrOic
+   aPQd624W7b8bOb85YhzvLinI+JD+LOqfIzsoXQKgfI/8TE0pN0VW6fJvq
+   vfDspIrSY7dT47N3CxYyT+71cnwguCDGcZTAhZy0LiRmxQxd1t1YqR41u
+   +0JtVo5f5+PbDY9f8MMwgv4EoydUIWi91QxmnNETBo/1UoQ6JoM1ScMtm
+   w==;
+X-CSE-ConnectionGUID: lfhqSrj/S8O/tmZJTqu89A==
+X-CSE-MsgGUID: IBELD3d4RBGw5USD1IDeMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="17742038"
+X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
+   d="scan'208";a="17742038"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 06:44:12 -0700
+X-CSE-ConnectionGUID: z/7+llWNTZ+XX1teFo7oIQ==
+X-CSE-MsgGUID: 5sJMXAkoRoWjTnepczNaRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
+   d="scan'208";a="47512408"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.111])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 06:44:09 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Sat, 6 Jul 2024 16:44:05 +0300 (EEST)
+To: Devin Bayer <dev@doubly.so>
+cc: corentin.chary@gmail.com, luke@ljones.dev, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3] platform/x86: asus-wmi: support the disable camera
+ LED on F10 of Zenbook 2023
+In-Reply-To: <20240628084603.217106-1-dev@doubly.so>
+Message-ID: <7e8ada6c-83b9-aa44-d5ca-70827ca1a363@linux.intel.com>
+References: <20240628084603.217106-1-dev@doubly.so>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] msm8937/msm8976/qcs404 icc patches
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Georgi Djakov <djakov@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240704200327.8583-1-a39.skl@gmail.com>
- <b4b94938-903a-40ba-baf3-d04226dc9f90@linaro.org>
-Content-Language: en-US
-From: Adam Skladowski <a39.skl@gmail.com>
-In-Reply-To: <b4b94938-903a-40ba-baf3-d04226dc9f90@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Fri, 28 Jun 2024, Devin Bayer wrote:
 
-On 7/5/24 08:49, Krzysztof Kozlowski wrote:
-> On 04/07/2024 22:02, Adam Skladowski wrote:
->> This series introduce new ICC drivers for some legacy socs
->> while at it also updates a bit of qcs404 driver which seems
->> to not receive much attention lately.
->> Please take in consideration i do not own any qcs404 board
->> so i cannot test anything else than if it compiles.
->>
->> Changes since v1
->> ================
->> 1. Reworded commit messages
->> 2. Adjusted yamls.
->> 3. Adjusted examples.
-> Adjusted to what? This is supposed to be specific.
->
-> BTW, you use here odd email address, so:
->
-> <form letter>
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC (and consider --no-git-fallback argument). It might
-> happen, that command when run on an older kernel, gives you outdated
-> entries. Therefore please be sure you base your patches on recent Linux
-> kernel.
->
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline) or work on fork of kernel
-> (don't, instead use mainline). Just use b4 and everything should be
-> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> patches to the patchset.
-> </form letter>
->
-> Best regards,
-> Krzysztof
->
-Indeed i send patches from different OS with old kernel tree inside,
-i haven't had idea about that.
+> Adds a sysfs entry for the LED on F10 above the crossed out camera icon on 2023 Zenbooks.
 
-Will update tree before sending.
-Regarding v3 which im going to send anyway, should i reword changes in v2?
+Thanks for the update, I've applied this into review-ilpo branch with 
+small (non-code) edits.
 
-Like in v2 i Adjusted yaml to look the way msm8953 is(seems its wrong).
+In future, please fold the changelog to 72 characters and include patch 
+history only after the first --- line so tools don't put it into the 
+commit message. I've handled these for you this time around so there's no 
+need to send another version because of those problems.
 
-Adjusting examples refers to removing redundant nodes from yaml examples.
-
-For sending i use this command:
-git send-email --to-cover --cc-cover patch-dir/*.patch --cc
-phone-devel@vger.kernel.org --cc ~postmarketos/upstreaming@lists.sr.ht
---cc-cmd='scripts/get_maintainer.pl --norolestats patch-dir/*.patch'
-
-Is switching to any different tool required?
-I doubt i would be able to do it without making some big mistakes.
-
+-- 
+ i.
+ 
+> v3
+> - add docs for WMI devices
+> - remove duplicate #define
+> 
+> v2
+> - Changed name from `platform::camera` to `asus::camera`
+> - Separated patch from patchset
+> 
+> v1
+> - https://lore.kernel.org/platform-driver-x86/20240620082223.20178-1-dev@doubly.so/
+> 
+> Signed-off-by: Devin Bayer <dev@doubly.so>
+> ---
+>  drivers/platform/x86/asus-wmi.c            | 35 ++++++++++++++++++++++
+>  include/linux/platform_data/x86/asus-wmi.h |  4 +++
+>  2 files changed, 39 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 3f07bbf809ef..4a9ad8b313e6 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -227,6 +227,7 @@ struct asus_wmi {
+>  	struct led_classdev lightbar_led;
+>  	int lightbar_led_wk;
+>  	struct led_classdev micmute_led;
+> +	struct led_classdev camera_led;
+>  	struct workqueue_struct *led_workqueue;
+>  	struct work_struct tpd_led_work;
+>  	struct work_struct wlan_led_work;
+> @@ -1533,6 +1534,27 @@ static int micmute_led_set(struct led_classdev *led_cdev,
+>  	return err < 0 ? err : 0;
+>  }
+>  
+> +static enum led_brightness camera_led_get(struct led_classdev *led_cdev)
+> +{
+> +	struct asus_wmi *asus;
+> +	u32 result;
+> +
+> +	asus = container_of(led_cdev, struct asus_wmi, camera_led);
+> +	asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_CAMERA_LED, &result);
+> +
+> +	return result & ASUS_WMI_DSTS_BRIGHTNESS_MASK;
+> +}
+> +
+> +static int camera_led_set(struct led_classdev *led_cdev,
+> +			   enum led_brightness brightness)
+> +{
+> +	int state = brightness != LED_OFF;
+> +	int err;
+> +
+> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CAMERA_LED, state, NULL);
+> +	return err < 0 ? err : 0;
+> +}
+> +
+>  static void asus_wmi_led_exit(struct asus_wmi *asus)
+>  {
+>  	led_classdev_unregister(&asus->kbd_led);
+> @@ -1540,6 +1562,7 @@ static void asus_wmi_led_exit(struct asus_wmi *asus)
+>  	led_classdev_unregister(&asus->wlan_led);
+>  	led_classdev_unregister(&asus->lightbar_led);
+>  	led_classdev_unregister(&asus->micmute_led);
+> +	led_classdev_unregister(&asus->camera_led);
+>  
+>  	if (asus->led_workqueue)
+>  		destroy_workqueue(asus->led_workqueue);
+> @@ -1631,6 +1654,18 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+>  			goto error;
+>  	}
+>  
+> +	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_CAMERA_LED)) {
+> +		asus->camera_led.name = "asus::camera";
+> +		asus->camera_led.max_brightness = 1;
+> +		asus->camera_led.brightness_get = camera_led_get;
+> +		asus->camera_led.brightness_set_blocking = camera_led_set;
+> +
+> +		rv = led_classdev_register(&asus->platform_device->dev,
+> +						&asus->camera_led);
+> +		if (rv)
+> +			goto error;
+> +	}
+> +
+>  error:
+>  	if (rv)
+>  		asus_wmi_led_exit(asus);
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index ab1c7deff118..d020fcbbcfb7 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -51,6 +51,10 @@
+>  #define ASUS_WMI_DEVID_LED6		0x00020016
+>  #define ASUS_WMI_DEVID_MICMUTE_LED		0x00040017
+>  
+> +/* Disable Camera LED */
+> +#define ASUS_WMI_DEVID_CAMERA_LED_NEG	0x00060078 /* 0 = on (unused) */
+> +#define ASUS_WMI_DEVID_CAMERA_LED	0x00060079 /* 1 = on */
+> +
+>  /* Backlight and Brightness */
+>  #define ASUS_WMI_DEVID_ALS_ENABLE	0x00050001 /* Ambient Light Sensor */
+>  #define ASUS_WMI_DEVID_BACKLIGHT	0x00050011
+> 
+> base-commit: 103a4e4a4351d3d5214c4f54fdf89f0f81b692ef
+> 
 
