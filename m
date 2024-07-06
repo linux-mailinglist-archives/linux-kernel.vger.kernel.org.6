@@ -1,83 +1,49 @@
-Return-Path: <linux-kernel+bounces-243393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D828D9295B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 00:44:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1F99295BA
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 00:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B721F217E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 22:44:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C431C20FDB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 22:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236DC405CC;
-	Sat,  6 Jul 2024 22:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HHo6cmX/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C066881E;
-	Sat,  6 Jul 2024 22:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3462436139;
+	Sat,  6 Jul 2024 22:52:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0BD1CD1F
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 22:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720305879; cv=none; b=daceC64R1r9JPl9Qar7xTFTBG01b9et1URjvkco+e70TNt7DQoW48m77qNPlyN22qMxR//XE6v0NTTxWUqQvSItTgSMeIhnI1gVF7zcgZ0FDTc4CLmjJmDv7kAWF0TczGNSnF5ak5vLQ0pr0njo/vlSzdbD8rgqzXv1HYoTgScs=
+	t=1720306364; cv=none; b=GyZNFtvXyNJUITCIFQT8osPFVxYiFB1JoL7AFgTxc1yaKhesiXZNPuwbvKwof6H/PhuMKSIHN3qxLIYGD96A8GX5uDsZRjQ0X1yCrhSUkGoqOXVlKV2CgpHVQcL+tiikjyBYDMWBEXsWZPj9WeaCvyB2HfqC9aRl8s0oM6b24ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720305879; c=relaxed/simple;
-	bh=WQySAcpdbRQmQL4PCMwk5G7kS07P/ADMvxxt0WpGKRw=;
+	s=arc-20240116; t=1720306364; c=relaxed/simple;
+	bh=ZK90u5RYphGiY8mFBPfe6XQyxZbvTFXAPWCE9dNGt4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jk9+/gbxbl+EmVapwTADyhFc4cp7R9yf75lW7xHdrtcdl+H04e5gEZfp8yeMbRdDhhIXxKszIS1IXL70rxPWBok8aBbsukqPjqygKLQfC2vCoxJVjdG975IvrSJBrzBvLbj15ufR4DZKv5wUyRStpBiVPDiLPhJYU/z+M6EkYng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HHo6cmX/; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720305878; x=1751841878;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WQySAcpdbRQmQL4PCMwk5G7kS07P/ADMvxxt0WpGKRw=;
-  b=HHo6cmX/fjOYs1R5lNizQGg4VGtJHQC6h1LEKcvpdStUJLmApRNZSdYq
-   pyj42si9tDC+dt8acrE89KXm6hn40UmUiIbbchVcGcyHZs4motYfAV9oc
-   D4ufbuRYzQAeX1L1HSFtm47s4E50JA+ag2s/K/ZFk+pOLQjzskJVLrJKG
-   WqxtQDEr+pxmKkeDwGFOF6+qy0jpcPzPfTYmfZEXs1UIXBzujMqamZXDn
-   yxG8cHDmKn4/TnGMmbdH0os4DJAXDDInRGhlGSEQeR4H0m0iZM/vXlCPk
-   GP40U0zURAIXxblA8MCnEtY2Gc2QknFgRDU2P8EvlmbaPGPcOjv0jQGHZ
-   w==;
-X-CSE-ConnectionGUID: kqQAxcayThq+x6FfPBxHhg==
-X-CSE-MsgGUID: UI8gMLXUT5e4NAH4SBDoBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="17756088"
-X-IronPort-AV: E=Sophos;i="6.09,188,1716274800"; 
-   d="scan'208";a="17756088"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 15:44:37 -0700
-X-CSE-ConnectionGUID: v4wp8Vc9TnyrP3ci4ZPCOA==
-X-CSE-MsgGUID: gWFq5QX3Rhe2NUcc64yoTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,188,1716274800"; 
-   d="scan'208";a="84688673"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 15:44:37 -0700
-Date: Sat, 6 Jul 2024 15:49:51 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
- LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
- <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
- <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
- Andi Kleen <andi.kleen@intel.com>, "Mehta, Sohil" <sohil.mehta@intel.com>,
- Zeng Guang <guang.zeng@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 08/11] perf/x86: Enable NMI source reporting for
- perfmon
-Message-ID: <20240706154951.4852b8c4@jacob-builder>
-In-Reply-To: <f5ec09c0-db5e-4c2f-b516-964e8d7eb2af@linux.intel.com>
-References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
-	<20240628201839.673086-9-jacob.jun.pan@linux.intel.com>
-	<f5ec09c0-db5e-4c2f-b516-964e8d7eb2af@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=MHjnsK6GMHns23VZ3HgqImwc8X0/btdCTrAqzOOt17li0CQ2S1ysW4eQUlie8sXAfoDt2mJ6tMxlllSQRZVoUze8i0CANlQj+EMv40TaZoylu9qReKj9myD4ZLGgREv/Vmi8xSAB3vCbIi6zpCs+ApVe81/0UsSt5QmvCOuQetc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A667BDA7;
+	Sat,  6 Jul 2024 15:53:05 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82D2F3F762;
+	Sat,  6 Jul 2024 15:52:39 -0700 (PDT)
+Date: Sat, 6 Jul 2024 23:50:41 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc: sunxi: sram: Constify struct regmap_config
+Message-ID: <20240706235041.1c5181b8@minigeek.lan>
+In-Reply-To: <20240705-sunxi-sram-const-regmap_config-v1-1-1b997cd65d0f@gmail.com>
+References: <20240705-sunxi-sram-const-regmap_config-v1-1-1b997cd65d0f@gmail.com>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,76 +53,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Fri, 05 Jul 2024 12:52:27 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-On Thu, 4 Jul 2024 10:44:23 -0400, "Liang, Kan" <kan.liang@linux.intel.com>
-wrote:
-
-> On 2024-06-28 4:18 p.m., Jacob Pan wrote:
-> > Program the designated NMI source vector into the performance monitoring
-> > interrupt (PMI) of the local vector table. PMI handler will be directly
-> > invoked when its NMI is generated. This avoids the latency of calling
-> > all NMI handlers blindly.
-> > 
-> > Co-developed-by: Zeng Guang <guang.zeng@intel.com>
-> > Signed-off-by: Zeng Guang <guang.zeng@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > 
-> > ---
-> > v3: Program NMI source vector in PVTPC unconditionally (HPA)
-> > v2: Fix a compile error apic_perfmon_ctr is undefined in i386 config
-> > ---
-> >  arch/x86/events/core.c       | 6 ++++--
-> >  arch/x86/events/intel/core.c | 6 +++---
-> >  arch/x86/include/asm/apic.h  | 1 +
-> >  3 files changed, 8 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> > index 1ef2201e48ac..be75bdcdd400 100644
-> > --- a/arch/x86/events/core.c
-> > +++ b/arch/x86/events/core.c
-> > @@ -46,6 +46,7 @@
-> >  
-> >  struct x86_pmu x86_pmu __read_mostly;
-> >  static struct pmu pmu;
-> > +u32 apic_perfmon_ctr = APIC_DM_NMI;>
-> >  DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events) = {
-> >  	.enabled = 1,
-> > @@ -1680,7 +1681,7 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
-> >  	 * This generic handler doesn't seem to have any issues where
-> > the
-> >  	 * unmasking occurs so it was left at the top.
-> >  	 */
-> > -	apic_write(APIC_LVTPC, APIC_DM_NMI);
-> > +	apic_write(APIC_LVTPC, apic_perfmon_ctr);
-> >  
-> >  	for (idx = 0; idx < x86_pmu.num_counters; idx++) {
-> >  		if (!test_bit(idx, cpuc->active_mask))
-> > @@ -1723,7 +1724,8 @@ void perf_events_lapic_init(void)
-> >  	/*
-> >  	 * Always use NMI for PMU
-> >  	 */
-> > -	apic_write(APIC_LVTPC, APIC_DM_NMI);
-> > +	apic_perfmon_ctr |= NMI_SOURCE_VEC_PMI;
-> > +	apic_write(APIC_LVTPC, apic_perfmon_ctr);  
+> `sunxi_sram_regmap_config` is not modified and can be declared as const
+> to move its data to a read-only section.
 > 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Cheers,
+Andre
+
+> ---
+>  drivers/soc/sunxi/sunxi_sram.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> It looks like the same value is written unconditionally.
+> diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
+> index 71cc377b5e24..2781a091a6a6 100644
+> --- a/drivers/soc/sunxi/sunxi_sram.c
+> +++ b/drivers/soc/sunxi/sunxi_sram.c
+> @@ -344,7 +344,7 @@ static void sunxi_sram_unlock(void *_lock)
+>  	spin_unlock(lock);
+>  }
+>  
+> -static struct regmap_config sunxi_sram_regmap_config = {
+> +static const struct regmap_config sunxi_sram_regmap_config = {
+>  	.reg_bits       = 32,
+>  	.val_bits       = 32,
+>  	.reg_stride     = 4,
 > 
-> Why not use a macro, e.g., APIC_DM_NMI_WITH_SOURCE, to replace the
-> variable?
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240705-sunxi-sram-const-regmap_config-d05d1bb0583c
 > 
-yes, it is unconditional now. I will use the following:
+> Best regards,
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -30,6 +30,8 @@
- #define APIC_EXTNMI_ALL                1
- #define APIC_EXTNMI_NONE       2
-
-+#define APIC_PERF_NMI          (APIC_DM_NMI | NMI_SOURCE_VEC_PMI)
-
-
-Thanks,
-
-Jacob
 
