@@ -1,198 +1,180 @@
-Return-Path: <linux-kernel+bounces-243080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813B092913C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:12:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7585F929143
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41A81F21354
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:12:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E501C21907
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F9518EA8;
-	Sat,  6 Jul 2024 06:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAriyQnG"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2551C693;
+	Sat,  6 Jul 2024 06:21:27 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D729179BD;
-	Sat,  6 Jul 2024 06:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B9F17722
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 06:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720246360; cv=none; b=hhxlRoWDRDF/w67e2eK3/+xiSqF7EAMbiRw7FZEL0s0WUV4ymnJI17MUbaDOCx+lbZxwrQVkgVMOwcDS2GcgWwgdrGra+2ALwVNid6lry5M+F5eCMO5L9bvQdfokytJO3GHnHp1YAU1N3J/x41V9ibw38wRxZalvbP/TVEVYT2c=
+	t=1720246886; cv=none; b=gwplNwk7f8XHjpogzUo3Dfc+DU5PM2+0NzgtsfbgADrue6Q+CBzqVb6SsFJxmhHF5D/fvZ4rQdfBsp736PRoaoxw1VqI1ooicoW35HVFxJidi5B9+gIXfIyXVIITPODDxOTHhCXtxo4+mZdrK6n++ByXB++h0cOE8e0+n7w63Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720246360; c=relaxed/simple;
-	bh=2Fks1yXJtlGGjIbK5eKtS5Vm+73eQlEo1L2qioOC/fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYTSrhiMCtN4RrlDlNpuehhL96ysc//NPMqcIoHfNDoKExPykQbtX4VBQK5X3feONnWiGvSsswNxtt3EesPrKYFklB/W4vi/c2o4wpeTC38M7XWO/nD0YtrFnF8dMSGhQPGOutqohMCmW8i+Oy2G/w3LAo3JG9HJ+sdgiuHhYTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAriyQnG; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a77e392f59fso28626866b.1;
-        Fri, 05 Jul 2024 23:12:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720246357; x=1720851157; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDbSGOTT29nUQuDrfA04vbxY/zhE1PwPtnbE9KH53Hw=;
-        b=TAriyQnGPzmsbdTlygUHRrLhe0UtDgnJrhChgxngpeltvhwPVp7umXWUTaKXyIowUt
-         r1HD//SPqBdjkbYAAp8JB/GLEv4KqKWOTcgouJ1B2F3i/8ly1TdyAabJwg0CXhc0a2hK
-         /jqH6HtT1CFB470HELQVa4tSwqDYjVyQIrXW+R2rclkilWaBlv4kNNvibYnSHgCn2qQk
-         JZRfrtA+ajKomkcm52BJ4xGqqB1+sl3JUOdd3uLWOd8GPmsNuymoSkJ5Eh6lw94vQ/ni
-         65y+dAj9X1isiqvEEifaCK2UcSQl89Fkuip7LxhXXxupTcn2KQ15pgmwwghR9LzIvJvJ
-         KkrQ==
+	s=arc-20240116; t=1720246886; c=relaxed/simple;
+	bh=i+YznmfnmStVata3WBXb1cgfkdx0doyoSeWA+buQSsc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j1YiZdHwAkt2rT1Q/LQfke+r7Q+nAvYI4Ji7b8ysrtYoaihBVaCNDSqgK1S7OvtyXAb8JSRNvAGY8j3pUCHuqFeMA6ffy5tR+7jNTbyOFb+KlvF8WqZGt4ThGLPvBVu/ojFu1seh7KgIwkiRItbWMfHhv7GlhHtMrgUM1RkuHak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f8f8538036so13870039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 23:21:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720246357; x=1720851157;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FDbSGOTT29nUQuDrfA04vbxY/zhE1PwPtnbE9KH53Hw=;
-        b=Y4RvmHw3z0M9GRe2BV+cHH7TmGJkh822umUTz6O+fb2RHcmO+jKJaLqAkIVMlQnUXw
-         yQbSdr+mrERYtICznLXf13q17x5HAXHyln6MC5ThBz02Yw0rbY4A3ftYBMNzhNy4f/2B
-         8/+G0pLWQMI5DYT7SSGwEyK21IXKEkTiM3CMKYurDOaG/oT8xMmluiVZpmX+mT+QszJ5
-         bJTMbRAUMHRIVR6I9VVr9a6NnGn4DaxGS7YcvOmSFs+kP/Xpn2UycSEIZo88wYWnIPJe
-         Fud04LpZvTMz2AbwwI3O9ZpQDZhn02y1bcGLskQHxYChLr1JVEFz68mK6Ya342UgZj5i
-         TE8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUyoiHMbWcU0Z3+ht4TxXUN40H4I4nTyxMenRvCdcmRhCNn+e+UE1cuvBBjyU8fzaVvecFMsu4NzgZzmP3VkML1qPLJUfiNtuIQsRhZXjqhTDvGY0oQsoTIgZ4aWzgAX3q1hd75meXUu9Hn
-X-Gm-Message-State: AOJu0YzykQL1KoI5lbU3GsBVTsYIeQGc7jEi7iLtuDVDG25H0R3tb+qz
-	WOlx0Lt0GmZMynqzsOiu+A6FOCMZtfgxIR3qF4LZG+4NVnYddFZr
-X-Google-Smtp-Source: AGHT+IFQGo+Vs5pdkor1uOiOtgu7cQVjKdGdWWlD+aVNznwVI9BiGzRyrVGIoVnnnwlHjSZMnv1bOw==
-X-Received: by 2002:a17:907:7da0:b0:a77:cf9d:f496 with SMTP id a640c23a62f3a-a77cf9df66bmr257510066b.39.1720246357279;
-        Fri, 05 Jul 2024 23:12:37 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77b6f7649bsm196884466b.193.2024.07.05.23.12.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 05 Jul 2024 23:12:36 -0700 (PDT)
-Date: Sat, 6 Jul 2024 06:12:36 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, akpm@linux-foundation.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH 2/3] modpost: .meminit.* is not in init section when
- CONFIG_MEMORY_HOTPLUG set
-Message-ID: <20240706061236.snp4r2tixx3h7hfe@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240702234008.19101-1-richard.weiyang@gmail.com>
- <20240702234008.19101-2-richard.weiyang@gmail.com>
- <CAK7LNAR08Nx3-8XYe4qmUegDFo2zLUvkVdA1t51g1Bamh5Tteg@mail.gmail.com>
- <20240705065456.dogycpd37jun44p5@master>
+        d=1e100.net; s=20230601; t=1720246884; x=1720851684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HvF3U4FNYQ7TdKEZe0QBJjv+VB2dCsN7syqEZ5rBFqs=;
+        b=aSZS9/LlYpGhnyG4LV1m0xJh6tT+SYN9uswSn2h8E1o+cl/PLyxDUGbon8lX30PdNr
+         mA95TscbpvZTzHqJXNI9wpvzTgjPiGah5KF9bupf/j1xDHmWoqIyBmhUJKBTqZ8TMWzj
+         8592Iep+xreTcbzKmbmc54z4VPoD4/H5bMQP9VfgPDC+C8jXkYNZ1OgH3i9hM/+Hz3K6
+         zhlQ2oOepLCO45mGmzUlaA3vXMvYQ5mH7VlfhS6yEwWMexQ21hFp9j0ZIuAjluWSbs/z
+         8WCIb9Pc+8cxT8yhuo67nkzqRHzItLS2ssPQL9ey1Z21Xe+eFoWbaFFbKMmSo6fkvWLU
+         ZDdg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/1SxMdihxu1LUK0M6a37nrV8F1eIU3Lzp8cg69zYK0/jKtn9fgdAbvCRM4fBX5lc0ZftfSlYtGqbhg/ANHeqAI9eSM6wr9vAAyIm0
+X-Gm-Message-State: AOJu0YwAdTv3HmNSIhPNyb1dX+MoDl+oRhemKCXyRVUJXNVqM6b4rTBH
+	dzrYOUarulGMdMIChfNIxl4mDgc3RU373tni4DKpElHztNW38BHfLtyEkOS0KFJaG0LudjHJ3eI
+	NyZY9owQh04ULYMnmwxuJtrvTjj3zMExqAGV5w6b2/9zf/NpuBnlQ8lo=
+X-Google-Smtp-Source: AGHT+IFpWxQJpIFnmxzXWBs15CP8b1VBO0TV0e8rpooFaScrwB1N3bvOKJLR8nS7xeX/LFMD/9sE3u91wfQeExUYsXz2heCWk7Oc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240705065456.dogycpd37jun44p5@master>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Received: by 2002:a05:6602:2cd3:b0:7f6:8521:fb2f with SMTP id
+ ca18e2360f4ac-7f68521fcdcmr20268139f.1.1720246884262; Fri, 05 Jul 2024
+ 23:21:24 -0700 (PDT)
+Date: Fri, 05 Jul 2024 23:21:24 -0700
+In-Reply-To: <000000000000adb970061c354f06@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000767898061c8e30e8@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] general protection fault in dev_map_redirect
+From: syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bigeasy@linutronix.de, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net, 
+	eddyz87@gmail.com, haoluo@google.com, hawk@kernel.org, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
+	netdev@vger.kernel.org, patchwork-bot@kernel.org, sdf@fomichev.me, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 05, 2024 at 06:54:56AM +0000, Wei Yang wrote:
->On Wed, Jul 03, 2024 at 11:44:38PM +0900, Masahiro Yamada wrote:
->>On Wed, Jul 3, 2024 at 8:40 AM Wei Yang <richard.weiyang@gmail.com> wrote:
->>>
->>> .meminit.* is not put into init section when CONFIG_MEMORY_HOTPLUG is
->>> set, since we define MEM_KEEP()/MEM_DISCARD() according to
->>> CONFIG_MEMORY_HOTPLUG.
->>>
->>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
->>> CC: Mike Rapoport (IBM) <rppt@kernel.org>
->>> ---
->>>  scripts/mod/modpost.c | 10 ++++++++++
->>>  1 file changed, 10 insertions(+)
->>
->>
->>
->>NACK.
->>
->>
->>The section mismatch is performed _unconditionally_.
->>
->>
->>
->>In the old days, we did this depending on relevant CONFIG options.
->>It was more than 15 years ago that we stopped doing that.
->>
->>
->>See this:
->>
->>
->>commit eb8f689046b857874e964463619f09df06d59fad
->>Author: Sam Ravnborg <sam@ravnborg.org>
->>Date:   Sun Jan 20 20:07:28 2008 +0100
->>
->>    Use separate sections for __dev/__cpu/__mem code/data
->>
->>
->>
->>
->>So, if you wanted to check this only when CONFIG_MEMORY_HOTPLUG=n,
->>you would need to add #ifdef CONFIG_MEMORY_HOTPLUG to include/linux/init.h
->>
->>That is what we did in the Linux 2.6.* era, which had much worse
->>section mismatch coverage.
->>
->
->Masahiro 
->
->If you would give me some suggestions, I'd appreciate it a lot.
->
->The original thing I want to do is to put function __free_pages_core() in
->__meminit section, since this function is only used by __init functions and
->in memory_hotplug.c.  This means it is save to release it if
->CONFIG_MEMORY_HOTPLUG is set.
->
->Then I add __meminit to function __free_pages_core() and face the warning from
->modpost.
->
->  WARNING: modpost: vmlinux: section mismatch in reference: generic_online_page+0xa (section: .text) -> __free_pages_core (section: .meminit.text)
->
->A .text function calls init code is not proper. Then I add __meminit to
->generic_online_page too. Then I face this warning from modpost.
->
->  WARNING: modpost: vmlinux: generic_online_page: EXPORT_SYMBOL used for init symbol. Remove __init or EXPORT_SYMBOL.
->
+syzbot has found a reproducer for the following issue on:
 
-I guess I found the correct way.
+HEAD commit:    0b58e108042b Add linux-next specific files for 20240703
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1228a3b9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ed034204f2e40e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=08811615f0e17bc6708b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12512bc1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fe346e980000
 
-Add __ref to generic_online_page to not issue a warning.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d079762feae/disk-0b58e108.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e53996c8d8c2/vmlinux-0b58e108.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a0bf21cdd844/bzImage-0b58e108.xz
 
->Function generic_online_page() is exported and be used in some modules. And is
->not allowed to use init tag.
->
->When looking into the code, this warning is printed by this code:
->
->   #define ALL_INIT_SECTIONS INIT_SECTIONS, ALL_XXXINIT_SECTIONS
->   
->   if (match(secname, PATTERNS(ALL_INIT_SECTIONS)))
->   	warn("%s: %s: EXPORT_SYMBOL used for init symbol. Remove __init or EXPORT_SYMBOL.\n",
->   	     mod->name, name);
->
->If my understanding is correct, the code means we can't use a function in init
->section, since the code will be released after bootup.
->
->But for this case, when CONFIG_MEMORY_HOTPLUG is set, the section .meminit.*
->is not put into the real init sections. So the functions are not released and
->could be used by modules. This behavior is introduced in commit
->eb8f689046b8(the one you mentioned above).
->
->So the check here is not proper to me. We should exclude .meminit.* from
->ALL_INIT_SECTIONS.
->
->Looking forward your suggestion and a proper way to handle this.
->
->-- 
->Wei Yang
->Help you, Help me
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com
 
--- 
-Wei Yang
-Help you, Help me
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000007: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000038-0x000000000000003f]
+CPU: 1 UID: 0 PID: 5101 Comm: syz-executor153 Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
+RIP: 0010:__bpf_xdp_redirect_map include/linux/filter.h:1699 [inline]
+RIP: 0010:dev_map_redirect+0x65/0x6a0 kernel/bpf/devmap.c:1015
+Code: 48 c1 e8 03 80 3c 28 00 74 08 48 89 df e8 83 b3 3d 00 4c 8b 2b 4d 8d 7d 38 4c 89 fb 48 c1 eb 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 03 84 c0 0f 85 6e 04 00 00 41 8b 2f 89 ee 83 e6 02 31 ff
+RSP: 0018:ffffc9000355f6e8 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000007 RCX: ffff888018b78000
+RDX: 0000000000000000 RSI: 000000000355f738 RDI: ffff8880183a2800
+RBP: dffffc0000000000 R08: 0000000000000007 R09: ffffffff81b5ee2f
+R10: 0000000000000004 R11: ffff888018b78000 R12: 000000000355f738
+R13: 0000000000000000 R14: 0000000000000008 R15: 0000000000000038
+FS:  000055557cbd4380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000f000 CR3: 0000000078ac6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bpf_prog_ec9efaa32d58ce69+0x56/0x5a
+ __bpf_prog_run include/linux/filter.h:691 [inline]
+ bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+ bpf_prog_run_generic_xdp+0x679/0x14c0 net/core/dev.c:4962
+ netif_receive_generic_xdp net/core/dev.c:5075 [inline]
+ do_xdp_generic+0x673/0xb90 net/core/dev.c:5134
+ tun_get_user+0x2805/0x4560 drivers/net/tun.c:1924
+ tun_chr_write_iter+0x113/0x1f0 drivers/net/tun.c:2048
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa9a2adcf90
+Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 31 e1 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+RSP: 002b:00007ffd3cd09788 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa9a2adcf90
+RDX: 000000000000fdef RSI: 0000000020000100 RDI: 00000000000000c8
+RBP: 0000000000000000 R08: 00007ffd3cd098b8 R09: 00007ffd3cd098b8
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
+RIP: 0010:__bpf_xdp_redirect_map include/linux/filter.h:1699 [inline]
+RIP: 0010:dev_map_redirect+0x65/0x6a0 kernel/bpf/devmap.c:1015
+Code: 48 c1 e8 03 80 3c 28 00 74 08 48 89 df e8 83 b3 3d 00 4c 8b 2b 4d 8d 7d 38 4c 89 fb 48 c1 eb 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 03 84 c0 0f 85 6e 04 00 00 41 8b 2f 89 ee 83 e6 02 31 ff
+RSP: 0018:ffffc9000355f6e8 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000007 RCX: ffff888018b78000
+RDX: 0000000000000000 RSI: 000000000355f738 RDI: ffff8880183a2800
+RBP: dffffc0000000000 R08: 0000000000000007 R09: ffffffff81b5ee2f
+R10: 0000000000000004 R11: ffff888018b78000 R12: 000000000355f738
+R13: 0000000000000000 R14: 0000000000000008 R15: 0000000000000038
+FS:  000055557cbd4380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000f000 CR3: 0000000078ac6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	48 c1 e8 03          	shr    $0x3,%rax
+   4:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1)
+   8:	74 08                	je     0x12
+   a:	48 89 df             	mov    %rbx,%rdi
+   d:	e8 83 b3 3d 00       	call   0x3db395
+  12:	4c 8b 2b             	mov    (%rbx),%r13
+  15:	4d 8d 7d 38          	lea    0x38(%r13),%r15
+  19:	4c 89 fb             	mov    %r15,%rbx
+  1c:	48 c1 eb 03          	shr    $0x3,%rbx
+  20:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  27:	fc ff df
+* 2a:	0f b6 04 03          	movzbl (%rbx,%rax,1),%eax <-- trapping instruction
+  2e:	84 c0                	test   %al,%al
+  30:	0f 85 6e 04 00 00    	jne    0x4a4
+  36:	41 8b 2f             	mov    (%r15),%ebp
+  39:	89 ee                	mov    %ebp,%esi
+  3b:	83 e6 02             	and    $0x2,%esi
+  3e:	31 ff                	xor    %edi,%edi
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
