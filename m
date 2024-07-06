@@ -1,113 +1,181 @@
-Return-Path: <linux-kernel+bounces-243281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D27B9293F9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:05:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC6E9293FD
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C932835D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:05:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBD631F228B5
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0831A137903;
-	Sat,  6 Jul 2024 14:05:31 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527E113A245;
+	Sat,  6 Jul 2024 14:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hgY7G3jm"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52473131E38;
-	Sat,  6 Jul 2024 14:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F200512F5B1;
+	Sat,  6 Jul 2024 14:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720274730; cv=none; b=FyWJOVzsQGcOTE5CrB/x6MycQMrY4mphh9f1JSb2zPpQjSe5hbvkh5EmqrQeXzP8MY8uql1YJ3dzb6vZ8DEYJdeV54xvB6ThPRWUdUYvaetXOHFT7v3adoqVws8HoIrknCuRZEHr9tV3n0+0WfQpSLaxD748SMm2zjbCleSGMr8=
+	t=1720274819; cv=none; b=MH2fElY2JKeUKVPz5NbA4ri41kwc2ycy5kvJQnspHlGr7CZ07QFCIgeKX6ySLE1mjJweun3njPuA+PJVmn+RtIv+K9Yhc7Ic4ti4vGzlUxWn0vdTe9Cth7dwl9Su77CPG7CulQqRTrEJvWKFYZ0pFMIe0rMAwKGKb8Lv9q0N74o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720274730; c=relaxed/simple;
-	bh=MSc8OTMQZrHOQM8n4bGSW9rNoDlLTQ/CsDbfWASvVmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K8RUJQx5NKx+OnlkSBjwvuxSPyaa7ck1TpxDd5jTAcU9F+bevXloSWfCw93ZItp3xTOupMoakuT2tsBEnOJCVivIw6BaPPRLIuKWMCgFB3yw0g5CITAxG8AXFj3O+YgkBaavRIykpr8EAD+JjdVQcJgPz02Tgm9QGhGDZZ/CEFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Sat, 6 Jul 2024 14:05:24 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] serial: 8250: don't lost port's default capabilities
-Message-ID: <20240706140524.GYA4122589.dlan.gentoo>
-References: <20240706082928.2238-1-jszhang@kernel.org>
+	s=arc-20240116; t=1720274819; c=relaxed/simple;
+	bh=FJYWZgERK6AfPlLkLPSaJP2zKhwTtNKHakJxE7nKzkI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H/0POvenHfAIahKyTHbTJkMm4SQMMEq/kxByBlt0pJofF4rWV1Z0f2K+sRPhXsfIncNj2K/SbMHULER1k4SgtewFCe+2iA17ApGVn92piOhIQkTW7G1WFyYXCJsuJa5ql6lxOvAoSNoYabY7E0580B8V6qKCdUIyuomJh709d0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hgY7G3jm; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a77c2d89af8so247313766b.2;
+        Sat, 06 Jul 2024 07:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720274816; x=1720879616; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X4lGVJnjwiIgh/4bKQak60cgJ03UTxinvLEVUXyN/F0=;
+        b=hgY7G3jmYjroVeIj/nN9trJ4UeA36GFNVpGMzYnqbFcewfWzjiNHqXDYYt7lt2Sj+F
+         08HE1A9kq5wjz6MMilngh/VrWHJZ2kcfeC9Q1lPQPM1WULCebrBYsPiHNGsT/iTjTB2L
+         dCiWNV3CpDTM2BOHFbMnG0F8sM2pTXa2apKqF9ZeBTKs4vs7cxdMQW/yya4SBP45v6he
+         BN1YB149456hjsZxDBo1ape69rsPlgRevf4HTmauNv8vnkjWzPWLjbe2gsnXBDKcE0vy
+         K2BYJnVnTNejS6YC5fgQv9GW8/+yoYoszSJ1VmqEYGSNE2dQApGBEINNM3msjpSW5FtH
+         qMxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720274816; x=1720879616;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4lGVJnjwiIgh/4bKQak60cgJ03UTxinvLEVUXyN/F0=;
+        b=Ox40Zcdysr7293kpKXrd7OTyOnp1nTC5fCM9M5jdKHxUybVW21y+a6RRImFmyoCOjt
+         6YEIX/OWAT6KGhSJNQwTnqLv5zaL0sG4z9d/K0GjB+pppcUWwA8elrx/2MCilbtN+mid
+         n5fXTm2os440Fy6pab1DEq9W3coBI/3+RlqAcUK7HmGzsVs+pfAeUZCZkEmz1LpLUhKl
+         QQtTr0GS/RjYiUrTN2SDBOHIobqHs6JsfPxpRL/5jrZMMej9hI3hNDHVKgWCG+aQ4Lv+
+         mY8gFTiKIfJtJItWU3YfNkOFmCseLrARyzNuBGO8sgjML42o2JVEPQf88T5/DmRpjTjp
+         Uufg==
+X-Forwarded-Encrypted: i=1; AJvYcCUO3FiuLpiNxNQpRO22AFBlaLHiBksWRHiCpxesaMBwpPkU1BdZqMvL/ByWGdltNuMJf1LU3iHHfkuaqJyuuNvo32V0HwnBpxTJnqzVMYQB5D4QCCIge0T/Hnv7JB95xZNyvSdbPSE4u/9E0vPqU320x5h7PKoH0fR54359dLv99x6MXSx6CM5KFiMrziLH3RdqB4YIeVsYg/O9nDg2Bwe+qw==
+X-Gm-Message-State: AOJu0Yx1u+18tzEDYURs+sRmxXOz04/Spc+Sm2sMgIDQdruPs5/cVzoz
+	JOr+10n3BPZ9MhVdUGbWxpuZ1gAyd5RhHUiydlZtHw7P12nYo8I8
+X-Google-Smtp-Source: AGHT+IHrupOKilPkKjgsniBzZ76M0pNSKz1zD6YUiQRTviCVntMFiiCFl5J31jzwgec/M3YvxvJYmw==
+X-Received: by 2002:a17:906:fc08:b0:a77:d6c7:df5c with SMTP id a640c23a62f3a-a77d6c7e065mr266697566b.17.1720274816092;
+        Sat, 06 Jul 2024 07:06:56 -0700 (PDT)
+Received: from [192.168.1.13] (bzc167.neoplus.adsl.tpnet.pl. [83.30.48.167])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77e6e700f4sm42056466b.60.2024.07.06.07.06.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Jul 2024 07:06:53 -0700 (PDT)
+Message-ID: <7e918762-1175-4ad1-b595-3d1992b6c4f7@gmail.com>
+Date: Sat, 6 Jul 2024 16:06:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240706082928.2238-1-jszhang@kernel.org>
-
-Hi
-
-On 16:29 Sat 06 Jul     , Jisheng Zhang wrote:
-> Commit b0b8c84cf58d ("serial: of_serial: Handle auto-flow-control
-> property") added support for fifo-size and hw-flow-control properties
-> to avoid adding new types to 8250.c for UARTs that are compatible with
-> the standard types but that have different size fifo or support 16750
-> compatible auto flow control. We avoided many new 8250 port types with
-> this nice feature, but there's a problem, if the code detects fifo-size
-> or auto-flow-control property, up->capabilities will be set
-> accordingly, then serial8250_set_defaults() will ignore the default
-> port's capabilities:
-
-> 
-> |if (!up->capabilities)
-> |	up->capabilities = uart_config[type].flags;
-> 
-so the previous old logic is trying to override the config of 'type' uart,
-while this patch try to extend capabilities with default config of 'type' uart as base
-
-I tend to agree this is right direction (but wasn't 100% sure..)
-
-btw, Jisheng, can you also check serial8250_do_startup()? which has similar logic
-
-> If the port's default capabilities contains other bits such as
-> UART_CAP_SLEEP, UART_CAP_EFR and so on, they are lost.
-> 
-> Fixes: b0b8c84cf58d ("serial: of_serial: Handle auto-flow-control property")
-
-I believe the commit just reveal the problem, make it more visible, but not the root cause,
-'git blame' lead to b6830f6df8914f ("serial: 8250: Split base port operations from universal driver")
-as the original commit introduce this logic which seems exist long time ago..
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] dt-bindings: interconnect: qcom: Add Qualcomm
+ MSM8976 NoC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Georgi Djakov <djakov@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240704200327.8583-1-a39.skl@gmail.com>
+ <20240704200327.8583-2-a39.skl@gmail.com>
+ <03e96fa4-b916-4121-a9bd-bfcd40fb10b3@linaro.org>
+Content-Language: en-US
+From: Adam Skladowski <a39.skl@gmail.com>
+In-Reply-To: <03e96fa4-b916-4121-a9bd-bfcd40fb10b3@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  drivers/tty/serial/8250/8250_port.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> index 893bc493f662..e20614241229 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -3245,8 +3245,7 @@ void serial8250_set_defaults(struct uart_8250_port *up)
->  			up->port.fifosize = uart_config[type].fifo_size;
->  		if (!up->tx_loadsz)
->  			up->tx_loadsz = uart_config[type].tx_loadsz;
-> -		if (!up->capabilities)
-> -			up->capabilities = uart_config[type].flags;
-> +		up->capabilities |= uart_config[type].flags;
->  	}
->  
->  	set_io_from_upio(port);
-> -- 
-> 2.43.0
-> 
+On 7/5/24 08:55, Krzysztof Kozlowski wrote:
+> On 04/07/2024 22:02, Adam Skladowski wrote:
+>> Add bindings for Qualcomm MSM8976 Network-On-Chip interconnect devices.
+>>
+>> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+>> ---
+>>  .../bindings/interconnect/qcom,msm8976.yaml   | 63 ++++++++++++
+>>  .../dt-bindings/interconnect/qcom,msm8976.h   | 97 +++++++++++++++++++
+>>  2 files changed, 160 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,msm8976.yaml
+>>  create mode 100644 include/dt-bindings/interconnect/qcom,msm8976.h
+>>
+> This is not a valid path. Please correct it, otherwise tools cannot
+> validate it.
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Somehow got this weird idea out of qcom,msm8953.yaml
+
+seems its wrong over there too.
+
+Should proper line be like? :
+  See also:: include/dt-bindings/interconnect/qcom,msm8976.h
+
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,msm8976-bimc
+>> +      - qcom,msm8976-pcnoc
+>> +      - qcom,msm8976-snoc
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#interconnect-cells':
+>> +    const: 2
+>> +
+> I don't know what and why happened here. I asked for different order of
+> properties and properties are gone. Provide detailed changelog.
+
+For disappearing props it turns out clocks which i had defined for it
+aren't required so these were wiped from yaml+driver.
+
+>> +patternProperties:
+>> +  '^interconnect-[a-z0-9\-]+$':
+>> +    type: object
+>> +    $ref: qcom,rpm-common.yaml#
+>> +    unevaluatedProperties: false
+>> +    description:
+>> +      The interconnect providers do not have a separate QoS register space,
+>> +      but share parent's space.
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        const: qcom,msm8976-snoc-mm
+>> +
+>> +    required:
+>> +      - compatible
+>> +      - '#interconnect-cells'
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#interconnect-cells'
+>> +
+>
+> So no schema? Sorry, this is very confusing.
+>
+> I am not going to review the rest. You implemented some odd changes, not
+> what was asked. At least not entirely. With no changelog explaining
+> this, you basically expect me to do review from scratch like there was
+> no previous review.
+>
+> That's not how it works.
+>
+> Best regards,
+> Krzysztof
+>
+As both yamls will not differ much from qcom,msm8939.yaml 
+i moved compatibles in it for v3.
+
+Would be great to discuss it before resending on #linux-msm
+
 
