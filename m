@@ -1,97 +1,196 @@
-Return-Path: <linux-kernel+bounces-243246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B404A92937C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:14:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EA0929380
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F3E1C21457
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE0D1C20DF3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CB07D401;
-	Sat,  6 Jul 2024 12:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3092D8174E;
+	Sat,  6 Jul 2024 12:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgQ3AoNq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTNGvpul"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9ED17FE;
-	Sat,  6 Jul 2024 12:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D279461;
+	Sat,  6 Jul 2024 12:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720268037; cv=none; b=ZoN/H6b06dHsZ9xMymGbnOqS5eCyhAog+DGRb2YTj/CZUtx90zntdVNxhmMCeaLSOG9CXvi2I+lgyFnBWhlyhYD0Tr7O9+wYIK6ilGVOhlEnvZUIfQ2HFI29eolfA7s1RKjJCCt3YOeX0grnJP7FQ8DynOpvJeboc5aBrQMAQUA=
+	t=1720268158; cv=none; b=p7R7C5fM3KkaTjcLDEVNsm3hSdC+X5M/l2PfxZY9TP6VK4ClQ0ldFoVyunSaasrGzdFAas9uy71NwpKi9RTMOaECQJjgb0Urvz6aAgwqYwum/POYNbncGIIvyxeWslYQdXK6ICfoVxLHrk+wVyJVn+dct3kWg3kH6qeXMHNbC4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720268037; c=relaxed/simple;
-	bh=+atnM+sTNzc3s7SG9E8Qur1BUOFc6hJDcQTnxk3hqk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMrWSlGPIDincTE0S4bjyTZKvNgdkJdvvW2Q2EKWYhxlszvDIqYzGLfl1BgC09QqSG+rK3SRjFFMcIe0OA70Kjx3E9TbfJz6jwc++f3zoJScCceV4A7imIhR459SbPFJoyDLKzDj8bvL97R9uSFeoZn4upCDBDj2sCZv3FD8ODY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgQ3AoNq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 603EFC2BD10;
-	Sat,  6 Jul 2024 12:13:55 +0000 (UTC)
+	s=arc-20240116; t=1720268158; c=relaxed/simple;
+	bh=ewHfk6kp7DgjzAdnMopMg8nYiloA7F7Sv9n6J0f9y8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BhO8KNed7r44RXAgjd8pCJGBM3tQM5waZln3RzPKjuhwEm3xSrvYZh6qplenWT4F05NySrcghhZ2cLDMHYJbtlNEQIOrs2Fg3aZndbZmaz/tRnjt2Wd8xP2YqJBuLCF1OabN2E8lXPtV8OLFWcePqRffHbl7IoC519pSZbiY0pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTNGvpul; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13754C2BD10;
+	Sat,  6 Jul 2024 12:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720268037;
-	bh=+atnM+sTNzc3s7SG9E8Qur1BUOFc6hJDcQTnxk3hqk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fgQ3AoNqQ90COdJy8KxvdqruB7NIdqqEgrOdTs8UqpHMkXjCuwiubSvVv1PlF3AN+
-	 +If/folhBSCQTCh9kzcNAdL9A05MBH1FkKYniqO7BPkjOL2oFIpw9+NO7J0qUZialu
-	 9NUWb0Wpifp8D0cpQiI/GSXsVjYgDUQyGvtjrRuZkNaLG6zZpLjWaesTsmPAT1b3x1
-	 wYNT8OHgvBXz7kPdedkdWfkzI9WSekNCG78o1LrDtdNJnq4H4cJef5uUE1DVaykHl4
-	 2gVA3ZjLmOKtVP6myKUZnxCgVmuCgkybuf/Impjqui0tUm/oA3o7A2h2Mb6yQBbw8B
-	 RchMswYc+W+yA==
-Date: Sat, 6 Jul 2024 13:13:53 +0100
-From: Simon Horman <horms@kernel.org>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] udp: Remove duplicate included header file
- trace/events/udp.h
-Message-ID: <20240706121353.GC1481495@kernel.org>
-References: <20240706071132.274352-2-thorsten.blum@toblux.com>
+	s=k20201202; t=1720268157;
+	bh=ewHfk6kp7DgjzAdnMopMg8nYiloA7F7Sv9n6J0f9y8M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NTNGvpul4CFL8Ua3b+uNIcisnwGPlyKW+BLn9kE6R8yn/MWemz9lq3EWzAz5h9SVU
+	 FWxnZBhmfvHcWDkNBgqlwv9BtthYg4WwUTEePoY770I3ctXw16VPyTKLMgmUSjuaHi
+	 8cjErYdcZIc35qEuwesnutwYjtKhG57Pfg2TQlwyCpL90BvRGwqXtYGdzWWcnq6orC
+	 7BKBJC5Lh32ReUl4C1PceMPvsL/ZZWTBGd3iUoh2NB48nIdi9qSIv3bDoVQMwyTLUk
+	 0GRPu4bWm0MFEDmFRCF5/fL0YQZOjowV80XbE5AQrpSk4Nw+DQQ6FMGO0KKJQE3wzn
+	 olWNWrWD5ts3g==
+Date: Sat, 6 Jul 2024 13:15:49 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, jstephan@baylibre.com,
+ dlechner@baylibre.com, Conor Dooley <conor.dooley@microchip.com>,
+ tools@kernel.org
+Subject: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements
+Message-ID: <20240706131549.1f94449c@jic23-huawei>
+In-Reply-To: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
+References: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240706071132.274352-2-thorsten.blum@toblux.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 06, 2024 at 09:11:33AM +0200, Thorsten Blum wrote:
-> Remove duplicate included header file trace/events/udp.h and the
-> following warning reported by make includecheck:
-> 
->   trace/events/udp.h is included more than once
-> 
-> Compile-tested only.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+On Tue, 02 Jul 2024 17:34:04 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-Thanks, I see that trace/events/udp.h is also included on line 36.
+> This series adds the following improvements over the current AD7606's
+> driver implementation:
+>=20
+> - Fix wrong usage of gpio array
+> - Fix standby that was documented as ACTIVE_LOW but handled in the
+>   driver as if it was ACTIVE_HIGH
+> - Improve dt-bindings documentation
+> - Switch mutex lock to scoped guard
+>=20
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+This series is blowing up with b4, in that it is finding tags that were
+not given and I can't work out why.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Tried various options but even a simple b4 am -l 20240702-cleanup-ad7606-v3=
+-0-57fd02a4e2aa@baylibre.com
+Is merrily finding tags that I can find no record of.
+  =E2=9C=93 [PATCH v3 1/8] dt-bindings: iio: adc: adi,ad7606: normalize tex=
+twidth
+    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
+M/kernel.org)
+    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
+el.org)
+    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-1-57fd02a4e=
+2aa@baylibre.com
+  =E2=9C=93 [PATCH v3 2/8] dt-bindings: iio: adc: adi,ad7606: improve descr=
+iptions
+    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-2-57fd02a4e=
+2aa@baylibre.com
+  =E2=9C=93 [PATCH v3 3/8] dt-bindings: iio: adc: adi,ad7606: add supply pr=
+operties
+    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-3-57fd02a4e=
+2aa@baylibre.com
+  =E2=9C=93 [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: fix example
+    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
+M/kernel.org)
+    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
+org)
+    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
+el.org)
+    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-4-57fd02a4e=
+2aa@baylibre.com
+  =E2=9C=93 [PATCH v3 5/8] dt-bindings: iio: adc: adi,ad7606: add conditions
+    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
+org)
+    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
+el.org)
+    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-5-57fd02a4e=
+2aa@baylibre.com
+  =E2=9C=93 [PATCH v3 6/8] iio: adc: ad7606: fix oversampling gpio array
+    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
+M/kernel.org)
+    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
+org)
+    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
+el.org)
+    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-6-57fd02a4e=
+2aa@baylibre.com
+  =E2=9C=93 [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio state to matc=
+h the documentation
+    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
+M/kernel.org)
+    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
+org)
+    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
+el.org)
+    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-7-57fd02a4e=
+2aa@baylibre.com
+  =E2=9C=93 [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to scoped_guard
+    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-8-57fd02a4e=
+2aa@baylibre.com
+
+Take patch 7 for example, I can find no record or Rob or Conor replying to =
+that
+or giving tags on the cover letter.
+
+The only local parameter I have is to change the link path as you can see a=
+bove.
+
+Tried it with b4 0.14 and master as of today.
+
 
 > ---
->  net/ipv6/udp.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-> index c81a07ac0463..bfd7fff1bc0c 100644
-> --- a/net/ipv6/udp.c
-> +++ b/net/ipv6/udp.c
-> @@ -46,7 +46,6 @@
->  #include <net/tcp_states.h>
->  #include <net/ip6_checksum.h>
->  #include <net/ip6_tunnel.h>
-> -#include <trace/events/udp.h>
->  #include <net/xfrm.h>
->  #include <net/inet_hashtables.h>
->  #include <net/inet6_hashtables.h>
-> -- 
-> 2.45.2
-> 
-> 
+> Changes in v3:
+> - Remove the two first patches that were already picked up.
+> - Add styling corrections.
+> - [Patch 6/8] Improve commit message.
+> - [Patch 8/8] Replace every scoped_guard by simple guard.
+> - Link to v2: https://lore.kernel.org/r/20240628-cleanup-ad7606-v2-0-96e0=
+2f90256d@baylibre.com
+>=20
+> Changes in v2:
+> - Change scoped guard to guard(mutex)(&st->lock). This was tested with
+>   Rob's bot condition, and seems not to generate warning anymore.
+> - Reorder the commits for avoiding bisection issues and respect commit
+>   priority rules.
+> - Add vdrive-supply to required properties.
+> - Separate cosmetic changes from content ones in dt-binding
+>   descriptions.
+> - Move maxItems changes (and plural in descriptions) to the commit that
+>   adds conditions.
+> - Link to v1: https://lore.kernel.org/r/20240618-cleanup-ad7606-v1-0-f185=
+4d5c779d@baylibre.com
+>=20
+> ---
+> Guillaume Stols (8):
+>       dt-bindings: iio: adc: adi,ad7606: normalize textwidth
+>       dt-bindings: iio: adc: adi,ad7606: improve descriptions
+>       dt-bindings: iio: adc: adi,ad7606: add supply properties
+>       dt-bindings: iio: adc: adi,ad7606: fix example
+>       dt-bindings: iio: adc: adi,ad7606: add conditions
+>       iio: adc: ad7606: fix oversampling gpio array
+>       iio: adc: ad7606: fix standby gpio state to match the documentation
+>       iio: adc: ad7606: switch mutexes to scoped_guard
+>=20
+>  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 123 +++++++++++++++=
++-----
+>  drivers/iio/adc/ad7606.c                           |  47 ++++----
+>  drivers/iio/adc/ad7606_spi.c                       |   5 +-
+>  3 files changed, 115 insertions(+), 60 deletions(-)
+> ---
+> base-commit: 340fa834ae229a952db04a57ed13fd5d35d75818
+> change-id: 20240416-cleanup-ad7606-161e2ed9818b
+>=20
+> Best regards,
+
 
