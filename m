@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-243220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16FB92932D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:30:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B608C929331
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FE7AB223AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92481C211EA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B76816D305;
-	Sat,  6 Jul 2024 11:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDEF13777E;
+	Sat,  6 Jul 2024 11:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ka0BtGaI"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="aab3VH7X"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE841607BD
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C99416ABC6
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720264934; cv=none; b=eYKEsJK6ejTLmSufr87OFjQdbUQJfdE6AqKUSw3PbIq5y7T/kBOVc9UYsRXd77COebw1hnndhB4THHd6NEIauCA43XblIYRGoiCep2I8wO7Wgh3hdi9AJpfuFsETCyDLhJ/Fe2UlHhAD8gmNJ+HAikxLBafuNr6MP5MgBo+IIkU=
+	t=1720264935; cv=none; b=giMIrkgHa92Pzg9flxpHjdkONWuC59przsW5AJtsrcUi0G0bt1dfVqcF3XlYYVdiyhooNtJ/c640iRJe/qcdO1a55dl0LQsGiR3ultAkRyyTBwKCxWmtfL8kZkEfnXy7v354Jzi7hJGjwaeg9McGoPLWcQzleWI+9p4OdCRFhkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720264934; c=relaxed/simple;
-	bh=V8GzMYxUk0jHdZK4zpgyxLvV94uulnNsO+n9pA51jpk=;
+	s=arc-20240116; t=1720264935; c=relaxed/simple;
+	bh=oe9kE7IlLNP12Xetii5tL+q+oVquoer3DC9xvAqBaHc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f+i98IxN5we4COzA9gJdiileGAyvmnHFobkszNXKEaN8npsFbJQztqiXubMHuQ9IfeB7NmPbg6mjrrvsg/aJ5ZCMUn4FsrLmp7vJdKQ4aC+S1aXnbxRXZ6PY0TAN4HnwcEezY+Rkbfgn/AdtahQsER4d1k4TURieW3hg3x6hVPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ka0BtGaI; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=ZH6whkP6WKhe0htNCf0XPNSkxp5MiWIs6Ta6LKLXYyiaayezPwRAY0C57KguLOYGLG23dPKzrHLfnxh+dhr+tpx9hU7+qWuWGWl+YAO2+MuOQFkGzb/RZOS2v4S2HlkhhunBpIsGEnTsAovcYi1WuOUB2kvbyukTbn8gWlqE6v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=aab3VH7X; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=/P4DoAP5gYAxjEHPsExZWYzXzNikF5f0sRGxYHSLQ98=; b=ka0BtG
-	aI9yT89bk8EFs1JvtMldAVVSg8CFFNBeR2UiwyHQHn9Bt+H1LSLmD2CmQr2rx3GJ
-	InfW0SZ8Hb2a4kyVaQMmU/TflcKyPnuPpNDOrm3xqk1EGygZ7ENnSO05l6I5Ga2P
-	gSbfPNP7tzt24Xr7gtDAxE+N+tf3qIW/9TDx9uo/yYuxBqTqUEpX2HjLhb3aV0cL
-	7qMbD9X4KKY5anQs7k7Yb0zZaXUmR1eSgoEjnwyDh8Bib3VJmrVwY61ESI/eLE3m
-	37iADGECWFPQkFi6SqvqxpZwQhfTlJR324WTAPtj0efDu9vylxvRg3+aCikzRTOj
-	Bf5kdQGtfUS1ZSuQ==
-Received: (qmail 3810807 invoked from network); 6 Jul 2024 13:21:53 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:53 +0200
-X-UD-Smtp-Session: l3s3148p1@x9gSY5IcZMJQT+F6
+	 s=k1; bh=JcAYAk0ghBJQVZv6kEqnQcCKNw8XhxvsQElmIK29aYs=; b=aab3VH
+	7X0h+0AJL89UZ8LEAcoVykZR6OO9g5tMLldWc48a7mlqgFFTsZApN5j/VC7tssOj
+	JitbYiLpl6JfTtCj2XOoxMkcJCG648UzivdPYPkjnlUi9vxhgBgu39vOAcIXyuEr
+	FEfIAKHEHuTyZXGExSgavlf2KNLK328MVROVdjatT3aEUaiviS0ZV4EKOIx2b+e3
+	9s/4sEvSZNp+ARpP3KNfBeorSdete7yPbY+BoJqkjOoQVFfopK9z9sSSheuICOjf
+	QiTJz3iZz3xdHjIlAs2B/KatAIR+BDnzAEH2OQBYrF6jWQtcsPDR5DRM4KLWF5bT
+	vQlTKlnGFi7Lp3Ow==
+Received: (qmail 3810829 invoked from network); 6 Jul 2024 13:21:54 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:54 +0200
+X-UD-Smtp-Session: l3s3148p1@+MYcY5IcZsJQT+F6
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Jean Delvare <jdelvare@suse.com>,
 	Andi Shyti <andi.shyti@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 44/60] i2c: rzv2m: reword according to newest specification
-Date: Sat,  6 Jul 2024 13:20:44 +0200
-Message-ID: <20240706112116.24543-45-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 45/60] i2c: sis5595: reword according to newest specification
+Date: Sat,  6 Jul 2024 13:20:45 +0200
+Message-ID: <20240706112116.24543-46-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
 References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
@@ -69,52 +68,21 @@ specifications and replace "master/slave" with more appropriate terms.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-rzv2m.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-sis5595.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-rzv2m.c b/drivers/i2c/busses/i2c-rzv2m.c
-index b0bfc96b9ede..8380a68538ab 100644
---- a/drivers/i2c/busses/i2c-rzv2m.c
-+++ b/drivers/i2c/busses/i2c-rzv2m.c
-@@ -321,8 +321,8 @@ static int rzv2m_i2c_stop_condition(struct rzv2m_i2c_priv *priv)
- 				  100, jiffies_to_usecs(priv->adap.timeout));
- }
- 
--static int rzv2m_i2c_master_xfer_msg(struct rzv2m_i2c_priv *priv,
--				  struct i2c_msg *msg, int stop)
-+static int rzv2m_i2c_xfer_msg(struct rzv2m_i2c_priv *priv,
-+			      struct i2c_msg *msg, int stop)
- {
- 	unsigned int count = 0;
- 	int ret, read = !!(msg->flags & I2C_M_RD);
-@@ -351,8 +351,8 @@ static int rzv2m_i2c_master_xfer_msg(struct rzv2m_i2c_priv *priv,
- 	return ret;
- }
- 
--static int rzv2m_i2c_master_xfer(struct i2c_adapter *adap,
--				 struct i2c_msg *msgs, int num)
-+static int rzv2m_i2c_xfer(struct i2c_adapter *adap,
-+			  struct i2c_msg *msgs, int num)
- {
- 	struct rzv2m_i2c_priv *priv = i2c_get_adapdata(adap);
- 	struct device *dev = priv->adap.dev.parent;
-@@ -370,7 +370,7 @@ static int rzv2m_i2c_master_xfer(struct i2c_adapter *adap,
- 
- 	/* I2C main transfer */
- 	for (i = 0; i < num; i++) {
--		ret = rzv2m_i2c_master_xfer_msg(priv, &msgs[i], i == (num - 1));
-+		ret = rzv2m_i2c_xfer_msg(priv, &msgs[i], i == (num - 1));
- 		if (ret < 0)
- 			goto out;
+diff --git a/drivers/i2c/busses/i2c-sis5595.c b/drivers/i2c/busses/i2c-sis5595.c
+index 32476dc10ad6..ca06fffb8f61 100644
+--- a/drivers/i2c/busses/i2c-sis5595.c
++++ b/drivers/i2c/busses/i2c-sis5595.c
+@@ -257,7 +257,7 @@ static int sis5595_transaction(struct i2c_adapter *adap)
+ 	if (temp & 0x20) {
+ 		dev_err(&adap->dev, "Bus collision! SMBus may be locked until "
+ 			"next hard reset (or not...)\n");
+-		/* Clock stops and slave is stuck in mid-transmission */
++		/* Clock stops and target is stuck in mid-transmission */
+ 		result = -EIO;
  	}
-@@ -408,7 +408,7 @@ static const struct i2c_adapter_quirks rzv2m_i2c_quirks = {
- };
- 
- static struct i2c_algorithm rzv2m_i2c_algo = {
--	.master_xfer = rzv2m_i2c_master_xfer,
-+	.xfer = rzv2m_i2c_xfer,
- 	.functionality = rzv2m_i2c_func,
- };
  
 -- 
 2.43.0
