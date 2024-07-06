@@ -1,184 +1,215 @@
-Return-Path: <linux-kernel+bounces-243278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44129293ED
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AAC9293F4
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59CE71F221AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247871F220DA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C69212FF9F;
-	Sat,  6 Jul 2024 13:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20816135A79;
+	Sat,  6 Jul 2024 14:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P56CncoS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/WkLFEL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9DC4C3D0;
-	Sat,  6 Jul 2024 13:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2BE74070;
+	Sat,  6 Jul 2024 14:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720273863; cv=none; b=P1dhrfkdsHq8HGdf24gf1JgvjUwdBv6xNuwVUIclTrM5LHDk0wonJoo1HjYnpA4c16ARMynB4b6YCHnFDky9VTwvAhopnzygy1nI5c79gBjF0IAE47CQXHQ8pVX/nr0GSujN13+ycmBhq46AiSuA5WQhGvoJlXeSYJyI1w26Mec=
+	t=1720274621; cv=none; b=EFFbqLxB6LSPYSJoTtksVVOTtarJXFvdRMpl6hhQ4L0KEY1Y9YXK/cnmje1i80CXne8LA8nkPPS/ctQFCH1+GcmpcB/l/9Yctq/It4s8Kn2AWw2FqMW4Ks6l8/SYOKoSP+mNmZSByZYV7saxFaumPpWFU9bQafB/0+niur2yyiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720273863; c=relaxed/simple;
-	bh=X9vRa17fTy9MnCPbEsacHW0Yq6YdSHQRYPKmU8jUpl4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Td36n+GUyIJY0YHaUb0kwjLzZ01mxnUywwui/GqyYL3EerFobGlmuNE0Aw2/UHe7xz8auArOn8Tdtkfg4BLxorsRjL/7JG+tCCOFq3IDwRbOqeplazCEzqv5Z/Zk4qRBVik36r8gw9+13tmx7UttCHLbKsumXX7ps1r5hB/psoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P56CncoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FA9BC4AF0C;
-	Sat,  6 Jul 2024 13:51:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720273863;
-	bh=X9vRa17fTy9MnCPbEsacHW0Yq6YdSHQRYPKmU8jUpl4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P56CncoSI+upQ65deMifAigKav0nmp4m+4iIwUIbHtq2Q3Aqvnyzoq9MMLhJjA/d8
-	 GddYkhlz/muKY+rEVMPYK+GWpqxj8E6fXSBac2faMpSHo+rJpRbeXTdS8oCwcAqI9d
-	 6MwUkwggEGHHAPbfGYIE0uRaPQugnQJqd3sqS8J8chSrFL1XLluP31I1eEM6nXRS+Z
-	 DGpj/YWEdCIpttTdvHP2EIzUY5ulhuqpqgkBZRtQC6lGHu5ie8ZMnY/umHzfIamG4e
-	 PVTe2owibtz68TrVVSkjMKG2O9qjNMggQZE23fOUhBcNI4no+lO0KtT7TQ7PnoAYG0
-	 Fx8lZ7k2is55g==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ee9b1b422fso4302301fa.0;
-        Sat, 06 Jul 2024 06:51:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWVf7jWfTMICsILp02RGJeaA4BuQpjGT1WLgZbV00Cd3ovVdxzCJO+5sscTVGOYacNNaJwba9SBB0tadeXjStBR/hhuPGkwQ+Y/vDw1odkfxui5jHdbsyYoArnhsvf6gSjhVE3m0hJxxcEC
-X-Gm-Message-State: AOJu0YzGuybj+VKsMOw6vCJoURcD9kU2Cd8xB7UfZSOM141p7QhoXy4Y
-	iuEw+HQGsOxljMoYyYCVN5a8Rtkv1U9gUZSMfflTHyyz4abonhJFqTGI2wEkuBn+hQbLENLgjVE
-	uCtZB60aFfF8hGaRpKnRvL4NxW4o=
-X-Google-Smtp-Source: AGHT+IFjONZrso8UsJ0ZUhCSnU5Oo3SGE8q0i9xF8cRqaj63wQ+qy5hYgEUSoAmmfcT42fXEYFYgCvCnsJiObr0pRXE=
-X-Received: by 2002:a05:6512:34c2:b0:52c:9820:5e52 with SMTP id
- 2adb3069b0e04-52ea0e3a7f7mr1582535e87.27.1720273861763; Sat, 06 Jul 2024
- 06:51:01 -0700 (PDT)
+	s=arc-20240116; t=1720274621; c=relaxed/simple;
+	bh=CaJj4a2hkJ8XkHv9OyV8QGNBDNfocv2VKU+HWs5oG/U=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ilMYG45eZrV0hkEH7ccmDugxJwN4cVW8wm0OlJn7Y0AA0dta2MQnpfJ/9MlcOqKg07ueLAB0ikpRTL7VW6CzaTM0QkujMq+stO7b1Sm2nvebdGkbi1cAQshyW0Ysdyg8EjgHaWbDkkL9zB2zQmKJKTiiJQX8L21wAiEMFnLqIfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/WkLFEL; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720274619; x=1751810619;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=CaJj4a2hkJ8XkHv9OyV8QGNBDNfocv2VKU+HWs5oG/U=;
+  b=D/WkLFELdCjj431+TAm5KZAbn3NOFgAiUOVPfBOvrKXH+MJJdTtAqH3n
+   5GnPxEB0yylzVbqZq4XoFWc44/7pi+NIjQBhgtwPIjfkLYHvSNj4xt27g
+   6wjmopVWWj2K3FzYkg2ayd/66kfKNP6sl4ykDc79ypNJEiNoCUBUC1NYl
+   YhU+cDuHyF4qnG6YzFR/shvEoJOctPuc7+V/zYLZN1J9ZEXd8cixopxmX
+   ptHLfvFnUPvB+TJAyTQChG7Brz/rUL/HnDAf/HwJvMPkywKbJeyXpC8ED
+   6exLoLrLJxk21/hMlxmFKMca/jcn75C+PYqQk/7HGHbWIWtv5i6wl/eoo
+   g==;
+X-CSE-ConnectionGUID: i4lU+A05TCOcCCsPPaLt8A==
+X-CSE-MsgGUID: lx7wyst8Rh2iIXTGlIyBYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="21303381"
+X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
+   d="scan'208";a="21303381"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 07:03:38 -0700
+X-CSE-ConnectionGUID: GIlTlh5dSdCBt4o/htKkfQ==
+X-CSE-MsgGUID: Xyax3z0bSEu0502984e00Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
+   d="scan'208";a="46857918"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.111])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 07:03:36 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Sat, 6 Jul 2024 17:03:32 +0300 (EEST)
+To: "David E. Box" <david.e.box@linux.intel.com>
+cc: linux-doc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH V4 3/3] tools/arch/x86/intel_sdsi: Add attestation
+ support
+In-Reply-To: <20240608034247.181843-3-david.e.box@linux.intel.com>
+Message-ID: <93ff0003-817c-a424-df05-b05b42eaebff@linux.intel.com>
+References: <20240608034247.181843-1-david.e.box@linux.intel.com> <20240608034247.181843-3-david.e.box@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702234008.19101-1-richard.weiyang@gmail.com>
- <20240702234008.19101-2-richard.weiyang@gmail.com> <CAK7LNAR08Nx3-8XYe4qmUegDFo2zLUvkVdA1t51g1Bamh5Tteg@mail.gmail.com>
- <20240705065456.dogycpd37jun44p5@master> <20240706061236.snp4r2tixx3h7hfe@master>
-In-Reply-To: <20240706061236.snp4r2tixx3h7hfe@master>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 6 Jul 2024 22:50:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARX+qxzD-6ip9Q64Bvju3ACQ0uFPThkLgRqvmem-LQ9uw@mail.gmail.com>
-Message-ID: <CAK7LNARX+qxzD-6ip9Q64Bvju3ACQ0uFPThkLgRqvmem-LQ9uw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] modpost: .meminit.* is not in init section when
- CONFIG_MEMORY_HOTPLUG set
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: akpm@linux-foundation.org, nathan@kernel.org, nicolas@fjasle.eu, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, Mike Rapoport <rppt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Sat, Jul 6, 2024 at 3:12=E2=80=AFPM Wei Yang <richard.weiyang@gmail.com>=
- wrote:
->
-> On Fri, Jul 05, 2024 at 06:54:56AM +0000, Wei Yang wrote:
-> >On Wed, Jul 03, 2024 at 11:44:38PM +0900, Masahiro Yamada wrote:
-> >>On Wed, Jul 3, 2024 at 8:40=E2=80=AFAM Wei Yang <richard.weiyang@gmail.=
-com> wrote:
-> >>>
-> >>> .meminit.* is not put into init section when CONFIG_MEMORY_HOTPLUG is
-> >>> set, since we define MEM_KEEP()/MEM_DISCARD() according to
-> >>> CONFIG_MEMORY_HOTPLUG.
-> >>>
-> >>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> >>> CC: Mike Rapoport (IBM) <rppt@kernel.org>
-> >>> ---
-> >>>  scripts/mod/modpost.c | 10 ++++++++++
-> >>>  1 file changed, 10 insertions(+)
-> >>
-> >>
-> >>
-> >>NACK.
-> >>
-> >>
-> >>The section mismatch is performed _unconditionally_.
-> >>
-> >>
-> >>
-> >>In the old days, we did this depending on relevant CONFIG options.
-> >>It was more than 15 years ago that we stopped doing that.
-> >>
-> >>
-> >>See this:
-> >>
-> >>
-> >>commit eb8f689046b857874e964463619f09df06d59fad
-> >>Author: Sam Ravnborg <sam@ravnborg.org>
-> >>Date:   Sun Jan 20 20:07:28 2008 +0100
-> >>
-> >>    Use separate sections for __dev/__cpu/__mem code/data
-> >>
-> >>
-> >>
-> >>
-> >>So, if you wanted to check this only when CONFIG_MEMORY_HOTPLUG=3Dn,
-> >>you would need to add #ifdef CONFIG_MEMORY_HOTPLUG to include/linux/ini=
-t.h
-> >>
-> >>That is what we did in the Linux 2.6.* era, which had much worse
-> >>section mismatch coverage.
-> >>
-> >
-> >Masahiro
-> >
-> >If you would give me some suggestions, I'd appreciate it a lot.
-> >
-> >The original thing I want to do is to put function __free_pages_core() i=
-n
-> >__meminit section, since this function is only used by __init functions =
-and
-> >in memory_hotplug.c.  This means it is save to release it if
-> >CONFIG_MEMORY_HOTPLUG is set.
-> >
-> >Then I add __meminit to function __free_pages_core() and face the warnin=
-g from
-> >modpost.
-> >
-> >  WARNING: modpost: vmlinux: section mismatch in reference: generic_onli=
-ne_page+0xa (section: .text) -> __free_pages_core (section: .meminit.text)
-> >
-> >A .text function calls init code is not proper. Then I add __meminit to
-> >generic_online_page too. Then I face this warning from modpost.
-> >
-> >  WARNING: modpost: vmlinux: generic_online_page: EXPORT_SYMBOL used for=
- init symbol. Remove __init or EXPORT_SYMBOL.
-> >
->
-> I guess I found the correct way.
->
-> Add __ref to generic_online_page to not issue a warning.
+On Fri, 7 Jun 2024, David E. Box wrote:
 
+> Add support in the intel_sdsi tool to perform SPDM GET_DIGESTS and
+> GET_CERTIFICATE commands. Output is sent to stdout.
+> 
+> Example reading the certificate chain from socket 0:
+> 
+> intel_sdsi -d 1 -attest get_certificate | openssl x509 -inform DER -nout -text
+> 
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> ---
+> V4 - No change
+> 
+> V3 - No change
+> 
+> V2 - Remove unnecessary struct packing
+>    - Remove newline from perror()
+>    - Add message options in --help output
+>    - Use new SDSI_SPDM_BUF_SIZE from uapi header
+>    - In spdm_get_certificate:
+>         - Initialize remainder length to the minimum of the actual size
+>           or the maximum buffer size.
+>         - Add old_remainder to test that the remaining certificate
+>           length is less than the previous length
+> 
+>  tools/arch/x86/intel_sdsi/Makefile     |  11 +-
+>  tools/arch/x86/intel_sdsi/intel_sdsi.c |  72 +++-
+>  tools/arch/x86/intel_sdsi/spdm.c       | 476 +++++++++++++++++++++++++
+>  tools/arch/x86/intel_sdsi/spdm.h       |  13 +
+>  4 files changed, 567 insertions(+), 5 deletions(-)
+>  create mode 100644 tools/arch/x86/intel_sdsi/spdm.c
+>  create mode 100644 tools/arch/x86/intel_sdsi/spdm.h
+> 
 
+> +++ b/tools/arch/x86/intel_sdsi/spdm.c
+> @@ -0,0 +1,476 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * spdm: Lightweight Security Protocol and Data Model (SPDM) specification
+> + * support code for performing attestation commands using the Intel On
+> + * Demand driver ioctl interface. Intel On Demand currently supports
+> + * SPDM version 1.0
+> + *
+> + * See the SPDM v1.0 specification at:
+> + * https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf
+> + *
+> + * Copyright (C) 2024 Intel Corporation. All rights reserved.
+> + */
+> +
+> +#include<linux/bits.h>
+> +
+> +#include<fcntl.h>
+> +#include<stdio.h>
+> +#include<stdlib.h>
+> +#include<stdint.h>
+> +#include<string.h>
+> +#include<unistd.h>
+> +#include<sys/ioctl.h>
 
-Yes, __ref is used to bypass the section mismatch check.
+All missing spaces. :-(
 
-Some functions in mm/memory_hotplug.c are annotated as __ref
-to reference __meminit functions.
+> +static int sdsi_process_ioctl(int ioctl_no, void *info, uint8_t dev_no)
+> +{
+> +	char pathname[14];
+> +	int fd, ret;
+> +
+> +	ret = snprintf(pathname, 14, "%s%d", SDSI_DEV_PATH, dev_no);
 
-Adding __ref is the easy solution.
+sizeof(pathname)
 
+> +	remainder_length = size < SDSI_SPDM_BUF_SIZE ? size : SDSI_SPDM_BUF_SIZE;
+> +	old_remainder = remainder_length;
+> +
+> +	while (remainder_length) {
+> +		uint16_t length;
+> +
+> +		length = remainder_length < SDSI_SPDM_BUF_SIZE ?
+> +				remainder_length : SDSI_SPDM_BUF_SIZE;
+> +		offset += portion_length;
 
+The way bound check interplay with old_remainder and remainder_length in 
+this code is quite convoluted and could contain some problems.
 
-Having said that, I started to think
-eb8f689046b857874e964463619f09df06d59fad was the wrong decision.
-I will revert it.
+Would it work if old_remainder is set only here and the bound check 
+before the loop is replaced with a plain remainder_length = size 
+assignment?
 
+> +
+> +		ret = get_certificate_portion(dev_no, offset, length,
+> +					      &portion_length,
+> +					      &remainder_length,
+> +					      c->chain);
+> +		if (ret < 0)
+> +			goto free_cert_chain;
+> +
+> +		if (!(remainder_length < old_remainder)) {
+> +			fprintf(stderr, "Bad GET_CERTIFICATE length\n");
+> +			ret = -1;
+> +			goto free_cert_chain;
+> +		}
+> +
+> +		old_remainder = remainder_length;
+> +	}
+> +
+> +	c->len = offset + portion_length;
+> +	return 0;
+> +
+> +free_cert_chain:
+> +	free(c->chain);
+> +	c->chain = NULL;
+> +	return ret;
+> +}
+> diff --git a/tools/arch/x86/intel_sdsi/spdm.h b/tools/arch/x86/intel_sdsi/spdm.h
+> new file mode 100644
+> index 000000000000..aa7e08ffb872
+> --- /dev/null
+> +++ b/tools/arch/x86/intel_sdsi/spdm.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#include <stdint.h>
+> +
+> +#define TPM_ALG_SHA_384_SIZE 48
+> +
+> +struct cert_chain {
+> +	void *chain;
+> +	size_t len;
+> +};
+> +
+> +int spdm_get_digests(int dev_no, uint8_t digest[TPM_ALG_SHA_384_SIZE]);
+> +int spdm_get_certificate(int dev_no, struct cert_chain *c);
+> +
 
+Trailing newline.
 
+-- 
+ i.
 
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
