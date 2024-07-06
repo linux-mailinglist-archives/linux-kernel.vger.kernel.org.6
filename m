@@ -1,178 +1,138 @@
-Return-Path: <linux-kernel+bounces-243067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73BA929112
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:09:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C836929118
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E09B1F23250
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:09:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8103B2245A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0860128DCC;
-	Sat,  6 Jul 2024 05:08:25 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB3B175AE;
+	Sat,  6 Jul 2024 05:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="AcQARgW0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qDo66Agc"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37CD20B04
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 05:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA749134A9;
+	Sat,  6 Jul 2024 05:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720242504; cv=none; b=mOMX3ty2aR1CBwrxf20Dbul+7UpyrMqcvsj5LA74H/QWn6ZoKKYnQLC22BDhvObVDyBZAzPGiuBByHU7+hEld6H4OEoezrVAoQlMsxFv5RH9VUJfrJfOkTlrBmKP369LLyTGd76nwCUCkQ7YHyLZcTe2zvUIaEMoc/n0pHqzmxo=
+	t=1720242624; cv=none; b=MLUZOmJNoQmQW8EBFsImKk55lI+aaruttWnN32g9Q7WxwVCPs+btqQ1H+KIqwsKisCAcgElKC3Uf93dgj3H+x+KWq8hI9MUW7ETE/HyYZQAZ7VghbXTNM5JWB2BRsd1MSYlFCXDHSgmMBMP+qIu/pKxo6UvAz+IubwjwNFYO9W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720242504; c=relaxed/simple;
-	bh=zNgwfH6InNsnWWKPwSRPQOgaum/vvGCcbSzXoI9VjYI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tmEkp3YPRjx3nLM0Q+5Hu83Ppp+z4qRhaJ/RT1Wz+fXf891wR3BEq9j+HMyKCQqCDHcVfl6G9dJ/pBJrR5fQG7qfMxOh4cgOtldbpYSSQFzlZEa+CXatIw553cU3pgWCCBGAUWJMwKvR98qnQloQ5443azqNhSQHnb9Cwb4WyGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f63ce98003so274045739f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 22:08:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720242502; x=1720847302;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uMnth4lpZqa54DWQFc+Nscp7G5diBYCWrU+izZnqnwE=;
-        b=Rq2Z9Xhy0JYX3ZEPE/x3cXhBjs6hp1OzNeiPYJ4sKNfLM+WcvRgnLe++P22KQqKvfO
-         YlXRGzg106gKeczCydDvRo9y5YyX7TfYB24XT/DVfJKliPxz3hL6ttXfWJpeWGFgHZ8a
-         rTOBtSW3z2Tpf51i8dFccQxAoAJiUSE1INrXmuqfREspP3HKKOQQrbncVZA1hJFDsuqr
-         dAEzMz8CUuJe2Y1Xc1bdV7AlLgNkVqBYOgsA2Poy8m7F6JaZ0WcmquM/Ro+pwIfDeSak
-         zT9yIPPa4BAOw/EenRTLMy2T71Eu5WaPsrUBR6S1kIHFt3TeHEA6aF638hE3UbVHwkFP
-         favw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaKNlu2uv+RmTRBdKivFdTJldxIi5d3MWx6cBGEvSM7VceeFSaePs8214R86Hs+GNTc3aTSzzbo6nLUuxHyk7ylBjywu2EMoQBpd1m
-X-Gm-Message-State: AOJu0YxyFsg87j2werJK4vsugveHTn+FXy1r0996kXB+5WyfS3v/Isfq
-	Fe26idxlLemOyp1mYcSu4afUF6Vy3QecBf+rAoNvdiWTua8Vvm/PD0x+Xc5wPUndxhSOEKytVNP
-	HiNS8A4YKOsG+2spWLiKJoYOHzCd1kI1vSvvhMmonK+dbFG/4Ia0Dqhk=
-X-Google-Smtp-Source: AGHT+IFr4AsctvjiD5hASZ8o+wMepJiBeGtuBChIyn9BbPMd4UnjcMUWz+fifv4uC5+sdUUtcxKT9HnpOHj9ChVOOZf4dAxjVZ9C
+	s=arc-20240116; t=1720242624; c=relaxed/simple;
+	bh=uXJuO0ar4KNAfctKzaMcvzcLTidBa4zbvW5elDHMKgU=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=ALP2wikxbfASm3LpbFuWdur+XLX6mu9zuYLj3oRHvWLI/L1TieX78MOO9P8g8nFYYgA1e3S6cyKkmdKTT7F3chnB2sWhMExrgPNhhkXIqgtnvsiyApSj3o4WKzvfIm0H8yRUu5t9b6WSgJeylv8rXk9FZFn15KYgrcvo0oFleJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=AcQARgW0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qDo66Agc; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 0651611402C1;
+	Sat,  6 Jul 2024 01:10:22 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Sat, 06 Jul 2024 01:10:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1720242622;
+	 x=1720329022; bh=GSLngGMalGZD/Qlig2AUU7rfR0AN7E8izaKIuOLpo6Q=; b=
+	AcQARgW0s4SJP0My25QGHeYpRaGMMEDlwt+klbiCiuvcQ13T+4nhq8ImBI05mh43
+	jo9pVHz35moc7DXyI1f6saDB/FFBGcZDOIGxFqSS2Vtp3rmJKFRrhcMI7YdMHFK/
+	rrpzWbwQOsjviRZsGBLXsALxP2RNFuJJpMxtH1d3G9hgwPiSwXc3sIjbxfWLX1mf
+	nxA2qxydDU4p9uOlAMc1xjcoLFKByQTAUljy/aKtSD/8w05XBVDg6LJY8ZW9l922
+	Xry+P0HIuB+AO4CNVGdIRX7kMXal9pSbSo2zGklx/D7Rk8UG1rvhJ6b9tCYyxiQa
+	QLQ3CUee7OvBSekHJ461sA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720242622; x=
+	1720329022; bh=GSLngGMalGZD/Qlig2AUU7rfR0AN7E8izaKIuOLpo6Q=; b=q
+	Do66AgcxXU04ALV49GJUAlraBQMExbRzlQL7uYYkt0LaaEEqMP6MkkfNBy/XTPBB
+	pTmK19APYOLdNrU41agim1lXkE9WIQb2D1Ug44yGW5wjwqoq1AyUcNayIz9UjorP
+	UBDSRS17duXHmERxrS7tQTXKmb8dGlOvb4nssIaPdjZvXz7W90RI2jri8qZYrmiU
+	xWg3jaQgwfhdrajym7mlR+glgyndPHg7/X83mmf3ivPdoSGqcThTFqonYTU6Js3C
+	J69c+UPuqxSChUaGZsSaSZqrY5I+Fa9JLW+6ltzUQ8xLzF4FhWaCrYs8Ya49iYVP
+	6gEnGjIF/Xmw0hN3UrPCA==
+X-ME-Sender: <xms:vdGIZiYv0sLjORJ7iw85-aK8C6a2qtUVURyoLrjCgNPXDTUjH2Vp4g>
+    <xme:vdGIZlZT2HxL8QYFfaFRdhjSWqD2OUYWk9elpT1MsIcKFaIA7s17OOjj-m55zhaA2
+    ysVjYdYKmKBgtb-G2o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvgdeludcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
+    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
+    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:vdGIZs8Xo-EjmBngwmdKl7Hlxk1BGiU3hdpHLgmruba7zm9TYIKhVQ>
+    <xmx:vdGIZkqJjFOCeIoXL8kaQuxhcs9OxpedJJedMu4EXd40cTVB5KZ4zA>
+    <xmx:vdGIZtq0qs7uJTrmeqxA82Bmi4Zh0WZbBpDy96fb93eFL7uPEAOekg>
+    <xmx:vdGIZiR5CaO_SpXqlmPbKQ6XhxLtpjBKvkPy3DAzxDBgX7eYjn6_Dw>
+    <xmx:vdGIZk3DofCj4ql_v1LJTMQo2Izlt9iU-Jg-5kE7fP185XAExRtFu50F>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BA6D836A0074; Sat,  6 Jul 2024 01:10:21 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2cc4:b0:7f6:5c77:ce16 with SMTP id
- ca18e2360f4ac-7f66df29b61mr44280539f.3.1720242502048; Fri, 05 Jul 2024
- 22:08:22 -0700 (PDT)
-Date: Fri, 05 Jul 2024 22:08:22 -0700
-In-Reply-To: <00000000000079d168061c36ce83@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000432cc7061c8d2b68@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] stack segment fault in dev_hash_map_redirect
-From: syzbot <syzbot+c1e04a422bbc0f0f2921@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
-	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    0b58e108042b Add linux-next specific files for 20240703
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=165ce371980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed034204f2e40e53
-dashboard link: https://syzkaller.appspot.com/bug?extid=c1e04a422bbc0f0f2921
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14987969980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11955485980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1d079762feae/disk-0b58e108.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e53996c8d8c2/vmlinux-0b58e108.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a0bf21cdd844/bzImage-0b58e108.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c1e04a422bbc0f0f2921@syzkaller.appspotmail.com
-
-Oops: stack segment: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5094 Comm: syz-executor316 Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
-RIP: 0010:__bpf_xdp_redirect_map include/linux/filter.h:1699 [inline]
-RIP: 0010:dev_hash_map_redirect+0x64/0x620 kernel/bpf/devmap.c:1022
-Code: 00 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 9f 9c 3d 00 48 8b 03 48 89 44 24 08 48 8d 58 38 48 89 dd 48 c1 ed 03 <42> 0f b6 44 3d 00 84 c0 0f 85 f5 03 00 00 44 8b 33 44 89 f6 83 e6
-RSP: 0018:ffffc9000356f958 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 0000000000000038 RCX: ffff8880276e9e00
-RDX: 0000000000000000 RSI: 000000000356f9b0 RDI: ffff88802f22f000
-RBP: 0000000000000007 R08: 0000000000000007 R09: ffffffff81b5ee2f
-R10: 0000000000000004 R11: ffff8880276e9e00 R12: 0000000000000008
-R13: 000000000356f9b0 R14: 0000000000000000 R15: dffffc0000000000
-FS:  000055557ccb9380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000021d5ab98 CR3: 0000000022250000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bpf_prog_ec9efaa32d58ce69+0x56/0x5a
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run_xdp include/net/xdp.h:514 [inline]
- tun_build_skb drivers/net/tun.c:1711 [inline]
- tun_get_user+0x3321/0x4560 drivers/net/tun.c:1819
- tun_chr_write_iter+0x113/0x1f0 drivers/net/tun.c:2048
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbd788a7f10
-Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d b1 e1 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
-RSP: 002b:00007ffde33a9838 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbd788a7f10
-RDX: 000000000000004e RSI: 0000000020000540 RDI: 00000000000000c8
-RBP: 0000000000000000 R08: 00007ffde33a9968 R09: 00007ffde33a9968
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
-RIP: 0010:__bpf_xdp_redirect_map include/linux/filter.h:1699 [inline]
-RIP: 0010:dev_hash_map_redirect+0x64/0x620 kernel/bpf/devmap.c:1022
-Code: 00 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 9f 9c 3d 00 48 8b 03 48 89 44 24 08 48 8d 58 38 48 89 dd 48 c1 ed 03 <42> 0f b6 44 3d 00 84 c0 0f 85 f5 03 00 00 44 8b 33 44 89 f6 83 e6
-RSP: 0018:ffffc9000356f958 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 0000000000000038 RCX: ffff8880276e9e00
-RDX: 0000000000000000 RSI: 000000000356f9b0 RDI: ffff88802f22f000
-RBP: 0000000000000007 R08: 0000000000000007 R09: ffffffff81b5ee2f
-R10: 0000000000000004 R11: ffff8880276e9e00 R12: 0000000000000008
-R13: 000000000356f9b0 R14: 0000000000000000 R15: dffffc0000000000
-FS:  000055557ccb9380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000021d5ab98 CR3: 0000000022250000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 48 89             	add    %cl,-0x77(%rax)
-   3:	d8 48 c1             	fmuls  -0x3f(%rax)
-   6:	e8 03 42 80 3c       	call   0x3c80420e
-   b:	38 00                	cmp    %al,(%rax)
-   d:	74 08                	je     0x17
-   f:	48 89 df             	mov    %rbx,%rdi
-  12:	e8 9f 9c 3d 00       	call   0x3d9cb6
-  17:	48 8b 03             	mov    (%rbx),%rax
-  1a:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
-  1f:	48 8d 58 38          	lea    0x38(%rax),%rbx
-  23:	48 89 dd             	mov    %rbx,%rbp
-  26:	48 c1 ed 03          	shr    $0x3,%rbp
-* 2a:	42 0f b6 44 3d 00    	movzbl 0x0(%rbp,%r15,1),%eax <-- trapping instruction
-  30:	84 c0                	test   %al,%al
-  32:	0f 85 f5 03 00 00    	jne    0x42d
-  38:	44 8b 33             	mov    (%rbx),%r14d
-  3b:	44 89 f6             	mov    %r14d,%esi
-  3e:	83                   	.byte 0x83
-  3f:	e6                   	.byte 0xe6
+Message-Id: <f9030076-4356-4eb8-820f-033a324c673a@app.fastmail.com>
+In-Reply-To: <20240706-config-refresh-v1-1-5dba0064cf08@flygoat.com>
+References: <20240706-config-refresh-v1-0-5dba0064cf08@flygoat.com>
+ <20240706-config-refresh-v1-1-5dba0064cf08@flygoat.com>
+Date: Sat, 06 Jul 2024 13:10:01 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] MIPS: config: Enable MSA and virtualization for MIPS64R6
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+
+=E5=9C=A82024=E5=B9=B47=E6=9C=886=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
+=8D=881:07=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> All MIPS64R6 cores so far supports MSA and vz, so it makes sense
+> to enable them in 64R6 default config.
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>  arch/mips/configs/generic/64r6.config | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/mips/configs/generic/64r6.config=20
+> b/arch/mips/configs/generic/64r6.config
+> index 5dd8e8503e34..2a2036abdd2d 100644
+> --- a/arch/mips/configs/generic/64r6.config
+> +++ b/arch/mips/configs/generic/64r6.config
+> @@ -3,4 +3,6 @@ CONFIG_64BIT=3Dy
+>  CONFIG_MIPS32_O32=3Dy
+>  CONFIG_MIPS32_N32=3Dy
+>=20
+> +CONIFG_CPU_HAS_MSA=3Dy
+^ Ouch, typo here when I copy changes back from my build machine.
+
+Will respin after initial review.
+
+Thanks
+>  CONFIG_CRYPTO_CRC32_MIPS=3Dy
+> +CONFIG_VIRTUALIZATION=3Dy
+>
+> --=20
+> 2.45.2
+
+--=20
+- Jiaxun
 
