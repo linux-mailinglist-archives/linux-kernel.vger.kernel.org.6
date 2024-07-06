@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-243050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236E39290F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB569290F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1D0283E05
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A752283F6D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E699E757FC;
-	Sat,  6 Jul 2024 04:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7AA7CF33;
+	Sat,  6 Jul 2024 04:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H9uUbBTd"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ka9pMRTO"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C497D7347E
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 04:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176F9763E7
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 04:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720241843; cv=none; b=rOXHaUp0cNvhHc1V+BZ0w1Gis/o6eutw6m45Sv4ZnFBhaG3pu0q5sSjX6XFMP1RISk0AEbuq0He3Rbci7srwUy0cA7qLBm9N12J0W6wVUy7miIeutHOYc8JrzC9wvonmzYm0ly3wn2CMnzagFaoYddxKdPVvLlZd0BNtpWX+TtI=
+	t=1720241845; cv=none; b=EM4eXF0jMldrTr64QOu9HRJFe8feK+nTBd+iUv9JWpOK1C1w18pfa1PD3PpYIzIwrp7ykwpzqM7Bsce9p4DPiN+27Q9//PG3vE1Rc/ATZMaXnaI2QWt5Qxve6DfQT3nO5X7t6rWJIFRCnvnJtabGcSazKk7BPmi486SaXheXNVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720241843; c=relaxed/simple;
-	bh=d4sQtH1CMOfdwHUjN9Or0CwJq08KoxlzJDmfznBURQA=;
+	s=arc-20240116; t=1720241845; c=relaxed/simple;
+	bh=HcNkB8JxsPku3lgBoXrRyLCr/wQaOl/b/A7+lr8k6+8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LIa0Y6fazDS00K6Z+rlCG7aI1InzUb9uqoY9Pee7rdVGXysgCRCKdhrKvY4iDWZZGOHud0Qp+gs3F8aO6OG2PvuLJfTB3zusdxWVeFaK2xIPm7KZSZFkPOW9zLhxCtNzTJDaHhfe161VNlcYEQJf4A2YB+iXZJvhY1Birb2YnVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H9uUbBTd; arc=none smtp.client-ip=209.85.219.173
+	 MIME-Version; b=Xa9aOBlnJy4pwM7Zx70owODJfV4dDsqjfIlw40Aq1dwT1jpjC5zakf/pPDUFyBn7zDGtZ5bn75QE4+EbfgERk5nSf/JE6ZBhTu84cIulun7KZPYerIPsSgVmHDlad1VenxwreXgA56VRvwaYz+GhOAwxStNis4aAcCGrQNErjCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ka9pMRTO; arc=none smtp.client-ip=209.85.167.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e035ecb35ffso2104122276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 21:57:21 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3d9234b77dfso294099b6e.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 21:57:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720241841; x=1720846641; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1720241843; x=1720846643; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ItQuTXBasJJqFqQGi1leSL1bLvz+yxnE1Fe3ZC5JuEc=;
-        b=H9uUbBTd+OVhQE54qZKGPt2YUSJl8mYR38nuG97tU06KnAWvJy+2MSdfzH2k0DT8k8
-         K/bLELu2B5aDZGyAdDB046XNJGevlX/J5uTmduIY5bVym7q2fHvvqQIyq27Ped09kidn
-         mEx9dq4kmE+CBHAGgnhyjzY7h/0xkIf1jlsow=
+        bh=YRl8rO13pUtwD5y4kvoIkAPkStq8x/JmnNOrgmlShMo=;
+        b=ka9pMRTOYpSU3KfzRzjy1Zo+pimB6S6tZ8vFvXRkIhopCmvmkJOpN/qabjRIy76mDE
+         hBujYOvn3YQam8qDiOQDOo6sSxM+b9JHEHTXUH6Nyv3KL56GFaldKoKVzoNszCYjqKsw
+         Zj8n0AyGK9NKxw87VmrYR/uq09rg2J8PLkNtA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720241841; x=1720846641;
+        d=1e100.net; s=20230601; t=1720241843; x=1720846643;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ItQuTXBasJJqFqQGi1leSL1bLvz+yxnE1Fe3ZC5JuEc=;
-        b=hgACtksfY7WfNRCsYF6Pq+o3D29oL8Y8Zs0JmisSia5M1OkeDBmG9v0wkG/uuv4PIz
-         ITUOF1alCMs9zWyHfVDV9XEaQDj/45zsEW4jrQO/pqPADALE1zQhbXU0y/UDXOEIopWG
-         VKdSI5vFFbthxFs0EPPr/40r5q/a42hPJggquf018v7X5Jw706WhY+PKldDymRq1xOym
-         O0ebLOmomd4SngM5t5n0Ta3bpvwJgb0NY0HhJznFlXuLCouQg5LdZNmz2bzbASwcnf/B
-         PdPr36jf/rJiqBVpUoM0jzNIiHG9B5Nmq7UDz9XUYhshf5ymcjj092rqnigs3r/614Yv
-         +ebA==
-X-Gm-Message-State: AOJu0Yw7ylUXyjWCK4IDNKXlWV/INB7JYNMFe2y/PssuUFHsmxDzZPuW
-	jOuM9EWqWCU8zTaXO707qgPL0xjQQDn9+0FZsupnrCXLwrlPVN3gNA8zHsgVIA==
-X-Google-Smtp-Source: AGHT+IH3TxO6XRauX78xSEH9zyZoG0lQ6N4GKqEwieuZodw7hWb3+rGnNMiqHwTJgN6A6SdOHegAyA==
-X-Received: by 2002:a05:6902:1a48:b0:e02:be75:6a87 with SMTP id 3f1490d57ef6-e03c19d0aabmr8542134276.37.1720241840942;
-        Fri, 05 Jul 2024 21:57:20 -0700 (PDT)
+        bh=YRl8rO13pUtwD5y4kvoIkAPkStq8x/JmnNOrgmlShMo=;
+        b=nJ6PL/flYRpYeKqtz7/6rqaQkYLLT80Kk75E0yYrOKkrA24gNTu1AQNfjl23JCayJB
+         2DyRlYZC6PyC3+UwTc/+8JG5ywlTs+uP+DPBvTmOqIXiavHP/e1dKHBh7uH0el5ti/ic
+         jpwEPchdvEqj+8pemjz5oSLtYsxbCLZTE1Bck+d9lULUqS5ILKiLTdsK5aC+OrwsDQzP
+         giYANP/wGPR2Zq1G4dSnIo9ZHyC1AMmv04MGOcFSjDuUlhGTjCyznMhVpwb6z+vrItBH
+         HfriLCS+oDRv8hfBriJNANvOKjBNc2tmW+XR0jweQux9WZVKjWYstZMk1IJe1v76Vd1+
+         HguQ==
+X-Gm-Message-State: AOJu0YzExjWppp/EAdWMIo3whVTorE9twfo0rZ8aXGp6agz3341/21sd
+	C0d4TOfOgikMTiPY208mIGMPZykMHRY5m7PdSRH7+7DwMZecFgrOMQS4R6BEhQ==
+X-Google-Smtp-Source: AGHT+IEa1DFVnS7VxDRrsxAhjdMjQcszmyX5KHF6huvxiCujMuKmb83PI1C9BnF3Crsjz0oijaETiQ==
+X-Received: by 2002:a05:6808:13ce:b0:3d6:2b42:82e3 with SMTP id 5614622812f47-3d914c51bc2mr7099384b6e.4.1720241843098;
+        Fri, 05 Jul 2024 21:57:23 -0700 (PDT)
 Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:88a7:e7d7:713d:ff09])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7623cd854b2sm2784104a12.38.2024.07.05.21.57.19
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7623cd854b2sm2784104a12.38.2024.07.05.21.57.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 21:57:20 -0700 (PDT)
+        Fri, 05 Jul 2024 21:57:22 -0700 (PDT)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Minchan Kim <minchan@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv5 14/23] zram: recalculate zstd compression params once
-Date: Sat,  6 Jul 2024 13:56:16 +0900
-Message-ID: <20240706045641.631961-15-senozhatsky@chromium.org>
+Subject: [PATCHv5 15/23] zram: extend comp_algorithm attr write handling
+Date: Sat,  6 Jul 2024 13:56:17 +0900
+Message-ID: <20240706045641.631961-16-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 In-Reply-To: <20240706045641.631961-1-senozhatsky@chromium.org>
 References: <20240706045641.631961-1-senozhatsky@chromium.org>
@@ -81,48 +81,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-zstd compression params depends on level, but are constant
-for a given instance of zstd compression backend.  Calculate
-once (during ctx creation).
+Previously comp_algorithm device attr would accept only
+algorithm name param, however in order to enabled comp
+configuration we need to extend comp_algorithm_store()
+with param=value support.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/backend_zstd.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/block/zram/zram_drv.c | 54 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 52 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/zram/backend_zstd.c b/drivers/block/zram/backend_zstd.c
-index 2328a462b82c..a9808abcf5f2 100644
---- a/drivers/block/zram/backend_zstd.c
-+++ b/drivers/block/zram/backend_zstd.c
-@@ -10,6 +10,7 @@
- struct zstd_ctx {
- 	zstd_cctx *cctx;
- 	zstd_dctx *dctx;
-+	zstd_parameters cprm;
- 	void *cctx_mem;
- 	void *dctx_mem;
- 	s32 level;
-@@ -40,6 +41,7 @@ static void *zstd_create(struct zcomp_params *params)
- 		ctx->level = zstd_default_clevel();
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 84757f0c8166..a2c23ca033b5 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -998,6 +998,12 @@ static int __comp_algorithm_store(struct zram *zram, u32 prio, const char *buf)
+ 	return 0;
+ }
  
- 	prm = zstd_get_params(ctx->level, PAGE_SIZE);
-+	ctx->cprm = zstd_get_params(ctx->level, PAGE_SIZE);
- 	sz = zstd_cctx_workspace_bound(&prm.cParams);
- 	ctx->cctx_mem = vzalloc(sz);
- 	if (!ctx->cctx_mem)
-@@ -69,11 +71,10 @@ static int zstd_compress(void *ctx, const unsigned char *src, size_t src_len,
- 			 unsigned char *dst, size_t *dst_len)
++static int comp_params_store(struct zram *zram, u32 prio, s32 level)
++{
++	zram->params[prio].level = level;
++	return 0;
++}
++
+ static ssize_t comp_algorithm_show(struct device *dev,
+ 				   struct device_attribute *attr,
+ 				   char *buf)
+@@ -1013,9 +1019,43 @@ static ssize_t comp_algorithm_store(struct device *dev,
+ 				    size_t len)
  {
- 	struct zstd_ctx *zctx = ctx;
--	const zstd_parameters prm = zstd_get_params(zctx->level, PAGE_SIZE);
- 	size_t ret;
+ 	struct zram *zram = dev_to_zram(dev);
++	char *args, *param, *val;
++	char *alg = NULL;
++	s32 level = ZCOMP_PARAM_NO_LEVEL;
+ 	int ret;
  
- 	ret = zstd_compress_cctx(zctx->cctx, dst, *dst_len,
--				 src, src_len, &prm);
-+				 src, src_len, &zctx->cprm);
- 	if (zstd_is_error(ret))
+-	ret = __comp_algorithm_store(zram, ZRAM_PRIMARY_COMP, buf);
++	args = skip_spaces(buf);
++	while (*args) {
++		args = next_arg(args, &param, &val);
++
++		/*
++		 * We need to support 'param' without value, which is an
++		 * old format for this attr (algorithm name only).
++		 */
++		if (!val || !*val) {
++			alg = param;
++			continue;
++		}
++
++		if (!strcmp(param, "algo")) {
++			alg = val;
++			continue;
++		}
++
++		if (!strcmp(param, "level")) {
++			ret = kstrtoint(val, 10, &level);
++			if (ret)
++				return ret;
++			continue;
++		}
++	}
++
++	if (!alg)
++		return -EINVAL;
++
++	ret = comp_params_store(zram, ZRAM_PRIMARY_COMP, level);
++	if (!ret)
++		ret = __comp_algorithm_store(zram, ZRAM_PRIMARY_COMP, alg);
+ 	return ret ? ret : len;
+ }
+ 
+@@ -1048,6 +1088,7 @@ static ssize_t recomp_algorithm_store(struct device *dev,
+ 	int prio = ZRAM_SECONDARY_COMP;
+ 	char *args, *param, *val;
+ 	char *alg = NULL;
++	s32 level = ZCOMP_PARAM_NO_LEVEL;
+ 	int ret;
+ 
+ 	args = skip_spaces(buf);
+@@ -1068,6 +1109,13 @@ static ssize_t recomp_algorithm_store(struct device *dev,
+ 				return ret;
+ 			continue;
+ 		}
++
++		if (!strcmp(param, "level")) {
++			ret = kstrtoint(val, 10, &level);
++			if (ret)
++				return ret;
++			continue;
++		}
+ 	}
+ 
+ 	if (!alg)
+@@ -1076,7 +1124,9 @@ static ssize_t recomp_algorithm_store(struct device *dev,
+ 	if (prio < ZRAM_SECONDARY_COMP || prio >= ZRAM_MAX_COMPS)
  		return -EINVAL;
- 	*dst_len = ret;
+ 
+-	ret = __comp_algorithm_store(zram, prio, alg);
++	ret = comp_params_store(zram, prio, level);
++	if (!ret)
++		ret = __comp_algorithm_store(zram, prio, alg);
+ 	return ret ? ret : len;
+ }
+ #endif
 -- 
 2.45.2.803.g4e1b14247a-goog
 
