@@ -1,168 +1,97 @@
-Return-Path: <linux-kernel+bounces-243245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210E9929378
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B404A92937C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4252F1C2115F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F3E1C21457
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A38F7EF04;
-	Sat,  6 Jul 2024 12:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CB07D401;
+	Sat,  6 Jul 2024 12:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+3XmhCi"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgQ3AoNq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A6F50246;
-	Sat,  6 Jul 2024 12:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9ED17FE;
+	Sat,  6 Jul 2024 12:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720267672; cv=none; b=rg7WJMcdksfP7kkZI6fR4GKsMQRcEN4fNdgBjuY7QsZFjCAqIYcj2jqPBGnbmp1tHL19Om07q81MHWvHLYRuE3GYughnwrXGimEz6NkgmIa8YDckTQ+S8EDXUOkUFMP5vx5vW+otOGagKISW5ioJ6FT7Q03gZgN7OBR+MzX0esQ=
+	t=1720268037; cv=none; b=ZoN/H6b06dHsZ9xMymGbnOqS5eCyhAog+DGRb2YTj/CZUtx90zntdVNxhmMCeaLSOG9CXvi2I+lgyFnBWhlyhYD0Tr7O9+wYIK6ilGVOhlEnvZUIfQ2HFI29eolfA7s1RKjJCCt3YOeX0grnJP7FQ8DynOpvJeboc5aBrQMAQUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720267672; c=relaxed/simple;
-	bh=g130VdJy4X5RQveGbr0aWPyXnw4vw6OGxH70BzO++x0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z1MdBGWNkL5pUlKRpUViJHQandiiY0MFa/4CgRSkPjzI4lgPxjtMCGoEQedDSXzOI9eHH49wGpVvFObKF2OIbwo/WPpfFcVehJFhH9kAPzUtdvgx93UPy12Xj/aCLbP+eoFr4PHeW8bR0UzEO/4nQwIfsFWvYbVybDiZi9D3+iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+3XmhCi; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-651815069f8so29234127b3.1;
-        Sat, 06 Jul 2024 05:07:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720267670; x=1720872470; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UqjVGacvr99k3S0wau6SJoKWQts7Y2bmo2bsBuOmljA=;
-        b=f+3XmhCiaJkJs+q0npMTL4J8UvClVfUk9Ef0rKiJZXKETFjj2zuYjyj5SqJ2kfDlk7
-         ef7bUf+QAauC5aRnBqnz8Sflgp/rbDq6ahUiq4a3zPWaeLYBVcZllbwVcVroqax5aqh1
-         VGqCzjMDBT5n+HfJsSDmIUU0SsJmKcMEGb0JZ4nZXCAZBCcHLS74MvF2nqgVOQx8WCmd
-         OB/1F85sn6oMGzm4WK3yV/DstxwHQoTumTklprq2Xy1agv3d2hgzMwu0GDPZrXUetIHU
-         lcKzLxZ4BuTpmCPFssTGGk0lWDhprM4SaZFBfOKMQyc90zQEHMS9JhFQ1b55f0zbu6fO
-         iDHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720267670; x=1720872470;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UqjVGacvr99k3S0wau6SJoKWQts7Y2bmo2bsBuOmljA=;
-        b=lpKFDGZsYLN75h9nInqEqaAXt+4BgJsO66MUd5Vg3RvtphhnpgpFzdBbK1xCPsBgum
-         yhSeNmBdd6VWEitNzMbrjlTFpjY+KUuhobFY70LsbPR0BXSlMNkO1FKLv6/avKh14Ehu
-         YTRYy0AJsJ+yw25//oX902N2IHQKwwprPbFErxAg9JnMsKTd7rzRQODzPXrj0hkaKEhK
-         VtWR7bZkqY6DDetRVn7bq+0RVSv/gX3HWeHtDYgcecckO+mGnPdXwKiFN0u0rZ1nAodY
-         gZq1yH2i/Hg/oW8AAf+7tQ95/Qio4ts1pUUaUCjzGiCe+IqPS1rWj7pxqPBRQvMU5yMQ
-         ou7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVihZUALY2J3j8R+AiGeNdA8znzkjSJwZaD+x6LKAFUS6YfXc5wanxhBJlysTThMzs07Bx4T9Ifizce3OFLfDyaChVyhauXEOuVeSI3SQAybXhizkCOPLtEPpL9CZTcCsvJs4UihXK1y/o=
-X-Gm-Message-State: AOJu0Yy6EARObuezYu9OGPbn1aMWGJPoWGMFtpt51oU5ZNBnA4sSgtGz
-	5a+lO6r3wlhOpMHpHvpSkVNjYC6AhkDgSb4a84dx+RqsyKjf+T/TEW120bTL9MtUCACFUmsjwVe
-	/2CBn8aY7fW0aTXDh1bL2/odDuu6LC/KV
-X-Google-Smtp-Source: AGHT+IEBZ/FUz/DsO7jOLpOU0J6Jmcc/4QS4QIM895fzsXyrUnDATeRHsjxnAed8u+yDzbzNAiteUqr+agzXrZOR0OY=
-X-Received: by 2002:a05:690c:f02:b0:62f:206e:c056 with SMTP id
- 00721157ae682-652f5778c41mr49833507b3.5.1720267670059; Sat, 06 Jul 2024
- 05:07:50 -0700 (PDT)
+	s=arc-20240116; t=1720268037; c=relaxed/simple;
+	bh=+atnM+sTNzc3s7SG9E8Qur1BUOFc6hJDcQTnxk3hqk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMrWSlGPIDincTE0S4bjyTZKvNgdkJdvvW2Q2EKWYhxlszvDIqYzGLfl1BgC09QqSG+rK3SRjFFMcIe0OA70Kjx3E9TbfJz6jwc++f3zoJScCceV4A7imIhR459SbPFJoyDLKzDj8bvL97R9uSFeoZn4upCDBDj2sCZv3FD8ODY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgQ3AoNq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 603EFC2BD10;
+	Sat,  6 Jul 2024 12:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720268037;
+	bh=+atnM+sTNzc3s7SG9E8Qur1BUOFc6hJDcQTnxk3hqk4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fgQ3AoNqQ90COdJy8KxvdqruB7NIdqqEgrOdTs8UqpHMkXjCuwiubSvVv1PlF3AN+
+	 +If/folhBSCQTCh9kzcNAdL9A05MBH1FkKYniqO7BPkjOL2oFIpw9+NO7J0qUZialu
+	 9NUWb0Wpifp8D0cpQiI/GSXsVjYgDUQyGvtjrRuZkNaLG6zZpLjWaesTsmPAT1b3x1
+	 wYNT8OHgvBXz7kPdedkdWfkzI9WSekNCG78o1LrDtdNJnq4H4cJef5uUE1DVaykHl4
+	 2gVA3ZjLmOKtVP6myKUZnxCgVmuCgkybuf/Impjqui0tUm/oA3o7A2h2Mb6yQBbw8B
+	 RchMswYc+W+yA==
+Date: Sat, 6 Jul 2024 13:13:53 +0100
+From: Simon Horman <horms@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] udp: Remove duplicate included header file
+ trace/events/udp.h
+Message-ID: <20240706121353.GC1481495@kernel.org>
+References: <20240706071132.274352-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
- <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com> <CAK-xaQaesuU-TjDQcXgbjoNbZa0Y2qLHtSu5efy99EUDVnuhUg@mail.gmail.com>
-In-Reply-To: <CAK-xaQaesuU-TjDQcXgbjoNbZa0Y2qLHtSu5efy99EUDVnuhUg@mail.gmail.com>
-From: Andrea Gelmini <andrea.gelmini@gmail.com>
-Date: Sat, 6 Jul 2024 14:07:33 +0200
-Message-ID: <CAK-xaQbcpzvH1uGiDa04g1NrQsBMnyH2z-FPC4CdS=GDfRCsLg@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240706071132.274352-2-thorsten.blum@toblux.com>
 
-Il giorno sab 6 lug 2024 alle ore 02:11 Andrea Gelmini
-<andrea.gelmini@gmail.com> ha scritto:
-> For the moment it seems we have a winner!
+On Sat, Jul 06, 2024 at 09:11:33AM +0200, Thorsten Blum wrote:
+> Remove duplicate included header file trace/events/udp.h and the
+> following warning reported by make includecheck:
+> 
+>   trace/events/udp.h is included more than once
+> 
+> Compile-tested only.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-I confirm this, but I forgot to add this (a lot of these):
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm firefox-bin nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm firefox-bin nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:06 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
-[sab lug  6 13:12:07 2024] BTRFS warning (device dm-0): extent
-shrinker already running, comm cc1plus nr_to_scan 2
+Thanks, I see that trace/events/udp.h is also included on line 36.
 
-Just for the record, compiling LibreOffice.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-In the meanwhile running restic (full backup to force read
-everything), no sluggish at all.
+> ---
+>  net/ipv6/udp.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+> index c81a07ac0463..bfd7fff1bc0c 100644
+> --- a/net/ipv6/udp.c
+> +++ b/net/ipv6/udp.c
+> @@ -46,7 +46,6 @@
+>  #include <net/tcp_states.h>
+>  #include <net/ip6_checksum.h>
+>  #include <net/ip6_tunnel.h>
+> -#include <trace/events/udp.h>
+>  #include <net/xfrm.h>
+>  #include <net/inet_hashtables.h>
+>  #include <net/inet6_hashtables.h>
+> -- 
+> 2.45.2
+> 
+> 
 
