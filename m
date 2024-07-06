@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-242985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC136928FE3
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:10:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA88928FEA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79B21B22E85
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F961F227A3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5948F47;
-	Sat,  6 Jul 2024 01:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC647483;
+	Sat,  6 Jul 2024 01:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfI6cLM1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Al6QKwKf"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7C14A19;
-	Sat,  6 Jul 2024 01:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698068814
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 01:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720228233; cv=none; b=Cpcjh5w0advIWnvy4yFVB4br3rIiQCnAdfwcZ3EeipMmMESu74+Mw2d6FuW1B3XuI1ygLmB6SdW4ehHgbN5Xp6XbcBuG9gT+LyQfJ6mipsbbJcou29WSDUIdKAObJvy1jkYdfWHMA7Qb9BzwEHI4ZPn9n18gf+tyEm00TFilecg=
+	t=1720228355; cv=none; b=S4mxdi2wt4dJK1PZiWg5QzrnYayk9fwB20e8LcwBHO5VU1c+kxfyiWGH6A89IX1wImoV1kI1ktKge7b7B6Ztl04fyEC8wHjWyEXH4eWOBo/5uHBXsEF4kyccZhGPtKFmPYXCQ1nn+XCJBkZD+8cmH1DKw2szwz79b4/+StBA77U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720228233; c=relaxed/simple;
-	bh=zkCxmVfyAcZ3ameHi0iJtKJwpuGLKb+DGOkw/aensNY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fFitaoj8y9hDJGVQQJTdYAytsfyed32zWYtjv1AJ8w3LFx/J2Tq6W3wD7oyv0W+alQpkREJWMmI+bx84+qD/f4O+2pO5ZOGr4WFKHuNmpGH42XGs3AuMrpP+Yjy3xfQl7fNTXknOFDHl7rvGU9s+N7b+9yqsH00Dt0wjScFoMP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfI6cLM1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BD9F5C32781;
-	Sat,  6 Jul 2024 01:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720228232;
-	bh=zkCxmVfyAcZ3ameHi0iJtKJwpuGLKb+DGOkw/aensNY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FfI6cLM1x64E4KFsAMKmN4ng2Xj0cJGiPYZ+qiLGU7tpjnlsQ+eiunOvsE8rJ3oYO
-	 cVchYkPHgW+Und3Kqvp2/9H8GJIdk7vwYaNFMK0dF05BN/L0RjQEFQU+AJLsDudGUS
-	 KqsyGa2nh+F7Y5FanmvKl+uHl2wQ1U3cQ9/7L9gDKk82SVkfYDRqmP2pq9HcO/qdRp
-	 4jp+KyQ+ZLDU2gifyz5JQonqH5JxdjyidIhbOgXsTJNDkfE0/uko3Aav6TthMNU8ps
-	 6qSbjFS59O2h3orpruXLO7ryOcxxQ9pSGEIlP6TrhrDkpZbiuD5arD7urEEbHTdu39
-	 7xYZo8IO0glng==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A51B6C43332;
-	Sat,  6 Jul 2024 01:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720228355; c=relaxed/simple;
+	bh=sjzCSpb4AjEcdY7WUrMAhjeDDRnl1FuW0zaFanlMhk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KGvLGvQfhw/CJSQ7rlwstk2QaCCWv02Mlmm86KsiGYRdu5W7FvpkohTe4hAUECsQFLOiHHuk9xXIKE7KSlCqHPdEheGw7BvruQ4jHtzeCEkqy8PG3cJ80aGd2YiqCt6fAY6LzElO1ER1sC3WUgQBFX9yW3GtflRKm4EXBGMOvVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Al6QKwKf; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=AS9cAtBh3YgCXgXDU4/Q/DI5ppPuFlEliQR7lHeCIFU=; b=Al6QKwKfrxtaZ82v3rD2sW6tBY
+	NG3wUo2e6pDDjZAB5EexFvBpT6VyEG3pJEpGkSrwmB2faRBewSkxK5yU5qurb3hMKr+ZA6o0LhJKi
+	on/BqqCh+3BPiXOSHNoBKFmrjV1Punqk+hSq6b0/ZuHrp5/TUKMN7ej4FqKzwgRl0XI5wE2uxUHjn
+	2zqdjHMTtM2nT24FulDuvyQvEaVid5mR2LL4MkZWBdSbJtybHDHxlgwpIX6x1LV2YpMaisuHJbuxK
+	HNou44h9OqMUH8MEH1C8sUyN2iIn/+DwwO8N8hjc/Z7UOBDSVEeHz6+wb2LLPyPtRgE1Ph3NVzdCH
+	n+ZyyEyw==;
+Received: from [191.19.134.16] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sPtyS-00BhBm-CQ; Sat, 06 Jul 2024 03:12:24 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel-dev@igalia.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Simon Ser <contact@emersion.fr>,
+	Pekka Paalanen <ppaalanen@gmail.com>,
+	daniel@ffwll.ch,
+	Daniel Stone <daniel@fooishbar.org>,
+	=?UTF-8?q?=27Marek=20Ol=C5=A1=C3=A1k=27?= <maraeo@gmail.com>,
+	Dave Airlie <airlied@gmail.com>,
+	ville.syrjala@linux.intel.com,
+	Xaver Hugl <xaver.hugl@gmail.com>,
+	Joshua Ashton <joshua@froggi.es>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v8 0/1] drm/atomic: Ease async flip restrictions
+Date: Fri,  5 Jul 2024 22:12:12 -0300
+Message-ID: <20240706011214.380390-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v9 00/10] net: openvswitch: Add sample multicasting.
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172022823267.9162.5749363663019747112.git-patchwork-notify@kernel.org>
-Date: Sat, 06 Jul 2024 01:10:32 +0000
-References: <20240704085710.353845-1-amorenoz@redhat.com>
-In-Reply-To: <20240704085710.353845-1-amorenoz@redhat.com>
-To: =?utf-8?q?Adri=C3=A1n_Moreno_=3Camorenoz=40redhat=2Ecom=3E?=@codeaurora.org
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com,
- horms@kernel.org, i.maximets@ovn.org, dev@openvswitch.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
 
-Hello:
+Hi,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+As per my previous patchsets, the goal of this work is to find a nice way to
+allow amdgpu to perform async page flips in the overlay plane as well, not
+only on the primary one. Currently, when using the atomic uAPI, this is the only
+type of plane allowed to do async flips, and every driver accepts it.
 
-On Thu,  4 Jul 2024 10:56:51 +0200 you wrote:
-> ** Background **
-> Currently, OVS supports several packet sampling mechanisms (sFlow,
-> per-bridge IPFIX, per-flow IPFIX). These end up being translated into a
-> userspace action that needs to be handled by ovs-vswitchd's handler
-> threads only to be forwarded to some third party application that
-> will somehow process the sample and provide observability on the
-> datapath.
-> 
-> [...]
+In my last version, I had created a static field `bool async_flip` for
+drm_planes. When creating new planes, drivers could tell if such plane was
+allowed or not to do async flips. This would be latter checked on the atomic
+uAPI whenever the DRM_MODE_PAGE_FLIP_ASYNC was present.
 
-Here is the summary with links:
-  - [net-next,v9,01/10] net: psample: add user cookie
-    https://git.kernel.org/netdev/net-next/c/093b0f366567
-  - [net-next,v9,02/10] net: sched: act_sample: add action cookie to sample
-    https://git.kernel.org/netdev/net-next/c/03448444ae5c
-  - [net-next,v9,03/10] net: psample: skip packet copy if no listeners
-    https://git.kernel.org/netdev/net-next/c/c35d86a23029
-  - [net-next,v9,04/10] net: psample: allow using rate as probability
-    https://git.kernel.org/netdev/net-next/c/7b1b2b60c63f
-  - [net-next,v9,05/10] net: openvswitch: add psample action
-    https://git.kernel.org/netdev/net-next/c/aae0b82b46cb
-  - [net-next,v9,06/10] net: openvswitch: store sampling probability in cb.
-    https://git.kernel.org/netdev/net-next/c/71763d8a8203
-  - [net-next,v9,07/10] selftests: openvswitch: add psample action
-    https://git.kernel.org/netdev/net-next/c/60ccf62d3ceb
-  - [net-next,v9,08/10] selftests: openvswitch: add userspace parsing
-    https://git.kernel.org/netdev/net-next/c/c7815abbea45
-  - [net-next,v9,09/10] selftests: openvswitch: parse trunc action
-    https://git.kernel.org/netdev/net-next/c/b192bf12dbb0
-  - [net-next,v9,10/10] selftests: openvswitch: add psample test
-    https://git.kernel.org/netdev/net-next/c/30d772a03582
+However, Dmitry Baryshkov raised a valid point about getting confused with the 
+existing atomic_async_check() code, giving that is an function to do basically
+what I want: to let drivers tell DRM whether a giving plane can do async flips
+or not. It turns out atomic_async_check() is implemented by drivers to deal with
+the legacy cursor update, so it's not wired with the atomic uAPI because is
+something that precedes such API.
 
-You are awesome, thank you!
+So my new proposal is to just reuse this same function in the atomic uAPI path.
+The plane restrictions defined at atomic_async_check() should work in this
+codepath as well. And I will be able to allow overlays planes by modifying
+amdgpu_dm_plane_atomic_async_check(), and anyone else have a proper place to
+play with async plane restrictions as well.
+
+One note is that currently we always allow async flips for primary planes,
+regardless of the drivers, but not every atomic_async_check() implementation
+allows primary planes (because they were writing targeting cursor planes
+anyway...). To avoid regressions, my patch only calls atomic_async_check() for
+non primary planes, and always allows primary ones.
+
+Thoughts?
+
+Changelog
+ v7: https://lore.kernel.org/dri-devel/20240618030024.500532-1-andrealmeid@igalia.com/
+ - Complete rewrite
+
+
+André Almeida (2):
+  drm/atomic: Let drivers decide which planes to async flip
+  drm/amdgpu: Enable async flip on overlay planes
+
+ .../amd/display/amdgpu_dm/amdgpu_dm_plane.c   |  3 +--
+ drivers/gpu/drm/drm_atomic_uapi.c             | 21 ++++++++++++++-----
+ 2 files changed, 17 insertions(+), 7 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.45.2
 
 
