@@ -1,101 +1,189 @@
-Return-Path: <linux-kernel+bounces-243237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF46929358
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:42:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A327792935A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CB51C20CC6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:42:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31A121F21D6A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974F573509;
-	Sat,  6 Jul 2024 11:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdbVrXBM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC9A757E5;
+	Sat,  6 Jul 2024 11:44:15 +0000 (UTC)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAE417722;
-	Sat,  6 Jul 2024 11:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700E97172F;
+	Sat,  6 Jul 2024 11:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720266113; cv=none; b=FGyObo6At4fR9rZa8U8jQSn5WDBNQZovWFFvGzZj+dOgMfhGF2DLATDqirmxZeEjj8lIQMSlglzUXSaKmI5tOrBlRTUf+5QZML3wVCUkhWXqXwRq8ahNJRwfJ5TGFExnmrtLFHHd/5+YUaokUkGKww2E6lK6BtecVhg/319vSjE=
+	t=1720266254; cv=none; b=nWAtL5s4b8rinntk+vcxScfP/aJBnGj2Iv0z6uzaiix1F7/huLrHWugIa3uBg03YQfKHn/GQ1L02bDyK9DQYzzCAJsTfDoxQOqi7kCQsBdi2sI2bVuv8+/s76/W3O+eBABpLDN6uVs/Qx5XXLQxEPop9riPYLhSXQFczYc9hYCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720266113; c=relaxed/simple;
-	bh=ZpiVxTkDAGl22bjAArHNJMuQ2aUZXYATBN98gMUP21o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=seH+fK8+/3YRavF2FhxJuUtzkIsZlyRY+IOyNptssQlWHL4F32Egced8+VtLt4bM6J6B9EeyntLIZx/Hlvd65q7ZjNc8HAg/AyKxigaFNLf9A6YvpXbvd6nTbiD+HK+tymfZ99f2YCjPmwONSq0kEZuh5HdSmNWvStpZRXWi4Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdbVrXBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B5CC3277B;
-	Sat,  6 Jul 2024 11:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720266113;
-	bh=ZpiVxTkDAGl22bjAArHNJMuQ2aUZXYATBN98gMUP21o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pdbVrXBMMhrkNbPlOYhoopbfyJZKXKB7YfADm1W4wkui0/I0wSjo+olFCsab1Eq49
-	 CUPuhVMV/weIvaJwy+S45vFVEouTkc5c/yMdtq3WzO2bhDpYuQHrYnov/ArFFLWucA
-	 FDOu4lk3VM57dcQaPwXoMIfSQR9b19FvAmoJWqxGdN9zaBh9OKgxv9zm+ReHpTmeKA
-	 Z/jsHtxUKg8+q0PcGbxEcj2BpSYr0Q+HVxJpsdhwpvJ+AEi++AC5QVZHvmvOmekWq7
-	 ZHHxuL3Hn0JfbFUTrDP62xwihhbonXFMHtgtUoZwyrIEKPSC4Z2zhmuZg8N4bFyPo8
-	 dxKj4EKuBlqhQ==
-Date: Sat, 6 Jul 2024 12:41:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Aleksandr Mishin <amishin@t-argos.ru>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Datta Shubhrajyoti
- <shubhrajyoti@ti.com>, linux-iio@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] staging: iio: frequency: ad9834: Validate frequency
- parameter value
-Message-ID: <20240706124146.036f152a@jic23-huawei>
-In-Reply-To: <59cc60a1-f6d6-4f9f-bc36-6b06315eaee4@suswa.mountain>
-References: <20240703104734.12034-1-amishin@t-argos.ru>
-	<20240703154506.25584-1-amishin@t-argos.ru>
-	<59cc60a1-f6d6-4f9f-bc36-6b06315eaee4@suswa.mountain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720266254; c=relaxed/simple;
+	bh=3WQQrxcBcr055f1jLShA2iF0olkPjnm/KLdE+z7pmYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BZMzVasOakrj039uhAyux56EIfFWuODpsCkpdvMnYIx5NWLGQY+H5DlhMFo05eCAMj3+ZNpIo8nqxyjB/ukuh6cD5OnmjpHfwwDTZn1YtwsyGA6HzeuP07TA7FkIBhWr1HJ/JQn5+VMZ8NDHp8Wgvm1jK1JR0sgsgm8RE4dFp9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e9fe05354so3519913e87.1;
+        Sat, 06 Jul 2024 04:44:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720266250; x=1720871050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V+134akog2wvWq0vXgpMfAQRTi+1SDwDutTFUFvF3Uc=;
+        b=T1A8XVYdgsR+5hcers5LCZyPFzcyj90056gdve3UEsXOu1K9o22KOr5laQbwE769eK
+         fmbmdKx/KZMKFLKqI6oSM7AFOL4C3KHJCRRv7evVFYxxRV4BoY5WHDN6kNQdVGQ1rME8
+         iu5/vEUcAF+fqbIsCHbnJlzx1VziSSwuLLYOH8StdA1LQSiKSi9VTx+1KEx3hoA4Q1q+
+         qa9RgVPQk68yKTrxvkaI0wXhMFIjUd2IEjnhtNTvOgI/a0KotHCQ6Yqdv5jbViJSm/NX
+         JVvs3Ojj0oWXGWJi8AhaeHHrpJ4kX2tDMCYIwDgJqnuHtee4DNVzurNS8HZAPV4/Ev3h
+         vtEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9nOaeT3/RM6eYa9rvBIomFrundrG7P9MIOcvq4ItpOeR+rc+SZy/3kPmJg4GfifWMauM6J5K6xC0qpWV1TAkDezUoekt4nTl2Grc9
+X-Gm-Message-State: AOJu0Yxz+spKaV1WOVOMIBtnzTVnP5c7i7wIm4sJ+7jMLDi4BTGE6YAJ
+	VSRaLvoFt3sU2oe2ZW9wUxy6l2YYubqOA1AXSUbKyB3B+1BsIrNu7fi8Mpm+
+X-Google-Smtp-Source: AGHT+IFF0xwnieRUYX6JcOX+8hVZktq+p6bp7JjZxIdSCMtHYnaNLkOZAt0o8lRnFlRnuB4EydEeMg==
+X-Received: by 2002:a05:6512:4804:b0:52c:b09e:136d with SMTP id 2adb3069b0e04-52ea063aa83mr5154514e87.32.1720266249479;
+        Sat, 06 Jul 2024 04:44:09 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2f63csm3043861e87.215.2024.07.06.04.44.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Jul 2024 04:44:08 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ee88c4443eso27128721fa.3;
+        Sat, 06 Jul 2024 04:44:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXxy3LKJBWIqp/PXg9kv957bngWVYqw7j7mvOTVTbDA1oeovbsoPr06Bvxb4i7Ug0k6R8ywwJ6M/Ntn+Yg5dOqrp/9OZ9CGUwJK5Ieu
+X-Received: by 2002:a05:651c:d3:b0:2ee:56b0:38e3 with SMTP id
+ 38308e7fff4ca-2ee8f9ae2bdmr48618231fa.24.1720266248186; Sat, 06 Jul 2024
+ 04:44:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com> <20240706112116.24543-49-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20240706112116.24543-49-wsa+renesas@sang-engineering.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 6 Jul 2024 19:43:55 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66u=QhV_EWAbqD9i1ZgVyAToTSr6L8m6ShJyCsimqGzfg@mail.gmail.com>
+Message-ID: <CAGb2v66u=QhV_EWAbqD9i1ZgVyAToTSr6L8m6ShJyCsimqGzfg@mail.gmail.com>
+Subject: Re: [PATCH v2 48/60] i2c: sun6i-p2wi: reword according to newest specification
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 3 Jul 2024 18:29:43 +0200
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On Sat, Jul 6, 2024 at 7:22=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
+> specifications and replace "master/slave" with more appropriate terms.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> On Wed, Jul 03, 2024 at 06:45:06PM +0300, Aleksandr Mishin wrote:
-> > In ad9834_write_frequency() clk_get_rate() can return 0. In such case
-> > ad9834_calc_freqreg() call will lead to division by zero. Checking
-> > 'if (fout > (clk_freq / 2))' doesn't protect in case of 'fout' is 0.
-> > ad9834_write_frequency() is called from ad9834_write(), where fout is
-> > taken from text buffer, which can contain any value.
-> > 
-> > Modify parameters checking.
-> > 
-> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> > 
-> > Fixes: 12b9d5bf76bf ("Staging: IIO: DDS: AD9833 / AD9834 driver")
-> > Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-> > ---
-> > v1->v2: Check if clk_freq == 0 directly instead of fout == 0
-> >  as suggested by Dan  
-> 
-> 
-> Thanks!
-> 
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-Applied and marked for stable.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-> regards,
-> dan carpenter
-> 
-
+> ---
+>  drivers/i2c/busses/i2c-sun6i-p2wi.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-sun6i-p2wi.c b/drivers/i2c/busses/i2c=
+-sun6i-p2wi.c
+> index 85e035e7a1d7..074eade6c4a4 100644
+> --- a/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> +++ b/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> @@ -10,7 +10,7 @@
+>   * The P2WI controller looks like an SMBus controller which only support=
+s byte
+>   * data transfers. But, it differs from standard SMBus protocol on sever=
+al
+>   * aspects:
+> - * - it supports only one slave device, and thus drop the address field
+> + * - it supports only one target device, and thus drop the address field
+>   * - it adds a parity bit every 8bits of data
+>   * - only one read access is required to read a byte (instead of a write
+>   *   followed by a read access in standard SMBus protocol)
+> @@ -88,7 +88,7 @@ struct p2wi {
+>         void __iomem *regs;
+>         struct clk *clk;
+>         struct reset_control *rstc;
+> -       int slave_addr;
+> +       int target_addr;
+>  };
+>
+>  static irqreturn_t p2wi_interrupt(int irq, void *dev_id)
+> @@ -121,7 +121,7 @@ static int p2wi_smbus_xfer(struct i2c_adapter *adap, =
+u16 addr,
+>         struct p2wi *p2wi =3D i2c_get_adapdata(adap);
+>         unsigned long dlen =3D P2WI_DLEN_DATA_LENGTH(1);
+>
+> -       if (p2wi->slave_addr >=3D 0 && addr !=3D p2wi->slave_addr) {
+> +       if (p2wi->target_addr >=3D 0 && addr !=3D p2wi->target_addr) {
+>                 dev_err(&adap->dev, "invalid P2WI address\n");
+>                 return -EINVAL;
+>         }
+> @@ -188,7 +188,7 @@ static int p2wi_probe(struct platform_device *pdev)
+>         unsigned long parent_clk_freq;
+>         u32 clk_freq =3D I2C_MAX_STANDARD_MODE_FREQ;
+>         struct p2wi *p2wi;
+> -       u32 slave_addr;
+> +       u32 target_addr;
+>         int clk_div;
+>         int irq;
+>         int ret;
+> @@ -207,7 +207,7 @@ static int p2wi_probe(struct platform_device *pdev)
+>         }
+>
+>         if (of_get_child_count(np) > 1) {
+> -               dev_err(dev, "P2WI only supports one slave device\n");
+> +               dev_err(dev, "P2WI only supports one target device\n");
+>                 return -EINVAL;
+>         }
+>
+> @@ -215,24 +215,24 @@ static int p2wi_probe(struct platform_device *pdev)
+>         if (!p2wi)
+>                 return -ENOMEM;
+>
+> -       p2wi->slave_addr =3D -1;
+> +       p2wi->target_addr =3D -1;
+>
+>         /*
+>          * Authorize a p2wi node without any children to be able to use a=
+n
+>          * i2c-dev from userpace.
+> -        * In this case the slave_addr is set to -1 and won't be checked =
+when
+> +        * In this case the target_addr is set to -1 and won't be checked=
+ when
+>          * launching a P2WI transfer.
+>          */
+>         childnp =3D of_get_next_available_child(np, NULL);
+>         if (childnp) {
+> -               ret =3D of_property_read_u32(childnp, "reg", &slave_addr)=
+;
+> +               ret =3D of_property_read_u32(childnp, "reg", &target_addr=
+);
+>                 if (ret) {
+> -                       dev_err(dev, "invalid slave address on node %pOF\=
+n",
+> +                       dev_err(dev, "invalid target address on node %pOF=
+\n",
+>                                 childnp);
+>                         return -EINVAL;
+>                 }
+>
+> -               p2wi->slave_addr =3D slave_addr;
+> +               p2wi->target_addr =3D target_addr;
+>         }
+>
+>         p2wi->regs =3D devm_platform_ioremap_resource(pdev, 0);
+> --
+> 2.43.0
+>
 
