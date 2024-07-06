@@ -1,336 +1,96 @@
-Return-Path: <linux-kernel+bounces-243007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F33929037
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B2992903F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6321C20D6A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14231C20F9C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F94EAE7;
-	Sat,  6 Jul 2024 03:11:57 +0000 (UTC)
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283DEF510;
+	Sat,  6 Jul 2024 03:13:44 +0000 (UTC)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51223C156;
-	Sat,  6 Jul 2024 03:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691455258;
+	Sat,  6 Jul 2024 03:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720235516; cv=none; b=opyCFbTG7yALWmC44TJbsdBoM+O7EAxiot7UEDi4l2matsUDiPEY5Ub9TOT+DipIDWLxgFjYgoDuiay915YC3t9svQPacvG7nwvpECtRlQfTZbGsmZ1ik9/7sVZ84uR6zG1V0ItKTvIb1uSKcES0z0L7onaVsfdqE5MHeJveB1A=
+	t=1720235623; cv=none; b=Ifkx8GabnlkjORIEyKFlTud3bCxmqCpzCU9ziPeFXnwYwKfoVV35ycx5RROPDE1LEfE7QF8C7060f0l1Td2JZNvGYOm4Fn/PYcsa7pfYiECYIA2aPkxPVuSkobqIFI74bufJAUY7YW0PW0r+7g1zSM+UgOf9JHuZtx5htHbmncI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720235516; c=relaxed/simple;
-	bh=MyjTGk6VuWMYFBl8e5jB9YOcHh8boZQO8NlWjQrIp6U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mFERzBPkpmvFClnZD7TiFcMUZ3AWdkaONLkR+8Gjk/wXP07ktSeXORmE9CYZfKdJBt7A/ROYtaLKeAg6w5bveKW6NNYJJzIOLvaKTyCXZsrbSIHW8eGr4gujymna9utSk4vfdjmP4YAP3kzFaYV/we7Wj6UA7w5bTv5bcQtJQoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=43.155.80.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpip1t1720235489tei2m50
-X-QQ-Originating-IP: T9voozigEMbvKQqLmyXHyvJvu/Sgt2Ax2xFLqZOUFw0=
-Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [255.251.210.2])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 06 Jul 2024 11:11:23 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1222939419050242368
-From: WangYuli <wangyuli@uniontech.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	sashal@kernel.org
-Cc: ast@kernel.org,
-	keescook@chromium.org,
-	linux-hardening@vger.kernel.org,
-	christophe.leroy@csgroup.eu,
-	catalin.marinas@arm.com,
-	song@kernel.org,
-	puranjay12@gmail.com,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@google.com,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	illusionist.neo@gmail.com,
-	linux@armlinux.org.uk,
-	bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	loongarch@lists.linux.dev,
-	johan.almbladh@anyfinetworks.com,
-	paulburton@kernel.org,
-	tsbogend@alpha.franken.de,
-	linux-mips@vger.kernel.org,
-	deller@gmx.de,
-	linux-parisc@vger.kernel.org,
-	iii@linux.ibm.com,
-	hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	svens@linux.ibm.com,
-	linux-s390@vger.kernel.org,
-	davem@davemloft.net,
-	sparclinux@vger.kernel.org,
-	kuba@kernel.org,
-	hawk@kernel.org,
-	netdev@vger.kernel.org,
-	dsahern@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	guanwentao@uniontech.com,
-	baimingcong@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] Revert "bpf: Take return from set_memory_rox() into account with bpf_jit_binary_lock_ro()" for linux-6.6.37
-Date: Sat,  6 Jul 2024 11:11:01 +0800
-Message-ID: <5A29E00D83AB84E3+20240706031101.637601-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720235623; c=relaxed/simple;
+	bh=8r6e5VdsGSvAd/EOvHwlztu1maR/ucNt/V2Vf0VeKu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z57i9sjMnTqKKumNGP3csHzxd8SHKrY1az854SGFGKcC2V3oyYaFvY0wnm7QUgZ7jWgWpUvZgW1y/e9JwxVBbF19NXG5cbNkUys8LNRLQQBm6hondhgVa/QiCbsVt4c2qxVcEizO+DaKDqj6Fis2a2sW4wwEZyby7dH1RzOAC+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70b04cb28acso1413984b3a.0;
+        Fri, 05 Jul 2024 20:13:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720235622; x=1720840422;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l//qXY+2WrChoYJwXqVw+b5XyYvR2kjLJUxRjyCvlcQ=;
+        b=Zaj0AY5JOTwOobaM2IIx4NhU8HjJ+89EI4n0nEBn+fA7MAgeZzb61yh2Tm64OSctJZ
+         7GE2vZZe0mJTXx/5XzwP3hPi0dKw60X3+IY3z1mWVkMmd1y1X77tYBKw2fhsHu/aIZtC
+         qvOJKP3LliOJUBcRkU6/sfJuO8pEKSbsJgCi+gwYFxlZRdYOzIruXAuHqTPruStGq4Kn
+         I6pRjFqUgr5VysUr2z7TkLZZ9f/02NKinrf9SV97FH36CtS/Da+muZGOsOuq2Ih7x2G6
+         Q2lbcLJ75KjfsWksFDrz0pZ8tQYc5HE1TXHwLZauZkpSD1AhaNncbT8twtrV9Sz2AF6n
+         /3Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFVJHT/2cjyGXnMFTlspAknb8gqhkYO/xaTlFvRzLBHlPm3p+MOaH7PATQY3aL2YPtoYOre1HpSe86+PuA080E0CwyNByd0uQb08KAsn2WmQ/FtDucB8j2iKNbRtyyehI9e+VDSq0z
+X-Gm-Message-State: AOJu0Yyl+rmcAE1tt3WErAejWD9MDlizvmNXb+fdL3YvzgzvN/SYI8CP
+	wtOQdEbPCEAX7zc2JtZEkGDwWP2MZPJfHZeap2Twqu0hVeWcJVWu
+X-Google-Smtp-Source: AGHT+IEDrW1MqoaS5xkn+MIqPNA9xRfaWDarioF/FdHAR3ugt1rckOZqRsfS5mvG9NvB+TO8gU97cg==
+X-Received: by 2002:a05:6a00:4694:b0:704:2516:8d17 with SMTP id d2e1a72fcca58-70b01abb578mr7757750b3a.8.1720235621612;
+        Fri, 05 Jul 2024 20:13:41 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b044bdac4sm3350226b3a.192.2024.07.05.20.13.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 20:13:41 -0700 (PDT)
+Date: Sat, 6 Jul 2024 12:13:40 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: kirin: fix memory leak in kirin_pcie_parse_port()
+Message-ID: <20240706031340.GC1195499@rocinante>
+References: <20240609-pcie-kirin-memleak-v1-1-62b45b879576@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240609-pcie-kirin-memleak-v1-1-62b45b879576@gmail.com>
 
-This reverts commit 08f6c05feb1db21653e98ca84ea04ca032d014c7.
+> The conversion of this file to use the agnostic GPIO API has introduced
+> a new early return where the refcounts of two device nodes (parent and
+> child) are not decremented.
+> 
+> Given that the device nodes are not required outside the loops where
+> they are used, and to avoid potential bugs every time a new error path
+> is introduced to the loop, the _scoped() versions of the macros have
+> been applied. The bug was introduced recently, and the fix is not
+> relevant for old stable kernels that might not support the scoped()
+> variant.
 
-Upstream commit e60adf513275 ("bpf: Take return from set_memory_rox() into account with bpf_jit_binary_lock_ro()")
-depends on
-upstream commit 1dad391daef1 ("bpf, arm64: use bpf_prog_pack for memory management").
+Applied to controller/kirin, thank you!
 
-It will cause a compilation warning on the arm64 if it's not merged:
-  arch/arm64/net/bpf_jit_comp.c: In function ‘bpf_int_jit_compile’:
-  arch/arm64/net/bpf_jit_comp.c:1651:17: warning: ignoring return value of ‘bpf_jit_binary_lock_ro’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
-   1651 |                 bpf_jit_binary_lock_ro(header);
-        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[1/1] PCI: kirin: Fix memory leak in kirin_pcie_parse_port()
+      https://git.kernel.org/pci/pci/c/1a164371b362
 
-This will prevent the kernel with the '-Werror' compile option from
-being compiled successfully.
-
-We might as well revert this commit in linux-6.6.37 to solve the
-problem in a simple way.
-
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/arm/net/bpf_jit_32.c        | 25 +++++++++++++------------
- arch/loongarch/net/bpf_jit.c     | 22 ++++++----------------
- arch/mips/net/bpf_jit_comp.c     |  3 +--
- arch/parisc/net/bpf_jit_core.c   |  8 +-------
- arch/s390/net/bpf_jit_comp.c     |  6 +-----
- arch/sparc/net/bpf_jit_comp_64.c |  6 +-----
- arch/x86/net/bpf_jit_comp32.c    |  3 ++-
- include/linux/filter.h           |  5 ++---
- 8 files changed, 27 insertions(+), 51 deletions(-)
-
-diff --git a/arch/arm/net/bpf_jit_32.c b/arch/arm/net/bpf_jit_32.c
-index ac8e4d9bf954..6a1c9fca5260 100644
---- a/arch/arm/net/bpf_jit_32.c
-+++ b/arch/arm/net/bpf_jit_32.c
-@@ -1982,21 +1982,28 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 	/* If building the body of the JITed code fails somehow,
- 	 * we fall back to the interpretation.
- 	 */
--	if (build_body(&ctx) < 0)
--		goto out_free;
-+	if (build_body(&ctx) < 0) {
-+		image_ptr = NULL;
-+		bpf_jit_binary_free(header);
-+		prog = orig_prog;
-+		goto out_imms;
-+	}
- 	build_epilogue(&ctx);
- 
- 	/* 3.) Extra pass to validate JITed Code */
--	if (validate_code(&ctx))
--		goto out_free;
-+	if (validate_code(&ctx)) {
-+		image_ptr = NULL;
-+		bpf_jit_binary_free(header);
-+		prog = orig_prog;
-+		goto out_imms;
-+	}
- 	flush_icache_range((u32)header, (u32)(ctx.target + ctx.idx));
- 
- 	if (bpf_jit_enable > 1)
- 		/* there are 2 passes here */
- 		bpf_jit_dump(prog->len, image_size, 2, ctx.target);
- 
--	if (bpf_jit_binary_lock_ro(header))
--		goto out_free;
-+	bpf_jit_binary_lock_ro(header);
- 	prog->bpf_func = (void *)ctx.target;
- 	prog->jited = 1;
- 	prog->jited_len = image_size;
-@@ -2013,11 +2020,5 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 		bpf_jit_prog_release_other(prog, prog == orig_prog ?
- 					   tmp : orig_prog);
- 	return prog;
--
--out_free:
--	image_ptr = NULL;
--	bpf_jit_binary_free(header);
--	prog = orig_prog;
--	goto out_imms;
- }
- 
-diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-index 13cd480385ca..9eb7753d117d 100644
---- a/arch/loongarch/net/bpf_jit.c
-+++ b/arch/loongarch/net/bpf_jit.c
-@@ -1206,19 +1206,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 	flush_icache_range((unsigned long)header, (unsigned long)(ctx.image + ctx.idx));
- 
- 	if (!prog->is_func || extra_pass) {
--		int err;
--
- 		if (extra_pass && ctx.idx != jit_data->ctx.idx) {
- 			pr_err_once("multi-func JIT bug %d != %d\n",
- 				    ctx.idx, jit_data->ctx.idx);
--			goto out_free;
--		}
--		err = bpf_jit_binary_lock_ro(header);
--		if (err) {
--			pr_err_once("bpf_jit_binary_lock_ro() returned %d\n",
--				    err);
--			goto out_free;
-+			bpf_jit_binary_free(header);
-+			prog->bpf_func = NULL;
-+			prog->jited = 0;
-+			prog->jited_len = 0;
-+			goto out_offset;
- 		}
-+		bpf_jit_binary_lock_ro(header);
- 	} else {
- 		jit_data->ctx = ctx;
- 		jit_data->image = image_ptr;
-@@ -1249,13 +1246,6 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 	out_offset = -1;
- 
- 	return prog;
--
--out_free:
--	bpf_jit_binary_free(header);
--	prog->bpf_func = NULL;
--	prog->jited = 0;
--	prog->jited_len = 0;
--	goto out_offset;
- }
- 
- /* Indicate the JIT backend supports mixing bpf2bpf and tailcalls. */
-diff --git a/arch/mips/net/bpf_jit_comp.c b/arch/mips/net/bpf_jit_comp.c
-index e355dfca4400..a40d926b6513 100644
---- a/arch/mips/net/bpf_jit_comp.c
-+++ b/arch/mips/net/bpf_jit_comp.c
-@@ -1012,8 +1012,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 	bpf_prog_fill_jited_linfo(prog, &ctx.descriptors[1]);
- 
- 	/* Set as read-only exec and flush instruction cache */
--	if (bpf_jit_binary_lock_ro(header))
--		goto out_err;
-+	bpf_jit_binary_lock_ro(header);
- 	flush_icache_range((unsigned long)header,
- 			   (unsigned long)&ctx.target[ctx.jit_index]);
- 
-diff --git a/arch/parisc/net/bpf_jit_core.c b/arch/parisc/net/bpf_jit_core.c
-index 979f45d4d1fb..d6ee2fd45550 100644
---- a/arch/parisc/net/bpf_jit_core.c
-+++ b/arch/parisc/net/bpf_jit_core.c
-@@ -167,13 +167,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 	bpf_flush_icache(jit_data->header, ctx->insns + ctx->ninsns);
- 
- 	if (!prog->is_func || extra_pass) {
--		if (bpf_jit_binary_lock_ro(jit_data->header)) {
--			bpf_jit_binary_free(jit_data->header);
--			prog->bpf_func = NULL;
--			prog->jited = 0;
--			prog->jited_len = 0;
--			goto out_offset;
--		}
-+		bpf_jit_binary_lock_ro(jit_data->header);
- 		prologue_len = ctx->epilogue_offset - ctx->body_len;
- 		for (i = 0; i < prog->len; i++)
- 			ctx->offset[i] += prologue_len;
-diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
-index 05746e22fe79..62ee557d4b49 100644
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -1973,11 +1973,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
- 		print_fn_code(jit.prg_buf, jit.size_prg);
- 	}
- 	if (!fp->is_func || extra_pass) {
--		if (bpf_jit_binary_lock_ro(header)) {
--			bpf_jit_binary_free(header);
--			fp = orig_fp;
--			goto free_addrs;
--		}
-+		bpf_jit_binary_lock_ro(header);
- 	} else {
- 		jit_data->header = header;
- 		jit_data->ctx = jit;
-diff --git a/arch/sparc/net/bpf_jit_comp_64.c b/arch/sparc/net/bpf_jit_comp_64.c
-index 73bf0aea8baf..fa0759bfe498 100644
---- a/arch/sparc/net/bpf_jit_comp_64.c
-+++ b/arch/sparc/net/bpf_jit_comp_64.c
-@@ -1602,11 +1602,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 	bpf_flush_icache(header, (u8 *)header + header->size);
- 
- 	if (!prog->is_func || extra_pass) {
--		if (bpf_jit_binary_lock_ro(header)) {
--			bpf_jit_binary_free(header);
--			prog = orig_prog;
--			goto out_off;
--		}
-+		bpf_jit_binary_lock_ro(header);
- 	} else {
- 		jit_data->ctx = ctx;
- 		jit_data->image = image_ptr;
-diff --git a/arch/x86/net/bpf_jit_comp32.c b/arch/x86/net/bpf_jit_comp32.c
-index f2fc8c38629b..429a89c5468b 100644
---- a/arch/x86/net/bpf_jit_comp32.c
-+++ b/arch/x86/net/bpf_jit_comp32.c
-@@ -2600,7 +2600,8 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 	if (bpf_jit_enable > 1)
- 		bpf_jit_dump(prog->len, proglen, pass + 1, image);
- 
--	if (image && !bpf_jit_binary_lock_ro(header)) {
-+	if (image) {
-+		bpf_jit_binary_lock_ro(header);
- 		prog->bpf_func = (void *)image;
- 		prog->jited = 1;
- 		prog->jited_len = proglen;
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index a74d97114a54..5a2800ec94ea 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -853,11 +853,10 @@ static inline int __must_check bpf_prog_lock_ro(struct bpf_prog *fp)
- 	return 0;
- }
- 
--static inline int __must_check
--bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
-+static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
- {
- 	set_vm_flush_reset_perms(hdr);
--	return set_memory_rox((unsigned long)hdr, hdr->size >> PAGE_SHIFT);
-+	set_memory_rox((unsigned long)hdr, hdr->size >> PAGE_SHIFT);
- }
- 
- int sk_filter_trim_cap(struct sock *sk, struct sk_buff *skb, unsigned int cap);
--- 
-2.43.0
-
+	Krzysztof
 
