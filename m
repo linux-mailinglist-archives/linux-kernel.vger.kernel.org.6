@@ -1,181 +1,441 @@
-Return-Path: <linux-kernel+bounces-243129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A00192922A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA8E929238
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF3B1C2119A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:17:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FD521C20CA5
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD204D599;
-	Sat,  6 Jul 2024 09:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="emjuXHve"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2079.outbound.protection.outlook.com [40.107.215.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F546502BE;
+	Sat,  6 Jul 2024 09:28:26 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA144C3D0
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 09:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720257415; cv=fail; b=N6//Z6pXpiyh6zpya9j2fOGaMTRMXZXGfyLzqkhREM4C3U9KhlZoyzWF7rxGb5QXyZmcgqO6fEOOJ5YXiHM+DJPyQgXje7m3Mv40fjd81FdeCu88y1fieRBiT9hwUd48Nvb9HOllv+UpryawSbxUKxwlk2lM0UMPWuY12K6ShcI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720257415; c=relaxed/simple;
-	bh=7YrBdxNjpEcrivp/hp7bbPmDqnd0XfEQUHa/wQ0YopU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=j8mded//ZFZuo9ADU7zBIwTM6D5frZj/yWxZZRMX+3aWDDzIyDn8dQlS9fCFxtropmAB+zFWARdK9YCjoyrkf+9MmLhWHzhCael954XhYEWbOMAX18wX6NJiPcu0RtuiEymH0T4RuMKOGZPPMqdoKdis/2H+7ByJ+ReN8rvmKK4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=emjuXHve; arc=fail smtp.client-ip=40.107.215.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Nf8JQfnQVdZnlfHmaU5pEAlhkRcPNMwLaZyF2IAe6C86GAmcrnlFMjJ8OQKs3t8pcjG1qyvFR4YHWLap6Ael7HoxEMK2q8BQrbSOYT7CRoqv6eVtvhrkfXPsHTzPn5/Ub8FFY8XIfX2OEd/j5ZiRPHACmLqhNQdJhaJKnrDVgbGQotI6RPYE53bF1WFkfLBLirkAqEuBni8uJ0tDFGFejHV2WUxMMCK1LjS0+D4aHyAfvqA97xoEH/LjAGkTobNR2sYSk+yo8stv/UXV1R1e4JEIvPfPDWcCvW9sN3FMjFArfEExDtA5ZChrH67krp/0zSiAenwoCAHZS2sYUlWIjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zr7eZ/umvFI0IK9ZzBZgID/XxpUUHRanXPRA45J0FEU=;
- b=ixh8/IT4E6U1H5OPS3sWgPEH83sA+MpxkShw83OzhN2KAdqff30t9c7qVGIFemLFvkR7lxStM239YpqTu9ROaD6b2jPFVn1/cVJpA+b6KGcAdMm6UABqNJ68oEeW1qXIFJjzuN36w3xKwclh/eyLpJ/nuC2qaglJwswWUHsB3vku7y5E+45Aia/Gpzbg2rdyK1rh2Iy28IOzUAKzZQ46H8KbdxO/MgfzEC/IFvH+TKPt51lJiVYN+RL4zPsxHD7YIOYuVKlrIPZuP6Ebk7/1FquHOAAYqsAbzSMcmX/DuzRCsWGs/p4jbUS88gmazYc5W/rkM8iCjleEmXO7Sa5Ymg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zr7eZ/umvFI0IK9ZzBZgID/XxpUUHRanXPRA45J0FEU=;
- b=emjuXHveK+451Lt2dOdADeUoXC9W2rqCqTccMks6CcSWQqueKBVsXkHTZC8ubd/8ClwJqGBe1ER51QKqS9KgDoKZCo9cy3pIHFf9RLdks2k+TyM30mjb4LL2E50qOE4S+hCtbzSUp+e/ajzLR2kwGSFP0dyGoJIcvoZGTUnlzLs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oppo.com;
-Received: from SEYPR02MB6014.apcprd02.prod.outlook.com (2603:1096:101:6b::10)
- by SI2PR02MB5516.apcprd02.prod.outlook.com (2603:1096:4:1b1::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Sat, 6 Jul
- 2024 09:16:50 +0000
-Received: from SEYPR02MB6014.apcprd02.prod.outlook.com
- ([fe80::bb06:c283:a50:7796]) by SEYPR02MB6014.apcprd02.prod.outlook.com
- ([fe80::bb06:c283:a50:7796%7]) with mapi id 15.20.7741.029; Sat, 6 Jul 2024
- 09:16:50 +0000
-From: Sheng Yong <shengyong@oppo.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Sheng Yong <shengyong@oppo.com>
-Subject: [PATCH] f2fs: fix start segno of large section
-Date: Sat,  6 Jul 2024 17:16:34 +0800
-Message-Id: <20240706091634.1970874-1-shengyong@oppo.com>
-X-Mailer: git-send-email 2.40.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0055.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::16) To SEYPR02MB6014.apcprd02.prod.outlook.com
- (2603:1096:101:6b::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DB831758;
+	Sat,  6 Jul 2024 09:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720258105; cv=none; b=AefofWjHwYjp3lMthzCkPKy9KQbImHQq/JYz98598FyZkSlCqQ0o4p7ghBHJx2XwIF3CltQZux1YWFmDJZbbI1xlbWeBeGm3es2c0gVQ/mm/ltlVMBpb/kvODPQqIWmS+gmVZ/pnD+XRXKfv9NXHSPfYdBwSqDw9En6CdXKBK1A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720258105; c=relaxed/simple;
+	bh=OdxGGvjzjgYb4vNkuEKT9XJdE4c3YaQ4kAN33ASuK7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CX3sSmz141HVJ6ZouTxs7bBXhtGzv3qjQEgAaOAJZ3ZgmXqkaMAh8oBhaFr97pnVGfigmue74Ky3js2+4QqJFxUSyHwHTXA6n/P4G/luXxKqr887o4AFLWQ8jPY9nzjouxodVi1AXjXsIlxNNH6FYF5mln5wP6WGKFO88Jmd2dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WGQ6M16YDz4f3kpQ;
+	Sat,  6 Jul 2024 17:28:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 9B7A11A0199;
+	Sat,  6 Jul 2024 17:28:18 +0800 (CST)
+Received: from [10.67.111.192] (unknown [10.67.111.192])
+	by APP3 (Coremail) with SMTP id _Ch0CgBnKmQvDolmDVMQBQ--.59961S2;
+	Sat, 06 Jul 2024 17:28:16 +0800 (CST)
+Message-ID: <5c43f532-c849-41c9-92dc-83925f5835d7@huaweicloud.com>
+Date: Sat, 6 Jul 2024 17:28:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|SI2PR02MB5516:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3dc83b9-a9c5-4deb-c331-08dc9d9c5e12
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0m/CugkZVU+lFjPw6Mg7h8ot3hJG1DlVB8lXSfS8qk9Wb/yGGHNUSZ73ydk5?=
- =?us-ascii?Q?w/i1l71eySMQh5s49aOxb7kGC16G7oFw9o3jJkEX0ktA35HcTU0AM3kWOPDY?=
- =?us-ascii?Q?KkzHJMWVD1NRKYlT8tDcbxex9EP5CJDOYqbJ+x9a9wsxD4ocvPUD324/tYbs?=
- =?us-ascii?Q?m9t0hDSPfPBkWc+YGWZ0+n0NtdlR9iv676czrngYfnCp/FrlLgwt3yvoRZoh?=
- =?us-ascii?Q?439sRHFFwWK6RSp7dy6YCgwTgBVTjcmh+3iZSLvg77U0AsOfExtk6x7MH4wd?=
- =?us-ascii?Q?9QhPt8IG2mGVK6g86SqO9Rj7VurE3ZyYSCsyn+/rPHea/mrkyjAAG9S8lL0E?=
- =?us-ascii?Q?sHlg6Yz9L6TzHsuCV/Tgo/Z3nh/Pi3DBpVgDtEtLMg16BiaxM2GzC0rT93Bw?=
- =?us-ascii?Q?A16vNMhVJ4GUQRaTnvPxG22HFj+DIyN/IaJeBrB5Ii2mhVr9SJxAuuo0mqCw?=
- =?us-ascii?Q?RqRZmVKui0UQlB2fKuWxWnEYUKmq6+/CZaskpZbxitnBph3ztf24lIeNaxLB?=
- =?us-ascii?Q?APOe+WbDCDbE6urWuTx5OhsyJpfJF6COr6iO3PUH0bWMGMTuW+tmsnsY8VnL?=
- =?us-ascii?Q?0niIieJuITfDMpyuexSNCsavZ/AvIh8zJf4speOeqVtLlxfUrwKo2HTPwoXh?=
- =?us-ascii?Q?rvM6CVQjF1NjpCHuUvdbVFFbXhweCBRV2pPbf6xEoilf7UZ0WHxl+0aZyUGq?=
- =?us-ascii?Q?vbYsMkAlPUYXlrFspS2U31sfHNQvJzjkCmisejzFx9On8m5lOp2Np+bAZ6at?=
- =?us-ascii?Q?jtrIEQdnYTq70AXSHDGTqmDB8bKzpdQizqPFYx6TM60KDar4l4somNluti+I?=
- =?us-ascii?Q?YbdbN7X+73n5cZRI4i3LobdjYbKiHXMF4xjWXP5NGn+LUZNNkaz0t/TO4zEg?=
- =?us-ascii?Q?AD1M5t4AMudUxy3Njn8gT1FOihc2OwmAlvPu6trkOrkITauDg07THNwgLah+?=
- =?us-ascii?Q?sbwKVy/dS+5SyS6hhJsRW+tKuR2iC33YqpYRsLs0ST6neyrleqg2Ouc9o8d1?=
- =?us-ascii?Q?xHHr2JoLUQ3Tlr58LnVh77QPfWYn8ZfGct9mRlKi+fvhPM8ptDLff9peY2i7?=
- =?us-ascii?Q?Lzxu+a6LdEKk2KAhEwVjJcmZytGxN4A+elkNGdVwQWM6KUtrTg3b7Il3rdRh?=
- =?us-ascii?Q?EfuP+T/XdLHvnxa+NsYd0FwRKyNTli0Am0FUoPglLbZO/5RwPyRVmaJ3BxXL?=
- =?us-ascii?Q?9PbRGSSZhM55P8MhsjH69PZri6CbK2cG0ZK7VevrZUmjJ1mUqCg2HXjoyba3?=
- =?us-ascii?Q?IpgUuu4Aron/J3QUDhrYYBhywdGVHKWHLr2TDAhty8nLcWmRhVLidr5g/QiD?=
- =?us-ascii?Q?fnPaBJeZorN5GRas7cAlxlWEgk+Wusl7Tyt59mKRUJDIhsWQzhumObOEUt0B?=
- =?us-ascii?Q?vKPhfyj4pykf2Im1tf19yFIYbM8nvEGLgpKsY5fXYQvFISvpfQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR02MB6014.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SLuhIzNn4/dI5hZns2nm1NeUd205L++8Nf+m4UQERMCPXzSY+LtU6nwGqmQY?=
- =?us-ascii?Q?rk1Wk5cLJHZBi6XFs52wFWrYCWEKRKJc1e3xpEeKhYsQqdryz7xjEZ5G1ymO?=
- =?us-ascii?Q?V2oGeT+J/qCJgB1xH8ZLVtBg5E9k3JCL5TR2SclS/9MO6RgZIvxXm2fbJkGX?=
- =?us-ascii?Q?lxUW8kqAttxk2rffhJ4JU3AdMQcImZ+hkzvLwBOeihVfY/tvjIQbeljh0qAp?=
- =?us-ascii?Q?0OZNTHXfarm9j4jdKcpIJwkJKp7ti4SfoEJhSmYWjPkvcQ387eKRamZ407L3?=
- =?us-ascii?Q?TX2wbn85OGRYV62M2Ll62UOJ5MC780beYyYWTgbdd0IzBpAfDJrkMpJSQnrt?=
- =?us-ascii?Q?gK3jg0EC85moWfCtLeQjJOyTnh2JiX7P4cPOOqAQqaXA6qP5BFldnJKIeIBi?=
- =?us-ascii?Q?bR3qkjZFFskUVzm2h8DZakEb/66x90P35LAIE33tdAqFA7/hY1DoxxA43MPV?=
- =?us-ascii?Q?VG0/6MU8L7exHczROVH3wrcQyBJY+3LrxRj+LmYt7wyB8xIltP8+M0sxIuis?=
- =?us-ascii?Q?sq0YjKWtEf6FPZmSwzXg2xAbf4GMI3cdh6BUTcfZAKKOTdEvWDcFrITH8z21?=
- =?us-ascii?Q?YyYIMBEnAwjBxxhPoJjEUl5+RagGrnRdOTAU7jjv612U3SiqdgUogSxgK/gD?=
- =?us-ascii?Q?/5fvR2thIxckeGOTk3lLAoxSk4c2XD4oQWwEDMqa29q0sp0DFl0bvaroB0fE?=
- =?us-ascii?Q?tNSoBn/xg6NSPITIQliOHZm7081PjUP07V0vGoAI12A/5JKnJywwIvrSn+g8?=
- =?us-ascii?Q?SK/nk0/CjAWZGULyPfmAeKd/zqhQoZof4KqMdQhXsmqRG7g5LYrs63IShYSC?=
- =?us-ascii?Q?Npw6dn4ejj06JidtSlosj/PNx+WcHhcNMKlwZQzb7Oi09w14TfkeaSKGbbTF?=
- =?us-ascii?Q?2gWFBnGWIry01SKPoZHoqrlW+8feky3vCx+nrDrf/E9XMYU2OKNDFpOihuE5?=
- =?us-ascii?Q?ARxG4X5NLzVzosoR2y50ghK4Y+RltZo22wk6TDILrKCQ+vc5uSBL/ktBLWs9?=
- =?us-ascii?Q?zlcPBvH1MAFMDtvSFHd7RALnl4zY9G9+x6ISfUvW4AXlMkzycQu6IzDqKpav?=
- =?us-ascii?Q?VICEDj1/KLzcg7GJFupIV8jLF3R7w/9Cn8zs7J23oBEJTSWnwizI9dSKzucO?=
- =?us-ascii?Q?FeSPT+jcsHxIV1WfB+kH4zyZzCAmWvJns+6v6Ae91AbXaFPX47HEIJwG8stG?=
- =?us-ascii?Q?HW2kCaBAGEThpqH/bd32kD9AD/8FZMlxRWqIysX6f7tMhXu1gdtkQFuuBzdc?=
- =?us-ascii?Q?XrrzANgeGfQQB3dWRkJmIadcMpWvB0Q/AgKcF6jXh5sKvuLHIhYWRDOkXqx1?=
- =?us-ascii?Q?fSySxeuN/DNdiS6R3Jvsmjjhk0IiWvLSFPIon28Aa/SasYSFO76i+OQIuaZ8?=
- =?us-ascii?Q?EzMGarZEp//nGTT35mKoW/AeDoDoBtVoahvg3LOclCqEu0iaQQ12TyJWLGNq?=
- =?us-ascii?Q?PRx9Jo/eTvS2bs2NBj8H7D9HnvPqqeWQSEdohjoZYyq8FCOxZfP/N438ZMwf?=
- =?us-ascii?Q?Fq0OEgEFr0O4vEtNQmwkxMAQAq2wFGogZ/zHsM2tME9HpEUx8iTYDg41LdDv?=
- =?us-ascii?Q?yhnBT/0a5BuaTRvZWqmNrP8HueYUXqlgCKq9lBr9?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3dc83b9-a9c5-4deb-c331-08dc9d9c5e12
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB6014.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2024 09:16:50.0625
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2LFMH+LlWgoESV4HjamyR9Mkrc7m14gmpnNgJWRy1UU9H8rrNYnQwPwOkc0NOVPF4W0blPAyDhvjFqLW2MostA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR02MB5516
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2] arm64, bpf: Add 12-argument support for bpf
+ trampoline
+Content-Language: en-US
+To: Puranjay Mohan <puranjay@kernel.org>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay12@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+ bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240705125336.46820-1-puranjay@kernel.org>
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+In-Reply-To: <20240705125336.46820-1-puranjay@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgBnKmQvDolmDVMQBQ--.59961S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3trWkJFW7Cr4DXw47Kw48WFg_yoW8JF4xZo
+	ZFgFsFvF4xGryfJ393Kr95Jry7Zan29rn7XayrJrs8XFySqr45Kr1fWw4fJ3WruF4jgFs7
+	CF1jqa4UtF4fZFn5n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUU5R7kC6x804xWl14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK
+	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF
+	7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-get_ckpt_valid_blocks() checks valid ckpt blocks in current section.
-It counts all vblocks from the first to the last segment in the
-large section. However, START_SEGNO() is used to get the first segno
-in an SIT block. This patch fixes that to get the correct start segno.
+On 7/5/2024 8:53 PM, Puranjay Mohan wrote:
+> The arm64 bpf JIT currently supports attaching the trampoline to
+> functions with <= 8 arguments. This is because up to 8 arguments can be
+> passed in registers r0-r7. If there are more than 8 arguments then the
+> 9th and later arguments are passed on the stack, with SP pointing to the
+> first stacked argument. See aapcs64[1] for more details.
+> 
+> If the 8th argument is a structure of size > 8B, then it is passed fully
+> on stack and r7 is not used for passing any argument. If there is a 9th
+> argument, it will be passed on the stack, even though r7 is available.
+> 
+> Add the support of storing and restoring arguments passed on the stack
+> to the arm64 bpf trampoline. This will allow attaching the trampoline to
+> functions that take up to 12 arguments.
+> 
+> [1] https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst#parameter-passing
+> 
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> ---
+> Changes in V1 -> V2:
+> V1: https://lore.kernel.org/all/20240704173227.130491-1-puranjay@kernel.org/
+> - Fixed the argument handling for composite types (structs)
+> ---
+>   arch/arm64/net/bpf_jit_comp.c                | 139 ++++++++++++++-----
+>   tools/testing/selftests/bpf/DENYLIST.aarch64 |   3 -
+>   2 files changed, 107 insertions(+), 35 deletions(-)
+> 
+> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+> index 751331f5ba90..063bf5e11fc6 100644
+> --- a/arch/arm64/net/bpf_jit_comp.c
+> +++ b/arch/arm64/net/bpf_jit_comp.c
+> @@ -30,6 +30,8 @@
+>   #define TMP_REG_3 (MAX_BPF_JIT_REG + 3)
+>   #define FP_BOTTOM (MAX_BPF_JIT_REG + 4)
+>   #define ARENA_VM_START (MAX_BPF_JIT_REG + 5)
+> +/* Up to eight function arguments are passed in registers r0-r7 */
+> +#define ARM64_MAX_REG_ARGS 8
+>   
+>   #define check_imm(bits, imm) do {				\
+>   	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
+> @@ -2001,26 +2003,51 @@ static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct bpf_tramp_links *tl,
+>   	}
+>   }
+>   
+> -static void save_args(struct jit_ctx *ctx, int args_off, int nregs)
+> +static void save_args(struct jit_ctx *ctx, int args_off, int orig_sp_off,
+> +		      int nargs, int nreg_args)
+>   {
+> +	const u8 tmp = bpf2a64[TMP_REG_1];
+> +	int arg_pos;
+>   	int i;
+>   
+> -	for (i = 0; i < nregs; i++) {
+> -		emit(A64_STR64I(i, A64_SP, args_off), ctx);
+> +	for (i = 0; i < nargs; i++) {
+> +		if (i < nreg_args) {
+> +			emit(A64_STR64I(i, A64_SP, args_off), ctx);
+> +		} else {
+> +			arg_pos = orig_sp_off + (i - nreg_args) * 8;
+> +			emit(A64_LDR64I(tmp, A64_SP, arg_pos), ctx);
+> +			emit(A64_STR64I(tmp, A64_SP, args_off), ctx);
+> +		}
+>   		args_off += 8;
+>   	}
+>   }
+>   
+> -static void restore_args(struct jit_ctx *ctx, int args_off, int nregs)
+> +static void restore_args(struct jit_ctx *ctx, int args_off, int nreg_args)
+>   {
+>   	int i;
+>   
+> -	for (i = 0; i < nregs; i++) {
+> +	for (i = 0; i < nreg_args; i++) {
+>   		emit(A64_LDR64I(i, A64_SP, args_off), ctx);
+>   		args_off += 8;
+>   	}
+>   }
+>   
+> +static void restore_stack_args(struct jit_ctx *ctx, int args_off, int stk_arg_off,
+> +			       int nargs, int nreg_args)
+> +{
+> +	const u8 tmp = bpf2a64[TMP_REG_1];
+> +	int arg_pos;
+> +	int i;
+> +
+> +	for (i = nreg_args; i < nargs; i++) {
+> +		arg_pos = args_off + i * 8;
+> +		emit(A64_LDR64I(tmp, A64_SP, arg_pos), ctx);
+> +		emit(A64_STR64I(tmp, A64_SP, stk_arg_off), ctx);
+> +
+> +		stk_arg_off += 8;
+> +	}
+> +}
+> +
+>   /* Based on the x86's implementation of arch_prepare_bpf_trampoline().
+>    *
+>    * bpf prog and function entry before bpf trampoline hooked:
+> @@ -2034,15 +2061,17 @@ static void restore_args(struct jit_ctx *ctx, int args_off, int nregs)
+>    */
+>   static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   			      struct bpf_tramp_links *tlinks, void *func_addr,
+> -			      int nregs, u32 flags)
+> +			      int nargs, int nreg_args, u32 flags)
+>   {
+>   	int i;
+>   	int stack_size;
+> +	int stk_arg_off;
+> +	int orig_sp_off;
+>   	int retaddr_off;
+>   	int regs_off;
+>   	int retval_off;
+>   	int args_off;
+> -	int nregs_off;
+> +	int nargs_off;
+>   	int ip_off;
+>   	int run_ctx_off;
+>   	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
+> @@ -2052,6 +2081,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   	__le32 **branches = NULL;
+>   
+>   	/* trampoline stack layout:
+> +	 * SP + orig_sp_off [ first stack arg   ] if nargs > 8
+>   	 *                  [ parent ip         ]
+>   	 *                  [ FP                ]
+>   	 * SP + retaddr_off [ self ip           ]
+> @@ -2069,14 +2099,24 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   	 *                  [ ...               ]
+>   	 * SP + args_off    [ arg reg 1         ]
+>   	 *
+> -	 * SP + nregs_off   [ arg regs count    ]
+> +	 * SP + nargs_off   [ arg count         ]
+>   	 *
+>   	 * SP + ip_off      [ traced function   ] BPF_TRAMP_F_IP_ARG flag
+>   	 *
+>   	 * SP + run_ctx_off [ bpf_tramp_run_ctx ]
+> +	 *
+> +	 *		    [ stack_argN	]
+> +	 *		    [ ...		]
+> +	 * SP + stk_arg_off [ stack_arg1	] BPF_TRAMP_F_CALL_ORIG
+>   	 */
+>   
+>   	stack_size = 0;
+> +	stk_arg_off = stack_size;
+> +	if ((flags & BPF_TRAMP_F_CALL_ORIG) && (nargs - nreg_args > 0)) {
+> +		/* room for saving arguments passed on stack */
+> +		stack_size += (nargs - nreg_args) * 8;
+> +	}
+> +
+>   	run_ctx_off = stack_size;
+>   	/* room for bpf_tramp_run_ctx */
+>   	stack_size += round_up(sizeof(struct bpf_tramp_run_ctx), 8);
+> @@ -2086,13 +2126,13 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   	if (flags & BPF_TRAMP_F_IP_ARG)
+>   		stack_size += 8;
+>   
+> -	nregs_off = stack_size;
+> +	nargs_off = stack_size;
+>   	/* room for args count */
+>   	stack_size += 8;
+>   
+>   	args_off = stack_size;
+>   	/* room for args */
+> -	stack_size += nregs * 8;
+> +	stack_size += nargs * 8;
+>   
+>   	/* room for return value */
+>   	retval_off = stack_size;
+> @@ -2110,6 +2150,11 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   	/* return address locates above FP */
+>   	retaddr_off = stack_size + 8;
+>   
+> +	/* original SP position
+> +	 * stack_size + parent function frame + patched function frame
+> +	 */
+> +	orig_sp_off = stack_size + 32;
+> +
+>   	/* bpf trampoline may be invoked by 3 instruction types:
+>   	 * 1. bl, attached to bpf prog or kernel function via short jump
+>   	 * 2. br, attached to bpf prog or kernel function via long jump
+> @@ -2135,12 +2180,12 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   		emit(A64_STR64I(A64_R(10), A64_SP, ip_off), ctx);
+>   	}
+>   
+> -	/* save arg regs count*/
+> -	emit(A64_MOVZ(1, A64_R(10), nregs, 0), ctx);
+> -	emit(A64_STR64I(A64_R(10), A64_SP, nregs_off), ctx);
+> +	/* save argument count */
+> +	emit(A64_MOVZ(1, A64_R(10), nargs, 0), ctx);
+> +	emit(A64_STR64I(A64_R(10), A64_SP, nargs_off), ctx);
+>   
+> -	/* save arg regs */
+> -	save_args(ctx, args_off, nregs);
+> +	/* save arguments passed in regs and on the stack */
+> +	save_args(ctx, args_off, orig_sp_off, nargs, nreg_args);
+>   
+>   	/* save callee saved registers */
+>   	emit(A64_STR64I(A64_R(19), A64_SP, regs_off), ctx);
+> @@ -2167,7 +2212,10 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   	}
+>   
+>   	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> -		restore_args(ctx, args_off, nregs);
+> +		/* restore arguments that were passed in registers */
+> +		restore_args(ctx, args_off, nreg_args);
+> +		/* restore arguments that were passed on the stack */
+> +		restore_stack_args(ctx, args_off, stk_arg_off, nargs, nreg_args);
+>   		/* call original func */
+>   		emit(A64_LDR64I(A64_R(10), A64_SP, retaddr_off), ctx);
+>   		emit(A64_ADR(A64_LR, AARCH64_INSN_SIZE * 2), ctx);
+> @@ -2196,7 +2244,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   	}
+>   
+>   	if (flags & BPF_TRAMP_F_RESTORE_REGS)
+> -		restore_args(ctx, args_off, nregs);
+> +		restore_args(ctx, args_off, nreg_args);
+>   
+>   	/* restore callee saved register x19 and x20 */
+>   	emit(A64_LDR64I(A64_R(19), A64_SP, regs_off), ctx);
+> @@ -2228,19 +2276,42 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+>   	return ctx->idx;
+>   }
+>   
+> -static int btf_func_model_nregs(const struct btf_func_model *m)
+> +static int btf_func_model_nargs(const struct btf_func_model *m)
+>   {
+> -	int nregs = m->nr_args;
+> +	int nargs = m->nr_args;
+>   	int i;
+>   
+> -	/* extra registers needed for struct argument */
+> +	/* extra registers or stack slots needed for struct argument */
+>   	for (i = 0; i < MAX_BPF_FUNC_ARGS; i++) {
+>   		/* The arg_size is at most 16 bytes, enforced by the verifier. */
+>   		if (m->arg_flags[i] & BTF_FMODEL_STRUCT_ARG)
+> -			nregs += (m->arg_size[i] + 7) / 8 - 1;
+> +			nargs += (m->arg_size[i] + 7) / 8 - 1;
+>   	}
+>   
+> -	return nregs;
+> +	return nargs;
+> +}
+> +
+> +/* get the count of the regs that are used to pass arguments */
+> +static int btf_func_model_nreg_args(const struct btf_func_model *m)
+> +{
+> +	int nargs = m->nr_args;
+> +	int nreg_args = 0;
+> +	int i;
+> +
+> +	for (i = 0; i < nargs; i++) {
+> +		/* The arg_size is at most 16 bytes, enforced by the verifier. */
+> +		if (m->arg_flags[i] & BTF_FMODEL_STRUCT_ARG) {
+> +			/* struct members are all in the registers or all
+> +			 * on the stack.
+> +			 */
+> +			if (nreg_args + ((m->arg_size[i] + 7) / 8 - 1) > 7)
+> +				break;
+> +			nreg_args += (m->arg_size[i] + 7) / 8 - 1;
+> +		}
+> +		nreg_args++;
+> +	}
+> +
+> +	return (nreg_args > ARM64_MAX_REG_ARGS ? ARM64_MAX_REG_ARGS : nreg_args);
+>   }
+>   
+>   int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
+> @@ -2251,14 +2322,16 @@ int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
+>   		.idx = 0,
+>   	};
+>   	struct bpf_tramp_image im;
+> -	int nregs, ret;
+> +	int nargs, nreg_args, ret;
+>   
+> -	nregs = btf_func_model_nregs(m);
+> -	/* the first 8 registers are used for arguments */
+> -	if (nregs > 8)
+> +	nargs = btf_func_model_nargs(m);
+> +	if (nargs > MAX_BPF_FUNC_ARGS)
+>   		return -ENOTSUPP;
+>   
+> -	ret = prepare_trampoline(&ctx, &im, tlinks, func_addr, nregs, flags);
+> +	nreg_args = btf_func_model_nreg_args(m);
+> +
+> +	ret = prepare_trampoline(&ctx, &im, tlinks, func_addr, nargs, nreg_args,
+> +				 flags);
+>   	if (ret < 0)
+>   		return ret;
+>   
+> @@ -2285,7 +2358,7 @@ int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+>   				u32 flags, struct bpf_tramp_links *tlinks,
+>   				void *func_addr)
+>   {
+> -	int ret, nregs;
+> +	int ret, nargs, nreg_args;
+>   	void *image, *tmp;
+>   	u32 size = ro_image_end - ro_image;
+>   
+> @@ -2302,13 +2375,15 @@ int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+>   		.idx = 0,
+>   	};
+>   
+> -	nregs = btf_func_model_nregs(m);
+> -	/* the first 8 registers are used for arguments */
+> -	if (nregs > 8)
+> +	nargs = btf_func_model_nargs(m);
+> +	if (nargs > MAX_BPF_FUNC_ARGS)
+>   		return -ENOTSUPP;
+>   
+> +	nreg_args = btf_func_model_nreg_args(m);
+> +
+>   	jit_fill_hole(image, (unsigned int)(ro_image_end - ro_image));
+> -	ret = prepare_trampoline(&ctx, im, tlinks, func_addr, nregs, flags);
+> +	ret = prepare_trampoline(&ctx, im, tlinks, func_addr, nargs, nreg_args,
+> +				 flags);
+>   
+>   	if (ret > 0 && validate_code(&ctx) < 0) {
+>   		ret = -EINVAL;
+> diff --git a/tools/testing/selftests/bpf/DENYLIST.aarch64 b/tools/testing/selftests/bpf/DENYLIST.aarch64
+> index 3c7c3e79aa93..e865451e90d2 100644
+> --- a/tools/testing/selftests/bpf/DENYLIST.aarch64
+> +++ b/tools/testing/selftests/bpf/DENYLIST.aarch64
+> @@ -4,9 +4,6 @@ fexit_sleep                                      # The test never returns. The r
+>   kprobe_multi_bench_attach                        # needs CONFIG_FPROBE
+>   kprobe_multi_test                                # needs CONFIG_FPROBE
+>   module_attach                                    # prog 'kprobe_multi': failed to auto-attach: -95
+> -fentry_test/fentry_many_args                     # fentry_many_args:FAIL:fentry_many_args_attach unexpected error: -524
+> -fexit_test/fexit_many_args                       # fexit_many_args:FAIL:fexit_many_args_attach unexpected error: -524
+> -tracing_struct/struct_many_args                  # struct_many_args:FAIL:tracing_struct_many_args__attach unexpected error: -524
+>   fill_link_info/kprobe_multi_link_info            # bpf_program__attach_kprobe_multi_opts unexpected error: -95
+>   fill_link_info/kretprobe_multi_link_info         # bpf_program__attach_kprobe_multi_opts unexpected error: -95
+>   fill_link_info/kprobe_multi_invalid_ubuff        # bpf_program__attach_kprobe_multi_opts unexpected error: -95
 
-Fixes: 61461fc921b7 ("f2fs: fix to avoid touching checkpointed data in get_victim()")
-Signed-off-by: Sheng Yong <shengyong@oppo.com>
----
- fs/f2fs/segment.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+It looks like this patch, similar to [1], also does not handle
+parameter alignment properly [2].
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index e1c0f418aa11..6ed5bc811d2c 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -347,7 +347,8 @@ static inline unsigned int get_ckpt_valid_blocks(struct f2fs_sb_info *sbi,
- 				unsigned int segno, bool use_section)
- {
- 	if (use_section && __is_large_section(sbi)) {
--		unsigned int start_segno = START_SEGNO(segno);
-+		unsigned int start_segno = segno / SEGS_PER_SEC(sbi) *
-+							SEGS_PER_SEC(sbi);
- 		unsigned int blocks = 0;
- 		int i;
- 
--- 
-2.40.1
+For example:
+
+int func(__int128 a, __int128 b, __int128 c, int64_t d, __int128 e, int64_t f, __int128 g)
+{
+}
+
+parameter a~d are passed through register x0~x6, while parameter
+e~g are passed through stack. Since __int128 is 16-byte aligned,
+parameter e, f, and g should be placed at sp + 0, +16, and +32
+respectively, with 8 bytes **padding** between f and g.
+
+
+And the compiler's alignment or packed attribute may make things
+worse, causing parameters to be placed on the stack at positions
+that are not naturally aligned.
+
+[1] https://lore.kernel.org/bpf/20230917150752.69612-1-xukuohai@huaweicloud.com/
+[2] https://lore.kernel.org/bpf/CABRcYmLtk8aQEzoUFw+j5Rdd-MXf-q+i7RHXZtu-skjRz11ZDw@mail.gmail.com/
 
 
