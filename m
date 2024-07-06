@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-243419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0589295FD
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B76629295FF
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A19C1C20B40
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88F01C20AF7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A514D8CE;
-	Sat,  6 Jul 2024 23:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FAD2C6AF;
+	Sat,  6 Jul 2024 23:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EBYuuktR"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ec7CGA1h"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E890F10953;
-	Sat,  6 Jul 2024 23:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711A9757FC;
+	Sat,  6 Jul 2024 23:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720309996; cv=none; b=SfhCQikFtbEEvw/zvVhMTL2a6HJhiCP3xndw+6VgcgGk7H2zdUI6DEgDFDdQR2vCLNwgAL83GL9oHVQxkwMlWdsJ4iy89ciccn9Q8eVnpbiGYoJOK5L4a8pSyvhk7nRRTINWEehUP6NbNEOB3T2Iss0KYCASc7m62n4dUgqc9Q4=
+	t=1720310058; cv=none; b=jP5v4hXt8UEZ5UU+ZdZ5MuEcT4CpsOD1fKXAU4n7P069i5HqNZqNXQIRbmv5ECQ9nlycoud0lSvgT+9+hyH0oh1+LsWGI3l1ADnrjGT8faSxBYo+dhxiwpfKSP2Xp/ce+fSE/HNQC/dyiNr2B9zYrtP89oQ+IK8QgeS73k9EBMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720309996; c=relaxed/simple;
-	bh=8MpIh0u2fu1mBQS1tGkkiaL8mpe1cnEquAjL8fJNZmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VtFZjN8o5h3R9B01RA7bedXxV0BUcfNY77YiilO9r9SKP7wbBJA3ZcOuNK2FZfov/NhYoN1BEvJlchdnl9baZLXwEHBY2OIzWjLUaDGrbFt7lX8KavyWSNbcFBplRm/AQVbGWg3uKleu0L8mwYI9WM+0krb8QycQwTO3oyzKvXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EBYuuktR; arc=none smtp.client-ip=209.85.222.180
+	s=arc-20240116; t=1720310058; c=relaxed/simple;
+	bh=tQZE+yvLdfcAriqqKjQn68N/FqDQMhVHYTqcmUeyadc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OPnEqbAv+qx9wgqtyuHXayugwJ1MmZc5l//3c97MLNjNZF2o8Gl2zD0d2EBuOMgjpV2xRLI8iFQSPcHLv/DpbvO50j25WVeaL0ktjBasYuSqwz81IGCSwvDAMFI5kv82mr9Q1b3n8+NRQQhw9zj3r7SatFQQTMU5N0qi62n/5lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ec7CGA1h; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-79efec89c80so94723685a.2;
-        Sat, 06 Jul 2024 16:53:14 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ee4ae13aabso28479581fa.2;
+        Sat, 06 Jul 2024 16:54:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720309994; x=1720914794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720310054; x=1720914854; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8MpIh0u2fu1mBQS1tGkkiaL8mpe1cnEquAjL8fJNZmI=;
-        b=EBYuuktRw32OkRf6EkTC3lU/ef/zgLpa5lZ6Vq/2Ll47AihPZcNDQP8UFSHRFlvYI3
-         4AsIdAhZOBQ2UavCm4jNo9bh+7z+OhuTpWoY2Ogsxy2ULe/XCYzk19kWPxTCO2CC7HDs
-         6EB3AMW6VfOkCasyFT0zJ7lSvJz46Q8zegz54HMiYKwzJWytvBKCwaajuKf2f6v5AZXK
-         1UoHOBkO9D+JoYH9x6bzwgjF7iWul44NHR5KhSAaxOPE58a0RYvHJorstxE4wKDyBW/P
-         lcoXhdhaHPT79yaAUUojT57FX/CJzjpAyOLxivAXtY1NGO7DQus+ZMiX6TcbP82KufUK
-         nptg==
+        bh=TkBRl4JZWQbks3co99KOiKCP10Ez5zuclfcztvGtTA0=;
+        b=Ec7CGA1hsmL6bS84SDy2AY3yg937ga+M/037mBIfBPqniSPPNeY8kI4m5xfei0AfTM
+         J8gw2dhoutYrd8XeWCsGZz6eJguY4Osvqy6SH+pWtFMLZSOSPSCBwgOeH1ZihvkvRSVf
+         h6Qgs6QuCexGwjlkYe7IpwZqKHO2DY/VSGjpsDnH+M2K2uczw9Xl5yD9VQI+IYskZ/sS
+         aeamuX1gE/xSWMEJwOOuyQI2xFx6IULZLZMRdi2Js9r85Czmq6EZ6OpIo+WTTYG231ob
+         GI5WOhF2rAo34Juli3x404lZ+czOL2yBe0DJYgrGrJ8g3gxlhFkgHj6ZV4OwIUhg832a
+         eY2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720309994; x=1720914794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8MpIh0u2fu1mBQS1tGkkiaL8mpe1cnEquAjL8fJNZmI=;
-        b=PSTwpXWGdD++vipOHxqMUinN9a5ly9rB/3PVPsRm7p1yk1hoQG7CvKXcgphEvlUExk
-         cNy02YyO/NlqbQEMmHW3ufFPAIyeoB+i7l3BE75GnOEGkqJsgGgizLQnYoYgzvo+5Jzi
-         QxzDFdVaUsmx22Yz+uYM/By4Wv5emgylMEP+s2skfoD/yf3wsGMChRWngs7VkEU8mh1o
-         Lf2cLBE5aRXDKWyf9+vS2ldSplGcaZ4tP+VDQ/yyZc3MsuKnuwlPLcLs9F21AYR+uQ+5
-         xzsDCwxsK0k5/k1aKKL/AAsP1tmatKRa5oXtuH56akcST5Kmi2IJilTuTfEKPh8hdsor
-         YUFw==
-X-Forwarded-Encrypted: i=1; AJvYcCU90inEnOxZ8PnNOx+pC8V+kmHKkuSxXvL/L4syJY/aI9g6gyyNC8jYbx6OD2JOz2g/QjdxCr1KVNeRc01HhDvEfc/ukMAxlZMlSFWKnPqB3QMOG+vjGiHJt1WxRc3WD1KhsfMvlxfM
-X-Gm-Message-State: AOJu0Yx/LBa7VZf79kXUy0t6Gz8GH/SCYSYcYJWFk/yfrpJOmr0DQkbP
-	SxeXYmg9PjoFUocHpybC4wRt+FPbTbmlD93bgGLqlPru4vXGdrCcxvUfVgYZTEFzmblE/paolO5
-	ygtJaT5HfLzw7oqyBH1Jrdaxkvf0=
-X-Google-Smtp-Source: AGHT+IHA/MsUFqZtusJR9E/YqELzb9rz0q54Gg1DlK/3baD3u+GVRo8KAVIfXyEiJoZC+pZi8qFPsIWfsfYFlYiMhVc=
-X-Received: by 2002:ad4:5cc9:0:b0:6b2:da77:9a42 with SMTP id
- 6a1803df08f44-6b5ecfd167amr126673236d6.16.1720309993772; Sat, 06 Jul 2024
- 16:53:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720310054; x=1720914854;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TkBRl4JZWQbks3co99KOiKCP10Ez5zuclfcztvGtTA0=;
+        b=cRk4auHWj3oxsuZOw7CTYhrlG+7SvkmtyBr/pI7GPsTo1f0qno+4L17C9ttQy3MikQ
+         Ixh6bEM2ItTMbz/GmQB1ijW8TIJIOxH6XJbtmn5CYMDUBFXmygeOjxtrPJmmZ6V5yptR
+         oQdHdI5iDPdVK/6LH/9B3niIhlZfs2hn/phqknqBsRzIpjUPBeY+W/sn+7oO8tRHjyEz
+         yobfXaRrS71cMbbIWwpgnyIW3M0I6XWQsh83RZ/eUVMlRMrKIbjiLfgpPQCkk2VsfwkE
+         5ljG0MIHC+cpBls6A6VWHu8H9HyPzIYvwRCf7ecu3mFAY+xY7ktmPM5OgqgCqJcY/kuv
+         rcoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWijb3N4apvM0MudJE73mfrIhkKtrLmz5doNWBbMWCm9Z7tXOo7CiRIU188H/Wy2MC8nqhukgTMdBiB+2Qhuz6hrylS1FnL41JI21fT
+X-Gm-Message-State: AOJu0YwjMQBrb+AahIGYrjHBwMKctw3/yyqBuDEwivciSVj12OqUREie
+	CVrIaxWbtYoeddOm34StTVj3y/SriLQxEN6V1Xd3Vc2hUJgFpHNNA+TYLg==
+X-Google-Smtp-Source: AGHT+IFjxLRiqWs6I1gi7nEI+ki9QPaE28Ux4OPOSjqrc1XSsJ2GiZOGt6EoykKVzB28W+fz4rbdZA==
+X-Received: by 2002:a05:6512:2f9:b0:52e:6ee4:5eaa with SMTP id 2adb3069b0e04-52ea06bb184mr4849434e87.54.1720310053762;
+        Sat, 06 Jul 2024 16:54:13 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-40-28.xnet.hr. [88.207.40.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77e7a56e30sm71995566b.141.2024.07.06.16.54.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Jul 2024 16:54:13 -0700 (PDT)
+Message-ID: <51a4022c-e5a7-48c2-8c87-0e26a1b7b406@gmail.com>
+Date: Sun, 7 Jul 2024 01:54:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706022523.1104080-1-flintglass@gmail.com> <20240706022523.1104080-6-flintglass@gmail.com>
-In-Reply-To: <20240706022523.1104080-6-flintglass@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Sat, 6 Jul 2024 16:53:02 -0700
-Message-ID: <CAKEwX=MmwqevpoGnskXrsYQWKOR8yx4t0moasVO=risu0P7-uA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] mm: zswap: store incompressible page as-is
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-input@vger.kernel.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ linux-kernel@vger.kernel.org, Felipe Balbi <me@felipebalbi.com>,
+ Peter De Schrijver <peter.de-schrijver@nokia.com>
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: [PROBLEM linux-next] drivers/input/misc/twl4030-pwrbutton.c:33:
+ warning: expecting prototype for twl4030().
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 5, 2024 at 7:25=E2=80=AFPM Takero Funaki <flintglass@gmail.com>=
- wrote:
->
-> This patch allows zswap to accept incompressible pages and store them
-> into zpool if possible.
->
-> This change is required to achieve zero rejection on zswap_store(). With
-> proper amount of proactive shrinking, swapout can be buffered by zswap
-> without IO latency. Storing incompressible pages may seem costly, but it
-> can reduce latency. A rare incompressible page in a large batch of
-> compressive pages can delay the entire batch during swapping.
->
-> The memory overhead is negligible because the underlying zsmalloc
-> already accepts nearly incompressible pages. zsmalloc stores data close
-> to PAGE_SIZE to a dedicated page. Thus storing as-is saves decompression
-> cycles without allocation overhead. zswap itself has not rejected pages
-> in these cases.
->
-> To store the page as-is, use the compressed data size field `length` in
-> struct `zswap_entry`. The length =3D=3D PAGE_SIZE indicates
-> incompressible data.
->
-> If a zpool backend does not support allocating PAGE_SIZE (zbud), the
-> behavior remains unchanged. The allocation failure reported by the zpool
-> blocks accepting the page as before.
->
-> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+Hi,
 
-I tried to propose something similar in the past. Please read the
-following discussion:
+This is the result of testing randconfig with KCONFIG_SEED=0xEE7AB52F in next-20240703 vanilla tree on
+Ubuntu 22.04 LTS. GCC used is gcc (Ubuntu 12.3.0-1ubuntu1~22.04) 12.3.0.
 
-https://lore.kernel.org/all/CAJD7tka6XRyzYndRNEFZmi0Zj4DD2KnVzt=3DvMGhfF4iN=
-2B4VKw@mail.gmail.com/
+The particular warning is as follows:
 
-But, the TLDR is Yosry was (rightly) concerned that with this
-approach, memory reclaiming could end up increasing memory usage
-rather than reducing (since we do not free up the page that fail to
-zswap-out, and we need extra memory for the zswap metadata of that
-page).
+drivers/input/misc/twl4030-pwrbutton.c:33: warning: expecting prototype for twl4030(). Prototype was for PWR_PWRON_IRQ() instead
 
-So my vote on this patch would be NACK, until we get around this issue
-somehow :)
+The offending line was brought with the commit 68d8bf0436001.
+
+ 23 #include <linux/module.h>
+ 24 #include <linux/init.h>
+ 25 #include <linux/kernel.h>
+ 26 #include <linux/errno.h>
+ 27 #include <linux/input.h>
+ 28 #include <linux/interrupt.h>
+ 29 #include <linux/of.h>
+ 30 #include <linux/platform_device.h>
+ 31 #include <linux/mfd/twl.h>
+ 32 
+ 33 #define PWR_PWRON_IRQ (1 << 0)
+ 34 
+
+This time I really cannot tell what is confusing the compiler (GCC 12.3.0).
+
+As we know, warnings might be a sign that something is wrong which I cannot see, but you might.
+
+Best regards,
+Mirsad Todorovac
 
