@@ -1,221 +1,244 @@
-Return-Path: <linux-kernel+bounces-243155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B03929292
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:29:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D783929298
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9653FB21906
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33CC4282CD4
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2178E6A8CF;
-	Sat,  6 Jul 2024 10:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7918B6FE21;
+	Sat,  6 Jul 2024 10:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYf7Q5aT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OB+Aflby"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AE25FBB7
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 10:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A24F6F30B
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 10:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720261779; cv=none; b=QgR0DdBdH/fsMod595uuCO80o8mi/gqKpLQxg9u2dJY1lKSm4styO1n5Y+2FYHoDmp+yRjt4LsCt8yfXyI34vc7KkFVh6OK6lJQnfyOriNMkayxFKj3XQQjLkG+T6wYflA4/0AMJb+bWKyeOgn7lxp0/9fvSwONk0SRdEmylOI8=
+	t=1720262045; cv=none; b=OGJOrdjUSZI/QoundDLrs/hWMjboPgeiFMIFmBiVXSkyF1QHRkc1dBX8ol+4Gqv77xSUwFMXke099/R4FnBYJUZM3p+HTFYBd5ODUlitTYmbfc8ZxFdcJ04xnjGkTIO8oaLrON+5Pco539mxjpUSnJOYm8M1/UGviQS2Ch/h2Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720261779; c=relaxed/simple;
-	bh=r7NUPpKWJkcWjWI8J6KpTF0A56sbKiYsklXo24upl50=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bvf2JH8QrOF7Wnljm7eeD0yuhCbsEPb2SdbggEQ7TFD7cAV5YI00Ew7YXMm/2WT3By77LPAD98Ojotl0kkTactiqC0r+RE5KXjhTfsxwi1NlOtV/zVlxDkwGc9DK37iV+vaaP5b4a4IVbpDjFgP88MU67S85hFZR5WlOyeraX9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYf7Q5aT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5BAEC2BD10
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 10:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720261778;
-	bh=r7NUPpKWJkcWjWI8J6KpTF0A56sbKiYsklXo24upl50=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VYf7Q5aTuJhpwvGvH20moQv19ySOauc0HDO9p3/MMwhYO5B9+u+vvgbckDOM1sjPk
-	 7Rgg3wRS6cZD5gWroCaEtiJsmWrqICUCF9kohc+XyusOJQvC6L1xcRFTkOx86zavtg
-	 qLPmurbJTwjv9X8vtQ7Zx9GMVC5M2t2qXGEZWmBgkYp5/GsNqWjVGUU10SHmNRXZSS
-	 boFtyiQot8QdZbW13aIszx2JeowdsKj3RdQsoDhM+5Pp2al84zu/zCmQVUZ6ty4Vv9
-	 FMfuGbFHLt3YjsCbUZ4hnvT75Lv1B/eDC184A17+xvmp9IwjCKig+5nynfigDoW5Fq
-	 a8P1zmqFthLqQ==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a75131ce948so283662066b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 03:29:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX6TkHmxxUTuMn5/7e30hgaWQIXedttIeI33nlQcp99KJjXZ8XEoFPWSZXHzUgxIyhwwsOzwfCMUFohzF80ACOIbk9zZ5lbfYRICWBf
-X-Gm-Message-State: AOJu0Yzxe1jyaizon1nPo8SyzAX8I8IsPpThwewCUkbzT8QePpqW6fUB
-	T4qx3Az+t/aFt4WxIYsp72AT4S5JhAZE0oyzrk1Gv9/FVqbaKi3LXVM3cWoiNucjKLuaiC0tx/7
-	9Armh8avckjLrdMkKWCG1yNjHyPo=
-X-Google-Smtp-Source: AGHT+IFNIEG18Cj0x0Siil0rzAqfYZr9X+bAg1/I4JmZ5boLndckP1EN+QzSiuFk9E3CIS6gwqCTWnSJBAOl5AHr57o=
-X-Received: by 2002:a17:906:4f0f:b0:a6f:49eb:31a5 with SMTP id
- a640c23a62f3a-a77ba72e088mr380092966b.77.1720261777447; Sat, 06 Jul 2024
- 03:29:37 -0700 (PDT)
+	s=arc-20240116; t=1720262045; c=relaxed/simple;
+	bh=pKmz2MSXbsXY1TVYCOFk40qxUqMYq2ihZ17VzYmJj74=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CiffbVn2AtY48P7ovesOa5EV4ME2h6k4+IZfSDvSjDst7l+ugdc7EGFzNqtRcDP60BvdpdvvdzIhaqIH4Y9+HCz4zcWQyOeCIasIraLNY9XA3gHcxEIhwfx99/sKHnaj5+GspHIRq4LTvXCcbGSDeR9l5xJ4/LdActmWMf/03pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OB+Aflby; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1720262035; x=1720521235;
+	bh=eV2kqn2oW0bpvGpk8bMOJksVw0Q08ALVrHBIpfM92Vo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=OB+AflbyK2jD1nUL4txPo7amN/5ubcw/iziZEfcZL/t1h+fUX5jNWxy/eB8BS0Vmn
+	 PllL8+tNcB22V6s0FW58sjfZH7qUYw/waIpk2Z8+r2eh9zdnOM/XZ8h7L4IQAXpucu
+	 xYtCUiWYzRrejhj7CtG4xgvVximR8oTzshoLHyBZEbki5n/VCrUyvpgCsl+38u4osp
+	 qAlPwBp5FLfXrEXIuovCVsMm40uVky8e5aajR+blggzsi9TEoG0qv6lVqU/oUfFkoP
+	 0fmVDqurkHeoJ6YJc6Rz4XSqGHT8XPoosQ4cFysGvwdY6DM+IrqkFd8PWZvnw8Q5CC
+	 7wp/FBLRHPi/w==
+Date: Sat, 06 Jul 2024 10:33:49 +0000
+To: Danilo Krummrich <dakr@redhat.com>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 01/20] rust: alloc: add `Allocator` trait
+Message-ID: <37d87244-fbef-414c-a726-60839b305040@proton.me>
+In-Reply-To: <20240704170738.3621-2-dakr@redhat.com>
+References: <20240704170738.3621-1-dakr@redhat.com> <20240704170738.3621-2-dakr@redhat.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 20d835e43020bd428b00f8fd1af6b48b1aba063f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706073858.161035-1-xry111@xry111.site> <20240706073858.161035-2-xry111@xry111.site>
-In-Reply-To: <20240706073858.161035-2-xry111@xry111.site>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 6 Jul 2024 18:29:24 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6K7SXtXpv9Udo8md0sdn+40TGPTCdSPeM1HmbJqrhboQ@mail.gmail.com>
-Message-ID: <CAAhV-H6K7SXtXpv9Udo8md0sdn+40TGPTCdSPeM1HmbJqrhboQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] LoongArch: Add support for relocating the kernel with
- RELR relocation
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: WANG Xuerui <kernel@xen0n.name>, Jinyang He <hejinyang@loongson.cn>, 
-	Youling Tang <tangyouling@kylinos.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Fangrui Song <maskray@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Ruoyao,
-
-On Sat, Jul 6, 2024 at 3:39=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrote=
-:
->
-> RELR as a relocation packing format for relative relocations for
-> reducing the size of relative relocation records.  In a position
-> independent executable there are often many relative relocation
-> records, and our vmlinux is a PIE.
->
-> The LLD linker (since 17.0.0) and the BFD linker (since 2.43) supports
-> packing the relocations in the RELR format for LoongArch, with the flag
-> -z pack-relative-relocs.
->
-> Commits 5cf896fb6be3
-> ("arm64: Add support for relocating the kernel with RELR relocations")
-> and ccb2d173b983
-> ("Makefile: use -z pack-relative-relocs") have already added the
-> framework to use RELR.  We just need to wire it up and process the RELR
-> relocation records in relocate_relative() in addition to the RELA
-> relocation records.
->
-> A ".p2align 3" directive is added to la_abs macro or the BFD linker
-> cannot pack the relocation records against the .la_abs section (the
-> ". =3D ALIGN(8);" directive in vmlinux.lds.S is too late in the linking
-> process).
->
-> With defconfig and CONFIG_RELR vmlinux.efi is 2.1 MiB (6%) smaller, and
-> vmlinuz.efi (using gzip compression) is 384 KiB (2.8%) smaller.
->
-> Link: https://groups.google.com/d/topic/generic-abi/bX460iggiKg
-> Link: https://reviews.llvm.org/D138135#4531389
-> Link: https://sourceware.org/git/?p=3Dbinutils-gdb.git;a=3Dcommit;h=3Dd89=
-ecf33ab6d
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+On 04.07.24 19:06, Danilo Krummrich wrote:
+> Add a kernel specific `Allocator` trait, that in contrast to the one in
+> Rust's core library doesn't require unstable features and supports GFP
+> flags.
+>=20
+> Subsequent patches add the following trait implementors: `Kmalloc`,
+> `Vmalloc` and `KVmalloc`.
+>=20
+> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
 > ---
->  arch/loongarch/Kconfig                |  1 +
->  arch/loongarch/include/asm/asmmacro.h |  1 +
->  arch/loongarch/include/asm/setup.h    |  5 +++++
->  arch/loongarch/kernel/relocate.c      | 18 ++++++++++++++++++
->  arch/loongarch/kernel/vmlinux.lds.S   |  8 ++++++++
->  5 files changed, 33 insertions(+)
->
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index ddc042895d01..03b3ef5edd24 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -607,6 +607,7 @@ config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
->
->  config RELOCATABLE
->         bool "Relocatable kernel"
-> +       select ARCH_HAS_RELR
-Why is this selection under RELOCATABLE? I know ARM64 is the same, but why?
-
-Huacai
-
->         help
->           This builds the kernel as a Position Independent Executable (PI=
-E),
->           which retains all relocation metadata required, so as to reloca=
-te
-> diff --git a/arch/loongarch/include/asm/asmmacro.h b/arch/loongarch/inclu=
-de/asm/asmmacro.h
-> index 655db7d7a427..8d7f501b0a12 100644
-> --- a/arch/loongarch/include/asm/asmmacro.h
-> +++ b/arch/loongarch/include/asm/asmmacro.h
-> @@ -609,6 +609,7 @@
->         lu32i.d \reg, 0
->         lu52i.d \reg, \reg, 0
->         .pushsection ".la_abs", "aw", %progbits
-> +       .p2align 3
->         .dword  766b
->         .dword  \sym
->         .popsection
-> diff --git a/arch/loongarch/include/asm/setup.h b/arch/loongarch/include/=
-asm/setup.h
-> index ee52fb1e9963..3c2fb16b11b6 100644
-> --- a/arch/loongarch/include/asm/setup.h
-> +++ b/arch/loongarch/include/asm/setup.h
-> @@ -34,6 +34,11 @@ extern long __la_abs_end;
->  extern long __rela_dyn_begin;
->  extern long __rela_dyn_end;
->
-> +#ifdef CONFIG_RELR
-> +extern long __relr_dyn_begin;
-> +extern long __relr_dyn_end;
-> +#endif
-> +
->  extern unsigned long __init relocate_kernel(void);
->
->  #endif
-> diff --git a/arch/loongarch/kernel/relocate.c b/arch/loongarch/kernel/rel=
-ocate.c
-> index 69d73dc7326a..6abb9c91b255 100644
-> --- a/arch/loongarch/kernel/relocate.c
-> +++ b/arch/loongarch/kernel/relocate.c
-> @@ -37,6 +37,24 @@ static inline void __init relocate_relative(void)
->                 relocated_addr =3D (Elf64_Addr)RELOCATED(relocated_addr);
->                 *(Elf64_Addr *)RELOCATED(addr) =3D relocated_addr;
->         }
-> +
-> +#ifdef CONFIG_RELR
-> +       u64 *relr =3D (u64 *)&__relr_dyn_begin;
-> +       u64 *relr_end =3D (u64 *)&__relr_dyn_end;
-> +       u64 *addr =3D NULL;
-> +
-> +       for ( ; relr < relr_end; relr++) {
-> +               if ((*relr & 1) =3D=3D 0) {
-> +                       addr =3D (u64 *)(*relr + reloc_offset);
-> +                       *addr++ +=3D reloc_offset;
-> +               } else {
-> +                       for (u64 *p =3D addr, r =3D *relr >> 1; r; p++, r=
- >>=3D 1)
-> +                               if (r & 1)
-> +                                       *p +=3D reloc_offset;
-> +                       addr +=3D 63;
-> +               }
-> +       }
-> +#endif
+>  rust/kernel/alloc.rs | 73 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>=20
+> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> index 531b5e471cb1..462e00982510 100644
+> --- a/rust/kernel/alloc.rs
+> +++ b/rust/kernel/alloc.rs
+> @@ -11,6 +11,7 @@
+>  /// Indicates an allocation error.
+>  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+>  pub struct AllocError;
+> +use core::{alloc::Layout, ptr, ptr::NonNull};
+>=20
+>  /// Flags to be used when allocating memory.
+>  ///
+> @@ -71,3 +72,75 @@ pub mod flags {
+>      /// small allocations.
+>      pub const GFP_NOWAIT: Flags =3D Flags(bindings::GFP_NOWAIT);
 >  }
->
->  static inline void __init relocate_absolute(long random_offset)
-> diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/=
-vmlinux.lds.S
-> index 3c7595342730..08ea921cdec1 100644
-> --- a/arch/loongarch/kernel/vmlinux.lds.S
-> +++ b/arch/loongarch/kernel/vmlinux.lds.S
-> @@ -113,6 +113,14 @@ SECTIONS
->                 __rela_dyn_end =3D .;
->         }
->
-> +#ifdef CONFIG_RELR
-> +       .relr.dyn : ALIGN(8) {
-> +               __relr_dyn_begin =3D .;
-> +                *(.relr.dyn)
-> +               __relr_dyn_end =3D .;
-> +       }
-> +#endif
 > +
->         .data.rel : { *(.data.rel*) }
->
->  #ifdef CONFIG_RELOCATABLE
+> +/// The kernel's [`Allocator`] trait.
+> +///
+> +/// An implementation of [`Allocator`] can allocate, re-allocate and fre=
+e memory buffer described
+> +/// via [`Layout`].
+> +///
+> +/// [`Allocator`] is designed to be implemented on ZSTs; its safety requ=
+irements to not allow for
+> +/// keeping a state throughout an instance.
+
+Why do the functions take `&self` if it is forbidden to have state? I
+would remove the receiver in that case.
+
+> +///
+> +/// # Safety
+> +///
+> +/// Memory returned from an allocator must point to a valid memory buffe=
+r and remain valid until
+> +/// its explicitly freed.
+> +///
+> +/// Copying, cloning, or moving the allocator must not invalidate memory=
+ blocks returned from this
+> +/// allocator. A copied, cloned or even new allocator of the same type m=
+ust behave like the same
+> +/// allocator, and any pointer to a memory buffer which is currently all=
+ocated may be passed to any
+> +/// other method of the allocator.
+
+If you provide no receiver methods, then I think we can remove this
+requirement.
+
+> +pub unsafe trait Allocator {
+> +    /// Allocate memory based on `layout` and `flags`.
+> +    ///
+> +    /// On success, returns a buffer represented as `NonNull<[u8]>` that=
+ satisfies the size an
+
+typo "an" -> "and"
+
+> +    /// alignment requirements of layout, but may exceed the requested s=
+ize.
+
+Also if it may exceed the size, then I wouldn't call that "satisfies the
+size [...] requirements".
+
+> +    ///
+> +    /// This function is equivalent to `realloc` when called with a NULL=
+ pointer and an `old_size`
+> +    /// of `0`.
+
+This is only true for the default implementation and could be
+overridden, since it is not a requirement of implementing this trait to
+keep it this way. I would remove this sentence.
+
+> +    fn alloc(&self, layout: Layout, flags: Flags) -> Result<NonNull<[u8]=
+>, AllocError> {
+
+Instead of using the `Flags` type from the alloc module, we should have
+an associated `Flags` type in this trait.
+
+Similarly, it might also be a good idea to let the implementer specify a
+custom error type.
+
+> +        // SAFETY: Passing a NULL pointer to `realloc` is valid by it's =
+safety requirements and asks
+> +        // for a new memory allocation.
+> +        unsafe { self.realloc(ptr::null_mut(), 0, layout, flags) }
+> +    }
+> +
+> +    /// Re-allocate an existing memory allocation to satisfy the request=
+ed `layout`. If the
+> +    /// requested size is zero, `realloc` behaves equivalent to `free`.
+
+This is not guaranteed by the implementation.
+
+> +    ///
+> +    /// If the requested size is larger than `old_size`, a successful ca=
+ll to `realloc` guarantees
+> +    /// that the new or grown buffer has at least `Layout::size` bytes, =
+but may also be larger.
+> +    ///
+> +    /// If the requested size is smaller than `old_size`, `realloc` may =
+or may not shrink the
+> +    /// buffer; this is implementation specific to the allocator.
+> +    ///
+> +    /// On allocation failure, the existing buffer, if any, remains vali=
+d.
+> +    ///
+> +    /// The buffer is represented as `NonNull<[u8]>`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `ptr` must point to an existing and valid memory allocation crea=
+ted by this allocator
+> +    /// instance of a size of at least `old_size`.
+> +    ///
+> +    /// Additionally, `ptr` is allowed to be a NULL pointer; in this cas=
+e a new memory allocation is
+> +    /// created.
+> +    unsafe fn realloc(
+> +        &self,
+> +        ptr: *mut u8,
+> +        old_size: usize,
+
+Why not request the old layout like the std Allocator's grow/shrink
+functions do?
+
+> +        layout: Layout,
+> +        flags: Flags,
+> +    ) -> Result<NonNull<[u8]>, AllocError>;
+> +
+> +    /// Free an existing memory allocation.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `ptr` must point to an existing and valid memory allocation crea=
+ted by this `Allocator`
+> +    /// instance.
+> +    unsafe fn free(&self, ptr: *mut u8) {
+
+`ptr` should be `NonNull<u8>`.
+
+> +        // SAFETY: `ptr` is guaranteed to be previously allocated with t=
+his `Allocator` or NULL.
+> +        // Calling `realloc` with a buffer size of zero, frees the buffe=
+r `ptr` points to.
+> +        let _ =3D unsafe { self.realloc(ptr, 0, Layout::new::<()>(), Fla=
+gs(0)) };
+
+Why does the implementer have to guarantee this?
+
+> +    }
+> +}
 > --
 > 2.45.2
->
+>=20
+
+More general questions:
+- are there functions in the kernel to efficiently allocate zeroed
+  memory? In that case, the Allocator trait should also have methods
+  that do that (with a iterating default impl).
+- I am not sure putting everything into the single realloc function is a
+  good idea, I like the grow/shrink methods of the std allocator. Is
+  there a reason aside from concentrating the impl to go for only a
+  single realloc function?
+
+---
+Cheers,
+Benno
+
 
