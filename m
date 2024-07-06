@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-243210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB7929317
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C8692931B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BD1A1F21CAA
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6B961F214A7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0562158DB9;
-	Sat,  6 Jul 2024 11:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7F915EFC9;
+	Sat,  6 Jul 2024 11:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="R2Hfadrr"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GQndvjGO"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C86315624B
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F2E158DC3
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720264924; cv=none; b=UMd5FY11/Zt/sjPXLQNhEXlA1i7q/hUvMKCLaQNO3XPfj78nlIvwqBUVGSyhkUiuy6ZSfAHuOwkjB2NhncUSttJH0mQ9YRnGrUkVnTuMp6+J7paMI3aS2GTAk2xy+s1ye66d9LktfcQA7OmGMDWRU2mGbOSmeYIenpp2oJhnANs=
+	t=1720264926; cv=none; b=RPIsg9rQWs6ljAK/CDp2n/JBSAyzs/eQk39FVZSN498kIAEjGG8/eLFZcd2iDR8umMPBoDFATdyHvLsYsST/id51y/zYe1iVCvzd2JSxKH05hQbKsmPzBAy6WdRKGtpDa5O0p57A0CrQAVAGUUCmi4ky0xklbAcek26/fSxCXjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720264924; c=relaxed/simple;
-	bh=FZluNKjq2UTA1D7/cQ+l7ws3ClAxigdEED5x/EbY778=;
+	s=arc-20240116; t=1720264926; c=relaxed/simple;
+	bh=ScaL0Ozty9ZSgQUVbj3nwMkwJgaXyJfRepDSjvMz2dE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jVnSgEFt+svMo7R6cCbCnRea/JvN9H2HgGTXvws/x2oPMnsDM1FogkS78dTlaP5ddfbVgdypcIueRVcXhmOuv71pXxFJidDTikf6KF2qSJ3hnVqPrwwG7wooyKVHGVOOR/xG1Pnw0VK93nxSVCRP/NXLs9cZI4mBZqqJlREXQns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=R2Hfadrr; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=RQPj+m7/fNnE+EVYrhYjMH+7UGSIF0cYrpOk2A/PTZ50JMcPWWU1/3Gt+Jp7paiwmE4giH5QSxC2x0facd7Evbbh7Cb9IWicHG0vPYMZMRco8COzZUPE40pUm/o4Go/skUSrRotM+cc0zijGrLJ7xkjR7n208sfBsm0aBEHLjjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GQndvjGO; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=N1PwxPL8CNJDYeVjR4HvcrKu3KtQLbZ1YXWFnBOhDwg=; b=R2Hfad
-	rrwV2VX2Umk6bQIuY75BclpPhx39JqCqWHxa4ZAbZtgkhcfQfBNLtOhomt+zQqqf
-	SgipuchQtXWPJWWLRkIq0hG8OOLKh+y1qvjn25UYpRDE1ixSKfuVtgSQbG/5SJOz
-	wQmEQdIcnbxkV7VXmeYFXy6b2WzCwKzBL0FPKuetLWIZuUuzaa+lAJHSzhkTYpFM
-	Kn9oujkJ8oSwxYwPgrhRH8iQ7Lmhkbtw0xNu3v8rhMxgtSx+tS/ed2zt7aqeCiwX
-	XxGMCtgMKna4Rd8bappvQxQdot4cC66sUQcnNixfC+yL1RyI/54G2HdG78vh5hcq
-	wu9l67GQSlqpsZHw==
-Received: (qmail 3810488 invoked from network); 6 Jul 2024 13:21:46 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:46 +0200
-X-UD-Smtp-Session: l3s3148p1@7AOoYpIcAsJQT+F6
+	 s=k1; bh=LBOEuPmP45x17I1fwDIjtyeY3JJeak/7XBOt8b+rk0Y=; b=GQndvj
+	GO9tntaD22QpjEHsVWIl+PXS9ut84waujSJYHUm5/ZTemkH/9Ze6jnN7BupSp/gw
+	e0m21RK7kZ1nc7npNS1ZsN+hVtX4qDWSoo/t2pC8WohZaGRlCBDdXovBOnqwEUe4
+	kB8WvkjvjzvVqR2Eg/H9Ges84KDDuMw77o3aXfUn1IXaMaXo8o6OnBmgcveyIpKS
+	OPpYUyD84xMiutNhHzQSKW9wLQTgmrd+/v7t9qG1DQvYjWok8kV+CfRCRwoZeyO4
+	9YFCU4OdP8HK4Jt/GX+U7IcAM5tdqbxz7GoXHRTmBsI3WvuIbq+A2hTKe4EdVVPG
+	+u1+D7q+r1tljYSA==
+Received: (qmail 3810518 invoked from network); 6 Jul 2024 13:21:47 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:47 +0200
+X-UD-Smtp-Session: l3s3148p1@GHOyYpIcEMJQT+F6
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Robert Richter <rric@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
 	Andi Shyti <andi.shyti@kernel.org>,
+	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 34/60] i2c: octeon: reword according to newest specification
-Date: Sat,  6 Jul 2024 13:20:34 +0200
-Message-ID: <20240706112116.24543-35-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 35/60] i2c: opal: reword according to newest specification
+Date: Sat,  6 Jul 2024 13:20:35 +0200
+Message-ID: <20240706112116.24543-36-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
 References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
@@ -68,69 +72,37 @@ specifications and replace "master/slave" with more appropriate terms.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-octeon-core.c    | 6 +++---
- drivers/i2c/busses/i2c-octeon-core.h    | 4 ++--
- drivers/i2c/busses/i2c-octeon-platdrv.c | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-opal.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-octeon-core.c b/drivers/i2c/busses/i2c-octeon-core.c
-index 5b7b942141e7..16cc34a0526e 100644
---- a/drivers/i2c/busses/i2c-octeon-core.c
-+++ b/drivers/i2c/busses/i2c-octeon-core.c
-@@ -221,14 +221,14 @@ static int octeon_i2c_check_status(struct octeon_i2c *i2c, int final_read)
- 	case STAT_LOST_ARB_B0:
- 		return -EAGAIN;
- 
--	/* Being addressed as slave, should back off & listen */
-+	/* Being addressed as local target, should back off & listen */
- 	case STAT_SLAVE_60:
- 	case STAT_SLAVE_70:
- 	case STAT_GENDATA_ACK:
- 	case STAT_GENDATA_NAK:
- 		return -EOPNOTSUPP;
- 
--	/* Core busy as slave */
-+	/* Core busy as local target */
- 	case STAT_SLAVE_80:
- 	case STAT_SLAVE_88:
- 	case STAT_SLAVE_A0:
-@@ -608,7 +608,7 @@ static int octeon_i2c_hlc_comp_write(struct octeon_i2c *i2c, struct i2c_msg *msg
+diff --git a/drivers/i2c/busses/i2c-opal.c b/drivers/i2c/busses/i2c-opal.c
+index 17ef87d50f7c..d9dd71cf37fd 100644
+--- a/drivers/i2c/busses/i2c-opal.c
++++ b/drivers/i2c/busses/i2c-opal.c
+@@ -70,8 +70,8 @@ static int i2c_opal_send_request(u32 bus_id, struct opal_i2c_request *req)
+ 	return rc;
  }
  
- /**
-- * octeon_i2c_xfer - The driver's master_xfer function
-+ * octeon_i2c_xfer - The driver's xfer function
-  * @adap: Pointer to the i2c_adapter structure
-  * @msgs: Pointer to the messages to be processed
-  * @num: Length of the MSGS array
-diff --git a/drivers/i2c/busses/i2c-octeon-core.h b/drivers/i2c/busses/i2c-octeon-core.h
-index 7af01864da75..b265e21189a1 100644
---- a/drivers/i2c/busses/i2c-octeon-core.h
-+++ b/drivers/i2c/busses/i2c-octeon-core.h
-@@ -39,8 +39,8 @@
- /* Controller command and status bits */
- #define TWSI_CTL_CE		0x80	/* High level controller enable */
- #define TWSI_CTL_ENAB		0x40	/* Bus enable */
--#define TWSI_CTL_STA		0x20	/* Master-mode start, HW clears when done */
--#define TWSI_CTL_STP		0x10	/* Master-mode stop, HW clears when done */
-+#define TWSI_CTL_STA		0x20	/* Controller-mode start, HW clears when done */
-+#define TWSI_CTL_STP		0x10	/* Controller-mode stop, HW clears when done */
- #define TWSI_CTL_IFLG		0x08	/* HW event, SW writes 0 to ACK */
- #define TWSI_CTL_AAK		0x04	/* Assert ACK */
- 
-diff --git a/drivers/i2c/busses/i2c-octeon-platdrv.c b/drivers/i2c/busses/i2c-octeon-platdrv.c
-index 7d54b3203f71..dc6dff95c68c 100644
---- a/drivers/i2c/busses/i2c-octeon-platdrv.c
-+++ b/drivers/i2c/busses/i2c-octeon-platdrv.c
-@@ -122,7 +122,7 @@ static u32 octeon_i2c_functionality(struct i2c_adapter *adap)
+-static int i2c_opal_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+-				int num)
++static int i2c_opal_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
++			 int num)
+ {
+ 	unsigned long opal_id = (unsigned long)adap->algo_data;
+ 	struct opal_i2c_request req;
+@@ -179,9 +179,9 @@ static u32 i2c_opal_func(struct i2c_adapter *adapter)
  }
  
- static const struct i2c_algorithm octeon_i2c_algo = {
--	.master_xfer = octeon_i2c_xfer,
-+	.xfer = octeon_i2c_xfer,
- 	.functionality = octeon_i2c_functionality,
+ static const struct i2c_algorithm i2c_opal_algo = {
+-	.master_xfer	= i2c_opal_master_xfer,
+-	.smbus_xfer	= i2c_opal_smbus_xfer,
+-	.functionality	= i2c_opal_func,
++	.xfer = i2c_opal_xfer,
++	.smbus_xfer = i2c_opal_smbus_xfer,
++	.functionality = i2c_opal_func,
  };
  
+ /*
 -- 
 2.43.0
 
