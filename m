@@ -1,162 +1,271 @@
-Return-Path: <linux-kernel+bounces-243343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29A59294EF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 19:40:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0785D9294F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 20:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC181C20C8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB74280EF7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 18:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF53E13C812;
-	Sat,  6 Jul 2024 17:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C412913BC1B;
+	Sat,  6 Jul 2024 18:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XLEGXMu9"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UO5gXbrf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6255757FC
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 17:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA6013A87E;
+	Sat,  6 Jul 2024 18:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720287605; cv=none; b=QJFbjnS0gm8ctc+RI5O+10g3Ovw9fLJlIGTx8LVKZrFSjwXwg1kfyQtTIgzBIjVeQaidHTF0tpjbFzZg54JrljOWACvKxFMC1aJb6uxSXP3fH2KKd+KFWKz01OdCvaRf8lrT35aRbofvcJmyMJEweShF+uSXy5MCEMdwlKIxGwY=
+	t=1720289296; cv=none; b=VAIqt+lk/l7csVnepNryysdfYbprxW1gq4IAjYxKQSvyrHDYLXB05W7AruHbWV+JuMnXenu6X+5ENQbl4SqU9DKtVRHZXUCDylai5EvpGslKgvA/2jzllsvo/Hr7acgR6yxpKvwKeM9lkjoxXKrTqae9qzSVwLeHJb0/yNXsgQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720287605; c=relaxed/simple;
-	bh=K7/5S3Zqv2W8qdrNqOS6SWkrmCLz+5aP6vwqLcb5BLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=upn7Wf1u4v7ctHsBNHIrAG6J95mUhxh0pYuEYPWmWa6RuFRjdLIUkWhqcejnuvgw6Q/mUsQFYSkjifo7nQrr7UenfgmNQOfAo8dgm4to6UjLPJHZIuVFqNB/935+Yvm1bzuUtNC1UxY77w7Vq8P2/pInrePdP0IPoODP9csqHSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XLEGXMu9; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fb457b53c8so13992635ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 10:40:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720287603; x=1720892403; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+w1HhCtOPF6+jQjVe2f79xd5RcxOFhfFM5UmLnkLxcg=;
-        b=XLEGXMu9mAzJRha7s0vx6wQnX8lZhbRxYW2lXioss/ZRJOLUUiY0DDl1jiTBL62W/V
-         Ycjb+VxiaU5KISo7qWfzQ5LH2OwrN6HFIZZW65r5DJ7mh7I6ttQyr5bjy2I3UzLw8GC5
-         MR4jTt4KrRsof0NmHWQ5pGPvr/utEKgDaH57LTvjD6tArjE71efkDRe4WfrnTT3xq/SU
-         voWgmOCb19R08LZa14xyWMNhqveCZFT4hXGVjoYREB/DTmHlvk9okgXIDiqVbzywyFI6
-         vrNm6CeK2XRO/9PeAegILo4Ib4PwMJXqSkrbgzESNtz69QfoqhdEcTebRoQsHyZh1n+E
-         UVLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720287603; x=1720892403;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+w1HhCtOPF6+jQjVe2f79xd5RcxOFhfFM5UmLnkLxcg=;
-        b=kE427yfIDR0oA8OmagH+AEQYIjkETbkINPknsMcFmYGEiuQF4d6vKSDGJR6EToFo6E
-         BQU7Nx/CJ4EIqUBxe0x9t+4sMx/cYUlQgYhUU5PStL58SqedCYCrSjG/aDP2JyRYZcoD
-         Upq46jW0F1lmbO5Cwpx1P53gJmddAeZqdTyFTSGcM2Vd2djDVDKDtmbJ1q0IIBL4F6zm
-         f8/sh465+2M30sstLWlpF+x3M0DlPkRe1Zdo9Il+CzU2qtnOHTV9EgzJN0OiiYiu3iyM
-         QcN88GsVPrwtGz+yqaFwsvIFmTX45NTk/JMPsclXbuvG65HBu1SN/4n3y6E2lYAsqCc0
-         WddA==
-X-Forwarded-Encrypted: i=1; AJvYcCUG3yH7169+gqqNbdbFqJzvWIBFBU6ElYsE+jBk01rT4IjSyZ6eRy9sir0f0OpCR3ZIh7Hz5/d4TPeBpZD17/4fbnmzlrSwTifyO/kP
-X-Gm-Message-State: AOJu0YyS5J0uL+nFGL9HQmDbBYyLdFCq4YlcilahRz7ycGZllDRzaw+J
-	BuahSLdS3VzsZOeL3qJnxROlJpMVzxb6VDLqLzBIXc8Jtmr3Co0ra67EK5foJQ==
-X-Google-Smtp-Source: AGHT+IFfAmOh1vpybFa6ASP3tIwymsHJN+q/v+qmk1RVhTTsF5OCIrWZZWApJcwuyin0gArdkk3Wrw==
-X-Received: by 2002:a17:902:d4cd:b0:1f6:e20f:86b4 with SMTP id d9443c01a7336-1fb33f36fc1mr68382145ad.61.1720287603063;
-        Sat, 06 Jul 2024 10:40:03 -0700 (PDT)
-Received: from thinkpad ([220.158.156.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb14faa241sm70616845ad.110.2024.07.06.10.39.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 10:40:02 -0700 (PDT)
-Date: Sat, 6 Jul 2024 23:09:54 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org, Jason Liu <jason.hui.liu@nxp.com>
-Subject: Re: [PATCH v6 02/10] PCI: imx6: Fix i.MX8MP PCIe EP's occasional
- failure to trigger MSI
-Message-ID: <20240706173954.GB3980@thinkpad>
-References: <20240617-pci2_upstream-v6-0-e0821238f997@nxp.com>
- <20240617-pci2_upstream-v6-2-e0821238f997@nxp.com>
- <20240629130525.GC5608@thinkpad>
- <ZoL2W1Blrhzf19oM@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1720289296; c=relaxed/simple;
+	bh=uDlkl+sgIHM1QHirLoUu2V9j90VrrBXLSt/Bf+ihwrU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NI7W2FekSaaYHVbETBjguZ2QDc10wmr3I/P/tDD33MqH8lGlG37y44urodpTu370XtpBmrll9ewG+/G+LEAYY9j0vTmkPaNr0K8azN0nKO278IvJyncV1AEvwQ+hl0H0Hy/eSqP7c31Yb2FZRTtZ1vgZf5bWl8sL4hu9dWClbas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UO5gXbrf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575B4C4AF0D;
+	Sat,  6 Jul 2024 18:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720289296;
+	bh=uDlkl+sgIHM1QHirLoUu2V9j90VrrBXLSt/Bf+ihwrU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UO5gXbrf7AH9sCVWD6lVDLh/Pe+OubB0hImuHwl5ehyPnNq6f01Qq4dvPk24QNd6L
+	 Iof9JHYXwDv3246nHJGjzCJ+XRxJtTNEkRjM+lzRrhV7TBfQfWEEahd8wg704uaTR0
+	 rqjWdKRDyVTrPkKfFl8yLGp71R9yH2bXkuel2zx+/EfFMiJaBy/FCh17liRWt7uuIj
+	 tQarwCrUCtZseeh3JN6wDhZC+8Jb/OVzuvRgQ6mwvUi/h8Kf3CoxxF3nCkR3P+WJju
+	 WHxJp/bn665xEWz2hY1BeliHsQ4C2HxXiXHX6kCvnj6UgVh8+aE3AaLCRrYKwbeVoK
+	 uPKaEbfJedXKw==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ea8320d48so957026e87.1;
+        Sat, 06 Jul 2024 11:08:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU00w9gEg/V+btMYBvd57yYStNikeHfADb9bolP24nBqaiLPIqYLmnFw1EQOLW1ktcE8LZ1766k55lAPSpLqC0QTsUiPnajmrK61g==
+X-Gm-Message-State: AOJu0YxjvWkeh4tA37GGFiYct+/va73C7+SyioUrscqJnZAPzb6uxKkK
+	q2JUasE2WarP/6DXFJix2FoFOhMp6v+VmI1EZLhbg7Jyk+DulSD1GXQfidQ3fsPwGlY22S4+fBE
+	24WkRJaB/0k0U5ZInQXPLphIJL44=
+X-Google-Smtp-Source: AGHT+IFiLkmA6j4UqVx5NmU+ArqOPS8G32yVfl+L3r4yqEiQeMdZrxtGBHeqAKOSWgEe7Cj3gv2i14yc8Rs6PPW4kF8=
+X-Received: by 2002:ac2:5107:0:b0:52c:8b11:80cf with SMTP id
+ 2adb3069b0e04-52ea0de1675mr2121490e87.8.1720289294972; Sat, 06 Jul 2024
+ 11:08:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZoL2W1Blrhzf19oM@lizhi-Precision-Tower-5810>
+References: <20240706160511.2331061-1-masahiroy@kernel.org> <20240706160511.2331061-2-masahiroy@kernel.org>
+In-Reply-To: <20240706160511.2331061-2-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 7 Jul 2024 03:07:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQBMJvJM9OjXP=QWZwRFpif8tg9AHTA4vu=7nO6D3ahYQ@mail.gmail.com>
+Message-ID: <CAK7LNAQBMJvJM9OjXP=QWZwRFpif8tg9AHTA4vu=7nO6D3ahYQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] init/modpost: conditionally check section mismatch to __meminit*
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Wei Yang <richard.weiyang@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 02:32:59PM -0400, Frank Li wrote:
-> On Sat, Jun 29, 2024 at 06:35:25PM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Jun 17, 2024 at 04:16:38PM -0400, Frank Li wrote:
-> > > From: Richard Zhu <hongxing.zhu@nxp.com>
-> > > 
-> > > Correct occasional MSI triggering failures in i.MX8MP PCIe EP by apply 64KB
-> > > hardware alignment requirement.
-> > > 
-> > > MSI triggering fail if the outbound MSI memory region (ep->msi_mem) is not
-> > > aligned to 64KB.
-> > > 
-> > > In dw_pcie_ep_init():
-> > > 
-> > > ep->msi_mem = pci_epc_mem_alloc_addr(epc, &ep->msi_mem_phys,
-> > > 				     epc->mem->window.page_size);
-> > > 
-> > 
-> > So this is an alignment restriction w.r.t iATU. In that case, we should be
-> > passing 'pci_epc_features::align' instead?
-> 
-> pci_epc_features::align already set.
-> 
-> pci_epc_mem_alloc_addr(
-> 	...
-> 	align_size = ALIGN(size, mem->window.page_size);
-> 	order = pci_epc_mem_get_order(mem, align_size);
-> 	...
-> }
-> 
-> but pci_epc_mem_alloc_addr() align to page_size, instead of
-> pci_epc_features::align.
-> 
+On Sun, Jul 7, 2024 at 1:05=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> This reverts commit eb8f689046b8 ("Use separate sections for __dev/
+> _cpu/__mem code/data").
+>
+> Check section mismatch to __meminit* only when CONFIG_MEMORY_HOTPLUG=3Dy.
 
-'window.page_size' is set to what is passed as 'page_size' argument to
-pci_epc_mem_init(). In this case, 'ep->page_size' is passed which corresponds to
-size of pages that can be allocated within the memory window.
+This is the opposite. The correct statement is:
 
-Default value of 'ep->page_size' is PAGE_SIZE which is most likely 4K. So if
-your hardware cannot allocate 4K pages within the memory window, then it
-doesn't support splitting this OB region into 4K pages.
 
-But this has nothing to do with alignment AFAIU since epc_features::align is
-used for IB memory. This 'page_size' argument was introduced for some TI SoC
-that doesn't handle PAGE_SIZE splitting of OB memory window. Reference:
+    ... only when CONFIG_MEMORY_HOTPLUG=3Dn
 
-52c9285d4745 ("PCI: endpoint: Add support for configurable page size")
 
-Can you check if your SoC also suffers from the same limitation? If so, then you
-should modify the commit message to make it clear.
 
-- Mani
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+>
+> With this change, the linker script and modpost become simpler, and we
+> can get rid of the __ref annotations from the memory hotplug code.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>  include/asm-generic/vmlinux.lds.h | 18 ++----------------
+>  include/linux/init.h              | 14 +++++++++-----
+>  scripts/mod/modpost.c             | 19 ++++---------------
+>  3 files changed, 15 insertions(+), 36 deletions(-)
+>
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmli=
+nux.lds.h
+> index 62b4cb0462e6..c23f7d0645ad 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -141,14 +141,6 @@
+>   * often happens at runtime)
+>   */
+>
+> -#if defined(CONFIG_MEMORY_HOTPLUG)
+> -#define MEM_KEEP(sec)    *(.mem##sec)
+> -#define MEM_DISCARD(sec)
+> -#else
+> -#define MEM_KEEP(sec)
+> -#define MEM_DISCARD(sec) *(.mem##sec)
+> -#endif
+> -
+>  #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+>  #define KEEP_PATCHABLE         KEEP(*(__patchable_function_entries))
+>  #define PATCHABLE_DISCARDS
+> @@ -357,7 +349,6 @@
+>         *(.data..decrypted)                                             \
+>         *(.ref.data)                                                    \
+>         *(.data..shared_aligned) /* percpu related */                   \
+> -       MEM_KEEP(init.data*)                                            \
+>         *(.data.unlikely)                                               \
+>         __start_once =3D .;                                              =
+ \
+>         *(.data.once)                                                   \
+> @@ -523,7 +514,6 @@
+>         /* __*init sections */                                          \
+>         __init_rodata : AT(ADDR(__init_rodata) - LOAD_OFFSET) {         \
+>                 *(.ref.rodata)                                          \
+> -               MEM_KEEP(init.rodata)                                   \
+>         }                                                               \
+>                                                                         \
+>         /* Built-in module parameters. */                               \
+> @@ -574,8 +564,7 @@
+>                 *(.text.unknown .text.unknown.*)                        \
+>                 NOINSTR_TEXT                                            \
+>                 *(.ref.text)                                            \
+> -               *(.text.asan.* .text.tsan.*)                            \
+> -       MEM_KEEP(init.text*)                                            \
+> +               *(.text.asan.* .text.tsan.*)
+>
+>
+>  /* sched.text is aling to function alignment to secure we have same
+> @@ -682,7 +671,6 @@
+>  #define INIT_DATA                                                      \
+>         KEEP(*(SORT(___kentry+*)))                                      \
+>         *(.init.data .init.data.*)                                      \
+> -       MEM_DISCARD(init.data*)                                         \
+>         KERNEL_CTORS()                                                  \
+>         MCOUNT_REC()                                                    \
+>         *(.init.rodata .init.rodata.*)                                  \
+> @@ -690,7 +678,6 @@
+>         TRACE_SYSCALLS()                                                \
+>         KPROBE_BLACKLIST()                                              \
+>         ERROR_INJECT_WHITELIST()                                        \
+> -       MEM_DISCARD(init.rodata)                                        \
+>         CLK_OF_TABLES()                                                 \
+>         RESERVEDMEM_OF_TABLES()                                         \
+>         TIMER_OF_TABLES()                                               \
+> @@ -708,8 +695,7 @@
+>
+>  #define INIT_TEXT                                                      \
+>         *(.init.text .init.text.*)                                      \
+> -       *(.text.startup)                                                \
+> -       MEM_DISCARD(init.text*)
+> +       *(.text.startup)
+>
+>  #define EXIT_DATA                                                      \
+>         *(.exit.data .exit.data.*)                                      \
+> diff --git a/include/linux/init.h b/include/linux/init.h
+> index b2e9dfff8691..ee1309473bc6 100644
+> --- a/include/linux/init.h
+> +++ b/include/linux/init.h
+> @@ -84,11 +84,15 @@
+>
+>  #define __exit          __section(".exit.text") __exitused __cold notrac=
+e
+>
+> -/* Used for MEMORY_HOTPLUG */
+> -#define __meminit        __section(".meminit.text") __cold notrace \
+> -                                                 __latent_entropy
+> -#define __meminitdata    __section(".meminit.data")
+> -#define __meminitconst   __section(".meminit.rodata")
+> +#ifdef CONFIG_MEMORY_HOTPLUG
+> +#define __meminit
+> +#define __meminitdata
+> +#define __meminitconst
+> +#else
+> +#define __meminit      __init
+> +#define __meminitdata  __initdata
+> +#define __meminitconst __initconst
+> +#endif
+>
+>  /* For assembly routines */
+>  #define __HEAD         .section        ".head.text","ax"
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 3e5313ed6065..8c8ad7485f73 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -776,17 +776,14 @@ static void check_section(const char *modname, stru=
+ct elf_info *elf,
+>
+>
+>  #define ALL_INIT_DATA_SECTIONS \
+> -       ".init.setup", ".init.rodata", ".meminit.rodata", \
+> -       ".init.data", ".meminit.data"
+> +       ".init.setup", ".init.rodata", ".init.data"
+>
+>  #define ALL_PCI_INIT_SECTIONS  \
+>         ".pci_fixup_early", ".pci_fixup_header", ".pci_fixup_final", \
+>         ".pci_fixup_enable", ".pci_fixup_resume", \
+>         ".pci_fixup_resume_early", ".pci_fixup_suspend"
+>
+> -#define ALL_XXXINIT_SECTIONS ".meminit.*"
+> -
+> -#define ALL_INIT_SECTIONS INIT_SECTIONS, ALL_XXXINIT_SECTIONS
+> +#define ALL_INIT_SECTIONS ".init.*"
+>  #define ALL_EXIT_SECTIONS ".exit.*"
+>
+>  #define DATA_SECTIONS ".data", ".data.rel"
+> @@ -797,9 +794,7 @@ static void check_section(const char *modname, struct=
+ elf_info *elf,
+>                 ".fixup", ".entry.text", ".exception.text", \
+>                 ".coldtext", ".softirqentry.text"
+>
+> -#define INIT_SECTIONS      ".init.*"
+> -
+> -#define ALL_TEXT_SECTIONS  ".init.text", ".meminit.text", ".exit.text", =
+\
+> +#define ALL_TEXT_SECTIONS  ".init.text", ".exit.text", \
+>                 TEXT_SECTIONS, OTHER_TEXT_SECTIONS
+>
+>  enum mismatch {
+> @@ -839,12 +834,6 @@ static const struct sectioncheck sectioncheck[] =3D =
+{
+>         .bad_tosec =3D { ALL_INIT_SECTIONS, ALL_EXIT_SECTIONS, NULL },
+>         .mismatch =3D TEXTDATA_TO_ANY_INIT_EXIT,
+>  },
+> -/* Do not reference init code/data from meminit code/data */
+> -{
+> -       .fromsec =3D { ALL_XXXINIT_SECTIONS, NULL },
+> -       .bad_tosec =3D { INIT_SECTIONS, NULL },
+> -       .mismatch =3D XXXINIT_TO_SOME_INIT,
+> -},
+>  /* Do not use exit code/data from init code */
+>  {
+>         .fromsec =3D { ALL_INIT_SECTIONS, NULL },
+> @@ -859,7 +848,7 @@ static const struct sectioncheck sectioncheck[] =3D {
+>  },
+>  {
+>         .fromsec =3D { ALL_PCI_INIT_SECTIONS, NULL },
+> -       .bad_tosec =3D { INIT_SECTIONS, NULL },
+> +       .bad_tosec =3D { ALL_INIT_SECTIONS, NULL },
+>         .mismatch =3D ANY_INIT_TO_ANY_EXIT,
+>  },
+>  {
+> --
+> 2.43.0
+>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
