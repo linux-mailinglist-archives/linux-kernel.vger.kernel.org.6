@@ -1,482 +1,336 @@
-Return-Path: <linux-kernel+bounces-243006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA8D92901F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:00:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F33929037
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43FE41C21180
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:00:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6321C20D6A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE5EFBE8;
-	Sat,  6 Jul 2024 03:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0h+FHZA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F94EAE7;
+	Sat,  6 Jul 2024 03:11:57 +0000 (UTC)
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FC91367;
-	Sat,  6 Jul 2024 03:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51223C156;
+	Sat,  6 Jul 2024 03:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720234836; cv=none; b=VfOT4O5EFpYcYUYfhAqoiwIPSaKG7DftqrtKO4C9w51QQsfb/O+j4uHhXMQ0UAWLMalOzyxiO4Y5ZMwuMYvf0lMNgM8gyB1M8/UEWBuEM/cSLdRynXBCRLXWxUyMKZ8YgodRZAbFGu3PtWnJY007n6GnvR2bEny+CT6B0E/VfjE=
+	t=1720235516; cv=none; b=opyCFbTG7yALWmC44TJbsdBoM+O7EAxiot7UEDi4l2matsUDiPEY5Ub9TOT+DipIDWLxgFjYgoDuiay915YC3t9svQPacvG7nwvpECtRlQfTZbGsmZ1ik9/7sVZ84uR6zG1V0ItKTvIb1uSKcES0z0L7onaVsfdqE5MHeJveB1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720234836; c=relaxed/simple;
-	bh=dxpPrVajL1gnWoK3H3BsUvtBsIYVkcyQNOmdZ0caoXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aIAKw9dDKx0RoYggMRj66eouJkdUtQTS5bgoNxAYg1T+lRFbOAs8VBcj2xW0pipO1laD8UuZ//mHZ8+iFM/WAuAAzxp76to9iyy9XN6fsCYjOwV7wwTbEO67A4On81jOpwXuOrLKQuO/Jkg1nUMTgIcD1NOpawz1ROQVvG7yrG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0h+FHZA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87A62C4AF0A;
-	Sat,  6 Jul 2024 03:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720234835;
-	bh=dxpPrVajL1gnWoK3H3BsUvtBsIYVkcyQNOmdZ0caoXg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l0h+FHZAyCj0tfk6ZmxjGrK0W4g1qv67Ori+w33lzZu3IkLStbaD6kskV7Tcux5TF
-	 AeUZl8JeffWm2vg7LKXmyijuDW8GcW3SP9yw79jdadXkZrTIy5JW4StE95JRofrfbR
-	 SJhDIDh3s/8kPuHMjyMMUxrOLCZVnpjOuTeTNKm7vC6k0J9nUCpz2zlSf+5RodUuDj
-	 m8WqPzDEZOaTVUy382xIMvGRb7PgS8s/wT/dbn8KaUxjuiu93CuK/HBNNtFvUgOCYL
-	 1ORYd7kl5g1UdogR2wXXr8rEXXQklIVO65c714Z42zi5OMvS0hh+FTexUWL5C2bG6W
-	 8N6ILmbdgpFkQ==
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a77e5929033so7273166b.0;
-        Fri, 05 Jul 2024 20:00:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDDqC3CdQeFnIBOlulmTmbKf5sPVpi75RR2T81to1VlYsik0J4KELTXpT/qIqqne69ZRAmdlDovTSRTq8VUkiA/wswUBv+j6srFAj2ljmsqTIBSx/q6HaWlXKRqN/lyXB/
-X-Gm-Message-State: AOJu0YwdyyotTfgqY3Yj32KlhTu8yWUH0+Nw9/LiFMmtjwKxvzsx14ze
-	ZLkUGNXx8gmSC7EFsUZR9/IcMKRAn01CVe5aygHq5giBjRKcDHKhYrZcff9yocurGFzGZ1oseCn
-	Dxvl3/OBichRE0sEWU669udrriDY=
-X-Google-Smtp-Source: AGHT+IFp6pWEgG8JzQC9B8zoNUBGdnMiM4oV+Rq7m+6HGCXR0+SqywOwjCEAwSB0UPjuD1UlWZzXtPgozgpEWQmOs1E=
-X-Received: by 2002:a17:906:a08:b0:a77:c525:5c64 with SMTP id
- a640c23a62f3a-a77c52571e8mr319512566b.39.1720234833974; Fri, 05 Jul 2024
- 20:00:33 -0700 (PDT)
+	s=arc-20240116; t=1720235516; c=relaxed/simple;
+	bh=MyjTGk6VuWMYFBl8e5jB9YOcHh8boZQO8NlWjQrIp6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mFERzBPkpmvFClnZD7TiFcMUZ3AWdkaONLkR+8Gjk/wXP07ktSeXORmE9CYZfKdJBt7A/ROYtaLKeAg6w5bveKW6NNYJJzIOLvaKTyCXZsrbSIHW8eGr4gujymna9utSk4vfdjmP4YAP3kzFaYV/we7Wj6UA7w5bTv5bcQtJQoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=43.155.80.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpip1t1720235489tei2m50
+X-QQ-Originating-IP: T9voozigEMbvKQqLmyXHyvJvu/Sgt2Ax2xFLqZOUFw0=
+Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [255.251.210.2])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 06 Jul 2024 11:11:23 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 1222939419050242368
+From: WangYuli <wangyuli@uniontech.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	sashal@kernel.org
+Cc: ast@kernel.org,
+	keescook@chromium.org,
+	linux-hardening@vger.kernel.org,
+	christophe.leroy@csgroup.eu,
+	catalin.marinas@arm.com,
+	song@kernel.org,
+	puranjay12@gmail.com,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@google.com,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	illusionist.neo@gmail.com,
+	linux@armlinux.org.uk,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	loongarch@lists.linux.dev,
+	johan.almbladh@anyfinetworks.com,
+	paulburton@kernel.org,
+	tsbogend@alpha.franken.de,
+	linux-mips@vger.kernel.org,
+	deller@gmx.de,
+	linux-parisc@vger.kernel.org,
+	iii@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	linux-s390@vger.kernel.org,
+	davem@davemloft.net,
+	sparclinux@vger.kernel.org,
+	kuba@kernel.org,
+	hawk@kernel.org,
+	netdev@vger.kernel.org,
+	dsahern@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	guanwentao@uniontech.com,
+	baimingcong@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] Revert "bpf: Take return from set_memory_rox() into account with bpf_jit_binary_lock_ro()" for linux-6.6.37
+Date: Sat,  6 Jul 2024 11:11:01 +0800
+Message-ID: <5A29E00D83AB84E3+20240706031101.637601-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524073812.731032-1-maobibo@loongson.cn> <20240524073812.731032-2-maobibo@loongson.cn>
-In-Reply-To: <20240524073812.731032-2-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 6 Jul 2024 11:00:20 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5G7O7tbwzyaoO4iEXuN+_xbVFJDEyv1HH7GqOH24639Q@mail.gmail.com>
-Message-ID: <CAAhV-H5G7O7tbwzyaoO4iEXuN+_xbVFJDEyv1HH7GqOH24639Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] LoongArch: KVM: Add steal time support in kvm side
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Hi, Bibo,
+This reverts commit 08f6c05feb1db21653e98ca84ea04ca032d014c7.
 
-On Fri, May 24, 2024 at 3:38=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> Steal time feature is added here in kvm side, VM can search supported
-> features provided by KVM hypervisor, feature KVM_FEATURE_STEAL_TIME
-> is added here. Like x86, steal time structure is saved in guest memory,
-> one hypercall function KVM_HCALL_FUNC_NOTIFY is added to notify KVM to
-> enable the feature.
->
-> One cpu attr ioctl command KVM_LOONGARCH_VCPU_PVTIME_CTRL is added to
-> save and restore base address of steal time structure when VM is migrated=
-.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  arch/loongarch/include/asm/kvm_host.h  |   7 ++
->  arch/loongarch/include/asm/kvm_para.h  |  10 ++
->  arch/loongarch/include/asm/kvm_vcpu.h  |   4 +
->  arch/loongarch/include/asm/loongarch.h |   1 +
->  arch/loongarch/include/uapi/asm/kvm.h  |   4 +
->  arch/loongarch/kvm/Kconfig             |   1 +
->  arch/loongarch/kvm/exit.c              |  38 +++++++-
->  arch/loongarch/kvm/vcpu.c              | 124 +++++++++++++++++++++++++
->  8 files changed, 187 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/inclu=
-de/asm/kvm_host.h
-> index c87b6ea0ec47..2eb2f7572023 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -30,6 +30,7 @@
->  #define KVM_PRIVATE_MEM_SLOTS          0
->
->  #define KVM_HALT_POLL_NS_DEFAULT       500000
-> +#define KVM_REQ_STEAL_UPDATE           KVM_ARCH_REQ(1)
->
->  #define KVM_GUESTDBG_SW_BP_MASK                \
->         (KVM_GUESTDBG_ENABLE | KVM_GUESTDBG_USE_SW_BP)
-> @@ -201,6 +202,12 @@ struct kvm_vcpu_arch {
->         struct kvm_mp_state mp_state;
->         /* cpucfg */
->         u32 cpucfg[KVM_MAX_CPUCFG_REGS];
-> +       /* paravirt steal time */
-> +       struct {
-> +               u64 guest_addr;
-> +               u64 last_steal;
-> +               struct gfn_to_hva_cache cache;
-> +       } st;
->  };
->
->  static inline unsigned long readl_sw_gcsr(struct loongarch_csrs *csr, in=
-t reg)
-> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/inclu=
-de/asm/kvm_para.h
-> index 4ba2312e5f8c..a9ba8185d4af 100644
-> --- a/arch/loongarch/include/asm/kvm_para.h
-> +++ b/arch/loongarch/include/asm/kvm_para.h
-> @@ -14,6 +14,7 @@
->
->  #define KVM_HCALL_SERVICE              HYPERCALL_ENCODE(HYPERVISOR_KVM, =
-KVM_HCALL_CODE_SERVICE)
->  #define  KVM_HCALL_FUNC_IPI            1
-> +#define  KVM_HCALL_FUNC_NOTIFY         2
->
->  #define KVM_HCALL_SWDBG                        HYPERCALL_ENCODE(HYPERVIS=
-OR_KVM, KVM_HCALL_CODE_SWDBG)
->
-> @@ -24,6 +25,15 @@
->  #define KVM_HCALL_INVALID_CODE         -1UL
->  #define KVM_HCALL_INVALID_PARAMETER    -2UL
->
-> +#define KVM_STEAL_PHYS_VALID           BIT_ULL(0)
-> +#define KVM_STEAL_PHYS_MASK            GENMASK_ULL(63, 6)
-> +struct kvm_steal_time {
-> +       __u64 steal;
-> +       __u32 version;
-> +       __u32 flags;
-I found that x86 has a preempted field here, in our internal repo the
-LoongArch version also has this field. Moreover,
-kvm_steal_time_set_preempted() and kvm_steal_time_clear_preempted()
-seems needed.
+Upstream commit e60adf513275 ("bpf: Take return from set_memory_rox() into account with bpf_jit_binary_lock_ro()")
+depends on
+upstream commit 1dad391daef1 ("bpf, arm64: use bpf_prog_pack for memory management").
 
-> +       __u32 pad[12];
-> +};
-> +
->  /*
->   * Hypercall interface for KVM hypervisor
->   *
-> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/inclu=
-de/asm/kvm_vcpu.h
-> index 590a92cb5416..d7e51300a89f 100644
-> --- a/arch/loongarch/include/asm/kvm_vcpu.h
-> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
-> @@ -120,4 +120,8 @@ static inline void kvm_write_reg(struct kvm_vcpu *vcp=
-u, int num, unsigned long v
->         vcpu->arch.gprs[num] =3D val;
->  }
->
-> +static inline bool kvm_pvtime_supported(void)
-> +{
-> +       return !!sched_info_on();
-> +}
->  #endif /* __ASM_LOONGARCH_KVM_VCPU_H__ */
-> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/incl=
-ude/asm/loongarch.h
-> index eb09adda54b7..7a4633ef284b 100644
-> --- a/arch/loongarch/include/asm/loongarch.h
-> +++ b/arch/loongarch/include/asm/loongarch.h
-> @@ -169,6 +169,7 @@
->  #define  KVM_SIGNATURE                 "KVM\0"
->  #define CPUCFG_KVM_FEATURE             (CPUCFG_KVM_BASE + 4)
->  #define  KVM_FEATURE_IPI               BIT(1)
-> +#define  KVM_FEATURE_STEAL_TIME                BIT(2)
->
->  #ifndef __ASSEMBLY__
->
-> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/inclu=
-de/uapi/asm/kvm.h
-> index f9abef382317..ddc5cab0ffd0 100644
-> --- a/arch/loongarch/include/uapi/asm/kvm.h
-> +++ b/arch/loongarch/include/uapi/asm/kvm.h
-> @@ -81,7 +81,11 @@ struct kvm_fpu {
->  #define LOONGARCH_REG_64(TYPE, REG)    (TYPE | KVM_REG_SIZE_U64 | (REG <=
-< LOONGARCH_REG_SHIFT))
->  #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOONGARC=
-H_CSR, REG)
->  #define KVM_IOC_CPUCFG(REG)            LOONGARCH_REG_64(KVM_REG_LOONGARC=
-H_CPUCFG, REG)
-> +
-> +/* Device Control API on vcpu fd */
->  #define KVM_LOONGARCH_VCPU_CPUCFG      0
-> +#define KVM_LOONGARCH_VCPU_PVTIME_CTRL 1
-> +#define  KVM_LOONGARCH_VCPU_PVTIME_GPA 0
->
->  struct kvm_debug_exit_arch {
->  };
-> diff --git a/arch/loongarch/kvm/Kconfig b/arch/loongarch/kvm/Kconfig
-> index c4ef2b4d9797..248744b4d086 100644
-> --- a/arch/loongarch/kvm/Kconfig
-> +++ b/arch/loongarch/kvm/Kconfig
-> @@ -29,6 +29,7 @@ config KVM
->         select KVM_MMIO
->         select HAVE_KVM_READONLY_MEM
->         select KVM_XFER_TO_GUEST_WORK
-> +       select SCHED_INFO
->         help
->           Support hosting virtualized guest machines using
->           hardware virtualization extensions. You will need
-> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-> index c86e099af5ca..e2abd97fb13f 100644
-> --- a/arch/loongarch/kvm/exit.c
-> +++ b/arch/loongarch/kvm/exit.c
-> @@ -24,7 +24,7 @@
->  static int kvm_emu_cpucfg(struct kvm_vcpu *vcpu, larch_inst inst)
->  {
->         int rd, rj;
-> -       unsigned int index;
-> +       unsigned int index, ret;
->
->         if (inst.reg2_format.opcode !=3D cpucfg_op)
->                 return EMULATE_FAIL;
-> @@ -50,7 +50,10 @@ static int kvm_emu_cpucfg(struct kvm_vcpu *vcpu, larch=
-_inst inst)
->                 vcpu->arch.gprs[rd] =3D *(unsigned int *)KVM_SIGNATURE;
->                 break;
->         case CPUCFG_KVM_FEATURE:
-> -               vcpu->arch.gprs[rd] =3D KVM_FEATURE_IPI;
-> +               ret =3D KVM_FEATURE_IPI;
-> +               if (sched_info_on())
-What about replacing it with your helper function kvm_pvtime_supported()?
+It will cause a compilation warning on the arm64 if it's not merged:
+  arch/arm64/net/bpf_jit_comp.c: In function ‘bpf_int_jit_compile’:
+  arch/arm64/net/bpf_jit_comp.c:1651:17: warning: ignoring return value of ‘bpf_jit_binary_lock_ro’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   1651 |                 bpf_jit_binary_lock_ro(header);
+        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Huacai
+This will prevent the kernel with the '-Werror' compile option from
+being compiled successfully.
 
-> +                       ret |=3D KVM_FEATURE_STEAL_TIME;
-> +               vcpu->arch.gprs[rd] =3D ret;
->                 break;
->         default:
->                 vcpu->arch.gprs[rd] =3D 0;
-> @@ -687,6 +690,34 @@ static int kvm_handle_fpu_disabled(struct kvm_vcpu *=
-vcpu)
->         return RESUME_GUEST;
->  }
->
-> +static long kvm_save_notify(struct kvm_vcpu *vcpu)
-> +{
-> +       unsigned long id, data;
-> +
-> +       id   =3D kvm_read_reg(vcpu, LOONGARCH_GPR_A1);
-> +       data =3D kvm_read_reg(vcpu, LOONGARCH_GPR_A2);
-> +       switch (id) {
-> +       case KVM_FEATURE_STEAL_TIME:
-> +               if (!kvm_pvtime_supported())
-> +                       return KVM_HCALL_INVALID_CODE;
-> +
-> +               if (data & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
-> +                       return KVM_HCALL_INVALID_PARAMETER;
-> +
-> +               vcpu->arch.st.guest_addr =3D data;
-> +               if (!(data & KVM_STEAL_PHYS_VALID))
-> +                       break;
-> +
-> +               vcpu->arch.st.last_steal =3D current->sched_info.run_dela=
-y;
-> +               kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
-> +               break;
-> +       default:
-> +               break;
-> +       };
-> +
-> +       return 0;
-> +};
-> +
->  /*
->   * kvm_handle_lsx_disabled() - Guest used LSX while disabled in root.
->   * @vcpu:      Virtual CPU context.
-> @@ -758,6 +789,9 @@ static void kvm_handle_service(struct kvm_vcpu *vcpu)
->                 kvm_send_pv_ipi(vcpu);
->                 ret =3D KVM_HCALL_SUCCESS;
->                 break;
-> +       case KVM_HCALL_FUNC_NOTIFY:
-> +               ret =3D kvm_save_notify(vcpu);
-> +               break;
->         default:
->                 ret =3D KVM_HCALL_INVALID_CODE;
->                 break;
-> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-> index 9e8030d45129..382796f1d3e6 100644
-> --- a/arch/loongarch/kvm/vcpu.c
-> +++ b/arch/loongarch/kvm/vcpu.c
-> @@ -31,6 +31,117 @@ const struct kvm_stats_header kvm_vcpu_stats_header =
-=3D {
->                        sizeof(kvm_vcpu_stats_desc),
->  };
->
-> +static void kvm_update_stolen_time(struct kvm_vcpu *vcpu)
-> +{
-> +       struct kvm_steal_time __user *st;
-> +       struct gfn_to_hva_cache *ghc;
-> +       struct kvm_memslots *slots;
-> +       gpa_t gpa;
-> +       u64 steal;
-> +       u32 version;
-> +
-> +       ghc =3D &vcpu->arch.st.cache;
-> +       gpa =3D vcpu->arch.st.guest_addr;
-> +       if (!(gpa & KVM_STEAL_PHYS_VALID))
-> +               return;
-> +
-> +       gpa &=3D KVM_STEAL_PHYS_MASK;
-> +       slots =3D kvm_memslots(vcpu->kvm);
-> +       if (slots->generation !=3D ghc->generation || gpa !=3D ghc->gpa) =
-{
-> +               if (kvm_gfn_to_hva_cache_init(vcpu->kvm, ghc, gpa,
-> +                                       sizeof(*st))) {
-> +                       ghc->gpa =3D INVALID_GPA;
-> +                       return;
-> +               }
-> +       }
-> +
-> +       st =3D (struct kvm_steal_time __user *)ghc->hva;
-> +       unsafe_get_user(version, &st->version, out);
-> +       if (version & 1)
-> +               version +=3D 1;
-> +       version +=3D 1;
-> +       unsafe_put_user(version, &st->version, out);
-> +       smp_wmb();
-> +
-> +       unsafe_get_user(steal, &st->steal, out);
-> +       steal +=3D current->sched_info.run_delay -
-> +               vcpu->arch.st.last_steal;
-> +       vcpu->arch.st.last_steal =3D current->sched_info.run_delay;
-> +       unsafe_put_user(steal, &st->steal, out);
-> +
-> +       smp_wmb();
-> +       version +=3D 1;
-> +       unsafe_put_user(version, &st->version, out);
-> +out:
-> +       mark_page_dirty_in_slot(vcpu->kvm, ghc->memslot, gpa_to_gfn(ghc->=
-gpa));
-> +}
-> +
-> +static int kvm_loongarch_pvtime_has_attr(struct kvm_vcpu *vcpu,
-> +                                       struct kvm_device_attr *attr)
-> +{
-> +       if (!kvm_pvtime_supported() ||
-> +                       attr->attr !=3D KVM_LOONGARCH_VCPU_PVTIME_GPA)
-> +               return -ENXIO;
-> +
-> +       return 0;
-> +}
-> +
-> +static int kvm_loongarch_pvtime_get_attr(struct kvm_vcpu *vcpu,
-> +                                       struct kvm_device_attr *attr)
-> +{
-> +       u64 __user *user =3D (u64 __user *)attr->addr;
-> +       u64 gpa;
-> +
-> +       if (!kvm_pvtime_supported() ||
-> +                       attr->attr !=3D KVM_LOONGARCH_VCPU_PVTIME_GPA)
-> +               return -ENXIO;
-> +
-> +       gpa =3D vcpu->arch.st.guest_addr;
-> +       if (put_user(gpa, user))
-> +               return -EFAULT;
-> +
-> +       return 0;
-> +}
-> +
-> +static int kvm_loongarch_pvtime_set_attr(struct kvm_vcpu *vcpu,
-> +                                       struct kvm_device_attr *attr)
-> +{
-> +       u64 __user *user =3D (u64 __user *)attr->addr;
-> +       struct kvm *kvm =3D vcpu->kvm;
-> +       u64 gpa;
-> +       int ret =3D 0;
-> +       int idx;
-> +
-> +       if (!kvm_pvtime_supported() ||
-> +                       attr->attr !=3D KVM_LOONGARCH_VCPU_PVTIME_GPA)
-> +               return -ENXIO;
-> +
-> +       if (get_user(gpa, user))
-> +               return -EFAULT;
-> +
-> +       if (gpa & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
-> +               return -EINVAL;
-> +
-> +       if (!(gpa & KVM_STEAL_PHYS_VALID)) {
-> +               vcpu->arch.st.guest_addr =3D gpa;
-> +               return 0;
-> +       }
-> +
-> +       /* Check the address is in a valid memslot */
-> +       idx =3D srcu_read_lock(&kvm->srcu);
-> +       if (kvm_is_error_hva(gfn_to_hva(kvm, gpa >> PAGE_SHIFT)))
-> +               ret =3D -EINVAL;
-> +       srcu_read_unlock(&kvm->srcu, idx);
-> +
-> +       if (!ret) {
-> +               vcpu->arch.st.guest_addr =3D gpa;
-> +               vcpu->arch.st.last_steal =3D current->sched_info.run_dela=
-y;
-> +               kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
->  /*
->   * kvm_check_requests - check and handle pending vCPU requests
->   *
-> @@ -48,6 +159,9 @@ static int kvm_check_requests(struct kvm_vcpu *vcpu)
->         if (kvm_dirty_ring_check_request(vcpu))
->                 return RESUME_HOST;
->
-> +       if (kvm_check_request(KVM_REQ_STEAL_UPDATE, vcpu))
-> +               kvm_update_stolen_time(vcpu);
-> +
->         return RESUME_GUEST;
->  }
->
-> @@ -671,6 +785,9 @@ static int kvm_loongarch_vcpu_has_attr(struct kvm_vcp=
-u *vcpu,
->         case KVM_LOONGARCH_VCPU_CPUCFG:
->                 ret =3D kvm_loongarch_cpucfg_has_attr(vcpu, attr);
->                 break;
-> +       case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
-> +               ret =3D kvm_loongarch_pvtime_has_attr(vcpu, attr);
-> +               break;
->         default:
->                 break;
->         }
-> @@ -703,6 +820,9 @@ static int kvm_loongarch_vcpu_get_attr(struct kvm_vcp=
-u *vcpu,
->         case KVM_LOONGARCH_VCPU_CPUCFG:
->                 ret =3D kvm_loongarch_get_cpucfg_attr(vcpu, attr);
->                 break;
-> +       case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
-> +               ret =3D kvm_loongarch_pvtime_get_attr(vcpu, attr);
-> +               break;
->         default:
->                 break;
->         }
-> @@ -725,6 +845,9 @@ static int kvm_loongarch_vcpu_set_attr(struct kvm_vcp=
-u *vcpu,
->         case KVM_LOONGARCH_VCPU_CPUCFG:
->                 ret =3D kvm_loongarch_cpucfg_set_attr(vcpu, attr);
->                 break;
-> +       case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
-> +               ret =3D kvm_loongarch_pvtime_set_attr(vcpu, attr);
-> +               break;
->         default:
->                 break;
->         }
-> @@ -1084,6 +1207,7 @@ static int _kvm_vcpu_load(struct kvm_vcpu *vcpu, in=
-t cpu)
->
->         /* Control guest page CCA attribute */
->         change_csr_gcfg(CSR_GCFG_MATC_MASK, CSR_GCFG_MATC_ROOT);
-> +       kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
->
->         /* Don't bother restoring registers multiple times unless necessa=
-ry */
->         if (vcpu->arch.aux_inuse & KVM_LARCH_HWCSR_USABLE)
-> --
-> 2.39.3
->
+We might as well revert this commit in linux-6.6.37 to solve the
+problem in a simple way.
+
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/arm/net/bpf_jit_32.c        | 25 +++++++++++++------------
+ arch/loongarch/net/bpf_jit.c     | 22 ++++++----------------
+ arch/mips/net/bpf_jit_comp.c     |  3 +--
+ arch/parisc/net/bpf_jit_core.c   |  8 +-------
+ arch/s390/net/bpf_jit_comp.c     |  6 +-----
+ arch/sparc/net/bpf_jit_comp_64.c |  6 +-----
+ arch/x86/net/bpf_jit_comp32.c    |  3 ++-
+ include/linux/filter.h           |  5 ++---
+ 8 files changed, 27 insertions(+), 51 deletions(-)
+
+diff --git a/arch/arm/net/bpf_jit_32.c b/arch/arm/net/bpf_jit_32.c
+index ac8e4d9bf954..6a1c9fca5260 100644
+--- a/arch/arm/net/bpf_jit_32.c
++++ b/arch/arm/net/bpf_jit_32.c
+@@ -1982,21 +1982,28 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 	/* If building the body of the JITed code fails somehow,
+ 	 * we fall back to the interpretation.
+ 	 */
+-	if (build_body(&ctx) < 0)
+-		goto out_free;
++	if (build_body(&ctx) < 0) {
++		image_ptr = NULL;
++		bpf_jit_binary_free(header);
++		prog = orig_prog;
++		goto out_imms;
++	}
+ 	build_epilogue(&ctx);
+ 
+ 	/* 3.) Extra pass to validate JITed Code */
+-	if (validate_code(&ctx))
+-		goto out_free;
++	if (validate_code(&ctx)) {
++		image_ptr = NULL;
++		bpf_jit_binary_free(header);
++		prog = orig_prog;
++		goto out_imms;
++	}
+ 	flush_icache_range((u32)header, (u32)(ctx.target + ctx.idx));
+ 
+ 	if (bpf_jit_enable > 1)
+ 		/* there are 2 passes here */
+ 		bpf_jit_dump(prog->len, image_size, 2, ctx.target);
+ 
+-	if (bpf_jit_binary_lock_ro(header))
+-		goto out_free;
++	bpf_jit_binary_lock_ro(header);
+ 	prog->bpf_func = (void *)ctx.target;
+ 	prog->jited = 1;
+ 	prog->jited_len = image_size;
+@@ -2013,11 +2020,5 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 		bpf_jit_prog_release_other(prog, prog == orig_prog ?
+ 					   tmp : orig_prog);
+ 	return prog;
+-
+-out_free:
+-	image_ptr = NULL;
+-	bpf_jit_binary_free(header);
+-	prog = orig_prog;
+-	goto out_imms;
+ }
+ 
+diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+index 13cd480385ca..9eb7753d117d 100644
+--- a/arch/loongarch/net/bpf_jit.c
++++ b/arch/loongarch/net/bpf_jit.c
+@@ -1206,19 +1206,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 	flush_icache_range((unsigned long)header, (unsigned long)(ctx.image + ctx.idx));
+ 
+ 	if (!prog->is_func || extra_pass) {
+-		int err;
+-
+ 		if (extra_pass && ctx.idx != jit_data->ctx.idx) {
+ 			pr_err_once("multi-func JIT bug %d != %d\n",
+ 				    ctx.idx, jit_data->ctx.idx);
+-			goto out_free;
+-		}
+-		err = bpf_jit_binary_lock_ro(header);
+-		if (err) {
+-			pr_err_once("bpf_jit_binary_lock_ro() returned %d\n",
+-				    err);
+-			goto out_free;
++			bpf_jit_binary_free(header);
++			prog->bpf_func = NULL;
++			prog->jited = 0;
++			prog->jited_len = 0;
++			goto out_offset;
+ 		}
++		bpf_jit_binary_lock_ro(header);
+ 	} else {
+ 		jit_data->ctx = ctx;
+ 		jit_data->image = image_ptr;
+@@ -1249,13 +1246,6 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 	out_offset = -1;
+ 
+ 	return prog;
+-
+-out_free:
+-	bpf_jit_binary_free(header);
+-	prog->bpf_func = NULL;
+-	prog->jited = 0;
+-	prog->jited_len = 0;
+-	goto out_offset;
+ }
+ 
+ /* Indicate the JIT backend supports mixing bpf2bpf and tailcalls. */
+diff --git a/arch/mips/net/bpf_jit_comp.c b/arch/mips/net/bpf_jit_comp.c
+index e355dfca4400..a40d926b6513 100644
+--- a/arch/mips/net/bpf_jit_comp.c
++++ b/arch/mips/net/bpf_jit_comp.c
+@@ -1012,8 +1012,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 	bpf_prog_fill_jited_linfo(prog, &ctx.descriptors[1]);
+ 
+ 	/* Set as read-only exec and flush instruction cache */
+-	if (bpf_jit_binary_lock_ro(header))
+-		goto out_err;
++	bpf_jit_binary_lock_ro(header);
+ 	flush_icache_range((unsigned long)header,
+ 			   (unsigned long)&ctx.target[ctx.jit_index]);
+ 
+diff --git a/arch/parisc/net/bpf_jit_core.c b/arch/parisc/net/bpf_jit_core.c
+index 979f45d4d1fb..d6ee2fd45550 100644
+--- a/arch/parisc/net/bpf_jit_core.c
++++ b/arch/parisc/net/bpf_jit_core.c
+@@ -167,13 +167,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 	bpf_flush_icache(jit_data->header, ctx->insns + ctx->ninsns);
+ 
+ 	if (!prog->is_func || extra_pass) {
+-		if (bpf_jit_binary_lock_ro(jit_data->header)) {
+-			bpf_jit_binary_free(jit_data->header);
+-			prog->bpf_func = NULL;
+-			prog->jited = 0;
+-			prog->jited_len = 0;
+-			goto out_offset;
+-		}
++		bpf_jit_binary_lock_ro(jit_data->header);
+ 		prologue_len = ctx->epilogue_offset - ctx->body_len;
+ 		for (i = 0; i < prog->len; i++)
+ 			ctx->offset[i] += prologue_len;
+diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
+index 05746e22fe79..62ee557d4b49 100644
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -1973,11 +1973,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
+ 		print_fn_code(jit.prg_buf, jit.size_prg);
+ 	}
+ 	if (!fp->is_func || extra_pass) {
+-		if (bpf_jit_binary_lock_ro(header)) {
+-			bpf_jit_binary_free(header);
+-			fp = orig_fp;
+-			goto free_addrs;
+-		}
++		bpf_jit_binary_lock_ro(header);
+ 	} else {
+ 		jit_data->header = header;
+ 		jit_data->ctx = jit;
+diff --git a/arch/sparc/net/bpf_jit_comp_64.c b/arch/sparc/net/bpf_jit_comp_64.c
+index 73bf0aea8baf..fa0759bfe498 100644
+--- a/arch/sparc/net/bpf_jit_comp_64.c
++++ b/arch/sparc/net/bpf_jit_comp_64.c
+@@ -1602,11 +1602,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 	bpf_flush_icache(header, (u8 *)header + header->size);
+ 
+ 	if (!prog->is_func || extra_pass) {
+-		if (bpf_jit_binary_lock_ro(header)) {
+-			bpf_jit_binary_free(header);
+-			prog = orig_prog;
+-			goto out_off;
+-		}
++		bpf_jit_binary_lock_ro(header);
+ 	} else {
+ 		jit_data->ctx = ctx;
+ 		jit_data->image = image_ptr;
+diff --git a/arch/x86/net/bpf_jit_comp32.c b/arch/x86/net/bpf_jit_comp32.c
+index f2fc8c38629b..429a89c5468b 100644
+--- a/arch/x86/net/bpf_jit_comp32.c
++++ b/arch/x86/net/bpf_jit_comp32.c
+@@ -2600,7 +2600,8 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+ 	if (bpf_jit_enable > 1)
+ 		bpf_jit_dump(prog->len, proglen, pass + 1, image);
+ 
+-	if (image && !bpf_jit_binary_lock_ro(header)) {
++	if (image) {
++		bpf_jit_binary_lock_ro(header);
+ 		prog->bpf_func = (void *)image;
+ 		prog->jited = 1;
+ 		prog->jited_len = proglen;
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index a74d97114a54..5a2800ec94ea 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -853,11 +853,10 @@ static inline int __must_check bpf_prog_lock_ro(struct bpf_prog *fp)
+ 	return 0;
+ }
+ 
+-static inline int __must_check
+-bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
++static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+ {
+ 	set_vm_flush_reset_perms(hdr);
+-	return set_memory_rox((unsigned long)hdr, hdr->size >> PAGE_SHIFT);
++	set_memory_rox((unsigned long)hdr, hdr->size >> PAGE_SHIFT);
+ }
+ 
+ int sk_filter_trim_cap(struct sock *sk, struct sk_buff *skb, unsigned int cap);
+-- 
+2.43.0
+
 
