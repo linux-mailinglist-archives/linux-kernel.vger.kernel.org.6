@@ -1,219 +1,305 @@
-Return-Path: <linux-kernel+bounces-243265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0BA9293C6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:29:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B50B9293CC
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE041C211C8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:29:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7E50B21925
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D31A13174B;
-	Sat,  6 Jul 2024 13:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6732E130484;
+	Sat,  6 Jul 2024 13:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTX1vNb5"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0xGflf6"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1113482D3;
-	Sat,  6 Jul 2024 13:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D0E50285;
+	Sat,  6 Jul 2024 13:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720272580; cv=none; b=VZbv9EnihSYlKThRU7OXPgZE0PqcgeCwNSRI+mBYs/fJMx+Hh5PMlT641c+H23jL4ya/X40ZKjAU5lx+g51zqYtgACB/PxHyUAs9CyJeS1HeanI5raQnOmq479wIMbG+YkBbZS6MRfRPeWW6KW45uvn1aswSm49gW81Huhyeomw=
+	t=1720272816; cv=none; b=K8nOu9hNO+fekOHM3Uh8YJbY8N5Xe8pcU3o1j/zKIcsG+YTvS3cRAJBnd4K8jz5ldsARfwpB+EDqWMPvv/Qbin7x2E64km9Ki+TzWogaOXZR5OvTpehLeu/0M/g4d0xrmuQu2uXvLQbo9thy+D5n1zOIHSLKtDC4Q88p7uN5eco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720272580; c=relaxed/simple;
-	bh=tyWj4fij4P/SkbMsqeIBPpxU0hUoLxa3AxMnnTqsQRg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=Ej3XYt25+mN7ol6yYUVtOKRrpCTanfzOgzB/sJtO8vqnqsM1h9QfG9Onf4ZvTWXnhIN/r2Narh2+AJCe8pMZfhOTySlBl0M6xlJ1LdG0tnV0IeLHajrYJ2m23aj329QZhDy2fdJVeIAu437z+aLRdyHVZ/KaU/030jLdMYjASGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTX1vNb5; arc=none smtp.client-ip=209.85.128.174
+	s=arc-20240116; t=1720272816; c=relaxed/simple;
+	bh=65bZJJmOm8R1QkVqY8ukfBhTeQrrey9GA2nRERDUUuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Rs7nzDGi9eQ6NXFcIhA8td+6/LRwbvbZJrW8ll7l+yn0XTKgo59xQukHyfrV+kNd5KWZKicE3ZyWq/k1n5FSJw5+gAKhpNQeODiQHFwtUgz2E6u+XCdOGcqVSqhLtmRqUyTBn98hJv7FAQ1RrAD09rEpPt3W8QHG3dBb9NYgrvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0xGflf6; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-654cf0a069eso9071327b3.1;
-        Sat, 06 Jul 2024 06:29:38 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4255fa23f7bso16456605e9.2;
+        Sat, 06 Jul 2024 06:33:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720272578; x=1720877378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u+0C3hzJM3P4EhoexxB9qMOOcPx/HYZc4cqwJ6D3Ay8=;
-        b=WTX1vNb5OTQGanO6EW1o3iFrD04IQZ/mXvnLolJ9LuEyV2L7QU6ZFU3yqP2LmkjEdB
-         uPNr8pdrlOZ1iRpxJIywS/3T0CzTlmyCCGUp8HGYXJon92VCUGcupDvh+kVIJUYK9qW/
-         fd4AjyDygokegs+4h3et7qyWVI7ZbzlBIQgqbZWO5yE3l6oBM1/e5CCjGPOtKvFuCtJg
-         y4nfC8fDxivV/iQ/K5MsJDlQvjcoUnJ9RnVMSfYbM2LLcCYfvcGM6H3gB+xhnw+vHk7l
-         LeGu75fuFLKvN5GWKwLQy1HFkbi93ut1eyUtEWGyWo6Oayn2FVttdRWBMCL9jknG3Hb7
-         SVzg==
+        d=gmail.com; s=20230601; t=1720272813; x=1720877613; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SIoT7ZBfIhmIp8CBtQ1Sfwkn0lYW/qF5loxt2bM++CA=;
+        b=A0xGflf60rNENGHMmXWd2iL40qNQQ+yF3LgsV3OC6nKr0sv6GdVY2eNwdVxxurPa06
+         4YUHkn2MIZZtuRSTc1EyiR5TA6qNxxbpeOf/EjwpLBZpU8JTqdaQvCBrmjFgL5g/qwKT
+         RkNHuAsZVsODVwnMWy58IWsi9fbaPJb4F7ofgSfqLv3xqCYMrXG3bWSd7LJd6qTLGQl6
+         p30ofpaP98ltUzAgOKvVvaj3u/7TbLkSUQzEG6Rj2V7hrEwKqVyUE2y2Pomg7nO8udtd
+         VNKwJyUpeSob8J3qbdVS6HuJtJSCvu5bIUlUiK98ntzrw9vx1YkR0dl7TW8XVhC8SV5Y
+         WfFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720272578; x=1720877378;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=u+0C3hzJM3P4EhoexxB9qMOOcPx/HYZc4cqwJ6D3Ay8=;
-        b=TjIzUxZUA6Vf8v3w4Cm5+kFCqejT5LIR1PJO3UQqiQY7d3b7hXpNzRN/NZywkjIovb
-         vWa4l7KRmUVe2hadtKYZ2JWP0Hz72N8vlXHKHEmdFl9EizQGltl12icBVjUsFmAxeRjC
-         PbbMESUOjCrgx5P2nXtNkTAcNe5uvO13aNqDSSdj2DKIUtdlMLRNvunr/epXxRExP7F9
-         SrdrxzRAN3sjT5u8SuRllp562Iy74PkzqKJpqG4wxsH9a+B+t9FGx0hRfXBsUzG7Y4jY
-         cmSk8XadhuB1pmg6W37BegmtcFy8J9nQdHIcRLGWswhwFlThJ/ew2hq7+kVjwxqZOYih
-         RGSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOjKLbeNdfukzwUGcY9z3+OPWECU5FHbo1W2bpl92Cp+zNgxnof4p+MhH3/cGsfXpywHhE8YI9bM9kbEsqjewrb9lDpf3gq+uk8x1yPq1mgLnUF++APhKgXf35wxq4fxqJxKZ8
-X-Gm-Message-State: AOJu0YzP81MBMewbFmeJablPIeF/yYHW1SP+39hWMr0TJWmvmoDMar1H
-	BxnkOiLZ6Wxa1fSxL/cBlG9QGXGTJxQ88WracQ6DJFqhH0OzU13G
-X-Google-Smtp-Source: AGHT+IFwfFMQQZX1qK22eMO9B7PVE3XTEtpharBfanLuZEq+jgSO/uqHA520GfSsvYfac2XRjx1Mpw==
-X-Received: by 2002:a05:690c:ec4:b0:64a:956b:c063 with SMTP id 00721157ae682-652d8438d69mr90724117b3.39.1720272577785;
-        Sat, 06 Jul 2024 06:29:37 -0700 (PDT)
-Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d692f0aafsm876897985a.77.2024.07.06.06.29.37
+        d=1e100.net; s=20230601; t=1720272813; x=1720877613;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SIoT7ZBfIhmIp8CBtQ1Sfwkn0lYW/qF5loxt2bM++CA=;
+        b=Ac2Ah+NOudm3n6ZqTuu9Fzj6BP6hr1r7XCKE4XrBUdltHuF0jVVg0xstXNj5UeVHpl
+         g1Ppt/qhDGPnS8I9tzK6d4lRdXrUi2/dkPlBmILFlAxsq25OxwgjkyZ3boY53LIUYqht
+         MFyHpJ4/DmDLqXLPyKXwAUrws46WKUJatBvJTGYnNHeyOUxunVl7J8dvzU8V2ZZeoAJh
+         fQSx6a2QtfQYOL6mYNIJyRCAMeeFtBLpDGfBoytBCG3UJoNqjdDjHwsZgP8fFBCocvvv
+         gnFizsEHt/V2uC1h+4DrWXndH+8oSFu6CdpdGMQ7Y8D2w6/RL2IfcvW0paZ5dRMIW3mn
+         QguQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWo3dCvDwNpc2G1HMt/0eltIymwpW5U5CnY5WfCa+rY+QfPdvovS38Ni0VyB69ymoa1g/8cAHk9Dmmgox38X9QnNI14FWirCSrRxbA5uBe0iKH+Sr5TIyhnFhFHHabQwB6UgEpZmvuWRA==
+X-Gm-Message-State: AOJu0Yy2+fPHr91L/DbTPw1M/aFwHl+PLc+AMwnPn9SARKRRhPIe3A83
+	V2u2bNUzDhakc+aPTAvm5VErG9SK+1AMXQliNaXr0OunafyRzxKu
+X-Google-Smtp-Source: AGHT+IGyLdMJkQD2YIPfyHwXPNVPWRLLzrCzTeATKrNq75NyGmHq1Rx8jxCFqP6frOsCMjHGmFjR4Q==
+X-Received: by 2002:a7b:cd95:0:b0:425:63a9:f96e with SMTP id 5b1f17b1804b1-4264a428f87mr51263685e9.36.1720272812800;
+        Sat, 06 Jul 2024 06:33:32 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a28333dsm97774285e9.40.2024.07.06.06.33.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 06:29:37 -0700 (PDT)
-Date: Sat, 06 Jul 2024 09:29:37 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, 
- David Ahern <dsahern@kernel.org>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- Andrew Lunn <andrew@lunn.ch>, 
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <668946c1ddef_12869e29412@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240703150342.1435976-4-aleksander.lobakin@intel.com>
-References: <20240703150342.1435976-1-aleksander.lobakin@intel.com>
- <20240703150342.1435976-4-aleksander.lobakin@intel.com>
-Subject: Re: [PATCH net-next v2 3/5] netdev_features: convert NETIF_F_LLTX to
- dev->lltx
+        Sat, 06 Jul 2024 06:33:32 -0700 (PDT)
+Date: Sat, 6 Jul 2024 15:33:30 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: mmc: sdhci-sprd: convert to YAML
+Message-ID: <ZolHqsBnQxSo6SbT@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Alexander Lobakin wrote:
-> NETIF_F_LLTX can't be changed via Ethtool and is not a feature,
-> rather an attribute, very similar to IFF_NO_QUEUE (and hot).
-> Free one netdev_features_t bit and make it a "hot" private flag.
-> 
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Covert the Spreadtrum SDHCI controller bindings to DT schema.
+Rename the file to match compatible.
 
-> diff --git a/Documentation/networking/netdev-features.rst b/Documentation/networking/netdev-features.rst
-> index d7b15bb64deb..f29d982ebf5d 100644
-> --- a/Documentation/networking/netdev-features.rst
-> +++ b/Documentation/networking/netdev-features.rst
-> @@ -139,14 +139,6 @@ chained skbs (skb->next/prev list).
->  Features contained in NETIF_F_SOFT_FEATURES are features of networking
->  stack. Driver should not change behaviour based on them.
->  
-> - * LLTX driver (deprecated for hardware drivers)
-> -
-> -NETIF_F_LLTX is meant to be used by drivers that don't need locking at all,
-> -e.g. software tunnels.
-> -
-> -This is also used in a few legacy drivers that implement their
-> -own locking, don't use it for new (hardware) drivers.
-> -
->   * netns-local device
->  
->  NETIF_F_NETNS_LOCAL is set for devices that are not allowed to move between
-> diff --git a/Documentation/networking/netdevices.rst b/Documentation/networking/netdevices.rst
-> index c2476917a6c3..857c9784f87e 100644
-> --- a/Documentation/networking/netdevices.rst
-> +++ b/Documentation/networking/netdevices.rst
-> @@ -258,11 +258,11 @@ ndo_get_stats:
->  ndo_start_xmit:
->  	Synchronization: __netif_tx_lock spinlock.
->  
-> -	When the driver sets NETIF_F_LLTX in dev->features this will be
-> +	When the driver sets dev->lltx this will be
->  	called without holding netif_tx_lock. In this case the driver
->  	has to lock by itself when needed.
->  	The locking there should also properly protect against
-> -	set_rx_mode. WARNING: use of NETIF_F_LLTX is deprecated.
-> +	set_rx_mode. WARNING: use of dev->lltx is deprecated.
->  	Don't use it for new drivers.
->  
->  	Context: Process with BHs disabled or BH (timer),
-> diff --git a/drivers/net/ethernet/tehuti/tehuti.h b/drivers/net/ethernet/tehuti/tehuti.h
-> index 909e7296cecf..47a2d3e5f8ed 100644
-> --- a/drivers/net/ethernet/tehuti/tehuti.h
-> +++ b/drivers/net/ethernet/tehuti/tehuti.h
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+Node name adjustments in DTS are being handled as part of:
+https://lore.kernel.org/lkml/cover.1720112081.git.stano.jakubek@gmail.com/
 
-> @@ -23,8 +23,6 @@ enum {
->  	NETIF_F_HW_VLAN_CTAG_FILTER_BIT,/* Receive filtering on VLAN CTAGs */
->  	NETIF_F_VLAN_CHALLENGED_BIT,	/* Device cannot handle VLAN packets */
->  	NETIF_F_GSO_BIT,		/* Enable software GSO. */
-> -	NETIF_F_LLTX_BIT,		/* LockLess TX - deprecated. Please */
-> -					/* do not use LLTX in new drivers */
->  	NETIF_F_NETNS_LOCAL_BIT,	/* Does not change network namespaces */
->  	NETIF_F_GRO_BIT,		/* Generic receive offload */
->  	NETIF_F_LRO_BIT,		/* large receive offload */
+ .../devicetree/bindings/mmc/sdhci-sprd.txt    |  67 ----------
+ .../bindings/mmc/sprd,sdhci-r11.yaml          | 120 ++++++++++++++++++
+ 2 files changed, 120 insertions(+), 67 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+ create mode 100644 Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml
 
-> @@ -1749,6 +1749,8 @@ enum netdev_reg_state {
->   *			booleans combined, only to assert cacheline placement
->   *	@priv_flags:	flags invisible to userspace defined as bits, see
->   *			enum netdev_priv_flags for the definitions
-> + *	@lltx:		device supports lockless Tx. Mainly used by logical
-> + *			interfaces, such as tunnels
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt b/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+deleted file mode 100644
+index eb7eb1b529f0..000000000000
+--- a/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
++++ /dev/null
+@@ -1,67 +0,0 @@
+-* Spreadtrum SDHCI controller (sdhci-sprd)
+-
+-The Secure Digital (SD) Host controller on Spreadtrum SoCs provides an interface
+-for MMC, SD and SDIO types of cards.
+-
+-This file documents differences between the core properties in mmc.txt
+-and the properties used by the sdhci-sprd driver.
+-
+-Required properties:
+-- compatible: Should contain "sprd,sdhci-r11".
+-- reg: physical base address of the controller and length.
+-- interrupts: Interrupts used by the SDHCI controller.
+-- clocks: Should contain phandle for the clock feeding the SDHCI controller
+-- clock-names: Should contain the following:
+-	"sdio" - SDIO source clock (required)
+-	"enable" - gate clock which used for enabling/disabling the device (required)
+-	"2x_enable" - gate clock controlling the device for some special platforms (optional)
+-
+-Optional properties:
+-- assigned-clocks: the same with "sdio" clock
+-- assigned-clock-parents: the default parent of "sdio" clock
+-- pinctrl-names: should be "default", "state_uhs"
+-- pinctrl-0: should contain default/high speed pin control
+-- pinctrl-1: should contain uhs mode pin control
+-
+-PHY DLL delays are used to delay the data valid window, and align the window
+-to sampling clock. PHY DLL delays can be configured by following properties,
+-and each property contains 4 cells which are used to configure the clock data
+-write line delay value, clock read command line delay value, clock read data
+-positive edge delay value and clock read data negative edge delay value.
+-Each cell's delay value unit is cycle of the PHY clock.
+-
+-- sprd,phy-delay-legacy: Delay value for legacy timing.
+-- sprd,phy-delay-sd-highspeed: Delay value for SD high-speed timing.
+-- sprd,phy-delay-sd-uhs-sdr50: Delay value for SD UHS SDR50 timing.
+-- sprd,phy-delay-sd-uhs-sdr104: Delay value for SD UHS SDR50 timing.
+-- sprd,phy-delay-mmc-highspeed: Delay value for MMC high-speed timing.
+-- sprd,phy-delay-mmc-ddr52: Delay value for MMC DDR52 timing.
+-- sprd,phy-delay-mmc-hs200: Delay value for MMC HS200 timing.
+-- sprd,phy-delay-mmc-hs400: Delay value for MMC HS400 timing.
+-- sprd,phy-delay-mmc-hs400es: Delay value for MMC HS400 enhanced strobe timing.
+-
+-Examples:
+-
+-sdio0: sdio@20600000 {
+-	compatible  = "sprd,sdhci-r11";
+-	reg = <0 0x20600000 0 0x1000>;
+-	interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+-
+-	clock-names = "sdio", "enable";
+-	clocks = <&ap_clk CLK_EMMC_2X>,
+-		 <&apahb_gate CLK_EMMC_EB>;
+-	assigned-clocks = <&ap_clk CLK_EMMC_2X>;
+-	assigned-clock-parents = <&rpll CLK_RPLL_390M>;
+-
+-	pinctrl-names = "default", "state_uhs";
+-	pinctrl-0 = <&sd0_pins_default>;
+-	pinctrl-1 = <&sd0_pins_uhs>;
+-
+-	sprd,phy-delay-sd-uhs-sdr104 = <0x3f 0x7f 0x2e 0x2e>;
+-	bus-width = <8>;
+-	non-removable;
+-	no-sdio;
+-	no-sd;
+-	cap-mmc-hw-reset;
+-	status = "okay";
+-};
+diff --git a/Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml b/Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml
+new file mode 100644
+index 000000000000..3cf4a41e4ed8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml
+@@ -0,0 +1,120 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mmc/sprd,sdhci-r11.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum SDHCI controller
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    const: sprd,sdhci-r11
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    items:
++      - description: SDIO source clock
++      - description: gate clock for enabling/disabling the device
++      - description: gate clock controlling the device for some special platforms (optional)
++
++  clock-names:
++    minItems: 2
++    items:
++      - const: sdio
++      - const: enable
++      - const: 2x_enable
++
++  assigned-clocks:
++    maxItems: 1
++
++  assigned-clock-parents:
++    maxItems: 1
++
++  pinctrl-0:
++    description: default/high speed pin control
++    maxItems: 1
++
++  pinctrl-1:
++    description: UHS mode pin control
++    maxItems: 1
++
++  pinctrl-names:
++    minItems: 1
++    items:
++      - const: default
++      - const: state_uhs
++
++patternProperties:
++  "^sprd,phy-delay-(legacy|mmc-(ddr52|highspeed|hs[24]00|hs400es)|sd-(highspeed|uhs-sdr(50|104)))$":
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    items:
++      - description: clock data write line delay value
++      - description: clock read command line delay value
++      - description: clock read data positive edge delay value
++      - description: clock read data negative edge delay value
++    description:
++      PHY DLL delays are used to delay the data valid window, and align
++      the window to the sampling clock. Each cell's delay value unit is
++      cycle of the PHY clock.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
++allOf:
++  - $ref: sdhci-common.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/sprd,sc9860-clk.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    mmc@50430000 {
++      compatible = "sprd,sdhci-r11";
++      reg = <0x50430000 0x1000>;
++      interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++
++      clocks = <&aon_prediv CLK_EMMC_2X>,
++               <&apahb_gate CLK_EMMC_EB>,
++               <&aon_gate CLK_EMMC_2X_EN>;
++      clock-names = "sdio", "enable", "2x_enable";
++      assigned-clocks = <&aon_prediv CLK_EMMC_2X>;
++      assigned-clock-parents = <&clk_l0_409m6>;
++
++      pinctrl-0 = <&sd0_pins_default>;
++      pinctrl-1 = <&sd0_pins_uhs>;
++      pinctrl-names = "default", "state_uhs";
++
++      bus-width = <8>;
++      cap-mmc-hw-reset;
++      mmc-hs400-enhanced-strobe;
++      mmc-hs400-1_8v;
++      mmc-hs200-1_8v;
++      mmc-ddr-1_8v;
++      non-removable;
++      no-sdio;
++      no-sd;
++
++      sprd,phy-delay-mmc-ddr52 = <0x3f 0x75 0x14 0x14>;
++      sprd,phy-delay-mmc-hs200 = <0x0 0x8c 0x8c 0x8c>;
++      sprd,phy-delay-mmc-hs400 = <0x44 0x7f 0x2e 0x2e>;
++      sprd,phy-delay-mmc-hs400es = <0x3f 0x3f 0x2e 0x2e>;
++    };
++...
+-- 
+2.34.1
 
-This loses some of the explanation in the NETIF_F_LLTX documentation.
-
-lltx is not deprecated, for software devices, existing documentation
-is imprecise on that point. But don't use it for new hardware drivers
-should remain clear.
-
->   *
->   *	@name:	This is the first field of the "visible" part of this structure
->   *		(i.e. as seen by users in the "Space.c" file).  It is the name
-
-> @@ -3098,7 +3098,7 @@ static void amt_link_setup(struct net_device *dev)
->  	dev->hard_header_len	= 0;
->  	dev->addr_len		= 0;
->  	dev->priv_flags		|= IFF_NO_QUEUE;
-> -	dev->features		|= NETIF_F_LLTX;
-> +	dev->lltx		= true;
->  	dev->features		|= NETIF_F_GSO_SOFTWARE;
->  	dev->features		|= NETIF_F_NETNS_LOCAL;
->  	dev->hw_features	|= NETIF_F_SG | NETIF_F_HW_CSUM;
-
-Since this is an integer type, use 1 instead of true?
-
-Type conversion will convert true to 1. But especially when these are
-integer bitfields, relying on conversion is a minor unnecessary risk.
-
->  int dsa_user_suspend(struct net_device *user_dev)
-> diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-> index 6b2a360dcdf0..44199d1780d5 100644
-> --- a/net/ethtool/common.c
-> +++ b/net/ethtool/common.c
-> @@ -24,7 +24,6 @@ const char netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN] = {
->  	[NETIF_F_HW_VLAN_STAG_FILTER_BIT] = "rx-vlan-stag-filter",
->  	[NETIF_F_VLAN_CHALLENGED_BIT] =  "vlan-challenged",
->  	[NETIF_F_GSO_BIT] =              "tx-generic-segmentation",
-> -	[NETIF_F_LLTX_BIT] =             "tx-lockless",
->  	[NETIF_F_NETNS_LOCAL_BIT] =      "netns-local",
->  	[NETIF_F_GRO_BIT] =              "rx-gro",
->  	[NETIF_F_GRO_HW_BIT] =           "rx-gro-hw",
-
-Is tx-lockless no longer reported after this?
-
-These features should ideally still be reported, even if not part of
-the features bitmap in the kernel implementation.
-
-This removal is what you hint at in the cover letter with
-
-  Even shell scripts won't most likely break since the removed bits
-  were always read-only, meaning nobody would try touching them from
-  a script.
-
-It is a risk. And an avoidable one?
-
-
- 
 
