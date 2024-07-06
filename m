@@ -1,224 +1,154 @@
-Return-Path: <linux-kernel+bounces-243364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E2092953F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:29:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9E2929547
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9BD51F21734
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 21:29:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C573B212F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 21:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C1122F11;
-	Sat,  6 Jul 2024 21:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823F93DBB7;
+	Sat,  6 Jul 2024 21:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NVBSGusk"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XwvJdHhh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244FC17FE
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 21:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36293208BC;
+	Sat,  6 Jul 2024 21:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720301355; cv=none; b=q4lMtwT1vxY57MPBDE0+aQ6PlyoAuxENXOcCEPLGv4PskKf5otITZDKocIry+6fWm2uzJiuBEUqMOkWtplsRDju4JCZLuskD8RLlpyrTbij07s0AZmyzGJ52SE4eHbVkYOmjYAFzE09bmIzCvb2RJSmtB6CX7iVVVYzAstp8muo=
+	t=1720302441; cv=none; b=gg/Un9CSCtUPB3IHWYtL+5u09epj9Q5zQRP2Dg1pn6IJUjPVFZvH04E3kGjRydiQQ4e/5iVY5o3/WY55Jj17m9hzmJ1jrAuHo6dCDdgs3wlMcm0u5NPZX5jj/bmpBQn9YsM0vFhwAx30enC6AznyJfjtYQz9U718BTSaoEEpM9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720301355; c=relaxed/simple;
-	bh=jdFXfcUQPuMYG8YSCp64iIiXJWjhTE6lvoXo6ybJ1Pk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ABQ+dUPbEwxTfBBd6KI77siMwMTeG1B5Z1ROrao1MYox/DwXyoyxk/C/H91Qzrdg3Y5yw0Xy0liyjT+sdnEQ5xxoBzrODuteZQHNtTuPmrsMNObQ1PvQnh6otv8Du1LTuqd8iMIf1N1nlZffpgPtdsRBQAhXWCONDvxVh9qhj1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NVBSGusk; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7035d5c08a8so753121a34.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 14:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720301353; x=1720906153; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ue8gY35brEYBVWt8FyxwSeAIH2C+YwAP5qKojzB01cI=;
-        b=NVBSGusko5T6/mSh9sTNHrcNKCLYDLPevlEvXuT4qG6PmUxhnY3Thjl856StJgFQGV
-         HOiXtOjJ71/9c8+6mGpTbdXuIMb6rZ5PRLOAL2Vtv9yrUouE5lBrln4hRxQp/1EyURdA
-         y+9RZWwK40+XTsSrVA7EDVJvrpcU1HUyTPjdciMlxpgRhdUOzlAGOphRpOREfZeoPHqm
-         zJCC92+nGX3DYoXU1MOqdzsdIs5/lLai9SzBX2YPin0i1y3RfDm1EuU2SIvRIBRoKI+e
-         lglXX2p0H332lfLb7R4dG+Ce3K7x6+v0cMSP88XPcQZE2qjbpCkCoJ8732jqbrJTzFFP
-         9kug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720301353; x=1720906153;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ue8gY35brEYBVWt8FyxwSeAIH2C+YwAP5qKojzB01cI=;
-        b=nnYtjDOr+t2lUeeTAvKSaypBTIKnFuHMMkQGPHI/3g367uwqh249LjEoQU43ppUS/a
-         pmRW+gAQwjJONV6/EZ+Q4QzuQzX9ZI6j4dZWTl8W/Y3rigxQ8QG97eSSpnXBKBHqTKJg
-         pWC8gVdUnm+vFkt13pv06EhQ0mOb+FsR5PDK0drNHEKHihl3fWACLrKPmVPwWi1XdX3L
-         nDL4pi6tse4LXzm9rqvb13QdpfBNIaMnrfyVRehVKmZ7EuUgPOMh522lkkRp6Qz3Wu4S
-         y8ECj7JUJiVYH/ZZMn2TTmJQ3JgCQXRu8x7tW9OIt/AkFIsPJL2WSYQI7DolMVG2UO6K
-         i6wg==
-X-Forwarded-Encrypted: i=1; AJvYcCULQQ0z7AMOc9auTgtyJortcfJLYTjXkG3yYvH04JSXZ/j0Slvdn8nMr1VyTivA17+Sfa3XlfS6AL52ifnaMfN4YLc/m7nhVPaBJxkS
-X-Gm-Message-State: AOJu0YwTGiLwH4q26fbMIj4+8NAWQRDdzlZ6mMeGA0dqftPMGpI/nT7K
-	NDm3NdMhndF0Ficu+EsAVrjfab2GjFhHShIUzkzZ1j8hPMFvTD00qhsVfs4Q/w==
-X-Google-Smtp-Source: AGHT+IGHrlPCBl63akfzuRCMp6XLRSgTopTU+czREYQwtTu7G1RfFozNSVFeOgW1nhmv4D6E1jZ+EA==
-X-Received: by 2002:a05:6870:eca0:b0:25e:1c9d:f180 with SMTP id 586e51a60fabf-25e2bf2aed9mr8482336fac.50.1720301352822;
-        Sat, 06 Jul 2024 14:29:12 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25e71070ba1sm307134fac.34.2024.07.06.14.29.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 14:29:11 -0700 (PDT)
-Date: Sat, 6 Jul 2024 14:29:00 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Kefeng Wang <wangkefeng.wang@huawei.com>, 
-    Andrew Morton <akpm@linux-foundation.org>
-cc: Hugh Dickins <hughd@google.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>, 
-    Yang Shi <shy828301@gmail.com>, Zi Yan <ziy@nvidia.com>, 
-    Barry Song <baohua@kernel.org>, David Hildenbrand <david@redhat.com>, 
-    Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
- migration
-In-Reply-To: <7b7f2eb7-953a-4aa0-acb0-1ab32c7cc1bf@huawei.com>
-Message-ID: <68feee73-050e-8e98-7a3a-abf78738d92c@google.com>
-References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com> <20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org> <825653a7-a4d4-89f2-278f-4b18f8f8da5d@google.com> <7b7f2eb7-953a-4aa0-acb0-1ab32c7cc1bf@huawei.com>
+	s=arc-20240116; t=1720302441; c=relaxed/simple;
+	bh=b7tz0BzPgTkRKIfhOuHJPntfjh/mfDWtZRGrng30wSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cra0uamKcgrYD+LuGquNkkUnsZxqE6NmW7UVeTjhnbfoPf6rnfCN/5tr4/9OYIwTEG8AuHDLeWgt+PeHPUCAK6AwYZJ171hBlwUlP9ulK2W8sIjJAN36i12AzRk0z2G3kQFpnqCx040ylh/3deoP7JkWFNMG9THJnXkdX9lPXJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XwvJdHhh; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720302440; x=1751838440;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b7tz0BzPgTkRKIfhOuHJPntfjh/mfDWtZRGrng30wSo=;
+  b=XwvJdHhhnM2isTWidrzQzc7Fxnh/ibccR2plAog0FJltVlAHwRt+y0vQ
+   EQhQb0xRwwAVhT20Abv5sFN6dPDpRT69X2Obo2tufp9I2+LSj0NvOuu+2
+   17UXEXCX7GBM9gudQiKoECyV0mCc11ulHd7E8NhMT9FC3i828QzMVWTsq
+   s0ZmMBdJxk2dM5Oe4I1EyYvGuUU01/8SPgXBl0UcMB1BKR/GLy5X9sUnN
+   Uk5kzL0FCcpI09gDWBkJNmhy7vBAOlgj8WZoKcEC3ECk0incHordMtL7F
+   4TIyJcWfADbIhLEPZi3bCRFxVD03yUZleLbAmv7uy2BX+oqpCNfplivdp
+   g==;
+X-CSE-ConnectionGUID: 8fGhTqJUTiqCNqTJK/2eoA==
+X-CSE-MsgGUID: lVn9R/cvR5+e4YHAxLxheA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="40054726"
+X-IronPort-AV: E=Sophos;i="6.09,188,1716274800"; 
+   d="scan'208";a="40054726"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 14:47:18 -0700
+X-CSE-ConnectionGUID: x56BgKGcSFybPQ0nCuyziw==
+X-CSE-MsgGUID: mqcrBhS1RU6JCAqk8hd6QQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,188,1716274800"; 
+   d="scan'208";a="51981673"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 06 Jul 2024 14:47:15 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sQDFQ-000UJK-1x;
+	Sat, 06 Jul 2024 21:47:12 +0000
+Date: Sun, 7 Jul 2024 05:46:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Paul Burton <paulburton@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH v2 05/10] MIPS: smp: Implement IPI stats
+Message-ID: <202407070535.1mCAxzdO-lkp@intel.com>
+References: <20240705-b4-mips-ipi-improvements-v2-5-2d50b56268e8@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705-b4-mips-ipi-improvements-v2-5-2d50b56268e8@flygoat.com>
 
-On Thu, 4 Jul 2024, Kefeng Wang wrote:
-> On 2024/7/4 11:21, Hugh Dickins wrote:
-> > On Wed, 3 Jul 2024, Andrew Morton wrote:
-> >> On Tue, 2 Jul 2024 00:40:55 -0700 (PDT) Hugh Dickins <hughd@google.com>
-> >> wrote:
-> >>
-> ...
-> > 
-> > And perhaps a conflict with another one of Kefeng's, which deletes a hunk
-> > in mm/migrate.c just above where I add a hunk: and that's indeed how it
-> > should end up, hunk deleted by Kefeng, hunk added by me.
-> > 
-> >>
-> >> --- mm/memcontrol.c~mm-refactor-folio_undo_large_rmappable
-> >> +++ mm/memcontrol.c
-> >> @@ -7832,8 +7832,7 @@ void mem_cgroup_migrate(struct folio *ol
-> >>     * In addition, the old folio is about to be freed after migration, so
-> >>     * removing from the split queue a bit earlier seems reasonable.
-> >>     */
-> >> -	if (folio_test_large(old) && folio_test_large_rmappable(old))
-> >> -		folio_undo_large_rmappable(old);
-> >> +	folio_undo_large_rmappable(old);
-> >>   	old->memcg_data = 0;
-> >>   }
-> >>
-> >> I'm resolving this by simply dropping the above hunk.  So Kefeng's
-> >> patch is now as below.  Please check.
-> > 
-> > Checked, and that is correct, thank you Andrew.  Correct, but not quite
-> > complete: because I'm sure that if Kefeng had written his patch after
-> > mine, he would have made the equivalent change in mm/migrate.c:
-> > 
-> 
-> Yes,
-> 
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -443,8 +443,7 @@ int folio_migrate_mapping(struct address_space *mapping,
-> >    }
-> >   
-> >   	/* Take off deferred split queue while frozen and memcg set */
-> > -	if (folio_test_large(folio) && folio_test_large_rmappable(folio))
-> > -		folio_undo_large_rmappable(folio);
-> > +	folio_undo_large_rmappable(folio);
-> >   
-> >    /*
-> >     * Now we know that no one else is looking at the folio:
-> > 
-> > But there's no harm done if you push out a tree without that additional
-> > mod: we can add it as a fixup afterwards, it's no more than a cleanup.
-> > 
-> Maybe we could convert to __folio_undo_large_rmappable() for !maping part,
-> which will avoid unnecessary freeze/unfreeze for empty deferred
-> list.
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index ca65f03acb31..e6af9c25c25b 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -412,10 +412,11 @@ static int __folio_migrate_mapping(struct address_space
-> *mapping,
->         if (!mapping) {
->                 /* Take off deferred split queue while frozen and memcg set */
->                 if (folio_test_large(folio) &&
-> -                   folio_test_large_rmappable(folio)) {
-> +                   folio_test_large_rmappable(folio) &&
-> +                   !data_race(list_empty(&folio->_deferred_list))) {
->                         if (!folio_ref_freeze(folio, expected_count))
->                                 return -EAGAIN;
-> -                       folio_undo_large_rmappable(folio);
-> +                       __folio_undo_large_rmappable(folio);
->                         folio_ref_unfreeze(folio, expected_count);
->                 }
-> 
+Hi Jiaxun,
 
-What you show above is exactly what I had when I was originally testing
-over the top of mm-everything (well, not quite exactly, I don't think I
-bothered with the data_race()). But I grew to feel that probably everyone
-else would be happier with less of those internals _deferred_list and
-__folio_undo_large_rmappable() spread about.
+kernel test robot noticed the following build warnings:
 
-There are many ways to play it. I had also considered doing it Zi Yan's
-way, freezing always in the !mapping case as well as in the mapping case:
-what overhead it adds would probably get lost amidst all the other overhead
-of page migration. It will not be surprising if changes come later requiring
-us always to freeze in the anon !swapcache case too, it always seemed a bit
-surprising not to need freezing there. But for now I decided it's best to
-keep the freezing to the case where it's known to be needed (but without
-getting into __s).
+[auto build test WARNING on 0b58e108042b0ed28a71cd7edf5175999955b233]
 
-Many ways to play it, and I've no objection if someone then changes it
-around later; but we've no need to depart from what Andrew already has.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jiaxun-Yang/MIPS-smp-Make-IPI-interrupts-scalable/20240706-040839
+base:   0b58e108042b0ed28a71cd7edf5175999955b233
+patch link:    https://lore.kernel.org/r/20240705-b4-mips-ipi-improvements-v2-5-2d50b56268e8%40flygoat.com
+patch subject: [PATCH v2 05/10] MIPS: smp: Implement IPI stats
+config: mips-rb532_defconfig (https://download.01.org/0day-ci/archive/20240707/202407070535.1mCAxzdO-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240707/202407070535.1mCAxzdO-lkp@intel.com/reproduce)
 
-Except, he did ask one of us to send along the -fix removing the unnecessary
-checks before its second folio_undo_large_rmappable() once your refactor
-patch goes in: here it is below.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407070535.1mCAxzdO-lkp@intel.com/
 
-[I guess this is the wrong place to say so, but folio_undo_large_rmappable()
-is a dreadful name: it completely obscures what the function actually does,
-and gives the false impression that the folio would be !large_rmappable
-afterwards. I hope that one day the name gets changed to something like
-folio_unqueue_deferred_split() or folio_cancel_deferred_split().]
+All warnings (new ones prefixed by >>):
 
-[PATCH] mm: refactor folio_undo_large_rmappable() fix
+   In file included from arch/mips/kernel/irq.c:17:
+   In file included from include/linux/mm.h:2229:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from arch/mips/kernel/irq.c:29:
+>> arch/mips/include/asm/ipi.h:54:6: warning: no previous prototype for function 'mips_smp_ipi_set_virq_range' [-Wmissing-prototypes]
+      54 | void mips_smp_ipi_set_virq_range(int virq, int nr)
+         |      ^
+   arch/mips/include/asm/ipi.h:54:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      54 | void mips_smp_ipi_set_virq_range(int virq, int nr)
+         | ^
+         | static 
+>> arch/mips/include/asm/ipi.h:58:6: warning: no previous prototype for function 'mips_smp_ipi_set_irqdomain' [-Wmissing-prototypes]
+      58 | void mips_smp_ipi_set_irqdomain(struct irq_domain *d)
+         |      ^
+   arch/mips/include/asm/ipi.h:58:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      58 | void mips_smp_ipi_set_irqdomain(struct irq_domain *d)
+         | ^
+         | static 
+   3 warnings generated.
 
-Now that folio_undo_large_rmappable() is an inline function checking
-order and large_rmappable for itself (and __folio_undo_large_rmappable()
-is now declared even when CONFIG_TRANASPARENT_HUGEPAGE is off) there is
-no need for folio_migrate_mapping() to check large and large_rmappable
-first (in the mapping case when it has had to freeze anyway).
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Reviewed-by: Zi Yan <ziy@nvidia.com>
----
-For folding in to mm-unstable's "mm: refactor folio_undo_large_rmappable()",
-unless I'm too late and it's already mm-stable (no problem, just a cleanup).
+vim +/mips_smp_ipi_set_virq_range +54 arch/mips/include/asm/ipi.h
 
- mm/migrate.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+42d789a89e6b90 Jiaxun Yang 2024-07-05  48  
+42d789a89e6b90 Jiaxun Yang 2024-07-05  49  static inline void mips_smp_show_ipi_stats(struct seq_file *p, int prec)
+42d789a89e6b90 Jiaxun Yang 2024-07-05  50  {
+42d789a89e6b90 Jiaxun Yang 2024-07-05  51  }
+b7a65e07e35cdf Jiaxun Yang 2024-07-05  52  #endif /* CONFIG_GENERIC_IRQ_IPI */
+877ae81debcbb0 Jiaxun Yang 2024-07-05  53  #else
+877ae81debcbb0 Jiaxun Yang 2024-07-05 @54  void mips_smp_ipi_set_virq_range(int virq, int nr)
+877ae81debcbb0 Jiaxun Yang 2024-07-05  55  {
+877ae81debcbb0 Jiaxun Yang 2024-07-05  56  }
+877ae81debcbb0 Jiaxun Yang 2024-07-05  57  
+877ae81debcbb0 Jiaxun Yang 2024-07-05 @58  void mips_smp_ipi_set_irqdomain(struct irq_domain *d)
+877ae81debcbb0 Jiaxun Yang 2024-07-05  59  {
+877ae81debcbb0 Jiaxun Yang 2024-07-05  60  }
+877ae81debcbb0 Jiaxun Yang 2024-07-05  61  
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -443,8 +443,7 @@ int folio_migrate_mapping(struct address_space *mapping,
- 	}
- 
- 	/* Take off deferred split queue while frozen and memcg set */
--	if (folio_test_large(folio) && folio_test_large_rmappable(folio))
--		folio_undo_large_rmappable(folio);
-+	folio_undo_large_rmappable(folio);
- 
- 	/*
- 	 * Now we know that no one else is looking at the folio:
 -- 
-2.35.3
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
