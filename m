@@ -1,111 +1,474 @@
-Return-Path: <linux-kernel+bounces-243083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBED92915E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:45:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D5D929163
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0132282C11
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76AE283043
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D181C6A7;
-	Sat,  6 Jul 2024 06:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VUVvQQaE"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA1117BD3;
-	Sat,  6 Jul 2024 06:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B6E1CD00;
+	Sat,  6 Jul 2024 06:59:31 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0471C698;
+	Sat,  6 Jul 2024 06:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720248290; cv=none; b=KvCb08YQjSuI2xgihSi+cySnPlBwQVVrsbYzNOavgyiIDGAxeHIgrVwOuWG/M1kkQamItpXfkBdN5LrZ5abLjVYrci2IxgvxuYCAZpSF7orGLzyarTKYVNj0rDLFaQUmxZEEytr8MA8Ei2EO+JlhPEs3UfX9MvDaWCeLlxtiKLw=
+	t=1720249170; cv=none; b=DzPsM1djwnf1Oogv/RekmxsuezJexB1NLOxtsy/9Ixho2KT3V2jhD1jvEgFZPIABDbXdsJWWU2wlvTMpwggUUnFCE3AW5PBOAM0P9tOfWiny3aZI/1V6gAGxvyMsBJGnan8L10/123It0CrqW7l93/2OsF1U22hHTNinuXmE1kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720248290; c=relaxed/simple;
-	bh=NH0U8SYMXqcCSrXZ7qu6VT16yVW+2MZ7RLvA2Zodprg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n6Azp8bgDE60bk4tcr6dCjeIkW+8uVIllkGykaJesjrGz4Ee90DlBtJ3hXZyMahvhyJYy4n4cN9yMzR/PIpArFUd1wxDB7p4YA8vHV6aLaRuwTta+HpVzVN3J2Q8/DlFK0YCRLSuNPa1zQY4SF++M4fJLEezBNWZClwamAs1s0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VUVvQQaE; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4666iFk8071877;
-	Sat, 6 Jul 2024 01:44:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720248255;
-	bh=qYoP9culH6ZxGxGoSntIgBVMnx2ZLL7C0Z7bcNlrEfY=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=VUVvQQaEWs2FXOiJayzv62yXOQtE+NILGMyD9icXubuakt6GyqqkCgo7pJBIs+F1Z
-	 /hlfr+pYwhw/HUESI10cWv99ZAkH3L4LtfVS+l+CnxfJHK1exInVmW68F/QY4d+Scl
-	 UweOR31QJP+f0KhUBHdiT/sldL/k22LgKkBoLwek=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4666iFsQ009824
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 6 Jul 2024 01:44:15 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 6
- Jul 2024 01:44:14 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 6 Jul 2024 01:44:14 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4666iDda074785;
-	Sat, 6 Jul 2024 01:44:14 -0500
-Date: Sat, 6 Jul 2024 12:14:13 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas
-	<bhelgaas@google.com>,
-        Francesco Dolcini <francesco.dolcini@toradex.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v1 0/2] PCI: ti: k3: Fix TI J721E PERST# polarity
-Message-ID: <2def13f4-aea3-466c-9f8c-1e44694eeb4a@ti.com>
-References: <20240703100036.17896-1-francesco@dolcini.it>
+	s=arc-20240116; t=1720249170; c=relaxed/simple;
+	bh=olEjsXIAWmZoZr8LY91Ntm9s2L+/5znHbZ8MkkOyB4A=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Qjx4JfElMz42AgiqcHrJQ+P9rsGnEH/0xEwv/FJ7T9PlxQHBO8rKwCYg3vBtKvXd/djzINUMLcTo09ByhX14dn8zV6p5uJCPERaIEySvWEIgbuSSf/CqyNKvOZ2KGv9A5Ex77t4YkR3p3LCk4Enn9jDLoarD7UyjHcRSAhXsIfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxTetM64hmnocBAA--.4599S3;
+	Sat, 06 Jul 2024 14:59:24 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx08RJ64hm0yA9AA--.65446S3;
+	Sat, 06 Jul 2024 14:59:23 +0800 (CST)
+Subject: Re: [PATCH v4 1/2] LoongArch: KVM: Add steal time support in kvm side
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, x86@kernel.org, virtualization@lists.linux.dev
+References: <20240524073812.731032-1-maobibo@loongson.cn>
+ <20240524073812.731032-2-maobibo@loongson.cn>
+ <CAAhV-H5G7O7tbwzyaoO4iEXuN+_xbVFJDEyv1HH7GqOH24639Q@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <1aa110a8-28b9-d1d0-4b39-bc894b31f26c@loongson.cn>
+Date: Sat, 6 Jul 2024 14:59:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240703100036.17896-1-francesco@dolcini.it>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAAhV-H5G7O7tbwzyaoO4iEXuN+_xbVFJDEyv1HH7GqOH24639Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8Bx08RJ64hm0yA9AA--.65446S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj9fXoW3KFy7JrWUWr48tFy3tF4UWrX_yoW8Jw4Uuo
+	WFyF1Iq3y8Ww45uF4DG34Yq3y0v340kw4UA3y3Zwn3Wa1xta45WF15Ga1YvF43Xr1kGr13
+	Ca42g3yqvayfJwn5l-sFpf9Il3svdjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
+	UjIYCTnIWjp_UUUYc7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
+	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
+	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8Zw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_Ma
+	UUUUU
 
-On Wed, Jul 03, 2024 at 12:00:34PM +0200, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+Huacai,
+
+On 2024/7/6 上午11:00, Huacai Chen wrote:
+> Hi, Bibo,
 > 
-> Fix PCIe PERST# signal polarity in TI J721E used on TI K3 machines.
+> On Fri, May 24, 2024 at 3:38 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> Steal time feature is added here in kvm side, VM can search supported
+>> features provided by KVM hypervisor, feature KVM_FEATURE_STEAL_TIME
+>> is added here. Like x86, steal time structure is saved in guest memory,
+>> one hypercall function KVM_HCALL_FUNC_NOTIFY is added to notify KVM to
+>> enable the feature.
+>>
+>> One cpu attr ioctl command KVM_LOONGARCH_VCPU_PVTIME_CTRL is added to
+>> save and restore base address of steal time structure when VM is migrated.
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/include/asm/kvm_host.h  |   7 ++
+>>   arch/loongarch/include/asm/kvm_para.h  |  10 ++
+>>   arch/loongarch/include/asm/kvm_vcpu.h  |   4 +
+>>   arch/loongarch/include/asm/loongarch.h |   1 +
+>>   arch/loongarch/include/uapi/asm/kvm.h  |   4 +
+>>   arch/loongarch/kvm/Kconfig             |   1 +
+>>   arch/loongarch/kvm/exit.c              |  38 +++++++-
+>>   arch/loongarch/kvm/vcpu.c              | 124 +++++++++++++++++++++++++
+>>   8 files changed, 187 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+>> index c87b6ea0ec47..2eb2f7572023 100644
+>> --- a/arch/loongarch/include/asm/kvm_host.h
+>> +++ b/arch/loongarch/include/asm/kvm_host.h
+>> @@ -30,6 +30,7 @@
+>>   #define KVM_PRIVATE_MEM_SLOTS          0
+>>
+>>   #define KVM_HALT_POLL_NS_DEFAULT       500000
+>> +#define KVM_REQ_STEAL_UPDATE           KVM_ARCH_REQ(1)
+>>
+>>   #define KVM_GUESTDBG_SW_BP_MASK                \
+>>          (KVM_GUESTDBG_ENABLE | KVM_GUESTDBG_USE_SW_BP)
+>> @@ -201,6 +202,12 @@ struct kvm_vcpu_arch {
+>>          struct kvm_mp_state mp_state;
+>>          /* cpucfg */
+>>          u32 cpucfg[KVM_MAX_CPUCFG_REGS];
+>> +       /* paravirt steal time */
+>> +       struct {
+>> +               u64 guest_addr;
+>> +               u64 last_steal;
+>> +               struct gfn_to_hva_cache cache;
+>> +       } st;
+>>   };
+>>
+>>   static inline unsigned long readl_sw_gcsr(struct loongarch_csrs *csr, int reg)
+>> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/include/asm/kvm_para.h
+>> index 4ba2312e5f8c..a9ba8185d4af 100644
+>> --- a/arch/loongarch/include/asm/kvm_para.h
+>> +++ b/arch/loongarch/include/asm/kvm_para.h
+>> @@ -14,6 +14,7 @@
+>>
+>>   #define KVM_HCALL_SERVICE              HYPERCALL_ENCODE(HYPERVISOR_KVM, KVM_HCALL_CODE_SERVICE)
+>>   #define  KVM_HCALL_FUNC_IPI            1
+>> +#define  KVM_HCALL_FUNC_NOTIFY         2
+>>
+>>   #define KVM_HCALL_SWDBG                        HYPERCALL_ENCODE(HYPERVISOR_KVM, KVM_HCALL_CODE_SWDBG)
+>>
+>> @@ -24,6 +25,15 @@
+>>   #define KVM_HCALL_INVALID_CODE         -1UL
+>>   #define KVM_HCALL_INVALID_PARAMETER    -2UL
+>>
+>> +#define KVM_STEAL_PHYS_VALID           BIT_ULL(0)
+>> +#define KVM_STEAL_PHYS_MASK            GENMASK_ULL(63, 6)
+>> +struct kvm_steal_time {
+>> +       __u64 steal;
+>> +       __u32 version;
+>> +       __u32 flags;
+> I found that x86 has a preempted field here, in our internal repo the
+> LoongArch version also has this field. Moreover,
+> kvm_steal_time_set_preempted() and kvm_steal_time_clear_preempted()
+> seems needed.
+By my understanding, macro vcpu_is_preempted() is used together with pv 
+spinlock, and pv spinlock depends on pv stealtime. So I think preempted 
+flag is not part of pv stealtime, it is part of pv spinlock.
+
+We are going to add preempted field if pv spinlock is added.
 > 
-> PCIe PERST# needs to be de-asserted for PCIe to work, however, the driver is
-> doing the opposite and the device tree files are defining the signal with the
-> wrong polarity to cope with that. Fix both the driver and the affected DT
-> files.
+>> +       __u32 pad[12];
+>> +};
+>> +
+>>   /*
+>>    * Hypercall interface for KVM hypervisor
+>>    *
+>> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
+>> index 590a92cb5416..d7e51300a89f 100644
+>> --- a/arch/loongarch/include/asm/kvm_vcpu.h
+>> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
+>> @@ -120,4 +120,8 @@ static inline void kvm_write_reg(struct kvm_vcpu *vcpu, int num, unsigned long v
+>>          vcpu->arch.gprs[num] = val;
+>>   }
+>>
+>> +static inline bool kvm_pvtime_supported(void)
+>> +{
+>> +       return !!sched_info_on();
+>> +}
+>>   #endif /* __ASM_LOONGARCH_KVM_VCPU_H__ */
+>> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
+>> index eb09adda54b7..7a4633ef284b 100644
+>> --- a/arch/loongarch/include/asm/loongarch.h
+>> +++ b/arch/loongarch/include/asm/loongarch.h
+>> @@ -169,6 +169,7 @@
+>>   #define  KVM_SIGNATURE                 "KVM\0"
+>>   #define CPUCFG_KVM_FEATURE             (CPUCFG_KVM_BASE + 4)
+>>   #define  KVM_FEATURE_IPI               BIT(1)
+>> +#define  KVM_FEATURE_STEAL_TIME                BIT(2)
+>>
+>>   #ifndef __ASSEMBLY__
+>>
+>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
+>> index f9abef382317..ddc5cab0ffd0 100644
+>> --- a/arch/loongarch/include/uapi/asm/kvm.h
+>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+>> @@ -81,7 +81,11 @@ struct kvm_fpu {
+>>   #define LOONGARCH_REG_64(TYPE, REG)    (TYPE | KVM_REG_SIZE_U64 | (REG << LOONGARCH_REG_SHIFT))
+>>   #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOONGARCH_CSR, REG)
+>>   #define KVM_IOC_CPUCFG(REG)            LOONGARCH_REG_64(KVM_REG_LOONGARCH_CPUCFG, REG)
+>> +
+>> +/* Device Control API on vcpu fd */
+>>   #define KVM_LOONGARCH_VCPU_CPUCFG      0
+>> +#define KVM_LOONGARCH_VCPU_PVTIME_CTRL 1
+>> +#define  KVM_LOONGARCH_VCPU_PVTIME_GPA 0
+>>
+>>   struct kvm_debug_exit_arch {
+>>   };
+>> diff --git a/arch/loongarch/kvm/Kconfig b/arch/loongarch/kvm/Kconfig
+>> index c4ef2b4d9797..248744b4d086 100644
+>> --- a/arch/loongarch/kvm/Kconfig
+>> +++ b/arch/loongarch/kvm/Kconfig
+>> @@ -29,6 +29,7 @@ config KVM
+>>          select KVM_MMIO
+>>          select HAVE_KVM_READONLY_MEM
+>>          select KVM_XFER_TO_GUEST_WORK
+>> +       select SCHED_INFO
+>>          help
+>>            Support hosting virtualized guest machines using
+>>            hardware virtualization extensions. You will need
+>> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
+>> index c86e099af5ca..e2abd97fb13f 100644
+>> --- a/arch/loongarch/kvm/exit.c
+>> +++ b/arch/loongarch/kvm/exit.c
+>> @@ -24,7 +24,7 @@
+>>   static int kvm_emu_cpucfg(struct kvm_vcpu *vcpu, larch_inst inst)
+>>   {
+>>          int rd, rj;
+>> -       unsigned int index;
+>> +       unsigned int index, ret;
+>>
+>>          if (inst.reg2_format.opcode != cpucfg_op)
+>>                  return EMULATE_FAIL;
+>> @@ -50,7 +50,10 @@ static int kvm_emu_cpucfg(struct kvm_vcpu *vcpu, larch_inst inst)
+>>                  vcpu->arch.gprs[rd] = *(unsigned int *)KVM_SIGNATURE;
+>>                  break;
+>>          case CPUCFG_KVM_FEATURE:
+>> -               vcpu->arch.gprs[rd] = KVM_FEATURE_IPI;
+>> +               ret = KVM_FEATURE_IPI;
+>> +               if (sched_info_on())
+> What about replacing it with your helper function kvm_pvtime_supported()?
+Sure, will replace it with helper function kvm_pvtime_supported().
 
-For the series,
+Regards
+Bibo Mao
+> 
+> Huacai
+> 
+>> +                       ret |= KVM_FEATURE_STEAL_TIME;
+>> +               vcpu->arch.gprs[rd] = ret;
+>>                  break;
+>>          default:
+>>                  vcpu->arch.gprs[rd] = 0;
+>> @@ -687,6 +690,34 @@ static int kvm_handle_fpu_disabled(struct kvm_vcpu *vcpu)
+>>          return RESUME_GUEST;
+>>   }
+>>
+>> +static long kvm_save_notify(struct kvm_vcpu *vcpu)
+>> +{
+>> +       unsigned long id, data;
+>> +
+>> +       id   = kvm_read_reg(vcpu, LOONGARCH_GPR_A1);
+>> +       data = kvm_read_reg(vcpu, LOONGARCH_GPR_A2);
+>> +       switch (id) {
+>> +       case KVM_FEATURE_STEAL_TIME:
+>> +               if (!kvm_pvtime_supported())
+>> +                       return KVM_HCALL_INVALID_CODE;
+>> +
+>> +               if (data & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
+>> +                       return KVM_HCALL_INVALID_PARAMETER;
+>> +
+>> +               vcpu->arch.st.guest_addr = data;
+>> +               if (!(data & KVM_STEAL_PHYS_VALID))
+>> +                       break;
+>> +
+>> +               vcpu->arch.st.last_steal = current->sched_info.run_delay;
+>> +               kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+>> +               break;
+>> +       default:
+>> +               break;
+>> +       };
+>> +
+>> +       return 0;
+>> +};
+>> +
+>>   /*
+>>    * kvm_handle_lsx_disabled() - Guest used LSX while disabled in root.
+>>    * @vcpu:      Virtual CPU context.
+>> @@ -758,6 +789,9 @@ static void kvm_handle_service(struct kvm_vcpu *vcpu)
+>>                  kvm_send_pv_ipi(vcpu);
+>>                  ret = KVM_HCALL_SUCCESS;
+>>                  break;
+>> +       case KVM_HCALL_FUNC_NOTIFY:
+>> +               ret = kvm_save_notify(vcpu);
+>> +               break;
+>>          default:
+>>                  ret = KVM_HCALL_INVALID_CODE;
+>>                  break;
+>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+>> index 9e8030d45129..382796f1d3e6 100644
+>> --- a/arch/loongarch/kvm/vcpu.c
+>> +++ b/arch/loongarch/kvm/vcpu.c
+>> @@ -31,6 +31,117 @@ const struct kvm_stats_header kvm_vcpu_stats_header = {
+>>                         sizeof(kvm_vcpu_stats_desc),
+>>   };
+>>
+>> +static void kvm_update_stolen_time(struct kvm_vcpu *vcpu)
+>> +{
+>> +       struct kvm_steal_time __user *st;
+>> +       struct gfn_to_hva_cache *ghc;
+>> +       struct kvm_memslots *slots;
+>> +       gpa_t gpa;
+>> +       u64 steal;
+>> +       u32 version;
+>> +
+>> +       ghc = &vcpu->arch.st.cache;
+>> +       gpa = vcpu->arch.st.guest_addr;
+>> +       if (!(gpa & KVM_STEAL_PHYS_VALID))
+>> +               return;
+>> +
+>> +       gpa &= KVM_STEAL_PHYS_MASK;
+>> +       slots = kvm_memslots(vcpu->kvm);
+>> +       if (slots->generation != ghc->generation || gpa != ghc->gpa) {
+>> +               if (kvm_gfn_to_hva_cache_init(vcpu->kvm, ghc, gpa,
+>> +                                       sizeof(*st))) {
+>> +                       ghc->gpa = INVALID_GPA;
+>> +                       return;
+>> +               }
+>> +       }
+>> +
+>> +       st = (struct kvm_steal_time __user *)ghc->hva;
+>> +       unsafe_get_user(version, &st->version, out);
+>> +       if (version & 1)
+>> +               version += 1;
+>> +       version += 1;
+>> +       unsafe_put_user(version, &st->version, out);
+>> +       smp_wmb();
+>> +
+>> +       unsafe_get_user(steal, &st->steal, out);
+>> +       steal += current->sched_info.run_delay -
+>> +               vcpu->arch.st.last_steal;
+>> +       vcpu->arch.st.last_steal = current->sched_info.run_delay;
+>> +       unsafe_put_user(steal, &st->steal, out);
+>> +
+>> +       smp_wmb();
+>> +       version += 1;
+>> +       unsafe_put_user(version, &st->version, out);
+>> +out:
+>> +       mark_page_dirty_in_slot(vcpu->kvm, ghc->memslot, gpa_to_gfn(ghc->gpa));
+>> +}
+>> +
+>> +static int kvm_loongarch_pvtime_has_attr(struct kvm_vcpu *vcpu,
+>> +                                       struct kvm_device_attr *attr)
+>> +{
+>> +       if (!kvm_pvtime_supported() ||
+>> +                       attr->attr != KVM_LOONGARCH_VCPU_PVTIME_GPA)
+>> +               return -ENXIO;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int kvm_loongarch_pvtime_get_attr(struct kvm_vcpu *vcpu,
+>> +                                       struct kvm_device_attr *attr)
+>> +{
+>> +       u64 __user *user = (u64 __user *)attr->addr;
+>> +       u64 gpa;
+>> +
+>> +       if (!kvm_pvtime_supported() ||
+>> +                       attr->attr != KVM_LOONGARCH_VCPU_PVTIME_GPA)
+>> +               return -ENXIO;
+>> +
+>> +       gpa = vcpu->arch.st.guest_addr;
+>> +       if (put_user(gpa, user))
+>> +               return -EFAULT;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int kvm_loongarch_pvtime_set_attr(struct kvm_vcpu *vcpu,
+>> +                                       struct kvm_device_attr *attr)
+>> +{
+>> +       u64 __user *user = (u64 __user *)attr->addr;
+>> +       struct kvm *kvm = vcpu->kvm;
+>> +       u64 gpa;
+>> +       int ret = 0;
+>> +       int idx;
+>> +
+>> +       if (!kvm_pvtime_supported() ||
+>> +                       attr->attr != KVM_LOONGARCH_VCPU_PVTIME_GPA)
+>> +               return -ENXIO;
+>> +
+>> +       if (get_user(gpa, user))
+>> +               return -EFAULT;
+>> +
+>> +       if (gpa & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
+>> +               return -EINVAL;
+>> +
+>> +       if (!(gpa & KVM_STEAL_PHYS_VALID)) {
+>> +               vcpu->arch.st.guest_addr = gpa;
+>> +               return 0;
+>> +       }
+>> +
+>> +       /* Check the address is in a valid memslot */
+>> +       idx = srcu_read_lock(&kvm->srcu);
+>> +       if (kvm_is_error_hva(gfn_to_hva(kvm, gpa >> PAGE_SHIFT)))
+>> +               ret = -EINVAL;
+>> +       srcu_read_unlock(&kvm->srcu, idx);
+>> +
+>> +       if (!ret) {
+>> +               vcpu->arch.st.guest_addr = gpa;
+>> +               vcpu->arch.st.last_steal = current->sched_info.run_delay;
+>> +               kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+>> +       }
+>> +
+>> +       return ret;
+>> +}
+>> +
+>>   /*
+>>    * kvm_check_requests - check and handle pending vCPU requests
+>>    *
+>> @@ -48,6 +159,9 @@ static int kvm_check_requests(struct kvm_vcpu *vcpu)
+>>          if (kvm_dirty_ring_check_request(vcpu))
+>>                  return RESUME_HOST;
+>>
+>> +       if (kvm_check_request(KVM_REQ_STEAL_UPDATE, vcpu))
+>> +               kvm_update_stolen_time(vcpu);
+>> +
+>>          return RESUME_GUEST;
+>>   }
+>>
+>> @@ -671,6 +785,9 @@ static int kvm_loongarch_vcpu_has_attr(struct kvm_vcpu *vcpu,
+>>          case KVM_LOONGARCH_VCPU_CPUCFG:
+>>                  ret = kvm_loongarch_cpucfg_has_attr(vcpu, attr);
+>>                  break;
+>> +       case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
+>> +               ret = kvm_loongarch_pvtime_has_attr(vcpu, attr);
+>> +               break;
+>>          default:
+>>                  break;
+>>          }
+>> @@ -703,6 +820,9 @@ static int kvm_loongarch_vcpu_get_attr(struct kvm_vcpu *vcpu,
+>>          case KVM_LOONGARCH_VCPU_CPUCFG:
+>>                  ret = kvm_loongarch_get_cpucfg_attr(vcpu, attr);
+>>                  break;
+>> +       case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
+>> +               ret = kvm_loongarch_pvtime_get_attr(vcpu, attr);
+>> +               break;
+>>          default:
+>>                  break;
+>>          }
+>> @@ -725,6 +845,9 @@ static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
+>>          case KVM_LOONGARCH_VCPU_CPUCFG:
+>>                  ret = kvm_loongarch_cpucfg_set_attr(vcpu, attr);
+>>                  break;
+>> +       case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
+>> +               ret = kvm_loongarch_pvtime_set_attr(vcpu, attr);
+>> +               break;
+>>          default:
+>>                  break;
+>>          }
+>> @@ -1084,6 +1207,7 @@ static int _kvm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>>
+>>          /* Control guest page CCA attribute */
+>>          change_csr_gcfg(CSR_GCFG_MATC_MASK, CSR_GCFG_MATC_ROOT);
+>> +       kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+>>
+>>          /* Don't bother restoring registers multiple times unless necessary */
+>>          if (vcpu->arch.aux_inuse & KVM_LARCH_HWCSR_USABLE)
+>> --
+>> 2.39.3
+>>
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-
-Since DT and driver patches go to different subsystems, both patches need
-to go in simultaneously to avoid making devices non-functional if one of
-the patches gets applied but the other one doesn't.
-
-Regards,
-Siddharth.
 
