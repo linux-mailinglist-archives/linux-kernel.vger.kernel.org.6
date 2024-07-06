@@ -1,232 +1,323 @@
-Return-Path: <linux-kernel+bounces-243304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6845292945A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:08:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 484E592945B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7BA1C21774
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C183C1F21520
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B216913AD06;
-	Sat,  6 Jul 2024 15:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089AC13AD0F;
+	Sat,  6 Jul 2024 15:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sch.bme.hu header.i=@sch.bme.hu header.b="PS8ZoSdw"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11023101.outbound.protection.outlook.com [52.101.67.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZIYpmmE+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E311386BF;
-	Sat,  6 Jul 2024 15:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720278491; cv=fail; b=WPsDd2Nn+vZ8MzWl9OSHzt57xYKYwR+e9EtkAUSa4IFJwAQ7cwbMgm/fYdp7NpoJsOcw05tggUZfTBp2Nvpt7D9VE9tyPqVSbiz1azbsT6TPi8vHqePEBH55h20i7yMf7zZmBuJQ9isWavM61jKjM948GqON1QE1QAWjeMkj/IM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720278491; c=relaxed/simple;
-	bh=5sZMzLDQXVhm+nrLMgC/9IwyCfsOFg7o6zvtB+Yv5v8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZFUY2/fDeL79YGUQvmsFQP/Ktt3uwyY6yHocgYFhjG7hntrekHKohMo69TE99tHljRdJ4F199d2QssiPdgUFvYRyRYaJAqP4JiOn/RPxpCr+J4RpBsfZuTSCwflsV1mU+Wlgx7CWb8AKhGpqZBcg1ySJCdvucaNp5w8jt4aBXxE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sch.bme.hu; spf=pass smtp.mailfrom=sch.bme.hu; dkim=pass (1024-bit key) header.d=sch.bme.hu header.i=@sch.bme.hu header.b=PS8ZoSdw; arc=fail smtp.client-ip=52.101.67.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sch.bme.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sch.bme.hu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DiGc4ln7B5ukBxotZtg+cImeEx5fte6mR8pU+Tm1ABvoe+WY5HcQCGA6j4tWZDQDGvzpdBMwxKIh9uIN1JyLq1dFH8DS8IGFhF8WsgzYYpQrvmxKQ2dk9aIrsh9wabkd8Z9jR4gRDExIz54ehMusXoT5m7H7Sma+CPdSy75Zhjd+bQJqXlkLWg63Z4WQCM8g7AkgHva3rq71ZXO9NICuHztdWdy48j9fh4lv91VmK4zC2+ZfX1xP5M03Lp501qX65eQfev7lbQfOJFwcidnO+Ifj8bXmDgejlRrvkaaTr0YWl1bpvgZBHRkxDzE3zpqGDqyvbp07rROXLPnhM0f2pw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MtVkPqCrloqWVPJYnh4auKdX0FwZwbRduhYgfyYA/Hw=;
- b=Zxxf+Lex7fyhbSrvrQ7F11m8qHlL/+GHu2uKbZddziBNvq2pvI3QbpUt5f5yZJpziFs56QP152KitHpQtM6WGTG7axsJo4lOq18UiHcOTxljtntGjqKAQcmEWSWUTl2ON2Hri7ZHlLo0eU2FRFoH1fsX1K8yupvecjpFHNHaDzhmJ2Zq2Ng1AQOHmWletRYaredi/lcPgCm+kQ6bkhrKT1e28Ob4F+QEsN5AnnOizrjuTjReWCtlPw5C2DTBm0V/YQPVN/24RRnJzgpP5Be2PS3KtzmkwT9uOAtONuI58HwD/JQqCu0DKJgGoqVIK6Bs47TzE6v91kNWyblWAAhwBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sch.bme.hu; dmarc=pass action=none header.from=sch.bme.hu;
- dkim=pass header.d=sch.bme.hu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sch.bme.hu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MtVkPqCrloqWVPJYnh4auKdX0FwZwbRduhYgfyYA/Hw=;
- b=PS8ZoSdwMTN17eG4xGpgJXHM2zCMDlWLOKURo55PD9Rb7xx/2y27+UJSyvi/jsCwEIbN8nPwxxMLC8ldwUm8o6NdyAnYHV6kz58TKTRsJ5/wEfE4B6n193z3VI7WAxYLh/FFS61x06b+EfTS3HITIbwD685IiLmsWXsL0tDIntA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=sch.bme.hu;
-Received: from AM6PR0402MB3416.eurprd04.prod.outlook.com (2603:10a6:209:6::21)
- by PAXPR04MB8207.eurprd04.prod.outlook.com (2603:10a6:102:1cd::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.31; Sat, 6 Jul
- 2024 15:08:03 +0000
-Received: from AM6PR0402MB3416.eurprd04.prod.outlook.com
- ([fe80::4fe0:b908:2878:6d88]) by AM6PR0402MB3416.eurprd04.prod.outlook.com
- ([fe80::4fe0:b908:2878:6d88%6]) with mapi id 15.20.7719.029; Sat, 6 Jul 2024
- 15:08:03 +0000
-Message-ID: <188d9071-01f5-4e81-9427-5b8397864211@sch.bme.hu>
-Date: Sat, 6 Jul 2024 17:07:56 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/60] i2c: cp2615: reword according to newest
- specification
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
- =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <20240706112116.24543-10-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-From: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>
-In-Reply-To: <20240706112116.24543-10-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VI1PR07CA0297.eurprd07.prod.outlook.com
- (2603:10a6:800:130::25) To AM6PR0402MB3416.eurprd04.prod.outlook.com
- (2603:10a6:209:6::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2123571B52
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 15:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720278712; cv=none; b=RPfStTV3aHWdTwXY9RW5ZjigUhciOEliqA1QHtlEsXWjmEXGWITKrPJ0WJNZsQTXdJMi/Niird8PGVcY8Z5kMHJeQqi4cFEWMIT2a9sy3uQbYmryuA8EYy2o6HdXkyQhhdYiE5f12KBVviAPzHhTr4hwp/7L3Dqt2y0iVjIBDVs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720278712; c=relaxed/simple;
+	bh=BGXPqF/he+M8n8bKnThXKeSfU7ZiAJGp2edLUdOx340=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SfOAsmAOS45e2Cz4C3VmfwsJKqRiUNR1yQiQphGkvIbdT8r6uPkpqBBbIDKOzrzIP1D61OMMWgoudWu5OGFBp3dVO/Woamo9Uchxikl4Pgn7jssbwPNilop5YMPYmDD51uoIK1pMiigHFMNrNqcHtMGmWqdtA6Sz43SjVOJFfbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZIYpmmE+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720278709;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f9Drg1pcL+fJJSNxrDujMl52l5uOCHsD7N8/R/pFtLM=;
+	b=ZIYpmmE+akuZKsmLUG+lsLDudngRl3zalaSYRAdUxRxYj3B9pqv2fLkEs54pb+qUlqnZ87
+	Nkoq+u5Pw6OgbS2DAZ8Z6cpqXhZuyUKdDzanmzkhLaWNfOWWD8lS0ef22z1aWGlawxxnYr
+	IAyrms3GUQRkb9PqnUadgxrRQnQ0K+I=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-471-lik2YIl9MlG1VksZ3U_k7w-1; Sat, 06 Jul 2024 11:11:45 -0400
+X-MC-Unique: lik2YIl9MlG1VksZ3U_k7w-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ec72d14876so24889131fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 08:11:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720278703; x=1720883503;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f9Drg1pcL+fJJSNxrDujMl52l5uOCHsD7N8/R/pFtLM=;
+        b=J8KYq5TKZq8EXwLqfVt+Uad4ek/dSrmzT7QKMA1EXS9kOJsptD6OYjDThtTmvxnPbA
+         Wv9e+ZRudvoYwhSoG7xBvAXRk5v2HBQmWv+etnIF4ZcTd73Q2vyK6amOBjOEFjYfqphx
+         rUlsefKLh+a4jtBhN6+Y5/cppCEB61R8k4EG7CZUvRd6ho7uj+HVDZxzujPzNvRjFBf0
+         UCT6iHuBO9TBJuDJDbcIkc8zoWZydcA7MaeJKv2udl0TZaErzok07CtewFLk1aJFVpJx
+         B8c0hID+4uUjiwAoa4JUNAMFXG3vjqk2l2DKcEFwVVDN67CVC/ZRMkUIbubktCmxXy07
+         mvdg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9pDUkpusadX241SKNsK6JPdnwl6LhwAhi4ho5gtF6xiMkRDq7026GDoDHj5Pf1ygFtnU/pAooZgIYIoIwzwABMxnPAFzOHMPrMLeL
+X-Gm-Message-State: AOJu0YyDMjK/gUUjcjiWvb5RYlle6/9Nouhlow1VVib+Vgeca96fHX3u
+	LFIvZHoR9s4CR9KOLROH7VymjM68clVRE6o6Kbu7XQl9b2wycD1cFRkgSC/iIbkThUGak+B8zdB
+	reGkmOyqOBgY6b5YO009Gtnnrii6Jhr0QB6rPFgemzJiYjE9A45OvpQbdt/zHtQ==
+X-Received: by 2002:a2e:a5c4:0:b0:2ec:4399:9c0f with SMTP id 38308e7fff4ca-2ee8ec6fccfmr63610501fa.0.1720278703626;
+        Sat, 06 Jul 2024 08:11:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXQpEcHiIHBZR4uOoqLIphHdwqLkdbh9n5g2nccrQ8lfR5TX+chvwswbLCdc36Vtwuy4zKIw==
+X-Received: by 2002:a2e:a5c4:0:b0:2ec:4399:9c0f with SMTP id 38308e7fff4ca-2ee8ec6fccfmr63610241fa.0.1720278703135;
+        Sat, 06 Jul 2024 08:11:43 -0700 (PDT)
+Received: from pollux.localdomain ([2a02:810d:4b3f:ee94:701e:8fb8:a84f:6308])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a283551sm100210825e9.42.2024.07.06.08.11.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Jul 2024 08:11:42 -0700 (PDT)
+Date: Sat, 6 Jul 2024 17:11:41 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 01/20] rust: alloc: add `Allocator` trait
+Message-ID: <ZolerSMkVl0C4yfF@pollux.localdomain>
+References: <20240704170738.3621-1-dakr@redhat.com>
+ <20240704170738.3621-2-dakr@redhat.com>
+ <37d87244-fbef-414c-a726-60839b305040@proton.me>
+ <ZoklB7aLyc90kWPT@pollux.localdomain>
+ <2c322b00-20f8-4102-9f3b-edab0c0907b9@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR0402MB3416:EE_|PAXPR04MB8207:EE_
-X-MS-Office365-Filtering-Correlation-Id: 783de498-3d4d-47d8-58df-08dc9dcd6eb8
-X-LD-Processed: 79f0ae63-ef51-49f5-9f51-78a3346e1507,ExtFwd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|41320700013|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YVhjN3gxdVlSanlqTXQ1aDMwUU80UmRFUEhOd1lTY2lSRTJVUlN0cGlNZlhv?=
- =?utf-8?B?ODNMdnBHbVVkZk14TDY0TTFXZ2hucWdlemZWdWN4Nkt5eW9VVTJHM0ZBQzZM?=
- =?utf-8?B?VTMwd3dmSkJqWEoraDBhUGh6TWJSUXJiYjlyeVFnNnNZaXpjWG1jSG5GS2hM?=
- =?utf-8?B?TVg0bzhxa2xTV0Uwb1cxRVBqVXl1K1FNY3dmYkRtejJEWGcwbVhlaVRKVzJ6?=
- =?utf-8?B?cVdNR0p0RVREekh5NS84aWt1bUpjT3FjZkNPbHJMbzZwbUNrK2NUOU56cjFy?=
- =?utf-8?B?OG1seWFIenlYcGhIY05FQ3p1MTdBckhjZ2szTzB1S3hEd0c0NVBINEFGclAw?=
- =?utf-8?B?R2VHdjYvUmIwR1RudlRBblp2WGJsdThaQWFzVittbFc1bGV6OTNRZjFrYWJv?=
- =?utf-8?B?a1BnQzVmN1NPV2tETDdzTUtHRnZZMnRuakRJN2hNNFl1SVpYY216TnorRWxl?=
- =?utf-8?B?eEw3OW5yb3FOSXpCckFZcUF2YkFKallmTWZaYklDVjk3SGlwMXB5b1padzIw?=
- =?utf-8?B?U1JwSjBUbnZYV1NOdnAxNmtwTzJJWHpFMURGa3lnMGtiVi90MGVDUTNpWnlD?=
- =?utf-8?B?aFRpUUtrR2RERTNiellvZUlVM2k4aVE1aTJQR3lteXlKeFNhVElwT1hZVFN2?=
- =?utf-8?B?eUsvRG1Nb3hGWlpaYmoybWlYQWQyeU5RWWVsRTI5MzZibnVWUWdGR2thVGxp?=
- =?utf-8?B?VFEwTXNKTkVZeVRqbEQ3cUlybzdiTDhVN05UU3J0ZFMyVm1tNkdicUdaVzNK?=
- =?utf-8?B?NEdBbmpPa1RQdWMrUzlma3l2blJjN3FGY3BuQWRvMHNDcFNkNW1jNzhjQ01Z?=
- =?utf-8?B?T09GVERQMnFMZTh2blloQzRpQk1ub3pDU1MwREdPRnNUVi85STUwTFF1RGNM?=
- =?utf-8?B?RlVhYVFJbmxxUkszOVhOZUt1VS9aUkRvZUcrb2lNYXoxTEQ0RXBsQUxSdDJo?=
- =?utf-8?B?RC9NcXJYWTV3RTVnSkJ3eWF0Si82SEpnVmJ0VU5IUWVJd1luTFpGciszUWZS?=
- =?utf-8?B?UGQ0YzAzWTBteWdBWWMrTVZpNzN3WWV0elFkbWZjaFdjWUFNNE05MkorKzNi?=
- =?utf-8?B?YmFtUGUxL1NlN2QvMThvQzRYVWpENlA0SHhQQkRMbnUrVmJZZWs5R0tSb0R0?=
- =?utf-8?B?NDQrTnFCdVRzUFhTcmdReUFJMUFJMUlNZzI3am5ydElocWJYZUcyOHROT3Fz?=
- =?utf-8?B?NE1DR09vVTF6L1EzaVNIMElobEZlTSt4R284SHpoTVg5SkZLSm5CRHJwRTlD?=
- =?utf-8?B?VWdpNmt4ekl2bkxWcTI5WFNhUTlpbW5QMUtzMFJpc09uZ2c5ZEJlK29lbE5T?=
- =?utf-8?B?dGY5bE5nS2dYL3ZwQUpUWlNnVllCbU4vVU9zZE5QYklQZlNwcFN2eWRCNnhP?=
- =?utf-8?B?M0xXYVdHVE1MV1dHMngxS2tQa1A2anBDREtwRDlJaERsLy9nYkNXKzczRmhy?=
- =?utf-8?B?WjBWbFJMNEpnMk5WV3NIdCtGU0ZxTmhxaVJmcklHN1ZmQ3h6cWVyVEVmcFc2?=
- =?utf-8?B?ODhDRW1rc1VKZUltQXRMNkU3a01lYzU1QUhqM3ZuMU5XSVYycElCQXhCcTNP?=
- =?utf-8?B?aE5heWxBbW10Wk5obU5HLzdIR2VwU2tUOHpWb25jV1hCSHFIZFBKL3pYNStt?=
- =?utf-8?B?elJTaXoySmhjcHJNaEdHeStTUzd3SUFqVTNOaUd3MlVjUVhxY2l1NFpMSk1T?=
- =?utf-8?B?SzU2VVRTaFR3dGxoc2hEenNoMnpKTXBkcjMyNWdlSGVINkdvenR3dnVvbTZM?=
- =?utf-8?B?d3BmK3lreUJjdU81TWlxNlZqc2tjdkJXV1B6aVR6S3NtK0ttVThmUlYva2hY?=
- =?utf-8?B?eWo5NUZsMk1wTDRtdXVnZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR0402MB3416.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(41320700013)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TGVndktDRUEwazFCS1VGc3BlbmF6ZFVZbG8zSnhwWXpJOHpta1NUb1BXOTFj?=
- =?utf-8?B?RnpwMkREbmd5bkE4VGxoTlU1bjBuZ3hpdDJaR05melV0VWZJWGd6ZWJXbzlE?=
- =?utf-8?B?cFVyaEdwdHZ5MzZhMWgyQ3cwQThuQy9weTg1ZXRqNjVJM3JBeU0wVkJvZEkv?=
- =?utf-8?B?ZWppdGRkbDZ3VFNQZHZSYnJ6bTgreDgxOUtHSU9EbmVrWUVFdzc2WEQ5OTZ6?=
- =?utf-8?B?WnFneVpyaHhwMlZVTjNwWmNOUUdWQUdPcUhiQkl3Yklxam0rdzVybHFFdnRs?=
- =?utf-8?B?NlhmOVZEb0xNMjdDT2xWYVBhcVo0SjhQeVp1UGdWNCtINzNmVGRvOUZVREh3?=
- =?utf-8?B?c3FDN1pQL2ZjVkhQaUNjeWh4dGxDOU5lMkttamJYOXJwYWlONUN0OWI1bVI4?=
- =?utf-8?B?UFlxMDNxQytzcGZpMjlIZUFhc3ZqNzZadkpqdFRPRjJKRXFrK2gzT1hGZDBS?=
- =?utf-8?B?MXpoZ0pmeFJTM3YvZGUzZ0hDRXB4MkpFRFUzUCttd05jQktFWWRjc3RWcVlV?=
- =?utf-8?B?MTVoaWtWTU43LzZXWkFqUmpuTGhKejBmSzhrTnJ6OXFKbStVRXdqMmpManZk?=
- =?utf-8?B?UXZaT2ZMdEdJMzg5dEhqREJKWTBvcnNDZThxbzJyaVF3YlpwSXB2Sm53VHB2?=
- =?utf-8?B?UGJKUFlyOUdobWluMERpbDU5bTcwN2huMEJGZ0o4TzVGUUQ4YzVYR29odWhp?=
- =?utf-8?B?ZWlxUHRlK0wxNkN2NGRSZmhXNHUrb25JaTErVkpWb3JXSGgrVE8vOXpsWUdY?=
- =?utf-8?B?bUFJRGlMb3pEbVdWd0hzWlhJNjFXd3JTMGtmMkVTV3hyQjdxeG1ieU5nNEZI?=
- =?utf-8?B?Q21EZlhDRzJMeEFpRld6azlYQmh3VmhhSkhUVk42d080eFBSenJvVjZPTU9P?=
- =?utf-8?B?Y1dNL0hkd1RLU1hJa2pkTGdWSExGVlZLZkFjMXZMeGd0dWZwL3l0djZBOFFQ?=
- =?utf-8?B?YnJlQ0JkTzcxZ0MydHF4c3Q4SEdHaGVvRGp2dmFwODhhWjBxc1FrRG41TmJT?=
- =?utf-8?B?QkFBbGkyYXl6Y0JXWU1uVlUwVVh4NlhlUnhJVHBzLzlIZGUwUWJjUUVnUTlB?=
- =?utf-8?B?eWY4YVFFQUZNajk4M2JMaU5UOFNWZTRHTmRHQWJ4dVVYRktqb0dzbWtkVmdy?=
- =?utf-8?B?WGF5Z2tROEJ0cit3NThBODl5ZXVvNXRKUXhqMDRpSnU3dUNhbGFMRGFiOS90?=
- =?utf-8?B?NFZKU1QvQXdLbEdtN1VxY0tzMlltODZoN0xmempJSmhsWklIb01ybFhHMnc0?=
- =?utf-8?B?MHlFOTI4UWt1VDF5ak85dGcxcGN1S1VaYnlkeDFNbmNPbGVLV0dwSlJSNUxD?=
- =?utf-8?B?Z0l1cGZsc3FUZVRMcFc3cFRscmRZWGtmbDUycld2elhONjdycDVRRTZLV2Ja?=
- =?utf-8?B?WXRZb2d1MmNId2lud0djbnpxaTE2ZkI1WTlCUEliVGxGZ0tXRGZpeDZJSnN3?=
- =?utf-8?B?K1EwZUYrOTZCTVc4QnQzYWpRNERCb2JYVUhSTlpPWFgyVVJSWE0yYWhqOStX?=
- =?utf-8?B?TmVrbWNCOHdLZC96b2tpTWFsVkg1c0owN2t3aDlaNHp2VGltSWxENTF6MEhx?=
- =?utf-8?B?eWVudGlOOHk0eHc5SHp0TFI4RDFIS1FnTUhCRHhZWmF2UnllTnVnc0l0UXRR?=
- =?utf-8?B?MG55NzROQ3NxQ0l1V3EwMmtyL0UzYy9ZQUh0dFBsaVRSUitLUGhjOUR1RVJG?=
- =?utf-8?B?Z3Jtc0FXYVpwR3lEeHZZU0VYSktpN0t5WENTcERRRlZkaVN2SVVJdEt2SlZV?=
- =?utf-8?B?dENPSjV2aEhodHdKOFVHayt0T1ZkM1ViUmM3d2dWOFFuV1ZGMGxBVDgxOS9z?=
- =?utf-8?B?aXczLzZtdld5WmIzK29ScXd4bGtXUjNNNjNaR0xlNXNpck5qSnFIQmpDMTZ4?=
- =?utf-8?B?dXlESnVOSExuMDljSjRndEZwS0tsSEVoTUNLMDlqeTB1Rzk0bmFOUDIyckg1?=
- =?utf-8?B?SUVibmR6dnJ2M0FYOTFuRXhHZGhHL29CclR1c204N3lLUjgweTJTVDFuK0t1?=
- =?utf-8?B?ZllJK0kydkZXZUY4N016SW5YZytHNXN5YW1jdm0vczRNNFVsbnBBbnVzSWdh?=
- =?utf-8?B?aU9zSXBHQ3B6Tyt1Wmh4aFkzRCtpK3QxaUtRRCs4MTZHN0ovd0tjRHFSeUU5?=
- =?utf-8?Q?HYEXEkTfpcGjaAz5FsYKiEZNV?=
-X-OriginatorOrg: sch.bme.hu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 783de498-3d4d-47d8-58df-08dc9dcd6eb8
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR0402MB3416.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2024 15:08:03.5235
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 79f0ae63-ef51-49f5-9f51-78a3346e1507
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BtEW0NEEXKR1k/+2XG9XHC3ccpGnkQiaPRL1FdAn0UvAkxDRUluj8q1HZV0iOoaTCsVza4KILUWTxO3tA2YsJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8207
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c322b00-20f8-4102-9f3b-edab0c0907b9@proton.me>
 
-Hi!
-
-On 2024. 07. 06. 13:20, Wolfram Sang wrote:
-> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
-> specifications and replace "master/slave" with more appropriate terms.
+On Sat, Jul 06, 2024 at 01:17:19PM +0000, Benno Lossin wrote:
+> On 06.07.24 13:05, Danilo Krummrich wrote:
+> > On Sat, Jul 06, 2024 at 10:33:49AM +0000, Benno Lossin wrote:
+> >> On 04.07.24 19:06, Danilo Krummrich wrote:
+> >>> +pub unsafe trait Allocator {
+> >>> +    /// Allocate memory based on `layout` and `flags`.
+> >>> +    ///
+> >>> +    /// On success, returns a buffer represented as `NonNull<[u8]>` that satisfies the size an
+> >>
+> >> typo "an" -> "and"
+> >>
+> >>> +    /// alignment requirements of layout, but may exceed the requested size.
+> >>
+> >> Also if it may exceed the size, then I wouldn't call that "satisfies the
+> >> size [...] requirements".
+> > 
+> > Do you have a better proposal? To me "satisfies or exceeds" sounds reasonable.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> I think "satisfies the layout constraints (i.e. minimum size and
+> alignment as specified by `layout`)" would be better.
+> 
+> >>> +    ///
+> >>> +    /// This function is equivalent to `realloc` when called with a NULL pointer and an `old_size`
+> >>> +    /// of `0`.
+> >>
+> >> This is only true for the default implementation and could be
+> >> overridden, since it is not a requirement of implementing this trait to
+> >> keep it this way. I would remove this sentence.
+> > 
+> > I could add a bit more generic description and say that for the default impl
+> > "This function is eq..."?
+> > 
+> >>
+> >>> +    fn alloc(&self, layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
+> >>
+> >> Instead of using the `Flags` type from the alloc module, we should have
+> >> an associated `Flags` type in this trait.
+> > 
+> > What does this give us?
+> 
+> 1. IIRC not all flags can be used with every allocator (or do not have
+>    an effect) and it would be best if only the working ones are allowed.
+
+Agreed, but I'm not sure if it's worth the effort having different `Flags`
+types for that only.
+
+But I guess this and the below argument justify using an associated type. I will
+queue this change up.
+
+> 2. that way the design is more flexible and could be upstreamed more
+>    easily.
+> 
+> >> Similarly, it might also be a good idea to let the implementer specify a
+> >> custom error type.
+> > 
+> > Same here, why?
+> 
+> In this case the argument is weaker, but it could allow us to implement
+> an allocator with `Error = Infallible`, to statically guarantee
+> allocation (e.g. when using GFP_ATOMIC). But at the moment there is no
+> user.
+
+GFP_ATOMIC can fail, I guess you mean __GFP_NOFAIL.
+
+Not really sure how this would work other than with separate `alloc_nofail` and
+`realloc_nofail` functions?
+
+> 
+> >>> +        // SAFETY: Passing a NULL pointer to `realloc` is valid by it's safety requirements and asks
+> >>> +        // for a new memory allocation.
+> >>> +        unsafe { self.realloc(ptr::null_mut(), 0, layout, flags) }
+> >>> +    }
+> >>> +
+> >>> +    /// Re-allocate an existing memory allocation to satisfy the requested `layout`. If the
+> >>> +    /// requested size is zero, `realloc` behaves equivalent to `free`.
+> >>
+> >> This is not guaranteed by the implementation.
+> > 
+> > Not sure what exactly you mean? Is it about "satisfy" again?
+> 
+> If the requested size is zero, the implementation could also leak the
+> memory, nothing prevents me from implementing such an Allocator.
+
+Well, hopefully the documentation stating that `realloc` must be implemented
+this exact way prevents you from doing otherwise. :-)
+
+Please let me know if I need to document this in a different way if it's not
+sufficient as it is.
+
+> 
+> >>> +    ///
+> >>> +    /// If the requested size is larger than `old_size`, a successful call to `realloc` guarantees
+> >>> +    /// that the new or grown buffer has at least `Layout::size` bytes, but may also be larger.
+> >>> +    ///
+> >>> +    /// If the requested size is smaller than `old_size`, `realloc` may or may not shrink the
+> >>> +    /// buffer; this is implementation specific to the allocator.
+> >>> +    ///
+> >>> +    /// On allocation failure, the existing buffer, if any, remains valid.
+> >>> +    ///
+> >>> +    /// The buffer is represented as `NonNull<[u8]>`.
+> >>> +    ///
+> >>> +    /// # Safety
+> >>> +    ///
+> >>> +    /// `ptr` must point to an existing and valid memory allocation created by this allocator
+> >>> +    /// instance of a size of at least `old_size`.
+> >>> +    ///
+> >>> +    /// Additionally, `ptr` is allowed to be a NULL pointer; in this case a new memory allocation is
+> >>> +    /// created.
+> >>> +    unsafe fn realloc(
+> >>> +        &self,
+> >>> +        ptr: *mut u8,
+> >>> +        old_size: usize,
+> >>
+> >> Why not request the old layout like the std Allocator's grow/shrink
+> >> functions do?
+> > 
+> > Because we only care about the size that needs to be preserved when growing the
+> > buffer. The `alignment` field of `Layout` would be wasted.
+> 
+> In the std Allocator they specified an old layout. This is probably
+> because of the following: if `Layout` is ever extended to hold another
+> property that would need to be updated, the signatures are already
+> correct.
+> In our case we could change it tree-wide, so I guess we could fix that
+> issue when it comes up.
+
+Yes, I think so too.
+
+> 
+> >>> +        layout: Layout,
+> >>> +        flags: Flags,
+> >>> +    ) -> Result<NonNull<[u8]>, AllocError>;
+> >>> +
+> >>> +    /// Free an existing memory allocation.
+> >>> +    ///
+> >>> +    /// # Safety
+> >>> +    ///
+> >>> +    /// `ptr` must point to an existing and valid memory allocation created by this `Allocator`
+> >>> +    /// instance.
+> >>> +    unsafe fn free(&self, ptr: *mut u8) {
+> >>
+> >> `ptr` should be `NonNull<u8>`.
+> > 
+> > Creating a `NonNull` from a raw pointer is an extra operation for any user of
+> > `free` and given that all `free` functions in the kernel accept a NULL pointer,
+> > I think there is not much value in making this `NonNull`.
+> 
+> I don't think that this argument holds for Rust though. For example,
+> `KBox` contains a `Unique` that contains a `NonNull`, so freeing could
+> just be done with `free(self.0.0)`.
+
+Agreed, we can indeed make it a `&NonNull<u8>`. However, I find this a bit
+inconsistent with the signature of `realloc`.
+
+Should we go with separate `shrink` / `grow`, `free` could be implemented as
+shrinking to zero and allowing a NULL pointer makes not much sense.
+
+But as mentioned, I'm not yet seeing the benefit of having `realloc` split into
+`grow` and `shrink`.
+
+> 
+> >>> +        // SAFETY: `ptr` is guaranteed to be previously allocated with this `Allocator` or NULL.
+> >>> +        // Calling `realloc` with a buffer size of zero, frees the buffer `ptr` points to.
+> >>> +        let _ = unsafe { self.realloc(ptr, 0, Layout::new::<()>(), Flags(0)) };
+> >>
+> >> Why does the implementer have to guarantee this?
+> > 
+> > Who else can guarantee this?
+> 
+> Only the implementer yes. But they are not forced to do this i.e.
+> nothing in the safety requirements of `Allocator` prevents me from doing
+> a no-op on reallocating to a zero size.
+
+Ah, I see now, this is the same as your comment on the documentation of
+`realloc`. So, this indeed just about missing a safety comment.
+
+> 
+> >>> +    }
+> >>> +}
+> >>> --
+> >>> 2.45.2
+> >>>
+> >>
+> >> More general questions:
+> >> - are there functions in the kernel to efficiently allocate zeroed
+> >>   memory? In that case, the Allocator trait should also have methods
+> >>   that do that (with a iterating default impl).
+> > 
+> > We do this with GFP flags. In particular, you can pass GFP_ZERO to `alloc` and
+> > `realloc` to get zeroed memory. Hence, I think having dedicated functions that
+> > just do "flags | GFP_ZERO" would not add much value.
+> 
+> Ah right, no in that case, we don't need it.
+> 
+> >> - I am not sure putting everything into the single realloc function is a
+> >>   good idea, I like the grow/shrink methods of the std allocator. Is
+> >>   there a reason aside from concentrating the impl to go for only a
+> >>   single realloc function?
+> > 
+> > Yes, `krealloc()` already provides exactly the described behaviour. See the
+> > implementation of `Kmalloc`.
+> 
+> But `kvmalloc` does not and neither does `vmalloc`. I would prefer
+> multiple smaller functions over one big one in this case.
+
+What I forsee is that:
+
+  - `alloc` becomes a `grow` from zero.
+  - `free` becomes a `shrink` to zero.
+  - `grow` and `shrink` become a `realloc` alias,
+     because they're almost the same
+
+Wouldn't this just put us were we already are, effectively?
+
+> 
 > ---
->   drivers/i2c/busses/i2c-cp2615.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
+> Cheers,
+> Benno
 > 
-> diff --git a/drivers/i2c/busses/i2c-cp2615.c b/drivers/i2c/busses/i2c-cp2615.c
-> index cf3747d87034..315a37155401 100644
-> --- a/drivers/i2c/busses/i2c-cp2615.c
-> +++ b/drivers/i2c/busses/i2c-cp2615.c
-> @@ -60,7 +60,7 @@ enum cp2615_i2c_status {
->   	CP2615_CFG_LOCKED = -6,
->   	/* read_len or write_len out of range */
->   	CP2615_INVALID_PARAM = -4,
-> -	/* I2C slave did not ACK in time */
-> +	/* I2C target did not ACK in time */
->   	CP2615_TIMEOUT,
->   	/* I2C bus busy */
->   	CP2615_BUS_BUSY,
 
-The diff is cut short, but here would be the comment for the next enum 
-element, CP2615_BUS_ERROR, which reads:
- > /* I2C bus error (ie. device NAK'd the request) */
-If you're going for consistency, you might want to edit that as well.
-
-> @@ -211,7 +211,7 @@ static int cp2615_check_iop(struct usb_interface *usbif)
->   }
->   
->   static int
-> -cp2615_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
-> +cp2615_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
->   {
->   	struct usb_interface *usbif = adap->algo_data;
->   	int i = 0, ret = 0;
-> @@ -250,8 +250,8 @@ cp2615_i2c_func(struct i2c_adapter *adap)
->   }
->   
->   static const struct i2c_algorithm cp2615_i2c_algo = {
-> -	.master_xfer	= cp2615_i2c_master_xfer,
-> -	.functionality	= cp2615_i2c_func,
-> +	.xfer = cp2615_i2c_xfer,
-> +	.functionality = cp2615_i2c_func,
->   };
->   
->   /*
-
-I don't understand the need for the whitespace changes.
-
-Anyways, these are just minor things I could live with.
-
-Reviewed-by: Bence Csókás <bence98@sch.bme.hu>
-
-Bence
 
