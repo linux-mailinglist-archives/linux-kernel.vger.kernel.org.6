@@ -1,138 +1,80 @@
-Return-Path: <linux-kernel+bounces-243249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9BC92938A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:27:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3971929390
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB30C282F61
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:27:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7162F2828DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB93E7D07D;
-	Sat,  6 Jul 2024 12:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB4412CDB5;
+	Sat,  6 Jul 2024 12:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u16bcXx/"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kMtAaZ3r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9423277102
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 12:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3C37D3FB;
+	Sat,  6 Jul 2024 12:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720268853; cv=none; b=tUj0j2sdNW7nECto0lTLeNesCiZ/tHj+eklPdjdt2J7hkB6UOYnOxOFQgnyCicyRQkm2Jd6dfsMfHq9+mrQSZh5GAtkaTT3qPzlv0Y29AkBBhO2ppK3OQkTMpyUEZn6HnYstcavVdnGu5jfhFNfDAZpbU092I/ExRtnuYYLcTdE=
+	t=1720268974; cv=none; b=UBGzQUPctD6fobp27DJ+QLw+DDl3UadjIk5ap8HWTOgMYvfO01O8f3u+DJDtTCImYJ4kRPW3d3Wy4xhdi6lbuGamjgjRElAGlKbkyXb0WdZC2XeDxXQ3cJn/EdVRzjR3Ccs0heIDKS2ncVPF7z5lS2+l9UapzDb60FAhuWWeexc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720268853; c=relaxed/simple;
-	bh=CNh77vBEEcst80YNM8uwqUWtpZsl1u1HS+xSctV9qng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FTrgNWAaUQwkLDSeIso0Dxmf8+2Pas0qqvOKEWSkrW+f0qfzlXenOib5sRO7EiLRv8eH0Fric6ev8LFiNVggphg9Xi9TpPY8IqQGQyiFi2+l8dL2VLucKJy/dNzysyzN/8TwXDfCgrre6DdWxeB7ScLJw10EouY8jLFVIOS/lS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u16bcXx/; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee75ffce77so29873441fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 05:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720268850; x=1720873650; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OzdIv4B3CXoRooPpy7PW3AjhEb9rUJkTARdZztIO/8=;
-        b=u16bcXx//FVL0+fE8XM+dlUblx9eP8E4BGlwx2V1yZalRhfuP1b99XhcaEVMMa9Tuf
-         +s/64o9EW2rPbQGbPjuPkSJ/JXNBEp6nn3InvSP7BH7WhROxs7ZiiXY61zxXOAYHooS7
-         SVDRhJGZljbwqI845zhj7anUBfc1tXQbcOx68NUIrNzCH3cwElFEdFLWWEGlJAKaZyA2
-         rFRm6y6TVL8Wb60Cl0ym01Pizwft6sM1vrlFaTxmtcAuCiq9qU4b43FeMDQCvjqOpN2Z
-         9SWk5dRahP7U27Rnu9fOkpzBgQE+xnV0ENNFcGE1CSFB1guMH/bsq+P18jxnkYQlx+w2
-         XBGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720268850; x=1720873650;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7OzdIv4B3CXoRooPpy7PW3AjhEb9rUJkTARdZztIO/8=;
-        b=fUNvjONpEWTguAlxH4vBNHxiD+mSKzn+eO8o9Xtv/B1A3KKlMyv3h4snTpxs+FPu34
-         NcdtbFz9AtgD1BoiRsfCxYdMKEhumGWbNnk9FIVfCOKYKITv8zLu1eiHokE/bWUrZDOS
-         cKxq4gbAZCc2ip4dZA3K2207QPI+sCu5c7LTPLQtHO6OKWUI2cpEw6gbeAkzZ2sUiFU8
-         /o9AvqR7R+ms1ToV26GbyAq0U1WmnvT9jZ1i89O640mZHBPRZ2BNfCcpu752poqAQoxH
-         q/H+13E9DWUe3p8YF4rGuhG0XQfP9bHQaZbUKt30aPemkLYGR4Qa0LcOC7RkPsZp47vv
-         ufrg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7sI1wxA4rZTVZ4wUBZOhkHAEFFyCGbPkzUni9PyFTO91exkAg9ap9FuL2YO15kMsDGAyip4o3GDOnu5Jdjjg4vfozytGt8QxqMzT5
-X-Gm-Message-State: AOJu0YycP8lqIQIm9WgFJPEOueyX82eHwVX/ptQ40RrXDB022ZeYsC7E
-	7imB0O1tCxcD+AXKt0ET5C3DXoUnmsbZln8GxDHkPJRyzz6ZKYuktVHg+z3e3kMJPGR/g7x9pJJ
-	H
-X-Google-Smtp-Source: AGHT+IG0zM4EoZaIWz2SJ7wgUaWziV/xyRRgtrQtEvnRyahvRk4wDLrwnXeaQF2iTgDHymRZcJ3nSQ==
-X-Received: by 2002:a2e:9ad4:0:b0:2ee:8566:32cb with SMTP id 38308e7fff4ca-2ee8ed91179mr54011221fa.16.1720268848945;
-        Sat, 06 Jul 2024 05:27:28 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77dfd03b3fsm70663566b.162.2024.07.06.05.27.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Jul 2024 05:27:28 -0700 (PDT)
-Message-ID: <635cc297-1111-41fa-b8da-06f69447ba22@linaro.org>
-Date: Sat, 6 Jul 2024 14:27:26 +0200
+	s=arc-20240116; t=1720268974; c=relaxed/simple;
+	bh=a4hr+lF5lsa4T4pmwO8qJMekpIUAmRcbcuxqF7sAq9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LUSK6kyXvcjqRRvQuHQmxor0cUiAFmeN+SD0BpqnNOVtY41q1zsgxeo4xyy8JvWil6dLQW3j4tPBMsyJ2sVB6FEyraBmxuVH6we+LEemyAtMvXDUXHqxONy5v+8cUN3iIHyToeVrfdtBA7aDevqNWC/6iJ1mlwx9bmCS3VUHpT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kMtAaZ3r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44313C2BD10;
+	Sat,  6 Jul 2024 12:29:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720268974;
+	bh=a4hr+lF5lsa4T4pmwO8qJMekpIUAmRcbcuxqF7sAq9A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kMtAaZ3rW/sxE4lcqDb92weUGcjRRAQEKY8otuHoXIER2jg/W7KDYffFwIcUKoDIa
+	 oyErOKmSTuco6IiVOVg+msVbbSBIe21TTjDS39Ep5P5g5qQ5Bg95kyVBC+3K+8GanD
+	 Sr89VWLp1l0l8ewB6Z1wLRppVY8MVdut7nA7t/O0=
+Date: Sat, 6 Jul 2024 08:29:28 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Guillaume Stols <gstols@baylibre.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, jstephan@baylibre.com, dlechner@baylibre.com, 
+	Conor Dooley <conor.dooley@microchip.com>, tools@kernel.org
+Subject: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements
+Message-ID: <20240706-funny-flamingo-of-temperance-9d1e85@lemur>
+References: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
+ <20240706131549.1f94449c@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: sc7280: Enable download mode
- register write
-To: Mukesh Ojha <quic_mojha@quicinc.com>, andersson@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240705143443.1491956-1-quic_mojha@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240705143443.1491956-1-quic_mojha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240706131549.1f94449c@jic23-huawei>
 
-On 5.07.2024 4:34 PM, Mukesh Ojha wrote:
-> Enable download mode setting for sc7280 which can help collect
-> ramdump for this SoC.
+On Sat, Jul 06, 2024 at 01:15:49PM GMT, Jonathan Cameron wrote:
+> This series is blowing up with b4, in that it is finding tags that were
+> not given and I can't work out why.
 > 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
+> Tried various options but even a simple b4 am -l 20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com
+> Is merrily finding tags that I can find no record of.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+I can't replicate this, so something else is going on. Can you try:
 
-Konrad
+    b4 --no-cache am -l 20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com
+
+In either case, I want to see the output of:
+
+    b4 -d am -l 20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com 2>/tmp/b4-debug
+
+-K
 
