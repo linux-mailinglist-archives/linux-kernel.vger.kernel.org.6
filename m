@@ -1,172 +1,148 @@
-Return-Path: <linux-kernel+bounces-243139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3460192925F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:02:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBF7929260
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DD57B222B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620B52829BE
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B17C60B8A;
-	Sat,  6 Jul 2024 10:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4DE73176;
+	Sat,  6 Jul 2024 10:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="loX+f5yM"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2106.outbound.protection.outlook.com [40.92.103.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GQNvQSmq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20003399F;
-	Sat,  6 Jul 2024 10:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.106
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720260105; cv=fail; b=Ps2ZSn5HmREkwZYmZ1FTguqmx92XxGqZWmfGSkNp35XkJB8JSH8pxEercVQ7pr7SHzk8Dq7BQem60dJYhL9WNBcH3VGs5QLBEMZP+9ixFOdCMxHFQ/KO/We5w3pojB10nnNeOBhq7l1IklXSxeq2WgpcDgmQJwmmrMD8WufXsZ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720260105; c=relaxed/simple;
-	bh=YvUlN4v6Eo3B57Jw2+X0blCq2Htl1h7zf2cnPyOviC4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OcjOuV3XHmWHrLYg0nivbbpIH8CHvok8GCSey1CRCt0ccPC4akdU39RpgS27sBmrHdnoCvY0NQDBi3D2YUT4RmJVVHDJDAKEotf5AfoYtp3hPm9wlJpH3mZYKOTQhlYTYw+NlvyjS3E/xTpZm2RoDnE6S5pF/LLZpPp4bBJ2zg4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=loX+f5yM; arc=fail smtp.client-ip=40.92.103.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MEhBBVq64vN+AYHzuGDwASBLA8ywxRLRb27FrywRUBW7+IDflwulfV2Rdl8lj2xJJEYEV9Hs5MTqBvDObq6kV/3z1VTSMXFJl0vX30gMDj5h+MhObGEpAYwdiy4EAGJisuigs0piKUkk+hkT+eCZhVHbHBDZ1nDYrVv044FFHwxosyuKjH27w/BE3tQNVqHDtzPdeURVcktFF3b/iA5YjuQiaYbZevsM2J8KcNP+qNxPoP1VGcz3rOditurcxl7dTnUFuLaV9umWSaHl4aOFWcZa1udMe8Yzvbux3hNRSDQsAH5VhjW2HSA3Jg7k7lS21HnIxqsYCKx6L3jKoGD4ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IFjMji8+ZX2RUdQlqvZpqojMNot+BRk3/n7pqXudwuE=;
- b=QzVYe9WANFrA39g6W9s3BThmVT5RP3/sQ5+teWpG72ZII7cmTtJmJ21RfwOx8BXNZEReHWRVe1sBHsetbNlmjT29SqEMm0ZN6N5IeFE3cIwYv5kMkJIv/B1XPPUr0egPKTx8D1XhW5DapnsN+gcB3hRBxuzQc49qK83cxGQJ9e1+gOKGS4OK8PZDccL1FLuAzplpnwn0QbSMruaL0Is5ezSW/Ima8TWRuBeuizDObQX8+cPBwqLwJ1xyOKcGWEe0qYR7NJoykV4iFM6e2mmvKxYg9KhYl71NgPOw6zGpcqf8aiWNPeIRAH3IoRaclboQJjjhYgnLhAaI2NTGr2EY5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IFjMji8+ZX2RUdQlqvZpqojMNot+BRk3/n7pqXudwuE=;
- b=loX+f5yM7hkpoLU3cBU/qvXEcx14f3vocOkj0MmETqgjxD/msX0QaI2QrVVTaJP6mwQIwjP+klVzy+FOPjJDL8pXyCWTlEJdG0E+rLFkrRQV9khAOyZrM/TjJWUNonGlVTjbuVWXk0Ns023vh2zCqFvxdVGdXLMuRcVtPLSk/JxTn2vvSmt8n7elv0SKay5aYePgpSRw5UPVTnUt3jCsMJkbBUf47yWTZrSyeiVJvS/MWeYBAqgeKLRmqAv3BumCBwGvo3ZXTEGr5w8XISp4PDp5cGK4wSZKj4GVV8UaWolKDT25i8tTIYAuhvIlCdCsdYOkgHdodmD7eaBicylK1w==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN2P287MB1372.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1a5::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.33; Sat, 6 Jul 2024 10:01:38 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7741.031; Sat, 6 Jul 2024
- 10:01:38 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"oneukum@suse.com" <oneukum@suse.com>, "stern@rowland.harvard.edu"
-	<stern@rowland.harvard.edu>
-CC: Kerem Karabay <kekrby@gmail.com>, Orlando Chamberlain
-	<orlandoch.dev@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org"
-	<linux-usb@vger.kernel.org>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>, "usb-storage@lists.one-eyed-alien.net"
-	<usb-storage@lists.one-eyed-alien.net>
-Subject: [PATCH v2 2/2] scsi: usb: uas: Implement the new shutdown callback
-Thread-Topic: [PATCH v2 2/2] scsi: usb: uas: Implement the new shutdown
- callback
-Thread-Index: AQHaz4t+VjkiMxF+7kWm0GtAei2JZA==
-Date: Sat, 6 Jul 2024 10:01:38 +0000
-Message-ID: <BAC247FF-CDA3-4C34-A9CC-A429E3AD13C3@live.com>
-References: <A6C4519F-852E-4B5C-B791-7396B515B8A6@live.com>
- <A53C580E-C0CC-42AA-B50B-F1B8A5756C9F@live.com>
-In-Reply-To: <A53C580E-C0CC-42AA-B50B-F1B8A5756C9F@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [pwObd6efDSo5L+n51THClYj64pmXlzlR4hhgqZrXw9FvJqeYQkeQmecd4ZtaVn/g6yWNUeLNXQI=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB1372:EE_
-x-ms-office365-filtering-correlation-id: c2ed1494-49b5-4d21-63a1-08dc9da2a099
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|8060799006|19110799003|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- Vgz5ZHmBuaGT7XnpoXYNu/xYfoh9fg/Lyro8G7QCKkEuXOErwxgDVF8yVXL+R/rHiBAD7iATI1TRDIjgLc2fcj3cWFFwLSLIgQtBYAxWkH+YNvNIWy+R4qsBV/LShVAIonrePMBoRCQGd1PPFtJwcdUyMFiSiaXX8faDrN1xLnd5AWB5Ae7DJuavqjQAL0KKmitQy4ESF2B9y/Bem8BReFcA0gFOvJmjW6Se2fTpwse4mcIz0qMVSU8OmEyRAH/wPNuMWDH+mRUJ+X3bwqkwmdhs7AmkAlE0yA58mFUXAUoSc7yXKzx5ER0x8BUdEKrwtaRBlrNTppk98WKiDjOAW3Pn31c65tPk/rtQQe9JO0HjAWoJM+Okyg2S+EbSUKhgAZqiUNf03+6y4uggZkcx04Gzh3b9Twgpb9MtW/A/Qf63eh67gMKSSSJwg8eF84C/YUrPy0zqLcnxwkzh4vfb9rF+jRhyepPb0hXfSJdMPaSFrUnB1jxbADNCyC0++Z7tc5/F5kAJwepdUlMV0Y0PY56jo1oetZkqC8U9zu7cxmXmsQMC3hxrEqSds6L3K5wKPrjMsJ7pRL8HNK8topy3VKPVKyikEQEEcrDfUACKnEyWlMs8e9sM86JBTJCB4wNCxPfaHVAoKGrVqPcb6o+O+w==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?9xfhOKjb54NR8NyRSbY6j4lohbxwPEe6e4l2Se+gtfbvgZ5Da1gzrTOGsE0i?=
- =?us-ascii?Q?JO2hIBWPfAq/e3kRoJ0myEkI+MiIyFxWYRl+Ino15qME50QKvT3zWP7zFFor?=
- =?us-ascii?Q?w9AbUhE5OHp5odj2kk+80yqJ9ogloc41OtaR3oIg+39rDZ2hlO+Bw5PWCFf6?=
- =?us-ascii?Q?sAzG3DGKDwFp+dlH3n+PM0DuQ8KSRxtmmlrpuDnvyrvPSGwIeaVOAcTnmJyo?=
- =?us-ascii?Q?xQNWIA8kdDDA9oTSvM780uBDD8VBzI4ICmkVoBHXmbH4fIldxuELnc07x/Ho?=
- =?us-ascii?Q?Tq3cRlF1H0GKOA3988u/QcxDn9tby4r9d8E/4asG6XzrsXGPYPyrkQ1Ovxez?=
- =?us-ascii?Q?nVaATszjBRxFaabu6vzWJRkIZKZEGGtGsPPVBXF8FZ992zJP9XsFq8VJ8/rY?=
- =?us-ascii?Q?49uquxV5S8vWHzO7w7aXjQl0JhN5Upa0vHmkVXIfbS90l6NQ5lEUJ3O/+2M1?=
- =?us-ascii?Q?Cb8R6Yni/IoxuTIKHGOQHiynuxjc1zRdyEstl2BsDnv1PYEvbSNRwj4Pgqx1?=
- =?us-ascii?Q?+8skArnsOwotfxfMYf3C/L7cSRPJCkpK7R6LkwzqAt5Efi7amL9FFGjiPWZw?=
- =?us-ascii?Q?MXRdO1xMjQYE+obpy/jpqYMRvYhXWQ5vZwScKMO5rVlt/YCIYarIq2xi0AUf?=
- =?us-ascii?Q?QSAHhDJtlftoPG6o1GjtAHstaXrUfSUZWZJy+dRAvTG956LnU42AxyR01K+R?=
- =?us-ascii?Q?Mk/2qUR+SQ9l07c8dws4QCb2fr/WmngXZfqHT4h1WjpbjLi4lOHVYZAOdU1/?=
- =?us-ascii?Q?H5b+37q0aShxPky7ZG/r1LUFvFEaZmOuTZr/6U9hSFL5q/Yc0OBDMmp2UtB1?=
- =?us-ascii?Q?svl5bOLQk47+c8xs4kn+CvkhMSJnpXRMF5WE5EMi53faUwVEu4dt1iQiT00D?=
- =?us-ascii?Q?SWKk1FRqxtTGZulSsBZaj/JryleeFBlXoUiTPq4XwHs1jynht68W5qtS2qDK?=
- =?us-ascii?Q?rhGfK2QXtEDbhqZCl2XtE3eibgN8DWKgDxYzRZIRVQWDLDZv7mYOv4EocHR5?=
- =?us-ascii?Q?/rlNANB29xSjdIJmuawiohoJnMoHlMu+6o3/z+9WD3CYVEvfL/SgAFr8xllZ?=
- =?us-ascii?Q?37WrZxh20zGhC9rQ2zEKyvjq/6tuNU7Q/UzZ7eR5nNBFGTcSRHgYi6bEMEqf?=
- =?us-ascii?Q?lbnnYLbGRb1YqboE3CUrKPM92+lSDP0Hs3g/uqDV59gjon4Ac2HmD9yAcc88?=
- =?us-ascii?Q?QBdeoVb0oG6d9+M+qhqNTu0gBsnauBHK/J7FOlYHD8VbMTP09tjisBazQyMc?=
- =?us-ascii?Q?mkJJskNj6JNKQNH/U69aZNIdO5SuYWxm9qJMwsY5l6XbpJ7vl71Rtsbe1hlP?=
- =?us-ascii?Q?WZj9y+hEXLDLrOg2QBejmn3E?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19EB418F74654444830B8815E68C0254@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC0E6F2F4
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 10:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720260133; cv=none; b=DestgSvofnLK33SEgCmNMvzif9kNVTnaqmbnksRPT9eqRseJ4N3y3fajnOm6Wbdn4haV1sc/MzBNOn1xZ/G8NO8y0JFa/uLqvswwMeagakw1OgnpIIGfBOWXQFSJsPIz9Bf6UVzCrP8i00WEm/MpXRciCwEIV8YTqNWWe6qMpW4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720260133; c=relaxed/simple;
+	bh=H4v5aWPyuH8ogtzPr7Pb37HiaZAqzeG70v2kVeFCsKQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bjDEE9eG1XfdAO2RlDkbCmk/nw3hn/igknjLqLuUA8hBIR9d5hKyfHEhuMnFxrQRaw2JN03+geVs1zcHPWpidguN7V5YNlzjJITtCSAB5cQk1E90EmqLqY43v0LQq1e2gfkCw8qSIHINEN7oXKmB/DXjh63a+zd4HaqjcItxRI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GQNvQSmq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720260130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+yL7+Ipb2CRJAiVuN9+PK4t3/NV6AMkm+gY+mr3QzGs=;
+	b=GQNvQSmqOVykLeadiZ9nHmsACfyCGjRTDwTFlECFVOmdKnbyKXXnkLPm+fk3Q0AKSqwSOH
+	2zG/qsq0OfX83QcEwdUoJDb0HSQcTlR+qpsT171N4ZqHKkcUlvQjw9avTWo5H2nVv/Z+M7
+	/IAWu/mOb8lVqBpiYPr6ZAd8aTMXo0Q=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-275--zNuANeIN3-oRlGgYTbcyg-1; Sat,
+ 06 Jul 2024 06:02:06 -0400
+X-MC-Unique: -zNuANeIN3-oRlGgYTbcyg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD42D196CDEF;
+	Sat,  6 Jul 2024 10:02:03 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.38])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D2021955F3B;
+	Sat,  6 Jul 2024 10:01:57 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,  "Jason A. Donenfeld"
+ <Jason@zx2c4.com>,  jolsa@kernel.org,  mhiramat@kernel.org,
+  cgzones@googlemail.com,  brauner@kernel.org,
+  linux-kernel@vger.kernel.org,  arnd@arndb.de,  Adhemerval Zanella Netto
+ <adhemerval.zanella@linaro.org>,  Zack Weinberg <zack@owlfolio.org>,
+  Cristian =?utf-8?Q?Rodr=C3=ADguez?= <cristian@rodriguez.im>,  Wilco
+ Dijkstra
+ <Wilco.Dijkstra@arm.com>
+Subject: Re: deconflicting new syscall numbers for 6.11
+In-Reply-To: <ZoiaWz9mG9rb0QND@localhost.localdomain> (Mathieu Desnoyers's
+	message of "Fri, 5 Jul 2024 21:14:03 -0400")
+References: <ZobXdDCYBi8OM-Fo@zx2c4.com>
+	<CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
+	<ZoiaWz9mG9rb0QND@localhost.localdomain>
+Date: Sat, 06 Jul 2024 12:01:54 +0200
+Message-ID: <87sewmzvn1.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2ed1494-49b5-4d21-63a1-08dc9da2a099
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jul 2024 10:01:38.4084
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB1372
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Kerem Karabay <kekrby@gmail.com>
+* Mathieu Desnoyers:
 
-This patch implements the new shutdown callback method added to
-usb_driver on the UAS driver.
+> From an absolutely-not-security-expert perspective, here is how I see
+> the desiderata breakdown:
+>
+> - There appears to be a need to make sure the random seed is not exposed
+>   across fork, core dump and other similar scenarios. This can be
+>   achieved by simply letting userspace use the appropriate madvise(2)
+>   advices on a memory mapping created through mmap(2). I don't see why
+>   there would be any need to create any RNG-centric ABI for this. If
+>   new madvise(2) advices are needed, they can simply be added there.
 
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/usb/storage/uas.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+I don't think there's consensus about protecting coredumps and VM-level
+forks (migration where multiple clones continue executing).
 
-diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
-index b610a2de4..0cdbcf825 100644
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -1232,9 +1232,8 @@ static void uas_disconnect(struct usb_interface *intf=
-)
-  * hang on reboot when the device is still in uas mode. Note the reset is
-  * necessary as some devices won't revert to usb-storage mode without it.
-  */
--static void uas_shutdown(struct device *dev)
-+static void uas_shutdown(struct usb_interface *intf)
- {
--	struct usb_interface *intf =3D to_usb_interface(dev);
- 	struct usb_device *udev =3D interface_to_usbdev(intf);
- 	struct Scsi_Host *shost =3D usb_get_intfdata(intf);
- 	struct uas_dev_info *devinfo =3D (struct uas_dev_info *)shost->hostdata;
-@@ -1257,7 +1256,7 @@ static struct usb_driver uas_driver =3D {
- 	.suspend =3D uas_suspend,
- 	.resume =3D uas_resume,
- 	.reset_resume =3D uas_reset_resume,
--	.driver.shutdown =3D uas_shutdown,
-+	.shutdown =3D uas_shutdown,
- 	.id_table =3D uas_usb_ids,
- };
-=20
---=20
-2.43.0
+Personally, I'm not convinced either that it's sufficient to protect
+just the RNG from VM-level forks if nonce-reliant ciphers are involved.
+It needs careful condiseration how these ciphers are used, and I'm not
+sure that VM-level fork protection for the RNG itself is even a critical
+part of that.  (The ciphers are still deterministic, and the forks will
+compute the same result if the operations are ordered correctly,
+resulting in no information leak.  Anyway, I don't understand why
+cryptographers prefer algorithms where nonces are so critical to avoid
+long-term key leaks.)
+
+> - There appears to be interest in having a RNG faster than a system call
+>   for various reasons I'm not familiar with. A vDSO appears to be one
+>   way to do this. Another way would be to let userspace implement it
+>   all, which raises the following question: what is the minimal state
+>   known only by the kernel currently unknown from userspace ? This
+>   brings the following point.
+
+The history here is that we had a reasonable fast userspace
+implementation that could deal with the process fork case (which is
+quite easier within glibc).  It could not deal with VM-level forks.  The
+goal was to provide something that is unpredictable in practice and
+about as fast as random() (or even rand()), so that programmers could
+just use arc4random() if they do not need a reproducible sequence and
+not worry about performance.  We removed this implementation from glibc
+and replaced it with something that makes a system call on every
+arc4random call.  The promise at the time was that we'll soon get a vDSO
+call to accelerate this, without the need for some sort of stream cipher
+in glibc.  That hasn't happened so far.
+
+Meanwhile, it's been reported that if chrony uses arc4random from glibc,
+NTP server performance drops by 25%:
+
+  Bug 29437 - arc4random is too slow
+  <https://sourceware.org/bugzilla/show_bug.cgi?id=29437.
+
+Obviously, we need to fix this eventually.
+
+The arc4random implementation in glibc was never intended to displace
+randomness generation for cryptographic purposes.  AndIt doesn't have
+to: none of the major cryptographic libraries will give up their RNG in
+favor of glibc's, so if you are doing cryptography, you already have a
+RNG recommended by the cryptographers that is ready to use.  The
+arc4random implementation had a different use case, replacing random()
+and rand() calls, but it was somehow repurposed.
+
+Thanks,
+Florian
 
 
