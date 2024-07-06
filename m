@@ -1,241 +1,240 @@
-Return-Path: <linux-kernel+bounces-242974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7953928FC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 02:25:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180E0928FC3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 02:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E964284109
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:25:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64EADB220E9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942886FC6;
-	Sat,  6 Jul 2024 00:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEA85258;
+	Sat,  6 Jul 2024 00:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bU7jiVie"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TCKZIthK"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2072.outbound.protection.outlook.com [40.107.94.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5BA819;
-	Sat,  6 Jul 2024 00:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720225516; cv=none; b=r0GzqqjEPjeo1svATn6NEJiemb5ciELoYTYGBuv/siHHXT/9zpJbZPVl5m+MbjIHj5V6eH2+X8ZNXk8W6tDm7WbzQ7tCcMcenhWrF9SB1COOIfu+6zyYJNfOi66cnVEXoWBEX5DwK5dIISo/+6b1G5uHyYSht2msm/HtmLQ21fY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720225516; c=relaxed/simple;
-	bh=HDvxJMVFURzuoh4c5OywGu8H0n7JGtyxxxcWcnJoWXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HA33JL+b1kCdmNgFnXgz8KY0Ff9CZiyeGzY5asJiWpSJi4TzoTs0MBEbtnMWVKTGWnaOQpJRbIbI+E/DVYx2I97RAVDHB3nxEQ8ly+wmhFlUIo6jKyqwl4lzcShQ70UgdyhAPXxBFYJ7gSrtK52kORAl5l2Qz8Tdea/LxnIkNws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bU7jiVie; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D696EC116B1;
-	Sat,  6 Jul 2024 00:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720225516;
-	bh=HDvxJMVFURzuoh4c5OywGu8H0n7JGtyxxxcWcnJoWXU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bU7jiVieKBuQprBoh0u/A02pz9mcwwtR0eUlvqFw9gNsXqar0NX5atAJJbzT4poOo
-	 eosqTjOzDVpPohLwyuaQ0MYCLH1b47YLuq66jTbzck+spkmCqewht1waTZQIgl61mW
-	 GudrQW2tX7CxEgAeKE/u/A/4Xs27PsVL3UwTcLwSj+isXbPZ/kn84QyQStI00m28Qp
-	 NHNuuJIx2l1NbGB9xfkrdXuk6Hr4uOn9ZwworXG47dfEiiYHhIFf+mbJ08Gd7lA7gl
-	 gEp60/jZVigEfXbrUjzkwuAYD/lE9tknHUbmxHBVV7QsHayj74mHE7EBfaYWoO9Yoi
-	 7rd/NKSJ1rUbw==
-Message-ID: <ab8112e6-ea7b-4b36-b395-049214e1608d@kernel.org>
-Date: Sat, 6 Jul 2024 02:25:07 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EDE360;
+	Sat,  6 Jul 2024 00:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720225971; cv=fail; b=lIb4iY9nnaWuGeAnn9+QsZkd3VfCcSay3wJpho///XeOicRofSi/ExeWeiZ+dpg17MurvrO3dKbiCPHnvY2DRAaDAPZZQcYYNzkD1y/mXeAw0WlQpdCydHr5jWlIKu0/nxl6pfhbD8JUveIz5qx3cqRB11+tpNZPoYzz661BoIE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720225971; c=relaxed/simple;
+	bh=I7SGMvzMAOGlP9EUqbfrsKRYMLVjlDk+nVDp0BAgv2I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FuCpOHFfLLsb9L2y9TATstRe8jygXRw4dknzh+ePN6btGOSw+0Corgcy0dfSArOXTnH4kmDsxAyVQ9ordTLv9Vdc7EqXKy+Jsjbxu7kkbm7YpZGkkKu4/2q3mvWGFBz3D9n2za3v8xebVpFEKTpteDur9wkjPJBeAP4QwdjQka4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TCKZIthK; arc=fail smtp.client-ip=40.107.94.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nWjG8c/LRtEnNUT7/UlfuvxnUhyJedK8MipYcYU47cqh8PWSXBbDTPN9RYQmK0vysFEEg/5paDOpaDSALLhIbsMmiB9tSb5xCjXBIzlr/dsKo6bVGAfW6lhMfe4MfVrt4Kkty/BzfX8mqmvvPL/yZ8tP/CeYBlNSDbAvrzSzUuCtWqhYC7qgFSUkY7v3ApDJUce+Xka+kEVKW/ROB7gNBU8vl7WV9UtoQeV7W5CFdW1LsO0jb688j/8pRPF94TMYVvccRRomkUIArQ//P4rWxvxQMvPeLLcembArb3ZSzVhsVCoI221dRG/a9h8kwoMi3gm0TRya2Gi39ldGyYSdpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=W87poMyUedY4N2CWZdu3OtpSQw8VuVgrXmf1DsyYVSI=;
+ b=cTciEg9Yqjd7UNTEsaKuAMuvZBP1DwEsAwyoUFLmzOV4iK2tOi0AofLYMyycgWlHaMRctGFRZGJ1dA+RMHWKpWXscWfY329TDG8noK21167ZCdN72OHpZLgFOWRAhMwPRAyAtY05cCrZ+YcBxOzlKpUAmV29PKlNchVEG62RjGQxsI0516huwrYnX7Kxm2IpGZ+pOGoQJGPwsrz/i3Bd+5L3pXlK7+f9GwY76nRMjsVOmWTrRFIzQx7D/QaxF982jN0tXo3ri0T6mjszU/M6Rj13ySQIVSPKkpX8TPk+4wf7/BA9nFRWOJqzLOj21ieDSUPjzGb5Yk/v5pyZoswCog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W87poMyUedY4N2CWZdu3OtpSQw8VuVgrXmf1DsyYVSI=;
+ b=TCKZIthK+gaitL+gXbeS4CjW1Lab5smzObkJpmjK7WhwUUj1x7zZYb4mAaZSejSLgoa44xuI5jc+k4wUknvPWn3GAauBefV1UIlv3z6CmTJHpLcO0jX1YRhZjcErA0vfKz/VzkQqA0rpK4mNZc18l8nacVQ8A0mzFk17o2ryVSsgd3sIBm4VKDA8xk9iufYYpm4sTGiPhRtc4ovysGTT5BfkKgB7FkxkzFipCGNz0tIsFBsJ29B3VGwXodKTAGj/0EkHJkyZeq6ZvghxGBKjXKTXWRbb3Tdc9EXdu8v3dEsPJsUrORnFH+5OMM+ZtC3pvrHMKJza9t7nmX/+GbyzgQ==
+Received: from MN2PR20CA0054.namprd20.prod.outlook.com (2603:10b6:208:235::23)
+ by DM4PR12MB8474.namprd12.prod.outlook.com (2603:10b6:8:181::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Sat, 6 Jul
+ 2024 00:32:44 +0000
+Received: from BL02EPF0001A0FC.namprd03.prod.outlook.com
+ (2603:10b6:208:235:cafe::56) by MN2PR20CA0054.outlook.office365.com
+ (2603:10b6:208:235::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29 via Frontend
+ Transport; Sat, 6 Jul 2024 00:32:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL02EPF0001A0FC.mail.protection.outlook.com (10.167.242.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7741.18 via Frontend Transport; Sat, 6 Jul 2024 00:32:43 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 5 Jul 2024
+ 17:32:27 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 5 Jul 2024
+ 17:32:26 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 5 Jul 2024 17:32:25 -0700
+Date: Fri, 5 Jul 2024 17:32:24 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Will Deacon <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v9 4/6] iommu/arm-smmu-v3: Add CS_NONE quirk for
+ CONFIG_TEGRA241_CMDQV
+Message-ID: <ZoiQmAszSQbP18lQ@Asurada-Nvidia>
+References: <cover.1718228494.git.nicolinc@nvidia.com>
+ <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
+ <20240702174307.GB4740@willie-the-truck>
+ <ZoREzIAqzyamQBWL@Asurada-Nvidia>
+ <20240702184942.GD5167@willie-the-truck>
+ <ZoRZP4k1A3G7nH9q@Asurada-Nvidia>
+ <ZoReq/kNi368x79q@Asurada-Nvidia>
+ <20240705152721.GA9485@willie-the-truck>
+ <Zog3IgdmYRU7VbJB@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH bpf-next v3 2/3] selftests/bpf: Add mptcp pm_nl_ctl link
-Content-Language: en-GB
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Geliang Tang <tanggeliang@kylinos.cn>,
- mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, Shuah Khan <shuah@kernel.org>
-References: <20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-0-ebdc2d494049@kernel.org>
- <20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-2-ebdc2d494049@kernel.org>
- <08f925cd-e267-4a6b-84b1-792515c4e199@kernel.org>
- <90e916e8-ec4e-447b-8ee6-eb247f3a72ad@linux.dev>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <90e916e8-ec4e-447b-8ee6-eb247f3a72ad@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Zog3IgdmYRU7VbJB@Asurada-Nvidia>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FC:EE_|DM4PR12MB8474:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34b6418e-61d1-4477-5696-08dc9d5326ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?K5Qs5BY1NVkg/P8LjAtvWw7Yw6EqHwST3QcQ/JnJsaH2ePcP/u4dNSVlZFBz?=
+ =?us-ascii?Q?2bnT4zTKFWHzmFzEvYqmZ/nhgVxuj+EJf1pcT0NsHThmePgVQtOuUY8paxgY?=
+ =?us-ascii?Q?z95s3s5QMg5ZgtLsNzFCH4Zj75eY0Viv27/NSqJEgdjTNbAIiqFrCRAISG7Z?=
+ =?us-ascii?Q?Tlr6lGBqes0ownrhM8KXi2qAOslJjUMj9gelcaKYERAnuWzyjnmFdb44tMym?=
+ =?us-ascii?Q?GOIPaQ9+WdrxGmjMgGiJoR5+8s7ynZey1rLizV3i1t4RwK13fHRe8dyO1iaY?=
+ =?us-ascii?Q?jlx1FJFFMjGL1xthzBoFjYOWdFn68i6wmZkUOFdz2G1bZIoYB+eQIwkYGaNk?=
+ =?us-ascii?Q?zhVzg6c/HoLSSIIKfUPRyRktGVjmgKws03cqCoSrilwMAlt8s41Mz+6TrTHs?=
+ =?us-ascii?Q?Xy2f/Rw1gmoTB+H1uFFcxXaTgyejp7MVi0zu1Hfqi2iEDw9Vp3Eli+Ib8PYG?=
+ =?us-ascii?Q?YTiiC0ONt6ZCVgpHlP3T3IJ1d5oi967u/vbARLrxrksSG4dvsOTHGGcFdxod?=
+ =?us-ascii?Q?sFHImd3fvzr3PjSrKTjmQbn+CqoGW9a0qPwfUJBWwr3NCB+0H8l6qT1K65gS?=
+ =?us-ascii?Q?TQnGVnmse95y1zgsqa9Bs5ymiWYNkh56UeVL0YdgIiJiAntW6DnjxJbIS5Mk?=
+ =?us-ascii?Q?F7MUzCVWGpxbp1/vYJnEe4OeS7aYBabQtFBakf0GDvOXYdt+TgEnNEQf0kYI?=
+ =?us-ascii?Q?ydzxgzN4RqoXa6gnKJWnPXv7W9JgyezqF3U4R9VFOs4zX/QtiYj2ftFXmnG9?=
+ =?us-ascii?Q?iW2ZyqZPBHtWTY/btBkhsDpwzDKDTlPIwKWry7kbwyAHyXtoouu8RBIM2OHD?=
+ =?us-ascii?Q?mKWfLffX+FWjJaaYkgtnXj2HPFH6Z8MoNvO2evJ6AW3b+GCRGXoSGmxBzsa3?=
+ =?us-ascii?Q?PF/mJSG395IbhKdy/8YdroKb02NNfa4A5uBn/gGBSTgMoZFakYebumjEbnyB?=
+ =?us-ascii?Q?ns3NXw9WABk+FjgmTPufH86XclMImFq9rTtTQnkG2SdudZd1q0wAkF7X1FoL?=
+ =?us-ascii?Q?Kx3kj2PBvg5zv5j1os2i1x14G+mZfmTYk2FqgC9e85rAywETTzuuew0uADDJ?=
+ =?us-ascii?Q?D3SuF2EL0IYCqdzFUey1X4buIqsAswEX9ATgkX5wDfUrKh2iTMlShzTPOjWP?=
+ =?us-ascii?Q?9vLl6E4wcpw4SnQQQBgUmOL+quM9tndcTQB1mhr2LyZ1udbKcOkk2Cf5zw3s?=
+ =?us-ascii?Q?Li9wYrVgWpBPTMARMt/YYwz98hG4eFrpDw5L4Ukx7Zl4CKeSaT2T+QHEXceV?=
+ =?us-ascii?Q?0G+ERhgaG4yjAm1OX5yi4I+po/N7A2buwAln2c352aYQx80p8JFrTsdUfwPZ?=
+ =?us-ascii?Q?mtqoo8Luy/XGY6kGWpVxgy2rhZPsASSgsZ8wZl9RFi5CwSnMXPxACFKeCNW1?=
+ =?us-ascii?Q?n2vPQLpaZ0laUy5kNgWt/eP4soNSSkH4OKWQohdT1RURAmnnlXLOii1J35Dz?=
+ =?us-ascii?Q?mWMic8+bCZNt9J1yqIFJ7uJG2/tQ41D1?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2024 00:32:43.8802
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34b6418e-61d1-4477-5696-08dc9d5326ef
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0FC.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8474
 
-Hi Martin,
-
-Thank you for your reply!
-
-On 06/07/2024 01:10, Martin KaFai Lau wrote:
-> On 7/4/24 3:48 AM, Matthieu Baerts wrote:
->>> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/
->>> selftests/bpf/Makefile
->>> index e0b3887b3d2d..204269d0b5b8 100644
->>> --- a/tools/testing/selftests/bpf/Makefile
->>> +++ b/tools/testing/selftests/bpf/Makefile
->>> @@ -144,7 +144,7 @@ TEST_GEN_PROGS_EXTENDED = test_skb_cgroup_id_user \
->>>       flow_dissector_load test_flow_dissector
->>> test_tcp_check_syncookie_user \
->>>       test_lirc_mode2_user xdping test_cpp runqslower bench
->>> bpf_testmod.ko \
->>>       xskxceiver xdp_redirect_multi xdp_synproxy veristat
->>> xdp_hw_metadata \
->>> -    xdp_features bpf_test_no_cfi.ko
->>> +    xdp_features bpf_test_no_cfi.ko mptcp_pm_nl_ctl
->> On the BPF CI, we have such errors:
->>
->>     mptcp_pm_nl_ctl.c:20:10: fatal error: 'linux/mptcp.h' file not found
->>       20 | #include "linux/mptcp.h"
->>          |          ^~~~~~~~~~~~~~~
->>
->> On my side, I don't have any issue, because the compiler uses the
->> mptcp.h file from the system: /usr/include/linux/mptcp.h
->>
->> I suppose that's not OK on the BPF CI, as it looks like it doesn't have
->> this file there, probably because it still uses Ubuntu 20.04 as base,
->> which doesn't include this file in the linux-libc-dev package.
->>
->> When I look at how this 'mptcp_pm_nl_ctl' tool -- and all the other
->> programs from that list -- is compiled (V=1), I see that the following
->> "-I" options are given:
->>
->>    -I${PWD}/tools/testing/selftests/bpf
->>    -I${BUILD}//tools/include
->>    -I${BUILD}/include/generated
->>    -I${PWD}/tools/lib
->>    -I${PWD}/tools/include
->>    -I${PWD}/tools/include/uapi
->>    -I${BUILD}/
->>
->> It will then not look at -I${PWD}/usr/include or the directory generated
->> with:
->>
->>    make headers_install INSTALL_HDR_PATH=(...)
+On Fri, Jul 05, 2024 at 11:10:47AM -0700, Nicolin Chen wrote:
+> Hi Will,
 > 
-> It sounds like the tools/testing/selftests/net/mptcp/Makefile is looking
-> at this include path, so it works?
-
-Yes it does work.
-
-> iiu the bpf/Makefile correctly, it has the bpftool "make" compiled and
-> installed at tools/testing/selftests/bpf/tools/sbin/. May be directly
-> compile the pm_nl_ctl by "make tools/testing/selftests/net/mptcp/"?
-
-That could be an alternative, I didn't know it would be OK to add such
-dependence, good idea.
-
->> I guess that's why people have duplicated files in 'tools/include/uapi',
->> but I also understood from Jakub that it is not a good idea to continue
->> to do so.
->>
->> What would be the best solution to avoid a copy? A symlink still looks
->> like a workaround.
->>
->> In the other selftests, KHDR_INCLUDES is used to be able to include the
->> path containing the UAPI headers. So if someone built the headers in a
+> On Fri, Jul 05, 2024 at 04:27:21PM +0100, Will Deacon wrote:
+> > On Tue, Jul 02, 2024 at 01:10:19PM -0700, Nicolin Chen wrote:
+> > > On Tue, Jul 02, 2024 at 12:47:14PM -0700, Nicolin Chen wrote:
+> > > > @@ -345,6 +345,11 @@ static void arm_smmu_cmdq_build_sync_cmd(u64 *cmd, struct arm_smmu_device *smmu,
+> > > >             FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH) |
+> > > >             FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
+> > > >
+> > > > +   if (cmdq->type == TEGRA241_VCMDQ) {
+> > > > +           cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_NONE);
+> > > > +           return;
+> > > > +   }
+> > > > +
+> > > >     if (!(smmu->options & ARM_SMMU_OPT_MSIPOLL)) {
+> > > >             cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
+> > > >             return;
+> > > > @@ -690,7 +695,8 @@ static int arm_smmu_cmdq_poll_until_sync(struct arm_smmu_device *smmu,
+> > > >                                     struct arm_smmu_cmdq *cmdq,
+> > > >                                     struct arm_smmu_ll_queue *llq)
+> > > >  {
+> > > > -   if (smmu->options & ARM_SMMU_OPT_MSIPOLL)
+> > > > +   if (smmu->options & ARM_SMMU_OPT_MSIPOLL &&
+> > > > +       cmdq->type != TEGRA241_VCMDQ) {
+> > > >             return __arm_smmu_cmdq_poll_until_msi(smmu, cmdq, llq);
+> > > >
+> > > > --------------------------------------------------------------
+> > > >
+> > > > Would you prefer this one? I feel CMDQ_QUIRK_SYNC_CS_NONE_ONLY
+> > > > is more general looking though..
+> > >
+> > > And we would need some additional lines of comments for the two
+> > > pieces above, explaining why TEGRA241_VCMDQ type needs the first
+> > > one while bypasses the second one. Again, it feels even worse :(
+> > 
+> > I hacked the code around a bit this afternoon. Please can you see if:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-nicolin/grace-vcmdq-wip
+> > 
+> > does roughly what you need?
 > 
-> Meaning KHDR_INCLUDES should be used and -I${PWD}/tools/include/uapi can
-> be retired?
+> I appreciate the patch. Yet, we cannot use IORT's model field.
+> This would need to go through IORT documentation, for A. And B,
+> we had a very long discussion with ARM (Robin was there) years
+> ago, and concluded that this CMDQV would not be a model in IORT
+> but a DSDT node as an extension. So, this is firm...
+> 
+> With that, we cannot avoid an unconditional hard-coding tegra
+> function call even if we switch to an impl design:
+> 
+> +static int acpi_smmu_impl_init(u32 model, struct arm_smmu_device *smmu)
+> +{
+> +	/*
+> +	 * unconditional go through ACPI table to detect if there is a tegra241
+> +	 * implementation that extends SMMU with a CMDQV. The probe() will fill
+> +	 * the smmu->impl pointer upon success. Otherwise, fall back to regular
+> +	 * SMMU CMDQ.
+> +	 */
+> +	tegra241_impl_acpi_probe(smmu);
+> +	return 0;
+> +}
+> 
+> As for arm_smmu_cmdq_needs_busy_polling, it doesn't really look
+> very optimal to me. But if you insist on having an smmu option,
+> we still have to take in the PATCH-3 in this series, enforcing
+> an arm_smmu_cmdq_build_sync_cmd() call in the IRQ handler too.
+> So, it would eventually look like [attachment].
 
-That's the idea, yes, for "userspace programs". I mean: for BPF programs
-requiring vmlinux.h (BPF_CFLAGS), I guess you will still need the bpf.h
-file from tools/include/uapi, no?
+Please ignore the attachment. Since we are adding arm_smmu_impl,
+I figure that we could add an arm_smmu_cmdq_impl too. There's an
+another small feature that I didn't implement in this v9, while
+being able to benefit from a cmdq impl now.
 
-> I haven't looked into the details. I quickly tried but it
-> fails in my environment.
+The impl can also hold a boolean busy_polling, so we won't need
+a global smmu option.
 
-Do you not have issues because some files have something like:
+I will send a new version asap, though I am not sure if we can
+still make it to this cycle that we hoped for :-/
 
-  #include <uapi/linux/(...).h>
-
-On my side, I had a working version using this patch:
-
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-> index 7c5827d20c2e..112f14d40852 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -37,7 +37,7 @@ CFLAGS += -g $(OPT_FLAGS) -rdynamic            \
->           -Wall -Werror -fno-omit-frame-pointer                  \
->           $(GENFLAGS) $(SAN_CFLAGS) $(LIBELF_CFLAGS)             \
->           -I$(CURDIR) -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR)   \
-> -         -I$(TOOLSINCDIR) -I$(APIDIR) -I$(OUTPUT)
-> +         -I$(TOOLSINCDIR) $(KHDR_INCLUDES) -I$(OUTPUT)
->  LDFLAGS += $(SAN_LDFLAGS)
->  LDLIBS += $(LIBELF_LIBS) -lz -lrt -lpthread
->  
-
-But only after having removed these extra 'uapi/':
-
-  $ git grep -l '<uapi/' -- tools/testing/selftests/bpf | \
-    xargs sed -i 's|#include <uapi/|#include <|g'
-
-Is it not OK for you like that?
-
-Note that I built the selftests using KHDR_INCLUDES=-I$INSTALL_HDR_PATH.
-
->> seperated directory -- INSTALL_HDR_PATH=(...) -- KHDR_INCLUDES can be
->> overridden to look there, instead of ${KERNEL_SRC}/usr/include. Would it
->> be OK to do that? Would it work for the CI without extra changes? Or do
->> you still prefer a copy/symlink to 'tools/include/uapi' instead?
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+Thanks
+Nicolin
 
