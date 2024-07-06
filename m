@@ -1,143 +1,125 @@
-Return-Path: <linux-kernel+bounces-243332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E459294BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 18:25:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C933E9294C6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 18:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4048282484
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:25:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FEAAB21864
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3212013B7A3;
-	Sat,  6 Jul 2024 16:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA00F13BC26;
+	Sat,  6 Jul 2024 16:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b="j+h/bjEw"
-Received: from smtp0-kfki.kfki.hu (smtp0-kfki.kfki.hu [148.6.0.49])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zqwa1LPe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5C623BE;
-	Sat,  6 Jul 2024 16:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBFDC8E1
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 16:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720283111; cv=none; b=KomttPB3MC5U3vYS2Hm9GEggE8OeH5VeL0YAE8/TH9umszwiKIDxEpkrRNDO99SjuVMrv9JZLjufAHtNi1m1csbYX30nE73i+Jl7TsBe39vQWq5ECSH79yLyVq2Kwew796XyU0hQ5+cER0nFhfh2ugOavCuXVRrAjbgFXZOPeqg=
+	t=1720284302; cv=none; b=sdfJ6sHWhTphmqJrPgV+IHtX7Fi9qt9nYwyTrP3Ll8TBya97bjRXhKzDWLBRjNZpAoMx0BeR+wmu6DXp2Up67HznExJoYMbwNP2++qtbNBQo0pSuQeN41u5nnn7ArZ5jEPerhu16kcSWKBaGxPZ7hIkDp+ZN+AAzWhv0ZWWIhXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720283111; c=relaxed/simple;
-	bh=yzuqB1ahBjHothxqzHppk9bd4Bz98MkN5vE8AgzGvBc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=FjDCwXT5EYBIaYujeykxZBS3UpD0pDqDMyZCy1PHTtTW58Hlbp8vMkpLNEXTZv3IqheAQnK/8hTQd7uXNZz6n3/CiJ+MVVOUP9duhdoigbgySPZZIFkVbv2IzBzaA3oAiG8QL9HYL2twqajh3jRwQ2SiGbNfVDNzt8XpwJIPOww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu; spf=pass smtp.mailfrom=blackhole.kfki.hu; dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b=j+h/bjEw; arc=none smtp.client-ip=148.6.0.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blackhole.kfki.hu
-Received: from localhost (localhost [127.0.0.1])
-	by smtp0.kfki.hu (Postfix) with ESMTP id 876C4674010C;
-	Sat,  6 Jul 2024 18:16:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	blackhole.kfki.hu; h=mime-version:references:message-id
-	:in-reply-to:from:from:date:date:received:received:received
-	:received; s=20151130; t=1720282574; x=1722096975; bh=jHJHkf31U+
-	8UwKd/kThgQslxJA+f8gODKZm1Ph5NdNg=; b=j+h/bjEwQZvrCxQYJb1ypJH3ls
-	x5RguauVNfRT/9mA8xiGuGLXCzjt0EUrRvrSVIgrgkGssPa//Obp/QCSkW85FiH5
-	CWf70AE0d9HyLkvycx5Bkn0D5lgXFCwoACV3BHj15ciomIh4Z8lSqdfQzd64HLfv
-	t+B0uNh6SFFGGO/qo=
-X-Virus-Scanned: Debian amavisd-new at smtp0.kfki.hu
-Received: from smtp0.kfki.hu ([127.0.0.1])
-	by localhost (smtp0.kfki.hu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP; Sat,  6 Jul 2024 18:16:14 +0200 (CEST)
-Received: from mentat.rmki.kfki.hu (77-234-64-135.pool.digikabel.hu [77.234.64.135])
-	(Authenticated sender: kadlecsik.jozsef@wigner.hu)
-	by smtp0.kfki.hu (Postfix) with ESMTPSA id 964EB6740107;
-	Sat,  6 Jul 2024 18:16:13 +0200 (CEST)
-Received: by mentat.rmki.kfki.hu (Postfix, from userid 1000)
-	id 36AEC408; Sat,  6 Jul 2024 18:16:13 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by mentat.rmki.kfki.hu (Postfix) with ESMTP id 2D2F8406;
-	Sat,  6 Jul 2024 18:16:13 +0200 (CEST)
-Date: Sat, 6 Jul 2024 18:16:13 +0200 (CEST)
-From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-To: Florian Westphal <fw@strlen.de>
-cc: yyxRoy <yyxroy22@gmail.com>, pablo@netfilter.org, 
-    gregkh@linuxfoundation.org, davem@davemloft.net, edumazet@google.com, 
-    kuba@kernel.org, pabeni@redhat.com, netfilter-devel@vger.kernel.org, 
-    coreteam@netfilter.org, netdev@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, yyxRoy <979093444@qq.com>
-Subject: Re: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE
- for in-window RSTs
-In-Reply-To: <20240705094333.GB30758@breakpoint.cc>
-Message-ID: <1173262c-a471-683f-9e00-abc8192c9ca8@blackhole.kfki.hu>
-References: <20240705040013.29860-1-979093444@qq.com> <20240705094333.GB30758@breakpoint.cc>
+	s=arc-20240116; t=1720284302; c=relaxed/simple;
+	bh=fcVi+G5fk6qpDDel7JfVpI22vwpPhkswMhck0/nEnic=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iC0+uY8fewDRmpaLvv9+C8sGySYDI3istesjK3mM6LDluTxu7pfkdpZXvXv4XTyEo80BrrJL+3vzl3ofmbTBoUMhK8hMoH8Cxgz+kA5CW/OD7HpUXEfOl5t592QVnCjs1oAdU4mygwdxPHdzXbs54/Jhr1sPXC3d3x9Vk+cJw34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zqwa1LPe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720284299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w+OayAN4XtlzDkGXDkDGBj96tW5MpqvXd9LH9Y0s11U=;
+	b=Zqwa1LPeKcXyT2erj6DXQx10NaRbSjJ+549btKYpGGUvx7cuI0xpdaZDLoeYaPugiRzVtq
+	/EBVzEUlSBpA/tjsNc6lFRo6I7hdHps6qALDUjRoqN75SwVyrunJtKY5AGju88y6CvgtTl
+	+vU1jfBKqtdSADF5Q24ikjbiTCuH/eY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-457-qRwndmYXNrWAn82VLeYBUg-1; Sat,
+ 06 Jul 2024 12:44:52 -0400
+X-MC-Unique: qRwndmYXNrWAn82VLeYBUg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8418219560B1;
+	Sat,  6 Jul 2024 16:44:50 +0000 (UTC)
+Received: from optiplex-lnx.redhat.com (unknown [10.22.9.99])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5A1701955F40;
+	Sat,  6 Jul 2024 16:44:47 +0000 (UTC)
+From: Rafael Aquini <aquini@redhat.com>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	aquini@redhat.com
+Subject: [PATCH v3 2/2] kbuild: rpm-pkg: introduce a simple changelog section for kernel.spec
+Date: Sat,  6 Jul 2024 12:44:23 -0400
+Message-ID: <20240706164423.1934390-1-aquini@redhat.com>
+In-Reply-To: <CAK7LNASzX29R38ApwByCO3kpiY6-L5UqHnP1Vs2WRBQM8z+kQw@mail.gmail.com>
+References: <CAK7LNASzX29R38ApwByCO3kpiY6-L5UqHnP1Vs2WRBQM8z+kQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-deepspam: dunno 31%
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, 5 Jul 2024, Florian Westphal wrote:
+Fix the following rpmbuild warning:
 
-> yyxRoy <yyxroy22@gmail.com> wrote:
-> > With previous commit https://github.com/torvalds/linux/commit/be0502a
-> > ("netfilter: conntrack: tcp: only close if RST matches exact sequence")
-> > to fight against TCP in-window reset attacks, current version of netfilter
-> > will keep the connection state in ESTABLISHED, but lower the timeout to
-> > that of CLOSE (10 seconds by default) for in-window TCP RSTs, and wait for
-> > the peer to send a challenge ack to restore the connection timeout
-> > (5 mins in tests).
-> > 
-> > However, malicious attackers can prevent incurring challenge ACKs by
-> > manipulating the TTL value of RSTs. The attacker can probe the TTL value
-> > between the NAT device and itself and send in-window RST packets with
-> > a TTL value to be decreased to 0 after arriving at the NAT device.
-> > This causes the packet to be dropped rather than forwarded to the
-> > internal client, thus preventing a challenge ACK from being triggered.
-> > As the window of the sequence number is quite large (bigger than 60,000
-> > in tests) and the sequence number is 16-bit, the attacker only needs to
-> > send nearly 60,000 RST packets with different sequence numbers
-> > (i.e., 1, 60001, 120001, and so on) and one of them will definitely
-> > fall within in the window.
-> > 
-> > Therefore we can't simply lower the connection timeout to 10 seconds
-> > (rather short) upon receiving in-window RSTs. With this patch, netfilter
-> > will lower the connection timeout to that of CLOSE only when it receives
-> > RSTs with exact sequence numbers (i.e., old_state != new_state).
-> 
-> This effectively ignores most RST packets, which will clog up the
-> conntrack table (established timeout is 5 days).
-> 
-> I don't think there is anything sensible that we can do here.
-> 
-> Also, one can send train with data packet + rst and we will hit
-> the immediate close conditional:
-> 
->    /* Check if rst is part of train, such as
->     *   foo:80 > bar:4379: P, 235946583:235946602(19) ack 42
->     *   foo:80 > bar:4379: R, 235946602:235946602(0)  ack 42
->     */
->     if (ct->proto.tcp.last_index == TCP_ACK_SET &&
->         ct->proto.tcp.last_dir == dir &&
->         seq == ct->proto.tcp.last_end)
->             break;
-> 
-> So even if we'd make this change it doesn't prevent remote induced
-> resets.
-> 
-> Conntrack cannot validate RSTs precisely due to lack of information,
-> only the endpoints can do this.
+  $ make srcrpm-pkg
+  ...
+  RPM build warnings:
+      source_date_epoch_from_changelog set but %changelog is missing
 
-I fully agree with Florian: conntrack plays the role of a middle box and 
-cannot absolutely know the right seq/ack numbers of the client/server 
-sides. Add NAT on top of that and there are a couple of ways to attack a 
-given traffic. I don't see a way by which the checkings/parameters could 
-be tightened without blocking real traffic.
+Signed-off-by: Rafael Aquini <aquini@redhat.com>
+---
+ scripts/package/mkspec | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/scripts/package/mkspec b/scripts/package/mkspec
+index ce201bfa8377..e45fdb12fbc7 100755
+--- a/scripts/package/mkspec
++++ b/scripts/package/mkspec
+@@ -28,3 +28,26 @@ cat<<EOF
+ EOF
  
-Best regards,
-Jozsef
+ cat "${srctree}/scripts/package/kernel.spec"
++
++# collect the user's name and email address for the changelog entry
++if [ "$(command -v git)" ]; then
++	name=$(git config user.name) || true
++	email=$(git config user.email) || true
++fi
++
++if [ ! "${name:+set}" ]; then
++	name=${KBUILD_BUILD_USER:-$(id -nu)}
++fi
++
++if [ ! "${email:+set}" ]; then
++	buildhost=${KBUILD_BUILD_HOST:-$(hostname -f 2>/dev/null || hostname)}
++	builduser=${KBUILD_BUILD_USER:-$(id -nu)}
++	email="${builduser}@${buildhost}"
++fi
++
++cat << EOF
++
++%changelog
++* $(LC_ALL=C; date +'%a %b %d %Y') ${name} <${email}> - ${KERNELRELEASE}
++- Custom built Linux kernel.
++EOF
 -- 
-E-mail  : kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
-PGP key : https://wigner.hu/~kadlec/pgp_public_key.txt
-Address : Wigner Research Centre for Physics
-          H-1525 Budapest 114, POB. 49, Hungary
+2.45.1
+
 
