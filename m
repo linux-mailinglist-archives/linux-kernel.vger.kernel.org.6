@@ -1,257 +1,174 @@
-Return-Path: <linux-kernel+bounces-243326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179D09294A1
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26FDA9294A9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F7E28375C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:42:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51BB282B60
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3182613AA42;
-	Sat,  6 Jul 2024 15:42:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEF513A87E;
+	Sat,  6 Jul 2024 15:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="EFm+RcmE";
+	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="feUqBK6f"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C16757E5
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 15:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720280556; cv=none; b=qGzP3/6qN/CPI+3Jj7PZ9hB2KdsfbakmJxoMBMzl+QhkWAjp9MuLM1n5qU8bZgwkhYXgdYDitmjomTMHMvp2KeHKKWrXxmy81pfKcygxY26P3LbV5AlR7XQGqmttjfjd1q3XH8ivt2Uh1lb+wgKRwWd4mW2yi4Pmd9N2FjN3ZxM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720280556; c=relaxed/simple;
-	bh=DWLUaXqYP1mg61bu9brJr6ahpMLrmmgFA0Hc/DO8xoQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H1Yw9m4Qlvu/mS119MpSr3r8VQjxkr1+8KpNuuf4HnSclk4nGKNtQ+imVkIChfvldYeLzajC/0dlm2jIuvyHyhdRwMCJSh9teiFi98PwocWzbLbp/21e/0sufK/5ZtR83UqZMdhcFiPmsmz+OKSDJty+WuzL05gsFmzRGusFpuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sQ7Y5-0006YD-MF; Sat, 06 Jul 2024 17:42:05 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sQ7Y2-007bN9-Sb; Sat, 06 Jul 2024 17:42:02 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sQ7Y2-0066nl-2c;
-	Sat, 06 Jul 2024 17:42:02 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Yuiko Oshino <yuiko.oshino@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: [PATCH net-next v3 1/1] net: phy: microchip: lan937x: add support for 100BaseTX PHY
-Date: Sat,  6 Jul 2024 17:42:01 +0200
-Message-Id: <20240706154201.1456098-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEBE168DA;
+	Sat,  6 Jul 2024 15:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720281340; cv=pass; b=I8LRgA4TFJ7YydrZKOEpt91pd0NkQhvLXGKcpkXVE9/STv4E7KokD0sRomJ/OmtMRnB7SHZ6yr4oNpr0FDqYY1dPnnwU3F4hvMCBzuyG5As2Dz8IOHCFB17xB8UCkxA3RA2LYwpmHMtlwoT3J+1YiwJn1FD2VTYVuuMUqrk0YYk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720281340; c=relaxed/simple;
+	bh=Nw528Q8aiXtTR/m5KO2A6eO3cpfoszO5p+Ec9Wh5CR8=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=WWTazU6NK0YBFMar46P/8LZBYMpJSChGL1Vlbc71X/jCiwZ0cKb3jSC/kLQ+MwpFOqEm5afFme2L6bv86EcJmZNU7SHU2dm8XIAf8yhT9EAdq0BomD3qAtVUDz+hi/JaW/yWJMO6+wDjIvExID3n++oLFV+8T7VNRadt5NlGQbA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=EFm+RcmE; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=feUqBK6f; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
+ARC-Seal: i=1; a=rsa-sha256; t=1720281272; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=oQu9NJpOTvlm5sqaOBtbtSjC0GmbqaTimIaErxL5er0Cy/y1doMRrYd8YHsasBDvv2
+    +bpa44fULXnM/OBjToO6pjSsNp47pPrDs/uh4c233WTsognGXbU/xHZf7ukrIjVP4BZg
+    RDNpuIgguQl5U4eickv0vIPFv1VdshLv9RL0fN9uR3l5fDQK0MxIIUihJhOfUtwJHYOI
+    LOTldA+PQuA7IatRdqAY4xy3njnQUQTmzZElydx1EoXLofTU1PxE6/GEIbXwWOHrdQsE
+    BmGRnxQUh9GGIYJYbpdt45g+5rGRr78G8DuOgkLjQOZBpyoec9SyqEO+6BWQLsnCweP2
+    eYqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1720281272;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:In-Reply-To:Cc:References:Message-Id:Date:Subject:From:Cc:Date:
+    From:Subject:Sender;
+    bh=V5YwiazAeEN4dRiis3W1yfsGHE0h2QF7Ju83ZXv0xIw=;
+    b=DyT6PHTmBeSgGXeyC302gvjLyhYtgE5QH2EwcjMehTllmqGQGALl7lc9l0KXPFuahz
+    CI4U/aIETe985yEzzLSZKBxiS5UD+owVLYCT9pk+ORt+c0+n0yk8jQV/Ck9rkIvmHqlN
+    c0K2AjvqxGPBzvBDX9TbPJVDJ8pGpi2RxISJutYNTxnVtNpsHyqEIVfK6sdyXSvNssNv
+    Jh8OH3qdqzaJqfgxEOeNFr/ypfASJCQ/HP2l1eFLRMEJuJQTXZqZqxYWCd02VfWTlWV6
+    ZFrnfP9PXE03ZSdknClLVLth+Kmj4yGMZVm4xdIuUxfK4g/CSYco3EW0Z56DtB8qTVMA
+    ZfmQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1720281272;
+    s=strato-dkim-0002; d=xenosoft.de;
+    h=To:In-Reply-To:Cc:References:Message-Id:Date:Subject:From:Cc:Date:
+    From:Subject:Sender;
+    bh=V5YwiazAeEN4dRiis3W1yfsGHE0h2QF7Ju83ZXv0xIw=;
+    b=EFm+RcmEv3Jb6IZRdOg09a00x/Od740fpnTkH8XS2mvx3dIdfIgtyl9OLqp+av91aq
+    AFPsmvHmMk9Q27zp6YWU08KM1I+eXCIz9b/BqEUtCf7iBaOjB7ua7y5S2OxEte2wwij5
+    fpTecZk7yKJXlgG7BpJlgTQl/7k0x+2RVGI5NnFCUTd76FeOvoGKayrASRIBiTCN67d3
+    7KkTan+cH7n4Jf8K+Z5cByWi7LE1b4f63NGtPYhfdluXG94oMzrPZ5euEUJABLQFmAQi
+    4tboeUrDnPivRy0+v+b8VGNq0TPKxmWEhUoH5ckaGWqG7ok35jm3XulmmNnthRcawkEW
+    xXBQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1720281272;
+    s=strato-dkim-0003; d=xenosoft.de;
+    h=To:In-Reply-To:Cc:References:Message-Id:Date:Subject:From:Cc:Date:
+    From:Subject:Sender;
+    bh=V5YwiazAeEN4dRiis3W1yfsGHE0h2QF7Ju83ZXv0xIw=;
+    b=feUqBK6fPUAJa9MwugIBfvjA9VqnYR2IcS/1VKpZyqPJcohTAspOxna4wuCDAPKPF4
+    HMtx926oKldM5qV6MgAA==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr6KxrfO5Oh7V7X5m3s36WCHpkK6jpK2wKbeiFIUzgLYe3d6gbw0o="
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 50.5.0 AUTH)
+    with ESMTPSA id e08389066FsVYVz
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Sat, 6 Jul 2024 17:54:31 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From: Christian Zigotzky <chzigotzky@xenosoft.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives after the of/irq updates 2024-05-29
+Date: Sat, 6 Jul 2024 17:54:20 +0200
+Message-Id: <8FDD860C-4DA4-46EF-BAD6-8F68837DA993@xenosoft.de>
+References: <aeaa9b78-5853-473e-b985-b10241e88e0d@xenosoft.de>
+Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com,
+ DTML <devicetree@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
+ Matthew Leaman <matthew@a-eon.biz>,
+ Darren Stevens <darren@stevens-zone.net>,
+ Christian Zigotzky <info@xenosoft.de>
+In-Reply-To: <aeaa9b78-5853-473e-b985-b10241e88e0d@xenosoft.de>
+To: Michael Ellerman <mpe@ellerman.id.au>, Marc Zyngier <maz@kernel.org>
+X-Mailer: iPhone Mail (21F90)
 
-Add support of 100BaseTX PHY build in to LAN9371 and LAN9372 switches.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
----
-changes v3:
-- add function comments
-- split read_status function
-- use (ret < 0) instead of (ret)
-changes v2:
-- move LAN937X_TX code from microchip_t1.c to microchip.c
-- add Reviewed-by tags
----
- drivers/net/phy/microchip.c | 126 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 125 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/microchip.c b/drivers/net/phy/microchip.c
-index 0b88635f4fbca..d3273bc0da4a1 100644
---- a/drivers/net/phy/microchip.c
-+++ b/drivers/net/phy/microchip.c
-@@ -12,8 +12,14 @@
- #include <linux/of.h>
- #include <dt-bindings/net/microchip-lan78xx.h>
- 
-+#define PHY_ID_LAN937X_TX			0x0007c190
-+
-+#define LAN937X_MODE_CTRL_STATUS_REG		0x11
-+#define LAN937X_AUTOMDIX_EN			BIT(7)
-+#define LAN937X_MDI_MODE			BIT(6)
-+
- #define DRIVER_AUTHOR	"WOOJUNG HUH <woojung.huh@microchip.com>"
--#define DRIVER_DESC	"Microchip LAN88XX PHY driver"
-+#define DRIVER_DESC	"Microchip LAN88XX/LAN937X TX PHY driver"
- 
- struct lan88xx_priv {
- 	int	chip_id;
-@@ -373,6 +379,115 @@ static void lan88xx_link_change_notify(struct phy_device *phydev)
- 	}
- }
- 
-+/**
-+ * lan937x_tx_read_mdix_status - Read the MDIX status for the LAN937x TX PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This function reads the MDIX status of the LAN937x TX PHY and sets the
-+ * mdix_ctrl and mdix fields of the phy_device structure accordingly.
-+ * Note that MDIX status is not supported in AUTO mode, and will be set
-+ * to invalid in such cases.
-+ *
-+ * Return: 0 on success, a negative error code on failure.
-+ */
-+static int lan937x_tx_read_mdix_status(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = phy_read(phydev, LAN937X_MODE_CTRL_STATUS_REG);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret & LAN937X_AUTOMDIX_EN) {
-+		phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
-+		/* MDI/MDIX status is unknown */
-+		phydev->mdix = ETH_TP_MDI_INVALID;
-+	} else if (ret & LAN937X_MDI_MODE) {
-+		phydev->mdix_ctrl = ETH_TP_MDI_X;
-+		phydev->mdix = ETH_TP_MDI_X;
-+	} else {
-+		phydev->mdix_ctrl = ETH_TP_MDI;
-+		phydev->mdix = ETH_TP_MDI;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * lan937x_tx_read_status - Read the status for the LAN937x TX PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This function reads the status of the LAN937x TX PHY and updates the
-+ * phy_device structure accordingly.
-+ *
-+ * Return: 0 on success, a negative error code on failure.
-+ */
-+static int lan937x_tx_read_status(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = genphy_read_status(phydev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return lan937x_tx_read_mdix_status(phydev);
-+}
-+
-+/**
-+ * lan937x_tx_set_mdix - Set the MDIX mode for the LAN937x TX PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This function configures the MDIX mode of the LAN937x TX PHY based on the
-+ * mdix_ctrl field of the phy_device structure. The MDIX mode can be set to
-+ * MDI (straight-through), MDIX (crossover), or AUTO (auto-MDIX). If the mode
-+ * is not recognized, it returns 0 without making any changes.
-+ *
-+ * Return: 0 on success, a negative error code on failure.
-+ */
-+static int lan937x_tx_set_mdix(struct phy_device *phydev)
-+{
-+	u16 val;
-+
-+	switch (phydev->mdix_ctrl) {
-+	case ETH_TP_MDI:
-+		val = 0;
-+		break;
-+	case ETH_TP_MDI_X:
-+		val = LAN937X_MDI_MODE;
-+		break;
-+	case ETH_TP_MDI_AUTO:
-+		val = LAN937X_AUTOMDIX_EN;
-+		break;
-+	default:
-+		return 0;
-+	}
-+
-+	return phy_modify(phydev, LAN937X_MODE_CTRL_STATUS_REG,
-+			  LAN937X_AUTOMDIX_EN | LAN937X_MDI_MODE, val);
-+}
-+
-+/**
-+ * lan937x_tx_config_aneg - Configure auto-negotiation and fixed modes for the
-+ *                          LAN937x TX PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This function configures the MDIX mode for the LAN937x TX PHY and then
-+ * proceeds to configure the auto-negotiation or fixed mode settings
-+ * based on the phy_device structure.
-+ *
-+ * Return: 0 on success, a negative error code on failure.
-+ */
-+static int lan937x_tx_config_aneg(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = lan937x_tx_set_mdix(phydev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return genphy_config_aneg(phydev);
-+}
-+
- static struct phy_driver microchip_phy_driver[] = {
- {
- 	.phy_id		= 0x0007c132,
-@@ -400,12 +515,21 @@ static struct phy_driver microchip_phy_driver[] = {
- 	.set_wol	= lan88xx_set_wol,
- 	.read_page	= lan88xx_read_page,
- 	.write_page	= lan88xx_write_page,
-+},
-+{
-+	PHY_ID_MATCH_MODEL(PHY_ID_LAN937X_TX),
-+	.name		= "Microchip LAN937x TX",
-+	.suspend	= genphy_suspend,
-+	.resume		= genphy_resume,
-+	.config_aneg	= lan937x_tx_config_aneg,
-+	.read_status	= lan937x_tx_read_status,
- } };
- 
- module_phy_driver(microchip_phy_driver);
- 
- static struct mdio_device_id __maybe_unused microchip_tbl[] = {
- 	{ 0x0007c132, 0xfffffff2 },
-+	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN937X_TX) },
- 	{ }
+On 6. Jul 2024, at 06:15, Christian Zigotzky wrote:
+
+Our tester has tested the second irq patch again and the kernel boots. We wi=
+ll test it again to be sure that it really works. ;-)
+
+Second irq patch:
+
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index 462375b293e47..c94203ce65bb3 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -81,7 +81,8 @@ EXPORT_SYMBOL_GPL(of_irq_find_parent);
+ /*
+  * These interrupt controllers abuse interrupt-map for unspeakable
+  * reasons and rely on the core code to *ignore* it (the drivers do
+- * their own parsing of the property).
++ * their own parsing of the property). The PAsemi entry covers a
++ * non-sensical interrupt-map that is better left ignored.
+  *
+  * If you think of adding to the list for something *new*, think
+  * again. There is a high chance that you will be sent back to the
+@@ -95,6 +96,7 @@ static const char * const of_irq_imap_abusers[] =3D {
+     "fsl,ls1043a-extirq",
+     "fsl,ls1088a-extirq",
+     "renesas,rza1-irqc",
++    "pasemi,rootbus",
+     NULL,
  };
- 
--- 
-2.39.2
+
+@@ -293,20 +295,8 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phan=
+dle_args *out_irq)
+             imaplen -=3D imap - oldimap;
+             pr_debug(" -> imaplen=3D%d\n", imaplen);
+         }
+-        if (!match) {
+-            if (intc) {
+-                /*
+-                 * The PASEMI Nemo is a known offender, so
+-                 * let's only warn for anyone else.
+-                 */
+-                WARN(!IS_ENABLED(CONFIG_PPC_PASEMI),
+-                     "%pOF interrupt-map failed, using interrupt-controller=
+\n",
+-                     ipar);
+-                return 0;
+-            }
+-
++        if (!match)
+             goto fail;
+-        }
+
+         /*
+          * Successfully parsed an interrupt-map translation; copy new
+
+-----
+
+Great news! Our tester has tested this second irq patch again and it boots.
+
+Link: https://forum.hyperion-entertainment.com/viewtopic.php?p=3D58632#p5863=
+2
+
+We will use this patch for the kernel 6.10-rc7.
+
+- - Christian=
 
 
