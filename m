@@ -1,195 +1,156 @@
-Return-Path: <linux-kernel+bounces-243119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46060929209
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:53:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52604929211
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBCC1C215FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E73282183
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949D54C3D0;
-	Sat,  6 Jul 2024 08:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54EC4D8A3;
+	Sat,  6 Jul 2024 08:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhSI9A16"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="HIRhDWVJ"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2074.outbound.protection.outlook.com [40.92.102.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0E022EF2
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 08:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720255998; cv=none; b=F9178B2exbYETtJz+Pz/At/g2BgZkdkrCgEv0XEx5m8B/Q3+CZvHEoh2KW4AaxRyq7zU5P0Mo22XyhttuADcye/i01HE64vYzXRZ4PFzu08ICyAr/qaFd1hH/D9OyEhzZ+clkQhH/XIRGxIIAgukk/mFXw1KllG4Q6El8gMWUNI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720255998; c=relaxed/simple;
-	bh=yGiFlwK+Xw/rrB/nlj2FnyAjmvDNJoEUvBd9S/bCJLI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a0IT9tbK1JyOIr9jq/i2ttbOgjKW+tNbdxQWT7tXSF9kmlqjFm4f9PU0VDr0QxAnJOp6BO1WOIDDTthEt+Ml2mWWaxm0K/A4rh83CJeXIVJRtfDqoOvl2U5bv+646+/JGUQ9kxO3NrxCloM03wpLmNo6Kbc+ITcK76xE2nLsbJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhSI9A16; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14BC4C4AF0B
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 08:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720255998;
-	bh=yGiFlwK+Xw/rrB/nlj2FnyAjmvDNJoEUvBd9S/bCJLI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BhSI9A16bLMe9YSe1H8wp1vwkos56XbslHfaDu7KDcAiTmXNU4R3ZAbHNvtVpysa5
-	 lshn5WQF0g1239KDsl+T0akFABftBdajYkpgJjd302E6KHVyDWycDCTkNFkTXRfMVq
-	 bMTU5u3hrcoifLJvrydu8f78TY0bpGFEwJo2YMu/cW4dZGtq7yxVQnopQzoYR2KsFF
-	 S8nojOJfTCz+98nXlblspfJKD3+vmDMiQz4hwAP/8UIGLDJRPhWgfrweKdet6vcRsF
-	 MnSrrTwmMOBODnU3lNTzRwYGKzxdB24xPtOYVpUICxoo1URDZWRYI9STWF2XaBZp/M
-	 MmU12dqImn25Q==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77e85cb9b4so9894366b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 01:53:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVz1JDHR3PeCBlKkYklUAsNyt4mgSQ4ZfNgXsHO85FVvnUMuoOrT+3nW9ZlWmS/BP1jw+FCxaSv7X403PejY2Rou39azCefUMdHR/J/
-X-Gm-Message-State: AOJu0Yzwsl+Q3LJLvlE60JI/45CVNJqd1VOJHln3rRSD7dJNv0679zqy
-	XCF5VhVcS0e9Ck2JcY0EkHshWjTfu2tAJoxdMtoFQO4+a/0eAUr5aEmwzBlKxodkxTx51B2omci
-	sPqn7S/LouTAqrHuv9YPoFjTjkj4voFsYzPP2
-X-Google-Smtp-Source: AGHT+IG6qm2LEVFPDInWtM8uLwi7DUyNLBYYlcj/M9Ftz1Yp5Blf0TQ/9w9jf2A+wl/ieaHJzuQUlPFaKvDk+XKulEg=
-X-Received: by 2002:a17:906:f1d0:b0:a77:deb2:8af8 with SMTP id
- a640c23a62f3a-a77deb2b909mr113538966b.77.1720255976572; Sat, 06 Jul 2024
- 01:52:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF29222EF2;
+	Sat,  6 Jul 2024 08:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720256172; cv=fail; b=B+7NrtzwHeCikHxMWBeqm+r4DpU3GoC7Zcm06hPbWSY9iZ3k52KtfyxFiaiO/Z2BQL2fSBvTiouxW1UdmnASKBAIiF/zqHqbACTaQZpVJtJWzAUTBnZjkXnyO8ve1jDykpTG5QUG868agjQuoqo76xVB9Sqf5wxUucVOWf6FuGg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720256172; c=relaxed/simple;
+	bh=3rn1boqzI9zsf5w0UTwRP/bFKB9pINv8F26QP4ydFkc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZecBoFvzTSkcaRsOqsPPU7sVdOOh8rTURYuwgGPYsruvMT1uj6nDRD8RCog8zKS+6pZDYXkO9L7YqRgLBh3f9tLO543kNwDKlaApIW29d81+gUPkD/tHPG4BChVDLgWIakJX8ecDjNi+Jdr93OVAx1+A7Qq4b5+HtPaK/xQosCw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=HIRhDWVJ; arc=fail smtp.client-ip=40.92.102.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GRcMV2ymQ7FuMZR/H5+ZPqKQS4hWv2Yd2Ss7/hA+yVyQr5HtwLPD2JyMX3l/J1vwD2r9QLsZTB/r6fFfyMUDBSR3izQm6lEMV/Nn1HH8syglmoXgbar3noOQRTuHO8j89kh5hAIKmiM6zub0V4LVFPCCt6Ao66oHoVNDhLzyuvDYbZPTamdhFJI2bzsRheyoh+EIRbYdZPtSicfgPpyMkF5Jz+oWRQJqC/BS5cdxeCGhKsdMShLTnJMmcW8Sr5nz5lwFCb75cqmAtWzQLUTLeMDZZSp4haIpwcyto6I29NmkwolyYMtJ7fZvBP8+KCb2xd+ikgIW8JtdPvcD9PlaUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3rn1boqzI9zsf5w0UTwRP/bFKB9pINv8F26QP4ydFkc=;
+ b=CmMyCozDlFqkCZEAltKXQ11TA61sAcX8TgyN3XPd41LK3SEESRH2zqzGahiIWlnTEO+7DeohcQiJWJPI0kdE5UGffDgT7rw42MM1BHykGsX3L+bEjp3TK+8Mz1qighrmogwBqUPv4jk6ckk1pIP32DXB2U3u+px6qjkE+TiDHATE/A2jUOLqaIgTKAxFmzsJmVVHunc+doDXoNkwu8h4uQuitZ9lBlZ5JgkJ7F5+bZhCokrghFG+84U6Qcnzw7RQvSk97wz5RbBes9J94b2eS7ljtSxjcB9lrOpcZXsAL9ncZOAfYHWK5sthAHvi2yCHXVY9tvvbpzSI014PwDxz5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3rn1boqzI9zsf5w0UTwRP/bFKB9pINv8F26QP4ydFkc=;
+ b=HIRhDWVJgLHVf+9I1wUNGZqWyhI24QESKandBdTZgklopGKXcqtLBbma7kCd1DEhV9rWasyD3rIUsF/vQNiJzDUGBNViRmGQfsZLZjejVXVNJW88sZK7TnyTUTO+rwFSBTg2WaKoYRbo0BpgoONdT92mmt+3n7FDRWt8vXhFY70sOLtECjd1/myYnne+eGjUiFyeLid2G0EMk67JC35oatJTRKsXeQBdWYTFzesmsHXMnUWie5L24IR03XTaLFLYGi9Hem+IDSF43Vw+Fn28SbkyQEX/Bk73LYX6dgbEZS2x92k05HNz9FPViyE9ycC7WKjpyUNXnkSrVXsMtw8C0w==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN0P287MB0229.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:e4::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7741.33; Sat, 6 Jul 2024 08:56:05 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7741.031; Sat, 6 Jul 2024
+ 08:56:05 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "oneukum@suse.com" <oneukum@suse.com>, "stern@rowland.harvard.edu"
+	<stern@rowland.harvard.edu>, "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "usb-storage@lists.one-eyed-alien.net"
+	<usb-storage@lists.one-eyed-alien.net>, Kerem Karabay <kekrby@gmail.com>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH] USB: core: add 'shutdown' callback to usb_driver
+Thread-Topic: [PATCH] USB: core: add 'shutdown' callback to usb_driver
+Thread-Index: AQHazs1tjVgoALhhKk+BKEcu0nmxn7HpWxaAgAAL54A=
+Date: Sat, 6 Jul 2024 08:56:05 +0000
+Message-ID: <C5231A8D-C529-4BAC-9E2D-32F00321A294@live.com>
+References: <7332D45F-9BD3-4D0E-A5AF-9845353415A9@live.com>
+ <2024070649-nuzzle-movable-f383@gregkh>
+In-Reply-To: <2024070649-nuzzle-movable-f383@gregkh>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn: [GPdUZXT4asxpZ3LfBHSn2wtR0HYZrIStz1K2baa59zewK8SE1SdoXoqmj0ci7Yls]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB0229:EE_
+x-ms-office365-filtering-correlation-id: d0140784-d1b8-4839-9011-08dc9d99787f
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|8060799006|19110799003|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ tdHD0PBtb/6VECBsjwqHtvzvyxAudiuU1Kc+CUdpIqm/6DrENUAHzsflVQU9pNjCBC9XUI60h4BKfM7P6yxylVp3n/luYp+CnmkgUMdB4DHXwPDbJVayKV7XrkKJxGlLUs9kmnDdfBFAKqO1gqn5l5mLOwpqXnqUAZ4yVe0y7C26fz0gN+4A+bk7yIFuyC7jj9Nt/NuAOdEoHJm8b6URVkyzb90QkBqEvp+BSdNDwzCPshWaExFx8RMknkgbqz9XIr6HJhHAGTFgCfovB9UGldS8Xsbq8Wd7LYfFI+ygdFZ+Jdwjd7pfTamb6bi4aK54fb7sLeidBYOBVZuZkQBjwKtp16VE1FG1prwA+0a63L2RFg6mvDSHBStCS/UCcp7jOoZOpzvu4ct89LZTPiSx03x0GkEslqRwKbXvcZpUOUI5FWDIZRjUlGnwmTVE6UtHSpDqzqTlGfd9KkphXoPp/jv+aE1PANVQSJv5VXaw9wI3CeMU3l7EjpyiU374O0i1UR+xjJLBhGoYnM6futj9HldWSZr+SfAsnv0J9ySDCVXyoc8uafZfH0dDPIGCSdeS3NxdYnahasFBB+a/uOPozY8FTj8Xt3egg9lgP7CMnPRosjHwAhCB5jq5RK8xyT7qgMxszfPwrwx8pWfOItdzFw==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?N3hyMmx2Z1YxMVFXenJpVHJnbElUUG5ldEY0MjN1TUFNU3NHRG4yK3FrQXE3?=
+ =?utf-8?B?YU1vVy8rWHYyODRRVXNPR0Rwb2hzRU5RdWxFbjBBRmJub2ppUUh1R0xtRW44?=
+ =?utf-8?B?U0RiNCtydkVYRnQzcHVYUDBsZUZ0ZWJNVHI3MmNYSnpvNmRuQWJsN3hvVWFF?=
+ =?utf-8?B?UUsvSW1UQnI4Uk9XT2ZNZ0FmUWZ3OTFaTGV1ZFRMV2JEdHo2b2wxcGtsQmdr?=
+ =?utf-8?B?YWR2QUZ6dVlzQ1JHSWR3dVA4by9VSHlraDBGUHNNei96R1dCQWJjQnFvNXpM?=
+ =?utf-8?B?K0NGVFBEcURyaFJBa1poeG5RWXJJMTZmMFhrZmVMYmZPbnNKMWEvNC94U3Bv?=
+ =?utf-8?B?QkdFYlBMQWxINFdDS0xyaGhIbC9nKzd0Y1QvUWpzczBjeHhwbkhiY1hYTVBo?=
+ =?utf-8?B?TjFzb0o2U0VPN3VGVHhvMDBxTTdDcFpKVHpJTk1BYTlyQlp3Wi82RTZpeDJS?=
+ =?utf-8?B?MVkyNVV0WW5xd21tY1hCSmhhWmRDenlqaGZPMC9zaGFWVitvWVZHb0lzMmta?=
+ =?utf-8?B?d25jd3RuZU1vL1VKMnZsdEI0V3RzS1R2aGluT0hOVE9OUm1aVm5GNkRTVWlJ?=
+ =?utf-8?B?MFdzVmlORXQvbFNudVdLTWRQRVVQUU1UaUtkWDV4MGJSYXV5Uk1yZnFpaDlH?=
+ =?utf-8?B?eEFVdGVJMG55ejl6bUJGRnFINjRBSExtMmRHNVo5TXdBMFptbll5NUV4b1NG?=
+ =?utf-8?B?bXliVDYzamI4QWowRURHWDlRQ0ZqMnRzd1Z4WFRQbi9vZU9qM1IvQmpkVnZN?=
+ =?utf-8?B?ZVJDbzZjZS9EQ0FjUUI1N3ZlSVBtWnhvUnhNQ2ZmaUtuZWV3UktYT2FIV3dr?=
+ =?utf-8?B?OEYzajRnRFpaT0hmb296NlV5bFFiVmliRHZSQWoyZTJUbFk3V0lxWHZjbUNO?=
+ =?utf-8?B?NUttSUQ1ZXN3K2lXb0FtYkZDN2JaY0lrM01DQ253Y0hhTzlaWUx5QXZRa2o3?=
+ =?utf-8?B?SWgrNE5iakoyZElJTDZqeGlPQjljeXZSeUJEVkZZQ2I5Y0NEdEEwVjAvTTFq?=
+ =?utf-8?B?bzE2THhneUNIMkhjT1U0WXFSZHhPOG1lQXRadWF4bGJCOWNHSGVPT0hta2dN?=
+ =?utf-8?B?MXozWWJ2MDI1djdoTGlQMmRPQWlpUkREN2tjVXBXckROZEZaUVY3YTRrblVC?=
+ =?utf-8?B?aElXUXJObFlrY1ozZ3NVL2p4TmJrQ21NcW1xb3VGbjZoZEZSVGhld3J0WlZk?=
+ =?utf-8?B?U0Fka0ZHNkdyNmNJSnhoUHRaYXNhSGR4TnVRNlBkWlB3aWVXUXprU2xCeDlG?=
+ =?utf-8?B?dnpKR2VwMys5M0xUWnYvM0lZQVEwU1lQYVJYb1pVTGhGK2p3L3VYVFVzeWI4?=
+ =?utf-8?B?RGNKN20vRC92dkg1Y1dBUFpxNDZEQStxRzhzQ0QydWJXU2hqcW1WbE1Scklw?=
+ =?utf-8?B?M3FBbVlGeFRFaEVRTnhOVk9JV2ZPalBrRUN5NmRtNVZvQ1Zob1JPeGpNMGRU?=
+ =?utf-8?B?dWlYVGFET2tkeDFVL3hFb0tVenE0TjkvRVF0cmFXMWc5d3ljZHMwcDVsMmJo?=
+ =?utf-8?B?T2JzWFZSKzdqbUJiU1lsTDQwaVE1T3MvV1FBSmozWUtyaHE3YjV3UUgxVEoz?=
+ =?utf-8?B?eGh4dCt3RFhrcWZ1MythTjE4aHUwQVp6ajkrNlhjS1Yycm0ySkF4TUhSUWJI?=
+ =?utf-8?B?eExsZXB3TEJvbGxVUjdNaEJPTlpJSlhzaHlSQjJRODRsZG9yRnB3azhyS2VY?=
+ =?utf-8?B?ZDN3c29MaHpoOTJWSWppZXByM1QxcExXSFhlVllOWkE1NGpWSUZvWmd4V0Y4?=
+ =?utf-8?Q?wQF5sztplswYFBn2GtGC7R9eqA1bRnXqF5na/S4?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B6BF59FDACC424478C0EA70C174B669A@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
-In-Reply-To: <20240704190137.696169-2-mic@digikod.net>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Sat, 6 Jul 2024 16:52:42 +0800
-X-Gmail-Original-Message-ID: <CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com>
-Message-ID: <CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0140784-d1b8-4839-9011-08dc9d99787f
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jul 2024 08:56:05.6904
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0229
 
-On Fri, Jul 5, 2024 at 3:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> allowed for execution.  The main use case is for script interpreters and
-> dynamic linkers to check execution permission according to the kernel's
-> security policy. Another use case is to add context to access logs e.g.,
-> which script (instead of interpreter) accessed a file.  As any
-> executable code, scripts could also use this check [1].
->
-
-Can you give a worked-out example of how this is useful?
-
-I assume the idea is that a program could open a file, then pass the
-fd to execveat() to get the kernel's idea of whether it's permissible
-to execute it.  And then the program would interpret the file, which
-is morally like executing it.  And there would be a big warning in the
-manpage that passing a *path* is subject to a TOCTOU race.
-
-This type of usage will do the wrong thing if LSM policy intends to
-lock down the task if the task were to actually exec the file.  I
-personally think this is a mis-design (let the program doing the
-exec-ing lock itself down, possibly by querying a policy, but having
-magic happen on exec seems likely to do the wrong thing more often
-that it does the wright thing), but that ship sailed a long time ago.
-
-So maybe what's actually needed is a rather different API: a way to
-check *and perform* the security transition for an exec without
-actually execing.  This would need to be done NO_NEW_PRIVS style for
-reasons that are hopefully obvious, but it would permit:
-
-fd =3D open(some script);
-if (do_exec_transition_without_exec(fd) !=3D 0)
-  return;  // don't actually do it
-
-// OK, we may have just lost privileges.  But that's okay, because we
-meant to do that.
-// Make sure we've munmapped anything sensitive and erased any secrets
-from memory,
-// and then interpret the script!
-
-I think this would actually be straightforward to implement in the
-kernel -- one would need to make sure that all the relevant
-no_new_privs checks are looking in the right place (as the task might
-not actually have no_new_privs set, but LSM_UNSAFE_NO_NEW_PRIVS would
-still be set), but I don't see any reason this would be
-insurmountable, nor do I expect there would be any fundamental
-problems.
-
-
-> This is different than faccessat(2) which only checks file access
-> rights, but not the full context e.g. mount point's noexec, stack limit,
-> and all potential LSM extra checks (e.g. argv, envp, credentials).
-> Since the use of AT_CHECK follows the exact kernel semantic as for a
-> real execution, user space gets the same error codes.
->
-> With the information that a script interpreter is about to interpret a
-> script, an LSM security policy can adjust caller's access rights or log
-> execution request as for native script execution (e.g. role transition).
-> This is possible thanks to the call to security_bprm_creds_for_exec().
->
-> Because LSMs may only change bprm's credentials, use of AT_CHECK with
-> current kernel code should not be a security issue (e.g. unexpected role
-> transition).  LSMs willing to update the caller's credential could now
-> do so when bprm->is_check is set.  Of course, such policy change should
-> be in line with the new user space code.
->
-> Because AT_CHECK is dedicated to user space interpreters, it doesn't
-> make sense for the kernel to parse the checked files, look for
-> interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
-> if the format is unknown.  Because of that, security_bprm_check() is
-> never called when AT_CHECK is used.
->
-> It should be noted that script interpreters cannot directly use
-> execveat(2) (without this new AT_CHECK flag) because this could lead to
-> unexpected behaviors e.g., `python script.sh` could lead to Bash being
-> executed to interpret the script.  Unlike the kernel, script
-> interpreters may just interpret the shebang as a simple comment, which
-> should not change for backward compatibility reasons.
->
-> Because scripts or libraries files might not currently have the
-> executable permission set, or because we might want specific users to be
-> allowed to run arbitrary scripts, the following patch provides a dynamic
-> configuration mechanism with the SECBIT_SHOULD_EXEC_CHECK and
-> SECBIT_SHOULD_EXEC_RESTRICT securebits.
-
-Can you explain what those bits do?  And why they're useful?
-
->
-> This is a redesign of the CLIP OS 4's O_MAYEXEC:
-> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d=
-6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> This patch has been used for more than a decade with customized script
-> interpreters.  Some examples can be found here:
-> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=3DO_MA=
-YEXEC
-
-This one at least returns an fd, so it looks less likely to get
-misused in a way that adds a TOCTOU race.
+DQpIaSBHcmVnDQoNCj4gT24gNiBKdWwgMjAyNCwgYXQgMTo0M+KAr1BNLCBncmVna2hAbGludXhm
+b3VuZGF0aW9uLm9yZyB3cm90ZToNCj4gDQo+IE9uIEZyaSwgSnVsIDA1LCAyMDI0IGF0IDExOjIx
+OjA2QU0gKzAwMDAsIEFkaXR5YSBHYXJnIHdyb3RlOg0KPj4gRnJvbTogS2VyZW0gS2FyYWJheSA8
+a2VrcmJ5QGdtYWlsLmNvbT4NCj4+IA0KPj4gVGhpcyBzaW1wbGlmaWVzIHJ1bm5pbmcgY29kZSBv
+biBzaHV0ZG93biBmb3IgVVNCIGRyaXZlcnMuDQo+PiANCj4gDQo+IFNvcnJ5LCBidXQgdGhpcyBk
+b2VzIG5vdCBleHBsYWluIHdoeSB0aGlzIGlzIG5lZWRlZCBhdCBhbGwgOigNCj4gDQo+IFdoZXJl
+IGRpZCB0aGlzIGNoYW5nZSBjb21lIGZyb20/ICBXaGF0IHByb2JsZW0gZG9lcyBpdCBzb2x2ZT8g
+IFdoeQ0KPiBzaG91bGQgd2UgdGFrZSBpdD8NCj4gDQoNCkN1cnJlbnRseSB0aGVyZSBpcyBubyBz
+dGFuZGFyZGl6ZWQgbWV0aG9kIGZvciBVU0IgZHJpdmVycyB0byBoYW5kbGUNCnNodXRkb3duIGV2
+ZW50cy4gVGhpcyBwYXRjaCBzaW1wbGlmaWVzIHJ1bm5pbmcgY29kZSBvbiBzaHV0ZG93biBmb3Ig
+VVNCDQpkZXZpY2VzIGJ5IGFkZGluZyBhIHNodXRkb3duIGNhbGxiYWNrIHRvIHVzYl9kcml2ZXIu
+IEl0IGFsc28gaW1wbGVtZW50cyB0aGUNCm5ldyBtZXRob2QgdG8gZXhpc3RpbmcgIlVTQiBBdHRh
+Y2hlZCBTQ1NJ4oCdIGRyaXZlciB0aGF0IHJlcXVpcmVkIHNodXRkb3duDQoNCklzIHRoaXMgZ29v
+ZCBlbm91Z2g/DQo+IEkgdGhpbmsgSSBrbm93IHRoZSBhbnN3ZXJzIHRvIHRoZXNlIHF1ZXN0aW9u
+cywgYnV0IHlvdSBuZWVkIHRvIGRvY3VtZW50DQo+IGl0IGhlcmUgYXMgdG8gd2h5IGl0IGlzIG5l
+ZWRlZCAocGxlYXNlIHJlYWQgdGhlIGtlcm5lbCBkb2N1bWVudGF0aW9uIGZvcg0KPiBob3cgdG8g
+d3JpdGUgYSBnb29kIGNoYW5nZWxvZyB0ZXh0IGFuZCBzdWJqZWN0IGxpbmUuKQ0KDQpUaGUgc3Vi
+amVjdCBsb29rcyBmaW5lIHRvIG1lLiBJZiB5b3UgdGhpbmsgaXQgY2FuIGJlIGltcHJvdmVkLCBz
+dWdnZXN0aW9ucyBzaGFsbCBiZSBhcHByZWNpYXRlZC4NCg0KVGhhbmtzDQpBZGl0eWENCg0K
 
