@@ -1,122 +1,109 @@
-Return-Path: <linux-kernel+bounces-243276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED5AB9293E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:47:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9029293EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A611B283240
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:47:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D9A1B22105
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A2B132464;
-	Sat,  6 Jul 2024 13:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A2071B3A;
+	Sat,  6 Jul 2024 13:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fnpFjxMm"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AraKd74W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A2817722;
-	Sat,  6 Jul 2024 13:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256CF4C3D0
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 13:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720273646; cv=none; b=CYhZ44x624/8E356k+NgBD3PXeddqsJthPKG8omyYueyW3f9AWgjGVWeGiH0ycEzSviGWCwRMw9wy3DfFSph2Rb7YA24topkh+z3PQAOflm1rjy1CkhgnWpsGC2Fsif09BqBm+Id+HBgjAzL8nqKLp4UcEr6W9thtOk4aNOSX5Q=
+	t=1720273791; cv=none; b=FU2yX+sfJ10ElYWdMoRTvMpIx72n+bAxliXlhapIT+XbPUjnrzLOoTkrdvXZ65sBQi84wjCjW0YHuMewxi2V1tqFmitybFcmu5N6eOg6fxKGFgdhZdkCjcbryVfCeKeclkmO+EOjrj38aU/1LzzUgBKIWB2GWzj1ZKhAjbP8YlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720273646; c=relaxed/simple;
-	bh=gKb+fOdqmF+Ow9L9QOaxxCq+3QMp16IRzNpmu/XxDQU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=a7bU9x5R+73OtOuX4EkogoQgf3VUSKQogK+ex+gc3sqhF6KRu0zuyi2ADhpBlfRv6CaMcQDfeEplzkUI7XhQQgwI7NOoDKji0hf6b4Vb8qa1wVuH6GMSv/Wu5gb90u/s2nmVW2C2vSdltVH7fYpyFqfUNTmsJ5FDBgnqwu3isX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fnpFjxMm; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720273629; x=1720878429; i=markus.elfring@web.de;
-	bh=MByzy7Ml2oLP3hM4rp6O/TDGgtDc1cSqYNTvBixN6dc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=fnpFjxMmy2tXUu/pPUp91fzsHHdSUiOIYCubMqIdYpUNbtQ1opSobH7aSx6YUHxT
-	 QYoQW285Yu1GrUbmeh8VgTngC94IOfD0ScsI504ThGEJ7mjWkWijJl5kyD09PbHGp
-	 f+4nYB72VI9xhyYRxIaZwQZINfyvL+37rV0xwL+MshZsB/i6LG7Dlvkfka/mFXGVb
-	 4jmaolh5XR5/RHMVVIKnF0SN2mDvhGhPb/3P+k3CqGxsPQrE6NNXrdNhlzX5znaQV
-	 Oha8BhkQEkG03Z8pens6jkOUKM8ldDRAtFmoLXRjwUgMfQgHjeNiYdFY5LhtCWhPd
-	 Zqp8lN/AHWXNpVRQyQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLifq-1shcbc43Q8-00XEGs; Sat, 06
- Jul 2024 15:47:09 +0200
-Message-ID: <4ffe1d11-8442-40fc-bb93-581e9d1c93ab@web.de>
-Date: Sat, 6 Jul 2024 15:47:02 +0200
+	s=arc-20240116; t=1720273791; c=relaxed/simple;
+	bh=WwtWGqd3b7WM+nXM9jFiZlnjseqVlB8/RHiBNoQSNnU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IKX36ZAk2Zrw0as2Cu3Qq1Upu1z9lc31TZUyaMV5q9Bm3jEH6qaluk9HVA0lpwS2QOk3NR/FnEHAwrMTwLdTdV9oOB4XNRPn49hYkDUiIYuEJsHEX9TylwP5AbfTXKuaIJAAK4rbKx8XCnYvgoA/Q0paPRLCnB/vVq5dKV3RSEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AraKd74W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E81ABC4AF0B
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 13:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720273790;
+	bh=WwtWGqd3b7WM+nXM9jFiZlnjseqVlB8/RHiBNoQSNnU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AraKd74WGwCrXja+sF7XhgkgSatRVC7niFdoj1uE44TAPqjk3GA9dfBZLzH1LRGmS
+	 dPk2/zQTTjQ+k0sR71HET5EJ2k6em3sBbdaO6vr+H9pCO1C42TNv3gE6yRaejpPioN
+	 DqaYh0aIYS8pw+DsroFQDobC2O5Xq8MgI++Tp8pH5lO9aPF9zuXdS+te8M1aigJAuH
+	 CDondeIMCWYy/QS5Zf1JUjF5/c5XI1svdUU82tKiAEYNoEAvpMwqtpHmDLCvCTBSz1
+	 /0OhiE5u2gtrQPI51nT3yKs9tV/v2g/zHrAEgsos0LsjSmBsoxpS1+pQhGebppX1JY
+	 zY01yZgfr3ksQ==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77b550128dso313514066b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 06:49:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0e9QKuYQ6er39k0H9K2twpF44irCc3qlwGcBN2KW2u0T5SG3KfBvZ9w5fKzUMAg/hZUqX17bADNJcROEbqYKW+O1PMoDEsg0vPj3J
+X-Gm-Message-State: AOJu0Yy8sFur2uAh5BkmxqzKP6TCScIIIU8Sk4DtL7utuWkHccyGjqdB
+	A9kEz3eaaIvJ74zvE2aY/h3nlgXOj5YGhXltjBCUTRnMcGbCpsVEV1khQPqc+nFAcRqBdj0Azmc
+	B5JNqQtij690IhFx+kykS6lEUn1I=
+X-Google-Smtp-Source: AGHT+IESGgckyWRKHZbg0sq8z9FEAOZ/7LM0DfdCM/NpkuRRuuAsW+3xXiTKLmrRqbU3XT7zJUed4tVMreQO5TRl/aA=
+X-Received: by 2002:a17:906:aed1:b0:a77:b01b:f949 with SMTP id
+ a640c23a62f3a-a77ba48cfc6mr558366566b.35.1720273789487; Sat, 06 Jul 2024
+ 06:49:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Aleksandr Mishin <amishin@t-argos.ru>, linux-acpi@vger.kernel.org,
- lvc-project@linuxtesting.org, Rajmohan Mani <rajmohan.mani@intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
- Len Brown <lenb@kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20240705113434.17249-1-amishin@t-argos.ru>
-Subject: Re: [PATCH] ACPI / PMIC: Remove unneeded check in
- tps68470_pmic_opregion_probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240705113434.17249-1-amishin@t-argos.ru>
-Content-Type: text/plain; charset=UTF-8
+References: <20240706073858.161035-1-xry111@xry111.site> <20240706073858.161035-2-xry111@xry111.site>
+ <CAAhV-H6K7SXtXpv9Udo8md0sdn+40TGPTCdSPeM1HmbJqrhboQ@mail.gmail.com> <cb3c2038b97689371226c467befdbf9e13113744.camel@xry111.site>
+In-Reply-To: <cb3c2038b97689371226c467befdbf9e13113744.camel@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 6 Jul 2024 21:49:40 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4CQMmrLRv=vi8N63p2NXbdozpDakJLia8soFvVohCbqQ@mail.gmail.com>
+Message-ID: <CAAhV-H4CQMmrLRv=vi8N63p2NXbdozpDakJLia8soFvVohCbqQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] LoongArch: Add support for relocating the kernel with
+ RELR relocation
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: WANG Xuerui <kernel@xen0n.name>, Jinyang He <hejinyang@loongson.cn>, 
+	Youling Tang <tangyouling@kylinos.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Fangrui Song <maskray@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2cul2SYca5S9Qs6D+C4Qi/0pJNP9zIDAziQ2WAPO29p2UDgE49M
- 4fd7xKzA0AeKp5wnWl3LVRLzXfAocDoqpJ6+GgvscAJoAT2A830Tn4OKoxuKZjw4wKyxN33
- l+cT0xtm5wdWf0T7i3vwzBaaFKO/7YAHqoz24gPaurWyzNN1L10W/x2X9ONhTEmpEE3IyFb
- sGoAjkcf6R8mgF1zs/mTw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3X6Ayt8S5eE=;xTS0IF0OTLenoH1/SApCXE9Y5Aq
- PXtSPqqjpUcxjYrm34GXgf0eufpOeTXkUflYUKasosvHwBSN9kB3HGC2dC7sSiSjy/EkMUG0k
- soMNY7UZNc+SC7LQVz0vNpVF10/8QDoEiGy7dt1/NucJcCu0JZ6/X5/at+eeAhanmaJbWc79n
- 32pXiN0zprJ8XZK40kXSDMCGzH0tzRR/P6yEmXKzNnFPM2Kkf4CiAm9j0bDHHNj5gv5OEQbUT
- tHDMc1QupM5MvCU6jSTVsSHIddPyPiUXN/gvZuyiZQdDCdivrVwfZvEzQUy3Q28ota91YlGkZ
- tZL76VTFPrxn2OR77q6fNvNFMzh4whsAXtmeCqmyzuKFdD5ffQCF89T18oGEZUYjSVV00XnRT
- brYkCp+otppvBeqnRuDtUcvDquLbTZp39lcZckSPiPhdxiUoQf30PJAE3qg2GWKJ4oboLHIAe
- eOXhb5OTQywu/GJIcZ8UwrjGtwB+gFbOvMjXWfs8/AVtz6ZDIzvfGRDXA1PWASwSIvlqfbYK2
- mrXka99jGmTx4WxbvM4qWog6Aw5JyP+OTdWtGp/AkzzpTa81Lng0Qhhjryw99uup/a2S8ymVl
- R8XyIXta+8zU+QDgXskPG440UbOnO25nwuhI8raqDH87otwpi4y2VnaVQsJucqrXXfilo11cI
- hez1Qg5TgkUjRqdS8gcpzmabmtyDRK+Ubm0yVylMRAmAfLvqIXezNk9pZ+8y/IkMV1MgL8VeN
- z2C77iwSleXUe6ApZH92ua1zQhVQd3eb5Lrw58ynrUEfuMd14MHsgdK5liXPcIgm4O/S45AQv
- RKhnXQQqC75zx49rK1HQrueO5NEGkF44J4mQcNs+ODJWc=
 
-> In tps68470_pmic_opregion_probe() pointer 'dev' is compared to NULL whic=
-h
-> is useless.
-
-            because =E2=80=A6?
-
-
-> Fix this issue by removing unneeded check.
-
-Another wording suggestion:
-  Thus remove a redundant check (and =E2=80=A6?).
-
-
-=E2=80=A6
-> +++ b/drivers/acpi/pmic/tps68470_pmic.c
-> @@ -376,7 +376,7 @@ static int tps68470_pmic_opregion_probe(struct platf=
-orm_device *pdev)
->  	struct tps68470_pmic_opregion *opregion;
->  	acpi_status status;
+On Sat, Jul 6, 2024 at 6:34=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrote=
+:
 >
-> -	if (!dev || !tps68470_regmap) {
-> +	if (!tps68470_regmap) {
->  		dev_warn(dev, "dev or regmap is NULL\n");
-=E2=80=A6
+> On Sat, 2024-07-06 at 18:29 +0800, Huacai Chen wrote:
+>
+> /* snip */
+>
+> > > diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> > > index ddc042895d01..03b3ef5edd24 100644
+> > > --- a/arch/loongarch/Kconfig
+> > > +++ b/arch/loongarch/Kconfig
+> > > @@ -607,6 +607,7 @@ config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+> > >
+> > >  config RELOCATABLE
+> > >         bool "Relocatable kernel"
+> > > +       select ARCH_HAS_RELR
+> > Why is this selection under RELOCATABLE? I know ARM64 is the same, but
+> > why?
+>
+> Because if we just select it in CONFIG_LOONGARCH instead of
+> CONFIG_RELOCATABLE, the users who have disabled CONFIG_RELOCATABLE will
+> still see the entry for RELR in their configuration interface.  And
+> they'll ask "hey what's this for?  Why my kernel needs relocation?"
+RELR is not a similar conception to RELA, it is only used for
+relocatable kernel?
 
-Would you like to adjust the passed string literal accordingly?
+Huacai
 
-Regards,
-Markus
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
 
