@@ -1,122 +1,191 @@
-Return-Path: <linux-kernel+bounces-243330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571CA9294B3
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 18:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CE69294B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 18:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD37C1F22DDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C521C21802
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C50613A242;
-	Sat,  6 Jul 2024 16:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C60313BAD7;
+	Sat,  6 Jul 2024 16:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Pkn/esCw"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZlEYqkc"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56F228F0;
-	Sat,  6 Jul 2024 16:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD8D6A357;
+	Sat,  6 Jul 2024 16:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720282317; cv=none; b=ZYDmwmhGbYEptH0R6glk7HYxOPgc9gOAQ7p2nB03U8AUoTsTEkJgdqoEuG3XRwe37ZVjt8QmVRlEoJL+OLoV8u4ffQgD1RX1kMYLX3CaxMS6Q0aqOfhiutuPfJ78Qk0PbMOueJqYus/DT+C/kgVSzs9UmKNa+1UHrwsT0FLVI5c=
+	t=1720282318; cv=none; b=F2am5vpgaygLT+47aimfwO4kpRo6wkoLuliB+3KiPY1bFQvzVc8kTBKiWfPumBWYujutU9oCnzeg5WDESzaJYLiFb53lFijvOf0lt4Ygre9avSn2QSRv4KSDM355CExEgTC4R0Cfi26X9L0oC3hWBh1wsddDFzhCqyO6WHKuEZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720282317; c=relaxed/simple;
-	bh=oXGlhzAtXvs8UnbMxs5EasAUkT8aokI6Ny/VAaGrsMs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Uh5CgH8FmWqXy522bNhBEf/OiX6YsXe3hIKbBtg0RB+kCIJI7gYbLVZTH+mfY+hywvX0HP4mDMkEaf2X5I7JCNkahRjePXvh0EjOGh0MBIzg8V5dQhvkfBzY+Hb0m6xixJf4rhO+MwJhNpuJFEic6s/TXmphKIxYDvENFEjCpv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Pkn/esCw; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720282275; x=1720887075; i=markus.elfring@web.de;
-	bh=wSNc5OJvA/+t3BvPmEDcBu11ZZasbicaUTEg3PNG+Ps=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Pkn/esCwkeFzd0Y2BdtCpxzZmmZk4D5mgTxmonMerIe3SizHRtPXXfgEw14SRAzE
-	 /fWM+l5iTAMQU/YBrWLDNhBKE64WOsJGZEWly5mSIzLFSHZjJ4nc6OpsbEyFQb5H/
-	 YuqHwRg1Z0bU+zaDeNOVuNVMRzVYvP+O0OllZclVRZFgfsthcVEXKjLt2p1eHD5sK
-	 9p3OhI3yHNlXleYq7M3eY1IgkcvCvSSEDms0p1/nGpXQ6k2dDCUY9c0PZFbB++e75
-	 NQ6yUVCKC6a+LzlIDJP3QRqj2bJIX/gX6IVONBd8cPY9eHTHplI0TTx9MKM8tvMir
-	 LyizqUFtKB5YuEYZyQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdO9K-1rr4Ed0zAW-00kW11; Sat, 06
- Jul 2024 18:11:15 +0200
-Message-ID: <3c5e38e3-79fe-4989-89ca-f128b0d713cd@web.de>
-Date: Sat, 6 Jul 2024 18:11:10 +0200
+	s=arc-20240116; t=1720282318; c=relaxed/simple;
+	bh=hx7hu1VppO7Lceczk4LBvMp0grQA3KyUAjS2JOTWiHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=D2K6YAT0GocMyNnbQnbwmEnuh0qdaFSDut0fViUWIdnLwDWZBZb+BTV8AKuZ/gjx6lyXQ1UxF4yA+HJRDgMGB17pFExdZDOaTPbyuoE98F8jswy2jJKXyuzprWBDCLeGYaE2I1KUW6AHd/moO23K3oIKvcUEk1FUpiEaDTU0kWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZlEYqkc; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42641dec7c3so15905875e9.0;
+        Sat, 06 Jul 2024 09:11:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720282315; x=1720887115; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BTB8Xon6KPoe3db5OQQTjTGvBHSB1yuS1b9hsPygqLE=;
+        b=gZlEYqkcYrpvphzL369WxBi7PuPiAudY5lTNaiok9I5xtdyTdUUUrOYJsNRPai1Iuq
+         d3GxJbqoL50vaGq6TmtbaF51vLb2DraqiQdiwdwFnhSCs0GqY7WT1i0bV8dXwXQ0Gg6d
+         +xPIeOBg6LmKGYQYQyerNxiWJYKGimAcup3iPeNMyqyU1RAzpkD7WED/u5tb1vGzKjeL
+         F3gb9JsE+ZJ3zZqGKOI2w8Pmdz3a0X1t0WZmhP194jBVje4vq+thdbDuEMcfUKzv8Jnt
+         yROtQt/WEYH2MNwVW1SsBc7ZTSeXqlSOxlhan9xzLHDbxQNDWqetEOPi/cEQi8EN49aT
+         2yAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720282315; x=1720887115;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BTB8Xon6KPoe3db5OQQTjTGvBHSB1yuS1b9hsPygqLE=;
+        b=BqBVDTdu4ig7JwVfNehCtTdOFXY+MGUFlcVlUfHYnpdW/KMf8hBnAAme3i4DNu+fjV
+         3yJrGY6r3K0JIi0SCD2XpoPRT+IiDlhe/JA0TBEJ159PjD+QQntOfxsDfvAR4LOHOlDj
+         nHgs/eQT9a2KgLQU90eG1k9/xdyBynH9pmb2KVlxOPmtXiv7zFxnODQ9gTYBic3rVR4x
+         96rN8Ja19qHiN+/euECr1VyQyasvG9jBVdYD2D0mAIqvM4bRAzIDWWWLyvERVNZdyf5y
+         TErjEHjmulfCQSbJl3QXAJnFQVdMUTKCU5LBL97a9j8lh4c9l4zg6TSIPJ1/t7QMv8f4
+         T8lA==
+X-Forwarded-Encrypted: i=1; AJvYcCVISFRjaRehszfpqFFKNbKoLDaPBErvr3q1SEFSnF3Fbq2tpfCzzddUxUe1gRlBRZRdCt2fXOHwhp7IJrXWoRWZpES9RYw2hhdoxVTOcjBjQH9u/1GWtC9PH8zh7swWqTNv+9646D2/Dw==
+X-Gm-Message-State: AOJu0Yy3zpYECLPM4N92QNB4N8EyGpIKD+yG2xbM1fFo9ukMJXek4r1A
+	59lJgMEDlUBhGWf8bQ7iUGIZ8AEXTVL0J8h7qaM/DBJ4qVEJP2H9
+X-Google-Smtp-Source: AGHT+IE8na9QX/RTxi1AT0cEX8PHZn2T/lH8IJzOK6lmzb1OjJrAo99AnmrH8u/7T4uTpxPsTi1ZfA==
+X-Received: by 2002:a5d:658e:0:b0:367:880f:5d4e with SMTP id ffacd0b85a97d-3679dd34ca9mr5207671f8f.39.1720282314870;
+        Sat, 06 Jul 2024 09:11:54 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a043a16sm23911430f8f.0.2024.07.06.09.11.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Jul 2024 09:11:54 -0700 (PDT)
+Date: Sat, 6 Jul 2024 18:11:52 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: rtc: sprd,sc2731-rtc: convert to YAML
+Message-ID: <ZolsyEC8eeJWNIb6@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Aleksandr Mishin <amishin@t-argos.ru>, linux-remoteproc@vger.kernel.org,
- lvc-project@linuxtesting.org, Siddharth Gupta <sidgup@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Rishabh Bhatnagar <rishabhb@codeaurora.org>
-References: <20240705160252.9628-1-amishin@t-argos.ru>
-Subject: Re: [PATCH] remoteproc: Remove unneeded check in elf_strtbl_add()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240705160252.9628-1-amishin@t-argos.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JhyjISt2ccmqmH/76Kuihdc+OpdTt9zOLM4PJD9Gsqb6syXcePa
- JHFWleSjhCqQIocirqtQ+U4zPFUQlzSzhcfm2EHGzHwhRaK1UgxjGqhJcAnjg2lOUCcm11E
- +OIkZif/QzVRpk0gP1cgeRaN69j8i1x0mdhVVWedn2JoHhfI/4lAINBOX2bIxxAfbyNBLUs
- 67d9ihVyNsG7JyU8YamyQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bZBNrj9zPG0=;v2BQriIfYu1OeqR0HRJPCtppiVF
- Q+CvVn7/Hqs48ZqN4WGNWWL/tnz/T0pLCrqlz37mdQ43Pk3mfFh8tVbAVquQ9qrqQQZF/nhYL
- ILRri+Zd9HrhxyrIVBuL4v3aY8Rld3LHH/HISHSBSYE9BNyfSbqi76KbvjS/8xIxnVDstE9Zq
- Rwnt+wYMHsOh+5szX+1GqOF9Q0KVELEw0svPjPFp38on1BfgKvgwW+kU2QaPLdkeZ6ESFkiLy
- NfVB65a6wqeCqTEjt2wxKeEQlsRgg+kxoPp9u+OYMckJUMpkcFBSctJGHr+K0XI3QSHI13Q/G
- waA9QMQI9P4C9gK+/oUkzQR1I0C9kqpcPyulCLKWWv1Fi5SvD/XXV1TJyIthwUiNVEJImx1Ng
- JjxZngqlijqwQX2nMGO9zTzI5WZfHY6DkemdDXNCyDAN0VQfYw/x7Nasf+/Cb0RpeVb6SC16D
- p6vZxUaUPKb02DHcN7hkjQfjvJK6aYt3nLPD5reDrcPSDMtnwF0vsCp27qEhHOsNxi2CpkG3f
- XHN7TmgxH6KVVTWVVF+LogRFEHcnEjKvoKRxSmH+Y70bnpoFZ/2Y6kBZ2huxENT0kdGJ8k6Sn
- iflVIV0VeE+Jf4zeuJxA1eN2zcdlagbC/HgPdNYQTg/LMH193507Bq//AqKF5qGaB0NXaZqcc
- o6FdYB4yQoWYMNt8z32EouAQcjKAwBlROOj3CTkWxoQwDA/Ef4HKs7dKgKGAWiNFOkfLP6Asu
- PU61kkNc3UsmEUDsaju+YNn6bXfM/dBfwPx6d6dQwW+8EQb0B3hJqxcxKvE4/xUNO5PGEp66W
- cFy+Upje6hboGeMbLe/kffVr50G8C2lbl7mR72xdKfqM4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-=E2=80=A6
-> useless.
+Convert the Spreadtrum SC2731 RTC bindings to DT schema.
+Rename file to match compatible.
 
-         because =E2=80=A6?
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+ .../bindings/rtc/sprd,sc2731-rtc.yaml         | 49 +++++++++++++++++++
+ .../bindings/rtc/sprd,sc27xx-rtc.txt          | 26 ----------
+ 2 files changed, 49 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
 
+diff --git a/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml b/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
+new file mode 100644
+index 000000000000..f3d20e976965
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/sprd,sc2731-rtc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum SC2731 Real Time Clock
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    const: sprd,sc2731-rtc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++allOf:
++  - $ref: rtc.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    pmic {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      rtc@280 {
++        compatible = "sprd,sc2731-rtc";
++        reg = <0x280>;
++        interrupt-parent = <&sc2731_pmic>;
++        interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
++      };
++    };
++...
+diff --git a/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt b/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
+deleted file mode 100644
+index 1f5754299d31..000000000000
+--- a/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-Spreadtrum SC27xx Real Time Clock
+-
+-Required properties:
+-- compatible: should be "sprd,sc2731-rtc".
+-- reg: address offset of rtc register.
+-- interrupts: rtc alarm interrupt.
+-
+-Example:
+-
+-	sc2731_pmic: pmic@0 {
+-		compatible = "sprd,sc2731";
+-		reg = <0>;
+-		spi-max-frequency = <26000000>;
+-		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		rtc@280 {
+-			compatible = "sprd,sc2731-rtc";
+-			reg = <0x280>;
+-			interrupt-parent = <&sc2731_pmic>;
+-			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+-		};
+-	};
+-- 
+2.34.1
 
-> Fix this issue by removing unneeded check.
-
-Another wording suggestion:
-  Thus remove a redundant check.
-
-
-=E2=80=A6
-> +++ b/drivers/remoteproc/remoteproc_elf_helpers.h
-> @@ -107,7 +107,7 @@ static inline unsigned int elf_strtbl_add(const char=
- *name, void *ehdr, u8 class
->  	shdr =3D ehdr + elf_size_of_hdr(class) + shstrndx * elf_size_of_shdr(c=
-lass);
->  	strtab =3D ehdr + elf_shdr_get_sh_offset(class, shdr);
->  	idx =3D index ? *index : 0;
-> -	if (!strtab || !name)
-> +	if (!name)
->  		return 0;
-=E2=80=A6
-
-How do you think about to perform the remaining null pointer check
-as the first statement (because of input parameter validation in
-this function implementation)?
-
-Regards,
-Markus
 
