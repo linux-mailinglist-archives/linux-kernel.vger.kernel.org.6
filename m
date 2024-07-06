@@ -1,414 +1,179 @@
-Return-Path: <linux-kernel+bounces-243066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D4192910F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:09:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC0F929114
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F381C22391
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35C211F232A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D5D21350;
-	Sat,  6 Jul 2024 05:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="CTsvPm6F";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kkni2iiW"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF01318C3B;
+	Sat,  6 Jul 2024 05:08:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1EE1CF92;
-	Sat,  6 Jul 2024 05:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4790405CC
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 05:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720242503; cv=none; b=Q4+fk5mjoFDLoTNI17aX9AxTLk5UYjin+ds/S39VfkYp0siXoOJRcFKR2rg/0ZmuWbQisQ7532MR8OnhKq6YS0b1NjeDyINh1rXhonB57hT/PvKzUhEVx3YpHSFTJRw5CGez1h9LudHY/l7oUtkes6RhH8jsBe/ok5mPCgJJayo=
+	t=1720242517; cv=none; b=fgAWDv6MpAbBsaBCBi5z/hdsgEqTJQ2QHPVeleJvmqeZVlXMnHnhrgLtXFxIejCRt/knixO3epgT2AhjqHQNa473LD8uETjMK/d9g21/pWwSZIVjnzx5fNwEbxWG0YGLBw44pdbZG4acgWmiJ9hGIwQKI/yZUlleTM6Z7UTklro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720242503; c=relaxed/simple;
-	bh=40UuOsBIwHIFrdQhruCGrsQbCHrE7MzAtbIQKbDhmG8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YRJ23JjhQ9mJDfp0sB563LGvX3AKPTpTCjD8Frjb+3vTsRBGjxpQ/USokvUZlMz9KWzQF8fySO9oA9hNTPE9MKoe5BRwnokMjGwP/6fbXWWobIbev9bYGNEFER3fQPld+AhS5l8/5pxuAQvOmRHW0MFm0dM0Jb3fbYjdCyOl2M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=CTsvPm6F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kkni2iiW; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 983A511402C1;
-	Sat,  6 Jul 2024 01:08:20 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 06 Jul 2024 01:08:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1720242500;
-	 x=1720328900; bh=HXny34oNFwETrkhfzSAjHQISVkQHR6yL0d1WvUtzV4s=; b=
-	CTsvPm6Fp3c/7ka3sYJ5zSI0lB9nOmtuxaAniZIQ+n8gRAyTqiI0QaLhlbiVH7xt
-	y9NrzyBHigPEMdW8HC/jFpvY3TKiRRD0j/wTeH7aBT4FCEFNmrcBKC+V3z2WOqDY
-	66okjDhnGDCCTwWaVjKGDA7ap9qmoBqHz7BYWtO2VG4UicgxROGxKTJvHRj7Uz44
-	ohVaPwwjkCHGLLzRIkuz1OwTn/Ml7i9bkx6NhYar5nfHiE+Jm8DURXOnpwDgoYnL
-	t2op7ytvmvB3tywAiCz+qyaL3tmbslMwOSvnp2Wdej/2BO265OaJgXyCSe8+iu5X
-	JP2Mwajhft7+2kYMxiINqA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720242500; x=
-	1720328900; bh=HXny34oNFwETrkhfzSAjHQISVkQHR6yL0d1WvUtzV4s=; b=K
-	kni2iiWWiJ3WC5vDpumkAhXt8/mwMikr/NZJgBt0AMJqAHPj57uKm6MeKmn5byg2
-	7cAWDeJs1t2QCyBhQlEjrZXYAsj4EgOSOtabJwJ8xC+Qp5kx0V0LSfLfFP2dNTVq
-	FlFiRD5VYXLnNyJ7MgePxiIESVgkY0705CCk35waMxKXgoudGOuzRAEKlQlb07Fy
-	2ZnHSId3T6ZDd9cgH9CUElaLTHbouDqt/jPvuEeQSP1UuEQZbqTQKm/r78pKGc/u
-	V0AJVrNzHB/HQXq9aBNMvdlh06+wUr1We0nMHkpTpUDxEokLIgayqMdqiNk6zE4y
-	5BqzU9hsKxBNqo3gO3IDg==
-X-ME-Sender: <xms:RNGIZqUTG-7hPQEO96jgEJi582T62iye3RDedeDThSBdrI7ZIPajkA>
-    <xme:RNGIZmm3Py_97BASAJqMDATQAZtiJ2qLwILntSB7aTKiaAgf9CkO_GR0MBeG__OGr
-    oy_vmFybdR68fcaciY>
-X-ME-Received: <xmr:RNGIZubFFXcrnDvjid659kNgmXIF0D6lXodys1yPKK-hjOGIMDrepkMq08TlwcYkv9I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvgdeltdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomheplfhirgig
-    uhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
-    ggtffrrghtthgvrhhnpedvkeeihfefveekueevteefleffkeegudeghfdtuddugefhueev
-    geffgedukeejleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:RNGIZhVT_WzlvptndB2hp5tnPL7ilVQ2RQNW1RR7V4ddaTbAfBuzVQ>
-    <xmx:RNGIZkkCIQpTxUDwlGRGfxlcwe1pxwfsAJKpJyjq3slVXtyu7C1r9w>
-    <xmx:RNGIZmcrTuJBXUwLAMEbmJmslqrV80xbUhgLzFqXvTKf8xdMR8UPOQ>
-    <xmx:RNGIZmGW2F2AyVusQGxzUmtQhQcOXXyYycv3Kdq2fTco5Pv4dnL-eg>
-    <xmx:RNGIZlAwSO6bwTLDBLrzm0_xevGwlwdgXXhC0P-LPXIIOebT9XX9zBzd>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 6 Jul 2024 01:08:18 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Sat, 06 Jul 2024 13:08:01 +0800
-Subject: [PATCH 4/4] MIPS: config: Add ip30_defconfig
+	s=arc-20240116; t=1720242517; c=relaxed/simple;
+	bh=8jdMxxXbT6y02VK36z1BPd7lJxLpS2ah7tvvgVKBBXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N6yX8yIH71wj2MKbp17J9x/S0sP2xab2X+PeoPDDWEMc5o529+MHxFY5ynm2XfHacwH+IiWoDrJ+AwS6rY/gcP/kixutrpd0YEi79TRFJx5Eh1TvR9HSTRPMWMOT2s2teKQmTe/SqpyXA0zxWid5Ii7QuWLh561j66Mb8Jdk7X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPxek-0001bt-VF; Sat, 06 Jul 2024 07:08:18 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPxeh-007V4g-TI; Sat, 06 Jul 2024 07:08:15 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPxeh-000hrD-2b;
+	Sat, 06 Jul 2024 07:08:15 +0200
+Date: Sat, 6 Jul 2024 07:08:15 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Dan Robertson <dan@dlrobertson.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, kernel@pengutronix.de,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/6] iio: adc: ti-tsc2046: simplify with cleanup.h
+Message-ID: <ZojRPxa0SWUvqGgC@pengutronix.de>
+References: <20240705-cleanup-h-iio-v1-0-77114c7e84c5@linaro.org>
+ <20240705-cleanup-h-iio-v1-5-77114c7e84c5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240706-config-refresh-v1-4-5dba0064cf08@flygoat.com>
-References: <20240706-config-refresh-v1-0-5dba0064cf08@flygoat.com>
-In-Reply-To: <20240706-config-refresh-v1-0-5dba0064cf08@flygoat.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6971;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=40UuOsBIwHIFrdQhruCGrsQbCHrE7MzAtbIQKbDhmG8=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrSOixZzVvjfkDu3uOXkHLG3Rttqnuy8nnCwv+aV+ZNKn
- paMjwtnd5SyMIhxMciKKbKECCj1bWi8uOD6g6w/MHNYmUCGMHBxCsBEEr0Y/ifLdcvueshTbpr7
- 4P+O1y9jONdErPo9tXvDlp7sVa7R2hsY/iee4mnlWTr18KMLrZ/45hpxOat5ORyWy2d/f7H82Pt
- 1WTwA
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240705-cleanup-h-iio-v1-5-77114c7e84c5@linaro.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add ip30_defconfig derived from ip27_defconfig to ensure this
-target is build tested by various kernel testing projects.
+On Fri, Jul 05, 2024 at 12:40:48PM +0200, Krzysztof Kozlowski wrote:
+> Allocate the memory with scoped/cleanup.h to reduce error handling and
+> make the code a bit simpler.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/configs/ip30_defconfig | 285 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 285 insertions(+)
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-diff --git a/arch/mips/configs/ip30_defconfig b/arch/mips/configs/ip30_defconfig
-new file mode 100644
-index 000000000000..c0e790e68977
---- /dev/null
-+++ b/arch/mips/configs/ip30_defconfig
-@@ -0,0 +1,285 @@
-+CONFIG_SYSVIPC=y
-+CONFIG_POSIX_MQUEUE=y
-+CONFIG_NO_HZ=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_IKCONFIG=y
-+CONFIG_IKCONFIG_PROC=y
-+CONFIG_LOG_BUF_SHIFT=15
-+CONFIG_CGROUPS=y
-+CONFIG_CPUSETS=y
-+CONFIG_RELAY=y
-+CONFIG_EXPERT=y
-+CONFIG_SGI_IP30=y
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
-+CONFIG_HZ_1000=y
-+CONFIG_MIPS32_O32=y
-+CONFIG_MIPS32_N32=y
-+CONFIG_PM=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_MODULE_SRCVERSION_ALL=y
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_SGI_PARTITION=y
-+CONFIG_DEFAULT_MMAP_MIN_ADDR=65536
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_UNIX=y
-+CONFIG_XFRM_USER=m
-+CONFIG_XFRM_STATISTICS=y
-+CONFIG_NET_KEY=y
-+CONFIG_NET_KEY_MIGRATE=y
-+CONFIG_INET=y
-+CONFIG_IP_MULTICAST=y
-+CONFIG_IP_PNP=y
-+CONFIG_TCP_MD5SIG=y
-+CONFIG_IPV6_ROUTER_PREF=y
-+CONFIG_IPV6_ROUTE_INFO=y
-+CONFIG_IPV6_OPTIMISTIC_DAD=y
-+CONFIG_INET6_AH=m
-+CONFIG_INET6_ESP=m
-+CONFIG_INET6_IPCOMP=m
-+CONFIG_IPV6_MIP6=m
-+CONFIG_IPV6_SIT=m
-+CONFIG_IPV6_SIT_6RD=y
-+CONFIG_IPV6_TUNNEL=m
-+CONFIG_IPV6_MULTIPLE_TABLES=y
-+CONFIG_IPV6_SUBTREES=y
-+CONFIG_IPV6_MROUTE=y
-+CONFIG_IPV6_PIMSM_V2=y
-+CONFIG_NETWORK_SECMARK=y
-+CONFIG_NET_SCHED=y
-+CONFIG_NET_SCH_HTB=m
-+CONFIG_NET_SCH_HFSC=m
-+CONFIG_NET_SCH_PRIO=m
-+CONFIG_NET_SCH_MULTIQ=y
-+CONFIG_NET_SCH_RED=m
-+CONFIG_NET_SCH_SFQ=m
-+CONFIG_NET_SCH_TEQL=m
-+CONFIG_NET_SCH_TBF=m
-+CONFIG_NET_SCH_GRED=m
-+CONFIG_NET_SCH_NETEM=m
-+CONFIG_NET_SCH_INGRESS=m
-+CONFIG_NET_CLS_BASIC=m
-+CONFIG_NET_CLS_ROUTE4=m
-+CONFIG_NET_CLS_FW=m
-+CONFIG_NET_CLS_U32=m
-+CONFIG_CLS_U32_MARK=y
-+CONFIG_NET_CLS_FLOW=m
-+CONFIG_NET_CLS_CGROUP=y
-+CONFIG_NET_CLS_ACT=y
-+CONFIG_NET_ACT_POLICE=y
-+CONFIG_NET_ACT_GACT=m
-+CONFIG_GACT_PROB=y
-+CONFIG_NET_ACT_MIRRED=m
-+CONFIG_NET_ACT_NAT=m
-+CONFIG_NET_ACT_PEDIT=m
-+CONFIG_NET_ACT_SKBEDIT=m
-+CONFIG_CFG80211=m
-+CONFIG_MAC80211=m
-+CONFIG_RFKILL=m
-+# CONFIG_VGA_ARB is not set
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_CDROM_PKTCDVD=m
-+CONFIG_ATA_OVER_ETH=m
-+CONFIG_SCSI=y
-+CONFIG_BLK_DEV_SD=y
-+CONFIG_CHR_DEV_ST=y
-+CONFIG_BLK_DEV_SR=m
-+CONFIG_CHR_DEV_SG=m
-+CONFIG_CHR_DEV_SCH=m
-+CONFIG_SCSI_CONSTANTS=y
-+CONFIG_SCSI_LOGGING=y
-+CONFIG_SCSI_SCAN_ASYNC=y
-+CONFIG_SCSI_SPI_ATTRS=y
-+CONFIG_SCSI_FC_ATTRS=y
-+CONFIG_SCSI_CXGB3_ISCSI=m
-+CONFIG_SCSI_BNX2_ISCSI=m
-+CONFIG_BE2ISCSI=m
-+CONFIG_SCSI_HPSA=m
-+CONFIG_SCSI_3W_SAS=m
-+CONFIG_SCSI_AIC94XX=m
-+# CONFIG_AIC94XX_DEBUG is not set
-+CONFIG_SCSI_MVSAS=m
-+# CONFIG_SCSI_MVSAS_DEBUG is not set
-+CONFIG_SCSI_MPT2SAS=m
-+CONFIG_LIBFC=m
-+CONFIG_SCSI_QLOGIC_1280=y
-+CONFIG_SCSI_PMCRAID=m
-+CONFIG_SCSI_BFA_FC=m
-+CONFIG_SCSI_DH=y
-+CONFIG_SCSI_DH_RDAC=m
-+CONFIG_SCSI_DH_HP_SW=m
-+CONFIG_SCSI_DH_EMC=m
-+CONFIG_SCSI_DH_ALUA=m
-+CONFIG_MD=y
-+CONFIG_BLK_DEV_MD=y
-+CONFIG_MD_RAID0=y
-+CONFIG_MD_RAID1=y
-+CONFIG_MD_RAID10=m
-+CONFIG_MD_RAID456=y
-+CONFIG_BLK_DEV_DM=m
-+CONFIG_DM_CRYPT=m
-+CONFIG_DM_SNAPSHOT=m
-+CONFIG_DM_MIRROR=m
-+CONFIG_DM_LOG_USERSPACE=m
-+CONFIG_DM_ZERO=m
-+CONFIG_DM_MULTIPATH=m
-+CONFIG_DM_MULTIPATH_QL=m
-+CONFIG_DM_MULTIPATH_ST=m
-+CONFIG_DM_UEVENT=y
-+CONFIG_IFB=m
-+CONFIG_MACVLAN=m
-+CONFIG_VETH=m
-+CONFIG_ATL2=m
-+CONFIG_ATL1E=m
-+CONFIG_ATL1C=m
-+CONFIG_B44=m
-+CONFIG_BNX2X=m
-+CONFIG_ENIC=m
-+CONFIG_DNET=m
-+CONFIG_BE2NET=m
-+CONFIG_E1000E=m
-+CONFIG_IGB=m
-+CONFIG_IGBVF=m
-+CONFIG_IXGBE=m
-+CONFIG_JME=m
-+CONFIG_MLX4_EN=m
-+# CONFIG_MLX4_DEBUG is not set
-+CONFIG_KS8851_MLL=m
-+CONFIG_AX88796=m
-+CONFIG_AX88796_93CX6=y
-+CONFIG_ETHOC=m
-+CONFIG_QLA3XXX=m
-+CONFIG_NETXEN_NIC=m
-+CONFIG_SFC=m
-+CONFIG_SMC91X=m
-+CONFIG_SMSC911X=m
-+CONFIG_NIU=m
-+CONFIG_TEHUTI=m
-+CONFIG_VIA_VELOCITY=m
-+CONFIG_PHYLIB=y
-+CONFIG_CICADA_PHY=m
-+CONFIG_DAVICOM_PHY=m
-+CONFIG_ICPLUS_PHY=m
-+CONFIG_LXT_PHY=m
-+CONFIG_LSI_ET1011C_PHY=m
-+CONFIG_MARVELL_PHY=m
-+CONFIG_NATIONAL_PHY=m
-+CONFIG_QSEMI_PHY=m
-+CONFIG_REALTEK_PHY=m
-+CONFIG_SMSC_PHY=m
-+CONFIG_STE10XP=m
-+CONFIG_VITESSE_PHY=m
-+CONFIG_ADM8211=m
-+CONFIG_ATH5K=m
-+CONFIG_ATH9K=m
-+CONFIG_B43=m
-+CONFIG_B43LEGACY=m
-+# CONFIG_B43LEGACY_DEBUG is not set
-+CONFIG_IPW2100=m
-+CONFIG_IPW2100_MONITOR=y
-+CONFIG_IPW2100_DEBUG=y
-+CONFIG_IPW2200=m
-+CONFIG_IPW2200_MONITOR=y
-+CONFIG_IPW2200_PROMISCUOUS=y
-+CONFIG_IPW2200_QOS=y
-+CONFIG_IPW2200_DEBUG=y
-+CONFIG_IWLWIFI=m
-+CONFIG_P54_COMMON=m
-+CONFIG_P54_PCI=m
-+CONFIG_LIBERTAS_THINFIRM=m
-+CONFIG_MWL8K=m
-+CONFIG_RT2X00=m
-+CONFIG_RT2400PCI=m
-+CONFIG_RT2500PCI=m
-+CONFIG_RT61PCI=m
-+CONFIG_RT2800PCI=m
-+CONFIG_RTL8180=m
-+CONFIG_WL1251=m
-+CONFIG_WL12XX=m
-+# CONFIG_INPUT is not set
-+CONFIG_SERIO_LIBPS2=m
-+CONFIG_SERIO_RAW=m
-+CONFIG_SERIO_ALTERA_PS2=m
-+# CONFIG_VT is not set
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_EXTENDED=y
-+CONFIG_SERIAL_8250_MANY_PORTS=y
-+CONFIG_SERIAL_8250_SHARE_IRQ=y
-+CONFIG_NOZOMI=m
-+CONFIG_HW_RANDOM_TIMERIOMEM=m
-+CONFIG_I2C_CHARDEV=m
-+CONFIG_I2C_ALI1535=m
-+CONFIG_I2C_ALI1563=m
-+CONFIG_I2C_ALI15X3=m
-+CONFIG_I2C_AMD756=m
-+CONFIG_I2C_AMD8111=m
-+CONFIG_I2C_I801=m
-+CONFIG_I2C_ISCH=m
-+CONFIG_I2C_PIIX4=m
-+CONFIG_I2C_NFORCE2=m
-+CONFIG_I2C_SIS5595=m
-+CONFIG_I2C_SIS630=m
-+CONFIG_I2C_SIS96X=m
-+CONFIG_I2C_VIA=m
-+CONFIG_I2C_VIAPRO=m
-+CONFIG_I2C_OCORES=m
-+CONFIG_I2C_PCA_PLATFORM=m
-+CONFIG_I2C_SIMTEC=m
-+CONFIG_I2C_TAOS_EVM=m
-+CONFIG_I2C_STUB=m
-+# CONFIG_HWMON is not set
-+CONFIG_THERMAL=y
-+CONFIG_MFD_PCF50633=m
-+CONFIG_PCF50633_ADC=m
-+CONFIG_PCF50633_GPIO=m
-+CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_M48T35=y
-+CONFIG_UIO=y
-+CONFIG_UIO_AEC=m
-+CONFIG_UIO_SERCOS3=m
-+CONFIG_UIO_PCI_GENERIC=m
-+CONFIG_EXT2_FS=y
-+CONFIG_EXT2_FS_XATTR=y
-+CONFIG_EXT2_FS_POSIX_ACL=y
-+CONFIG_EXT2_FS_SECURITY=y
-+CONFIG_EXT3_FS=y
-+CONFIG_EXT3_FS_POSIX_ACL=y
-+CONFIG_EXT3_FS_SECURITY=y
-+CONFIG_XFS_FS=m
-+CONFIG_XFS_QUOTA=y
-+CONFIG_XFS_POSIX_ACL=y
-+CONFIG_BTRFS_FS=m
-+CONFIG_BTRFS_FS_POSIX_ACL=y
-+CONFIG_QUOTA_NETLINK_INTERFACE=y
-+CONFIG_FUSE_FS=m
-+CONFIG_CUSE=m
-+CONFIG_PROC_KCORE=y
-+CONFIG_TMPFS=y
-+CONFIG_TMPFS_POSIX_ACL=y
-+CONFIG_SQUASHFS=m
-+CONFIG_OMFS_FS=m
-+CONFIG_NFS_FS=y
-+CONFIG_SECURITYFS=y
-+CONFIG_CRYPTO_CRYPTD=m
-+CONFIG_CRYPTO_BLOWFISH=m
-+CONFIG_CRYPTO_CAMELLIA=m
-+CONFIG_CRYPTO_CAST5=m
-+CONFIG_CRYPTO_CAST6=m
-+CONFIG_CRYPTO_FCRYPT=m
-+CONFIG_CRYPTO_SERPENT=m
-+CONFIG_CRYPTO_TWOFISH=m
-+CONFIG_CRYPTO_CTS=m
-+CONFIG_CRYPTO_LRW=m
-+CONFIG_CRYPTO_PCBC=m
-+CONFIG_CRYPTO_XTS=m
-+CONFIG_CRYPTO_HMAC=y
-+CONFIG_CRYPTO_MD4=m
-+CONFIG_CRYPTO_RMD160=m
-+CONFIG_CRYPTO_VMAC=m
-+CONFIG_CRYPTO_WP512=m
-+CONFIG_CRYPTO_XCBC=m
-+CONFIG_CRYPTO_LZO=m
-+CONFIG_CRC_T10DIF=m
+Thank you!
+
+
+> ---
+>  drivers/iio/adc/ti-tsc2046.c | 29 ++++++++++++-----------------
+>  1 file changed, 12 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ti-tsc2046.c b/drivers/iio/adc/ti-tsc2046.c
+> index edcef8f11522..24b1d4390872 100644
+> --- a/drivers/iio/adc/ti-tsc2046.c
+> +++ b/drivers/iio/adc/ti-tsc2046.c
+> @@ -6,6 +6,7 @@
+>   */
+>  
+>  #include <linux/bitfield.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/delay.h>
+>  #include <linux/module.h>
+>  #include <linux/regulator/consumer.h>
+> @@ -273,7 +274,6 @@ static int tsc2046_adc_read_one(struct tsc2046_adc_priv *priv, int ch_idx,
+>  				u32 *effective_speed_hz)
+>  {
+>  	struct tsc2046_adc_ch_cfg *ch = &priv->ch_cfg[ch_idx];
+> -	struct tsc2046_adc_atom *rx_buf, *tx_buf;
+>  	unsigned int val, val_normalized = 0;
+>  	int ret, i, count_skip = 0, max_count;
+>  	struct spi_transfer xfer;
+> @@ -287,18 +287,20 @@ static int tsc2046_adc_read_one(struct tsc2046_adc_priv *priv, int ch_idx,
+>  		max_count = 1;
+>  	}
+>  
+> -	if (sizeof(*tx_buf) * max_count > PAGE_SIZE)
+> +	if (sizeof(struct tsc2046_adc_atom) * max_count > PAGE_SIZE)
+>  		return -ENOSPC;
+>  
+> -	tx_buf = kcalloc(max_count, sizeof(*tx_buf), GFP_KERNEL);
+> +	struct tsc2046_adc_atom *tx_buf __free(kfree) = kcalloc(max_count,
+> +								sizeof(*tx_buf),
+> +								GFP_KERNEL);
+>  	if (!tx_buf)
+>  		return -ENOMEM;
+>  
+> -	rx_buf = kcalloc(max_count, sizeof(*rx_buf), GFP_KERNEL);
+> -	if (!rx_buf) {
+> -		ret = -ENOMEM;
+> -		goto free_tx;
+> -	}
+> +	struct tsc2046_adc_atom *rx_buf __free(kfree) = kcalloc(max_count,
+> +								sizeof(*rx_buf),
+> +								GFP_KERNEL);
+> +	if (!rx_buf)
+> +		return -ENOMEM;
+>  
+>  	/*
+>  	 * Do not enable automatic power down on working samples. Otherwise the
+> @@ -326,7 +328,7 @@ static int tsc2046_adc_read_one(struct tsc2046_adc_priv *priv, int ch_idx,
+>  	if (ret) {
+>  		dev_err_ratelimited(&priv->spi->dev, "SPI transfer failed %pe\n",
+>  				    ERR_PTR(ret));
+> -		goto free_bufs;
+> +		return ret;
+>  	}
+>  
+>  	if (effective_speed_hz)
+> @@ -337,14 +339,7 @@ static int tsc2046_adc_read_one(struct tsc2046_adc_priv *priv, int ch_idx,
+>  		val_normalized += val;
+>  	}
+>  
+> -	ret = DIV_ROUND_UP(val_normalized, max_count - count_skip);
+> -
+> -free_bufs:
+> -	kfree(rx_buf);
+> -free_tx:
+> -	kfree(tx_buf);
+> -
+> -	return ret;
+> +	return DIV_ROUND_UP(val_normalized, max_count - count_skip);
+>  }
+>  
+>  static size_t tsc2046_adc_group_set_layout(struct tsc2046_adc_priv *priv,
+> 
+> -- 
+> 2.43.0
+> 
+> 
+> 
 
 -- 
-2.45.2
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
