@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-242965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA901928FA0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 02:04:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E768F928FAA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 02:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA6B1C21AEE
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:04:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36176B24FE9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD2623BE;
-	Sat,  6 Jul 2024 00:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZHS3ugT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F25723BE;
+	Sat,  6 Jul 2024 00:11:09 +0000 (UTC)
+Received: from norbury.hmeau.com (helcar.hmeau.com [216.24.177.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4C3A2D;
-	Sat,  6 Jul 2024 00:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B6F17FE;
+	Sat,  6 Jul 2024 00:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.24.177.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720224281; cv=none; b=oJhqL87/3/xfinFRx4m4aC5wZ2zrHKgxNIc0aaqDF6CqNAXYqkioIK9AbvXUijXXxbb8cdx0IcogW/bCCdwFCIYn8nNt6NQj9o+Exj6cKG7vWMLT5L58NB6AfJWM3I05xeQwVBJfTxb2qG5vAgH2PgEyogIoBHMPfUbwu4zBSys=
+	t=1720224668; cv=none; b=u0zBsCLrAsEel+hwgfjmnz8P0OIyrM8uTgewOUQNO+zjehw4Jt9V1MPb+ysPPiLOfKEXedWa9RJn/F6yVkmHa1yZGTZhxGKmruh1gwi3a8svEf7w/C6w5aZLjVbSqHiCjT1124sGlGiIxXG0hJ/5nwEnzD28IJIxgGYR6XLyeuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720224281; c=relaxed/simple;
-	bh=IArMh7LBFAFgRILBSoSxBbLYgPD5itwwAMFiH8rLREM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PHT7Fn5UAQguWuVzeGKlGsyORfOqu0jvuXrjh6gQYUBIlhfBwdijDDnbMUCaCnnR4oAouOeby6HAR7L0lREAz/oXHVfoL5j1Bi+88LieUPbiWS3NMke/tX3NTVxlHUw1uwc2PgWwSiO51fCd1Qv6VPR2nizAKupXCq2oXbtkKzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZHS3ugT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B7DC116B1;
-	Sat,  6 Jul 2024 00:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720224281;
-	bh=IArMh7LBFAFgRILBSoSxBbLYgPD5itwwAMFiH8rLREM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PZHS3ugTPEhrdsx4ao8bYfhCGh58kXZEX5JQT1O27ohym7WVDSL9Sxf+E/WrNpwGI
-	 R7VboSuCOOtOyCo8PJ/wnphv0GSzskpYw2ZDH/DKJPtOJLFdtUia/Ava41IhfugUqH
-	 X3E4qQ4Z1pWZ1h0XkKiYfBWn5gKCKjE7pr0zWNIQHqQNjJN33h5rCXkXr3AxaYJ/3s
-	 MlF5ak7CbMZSJTkgxavdRRgAaKItaM/584bQ2tVp72zO0Ut969zMPQFg34uyovmGHE
-	 kjtNAd8FSHEXB8lyB70DSGCttezXnB0ly7WtWOcI620H4OcREtKtbiH63JiFs9DdAY
-	 QEAO2x050RIrg==
-Date: Fri, 5 Jul 2024 17:04:40 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH net-next v3 0/4] net: phy: aquantia: enable support for
- aqr115c
-Message-ID: <20240705170440.22a39045@kernel.org>
-In-Reply-To: <20240703181132.28374-1-brgl@bgdev.pl>
-References: <20240703181132.28374-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1720224668; c=relaxed/simple;
+	bh=LguLmIQSB/dZ75aSBBP49WT4ZtDGzUukxhPYqFXnGx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FvQJhvwgtK0J2sKMz0no+AbHvoUFsCQbuxwlGZu7lKz+yBc751+SJ61jKYSfgnC1KFVbHMjTYLRRe0D212F4ssCZJuFoAWC7nNnhh6UMHH4uGGcoc9PSy/nakI38Z8S4jxqQ1udzVauBX3E7xwCIQjiIVnb7bVSlTb4QPu3XjXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=216.24.177.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sPt0Z-006gdt-04;
+	Sat, 06 Jul 2024 10:10:45 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 06 Jul 2024 10:10:31 +1000
+Date: Sat, 6 Jul 2024 10:10:31 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Francesco Dolcini <francesco@dolcini.it>,
+	Bharat Bhushan <bbhushan2@marvell.com>
+Cc: Olivia Mackall <olivia@selenic.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] hwrng: Kconfig - Do not enable by default CN10K driver
+Message-ID: <ZoiLd/Cezq2CS4Zp@gondor.apana.org.au>
+References: <20240625195746.48905-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625195746.48905-1-francesco@dolcini.it>
 
-On Wed,  3 Jul 2024 20:11:27 +0200 Bartosz Golaszewski wrote:
-> [PATCH net-next v3 0/4] net: phy: aquantia: enable support for aqr115c
+On Tue, Jun 25, 2024 at 09:57:46PM +0200, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> Do not enable by default the CN10K HW random generator driver.
+> 
+> CN10K Random Number Generator is available only on some specific
+> Marvell SoCs, however the driver is in practice enabled by default on
+> all arm64 configs.
+> 
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+> as an alternative I could propose
+> 
+> default HW_RANDOM if ARCH_THUNDER=y
 
-Doesn't seem to apply:
+Adding marvell Cc.
 
-Applying: net: phy: aquantia: rename and export aqr107_wait_reset_complete()
-error: patch failed: drivers/net/phy/aquantia/aquantia.h:201
-error: drivers/net/phy/aquantia/aquantia.h: patch does not apply
-Patch failed at 0001 net: phy: aquantia: rename and export aqr107_wait_reset_complete()
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am --abort".
-hint: Disable this message with "git config advice.mergeConflict false"
+Cheers,
 -- 
-pw-bot: cr
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
