@@ -1,194 +1,181 @@
-Return-Path: <linux-kernel+bounces-243128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE37929229
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:16:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A00192922A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7043B1C212E6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:16:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF3B1C2119A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D004C3D0;
-	Sat,  6 Jul 2024 09:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD204D599;
+	Sat,  6 Jul 2024 09:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZfzHcbJt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="emjuXHve"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2079.outbound.protection.outlook.com [40.107.215.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1CD17740
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 09:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720257405; cv=none; b=EIw5RCJIl+fk62wIehUrJNOJM978ynpUfRCJTYESRiTM/nhV8pQ8z+He4GBiNB7HDKhL8BYmm71lvoIANfqwhAXWQLo29YTkzo72y3037ieyvOwmlySJ5kqNx/q3ZcnpQ3VJCPLAbTUWaMvYMJsYjot3UWTM9jkcWg64yenfcqo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720257405; c=relaxed/simple;
-	bh=mSOe5IL52tQA3CSWmiOZHQq3AKs7OVITM1J54jxHzi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISL/oKB86LaUsrz8uL+bnOTwQsQkKmX2gwAYQrJvj2GzzO7D7/T/tZphJKBWClRcb4z6VwlmATz29I1bIUpCIaJZ4f1PLXJt6mEAJqS0wt5iJxHNApxupusOYV1eI2RcJv42uxUg9z1yVcgn83yWh42QitRbT2jtUMKqGWbb2Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZfzHcbJt; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720257403; x=1751793403;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mSOe5IL52tQA3CSWmiOZHQq3AKs7OVITM1J54jxHzi0=;
-  b=ZfzHcbJtMrF2Ga0cxCu9Z8iA76fzkDNK036poUVmHyOuWgo6ddh4reYG
-   D0U/5pAHdpsn8x+weeQCo26OadAlePNPi9lTgLHJppOt9+7FCE1p2RjaZ
-   d8kZ/vkXhjgeDh3OklpKnuCfRMCNCvQYGr8qx7i77XAtM5QAAInC7psTr
-   RdvY/kNRQb93RIK1mvCkeb7MDF8OqtE794NiowFp+0EguX7mvYL1VGuNU
-   jxqERSMILI9466wKWiToLukOgQq0G5/hEmA9pEHEYUKtWcUble6VCY/uY
-   hhhNJIVr0OfYPTKHr6+r/uBiwWfNOlzl81RsvoPg5MlUTt00XX+o84p0j
-   g==;
-X-CSE-ConnectionGUID: mABhjQP2TNmokh4CbVECDw==
-X-CSE-MsgGUID: XRCSVKCkRwOKEBUy9hrnXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="20430098"
-X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
-   d="scan'208";a="20430098"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 02:16:42 -0700
-X-CSE-ConnectionGUID: eg+P6/jNRVOu0yid8K+2YA==
-X-CSE-MsgGUID: pRuJzgJKTeKhngIITJkerQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
-   d="scan'208";a="46992364"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 06 Jul 2024 02:16:36 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sQ1X0-000TXk-04;
-	Sat, 06 Jul 2024 09:16:34 +0000
-Date: Sat, 6 Jul 2024 17:16:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: oe-kbuild-all@lists.linux.dev, Matthew Wilcox <willy@infradead.org>,
-	Mel Gorman <mgorman@suse.de>, Dave Jiang <dave.jiang@intel.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Huang Ying <ying.huang@intel.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	"Kirill A . Shutemov" <kirill@shutemov.name>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Borislav Petkov <bp@alien8.de>, peterx@redhat.com,
-	Hugh Dickins <hughd@google.com>,
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Subject: Re: [PATCH v2 7/8] mm/x86: Add missing pud helpers
-Message-ID: <202407061716.WH5NMiL2-lkp@intel.com>
-References: <20240703212918.2417843-8-peterx@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA144C3D0
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 09:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720257415; cv=fail; b=N6//Z6pXpiyh6zpya9j2fOGaMTRMXZXGfyLzqkhREM4C3U9KhlZoyzWF7rxGb5QXyZmcgqO6fEOOJ5YXiHM+DJPyQgXje7m3Mv40fjd81FdeCu88y1fieRBiT9hwUd48Nvb9HOllv+UpryawSbxUKxwlk2lM0UMPWuY12K6ShcI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720257415; c=relaxed/simple;
+	bh=7YrBdxNjpEcrivp/hp7bbPmDqnd0XfEQUHa/wQ0YopU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=j8mded//ZFZuo9ADU7zBIwTM6D5frZj/yWxZZRMX+3aWDDzIyDn8dQlS9fCFxtropmAB+zFWARdK9YCjoyrkf+9MmLhWHzhCael954XhYEWbOMAX18wX6NJiPcu0RtuiEymH0T4RuMKOGZPPMqdoKdis/2H+7ByJ+ReN8rvmKK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=emjuXHve; arc=fail smtp.client-ip=40.107.215.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Nf8JQfnQVdZnlfHmaU5pEAlhkRcPNMwLaZyF2IAe6C86GAmcrnlFMjJ8OQKs3t8pcjG1qyvFR4YHWLap6Ael7HoxEMK2q8BQrbSOYT7CRoqv6eVtvhrkfXPsHTzPn5/Ub8FFY8XIfX2OEd/j5ZiRPHACmLqhNQdJhaJKnrDVgbGQotI6RPYE53bF1WFkfLBLirkAqEuBni8uJ0tDFGFejHV2WUxMMCK1LjS0+D4aHyAfvqA97xoEH/LjAGkTobNR2sYSk+yo8stv/UXV1R1e4JEIvPfPDWcCvW9sN3FMjFArfEExDtA5ZChrH67krp/0zSiAenwoCAHZS2sYUlWIjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zr7eZ/umvFI0IK9ZzBZgID/XxpUUHRanXPRA45J0FEU=;
+ b=ixh8/IT4E6U1H5OPS3sWgPEH83sA+MpxkShw83OzhN2KAdqff30t9c7qVGIFemLFvkR7lxStM239YpqTu9ROaD6b2jPFVn1/cVJpA+b6KGcAdMm6UABqNJ68oEeW1qXIFJjzuN36w3xKwclh/eyLpJ/nuC2qaglJwswWUHsB3vku7y5E+45Aia/Gpzbg2rdyK1rh2Iy28IOzUAKzZQ46H8KbdxO/MgfzEC/IFvH+TKPt51lJiVYN+RL4zPsxHD7YIOYuVKlrIPZuP6Ebk7/1FquHOAAYqsAbzSMcmX/DuzRCsWGs/p4jbUS88gmazYc5W/rkM8iCjleEmXO7Sa5Ymg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zr7eZ/umvFI0IK9ZzBZgID/XxpUUHRanXPRA45J0FEU=;
+ b=emjuXHveK+451Lt2dOdADeUoXC9W2rqCqTccMks6CcSWQqueKBVsXkHTZC8ubd/8ClwJqGBe1ER51QKqS9KgDoKZCo9cy3pIHFf9RLdks2k+TyM30mjb4LL2E50qOE4S+hCtbzSUp+e/ajzLR2kwGSFP0dyGoJIcvoZGTUnlzLs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oppo.com;
+Received: from SEYPR02MB6014.apcprd02.prod.outlook.com (2603:1096:101:6b::10)
+ by SI2PR02MB5516.apcprd02.prod.outlook.com (2603:1096:4:1b1::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Sat, 6 Jul
+ 2024 09:16:50 +0000
+Received: from SEYPR02MB6014.apcprd02.prod.outlook.com
+ ([fe80::bb06:c283:a50:7796]) by SEYPR02MB6014.apcprd02.prod.outlook.com
+ ([fe80::bb06:c283:a50:7796%7]) with mapi id 15.20.7741.029; Sat, 6 Jul 2024
+ 09:16:50 +0000
+From: Sheng Yong <shengyong@oppo.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Sheng Yong <shengyong@oppo.com>
+Subject: [PATCH] f2fs: fix start segno of large section
+Date: Sat,  6 Jul 2024 17:16:34 +0800
+Message-Id: <20240706091634.1970874-1-shengyong@oppo.com>
+X-Mailer: git-send-email 2.40.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0055.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::16) To SEYPR02MB6014.apcprd02.prod.outlook.com
+ (2603:1096:101:6b::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703212918.2417843-8-peterx@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|SI2PR02MB5516:EE_
+X-MS-Office365-Filtering-Correlation-Id: f3dc83b9-a9c5-4deb-c331-08dc9d9c5e12
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0m/CugkZVU+lFjPw6Mg7h8ot3hJG1DlVB8lXSfS8qk9Wb/yGGHNUSZ73ydk5?=
+ =?us-ascii?Q?w/i1l71eySMQh5s49aOxb7kGC16G7oFw9o3jJkEX0ktA35HcTU0AM3kWOPDY?=
+ =?us-ascii?Q?KkzHJMWVD1NRKYlT8tDcbxex9EP5CJDOYqbJ+x9a9wsxD4ocvPUD324/tYbs?=
+ =?us-ascii?Q?m9t0hDSPfPBkWc+YGWZ0+n0NtdlR9iv676czrngYfnCp/FrlLgwt3yvoRZoh?=
+ =?us-ascii?Q?439sRHFFwWK6RSp7dy6YCgwTgBVTjcmh+3iZSLvg77U0AsOfExtk6x7MH4wd?=
+ =?us-ascii?Q?9QhPt8IG2mGVK6g86SqO9Rj7VurE3ZyYSCsyn+/rPHea/mrkyjAAG9S8lL0E?=
+ =?us-ascii?Q?sHlg6Yz9L6TzHsuCV/Tgo/Z3nh/Pi3DBpVgDtEtLMg16BiaxM2GzC0rT93Bw?=
+ =?us-ascii?Q?A16vNMhVJ4GUQRaTnvPxG22HFj+DIyN/IaJeBrB5Ii2mhVr9SJxAuuo0mqCw?=
+ =?us-ascii?Q?RqRZmVKui0UQlB2fKuWxWnEYUKmq6+/CZaskpZbxitnBph3ztf24lIeNaxLB?=
+ =?us-ascii?Q?APOe+WbDCDbE6urWuTx5OhsyJpfJF6COr6iO3PUH0bWMGMTuW+tmsnsY8VnL?=
+ =?us-ascii?Q?0niIieJuITfDMpyuexSNCsavZ/AvIh8zJf4speOeqVtLlxfUrwKo2HTPwoXh?=
+ =?us-ascii?Q?rvM6CVQjF1NjpCHuUvdbVFFbXhweCBRV2pPbf6xEoilf7UZ0WHxl+0aZyUGq?=
+ =?us-ascii?Q?vbYsMkAlPUYXlrFspS2U31sfHNQvJzjkCmisejzFx9On8m5lOp2Np+bAZ6at?=
+ =?us-ascii?Q?jtrIEQdnYTq70AXSHDGTqmDB8bKzpdQizqPFYx6TM60KDar4l4somNluti+I?=
+ =?us-ascii?Q?YbdbN7X+73n5cZRI4i3LobdjYbKiHXMF4xjWXP5NGn+LUZNNkaz0t/TO4zEg?=
+ =?us-ascii?Q?AD1M5t4AMudUxy3Njn8gT1FOihc2OwmAlvPu6trkOrkITauDg07THNwgLah+?=
+ =?us-ascii?Q?sbwKVy/dS+5SyS6hhJsRW+tKuR2iC33YqpYRsLs0ST6neyrleqg2Ouc9o8d1?=
+ =?us-ascii?Q?xHHr2JoLUQ3Tlr58LnVh77QPfWYn8ZfGct9mRlKi+fvhPM8ptDLff9peY2i7?=
+ =?us-ascii?Q?Lzxu+a6LdEKk2KAhEwVjJcmZytGxN4A+elkNGdVwQWM6KUtrTg3b7Il3rdRh?=
+ =?us-ascii?Q?EfuP+T/XdLHvnxa+NsYd0FwRKyNTli0Am0FUoPglLbZO/5RwPyRVmaJ3BxXL?=
+ =?us-ascii?Q?9PbRGSSZhM55P8MhsjH69PZri6CbK2cG0ZK7VevrZUmjJ1mUqCg2HXjoyba3?=
+ =?us-ascii?Q?IpgUuu4Aron/J3QUDhrYYBhywdGVHKWHLr2TDAhty8nLcWmRhVLidr5g/QiD?=
+ =?us-ascii?Q?fnPaBJeZorN5GRas7cAlxlWEgk+Wusl7Tyt59mKRUJDIhsWQzhumObOEUt0B?=
+ =?us-ascii?Q?vKPhfyj4pykf2Im1tf19yFIYbM8nvEGLgpKsY5fXYQvFISvpfQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR02MB6014.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SLuhIzNn4/dI5hZns2nm1NeUd205L++8Nf+m4UQERMCPXzSY+LtU6nwGqmQY?=
+ =?us-ascii?Q?rk1Wk5cLJHZBi6XFs52wFWrYCWEKRKJc1e3xpEeKhYsQqdryz7xjEZ5G1ymO?=
+ =?us-ascii?Q?V2oGeT+J/qCJgB1xH8ZLVtBg5E9k3JCL5TR2SclS/9MO6RgZIvxXm2fbJkGX?=
+ =?us-ascii?Q?lxUW8kqAttxk2rffhJ4JU3AdMQcImZ+hkzvLwBOeihVfY/tvjIQbeljh0qAp?=
+ =?us-ascii?Q?0OZNTHXfarm9j4jdKcpIJwkJKp7ti4SfoEJhSmYWjPkvcQ387eKRamZ407L3?=
+ =?us-ascii?Q?TX2wbn85OGRYV62M2Ll62UOJ5MC780beYyYWTgbdd0IzBpAfDJrkMpJSQnrt?=
+ =?us-ascii?Q?gK3jg0EC85moWfCtLeQjJOyTnh2JiX7P4cPOOqAQqaXA6qP5BFldnJKIeIBi?=
+ =?us-ascii?Q?bR3qkjZFFskUVzm2h8DZakEb/66x90P35LAIE33tdAqFA7/hY1DoxxA43MPV?=
+ =?us-ascii?Q?VG0/6MU8L7exHczROVH3wrcQyBJY+3LrxRj+LmYt7wyB8xIltP8+M0sxIuis?=
+ =?us-ascii?Q?sq0YjKWtEf6FPZmSwzXg2xAbf4GMI3cdh6BUTcfZAKKOTdEvWDcFrITH8z21?=
+ =?us-ascii?Q?YyYIMBEnAwjBxxhPoJjEUl5+RagGrnRdOTAU7jjv612U3SiqdgUogSxgK/gD?=
+ =?us-ascii?Q?/5fvR2thIxckeGOTk3lLAoxSk4c2XD4oQWwEDMqa29q0sp0DFl0bvaroB0fE?=
+ =?us-ascii?Q?tNSoBn/xg6NSPITIQliOHZm7081PjUP07V0vGoAI12A/5JKnJywwIvrSn+g8?=
+ =?us-ascii?Q?SK/nk0/CjAWZGULyPfmAeKd/zqhQoZof4KqMdQhXsmqRG7g5LYrs63IShYSC?=
+ =?us-ascii?Q?Npw6dn4ejj06JidtSlosj/PNx+WcHhcNMKlwZQzb7Oi09w14TfkeaSKGbbTF?=
+ =?us-ascii?Q?2gWFBnGWIry01SKPoZHoqrlW+8feky3vCx+nrDrf/E9XMYU2OKNDFpOihuE5?=
+ =?us-ascii?Q?ARxG4X5NLzVzosoR2y50ghK4Y+RltZo22wk6TDILrKCQ+vc5uSBL/ktBLWs9?=
+ =?us-ascii?Q?zlcPBvH1MAFMDtvSFHd7RALnl4zY9G9+x6ISfUvW4AXlMkzycQu6IzDqKpav?=
+ =?us-ascii?Q?VICEDj1/KLzcg7GJFupIV8jLF3R7w/9Cn8zs7J23oBEJTSWnwizI9dSKzucO?=
+ =?us-ascii?Q?FeSPT+jcsHxIV1WfB+kH4zyZzCAmWvJns+6v6Ae91AbXaFPX47HEIJwG8stG?=
+ =?us-ascii?Q?HW2kCaBAGEThpqH/bd32kD9AD/8FZMlxRWqIysX6f7tMhXu1gdtkQFuuBzdc?=
+ =?us-ascii?Q?XrrzANgeGfQQB3dWRkJmIadcMpWvB0Q/AgKcF6jXh5sKvuLHIhYWRDOkXqx1?=
+ =?us-ascii?Q?fSySxeuN/DNdiS6R3Jvsmjjhk0IiWvLSFPIon28Aa/SasYSFO76i+OQIuaZ8?=
+ =?us-ascii?Q?EzMGarZEp//nGTT35mKoW/AeDoDoBtVoahvg3LOclCqEu0iaQQ12TyJWLGNq?=
+ =?us-ascii?Q?PRx9Jo/eTvS2bs2NBj8H7D9HnvPqqeWQSEdohjoZYyq8FCOxZfP/N438ZMwf?=
+ =?us-ascii?Q?Fq0OEgEFr0O4vEtNQmwkxMAQAq2wFGogZ/zHsM2tME9HpEUx8iTYDg41LdDv?=
+ =?us-ascii?Q?yhnBT/0a5BuaTRvZWqmNrP8HueYUXqlgCKq9lBr9?=
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3dc83b9-a9c5-4deb-c331-08dc9d9c5e12
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB6014.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2024 09:16:50.0625
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2LFMH+LlWgoESV4HjamyR9Mkrc7m14gmpnNgJWRy1UU9H8rrNYnQwPwOkc0NOVPF4W0blPAyDhvjFqLW2MostA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR02MB5516
 
-Hi Peter,
+get_ckpt_valid_blocks() checks valid ckpt blocks in current section.
+It counts all vblocks from the first to the last segment in the
+large section. However, START_SEGNO() is used to get the first segno
+in an SIT block. This patch fixes that to get the correct start segno.
 
-kernel test robot noticed the following build errors:
+Fixes: 61461fc921b7 ("f2fs: fix to avoid touching checkpointed data in get_victim()")
+Signed-off-by: Sheng Yong <shengyong@oppo.com>
+---
+ fs/f2fs/segment.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-[auto build test ERROR on akpm-mm/mm-everything]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Xu/mm-dax-Dump-start-address-in-fault-handler/20240705-013812
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240703212918.2417843-8-peterx%40redhat.com
-patch subject: [PATCH v2 7/8] mm/x86: Add missing pud helpers
-config: i386-randconfig-011-20240706 (https://download.01.org/0day-ci/archive/20240706/202407061716.WH5NMiL2-lkp@intel.com/config)
-compiler: gcc-11 (Ubuntu 11.4.0-4ubuntu1) 11.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240706/202407061716.WH5NMiL2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407061716.WH5NMiL2-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/x86/include/asm/atomic.h:8,
-                    from include/linux/atomic.h:7,
-                    from include/linux/jump_label.h:256,
-                    from include/linux/static_key.h:1,
-                    from arch/x86/include/asm/nospec-branch.h:6,
-                    from arch/x86/include/asm/irqflags.h:9,
-                    from include/linux/irqflags.h:18,
-                    from include/linux/spinlock.h:59,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/mm.h:7,
-                    from arch/x86/mm/pgtable.c:2:
-   In function 'pudp_establish',
-       inlined from 'pudp_invalidate' at arch/x86/mm/pgtable.c:649:14:
->> arch/x86/include/asm/cmpxchg.h:67:25: error: call to '__xchg_wrong_size' declared with attribute error: Bad argument size for xchg
-      67 |                         __ ## op ## _wrong_size();                      \
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/x86/include/asm/cmpxchg.h:78:33: note: in expansion of macro '__xchg_op'
-      78 | #define arch_xchg(ptr, v)       __xchg_op((ptr), (v), xchg, "")
-         |                                 ^~~~~~~~~
-   include/linux/atomic/atomic-arch-fallback.h:12:18: note: in expansion of macro 'arch_xchg'
-      12 | #define raw_xchg arch_xchg
-         |                  ^~~~~~~~~
-   include/linux/atomic/atomic-instrumented.h:4758:9: note: in expansion of macro 'raw_xchg'
-    4758 |         raw_xchg(__ai_ptr, __VA_ARGS__); \
-         |         ^~~~~~~~
-   arch/x86/include/asm/pgtable.h:1415:24: note: in expansion of macro 'xchg'
-    1415 |                 return xchg(pudp, pud);
-         |                        ^~~~
-
-
-vim +/__xchg_wrong_size +67 arch/x86/include/asm/cmpxchg.h
-
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  37  
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  38  /* 
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  39   * An exchange-type operation, which takes a value and a pointer, and
-7f5281ae8a8e7f8 Li Zhong            2013-04-25  40   * returns the old value.
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  41   */
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  42  #define __xchg_op(ptr, arg, op, lock)					\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  43  	({								\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  44  	        __typeof__ (*(ptr)) __ret = (arg);			\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  45  		switch (sizeof(*(ptr))) {				\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  46  		case __X86_CASE_B:					\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  47  			asm volatile (lock #op "b %b0, %1\n"		\
-2ca052a3710fac2 Jeremy Fitzhardinge 2012-04-02  48  				      : "+q" (__ret), "+m" (*(ptr))	\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  49  				      : : "memory", "cc");		\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  50  			break;						\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  51  		case __X86_CASE_W:					\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  52  			asm volatile (lock #op "w %w0, %1\n"		\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  53  				      : "+r" (__ret), "+m" (*(ptr))	\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  54  				      : : "memory", "cc");		\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  55  			break;						\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  56  		case __X86_CASE_L:					\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  57  			asm volatile (lock #op "l %0, %1\n"		\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  58  				      : "+r" (__ret), "+m" (*(ptr))	\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  59  				      : : "memory", "cc");		\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  60  			break;						\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  61  		case __X86_CASE_Q:					\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  62  			asm volatile (lock #op "q %q0, %1\n"		\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  63  				      : "+r" (__ret), "+m" (*(ptr))	\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  64  				      : : "memory", "cc");		\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  65  			break;						\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  66  		default:						\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30 @67  			__ ## op ## _wrong_size();			\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  68  		}							\
-31a8394e069e47d Jeremy Fitzhardinge 2011-09-30  69  		__ret;							\
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  70  	})
-e9826380d83d1bd Jeremy Fitzhardinge 2011-08-18  71  
-
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index e1c0f418aa11..6ed5bc811d2c 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -347,7 +347,8 @@ static inline unsigned int get_ckpt_valid_blocks(struct f2fs_sb_info *sbi,
+ 				unsigned int segno, bool use_section)
+ {
+ 	if (use_section && __is_large_section(sbi)) {
+-		unsigned int start_segno = START_SEGNO(segno);
++		unsigned int start_segno = segno / SEGS_PER_SEC(sbi) *
++							SEGS_PER_SEC(sbi);
+ 		unsigned int blocks = 0;
+ 		int i;
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.40.1
+
 
