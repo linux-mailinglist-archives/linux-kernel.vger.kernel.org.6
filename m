@@ -1,105 +1,93 @@
-Return-Path: <linux-kernel+bounces-242972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446A6928FB4
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 02:17:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C09928FBD
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 02:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D741C21C76
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:17:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44721B238E3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC445234;
-	Sat,  6 Jul 2024 00:17:28 +0000 (UTC)
-Received: from norbury.hmeau.com (helcar.hmeau.com [216.24.177.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8446125;
+	Sat,  6 Jul 2024 00:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqKaYNWQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B305B629;
-	Sat,  6 Jul 2024 00:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.24.177.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96762629;
+	Sat,  6 Jul 2024 00:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720225047; cv=none; b=CYB5zfiX73mW0gVAv8x9kwX0yjdWU9pr3vkd6rRTkQp3aOrs/KXk+w53lXZCIkHS6n9vBRssfOJje6zIboljeh8aLQ92nwiQxPImGnfnhPCU/le94ZnZr6uR7sRh53uN6WiOyf4FS9HUo2AwhuuIvBZOJvFMm/3CCb0irP2sCCI=
+	t=1720225232; cv=none; b=bFtP6n7Enm6UQ0H9sexPGuE6CSkfjNgw+WhgwykTAfND4MiUroUrRh/BMcjpL20Paq4H2QQDAsiDQSeH2Ls4bXyXTeEU96E4zTBvqrs3jA53ytEJs3T5eaVxqvEIcuwpKYOAW5w3QDUbngIeqWn7ZHZ5gw3SCng4FAwHKXk7lgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720225047; c=relaxed/simple;
-	bh=cMJATAPOvLQoqwfPFRdiXpLFlGIrRlz9nAZQSkU3gS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6pCmRhQ1zN74D/u5PSGB8dWdnLcWVqE3o2EkXe31RZ1fAyK418zN/HNwrdDdbtoeRAB4+QKQQm36RWkpmxYjr/gvZ5SeFecp+whpKKeYOpiwa51sHy95G8mVcmtWq2unMOZ+jhoIohmaHE4BJ3pDddnAfxlcX0DhBoPlWM8Gi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=216.24.177.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sPt5o-006giK-2U;
-	Sat, 06 Jul 2024 10:16:11 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 06 Jul 2024 10:15:57 +1000
-Date: Sat, 6 Jul 2024 10:15:57 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Aurelien Jarno <aurelien@aurel32.net>,
-	Olivia Mackall <olivia@selenic.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Martin Kaiser <martin@kaiser.cx>, Tony Luck <tony.luck@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] hwrng: add hwrng driver for Rockchip RK3568 SoC
-Message-ID: <ZoiMvTzXMFxkfcJF@gondor.apana.org.au>
-References: <cover.1719365405.git.daniel@makrotopia.org>
- <15b001360cffc0832e7e2748ad900b1336e0fa32.1719365406.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1720225232; c=relaxed/simple;
+	bh=mTFJwvimHXfAAulibMAiNcci7VWAw1aUgc5lWwsGlzg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Dbm6rEkMa/XwSIGMt8eJpoc1wJNLRYAJrJsl+E9DXkdAYv/N0pPIIOdNNl09M0RChoNOC9en3NV1hW/nOFAgyo6pz6y5zvNAW9brnqOOH4x+MqwRc2RztNHSaip+n2qKClAf6JzFYnO4Yk3wANNzX2uNn3zOuQNsJp6tGEnndbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqKaYNWQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E7BCC4AF0A;
+	Sat,  6 Jul 2024 00:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720225231;
+	bh=mTFJwvimHXfAAulibMAiNcci7VWAw1aUgc5lWwsGlzg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hqKaYNWQHVzxtLXwo8RWSYlirR2212yBeF5EACILm6jM7uwkl1Mbqzxkny6Yudi0P
+	 HZOC68T4P1kCUzR6tlkia4jqctQS7GHsgDt4tSpyQ21t8DmuvbQv6MVgcrFtVq4FZ8
+	 ZcWxRQKIGZwepY3euo2QfAJIMd4q3nCjcdlCH+2hOT/rwyqhMhhGZpvSC67EHxXleg
+	 rdUpitmHnKPG6DWEXrQTFArhXRK9DSDR8Ut0buq4pr6mHf3ZmdtZPK0snhlqth1hIG
+	 oVmgkIiNazL/tGvEUhjctZzaagbbaxmm6so4f3EcBr68lGP2I7a6EGy4p/BkqPp6RL
+	 IgD3efAfD30FQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0BF31C43332;
+	Sat,  6 Jul 2024 00:20:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15b001360cffc0832e7e2748ad900b1336e0fa32.1719365406.git.daniel@makrotopia.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: bcmasp: Fix error code in probe()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172022523104.18034.11968225683723635232.git-patchwork-notify@kernel.org>
+Date: Sat, 06 Jul 2024 00:20:31 +0000
+References: <ZoWKBkHH9D1fqV4r@stanley.mountain>
+In-Reply-To: <ZoWKBkHH9D1fqV4r@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: justin.chen@broadcom.com, florian.fainelli@broadcom.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, bcm-kernel-feedback-list@broadcom.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Wed, Jun 26, 2024 at 02:37:10AM +0100, Daniel Golle wrote:
->
-> +#ifndef CONFIG_PM
-> +	rk_rng->rng.init = rk_rng_init;
-> +	rk_rng->rng.cleanup = rk_rng_cleanup;
-> +#endif
+Hello:
 
-Please rewrite this as
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-	if (!IS_ENABLED(CONFIG_PM)) {
-		...
-	}
+On Thu, 4 Jul 2024 10:19:44 -0500 you wrote:
+> Return an error code if bcmasp_interface_create() fails.  Don't return
+> success.
+> 
+> Fixes: 490cb412007d ("net: bcmasp: Add support for ASP2.0 Ethernet controller")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/net/ethernet/broadcom/asp2/bcmasp.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-> +#ifdef CONFIG_PM
-> +static int rk_rng_runtime_suspend(struct device *dev)
-> +{
-> +	struct rk_rng *rk_rng = dev_get_drvdata(dev);
-> +
-> +	rk_rng_cleanup(&rk_rng->rng);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rk_rng_runtime_resume(struct device *dev)
-> +{
-> +	struct rk_rng *rk_rng = dev_get_drvdata(dev);
-> +
-> +	return rk_rng_init(&rk_rng->rng);
-> +}
-> +#endif
+Here is the summary with links:
+  - [net] net: bcmasp: Fix error code in probe()
+    https://git.kernel.org/netdev/net/c/0c754d9d86ff
 
-These ifdefs should just disappear, with __maybe_unused added
-instead.
-
-Thanks,
+You are awesome, thank you!
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
