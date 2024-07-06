@@ -1,189 +1,177 @@
-Return-Path: <linux-kernel+bounces-243073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2956F929124
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:22:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF97929126
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45062842E8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:22:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FE11F2325F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE5E18B1A;
-	Sat,  6 Jul 2024 05:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A484117C7F;
+	Sat,  6 Jul 2024 05:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CZK3I+0E"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYd3mdmC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A683B847A;
-	Sat,  6 Jul 2024 05:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE725847A;
+	Sat,  6 Jul 2024 05:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720243366; cv=none; b=a3TVWw/mT7LLDUxiYJMJ/+89f1uwTf1ZMoP0AGap1Kn8GqyZBeYMu3Vb0+49bC6TiXM3FU/37xcycpintPP4quQLYUOctyaDnsZk6Mg5GTBHtM6qMrI/TVI19HfxiYulLSAZKrXaYN9Zo10ExNAs+C6iMSUhOR+3nrkcinHoY+c=
+	t=1720243532; cv=none; b=CBJaXgmf04/DMfPSH6V5HzURATDNxFXmlU9kZHNS/0GEoWpCS427wF13yc8t5A1O2UAp7LxDBy9iJ/nOJknVLyqLZKPbI24306AKsj8pqYkjMvrXYLThxWgjmda8BQIKPF6tZA1X+69N2fTc+73VZ0gADY6aGFzUN7C/t5jzSH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720243366; c=relaxed/simple;
-	bh=rmxLVa8uCp6DHXJ0HoO/miegT4CBhHRwl9IrK3u8KqM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=Rvo0WHGaPAId/+yH8YDnyX1yytkpnxH4tOlMgizAn0NsA3nOMeLetKGr4nhGT/bKbpfBioMIJMY5GoZFos1UIlViy1qcwc/9grsGa3/64sQz3TNgpXj74GhoRqdj/YdPJkzQdrMwZKGv0ZO5O+XDPWZpiRqjtBlh4uY/olDu0Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CZK3I+0E; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4662sLul020013;
-	Sat, 6 Jul 2024 05:22:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9Z8c5/BRJkcuDvXowiIkvzSl0gmaQinmIo2MJaNQ7yo=; b=CZK3I+0EGzUevD4O
-	CqqtuAKD15xfhdJfivqoekRmZpgP4VaAoTxwHKSBocNKEorYdSn1Cz7kRIPEs68i
-	F+ENRmnWewa5FRcqX+VUFj2X4PJ+9n/cKrKg5HMjYmpWL54Eh27tKKDhH/XZ4uJO
-	l3SGbkthoo+PsQNBwjrpVu4uwfBAulXVwhZdEeIKpa9fK2pizJU5liFnGZpoMNuc
-	a9noA1yaXyPyn1R0jWbVyxKBM7V2m4BepCErowu7vIwwksH1w6eO3SFmUddtZDSH
-	4F977RIN5CyQsALwWSNaulf1YLJmSOqBiroIU5nrOcc0M7bPOa52DIzyb/fSXPLy
-	9rCEcQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwg4qt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 06 Jul 2024 05:22:33 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4665MWLj003340
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 6 Jul 2024 05:22:32 GMT
-Received: from [10.239.133.211] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
- 22:22:28 -0700
-Message-ID: <8b7a9bcf-6660-47bc-adc7-4e9a26548f29@quicinc.com>
-Date: Sat, 6 Jul 2024 13:22:26 +0800
+	s=arc-20240116; t=1720243532; c=relaxed/simple;
+	bh=I6v2Yip5bpaDDpFCUA6KU3LLq5/5qOBlrs7+iWTxMP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qmYSKTFNztEsLBQ3MJZiUvBLZR7ILNbG2mGFAm9tiP7MiIkFm9LolyEUXhckIKnhOne/XJFCKPA6OzRKM6cxuN6ep1vRwXMUwUIi/ayQuGBe7IX+3o+W3Gocr0Lvh1obWshSwL+3BiNWtNshgsGIuc/Tg+8XYKLof3qAyKb2ru8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYd3mdmC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ADCAC32786;
+	Sat,  6 Jul 2024 05:25:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720243531;
+	bh=I6v2Yip5bpaDDpFCUA6KU3LLq5/5qOBlrs7+iWTxMP4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CYd3mdmC2KLtek2B2tNDJi62AadxWOiP1mzE064FIcYhrEYwr1frHxdfRA/kfeuPN
+	 hum5/C2GOgZJG6bdu5R67lnI/QgD5nVNKSgTR6wSr9+JB2VIJF+/y7YRximWkFU62Q
+	 EFOvo9XmcOAMzzqVcfzmuxjBfRZ/B+gOHaPHtSXMc4X0jt246Xej0pxCmIxbwjlWsG
+	 LJUKSCNH5mzhELcd0Gm/coeSAYi3I1PBcTJrDwsoa87OJ2Nb4f3UVl6kHCtGM/QaRA
+	 KJkTc0/3SZz1v222d0Fh2/ooh9w5ZVhLq23w9XX+bSAkLqTHJD30EJihwvJGhhWhud
+	 sy/iq4XXGySvQ==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ea16b429dso1668686e87.1;
+        Fri, 05 Jul 2024 22:25:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgTvoqcc9gCwpqEMN91WOP0Cp0aCYyxWwF4vAbHchZqKE79p+Uco+dvH9efqMcXPwJncwKyOBQLOulYMWg0MQbjbXISFzpUzplPem3
+X-Gm-Message-State: AOJu0YzQyWnRYLwgvnlq3i8XtGqhd1t8X4NU9Llrwkda+M0s0d8imBsv
+	pCxhIeJGooocnWIXD3F49vJbSyO9XmNn60nXZkTa8/Gf5iHn6h8voRQbAOFHy3YGXBilXRPIMT9
+	K1a0PgxdEQGmq54rsCb9f5uSBmCM=
+X-Google-Smtp-Source: AGHT+IF/ITEsyCGvTvd3e+m69+BOQ1XlFFWCTjPCbkRzTx2nQE/m7iwQfohgicKNwWBnEqQ9PfXx4y7FJ64ntGXsqhU=
+X-Received: by 2002:a05:6512:34c2:b0:52c:9820:5e52 with SMTP id
+ 2adb3069b0e04-52ea0e3a7f7mr1388986e87.27.1720243529995; Fri, 05 Jul 2024
+ 22:25:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: arm:
- qcom,coresight-static-replicator: Add property for source filtering
-From: Tao Zhang <quic_taozha@quicinc.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Jie Gan <quic_jiegan@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Mike Leach <mike.leach@linaro.org>, <coresight@lists.linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Yuanfang Zhang
-	<quic_yuanfang@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Tingwei Zhang
-	<quic_tingweiz@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Song Chai <quic_songchai@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, <devicetree@vger.kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-References: <20240705085152.9063-1-quic_taozha@quicinc.com>
- <20240705085152.9063-2-quic_taozha@quicinc.com>
- <172017590249.2933726.1790899873101654561.robh@kernel.org>
- <5ee373ed-abef-4611-a355-44668a85d0a7@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <5ee373ed-abef-4611-a355-44668a85d0a7@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uHQIVaWhrqKDXw_jWvZWn--wnlvgQALI
-X-Proofpoint-ORIG-GUID: uHQIVaWhrqKDXw_jWvZWn--wnlvgQALI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-06_02,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407060038
+References: <2c8833e1-1995-4f49-804a-705ab9e702a5@gmail.com>
+ <CAK7LNASH6mS3X_YhkVV9z5ZVXdew_nGpJxaakaE1moZckETM7A@mail.gmail.com> <70b32083-34fb-42a5-b9bd-6f4fd21f70fd@gmail.com>
+In-Reply-To: <70b32083-34fb-42a5-b9bd-6f4fd21f70fd@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 6 Jul 2024 14:24:53 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQsMAw_+wwtmC1JoG+wkJscZyJ3oqqFYbuCL9ynVordRQ@mail.gmail.com>
+Message-ID: <CAK7LNAQsMAw_+wwtmC1JoG+wkJscZyJ3oqqFYbuCL9ynVordRQ@mail.gmail.com>
+Subject: Re: [PROBLEM linux-next] Segfault while building headers with dpkg-deb
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 7/5/2024 11:23 PM, Tao Zhang wrote:
+On Sat, Jul 6, 2024 at 5:57=E2=80=AFAM Mirsad Todorovac <mtodorovac69@gmail=
+.com> wrote:
 >
-> On 7/5/2024 6:38 PM, Rob Herring (Arm) wrote:
->> On Fri, 05 Jul 2024 16:51:50 +0800, Tao Zhang wrote:
->>> Add a new property "filter_src" to label the source corresponding
->>> to the output connection for a static replicator. By combining
->>> a funnel and a static replicator in devicetree, a new device that
->>> supports multi-port input and multi-port output is implemented.
->>> In order to match the output port with the input port and
->>> successfully build the trace path, add this new property to
->>> indicate the data source corresponding to this output port.
->>>
->>> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
->>> ---
->>>   .../arm/arm,coresight-static-replicator.yaml   | 18 
->>> +++++++++++++++++-
->>>   1 file changed, 17 insertions(+), 1 deletion(-)
->>>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml: 
->> ^port@[01]$: Missing additionalProperties/unevaluatedProperties 
->> constraint
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml: 
->> endpoint: Missing additionalProperties/unevaluatedProperties constraint
->>
->> doc reference errors (make refcheckdocs):
->>
->> See 
->> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240705085152.9063-2-quic_taozha@quicinc.com
->>
->> The base for the series is generally the latest rc1. A different 
->> dependency
->> should be noted in *this* patch.
->>
->> If you already ran 'make dt_binding_check' and didn't see the above
->> error(s), then make sure 'yamllint' is installed and dt-schema is up to
->> date:
->>
->> pip3 install dtschema --upgrade
+> On 7/2/24 10:18, Masahiro Yamada wrote:
+> > On Sat, Jun 29, 2024 at 3:59=E2=80=AFAM Mirsad Todorovac <mtodorovac69@=
+gmail.com> wrote:
+> >>
+> >> Hi all,
+> >>
+> >> On the vanilla linux-next tree, branch next-20240627, there happens to=
+ be a bug while building
+> >> with the randconfig seed KCONFIG_SEED=3D0x90E8E591:
+> >>
+> >>   .
+> >>   .
+> >>   .
+> >>   XZ      debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/module=
+s/6.10.0-rc5-next-20240627-dirty/kernel/samples/trace_events/trace-events-s=
+ample.ko.xz
+> >>   XZ      debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/module=
+s/6.10.0-rc5-next-20240627-dirty/kernel/samples/trace_events/trace_custom_s=
+ched.ko.xz
+> >>   XZ      debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/module=
+s/6.10.0-rc5-next-20240627-dirty/kernel/samples/ftrace/sample-trace-array.k=
+o.xz
+> >>   XZ      debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/module=
+s/6.10.0-rc5-next-20240627-dirty/kernel/samples/fprobe/fprobe_example.ko.xz
+> >> dpkg-deb: building package 'linux-libc-dev' in '../linux-libc-dev_6.10=
+.0-rc5-45_i386.deb'.
+> >>   DEPMOD  debian/linux-image-6.10.0-rc5-next-20240627-dirty/lib/module=
+s/6.10.0-rc5-next-20240627-dirty
+> >> dpkg-deb: building package 'linux-headers-6.10.0-rc5-next-20240627-dir=
+ty' in '../linux-headers-6.10.0-rc5-next-20240627-dirty_6.10.0-rc5-45_i386.=
+deb'.
+> >> Segmentation fault (core dumped)
+> >> make[6]: *** [scripts/Makefile.modinst:128: depmod] Error 139
+> >> make[5]: *** [Makefile:1842: modules_install] Error 2
+> >> make[4]: *** [Makefile:2058: run-command] Error 2
+> >> make[3]: *** [debian/rules:61: binary-image] Error 2
+> >> make[3]: *** Waiting for unfinished jobs....
+> >> dpkg-deb: building package 'linux-image-6.10.0-rc5-next-20240627-dirty=
+-dbg' in '../linux-image-6.10.0-rc5-next-20240627-dirty-dbg_6.10.0-rc5-45_i=
+386.deb'.
+> >> dpkg-buildpackage: error: make -f debian/rules binary subprocess retur=
+ned exit status 2
+> >> make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
+> >> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:1555: bind=
+eb-pkg] Error 2
+> >> make: *** [Makefile:240: __sub-make] Error 2
+> >>
+> >> Build log and .config are attached at your convenience.
+> >
+> >
+> >
+> >
+> >
+> > If you used an old kmod version, this is a known issue.
+> >
+> > https://lore.kernel.org/linux-kbuild/E1rNVlL-000qDm-Pg@rmk-PC.armlinux.=
+org.uk/
+> >
+> > A quick solution is to upgrade your kmod version.
 >
-> Yes, I didn't see this errors in running 'make dt_binding_check', I 
-> will re-run this check
+> I see. Sorry then for the noise and duplicated work.
 >
-> according to your suggestion.
+> It might be inevitable that I will do something dumb more often than not =
+when testing
+> randconfig errors from such a vast number of lines of code ... :-/
 >
+> My kmod is as follows:
 >
-> Best,
+> ii  kmod           29-1ubuntu1  amd64        tools for managing Linux ker=
+nel modules
 >
-> Tao
-
-After upgrading dtschema and installing 'yamllint', I saw the above 
-errors in running
-
-'dt_binding_check'. I will fix them and update in the next patch series.
-
-
-Best,
-
-Tao
-
+> I thought of upgrading to 24.04 LTS, but when upgrading kmod I've lost th=
+e capacity to boot
+> the older kernels in bisect process?
 >
->>
->> Please check and re-submit after running the above command yourself. 
->> Note
->> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
->> your schema. However, it must be unset to test all examples with your 
->> schema.
->>
-> _______________________________________________
-> CoreSight mailing list -- coresight@lists.linaro.org
-> To unsubscribe send an email to coresight-leave@lists.linaro.org
+> Probably, it would be for the best if I had several versions of Ubuntu in=
+ multiple boot
+> options? However, I have not yet done that ...
+>
+
+
+You do not need to install distributions on your bare metal.
+
+
+I need varous test environments,
+such as Debian, Ubuntu, Fedora, OpenSUSE, Arch, ...
+
+
+For compile testing, I use Docker.
+When I need to replace the kernel, I use Vagrant.
+
+
+If you want to compile-test deb-pkg with randconfig,
+Docker is enough.
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
