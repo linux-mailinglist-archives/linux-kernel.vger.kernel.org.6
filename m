@@ -1,405 +1,127 @@
-Return-Path: <linux-kernel+bounces-243025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18369290B3
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:26:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90179290A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436C6283F76
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 04:26:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB5C8B22B04
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 04:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4936F171B6;
-	Sat,  6 Jul 2024 04:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1115C14295;
+	Sat,  6 Jul 2024 04:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtVNHpI2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrblvW7f"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A085FC18;
-	Sat,  6 Jul 2024 04:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1511CD2EE;
+	Sat,  6 Jul 2024 04:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720239974; cv=none; b=iZgjmbHkkzdLEesVu7Kg4P44myABC2/60Pwak0WBIee3H9HWtxZCwbeXOyzFFHB0lbMpzIIKEZqQUYYAs2bi+lexxQQi7saTD+GlKzF/Wwuo5JyuagAwxJKvzjwi8yqnACg9qdp6cvLR9N9g6JwVt4DioGmiYOPNCG6v/fHsDTw=
+	t=1720239226; cv=none; b=uwePkda+7v10xHG1aYrQFP+5zSsHuc9+boTnYR5JnoEPM/RzqHqoh1z47P4MyypiZXPlq7fXfCd4tkaf6erjJ5qbi3mjJ1ow/yUUCRh/S+EHv11jgYHpoPu5asgjZTVkeCpg0Vukn8ekuohthkNlQ01+mcctKlW4S5Ua081HI4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720239974; c=relaxed/simple;
-	bh=f0ndvVbMP0LaBSaQ3ruLNCD8tYgVYd2BI+1Id+KaYLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SzdXjQ21uhynhDROcZX4uxXpvHChIgseLe0hwVgeFzVk2UDbQ4n2ILxd/6R0eNnpj57GxOMrzEilHLn1EYd1DvNeULOZelXpi8tl303+u95WcRjQp7QuR82BM70t8VptevixbDtyQxCoyQH1dPgy57jeM+EG5EuhXHWpTA9Hv8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtVNHpI2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9C9C2BD10;
-	Sat,  6 Jul 2024 04:26:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720239973;
-	bh=f0ndvVbMP0LaBSaQ3ruLNCD8tYgVYd2BI+1Id+KaYLg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LtVNHpI2baRakXQxPSwidR3TIIHKkrv9pb7FmavBT1d88S0aBiITsM2bHpOoiDDKc
-	 2/iTCEtCO9e6vkIiN/c3Zuc0hyl/+0/aMoj9OUpkHrTmAzG3SArZiY8FJ1S2KlQZ5N
-	 cJmNhHx4Bv2OjbAtucx131qJJlfP0tzT3FvbxkSGgE2dI1RmwpXSf+USl4Jj4PlBB5
-	 d5Vtfi1dJFsO5gNKEegnPqnKG5dLti6Y3g+caNjFFbYv/gk46CTpy5QW6WEUh7JzQ5
-	 TyxSRDF2hqoItIsFOxdLK0jYQ/6AbG92hfA/o74yCtid0izWFQJlFXsYkBUdC4tSIG
-	 mq88O1+OHPiRg==
-Date: Sat, 6 Jul 2024 12:12:00 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>
-Subject: Re: [PATCH v3 08/11] riscv: dts: add initial SpacemiT K1 SoC device
- tree
-Message-ID: <ZojEEAdUwxPJwqIS@xhacker>
-References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
- <20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org>
- <Zoanxksn0nio4MPg@xhacker>
- <20240705063839.GA3042186@ofsar>
+	s=arc-20240116; t=1720239226; c=relaxed/simple;
+	bh=e1COZmN0ACxDEpeBkzbOQ98FKCuHMtW6sMu7vJujK3s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JkbYlRdTS/y7SGuiieU/+ZdWOrmfb1ewpmMTyYZScNum3M06pBMig/c3q88L63ZhBK+qIqJlzDFwVwE/FDPpTssXYX4hVd1b3XfBxrT/gOpbX8KcwJuZE8NSWSBQEGEHgAX5ATmnnxW9I/xs9T2+YDraPlclPN46A54MYOiT+q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MrblvW7f; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c2c6b27428so1442392a91.3;
+        Fri, 05 Jul 2024 21:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720239224; x=1720844024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ls2hibznFQFFiyaBc2JC2K5T01cGRkJS+TyfbwgK9iQ=;
+        b=MrblvW7fhKyKYbrpFIbFhqZaUMipk2BMOyqd0UxIyebLyo/nTcQ3V2uqRIqTmND+hu
+         cYxjjH2hpdrPKdyRZZ9dwoe+3+r5iM5ZwJIbwPTLHFR3Rbg+j7Y+EAeo0dGyxs9lXrsb
+         IKPW/oJM7K9LD2C1de+l2mDiKhIJ6kkxGApuld1uVTt1esjSMDNBjWMTAg3v8dUP+LT3
+         7VABMdfh3YXSwiisoCcGf3yHBzVaYwX3MNVlbe6Ex7GWiRMcljQ6oO3Wvs/vk9fKznkb
+         9ffPoy5PRqEhZHcUqEfeaFlz62ormWKeHbY8shuTezAaON6VHKFNCv4fL72HUoLa6arT
+         JCvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720239224; x=1720844024;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ls2hibznFQFFiyaBc2JC2K5T01cGRkJS+TyfbwgK9iQ=;
+        b=JKeIrNzzR4xQKnwREdb8LI3Tld/algBkD3rAUtwJX/X0f+nq2PNs1l9s2/xFjIwBa2
+         tq6BJmoogZhwBPni9HQ4sKOgk2qOSsPtURROmLmmWDVdmMDyq2O+disNXEqjjyutC4sA
+         U1KBrEUla7e4O6Jeq7f60amWlipe+7yQH/G+IYe+Ed2elNr4RUMa6CYKek6g3C13GGz8
+         Cjp7Zdl3HbU4SfZWAzLichopIRGe1xiRobC/zy40nvBJbGmWbrpluJTN24N1GIhHO8vm
+         yxSYPxX+aRHprzTX5akFogLGtQCPu7lXf+ub0AK2R7rqGV8RUQp36RCaYBoThN99nECC
+         hcaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Mv14+OKRJcGLmYEKbFfWkrNLR5FNAZqYyspDqpIL29aRh1rkIvUSMyYiVty85QnP1rgyxmzNPl5r6dq5pRcXafuHwvf8cvbIZmkfv0vNmGbPpNv8+DYWWnCH16kFbksgQfLS
+X-Gm-Message-State: AOJu0YyVY+t3pbpPcESDxsAzh6lArswOsxcWrE6Dgyddt2CirmhAyZqC
+	MtXw8T+w97qncgTu+Q3iRL3QcFWLRY+xuHJpEkG2TIHPJ7TAFBbN
+X-Google-Smtp-Source: AGHT+IHCGqCb42Q2amsChP5zcfGymr0D3h04i0GUO67qjuHQA9EL9wMxFGJAuvlzKJFWMWh8BtbH8g==
+X-Received: by 2002:a17:902:e80e:b0:1f8:6776:7ab7 with SMTP id d9443c01a7336-1fb33e4379amr51827745ad.24.1720239224169;
+        Fri, 05 Jul 2024 21:13:44 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1535d13sm148539355ad.165.2024.07.05.21.13.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 21:13:43 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: jiri@resnulli.us
+Cc: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH net,v2] team: Fix ABBA deadlock caused by race in team_del_slave
+Date: Sat,  6 Jul 2024 13:13:29 +0900
+Message-Id: <20240706041329.96637-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <000000000000ffc5d80616fea23d@google.com>
+References: <000000000000ffc5d80616fea23d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240705063839.GA3042186@ofsar>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 05, 2024 at 06:38:39AM +0000, Yixun Lan wrote:
-> 
-> On 21:46 Thu 04 Jul     , Jisheng Zhang wrote:
-> > On Wed, Jul 03, 2024 at 02:55:11PM +0000, Yixun Lan wrote:
-> > > From: Yangyu Chen <cyy@cyyself.name>
-> > > 
-> > > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
-> > > 
-> > > Key features:
-> > > - 4 cores per cluster, 2 clusters on chip
-> > > - UART IP is Intel XScale UART
-> > > 
-> > > Some key considerations:
-> > > - ISA string is inferred from vendor documentation[2]
-> > > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
-> > > - No coherent DMA on this board
-> > >     Inferred by taking vendor ethernet and MMC drivers to the mainline
-> > >     kernel. Without dma-noncoherent in soc node, the driver fails.
-> > > - No cache nodes now
-> > >     The parameters from vendor dts are likely to be wrong. It has 512
-> > >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
-> > >     When the size of the cache line is 64B, it is a directly mapped
-> > >     cache rather than a set-associative cache, the latter is commonly
-> > >     used. Thus, I didn't use the parameters from vendor dts.
-> > > 
-> > > Currently only support booting into console with only uart, other
-> > > features will be added soon later.
-> > > 
-> > > Link: https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1_datasheet [1]
-> > > Link: https://developer.spacemit.com/#/documentation?token=BWbGwbx7liGW21kq9lucSA6Vnpb [2]
-> > > Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/boot/dts/spacemit/k1-x.dtsi [3]
-> > > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-> > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > > ---
-> > >  arch/riscv/boot/dts/spacemit/k1.dtsi | 376 +++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 376 insertions(+)
-> > > 
-> > > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > > new file mode 100644
-> > > index 0000000000000..a076e35855a2e
-> > > --- /dev/null
-> > > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > > @@ -0,0 +1,376 @@
-> > > +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> > > +/*
-> > > + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-> > > + */
-> > > +
-> > > +/dts-v1/;
-> > > +/ {
-> > > +	#address-cells = <2>;
-> > > +	#size-cells = <2>;
-> > > +	model = "SpacemiT K1";
-> > > +	compatible = "spacemit,k1";
-> > > +
-> > > +	aliases {
-> > > +		serial0 = &uart0;
-> > > +		serial1 = &uart2;
-> > > +		serial2 = &uart3;
-> > > +		serial3 = &uart4;
-> > > +		serial4 = &uart5;
-> > > +		serial5 = &uart6;
-> > > +		serial6 = &uart7;
-> > > +		serial7 = &uart8;
-> > > +		serial8 = &uart9;
-> > > +	};
-> > > +
-> > > +	cpus {
-> > > +		#address-cells = <1>;
-> > > +		#size-cells = <0>;
-> > > +		timebase-frequency = <24000000>;
-> > > +
-> > > +		cpu-map {
-> > > +			cluster0 {
-> > > +				core0 {
-> > > +					cpu = <&cpu_0>;
-> > > +				};
-> > > +				core1 {
-> > > +					cpu = <&cpu_1>;
-> > > +				};
-> > > +				core2 {
-> > > +					cpu = <&cpu_2>;
-> > > +				};
-> > > +				core3 {
-> > > +					cpu = <&cpu_3>;
-> > > +				};
-> > > +			};
-> > > +
-> > > +			cluster1 {
-> > > +				core0 {
-> > > +					cpu = <&cpu_4>;
-> > > +				};
-> > > +				core1 {
-> > > +					cpu = <&cpu_5>;
-> > > +				};
-> > > +				core2 {
-> > > +					cpu = <&cpu_6>;
-> > > +				};
-> > > +				core3 {
-> > > +					cpu = <&cpu_7>;
-> > > +				};
-> > > +			};
-> > > +		};
-> > > +
-> > > +		cpu_0: cpu@0 {
-> > > +			compatible = "spacemit,x60", "riscv";
-> > > +			device_type = "cpu";
-> > > +			reg = <0>;
-> > > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> > > +			riscv,isa-base = "rv64i";
-> > > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> > > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> > > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> > > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> > > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> > > +			riscv,cbom-block-size = <64>;
-> > > +			riscv,cbop-block-size = <64>;
-> > > +			riscv,cboz-block-size = <64>;
-> > > +			mmu-type = "riscv,sv39";
-> > > +
-> > > +			cpu0_intc: interrupt-controller {
-> > > +				compatible = "riscv,cpu-intc";
-> > > +				interrupt-controller;
-> > > +				#interrupt-cells = <1>;
-> > > +			};
-> > > +		};
-> > > +
-> > > +		cpu_1: cpu@1 {
-> > > +			compatible = "spacemit,x60", "riscv";
-> > > +			device_type = "cpu";
-> > > +			reg = <1>;
-> > > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> > > +			riscv,isa-base = "rv64i";
-> > > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> > > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> > > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> > > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> > > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> > > +			riscv,cbom-block-size = <64>;
-> > > +			riscv,cbop-block-size = <64>;
-> > > +			riscv,cboz-block-size = <64>;
-> > > +			mmu-type = "riscv,sv39";
-> > > +
-> > > +			cpu1_intc: interrupt-controller {
-> > > +				compatible = "riscv,cpu-intc";
-> > > +				interrupt-controller;
-> > > +				#interrupt-cells = <1>;
-> > > +			};
-> > > +		};
-> > > +
-> > > +		cpu_2: cpu@2 {
-> > > +			compatible = "spacemit,x60", "riscv";
-> > > +			device_type = "cpu";
-> > > +			reg = <2>;
-> > > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> > > +			riscv,isa-base = "rv64i";
-> > > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> > > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> > > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> > > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> > > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> > > +			riscv,cbom-block-size = <64>;
-> > > +			riscv,cbop-block-size = <64>;
-> > > +			riscv,cboz-block-size = <64>;
-> > > +			mmu-type = "riscv,sv39";
-> > > +
-> > > +			cpu2_intc: interrupt-controller {
-> > > +				compatible = "riscv,cpu-intc";
-> > > +				interrupt-controller;
-> > > +				#interrupt-cells = <1>;
-> > > +			};
-> > > +		};
-> > > +
-> > > +		cpu_3: cpu@3 {
-> > > +			compatible = "spacemit,x60", "riscv";
-> > > +			device_type = "cpu";
-> > > +			reg = <3>;
-> > > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> > > +			riscv,isa-base = "rv64i";
-> > > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> > > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> > > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> > > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> > > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> > > +			riscv,cbom-block-size = <64>;
-> > > +			riscv,cbop-block-size = <64>;
-> > > +			riscv,cboz-block-size = <64>;
-> > > +			mmu-type = "riscv,sv39";
-> > > +
-> > > +			cpu3_intc: interrupt-controller {
-> > > +				compatible = "riscv,cpu-intc";
-> > > +				interrupt-controller;
-> > > +				#interrupt-cells = <1>;
-> > > +			};
-> > > +		};
-> > > +
-> > > +		cpu_4: cpu@4 {
-> > > +			compatible = "spacemit,x60", "riscv";
-> > > +			device_type = "cpu";
-> > > +			reg = <4>;
-> > > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> > > +			riscv,isa-base = "rv64i";
-> > > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> > > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> > > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> > > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> > > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> > > +			riscv,cbom-block-size = <64>;
-> > > +			riscv,cbop-block-size = <64>;
-> > > +			riscv,cboz-block-size = <64>;
-> > > +			mmu-type = "riscv,sv39";
-> > > +
-> > > +			cpu4_intc: interrupt-controller {
-> > > +				compatible = "riscv,cpu-intc";
-> > > +				interrupt-controller;
-> > > +				#interrupt-cells = <1>;
-> > > +			};
-> > > +		};
-> > > +
-> > > +		cpu_5: cpu@5 {
-> > > +			compatible = "spacemit,x60", "riscv";
-> > > +			device_type = "cpu";
-> > > +			reg = <5>;
-> > > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> > > +			riscv,isa-base = "rv64i";
-> > > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> > > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> > > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> > > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> > > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> > > +			riscv,cbom-block-size = <64>;
-> > > +			riscv,cbop-block-size = <64>;
-> > > +			riscv,cboz-block-size = <64>;
-> > > +			mmu-type = "riscv,sv39";
-> > > +
-> > > +			cpu5_intc: interrupt-controller {
-> > > +				compatible = "riscv,cpu-intc";
-> > > +				interrupt-controller;
-> > > +				#interrupt-cells = <1>;
-> > > +			};
-> > > +		};
-> > > +
-> > > +		cpu_6: cpu@6 {
-> > > +			compatible = "spacemit,x60", "riscv";
-> > > +			device_type = "cpu";
-> > > +			reg = <6>;
-> > > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> > > +			riscv,isa-base = "rv64i";
-> > > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> > > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> > > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> > > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> > > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> > > +			riscv,cbom-block-size = <64>;
-> > > +			riscv,cbop-block-size = <64>;
-> > > +			riscv,cboz-block-size = <64>;
-> > > +			mmu-type = "riscv,sv39";
-> > > +
-> > > +			cpu6_intc: interrupt-controller {
-> > > +				compatible = "riscv,cpu-intc";
-> > > +				interrupt-controller;
-> > > +				#interrupt-cells = <1>;
-> > > +			};
-> > > +		};
-> > > +
-> > > +		cpu_7: cpu@7 {
-> > > +			compatible = "spacemit,x60", "riscv";
-> > > +			device_type = "cpu";
-> > > +			reg = <7>;
-> > > +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> > > +			riscv,isa-base = "rv64i";
-> > > +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> > > +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> > > +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> > > +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> > > +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> > > +			riscv,cbom-block-size = <64>;
-> > > +			riscv,cbop-block-size = <64>;
-> > > +			riscv,cboz-block-size = <64>;
-> > > +			mmu-type = "riscv,sv39";
-> > > +
-> > > +			cpu7_intc: interrupt-controller {
-> > > +				compatible = "riscv,cpu-intc";
-> > > +				interrupt-controller;
-> > > +				#interrupt-cells = <1>;
-> > > +			};
-> > > +		};
-> > > +
-> > > +	};
-> > > +
-> > > +	soc {
-> > > +		compatible = "simple-bus";
-> > > +		interrupt-parent = <&plic>;
-> > > +		#address-cells = <2>;
-> > > +		#size-cells = <2>;
-> > > +		dma-noncoherent;
-> > > +		ranges;
-> > > +
-> > > +		uart0: serial@d4017000 {
-> > > +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> > 
-> > no, this is not a correct hw modeling. The doc on spacemit says
-> > all the uart support 64 bytes FIFO, declaring xscale only makes
-> > use of 32 bytes FIFO.
-> yes, I also noticed it's 64 bytes FIFO
-> 
-> > 
-> > IIRC, 8250_pxa is a xscale uart with 64 bytes FIFO, so this should be
-> > "mrvl,pxa-uart" or "mrvl,mmp-uart"
-> 
-> 
-> for mrvl,pxa-uart, I think you imply to use drivers/tty/serial/8250/8250_pxa.c,
-> which turn out doesn't work on k1 SoC, for the record, we need to adjust
+       CPU0                    CPU1
+       ----                    ----
+  lock(&rdev->wiphy.mtx);
+                               lock(team->team_lock_key#4);
+                               lock(&rdev->wiphy.mtx);
+  lock(team->team_lock_key#4);
 
-Really? I just tried "mrvl,pxa-uart" with rc6, it works perfectly, and the FIFO
-in the driver logic is 64bytes now. Am I misssing something or you never tried it?
+Deadlock occurs due to the above scenario. Therefore, you can prevent
+deadlock by briefly releasing the lock before calling dev_open() in
+team_port_add() and locking it again after it returns.
 
->  drivers/tty/serial/8250/Kconfig to enable the driver for ARCH_SPACEMIT,
->  and change uart compatible to "spacemit,k1-uart", "mrvl,pxa-uart"
-> 
-> for mrvl,mmp-uart, I see two choices, one using 8250_pxa.c which has same result
-> as mrvl,pxa-uart, another choice would using the driver of 8250_of.c 
-> and it work as same as "intel,xscale-uart", I don't see any difference..
-> 
-> P.S: there is possibly a side problem that "mrvl,mmp-uart" from 8250_of.c doesn't 
-> really compatile with "mrvl,mmp-uart" from 8250_pxa.c, but I think it's another story
+Reported-and-tested-by: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
+Fixes: 3d249d4ca7d0 ("net: introduce ethernet teaming device")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ drivers/net/team/team_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+index ab1935a4aa2c..245566a1875d 100644
+--- a/drivers/net/team/team_core.c
++++ b/drivers/net/team/team_core.c
+@@ -1213,7 +1213,9 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
+ 		goto err_port_enter;
+ 	}
+ 
++	mutex_unlock(&team->lock);
+ 	err = dev_open(port_dev, extack);
++	mutex_lock(&team->lock);
+ 	if (err) {
+ 		netdev_dbg(dev, "Device %s opening failed\n",
+ 			   portname);
+--
 
