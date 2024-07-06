@@ -1,179 +1,178 @@
-Return-Path: <linux-kernel+bounces-243068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC0F929114
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:09:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73BA929112
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35C211F232A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E09B1F23250
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF01318C3B;
-	Sat,  6 Jul 2024 05:08:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0860128DCC;
+	Sat,  6 Jul 2024 05:08:25 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4790405CC
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 05:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37CD20B04
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 05:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720242517; cv=none; b=fgAWDv6MpAbBsaBCBi5z/hdsgEqTJQ2QHPVeleJvmqeZVlXMnHnhrgLtXFxIejCRt/knixO3epgT2AhjqHQNa473LD8uETjMK/d9g21/pWwSZIVjnzx5fNwEbxWG0YGLBw44pdbZG4acgWmiJ9hGIwQKI/yZUlleTM6Z7UTklro=
+	t=1720242504; cv=none; b=mOMX3ty2aR1CBwrxf20Dbul+7UpyrMqcvsj5LA74H/QWn6ZoKKYnQLC22BDhvObVDyBZAzPGiuBByHU7+hEld6H4OEoezrVAoQlMsxFv5RH9VUJfrJfOkTlrBmKP369LLyTGd76nwCUCkQ7YHyLZcTe2zvUIaEMoc/n0pHqzmxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720242517; c=relaxed/simple;
-	bh=8jdMxxXbT6y02VK36z1BPd7lJxLpS2ah7tvvgVKBBXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6yX8yIH71wj2MKbp17J9x/S0sP2xab2X+PeoPDDWEMc5o529+MHxFY5ynm2XfHacwH+IiWoDrJ+AwS6rY/gcP/kixutrpd0YEi79TRFJx5Eh1TvR9HSTRPMWMOT2s2teKQmTe/SqpyXA0zxWid5Ii7QuWLh561j66Mb8Jdk7X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPxek-0001bt-VF; Sat, 06 Jul 2024 07:08:18 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPxeh-007V4g-TI; Sat, 06 Jul 2024 07:08:15 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sPxeh-000hrD-2b;
-	Sat, 06 Jul 2024 07:08:15 +0200
-Date: Sat, 6 Jul 2024 07:08:15 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Dan Robertson <dan@dlrobertson.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, kernel@pengutronix.de,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/6] iio: adc: ti-tsc2046: simplify with cleanup.h
-Message-ID: <ZojRPxa0SWUvqGgC@pengutronix.de>
-References: <20240705-cleanup-h-iio-v1-0-77114c7e84c5@linaro.org>
- <20240705-cleanup-h-iio-v1-5-77114c7e84c5@linaro.org>
+	s=arc-20240116; t=1720242504; c=relaxed/simple;
+	bh=zNgwfH6InNsnWWKPwSRPQOgaum/vvGCcbSzXoI9VjYI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tmEkp3YPRjx3nLM0Q+5Hu83Ppp+z4qRhaJ/RT1Wz+fXf891wR3BEq9j+HMyKCQqCDHcVfl6G9dJ/pBJrR5fQG7qfMxOh4cgOtldbpYSSQFzlZEa+CXatIw553cU3pgWCCBGAUWJMwKvR98qnQloQ5443azqNhSQHnb9Cwb4WyGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f63ce98003so274045739f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 22:08:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720242502; x=1720847302;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uMnth4lpZqa54DWQFc+Nscp7G5diBYCWrU+izZnqnwE=;
+        b=Rq2Z9Xhy0JYX3ZEPE/x3cXhBjs6hp1OzNeiPYJ4sKNfLM+WcvRgnLe++P22KQqKvfO
+         YlXRGzg106gKeczCydDvRo9y5YyX7TfYB24XT/DVfJKliPxz3hL6ttXfWJpeWGFgHZ8a
+         rTOBtSW3z2Tpf51i8dFccQxAoAJiUSE1INrXmuqfREspP3HKKOQQrbncVZA1hJFDsuqr
+         dAEzMz8CUuJe2Y1Xc1bdV7AlLgNkVqBYOgsA2Poy8m7F6JaZ0WcmquM/Ro+pwIfDeSak
+         zT9yIPPa4BAOw/EenRTLMy2T71Eu5WaPsrUBR6S1kIHFt3TeHEA6aF638hE3UbVHwkFP
+         favw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaKNlu2uv+RmTRBdKivFdTJldxIi5d3MWx6cBGEvSM7VceeFSaePs8214R86Hs+GNTc3aTSzzbo6nLUuxHyk7ylBjywu2EMoQBpd1m
+X-Gm-Message-State: AOJu0YxyFsg87j2werJK4vsugveHTn+FXy1r0996kXB+5WyfS3v/Isfq
+	Fe26idxlLemOyp1mYcSu4afUF6Vy3QecBf+rAoNvdiWTua8Vvm/PD0x+Xc5wPUndxhSOEKytVNP
+	HiNS8A4YKOsG+2spWLiKJoYOHzCd1kI1vSvvhMmonK+dbFG/4Ia0Dqhk=
+X-Google-Smtp-Source: AGHT+IFr4AsctvjiD5hASZ8o+wMepJiBeGtuBChIyn9BbPMd4UnjcMUWz+fifv4uC5+sdUUtcxKT9HnpOHj9ChVOOZf4dAxjVZ9C
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240705-cleanup-h-iio-v1-5-77114c7e84c5@linaro.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6602:2cc4:b0:7f6:5c77:ce16 with SMTP id
+ ca18e2360f4ac-7f66df29b61mr44280539f.3.1720242502048; Fri, 05 Jul 2024
+ 22:08:22 -0700 (PDT)
+Date: Fri, 05 Jul 2024 22:08:22 -0700
+In-Reply-To: <00000000000079d168061c36ce83@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000432cc7061c8d2b68@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] stack segment fault in dev_hash_map_redirect
+From: syzbot <syzbot+c1e04a422bbc0f0f2921@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 05, 2024 at 12:40:48PM +0200, Krzysztof Kozlowski wrote:
-> Allocate the memory with scoped/cleanup.h to reduce error handling and
-> make the code a bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+syzbot has found a reproducer for the following issue on:
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+HEAD commit:    0b58e108042b Add linux-next specific files for 20240703
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=165ce371980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ed034204f2e40e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=c1e04a422bbc0f0f2921
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14987969980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11955485980000
 
-Thank you!
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d079762feae/disk-0b58e108.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e53996c8d8c2/vmlinux-0b58e108.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a0bf21cdd844/bzImage-0b58e108.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c1e04a422bbc0f0f2921@syzkaller.appspotmail.com
+
+Oops: stack segment: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5094 Comm: syz-executor316 Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
+RIP: 0010:__bpf_xdp_redirect_map include/linux/filter.h:1699 [inline]
+RIP: 0010:dev_hash_map_redirect+0x64/0x620 kernel/bpf/devmap.c:1022
+Code: 00 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 9f 9c 3d 00 48 8b 03 48 89 44 24 08 48 8d 58 38 48 89 dd 48 c1 ed 03 <42> 0f b6 44 3d 00 84 c0 0f 85 f5 03 00 00 44 8b 33 44 89 f6 83 e6
+RSP: 0018:ffffc9000356f958 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: 0000000000000038 RCX: ffff8880276e9e00
+RDX: 0000000000000000 RSI: 000000000356f9b0 RDI: ffff88802f22f000
+RBP: 0000000000000007 R08: 0000000000000007 R09: ffffffff81b5ee2f
+R10: 0000000000000004 R11: ffff8880276e9e00 R12: 0000000000000008
+R13: 000000000356f9b0 R14: 0000000000000000 R15: dffffc0000000000
+FS:  000055557ccb9380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000021d5ab98 CR3: 0000000022250000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bpf_prog_ec9efaa32d58ce69+0x56/0x5a
+ __bpf_prog_run include/linux/filter.h:691 [inline]
+ bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+ tun_build_skb drivers/net/tun.c:1711 [inline]
+ tun_get_user+0x3321/0x4560 drivers/net/tun.c:1819
+ tun_chr_write_iter+0x113/0x1f0 drivers/net/tun.c:2048
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbd788a7f10
+Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d b1 e1 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+RSP: 002b:00007ffde33a9838 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fbd788a7f10
+RDX: 000000000000004e RSI: 0000000020000540 RDI: 00000000000000c8
+RBP: 0000000000000000 R08: 00007ffde33a9968 R09: 00007ffde33a9968
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
+RIP: 0010:__bpf_xdp_redirect_map include/linux/filter.h:1699 [inline]
+RIP: 0010:dev_hash_map_redirect+0x64/0x620 kernel/bpf/devmap.c:1022
+Code: 00 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 9f 9c 3d 00 48 8b 03 48 89 44 24 08 48 8d 58 38 48 89 dd 48 c1 ed 03 <42> 0f b6 44 3d 00 84 c0 0f 85 f5 03 00 00 44 8b 33 44 89 f6 83 e6
+RSP: 0018:ffffc9000356f958 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: 0000000000000038 RCX: ffff8880276e9e00
+RDX: 0000000000000000 RSI: 000000000356f9b0 RDI: ffff88802f22f000
+RBP: 0000000000000007 R08: 0000000000000007 R09: ffffffff81b5ee2f
+R10: 0000000000000004 R11: ffff8880276e9e00 R12: 0000000000000008
+R13: 000000000356f9b0 R14: 0000000000000000 R15: dffffc0000000000
+FS:  000055557ccb9380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000021d5ab98 CR3: 0000000022250000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	00 48 89             	add    %cl,-0x77(%rax)
+   3:	d8 48 c1             	fmuls  -0x3f(%rax)
+   6:	e8 03 42 80 3c       	call   0x3c80420e
+   b:	38 00                	cmp    %al,(%rax)
+   d:	74 08                	je     0x17
+   f:	48 89 df             	mov    %rbx,%rdi
+  12:	e8 9f 9c 3d 00       	call   0x3d9cb6
+  17:	48 8b 03             	mov    (%rbx),%rax
+  1a:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+  1f:	48 8d 58 38          	lea    0x38(%rax),%rbx
+  23:	48 89 dd             	mov    %rbx,%rbp
+  26:	48 c1 ed 03          	shr    $0x3,%rbp
+* 2a:	42 0f b6 44 3d 00    	movzbl 0x0(%rbp,%r15,1),%eax <-- trapping instruction
+  30:	84 c0                	test   %al,%al
+  32:	0f 85 f5 03 00 00    	jne    0x42d
+  38:	44 8b 33             	mov    (%rbx),%r14d
+  3b:	44 89 f6             	mov    %r14d,%esi
+  3e:	83                   	.byte 0x83
+  3f:	e6                   	.byte 0xe6
 
 
-> ---
->  drivers/iio/adc/ti-tsc2046.c | 29 ++++++++++++-----------------
->  1 file changed, 12 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ti-tsc2046.c b/drivers/iio/adc/ti-tsc2046.c
-> index edcef8f11522..24b1d4390872 100644
-> --- a/drivers/iio/adc/ti-tsc2046.c
-> +++ b/drivers/iio/adc/ti-tsc2046.c
-> @@ -6,6 +6,7 @@
->   */
->  
->  #include <linux/bitfield.h>
-> +#include <linux/cleanup.h>
->  #include <linux/delay.h>
->  #include <linux/module.h>
->  #include <linux/regulator/consumer.h>
-> @@ -273,7 +274,6 @@ static int tsc2046_adc_read_one(struct tsc2046_adc_priv *priv, int ch_idx,
->  				u32 *effective_speed_hz)
->  {
->  	struct tsc2046_adc_ch_cfg *ch = &priv->ch_cfg[ch_idx];
-> -	struct tsc2046_adc_atom *rx_buf, *tx_buf;
->  	unsigned int val, val_normalized = 0;
->  	int ret, i, count_skip = 0, max_count;
->  	struct spi_transfer xfer;
-> @@ -287,18 +287,20 @@ static int tsc2046_adc_read_one(struct tsc2046_adc_priv *priv, int ch_idx,
->  		max_count = 1;
->  	}
->  
-> -	if (sizeof(*tx_buf) * max_count > PAGE_SIZE)
-> +	if (sizeof(struct tsc2046_adc_atom) * max_count > PAGE_SIZE)
->  		return -ENOSPC;
->  
-> -	tx_buf = kcalloc(max_count, sizeof(*tx_buf), GFP_KERNEL);
-> +	struct tsc2046_adc_atom *tx_buf __free(kfree) = kcalloc(max_count,
-> +								sizeof(*tx_buf),
-> +								GFP_KERNEL);
->  	if (!tx_buf)
->  		return -ENOMEM;
->  
-> -	rx_buf = kcalloc(max_count, sizeof(*rx_buf), GFP_KERNEL);
-> -	if (!rx_buf) {
-> -		ret = -ENOMEM;
-> -		goto free_tx;
-> -	}
-> +	struct tsc2046_adc_atom *rx_buf __free(kfree) = kcalloc(max_count,
-> +								sizeof(*rx_buf),
-> +								GFP_KERNEL);
-> +	if (!rx_buf)
-> +		return -ENOMEM;
->  
->  	/*
->  	 * Do not enable automatic power down on working samples. Otherwise the
-> @@ -326,7 +328,7 @@ static int tsc2046_adc_read_one(struct tsc2046_adc_priv *priv, int ch_idx,
->  	if (ret) {
->  		dev_err_ratelimited(&priv->spi->dev, "SPI transfer failed %pe\n",
->  				    ERR_PTR(ret));
-> -		goto free_bufs;
-> +		return ret;
->  	}
->  
->  	if (effective_speed_hz)
-> @@ -337,14 +339,7 @@ static int tsc2046_adc_read_one(struct tsc2046_adc_priv *priv, int ch_idx,
->  		val_normalized += val;
->  	}
->  
-> -	ret = DIV_ROUND_UP(val_normalized, max_count - count_skip);
-> -
-> -free_bufs:
-> -	kfree(rx_buf);
-> -free_tx:
-> -	kfree(tx_buf);
-> -
-> -	return ret;
-> +	return DIV_ROUND_UP(val_normalized, max_count - count_skip);
->  }
->  
->  static size_t tsc2046_adc_group_set_layout(struct tsc2046_adc_priv *priv,
-> 
-> -- 
-> 2.43.0
-> 
-> 
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
