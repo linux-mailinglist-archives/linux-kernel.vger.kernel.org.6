@@ -1,121 +1,166 @@
-Return-Path: <linux-kernel+bounces-243311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FCF929467
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:21:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394D692946C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0481E1C2150B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:21:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E97832833B9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D115B13C67D;
-	Sat,  6 Jul 2024 15:21:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E82E13B285;
-	Sat,  6 Jul 2024 15:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FDC13AD1C;
+	Sat,  6 Jul 2024 15:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0Ibaz1B"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388BA132492;
+	Sat,  6 Jul 2024 15:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720279276; cv=none; b=kPYwH1iu6imHbQ0EFjwsHZFneupK+TKNksEwnpJfQTG0Qktc/EA59/Zfwp3w3hjVZqh7YZbtFptHf9LVXp45rtcBhV6suRYLceDsfmu0jrVHNZcEiU+O17hG38wV+f2S+ExEkI2rDssF3QF6G6AykPb+V45Ezkhmo2xl7RocFNs=
+	t=1720279435; cv=none; b=NnOtu4ae+nz/xtGAMn1AlF54c6A76nZZmaCt1iwnFuEggumcgLe0gyHvPhbpmEl3nyf1e6QwUvoXXsSdHT8uRSTqVSo7twD/LXqvoK5RqxWRnVqJacy9sFe32BEZGpfAxgsMj8qPCXZ8A7cVqsi0mYuypcXLcRkrMYb1EQ5ZfxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720279276; c=relaxed/simple;
-	bh=yXdPT+WkyCxMh0Bgond9k/k+SWwa6T8kNHAgWgcUYnQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=onOvLIIHFbtWxhWhJ8bChWgKikNtZdDi2GiXyLbrBfbEE+qrh9o+HBb9FNoNyleykDfsFg/vzYY04JOKIPTnU+AcVS13V8nJUBL65cE81n2m46sOk3m0R6aFt196PQ1B9iVI1RXgUpt+mIKiSawqthEBY6+4WyaiK/I4IPL0WQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 70B881596;
-	Sat,  6 Jul 2024 08:21:33 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3BC623F762;
-	Sat,  6 Jul 2024 08:21:06 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>,
-	James Clark <james.clark@arm.com>
-Subject: [PATCH v2 2/2] perf mem: Warn if memory events are not supported on all CPUs
-Date: Sat,  6 Jul 2024 16:20:35 +0100
-Message-Id: <20240706152035.86983-3-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240706152035.86983-1-leo.yan@arm.com>
-References: <20240706152035.86983-1-leo.yan@arm.com>
+	s=arc-20240116; t=1720279435; c=relaxed/simple;
+	bh=5SxVpHq21OxCvsGFYfj0CAfF5z+ueyVU4jGw3jVNyGE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ktKWjWUWflK8T49e4X83VCsQEaPMF4cjqanPZClpiusUjfxfjq3r2ZLjnuSz7gD3qqnM5dPsZf9B6Spv3t8f0PZCGoTlU+j1eThCdZkY5/wE6HN+zDEo8cJsMjZrl1GZbTQQZujCM8Fp3NCUpCT93zlQckjeY9kWYCzeWflCBG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0Ibaz1B; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-367ac08f80fso797498f8f.1;
+        Sat, 06 Jul 2024 08:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720279432; x=1720884232; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3q+USBToABJwmfqPMV/gavBxVc+orXVDvte1zTYf7JY=;
+        b=O0Ibaz1Bfy/d1smMUazXbKXETnkldvNp7TWpl/XwkzdZcL5B+Vbcdq4Oivirpbj1JG
+         wID9G+7pqt2kYnznalihbLnW0Wg4KfCZe+HM2/WcHJsGQ9I+2wEyQnwY+ehqqY1oC+xp
+         1DsZgzJLBrGChjkBtGMPydzvdIqlh6JHeByn7ZukecfsCwDpcJX8tsOfciucYu4exPXh
+         k8oMmAovFcDNAPbfs31vu4wN3EAnDKMKq+G0SfEYYhMpOEStyhaD+HA27n/IW9U/93D7
+         XeFIUih3DGRrQv9ANUhOr25GhoHYAi6EVSCqhdikb2OIP+C5Udg5ZPKnBOqK5FXvsTHA
+         j0XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720279432; x=1720884232;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3q+USBToABJwmfqPMV/gavBxVc+orXVDvte1zTYf7JY=;
+        b=JsFYswUpywLiFRO1kD4AZkYagzvxrHZKoJaLMP8j8wUikUeqEJeFFUADe5ayRjIVw1
+         n8Pe/Xip54e9Vy0Nv0nF4pyZKEU2Cc3MnsXctA0aBUwPcXFGjAkrjJvET3NjMuBqkmuE
+         t71o1eXxUkRbobWDHAe7ZIoJypqO26GyHI2DDlhK6vIqx8H3ASlHpWEL6jBm+I2W75rt
+         LjnPcog9+xwimz7tKY9JJH9YDezu/TA2Rtv96tb+y2MHrlzexmcr9GBA3cWGHEPD4MRT
+         /uKqOUL6ENVC8mPNC8hJgJclb8jKvNXZPq5jEQDEoXiQZoKr53BsaZzid4mFHUD3gdL6
+         Lf6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXrqONptZsrQJwJuT+c3MsickcLK+NikAaYrgE7W4crodAKstCCLP3NL6Ym9DUiH8hE01VgpPPJDvNC1UQXEls60czQl17kjJoAgeOokfnho+S/+tUQirDu12U8hwOkz3qEYNTHDk3JyCNwQFoOdYc9sjv7Fug80/4L6P49jV7QCn17us6wge52owsBMxpFl1Y0y/recG5o5FD0odnH
+X-Gm-Message-State: AOJu0Yz5nU/u2sJiw4Gcru+xiDv+8btleBTD1ub+bwf3MaXS5c3KMY+z
+	kWUcPhOIFmbb6sABR/NKODnWuk9vYgTXNBsHC+8bsSxFV1ZIEWev
+X-Google-Smtp-Source: AGHT+IGuHZqxCDsXWKNtqXwxfkmruJRlYvIuEJdJ6FlHcSNlIFM4AEDcUXXIzcKRm0pz28bW9xsSOA==
+X-Received: by 2002:a5d:6843:0:b0:367:89d3:6581 with SMTP id ffacd0b85a97d-3679dd2ac1cmr5487729f8f.17.1720279432233;
+        Sat, 06 Jul 2024 08:23:52 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-d11b-8ec4-ea76-796c.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d11b:8ec4:ea76:796c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3679ed376cdsm6421593f8f.114.2024.07.06.08.23.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Jul 2024 08:23:51 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/6] use device_for_each_child_node() to access device
+ child nodes
+Date: Sat, 06 Jul 2024 17:23:32 +0200
+Message-Id: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHRhiWYC/x2NUQrDIBAFrxL2u4IG29JepRTZrC91QbQohEDI3
+ Sv9HBhmDupoik7P6aCGTbvWMsBdJpLE5QOjcTDNdvb2bp2JQxKEtbYAlhQkaY6h1AjDG2vmJcM
+ 4cRD2y80/rjRS34ZV9//m9T7PH9bIF8V2AAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Daniel Scally <djrscally@gmail.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Marcin Wojtas <marcin.s.wojtas@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org, 
+ netdev@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720279430; l=2810;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=5SxVpHq21OxCvsGFYfj0CAfF5z+ueyVU4jGw3jVNyGE=;
+ b=6igQToqzmVSyatfLO2WUUbucw6CfBOiYElJ7VeY8UcOezRZ2KA6I7fk3qVtingGNye1FV+Vn8
+ iOLZgXQ3CliALlvVgV5PzU5ynT4JSC4+p/9XeJOUnWwqFIe3mJ+sITO
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-It is possible that memory events are not supported on all CPUs.
+This series aims to clarify the use cases of:
 
-Prints a warning by dumping the enabled CPU maps in this case.
+- device_for_each_child_node[_scoped]()
+- fwnode_for_each_available_child_node[_scoped]()
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
-Reviewed-by: James Clark <james.clark@arm.com>
+to access firmware nodes.
+
+There have been multiple discussions [1][2] about what the first macro
+implies in the sense of availability, and a number of users have opted
+for the second macro in cases where the first one should have been
+preferred.
+
+The second macro is intended to be used over child nodes of a firmware
+node, not direct child nodes of the device node. Instead, those users
+retrieve the fwnode member from the device struct just to have access to
+a macro that explicitly indicates node availability.
+
+That workaround is not necessary because `device_for_each_child_node()`
+implies availability for the existing backends (ACPI, DT, swnode).
+
+This series does not cover other points discussed in [2] like addressing
+uses of `fwnode_for_each_child_node()` where `device_*` should have been
+used, using the `_avaialble_` variant of the fwnode loop whenever
+possible, or adding new `_scoped` macros. Such points will be covered by
+subsequent series to keep focus on the "availability" issue.
+
+The conversion has been validated with an LTC2992 hwmon sensor, which is
+one of the affected drivers. The rest of the drivers could only be
+compiled and checked with static-analysis tools.
+
+Link: https://lore.kernel.org/all/20211205190101.26de4a57@jic23-huawei/ [1]
+Link: https://lore.kernel.org/all/20240523-fwnode_for_each_available_child_node_scoped-v2-0-701f3a03f2fb@gmail.com/ [2]
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- tools/perf/util/mem-events.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Javier Carrasco (6):
+      device property: document device_for_each_child_node macro
+      hwmon: (ltc2992) use device_for_each_child_node_scoped() to access child nodes
+      leds: bd2606mvv: use device_for_each_child_node() to access device child nodes
+      leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
+      leds: pca995x: use device_for_each_child_node() to access device child nodes
+      net: mvpp2: use device_for_each_child_node() to access device child nodes
 
-diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
-index 6dda47bb774f..8aff2ca8bbd5 100644
---- a/tools/perf/util/mem-events.c
-+++ b/tools/perf/util/mem-events.c
-@@ -8,6 +8,7 @@
- #include <unistd.h>
- #include <api/fs/fs.h>
- #include <linux/kernel.h>
-+#include "cpumap.h"
- #include "map_symbol.h"
- #include "mem-events.h"
- #include "mem-info.h"
-@@ -242,6 +243,7 @@ int perf_mem_events__record_args(const char **rec_argv, int *argv_nr)
- 	int i = *argv_nr;
- 	const char *s;
- 	char *copy;
-+	struct perf_cpu_map *cpu_map = NULL;
- 
- 	while ((pmu = perf_pmus__scan_mem(pmu)) != NULL) {
- 		for (int j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
-@@ -266,7 +268,19 @@ int perf_mem_events__record_args(const char **rec_argv, int *argv_nr)
- 
- 			rec_argv[i++] = "-e";
- 			rec_argv[i++] = copy;
-+
-+			cpu_map = perf_cpu_map__merge(cpu_map, pmu->cpus);
-+		}
-+	}
-+
-+	if (cpu_map) {
-+		if (!perf_cpu_map__equal(cpu_map, cpu_map__online())) {
-+			char buf[200];
-+
-+			cpu_map__snprint(cpu_map, buf, sizeof(buf));
-+			pr_warning("Memory events are enabled on a subset of CPUs: %s\n", buf);
- 		}
-+		perf_cpu_map__put(cpu_map);
- 	}
- 
- 	*argv_nr = i;
+ drivers/hwmon/ltc2992.c                         | 19 ++++----------
+ drivers/leds/leds-bd2606mvv.c                   |  7 +++--
+ drivers/leds/leds-is31fl319x.c                  | 34 ++++++++-----------------
+ drivers/leds/leds-pca995x.c                     | 15 ++++-------
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 13 +++-------
+ include/linux/property.h                        | 10 ++++++++
+ 6 files changed, 38 insertions(+), 60 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240701-device_for_each_child_node-available-1c1eca4b6495
+
+Best regards,
 -- 
-2.34.1
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
