@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-243279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AAC9293F4
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:03:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB28E9293F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247871F220DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6AEA1C216CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20816135A79;
-	Sat,  6 Jul 2024 14:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8B0137757;
+	Sat,  6 Jul 2024 14:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/WkLFEL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nS32CIJY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2BE74070;
-	Sat,  6 Jul 2024 14:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C519C77104;
+	Sat,  6 Jul 2024 14:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720274621; cv=none; b=EFFbqLxB6LSPYSJoTtksVVOTtarJXFvdRMpl6hhQ4L0KEY1Y9YXK/cnmje1i80CXne8LA8nkPPS/ctQFCH1+GcmpcB/l/9Yctq/It4s8Kn2AWw2FqMW4Ks6l8/SYOKoSP+mNmZSByZYV7saxFaumPpWFU9bQafB/0+niur2yyiI=
+	t=1720274709; cv=none; b=NU36slbWVqpHBI9Byn++uiYGv01kX+X54mf2C89iDx9uKhHvRncxmOGNNp5m+qsZIAo+KSCFAFQbmDnXgb1TEyCiEz7hSBhDb8wDGz00lyZqNNtMdFqwScJPiTnM6nvwoeftSIFWMQE5TAKZrHfTfe3ZwKTwRQiFlfg6pfkYl6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720274621; c=relaxed/simple;
-	bh=CaJj4a2hkJ8XkHv9OyV8QGNBDNfocv2VKU+HWs5oG/U=;
+	s=arc-20240116; t=1720274709; c=relaxed/simple;
+	bh=zDA7DjIHng7gBzabRQ4/boNw6+/aaA+4H7gLsS+Vfos=;
 	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ilMYG45eZrV0hkEH7ccmDugxJwN4cVW8wm0OlJn7Y0AA0dta2MQnpfJ/9MlcOqKg07ueLAB0ikpRTL7VW6CzaTM0QkujMq+stO7b1Sm2nvebdGkbi1cAQshyW0Ysdyg8EjgHaWbDkkL9zB2zQmKJKTiiJQX8L21wAiEMFnLqIfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/WkLFEL; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version:Content-Type; b=t3KazlQXzfdv56qEveEqF/aFnTOUT+u79GVc2fGmTBJ6UmHWV6QMl6YKG82lhh7tv6DB0vXO/Yef2mmiRF0W49pZdgkopNa81Cjtk+aqm4DTlrSgTo92MMbtgZC1T0a9ABzGGqHDyIbbobJbkl3thffab36YAWV+aDQvXA/uriw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nS32CIJY; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720274619; x=1751810619;
+  t=1720274708; x=1751810708;
   h=from:date:to:cc:subject:in-reply-to:message-id:
    references:mime-version;
-  bh=CaJj4a2hkJ8XkHv9OyV8QGNBDNfocv2VKU+HWs5oG/U=;
-  b=D/WkLFELdCjj431+TAm5KZAbn3NOFgAiUOVPfBOvrKXH+MJJdTtAqH3n
-   5GnPxEB0yylzVbqZq4XoFWc44/7pi+NIjQBhgtwPIjfkLYHvSNj4xt27g
-   6wjmopVWWj2K3FzYkg2ayd/66kfKNP6sl4ykDc79ypNJEiNoCUBUC1NYl
-   YhU+cDuHyF4qnG6YzFR/shvEoJOctPuc7+V/zYLZN1J9ZEXd8cixopxmX
-   ptHLfvFnUPvB+TJAyTQChG7Brz/rUL/HnDAf/HwJvMPkywKbJeyXpC8ED
-   6exLoLrLJxk21/hMlxmFKMca/jcn75C+PYqQk/7HGHbWIWtv5i6wl/eoo
-   g==;
-X-CSE-ConnectionGUID: i4lU+A05TCOcCCsPPaLt8A==
-X-CSE-MsgGUID: lx7wyst8Rh2iIXTGlIyBYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="21303381"
+  bh=zDA7DjIHng7gBzabRQ4/boNw6+/aaA+4H7gLsS+Vfos=;
+  b=nS32CIJYMvDn5J/N4X7pDccDyXxlgLA/bcj564WoPGkbsI6HHDi7gs/J
+   NZq+s5KoNe7TEuBJQE/BIl0b3h9ccBeQ8ld3BPFlEjk6ltVRxDTxdkE2x
+   +RqVQnnhmBF5Gv08Ei8H7uyrPQu3V3m26hIR4XIdGfZDBaXtXvBqJ9G6r
+   byD2I377jOmEaS3hvNKf57jycMw42crw7LDQcKMJoieZrAO11iwRGBD7W
+   oG6bHZmbXLJNuAQHHRk7A8fLpfpXLWk/I/eBM1eJkBEg++4s1VG5VT2HF
+   PXeaxnpcVHR8/xgPnyIdT2yGmmRHKHt1bcxHDLKZovPc0+J33QuN+v/yM
+   A==;
+X-CSE-ConnectionGUID: ryql6drFSLKuFAhNxA5sqQ==
+X-CSE-MsgGUID: lQDWxKntQkmApgHIJ8MSEQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="17664921"
 X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
-   d="scan'208";a="21303381"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 07:03:38 -0700
-X-CSE-ConnectionGUID: GIlTlh5dSdCBt4o/htKkfQ==
-X-CSE-MsgGUID: Xyax3z0bSEu0502984e00Q==
+   d="scan'208";a="17664921"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 07:05:07 -0700
+X-CSE-ConnectionGUID: CIx505l9Q+ik7gk6M2SA/Q==
+X-CSE-MsgGUID: oUvsf7XURJqcpTxGFgQn1g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,187,1716274800"; 
-   d="scan'208";a="46857918"
+   d="scan'208";a="47823537"
 Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.111])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 07:03:36 -0700
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2024 07:05:05 -0700
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Sat, 6 Jul 2024 17:03:32 +0300 (EEST)
+Date: Sat, 6 Jul 2024 17:05:01 +0300 (EEST)
 To: "David E. Box" <david.e.box@linux.intel.com>
 cc: linux-doc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, 
     LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH V4 3/3] tools/arch/x86/intel_sdsi: Add attestation
- support
-In-Reply-To: <20240608034247.181843-3-david.e.box@linux.intel.com>
-Message-ID: <93ff0003-817c-a424-df05-b05b42eaebff@linux.intel.com>
-References: <20240608034247.181843-1-david.e.box@linux.intel.com> <20240608034247.181843-3-david.e.box@linux.intel.com>
+Subject: Re: [PATCH V4 1/3] platform/x86/intel/sdsi: Add ioctl SPDM
+ transport
+In-Reply-To: <20240608034247.181843-1-david.e.box@linux.intel.com>
+Message-ID: <9dff7095-9796-dbf1-3269-d0e480cccaec@linux.intel.com>
+References: <20240608034247.181843-1-david.e.box@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,137 +77,69 @@ Content-Type: text/plain; charset=US-ASCII
 
 On Fri, 7 Jun 2024, David E. Box wrote:
 
-> Add support in the intel_sdsi tool to perform SPDM GET_DIGESTS and
-> GET_CERTIFICATE commands. Output is sent to stdout.
+> Intel On Demand adds attestation and firmware measurement retrieval
+> services through use of the protocols defined the Security Protocols and
+> Data Measurement (SPDM) specification. SPDM messages exchanges are used to
+> authenticate On Demand hardware and to retrieve signed measurements of the
+> NVRAM state used to track feature provisioning and the NVRAM state used for
+> metering services. These allow software to verify the authenticity of the
+> On Demand hardware as well as the integrity of the reported silicon
+> configuration.
 > 
-> Example reading the certificate chain from socket 0:
-> 
-> intel_sdsi -d 1 -attest get_certificate | openssl x509 -inform DER -nout -text
+> Add an ioctl interface for sending SPDM messages through the On Demand
+> mailbox. Provides commands to get a list of SPDM enabled devices, get the
+> message size limits for SPDM Requesters and Responders, and perform an SPDM
+> message exchange.
 > 
 > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> Link: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf [1]
 > ---
-> V4 - No change
+> V4
+>    - In sdsi_spdm_do_command(), change rsp_size from u32 to int to
+>      catch error from sdsi_spdm_exchange(). Reported by lkp.
+>    - Use SPDM_HEADER_SIZE in sdsi_spdm_do_command()
+> V3
+>    - Use %zu format for size_t
+>    - Simplify return in sdsi_spdm_ioctl()
 > 
-> V3 - No change
+> V2
+>    - Move size < 4 check into sdsi_spdm_exchange() and add comment
+>      clarifying return values of that function.
+>    - Use SZ_4K and add helpers
+>    - Use devm_kasprintf()
+>    - Remove unnecessary parens
+>    - Use --attest for long option
 > 
-> V2 - Remove unnecessary struct packing
->    - Remove newline from perror()
->    - Add message options in --help output
->    - Use new SDSI_SPDM_BUF_SIZE from uapi header
->    - In spdm_get_certificate:
->         - Initialize remainder length to the minimum of the actual size
->           or the maximum buffer size.
->         - Add old_remainder to test that the remaining certificate
->           length is less than the previous length
-> 
->  tools/arch/x86/intel_sdsi/Makefile     |  11 +-
->  tools/arch/x86/intel_sdsi/intel_sdsi.c |  72 +++-
->  tools/arch/x86/intel_sdsi/spdm.c       | 476 +++++++++++++++++++++++++
->  tools/arch/x86/intel_sdsi/spdm.h       |  13 +
->  4 files changed, 567 insertions(+), 5 deletions(-)
->  create mode 100644 tools/arch/x86/intel_sdsi/spdm.c
->  create mode 100644 tools/arch/x86/intel_sdsi/spdm.h
-> 
+>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+>  MAINTAINERS                                   |   1 +
+>  drivers/platform/x86/intel/sdsi.c             | 209 +++++++++++++++++-
+>  include/uapi/linux/intel_sdsi.h               |  81 +++++++
+>  4 files changed, 291 insertions(+), 1 deletion(-)
+>  create mode 100644 include/uapi/linux/intel_sdsi.h
 
-> +++ b/tools/arch/x86/intel_sdsi/spdm.c
-> @@ -0,0 +1,476 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * spdm: Lightweight Security Protocol and Data Model (SPDM) specification
-> + * support code for performing attestation commands using the Intel On
-> + * Demand driver ioctl interface. Intel On Demand currently supports
-> + * SPDM version 1.0
-> + *
-> + * See the SPDM v1.0 specification at:
-> + * https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf
-> + *
-> + * Copyright (C) 2024 Intel Corporation. All rights reserved.
-> + */
-> +
-> +#include<linux/bits.h>
-> +
-> +#include<fcntl.h>
-> +#include<stdio.h>
-> +#include<stdlib.h>
-> +#include<stdint.h>
-> +#include<string.h>
-> +#include<unistd.h>
-> +#include<sys/ioctl.h>
-
-All missing spaces. :-(
-
-> +static int sdsi_process_ioctl(int ioctl_no, void *info, uint8_t dev_no)
-> +{
-> +	char pathname[14];
-> +	int fd, ret;
-> +
-> +	ret = snprintf(pathname, 14, "%s%d", SDSI_DEV_PATH, dev_no);
-
-sizeof(pathname)
-
-> +	remainder_length = size < SDSI_SPDM_BUF_SIZE ? size : SDSI_SPDM_BUF_SIZE;
-> +	old_remainder = remainder_length;
-> +
-> +	while (remainder_length) {
-> +		uint16_t length;
-> +
-> +		length = remainder_length < SDSI_SPDM_BUF_SIZE ?
-> +				remainder_length : SDSI_SPDM_BUF_SIZE;
-> +		offset += portion_length;
-
-The way bound check interplay with old_remainder and remainder_length in 
-this code is quite convoluted and could contain some problems.
-
-Would it work if old_remainder is set only here and the bound check 
-before the loop is replaced with a plain remainder_length = size 
-assignment?
-
-> +
-> +		ret = get_certificate_portion(dev_no, offset, length,
-> +					      &portion_length,
-> +					      &remainder_length,
-> +					      c->chain);
-> +		if (ret < 0)
-> +			goto free_cert_chain;
-> +
-> +		if (!(remainder_length < old_remainder)) {
-> +			fprintf(stderr, "Bad GET_CERTIFICATE length\n");
-> +			ret = -1;
-> +			goto free_cert_chain;
-> +		}
-> +
-> +		old_remainder = remainder_length;
-> +	}
-> +
-> +	c->len = offset + portion_length;
-> +	return 0;
-> +
-> +free_cert_chain:
-> +	free(c->chain);
-> +	c->chain = NULL;
-> +	return ret;
-> +}
-> diff --git a/tools/arch/x86/intel_sdsi/spdm.h b/tools/arch/x86/intel_sdsi/spdm.h
+> diff --git a/include/uapi/linux/intel_sdsi.h b/include/uapi/linux/intel_sdsi.h
 > new file mode 100644
-> index 000000000000..aa7e08ffb872
+> index 000000000000..8e28764f4a98
 > --- /dev/null
-> +++ b/tools/arch/x86/intel_sdsi/spdm.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#include <stdint.h>
-> +
-> +#define TPM_ALG_SHA_384_SIZE 48
-> +
-> +struct cert_chain {
-> +	void *chain;
-> +	size_t len;
-> +};
-> +
-> +int spdm_get_digests(int dev_no, uint8_t digest[TPM_ALG_SHA_384_SIZE]);
-> +int spdm_get_certificate(int dev_no, struct cert_chain *c);
-> +
+> +++ b/include/uapi/linux/intel_sdsi.h
 
-Trailing newline.
+> +/**
+> + * struct sdsi_spdm_message - The SPDM message sent and received from the device
+> + * @spdm_version:		Supported SPDM version
+> + * @request_response_code:	The SPDM message code for requests and responses
+> + * @param1:			Parameter 1
+> + * @param2:			Parameter 2
+> + * @buffer:			SDPM message specific buffer
+> + *
+
+Extra newline here.
+
+> + */
+> +struct sdsi_spdm_message {
+> +	SPDM_HEADER;
+> +	__u8 buffer[SZ_4K - SPDM_HEADER_SIZE];
+> +};
+
 
 -- 
  i.
