@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-243367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89664929549
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 23:56:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC121929564
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 00:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC10CB212F9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 21:56:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89E85B2135C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 22:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA0A28DA5;
-	Sat,  6 Jul 2024 21:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45503339A1;
+	Sat,  6 Jul 2024 22:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAJgunqd"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="jbQ7oxWu"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE64E134A9;
-	Sat,  6 Jul 2024 21:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898E71BF58;
+	Sat,  6 Jul 2024 22:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720302991; cv=none; b=o9XDqPu8+8UZKZDQgTA9PnBRN/7SuU6fuTWJJ5soZmKYGD+6j6rZ6XtrHqccfY2cBayxU1aJ+w8Q9CDGVUIryzZH8bnNSAkn5gffrK0jW9Sw5wNU/gxmTFVlIahHvJ5+CKEVPu1Bhfa0m1gkwv0+gMik3in3vSQcRPiWjuAVyJs=
+	t=1720303255; cv=none; b=tDrQ4SExq+mb2GJj7JcAShhqjZl2KU4b9plg0K8zU/M0g0jlKrRvSQjWMA9WG4v4CZUu3ezeC1RaDPxdx4PIARKs/AogZxAtt7+hqs+Fm9f+eL7m2Bt5m5Lbsa7S5AIeZqIz7Nb0FYzS9wsvYF92jqEkJXb4wdZpW6DwbOaIOs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720302991; c=relaxed/simple;
-	bh=WZgF/zUF0x+goro8S5vqnV9fMEAqTuwEuLHUb8DeGSU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dnea/ZhjFBKskLGWd5QuRwUYJO9TVNdZHVoD3L6ZH8HTNbhAMlKRX3mBby+OWbtI5z2rjf9ym/f7B+Mm5KLH8CkYH5GBI/MMk17BvIgB5ZX17rnmPA7Ntt/9qRbkQvXimEIG9FHjxco4zY7RUiUjHgtqA1dAU9ZRCLeb5LSvmMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UAJgunqd; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58e76294858so4449440a12.0;
-        Sat, 06 Jul 2024 14:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720302988; x=1720907788; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UCkRsEz/Hi+9xWaaQEALQU1IZhkD8tAgiBdSpUaWA7c=;
-        b=UAJgunqddPOyRLmf43gnWCJnv13WjsZWm/dyLHID61bmooAfZXVLOHFc140gWBf+N1
-         4kNBZWvca87tQMZntStO619hmEXXbd9dTPdLfRHP08+DEiL8oijgj2fwFrkSp1lmfiLg
-         guEOtmfiVbw7L/2kuun9eA1BCnPivU7BzCVOa7hKU91VJSUr+gCj1DjTnKfW21/skkId
-         duBqOBi0eg+S1ma4xu8GU8snIINIAtrxs/rEmZ+XSEq4Gxib9l9ZQxy+Rk+wBXI4Wv/H
-         i9nbkm+M/uJ8d73EmpoQfburxpKlweSNSQHnTxJAl962GtqgUd0NkpuNu56Fxmba/avp
-         N/Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720302988; x=1720907788;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UCkRsEz/Hi+9xWaaQEALQU1IZhkD8tAgiBdSpUaWA7c=;
-        b=SWYqn0Dw5behoanQ836aHq9knocJnF3caRGWMx3KB+4CyIMUSeCrjAgQX7zTx70eOI
-         PAXGeRPoLRoYdTsEMu3jrpS6Q0UkmwiVvqwxlsn0QBBP7qQ64NTIIZP/RmbpS1Wnc2o1
-         I8oVrgZP1I61P/0dSi8wV1XncsKrbDaEwSlEPGRVQD4CCQAX/Ig2qnWSUbgSjOcaEJMt
-         OoAfPZRA32gpvRUMNTi71+ehtod2ssfMqcFBa1QIDaeq1Cd7dmRLawRiJXv5xzFsO0Up
-         mpvhGOqc01+FpGpHc71pgW542zgCs026elumT3vKx3ZuEIRqEDTg8JqIWsdD8muyCK7e
-         rs/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXHkMjLI0q98xMNz/I1G4l2MEFq+JC/MKwwZX5lA8EAwQIqRDd8IpR8eDBtw9ag2SIF7nxdpVc7ZXvXNl9RpY6z0nGRLiQKYlkquw==
-X-Gm-Message-State: AOJu0YzeBnnukuuB8YQkHe432niONxetUFXBUYZg7ePIpJHc8Dt/OeE+
-	pg8jC0GCksXXA8YP+ONQ/iCoU+e1Pi3rEmaWS1SoYsxOje+2ICn0eyapTr2U2pRHSiCQOiDk6Wq
-	XtJuX5E/9Axo9RjoqQBeQl+B0yTWZQCI4
-X-Google-Smtp-Source: AGHT+IGqRqLmmpzEaFzFVcF8tyAF90AtsEgaTnGIHqL6oslRNWWRxNuIdyp6r2Dxt+ZH7ADHEDIKjr5ivlDSFQ/3YbA=
-X-Received: by 2002:a05:6402:5253:b0:57d:3ef8:614d with SMTP id
- 4fb4d7f45d1cf-58e7bfb5842mr5164319a12.20.1720302987912; Sat, 06 Jul 2024
- 14:56:27 -0700 (PDT)
+	s=arc-20240116; t=1720303255; c=relaxed/simple;
+	bh=L0DmlBrywElD3FskQlMVzfQTsHLaAQHxjythqqbokUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HOrk+ySp3UomykT5aReUxL3UuL5ANzIOT479Bw5uZMNf1VBlmk3L/HNd5P5o1EyctwH4FzH21kbQc7w1ssYavFt8mLL/i1ZEIAxDVHrzS0fpIExErwHhiJU6Na8A9tGyato9sD2iQdkiAsMgqwdLJ+9SxL7D2MCa0gfH/99b8Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=jbQ7oxWu; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from newone.attlocal.net (76-224-187-148.lightspeed.sntcca.sbcglobal.net [76.224.187.148])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 02E911650ED;
+	Sun,  7 Jul 2024 00:00:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1720303247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PqfZG+GyBCV/bwFst3yoT6QdmPT89Y9QsWEZ0NJOICM=;
+	b=jbQ7oxWu0iK1ODnOkFb8/aL7t9anC92oBIiTqoP11ejxyx8vfwu4QJDRCPbpObbjLew+go
+	gzE6avDQYUlTdklw3Bomx3gDwbZbyCru7NE3X9QT4fncWjkBHHhYlDsGQ3EFgrKlTL5lEe
+	U8PFdBIZVCDjbvwTURleOkEao8aM+/Y=
+From: David Heidelberg <david@ixit.cz>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: David Heidelberg <david@ixit.cz>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: qcom: msm8960: correct memory base
+Date: Sat,  6 Jul 2024 15:00:30 -0700
+Message-ID: <20240706220041.241839-1-david@ixit.cz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 6 Jul 2024 16:56:16 -0500
-Message-ID: <CAH2r5msEqt_4VmncybOWBcADS96cPd19NjJnhtpkF7eMnAsSuQ@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fix
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Please pull the following changes since commit
-22a40d14b572deb80c0648557f4bd502d7e83826:
+DeviceTree validation requires a unit address on the memory node, adjust
+the base to match [Ref] and use this as unit address.
 
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+The bootloader will update the information with the actual values during
+boot.
 
-are available in the Git repository at:
+Ref: https://github.com/msm8916-mainline/lk2nd/blob/main/target/msm8960/rules.mk
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc6-smb3-client-fix
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-for you to fetch changes up to 08f70c0a930c00d25015fed7e3b7c5370d60be24:
-
-  cifs: Fix read-performance regression by dropping readahead
-expansion (2024-07-02 21:23:41 -0500)
-
-----------------------------------------------------------------
-fix for smb3 readahead performance regression
-
-----------------------------------------------------------------
-David Howells (1):
-      cifs: Fix read-performance regression by dropping readahead expansion
-
- fs/smb/client/file.c | 30 ------------------------------
- 1 file changed, 30 deletions(-)
-
+diff --git ./arch/arm/boot/dts/qcom/qcom-msm8960.dtsi ./arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+index a9c6d2dbb460..ebc43c5c6e5f 100644
+--- ./arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
++++ ./arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+@@ -47,9 +47,9 @@ L2: l2-cache {
+ 		};
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
+-		reg = <0x0 0x0>;
++		reg = <0x80000000 0>;
+ 	};
+ 
+ 	cpu-pmu {
 -- 
-Thanks,
+2.45.2
 
-Steve
 
