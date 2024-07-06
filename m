@@ -1,193 +1,251 @@
-Return-Path: <linux-kernel+bounces-243089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EB6929173
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:25:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D653F929187
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB1B1F226BF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:25:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9D091C21693
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D20823741;
-	Sat,  6 Jul 2024 07:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE421CD3C;
+	Sat,  6 Jul 2024 07:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="obBieLA1"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="o5Xs5d0j"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDFC22EE4
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 07:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A111B947;
+	Sat,  6 Jul 2024 07:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720250703; cv=none; b=R5mdCoiVEPgr+VJ6zYTZeTSP3ECV9kvSgD/+lg4j+lVFFffEauZnHoE243xSWaVyD6l4+xqwUdDfj6rDy3tlyBHMz1P4z5BvPEd1PrfN/zxqAnDj6mEdlPDcCFec166gyKuzCtXfuRFWZMTGyQZfHmL5XqdRhFTGr0+YmS0RJ1U=
+	t=1720251257; cv=none; b=fdRogRpMZH99fsITZrFuOwljFeW0noxRTxmMQ7ciqCIs42s/2lWKlO2kcO0/ohRVRKQeeG+s86kdD42LswT3w1E+enJp+08iQP5x1w3kyemLZ8bhUSZCjkhIo0bE309WepNZmupBFlPbgVBeOFeeOzhitHV1sFG+oXy/cFl40zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720250703; c=relaxed/simple;
-	bh=/DdiIPqa5tH2kZOOu8nmRlttA0monFsAOUcUN1HldhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lra0q7eh8PXlcmH1uwESFzi09BdimsLI+UsxkP85+Df9tVz9pBtKWsTnVSMCg32BIh7bdlLbrENND0r79GkDGwr6kvN1AUm7O5nr+r46XvZTzcuJGO7hQ04+jtAmMev8dmI3enz0Q5CckN97pqRdi6G+wafCFPmQP2pSZy8u/TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=obBieLA1; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=xGdheUenmNwaEUYa4vrPZFuS1XhkjyAUWG8jCK6KoFk=; b=obBieLA10y5E1PGhDlfuxRwHe1
-	b2ESR8lkpbR6xR8rGWwrOEB3tVql+s4JNBR53t+Snao2UNtM/NKN57qvGguWHIVYgQB6U4UiwTFuT
-	VNAfk7o7kHowCdlxpNw2VO5bT8JMFGF3j8lwubFxjMyRD/nt/nY5Q043BfMlt+oOLJCUw75hvzZb0
-	boGwAb+573aC2NlbyYY4eDqtmc4NF+SrV1aTznHrujx8Nl7HTEy31sJZFZp2EXM0Hqd+p7dM+nWpx
-	XIs3KN9ee11CL1/ROH+8K1njh8lnzYPQ1Lmpl/MUypk4W8NWmpxPX8MQKYJSR74jUEMeKa8945zvF
-	/YmugySg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35736)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sPzmh-000106-08;
-	Sat, 06 Jul 2024 08:24:39 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sPzmi-0005rV-3D; Sat, 06 Jul 2024 08:24:40 +0100
-Date: Sat, 6 Jul 2024 08:24:39 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: wanglinhui <wanglinhui@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	wangfangpeng1@huawei.com, zhangxun38@huawei.com,
-	yangzhuohao1@huawei.com
-Subject: Re: [PATCH] ARM: Fix "external abort on non-linefetch" kernel panic
- caused by userspace
-Message-ID: <ZojxN5iOHhGAt3A5@shell.armlinux.org.uk>
-References: <20240706032005.122654-1-wanglinhui@huawei.com>
+	s=arc-20240116; t=1720251257; c=relaxed/simple;
+	bh=NNVk2TdwIOi/kS3Dftxh5l5p+ufzBa1s3e8HZlk63a4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M9F5ljjRx7nU8V8zawd+kvWPF3KMSFO0/qXn6zIFMxfY8IF4Sru+Rleg95tct7Ue0TKPXCBIBC2cNnV2ydIBqYQl/XkePXT0pASUzkDf3whGRNG16kpTqihen0zht+rLqRfPtyCt2ZKSKWMelQ86V06bb/WvR3QqB1r64t54CLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=o5Xs5d0j; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1720251243;
+	bh=NNVk2TdwIOi/kS3Dftxh5l5p+ufzBa1s3e8HZlk63a4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=o5Xs5d0jcaKqJV+b570uy/hJ+Q72UlorU+FsSYZRpc+M8qTIyZr8tR5b14aYW4lO0
+	 tbRI6O910YZb5IPSDgKb8u2lm/STfMjtZgkOhAbh96238rERQ3BcIFC3dJ1nb18Gj5
+	 IQmUWBqfW//GYStlNOgwwoFKO6M5dn4sS+GW24zw=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sat, 06 Jul 2024 09:33:46 +0200
+Subject: [PATCH v2] kbuild: add script and target to generate pacman
+ package
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240706032005.122654-1-wanglinhui@huawei.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAFnziGYC/22Nyw6CMBBFf4V07Zi2vNSV/2FYlDKlE7Q0LaCG8
+ O9W3Lo8J7nnrixiIIzskq0s4EKRRpdAHjKmrXI9AnWJmeSy4JUsYWhnunfglX4oB37ooS3MqUZ
+ x7nhesbTzAQ299uatSWwpTmN47xeL+NpfrebFn9oiQIDS0lS5KY2q2+sTKcao7WyPDifWbNv2A
+ aDMbdm3AAAA
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720251242; l=6155;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=NNVk2TdwIOi/kS3Dftxh5l5p+ufzBa1s3e8HZlk63a4=;
+ b=5gHAgfNrPMs3Xro6uA6kL5cdRsIGXWUGhLLrwq+opjGn9peTa8u4DUAY1IN00pFMugj4KCNhY
+ iEYBEcXVEorCAcAYZtN57vvomvYsYD3lCYbBMbW628e3r9hW6pn019P
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Sat, Jul 06, 2024 at 11:20:05AM +0800, wanglinhui wrote:
-> 0x16800000 is a peripheral physical address that supports only
-> 4-byte-aligned access.
-> 
-> Use /dev/mem to enable the user space to access 0x16800000. Then userspace
-> unexpectedly tried to read four bytes from 0x16800001 (actually access
-> its virtual address), which caused the kernel to trigger an
-> "external abort on non-linefetch" panic:
-> 
->   Unhandled fault: external abort on non-linefetch (0x1018) at 0x0100129b
->   [0100129b] *pgd=85038831, *pte=16801703, *ppte=16801e33
->   Internal error: : 1018 [#1] SMP ARM
->   ...
->   CPU: 2 PID: xxxx Comm: xxxx Tainted: G           O      5.10.0 #1
->   Hardware name: Hisilicon A9
->   PC is at do_alignment_ldrstr+0xb8/0x100
->   LR is at 0xc1f203fc
->   psr: 200f0313
->   sp : c7081ed4  ip : 00000008  fp : 00000011
->   r10: b42250c8  r9 : c7081f0c  r8 : c7081fb0
->   r7 : 0100129b  r6 : 00000004  r5 : 00000000  r4 : e5908000
->   r3 : 00000000  r2 : c7081f0c  r1 : 200f0210  r0 : 0100129b
->   Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
->   Control: 1ac5387d  Table: 82c3c04a  DAC: 55555555
->   Process LcnNCoreTask (pid: 4049, stack limit = 0x14066b0e)
->   Call trace:
->     do_alignment_ldrstr
->     --do_alignment
->     ----do_DataAbort
->     ------__dabt_usr
-> 
-> It triggers a data abort exception twice. The first time occurs when
-> an unaligned address is accessed in user mode. The second time occurs
-> when the peripheral address is actually accessed in kernel mode,
-> and it crashes the kernel. However, the code location for the second
-> data abort is as follows:
-> 
->   ```
->   #define __get8_unaligned_check(ins, val, addr, err) \
->   	__asm__(\
->    ARM("1: "ins" %1, [%2], #1\n") \ <-- Second data abort is triggered here
->    THUMB("1: "ins" %1, [%2]\n") \
->    THUMB(" add %2, %2, #1\n") \
->   	"2:\n" \
->   	" .pushsection .text.fixup,\"ax\"\n" \
->   ```
-> 
-> It is an exception table entry that can be fixed up.
-> 
-> There is another test that indicates that
-> "external abort on non-linefetch" needs to be fixed up.
-> 
-> Similarly, use /dev/mem to map 0x16800000 to the user space.
-> Pass 0x16800001 (actually passes its virtual address) to the
-> kernel via the write() system call and write 1 byte.
-> It also causes the kernel to trigger an
-> "external abort on non-linefetch" panic:
-> 
->   Unhandled fault: external abort on non-linefetch (0x1018) at 0xb6f95000
->   [b6f95000] *pgd=83fb6831, *pte=16800783, *ppte=16800e33
->   Internal error: : 1018 [#1] SMP ARM
->   ...
->   CPU: 1 PID: xxxx Comm: xxxx Tainted: G           O      5.10.0 #1
->   Hardware name: Hisilicon A9
->   PC is at __get_user_1+0x14/0x20
->   LR is at iov_iter_fault_in_readable+0x7c/0x198
->   psr: 800b0213
->   sp : c195be18  ip : 00000001  fp : c35a2478
->   r10: c06b5260  r9 : 00000000  r8 : c356fee0
->   r7 : ffffe000  r6 : b6f95000  r5 : 00000001  r4 : c195bf10
->   r3 : b6f95000  r2 : f7f95000  r1 : beffffff  r0 : b6f95000
->   Call trace looks like:
->     __get_user_1
->     --iov_iter_fault_in_readable
->     ----generic_perform_write
->     ------__generic_file_write_iter
->     --------generic_file_write_iter
-> 
-> The location of the instruction that triggers the data abort
-> is as follows:
->   ```
->   ENTRY(__get_user_1)
->   	check_uaccess r0, 1, r1, r2, __get_user_bad
->   1: TUSER(ldrb) r2, [r0] <-- Data abort is triggered here
->   	mov r0, #0
->   	ret lr
->   ENDPROC(__get_user_1)
->   _ASM_NOKPROBE(__get_user_1)
->   ```
-> It is also an exception table entry that can be fixed up.
-> 
-> Address passed in from user space should not crash the kernel.
-> Therefore, fixup_exception() is added to fix up such exception.
+pacman is the package manager used by Arch Linux and its derivates.
+Creating native packages from the kernel tree has multiple advantages:
 
-NAK because:
+* The package triggers the correct hooks for initramfs generation and
+  bootloader configuration
+* Uninstallation is complete and also invokes the relevant hooks
+* New UAPI headers can be installed without any manual bookkeeping
 
-1) you're using /dev/mem which requires privileges - you're holding
-   the gun, pointing it at your foot.
+The PKGBUILD file is a simplified version of the one used for the
+downstream Arch Linux "linux" package.
+Extra steps that should not be necessary for a development kernel have
+been removed and an UAPI header package has been added.
 
-2) you're performing an unaligned access to a device which is
-   architecturally not permitted - you're pulling the trigger.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Replace ${MAKE} with $MAKE for consistency with other variables
+- Use $MAKE for "-s image_name"
+- Avoid permission warnings from build directory
+- Clarify reason for /build symlink removal
+- Install System.map and config
+- Install dtbs where available
+- Allow cross-build through arch=any
+- Sort Contributor/Maintainer chronologically
+- Disable some unneeded makepkg options
+- Use DEPMOD=true for consistency with rpm-package
+- Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
+---
+ .gitignore               |  6 ++++
+ scripts/Makefile.package | 15 +++++++++
+ scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 104 insertions(+)
 
-It's not surprising that the result is you've shot yourself in the
-foot!
+diff --git a/.gitignore b/.gitignore
+index c59dc60ba62e..7902adf4f7f1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -92,6 +92,12 @@ modules.order
+ #
+ /tar-install/
+ 
++#
++# pacman files (make pacman-pkg)
++#
++/PKGBUILD
++/pacman/
++
+ #
+ # We don't want to ignore the following even if they are dot-files
+ #
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index bf016af8bf8a..8c0c80f8bec0 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -141,6 +141,20 @@ snap-pkg:
+ 	cd $(objtree)/snap && \
+ 	snapcraft --target-arch=$(UTS_MACHINE)
+ 
++# pacman-pkg
++# ---------------------------------------------------------------------------
++
++PHONY += pacman-pkg
++pacman-pkg:
++	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
++	cd $(objtree) && \
++		srctree="$(realpath $(srctree))" \
++		objtree="$(realpath $(objtree))" \
++		BUILDDIR="$(realpath $(objtree))/pacman" \
++		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
++		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
++		makepkg
++
+ # dir-pkg tar*-pkg - tarball targets
+ # ---------------------------------------------------------------------------
+ 
+@@ -221,6 +235,7 @@ help:
+ 	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+ 	@echo '  snap-pkg            - Build only the binary kernel snap package'
+ 	@echo '                        (will connect to external hosts)'
++	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+ 	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
+ 	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
+ 	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
+diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+new file mode 100644
+index 000000000000..fe899c77a976
+--- /dev/null
++++ b/scripts/package/PKGBUILD
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: GPL-2.0-only
++# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
++# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
++
++pkgbase=linux-upstream
++pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
++pkgver="${KERNELRELEASE//-/_}"
++pkgrel="$KBUILD_REVISION"
++pkgdesc='Linux'
++url='https://www.kernel.org/'
++arch=(any)
++options=(!debug !strip !buildflags !makeflags)
++license=(GPL-2.0-only)
++
++build() {
++  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++  cd "$objtree"
++
++  # makepkg does a "chmod a-srw", triggering warnings during kbuild
++  chmod 0755 "$pkgdirbase" || true
++
++  $MAKE -f "${srctree}/Makefile"
++}
++
++package_linux-upstream() {
++  pkgdesc="The $pkgdesc kernel and modules"
++
++  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++  cd "$objtree"
++  local modulesdir="$pkgdir/usr/$MODLIB"
++
++  echo "Installing boot image..."
++  # systemd expects to find the kernel here to allow hibernation
++  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
++  install -Dm644 "$($MAKE -s image_name)" "$modulesdir/vmlinuz"
++
++  # Used by mkinitcpio to name the kernel
++  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
++
++  echo "Installing modules..."
++  $MAKE INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
++    DEPMOD=true modules_install
++
++  if $MAKE run-command KBUILD_RUN_COMMAND='test -d ${srctree}/arch/${SRCARCH}/boot/dts' 2>/dev/null; then
++    echo "Installing dtbs..."
++    $MAKE INSTALL_DTBS_PATH="$modulesdir/dtb" dtbs_install
++  fi
++
++  # remove build link, will be part of -headers package
++  rm -f "$modulesdir/build"
++}
++
++package_linux-upstream-headers() {
++  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
++
++  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++  cd "$objtree"
++  local builddir="$pkgdir/usr/$MODLIB/build"
++
++  echo "Installing build files..."
++  "$srctree/scripts/package/install-extmod-build" "$builddir"
++
++  echo "Installing System.map and config..."
++  cp System.map "$builddir/System.map"
++  cp .config "$builddir/.config"
++
++  echo "Adding symlink..."
++  mkdir -p "$pkgdir/usr/src"
++  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
++}
++
++package_linux-upstream-api-headers() {
++  pkgdesc="Kernel headers sanitized for use in userspace"
++  provides=(linux-api-headers)
++  conflicts=(linux-api-headers)
++
++  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++  cd "$objtree"
++
++  $MAKE headers_install INSTALL_HDR_PATH="$pkgdir/usr"
++}
++
++# vim:set ts=8 sts=2 sw=2 et:
 
-If you access /dev/mem, then you need to know what you're doing and
-you must access it according to the requirements of the memory space
-you are accessing, otherwise undefined behaviour will occur - not
-only architecturally, but also by the kernel.
+---
+base-commit: 1dd28064d4164a4dc9096fd1a7990d2de15f2bb6
+change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
 
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thomas Weißschuh <linux@weissschuh.net>
+
 
