@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-243200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ABA3929303
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:26:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA80E929307
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8252831DC
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94F1A1F21C8D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C07014EC62;
-	Sat,  6 Jul 2024 11:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E3B1514E9;
+	Sat,  6 Jul 2024 11:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="etwR/S80"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RULRLKX/"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF78149C57
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80E514AD0C
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720264917; cv=none; b=OmqiHzSL3LqxAvkZELYx165M+4hxcA3UxrBwS4y647rU293Xu63romLs4cHXK2jF/lBWv8ZNav06tdvYjODhnXYH+45Gss3GYtT9ILUWvbyEuY1VKkQvTRL8fZHenq3CnECleZaZE3bwc9ogGIZlrt7Rw1V9nlpqTtlSb4BHJXg=
+	t=1720264918; cv=none; b=EFAL2t0Io5xepmh1XImrXLvNAday03NVbQiirtU1fuqEDwzqut5eCjnw5qjssMgzuIaMlXnCfgIaBrskXM25sP6Gkyse78rh9RHApcdlIchhbz/tWOIFhfbscV+E9+ykAX4OlJHfhrP/+rnqqtTYdEppg3H49m1rYAvjCLz6ECY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720264917; c=relaxed/simple;
-	bh=TNI+L/52fU12C35bC8ALJbFy7cqdmVY1g5fmdAJc1mU=;
+	s=arc-20240116; t=1720264918; c=relaxed/simple;
+	bh=T4jrk/kzzw6tCtoxphDXWydkQlC4LvCGJTQQEQf4feQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H/PSpLp+4EGO/b25pbpy3TR3JCljZdekgB5exxBOgw8fMicaQwRqBE+iCFxY/AWqI54Pv/EHgpPr15kuJt9k2mxVar9JqaTxZCSG1BwaM2/AUcaA93FLxgZEgVvppB3NjWRdudCqPaJRAgf+BQQntZMzYKBOID3LPIwYvM4DA1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=etwR/S80; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=AgTCHTrY6AEMxpDzHHJlv88AlWWsC93P7+QVFk3L/g9iD//bvE1Ju+S++aFcDKE/wQLS+YSHKrevvdu1/PCVjd7z5TS4WbxJNZ+7i2IPdBAtPbkf5Q18S9jhToi1oDCw4blu32NwNFNRswE+MR5omCUAqLHbUQNgTmMNHOIxvnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RULRLKX/; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=SHNrzh4WajxFTgbzTsdFLWb8IzqbL0O1YmyvMU0gP+c=; b=etwR/S
-	807NoeIwIQ/0rYzvf4q8FCbehx6M39xADnbyGX2aIZQHAaELyxvz5LqNrcWuvqF+
-	4wHrpn9+WU7+IFHY2yQQVaO+CveTvrMRxPeXVzWiXHJfbQQeh6GpvOZ0Ka56yjEN
-	CLr8J1xkMMG1iB3KHF49B3WJ2ucpAJQZTskUBCP2o8NjN1CGR2S31tJj8TTjVnZM
-	y9X6iHH1ij/GAFjjKQEcKnaw3ZTecRWy4pTLRtjmXSdBvIBeoJYr0460+wlRS26e
-	Dp7uw8IigbW9lzrRZjS52l2D/KJy25t2KVAkpQINFgiPOXYz9kJ5+W1y/xBtTTZP
-	hQsSUHbo/dlAJsTQ==
-Received: (qmail 3810105 invoked from network); 6 Jul 2024 13:21:39 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:39 +0200
-X-UD-Smtp-Session: l3s3148p1@oy07YpIcTIZQT+F6
+	 s=k1; bh=SKSqotO9cRDWN6hrQrF4vCwa0Gryrx/y0GC4hbpD4k0=; b=RULRLK
+	X/1FBMiWoQKbx0toQDy8/KyiVHgjw64Pmxo5j7T5NVpgf0pFtOzWVPHZQgTh53my
+	hdjW61UcieQu0/QBGlAVkOrel8LL99utIyKPl3ZAAzPneCUQDI+x9O/NyVtR2Mgm
+	D0WhCt9pBCfg4/K+YjSb94RTOa/WYc5hSeJfNTEip9u+0ogFfiwnxehAS3lp022x
+	/Rw1r7TTKVHNdEh+c/WV2OiFdXx5VGfEEHO5GRT8eGALEzvznDme18CiAtt/MlSl
+	ebPMbdIOQ531Z0KleFWK48VgboNHcw7jk0Xc8iXUbhznmjl0KK4p1f6E9OBz7moG
+	6QE0DBxb6E06WYpQ==
+Received: (qmail 3810155 invoked from network); 6 Jul 2024 13:21:40 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:40 +0200
+X-UD-Smtp-Session: l3s3148p1@djtFYpIcXIZQT+F6
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Paul Cercueil <paul@crapouillou.net>,
 	Andi Shyti <andi.shyti@kernel.org>,
-	linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 24/60] i2c: jz4780: reword according to newest specification
-Date: Sat,  6 Jul 2024 13:20:24 +0200
-Message-ID: <20240706112116.24543-25-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 25/60] i2c: kempld: reword according to newest specification
+Date: Sat,  6 Jul 2024 13:20:25 +0200
+Message-ID: <20240706112116.24543-26-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
 References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
@@ -69,24 +67,24 @@ specifications and replace "master/slave" with more appropriate terms.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-jz4780.c | 4 ++--
+ drivers/i2c/busses/i2c-kempld.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-jz4780.c b/drivers/i2c/busses/i2c-jz4780.c
-index 7951891d6b97..4aafdfab6305 100644
---- a/drivers/i2c/busses/i2c-jz4780.c
-+++ b/drivers/i2c/busses/i2c-jz4780.c
-@@ -730,8 +730,8 @@ static u32 jz4780_i2c_functionality(struct i2c_adapter *adap)
+diff --git a/drivers/i2c/busses/i2c-kempld.c b/drivers/i2c/busses/i2c-kempld.c
+index c3a529a73b5b..eb66942e0b7d 100644
+--- a/drivers/i2c/busses/i2c-kempld.c
++++ b/drivers/i2c/busses/i2c-kempld.c
+@@ -276,8 +276,8 @@ static u32 kempld_i2c_func(struct i2c_adapter *adap)
  }
  
- static const struct i2c_algorithm jz4780_i2c_algorithm = {
--	.master_xfer	= jz4780_i2c_xfer,
--	.functionality	= jz4780_i2c_functionality,
-+	.xfer = jz4780_i2c_xfer,
-+	.functionality = jz4780_i2c_functionality,
+ static const struct i2c_algorithm kempld_i2c_algorithm = {
+-	.master_xfer	= kempld_i2c_xfer,
+-	.functionality	= kempld_i2c_func,
++	.xfer = kempld_i2c_xfer,
++	.functionality = kempld_i2c_func,
  };
  
- static const struct ingenic_i2c_config jz4780_i2c_config = {
+ static const struct i2c_adapter kempld_i2c_adapter = {
 -- 
 2.43.0
 
