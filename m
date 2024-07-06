@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-243262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70EF9293BE
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:20:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01349293BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37BA3B21D6C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:20:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5141F21E6A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED957A15B;
-	Sat,  6 Jul 2024 13:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B247812AAFD;
+	Sat,  6 Jul 2024 13:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="auu5pH2j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="JRDXe+Bh"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0998520310;
-	Sat,  6 Jul 2024 13:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1387320310
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 13:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720272008; cv=none; b=DDF0JLTBDr3nK3GPQhA/+VXYwlyimn/G38trcxsVUG5brD4hIVfXcwnwEnS54NJ3VA74qS7Bwtek9hLx7megtp29L0lBIim+8TEavhN6fwe6HrPTPfGZ2vA+AOf/TLjXsDaMGw+zI+Gi1JGDMfamD7/eUEkUl2amt1VRmwCzFmc=
+	t=1720272107; cv=none; b=T04cVtkFBd0Khi5K6xknCLGo8s5loLulSsUrjgF2t/ggGsp6fZ+F+5/jQZ7phWZYf4P0Mk6U1FsRF/fVNVtgeT4IutziqBwkyTLaU3/4qucW5oT4Tg3pduDyJGZvm60QGBhIQaaWbuhYcPOGUA9OiQls0CCA1BDz9UZqOvPqwVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720272008; c=relaxed/simple;
-	bh=00wVXN6YqZ9RBRgNtXKe7jf8xE6Yk1q+OFE7F8SzS/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ovo34QCw+rtcgmoYwb/tjDKy+aw7cXh4wAOTT4hW1rO7mayfUq5Ewol5oel9QGWib6WjvmCC6Cmsi5qMVB7q7YNssaoBtlrLWELb8XgMEy1VtILGu62n7MQ/LFHCMn2Pz22BOXwo0HCS6L/mONXF78Ng3s7RCCXHJgXBLpaHJ6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=auu5pH2j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD01C2BD10;
-	Sat,  6 Jul 2024 13:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720272007;
-	bh=00wVXN6YqZ9RBRgNtXKe7jf8xE6Yk1q+OFE7F8SzS/E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=auu5pH2j+VLw3CSQ5KtkOaoHMVt9jaMp3mM+CNsDPd+aWDFK2WV1PQUM7RinsRB13
-	 xLpPUjg/yD5VZT0QfnkR7cZtEDPd0tDdQFGIBfrrbHk9tTX9FbPkJg2SRrLtMathlO
-	 LWJw+lMQjCqtjf64/7vQfMkiZHFvfhMzNoBdkJ676ryfdfKRpYfCtPz7AdC7XWaxxe
-	 2DSIXaGjpaBmhD2mFOkuG44W6V9/NBXR5fUo/fLMTvdjtcuFbwxovBFW42h2Kt9+zT
-	 KocV7H9g24Sj91HSb2jRO8sZNvq/o2/tioNaKPDI/VDlOO69dobH/sRhGc3nSuREYq
-	 SQljuWyxS9JCw==
-Date: Sat, 6 Jul 2024 15:20:02 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.10-rc7
-Message-ID: <ZolEgp8R-JPRLYDB@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1720272107; c=relaxed/simple;
+	bh=E/Z+a0IYTlrM9p8N8UthGlV27pBUcXL9wofd/V7P/Gc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KdxwITsugSvU1LXPSm/qCYzdBrVZbmrkeeyhBQ4w4kg68yc8O6L9hlM3kKmQAgQ9dUhcmJv3vg2NeFzHNTnzert0/B9LnBgLU2Zs45A7GC4a2taaoFmDhiYFnXZlJI4L1VD5P2o8vBeuZRVd4w6j4ayU+u9bNoVyWeRFqL2cNgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=JRDXe+Bh; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1720272103; x=1720531303;
+	bh=s36rjgEJmVqwWLnrEohDXjmHZsXgc7KAt+lY3+9Djrc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=JRDXe+BhlK8YYpRfjMILF0mOIbsRV8uXH3eRgcn+SoUOXeNaY44MMhNESfegm7HLN
+	 Eu3z3EEB9w+rEFkt/FXOO7pl4OeCA86pe0Y/FbmaWjCG2KBhsBauJ3Wk51HKilhjWv
+	 wRh/lGFy936H20pVQxA2aIYafGwpOHkRC3zTE+uqtnYPPXndFkI/C/RFxlpw4hCi7+
+	 t3YyfeZ2weK23nBg7lKjxsUWhAoK+zsf2A20iYE7SAEYb/K60KwuuPsTMRmYY48YMI
+	 1794vLJYMrEFVwjFQJj/kY6+v3h5uXVF3iFzOX1RvL3dZW50fA4rWDkKP49/fU0oxr
+	 GYhTnRAXwZ9cA==
+Date: Sat, 06 Jul 2024 13:21:39 +0000
+To: Danilo Krummrich <dakr@redhat.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 07/20] rust: alloc: implement `Vmalloc` allocator
+Message-ID: <796b50c4-0824-4b9f-97f9-750f34096ed6@proton.me>
+In-Reply-To: <Zokm6M48WunoEohV@pollux.localdomain>
+References: <20240704170738.3621-1-dakr@redhat.com> <20240704170738.3621-8-dakr@redhat.com> <596c6446-eca4-46a8-91c5-e71e92c61062@proton.me> <Zokm6M48WunoEohV@pollux.localdomain>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 2ea57d4981e071ba6a4f70d52c4ec6ea648f6785
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="w4BAlaxAov1f3nQ1"
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On 06.07.24 13:13, Danilo Krummrich wrote:
+> On Sat, Jul 06, 2024 at 10:41:28AM +0000, Benno Lossin wrote:
+>> On 04.07.24 19:06, Danilo Krummrich wrote:
+>>> @@ -112,6 +118,55 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *=
+mut u8 {
+>>>      }
+>>>  }
+>>>
+>>> +unsafe impl Allocator for Vmalloc {
+>>> +    unsafe fn realloc(
+>>> +        &self,
+>>> +        src: *mut u8,
+>>> +        old_size: usize,
+>>> +        layout: Layout,
+>>> +        flags: Flags,
+>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
+>>> +        let mut size =3D aligned_size(layout);
+>>> +
+>>> +        let dst =3D if size =3D=3D 0 {
+>>> +            // SAFETY: `src` is guaranteed to be previously allocated =
+with this `Allocator` or NULL.
+>>> +            unsafe { bindings::vfree(src.cast()) };
+>>> +            NonNull::dangling()
+>>> +        } else if size <=3D old_size {
+>>> +            size =3D old_size;
+>>> +            NonNull::new(src).ok_or(AllocError)?
+>>> +        } else {
+>>> +            // SAFETY: `src` is guaranteed to point to valid memory wi=
+th a size of at least
+>>> +            // `old_size`, which was previously allocated with this `A=
+llocator` or NULL.
+>>> +            let dst =3D unsafe { bindings::__vmalloc_noprof(size as u6=
+4, flags.0) };
+>>> +
+>>> +            // Validate that we actually allocated the requested memor=
+y.
+>>> +            let dst =3D NonNull::new(dst.cast()).ok_or(AllocError)?;
+>>> +
+>>> +            if !src.is_null() {
+>>> +                // SAFETY: `src` is guaranteed to point to valid memor=
+y with a size of at least
+>>> +                // `old_size`; `dst` is guaranteed to point to valid m=
+emory with a size of at least
+>>> +                // `size`.
+>>> +                unsafe {
+>>> +                    core::ptr::copy_nonoverlapping(
+>>> +                        src,
+>>> +                        dst.as_ptr(),
+>>> +                        core::cmp::min(old_size, size),
+>>> +                    )
+>>> +                };
+>>> +
+>>> +                // SAFETY: `src` is guaranteed to be previously alloca=
+ted with this `Allocator` or
+>>> +                // NULL.
+>>> +                unsafe { bindings::vfree(src.cast()) }
+>>> +            }
+>>> +
+>>> +            dst
+>>> +        };
+>>
+>> If we had not a single realloc, but shrink/grow/free/alloc, then we
+>> would not need these checks here, I personally would prefer that, what
+>> do you guys think?
+>=20
+> Yeah, but look at `Kmalloc`, you'd have these checks in `Kmalloc`'s shrin=
+k/grow
+> functions instead, since `krealloc()` already behaves this way.
 
---w4BAlaxAov1f3nQ1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In the kmalloc case you would have different instantiations, no checks.
+IIUC for freeing you would do `krealloc(ptr, 0, flags)`.
 
-The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
+> Personally, I don't see much value in `shrink` and `grow`. I think
+> implementations end up calling into some `realloc` with either `new < old=
+` or
+> `new > old` anyway.
 
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+I think a `resize` would make more sense. In general, splitting
+resizing, creating and freeing makes sense to me.
 
-are available in the Git repository at:
+---
+Cheers,
+Benno
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc7
-
-for you to fetch changes up to b46803320c6ee2251de72d68f576a41aadbba17d:
-
-  Merge tag 'i2c-host-fixes-6.10-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-07-05 16:08:55 +0200)
-
-----------------------------------------------------------------
-Passing through an I2C driver fix
-
-----------------------------------------------------------------
-Piotr Wojtaszczyk (1):
-      i2c: pnx: Fix potential deadlock warning from del_timer_sync() call in isr
-
-Wolfram Sang (1):
-      Merge tag 'i2c-host-fixes-6.10-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
- drivers/i2c/busses/i2c-pnx.c | 48 +++++++++-----------------------------------
- 1 file changed, 10 insertions(+), 38 deletions(-)
-
---w4BAlaxAov1f3nQ1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaJRIEACgkQFA3kzBSg
-KbYdgQ//dTOrvDZKsPtk3r/imD65FyPOZKX+rIPiuHBJLLVjnwTaJaqM+kUd6061
-PZqwNhPQVD6/9AuiGRw6NtSIhfnUKHimI2wUFX1twOY2issqYckT3jjqZ6iQHENP
-fsP1C3HQN/qLBtdwwOYX72AIQJWkgfipUWr1guk45B+vbOGd4LDgJBlGnoyDzeHI
-tlH0sLf7TTW5CttzPssPLOJZlJtJ2F6zUSbiGSWJqGdJ5WMZdEe4xQmUH28f5Tx9
-T5A2TbSidx7+dCuKMxSBGYtS+2vOUsVApgQN04NzhJ20JXWTuF/BWIFSHSyatzex
-skamGlazj93ECz+3KshH3sZyMO57h+FVf3aorSPwV7HYNA4gwtbG4nyYEXBFFc+F
-SXfux7u9pYsXqKMEPsa7NqRhKhXhAityFvAPNKQXWwXiTeuVijRXpjDzF2BWxoLx
-3vXev9BdnCHtJr5TE5ULwdG5owMbs4/aKYcz3v+j7ApIgS/i9kTPYqga6of5E4eG
-LPaC/hipDYK+uLRM8BQcThOLcg73wFSq8OTf8EMx3EEevZPsycL9GJ3qjsKw9lJy
-zyKy+xniwq7n0exkfwLS2ocCy9LUIFHwyFZyf/OgXG+bJquamxEQxJykLaDyY24V
-3hCD6jnz4/N7ND2ZdV5wIFPxdMpiaZkBaIAuaXN3KByyhCniwWY=
-=USBK
------END PGP SIGNATURE-----
-
---w4BAlaxAov1f3nQ1--
 
