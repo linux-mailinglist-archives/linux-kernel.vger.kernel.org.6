@@ -1,98 +1,188 @@
-Return-Path: <linux-kernel+bounces-243076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A823A929129
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:48:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379C492912B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411371F21F48
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B1C2834B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28B818040;
-	Sat,  6 Jul 2024 05:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oPTTeg1k"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E441BC46;
+	Sat,  6 Jul 2024 05:49:23 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F72BEC0;
-	Sat,  6 Jul 2024 05:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEE818E06
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 05:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720244924; cv=none; b=lD/7D7nTPouOnJAYADs+TiQ4nOLb54RgfD0uYSdxXbSaYjMirRScbVtNDtAPECu+1zdr0H2MLOQPtlVJkw5xuqKT897lWBcu83OKV7EFT9wmn2nHDViDHWj+CHaKts2nc6vtPWBRphrGMeHIreylPSl6dsznPvmqFEmmyXHvxxE=
+	t=1720244963; cv=none; b=F7gJePUxtSRhgfTQNwLDdje4ENWCX9r0uuj/nCR9/lWXhr8sGvz/TgmzhSikfzA84WBmmr0YzJ6X8HtFAbmye5kCry8GbFKcbZsaE0WR8sLPkLGh5faR589x4GTJrNNt3KF6AhBTqvKWlvpYOFoomWYwwEIHViBTAWN0O6LM/+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720244924; c=relaxed/simple;
-	bh=I1k9ZsyGzCHSfLPR0X93qOviMBHDCU6ThhhGWNjEZR4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YCZUC6zRrjw/LYqkEjykVis0Ai8YxjK3wi/wgSaRGjGZh781AXDzTq7iKXyXkTVngh1I+n3URY2irNEtTLiG/2CZHtAquMhB7NO1rQTnZh+v2AKQrjId05KwZ+NRU0gDnR/+Ctmsd5Opa4OYem3DeLAbOeGYZuYX97fIQ7UQxjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oPTTeg1k; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720244912; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	bh=IziIWjLNMd2iMDJrrsmtrIogq2CTxxl3TSSYNG2sKOE=;
-	b=oPTTeg1k7ZNoGhiqdNximKgTseTcrUWPTHXGo0Ob2tva4ecU1ucHvh5UQzj4r6lYrrLlQo+Nd3GZr2OWjVHFFOREQCMA3jRNCz8JX9mIlHtCoBf0dvZcQXxhphKz/IUNXQWgiUtYj8oSq0mAqkD56glR4N5LoHyiD2wGFCkv6rQ=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=wodemia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W9wXMmc_1720244911;
-Received: from smtpclient.apple(mailfrom:wodemia@linux.alibaba.com fp:SMTPD_---0W9wXMmc_1720244911)
-          by smtp.aliyun-inc.com;
-          Sat, 06 Jul 2024 13:48:32 +0800
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1720244963; c=relaxed/simple;
+	bh=m/RaNl4T9cQru0+ThZ5I54BlLb7Jgc1dzINgA/T+TNs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R6hcHi3Ln3nvRceSEZjfwZtOE8zLjZnHfj7dxnvGPczyGfhc8nYeCrNa/k8BNNEd032LkFCpG9aQLsLHzralAe6cULkmJD2fWtwNjFhcsybqPy2FYib7R44fn0RWpLOlDmtURBERM8Le4JotBrl72+Cfb47SqFRmFOuJ6KGQuWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPyID-00037g-EA; Sat, 06 Jul 2024 07:49:05 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPyIA-007VN2-9D; Sat, 06 Jul 2024 07:49:02 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sPyIA-005P6I-0g;
+	Sat, 06 Jul 2024 07:49:02 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Michal Kubecek <mkubecek@suse.cz>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Woojung.Huh@microchip.com
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v2 1/1] ethtool: netlink: do not return SQI value if link is down
+Date: Sat,  6 Jul 2024 07:49:00 +0200
+Message-Id: <20240706054900.1288111-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH v1] zh_CN/admin-guide: one typo fix
-From: Tao Zou <wodemia@linux.alibaba.com>
-In-Reply-To: <87frsoauc2.fsf@meer.lwn.net>
-Date: Sat, 6 Jul 2024 13:48:30 +0800
-Cc: Dongliang Mu <mudongliangabcd@gmail.com>,
- Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>,
- linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AD0611D8-1892-41FE-B29B-9EEA4E07F9C2@linux.alibaba.com>
-References: <20240705022842.51451-1-wodemia@linux.alibaba.com>
- <CAD-N9QUPWrAaT-7UjibcKR7=L_etmGF4qy0voO8u3W+wk6G0nA@mail.gmail.com>
- <7E195EE5-F38E-4F32-ACA5-A36D79E66037@linux.alibaba.com>
- <87frsoauc2.fsf@meer.lwn.net>
-To: Jonathan Corbet <corbet@lwn.net>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Do not attach SQI value if link is down. "SQI values are only valid if
+link-up condition is present" per OpenAlliance specification of
+100Base-T1 Interoperability Test suite [1]. The same rule would apply
+for other link types.
 
-2024=E5=B9=B47=E6=9C=885=E6=97=A5 20:37=EF=BC=8CJonathan Corbet =
-<corbet@lwn.net> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Tao Zou <wodemia@linux.alibaba.com> writes:
->=20
->> 2024=E5=B9=B47=E6=9C=885=E6=97=A5 16:18=EF=BC=8CDongliang Mu =
-<mudongliangabcd@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> On Fri, Jul 5, 2024 at 10:29=E2=80=AFAM Tao Zou =
-<wodemia@linux.alibaba.com> wrote:
->>>>=20
->>>> Fix one chinese typo error.
->>>>=20
->>>> Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
->>>=20
->>> Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
->>>=20
->> Thanks a lot,  I will pick up your review tag.
->=20
-> No need unless there are other changes you need to make; it'll get
-> picked up when I apply the patch.
->=20
-> Thanks,
->=20
-> jon
+[1] https://opensig.org/automotive-ethernet-specifications/#
 
-Get it. Thanks for your explanation. =20
+Fixes: 806602191592 ("ethtool: provide UAPI for PHY Signal Quality Index (SQI)")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+changes v2:
+- add and reuse helper functions linkstate_sqi_critical_error() and
+  linkstate_sqi_valid()
+- make sure we set sqi and sqi_max vals only if both are valid
+---
+ net/ethtool/linkstate.c | 40 +++++++++++++++++++++++++++-------------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
-Tao Zou.=
+diff --git a/net/ethtool/linkstate.c b/net/ethtool/linkstate.c
+index b2de2108b356a..4efd327ba5d92 100644
+--- a/net/ethtool/linkstate.c
++++ b/net/ethtool/linkstate.c
+@@ -37,6 +37,8 @@ static int linkstate_get_sqi(struct net_device *dev)
+ 	mutex_lock(&phydev->lock);
+ 	if (!phydev->drv || !phydev->drv->get_sqi)
+ 		ret = -EOPNOTSUPP;
++	else if (!phydev->link)
++		ret = -ENETDOWN;
+ 	else
+ 		ret = phydev->drv->get_sqi(phydev);
+ 	mutex_unlock(&phydev->lock);
+@@ -55,6 +57,8 @@ static int linkstate_get_sqi_max(struct net_device *dev)
+ 	mutex_lock(&phydev->lock);
+ 	if (!phydev->drv || !phydev->drv->get_sqi_max)
+ 		ret = -EOPNOTSUPP;
++	else if (!phydev->link)
++		ret = -ENETDOWN;
+ 	else
+ 		ret = phydev->drv->get_sqi_max(phydev);
+ 	mutex_unlock(&phydev->lock);
+@@ -62,6 +66,16 @@ static int linkstate_get_sqi_max(struct net_device *dev)
+ 	return ret;
+ };
+ 
++static bool linkstate_sqi_critical_error(int sqi)
++{
++	return sqi < 0 && sqi != -EOPNOTSUPP && sqi != -ENETDOWN;
++}
++
++static bool linkstate_sqi_valid(struct linkstate_reply_data *data)
++{
++	return data->sqi >= 0 && data->sqi_max >= 0;
++}
++
+ static int linkstate_get_link_ext_state(struct net_device *dev,
+ 					struct linkstate_reply_data *data)
+ {
+@@ -93,12 +107,12 @@ static int linkstate_prepare_data(const struct ethnl_req_info *req_base,
+ 	data->link = __ethtool_get_link(dev);
+ 
+ 	ret = linkstate_get_sqi(dev);
+-	if (ret < 0 && ret != -EOPNOTSUPP)
++	if (linkstate_sqi_critical_error(ret))
+ 		goto out;
+ 	data->sqi = ret;
+ 
+ 	ret = linkstate_get_sqi_max(dev);
+-	if (ret < 0 && ret != -EOPNOTSUPP)
++	if (linkstate_sqi_critical_error(ret))
+ 		goto out;
+ 	data->sqi_max = ret;
+ 
+@@ -136,11 +150,10 @@ static int linkstate_reply_size(const struct ethnl_req_info *req_base,
+ 	len = nla_total_size(sizeof(u8)) /* LINKSTATE_LINK */
+ 		+ 0;
+ 
+-	if (data->sqi != -EOPNOTSUPP)
+-		len += nla_total_size(sizeof(u32));
+-
+-	if (data->sqi_max != -EOPNOTSUPP)
+-		len += nla_total_size(sizeof(u32));
++	if (linkstate_sqi_valid(data)) {
++		len += nla_total_size(sizeof(u32)); /* LINKSTATE_SQI */
++		len += nla_total_size(sizeof(u32)); /* LINKSTATE_SQI_MAX */
++	}
+ 
+ 	if (data->link_ext_state_provided)
+ 		len += nla_total_size(sizeof(u8)); /* LINKSTATE_EXT_STATE */
+@@ -164,13 +177,14 @@ static int linkstate_fill_reply(struct sk_buff *skb,
+ 	    nla_put_u8(skb, ETHTOOL_A_LINKSTATE_LINK, !!data->link))
+ 		return -EMSGSIZE;
+ 
+-	if (data->sqi != -EOPNOTSUPP &&
+-	    nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI, data->sqi))
+-		return -EMSGSIZE;
++	if (linkstate_sqi_valid(data)) {
++		if (nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI, data->sqi))
++			return -EMSGSIZE;
+ 
+-	if (data->sqi_max != -EOPNOTSUPP &&
+-	    nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI_MAX, data->sqi_max))
+-		return -EMSGSIZE;
++		if (nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI_MAX,
++				data->sqi_max))
++			return -EMSGSIZE;
++	}
+ 
+ 	if (data->link_ext_state_provided) {
+ 		if (nla_put_u8(skb, ETHTOOL_A_LINKSTATE_EXT_STATE,
+-- 
+2.39.2
+
 
