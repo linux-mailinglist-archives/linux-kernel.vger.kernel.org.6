@@ -1,115 +1,106 @@
-Return-Path: <linux-kernel+bounces-243086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BD092916C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:12:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E53792917C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A9B51C20D97
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:12:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8E7AB2212F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6B71CAB8;
-	Sat,  6 Jul 2024 07:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E9B1CD00;
+	Sat,  6 Jul 2024 07:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="KIC5+1EY"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NBzdTE48"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95631C2AD
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 07:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD631A29A;
+	Sat,  6 Jul 2024 07:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720249931; cv=none; b=nNNRSQ7I3fgAYdZJZ6fMo9+5CLTQJUtDj610Cf7a9GRRrGaH3WWQXTTnQx32CZMqiiesbQNjCymFOogxVa1vxclrK8QbVv4/ltwQxssNuqBToxiPNzHU70dfZtScNh35dY/AzrDwKaPyILtOfy0JVuCN96lXOoySTY1Hb/V4+T0=
+	t=1720250748; cv=none; b=a6RqSv3dVnwdixrmkAckA4MIL1CUxpcel8P9Tv1vYoBVV3+oe1IAzl7atoYpMxBgYdj3Pj7x36ghHgGc11l7dEDHw8zaZhY5LcVx3YmtDDyMR1bfHU3bbVppJgzRbSFry3/kuMDYbKFPy9K2i3fAMTewC4PODi1jBIxZVKgGzMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720249931; c=relaxed/simple;
-	bh=pRdqgQSLxCw7s0+Z4EG0qKtEpm8+VGpqYfnMuZ5v9yM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iuuUIZ21MLBXRZ7Z1J9gsULXa0+Tk7LCWrl1kaq8L/jXfyOtf3ibbTXfS7XqZguL/LQX4zoDZpyh9M+C1Y/IBe063n4TkdGvx4sWh5kgt+cQTtGtykAd+fII+AiMwoRe0YRuJOpydghpPz9+WNGV6Za4uTZCtUN0UgRRjNpH5iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=KIC5+1EY; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-36dd56cf5f5so8720025ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 00:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720249929; x=1720854729; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pBU/rymr2sXnQ8jMVGFQ/FuQw119gxmXGTmzs+tMs8I=;
-        b=KIC5+1EYDZOu7Oj3S+lpVpy4spLDefVFpRsG5xl5yq21fayQgB/CmdSPytOUXzT/CJ
-         X0Za1NBUos2GI8SAzvm1pJUgNblHPMm1HFwQ0pUMHz0VYheyUf0qWjOv4/JFTJLDUlLh
-         RgJPWGYgXgbY4vollE4ejDrOdURAogx+5sxfqql1nGEj8tYdc1T/ikAu1fLtsjevAiG5
-         DPeoAYRZUo9bxzrpIny0fA1UXaykYYkHufknnXW6oWw1KRwxYCHzvnwZ05qKkvEbP0i0
-         Kvr3fKl/BZOS+eM8FYIlDNHZNJh6fQkip6sOL3vwiGpN+j9Yo3QDmSAnBSKZFVT+OK8X
-         l7iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720249929; x=1720854729;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pBU/rymr2sXnQ8jMVGFQ/FuQw119gxmXGTmzs+tMs8I=;
-        b=UHKL1QhQ1gDNFwZi4MiQWeBG9YxZDCUnzj2QQaj3xGx+CZ/bzSyGKY3fFWYRuRfgwy
-         lgzoJvYGRbdzn9lrvmcoGMcdPW/r9T9QfrhSb1CqwIYbnNkp5t+H9l7INgbWg6q9QX+P
-         7R5GVbuHKJ8fXCtpKXHHzjbskmuzypr6sAmKzziNkUQ5Bo+pz1+Ke449JsBZ4YYeeUH8
-         RHQ4e5x5PCK0xsMfAQIwDEgq4Fo6Gse3WakJ/9XxBnyXpAHOsK1v3TXKYsDTfbNxeQfC
-         XGCHM/Ng3wl3gGN/BbyhxdVc589XZsKpxdS3sHhKj6tzQzlxjpsCoPJ0S+IxlW0cDVbV
-         18Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDDpek7lpHb1xb5XFMgcOEYJ/TV/jXNznGNRJWgQEj8HLGpbakQnTD6pIev3fkVZEKJU9NGsUeoAMU50OTyncQsU9ViV17ylkdBv/A
-X-Gm-Message-State: AOJu0YzlhKzjglXlRfOeftbJWI1zqS6FRWJs6H7i1/oDTiV2BnPTT82U
-	vaRGfTQRVtsyR5sPIpIzeazHsszOBIfom3Q0XeXSTfhmc5bAUdurkS7bZZrD8uA=
-X-Google-Smtp-Source: AGHT+IE3zQMSFK/fbRzcbv7S0sxo7hPGZzrByXAJW70o+JHkBq52dAH/GLhjQhmzXMBjOV2I5kCG9w==
-X-Received: by 2002:a05:6e02:148b:b0:374:6e8f:c760 with SMTP id e9e14a558f8ab-38399e4a998mr84825435ab.20.1720249929076;
-        Sat, 06 Jul 2024 00:12:09 -0700 (PDT)
-Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6d416554sm11921931a12.94.2024.07.06.00.12.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 00:12:08 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH net-next] udp: Remove duplicate included header file trace/events/udp.h
-Date: Sat,  6 Jul 2024 09:11:33 +0200
-Message-ID: <20240706071132.274352-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720250748; c=relaxed/simple;
+	bh=enV4Pmz9JYqoPxrbZ7WoUiNHOT9xZDkPD53ffPmZ6ec=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=DcjEAkuCSeoCzvl2coSDw5Pa9jxF7xotvnBUZQ8HJtEh+yQlyhlgO2yNZr0tzfHJL3DNBuxeYngVeKLw2mzRfPR9zEOUQon1/b780yYlhMJIJG/QbMb6sHcQCTaFXXuKH5eZyw9YScZny5hkqt1aIK7833bepxBWdCSygstGGm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NBzdTE48; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720250738; x=1720855538; i=markus.elfring@web.de;
+	bh=IZviilEXqtAESXHA45V3MqR+qjy8V7xE6K2KvJiIJuU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=NBzdTE48zB75GH1cIbjj8DhKztJazc02uYPVYk0aZnvCwXP3esDYJdtjl9d1vUJo
+	 ht0QnqJ9lkMjiWUla+zQzpewKTo+CF0mTz54mjLSKLqZ6Ag7Jg385aD566MkpEkBe
+	 2mGf6LrxBScpnukxZ6a7NwbSjC/8VpvGCeSIuLFKIChAqzjH4VeW9GfpMKMu5CnYE
+	 JJc79/xIuov/UgYBAxEk2IS59XcbOcYU1w8UvsDO7D6SYQU0RSfzYhCexmqoe4l8c
+	 JKd30OfoBiM99gfZgbj5ruh29PiiS+IHp6fEz+Y5PeTmOFvFdWSpNxu+xWmYpFmLi
+	 ejSbYzMnrZ6zDLI1eg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mx0N5-1sBD3f2JyN-0149MY; Sat, 06
+ Jul 2024 09:20:04 +0200
+Message-ID: <90779f58-9fe3-4d64-a449-f08f5eef7369@web.de>
+Date: Sat, 6 Jul 2024 09:20:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Minchan Kim <minchan@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Nick Terrell <terrelln@fb.com>
+References: <20240706045641.631961-4-senozhatsky@chromium.org>
+Subject: Re: [PATCH v5 03/23] lib: zstd: fix null-deref in
+ ZSTD_createCDict_advanced2()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240706045641.631961-4-senozhatsky@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Km/vDPiXp2BPvMcRE46bACQq+CFLlZKgrDCpRquZORNjwnw3hZM
+ grTaNSXbwKURJzJL14MKYZWLRUKVaPLNV86E8bNMJ77ObiQpDuT8jUoJDdAFRLmgbQLIJVH
+ bZ0ToYgXzBHPZW657yxkYj5B4TVlCdLf77EMg5/j3R85tpZaVgyP/n1wAjanBPapGIfNvDT
+ 7by/OuVlqbeEG+Z6Xk/fA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UXwnxxGvBaA=;P1NogJ1YKVOgnzjl88/twQDNnL/
+ +KxAV2UIWohZ9dWi2J2+peWpES4w+FatxhLgrtnB9vSbvjnj2UdAvY5oyEThbIut6AdirhP48
+ 3QEvtISsaCLloAm/m6Tk8KfLgUikuvIk3RofeC1gg5KSnZUfftJEL3eQ4outl8mxcdjdHKZ5L
+ 7IUsQYnVzMozvd8rswgWT0R12Pe0VVL1Wb+LWnom4Lmm+2NUN3hnCviYv0Q/hrp5LCgAHDOOE
+ d4rjeoSNmGqCjUMx3Naq7dabdPg2Cog5f30ctfoVBFV4WqURVBEqMmZVR0ATygqjieM0CbcYD
+ 31kc/xriKTZ/ppfgcqECZfodkVxGmao3ZG6qh23CLtIDVEEBACcc3YSTQRA8jyjI37SCzuylp
+ 5io0fhZQoRarTW1byeeAp92Hmm4Uu751ffi5JxwN2A0R+QuYBkA+Kr+AD7U0PIsn5+HC/bBm4
+ o1HAF5PKzaUTgUJrv9rDSxwonIfkYXqbaFHpnzTCB4VYM2zVJCLqQl1zmvvmj2z2pVsfDiATJ
+ UQGNruVMjBBE+TbeYRQx5I3+Iv1NnBqi1J6BJzDDdIHqgmG7ltKxoJe0/7sTwhtUNgKzSTYm7
+ yATlpuMvYujW0xBBjLzNrmlOkV0MSnb/zzsdXUDjMju6hTPCiZquESiX5g7mc8iIkyJCGlDKG
+ eZYeqTriMSwJ2a2uqGn/h3XEHspqLFAVSevm0oiGEA3Y/GYz/JQJsGYOqMtPxwllWBxI5xNUl
+ wtGEylw/rFAf4RGFnIXvot+FQz19y3SVas8S3LOINv44+e+du0criJCoupgm7mLUmnijHBz9P
+ 4scvCF4ikuks4g3ZP1b9QFLD4aflD+yxsXa2OKToQYfuM=
 
-Remove duplicate included header file trace/events/udp.h and the
-following warning reported by make includecheck:
+> ZSTD_createCDict_advanced2() must ensure that
+> ZSTD_createCDict_advanced_internal() has successfully
+> allocated cdict.  customMalloc() may be called under
+> low memory condition and may be unable to allocate
+> workspace for cdict.
 
-  trace/events/udp.h is included more than once
+* Please improve such a change description with imperative wordings.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n94
 
-Compile-tested only.
+* Would you like to use the term =E2=80=9Cnull pointer dereference=E2=80=
+=9D (in the summary phrase)?
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- net/ipv6/udp.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-index c81a07ac0463..bfd7fff1bc0c 100644
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -46,7 +46,6 @@
- #include <net/tcp_states.h>
- #include <net/ip6_checksum.h>
- #include <net/ip6_tunnel.h>
--#include <trace/events/udp.h>
- #include <net/xfrm.h>
- #include <net/inet_hashtables.h>
- #include <net/inet6_hashtables.h>
--- 
-2.45.2
-
+Regards,
+Markus
 
