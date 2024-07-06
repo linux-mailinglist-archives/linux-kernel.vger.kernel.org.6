@@ -1,191 +1,143 @@
-Return-Path: <linux-kernel+bounces-243331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CE69294B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 18:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E459294BB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 18:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C521C21802
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4048282484
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C60313BAD7;
-	Sat,  6 Jul 2024 16:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3212013B7A3;
+	Sat,  6 Jul 2024 16:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZlEYqkc"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b="j+h/bjEw"
+Received: from smtp0-kfki.kfki.hu (smtp0-kfki.kfki.hu [148.6.0.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD8D6A357;
-	Sat,  6 Jul 2024 16:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5C623BE;
+	Sat,  6 Jul 2024 16:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720282318; cv=none; b=F2am5vpgaygLT+47aimfwO4kpRo6wkoLuliB+3KiPY1bFQvzVc8kTBKiWfPumBWYujutU9oCnzeg5WDESzaJYLiFb53lFijvOf0lt4Ygre9avSn2QSRv4KSDM355CExEgTC4R0Cfi26X9L0oC3hWBh1wsddDFzhCqyO6WHKuEZI=
+	t=1720283111; cv=none; b=KomttPB3MC5U3vYS2Hm9GEggE8OeH5VeL0YAE8/TH9umszwiKIDxEpkrRNDO99SjuVMrv9JZLjufAHtNi1m1csbYX30nE73i+Jl7TsBe39vQWq5ECSH79yLyVq2Kwew796XyU0hQ5+cER0nFhfh2ugOavCuXVRrAjbgFXZOPeqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720282318; c=relaxed/simple;
-	bh=hx7hu1VppO7Lceczk4LBvMp0grQA3KyUAjS2JOTWiHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=D2K6YAT0GocMyNnbQnbwmEnuh0qdaFSDut0fViUWIdnLwDWZBZb+BTV8AKuZ/gjx6lyXQ1UxF4yA+HJRDgMGB17pFExdZDOaTPbyuoE98F8jswy2jJKXyuzprWBDCLeGYaE2I1KUW6AHd/moO23K3oIKvcUEk1FUpiEaDTU0kWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZlEYqkc; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42641dec7c3so15905875e9.0;
-        Sat, 06 Jul 2024 09:11:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720282315; x=1720887115; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BTB8Xon6KPoe3db5OQQTjTGvBHSB1yuS1b9hsPygqLE=;
-        b=gZlEYqkcYrpvphzL369WxBi7PuPiAudY5lTNaiok9I5xtdyTdUUUrOYJsNRPai1Iuq
-         d3GxJbqoL50vaGq6TmtbaF51vLb2DraqiQdiwdwFnhSCs0GqY7WT1i0bV8dXwXQ0Gg6d
-         +xPIeOBg6LmKGYQYQyerNxiWJYKGimAcup3iPeNMyqyU1RAzpkD7WED/u5tb1vGzKjeL
-         F3gb9JsE+ZJ3zZqGKOI2w8Pmdz3a0X1t0WZmhP194jBVje4vq+thdbDuEMcfUKzv8Jnt
-         yROtQt/WEYH2MNwVW1SsBc7ZTSeXqlSOxlhan9xzLHDbxQNDWqetEOPi/cEQi8EN49aT
-         2yAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720282315; x=1720887115;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BTB8Xon6KPoe3db5OQQTjTGvBHSB1yuS1b9hsPygqLE=;
-        b=BqBVDTdu4ig7JwVfNehCtTdOFXY+MGUFlcVlUfHYnpdW/KMf8hBnAAme3i4DNu+fjV
-         3yJrGY6r3K0JIi0SCD2XpoPRT+IiDlhe/JA0TBEJ159PjD+QQntOfxsDfvAR4LOHOlDj
-         nHgs/eQT9a2KgLQU90eG1k9/xdyBynH9pmb2KVlxOPmtXiv7zFxnODQ9gTYBic3rVR4x
-         96rN8Ja19qHiN+/euECr1VyQyasvG9jBVdYD2D0mAIqvM4bRAzIDWWWLyvERVNZdyf5y
-         TErjEHjmulfCQSbJl3QXAJnFQVdMUTKCU5LBL97a9j8lh4c9l4zg6TSIPJ1/t7QMv8f4
-         T8lA==
-X-Forwarded-Encrypted: i=1; AJvYcCVISFRjaRehszfpqFFKNbKoLDaPBErvr3q1SEFSnF3Fbq2tpfCzzddUxUe1gRlBRZRdCt2fXOHwhp7IJrXWoRWZpES9RYw2hhdoxVTOcjBjQH9u/1GWtC9PH8zh7swWqTNv+9646D2/Dw==
-X-Gm-Message-State: AOJu0Yy3zpYECLPM4N92QNB4N8EyGpIKD+yG2xbM1fFo9ukMJXek4r1A
-	59lJgMEDlUBhGWf8bQ7iUGIZ8AEXTVL0J8h7qaM/DBJ4qVEJP2H9
-X-Google-Smtp-Source: AGHT+IE8na9QX/RTxi1AT0cEX8PHZn2T/lH8IJzOK6lmzb1OjJrAo99AnmrH8u/7T4uTpxPsTi1ZfA==
-X-Received: by 2002:a5d:658e:0:b0:367:880f:5d4e with SMTP id ffacd0b85a97d-3679dd34ca9mr5207671f8f.39.1720282314870;
-        Sat, 06 Jul 2024 09:11:54 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a043a16sm23911430f8f.0.2024.07.06.09.11.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 09:11:54 -0700 (PDT)
-Date: Sat, 6 Jul 2024 18:11:52 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Baolin Wang <baolin.wang7@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: rtc: sprd,sc2731-rtc: convert to YAML
-Message-ID: <ZolsyEC8eeJWNIb6@standask-GA-A55M-S2HP>
+	s=arc-20240116; t=1720283111; c=relaxed/simple;
+	bh=yzuqB1ahBjHothxqzHppk9bd4Bz98MkN5vE8AgzGvBc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=FjDCwXT5EYBIaYujeykxZBS3UpD0pDqDMyZCy1PHTtTW58Hlbp8vMkpLNEXTZv3IqheAQnK/8hTQd7uXNZz6n3/CiJ+MVVOUP9duhdoigbgySPZZIFkVbv2IzBzaA3oAiG8QL9HYL2twqajh3jRwQ2SiGbNfVDNzt8XpwJIPOww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu; spf=pass smtp.mailfrom=blackhole.kfki.hu; dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b=j+h/bjEw; arc=none smtp.client-ip=148.6.0.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blackhole.kfki.hu
+Received: from localhost (localhost [127.0.0.1])
+	by smtp0.kfki.hu (Postfix) with ESMTP id 876C4674010C;
+	Sat,  6 Jul 2024 18:16:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	blackhole.kfki.hu; h=mime-version:references:message-id
+	:in-reply-to:from:from:date:date:received:received:received
+	:received; s=20151130; t=1720282574; x=1722096975; bh=jHJHkf31U+
+	8UwKd/kThgQslxJA+f8gODKZm1Ph5NdNg=; b=j+h/bjEwQZvrCxQYJb1ypJH3ls
+	x5RguauVNfRT/9mA8xiGuGLXCzjt0EUrRvrSVIgrgkGssPa//Obp/QCSkW85FiH5
+	CWf70AE0d9HyLkvycx5Bkn0D5lgXFCwoACV3BHj15ciomIh4Z8lSqdfQzd64HLfv
+	t+B0uNh6SFFGGO/qo=
+X-Virus-Scanned: Debian amavisd-new at smtp0.kfki.hu
+Received: from smtp0.kfki.hu ([127.0.0.1])
+	by localhost (smtp0.kfki.hu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP; Sat,  6 Jul 2024 18:16:14 +0200 (CEST)
+Received: from mentat.rmki.kfki.hu (77-234-64-135.pool.digikabel.hu [77.234.64.135])
+	(Authenticated sender: kadlecsik.jozsef@wigner.hu)
+	by smtp0.kfki.hu (Postfix) with ESMTPSA id 964EB6740107;
+	Sat,  6 Jul 2024 18:16:13 +0200 (CEST)
+Received: by mentat.rmki.kfki.hu (Postfix, from userid 1000)
+	id 36AEC408; Sat,  6 Jul 2024 18:16:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by mentat.rmki.kfki.hu (Postfix) with ESMTP id 2D2F8406;
+	Sat,  6 Jul 2024 18:16:13 +0200 (CEST)
+Date: Sat, 6 Jul 2024 18:16:13 +0200 (CEST)
+From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+To: Florian Westphal <fw@strlen.de>
+cc: yyxRoy <yyxroy22@gmail.com>, pablo@netfilter.org, 
+    gregkh@linuxfoundation.org, davem@davemloft.net, edumazet@google.com, 
+    kuba@kernel.org, pabeni@redhat.com, netfilter-devel@vger.kernel.org, 
+    coreteam@netfilter.org, netdev@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, yyxRoy <979093444@qq.com>
+Subject: Re: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE
+ for in-window RSTs
+In-Reply-To: <20240705094333.GB30758@breakpoint.cc>
+Message-ID: <1173262c-a471-683f-9e00-abc8192c9ca8@blackhole.kfki.hu>
+References: <20240705040013.29860-1-979093444@qq.com> <20240705094333.GB30758@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+X-deepspam: dunno 31%
 
-Convert the Spreadtrum SC2731 RTC bindings to DT schema.
-Rename file to match compatible.
+On Fri, 5 Jul 2024, Florian Westphal wrote:
 
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
----
- .../bindings/rtc/sprd,sc2731-rtc.yaml         | 49 +++++++++++++++++++
- .../bindings/rtc/sprd,sc27xx-rtc.txt          | 26 ----------
- 2 files changed, 49 insertions(+), 26 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
- delete mode 100644 Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
+> yyxRoy <yyxroy22@gmail.com> wrote:
+> > With previous commit https://github.com/torvalds/linux/commit/be0502a
+> > ("netfilter: conntrack: tcp: only close if RST matches exact sequence")
+> > to fight against TCP in-window reset attacks, current version of netfilter
+> > will keep the connection state in ESTABLISHED, but lower the timeout to
+> > that of CLOSE (10 seconds by default) for in-window TCP RSTs, and wait for
+> > the peer to send a challenge ack to restore the connection timeout
+> > (5 mins in tests).
+> > 
+> > However, malicious attackers can prevent incurring challenge ACKs by
+> > manipulating the TTL value of RSTs. The attacker can probe the TTL value
+> > between the NAT device and itself and send in-window RST packets with
+> > a TTL value to be decreased to 0 after arriving at the NAT device.
+> > This causes the packet to be dropped rather than forwarded to the
+> > internal client, thus preventing a challenge ACK from being triggered.
+> > As the window of the sequence number is quite large (bigger than 60,000
+> > in tests) and the sequence number is 16-bit, the attacker only needs to
+> > send nearly 60,000 RST packets with different sequence numbers
+> > (i.e., 1, 60001, 120001, and so on) and one of them will definitely
+> > fall within in the window.
+> > 
+> > Therefore we can't simply lower the connection timeout to 10 seconds
+> > (rather short) upon receiving in-window RSTs. With this patch, netfilter
+> > will lower the connection timeout to that of CLOSE only when it receives
+> > RSTs with exact sequence numbers (i.e., old_state != new_state).
+> 
+> This effectively ignores most RST packets, which will clog up the
+> conntrack table (established timeout is 5 days).
+> 
+> I don't think there is anything sensible that we can do here.
+> 
+> Also, one can send train with data packet + rst and we will hit
+> the immediate close conditional:
+> 
+>    /* Check if rst is part of train, such as
+>     *   foo:80 > bar:4379: P, 235946583:235946602(19) ack 42
+>     *   foo:80 > bar:4379: R, 235946602:235946602(0)  ack 42
+>     */
+>     if (ct->proto.tcp.last_index == TCP_ACK_SET &&
+>         ct->proto.tcp.last_dir == dir &&
+>         seq == ct->proto.tcp.last_end)
+>             break;
+> 
+> So even if we'd make this change it doesn't prevent remote induced
+> resets.
+> 
+> Conntrack cannot validate RSTs precisely due to lack of information,
+> only the endpoints can do this.
 
-diff --git a/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml b/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
-new file mode 100644
-index 000000000000..f3d20e976965
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/rtc/sprd,sc2731-rtc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Spreadtrum SC2731 Real Time Clock
-+
-+maintainers:
-+  - Orson Zhai <orsonzhai@gmail.com>
-+  - Baolin Wang <baolin.wang7@gmail.com>
-+  - Chunyan Zhang <zhang.lyra@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: sprd,sc2731-rtc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+allOf:
-+  - $ref: rtc.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    pmic {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      rtc@280 {
-+        compatible = "sprd,sc2731-rtc";
-+        reg = <0x280>;
-+        interrupt-parent = <&sc2731_pmic>;
-+        interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-+      };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt b/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
-deleted file mode 100644
-index 1f5754299d31..000000000000
---- a/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--Spreadtrum SC27xx Real Time Clock
--
--Required properties:
--- compatible: should be "sprd,sc2731-rtc".
--- reg: address offset of rtc register.
--- interrupts: rtc alarm interrupt.
--
--Example:
--
--	sc2731_pmic: pmic@0 {
--		compatible = "sprd,sc2731";
--		reg = <0>;
--		spi-max-frequency = <26000000>;
--		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		rtc@280 {
--			compatible = "sprd,sc2731-rtc";
--			reg = <0x280>;
--			interrupt-parent = <&sc2731_pmic>;
--			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
--		};
--	};
+I fully agree with Florian: conntrack plays the role of a middle box and 
+cannot absolutely know the right seq/ack numbers of the client/server 
+sides. Add NAT on top of that and there are a couple of ways to attack a 
+given traffic. I don't see a way by which the checkings/parameters could 
+be tightened without blocking real traffic.
+ 
+Best regards,
+Jozsef
 -- 
-2.34.1
-
+E-mail  : kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
+PGP key : https://wigner.hu/~kadlec/pgp_public_key.txt
+Address : Wigner Research Centre for Physics
+          H-1525 Budapest 114, POB. 49, Hungary
 
