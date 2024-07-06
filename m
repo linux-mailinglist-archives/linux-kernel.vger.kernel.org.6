@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-242984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6B2928FDF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:04:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0AA928FCC
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 02:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55F31C2223C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:04:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE1B1F227F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 00:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36ABE6AC0;
-	Sat,  6 Jul 2024 01:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3FB848D;
+	Sat,  6 Jul 2024 00:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1kTf4oz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQ13BSAy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB754A18
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 01:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F621256D;
+	Sat,  6 Jul 2024 00:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720227862; cv=none; b=HjDjzyZ5ynDnCZvK+Jx6VwupzEi7dVo5Z8vu7vOmeN3Zxw3LSph7P2nvIDMhBPq2HLlA1Nbb3cwM7nPDPHVTVpdhDR9GK8pCHUzP4GY0mBOAm7dn2V5JSVF+fITwoMshe5GQ12jkP8yOh/2VgTReeAYJB7dwyIgiz41B3fv5MSw=
+	t=1720227032; cv=none; b=Iue5i9oQecoBJ3HC1hDFtU4lNmcmk+1hEsH/TPpt7yxBv6N0hJYQmwvqmMiE4k3tp1kwx3oglPdLzgdO6F5gokFj22gQeLByCcYwmHBF1b1U9vkX5pHxUAcYoFgyHKgiiTisy9FyUlNF+ZOug0NQsprJptN967AOaMOnXQkS17s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720227862; c=relaxed/simple;
-	bh=1VaEWo6PugNMlQB4WbArRAI3mDoDE2X6SITcDlMPHWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+ZOBXdslicGhFOcmsinVif5EweFY47dkGGmJgTFUOdW2IGhtKfQlZarBUhchFcvMFA08O7gL2hAtFOK96K8oDVV7YAwDyEkTmwMaaSlcNX68vMYomG53DoR3dWUFUDwtgwRJr7ctAkw6ZNsAzqDSB7NbdTnObWr6ndRqAoCh50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1kTf4oz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA81FC116B1;
-	Sat,  6 Jul 2024 01:04:20 +0000 (UTC)
+	s=arc-20240116; t=1720227032; c=relaxed/simple;
+	bh=HXI9F2ozN47lIoalS26/JYpw58LCH3Ts4N8MhjcGSRg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gA3JxgudhZUqznxM4Ry8YgKPWLXqPN4lxQaH0nT4DlafLbExLTEUnlrRYvCDZLZVIuBJq8LNLnhcxZUfboz89jAxdxVyiIH3E2QB+V9j9L1V2qX7/bzuBtw5b+sqo/P4aW7QZs/hR0RxDAY6XxmB5R039qCCJByD+pNtSuKY/ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQ13BSAy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9A540C4AF0A;
+	Sat,  6 Jul 2024 00:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720227862;
-	bh=1VaEWo6PugNMlQB4WbArRAI3mDoDE2X6SITcDlMPHWE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h1kTf4ozGXtICJCRVaBLk/EyqTLd0Q//xdIFcpcTRcr3NVYfnUvx3LEs5nV23GN+H
-	 k2bUsyJuCZ+l4l8y0zvDRMLycQ9+hvgiJ/RC8qQKv6k+wsJ9OsghvhGCX9CCJtrUKV
-	 Gv7/bIJVSIQ0admoUICk7sA+h5p63S4s5k85YznjJgbWDYkKM6KWyPl17Frv8YbWvs
-	 +90zyL+TKyqjB8621uMpbewxlKx91wbMkVWJItovKH0VDUfHJC5t+teiL4MY90YSeu
-	 ZEPxIK/gS1hmIissh/wsFVf1fuUZgbJkyPLJlvJITM/jh2dnozlTnocgcugnpAatnQ
-	 IXalWU/hdvCuA==
-Date: Sat, 6 Jul 2024 08:50:10 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] riscv: define ILLEGAL_POINTER_VALUE for 64bit
-Message-ID: <ZoiUwsFIHcteBSms@xhacker>
-References: <20240705170210.3236-1-jszhang@kernel.org>
+	s=k20201202; t=1720227031;
+	bh=HXI9F2ozN47lIoalS26/JYpw58LCH3Ts4N8MhjcGSRg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=JQ13BSAyJAcj+HqE4VITbXvGp5bh5LKDp0SuXKBPhAf5zMn3jB4K8neJAnSfnLNL8
+	 q/7kb5fa/dDSTHVTt6WuUGDKJyDL2MR6OIZCX8McdSDURcnFx4hnAxA6m1KoU26uaa
+	 /hrHcuwPq13uD7NxXVUdDLJfzqLrJa+8dddVPNpcMdYRkxXAa3iV29eJ/CRtnUN8C8
+	 TK94jp6AvNt6dVUIXdQgR04W+cgg34bR1ie9XmNlP0ZZr7hLulTiyCLHQskDIN9+rO
+	 14grHr/lJ8AalelomHQfBOchspgmY4Z3FJJSse0x6mvLR4kduK8zf2Kg/dMgLZwYMX
+	 NXjkoBZcTzWYw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8E7E3C433A2;
+	Sat,  6 Jul 2024 00:50:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240705170210.3236-1-jszhang@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: ethernet: mtk_eth_soc: implement
+ .{get,set}_pauseparam ethtool ops
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172022703158.32390.5319141379722143709.git-patchwork-notify@kernel.org>
+Date: Sat, 06 Jul 2024 00:50:31 +0000
+References: <e3ece47323444631d6cb479f32af0dfd6d145be0.1720088047.git.daniel@makrotopia.org>
+In-Reply-To: <e3ece47323444631d6cb479f32af0dfd6d145be0.1720088047.git.daniel@makrotopia.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: john@phrozen.org, nbd@nbd.name, sean.wang@mediatek.com,
+ Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ linux@armlinux.org.uk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 
-On Sat, Jul 06, 2024 at 01:02:10AM +0800, Jisheng Zhang wrote:
-> This is used in poison.h for poison pointer offset. Based on current
-> SV39, SV48 and SV57 vm layout, 0xdead000000000000 is a proper value
-> that is not mappable, this can avoid potentially turning an oops to
-> an expolit.
+Hello:
 
-Maybe I also need to cc stable? This is a secure hole fix patch.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
+On Thu, 4 Jul 2024 11:14:55 +0100 you wrote:
+> Implement operations to get and set flow-control link parameters.
+> Both is done by simply calling phylink_ethtool_{get,set}_pauseparam().
+> Fix whitespace in mtk_ethtool_ops while at it.
 > 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 > ---
-> 
-> Since v1:
->  - fix typo:s/SV59/SV57
-> 
->  arch/riscv/Kconfig | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index c51b32a8ddff..c992eabbd002 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -313,6 +313,11 @@ config GENERIC_HWEIGHT
->  config FIX_EARLYCON_MEM
->  	def_bool MMU
->  
-> +config ILLEGAL_POINTER_VALUE
-> +	hex
-> +	default 0 if 32BIT
-> +	default 0xdead000000000000 if 64BIT
-> +
->  config PGTABLE_LEVELS
->  	int
->  	default 5 if 64BIT
-> -- 
-> 2.43.0
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>  drivers/net/ethernet/mediatek/mtk_eth_soc.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+
+Here is the summary with links:
+  - [net-next] net: ethernet: mtk_eth_soc: implement .{get,set}_pauseparam ethtool ops
+    https://git.kernel.org/netdev/net-next/c/064fbc4e9b5a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
