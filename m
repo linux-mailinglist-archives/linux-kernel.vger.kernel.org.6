@@ -1,85 +1,101 @@
-Return-Path: <linux-kernel+bounces-243239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B848F92935C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:45:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF46929358
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34BA1C20FAD
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:45:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CB51C20CC6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E524F763F8;
-	Sat,  6 Jul 2024 11:45:36 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974F573509;
+	Sat,  6 Jul 2024 11:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdbVrXBM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6FC481D5;
-	Sat,  6 Jul 2024 11:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAE417722;
+	Sat,  6 Jul 2024 11:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720266336; cv=none; b=AQzCtCyzmOu4+KuCNMJoETKCpeUJdV5Sjao3NzPcCHg3tKm33UXD2jto6xLojY3ZFl7ARt2zDHRxH+wrchGormW5SPLG2cYe8yDWHuxJFxaSuNc+tbnOU+kAMS+iQT5Yg6/BDuBtzlVaMZm1Ik/0B/YTynlOgYSzononzpbQ71A=
+	t=1720266113; cv=none; b=FGyObo6At4fR9rZa8U8jQSn5WDBNQZovWFFvGzZj+dOgMfhGF2DLATDqirmxZeEjj8lIQMSlglzUXSaKmI5tOrBlRTUf+5QZML3wVCUkhWXqXwRq8ahNJRwfJ5TGFExnmrtLFHHd/5+YUaokUkGKww2E6lK6BtecVhg/319vSjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720266336; c=relaxed/simple;
-	bh=dvPIjigUQi/mcN9lemwwdOKYmiHueQFcRpQHDFRxpQs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E7J3m5WzIDuwSqH8Y5qoIzRZeIvlH4trXzNQ4RtcEnaZLgTTzsMFGEjYi1QFEETsAlddhQ8IuDhyeIvt6hTgzlLULDyp2P7mRG8Ov2ALesKY3+ocwOElXi/Mu+/uc7/h2Igc6CKsrmQNtM1Zq2bojzbl5tHopoqQzd/hL6ZTwbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WGT3M3JgZz1T5Q7;
-	Sat,  6 Jul 2024 19:40:47 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id C523D180AA6;
-	Sat,  6 Jul 2024 19:45:24 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Sat, 6 Jul
- 2024 19:45:24 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] cgroup: distinguish name and legacy_name when show /proc/cgroups
-Date: Sat, 6 Jul 2024 11:38:30 +0000
-Message-ID: <20240706113830.1612319-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720266113; c=relaxed/simple;
+	bh=ZpiVxTkDAGl22bjAArHNJMuQ2aUZXYATBN98gMUP21o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=seH+fK8+/3YRavF2FhxJuUtzkIsZlyRY+IOyNptssQlWHL4F32Egced8+VtLt4bM6J6B9EeyntLIZx/Hlvd65q7ZjNc8HAg/AyKxigaFNLf9A6YvpXbvd6nTbiD+HK+tymfZ99f2YCjPmwONSq0kEZuh5HdSmNWvStpZRXWi4Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdbVrXBM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B5CC3277B;
+	Sat,  6 Jul 2024 11:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720266113;
+	bh=ZpiVxTkDAGl22bjAArHNJMuQ2aUZXYATBN98gMUP21o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pdbVrXBMMhrkNbPlOYhoopbfyJZKXKB7YfADm1W4wkui0/I0wSjo+olFCsab1Eq49
+	 CUPuhVMV/weIvaJwy+S45vFVEouTkc5c/yMdtq3WzO2bhDpYuQHrYnov/ArFFLWucA
+	 FDOu4lk3VM57dcQaPwXoMIfSQR9b19FvAmoJWqxGdN9zaBh9OKgxv9zm+ReHpTmeKA
+	 Z/jsHtxUKg8+q0PcGbxEcj2BpSYr0Q+HVxJpsdhwpvJ+AEi++AC5QVZHvmvOmekWq7
+	 ZHHxuL3Hn0JfbFUTrDP62xwihhbonXFMHtgtUoZwyrIEKPSC4Z2zhmuZg8N4bFyPo8
+	 dxKj4EKuBlqhQ==
+Date: Sat, 6 Jul 2024 12:41:46 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Aleksandr Mishin <amishin@t-argos.ru>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Datta Shubhrajyoti
+ <shubhrajyoti@ti.com>, linux-iio@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] staging: iio: frequency: ad9834: Validate frequency
+ parameter value
+Message-ID: <20240706124146.036f152a@jic23-huawei>
+In-Reply-To: <59cc60a1-f6d6-4f9f-bc36-6b06315eaee4@suswa.mountain>
+References: <20240703104734.12034-1-amishin@t-argos.ru>
+	<20240703154506.25584-1-amishin@t-argos.ru>
+	<59cc60a1-f6d6-4f9f-bc36-6b06315eaee4@suswa.mountain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Subsys_name may be different between v1 and v2. In cgroup v2
-blk subsys_name is io, while it is named blkio in cgroup v1.
-It better to distinguish name and legacy_name when we cat /proc/cgroups.
+On Wed, 3 Jul 2024 18:29:43 +0200
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cgroup-v1.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> On Wed, Jul 03, 2024 at 06:45:06PM +0300, Aleksandr Mishin wrote:
+> > In ad9834_write_frequency() clk_get_rate() can return 0. In such case
+> > ad9834_calc_freqreg() call will lead to division by zero. Checking
+> > 'if (fout > (clk_freq / 2))' doesn't protect in case of 'fout' is 0.
+> > ad9834_write_frequency() is called from ad9834_write(), where fout is
+> > taken from text buffer, which can contain any value.
+> > 
+> > Modify parameters checking.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> > 
+> > Fixes: 12b9d5bf76bf ("Staging: IIO: DDS: AD9833 / AD9834 driver")
+> > Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> > ---
+> > v1->v2: Check if clk_freq == 0 directly instead of fout == 0
+> >  as suggested by Dan  
+> 
+> 
+> Thanks!
+> 
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+Applied and marked for stable.
 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index b9dbf6bf2779..b29252ad91b6 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -677,7 +677,8 @@ int proc_cgroupstats_show(struct seq_file *m, void *v)
- 
- 	for_each_subsys(ss, i)
- 		seq_printf(m, "%s\t%d\t%d\t%d\n",
--			   ss->legacy_name, ss->root->hierarchy_id,
-+			   ss->root == &cgrp_dfl_root ? ss->name : ss->legacy_name,
-+			   ss->root->hierarchy_id,
- 			   atomic_read(&ss->root->nr_cgrps),
- 			   cgroup_ssid_enabled(i));
- 
--- 
-2.34.1
+> regards,
+> dan carpenter
+> 
 
 
