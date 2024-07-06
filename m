@@ -1,156 +1,359 @@
-Return-Path: <linux-kernel+bounces-243120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52604929211
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5DF929214
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E73282183
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BEF2282D79
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54EC4D8A3;
-	Sat,  6 Jul 2024 08:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="HIRhDWVJ"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2074.outbound.protection.outlook.com [40.92.102.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983131CD02;
+	Sat,  6 Jul 2024 09:00:30 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF29222EF2;
-	Sat,  6 Jul 2024 08:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720256172; cv=fail; b=B+7NrtzwHeCikHxMWBeqm+r4DpU3GoC7Zcm06hPbWSY9iZ3k52KtfyxFiaiO/Z2BQL2fSBvTiouxW1UdmnASKBAIiF/zqHqbACTaQZpVJtJWzAUTBnZjkXnyO8ve1jDykpTG5QUG868agjQuoqo76xVB9Sqf5wxUucVOWf6FuGg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720256172; c=relaxed/simple;
-	bh=3rn1boqzI9zsf5w0UTwRP/bFKB9pINv8F26QP4ydFkc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZecBoFvzTSkcaRsOqsPPU7sVdOOh8rTURYuwgGPYsruvMT1uj6nDRD8RCog8zKS+6pZDYXkO9L7YqRgLBh3f9tLO543kNwDKlaApIW29d81+gUPkD/tHPG4BChVDLgWIakJX8ecDjNi+Jdr93OVAx1+A7Qq4b5+HtPaK/xQosCw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=HIRhDWVJ; arc=fail smtp.client-ip=40.92.102.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GRcMV2ymQ7FuMZR/H5+ZPqKQS4hWv2Yd2Ss7/hA+yVyQr5HtwLPD2JyMX3l/J1vwD2r9QLsZTB/r6fFfyMUDBSR3izQm6lEMV/Nn1HH8syglmoXgbar3noOQRTuHO8j89kh5hAIKmiM6zub0V4LVFPCCt6Ao66oHoVNDhLzyuvDYbZPTamdhFJI2bzsRheyoh+EIRbYdZPtSicfgPpyMkF5Jz+oWRQJqC/BS5cdxeCGhKsdMShLTnJMmcW8Sr5nz5lwFCb75cqmAtWzQLUTLeMDZZSp4haIpwcyto6I29NmkwolyYMtJ7fZvBP8+KCb2xd+ikgIW8JtdPvcD9PlaUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3rn1boqzI9zsf5w0UTwRP/bFKB9pINv8F26QP4ydFkc=;
- b=CmMyCozDlFqkCZEAltKXQ11TA61sAcX8TgyN3XPd41LK3SEESRH2zqzGahiIWlnTEO+7DeohcQiJWJPI0kdE5UGffDgT7rw42MM1BHykGsX3L+bEjp3TK+8Mz1qighrmogwBqUPv4jk6ckk1pIP32DXB2U3u+px6qjkE+TiDHATE/A2jUOLqaIgTKAxFmzsJmVVHunc+doDXoNkwu8h4uQuitZ9lBlZ5JgkJ7F5+bZhCokrghFG+84U6Qcnzw7RQvSk97wz5RbBes9J94b2eS7ljtSxjcB9lrOpcZXsAL9ncZOAfYHWK5sthAHvi2yCHXVY9tvvbpzSI014PwDxz5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3rn1boqzI9zsf5w0UTwRP/bFKB9pINv8F26QP4ydFkc=;
- b=HIRhDWVJgLHVf+9I1wUNGZqWyhI24QESKandBdTZgklopGKXcqtLBbma7kCd1DEhV9rWasyD3rIUsF/vQNiJzDUGBNViRmGQfsZLZjejVXVNJW88sZK7TnyTUTO+rwFSBTg2WaKoYRbo0BpgoONdT92mmt+3n7FDRWt8vXhFY70sOLtECjd1/myYnne+eGjUiFyeLid2G0EMk67JC35oatJTRKsXeQBdWYTFzesmsHXMnUWie5L24IR03XTaLFLYGi9Hem+IDSF43Vw+Fn28SbkyQEX/Bk73LYX6dgbEZS2x92k05HNz9FPViyE9ycC7WKjpyUNXnkSrVXsMtw8C0w==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN0P287MB0229.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:e4::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.33; Sat, 6 Jul 2024 08:56:05 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7741.031; Sat, 6 Jul 2024
- 08:56:05 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: "oneukum@suse.com" <oneukum@suse.com>, "stern@rowland.harvard.edu"
-	<stern@rowland.harvard.edu>, "linux-usb@vger.kernel.org"
-	<linux-usb@vger.kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>, "usb-storage@lists.one-eyed-alien.net"
-	<usb-storage@lists.one-eyed-alien.net>, Kerem Karabay <kekrby@gmail.com>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: Re: [PATCH] USB: core: add 'shutdown' callback to usb_driver
-Thread-Topic: [PATCH] USB: core: add 'shutdown' callback to usb_driver
-Thread-Index: AQHazs1tjVgoALhhKk+BKEcu0nmxn7HpWxaAgAAL54A=
-Date: Sat, 6 Jul 2024 08:56:05 +0000
-Message-ID: <C5231A8D-C529-4BAC-9E2D-32F00321A294@live.com>
-References: <7332D45F-9BD3-4D0E-A5AF-9845353415A9@live.com>
- <2024070649-nuzzle-movable-f383@gregkh>
-In-Reply-To: <2024070649-nuzzle-movable-f383@gregkh>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn: [GPdUZXT4asxpZ3LfBHSn2wtR0HYZrIStz1K2baa59zewK8SE1SdoXoqmj0ci7Yls]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB0229:EE_
-x-ms-office365-filtering-correlation-id: d0140784-d1b8-4839-9011-08dc9d99787f
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|8060799006|19110799003|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- tdHD0PBtb/6VECBsjwqHtvzvyxAudiuU1Kc+CUdpIqm/6DrENUAHzsflVQU9pNjCBC9XUI60h4BKfM7P6yxylVp3n/luYp+CnmkgUMdB4DHXwPDbJVayKV7XrkKJxGlLUs9kmnDdfBFAKqO1gqn5l5mLOwpqXnqUAZ4yVe0y7C26fz0gN+4A+bk7yIFuyC7jj9Nt/NuAOdEoHJm8b6URVkyzb90QkBqEvp+BSdNDwzCPshWaExFx8RMknkgbqz9XIr6HJhHAGTFgCfovB9UGldS8Xsbq8Wd7LYfFI+ygdFZ+Jdwjd7pfTamb6bi4aK54fb7sLeidBYOBVZuZkQBjwKtp16VE1FG1prwA+0a63L2RFg6mvDSHBStCS/UCcp7jOoZOpzvu4ct89LZTPiSx03x0GkEslqRwKbXvcZpUOUI5FWDIZRjUlGnwmTVE6UtHSpDqzqTlGfd9KkphXoPp/jv+aE1PANVQSJv5VXaw9wI3CeMU3l7EjpyiU374O0i1UR+xjJLBhGoYnM6futj9HldWSZr+SfAsnv0J9ySDCVXyoc8uafZfH0dDPIGCSdeS3NxdYnahasFBB+a/uOPozY8FTj8Xt3egg9lgP7CMnPRosjHwAhCB5jq5RK8xyT7qgMxszfPwrwx8pWfOItdzFw==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?N3hyMmx2Z1YxMVFXenJpVHJnbElUUG5ldEY0MjN1TUFNU3NHRG4yK3FrQXE3?=
- =?utf-8?B?YU1vVy8rWHYyODRRVXNPR0Rwb2hzRU5RdWxFbjBBRmJub2ppUUh1R0xtRW44?=
- =?utf-8?B?U0RiNCtydkVYRnQzcHVYUDBsZUZ0ZWJNVHI3MmNYSnpvNmRuQWJsN3hvVWFF?=
- =?utf-8?B?UUsvSW1UQnI4Uk9XT2ZNZ0FmUWZ3OTFaTGV1ZFRMV2JEdHo2b2wxcGtsQmdr?=
- =?utf-8?B?YWR2QUZ6dVlzQ1JHSWR3dVA4by9VSHlraDBGUHNNei96R1dCQWJjQnFvNXpM?=
- =?utf-8?B?K0NGVFBEcURyaFJBa1poeG5RWXJJMTZmMFhrZmVMYmZPbnNKMWEvNC94U3Bv?=
- =?utf-8?B?QkdFYlBMQWxINFdDS0xyaGhIbC9nKzd0Y1QvUWpzczBjeHhwbkhiY1hYTVBo?=
- =?utf-8?B?TjFzb0o2U0VPN3VGVHhvMDBxTTdDcFpKVHpJTk1BYTlyQlp3Wi82RTZpeDJS?=
- =?utf-8?B?MVkyNVV0WW5xd21tY1hCSmhhWmRDenlqaGZPMC9zaGFWVitvWVZHb0lzMmta?=
- =?utf-8?B?d25jd3RuZU1vL1VKMnZsdEI0V3RzS1R2aGluT0hOVE9OUm1aVm5GNkRTVWlJ?=
- =?utf-8?B?MFdzVmlORXQvbFNudVdLTWRQRVVQUU1UaUtkWDV4MGJSYXV5Uk1yZnFpaDlH?=
- =?utf-8?B?eEFVdGVJMG55ejl6bUJGRnFINjRBSExtMmRHNVo5TXdBMFptbll5NUV4b1NG?=
- =?utf-8?B?bXliVDYzamI4QWowRURHWDlRQ0ZqMnRzd1Z4WFRQbi9vZU9qM1IvQmpkVnZN?=
- =?utf-8?B?ZVJDbzZjZS9EQ0FjUUI1N3ZlSVBtWnhvUnhNQ2ZmaUtuZWV3UktYT2FIV3dr?=
- =?utf-8?B?OEYzajRnRFpaT0hmb296NlV5bFFiVmliRHZSQWoyZTJUbFk3V0lxWHZjbUNO?=
- =?utf-8?B?NUttSUQ1ZXN3K2lXb0FtYkZDN2JaY0lrM01DQ253Y0hhTzlaWUx5QXZRa2o3?=
- =?utf-8?B?SWgrNE5iakoyZElJTDZqeGlPQjljeXZSeUJEVkZZQ2I5Y0NEdEEwVjAvTTFq?=
- =?utf-8?B?bzE2THhneUNIMkhjT1U0WXFSZHhPOG1lQXRadWF4bGJCOWNHSGVPT0hta2dN?=
- =?utf-8?B?MXozWWJ2MDI1djdoTGlQMmRPQWlpUkREN2tjVXBXckROZEZaUVY3YTRrblVC?=
- =?utf-8?B?aElXUXJObFlrY1ozZ3NVL2p4TmJrQ21NcW1xb3VGbjZoZEZSVGhld3J0WlZk?=
- =?utf-8?B?U0Fka0ZHNkdyNmNJSnhoUHRaYXNhSGR4TnVRNlBkWlB3aWVXUXprU2xCeDlG?=
- =?utf-8?B?dnpKR2VwMys5M0xUWnYvM0lZQVEwU1lQYVJYb1pVTGhGK2p3L3VYVFVzeWI4?=
- =?utf-8?B?RGNKN20vRC92dkg1Y1dBUFpxNDZEQStxRzhzQ0QydWJXU2hqcW1WbE1Scklw?=
- =?utf-8?B?M3FBbVlGeFRFaEVRTnhOVk9JV2ZPalBrRUN5NmRtNVZvQ1Zob1JPeGpNMGRU?=
- =?utf-8?B?dWlYVGFET2tkeDFVL3hFb0tVenE0TjkvRVF0cmFXMWc5d3ljZHMwcDVsMmJo?=
- =?utf-8?B?T2JzWFZSKzdqbUJiU1lsTDQwaVE1T3MvV1FBSmozWUtyaHE3YjV3UUgxVEoz?=
- =?utf-8?B?eGh4dCt3RFhrcWZ1MythTjE4aHUwQVp6ajkrNlhjS1Yycm0ySkF4TUhSUWJI?=
- =?utf-8?B?eExsZXB3TEJvbGxVUjdNaEJPTlpJSlhzaHlSQjJRODRsZG9yRnB3azhyS2VY?=
- =?utf-8?B?ZDN3c29MaHpoOTJWSWppZXByM1QxcExXSFhlVllOWkE1NGpWSUZvWmd4V0Y4?=
- =?utf-8?Q?wQF5sztplswYFBn2GtGC7R9eqA1bRnXqF5na/S4?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B6BF59FDACC424478C0EA70C174B669A@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B5A13AD8
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 09:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720256429; cv=none; b=VDKtUMSc9WYVQ8wh3DwuRxHQOndg4Fx11vrTRAWpXgn8jW/lB57GNW/MHW8PH7K9K58ZdPFtZrFLVh56oV0cwXJyY3+Tmy32OoPGzcfOf0HzdJQJeDg6f11y5S8pwEPZZKGFgeQBABhSwDJyJG7s6sDQsCoTm1dtGDBRiJPMMQk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720256429; c=relaxed/simple;
+	bh=AJFLYaaJwOeMzUWQvlijq7TxFq7HpFwyW4acO7iwA6c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BkfTqSoKrJClAABnL2D7GXWf2qqNOtQu+mbk6U64lgGnTv4i8zoHoR1O5V0CaW94tQxXdYZa6T/AB9+bM1+sLrSak2uyCYercVIhwK0kGksgPLmjLsjZFL26VRHj7cDyxJHbY8d5DXSJqyCMusyra3Rv4S3a6XfqMkykefFc5m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f6307d584aso288595739f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 02:00:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720256427; x=1720861227;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SRN0lsVUKVhkXUVTNtpdp4+tgBywPGNX0lahnUfn+h8=;
+        b=kyUSKY5GuuGbij1he2Hf1IJ2gG5QW/gqm2jeRzTXI/duDd0m3FAqaTQiWmmAkHSX/K
+         WnYwUW2+3U54zwaLwHn6aYcVGerzZ2VcNzyNNiUktjxGVtZFMikRyYs0YtmiZ5TMhs0v
+         lx8RPAfb3TN1GjkqGmA0yvWe/e7NPU6V6tfQhwUOmF4dGY9U+Bb46006Z6wjKI6yBRwF
+         yNxK0FNjESq1iC+O2OwQrTqKsyFEEExYeCKdCuEqeuQfm95i2wyxSvybs0hZ6XxJWxVI
+         5S8VcCu/BXBo22ltcT9f6ffENJzepHl5ZMpllP2UGXhuAsN7rtwXShaKKZz66vtzOw0A
+         ZELw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjmR5OF/0mXDgSX+Cc0siSlzBtXTJXLdQGt+7Xhfydxl0RRBFAaCtwKpnQz8Fhhp2KKt2NkNnc3yXru8HzrSCTvBMndM1tFtEM00DD
+X-Gm-Message-State: AOJu0YyAFHtWlvf0QjDoNT/aVl9I0BcH50JDPJEJzGfo5r1gHBN0keuv
+	3vLWku/CKuETowfEpwPYHTB1HEKEgUXo/wO9rP/pCgjsTqqMw8tzShiavrdm5/gl//F7IVHsVTn
+	nWMjrs4tegqDA5NAw7ciohFGp+1VC3R/8Ge1xuFjGlbSnqVQes1dGNSg=
+X-Google-Smtp-Source: AGHT+IFstf9W+jGuKjVCziRFwbqkUc0e7I8JgWQLMILX0dzIxieT1A8ljIHLXwLN0mqTuAgl8bnHFkGI23WThbhzrYYPcMtYvZIg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0140784-d1b8-4839-9011-08dc9d99787f
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jul 2024 08:56:05.6904
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0229
+X-Received: by 2002:a05:6638:9825:b0:4b9:26f5:3632 with SMTP id
+ 8926c6da1cb9f-4bf622c0508mr352305173.6.1720256422322; Sat, 06 Jul 2024
+ 02:00:22 -0700 (PDT)
+Date: Sat, 06 Jul 2024 02:00:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f9b248061c90680c@google.com>
+Subject: [syzbot] [net?] [s390?] possible deadlock in smc_shutdown
+From: syzbot <syzbot+60e37f9e2f4575eab889@syzkaller.appspotmail.com>
+To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
+	edumazet@google.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-DQpIaSBHcmVnDQoNCj4gT24gNiBKdWwgMjAyNCwgYXQgMTo0M+KAr1BNLCBncmVna2hAbGludXhm
-b3VuZGF0aW9uLm9yZyB3cm90ZToNCj4gDQo+IE9uIEZyaSwgSnVsIDA1LCAyMDI0IGF0IDExOjIx
-OjA2QU0gKzAwMDAsIEFkaXR5YSBHYXJnIHdyb3RlOg0KPj4gRnJvbTogS2VyZW0gS2FyYWJheSA8
-a2VrcmJ5QGdtYWlsLmNvbT4NCj4+IA0KPj4gVGhpcyBzaW1wbGlmaWVzIHJ1bm5pbmcgY29kZSBv
-biBzaHV0ZG93biBmb3IgVVNCIGRyaXZlcnMuDQo+PiANCj4gDQo+IFNvcnJ5LCBidXQgdGhpcyBk
-b2VzIG5vdCBleHBsYWluIHdoeSB0aGlzIGlzIG5lZWRlZCBhdCBhbGwgOigNCj4gDQo+IFdoZXJl
-IGRpZCB0aGlzIGNoYW5nZSBjb21lIGZyb20/ICBXaGF0IHByb2JsZW0gZG9lcyBpdCBzb2x2ZT8g
-IFdoeQ0KPiBzaG91bGQgd2UgdGFrZSBpdD8NCj4gDQoNCkN1cnJlbnRseSB0aGVyZSBpcyBubyBz
-dGFuZGFyZGl6ZWQgbWV0aG9kIGZvciBVU0IgZHJpdmVycyB0byBoYW5kbGUNCnNodXRkb3duIGV2
-ZW50cy4gVGhpcyBwYXRjaCBzaW1wbGlmaWVzIHJ1bm5pbmcgY29kZSBvbiBzaHV0ZG93biBmb3Ig
-VVNCDQpkZXZpY2VzIGJ5IGFkZGluZyBhIHNodXRkb3duIGNhbGxiYWNrIHRvIHVzYl9kcml2ZXIu
-IEl0IGFsc28gaW1wbGVtZW50cyB0aGUNCm5ldyBtZXRob2QgdG8gZXhpc3RpbmcgIlVTQiBBdHRh
-Y2hlZCBTQ1NJ4oCdIGRyaXZlciB0aGF0IHJlcXVpcmVkIHNodXRkb3duDQoNCklzIHRoaXMgZ29v
-ZCBlbm91Z2g/DQo+IEkgdGhpbmsgSSBrbm93IHRoZSBhbnN3ZXJzIHRvIHRoZXNlIHF1ZXN0aW9u
-cywgYnV0IHlvdSBuZWVkIHRvIGRvY3VtZW50DQo+IGl0IGhlcmUgYXMgdG8gd2h5IGl0IGlzIG5l
-ZWRlZCAocGxlYXNlIHJlYWQgdGhlIGtlcm5lbCBkb2N1bWVudGF0aW9uIGZvcg0KPiBob3cgdG8g
-d3JpdGUgYSBnb29kIGNoYW5nZWxvZyB0ZXh0IGFuZCBzdWJqZWN0IGxpbmUuKQ0KDQpUaGUgc3Vi
-amVjdCBsb29rcyBmaW5lIHRvIG1lLiBJZiB5b3UgdGhpbmsgaXQgY2FuIGJlIGltcHJvdmVkLCBz
-dWdnZXN0aW9ucyBzaGFsbCBiZSBhcHByZWNpYXRlZC4NCg0KVGhhbmtzDQpBZGl0eWENCg0K
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    1dfe225e9af5 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14202469980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=de2d4dc103148cd6
+dashboard link: https://syzkaller.appspot.com/bug?extid=60e37f9e2f4575eab889
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1dfe225e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1a8b8f1ba6ff/vmlinux-1dfe225e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/615b64310209/bzImage-1dfe225e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+60e37f9e2f4575eab889@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc6-syzkaller-00051-g1dfe225e9af5 #0 Not tainted
+------------------------------------------------------
+syz.1.5756/20250 is trying to acquire lock:
+ffff888043bbf058 (sk_lock-AF_SMC){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1602 [inline]
+ffff888043bbf058 (sk_lock-AF_SMC){+.+.}-{0:0}, at: smc_shutdown+0x65/0x800 net/smc/af_smc.c:2912
+
+but task is already holding lock:
+ffff8880210a2970 (&nsock->tx_lock){+.+.}-{3:3}, at: sock_shutdown+0x16f/0x280 drivers/block/nbd.c:395
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #7 (&nsock->tx_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       send_disconnects drivers/block/nbd.c:1312 [inline]
+       nbd_disconnect+0x321/0x540 drivers/block/nbd.c:1328
+       nbd_disconnect_and_put+0x2c/0x170 drivers/block/nbd.c:2155
+       nbd_genl_disconnect+0x398/0x570 drivers/block/nbd.c:2200
+       genl_family_rcv_msg_doit+0x202/0x2f0 net/netlink/genetlink.c:1115
+       genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+       genl_rcv_msg+0x565/0x800 net/netlink/genetlink.c:1210
+       netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2564
+       genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+       netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+       netlink_unicast+0x542/0x820 net/netlink/af_netlink.c:1361
+       netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1905
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg net/socket.c:745 [inline]
+       ____sys_sendmsg+0xab5/0xc90 net/socket.c:2585
+       ___sys_sendmsg+0x135/0x1e0 net/socket.c:2639
+       __sys_sendmsg+0x117/0x1f0 net/socket.c:2668
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #6 (&nbd->config_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       refcount_dec_and_mutex_lock+0x51/0xe0 lib/refcount.c:118
+       nbd_config_put+0x31/0x750 drivers/block/nbd.c:1341
+       nbd_release+0xb7/0x190 drivers/block/nbd.c:1653
+       blkdev_put_whole+0xad/0xf0 block/bdev.c:673
+       bdev_release+0x496/0x6f0 block/bdev.c:1096
+       blkdev_release+0x15/0x20 block/fops.c:623
+       __fput+0x408/0xbb0 fs/file_table.c:422
+       __fput_sync+0x47/0x50 fs/file_table.c:507
+       __do_sys_close fs/open.c:1563 [inline]
+       __se_sys_close fs/open.c:1548 [inline]
+       __x64_sys_close+0x86/0x100 fs/open.c:1548
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #5 (&disk->open_mutex){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       bdev_open+0x41a/0xe50 block/bdev.c:897
+       bdev_file_open_by_dev block/bdev.c:1011 [inline]
+       bdev_file_open_by_dev+0x17d/0x210 block/bdev.c:986
+       disk_scan_partitions+0x1ed/0x320 block/genhd.c:367
+       device_add_disk+0xe97/0x1250 block/genhd.c:510
+       pmem_attach_disk+0x9fe/0x1400 drivers/nvdimm/pmem.c:578
+       nd_pmem_probe+0x1a9/0x1f0 drivers/nvdimm/pmem.c:651
+       nvdimm_bus_probe+0x169/0x5d0 drivers/nvdimm/bus.c:91
+       call_driver_probe drivers/base/dd.c:578 [inline]
+       really_probe+0x23e/0xa90 drivers/base/dd.c:656
+       __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
+       driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
+       __driver_attach+0x283/0x580 drivers/base/dd.c:1214
+       bus_for_each_dev+0x13c/0x1d0 drivers/base/bus.c:368
+       bus_add_driver+0x2e9/0x690 drivers/base/bus.c:673
+       driver_register+0x15c/0x4b0 drivers/base/driver.c:246
+       __nd_driver_register+0x103/0x1a0 drivers/nvdimm/bus.c:619
+       do_one_initcall+0x128/0x700 init/main.c:1267
+       do_initcall_level init/main.c:1329 [inline]
+       do_initcalls init/main.c:1345 [inline]
+       do_basic_setup init/main.c:1364 [inline]
+       kernel_init_freeable+0x69d/0xca0 init/main.c:1578
+       kernel_init+0x1c/0x2b0 init/main.c:1467
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #4 (&nvdimm_namespace_key){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       device_lock include/linux/device.h:1009 [inline]
+       uevent_show+0x188/0x3b0 drivers/base/core.c:2743
+       dev_attr_show+0x53/0xe0 drivers/base/core.c:2437
+       sysfs_kf_seq_show+0x23e/0x410 fs/sysfs/file.c:59
+       seq_read_iter+0x4fa/0x12c0 fs/seq_file.c:230
+       kernfs_fop_read_iter+0x41a/0x590 fs/kernfs/file.c:279
+       new_sync_read fs/read_write.c:395 [inline]
+       vfs_read+0x869/0xbd0 fs/read_write.c:476
+       ksys_read+0x12f/0x260 fs/read_write.c:619
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #3 (kn->active#5){++++}-{0:0}:
+       kernfs_drain+0x48f/0x590 fs/kernfs/dir.c:500
+       __kernfs_remove+0x281/0x670 fs/kernfs/dir.c:1486
+       kernfs_remove_by_name_ns+0xb2/0x130 fs/kernfs/dir.c:1694
+       sysfs_remove_file include/linux/sysfs.h:773 [inline]
+       device_remove_file drivers/base/core.c:3061 [inline]
+       device_remove_file drivers/base/core.c:3057 [inline]
+       device_del+0x381/0x9f0 drivers/base/core.c:3866
+       unregister_netdevice_many_notify+0xc8a/0x19f0 net/core/dev.c:11249
+       unregister_netdevice_many net/core/dev.c:11277 [inline]
+       unregister_netdevice_queue+0x307/0x3f0 net/core/dev.c:11156
+       unregister_netdevice include/linux/netdevice.h:3119 [inline]
+       unregister_netdev+0x1c/0x30 net/core/dev.c:11295
+       gprs_attach+0x4ce/0x5e0 net/phonet/pep-gprs.c:291
+       pep_setsockopt+0x419/0x510 net/phonet/pep.c:1031
+       do_sock_setsockopt+0x222/0x480 net/socket.c:2312
+       __sys_setsockopt+0x1a4/0x270 net/socket.c:2335
+       __do_sys_setsockopt net/socket.c:2344 [inline]
+       __se_sys_setsockopt net/socket.c:2341 [inline]
+       __x64_sys_setsockopt+0xbd/0x160 net/socket.c:2341
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (rtnl_mutex){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       do_ipv6_setsockopt+0x2162/0x47b0 net/ipv6/ipv6_sockglue.c:567
+       ipv6_setsockopt+0xe3/0x1a0 net/ipv6/ipv6_sockglue.c:994
+       tcp_setsockopt+0xa4/0x100 net/ipv4/tcp.c:3765
+       smc_setsockopt+0x1b4/0xa00 net/smc/af_smc.c:3063
+       do_sock_setsockopt+0x222/0x480 net/socket.c:2312
+       __sys_setsockopt+0x1a4/0x270 net/socket.c:2335
+       __do_sys_setsockopt net/socket.c:2344 [inline]
+       __se_sys_setsockopt net/socket.c:2341 [inline]
+       __x64_sys_setsockopt+0xbd/0x160 net/socket.c:2341
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       smc_switch_to_fallback+0x2d/0xa00 net/smc/af_smc.c:893
+       smc_sendmsg+0x13d/0x520 net/smc/af_smc.c:2770
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg net/socket.c:745 [inline]
+       ____sys_sendmsg+0xab5/0xc90 net/socket.c:2585
+       ___sys_sendmsg+0x135/0x1e0 net/socket.c:2639
+       __sys_sendmmsg+0x1a1/0x450 net/socket.c:2725
+       __do_sys_sendmmsg net/socket.c:2754 [inline]
+       __se_sys_sendmmsg net/socket.c:2751 [inline]
+       __x64_sys_sendmmsg+0x9c/0x100 net/socket.c:2751
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (sk_lock-AF_SMC){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3534
+       lock_sock include/net/sock.h:1602 [inline]
+       smc_shutdown+0x65/0x800 net/smc/af_smc.c:2912
+       nbd_mark_nsock_dead+0xae/0x5d0 drivers/block/nbd.c:303
+       sock_shutdown+0x17c/0x280 drivers/block/nbd.c:396
+       nbd_clear_sock drivers/block/nbd.c:1334 [inline]
+       nbd_clear_sock_ioctl drivers/block/nbd.c:1472 [inline]
+       __nbd_ioctl drivers/block/nbd.c:1500 [inline]
+       nbd_ioctl+0x49b/0xfd0 drivers/block/nbd.c:1560
+       blkdev_ioctl+0x27c/0x6e0 block/ioctl.c:676
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:907 [inline]
+       __se_sys_ioctl fs/ioctl.c:893 [inline]
+       __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  sk_lock-AF_SMC --> &nbd->config_lock --> &nsock->tx_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&nsock->tx_lock);
+                               lock(&nbd->config_lock);
+                               lock(&nsock->tx_lock);
+  lock(sk_lock-AF_SMC);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.1.5756/20250:
+ #0: ffff888021dd2198 (&nbd->config_lock){+.+.}-{3:3}, at: nbd_ioctl+0x151/0xfd0 drivers/block/nbd.c:1553
+ #1: ffff8880210a2970 (&nsock->tx_lock){+.+.}-{3:3}, at: sock_shutdown+0x16f/0x280 drivers/block/nbd.c:395
+
+stack backtrace:
+CPU: 0 PID: 20250 Comm: syz.1.5756 Not tainted 6.10.0-rc6-syzkaller-00051-g1dfe225e9af5 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ lock_sock_nested+0x3a/0xf0 net/core/sock.c:3534
+ lock_sock include/net/sock.h:1602 [inline]
+ smc_shutdown+0x65/0x800 net/smc/af_smc.c:2912
+ nbd_mark_nsock_dead+0xae/0x5d0 drivers/block/nbd.c:303
+ sock_shutdown+0x17c/0x280 drivers/block/nbd.c:396
+ nbd_clear_sock drivers/block/nbd.c:1334 [inline]
+ nbd_clear_sock_ioctl drivers/block/nbd.c:1472 [inline]
+ __nbd_ioctl drivers/block/nbd.c:1500 [inline]
+ nbd_ioctl+0x49b/0xfd0 drivers/block/nbd.c:1560
+ blkdev_ioctl+0x27c/0x6e0 block/ioctl.c:676
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc301975ed9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc302792048 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fc301b04038 RCX: 00007fc301975ed9
+RDX: 0000000000000000 RSI: 000000000000ab04 RDI: 0000000000000003
+RBP: 00007fc3019e49e5 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007fc301b04038 R15: 00007ffc819d5788
+ </TASK>
+block nbd1: shutting down sockets
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
