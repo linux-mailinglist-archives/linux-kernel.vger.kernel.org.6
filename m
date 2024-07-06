@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-243106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33109291BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:06:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE059291BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5CF2832A0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D6C1C21094
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F7846450;
-	Sat,  6 Jul 2024 08:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF4446450;
+	Sat,  6 Jul 2024 08:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AYqjoKCn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aI8972uT"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730433B295;
-	Sat,  6 Jul 2024 08:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5316AC0;
+	Sat,  6 Jul 2024 08:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720253160; cv=none; b=BTcsAegn2LQrTyUQjQETaHxvQ6lMKvkD9eS9uK4H4QaKpP2YzBijfHAGyGWjbmovgioveSpaFo7jRxPmohF2bt0kMAzAG5PyA7hQ7bTYNmMuAefLJGT5OSKmwulDJMZ8ZaV0d3AFY2uAugCSm23i3loJrdOglvfqO7MvB47zAg0=
+	t=1720253476; cv=none; b=X6NZkH3DlcclA8KLokVBIoC5htQqQu4TKh/sDmOMjQmubYuO+9KmcUmVS+fqvCB8L/OzFommuAFZxX/JOgPP0lk75SK5GNe7Udl+9/aiPB7NVRICA1VPpPpWIPiiyA248pxAKOHxjXOKZZCtIaKUCzVKYlh6jjR59jC3nbIWJPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720253160; c=relaxed/simple;
-	bh=yRgXLaKmUsIdQHY1Q3h67uj2rWQ7+iou6MCLsSzPh+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I4HU8kLyjS7YMmCdesuOsrL+kE9d9IFcY/Yeuhs6qV1/IFLf5G5e0RYwuTScZfvcHNE8typrrcBHS1yW8zLv1tHgOnKt5mwttEnQdFDT20fI6mtuvdWsmYVwotQg8dZBfAOIK7G6+OTP7Zi1alTQOCvh4FxB97rucf++vfYwEJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AYqjoKCn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F843C2BD10;
-	Sat,  6 Jul 2024 08:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720253160;
-	bh=yRgXLaKmUsIdQHY1Q3h67uj2rWQ7+iou6MCLsSzPh+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AYqjoKCndsh1dPwy3fITjkAEFgvhA7Ic4mR0JIulCUlq4GOTlrguxNfg5X74DucdV
-	 Fb642usa+0w+oLSKjhfSEDuVuZrarWOY4zS7tNcbk8sXJi4boGMQWHq4duu5as14ry
-	 j82qJ1S+t9aUtA9+Tb2Wm4Siy1C9laN76TNwM+Ig=
-Date: Sat, 6 Jul 2024 10:05:56 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: =?utf-8?B?5byg54yb?= <zhangmeng.kevin@spacemit.com>
-Cc: Yixun Lan <dlan@gentoo.org>, Jisheng Zhang <jszhang@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, Jiri Slaby <jirislaby@kernel.org>,
-	Lubomir Rintel <lkundrak@v3.sk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Yangyu Chen <cyy@cyyself.name>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 06/11] dt-bindings: serial: 8250: Add SpacemiT K1 uart
- compatible
-Message-ID: <2024070645-trapper-shucking-acdb@gregkh>
-References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
- <20240703-k1-01-basic-dt-v3-6-12f73b47461e@gentoo.org>
- <ZoarsYMNJRu1-_wn@xhacker>
- <20240705064721.GB3042186@ofsar>
- <21b192b47649688e2400e3968e28905bba186d51.42926de8.32d7.41ea.b98f.6e2edb5e6c5a@feishu.cn>
+	s=arc-20240116; t=1720253476; c=relaxed/simple;
+	bh=rfZEouzOxsNRA4awpkHYUc2icZH/Imr5myeeWGkXRSs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tdn7HncwlZ8R5rit3+YaK0OyR0I1wgfDt2TK/RaZQsWiln8Ju9PWQmMYOuvY7JO+Lu1ox2HtGj01EZD5FGEUoxIsgCqZnaq+dqGzpIuAmdbJf2JnF/U36ul8dv5ZAwKAZ4qQL59kTs8i3mLNfYloodvysUJ7PUhDlaPq9RSkJm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aI8972uT; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-367a2c2e41aso991818f8f.2;
+        Sat, 06 Jul 2024 01:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720253473; x=1720858273; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jxdnk9LdT8owd0wJzaCgXhayUh+BFK4CbLfMVXWHNtg=;
+        b=aI8972uTYNQvFili5Pgrd4z5mEX5lsr1y2HEQool5bsMrFYY5XH9Oaxc8BsXnlGT2V
+         kX0YWhVx/xLu4Pe24KHjO1FT7Iu0A1de4/fXPNeFX7JiTeiSMeDVD/53ME30aUTzorbr
+         eJmNR3xVwNWkEFTgaY+cAqeAKc7UWmSGhId2AntOXUxKv6kfKpyTnyFGUJ5iW0f6s0XT
+         Rv076r69F6O6v+qyMcjAx/uYYMmAC7ZiE9/Fzdb1WQD3izzkvlQ1veNIUcnNCSmLE17K
+         VbR1IecXSUabEsDN/L0lhBqLoaH161H9ZfCriX2HAzHnTHtG9q0tX+My4rp99d1BKkSK
+         uobw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720253473; x=1720858273;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jxdnk9LdT8owd0wJzaCgXhayUh+BFK4CbLfMVXWHNtg=;
+        b=CIdLdg3fRz+X44EHrD09mHVsE8E0sw6oTnFn3PexeyCmraoeeghw3PBHbQ2/4uzJe9
+         AiYCjlWVZmGAqXbvCllR7JzicIMYqjxEyJgJhESemtiraopsfVsDezmYeMnu3dK5NoQ4
+         wAHiz6htNn0XlGlYpqeQ5mULkxHMkdDfvenMnSgEq4DaypZiraFUJdnsV7RkOP3RELh7
+         yZS9AKNNrp3EAWYLZExij6dCNU48TEcNRG0tuGWE4H6wbPmOx0pXIRvfLi22eg1UbUj9
+         tP66r5TbXU5uoo/mQPEOu/msQ9eB1PMkGFHeV7TNWTarbbS8AGV9Fo1yJx90R3EWuY0M
+         XilQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsT4H9My3XrnQeZmBrzh2FNkcmPQWUUavLwd4H+igmwnKN0NpfmRfdN+DZQPfcGI11cLilgx6hjiViOJH5bM7kzN6236Z8Ev4qOA6aBU7bIj5pOzJJXl0aq3Xa7gwimBvjBBPdke+Rog==
+X-Gm-Message-State: AOJu0YwWqEl2xAFfmsUiYCcvUZXzgsTQb+Euh200VQMUHLCPOaUZBbEr
+	DHrByGyiJj3wx7droxfdB5/60zpIok+eM8TZX+cxcySun7DNnnoRv8jwT+AD
+X-Google-Smtp-Source: AGHT+IFy6A3hKW7ZOYBZj6yCN1WQxglhxu7RdXUwCCGKSa4XPbZVh4Namx902c/KY2bbHNyp63ukkw==
+X-Received: by 2002:adf:fd02:0:b0:366:eeda:c32d with SMTP id ffacd0b85a97d-3679dd353c3mr4798004f8f.31.1720253472975;
+        Sat, 06 Jul 2024 01:11:12 -0700 (PDT)
+Received: from qamajeed.Home ([39.45.163.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678e5c2b08sm10235931f8f.71.2024.07.06.01.11.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Jul 2024 01:11:12 -0700 (PDT)
+From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Subject: [PATCH 1/4] Updating a deprecated use of strcpy from acpi_pad.c file.
+Date: Sat,  6 Jul 2024 13:11:01 +0500
+Message-Id: <20240706081104.14493-1-qasim.majeed20@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <21b192b47649688e2400e3968e28905bba186d51.42926de8.32d7.41ea.b98f.6e2edb5e6c5a@feishu.cn>
 
-On Sat, Jul 06, 2024 at 04:02:57PM +0800, 张猛 wrote:
-> This message and any attachment are confidential and may be privileged or otherwise protected from disclosure. If you are not an intended recipient of this message, please delete it and any attachment from your system and notify the sender immediately by reply e-mail. Unintended recipients should not use, copy, disclose or take any action based on this message or any information contained in this message. Emails cannot be guaranteed to be secure or error free as they can be intercepted, amended, lost or destroyed, and you should take full responsibility for security checking. 
+Replacing strcpy with strscpy.
+strcpy is a deprecated function.
+It should be removed from the kernel source.
 
-Now deleted.
+Link: https://github.com/KSPP/linux/issues/88
+
+Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+---
+ drivers/acpi/acpi_pad.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
+index bd1ad07f0290..e49f89bbeacf 100644
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -417,8 +417,8 @@ static int acpi_pad_probe(struct platform_device *pdev)
+ 	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
+ 	acpi_status status;
+ 
+-	strcpy(acpi_device_name(adev), ACPI_PROCESSOR_AGGREGATOR_DEVICE_NAME);
+-	strcpy(acpi_device_class(adev), ACPI_PROCESSOR_AGGREGATOR_CLASS);
++	strscpy(acpi_device_name(adev), ACPI_PROCESSOR_AGGREGATOR_DEVICE_NAME);
++	strscpy(acpi_device_class(adev), ACPI_PROCESSOR_AGGREGATOR_CLASS);
+ 
+ 	status = acpi_install_notify_handler(adev->handle,
+ 		ACPI_DEVICE_NOTIFY, acpi_pad_notify, adev);
+-- 
+2.34.1
+
 
