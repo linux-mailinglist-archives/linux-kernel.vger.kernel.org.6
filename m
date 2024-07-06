@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-243195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F969292F7
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:25:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410F09292FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A6F1F223E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E1A1C20F6D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB16149001;
-	Sat,  6 Jul 2024 11:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE067149E04;
+	Sat,  6 Jul 2024 11:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PxgarKUx"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OJ88jTM3"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7D31459E8
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07010146A63
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 11:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720264914; cv=none; b=r6+PeXyHrvYHdIrfTbj6JTHC1Cc9WAXS0OCfNY+mdRc0QKgRPDDUvMeGWhmoJcQrZqoEm9NEbpCDr+s+3zvo/SMgJFLsbSQd+pqf5Ly6AuC8DOxnnYQAPoO3yHf3BQC/UidlvcMvnxlmCMoSuZzV59MN6qlmxqymo4lFU8egxPk=
+	t=1720264914; cv=none; b=SRs0x0NIHv49+6mT42aMtiw9h24THLYt0aHAnICvesfSVbF7pGUbt7R/bSBomMHmbLfZPvT4MGbZ/OxjnP39TMu5DyjITncdgn3jXK/QIOAkhmvreeKIF2ewi8r1SaAFH8jGStv0a7XVusJLhQFR0lYTJ+4CEsUTJSrsV1EvRWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720264914; c=relaxed/simple;
-	bh=clHHUD3oc7AiBgTgg8PgDukw25LL9yUiiPzfbEuUbVI=;
+	bh=dMnyEjp7+uX7hB8OvommDFSS9gTLs56lQaOKFfeWV80=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j20pAAv2VCK+x3iUXNWmGmqo70xLWAvkTR8san1+Ozu16lrdMgTXu1NchmDZ/jDdYoCSXqefpuu2gpPQ9RrJaSkwWkPvlcql+6mU8RUGsEwVi0PiRCVlPjsVsOZv3PtF5Ydyx3qjgJt+AYPULdY7Gkzi7WZatoNcu6BLu7xL+4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PxgarKUx; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=RRLU5Mn0a8CThpV5P/Y458hKbS+xGm0gei9whIbqPmg4anQv0rRA4/OOFz72+WQVHmf5tnS4HD74xRUxU2i1yY3PurdcsyURbysBHdQ37ehfPOL4QUfbIx9+IF9dpEEe6NdFiD29eOtM8NObgQJ6D5eLn467+ijUy6/ELBeZKrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OJ88jTM3; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=iLZVl4e6/KmvptbLtSauaumo0amjB//eFIbpOtdLBZ0=; b=PxgarK
-	UxdxYJy7BE/1Hhyo0BrGXFuHKYuK/CBJm3qY3SbWVuqS0o+5xqTkEZ+KGb/XRuqk
-	my5fW0qGz2JKVRFDpKM0twjHEpuMDSywhABStg0Sjs4SPIKm3gfI8rfv6k/+PLZS
-	9oqnmy3OZMjuzsESumPbPMmu1fLFuuJvcNgF0+nJQr12kHcgiSlU8VAaqjXvDcdF
-	NmBq4AgqPjHOAm6YpZm5wABnae4Zn0G//IeMXFb7kCJ9TqJjsRLtr1nasXlhwx+0
-	6BaKLa/ksbSHjC++CQlJSMJhj+GHksP1DaUoskPag4fB9vEb9UShkWUNVPlckeTM
-	fom4zkXgVzFaJ89A==
-Received: (qmail 3809940 invoked from network); 6 Jul 2024 13:21:35 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:35 +0200
-X-UD-Smtp-Session: l3s3148p1@ovYFYpIcMoZQT+F6
+	 s=k1; bh=WeKdycd1+D6KyJrGKsaIPUssvwvGfHywxfTsuw+6QZA=; b=OJ88jT
+	M3XTQ+jEDbbGJ+iHvaV6rI1gd9OR5nHDY/sC35sFoXvTsi+Du6W7ZBnzGvcNcjqL
+	cGYmmjv8mKx4OCaz7OcV0od1JJqHHTVzm6OMpPdiBAdva7pyxkQq9b859Bo4mjw5
+	swkDZPZkwHG8D0pwyb3ulsY4c9o875gWvHzsgCd40NPkZRBFPj/sG0g4pUVS+miF
+	X0A8qtxQ0Qsc9LprrJXw63EbNRE0WCYmg9XJfj1eim3OsZEETa/j+9ckvKNCPpRh
+	w/Ysy/EPHf/hv010ES6BeEUjIJqA9uPOVv6NDucLYGZxRj5gnj3oG43JFnbol5Ru
+	As1HX91l6Y6kSPuw==
+Received: (qmail 3809969 invoked from network); 6 Jul 2024 13:21:36 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:36 +0200
+X-UD-Smtp-Session: l3s3148p1@OS4QYpIcOIZQT+F6
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Jean Delvare <jdelvare@suse.com>,
 	Andi Shyti <andi.shyti@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 19/60] i2c: hix5hd2: reword according to newest specification
-Date: Sat,  6 Jul 2024 13:20:19 +0200
-Message-ID: <20240706112116.24543-20-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 20/60] i2c: i801: reword according to newest specification
+Date: Sat,  6 Jul 2024 13:20:20 +0200
+Message-ID: <20240706112116.24543-21-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
 References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
@@ -67,33 +68,54 @@ specifications and replace "master/slave" with more appropriate terms.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-hix5hd2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-i801.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-hix5hd2.c b/drivers/i2c/busses/i2c-hix5hd2.c
-index a47b9939fa2c..64cade6ba923 100644
---- a/drivers/i2c/busses/i2c-hix5hd2.c
-+++ b/drivers/i2c/busses/i2c-hix5hd2.c
-@@ -200,7 +200,7 @@ static void hix5hd2_read_handle(struct hix5hd2_i2c_priv *priv)
- 		/* the last byte don't need send ACK */
- 		writel_relaxed(I2C_READ | I2C_NO_ACK, priv->regs + HIX5I2C_COM);
- 	} else if (priv->msg_len > 1) {
--		/* if i2c master receive data will send ACK */
-+		/* if i2c controller receive data will send ACK */
- 		writel_relaxed(I2C_READ, priv->regs + HIX5I2C_COM);
- 	} else {
- 		hix5hd2_rw_handle_stop(priv);
-@@ -384,8 +384,8 @@ static u32 hix5hd2_i2c_func(struct i2c_adapter *adap)
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index 44e3e9bae5f1..328c0dab6b14 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -88,7 +88,7 @@
+  * Block buffer				yes
+  * Block process call transaction	yes
+  * I2C block read transaction		yes (doesn't use the block buffer)
+- * Slave mode				no
++ * Target mode				no
+  * SMBus Host Notify			yes
+  * Interrupt processing			yes
+  *
+@@ -1277,10 +1277,10 @@ static void register_dell_lis3lv02d_i2c_device(struct i801_priv *priv)
+ 	i2c_new_client_device(&priv->adapter, &info);
  }
  
- static const struct i2c_algorithm hix5hd2_i2c_algorithm = {
--	.master_xfer		= hix5hd2_i2c_xfer,
--	.functionality		= hix5hd2_i2c_func,
-+	.xfer = hix5hd2_i2c_xfer,
-+	.functionality = hix5hd2_i2c_func,
- };
+-/* Register optional slaves */
+-static void i801_probe_optional_slaves(struct i801_priv *priv)
++/* Register optional targets */
++static void i801_probe_optional_targets(struct i801_priv *priv)
+ {
+-	/* Only register slaves on main SMBus channel */
++	/* Only register targets on main SMBus channel */
+ 	if (priv->features & FEATURE_IDF)
+ 		return;
  
- static int hix5hd2_i2c_probe(struct platform_device *pdev)
+@@ -1307,7 +1307,7 @@ static void i801_probe_optional_slaves(struct i801_priv *priv)
+ }
+ #else
+ static void __init input_apanel_init(void) {}
+-static void i801_probe_optional_slaves(struct i801_priv *priv) {}
++static void i801_probe_optional_targets(struct i801_priv *priv) {}
+ #endif	/* CONFIG_X86 && CONFIG_DMI */
+ 
+ #ifdef CONFIG_I2C_I801_MUX
+@@ -1777,7 +1777,7 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 
+ 	/* We ignore errors - multiplexing is optional */
+ 	i801_add_mux(priv);
+-	i801_probe_optional_slaves(priv);
++	i801_probe_optional_targets(priv);
+ 
+ 	pci_set_drvdata(dev, priv);
+ 
 -- 
 2.43.0
 
