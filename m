@@ -1,126 +1,198 @@
-Return-Path: <linux-kernel+bounces-243254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC63E92939D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:40:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D17B92939F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E5091F21E7A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A54B2830A2
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07D4763F8;
-	Sat,  6 Jul 2024 12:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3228C7D3E2;
+	Sat,  6 Jul 2024 12:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IgNUMCLo"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoLWMmPc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAFC17FE;
-	Sat,  6 Jul 2024 12:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C5217FE;
+	Sat,  6 Jul 2024 12:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720269634; cv=none; b=cMqicoHBNXT6SlbBipOPVuE8fnRID87V55xwDHQtHcf06gOiQIT1QbAWRrxS/Ckb8nT2ekOoZl4IgXb5gU/OMCu3U7fg/2Iij2h0JB70De1UHudsyNs3zRLcy3JgZQUVKoDXmUV2lOtJ5iM2whW0RwkKMIL+zJ2hbXRd8GoQx1Y=
+	t=1720269756; cv=none; b=V5XZq3abQEU8PXhLUibQUW9QYAtcJwTxYLEjJcb3YMo0g1qLJfZkw5Oa+Fz6EbmGfDUBTj7MhXjg2WOVJssoVL3xVbeMcTRR2dlb5A/XqSSCiHSCWZvkvVWeinvP+XY2SyJqDjurFjHFTUUicxvlW8y39IvoPS0VgzlGm9tOXf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720269634; c=relaxed/simple;
-	bh=j3UTqJfzsjIWbMszseeWkbC4a6y7kzVbRtpw0k1TAaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jYMvNoFyvuPrD7oslpUyCHS/kroljaSZl+wMB/l3Mee4dkj03T/XFYpYSXt+oqBfHmF6KveFa5R8OEoazOiNt7tALGjrCsrb8l+MI20EcEiEw4gtEIc6u0tVsqXoFXB0NbKnpcNAM0tMTpI1BjDZGWSgpnmmqxTOA8OB4bxYRsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IgNUMCLo; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c980b55741so1601165a91.2;
-        Sat, 06 Jul 2024 05:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720269633; x=1720874433; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j3UTqJfzsjIWbMszseeWkbC4a6y7kzVbRtpw0k1TAaw=;
-        b=IgNUMCLolStdz5tvGRtzkq7p/sfTJ+VvuIBKzhZxRTUGo8CBwlxx3CDS+Zi3LJqp2R
-         SfdAEP0borCE6DfFOb/TG2I6qtyso1zM6+0dAeZ505b2/a5Zmuc0LoolTHRrPaChwwjF
-         FWJ9ByZZFP0dK2TB51r++q5A1X4GtAJSQ9v2OPxWWIWdZ7AtZ3R75awVD6KBeVxZKwun
-         nsS4N4Zg34UoTYuNFBSXkeKrA05kvmdcZYBMQ/GuHk/NhYhERHzOd6q/0DhAfIXdCJGS
-         10j7mi60X5ZygrNm4wwlJgRxWUqr0oksVOz5Lccxf2w7Sh76YS7tNTCcnvoqyLRVpGWf
-         w6kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720269633; x=1720874433;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j3UTqJfzsjIWbMszseeWkbC4a6y7kzVbRtpw0k1TAaw=;
-        b=G01n3oYl9cE4FFffTEm+Y/Q2WqBNoOlvXfxwrNOKxds6usDW4vGV1Y55a8/902Znsa
-         S5d6Hk32VEVrbDWKQ0PhydVcAKfNPPZbSodXepLkSANAVrxH1CAjNo+HmsWH+4bGeMYi
-         wAZAbnjBp6yeEw6SB1sFK5cmBtkW+3yl+y4S4o+lHO1fSaRXhBtst6O8SPiUEVLdkDFq
-         YG23bk8tR/N1aAGM7q6TM2Go2EvZY5YYgF3yNq8gmjsSfj/BZ0la5P/8Oe1TpNVC+9f0
-         sv8qExqQL2IMe/4NI3OBANBsIj22RD0LlmtY5WA7DHqsh0KrzeK6uZAfpgmgihT0DgmA
-         wf3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qIv/30b+nM5bS+Bp5M9pN87UtAZ7Qi1Xl964a7p8rjnMRXoI3GZ+Vh3nHV6wABM7WU7b0GIsYvIBACHaw6Q+rgb4iHcSwFvym1fqDyklkFULCFcw1E/GzqSDok4AQOuKwNPRgQJEMkGJaT0=
-X-Gm-Message-State: AOJu0Yxu6GZaDUMp2Bo03KJsDX0eEOiiEKval/C6QdrGSCAKT3JS1MWC
-	SnuxKOi57eSah4DzTJXFOTjlaQIUCuPi3qcSqfRsdmLu83Ntw9PU3ZivYwQBqHnJvGVyg6y4foR
-	l5DwjYMov9MXOfS85xbNi1MHtt0Y=
-X-Google-Smtp-Source: AGHT+IGscmRNCPQPnGzlGQ4cn3OcoVG7q9GXhLRUHvJ7+NtJpAaDf3rsefSkGv35h79b1xfdIsoV/Lo+y6Z8Q5uipyw=
-X-Received: by 2002:a17:90a:d811:b0:2c9:887e:46de with SMTP id
- 98e67ed59e1d1-2c99c6aeff0mr4370632a91.12.1720269632639; Sat, 06 Jul 2024
- 05:40:32 -0700 (PDT)
+	s=arc-20240116; t=1720269756; c=relaxed/simple;
+	bh=5ENXDBMXjmBF8k+3fFYXj93fQplVf1tf/1nvD0CaQKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oI1aeUR3SEPBv3Gkucm/HRKGhJfuQdnKTx0UvBL+EeSZiP5mQ5fwWbCB3AuOCvV1VcN8+DJm6mWtxv7glpWVrWI4mXVdA3X7yUjPnYvhGppGMQ846DN2JaZNi+a+Mhco+HJvRiZQNJUf7Qp0PA1tbv1fUH5fCMHvSpDVNGEHOx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoLWMmPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE3FBC2BD10;
+	Sat,  6 Jul 2024 12:42:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720269755;
+	bh=5ENXDBMXjmBF8k+3fFYXj93fQplVf1tf/1nvD0CaQKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BoLWMmPcnjpFf8esl6hgCqhPDj5PqyEsrTzO55nalHLxCPaeZFXfSVSj8yK67wH/G
+	 3uODPanPgVwiAtGQEoikDTOqQji5SZij2Gqua89zyBIrKL24W0Lx0CFjy7vA6QFEeW
+	 XYXW+44HhK5U2uvLj/xKpWbusoyYvc6iJaJWFaYrK+++2prj4yjkQzn3r+j5cbIZ/d
+	 1dEM+qzGBLuOO7Sugn19QX/u2trEToCEYrjbE7aWXH/VJer7XCW0FZo5WznS6z/EPb
+	 2cXYpb+NzaMqvz+H/j7e05o+vM2PrgJofxT0vj/ifXDQA1fklOXROxaOt/4yKBiQlr
+	 rOcyUtJWVtpZQ==
+Date: Sat, 6 Jul 2024 13:42:30 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
+ Add Sophgo SARADC binding documentation
+Message-ID: <20240706-remote-undergo-3b9dfe44d16f@spud>
+References: <20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com>
+ <20240705-sg2002-adc-v2-1-83428c20a9b2@bootlin.com>
+ <20240705-unaired-pesticide-4135eaa04212@spud>
+ <6b5459fd-2873-4c26-b986-882413b8d95b@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704170738.3621-1-dakr@redhat.com> <20240704170738.3621-10-dakr@redhat.com>
- <fa6d6c0a-17eb-4280-baa3-df5f97e58497@proton.me>
-In-Reply-To: <fa6d6c0a-17eb-4280-baa3-df5f97e58497@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 6 Jul 2024 14:40:20 +0200
-Message-ID: <CANiq72kmppYpNNjP=0eqHx60ixjgoL4oW_ux1HVwM6vrCRFztw@mail.gmail.com>
-Subject: Re: [PATCH 09/20] rust: types: implement `Unique<T>`
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@redhat.com>, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, 
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aooyyyTiQwVeE6tX"
+Content-Disposition: inline
+In-Reply-To: <6b5459fd-2873-4c26-b986-882413b8d95b@bootlin.com>
+
+
+--aooyyyTiQwVeE6tX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 6, 2024 at 12:59=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> The `Unique` from std is special, in the sense that the Rust compiler
-> will emit the `noalias` LLVM attribute.
->
-> This gives std's `Box` type a possible performance advantage (IIRC Gary
-> had a compiler explorer example that showed different instruction
-> count).
+On Fri, Jul 05, 2024 at 05:24:19PM +0200, Thomas Bonnefille wrote:
+>=20
+>=20
+> On 7/5/24 5:01 PM, Conor Dooley wrote:
+> > On Fri, Jul 05, 2024 at 03:42:23PM +0200, Thomas Bonnefille wrote:
+> > > The Sophgo SARADC is a Successive Approximation ADC that can be found=
+ in
+> > > the Sophgo SoC.
+> > >=20
+> > > Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> > > ---
+> > >   .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 63 +++++++++++=
++++++++++++
+> > >   1 file changed, 63 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-=
+saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-sarad=
+c.yaml
+> > > new file mode 100644
+> > > index 000000000000..31bd8ac6dfa5
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.=
+yaml
+> > > @@ -0,0 +1,63 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-saradc.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title:
+> > > +  Sophgo CV18XX SoC series 3 channels Successive Approximation Analo=
+g to
+> > > +  Digital Converters
+> > > +
+> > > +maintainers:
+> > > +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> > > +
+> > > +description:
+> > > +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - enum:
+> > > +              - sophgo,cv1800b-saradc
+> > > +          - const: sophgo,cv18xx-saradc
+> >=20
+> > I don't think the fallback here makes sense. If there's other devices
+> > with a compatible programming model added later, we can fall back to the
+> > cv1800b.
+> >=20
+>=20
+> Ok I'll do that, I wasn't sure if it was a good practice to fallback on
+> another SoC specific compatible.
+>=20
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    description:
+> > > +      SARADC will use the presence of this clock to determine if the=
+ controller
+> > > +      needs to be explicitly clocked by it (Active domain) or if it =
+is part of
+> > > +      the No-Die Domain, along with the RTC, which does not require =
+explicit
+> > > +      clocking.
+> >=20
+> > What does "explicit clocking" mean? Is it clocked directly (or via
+> > dividers) by a clock on the board or another source?
+> >=20
+>=20
+> It means that, if a clock is provided, the driver will work in "Active
+> Domain" and will use the clock generator of the SoC to get the right clock
+> signal.
+>=20
+> However if no clock is provided, the controller will work in "No-Die" dom=
+ain
+> (Always On) and use the RTCSYS subsystem to get its clock signal.
 
-The example in question: https://godbolt.org/z/n93vePqMj -- there is
-one less memory load.
+So it does have a clock, but provided by a different provider. I don't
+really understand why that would "excuse" it from having a clocks
+property, with the RTCSYS as the provider.
 
-One can also easily craft examples where the compiler e.g. removes an
-entire loop: https://godbolt.org/z/c8ncbdKMe
+>=20
+> Indeed "explicitly clocked" may not be the right word to describe that,
+> maybe some thing like that is better :
+>=20
+> "SARADC will use the presence of this clock to determine if the controller
+> needs to use the clock generator to get its clock signal (Active domain) =
+or
+> if it is part of the No-Die Domain, along with the RTC, and does not requ=
+ire
+> the clock generator."
 
-But, of course, it depends on whether we will actually encounter these
-situations in real code, as you say. It could also be that today we
-don't find any relevant benefit, but there may exist situations later
-(perhaps because we have more code, or perhaps because codegen
-backends change).
 
-From a quick look, there are still quite a few open issues about the
-exact properties of `Box` and `Unique`, including whether `Box` has a
-derefencability requirement
-(https://github.com/rust-lang/unsafe-code-guidelines/issues/145).
 
-What properties would we want, today, from our `Box` types, if we
-could pick any? Should we have several kinds of `Box`es if there is no
-unique answer? Is it worth diverging from the standard one(s) in
-either direction (i.e. more invariants or less)?
+--aooyyyTiQwVeE6tX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers,
-Miguel
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZok7sgAKCRB4tDGHoIJi
+0lbpAQDwZEbhHg3rnEogG8hOoesPmLsMyjpyNzblwX9hRpY4cAEAhWAWi099oKNO
+nEQMmNkQKNvn/HlxM66JXbe1kmIIMAQ=
+=RK8u
+-----END PGP SIGNATURE-----
+
+--aooyyyTiQwVeE6tX--
 
