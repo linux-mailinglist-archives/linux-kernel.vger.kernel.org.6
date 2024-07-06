@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-243019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E811D92909E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:54:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58639290A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B3D9B2292D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:54:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501481F2250F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 04:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2499B168DA;
-	Sat,  6 Jul 2024 03:54:20 +0000 (UTC)
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB196134D1;
+	Sat,  6 Jul 2024 04:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c3wu35Pe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF7EE552;
-	Sat,  6 Jul 2024 03:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79982BA4D;
+	Sat,  6 Jul 2024 04:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720238059; cv=none; b=FMiJunnt+TMxXYOr3DTCC2u4MzcsboQwypponkQqwsMuneqalF3Zg+nyw5q+3pVZNbETZ0dKnseIEXIhby+DEMiHzNyq96mTkr/XpzRN5d6iwVKO7rwzyo+i0d3O68/Y9J/tv772iBmfqyQhmF9y0IcV1Hg5dIPPeIh0oSchbpU=
+	t=1720238433; cv=none; b=SIexvU+jc29vYnMoOSv/JJPKn/DlJsn1G0R/Bgn5autVVR9xmHLSRfpIB47q07uZSy9YEmhm21GWFqpDBh5Ubgw2KyQJCuYnkt6nc01XotLE4p9BzVa/rqTOk8zTQ/brLmueh+MpihhPCRLBoiMsNed0+l1Fc/y++1UTRBcyveA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720238059; c=relaxed/simple;
-	bh=ITg6qRMPQUBa0g5V9kbsJV7gEtIiSexsTKQ1w1qpxm0=;
+	s=arc-20240116; t=1720238433; c=relaxed/simple;
+	bh=tL0HpoCPbOh7JohmFkRuaLDytaWHjSmVWu8yOhp2tq4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UtYyOBgtMzjC6jhueQsv8ONJpvlwyXlQIw9DxkMQL4Ey+0u58IthqE2KsJvIYl2WZ8GGb9AoMrP6LlrfUz/9BiDRpU1H2eNhAQL6Wh6SwkCpSrndXcGCsaeLR1/4YZk8ZikgXiR0qA4FKrl/ypT55DEOtmol7wGjHZFO9BQ7x2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-380deeb250eso8115835ab.1;
-        Fri, 05 Jul 2024 20:54:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720238057; x=1720842857;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5D4tI0AD6TKB5f8V0gI1Ny//6YFM3x96o/cMbfklP+8=;
-        b=oW7a11WXUyNhgXoH/hyrXGd7nRvanv9WMt2xnOFNfjYgLEdBwwX44bkxmW+6GOnl0O
-         PpnXlq7EmYuwYbM8CgT3PkHi2IPcJa0g2kRv8Vzo2X+BIYLChqFEdW3xfDsM9gky0eZ1
-         +8B8LHoIMzPh5fUJ6i/I21BcEZqk2NS/J5yUfWoY+LPVEbgx+fJ0DFUp8+S5pUjDdi3t
-         RdaTEC8U0WjrlRKHYQcCgUluvpwXYVHggEZuB/dNyNz3ZxK/PBunKZOSURN52TgA/dEp
-         SmcbsmT4532uIhye24lrsdwG1jCRyWuYN2AyVJbvZqlsMn4J8Tt5UeF+JG1LfVBtzXHS
-         3MmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfTzEk3MW9kOC5J4gicLvjTtReehrHM93r4ox0dcyMQz9N6GH4mw/2q3VRtIrs/lnqB+kGDd5QCnDgOjjSTHz1JpQm9r+zqohHB0jiY9A1lr6JQz+CHzsm5y9lFOd+5aYRtZD3dl7G0jrDxcKW7MpY3k3VZIfAGoMbKZpmTLo9QidimyYGcNRLUD1CGp8pgHKxE40Ke/pcfll9M606FVc0LMi27068MDNL33s=
-X-Gm-Message-State: AOJu0YwgeBpUm+qfsl6OxmKg8WGT7GNIG7QuQT2zueNwaUUMIk7CfflT
-	b27Da65LdKNCX+Y1VQqTFs/3xR1zZb6mch4LKiuBRg9989veq/eQyrqHQ4N9sPE=
-X-Google-Smtp-Source: AGHT+IFkmr6rOVVQ6tzIaz/yVRjICqptKhGOdC6MQB/5XVn5kCPoeWBDP61rz3vPYC4BMP0jc8MmoA==
-X-Received: by 2002:a05:6e02:1ca5:b0:381:40be:4ce6 with SMTP id e9e14a558f8ab-38398a01bcbmr78518675ab.11.1720238057336;
-        Fri, 05 Jul 2024 20:54:17 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b12e6712esm1565477b3a.25.2024.07.05.20.54.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 20:54:16 -0700 (PDT)
-Date: Sat, 6 Jul 2024 12:54:15 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Will Deacon <will@kernel.org>, Joyce Ooi <joyce.ooi@intel.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Marc Zyngier <maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: controller: add missing MODULE_DESCRIPTION()
- macros
-Message-ID: <20240706035415.GJ1195499@rocinante>
-References: <20240626-md-drivers-pci-controller-v2-1-94c811db7a51@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ngdc09wHXU/DFDDp8C4jNXIcWvCWH91JO+Z1GZEcVVQyZLyiJ8dUl3ntr5rgq0AvxVDGYiKWRv80xSlqoNhkLX16/SUu3e8Hamyn49dzHJhAkV84gdCXIlhK1eL31VlObtVJCvHp2exYwRMhfteCEKllAg5jxr9yBH5Azz7WU5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c3wu35Pe; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720238431; x=1751774431;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tL0HpoCPbOh7JohmFkRuaLDytaWHjSmVWu8yOhp2tq4=;
+  b=c3wu35PeG1rICJ6calmq9NMxVGGhNd/c20n3bAOmN7oU0YN30m7wjTLf
+   G1zKr5+xMTbJQyjj7zU+Gg78bju0TFmNQYm0g4o00cz3NAO6fLC0+xSeo
+   GVMeaMdQZE8FRaJ8clvxY3uUNbCP2aeUPZ9GI/kiRWgRNfu98YK9v+O6I
+   oO4/eXmb2mr5VuyB2Rp7p1xfJ1fMgcqberJzB8b2ZNASIR3PnHQjQnrq4
+   c82vOrsVDz8EX4CqB7ennDzYnt2mh9JaiXehHjFufloGlLCEL9e+BNjAs
+   illiL+2owX2jsuWsR6ByJ/o0sA+QkJpNW+bzqMDIkAbB9yLMEsH8A8StA
+   w==;
+X-CSE-ConnectionGUID: jH3I1mC0TUGU5O0+s2K0+A==
+X-CSE-MsgGUID: 7Gy2eNB1RbqiAbnHIgMTnw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="28910667"
+X-IronPort-AV: E=Sophos;i="6.09,186,1716274800"; 
+   d="scan'208";a="28910667"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 21:00:30 -0700
+X-CSE-ConnectionGUID: MMc13cwyT/2G7WFvgxK13Q==
+X-CSE-MsgGUID: QWHHvSaNSyuuVw2zi3Rw9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,186,1716274800"; 
+   d="scan'208";a="47004640"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Jul 2024 21:00:25 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sPwb1-000THw-18;
+	Sat, 06 Jul 2024 04:00:23 +0000
+Date: Sat, 6 Jul 2024 11:59:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Danilo Krummrich <dakr@redhat.com>, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com
+Cc: oe-kbuild-all@lists.linux.dev, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>
+Subject: Re: [PATCH 20/20] kbuild: rust: remove the `alloc` crate
+Message-ID: <202407061152.YNTsL28i-lkp@intel.com>
+References: <20240704170738.3621-21-dakr@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,27 +85,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240626-md-drivers-pci-controller-v2-1-94c811db7a51@quicinc.com>
+In-Reply-To: <20240704170738.3621-21-dakr@redhat.com>
 
-Hello,
+Hi Danilo,
 
-> When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/dwc/pci-exynos.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera-msi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek-gen3.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/vmd.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-apple.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mt7621.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+kernel test robot noticed the following build warnings:
 
-Applied to misc, thank you!
+[auto build test WARNING on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
 
-[1/1] PCI: controller: Add missing MODULE_DESCRIPTION() macros
-      https://git.kernel.org/pci/pci/c/df472e9b08e2
+url:    https://github.com/intel-lab-lkp/linux/commits/Danilo-Krummrich/rust-alloc-add-Allocator-trait/20240705-155308
+base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+patch link:    https://lore.kernel.org/r/20240704170738.3621-21-dakr%40redhat.com
+patch subject: [PATCH 20/20] kbuild: rust: remove the `alloc` crate
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240706/202407061152.YNTsL28i-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240706/202407061152.YNTsL28i-lkp@intel.com/reproduce)
 
-	Krzysztof
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407061152.YNTsL28i-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> warning: unresolved link to `alloc`
+   --> rust/kernel/alloc.rs:3:25
+   |
+   3 | //! Extensions to the [`alloc`] crate.
+   |                         ^^^^^ no item named `alloc` in scope
+   |
+   = help: to escape `[` and `]` characters, add '' before them like `[` or `]`
+   = note: `#[warn(rustdoc::broken_intra_doc_links)]` on by default
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
