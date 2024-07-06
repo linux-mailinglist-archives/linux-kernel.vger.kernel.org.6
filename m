@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-243273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570D49293DF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192AD9293E3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E028CB22201
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22A281C21550
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 13:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754A513541E;
-	Sat,  6 Jul 2024 13:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D50C137905;
+	Sat,  6 Jul 2024 13:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jI+wLe/i"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nTQfCDnf"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF821CA9E;
-	Sat,  6 Jul 2024 13:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB241F608
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 13:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720273493; cv=none; b=LAsaCLZGSbG8L07TluUi4Llsf9mwatZpB6nCua5jEueVj3qyrNZugRzjWPfd/OTtRtbOaZL38JqiaQt5Bcp2UuKQHrWiukOKFBVyym2k7jxrikQ9PfDoD4aOlq8XWWZhw5TtKlNRgpep8wh3bRZzUkuq5ZkMX+oF5sXByFP86kg=
+	t=1720273524; cv=none; b=Oswe3GScxWX6eE6FegJ76/1Nhr0C+MRjSpVshkjYaMUIn0iQnwcNBiVS1aJQQ9/8ye5JhnMlk31tO+Rt3VpMi8+Uf9crwUu4O4oNFhKBxusnhz/2Zt+VSHVAFNzmgrk6W8m7av7OPN4XSzGE5t0OV6jsdmEvTkH4eNOqh610Jws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720273493; c=relaxed/simple;
-	bh=m0bYpwsv5CXzdPU1JTOPYlM4AKaftO+gBNs1P5wmq+o=;
+	s=arc-20240116; t=1720273524; c=relaxed/simple;
+	bh=PF0h1+oGkiFyh2lUW1h5DQmynoUC4x0O+nlOXzEkh5E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nDMk8yxMNWz6BwUE7Bt1bF9XhakSDRDme7BneAbCkaJv9cMLY29F5rjAqsUgsLoCTuva/T6MHL45ErW3Ky5XDCC0pIqKlBYvV2L0k5rUYF4X6p308KWbVhX/1xscmyt+kKGmvcsNSWU6S71rdH+f3F8/11BwMo3JaaoyH4oAM4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jI+wLe/i; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3748ebe7e53so10168405ab.1;
-        Sat, 06 Jul 2024 06:44:51 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Hjn7FYnIcOohw8e1m0ygHr+HznV4FKIRHyniUiMmC1Cn8VAW1mnyDO9yfm1zRmDU9KNIIjWAI1/fyBGuRLQqN8wqPMU6caGScWBz4ufvIUgjsSaQptqq1rRmzf/PQc1IxCVso2oDt3cqqNFjk7I+gpWqk1r21+lYuPFRHQrOq+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nTQfCDnf; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77af4cd570so150909566b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 06:45:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720273491; x=1720878291; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720273521; x=1720878321; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=IF+VJZV9loYUDBUkWiTPxIkxhWfa8f3msKhqFVWwXpM=;
-        b=jI+wLe/iTae8KMqbnQcAhisNY7HdBbyihQ4bV8/Mt1iAUY7RWo1eE4xHbrNvfQ27fD
-         VMWTeCEwMXaClqE6Vt+6XGHmByLu7erL1cTWtTPQ5Fckp7SS3ewShi7a174cEkMeCBmn
-         g8YmD8gUzIT7+Y38G7iXB07yv28KDcB9Mqg4Cijlb/vDK8VozJa6ej6sMQuDO+flB6lj
-         uTnfxaXNWiy3Mvg85sDXGy9bp7CC854aLjgbxT4an0RRuoQs4KxedUREdDwu88SXfYqR
-         XFU/e9yn1EFcJshNmvbDOFbSkSYkGsEH7tmulam8TKG3u0DIFFVeaUUgtsuw5lMGoBRb
-         W1iQ==
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=2S1DHxM0yx23XpwNFbOt5pMvU94CeRa/2MwtXb40TCw=;
+        b=nTQfCDnfubl7qGD73RX7JTbK5FGfU3jPxBc86X9V1+5jdX1fu3rNXF+2Gwd4QiEvlf
+         7Qi49Ip0b9SaONvtnyLZ3a3EJ8FAKO5TF2ZruZchhEGW95vXz8ryiSGNgXF0mzPIaUCd
+         0e3ymDTa5bBWlAnAiB/YVymIa6Jd9JhqGjj+7N1yBfBbSsUpaBlD1Cwq02sOyiweLnyP
+         F5WGOCQvL/P2WR0cRzXgJG4eTy39y/jiJWheK562Uf2umeiAkDfmbPlE4XVfI+KRLOWA
+         L/NegsxqHQ0b2INHfF1IiZ+v388W/UeQ9VjgKoI71/jt/xHLU9aNB0g+iS6cTQJfE6gY
+         V/Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720273491; x=1720878291;
+        d=1e100.net; s=20230601; t=1720273521; x=1720878321;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IF+VJZV9loYUDBUkWiTPxIkxhWfa8f3msKhqFVWwXpM=;
-        b=RKfYec8fLnqCljg6E2LpETrFPmYzV8KZ5wyePl5YoRqqmnTQhpv9ZMFSBXoDfjIGX4
-         /QJaSr+S7p7rxuSdbvjwpYHhU35qavjc4+geVX1PL9mFtjFk4A0w4ZDHC3uXPXsB7Ja7
-         7FhKkRreqkGgAqE4r2NGNCYlMc8uUfx/KJtu2zIrBuSzAGt9833aK+HAWm4a/Pim5A2f
-         yWPNBq1FWFXKkwuUVmsK3cOescGjsRPdzn1dRpCQj84MJrk48IURZ1/apiQzpxR+tq81
-         lKNCKCd8KarDuFAEAmPIx5ILDsU0MvFeXM4lDDqY1JokCHaS9T4mQpNxqBO0VZPqjLCu
-         OXgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCDQkVTRMrkB3LuAdHRQFwMYA6m5z7yJmDY+lSeW7wF0utskvcd+J3NTVC4LTJXslmEewIXoAzvGJKeMwK5j5JwXpufkHBrcClsgpOBRXZikKNnfDTktSDdeHuCRfgSXvfAydg63p9
-X-Gm-Message-State: AOJu0YwrP2D6Y75fcfdqZEix6Ioyz9znANvRc2r9juBozNGe/qDYTDbF
-	zorZ6A7tBuOjrSSZomalG6oJbvVODVJmf/FM+Vrqhyaw9l6PD8G6vNem8w==
-X-Google-Smtp-Source: AGHT+IEqhdIgo+GhUpUlKCY3uFKJPnGQpuqTIb7vTRHkiHSgsFlkKMfWuKjUAKqMzCBcbBYl/7Hi1g==
-X-Received: by 2002:a05:6e02:1d86:b0:375:a3a9:db49 with SMTP id e9e14a558f8ab-38398a01f5bmr95964985ab.9.1720273490658;
-        Sat, 06 Jul 2024 06:44:50 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb52941a24sm27617465ad.249.2024.07.06.06.44.49
+        bh=2S1DHxM0yx23XpwNFbOt5pMvU94CeRa/2MwtXb40TCw=;
+        b=xJsrz8s4YUJLv7jNvpOpnWQpjES3HZ1gZH1AxPwBvgBoQLo39wo2GYv0vpIFpUlqs6
+         7auF1Gfmu8RHh2fI/76cGkn/AG/uxuxKxL6yn38pxTcLLIQWj6bbVYTMBqkMc+n4YEJ2
+         zMJnSy2RRc7ENJDSIocF25r0yM+I1K4NgMYKZ/8YQef3uaAEK3rudbTeScaCv6Xpsbos
+         7uwmQzNJh+/e3CqLe0r+iHVPxDPsVHGBvHeo9wUAgp15N0xYAe7GYVWXGdKWARsl15d3
+         OEgron/kqn4lPOSPDcjn3g9jhSawFBnlidXEIP4kLkrEAhyeQPETeAOvUYhYLRMpjJ4D
+         HVmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYZJyqoZmyyJKwlnXuToTNk8OEUfsprDwFc2VV4Tn0buXBgqADd0HPUNqO9DS3deJJH8sLMB8ENiNuO2IFbi7zZpqhsD3zUfb5sQ4Y
+X-Gm-Message-State: AOJu0YzF35Z7dZgGpNawBkdGvg6bRa8Tz+nG3PvRXFJneI+rMofVAU/l
+	0s2qt4QbLCnDfiMDKbd4utPTWMjrSOLJs4hvUZ9UhVFsCXQqyiGkY/QGsoZKmRk=
+X-Google-Smtp-Source: AGHT+IGzECxaHWskymi62jCPiAax/L3GFDIo+8EkygkRsWMoNFAievbEM7ZIgnZH2Ki65uCIyugg4g==
+X-Received: by 2002:a05:6402:5215:b0:57c:a7dc:b0dc with SMTP id 4fb4d7f45d1cf-58e5994e4a0mr7338244a12.4.1720273521400;
+        Sat, 06 Jul 2024 06:45:21 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324dfaasm11091582a12.32.2024.07.06.06.45.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Jul 2024 06:44:50 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <b1f8c7a9-624a-4192-9f34-e2c715b16c3a@roeck-us.net>
-Date: Sat, 6 Jul 2024 06:44:49 -0700
+        Sat, 06 Jul 2024 06:45:21 -0700 (PDT)
+Message-ID: <a70f01cf-386e-43cd-b744-ec71aae923d9@linaro.org>
+Date: Sat, 6 Jul 2024 15:45:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,85 +76,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/60] i2c: diolan-u2c: reword according to newest
- specification
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <20240706112116.24543-14-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 3/6] clk: qcom: clk-alpha-pll: Add support for Regera
+ PLL ops
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-3-4baf54ec7333@quicinc.com>
+ <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240706112116.24543-14-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/6/24 04:20, Wolfram Sang wrote:
-> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
-> specifications and replace "master/slave" with more appropriate terms.
+On 3.07.2024 12:05 PM, Dmitry Baryshkov wrote:
+> On Tue, Jul 02, 2024 at 09:20:41PM GMT, Satya Priya Kakitapalli wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Regera PLL ops are required to control the Regera PLL from clock
+>> controller drivers, thus add support for the same.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> the same what?
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+I think it bears a similar meaning to "this" in OPP, as in referring to
+the main subject in the sentence.. Although I think I've only seen this
+phrasing in QC commit messages so far /shrug
 
-> ---
->   drivers/i2c/busses/i2c-diolan-u2c.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-diolan-u2c.c b/drivers/i2c/busses/i2c-diolan-u2c.c
-> index b48b7888936f..c02459405b26 100644
-> --- a/drivers/i2c/busses/i2c-diolan-u2c.c
-> +++ b/drivers/i2c/busses/i2c-diolan-u2c.c
-> @@ -414,7 +414,7 @@ static u32 diolan_usb_func(struct i2c_adapter *a)
->   }
->   
->   static const struct i2c_algorithm diolan_usb_algorithm = {
-> -	.master_xfer = diolan_usb_xfer,
-> +	.xfer = diolan_usb_xfer,
->   	.functionality = diolan_usb_func,
->   };
->   
-
+Konrad
 
