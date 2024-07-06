@@ -1,105 +1,98 @@
-Return-Path: <linux-kernel+bounces-242994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-242995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7546C928FFE
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 03:50:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3429929000
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 04:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B02B1F2291A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 01:50:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14576B21A4F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 02:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916D1BE4F;
-	Sat,  6 Jul 2024 01:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF73FA95E;
+	Sat,  6 Jul 2024 02:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/tkkBqq"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="l3dK/Fth"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85EB211C;
-	Sat,  6 Jul 2024 01:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6AF29CA
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 02:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720230632; cv=none; b=R5QGJRsn/5TlTy1LlxJ2FDBux2wFssf54o6omS0OfvMwdGMqgqtOMk/0/D3iMubZI6N3ZcwLe2kDa2yUjOZ4IbBPTfjvetcGNcCM9vqBLc1ihXoryjAoJP4W7/ug/2/5RbYusySMXDy2qN/1SMxmJZrCd4nHbvYBwqVTOTL1FvY=
+	t=1720231823; cv=none; b=OJJOrQCP6k4dpwh0TC5cLlGQA4k0+kTxm7EuVIGtYhLoCIfeDK2JC7g2LEKU+bdrWgQYfSCXhVTtlxPNgKgW4gOgV/3p2/q5nXFMmsz614q5vDHgaFdfYH9aKHBU9ENFcf47sxxYq135VGv5oHymVu+U6Jocws1PkTBZG467p8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720230632; c=relaxed/simple;
-	bh=1Uynl4Wyo6bxPwItWLnZ1wF42xTY5ATumBq6UCjr0yA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dEBD/BwhQ8XjHF+1dSJG1YcVYVy5ssyw+HeXD2HT3/4Tk9ZPJzI8HDLYlvku/3wtrX2pO64GHCuBGu0jEVwxnKUAT3Xyxeafu4gupOpxnnGIuwcwENO7pbNEjq24vUPj4v4Y/XNrggMlTSp7S6R8svefL+OBKPWqqh3Dkbfq7oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/tkkBqq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3359EC32781;
-	Sat,  6 Jul 2024 01:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720230631;
-	bh=1Uynl4Wyo6bxPwItWLnZ1wF42xTY5ATumBq6UCjr0yA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=K/tkkBqqgq5jNmwH4sFntT2G/1ztM8IX1gX1qVpqqQ1KGYeqUK3CmMQDPIPjuuK5Y
-	 A+dPSsV45NzsSXq1V1SNHQZUoDmd+pCK9rLQ9nrxKLHwAnJKDXdS/tOyoEPKhS6/v0
-	 R7QgUDE3yAHnR9egFZ90hAgfMrpQin5B2Cy5y9q7SkMRwwZQy2CPDneeUJ/pR0P5vR
-	 4eQEjPIRCuWXCECv4zuaIFQCOjxO0omkg/u7o7MEnHwy4ojuvDTYs+MlwQ7gVVJ9Hr
-	 nLy2lugrPOAa+moqTFfUAgLBDCG68VReHOInoP88vS9J0EMhmDbWPJ49nlV4KRP50U
-	 t9aO1K0igbCHg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 209D9C43446;
-	Sat,  6 Jul 2024 01:50:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720231823; c=relaxed/simple;
+	bh=DMLyCMONF54Q+IgQjEZrrmK+niHcMmjAxdxFlL7dVoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q38D8dW9WK+A8Poj7XiuDofUWfyYsWTzrgcFpxIAWbE7BapAoOXqUW52bc3zgGb6Hymfw/oPcW3upeAVeHXrX4FMItYB4R/tLV2XvGi/++fr+iPRjoD1GxCdX2c5LedNrOyxVB+BoMfdaISnOTe7/ImZuJSxMWQjSAs3uIG0Mb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=l3dK/Fth; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88C58C116B1;
+	Sat,  6 Jul 2024 02:10:22 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="l3dK/Fth"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720231820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oP7pKA2w2OGlbpisVwia1gxr0eOIYBDmJqs/kafeUWo=;
+	b=l3dK/FthgJajzCC6gJq4H28OLw8PZbc1UMWBmzvQvsOmCT32tpIhCI5BoPnKi+oo4hv1jb
+	U7hfynx5Qbq1xSLH7kmLxi6bWF0LgpceksObszwmIS6Cufxt5Oy4xSKWPIV/0mqIefdNOE
+	rg4gOrXL5HRMUnBesItnOBHWQ7E7UsE=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ce7407b1 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sat, 6 Jul 2024 02:10:19 +0000 (UTC)
+Date: Sat, 6 Jul 2024 04:10:17 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: jolsa@kernel.org, mhiramat@kernel.org, cgzones@googlemail.com,
+	brauner@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
+Subject: Re: deconflicting new syscall numbers for 6.11
+Message-ID: <ZoinidZQY6hU99XT@zx2c4.com>
+References: <CAHk-=wjCmw1L42W-o=pW7_i=nJK5r0_HFQTWD_agKWGt4hE7JQ@mail.gmail.com>
+ <CAHk-=win2mesMNEfL-KZQ_jk1YH8N8dL9r=7XOLp28_WMazpVg@mail.gmail.com>
+ <ZogcxjLv3NAeQYvA@zx2c4.com>
+ <CAHk-=whRpLyY+U9mkKo8O=2_BXNk=7sjYeObzFr3fGi0KLjLJw@mail.gmail.com>
+ <ZogzJCb66vwxwSLN@zx2c4.com>
+ <CAHk-=wgH=d8MUzJ32QNW_=KDQz7U5g_1Mm9sR9zB1iNUpxft7Q@mail.gmail.com>
+ <ZohB6uPAVX03Sc96@zx2c4.com>
+ <CAHk-=wgC5tWThswb1EO5W75wWL-OhB0fqrnF9nR+Fnsgjp-NfA@mail.gmail.com>
+ <CAHk-=wjwU6o4QExra5qNzBxtX5NwTfaX8ytZKk8BFtOng6zqSQ@mail.gmail.com>
+ <ZoiLzzM94m_sjfVK@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v6 0/7] net: pse-pd: Add new PSE c33 features
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172023063113.28145.15061182082357066469.git-patchwork-notify@kernel.org>
-Date: Sat, 06 Jul 2024 01:50:31 +0000
-References: <20240704-feature_poe_power_cap-v6-0-320003204264@bootlin.com>
-In-Reply-To: <20240704-feature_poe_power_cap-v6-0-320003204264@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, donald.hunter@gmail.com, o.rempel@pengutronix.de,
- corbet@lwn.net, thomas.petazzoni@bootlin.com, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, dentproject@linuxfoundation.org,
- kernel@pengutronix.de, linux-doc@vger.kernel.org, saikrishnag@marvell.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZoiLzzM94m_sjfVK@zx2c4.com>
 
-Hello:
+Hi again Linus,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 04 Jul 2024 10:11:55 +0200 you wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On Sat, Jul 06, 2024 at 02:11:59AM +0200, Jason A. Donenfeld wrote:
+> What I have in mind, IOW, isn't fanciness. But alright, let me run with
+> where you're urging me and see where that takes things. 
 > 
-> This patch series adds new c33 features to the PSE API.
-> - Expand the PSE PI informations status with power, class and failure
->   reason
-> - Add the possibility to get and set the PSE PIs power limit
+> > Side note: you could just stick the size as a constant in the vdso too.
 > 
-> [...]
+> Yea, this sounds more like solution (4) from my last email. I'll give
+> that a shot and see what it's like nuking the syscall. I'll ping here
+> when v21 of the series is ready, and hopefully you like it more.
 
-Here is the summary with links:
-  - [net-next,v6,1/7] net: ethtool: pse-pd: Expand C33 PSE status with class, power and extended state
-    https://git.kernel.org/netdev/net-next/c/e46296002113
-  - [net-next,v6,2/7] netlink: specs: Expand the PSE netlink command with C33 new features
-    https://git.kernel.org/netdev/net-next/c/c8149739af86
-  - [net-next,v6,3/7] net: pse-pd: pd692x0: Expand ethtool status message
-    https://git.kernel.org/netdev/net-next/c/ae37dc574259
-  - [net-next,v6,4/7] net: pse-pd: Add new power limit get and set c33 features
-    https://git.kernel.org/netdev/net-next/c/4a83abcef5f4
-  - [net-next,v6,5/7] net: ethtool: Add new power limit get and set features
-    https://git.kernel.org/netdev/net-next/c/30d7b6727724
-  - [net-next,v6,6/7] netlink: specs: Expand the PSE netlink command with C33 pw-limit attributes
-    https://git.kernel.org/netdev/net-next/c/dac3de193095
-  - [net-next,v6,7/7] net: pse-pd: pd692x0: Enhance with new current limit and voltage read callbacks
-    https://git.kernel.org/netdev/net-next/c/a87e699c9d33
+I'll spend the weekend doing my own code review and fixing things up and
+working on commit messages and documentation and all that, but there are
+now three simpler commits in here that implement what I have in mind
+based on our discussion:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+    https://git.zx2c4.com/linux-rng/log/
 
+The selftest code is the largest part of it. There's no more syscall. I
+think it should be much more to your liking and seems like an alright
+set of compromises. Hopefully that's a bit closer to the mark.
 
+Jason
 
