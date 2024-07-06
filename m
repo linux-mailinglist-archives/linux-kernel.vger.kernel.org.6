@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-243293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E96C929419
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:42:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E58C929417
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3231C21771
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:42:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9AAA282CED
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BA513A265;
-	Sat,  6 Jul 2024 14:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A92A139584;
+	Sat,  6 Jul 2024 14:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVDy32S3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="e/oqVuvq"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DA5132109;
-	Sat,  6 Jul 2024 14:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F69B29CA
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 14:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720276939; cv=none; b=i3xW8FubZun9i2eQgyEUJbd6LFAo/UqAE+cHL/0rIIcT9QnotKuaGJeBuSRg5cDjrw55DnfYbKhFd7VJy7om2e7fP5SRaVzR+AaOCBVqwe+JKrWmqjU2fLyHase2ZeScsGq50+gVtHw6Nz6AETBgQBItE/U3lII2pMRntk5RoO0=
+	t=1720276923; cv=none; b=k7kbUbRM8Iwlj6uiRvPcEYVmte+s2v2J5EeIsUHg58ieU2rvhrWN0at3y5MfergdQXRPPrnZBARZOzsjFAhH8BWXIHAAJSFt7RTDpc/LAnZIsmYqwXnBMqNvYtvQ/UnOG8WE2HY+VhhVV0WV1eQH7MBD5e3TM+c55gvAh+rizkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720276939; c=relaxed/simple;
-	bh=kmaLasBc28PecSN5WaVJ/A5fIQaXdnrZjil/fqE4rA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MhzAUumw2K2rG5+sg6LHeNCb7FaJBknM5HfAskODdJj7GM9p3k5BSDmuBjs6f28ycposT9dk/gOidtsr/02Zz/7bhtBwyCncpIoBm1vaeWdq9UWn8nHzAA3/anI3EWvJDYGb60mV1xT563PJg39s2ZROCsC2L1QgFyo3jWPOId0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVDy32S3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D5DC2BD10;
-	Sat,  6 Jul 2024 14:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720276939;
-	bh=kmaLasBc28PecSN5WaVJ/A5fIQaXdnrZjil/fqE4rA0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EVDy32S3vTBtxBzdJU1z+QSG3MJdyXZ/crOKEqBtNmRq0I2ih5eUroyvp61nWl4fp
-	 mxVsmcuxZpykXWHXDNVhFzOpKYSr9PRQ60iAf7up+3da7MZMMYUVM1A3+xQXFgwdMX
-	 Flu4mlWZ23iJAqBKQYStS4ixsVazAqh8bwK9E3v/jalCzDkd/4jkawObZwaSHnMsdw
-	 JsTLl8xqik9TEanwqBkWNhV5qqAu2lZgUwyhT32V6rwh91EEPmA6XcygwMH9n/B6P9
-	 jV7KzuPrADsmWtypWiv6lr6fJnbI/yhKcoHY0P9VX5nHAmCvxSTmEZooWfPDtuVtcs
-	 C++kuOgGkfPHA==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH] hwrng: core - remove (un)register_miscdev()
-Date: Sat,  6 Jul 2024 23:41:24 +0900
-Message-ID: <20240706144205.2301865-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1720276923; c=relaxed/simple;
+	bh=0NWOUSsB3uif636gQkfhs1/AhAJ9qh1pPIcVwkAs668=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eu2TGujXQRpoK9d8o2HkBGZQih5lEeuwnKAtpwQlYhh0lBb2c0qpbS0pycwIZcOH8HXMVukjEzLKEqXab8a1Tqdc8jjfUWWF6IN4B6ejkFaucw4NZHIlq3qTRzVWuMMBFeC759R9SocLs1C/eBZWGtJCHwBzWcuOWupYK9/akSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=e/oqVuvq; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=uOJePxJp1PxgWJ
+	736MVVoBjceFE66llaKX9HPIB52Bc=; b=e/oqVuvqwcxBHqAv1QV0kQsbDkj1KV
+	v6YBEBW8IxTWft8S0qMlOn2YFpl0wzk6wdrI/FiMFD+YCkbs3QQo/3xy2rQNvcv8
+	sc83oXCm0kKtTz6VHlGFJ6z2luzNIoJCyRA0WvEXwCCZapoKeJBZd1AJiULP9g1V
+	LlQvOpmw8SOqgx1q2wUuj8ADsfmQ+7N/PbfMAA8J7ceqkR4YlGdilMLWpQ4D+F51
+	7ZctD2tysRpLLTlq9j0fNSOADje5yN/fAYTpLOyfIO3CcGhJ0C+IGGL2LyU64quU
+	rDlH7zL0TDI4NwDyXtoS4EAsvo7uTLg3NS1wyNiz9KHnBbyJhF/D7dkg==
+Received: (qmail 3850048 invoked from network); 6 Jul 2024 16:41:57 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 16:41:57 +0200
+X-UD-Smtp-Session: l3s3148p1@lduVLpUckNhQT+F6
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: delete entry for Conghui Chen
+Date: Sat,  6 Jul 2024 16:41:50 +0200
+Message-ID: <20240706144150.2668-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,56 +58,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These functions are redundant after commit 0daa7a0afd0f ("hwrng: Avoid
-manual device_create_file() calls").
+The email address bounced. I couldn't find a newer one in recent git
+history, so delete this email entry.
 
-Let's call misc_(de)register() directly.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
- drivers/char/hw_random/core.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-index 4084df65c9fa..29a663db6909 100644
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -470,16 +470,6 @@ static struct attribute *rng_dev_attrs[] = {
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 68e3ef05facf..55bf8ba02386 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23842,7 +23842,6 @@ S:	Maintained
+ F:	drivers/vhost/scsi.c
  
- ATTRIBUTE_GROUPS(rng_dev);
- 
--static void __exit unregister_miscdev(void)
--{
--	misc_deregister(&rng_miscdev);
--}
--
--static int __init register_miscdev(void)
--{
--	return misc_register(&rng_miscdev);
--}
--
- static int hwrng_fillfn(void *unused)
- {
- 	size_t entropy, entropy_credit = 0; /* in 1/1024 of a bit */
-@@ -668,7 +658,7 @@ static int __init hwrng_modinit(void)
- 		return -ENOMEM;
- 	}
- 
--	ret = register_miscdev();
-+	ret = misc_register(&rng_miscdev);
- 	if (ret) {
- 		kfree(rng_fillbuf);
- 		kfree(rng_buffer);
-@@ -685,7 +675,7 @@ static void __exit hwrng_modexit(void)
- 	kfree(rng_fillbuf);
- 	mutex_unlock(&rng_mutex);
- 
--	unregister_miscdev();
-+	misc_deregister(&rng_miscdev);
- }
- 
- fs_initcall(hwrng_modinit); /* depends on misc_register() */
+ VIRTIO I2C DRIVER
+-M:	Conghui Chen <conghui.chen@intel.com>
+ M:	Viresh Kumar <viresh.kumar@linaro.org>
+ L:	linux-i2c@vger.kernel.org
+ L:	virtualization@lists.linux.dev
 -- 
 2.43.0
 
