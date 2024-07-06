@@ -1,100 +1,257 @@
-Return-Path: <linux-kernel+bounces-243325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B309294A0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179D09294A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 17:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA3781C21BC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F7E28375C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 15:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A5213B58F;
-	Sat,  6 Jul 2024 15:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BJ8pW5Cg"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3182613AA42;
+	Sat,  6 Jul 2024 15:42:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F473137930
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 15:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C16757E5
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 15:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720280472; cv=none; b=ZzO3q6o4HqYYWe7lSgHieXORYEVdI9bzW6zAsKat6jFFX5jS4OYgfwJAm5qWq1pxoPEIsrizCem04FB/ZUQSahq2kEgsv3fhmrl8CXMXjjcUD4Ja/DppFsVkJ+UOb3UD0QPaiTaJTjHL2yTqWiZUWYCrcy/OPc8NBdRzgq7m0cU=
+	t=1720280556; cv=none; b=qGzP3/6qN/CPI+3Jj7PZ9hB2KdsfbakmJxoMBMzl+QhkWAjp9MuLM1n5qU8bZgwkhYXgdYDitmjomTMHMvp2KeHKKWrXxmy81pfKcygxY26P3LbV5AlR7XQGqmttjfjd1q3XH8ivt2Uh1lb+wgKRwWd4mW2yi4Pmd9N2FjN3ZxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720280472; c=relaxed/simple;
-	bh=M9jRDBpbXwZ4EmwaQHnuGlnqvEpiyG3lM49RlqDVwbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PhOJwsvcE4Od2DGNWkd6XcSZoBvdGMWsJ6QSqmUxzceiqQ4EeAdAVo7uKjkCnWY4hAdXdN8I2iol3qJ0Pb/ans55UkXKwKoEUUye1+xu8/MMDxcei56jvpQvRy5zbZ12bfG0enfdGIiADar9Zkm9mz0SWDB0enNQsiHmZzyjscU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BJ8pW5Cg; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: dan.carpenter@linaro.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720280466;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VHyX+ItlOF80ZtMIh6eOxVSUOn43OMD99j3+D49eFXM=;
-	b=BJ8pW5CgQiMSF9nGLg3xKq2Nn38oV8dpQ+4hEKBu8lC+ozyGcn7toD/hvL5perN/YhKSbi
-	i0koOgsQf6LzOsG+xd0U6r/OKJYYatMPoFak7BHcVKr/FZvGu44FBscUah4Sk+89qr5rzP
-	iMqBP8zvY4LLUCbgFtjJrZtx6hvZBs4=
-X-Envelope-To: brauner@kernel.org
-X-Envelope-To: ast@kernel.org
-X-Envelope-To: daniel@iogearbox.net
-X-Envelope-To: andrii@kernel.org
-X-Envelope-To: martin.lau@linux.dev
-X-Envelope-To: eddyz87@gmail.com
-X-Envelope-To: song@kernel.org
-X-Envelope-To: john.fastabend@gmail.com
-X-Envelope-To: kpsingh@kernel.org
-X-Envelope-To: sdf@fomichev.me
-X-Envelope-To: haoluo@google.com
-X-Envelope-To: jolsa@kernel.org
-X-Envelope-To: bpf@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: kernel-janitors@vger.kernel.org
-Message-ID: <40958285-12dc-4beb-8085-53f0bb35a989@linux.dev>
-Date: Sat, 6 Jul 2024 08:40:55 -0700
+	s=arc-20240116; t=1720280556; c=relaxed/simple;
+	bh=DWLUaXqYP1mg61bu9brJr6ahpMLrmmgFA0Hc/DO8xoQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H1Yw9m4Qlvu/mS119MpSr3r8VQjxkr1+8KpNuuf4HnSclk4nGKNtQ+imVkIChfvldYeLzajC/0dlm2jIuvyHyhdRwMCJSh9teiFi98PwocWzbLbp/21e/0sufK/5ZtR83UqZMdhcFiPmsmz+OKSDJty+WuzL05gsFmzRGusFpuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sQ7Y5-0006YD-MF; Sat, 06 Jul 2024 17:42:05 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sQ7Y2-007bN9-Sb; Sat, 06 Jul 2024 17:42:02 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sQ7Y2-0066nl-2c;
+	Sat, 06 Jul 2024 17:42:02 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Yuiko Oshino <yuiko.oshino@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: [PATCH net-next v3 1/1] net: phy: microchip: lan937x: add support for 100BaseTX PHY
+Date: Sat,  6 Jul 2024 17:42:01 +0200
+Message-Id: <20240706154201.1456098-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next] bpf: remove unnecessary loop in
- task_file_seq_get_next()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Christian Brauner <brauner@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <ZoWJF51D4zWb6f5t@stanley.mountain>
-Content-Language: en-GB
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <ZoWJF51D4zWb6f5t@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Add support of 100BaseTX PHY build in to LAN9371 and LAN9372 switches.
 
-On 7/4/24 8:19 AM, Dan Carpenter wrote:
-> After commit 0ede61d8589c ("file: convert to SLAB_TYPESAFE_BY_RCU") this
-> loop always iterates exactly one time.  Delete the for statement and pull
-> the code in a tab.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
+---
+changes v3:
+- add function comments
+- split read_status function
+- use (ret < 0) instead of (ret)
+changes v2:
+- move LAN937X_TX code from microchip_t1.c to microchip.c
+- add Reviewed-by tags
+---
+ drivers/net/phy/microchip.c | 126 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 125 insertions(+), 1 deletion(-)
 
-LGTM. Thanks for the cleanup.
-
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
+diff --git a/drivers/net/phy/microchip.c b/drivers/net/phy/microchip.c
+index 0b88635f4fbca..d3273bc0da4a1 100644
+--- a/drivers/net/phy/microchip.c
++++ b/drivers/net/phy/microchip.c
+@@ -12,8 +12,14 @@
+ #include <linux/of.h>
+ #include <dt-bindings/net/microchip-lan78xx.h>
+ 
++#define PHY_ID_LAN937X_TX			0x0007c190
++
++#define LAN937X_MODE_CTRL_STATUS_REG		0x11
++#define LAN937X_AUTOMDIX_EN			BIT(7)
++#define LAN937X_MDI_MODE			BIT(6)
++
+ #define DRIVER_AUTHOR	"WOOJUNG HUH <woojung.huh@microchip.com>"
+-#define DRIVER_DESC	"Microchip LAN88XX PHY driver"
++#define DRIVER_DESC	"Microchip LAN88XX/LAN937X TX PHY driver"
+ 
+ struct lan88xx_priv {
+ 	int	chip_id;
+@@ -373,6 +379,115 @@ static void lan88xx_link_change_notify(struct phy_device *phydev)
+ 	}
+ }
+ 
++/**
++ * lan937x_tx_read_mdix_status - Read the MDIX status for the LAN937x TX PHY.
++ * @phydev: Pointer to the phy_device structure.
++ *
++ * This function reads the MDIX status of the LAN937x TX PHY and sets the
++ * mdix_ctrl and mdix fields of the phy_device structure accordingly.
++ * Note that MDIX status is not supported in AUTO mode, and will be set
++ * to invalid in such cases.
++ *
++ * Return: 0 on success, a negative error code on failure.
++ */
++static int lan937x_tx_read_mdix_status(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = phy_read(phydev, LAN937X_MODE_CTRL_STATUS_REG);
++	if (ret < 0)
++		return ret;
++
++	if (ret & LAN937X_AUTOMDIX_EN) {
++		phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
++		/* MDI/MDIX status is unknown */
++		phydev->mdix = ETH_TP_MDI_INVALID;
++	} else if (ret & LAN937X_MDI_MODE) {
++		phydev->mdix_ctrl = ETH_TP_MDI_X;
++		phydev->mdix = ETH_TP_MDI_X;
++	} else {
++		phydev->mdix_ctrl = ETH_TP_MDI;
++		phydev->mdix = ETH_TP_MDI;
++	}
++
++	return 0;
++}
++
++/**
++ * lan937x_tx_read_status - Read the status for the LAN937x TX PHY.
++ * @phydev: Pointer to the phy_device structure.
++ *
++ * This function reads the status of the LAN937x TX PHY and updates the
++ * phy_device structure accordingly.
++ *
++ * Return: 0 on success, a negative error code on failure.
++ */
++static int lan937x_tx_read_status(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = genphy_read_status(phydev);
++	if (ret < 0)
++		return ret;
++
++	return lan937x_tx_read_mdix_status(phydev);
++}
++
++/**
++ * lan937x_tx_set_mdix - Set the MDIX mode for the LAN937x TX PHY.
++ * @phydev: Pointer to the phy_device structure.
++ *
++ * This function configures the MDIX mode of the LAN937x TX PHY based on the
++ * mdix_ctrl field of the phy_device structure. The MDIX mode can be set to
++ * MDI (straight-through), MDIX (crossover), or AUTO (auto-MDIX). If the mode
++ * is not recognized, it returns 0 without making any changes.
++ *
++ * Return: 0 on success, a negative error code on failure.
++ */
++static int lan937x_tx_set_mdix(struct phy_device *phydev)
++{
++	u16 val;
++
++	switch (phydev->mdix_ctrl) {
++	case ETH_TP_MDI:
++		val = 0;
++		break;
++	case ETH_TP_MDI_X:
++		val = LAN937X_MDI_MODE;
++		break;
++	case ETH_TP_MDI_AUTO:
++		val = LAN937X_AUTOMDIX_EN;
++		break;
++	default:
++		return 0;
++	}
++
++	return phy_modify(phydev, LAN937X_MODE_CTRL_STATUS_REG,
++			  LAN937X_AUTOMDIX_EN | LAN937X_MDI_MODE, val);
++}
++
++/**
++ * lan937x_tx_config_aneg - Configure auto-negotiation and fixed modes for the
++ *                          LAN937x TX PHY.
++ * @phydev: Pointer to the phy_device structure.
++ *
++ * This function configures the MDIX mode for the LAN937x TX PHY and then
++ * proceeds to configure the auto-negotiation or fixed mode settings
++ * based on the phy_device structure.
++ *
++ * Return: 0 on success, a negative error code on failure.
++ */
++static int lan937x_tx_config_aneg(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = lan937x_tx_set_mdix(phydev);
++	if (ret < 0)
++		return ret;
++
++	return genphy_config_aneg(phydev);
++}
++
+ static struct phy_driver microchip_phy_driver[] = {
+ {
+ 	.phy_id		= 0x0007c132,
+@@ -400,12 +515,21 @@ static struct phy_driver microchip_phy_driver[] = {
+ 	.set_wol	= lan88xx_set_wol,
+ 	.read_page	= lan88xx_read_page,
+ 	.write_page	= lan88xx_write_page,
++},
++{
++	PHY_ID_MATCH_MODEL(PHY_ID_LAN937X_TX),
++	.name		= "Microchip LAN937x TX",
++	.suspend	= genphy_suspend,
++	.resume		= genphy_resume,
++	.config_aneg	= lan937x_tx_config_aneg,
++	.read_status	= lan937x_tx_read_status,
+ } };
+ 
+ module_phy_driver(microchip_phy_driver);
+ 
+ static struct mdio_device_id __maybe_unused microchip_tbl[] = {
+ 	{ 0x0007c132, 0xfffffff2 },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN937X_TX) },
+ 	{ }
+ };
+ 
+-- 
+2.39.2
 
 
