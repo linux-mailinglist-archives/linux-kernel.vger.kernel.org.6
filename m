@@ -1,143 +1,113 @@
-Return-Path: <linux-kernel+bounces-243283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA7C9293FF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:07:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D27B9293F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 16:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3899A2835AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C932835D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05989139CFC;
-	Sat,  6 Jul 2024 14:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="P1QjhmEF"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0831A137903;
+	Sat,  6 Jul 2024 14:05:31 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F86135A40;
-	Sat,  6 Jul 2024 14:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52473131E38;
+	Sat,  6 Jul 2024 14:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720274863; cv=none; b=GmvSOkyQGDFcBv5e9JLs3A5EZYdGuB4tFHNYfGcOXjruKr/hkRSRrT7q71zHevav/hGzBx6m8sOKEikwgO2Sgv1GgniVt7GpnkuRnsZoWycHOuqdsMBU9UT+vFFBuR0ftWZGsBOCjAWRUqPqfJ9s0F7WxjXQu7QeyVEGMw42pWo=
+	t=1720274730; cv=none; b=FyWJOVzsQGcOTE5CrB/x6MycQMrY4mphh9f1JSb2zPpQjSe5hbvkh5EmqrQeXzP8MY8uql1YJ3dzb6vZ8DEYJdeV54xvB6ThPRWUdUYvaetXOHFT7v3adoqVws8HoIrknCuRZEHr9tV3n0+0WfQpSLaxD748SMm2zjbCleSGMr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720274863; c=relaxed/simple;
-	bh=eNl93zsedAH4XgLxjz4sAfE79oGEd6zlZf9pYotZyPk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HTJvhC+v9OhHEMNNyEdwtIM+aov6WnXl9TToG7l3C71z0dJI4fMnxusKkb8XJ/zWelTCiY7K2Kaii8QHYsVHYPKLZl4VVsqdri0BQlDQhqXUcnMnkxxjv45d6OgF49hMV9mTi8Sy+IgctCNHwU1HzYpAg7b1kVioggl0ZezEc7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=P1QjhmEF; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 66274100003;
-	Sat,  6 Jul 2024 17:07:12 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1720274832; bh=9OVsh85Dfs0XARwMw+sWdfga+OlFbW2bccJIHpyv98E=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=P1QjhmEFyxTltzs+6NgTumtEWj/CYrYpIm4MiwIBU0KFreARwmCfwdXKMUwC626tB
-	 KLvQiOupHZ6bkGro/LvBD1xo6EfMjkvuUJyF64BksrlnTRblRLmckCpe4IjtMKOkhB
-	 fDl11hjti+Z2i9LJZeG+ieAvIpt5Mg+E8dqb9PMP6nAvtKY4EEbVxOAVsjOk3h9qow
-	 MEdl5EusmbVbOQDr10+/bAwAorq5tMXV5qovEhkT2PTxWe4I8iwsVJsFXPYmokf6WJ
-	 x1BqhMooHVFABEyNBmcRHkGoD+p7GRqOH201HhEj/IXJcT+ujc2VWKi61FoBRL+S5r
-	 LzwXtHEg6UuTQ==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Sat,  6 Jul 2024 17:05:58 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 6 Jul 2024
- 17:05:37 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Jesse Brandeburg
-	<jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Simon Horman
-	<horms@kernel.org>
-Subject: [PATCH net-next v2] ice: Adjust over allocation of memory in ice_sched_add_root_node() and ice_sched_add_node()
-Date: Sat, 6 Jul 2024 17:05:18 +0300
-Message-ID: <20240706140518.9214-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1720274730; c=relaxed/simple;
+	bh=MSc8OTMQZrHOQM8n4bGSW9rNoDlLTQ/CsDbfWASvVmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K8RUJQx5NKx+OnlkSBjwvuxSPyaa7ck1TpxDd5jTAcU9F+bevXloSWfCw93ZItp3xTOupMoakuT2tsBEnOJCVivIw6BaPPRLIuKWMCgFB3yw0g5CITAxG8AXFj3O+YgkBaavRIykpr8EAD+JjdVQcJgPz02Tgm9QGhGDZZ/CEFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Sat, 6 Jul 2024 14:05:24 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] serial: 8250: don't lost port's default capabilities
+Message-ID: <20240706140524.GYA4122589.dlan.gentoo>
+References: <20240706082928.2238-1-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186347 [Jul 06 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;t-argos.ru:7.1.1;lore.kernel.org:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/06 13:56:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/06 10:24:00 #25877639
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240706082928.2238-1-jszhang@kernel.org>
 
-In ice_sched_add_root_node() and ice_sched_add_node() there are calls to
-devm_kcalloc() in order to allocate memory for array of pointers to
-'ice_sched_node' structure. But in this calls there are 'sizeof(*root)'
-instead of 'sizeof(root)' and 'sizeof(*node)' instead of 'sizeof(node)'.
-So memory is allocated for structures instead pointers. This lead to
-significant over allocation of memory.
+Hi
 
-Adjust over allocation of memory by correcting devm_kcalloc() parameters.
+On 16:29 Sat 06 Jul     , Jisheng Zhang wrote:
+> Commit b0b8c84cf58d ("serial: of_serial: Handle auto-flow-control
+> property") added support for fifo-size and hw-flow-control properties
+> to avoid adding new types to 8250.c for UARTs that are compatible with
+> the standard types but that have different size fifo or support 16750
+> compatible auto flow control. We avoided many new 8250 port types with
+> this nice feature, but there's a problem, if the code detects fifo-size
+> or auto-flow-control property, up->capabilities will be set
+> accordingly, then serial8250_set_defaults() will ignore the default
+> port's capabilities:
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> |if (!up->capabilities)
+> |	up->capabilities = uart_config[type].flags;
+> 
+so the previous old logic is trying to override the config of 'type' uart,
+while this patch try to extend capabilities with default config of 'type' uart as base
 
-Suggested-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
-v2:
-  - Update comment, remove 'Fixes' tag and change the tree from 'net' to
-    'net-next' as suggested by Simon
-	(https://lore.kernel.org/all/20240706095258.GB1481495@kernel.org/)
-v1: https://lore.kernel.org/all/20240705163620.12429-1-amishin@t-argos.ru/
+I tend to agree this is right direction (but wasn't 100% sure..)
 
- drivers/net/ethernet/intel/ice/ice_sched.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+btw, Jisheng, can you also check serial8250_do_startup()? which has similar logic
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_sched.c b/drivers/net/ethernet/intel/ice/ice_sched.c
-index ecf8f5d60292..d8b6054f3436 100644
---- a/drivers/net/ethernet/intel/ice/ice_sched.c
-+++ b/drivers/net/ethernet/intel/ice/ice_sched.c
-@@ -28,9 +28,8 @@ ice_sched_add_root_node(struct ice_port_info *pi,
- 	if (!root)
- 		return -ENOMEM;
- 
--	/* coverity[suspicious_sizeof] */
- 	root->children = devm_kcalloc(ice_hw_to_dev(hw), hw->max_children[0],
--				      sizeof(*root), GFP_KERNEL);
-+				      sizeof(root), GFP_KERNEL);
- 	if (!root->children) {
- 		devm_kfree(ice_hw_to_dev(hw), root);
- 		return -ENOMEM;
-@@ -186,10 +185,9 @@ ice_sched_add_node(struct ice_port_info *pi, u8 layer,
- 	if (!node)
- 		return -ENOMEM;
- 	if (hw->max_children[layer]) {
--		/* coverity[suspicious_sizeof] */
- 		node->children = devm_kcalloc(ice_hw_to_dev(hw),
- 					      hw->max_children[layer],
--					      sizeof(*node), GFP_KERNEL);
-+					      sizeof(node), GFP_KERNEL);
- 		if (!node->children) {
- 			devm_kfree(ice_hw_to_dev(hw), node);
- 			return -ENOMEM;
+> If the port's default capabilities contains other bits such as
+> UART_CAP_SLEEP, UART_CAP_EFR and so on, they are lost.
+> 
+> Fixes: b0b8c84cf58d ("serial: of_serial: Handle auto-flow-control property")
+
+I believe the commit just reveal the problem, make it more visible, but not the root cause,
+'git blame' lead to b6830f6df8914f ("serial: 8250: Split base port operations from universal driver")
+as the original commit introduce this logic which seems exist long time ago..
+
+
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>  drivers/tty/serial/8250/8250_port.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+> index 893bc493f662..e20614241229 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -3245,8 +3245,7 @@ void serial8250_set_defaults(struct uart_8250_port *up)
+>  			up->port.fifosize = uart_config[type].fifo_size;
+>  		if (!up->tx_loadsz)
+>  			up->tx_loadsz = uart_config[type].tx_loadsz;
+> -		if (!up->capabilities)
+> -			up->capabilities = uart_config[type].flags;
+> +		up->capabilities |= uart_config[type].flags;
+>  	}
+>  
+>  	set_io_from_upio(port);
+> -- 
+> 2.43.0
+> 
+
 -- 
-2.30.2
-
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
