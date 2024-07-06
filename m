@@ -1,196 +1,163 @@
-Return-Path: <linux-kernel+bounces-243247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EA0929380
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:16:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2474F929387
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 14:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE0D1C20DF3
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B951F21B0E
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 12:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3092D8174E;
-	Sat,  6 Jul 2024 12:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD1F82D98;
+	Sat,  6 Jul 2024 12:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTNGvpul"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IIbfvqXf"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D279461;
-	Sat,  6 Jul 2024 12:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94EB7D07D
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 12:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720268158; cv=none; b=p7R7C5fM3KkaTjcLDEVNsm3hSdC+X5M/l2PfxZY9TP6VK4ClQ0ldFoVyunSaasrGzdFAas9uy71NwpKi9RTMOaECQJjgb0Urvz6aAgwqYwum/POYNbncGIIvyxeWslYQdXK6ICfoVxLHrk+wVyJVn+dct3kWg3kH6qeXMHNbC4Y=
+	t=1720268745; cv=none; b=exPyJMHY1KklU7tmckeX9cW21GWnQRIHF2YFk60fU5jnxuQ2j1I4q0XrSW/YAw5MlruYPVC+KOhmkz2qAz7y1B38K9xdG1V6W8HOOR+VxB9850FvJO3NmFuR2ByO3kXrz3qp/emIVznlcj5s6WVuasZgHMQJKKVhKnCr5MBtCJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720268158; c=relaxed/simple;
-	bh=ewHfk6kp7DgjzAdnMopMg8nYiloA7F7Sv9n6J0f9y8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BhO8KNed7r44RXAgjd8pCJGBM3tQM5waZln3RzPKjuhwEm3xSrvYZh6qplenWT4F05NySrcghhZ2cLDMHYJbtlNEQIOrs2Fg3aZndbZmaz/tRnjt2Wd8xP2YqJBuLCF1OabN2E8lXPtV8OLFWcePqRffHbl7IoC519pSZbiY0pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTNGvpul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13754C2BD10;
-	Sat,  6 Jul 2024 12:15:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720268157;
-	bh=ewHfk6kp7DgjzAdnMopMg8nYiloA7F7Sv9n6J0f9y8M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NTNGvpul4CFL8Ua3b+uNIcisnwGPlyKW+BLn9kE6R8yn/MWemz9lq3EWzAz5h9SVU
-	 FWxnZBhmfvHcWDkNBgqlwv9BtthYg4WwUTEePoY770I3ctXw16VPyTKLMgmUSjuaHi
-	 8cjErYdcZIc35qEuwesnutwYjtKhG57Pfg2TQlwyCpL90BvRGwqXtYGdzWWcnq6orC
-	 7BKBJC5Lh32ReUl4C1PceMPvsL/ZZWTBGd3iUoh2NB48nIdi9qSIv3bDoVQMwyTLUk
-	 0GRPu4bWm0MFEDmFRCF5/fL0YQZOjowV80XbE5AQrpSk4Nw+DQQ6FMGO0KKJQE3wzn
-	 olWNWrWD5ts3g==
-Date: Sat, 6 Jul 2024 13:15:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, jstephan@baylibre.com,
- dlechner@baylibre.com, Conor Dooley <conor.dooley@microchip.com>,
- tools@kernel.org
-Subject: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements
-Message-ID: <20240706131549.1f94449c@jic23-huawei>
-In-Reply-To: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
-References: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720268745; c=relaxed/simple;
+	bh=DFZp1w3U1zLZ9mYRVJJhPbbkzweHlhuPmDJD27v2LZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZo0tuGuWtvUHovNjdgxJD5uqMz0pW2rdEhWl7uExyS8AEnfMJ4dciolEFSWXurRWsJlzaeu/Gai6bSH0aStRHOEgqi+xOV7IG8F3rWBX8CzxZcu7Jfg1QZ0ayhbgphOp0r328DS5c6GvA5WDS9fmWyhOt5IYHQZXMKzk6fdYQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IIbfvqXf; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77c080b521so257113666b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 05:25:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720268742; x=1720873542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=GzVcGfV+V/qu8k2Xj2lgZCFxGBSRmb7rl1SXjaVtCD8=;
+        b=IIbfvqXfUlPCVyHb+vb3Lrwh1pgXHI0EMD5FC4NXGiT4wrej0cTo9GAGYsBNNXI2Ax
+         EVIyxQ4O5Z+cDJ3tbbMO8cgD6dLNepBr/fub21ZybbJuGEXYyXIj6xmsJuef0Akxq1LX
+         MLhH1yGlD+HBZT1BImApEO+N5UeurOz8C97HzQ9gRqG66/N1jXXIyXHnJWkIn+ow/xrx
+         iobHWe6RSHRNHZ9IhJHsnoiDlHuNTu4XRzN5vLvNj+zQaKNkj1q6e+W5hiVatKRGGTxV
+         R1P/vITlryhwe0SquRC0Fmg8D6mCs6OVt0D0K0z1+HfP7kXjtVN+txb01zY4bqZlA8vI
+         sOfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720268742; x=1720873542;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GzVcGfV+V/qu8k2Xj2lgZCFxGBSRmb7rl1SXjaVtCD8=;
+        b=UCQagwU8zSThHH34wBJxnqH1jwQLStttVih9nKddUx6NyvoUVOtEhy6MdtphcWgQeL
+         EE8NhX0SjZtELVU+8v+ys5QDlv+HlmCyNZKAFHkqXxEXeAIqp5qzaBpvfJ9LbtXmOmaH
+         z7sHyrHcGW7GNVGWhzQGfRlP4TAZu1hAkz0y2KjUHDI9+q94aHaoHvlqr4yHFXSBqNJC
+         4Sy0wri9H2qPTmDZywWcFLb3KwLPhkJ88VM6z3tGJ1yM40Q0M5VrYIp6QnZEZCtGmAKj
+         tX6aA7KhTkbMIvwMofr+K5jm1jz/Nuxtv/0WX/yHQgQx1ztNNHjUIjZIgIfNXALfTfaT
+         27hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWd9D90jiFAWVr16dXg1xhqvOgRmlUFNDJBO3TXBoJTOyn6MsOJLFYHmqjvFkHtTGTYIXB/BN9Jli/i7YEObdRlEjRK+FZUNRcInskm
+X-Gm-Message-State: AOJu0YxvaiRS71r4udKDo8zZxuAfHF3DvySK9gDBAuMGeZGCvKnd3OvX
+	JCL33MaM4VEksCOmcSmH26ytMJCxPXBNWXVIoRiwiA9/RkZk1jJ5uKdBGQRX+3E=
+X-Google-Smtp-Source: AGHT+IFesui1g3h3kXHDuok+m5oigNedPmIZKPMtcnYCh6HpEOC2GIsFKqa6U0WqyvXH/75yivsacA==
+X-Received: by 2002:a17:906:6b19:b0:a77:c9cc:f96f with SMTP id a640c23a62f3a-a77c9ccfaaamr310088666b.7.1720268741610;
+        Sat, 06 Jul 2024 05:25:41 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77c25b6b47sm186760066b.199.2024.07.06.05.25.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Jul 2024 05:25:40 -0700 (PDT)
+Message-ID: <1d8e3779-aebf-4f27-bd54-58007b80192a@linaro.org>
+Date: Sat, 6 Jul 2024 14:25:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] clk: qcom: Add support for Display clock Controllers
+ on SA8775P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_jkona@quicinc.com, quic_imrashai@quicinc.com
+References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
+ <20240612-sa8775p-mm-clock-controllers-v1-6-db295a846ee7@quicinc.com>
+ <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
+ <053e047b-7594-48bc-ac1b-2368c0c8f1cc@quicinc.com>
+ <8b19c43e-6b13-4b09-9498-ee0b24749d3f@quicinc.com>
+ <ucgeexs6impgapot4a55cwzqy5kv374jkyhylojvpmstm7cf42@r4i5toizchn2>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ucgeexs6impgapot4a55cwzqy5kv374jkyhylojvpmstm7cf42@r4i5toizchn2>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Tue, 02 Jul 2024 17:34:04 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
+On 5.07.2024 5:04 PM, Dmitry Baryshkov wrote:
+> On Wed, Jul 03, 2024 at 11:17:01PM GMT, Taniya Das wrote:
+>>
+>>
+>> On 6/21/2024 10:03 AM, Taniya Das wrote:
+>>>> Please merge this into one to save on boilerplate, take a look
+>>>> at dispcc-sc8280xp.c
+>>>>
+>>>
+>>> I did take a look at the dispcc for SC8280XP before posting the series,
+>>> but it kind of looked tricky to add fixes for a particular dispcc.
+>>> Debugging could also be difficult in my opinion.
+>>> Though I understand that we are trying to optimize by re-using few
+>>> common structures/probe but from clocks side they are all redefined.
+>>> That was the reason to keep them separate.
+>>
+>> Konrad, are you good with the proposal to keep the two instance of display
+>> clock controllers as separate drivers? As I looking to post
+>> the next patch series, please let me know your comments.
+> 
+> I'd say, continue with the separate drivers.
 
-> This series adds the following improvements over the current AD7606's
-> driver implementation:
->=20
-> - Fix wrong usage of gpio array
-> - Fix standby that was documented as ACTIVE_LOW but handled in the
->   driver as if it was ACTIVE_HIGH
-> - Improve dt-bindings documentation
-> - Switch mutex lock to scoped guard
->=20
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-This series is blowing up with b4, in that it is finding tags that were
-not given and I can't work out why.
++1
 
-Tried various options but even a simple b4 am -l 20240702-cleanup-ad7606-v3=
--0-57fd02a4e2aa@baylibre.com
-Is merrily finding tags that I can find no record of.
-  =E2=9C=93 [PATCH v3 1/8] dt-bindings: iio: adc: adi,ad7606: normalize tex=
-twidth
-    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
-M/kernel.org)
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
-el.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-1-57fd02a4e=
-2aa@baylibre.com
-  =E2=9C=93 [PATCH v3 2/8] dt-bindings: iio: adc: adi,ad7606: improve descr=
-iptions
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-2-57fd02a4e=
-2aa@baylibre.com
-  =E2=9C=93 [PATCH v3 3/8] dt-bindings: iio: adc: adi,ad7606: add supply pr=
-operties
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-3-57fd02a4e=
-2aa@baylibre.com
-  =E2=9C=93 [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: fix example
-    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
-M/kernel.org)
-    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
-org)
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
-el.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-4-57fd02a4e=
-2aa@baylibre.com
-  =E2=9C=93 [PATCH v3 5/8] dt-bindings: iio: adc: adi,ad7606: add conditions
-    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
-org)
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
-el.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-5-57fd02a4e=
-2aa@baylibre.com
-  =E2=9C=93 [PATCH v3 6/8] iio: adc: ad7606: fix oversampling gpio array
-    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
-M/kernel.org)
-    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
-org)
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
-el.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-6-57fd02a4e=
-2aa@baylibre.com
-  =E2=9C=93 [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio state to matc=
-h the documentation
-    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
-M/kernel.org)
-    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
-org)
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kern=
-el.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-7-57fd02a4e=
-2aa@baylibre.com
-  =E2=9C=93 [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to scoped_guard
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-8-57fd02a4e=
-2aa@baylibre.com
-
-Take patch 7 for example, I can find no record or Rob or Conor replying to =
-that
-or giving tags on the cover letter.
-
-The only local parameter I have is to change the link path as you can see a=
-bove.
-
-Tried it with b4 0.14 and master as of today.
-
-
-> ---
-> Changes in v3:
-> - Remove the two first patches that were already picked up.
-> - Add styling corrections.
-> - [Patch 6/8] Improve commit message.
-> - [Patch 8/8] Replace every scoped_guard by simple guard.
-> - Link to v2: https://lore.kernel.org/r/20240628-cleanup-ad7606-v2-0-96e0=
-2f90256d@baylibre.com
->=20
-> Changes in v2:
-> - Change scoped guard to guard(mutex)(&st->lock). This was tested with
->   Rob's bot condition, and seems not to generate warning anymore.
-> - Reorder the commits for avoiding bisection issues and respect commit
->   priority rules.
-> - Add vdrive-supply to required properties.
-> - Separate cosmetic changes from content ones in dt-binding
->   descriptions.
-> - Move maxItems changes (and plural in descriptions) to the commit that
->   adds conditions.
-> - Link to v1: https://lore.kernel.org/r/20240618-cleanup-ad7606-v1-0-f185=
-4d5c779d@baylibre.com
->=20
-> ---
-> Guillaume Stols (8):
->       dt-bindings: iio: adc: adi,ad7606: normalize textwidth
->       dt-bindings: iio: adc: adi,ad7606: improve descriptions
->       dt-bindings: iio: adc: adi,ad7606: add supply properties
->       dt-bindings: iio: adc: adi,ad7606: fix example
->       dt-bindings: iio: adc: adi,ad7606: add conditions
->       iio: adc: ad7606: fix oversampling gpio array
->       iio: adc: ad7606: fix standby gpio state to match the documentation
->       iio: adc: ad7606: switch mutexes to scoped_guard
->=20
->  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 123 +++++++++++++++=
-+-----
->  drivers/iio/adc/ad7606.c                           |  47 ++++----
->  drivers/iio/adc/ad7606_spi.c                       |   5 +-
->  3 files changed, 115 insertions(+), 60 deletions(-)
-> ---
-> base-commit: 340fa834ae229a952db04a57ed13fd5d35d75818
-> change-id: 20240416-cleanup-ad7606-161e2ed9818b
->=20
-> Best regards,
-
+Konrad
 
