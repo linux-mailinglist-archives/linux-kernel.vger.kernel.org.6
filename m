@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-243071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661D192911D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1980E92911B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 07:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBC74B227A8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:14:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78E01F23285
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 05:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0241799D;
-	Sat,  6 Jul 2024 05:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48A817984;
+	Sat,  6 Jul 2024 05:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="SHVd2YsX"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="ZJJ/3XuP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X8a8QJuc"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567F917740
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 05:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F341757E;
+	Sat,  6 Jul 2024 05:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720242889; cv=none; b=d5+tsLBv5y3IuwUgxUrHzd2hNdYDTLAqrpVBqnOK8ZAJKB6JNFyL2n0ECDzgVpnJR1ZOr2VFgYcE8rRpQqFgT40kWBpNLywHN0lInsQfqj7e3dAvL1E3aEnSea9pQ17LxwLcD9PJIEFedopPaCEW9EJs7oG0c/kuJP+O6DpxqzI=
+	t=1720242822; cv=none; b=ddMHa8va2uUAuShWC0Elgl6iLsT3WjHl8BSr7XhVxpWt2agJGgh8AcmtTVxwULTM81DHcyd/BswPAVEXr+8yKjFKNs5WAClB0wuO5ptH1d0Pwwv3c40if8vIOV8Y12B6t7wLSlZt2JI0bxM3Bz+mfbzTUhskAKRxrrX1koUe4Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720242889; c=relaxed/simple;
-	bh=mgf18Fc9En0jFpIVsTgvmKPyThGPCz/ikS0vOiSXnio=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fssuaQCpa1Pod1GaqkMpcdis0F09m/IlxE3IgBb//o9CRfo3agfBXugHRpCoX0JOG4mAbQyTlJ0CPEpq5yK8h+HP6ce+crDfEd3qjl9m5yMnNLK6M4uey7wgpkYbeIhtr5BUNQq2fbriFYcETJsn4BanxA+J3WXCjeR59kqjuCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=SHVd2YsX; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f4a5344ec7so16186655ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 22:14:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720242887; x=1720847687; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Giw87SQe8yuf6FkxysGSg/f7HoKphY0bMqQbHsvLA3c=;
-        b=SHVd2YsXu29HYrL/WxV6hSu7V8Cpe4759sOtZOXD9ergNdhjtWxykVop8QGOY5Id50
-         NDl034feKXh8we1mv5Cfka1WktjrJ+KqbqtBlOYlXxrxSwrunN2lUNc4Q2x14S3/028d
-         ZzGhzm/jNlhOX4ZHodzODcE+256lAGPktuBe0RJvOfQ4fXSk0iECzH8LXtQXWuBAAiw4
-         qWMraRENifRlWK50M9F8fAEZ2wT6lvJIfif2QIZoKZgkC44Fzm3cv38J9DnE1v0zNHYw
-         RnelGw8A5yZBfRmBnUmEs8Ji6U2lvteKq5FDUncRxIp6opy5OA3hUKRtq+Z0VJdA8Jtt
-         gSeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720242887; x=1720847687;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Giw87SQe8yuf6FkxysGSg/f7HoKphY0bMqQbHsvLA3c=;
-        b=ofxs53TLd4u9cErK5r5OuKLitRKqucKgMSu8WChx5BQfqjzsU9SV5mgmNqp3FyfHPP
-         u4534Bclz1bmzDE6XtegyB/CH+2PwU+PjGmGvJk3NpdsuDqMSRS7I8bYPPBEl86VAxfZ
-         oIbM1QPutriiz/V4ePpht82dkZfRRrboUve0e6Rf95ob1SusYondfAFomFgdaUr23T6x
-         XPOxRseaZy1n/CI7owBCw+e1iZEN4VP1CMuNdwovg1nqgxNFGmBev1jfGaIRY96NirOC
-         Y8bGcteHRgeiFZ6PXgWZaa7SSgg+D+Or201ctvgyhvFAGP5acMkpvLT1XbfpRXE6vpZs
-         81Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlOe/+zfSQaR2g2ptdu43hqP7Mp0KFYnmnGsZKkyw0aRz0JaWlJsaFcSG+Of84IppEB5nBEkoj37DxymyUw7bA8uxxOE1xv5n2qyBe
-X-Gm-Message-State: AOJu0YyZsQmhiECJiadOwn43usHqFfncSuX7ALa5ZsMZvu8GFqvBln7E
-	AZ73tHar7JP621LdjUomro4MecPCnTmmJ1bmMuV2FrTQz29l/rJWFrOoJUS5060=
-X-Google-Smtp-Source: AGHT+IFnQuT9OJyrEvKbkFbzI3EZR1voDmFuCU345bHL7OeAXzihbf1UNVrtwjUCvtnM/QKF/0czFw==
-X-Received: by 2002:a17:902:d58a:b0:1f7:1b42:42f3 with SMTP id d9443c01a7336-1fb37055ef2mr103534355ad.18.1720242886676;
-        Fri, 05 Jul 2024 22:14:46 -0700 (PDT)
-Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb3dbd7dcdsm34174015ad.157.2024.07.05.22.14.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 22:14:46 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH bpf-next] bpf: Use max() instead of max_t()
-Date: Sat,  6 Jul 2024 07:12:46 +0200
-Message-ID: <20240706051244.216737-3-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720242822; c=relaxed/simple;
+	bh=9RZgcQef9A8EDjSOss8dzeGpd1aXeonLkhkDDmhSVBw=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=o7So/jJIMhv4BS9E1MWulyMMlrzjVH5AIR2CdXI1dTayvbIvnn99ed7mOcsOVI6BfFfO/mtSoy7khEdA7tmeFCWivixm1WUKgLD56kgejIdTjAg/9mipu/vsX+qQk1XM03AuQo2qsSeKD6zHtJnRTiY6qXQ5UrSbT9j/QrsQYck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=ZJJ/3XuP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X8a8QJuc; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 47A6A1380603;
+	Sat,  6 Jul 2024 01:13:40 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Sat, 06 Jul 2024 01:13:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1720242820;
+	 x=1720329220; bh=0bzQ7Y5XTLJH38zVzN76yLI8mh1dQVhOzCGF8i6JY98=; b=
+	ZJJ/3XuP4WKKGxPxloHLo0U1sebb5grAiNEsvQBEeIqOQVtzoAu5ItoS/6FCewyY
+	mjt14pqzZtsRGjGgHIQut8+vgLSHH/r6QW2My4xzYu3yaYd+AMErnO0YR5SLjbG0
+	ueA3Q1hnd9uTOd5y8WCUfe7hx1etNo6LCIA28FtCcRNN9Jj4/2gZ/X+S4DyRQ+nt
+	6iwumK63Q8n2oD1tYqGpWwcI4BLsiEhy59CL7K1cHrqKqgkDdfsBwvu/3AyUb0A3
+	eYhdV7Js7LcZSorCoV3RGivAkc6n5GTnhoviy4quZtyYW0ct2SNsDAUA2EEtkbTz
+	l7UfRfW+86WUcUlSnA+JYg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720242820; x=
+	1720329220; bh=0bzQ7Y5XTLJH38zVzN76yLI8mh1dQVhOzCGF8i6JY98=; b=X
+	8a8QJucPewS/KMNM1q3Kzqka/4lTDcFrlL2eVIZ7YRHuML2GRMkTVIGa+QhzFXKo
+	L5Ckseqjkdvg0kiXrkDn3iQv9hV1iHeDv4PP5wUTqYbzr9Pt3v9UAwm5xWe8ofBa
+	CHp12cPDCjfc1z15MQalJfnlw0Q2KE2lWDlei4+MzWykwoVOL/6Hliyteu/849/G
+	YBH6y3lUpMP6vcoT1MRWsqt8Oy5bTcBrDUX2rhMlCL15E4mUk9jrUFb9VY5mOZTQ
+	44V7GsSDV+tDVeXWGs5h1M71eWqzuvveZSGPVDCDwlGHBK7Zm1pOnu2fcaRXfrft
+	GzQ24ZjIxioCrVUw4Qffw==
+X-ME-Sender: <xms:hNKIZmc6w5UFGkT3iM1QFZZDJIG1tWMpNv5xjE5wCUAU8gKOM63BsA>
+    <xme:hNKIZgOEgpugBr0SJgfWZwPLcY_coRimPU_XYJKqhuT3JiGBEE3nO4Peq08jLiZbU
+    D-v5onbtTgqInt-LKI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvgdeludcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
+    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+    eqnecuggftrfgrthhtvghrnhepkeelveffhedtiefgkeefhffftdduffdvueevtdffteeh
+    ueeihffgteelkeelkeejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigr
+    nhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:hNKIZng_Ub0UzksnyzJGR7JQZKVWDnpfIMCvbDvk1WgZhyQW5LeYOA>
+    <xmx:hNKIZj9CIXKKjxTLRqHUUeK5PNfXXcsmOkA2mDc_ZdNIA8XPMfLl7w>
+    <xmx:hNKIZiuTBWoUSrecCE0X5Vq0XfDAk-MR3882p0DR10650xZVCcHCSQ>
+    <xmx:hNKIZqHnIp3ixycdtWlBOEEQc1Gld9aO-SXRa93QhwSf2aIkQcgI1g>
+    <xmx:hNKIZkIVYTqDJvKP4ICVYpDp6I3dkH5Hl_aCCF48FT-7f5NtzdwJSY0->
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 0754236A0074; Sat,  6 Jul 2024 01:13:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <c95e4f86-b588-49a2-87d8-77d1e9d6472b@app.fastmail.com>
+In-Reply-To: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
+References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
+Date: Sat, 06 Jul 2024 13:13:09 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Serge Semin" <fancer.lancer@gmail.com>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] MIPS: cm: Probe GCR address from devicetree
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Use max() instead of max_t(). The types are already compatible and don't
-need to be cast to u32 using max_t().
 
-Compile-tested only.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- kernel/bpf/bpf_local_storage.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+=E5=9C=A82024=E5=B9=B46=E6=9C=8812=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
+=8D=886:08=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> Hi all,
+>
+> This series enabled mips-cm code to probe GCR address from devicetree.
+>
+> This feature has been implemented in MIPS's out-of-tree kernel for
+> a while, and MIPS's u-boot fork on boston will generate required
+> "mti,mips-cm" node as well.
 
-diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storage.c
-index 976cb258a0ed..f0a4f5c06b10 100644
---- a/kernel/bpf/bpf_local_storage.c
-+++ b/kernel/bpf/bpf_local_storage.c
-@@ -779,7 +779,7 @@ bpf_local_storage_map_alloc(union bpf_attr *attr,
- 
- 	nbuckets = roundup_pow_of_two(num_possible_cpus());
- 	/* Use at least 2 buckets, select_bucket() is undefined behavior with 1 bucket */
--	nbuckets = max_t(u32, 2, nbuckets);
-+	nbuckets = max(2, nbuckets);
- 	smap->bucket_log = ilog2(nbuckets);
- 
- 	smap->buckets = bpf_map_kvcalloc(&smap->map, sizeof(*smap->buckets),
--- 
-2.45.2
+Folks, any comments on this series?
 
+Thanks
+
+>
+> Please review.
+> Thanks
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> Changes in v2:
+> - Fix probe order on malta (Serge)
+> - dt binding improvements (Conor)
+> - Build warning fix
+> - Link to v1:=20
+> https://lore.kernel.org/r/20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.=
+com
+>
+> ---
+> Jiaxun Yang (6):
+>       MIPS: generic: Do __dt_setup_arch in prom_init
+>       MIPS: malta: Move SMP initialisation to device_tree_init
+>       MIPS: cm: Prefix probe functions with __init
+>       MIPS: Move mips_cm_probe after prom_init
+>       dt-bindings: mips: Document mti,mips-cm
+>       MIPS: cm: Probe GCR address from DeviceTree
+>
+>  .../devicetree/bindings/mips/mti,mips-cm.yaml      | 38 ++++++++++++
+>  arch/mips/generic/init.c                           |  9 ++-
+>  arch/mips/include/asm/mips-cm.h                    |  4 +-
+>  arch/mips/kernel/mips-cm.c                         | 69 +++++++++++++=
++++++----
+>  arch/mips/kernel/setup.c                           |  2 +-
+>  arch/mips/mti-malta/malta-init.c                   |  8 ++-
+>  6 files changed, 111 insertions(+), 19 deletions(-)
+> ---
+> base-commit: 2b84edefcad14934796fad37b16512b6a2ca467e
+> change-id: 20240506-cm_probe-0c667c8b63bf
+>
+> Best regards,
+> --=20
+> Jiaxun Yang <jiaxun.yang@flygoat.com>
+
+--=20
+- Jiaxun
 
