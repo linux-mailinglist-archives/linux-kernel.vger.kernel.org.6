@@ -1,131 +1,80 @@
-Return-Path: <linux-kernel+bounces-243110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158E69291C5
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:12:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFA29291CA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 10:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0541F21915
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:12:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 162D0B21967
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 08:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AFB482C6;
-	Sat,  6 Jul 2024 08:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D88047A7A;
+	Sat,  6 Jul 2024 08:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IyxkTrk0"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="l0QMAx4w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C8D4D9E3;
-	Sat,  6 Jul 2024 08:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFCC5695;
+	Sat,  6 Jul 2024 08:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720253495; cv=none; b=DVqIhpqHV1SJQ27FAAe7pEmMcG4Cx8R9MmNiWOql65mgZN7XtPVyM2Na0ebpzMSp/ePC10n6J4w9PUV+TnxOOIRZ5bRFac60gKKiqNr9tXeZrix4epZLVAdWTJQUwL957wD6o6X8yv2/S8CVPLBSE7mWyBNGKMjz0HkIbjgtD6c=
+	t=1720253597; cv=none; b=Nj9jQlfOnjyp1tOmRN7ynmat0XVwFjGwNBagNByh8jz6UMCux/j0W/aVp84jx4I0tBl2fWLmaZN1erSTuQ9PmOFkhkKW2hAhcDfg3cUcT0S7DK+Z+p1XllXtuB+nL/Vemck8FFGQuBv69iuoyNZWa8VodvkOSH2Cm94FmnE6YyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720253495; c=relaxed/simple;
-	bh=pKa+Okrp8HFvyoegiNG5O/Qu4HS3i0dN0VCzZBOFmjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j9hccSufxki9k2ETGRwpLgCBoU5etFNMSLQ0MqqoooMcxSeU1YR084i2wOI9N+b3ZUnTzx9g/scXqIkuhdxQkWE4UZGYf+O1tXCFJ4q7LPqdFgxQDjG3704gkI/Jt03UpxHholcTE4t2gYLpxGqvNDch7IIi+JYZzh77/p3n+hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IyxkTrk0; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ee90dc1dc1so20877501fa.3;
-        Sat, 06 Jul 2024 01:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720253492; x=1720858292; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PsjQFQCvqoiusg5g0bghoFxdMmEPMQr/Y48nTfxH8Fs=;
-        b=IyxkTrk0L4MTGvIBvQ9sH6a1g9xn9YGkyT0Cn43UpFUjXjUA3AcB3Xi5zU+Lq3cKPd
-         2S0EY8WumOe5BClnGdGEaU81TePhC0hjf42z3oVZhSrGOzD5GSY79fpja+fJce4L+COv
-         ZUS13n+Kfx2Fts83lAt/SUFcQZ2+N/JeH25fxWbUGN02ttzEhIOH46KCa1NuJEbYeJtP
-         DVsspW1VmjA252MkL5Z6xARh/H2S61lLXyN3165oqadJ+JIs2njFdaJm3RpuR47zG92b
-         lsXlS3IKjVwqk0O+Ml/aBKkcJCmx+dUwdcr6Nl7XeboKheMv3kxtuQvP2Nv8LQmaECss
-         mXCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720253492; x=1720858292;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PsjQFQCvqoiusg5g0bghoFxdMmEPMQr/Y48nTfxH8Fs=;
-        b=TvVqmLYB1nOnnd3CjheTdPcRICKMR3WjqDMaFADmB8ZxAJMn0Olf9p1WJ7qrW2tXvu
-         n37nJ7jj1rZM8VbFm3QKxsa4q8A3Lc5rgKmv9qR308KOQo4pgBGNbuAs2H9lPaiFGcwm
-         PBz5mYMtC2lB8A447ymBD3Nr6Rafpzl5YbtxjdKqhYIaQjF0v/pZLNY53fGFnv1gmUq8
-         YFeCmX/shhRisGm1q+KQeDVcoydho0O2mrUcQH3gtBO/SiMlJdE5u33CkbHFlj17kDLJ
-         wM7N8yEgNdn0tEzrKgDYtkckwB6787Vtowfzkr3FFtpSTtPQXZxdnYDrqhnbzAmcCbD9
-         KPoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjBH0QIAr+PWR2vvAxTFEFAkF3o/EIPujodvYmQj1RFtFI1W5XCBMgRrmm2kmTyQLWQyK03oNod7Kj6yoUhQ975GS7z4b87ogiNtMN22q0zGu5gn/N/p7t733I4JxX4n4KByMBYvA63Q==
-X-Gm-Message-State: AOJu0YxoTKFrwIxt1uqF9hW1aHuSnWJWmZ9diJ49uDbrAbzzA01taUkl
-	c+p4WXV8pLVEgu403oPXSvajx72zrqAHaqbVTk/9KgrsNLLgR7D7y4w95IHA
-X-Google-Smtp-Source: AGHT+IF/fAIXOMgJoLn+gsE/If7tDYT7q+fuwpkdYzhPW1+9vx+FlNTulT4Wh/2s5442+4geqhf43A==
-X-Received: by 2002:a05:651c:19a0:b0:2ee:7b93:5209 with SMTP id 38308e7fff4ca-2ee8ee14ee0mr53242151fa.45.1720253491610;
-        Sat, 06 Jul 2024 01:11:31 -0700 (PDT)
-Received: from qamajeed.Home ([39.45.163.30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678e5c2b08sm10235931f8f.71.2024.07.06.01.11.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 01:11:31 -0700 (PDT)
-From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-Subject: [PATCH 4/4] Updating a deprecated use of strcpy in button.c file.
-Date: Sat,  6 Jul 2024 13:11:04 +0500
-Message-Id: <20240706081104.14493-4-qasim.majeed20@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240706081104.14493-1-qasim.majeed20@gmail.com>
-References: <20240706081104.14493-1-qasim.majeed20@gmail.com>
+	s=arc-20240116; t=1720253597; c=relaxed/simple;
+	bh=VD/r4HnloDiHglxBi5eaUyYZytODT9d7ORdzPE63IoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fqlqdAyvThYbtOnFJX0WGyVTYhetiEwg+4x4oq1zX358PqheFqvznAcIcKfvXbaLDEAxXklOM6sB4aD7gdRfGOFV7eAORqkns2OSVY/8jtSk3DO0oU9/XPNC4xn5fNimHL2c73Mls1FpgJMJtPPcDqMkfFPdq7ObvJJAmrSOKE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=l0QMAx4w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BEBBC2BD10;
+	Sat,  6 Jul 2024 08:13:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720253597;
+	bh=VD/r4HnloDiHglxBi5eaUyYZytODT9d7ORdzPE63IoU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l0QMAx4wQi6KNt3rKtTiG8l2zOEgcyx6in5FX3f8sMShPI7FSqqm0IIEk/H4qx9qE
+	 q04pxTgm5ay/lDF3Qr69E6SvK6zm0Z16e1zqsmv1KBLpujjgWl4CFv8cAaIAbv5zz1
+	 igEd3+EtciE+C6kENGsdvrGvhRYms3OiuqJWEQIc=
+Date: Sat, 6 Jul 2024 10:13:13 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "oneukum@suse.com" <oneukum@suse.com>,
+	"stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"usb-storage@lists.one-eyed-alien.net" <usb-storage@lists.one-eyed-alien.net>
+Subject: Re: [PATCH] USB: core: add 'shutdown' callback to usb_driver
+Message-ID: <2024070649-nuzzle-movable-f383@gregkh>
+References: <7332D45F-9BD3-4D0E-A5AF-9845353415A9@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7332D45F-9BD3-4D0E-A5AF-9845353415A9@live.com>
 
-Replacing strcpy with strscpy.
-strcpy is a deprecated function.
-It should be removed from the kernel source.
+On Fri, Jul 05, 2024 at 11:21:06AM +0000, Aditya Garg wrote:
+> From: Kerem Karabay <kekrby@gmail.com>
+> 
+> This simplifies running code on shutdown for USB drivers.
+> 
 
-Link: https://github.com/KSPP/linux/issues/88
+Sorry, but this does not explain why this is needed at all :(
 
-Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
----
- drivers/acpi/button.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Where did this change come from?  What problem does it solve?  Why
+should we take it?
 
-diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-index cc61020756be..fa5f079b30d1 100644
---- a/drivers/acpi/button.c
-+++ b/drivers/acpi/button.c
-@@ -547,20 +547,20 @@ static int acpi_button_add(struct acpi_device *device)
- 	    !strcmp(hid, ACPI_BUTTON_HID_POWERF)) {
- 		button->type = ACPI_BUTTON_TYPE_POWER;
- 		handler = acpi_button_notify;
--		strcpy(name, ACPI_BUTTON_DEVICE_NAME_POWER);
-+		strscpy(name, ACPI_BUTTON_DEVICE_NAME_POWER);
- 		sprintf(class, "%s/%s",
- 			ACPI_BUTTON_CLASS, ACPI_BUTTON_SUBCLASS_POWER);
- 	} else if (!strcmp(hid, ACPI_BUTTON_HID_SLEEP) ||
- 		   !strcmp(hid, ACPI_BUTTON_HID_SLEEPF)) {
- 		button->type = ACPI_BUTTON_TYPE_SLEEP;
- 		handler = acpi_button_notify;
--		strcpy(name, ACPI_BUTTON_DEVICE_NAME_SLEEP);
-+		strscpy(name, ACPI_BUTTON_DEVICE_NAME_SLEEP);
- 		sprintf(class, "%s/%s",
- 			ACPI_BUTTON_CLASS, ACPI_BUTTON_SUBCLASS_SLEEP);
- 	} else if (!strcmp(hid, ACPI_BUTTON_HID_LID)) {
- 		button->type = ACPI_BUTTON_TYPE_LID;
- 		handler = acpi_lid_notify;
--		strcpy(name, ACPI_BUTTON_DEVICE_NAME_LID);
-+		strscpy(name, ACPI_BUTTON_DEVICE_NAME_LID);
- 		sprintf(class, "%s/%s",
- 			ACPI_BUTTON_CLASS, ACPI_BUTTON_SUBCLASS_LID);
- 		input->open = acpi_lid_input_open;
--- 
-2.34.1
+I think I know the answers to these questions, but you need to document
+it here as to why it is needed (please read the kernel documentation for
+how to write a good changelog text and subject line.)
 
+thanks,
+
+greg k-h
 
