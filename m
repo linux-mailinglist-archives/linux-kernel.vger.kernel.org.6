@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-243135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31ED392924D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:47:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E0192924F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 11:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6521F21F78
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8907E1C215A3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 09:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F354D8C8;
-	Sat,  6 Jul 2024 09:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8970352F6F;
+	Sat,  6 Jul 2024 09:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oF3hrZ8H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5098B446D2
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 09:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0BD1F61C;
+	Sat,  6 Jul 2024 09:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720259242; cv=none; b=PmzztmCQlfo3du309uzk2u+9wFSCcVvWxRWUpa4APQv2URAC0WNHVR95HgU9K3peaKHTO8rn2amf/WbrOXqcIlWyeoZ8Rnhfo5DwXkAgkcGQNUDBtOeCpzPjdw5afRqVdZfRQcBUk6lwsk4HViVGvHtA/2dpxO2489N47iky++4=
+	t=1720259583; cv=none; b=BkkLkTZfA/G64fFj0ov+oo926y8t5s5mLWPnRK5T5etWveAvPMaKIbEwrWtwCX2HqM/4UCfG8OTmc3X83tjtVOFdipebcElbOKyOyNkgn68Z0WirnC5gwJqvJzOouNLOjW6MHTGRFBf3jKjqCrsTpmMtfLwZ4ifFqxEeoUB2OH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720259242; c=relaxed/simple;
-	bh=SNpNHhUcv0Nu9x6lfjzmHZ7ku7HEgmZlGoB55wIMZj4=;
+	s=arc-20240116; t=1720259583; c=relaxed/simple;
+	bh=EoJn9pc2K+C/K7BLu1o4zFCKx6+NE9Wo+WHt6QnrWSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JTokd4vvlgvfvXhKyVke7wbCXgezC+irp62jrTjZbFiAVj1DY3r1mbL3BUZHBwwMlo5RKQqgLsr1K7MTaWi/IuxAOmej6bhCj7vovikyfPtLIYFEjerVz+NdxapBi43bHxuCXCrIavt7cAYznkJie2JwEMU3AiwsEmD0T9A9ypY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EBD5C2BD10;
-	Sat,  6 Jul 2024 09:47:20 +0000 (UTC)
-Date: Sat, 6 Jul 2024 10:47:17 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
-	anshuman.khandual@arm.com, david@redhat.com,
-	scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-Message-ID: <ZokSpUr16xmfY8Z6@arm.com>
-References: <Zn7q3oL1AE8jdM-g@arm.com>
- <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
- <Zn7xs6OYZz4dyA8a@arm.com>
- <200c5d06-c551-4847-adaf-287750e6aac4@os.amperecomputing.com>
- <ZoMG6n4hQp5XMhUN@arm.com>
- <1689cd26-514a-4d72-a1bd-b67357aab3e0@os.amperecomputing.com>
- <ZoZzhf9gGQxADLFM@arm.com>
- <b0315df9-b122-46cd-12b2-7704d4a4392e@gentwo.org>
- <Zog6eFF1zDl4IRHX@arm.com>
- <b1b52185-595a-b4e7-cc96-90faf34c8077@gentwo.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ds6LzIMqjmJdcB7XrT6UsXx4uXx8H8/p4W0mKCmK3pZtfkuEjx7+PC+eAaf/ne931ootbZTyenO13L1JWfmqYaTXXA4BQt4QsT3I/xSm7I5XctDe+/W45AuL6Abc4ejBoWcwomFbg07nXezRqQL2k19p4Xan5cF+jWRQMVhaNZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oF3hrZ8H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E28E8C2BD10;
+	Sat,  6 Jul 2024 09:53:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720259583;
+	bh=EoJn9pc2K+C/K7BLu1o4zFCKx6+NE9Wo+WHt6QnrWSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oF3hrZ8HY+7i9IMoKfw0AtfX5ocmKNXTt9vQ41mFKyuTSb1Mzp9OYb+rg2lKQdX5v
+	 Gkha4nLpVioUDVOrnvBybTy1NEUc6pJVk2OlY8fmhUgRjaDESph8fY61qACYvJ8vRX
+	 FsI5/5g6PWk8ZZIocJOUxC6+I6SDnOvn5P4lTb6Ubx8n8fz9ybDZvcAKKF07dy1cVl
+	 08d7OLyM5/bySva0iotFvQhNRK8VpQSfhXfh/e4xOClw9xJateezPtgPyf8ZqI/SHb
+	 5c3uU9a/V2dDtLv6kayhdVB9/B+2vgU26ZJFj6Ui0IYr1fT/B8n+Ue9iK75xiK4sho
+	 HXWXsYewNPg8g==
+Date: Sat, 6 Jul 2024 10:52:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH net] ice: Adjust memory overrun in
+ ice_sched_add_root_node() and ice_sched_add_node()
+Message-ID: <20240706095258.GB1481495@kernel.org>
+References: <20240705163620.12429-1-amishin@t-argos.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,67 +63,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b1b52185-595a-b4e7-cc96-90faf34c8077@gentwo.org>
+In-Reply-To: <20240705163620.12429-1-amishin@t-argos.ru>
 
-On Fri, Jul 05, 2024 at 11:51:33AM -0700, Christoph Lameter (Ampere) wrote:
-> On Fri, 5 Jul 2024, Catalin Marinas wrote:
-> > People will be happy until one enables execute-only ELF text sections in
-> > a distro and all that opcode parsing will add considerable overhead for
-> > many read faults (those with a writeable vma).
+On Fri, Jul 05, 2024 at 07:36:20PM +0300, Aleksandr Mishin wrote:
+> In ice_sched_add_root_node() and ice_sched_add_node() there are calls to
+> devm_kcalloc() in order to allocate memory for array of pointers to
+> 'ice_sched_node' structure. But in this calls there are 'sizeof(*root)'
+> instead of 'sizeof(root)' and 'sizeof(*node)' instead of 'sizeof(node)'.
+> So memory is allocated for structures instead pointers. This lead to
+> significant memory overrun.
+> Looks like it was done for "coverity[suspicious_sizeof] workaround".
+
+Hi Aleksandr,
+
+While I agree that your patch is correct, I doesn't look to me like it was
+done for "coverity[suspicious_sizeof] workaround", as that annotation was
+added after the cited patch where the problem appears to have been
+introduced.
+
 > 
-> The opcode is in the l1 cache since we just faulted on it. There is no
-> "considerable" overhead.
+> Adjust memory overrun by correcting devm_kcalloc() parameters.
 
-This has nothing to do with caches (and many Arm implementations still
-have separate I and D caches). With the right linker flags (e.g.
---execute-only for lld), one can generate a PROT_EXEC only (no
-PROT_READ) ELF text section. On newer Arm CPUs with FEAT_EPAN, the
-kernel no longer forces PROT_READ on PROT_EXEC only mappings. The
-get_user() in this patch to read the opcode will fault. So instead of
-two faults you get now for an atomic instruction, you'd get three (the
-additional one for opcode reading). What's worse, it affects standard
-loads as well in the same way.
+I also think it is misleading to describe this as an overrun.  In my
+opinion, an overrun refers to writing over the end of a buffer, or similar
+conditions where values are written to memory or read from that is not
+intended for that purpose.
 
-Yang Shi did test this scenario but for correctness only, not
-performance. It would be good to recompile the benchmark with
---execute-only (or --rosegment I think for gnu ld) and see post the
-results.
+But that is not the case here.  Instead it is an over allocation of memory.
+Which is, in a sense, the opposite of an overrun. I suggest updating the
+description of the problem.
 
-> > Just to be clear, there are still potential issues to address (or
-> > understand the impact of) in this patch with exec-only mappings and
-> > the performance gain _after_ the THP behaviour changed in the mm code.
-> > We can make a call once we have more data but, TBH, my inclination is
-> > towards 'no' given that OpenJDK already support madvise() and it's not
-> > arm64 specific.
 > 
-> It is arm64 specific. Other Linux architectures have optimizations for
-> similar issues in their arch code as mentioned in the patch or the
-> processors will not double fault.
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> Is there a particular reason for ARM as processor manufacturer to oppose
-> this patch? We have mostly hand waving and speculations coming from you
-> here.
+> Fixes: dc49c7723676 ("ice: Get MAC/PHY/link info and scheduler topology")
 
-Arm Ltd has no involvement at all in this decision (and probably if you
-ask the architects, they wouldn't see any problem). Even though I have
-an arm.com email address, my opinions on the list are purely from a
-kernel maintainer perspective.
+I do agree there is a problem. But I'm not convinced this is fixing a bug -
+is the overallocation of memory manifesting, in a real problem, other than
+perhaps contributing to memory pressure (I assume in not a very significant
+way).
 
-There's no speculation but some real concerns here. Please see above.
+My feeling is that it would be better to target this change to net-next and
+drop the Fixes tag.
 
-> What the patch does is clearly beneficial and it is an established way of
-> implementing read->write fault handling.
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
 
-It is clearly beneficial for this specific case but, as I said, we still
-need to address the execute-only mappings causing an additional fault on
-the opcode reading. You may not find many such binaries now in the field
-but there's a strong push from security people to enable it (it's a
-user-space decisions, the kernel simply provides PROT_EXEC only
-mappings).
-
-In addition, there's a 24% performance overhead in one of Yang Shi's
-results. This has not been explained.
-
--- 
-Catalin
+...
 
