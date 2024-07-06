@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-243038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80EB9290EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:57:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070A49290ED
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 06:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C3AB1F22F8E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 04:57:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B79722835A7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Jul 2024 04:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CDA1C2A3;
-	Sat,  6 Jul 2024 04:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1125A1CD3F;
+	Sat,  6 Jul 2024 04:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="McJeecHS"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UX8q+ONy"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600DA18EA8
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 04:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08221C697
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Jul 2024 04:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720241816; cv=none; b=u5vF5plZwbBqRERH/ik1MrGMBj0CUSR0mufZW+nE0tvodcN38SxOuBv9JVdcT5Wc35mmaJJ5RfjxucgF6vSTBk/CFAGkdpk79h/7Ge6nNIG/RUqlM4oiBV0EZ7OE8YZ+xhADpyBkgaFD77gKF2Xa0R8jcs/WHIS7Cq1+isYFwsY=
+	t=1720241819; cv=none; b=eByWAfOO6NN8FKdGID4gtku6BgrjT3La4PXgfRQdbaInfLLQ3B3oLZlnlrg9qd4iPXaoA24uUWr9ViiLb/yyawONeHd7N+BqJ8lqzuwXNZ3Si1vy7Q4bRJhWWiU315JhUTDQXPwl4T6BLca1yzx+0wbfstV7Ym++0R61/LykQi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720241816; c=relaxed/simple;
-	bh=TW8IWpx+kWbsEG+EhKN0puvD0sZJLuyE33r66GzEHKA=;
+	s=arc-20240116; t=1720241819; c=relaxed/simple;
+	bh=AxI1yOXfNzixZbRuyuo/WRbDbgz5hU/FIRLKw3O+4EY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bPJ3WCg2Becs6/NbHpNFmBevTqU1svBN7J6rvU7b+a53cki0CQJ4Xv/Rv3gkvhd04HoztnhYT6BGilYqSUuQJrpMDLzE5SIwtiYAGnDOHPGplsWlqFVlt0bgH8KklDzefWx/3uPLi+2qUJr/Dmv9XnG3CSjJsZG1fulXrv5WFBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=McJeecHS; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=eiEA07OY5qamJ4cbdFyIon+S5ZhcZIfo5RSimajOzKateH+tL0lkw9BaBUhwj197ipVosnlIR3gwvcplVi4kCOvywvQWs4KqO5rHo/9RaOxigLPZN3MhddihCKAm8FciwXh3Itkbltpx/hNulqhWi3O6CWNv/DetTU1kjVBjykg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UX8q+ONy; arc=none smtp.client-ip=209.85.161.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70af81e8439so1840316b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 21:56:55 -0700 (PDT)
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c651c521f2so797276eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Jul 2024 21:56:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720241814; x=1720846614; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1720241817; x=1720846617; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/FXjjKFQQ/AAI7tVJvwr6gZnCUjSgAdFHQ4h4smS3cs=;
-        b=McJeecHSwVF1yv8VIpWxOJqxNPb44hm1IKR0u+Vp2iIv5CIqwVojRmWMT/s3HhDnkt
-         HqAgeVu/573/X98Fd4dtP4HCUHS2hipNEQiswsnvrmCNJ46tg4tfXO6YXvJt9OmqCrdX
-         OEAer+tFK6eb+XP+pW5akf8/PR2MrVFI3xV+w=
+        bh=jf1Swlc+GcHPMZi81XclrU8zJMIYY20nEHE2YL4cnE0=;
+        b=UX8q+ONyyCOhy/HNFav0eOTF+1tdlmNRISDBfdAbY5gc1l8NAw2vLtkyG6V4EAtMIj
+         kKYFzyPLMhQm71Bo95BjgH5lNCqwHELZhxRQid2aJiB18pEKx6qWPp0cRvU1bz3j5pZ0
+         YLi+jSwjPz3XWWZ4CnEgSGndsd9K2wHsiGTDQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720241814; x=1720846614;
+        d=1e100.net; s=20230601; t=1720241817; x=1720846617;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/FXjjKFQQ/AAI7tVJvwr6gZnCUjSgAdFHQ4h4smS3cs=;
-        b=M2vDd+tH++6oPRY7Dv+RZLaCNAQ3p/T424yGZtyb+rGXV7ifK1lxUXdObJAYApj3gm
-         C72HN7S1SnE1rRhmS0nkxOZ4P+j7xSPw+vNwV0upHa8BI/2lbmfJz1k8JVEYQq/AIM8l
-         vENBtL8mbQ0VHvve4wLTiaAH1x7mK/yVR8E4yDpA7PYTvifP8a7mLL9TqSw3qQqSyvXz
-         2xm3NIdKweZbD44nfHmKKDOoqS7+gURfFgVKbthNe6BMVCkSzFWCoplrORrBwi4SCL5T
-         S33V3uR1NY6MUoArLQ8x0FR+EUiZkBFZJk4ULKpFtJ2pMMUCJcsUuaVZIokxID1Q0c3+
-         TP7Q==
-X-Gm-Message-State: AOJu0Yw8qatF3DH0jXKsuze5wRQ4cwxqLLRIpbwpvQDv8/BzBNvAh7H6
-	TokvkuWpE4NUvjO/vV63g0C7qJH+03ooSjKjm4VdFBlbZJiUfwRKAqcPiOVdww==
-X-Google-Smtp-Source: AGHT+IG1uu9EeufS7V2p8jG+wHETC2wQx4NYEmGYvO/CDixqNrUGPN9y8xNRWmR8SgshWuZeDtrZ/Q==
-X-Received: by 2002:a05:6a00:3306:b0:704:37b2:4ced with SMTP id d2e1a72fcca58-70b00945e6emr8066889b3a.11.1720241814560;
-        Fri, 05 Jul 2024 21:56:54 -0700 (PDT)
+        bh=jf1Swlc+GcHPMZi81XclrU8zJMIYY20nEHE2YL4cnE0=;
+        b=dfcXfsbdNpWVgpaQ5V5uG/1LNkeprh+qHtdmJpLfAslpXSxMIvE52WMtklnIcKdatH
+         6e6TIQXOHrxUpqlcBJh1vt8MYhpdFqv2uE/ZYZfUaypuCswtTuaT/Sf38d1Vu4etOzKB
+         uNLOCF0+lI3p1D2aP4LJgULYnJ5EijoGSiV36kIeJS6t++jhArFdAMX1S2zsYlh4O+yL
+         2A4aHGUSWZkEO7KtX+CfiHrslWMCA0jp9d3w7NbBaIxD7mJdofwDbyJh8skq0Kf3kylL
+         4izAyGBLzw3NcG1G/7ljAWL8FZPmShmeb6lWwhYxNDZSMSABQi/+/lQnSm/+CEut3qkJ
+         zzXw==
+X-Gm-Message-State: AOJu0YwgdhxRnQr5h+vodYyuqKCoXrEGmvCujK448X3WCj1U1/5M/4dv
+	TTzntljatzPmil3xdSFNCTLfTg6URBBBnRYPqqH2E6V+uy8QuULfDt31NOtBqQ==
+X-Google-Smtp-Source: AGHT+IF+tti8aMl4R/ryaZBrmJNkrtaFNv3vJz5tuQqhihSxL1fkpB0i/XD2WlUyxrwEoXsjSzAzgQ==
+X-Received: by 2002:a05:6870:9706:b0:25a:eca3:6b58 with SMTP id 586e51a60fabf-25e2bea664fmr5737810fac.43.1720241816931;
+        Fri, 05 Jul 2024 21:56:56 -0700 (PDT)
 Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:88a7:e7d7:713d:ff09])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7623cd854b2sm2784104a12.38.2024.07.05.21.56.53
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7623cd854b2sm2784104a12.38.2024.07.05.21.56.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 21:56:54 -0700 (PDT)
+        Fri, 05 Jul 2024 21:56:56 -0700 (PDT)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Minchan Kim <minchan@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Nick Terrell <terrelln@fb.com>
-Subject: [PATCHv5 02/23] lib: lz4hc: export LZ4_resetStreamHC symbol
-Date: Sat,  6 Jul 2024 13:56:04 +0900
-Message-ID: <20240706045641.631961-3-senozhatsky@chromium.org>
+Subject: [PATCHv5 03/23] lib: zstd: fix null-deref in ZSTD_createCDict_advanced2()
+Date: Sat,  6 Jul 2024 13:56:05 +0900
+Message-ID: <20240706045641.631961-4-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 In-Reply-To: <20240706045641.631961-1-senozhatsky@chromium.org>
 References: <20240706045641.631961-1-senozhatsky@chromium.org>
@@ -82,26 +82,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This symbol is needed to enable lz4hc dictionary support.
+ZSTD_createCDict_advanced2() must ensure that
+ZSTD_createCDict_advanced_internal() has successfully
+allocated cdict.  customMalloc() may be called under
+low memory condition and may be unable to allocate
+workspace for cdict.
 
 Cc: Nick Terrell <terrelln@fb.com>
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- lib/lz4/lz4hc_compress.c | 1 +
- 1 file changed, 1 insertion(+)
+ lib/zstd/compress/zstd_compress.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/lib/lz4/lz4hc_compress.c b/lib/lz4/lz4hc_compress.c
-index e7ac8694b797..bc45594ad2a8 100644
---- a/lib/lz4/lz4hc_compress.c
-+++ b/lib/lz4/lz4hc_compress.c
-@@ -621,6 +621,7 @@ void LZ4_resetStreamHC(LZ4_streamHC_t *LZ4_streamHCPtr, int compressionLevel)
- 	LZ4_streamHCPtr->internal_donotuse.base = NULL;
- 	LZ4_streamHCPtr->internal_donotuse.compressionLevel = (unsigned int)compressionLevel;
- }
-+EXPORT_SYMBOL(LZ4_resetStreamHC);
+diff --git a/lib/zstd/compress/zstd_compress.c b/lib/zstd/compress/zstd_compress.c
+index c1c316e9e289..e48c73880477 100644
+--- a/lib/zstd/compress/zstd_compress.c
++++ b/lib/zstd/compress/zstd_compress.c
+@@ -5336,6 +5336,8 @@ ZSTD_CDict* ZSTD_createCDict_advanced2(
+                         dictLoadMethod, cctxParams.cParams,
+                         cctxParams.useRowMatchFinder, cctxParams.enableDedicatedDictSearch,
+                         customMem);
++    if (!cdict)
++        return NULL;
  
- int LZ4_loadDictHC(LZ4_streamHC_t *LZ4_streamHCPtr,
- 	const char *dictionary,
+     if (ZSTD_isError( ZSTD_initCDict_internal(cdict,
+                                     dict, dictSize,
 -- 
 2.45.2.803.g4e1b14247a-goog
 
