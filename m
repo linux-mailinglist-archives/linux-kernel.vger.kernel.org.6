@@ -1,200 +1,144 @@
-Return-Path: <linux-kernel+bounces-243565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B3E9297C4
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:16:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70349297C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E33281629
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:16:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225B21C20A2A
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F741CF8B;
-	Sun,  7 Jul 2024 12:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA1C1CD32;
+	Sun,  7 Jul 2024 12:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4ZyUiHE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="N9tbjIy9"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CD71078B;
-	Sun,  7 Jul 2024 12:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3521C694;
+	Sun,  7 Jul 2024 12:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720354557; cv=none; b=Y9zJW04o01C4HStJnJa40qhMzVPuG6uolS0/up5DF6b2cp3zVr0QLMLND/cviIrS2Jhp/8C9rlqlSCMbUqwfgxjBlnuT78l6Zx9MyMNphCQ7vKNh8kpTVpfLdgV7IsWlY7cQFgSNQXlfrM7yDKpbWDCJQBP6elZRjowY8qTMV/c=
+	t=1720354683; cv=none; b=EdVy0kSRs92Z16VD6R1busCn7sXeKd5qbtXpdcJ0Hv3g9yBEzCYpzvOk7HY++KDope+0j/QYZ0RXhnTpNi4LbrBOGsMPO2J8wNzKhbhxePIKaaVYL/cymb79pnv7yIU2IA98mDEz+d/wrOVgiRtqftCcJS4bEdtBc6nqO9hDo70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720354557; c=relaxed/simple;
-	bh=cFKTEh2qd2OkxQvLdlG7DvgFOUbWL6ynQqseB8Y1hSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/nNm/KrbdDxAbcRGASJFp1VITxavqv5TkqAETDrVLea5haYIWe6M8Sxiqm4lk4zjnS+qpStx5XZq9YbrlFFqO+kN9uRi6/10U2WalMJ+Lp8VU7zxYqtniHng2D4Kb67qC6zYvaqOIAt0pT6CmBFJrxmdyitAnco5/rwUk5b+ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4ZyUiHE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32B52C4AF0D;
-	Sun,  7 Jul 2024 12:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720354557;
-	bh=cFKTEh2qd2OkxQvLdlG7DvgFOUbWL6ynQqseB8Y1hSw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P4ZyUiHEvZafr1zT25Dglm8QEnK0QvijBIYAq2nJ+OUwstbEFjoOeNieHuQ2Gaz9s
-	 g0+TZUpjJt+YubHjtstMoXmAMMXv4N4t+WiHuP7/RJqZ+GCKzDEQwiaISJQoTlxNkI
-	 prI5S3wUcRlxYXwKuGdKzfNm+SxWm/H7NgyqsBX9kvmORNLqN0zphDNbFYnS0m7RoJ
-	 TZ835GkbPl2KFYgq8TE2QQbYOhLuxB0wDDDg+I9ZRiDbRjUkzqfzGiFJXGxVRWVW9l
-	 S05LKethWB4Eo5pTcpQCjLQ7ujhEkm2l8d9Mdig1dE5Q/0B8Ltltmcb25TtJkKsAqB
-	 U6HZm4hYTJKOA==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52e9c55febcso3878090e87.2;
-        Sun, 07 Jul 2024 05:15:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVa2g7+dvQz+GdnFtfZXNL1GvCQ/X1YSRbL50UKrKIuQ6Y+tMnex9GKd2T32CbTB2MA2Aw2o95iwDSq0zQsIuJxlCtAt0EWy7NAWthN69DoAoxom5HYSf9yM+PlmzZfVxWNCJzGwdKx8uM=
-X-Gm-Message-State: AOJu0Yza1fQViJX63jAsV2e8NRzsDNOIVzze8kMcky6NNOpB16TtVY8P
-	w3zXtCSfZwCvUnzOvKBCpQC63goNWvm7zQsU9fIjDI9sMJKfJi+psTNWeQs0KOqxXq9T9CUq6S8
-	zT5jyaomtFkvhHorWuPIbNe5agwE=
-X-Google-Smtp-Source: AGHT+IFu7/fRbXxCQEqScaQZK0y/JZqv8wO8tL6UxI5Y7elizVotqtWelGeFXSSvAvpMkQtgKeKc5V98gw6KK56dGQ0=
-X-Received: by 2002:a19:5f5c:0:b0:52e:9ebe:7325 with SMTP id
- 2adb3069b0e04-52ea065f06cmr6301234e87.31.1720354555481; Sun, 07 Jul 2024
- 05:15:55 -0700 (PDT)
+	s=arc-20240116; t=1720354683; c=relaxed/simple;
+	bh=/ZE98uSxNAbfzHkH31FBNDLThBe/haeN9Vnngj4CFRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgJW/uvtTHJk6PReOiLebCqzhRVVAUEoYEym5+mkvkUpVEVQbLhyUdkapX2geXPp09vM4IdgOKv4Ajnv5Du2e0nVKzwpKzdr0bXKRR3yRopN8gReHCSAYoHivULIyuMPpCtf8IN5TdPIWUsz4cRHe2FYZv89dTgT+/RjfU6KzLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=N9tbjIy9; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1720354672; x=1720959472; i=j.neuschaefer@gmx.net;
+	bh=wOY2LTVtor9c0uh4sZNyK/qPJ5Ak71J0G4tckDfFQzU=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=N9tbjIy9QZbwZCaOjcLLmAIhLQ35YZsTqGiNPsM4LojXWbONQO0lLDx8F+jMmEqk
+	 i2n+SNidrO6TmTr9cTokLSHiQmLKKle8iRl/Z3LfIu2dzUlHCLYEoBwAPaBHaUS49
+	 AonpM1jLresat1y6sulftZHioMX+LnGn+RjvQOXXHxAuTClkCqUyGGu3oWudfPD2i
+	 /0ncmybCL9Q0AkwrQHyhIl0FuVQek+lESZlbzOVcrkx2HQ6b1uHNTGrtGA27sEEGy
+	 ulnBlHGDN+j7sE7BCL2UPZibjg81hDMscOs9YrXJ1GYLnSZTZ0a/36u+rU+VU+IJN
+	 cg+kxbL1FYI79ptsDg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([89.0.46.161]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MysRu-1sCd4k23Bi-00xmgG; Sun, 07
+ Jul 2024 14:17:52 +0200
+Date: Sun, 7 Jul 2024 14:17:51 +0200
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, openbmc@lists.ozlabs.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: nuvoton: wpcm450: align LED and GPIO keys node
+ name with bindings
+Message-ID: <ZoqHb93S6j-_jaRo@probook>
+References: <20240701164915.577068-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
- <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
- <CAK-xaQaesuU-TjDQcXgbjoNbZa0Y2qLHtSu5efy99EUDVnuhUg@mail.gmail.com>
- <CAK-xaQbcpzvH1uGiDa04g1NrQsBMnyH2z-FPC4CdS=GDfRCsLg@mail.gmail.com>
- <CAL3q7H63GexJexkDxSz9Av_s=XyYotJqLqjUubZmuU7vynaQNQ@mail.gmail.com> <CABXGCsO_6cJruBxKdqXzEze_hDGVsPtN8DBCob=OWF5OpT4s7Q@mail.gmail.com>
-In-Reply-To: <CABXGCsO_6cJruBxKdqXzEze_hDGVsPtN8DBCob=OWF5OpT4s7Q@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Sun, 7 Jul 2024 13:15:18 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H46BxXUnrZ8Q3WxYf=2Tx0taMt9-2wf0TCrwj_kOiC=Dg@mail.gmail.com>
-Message-ID: <CAL3q7H46BxXUnrZ8Q3WxYf=2Tx0taMt9-2wf0TCrwj_kOiC=Dg@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Andrea Gelmini <andrea.gelmini@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240701164915.577068-1-krzysztof.kozlowski@linaro.org>
+X-Provags-ID: V03:K1:b4mry7pjbZIt6XKul32V8zWb7qm4V36BMOV1anIacoWRyYBuYrx
+ uWIeweF7djxvaYIjhUFzpl1+zKZP6ze2aWiiTmQFfBtn4Glw/E9TKhcPemzk7fHCzPLoqfJ
+ nrQ5eIfx/8rrvyMtkYcNlEWcvUb1EuL9vHm78AxGO3NfkFVCGf9JwvozGMnpD18K4V9XXxz
+ cKxBsT/L5k1ZA+f1OKzlg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iobDFNDXXZ4=;pJuCc/1CkdUEyqNPsAqpRgO60r4
+ dAgJiXZ/eHyUTv9uc9Lzt01g4j5Zbn3AI6hisd2rjyZ2951CCgkaQMs0avIWEmsU2IK0JReJb
+ ThObmSeDPbJe7kQgOZVFFlr1gr/3ferB18uIZZ3TxzYSa+gPDS/N+jiZ0f7MNcwH739aO7uRM
+ LyXM+L9xeHUoza20NExz8t3fk40dY+grkNpwN3oLUyGCPm7Oas+YxWZe0Wzb2iuVZMuQniY+z
+ LjX4H7W9LvDr6UgFikA51xpw3f/dB0rf/qK4lOZOVykPt+s9+Z2MMNAlJAjCIY6SuVQgE28KP
+ c8PKgCECwY8I/ViRHyZBvSANNc+e2jOh3YmpNsfhYwviagzuCiDSBeZ9anAq0uYkRhtnbbf40
+ hlv1IXulfeAMHl4vncJbKkxyzr3bzPs8NIafkSuuoxGOaL80aol+sl51gUhBa+jmcxi+KC+WQ
+ hHcREWtqII4YrgjSdyCuyUndMazV1rJtkNWGZXF+c0PtfexFNQpviGbJvxayRQ3p6h87PIrAS
+ 15moPSBJKqz+bBp8P4R6qZ9Fwyl3LMiDk+EViLOF9AOIxGwMW2jj+jPmvtmQLTCL/a/P8GWcm
+ SmtGIAijzOVH1zP55e1HVKCU+pF22AYQ1cxuw82kX1LHS0/YrRLNo9XHXDyoaJTe8QZPNRLSg
+ qy9WKoGGSrFMOt+6/3dqAqX/nz4z09fMvdCgeyqWI5b16w/fEHFOw15wNReNq+my//3hj4DP0
+ kSqrunjXUR24ZEllZWvZ4EZ1flSn+P5DeCUsy+Jyvc/p6yDN8ts0+5+K7hIhjImzEjlVuDNru
+ rLx6XgNm/LR3fSS1JSMOBXqHKPh7qHqF96ZUrQVY5Vpbs=
 
-On Sun, Jul 7, 2024 at 12:35=E2=80=AFPM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
+On Mon, Jul 01, 2024 at 06:49:15PM +0200, Krzysztof Kozlowski wrote:
+> Bindings expect the LED and GPIO keys node names to follow certain
+> pattern, see dtbs_check warnings:
 >
-> On Sat, Jul 6, 2024 at 10:38=E2=80=AFPM Filipe Manana <fdmanana@kernel.or=
-g> wrote:
-> > So I've been working on a proper approach following all those test
-> > results from you and Mikhail, and I would like to ask you both to try
-> > this branch:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/fdmanana/linux.git/log/=
-?h=3Dtest3_em_shrinker_6.10
-> >
-> > Again, this is based on 6.10-rc6 plus 3 fixes for this issue you're bot=
-h having.
-> >
-> > Can you guys test that branch?
-> >
-> > Thank you a lot for all the time spent on this!
+>   nuvoton-wpcm450-supermicro-x9sci-ln4f.dtb: gpio-keys: 'uid' does not m=
+atch any of the regexes: '^(button|event|key|switch|(button|event|key|swit=
+ch)...
 >
-> 6.10.0-rc6-test1_em_shrinker_6.10
-> up  1:01
-> root         269 25.8  0.0      0     0 ?        R    10:59  15:47 [kswap=
-d0]
-> up  2:00
-> root         269 25.5  0.0      0     0 ?        S    10:59  30:46 [kswap=
-d0]
-> up  3:00
-> root         269 27.9  0.0      0     0 ?        S    10:59  50:18 [kswap=
-d0]
-> up  4:00
-> root         269 27.8  0.0      0     0 ?        S    10:59  67:08 [kswap=
-d0]
-> up  5:00
-> root         269 27.5  0.0      0     0 ?        S    10:59  83:01 [kswap=
-d0]
-> up  6:00
-> root         269 27.5  0.0      0     0 ?        S    10:59  99:31 [kswap=
-d0]
-> kswapd0 on the test1 branch is bad as
-> https://gist.githubusercontent.com/fdmanana/9cea16ca56594f8c7e20b67dc66c6=
-c94/raw/557bd5f6b37b65d210218f8da8987b74bfe5e515/gistfile1.txt
->
->
-> 6.10.0-rc6-test2_em_shrinker_6.10
-> up  1:00
-> root         269 11.7  0.0      0     0 ?        S    19:23   7:03 [kswap=
-d0]
-> up  2:02
-> root         269 11.9  0.0      0     0 ?        S    19:23  14:38 [kswap=
-d0]
-> up  3:00
-> root         269 11.9  0.0      0     0 ?        S    19:23  21:30 [kswap=
-d0]
-> up  4:01
-> root         269 11.2  0.0      0     0 ?        S    19:23  27:15 [kswap=
-d0]
-> up  5:00
-> root         269 11.4  0.0      0     0 ?        R    Jul06  34:25 [kswap=
-d0]
-> up  6:00
-> root         269 13.9  0.0      0     0 ?        S    Jul06  50:14 [kswap=
-d0]
-> On the test2 branch, kswapd0 is two times better.
->
->
-> 6.10.0-rc6-test3_em_shrinker_6.10 (d22fedf5058d)
-> up  1:02
-> root         269 11.0  0.0      0     0 ?        S    09:54   6:50 [kswap=
-d0]
-> up  2:00
-> root         269 10.7  0.0      0     0 ?        S    09:54  12:54 [kswap=
-d0]
-> up  3:00
-> root         269 10.1  0.0      0     0 ?        S    09:54  18:18 [kswap=
-d0]
-> up  4:00
-> root         269  9.5  0.0      0     0 ?        S    09:54  23:03 [kswap=
-d0]
-> up  5:01
-> root         269 10.0  0.0      0     0 ?        S    09:54  30:24 [kswap=
-d0]
-> up  6:00
-> root         269  9.9  0.0      0     0 ?        S    09:54  35:42 [kswap=
-d0]
-> On the test3 branch, kswapd0 is thee times better.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-That's good. And is the DE unresponsiveness gone too?
+Looks good, thanks!
 
-I see you tested d22fedf5058d, but I updated the branch a couple hours
-ago, now the top commit is fa8b5dd7fa18.
-Can you test the updated branch? It may help further in your case.
+Reviewed-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 
-https://git.kernel.org/pub/scm/linux/kernel/git/fdmanana/linux.git/commit/?=
-h=3Dtest3_em_shrinker_6.10&id=3Dfa8b5dd7fa18a4dc2ea6bdeaf5525b1af348f383
-
+>  .../dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts   | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> To catch up with the 6.9 branch, the timing needs to be 4 times better.
-
-Hopefully it will be much closer to that with the updated branch.
-The upcoming changes for 6.11 would help there too, but anyway we can
-still further optimize on top of the 6.10-rc code.
-
-Thanks Mikhail!
-
+> diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-=
+ln4f.dts b/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f=
+.dts
+> index b78c116cbc18..edb907f740bf 100644
+> --- a/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dt=
+s
+> +++ b/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dt=
+s
+> @@ -34,7 +34,7 @@ gpio-keys {
+>  		pinctrl-names =3D "default";
+>  		pinctrl-0 =3D <&key_pins>;
 >
+> -		uid {
+> +		button-uid {
+>  			label =3D "UID button";
+>  			linux,code =3D <KEY_HOME>;
+>  			gpios =3D <&gpio0 14 GPIO_ACTIVE_HIGH>;
+> @@ -46,12 +46,12 @@ gpio-leds {
+>  		pinctrl-names =3D "default";
+>  		pinctrl-0 =3D <&led_pins>;
+>
+> -		uid {
+> +		led-uid {
+>  			label =3D "UID";
+>  			gpios =3D <&gpio1 7 GPIO_ACTIVE_HIGH>;
+>  		};
+>
+> -		heartbeat {
+> +		led-heartbeat {
+>  			label =3D "heartbeat";
+>  			gpios =3D <&gpio1 4 GPIO_ACTIVE_LOW>;
+>  		};
 > --
-> Best Regards,
-> Mike Gavrilov.
+> 2.43.0
+>
 
