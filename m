@@ -1,115 +1,233 @@
-Return-Path: <linux-kernel+bounces-243703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D656929964
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73230929965
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1651DB20D4F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E582828188D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E9957CBE;
-	Sun,  7 Jul 2024 19:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F7A56766;
+	Sun,  7 Jul 2024 19:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HHTghpaG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XdnMr+ke"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sg5l14D6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C18C8BEF;
-	Sun,  7 Jul 2024 19:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C70D2E85E
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 19:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720378874; cv=none; b=NZtvhtewl+AuV+ZVaw4nv3D5wQo4CL7sNNIH/GJ+TXXap+diINwLyYHO1Kw/9l+dMF6c6ZyYpY/J66ru8ykC640w5MkR0UWaIfgmNXTdJVyeAKZ1WDfv+lYLEwe4maEFYoS1kaLCfj3CNbg0M1Jhyu8rB0mVUFLKivk4b6vWtO4=
+	t=1720379091; cv=none; b=cbWWds3znr2h6VYicrvFEDm/RhH5OB4Ef4D8fEDNyxLrFLpePUF8WADffGQ3Ok0qSy5dYoJ8IaMwNbU3ILzO9ejMZUHFq2PttyCXrGU5x+ZU7c53FcNZvSYwpNEjaJ1hPmS9mB0huyTL99ZOvDEQ7VxPsyOkH7V6SVPmiWDO0sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720378874; c=relaxed/simple;
-	bh=DiH0q2lmQfMpabjnUIZcmGEpU6B0TqByxAqfNRIw/fU=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=pHcny5Pna8eAEsZuZkOenE4a8bAM9AUJ/jHwmxSdLzchUNktDR8LFVIWAwmBC2Jgcgq14HGfVAmF71EeTL2jeU8OjieAF1zmi8WfRJAvgImHT4fWK9JahxOwpxxQA8c0GDT7aFaEZnnK4N8tZmUAg5s02atAjbs+j8YwbkNw3XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HHTghpaG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XdnMr+ke; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 71E371140299;
-	Sun,  7 Jul 2024 15:01:10 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Sun, 07 Jul 2024 15:01:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1720378870; x=1720465270; bh=fnPGPD9rRT
-	Nh/NwSH09iJcHZYTTZZQWsnaDWsGvqyLg=; b=HHTghpaGP/JjoOdMDMQxLTrjB9
-	0kv0clIUUiGG7R5+LhHcHbweBlbL0e+ztylTz4+kNtf2foqtgFduj/s4EDt5k/qC
-	G5lvqE+MaRgsVhOKtOIuHR0jYWLAndpUj+Oe7vwghlDLRcLGWhRfdrjZU6msK9Nc
-	39+I6n8sbF300XpkmWWWOg0o9d/I9SeAgOFvxoJvEUVN7ddpK5CdGFfYMBH0IviJ
-	G+Sfzn/64KRqZHDEg+JtSGoGTiES5TNLNavlreQKHPLJgxDbtUMofnl+Jpoo2opK
-	olWF9vVyik1Gl34BjX1ZMZdYncxHvrq+DTS8KlttcM5701CCEGTvaTwfME4Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720378870; x=1720465270; bh=fnPGPD9rRTNh/NwSH09iJcHZYTTZ
-	ZQWsnaDWsGvqyLg=; b=XdnMr+ke7rPcVaKICM/4MTAscO8S4n2POUvc+srkQSxu
-	PgKC1STml/ic3NIJD/DllgAn0fJ3GjsnRd9/t/RRIlaQXSizic7gjMrOj6ZrN7Jf
-	GjuGvdG7y2fJL9QE+JgK267/9xGU5BBAf7OEXpyJkkssec9F0X6CKvrHY6cWby9G
-	6ORmkQAxJaKLqUcR/kly+dc0lHmch96+3t6X04xfPLLb0IWZW0a/b1FKtqiLrLZy
-	ymTggkI5H4ULHzNC+s0NyMoWeCTy4zSDfkxU20Ms2+AWRiEQrrC8VIy3m3Zrs3iP
-	h8icHLQxtM0Rr2uuCGOIHIVxunk05zYOqUUOiYQlkQ==
-X-ME-Sender: <xms:9eWKZsbNzHZyq7QjOvDSiTmrwPW8YkRlGW9ViOokCnxsy8XWS1wRPQ>
-    <xme:9eWKZnadkURuThWfyvJ8KZ7g2M5fZKL4oA4vkDcfgNUO8yUq4k_rr1cMZ4N5fbsse
-    481-AxkkTltPXR92kc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehgddufeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:9eWKZm9noHmhVE14zh8Y2v1bgLu2GOJucLG4LfBhnJ5Hid1D0b7FeQ>
-    <xmx:9eWKZmowcccumd_rGZMPmbrZNxlNRl6megKIGrDLmGHWwFdJ8PMIcg>
-    <xmx:9eWKZnqdrGYzg33PeCcYvaQr5eyenQBr_CAKAjnZlsEmDWqN_KdckQ>
-    <xmx:9eWKZkRFWUaojh5VxSf-6rO1b2J6SQ7a4UdPDYuIpjHDzCl84eGnpA>
-    <xmx:9uWKZolrCFzeCkC80lMP5Ge2YhY0GId4LiRgAQIxgAqIsTI5Mwwbc2za>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id D891BB6008D; Sun,  7 Jul 2024 15:01:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1720379091; c=relaxed/simple;
+	bh=X1MoMcv4ihI14QVx4/wOJq/twGd7U0UyjiqdjnaqMOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPSyxvXlTUk6+/RGDensGX+97IljkWPOYsa2uxlh9sJEhEGvdClDdxyknFGX+WH7ZHE8JHrr4FWlxUIxTVQX4SPU9mXssvDo3UTfWDV37vpDgBYrR79fQ+isZ0T/kVs61FMP0dJrASAhtyW6sbIlQJTBa2BQ6GNbi/otWWPmUPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sg5l14D6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720379089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZkjOQU+aJaRi20NLE4drQggtIvxh43TsFHmIsrhDuZY=;
+	b=Sg5l14D63/LjXo0CiWm2/+GdY27O0rD3csWbYHmvTu4GKrOi7Pucw1s6flGLYa+32PkY0R
+	wnMi4ON8DW78YVT4j2MHZWO7KqT5bqrm2Uvgw/2U6Cu2+MW8p6UHciE2RZXDXh+h2p1i8k
+	kTLclonH//6Seu2K65vdni1H3xPdt5U=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-661-GuZJBXhQNBa4g4VQNbnkog-1; Sun,
+ 07 Jul 2024 15:04:47 -0400
+X-MC-Unique: GuZJBXhQNBa4g4VQNbnkog-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA94D196CDF4;
+	Sun,  7 Jul 2024 19:04:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.39])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 85BB319560AE;
+	Sun,  7 Jul 2024 19:04:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  7 Jul 2024 21:03:09 +0200 (CEST)
+Date: Sun, 7 Jul 2024 21:03:05 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, Mike Rapoport <rppt@kernel.org>,
+	akpm@linux-foundation.org, brauner@kernel.org, mjguzik@gmail.com,
+	tandersen@netflix.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] mm/memblock: introduce a new helper
+ memblock_estimated_nr_pages()
+Message-ID: <20240707190304.GC11914@redhat.com>
+References: <20240703005151.28712-1-richard.weiyang@gmail.com>
+ <Zoe4XN-gKJnjJtzi@kernel.org>
+ <20240706012805.uuvysz2qgapgqj6p@master>
+ <9f38e4f1-0ad3-4cd4-bcb7-5ec287859051@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <55a8cff0-1d73-4743-9c56-2792616426c7@app.fastmail.com>
-In-Reply-To: <20240707171919.1951895-5-nico@fluxnic.net>
-References: <20240707171919.1951895-1-nico@fluxnic.net>
- <20240707171919.1951895-5-nico@fluxnic.net>
-Date: Sun, 07 Jul 2024 20:59:29 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nicolas Pitre" <nico@fluxnic.net>, "Russell King" <linux@armlinux.org.uk>
-Cc: "Nicolas Pitre" <npitre@baylibre.com>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] __arch_xprod64(): make __always_inline when optimizing for
- performance
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f38e4f1-0ad3-4cd4-bcb7-5ec287859051@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Sun, Jul 7, 2024, at 19:17, Nicolas Pitre wrote:
-> From: Nicolas Pitre <npitre@baylibre.com>
+As I have already said, I can't review this patch.
+
+But I am curious, why set_max_threads() is the only user of the new helper?
+Say, should files_maxfiles_init() use it too or not? Perhaps the changelog
+can explain this?
+
+Thanks,
+
+Oleg.
+
+On 07/07, David Hildenbrand wrote:
 >
-> Recent gcc versions started not systematically inline __arch_xprod64()
-> and that has performance implications. Give the compiler the freedom to
-> decide only when optimizing for size.
->
-> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> On 06.07.24 03:28, Wei Yang wrote:
+> >On Fri, Jul 05, 2024 at 12:09:48PM +0300, Mike Rapoport wrote:
+> >>On Wed, Jul 03, 2024 at 12:51:49AM +0000, Wei Yang wrote:
+> >>>Instead of using raw memblock api, we wrap a new helper for user.
+> >>
+> >>The changelog should be more elaborate and explain why this function is
+> >>needed.
+> >>
+> >>>Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+> >>>---
+> >>>  include/linux/memblock.h |  1 +
+> >>>  mm/memblock.c            | 19 +++++++++++++++++++
+> >>>  2 files changed, 20 insertions(+)
+> >>>
+> >>>diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> >>>index 40c62aca36ec..7d1c32b3dc12 100644
+> >>>--- a/include/linux/memblock.h
+> >>>+++ b/include/linux/memblock.h
+> >>>@@ -486,6 +486,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
+> >>>  phys_addr_t memblock_phys_mem_size(void);
+> >>>  phys_addr_t memblock_reserved_size(void);
+> >>>+unsigned long memblock_estimated_nr_pages(void);
+> >>>  phys_addr_t memblock_start_of_DRAM(void);
+> >>>  phys_addr_t memblock_end_of_DRAM(void);
+> >>>  void memblock_enforce_memory_limit(phys_addr_t memory_limit);
+> >>>diff --git a/mm/memblock.c b/mm/memblock.c
+> >>>index e81fb68f7f88..c1f1aac0459f 100644
+> >>>--- a/mm/memblock.c
+> >>>+++ b/mm/memblock.c
+> >>>@@ -1729,6 +1729,25 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
+> >>>  	return memblock.reserved.total_size;
+> >>>  }
+> >>>+/**
+> >>>+ * memblock_estimated_nr_pages - return number of pages from memblock point of
+> >>>+ * view
+> >>
+> >>This function returns the estimate for free pages, not the number of pages
+> >>in RAM.
+> >>
+> >>How about memblock_estimated_nr_free_pages()?
+> >>
+> >>>+ * some calculation before all pages are freed to buddy system, especially
+> >>>+ * when CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled.
+> >>
+> >>I'm failing to parse this sentence. The return value here won't depend on
+> >>CONFIG_DEFERRED_STRUCT_PAGE_INIT.
+> >>
+> >>>+ *
+> >>>+ * At this point, we can get this information from memblock. Since the system
+> >>>+ * state is not settle down and address alignment, the value is an estimation.
+> >>>+ *
+> >>>+ * Return:
+> >>>+ * An estimated number of pages from memblock point of view.
+> >>
+> >>                            ^ free
+> >>
+> >>>+ */
+> >>>+unsigned long __init memblock_estimated_nr_pages(void)
+> >>>+{
+> >>>+	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
+> >>>+}
+> >>>+
+> >>>  /* lowest address */
+> >>>  phys_addr_t __init_memblock memblock_start_of_DRAM(void)
+> >>>  {
+> >>>-- 
+> >>>2.34.1
+> >>>
+> >
+> >Thanks for review. Is this one looks better?
+> >
+> >Subject: [PATCH] mm/memblock: introduce a new helper memblock_estimated_nr_free_pages()
+> >
+> >During bootup, system may need the number of free pages in the whole system
+> >to do some calculation before all pages are freed to buddy system. Usually
+> >this number is get from totalram_pages(). Since we plan to move the free
+> >pages accounting in __free_pages_core(), this value may not represent
+> >total free pages at the early stage, especially when
+> >CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled.
+> >
+> >Instead of using raw memblock api, let's introduce a new helper for user
+> >to get the estimated number of free pages from memblock point of view.
+> >
+> >Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+> >CC: David Hildenbrand <david@redhat.com>
+> >---
+> >  include/linux/memblock.h |  1 +
+> >  mm/memblock.c            | 22 ++++++++++++++++++++++
+> >  2 files changed, 23 insertions(+)
+> >
+> >diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> >index 40c62aca36ec..7d1c32b3dc12 100644
+> >--- a/include/linux/memblock.h
+> >+++ b/include/linux/memblock.h
+> >@@ -486,6 +486,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
+> >  phys_addr_t memblock_phys_mem_size(void);
+> >  phys_addr_t memblock_reserved_size(void);
+> >+unsigned long memblock_estimated_nr_pages(void);
+> >  phys_addr_t memblock_start_of_DRAM(void);
+> >  phys_addr_t memblock_end_of_DRAM(void);
+> >  void memblock_enforce_memory_limit(phys_addr_t memory_limit);
+> >diff --git a/mm/memblock.c b/mm/memblock.c
+> >index e81fb68f7f88..00decc42e02b 100644
+> >--- a/mm/memblock.c
+> >+++ b/mm/memblock.c
+> >@@ -1729,6 +1729,28 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
+> >  	return memblock.reserved.total_size;
+> >  }
+> >+/**
+> >+ * memblock_estimated_nr_free_pages - return estimated number of free pages
+> >+ * from memblock point of view
+> >+ *
+> >+ * During bootup, system may need the number of free pages in the whole system
+> >+ * to do some calculation before all pages are freed to buddy system. Usually
+> >+ * this number is get from totalram_pages(). Since we plan to move the free
+> >+ * pages accounting in __free_pages_core(), this value may not represent total
+> >+ * free pages at the early stage, especially when > + * CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled.
+> 
+> These historical details should be dropped. "Since we plan ..." will easily
+> get outdated soon.
+> 
+> * During bootup, subsystems might need a rough estimate of the number of *
+> free pages in the whole system, before precise numbers are available
+> * from the buddy. Especially with CONFIG_DEFERRED_STRUCT_PAGE_INIT, the
+> * numbers obtained from the buddy might be very imprecise during bootup.
+> 
+> ?
+> 
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
-Seems reasonable. Just to make sure: do you know if the non-inline
-version of xprod_64 ends up producing a more effecient division
-result than the __do_div64() code path on arch/arm?
-
-     Arnd
 
