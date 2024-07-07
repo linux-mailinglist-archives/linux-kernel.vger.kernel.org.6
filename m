@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-243629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B401292988B
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:55:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCA3929889
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C64B24198
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:55:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 759671C2221E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389CE249F9;
-	Sun,  7 Jul 2024 14:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126B528DD2;
+	Sun,  7 Jul 2024 14:53:57 +0000 (UTC)
 Received: from domac.alu.hr (domac.alu.hr [161.53.235.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4EB1CF8A
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 14:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC0F224DD
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 14:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.235.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720364118; cv=none; b=IZZzmE3NV4d5NedMoft4UoqvitV+coNJlRbzfI08lsRDZEapNMaxz+dksPvXkSGtZ5l2f3BBFnpnu9zx+kmgUweaSstA/Xs6nUN+rEhoTDV55I8OIpVIlenjk578H6HhIDa7oA16uOMZFbjvIUK9hvlBMALiHKc4XQQQM4HljrY=
+	t=1720364036; cv=none; b=Hfa14+KxwXrVcybPiI09KeyVBZrZwKswyl12CCCa9fc3XnXXhGYBpDlMKhy0e7YCN885QnQYn5qtXzOFgWYSmDngEUjzxnHrzcQjZG8zsm0IuDrNgeGhQjh0vW4JaGYkQrs8oIgnSTyJWs0l9KT8g0fVRivgLI2bdRS2vLAP9Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720364118; c=relaxed/simple;
-	bh=ORkTmI6YEscVUo6AccZIx1QFg0q/vy6tdjjB+lzVb+A=;
+	s=arc-20240116; t=1720364036; c=relaxed/simple;
+	bh=M+SGXgjsfoR8TEqvrfmgc7MBRienEtHopgHjtJA/678=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=W5aODo5i2z1BbVbwPuiDhaBsu7xJ/YvJL70X2oBjkDdIkvQ3h+cQ2U78i1Y4x3yfVfDTF9Ccs8t0LpiWekF2gQ06ursbBhrN+au1rA62vXSGamMdVxslDdUeVvF7QfytpXBgaiC+VaJcYlfySpkiWMQGnR0MEdQMK2G112GUJ8s=
+	 In-Reply-To:Content-Type; b=NBN2EH4rLoq6hYVfcQH1ZMOitxQNymaa4qryUJgJ7GxHdg3cOu/ziJB3FbKuPT1v0krXT3zuawT57mZC4Bzlw5VzFwqMAnvjK2UC7kU0rBEhFuRaMN7U+TMfkV0XwNCFDN/+OgXGKycjwLdG6TBZRIJ8aBtiLrWcmetSJ9aFf/4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=161.53.235.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (localhost [127.0.0.1])
-	by domac.alu.hr (Postfix) with ESMTP id 113E460173;
-	Sun,  7 Jul 2024 16:45:27 +0200 (CEST)
+	by domac.alu.hr (Postfix) with ESMTP id 8C1EE6017E;
+	Sun,  7 Jul 2024 16:53:51 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
 Received: from domac.alu.hr ([127.0.0.1])
 	by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 9SUPzB37gLXQ; Sun,  7 Jul 2024 16:45:24 +0200 (CEST)
+	with ESMTP id e_e-a6ribevo; Sun,  7 Jul 2024 16:53:49 +0200 (CEST)
 Received: from [192.168.178.20] (dh207-40-28.xnet.hr [88.207.40.28])
-	by domac.alu.hr (Postfix) with ESMTPSA id 08F766015E;
-	Sun,  7 Jul 2024 16:45:20 +0200 (CEST)
-Message-ID: <c8a0ab67-7d29-4ab5-8d08-e08edc5d568c@gmail.com>
-Date: Sun, 7 Jul 2024 16:45:16 +0200
+	by domac.alu.hr (Postfix) with ESMTPSA id DEC556015E;
+	Sun,  7 Jul 2024 16:53:39 +0200 (CEST)
+Message-ID: <ada86a07-f19d-45f0-b839-21eb2395d41b@gmail.com>
+Date: Sun, 7 Jul 2024 16:53:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,7 +47,9 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PROBLEM linux-next]
+Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM_linux-next=5D_drivers/mtd/mtdpart=2Ec=3A?=
+ =?UTF-8?B?NjkzOjM0OiBlcnJvcjog4oCYJXPigJkgZGlyZWN0aXZlIGFyZ3VtZW50IGlzIG51?=
+ =?UTF-8?Q?ll?=
 From: Mirsad Todorovac <mtodorovac69@gmail.com>
 To: Jonas Gorski <jonas.gorski@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
  <rafal@milecki.pl>
@@ -63,7 +65,7 @@ In-Reply-To: <f9818a25-0604-49a8-af06-3dc7de006377@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi, Jonas, Rafał, all,
+Hi,
 
 On 7/7/24 16:09, Mirsad Todorovac wrote:
 > 
@@ -159,11 +161,9 @@ On 7/7/24 16:09, Mirsad Todorovac wrote:
 > 
 > However, I would sleep much better if this is tested on actual hw. :-/
 
-Hi Jonas, Rafał,
-
 Is this what you had in mind?
 
------><------------------------
+-----------------><----------------------------
 diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
 index 6811a714349d..dd02690abf3a 100644
 --- a/drivers/mtd/mtdpart.c
@@ -184,13 +184,6 @@ index 6811a714349d..dd02690abf3a 100644
                                 continue;
                         ret = mtd_part_do_parse(parser, master, &pparts, data);
 --
-
-This will both eliminate warning and be more descriptive.
-
-I agree that vsprintf() will print "(null)" for NULL ptr, but GCC 12.3.0 doesn't tolerate such
-application and we cannot build w -Werror ...
-
-How does this look to you?
 
 Best regards,
 Mirsad Todorovac
