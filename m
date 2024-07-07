@@ -1,229 +1,348 @@
-Return-Path: <linux-kernel+bounces-243695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC11929951
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 20:28:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A26F6929953
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 20:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5840F1F211CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:28:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1578F1F20F1B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B632758210;
-	Sun,  7 Jul 2024 18:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E8A5FBB1;
+	Sun,  7 Jul 2024 18:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YHuBj+ab"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqNJNHu4"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E43057CB4;
-	Sun,  7 Jul 2024 18:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9283A8CE;
+	Sun,  7 Jul 2024 18:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720376899; cv=none; b=p3imuuwuuBst/7OwUa8o5eR4Jjng2cp4K0nib04qlDRW+fVIast49t7alITgxnCT+kHHkmuHC/jPgMRcgWy606B/hEfdGqK0hAP95jkoJx2nIkhl2F9IpMecI72wtw7DjHQ91HzLy7s2L/mU0opigS0Bd2Nc+pgapORR2kPSqOA=
+	t=1720377145; cv=none; b=Dl8Jf2pr7N5qjdzkF5Z6jq6UhP+lDVC67Wll8hpw6Bb9ZgIyShWhKbxCSs0snc61Mf8vgHNiiMwfIXFNGDXyTFZuC9eVvaeUJ0CehmEdgW+f1Xr5rz+X+Fq5nBddRxvdauOWEipde7XkKDQ698B2jrCsEwEKmD7dOucUjayNp+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720376899; c=relaxed/simple;
-	bh=bYzicIZOdk01yC8oQvG1MswafXxtIfTrxwTYAZGlZ1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kx4uFZD64SpHT1oUQBoHyuMDMZlTPPvnQ6lIHTHIhU1o1Xzq5RNEdNhTs0faFrQOwVNjisuBcCPrX6f/G6/yBTHhGm5K59yzoaABX4csCEpFuSM0w4inLYUegv8fdc42C/jx0bT2a5xcCtYBshtIjo6DXozTjykyhnroEkfKiUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YHuBj+ab; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 467HxHFY015573;
-	Sun, 7 Jul 2024 18:28:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=y42O/Hj8Q4phY
-	grWvIsSGvqBV9iNaFV72mSRjyhEg40=; b=YHuBj+abuVMTqiOHjBWJcv8iy+wa2
-	UUd2PnnN16dfPrei1nCI948Jbg5jgTNpaxpksZnh+wDllW8pD1S3KRNF6bPnz0YU
-	R4/ZZExsboKPMa5ZjE2B1nrPOwk2qgGkPUiEm52mYQm47TQXo4QGaT1iFcBZK36Z
-	WPaE4lrPwkFGLfuup2SKMoJYbdKKiHoeqpj8G502DC6JujmkXGokhtbybyPWs+H7
-	D1EadDHaKa5lCOxzLCA/CDKfPNDR74+s9+hta3PzZ5jfroy/JOsqm1f0tBwvxZZz
-	8vzqRtI6BcJPm+XGp0nrtaHwnYAFMIWq3AGtb71sjXhAMEtPZsFAHKDEQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 407ug6gftc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 07 Jul 2024 18:28:09 +0000 (GMT)
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 467IS8IJ023045;
-	Sun, 7 Jul 2024 18:28:09 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 407ug6gft9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 07 Jul 2024 18:28:08 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 467FHd2D014020;
-	Sun, 7 Jul 2024 18:28:07 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407h8pb905-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 07 Jul 2024 18:28:07 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 467IS3qO44302686
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 7 Jul 2024 18:28:05 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7952620043;
-	Sun,  7 Jul 2024 18:28:03 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0D3C520040;
-	Sun,  7 Jul 2024 18:27:57 +0000 (GMT)
-Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.ibm.com.com (unknown [9.43.85.13])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun,  7 Jul 2024 18:27:56 +0000 (GMT)
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        Chen Yu <yu.c.chen@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: [PATCH v6 3/3] perf sched map: Add --fuzzy-name option for fuzzy matching in task names
-Date: Sun,  7 Jul 2024 23:57:16 +0530
-Message-ID: <20240707182716.22054-4-vineethr@linux.ibm.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240707182716.22054-1-vineethr@linux.ibm.com>
-References: <20240707182716.22054-1-vineethr@linux.ibm.com>
+	s=arc-20240116; t=1720377145; c=relaxed/simple;
+	bh=PUwYvtSs4dAh2GNW0AlNlGIxZD9EfCfPtRWgu5+06Ec=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=q7w9VyETrrNFSeMPWUAH8uO73G+8iltZZNThnAGIT/AZGlxGjm3gz9v82sIfR6tJA9pJDV2qOj0cizzh49mY5BCryw87N/CC8eKA2I+gQJl6b40C7Zz0Min3Tmc5Esg04Tq/YLvE4QU1glscniaibjqhSaRjG6aE92o/qobFxAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UqNJNHu4; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7523f0870cso376391966b.3;
+        Sun, 07 Jul 2024 11:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720377142; x=1720981942; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cSQ2k1ZfQBZLe252vJL66rHXJ8887qSMUh6gPtklvIU=;
+        b=UqNJNHu4PnttMJ4qPpFslQ1NbG+Sn4OpNy/JrQy9NFrESGEOYEwqRXVjcca9DOh67p
+         PxmiGX6lyO5JAXADyijEudJWk+bLyz2ge+QW5K+9sGu2/Dif2jPvXdkEUNmOHIYzOshm
+         jNtBtTsvkDFy0Sv8xbTyjoLkVsltCG4CSxkBiG75phcJBzk+ry0nACid9ePK/9zVI+MN
+         wx+bC9tYdQp+L1rypPDP6b6xCiESCY22qeWrOHnICKmDgEMEjz//Eml4OAxkHcu3dCAn
+         XHsejqhLa83IA6moSAHRhFYJfbylhvKdY6husk/x1+RCBHh3pznsHnJF++aP9b8Pqn0v
+         cZ0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720377142; x=1720981942;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cSQ2k1ZfQBZLe252vJL66rHXJ8887qSMUh6gPtklvIU=;
+        b=L3gBPhnY1dgEBY6hsWs0F+Qo/6LzddsuD8B1HBlfmQUHXhKuKU50+3CCChxkCp2toJ
+         ndfjxGNjGJLilKEY7kdE4cOM18rSvjtLmHb1kWd5aM6wBDqs22HCOLBb+BM9Q01mr1S6
+         5M1uYt2L4FIcsLPR4ffvyTlwR4wMz1kiCmb7SzMuYyDdlv4Xp+RVtzN6DXhsvm9m39s1
+         kVMYjMxMoWrMyi9yPCrjYDrr+D4nI9VtAQBk5NSYaaQSiwgwfmDvZ0FGDivoyGeOZBX8
+         sBQyt+HU8hCVEaiLvvmFLhVKMzpOLlOC63diFWRzo2yXgTdPKb20AlqwssVcncmpjzBU
+         h36A==
+X-Forwarded-Encrypted: i=1; AJvYcCX8Otr80xDZQB3QDjl71oP+xqBYnILUxdE1QVdMCKFCOqIbNjaBVGQ0uvfHfsj7f/MXNNrb5B7bSdMurAzQa2MRxSX6EmJniG6X0IfZ4k/elW/b3Z1rzAMJo2o7n3TY/9RCl/lW6EhHuQ==
+X-Gm-Message-State: AOJu0YxNlope66s6H0QqxG7p/QS4GmTPKTylvXkAGqp7BNDClN2vq2io
+	JZWP+AxESGwaJLhZaHVQWGaZn7tH9reUJ98VvTSmr6+jYz7YeQ7V
+X-Google-Smtp-Source: AGHT+IH7Z9EpyQCMLSf7QY8DBtxZ8PceWBWNikn2dTf/MQLKllPJhYPKlXHM7Wqz/Hu9/4PzNXZhJg==
+X-Received: by 2002:a17:906:2803:b0:a77:c548:6452 with SMTP id a640c23a62f3a-a77c54864c9mr493914666b.41.1720377141976;
+        Sun, 07 Jul 2024 11:32:21 -0700 (PDT)
+Received: from smtpclient.apple (84-10-100-139.static.chello.pl. [84.10.100.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab065667sm862552966b.114.2024.07.07.11.32.20
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 07 Jul 2024 11:32:21 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: slpMu76cFTN9mN4pal38Lv8PkectHPC_
-X-Proofpoint-GUID: STvOs_61F-ZoncldBmtxcoHkMC104cfD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-07_06,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- malwarescore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0 mlxscore=0
- spamscore=0 mlxlogscore=999 bulkscore=0 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407070151
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.15\))
+Subject: Re: [PATCH v5 0/8] RK3588 and Rock 5B dts additions: thermal, OPP and
+ fan
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <1E6ED98C-BD49-485D-9FE9-9E7CAEDB4564@gmail.com>
+Date: Sun, 7 Jul 2024 20:32:18 +0200
+Cc: Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Dragan Simic <dsimic@manjaro.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Chen-Yu Tsai <wens@kernel.org>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <503ECE3A-CA1C-43A7-AEB2-C0000A930B3A@gmail.com>
+References: <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
+ <0418B5BB-6759-4BFA-BE6E-F5C7FA0CBF4F@gmail.com> <2236519.ZfL8zNpBrT@diego>
+ <1E6ED98C-BD49-485D-9FE9-9E7CAEDB4564@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+ Alexey Charkov <alchark@gmail.com>
+X-Mailer: Apple Mail (2.3654.120.0.1.15)
 
-The --fuzzy-name option can be used if fuzzy name matching is required.
-For example, "taskname" can be matched to any string that contains
-"taskname" as its substring.
+Heiko, Alexey,
 
-Sample output for --task-name wdav --fuzzy-name
-=============
- .  *A0  .   .   .   .   -   .   131040.641346 secs A0 => wdavdaemon:62509
- .   A0 *B0  .   .   .   -   .   131040.641378 secs B0 => wdavdaemon:62274
- .  *-   B0  .   .   .   -   .   131040.641379 secs
-*C0  .   B0  .   .   .   .   .   131040.641572 secs C0 => wdavdaemon:62283
- C0  .   B0  .  *D0  .   .   .   131040.641572 secs D0 => wdavdaemon:62277
- C0  .   B0  .   D0  .  *E0  .   131040.641578 secs E0 => wdavdaemon:62270
-*-   .   B0  .   D0  .   E0  .   131040.641581 secs
+After some more tests: is varying fan-speeds working stable for you?
 
-Suggested-by: Chen Yu <yu.c.chen@intel.com>
-Reviewed-and-tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
----
- tools/perf/Documentation/perf-sched.txt |  3 +++
- tools/perf/builtin-sched.c              | 20 +++++++++++++-------
- 2 files changed, 16 insertions(+), 7 deletions(-)
+In my case - 1 per few reboots results with board enters state with: =
+constant full speed and no any reaction for cpu temp.
+In such state - I need multiple hw poweroffs (remove usb-c plug) to get =
+fan-speeds working again.
+When board is such state - all seems to work ok (frequency scaling, etc) =
+except fan is constantly full speed=E2=80=A6
 
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index 4f8216ee4a74..84d49f9241b1 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -137,6 +137,9 @@ OPTIONS for 'perf sched map'
- 	task name(s).
- 	('-' indicates other tasks while '.' is idle).
- 
-+--fuzzy-name::
-+	Given task name(s) can be partially matched (fuzzy matching).
-+
- OPTIONS for 'perf sched timehist'
- ---------------------------------
- -k::
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 7de29c2f3d23..8750b5f2d49b 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -158,6 +158,7 @@ struct perf_sched_map {
- 	const char		*color_cpus_str;
- 	const char		*task_name;
- 	struct strlist		*task_names;
-+	bool			fuzzy;
- 	struct perf_cpu_map	*cpus;
- 	const char		*cpus_str;
- };
-@@ -1541,12 +1542,16 @@ map__findnew_thread(struct perf_sched *sched, struct machine *machine, pid_t pid
- 	return thread;
- }
- 
--static bool sched_match_task(const char *comm_str, struct strlist *task_names)
-+static bool sched_match_task(struct perf_sched *sched, const char *comm_str)
- {
-+	bool fuzzy_match = sched->map.fuzzy;
-+	struct strlist *task_names = sched->map.task_names;
- 	struct str_node *node;
- 
- 	strlist__for_each_entry(node, task_names) {
--		if (strcmp(comm_str, node->s) == 0)
-+		bool match_found = fuzzy_match ? !!strstr(comm_str, node->s) :
-+							!strcmp(comm_str, node->s);
-+		if (match_found)
- 			return true;
- 	}
- 
-@@ -1622,7 +1627,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 	const char *color = PERF_COLOR_NORMAL;
- 	char stimestamp[32];
- 	const char *str;
--	struct strlist *task_names = sched->map.task_names;
- 
- 	BUG_ON(this_cpu.cpu >= MAX_CPUS || this_cpu.cpu < 0);
- 
-@@ -1674,7 +1678,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 			 */
- 			tr->shortname[0] = '.';
- 			tr->shortname[1] = ' ';
--		} else if (!sched->map.task_name || sched_match_task(str, task_names)) {
-+		} else if (!sched->map.task_name || sched_match_task(sched, str)) {
- 			tr->shortname[0] = sched->next_shortname1;
- 			tr->shortname[1] = sched->next_shortname2;
- 
-@@ -1703,15 +1707,15 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 	 * Check which of sched_in and sched_out matches the passed --task-name
- 	 * arguments and call the corresponding print_sched_map.
- 	 */
--	if (sched->map.task_name && !sched_match_task(str, task_names)) {
--		if (!sched_match_task(thread__comm_str(sched_out), task_names))
-+	if (sched->map.task_name && !sched_match_task(sched, str)) {
-+		if (!sched_match_task(sched, thread__comm_str(sched_out)))
- 			goto out;
- 		else
- 			goto sched_out;
- 
- 	} else {
- 		str = thread__comm_str(sched_out);
--		if (!(sched->map.task_name && !sched_match_task(str, task_names)))
-+		if (!(sched->map.task_name && !sched_match_task(sched, str)))
- 			proceed = 1;
- 	}
- 
-@@ -3655,6 +3659,8 @@ int cmd_sched(int argc, const char **argv)
-                     "display given CPUs in map"),
- 	OPT_STRING(0, "task-name", &sched.map.task_name, "task",
- 		"map output only for the given task name(s)."),
-+	OPT_BOOLEAN(0, "fuzzy-name", &sched.map.fuzzy,
-+		"given command name can be partially matched (fuzzy matching)"),
- 	OPT_PARENT(sched_options)
- 	};
- 	const struct option timehist_options[] = {
--- 
-2.43.2
+Is it varying fan-speed working stable for you?
+Maybe my issue is some kernel modules loading race?
+
+
+> Wiadomo=C5=9B=C4=87 napisana przez Piotr Oniszczuk =
+<piotr.oniszczuk@gmail.com> w dniu 07.07.2024, o godz. 14:37:
+>=20
+> Heiko,
+> pls see inline
+>=20
+>> Wiadomo=C5=9B=C4=87 napisana przez Heiko St=C3=BCbner =
+<heiko@sntech.de> w dniu 07.07.2024, o godz. 13:11:
+>>=20
+>> Hey,
+>>=20
+>> Am Sonntag, 7. Juli 2024, 11:39:57 CEST schrieb Piotr Oniszczuk:
+>>> Alexey,
+>>> I=E2=80=99m playing with this series on rock5c on 6.10-rc6.
+>>>=20
+>>> Is code in this series enough to get working pwm-fan on rock5c?
+>>> (of course after adding required changes from rokc5b dts to rock5c =
+dts)
+>>>=20
+>>> In my case i=E2=80=99m getting constantly full speed of fan on my =
+rock5c.
+>>>=20
+>>> hw seems ok as echo 96 > =
+/sys/devices/platform/pwm-fan/hwmon/hwmon0/pwm1 changes fans speed as =
+expected.
+>>>=20
+>>> May you pls hint me what i=E2=80=99m missing here?
+>>=20
+>> at least on my rock 5 itx patches, I get varying fan-speeds.
+>> The fan starts high and then lowers its speed once the cpu-regulators
+>> and every is set up.
+>=20
+> Ah - ok.
+> I verified and it looks there was typo from my side in dts fan stanza =
+:-/
+> Now it works as expected :-)
+>=20
+> Many thx for your time!
+>=20
+>>=20
+>> While I was working on the dts and the cpu-supplies were not yet =
+working,
+>> the fan speed stayed high, so maybe check that frequency scaling =
+actually
+>> works?
+>> And of course you need the thermal map to handle the fan.=20
+>=20
+>>=20
+>> Also of course I don't see a rock5c patch anywhere, so where did that
+>> board dts come from?=20
+>=20
+> rock5c is my development: =
+https://gist.github.com/warpme/6b2fa9004d8b28c0e43fa16b0b6595f3
+>=20
+>>=20
+>>=20
+>> Heiko
+>>=20
+>>>> Wiadomo=C5=9B=C4=87 napisana przez Alexey Charkov =
+<alchark@gmail.com> w dniu 17.06.2024, o godz. 20:28:
+>>>>=20
+>>>> This enables thermal monitoring and CPU DVFS on RK3588(s), as well =
+as
+>>>> active cooling on Radxa Rock 5B via the provided PWM fan.
+>>>>=20
+>>>> Some RK3588 boards use separate regulators to supply CPUs and their
+>>>> respective memory interfaces, so this is handled by coupling those
+>>>> regulators in affected boards' device trees to ensure that their
+>>>> voltage is adjusted in step.
+>>>>=20
+>>>> This also enables the built-in thermal sensor (TSADC) for all =
+boards
+>>>> that don't currently have it enabled, using the default CRU based
+>>>> emergency thermal reset. This default configuration only uses =
+on-SoC
+>>>> devices and doesn't rely on any external wiring, thus it should =
+work
+>>>> for all devices (tested only on Rock 5B though).
+>>>>=20
+>>>> The boards that have TSADC_SHUT signal wired to the PMIC reset line
+>>>> can choose to override the default reset logic in favour of GPIO
+>>>> driven (PMIC assisted) reset, but in my testing it didn't work on
+>>>> Radxa Rock 5B - maybe I'm reading the schematic wrong and it =
+doesn't
+>>>> support PMIC assisted reset after all.
+>>>>=20
+>>>> Fan control on Rock 5B has been split into two intervals: let it =
+spin
+>>>> at the minimum cooling state between 55C and 65C, and then =
+accelerate
+>>>> if the system crosses the 65C mark - thanks to Dragan for =
+suggesting.
+>>>> This lets some cooling setups with beefier heatsinks and/or larger
+>>>> fan fins to stay in the quietest non-zero fan state while still
+>>>> gaining potential benefits from the airflow it generates, and
+>>>> possibly avoiding noisy speeds altogether for some workloads.
+>>>>=20
+>>>> OPPs help actually scale CPU frequencies up and down for both =
+cooling
+>>>> and performance - tested on Rock 5B under varied loads. I've =
+dropped
+>>>> those OPPs that cause frequency reductions without accompanying =
+decrease
+>>>> in CPU voltage, as they don't seem to be adding much benefit in day =
+to
+>>>> day use, while the kernel log gets a number of "OPP is inefficient" =
+lines.
+>>>>=20
+>>>> Note that this submission doesn't touch the SRAM read margin =
+updates or
+>>>> the OPP calibration based on silicon quality which the downstream =
+driver
+>>>> does and which were mentioned in [1]. It works as it is (also =
+confirmed by
+>>>> Sebastian in his follow-up message [2]), and it is stable in my =
+testing on
+>>>> Rock 5B, so it sounds better to merge a simple version first and =
+then
+>>>> extend when/if required.
+>>>>=20
+>>>> This patch series has been rebased on top of Heiko's recent =
+for-next branch
+>>>> with Dragan's patch [3] which rearranges the .dtsi files for =
+per-variant OPPs.
+>>>> As a result, it now includes separate CPU OPP tables for RK3588(s) =
+and RK3588j.
+>>>>=20
+>>>> GPU OPPs have also been split out to accommodate for the difference =
+in RK3588j.
+>>>>=20
+>>>> [1] =
+https://lore.kernel.org/linux-rockchip/CABjd4YzTL=3D5S7cS8ACNAYVa730WA3iGd=
+5L_wP1Vn9=3Df83RCORA@mail.gmail.com/
+>>>> [2] =
+https://lore.kernel.org/linux-rockchip/pkyne4g2cln27dcdu3jm7bqdqpmd2kwkbgu=
+iolmozntjuiajrb@gvq4nupzna4o/
+>>>> [3] =
+https://lore.kernel.org/linux-rockchip/9ffedc0e2ca7f167d9d795b2a8f43cb9f56=
+a653b.1717923308.git.dsimic@manjaro.org/
+>>>>=20
+>>>> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+>>>> ---
+>>>> Changes in v5:
+>>>> - Rebased against linux-rockchip/for-next with Dragan's .dtsi =
+reshuffling on top
+>>>> - Added separate OPP values for RK3588j (these also apply to =
+RK3588m)
+>>>> - Separated GPU OPP values for RK3588j (RK3588m ones differ =
+slightly, not included here)
+>>>> - Dragan's patch: =
+https://lore.kernel.org/linux-rockchip/9ffedc0e2ca7f167d9d795b2a8f43cb9f56=
+a653b.1717923308.git.dsimic@manjaro.org/
+>>>> - Link to v4: =
+https://lore.kernel.org/r/20240506-rk-dts-additions-v4-0-271023ddfd40@gmai=
+l.com
+>>>>=20
+>>>> Changes in v4:
+>>>> - Rebased against linux-rockchip/for-next
+>>>> - Reordered DT nodes alphabetically as pointed out by Diederik
+>>>> - Moved the TSADC enablement to per-board .dts/.dtsi files
+>>>> - Dropped extra "inefficient" OPPs (same voltage - lower =
+frequencies)
+>>>> - Dropped second passive cooling trips altogether to keep things =
+simple
+>>>> - Added a cooling map for passive GPU cooling (in a separate patch)
+>>>> - Link to v3: =
+https://lore.kernel.org/r/20240229-rk-dts-additions-v3-0-6afe8473a631@gmai=
+l.com
+>>>>=20
+>>>> Changes in v3:
+>>>> - Added regulator coupling for EVB1 and QuartzPro64
+>>>> - Enabled the TSADC for all boards in .dtsi, not just Rock 5B =
+(thanks ChenYu)
+>>>> - Added comments regarding two passive cooling trips in each zone =
+(thanks Dragan)
+>>>> - Fixed active cooling map numbering for Radxa Rock 5B (thanks =
+Dragan)
+>>>> - Dropped Daniel's Acked-by tag from the Rock 5B fan patch, as =
+there's been quite some
+>>>> churn there since the version he acknowledged
+>>>> - Link to v2: =
+https://lore.kernel.org/r/20240130-rk-dts-additions-v2-0-c6222c4c78df@gmai=
+l.com
+>>>>=20
+>>>> Changes in v2:
+>>>> - Dropped the rfkill patch which Heiko has already applied
+>>>> - Set higher 'polling-delay-passive' (100 instead of 20)
+>>>> - Name all cooling maps starting from map0 in each respective zone
+>>>> - Drop 'contribution' properties from passive cooling maps
+>>>> - Link to v1: =
+https://lore.kernel.org/r/20240125-rk-dts-additions-v1-0-5879275db36f@gmai=
+l.com
+>>>>=20
+>>>> ---
+>>>> Alexey Charkov (8):
+>>>>    arm64: dts: rockchip: add thermal zones information on RK3588
+>>>>    arm64: dts: rockchip: enable thermal management on all RK3588 =
+boards
+>>>>    arm64: dts: rockchip: add passive GPU cooling on RK3588
+>>>>    arm64: dts: rockchip: enable automatic fan control on Rock 5B
+>>>>    arm64: dts: rockchip: Add CPU/memory regulator coupling for =
+RK3588
+>>>>    arm64: dts: rockchip: Add OPP data for CPU cores on RK3588
+>>>>    arm64: dts: rockchip: Add OPP data for CPU cores on RK3588j
+>>>>    arm64: dts: rockchip: Split GPU OPPs of RK3588 and RK3588j
+>>>>=20
+>>>> .../boot/dts/rockchip/rk3588-armsom-sige7.dts      |   4 +
+>>>> arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      | 197 =
++++++++++++++++++----
+>>>> .../dts/rockchip/rk3588-edgeble-neu6a-common.dtsi  |   4 +
+>>>> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts   |  16 ++
+>>>> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts   |   4 +
+>>>> arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi       | 190 =
+++++++++++++++++++++
+>>>> .../arm64/boot/dts/rockchip/rk3588-quartzpro64.dts |  12 ++
+>>>> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts    |  34 +++-
+>>>> .../arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts |   4 +
+>>>> .../arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi |   4 +
+>>>> arch/arm64/boot/dts/rockchip/rk3588.dtsi           |   1 +
+>>>> arch/arm64/boot/dts/rockchip/rk3588j.dtsi          | 141 =
++++++++++++++++
+>>>> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts   |   4 +
+>>>> arch/arm64/boot/dts/rockchip/rk3588s.dtsi          |   1 +
+>>>> 14 files changed, 577 insertions(+), 39 deletions(-)
+>>>> ---
+>>>> base-commit: 5cc74606bf40a2bbaccd3e3bb2781f637baebde5
+>>>> change-id: 20240124-rk-dts-additions-a6d7b52787b9
+>>>>=20
+>>>> Best regards,
 
 
