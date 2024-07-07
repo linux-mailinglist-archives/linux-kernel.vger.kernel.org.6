@@ -1,102 +1,110 @@
-Return-Path: <linux-kernel+bounces-243708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02EA929974
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7194929976
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E131F2118E
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:14:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11BD61C20991
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925C46BFA5;
-	Sun,  7 Jul 2024 19:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEA1487AE;
+	Sun,  7 Jul 2024 19:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="NfLe4usG";
-	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="Ijbdeqxn"
-Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="b5jTJ3lT"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B71EDC;
-	Sun,  7 Jul 2024 19:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9355C1865B
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 19:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720379666; cv=none; b=ekBMcTMMYllUfgNPhD2Ih/5LwyzjaqPXNI/qprWcw5XnfnFJWOuVekTKZ4KsLPbVvxS7bGpatmr1CSL+aQR5l+RUXcrCigO9h9h5TTkEG9OtFSpyBHehIgchDekAX4PtpePkMtOt6LWUC7QiDwSsKKqqdY5fKddueBODeOxTuYE=
+	t=1720379771; cv=none; b=bObZbgAXhC6StmcFIvsA1/+5ltNCIiOyZSfZNyMowEvprV8/VxN1PyIp8UR4yUZPTxS8udHoBTJLJL62w0/zT396GNpqCHVZ2rkenhJNVLz6aW0Sx6cxORmT2EOTVecisKw30tHJjrVfJSroiN7m5bGAdBd2AipLMImuysNBFhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720379666; c=relaxed/simple;
-	bh=hJi9qT7NMiPGNELhd/gsQKoJiUPQe9Di6PK9WXAAzkU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=FqvicCwPjvLkk+752eWxw/DIrl31q0H3eOtrpImzoMyaCkJqYz7gOBlF3dlCiO5HsUts+uR7zQKJF8l9OIo0o3UMZ1AuuIbgAzc3dmDgZrKtrXI3/5ZnWICVVrY+LB+dxwKx5M8jCIOUm24pTh854ptRyEnTMKIhalG0ctre1Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=NfLe4usG; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=Ijbdeqxn; arc=none smtp.client-ip=64.147.108.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 0574C1A299;
-	Sun,  7 Jul 2024 15:14:24 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
-	:to:cc:subject:in-reply-to:message-id:references:mime-version
-	:content-type; s=sasl; bh=hJi9qT7NMiPGNELhd/gsQKoJiUPQe9Di6PK9WX
-	AAzkU=; b=NfLe4usGZ65tMdGiRnaEInS7GA3HSU/vESYEuFbuC4Nj+XAc6jN8rk
-	4Lfg/p/F+af65Ea6Vva3ScSwgZKhcunJPUq/0N9yOlvmaVGv5xEbctvuykh2h38o
-	JexLk5KRmJZB++KwsekrJrB8sJPayMd811PqkQia4gLUE55/vfAnk=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id DE2C61A298;
-	Sun,  7 Jul 2024 15:14:23 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=hJi9qT7NMiPGNELhd/gsQKoJiUPQe9Di6PK9WXAAzkU=; b=IjbdeqxnIm+QsnUgpUv0I2waeZDxnrFtS2meCVqqvBnchIkgZ3KjDT8hl02rqTGkDMC40wDh8msX0+kBzMW6zn3cLR3hLxY2G6lNj3svKCXlhdWyuCK1J21a+mITxWFSmWfW0WzcJQ8bWmEY1u6STjC5F6EEJPbH4CaqpsmKmo8=
-Received: from yoda.fluxnic.net (unknown [184.162.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 4775B1A297;
-	Sun,  7 Jul 2024 15:14:23 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 16A3FD3B514;
-	Sun,  7 Jul 2024 15:14:22 -0400 (EDT)
-Date: Sun, 7 Jul 2024 15:14:21 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Russell King <linux@armlinux.org.uk>, 
-    Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] __arch_xprod64(): make __always_inline when
- optimizing for performance
-In-Reply-To: <55a8cff0-1d73-4743-9c56-2792616426c7@app.fastmail.com>
-Message-ID: <8251045r-26sn-4674-p820-4qp6s5o322qq@syhkavp.arg>
-References: <20240707171919.1951895-1-nico@fluxnic.net> <20240707171919.1951895-5-nico@fluxnic.net> <55a8cff0-1d73-4743-9c56-2792616426c7@app.fastmail.com>
+	s=arc-20240116; t=1720379771; c=relaxed/simple;
+	bh=x28LVFSF/IK1fOwi/xHvw+iFfI54lGCwG4q61vpP0LQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=crknHMfV6q8C2NgThCk6JuCj+RFcsYCDckhis9tsX1rDSfTXQv+ssNby2XZhroQ4VhNcDly6tDXVLLlFF7060gQtkG4hHM9gpzMQ09cMvTfOTyZQ1iO3/y0Jp+DGe8VmUXfFx92SCl6eTqWosynoR2df7L1X7K937LMB6RXJmvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=b5jTJ3lT; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=K+ysL2Mn2FVQqH0WhbxxJThx/wtL6dihXjVtsTevpNU=; b=b5jTJ3lTuUoQoJbSKmBBHA+I70
+	9vQ556AHW2iR4IggvxM5eX/TPQwJPsXPEfTUsRMkfNc26xdYuK2FBR9+MXPeAztXznPhCCFSaNYyL
+	93wMmi4uuIHHcKoSKfXJ4NOJnFmk1iS8fIX2blxNjA/7chyl0G+vFUceOn4qy1aMCr5ptIhvhfRqV
+	HW5or+2hh0YU4nBAWa9UYE2XpZpbueMujPbLC0YgODFj/eopoUBhvk4LRtU6t/sofDp9pOj0jXyd1
+	tNxHTQrUinqUqIXRN7TRMdcW0OKTIqq9qGSiyQwJ0Bqh3WvGQPCvJ9NkT7oQyFTwQ+Z769OH2cuv9
+	PtWsReTQ==;
+Received: from [187.36.213.55] (helo=[192.168.1.212])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sQXMM-00CD8O-9d; Sun, 07 Jul 2024 21:15:42 +0200
+Message-ID: <ddf0ea21-64ac-4f1b-9df6-83f4b4d552b0@igalia.com>
+Date: Sun, 7 Jul 2024 16:15:34 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID:
- 1E9BF95C-3C95-11EF-89E4-965B910A682E-78420484!pb-smtp2.pobox.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/vkms: Remove event from vkms_output
+To: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, open list <linux-kernel@vger.kernel.org>
+References: <20240703160458.1303872-1-lyude@redhat.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
+ H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
+ hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
+ GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
+ rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
+ s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
+ GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
+ pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
+In-Reply-To: <20240703160458.1303872-1-lyude@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 7 Jul 2024, Arnd Bergmann wrote:
-
-> On Sun, Jul 7, 2024, at 19:17, Nicolas Pitre wrote:
-> > From: Nicolas Pitre <npitre@baylibre.com>
-> >
-> > Recent gcc versions started not systematically inline __arch_xprod64()
-> > and that has performance implications. Give the compiler the freedom to
-> > decide only when optimizing for size.
-> >
-> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+On 7/3/24 13:04, Lyude Paul wrote:
+> While working on rvkms, I noticed that there's no code that actually uses
+> the drm_pending_vblank_event that's embedded in vkms_output. So, just drop
+> the member from the struct.
 > 
-> Seems reasonable. Just to make sure: do you know if the non-inline
-> version of xprod_64 ends up producing a more effecient division
-> result than the __do_div64() code path on arch/arm?
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-__arch_xprod_64() is part of the __do_div64() code path. So I'm not sure 
-of your question.
+Applied to drm-misc/drm-misc-next!
 
-Obviously, having __arch_xprod_64() inlined is faster but it increases 
-binary size.
+Best Regards,
+- Maíra
 
-
-Nicolas
+> ---
+>   drivers/gpu/drm/vkms/vkms_drv.h | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 8f5710debb1eb..5e46ea5b96dcc 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -103,7 +103,6 @@ struct vkms_output {
+>   	struct drm_writeback_connector wb_connector;
+>   	struct hrtimer vblank_hrtimer;
+>   	ktime_t period_ns;
+> -	struct drm_pending_vblank_event *event;
+>   	/* ordered wq for composer_work */
+>   	struct workqueue_struct *composer_workq;
+>   	/* protects concurrent access to composer */
 
