@@ -1,142 +1,232 @@
-Return-Path: <linux-kernel+bounces-243567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC1D9297CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6FD9297CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B02A1C209CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7157F1C20932
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999B91CF8B;
-	Sun,  7 Jul 2024 12:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0811CD2D;
+	Sun,  7 Jul 2024 12:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YaOXG0ST"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F1vGpH8H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C141CD18;
-	Sun,  7 Jul 2024 12:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0973F9E8
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 12:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720354793; cv=none; b=EencTWZ1DorVQAq0qQpeg5TeLV1NxQ7VwNnMjgotYpic9q5t/sKq9eN2EoGoT0gWJaV3kEKdU5zpB44lhUVs26Ry3MLmGQZzTetGWnNqsILGrP062wGtD3HkMRXerSojZjJeaBbfscuoNEEY8hA7qOgkQMt/v8VL2/6haX5d3ss=
+	t=1720355575; cv=none; b=B1cHLlPcmbomtUCCpK8YDrm7IRZmbu14ZObsTuM2YlnoOSQ+FRaXJIf2wd8O1XE0IbuZgYDVvnq+mkwhKIaVYCvrvsrrBRZSGeVfe7XxAqMR9aaeKdQJe0LtHZSFtJHwpi85mEF4dNrXSWDaZp9u3YaoXXSXjIzLPZU9mQXbaCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720354793; c=relaxed/simple;
-	bh=TTinsDE4smSpvNcHlbFfLij37NEbey2ls5gXMN5Ij6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nsxzcfQ3vJrxO+M8U8D06VnnyqCM2v+EAOLTtZWPy+joArd+xYq1dHuXItSeYinmGh1sw4KxleobuLTJjvfy+AwqoXWHMDVfxYAycS+qYJ+FYZo7/gdSqlYeUnRnLkRAtrcz0KTQiudBG6pgtYPpiQxVDyVHpUClgUSlUUZF8ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YaOXG0ST; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-36798779d75so2590679f8f.3;
-        Sun, 07 Jul 2024 05:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720354791; x=1720959591; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0z63j0IG6G2cLyHZPR3eZOhNl0P7RDBh+11mDqsiSP0=;
-        b=YaOXG0ST+yAHowhlv8m1fS+Soth5V7nEJ6WqP1feo5KQVYLvICLGIqJa9PLz1JYffM
-         vvZTPOMLZToup4S7fh9cgOuHUsuSxvApiiPPthCXFcy56MDC8NGoiWx6tY39xUvg1/Sy
-         rWk5OWd7/o6sxAgM2RYiPJG1jcwFoTy7qTFUi07fhhRpoi9JB6wiT91lbDc9c5vj7IwD
-         5qIln1vCYwkw1PSAoEbE4Ws2SBPEmVUvPRqiGYZRM6tNlQdD/4cBSU8eWT/k/HUXIZ2l
-         lv/N9NsiaiTKB4oxRNa8VpN248KUFJZiHl0DaKqXTBAoHlMvPBjQgMcvKXRfpwb8qpfg
-         1OuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720354791; x=1720959591;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0z63j0IG6G2cLyHZPR3eZOhNl0P7RDBh+11mDqsiSP0=;
-        b=vYvYyOJp/XD+D4ZQ340n2k+mnkQ5vS8IOZGmNAIQAKJBmk4z0k8KDsUVDIYIwBeKLh
-         nc1IPeWpbmX4bD60yADK4DNcMgvNssWbVCgfDEy4or+RenIzUZb9ANfDp99r1QrTpvCW
-         e/wBNelGKkAdNiEL8o7L5bdXbGrorEt9z+8T4RMbg1K8VzXZlCYvpky4mCFNLkkeZ6nA
-         PNQDHniTZLf9CgQMdWMFxUrwkXP8kaKGGk9E9HjAgpNpH/lVIS+L2q511lRB/A6akttx
-         NnZqKHL5H0kWqWyxdYF5U+4O/Th6OW1+QBryx9ltJV5LcTpXSKi9WZWi+pAsTSmN2OIy
-         PJrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVIQTz//eOOVeyhTFNIgKo+y/T3ScwxifmsgMImdHDAdnX5ZzR2EZA5+Dtehv/J2Oc8gFm0m3rNuqsmbOaDqBklllvmPd7MbvI6Or+SrnHHYOwVuPZBgS5x0gnXgpq+AB4qpaOjF52
-X-Gm-Message-State: AOJu0YwrO1BeGIH0yrOZpcHqHyDfCfNE3U3B44yLaor0wSCiwHFoVYE3
-	1i7WFEKjp+UhCvmpuLU9UXTDu7bk5xCWDcp5PVrVFjbdZp2doCg2
-X-Google-Smtp-Source: AGHT+IHUZLv8St8zNkkEQ7sFBF4FWyP/9+6rSpupCI9t8UeY97py1DIm2Uqs23QOakOT6qe/RC1hMA==
-X-Received: by 2002:a5d:4745:0:b0:367:8de4:84ef with SMTP id ffacd0b85a97d-3679dd31158mr7631345f8f.30.1720354790536;
-        Sun, 07 Jul 2024 05:19:50 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:954a:86d6:a384:2fbf? (2a02-8389-41cf-e200-954a-86d6-a384-2fbf.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:954a:86d6:a384:2fbf])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd6b4sm25128202f8f.17.2024.07.07.05.19.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jul 2024 05:19:50 -0700 (PDT)
-Message-ID: <0608fa9e-9ada-43a6-888d-fab6ed06bfb8@gmail.com>
-Date: Sun, 7 Jul 2024 14:19:48 +0200
+	s=arc-20240116; t=1720355575; c=relaxed/simple;
+	bh=k8tJqGhaFQiHUJH7F9ty+uvvwToEV3jR10FIHMbjE2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=koacPc6YVZQwDZ2j5Fjf/bFNwYaTxbsp8w1E1k+Tmf+SigJjHhKwZGbT71YCzFVfM5f7ERinRpso/mzYa+iU8pRLDRNEVW/9/kuNr1kj1bORl32yWPuFG+pB7u9OZYHzpS9dSOfKKh3DeNMM3cpvcVLjzStBiB+dGdwwtFe2+Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F1vGpH8H; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720355574; x=1751891574;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=k8tJqGhaFQiHUJH7F9ty+uvvwToEV3jR10FIHMbjE2Y=;
+  b=F1vGpH8HUIYro6Y5MU2QqUEqt7sKJX2elH5tg+cMIJkuKVGD/vwkywLh
+   Bm+WKL7gHziYnn3kfEs8VYISYEmFJdOtEn4lvWnn7cecihk3jSoQLn5MK
+   isHH8m4ofV+qrtjM9hf2Zzcmq9Xk7o/aZXQ7yS5XeAAVpRzhqmUCZFlBy
+   2wsGTxsZ3WOGaXVL9Q2NqyygLaEUBbupcQEuTNwv9OIu4NxB7Xe7bOf+6
+   Jxlcar+9FnjUmtiZ04q6BBXV1ubZyXTsAJSsrYnYnKP1iYiVzczStKPvf
+   S6Tv4cZ5Of3MR34sJLidU6dE/7y+JBofowHz1xMJcZ7hCUit/2oHHXJPE
+   Q==;
+X-CSE-ConnectionGUID: snPdXqylT6qe7l7BoFcFuA==
+X-CSE-MsgGUID: u2dffOOxSsilOHkXuXTEUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="21336504"
+X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
+   d="scan'208";a="21336504"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 05:32:54 -0700
+X-CSE-ConnectionGUID: NIAJf3IbSwSli/Ju7tRHcg==
+X-CSE-MsgGUID: velw9UBtRIWcqbxm+UE67Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
+   d="scan'208";a="47356427"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 07 Jul 2024 05:32:52 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sQR4T-000UwM-2F;
+	Sun, 07 Jul 2024 12:32:49 +0000
+Date: Sun, 7 Jul 2024 20:32:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Michal Simek <monstr@monstr.eu>
+Subject: arch/microblaze/kernel/entry.S:945: Error: unknown opcode "suspend"
+Message-ID: <202407072048.GS8vn0Re-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] PCI: kirin: use dev_err_probe() in probe error paths
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
- Binghui Wang <wangbinghui@hisilicon.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240706-pcie-kirin-dev_err_probe-v1-0-56df797fb8ee@gmail.com>
- <20240706-pcie-kirin-dev_err_probe-v1-1-56df797fb8ee@gmail.com>
- <20240707065358.GA3809216@rocinante>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240707065358.GA3809216@rocinante>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 07/07/2024 08:53, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> [...]
->> Use dev_err_probe() in all error paths with that construction.
-> 
-> Thank you for this nice refactoring!  Much appreciated.
-> 
-> [...]
->> -	if (ret > MAX_PCI_SLOTS) {
->> -		dev_err(dev, "Too many GPIO clock requests!\n");
->> -		return -EINVAL;
->> -	}
->> +	if (ret > MAX_PCI_SLOTS)
->> +		return dev_err_probe(dev, -EINVAL,
->> +				     "Too many GPIO clock requests!\n");
-> 
-> Something that would be nice to get consistent: adjust all the errors
-> capitalisation to make everything consistent, as appropriate, so that it's
-> either all lower-case or title case.  A mix of both often looks a bit
-> sloppy.
-> 
-> Do you think this would be something you would be willing to clean up in
-> this series too?  Especially since we are touching this code now.
-> 
->> -	if (!dev->of_node) {
->> -		dev_err(dev, "NULL node\n");
->> -		return -EINVAL;
->> -	}
->> +	if (!dev->of_node)
->> +		return dev_err_probe(dev, -EINVAL, "NULL node\n");
-> 
-> Perhaps -ENODEV would be more appropriate here?  Also, the error message is
-> not the best, as such, I wonder if we could make it better while we are at
-> it, so to speak.
-> 
-> 	Krzysztof
+Hi Appana,
 
-Sure, I will add that to v2. I have seen that typical error messages in
-other drivers for this error are "OF node not found", "Device node not
-found" and "This driver needs device tree". Given that "OF data missing"
-is used in this driver, I will go for the first one of the list, unless
-something different is preferred.
+FYI, the error/warning still remains.
 
-Best regards,
-Javier Carrasco
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c6653f49e4fd3b0d52c12a1fc814d6c5b234ea15
+commit: 88707ebe77e23e856981e597f322cabbf6415662 microblaze: Add custom break vector handler for mb manager
+date:   1 year, 9 months ago
+config: microblaze-allmodconfig (https://download.01.org/0day-ci/archive/20240707/202407072048.GS8vn0Re-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240707/202407072048.GS8vn0Re-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407072048.GS8vn0Re-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   arch/microblaze/kernel/entry.S: Assembler messages:
+>> arch/microblaze/kernel/entry.S:945: Error: unknown opcode "suspend"
+
+
+vim +/suspend +945 arch/microblaze/kernel/entry.S
+
+   825	
+   826		/* restore all the tlb's */
+   827		addik	r3, r0, TOPHYS(tlb_skip)
+   828		addik	r6, r0, PT_TLBL0
+   829		addik	r7, r0, PT_TLBH0
+   830	restore_tlb:
+   831		add	r6, r6, r1
+   832		add	r7, r7, r1
+   833		lwi	r2, r6, 0
+   834		mts 	rtlblo, r2
+   835		lwi	r2, r7, 0
+   836		mts	rtlbhi, r2
+   837		addik	r6, r6, 4
+   838		addik	r7, r7, 4
+   839		bgtid	r3, restore_tlb
+   840		addik	r3, r3, -1
+   841	
+   842		lwi  	r5, r0, TOPHYS(xmb_manager_dev)
+   843		lwi	r8, r0, TOPHYS(xmb_manager_reset_callback)
+   844		set_vms
+   845		/* return from reset need -8 to adjust for rtsd r15, 8 */
+   846		addik   r15, r0, ret_from_reset - 8
+   847		rtbd	r8, 0
+   848		nop
+   849	
+   850	ret_from_reset:
+   851		set_bip /* Ints masked for state restore */
+   852		VM_OFF
+   853		/* MS: Restore all regs */
+   854		RESTORE_REGS
+   855		lwi	r14, r1, PT_R14
+   856		lwi	r16, r1, PT_PC
+   857		addik	r1, r1, PT_SIZE + 36
+   858		rtbd	r16, 0
+   859		nop
+   860	
+   861	/*
+   862	 * Break handler for MB Manager. Enter to _xmb_manager_break by
+   863	 * injecting fault in one of the TMR Microblaze core.
+   864	 * FIXME: This break handler supports getting
+   865	 * called from kernel space only.
+   866	 */
+   867	C_ENTRY(_xmb_manager_break):
+   868		/*
+   869		 * Reserve memory in the stack for context store/restore
+   870		 * (which includes memory for storing tlbs (max two tlbs))
+   871		 */
+   872		addik	r1, r1, -PT_SIZE - 36
+   873		swi	r1, r0, xmb_manager_stackpointer
+   874		SAVE_REGS
+   875		swi	r14, r1, PT_R14	/* rewrite saved R14 value */
+   876		swi	r16, r1, PT_PC; /* PC and r16 are the same */
+   877	
+   878		lwi	r6, r0, TOPHYS(xmb_manager_baseaddr)
+   879		lwi	r7, r0, TOPHYS(xmb_manager_crval)
+   880		/*
+   881		 * When the break vector gets asserted because of error injection,
+   882		 * the break signal must be blocked before exiting from the
+   883		 * break handler, below code configures the tmr manager
+   884		 * control register to block break signal.
+   885		 */
+   886		swi	r7, r6, 0
+   887	
+   888		/* Save the special purpose registers  */
+   889		mfs	r2, rpid
+   890		swi	r2, r1, PT_PID
+   891	
+   892		mfs	r2, rtlbx
+   893		swi	r2, r1, PT_TLBI
+   894	
+   895		mfs	r2, rzpr
+   896		swi	r2, r1, PT_ZPR
+   897	
+   898	#if CONFIG_XILINX_MICROBLAZE0_USE_FPU
+   899		mfs	r2, rfsr
+   900		swi	r2, r1, PT_FSR
+   901	#endif
+   902		mfs	r2, rmsr
+   903		swi	r2, r1, PT_MSR
+   904	
+   905		/* Save all the tlb's */
+   906		addik	r3, r0, TOPHYS(tlb_skip)
+   907		addik	r6, r0, PT_TLBL0
+   908		addik	r7, r0, PT_TLBH0
+   909	save_tlb:
+   910		add	r6, r6, r1
+   911		add	r7, r7, r1
+   912		mfs	r2, rtlblo
+   913		swi	r2, r6, 0
+   914		mfs	r2, rtlbhi
+   915		swi	r2, r7, 0
+   916		addik	r6, r6, 4
+   917		addik	r7, r7, 4
+   918		bgtid	r3, save_tlb
+   919		addik	r3, r3, -1
+   920	
+   921		lwi  	r5, r0, TOPHYS(xmb_manager_dev)
+   922		lwi	r8, r0, TOPHYS(xmb_manager_callback)
+   923		/* return from break need -8 to adjust for rtsd r15, 8 */
+   924		addik   r15, r0, ret_from_break - 8
+   925		rtbd	r8, 0
+   926		nop
+   927	
+   928	ret_from_break:
+   929		/* flush the d-cache */
+   930		bralid	r15, mb_flush_dcache
+   931		nop
+   932	
+   933		/*
+   934		 * To make sure microblaze i-cache is in a proper state
+   935		 * invalidate the i-cache.
+   936		 */
+   937		bralid	r15, mb_invalidate_icache
+   938		nop
+   939	
+   940		set_bip; /* Ints masked for state restore */
+   941		VM_OFF;
+   942		mbar	1
+   943		mbar	2
+   944		bri	4
+ > 945		suspend
+   946		nop
+   947	#endif
+   948	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
