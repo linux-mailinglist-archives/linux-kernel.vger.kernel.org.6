@@ -1,158 +1,132 @@
-Return-Path: <linux-kernel+bounces-243460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEAF929665
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 04:36:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE78929667
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 05:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 367F81F21602
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 02:36:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF94CB213A0
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 03:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EED96FA8;
-	Sun,  7 Jul 2024 02:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Mk9hpqfc"
-Received: from BL0PR05CU006.outbound.protection.outlook.com (mail-eastusazolkn19011012.outbound.protection.outlook.com [52.103.1.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094275227;
+	Sun,  7 Jul 2024 03:07:46 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6558263A9
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 02:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.1.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720319763; cv=fail; b=KBvAmWSjf6iyMMXw6DtX4UPCTP+RbxDFu2VrllEqWOK3cm/5UAhGemt/mz8clkyiPDC9guOoVpLRQaLU7OMKasxYJBsbEMIt2jWGMVPhLO0+ZSe7WRlMUdbjlcsa4Gt75GJq2z37tm16+Xmp1ItjJIsoiTFklda6KIJKAAIOatk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720319763; c=relaxed/simple;
-	bh=0E/OzYbxSCROZYy6yvjH9tMn3Ftdk2gWmEBgq1IRn7s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kmM2NEsYU9Z5r3ueEjpHq2GE4Xa/fZ22FJmmIY4V8xcvTFQM/zY9t5ijJFHkMEWLb7NEMi5JIrjPdNYSQT+S3Z/5S5+kUN2wQn86dLZLFx5XpJ2KOjQ7kdrFNfrNxigo0WCwMEPgjyhb3DQzdrn70hYH1xSYDe0W66JsZPpCozc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Mk9hpqfc; arc=fail smtp.client-ip=52.103.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QFY9pvH5INRGJH/ECOsu2d6q6NwbNckq4+Hd0jsOSx1P5t1OPx33NpSnnWE3eOXJgC0zgC+CXk66Zlq1XO6JcUr2uQLS/3QzejRzhYaX6t+OELY7pvwfvPNaCR/6LEu3FslvVHj4B+cMKrIBFnigF0839pfuCWcBLVCLTLmYEDhUyr9iWOeiea8HrJjohAcIGBil9WsmtXWXQy4zFnHkrU8S9+JNvmmG9bYSL4Bw2RXHTCJQiCUsCJ8hzqB/gWIXngIn1rqofI4GHeiPuy61fk3z1P/zVYkhOZNdFzJTI/NlkYw5ns2pRNwcxfL9q6/gRakeyzYw2VkWGQJFuX13IQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/KzU+O3ozSDccvpcJDc7YDBn1Pzu2augdysaGFsYEoI=;
- b=nak967yj4Sq3u8gGKUmq9jI8WrG9FvdSKPOsBfnvX3E35LM+357Pck2oPP5rSmIGjHsxZSPtzRzplMHHUnwIur/aROhGwI4NYRubYx/wLlsWXrEyE3Nh0pXR6aNHIOJcLlTmC8hI2+Se9qyUfp8ywaUGW0myCMYr2hYuo4grm2IYYlVZt1J8ZlAv54QlbBd9zRKer5O5FpW6R0voI18oytDa3VxbzxwOJXXcUuHg9yqU0QW0zJ5UYqUwujj/hlpqybjitQvu5w3scQKF4u8WQ70sAGYiu6rq5uPjLMhTmY/cHkKJn7kDtJtpvmNxhIKMoRvbJTPDBIgcP1gB/s1qGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/KzU+O3ozSDccvpcJDc7YDBn1Pzu2augdysaGFsYEoI=;
- b=Mk9hpqfcxFRybNnTlEp0AgZ/x37jpP1K0TQJnS+l1pR6bdJIQPkQVaTXV0+ARKvC9e0I50486LR+fGJTzU2zGwTMxQOiDrVPcmxBZQhQE+jWepzESrb9qGs2pTgUIR++O93KOaIyJC+YevSBfk8XjwJ4ILRTSBGKiPl7HmfSBpsdWiuxxSP6C1T1o6px4X5OmIr1jHbIyPkk9MSjrKvd2gSaj7qNQc3TgNRI7LW9mPToU8GX0RApi07wojcIJH688Y1gZwxKDU+uS5EnCTLZ3Y1ys3Rcxt90aT3clnLeh/ijeW0pVwMgn5DYZEog9xN1hHDYDOvYRPiqnULwkbN/CQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by IA3PR02MB10675.namprd02.prod.outlook.com (2603:10b6:208:50f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Sun, 7 Jul
- 2024 02:35:58 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%5]) with mapi id 15.20.7741.033; Sun, 7 Jul 2024
- 02:35:57 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Christoph Hellwig <hch@lst.de>
-CC: "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>, "jgross@suse.com"
-	<jgross@suse.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>,
-	"oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
-	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "petr@tesarici.cz"
-	<petr@tesarici.cz>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-Subject: RE: [PATCH v2 1/1] swiotlb: Reduce swiotlb pool lookups
-Thread-Topic: [PATCH v2 1/1] swiotlb: Reduce swiotlb pool lookups
-Thread-Index: AQHay9fgMpKn4lnf90SYtF8Z1AfgLLHpORSAgAErN7CAADBQYA==
-Date: Sun, 7 Jul 2024 02:35:57 +0000
-Message-ID:
- <SN6PR02MB4157144A1C28D63E00B4F9B2D4D92@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240701165746.1358-1-mhklinux@outlook.com>
- <20240706055019.GA13280@lst.de>
- <SN6PR02MB4157141FBF8252BDEAD831C1D4D92@SN6PR02MB4157.namprd02.prod.outlook.com>
-In-Reply-To:
- <SN6PR02MB4157141FBF8252BDEAD831C1D4D92@SN6PR02MB4157.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [0AoF1RSeJm00yQ3smvjGBiTH2ypQgbDW]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|IA3PR02MB10675:EE_
-x-ms-office365-filtering-correlation-id: edeae486-2717-4228-2e57-08dc9e2d8834
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|8060799006|19110799003|102099032|440099028|3412199025;
-x-microsoft-antispam-message-info:
- eoB7t4cQEtZTgMoHOtj+QiFPu4NwcMvlnh0gbEvUe68rGfpVhwwl2kg30YdX00z/n6SjKIPbsKMm9xK/P2G8inn6/g+fHM+FjFqysSqb6u4/JJlAjDvNIDI7cGkB9dCSrcmh32nxpj7kOIUCZdFCAtIhhvcuvzi4zGbamfl6qXAKhJlyAnebcnsVtFw1gcB5FaryOelZ+v/9KJafwyTz6MKL5dY/5AtQjS9/g6420ktzCham5/A5fwDlkf4i0XAIL/x/RV9sKS1kHifcoeyEQvOVQs/qI+3kSRqq7nJOUHYmGwou585+h/9C67z+f6qzTftWbqKueQyN7yJzU40HwoqzPKIXGm7HczIAca/3CaeYJBo+ywI71fJyHT+wYaKoPIEkCXMJJamyjAIPIBXzjOb9+XyQ4AiwtlHU67vOc1SKt8HBeKrEeeTyllDejgeU+gsxx83UkMi/OSkWrkC8ETE+w5NRTMx864vT1vaWN0YbCIIhV7LJ9pc8G9ftnkktpOkRBRj1BxnVojujtyLhbGFvFmtUoTYEYsqlAdVpzfwdQPXTN+eyvMNeWOYOzpgmscSZDAOObUKUMrXpqm4+km/DYyFF5Ng4pVEGuR7GpV/nI5PuwdaRVCRki+B8gHYwdi+bD1edZv71eVrrgfvoug==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?XKxrFKf13SyFUhUA14pSiXK/kU9AuevkEZM6FJEraFIv/ttbr8o1PAn/E/t6?=
- =?us-ascii?Q?8/scAMixQhlgC5Do5zfNDJpmm3p0e0u+mpbsgziIOfhn27yjuRL5FNfg44eA?=
- =?us-ascii?Q?kHrd17j0/fK37uICYx7eL1lU/yCwMRffhi4lzS7fENLDjSSG6Pcbyd+i7n3O?=
- =?us-ascii?Q?02mA+ciAu3QJSrqWJFVruSbUZVeQ0hPL3dW8Q3ILrz0pBIWU/Ta4K2wbmp0n?=
- =?us-ascii?Q?y/ZeWuLv7cxhPqtFdROS3wI2QPhr5R8XATVjv1pbeYs6WQTHRmTWO7uS4Ocj?=
- =?us-ascii?Q?SSzS01WY30oZw6GhmBgkx62lr8c1sUxOayZ1GIoQCOEkZAuFUSD6bzCIZvDN?=
- =?us-ascii?Q?xIGt5lQUXUc8t+KLtuonv+sAtZN4WcdFnP5BYfdVmVn1biXea/UfBN3ANS7R?=
- =?us-ascii?Q?B0XCFWSKvY48CxOC2+57U+exMc4qp6N+33Xd2Voo+RKxocKdgnPC7bd1EDZg?=
- =?us-ascii?Q?/+PR4bbZMvMs/OqCQiUruNIcnYvHMtbs+G0irNwRk5YINvxqWOeevxxUm8As?=
- =?us-ascii?Q?MjVJTagwLjWkUi9moTXRBdqfwoDKt9OBmrS9UexB59FECzXgFcYLVvZxLV7L?=
- =?us-ascii?Q?bdNibAkny644i8YyMeh5+YYTBkZSVIWfaVdCjUMpYklBrU94eAV7WdLdAZEP?=
- =?us-ascii?Q?ICI4TR+GhSKb5nHt1XTF8ZxLQKGF2sLQfABzDBRuFP8wVegQ1fdS0qYMsXMv?=
- =?us-ascii?Q?BzBBl6o0NuTZRXkqHoTLkp/vIwR3ecOmqXaVQ12nk7kQ+3HEz27XwQvoAUXT?=
- =?us-ascii?Q?T6i1W3cZ52lTV+tG19WTITjSZTg7+SgjhV4cfSCkV6qxrwzOVRHIoWPNMuJi?=
- =?us-ascii?Q?Hb1aTKdjB8ohyNkICBMgLSqUKkYrCHlsjZvu1y2g5o9FIYpf4d3RFFJb44X5?=
- =?us-ascii?Q?U8ufOshXhW9iDsCbE9jsNnJToAuFI3I63ZZCM+jxTHBbkSZqM9I8132Y5Z3z?=
- =?us-ascii?Q?waXsd6aYwSqpWGA2jKtDZlTT1wkjMqWgAT+5FixHToixBZyi53t1jKMbKxMf?=
- =?us-ascii?Q?qX7BlOmhpL69IrkyZqDJ1OemQCqLKHbvNV9u1DdMLHg/rn7LMQzA49Lq7uZV?=
- =?us-ascii?Q?DWMTw+ZAMxlQAz6VtWN/wHrS8bSxmApsIq0ashYSz8VV4q1JipodXnjwXpsN?=
- =?us-ascii?Q?TGiMMGC7+fyRXr6xFtJ0DnRWHUKwtYk6IMCJfuyeCkI2PmKxhi3vNSZ5Vajp?=
- =?us-ascii?Q?sThsCmpu9DgdEIIbZNaRw/MI6RfcgbX3EtfQiD6kPHB6yOcLOaBJbLU3x/0?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4F729B0
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 03:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720321665; cv=none; b=CtngVS6dEPs3u/gF89K87OdxFN1jIJe0ewAswnxzRSAqVU+8ZTxVGI8KfmbKYQUxOPNZdZAFRb8jTokU3eFJHntql2mLCy1kkaelsEWFHzTHOdheMMF9EXWyhWnYQ4VES/WDb0+h0o1mbd8Qqt0CMPFj/d18CjJDggaY2ArHXyo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720321665; c=relaxed/simple;
+	bh=Od9960aKch9lqmxoAz92nVMItoCL8B1mT9WY5A7etbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VEdoVCzGUH290mLoOXi7KqOZpQbStsBLfHsfjvWXTZuskJMmQbqgC1m7g7QFFB8yvlMsPTrLg0x+eFL+wNRIwZl0xIwh1q/pOmyckJeAmL/4GCjj0OpauqrTZ5inrPQzgCyGWhwXP/R7tfTE/Y9Chs2hc7RjMvv8nW0RfWAvBE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WGsZw4KYvzdgJ7;
+	Sun,  7 Jul 2024 11:06:00 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 78D3418007C;
+	Sun,  7 Jul 2024 11:07:39 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sun, 7 Jul 2024 11:07:38 +0800
+Message-ID: <55610a6f-dd13-4636-b13c-2d9269782687@huawei.com>
+Date: Sun, 7 Jul 2024 11:07:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: edeae486-2717-4228-2e57-08dc9e2d8834
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jul 2024 02:35:57.5042
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR02MB10675
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
+ migration
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>
+CC: Baolin Wang <baolin.wang@linux.alibaba.com>, Nhat Pham
+	<nphamcs@gmail.com>, Yang Shi <shy828301@gmail.com>, Zi Yan <ziy@nvidia.com>,
+	Barry Song <baohua@kernel.org>, David Hildenbrand <david@redhat.com>, Matthew
+ Wilcox <willy@infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>
+References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
+ <20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org>
+ <825653a7-a4d4-89f2-278f-4b18f8f8da5d@google.com>
+ <7b7f2eb7-953a-4aa0-acb0-1ab32c7cc1bf@huawei.com>
+ <68feee73-050e-8e98-7a3a-abf78738d92c@google.com>
+ <20240706191122.134c5ae35e86c68d52bf11a9@linux-foundation.org>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20240706191122.134c5ae35e86c68d52bf11a9@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-From: Michael Kelley Sent: Saturday, July 6, 2024 7:12 PM
 
-[ ... ]
-> >
-> > If we then stub out swiotlb_find_pool to return NULL for !CONFIG_SWIOTL=
-B,
-> > we also don't need extra stubs for all the __swiotlb_ helpers as the
-> > compiler will eliminate the calls as dead code.
->=20
-> Yes, this works as long as the declarations for the __swiotlb_foo
-> functions are *not* under CONFIG_SWIOTLB. But when compiling with
-> !CONFIG_SWIOTLB on arm64 with gcc-8.5.0, two tangentially related
-> compile errors occur. iommu_dma_map_page() references
-> swiotlb_tlb_map_single(). The declaration for the latter is under
-> CONFIG_SWIOTLB. A similar problem occurs with dma_direct_map_page()
-> and swiotlb_map(). Do later versions of gcc not complain when the
-> reference is in dead code? Or are these just bugs that occurred because
-> !CONFIG_SWIOTLB is rare? If the latter, I can submit a separate patch to
-> move the declarations out from under CONFIG_SWIOTLB.
->=20
 
-Ignore the "two tangentially related compile errors".  I schlepped some
-code around incorrectly and caused the problem myself. :-(
+On 2024/7/7 10:11, Andrew Morton wrote:
+> On Sat, 6 Jul 2024 14:29:00 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
+> 
+>>
+>> What you show above is exactly what I had when I was originally testing
+>> over the top of mm-everything (well, not quite exactly, I don't think I
+>> bothered with the data_race()). But I grew to feel that probably everyone
+>> else would be happier with less of those internals _deferred_list and
+>> __folio_undo_large_rmappable() spread about.
 
-Michael
+Maybe some helper to check whether or not we should unqueue the
+defferred_list, but it out of scope in this patch, and maybe not worth it
+
+>>
+>> There are many ways to play it. I had also considered doing it Zi Yan's
+>> way, freezing always in the !mapping case as well as in the mapping case:
+>> what overhead it adds would probably get lost amidst all the other overhead
+>> of page migration. It will not be surprising if changes come later requiring
+>> us always to freeze in the anon !swapcache case too, it always seemed a bit
+>> surprising not to need freezing there. But for now I decided it's best to
+>> keep the freezing to the case where it's known to be needed (but without
+>> getting into __s).
+>>
+>> Many ways to play it, and I've no objection if someone then changes it
+>> around later; but we've no need to depart from what Andrew already has.
+>>
+>> Except, he did ask one of us to send along the -fix removing the unnecessary
+>> checks before its second folio_undo_large_rmappable() once your refactor
+>> patch goes in: here it is below.
+
+OK, let's keep it simple, thank your for pushing it out.
+> 
+> Grabbed, thanks.
+> 
+>> [I guess this is the wrong place to say so, but folio_undo_large_rmappable()
+>> is a dreadful name: it completely obscures what the function actually does,
+>> and gives the false impression that the folio would be !large_rmappable
+>> afterwards. I hope that one day the name gets changed to something like
+>> folio_unqueue_deferred_split() or folio_cancel_deferred_split().]
+> 
+> Naming is important, but so also is commentary.
+> folio_undo_large_rmappable() lacks any.
+> 
+>> [PATCH] mm: refactor folio_undo_large_rmappable() fix
+>>
+>> Now that folio_undo_large_rmappable() is an inline function checking
+>> order and large_rmappable for itself (and __folio_undo_large_rmappable()
+>> is now declared even when CONFIG_TRANASPARENT_HUGEPAGE is off) there is
+>> no need for folio_migrate_mapping() to check large and large_rmappable
+>> first (in the mapping case when it has had to freeze anyway).
+>>
+>> ...
+>>
+>> For folding in to mm-unstable's "mm: refactor folio_undo_large_rmappable()",
+>> unless I'm too late and it's already mm-stable (no problem, just a cleanup).
+> 
+> Missed the mm-stable mergification by >that much<.  I'll queue it
+> separately, thanks.
 
