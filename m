@@ -1,161 +1,106 @@
-Return-Path: <linux-kernel+bounces-243680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910D2929930
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC430929935
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44B1328125B
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:43:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D6728153B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CAA55894;
-	Sun,  7 Jul 2024 17:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F1357CA6;
+	Sun,  7 Jul 2024 17:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Rs747sjI"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkS8l/eo"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063921429B
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 17:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4061F3FB96;
+	Sun,  7 Jul 2024 17:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720374203; cv=none; b=Kv4ICKYK59CoMRx77qwviOl2XhoDdkx0fFW/rG5pfjpSfKxHq89OHbEbVmrP7KxByIaQbvdeu2P6rohnUBflQg6FaWLuJb8+wwu7kF9vw9QLDRbfhkH5TouzPFST/5Y0kaSma652oH/D3XnPfOb4LzCuzlq661hVeMeX29JF1ws=
+	t=1720374987; cv=none; b=YwBZaIWaQarQLbQ4xCcjluaan4xDpp2p8CVRi3RiaN+siyXRrG7HEvbbqqNrTa/3TkK+tYQvTw2kX2OENE6tVzlLv5H8zdYhr7/3JDu5KCquAg1Nl7OUE60PCIrcc5tWm4a3mB78JDktUoq94SgnNdBILRtBb8WkuxXIGe+v5MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720374203; c=relaxed/simple;
-	bh=QyUIBEUXI5lvXUyIGQdSps/Vxx7xxjrCMDiyg0Rz1Cg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vp/9FfIuQ7jKdrK+egu2a5JyyuAsbnB3yelAp4K3mAHeoigK5RVJAUOCyyC88RQpMaFolft0iLbn6HlD4f2l65MiO5/nKNNNpGMjv9SOOjEg6EdZAmNTvjhUAxFSVi5YmNdWlNT1tIFPBDV8HKvmDuBgkjlXmf653nSZXcZnY/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Rs747sjI; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 467HgGjS2785325
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 7 Jul 2024 10:42:18 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 467HgGjS2785325
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1720374139;
-	bh=itP4ghL+1+IcWh0pKZ2h8UaPGarYlX86pW/7PPml8Gg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rs747sjIOcgl2qwE3tjiruNHopsRa+DcsP84kNNdDKLx282s3t+/nTq5bUrs5Gdam
-	 JUnZTH1YCedeLjbIy9v+2TS9ZVA/6rxs6PKqu/Q4IgtUXggk6RGDltHBfm3ERRZGuB
-	 hol4cScDo2puAko1FMN0q9pNmlmTbnCPOk6ibMzQ2CzS7FgKwrZBUylFkgemtaQXDu
-	 d4O1Q/8FcpgJTkvyoyXaa8YQ773+Muhkyw4Fb9uixpv89l7MwqTYXJTIybu3wnFye3
-	 w7axg9S9JnrZ6YmPddUSJJlhzOoxrFEN99k4SgNX66rzB8EnnClIjRpatQZt2aQ3rL
-	 iI+4dC2T4F4WA==
-Message-ID: <0f8a5e47-58e8-4adb-a796-f31f8d35f487@zytor.com>
-Date: Sun, 7 Jul 2024 10:42:16 -0700
+	s=arc-20240116; t=1720374987; c=relaxed/simple;
+	bh=zqxRC/OCWtMYzBfgDiMrxFE0R1/qK2xdfC7+ctzGRKw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jBniJ5ITFDBTQVXs78iIeGbLvI/1wLpxtD9yU5qnAsL3k4cnML0RtTlUQwRkSAgxQu0tJ++7lRTXHFQpHAK0Ut98Vws+V6Agva1WYkWWNRKiYcea7qKAiwqPgD8IhQ5gZTvJc/2IzrEdBL+oIjVX3koqW16K9RECSr3WR+GknOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkS8l/eo; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4265ddc879aso9020115e9.0;
+        Sun, 07 Jul 2024 10:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720374984; x=1720979784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iFovd2CBsLr5gf/in/j/bQ114RRO4t9SF/VVgwyJEPs=;
+        b=DkS8l/eoLtZ36X6dno+ib+pyoVEvJ3FSzaRHi8ROV2SrJS0h96o2+uGm7VSFwSwCMQ
+         i5S/Eaw0mJc6fNUwvx4j5m8kFqttanVzeP+CL9HsGAQRFIqdB5mnNutxgnUtgIrp1uO3
+         sQKZnEmOeyMYIZfuMXjgQa9nMp5CdRxl4yD++EkaZ06cYAj3ki9cPsfg7lVOwryQoym4
+         6QHSpVb1sklE6sdv+adUuQIJuw9Vdo6No+DQ15hHSZrNOmXTAygIudSArJhrAF/lmdH+
+         YW5NvTRpvSzV8cJpNiQKYJFNiCRwFRLiXGETNsov9bAhSrhWfHVYeHVfeG5fmoAAQSCI
+         i3Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720374984; x=1720979784;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iFovd2CBsLr5gf/in/j/bQ114RRO4t9SF/VVgwyJEPs=;
+        b=tkXDp/F+OeJEs6a3f2/H7yVnBa26u25+ydJBuTXCoaPijyQZWZ2b98ahePglggWlDJ
+         BVyAyTYU4e/zDRitMG8yhbK+kx3nEbdCOlswrnVZMH1s1/WG1dCuOFaiHWOK5U0yTiH2
+         2DEeFSqst8KQG0rLNDYsdfwi2ON2RyNaYGV2JokR6g0ZBvwd44aMBLmLuSXgiXu60prb
+         ySeYWSVm9s0QvEYHs2gkASTTgr2E0r7fZ93+9skKpLAq/1SBDDCGQK8iredTQrOQQxx1
+         p5hHZzKpeicUcC5xchhQ6xSOaGYnumptrFKMRWZAyi5MFJUzkHqHrss+5zA+AsDx+17/
+         W1Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0wOnwTBQKeXoIryN87r3CTS13SF2Lwb0y27777OHTJNB9rELrMQyZxXppn6TIuW43iaiPzF/f5/n087z2+L0nBTRGVN0HtrbWZvCz
+X-Gm-Message-State: AOJu0Yyckbr12BEItKuXxTotUSv9mqnwhtRlUqypXH3OXYMf+P4cK1kO
+	+/bxklzUN1ZQtL5n6asntQNkqbrAkI04mttfs25bdwnXbN5M7PU8
+X-Google-Smtp-Source: AGHT+IGb1GhRm1vZcj8aUuS3EJE02jgDiPhrPJvQiEI+4bEFweCdI20pOMzoETgdSUFh/j5hTSE1iw==
+X-Received: by 2002:a05:600c:19cf:b0:426:66fb:fcd6 with SMTP id 5b1f17b1804b1-42666fbfd5fmr10513615e9.3.1720374984470;
+        Sun, 07 Jul 2024 10:56:24 -0700 (PDT)
+Received: from localhost.localdomain ([2001:8a0:ed72:2800:17de:b512:9f9e:464b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a28355csm135562825e9.43.2024.07.07.10.56.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jul 2024 10:56:24 -0700 (PDT)
+From: Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>
+To: hdegoede@redhat.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	carlosmiguelferreira.2003@gmail.com
+Subject: [PATCH v3 0/1] HP: wmi: added support for 4 zone keyboard rgb
+Date: Sun,  7 Jul 2024 18:54:53 +0100
+Message-ID: <20240707175613.27529-1-carlosmiguelferreira.2003@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] x86/fred: Parse cmdline param "fred=" in
- cpu_parse_early_param()
-To: Nikolay Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org
-Cc: hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
-        andrew.cooper3@citrix.com, houwenlong.hwl@antgroup.com
-References: <20240703085426.274801-1-xin@zytor.com>
- <20240703085426.274801-2-xin@zytor.com>
- <48e5f704-c683-43ca-bb5e-0fb691eab4d5@suse.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <48e5f704-c683-43ca-bb5e-0fb691eab4d5@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 7/4/2024 4:20 AM, Nikolay Borisov wrote:
-> 
-> 
-> On 3.07.24 г. 11:54 ч., Xin Li (Intel) wrote:
->> Depending on whether FRED will be used, sysvec_install() installs
->> a system interrupt handler into FRED system vector dispatch table
->> or IDT.  However FRED can be disabled later in trap_init(), after
->> sysvec_install() is called.  E.g., the HYPERVISOR_CALLBACK_VECTOR
->> handler is registered with sysvec_install() in kvm_guest_init(),
->> which is called in setup_arch() but way before trap_init().  IOW,
->> there is a gap between FRED is available and available but disabled.
->> As a result, when FRED is available but disabled, its IDT handler
->> is not installed thus spurious_interrupt() will be invoked.
->>
->> Fix it by parsing cmdline param "fred=" in cpu_parse_early_param()
->> to minimize the gap between FRED is available and available but
->> disabled.
->>
->> Fixes: 3810da12710a ("x86/fred: Add a fred= cmdline param")
->> Reported-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
->> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
->> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
->> ---
->>   arch/x86/kernel/cpu/common.c |  5 +++++
->>   arch/x86/kernel/traps.c      | 26 --------------------------
->>   2 files changed, 5 insertions(+), 26 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
->> index d4e539d4e158..9a904fe7c829 100644
->> --- a/arch/x86/kernel/cpu/common.c
->> +++ b/arch/x86/kernel/cpu/common.c
->> @@ -1510,6 +1510,11 @@ static void __init cpu_parse_early_param(void)
->>       if (cmdline_find_option_bool(boot_command_line, "nousershstk"))
->>           setup_clear_cpu_cap(X86_FEATURE_USER_SHSTK);
->> +    /* Minimize the gap between FRED is available and available but 
->> disabled. */
->> +    arglen = cmdline_find_option(boot_command_line, "fred", arg, 
->> sizeof(arg));
->> +    if (arglen != strlen("on") || strcmp(arg, "on"))
-> 
-> 
-> Just make this check :
-> 
-> ret = cmdline_find_option(...)
-> if (ret < 0 || strcmp()))
-> 
-> A lot more straightforward
-> 
+Hi,
+As suggested, this driver now uses the multicolor led api.
 
-I'd do
-	if (arglen != 2 || strncmp(arg, "on", 2))
+Please note that for brightness, it takes the brightness files in
+each zone and uses them as one as there is no per zone brightness
+control, so all the files control the brightness of the entire keyboard.
+Also, when the backlight toggle key is pressed it updates the brightness
+on all the zones to avoid some edge case problems i ran into
+where setting the same color more than once would set the brightness
+to the previous value.
 
-If arglen is 2, strncmp(arg, "on", 2) is essentially strcmp(arg, "on"), 
-but I should've kept using strncmp.
+Please let me know if this is a good approach.
+
+Carlos Ferreira (1):
+  HP: wmi: added support for 4 zone keyboard rgb
+
+ drivers/platform/x86/hp/hp-wmi.c | 248 +++++++++++++++++++++++++++++--
+ 1 file changed, 239 insertions(+), 9 deletions(-)
+
+-- 
+2.45.2
+
 
