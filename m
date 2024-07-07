@@ -1,146 +1,126 @@
-Return-Path: <linux-kernel+bounces-243574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD80A9297E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251089297EC
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB251C209D0
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D594028167E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A46F1E888;
-	Sun,  7 Jul 2024 12:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11101F934;
+	Sun,  7 Jul 2024 12:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/SSDjxd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jbjYVfUw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7691918C31;
-	Sun,  7 Jul 2024 12:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B6A224DD;
+	Sun,  7 Jul 2024 12:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720356425; cv=none; b=u30RGxvY0/LpDFYy1RtG8fjwE5DrJeE+5qL3NsrSLCbOMLDOAtJ/Q1pwsPVV1xwZZ/kZHDDixmOQDi0pD1Y7WWD7OJVLjrGpJ6a0zlJYB6L6Ktrt20/KLfusJJdvo52acXzuacRpthdX5XIdsTc9Moi9AeniPAqqLlbk0LMM3P8=
+	t=1720356946; cv=none; b=Yupb/ON1mGHlNMkzgEp3q0REWFUJiD6q7UBvbDIe0wPHr+qWunYcNJE32VPIAZfBlHtJtu+x9Xmtg/jJPJvjN1ewV+B5bPmQwJIOOCQcw+b+8AJCH5rfxDT8PV8mpTPcPflayKgcTD8DnM1LgDzzYtBAWZilz6aSeICh1wscmdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720356425; c=relaxed/simple;
-	bh=tUa18Im2NrzZwuN6YIjmqlyQnmms9tiBpfEKVla0Das=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FpdH1Fo4qb+HHEtpi7JS0pMIWf5YSByUvOWJ/jwdPiUOCLY+6T12LM68r7Q6GkXz7JjDVvhL0Grv4MkECwjWV5DOy5hODOIEv2gTfAUWmp4hAQkZxk9aAs8IHGURQdMXGThuSfvzpcCf14QAbpaNg9u+Qx/MjtZN+Z/+Qxb184Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/SSDjxd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18251C3277B;
-	Sun,  7 Jul 2024 12:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720356425;
-	bh=tUa18Im2NrzZwuN6YIjmqlyQnmms9tiBpfEKVla0Das=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j/SSDjxdhNKm1DhkHJeM+zEXe0ZD7nePfw9pVimLh3cVwZFMUB9YRIfnIsZAvP3Ey
-	 BzM0v0lfMZ/iTdn9ZNaUh554L5oql6JnF7QhBxRQzHgQBgZNK+02p6Q1/2wKDek3zk
-	 981Oby3fByW8WoW0YonC15m7YEmxVvMrlbxxZBssecoKvEUYv1RGSAwCNrhbA0J/aH
-	 wLFpaFVTiiCYKw1iWzIjOwkdSMJVy2Sh6MtlA3sJSp3jTSiqED/QN/T8AUC7l5Vca2
-	 W5FOsZwIVKCn3aLYOrTPsOvD61nmfwxCiywpagMs0e3HgKTL/Wzf54PQ3PMRiYi6fl
-	 Co/uFbT6iGkhA==
-Message-ID: <50d0bdd6-2262-4404-9a26-29b1f2e6fe92@kernel.org>
-Date: Sun, 7 Jul 2024 14:46:59 +0200
+	s=arc-20240116; t=1720356946; c=relaxed/simple;
+	bh=8CQywXGpVZmoXAWi7aQtBVNWRM3RoZSfC5ilnp7epOE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m80t2bPh5G0eQA2k9tUqV356xnseEhr+EKcHAs+AULldSJbgysJ9nb82r2ROxavgjq5OKcuwAjzSWKqy4ItUDlSHCuxpWTfWoboqj7B3CfJSXdOpJWSxQR27cMx/Lt4V3dT/UI5aX1DnCr2wYPxFnDGAuQXHIJ1QPHpxFu4IoVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jbjYVfUw; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720356945; x=1751892945;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8CQywXGpVZmoXAWi7aQtBVNWRM3RoZSfC5ilnp7epOE=;
+  b=jbjYVfUwrgMuwy9S+4Ql9FzwL0iOmJCvpT5YDmWwzorAcEpzHWqIK2ZG
+   dmRxuIzGD09vvykSoGWHfAv+ww6pyRmuy5BmDSMafNHLDN2dY7bh4Oa3D
+   meY/cNbFXl0/prg4l0X65Pt3sxisaeeSXsIf8U6QGGV/COy6nWN/t8GJj
+   h00FNw8NcDtFZS/q+Fse1MF5nBWiCw6cpl/B2ufan0wpFJAn8a+y+bpS7
+   Kx4QO00YggelTp8T55S9qei7icTUlitkFpvm+2yF3OnnB3Jlk/dR89hVV
+   G29IN3bRpPdrFBGCvCrqCHDeEsN2jnEX4eR+lfdjhEe1O+OJQmIfptC18
+   w==;
+X-CSE-ConnectionGUID: 6ImWUKwnTKibyeHgUI1Tjg==
+X-CSE-MsgGUID: /SLo8p2uS8u3TnW8RWr5Vw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="28723343"
+X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
+   d="scan'208";a="28723343"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 05:55:44 -0700
+X-CSE-ConnectionGUID: 29qQB5d0QByj+IG+noHX1w==
+X-CSE-MsgGUID: tIxHmSCoRHKInGn757BvVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
+   d="scan'208";a="51692250"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 05:55:42 -0700
+Received: from mohdfai2-iLBPG12-1.png.intel.com (mohdfai2-iLBPG12-1.png.intel.com [10.88.227.73])
+	by linux.intel.com (Postfix) with ESMTP id 2973D20738C7;
+	Sun,  7 Jul 2024 05:55:38 -0700 (PDT)
+From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Simon Horman <horms@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Sasha Neftin <sasha.neftin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+Subject: [PATCH iwl-net v2 0/3] igc bug fixes related to qbv_count usage
+Date: Sun,  7 Jul 2024 08:53:15 -0400
+Message-Id: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p: Add TCSR halt register
- space
-To: Mukesh Ojha <quic_mojha@quicinc.com>, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konrad.dybcio@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240705153252.1571814-1-quic_mojha@quicinc.com>
- <20240705153252.1571814-2-quic_mojha@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240705153252.1571814-2-quic_mojha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/07/2024 17:32, Mukesh Ojha wrote:
-> Enable download mode for sa8775p which can help collect
-> ramdump for this SoC.
-> 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 23f1b2e5e624..a46d00b1ddda 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -221,6 +221,7 @@ eud_in: endpoint {
->  	firmware {
->  		scm {
->  			compatible = "qcom,scm-sa8775p", "qcom,scm";
-> +			qcom,dload-mode = <&tcsr 0x13000>;
->  			memory-region = <&tz_ffi_mem>;
->  		};
->  	};
-> @@ -2824,6 +2825,11 @@ tcsr_mutex: hwlock@1f40000 {
->  			#hwlock-cells = <1>;
->  		};
->  
-> +		tcsr: syscon@1fc0000 {
-> +			compatible = "qcom,sa8775p-tcsr", "syscon";
+These igc bug fixes are sent as a patch series because:
 
-The file is going away. This change is very confusing.
+1.  The two patches below remove the reliance on using the qbv_count field.
+   "igc: Fix qbv_config_change_errors logics"
+   "igc: Fix reset adapter logics when tx mode change"
 
-Please align first with your colleagues instead of sending conflicting
-work without any explanation.
+    qbv_count field will be removed in future patch via iwl-next.
 
-Best regards,
-Krzysztof
+2. The patch "igc: Fix qbv tx latency by setting gtxoffset" reuse the
+   function igc_tsn_will_tx_mode_change() which was created in the patch:
+   "igc: Fix reset adapter logics when tx mode change"
+
+v1: https://patchwork.kernel.org/project/netdevbpf/cover/20240702040926.3327530-1-faizal.abdul.rahim@linux.intel.com/
+
+Changelog:
+v1 -> v2
+- Instead of casting to bool, use !! (Simon)
+- Simplify new functions created. Instead of if.. return true, else return false,
+  use single return. (Simon)
+- Remove patch "igc: Remove unused qbv_coun" from this series which is targeting
+  to iwl-net. This patch will be sent to iwl-next. (Simon)
+
+Faizal Rahim (3):
+  igc: Fix qbv_config_change_errors logics
+  igc: Fix reset adapter logics when tx mode change
+  igc: Fix qbv tx latency by setting gtxoffset
+
+ drivers/net/ethernet/intel/igc/igc_main.c |  8 +++--
+ drivers/net/ethernet/intel/igc/igc_tsn.c  | 41 ++++++++++++++++-------
+ drivers/net/ethernet/intel/igc/igc_tsn.h  |  1 +
+ 3 files changed, 36 insertions(+), 14 deletions(-)
+
+--
+2.25.1
 
 
