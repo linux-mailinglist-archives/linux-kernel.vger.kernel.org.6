@@ -1,232 +1,287 @@
-Return-Path: <linux-kernel+bounces-243568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6FD9297CE
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1630A9297D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7157F1C20932
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 395DE1C209AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0811CD2D;
-	Sun,  7 Jul 2024 12:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF6C1E492;
+	Sun,  7 Jul 2024 12:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F1vGpH8H"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QF5f9Hhq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0973F9E8
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 12:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F4B18C31;
+	Sun,  7 Jul 2024 12:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720355575; cv=none; b=B1cHLlPcmbomtUCCpK8YDrm7IRZmbu14ZObsTuM2YlnoOSQ+FRaXJIf2wd8O1XE0IbuZgYDVvnq+mkwhKIaVYCvrvsrrBRZSGeVfe7XxAqMR9aaeKdQJe0LtHZSFtJHwpi85mEF4dNrXSWDaZp9u3YaoXXSXjIzLPZU9mQXbaCQ=
+	t=1720355705; cv=none; b=iDgxN8XB8Z/ggEb7aBd4uuU2O6eGSvVsF0GwEbqm0kaAyCuM6kSIvNFWV/nfxQF9H3XgXe9PkMLSxDySmhiH6bsLKIBrRl9cuX5XJgcivvTLzi/uBem6K1V1A3zDWLwSnt4aA0E8cxCgL/c/65lNyBsf5an3xJQl1LTgHPbbl3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720355575; c=relaxed/simple;
-	bh=k8tJqGhaFQiHUJH7F9ty+uvvwToEV3jR10FIHMbjE2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=koacPc6YVZQwDZ2j5Fjf/bFNwYaTxbsp8w1E1k+Tmf+SigJjHhKwZGbT71YCzFVfM5f7ERinRpso/mzYa+iU8pRLDRNEVW/9/kuNr1kj1bORl32yWPuFG+pB7u9OZYHzpS9dSOfKKh3DeNMM3cpvcVLjzStBiB+dGdwwtFe2+Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F1vGpH8H; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720355574; x=1751891574;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=k8tJqGhaFQiHUJH7F9ty+uvvwToEV3jR10FIHMbjE2Y=;
-  b=F1vGpH8HUIYro6Y5MU2QqUEqt7sKJX2elH5tg+cMIJkuKVGD/vwkywLh
-   Bm+WKL7gHziYnn3kfEs8VYISYEmFJdOtEn4lvWnn7cecihk3jSoQLn5MK
-   isHH8m4ofV+qrtjM9hf2Zzcmq9Xk7o/aZXQ7yS5XeAAVpRzhqmUCZFlBy
-   2wsGTxsZ3WOGaXVL9Q2NqyygLaEUBbupcQEuTNwv9OIu4NxB7Xe7bOf+6
-   Jxlcar+9FnjUmtiZ04q6BBXV1ubZyXTsAJSsrYnYnKP1iYiVzczStKPvf
-   S6Tv4cZ5Of3MR34sJLidU6dE/7y+JBofowHz1xMJcZ7hCUit/2oHHXJPE
-   Q==;
-X-CSE-ConnectionGUID: snPdXqylT6qe7l7BoFcFuA==
-X-CSE-MsgGUID: u2dffOOxSsilOHkXuXTEUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11125"; a="21336504"
-X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
-   d="scan'208";a="21336504"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 05:32:54 -0700
-X-CSE-ConnectionGUID: NIAJf3IbSwSli/Ju7tRHcg==
-X-CSE-MsgGUID: velw9UBtRIWcqbxm+UE67Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
-   d="scan'208";a="47356427"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 07 Jul 2024 05:32:52 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sQR4T-000UwM-2F;
-	Sun, 07 Jul 2024 12:32:49 +0000
-Date: Sun, 7 Jul 2024 20:32:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>
-Subject: arch/microblaze/kernel/entry.S:945: Error: unknown opcode "suspend"
-Message-ID: <202407072048.GS8vn0Re-lkp@intel.com>
+	s=arc-20240116; t=1720355705; c=relaxed/simple;
+	bh=WWN+fePr3kxsmN+FBpOBpPnJnDZrGl72GjXhpYaus9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KT+WG/sYS0HcLMmaSUV09r5+n8w4xXV3OOD0LWOo/SnWqhQ6pbAPdxD3sGspJMDBzOz+GoOyIGcXtdwGNXLORu2w8f3zkObQLALPC/RdsGEF+eqznYU2iRlMqCMh1GtfppoIz7dRB+cM7dXytA2weE2Sz4VpdaYQd8hTypi7Fxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QF5f9Hhq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DE07C3277B;
+	Sun,  7 Jul 2024 12:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720355704;
+	bh=WWN+fePr3kxsmN+FBpOBpPnJnDZrGl72GjXhpYaus9s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QF5f9HhquPLiwmrVo/gRMcIOlCTzQnAf5n+HE7QGwsnNhd8dbtOd69gPsPlD9gofR
+	 m6kwq3XUiE6JG76f3ZLj2q6V/YNTLckIi/SjXzMX2uXFrJZI6Z9ERWN7dm7E4+SVzg
+	 LdU6kHAr28NcD0OMDDdVUVllGACPG1H9U6T8m/bdjAes/hXeHq/4wkxNnNq8PbpVna
+	 t2B26l3cEekU2By3/dXuGALNQKfsPMcIwRTNBY+xSpmBBxk49GNgVtx3oaUDCvhJS0
+	 sw5wMEPMkrVQ+m9Vl7a+3hFRXZYLMCVW7m0ZsiE9EU20tlQ/Rfc9PT0P9NX85vDrxi
+	 vtb63DgjJgYwA==
+Message-ID: <450d1575-c9b3-413b-bfa9-8dc4352fa263@kernel.org>
+Date: Sun, 7 Jul 2024 14:34:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] dt-bindings: arm: fsl: add imx-se-fw binding doc
+To: Pankaj Gupta <pankaj.gupta@nxp.com>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20240705-imx-se-if-v4-0-52d000e18a1d@nxp.com>
+ <20240705-imx-se-if-v4-2-52d000e18a1d@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240705-imx-se-if-v4-2-52d000e18a1d@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Appana,
+On 05/07/2024 15:52, Pankaj Gupta wrote:
+> The NXP security hardware IP(s) like: i.MX EdgeLock Enclave, V2X etc.,
+> creates an embedded secure enclave within the SoC boundary to enable
+> features like:
+> - HSM
+> - SHE
+> - V2X
+> 
+> Secure-Enclave(s) communication interface are typically via message
+> unit, i.e., based on mailbox linux kernel driver. This driver enables
+> communication ensuring well defined message sequence protocol between
+> Application Core and enclave's firmware.
+> 
+> Driver configures multiple misc-device on the MU, for multiple
+> user-space applications, to be able to communicate over single MU.
+> 
+> It exists on some i.MX processors. e.g. i.MX8ULP, i.MX93 etc.
 
-FYI, the error/warning still remains.
+This binding is not improving, even though it is v5.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   c6653f49e4fd3b0d52c12a1fc814d6c5b234ea15
-commit: 88707ebe77e23e856981e597f322cabbf6415662 microblaze: Add custom break vector handler for mb manager
-date:   1 year, 9 months ago
-config: microblaze-allmodconfig (https://download.01.org/0day-ci/archive/20240707/202407072048.GS8vn0Re-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240707/202407072048.GS8vn0Re-lkp@intel.com/reproduce)
+> 
+> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> ---
+>  .../devicetree/bindings/firmware/fsl,imx-se.yaml   | 133 +++++++++++++++++++++
+>  1 file changed, 133 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/firmware/fsl,imx-se.yaml b/Documentation/devicetree/bindings/firmware/fsl,imx-se.yaml
+> new file mode 100644
+> index 000000000000..b9018645101d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/firmware/fsl,imx-se.yaml
+> @@ -0,0 +1,133 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/firmware/fsl,imx-se.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP i.MX HW Secure Enclave(s) EdgeLock Enclave
+> +
+> +maintainers:
+> +  - Pankaj Gupta <pankaj.gupta@nxp.com>
+> +
+> +description: |
+> +  NXP's SoC may contain one or multiple embedded secure-enclave HW
+> +  IP(s) like i.MX EdgeLock Enclave, V2X etc. These NXP's HW IP(s)
+> +  enables features like
+> +    - Hardware Security Module (HSM),
+> +    - Security Hardware Extension (SHE), and
+> +    - Vehicular to Anything (V2X)
+> +
+> +  Communication interface to the secure-enclaves is based on the
+> +  messaging unit(s).
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "firmware@[0-9a-f]+$"
+> +
+> +  compatible:
+> +    enum:
+> +      - fsl,imx8ulp-se
+> +      - fsl,imx93-se
+> +      - fsl,imx95-se
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: Identifier of the communication interface to secure-enclave.
+> +
+> +  mboxes:
+> +    description: contain a list of phandles to mailboxes.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407072048.GS8vn0Re-lkp@intel.com/
+Drop, obvious.
 
-All errors (new ones prefixed by >>):
+> +    items:
+> +      - description: Specify the mailbox used to send message to se firmware
+> +      - description: Specify the mailbox used to receive message from se firmware
 
-   arch/microblaze/kernel/entry.S: Assembler messages:
->> arch/microblaze/kernel/entry.S:945: Error: unknown opcode "suspend"
+Drop redundant/obvious parts.
+
+So two mailboxes?
+
+> +
+> +  mbox-names:
+> +    items:
+> +      - const: tx
+> +      - const: rx
+> +      - const: txdb
+> +      - const: rxdb
+
+4 mailboxes? This cannot be different.
+
+> +    minItems: 2
+> +
+> +  memory-region:
+> +    description: contains the phandle to reserved external memory.
+
+Drop
+
+> +    items:
+> +      - description: It is used by secure-enclave firmware. It is an optional
+> +          property based on compatible and identifier to communication interface.
+> +          (see bindings/reserved-memory/reserved-memory.txt)
+> +
+> +  sram:
+> +    description: contains the phandle to sram.
+
+Drop
+
+> +    items:
+> +      - description: Phandle to the device SRAM. It is an optional property
+> +          based on compatible and identifier to communication interface.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - mboxes
+> +  - mbox-names
+> +
+> +additionalProperties: false
+
+Keep it after allOf block
 
 
-vim +/suspend +945 arch/microblaze/kernel/entry.S
+> +
+> +allOf:
+> +  # memory-region
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8ulp-se
+> +              - fsl,imx93-se
+> +    then:
+> +      required:
+> +        - memory-region
+> +    else:
+> +      properties:
+> +        memory-region: false
+> +
+> +  # sram
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8ulp-se
+> +    then:
+> +      required:
+> +        - sram
+> +
+> +    else:
+> +      properties:
+> +        sram: false
+> +
+> +examples:
+> +  - |
+> +    firmware {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +      firmware@0 {
+> +        compatible = "fsl,imx95-se";
+> +        reg = <0x0>;
+> +        mboxes = <&ele_mu0 0 0>, <&ele_mu0 1 0>;
+> +        mbox-names = "tx", "rx";
+> +      };
 
-   825	
-   826		/* restore all the tlb's */
-   827		addik	r3, r0, TOPHYS(tlb_skip)
-   828		addik	r6, r0, PT_TLBL0
-   829		addik	r7, r0, PT_TLBH0
-   830	restore_tlb:
-   831		add	r6, r6, r1
-   832		add	r7, r7, r1
-   833		lwi	r2, r6, 0
-   834		mts 	rtlblo, r2
-   835		lwi	r2, r7, 0
-   836		mts	rtlbhi, r2
-   837		addik	r6, r6, 4
-   838		addik	r7, r7, 4
-   839		bgtid	r3, restore_tlb
-   840		addik	r3, r3, -1
-   841	
-   842		lwi  	r5, r0, TOPHYS(xmb_manager_dev)
-   843		lwi	r8, r0, TOPHYS(xmb_manager_reset_callback)
-   844		set_vms
-   845		/* return from reset need -8 to adjust for rtsd r15, 8 */
-   846		addik   r15, r0, ret_from_reset - 8
-   847		rtbd	r8, 0
-   848		nop
-   849	
-   850	ret_from_reset:
-   851		set_bip /* Ints masked for state restore */
-   852		VM_OFF
-   853		/* MS: Restore all regs */
-   854		RESTORE_REGS
-   855		lwi	r14, r1, PT_R14
-   856		lwi	r16, r1, PT_PC
-   857		addik	r1, r1, PT_SIZE + 36
-   858		rtbd	r16, 0
-   859		nop
-   860	
-   861	/*
-   862	 * Break handler for MB Manager. Enter to _xmb_manager_break by
-   863	 * injecting fault in one of the TMR Microblaze core.
-   864	 * FIXME: This break handler supports getting
-   865	 * called from kernel space only.
-   866	 */
-   867	C_ENTRY(_xmb_manager_break):
-   868		/*
-   869		 * Reserve memory in the stack for context store/restore
-   870		 * (which includes memory for storing tlbs (max two tlbs))
-   871		 */
-   872		addik	r1, r1, -PT_SIZE - 36
-   873		swi	r1, r0, xmb_manager_stackpointer
-   874		SAVE_REGS
-   875		swi	r14, r1, PT_R14	/* rewrite saved R14 value */
-   876		swi	r16, r1, PT_PC; /* PC and r16 are the same */
-   877	
-   878		lwi	r6, r0, TOPHYS(xmb_manager_baseaddr)
-   879		lwi	r7, r0, TOPHYS(xmb_manager_crval)
-   880		/*
-   881		 * When the break vector gets asserted because of error injection,
-   882		 * the break signal must be blocked before exiting from the
-   883		 * break handler, below code configures the tmr manager
-   884		 * control register to block break signal.
-   885		 */
-   886		swi	r7, r6, 0
-   887	
-   888		/* Save the special purpose registers  */
-   889		mfs	r2, rpid
-   890		swi	r2, r1, PT_PID
-   891	
-   892		mfs	r2, rtlbx
-   893		swi	r2, r1, PT_TLBI
-   894	
-   895		mfs	r2, rzpr
-   896		swi	r2, r1, PT_ZPR
-   897	
-   898	#if CONFIG_XILINX_MICROBLAZE0_USE_FPU
-   899		mfs	r2, rfsr
-   900		swi	r2, r1, PT_FSR
-   901	#endif
-   902		mfs	r2, rmsr
-   903		swi	r2, r1, PT_MSR
-   904	
-   905		/* Save all the tlb's */
-   906		addik	r3, r0, TOPHYS(tlb_skip)
-   907		addik	r6, r0, PT_TLBL0
-   908		addik	r7, r0, PT_TLBH0
-   909	save_tlb:
-   910		add	r6, r6, r1
-   911		add	r7, r7, r1
-   912		mfs	r2, rtlblo
-   913		swi	r2, r6, 0
-   914		mfs	r2, rtlbhi
-   915		swi	r2, r7, 0
-   916		addik	r6, r6, 4
-   917		addik	r7, r7, 4
-   918		bgtid	r3, save_tlb
-   919		addik	r3, r3, -1
-   920	
-   921		lwi  	r5, r0, TOPHYS(xmb_manager_dev)
-   922		lwi	r8, r0, TOPHYS(xmb_manager_callback)
-   923		/* return from break need -8 to adjust for rtsd r15, 8 */
-   924		addik   r15, r0, ret_from_break - 8
-   925		rtbd	r8, 0
-   926		nop
-   927	
-   928	ret_from_break:
-   929		/* flush the d-cache */
-   930		bralid	r15, mb_flush_dcache
-   931		nop
-   932	
-   933		/*
-   934		 * To make sure microblaze i-cache is in a proper state
-   935		 * invalidate the i-cache.
-   936		 */
-   937		bralid	r15, mb_invalidate_icache
-   938		nop
-   939	
-   940		set_bip; /* Ints masked for state restore */
-   941		VM_OFF;
-   942		mbar	1
-   943		mbar	2
-   944		bri	4
- > 945		suspend
-   946		nop
-   947	#endif
-   948	
+One example is enough.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+Best regards,
+Krzysztof
+
 
