@@ -1,71 +1,67 @@
-Return-Path: <linux-kernel+bounces-243661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1C89298EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:53:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FC79298F3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63312B2172F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AA461C20C7D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721B9481BD;
-	Sun,  7 Jul 2024 16:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7115F47A5C;
+	Sun,  7 Jul 2024 16:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="IQlRACtA";
-	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="rCpNcsQd"
-Received: from pb-smtp1.pobox.com (pb-smtp1.pobox.com [64.147.108.70])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxR8DmPe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D891447A60;
-	Sun,  7 Jul 2024 16:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77174654E;
+	Sun,  7 Jul 2024 16:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720371222; cv=none; b=HLfE/830wa438QV6lLQRHKGRU9XFiwQrVxAuQcQhNjMhQANUtSMfo61MdQ8qdoZGcfn289CEGkIFBT66db8/lafvvohgAtLAarYAVCw/bYl9kvXjLCSfTX1GOY/F5JcJDoYwudPH33KYEF1eEdkJURAeDqd+YwvJZefMQuLCZhc=
+	t=1720371226; cv=none; b=NKkbim48V+c4wWoYDA9iCXSo+iOmh2H62F82ETqcZGB19J4yrJSaVIX680UcSN2oiw3J6yS3LIAZqAKtdLv8kwSH+ECje6AWxAsTdIz0UJrfWHkjp46vCuu0zp8FpBM51gF8t9fy4PYPablgDxvqBU+p8YDtO+y1QXOGExZZKKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720371222; c=relaxed/simple;
-	bh=vntOzjQEI3yBL/RjMRz59P/+MLtpRD2YnC8nimZ3bu8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GbNwzpnkbHCyuDXC5FL1JatbcVz9Gmmj9RFIdDrSEQg7LvNdOATqmhA4q7ul9TRnv+13Iz83qkmXUDVlcCC4h3S1Il2Rd74uWGJcT4chyfnKUGSn7JXgvyRKEtJVX4TJB3IouMclZsfAuO5xpjssq5Pclw6AzkMivn2KisGVY5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=IQlRACtA; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=rCpNcsQd; arc=none smtp.client-ip=64.147.108.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
-	by pb-smtp1.pobox.com (Postfix) with ESMTP id 8EA292270F;
-	Sun,  7 Jul 2024 12:53:39 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
-	:to:cc:subject:in-reply-to:message-id:references:mime-version
-	:content-type; s=sasl; bh=vntOzjQEI3yBL/RjMRz59P/+MLtpRD2YnC8nim
-	Z3bu8=; b=IQlRACtAJ5fqsi2crNtXveguHnskQhSRc8hddeYqP3LB1Vca7ZH0uG
-	OXZwxvv9osG4aw+EDIpEkHx/d9LCDwsV3hyRyih8E7DVHSoA+sGeLigjnD4IDLV5
-	sNq6GF/Wy9ZFTEXUfxY1vqC/S+mSdXjXdghVJ6qTlCGOXro2Gm0AM=
-Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
-	by pb-smtp1.pobox.com (Postfix) with ESMTP id 8459F2270E;
-	Sun,  7 Jul 2024 12:53:39 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=vntOzjQEI3yBL/RjMRz59P/+MLtpRD2YnC8nimZ3bu8=; b=rCpNcsQd6FgPNVNfb/fWwwge/pwhoCqoYxE7RJuDwRonS0AD3kZa2rpjq+TXj0sxm8Oe9hbMJ7oHrLZ98/GPYUqiBafzSahp+mHi0q6O/IrIeesfgMIQGB+L04LtSHtJZh8PRXEcMcwghsh1qstpshpplESJQPtD38f5hJh+SbE=
-Received: from yoda.fluxnic.net (unknown [184.162.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 0D5002270D;
-	Sun,  7 Jul 2024 12:53:39 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id D8A4ED3B18E;
-	Sun,  7 Jul 2024 12:53:37 -0400 (EDT)
-Date: Sun, 7 Jul 2024 12:53:37 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Russell King <linux@armlinux.org.uk>, 
-    Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org, 
-    llvm@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 2/2] asm-generic/div64: reimplement __arch_xprod64()
-In-Reply-To: <3adf7f7b-a46e-4368-a87a-a217a8a8f9d1@app.fastmail.com>
-Message-ID: <n42s335n-44n0-pq0o-78q8-s38o2ssn8p5r@syhkavp.arg>
-References: <20240705022334.1378363-1-nico@fluxnic.net> <20240705022334.1378363-3-nico@fluxnic.net> <3adf7f7b-a46e-4368-a87a-a217a8a8f9d1@app.fastmail.com>
+	s=arc-20240116; t=1720371226; c=relaxed/simple;
+	bh=LO+JAK2kFx7TUk6Rns6hr7HIOLavQDXDT6QwVoDH924=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kIXlX9A75ZsAEWgh0evJKK9gb4WE9kTLJwfGDAAi/j6tpPNi8ShtV7Z2VPSjYrW3I/Aqu7WV9k+WlzNt0+aZFB9h+cgSJVrHdbaw6L/Jl+AvQ/w0c0girBqD39TlI9xqDhTSXHkKonjH4VSqW8eez1u6uy9N3ZZTa/J9M634Glo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxR8DmPe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEB5DC32781;
+	Sun,  7 Jul 2024 16:53:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720371226;
+	bh=LO+JAK2kFx7TUk6Rns6hr7HIOLavQDXDT6QwVoDH924=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PxR8DmPedXrCCP0XME8n551nlcjprlutZZPfIk6n5MRaKHGv5891jLauSifacmz8m
+	 6DPL4t8smgNlMKuPQ55Wyxn4Yj9GBG8wxjU5MjbgB0uojFlym7TA/qYLgfU4ggbwzy
+	 bUG9MXkkynOZ29wDWeFHwf5fJRMNaisN7P2baSjOWYMQDqOC3By3ItZ2gb8u6boWeq
+	 kFJTdBCihK8Z1DPGVeBFxyxVkrmASrr4PVFq9DBPtsIE4ZlOH39Q0BFj647eZTZcFH
+	 IM763w1rxz2v5MbJ+JV/8of1NHggFKw/vR0Uy7QsQyyrBLi8JsrZKBX6z0kFjGAUBb
+	 bwi0/McI6+ZTw==
+Date: Sun, 7 Jul 2024 17:53:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rob Herring <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>, Heikki
+ Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Jean Delvare <jdelvare@suse.com>, Guenter
+ Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+ <lee@kernel.org>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-leds@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 1/6] device property: document
+ device_for_each_child_node macro
+Message-ID: <20240707175339.427ab29f@jic23-huawei>
+In-Reply-To: <20240706-device_for_each_child_node-available-v1-1-8a3f7615e41c@gmail.com>
+References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
+	<20240706-device_for_each_child_node-available-v1-1-8a3f7615e41c@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,62 +69,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID:
- 75738646-3C81-11EF-A52D-5B6DE52EC81B-78420484!pb-smtp1.pobox.com
+Content-Transfer-Encoding: 7bit
 
-On Fri, 5 Jul 2024, Arnd Bergmann wrote:
+On Sat, 06 Jul 2024 17:23:33 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-> On Fri, Jul 5, 2024, at 04:20, Nicolas Pitre wrote:
-> > From: Nicolas Pitre <npitre@baylibre.com>
-> >
-> > Several years later I just realized that this code could be optimized
-> > and more importantly simplified even further. With some reordering, it
-> > is possible to dispense with overflow handling entirely and still have
-> > optimal code.
-> >
-> > There is also no longer a reason to have the possibility for
-> > architectures to override the generic version. Only ARM did it and these
-> > days the compiler does a better job than the hand-crafted assembly
-> > version anyway.
-> >
-> > Kernel binary gets slightly smaller as well. Using the ARM's
-> > versatile_defconfig plus CONFIG_TEST_DIV64=y:
-> >
-> > Before this patch:
-> >
-> >    text    data     bss     dec     hex filename
-> > 9644668 2743926  193424 12582018         bffc82 vmlinux
-> >
-> > With this patch:
-> >
-> >    text    data     bss     dec     hex filename
-> > 9643572 2743926  193424 12580922         bff83a vmlinux
-> >
-> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> There have been some misconceptions about this macro, which iterates
+> over available child nodes from different backends.
 > 
-> This looks really nice, thanks for the work!
+> As that is not obvious by its name, some users have opted for the
+> `fwnode_for_each_available_child_node()` macro instead.
+> That requires an unnecessary, explicit access to the fwnode member
+> of the device structure.
 > 
-> I've tried reproducing your finding to see what compiler
-> version started being good enough to benefit from the
-> new version. Looking at just the vmlinux size as you did
-> above, I can confirm that the generated code is noticeably
-> smaller in gcc-11 and above, slightly smaller in gcc-10
-> but larger in gcc-9 and below.
+> Passing the device to `device_for_each_child_node()` is shorter,
+> reflects more clearly the nature of the child nodes, and renders the
+> same result.
+> 
+> In general, `fwnode_for_each_available_child_node()` should be used
+> whenever the parent node of the children to iterate over is a firmware
+> node, and not the device itself.
+> 
+> Document the `device_for_each_child node(dev, child)` macro to clarify
+> its functionality.
+> 
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Well well... Turns out that binary size is a bad metric here. The main 
-reason why the compiled code gets smaller is because gcc decides to 
-_not_ inline __arch_xprod_64(). That makes the kernel smaller, but a 
-bunch of conditionals in there were really meant to be resolved at 
-compile time in order to generate the best code for each instance. With 
-a non inlined version, those conditionals are no longer based on 
-constants and the compiler emits code to determine at runtime if 2 or 3 
-instructions can be saved, which completely defeats the purpose in 
-addition to make performance worse.
+LGTM but I think needs at least a DT and ACPI ack.
 
-So I've reworked it all again, this time taking into account the 
-possibility for the compiler not to inline that code sometimes. Plus 
-some more simplifications.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
+One trivial tweak inline.
 
-Nicolas
+> ---
+>  include/linux/property.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index 61fc20e5f81f..ba8a3dc54786 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -171,6 +171,16 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
+>  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+>  						 struct fwnode_handle *child);
+>  
+> +/**
+> + * device_for_each_child_node - iterate over available child nodes of a device
+> + * @dev: Pointer to the struct device
+> + * @child: Pointer to an available child node in each loop iteration, if found
+
+If it's not found then there are no loop iterations. So could drop the ,if found
+I think.
+
+> + *
+> + * Unavailable nodes are skipped i.e. this macro is implicitly _available_.
+> + * The reference to the child node must be dropped on early exits.
+> + * See fwnode_handle_put().
+> + * For a scoped version of this macro, use device_for_each_child_node_scoped().
+> + */
+>  #define device_for_each_child_node(dev, child)				\
+>  	for (child = device_get_next_child_node(dev, NULL); child;	\
+>  	     child = device_get_next_child_node(dev, child))
+> 
+
 
