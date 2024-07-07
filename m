@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-243582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE7D929802
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:04:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2232F929805
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2561F21DB1
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:04:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDED31F21E95
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE43200DB;
-	Sun,  7 Jul 2024 13:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA08120319;
+	Sun,  7 Jul 2024 13:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sS9mgBkJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcDbMQ2H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA15D12B72;
-	Sun,  7 Jul 2024 13:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234631DFD0;
+	Sun,  7 Jul 2024 13:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720357451; cv=none; b=gHAg8aXu+nfeLdm/Ns5OSw7mWe6us+bV7bTx7AQaho2N+V+fy7RkDmAYarzAydgupQY55HHO8AabGcpG0d67T2pGVXhDupEPbnVThBkVTNts83QXE/qYuiLknBqD91M2CqK55Va0dRBGYD8AcnovKx6GMjKZtE4fKpQ8rDVDZ88=
+	t=1720357544; cv=none; b=q+hQiCGFHJsb72xW0fmXCMV2pVMStRhEE2JvElCIjcYpGZfXFq7HzwXJKBOXjOr6CoRggbz4aTx7LkgA9+CrqpqLm35JFGcW0Rej61jawDUMeVkPIe7VQHepgnwmdwiYxENuM7eDjmi6dRzXl1gJMs7+DEuhulf27bAbpO8jLFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720357451; c=relaxed/simple;
-	bh=SXk6QhYOduYbswLt+CqUgwu2eyf7K/QgrPMluZniHqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nx1aPuYaWvlZVZJ4mCtUZihbDy/dvdA72i94mFZ42Atv0Ser9Ldkhl5zfBjMin1Mhh7KTcV5bpdUDOD8sQL4XF/LXk7tBFgkzB8V03Tg75MUkQqEZrlbR6GOi8bC8NKz9guGRqYzHcfuEkyY7vUi42OgQEva/pbTBjVxX9xdNyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sS9mgBkJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D64C3277B;
-	Sun,  7 Jul 2024 13:04:04 +0000 (UTC)
+	s=arc-20240116; t=1720357544; c=relaxed/simple;
+	bh=M+lisCp633+M0Z1/hAPSKFqxu14ftfZ2Hy+tPvtAqzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pHssgFBG7q+4aDpDDDCyN1/BNp+jVuCgzQSAVTUrZblciXt8EEjjVDoPApSd7DGJccRXX1mwxncP3fVs+hqIkt8I67JRiaCX7af4EWT8hBGhC7y4PNrq36TdxNmWZXm+I/6pA99B3dcyBTpRVfthLhF1z5Z5R/lzR9gixrziCko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcDbMQ2H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB587C3277B;
+	Sun,  7 Jul 2024 13:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720357450;
-	bh=SXk6QhYOduYbswLt+CqUgwu2eyf7K/QgrPMluZniHqA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sS9mgBkJxLzp2GjupmQyPhqg/xo3ngf2S9+ja5ddDqyCpZPZGhVhiJO2aaq312Jmq
-	 xc5ObVTn/TV38LyKBT16q3wCn6BGm4KbYV+TwwpgorJ+t9kSNEn5BqFiB1AnIxWPk9
-	 0gofFmvmWVfxWKQB4mXaO/7FtYGZ8Xhqj9TeUZBEIKyVsAgplk5LeLr8vHsOBr/FFG
-	 oKEuAdIBV8cnm1xcnpadj0kh9BeNrzzSHsClGthw1JnGaKUlcHwSvL6CVwz7qgZqOy
-	 XIvuty02pkiNG0qZMNiWDhDme5R4/VZ4QlVsg45PjtIvlwck0CGgvnfR28VsF25zBa
-	 5IyfAjv87YXeA==
-Message-ID: <1bf25e5b-a9aa-42cd-966c-c5674dc502c9@kernel.org>
-Date: Sun, 7 Jul 2024 15:04:02 +0200
+	s=k20201202; t=1720357543;
+	bh=M+lisCp633+M0Z1/hAPSKFqxu14ftfZ2Hy+tPvtAqzk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WcDbMQ2HNa67OHKexKGMJ0bAjIAni2o4mKq6NVQIt48oR3YZxbkAFbhunpl5JeA+D
+	 KM93mIlYPVLrat/0K2cfiUSmrmVgppxTyc/kcHWaLd/bLpCvU7LVqyk8Y8rZyAmv7G
+	 KwxPc/uu3NQBvvrErp598+40HK7MFlBh30/uSZLsZAK/3aailDV+MT513giKxo0ARU
+	 g8QiS8Gh+Uuz1tUKpDS/Cfe2mkdNI460M4Nm9lqHBbmSZ0CuasjD7E/OGGpl9Xxwa5
+	 ZfbjXlCA12vYD9xJpCdamnpsfk4x+GZUZKifwDa3lP/0NDlZJ7MWe4VTO2R/wjJizv
+	 7AGNWShD0y+zA==
+Date: Sun, 7 Jul 2024 14:05:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] dt-bindings: iio: BU27034 => BU27034ANUC
+Message-ID: <20240707140536.1dbb989b@jic23-huawei>
+In-Reply-To: <c39f9c67b3c07a27d7a13109c7b69cff9cfd2b9b.1720176341.git.mazziesaccount@gmail.com>
+References: <cover.1720176341.git.mazziesaccount@gmail.com>
+	<c39f9c67b3c07a27d7a13109c7b69cff9cfd2b9b.1720176341.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] MAINTAINERS: Add an entry for Amlogic WCN power
- sequence
-To: yang.li@amlogic.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
- <20240705-pwrseq-v1-3-31829b47fc72@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240705-pwrseq-v1-3-31829b47fc72@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 05/07/2024 13:13, Yang Li via B4 Relay wrote:
-> From: Yang Li <yang.li@amlogic.com>
+On Fri, 5 Jul 2024 13:54:12 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+
+> The BU27034NUC was cancelled before it entered mass production. It was
+> replaced by a new variant BU27034ANUC (note, added 'A'). The new
+> variant gained a few significant changes, like removal of the 3.rd data
+> channel and dropping some of the gain settings. This means that, from
+> software point of view these ICs are incompatible. Lux calculation based
+> on the data from the sensors needs to be done differently, and on the
+> BU27034ANUC the channel 3 data is missing. Also, the gain setting
+> differencies matter.
 > 
-> Add an entry for Amlogic WCN power sequence.
+> Unfortunately, the identification register was not changed so there is no
+> safe way for the software to distinguish the variants.
 > 
-> Signed-off-by: Yang Li <yang.li@amlogic.com>
+> According to the ROHM HQ engineers, the old BU27034NUC should not be
+> encountered in the wild. Hence it makes sense to remove the support for
+> the old BU27034NUC and add support for the new BU27034ANUC. Change the
+> compatible in order to not load the incompatible old driver for new sensor
+> (or, if someone had the old sensor, the new driver for it).
+> 
+> Drop the compatible for old sensor which should not be in the wild and
+> add a new compatible for the new model with accurate model suffix
+> 'anuc'.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Rename indeed makes sense.  One minor, 'whilst you are here' comment inline.
+
+> 
 > ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> A patch renaming the file according to the new compatible will follow.
+> If renaming is not needed or appropriate, that patch can be dropped.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index dcb37b635f2c..0773f7040341 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1174,6 +1174,14 @@ F:	Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
->  F:	drivers/perf/amlogic/
->  F:	include/soc/amlogic/
+> Revision history:
+> v2: New patch
+> ---
+>  .../devicetree/bindings/iio/light/rohm,bu27034.yaml      | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+> index 30a109a1bf3b..535bd18348ac 100644
+> --- a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+> +++ b/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+> @@ -4,20 +4,19 @@
+>  $id: http://devicetree.org/schemas/iio/light/rohm,bu27034.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
 >  
-> +AMLOGIC WCN POWER SEQUENCING
-> +M:	Yang Li <yang.li@amlogic.com>
-> +L:	linux-pm@vger.kernel.org
-> +S:	Maintained
-> +W:	http://www.amlogic.com
+> -title: ROHM BU27034 ambient light sensor
+> +title: ROHM BU27034ANUC ambient light sensor
+>  
+>  maintainers:
+>    - Matti Vaittinen <mazziesaccount@gmail.com>
+>  
+>  description: |
+> -  ROHM BU27034 is an ambient light sesnor with 3 channels and 3 photo diodes
+> +  ROHM BU27034ANUC is an ambient light sesnor with 2 channels and 2 photo diodes
 
-Drop. It's not helpful at all. Don't throw at us your company marketing.
+ sensor
 
-Best regards,
-Krzysztof
+>    capable of detecting a very wide range of illuminance. Typical application
+>    is adjusting LCD and backlight power of TVs and mobile phones.
+> -  https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bu27034nuc-e.pdf
+>  
+>  properties:
+>    compatible:
+> -    const: rohm,bu27034
+> +    const: rohm,bu27034anuc
+>  
+>    reg:
+>      maxItems: 1
+> @@ -37,7 +36,7 @@ examples:
+>        #size-cells = <0>;
+>  
+>        light-sensor@38 {
+> -        compatible = "rohm,bu27034";
+> +        compatible = "rohm,bu27034anuc";
+>          reg = <0x38>;
+>          vdd-supply = <&vdd>;
+>        };
 
 
