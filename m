@@ -1,129 +1,118 @@
-Return-Path: <linux-kernel+bounces-243549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E79E92978A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:03:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585F392978D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8FA3B210F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:03:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1198B2107B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D832C1C68C;
-	Sun,  7 Jul 2024 11:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59601C287;
+	Sun,  7 Jul 2024 11:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvGwxSoY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XgUuU4av"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C3D1CD00;
-	Sun,  7 Jul 2024 11:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BF01B94F
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 11:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720350204; cv=none; b=me/GuMbuRGOihG7LP/nqZm4UhFJQcNRc9fcVe1VdSfbIJ95XqcsN9cVIkNAIfVGRCBWH+JAHmjg/fhhMNoTKhuK7mFN+YROUum53j4RwUSuACWdkAf9Hb0tIo1iS/A2kBCMn8FpsU4IstsNtvdNpWinvW35pqle9e87aT+IadnA=
+	t=1720350403; cv=none; b=Uwq+/DaoKM7zNkb5yUFbX2j0Bu/8R0regrWNvOMND3FFHm/Fnxd5IVuuu0JHtg4FDXtvNvArQx3luMr0KCNlLpQhPHJIvKEdTRzB1rXrP88zr8owfMGSohkD2YE0LSv5F8KV3b2VIORdLY3RU8feBjTLvgjly5benu/sY2cWW5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720350204; c=relaxed/simple;
-	bh=rZq8y/nfB592aWpSAA6XvX0lF6OMilx0LOgA1yo+8TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J1jefBrcljC4t5al8lhDj8kgktvgZQDE+VZrhH8I9DsOb9qfdLzJeTwuQ2BIzWej4dVp4L0zYAznEvfK4+KvGDIE3FgOLDaD6jOt5x3N0KBA38VuLN8KHt+goVoBHxO7Y/pBElcKi2N3SKI7Pif97CFbn3NP9gf3VomQ6JPbYho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvGwxSoY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B14AC3277B;
-	Sun,  7 Jul 2024 11:03:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720350203;
-	bh=rZq8y/nfB592aWpSAA6XvX0lF6OMilx0LOgA1yo+8TA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nvGwxSoYJuakPOlDpRHXlFptfutMGIfqXzFmmW8kJvfyIMSHxcq7Y9fdNoTp5n/BL
-	 Jxa2LurSK7neDOoQF7kQWbamXeoUgvr6NF3PYWygcqNTqXg2GFORuFrAMiWEm4MXZ2
-	 rWXzoBIbtyNW1KTx8hevn3qBIkUEIxFEIZwd915aRXOnYOdI8FkysRH/57QRMOfPtE
-	 BcOgkf7HCSocRQFQBjIm/1FTAun6mHJvYRLIbWM+jdfnukk/I8hhRKxM8qNj6aFqNA
-	 A6onupEz7vDbPW6z1pFy5qbTUUIcUBDxZdqsfrsV87BbRMDSvPO0OLSa2vpYbJ8+O3
-	 87U1BVqAdJcog==
-Date: Sun, 7 Jul 2024 12:03:14 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, jstephan@baylibre.com,
- dlechner@baylibre.com, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements
-Message-ID: <20240707120314.7d363662@jic23-huawei>
-In-Reply-To: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
-References: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720350403; c=relaxed/simple;
+	bh=qcdakLSQnrrjFFUgrSUQQba4I6Er/xiv67DBi6NE6aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZA5WOVbGTvvuhUUDmSsgfvrQ1J3hPvpJdgCSlzLxcGdX+G2QAxTvB3U9Vb9761y5F94/RmJ3LO7vmkx42r8qNpF/lg6PM5NXB6FSzQEuiHLGRNbr+jdAcOEdvFox9Et9xAhlD0NHLjW3lbluwqbzsSmsSM7G9uas4PZ+IeMA/to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XgUuU4av; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=87n/
+	1dTva8J7QRivoWNaqXOhncR6aueYQkpii/siNgs=; b=XgUuU4avjgtPSh/Ti6MX
+	nGPpXJ/3s7OjGlmtYvlwpGMBDD6d0VlGCzmrOGGZdEWbAGLWhMvx3JLdbEC+YYdN
+	GoTLZvxpV6jQWOsz2M6ZNG1GWCZdorQMvd2yjS/U306TXL2tN1oZPFb4T59zW7ee
+	7VVJafVuc9gTtTdT0IRvkCO1MW6JOgbaJYZf3IHDPU21lBp+fuolRm9u0BFosTg7
+	cY37cmS36Q5ehjhMJykfmNR5xkypfbNMGveHP6umFDx6VFgvh18SUt/CVrh57fuf
+	SQcSPZb9NSxsHJdPOy/uW0hXfsp6w3BlJ+iL2Cmy5g0XgFLJ4nSI4x65FvfcXMQv
+	1A==
+Received: (qmail 4076470 invoked from network); 7 Jul 2024 13:06:37 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Jul 2024 13:06:37 +0200
+X-UD-Smtp-Session: l3s3148p1@SclJSqYcKtNQT+F6
+Date: Sun, 7 Jul 2024 13:06:36 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PATCH v2 3/3] i2c: rcar: minor changes to adhere to coding style
+Message-ID: <Zop2vNCrzDmEKKiO@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>
+References: <20240707082848.5424-4-wsa+renesas@sang-engineering.com>
+ <f93eda7e-e65f-42e9-b96d-e88290201ca0@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MaVWlVIGH0PKR6c9"
+Content-Disposition: inline
+In-Reply-To: <f93eda7e-e65f-42e9-b96d-e88290201ca0@web.de>
 
-On Tue, 02 Jul 2024 17:34:04 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
 
-> This series adds the following improvements over the current AD7606's
-> driver implementation:
-> 
-> - Fix wrong usage of gpio array
-> - Fix standby that was documented as ACTIVE_LOW but handled in the
->   driver as if it was ACTIVE_HIGH
-> - Improve dt-bindings documentation
-> - Switch mutex lock to scoped guard
-> 
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-Given issues I'm having locally with b4 I applied these but added tags by hand.
-Tweaked last patch description to mention guard() rather than scoped_guard()
-to reflect changes in v3.
+--MaVWlVIGH0PKR6c9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Sun, Jul 07, 2024 at 12:34:36PM +0200, Markus Elfring wrote:
+> > A newline was missing and closing braces of functions do not need a
+> > semicolon.
+>=20
+> Can there be a need to offer such changes by separate update steps?
 
-Jonathan
+That would be too fine grained in my book.
 
-> ---
-> Changes in v3:
-> - Remove the two first patches that were already picked up.
-> - Add styling corrections.
-> - [Patch 6/8] Improve commit message.
-> - [Patch 8/8] Replace every scoped_guard by simple guard.
-> - Link to v2: https://lore.kernel.org/r/20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com
-> 
-> Changes in v2:
-> - Change scoped guard to guard(mutex)(&st->lock). This was tested with
->   Rob's bot condition, and seems not to generate warning anymore.
-> - Reorder the commits for avoiding bisection issues and respect commit
->   priority rules.
-> - Add vdrive-supply to required properties.
-> - Separate cosmetic changes from content ones in dt-binding
->   descriptions.
-> - Move maxItems changes (and plural in descriptions) to the commit that
->   adds conditions.
-> - Link to v1: https://lore.kernel.org/r/20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com
-> 
-> ---
-> Guillaume Stols (8):
->       dt-bindings: iio: adc: adi,ad7606: normalize textwidth
->       dt-bindings: iio: adc: adi,ad7606: improve descriptions
->       dt-bindings: iio: adc: adi,ad7606: add supply properties
->       dt-bindings: iio: adc: adi,ad7606: fix example
->       dt-bindings: iio: adc: adi,ad7606: add conditions
->       iio: adc: ad7606: fix oversampling gpio array
->       iio: adc: ad7606: fix standby gpio state to match the documentation
->       iio: adc: ad7606: switch mutexes to scoped_guard
-> 
->  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 123 ++++++++++++++++-----
->  drivers/iio/adc/ad7606.c                           |  47 ++++----
->  drivers/iio/adc/ad7606_spi.c                       |   5 +-
->  3 files changed, 115 insertions(+), 60 deletions(-)
-> ---
-> base-commit: 340fa834ae229a952db04a57ed13fd5d35d75818
-> change-id: 20240416-cleanup-ad7606-161e2ed9818b
-> 
-> Best regards,
+> >  	return !!(rcar_i2c_read(priv, ICMCR) & FSCL);
+> >
+> > -};
+> > +}
+> =E2=80=A6
+>=20
+> How do you think about to omit any blank lines at such source code places?
 
+Oh yes, that newline should go as well. Thanks!
+
+
+--MaVWlVIGH0PKR6c9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaKdrYACgkQFA3kzBSg
+Kba++g/8C4HdtvgGqE6iJDckRHQ6qUgQL/PPoZEFrivN+umIhSd4wRljIJsRAV3r
+OQ7NUJlnXi0BKnHNAUdDIOinrs5+k/AOUv1VMe+rWiGQooPBM0hp8VbrQ2EGUXoy
+0OyUw64tbOPEpBwdMoYg9++t8YdIaO8pMB99bmLZkQvHLjq/W6K6HXMCYPCL6jjh
+7xBXFKdVa4ARXs35SYwhMGBDwBBox6TwuhJK4b84Bf4idTapim7GyknXZUHYf5EG
+9BC8mk0OzR0W9m7Q1StkyGqSUFbOehz6WsntmF99StuvESzV+aoWcMDlbHO/Ow2o
+rErAz5R0YhlWR4jwKI5Cf8jMbgz4LQH+UpeaPUuGtyy47QOosbhatsDY5/fwGpAy
+WifHlt4OZL8mQLEbHsF36c0xZehCfcsCUt7e6Zj9lD+kyUjfKCSsgG07oDSdw3ka
+wRQ/l6oYOfzWbs1avWVD90Hl9AbpLFONxJJHahKli1lwV5BsX5PZwEBAusBsneBe
+Hnik5DkiUQg1yF1HYxXAMTNx/uA4LVMXkBcWoPc4g2Yu7byEstltVFkU3o2J2j2G
+TQv7WfFfhWMPZDdOy26GlJxcDAENrxHbLY8zLz1NXi6QOxRNvJvfnwsrx8JT1ubA
+AjXCXCascdIkfKxWreuG8SE8ONU6Zx/pytBlhe05Hi9AWn38MrA=
+=Qt7Q
+-----END PGP SIGNATURE-----
+
+--MaVWlVIGH0PKR6c9--
 
