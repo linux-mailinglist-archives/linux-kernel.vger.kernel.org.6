@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-243495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F0F9296E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:53:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7678C9296E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B31C1B21AA9
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:52:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02983B213D8
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E49DDBD;
-	Sun,  7 Jul 2024 06:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F545E54C;
+	Sun,  7 Jul 2024 06:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewfthhii"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOIq+nqi"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6DBF519
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FB2CA62
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720335163; cv=none; b=IZhBzJ1TMUeIxbH81LccwlnbYejZIgWVmkpJT0+oJ02vCeH5bjJM/Io5Dw2k8oqS/7c5S1d1KC5jqthrW7hTyuLULfFB6dBkvkRIjiKXg0iWcAfJrfPaqGRnqHmKd54WXBF0WPUqzOq0USE1ZmOE7+Ek7YJumrhSwleHxv76VJI=
+	t=1720335172; cv=none; b=dKbu0LYPwlHSGTZQ5jZQWpWHJlR63Bu11FyyWJmXPSTifzeAMVb2iDpLeOT4dX8yL+UVQXQ82iAjfwVQrqn/9F9HjgoGMngjruVwS0WlBzeZDwS0l4mwXvRnQ+ACetiZ39WyN/9SAJGHfilDDeJKNBD23jitUFjfPlVGuBlkLYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720335163; c=relaxed/simple;
-	bh=2gHlRRfe5N0hzfS0ebrcez3lGn41AB8pRSZzX3LKbLg=;
+	s=arc-20240116; t=1720335172; c=relaxed/simple;
+	bh=eTcdbviIPXnaBScX/lCwCkx4UwxG0OeM942lVs5Y1aA=;
 	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TtHdvJ7bhL7KKDGRoZz4j/iz5hJA71cfr4frndgdcXqGvjLc48018FobGSM8xCSYJfffwds+3bKajbyFzBG7YkveapnNItxcbvV0EDRn2pOFNTUxJsm2VGMQfwUOqwfYXnJ5Tyl5srwu4z6zckQuojkOda5nIoZ5fI7akzNl92o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ewfthhii; arc=none smtp.client-ip=209.85.128.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ar5XYd2i5PPPchhLQKm9HLAkKRt7BsZcCFaxA/0Xhu0GXh5W9huUJYz4xCBvyE4XdrdHCa0Zv9DNL195dtUGczzvjNhMc2c5bVGx1fKmm7hkeyjAMZJM+17ju5dTTaug93HiZW+O/lq+uh+r+822QNPkx3NLfH8iModWEl++Ch0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOIq+nqi; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42111cf2706so3288085e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 23:52:42 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-426659ff58bso323105e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 23:52:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720335160; x=1720939960; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720335170; x=1720939970; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4nTXTdn8BfpeIUTQTFy+0PL+rg8osqbE7sRCEcbh36A=;
-        b=ewfthhiijy5WtXVroQPaGZWtTDhKhCSsXy1QiDoZ0PftOrCp12rYNqX3Z/JAF6SBr4
-         Qs0n51EKu9p0g/WO9ij4AjlLpG2fVNUgErQZ9+EG2pyoxXK2Ku48O+7Kj8N2ZlbAtohP
-         LiPBHHu+KgXZhw4rq54va+t7O6habKfmSB5gNKmTmw/3XUVBtyqK62hAyvaKOTGZXSa3
-         3+fs/WbUZ4uhkKp6UmLZ1T7huhUnUIvxFrF7hI8TtI7b6MA03Ey0AbXDTxNA9+L4zN/L
-         AsOdS/h2EOHsPcu4QhmCcKgM0vxKW9R2Mb86tNmzLC0l124Umz9Vj4r8vTJzvUDCOwMq
-         fVSg==
+        bh=ilGTpNzNmztcyPOmCQQUHGh9qBBEQhne1jUpgHqVUc4=;
+        b=fOIq+nqih1muse871PKVaHtDAPbzPtbThQmgWv2iAYzxpKRwzFNTEA3Ixi0s9M1sfT
+         1x2LZC8pGsShga5HFDbDv7k0Wj0Y1f4SHebSpOOaoPnm+r/eto49rgo77xjX39ybPZ3J
+         gXlZtb0KkpPn8bBzMa9SfTJcwKhb0r1KDSiCmfS5eRACpT41A/veCcqH1LHJKuzA0LuY
+         hUS4BrAnD3MyAxiHlg8GwMXvnssB1tpEY3Ui350RDdsqCyfk3y4Oonx9slamitvel4aM
+         qjfykR3jpqcR1azn7l3cXS38j5HiylHZ7aurxDflHawI78PusDBUDvijuoEYtFT36Gz2
+         MP6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720335160; x=1720939960;
+        d=1e100.net; s=20230601; t=1720335170; x=1720939970;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4nTXTdn8BfpeIUTQTFy+0PL+rg8osqbE7sRCEcbh36A=;
-        b=t7rZeL80d38PTgQjaSKkeh8KD6ap+awYMiGUbUmuhXUpeZrEvKPntnRqLekmutjrA5
-         iLOyTnEibMrBFaCTvfo7o3pjwqAGiiUVTJQ9nPezG0gopq0mLPwyawLBufjzCLkSYAsA
-         WgL9eA7SM605I+VhIxWy1ryKXjmADskujXh/8hplhnrqOlL3VpyaxhWYDt4hrVA4QSsn
-         CDLMjxsrdCZ92RC/9YhRlKciZAzeGYoyt7xpzMxAcE+86pDaVzmk3PP7Asub3vH863xf
-         VvvT7dGXb3ssp4NW5+PyOd8ZsAvOA2HkvSSY0jWhFJvf+tmm2UlRVeaLbXmuvssHYxZW
-         g2vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXW6PO9fz5cz0Ddkdku7PDZIlMZQkGl9jOAv2BYVBgMsj9vIkoBfTrB1xxO7vhtrSAYQIYee2kjZmfu6f4CVtQwUfq+iRCzyvn9cs9q
-X-Gm-Message-State: AOJu0YwwZZZAi6euUOcGWclO8k+kVXph4fv0pQSnEeBxb4CtWXQg4DYm
-	chg7jIe8WFMo2Wgzit8l7+DNRTtTOzy7gnhD/QzdOVjqadB0mT1c
-X-Google-Smtp-Source: AGHT+IEkAV8bNmuZkYXMin26Xc6b6o7XjXvQBr+yzOkeoBzNz/3QpTUWJQLG0wyYeJeR+246lvNNQQ==
-X-Received: by 2002:a05:600c:35d4:b0:426:4920:2846 with SMTP id 5b1f17b1804b1-4264a46b0bbmr59448925e9.3.1720335160526;
-        Sat, 06 Jul 2024 23:52:40 -0700 (PDT)
+        bh=ilGTpNzNmztcyPOmCQQUHGh9qBBEQhne1jUpgHqVUc4=;
+        b=UqtVWfDJwXXsmNd/6des740GPpDJbI2ZwRg49jNaN4nlaAfMZ033yNX820RAnfZ9R7
+         qR22gqIiiVzQcr4JTXt73rBNHq0l5UKbJQDcpzD5Oe1BUunJGlws12qw1vQnG9mq6qRl
+         VxydK71jMWB9TlDj6mhqmqhQ8pZsClSx+x6KUL+YovJoylADFlXmUfKDkLJVx1Zl1Pxr
+         eswKMFaRJ8Pu6xjZWqwTpd2ntnZxbqJa/R5BQ/zXjtyvZJU2jrcKPmkWftxedkKRPxbe
+         hq+NGtvPZKFXQGGuBG/CCs1q2eGPjPLRC++bprysM9tMtHma06oyAYbmrJqG/hjQlcab
+         eXMA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6S8ZeCO4PjQaMIi6CJEzMGqX9SJiL3kM3sUfg7rGis0ZUiL/AX/TddFuCyErLPXk1EurL0uEjE6Y+X3CpMReRtRySsgv9/i/nRJ1W
+X-Gm-Message-State: AOJu0YwEC998DU+sdit5BBmjUUbbfTstbVq/kdv9U9aZ/JRbiXeTJjU/
+	Z9u/S0bx8rAFJwXsSn8QBrZRifq/MExNdlFErDDRfU2CrnT12mld
+X-Google-Smtp-Source: AGHT+IExqykmCMe6GXQZ7zesU7eaEDbMJuHK4G7VD3P5t8/8k+npWYx4FTyVgA1r/OC/yRGdjBMOnw==
+X-Received: by 2002:a05:600c:4f03:b0:426:6358:7c5d with SMTP id 5b1f17b1804b1-4266358805emr10599065e9.4.1720335169931;
+        Sat, 06 Jul 2024 23:52:49 -0700 (PDT)
 Received: from matrix-ESPRIMO-P710 (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36792881856sm10726712f8f.6.2024.07.06.23.52.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367b164799csm4214321f8f.56.2024.07.06.23.52.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 23:52:39 -0700 (PDT)
-Date: Sun, 7 Jul 2024 08:52:38 +0200
+        Sat, 06 Jul 2024 23:52:49 -0700 (PDT)
+Date: Sun, 7 Jul 2024 08:52:47 +0200
 From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/13] staging: rtl8723bs: Remove unused macros in
+Subject: [PATCH 05/13] staging: rtl8723bs: Move last macro from
  hal_phy_reg_8723b.h
-Message-ID: <a478e607d4fcf22f547594c4a569c27da4fb2645.1720245061.git.philipp.g.hortmann@gmail.com>
+Message-ID: <7e1e5591af85a452415fb137767e21d0d1d163a1.1720245061.git.philipp.g.hortmann@gmail.com>
 References: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,72 +83,39 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
 
-Remove unused and double defined macros.
+Move last macro from hal_phy_reg_8723b.h to Hal8192CPhyReg.h to prepare
+removal of hal_phy_reg_8723b.h.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
- .../rtl8723bs/include/hal_phy_reg_8723b.h     | 51 -------------------
- 1 file changed, 51 deletions(-)
+ drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h    | 1 +
+ drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h | 5 -----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h b/drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h
+index 586a3dabc5ca..292c18b62537 100644
+--- a/drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h
++++ b/drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h
+@@ -1108,5 +1108,6 @@
+ 
+ /*--------------------------Define Parameters-------------------------------*/
+ 
++#define rDPDT_control				0x92c
+ 
+ #endif	/* __INC_HAL8192SPHYREG_H */
 diff --git a/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h b/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
-index b0b1ac1090fc..0791b85b7c57 100644
+index 0791b85b7c57..da549b773243 100644
 --- a/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
 +++ b/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
-@@ -14,56 +14,5 @@
- /*  4. Page9(0x900) */
- /*  */
- #define rDPDT_control				0x92c
--#define rfe_ctrl_anta_src				0x930
--#define rS0S1_PathSwitch			0x948
--#define AGC_table_select				0xb2c
--
+@@ -9,10 +9,5 @@
+ 
+ #include <Hal8192CPhyReg.h>
+ 
+-/*  BB Register Definition */
 -/*  */
--/*  PageB(0xB00) */
+-/*  4. Page9(0x900) */
 -/*  */
--#define rPdp_AntA						0xb00
--#define rPdp_AntA_4						0xb04
--#define rPdp_AntA_8						0xb08
--#define rPdp_AntA_C						0xb0c
--#define rPdp_AntA_10					0xb10
--#define rPdp_AntA_14					0xb14
--#define rPdp_AntA_18					0xb18
--#define rPdp_AntA_1C					0xb1c
--#define rPdp_AntA_20					0xb20
--#define rPdp_AntA_24					0xb24
--
--#define rConfig_Pmpd_AntA				0xb28
--#define rConfig_ram64x16				0xb2c
--
--#define rBndA							0xb30
--#define rHssiPar						0xb34
--
--#define rConfig_AntA					0xb68
--#define rConfig_AntB					0xb6c
--
--#define rPdp_AntB						0xb70
--#define rPdp_AntB_4						0xb74
--#define rPdp_AntB_8						0xb78
--#define rPdp_AntB_C						0xb7c
--#define rPdp_AntB_10					0xb80
--#define rPdp_AntB_14					0xb84
--#define rPdp_AntB_18					0xb88
--#define rPdp_AntB_1C					0xb8c
--#define rPdp_AntB_20					0xb90
--#define rPdp_AntB_24					0xb94
--
--#define rConfig_Pmpd_AntB				0xb98
--
--#define rBndB							0xba0
--
--#define rAPK							0xbd8
--#define rPm_Rx0_AntA					0xbdc
--#define rPm_Rx1_AntA					0xbe0
--#define rPm_Rx2_AntA					0xbe4
--#define rPm_Rx3_AntA					0xbe8
--#define rPm_Rx0_AntB					0xbec
--#define rPm_Rx1_AntB					0xbf0
--#define rPm_Rx2_AntB					0xbf4
--#define rPm_Rx3_AntB					0xbf8
+-#define rDPDT_control				0x92c
  
  #endif
 -- 
