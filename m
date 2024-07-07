@@ -1,155 +1,141 @@
-Return-Path: <linux-kernel+bounces-243535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18933929758
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:46:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A077392975C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B02B11F21370
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 09:46:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D72F1C20A46
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5241518C22;
-	Sun,  7 Jul 2024 09:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahYHGAFD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FA717C64;
+	Sun,  7 Jul 2024 10:06:30 +0000 (UTC)
+Received: from 2.mo561.mail-out.ovh.net (2.mo561.mail-out.ovh.net [46.105.75.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E29B641;
-	Sun,  7 Jul 2024 09:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D7411725
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 10:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.75.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720345551; cv=none; b=uvqprH0dNIT0Gndjzrv1TkTby8xB6SkcOG0JrSmip4MLLz+RzeFrRHf/s+SE/HPkW1mx7A1sPjvRL8X7V3ri0J8sGwXA03vpUVf9JG/6zZi84QmwBQE50AUd8tKw0OGRfY8yJKVFVAsfKfCI1aBOEFvsUnvHng9EulOj3GFtNHA=
+	t=1720346790; cv=none; b=ZVy+M7CE+Dt+OrKVC60+I8TBpOzQxwuSGt7kl4eABNeWrNnP1/jTgE7F9TNoAVxVj7CIUZydmen3wfanlmxsM60UK6gb7VxmsZmgDPoQpwNMlnIeQiW0PEoDQpM9WucdKdLQv7O7HP08i7JHZ0LyPYfKReOFnT+utJnAjjvqQyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720345551; c=relaxed/simple;
-	bh=hNUGTH1mhz5l+9in2/mMOpiVJOQXuWh1yP0g+veKSK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OfAZJxnbTaVoB1aV6CrBw6XxAdgl+Hj5WzUzTcBfHVQ9pYXLGvIXmo3+jQYQUP1cj4q5u3la4tkSG6CJYGpQMCe9vXbr/g08girVshcCDtHIMLYL/ti1ovotIQyWpINI/yru9lGoqZmAtlhqrPKKpKr4moLFLJvEU8Jpo2jNyg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahYHGAFD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39EC2C3277B;
-	Sun,  7 Jul 2024 09:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720345551;
-	bh=hNUGTH1mhz5l+9in2/mMOpiVJOQXuWh1yP0g+veKSK0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ahYHGAFDjGl7i/GWARbP/F9pDYyXX3XPYRGN0PWvpQdcU2oQHDkZ0wJcKKuvKfVJc
-	 2hfX7AU3v42PzHu7U07l94/7jkm9EFmW+xrBKRB9eDQL/pCqX7ppg1lIWwvq0cAt12
-	 ws9vXfMuNdLl8/xOvdEnMeKv6DQwPHTR15Yrh/qHFshtGrrKFVHE9kBTQbipArpx8K
-	 wc/TrHCQ/V42wsh6YAjiO0iQcvH9jBnOC/2CaPidj7zVz1Q39pONyD0/HWnskSVPlF
-	 rm6kA2bjmL1Nqo+OJR+bSkx51dK+h7UENltUEUKGo6rfQ6jQG8sKmmFbrh13JTZ9gV
-	 WrZ4agy073JUw==
-Date: Sun, 7 Jul 2024 12:45:46 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
-	"Zeng, Oak" <oak.zeng@intel.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
-Message-ID: <20240707094546.GI6695@unreal>
-References: <cover.1719909395.git.leon@kernel.org>
- <20240705063910.GA12337@lst.de>
+	s=arc-20240116; t=1720346790; c=relaxed/simple;
+	bh=q+ZVjfg32dhaNaFZrGSXCDJnaZ2EaLf0W2r5pUl6IEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AHRv8MGA757s7JKfXVpSpeq0rgOXXAi7dNuHA/2UObZoCdFLQ3Nkm6OsqLum7bVR5UWsV+RCqQ5JPhDMGnXQ86DopgTlL9mBpRX9ML3zKVPUd+ebeuUxdB9gbWjT7PTEzuLJ4of8c5dJycI24fuqxPsaxMMVsjUmSlomP75H0ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl; spf=pass smtp.mailfrom=milecki.pl; arc=none smtp.client-ip=46.105.75.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=milecki.pl
+Received: from director11.ghost.mail-out.ovh.net (unknown [10.108.9.137])
+	by mo561.mail-out.ovh.net (Postfix) with ESMTP id 4WGzcd5ywcz1N4Y
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 07:37:53 +0000 (UTC)
+Received: from ghost-submission-6684bf9d7b-7hjjw (unknown [10.110.113.129])
+	by director11.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 592ED1FE1E;
+	Sun,  7 Jul 2024 07:37:51 +0000 (UTC)
+Received: from milecki.pl ([37.59.142.108])
+	by ghost-submission-6684bf9d7b-7hjjw with ESMTPSA
+	id 1GHDEc9Fimb2UQoARsdD+Q
+	(envelope-from <rafal@milecki.pl>); Sun, 07 Jul 2024 07:37:51 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-108S00297993a4f-17e4-4353-9d0d-40a5a04800ad,
+                    9FB31564A4F31A61F7AB0932BCD271886B876CF9) smtp.auth=rafal@milecki.pl
+X-OVh-ClientIp:31.11.218.106
+Message-ID: <0c095098-4b3e-481b-b866-29cacb9f165d@milecki.pl>
+Date: Sun, 7 Jul 2024 09:37:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240705063910.GA12337@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PROBLEM linux-next]
+To: Mirsad Todorovac <mtodorovac69@gmail.com>, linux-mtd@lists.infradead.org
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
+ Miquel Raynal <miquel.raynal@bootlin.com>
+References: <47e0483d-6e3d-43a8-9273-25278a4a74b9@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+In-Reply-To: <47e0483d-6e3d-43a8-9273-25278a4a74b9@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 5030802259375991588
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeggdduvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeetteefjeejgefhieekveelveekhedtgefhgfdutdehhffggfevudehteevjeeuteenucfkphepuddvjedrtddrtddruddpfedurdduuddrvddukedruddtiedpfeejrdehledrudegvddruddtkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedupdhmohguvgepshhmthhpohhuth
 
-On Fri, Jul 05, 2024 at 08:39:10AM +0200, Christoph Hellwig wrote:
-> Review from the NVMe driver consumer perspective.  I think if all these
-> were implement we'd probably end up with less code than before the
-> conversion.
+Some more descriptive subject would be nice :)
 
-Thanks for the review, I will try to address all the comments in the next version.
 
+On 7.07.2024 02:10, Mirsad Todorovac wrote:
+> In file included from ./include/asm-generic/bug.h:22,
+>                   from ./arch/x86/include/asm/bug.h:87,
+>                   from ./include/linux/bug.h:5,
+>                   from ./include/linux/fortify-string.h:6,
+>                   from ./include/linux/string.h:374,
+>                   from ./arch/x86/include/asm/page_32.h:18,
+>                   from ./arch/x86/include/asm/page.h:14,
+>                   from ./arch/x86/include/asm/processor.h:20,
+>                   from ./arch/x86/include/asm/timex.h:5,
+>                   from ./include/linux/timex.h:67,
+>                   from ./include/linux/time32.h:13,
+>                   from ./include/linux/time.h:60,
+>                   from ./include/linux/stat.h:19,
+>                   from ./include/linux/module.h:13,
+>                   from drivers/mtd/mtdpart.c:10:
+> drivers/mtd/mtdpart.c: In function ‘parse_mtd_partitions’:
+> drivers/mtd/mtdpart.c:693:34: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
+>    693 |                         pr_debug("%s: got parser %s\n", master->name,
+>        |                                  ^~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/printk.h:376:21: note: in definition of macro ‘pr_fmt’
+>    376 | #define pr_fmt(fmt) fmt
+>        |                     ^~~
+> ./include/linux/dynamic_debug.h:248:9: note: in expansion of macro ‘__dynamic_func_call_cls’
+>    248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+>        |         ^~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/dynamic_debug.h:250:9: note: in expansion of macro ‘_dynamic_func_call_cls’
+>    250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+>        |         ^~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/dynamic_debug.h:269:9: note: in expansion of macro ‘_dynamic_func_call’
+>    269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+>        |         ^~~~~~~~~~~~~~~~~~
+> ./include/linux/printk.h:610:9: note: in expansion of macro ‘dynamic_pr_debug’
+>    610 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+>        |         ^~~~~~~~~~~~~~~~
+> drivers/mtd/mtdpart.c:693:25: note: in expansion of macro ‘pr_debug’
+>    693 |                         pr_debug("%s: got parser %s\n", master->name,
+>        |                         ^~~~~~~~
+> drivers/mtd/mtdpart.c:693:50: note: format string is defined here
+>    693 |                         pr_debug("%s: got parser %s\n", master->name,
+>        |                                                  ^~
 > 
-> The split between dma_iova_attrs, dma_memory_type and dma_iova_state is
-> odd.  I would have expected them to just be just a single object.  While
-> talking about this I think the domain field in dma_iova_state should
-> probably be a private pointer instead of being tied to the iommu.
-> 
-> Also do we need the attrs member in the iova_attrs structure?  The
-> "attrs" really are flags passed to the mapping routines that are
-> per-operation and not persistent, so I'd expect them to be passed
-> per-call and not stored in a structure.
+> Offending commit is 5b644aa012f67.
 
-It is left-over from my not-send version where I added new attribute
-to indicate that dma_alloc_iova() can't support SWIOTLB to avoid
-dev_use_swiotlb() mess. I will remove it.
+Actually it goes back to 2015 to the commit 8e2c992b59fc ("mtd: mtdpart: add debug prints to partition parser.").
 
-> 
-> I'd also expect that the use_iova field to be in the mapping state
-> and not separately provided by the driver.
-> 
-> For nvme specific data structures I would have expected a dma_add/
-> len pair in struct iod_dma_map, maybe even using a common type.
-> 
-> Also the data structure split seems odd - I'd expect the actual
-> mapping state and a small number (at least one) dma_addr/len pair
-> to be inside the nvme_iod structure, and then only do the dynamic
-> allocation if we need more of them because there are more segments
-> and we are not using the iommu.
-> 
-> If we had a common data structure for the dma_addr/len pairs
-> dma_unlink_range could just take care of the unmap for the non-iommu
-> case as well, which would be neat.  I'd also expect that
-> dma_free_iova would be covered by it.
 
-Internally Jason asked for the same thing, but I didn't want to produce
-asymmetric API where drivers have a call to dma_alloc_iova() but don't
-have a call to dma_free_iova(). However, now, it is 2 versus 1, so I will
-change it.
+> Proposed non-intrusive fix resolves the warning/error, but I could not test the code.
+> (I don't have the physical device.)
+> 
+> -----------------><------------------------------------------
+> diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+> index 6811a714349d..81665d67ed2d 100644
+> --- a/drivers/mtd/mtdpart.c
+> +++ b/drivers/mtd/mtdpart.c
+> @@ -691,7 +691,7 @@ int parse_mtd_partitions(struct mtd_info *master, const char *const *types,
+>                          if (!parser && !request_module("%s", *types))
+>                                  parser = mtd_part_parser_get(*types);
+>                          pr_debug("%s: got parser %s\n", master->name,
+> -                               parser ? parser->name : NULL);
+> +                               parser ? parser->name : "(null"));
+>                          if (!parser)
+>                                  continue;
+>                          ret = mtd_part_do_parse(parser, master, &pparts, data);
+> 
+> 
+> Hope this helps.
 
-> 
-> I would have expected dma_link_range to return the dma_addr_t instead
-> of poking into the iova structure in the callers.
-> 
-> In __nvme_rq_dma_map the <= PAGE_SIZE case is pointless.  In the
-> existing code the reason for it is to avoid allocating and mapping the
-> sg_table, but that code is still left before we even get to this code.
-> 
-> My suggestion above to only allocate the dma_addr/len pairs when there
-> is more than 1 or a few of it would allow to trivially implement that
-> suggestion using the normal API without having to keep that special
-> case and the dma_len parameter around.
-> 
-> If this addes a version of dma_map_page_atttrs that directly took
-> the physical address as a prep patch the callers would not have to
-> bother with page pointer manipulations and just work on physical
-> addresses for both the iommu and no-iommu cases.  It would also help
-> a little bit with the eventualy switch to store the physical address
-> instead of page+offset in the bio_vec.  Talking about that, I've
-> been wanting to add a bvec_phys helper for to convert the
-> page_phys(bv.bv_page) + bv.bv_offset calculations.  This is becoming
-> more urgent with more callers needing to that, I'll try to get it out
-> to Jens ASAP so that it can make the 6.11 merge window.
-> 
-> Can we make dma_start_range / dma_end_range simple no-ops for the
-> non-iommu code to avoid boilerplate code in the callers to avoid
-> boilerplate code in the callers to deal with the two cases?
-
-Yes, sure.
-
-Thanks
+I'd say it's simple enough to send patch without actual hw testing.
 
