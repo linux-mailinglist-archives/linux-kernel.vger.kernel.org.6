@@ -1,395 +1,553 @@
-Return-Path: <linux-kernel+bounces-243530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A5E1929747
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F839929749
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB511C20AE5
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 09:24:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4C3281AE5
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 09:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39C11429B;
-	Sun,  7 Jul 2024 09:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C85C12B95;
+	Sun,  7 Jul 2024 09:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ark0i0fb"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazolkn19011029.outbound.protection.outlook.com [52.103.43.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+mQrY41"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CE514277;
-	Sun,  7 Jul 2024 09:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720344282; cv=fail; b=LZCt4n58u35P1hmVV73iylwUOf0OiuwT1CgF6qMlUvA5dYwZB2UE/q7ThUxvayUOuZ6Ea2UOEUWL/cHAk0HSNUfvNOQxBJF8HRf8s+4u7kh0PfDhVEX87ocDalImXQYaJ7cPajll3peSEYzIQ4Lypj4xU4ePxHxRNoc4/ikaAdE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720344282; c=relaxed/simple;
-	bh=uJ7ZIQFnjNRjCsjWnooA0LV3ssF1c+BvPgaueXkio5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=U8bXykJ6hf6mPt6VR7Cw6TO50qhNB+j8vzh/EscugvhEVsUX0AsxUS3SMNMbbmB5oNv4dRdT5+pSLmp2+9GAYOaVwCoSitCRWR4D9lVHC1cChjFABljCpHcKmBGVT7hnglAvSZ6UX0JRhqGnzwZo39hMdrRaktIhRazKUAi2GiA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ark0i0fb; arc=fail smtp.client-ip=52.103.43.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eWftMy3+FWEw5o1DsUAR51p8KRmXq1lBxnVFO4UnK3nXhpwHDiV4rx2J1J9pgCXNCbQLFXHu+9CnAC+Z6jKfF5M5duxyV4XzAuas64uKQxjBXuO7bp4le6nd9TmmQztEASRwZL6OQwGrRE6o0v8hWy/o+KXdYz/JI4GyugCNCbudqOy80gd/CveN4kfJwayiYmSigpt2V2o0o7JtpfcOuGRgApFw63Fso/HsPSDlbbliazxE5pgRo2U/Rk5sFq+WDjbw44ubhoQvtJhjDLoivcwvzbwVB4tkiVosunhjYm7ACqDaozX74eMalan40k1N4cvE/BwV8vQWY5ZXa75Pvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jan1ql/L29Rs8eZjF6mvbICM+pY33rdSiq3JuC7mv+8=;
- b=DhH1RyGLP2uX92KTUFoRglyGvctgsXKIV5ObI24l6y5KHEzAjkv9UaTRy6XZ7zL8WtU+YqWH0IysuSbG4xVkWChR0l7ECF73apFQoNR7QUifGRkTKm3Yj4IFAUNoGUeKL0i7YkDv2SiUDMbCsqb41V6fTGutXkQlp/2sl6cUiNTPwqg3lAnNQRy90GFPMg3lr9gwi+ALMzs6swQ5CAXb6gzd9QRyFWKcuu3aIhrnAfffXFb6pWtPzteOPQ43eUhETmb6j0Sxm4qu1KUJaTbw8RvyrBr0gIdevk6s8HAoTni+1M3uz1ta2d5iqg3xOaoSvWMUhqXaOXn5+XafyDPQAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jan1ql/L29Rs8eZjF6mvbICM+pY33rdSiq3JuC7mv+8=;
- b=ark0i0fb/he+Uz48RFDES+B5y2R2Eo4EgjWr03XiNsZC/qLojB5kAsFps54hvnWPjRDTp+L/1w83y/nfR+Z4pNHDheD/hPL1Nv11eMGQ0kz+MXf81NBOi9kgOOw8cwuiR1XczecdERXLug6bXeNdgVWmu8lRlcsWz/pZippI6ySs3frhP4qcjlKhMwB/UAZgQJI9QJKzLgIyNdoGsGoAtUyqK/yZg7+ecdUcLyXIU636ishCxcDypaLhCLFdv/tjmBunNYAfcLustLw1YlM/H3/78+EVaWg8ahxj+bETCdkRvv9oVl2XvHeaK3FxxlxMYwYiAU/Xc+Nry31cpAROkw==
-Received: from OS3P286MB2597.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1f3::10)
- by OSZP286MB2346.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:15a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Sun, 7 Jul
- 2024 09:24:35 +0000
-Received: from OS3P286MB2597.JPNP286.PROD.OUTLOOK.COM
- ([fe80::90af:3f0d:73f8:cfeb]) by OS3P286MB2597.JPNP286.PROD.OUTLOOK.COM
- ([fe80::90af:3f0d:73f8:cfeb%6]) with mapi id 15.20.7741.033; Sun, 7 Jul 2024
- 09:24:34 +0000
-From: Shengyu Qu <wiagn233@outlook.com>
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	greearb@candelatech.com,
-	chui-hao.chiu@mediatek.com,
-	rany_hany@riseup.net,
-	meichia.chiu@mediatek.com,
-	StanleyYP.Wang@mediatek.com,
-	allen.ye@mediatek.com,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Shengyu Qu <wiagn233@outlook.com>,
-	Sujuan Chen <sujuan.chen@mediatek.com>,
-	Bo Jiao <bo.jiao@mediatek.com>
-Subject: [PATCH v4] wifi: mt76: mt7915: add wds support when wed is enabled
-Date: Sun,  7 Jul 2024 17:22:55 +0800
-Message-ID:
- <OS3P286MB259748F6FA6BE628C3295D7498D92@OS3P286MB2597.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [NLeiNRNhpp/5TQTOrK8RLXA1zsCU/w/m]
-X-ClientProxiedBy: SG2PR04CA0178.apcprd04.prod.outlook.com
- (2603:1096:4:14::16) To OS3P286MB2597.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:1f3::10)
-X-Microsoft-Original-Message-ID: <20240707092255.14189-1-wiagn233@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0505E17C91;
+	Sun,  7 Jul 2024 09:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720344295; cv=none; b=lGdFtxugR3ARQrhO1IKDF5GATekdwKkE8GdXklIqUGcLbjrGiyLo2WEeBjiipXmq4LJ5pVJS2XGryEhEDzp30WMCAR3WV3KLIzeFNkvXciVzwlMc9etkmx8I/TGGzGNWCXzRLeOl1uo1HgPB0C203pKqVha5jBzFXM3DyHOmVt8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720344295; c=relaxed/simple;
+	bh=atzmANg4H61M6MgJChGFra32mm5L9lToS/Ht3wAmSzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tWlfN6O/m+w/BwNWY5Y0OFBpYm7+koyAeZBMiEIUeaEiuLixwrJzKtWwx4OXvQxtZLuccmYviJwRO648McVpF9PYtSp18d8aJm2+Jisnne5iPcdpf0/qgepuIYWtixH5ofJJMecT6R4LiMYbeDZgBUf03geOcFQv/2E1GS3h+/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+mQrY41; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57cc30eaf0aso1708805a12.2;
+        Sun, 07 Jul 2024 02:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720344291; x=1720949091; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZPlZ/YHIEwpuu25UE8boHLQB32O0zvN8BBynnhGdKnQ=;
+        b=l+mQrY41EMBUfzSZFtdk7jTIEs98xOr9HoebXekFPz8g9w7fy3SxiRyk2B6lWT7hda
+         uopcQHNPG4hGGIDcB0xz8IHopP+f2rIfVG+KxWjM6oaARC/JQPOcULfNJ0spRIfjeL+a
+         fpp8jgJH8lqFvE3/CdBOwDsXXPiLDqCPMxhGs11hhGl8dCJyqTGQDmSgImKNmCX5sbPM
+         RSo6o/1GAYpqVa+oxzAyxLc9H9W/5JWsH4vGQ52pn0Nu40YoEXTDEekoB2KmkNBtJmhx
+         j0rRleo99Y+Aags+Luvfb3idC3l+bYMMqWnm+eRecxcYW/a/C7Sc7SpGI6vZ4EyHo1Es
+         hSqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720344291; x=1720949091;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZPlZ/YHIEwpuu25UE8boHLQB32O0zvN8BBynnhGdKnQ=;
+        b=oV3oJ3sOna48jLjEn55p8pxRZllercUFyhUWp2XRd9aJwPI2w2v54ziWD6FTdulPzp
+         dO/d4yr0o5QeK9Q+xF4ZHJajEW00MrQKeYAwMBFc4x7+nPq05o7JVtXaZSbC2psfWMLP
+         RwUb5KhQyBhs1qe7m1VMr5J6YdRgw9t/Wjsxw2nNa/h7GSDdcyNpzZa9d39XFDVC7EV/
+         OF5WEFs4gnVQirtF4xH99KyJaN1lOuYVePj8fmCSIjuljN2i3WbiOHqq+njvveejDAR6
+         w1rvs7EJBh4Lv9mD/D7x/QZhiw4qPl2JJArc9rs3xRji3HpowVbGshQnhe3uMr0q5Bx8
+         1hOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVehLdjoFl3tpV6Y0gGRmi5AHI16gTtts2QGbr1aeS8kuQaSqAVw4kqkbU+N9LyTXCOimhj97JoGCsmjIwk46A1ujYvHu2evnpbhm4M3/VazEqGLgmpptPwPl3NC0apSieV+JIj8hlEr3Q=
+X-Gm-Message-State: AOJu0YxWPtBz3u054i9qkbVwD+LupbBOeVN2Wu4pLFBr37FBERBS3q0v
+	kFeDj7SIzD5zR0RNZRXrkYg04U56urFxA44Zqfwbd84aEeKyHPM=
+X-Google-Smtp-Source: AGHT+IE4Sg6b+cyeReUtgp4CVDdLVmhLP3ZiJmnlo0GEJj8i7mxGGdJa/0RUeko+TBxwQtuFwSSzLg==
+X-Received: by 2002:a05:6402:1e91:b0:58b:f46f:ae45 with SMTP id 4fb4d7f45d1cf-58e5a4098c6mr8032204a12.23.1720344290632;
+        Sun, 07 Jul 2024 02:24:50 -0700 (PDT)
+Received: from ?IPV6:2a02:810b:f40:4600:cbbd:ab24:fb5b:b94d? ([2a02:810b:f40:4600:cbbd:ab24:fb5b:b94d])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614f3d3e1sm11563386a12.80.2024.07.07.02.24.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Jul 2024 02:24:50 -0700 (PDT)
+Message-ID: <f7e34de0-0b18-4899-9c05-11c478cb53cc@gmail.com>
+Date: Sun, 7 Jul 2024 11:24:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3P286MB2597:EE_|OSZP286MB2346:EE_
-X-MS-Office365-Filtering-Correlation-Id: be804a5d-5583-4d71-347b-08dc9e669d6e
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|19110799003|8060799006|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	1UMAX6O9oXcKtekwUNWTrppbGCs3XJPz4w/fEptHOPwyubXMy7KRCkMFP32geG+40baz+JoegoVDFRHkGxCbZPKfEGYj1TkkgQlb5VUT75Xjc3XEY8MmIZGQ+MV85ooQcez2haNo8JjreJXstTgUxZcrkuBtW/1avnsNeLZAegilJwD8uN/etpUU/7LpLKdjktq0/ATOlygt/5Gx5lSA2nx1gAgT+tn67tuEPkQYD/2Y8V/WqC+V9itk5BciUgN45p5XZ/co0DX6n8xPlgzhWaVgOCfyZFm2my4DhtoWevNkc4dSYaZJs4Di7Q0rSwRBr1cLGX+zWb2r79W72YJE9sUT8BSG1KYiJ+uhOJz4iEuJzI2sohFTxA0pXdkgmVGRqHe3ZvW4VyImgqsAYVLhiKIZG8YQ4ab1dqeAJUNXZIdc1N0L19bCJIk3dp++o49RuLIkDCCdindrMIx9AertYCC4OCKG9k5qNpoPhDoBRoZzr95fOsEzfZw3UlEIMvUDe3LkWNA1U4C7m60eDUCCdheT3RqGhqqwTeOU3bvpBWgEauU49h+qwQ90qXFHyK7dIYVP8sla0JX5L52NkmOchsRFtzP8/2kqjsqs+S5c8KNvrwIyEGqCFrC7DKMJBPuYuvpRrXrqEFjKeMDozga01TlXK5fzOuBrGNrOJL0zCSlmOs8zRA9qCaE7F5pXYalm
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YL6Ah+4/6nH1W8JPrtrs71t7YErUEz971b7LmEr3OJhe5kBOtQxh7bXU0KZC?=
- =?us-ascii?Q?kM73IULUtT2ME9I5S79ZwKqxcI5snALVd+bZ09t4nfHDBu56gf99q1SQ3E6y?=
- =?us-ascii?Q?duTCQbeL1KShEuCmYuKHjuXvKT+p8aX7LgRZ7QTdnydZUScYGP7q84sLWqFz?=
- =?us-ascii?Q?iw2/csH7y9NTQggGAvoUWWao5X0xIx8jLUU6W6GRINWO7vp9bGOhG+49L7aX?=
- =?us-ascii?Q?GeZTD6E8whjwpWLzDQHFTeW8ybKU5EN/puoU6VZ7PO6IzZzHCoLrLK0x8nMw?=
- =?us-ascii?Q?CuKi4urkUYFJ46T04Hn5Hp9YU4hjYkr6f7dA3hH94wt4e5eLQ1pFBs/rYOD5?=
- =?us-ascii?Q?v49a1N9OqKonIYps7LeUIVnDrA8WD7X+fzhmJRLrtu68xoWWjhiugCDaRoh4?=
- =?us-ascii?Q?WFgy10BlIsBljHtHkKcq2TkDLoXED8p4oJfzqtl16hHx6jbkKwVvNzqoPozd?=
- =?us-ascii?Q?raqJy3RNz69u2e+7DPV/Jq2mpoFB7bzG59ol0lEh5vhuspuldpnSuWPg7VX3?=
- =?us-ascii?Q?RbeWttNo3/7zlEyJyez/UKpdlucyEjSGbAM1aelrQ44xg50RQDOXO3BOVThS?=
- =?us-ascii?Q?X2FSP9TFtebdWuS2p9ozo3jLLvw4JM7MKboMU3IPAzaGNgWCdx29n208DX9I?=
- =?us-ascii?Q?A4SIbq3EZgNMy5PmzfFBq0mWjFfg8U5uNaBmBF/sfB5GoF5OxBWQDXi7uGoU?=
- =?us-ascii?Q?j/omEE7aHze5GkWbc9y08KMyQ4qIwFiD6wkW2eERlcOjlhHWwT6tND7fT2Y4?=
- =?us-ascii?Q?nHgUmmjH/Agn7fXdj9nLqHr9FPGuEGYpmKf/w7N+Xh2A8wXhMnaUM68lUu93?=
- =?us-ascii?Q?+EBOCLmkTssxNGqIcGD5vENyzbQS05SSp61coBTJz9qYosv58LnoqkIXB+X/?=
- =?us-ascii?Q?gFMKTYj+vbZAPnjMRoKTASJJiQd6hBHjDllM4GE74sVxyr3ncRpLifcp8LG0?=
- =?us-ascii?Q?tXtfaIwt6hdvliPjqEu5lFJVOZG1XAkGRgOicVg4JLB7shbaQQKVFf4g41/C?=
- =?us-ascii?Q?ik3xtKnJaaNK2czFoJSMYE/C/uYAQOwjagPFLm2V4AYqAhlO7n5lmTp3hqEz?=
- =?us-ascii?Q?EUuQoo/nMH1+PKXepT7FdnHQKRxbyK6BadBDK7fppfMA3lq3h9x7BhMyaWak?=
- =?us-ascii?Q?JzTJlz03C3MzOsJEg0n0+SZOfpUs/y3S4uTmIEVw01Cak7VbL3wmVYgz8WzY?=
- =?us-ascii?Q?hrm1NLnbTP6j+0UFkgLtjEE67J187eS0tNZtvoA8FO/bmxWwxCH6I900tRw?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be804a5d-5583-4d71-347b-08dc9e669d6e
-X-MS-Exchange-CrossTenant-AuthSource: OS3P286MB2597.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2024 09:24:34.7739
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZP286MB2346
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/rockchip: inno_hdmi: add audio support
+To: Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
+Cc: hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, lgirdwood@gmail.com, broonie@kernel.org,
+ linux-sound@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <5dae5aa1-99a4-4509-87b8-b8fd1a599065@gmail.com>
+Content-Language: en-US
+From: Alex Bee <knaerzche@gmail.com>
+In-Reply-To: <5dae5aa1-99a4-4509-87b8-b8fd1a599065@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The current WED only supports 256 wcid, whereas mt7986 can support up to
-512 entries, so firmware provides a rule to get sta_info by DA when wcid
-is set to 0x3ff by txd. Also, WED provides a register to overwrite txd
-wcid, that is, wcid[9:8] can be overwritten by 0x3 and wcid[7:0] is set
-to 0xff by host driver.
+Hi Johan
+Am 07.07.24 um 01:59 schrieb Johan Jonker:
+> Add sound support to the INNO HDMI driver.
+> The HDMI TX audio source is connected to I2S.
+> Using the common hdmi-codec driver to support hdmi audio function.
+> 
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+> 
+> NOT TESTED WITH HARDWARE
+thanks for rebasing Yakir's patch, but this code is really not good and it
+wasn't merged for godd reasons. I actually have a patch prepared since some
+time to audio support to inno-hdmi which I didn't submit yet, because I
+wanted to wait, that Maxime's hdmi connector series gets merged. I'm going
+to submit it after 6.10 is released. Thanks for your understanding.
 
-However, firmware is unable to get sta_info from DA as DA != RA for
-4addr cases, so firmware and wifi host driver both use wcid (256 - 271)
-and (768 ~ 783) for sync up to get correct sta_info.
-
-Tested-by: Sujuan Chen <sujuan.chen@mediatek.com>
-Co-developed-by: Bo Jiao <bo.jiao@mediatek.com>
-Signed-off-by: Bo Jiao <bo.jiao@mediatek.com>
-Signed-off-by: Sujuan Chen <sujuan.chen@mediatek.com>
-Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
----
-Changes since v1:
- - Drop duplicate setting in mmio
- - Reduce the patch size by redefining mt76_wcid_alloc
-Changes since v2:
- - Rework wds wcid getting flow
-Changes since v3:
- - Rebase to next-20240703
- - Sync with downstream patch
----
- drivers/net/wireless/mediatek/mt76/mt76.h     |  9 +++++
- .../net/wireless/mediatek/mt76/mt7915/main.c  | 32 ++++++++++++++--
- .../net/wireless/mediatek/mt76/mt7915/mcu.c   | 16 ++++++--
- .../net/wireless/mediatek/mt76/mt7915/mcu.h   |  1 +
- drivers/net/wireless/mediatek/mt76/util.c     | 37 +++++++++++++++++--
- drivers/net/wireless/mediatek/mt76/util.h     |  7 +++-
- 6 files changed, 91 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76.h b/drivers/net/wireless/mediatek/mt76/mt76.h
-index 15f83b5adac7..fd211f2cf13c 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt76.h
-@@ -28,6 +28,9 @@
- 
- #define MT76_TOKEN_FREE_THR	64
- 
-+#define MT76_WED_WDS_MIN    256
-+#define MT76_WED_WDS_MAX    272
-+
- #define MT_QFLAG_WED_RING	GENMASK(1, 0)
- #define MT_QFLAG_WED_TYPE	GENMASK(4, 2)
- #define MT_QFLAG_WED		BIT(5)
-@@ -71,6 +74,12 @@ enum mt76_wed_type {
- 	MT76_WED_RRO_Q_IND,
- };
- 
-+enum mt76_wed_state {
-+	MT76_WED_DEFAULT,
-+	MT76_WED_ACTIVE,
-+	MT76_WED_WDS_ACTIVE,
-+};
-+
- struct mt76_bus_ops {
- 	u32 (*rr)(struct mt76_dev *dev, u32 offset);
- 	void (*wr)(struct mt76_dev *dev, u32 offset, u32 val);
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/main.c b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-index 049223df9beb..dc4d87e004a0 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-@@ -745,8 +745,15 @@ int mt7915_mac_sta_add(struct mt76_dev *mdev, struct ieee80211_vif *vif,
- 	bool ext_phy = mvif->phy != &dev->phy;
- 	int ret, idx;
- 	u32 addr;
-+	u8 flags = MT76_WED_DEFAULT;
- 
--	idx = mt76_wcid_alloc(dev->mt76.wcid_mask, MT7915_WTBL_STA);
-+	if (mtk_wed_device_active(&dev->mt76.mmio.wed) &&
-+	    !is_mt7915(&dev->mt76)) {
-+		flags = test_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags) ?
-+		       MT76_WED_WDS_ACTIVE : MT76_WED_ACTIVE;
-+	}
-+
-+	idx = __mt76_wcid_alloc(mdev->wcid_mask, MT7915_WTBL_STA, flags);
- 	if (idx < 0)
- 		return -ENOSPC;
- 
-@@ -1201,12 +1208,27 @@ static void mt7915_sta_set_4addr(struct ieee80211_hw *hw,
- {
- 	struct mt7915_dev *dev = mt7915_hw_dev(hw);
- 	struct mt7915_sta *msta = (struct mt7915_sta *)sta->drv_priv;
-+	int min = MT76_WED_WDS_MIN, max = MT76_WED_WDS_MAX;
- 
- 	if (enabled)
- 		set_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags);
- 	else
- 		clear_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags);
- 
-+	if (mtk_wed_device_active(&dev->mt76.mmio.wed) &&
-+	    !is_mt7915(&dev->mt76) &&
-+	    (msta->wcid.idx < min || msta->wcid.idx > max - 1)) {
-+		struct ieee80211_sta *pre_sta;
-+
-+		pre_sta = kzalloc(sizeof(*sta) + sizeof(*msta), GFP_KERNEL);
-+		mt76_sta_pre_rcu_remove(hw, vif, sta);
-+		memmove(pre_sta, sta, sizeof(*sta) + sizeof(*msta));
-+		mt7915_sta_add(hw, vif, sta);
-+		synchronize_rcu();
-+		mt7915_sta_remove(hw, vif, pre_sta);
-+		kfree(pre_sta);
-+	}
-+
- 	mt76_connac_mcu_wtbl_update_hdr_trans(&dev->mt76, vif, sta);
- }
- 
-@@ -1644,15 +1666,19 @@ mt7915_net_fill_forward_path(struct ieee80211_hw *hw,
- 	if (!mtk_wed_device_active(wed))
- 		return -ENODEV;
- 
--	if (msta->wcid.idx > 0xff)
-+	if (msta->wcid.idx > MT7915_WTBL_STA)
- 		return -EIO;
- 
- 	path->type = DEV_PATH_MTK_WDMA;
- 	path->dev = ctx->dev;
- 	path->mtk_wdma.wdma_idx = wed->wdma_idx;
- 	path->mtk_wdma.bss = mvif->mt76.idx;
--	path->mtk_wdma.wcid = is_mt7915(&dev->mt76) ? msta->wcid.idx : 0x3ff;
- 	path->mtk_wdma.queue = phy != &dev->phy;
-+	if (test_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags) ||
-+	    is_mt7915(&dev->mt76))
-+		path->mtk_wdma.wcid = msta->wcid.idx;
-+	else
-+		path->mtk_wdma.wcid = 0x3ff;
- 
- 	ctx->dev = NULL;
- 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-index 9599adf104b1..c01d1b40eeef 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-@@ -2350,10 +2350,18 @@ int mt7915_mcu_init_firmware(struct mt7915_dev *dev)
- 	if (ret)
- 		return ret;
- 
--	if ((mtk_wed_device_active(&dev->mt76.mmio.wed) &&
--	     is_mt7915(&dev->mt76)) ||
--	    !mtk_wed_get_rx_capa(&dev->mt76.mmio.wed))
--		mt7915_mcu_wa_cmd(dev, MCU_WA_PARAM_CMD(CAPABILITY), 0, 0, 0);
-+	if (mtk_wed_device_active(&dev->mt76.mmio.wed)) {
-+		if (is_mt7915(&dev->mt76) ||
-+		    !mtk_wed_get_rx_capa(&dev->mt76.mmio.wed))
-+			ret = mt7915_mcu_wa_cmd(dev, MCU_WA_PARAM_CMD(CAPABILITY),
-+						0, 0, 0);
-+		else
-+			ret = mt7915_mcu_wa_cmd(dev, MCU_WA_PARAM_CMD(SET),
-+						MCU_WA_PARAM_WED_VERSION,
-+						dev->mt76.mmio.wed.rev_id, 0);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	ret = mt7915_mcu_set_mwds(dev, 1);
- 	if (ret)
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
-index b41ac4aaced7..b2bf5472b2d7 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
-@@ -279,6 +279,7 @@ enum {
- 	MCU_WA_PARAM_CPU_UTIL = 0x0b,
- 	MCU_WA_PARAM_RED = 0x0e,
- 	MCU_WA_PARAM_RED_SETTING = 0x40,
-+	MCU_WA_PARAM_WED_VERSION = 0x32,
- };
- 
- enum mcu_mmps_mode {
-diff --git a/drivers/net/wireless/mediatek/mt76/util.c b/drivers/net/wireless/mediatek/mt76/util.c
-index d6c01a2dd198..461b74068fc3 100644
---- a/drivers/net/wireless/mediatek/mt76/util.c
-+++ b/drivers/net/wireless/mediatek/mt76/util.c
-@@ -42,9 +42,11 @@ bool ____mt76_poll_msec(struct mt76_dev *dev, u32 offset, u32 mask, u32 val,
- }
- EXPORT_SYMBOL_GPL(____mt76_poll_msec);
- 
--int mt76_wcid_alloc(u32 *mask, int size)
-+int __mt76_wcid_alloc(u32 *mask, int size, u8 flag)
- {
- 	int i, idx = 0, cur;
-+	int min = MT76_WED_WDS_MIN;
-+	int max = MT76_WED_WDS_MAX;
- 
- 	for (i = 0; i < DIV_ROUND_UP(size, 32); i++) {
- 		idx = ffs(~mask[i]);
-@@ -53,16 +55,45 @@ int mt76_wcid_alloc(u32 *mask, int size)
- 
- 		idx--;
- 		cur = i * 32 + idx;
--		if (cur >= size)
-+
-+		switch (flag) {
-+		case MT76_WED_ACTIVE:
-+			if (cur >= min && cur < max)
-+				continue;
-+
-+			if (cur >= size) {
-+				u32 end = max - min - 1;
-+
-+				i = min / 32;
-+				idx = ffs(~mask[i] & GENMASK(end, 0));
-+				if (!idx)
-+					goto error;
-+				idx--;
-+				cur = min + idx;
-+			}
-+
- 			break;
-+		case MT76_WED_WDS_ACTIVE:
-+			if (cur < min)
-+				continue;
-+			if (cur >= max)
-+				goto error;
-+
-+			break;
-+		default:
-+			if (cur >= size)
-+				goto error;
-+			break;
-+		}
- 
- 		mask[i] |= BIT(idx);
- 		return cur;
- 	}
- 
-+error:
- 	return -1;
- }
--EXPORT_SYMBOL_GPL(mt76_wcid_alloc);
-+EXPORT_SYMBOL_GPL(__mt76_wcid_alloc);
- 
- int mt76_get_min_avg_rssi(struct mt76_dev *dev, bool ext_phy)
- {
-diff --git a/drivers/net/wireless/mediatek/mt76/util.h b/drivers/net/wireless/mediatek/mt76/util.h
-index 260965dde94c..99b7263c0a20 100644
---- a/drivers/net/wireless/mediatek/mt76/util.h
-+++ b/drivers/net/wireless/mediatek/mt76/util.h
-@@ -27,7 +27,12 @@ enum {
- #define MT76_INCR(_var, _size) \
- 	(_var = (((_var) + 1) % (_size)))
- 
--int mt76_wcid_alloc(u32 *mask, int size);
-+int __mt76_wcid_alloc(u32 *mask, int size, u8 flags);
-+
-+static inline int mt76_wcid_alloc(u32 *mask, int size)
-+{
-+	return __mt76_wcid_alloc(mask, size, 0);
-+}
- 
- static inline void
- mt76_wcid_mask_set(u32 *mask, int idx)
--- 
-2.34.1
+Alex.
+> 
+> Changed V2:
+>    rebased
+>    hook to encoder->funcs->late_register
+>    return -EPROBE_DEFER as early as possible
+>    rename and update inno_hdmi_disable_frame() function
+>    avi and aai frames can not be disabled (See TRM)
+>    restyle
+> ---
+>   drivers/gpu/drm/rockchip/inno_hdmi.c | 295 ++++++++++++++++++++++++---
+>   drivers/gpu/drm/rockchip/inno_hdmi.h |   2 +
+>   2 files changed, 263 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
+> index 3df2cfcf9998..9c28080a0e27 100644
+> --- a/drivers/gpu/drm/rockchip/inno_hdmi.c
+> +++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
+> @@ -22,12 +22,20 @@
+>   #include <drm/drm_probe_helper.h>
+>   #include <drm/drm_simple_kms_helper.h>
+> 
+> +#include <sound/hdmi-codec.h>
+> +
+>   #include "rockchip_drm_drv.h"
+> 
+>   #include "inno_hdmi.h"
+> 
+>   #define INNO_HDMI_MIN_TMDS_CLOCK  25000000U
+> 
+> +struct inno_hdmi_audio_info {
+> +	int channels;
+> +	int sample_rate;
+> +	int sample_width;
+> +};
+> +
+>   struct inno_hdmi_phy_config {
+>   	unsigned long pixelclock;
+>   	u8 pre_emphasis;
+> @@ -62,6 +70,10 @@ struct inno_hdmi {
+>   	struct inno_hdmi_i2c *i2c;
+>   	struct i2c_adapter *ddc;
+> 
+> +	struct platform_device *audio_pdev;
+> +	struct inno_hdmi_audio_info audio;
+> +	bool audio_enabled;
+> +
+>   	const struct inno_hdmi_variant *variant;
+>   };
+> 
+> @@ -257,34 +269,35 @@ static void inno_hdmi_reset(struct inno_hdmi *hdmi)
+>   	inno_hdmi_standby(hdmi);
+>   }
+> 
+> -static void inno_hdmi_disable_frame(struct inno_hdmi *hdmi,
+> -				    enum hdmi_infoframe_type type)
+> +static void inno_hdmi_set_frame_index(struct inno_hdmi *hdmi,
+> +				      enum hdmi_infoframe_type type)
+>   {
+>   	struct drm_connector *connector = &hdmi->connector;
+> -
+> -	if (type != HDMI_INFOFRAME_TYPE_AVI) {
+> +	u32 frame_index;
+> +
+> +	switch (type) {
+> +	case HDMI_INFOFRAME_TYPE_AVI:
+> +		frame_index = INFOFRAME_AVI;
+> +		break;
+> +	case HDMI_INFOFRAME_TYPE_AUDIO:
+> +		frame_index = INFOFRAME_AAI;
+> +		break;
+> +	default:
+>   		drm_err(connector->dev,
+>   			"Unsupported infoframe type: %u\n", type);
+>   		return;
+>   	}
+> 
+> -	hdmi_writeb(hdmi, HDMI_CONTROL_PACKET_BUF_INDEX, INFOFRAME_AVI);
+> +	hdmi_writeb(hdmi, HDMI_CONTROL_PACKET_BUF_INDEX, frame_index);
+>   }
+> 
+>   static int inno_hdmi_upload_frame(struct inno_hdmi *hdmi,
+>   				  union hdmi_infoframe *frame, enum hdmi_infoframe_type type)
+>   {
+> -	struct drm_connector *connector = &hdmi->connector;
+>   	u8 packed_frame[HDMI_MAXIMUM_INFO_FRAME_SIZE];
+>   	ssize_t rc, i;
+> 
+> -	if (type != HDMI_INFOFRAME_TYPE_AVI) {
+> -		drm_err(connector->dev,
+> -			"Unsupported infoframe type: %u\n", type);
+> -		return 0;
+> -	}
+> -
+> -	inno_hdmi_disable_frame(hdmi, type);
+> +	inno_hdmi_set_frame_index(hdmi, type);
+> 
+>   	rc = hdmi_infoframe_pack(frame, packed_frame,
+>   				 sizeof(packed_frame));
+> @@ -312,7 +325,6 @@ static int inno_hdmi_config_video_avi(struct inno_hdmi *hdmi,
+>   						      &hdmi->connector,
+>   						      mode);
+>   	if (rc) {
+> -		inno_hdmi_disable_frame(hdmi, HDMI_INFOFRAME_TYPE_AVI);
+>   		return rc;
+>   	}
+> 
+> @@ -338,6 +350,197 @@ static int inno_hdmi_config_video_avi(struct inno_hdmi *hdmi,
+>   	return inno_hdmi_upload_frame(hdmi, &frame, HDMI_INFOFRAME_TYPE_AVI);
+>   }
+> 
+> +static int inno_hdmi_config_aai(struct inno_hdmi *hdmi)
+> +{
+> +	union hdmi_infoframe frame;
+> +	int rc;
+> +
+> +	rc = hdmi_audio_infoframe_init(&frame.audio);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	frame.audio.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
+> +	frame.audio.sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
+> +	frame.audio.sample_size = HDMI_AUDIO_SAMPLE_SIZE_STREAM;
+> +	frame.audio.channels = hdmi->audio.channels;
+> +
+> +	return inno_hdmi_upload_frame(hdmi, &frame, HDMI_INFOFRAME_TYPE_AUDIO);
+> +}
+> +
+> +static int inno_hdmi_audio_config(struct inno_hdmi *hdmi)
+> +{
+> +	struct inno_hdmi_audio_info *audio = &hdmi->audio;
+> +	int rate, N, channel;
+> +
+> +	if (audio->channels < 3)
+> +		channel = I2S_CHANNEL_1_2;
+> +	else if (audio->channels < 5)
+> +		channel = I2S_CHANNEL_3_4;
+> +	else if (audio->channels < 7)
+> +		channel = I2S_CHANNEL_5_6;
+> +	else
+> +		channel = I2S_CHANNEL_7_8;
+> +
+> +	switch (audio->sample_rate) {
+> +	case 32000:
+> +		rate = AUDIO_32K;
+> +		N = N_32K;
+> +		break;
+> +	case 44100:
+> +		rate = AUDIO_441K;
+> +		N = N_441K;
+> +		break;
+> +	case 48000:
+> +		rate = AUDIO_48K;
+> +		N = N_48K;
+> +		break;
+> +	case 88200:
+> +		rate = AUDIO_882K;
+> +		N = N_882K;
+> +		break;
+> +	case 96000:
+> +		rate = AUDIO_96K;
+> +		N = N_96K;
+> +		break;
+> +	case 176400:
+> +		rate = AUDIO_1764K;
+> +		N = N_1764K;
+> +		break;
+> +	case 192000:
+> +		rate = AUDIO_192K;
+> +		N = N_192K;
+> +		break;
+> +	default:
+> +		dev_err(hdmi->dev, "[%s] not support such sample rate %d\n",
+> +			__func__, audio->sample_rate);
+> +		return -ENOENT;
+> +	}
+> +
+> +	/* Set audio source I2S. */
+> +	hdmi_writeb(hdmi, HDMI_AUDIO_CTRL1, 0x01);
+> +	hdmi_writeb(hdmi, AUDIO_SAMPLE_RATE, rate);
+> +	hdmi_writeb(hdmi, AUDIO_I2S_MODE, v_I2S_MODE(I2S_STANDARD) |
+> +		    v_I2S_CHANNEL(channel));
+> +
+> +	hdmi_writeb(hdmi, AUDIO_I2S_MAP, 0x00);
+> +	hdmi_writeb(hdmi, AUDIO_I2S_SWAPS_SPDIF, 0);
+> +
+> +	/* Set N value. */
+> +	hdmi_writeb(hdmi, AUDIO_N_H, (N >> 16) & 0x0F);
+> +	hdmi_writeb(hdmi, AUDIO_N_M, (N >> 8) & 0xFF);
+> +	hdmi_writeb(hdmi, AUDIO_N_L, N & 0xFF);
+> +
+> +	/*Set HDMI NLPCM mode to support HDMI bit stream. */
+> +	hdmi_writeb(hdmi, HDMI_AUDIO_CHANNEL_STATUS, v_AUDIO_STATUS_NLPCM(0));
+> +
+> +	return inno_hdmi_config_aai(hdmi);
+> +}
+> +
+> +static int inno_hdmi_audio_hw_params(struct device *dev, void *d,
+> +				     struct hdmi_codec_daifmt *daifmt,
+> +				     struct hdmi_codec_params *params)
+> +{
+> +	struct inno_hdmi *hdmi = dev_get_drvdata(dev);
+> +	struct drm_display_info *display = &hdmi->connector.display_info;
+> +
+> +	if (!display->has_audio) {
+> +		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (!hdmi->encoder.encoder.crtc)
+> +		return -ENODEV;
+> +
+> +	switch (daifmt->fmt) {
+> +	case HDMI_I2S:
+> +		break;
+> +	default:
+> +		DRM_DEV_ERROR(dev, "invalid format %d\n", daifmt->fmt);
+> +		return -EINVAL;
+> +	}
+> +
+> +	hdmi->audio.channels = params->channels;
+> +	hdmi->audio.sample_rate = params->sample_rate;
+> +	hdmi->audio.sample_width = params->sample_width;
+> +
+> +	return inno_hdmi_audio_config(hdmi);
+> +}
+> +
+> +static void inno_hdmi_audio_shutdown(struct device *dev, void *d)
+> +{
+> +	/* Do nothing. */
+> +}
+> +
+> +static int inno_hdmi_audio_mute_stream(struct device *dev, void *d, bool mute, int direction)
+> +{
+> +	struct inno_hdmi *hdmi = dev_get_drvdata(dev);
+> +	struct drm_display_info *display = &hdmi->connector.display_info;
+> +
+> +	if (!display->has_audio) {
+> +		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	hdmi->audio_enabled = !mute;
+> +
+> +	if (mute)
+> +		hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_AUDIO_PD,
+> +			  v_AUDIO_MUTE(1) | v_AUDIO_PD(1));
+> +	else
+> +		hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_AUDIO_PD,
+> +			  v_AUDIO_MUTE(0) | v_AUDIO_PD(0));
+> +
+> +	return 0;
+> +}
+> +
+> +static int inno_hdmi_audio_get_eld(struct device *dev, void *d, uint8_t *buf, size_t len)
+> +{
+> +	struct inno_hdmi *hdmi = dev_get_drvdata(dev);
+> +	struct drm_mode_config *config = &hdmi->encoder.encoder.dev->mode_config;
+> +	struct drm_connector *connector;
+> +	int ret = -ENODEV;
+> +
+> +	mutex_lock(&config->mutex);
+> +	list_for_each_entry(connector, &config->connector_list, head) {
+> +		if (&hdmi->encoder.encoder == connector->encoder) {
+> +			memcpy(buf, connector->eld,
+> +			       min(sizeof(connector->eld), len));
+> +			ret = 0;
+> +		}
+> +	}
+> +	mutex_unlock(&config->mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct hdmi_codec_ops audio_codec_ops = {
+> +	.hw_params      = inno_hdmi_audio_hw_params,
+> +	.audio_shutdown = inno_hdmi_audio_shutdown,
+> +	.mute_stream    = inno_hdmi_audio_mute_stream,
+> +	.get_eld        = inno_hdmi_audio_get_eld,
+> +};
+> +
+> +static int inno_hdmi_audio_codec_init(struct inno_hdmi *hdmi)
+> +{
+> +	struct hdmi_codec_pdata codec_data = {
+> +		.i2s = 1,
+> +		.ops = &audio_codec_ops,
+> +		.max_i2s_channels = 8,
+> +	};
+> +
+> +	hdmi->audio.channels = 2;
+> +	hdmi->audio.sample_rate = 48000;
+> +	hdmi->audio.sample_width = 16;
+> +	hdmi->audio_enabled = false;
+> +	hdmi->audio_pdev = platform_device_register_data(hdmi->dev,
+> +							 HDMI_CODEC_DRV_NAME,
+> +							 PLATFORM_DEVID_NONE,
+> +							 &codec_data,
+> +							 sizeof(codec_data));
+> +
+> +	return PTR_ERR_OR_ZERO(hdmi->audio_pdev);
+> +}
+> +
+>   static int inno_hdmi_config_video_csc(struct inno_hdmi *hdmi)
+>   {
+>   	struct drm_connector *connector = &hdmi->connector;
+> @@ -479,8 +682,10 @@ static int inno_hdmi_setup(struct inno_hdmi *hdmi,
+> 
+>   	inno_hdmi_config_video_csc(hdmi);
+> 
+> -	if (display->is_hdmi)
+> +	if (display->is_hdmi) {
+>   		inno_hdmi_config_video_avi(hdmi, mode);
+> +		inno_hdmi_audio_config(hdmi);
+> +	}
+> 
+>   	/*
+>   	 * When IP controller have configured to an accurate video
+> @@ -588,6 +793,26 @@ inno_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
+>   				&crtc_state->adjusted_mode) == MODE_OK ? 0 : -EINVAL;
+>   }
+> 
+> +static int inno_hdmi_encoder_late_register(struct drm_encoder *encoder)
+> +{
+> +	struct inno_hdmi *hdmi = encoder_to_inno_hdmi(encoder);
+> +
+> +	return inno_hdmi_audio_codec_init(hdmi);
+> +}
+> +
+> +static void inno_hdmi_encoder_early_unregister(struct drm_encoder *encoder)
+> +{
+> +	struct inno_hdmi *hdmi = encoder_to_inno_hdmi(encoder);
+> +
+> +	platform_device_unregister(hdmi->audio_pdev);
+> +}
+> +
+> +static const struct drm_encoder_funcs inno_hdmi_encoder_funcs = {
+> +	.destroy          = drm_encoder_cleanup,
+> +	.late_register    = inno_hdmi_encoder_late_register,
+> +	.early_unregister = inno_hdmi_encoder_early_unregister,
+> +};
+> +
+>   static struct drm_encoder_helper_funcs inno_hdmi_encoder_helper_funcs = {
+>   	.atomic_check	= inno_hdmi_encoder_atomic_check,
+>   	.atomic_enable	= inno_hdmi_encoder_enable,
+> @@ -687,37 +912,26 @@ inno_hdmi_connector_duplicate_state(struct drm_connector *connector)
+>   }
+> 
+>   static const struct drm_connector_funcs inno_hdmi_connector_funcs = {
+> -	.fill_modes = drm_helper_probe_single_connector_modes,
+> -	.detect = inno_hdmi_connector_detect,
+> -	.destroy = inno_hdmi_connector_destroy,
+> -	.reset = inno_hdmi_connector_reset,
+> +	.fill_modes             = drm_helper_probe_single_connector_modes,
+> +	.detect                 = inno_hdmi_connector_detect,
+> +	.destroy                = inno_hdmi_connector_destroy,
+> +	.reset                  = inno_hdmi_connector_reset,
+>   	.atomic_duplicate_state = inno_hdmi_connector_duplicate_state,
+> -	.atomic_destroy_state = inno_hdmi_connector_destroy_state,
+> +	.atomic_destroy_state   = inno_hdmi_connector_destroy_state,
+>   };
+> 
+>   static struct drm_connector_helper_funcs inno_hdmi_connector_helper_funcs = {
+> -	.get_modes = inno_hdmi_connector_get_modes,
+> +	.get_modes  = inno_hdmi_connector_get_modes,
+>   	.mode_valid = inno_hdmi_connector_mode_valid,
+>   };
+> 
+>   static int inno_hdmi_register(struct drm_device *drm, struct inno_hdmi *hdmi)
+>   {
+>   	struct drm_encoder *encoder = &hdmi->encoder.encoder;
+> -	struct device *dev = hdmi->dev;
+> -
+> -	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+> -
+> -	/*
+> -	 * If we failed to find the CRTC(s) which this encoder is
+> -	 * supposed to be connected to, it's because the CRTC has
+> -	 * not been registered yet.  Defer probing, and hope that
+> -	 * the required CRTC is added later.
+> -	 */
+> -	if (encoder->possible_crtcs == 0)
+> -		return -EPROBE_DEFER;
+> 
+>   	drm_encoder_helper_add(encoder, &inno_hdmi_encoder_helper_funcs);
+> -	drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TMDS);
+> +	drm_encoder_init(drm, encoder, &inno_hdmi_encoder_funcs,
+> +			 DRM_MODE_ENCODER_TMDS, NULL);
+> 
+>   	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
+> 
+> @@ -911,6 +1125,7 @@ static int inno_hdmi_bind(struct device *dev, struct device *master,
+>   {
+>   	struct platform_device *pdev = to_platform_device(dev);
+>   	struct drm_device *drm = data;
+> +	struct drm_encoder *encoder;
+>   	struct inno_hdmi *hdmi;
+>   	const struct inno_hdmi_variant *variant;
+>   	int irq;
+> @@ -920,6 +1135,18 @@ static int inno_hdmi_bind(struct device *dev, struct device *master,
+>   	if (!hdmi)
+>   		return -ENOMEM;
+> 
+> +	encoder = &hdmi->encoder.encoder;
+> +	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+> +
+> +	/*
+> +	 * If we failed to find the CRTC(s) which this encoder is
+> +	 * supposed to be connected to, it's because the CRTC has
+> +	 * not been registered yet.  Defer probing, and hope that
+> +	 * the required CRTC is added later.
+> +	 */
+> +	if (encoder->possible_crtcs == 0)
+> +		return -EPROBE_DEFER;
+> +
+>   	hdmi->dev = dev;
+> 
+>   	variant = of_device_get_match_data(hdmi->dev);
+> diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.h b/drivers/gpu/drm/rockchip/inno_hdmi.h
+> index a7edf3559e60..0d108d3578fa 100644
+> --- a/drivers/gpu/drm/rockchip/inno_hdmi.h
+> +++ b/drivers/gpu/drm/rockchip/inno_hdmi.h
+> @@ -91,10 +91,12 @@ enum {
+>   #define HDMI_AV_MUTE			0x05
+>   #define m_AVMUTE_CLEAR			(1 << 7)
+>   #define m_AVMUTE_ENABLE			(1 << 6)
+> +#define m_AUDIO_PD			(1 << 2)
+>   #define m_AUDIO_MUTE			(1 << 1)
+>   #define m_VIDEO_BLACK			(1 << 0)
+>   #define v_AVMUTE_CLEAR(n)		(n << 7)
+>   #define v_AVMUTE_ENABLE(n)		(n << 6)
+> +#define v_AUDIO_PD(n)			(n << 2)
+>   #define v_AUDIO_MUTE(n)			(n << 1)
+>   #define v_VIDEO_MUTE(n)			(n << 0)
+> 
+> --
+> 2.39.2
+> 
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
 
