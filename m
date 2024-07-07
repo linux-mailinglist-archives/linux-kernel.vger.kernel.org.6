@@ -1,134 +1,100 @@
-Return-Path: <linux-kernel+bounces-243553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6DA929799
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B209297A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9711F21453
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E7E41F214B9
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FF91C68C;
-	Sun,  7 Jul 2024 11:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5158D1C286;
+	Sun,  7 Jul 2024 11:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwqCyB8i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65536FBE;
-	Sun,  7 Jul 2024 11:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kzIORbiS"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44156FBE
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 11:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720351300; cv=none; b=g4nSZNxPeVLyIEcTOBqrAykmSEPlDEcVdXFqjyRXNEv5M4zPLdmBCaKHPb3N0h5rY81A5bxqDJ8NPQtDR92n6ZgX75khUxkhin+49ViNBc/+6NJX7HIww0SxpjAgKCP5VpZadkWDe3DKG6jmidHSvgG0k4eWD+u37MO0yqaSanc=
+	t=1720352351; cv=none; b=XqupCcKwKj6E8JX+VAFYO0Y3ZNycAtn5ebKJqaqwkYUJoUnTjkKhPlP+ZkarQ24skBAqxCAANK/oVeDN6Zn0mlNufMTp5TnGjmjrt2TQerfJDoQc55xYbmCUt8HmzO8iNOcOfn3VDXZvxd8b9GGyiBEDZzOVuYoN8nfhhgyI1mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720351300; c=relaxed/simple;
-	bh=RuY0M+PTCkxY/xq17rYpCK199mEZaqpmtfHMMGxCftE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UxEelUYczJZcPfRAR45hRYDNlY7YNOR9fEGx7DWtpFWanXfm948gJIU19+0py66edQ7PqRr4bnOL6p+CM/CfeDVNvZfw73wNg4vaHqY9aNGnsdksVU3sTRYP89Nb0Woupo46kqDkLWyubW3MuPAalEilQHcSYGPFQMWPqtJe3I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwqCyB8i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A789C3277B;
-	Sun,  7 Jul 2024 11:21:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720351299;
-	bh=RuY0M+PTCkxY/xq17rYpCK199mEZaqpmtfHMMGxCftE=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=hwqCyB8i+bVFuMMUf0NbIAMukTWz2xnrM35Iydj7smVJG3ROoaxkmkpsqL18ghvT4
-	 p8+J8MHHm2yPSrbva0OnpFU3RL8HBCSxbwWiPJAOnlYvhT7ld6N0xmnyMfXqvT2kef
-	 f8RxAYEqlRec7D5gpCA6ocPnoQAp9T5FJFt1s+MutjzdbzZs2j0Jgc4OEZDP61t9OC
-	 6qBf/jDFvsBQPVwd5+yFInFmxkr+meRUkr/Q/nKTGaM/5Em4C/z0/LJil3QrgCazrW
-	 w8qyb+y64R3LbSX8tml7Ns5MTBdJklIhSIqmjsMa8WMl0HUSK19Cgr+lOHLBS2s+Ar
-	 IrtUHM1EIdG5w==
-Message-ID: <4e0e5dea-09a7-479d-9a1d-7c95132949c1@kernel.org>
-Date: Sun, 7 Jul 2024 13:21:34 +0200
+	s=arc-20240116; t=1720352351; c=relaxed/simple;
+	bh=T2whgI8NzRKziduaNUYQ4B8mIs4io9Ikg5vI65VVnOI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=oX4vrwdadCH04cbEcjDYfTOqfNw/oP+0Fe4THpMf4dyXmGfeU/tHGSPm16vrJo4odLqrglRwe0s9KcglKxRak3YeZ1q3maz6yzuQSq+7uIbAOycpTiHkkV92YI5iA1uJpqfhVt7x2ivmiKAIQ7hO67SQ9R5orwWFRYwjh9ZU4eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kzIORbiS; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=lW9P4fE4UgSQNq0AWC
+	mprAyHMH36OOKG3BU4YsESyUw=; b=kzIORbiSCgDipLvTCPFrlyeR2FsRM31XEX
+	nVLHGC6AD5vmCoz64JVS+JrTnp6YnNifEFg5eWyYN0OyaGlTT5Pex0z53STUGVzE
+	LCC7J873CdS1ovTJL3+SJoKy8mQoUe93tNnrOaWR9TJdxY/j1JsxVZxj5EOx/17W
+	ZE9jkpylI=
+Received: from localhost.localdomain (unknown [114.92.56.131])
+	by gzga-smtp-mta-g3-0 (Coremail) with SMTP id _____wD3_7aMeopmv1HcBQ--.57812S2;
+	Sun, 07 Jul 2024 19:23:10 +0800 (CST)
+From: Lizhe <sensor1010@163.com>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Lizhe <sensor1010@163.com>
+Subject: [PATCH] driver:core: no need to invert the return value of the call_driver_probe()
+Date: Sun,  7 Jul 2024 04:22:36 -0700
+Message-Id: <20240707112236.3187-1-sensor1010@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:_____wD3_7aMeopmv1HcBQ--.57812S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr13tw4DCF4DWF13AF45Awb_yoWkZwb_Cw
+	17ur9ru347Kan7Wr18XrsrZrZFkF4xWrs8Zr40qas3tFyUJ34Y9F4DWr98Jr45W397CrWD
+	Cry2grW8ur13GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRKkucJUUUUU==
+X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/1tbiSB8Vq2XAmJL2-QAAsN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] Removed extra asterisks from comment beginnings, and
- removed unnecessary comment end
-To: Gold Side <goldside000@outlook.com>, "perex@perex.cz" <perex@perex.cz>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>
-References: <DM4P223MB054139F737887D40A2CA396FF7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <DM4P223MB054139F737887D40A2CA396FF7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 07/07/2024 06:14, Gold Side wrote:
-> From 33dc0aa3973913f310840cc8f7d5d599d573c297 Mon Sep 17 00:00:00 2001
-> From: Steven Davis <goldside000@outlook.com>
-> Date: Tue, 2 Jul 2024 23:43:15 -0400
-> Subject: [PATCH 2/3] Removed unnecessary comment end
-> 
-> It still works the same without that comment end, so why is it in there?
+If drv->probe() or drv->bus->probe() returns EPROBE_DEFER,
+then there is no need to invert the sign. Similarly,
+if it returns -EPROBE_DEFER, no sign inversion is needed either
 
-Because license-rules asks for it. Why do you change only one file? Look
-how this is done in other files. This should make you ask questions why
-doing things differently.
+In the probe function (either bus->probe() or drv->probe()),
+there is no return value of EPROBE_DEFER.
 
-> Signed-off-by: Steven Davis <goldside000@outlook.com>
+Signed-off-by: Lizhe <sensor1010@163.com>
+---
+ drivers/base/dd.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Please use git to create commits, not hand-craft them. Missing blank
-line before tag.
-
-Entire patch does not look like proper patch, but some weirdly generated
-mbox file. :/ Use git format-patch or b4.
-
-> ---
->  include/memory/renesas-rpc-if.h | 2 +-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 83d352394fdf..d047919d1f5e 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -664,11 +664,6 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 		if (link_ret == -EAGAIN)
+ 			ret = -EPROBE_DEFER;
+ 
+-		/*
+-		 * Return probe errors as positive values so that the callers
+-		 * can distinguish them from other errors.
+-		 */
+-		ret = -ret;
+ 		goto probe_failed;
+ 	}
+ 
+@@ -826,7 +821,7 @@ static int driver_probe_device(struct device_driver *drv, struct device *dev)
+ 
+ 	atomic_inc(&probe_count);
+ 	ret = __driver_probe_device(drv, dev);
+-	if (ret == -EPROBE_DEFER || ret == EPROBE_DEFER) {
++	if (ret == -EPROBE_DEFER) {
+ 		driver_deferred_probe_add(dev);
+ 
+ 		/*
+-- 
+2.17.1
 
 
