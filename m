@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-243596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29D692983C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:58:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6633929841
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE3B1C213AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A04A2811B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E3423741;
-	Sun,  7 Jul 2024 13:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CB225569;
+	Sun,  7 Jul 2024 14:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cq9pO14Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSLQIOrT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5688122EEF;
-	Sun,  7 Jul 2024 13:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E4324B29;
+	Sun,  7 Jul 2024 14:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720360694; cv=none; b=jtyk9zUQ42RP0rhz60Pbu7ObBo3VidwTZ56jiGAb7AEFPPVfar+jfYaeMgtWBGz3d0cKn+h5KSw0bN5siyeRktrs7h+r6468l0NTacfwM720VdaJ3qrzF7N1nvMJ810X02L+wtp6ztNzcn/EBFLlz21fgTltDY+52L1NUr5dvbY=
+	t=1720360806; cv=none; b=lLKYTM+7OLt0vDwHiCTJuoUsrwDRAf2aEl1C8J8/YsZ1Pi6dm5IJK8dTE56SPs36FJXIxJGUcXLDPbS9JBRQzX/XUNagIYD3JeJCfju3ttODjIr70/yC0J9EjCN73oVEgxcHKsNAPhANkkL4lh9y6+R1JOwPhasKuzRgRwfMKMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720360694; c=relaxed/simple;
-	bh=8Kylf+t2UNpIbjF9sss2Nya8a4fTm/WXmwgVokPpJ38=;
+	s=arc-20240116; t=1720360806; c=relaxed/simple;
+	bh=w6E61bZ+Nc7fH6AkO+e1UuyFuM7XFN8xxnB02WH7ZKU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p2Jrv4vNWN1CPBrrcgyaPCOneZoTV1Td6TroNMzQRHjbZxgJtg2pzmd1OoHyhMZpnzsJn0Z4Qy6sAPJuBk9BZOMvEeCXbF+GMbMfmypICu4T31JmJ1ZE/4gSRbJ4eNtDEIUkITsnpKQl7chfM/Ir914PnZ2XJB/wdZZDq6HCIZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cq9pO14Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32BDAC3277B;
-	Sun,  7 Jul 2024 13:58:06 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nKqDZT1WksenriHTAA4T9kzhsfbr5eprCGD9xIDRvhZSjsOZkAJ1BbaGga7DIlSAhOLBbKF2OUqTFWaJTdRaf7TE29DIMsMdnWa1cVpuu9XHoVZtCLOTUoK+LVox60AQlq6O5ocY2c16+Bd5a9RMcLRiyPtRIJfXxILqnPJrfCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSLQIOrT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4B8C3277B;
+	Sun,  7 Jul 2024 13:59:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720360693;
-	bh=8Kylf+t2UNpIbjF9sss2Nya8a4fTm/WXmwgVokPpJ38=;
+	s=k20201202; t=1720360805;
+	bh=w6E61bZ+Nc7fH6AkO+e1UuyFuM7XFN8xxnB02WH7ZKU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cq9pO14YA3xvEgzmURKEXlEx2QAJJigIvzd9oWKfch1rHKqK+jC1k06b3zymFbDih
-	 KwXB6XFkKPIJIEXG8/PGMXO4LI33rNcy7Kfi6QGHP2K3YOR9JZ5dSWNawL0DP+hlHQ
-	 z9mO0AABa0pLZhP7w41NRNUmA4QZKHC3b9OkaCni5NiGjTURkObYlJE9N1dwYTZXhn
-	 iZxwdvyR2cFQV0N2uupPDgVmIRq23EyOUF+xDohtVKNtUytcv2OC6/+dXmyoETiDeh
-	 /wzsHtzWiaTrBV+6bHJORRsemdfn94GcXsADFc8ymRkuXYuUsgMSZjR503kFhg57VS
-	 BYanrbZV7gxpw==
-Message-ID: <eec3d2a7-0197-4196-bf6f-71d0e29777de@kernel.org>
-Date: Sun, 7 Jul 2024 15:58:04 +0200
+	b=WSLQIOrT+HiXM06ezax1CgdZzJMHs2tG5p/jyZL40Lyw64OJOn7VqHCvKzOnIun9w
+	 s6ST+JTzdDi/wUlJxGDtpaa7S67wAm8LsvS3nk6EF2jmqHpACQtZmaZhEN9ITntz9h
+	 oSlOd+vaSa6FqkrEQqIC26H/duwTwWRglBg+m8+vqVtwj/uOUguCQ1apde1zAXaOKo
+	 r8adn0m09tsmfZgiuAspuVbUhn9e3m/WQFOH2bmo0g411k/tqr10rq7BEDXSGVGW6u
+	 xlHDmlI7kiCyi/i0l/1/L5E4GrkAOYIYX9gukSOar80Orpno/GMgL2BbmICI6SbMho
+	 eDEjO6rBIVHvg==
+Message-ID: <cd558335-6e72-46d1-911b-68ccbb211136@kernel.org>
+Date: Sun, 7 Jul 2024 15:59:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] dt-bindings: display: imx: Add some i.MX8qxp
- Display Controller processing units
+Subject: Re: [PATCH 02/10] dt-bindings: display: imx: Add i.MX8qxp Display
+ Controller display engine
 To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
  devicetree@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -60,7 +60,7 @@ Cc: p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
  shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
  festevam@gmail.com, tglx@linutronix.de
 References: <20240705090932.1880496-1-victor.liu@nxp.com>
- <20240705090932.1880496-2-victor.liu@nxp.com>
+ <20240705090932.1880496-3-victor.liu@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,33 +106,112 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240705090932.1880496-2-victor.liu@nxp.com>
+In-Reply-To: <20240705090932.1880496-3-victor.liu@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/07/2024 11:09, Liu Ying wrote:
-> Freescale i.MX8qxp Display Controller is implemented as construction set of
-> building blocks with unified concept and standardized interfaces.
+> i.MX8qxp Display Controller display engine consists of all processing units
+> that operate in a display clock domain.
 > 
-> Document some processing units to support two display outputs.
-
-
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+>  .../imx/fsl,imx8qxp-dc-display-engine.yaml    | 166 ++++++++++++++++++
+>  1 file changed, 166 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-display-engine.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-display-engine.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-display-engine.yaml
+> new file mode 100644
+> index 000000000000..dc9579897b76
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-display-engine.yaml
+> @@ -0,0 +1,166 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8qxp-dc-display-engine.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale i.MX8qxp Display Controller Display Engine
+> +
+> +description:
+> +  All Processing Units that operate in a display clock domain. Pixel pipeline
+> +  is driven by a video timing and cannot be stalled. Implements all display
+> +  specific processing.
+> +
 > +maintainers:
 > +  - Liu Ying <victor.liu@nxp.com>
 > +
 > +properties:
 > +  compatible:
-> +    const: fsl,imx8qxp-dc-tcon
+> +    const: fsl,imx8qxp-dc-display-engine
 > +
 > +  reg:
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: top
+> +      - const: cfg
+> +
+> +  resets:
 > +    maxItems: 1
 > +
-> +  fsl,dc-tc-id:
-> +    description: Timing Controller unit instance number
+> +  interrupts:
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: shdload
+> +      - const: framecomplete
+> +      - const: seqcomplete
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges: true
+> +
+> +  fsl,dc-de-id:
+> +    description: Display Engine instance number
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
 
-No instance numbering. This applies to your entire patchset.
+No, drop. For the same reason as earlier patch.
 
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/properties/port
+> +    description: video output
 
+Eh, mixing children with and without addresses is considered poor design.
+
+> +
+> +patternProperties:
+> +  "^dither@[0-9a-f]+$":
+> +    type: object
+> +    additionalProperties: true
+> +
+> +    properties:
+> +      compatible:
+> +        const: fsl,imx8qxp-dc-dither
+> +
+> +  "^framegen@[0-9a-f]+$":
+> +    type: object
+> +    additionalProperties: true
+> +
+> +    properties:
+> +      compatible:
+> +        const: fsl,imx8qxp-dc-framegen
+> +
+> +  "^gammacor@[0-9a-f]+$":
+
+This looks like you are organizing bindings per your driver architecture.
 
 Best regards,
 Krzysztof
