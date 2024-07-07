@@ -1,867 +1,399 @@
-Return-Path: <linux-kernel+bounces-243544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A33B929774
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:38:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6FB92977E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 12:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 866C41C20A31
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296091F2134E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5457E1B94F;
-	Sun,  7 Jul 2024 10:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B7F1CAB2;
+	Sun,  7 Jul 2024 10:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fT4LnrQh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7ZVhrsG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38E41862C;
-	Sun,  7 Jul 2024 10:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B867D1C68C;
+	Sun,  7 Jul 2024 10:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720348719; cv=none; b=lD/2054b7Fi12NRq4hgt5LBZbz6CVgBnYvCYuoXx9RTvTa06hdZDLbo2SUYbceah6LEQKgOrw8DbXyTeOvVg83MjKedtDBja7ETwdWWSsNtEyZ5ZsgRt0ujxZyUJbg3bq0Zwhe0ob5zPa6jiAcdiBG2ObAHOTm6n0tRI1j3nvyM=
+	t=1720349361; cv=none; b=CsQaHLNB80HVcQjmVkTamyLsCsZbPnZ01huVu8uekCLkR7EFsUTuEXX6dxIStG2ZGo37tVKuGhtMQ4OvjvfpXCJcGogjZ0TliyBYx/xE2Mz6m0pcMpbcWAg+3VahlS8Y4TTHkbgUCV+1Qf6bI/Ibk0TxgVgmHBlpfPR+ptAa+Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720348719; c=relaxed/simple;
-	bh=uNXXhiM1YnJJ58BhSBQ+0ikKYaqQBgUhVEVHTpXyhdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JFwCPitZohu4dRXT5INbTRe1wG5fsZR2NG5Zc1OeynmL5l3clvtTlVhglUv10YfK9BIPDMcPUgIx+yGwS1iUOgj77Ho+96LqT3Go7eJ6696ftKGlT7rLEtdbi72B3hiqjcHBDoT7Z3k8jfKIh2FmTnX9Xrt14AQeC7G46wSKttw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fT4LnrQh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C90C3277B;
-	Sun,  7 Jul 2024 10:38:34 +0000 (UTC)
+	s=arc-20240116; t=1720349361; c=relaxed/simple;
+	bh=PVeeT1vuKAzmmUc8lT97zvSGNvt7Pq7VMHk/PwTN2Vg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PxW8uVD/GP9eD11MT736OpEpowskMDduTsqPGktp/ZqJ/fdD/Ir39wgZHer5RDytdT8UdYLgLYQ12cQSIDdp9EtLk8fZbt4KyaoAkTmBMevhoqqIeSBdZdF9z73SOueQ+Zbu7nYJrnsUyYz2L4WLroQN52HMTZxXRxNGCrfR1P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7ZVhrsG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770E9C3277B;
+	Sun,  7 Jul 2024 10:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720348719;
-	bh=uNXXhiM1YnJJ58BhSBQ+0ikKYaqQBgUhVEVHTpXyhdk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fT4LnrQhYBRLen+6EjLqSEAxwy5Jk7DAyWQoHorfaYfpct8EP7YI0G028j3g6xcrd
-	 8tl2NCzWeMx5Xm5z+BC7HApAovwFHuhqB5bPQrqpz0MhqkI59ScraE9loeLTI31Znw
-	 P8At3D0YN3JQ4GtfmqQdaCdOVaj6+IeM+7HDXj7dIoQRnXqK+5pIxdSIQ7WuRtN5fQ
-	 r2jOpAyefdqs5ck3BfYVtyDX36CDxg6eM2+3Pk49yN/g9xPNjTjqdlJ0tFb2rogvv0
-	 qLozjyX4e6pjOW6lp5Ml3y4M+MhT+pwU/Pv3WwRkHQ5SnHIrQgDdIa/VcI7EA84//w
-	 kPapeUurVylIw==
-Date: Sun, 7 Jul 2024 11:38:30 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Guillaume Stols <gstols@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- devicetree@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- jstephan@baylibre.com, dlechner@baylibre.com, Conor Dooley
- <conor.dooley@microchip.com>, tools@kernel.org
-Subject: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements
-Message-ID: <20240707113830.346fced4@jic23-huawei>
-In-Reply-To: <20240706-funny-flamingo-of-temperance-9d1e85@lemur>
-References: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
-	<20240706131549.1f94449c@jic23-huawei>
-	<20240706-funny-flamingo-of-temperance-9d1e85@lemur>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1720349361;
+	bh=PVeeT1vuKAzmmUc8lT97zvSGNvt7Pq7VMHk/PwTN2Vg=;
+	h=Subject:From:To:Date:In-Reply-To:References:From;
+	b=b7ZVhrsGSDe2E9rR9Ha7eAhR8S2/rzcyFztgnM01EfqLaggWbaCEuT3PQnRYMvSy2
+	 iDyVAK8OReNsfWoUYO0dTfBJbJytdZKgQtP2x8c02nJH/lAvWNfu/CX1ZFJUYCaO88
+	 F9hR7YGU8CJslyapmBKhmg6MEy2Q8UcYlWVuLmxkPu5vDPrO+4ehUjNLE4Bx2RGHPb
+	 uSs26wTdQUhl9gX0HbCywRGWIfAnCUup3S3U42GkHWleufPZF9jsezAX1GTImts4z/
+	 jh8vckR2MYzEieuEglHqT6L0QuaiIIN90jf7+9meHVBiwI82oQvwMUe/nAa++Wa+jx
+	 UunaFPIgh0X6Q==
+Message-ID: <9825cc5ff85d4a2a4ce1c955f49681bef8d03442.camel@kernel.org>
+Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_umount
+From: Jeff Layton <jlayton@kernel.org>
+To: syzbot <syzbot+b568ba42c85a332a88ee@syzkaller.appspotmail.com>, 
+	Dai.Ngo@oracle.com, chuck.lever@oracle.com, kolga@netapp.com, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, neilb@suse.de, 
+	syzkaller-bugs@googlegroups.com, tom@talpey.com
+Date: Sun, 07 Jul 2024 06:49:19 -0400
+In-Reply-To: <000000000000f8ed54061ca0d9a5@google.com>
+References: <000000000000f8ed54061ca0d9a5@google.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, 6 Jul 2024 08:29:28 -0400
-Konstantin Ryabitsev <konstantin@linuxfoundation.org> wrote:
-
-> On Sat, Jul 06, 2024 at 01:15:49PM GMT, Jonathan Cameron wrote:
-> > This series is blowing up with b4, in that it is finding tags that were
-> > not given and I can't work out why.
-> >=20
-> > Tried various options but even a simple b4 am -l 20240702-cleanup-ad760=
-6-v3-0-57fd02a4e2aa@baylibre.com
-> > Is merrily finding tags that I can find no record of. =20
+On Sat, 2024-07-06 at 21:37 -0700, syzbot wrote:
+> Hello,
 >=20
-> I can't replicate this, so something else is going on. Can you try:
+> syzbot found the following issue on:
 >=20
->     b4 --no-cache am -l 20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibr=
-e.com
-
-Moved the no-cache after am as otherwise unrecognised parameter.
-Not seeing any change to results.
-
+> HEAD commit:    1dd28064d416 Merge tag 'integrity-v6.10-fix' of ssh://ra.=
+k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16814d7698000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1ace69f521989=
+b1f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Db568ba42c85a332=
+a88ee
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
 >=20
-> In either case, I want to see the output of:
+> Unfortunately, I don't have any reproducer for this issue yet.
 >=20
->     b4 -d am -l 20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com 2>=
-/tmp/b4-debug
-
-Running git --no-pager rev-parse --show-toplevel
-Running git --no-pager config -z --get-regexp b4\..*
-Running git --no-pager config -z --get-regexp gpg\..*
-Running git --no-pager config -z --get-regexp user\..*
-Running git --no-pager config -z --get-regexp sendemail\.[^.]+$
-Using values from sendemail
-t_mbx_url=3Dhttps://lore.kernel.org/all/20240702-cleanup-ad7606-v3-0-57fd02=
-a4e2aa@baylibre.com/t.mbox.gz
-Grabbing thread from lore.kernel.org/all/20240702-cleanup-ad7606-v3-0-57fd0=
-2a4e2aa@baylibre.com/t.mbox.gz
-Mailsplitting the mbox into /tmp/tmp5ftpkxzs-mailsplit
-Running git --no-pager mailsplit --mboxrd -o/tmp/tmp5ftpkxzs-mailsplit
-Looking at: 20240702-cleanup-ad7606-v3-1-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-1-57fd02a4e2aa@baylibre.com
-Looking at: 20240702-cleanup-ad7606-v3-2-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-2-57fd02a4e2aa@baylibre.com
-Looking at: 20240702-cleanup-ad7606-v3-3-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-3-57fd02a4e2aa@baylibre.com
-Looking at: 20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com
-Looking at: 20240702-cleanup-ad7606-v3-4-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-4-57fd02a4e2aa@baylibre.com
-Looking at: 20240702-cleanup-ad7606-v3-6-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-6-57fd02a4e2aa@baylibre.com
-Looking at: 20240702-cleanup-ad7606-v3-5-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-5-57fd02a4e2aa@baylibre.com
-Looking at: 20240702-cleanup-ad7606-v3-7-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-7-57fd02a4e2aa@baylibre.com
-Looking at: 20240702-cleanup-ad7606-v3-8-57fd02a4e2aa@baylibre.com
-Kept in thread: 20240702-cleanup-ad7606-v3-8-57fd02a4e2aa@baylibre.com
-Looking at: 17e484a2c07c0a521120a6a3cab7dfcf5f3c2fee.camel@gmail.com
-Kept in thread: 17e484a2c07c0a521120a6a3cab7dfcf5f3c2fee.camel@gmail.com
-Looking at: 429af3d1afe4297dde5c8795ca745d84d52e5033.camel@gmail.com
-Kept in thread: 429af3d1afe4297dde5c8795ca745d84d52e5033.camel@gmail.com
-Looking at: 8010eaf5300d2dcf928812693379b649b77f0e0f.camel@gmail.com
-Kept in thread: 8010eaf5300d2dcf928812693379b649b77f0e0f.camel@gmail.com
-Looking at: 20240706131549.1f94449c@jic23-huawei
-Kept in thread: 20240706131549.1f94449c@jic23-huawei
-Looking at: 20240706-funny-flamingo-of-temperance-9d1e85@lemur
-Kept in thread: 20240706-funny-flamingo-of-temperance-9d1e85@lemur
-Looking at: 4d47b8c3-2f36-4325-b288-0faa40f876eb@web.de
-Kept in thread: 4d47b8c3-2f36-4325-b288-0faa40f876eb@web.de
-Analyzing 15 messages in the thread
-Ignoring 24:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 34:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 44:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 56:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 71:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 80:      maxItems: 3 (not a recognized non-person trailer)
-Ignoring 95:      type: boolean (not a recognized non-person trailer)
-Looking at: [PATCH v3 1/8] dt-bindings: iio: adc: adi,ad7606: normalize tex=
-twidth
-  adding as patch
-Ignoring 14:    avcc-supply: true (not a recognized non-person trailer)
-Ignoring 20:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 32:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 45:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 58:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 67:      maxItems: 3 (not a recognized non-person trailer)
-Ignoring 83:      type: boolean (not a recognized non-person trailer)
-Looking at: [PATCH v3 2/8] dt-bindings: iio: adc: adi,ad7606: improve descr=
-iptions
-  adding as patch
-Ignoring 15:    avcc-supply: true (not a recognized non-person trailer)
-Looking at: [PATCH v3 3/8] dt-bindings: iio: adc: adi,ad7606: add supply pr=
-operties
-  adding as patch
-Ignoring 33:       dt-bindings: iio: adc: adi,ad7606: normalize textwidth (=
-not a recognized non-person trailer)
-Ignoring 34:       dt-bindings: iio: adc: adi,ad7606: improve descriptions =
-(not a recognized non-person trailer)
-Ignoring 35:       dt-bindings: iio: adc: adi,ad7606: add supply properties=
- (not a recognized non-person trailer)
-Ignoring 36:       dt-bindings: iio: adc: adi,ad7606: fix example (not a re=
-cognized non-person trailer)
-Ignoring 37:       dt-bindings: iio: adc: adi,ad7606: add conditions (not a=
- recognized non-person trailer)
-Ignoring 38:       iio: adc: ad7606: fix oversampling gpio array (not a rec=
-ognized non-person trailer)
-Ignoring 39:       iio: adc: ad7606: fix standby gpio state to match the do=
-cumentation (not a recognized non-person trailer)
-Ignoring 40:       iio: adc: ad7606: switch mutexes to scoped_guard (not a =
-recognized non-person trailer)
-Looking at: [PATCH v3 0/8] iio: adc: ad7606: Improvements
-  adding as v3 cover letter
-Looking at: [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: fix example
-  adding as patch
-Looking at: [PATCH v3 6/8] iio: adc: ad7606: fix oversampling gpio array
-  adding as patch
-Ignoring 93:  unevaluatedProperties: false (not a recognized non-person tra=
-iler)
-Looking at: [PATCH v3 5/8] dt-bindings: iio: adc: adi,ad7606: add conditions
-  adding as patch
-Looking at: [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio state to matc=
-h the documentation
-  adding as patch
-Looking at: [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to scoped_guard
-  adding as patch
-Looking at: Re: [PATCH v3 6/8] iio: adc: ad7606: fix oversampling gpio array
-  adding to followups
-Looking at: Re: [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio state to =
-match the documentation
-  adding to followups
-Looking at: Re: [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to scoped_g=
-uard
-  adding to followups
-Looking at: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements
-  adding to followups
-Looking at: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements
-  adding to followups
-Looking at: Re: [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to scoped_g=
-uard
-  adding to followups
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-full_threads specified, adding t=3D1
-Using cached copy: /home/jic23/.cache/b4/3bbd0dc0edd87cc84b84b8e5684b244bc5=
-ee9b43.pi.msgs
-Retrieved 65 matching code-review messages
-Ignoring 92:  unevaluatedProperties: false (not a recognized non-person tra=
-iler)
-Ignoring 53:  Base: using specified base-commit 07d4d0bb4a8ddcc463ed599b22f=
-510d5926c2495 (not a recognized non-person trailer)
-Ignoring 54: Applying: dt-bindings: iio: adc: adi,ad7606: add missing datas=
-heet link (not a recognized non-person trailer)
-Ignoring 55: Applying: dt-bindings: iio: adc: adi,ad7606: comment and sort =
-the compatible names (not a recognized non-person trailer)
-Ignoring 56: Applying: dt-bindings: iio: adc: adi,ad7606: normalize textwid=
-th (not a recognized non-person trailer)
-Ignoring 57: Applying: dt-bindings: iio: adc: adi,ad7606: improve descripti=
-ons (not a recognized non-person trailer)
-Ignoring 58: Applying: dt-bindings: iio: adc: adi,ad7606: add supply proper=
-ties (not a recognized non-person trailer)
-Ignoring 59: Applying: dt-bindings: iio: adc: adi,ad7606: fix example (not =
-a recognized non-person trailer)
-Ignoring 60: Applying: dt-bindings: iio: adc: adi,ad7606: add conditions (n=
-ot a recognized non-person trailer)
-Ignoring 61: Applying: iio: adc: ad7606: fix oversampling gpio array (not a=
- recognized non-person trailer)
-Ignoring 62: Applying: iio: adc: ad7606: fix standby gpio state to match th=
-e documentation (not a recognized non-person trailer)
-Ignoring 63: Applying: iio: adc: ad7606: switch mutexes to scoped_guard (no=
-t a recognized non-person trailer)
-Ignoring 14:  description: | (not a recognized non-person trailer)
-Ignoring 14:    avcc-supply: true (not a recognized non-person trailer)
-Ignoring 7: url:    https://github.com/intel-lab-lkp/linux/commits/Guillaum=
-e-Stols/dt-bindings-iio-adc-adi-ad7606-add-missing-datasheet-link/20240618-=
-223010 (not a recognized non-person trailer)
-Ignoring 8: base:   07d4d0bb4a8ddcc463ed599b22f510d5926c2495 (not a recogni=
-zed non-person trailer)
-Ignoring 11: config: x86_64-randconfig-101-20240619 (https://download.01.or=
-g/0day-ci/archive/20240619/202406191142.rs8moLqC-lkp@intel.com/config) (not=
- a recognized link trailer)
-Ignoring 12: compiler: clang version 18.1.5 (https://github.com/llvm/llvm-p=
-roject 617a15a9eac96088ae5e9134248d8236e34b91b1) (not a recognized non-pers=
-on trailer)
-Ignoring 13:    avcc-supply: true (not a recognized non-person trailer)
-Ignoring 19:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 30:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 41:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 51:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 63:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 80:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 91:      maxItems: 3 (not a recognized non-person trailer)
-Ignoring 108:      type: boolean (not a recognized non-person trailer)
-Ignoring 14:  description: | (not a recognized non-person trailer)
-Ignoring 14:    avcc-supply: true (not a recognized non-person trailer)
-Ignoring 23:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 33:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 43:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 55:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 70:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 79:      maxItems: 3 (not a recognized non-person trailer)
-Ignoring 94:      type: boolean (not a recognized non-person trailer)
-Ignoring 13:    avcc-supply: true (not a recognized non-person trailer)
-Ignoring 19:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 31:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 44:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 57:      maxItems: 1 (not a recognized non-person trailer)
-Ignoring 66:      maxItems: 3 (not a recognized non-person trailer)
-Ignoring 82:      type: boolean (not a recognized non-person trailer)
-Ignoring 26:       dt-bindings: iio: adc: adi,ad7606: add missing datasheet=
- link (not a recognized non-person trailer)
-Ignoring 27:       dt-bindings: iio: adc: adi,ad7606: comment and sort the =
-compatible names (not a recognized non-person trailer)
-Ignoring 28:       dt-bindings: iio: adc: adi,ad7606: normalize textwidth (=
-not a recognized non-person trailer)
-Ignoring 29:       dt-bindings: iio: adc: adi,ad7606: improve descriptions =
-(not a recognized non-person trailer)
-Ignoring 30:       dt-bindings: iio: adc: adi,ad7606: add supply properties=
- (not a recognized non-person trailer)
-Ignoring 31:       dt-bindings: iio: adc: adi,ad7606: fix example (not a re=
-cognized non-person trailer)
-Ignoring 32:       dt-bindings: iio: adc: adi,ad7606: add conditions (not a=
- recognized non-person trailer)
-Ignoring 33:       iio: adc: ad7606: fix oversampling gpio array (not a rec=
-ognized non-person trailer)
-Ignoring 34:       iio: adc: ad7606: fix standby gpio state to match the do=
-cumentation (not a recognized non-person trailer)
-Ignoring 35:       iio: adc: ad7606: switch mutexes to scoped_guard (not a =
-recognized non-person trailer)
-Ignoring 82:  unevaluatedProperties: false (not a recognized non-person tra=
-iler)
-Ignoring 13:       dt-bindings: iio: adc: adi,ad7606: add missing datasheet=
- link (not a recognized non-person trailer)
-Ignoring 14:       dt-bindings: iio: adc: adi,ad7606: comment and sort the =
-compatible names (not a recognized non-person trailer)
-Ignoring 15:       dt-bindings: iio: adc: adi,ad7606: improve descriptions =
-(not a recognized non-person trailer)
-Ignoring 16:       dt-bindings: iio: adc: adi,ad7606: add supply properties=
- (not a recognized non-person trailer)
-Ignoring 17:       dt-bindings: iio: adc: adi,ad7606: add conditions (not a=
- recognized non-person trailer)
-Ignoring 18:       dt-bindings: iio: adc: adi,ad7606: fix example (not a re=
-cognized non-person trailer)
-Ignoring 19:       iio: adc: ad7606: switch mutexes to scoped_guard (not a =
-recognized non-person trailer)
-Ignoring 20:       iio: adc: ad7606: fix oversampling gpio array (not a rec=
-ognized non-person trailer)
-Ignoring 21:       iio: adc: ad7606: fix standby gpio state to match the do=
-cumentation (not a recognized non-person trailer)
-Analyzing 50 code-review messages
-  new message: 171985401324.129711.10327596818735583111.robh@kernel.org
-Running git --no-pager patch-id --stable
-  found matching patch-id for dt-bindings: iio: adc: adi,ad7606: normalize =
-textwidth
-  new message: 20240623163130.4a72707b@jic23-huawei
-  skipping reply without trailers: 20240623163130.4a72707b@jic23-huawei
-  new message: 20240618-oval-parish-d3fa2925a52a@spud
-  found a cover letter for dt-bindings: iio: adc: adi,ad7606: add conditions
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-  found matching patch-id for dt-bindings: iio: adc: adi,ad7606: add condit=
-ions
-  new message: 20240618-cleanup-ad7606-v1-7-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-7-f1854d5c779d@baylibre.com
-  new message: 12e5c4b4-e51d-4e69-8c63-3f6aefb574d9@baylibre.com
-  skipping reply without trailers: 12e5c4b4-e51d-4e69-8c63-3f6aefb574d9@bay=
-libre.com
-  new message: 20240628-cleanup-ad7606-v2-7-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-7-96e02f90256d@baylibre.com
-  new message: 20240629162223.5b8d35b8@jic23-huawei
-  skipping reply without trailers: 20240629162223.5b8d35b8@jic23-huawei
-  new message: 20240628-postwar-scaling-cb7d7b1f4f3c@spud
-  skipping reply without trailers: 20240628-postwar-scaling-cb7d7b1f4f3c@sp=
-ud
-  new message: 20240623164126.0cf96981@jic23-huawei
-  skipping reply without trailers: 20240623164126.0cf96981@jic23-huawei
-  new message: 20240630-darling-dairy-f161f784f45a@spud
-  skipping reply without trailers: 20240630-darling-dairy-f161f784f45a@spud
-  new message: 20240618-cleanup-ad7606-v1-1-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-1-f1854d5c779d@baylibre.com
-  new message: 20240618-cleanup-ad7606-v1-6-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-6-f1854d5c779d@baylibre.com
-  new message: 20240618-cleanup-ad7606-v1-4-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-4-f1854d5c779d@baylibre.com
-  new message: 20240628-sworn-vegan-be51d695ba52@spud
-  found a cover letter for dt-bindings: iio: adc: adi,ad7606: add conditions
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-Running git --no-pager patch-id --stable
-  found matching patch-id for dt-bindings: iio: adc: adi,ad7606: add condit=
-ions
-  new message: 20240623163508.4e0bdb8b@jic23-huawei
-  skipping reply without trailers: 20240623163508.4e0bdb8b@jic23-huawei
-  new message: 171952025424.477297.14698127361119381011.robh@kernel.org
-  found matching patch-id for dt-bindings: iio: adc: adi,ad7606: add missin=
-g datasheet link
-  new message: 20240628-cleanup-ad7606-v2-10-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-10-96e02f90256d@baylibre.c=
-om
-  new message: 202406191142.rs8moLqC-lkp@intel.com
-  skipping reply without trailers: 202406191142.rs8moLqC-lkp@intel.com
-  new message: 171985436896.136027.10830474139479480832.robh@kernel.org
-  found a cover letter for dt-bindings: iio: adc: adi,ad7606: improve descr=
-iptions
-  found matching patch-id for dt-bindings: iio: adc: adi,ad7606: improve de=
-scriptions
-  new message: 20240623164920.48dda649@jic23-huawei
-  skipping reply without trailers: 20240623164920.48dda649@jic23-huawei
-  new message: 20240618-cleanup-ad7606-v1-8-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-8-f1854d5c779d@baylibre.com
-  new message: 171872601308.2592859.9209680647249959738.robh@kernel.org
-  skipping reply without trailers: 171872601308.2592859.9209680647249959738=
-.robh@kernel.org
-  new message: 20240618-cleanup-ad7606-v1-3-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-3-f1854d5c779d@baylibre.com
-  new message: 20240628-cleanup-ad7606-v2-1-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-1-96e02f90256d@baylibre.com
-  new message: 20240618-spearfish-swear-213166c7224f@spud
-  skipping parent without a diff or diffstat
-  skipping parent without a diff or diffstat
-  found matching patch-id for dt-bindings: iio: adc: adi,ad7606: add supply=
- properties
-  new message: 62dadd31-5fd1-45b4-99e8-44ffb367bad5@baylibre.com
-  skipping reply without trailers: 62dadd31-5fd1-45b4-99e8-44ffb367bad5@bay=
-libre.com
-  new message: 20240628-cleanup-ad7606-v2-6-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-6-96e02f90256d@baylibre.com
-  new message: 20240628-cleanup-ad7606-v2-5-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-5-96e02f90256d@baylibre.com
-  new message: 20240618-cleanup-ad7606-v1-9-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-9-f1854d5c779d@baylibre.com
-  new message: 20240629163659.322954c3@jic23-huawei
-  skipping reply without trailers: 20240629163659.322954c3@jic23-huawei
-  new message: 20240629163845.0a8ed683@jic23-huawei
-  skipping reply without trailers: 20240629163845.0a8ed683@jic23-huawei
-  new message: 20240628-cleanup-ad7606-v2-3-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-3-96e02f90256d@baylibre.com
-  new message: 20240628-trustful-urchin-741943d2e98d@spud
-  skipping reply without trailers: 20240628-trustful-urchin-741943d2e98d@sp=
-ud
-  new message: 20240618-rack-synthetic-1d1747b34a6a@spud
-  found matching patch-id for dt-bindings: iio: adc: adi,ad7606: fix example
-  new message: 20240623162827.45220840@jic23-huawei
-  skipping reply without trailers: 20240623162827.45220840@jic23-huawei
-  new message: 20240618-cleanup-ad7606-v1-2-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-2-f1854d5c779d@baylibre.com
-  new message: 20240628-cleanup-ad7606-v2-8-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-8-96e02f90256d@baylibre.com
-  new message: 171952032004.478307.5280182877867747227.robh@kernel.org
-  found matching patch-id for dt-bindings: iio: adc: adi,ad7606: comment an=
-d sort the compatible names
-  new message: 20240623163330.7a9fd911@jic23-huawei
-  skipping reply without trailers: 20240623163330.7a9fd911@jic23-huawei
-  new message: 20240629161808.6c15bcb9@jic23-huawei
-  skipping reply without trailers: 20240629161808.6c15bcb9@jic23-huawei
-  new message: 20240629163043.5e96e80c@jic23-huawei
-  skipping reply without trailers: 20240629163043.5e96e80c@jic23-huawei
-  new message: 20240628-cleanup-ad7606-v2-4-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-4-96e02f90256d@baylibre.com
-  new message: 20240623164542.53a9f2b1@jic23-huawei
-  skipping reply without trailers: 20240623164542.53a9f2b1@jic23-huawei
-  new message: 20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com
-  new message: 20240618-eggnog-cusp-8b5a17313367@spud
-  skipping reply without trailers: 20240618-eggnog-cusp-8b5a17313367@spud
-  new message: 20240618-cleanup-ad7606-v1-5-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-5-f1854d5c779d@baylibre.com
-  new message: 20240629162907.0f5b234e@jic23-huawei
-  skipping reply without trailers: 20240629162907.0f5b234e@jic23-huawei
-  new message: 20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com
-  skipping non-reply: 20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com
-  new message: 20240628-cleanup-ad7606-v2-2-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-2-96e02f90256d@baylibre.com
-  new message: 20240628-cleanup-ad7606-v2-9-96e02f90256d@baylibre.com
-  skipping non-reply: 20240628-cleanup-ad7606-v2-9-96e02f90256d@baylibre.com
-Analyzing follow-up: Re: [PATCH v3 6/8] iio: adc: ad7606: fix oversampling =
-gpio array (noname.nuno@gmail.com)
-fmsg.in_reply_to=3D20240702-cleanup-ad7606-v3-6-57fd02a4e2aa@baylibre.com
-Found in-reply-to 20240702-cleanup-ad7606-v3-6-57fd02a4e2aa@baylibre.com in=
- msgid_map
-trailer did not match: Reviewed-by: Nuno Sa <nuno.sa@analog.com>
- Parent: [PATCH v3 6/8] iio: adc: ad7606: fix oversampling gpio array
- Trailers:
-Analyzing follow-up: Re: [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio =
-state to match the documentation (noname.nuno@gmail.com)
-fmsg.in_reply_to=3D20240702-cleanup-ad7606-v3-7-57fd02a4e2aa@baylibre.com
-Found in-reply-to 20240702-cleanup-ad7606-v3-7-57fd02a4e2aa@baylibre.com in=
- msgid_map
-trailer did not match: Reviewed-by: Nuno Sa <nuno.sa@analog.com>
- Parent: [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio state to match t=
-he documentation
- Trailers:
-Analyzing follow-up: Re: [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to=
- scoped_guard (noname.nuno@gmail.com)
-fmsg.in_reply_to=3D20240702-cleanup-ad7606-v3-8-57fd02a4e2aa@baylibre.com
-Found in-reply-to 20240702-cleanup-ad7606-v3-8-57fd02a4e2aa@baylibre.com in=
- msgid_map
-trailer did not match: Reviewed-by: Nuno Sa <nuno.sa@analog.com>
- Parent: [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to scoped_guard
- Trailers:
-Analyzing follow-up: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements (jic=
-23@kernel.org)
-  no trailers found, skipping
-Analyzing follow-up: Re: [PATCH v3 0/8] iio: adc: ad7606: Improvements (kon=
-stantin@linuxfoundation.org)
-  no trailers found, skipping
-Analyzing follow-up: Re: [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to=
- scoped_guard (Markus.Elfring@web.de)
-  no trailers found, skipping
-  trailer email match
-    adding "Acked-by: Rob Herring (Arm) <robh@kernel.org>" from trailer_map=
- to: [PATCH v3 1/8] dt-bindings: iio: adc: adi,ad7606: normalize textwidth
-  trailer exact name match
-  trailer fuzzy name match
-    adding "Reviewed-by: Conor Dooley <conor.dooley@microchip.com>" from tr=
-ailer_map to: [PATCH v3 1/8] dt-bindings: iio: adc: adi,ad7606: normalize t=
-extwidth
-  trailer email match
-    adding "Reviewed-by: Rob Herring (Arm) <robh@kernel.org>" from trailer_=
-map to: [PATCH v3 1/8] dt-bindings: iio: adc: adi,ad7606: normalize textwid=
-th
-  trailer exact name match
-  trailer fuzzy name match
-    adding "Reviewed-by: Conor Dooley <conor.dooley@microchip.com>" from tr=
-ailer_map to: [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: fix example
-  trailer exact name match
-  trailer fuzzy name match
-  trailer email match
-    adding "Reviewed-by: Rob Herring (Arm) <robh@kernel.org>" from trailer_=
-map to: [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: fix example
-  trailer exact name match
-  trailer fuzzy name match
-    adding "Acked-by: Conor Dooley <conor.dooley@microchip.com>" from trail=
-er_map to: [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: fix example
-  trailer exact name match
-  trailer fuzzy name match
-    adding "Reviewed-by: Conor Dooley <conor.dooley@microchip.com>" from tr=
-ailer_map to: [PATCH v3 5/8] dt-bindings: iio: adc: adi,ad7606: add conditi=
-ons
-  trailer email match
-    adding "Reviewed-by: Rob Herring (Arm) <robh@kernel.org>" from trailer_=
-map to: [PATCH v3 5/8] dt-bindings: iio: adc: adi,ad7606: add conditions
-  trailer exact name match
-  trailer fuzzy name match
-    adding "Reviewed-by: Conor Dooley <conor.dooley@microchip.com>" from tr=
-ailer_map to: [PATCH v3 6/8] iio: adc: ad7606: fix oversampling gpio array
-  trailer exact name match
-  trailer fuzzy name match
-  trailer email match
-    adding "Reviewed-by: Rob Herring (Arm) <robh@kernel.org>" from trailer_=
-map to: [PATCH v3 6/8] iio: adc: ad7606: fix oversampling gpio array
-  trailer exact name match
-  trailer fuzzy name match
-    adding "Reviewed-by: Conor Dooley <conor.dooley@microchip.com>" from tr=
-ailer_map to: [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio state to ma=
-tch the documentation
-  trailer exact name match
-  trailer fuzzy name match
-  trailer email match
-    adding "Reviewed-by: Rob Herring (Arm) <robh@kernel.org>" from trailer_=
-map to: [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio state to match th=
-e documentation
-Checking attestation on all messages, may take a moment...
-Loading attestation: [PATCH v3 1/8] dt-bindings: iio: adc: adi,ad7606: norm=
-alize textwidth
-Loading DKIM attestation for d=3Dbaylibre-com.20230601.gappssmtp.com, s=3D2=
-0230601
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/relaxed', b'd'=
-: b'baylibre-com.20230601.gappssmtp.com', b's': b'20230601', b't': b'171994=
-1647', b'x': b'1720546447', b'darn': b'vger.kernel.org', b'h': b'cc:to:in-r=
-eply-to:references:message-id:content-transfer-encoding\r\n         :mime-v=
-ersion:subject:date:from:from:to:cc:subject:date:message-id\r\n         :re=
-ply-to', b'bh': b'XoOP6xDFVO+piNQMxKh2JgMUAWvA+ZCbwk4Ckp0ym3U=3D', b'b': b'=
-bskrnKu86JUiCpGnSMMH0jp0oIo7CNOU5GucJkH1i8FNuWfuWtgReLxPKvsgakZwwe\r\n     =
-    zeCBNMxG4Ev5grxV0bx9i2Dj/w9ZHSLvHRN4Sx6nKXjNT1vKIHb0cSCBedtTb7KneORE\r\=
-n         F6VzDlGwGBBYugqJT1xtmsuSbUR5ujVM8dIlADMkhlqoJY+77P59vry8d5kiW/SNt=
-MID\r\n         Ejgdd2Gt2ocgc9+W/bypD9KGWg10oIlrxxuS4PB30iEIi2fUsm8tiwnhnBm=
-8RToMKs7r\r\n         ZBKEyyxjJLJgzsbDytQli+8g7Uxdk029u1WEmmfi18xEZD8PQ7xXG=
-gf4umta217DkiV0\r\n         WL1Q=3D=3D'}
-DKIM: bh: b'XoOP6xDFVO+piNQMxKh2JgMUAWvA+ZCbwk4Ckp0ym3U=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: baylibre-com.20230601.gappssmtp.com=3DTrue
-Attestors: 1
-PASS : time drift between Date and t (0:00:02)
-Loading attestation: [PATCH v3 2/8] dt-bindings: iio: adc: adi,ad7606: impr=
-ove descriptions
-Loading DKIM attestation for d=3Dbaylibre-com.20230601.gappssmtp.com, s=3D2=
-0230601
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/relaxed', b'd'=
-: b'baylibre-com.20230601.gappssmtp.com', b's': b'20230601', b't': b'171994=
-1648', b'x': b'1720546448', b'darn': b'vger.kernel.org', b'h': b'cc:to:in-r=
-eply-to:references:message-id:content-transfer-encoding\r\n         :mime-v=
-ersion:subject:date:from:from:to:cc:subject:date:message-id\r\n         :re=
-ply-to', b'bh': b'HiVIhZEAyuYnJTbH9Xr5ihUjZSz2ff/4WqtLGIZJN0k=3D', b'b': b'=
-JVOkIvJ+wPM4x7f1DiLk5FgH7P2fdCOFd5yG0hQ1yWyFJA0zhdVyeV6NbX92z8gSWv\r\n     =
-    KVb7rxfScYJQTBbv5mE2ykov//i1aNLabqEJzgkCF7mR9a/mRs7p1wZg+9l8mWvvwbAr\r\=
-n         Ssg68/Yjzo0ra30+fc/Hpko9ZhURiLXswyNcHMWWErQLN4G68FQYmsBFvt3y+YTNl=
-7hd\r\n         0ToQ6lMQjcB1fgdtCHqemj5uJuZhsaco8ZFZd8TNCEwLKUhYdMW596nBuc/=
-koIG1bOeB\r\n         x78KtxccdXiqugLGGpP5G9JgHnI2/9lDsOOBjSA4jDiCT4BYD5JlD=
-+JiMvDYW9Gtbn77\r\n         jzEw=3D=3D'}
-DKIM: bh: b'HiVIhZEAyuYnJTbH9Xr5ihUjZSz2ff/4WqtLGIZJN0k=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: baylibre-com.20230601.gappssmtp.com=3DTrue
-Attestors: 1
-PASS : time drift between Date and t (0:00:02)
-Loading attestation: [PATCH v3 3/8] dt-bindings: iio: adc: adi,ad7606: add =
-supply properties
-Loading DKIM attestation for d=3Dbaylibre-com.20230601.gappssmtp.com, s=3D2=
-0230601
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/relaxed', b'd'=
-: b'baylibre-com.20230601.gappssmtp.com', b's': b'20230601', b't': b'171994=
-1648', b'x': b'1720546448', b'darn': b'vger.kernel.org', b'h': b'cc:to:in-r=
-eply-to:references:message-id:content-transfer-encoding\r\n         :mime-v=
-ersion:subject:date:from:from:to:cc:subject:date:message-id\r\n         :re=
-ply-to', b'bh': b'W4PsgI6ViSPMjJzEXz9ZwZPETs75x12HxOOvUnLBogs=3D', b'b': b'=
-MMQfxXhxHILGpuIKp7BXBARHk67TYPEtouN+SIQNb/okU9lwCsaVwPUui8IJdSAnwq\r\n     =
-    eELlxHmR7iXrka7txLZRSn4LI9QY+6s3uf7QoQicsEjT8zkdWIKf7Y5R3oGsWyMIhgDW\r\=
-n         NOdTRaM/dyhHjsDtVv6JTsl1HPbeBA5ilCvMN4hSenQ3nPqjZR9JC9Vg6fCJ+ydiR=
-5fs\r\n         B3Xbyskyg5ffV8ONLy1CuWbsLLm89Md/CgQ8tSxYhgl8Kocmi/9xWyMjbKk=
-c7hiZbiss\r\n         GjNj8dxHP2FtztI9SQLm54lmwW8KGpUbxQqnaFFHm4qMxC9EaEx5g=
-CFD7grgZxyqYiv/\r\n         NdfQ=3D=3D'}
-DKIM: bh: b'W4PsgI6ViSPMjJzEXz9ZwZPETs75x12HxOOvUnLBogs=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: baylibre-com.20230601.gappssmtp.com=3DTrue
-Attestors: 1
-PASS : time drift between Date and t (0:00:01)
-Loading attestation: [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: fix =
-example
-Loading DKIM attestation for d=3Dbaylibre-com.20230601.gappssmtp.com, s=3D2=
-0230601
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/relaxed', b'd'=
-: b'baylibre-com.20230601.gappssmtp.com', b's': b'20230601', b't': b'171994=
-1649', b'x': b'1720546449', b'darn': b'vger.kernel.org', b'h': b'cc:to:in-r=
-eply-to:references:message-id:content-transfer-encoding\r\n         :mime-v=
-ersion:subject:date:from:from:to:cc:subject:date:message-id\r\n         :re=
-ply-to', b'bh': b'bqVxrCmaqTdd1OivUsUaCiiNGBxmmQjkW28fKPO8hWM=3D', b'b': b'=
-X9OwpT/GOyRvGYNRAocpe5BorQ35LZ8cPEWEfpTR6VVmG/PAiBclZWeABUcaqBY7qh\r\n     =
-    LDPrH3wmj2M9egaLNVE0QXywMfeRljb3nFTSSHVEA2Fq6BttdiEj5Wg1LvIhwsPo3FQN\r\=
-n         YSjl8QJTLn5CachTFU1FE9zAyxIYewQNASAbijE5rrbCTLor6iymiVQlZGI3yH81+=
-hre\r\n         hmhcxSoPQ6mjcnmwbRKMq9gwBFiRFv6XD3dcXiah3zLKRFZiNea74dhik8S=
-2mz6Ho3lL\r\n         t4WG2pmXB7JXCj9SJxI9Vc/mfFhv7GyeVtS+zPSNqggUVVSPskvwE=
-tL0EMutxK6dI13F\r\n         TPZg=3D=3D'}
-DKIM: bh: b'bqVxrCmaqTdd1OivUsUaCiiNGBxmmQjkW28fKPO8hWM=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: baylibre-com.20230601.gappssmtp.com=3DTrue
-Attestors: 1
-PASS : time drift between Date and t (0:00:01)
-Loading attestation: [PATCH v3 5/8] dt-bindings: iio: adc: adi,ad7606: add =
-conditions
-Loading DKIM attestation for d=3Dbaylibre-com.20230601.gappssmtp.com, s=3D2=
-0230601
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/relaxed', b'd'=
-: b'baylibre-com.20230601.gappssmtp.com', b's': b'20230601', b't': b'171994=
-1649', b'x': b'1720546449', b'darn': b'vger.kernel.org', b'h': b'cc:to:in-r=
-eply-to:references:message-id:content-transfer-encoding\r\n         :mime-v=
-ersion:subject:date:from:from:to:cc:subject:date:message-id\r\n         :re=
-ply-to', b'bh': b'OlOMVM0Oi/I1G5ABSh4CvVIoiZHYlhaelZAr8Gl3RX4=3D', b'b': b'=
-Tb2/hbh25bo/t5+n3AURyKbt8RCGLirlj9Dzhx3WRbY6Rf+9SPAc3FH73mXmDXjc0r\r\n     =
-    oecveLKmgKuQw/9hNnyGi3S8L3W5Pl1wLMFYIssGi0QiqdTx/Sd2nib8Fx1In2mmZEsX\r\=
-n         sTf/I2R1uYfqUD5y8rktm73lE4yBU30TQmo7sEO8s5TYZH1Uwb4+5dzNJ8sMd4RwX=
-Gcq\r\n         l9+7mQd1CAiNBGxZjte/NKmjepAXvKOk6Zv2biaaN7SQyReGZnQENMVNFAW=
-ySePshDyN\r\n         GC7BBHxwts+6IJ5bqdtKCMMLLyNhx3yziQS5JJQ/Qk5WIGRSX6Yvx=
-jfehsrHOQ5BqcMW\r\n         VatQ=3D=3D'}
-DKIM: bh: b'OlOMVM0Oi/I1G5ABSh4CvVIoiZHYlhaelZAr8Gl3RX4=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: baylibre-com.20230601.gappssmtp.com=3DTrue
-Attestors: 1
-PASS : time drift between Date and t (0:00:00)
-Loading attestation: [PATCH v3 6/8] iio: adc: ad7606: fix oversampling gpio=
- array
-Loading DKIM attestation for d=3Dbaylibre-com.20230601.gappssmtp.com, s=3D2=
-0230601
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/relaxed', b'd'=
-: b'baylibre-com.20230601.gappssmtp.com', b's': b'20230601', b't': b'171994=
-1650', b'x': b'1720546450', b'darn': b'vger.kernel.org', b'h': b'cc:to:in-r=
-eply-to:references:message-id:content-transfer-encoding\r\n         :mime-v=
-ersion:subject:date:from:from:to:cc:subject:date:message-id\r\n         :re=
-ply-to', b'bh': b'iYOb3cXloM7JPnPejGsCNHK/CDwXTFwHzLHb3/a7qrs=3D', b'b': b'=
-svL4kTXcPOQ9HPCJ3Xp0NAJEsOuZVPfLRyOAMLjPjEaUjFowOymTlyXzxtdSE4+pQ2\r\n     =
-    XFfjnZSuNjeoiP4z6JQExroqoVw1VCkW1sb+A41j8cTp17lN5LaM9oY8zEdBiLA+xov7\r\=
-n         LcgwmBWgQKXaEm+zHRwsTpBXVcLaRmMmlc/tLo4Y77a9FVLYJDSQLOJwPDFBTlfTP=
-MCa\r\n         UK8IWdqXS/+zUWQXXjPiNObYDFcUl/Tfnsx6dnyrZhiLl4ySc73QtT4j5/1=
-wnkpSBCrY\r\n         NelVVL/dWhhd1AhsABv9fMBhGBc1BqovDozxd1OS/0GOunqEU802F=
-HzfDHHa96O5uDzO\r\n         t2dA=3D=3D'}
-DKIM: bh: b'iYOb3cXloM7JPnPejGsCNHK/CDwXTFwHzLHb3/a7qrs=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: baylibre-com.20230601.gappssmtp.com=3DTrue
-Attestors: 1
-PASS : time drift between Date and t (0:00:00)
-Loading attestation: [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio stat=
-e to match the documentation
-Loading DKIM attestation for d=3Dbaylibre-com.20230601.gappssmtp.com, s=3D2=
-0230601
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/relaxed', b'd'=
-: b'baylibre-com.20230601.gappssmtp.com', b's': b'20230601', b't': b'171994=
-1650', b'x': b'1720546450', b'darn': b'vger.kernel.org', b'h': b'cc:to:in-r=
-eply-to:references:message-id:content-transfer-encoding\r\n         :mime-v=
-ersion:subject:date:from:from:to:cc:subject:date:message-id\r\n         :re=
-ply-to', b'bh': b'0syamWwYKEIgGFfBRP6mPS2Iu9QxWFGeekc+8eB0dRA=3D', b'b': b'=
-f04+9I1Zp3cuLVlh/iAyzqvyLqR/68uCE60iStM+7uiaA+NyLfEIhUU/fBEOK5ahv9\r\n     =
-    W5+qEKQMAGz/8TAzWesVAKfHURcOsU7/4EI79CGAKDVsLbK4sFiuQ4dofCfXafxeFlul\r\=
-n         V8uTBRmqvkYu2dqTJLQvF1K7REeYy0oFREGAzcwdrf7EgM29goqFrq5pr1WyPTwkd=
-cD6\r\n         n7ijdi3EdUM+RDW2MaQ4QQqt0Ne5eD1XrPOTBcnHD/8ysSZenDYfb7WlBnV=
-kj8qJ7uBm\r\n         r5kODm7INJp8Tep99c2QJzme64wh1O+bsN33Izg3hdakNMh5Agcvf=
-VblmgqQ+C+/M6gb\r\n         U5+Q=3D=3D'}
-DKIM: bh: b'0syamWwYKEIgGFfBRP6mPS2Iu9QxWFGeekc+8eB0dRA=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: baylibre-com.20230601.gappssmtp.com=3DTrue
-Attestors: 1
-PASS : time drift between Date and t (-1 day, 23:59:59)
-Loading attestation: [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to sco=
-ped_guard
-Loading DKIM attestation for d=3Dbaylibre-com.20230601.gappssmtp.com, s=3D2=
-0230601
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/relaxed', b'd'=
-: b'baylibre-com.20230601.gappssmtp.com', b's': b'20230601', b't': b'171994=
-1651', b'x': b'1720546451', b'darn': b'vger.kernel.org', b'h': b'cc:to:in-r=
-eply-to:references:message-id:content-transfer-encoding\r\n         :mime-v=
-ersion:subject:date:from:from:to:cc:subject:date:message-id\r\n         :re=
-ply-to', b'bh': b'E8NfF8jZGHkcRRoEHwh26DQAMmLR92lEfTyFLVBd7mk=3D', b'b': b'=
-wjgEClSKZUgLm+5X2uffIcPZ8XKSVrPa9StW/UaOK5HuR6isRw6VJz5Abx/rf50QAK\r\n     =
-    kXoyWi3gZXDLrOqoXcGEVlQADzT5gdleupF0ljteP8kq3rDZuTH8zQphgZd1z3BvunqE\r\=
-n         amG4Najj73fS73XTLLMMnVCA0nDi+RXZ82kYZDtzRelT5ljnj9cVx3pC2d5/EhEm5=
-N4n\r\n         saRx1qzD+F0MB2TwYFKRfia3C618gHwpIsLwWzJW41EjofybfJNFG1TYpFz=
-I8yr9LsC2\r\n         oPGOhUyASfS+bYAyBzQ1P38qh+ni12suKkDrOHDSdrZ+kJ/0UNmx2=
-bBUMiQ16vnxJ97j\r\n         FiPA=3D=3D'}
-DKIM: bh: b'E8NfF8jZGHkcRRoEHwh26DQAMmLR92lEfTyFLVBd7mk=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: baylibre-com.20230601.gappssmtp.com=3DTrue
-Attestors: 1
-PASS : time drift between Date and t (-1 day, 23:59:59)
----
-  =1B[32m=E2=9C=93=1B[0m [PATCH v3 1/8] dt-bindings: iio: adc: adi,ad7606: =
-normalize textwidth
-Body contains non-ascii characters. Running Unicode Cf char tests.
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmpzcodv=
-utk/m /tmp/tmpzcodvutk/p
-Loading attestation: Re: [PATCH v2 07/10] dt-bindings: iio: adc: adi,ad7606=
-: add conditions
-Loading DKIM attestation for d=3Dkernel.org, s=3Dk20201202
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/simple', b'd':=
- b'kernel.org', b's': b'k20201202', b't': b'1719587717', b'bh': b'bu0ftpyAi=
-juweDhRTmvWJVpSDGx2EDgXAxaHL4ijmww=3D', b'h': b'Date:From:To:Cc:Subject:Ref=
-erences:In-Reply-To:From', b'b': b'sJf6Few/SMza311Oz8Dt5No3XiJ94XiQWAasODCy=
-bdXBiSeYvzAQlejnBa1Lato5U\r\n\t wyG5175CnhPJqSxeIQ4zw+MjsyidmYSmnGjSefsTbqX=
-U+jgjx80Wq99amKuWLsyb3y\r\n\t sLqmVURhq4h1hUOVoA0w10ibFAEBciW1t5MIPGBYrBrNQ=
-I6DivjGg/VNHW1/ag6i3T\r\n\t IYKSCrRPCE7moJNURIlvC/3aBPQtVxe7onVmb1SIQ3t1o9L=
-z8ziKQThZdD6KgQHLBT\r\n\t 5IsYpjJOsLaMI2D0zXH5RvL+lfV7LOjCIC8R2avOqMX6SHf2I=
-H3JPrkurxMUYdVV2I\r\n\t vGQQG9lKR8L+A=3D=3D'}
-DKIM: bh: b'bu0ftpyAijuweDhRTmvWJVpSDGx2EDgXAxaHL4ijmww=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: kernel.org=3DTrue
-PASS : sig domain kernel.org matches from identity conor@kernel.org
-Attestors: 1
-    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=1B[32m=E2=9C=
-=93=1B[0m DKIM/kernel.org)
-Loading attestation: Re: [PATCH v2 04/10] dt-bindings: iio: adc: adi,ad7606=
-: improve descriptions
-Loading DKIM attestation for d=3Dkernel.org, s=3Dk20201202
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/simple', b'd':=
- b'kernel.org', b's': b'k20201202', b't': b'1719854370', b'bh': b'F6Mg3Q9Ht=
-FWN3btjP5ziRej2VlTPFVg4j6vn1JweSfI=3D', b'h': b'Date:From:To:Cc:Subject:Ref=
-erences:In-Reply-To:From', b'b': b'SHx7u0vLf+kFXkUaPhxUr8J78oY6ddSvwzn4tjHa=
-O8qiAeZxuucFdRm2vDrZOO8T/\r\n\t MzL6oKjXa7TXAio2yY8E4j255UKeljiSIW91xWHq2iK=
-YSyKPd+/HQlsBw6CkrGkrW4\r\n\t r847M5mE+gZH1TBnO4e79zptI8uxQ6DMyyJ4oUvEHdlCE=
-EEZ8/3FOOCyNVJJSo/Fui\r\n\t J35ZkXzk3JMINehehfZdv3C5Hi9PzpGxocXfKB9ATBLm2LJ=
-VZK4Ya1D1IJjy7p1tuk\r\n\t qJEp9eHbZulMa6TTWvEHi/3ggMbjOjR6Uk6j5zdzemeUfZ/mF=
-XLl01BCl75YZrTlNh\r\n\t pAxKYhOpNhVow=3D=3D'}
-DKIM: bh: b'F6Mg3Q9HtFWN3btjP5ziRej2VlTPFVg4j6vn1JweSfI=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: kernel.org=3DTrue
-PASS : sig domain kernel.org matches from identity robh@kernel.org
-Attestors: 1
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=1B[32m=E2=9C=93=1B=
-[0m DKIM/kernel.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-1-57fd02a4e=
-2aa@baylibre.com
-  =1B[32m=E2=9C=93=1B[0m [PATCH v3 2/8] dt-bindings: iio: adc: adi,ad7606: =
-improve descriptions
-Body contains non-ascii characters. Running Unicode Cf char tests.
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmphavue=
-hp5/m /tmp/tmphavuehp5/p
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-2-57fd02a4e=
-2aa@baylibre.com
-  =1B[32m=E2=9C=93=1B[0m [PATCH v3 3/8] dt-bindings: iio: adc: adi,ad7606: =
-add supply properties
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmp3_24h=
-10k/m /tmp/tmp3_24h10k/p
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-3-57fd02a4e=
-2aa@baylibre.com
-  =1B[32m=E2=9C=93=1B[0m [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: =
-fix example
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmpcy04x=
-gt3/m /tmp/tmpcy04xgt3/p
-Loading attestation: Re: [PATCH 5/9] dt-bindings: iio: adc: adi,ad7606: add=
- conditions
-Loading DKIM attestation for d=3Dkernel.org, s=3Dk20201202
-DKIM: sig: {b'v': b'1', b'a': b'rsa-sha256', b'c': b'relaxed/simple', b'd':=
- b'kernel.org', b's': b'k20201202', b't': b'1718723637', b'bh': b'kWLzasd2J=
-v00eh2+ymMa0JXWplIZ46GqFdb45PLJiMs=3D', b'h': b'Date:From:To:Cc:Subject:Ref=
-erences:In-Reply-To:From', b'b': b'JHP2taepLHd1qo2ZO3Fqo5kv42Y7HWK3Hvd4M9y2=
-nQyamYsR5YFzzeg2qxzZaGeZB\r\n\t 7ZdRPOggnESPB72uGTfHtxrMYHUu9VivKEp62sFDgqw=
-7t40OShbPhAyEmDwSujTM8L\r\n\t jlpJkJIwACiMEUKiXkgrJQS2ImsfaBlG+vo6JUZgmmw/l=
-V7Tg1gZIUY4HFTjPIb/Xu\r\n\t UntfmSZN5WNXqR1Es9Jto/136eADuj73gdLn4T7FL3k9ui8=
-XrhCxUm86sueii4+W/r\r\n\t 4Va9iKPlphFGvUY/fnde6a6Ahqk1mQxQRXUSHs0ZoEeLJo/Ff=
-hR8SRt6a7bbMF/DSc\r\n\t Cfl1P7hqIRE+g=3D=3D'}
-DKIM: bh: b'kWLzasd2Jv00eh2+ymMa0JXWplIZ46GqFdb45PLJiMs=3D'
-DKIM: b'DKIM-Signature' valid: True
-DKIM verify results: kernel.org=3DTrue
-PASS : sig domain kernel.org matches from identity conor@kernel.org
-Attestors: 1
-    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=1B[32m=E2=9C=
-=93=1B[0m DKIM/kernel.org)
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=1B[32m=E2=9C=93=1B=
-[0m DKIM/kernel.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-4-57fd02a4e=
-2aa@baylibre.com
-  =1B[32m=E2=9C=93=1B[0m [PATCH v3 5/8] dt-bindings: iio: adc: adi,ad7606: =
-add conditions
-Body contains non-ascii characters. Running Unicode Cf char tests.
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmpdbsjb=
-qe5/m /tmp/tmpdbsjbqe5/p
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=1B[32m=E2=9C=93=1B=
-[0m DKIM/kernel.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-5-57fd02a4e=
-2aa@baylibre.com
-  =1B[32m=E2=9C=93=1B[0m [PATCH v3 6/8] iio: adc: ad7606: fix oversampling =
-gpio array
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmp07w7v=
-2eu/m /tmp/tmp07w7v2eu/p
-    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=1B[32m=E2=9C=
-=93=1B[0m DKIM/kernel.org)
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=1B[32m=E2=9C=93=1B=
-[0m DKIM/kernel.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-6-57fd02a4e=
-2aa@baylibre.com
-  =1B[32m=E2=9C=93=1B[0m [PATCH v3 7/8] iio: adc: ad7606: fix standby gpio =
-state to match the documentation
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmparf0x=
-uvu/m /tmp/tmparf0xuvu/p
-    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=1B[32m=E2=9C=
-=93=1B[0m DKIM/kernel.org)
-    + Reviewed-by: Rob Herring (Arm) <robh@kernel.org> (=1B[32m=E2=9C=93=1B=
-[0m DKIM/kernel.org)
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-7-57fd02a4e=
-2aa@baylibre.com
-  =1B[32m=E2=9C=93=1B[0m [PATCH v3 8/8] iio: adc: ad7606: switch mutexes to=
- scoped_guard
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmpypnbw=
-tkn/m /tmp/tmpypnbwtkn/p
-    + Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-8-57fd02a4e=
-2aa@baylibre.com
-  ---
-  =1B[32m=E2=9C=93=1B[0m Signed: DKIM/baylibre-com.20230601.gappssmtp.com (=
-From: gstols@baylibre.com)
----
-Total patches: 8
----
-NOTE: some trailers ignored due to from/email mismatches:
-    ! Trailer: Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-     Msg From: Nuno S=C3=A1 <noname.nuno@gmail.com>
-NOTE: Rerun with -S to apply them anyway
-Running git --no-pager rev-parse --show-toplevel
----
-Running git --no-pager mailinfo --encoding=3DUTF-8 --scissors /tmp/tmpnzax6=
-wah/m /tmp/tmpnzax6wah/p
-Cover: ./v3_20240702_gstols_iio_adc_ad7606_improvements.cover
- Link: https://patch.msgid.link/20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@b=
-aylibre.com
-Running git --no-pager --git-dir /home/jic23/src/kernel/iio/.git cat-file -=
-e 340fa834ae229a952db04a57ed13fd5d35d75818
- Base: using specified base-commit 340fa834ae229a952db04a57ed13fd5d35d75818
-       git checkout -b v3_20240702_gstols_baylibre_com 340fa834ae229a952db0=
-4a57ed13fd5d35d75818
-       git am ./v3_20240702_gstols_iio_adc_ad7606_improvements.mbx
-Wrote v3_20240702_gstols_iio_adc_ad7606_improvements.am for thanks tracking
-
-
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/20c723869b92/dis=
+k-1dd28064.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c2a9a7382516/vmlinu=
+x-1dd28064.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9872fe6f2853/b=
+zImage-1dd28064.xz
 >=20
-> -K
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+b568ba42c85a332a88ee@syzkaller.appspotmail.com
+>=20
+> INFO: task syz.0.2871:13167 blocked for more than 143 seconds.
+>       Not tainted 6.10.0-rc6-syzkaller-00212-g1dd28064d416 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.0.2871      state:D stack:26704 pid:13167 tgid:13165 ppid:10304 =
+ flags:0x00000004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5408 [inline]
+>  __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+>  __schedule_loop kernel/sched/core.c:6822 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6837
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+>  nfsd_shutdown_threads+0x4e/0xd0 fs/nfsd/nfssvc.c:632
+>  nfsd_umount+0x43/0xd0 fs/nfsd/nfsctl.c:1412
+>  deactivate_locked_super+0xc4/0x130 fs/super.c:473
+>  put_fs_context+0x94/0x780 fs/fs_context.c:516
+>  fscontext_release+0x65/0x80 fs/fsopen.c:73
+>  __fput+0x24a/0x8a0 fs/file_table.c:422
+>  task_work_run+0x24f/0x310 kernel/task_work.c:180
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0x168/0x360 kernel/entry/common.c:218
+>  do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f11fe775bd9
+> RSP: 002b:00007f11ff494048 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+> RAX: 0000000000000000 RBX: 00007f11fe903f60 RCX: 00007f11fe775bd9
+> RDX: 0000000000000000 RSI: ffffffffffffffff RDI: 0000000000000003
+> RBP: 00007f11fe7e4aa1 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 000000000000000b R14: 00007f11fe903f60 R15: 00007ffc04bba328
+>  </TASK>
+>=20
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/30:
+>  #0: ffffffff8e333f20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire i=
+nclude/linux/rcupdate.h:329 [inline]
+>  #0: ffffffff8e333f20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock incl=
+ude/linux/rcupdate.h:781 [inline]
+>  #0: ffffffff8e333f20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_loc=
+ks+0x55/0x2a0 kernel/locking/lockdep.c:6614
+> 3 locks held by kworker/u8:4/66:
+>  #0: ffff888015089148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: pr=
+ocess_one_work kernel/workqueue.c:3223 [inline]
+>  #0: ffff888015089148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: pr=
+ocess_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3329
+>  #1: ffffc900020afd00 ((work_completion)(&map->work)){+.+.}-{0:0}, at: pr=
+ocess_one_work kernel/workqueue.c:3224 [inline]
+>  #1: ffffc900020afd00 ((work_completion)(&map->work)){+.+.}-{0:0}, at: pr=
+ocess_scheduled_works+0x945/0x1830 kernel/workqueue.c:3329
+>  #2: ffffffff8e3391c0 (rcu_state.barrier_mutex){+.+.}-{3:3}, at: rcu_barr=
+ier+0x4c/0x530 kernel/rcu/tree.c:4448
+> 4 locks held by udevd/4534:
+>  #0: ffff88805a0fdd58 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb7/0xd6=
+0 fs/seq_file.c:182
+>  #1: ffff88806542ec88 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_seq_start+0x=
+53/0x3b0 fs/kernfs/file.c:154
+>  #2: ffff88805af532d8 (kn->active#5){++++}-{0:0}, at: kernfs_seq_start+0x=
+72/0x3b0 fs/kernfs/file.c:155
+>  #3: ffff8880686c90e8 (&dev->mutex){....}-{3:3}, at: device_lock include/=
+linux/device.h:1009 [inline]
+>  #3: ffff8880686c90e8 (&dev->mutex){....}-{3:3}, at: uevent_show+0x17d/0x=
+340 drivers/base/core.c:2743
+> 2 locks held by getty/4842:
+>  #0: ffff88802f9d10a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wa=
+it+0x25/0x70 drivers/tty/tty_ldisc.c:243
+>  #1: ffffc9000312b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_r=
+ead+0x6b5/0x1e10 drivers/tty/n_tty.c:2211
+> 3 locks held by kworker/u9:10/5101:
+>  #0: ffff88802e1fa148 ((wq_completion)hci2){+.+.}-{0:0}, at: process_one_=
+work kernel/workqueue.c:3223 [inline]
+>  #0: ffff88802e1fa148 ((wq_completion)hci2){+.+.}-{0:0}, at: process_sche=
+duled_works+0x90a/0x1830 kernel/workqueue.c:3329
+>  #1: ffffc90003827d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:=
+0}, at: process_one_work kernel/workqueue.c:3224 [inline]
+>  #1: ffffc90003827d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:=
+0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3329
+>  #2: ffff888020eb4d88 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_wor=
+k+0x1ec/0x400 net/bluetooth/hci_sync.c:322
+> 2 locks held by syz.4.2691/12623:
+>  #0: ffffffff8f63ad70 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/n=
+etlink/genetlink.c:1218
+>  #1: ffffffff8e5fff48 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_=
+doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1940
+> 2 locks held by syz.0.2871/13167:
+>  #0: ffff88804e1920e0 (&type->s_umount_key#77){++++}-{3:3}, at: __super_l=
+ock fs/super.c:56 [inline]
+>  #0: ffff88804e1920e0 (&type->s_umount_key#77){++++}-{3:3}, at: __super_l=
+ock_excl fs/super.c:71 [inline]
+>  #0: ffff88804e1920e0 (&type->s_umount_key#77){++++}-{3:3}, at: deactivat=
+e_super+0xb5/0xf0 fs/super.c:505
+>  #1: ffffffff8e5fff48 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_shutdown_threads=
++0x4e/0xd0 fs/nfsd/nfssvc.c:632
 
+Above there are two tasks that are holding/blocked on the nfsd_mutex.
+The first is the stuck thread. The second is a task that took it in
+nfsd_nl_listener_set_doit. I don't see a way to exit that function
+without releasing that mutex, so it seems likely that thread is stuck
+too for some reason. Unfortunately, we don't have a stack trace from
+that task, so I can't tell what it's doing.
+
+
+> 1 lock held by udevd/14823:
+> 2 locks held by syz-executor/15993:
+>  #0: ffffffff8f5d4908 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rt=
+netlink.c:79 [inline]
+>  #0: ffffffff8f5d4908 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x8=
+42/0x1180 net/core/rtnetlink.c:6632
+>  #1: ffffffff8e3392f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_l=
+ock kernel/rcu/tree_exp.h:323 [inline]
+>  #1: ffffffff8e3392f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_=
+rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:939
+> 1 lock held by syz.4.3895/16063:
+>  #0: ffff88804e1920e0 (&type->s_umount_key#77){++++}-{3:3}, at: __super_l=
+ock fs/super.c:58 [inline]
+>  #0: ffff88804e1920e0 (&type->s_umount_key#77){++++}-{3:3}, at: super_loc=
+k+0x27c/0x400 fs/super.c:120
+> 4 locks held by kvm-nx-lpage-re/16077:
+>  #0: ffffffff8e361f28 (cgroup_mutex){+.+.}-{3:3}, at: cgroup_lock include=
+/linux/cgroup.h:368 [inline]
+>  #0: ffffffff8e361f28 (cgroup_mutex){+.+.}-{3:3}, at: cgroup_attach_task_=
+all+0x27/0xe0 kernel/cgroup/cgroup-v1.c:61
+>  #1: ffffffff8e1ce5b0 (cpu_hotplug_lock){++++}-{0:0}, at: cgroup_attach_l=
+ock+0x11/0x40 kernel/cgroup/cgroup.c:2413
+>  #2: ffffffff8e362110 (cgroup_threadgroup_rwsem){++++}-{0:0}, at: cgroup_=
+attach_task_all+0x31/0xe0 kernel/cgroup/cgroup-v1.c:62
+>  #3: ffffffff8e3392f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_l=
+ock kernel/rcu/tree_exp.h:291 [inline]
+>  #3: ffffffff8e3392f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_=
+rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:939
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> NMI backtrace for cpu 1
+> CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc6-syzkaller-00212-g1=
+dd28064d416 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 06/07/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>  nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+>  nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+>  trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+>  watchdog+0xfde/0x1020 kernel/hung_task.c:379
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> Sending NMI from CPU 1 to CPUs 0:
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 1109 Comm: kworker/u8:6 Not tainted 6.10.0-rc6-syzkaller-0021=
+2-g1dd28064d416 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 06/07/2024
+> Workqueue: writeback wb_workfn (flush-8:0)
+> RIP: 0010:bio_add_page+0xb7/0x840 block/bio.c:1118
+> Code: 05 00 00 8b 5d 00 45 89 f4 41 f7 d4 89 df 44 89 e6 e8 dd 6f 11 fd 4=
+4 39 e3 76 0a e8 13 6e 11 fd e9 20 04 00 00 48 89 6c 24 28 <49> 8d 5f 70 48=
+ 89 d8 48 c1 e8 03 48 89 44 24 30 42 0f b6 04 28 84
+> RSP: 0018:ffffc900045ce610 EFLAGS: 00000213
+> RAX: 0000000000000000 RBX: 000000000000a000 RCX: ffff888022311e00
+> RDX: ffff888022311e00 RSI: 00000000ffffefff RDI: 000000000000a000
+> RBP: ffff88802eb37a28 R08: ffffffff8484b8a3 R09: 1ffffd4000090b30
+> R10: dffffc0000000000 R11: fffff94000090b31 R12: 00000000ffffefff
+> R13: dffffc0000000000 R14: 0000000000001000 R15: ffff88802eb37a00
+> FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b30e11ff8 CR3: 000000000e132000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <NMI>
+>  </NMI>
+>  <TASK>
+>  bio_add_folio+0x52/0x80 block/bio.c:1160
+>  io_submit_add_bh fs/ext4/page-io.c:422 [inline]
+>  ext4_bio_write_folio+0x1691/0x1da0 fs/ext4/page-io.c:560
+>  mpage_submit_folio+0x1af/0x230 fs/ext4/inode.c:1869
+>  mpage_process_page_bufs+0x6c9/0x8d0 fs/ext4/inode.c:1982
+>  mpage_prepare_extent_to_map+0xec7/0x1c80 fs/ext4/inode.c:2490
+>  ext4_do_writepages+0xc52/0x3d40 fs/ext4/inode.c:2632
+>  ext4_writepages+0x213/0x3c0 fs/ext4/inode.c:2768
+>  do_writepages+0x359/0x870 mm/page-writeback.c:2656
+>  __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1651
+>  writeback_sb_inodes+0x99c/0x1380 fs/fs-writeback.c:1947
+>  __writeback_inodes_wb+0x11b/0x260 fs/fs-writeback.c:2018
+>  wb_writeback+0x495/0xd40 fs/fs-writeback.c:2129
+>  wb_check_old_data_flush fs/fs-writeback.c:2233 [inline]
+>  wb_do_writeback fs/fs-writeback.c:2286 [inline]
+>  wb_workfn+0xba1/0x1090 fs/fs-writeback.c:2314
+>  process_one_work kernel/workqueue.c:3248 [inline]
+>  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+>  worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>=20
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>=20
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>=20
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>=20
+> If you want to undo deduplication, reply with:
+> #syz undup
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
