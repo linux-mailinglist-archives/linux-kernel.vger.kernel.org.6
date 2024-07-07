@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-243665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271A49298FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72121929900
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB4A4B20E50
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:56:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9E23B210E1
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF4F4DA0C;
-	Sun,  7 Jul 2024 16:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED58D54F95;
+	Sun,  7 Jul 2024 16:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgEh20o8"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6ENFVWy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10A42A1B2
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 16:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB9B4F5EC;
+	Sun,  7 Jul 2024 16:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720371384; cv=none; b=jaBRSo2udTeOm7HFam+WfOdv+wuQnHw7ch0JYiR6KLWFaz59yeGlzNxY/q8jrI1kISD/dsx16sKKr3OUNOrseMKXfEgmDG/lo3RVUnYaLuMg6oAylvm1Hp0fWinFSRePwNnn64OszTdsfRQUBuE6v4gnlF0FmNdUGvazKfgI5Gc=
+	t=1720371447; cv=none; b=tabVhQ6WsEoDz5qrYPdnUyDicbiYmPt+ol57QcBmL1ANUJ2HBLmt/Z8lwMa5ifNMu9aT0IOtuy3ffV/yQ7C1qT/+eyJ9i+KDYm0s06yoMx9IKQWTUJXe0yPEX3f+LDAlvX65dgUE3kLhbxaU1DwBv59lsK0DWwGHLbBAXKbjeZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720371384; c=relaxed/simple;
-	bh=5DfE6f6Oqj8wdfsRshtMNGXDLkc9ZBAUahy/lkVZypY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=NoiR97iCjSxwj/JS2Qb4YxVkpC+PpHuLdv2602V5YtpJb/Ap+CdZLP/LxqdbuJmGe0i5u5kIISObsyAunIpRj7gUk1+eBBAF5w03gzaL1JsBbC5rqBU96IiLBrD4qTBgH3XIiQYroOEq2+qfS7T3d8Gu539NwiR9gKe9rtyqUlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgEh20o8; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d925e50f33so731012b6e.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 09:56:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720371382; x=1720976182; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3POdzJNyO55ZAiRYuTicBz7Q4S3Y0xjkX8NRlj51LoY=;
-        b=FgEh20o8OXuryggpyGl7TjtGoZHz3Hm9DK5lL5MxTwtA+pHJi8DD1jsVYxY8D3myL2
-         /jAb5XpRriLWCABUgNy/0+cOeNW4fWn7I6ICDMoK1TXEZ2O9tv95sYx3mfSLhxp/5Td8
-         Sto7/23ZBkhnyEG5FcE6+8A9G51E6trDiXWvTKBXPHKLlf0Ny2eCBplyuS2ABgBLAor5
-         KKDgJkG0L3O3CDuxgj1JLnDsevgJdO3Cckr/nBH3lH38YK1kIdE0DH9HPlJ/LQ7e2ta4
-         nq6WMVYDMBl4H/cndyNxfuRG72+3YMv/CsEbqVzQckDTUuYy5L7SnBL5a+sJUuueHSXj
-         AxBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720371382; x=1720976182;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3POdzJNyO55ZAiRYuTicBz7Q4S3Y0xjkX8NRlj51LoY=;
-        b=PhOnnMQL+jlJE6Ce5cHccgWZqSWcPPEPlVviTRiJBo5FwflDV3yVHOHnx3guaKfA21
-         6R6cScvF3ypu7fmR0+1uhwTacQYTX0odatQ51OsIzbJ3y0nknCtSnJ0vtA7AbgJGJGi8
-         FFAx6/yp8LdQlRw1Rx4at7mSUF8xZJlj0QhJwbBqVrWZtzC0Ta6Rm6F1Zlo04GYvzyEO
-         eJx81OvPwml+M1iZ1L0AQXvxCg9C5crvap9yVkIr5+Lk2iX2kS3YFMbN3Ok2ogeWHCMr
-         b4FoQ4v6W/hTfSHeJA/R1+oiq6oSXfaDkyD2mRJk81yNyehkjDYNQlzcoBESTGVcVwVE
-         rBmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTxHNLVVzZgD9GcHcc5h13UyvywMEX+sNlYyPO+UBMawGcpo/nkEdyVON3sPmZGF5MtEiZGg6Eyxkc3+B6Hfwb5UVXJYulGRMAmQBz
-X-Gm-Message-State: AOJu0YwkN8o4pf12Sr9KuLWa2J8hHKj/aH0ZtgymU9QYa3OapYY5IvXs
-	CrWmJtSMmNlg++8M+Vr4XkBGkxbVoNhevl4O4waXEcvw8UvHOvIV
-X-Google-Smtp-Source: AGHT+IHmxN4t7exVxHh5z9R5U+tDjCe7anp+einTNwkmy/qTnqoiaGh1YcFhaj2/CNdjrmIfYdfI5w==
-X-Received: by 2002:a05:6808:1692:b0:3d8:4603:e79d with SMTP id 5614622812f47-3d914c94352mr13987554b6e.32.1720371381773;
-        Sun, 07 Jul 2024 09:56:21 -0700 (PDT)
-Received: from ?IPV6:2600:6c56:7d00:582f::64e? ([2600:6c56:7d00:582f::64e])
-        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3d62fa3bb0fsm3418036b6e.35.2024.07.07.09.56.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jul 2024 09:56:21 -0700 (PDT)
-Message-ID: <c33b3a21-b996-43d5-bc52-992bf3444ac3@gmail.com>
-Date: Sun, 7 Jul 2024 11:56:20 -0500
+	s=arc-20240116; t=1720371447; c=relaxed/simple;
+	bh=7FQfAqx5QrqdtuO/noa37pWuVXAVEEJ9FdaqMS8ffPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K9tr7mxxBN+U0pXmqjm+HU57jSeSWdfggbTTyMAcnSMkVWpOBU592Qt5+RCwT0KHXkiRaFFcF3gw7atOGZZVOYzCKuIoWKA9t1krrpzVz3qElzqQUBO035lelsOzIEcaOIdbiXlAhtsC3ZtFjaY4Wzjx3mhZms0CCOHA8JpOIbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6ENFVWy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91739C32781;
+	Sun,  7 Jul 2024 16:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720371447;
+	bh=7FQfAqx5QrqdtuO/noa37pWuVXAVEEJ9FdaqMS8ffPU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u6ENFVWy+DvAkOIvrXQXhRICTc6SKKJVLs8OEnaz7XXwf/CQ/v7YUkZjvnb7I/geJ
+	 TX5PjmexYY+PBepSjKylsmL5zsNNYDEyG3lmz3AmeGPCs7U7tKS2IUi6J6CKS+a6hi
+	 a7dVvLJJlZ+aHSqTL4e7+IIXBA8beBYgYCFPTaUywtnD5REmV7yDWMKnQaps4A/+8i
+	 QNTqPVOIqM649hKog/eMvjP8yj8pI+7t/+jeWhB6xdnS+j0vycAv6VFoHemHnMYzoM
+	 FeTfCSNwjoU9vxmzC+N1UYAfL8OZGW76/VNjg7tgmLUxcYqvnd8Ph1W5FJENI7kN1B
+	 INInHKsWfNaFA==
+Date: Sun, 7 Jul 2024 17:57:13 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rob Herring <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>, Heikki
+ Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Jean Delvare <jdelvare@suse.com>, Guenter
+ Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+ <lee@kernel.org>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-leds@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 3/6] leds: bd2606mvv: use device_for_each_child_node()
+ to access device child nodes
+Message-ID: <20240707175713.4deb559f@jic23-huawei>
+In-Reply-To: <20240706-device_for_each_child_node-available-v1-3-8a3f7615e41c@gmail.com>
+References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
+	<20240706-device_for_each_child_node-available-v1-3-8a3f7615e41c@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: jason@zx2c4.com
-Cc: arnd@arndb.de, brauner@kernel.org, cgzones@googlemail.com,
- jolsa@kernel.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
- torvalds@linux-foundation.org
-References: <CAHmME9pgFXhSdWpTwt_x51pFu2Qm878dhcQjG9WhPXV_XFXm9w@mail.gmail.com>
-Subject: Re: deconflicting new syscall numbers for 6.11
-Content-Language: en-US
-From: Russell Haley <yumpusamongus@gmail.com>
-In-Reply-To: <CAHmME9pgFXhSdWpTwt_x51pFu2Qm878dhcQjG9WhPXV_XFXm9w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Since any PRNG will have the concept of re-seeding, I had to think
-*really hard* to understand how a pseudo-generation number that really
-means "reseed advised on change" could restrict future kernel
-development, so for anyone else following along in the peanut gallery,
-here's the scenario I came up with:
+On Sat, 06 Jul 2024 17:23:35 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-Suppose on some future CPU, RDRAND is improved to be essentially
-perfect, with the same latency and throughput as a load from L1. So it
-acts like a HWRNG, not a PRNG.  On such a CPU and with a command line
-option that means "I 100% trust my CPU vendor," the kernel could
-statically replace getrandom() with a function that just uses RDRAND,
-and statically disable all the machinery for gathering entropy from
-events and re-seeding the PRNG.
+> The iterated nodes are direct children of the device node, and the
+> `device_for_each_child_node()` macro accounts for child node
+> availability.
+> 
+> `fwnode_for_each_available_child_node()` is meant to access the child
+> nodes of an fwnode, and therefore not direct child nodes of the device
+> node.
+> 
+> Use `device_for_each_child_node()` to indicate device's direct child
+> nodes.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Why not the scoped variant?
+There look to be two error paths in there which would be simplified.
 
-*Unless*, that is, userspace potentially needs to know when a
-reseed-necessitating event has happened.
+> ---
+>  drivers/leds/leds-bd2606mvv.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-bd2606mvv.c b/drivers/leds/leds-bd2606mvv.c
+> index 3fda712d2f80..4f38b7b4d9d1 100644
+> --- a/drivers/leds/leds-bd2606mvv.c
+> +++ b/drivers/leds/leds-bd2606mvv.c
+> @@ -69,7 +69,7 @@ static const struct regmap_config bd2606mvv_regmap = {
+>  
+>  static int bd2606mvv_probe(struct i2c_client *client)
+>  {
+> -	struct fwnode_handle *np, *child;
+> +	struct fwnode_handle *child;
+>  	struct device *dev = &client->dev;
+>  	struct bd2606mvv_priv *priv;
+>  	struct fwnode_handle *led_fwnodes[BD2606_MAX_LEDS] = { 0 };
+> @@ -77,8 +77,7 @@ static int bd2606mvv_probe(struct i2c_client *client)
+>  	int err, reg;
+>  	int i;
+>  
+> -	np = dev_fwnode(dev);
+> -	if (!np)
+> +	if (!dev_fwnode(dev))
+>  		return -ENODEV;
+>  
+>  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> @@ -94,7 +93,7 @@ static int bd2606mvv_probe(struct i2c_client *client)
+>  
+>  	i2c_set_clientdata(client, priv);
+>  
+> -	fwnode_for_each_available_child_node(np, child) {
+> +	device_for_each_child_node(dev, child) {
+>  		struct bd2606mvv_led *led;
+>  
+>  		err = fwnode_property_read_u32(child, "reg", &reg);
+> 
 
-- Russell
 
