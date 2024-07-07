@@ -1,53 +1,92 @@
-Return-Path: <linux-kernel+bounces-243681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE406929932
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:56:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B22929939
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 20:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A22F32815FE
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70F6A1C209CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260B655897;
-	Sun,  7 Jul 2024 17:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BF256B8C;
+	Sun,  7 Jul 2024 18:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ug5Hyrr1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3xnUTPp"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62697376E0;
-	Sun,  7 Jul 2024 17:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22DA1B80F;
+	Sun,  7 Jul 2024 18:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720374960; cv=none; b=YJ300GOsmaXbHCIXAhXDr1NBUAGUx8o0AOSGdhJzGeM0mbxon2hpiLBR5f4IBrznhTZlkFgk/umbs4lmg7P2j9T8WzLa36GYDHgJ/0M8mVN/g73x1sCRlNSQj7cUHAPS6l8lr0HwS0KGuOSlIklnNCwvyoxiLPJBe04Duu7ZJYU=
+	t=1720375283; cv=none; b=uwkTRenOG7d36k3+OU8l9YB1/RiNveTeXIbVfeVhGuEsDSU0lfhnRedebp2aFfewQ7fZoWbc2UDng6F726QRQS602kKvdGjSpvuxNVCS1dCmHP+NyL8KKFq2NaS2ERVc9Gd2KBQFrBKhCOdxNeOMhPKPrESY94IHTAA19qtN8Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720374960; c=relaxed/simple;
-	bh=tCtzvIADdB8zhgu5nlKpUyUKWSyi/Efze9E/Z4YX6oA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lVQhiFAYih5sZpXANH9v8l/DHRtsZ8FeNzr5Vxi5Sq4tIqXKaMwPs9bj6mqn/5DdEtocTlpe+IhdUmc9Vx1N+/nACrANaNBRIxr8b2/+pL+2MZ61URzYYUANNRhAEFTQYK0trNBUQ9IICNP4C2pJujRDq2n4j3/FCJVG47GjJhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ug5Hyrr1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E75C3277B;
-	Sun,  7 Jul 2024 17:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720374959;
-	bh=tCtzvIADdB8zhgu5nlKpUyUKWSyi/Efze9E/Z4YX6oA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ug5Hyrr1o4GFLMRYpODBkeDRNnms4fj0A0EV2Hs8HvN6WY05xse/McpVlSW0re59H
-	 DcuzrT4ZRVBmQy6nBT6AffTsiC4e7vWiqQqOwZTvCirJdGVJ/znaX/ClxemDpHRW//
-	 hgJ0KZ/r2W5nGV5THLhVrbniq2LF7HYbNX+mxwzyg5ghOYtbmwUKbadn2NdpgGR3/D
-	 Y07O/fLMm+CVepo96z2d0qh34Iu6L9GuG9glEv38tUGT/Ql4BeNbDHRhDLYzc7WwYr
-	 TTpffuoj/t08qKxkG2v5tDZzokZ00sp9VyrXuN9trA8IQBbgWNAEPULc8ZajumxLH1
-	 0fmHrLpRncn2w==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.10-rc6
-Date: Sun,  7 Jul 2024 10:55:58 -0700
-Message-ID: <20240707175558.480229-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+	s=arc-20240116; t=1720375283; c=relaxed/simple;
+	bh=OpxCgfEXEorWNo4Da8hW1Cm7T3Z4snG9SnjNTGfLf4Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Bf/kgm7WEYpIquqH4TdbIwYawcmWZRTcxuaP6vmsSeXhYlftyiWhfPdBo/rXcYwi514Ue9QAvCc7X/csBVDdbUwPVzcUYEn9hirNmkpPp8mM0p0aiBiiJqQvQslR2cm8KXKTsdq9efC1dTjE44zVv4/gRgfsj+H5dHf3eh75/QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P3xnUTPp; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-6c386a3ac43so439928a12.0;
+        Sun, 07 Jul 2024 11:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720375281; x=1720980081; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=93Ojm2olTWO/cVVcGJO1BWPZLGlAEblYLC3+GArrsIA=;
+        b=P3xnUTPpZlUoFMPJv1txMnpqJ11FwcljRlcPZBzAtqj7d10LiIWEDDurNK98Cu8uwt
+         a6r87eAjPnYsrrQAc9p5JSMNmN6GLdGafeklYKZdS3SFbkhjZ32dhMaQ7GbQxXQVGTBT
+         BVc/xJRksQwP+aAJetyIe9SZYHGLD2UGgZsZouDSq6AYW9igBX0chVTw7qHRHRcKdQ6F
+         3VCxLbmoZ0z+aEz73mGpFzZzk0/029e9X/BtEga/mLPhKfDJu3Dw7Nrr+E/YRA+xPyF2
+         zlFYC3WQu5mxPFiq/iHs9i1/vqL9CUPJxwSslFjYQk+GFdHfVehWMVrijccjOj9SH/5C
+         e97Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720375281; x=1720980081;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=93Ojm2olTWO/cVVcGJO1BWPZLGlAEblYLC3+GArrsIA=;
+        b=N0riXi2z3fb7PG87OjhniVheU0deg/UufBr6fz9VDMnfsGIaJTPFRM8vWDGyaNKuHV
+         jkB/aOhvp97GzxCoRflfRBs83Cu2KbobnyRoPKtfwGlVoKqIdKVD1QWR3CCMCyzAODtq
+         gPSp1ag9UWpSmPQT5Mlk1Ugomoa+4QfJ15SekGXzp7CB6e35dTm8MuHbJbUA923Lo+Ot
+         3vIE/9cReRrGTufMWaOCeqwAOhe4w0Hq9DgiUC3u2RoRGYhxhcP+Q/jWI2k01MsbqDKY
+         9y2qpqoxK6UZN3Ctmq/wT2ceRQSc9JTuH6I3/Fm5Y+pER8aPslP4DqooroH6KgIqp0/5
+         YFog==
+X-Forwarded-Encrypted: i=1; AJvYcCUQkvrpNyvcurFb3AHiJWTvhOXLM9SHZfYO5TVz5pFO5Qcj7IPjRm9Rz8c2h4vNfRiTQgWijp8W6So/N1M3Hqt/u+m01UgAhWCB+HuD/QzfHu2lyNj7qTn1dPNMhgxpFBODCEecSqcrXDIoKl6mKg==
+X-Gm-Message-State: AOJu0YzQcKC9BiNUc4Jic/pp3wgEkOtUbsdjVhGVN6TbiWdKxjwS5LWF
+	U4fxX3lAyzftR5dN8ptv1jZXdV19Gm3XPvmjMCpyREF7e1a6vt+u
+X-Google-Smtp-Source: AGHT+IHTE23/0P0T4ySobBhOOM5/UDk/WA3TIXDz2U6mmIginobvrohUUSfRowNxuwgUW6YWmiM1Sw==
+X-Received: by 2002:a17:902:d48b:b0:1f5:e635:21e9 with SMTP id d9443c01a7336-1fb33e88f87mr125721095ad.2.1720375281095;
+        Sun, 07 Jul 2024 11:01:21 -0700 (PDT)
+Received: from localhost.localdomain (n058152114213.netvigator.com. [58.152.114.213])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb8a279debsm10171115ad.19.2024.07.07.11.01.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jul 2024 11:01:20 -0700 (PDT)
+From: Haoze Xie <royenheart@gmail.com>
+To: irogers@google.com
+Cc: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoze Xie <royenheart@gmail.com>,
+	Yuan Tan <tanyuan@tinylab.org>
+Subject: [PATCH 1/1] perf record: Fix memset out-of-range error
+Date: Mon,  8 Jul 2024 02:01:00 +0800
+Message-Id: <11e12f171b846577cac698cd3999db3d7f6c4d03.1720372317.git.royenheart@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1720372317.git.royenheart@gmail.com>
+References: <cover.1720372317.git.royenheart@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,65 +95,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 2607133196c35f31892ee199ce7ffa717bea4ad1:
+Modified the object of 'memset' from '&lost.lost' to '&lost' in
+record__read_lost_samples. This allows 'memset' to access memory properly
+without causing out-of-bounds problems.
 
-  clk: sifive: Do not register clkdevs for PRCI clocks (2024-05-29 12:31:02 -0700)
+The problems got from builtin-record.c are:
 
-are available in the Git repository at:
+In file included from /usr/include/string.h:495,
+                 from util/parse-events.h:13,
+                 from builtin-record.c:14:
+In function 'memset',
+    inlined from 'record__read_lost_samples' at
+    builtin-record.c:1958:6,
+    inlined from '__cmd_record.constprop' at builtin-record.c:2817:2:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:71:10: error:
+'__builtin_memset' offset [17, 64] from the object at 'lost' is out
+of the bounds of referenced subobject 'lost' with type
+'struct perf_record_lost_samples' at offset 0 [-Werror=array-bounds]
+71|return __builtin___memset_chk (__dest,__ch,__len,__bos0 (__dest));
+  |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+The error arised when performing a memset operation on the 'lost' variable,
+the bytes of 'sizeof(lost)' exceeds that of '&lost.lost', which are 64
+and 16.
 
-for you to fetch changes up to 10f84de27bd05bd2648512975d085dbe0a1e71c3:
+Fixes: 6c1785cd75ef ("perf record: Ensure space for lost samples")
+Signed-off-by: Haoze Xie <royenheart@gmail.com>
+Signed-off-by: Yuan Tan <tanyuan@tinylab.org>
+---
+ tools/perf/builtin-record.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  Merge tag 'qcom-clk-fixes-for-6.10' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into clk-fixes (2024-07-02 12:03:15 -0700)
-
-----------------------------------------------------------------
-A set of clk fixes for the Qualcomm, Mediatek, and Allwinner drivers:
-
- - Fix the Qualcomm Stromer Plus PLL set_rate() clk_op to explicitly set
-   the alpha enable bit and not set bits that don't exist
- - Mark Qualcomm IPQ9574 crypto clks as voted to avoid stuck clk
-   warnings
- - Fix the parent of some PLLs on Qualcomm sm6530 so their rate is
-   correct
- - Fix the min/max rate clamping logic in the Allwinner driver that got
-   broken in v6.9
- - Limit runtime PM enabling in the Mediatek driver to only
-   mt8183-mfgcfg so that system wide resume doesn't break on other
-   Mediatek SoCs
-
-----------------------------------------------------------------
-Frank Oltmanns (1):
-      clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
-
-Gabor Juhos (2):
-      clk: qcom: clk-alpha-pll: set ALPHA_EN bit for Stromer Plus PLLs
-      clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from Stromer pll configs
-
-Luca Weiss (1):
-      clk: qcom: gcc-sm6350: Fix gpll6* & gpll7 parents
-
-Md Sadre Alam (1):
-      clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
-
-Pin-yen Lin (1):
-      clk: mediatek: mt8183: Only enable runtime PM on mt8183-mfgcfg
-
-Stephen Boyd (2):
-      Merge tag 'sunxi-clk-fixes-for-6.10' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into clk-fixes
-      Merge tag 'qcom-clk-fixes-for-6.10' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into clk-fixes
-
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c |  1 +
- drivers/clk/mediatek/clk-mtk.c           | 24 ++++++++++++++----------
- drivers/clk/mediatek/clk-mtk.h           |  2 ++
- drivers/clk/qcom/apss-ipq-pll.c          |  2 --
- drivers/clk/qcom/clk-alpha-pll.c         |  3 +++
- drivers/clk/qcom/gcc-ipq9574.c           | 10 ++++++----
- drivers/clk/qcom/gcc-sm6350.c            | 10 +++++-----
- drivers/clk/sunxi-ng/ccu_common.c        | 18 ++++++++++++------
- 8 files changed, 43 insertions(+), 27 deletions(-)
-
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 019305b94e5f..a94516e8c522 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1955,7 +1955,7 @@ static void record__read_lost_samples(struct record *rec)
+ 				}
+ 
+ 				if (count.lost) {
+-					memset(&lost.lost, 0, sizeof(lost));
++					memset(&lost, 0, sizeof(lost));
+ 					lost.lost.header.type = PERF_RECORD_LOST_SAMPLES;
+ 					__record__save_lost_samples(rec, evsel, &lost.lost,
+ 								    x, y, count.lost, 0);
+@@ -1965,7 +1965,7 @@ static void record__read_lost_samples(struct record *rec)
+ 
+ 		lost_count = perf_bpf_filter__lost_count(evsel);
+ 		if (lost_count) {
+-			memset(&lost.lost, 0, sizeof(lost));
++			memset(&lost, 0, sizeof(lost));
+ 			lost.lost.header.type = PERF_RECORD_LOST_SAMPLES;
+ 			__record__save_lost_samples(rec, evsel, &lost.lost, 0, 0, lost_count,
+ 						    PERF_RECORD_MISC_LOST_SAMPLES_BPF);
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+2.25.1
+
 
