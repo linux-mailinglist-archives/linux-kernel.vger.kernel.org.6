@@ -1,74 +1,80 @@
-Return-Path: <linux-kernel+bounces-243733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657259299C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 22:57:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E909299C6
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 23:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62951F213EB
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 20:57:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785281C20D01
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC12143AC3;
-	Sun,  7 Jul 2024 20:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E6A57C8E;
+	Sun,  7 Jul 2024 21:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WS2l3vHf"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fJeIr0W+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D18355C29
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 20:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5E0224D4
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 21:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720385871; cv=none; b=cBXwTcgvU+LOfOJTbpMfm3HG5nXPnQ+SlufSSjhriLsiWzqrS4jO/lz0iHPeuQVORnrSHQY7to8p6JBg97D/xcJwt6kYIeyOALO7dN0UqqwYTSW0CoMXNru+w6dWSAXWiG06dcFtRPuO/pZ1tZNyp3DdzuGbQE7PTU0As3lVYqI=
+	t=1720386070; cv=none; b=WULZrSNnrQxz+EEeOkqgxM7DHDxKFUoAa8loVoHyrn1NOaYzrUwAKTzojit5lboetFKmwCQb/s903b86wyrMmEMFNHFZoB7HRFiMrGCWOjkjRvBg+aqAHjOfEjmaVtnmnAnx8vAFCmhq5jPW8EYfFBliaZqNfPM2r8KIMBGGcUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720385871; c=relaxed/simple;
-	bh=1EpURj7eKctL0k8goe0TWYUri6wGvwSx78f7ule8K10=;
+	s=arc-20240116; t=1720386070; c=relaxed/simple;
+	bh=Okw5O240u4q+Y/Mg4iX+wPYuhJB7XxrkO8YTRVN2Dqc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o6MmgtUE4nhYKpznT1AuJ9jF6hqhKt0pRyCaP2iOTXOef6EHv8EGrGcw9jrPk8oY6RXuZKVJRQeBKMg1DGZhrGbQvcx5ZQV+EbKoMvhUfwtKhMSrciMAeZIivxSSbaK0dk70PkpUNFXmz/RGCxySMxcXByryjXsv0B6QKMl3PG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WS2l3vHf; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b5da2730efso21108306d6.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 13:57:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720385868; x=1720990668; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmidXgihv1jjKguPN7S7rCVXUq02hBfkbSjdBG/f3vo=;
-        b=WS2l3vHfFu0/RgYBJrJg7eB6DaqQf/uV2V+9/8ZlJwaYFgdNUfUd5qBDxlJnBrNVp+
-         LGWVMG3mQS5LYVvQVTfzjIefUcFA+6ikXudu6FEXd5PHUYY27BD/8DdYJx/0qJKHOf2b
-         V8ZCdvPNfhtnoqCn6moJ8GKUTdinz/xYA9itGnQ83eKpRxbuk/OZta7KZFjBedEW3pVl
-         YKOY4AltOFPfUUemWuV1LI6idmQSeZARlDfeUBPucdmwjKhSAjVUmQmgyQ30HaDrnmNA
-         tyFTV/M4h+dITiLho3LCTWAVS7x2aMiS6B7W/3Y0KpH6yG3SKuLC2/FzkXEYXIAzOz4J
-         WWvA==
+	 In-Reply-To:Content-Type; b=E/qQsa79kcVytckFU0F6DdSPwWQJGtdh0Qc79aq1uF6uq9svQVqPI8CMDGy/dCZLcC1AZ+bPbSVye2hneBnXxtvZQStsN8FC2gWapge806QQV1iyC7TvE16Fsol6ZSG6CrGxJJQiqu9jVHY+9mt9I0mz9TEAIbpkP4iON0g443U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fJeIr0W+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720386067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LvIWlwl8DHJhFq3or4kDUP1tA5vzdIeDCGHCo8MeNUs=;
+	b=fJeIr0W+nePpFmMtf101pVH6BdqjUP2OB8NT2U9QfKl6M3RjC5XZje6ACZIQPeP8yZxUeu
+	cImYl8oZPo5m1P22QJo/+vR+wRMd8OCBAUu/iCkJpvtv/s8iu17/+Q7N2rtfN2TWQSpU5a
+	UIbH0x2ZBedApADQ6rUAVstoAMOIaY4=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-209-f4H-PEy5MhmH7TvqBgZ5nQ-1; Sun, 07 Jul 2024 17:01:06 -0400
+X-MC-Unique: f4H-PEy5MhmH7TvqBgZ5nQ-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ec72d14876so32307291fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 14:01:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720385868; x=1720990668;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pmidXgihv1jjKguPN7S7rCVXUq02hBfkbSjdBG/f3vo=;
-        b=WNrRtZ8RBwlcuNXj1EaH+kCS1vaYjSIlpw3RxhwOHnOCfOYwd3qQNYNq5szxm2amgK
-         /CNKTpTTHtAk3Vq5oI5i0jpItDSFjCnrS60/qkfF08k/cVXImBmAwpmEjkOYXastsEim
-         y5FTXy/pTpSEywsfJyGNlEFm45+doWVJDzY009lWKv4lezSO4Mcxggk41bWIZbH7TyKu
-         e41E8HhtyNBFKw86OvMEZoMv+UJ6WNgsbsobCZ/qfgsYOxIwAqT0yBBZ30udh170svM7
-         DVnN4sPXlmA/JaFAxmH6hCjuFRKL+mdDxrrMhFHjR9P7hYEX7/yO6VUw/Cm+dXgszfB7
-         u82g==
-X-Forwarded-Encrypted: i=1; AJvYcCXKI0xiiKO0CBelIkSCvSYX+ovZ6JwdMK6imF2lPSH0q3Fm24K9PZePKACR4EC+rIF3PkP9GfoZYC54QTzH6SY0WqeeMjWr9TsELn8m
-X-Gm-Message-State: AOJu0YxmGvvvmrnzkq2CgQjsGQmccMfHJ2lGlDpD4SeApmspMzvLehg3
-	3ndQE0nLfxvKG3k1Ho4arjmDxzQtGDSvSeZKvWlMUWNbRFHAYYgJKppJjFtu1o4=
-X-Google-Smtp-Source: AGHT+IFt0GV3SqYWzURRJo3rZopPB7sj8oee+kKDucgUe+a4EoidCcT7G9pZ3xLzUFRqY7eKGrw7iQ==
-X-Received: by 2002:a05:6214:d6d:b0:6b2:da7e:5cb7 with SMTP id 6a1803df08f44-6b5ecf8eef1mr138919816d6.5.1720385868238;
-        Sun, 07 Jul 2024 13:57:48 -0700 (PDT)
-Received: from ?IPV6:2804:1b3:a7c2:7751:d024:65a5:58de:cd2e? ([2804:1b3:a7c2:7751:d024:65a5:58de:cd2e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b0d368d7csm5054543b3a.49.2024.07.07.13.57.44
+        d=1e100.net; s=20230601; t=1720386065; x=1720990865;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LvIWlwl8DHJhFq3or4kDUP1tA5vzdIeDCGHCo8MeNUs=;
+        b=OQZuv3RuhZ976UjpQRTzTXlBqcaoGcPMV6CfN3s33N59x/uJ3MsVNeKHSFnme2Im66
+         JCpIV+0a7VjTIDnwItJslFQd7cnsfp4scxBfDAgValgcbMCX8Q+Pz/wUS1biE08HZdGd
+         cMn7AM3mJwbD2A4IQFmjMtsWrtlS51vhKh3PXb5zZWbRo5sNRF8AihL58VVZZx9Muqol
+         hPS/iFMCfikxkJkjAliZU530ZwmJXR0022vl4C3iC3WXf0usBycndpZkJTIfBQ4Y1uxn
+         qnEBUVV3qc3vja2xh2s4nQo6oKJBrL7nadEfEt1iawHEwnwNS8NggU1r0y4X4QW2y9Ac
+         9mSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjxnPKgjDygwjlAU6Q3rOVCfoid+iCkJmov2zdeocHZReEyfWcF6y62PotCe8z3fMunOHFxTAxbAwUPkg9H5EUevcB359E4fmT71YP
+X-Gm-Message-State: AOJu0YzDV+mLWN2H1GnfmVQdUB8VJpUMlZ+MQA7EKT8F7vvAjv04Np5E
+	5QANYw4bRDyYD85bdrx5AYcOiNLXk0FFf3uOm/qlJAyji0Gq16JtuYyCV6DT7RqQv4JYH7SUDBX
+	yI+b7rkB1UK4Eq1VJFeAaWpx1y7FggFLZxVwp3Cprq73iIasiwyezEKclmLdoqg==
+X-Received: by 2002:a05:651c:19a2:b0:2ec:4086:ea6d with SMTP id 38308e7fff4ca-2ee8ed5f61emr80641251fa.4.1720386064872;
+        Sun, 07 Jul 2024 14:01:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8qeOvMCk8PQe6Rpatbp9qDgVonuvCIsKIw8dx2fcqG8CtClRo7qd9MPYVscr1v+qTwWOOJw==
+X-Received: by 2002:a05:651c:19a2:b0:2ec:4086:ea6d with SMTP id 38308e7fff4ca-2ee8ed5f61emr80640981fa.4.1720386064276;
+        Sun, 07 Jul 2024 14:01:04 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c72f:c00:10f0:d1a8:c206:17ac? (p200300cbc72f0c0010f0d1a8c20617ac.dip0.t-ipconnect.de. [2003:cb:c72f:c00:10f0:d1a8:c206:17ac])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266ac156easm9425895e9.38.2024.07.07.14.01.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jul 2024 13:57:47 -0700 (PDT)
-Message-ID: <36c5b88a-fcc0-41b4-8638-964e13edb0b0@linaro.org>
-Date: Sun, 7 Jul 2024 17:57:42 -0300
+        Sun, 07 Jul 2024 14:01:03 -0700 (PDT)
+Message-ID: <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
+Date: Sun, 7 Jul 2024 23:01:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,75 +82,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: deconflicting new syscall numbers for 6.11
-To: Florian Weimer <fweimer@redhat.com>, Zack Weinberg <zack@owlfolio.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "Jason A. Donenfeld" <Jason@zx2c4.com>, jolsa@kernel.org,
- mhiramat@kernel.org, cgzones@googlemail.com, brauner@kernel.org,
- linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- =?UTF-8?Q?Cristian_Rodr=C3=ADguez?= <cristian@rodriguez.im>,
- Wilco Dijkstra <Wilco.Dijkstra@arm.com>
-References: <ZobXdDCYBi8OM-Fo@zx2c4.com>
- <CAHk-=wiGk+1eNy4Vk6QsEgM=Ru3jE40qrDwgq_CSKgqwLgMdRg@mail.gmail.com>
- <ZoiaWz9mG9rb0QND@localhost.localdomain>
- <87sewmzvn1.fsf@oldenburg.str.redhat.com>
- <a9724690-98f4-4ddb-841d-fcc9150e54c7@app.fastmail.com>
- <875xtibksl.fsf@oldenburg.str.redhat.com>
+Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev, tglx@linutronix.de, linux-crypto@vger.kernel.org,
+ linux-api@vger.kernel.org, x86@kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <20240707002658.1917440-1-Jason@zx2c4.com>
+ <20240707002658.1917440-2-Jason@zx2c4.com>
+ <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
+ <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
+ <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
+ <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
-Organization: Linaro
-In-Reply-To: <875xtibksl.fsf@oldenburg.str.redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 06/07/24 12:30, Florian Weimer wrote:
-> * Zack Weinberg:
-> 
->> Without commenting on the rest of this...
+On 07.07.24 21:22, Linus Torvalds wrote:
+> On Sun, 7 Jul 2024 at 11:52, David Hildenbrand <david@redhat.com> wrote:
 >>
->> On Sat, Jul 6, 2024, at 6:01 AM, Florian Weimer wrote:
->>> The arc4random implementation in glibc was never intended to displace
->>> randomness generation for cryptographic purposes.
->>
->> ...arc4random on the BSDs (particularly on OpenBSD) *is* intended to be
->> suitable for cryptographic purposes, and, simultaneously, intended to be
->> fast enough that user space programs should never hesitate to use it.
->> Therefore, Linux+glibc needs to be prepared for user space programs to
->> use it that way -- expecting both speed and cryptographic strength --
->> or else we shouldn't have added it at all.
+>> I recall that introducing things like MAP_SHARED_VALIDATE received a lot
+>> of pushback in the past. But that was before my MM days, and I only had
+>> people tell me stories about it.
 > 
-> None of the major cryptographic libraries (OpenSSL, NSS, nettle,
-> libgcrypt, OpenJDK, Go, GNUTLS) use arc4random in their upstream
-> version.  If the BSDs use arc4random rather than the bundled generators,F
-> they must have downstream-only patches.  I also don't see why someone
-> writing a new library from scratch would use arc4random because its
-> addition to glibc is still quite recent, and it provides no performance
-> advantage over going to the kernel interfaces directly.
+> I think MAP_SHARED_VALIDATE was mostly about worrying about the API impact.
+> 
+> And I think it worked out so well that this is probably the first time
+> it has been brought up ever since ;)
+> 
+> That said, the *reason* for MAP_SHARED_VALIDATE is actually very
+> valid: we have historically just ignored any random flags in the
+> mmap() interfaces, and with shared mappings, that can be dangerous.
+> 
+> IOW, the real issue wasn't MAP_SHARED_VALIDATE itself, but introducing
+> *other* flags that affected maps that old kernels would ignore, and
+> then the worry was "now old kernels and new kernels work very
+> differently for this binary".
+> 
+> That's technically obviously true of any MAP_DROPPABLE thing too - old
+> kernels would happily just ignore it. I suspect that's more of a
+> feature than a mis-feature, but..
+> 
+>> My understanding so far was that we should have madvise() ways to toggle
+>> stuff and add mmap bits if not avoidable; at least that's what I learned
+>> from the community.
+> 
+> It doesn't sound like a bad model in general. I'm not entirely sure it
+> makes sense for something like "droppable", since that is a fairly
+> fundamental behavioral thing. Does it make sense to make something
+> undroppable when it can drop pages concurrently with that operation?
+> 
+> I mean, you can't switch MAP_SHARED around either.
+> 
+> The other bits already _do_ have madvise() things, and Jason added a
+> way to just do it all in one go.
 
-The BSD seems to use use it extensively, specially in the base system for
-tools like smtpd/relayd/etc. as alternative to rand/random and to avoid 
-pulling a RNG from cryptographic library. But I agree that for glibc, 
-arc4random being just a shim over getrandom is only helpful as a way to
-avoid a biased implementation of arc4random_uniform (which is quite 
-common if you check on the internet about it...).
+I just recalled that with MAP_HUGETLB, bits [26:31] encode a hugetlb
+size (see include/uapi/asm-generic/hugetlb_encode.h). hugetlb, the gift
+that keeps on giving.
 
-Also, this vDSO proposal and they way the now is up to kernel to manage
-the RNG state would adds some extra considerations for libc getrandom 
-implementation.  The libc symbol now is fully async-signal and thread-safe
-due being just a syscall wrapper, and to sane manage the way the vDSO 
-buffer is designed (either by vgetrandom_alloc or mmap), the runtime 
-will need a way to allocate and manage this threads states with a block 
-allocator (assuming runtime would like to keep a per-thread state).
+We're using:
 
-For arc4random, the libbsd way or the old way glibc used to do (prior
-Jason refactor), would be simple because it was never intended to be
-async-signal.  But for getrandom it would require to either have a
-async-signal-safe malloc implementation (to keep track of the extra
-states) or a block allocation over mmap (which adds some extra memory 
-usage). So getrandom now will potentially uses 2 more pages, which is 
-not the end of world since interface is designed to allow failure, but 
-it is something to consider.
++#define MAP_WIPEONFORK		0x08000000	/* Zero memory in child forks. */
++#define MAP_DONTDUMP		0x10000000	/* Do not write to coredumps. */
++#define MAP_DROPPABLE		0x20000000	/* Zero memory under memory pressure. */
+
+Which should be bit 27-29.
+
+So using these flags with MAP_HUGETLB will result in surprises.
+
+At least MAP_DROPPABLE doesn't quite make sense with hugetlb, but at least
+the other ones do have semantics with hugetlb?
+
+It's late Sunday here in Germany, so I might just have messed something up.
+
+Just raising that there might be a "bit" conflict.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
