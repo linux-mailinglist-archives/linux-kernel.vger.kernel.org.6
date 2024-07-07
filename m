@@ -1,235 +1,132 @@
-Return-Path: <linux-kernel+bounces-243451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB782929647
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 03:35:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D53D929648
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 03:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E70281E9D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9D71F217CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5E84687;
-	Sun,  7 Jul 2024 01:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E9F28EA;
+	Sun,  7 Jul 2024 01:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nLrtCJB3"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qc7sBhKM"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CFC4405;
-	Sun,  7 Jul 2024 01:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9BD136A
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 01:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720316140; cv=none; b=OUP1eSoHisdAaT1yz0h0yTjaqB9Bte3KI+Ek/51rsVaOLfWDMyjxvUShAZOal661/MgXFzkAvyFN4sFLK+GGCSFQAquz9ue8RXynhdiVbV0sujIbYJfyRFgq5DDWABWyhgmxX/KOk00LMM4/jvzPSDkcU/ZYFqobmcd7DjQGNG4=
+	t=1720316262; cv=none; b=aykR4gODgNpcJYFtSHXglOailocCYhKCDLj9J4jEf2qusmJdw8tsckHB9klBGUp9rQacsz64djRV8+9Gmwd3FtCJClhWZGdBy7Cy2B4lnA4+ITfoqBqQ8H4MKm2QH+7DlolHa4LwhFyxgH98tHg2X5+YfNt2TCzk4+Cb5AfmF5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720316140; c=relaxed/simple;
-	bh=FAd3RH6khzaVnEZHL7BMSU96scf6UJhfhiPjabrIm+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cL8j+nUqQ7SLhUNJOnmqpz4izeQIH/b0xE40c63U24sA4pgtN8FJhymImqggb38Qr29QpjiJk6MC1iExZfQsr7x3LVt7AlC2I+UscwjaRz0+Y3aNKaBzNIXxgJhXMwiu474tVE5ZmavmJCBJuqOHJzY0UHp/XnOyyrKdSPwm+wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nLrtCJB3; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1720316262; c=relaxed/simple;
+	bh=i4OJnuFjU5D17LlvlGu+RARI7rZTs6J0HAiqIAMsexY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Kz7yYZCF+Ji4+7X/ec4zUzh37bMItzcFj75EC6XhtdJMRe5fJGIb7mkMjdCWw9y+u6DDpST1Yoc6jMuoXVNO31KBzdDqMo0lt0mPWBxfUaN0ld5nW2uGvuDjFiYPubgMjMYxM9JIeYF9VSiwEzcCWRt2KSF+WgyAw0Pzk5ibu0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qc7sBhKM; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c9ddc9aea7so251240a91.2;
-        Sat, 06 Jul 2024 18:35:38 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70af3d9169bso1783948b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 18:37:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720316138; x=1720920938; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=nsguKa8Fd9DPaCpX9PzRwBcETLMtI48yaYMApWrDjW8=;
-        b=nLrtCJB3raZ35aTH9hZlooOpMrhAOftHssWk4o2AMzDHK8G2xvHkK7ES13RuPHB3NN
-         TcbEz40CcACG5+6delGqKd5aAzyZKJK8F7DMTb+m0p6SJoumFzaXT9iXNfnzdo+cm2Dg
-         GIhKgUw0uXAXFknS06WkF6MYUR80cNh6LKcVo26LCr3RBo7VN64//YEgeh/xx+73Lj33
-         +SaWlQ4+aAew7EvIrwAk+nITZI3FK7eCS9Co1xNo+jOD5n4EUaCGio167vXua90QMNv5
-         osTSZci3tLS+5mZS3wRxzE62PCfM1BTG/Vw0+ee0VwDyx6KZV1WUG3Nq3CIFnoZIzSPs
-         BD0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720316138; x=1720920938;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720316261; x=1720921061; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nsguKa8Fd9DPaCpX9PzRwBcETLMtI48yaYMApWrDjW8=;
-        b=Wc9FzbVXmtK5YgSKCZFgcShU4liBTPipgtb0KS+OzLlB9k2FvX0wCLNaeNBrpIi9Je
-         TPiCNBtRsp3y4ME/u/C+bUQHE7id8vuvHVmsNo4wo2wsyHoaeHzJVr2FNTrVsSN5EVUY
-         2S2a957Bu3rl733MysMBw7Tv95ZQ6yZ67z/zSr/oE7b16TgPxZkaSQ9VPC4axagPWLCZ
-         ZO8rM/eyZE78RDJRDO9G5OaPsB5cfB/V4LarmQ1N033q+LCv6JlrXRu9SlkiLW3K1KiQ
-         sH/5mfKPxC4JN7gQfnCoA1xLfZ49J/VVX29n4lyOcbGMrtiCPHEaajq9WrRpHy217Yqt
-         zuzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvuo6A1xAIXUfvc41cBZMazExFMt6JrE65hq71BjOwFCBmQjvuedZDv35dKqPkTGwmn3t7sPEqfWZXNGWdDMJY6T8zmHrZjsf3VXpDWIOgrT+ct4hSb+BWCvczcZ6jw+aBj80qywL066WQBjdocTAM4N2BWkIfNhA/KWx9apC8HX7r2KXIKQJAoccZxCJr37zF+BHJYgBEz9ym1xlSnL9a
-X-Gm-Message-State: AOJu0Ywo9hp2uc/kLSPyQpad9bEti+LT5EvEH1kzoeHLGdoKdmYJTgyb
-	1P/LD8LWx3fdJxB4jwTs/4q+qeIeRSLnZqlgGnehnk40DZQTPzMF
-X-Google-Smtp-Source: AGHT+IFoUAJxvVZfvCiN/bhFxXLAbSuX+gKzkgcu8uug+VjJ8+a7o3oqyy5WCYAmmuP/vmkix0XODg==
-X-Received: by 2002:a05:6a20:9146:b0:1c0:dfb3:4214 with SMTP id adf61e73a8af0-1c0dfb345bemr3921383637.38.1720316137656;
-        Sat, 06 Jul 2024 18:35:37 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb3ce7144esm48053225ad.300.2024.07.06.18.35.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Jul 2024 18:35:36 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <a0337b42-4cce-42f4-91f6-eca65c62ed47@roeck-us.net>
-Date: Sat, 6 Jul 2024 18:35:35 -0700
+        bh=HnmnKzS0MqQjJkVIzx0uL8WK8vRtoDuAmz8drJ9JhLw=;
+        b=Qc7sBhKMeLmk7b5JSYJdGG5EeB/mUJguybyPPysTtbXNWmEss9G1i3Cbt64Bi2F/Z1
+         skXvAh32qbbXFbR1w10W/rXfczg7S/x/lMnW+hWUU/zZx0KLc4BgicZQIFIQziI82H/u
+         yqC9Ie4MQhyqwWWHSbFf8Gi8Zvmw6tNLjQmAmIcrhTjUTnf9bOa8+r2TjdZ2atlJkP4I
+         fLPZvT+evARpVcprg4GAMj0+hPBYXG1KFbBcDuIMD6L29zYeuJYoLnsw/JlH+BPF9tHC
+         7K3S2j5jdespOBrPbkgF2fcNqicLXmgFaL0n8l1sFHF5xguTIxAhFEdIxZJLPLVjUY8p
+         HdDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720316261; x=1720921061;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HnmnKzS0MqQjJkVIzx0uL8WK8vRtoDuAmz8drJ9JhLw=;
+        b=Pw+gXtg0cV9ZsqO1JhezDA3gQzwfjeAffwrHAYpdpZcThrt7jRbYVuAOOPhYXfV7Kz
+         MwOkp7hm58SCarbISgyKDtMWoaQT2m4f6CBYW2hT41RmPzZ7k+TGd7ZmmMf4cHdP6Aae
+         FFMj6+tNgQOkRNCrb8siqsQxRFUy9j96rqJ1z5/hhHFXHAwZR62sRYmgBsYr2Tf8eOyC
+         WWu+xIn4ldJRUV2hM3G2L0QP43AlTSyIT3BS4md2ybDm9HyfzEWzH0zyvq0nanZvz4HA
+         UOVescs0M3viM8bXSJEHaFdorYDl5YwzRgWaio7nMHDp6B0rb0rnC6DMmq1xI6QwH3TY
+         X/0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVNxux6kUTRt5xShxiYjCkGjLO46HA1TjcEujfq2CIVgn646Y6MXOC1s03w8CRpH7kCztUjtYs1I8OQEv59dfpKqXRt4ywuDOx4O5rI
+X-Gm-Message-State: AOJu0Yxc1TzZQ9WC8CC5571kNl1nOAt7kjYKt4FpzQjbuGfG31CyHqBz
+	A8/Xwbv197b3i3SzfmVc/xbG88qi0DJkW5ZFftCUQ4EdbFOf2hToF2As5g==
+X-Google-Smtp-Source: AGHT+IFpCBjDL7gPHbh818KuoaEfT1fK1KoMm6EqG2GWgdksUPg1xa5qrR/h+FOd+kz5WCZzw21Tow==
+X-Received: by 2002:a05:6359:4587:b0:1aa:b8ba:8e with SMTP id e5c5f4694b2df-1aab8ba0370mr327529955d.22.1720316240013;
+        Sat, 06 Jul 2024 18:37:20 -0700 (PDT)
+Received: from localhost.localdomain ([2403:2c80:6::3052])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a984507sm5642635a91.32.2024.07.06.18.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Jul 2024 18:37:19 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: akpm@linux-foundation.org
+Cc: ioworker0@gmail.com,
+	21cnbao@gmail.com,
+	baohua@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	david@redhat.com,
+	dj456119@gmail.com,
+	libang.li@antgroup.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mingzhe.yang@ly.com,
+	ryan.roberts@arm.com,
+	shy828301@gmail.com,
+	ziy@nvidia.com
+Subject: Re: [PATCH v3 2/2] mm: add docs for per-order mTHP split counters
+Date: Sun,  7 Jul 2024 09:36:59 +0800
+Message-Id: <20240707013659.1151-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20240704012905.42971-3-ioworker0@gmail.com>
+References: <20240704012905.42971-3-ioworker0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: hwmon: Add Sophgo SG2042 external
- hardware monitor support
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>
-References: <IA1PR20MB4953967EA6AF3A6EFAE6AB10BBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953F58B631D836F3863115ABBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <5a2e23f4-d54a-45ae-a09d-e557b110e017@roeck-us.net>
- <IA1PR20MB49539E946C2D5D025932ABEEBBD82@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <IA1PR20MB49539E946C2D5D025932ABEEBBD82@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/6/24 16:34, Inochi Amaoto wrote:
-> On Sat, Jul 06, 2024 at 09:48:58AM GMT, Guenter Roeck wrote:
->> On Wed, Jul 03, 2024 at 10:30:43AM +0800, Inochi Amaoto wrote:
->>> Due to the design, Sophgo SG2042 use an external MCU to provide
->>> hardware information, thermal information and reset control.
->>>
->>> Add bindings for this monitor device.
->>>
->>> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
->>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->>> ---
->>>   .../hwmon/sophgo,sg2042-hwmon-mcu.yaml        | 43 +++++++++++++++++++
->>>   1 file changed, 43 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
->>>
->>> --
->>> 2.45.2
->>>
->>> diff --git a/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml b/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
->>> new file mode 100644
->>> index 000000000000..f0667ac41d75
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
->>> @@ -0,0 +1,43 @@
->>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/hwmon/sophgo,sg2042-hwmon-mcu.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Sophgo SG2042 onboard MCU support
->>> +
->>> +maintainers:
->>> +  - Inochi Amaoto <inochiama@outlook.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: sophgo,sg2042-hwmon-mcu
->>
->> According to the other patch, this actually covers four
->> distinct models/devices.
->>
->> static const struct sg2042_mcu_board_data[] = {
->>> +	{
->>> +		.id = 0x80,
->>> +		.name = "SG2042 evb x8",
->>> +	},
->>> +	{
->>> +		.id = 0x81,
->>> +		.name = "SG2042R evb",
->>> +	},
->>> +	{
->>> +		.id = 0x83,
->>> +		.name = "SG2042 evb x4",
->>> +	},
->>> +	{
->>> +		.id = 0x90,
->>> +		.name = "Milk-V Pioneer",
->>> +	},
->>> +};
->>> +
->>
->> Is it really appropriate to use a single compatible property for all of those ?
->>
->> Guenter
-> 
-> These board can only be detected at running time (even this should on
-> a specific board). On real world, it can only sees a MCU onboard.
-> I don't think it is a good idea to add some bindings to cover these
-> model. It seems better to remove this array and let userspace to parse
-> these ids.
-> 
+Hi Andrew,
 
-Isn't that what devicetree is for ? It should either not be necessary
-to distinguish the models because they all behave the same and all of them
-are happy with the same compatible property, or there is some difference
-which should be reflected in devicetree. In other words, either they
-are all compatible with sophgo,sg2042-hwmon-mcu, and sg2042_mcu_board_data
-as well as sg2042_mcu_check_board() are unnecessary, or they are not
-compatible and there should be separate compatible property names.
-struct of_device_data does have a .data pointer for a reason, after all.
+Could you please fold the following changes into this patch?
 
-In yet other words, it seems odd to have a devicetree file for Milk-V Pioneer
-and then to check in the hwmon driver if this is _really_ a Milk-V Pioneer
-and bail out if it isn't. And I _really_ don't want to deal with continuous
-driver patches whenever one of the systems using one of those MCUs starts
-shipping a new firmware version or is deployed on a new board variant.
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 747c811ee8f1..fe237825b95c 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -513,17 +513,16 @@ split
+ 	is incremented every time a huge page is successfully split into
+ 	smaller orders. This can happen for a variety of reasons but a
+ 	common reason is that a huge page is old and is being reclaimed.
+-	This action implies splitting any block mappings into PTEs.
+ 
+ split_failed
+ 	is incremented if kernel fails to split huge
+ 	page. This can happen if the page was pinned by somebody.
+ 
+ split_deferred
+-	is incremented when a huge page is put onto split
+-	queue. This happens when a huge page is partially unmapped and
+-	splitting it would free up some memory. Pages on split queue are
+-	going to be split under memory pressure.
++        is incremented when a huge page is put onto split queue.
++        This happens when a huge page is partially unmapped and splitting
++        it would free up some memory. Pages on split queue are going to
++        be split under memory pressure, if splitting is possible.
+ 
+ As the system ages, allocating huge pages may be expensive as the
+ system uses memory compaction to copy data around memory to free a
+-- 
 
 Thanks,
-Guenter
-
+Lance
 
