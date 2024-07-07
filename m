@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-243476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DCC39296BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 07:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED17E9296BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 07:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E2061C20E7A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 05:54:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C4931C20B9A
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 05:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2609F8F6D;
-	Sun,  7 Jul 2024 05:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB2FB653;
+	Sun,  7 Jul 2024 05:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnAGuIEw"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cg68b9uX"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8644D53B
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 05:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D9A10A0A
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 05:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720331646; cv=none; b=I8w6jQNC4aMUr+3fidrj0NQa22SH5gCPX6EsVl5ca8357IpdTYONRu/7ghvy+aoSPNyokgr4Gldj4iIelyZ3ofryGXSghxNiAGNkMn/0kj3ardtyJz9XeafS6K02qyVnXWBWtuQQilxIh8OPqATzM/laWfvKRPpN522pCmLzrcI=
+	t=1720331652; cv=none; b=ru7U1H1+pnFl/oabV/Qm1GnjFU+N5LIj2uT2cXCEzwhuWPLvDRIyEprvsQr/CLcBsv0RAOz4ZFaEUcCexpcxZPDII3q0yUQ81B/G0XmdIc8g/T8PlVnXmG75UJjrj+wHYOHcHRdpMcPgwSIBcaytHyUF9VZx98uzvtLRZMk5918=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720331646; c=relaxed/simple;
-	bh=qPFTc3FO5hdRbWD/xpZXkA2hnMsn8o0ImHjlbGM0Pyg=;
+	s=arc-20240116; t=1720331652; c=relaxed/simple;
+	bh=L6kGp0yQ/1I5sbHd1feIDteukGCJQBEVDTYbRX9lmmc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SS95NSA5bSTvH0C6d0s8qXmZsE8AJdmrNcnRIdQajVEPQBm3LfqcueHCizX+kAv1JAEpcCz1fggYSk5tW6jw+iZ1eg6QSHEhaR/popHhRXLnuIY/MPRGwg23MeLQ6XAzBlSuZiew/hhUku2jjrFOIE4ii7G7zUE5Mq7VMS0PLfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnAGuIEw; arc=none smtp.client-ip=209.85.128.177
+	 MIME-Version; b=MoQCUS5gYtNNN6uStJajTi1LLrDTkA3gEw9wcWRB+LS+OuxxIstbu/YSI7yRxKS8hNreRdgNXvk912FdvZfVqkpLZAfenYJFJ7b6SCDmUbvVQnrp3i+HK+02ZuVG4bfNXo6VUJz+yG8o1AWFm/XI6QJDvUswXFbNCx0rltv+PHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cg68b9uX; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-64b29539d87so25593437b3.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 22:54:04 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b2a0542c2so194564b3a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 22:54:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720331644; x=1720936444; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720331650; x=1720936450; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5AFnd+VA8Z38aedFSnDQhJz5LXWpxu4cJVkL+MlMwtg=;
-        b=XnAGuIEwgvpcT70cDrSFyrv+p8SkpcDny8P6BEWqeK07w4Vs6CU72fQFPXREmxYz5I
-         o/mJa7D+qqb4x35PAf2EYA7NFsb/HKX1GHbXt6VKhtXJxyusoAd9q/d3pN7zZiFcqCtW
-         SRzVWXS1tSFCTLH864oJ1qboc501syT3a1YU4lAPplOkhJD+X751ACcdTgXAciBdi092
-         8TPOWzZtrMIuQOLI8BsfISJlX0u5frLnA9b9CmcvRTJZBmwK0ek5+GnhNRbYrfTJWDLS
-         1rD//eKL/4Xo2XvoLBYEJ0Orp1snLUrh3i7k40Qz773SKbidGkfdntemp4ZmOWBmBr2l
-         86fg==
+        bh=D0ao/bHiRilB5S2e2EOSdMSTC1iVfP4AjXJyo+t6sd4=;
+        b=Cg68b9uXdCBXoiZDDsatrgEsAtF9p0YrLzCt0T+0hFJK7NqY82JLbcKErIC/hrFHjP
+         vqZPvfMtX5QOgyeCFTCl1gvC715FOsmXjzhdDF8TvZxYPoeLsFyoraklKizJW237O9Jj
+         9aQAjUUD7cgWJAIT5uw4PNS5YHgc667r5Vzbe67ikyFRyuJ3erO/7wZH2ufo6ua7BcFl
+         l/yc2wo45fIT5kr8pL5OEHYmLar0l+hge5lovEDXOB9VDaNDNZPrhSmlrcsmfmCEz2c4
+         cuRMVjmBVOt00F0q+7bXTRpYBsIrY4jJuOlOWz9SmvJIg8rw1kMKSIEOn/Mv/Nbku99T
+         nafw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720331644; x=1720936444;
+        d=1e100.net; s=20230601; t=1720331650; x=1720936450;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5AFnd+VA8Z38aedFSnDQhJz5LXWpxu4cJVkL+MlMwtg=;
-        b=mjLmB5yTHwejvaalvuGsdEE4MupjV4mYjHbmavRTPh6NIlrV1vKtFL6BMX6eLdy9yq
-         L00QaK41HV3bcqdJzi0Hn8Fi/UUceawOdcDO1ctVsmGG9V+n1rv9FecN/jRvuMRBAFsn
-         JGDfslTKGQKImQ5W/rcT/6lgZ/qI7cG8iZ9zYYr1gjVXt7tbcUjtxa1hNmk99DqXrhZN
-         TMt9aBwlMiDvWPypAh4FgY9sGHJ80n1gZCaJRyXA1/Xpp75a5rDMdGR4wItxSzRMmodm
-         Vr88if+m72iCJGfHQfvDDVYz99ecYEDm6HCWbfY1qJ4qG5TRQDvp80qEUrBel1pN+4lz
-         93YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLpEekKShcZApvzsOvV73DS0TconvfTbtsG3hA4kbtQFY82OAc1+YsvN5bY8+7fwDS0RwIrHacfdDAb51/Ar8h5VN8FxUqYcY23vtf
-X-Gm-Message-State: AOJu0YzPeumR4UiCfy3kIdNFFF39y3Ep5waUSMlm7MKMpfNGgcFBYmgb
-	73PInlBCXeEvzIR1O6mryB5nXMro9b2+3MuZRz8AVY9lRrstDGZ8
-X-Google-Smtp-Source: AGHT+IEM8rXNId+q2iXUTZrQl0UTkENIr3G4q3CoYS4vqe0FwmaON3MklvnPUYn/y1DOmJ4MEAs5FQ==
-X-Received: by 2002:a05:690c:986:b0:63b:d711:f06d with SMTP id 00721157ae682-652d7b5c8d9mr79208147b3.33.1720331643688;
-        Sat, 06 Jul 2024 22:54:03 -0700 (PDT)
+        bh=D0ao/bHiRilB5S2e2EOSdMSTC1iVfP4AjXJyo+t6sd4=;
+        b=NlGtEBJp9G9LVS29/GL9jd/GkRpqwH1MROCfY2NRGosux4v3ZUR7cQELj8NFTDWNXD
+         Vp9HDJspnh4vO9b3xIjDI9BM72J6GpMDB8/eFJhwbV7b6F5NVlO8x6tDjzP6CtQOHRgU
+         VUvq2avweoYGe2/IxpD9DF9EqpViLnd5m4kV7jmHRlUECf8GmLrBcAQIs+9lFdd5EEXM
+         ItbVkD09QeU4ZLk697vJnlA0MLHyw6QdlrNfzhbmkDDY7jHuJgt2hOgwBZgPnVja5ZCK
+         OmhtKmB9ZLaqlXyqSH3iRl0adx7zBbR7T7S6ZdCseTBnaMJeE2qg3iexYDNYfcsmrkn9
+         aMaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCloM1ykEY5jm7dGcJq1APmwnHiC+bPKOBnc7SMZAlpX/iCUQc/Uht+bdjXljSLSG82kL96DoaAwG24NeTfbQsajwJj1n78WZq0wqs
+X-Gm-Message-State: AOJu0YzFlJS4yrP12BdIrZmPlvfMrYuZpWNVBhTssaHqJ/qr6CQy/xMO
+	pmtd1pHVk5pjRQJGKxIBgGL0eAkDUKG2kCISmZffKuRxyAPHY5aB
+X-Google-Smtp-Source: AGHT+IGG7pp0NWsGPjDUHxaPtmH314w9l9YdSMp2LYg0SS7OJEi0aKYm9s3XK1kO6NxeK/Uks5f+5Q==
+X-Received: by 2002:a05:6a00:2ea6:b0:70b:2589:3a55 with SMTP id d2e1a72fcca58-70b25893db3mr2139078b3a.32.1720331649578;
+        Sat, 06 Jul 2024 22:54:09 -0700 (PDT)
 Received: from kousik.local ([2405:201:c006:312d:252d:94b8:b79c:d7bb])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b2e5fe3dfsm94429b3a.97.2024.07.06.22.53.59
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b2e5fe3dfsm94429b3a.97.2024.07.06.22.54.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 22:54:03 -0700 (PDT)
+        Sat, 06 Jul 2024 22:54:09 -0700 (PDT)
 From: Kousik Sanagavarapu <five231003@gmail.com>
 To: Nishanth Menon <nm@ti.com>,
 	Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
@@ -77,9 +77,9 @@ Cc: Shuah Khan <skhan@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Kousik Sanagavarapu <five231003@gmail.com>
-Subject: [PATCH v3 1/4] soc: ti: pruss: factor out memories setup
-Date: Sun,  7 Jul 2024 10:44:16 +0530
-Message-ID: <20240707055341.3656-2-five231003@gmail.com>
+Subject: [PATCH v3 2/4] soc: ti: pruss: do device_node auto cleanup
+Date: Sun,  7 Jul 2024 10:44:17 +0530
+Message-ID: <20240707055341.3656-3-five231003@gmail.com>
 X-Mailer: git-send-email 2.45.2.561.g66ac6e4bcd
 In-Reply-To: <20240707055341.3656-1-five231003@gmail.com>
 References: <20240707055341.3656-1-five231003@gmail.com>
@@ -91,161 +91,187 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out memories setup code from probe() into a new function
-pruss_of_setup_memories().  This sets the stage for introducing auto
-cleanup of the device node (done in the subsequent patch), since the
-clean up depends on the scope of the pointer and factoring out
-code into a seperate function obviously limits the scope of the various
-variables used in that function.
+Use scope based cleanup instead of manual of_node_put() calls, hence
+simplifying the handling of error paths at various places.
 
-Apart from the above, this change also has the advantage of making the
-code look more neat.
+While at it, use dev_err_probe() instead of dev_err() in all the code
+paths touched.
 
-While at it, use dev_err_probe() instead of plain dev_err() as this new
-function is called by the probe().
-
+Suggested-by: Julia Lawall <julia.lawall@inria.fr>
 Signed-off-by: Kousik Sanagavarapu <five231003@gmail.com>
 ---
- drivers/soc/ti/pruss.c | 111 ++++++++++++++++++++++-------------------
- 1 file changed, 61 insertions(+), 50 deletions(-)
+ drivers/soc/ti/pruss.c | 91 +++++++++++++++---------------------------
+ 1 file changed, 33 insertions(+), 58 deletions(-)
 
 diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-index 24a42e0b645c..a3c55a291b0b 100644
+index a3c55a291b0b..a01eabb0ca26 100644
 --- a/drivers/soc/ti/pruss.c
 +++ b/drivers/soc/ti/pruss.c
-@@ -415,6 +415,63 @@ static int pruss_clk_init(struct pruss *pruss, struct device_node *cfg_node)
- 	return ret;
- }
+@@ -380,50 +380,42 @@ static int pruss_clk_mux_setup(struct pruss *pruss, struct clk *clk_mux,
  
-+static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+	struct device_node *child;
-+	const struct pruss_private_data *data = of_device_get_match_data(dev);
-+	const char *mem_names[PRUSS_MEM_MAX] = { "dram0", "dram1", "shrdram2" };
-+	int i;
-+
-+	child = of_get_child_by_name(np, "memories");
-+	if (!child)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "%pOF is missing its 'memories' node\n",
-+				     child);
-+
-+	for (i = 0; i < PRUSS_MEM_MAX; i++) {
-+		struct resource res;
-+		int index;
-+
-+		/*
-+		 * On AM437x one of two PRUSS units don't contain Shared RAM,
-+		 * skip it
-+		 */
-+		if (data && data->has_no_sharedram && i == PRUSS_MEM_SHRD_RAM2)
-+			continue;
-+
-+		index = of_property_match_string(child, "reg-names",
-+						 mem_names[i]);
-+		if (index < 0) {
-+			of_node_put(child);
-+			return index;
-+		}
-+
-+		if (of_address_to_resource(child, index, &res)) {
-+			of_node_put(child);
-+			return -EINVAL;
-+		}
-+
-+		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
-+							resource_size(&res));
-+		if (!pruss->mem_regions[i].va) {
-+			of_node_put(child);
-+			return dev_err_probe(dev, -ENOMEM,
-+					     "failed to parse and map memory resource %d %s\n",
-+					     i, mem_names[i]);
-+		}
-+		pruss->mem_regions[i].pa = res.start;
-+		pruss->mem_regions[i].size = resource_size(&res);
-+
-+		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
-+			mem_names[i], &pruss->mem_regions[i].pa,
-+			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
-+	}
-+	of_node_put(child);
-+
-+	return 0;
-+}
-+
- static struct regmap_config regmap_conf = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
-@@ -471,15 +528,8 @@ static int pruss_cfg_of_init(struct device *dev, struct pruss *pruss)
- static int pruss_probe(struct platform_device *pdev)
+ static int pruss_clk_init(struct pruss *pruss, struct device_node *cfg_node)
  {
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev_of_node(dev);
--	struct device_node *child;
- 	struct pruss *pruss;
--	struct resource res;
--	int ret, i, index;
 -	const struct pruss_private_data *data;
--	const char *mem_names[PRUSS_MEM_MAX] = { "dram0", "dram1", "shrdram2" };
+-	struct device_node *clks_np;
+ 	struct device *dev = pruss->dev;
+-	int ret = 0;
 -
--	data = of_device_get_match_data(&pdev->dev);
+-	data = of_device_get_match_data(dev);
++	struct device_node *clks_np __free(device_node) =
++			of_get_child_by_name(cfg_node, "clocks");
++	const struct pruss_private_data *data = of_device_get_match_data(dev);
 +	int ret;
  
- 	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
- 	if (ret) {
-@@ -494,48 +544,9 @@ static int pruss_probe(struct platform_device *pdev)
- 	pruss->dev = dev;
- 	mutex_init(&pruss->lock);
- 
--	child = of_get_child_by_name(np, "memories");
--	if (!child) {
--		dev_err(dev, "%pOF is missing its 'memories' node\n", child);
+-	clks_np = of_get_child_by_name(cfg_node, "clocks");
+-	if (!clks_np) {
+-		dev_err(dev, "%pOF is missing its 'clocks' node\n", cfg_node);
 -		return -ENODEV;
 -	}
++	if (!clks_np)
++		return dev_err_probe(dev, -ENODEV,
++				     "%pOF is missing its 'clocks' node\n",
++				     cfg_node);
+ 
+ 	if (data && data->has_core_mux_clock) {
+ 		ret = pruss_clk_mux_setup(pruss, pruss->core_clk_mux,
+ 					  "coreclk-mux", clks_np);
+-		if (ret) {
+-			dev_err(dev, "failed to setup coreclk-mux\n");
+-			goto put_clks_node;
+-		}
++		if (ret)
++			return dev_err_probe(dev, ret,
++					     "failed to setup coreclk-mux\n");
+ 	}
+ 
+ 	ret = pruss_clk_mux_setup(pruss, pruss->iep_clk_mux, "iepclk-mux",
+ 				  clks_np);
+-	if (ret) {
+-		dev_err(dev, "failed to setup iepclk-mux\n");
+-		goto put_clks_node;
+-	}
 -
--	for (i = 0; i < PRUSS_MEM_MAX; i++) {
--		/*
--		 * On AM437x one of two PRUSS units don't contain Shared RAM,
--		 * skip it
--		 */
--		if (data && data->has_no_sharedram && i == PRUSS_MEM_SHRD_RAM2)
--			continue;
--
--		index = of_property_match_string(child, "reg-names",
--						 mem_names[i]);
+-put_clks_node:
+-	of_node_put(clks_np);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to setup iepclk-mux\n");
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
+ {
+ 	struct device_node *np = dev_of_node(dev);
+-	struct device_node *child;
++	struct device_node *child __free(device_node) =
++			of_get_child_by_name(np, "memories");
+ 	const struct pruss_private_data *data = of_device_get_match_data(dev);
+ 	const char *mem_names[PRUSS_MEM_MAX] = { "dram0", "dram1", "shrdram2" };
+ 	int i;
+ 
+-	child = of_get_child_by_name(np, "memories");
+ 	if (!child)
+ 		return dev_err_probe(dev, -ENODEV,
+ 				     "%pOF is missing its 'memories' node\n",
+@@ -442,24 +434,18 @@ static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
+ 
+ 		index = of_property_match_string(child, "reg-names",
+ 						 mem_names[i]);
 -		if (index < 0) {
 -			of_node_put(child);
--			return index;
++		if (index < 0)
+ 			return index;
 -		}
--
+ 
 -		if (of_address_to_resource(child, index, &res)) {
 -			of_node_put(child);
--			return -EINVAL;
++		if (of_address_to_resource(child, index, &res))
+ 			return -EINVAL;
 -		}
--
--		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
--							resource_size(&res));
+ 
+ 		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
+ 							resource_size(&res));
 -		if (!pruss->mem_regions[i].va) {
--			dev_err(dev, "failed to parse and map memory resource %d %s\n",
--				i, mem_names[i]);
 -			of_node_put(child);
--			return -ENOMEM;
++		if (!pruss->mem_regions[i].va)
+ 			return dev_err_probe(dev, -ENOMEM,
+ 					     "failed to parse and map memory resource %d %s\n",
+ 					     i, mem_names[i]);
 -		}
--		pruss->mem_regions[i].pa = res.start;
--		pruss->mem_regions[i].size = resource_size(&res);
--
--		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
--			mem_names[i], &pruss->mem_regions[i].pa,
--			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
--	}
+ 		pruss->mem_regions[i].pa = res.start;
+ 		pruss->mem_regions[i].size = resource_size(&res);
+ 
+@@ -467,7 +453,6 @@ static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
+ 			mem_names[i], &pruss->mem_regions[i].pa,
+ 			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
+ 	}
 -	of_node_put(child);
-+	ret = pruss_of_setup_memories(dev, pruss);
-+	if (ret < 0)
-+		goto rpm_put;
  
- 	platform_set_drvdata(pdev, pruss);
+ 	return 0;
+ }
+@@ -481,26 +466,21 @@ static struct regmap_config regmap_conf = {
+ static int pruss_cfg_of_init(struct device *dev, struct pruss *pruss)
+ {
+ 	struct device_node *np = dev_of_node(dev);
+-	struct device_node *child;
++	struct device_node *child __free(device_node) =
++			of_get_child_by_name(np, "cfg");
+ 	struct resource res;
+ 	int ret;
  
+-	child = of_get_child_by_name(np, "cfg");
+-	if (!child) {
+-		dev_err(dev, "%pOF is missing its 'cfg' node\n", child);
+-		return -ENODEV;
+-	}
++	if (!child)
++		return dev_err_probe(dev, -ENODEV,
++				     "%pOF is missing its 'cfg' node\n", child);
+ 
+-	if (of_address_to_resource(child, 0, &res)) {
+-		ret = -ENOMEM;
+-		goto node_put;
+-	}
++	if (of_address_to_resource(child, 0, &res))
++		return -ENOMEM;
+ 
+ 	pruss->cfg_base = devm_ioremap(dev, res.start, resource_size(&res));
+-	if (!pruss->cfg_base) {
+-		ret = -ENOMEM;
+-		goto node_put;
+-	}
++	if (!pruss->cfg_base)
++		return -ENOMEM;
+ 
+ 	regmap_conf.name = kasprintf(GFP_KERNEL, "%pOFn@%llx", child,
+ 				     (u64)res.start);
+@@ -509,20 +489,15 @@ static int pruss_cfg_of_init(struct device *dev, struct pruss *pruss)
+ 	pruss->cfg_regmap = devm_regmap_init_mmio(dev, pruss->cfg_base,
+ 						  &regmap_conf);
+ 	kfree(regmap_conf.name);
+-	if (IS_ERR(pruss->cfg_regmap)) {
+-		dev_err(dev, "regmap_init_mmio failed for cfg, ret = %ld\n",
+-			PTR_ERR(pruss->cfg_regmap));
+-		ret = PTR_ERR(pruss->cfg_regmap);
+-		goto node_put;
+-	}
++	if (IS_ERR(pruss->cfg_regmap))
++		return dev_err_probe(dev, PTR_ERR(pruss->cfg_regmap),
++				     "regmap_init_mmio failed for cfg\n");
+ 
+ 	ret = pruss_clk_init(pruss, child);
+ 	if (ret)
+-		dev_err(dev, "pruss_clk_init failed, ret = %d\n", ret);
++		return dev_err_probe(dev, ret, "pruss_clk_init failed\n");
+ 
+-node_put:
+-	of_node_put(child);
+-	return ret;
++	return 0;
+ }
+ 
+ static int pruss_probe(struct platform_device *pdev)
 -- 
 2.45.2.561.g66ac6e4bcd
 
