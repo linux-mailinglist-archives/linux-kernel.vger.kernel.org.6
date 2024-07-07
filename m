@@ -1,75 +1,155 @@
-Return-Path: <linux-kernel+bounces-243634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643D492989F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:24:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF1A9298A3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A8A1C21701
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:24:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FBE91F22C7C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB96E38F9A;
-	Sun,  7 Jul 2024 15:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDAF3AC01;
+	Sun,  7 Jul 2024 15:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZbBUbfU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Em4bSQdC"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAE123741;
-	Sun,  7 Jul 2024 15:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98115EDC;
+	Sun,  7 Jul 2024 15:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720365857; cv=none; b=iu3PTV5ikt4lRLx6yDA/y3539Ih6zlGmrxioYg5M0ZU/omTTVOA3R2119+aKEyY8xsEBbOLxLygB6hd+EE9bso7hxKL0OwlflOWngg9mYBnicPhRS9F/+M8haRIUxNhiuVmGlaCQk5HZxhVC9HjpJKVJQq+ufPsX3YG4wCO8ZeY=
+	t=1720366082; cv=none; b=qsSATyfIKglsgOu6yGEfXkqclOwqB5yDfjHG/wq+Lgdt5uZri4Z1IwoBt75HYTdhlpcVn8nU2ntMUO12No2ydMBQ94aBzAKSiUx/6yR5yaR7Po+0V8vU+bHrJsKzTb7ZwT3NphyKa8U6u5f4cDtc7gYUNp2uklurgUxC0X0L1Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720365857; c=relaxed/simple;
-	bh=CqRDK8Jf1qVReVZD/FMHSwR/5bdgbsJ28UK7zoXC7l0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oGJQqWpSZiafD/pBIE5obA4sgO5ySLZuTyaX48GepdO7tA7qKAi3Vn9XdW7pQ1WW0GFjorTJbS1w0lhfIVRxUyUflksbrRZaygMmLvKvFkpV84l86GYk14d5zXvzbqeDjsr27kUFrv63vS5330yDNPCYSgBTrdmS2wztMcN/tF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZbBUbfU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 233F6C3277B;
-	Sun,  7 Jul 2024 15:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720365856;
-	bh=CqRDK8Jf1qVReVZD/FMHSwR/5bdgbsJ28UK7zoXC7l0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SZbBUbfUmE5TfYDH+zcMPfhccY6CjylVwGvePYquDJJpvKAXmgIfRXUap9tyDuAzT
-	 irfolJil4NBQd6DsuQjNkHrTNAh9FFcVmpZagzK9uVa0Aq/pAD+eZS+WrcbEfQ9RUn
-	 FMdYZJgpCutiqtyLoOovi+ivO5SK3ck1tu+gRtq8pAfGVnKuDOjb+PgBzX9bBEyGyc
-	 S/KsvchzbqR71qwm6GyjU0kOHBp7kkE1dXgCU3E5ZfVcHE4VQwxMm0pnJBaQEgSNob
-	 6pwiEkWgdP2Zh0BJY6mYT9NmZojuTmaGCOpTMoBK7s8XRk6ZPR5lUQC9xquCXq3zQT
-	 VO2NZjLCU5zWA==
-Date: Sun, 7 Jul 2024 16:24:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: javier.carrasco.cruz@gmail.com, Michael.Hennerich@analog.com,
- cosmin.tanislav@analog.com, dan@dlrobertson.com, jagathjog1996@gmail.com,
- lars@metafoo.de, linus.walleij@linaro.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, marcelo.schmitt@analog.com,
- nuno.sa@analog.com
-Subject: Re: [PATCH 05/10]: iio: chemical: bme680: Constify struct
- regmap_bus
-Message-ID: <20240707162407.5603b1c0@jic23-huawei>
-In-Reply-To: <20240706105137.98124-1-vassilisamir@gmail.com>
-References: <20240703-iio-cont-regmap_bus-v1-5-34754f355b65@gmail.com>
-	<20240706105137.98124-1-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720366082; c=relaxed/simple;
+	bh=3QJzNF62gxTDAiNfsYf65fyUsELa6Yfsu2RONfThXrA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=swp+jQ3mZLHC9y8T2eRy/IgQ1yeXGknMUiuUFS6b1CoxTNXXC9jw4SsmeintxgVcHIAKBYPdfCiecz+e2f7sKvXjYKQfVMznRvgx+FcnUIggj9l0b7lEPADtYlzT6xiwZ3lS5/ZzFJROmbNeqf+Se8B7lziDzQVDFfGk7OMCVdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Em4bSQdC; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ee817dac89so37879921fa.1;
+        Sun, 07 Jul 2024 08:28:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720366079; x=1720970879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fr+DZ0MDnE5jftvLCDj70dKzBj7NuMiWgPTtDpC35MY=;
+        b=Em4bSQdCXUvqqo/tvXSjQoUVT1cAhl7PhbfCdR8qesybcznzjvTBp5TzyCEkxxkDda
+         LTRLKuziaXHmD6JLlUP2+aqFlu3Yg0x/dtjRkPvdlZyIGd+ZPsuFyWItY+qGVXhp4O4F
+         zCRHchsqZewFBH+jGXwrBc0rCMq1j4KUbz3Uu/WDRJYLH4qGBdUsV3JbE4jYVsg3OPiS
+         iA77I1JxNAWAlu6VflgKzeCEMpkh7Io5JmSZqoDF9gWdHlhta5F/2mp5WnRdpsLKdsOz
+         lawwAyMeNgYAmjN6NoKRUS1r/BMB+5qx1Ho+Nm4LhYk0xKQLavw7V6/TKDslFsIn3N07
+         iDxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720366079; x=1720970879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fr+DZ0MDnE5jftvLCDj70dKzBj7NuMiWgPTtDpC35MY=;
+        b=AEZLb1fuzJBUuE8ROFTT18mNZSRUF/f4T2FFORHpMilFdkzzAplTNphpulXBpERJbh
+         KDxy1GZZM2qa3BDXZ27YayqJ/YxJi1iFB6kHtKTGtCb8BAnQd9QMGxIS4gxlznBFjOsM
+         qYDOmIHkx+Jdtz1mDG3da0r9WQgyNQjGwmJB+ikRNJi05q7/dOYhcit2EI5pGIz4k+Bj
+         eMf4BYhg5dR4RVSt99IuD0/nF+xebYj6IH33vEuEu2bCx7ITXxvfKwXI4tYtzk6LiIVz
+         r+lQpVevj7F69v/mQBB1wprjGoPGjm4z6t2hXpzXG5WWGv2txRm+FfGzgZ1xCBrz39p1
+         wOUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmeggnqKh/3lNU13CbiRsPcQ302tQFS+YtSYcxmyJQDKXPCHNUfP1bUzaUyLaDufWvoubIjwWxHD6+UtdQxmyPB/swpm3uEGYoWoCPsaER+m4NRe6LJSMwM9SYyK1bKNtFIwzeYO/NweP1jYw=
+X-Gm-Message-State: AOJu0Yx9VrXw8pk1glnPz2kNQPc/sludabx0225eHROcolTowuMMLZe8
+	zrFKxeR2izeVH9usYW4Jda8fWoIklg9cN04Nx+7ff8P+oHZ9OYMEN7cyzBiJTgNG115vNJVlTTB
+	FL+7g3kDd8JVp+hog/DMwMAPxRsu3t4h9
+X-Google-Smtp-Source: AGHT+IHAmu2FqqcMyieYM5i/cU8KsuJuD3lE+cYUbLZISRwa/hgVzTPFxdNvbDXESh/2KdJA6+mDBmTXyUzZiFOXZrE=
+X-Received: by 2002:ac2:58f5:0:b0:52e:9389:5694 with SMTP id
+ 2adb3069b0e04-52ea0e58748mr2432064e87.34.1720366078372; Sun, 07 Jul 2024
+ 08:27:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <7da501fae4f96e3d2c740fe5638cad813d33fcbf.1720360830.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7da501fae4f96e3d2c740fe5638cad813d33fcbf.1720360830.git.christophe.jaillet@wanadoo.fr>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Mon, 8 Jul 2024 00:27:41 +0900
+Message-ID: <CAKFNMond47=nPZdPN2+ZAAFJCN3RYGMi1+GdDPje+QXFRyBvog@mail.gmail.com>
+Subject: Re: [PATCH] nilfs2: Constify struct kobj_type
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat,  6 Jul 2024 12:51:37 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+On Sun, Jul 7, 2024 at 11:01=E2=80=AFPM Christophe JAILLET wrote:
+>
+> 'struct kobj_type' is not modified in this driver. It is only used with
+> kobject_init_and_add() which takes a "const struct kobj_type *" parameter=
+.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   22403    4184      24   26611    67f3 fs/nilfs2/sysfs.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   22723    3928      24   26675    6833 fs/nilfs2/sysfs.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only
+> ---
+>  fs/nilfs2/sysfs.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/nilfs2/sysfs.c b/fs/nilfs2/sysfs.c
+> index 379d22e28ed6..a5569b7f47a3 100644
+> --- a/fs/nilfs2/sysfs.c
+> +++ b/fs/nilfs2/sysfs.c
+> @@ -56,7 +56,7 @@ static void nilfs_##name##_attr_release(struct kobject =
+*kobj) \
+>                                                 sg_##name##_kobj); \
+>         complete(&subgroups->sg_##name##_kobj_unregister); \
+>  } \
+> -static struct kobj_type nilfs_##name##_ktype =3D { \
+> +static const struct kobj_type nilfs_##name##_ktype =3D { \
+>         .default_groups =3D nilfs_##name##_groups, \
+>         .sysfs_ops      =3D &nilfs_##name##_attr_ops, \
+>         .release        =3D nilfs_##name##_attr_release, \
+> @@ -166,7 +166,7 @@ static const struct sysfs_ops nilfs_snapshot_attr_ops=
+ =3D {
+>         .store  =3D nilfs_snapshot_attr_store,
+>  };
+>
+> -static struct kobj_type nilfs_snapshot_ktype =3D {
+> +static const struct kobj_type nilfs_snapshot_ktype =3D {
+>         .default_groups =3D nilfs_snapshot_groups,
+>         .sysfs_ops      =3D &nilfs_snapshot_attr_ops,
+>         .release        =3D nilfs_snapshot_attr_release,
+> @@ -967,7 +967,7 @@ static const struct sysfs_ops nilfs_dev_attr_ops =3D =
+{
+>         .store  =3D nilfs_dev_attr_store,
+>  };
+>
+> -static struct kobj_type nilfs_dev_ktype =3D {
+> +static const struct kobj_type nilfs_dev_ktype =3D {
+>         .default_groups =3D nilfs_dev_groups,
+>         .sysfs_ops      =3D &nilfs_dev_attr_ops,
+>         .release        =3D nilfs_dev_attr_release,
+> --
+> 2.45.2
+>
 
-> For the BME680 part:
-> 
-> Tested-By: Vasileios Amoiridis <vassilisamir@gmail.com>
+Thanks, this seems like a reasonable change.
+I'll test it in a few environments just to be sure, and then send it upstre=
+am.
 
-Thanks. Added the tags for this and the other one.
+Ryusuke Konishi
 
