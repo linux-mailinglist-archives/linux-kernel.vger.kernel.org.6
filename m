@@ -1,100 +1,67 @@
-Return-Path: <linux-kernel+bounces-243509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3619296FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 09:57:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE7F929708
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EEE61F214B9
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 07:57:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9190281E14
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E1EF9EB;
-	Sun,  7 Jul 2024 07:57:15 +0000 (UTC)
-Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AA010A22;
+	Sun,  7 Jul 2024 08:08:31 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750C2CA40
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 07:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5F1101CA;
+	Sun,  7 Jul 2024 08:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720339035; cv=none; b=UtYg6czLck/TxY/wAt23T1W3ie86lVcoD2ZYlpg0HogdLX1YcU+oRoLvxf+YY0VVUxPZoZGtP6ZJDE8VTBiK2jj+shwcJrt0rP5KUnYAEimTnVBjR5YtMQjpAZ4NTHzkXKqBEUzNUZz+9iBxFK4Jap26XwcSw6/bfPj1SKEv+/w=
+	t=1720339710; cv=none; b=hT32yRP2OApYzPleNlJNUPfmaJrDEsuExVud5GZ/hpk0XR/hXyp6aTcTkBycvVYHrRLm8uok7otvlz7I+fg5I0BvaZhuzKhPeOpSxGNtM4xNgOCRS+cWCZrkshcar3sK/C1LIv1nhcG9DiMH/fGZ7N0dGqwgbrVOcwB25uB11JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720339035; c=relaxed/simple;
-	bh=IAaStqRr7hyLLG8bbQzWfK4Jo2PvQI4E75hxcwWi3TQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gzCTP8oHmhbnUMY/xs13sn1s/by/6gZQag/04dRjgnYqWGGHWOn6CuO4XdALNN0lOzCHFboSav/BNnOEXQs8aZn9YPkI9/YgfZPx9aF8tw0uE0ThpYWW9GmgapRLMx387F3uxp/otpIZ6WuiuexvswSWwUxk/H+3Fkea/Eybszo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.8.88])
-	by sina.com (10.185.250.21) with ESMTP
-	id 668A4A4600003EF9; Sun, 7 Jul 2024 15:56:57 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5756333408340
-X-SMAIL-UIID: D2DAC477427848E99147B9746D864345-20240707-155657-1
-From: Hillf Danton <hdanton@sina.com>
-To: Florian Westphal <fw@strlen.de>
-Cc: netfilter-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1720339710; c=relaxed/simple;
+	bh=1rttPyuSa8fkhuT1EBmrD0ZvIWR2Zg1hG6GJRNc1R4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsP28g8eZJENpIsyIqqFDvL/EQeLKuFovqNav5reC2CHXM0eQg2XQEKqCjWW465jMU2RCFKQ7ycoU4iv9SOgzE6M1fXwPDU4wruHoFlXPsZ4sW6UreNwPSBZnoxoabOFrlpo0rOdq5ICPa+qCzc1Q6/A/qhg7Y2Zfca1JQF+wNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1sQMwa-0007es-17; Sun, 07 Jul 2024 10:08:24 +0200
+Date: Sun, 7 Jul 2024 10:08:24 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
 	syzkaller-bugs@googlegroups.com,
 	syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
-Subject: Re: [PATCH nf] netfilter: nf_tables: unconditionally flush pending work before notifier
-Date: Sun,  7 Jul 2024 15:56:44 +0800
-Message-Id: <20240707075644.752-1-hdanton@sina.com>
-In-Reply-To: <20240705110218.GA1616@breakpoint.cc>
-References: 
+Subject: Re: [PATCH nf] netfilter: nf_tables: unconditionally flush pending
+ work before notifier
+Message-ID: <20240707080824.GA29318@breakpoint.cc>
+References: <20240705110218.GA1616@breakpoint.cc>
+ <20240707075644.752-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240707075644.752-1-hdanton@sina.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, 5 Jul 2024 13:02:18 +0200 Florian Westphal <fw@strlen.de>
-> Hillf Danton <hdanton@sina.com> wrote:
-> > > 				lock trans mutex returns
-> > >   				flush work
-> > >   				free A
-> > >   				unlock trans mutex
-> > > 
-> > If your patch is correct, it should survive a warning.
-> > 
-> > #syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  1c5fc27bc48a
-> > 
-> > --- x/net/netfilter/nf_tables_api.c
-> > +++ y/net/netfilter/nf_tables_api.c
-> > @@ -11552,9 +11552,10 @@ static int nft_rcv_nl_event(struct notif
-> >  
-> >  	gc_seq = nft_gc_seq_begin(nft_net);
-> >  
-> > -	if (!list_empty(&nf_tables_destroy_list))
-> > -		nf_tables_trans_destroy_flush_work();
-> > +	nf_tables_trans_destroy_flush_work();
-> >  again:
-> > +	WARN_ON(!list_empty(&nft_net->commit_list));
-> > +
+Hillf Danton <hdanton@sina.com> wrote:
+> > I think this change might be useful as it also documents
+> > this requirement.
 > 
-> You could officially submit this patch to nf-next, this
-> is a slow path and the transaction list must be empty here.
+> Yes it is boy and the current reproducer triggered another warning [1,2].
 > 
-> I think this change might be useful as it also documents
-> this requirement.
+> [1] https://lore.kernel.org/lkml/20240706231332.3261-1-hdanton@sina.com/
 
-Yes it is boy and the current reproducer triggered another warning [1,2].
-
-[1] https://lore.kernel.org/lkml/20240706231332.3261-1-hdanton@sina.com/
-[2] https://lore.kernel.org/lkml/000000000000a42289061c9d452e@google.com/
-
-And feel free to take a look at fput() and sock_put() for instance of
-freeing slab pieces asyncally.
+The WARN is incorrect.  The destroy list can be non-empty; i already
+tried to explain why.
 
