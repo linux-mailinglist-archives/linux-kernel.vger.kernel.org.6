@@ -1,199 +1,391 @@
-Return-Path: <linux-kernel+bounces-243607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C4292985D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:43:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B357929862
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212341F20F02
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 638201C20C3C
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9982C87A;
-	Sun,  7 Jul 2024 14:43:21 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011AE3771C;
+	Sun,  7 Jul 2024 14:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YcdkDX6q"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6E82BCF5
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 14:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09053224DD;
+	Sun,  7 Jul 2024 14:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720363401; cv=none; b=kWYPDGQM0nJnaTLE5+PSSu9AOodAAS5pPIA+gFFR0TnxzJBuoDw2/C1cf/rglA5mCe6veULiukE1OH8pZzRgLnli20An+dyPatVUj+AJCniikXKT1d6n2YXwS4El9MFN3uUxuKL/c17n4oz/8yt1NQCWELlZtu5dOBkS4QYj760=
+	t=1720363492; cv=none; b=jBGlh6DUg7gA/fxegZvHNAbN84uvMFxnezPo0LY9z6+QajFOH9I7UfEghFQVQ3qgHEWP5eZ5c0MvB3nVmgXRi/IrWzZ7W0bc4Y3Xww7sOTbCvQ9GwXGnN/SeN+73GD2OsSyYQ0UYY+y9HcJUA0kb22OPoReKA3ixjStc+6FK+eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720363401; c=relaxed/simple;
-	bh=7j7KGSNrjRFsy3ZW44XyrY0u1nboPRJSmNDijIqvb2E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dxdLX8U7tD0YqgcYHxwuWgaObUkFQ6qA3xylLw45ejgB/P3e/cqWp1AyuIDpR+Sl/1NSQZEjHVW5i3QyiCulLku56/vLdd1CDdZIc7YXrdUjRaTbTkTcGf+8NLMi3v8056qKW4bkaqLAIwie8fVkDBOkVD1Ev7ixoDQeFVM12dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f639551768so406791539f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 07:43:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720363398; x=1720968198;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V1dG4nqad4PESsTrAmwiussy5msbP8NdIzbFRyO+5oA=;
-        b=jBnsl8nM4skoiyd2+u1j0pGaL9IunH5HgwMrmGDbxPcsCLN4qbRK80oLXmw7AZGcQz
-         6v1ugLdvp/IjXTC8ztsUeyje0MgbY+cuWfRb0wQX+efjj3+FBqxT7ka2uDn6TyT9zfoM
-         HzOuc1LHprlhD5dTXNUQdtwjvMEIsLVbDjLasjiR4Sj7n0tGSLYWuYHEQHJbr4B90+mR
-         Q2VYw3F8XKdohuqw6KDCzTFbqXknYTgT3nYDlazOxO9uAx/EwiqFbCLfTA8VJXK4Zm6Y
-         jZ8ZR5qJR3HfpGB+0MtYAo+esYP7Xy19cq9BikD1yg14XykGglECbMlBzim1tf3GGaG5
-         XmtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUB4BYaEMXt1tb6Ef71gNX4lnZh6oULUNiMGGt2H+Vkjd5k/w3Fg6c31iXlD3QYJIqVJgHv2veyHQ/QlFvVrXUpaPK56lfTZpJffl4x
-X-Gm-Message-State: AOJu0YwkTmM0Gmd8gToc7bsLcYo5z69kpb6ymhMnjxeFs+m0f+nGcpYr
-	cgnpHE4QIVAu76HQNq+iuPcT59ROCSsjvGWaHa937IRIIA7fu6lajl/4tHQl0XPpSmiTBRbvReG
-	HAsrzinBze1g9a8mvs11cXHCr7A/wzE3sO/KxbIJnlGpLRphWQoTc2vo=
-X-Google-Smtp-Source: AGHT+IGZsZ3PwhnP16DjjOH+83aQd/N6lFHFSBmYcy/NcuASx4xuDDNm2AsYiPiJbYTEJqkb043ldf9ydKF82LDH/vTi0kwGX8lX
+	s=arc-20240116; t=1720363492; c=relaxed/simple;
+	bh=5Qciw6otyjwfBQ6FyQTcmYYKqOnvTM00uWFIns8Jsyo=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=tsuoPpkBiDrHTCSfib+u/9kNGA3VNbEicmTauhrNY3I01YkaY23/RlNOQ169XUye8TYenIeB+1ZKkN5vpoJYTkKSFqFXxKY9JWNfwWJv46394HAAliX8NZwHKTKglzsutlAdz02AQ2EQtlzKfSZC41otJKchp8DUyRme433+6ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YcdkDX6q; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 467AtWUC004910;
+	Sun, 7 Jul 2024 14:44:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-type
+	:content-transfer-encoding:mime-version; s=pp1; bh=uKdYUANmQJaS1
+	PQv3e/DbBjUIOYEUCLnM2sgfoz1Oqs=; b=YcdkDX6qPXRXNoNuCfN3Pkigl+zqp
+	cBv9Vmk9Qlbc68/of4i7RLNVJN7kunBM4+lkCLmD7/G1HdQCtN/mOQ+E8gSjQmPH
+	XSYAAubLTbZHYiG7/r0wawR/XjWUgDLpnWlfRDLUOx60zAI6vqR3Ob3zWcETFco8
+	RbtoSszDbQWfttqfy8pHs1FczC54zwAJxYNJvPLDxHWdTSyhgAuAwcmo8LIJRTi6
+	MO/4vk+Q4NZ1nINFy8GF37xdCg38V43bVp+C3rfYpq6RvMfumotS1dr8ued7PGTV
+	xTVNXT7/52zUZ096gL6KKHLJV5sp/EQtlo0dWeLkGNzBI1RcRzTZegCdA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 407p7j8mer-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 07 Jul 2024 14:44:32 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 467EiVeH029974;
+	Sun, 7 Jul 2024 14:44:31 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 407p7j8mep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 07 Jul 2024 14:44:31 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 467EVaRx013931;
+	Sun, 7 Jul 2024 14:44:31 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407gn0answ-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 07 Jul 2024 14:44:30 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 467EiPnK13304174
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 7 Jul 2024 14:44:27 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1554120049;
+	Sun,  7 Jul 2024 14:44:25 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3039C20040;
+	Sun,  7 Jul 2024 14:44:22 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.43.1.68])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun,  7 Jul 2024 14:44:21 +0000 (GMT)
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, namhyung@kernel.org, segher@kernel.crashing.org,
+        christophe.leroy@csgroup.eu
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com
+Subject: [PATCH V6 00/18] Add data type profiling support for powerpc
+Date: Sun,  7 Jul 2024 20:14:01 +0530
+Message-Id: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.35.1
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xtJNrQAwVppkUmLGXP-eN8YFGWe4uZjx
+X-Proofpoint-ORIG-GUID: DAQgsnKsO_mgSluAdt-5BDFhxXMmo85m
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1650:b0:4c0:8165:c391 with SMTP id
- 8926c6da1cb9f-4c08165c540mr466800173.4.1720363398504; Sun, 07 Jul 2024
- 07:43:18 -0700 (PDT)
-Date: Sun, 07 Jul 2024 07:43:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000040b643061ca951fe@google.com>
-Subject: [syzbot] [kernel?] possible deadlock in assign_fw
-From: syzbot <syzbot+e70e4c6f6eee43357ba7@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	mcgrof@kernel.org, rafael@kernel.org, russ.weight@linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-07_06,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ bulkscore=0 mlxscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ impostorscore=0 phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407070117
 
-Hello,
+The patchset from Namhyung added support for data type profiling
+in perf tool. This enabled support to associate PMU samples to data
+types they refer using DWARF debug information. With the upstream
+perf, currently it possible to run perf report or perf annotate to
+view the data type information on x86.
 
-syzbot found the following issue on:
+Initial patchset posted here had changes need to enable data type
+profiling support for powerpc.
 
-HEAD commit:    e9d22f7a6655 Merge tag 'linux_kselftest-fixes-6.10-rc7' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1471b399980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=864caee5f78cab51
-dashboard link: https://syzkaller.appspot.com/bug?extid=e70e4c6f6eee43357ba7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+https://lore.kernel.org/all/6e09dc28-4a2e-49d8-a2b5-ffb3396a9952@csgroup.eu/T/
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Main change were:
+1. powerpc instruction nmemonic table to associate load/store
+instructions with move_ops which is use to identify if instruction
+is a memory access one.
+2. To get register number and access offset from the given
+instruction, code uses fields from "struct arch" -> objump.
+Added entry for powerpc here.
+3. A get_arch_regnum to return register number from the
+register name string.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c3dd72a93425/disk-e9d22f7a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9d79986da9dc/vmlinux-e9d22f7a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0df271bec574/bzImage-e9d22f7a.xz
+But the apporach used in the initial patchset used parsing of
+disassembled code which the current perf tool implementation does.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e70e4c6f6eee43357ba7@syzkaller.appspotmail.com
+Example: lwz     r10,0(r9)
 
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 000000000000006e R14: 00007f30c0504038 R15: 00007f30c062fa68
- </TASK>
-============================================
-WARNING: possible recursive locking detected
-6.10.0-rc6-syzkaller-00061-ge9d22f7a6655 #0 Not tainted
---------------------------------------------
-syz.1.2110/15436 is trying to acquire lock:
-ffffffff8ec73968 (fw_lock){+.+.}-{3:3}, at: assign_fw+0x56/0x890 drivers/base/firmware_loader/main.c:700
+This line "lwz r10,0(r9)" is parsed to extract instruction name,
+registers names and offset. Also to find whether there is a memory
+reference in the operands, "memory_ref_char" field of objdump is used.
+For x86, "(" is used as memory_ref_char to tackle instructions of the
+form "mov  (%rax), %rcx".
 
-but task is already holding lock:
-ffffffff8ec73968 (fw_lock){+.+.}-{3:3}, at: device_cache_fw_images drivers/base/firmware_loader/main.c:1483 [inline]
-ffffffff8ec73968 (fw_lock){+.+.}-{3:3}, at: fw_pm_notify+0x232/0x2f0 drivers/base/firmware_loader/main.c:1536
+In case of powerpc, not all instructions using "(" are the only memory
+instructions. Example, above instruction can also be of extended form (X
+form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
+and extract the source/target registers, second patchset added support to use
+raw instruction. With raw instruction, macros are added to extract opcode
+and register fields.
+Link to second patchset:
+https://lore.kernel.org/all/20240506121906.76639-1-atrajeev@linux.vnet.ibm.com/
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+Example representation using --show-raw-insn in objdump gives result:
 
-       CPU0
-       ----
-  lock(fw_lock);
-  lock(fw_lock);
+38 01 81 e8     ld      r4,312(r1)
 
- *** DEADLOCK ***
+Here "38 01 81 e8" is the raw instruction representation. In powerpc,
+this translates to instruction form: "ld RT,DS(RA)" and binary code
+as:
+  _____________________________________
+  | 58 |  RT  |  RA |      DS       | |
+  -------------------------------------
+0    6     11    16              30 31
 
- May be due to missing lock nesting notation
+Second patchset used "objdump" again to read the raw instruction.
+But since there is no need to disassemble and binary code can be read
+directly from the DSO, third patchset (ie this patchset) uses below
+apporach. The apporach preferred in powerpc to parse sample for data
+type profiling in V3 patchset is:
+- Read directly from DSO using dso__data_read_offset
+- If that fails for any case, fallback to using libcapstone
+- If libcapstone is not supported, approach will use objdump
 
-5 locks held by syz.1.2110/15436:
- #0: ffffffff8eb2f6e8 (misc_mtx){+.+.}-{3:3}, at: misc_open+0x5c/0x390 drivers/char/misc.c:129
- #1: ffffffff8e1e7368 (system_transition_mutex){+.+.}-{3:3}, at: lock_system_sleep+0x60/0xa0 kernel/power/main.c:56
- #2: ffffffff8e2077f0 ((pm_chain_head).rwsem){++++}-{3:3}, at: blocking_notifier_call_chain_robust+0xac/0x1e0 kernel/notifier.c:352
- #3: ffffffff8ec73968 (fw_lock){+.+.}-{3:3}, at: device_cache_fw_images drivers/base/firmware_loader/main.c:1483 [inline]
- #3: ffffffff8ec73968 (fw_lock){+.+.}-{3:3}, at: fw_pm_notify+0x232/0x2f0 drivers/base/firmware_loader/main.c:1536
- #4: ffffffff8ec6ea08 (dpm_list_mtx){+.+.}-{3:3}, at: device_pm_lock drivers/base/power/main.c:113 [inline]
- #4: ffffffff8ec6ea08 (dpm_list_mtx){+.+.}-{3:3}, at: dpm_for_each_dev+0x2b/0xc0 drivers/base/power/main.c:1961
+Patchset adds support to pick the opcode and reg fields from this
+raw/binary instruction code. This approach came in from review comment
+by Segher Boessenkool and Christophe for the initial patchset.
 
-stack backtrace:
-CPU: 0 PID: 15436 Comm: syz.1.2110 Not tainted 6.10.0-rc6-syzkaller-00061-ge9d22f7a6655 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_deadlock kernel/locking/lockdep.c:3062 [inline]
- validate_chain+0x15d3/0x5900 kernel/locking/lockdep.c:3856
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- assign_fw+0x56/0x890 drivers/base/firmware_loader/main.c:700
- _request_firmware+0xd0a/0x12b0 drivers/base/firmware_loader/main.c:917
- request_firmware drivers/base/firmware_loader/main.c:963 [inline]
- cache_firmware drivers/base/firmware_loader/main.c:1265 [inline]
- __async_dev_cache_fw_image+0xe7/0x320 drivers/base/firmware_loader/main.c:1379
- async_schedule_node_domain+0xdc/0x110 kernel/async.c:221
- async_schedule_domain include/linux/async.h:72 [inline]
- dev_cache_fw_image+0x36d/0x3e0 drivers/base/firmware_loader/main.c:1435
- dpm_for_each_dev+0x58/0xc0 drivers/base/power/main.c:1963
- device_cache_fw_images drivers/base/firmware_loader/main.c:1485 [inline]
- fw_pm_notify+0x24a/0x2f0 drivers/base/firmware_loader/main.c:1536
- notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
- notifier_call_chain_robust kernel/notifier.c:128 [inline]
- blocking_notifier_call_chain_robust+0xe8/0x1e0 kernel/notifier.c:353
- pm_notifier_call_chain_robust+0x2c/0x60 kernel/power/main.c:102
- snapshot_open+0x1a1/0x280 kernel/power/user.c:77
- misc_open+0x313/0x390 drivers/char/misc.c:165
- chrdev_open+0x5b0/0x630 fs/char_dev.c:414
- do_dentry_open+0x970/0x1450 fs/open.c:955
- vfs_open+0x3e/0x330 fs/open.c:1086
- do_open fs/namei.c:3654 [inline]
- path_openat+0x2c01/0x35f0 fs/namei.c:3813
- do_filp_open+0x235/0x490 fs/namei.c:3840
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1413
- do_sys_open fs/open.c:1428 [inline]
- __do_sys_openat fs/open.c:1444 [inline]
- __se_sys_openat fs/open.c:1439 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1439
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f30c0375bd9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f30c1120048 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f30c0504038 RCX: 00007f30c0375bd9
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: ffffffffffffff9c
-RBP: 00007f30c11200a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 000000000000006e R14: 00007f30c0504038 R15: 00007f30c062fa68
- </TASK>
+Apart from that, instruction tracking is enabled for powerpc and
+support function is added to find variables defined as registers
+Example, in powerpc, below two registers are
+defined to represent variable:
+1. r13: represents local_paca
+register struct paca_struct *local_paca asm("r13");
 
+2. r1: represents stack_pointer
+register void *__stack_pointer asm("r1");
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+These are handled in this patchset.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+- Patch 1 is to rearrange register state type structures to header file
+so that it can referred from other arch specific files
+- Patch 2 is to make instruction tracking as a callback to"struct arch"
+so that it can be implemented by other archs easily and defined in arch
+specific files
+- Patch 3 is to handle state type regs array size for x86 and powerpc
+- Patch 4 adds support to capture and parse raw instruction in powerpc
+using dso__data_read_offset utility
+- Patch 4 also adds logic to support using objdump when doing default "perf
+report" or "perf annotate" since it that needs disassembled instruction.
+- Patch 5 adds disasm_line__parse to parse raw instruction for powerpc
+- Patch 6 update parameters for reg extract functions to use raw
+instruction on powerpc
+- Patch 7 updates ins__find to carry raw_insn and also adds parse
+callback for memory instructions for powerpc
+- Patch 8 add support to identify memory instructions of opcode 31 in
+powerpc
+- Patch 9 adds more instructions to support instruction tracking in powerpc
+- Patch 10 and 11 handles instruction tracking for powerpc.
+- Patch 12, 13 and 14 add support to use libcapstone in powerpc
+- Patch 15 and patch 16 handles support to find global register variables
+- PAtch 17 updates data type compare functions data_type_cmp and
+  sort__typeoff_sort to include var_name along with type_name in
+  comparison.
+- Patch 18 handles insn-stat option for perf annotate
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Note:
+- There are remaining unknowns (25%) as seen in annotate Instruction stats
+below.
+- This patchset is not tested on powerpc32. In next step of enhancements
+along with handling remaining unknowns, plan to cover powerpc32 changes
+based on how testing goes.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+With the current patchset:
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+ ./perf record -a -e mem-loads sleep 1
+ ./perf report -s type,typeoff --hierarchy --group --stdio
+ ./perf annotate --data-type --insn-stat
 
-If you want to undo deduplication, reply with:
-#syz undup
+perf annotate logs:
+==================
+
+Annotate Instruction stats
+total 609, ok 446 (73.2%), bad 163 (26.8%)
+
+  Name/opcode:  Good   Bad
+  -----------------------------------------------------------
+  58                  :   323    80
+  32                  :    49    43
+  34                  :    33    11
+  OP_31_XOP_LDX       :     8    20
+  40                  :    23     0
+  OP_31_XOP_LWARX     :     5     1
+  OP_31_XOP_LWZX      :     2     3
+  OP_31_XOP_LDARX     :     3     0
+  33                  :     0     2
+  OP_31_XOP_LBZX      :     0     1
+  OP_31_XOP_LWAX      :     0     1
+  OP_31_XOP_LHZX      :     0     1
+
+perf report logs:
+=================
+
+  Total Lost Samples: 0
+
+  Samples: 1K of event 'mem-loads'
+  Event count (approx.): 937238
+
+  Overhead  Data Type  Data Type Offset
+ ........  .........  ................
+    48.60%  (unknown)  (unknown) +0 (no field)
+    11.42%  long unsigned int  long unsigned int +0 (current_stack_pointer)
+     4.68%  struct paca_struct  struct paca_struct +2312 (__current)
+     4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask)
+     2.69%  struct paca_struct  struct paca_struct +2808 (canary)
+     2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
+     2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
+     1.43%  long unsigned int  long unsigned int +0 (no field)
+     1.41%  struct vm_fault  struct vm_fault +0 (vma)
+     1.29%  struct task_struct  struct task_struct +276 (flags)
+     1.03%  struct pt_regs  struct pt_regs +264 (user_regs.msr)
+     0.90%  struct security_hook_list  struct security_hook_list +0 (list.next)
+     0.76%  struct irq_desc  struct irq_desc +304 (irq_data.chip)
+     0.76%  struct rq  struct rq +2856 (cpu)
+     0.72%  long long unsigned int  long long unsigned int +0 (no field)
+
+Thanks
+Athira Rajeev
+
+Changelog:
+From v5 -> v6:
+- Addressed review comments from Namhyung
+  Conditionally define TYPE_STATE_MAX_REGS based on arch.
+  Added macro for defining width of the raw codes and spaces
+  in disasm_line__parse_powerpc.
+  Call disasm_line__parse from disasm_line__parse_powerpc
+  for generic code.
+  Renamed symbol__disassemble_dso to symbol__disassemble_raw.
+  Fixed find_data_type_global_reg to correclty free var_types
+  and change indent level.
+  Fixed data_type_cmp and sort__typeoff_sort to include var_name
+  in comparing data type entries.
+  
+From v4 -> v5:
+- Addressed review comments from Namhyung
+  Handle max number of type state regs as 16 for x86 and 32 for
+  powerpc.
+  Added generic support for objdump patch first and DSO read
+  optimisation next
+  combined patch 3 and patch 4 in patchseries V4 to one patch
+  Changed reference for "raw_insn" to use "u32"
+  Splitted "parse" callback patch changes and "ins__find" patch
+  changes into two
+  Instead of making weak function, added get_powerpc_regs to
+  extract register and offset fields for powerpc
+- Addressed complation fail when "dwarf.h" is not present ie
+  elfutils devel is not present. Used includes for #ifdef HAVE_DWARF_SUPPORT
+  when including functions that use Dwarf references. Also
+  conditionally include some of the header files.
+
+From v3->v4:
+- Addressed review comments from Ian by using capston_init from
+  "util/print_insn.c" instead of "open_capston_handle".
+- Addressed review comment from Namhyung by moving "opcode"
+  field from "struct ins" to "struct disasm_line"
+
+From v2->v3:
+- Addressed review comments from Christophe and Namhyung for V2
+- Changed the apporach in powerpc to parse sample for data
+  type profiling as:
+  Read directly from DSO using dso__data_read_offset
+  If that fails for any case, fallback to using libcapstone
+  If libcapstone is not supported, approach will use objdump
+- Include instructions with opcode as 31 and correctly categorize
+  them as memory or arithmetic instructions.
+- Include more instructions for instruction tracking in powerpc
+
+From v1->v2:
+- Addressed suggestion from Christophe Leroy and Segher Boessenkool
+  to use the binary code (raw insn) to fetch opcode, register and
+  offset fields.
+- Added support for instruction tracking in powerpc
+- Find the register defined variables (r13 and r1 which points to
+  local_paca and current_stack_pointer in powerpc)
+
+Athira Rajeev (18):
+  tools/perf: Move the data structures related to register type to
+    header file
+  tools/perf: Add "update_insn_state" callback function to handle arch
+    specific instruction tracking
+  tools/perf: Update TYPE_STATE_MAX_REGS to include max of regs in
+    powerpc
+  tools/perf: Add disasm_line__parse to parse raw instruction for
+    powerpc
+  tools/perf: Add support to capture and parse raw instruction in
+    powerpc using dso__data_read_offset utility
+  tools/perf: Update parameters for reg extract functions to use raw
+    instruction on powerpc
+  tools/perf: Add parse function for memory instructions in powerpc
+  tools/perf: Add support to identify memory instructions of opcode 31
+    in powerpc
+  tools/perf: Add some of the arithmetic instructions to support
+    instruction tracking in powerpc
+  tools/perf: Add more instructions for instruction tracking
+  tools/perf: Update instruction tracking for powerpc
+  tools/perf: Make capstone_init non-static so that it can be used
+    during symbol disassemble
+  tools/perf: Use capstone_init and remove open_capstone_handle from
+    disasm.c
+  tools/perf: Add support to use libcapstone in powerpc
+  tools/perf: Add support to find global register variables using
+    find_data_type_global_reg
+  tools/perf: Add support for global_die to capture name of variable in
+    case of register defined variable
+  tools/perf: Update data_type_cmp and sort__typeoff_sort function to
+    include var_name in comparison
+  tools/perf: Set instruction name to be used with insn-stat when using
+    raw instruction
+
+ tools/include/linux/string.h                  |   2 +
+ tools/lib/string.c                            |  13 +
+ tools/perf/arch/arm64/annotate/instructions.c |   3 +-
+ .../arch/loongarch/annotate/instructions.c    |   6 +-
+ .../perf/arch/powerpc/annotate/instructions.c | 254 ++++++++
+ tools/perf/arch/powerpc/util/dwarf-regs.c     |  53 ++
+ tools/perf/arch/s390/annotate/instructions.c  |   5 +-
+ tools/perf/arch/x86/annotate/instructions.c   | 377 ++++++++++++
+ tools/perf/builtin-annotate.c                 |   4 +-
+ tools/perf/util/annotate-data.c               | 545 ++++--------------
+ tools/perf/util/annotate-data.h               |  83 +++
+ tools/perf/util/annotate.c                    |  29 +-
+ tools/perf/util/annotate.h                    |   6 +-
+ tools/perf/util/disasm.c                      | 468 +++++++++++++--
+ tools/perf/util/disasm.h                      |  19 +-
+ tools/perf/util/dwarf-aux.c                   |   1 +
+ tools/perf/util/dwarf-aux.h                   |   1 +
+ tools/perf/util/include/dwarf-regs.h          |  12 +
+ tools/perf/util/print_insn.c                  |  15 +-
+ tools/perf/util/print_insn.h                  |   5 +
+ tools/perf/util/sort.c                        |  23 +-
+ 21 files changed, 1420 insertions(+), 504 deletions(-)
+
+-- 
+2.43.0
+
 
