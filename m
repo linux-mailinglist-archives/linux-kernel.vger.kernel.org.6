@@ -1,391 +1,117 @@
-Return-Path: <linux-kernel+bounces-243523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31EF3929723
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AC0929729
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792E4281AC1
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:34:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB66281A33
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B773F9CC;
-	Sun,  7 Jul 2024 08:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274AD125B2;
+	Sun,  7 Jul 2024 08:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BUEdqSZX"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eadWUsw7"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE22C5227
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 08:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38DE7FF;
+	Sun,  7 Jul 2024 08:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720341269; cv=none; b=Pc23Y9Wlhf6KCFqtEMn7LKfprVjGeUxAAqKJQ2p4VmOYSvgaYehNAfE2Q1YW4oDTuer5plm5vj3EAa0lvJpF1aPY5AtzbSGCV7OhSngzCz+ioC7dXVnz964iT4BFGySH+KQUHq6Js5Ojk8EOwLyrAmIgAeh0bF6HGaQbt6z7l9o=
+	t=1720341947; cv=none; b=S25AeSOv8OauIcMdgCv5Or+kO3HGz7+dQ73URCijG2nXF1muIXxZkuzef9ETVG8EeRfQ0qw1kegvJrdpig2o79VjfCqLP2qMTDRsXjQqsUJX/l2x8OdhCK3aVcg1Mir3jSwkUiltrEnSNnnRnqK+KQWvb7NIpFjsH7xtciCDSP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720341269; c=relaxed/simple;
-	bh=YhFbHainyYeyciT6pc1KvK3diNomH6u/4XzJ0ctmYLM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aF7oO5rhhUZU3fOIfgodI124Wyhs/7UQPAoPc6LmD+iLU6i8x6IbbBkNqWzB8ukPuds/thC9cPMZjvdXQ3wmr+Yze3gIRl8rnBwI2FDUnIdC6J9jkpabS1Dmj5+wl4jWDT7QtHpXDvxodm3dt0hphZzXHr+l+1hvkztdaFkKh8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BUEdqSZX; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4678UOcB006842;
-	Sun, 7 Jul 2024 03:30:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720341024;
-	bh=yLpZSA+/kNe6Eaz8hHjEs6HoSIzToxZRAf/a0PLG8MM=;
-	h=From:To:CC:Subject:Date;
-	b=BUEdqSZXd5yMVxpXRjrHvbi8NWNJZ+8b8ld4k+kpTqag/wh/HnZN/pzAXC+ZVNbKa
-	 b1ZaWDUo8J9+E9AdTbNZP8WeDjFbwu69N8RihKITc4z+rs3UfCodDykMOdNjutEzG4
-	 0ix4MaW6u9hAHDXmqu7pBTST5HClnbAyERo6FCUM=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4678UOdS121327
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 7 Jul 2024 03:30:24 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 7
- Jul 2024 03:30:24 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 7 Jul 2024 03:30:24 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.158])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4678UERh011105;
-	Sun, 7 Jul 2024 03:30:15 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <zhourui@huaqin.com>,
-        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
-        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
-        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
-        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
-        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
-        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v1] ASoc: TAS2781: replace beXX_to_cpup with get_unaligned_beXX for potentially broken alignment
-Date: Sun, 7 Jul 2024 16:30:07 +0800
-Message-ID: <20240707083011.98-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1720341947; c=relaxed/simple;
+	bh=CyTzhOxBQthFyGXcVW6Ge9YgHiZ1vJTkQ/bVRvaHHaM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=jrsQeQy5Gwhxvz0KtXOhzKoCj3kvLAqlA8BPA/hdOWru40v30GkLbTKkPaTc3HX8vkaGcazBQejdiyee4TFzZf/jI44/nd5zm3hC0B1DnMSGIvW/9dgJMjiPWyi14EXexxdqr1o7zG995BNFUwKXn/s47a1LcYbTmEiqU4cs9Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eadWUsw7; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720341933; x=1720946733; i=markus.elfring@web.de;
+	bh=CyTzhOxBQthFyGXcVW6Ge9YgHiZ1vJTkQ/bVRvaHHaM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=eadWUsw7y7YOwkSdVRTHKXyD4L8okP2qS7lgfnVcwRqQJqj/5AhEPv40d1DrLoEI
+	 8tsnlWeBD5ZFS+osbWTWAfiBdl+ZB9v8fWBy4eSBuNhrdLlBFjp9uMY9vblggQyHI
+	 g21LdhVc7fXc/3+JCqQjOR5tEhxGHU4/6pCQ1fflOLRiO9l4xvcEtq4kmQckAutUi
+	 sbrvTtTp59d4Rex/AtR2d37kWxLuCGsqd4Aq4NQI0UXW8kOKLVsiVBGkbmRINaXYa
+	 VGEtjU+eFNe+7JpA5xwDXxeUaI8D0XCKN9FQMF06Tlp9lskNWxgnif2nZeQTTBzRW
+	 uj7mZ5RWraVrH2VG3A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MhWop-1rvQUg1It1-00opnh; Sun, 07
+ Jul 2024 10:45:33 +0200
+Message-ID: <8b24a50c-ac43-473c-80fd-185ee806b5f2@web.de>
+Date: Sun, 7 Jul 2024 10:45:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+To: Sungwoo Kim <iam@sung-woo.kim>, linux-bluetooth@vger.kernel.org,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Von Dentz <luiz.dentz@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, "Dave (Jing) Tian"
+ <daveti@purdue.edu>, Hui Peng <benquike@gmail.com>
+References: <20240706225124.1247944-1-iam@sung-woo.kim>
+Subject: Re: [PATCH v2] Bluetooth: hci: fix null-ptr-deref in
+ hci_read_supported_codecs
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240706225124.1247944-1-iam@sung-woo.kim>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/OKP/kB0LAmfffMhCRcvGRVdMSFXzQ52i23cPJFJn+XAfU8SzJ8
+ 2ZQaoCXiwmgGvtPLdY8g9kjL0wtTM5p5vVWgQjHowNmiMBxV4XXRwSdSB3ItarIwegOIClF
+ tSJ8/ZuE1NFmIgvRci5VsTFBmg//V5xGGD647yWw5podxTw9EibUb/c4dXfcLrT+439aXnN
+ w8HGMS3QisHS+e64VKb1Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Y1clwikdP70=;PQCF2KiXkStkpGaj/vHKAOZ8oxb
+ EtmBOfhTXhbbHKNq9PgRY2vuf5J1kVWwi27/Q1PEPTQ002LOE6CZojUnKsX/alLXEatk85jr0
+ YkZLdH+ScdyOK02eSf2rxeFjEhQERrlrWZN20BZsIKGGrDB5sYVc5JhMDuZn9jMykhEwJ7JQR
+ hv9+52J7bcOB4Ryg2DCM7OWFRbgiuTLvcgx0p18hy/gAbnj7k6Dp7dnlNwhIul9esvexU0lPP
+ oXrn+XHC7qny3pg/l7MIYIQlqC7vqRotMwh326qHyZHtrGj604VnfoN4KaPIW7lv/NoQcIMIS
+ X6Yo/SGWv+a8sYnIe7hGZo3p5iYozUEnYVNyrf4KxLUYY8u44xd9SAoAJblR66+YpO1bnzZ1b
+ 8RqfbpKga5M8AJBOA2WcmWyr+G3vmu1q9J3TIrQXwJHtbuWLLN8Jv1mpH7EZYnyaVBGb6Ibmf
+ dYSFhhMPg19s6rODTpY1cDKrUwLcPTFyElFXoPKZF5HyHHPRhjq4bPgQ3qcHZyfUHaAwJUopC
+ rKwsRPQbC7DhpCebjkG7Y4ulVAT2TPvOz7Xd8U9737UW1aN1S9k2xxN+AL/QKvEOySVMx227c
+ L+zb58hqQ3+gNZG9aVMr4b9KTAb/NrpkHv6f8E8i7ge8wjWKzTPYo2IkVUi121KqWaX1oSsHU
+ CTwktJRXnaGjG7PU6gwwIUAoCIH1LSYzuyyOtlDgH/F+s9K2GTUpa5g4fRdkq+U4k6en0QLvx
+ HmnLIpxL/WRTatA+RC1Plzb4uQOBuIGizM/w/p+q6ka4WonDHSDWiA1Lrjetuu2FGY96U+EiS
+ oZ85y7gzoE6+EF2yfNC2+PnDFkNaj+HHcH2fPxxO5n9HY=
 
-Use get_unaligned_be16 instead of be16_to_cpup and get_unaligned_be32
-instead of be32_to_cpup for potentially broken alignment.
+Please put email addresses for recipients not only into the message field =
+=E2=80=9CCc=E2=80=9D.
 
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
----
-v1:
- - Add "#include <asm/unaligned.h>" for the declaration of
-   get_unaligned_beXX
----
- sound/soc/codecs/tas2781-fmwlib.c | 71 +++++++++++++++----------------
- 1 file changed, 35 insertions(+), 36 deletions(-)
+=E2=80=A6
+> Fix __hci_cmd_sync_sk() to not return NULL.
+>
+> KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
+=E2=80=A6
 
-diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-index 838d29fead96..63626b982d04 100644
---- a/sound/soc/codecs/tas2781-fmwlib.c
-+++ b/sound/soc/codecs/tas2781-fmwlib.c
-@@ -21,7 +21,7 @@
- #include <sound/soc.h>
- #include <sound/tlv.h>
- #include <sound/tas2781.h>
--
-+#include <asm/unaligned.h>
- 
- #define ERROR_PRAM_CRCCHK			0x0000000
- #define ERROR_YRAM_CRCCHK			0x0000001
-@@ -187,8 +187,7 @@ static struct tasdevice_config_info *tasdevice_add_config(
- 	/* convert data[offset], data[offset + 1], data[offset + 2] and
- 	 * data[offset + 3] into host
- 	 */
--	cfg_info->nblocks =
--		be32_to_cpup((__be32 *)&config_data[config_offset]);
-+	cfg_info->nblocks = get_unaligned_be32(&config_data[config_offset]);
- 	config_offset += 4;
- 
- 	/* Several kinds of dsp/algorithm firmwares can run on tas2781,
-@@ -232,14 +231,14 @@ static struct tasdevice_config_info *tasdevice_add_config(
- 
- 		}
- 		bk_da[i]->yram_checksum =
--			be16_to_cpup((__be16 *)&config_data[config_offset]);
-+			get_unaligned_be16(&config_data[config_offset]);
- 		config_offset += 2;
- 		bk_da[i]->block_size =
--			be32_to_cpup((__be32 *)&config_data[config_offset]);
-+			get_unaligned_be32(&config_data[config_offset]);
- 		config_offset += 4;
- 
- 		bk_da[i]->n_subblks =
--			be32_to_cpup((__be32 *)&config_data[config_offset]);
-+			get_unaligned_be32(&config_data[config_offset]);
- 
- 		config_offset += 4;
- 
-@@ -289,7 +288,7 @@ int tasdevice_rca_parser(void *context, const struct firmware *fmw)
- 	}
- 	buf = (unsigned char *)fmw->data;
- 
--	fw_hdr->img_sz = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_hdr->img_sz = get_unaligned_be32(&buf[offset]);
- 	offset += 4;
- 	if (fw_hdr->img_sz != fmw->size) {
- 		dev_err(tas_priv->dev,
-@@ -300,9 +299,9 @@ int tasdevice_rca_parser(void *context, const struct firmware *fmw)
- 		goto out;
- 	}
- 
--	fw_hdr->checksum = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_hdr->checksum = get_unaligned_be32(&buf[offset]);
- 	offset += 4;
--	fw_hdr->binary_version_num = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_hdr->binary_version_num = get_unaligned_be32(&buf[offset]);
- 	if (fw_hdr->binary_version_num < 0x103) {
- 		dev_err(tas_priv->dev, "File version 0x%04x is too low",
- 			fw_hdr->binary_version_num);
-@@ -311,7 +310,7 @@ int tasdevice_rca_parser(void *context, const struct firmware *fmw)
- 		goto out;
- 	}
- 	offset += 4;
--	fw_hdr->drv_fw_version = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_hdr->drv_fw_version = get_unaligned_be32(&buf[offset]);
- 	offset += 8;
- 	fw_hdr->plat_type = buf[offset];
- 	offset += 1;
-@@ -339,11 +338,11 @@ int tasdevice_rca_parser(void *context, const struct firmware *fmw)
- 	for (i = 0; i < TASDEVICE_DEVICE_SUM; i++, offset++)
- 		fw_hdr->devs[i] = buf[offset];
- 
--	fw_hdr->nconfig = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_hdr->nconfig = get_unaligned_be32(&buf[offset]);
- 	offset += 4;
- 
- 	for (i = 0; i < TASDEVICE_CONFIG_SUM; i++) {
--		fw_hdr->config_size[i] = be32_to_cpup((__be32 *)&buf[offset]);
-+		fw_hdr->config_size[i] = get_unaligned_be32(&buf[offset]);
- 		offset += 4;
- 		total_config_sz += fw_hdr->config_size[i];
- 	}
-@@ -423,7 +422,7 @@ static int fw_parse_block_data_kernel(struct tasdevice_fw *tas_fmw,
- 	/* convert data[offset], data[offset + 1], data[offset + 2] and
- 	 * data[offset + 3] into host
- 	 */
--	block->type = be32_to_cpup((__be32 *)&data[offset]);
-+	block->type = get_unaligned_be32(&data[offset]);
- 	offset += 4;
- 
- 	block->is_pchksum_present = data[offset];
-@@ -438,10 +437,10 @@ static int fw_parse_block_data_kernel(struct tasdevice_fw *tas_fmw,
- 	block->ychksum = data[offset];
- 	offset++;
- 
--	block->blk_size = be32_to_cpup((__be32 *)&data[offset]);
-+	block->blk_size = get_unaligned_be32(&data[offset]);
- 	offset += 4;
- 
--	block->nr_subblocks = be32_to_cpup((__be32 *)&data[offset]);
-+	block->nr_subblocks = get_unaligned_be32(&data[offset]);
- 	offset += 4;
- 
- 	/* fixed m68k compiling issue:
-@@ -482,7 +481,7 @@ static int fw_parse_data_kernel(struct tasdevice_fw *tas_fmw,
- 		offset = -EINVAL;
- 		goto out;
- 	}
--	img_data->nr_blk = be32_to_cpup((__be32 *)&data[offset]);
-+	img_data->nr_blk = get_unaligned_be32(&data[offset]);
- 	offset += 4;
- 
- 	img_data->dev_blks = kcalloc(img_data->nr_blk,
-@@ -578,14 +577,14 @@ static int fw_parse_variable_header_kernel(
- 		offset = -EINVAL;
- 		goto out;
- 	}
--	fw_hdr->device_family = be16_to_cpup((__be16 *)&buf[offset]);
-+	fw_hdr->device_family = get_unaligned_be16(&buf[offset]);
- 	if (fw_hdr->device_family != 0) {
- 		dev_err(tas_priv->dev, "%s:not TAS device\n", __func__);
- 		offset = -EINVAL;
- 		goto out;
- 	}
- 	offset += 2;
--	fw_hdr->device = be16_to_cpup((__be16 *)&buf[offset]);
-+	fw_hdr->device = get_unaligned_be16(&buf[offset]);
- 	if (fw_hdr->device >= TASDEVICE_DSP_TAS_MAX_DEVICE ||
- 		fw_hdr->device == 6) {
- 		dev_err(tas_priv->dev, "Unsupported dev %d\n", fw_hdr->device);
-@@ -603,7 +602,7 @@ static int fw_parse_variable_header_kernel(
- 		goto out;
- 	}
- 
--	tas_fmw->nr_programs = be32_to_cpup((__be32 *)&buf[offset]);
-+	tas_fmw->nr_programs = get_unaligned_be32(&buf[offset]);
- 	offset += 4;
- 
- 	if (tas_fmw->nr_programs == 0 || tas_fmw->nr_programs >
-@@ -622,14 +621,14 @@ static int fw_parse_variable_header_kernel(
- 
- 	for (i = 0; i < tas_fmw->nr_programs; i++) {
- 		program = &(tas_fmw->programs[i]);
--		program->prog_size = be32_to_cpup((__be32 *)&buf[offset]);
-+		program->prog_size = get_unaligned_be32(&buf[offset]);
- 		offset += 4;
- 	}
- 
- 	/* Skip the unused prog_size */
- 	offset += 4 * (TASDEVICE_MAXPROGRAM_NUM_KERNEL - tas_fmw->nr_programs);
- 
--	tas_fmw->nr_configurations = be32_to_cpup((__be32 *)&buf[offset]);
-+	tas_fmw->nr_configurations = get_unaligned_be32(&buf[offset]);
- 	offset += 4;
- 
- 	/* The max number of config in firmware greater than 4 pieces of
-@@ -661,7 +660,7 @@ static int fw_parse_variable_header_kernel(
- 
- 	for (i = 0; i < tas_fmw->nr_programs; i++) {
- 		config = &(tas_fmw->configs[i]);
--		config->cfg_size = be32_to_cpup((__be32 *)&buf[offset]);
-+		config->cfg_size = get_unaligned_be32(&buf[offset]);
- 		offset += 4;
- 	}
- 
-@@ -699,7 +698,7 @@ static int tasdevice_process_block(void *context, unsigned char *data,
- 		switch (subblk_typ) {
- 		case TASDEVICE_CMD_SING_W: {
- 			int i;
--			unsigned short len = be16_to_cpup((__be16 *)&data[2]);
-+			unsigned short len = get_unaligned_be16(&data[2]);
- 
- 			subblk_offset += 2;
- 			if (subblk_offset + 4 * len > sublocksize) {
-@@ -725,7 +724,7 @@ static int tasdevice_process_block(void *context, unsigned char *data,
- 		}
- 			break;
- 		case TASDEVICE_CMD_BURST: {
--			unsigned short len = be16_to_cpup((__be16 *)&data[2]);
-+			unsigned short len = get_unaligned_be16(&data[2]);
- 
- 			subblk_offset += 2;
- 			if (subblk_offset + 4 + len > sublocksize) {
-@@ -766,7 +765,7 @@ static int tasdevice_process_block(void *context, unsigned char *data,
- 				is_err = true;
- 				break;
- 			}
--			sleep_time = be16_to_cpup((__be16 *)&data[2]) * 1000;
-+			sleep_time = get_unaligned_be16(&data[2]) * 1000;
- 			usleep_range(sleep_time, sleep_time + 50);
- 			subblk_offset += 2;
- 		}
-@@ -910,7 +909,7 @@ static int fw_parse_variable_hdr(struct tasdevice_priv
- 
- 	offset += len;
- 
--	fw_hdr->device_family = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_hdr->device_family = get_unaligned_be32(&buf[offset]);
- 	if (fw_hdr->device_family != 0) {
- 		dev_err(tas_priv->dev, "%s: not TAS device\n", __func__);
- 		offset = -EINVAL;
-@@ -918,7 +917,7 @@ static int fw_parse_variable_hdr(struct tasdevice_priv
- 	}
- 	offset += 4;
- 
--	fw_hdr->device = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_hdr->device = get_unaligned_be32(&buf[offset]);
- 	if (fw_hdr->device >= TASDEVICE_DSP_TAS_MAX_DEVICE ||
- 		fw_hdr->device == 6) {
- 		dev_err(tas_priv->dev, "Unsupported dev %d\n", fw_hdr->device);
-@@ -963,7 +962,7 @@ static int fw_parse_block_data(struct tasdevice_fw *tas_fmw,
- 		offset = -EINVAL;
- 		goto out;
- 	}
--	block->type = be32_to_cpup((__be32 *)&data[offset]);
-+	block->type = get_unaligned_be32(&data[offset]);
- 	offset += 4;
- 
- 	if (tas_fmw->fw_hdr.fixed_hdr.drv_ver >= PPC_DRIVER_CRCCHK) {
-@@ -988,7 +987,7 @@ static int fw_parse_block_data(struct tasdevice_fw *tas_fmw,
- 		block->is_ychksum_present = 0;
- 	}
- 
--	block->nr_cmds = be32_to_cpup((__be32 *)&data[offset]);
-+	block->nr_cmds = get_unaligned_be32(&data[offset]);
- 	offset += 4;
- 
- 	n = block->nr_cmds * 4;
-@@ -1039,7 +1038,7 @@ static int fw_parse_data(struct tasdevice_fw *tas_fmw,
- 		goto out;
- 	}
- 	offset += n;
--	img_data->nr_blk = be16_to_cpup((__be16 *)&data[offset]);
-+	img_data->nr_blk = get_unaligned_be16(&data[offset]);
- 	offset += 2;
- 
- 	img_data->dev_blks = kcalloc(img_data->nr_blk,
-@@ -1076,7 +1075,7 @@ static int fw_parse_program_data(struct tasdevice_priv *tas_priv,
- 		offset = -EINVAL;
- 		goto out;
- 	}
--	tas_fmw->nr_programs = be16_to_cpup((__be16 *)&buf[offset]);
-+	tas_fmw->nr_programs = get_unaligned_be16(&buf[offset]);
- 	offset += 2;
- 
- 	if (tas_fmw->nr_programs == 0) {
-@@ -1143,7 +1142,7 @@ static int fw_parse_configuration_data(
- 		offset = -EINVAL;
- 		goto out;
- 	}
--	tas_fmw->nr_configurations = be16_to_cpup((__be16 *)&data[offset]);
-+	tas_fmw->nr_configurations = get_unaligned_be16(&data[offset]);
- 	offset += 2;
- 
- 	if (tas_fmw->nr_configurations == 0) {
-@@ -1775,7 +1774,7 @@ static int fw_parse_header(struct tasdevice_priv *tas_priv,
- 	/* Convert data[offset], data[offset + 1], data[offset + 2] and
- 	 * data[offset + 3] into host
- 	 */
--	fw_fixed_hdr->fwsize = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_fixed_hdr->fwsize = get_unaligned_be32(&buf[offset]);
- 	offset += 4;
- 	if (fw_fixed_hdr->fwsize != fmw->size) {
- 		dev_err(tas_priv->dev, "File size not match, %lu %u",
-@@ -1784,9 +1783,9 @@ static int fw_parse_header(struct tasdevice_priv *tas_priv,
- 		goto out;
- 	}
- 	offset += 4;
--	fw_fixed_hdr->ppcver = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_fixed_hdr->ppcver = get_unaligned_be32(&buf[offset]);
- 	offset += 8;
--	fw_fixed_hdr->drv_ver = be32_to_cpup((__be32 *)&buf[offset]);
-+	fw_fixed_hdr->drv_ver = get_unaligned_be32(&buf[offset]);
- 	offset += 72;
- 
-  out:
-@@ -1828,7 +1827,7 @@ static int fw_parse_calibration_data(struct tasdevice_priv *tas_priv,
- 		offset = -EINVAL;
- 		goto out;
- 	}
--	tas_fmw->nr_calibrations = be16_to_cpup((__be16 *)&data[offset]);
-+	tas_fmw->nr_calibrations = get_unaligned_be16(&data[offset]);
- 	offset += 2;
- 
- 	if (tas_fmw->nr_calibrations != 1) {
--- 
-2.34.1
+How do you think about to use a summary phrase like
+=E2=80=9CPrevent null pointer dereference in hci_read_supported_codecs()=
+=E2=80=9D?
 
+
+=E2=80=A6
+> Fixes: abfeea476c68 ("Bluetooth: hci_sync: Convert MGMT_OP_START_DISCOVE=
+RY")
+=E2=80=A6
+
+Would you like to add a =E2=80=9Cstable tag=E2=80=9D accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/stable-kernel-rules.rst?h=3Dv6.10-rc6#n34
+
+Regards,
+Markus
 
