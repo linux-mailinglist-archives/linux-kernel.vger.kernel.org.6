@@ -1,174 +1,131 @@
-Return-Path: <linux-kernel+bounces-243714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A495A929982
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:23:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266F5929985
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A3A1281482
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1D351F212A6
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762CF6F2E5;
-	Sun,  7 Jul 2024 19:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BEB6CDAB;
+	Sun,  7 Jul 2024 19:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O0gZTKHW"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="V+upbhkY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jjp1bY+H"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD8B55893
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 19:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB9A34545;
+	Sun,  7 Jul 2024 19:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720380185; cv=none; b=hc/FxLvTRrpt+ejGZVfUbVMcRU2fGLfQgBbw9TPqoTfCNEWyg8Ze0r3FnJcFZIxi2sUtAjbamMBZM241qWYFUrzughzBnV+BWVZPRVhKqKhzgwb/1t8Vy3mzxL3nUHESXRK6BL8xayA/5WHtTo4RL8GIIB9ikphcF1qC9ggoFDI=
+	t=1720381103; cv=none; b=Qo3Zj31qgeKwjIiNBi7THzKANk57zMplxCCsB80CmO6YSPNVNF6Z3v+XLI72ENIhcMTTuxJ5qiONPLks1axbsfjAtk0YGlq8N/iMN/QBnzkO07wwwYuUxPpiOGn+0lTiwuJSJJqBX+irtbgZeOVSzZzS47iOyPiYUvz30P9w4dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720380185; c=relaxed/simple;
-	bh=EpPs/PieXAoJ9C1Niu2SR/rTGpSjbWX77CzmDxsNsCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J4SIhdJdioECrWfu242Dy2eWWCYSBMA0qWakHktM3tUpdhpd8D62tq2mLKYlLym0UScSZxh62gJyhIERSS+ecB4tlea3ITIdUYfjLpXK1mzVEn5dxJJaI0xRrk0sibOvh7jsaTYq40OH2ZrlXQbJgfWppqg6OGkPMzFCbxi7u4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=O0gZTKHW; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77c9c5d68bso260390266b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 12:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1720380182; x=1720984982; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r0kqfSkBdmswPIG4hqXsZ+rgeH3ZVa2Soxi8UY2qccM=;
-        b=O0gZTKHWqwDskabka0/dAI4tfr6cJLX8haT1skAujsKfM4W3QilrlqCBwDr44hKW17
-         xtgglYIPxVAdWCI+RJsP1vrns2bj0cUvkT40pn5gDU0uFGfxLoUP7WHAqAdYUPNViAiy
-         xvwJZ9+fbwptTWg8g8RSgavWJZrIA0TgP17Cg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720380182; x=1720984982;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r0kqfSkBdmswPIG4hqXsZ+rgeH3ZVa2Soxi8UY2qccM=;
-        b=rYRd5aJNy1EAGueURsvhGT1Fxk/6rysLVl3z9TctFQcN/ENteYPI9QU4aySvzZKhew
-         nbFIBxrHbcaD0pY8AUKKuUKE//+ysCu4rNwHOQkB9s+BmyrXA/jo6vSVzZ5c66czQQPF
-         /6WTMwmpLykwrF9+qVCNzf9ykg6rpOh4YEN8xnPrjTGLsm3DX/OcoW5T6NTnfeDDcNua
-         ywEmfYVwPfCSuOI9B/74VTCDsO/QGh5fpMQxVHNnUHK8P7tg55p+CsUcntJVieuMVU0O
-         fG/+FdHgWtGM2y5a+gVfDY45kmWo9RiPCm4Jtm4ggUIZDMixPY+Yxxr6MLr0IX73+O1S
-         kghw==
-X-Forwarded-Encrypted: i=1; AJvYcCXx1DACwGfaJjbE/Hhprn0cGYjNV4ub5ELK6cHNUTqVjE0DTLwMCINMO2EWM9B8nSf7FBFbqW6R54k/ScbgVr1wJGn/tm/wHrP6VPjv
-X-Gm-Message-State: AOJu0Yyaqu50setfhqblDwlG2Ys+IRupuodIRaNosOCF/7Y1K8ONdvKt
-	VNrWpOLGnGKY9yIebwKfgmijBVRuBJ8xau39mIBaC3k6IHZylATLbOgzFeGg+zqatui5YCGaRQE
-	hnmb9cA==
-X-Google-Smtp-Source: AGHT+IFKIxtdQLj8rYciQUnfKuVc4nv3ypiQkOb74bOTLRpWIPjhoq6zWN2+/Xgpj+SJI++1TNX6xQ==
-X-Received: by 2002:a17:907:97c8:b0:a77:b410:b1ed with SMTP id a640c23a62f3a-a77ba48325cmr875597466b.36.1720380181863;
-        Sun, 07 Jul 2024 12:23:01 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77c68cf842sm265059566b.148.2024.07.07.12.23.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jul 2024 12:23:01 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77c4309fc8so313883566b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 12:23:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXipNqzzZ81yoRj6r3ljCU9+5NN4hnPANaz0sZUtl/dfSxzGbDXolad/seaDvitxWxjWZDJQ3BJQrUjP9zm3S5j1jmVElgPbbso1ChU
-X-Received: by 2002:a17:906:7708:b0:a75:3c31:4f58 with SMTP id
- a640c23a62f3a-a77ba46fa2bmr620405066b.32.1720380181227; Sun, 07 Jul 2024
- 12:23:01 -0700 (PDT)
+	s=arc-20240116; t=1720381103; c=relaxed/simple;
+	bh=a4kkbaTvFndhYJsUksQQjEEibO7NQHKBUX/1MXwtQLk=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=YHMvhBhs5kfMPoCcpOmJf0QnMGt/NEc3CU1GsvrYoZalPZzpqxDvq0GI3TcFAHD+N97ImS1ajVZFhK8H+hIhpZPbB2kviOpeEEJ8Kxm5W0Jg6H37DpjC1J8ZnL6En7+AMILWE2z0t5xd0UjRE7gqfU4RVC0hflR/XrDENbRa4VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=V+upbhkY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jjp1bY+H; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id DDE3F1140298;
+	Sun,  7 Jul 2024 15:38:20 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Sun, 07 Jul 2024 15:38:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720381100; x=1720467500; bh=i3QTytn5Xr
+	/5YqRfU9uxDP6T/PtFr8v+b1aNKyRVK+M=; b=V+upbhkYUfj9Sln81iDRm/HW83
+	orKxf+tv8sgI2q9Ys/hhU1AACFXlfqW/9T4rbwLqA32LA0aTGEiBz4tzqUXGf8PW
+	H1FadM+MCZBXSGo8yFe0hU9Aex6UjvNez3MvYcb9Lhuf9pyhwIiM8YZqUZCvJFE0
+	khJl/m9l+O5hjI1rmlpau+79zyssn+OFaPTd6dhjHvohat9b9hABndJsAAKiafb6
+	vQw/KrHY43y6YXCQf2+8Dyp3Fcf4ZcDytZiHPZU9YlhmolkQnGWq9YTbz8ItBDD+
+	kmlWAB8nMLzZJmMFbvgSk9I375J16yIhkPgmHtsauB5pjYsuNk27zLELHYFw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720381100; x=1720467500; bh=i3QTytn5Xr/5YqRfU9uxDP6T/PtF
+	r8v+b1aNKyRVK+M=; b=jjp1bY+HjOWk6TTAgs8BEyJDgDH3+yj+8l39Oy/zTH6M
+	qOtCe2O477XqtdzEAMmP+d3b6OdCdrauT9+HvT5yA3ZFUOfTiS1AeZbNgA9SCftA
+	HCwCiWgvUYeNVDue5F4ipflSHKXM9HIdCxVxn8Jcd1MTfbNjKSxTkZ3OJYK86Brc
+	INAv93WURylIPmu0Nk8zI2DHglk83dUfPxxq7U6Fbdv/h7ArbHRNkSC8dwV4ufOd
+	/DmzonNUxGb+ZLY1MkWAqKAS4HzOKCja9IvOfLXjMF1D3YMwrvW4iyqQ2E1d9CJw
+	y8oj43kRPu3qnu4cDnMDDHA4rv1AESfP5VpJiM9l3A==
+X-ME-Sender: <xms:rO6KZq7k53c-coc1BqcGjBv9CQgZHog2awZIT8NsZr1Ts4c-T43QSg>
+    <xme:rO6KZj7OjmEqUrjTzi8cQjVjA4zeLx0bJKaqwGqtBfRWaktcDga-1G64wyIGHUI2k
+    _4KLCZs3sG0DMmwUEw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehgddugedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:rO6KZpfcobOansTlsGPOBjMbQlQoJIboPqPaU_5PrwbQuAV6KixONw>
+    <xmx:rO6KZnICMnqD14B7cBExndtkGSaixTvQxpN73ht_VroueZ2HBNh1kw>
+    <xmx:rO6KZuI62U671tI_FtxJoYtRBeJbSJ_sW_ZYzSa-1DcrjZfyeHffXg>
+    <xmx:rO6KZoy6o4IE53_Ysr7dOV6UjZb8heQri6YaY3c2Ca1G-qEpuZufTQ>
+    <xmx:rO6KZq1l3FdM5KlfGifGiNAUzhgIARYF0dMLwlW7r5LIvksjxADZOf8R>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 9B87DB6008D; Sun,  7 Jul 2024 15:38:20 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240707002658.1917440-1-Jason@zx2c4.com> <20240707002658.1917440-2-Jason@zx2c4.com>
- <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com> <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
- <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
-In-Reply-To: <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 7 Jul 2024 12:22:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
-Message-ID: <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
-Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
- lazily freeable mappings
-To: David Hildenbrand <david@redhat.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	tglx@linutronix.de, linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, 
-	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <3dc8f89e-4525-4084-9d4a-facb6105239c@app.fastmail.com>
+In-Reply-To: <8251045r-26sn-4674-p820-4qp6s5o322qq@syhkavp.arg>
+References: <20240707171919.1951895-1-nico@fluxnic.net>
+ <20240707171919.1951895-5-nico@fluxnic.net>
+ <55a8cff0-1d73-4743-9c56-2792616426c7@app.fastmail.com>
+ <8251045r-26sn-4674-p820-4qp6s5o322qq@syhkavp.arg>
+Date: Sun, 07 Jul 2024 21:37:49 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nicolas Pitre" <nico@fluxnic.net>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] __arch_xprod64(): make __always_inline when optimizing for
+ performance
+Content-Type: text/plain
 
-On Sun, 7 Jul 2024 at 11:52, David Hildenbrand <david@redhat.com> wrote:
+On Sun, Jul 7, 2024, at 21:14, Nicolas Pitre wrote:
+> On Sun, 7 Jul 2024, Arnd Bergmann wrote:
 >
-> I recall that introducing things like MAP_SHARED_VALIDATE received a lot
-> of pushback in the past. But that was before my MM days, and I only had
-> people tell me stories about it.
-
-I think MAP_SHARED_VALIDATE was mostly about worrying about the API impact.
-
-And I think it worked out so well that this is probably the first time
-it has been brought up ever since ;)
-
-That said, the *reason* for MAP_SHARED_VALIDATE is actually very
-valid: we have historically just ignored any random flags in the
-mmap() interfaces, and with shared mappings, that can be dangerous.
-
-IOW, the real issue wasn't MAP_SHARED_VALIDATE itself, but introducing
-*other* flags that affected maps that old kernels would ignore, and
-then the worry was "now old kernels and new kernels work very
-differently for this binary".
-
-That's technically obviously true of any MAP_DROPPABLE thing too - old
-kernels would happily just ignore it. I suspect that's more of a
-feature than a mis-feature, but..
-
-> My understanding so far was that we should have madvise() ways to toggle
-> stuff and add mmap bits if not avoidable; at least that's what I learned
-> from the community.
-
-It doesn't sound like a bad model in general. I'm not entirely sure it
-makes sense for something like "droppable", since that is a fairly
-fundamental behavioral thing. Does it make sense to make something
-undroppable when it can drop pages concurrently with that operation?
-
-I mean, you can't switch MAP_SHARED around either.
-
-The other bits already _do_ have madvise() things, and Jason added a
-way to just do it all in one go.
-
-> Good to hear that this is changing. (or it's just been an urban myth)
-
-I don't know if that's an urban myth.  Some people are a *lot* more
-risk-averse than I personally am. I want things to make sense, but I
-also consider "this is fixable if it causes issues" to be a valid
-argument.
-
-So for example, who knows *what* garbage people pass off to mmap() as
-an argument. That worry was why MAP_SHARED_VALIDATE happened.
-
-But at the same time, does it make sense to complicate things because
-of some theoretical worry? Giving random bits to mmap() sounds
-unlikely to be a real issue to me, but maybe I'm being naive.
-
-I do generally think that user mode programs can pretty much be
-expected to do random things, but how do you even *create* a mmap
-MAP_xyz flags field that has random high bits set?
-
-> > We also have PROT_GROSDOWN and PROT_GROWSUP , which is basically a
-> > "match MAP_GROWSxyz and change the mprotect() limits appropriately"
+>> On Sun, Jul 7, 2024, at 19:17, Nicolas Pitre wrote:
+>> > From: Nicolas Pitre <npitre@baylibre.com>
+>> >
+>> > Recent gcc versions started not systematically inline __arch_xprod64()
+>> > and that has performance implications. Give the compiler the freedom to
+>> > decide only when optimizing for size.
+>> >
+>> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+>> 
+>> Seems reasonable. Just to make sure: do you know if the non-inline
+>> version of xprod_64 ends up producing a more effecient division
+>> result than the __do_div64() code path on arch/arm?
 >
-> It's the first time I hear about these two mprotect() options, thanks
-> for mentioning that :)
+> __arch_xprod_64() is part of the __do_div64() code path. So I'm not sure 
+> of your question.
+>
+> Obviously, having __arch_xprod_64() inlined is faster but it increases 
+> binary size.
 
-Don't thank me.
+I meant whether calling __div64_const32->__arch_xprod_64() is
+still faster for a constant base when the new __arch_xprod_64()
+is out of line, compared to the __div64_32->__do_div64()
+assembly code path we take for a non-constant base.
 
-They actually do make sense in a "what if I want to mprotect() the
-stack, but I don't know what the stack range is since it's dynamic"
-kind of sense, so I certainly don't hate them.
-
-So they are not bad bits, but at the same time they are examples of
-how there is a fuzzy line between MAP_xyz and PROT_xyz.
-
-And sometimes the line is literally just "mprotect() only gets one of
-them, but we want to pass in the other one, so we duplicate them as a
-very very special case".
-
-                     Linus
+       Arnd
 
