@@ -1,107 +1,140 @@
-Return-Path: <linux-kernel+bounces-243605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C458929855
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:15:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCD092985A
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45D81C20F01
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0852823F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42DA2B9D5;
-	Sun,  7 Jul 2024 14:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0D525569;
+	Sun,  7 Jul 2024 14:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KfbxuzJI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XrMFgfi5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jLwhdt4P"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078FB2374C;
-	Sun,  7 Jul 2024 14:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3A6EDC
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 14:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720361709; cv=none; b=EOlunRYOtM8RVXS9JKcgNkY4fO5wqBWDCCCP2oFyZi7Ck0Rxzl0QwWeos7eeR+CjpQbMz1OXqJGKKRLlHc23PrA4/hA/gm2BHk1pgUuE3VNZj7uWTr/IJwMQAzkoBe9ly5rW0PmwzHU24Lk54o+WQ/mu/Vqj1JO0TZkN4B6MjSo=
+	t=1720362869; cv=none; b=rSODWSFL0XScP2vEvXPpjGzz3DyAk/DDm30YJ5XG5zZTcoTeo7RN/vUbrHnSDSN/xMrUvDFcILkCCqe2ASqSPTPFxSuAaJiGA9IgR4IjBHvN6ZWGpuAy9KEkOfSivkP3UJBsuZfFl5pu62CDnmMTQ168slMmNtgcyU13QGkI5fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720361709; c=relaxed/simple;
-	bh=vkrlcom1iru6FFlS0UV2djnDdnIUAWjfO8eztANhI70=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gDJgR7E7HBRen5d2d58yxf2mQ1rQMZYMfZyy8WWJwN2LIiGAiEkoUxiQ7bNOxG/OYHjUPV4bwMPqaRVvg6hhJ/e6KoUvsWs/SFctUThVRQoechhW6MvHyJL5WFgIiYtNAvBb5vn7FS5pxfL9jbAMImYb8PGu8F2uqx1L2wDBKjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KfbxuzJI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A22C3277B;
-	Sun,  7 Jul 2024 14:15:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720361708;
-	bh=vkrlcom1iru6FFlS0UV2djnDdnIUAWjfO8eztANhI70=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KfbxuzJIETZGn1xfUnDzoBKTfFSZlizgvlYvodoykdM9tQivAYVz5gCRc3S8xIgFi
-	 u4glN52QLRrWmVx6Z5K7yxOr2TZmkuMLqUSL6vnkRpt9VXlPyFuYqzgAQ5Wh3GhAXF
-	 y8NE5gjeYCpyRQJMl7VleZRuNCU3rsHZMU8BEuiIUTwXoH2feEa18e9iFzPCFZbSdV
-	 ev6qeiL1JXabs7X4B/JeV94Ky9u+2umPPqR0eLiUoPLFtjHu1o50yYNv1Jo5Dvd/QP
-	 ptj9aOqpOFjSpZyi/Cgxv75WryVYwz5Wlxv/zUWmUYxA3pBVMPuzCsm8yLimtb5r8d
-	 TU9rnVGsvjgwA==
-Date: Sun, 7 Jul 2024 15:15:01 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: dac: ti-dac7311: Add check for spi_setup
-Message-ID: <20240707151450.595fe29a@jic23-huawei>
-In-Reply-To: <20240705084250.3006527-1-nichen@iscas.ac.cn>
-References: <20240705084250.3006527-1-nichen@iscas.ac.cn>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720362869; c=relaxed/simple;
+	bh=VpbR1U4/APX17kDvuZzFM6O8thDFY4upsDEyCoY/fMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tK7A7ikHv0xKkaUm2iN85/g500FSfFmTI7OrEhF47x6P1WCS9Qpl39fVE3AR6aQgKqcYmes7M6buNLp542TVqQPvXMaVcFuxS3SqZZD9THujSeMh9QnYq6VFBxkPf8DwKpapP6towHycxPSJC1jc9Yw/WbihHaCBLTUiX0Ucawc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XrMFgfi5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jLwhdt4P; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 7 Jul 2024 16:34:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720362858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QT/JZYImBb6WANX1g7RQzC4oQ/TM5mv6H1+ZAVtcEXg=;
+	b=XrMFgfi5+bmf2zFPnd/QIDWbDG4J9yVFcVeEfPFcGD2V4UOZ5ewOMdbVTHJblauCULN9Hb
+	Z6m0AJLk0GWA4EVRGXXghlSQIzpCn4/o2i4ipiSbghedsxff4yPEI0b/esgvatT+A22uE4
+	8w7tTDSwhaOphu6075MGsB/4iPHa4q7rxdQOFqZvM0O5Eqnn4cdptR3tjJWbcofNUHUw6z
+	ZdFb//XUubzTHCc0StsOtP/zX7EW6ouxO3ef3jFi9kwwn0uGdZLGO+OJuQgYygrOJ98APw
+	UUxzMePNtAty/VrAEMPjsI5oPTqkcEdTQASoupUBlOEg0fgahzXpwnRl94QcdQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720362858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QT/JZYImBb6WANX1g7RQzC4oQ/TM5mv6H1+ZAVtcEXg=;
+	b=jLwhdt4P8vKkACKriOoBEVzOi4lnMiuf/wQLdPJZvmPN6T0VcKicgoqEPBoQvXE+Ew85ut
+	9P7j3KfvcOFFCsBQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Anup Patel <anup@brainfault.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	b.spranger@linutronix.de, Christoph Hellwig <hch@lst.de>,
+	Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH] irqchip/sifive-plic: Fix plic_set_affinity() only
+ enables 1 cpu
+Message-ID: <20240707143414.0ydME30F@linutronix.de>
+References: <20240703072659.1427616-1-namcao@linutronix.de>
+ <CAAhSdy0ZGD-p0iBVPqHF0RKTwvAAMWwYZ0ufioRrO75JzSh1qQ@mail.gmail.com>
+ <20240703123327.CvOiP2Jb@linutronix.de>
+ <CAAhSdy3gZHnSwovxypY5vP438TNPj8h+miqtyBKhEUAdWj=htQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhSdy3gZHnSwovxypY5vP438TNPj8h+miqtyBKhEUAdWj=htQ@mail.gmail.com>
 
-On Fri,  5 Jul 2024 16:42:50 +0800
-Chen Ni <nichen@iscas.ac.cn> wrote:
-
-> Add check for the return value of spi_setup() and return the error
-> if it fails in order to catch the error.
+On Wed, Jul 03, 2024 at 08:31:31PM +0530, Anup Patel wrote:
+> On Wed, Jul 3, 2024 at 6:03 PM Nam Cao <namcao@linutronix.de> wrote:
+> >
+> > On Wed, Jul 03, 2024 at 05:28:23PM +0530, Anup Patel wrote:
+> > > On Wed, Jul 3, 2024 at 12:57 PM Nam Cao <namcao@linutronix.de> wrote:
+> > > >
+> > > > plic_set_affinity() only enables interrupt for the first possible CPU in
+> > > > the mask. The point is to prevent all CPUs trying to claim an interrupt,
+> > > > but only one CPU succeeds and the other CPUs wasted some clock cycles for
+> > > > nothing.
+> > > >
+> > > > However, there are two problems with that:
+> > > > 1. Users cannot enable interrupt on multiple CPUs (for example, to minimize
+> > > > interrupt latency).
+> > >
+> > > Well, you are assuming that multiple CPUs are always idle or available
+> > > to process interrupts. In other words, if the system is loaded running
+> > > some workload on each CPU then performance on multiple CPUs
+> > > will degrade since multiple CPUs will wastefully try to claim interrupt.
+> > >
+> > > In reality, we can't make such assumptions and it is better to target a
+> > > particular CPU for processing interrupts (just like various other interrupt
+> > > controllers). For balancing interrupt processing load, we have software
+> > > irq balancers running in user-space (or kernel space) which do a
+> > > reasonably fine job of picking appropriate CPU for interrupt processing.
+> >
+> > Then we should leave the job of distributing interrupts to those tools,
+> > right? Not all use cases want minimally wasted CPU cycles. For example, if
+> > a particular interrupt does not arrive very often, but when it does, it
+> > needs to be handled fast; in this example, clearly enabling this interrupt
+> > for all CPUs is superior.
 > 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> This is a very specific case which you are trying to optimize and in the
+> process hurting performance in many other cases. There are many high
+> speed IOs (network, storage, etc) where rate of interrupt is high so for
+> such IO your patch will degrade performance on multiple CPUs.
 
-Hi Chen,
+No, it wouldn't "hurting performance in many other cases". It would give
+users the ability to do what they want, including hurting performance as
+you said, or improving performance as I pointed out earlier.
 
-This driver is using dev_err_probe() in some error returns from
-the probe function and not in others. It would be good to change them
-all to dev_err_probe() as it's both shorter and brings other advantages
-in some paths.   In meantime let's not introduce another one to convert!
+I am willing to bet that most users don't ever touch this. But if they do,
+they better know what they are doing. If they want to waste their CPU
+cycles, so be it.
 
-I'll make the change and apply this.
+My point essentially is that kernel shouldn't force any policy on users.
+The only case this makes sense is when the policy is _strictly_ better than
+anything else, which is not true here. What the driver should do is
+providing a "good enough for most" default, but still let users decide
+what's best for them.
 
-Applied to the testing branch of iio.git. I'll rebase that on 6.11-rc1 once
-that is available in a couple of weeks time. At that point it'll become
-the iio.git togreg branch and be picked up by linux next etc
+Side note: if I am not mistaken, the effective affinity mask thing is for
+hardware limitation of the chips who cannot enable interrupt for all CPUs
+in the mask. RISC-V PLIC, on the other hand, can enable interrupts for any
+CPU, and therefore should do so.
 
-
-> ---
->  drivers/iio/dac/ti-dac7311.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/dac/ti-dac7311.c b/drivers/iio/dac/ti-dac7311.c
-> index 7f89d2a52f49..8e8a8ab0ebf6 100644
-> --- a/drivers/iio/dac/ti-dac7311.c
-> +++ b/drivers/iio/dac/ti-dac7311.c
-> @@ -249,7 +249,11 @@ static int ti_dac_probe(struct spi_device *spi)
->  
->  	spi->mode = SPI_MODE_1;
->  	spi->bits_per_word = 16;
-> -	spi_setup(spi);
-> +	ret = spi_setup(spi);
-> +	if (ret < 0) {
-> +		dev_err(dev, "spi_setup failed\n");
-> +		return ret;
-		return dev_err_probe(dev, ret, "spi_setup failed\n");
-and drop the now unneeded brackets.
-> +	}
->  
->  	indio_dev->info = &ti_dac_info;
->  	indio_dev->name = spi_get_device_id(spi)->name;
-
+Best regards,
+Nam
 
