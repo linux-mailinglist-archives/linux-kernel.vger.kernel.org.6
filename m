@@ -1,186 +1,148 @@
-Return-Path: <linux-kernel+bounces-243479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDDA19296C0
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 07:54:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37FEB9296B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 07:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CE728276A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 05:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48BC1282725
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 05:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ED9EAF9;
-	Sun,  7 Jul 2024 05:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130C3C8E1;
+	Sun,  7 Jul 2024 05:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHqv+qM8"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="q1R3tD2R"
+Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A185815EA6
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 05:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122793C0B;
+	Sun,  7 Jul 2024 05:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720331665; cv=none; b=rK0H+nOqSA4hWM5xXO5S5/S19cjJd/U7OJ77LhUxJFtUuFm9qNUUzRo22AAiAjnibkLtG/q9LHpCfDOqM+jjGiVhOJPGd7EJubVin6h3S22pXFcxt4RjEylMzM5jwl4XRyh/FPNOu65M+mBIPhRtCCoG/2A2u8pICIhcPVobAKE=
+	t=1720330202; cv=none; b=lZqjrmd3y8jtuu/tPe7ahdqu5WmBKsGYKY3KclqKm4cHLVknAanbOO/eL7ASWi6qtJ8mstz6mJSRd9t+YbFV1ebuT6ySZYmksdT0nfBcv7geY+ZeYMHTAqK+XM/y8HxJyGbPVlWo0DsWmx8SHndb0nyJGk1zXYa1U95ZUeJB4Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720331665; c=relaxed/simple;
-	bh=A+Yqc0Y2sY3QERD0+cTYtcAee5yJA/eRgm7s+R2BFY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WqR319DbYSNtdJB60Co9F0ChiQztMeCe9Zh0p8N/o2Hh+QnHtBVvOxZSCwqQm+6JnK/2DWA7JPNQv6yq1LmSN1q4houMGdSBvx4WgByVSzbDCHYN9fOKcXwo/JpXG6E8w62plxmSb7rdFmDYTc5MDhsKO7un3DNSNfWhezH+TwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHqv+qM8; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3c9cc66c649so1525129b6e.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 22:54:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720331663; x=1720936463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oUg4PV29CFOGLmMvmdWs76G4kY/lh/K0XHciozPPEOE=;
-        b=VHqv+qM8T+cRtDJKRy8AicAxbxMelKJNDFTJw62tyzmkdrYqknu9MI2HK0YelX6clu
-         vfqGZ3j7Iz9tPXY4gAxCeQ18YgC/cSfgffchfV+u9XC4jpyik6R2Q57MLtRjvvmqM53D
-         ot0K7QpaRy0qasMuBphzJtZ33/gIv+BZJtEhtnKMOoyrfVARhxuhloZHhLVYiAH4PzTf
-         Y3Oznt24hATjBlgtda6DKASxvwgO46+GPOfqUM44no+10gokz28BykH/vW2pzNugeJeq
-         li1VcFXs1ysdgB/kEPqCGROx1BgwSNvPvk5AZ+pHOGBfeGN4EmF4cMN+qwDIRUn27Kde
-         e7Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720331663; x=1720936463;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oUg4PV29CFOGLmMvmdWs76G4kY/lh/K0XHciozPPEOE=;
-        b=NnqNJpUVXYqkludzUWNmr8rNtyp8QlvXPEZkpg6yOKrygCcgZgzIOIs4+S0yrKouFH
-         9VH0EmyGlQoFOgsistkGHXniFZW8iZRVzfovOhXaHWwIYZCdaNMVs94aIw3fTfBgeANv
-         XH7NjvqJwkk6XbRLQoY2gp09SmQ768zoSbHj4OBNef5NPm/rf/WsMay4xDWP8EqnTACT
-         iQEg4bZvp4Zbhwb/RH2+tP2ppLeRZooJBhVguyvHISfk4590edlrPKUf/G1PFjKxi3nr
-         rQQN19MdHxKLzOoZXi4RXebaHLT4twomzB2V8mezA98uWGJV/hj6/Pxprj2H4vCOJkum
-         ffyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJvhIK/z3zrAl0BuIkMEspq5p4Y5KC7Cl0jESsW0KQREeDkpc0cpfc7mu0pOaQc7ENIVyY0q1jH/xuo3AC5goCdZKGlENgtNyN/SoR
-X-Gm-Message-State: AOJu0YxA7qHei2YrgJI98o9SdO2Z4yoP08Jin7ESKokuO9OkbJWmv+LT
-	tzbp8QvtWNTuP2oh+8qVgLdv3gYaVSeYrWPY7qgs/YCo9vy8mJSG
-X-Google-Smtp-Source: AGHT+IFUJJDPOBesbBpJmBoRvVb3Ess8NluFY8+9Qxo64gDShTCPBuINQn3LHw7EIoQS+c8DkpXYLQ==
-X-Received: by 2002:a05:6808:1392:b0:3d9:1f05:845 with SMTP id 5614622812f47-3d91f050a43mr7087381b6e.19.1720331662674;
-        Sat, 06 Jul 2024 22:54:22 -0700 (PDT)
-Received: from kousik.local ([2405:201:c006:312d:252d:94b8:b79c:d7bb])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b2e5fe3dfsm94429b3a.97.2024.07.06.22.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 22:54:22 -0700 (PDT)
-From: Kousik Sanagavarapu <five231003@gmail.com>
-To: Nishanth Menon <nm@ti.com>,
-	Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Julia Lawall <julia.lawall@inria.fr>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Kousik Sanagavarapu <five231003@gmail.com>
-Subject: [PATCH v3 4/4] soc: ti: pm33xx: do device_node auto cleanup
-Date: Sun,  7 Jul 2024 10:44:19 +0530
-Message-ID: <20240707055341.3656-5-five231003@gmail.com>
-X-Mailer: git-send-email 2.45.2.561.g66ac6e4bcd
-In-Reply-To: <20240707055341.3656-1-five231003@gmail.com>
-References: <20240707055341.3656-1-five231003@gmail.com>
+	s=arc-20240116; t=1720330202; c=relaxed/simple;
+	bh=RrJZGTxd7xygHhaOVoishTvrFUj3gGMe/6VLlgISMgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Sgkmi7/GSfRoAI3JyKG3FHdRaxTj22cDC/2G+MhI7ygz/BOIdxtfjVIbznWo3YFofFXTyiXuoyBQGABQIiPosAfyefdU/qJGeVmLHbtxWHaXrjgq7p0TKi2vY1iIewUs531BCJ6qN3HsrlYXPrW2YXb47BwfQ8vaeWqUKsVj2rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=q1R3tD2R; arc=none smtp.client-ip=193.252.23.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id QKT8ssABbbqgGQKT8soUOV; Sun, 07 Jul 2024 07:29:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720330191;
+	bh=zC54ys3M8a39QLCtSzCZVowyG7EsoN9tlLmkgNqnfvk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=q1R3tD2RXdeLFyBEQTmY0fXh19otMgvcnaVayp8aA524Au5Og59rc7IdyRPmdZauT
+	 +JM3S5N5bt5lbojBzDK991fq+LRxD3RckSk5ZggPl2RaefwxZl4P9UTijWJBZseetv
+	 ImAORn69hTuHhzoVO4DMb/wdmEnXGF2xS96UxgSfTp1oCQFq7i/NknY8pmihF6OqV8
+	 54lSTnrL0SnbsyaS202XTF5u3M9fFM8KgcS8BirE3GeiznpeDg3g+T/HaHdtCfUwBg
+	 Km25DkU07YuNSG1aW87wwxnCPrLN0JD/ifJJNB9VbnX7Tqr3ozt7hTZ9Dk6L0LGTSF
+	 Dqswi9a5z0kGg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 07 Jul 2024 07:29:51 +0200
+X-ME-IP: 86.243.222.230
+Message-ID: <7635709f-9974-4c60-9cb0-78ae7f007cc2@wanadoo.fr>
+Date: Sun, 7 Jul 2024 07:29:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] Removed extra asterisks from comment beginnings, and
+ removed unnecessary comment end
+To: Gold Side <goldside000@outlook.com>, "krzk@kernel.org" <krzk@kernel.org>,
+ "perex@perex.cz" <perex@perex.cz>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>
+References: <DM4P223MB0541357D7B105C83EF9FCFD5F7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <DM4P223MB0541357D7B105C83EF9FCFD5F7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Use scope based cleanup instead of manual of_node_put() calls, hence
-simplifying the handling of error paths.
+Le 07/07/2024 à 06:14, Gold Side a écrit :
+>  From 3574f0514207f9610a69d82d3dd0d018d6dce5dd Mon Sep 17 00:00:00 2001
+> From: Steven Davis <goldside000@outlook.com>
+> Date: Tue, 2 Jul 2024 22:57:24 -0400
+> Subject: [PATCH 1/3] Removed extra asterisk from comment beginning
+> 
+> It saves a byte. I'd imagine bytes are valuable in a project like this.
+> PS: Please forgive my previous patch email, I didn't know the guidelines well.
 
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Signed-off-by: Kousik Sanagavarapu <five231003@gmail.com>
----
- drivers/soc/ti/pm33xx.c | 52 +++++++++++++++++------------------------
- 1 file changed, 21 insertions(+), 31 deletions(-)
+Hi,
 
-diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-index 8e983c3c4e03..d0edce53c793 100644
---- a/drivers/soc/ti/pm33xx.c
-+++ b/drivers/soc/ti/pm33xx.c
-@@ -383,54 +383,44 @@ static void am33xx_pm_free_sram(void)
-  */
- static int am33xx_pm_alloc_sram(void)
- {
--	struct device_node *np;
--	int ret = 0;
-+	struct device_node *np __free(device_node) =
-+			of_find_compatible_node(NULL, NULL, "ti,omap3-mpu");
- 
--	np = of_find_compatible_node(NULL, NULL, "ti,omap3-mpu");
- 	if (!np) {
- 		np = of_find_compatible_node(NULL, NULL, "ti,omap4-mpu");
--		if (!np) {
--			dev_err(pm33xx_dev, "PM: %s: Unable to find device node for mpu\n",
--				__func__);
--			return -ENODEV;
--		}
-+		if (!np)
-+			return dev_err_probe(pm33xx_dev, -ENODEV,
-+					     "PM: %s: Unable to find device node for mpu\n",
-+					     __func__);
- 	}
- 
- 	sram_pool = of_gen_pool_get(np, "pm-sram", 0);
--	if (!sram_pool) {
--		dev_err(pm33xx_dev, "PM: %s: Unable to get sram pool for ocmcram\n",
--			__func__);
--		ret = -ENODEV;
--		goto mpu_put_node;
--	}
-+	if (!sram_pool)
-+		return dev_err_probe(pm33xx_dev, -ENODEV,
-+				     "PM: %s: Unable to get sram pool for ocmcram\n",
-+				     __func__);
- 
- 	sram_pool_data = of_gen_pool_get(np, "pm-sram", 1);
--	if (!sram_pool_data) {
--		dev_err(pm33xx_dev, "PM: %s: Unable to get sram data pool for ocmcram\n",
--			__func__);
--		ret = -ENODEV;
--		goto mpu_put_node;
--	}
-+	if (!sram_pool_data)
-+		return dev_err_probe(pm33xx_dev, -ENODEV,
-+				     "PM: %s: Unable to get sram data pool for ocmcram\n",
-+				     __func__);
- 
- 	ocmcram_location = gen_pool_alloc(sram_pool, *pm_sram->do_wfi_sz);
--	if (!ocmcram_location) {
--		dev_err(pm33xx_dev, "PM: %s: Unable to allocate memory from ocmcram\n",
--			__func__);
--		ret = -ENOMEM;
--		goto mpu_put_node;
--	}
-+	if (!ocmcram_location)
-+		return dev_err_probe(pm33xx_dev, -ENOMEM,
-+				     "PM: %s: Unable to allocate memory from ocmcram\n",
-+				     __func__);
- 
- 	ocmcram_location_data = gen_pool_alloc(sram_pool_data,
- 					       sizeof(struct emif_regs_amx3));
- 	if (!ocmcram_location_data) {
--		dev_err(pm33xx_dev, "PM: Unable to allocate memory from ocmcram\n");
- 		gen_pool_free(sram_pool, ocmcram_location, *pm_sram->do_wfi_sz);
--		ret = -ENOMEM;
-+		return dev_err_probe(pm33xx_dev, -ENOMEM,
-+				     "PM: Unable to allocate memory from ocmcram\n");
- 	}
- 
--mpu_put_node:
--	of_node_put(np);
--	return ret;
-+	return 0;
- }
- 
- static int am33xx_pm_rtc_setup(void)
--- 
-2.45.2.561.g66ac6e4bcd
+no-problem, newcomers are always welcomed and they have to learn. So, 
+IMHO, making small mistakes is part of the learning curve.
+
+
+People/mailing-list should be defined according to the MAINTAINERS file. 
+A script helps you for that: ./scripts/get_maintainer.pl
+
+It can be run either on a patch or on a file/directory.
+
+Here:
+	./scripts/get_maintainer.pl -f kernel/module/main.c
+or
+	./scripts/get_maintainer.pl your_patch.patch
+give:
+	Luis Chamberlain <mcgrof@kernel.org> (maintainer:MODULE SUPPORT)
+	linux-modules@vger.kernel.org (open list:MODULE SUPPORT)
+	linux-kernel@vger.kernel.org (open list:MODULE SUPPORT)
+
+It is perfectly fine to add other people/mailing list that are relevant, 
+as kernel-janitor.
+
+If you are using git mail, it is possible to automate the creation of 
+the To: and cc: fields. (see 
+https://www.marcusfolkesson.se/blog/get_maintainers-and-git-send-email/). 
+If using this --identify, you still can add some other --to, --cc., 
+which is really convenient.
+
+
+
+On your commit log, here are a few comments:
+   - there should be a new-line before the Signed-off-by: line
+   - you can add whatever you want after the --- ending the commit 
+description. These extra comments are informational only, and won't be 
+part of the git history. Here, your PS should have been here.
+    - imperative wording is preferred when writing commit logs
+
+You can also give a look at 
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html, 
+if not already done.
+
+
+Welcome and happy patching :)
+
+CJ
+
+> Signed-off-by: Steven Davis <goldside000@outlook.com
+> ---
+>   kernel/module/main.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index d18a94b973e102..25e456f4381c71 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -450,7 +450,7 @@ bool __is_module_percpu_address(unsigned long addr, unsigned long *can_addr)
+>        return false;
+>   }
+>   
+> -/**
+> +/*
+>    * is_module_percpu_address() - test whether address is from module static percpu
+>    * @addr: address to test
+>    *
 
 
