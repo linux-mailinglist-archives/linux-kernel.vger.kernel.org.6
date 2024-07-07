@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-243502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AED9296E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:54:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C02E9296EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EA21F21136
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C543281ADE
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFBACA62;
-	Sun,  7 Jul 2024 06:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA815D27E;
+	Sun,  7 Jul 2024 06:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvtiINds"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTNJ9uFH"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F58F501
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844B1AD4B
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720335271; cv=none; b=ezn5Tb0/MNcwpKwApwc1GrZYDBeIIotzsPbeCnFlJX7lYhv6s2un+uOq56PSSO+/Q5F6/8/BlPl33EdLDwIe2Ih+S6X2E9kgbrgKg408ZhL6uD6M3/atiOWkU84eNS9omnWLtHUFP/CNc4gzOpAAMphCsGOnQVshUGFuEX7l4Pg=
+	t=1720335283; cv=none; b=TpOETHFLvJFZOOfcfeVfQvN8YzKKmceysQuop6wyPnw4qkcGlk/F5AIZIS2A8DO3N5V0yKQ2gZYS1Qkl7jx9bJAVHUf+hut4M2mNbZCdKtb014i/BNR8TXuoQ0IedmRudRKB/oqZpI8uOZwMNEIo4tqFbqCsUoA+GEQrtIucvgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720335271; c=relaxed/simple;
-	bh=+IuYxCm1vlnF378i4O4W0jciEGj38cmeBQhvj6kIefI=;
+	s=arc-20240116; t=1720335283; c=relaxed/simple;
+	bh=fl5JDEwJz6N1kP/kziK/6oStTJRXgZqlJ4YZD7FPgcA=;
 	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSOyg2qoY6wwPaQhwMXKBMriJI4nHliNkiLkY7no2srFumveYmAH6pny9seQyJpVdR45QvQME7PxDMkEcAq9DI6KEH7oeZj2HquiFprMvbBby1W1XR+vBr7d7HrJDX0qTeB/WxxrYDLhRxjcn24vfwSnb7gT7oyt/TxAP4OkDWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SvtiINds; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=FnIMlzq57/Yz0zvgBFFS/llr64XheKCQsWAgnnwk1U4lt8JHSw3gGEbojs/wCBzTp2bzkragyOiamYGIRm46RFLM5D83hVAFvKJG00TeLvhoDvJM4+4WOr5OxytCgYMaRVbL8/F3StRVlcOanFaK9oyFapHEEauzz3qRu+VNBek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTNJ9uFH; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42665d94cb7so359105e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 23:54:30 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-426607d4eb7so881755e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 23:54:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720335269; x=1720940069; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720335280; x=1720940080; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GrA22IGjkXIPIsfTt9aOZ8ajLSC1LUgeoha8qPdMqb8=;
-        b=SvtiINds3ZSAF3vqkAIZrLjmDBp8baOjw6JeWICQAOFE45PfeMb6NkXx3z4xTMsGjg
-         7WKvQNqVJH4WpaLQXtyVuEWM+UbfoQoAkayUlYWlsJXv0zXCSBh/8UmoMffTGaiQHkuU
-         aDv9o0tgogUnr7xTgz8JMFZRV7pM95TYPb6V+NaP3ODeeEpwztSHVWubEKAC3QQNjSOl
-         E/wALbyUHob4XrWZoD/aZXcrTfrCL+HKIJM0ARf7ZocRtAh21ZbVkXoS0VAM0Y2yoqvG
-         K5gY9OwDftC+y5VYidZN0mFrHeBgTmW/tWOSB4wHx9Wd9imPHSX+qXpIooiphzHb1A9B
-         dUeA==
+        bh=3wa19O5pYQt2ewjnjIco7NcYsEERZusPgocEP5T3ISE=;
+        b=OTNJ9uFHTxXclPhPIv8tz4Td1a/ZQOoeptLftv5i7xmP5jGxZD8O4bYk0wQmR1HMi/
+         QXhwUinjUXgCdtF+3bqxitAQeKQqVHyBjJc85jwfB8SRfqtw6hnKwcFnCyrh0qTv/D9T
+         zceCAdySje8Ssd9NckSG9w4BL4YLme+Vi+8r/zx/AaopQpvfnZa1jKyayO3yJpXO0KED
+         nwybobI50mxmniG6UD1a1tiwuYAIerYygRd31ZpDqZqwnggIE4r9y5vAs0twJWw1UNsL
+         Gh+6jUIVxmobV8kqlpJLJYskmLfvc9ZqdXK3somb5/hGTnRiIAkqdWWalug42RLO40W2
+         BTBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720335269; x=1720940069;
+        d=1e100.net; s=20230601; t=1720335280; x=1720940080;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GrA22IGjkXIPIsfTt9aOZ8ajLSC1LUgeoha8qPdMqb8=;
-        b=STtrL7HmYLNZxLcKWyV1M9ivIP+zWOZI3B7E6vkPk3HpUQjAT6KIrd8RGHjjyl7Rup
-         KXQOJIkKt4llyGAehpIUJjqC5DcDqnww/2PFtfkDeSUmHnriEAL3OSDHIftUV6jS+9mH
-         lGFRHq3uVBqRQ5By0qWPAPjATyTXlOrZfQ2Yeabth6L95g0k1hZYfXny83HVDyFNWIT2
-         8OK9AYrPVtDBiZpBk0Xh9H8tbtLzyq3BqSn4jfijcIYFOusGmRG5FExgM3bsFOkIBK0f
-         +SYTDPJa8ZPk09pK63G4V6cHNTHFFHy/a7zo7v/lb2zv07NIVxKZTbhcNyR43dyPQbKY
-         RubA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGIeo/nGtIgnY3LKvzXy2cmrCdG/x7G+JSp2qbi9xtXNV9smKC3V1pL2Y+PRnbLnpch7WIH8xV/pInkDpDwBIS4ITVRRhNmGJZV5MW
-X-Gm-Message-State: AOJu0YxPXEvOHlo3sDiCWRCXHq1fg4SkBJl8VB8Bsm2xwGVjYrZZCJKr
-	Ix3u/fFtCpXWKzs3rSkeIuKLNs9lBHyL+WwoaT+ANqvE9DVa6QOa
-X-Google-Smtp-Source: AGHT+IGufE3eoOICGbDX7bEjamrSracJzS3rK65OoospbvJ4bZw+aIa8Ytp4bOT2V1liAOcVi6lhmQ==
-X-Received: by 2002:a5d:6c6a:0:b0:366:e496:1caa with SMTP id ffacd0b85a97d-3679dd73a48mr5689649f8f.5.1720335268857;
-        Sat, 06 Jul 2024 23:54:28 -0700 (PDT)
+        bh=3wa19O5pYQt2ewjnjIco7NcYsEERZusPgocEP5T3ISE=;
+        b=VdSyb/SM4I1Ch27/b2sPd/eVUsgrFDKSfGwrpJgpbDmDxY39Q50H3GT4cT6rkdjjrs
+         5MzkumM+eHsLwmmK789c7A/QZ4hOsyghUDe48XmshhfevE8lmTWI/rxbQ74++Amy1Vou
+         0E63ef8rh/gK+MHwdDPozFd0ukUnxk3vrlHP9mk7ER5EkOHAHDqyooJR8XtchD98fjEe
+         8xJ8Neo8JZ7mQWWpCJMh8BN6KcDwIoJ0QkOI/jSp5pFBIro78RO+bhDXFkS1gPXQl3H6
+         QRzF76cVTKNDoY7kMC0VoH2pZSQhS2fnW0NiSOG65jWdmv+QYrLhtNyge8AdILMFvwKv
+         /9hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXoRt7HO0/GTXFe3x6QxenO9xEey3iXyhPutZkBPvtO5RZEpbxPZtDrE9u8PY/y5CTa4h0Af07HbfbzKkieZgP2XV068Xb2vfj3RXty
+X-Gm-Message-State: AOJu0YzDbRCEX2OVbPVe2DYOo/nwqCC/QepYRBCecKRjxFcEFclDA1mX
+	dePlIEnKUarpy/W+YEta7Hb+6++OoLU3xemvzzhJ0cP60X2KgDuU
+X-Google-Smtp-Source: AGHT+IFZEFK5H9qIKoi9/OUccxTTbshTz8ItyAVXK597dCah3k1qm+x1YCXH72JiXf+cgUyN2PSzaA==
+X-Received: by 2002:a05:6000:1788:b0:35f:1edb:4695 with SMTP id ffacd0b85a97d-3679dd73a60mr6145353f8f.6.1720335279920;
+        Sat, 06 Jul 2024 23:54:39 -0700 (PDT)
 Received: from matrix-ESPRIMO-P710 (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678877f19dsm13204328f8f.43.2024.07.06.23.54.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a1ee57d8sm6986005f8f.47.2024.07.06.23.54.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 23:54:28 -0700 (PDT)
-Date: Sun, 7 Jul 2024 08:54:26 +0200
+        Sat, 06 Jul 2024 23:54:39 -0700 (PDT)
+Date: Sun, 7 Jul 2024 08:54:37 +0200
 From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/13] staging: rtl8723bs: Remove unused macros in rtw_mlme.h
-Message-ID: <e04836b646ccd0a97ee0658dc61db7ac748bcb40.1720245061.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 11/13] staging: rtl8723bs: Remove unused macros in rtw_efuse.h
+Message-ID: <dda48a640142abbddb846bddf656ac5adada2971.1720245061.git.philipp.g.hortmann@gmail.com>
 References: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,67 +86,33 @@ Remove unused macros.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
- drivers/staging/rtl8723bs/include/rtw_mlme.h | 26 --------------------
- 1 file changed, 26 deletions(-)
+ drivers/staging/rtl8723bs/include/rtw_efuse.h | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme.h b/drivers/staging/rtl8723bs/include/rtw_mlme.h
-index f939d267b0c7..e103c4a15d1a 100644
---- a/drivers/staging/rtl8723bs/include/rtw_mlme.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_mlme.h
-@@ -39,11 +39,6 @@
+diff --git a/drivers/staging/rtl8723bs/include/rtw_efuse.h b/drivers/staging/rtl8723bs/include/rtw_efuse.h
+index 5938a6bfb573..0cb8c6f6d34d 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_efuse.h
++++ b/drivers/staging/rtl8723bs/include/rtw_efuse.h
+@@ -7,19 +7,6 @@
+ #ifndef __RTW_EFUSE_H__
+ #define __RTW_EFUSE_H__
  
- /* ifdef UNDER_MPTEST */
- #define	WIFI_MP_STATE							0x00010000
--#define	WIFI_MP_CTX_BACKGROUND				0x00020000	/*  in continuous tx background */
--#define	WIFI_MP_CTX_ST						0x00040000	/*  in continuous tx with single-tone */
--#define	WIFI_MP_CTX_BACKGROUND_PENDING	0x00080000	/*  pending in continuous tx background due to out of skb */
--#define	WIFI_MP_CTX_CCK_HW					0x00100000	/*  in continuous tx */
--#define	WIFI_MP_CTX_CCK_CS					0x00200000	/*  in continuous tx with carrier suppression */
- /* endif */
- 
- /* define _FW_UNDER_CMD		WIFI_UNDER_CMD */
-@@ -75,8 +70,6 @@ enum {
- 	GHZ_MAX,
- };
- 
--#define rtw_band_valid(band) ((band) >= GHZ24_50 && (band) < GHZ_MAX)
 -
- /*
- 
- there are several "locks" in mlme_priv,
-@@ -252,11 +245,6 @@ struct mlme_priv {
- 	unsigned long	timeBcnInfoChkStart;
- };
- 
--#define rtw_mlme_set_auto_scan_int(adapter, ms) \
--	do { \
--		adapter->mlmepriv.auto_scan_int_ms = ms; \
--	while (0)
+-#define	EFUSE_ERROE_HANDLE		1
 -
- void rtw_mlme_reset_auto_scan_int(struct adapter *adapter);
- 
- struct hostapd_priv {
-@@ -400,20 +388,6 @@ int is_same_network(struct wlan_bssid_ex *src, struct wlan_bssid_ex *dst, u8 fea
- 
- #define rtw_roam_flags(adapter) ((adapter)->mlmepriv.roam_flags)
- #define rtw_chk_roam_flags(adapter, flags) ((adapter)->mlmepriv.roam_flags & flags)
--#define rtw_clr_roam_flags(adapter, flags) \
--	do { \
--		((adapter)->mlmepriv.roam_flags &= ~flags); \
--	} while (0)
+-#define	PG_STATE_HEADER			0x01
+-#define	PG_STATE_WORD_0		0x02
+-#define	PG_STATE_WORD_1		0x04
+-#define	PG_STATE_WORD_2		0x08
+-#define	PG_STATE_WORD_3		0x10
+-#define	PG_STATE_DATA			0x20
 -
--#define rtw_set_roam_flags(adapter, flags) \
--	do { \
--		((adapter)->mlmepriv.roam_flags |= flags); \
--	} while (0)
+-#define	PG_SWBYTE_H			0x01
+-#define	PG_SWBYTE_L			0x02
 -
--#define rtw_assign_roam_flags(adapter, flags) \
--	do { \
--		((adapter)->mlmepriv.roam_flags = flags); \
--	} while (0)
+ #define	PGPKT_DATA_SIZE		8
  
- void _rtw_roaming(struct adapter *adapter, struct wlan_network *tgt_network);
- void rtw_roaming(struct adapter *adapter, struct wlan_network *tgt_network);
+ #define	EFUSE_WIFI				0
 -- 
 2.45.2
 
