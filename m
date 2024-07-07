@@ -1,71 +1,78 @@
-Return-Path: <linux-kernel+bounces-243500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591289296E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:54:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 214AE9296E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04CB61F21869
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0EC1281A65
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EC3D27E;
-	Sun,  7 Jul 2024 06:54:03 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B20DFBEA;
+	Sun,  7 Jul 2024 06:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfkU9jnG"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF58125B2;
-	Sun,  7 Jul 2024 06:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638D5101CA
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720335243; cv=none; b=a/VfzrpoT9DnfaUt5WycwU+CRmqicuyY6JorBq/xuRBILyubndOOmp6+L7M0b/zdmFbECeanTvPvGpAtlVEcfiTTcAWJvK8OPQ2ygXHFLfidzeZMj7X/pPuodI74dD7jsDB85RLJL51RCCpoiTrvtOobNP7IMm/4ytZaxt7Gw78=
+	t=1720335246; cv=none; b=YpoUi4notRhr5MYfCaN841HpKt5WPH1HW8RYiDuwLUej67JUPAuB6qdM39tmaLC7fwd8YVoPwZHI/uORG6xQSi+W479DZWFibXQEsUoUKI3SEYiLZHfp1/nX9tCYCg/gYfaeizagQlxgr8n/xq7VbdrAC7vbGN1DTQ4v6DOFY6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720335243; c=relaxed/simple;
-	bh=0W2OvKgWkCMl1uTMluMqC8LesqCmJbfOCaU1FmjtyLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SNWl5Di5vxHt7PbxQPmiF/rgRmgIe17f4sM/jO7DQXbLt+3h8cUn8VpQmf4AGNWsgs+GXayGSI2r/KPkoSI3AIJNu72jrK9K+CwBYnmdiVndkuIQJVqPt4o/UkaE5uLCTal3nTOBGWL3EKx0lVVYijC4GzTXG9Mf5NnOm/gTMNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1720335246; c=relaxed/simple;
+	bh=vzhS4eOdB3JVBmGj6GZR41u0035kWUjZHf2QmYjBHj0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OOh0V6OFEuO2zTxsHAm8q/qg7+o02orv1xK+MOgySoAXVFf45rHLJSuSxSyJ0BRFojYddyvFj+LX62YMu6utiZ9UOpInE4de2JunPyNihhRlyaFd78hboth98inl7cnkvdT3sP/BgRyLKPGxbv71MDvs5rWnMmsbRK+JfI7qV8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfkU9jnG; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fb05b0be01so17094655ad.2;
-        Sat, 06 Jul 2024 23:54:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720335241; x=1720940041;
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4265dd11476so1415575e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 23:54:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720335243; x=1720940043; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L17bu5yX3ssgKrMTsiZwMgl58vpmJ1s2WNn54DauvtI=;
+        b=GfkU9jnGK6Q5aeYF3VTDdEd2JbfhN7AOMO7QESGe5nasd+x8Nb82Ekd8mjerrH0OVD
+         tQ6pgk5RP0/AUjPfkQAHHzybn3IfCKp587MPxantzJnV49drrPHRjbgHJ24rVOU1VJM+
+         NyeWQp7ThAtY0rCsP1CkPuK/BD5/2gmQEbfO48Toxh19m7SOCq2BwNRdVbIN5593K/rZ
+         TNy3F+k4Tf37xUX6m/TlC+45QaC7OvesPuaF8wHJMEDYMI3U3L6R/sQYByiwgZChkvGo
+         SfAMZgBRyChujXVvKzJNxz3UPKj+xb1DA1VaX4QMP0YxDjWXH9+EudF2nOubyIsAVNZJ
+         52IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720335243; x=1720940043;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4JYBMADKU5e43KLTkm4N5GBLxm7MyujvJUYfrOxGV6o=;
-        b=HrmpOYrj84goPDx9YkK01Qka4l5m9irwVZCBWh00/kfGHI4cHllAn9A1g0+97TrohE
-         YwN2bg3U/QW5VLaUN4hk6LLKcyKt+5PCOOX53vBbjznTuKy6eB7lJ2x/BSMbcIfOHYgy
-         8+TbAetCcC75D178BKZEssuedUxUF3ORGgFhQ6S5BCNhs6Qr9xMASceYBIRNbLoZMNUz
-         eLKOOLl/Ekbt6JRJy+JAFzqlm1Vmwckcr+4hCFF1sa2M93TA/Y1KPE3vgFEFd7qPdzpw
-         H3A1fmACZaSYj7haZxlXCH61+eobkouykgRDYVkKBiPZKcaYyaJ4FpiFW1s6prkYr6GG
-         BzzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHWP5xLdHFveonie0EW6auSu5dJPVf3kyXu9t1te8qa46OQOTWPEZkQHGBoZqSgDlgQdhBjuqVIav7iDfsB3/+1MfBGdfN/QKgBBzH9HTafVfmn20U7Qd5/9xrZP2S1jhsOAi3dlg8
-X-Gm-Message-State: AOJu0YzeLUZ7ZPzJep5K5nsg4WGroLwu9SbaNxvhRgBgb+95sMDUuMpb
-	8W3ftx8A6NbPGrdCHAS4d2n4Pu6eI7jkA4bCjPv+gIskd9iCrlwB
-X-Google-Smtp-Source: AGHT+IEQ+FaOtzEXvU/iRRCzYUPGAkAvN7iYcrCrlRo+z+uOsIDeaKNAYLV1qz1NKphWv1sY69O5gA==
-X-Received: by 2002:a17:902:e546:b0:1fb:6ddf:654b with SMTP id d9443c01a7336-1fb6ddf666fmr27777895ad.65.1720335240768;
-        Sat, 06 Jul 2024 23:54:00 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb3dbd7dcdsm50783255ad.157.2024.07.06.23.53.59
+        bh=L17bu5yX3ssgKrMTsiZwMgl58vpmJ1s2WNn54DauvtI=;
+        b=i8d410BVeTcKrWjSLICfVV5pPdAhy99uSyTyORzcsmTnUNbxbPKtfaSDgKfGLJW2Zs
+         ciijs0Hvn4F1wRXipT0jeny3X/Z6W6N2I2nco7CmkFHgB+hXi4Xl490jbtMhScGzsoOR
+         XcK72OtUEXy1sYM/gXqlbeDfHNRhqOMm7bo8mW6dEVvIBeWkZL0S6nrwFvXAwAQTBiyK
+         M1+ZkV0G+QStj2rieXoWtZLYLXwi3A976n63QIiMkWCytx1xhqakxIy0SX73p1GJFJuw
+         cDmAI7TPEP9fRkT2ruNk7TuwVS3p97L4p6QMfvhhsQWziYaubRpc6Yq1BhWSXlAW+pRf
+         ZX+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBKNBg92+ADVrMK2S3QobrUCe7Nok8EJwkhJY3jNDi8t9dUM7Do8zPLYnqWn6BEZXQ0Y7hXVTCcb2P75c8aLDGWOKI25OsiShvjS1g
+X-Gm-Message-State: AOJu0YyoobG5pLrh6ikW3VzyK4eJ1fim+wme4Dn9e5nAQ3cqRVlezwGT
+	Yldp8OU0rPIyBCF1Qd/WiOdI6CB/CG1X3QiEDCkgaoAVpGoG3BXJcKAa3w==
+X-Google-Smtp-Source: AGHT+IEQVNF8CLloFDHw1LG1lFShBIaHRdILEu+du4X3fMXKOpjm5yvzkkVqU6oMCYCFgqaXvqKjoQ==
+X-Received: by 2002:a05:600c:4c0a:b0:426:5fd1:281 with SMTP id 5b1f17b1804b1-4265fd10561mr19771895e9.1.1720335242564;
+        Sat, 06 Jul 2024 23:54:02 -0700 (PDT)
+Received: from matrix-ESPRIMO-P710 (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42662a21066sm29644725e9.22.2024.07.06.23.54.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 23:53:59 -0700 (PDT)
-Date: Sun, 7 Jul 2024 15:53:58 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: kirin: use dev_err_probe() in probe error paths
-Message-ID: <20240707065358.GA3809216@rocinante>
-References: <20240706-pcie-kirin-dev_err_probe-v1-0-56df797fb8ee@gmail.com>
- <20240706-pcie-kirin-dev_err_probe-v1-1-56df797fb8ee@gmail.com>
+        Sat, 06 Jul 2024 23:54:01 -0700 (PDT)
+Date: Sun, 7 Jul 2024 08:54:00 +0200
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH 09/13] staging: rtl8723bs: Remove unused macros in
+ HalPwrSeqCmd.h
+Message-ID: <ac52d73666090a70e8c1edc87e511f1ea2c139e4.1720245061.git.philipp.g.hortmann@gmail.com>
+References: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,42 +81,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240706-pcie-kirin-dev_err_probe-v1-1-56df797fb8ee@gmail.com>
+In-Reply-To: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
 
-Hello,
+Remove unused macros.
 
-[...]
-> Use dev_err_probe() in all error paths with that construction.
+Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+---
+ drivers/staging/rtl8723bs/include/HalPwrSeqCmd.h | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-Thank you for this nice refactoring!  Much appreciated.
+diff --git a/drivers/staging/rtl8723bs/include/HalPwrSeqCmd.h b/drivers/staging/rtl8723bs/include/HalPwrSeqCmd.h
+index e30071935d27..b81252d374ef 100644
+--- a/drivers/staging/rtl8723bs/include/HalPwrSeqCmd.h
++++ b/drivers/staging/rtl8723bs/include/HalPwrSeqCmd.h
+@@ -49,8 +49,6 @@
+ /*---------------------------------------------*/
+    /*  define the base address of each block */
+ #define PWR_BASEADDR_MAC		0x00
+-#define PWR_BASEADDR_USB		0x01
+-#define PWR_BASEADDR_PCIE		0x02
+ #define PWR_BASEADDR_SDIO		0x03
+ 
+ /*---------------------------------------------*/
+@@ -64,21 +62,12 @@
+ /*---------------------------------------------*/
+ /* 3 The value of fab_msk: 4 bits */
+ /*---------------------------------------------*/
+-#define	PWR_FAB_TSMC_MSK		BIT(0)
+-#define	PWR_FAB_UMC_MSK			BIT(1)
+ #define	PWR_FAB_ALL_MSK			(BIT(0)|BIT(1)|BIT(2)|BIT(3))
+ 
+ /*---------------------------------------------*/
+ /* 3 The value of cut_msk: 8 bits */
+ /*---------------------------------------------*/
+ #define	PWR_CUT_TESTCHIP_MSK	BIT(0)
+-#define	PWR_CUT_A_MSK			BIT(1)
+-#define	PWR_CUT_B_MSK			BIT(2)
+-#define	PWR_CUT_C_MSK			BIT(3)
+-#define	PWR_CUT_D_MSK			BIT(4)
+-#define	PWR_CUT_E_MSK			BIT(5)
+-#define	PWR_CUT_F_MSK			BIT(6)
+-#define	PWR_CUT_G_MSK			BIT(7)
+ #define	PWR_CUT_ALL_MSK			0xFF
+ 
+ 
+-- 
+2.45.2
 
-[...]
-> -	if (ret > MAX_PCI_SLOTS) {
-> -		dev_err(dev, "Too many GPIO clock requests!\n");
-> -		return -EINVAL;
-> -	}
-> +	if (ret > MAX_PCI_SLOTS)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "Too many GPIO clock requests!\n");
-
-Something that would be nice to get consistent: adjust all the errors
-capitalisation to make everything consistent, as appropriate, so that it's
-either all lower-case or title case.  A mix of both often looks a bit
-sloppy.
-
-Do you think this would be something you would be willing to clean up in
-this series too?  Especially since we are touching this code now.
-
-> -	if (!dev->of_node) {
-> -		dev_err(dev, "NULL node\n");
-> -		return -EINVAL;
-> -	}
-> +	if (!dev->of_node)
-> +		return dev_err_probe(dev, -EINVAL, "NULL node\n");
-
-Perhaps -ENODEV would be more appropriate here?  Also, the error message is
-not the best, as such, I wonder if we could make it better while we are at
-it, so to speak.
-
-	Krzysztof
 
