@@ -1,197 +1,134 @@
-Return-Path: <linux-kernel+bounces-243716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BAC5929987
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D212792998D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 21:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8F01F21271
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:41:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856C61F212DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD5A6F2E0;
-	Sun,  7 Jul 2024 19:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fn4Rllxt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B2C60275;
+	Sun,  7 Jul 2024 19:48:38 +0000 (UTC)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989F634545;
-	Sun,  7 Jul 2024 19:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6231DA4D;
+	Sun,  7 Jul 2024 19:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720381280; cv=none; b=RVuwaKp9AkVk/LeJXuu/o4sMuisKAyL6OFKRbawuDL/tekzPR/ySSWgtysnDY3+UMDppqlsl/6SMNvL8KpfBWjOII0vQz9R+OkBrUSupWlJJlMf8w6knvnyiUAejTse6yJO5VQ+bXfOWvMHaztde5EyQGmJhvCErFQ1Glp5QIsI=
+	t=1720381718; cv=none; b=MNsx2L4YF8gnDGWAxn+pLpBaWZyZAcfjv9TTCxYwi56AYcKIwYAy6ZMocoCiLhmqonv+mOW214jFrq+EsuDbgJtu2ye6XETPKIG9C5ytxExXiRVx+lKXhSKJqFhNBqNNT44ZNss22X4UFwatM6a43O95i8aTBV7rGZAMKEf8Pqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720381280; c=relaxed/simple;
-	bh=24s7GAiJqumgDMoJwbnNmAYEdsxrDnWAFn3353foY5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ufz4EIaLCxOrigEa8dx5Z9I2B49GeygEGjZhIj23ozYzIEg8Wpso8N04jXuGF2puriALJ0Quzy6Sw6bzB3oXrXbDScTuiYKGHnFIwFy3hl7Ks3Bd+GXki9lm4oZi4tyOh+HVHoMHnpEdL5YMQURfR5xf2Wstm9ub4aOJe5gBCkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fn4Rllxt; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720381278; x=1751917278;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=24s7GAiJqumgDMoJwbnNmAYEdsxrDnWAFn3353foY5U=;
-  b=fn4RllxtGPMMkyWpOfzbo3vPZ/+LgbZ3PRFcNSLNcYA37xMP0soQvmxa
-   FF9O8EqmVUbu3vG1rFEDoKsvvTl6gH9W2Ix4GpMVfBZrEM7hALDLCVYiv
-   FDD5aye+DEX6Gv7h9oBQHKD9TX/d56McOd21C4LUOmowX5R/KqizEe7VD
-   OnCGXaTw8CSQs2tm+Z6mJnSir61YSi48hjXneYeLv7rHm3YPpi3GUzQ5x
-   o0dihUzo6QkfT4z5OgxGWPRbeE8A3bkD2rVIJqDEn0KXglVq6ktgI8iD6
-   VLoG5SQWyWVMJCGt3mrb3ekSlnmpSLzqlPU6cRrOM27jcLEzXADpGD1X/
-   Q==;
-X-CSE-ConnectionGUID: ATlD/1fZRdCOGEU8F55Gfg==
-X-CSE-MsgGUID: MA76KQaZRTGJ3KVJip5IYw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="28979899"
-X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
-   d="scan'208";a="28979899"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 12:41:18 -0700
-X-CSE-ConnectionGUID: 9mRhFq3/TVWowy/6X5agIg==
-X-CSE-MsgGUID: jFpu7DR2TtaMQ7p9tGY2Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
-   d="scan'208";a="47080366"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 07 Jul 2024 12:41:15 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sQXl3-000VEK-1W;
-	Sun, 07 Jul 2024 19:41:13 +0000
-Date: Mon, 8 Jul 2024 03:40:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nicolas Pitre <nico@fluxnic.net>, Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@armlinux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, Nicolas Pitre <npitre@baylibre.com>,
-	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] __arch_xprod64(): make __always_inline when
- optimizing for performance
-Message-ID: <202407080355.VUEmeBsv-lkp@intel.com>
-References: <20240707171919.1951895-5-nico@fluxnic.net>
+	s=arc-20240116; t=1720381718; c=relaxed/simple;
+	bh=w8dtLH5b/gCGh710eceQVGii0Z5ddM0LbRV4Q4GhUm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=ZOJBp8b7YW2nQX58E5VzvbJ5p7TZRRccsrv8IPzEQNl/CGh1OwbhJ1Ni+xwNkZglyOfcke3lTlPHK4qiOKoddR9dSJhtxH0PJXGdBLZaoOMtu/pIMtF1QUSLZF3jGUCmSlZeCi50Cs/iHOZOets3PpAepQ2XhQjhDJumnzJv+fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfb05bcc50dso2760134276.0;
+        Sun, 07 Jul 2024 12:48:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720381714; x=1720986514;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RMsuZ61QBM82MumDaO8bDuXHBbe5krN+mT8zYezhXwk=;
+        b=sj/3kLrv3H7p4pb3ylti69SfUiQk4s0X29ThV9Abm30QO8Ki25RzPulKNyrgaENxnO
+         Kie5jGLlwIENAxrgp/ao7JZB49gSugEK89zxO5oGXLqAB17QX3/HbteHRNyQy+y5WJ2J
+         d8MupM264lOZnehstbPTNSrOHMhDIBneDr8i4MuxKIzJiA+5/kGraRSlAWu5llZRcn5w
+         6lVL7JbfaHyj6XKY35qg9zf+nq1Jtggj9Q6+9435080W6wz/tFpGdbMRyzMu0Qqbwrbv
+         oonxDsZOvFXmKSzo/AqqRSHcAgFa6d4Qpco9xFR1uYBeIIUWfqiHHMPZA5KCF5AuMb6r
+         993A==
+X-Forwarded-Encrypted: i=1; AJvYcCU4bySsOui1WAGDjqFO/C/TR9JGv7pq5EEvnq2hiItmu6PnvYPfNHkM4F1R0o50TlfQRnjI/BUvGu1j8hgMOCeWqoZ/HprOnAKHn7YB4erwS4V+RdlMlU3B5bXLxGspQzMZbERjnGXPMihLFrFEDMpE+9H+X87+LjvRqTsX5Ww1REkPSMUIUmd5vbYVxhNbOVWsHhmTxFMOzkv5pWZEIgMdfQDnww==
+X-Gm-Message-State: AOJu0YwqUDP3U5HWsTSx71F3FVmo5qZ8G2Pzt+YIgjY3giuVmMTHVCQl
+	PEuiWA474DRgYhfu8CR3WEQKb0gjECWuu+iTyX3cbJfxxC90NdD0OOQSGx5k
+X-Google-Smtp-Source: AGHT+IEFeKZdjsdQAmGHulgBOFRmVtfVuxbYqrjSPEGkCvTVrtuzn/VZ3SDDB0MiOZG67fiu+/DdJw==
+X-Received: by 2002:a05:690c:6f89:b0:64b:5fcb:6847 with SMTP id 00721157ae682-652d5345b48mr118905317b3.16.1720381714414;
+        Sun, 07 Jul 2024 12:48:34 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-65171900016sm16823687b3.99.2024.07.07.12.48.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Jul 2024 12:48:34 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-654ce021660so14370987b3.1;
+        Sun, 07 Jul 2024 12:48:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWR77H6Iy0FvtPBqv2kpxBSrWKUbf5hEhhf/JxjQ/nl83ujQDwKvESvknq8rnyNUcH07MQv8ASbqNjyJwB4LLyJcul+7sCc+G3GuB4gnO3frtMoWbgy0XYf711WgvPFmQ5eBMY3fqPObzhSjr9uH8tniKVr/TXW0hBhmNUv7C7VJGL3Rrs4KPcKQUuUtxmFaXH3+m0w3Y7p8qMHkB70s6iWuEktvQ==
+X-Received: by 2002:a05:690c:986:b0:632:58ba:cbad with SMTP id
+ 00721157ae682-652d522632bmr92288727b3.10.1720381713087; Sun, 07 Jul 2024
+ 12:48:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240707171919.1951895-5-nico@fluxnic.net>
+References: <20240213220221.2380-8-wsa+renesas@sang-engineering.com>
+ <170870160052.1698319.4712751560931025638.b4-ty@kernel.org> <Zooqfe1sJQsvltwj@shikoro>
+In-Reply-To: <Zooqfe1sJQsvltwj@shikoro>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 7 Jul 2024 21:48:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU6OquhF_WRxD+YxRfJwASepOb-pJp3wT7bvcpb1PHLDQ@mail.gmail.com>
+Message-ID: <CAMuHMdU6OquhF_WRxD+YxRfJwASepOb-pJp3wT7bvcpb1PHLDQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mfd: tmio: simplify header and move to platform_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Lee Jones <lee@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-sh@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nicolas,
+On Sun, Jul 7, 2024 at 7:41=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> On Fri, Feb 23, 2024 at 03:20:00PM +0000, Lee Jones wrote:
+> > On Tue, 13 Feb 2024 23:02:19 +0100, Wolfram Sang wrote:
+> > > Changes since v1:
+> > >
+> > > * rebased to rc4
+> > > * collected all needed acks (Thanks!)
+> > > * capitalized first letter in commit subject
+> > >
+> > > The MFD parts of the TMIO have been removed by Arnd, so that only the
+> > > SD/MMC related functionality is left. Remove the outdated remains in =
+the
+> > > public header file and then move it to platform_data as the data is n=
+ow
+> > > specific for the SD/MMC part.
+> > >
+> > > [...]
+> >
+> > Applied, thanks!
+> >
+> > [1/6] mfd: tmio: Remove obsolete platform_data
+> >       commit: 58d6d15662e4039fab7d786f0426843befa77ad4
+> > [2/6] mfd: tmio: Remove obsolete io accessors
+> >       commit: e927d7bac109d8ca1729dda47a8dbc220efdb50e
+> > [3/6] mmc: tmio/sdhi: Fix includes
+> >       commit: bed05c68aa8f078206143700cd37e42a0084155f
+> > [4/6] mfd: tmio: Update include files
+> >       commit: 3ef94c41db82573dc1e1dd6c259aec8ef6caaaf3
+> > [5/6] mfd: tmio: Sanitize comments
+> >       commit: 2d417dda59123b9523a19ce75fea3fd1056c3b4c
+> > [6/6] mfd: tmio: Move header to platform_data
+> >       commit: 858b29729c9d319b9cd1441646cc3af246d3c3f9
+>
+> This series is not upstream yet?
 
-kernel test robot noticed the following build errors:
+FTR, it entered linux-next in next-20240402, but disappeared after
+next-20240510.
 
-[auto build test ERROR on arnd-asm-generic/master]
-[also build test ERROR on arm/for-next arm/fixes soc/for-next linus/master v6.10-rc6 next-20240703]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Gr{oetje,eeting}s,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nicolas-Pitre/lib-math-test_div64-add-some-edge-cases-relevant-to-__div64_const32/20240708-013344
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-patch link:    https://lore.kernel.org/r/20240707171919.1951895-5-nico%40fluxnic.net
-patch subject: [PATCH v2 4/4] __arch_xprod64(): make __always_inline when optimizing for performance
-config: arm-randconfig-002-20240708 (https://download.01.org/0day-ci/archive/20240708/202407080355.VUEmeBsv-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240708/202407080355.VUEmeBsv-lkp@intel.com/reproduce)
+                        Geert
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407080355.VUEmeBsv-lkp@intel.com/
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-All errors (new ones prefixed by >>):
-
-   scripts/genksyms/parse.y: warning: 9 shift/reduce conflicts [-Wconflicts-sr]
-   scripts/genksyms/parse.y: warning: 5 reduce/reduce conflicts [-Wconflicts-rr]
-   scripts/genksyms/parse.y: note: rerun with option '-Wcounterexamples' to generate conflict counterexamples
-   In file included from include/linux/math.h:6,
-                    from include/linux/kernel.h:27,
-                    from include/linux/cpumask.h:11,
-                    from include/linux/sched.h:16,
-                    from arch/arm/kernel/asm-offsets.c:11:
->> arch/arm/include/asm/div64.h:60:1: error: return type defaults to 'int' [-Werror=implicit-int]
-      60 | __arch_xprod_64(uint64_t m, uint64_t n, bool bias)
-         | ^~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-   make[3]: *** [scripts/Makefile.build:117: arch/arm/kernel/asm-offsets.s] Error 1 shuffle=2335528022
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1208: prepare0] Error 2 shuffle=2335528022
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:240: __sub-make] Error 2 shuffle=2335528022
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:240: __sub-make] Error 2 shuffle=2335528022
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +/int +60 arch/arm/include/asm/div64.h
-
-    54	
-    55	#ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-    56	static __always_inline
-    57	#else
-    58	static inline
-    59	#endif
-  > 60	__arch_xprod_64(uint64_t m, uint64_t n, bool bias)
-    61	{
-    62		unsigned long long res;
-    63		register unsigned int tmp asm("ip") = 0;
-    64		bool no_ovf = __builtin_constant_p(m) &&
-    65			      ((m >> 32) + (m & 0xffffffff) < 0x100000000);
-    66	
-    67		if (!bias) {
-    68			asm (	"umull	%Q0, %R0, %Q1, %Q2\n\t"
-    69				"mov	%Q0, #0"
-    70				: "=&r" (res)
-    71				: "r" (m), "r" (n)
-    72				: "cc");
-    73		} else if (no_ovf) {
-    74			res = m;
-    75			asm (	"umlal	%Q0, %R0, %Q1, %Q2\n\t"
-    76				"mov	%Q0, #0"
-    77				: "+&r" (res)
-    78				: "r" (m), "r" (n)
-    79				: "cc");
-    80		} else {
-    81			asm (	"umull	%Q0, %R0, %Q2, %Q3\n\t"
-    82				"cmn	%Q0, %Q2\n\t"
-    83				"adcs	%R0, %R0, %R2\n\t"
-    84				"adc	%Q0, %1, #0"
-    85				: "=&r" (res), "+&r" (tmp)
-    86				: "r" (m), "r" (n)
-    87				: "cc");
-    88		}
-    89	
-    90		if (no_ovf) {
-    91			asm (	"umlal	%R0, %Q0, %R1, %Q2\n\t"
-    92				"umlal	%R0, %Q0, %Q1, %R2\n\t"
-    93				"mov	%R0, #0\n\t"
-    94				"umlal	%Q0, %R0, %R1, %R2"
-    95				: "+&r" (res)
-    96				: "r" (m), "r" (n)
-    97				: "cc");
-    98		} else {
-    99			asm (	"umlal	%R0, %Q0, %R2, %Q3\n\t"
-   100				"umlal	%R0, %1, %Q2, %R3\n\t"
-   101				"mov	%R0, #0\n\t"
-   102				"adds	%Q0, %1, %Q0\n\t"
-   103				"adc	%R0, %R0, #0\n\t"
-   104				"umlal	%Q0, %R0, %R2, %R3"
-   105				: "+&r" (res), "+&r" (tmp)
-   106				: "r" (m), "r" (n)
-   107				: "cc");
-   108		}
-   109	
-   110		return res;
-   111	}
-   112	#define __arch_xprod_64 __arch_xprod_64
-   113	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
