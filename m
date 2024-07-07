@@ -1,80 +1,69 @@
-Return-Path: <linux-kernel+bounces-243484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE99D9296C9
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:02:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E9F9296CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 793AB1F21E9D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248DD28272A
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B3D79E0;
-	Sun,  7 Jul 2024 06:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117A38814;
+	Sun,  7 Jul 2024 06:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vbt3dYEg"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UG1BaYS5"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533FC23B0
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA045AD24
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720332138; cv=none; b=MTdossOQ9lBc6mt1spiQ2H83PKYQNro6cwmgsEISW9U1By0Q832YHYlVA8KFh1LAZfXh9brOepiZScXS/YCa5aZYeZHYknykw6XB5KVrlGv0jdVsoHzIrpp9FIjutPVMzuScaTeM+RYOyFE3yMeJZ454yrj/MUA07nB3rrmMCAE=
+	t=1720333432; cv=none; b=kvsi6mu2SVXE7K0lPvDZuctBdUQzqw5QL1I4X/yH4c5Sjz0A6b9kUQdsY5R0HL3CfoEjnjLUWUqIsskLBc3CAFa3HB08kASfyZkIYYihjbF2OPDdrcOLUTP+cMudvsQsM6nGIo7440Ht4qiDxC1CkgUZe4NFj/vJaNicXfieQ4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720332138; c=relaxed/simple;
-	bh=H6cPQ5ms3uaLdvwVxSxZ9+wUNHcNCDKI8rCw/mLmDMQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XISvWIZxe5FmV3dcCXdAwvAbVHUfxsV2EQIpUenNPzp41ckxZB/Ghsv4HxOeC37YS4gV2Ya8NMT7I0ESo8klbSQ9luv7j5JPQ1NiAGoLFZEeZvcu/pop3WK9GMwPjkjFdT6imecnc8Z7AU2SsbeimJwW2zzIpGXyXw/4j3E+l6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vbt3dYEg; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f65a3abd01so20133665ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 23:02:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720332136; x=1720936936; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0IGjS+Uaml8qMFqQu2OuijcDEH7XhYZvFeF/aJ7iOe8=;
-        b=Vbt3dYEghfVQcN7jLzLwiwlBrEVqVpmWxlZ6dmMqvIA4LUiKlJsPLNxa1KMgFrhZX/
-         TGVf+1ZbMIZcW3+V0/6a0Wh+YqlOlR/FT1/hLvQPjXa3QUP8Ogxn3H2xvkWCImYdEGQS
-         ieklUc+e7wuZR83DJHMsiA8a9zB1Vta50NowN4pul9keduevgtiJE49kJhow8AOOvG9w
-         kF29j5LqRk13f5MHWBo/fG5tlmp7LOiBofSF1QtwnoO0l0ibjDV8CvX0+Otpi17StTcC
-         vQaMHWJSCK00HNFR1/RXt7azidYaOxIafm5Rz9+vBWjSQtejuT3oZYeWiVu7Az+NLdd1
-         iVWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720332136; x=1720936936;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0IGjS+Uaml8qMFqQu2OuijcDEH7XhYZvFeF/aJ7iOe8=;
-        b=nV0TyJjZClGv7C/ehGOhq69Y4CQtkj/0lHdhy4eZ0t3HP+athYydgFpgqNxOr3uppj
-         KrFAYqw1WeIAsER34wij9w5Q4yEXygROyiNvV7hZgjeMFHYE2vX4BgzbxdpXWjgoatNW
-         ta7aGEXq19Osu2KPyg7LmUMVLhAxIYuulUWa5zAGTCc8+o8pViC/r5YbCYW/bj/AoU0a
-         hrANPbLbqFluK6SOvUqz0HnhqIvqnvXqAnk3lDIvXJVctawujVm8TTCNZujCX4g+ABIh
-         b5vrtgHoxQyamFEJp+0zsik7JWzRHlW/Nt5MXoLPRuATudap3BsRtxNBoS5SXyxLOFnI
-         X4zQ==
-X-Gm-Message-State: AOJu0YyH1/Okaj60LzhkS+osdoBLDcGOTYDtVvp3CsKZEn8jpByorv18
-	hIFMCnui4/Z4G+6bixx5cldCXunPg6gGFEVQGwkSi0NRc8M4Dw7z
-X-Google-Smtp-Source: AGHT+IG99n+YAiWmWhfYQ350jt140MuiEkIHQkXBRUVw9K2XCzed5xDVn6gLxRMimwlPlAGvL019Sg==
-X-Received: by 2002:a17:90a:bb0d:b0:2c9:69ce:cd5a with SMTP id 98e67ed59e1d1-2c99c53bcf2mr6379383a91.17.1720332136439;
-        Sat, 06 Jul 2024 23:02:16 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a950c37sm5897085a91.13.2024.07.06.23.02.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 23:02:16 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+705c61d60b091ef42c04@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] possible deadlock in team_del_slave (3)
-Date: Sun,  7 Jul 2024 15:02:12 +0900
-Message-Id: <20240707060213.3367-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <000000000000ffc5d80616fea23d@google.com>
-References: <000000000000ffc5d80616fea23d@google.com>
+	s=arc-20240116; t=1720333432; c=relaxed/simple;
+	bh=Kr8q7jgtvxXVl4D8u942YnL8udJewM780MCOxyFlPCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FQsUWAOZxhL5bU0deLNsktXMHbx0WxRoV1d4llinQ3zPu24DaO/L8GSlgD19hLzVAOn5Ov+qwgQp/CFE+Ca+40gt8iYvpmfDwM7OTKfQNnfB93Yariasr5JLb+OrqE+9iylt7ifEpU9hVVjYord8mT8r86K4kt5WTIByhwN2rqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UG1BaYS5; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id QKkEsyOxChEtDQKkWs8JLE; Sun, 07 Jul 2024 07:47:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720331269;
+	bh=Ghi6/9KK5dnA4d7xrwkCyOhDZvJBSxCQgYi3tZ7zCuA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=UG1BaYS5p50YBPSwi/Swqw/Ei+LajcK5WrI3tsOSriwLjEBS4TtTB64qkeuRQBvZq
+	 pqg4k0guhhYIzkmJIY7VzCHzOIEePsz5qPbDzkI0b16m97fmLj1bl7aJNlAXQGmvil
+	 BMwQ63yIMqJ9ogHWOuan2tiWMhtDNBLu/hycRjVlz7vrhDsF3cYA34ROnc4ycw6YcK
+	 TfgO3c9uVxNoXtvCOZnv8DuTsTjbdTivBTLQMNItDjjeBNB5Csa4IIMt2CclcgX6nt
+	 aIgrdKvDO690XhgaYAN0pZgFZzVcaR+8kYKzyHVHuVfVZGEN/UF/muwhDHkh+tyzK2
+	 IERxLON+14o9A==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 07 Jul 2024 07:47:49 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	fchiby@baylibre.com,
+	fparent@baylibre.com,
+	s.hauer@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 1/3] soc: mediatek: pwrap: Constify struct pmic_wrapper_type
+Date: Sun,  7 Jul 2024 07:47:20 +0200
+Message-ID: <5b4b60c5dfd6d8fe893b05cfc96c0e2d67705463.1720331018.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1720331018.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1720331018.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,24 +72,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+'struct pmic_wrapper_type' is not modified in this driver.
 
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
+
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  45336	   8724	     16	  54076	   d33c	drivers/soc/mediatek/mtk-pmic-wrap.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  45528	   8532	     16	  54076	   d33c	drivers/soc/mediatek/mtk-pmic-wrap.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- net/mac80211/iface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Compile tested-only
 
-diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
-index b935bb5d8ed1..7ac4a62ed536 100644
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@ -2301,7 +2301,7 @@ void ieee80211_remove_interfaces(struct ieee80211_local *local)
- 			ieee80211_vif_cfg_change_notify(sdata,
- 							BSS_CHANGED_ARP_FILTER);
+Changes in v2:
+   - Add R-b
+
+v1: https://lore.kernel.org/all/ee3160978ac6564663d044815f24cf79e2e0744e.1719652155.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/soc/mediatek/mtk-pmic-wrap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+index efd9cae212dc..0da0cdec5050 100644
+--- a/drivers/soc/mediatek/mtk-pmic-wrap.c
++++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+@@ -2397,7 +2397,7 @@ static const struct pmic_wrapper_type pwrap_mt8183 = {
+ 	.init_soc_specific = pwrap_mt8183_init_soc_specific,
+ };
  
--		list_del(&sdata->list);
-+		list_del_init(&sdata->list);
- 		cfg80211_unregister_wdev(&sdata->wdev);
+-static struct pmic_wrapper_type pwrap_mt8195 = {
++static const struct pmic_wrapper_type pwrap_mt8195 = {
+ 	.regs = mt8195_regs,
+ 	.type = PWRAP_MT8195,
+ 	.arb_en_all = 0x777f, /* NEED CONFIRM */
+@@ -2423,7 +2423,7 @@ static const struct pmic_wrapper_type pwrap_mt8365 = {
+ 	.init_soc_specific = NULL,
+ };
  
- 		if (!netdev)
---
+-static struct pmic_wrapper_type pwrap_mt8516 = {
++static const struct pmic_wrapper_type pwrap_mt8516 = {
+ 	.regs = mt8516_regs,
+ 	.type = PWRAP_MT8516,
+ 	.arb_en_all = 0xff,
+@@ -2435,7 +2435,7 @@ static struct pmic_wrapper_type pwrap_mt8516 = {
+ 	.init_soc_specific = NULL,
+ };
+ 
+-static struct pmic_wrapper_type pwrap_mt8186 = {
++static const struct pmic_wrapper_type pwrap_mt8186 = {
+ 	.regs = mt8186_regs,
+ 	.type = PWRAP_MT8186,
+ 	.arb_en_all = 0xfb27f,
+-- 
+2.45.2
+
 
