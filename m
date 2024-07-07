@@ -1,117 +1,235 @@
-Return-Path: <linux-kernel+bounces-243524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AC0929729
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:45:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1055F92972E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB66281A33
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B892819FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274AD125B2;
-	Sun,  7 Jul 2024 08:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCD712E75;
+	Sun,  7 Jul 2024 08:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eadWUsw7"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D/iFG6SN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38DE7FF;
-	Sun,  7 Jul 2024 08:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBE7F51B;
+	Sun,  7 Jul 2024 08:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720341947; cv=none; b=S25AeSOv8OauIcMdgCv5Or+kO3HGz7+dQ73URCijG2nXF1muIXxZkuzef9ETVG8EeRfQ0qw1kegvJrdpig2o79VjfCqLP2qMTDRsXjQqsUJX/l2x8OdhCK3aVcg1Mir3jSwkUiltrEnSNnnRnqK+KQWvb7NIpFjsH7xtciCDSP8=
+	t=1720342610; cv=none; b=GTBbKyFOrFv+OCPPjwx8ViCO4WIoRi7xibQGV+ZoLkDU2J2RmbSkLL4NpKbY4klkOSl4dqktJIXtyvEE4yyijEOj3ukZmdfGNJhGI3svtLHtRbn0vOqYph6Y/V10xZbKm8Qy5DLbQXlxoJaJuAQf5DWUfBhwv4D0llED7083y0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720341947; c=relaxed/simple;
-	bh=CyTzhOxBQthFyGXcVW6Ge9YgHiZ1vJTkQ/bVRvaHHaM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=jrsQeQy5Gwhxvz0KtXOhzKoCj3kvLAqlA8BPA/hdOWru40v30GkLbTKkPaTc3HX8vkaGcazBQejdiyee4TFzZf/jI44/nd5zm3hC0B1DnMSGIvW/9dgJMjiPWyi14EXexxdqr1o7zG995BNFUwKXn/s47a1LcYbTmEiqU4cs9Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eadWUsw7; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720341933; x=1720946733; i=markus.elfring@web.de;
-	bh=CyTzhOxBQthFyGXcVW6Ge9YgHiZ1vJTkQ/bVRvaHHaM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=eadWUsw7y7YOwkSdVRTHKXyD4L8okP2qS7lgfnVcwRqQJqj/5AhEPv40d1DrLoEI
-	 8tsnlWeBD5ZFS+osbWTWAfiBdl+ZB9v8fWBy4eSBuNhrdLlBFjp9uMY9vblggQyHI
-	 g21LdhVc7fXc/3+JCqQjOR5tEhxGHU4/6pCQ1fflOLRiO9l4xvcEtq4kmQckAutUi
-	 sbrvTtTp59d4Rex/AtR2d37kWxLuCGsqd4Aq4NQI0UXW8kOKLVsiVBGkbmRINaXYa
-	 VGEtjU+eFNe+7JpA5xwDXxeUaI8D0XCKN9FQMF06Tlp9lskNWxgnif2nZeQTTBzRW
-	 uj7mZ5RWraVrH2VG3A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MhWop-1rvQUg1It1-00opnh; Sun, 07
- Jul 2024 10:45:33 +0200
-Message-ID: <8b24a50c-ac43-473c-80fd-185ee806b5f2@web.de>
-Date: Sun, 7 Jul 2024 10:45:03 +0200
+	s=arc-20240116; t=1720342610; c=relaxed/simple;
+	bh=tH9nMASGzPPGyJh68hCgqOFGw5zJeZCLjZOsJf+Rlr0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UXWoSE0ZgBcfCshOm+uqITBe4X83nQ7GyVr9sTkvg2HCphFeDvYuAo7k4QNhAueZRMLKhgDv8zD5XeK2hPWE8ejGXg0r5UZPXNbBjsdwf8qrAWvX0h9YKT64fXPdI0+/CBWSmUObtcm3sFHWh49nQviKLjJE4+WurgYpmQCg53E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D/iFG6SN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4676FgXq018591;
+	Sun, 7 Jul 2024 08:56:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Q9E7DqNQLQNBs9xfmNPO/E
+	rBsLEs5p+TdEFHa+ZXnLU=; b=D/iFG6SNlUQYW+uHcPDN8+prxClVKIaa9FCJWi
+	mjABeXwH0zjwWY6eCzfER1ynh/cUnvxLX+rSl14l/r0YzGIEk5JnnJu2cpbBpbNT
+	PSAtQ/x+WVDQtXFpzu2IptLxMFNmpYdYYKCWP+jq5SAOBSFBqs/SWhD1t/mWtZkt
+	VemDaiMay18N3Ok3ObSIxKGb8oxL4VMyqx0TuXChyk/MGn3QjKBG9fUth41Felb6
+	N13eags/YHfAfxvL9H8IVY1f5RWoCgMWNyQ5fbeC+E3UkEb+MSsC585CixM/hy3j
+	zlAuJ0xsMbp9rbRK+pbFUdrBavlBWBAUc6cJbQ7rX/ZGdk4Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmhhje-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 07 Jul 2024 08:56:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4678ubI1026081
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 7 Jul 2024 08:56:37 GMT
+Received: from hu-kriskura-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 7 Jul 2024 01:56:33 -0700
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Johan Hovold
+	<johan@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <quic_ppratap@quicinc.com>,
+        <quic_jackp@quicinc.com>, Krishna Kurapati <quic_kriskura@quicinc.com>
+Subject: [PATCH v17] arm64: dts: qcom: sa8295p-adp: Enable the four USB Type-A ports
+Date: Sun, 7 Jul 2024 14:26:24 +0530
+Message-ID: <20240707085624.3411961-1-quic_kriskura@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Sungwoo Kim <iam@sung-woo.kim>, linux-bluetooth@vger.kernel.org,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Von Dentz <luiz.dentz@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Dave (Jing) Tian"
- <daveti@purdue.edu>, Hui Peng <benquike@gmail.com>
-References: <20240706225124.1247944-1-iam@sung-woo.kim>
-Subject: Re: [PATCH v2] Bluetooth: hci: fix null-ptr-deref in
- hci_read_supported_codecs
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240706225124.1247944-1-iam@sung-woo.kim>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/OKP/kB0LAmfffMhCRcvGRVdMSFXzQ52i23cPJFJn+XAfU8SzJ8
- 2ZQaoCXiwmgGvtPLdY8g9kjL0wtTM5p5vVWgQjHowNmiMBxV4XXRwSdSB3ItarIwegOIClF
- tSJ8/ZuE1NFmIgvRci5VsTFBmg//V5xGGD647yWw5podxTw9EibUb/c4dXfcLrT+439aXnN
- w8HGMS3QisHS+e64VKb1Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Y1clwikdP70=;PQCF2KiXkStkpGaj/vHKAOZ8oxb
- EtmBOfhTXhbbHKNq9PgRY2vuf5J1kVWwi27/Q1PEPTQ002LOE6CZojUnKsX/alLXEatk85jr0
- YkZLdH+ScdyOK02eSf2rxeFjEhQERrlrWZN20BZsIKGGrDB5sYVc5JhMDuZn9jMykhEwJ7JQR
- hv9+52J7bcOB4Ryg2DCM7OWFRbgiuTLvcgx0p18hy/gAbnj7k6Dp7dnlNwhIul9esvexU0lPP
- oXrn+XHC7qny3pg/l7MIYIQlqC7vqRotMwh326qHyZHtrGj604VnfoN4KaPIW7lv/NoQcIMIS
- X6Yo/SGWv+a8sYnIe7hGZo3p5iYozUEnYVNyrf4KxLUYY8u44xd9SAoAJblR66+YpO1bnzZ1b
- 8RqfbpKga5M8AJBOA2WcmWyr+G3vmu1q9J3TIrQXwJHtbuWLLN8Jv1mpH7EZYnyaVBGb6Ibmf
- dYSFhhMPg19s6rODTpY1cDKrUwLcPTFyElFXoPKZF5HyHHPRhjq4bPgQ3qcHZyfUHaAwJUopC
- rKwsRPQbC7DhpCebjkG7Y4ulVAT2TPvOz7Xd8U9737UW1aN1S9k2xxN+AL/QKvEOySVMx227c
- L+zb58hqQ3+gNZG9aVMr4b9KTAb/NrpkHv6f8E8i7ge8wjWKzTPYo2IkVUi121KqWaX1oSsHU
- CTwktJRXnaGjG7PU6gwwIUAoCIH1LSYzuyyOtlDgH/F+s9K2GTUpa5g4fRdkq+U4k6en0QLvx
- HmnLIpxL/WRTatA+RC1Plzb4uQOBuIGizM/w/p+q6ka4WonDHSDWiA1Lrjetuu2FGY96U+EiS
- oZ85y7gzoE6+EF2yfNC2+PnDFkNaj+HHcH2fPxxO5n9HY=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mKChzIPReX79mE4PRibae0hqT7OmsW1P
+X-Proofpoint-ORIG-GUID: mKChzIPReX79mE4PRibae0hqT7OmsW1P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-07_05,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407070071
 
-Please put email addresses for recipients not only into the message field =
-=E2=80=9CCc=E2=80=9D.
+The multiport USB controller in the SA8295P ADP is connected to four USB
+Type-A ports. VBUS for each of these ports are provided by a
+TPS2559QWDRCTQ1 regulator, controlled from PMIC GPIOs.
 
+Add the necessary regulators and GPIO configuration to power these.
 
-=E2=80=A6
-> Fix __hci_cmd_sync_sk() to not return NULL.
->
-> KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-=E2=80=A6
+It seems reasonable that these regulators should be referenced as vbus
+supply of usb-a-connector nodes and controlled by e.g. dwc3, but as this
+is not supported in Linux today the regulators are left always-on for
+now.
 
-How do you think about to use a summary phrase like
-=E2=80=9CPrevent null pointer dereference in hci_read_supported_codecs()=
-=E2=80=9D?
+Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+---
+Changes in v17:
+Updated commit text as per comments on v16.
+This has been only compile tested as only the commit text
+has been updated.
 
+Link to v16:
+https://lore.kernel.org/all/20240429162048.2133512-3-quic_kriskura@quicinc.com/
 
-=E2=80=A6
-> Fixes: abfeea476c68 ("Bluetooth: hci_sync: Convert MGMT_OP_START_DISCOVE=
-RY")
-=E2=80=A6
+ arch/arm64/boot/dts/qcom/sa8295p-adp.dts | 83 ++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-Would you like to add a =E2=80=9Cstable tag=E2=80=9D accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/stable-kernel-rules.rst?h=3Dv6.10-rc6#n34
+diff --git a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+index 78e933c42c31..2fd1dafe63ce 100644
+--- a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
++++ b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ #include <dt-bindings/spmi/spmi.h>
++#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+ 
+ #include "sa8540p.dtsi"
+ #include "sa8540p-pmics.dtsi"
+@@ -109,6 +110,46 @@ edp3_connector_in: endpoint {
+ 		};
+ 	};
+ 
++	regulator-usb2-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "USB2_VBUS";
++		gpio = <&pmm8540c_gpios 9 GPIO_ACTIVE_HIGH>;
++		pinctrl-0 = <&usb2_en>;
++		pinctrl-names = "default";
++		enable-active-high;
++		regulator-always-on;
++	};
++
++	regulator-usb3-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "USB3_VBUS";
++		gpio = <&pmm8540e_gpios 5 GPIO_ACTIVE_HIGH>;
++		pinctrl-0 = <&usb3_en>;
++		pinctrl-names = "default";
++		enable-active-high;
++		regulator-always-on;
++	};
++
++	regulator-usb4-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "USB4_VBUS";
++		gpio = <&pmm8540g_gpios 5 GPIO_ACTIVE_HIGH>;
++		pinctrl-0 = <&usb4_en>;
++		pinctrl-names = "default";
++		enable-active-high;
++		regulator-always-on;
++	};
++
++	regulator-usb5-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "USB5_VBUS";
++		gpio = <&pmm8540g_gpios 9 GPIO_ACTIVE_HIGH>;
++		pinctrl-0 = <&usb5_en>;
++		pinctrl-names = "default";
++		enable-active-high;
++		regulator-always-on;
++	};
++
+ 	reserved-memory {
+ 		gpu_mem: gpu-mem@8bf00000 {
+ 			reg = <0 0x8bf00000 0 0x2000>;
+@@ -637,6 +678,10 @@ &usb_1_qmpphy {
+ 	status = "okay";
+ };
+ 
++&usb_2 {
++	status = "okay";
++};
++
+ &usb_2_hsphy0 {
+ 	vdda-pll-supply = <&vreg_l5a>;
+ 	vdda18-supply = <&vreg_l7g>;
+@@ -697,6 +742,44 @@ max20411_en: max20411-en-state {
+ 	};
+ };
+ 
++&pmm8540c_gpios {
++	usb2_en: usb2-en-state {
++		pins = "gpio9";
++		function = "normal";
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_HIGH>;
++		output-enable;
++		power-source = <0>;
++	};
++};
++
++&pmm8540e_gpios {
++	usb3_en: usb3-en-state {
++		pins = "gpio5";
++		function = "normal";
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_HIGH>;
++		output-enable;
++		power-source = <0>;
++	};
++};
++
++&pmm8540g_gpios {
++	usb4_en: usb4-en-state {
++		pins = "gpio5";
++		function = "normal";
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_HIGH>;
++		output-enable;
++		power-source = <0>;
++	};
++
++	usb5_en: usb5-en-state {
++		pins = "gpio9";
++		function = "normal";
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_HIGH>;
++		output-enable;
++		power-source = <0>;
++	};
++};
++
+ &tlmm {
+ 	pcie2a_default: pcie2a-default-state {
+ 		clkreq-n-pins {
+-- 
+2.34.1
 
-Regards,
-Markus
 
