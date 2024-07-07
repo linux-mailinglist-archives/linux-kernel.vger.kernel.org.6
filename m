@@ -1,269 +1,203 @@
-Return-Path: <linux-kernel+bounces-243644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7A19298BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:03:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBAC19298BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32E551F212D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:03:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09DD81C2151B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445013BB32;
-	Sun,  7 Jul 2024 16:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20213BB32;
+	Sun,  7 Jul 2024 16:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpfkRWkV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SEe/JAKt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5928A28EA;
-	Sun,  7 Jul 2024 16:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7578328EA;
+	Sun,  7 Jul 2024 16:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720368188; cv=none; b=Uyjhgfh1yQ+5vXbaNGvISfNKG7gfdgJsPG5MR1tlwsidmvXyc41wVTHoDZ6E3ctaqCJOYJ2TwQq0Xyskap+zJuZt4NtcJr+wa7XsKPoTUxSm83m1PzL+PHu0JuALompKOVXUxkzdr0bGESY6+9SOjhWqqXULmAA64fNjGr6j2QY=
+	t=1720368227; cv=none; b=UHlVV8JOfZCAtjt4CA33FAQfMcykcdKN61KXlchG5O9dhIEo0D5r9C7XR+Cb8UdqPPUHNm40TK3j7txyCR4DLQ2I1HYzRUi8O0vmDuL/BUm4PE+rfvpPvsv9eeZ1MRBX2s8Ms0w/QtaahqP5ZFcCIAjpSL7KJdf931Jbid+Uk8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720368188; c=relaxed/simple;
-	bh=7Zh/BdC70mcdgFjK67+A5h+GYA7oU9qGfd1HQ+JVvb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=twKTY+TYjG+U15fXSlGtY+kYeBS65Zmu+/F5HZqq+ypxQPWWzzqGv5HhPX+V4oJnyh7D+4GahUc0BvboX0cJbWSkTmmTBLUkzRxujOqag4z93DVHJoO3R8uMCviPZoI4/KTnrM1VRnkMzuUTMdn35zsFsRhLTXTJLE+hQloJWCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpfkRWkV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE1DC3277B;
-	Sun,  7 Jul 2024 16:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720368187;
-	bh=7Zh/BdC70mcdgFjK67+A5h+GYA7oU9qGfd1HQ+JVvb8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NpfkRWkVBkHdgXreGQ0CXV4pmoBgFiCmrA4ADKn2pKkV2srCefCJO/zOJyZUPTvBl
-	 TUc3m1wYBTQHc+lAm7hUdyMumhKmgwoYosQ4K36t7NohnVSc4EgbNRCV+p3hs+DVei
-	 /NZSW5mD2RvM4LbCb5eLn4siYjufwY79bbrZND0AH8Z+3ZRO53YF9QXaZAkEXVdd0X
-	 3pIWyKqD9VbX5ktCVXws8NglXUJQvc9zGCrfJG/KRtF/Nyk+vhrQacpfCe7GgV6Fvi
-	 CJ44vlO31ADWG4aq8/0IB9XwGJp+XNTAskswZAjGiT/UnGOHjXRyZ0jAuch6MOQOiQ
-	 y/NM3/f9ce3cw==
-Date: Sun, 7 Jul 2024 17:02:59 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Greg Kroah-Hartman <gregkh@suse.de>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron
- <jic23@cam.ac.uk>, jstephan@baylibre.com, dlechner@baylibre.com
-Subject: Re: [PATCH v3] iio: adc: ad7606: remove frstdata check for serial
- mode
-Message-ID: <20240707170259.5505e8c3@jic23-huawei>
-In-Reply-To: <20240702-cleanup-ad7606-v3-1-18d5ea18770e@baylibre.com>
-References: <20240702-cleanup-ad7606-v3-1-18d5ea18770e@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720368227; c=relaxed/simple;
+	bh=+C98fktP2PvVUClWe+Ihb8xDaQzuDfLxCpAMjLAICOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y4a4wIxts4ZeMtBROa7SqkGqZtIlGBvWjA91I+zRcniUIPP0CwJ78If5uyOudxp7v1nEib7qibsng6fbeo6af/AprGEL5Lo2AoVQjSSZaZKEEsF6NeuUgeky7Axsk+AWQnLfD0KSfWLYGJsWpv1LM3H5enaBM9tQNCzzjbg9zOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SEe/JAKt; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720368225; x=1751904225;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+C98fktP2PvVUClWe+Ihb8xDaQzuDfLxCpAMjLAICOE=;
+  b=SEe/JAKtyVjlEGal+UM3k20W8sL+7+busMziGhc8tlKei+aGvlj1z7hv
+   t0ZCjiyUEhLBhL0l1Wytj9MiohyiFFco1TyXcVPxHyVHQ6BtPRwPTqLmw
+   Ot43cZc4gngFQVvLYAr9p96aWudu5D7jqRMfrUSAyPnvCRFclMXnnX921
+   ibplSwbyXrkzqDMxZ15YLOjzQQjZuyGZ6cB72td7PS7//sA0bPu0WxsSI
+   IjjVjl/3d9GOoYYsvTSKD7nr/wXlD3Vp6+gwfXAwBVjpEBEGTYdZ2Fl6h
+   eRdE/Lr49rw7piMQ/Ttr0GG4oRf3duXrkhGgfAOgQH6GcwpB5AtOBitjY
+   A==;
+X-CSE-ConnectionGUID: nC/w1FWSSbWvusA+IpQ24A==
+X-CSE-MsgGUID: b9JoLN7nR2Kxmbj3SLqxuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="17390532"
+X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
+   d="scan'208";a="17390532"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 09:03:45 -0700
+X-CSE-ConnectionGUID: yQJthOFoQWGPoURzIEQO+Q==
+X-CSE-MsgGUID: mFpJMzK7Sf2t0YVMMwJOLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,190,1716274800"; 
+   d="scan'208";a="47175035"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 07 Jul 2024 09:03:40 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sQUMU-000V4Q-0o;
+	Sun, 07 Jul 2024 16:03:38 +0000
+Date: Mon, 8 Jul 2024 00:03:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	sudeep.holla@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com,
+	michal.simek@amd.com, quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com, ptosi@google.com, dan.carpenter@linaro.org,
+	souvik.chakravarty@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 5/8] firmware: arm_scmi: Make SMC transport a standalone
+ driver
+Message-ID: <202407072316.PqU8yj52-lkp@intel.com>
+References: <20240707002055.1835121-6-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240707002055.1835121-6-cristian.marussi@arm.com>
 
-On Tue, 02 Jul 2024 12:52:51 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
+Hi Cristian,
 
-> The current implementation attempts to recover from an eventual glitch
-> in the clock by checking frstdata state after reading the first
-> channel's sample: If frstdata is low, it will reset the chip and
-> return -EIO.
-> 
-> This will only work in parallel mode, where frstdata pin is set low
-> after the 2nd sample read starts.
-> 
-> For the serial mode, according to the datasheet, "The FRSTDATA output
-> returns to a logic low following the 16th SCLK falling edge.", thus
-> after the Xth pulse, X being the number of bits in a sample, the check
-> will always be true, and the driver will not work at all in serial
-> mode if frstdata(optional) is defined in the devicetree as it will
-> reset the chip, and return -EIO every time read_sample is called.
-> 
-> Hence, this check must be removed for serial mode.
-> 
-> Fixes: b9618c0cacd7 ("staging: IIO: ADC: New driver for AD7606/AD7606-6/AD7606-4")
-> 
-No blank line here. Fixes is part of the tag block and some tooling
-falls over if it sees a blank line. 
+kernel test robot noticed the following build warnings:
 
-There are bots checking this on upstream trees btw.
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on next-20240703]
+[cannot apply to linus/master v6.10-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-With that blank line removed, applied to the fixes-togreg branch of iio.git and
-marked for stable.  Note I might not do a pull request until the merge window
-is over as I don't have anything particularly urgent and it can get messy!
+url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Marussi/firmware-arm_scmi-Introduce-setup_shmem_iomap/20240707-082513
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20240707002055.1835121-6-cristian.marussi%40arm.com
+patch subject: [PATCH 5/8] firmware: arm_scmi: Make SMC transport a standalone driver
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20240707/202407072316.PqU8yj52-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240707/202407072316.PqU8yj52-lkp@intel.com/reproduce)
 
-Thanks,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407072316.PqU8yj52-lkp@intel.com/
 
-Jonathan
+All warnings (new ones prefixed by >>):
 
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> ---
-> Changes in v3:
-> - Improve commit message.
-> - Add Fixes tag: the fixes tag is the initial commit since the issue
->   have been there from then on, probably overlooked because removing
->   frstdata from DT solved the issue.
-> - Remove extra linebreak.
-> - Link to v2: https://lore.kernel.org/r/20240618-cleanup-ad7606-v2-1-b0fd015586aa@baylibre.com
-> 
-> iio: adc: ad7606: remove frstdata check for serial modei
-> 
-> Changes in v2:
->  - Remove frstdata check only for the serial interface as suggested by
->    Michael Hennerich.
->  - Link to v1: https://lore.kernel.org/r/20240417-cleanup-ad7606-v1-1-5c2a29662c0a@baylibre.com
-> ---
->  drivers/iio/adc/ad7606.c     | 28 ++------------------------
->  drivers/iio/adc/ad7606.h     |  2 ++
->  drivers/iio/adc/ad7606_par.c | 48 +++++++++++++++++++++++++++++++++++++++++---
->  3 files changed, 49 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> index 3a417595294f..c321c6ef48df 100644
-> --- a/drivers/iio/adc/ad7606.c
-> +++ b/drivers/iio/adc/ad7606.c
-> @@ -49,7 +49,7 @@ static const unsigned int ad7616_oversampling_avail[8] = {
->  	1, 2, 4, 8, 16, 32, 64, 128,
->  };
->  
-> -static int ad7606_reset(struct ad7606_state *st)
-> +int ad7606_reset(struct ad7606_state *st)
->  {
->  	if (st->gpio_reset) {
->  		gpiod_set_value(st->gpio_reset, 1);
-> @@ -60,6 +60,7 @@ static int ad7606_reset(struct ad7606_state *st)
->  
->  	return -ENODEV;
->  }
-> +EXPORT_SYMBOL_NS_GPL(ad7606_reset, IIO_AD7606);
->  
->  static int ad7606_reg_access(struct iio_dev *indio_dev,
->  			     unsigned int reg,
-> @@ -88,31 +89,6 @@ static int ad7606_read_samples(struct ad7606_state *st)
->  {
->  	unsigned int num = st->chip_info->num_channels - 1;
->  	u16 *data = st->data;
-> -	int ret;
-> -
-> -	/*
-> -	 * The frstdata signal is set to high while and after reading the sample
-> -	 * of the first channel and low for all other channels. This can be used
-> -	 * to check that the incoming data is correctly aligned. During normal
-> -	 * operation the data should never become unaligned, but some glitch or
-> -	 * electrostatic discharge might cause an extra read or clock cycle.
-> -	 * Monitoring the frstdata signal allows to recover from such failure
-> -	 * situations.
-> -	 */
-> -
-> -	if (st->gpio_frstdata) {
-> -		ret = st->bops->read_block(st->dev, 1, data);
-> -		if (ret)
-> -			return ret;
-> -
-> -		if (!gpiod_get_value(st->gpio_frstdata)) {
-> -			ad7606_reset(st);
-> -			return -EIO;
-> -		}
-> -
-> -		data++;
-> -		num--;
-> -	}
->  
->  	return st->bops->read_block(st->dev, num, data);
->  }
-> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-> index 0c6a88cc4695..6649e84d25de 100644
-> --- a/drivers/iio/adc/ad7606.h
-> +++ b/drivers/iio/adc/ad7606.h
-> @@ -151,6 +151,8 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
->  		 const char *name, unsigned int id,
->  		 const struct ad7606_bus_ops *bops);
->  
-> +int ad7606_reset(struct ad7606_state *st);
-> +
->  enum ad7606_supported_device_ids {
->  	ID_AD7605_4,
->  	ID_AD7606_8,
-> diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
-> index d8408052262e..6bc587b20f05 100644
-> --- a/drivers/iio/adc/ad7606_par.c
-> +++ b/drivers/iio/adc/ad7606_par.c
-> @@ -7,6 +7,7 @@
->  
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/platform_device.h>
->  #include <linux/types.h>
->  #include <linux/err.h>
-> @@ -21,8 +22,29 @@ static int ad7606_par16_read_block(struct device *dev,
->  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
->  	struct ad7606_state *st = iio_priv(indio_dev);
->  
-> -	insw((unsigned long)st->base_address, buf, count);
->  
-> +	/*
-> +	 * On the parallel interface, the frstdata signal is set to high while
-> +	 * and after reading the sample of the first channel and low for all
-> +	 * other channels.  This can be used to check that the incoming data is
-> +	 * correctly aligned.  During normal operation the data should never
-> +	 * become unaligned, but some glitch or electrostatic discharge might
-> +	 * cause an extra read or clock cycle.  Monitoring the frstdata signal
-> +	 * allows to recover from such failure situations.
-> +	 */
-> +	int num = count;
-> +	u16 *_buf = buf;
-> +
-> +	if (st->gpio_frstdata) {
-> +		insw((unsigned long)st->base_address, _buf, 1);
-> +		if (!gpiod_get_value(st->gpio_frstdata)) {
-> +			ad7606_reset(st);
-> +			return -EIO;
-> +		}
-> +		_buf++;
-> +		num--;
-> +	}
-> +	insw((unsigned long)st->base_address, _buf, num);
->  	return 0;
->  }
->  
-> @@ -35,8 +57,28 @@ static int ad7606_par8_read_block(struct device *dev,
->  {
->  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
->  	struct ad7606_state *st = iio_priv(indio_dev);
-> -
-> -	insb((unsigned long)st->base_address, buf, count * 2);
-> +	/*
-> +	 * On the parallel interface, the frstdata signal is set to high while
-> +	 * and after reading the sample of the first channel and low for all
-> +	 * other channels.  This can be used to check that the incoming data is
-> +	 * correctly aligned.  During normal operation the data should never
-> +	 * become unaligned, but some glitch or electrostatic discharge might
-> +	 * cause an extra read or clock cycle.  Monitoring the frstdata signal
-> +	 * allows to recover from such failure situations.
-> +	 */
-> +	int num = count;
-> +	u16 *_buf = buf;
-> +
-> +	if (st->gpio_frstdata) {
-> +		insb((unsigned long)st->base_address, _buf, 2);
-> +		if (!gpiod_get_value(st->gpio_frstdata)) {
-> +			ad7606_reset(st);
-> +			return -EIO;
-> +		}
-> +		_buf++;
-> +		num--;
-> +	}
-> +	insb((unsigned long)st->base_address, _buf, num * 2);
->  
->  	return 0;
->  }
-> 
-> ---
-> base-commit: 07d4d0bb4a8ddcc463ed599b22f510d5926c2495
-> change-id: 20240416-cleanup-ad7606-161e2ed9818b
-> 
-> Best regards,
+>> drivers/firmware/arm_scmi/scmi_transport_smc.c:157:58: warning: variable 'size' is uninitialized when used here [-Wuninitialized]
+                   void __iomem *ptr = (void __iomem *)scmi_info->shmem + size - 8;
+                                                                          ^~~~
+   drivers/firmware/arm_scmi/scmi_transport_smc.c:136:22: note: initialize the variable 'size' to silence this warning
+           resource_size_t size;
+                               ^
+                                = 0
+   1 warning generated.
 
+
+vim +/size +157 drivers/firmware/arm_scmi/scmi_transport_smc.c
+
+0bfdca8a8661aa drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2021-12-20  129  
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  130  static int smc_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  131  			  bool tx)
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  132  {
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  133  	struct device *cdev = cinfo->dev;
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  134  	unsigned long cap_id = ULONG_MAX;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  135  	struct scmi_smc *scmi_info;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  136  	resource_size_t size;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  137  	struct resource res;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  138  	u32 func_id;
+d1ff11d7ad8704 drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2023-07-19  139  	int ret;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  140  
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  141  	if (!tx)
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  142  		return -ENODEV;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  143  
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  144  	scmi_info = devm_kzalloc(dev, sizeof(*scmi_info), GFP_KERNEL);
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  145  	if (!scmi_info)
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  146  		return -ENOMEM;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  147  
+728a057b6ab114 drivers/firmware/arm_scmi/scmi_transport_smc.c Cristian Marussi 2024-07-07  148  	scmi_info->shmem = core->shmem->setup_iomap(cinfo, dev, tx);
+6c5d3315c40fa0 drivers/firmware/arm_scmi/smc.c                Peng Fan         2024-07-07  149  	if (IS_ERR(scmi_info->shmem))
+6c5d3315c40fa0 drivers/firmware/arm_scmi/smc.c                Peng Fan         2024-07-07  150  		return PTR_ERR(scmi_info->shmem);
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  151  
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  152  	ret = of_property_read_u32(dev->of_node, "arm,smc-id", &func_id);
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  153  	if (ret < 0)
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  154  		return ret;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  155  
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  156  	if (of_device_is_compatible(dev->of_node, "qcom,scmi-smc")) {
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09 @157  		void __iomem *ptr = (void __iomem *)scmi_info->shmem + size - 8;
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  158  		/* The capability-id is kept in last 8 bytes of shmem.
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  159  		 *     +-------+ <-- 0
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  160  		 *     | shmem |
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  161  		 *     +-------+ <-- size - 8
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  162  		 *     | capId |
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  163  		 *     +-------+ <-- size
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  164  		 */
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  165  		memcpy_fromio(&cap_id, ptr, sizeof(cap_id));
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  166  	}
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  167  
+5f2ea10a808aef drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-05-06  168  	if (of_device_is_compatible(dev->of_node, "arm,scmi-smc-param")) {
+5f2ea10a808aef drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-05-06  169  		scmi_info->param_page = SHMEM_PAGE(res.start);
+5f2ea10a808aef drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-05-06  170  		scmi_info->param_offset = SHMEM_OFFSET(res.start);
+5f2ea10a808aef drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-05-06  171  	}
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  172  	/*
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  173  	 * If there is an interrupt named "a2p", then the service and
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  174  	 * completion of a message is signaled by an interrupt rather than by
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  175  	 * the return of the SMC call.
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  176  	 */
+d1ff11d7ad8704 drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2023-07-19  177  	scmi_info->irq = of_irq_get_byname(cdev->of_node, "a2p");
+d1ff11d7ad8704 drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2023-07-19  178  	if (scmi_info->irq > 0) {
+d1ff11d7ad8704 drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2023-07-19  179  		ret = request_irq(scmi_info->irq, smc_msg_done_isr,
+d1ff11d7ad8704 drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2023-07-19  180  				  IRQF_NO_SUSPEND, dev_name(dev), scmi_info);
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  181  		if (ret) {
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  182  			dev_err(dev, "failed to setup SCMI smc irq\n");
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  183  			return ret;
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  184  		}
+f716cbd33f038a drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2021-12-20  185  	} else {
+f716cbd33f038a drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2021-12-20  186  		cinfo->no_completion_irq = true;
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  187  	}
+dd820ee21d5e07 drivers/firmware/arm_scmi/smc.c                Jim Quinlan      2020-12-22  188  
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  189  	scmi_info->func_id = func_id;
+da405477e76707 drivers/firmware/arm_scmi/smc.c                Nikunj Kela      2023-10-09  190  	scmi_info->cap_id = cap_id;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  191  	scmi_info->cinfo = cinfo;
+0bfdca8a8661aa drivers/firmware/arm_scmi/smc.c                Cristian Marussi 2021-12-20  192  	smc_channel_lock_init(scmi_info);
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  193  	cinfo->transport_info = scmi_info;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  194  
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  195  	return 0;
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  196  }
+1dc6558062dadf drivers/firmware/arm_scmi/smc.c                Peng Fan         2020-03-08  197  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
