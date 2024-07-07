@@ -1,137 +1,210 @@
-Return-Path: <linux-kernel+bounces-243677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAFC7929926
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:20:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4FD929929
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 19:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E89B1F213B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:20:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DD35B21317
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D3D7405A;
-	Sun,  7 Jul 2024 17:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95BA535DC;
+	Sun,  7 Jul 2024 17:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="ephEmCz0";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="IHnMbrny"
-Received: from pb-smtp20.pobox.com (pb-smtp20.pobox.com [173.228.157.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhFi0bS8"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A836BFCA;
-	Sun,  7 Jul 2024 17:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.228.157.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB1C1DFEB;
+	Sun,  7 Jul 2024 17:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720372773; cv=none; b=ac8WPbzozcC7iPzNL0ecmslFFa6wn/7GcxCNbcFJ8z+/9OZIC1Emxd/h1R+jy2U0saWnSUcjr7Bb0akNThH0DNHVJsDIVaRlhucE4R09b7CzEK2zutyotCl1EnIl8ehbvQrFGq/ZJl4RFpjAVvxh9cYhi2/1IeTipTJ0JPJX2hE=
+	t=1720373039; cv=none; b=pOyfwFS3SrQerrfPaMRDk66H9M6Gh4f8NCFX1YVrcp8YrMd2AUKOAZTgKSoZ82aK4iHiyi5qzihLtqEBZanCGs8vlbrgEJYoB/5y3+H0YDDdQsymndTKWZ1fZ5Ob0rrpAv8iloicFWjp8/dU/bS+Sh+SXdLH9YrLjgvYH/9o/Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720372773; c=relaxed/simple;
-	bh=/QuuLJC1nxKgKxynXhnQImpEZwtp//wq0C11wSeUgwM=;
+	s=arc-20240116; t=1720373039; c=relaxed/simple;
+	bh=ZQmbDHsQvjQBDmkJ+Fa6JDDQBZQvzQIiuk1mPEYhXrc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QC4Ck94WArlCSkcVKcg2krNQ9vdsJ7p7QUsfV3wQ0ZSiFezGoFIre78L4hs62P4RKkIdB4JndeceMmDSlVVqSfQuxlwfHqaZtBuPRLdGl9MFAVLNoqfwCYqJf7pWeBLIPL3XDsyUp7Wn09JeXsRf+5vDyQjIazlkc2BkOhg50+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=ephEmCz0; dkim=fail (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=IHnMbrny reason="signature verification failed"; arc=none smtp.client-ip=173.228.157.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
-	by pb-smtp20.pobox.com (Postfix) with ESMTP id B480E2D823;
-	Sun,  7 Jul 2024 13:19:31 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=from:to:cc
-	:subject:date:message-id:in-reply-to:references:mime-version
-	:content-transfer-encoding; s=sasl; bh=/QuuLJC1nxKgKxynXhnQImpEZ
-	wtp//wq0C11wSeUgwM=; b=ephEmCz0LimOeexEBEfJAUlfodnujXcfDiiGRHBND
-	jrRB51LeAr0Dwc1aK21Fb+h+fnxc9DouWRiq66h7yB3gdaBjiT8csqdinTcVFW6U
-	iP8b9YHwRcgTK6z7Xz64pIYsKxY2idHM6wDbxA2480LLOe341pAgWpnRghQX1YoJ
-	HU=
-Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
-	by pb-smtp20.pobox.com (Postfix) with ESMTP id AE2932D822;
-	Sun,  7 Jul 2024 13:19:31 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=from:to:cc:subject:date:message-id:in-reply-to:references:mime-version:content-transfer-encoding; s=2016-12.pbsmtp; bh=ywfxdQDukdfVWt5y0bqhjJ6Uf8FKCaBkrknbgBicBmY=; b=IHnMbrnypAD49U6KbEf93hV0EpjAokmpx/Rv8bVqlEeYyea94r17/SquSIRdLaPDmq9DMqVM5aCiMCgm14rHyMKb3SZ4iOWqnZbIVUTu+GBhvCEmd0bIbHdERFvan9pMNEUdMq1stvOa4kD1+q8SZCu5o1OVgD/mezofoKNn2Fc=
-Received: from yoda.fluxnic.net (unknown [184.162.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by pb-smtp20.pobox.com (Postfix) with ESMTPSA id ADD0F2D81F;
-	Sun,  7 Jul 2024 13:19:27 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 79FAFD3B28E;
-	Sun,  7 Jul 2024 13:19:25 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Nicolas Pitre <npitre@baylibre.com>,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] __arch_xprod64(): make __always_inline when optimizing for performance
-Date: Sun,  7 Jul 2024 13:17:36 -0400
-Message-ID: <20240707171919.1951895-5-nico@fluxnic.net>
+	 MIME-Version; b=uA0KmmZ2xJ8xZ2HaqdbJo9gawU4eZZMxLvbKQmgAso0mzU9lceewV6zigwTUNWFr2/drxbw/AVMN4gE3PqsT0zkz5r1v9J9k5edS2TYACKQMyNmjGogH8QDC21Yk+7ZusM3v85auCfATd+H7hixeihdWiHKz7179mEWVXvopNwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hhFi0bS8; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3678aa359b7so2594263f8f.1;
+        Sun, 07 Jul 2024 10:23:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720373036; x=1720977836; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJCjdfrQ8aPWVCj5Ds9uLJdxgkaWdZl/hGofw0fBJ2E=;
+        b=hhFi0bS8gLao2zyY5MzqyfOUPJ1Ht4+m2SO21RKjLwEP4iMD3y4fN2wKhUuQAvV5Bc
+         /lQa2WdKsATHH95taO5mSqL0bml0qwMwXPkNIWAA3LWrhVFW58Ze+zA5hIGLYhhbuwz4
+         PsrQ21r3b4uV8N1UnXiBPjLecIfMfiW3sTrMXVVXfc4HyLn91UI78P4wvO8YQ7vNfN9L
+         EYS5ZFovh232a1QoDmK7TxuKXr6oZA4lKhnwn3XwHDJhUmVspaF3O4ys6joZoWkwD21j
+         CMfNdMEqil6QFfj7Eb5NCeyIofsla1Q/XhMx8TfNPrVQnd74W6MRBBOgWyOey3aai5x0
+         l4sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720373036; x=1720977836;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SJCjdfrQ8aPWVCj5Ds9uLJdxgkaWdZl/hGofw0fBJ2E=;
+        b=t2kHfzZnvuMgtc3mhj07vo8VQf5xw1MRieEDU7LKxcp1aW2HIyVEUubwssm+rYDiZb
+         PgLo22AaZ+D74l6fNilMvRnv1ixexkNMIOVeScYi2ObEr/iX8VXW9w6QEJcITy0EuEvM
+         w/Gxges8A+tz5GRaWpQ6gRbRKrh56oy/x7t3K77RU5KgwGp+M7oP5JLS411MAx/tzv/t
+         fSy2S4AtIgLgeaH3NtO3icxVW9u/adyOzUKCFqoEDnnuRNTR/0yu7IrhSfg9pJ2IBW7t
+         dD+m3Xgt+2X5GlOderD5aCLvWpcSnGl74lAyp/2lqOy5cnhtdA5OlUo6R0PG4EoyhW9R
+         0f0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXopiZJ8HVAVPEge7TebTSlyLJv5ZmcZIQ3QfiCZ9PPVnhXgsBy0xgpic0Tb/1pbjoCUkNuPeM4gVXPZ7ym/2EuqAIEB145ZTnVrnIOrZ4Q1/cIgPfAalzcij7MBYN2BYuDZ87uPotU45XP/bazTHkT51zKP1GM+oye9EBg3e/18IYTNqqPlg/5GFijyDs=
+X-Gm-Message-State: AOJu0YysGfDitaN2HlbFlINWTs6B1VapBfI5eFmFFd1X6BRfaVTSTPtB
+	Q7QmKgHUoHcx2igaJMv2Vn9dQwOXR3ATiXJfyzyMtiQAUPXLA/mL
+X-Google-Smtp-Source: AGHT+IFZOzod0Y2BwmwPeiFLAmKCFJLGdNREpGGJpTiyGT9P3/8Klvh5SH6BxWnb9Y4xfPl3At/AcA==
+X-Received: by 2002:adf:ce0d:0:b0:366:eadc:573f with SMTP id ffacd0b85a97d-3679f75c4eemr9234958f8f.27.1720373035359;
+        Sun, 07 Jul 2024 10:23:55 -0700 (PDT)
+Received: from localhost.localdomain ([2001:8a0:ed72:2800:17de:b512:9f9e:464b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367961a507csm11039720f8f.77.2024.07.07.10.23.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jul 2024 10:23:55 -0700 (PDT)
+From: Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>
+To: hdegoede@redhat.com
+Cc: carlosmiguelferreira.2003@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	mustafa.eskieksi@gmail.com,
+	pavel@ucw.cz,
+	platform-driver-x86@vger.kernel.org,
+	rishitbansal0@gmail.com,
+	wse@tuxedocomputers.com
+Subject: Re: Re: [PATCH] HP: wmi: added support for 4 zone keyboard rgb
+Date: Sun,  7 Jul 2024 18:20:00 +0100
+Message-ID: <20240707172000.19723-1-carlosmiguelferreira.2003@gmail.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240707171919.1951895-1-nico@fluxnic.net>
-References: <20240707171919.1951895-1-nico@fluxnic.net>
+In-Reply-To: <473d8897-7b97-4175-b171-42fd2c8de0d6@redhat.com>
+References: <473d8897-7b97-4175-b171-42fd2c8de0d6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Pobox-Relay-ID:
- 1085295C-3C85-11EF-858D-C38742FD603B-78420484!pb-smtp20.pobox.com
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-From: Nicolas Pitre <npitre@baylibre.com>
+Hi, sorry for the (big) delay
 
-Recent gcc versions started not systematically inline __arch_xprod64()
-and that has performance implications. Give the compiler the freedom to
-decide only when optimizing for size.
+> Hi Carlos,
+> 
+> On 3/24/24 7:05 PM, Carlos Ferreira wrote:
+> > Added support for 4 zone keyboard rgb on omen laptops.
+> > 
+> > Signed-off-by: Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>
+> 
+> Thank you for your patch and sorry for being slow with replying to this.
+> 
+> There actually already was a previous attemp to add support for
+> the 4 zone keyboard to hp-wmi by Rishit Bansal:
+> 
+> https://lore.kernel.org/platform-driver-x86/20230131235027.36304-1-rishitbansal0@gmail.com/
+> 
+> As discussed there we really want to define a new standardized
+> userspace API for the backlight functionality of these zoned
+> RGB keyboards. Using driver specific sysfs attributes for this
+> is undesirable, since that will never get wide support in userspace.
+> 
+> OTOH if we define and document a new standard userspace API for this
+> then hopefully standard userspace stacks like KDE and GNOME will
+> eventually get support for this and then for the next zoned rgb
+> keyboard things will just work using the new standard API once
+> kernel support is merged.
+> 
+> I realize that using a single LED class device with kbd_backlight
+> in the name to tap into the existing userspace support to at least
+> control the overall backlight brightness is useful and tempting but
+> 
+> IMHO this really is a case where we need a new userspace API and then
+> emulating just a single brightness control for compatilbility with
+> existing userspace UI code can be done in powerdevil (KDE) or
+> upower (GNOME and others) in combination with offereing a more
+> complete DBUS API to also allow controlling the zones separately.
+> 
 
-Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
----
- arch/arm/include/asm/div64.h | 7 ++++++-
- include/asm-generic/div64.h  | 7 ++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+That makes sense. I should post my first implementation using the
+multicolor led api soon.
 
-diff --git a/arch/arm/include/asm/div64.h b/arch/arm/include/asm/div64.h
-index 562d5376ae..3912bf4ce9 100644
---- a/arch/arm/include/asm/div64.h
-+++ b/arch/arm/include/asm/div64.h
-@@ -52,7 +52,12 @@ static inline uint32_t __div64_32(uint64_t *n, uint32_=
-t base)
-=20
- #else
-=20
--static inline uint64_t __arch_xprod_64(uint64_t m, uint64_t n, bool bias=
-)
-+#ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-+static __always_inline
-+#else
-+static inline
-+#endif
-+__arch_xprod_64(uint64_t m, uint64_t n, bool bias)
- {
- 	unsigned long long res;
- 	register unsigned int tmp asm("ip") =3D 0;
-diff --git a/include/asm-generic/div64.h b/include/asm-generic/div64.h
-index 5d59cf7e73..25e7b4b58d 100644
---- a/include/asm-generic/div64.h
-+++ b/include/asm-generic/div64.h
-@@ -134,7 +134,12 @@
-  * Hoping for compile-time optimization of  conditional code.
-  * Architectures may provide their own optimized assembly implementation=
-.
-  */
--static inline uint64_t __arch_xprod_64(const uint64_t m, uint64_t n, boo=
-l bias)
-+#ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-+static __always_inline
-+#else
-+static inline
-+#endif
-+uint64_t __arch_xprod_64(const uint64_t m, uint64_t n, bool bias)
- {
- 	uint32_t m_lo =3D m;
- 	uint32_t m_hi =3D m >> 32;
---=20
-2.45.2
+> Recently another (laptop) driver for Casper Excalibur laptops has
+> been posted and this also include support for a 4 zone rgb keyboard:
+> https://lore.kernel.org/platform-driver-x86/20240324181201.87882-2-mustafa.eskieksi@gmail.com/
+> 
+> This driver actually already implements the userspace API proposed in
+> the discussion surrounding the earlier "[PATCH V3] platform/x86: hp-wmi:
+> Support omen backlight control wmi-acpi methods" patch.
+> 
+> This driver creates 4 LED class devices using the multi-color LED API
+> for RGB. One LED class device per zone. These are named:
+> 
+> casper:rgb:kbd_zoned_backlight-right
+> casper:rgb:kbd_zoned_backlight-middle
+> casper:rgb:kbd_zoned_backlight-left
+> casper:rgb:kbd_zoned_backlight-corners
+> 
+> Where as for the HP laptop case I believe the 4 multi-color LED
+> class devices should have the following names since the zones
+> are different:
+> 
+> hp:rgb:kbd_zoned_backlight-main
+> hp:rgb:kbd_zoned_backlight-wasd
+> hp:rgb:kbd_zoned_backlight-cursor
+> hp:rgb:kbd_zoned_backlight-numpad
+> 
 
+For this driver i think it should be something more like this:
+
+hp:rgb:kbd_zoned_backlight-right
+hp:rgb:kbd_zoned_backlight-middle
+hp:rgb:kbd_zoned_backlight-left
+hp:rgb:kbd_zoned_backlight-wasd
+
+> As I mentioned in my review of the Casper Excalibur laptop driver
+> as part of adding support for these zoned rgb keyboards to various
+> laptop vendor specific drivers we should also document how these
+> devices are presented to userspace:
+> 
+> A separate patch needs to be written to add documentation about
+> the use of these names for zoned RGB backlit kbds in a new paragraph /
+> subsection of the "LED Device Naming" section of:
+> 
+> Documentation/leds/leds-class.rst 
+> 
+> And this should document at least the 2 currently known
+> zone sets:
+> 
+> :rgb:kbd_zoned_backlight-right
+> :rgb:kbd_zoned_backlight-middle
+> :rgb:kbd_zoned_backlight-left
+> :rgb:kbd_zoned_backlight-corners
+> 
+> :rgb:kbd_zoned_backlight-main
+> :rgb:kbd_zoned_backlight-wasd
+> :rgb:kbd_zoned_backlight-cursor
+> :rgb:kbd_zoned_backlight-numpad
+> 
+> with a comment that in the future different zone names are possible
+> if keyboards with a different zoning scheme show up.
+> 
+> Perhaps you can work together with Mustafa on writing a patch for:
+> Documentation/leds/leds-class.rst ?
+> 
+
+I am open to it if it was not done yet. But could you please
+be a bit more specific about what exactly
+needs to be documented about my patch?
+Zone names, brightness control, userspace interaction?
+
+> for this and then hopefully Pavel can review + ack this patch
+> and then we can move forward with both the hp and the casper
+> laptop zoned rgb keyboard support.
+> 
+> Regards,
+> 
+> Hans
 
