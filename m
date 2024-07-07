@@ -1,116 +1,101 @@
-Return-Path: <linux-kernel+bounces-243632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5984C92989C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:22:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398AF92989D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD829B20A12
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:22:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742261C21EAF
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D97E38FB9;
-	Sun,  7 Jul 2024 15:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205DF38FB9;
+	Sun,  7 Jul 2024 15:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTCxanOf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5SSOY74"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0923EDC;
-	Sun,  7 Jul 2024 15:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640FEEDC;
+	Sun,  7 Jul 2024 15:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720365714; cv=none; b=hBQd5kfk9X3kkF9DWrWB+VOAgxP9sWXO71TB1cDqQbd/xWNIdv2TN0xQiHew2v3fos6/VMuHxHpQUy7rvhZ4T5GTo7f/OAkkXEOAhXdkagNpi72ZQEc2m/ulAhPoatHKn7wrlMrZY5mC+h8/RvvKfKmmO2CaOXLPNZik2q1D91Q=
+	t=1720365734; cv=none; b=ADK6L8qj+zgBD9V+AZ2sgZeF36GJ8tuxWOW6bYSPn+S1f+y7EPH6KiHKZ2IgNum1noVZfseQfksPNwjGW/gq1LqiHFZSkLYLoD1h2OJi85+bUdY5DOjp9NiWIb+V3o6UdyVUC6CGMF2ebHmz6S4otuzsQGOmfVW2fZYt2+ZNv3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720365714; c=relaxed/simple;
-	bh=ZTHfu8WHstnTq0iDPJMZVpdzuIPlhUF3qHQYwWj77zU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=njL9mavntGkT7LA5TfE0Sw9wYwotqRYXYaQ/3lQSOCZfqb70ogOyXJ80JyrGCHMlXBt4xo0SE707k031P931jak9fymQWawSQxrCYjXXhAxTv/Y6EQKzGduKSFbIVhxBW9lQ3vQGRhksK5M9e2jU83On0UNbPfgtEexu44OKlK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTCxanOf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85403C3277B;
-	Sun,  7 Jul 2024 15:21:49 +0000 (UTC)
+	s=arc-20240116; t=1720365734; c=relaxed/simple;
+	bh=tmXvznDulf9bw8t1c6IsEHMz46Iiva662nh3Y9tT0aE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=i1TKySvsRYkHb6CH0vK3QhhMY3WFrW0gw1D0wdO2VaVFkNcCEGETvjVHFfaGlQr+ZAXomQ6zB/qcXMgX/YinD+2bUHzFrYmxs1aDekTD+Y1LblnIlT9BfKo17r0aUk3JtqNYZAA8MMRKSFaBGlRPgVcg46WjfVyN+xR67rkc+oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5SSOY74; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C57AC3277B;
+	Sun,  7 Jul 2024 15:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720365713;
-	bh=ZTHfu8WHstnTq0iDPJMZVpdzuIPlhUF3qHQYwWj77zU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VTCxanOfSSdDkk/8LHOTeJaccNd8RmSEyaD7BHh08G2W/sbdqo7u9Iow51ikJEREv
-	 AAHFJzDu1oV4jm63Z7nPyNWOn2xmpPAo0Uehm/+5dtWktLZQ6gnTnHSQ5AKJFzLVZm
-	 kj/1Sv4aCeBSBFEXkWPZvbcoof3USbQy1Pkl+0JT8/nivShAngLiJ3kKsiXoBLKSqa
-	 P+hW6Ptm7CaPrXmhl2UdLBEkVCRzYgN4nHAheSrTyK++g5jjAW40lrg9q0hgQSyTC4
-	 u5n/T/c6INdcILMbeN5ftx6XCPzS555heAYeFwpzzUtAR+gnlcm7nsKCCb63A6mNqk
-	 bt4UA8ZydhLpQ==
-Date: Sun, 7 Jul 2024 16:21:44 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: <fabrice.gasnier@foss.st.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Nuno Sa <nuno.sa@analog.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-stm32@st-md-mailman.stormreply.com>,
- <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 8/8] iio: adc: stm32-dfsdm: add scaling support to
- dfsdm
-Message-ID: <20240707162144.19ffc0eb@jic23-huawei>
-In-Reply-To: <20240704155338.2387858-9-olivier.moysan@foss.st.com>
-References: <20240704155338.2387858-1-olivier.moysan@foss.st.com>
-	<20240704155338.2387858-9-olivier.moysan@foss.st.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1720365734;
+	bh=tmXvznDulf9bw8t1c6IsEHMz46Iiva662nh3Y9tT0aE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=B5SSOY74qYG5DLdwzkTGwVb0XVucLP4eHp+Y5Q/0/pNXCVSpbcpBEWVy1wnzivMIa
+	 +5+gJxhq7H2IexxQ0cepAVSj74tIGUuvd/aV4rSTWO9LHK9ly1nVcOTK6NdXz8o/4/
+	 AlJ37XDlVb5o/s1p9TmCaCizwulq1WnbpxIkgZS4xxqJERNWDiIzj8gpSAUEhbjh3D
+	 AB3CtVOVIXQ6mNNT6hgwY3j912JwhQPz4zATZIIwH95OsBthqkx3vqHF8lH4h7tJ4e
+	 JmG/YY/IWd2vTtLQM45SWVAEOWdF/j/RuhV7B1e/JTu5uSediYwvhEkdxU2eVXFWMA
+	 FvL3yGwLOj35w==
+Date: Sun, 07 Jul 2024 08:22:13 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>, linux-hardening@vger.kernel.org
+CC: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+ linux-kernel@vger.kernel.org
+Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM_linux-next=5D_include/linux/for?=
+ =?UTF-8?Q?tify-string=2Eh=3A580=3A25=3A?=
+ =?UTF-8?Q?_error=3A_call_to_=E2=80=98=5F=5Frea?=
+ =?UTF-8?Q?d=5Foverflow2=5Ffield=E2=80=99_declared_with_attribute_?=
+ =?UTF-8?Q?warning=3A_detected_read_beyond_size_of_field?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <9b69fb14-df89-4677-9c82-056ea9e706f5@gmail.com>
+References: <9b69fb14-df89-4677-9c82-056ea9e706f5@gmail.com>
+Message-ID: <3639BC84-F533-45A6-AB7D-CABA1A1673EF@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 4 Jul 2024 17:53:36 +0200
-Olivier Moysan <olivier.moysan@foss.st.com> wrote:
 
-> Add scaling support to STM32 DFSDM.
-> 
-> When used in an analog context, a DFSDM filter typically converts the data
-> from a sigma delta modulator. The IIO device associated to the DFSDM
-> filter provides these data as raw data.
-> The IIO device can provide scaling information (voltage and offset) to
-> allow conversion of raw data into physical values.
-> 
-> With the new binding based on IIO backend framework, the sigma delta
-> modulators are defined as backends providing scaling information.
-> 
-> The scaling is not supported with legacy binding.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> Acked-by: Nuno Sa <nuno.sa@analog.com>
 
-One really minor thing inline.
+On July 6, 2024 5:26:25 PM PDT, Mirsad Todorovac <mtodorovac69@gmail=2Ecom=
+> wrote:
+>Hi, all!
+>
+>This is the result of testing randconfig with KCONFIG_SEED=3D0xEE7AB52F i=
+n next-20240703 vanilla tree on
+>Ubuntu 22=2E04 LTS=2E GCC used is gcc (Ubuntu 12=2E3=2E0-1ubuntu1~22=2E04=
+) 12=2E3=2E0=2E
+>
+>The particular error is as follows:
+>
+>In file included from =2E/include/linux/string=2Eh:374,
+>                 from =2E/arch/x86/include/asm/page_32=2Eh:18,
+>                 from =2E/arch/x86/include/asm/page=2Eh:14,
+>                 from =2E/arch/x86/include/asm/processor=2Eh:20,
+>                 from =2E/include/linux/sched=2Eh:13,
+>                 from =2E/include/linux/audit=2Eh:12,
+>                 from kernel/seccomp=2Ec:19:
+>In function =E2=80=98fortify_memcpy_chk=E2=80=99,
+>    inlined from =E2=80=98syscall_get_arguments=E2=80=99 at =2E/arch/x86/=
+include/asm/syscall=2Eh:85:2,
 
-Jonathan
+memcpy(args, &regs->bx, 6 * sizeof(args[0]));
 
-> @@ -1278,7 +1308,14 @@ static int stm32_dfsdm_read_raw(struct iio_dev *indio_dev,
->  				int *val2, long mask)
->  {
->  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-> -	int ret;
-> +
-> +	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
-> +	struct stm32_dfsdm_filter_osr *flo = &fl->flo[fl->fast];
-> +	u32 max = flo->max << (flo->lshift - chan->scan_type.shift);
-> +	int ret, idx = chan->scan_index;
-Trivial but I've been grumping at others about this today so you get it too ;)
-Don't mix declarations that include assignments with ones that don't.
-It isn't good for general readability.
-	int idx = chan->scan_index;
-	int ret;
+Yup, this reads from regs starting at bx, rather than only bx=2E I will se=
+nd to patch to expand it (like is done for compat mode a few lines later)=
+=2E
 
-I'm not interested in patches to 'fix' this in other code, but nice to not
-introduce more cases in new code.
+-Kees
 
-> +
-> +	if (flo->lshift < chan->scan_type.shift)
-> +		max = flo->max >> (chan->scan_type.shift - flo->lshift);
->  
->  	switch (mask) {
->  	case IIO_CHAN_INFO_RAW:
+--=20
+Kees Cook
 
