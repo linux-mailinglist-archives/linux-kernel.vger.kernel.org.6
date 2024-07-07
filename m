@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-243599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6E4929847
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E908C92984D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B551C2122B
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:02:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123961C213E4
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74CF24205;
-	Sun,  7 Jul 2024 14:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DEF24205;
+	Sun,  7 Jul 2024 14:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6uLSlGI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaO+Xbcg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD86210E4;
-	Sun,  7 Jul 2024 14:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6490F210E4;
+	Sun,  7 Jul 2024 14:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720360941; cv=none; b=gx9Bq/tVAolja0R/xkV5PrSM+BSiQGT2HRqP6vOvwYauhZk1ZuE1lpUE0+FzrMKThEx3dL8rpQurYqX09nlOijjXoRaAYu95k1zo2+92q4LYQ3EgtmR0XQVIYdOqY81tEY2o3zaNOF/rttK9oM7J0Rl5jeJNowSOY6ePXfEj81w=
+	t=1720361047; cv=none; b=EGEgoZ9Ie5O5sKg9O6IBnMvGVZgDK9TrBqTE6PD/0NwdRXdxDAXYBpQPXgGI840V6GtGR0R6D2+tmWjJIsQpbGejwBzf4RoMJ/6a+nvTsXY3wpmXIk20XuLmZ+XubdPXy+TwB11hwuNlbJQw1AfLur4vA/WyRtQXGXvdt5NsL58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720360941; c=relaxed/simple;
-	bh=PiEmR3MtFXFTdyxB2ELkCyHOiGLzvuMASAPqj0DYwm0=;
+	s=arc-20240116; t=1720361047; c=relaxed/simple;
+	bh=4w3hEfthvLJb+KZOXnF/6omToYQkMKwOslerv3L7JWM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jrA8Yqj76yl2K7v13VN7q5ZGD8M3F48votZdXtPoOVAWuSLVgUWqVQcFxe/OVEMo77BhXA9A0b+Vn6Z1nBNt3GkF2juzME1bd1IZlsbvNZG1PJ5rrubeOgvtV633pM8rxuZH9u9pVzTHIQqNMzmcxSF0Zsmb8fM1lWdNvC5TroE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6uLSlGI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E93C3277B;
-	Sun,  7 Jul 2024 14:02:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=q55CJMATjSt/3HKudKj5InQxEYrflyFkN3B9IYEH2X+eV/cy85LpgPDAq/keBmCs2s0D+05eZ54Q48YGymGbMjU8EwYKms2vsDxutWF5MgOynuxK6CW6qHGSZxeurnpxKJALSQQZRfZ5z2B9TwHPU1OuVGu/0VwZkW+Uk9gFcJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaO+Xbcg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D875C3277B;
+	Sun,  7 Jul 2024 14:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720360940;
-	bh=PiEmR3MtFXFTdyxB2ELkCyHOiGLzvuMASAPqj0DYwm0=;
+	s=k20201202; t=1720361047;
+	bh=4w3hEfthvLJb+KZOXnF/6omToYQkMKwOslerv3L7JWM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N6uLSlGId0cAzBFlogc6g//2XrbnvTnhR2N4Kf26ti/jE44co0HIpJx8mguuFLlq0
-	 DACSskUC8GdrqgHs9g2xMHXMX0FtAF5UlLQJ2mgzfNAEdGMET81IdWPqhJE/qO76i7
-	 IJwclwBjm9SYzK+2I6/yQ7XQ5sjSH1Bzk3Pmq8agiuriR5CQAX6APgppJR9hidV6l5
-	 BgWtnCD458jf2f3I/9jYeUA7cZCSlMAFI6Fb7Fy0cDuRkn5lOJuywQjXlsU0KcC0OM
-	 1uaCmnpg5R7pNUeG5xRCcZlSvnLjlUE1rT71250AVm4DMi3FtcvlaIdQO/QZFWM9dU
-	 xEDGpa3+xo8Rw==
-Message-ID: <35c70e6c-d4e1-45a0-8c8e-db530fd84aab@kernel.org>
-Date: Sun, 7 Jul 2024 16:02:11 +0200
+	b=OaO+Xbcg11o6Bn04s0byyYBatWxqqGxrz82+qH/hUasbAXskXSi7qMORigQbl5w/0
+	 iZNZ7jVXeSXEgkRCLJIF89lFSTa7d3l4LM3gvP9A7C8AawCeRb9bdUk29q4PV7VTtN
+	 z2n0Rgpf0opgMEzDHqMIRz4mB26wZSIvcS2x7zqi1kQu9AVkG/kJ4c3IgJ6JbWI6fC
+	 5jUT1+80xcWEkllxCyr2RIKvJcK7PtzpO7Ujc+XkMR7GJwYWuoOm5z7znPliXkCC2A
+	 P6faaVNOdJumuVRt74hSqoQvCxyoRx9MKM8WTZ8+VuBenYeoeHuDi+RVLPwtt0sLK5
+	 nJxvhoZGJwlgg==
+Message-ID: <e2454904-c70e-49f9-b7b6-05ef348c35fb@kernel.org>
+Date: Sun, 7 Jul 2024 16:03:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/10] dt-bindings: display: imx: Add i.MX8qxp Display
- Controller pixel engine
+Subject: Re: [PATCH 05/10] dt-bindings: display: imx: Add i.MX8qxp Display
+ Controller
 To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
  devicetree@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -60,7 +60,7 @@ Cc: p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
  shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
  festevam@gmail.com, tglx@linutronix.de
 References: <20240705090932.1880496-1-victor.liu@nxp.com>
- <20240705090932.1880496-4-victor.liu@nxp.com>
+ <20240705090932.1880496-6-victor.liu@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,38 +106,142 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240705090932.1880496-4-victor.liu@nxp.com>
+In-Reply-To: <20240705090932.1880496-6-victor.liu@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/07/2024 11:09, Liu Ying wrote:
-> i.MX8qxp Display Controller pixel engine consists of all processing units
-> that operate in the AXI bus clock domain.  Command sequencer and interrupt
-> controller of the Display Controller work with AXI bus clock, but they are
-> not in pixel engine.
+> i.MX8qxp Display Controller(DC) is comprised of three main components that
+> include a blit engine for 2D graphics accelerations, display controller for
+> display output processing, as well as a command sequencer.
 > 
 > Signed-off-by: Liu Ying <victor.liu@nxp.com>
 > ---
-
-
+>  .../bindings/display/imx/fsl,imx8qxp-dc.yaml  | 243 ++++++++++++++++++
+>  1 file changed, 243 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc.yaml
+> new file mode 100644
+> index 000000000000..a2ad280d2839
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc.yaml
+> @@ -0,0 +1,243 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8qxp-dc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +        extdst@56180a40 {
-> +            compatible = "fsl,imx8qxp-dc-extdst";
-> +            reg = <0x56180a40 0x7>, <0x56186000 0x400>;
-> +            reg-names = "pec", "cfg";
-> +            interrupt-parent = <&dc0_intc>;
-> +            interrupts = <12>, <13>, <14>;
-> +            interrupt-names = "shdload", "framecomplete", "seqcomplete";
-> +            fsl,dc-ed-id = <5>;
+> +title: Freescale i.MX8qxp Display Controller
+> +
+> +description: |
+> +  The Freescale i.MX8qxp Display Controller(DC) is comprised of three main
+> +  components that include a blit engine for 2D graphics accelerations, display
+> +  controller for display output processing, as well as a command sequencer.
+> +
+> +                                  Display buffers              Source buffers
+> +                                 (AXI read master)            (AXI read master)
+> +                                  | .......... |                  | | |
+> +      +---------------------------+------------+------------------+-+-+------+
+> +      | Display Controller (DC)   | .......... |                  | | |      |
+> +      |                           |            |                  | | |      |
+> +      |   @@@@@@@@@@@  +----------+------------+------------+     | | |      |
+> +  A   |  | Command   | |          V            V            |     | | |      |
+> +  X <-+->| Sequencer | |    @@@@@@@@@@@@@@@@@@@@@@@@@@@@    |     V V V      |
+> +  I   |  | (AXI CLK) | |   |                            |   |   @@@@@@@@@@   |
+> +      |   @@@@@@@@@@@  |   |       Pixel Engine         |   |  |          |  |
+> +      |       |        |   |         (AXI CLK)          |   |  |          |  |
+> +      |       V        |    @@@@@@@@@@@@@@@@@@@@@@@@@@@@    |  |          |  |
+> +  A   |   ***********  |       |   |            |   |       |  |   Blit   |  |
+> +  H <-+->| Configure | |       V   V            V   V       |  |  Engine  |  |
+> +  B   |  | (CFG CLK) | |    00000000000      11111111111    |  | (AXI CLK)|  |
+> +      |   ***********  |   |  Display  |    |  Display  |   |  |          |  |
+> +      |                |   |  Engine   |    |  Engine   |   |  |          |  |
+> +      |                |   | (Disp CLK)|    | (Disp CLK)|   |  |          |  |
+> +      |   @@@@@@@@@@@  |    00000000000      11111111111    |   @@@@@@@@@@   |
+> +  I   |  |  Common   | |         |                |         |       |        |
+> +  R <-+--|  Control  | |         |    Display     |         |       |        |
+> +  Q   |  | (AXI CLK) | |         |   Controller   |         |       |        |
+> +      |   @@@@@@@@@@@  +------------------------------------+       |        |
+> +      |                          |                |       ^         |        |
+> +      +--------------------------+----------------+-------+---------+--------+
+> +              ^                  |                |       |         |
+> +              |                  V                V       |         V
+> +       Clocks & Resets        Display          Display  Panic   Destination
+> +                              Output0          Output1 Control    buffer
+> +                                                              (AXI write master)
+> +
+> +maintainers:
+> +  - Liu Ying <victor.liu@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: fsl,imx8qxp-dc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 2
+> +
+> +  reset-names:
+> +    items:
+> +      - const: axi
+> +      - const: cfg
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges: true
+> +
+> +patternProperties:
+> +  "^axi-performance-counter@[0-9a-f]+$":
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+Is this a PMU?
+
+> +    type: object
+> +    additionalProperties: true
+> +
+> +    properties:
+> +      compatible:
+> +        const: fsl,imx8qxp-dc-axi-performance-counter
+> +
+
+
+> +        pixel-engine@56180800 {
+> +            compatible = "fsl,imx8qxp-dc-pixel-engine";
+> +            reg = <0x56180800 0xac00>;
+> +            clocks = <&dc0_lpcg IMX_LPCG_CLK_5>;
+> +            #address-cells = <1>;
+> +            #size-cells = <1>;
+> +            ranges;
 > +        };
 > +
-> +        fetchwarp@56180a60 {
-> +            compatible = "fsl,imx8qxp-dc-fetchwarp";
-> +            reg = <0x56180a60 0x4>, <0x56186400 0x400>;
+> +        display-engine@5618b400 {
+> +            compatible = "fsl,imx8qxp-dc-display-engine";
+> +            reg = <0x5618b400 0x14>, <0x5618b800 0x1c00>;
+> +            reg-names = "top", "cfg";
+> +            interrupt-parent = <&dc0_intc>;
 
-Aha, one word for address range.
+Where is this node?
 
-Sorry, these are not separate devices.
+I think this proves that interrupt controller is part of the display
+controller.
 
 Best regards,
 Krzysztof
