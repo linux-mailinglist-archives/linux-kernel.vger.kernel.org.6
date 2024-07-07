@@ -1,210 +1,212 @@
-Return-Path: <linux-kernel+bounces-243425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BEAF92960C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 02:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE6692960D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 02:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBD831F219F6
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 00:04:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3701F21995
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 00:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7E01103;
-	Sun,  7 Jul 2024 00:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B7B7EF;
+	Sun,  7 Jul 2024 00:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FeWxLg96"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ReCrxwlU"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2B8181;
-	Sun,  7 Jul 2024 00:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E329B181
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 00:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720310648; cv=none; b=FtLHOMF/SW2JaBg8GwTuWZqwW8PgMzFAXgcNiCf7QWh+uIkhVNTtGY+6SPVzyxdh0F94dv0kxO+lutavfn8thgfdw/iIxNmJ8miovXY0l7V0yUcUOQ6+4ISZ1W/b/vhkdRraBKvV+4DS3VUd59VJz2flZoNP4KnydlqeV4PIZO0=
+	t=1720311037; cv=none; b=jFrMaXw4Ss7lQD4XmGtwRABdest5OWJIMmUnDfn8vHlkmD91dwJkCQUVsJBZBtKM/6+69tNgy9thwstxn7OK00xyLPEy6sg+Jh91a+uQvOolTqBit5qm2S+UqAXuzTX2737CSPR59kYdTizSH3SzRrg3ui4yD83xF5abq4Baltk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720310648; c=relaxed/simple;
-	bh=EN8xWQ8I4hHzTIQl0ax0U9fbl8La86KwDFDt1yGQk84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tsB3tE7L8RfRyi6z3BQeJkbGhUukA0wW1nkZdfdwnbMZ3LfoSk91xb7kBZccwf/AqRv+oUZtK+TJzVa58R/CYJ17twWuzDaqSznLJKq0guEspoHvi7l+hUdB+IFKURL09iajdOP/KqGPGZg4tRmEKYI5JV3injjWlBT1fBN2fWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FeWxLg96; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1720311037; c=relaxed/simple;
+	bh=MVehUZlF6Vu/DFgojSa/tE2mpuA+8z5P9jTX3Y13ZvU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=RkhvpguzHUJdqKGKQAXFmThzT5My9/EL1vEDr3e5B2GQ9tGdj7aZ1g08jdbPFA40Fb+uBHp8PNakkIXDa1WrbqbP378ClPRfs44tXeslVD9OfchTb9Chgmm+NtUyqfpOCq0R/7QP30upf5ijk0JSaMvUg+x6ciTW7v/iD+mw5zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ReCrxwlU; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a77e5929033so68860466b.0;
-        Sat, 06 Jul 2024 17:04:06 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52e9944764fso3141163e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 17:10:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720310645; x=1720915445; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RWKqO2BWwvKMkfcddteTT/xU6+nFQEAn8H1kp+9IBak=;
-        b=FeWxLg96cSgCEYnsl4g2dvDS/KBg+g8CdxYPVluFBNdZL7Ck0Qf2ySQMTHcFzafJSH
-         PwqCCJ8zylzAAiXwns12G1naGeHu1cZ6L+3IJrHHP2Qb2spIFlWMc5Ygx9zH84EkjEmu
-         CZvCuBtVx3V9yI/c1e1izRGtm6yMnb+VXXmcHVzkn4gM54RCODodCwfkT2ErypR+klP9
-         ePNQ71WzozmLVDcKZYIh4ZjNICO5XXiaXgDg+eQs13x9orMqqeCXiaM/8jMp2WnduXeE
-         sTdPm7QniDIqQHxKJfcC2m2VcA1mCN2gpzZM5nV57mATXcgFyYdrfHCnLH9nl3WNip2M
-         2IOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720310645; x=1720915445;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720311034; x=1720915834; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RWKqO2BWwvKMkfcddteTT/xU6+nFQEAn8H1kp+9IBak=;
-        b=qFGaf+eI5AHZkqzB9UIFeEIWc+NdGUEw+nDU6COVec3B1yyxFlTxeLYK/rLgECb+C+
-         isSm27O0JdilcSjKYLJGJhRKYAKzY7V3Zd7XyRKqq6fs1hIlCRbqzMc1oiOAUDiMCq3F
-         T1SGpgFXR4shLHFvY6mmAyIQm03HKarhXZ6yMP+SY0hMafAqOkqS+bb+jvwPS4YDM16w
-         WpvG9/waRMxULSZJ/xrbhq5V64PYrEMSdEI1jwZ/VibU2bliVihVnOHBNDjsTatmU5HD
-         P98Rt0wtjp1Vch35t7fDnLvRHzPhIzVgsXMG87cXGqMutHfa/5Nv/bA/mOU/+p98GLa/
-         kR+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWnumEnPnpKcN3Gbtq+kwl4tPCypW/km5yGQumgK9LP89qJOOr3j47V0aORnFkCerHqJTAmjnOfB0dCZdxAE9abvUOEeQM4x0eKEAGvC5m3O4EUKfukJKzC9wS0eHMQ9O/kCCfaQIwYH65r
-X-Gm-Message-State: AOJu0Yz63x50jPiG9mdjxd4LESs6PPb9Sveh0RGBc8L7+BxG4oaO2LLK
-	kMUhEDY+TJBaCyDDe55OA69eMGMcigNb+tfxAbdc6Oea/piHmbPs
-X-Google-Smtp-Source: AGHT+IGCj+7/ZhKNfQy2zOxzUfK6ed8+jvH0WVkR8cR9x01L3VOWGrROanABN7ciMy44Y3929ceDNw==
-X-Received: by 2002:a17:906:a08:b0:a77:c525:5c64 with SMTP id a640c23a62f3a-a77c52571e8mr435239066b.39.1720310644866;
-        Sat, 06 Jul 2024 17:04:04 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77c127bc6asm232410866b.116.2024.07.06.17.04.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 06 Jul 2024 17:04:04 -0700 (PDT)
-Date: Sun, 7 Jul 2024 00:04:03 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>, akpm@linux-foundation.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH 2/3] modpost: .meminit.* is not in init section when
- CONFIG_MEMORY_HOTPLUG set
-Message-ID: <20240707000403.b4gtuqiwpx3rp766@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240702234008.19101-1-richard.weiyang@gmail.com>
- <20240702234008.19101-2-richard.weiyang@gmail.com>
- <CAK7LNAR08Nx3-8XYe4qmUegDFo2zLUvkVdA1t51g1Bamh5Tteg@mail.gmail.com>
- <20240705065456.dogycpd37jun44p5@master>
- <20240706061236.snp4r2tixx3h7hfe@master>
- <CAK7LNARX+qxzD-6ip9Q64Bvju3ACQ0uFPThkLgRqvmem-LQ9uw@mail.gmail.com>
+        bh=QSQHzQJ3Axb1vJzMvaBtOco60Ni4GgW3nF1QDSr55jY=;
+        b=ReCrxwlUy61brVzkmvINfl/1m8wtCbIbbDsyWuQ3oCtYS/rg3KIXoAFbRSN8voWtzh
+         6ARhixBQ7Uners+AgY4mAagzYCfzDP9Q/61I3yTzfFmrgsJ++rDq/vP10H6bxif22FNJ
+         pwlOrFLE0kY53dKQdo0mlAB7Wm1x9TuBRHrEAuO3epRUw4goLYVefuC2DxxOqjsLDfJq
+         TXun+vvlpbOMIy55CcTkQw+tJ2Zq4YZZyuh6j5GPq8nfizlJEZXUt36PJpQDFM7lWH/g
+         Trll8ba5l/8Dy0f4yyxvSX5uncNJW9b19eeTaWjldoDvF5fn9hXLCQ8RlZU85ZDKsGJs
+         +1hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720311034; x=1720915834;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QSQHzQJ3Axb1vJzMvaBtOco60Ni4GgW3nF1QDSr55jY=;
+        b=jGPOk72Vl5qw4UxWYB1wtlIBFJvhRoIBfJ0upcQiCzKxrg38a63SKQiAZC7ZHlf33s
+         5riXulU6LaiY+3FIfYvTgpgEiq3gYLYe4VN7rR9cQPDH1Gy58BV32+22IWb9/p4SvjjD
+         BnchF/OWAFLYyWpEBK4aDffAa7oi/igJa8fFaMBcnm3sVTxtDS14UBmgojcjQoCAjlhC
+         4gYJEhYL2P7x8KDsJ58WK11JFrN+h0ViTmDsGQrqM9uZELA+neIDi3NcPpBMC9mOmJkd
+         vHOk0nnXOKiaPCFPUOuKP0zYnam+5Fwui1jmVOHvMt+07F/KCSulh0QlNN1a9QF7K9nX
+         z4sg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4g5NmGhMaVmPlqmFhDo8Ez0xdU/SOGEGNwQBjJRl3eXC48hRuwfZN9h2quIT7Rb+eytNqNdRS0bD/Bk+xWIMOYt7jHDuCCRkN9KBS
+X-Gm-Message-State: AOJu0Yx0A+hym71o+aVnvG2hHigdAndSEfrTvJzQqJwZhOjgFiNwImhd
+	AqVUwCG5JCItKx373ReBCkvwtSyTDDHY3IGZgIQvinvBAhAKWKYt
+X-Google-Smtp-Source: AGHT+IE4k7AyrHz/Dfv9N1ZosT3VQYZ2AufhQWaafj16Iqwsj5Y9kVe8oNgSVYlFxwpYqKDRU5ArBw==
+X-Received: by 2002:ac2:598e:0:b0:52e:9c63:5fe8 with SMTP id 2adb3069b0e04-52ea06b77camr5191300e87.54.1720311033536;
+        Sat, 06 Jul 2024 17:10:33 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-40-28.xnet.hr. [88.207.40.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77cf5c9fa3sm163597966b.4.2024.07.06.17.10.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Jul 2024 17:10:33 -0700 (PDT)
+Message-ID: <47e0483d-6e3d-43a8-9273-25278a4a74b9@gmail.com>
+Date: Sun, 7 Jul 2024 02:10:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: [PROBLEM linux-next]
+To: linux-mtd@lists.infradead.org
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARX+qxzD-6ip9Q64Bvju3ACQ0uFPThkLgRqvmem-LQ9uw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Sat, Jul 06, 2024 at 10:50:25PM +0900, Masahiro Yamada wrote:
->On Sat, Jul 6, 2024 at 3:12 PM Wei Yang <richard.weiyang@gmail.com> wrote:
->>
->> On Fri, Jul 05, 2024 at 06:54:56AM +0000, Wei Yang wrote:
->> >On Wed, Jul 03, 2024 at 11:44:38PM +0900, Masahiro Yamada wrote:
->> >>On Wed, Jul 3, 2024 at 8:40 AM Wei Yang <richard.weiyang@gmail.com> wrote:
->> >>>
->> >>> .meminit.* is not put into init section when CONFIG_MEMORY_HOTPLUG is
->> >>> set, since we define MEM_KEEP()/MEM_DISCARD() according to
->> >>> CONFIG_MEMORY_HOTPLUG.
->> >>>
->> >>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
->> >>> CC: Mike Rapoport (IBM) <rppt@kernel.org>
->> >>> ---
->> >>>  scripts/mod/modpost.c | 10 ++++++++++
->> >>>  1 file changed, 10 insertions(+)
->> >>
->> >>
->> >>
->> >>NACK.
->> >>
->> >>
->> >>The section mismatch is performed _unconditionally_.
->> >>
->> >>
->> >>
->> >>In the old days, we did this depending on relevant CONFIG options.
->> >>It was more than 15 years ago that we stopped doing that.
->> >>
->> >>
->> >>See this:
->> >>
->> >>
->> >>commit eb8f689046b857874e964463619f09df06d59fad
->> >>Author: Sam Ravnborg <sam@ravnborg.org>
->> >>Date:   Sun Jan 20 20:07:28 2008 +0100
->> >>
->> >>    Use separate sections for __dev/__cpu/__mem code/data
->> >>
->> >>
->> >>
->> >>
->> >>So, if you wanted to check this only when CONFIG_MEMORY_HOTPLUG=n,
->> >>you would need to add #ifdef CONFIG_MEMORY_HOTPLUG to include/linux/init.h
->> >>
->> >>That is what we did in the Linux 2.6.* era, which had much worse
->> >>section mismatch coverage.
->> >>
->> >
->> >Masahiro
->> >
->> >If you would give me some suggestions, I'd appreciate it a lot.
->> >
->> >The original thing I want to do is to put function __free_pages_core() in
->> >__meminit section, since this function is only used by __init functions and
->> >in memory_hotplug.c.  This means it is save to release it if
->> >CONFIG_MEMORY_HOTPLUG is set.
->> >
->> >Then I add __meminit to function __free_pages_core() and face the warning from
->> >modpost.
->> >
->> >  WARNING: modpost: vmlinux: section mismatch in reference: generic_online_page+0xa (section: .text) -> __free_pages_core (section: .meminit.text)
->> >
->> >A .text function calls init code is not proper. Then I add __meminit to
->> >generic_online_page too. Then I face this warning from modpost.
->> >
->> >  WARNING: modpost: vmlinux: generic_online_page: EXPORT_SYMBOL used for init symbol. Remove __init or EXPORT_SYMBOL.
->> >
->>
->> I guess I found the correct way.
->>
->> Add __ref to generic_online_page to not issue a warning.
->
->
->
->Yes, __ref is used to bypass the section mismatch check.
->
+Hi, all,
 
-I am think whether __ref is providing a gate to escape the check of modpost?
+This is the result of testing randconfig with KCONFIG_SEED=0xEE7AB52F in next-20240703 vanilla tree on
+Ubuntu 22.04 LTS. GCC used is GCC (Ubuntu 12.3.0-1ubuntu1~22.04) 12.3.0.
 
->Some functions in mm/memory_hotplug.c are annotated as __ref
->to reference __meminit functions.
->
->Adding __ref is the easy solution.
->
->
->
->Having said that, I started to think
->eb8f689046b857874e964463619f09df06d59fad was the wrong decision.
->I will revert it.
->
+The particular error is as follows:
 
-Oh, I finally understand it... didn't think that was a wrong decision :-(
+In file included from ./include/asm-generic/bug.h:22,
+                 from ./arch/x86/include/asm/bug.h:87,
+                 from ./include/linux/bug.h:5,
+                 from ./include/linux/fortify-string.h:6,
+                 from ./include/linux/string.h:374,
+                 from ./arch/x86/include/asm/page_32.h:18,
+                 from ./arch/x86/include/asm/page.h:14,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:67,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from drivers/mtd/mtdpart.c:10:
+drivers/mtd/mtdpart.c: In function ‘parse_mtd_partitions’:
+drivers/mtd/mtdpart.c:693:34: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
+  693 |                         pr_debug("%s: got parser %s\n", master->name,
+      |                                  ^~~~~~~~~~~~~~~~~~~~~
+./include/linux/printk.h:376:21: note: in definition of macro ‘pr_fmt’
+  376 | #define pr_fmt(fmt) fmt
+      |                     ^~~
+./include/linux/dynamic_debug.h:248:9: note: in expansion of macro ‘__dynamic_func_call_cls’
+  248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/dynamic_debug.h:250:9: note: in expansion of macro ‘_dynamic_func_call_cls’
+  250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+./include/linux/dynamic_debug.h:269:9: note: in expansion of macro ‘_dynamic_func_call’
+  269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+      |         ^~~~~~~~~~~~~~~~~~
+./include/linux/printk.h:610:9: note: in expansion of macro ‘dynamic_pr_debug’
+  610 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~
+drivers/mtd/mtdpart.c:693:25: note: in expansion of macro ‘pr_debug’
+  693 |                         pr_debug("%s: got parser %s\n", master->name,
+      |                         ^~~~~~~~
+drivers/mtd/mtdpart.c:693:50: note: format string is defined here
+  693 |                         pr_debug("%s: got parser %s\n", master->name,
+      |                                                  ^~
 
->
->
->
->
->
->
->
->
->
->
->-- 
->Best Regards
->Masahiro Yamada
+Offending commit is 5b644aa012f67.
 
--- 
-Wei Yang
-Help you, Help me
+Offending code is here:
+
+  668 int parse_mtd_partitions(struct mtd_info *master, const char *const *types,
+  669                          struct mtd_part_parser_data *data)
+  670 {
+  671         struct mtd_partitions pparts = { };
+  672         struct mtd_part_parser *parser;
+  673         int ret, err = 0;
+  674 
+  675         if (!types)
+  676                 types = mtd_is_partition(master) ? default_subpartition_types :
+  677                         default_mtd_part_types;
+  678 
+  679         for ( ; *types; types++) {
+  680                 /*
+  681                  * ofpart is a special type that means OF partitioning info
+  682                  * should be used. It requires a bit different logic so it is
+  683                  * handled in a separated function.
+  684                  */
+  685                 if (!strcmp(*types, "ofpart")) {
+  686                         ret = mtd_part_of_parse(master, &pparts);
+  687                 } else {
+  688                         pr_debug("%s: parsing partitions %s\n", master->name,
+  689                                  *types);
+  690                         parser = mtd_part_parser_get(*types);
+  691                         if (!parser && !request_module("%s", *types))
+  692                                 parser = mtd_part_parser_get(*types);
+→ 693                         pr_debug("%s: got parser %s\n", master->name,
+→ 694                                 parser ? parser->name : NULL);
+  695                         if (!parser)
+  696                                 continue;
+  697                         ret = mtd_part_do_parse(parser, master, &pparts, data);
+  698                         if (ret <= 0)
+  699                                 mtd_part_parser_put(parser);
+  700                 }
+  701                 /* Found partitions! */
+  702                 if (ret > 0) {
+  703                         err = add_mtd_partitions(master, pparts.parts,
+  704                                                  pparts.nr_parts);
+  705                         mtd_part_parser_cleanup(&pparts);
+  706                         return err ? err : pparts.nr_parts;
+  707                 }
+  708                 /*
+  709                  * Stash the first error we see; only report it if no parser
+  710                  * succeeds
+  711                  */
+  712                 if (ret < 0 && !err)
+  713                         err = ret;
+  714         }
+  715         return err;
+  716 }
+
+Proposed non-intrusive fix resolves the warning/error, but I could not test the code.
+(I don't have the physical device.)
+
+-----------------><------------------------------------------
+diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+index 6811a714349d..81665d67ed2d 100644
+--- a/drivers/mtd/mtdpart.c
++++ b/drivers/mtd/mtdpart.c
+@@ -691,7 +691,7 @@ int parse_mtd_partitions(struct mtd_info *master, const char *const *types,
+                        if (!parser && !request_module("%s", *types))
+                                parser = mtd_part_parser_get(*types);
+                        pr_debug("%s: got parser %s\n", master->name,
+-                               parser ? parser->name : NULL);
++                               parser ? parser->name : "(null"));
+                        if (!parser)
+                                continue;
+                        ret = mtd_part_do_parse(parser, master, &pparts, data);
+
+
+Hope this helps.
+
+Best regards,
+Mirsad Todorovac
 
