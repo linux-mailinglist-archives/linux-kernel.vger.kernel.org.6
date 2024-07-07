@@ -1,292 +1,206 @@
-Return-Path: <linux-kernel+bounces-243627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF9092987C
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:49:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B401292988B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59CD284EC4
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:49:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C64B24198
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 14:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21AD78C7E;
-	Sun,  7 Jul 2024 14:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WhkDDYq/"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389CE249F9;
+	Sun,  7 Jul 2024 14:55:19 +0000 (UTC)
+Received: from domac.alu.hr (domac.alu.hr [161.53.235.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2467144369;
-	Sun,  7 Jul 2024 14:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4EB1CF8A
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 14:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.235.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720363541; cv=none; b=tp9BGk5KBuFbz1Dc2q2QzL7sSII9BvMKw190IX9uMEpEkr1gnq9jbi3YCyaT37ytHu5Nq8Igfx4whEBJyNk5CM67tlZyXsQVIe0ZR78BCjQucQjdRV/LyfgsX2trJAPbNt+UidBS+uE91oD6AOf491/PoLHYlY68lKhs/2LyMIM=
+	t=1720364118; cv=none; b=IZZzmE3NV4d5NedMoft4UoqvitV+coNJlRbzfI08lsRDZEapNMaxz+dksPvXkSGtZ5l2f3BBFnpnu9zx+kmgUweaSstA/Xs6nUN+rEhoTDV55I8OIpVIlenjk578H6HhIDa7oA16uOMZFbjvIUK9hvlBMALiHKc4XQQQM4HljrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720363541; c=relaxed/simple;
-	bh=SnBC9DVnSB7gMPSTmNBDCVpgwc1u6ROtWUckss3f+Uk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PkYiFxRs8FMvSRefSUsZWYcUig9QD+3lU9eb5SOXKGjf+rg0P2+pw7T/XtrthD9XpAKm+yDPz9Zj1v/M8ZVQ113rDoAJlgbSthWlmPrMXfwqEEaOzBg+AYXYrEKjfsC+3PX8s5TTBWpw29w4/Q89paTzayp9jTc5cY29REjhfxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WhkDDYq/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 467DnEAs020623;
-	Sun, 7 Jul 2024 14:45:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=81rM5r6ahCelb
-	X8xR/fbzubj9HMXZimiAn7nUwcJWcY=; b=WhkDDYq/+B20g9GOcD4umLldV2sdW
-	o1tapUTmIFRMYxiwT5e0s54xPu8CNtscsN8Q/JsIGcD1oMjxLqbjkl1BBPbQFTAP
-	SJi9VjfNEFJ+df4BdZMsJ8hm12g1gi6+8xEgT95KhSQ9EsgAzncInVjQxEU959uY
-	2uU8Ke51CzDmN/oeQEqYdRwoWwxU0DfzafzPORaBAxeCKtIcYGH9gYpU9lIS2GUj
-	sn84r5+cl4mDE/IQdSIZUoFwHUpV6TcpXKUGTVD4Sx/VNGuMP+mFYCPzYcRoZL5A
-	GuEkOvIF6k7LuvRn0RTPjpfyIVX13d53AvLxNKoZvZfxBHkzEBLcnE1kw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 407p7j8mg2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 07 Jul 2024 14:45:31 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 467EjUWK031170;
-	Sun, 7 Jul 2024 14:45:30 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 407p7j8mfx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 07 Jul 2024 14:45:30 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 467DwIpf024671;
-	Sun, 7 Jul 2024 14:45:29 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 407g8ttrah-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 07 Jul 2024 14:45:29 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 467EjO0a31523140
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 7 Jul 2024 14:45:26 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5ADE520040;
-	Sun,  7 Jul 2024 14:45:24 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 78B602004B;
-	Sun,  7 Jul 2024 14:45:21 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.43.1.68])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun,  7 Jul 2024 14:45:21 +0000 (GMT)
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-        irogers@google.com, namhyung@kernel.org, segher@kernel.crashing.org,
-        christophe.leroy@csgroup.eu
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
-        disgoel@linux.vnet.ibm.com
-Subject: [PATCH V6 18/18] tools/perf: Set instruction name to be used with insn-stat when using raw instruction
-Date: Sun,  7 Jul 2024 20:14:19 +0530
-Message-Id: <20240707144419.92510-19-atrajeev@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
-References: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
+	s=arc-20240116; t=1720364118; c=relaxed/simple;
+	bh=ORkTmI6YEscVUo6AccZIx1QFg0q/vy6tdjjB+lzVb+A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W5aODo5i2z1BbVbwPuiDhaBsu7xJ/YvJL70X2oBjkDdIkvQ3h+cQ2U78i1Y4x3yfVfDTF9Ccs8t0LpiWekF2gQ06ursbBhrN+au1rA62vXSGamMdVxslDdUeVvF7QfytpXBgaiC+VaJcYlfySpkiWMQGnR0MEdQMK2G112GUJ8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=161.53.235.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (localhost [127.0.0.1])
+	by domac.alu.hr (Postfix) with ESMTP id 113E460173;
+	Sun,  7 Jul 2024 16:45:27 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
+Received: from domac.alu.hr ([127.0.0.1])
+	by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 9SUPzB37gLXQ; Sun,  7 Jul 2024 16:45:24 +0200 (CEST)
+Received: from [192.168.178.20] (dh207-40-28.xnet.hr [88.207.40.28])
+	by domac.alu.hr (Postfix) with ESMTPSA id 08F766015E;
+	Sun,  7 Jul 2024 16:45:20 +0200 (CEST)
+Message-ID: <c8a0ab67-7d29-4ab5-8d08-e08edc5d568c@gmail.com>
+Date: Sun, 7 Jul 2024 16:45:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PROBLEM linux-next]
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>
+Cc: linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
+ Miquel Raynal <miquel.raynal@bootlin.com>
+References: <47e0483d-6e3d-43a8-9273-25278a4a74b9@gmail.com>
+ <0c095098-4b3e-481b-b866-29cacb9f165d@milecki.pl>
+ <CAOiHx=nmcf1mRy_i9vUDNtqOZTQ=PFWY8MGEV1FZfgt=GHqj5A@mail.gmail.com>
+ <f9818a25-0604-49a8-af06-3dc7de006377@gmail.com>
+Content-Language: en-US
+In-Reply-To: <f9818a25-0604-49a8-af06-3dc7de006377@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tm4h7PV3-1w7TrrJTt6bsTakP-LkmmHx
-X-Proofpoint-ORIG-GUID: nfNaFB2mlgeenQIvjW3wTX3_J-HZpH9X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-07_06,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- bulkscore=0 mlxscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- impostorscore=0 phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407070117
 
-Since the "ins.name" is not set while using raw instruction,
-perf annotate with insn-stat gives wrong data:
+Hi, Jonas, Rafał, all,
 
-Result from "./perf annotate --data-type --insn-stat":
+On 7/7/24 16:09, Mirsad Todorovac wrote:
+> 
+> 
+> On 7/7/24 10:12, Jonas Gorski wrote:
+>> On Sun, 7 Jul 2024 at 09:38, Rafał Miłecki <rafal@milecki.pl> wrote:
+>>>
+>>> Some more descriptive subject would be nice :)
+>>>
+>>>
+>>> On 7.07.2024 02:10, Mirsad Todorovac wrote:
+>>>> In file included from ./include/asm-generic/bug.h:22,
+>>>>                   from ./arch/x86/include/asm/bug.h:87,
+>>>>                   from ./include/linux/bug.h:5,
+>>>>                   from ./include/linux/fortify-string.h:6,
+>>>>                   from ./include/linux/string.h:374,
+>>>>                   from ./arch/x86/include/asm/page_32.h:18,
+>>>>                   from ./arch/x86/include/asm/page.h:14,
+>>>>                   from ./arch/x86/include/asm/processor.h:20,
+>>>>                   from ./arch/x86/include/asm/timex.h:5,
+>>>>                   from ./include/linux/timex.h:67,
+>>>>                   from ./include/linux/time32.h:13,
+>>>>                   from ./include/linux/time.h:60,
+>>>>                   from ./include/linux/stat.h:19,
+>>>>                   from ./include/linux/module.h:13,
+>>>>                   from drivers/mtd/mtdpart.c:10:
+>>>> drivers/mtd/mtdpart.c: In function ‘parse_mtd_partitions’:
+>>>> drivers/mtd/mtdpart.c:693:34: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
+>>>>    693 |                         pr_debug("%s: got parser %s\n", master->name,
+>>>>        |                                  ^~~~~~~~~~~~~~~~~~~~~
+>>>> ./include/linux/printk.h:376:21: note: in definition of macro ‘pr_fmt’
+>>>>    376 | #define pr_fmt(fmt) fmt
+>>>>        |                     ^~~
+>>>> ./include/linux/dynamic_debug.h:248:9: note: in expansion of macro ‘__dynamic_func_call_cls’
+>>>>    248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+>>>>        |         ^~~~~~~~~~~~~~~~~~~~~~~
+>>>> ./include/linux/dynamic_debug.h:250:9: note: in expansion of macro ‘_dynamic_func_call_cls’
+>>>>    250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+>>>>        |         ^~~~~~~~~~~~~~~~~~~~~~
+>>>> ./include/linux/dynamic_debug.h:269:9: note: in expansion of macro ‘_dynamic_func_call’
+>>>>    269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+>>>>        |         ^~~~~~~~~~~~~~~~~~
+>>>> ./include/linux/printk.h:610:9: note: in expansion of macro ‘dynamic_pr_debug’
+>>>>    610 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+>>>>        |         ^~~~~~~~~~~~~~~~
+>>>> drivers/mtd/mtdpart.c:693:25: note: in expansion of macro ‘pr_debug’
+>>>>    693 |                         pr_debug("%s: got parser %s\n", master->name,
+>>>>        |                         ^~~~~~~~
+>>>> drivers/mtd/mtdpart.c:693:50: note: format string is defined here
+>>>>    693 |                         pr_debug("%s: got parser %s\n", master->name,
+>>>>        |                                                  ^~
+>>>>
+>>>> Offending commit is 5b644aa012f67.
+>>>
+>>> Actually it goes back to 2015 to the commit 8e2c992b59fc ("mtd: mtdpart: add debug prints to partition parser.").
+>>>
+>>>
+>>>> Proposed non-intrusive fix resolves the warning/error, but I could not test the code.
+>>>> (I don't have the physical device.)
+>>>>
+>>>> -----------------><------------------------------------------
+>>>> diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+>>>> index 6811a714349d..81665d67ed2d 100644
+>>>> --- a/drivers/mtd/mtdpart.c
+>>>> +++ b/drivers/mtd/mtdpart.c
+>>>> @@ -691,7 +691,7 @@ int parse_mtd_partitions(struct mtd_info *master, const char *const *types,
+>>>>                          if (!parser && !request_module("%s", *types))
+>>>>                                  parser = mtd_part_parser_get(*types);
+>>>>                          pr_debug("%s: got parser %s\n", master->name,
+>>>> -                               parser ? parser->name : NULL);
+>>>> +                               parser ? parser->name : "(null"));
+>>>>                          if (!parser)
+>>>>                                  continue;
+>>>>                          ret = mtd_part_do_parse(parser, master, &pparts, data);
+>>>>
+>>>>
+>>>> Hope this helps.
+>>>
+>>> I'd say it's simple enough to send patch without actual hw testing.
+>>
+>> Though the kernel's vsprintf will already handle NULL pointers and
+>> print "(null)" [1], so I'm not sure if this is an actual improvement.
+>>
+>> The only way this can be NULL though is if the request_module()
+>> failed, so maybe a proper error message would be better here instead
+>> of an obscure "got parser (null)". You don't even know which type
+>> wasn't available. E.g. pr_debug("%: no parser for type %s
+>> available\n", master->name, *types).
+> 
+> Agreed. Your proposal is much more descriptive.
+> 
+> Will you do this patch or should I and put a Suggested-by: ?
+> 
+> However, I would sleep much better if this is tested on actual hw. :-/
 
-Annotate Instruction stats
-total 615, ok 419 (68.1%), bad 196 (31.9%)
+Hi Jonas, Rafał,
 
-  Name      :  Good   Bad
------------------------------------------------------------
-            :   419   196
+Is this what you had in mind?
 
-Patch sets "dl->ins.name" in arch specific function "check_ppc_insn"
-while initialising "struct disasm_line". Also update "ins_find" function
-to pass "struct disasm_line" as a parameter so as to set its name field
-in arch specific call.
+-----><------------------------
+diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+index 6811a714349d..dd02690abf3a 100644
+--- a/drivers/mtd/mtdpart.c
++++ b/drivers/mtd/mtdpart.c
+@@ -690,8 +690,12 @@ int parse_mtd_partitions(struct mtd_info *master, const char *const *types,
+                        parser = mtd_part_parser_get(*types);
+                        if (!parser && !request_module("%s", *types))
+                                parser = mtd_part_parser_get(*types);
+-                       pr_debug("%s: got parser %s\n", master->name,
+-                               parser ? parser->name : NULL);
++                       if (!parser)
++                               pr_debug("%s: no parser available for type %s\n",
++                                       master->name, *types);
++                       else
++                               pr_debug("%s: got parser %s\n", master->name,
++                                       parser->name);
+                        if (!parser)
+                                continue;
+                        ret = mtd_part_do_parse(parser, master, &pparts, data);
+--
 
-With the patch changes:
+This will both eliminate warning and be more descriptive.
 
-Annotate Instruction stats
-total 609, ok 446 (73.2%), bad 163 (26.8%)
+I agree that vsprintf() will print "(null)" for NULL ptr, but GCC 12.3.0 doesn't tolerate such
+application and we cannot build w -Werror ...
 
-  Name/opcode:  Good   Bad
------------------------------------------------------------
-  58                  :   323    80
-  32                  :    49    43
-  34                  :    33    11
-  OP_31_XOP_LDX       :     8    20
-  40                  :    23     0
-  OP_31_XOP_LWARX     :     5     1
-  OP_31_XOP_LWZX      :     2     3
-  OP_31_XOP_LDARX     :     3     0
-  33                  :     0     2
-  OP_31_XOP_LBZX      :     0     1
-  OP_31_XOP_LWAX      :     0     1
-  OP_31_XOP_LHZX      :     0     1
+How does this look to you?
 
-Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
----
- .../perf/arch/powerpc/annotate/instructions.c  | 18 +++++++++++++++---
- tools/perf/builtin-annotate.c                  |  4 ++--
- tools/perf/util/annotate.c                     |  2 +-
- tools/perf/util/disasm.c                       | 10 +++++-----
- tools/perf/util/disasm.h                       |  2 +-
- 5 files changed, 24 insertions(+), 12 deletions(-)
+Best regards,
+Mirsad Todorovac
 
-diff --git a/tools/perf/arch/powerpc/annotate/instructions.c b/tools/perf/arch/powerpc/annotate/instructions.c
-index af1032572bf3..ede9eeade0ab 100644
---- a/tools/perf/arch/powerpc/annotate/instructions.c
-+++ b/tools/perf/arch/powerpc/annotate/instructions.c
-@@ -189,8 +189,9 @@ static int cmp_offset(const void *a, const void *b)
- 	return (val1->value - val2->value);
- }
- 
--static struct ins_ops *check_ppc_insn(u32 raw_insn)
-+static struct ins_ops *check_ppc_insn(struct disasm_line *dl)
- {
-+	int raw_insn = dl->raw.raw_insn;
- 	int opcode = PPC_OP(raw_insn);
- 	int mem_insn_31 = PPC_21_30(raw_insn);
- 	struct insn_offset *ret;
-@@ -198,19 +199,30 @@ static struct ins_ops *check_ppc_insn(u32 raw_insn)
- 		"OP_31_INSN",
- 		mem_insn_31
- 	};
-+	char name_insn[32];
- 
- 	/*
- 	 * Instructions with opcode 32 to 63 are memory
- 	 * instructions in powerpc
- 	 */
- 	if ((opcode & 0x20)) {
-+		/*
-+		 * Set name in case of raw instruction to
-+		 * opcode to be used in insn-stat
-+		 */
-+		if (!strlen(dl->ins.name)) {
-+			sprintf(name_insn, "%d", opcode);
-+			dl->ins.name = strdup(name_insn);
-+		}
- 		return &load_store_ops;
- 	} else if (opcode == 31) {
- 		/* Check for memory instructions with opcode 31 */
- 		ret = bsearch(&mem_insns_31_opcode, ins_array, ARRAY_SIZE(ins_array), sizeof(ins_array[0]), cmp_offset);
--		if (ret != NULL)
-+		if (ret) {
-+			if (!strlen(dl->ins.name))
-+				dl->ins.name = strdup(ret->name);
- 			return &load_store_ops;
--		else {
-+		} else {
- 			mem_insns_31_opcode.value = PPC_22_30(raw_insn);
- 			ret = bsearch(&mem_insns_31_opcode, arithmetic_ins_op_31, ARRAY_SIZE(arithmetic_ins_op_31),
- 					sizeof(arithmetic_ins_op_31[0]), cmp_offset);
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index b10b7f005658..68e929d4746e 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -396,10 +396,10 @@ static void print_annotate_item_stat(struct list_head *head, const char *title)
- 	printf("total %d, ok %d (%.1f%%), bad %d (%.1f%%)\n\n", total,
- 	       total_good, 100.0 * total_good / (total ?: 1),
- 	       total_bad, 100.0 * total_bad / (total ?: 1));
--	printf("  %-10s: %5s %5s\n", "Name", "Good", "Bad");
-+	printf("  %-10s: %5s %5s\n", "Name/opcode", "Good", "Bad");
- 	printf("-----------------------------------------------------------\n");
- 	list_for_each_entry(istat, head, list)
--		printf("  %-10s: %5d %5d\n", istat->name, istat->good, istat->bad);
-+		printf("  %-20s: %5d %5d\n", istat->name, istat->good, istat->bad);
- 	printf("\n");
- }
- 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 8db2f32700aa..e1f24dff8042 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2229,7 +2229,7 @@ static struct annotated_item_stat *annotate_data_stat(struct list_head *head,
- 		return NULL;
- 
- 	istat->name = strdup(name);
--	if (istat->name == NULL) {
-+	if ((istat->name == NULL) || (!strlen(istat->name))) {
- 		free(istat);
- 		return NULL;
- 	}
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index 63681df6482b..cd283c42195c 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -859,7 +859,7 @@ static void ins__sort(struct arch *arch)
- 	qsort(arch->instructions, nmemb, sizeof(struct ins), ins__cmp);
- }
- 
--static struct ins_ops *__ins__find(struct arch *arch, const char *name, u32 raw_insn)
-+static struct ins_ops *__ins__find(struct arch *arch, const char *name, struct disasm_line *dl)
- {
- 	struct ins *ins;
- 	const int nmemb = arch->nr_instructions;
-@@ -871,7 +871,7 @@ static struct ins_ops *__ins__find(struct arch *arch, const char *name, u32 raw_
- 		 */
- 		struct ins_ops *ops;
- 
--		ops = check_ppc_insn(raw_insn);
-+		ops = check_ppc_insn(dl);
- 		if (ops)
- 			return ops;
- 	}
-@@ -905,9 +905,9 @@ static struct ins_ops *__ins__find(struct arch *arch, const char *name, u32 raw_
- 	return ins ? ins->ops : NULL;
- }
- 
--struct ins_ops *ins__find(struct arch *arch, const char *name, u32 raw_insn)
-+struct ins_ops *ins__find(struct arch *arch, const char *name, struct disasm_line *dl)
- {
--	struct ins_ops *ops = __ins__find(arch, name, raw_insn);
-+	struct ins_ops *ops = __ins__find(arch, name, dl);
- 
- 	if (!ops && arch->associate_instruction_ops)
- 		ops = arch->associate_instruction_ops(arch, name);
-@@ -917,7 +917,7 @@ struct ins_ops *ins__find(struct arch *arch, const char *name, u32 raw_insn)
- 
- static void disasm_line__init_ins(struct disasm_line *dl, struct arch *arch, struct map_symbol *ms)
- {
--	dl->ins.ops = ins__find(arch, dl->ins.name, dl->raw.raw_insn);
-+	dl->ins.ops = ins__find(arch, dl->ins.name, dl);
- 
- 	if (!dl->ins.ops)
- 		return;
-diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
-index c1bb1e484bfb..f56beedeb9da 100644
---- a/tools/perf/util/disasm.h
-+++ b/tools/perf/util/disasm.h
-@@ -105,7 +105,7 @@ struct annotate_args {
- struct arch *arch__find(const char *name);
- bool arch__is(struct arch *arch, const char *name);
- 
--struct ins_ops *ins__find(struct arch *arch, const char *name, u32 raw_insn);
-+struct ins_ops *ins__find(struct arch *arch, const char *name, struct disasm_line *dl);
- int ins__scnprintf(struct ins *ins, char *bf, size_t size,
- 		   struct ins_operands *ops, int max_ins_name);
- 
--- 
-2.43.0
+> Best regards,
+> Mirsad Todorovac
+> 
+>> [1] https://elixir.bootlin.com/linux/latest/source/lib/vsprintf.c#L696
+>>
+>> Best Regards,
+>> Jonas
 
 
