@@ -1,179 +1,194 @@
-Return-Path: <linux-kernel+bounces-243511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4F8F92970A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:12:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EF992970B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575D61F216A6
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:12:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9CD1F2165A
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B88FBEA;
-	Sun,  7 Jul 2024 08:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421DCF9EB;
+	Sun,  7 Jul 2024 08:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B16m1xkE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmgDTS6Y"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713787FF
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 08:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D3F7FF
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 08:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720339914; cv=none; b=nrUC6z/0HGbU2gwN444esqyQWtcvRrYUKMqxHrxuCvs4P+KYa5o1kzNJ538LlzqIWUJkA2LlYct35JCBHHxMR0fP00w84vmmpzbon0KHg8sGLOWXuPQA/K27e0u713VigtR7+r9sMao+WQVKiELk3IxrCbY1U8fKa+Z+ECzifpc=
+	t=1720339942; cv=none; b=ThkDTXAnC/9PT1XzvTz1bSOOrGl5iG9S1ooX79AheQ13jPmWDrptwWhryy3AA/DWbe/ICstaiiLY9V0vRZiT/4XqBTXaBsV5ANrAGwwx+cBgGbysLk5FjCsyZ1Y7Au3Na4UvxYQZRUaBr4GwqbHdEJvqimGIn1Pzig4yFjOIFBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720339914; c=relaxed/simple;
-	bh=97bqdBTrNtC8IwMLKbe736CxgV5zMMtcEBNYRacAEeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKHtQLclSH+oolILdtsRUBLzXJa8dPDkSwjtIR7D29/Q/mYaufsNeaMPs50ovmO+z/zBxmYFn590aJs08WJ5r2XCv09oVonmfWSpynrhd8mSs6taJK4Nyn4RI/uK5LIMPQr4wLdj7PTPWVcb7UAs/JfrmUi+gm36NLyDmdS/d/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B16m1xkE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720339911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0FC4NvfoAJx1Y/gu3Ro2ey/6zbMrWE94iatb1WkAmOQ=;
-	b=B16m1xkErtbQ12YMYNsPJ5EU1IKFBicK8o4O3AC4TJ3xoXqBdQsuVJouYW6bwgFSOq9c3v
-	eiaoLQaC0X6Zj65xwB+daRBxFsjp+onWvJgaDoIIuyDjN+B8LFPBVNerK615btKkBKrqB4
-	yjUHqc0LumPKesvoUQJYqOCWE8lL/IM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-677-PN-JcMBtN7ur1fkA9jnPeA-1; Sun, 07 Jul 2024 04:11:49 -0400
-X-MC-Unique: PN-JcMBtN7ur1fkA9jnPeA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42668699453so738675e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 01:11:49 -0700 (PDT)
+	s=arc-20240116; t=1720339942; c=relaxed/simple;
+	bh=sjlaSQkHcIegINmraidbVbGxor/drjf3WB6FSzaRhvc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I8+jbVjpCgIVx2Aihf7YvgGAOVRm9xvgKrohXt6twJejspYcMBcHWoMIMISmPQNdOTSX7iZs5FBoZXFFG9HqUU9mLRPCNPuSsimF6azzw19N2Sr5qzhXxVWsp3x27vSKTKOP0WokrrY+7OjKeaLnaJecyXT057f3geFsEQkKetE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmgDTS6Y; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7035b2947a4so1050937a34.3
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 01:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720339940; x=1720944740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RFpie4PTNsoMWbDRDvwqxE8zyMFGx2b17ygGgwi8cRE=;
+        b=hmgDTS6Yvh3+JAHehdy+6qYgYn6ESBaoQ1wuWTbcXIhWNDt2tXM+vAok0QX0uwC9UI
+         rCxkF7wOYl/FI4cqMOUK0phlBxFgCIv+THvGbsiy68st6crTOxPZA7xdBbygqzPiCVvg
+         Sx09EJZYONwkH8BQXA/QZFg61oieBFWYvM8uvKf8OQoQb1SkL3eYQTWF9umOJ5sYlfPL
+         oeYn2ofZHrLk07SiCM/eZ6KfDrQMbB7NJE5JpX/biWB9tmjsr8QhQ9fpgbTyWEDJOLna
+         VAAxVK8K3/plNpN41lHujlIb9Y6P7tdRrAxUaNyP2kDzpIwgn6cMkuX6muJ9b00g9zvk
+         jWtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720339908; x=1720944708;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0FC4NvfoAJx1Y/gu3Ro2ey/6zbMrWE94iatb1WkAmOQ=;
-        b=WI360SEpy+8jn/8OZvmIu73GGFmriQxO0GCyvqMAjmHqaEVIk43Qi1fx+Pjl//Xpv9
-         vtIEK8mJEM7Gfzv4cm46p+eyn8ZglsY0oJRlw3Mz5Sb70Imu4eZD4s50Dl6oY1lXjyjv
-         wpk8Q9W2XcFg2EGNyNV8wWk/zBoFY8AZ0UvV7TCRp0EWBB48oQ+SDjuZtdezEGOEyTF2
-         TZct242lIhNm23gEVIiWJ0XSzZ5nLiEEHcMuwcckXNr45NYXxybB4VTYN3k8VCKzrHs4
-         mHsPXIOFbvP8fmHkMvtRnJazPcXLG6PkPATVLa60xFCg6/IVOk+DIdUQ2EaYKOA6p+I/
-         G5gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiEkYq8LpJVtjipuEx1XKvMQWGBFfLdukHNsdPMNiy8WZHiEso6H2OFHv1GzP4+kBETkEvJH7pPervlXIW5jWRG1FDDjuWZC8tAK8B
-X-Gm-Message-State: AOJu0Yw20sg8vep374QLPVaLsPY58EIzHddHWrxpSiPnz2vpgJG+4Uwl
-	qLUEg9cZb0C+oZBLUb2MD0wN5763jiDEN2PZ9Mn9bNbtOt3upz3PAD0bBUxzcKZMuKKbc6iMrgF
-	SJhNluSLz8SUT+2+GGjsLmMSc/+uixcrz0egiRbDiDAJezyvv9KRauRiTP0goXg==
-X-Received: by 2002:a05:600c:4787:b0:426:63f1:9a1b with SMTP id 5b1f17b1804b1-42663f19bddmr9560885e9.33.1720339908780;
-        Sun, 07 Jul 2024 01:11:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEafKI8YyHtgDom4e/eOXaAlEzV1pgl+1foShbkE7WKPQAePKR7zrXbwxom2eBgKuJXJMW1w==
-X-Received: by 2002:a05:600c:4787:b0:426:63f1:9a1b with SMTP id 5b1f17b1804b1-42663f19bddmr9560695e9.33.1720339908392;
-        Sun, 07 Jul 2024 01:11:48 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72f:c00:10f0:d1a8:c206:17ac? (p200300cbc72f0c0010f0d1a8c20617ac.dip0.t-ipconnect.de. [2003:cb:c72f:c00:10f0:d1a8:c206:17ac])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2519a4sm119123635e9.35.2024.07.07.01.11.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jul 2024 01:11:47 -0700 (PDT)
-Message-ID: <d1686beb-aff7-4ead-bb6d-53f2b1603f46@redhat.com>
-Date: Sun, 7 Jul 2024 10:11:46 +0200
+        d=1e100.net; s=20230601; t=1720339940; x=1720944740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RFpie4PTNsoMWbDRDvwqxE8zyMFGx2b17ygGgwi8cRE=;
+        b=XUD+CuMOlkc1xh84dZONJTnIKv2jAToDEQOqPOrNvZd0sEZ2YVxx7bcM+a0U7Sf7mv
+         x1589Sal4wN23E9p6yj5q7ipwuAytUk2v8jJqlYfiqAkJM32yL3Nh5h2RNiKxT5J+Wr/
+         eSE7h/57nvSO2FeA9pa0vD+l6UcS4km11WN7AahzyDVHIzoFuxbL9w+VBWko/viTeQlx
+         WHeF+1mToFMWps5xPmA24vx4YNPvQasQXxDCna5U9KE7vypPxS/3GCANj+me43MU3BR9
+         PglLE3Jmnnmhm/c0EhOJgRU8jg9kfhTvZvinVvFkLNSvM0rLS++bXtN3N72ym2TzPx+2
+         IubQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV93RkrdKdhLA61S8LiNdcn9GplV8gGFhO1eX48epClOeV83gCF6z7MPCA5J4vnuHwwixLo8vCHrfY1NsN9KYgzQSoWF3Bal0XzdMU8
+X-Gm-Message-State: AOJu0Yzrgu4FckwXMXaWhC01qE6AEpUBJR3jUeUC1gAGlrkfMS4mnTAC
+	hvV+wLyvhtZdihanUPY1mBAlDbN2bJoaFJitjVL24y44MBLfYjcMgpAyDzD9uGsXhZpb23SbTbB
+	iizCM9erORMA1gRzYSFTjMqfPxIg=
+X-Google-Smtp-Source: AGHT+IFY+L7sQOal4yf8wQbrG6IrzX1JOhyjrhHWxI/zVy0m7b5kst5TDs2RFEk+QYiIqaMDsAtImgmTAuC96RJpsqA=
+X-Received: by 2002:a05:6358:5929:b0:1aa:b7d7:2227 with SMTP id
+ e5c5f4694b2df-1aab7d72faemr262383355d.6.1720339939758; Sun, 07 Jul 2024
+ 01:12:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm: Fix khugepaged activation policy
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Lance Yang <ioworker0@gmail.com>, Yang Shi <shy828301@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240705102849.2479686-1-ryan.roberts@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240705102849.2479686-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <47e0483d-6e3d-43a8-9273-25278a4a74b9@gmail.com> <0c095098-4b3e-481b-b866-29cacb9f165d@milecki.pl>
+In-Reply-To: <0c095098-4b3e-481b-b866-29cacb9f165d@milecki.pl>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Sun, 7 Jul 2024 10:12:08 +0200
+Message-ID: <CAOiHx=nmcf1mRy_i9vUDNtqOZTQ=PFWY8MGEV1FZfgt=GHqj5A@mail.gmail.com>
+Subject: Re: [PROBLEM linux-next]
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, linux-mtd@lists.infradead.org, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org, 
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05.07.24 12:28, Ryan Roberts wrote:
-> Since the introduction of mTHP, the docuementation has stated that
-> khugepaged would be enabled when any mTHP size is enabled, and disabled
-> when all mTHP sizes are disabled. There are 2 problems with this; 1.
-> this is not what was implemented by the code and 2. this is not the
-> desirable behavior.
-> 
-> Desirable behavior is for khugepaged to be enabled when any PMD-sized
-> THP is enabled, anon or file. (Note that file THP is still controlled by
-> the top-level control so we must always consider that, as well as the
-> PMD-size mTHP control for anon). khugepaged only supports collapsing to
-> PMD-sized THP so there is no value in enabling it when PMD-sized THP is
-> disabled. So let's change the code and documentation to reflect this
-> policy.
-> 
-> Further, per-size enabled control modification events were not
-> previously forwarded to khugepaged to give it an opportunity to start or
-> stop. Consequently the following was resulting in khugepaged eroneously
-> not being activated:
-> 
->    echo never > /sys/kernel/mm/transparent_hugepage/enabled
->    echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
-> Closes: https://lore.kernel.org/linux-mm/7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com/
-> Cc: stable@vger.kernel.org
-> ---
+On Sun, 7 Jul 2024 at 09:38, Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl> wro=
+te:
+>
+> Some more descriptive subject would be nice :)
+>
+>
+> On 7.07.2024 02:10, Mirsad Todorovac wrote:
+> > In file included from ./include/asm-generic/bug.h:22,
+> >                   from ./arch/x86/include/asm/bug.h:87,
+> >                   from ./include/linux/bug.h:5,
+> >                   from ./include/linux/fortify-string.h:6,
+> >                   from ./include/linux/string.h:374,
+> >                   from ./arch/x86/include/asm/page_32.h:18,
+> >                   from ./arch/x86/include/asm/page.h:14,
+> >                   from ./arch/x86/include/asm/processor.h:20,
+> >                   from ./arch/x86/include/asm/timex.h:5,
+> >                   from ./include/linux/timex.h:67,
+> >                   from ./include/linux/time32.h:13,
+> >                   from ./include/linux/time.h:60,
+> >                   from ./include/linux/stat.h:19,
+> >                   from ./include/linux/module.h:13,
+> >                   from drivers/mtd/mtdpart.c:10:
+> > drivers/mtd/mtdpart.c: In function =E2=80=98parse_mtd_partitions=E2=80=
+=99:
+> > drivers/mtd/mtdpart.c:693:34: error: =E2=80=98%s=E2=80=99 directive arg=
+ument is null [-Werror=3Dformat-overflow=3D]
+> >    693 |                         pr_debug("%s: got parser %s\n", master=
+->name,
+> >        |                                  ^~~~~~~~~~~~~~~~~~~~~
+> > ./include/linux/printk.h:376:21: note: in definition of macro =E2=80=98=
+pr_fmt=E2=80=99
+> >    376 | #define pr_fmt(fmt) fmt
+> >        |                     ^~~
+> > ./include/linux/dynamic_debug.h:248:9: note: in expansion of macro =E2=
+=80=98__dynamic_func_call_cls=E2=80=99
+> >    248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt,=
+ func, ##__VA_ARGS__)
+> >        |         ^~~~~~~~~~~~~~~~~~~~~~~
+> > ./include/linux/dynamic_debug.h:250:9: note: in expansion of macro =E2=
+=80=98_dynamic_func_call_cls=E2=80=99
+> >    250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func,=
+ ##__VA_ARGS__)
+> >        |         ^~~~~~~~~~~~~~~~~~~~~~
+> > ./include/linux/dynamic_debug.h:269:9: note: in expansion of macro =E2=
+=80=98_dynamic_func_call=E2=80=99
+> >    269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,           =
+  \
+> >        |         ^~~~~~~~~~~~~~~~~~
+> > ./include/linux/printk.h:610:9: note: in expansion of macro =E2=80=98dy=
+namic_pr_debug=E2=80=99
+> >    610 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+> >        |         ^~~~~~~~~~~~~~~~
+> > drivers/mtd/mtdpart.c:693:25: note: in expansion of macro =E2=80=98pr_d=
+ebug=E2=80=99
+> >    693 |                         pr_debug("%s: got parser %s\n", master=
+->name,
+> >        |                         ^~~~~~~~
+> > drivers/mtd/mtdpart.c:693:50: note: format string is defined here
+> >    693 |                         pr_debug("%s: got parser %s\n", master=
+->name,
+> >        |                                                  ^~
+> >
+> > Offending commit is 5b644aa012f67.
+>
+> Actually it goes back to 2015 to the commit 8e2c992b59fc ("mtd: mtdpart: =
+add debug prints to partition parser.").
+>
+>
+> > Proposed non-intrusive fix resolves the warning/error, but I could not =
+test the code.
+> > (I don't have the physical device.)
+> >
+> > -----------------><------------------------------------------
+> > diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+> > index 6811a714349d..81665d67ed2d 100644
+> > --- a/drivers/mtd/mtdpart.c
+> > +++ b/drivers/mtd/mtdpart.c
+> > @@ -691,7 +691,7 @@ int parse_mtd_partitions(struct mtd_info *master, c=
+onst char *const *types,
+> >                          if (!parser && !request_module("%s", *types))
+> >                                  parser =3D mtd_part_parser_get(*types)=
+;
+> >                          pr_debug("%s: got parser %s\n", master->name,
+> > -                               parser ? parser->name : NULL);
+> > +                               parser ? parser->name : "(null"));
+> >                          if (!parser)
+> >                                  continue;
+> >                          ret =3D mtd_part_do_parse(parser, master, &ppa=
+rts, data);
+> >
+> >
+> > Hope this helps.
+>
+> I'd say it's simple enough to send patch without actual hw testing.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Though the kernel's vsprintf will already handle NULL pointers and
+print "(null)" [1], so I'm not sure if this is an actual improvement.
 
--- 
-Cheers,
+The only way this can be NULL though is if the request_module()
+failed, so maybe a proper error message would be better here instead
+of an obscure "got parser (null)". You don't even know which type
+wasn't available. E.g. pr_debug("%: no parser for type %s
+available\n", master->name, *types).
 
-David / dhildenb
+[1] https://elixir.bootlin.com/linux/latest/source/lib/vsprintf.c#L696
 
+Best Regards,
+Jonas
 
