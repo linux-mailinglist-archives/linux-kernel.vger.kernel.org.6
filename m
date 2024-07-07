@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-243552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DAE929794
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:15:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6DA929799
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 175CEB20F9F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:15:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9711F21453
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AA41BF50;
-	Sun,  7 Jul 2024 11:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FF91C68C;
+	Sun,  7 Jul 2024 11:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cS0IKh1U"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwqCyB8i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CD312B95;
-	Sun,  7 Jul 2024 11:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65536FBE;
+	Sun,  7 Jul 2024 11:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720350919; cv=none; b=Vs+wSKTMq41GY65gyQ12QhaXwNpLYErv7quQR/QSB7rqdXZVYNm2e0BlTlfjzju75AnVJoRoWNjN00PJ80+BFlMxgCBQUzwpR93GjLlzdJw7EtU97sopyTGodO5lwnQTMl8MyOrrWo/45f9IgMhAjRZPq/Yzfz6Ug99UNmvDUKw=
+	t=1720351300; cv=none; b=g4nSZNxPeVLyIEcTOBqrAykmSEPlDEcVdXFqjyRXNEv5M4zPLdmBCaKHPb3N0h5rY81A5bxqDJ8NPQtDR92n6ZgX75khUxkhin+49ViNBc/+6NJX7HIww0SxpjAgKCP5VpZadkWDe3DKG6jmidHSvgG0k4eWD+u37MO0yqaSanc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720350919; c=relaxed/simple;
-	bh=GCiV83PkQGQBX0iCvr2E0PjQAzhoDidHblBBsoMp9Wk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cos5hHeU0xMF5vGDjnnmtS12NGPB7tHOhQp1LRyy4+5bGWIBZrkg3pZZyUPuebdnZeR8LFJqhG4hbxW7I2iIAJen69xDxVOESAGWwcDGFV9dcJHq/Uzeku56SBMAeoc6Oi4CueVEvcsMYqAUR4oEWlSpke9WaB5TXN6kC3C7qAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cS0IKh1U; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-64b05fab14eso29322897b3.2;
-        Sun, 07 Jul 2024 04:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720350917; x=1720955717; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JEDaHctMDjTLUQmt8H4eKIsXIEH/NgBcNg9NnhklDGc=;
-        b=cS0IKh1UCD/XFCERftuDjiEhnSWPETQpQZ5ndDd3JiHu7fB+suhumbgxeVS1HeeAX3
-         zgnVdxeU8Vc+YRS8qJAoVu81WgDOr9rtxjPQtybimGrP8gmBrW6XSqbUKkkz/XK3Hxr6
-         jk8vLWxw6YUUhsFYId99bSDU0gKZt+VahWu2g0erDeX0a35cpaiaKHM1JixyDoEccD8/
-         UXUeqiy+DmiMys8aoznO+zjEUKIDuwMyVXjeApGp+4Pa+jkALVILS8lEmfazoJGsiCjq
-         6C1HVQpBWAkQUQv+sfNN+sR+KHiqmaY02Z/MD4Tj2oILW2bqCJx+qGiIIVJ/+D0pJxH0
-         kroQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720350917; x=1720955717;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JEDaHctMDjTLUQmt8H4eKIsXIEH/NgBcNg9NnhklDGc=;
-        b=F80/KyiZPs5diBDoFqogwRYyVtyneSczkcWeytig5N64mkpWdKhJ0YiCz6OpKU/70o
-         PVD7dm9pPPN0RnfPtOacgR76VUIC5VPizjWZ9x89qsxC07xb1k8Rg0lPru43y1vW6mU4
-         TWHZm2MWJVMQSKsmzkCq/LLBeHyFXawpbsE0KJo0//tHka4H1FGDdclJ/OCx2Ouy38VN
-         Cn+VP8QD22jirtZQviAIvI+uVaIAlOhWe6656kOQV8bMPz7RwXcRDv1wJGqhdHMb32Hf
-         OesLiM7IkeUBbaT3zRBX/JFsiQoCj99t13HNLvqPfis9cyb0RdX/vmqwyy2tD4bgEy50
-         9XoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSDkaDxXHHuUH5AaC87Z0WreBbKFtey2mkYH4gB1Ak/yOwyc017N/3ujCv6eDnri6x07XpeQWwOC57FE8C8Ti3Mii2OESb0HU0fEJHeRgiNGWgrf12j/eSSpAovw49Qx4kujuiV5KGwu4=
-X-Gm-Message-State: AOJu0YxIK1BFLySATvmb//fZVyQdM9SA+ryjn+ugjQRlQX8ICnq/T9ga
-	eRpVMdzzilUuzQFk7m4XlTUPm8xfnpMH8hIhMKuvnNm3S2J+SoK+HxeF7lab6mveuQYAK2aITZ9
-	L3Zdamv4pNdpFKqiBU3RSxgPbssk=
-X-Google-Smtp-Source: AGHT+IF+cw2g6r/QOlqBO2ajneYgMMcCF8mdTACxJgT8VoYFfD/U+McKqqzQTSTWgFZrYRQtFjG8cHAyRVVKR8uPHCQ=
-X-Received: by 2002:a05:690c:f0b:b0:64b:52e8:4ad0 with SMTP id
- 00721157ae682-652d52266a8mr113145587b3.6.1720350917069; Sun, 07 Jul 2024
- 04:15:17 -0700 (PDT)
+	s=arc-20240116; t=1720351300; c=relaxed/simple;
+	bh=RuY0M+PTCkxY/xq17rYpCK199mEZaqpmtfHMMGxCftE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UxEelUYczJZcPfRAR45hRYDNlY7YNOR9fEGx7DWtpFWanXfm948gJIU19+0py66edQ7PqRr4bnOL6p+CM/CfeDVNvZfw73wNg4vaHqY9aNGnsdksVU3sTRYP89Nb0Woupo46kqDkLWyubW3MuPAalEilQHcSYGPFQMWPqtJe3I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwqCyB8i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A789C3277B;
+	Sun,  7 Jul 2024 11:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720351299;
+	bh=RuY0M+PTCkxY/xq17rYpCK199mEZaqpmtfHMMGxCftE=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=hwqCyB8i+bVFuMMUf0NbIAMukTWz2xnrM35Iydj7smVJG3ROoaxkmkpsqL18ghvT4
+	 p8+J8MHHm2yPSrbva0OnpFU3RL8HBCSxbwWiPJAOnlYvhT7ld6N0xmnyMfXqvT2kef
+	 f8RxAYEqlRec7D5gpCA6ocPnoQAp9T5FJFt1s+MutjzdbzZs2j0Jgc4OEZDP61t9OC
+	 6qBf/jDFvsBQPVwd5+yFInFmxkr+meRUkr/Q/nKTGaM/5Em4C/z0/LJil3QrgCazrW
+	 w8qyb+y64R3LbSX8tml7Ns5MTBdJklIhSIqmjsMa8WMl0HUSK19Cgr+lOHLBS2s+Ar
+	 IrtUHM1EIdG5w==
+Message-ID: <4e0e5dea-09a7-479d-9a1d-7c95132949c1@kernel.org>
+Date: Sun, 7 Jul 2024 13:21:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
- <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
- <CAK-xaQaesuU-TjDQcXgbjoNbZa0Y2qLHtSu5efy99EUDVnuhUg@mail.gmail.com>
- <CAK-xaQbcpzvH1uGiDa04g1NrQsBMnyH2z-FPC4CdS=GDfRCsLg@mail.gmail.com>
- <CAL3q7H63GexJexkDxSz9Av_s=XyYotJqLqjUubZmuU7vynaQNQ@mail.gmail.com>
- <CAL3q7H5fogJTfdkj_7y8upZj7+4dz65o-tKzyGf0WfLwm3nfUw@mail.gmail.com>
- <CAK-xaQaYDg60DizL3kJ3XKU5JD3kKVi3kecb2s18Po96T9tAHg@mail.gmail.com> <CAL3q7H6rir8w6ge6zDPXYFaBoLyHsbcApr9WXb+A1Vc+8RP77w@mail.gmail.com>
-In-Reply-To: <CAL3q7H6rir8w6ge6zDPXYFaBoLyHsbcApr9WXb+A1Vc+8RP77w@mail.gmail.com>
-From: Andrea Gelmini <andrea.gelmini@gmail.com>
-Date: Sun, 7 Jul 2024 13:15:00 +0200
-Message-ID: <CAK-xaQaDGR_x_HZ3CfTsguYQxWjUehKGSpapYLyF3wC=ofRB8g@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] Removed extra asterisks from comment beginnings, and
+ removed unnecessary comment end
+To: Gold Side <goldside000@outlook.com>, "perex@perex.cz" <perex@perex.cz>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>
+References: <DM4P223MB054139F737887D40A2CA396FF7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <DM4P223MB054139F737887D40A2CA396FF7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Il giorno dom 7 lug 2024 alle ore 12:28 Filipe Manana
-<fdmanana@kernel.org> ha scritto:
+On 07/07/2024 06:14, Gold Side wrote:
+> From 33dc0aa3973913f310840cc8f7d5d599d573c297 Mon Sep 17 00:00:00 2001
+> From: Steven Davis <goldside000@outlook.com>
+> Date: Tue, 2 Jul 2024 23:43:15 -0400
+> Subject: [PATCH 2/3] Removed unnecessary comment end
+> 
+> It still works the same without that comment end, so why is it in there?
 
-> > Ok, recompile now and test!
->
-> Thanks! Much appreciated!
+Because license-rules asks for it. Why do you change only one file? Look
+how this is done in other files. This should make you ask questions why
+doing things differently.
 
-So, usual benchmark:
-    fresh: 0:03:16 [ 275MiB/s]
-    aged: 0:02:30 [ 680MiB/s]
+> Signed-off-by: Steven Davis <goldside000@outlook.com>
 
-I let you know in a few days.
-Well, does it make sense to add the option to disable shrinker via /proc?
+Please use git to create commits, not hand-craft them. Missing blank
+line before tag.
 
-Thanks to you,
-Gelma
+Entire patch does not look like proper patch, but some weirdly generated
+mbox file. :/ Use git format-patch or b4.
+
+> ---
+>  include/memory/renesas-rpc-if.h | 2 +-
+
+Best regards,
+Krzysztof
+
 
