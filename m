@@ -1,118 +1,118 @@
-Return-Path: <linux-kernel+bounces-243456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2DE0929656
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 03:44:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2936992965A
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 04:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D58AB214AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 01:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8482822FE
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 02:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038864428;
-	Sun,  7 Jul 2024 01:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDBE4C98;
+	Sun,  7 Jul 2024 02:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0/0eJPt"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V/QlLI9X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B7B46B8;
-	Sun,  7 Jul 2024 01:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6850A4A1D
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 02:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720316677; cv=none; b=Lkk7/uamdvT2DsMAjNgb9LpAvDawFwMOSa7C6uUoi2YrqX5SatEkcna+3R9wWG6FCPc1TA/ulr+yQW8PplbOHtoJcLVB4VfsoL7/6p4XO8nUk2gF0G0HXVFA5HkiV6Pcq0VZ0oZxbQyk1HUhxuck39rQ4va128h0VYb2sJKFEn0=
+	t=1720318284; cv=none; b=hveVub5g/OKcv7opi2ErqPe+47rVdyveqD8erfYH0DVU0Y82h3smeKT4X6JLtwLY29XH+MgkfM7rRl6iqOLv+fdyTSPjRFyTIAfa9Qt/Z1qzUyv9mV2yic+8BcHgXXN4pbKJvm8ff9bY4bIrmFO9lyBKZVxOSi74UjFctSEan+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720316677; c=relaxed/simple;
-	bh=0Qhewd7KV2BAhhT5hTbByOo8ziUrqKMbApmaCZgk4ao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmeQLmo0mpEi8AwYcWCdWKZDeivWj+ysg/+UaGE4KxKl38w5CxfkoXWeR2lMD6IC2W0HVT5X3GmsYqPDwYKzJP1qabOHQPnEOAzvj3f3InlaXgU+5O06eRYWbXlyhhbDGipEvBHlaxGXIO1OW8K9iMpIWca+onez6Le2eY4msEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U0/0eJPt; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fb0d7e4ee9so18042885ad.3;
-        Sat, 06 Jul 2024 18:44:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720316675; x=1720921475; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BKJvEZwbMUI0nGNvhsZvG2yied7e/iQ25VzWDk0C7Xc=;
-        b=U0/0eJPtoCDgIiPOOhK2R3ccH4txD1v3PB+pSFOpTaxOTQ7Hmy96wNj9KE93B84oSq
-         NsxMaNh8oKH4a73hBPfqHpx/2AEub7ffNLO0GsUkNKRB5llc9bCKQmVyP1/Ad6Sd+brc
-         5Wqakh5Y9XAzYtDOxQmKP+ATF2gF+xS964RiqCk6cnpTIvzos5nCb9s3XHFTCnezKe5I
-         8YEnmdjqAspOisyd9hB4JDeUslgP/r2ucElLg5JNvRJsujuayR2rjgmXStKX1hbmzR3o
-         KxYOr+4MyfZSVTolsD+zFZpT6dyTvfssAUpNJh/k3P3vZZowh5OOaBs3ESV0OlAvEeBv
-         qhnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720316675; x=1720921475;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BKJvEZwbMUI0nGNvhsZvG2yied7e/iQ25VzWDk0C7Xc=;
-        b=ptMFrXPbvutwujIInMRc2Fh5Xeut2dU/YEr53M+pv6Z3IRX0qnQctTxy2dTP7nkX7Z
-         97D/7/RwAU7CchDR3R4XjUgvkSTYFKV9cl9Oux9mgseE0Mxn4qrXrI9Yu7mhd+wWkukj
-         NcB7pc+j9i09hiW9oC8TQeklD1HhnaY3Avy9uP5Z1EIzMFAxvzpU5IJNp6tKVp8XgABA
-         xpQuKompOKS5ooESRqyC6X5vQvTbb6vX8wcCCEPfchr3ZnijSseTqZ78JEA2mZC4osv9
-         6biOiNFVDZXcAlSlfcuDExZU7SB4Anh925ueNvkP6BwRYrj1yP5bvdBMeTafPITGLe4e
-         GkAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEdD2Wuf2rFoDcPf9GKSA0HFmmP0v90jTw3G/MQEB3Vlk4Nh/BGd+m2KM79M+FKxci8MKmuw3uJ4AMHgtLqgBkQkr4bJXTNAKNvQnlMS5iw1chYIgZHbICdHwbcrnVeXcJvUmcy28=
-X-Gm-Message-State: AOJu0YyRvo15m1llXzbqokPKF25FYAvoPn/qyc4D9MccDWJw9KWdV8hO
-	Qcn0G/Djq+a9rgB2Du2MNV9lGY+xCEPFxHzR7DcHLzDSYQoiKWcZNQtUCg==
-X-Google-Smtp-Source: AGHT+IF3dax0VqvVbRq38kfBoIY5PClgxCfRhtaNaG/TBs3mTgSAZxuqux4HhvlRJfGLSy2Zqd9hzg==
-X-Received: by 2002:a17:903:1ca:b0:1fb:4fa4:d24 with SMTP id d9443c01a7336-1fb4fa4101cmr58168895ad.50.1720316675117;
-        Sat, 06 Jul 2024 18:44:35 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb83cd6726sm2769905ad.241.2024.07.06.18.44.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 18:44:34 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Sat, 6 Jul 2024 15:44:33 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-	void@manifault.com, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
-	David Vernet <dvernet@meta.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v2 2/2] sched_ext: Add cpuperf support
-Message-ID: <ZonzAdyd6zb2Sm06@slm.duckdns.org>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-3-tj@kernel.org>
- <ZnM2ywDVRZbrN6OC@slm.duckdns.org>
- <CAKfTPtBPObGdcaQF5nKqr4042f-+5obTMm_S6S+=3_Ct33ZMyw@mail.gmail.com>
- <Zog5-Yd5wV0-Y76y@slm.duckdns.org>
- <CAKfTPtDeA4OTPJmEHd-wKToYwDVizcny-_qxEuDUA-OcaVm2Uw@mail.gmail.com>
+	s=arc-20240116; t=1720318284; c=relaxed/simple;
+	bh=uVV4zf6SMSVoLy2muGtpKIxe37Jvz/r6lR9ZxeJZR4M=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Unvb1DoeXT+7jqUwoK+TADkUXCqhFgiu52AlPwMTKjMHM+jwhp+ynHEoCSNZHFoSLOR+k+eb8YrOln+wlyWUogLV5ano/Cu7E6X1gAxbWA1IuWRujD/GohHwnexta2mnfhWzOmEpOhAmBTJX2SSaDRFxlEISEglRzBRM5NWOYLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V/QlLI9X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF5BC2BD10;
+	Sun,  7 Jul 2024 02:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1720318283;
+	bh=uVV4zf6SMSVoLy2muGtpKIxe37Jvz/r6lR9ZxeJZR4M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=V/QlLI9XKXAX7glP3L70L8cnhoJ2nzp0tiUjg8kVT2YEolYmWlSShNxo6cNB5ZJs/
+	 7eOL5upPHLcVJMjSSBFZ7Q44SNgz7U7Hynv3gAzDFl+iswwRpgogWhnTx0s0+8jlPp
+	 sv6uk+Mdf9CUnAFR0aidIuac1vRW44z/zzam2ysU=
+Date: Sat, 6 Jul 2024 19:11:22 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>, Yang Shi
+ <shy828301@gmail.com>, Zi Yan <ziy@nvidia.com>, Barry Song
+ <baohua@kernel.org>, David Hildenbrand <david@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
+ migration
+Message-Id: <20240706191122.134c5ae35e86c68d52bf11a9@linux-foundation.org>
+In-Reply-To: <68feee73-050e-8e98-7a3a-abf78738d92c@google.com>
+References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
+	<20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org>
+	<825653a7-a4d4-89f2-278f-4b18f8f8da5d@google.com>
+	<7b7f2eb7-953a-4aa0-acb0-1ab32c7cc1bf@huawei.com>
+	<68feee73-050e-8e98-7a3a-abf78738d92c@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDeA4OTPJmEHd-wKToYwDVizcny-_qxEuDUA-OcaVm2Uw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Sat, 6 Jul 2024 14:29:00 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
 
-On Sat, Jul 06, 2024 at 11:01:20AM +0200, Vincent Guittot wrote:
-> > There's scx_enabled() and scx_switched_all(). The former is set when some
-> > tasks may be on sched_ext. The latter when all tasks are on sched_ext. When
-> > some tasks may be on sched_ext but other tasks may be on fair, the condition
-> > is scx_enabled() && !scx_switched_all(). So, the above if statement
-> > condition is true for all cases that tasks may be on CFS (sched_ext is
-> > disabled or is enabled in partial mode).
 > 
-> My point is that if there is no fair task, cpu_util_cfs_boost() will
-> already return 0 so there is no need to add a sched_ext if statement
-> there
+> What you show above is exactly what I had when I was originally testing
+> over the top of mm-everything (well, not quite exactly, I don't think I
+> bothered with the data_race()). But I grew to feel that probably everyone
+> else would be happier with less of those internals _deferred_list and
+> __folio_undo_large_rmappable() spread about.
+> 
+> There are many ways to play it. I had also considered doing it Zi Yan's
+> way, freezing always in the !mapping case as well as in the mapping case:
+> what overhead it adds would probably get lost amidst all the other overhead
+> of page migration. It will not be surprising if changes come later requiring
+> us always to freeze in the anon !swapcache case too, it always seemed a bit
+> surprising not to need freezing there. But for now I decided it's best to
+> keep the freezing to the case where it's known to be needed (but without
+> getting into __s).
+> 
+> Many ways to play it, and I've no objection if someone then changes it
+> around later; but we've no need to depart from what Andrew already has.
+> 
+> Except, he did ask one of us to send along the -fix removing the unnecessary
+> checks before its second folio_undo_large_rmappable() once your refactor
+> patch goes in: here it is below.
 
-I see, but scx_switched_all() is a static key while cpu_util_cfs_boost()
-isn't necessarily trivial. I can remove the conditional but wouldn't it make
-more sense to keep it?
+Grabbed, thanks.
 
-Thanks.
+> [I guess this is the wrong place to say so, but folio_undo_large_rmappable()
+> is a dreadful name: it completely obscures what the function actually does,
+> and gives the false impression that the folio would be !large_rmappable
+> afterwards. I hope that one day the name gets changed to something like
+> folio_unqueue_deferred_split() or folio_cancel_deferred_split().]
 
--- 
-tejun
+Naming is important, but so also is commentary. 
+folio_undo_large_rmappable() lacks any.
+
+> [PATCH] mm: refactor folio_undo_large_rmappable() fix
+> 
+> Now that folio_undo_large_rmappable() is an inline function checking
+> order and large_rmappable for itself (and __folio_undo_large_rmappable()
+> is now declared even when CONFIG_TRANASPARENT_HUGEPAGE is off) there is
+> no need for folio_migrate_mapping() to check large and large_rmappable
+> first (in the mapping case when it has had to freeze anyway).
+> 
+> ...
+>
+> For folding in to mm-unstable's "mm: refactor folio_undo_large_rmappable()",
+> unless I'm too late and it's already mm-stable (no problem, just a cleanup).
+
+Missed the mm-stable mergification by >that much<.  I'll queue it
+separately, thanks.
 
