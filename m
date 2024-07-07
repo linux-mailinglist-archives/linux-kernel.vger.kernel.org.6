@@ -1,104 +1,88 @@
-Return-Path: <linux-kernel+bounces-243651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2059C9298CE
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:17:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11579298D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1486B21DC6
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:17:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E111C20410
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 16:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2779F46421;
-	Sun,  7 Jul 2024 16:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F134437C;
+	Sun,  7 Jul 2024 16:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b="jfVMmP4R"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MsNPscDZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAF336AEF
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 16:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921082261D;
+	Sun,  7 Jul 2024 16:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720369048; cv=none; b=FC291o3dbcxpSuwnizWAN2ucnLA3v+lJBtDrPKKdzIFDGApEDoTJqiBeowNcJ/tf0yLP8zMMVaODPNWkXXc53jEkLfA/fomtidCN28qnMTMvm1emCggBiWgIT0IW9SQok/B6GofisppNUNqz/8QX0olsuK78mtcx64uG/hWT5Hw=
+	t=1720369286; cv=none; b=MWQJ+pxh8PpDkn3Yz6MFP+mlbMELeObEFr0L+6lxycUXKi0LLTKhq3l0AjXfqsNQu9sMUlNeA2/62f1pLA34NeZ4WJcxFVtyVbmx4NJXA5LfeAORgWDTKavhQQpdM1kxbjdhxgDOtiS4/b5ZVsVIDy5Iucsuy416UcK8erC7Jk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720369048; c=relaxed/simple;
-	bh=Ypg8gp/D4iemXgpjuuQlmklQUpAwSkbacxj8LYyasN4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Gch/XI3ulw1aLEmr93zmNCqUxxbtSlVSX8J/wlKOXpPFjyEvZddpXqcjOi1EZ+mP+0ccqK0MmhtEdfK2Pvld19K0Mo+H5E9+i6AmPpFwlEwoyapi0v/+2YZyl808Fg6JPKoqL+d8nsYDx0H8lbDl95ZbrfoMazd/h1d42209yrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b=jfVMmP4R; arc=none smtp.client-ip=212.77.101.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 7077 invoked from network); 7 Jul 2024 18:17:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
-          t=1720369042; bh=IMNlr614g68M9kRzk9PBlas2EwOEEWQ13OgX9uD/Z5s=;
-          h=From:To:Cc:Subject;
-          b=jfVMmP4RMW5ge1xWtaxEbcGKs171v7sI1X6wnR0EOJOD0DzffBuCwIVKxnBZwEmSX
-           /cGPRH+6sUAz4r7LyRHtzKW37rDS/RxK1/OoNAO3dF871yYGGBoLseBeK7ZwtonUBM
-           WvSzf/GnmXnqq8J8hwaJ+PiiPwB9dtsfmW8xW1PI=
-Received: from 83.5.245.171.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.5.245.171])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <davem@davemloft.net>; 7 Jul 2024 18:17:22 +0200
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	jacob.e.keller@intel.com,
-	u.kleine-koenig@pengutronix.de,
-	olek2@wp.pl,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Joe Perches <joe@perches.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH [net] v2 1/1] net: ethernet: lantiq_etop: fix double free in detach
-Date: Sun,  7 Jul 2024 18:17:13 +0200
-Message-Id: <20240707161713.1936393-2-olek2@wp.pl>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240707161713.1936393-1-olek2@wp.pl>
-References: <20240707161713.1936393-1-olek2@wp.pl>
+	s=arc-20240116; t=1720369286; c=relaxed/simple;
+	bh=31LG3ypuK+FI1GLHPt7RsbkvRYW3TKqnQ7rUf3WR0nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SWBRFhpc9QmdGdWx9ZLHIwNnRhjfrPP6Nx4bcwv6M5qENayzT/lT10PQQXUr6eHjjN/kcwJOQoFxy482V0bmpwACMEOeRH6/F7GX0iNH9vYTZv+PXQH5ixdC8Kgn8Z9BUq17UsRYqh0tjcuqHF0YDOYLV6VpJrceqFKy01OAQiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MsNPscDZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4800C3277B;
+	Sun,  7 Jul 2024 16:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720369286;
+	bh=31LG3ypuK+FI1GLHPt7RsbkvRYW3TKqnQ7rUf3WR0nw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MsNPscDZsfyjcuwPtVCHSjPp7fwBekvv/2s88hADa1BcYjfDFQMhWNdVdbWNM/wyc
+	 Yd9K43C4Yk3S2mG2O1h8bzzy3W5rc8vMLQprTjPA+hZuim6QojfSdIqaj6TKhJNS07
+	 U3qAv+gOPlmztnyyyT6nTeoMmOG3WjZyaWtUNlZP2rCaoWXnriNR2uQJAuvcCjAcyC
+	 zkkV8gNrRf+SpUfCl7cfs+Cko+70EXNmOL8a4oIW1OtovswP6sU8/mCxS+ASpVBX2k
+	 OHHeU8Rg2ct8wZ6ZtV6Kgvat0vGBqRqUBgNgEQy7sjm58wKD8eVnAegCgWj/Cj31sw
+	 LpSeXgLG9rXoQ==
+Date: Sun, 7 Jul 2024 17:21:15 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Michael Hennerich
+ <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <noname.nuno@gmail.com>, Nuno Sa <nuno.sa@analog.com>
+Subject: Re: [PATCH v5 6/6] iio: dac: ltc2664: Add driver for LTC2664 and
+ LTC2672
+Message-ID: <20240707172115.5146e6f0@jic23-huawei>
+In-Reply-To: <20240702030025.57078-7-kimseer.paller@analog.com>
+References: <20240702030025.57078-1-kimseer.paller@analog.com>
+	<20240702030025.57078-7-kimseer.paller@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: efe9c2d3e8557673fba190ec7c1f9b39
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [UePk]                               
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The number of the currently released descriptor is never incremented
-which results in the same skb being released multiple times.
+On Tue, 2 Jul 2024 11:00:25 +0800
+Kim Seer Paller <kimseer.paller@analog.com> wrote:
 
-Fixes: 504d4721ee8e ("MIPS: Lantiq: Add ethernet driver")
-Reported-by: Joe Perches <joe@perches.com>
-Closes: https://lore.kernel.org/all/fc1bf93d92bb5b2f99c6c62745507cc22f3a7b2d.camel@perches.com/
-Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/net/ethernet/lantiq_etop.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+> LTC2664 4 channel, 12-/16-Bit Voltage Output SoftSpan DAC
+> LTC2672 5 channel, 12-/16-Bit Current Output Softspan DAC
+> 
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 
-diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ethernet/lantiq_etop.c
-index 5352fee62d2b..2a18e473bac2 100644
---- a/drivers/net/ethernet/lantiq_etop.c
-+++ b/drivers/net/ethernet/lantiq_etop.c
-@@ -217,9 +217,8 @@ ltq_etop_free_channel(struct net_device *dev, struct ltq_etop_chan *ch)
- 	if (ch->dma.irq)
- 		free_irq(ch->dma.irq, priv);
- 	if (IS_RX(ch->idx)) {
--		int desc;
--
--		for (desc = 0; desc < LTQ_DESC_NUM; desc++)
-+		for (ch->dma.desc = 0; ch->dma.desc < LTQ_DESC_NUM;
-+		     ch->dma.desc++)
- 			dev_kfree_skb_any(ch->skb[ch->dma.desc]);
- 	}
- }
--- 
-2.39.2
+Looks good to me.  No rush though to get those last few DT
+corners sorted as this is now 6.12 material anyway as I probably won't
+be sending any more pull requests until after rc1.
 
+Thanks,
+
+Jonathan
 
