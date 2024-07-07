@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-243560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74C3F9297B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:48:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D5F9297B3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB25B2102F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:48:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E595B20DFB
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D711CAA2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CCE1CD20;
 	Sun,  7 Jul 2024 11:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fzQdD2NU"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b3+I2ftD"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2240F182B9
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 11:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6CB1B812
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 11:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720352911; cv=none; b=lMiGMWzJBaz08usrfcv+shJbn9czaMeg5VluIURNEusSUI1zqeQQDBg2qrryfBCw8U234ez0ylsDOtTZK4vId0n2tc8wVSjMlFecxP5oE1Q0gkafLHXPCmnN6WDzjXiPOaXVQWup4uu/qtdBuFQxxwB/x76i2LwcARBdXpJt+MM=
+	t=1720352912; cv=none; b=F6+3TYsAQP2Jss0bPFLp5CZ4Fmnh+cMnxMGU/riT65r5AOUnQZVHMR8vjsztRuIcT2z0B/p+DU9aRaLmjPvZ53rwFIWx0HGfn8Tqj+4TdEqjMH4Bzt5rvVSIvYfR972ZB0Lzk1ac2yS6Da3bdYdr2xRzIcn22tQkWJcrsOheXMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720352911; c=relaxed/simple;
-	bh=7eU8XTYpAySaDWihgO7C8HhhZ+TbK38DEC+5Qtw+YuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZIWSv65dE/bDTdFa/u0zKDB4t4ABNUS9Hws3/W14dxQzUfw4YwwctoeenAly2SW/NyKNpzgWdjeoy6OknVtBg4r7UaQKEZZcW7mffV7RYddPv3INoXu0BporOSQCGDvbLr/LbVoDx8xc/QoEEZBQbk/KFOu9hbFS6g73WGZFHME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fzQdD2NU; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1720352912; c=relaxed/simple;
+	bh=puXzOPF/AYrg4WFo42l3Uwt5Xf58Tys5KqMAY49+BPA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oCgNiSbU+xDKdyC9bb8Bi03LEbJwYU1HyLAiL/9Pdo+1SWgZcP2pTi+MNdfa3EVHYWusbTrRnPLM2kQvAI+tU5Hen///B2f8/N2oUIY3M+jgwsWSa0myk5VlUD/cPLJlQQUupnCccuqh8hd4o0ltvEtMweEitx8mP0SnuoQOB9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b3+I2ftD; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42662c21289so4334645e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 04:48:29 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-36799fb93baso2016130f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 04:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720352908; x=1720957708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJ4/E9J4xI4cimYcWsERwrFehVb+qxmPhq/NewCkOwc=;
-        b=fzQdD2NUB7HwP2w80HQ9u6vsWgkrDVd37zDC3OfoCXyGxLxWY7OFZ1MGWgCfTnSSgH
-         jwVfaUMb4QwYA6lioIWegXSIl0QXTs5/X+S4oJ1rVsLUOUUJtHm4QTupU1+1x6u5HJEG
-         5ZEtSNalFxDugo8OuB6v+J26DopZNhrb4C1MJKkmqgwMy5DWuu2hRg9OGkKOqomebZth
-         2HNJFUZ/wabiATzwlTAQJgRfsL/+XNdMft2Vqi1gXAY248wpU5+R4MboGRRDy9Kz3o83
-         enTjxDlF5LpAshjC+HM+RjyICZcinrQmy7URCyJMvZBxnqr2PWaZymr61zhVnOepBOnl
-         SNEw==
+        d=linaro.org; s=google; t=1720352909; x=1720957709; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aj+H9xvUnyjT7MSWsF+iRqKuLRi/HfbWIla1Bmzx9bg=;
+        b=b3+I2ftDtfxi3jkf7Um5jmn0RQjmhWPmn9Kj/DVerJZambBG/SNLClTyAgdgH9Eqf7
+         UxfLu4DmoDcD8/1L5wWj53lo1ReiPWy5lw2yRG+zIuW9HntGVb8BHJ0vOGKK2Tc/DtXO
+         jLtFy2lYXeSKWefF1dS9l+wv9RF9WN2HIf9hHm0E4fHRHR9UjHURr7FNxemVyhLiwM3Q
+         IRWI13LYkfE9jhhSw2Vw7mqw1vyH64yeN4lxy5gkHIUGZcrbGV/E/doG6liGWzyrHga9
+         SN8Vkxl9ojfhuIbZJjMt6fapCRv1ncD38jxeyPsnTIgqUplesjDwdrpyIfiUXzHVv6EN
+         s8lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720352908; x=1720957708;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GJ4/E9J4xI4cimYcWsERwrFehVb+qxmPhq/NewCkOwc=;
-        b=lWRASzVncwTQHFHRO7lsWXmdJlcUn14GJKmWu2iR+Hznip+Q09YRU+YL4jxyiJEEpa
-         QXTUJx3KGTpk3l4Z7GFrgWgsQRc8pmJoaSTNyeHTknX//D0ma0ducBSOY0/7zC4acyYI
-         TMETNOH10pco7cEIsrbqnu/03duYZOiADwXhKI+v8MFb0/P3J7wjRMCmUpt9JAj6ratt
-         9KqH2QAM00vRqnvV0yrgUhNlQTecHd2cski8OuAIyt7JEgwnM3mILhkcooEaQlz6mTmm
-         k6thLu3hrqmYDWF+G2jYn7jy0SELcNyfSrJuux0oPpgVbnHXv/tuqEboVRMBVkkx9dPQ
-         HPFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlBK97QLFHMW97CM80MyHVAELBP+txSSU5p5zIJ1cCebo2reGnZt9RtndPLkzAkcat6itsUY6XW76RKzQUE5cJ7Pp+oww6bXXMI8ID
-X-Gm-Message-State: AOJu0YxO+MZDgY9bNWDZYlaMD9IHUMGFFzpfgaG7L14ZmgVC/YFF+JYu
-	W5jFfDbG6nQ+10ZvQuc4/3WogPM0OnY7+gFY48bVC38vcts3UagaqFIoBWQ7kaE=
-X-Google-Smtp-Source: AGHT+IEI6lDV64Hl12cyK3t6agUGUkDoFIW2n3pq5pOaxd9XBSBXy4giAuXzNO3Rsklt90kI7V0pLw==
-X-Received: by 2002:a05:600c:1d90:b0:426:6960:34ac with SMTP id 5b1f17b1804b1-4266960362emr1276995e9.36.1720352907837;
-        Sun, 07 Jul 2024 04:48:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720352909; x=1720957709;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aj+H9xvUnyjT7MSWsF+iRqKuLRi/HfbWIla1Bmzx9bg=;
+        b=ukZ6vtbrMu/ilo6vP1CggfPUNDMpWObQEc94w1gvFQqGFjP3k7tFz8XodHEm6oHOPD
+         sy/BxyuwXC3V2UC3bGDXApNmz560nmlI7tnpmyKDf3sb/zrumogNhjJR+MMMMxBk9fvz
+         hPXzS1J7sD4Y2M1xe481HT1w5lhOZf2oACbaW4uAOEaNQrB/u4MXYVXfpQNoX/Hbyx1r
+         R6ZoQoOjBhZlIL9ByvBvQtJFTwSlUWLyRJr8Jqvy5r+qLTT9G4BM5YzddA8p4+4m9mqN
+         I1FJf8bA7EASkm+0VKZuPP0N1j2Qpr0hBJ7QslpxfhbdS9hDvCKAVxYYNnDG6EuTEvmK
+         skUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3RL06F1tFkuVVmTc1Xs0O+0c8Dweaqv/3A2g3wPFg1EncFGDttsTxDkJOTyf6K1qQOjROQB3qlE2uZYBgj9K/GLr8XmMXVowhRRnE
+X-Gm-Message-State: AOJu0YzeUawiSiCAlxRC9A7O2z6kvrYq+Gu0bqwt9S8fIB6lGgFTSkPB
+	6aSCOmHnOkTI0UkM1ujzO2k5YjYv7bmg6HsoQ/X4IU/DPVl8csoB69jH4K0NRDM=
+X-Google-Smtp-Source: AGHT+IHeMOE4bOFQg+g/YY8EP60jFy+PSHmwQodEWUVahd9Sv7efipLc0NJkFBPW7S07o5gHz1LR0Q==
+X-Received: by 2002:adf:ab1c:0:b0:367:9791:f155 with SMTP id ffacd0b85a97d-3679dd55b9emr5247812f8f.40.1720352909065;
+        Sun, 07 Jul 2024 04:48:29 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367b09401d3sm4926279f8f.28.2024.07.07.04.48.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367b09401d3sm4926279f8f.28.2024.07.07.04.48.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jul 2024 04:48:27 -0700 (PDT)
+        Sun, 07 Jul 2024 04:48:28 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Lee Jones <lee@kernel.org>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
@@ -73,10 +75,12 @@ To: Lee Jones <lee@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 1/2] mfd: mt6360: Simplify with cleanup.h
-Date: Sun,  7 Jul 2024 13:48:22 +0200
-Message-ID: <20240707114823.9175-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/2] mfd: syscon: Simplify with cleanup.h
+Date: Sun,  7 Jul 2024 13:48:23 +0200
+Message-ID: <20240707114823.9175-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240707114823.9175-1-krzysztof.kozlowski@linaro.org>
+References: <20240707114823.9175-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,70 +94,73 @@ make the code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/mfd/mt6360-core.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ drivers/mfd/syscon.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/mfd/mt6360-core.c b/drivers/mfd/mt6360-core.c
-index 2685efa5c9e2..b9b1036c8ff4 100644
---- a/drivers/mfd/mt6360-core.c
-+++ b/drivers/mfd/mt6360-core.c
-@@ -5,6 +5,7 @@
-  * Author: Gene Chen <gene_chen@richtek.com>
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index 7d0e91164cba..c939a76e83b8 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -8,6 +8,7 @@
+  * Author: Dong Aisheng <dong.aisheng@linaro.org>
   */
  
 +#include <linux/cleanup.h>
- #include <linux/crc8.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
-@@ -404,7 +405,6 @@ static int mt6360_regmap_read(void *context, const void *reg, size_t reg_size,
- 	u8 reg_addr = *(u8 *)(reg + 1);
- 	struct i2c_client *i2c;
- 	bool crc_needed = false;
--	u8 *buf;
- 	int buf_len = MT6360_ALLOC_READ_SIZE(val_size);
- 	int read_size = val_size;
- 	u8 crc;
-@@ -423,7 +423,7 @@ static int mt6360_regmap_read(void *context, const void *reg, size_t reg_size,
- 		read_size += MT6360_CRC_CRC8_SIZE;
- 	}
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/hwspinlock.h>
+@@ -45,7 +46,6 @@ static const struct regmap_config syscon_regmap_config = {
+ static struct syscon *of_syscon_register(struct device_node *np, bool check_res)
+ {
+ 	struct clk *clk;
+-	struct syscon *syscon;
+ 	struct regmap *regmap;
+ 	void __iomem *base;
+ 	u32 reg_io_width;
+@@ -54,20 +54,16 @@ static struct syscon *of_syscon_register(struct device_node *np, bool check_res)
+ 	struct resource res;
+ 	struct reset_control *reset;
  
--	buf = kzalloc(buf_len, GFP_KERNEL);
-+	u8 *buf __free(kfree) = kzalloc(buf_len, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
+-	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
++	struct syscon *syscon __free(kfree) = kzalloc(sizeof(*syscon), GFP_KERNEL);
+ 	if (!syscon)
+ 		return ERR_PTR(-ENOMEM);
  
-@@ -433,24 +433,19 @@ static int mt6360_regmap_read(void *context, const void *reg, size_t reg_size,
- 	ret = i2c_smbus_read_i2c_block_data(i2c, reg_addr, read_size,
- 					    buf + MT6360_CRC_PREDATA_OFFSET);
- 	if (ret < 0)
--		goto out;
--	else if (ret != read_size) {
--		ret = -EIO;
--		goto out;
+-	if (of_address_to_resource(np, 0, &res)) {
+-		ret = -ENOMEM;
+-		goto err_map;
 -	}
-+		return ret;
-+	else if (ret != read_size)
-+		return -EIO;
++	if (of_address_to_resource(np, 0, &res))
++		return ERR_PTR(-ENOMEM);
  
- 	if (crc_needed) {
- 		crc = crc8(ddata->crc8_tbl, buf, val_size + MT6360_CRC_PREDATA_OFFSET, 0);
--		if (crc != buf[val_size + MT6360_CRC_PREDATA_OFFSET]) {
--			ret = -EIO;
--			goto out;
--		}
-+		if (crc != buf[val_size + MT6360_CRC_PREDATA_OFFSET])
-+			return -EIO;
- 	}
+ 	base = of_iomap(np, 0);
+-	if (!base) {
+-		ret = -ENOMEM;
+-		goto err_map;
+-	}
++	if (!base)
++		return ERR_PTR(-ENOMEM);
  
- 	memcpy(val, buf + MT6360_CRC_PREDATA_OFFSET, val_size);
--out:
--	kfree(buf);
--	return (ret < 0) ? ret : 0;
-+
-+	return 0;
+ 	/* Parse the device's DT node for an endianness specification */
+ 	if (of_property_read_bool(np, "big-endian"))
+@@ -152,7 +148,7 @@ static struct syscon *of_syscon_register(struct device_node *np, bool check_res)
+ 	list_add_tail(&syscon->list, &syscon_list);
+ 	spin_unlock(&syscon_list_slock);
+ 
+-	return syscon;
++	return_ptr(syscon);
+ 
+ err_reset:
+ 	reset_control_put(reset);
+@@ -163,8 +159,6 @@ static struct syscon *of_syscon_register(struct device_node *np, bool check_res)
+ 	regmap_exit(regmap);
+ err_regmap:
+ 	iounmap(base);
+-err_map:
+-	kfree(syscon);
+ 	return ERR_PTR(ret);
  }
  
- static int mt6360_regmap_write(void *context, const void *val, size_t val_size)
 -- 
 2.43.0
 
