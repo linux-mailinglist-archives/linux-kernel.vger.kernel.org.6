@@ -1,163 +1,119 @@
-Return-Path: <linux-kernel+bounces-243517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55158929714
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:29:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB66C929722
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFC012818BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:29:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001FD1C20DC2
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B37182DB;
-	Sun,  7 Jul 2024 08:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F57412B7F;
+	Sun,  7 Jul 2024 08:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JwoAZ39S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+gU56lq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4905917C64
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 08:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F637F9F5;
+	Sun,  7 Jul 2024 08:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720340938; cv=none; b=hE8VrthGTT4gl6QVf8m/MrLqcxdzab56dnTC0mI5ZJnNEznHecM3bfFYoAMsGskKbB57zbiQBL9g/02o0uP6ZhL4Tj4UZmtlU4NuRsVa6egRdRvXp44rrcU9MBPPVgD7L6CIfXZAhfjQzeykCvyEVw9QrbmbiUIN+XpC2oPA/AQ=
+	t=1720341012; cv=none; b=RbktyoxlHpwj3sTmcSbo6z+qb2hwlwZjtTOx2oOboIA+U+MvFEoIJmgms9Z2b/EDO01DP//Dqdvk/dstk6u1W0Al81SoiLUrsbFVfjel3DAPEbv8jh+1D5JngJq2w2PixKb/HXVqfjvg8NO/d3kFpjZRtyvjCjBayud0h/nrV+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720340938; c=relaxed/simple;
-	bh=CWlaQrfwQ78sWyj5YxJdp+t4BLet4A+mPiUfp/D8DVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OHyLOzhVeOS36I3jpUdY/YvbKszWyvj2xPYWZDk3QM0LQL0GYUyLCtmNfa6vr4EAjWonni7W1MYLWDJA49GTEoYHEXG2Tw9tmf64i1atww7UcJmARWRAdqPrcDdr4ReLvSjNsyA/GxMtu6SoheHRH4g6GP/WBxzIcRXgorcbWwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JwoAZ39S; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720340936;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9RHWJPg9INiiOPZD2SAh5huypv9jP+1nFy6J/LfVsNQ=;
-	b=JwoAZ39SFvGjRbn6LG8ojAJUN9Zs2W4Jd78/l2gJzNM0OIYjUI+RvohtOhdJrU681Xluey
-	CKhT/zs4D0LsBaJ8D63AukE5xmMsz7By38wlJI2zOBneCIAtGf/ywBXvmItsbXk6jxjJ9d
-	HIGTQe0LqgNa7OPX+A48kzsULgzmJv0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-Xp9XfX5yNdeFRegWBeVHEw-1; Sun, 07 Jul 2024 04:28:54 -0400
-X-MC-Unique: Xp9XfX5yNdeFRegWBeVHEw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42668796662so633845e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 01:28:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720340933; x=1720945733;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9RHWJPg9INiiOPZD2SAh5huypv9jP+1nFy6J/LfVsNQ=;
-        b=D75Sb1Wh5xLT0yIuh1A5pwK47eRW3HYcMVn2RKJxDToxuXH3UZTd3fVHoSDOtb6d8t
-         Rbe5X4Ooj3EjIg8V+lkox/SjTTey5zUOOWVmFf8MioDmXoZFPKRWNd6032qrkOipEVYg
-         H0nPzcQDywa43WfmFEC+I8yA2nUr15LJnwCWjMoJWxDxqluXvm03n74L+ndXlaCukkuT
-         sskwEVQnkiVPLrny4xxHXFnv3ElyGgZq65ltWuauwN9yR+nu2kZ3F4QjziBjDgsRoCMv
-         EFh30Ws7YcIai1opIkEjVheYG4aGnG3qrKRXX0za2wKY1Ejx7muxsvKC/TreiXYA8gIK
-         8Nwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfF8py9IX7cFfwXSmHPRAusrjaFpUk3eWiphmsWCca9Fcrgxf77mWias2cDyjcBArBAvR/H8Ay/VUJjvgzlK4BQZU4gXS7Nqvt4Keu
-X-Gm-Message-State: AOJu0Yw3HauKFEfPHIqtkQlb6ISOLtb+bODKbLuIGFBbHaHTBTboFVCj
-	m4xGcvOt/Y5FLwrd5Yhv9PKPXtY5vTsPMaMo/F8hp3fxZJ/cjrNbvLKObIR9h22NP5AmXJ+CyZT
-	SWhOGnMtAIos1xAXLorDuFbx/fFYfcWu/xzCgrWB50AbWMSp4zcKMnKnb2qDvLg==
-X-Received: by 2002:a05:600c:1d08:b0:425:6f96:8bee with SMTP id 5b1f17b1804b1-4264a34efe9mr86591255e9.0.1720340933152;
-        Sun, 07 Jul 2024 01:28:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBDkIAj0uC+yoLhRmiFZtVPaxhjALADx0V8DoBHX6FMZ8mPM+NCngUJgMUg0d9kEhOCHmEPg==
-X-Received: by 2002:a05:600c:1d08:b0:425:6f96:8bee with SMTP id 5b1f17b1804b1-4264a34efe9mr86591175e9.0.1720340932752;
-        Sun, 07 Jul 2024 01:28:52 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72f:c00:10f0:d1a8:c206:17ac? (p200300cbc72f0c0010f0d1a8c20617ac.dip0.t-ipconnect.de. [2003:cb:c72f:c00:10f0:d1a8:c206:17ac])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a25b5edsm120953975e9.37.2024.07.07.01.28.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jul 2024 01:28:52 -0700 (PDT)
-Message-ID: <48727db1-aac8-40d2-be20-9fd7777af62a@redhat.com>
-Date: Sun, 7 Jul 2024 10:28:51 +0200
+	s=arc-20240116; t=1720341012; c=relaxed/simple;
+	bh=Vh8TFzc59yfBw7szW67QjrvrQN/XSyaf8Bs5aoIYs2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFEEBP9Wnm512F8xjd7Apot1OXqVF6y1iiOI3LIFBl+Q8B7Z8DETqWBznM4ThJvjks/XRFuv+6QXuOTHDwtxZOkHOfrJBe4L4gmc9t7MVcjbcuavrglHdgV2/Cq4BNywKgBiF2mdBrkZy6/5vG6k+ffLoK5B1xVYf+9IeIkW7sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+gU56lq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5B09C3277B;
+	Sun,  7 Jul 2024 08:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720341012;
+	bh=Vh8TFzc59yfBw7szW67QjrvrQN/XSyaf8Bs5aoIYs2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y+gU56lqIrDYzeCZ8vUuYcuUoVh2dv0XV8/jrHUtfgjdfeKW5Yb85EgJ4PTTdTOhg
+	 5e4R1Hry+5EkiNW7+JQ/CymfY8aFUe9EnGFOKzRwz1ChP7u2k6nSyrkQGhjst+0fYP
+	 tyoFGrpzp9h+i51ZeP5t15CN++wdlWzrpOH1PDSBWrIcFzh1saLJ6v0ztl4H4h6rcw
+	 Yn8dJAoFf7YqJKKRjdOrsHtuls50g5wpGsTmgsvD3601DW/jhX7Q40pgcR45U2syeX
+	 KJ955JR3zOQ6Ytaz+xiGI/NT/cjIrE3e8+ZqTaV+i40Yrz9dhybuW8j1IZDcb9Oba8
+	 y9uA2sIxJ5WtA==
+Date: Sun, 7 Jul 2024 11:30:07 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
+ during reset
+Message-ID: <20240707083007.GE6695@unreal>
+References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
+ <20240705085937.1644229-3-huangjunxian6@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
- migration
-To: Hugh Dickins <hughd@google.com>, Kefeng Wang
- <wangkefeng.wang@huawei.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, Nhat Pham
- <nphamcs@gmail.com>, Yang Shi <shy828301@gmail.com>, Zi Yan
- <ziy@nvidia.com>, Barry Song <baohua@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
- <20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org>
- <825653a7-a4d4-89f2-278f-4b18f8f8da5d@google.com>
- <7b7f2eb7-953a-4aa0-acb0-1ab32c7cc1bf@huawei.com>
- <68feee73-050e-8e98-7a3a-abf78738d92c@google.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <68feee73-050e-8e98-7a3a-abf78738d92c@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705085937.1644229-3-huangjunxian6@hisilicon.com>
 
-> [I guess this is the wrong place to say so, but folio_undo_large_rmappable()
-> is a dreadful name: it completely obscures what the function actually does,
-> and gives the false impression that the folio would be !large_rmappable
-> afterwards. I hope that one day the name gets changed to something like
-> folio_unqueue_deferred_split() or folio_cancel_deferred_split().]
-Fully agreed, that is absolutely confusing. (and I thought for a second 
-that the folio would be !large_rmappable afterwards!)
+On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
+> From: wenglianfa <wenglianfa@huawei.com>
+> 
+> During reset, cmdq events won't be reported, leading to a long and
+> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
+> of reset.
+> 
+> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
+> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
+> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+> ---
+>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> index a5d746a5cc68..ff135df1a761 100644
+> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+>  
+>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
+>  }
+> +
+> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
+> +{
+> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
+> +	int i;
+> +
+> +	if (!hr_dev->cmd_mod)
 
--- 
-Cheers,
+What prevents cmd_mod from being changed?
 
-David / dhildenb
-
+> +		return;
+> +
+> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
+> +		hr_cmd->context[i].result = -EBUSY;
+> +		complete(&hr_cmd->context[i].done);
+> +	}
+> +}
+> +
+>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+>  {
+>  	struct hns_roce_dev *hr_dev;
+> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+>  	hr_dev->dis_db = true;
+>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
+>  
+> +	/* Complete the CMDQ event in advance during the reset. */
+> +	hns_roce_v2_reset_notify_cmd(hr_dev);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.33.0
+> 
 
