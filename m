@@ -1,118 +1,231 @@
-Return-Path: <linux-kernel+bounces-243457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2936992965A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 04:11:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9539192965B
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 04:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8482822FE
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 02:11:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8611C213AD
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 02:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDBE4C98;
-	Sun,  7 Jul 2024 02:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1571D4405;
+	Sun,  7 Jul 2024 02:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V/QlLI9X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="giw6caZg"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2051.outbound.protection.outlook.com [40.92.23.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6850A4A1D
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 02:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720318284; cv=none; b=hveVub5g/OKcv7opi2ErqPe+47rVdyveqD8erfYH0DVU0Y82h3smeKT4X6JLtwLY29XH+MgkfM7rRl6iqOLv+fdyTSPjRFyTIAfa9Qt/Z1qzUyv9mV2yic+8BcHgXXN4pbKJvm8ff9bY4bIrmFO9lyBKZVxOSi74UjFctSEan+g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720318284; c=relaxed/simple;
-	bh=uVV4zf6SMSVoLy2muGtpKIxe37Jvz/r6lR9ZxeJZR4M=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Unvb1DoeXT+7jqUwoK+TADkUXCqhFgiu52AlPwMTKjMHM+jwhp+ynHEoCSNZHFoSLOR+k+eb8YrOln+wlyWUogLV5ano/Cu7E6X1gAxbWA1IuWRujD/GohHwnexta2mnfhWzOmEpOhAmBTJX2SSaDRFxlEISEglRzBRM5NWOYLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V/QlLI9X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF5BC2BD10;
-	Sun,  7 Jul 2024 02:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720318283;
-	bh=uVV4zf6SMSVoLy2muGtpKIxe37Jvz/r6lR9ZxeJZR4M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V/QlLI9XKXAX7glP3L70L8cnhoJ2nzp0tiUjg8kVT2YEolYmWlSShNxo6cNB5ZJs/
-	 7eOL5upPHLcVJMjSSBFZ7Q44SNgz7U7Hynv3gAzDFl+iswwRpgogWhnTx0s0+8jlPp
-	 sv6uk+Mdf9CUnAFR0aidIuac1vRW44z/zzam2ysU=
-Date: Sat, 6 Jul 2024 19:11:22 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>, Yang Shi
- <shy828301@gmail.com>, Zi Yan <ziy@nvidia.com>, Barry Song
- <baohua@kernel.org>, David Hildenbrand <david@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
- migration
-Message-Id: <20240706191122.134c5ae35e86c68d52bf11a9@linux-foundation.org>
-In-Reply-To: <68feee73-050e-8e98-7a3a-abf78738d92c@google.com>
-References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
-	<20240703193536.78bce768a9330da3a361ca8a@linux-foundation.org>
-	<825653a7-a4d4-89f2-278f-4b18f8f8da5d@google.com>
-	<7b7f2eb7-953a-4aa0-acb0-1ab32c7cc1bf@huawei.com>
-	<68feee73-050e-8e98-7a3a-abf78738d92c@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C834687
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 02:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720318314; cv=fail; b=Z7KRJTT0vy4K31Uc3GxqeUBAVfjIgADI4Fwg42kQv4U6m65Kkvo4qYGxOPtAzdHwSW2vPmLFevQ37bgyHTZnrbOIgK4ZgOexZ7aThTbNhpQ6Vi0cZDCG5zl12fFuKmk/78GqgudnvP/3vCG0jeIdBzmApXBI373jKOF7jS2fhGI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720318314; c=relaxed/simple;
+	bh=vPOE/RUX6Qjbgs+TnxsY6JZjIXBh5kyhiUanaWmWEsk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HFzitE1pl1rZGyNtRG81zzPYeHXqomVcPWxC0UbkJwsOoVkvmNt/D7031D65iuy8zGHahP3uLRXInIqwj76a2A254IZWP3c0J5TkV4SV+KFRy2KpKLfhJUZCOExuuk0xCQsByCasis6cYvD6DPagtZ7rFxfDYDbEPdEm3f/wRmU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=giw6caZg; arc=fail smtp.client-ip=40.92.23.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DEuPTdm92pl1AfYDhNvuUxV5FFuL1D021EzNRGtu5P+pGE0wSJqeI+7ZHpn+w+E2hk72s/oqCGomvdATIn24xqCflY62uvpo3cC1u+ZjUYd9xZ07HyvhSeagFlYZVwA22eBYkqKpRwFQhqVNWqVZbO69mQh0B6A4xyte0YpgZaHgWz93HGzVHdYO0gnwAxoF6rBbEHXjSAo+oGwDcCe/e79qnYPSdoByIRgM44/6UPiwWBa2yzf7uFmfvgsuR9WJCrzoM+RMysEY560O1QEllIeAOamfSlL/oaq4jQ9SiConwQE67X6uiKt7J2NjQXP9WasukSLIa6RTNIQQEj13aA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1Jvd0bTA13j1zceTCtWv/2Yv9SQbo4O06fs4qCS8zQ0=;
+ b=M++2ifZoyiUht0TVSbFV3lMJiFFIqUxTcs+FaySV9EQEizbSAqOvJQHSUK+XsgfGFTNV0lCUjoz0YSM2NaX1MGVTxtXjm1yDwaibXtn7dycwsNjoz1WXmMiUC6DBYPbZrDc5ZasTTO7rDrcbkuW1906IOkQsdDtvrBZaejx+Zf9uneTmEAt65cw60ihzyYooT63dL/V9NzkFK60OX737XKPCfqh/boH5asvuTtkZb8R05Et1Pc3C3tzl1ZDHzxwW1W5R5Xzc39v4qIOFDUeyu9NMUoWJn6ULlc9N3FGknTB/fqJwC+6V2yDt/EE+6Z+2BZz/9JEsE0KSwECqzUgc7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1Jvd0bTA13j1zceTCtWv/2Yv9SQbo4O06fs4qCS8zQ0=;
+ b=giw6caZgMcDBDZoeEtxTNZMu2Cwr3StkohQsZhm2quBEoP2BrTil0XRCN+elraFOcHubMin7bF8yAHkHjBbGuk/bFU1sB+rADXpPxeI1iYsUJwgveJUGJTPjlByvtRFjvHTch/58M0ABlTTYwjVuUHaSswFWeSATj54tYo12032pFN4qvO3aWK2Yfu3p3Juf7gnqq+cUXtN2XnGRwjSHedC+03ctLHMs04U5tLJs4fgB19z/h+PUkCrr72FQbbWT4uvTMsoi48kNzFJmgoKbJhMhVvRKJ27Klo24TfyhGD8sW4uTCfCsDd9Xv6H18t8XehxpoX8WQXQv8B67J07lRQ==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CH3PR02MB10381.namprd02.prod.outlook.com (2603:10b6:610:20b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Sun, 7 Jul
+ 2024 02:11:50 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%5]) with mapi id 15.20.7741.033; Sun, 7 Jul 2024
+ 02:11:50 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Christoph Hellwig <hch@lst.de>
+CC: "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
+	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>, "jgross@suse.com"
+	<jgross@suse.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>,
+	"oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
+	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "petr@tesarici.cz"
+	<petr@tesarici.cz>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: RE: [PATCH v2 1/1] swiotlb: Reduce swiotlb pool lookups
+Thread-Topic: [PATCH v2 1/1] swiotlb: Reduce swiotlb pool lookups
+Thread-Index: AQHay9fgMpKn4lnf90SYtF8Z1AfgLLHpORSAgAErN7A=
+Date: Sun, 7 Jul 2024 02:11:48 +0000
+Message-ID:
+ <SN6PR02MB4157141FBF8252BDEAD831C1D4D92@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240701165746.1358-1-mhklinux@outlook.com>
+ <20240706055019.GA13280@lst.de>
+In-Reply-To: <20240706055019.GA13280@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [DZV6E/3NlpnHAc91A498CCzQ/Jkeeipi]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH3PR02MB10381:EE_
+x-ms-office365-filtering-correlation-id: 64cf174e-87b4-46bf-a60b-08dc9e2a2893
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|19110799003|8060799006|102099032|4302099013|3412199025|440099028|56899033|1602099012;
+x-microsoft-antispam-message-info:
+ MFaHtVYRplTq2A2QuYz1gL9hpvSogb7so0QAm3ObMEpqHzFuzAucvgOjdgCqYZ2JSphYPYBStL7ttMG2Trv8riMNP0nI9dfr+xFhjkb2KzEFJaMZMPcojAqzneJBghwbSgAI419/rBRJ/IyQ5D4BJu+HzmD4ccwTU2xZQpA7FTD70eESJE8W6coV24pMhxUVoS00GKbP/FXwnDWZ0z61gqZCZNIKqsmiSZ7GE/05KbyUwgBtxTuiJMDEcoKsW75oYDnIqrgOY4UOJ5r294dQJgiYZ8DYWgqPu38IIa7zgfqbGFLFE2yNG+A7KW4kObWwtHzSbXyimLKhusIC5Ygh0/T5ctHcKk5Wtwlk/wOWBN8oTuSBKfOY9c6w2zl72QturB+g10/t3TJs53S6eIN00AuXcs4ysEcsRsDxNuPgLqU/yMq+og6udrxUoP6XLZVJph5TXDCVj19uE1uYZ9ntSrgiNgGmOwy2U24hUJD/c6x0cv+cK4cJT22J9sR4r2xP0umgfZE+cpVnWMrHZUBeCpMIWYDvIzTib37YTW9qeG3WcJq5zGVXAHSD2un55Y3Tw6K2usIRYypitc3ELFhOF0GRCRxSpjAGnPdVYBhn7VZTB+1qkNTjYe90i5QyYO23KXV52dVe98CtP28bQQESnSTMhh+r6jG9NiP3lYXASB//YF4ss4wT92FxXAS2Rj9mv0FZIrDbaOKXGBiim5zMjEjwRWAweR+1PchD2GgWRCw67W1TCsh6NWh6j8yaTcqE
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?yI30LpH8L/942PKTdAwTPIuFKyjW9tw+POrJuO0ODmv61j/OaMyJm+lX5Y?=
+ =?iso-8859-2?Q?/2OUJbi5Je5m3tsM3/pYRz2/534oj9Mz1sOBOKn374vwHxzkCVe0WEEC+W?=
+ =?iso-8859-2?Q?W+Y4wTl/dKUyTFs/1yMbKltrgyNav45ne8GN02OeF3zhcTmXujJYSQ7NCB?=
+ =?iso-8859-2?Q?kuU5rDIf1D9WiryT4Ds7PIJ9zU+g6ZZMn18xeTZl79RYmLUdF9tP8+foQ5?=
+ =?iso-8859-2?Q?PyTzufe0fXB2Rq04+6xUpA5Vam3IjipbiIb/VJ6HoaTcKa8RQel8ByryNW?=
+ =?iso-8859-2?Q?DL7TzPGyNYp207qe8VIsIzNL//yhEywzmbs6X9gv/FqZFrMWPdKRcDlSK4?=
+ =?iso-8859-2?Q?3HQqADs6efuKOmwGtEJdOpG5uro7WFnmW3BJtInKQmq8/cOTD3s/gpSpGq?=
+ =?iso-8859-2?Q?rA8p8uPo3kQHKtTy/SbCG9Bj2DTQMfuRU7Wy/F3c1HA8q7afOTXHdE8Nh5?=
+ =?iso-8859-2?Q?Wh7HfTjhqV4x6b1FKa9xg2RIjDQ3vSE5/x9d97Yi5yC9oHT5r9SFJMDgBu?=
+ =?iso-8859-2?Q?kMczY/QOXs7svrQmxD5vlDzn+kci8HzoCyt2JnRt1zioWpLe7h7hxJ0n6i?=
+ =?iso-8859-2?Q?YtPaL3f90IOjIAjkt/ZmNYX3BOq6cEw4GP9s6ggVJdDr5MdMIl+oTI8dHU?=
+ =?iso-8859-2?Q?gTsDGXUYtCw5ucr3E7OlIuKwjLGI+Yrfx4RVvwIdVJiqt74MwBcG82WB8X?=
+ =?iso-8859-2?Q?M085WTUW7dmXa8uSDfwwOm8KyxyAkL/tdK8n2VGvP2aH/4x321qJLo/PAZ?=
+ =?iso-8859-2?Q?UZW9LACHQTF0DtK7L8A1DTIgH+91XtmS5W5BdTi8kErU/UjkPu6ZuX4tCU?=
+ =?iso-8859-2?Q?LFfz2oxqfX0pntsv+TvMXIDeFPZXHkHwG/nP6mo9HREzwT7JQQFuZOJzyg?=
+ =?iso-8859-2?Q?7e48c6ObgOW6UAk4q21gFpgL8w/84BzqT/93U7nQbFXtdz8zNEzZBNOI6f?=
+ =?iso-8859-2?Q?c80LKvEdJqse07phPV14BIwR9FK+Kkok56VZIPEbFeG9elZ/uBc0qavmj7?=
+ =?iso-8859-2?Q?Slcwo2ee86+x1iGPy+/KYmliuHx+hzKfbZxe5EnKtsb6waLh7bfKpk4Llj?=
+ =?iso-8859-2?Q?7PJgi0Qhu4j1JU0zX9fEtFJo8HKxw6Ut7fwt6cpt2SW8skZsPOwmd4HCAQ?=
+ =?iso-8859-2?Q?87RgkZJHqgxRwYbHG1PYKOQWho1+xpxCwB9o4vaDOHLndoZ4djOPyTj/Mq?=
+ =?iso-8859-2?Q?8E/3CGTs7eI9iFCIov/TSwheXy0RDq+90f4Sad86VMO85FQCQiXKCD0vzw?=
+ =?iso-8859-2?Q?DjWUF1FknFbDvrRAGESS6Zs8YlG6vmcxR4hH2i0IU=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64cf174e-87b4-46bf-a60b-08dc9e2a2893
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jul 2024 02:11:48.5826
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR02MB10381
 
-On Sat, 6 Jul 2024 14:29:00 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
+From: Christoph Hellwig <hch@lst.de> Sent: Friday, July 5, 2024 10:50 PM
+>=20
+> Hi Michael,
+>=20
+> I like the idea behind this, but can you respin it to avoid some of
+> the added code duplication.  We have a lot of this pattern:
+>=20
+> 	pool =3D swiotlb_find_pool(dev, paddr);
+> 	if (pool)
+> 		swiotlb_foo(dev, ...
+>=20
+> duplicated in all three swiotlb users.  If we rename the original
+> swiotlb_foo to __swiotlb_foo and add a little inline wrapper this is
+> de-duplicated and also avoids exposing swiotlb_find_pool to the
+> callers.
 
-> 
-> What you show above is exactly what I had when I was originally testing
-> over the top of mm-everything (well, not quite exactly, I don't think I
-> bothered with the data_race()). But I grew to feel that probably everyone
-> else would be happier with less of those internals _deferred_list and
-> __folio_undo_large_rmappable() spread about.
-> 
-> There are many ways to play it. I had also considered doing it Zi Yan's
-> way, freezing always in the !mapping case as well as in the mapping case:
-> what overhead it adds would probably get lost amidst all the other overhead
-> of page migration. It will not be surprising if changes come later requiring
-> us always to freeze in the anon !swapcache case too, it always seemed a bit
-> surprising not to need freezing there. But for now I decided it's best to
-> keep the freezing to the case where it's known to be needed (but without
-> getting into __s).
-> 
-> Many ways to play it, and I've no objection if someone then changes it
-> around later; but we've no need to depart from what Andrew already has.
-> 
-> Except, he did ask one of us to send along the -fix removing the unnecessary
-> checks before its second folio_undo_large_rmappable() once your refactor
-> patch goes in: here it is below.
+This works pretty well. It certainly avoids the messiness of declaring
+a "pool" local variable and needing a separate assignment before the
+"if" statement, in each of the 9 call sites. The small downside is that
+it looks like a swiotlb function is called every time, even though
+there's usually an inline bailout. But that pattern occurs throughout
+the kernel, so not a big deal.
 
-Grabbed, thanks.
+I initially coded this change as a separate patch that goes first. But
+the second patch ends up changing about 20 lines that are changed
+by the first patch. It's hard to cleanly tease them apart. So I've gone
+back to a single unified patch. But let me know if you think it's worth
+the extra churn to break them apart.
 
-> [I guess this is the wrong place to say so, but folio_undo_large_rmappable()
-> is a dreadful name: it completely obscures what the function actually does,
-> and gives the false impression that the folio would be !large_rmappable
-> afterwards. I hope that one day the name gets changed to something like
-> folio_unqueue_deferred_split() or folio_cancel_deferred_split().]
+>=20
+> If we then stub out swiotlb_find_pool to return NULL for !CONFIG_SWIOTLB,
+> we also don't need extra stubs for all the __swiotlb_ helpers as the
+> compiler will eliminate the calls as dead code.
 
-Naming is important, but so also is commentary. 
-folio_undo_large_rmappable() lacks any.
+Yes, this works as long as the declarations for the __swiotlb_foo
+functions are *not* under CONFIG_SWIOTLB. But when compiling with
+!CONFIG_SWIOTLB on arm64 with gcc-8.5.0, two tangentially related
+compile errors occur. iommu_dma_map_page() references
+swiotlb_tlb_map_single(). The declaration for the latter is under
+CONFIG_SWIOTLB. A similar problem occurs with dma_direct_map_page()
+and swiotlb_map(). Do later versions of gcc not complain when the
+reference is in dead code? Or are these just bugs that occurred because
+!CONFIG_SWIOTLB is rare? If the latter, I can submit a separate patch to
+move the declarations out from under CONFIG_SWIOTLB.
 
-> [PATCH] mm: refactor folio_undo_large_rmappable() fix
-> 
-> Now that folio_undo_large_rmappable() is an inline function checking
-> order and large_rmappable for itself (and __folio_undo_large_rmappable()
-> is now declared even when CONFIG_TRANASPARENT_HUGEPAGE is off) there is
-> no need for folio_migrate_mapping() to check large and large_rmappable
-> first (in the mapping case when it has had to freeze anyway).
-> 
-> ...
->
-> For folding in to mm-unstable's "mm: refactor folio_undo_large_rmappable()",
-> unless I'm too late and it's already mm-stable (no problem, just a cleanup).
+>=20
+> I might be missing something, but what is the reason for using the
+> lower-level __swiotlb_find_pool in swiotlb_map and xen_swiotlb_map_page?
+> I can't see a reason why the simple checks in swiotlb_find_pool itself
+> are either wrong or a performance problem there. =20
 
-Missed the mm-stable mergification by >that much<.  I'll queue it
-separately, thanks.
+Yes, swiotlb_find_pool() could be used instead of __swiotlb_find_pool().
+
+> Because if we don't
+> need these separate calls we can do away with __swiotlb_find_pool
+> for !CONFIG_SWIOTLB_DYNAMIC and simplify swiotlb_find_pool quite
+> a bit like this:
+>=20
+> 	...
+>=20
+> 	if (!mem)
+> 		return NULL;
+>=20
+> 	if (IS_ENABLED(CONFIG_SWIOTLB_DYNAMIC)) {
+
+The "IS_ENABLED" doesn't work because the dma_uses_io_tlb
+field in struct dev is under CONFIG_SWIOTLB_DYNAMIC. I guess
+it could be moved out, but that's going further afield. So I'm back
+to using #ifdef.
+
+> 		smp_rmb();
+> 		if (!READ_ONCE(dev->dma_uses_io_tlb))
+> 			return NULL;
+> 		return __swiotlb_find_pool(dev, paddr);
+> 	}
+>=20
+> 	if (paddr < mem->defpool.start || paddr >=3D mem->defpool.end)
+> 		return NULL;
+> 	return &dev->dma_io_tlb_mem->defpool;
+
+Petr Tesa=F8=EDk had commented [1] on my original RFC suggesting that
+__swiotlb_find_pool() be used here instead of open coding it. With
+the changes you suggest, __swiotlb_find_pool() is needed only in
+the CONFIG_SWIOTLB_DYNAMIC case, and I would be fine with just
+open coding the address of defpool here. Petr -- are you OK with
+removing __swiotlb_find_pool when !CONFIG_SWIOTLB_DYNAMIC,
+since this is the only place it would be used?
+
+>=20
+>=20
+> While you're at it please fix the > 80 character lines as this patch
+> is adding plenty.
+
+Many cases already go away with your first suggestion above,
+but I'll fix the others.
+
+Michael
+
+[1] https://lore.kernel.org/linux-iommu/20240627092049.1dbec746@meshulam.te=
+sarici.cz/
 
