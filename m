@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-243515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E33929712
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:24:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD756929713
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 10:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C242818FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:24:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9121B281893
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36DC11CA9;
-	Sun,  7 Jul 2024 08:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5539910A22;
+	Sun,  7 Jul 2024 08:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qe3W+aH9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JM8pCKLJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405A71078B;
-	Sun,  7 Jul 2024 08:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF1B79F2
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 08:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720340678; cv=none; b=NfOmVLALNK6l6fsR4JL5PNzdvh3DuvlDlXRPwEqUwRHxgsJuhmEyWwyW8EXqii7iLeGqvFK7CCphSnsbrMS2xYonW/p7KfTleaIISpvGVor/M8jF9/Dj1CLhA73ewb9yRA+5lo382kpb9nFChYfj9eirtGUgJ7ROMd+u2tJAyE0=
+	t=1720340826; cv=none; b=deYanSlQ9ffslq+kyH1zkepD7ASnxBFiqzKfh5JzhwtUmj/FxBBJYGvThQje5gdn2KtXsumvFFJWHWr1choQBYU35DCOA8cuwV4CZKU0GEb7RB1x+KgIpkVUqNrD4cNua+rH+pzXH8J3cgVnik0iV7LBLeIkRxP0dOitkFxWhcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720340678; c=relaxed/simple;
-	bh=ppO6FBi3iKDQ0JeXaUGFkZ4NSMxgumSYofQkBenoBCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PrA12KgZu6vWJUbC2vSGWZ12eQSe3N3w+x/F7u8Ywno0zqeTfKizK1yVrrZk1CzfQ6hGjldAIz+EYwPhlNx3AFNFqh7SGEjWE2cCy9+StYirR+TaU3NqvbwHom0U+hb68YjhhIzyelPE3dv5icYQ/qCtSAjQ3eSPhetclclWxG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qe3W+aH9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD07C3277B;
-	Sun,  7 Jul 2024 08:24:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720340677;
-	bh=ppO6FBi3iKDQ0JeXaUGFkZ4NSMxgumSYofQkBenoBCM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qe3W+aH96XZ9mVxsGLaxMVq9SeHE9lIBFtNIrnq++NZkddPcn4T6VjQdIVHvpjvdt
-	 6KaER9eeghdu2/1+CHLq+tmVN3ksyt6H0JrFxOyBIGT4e8xEo+o13LnM9pQCpSVqBT
-	 p/8M9p9Ktkruu3y/aADJ4fYXK7+Fh/iKGGXwiIoDE4gHgpZknIYTLOZTlzztRX7n8M
-	 Jk+cku2A+B9w36AFGHbcvGU3Lee5D+28BR2hDBMshcb7TnUvojpGAIGvF4RI2nTg/l
-	 lmt3xGicTVq/7pT+AViKWyYx5y//ZUNLg8PFPiriAHgbJBxbsF+aizOfBznhd+Qdv9
-	 MoXf8P66UHWhw==
-Date: Sun, 7 Jul 2024 11:24:33 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-rc 1/9] RDMA/hns: Check atomic wr length
-Message-ID: <20240707082433.GD6695@unreal>
-References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
- <20240705085937.1644229-2-huangjunxian6@hisilicon.com>
+	s=arc-20240116; t=1720340826; c=relaxed/simple;
+	bh=z1Ie+swoxknZq9zY55UOI5qIeBXSF+/KBwodL1npwbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MKWpb0AZAzfTF8MJEqR8bOOtdSZbQlnU1qF/jfm2hYapxGocQfbHPgFWuVNQCjlb3JbAxvIebyZp9gmNxtMHNwcgN1SDnUsBGBfeaLfUQx/9/nuKK+Ii8QWx/5BlExhOxYoM7PRts3MP0807ec2K4oVgeZDmTQOFgIB/bfOlrUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JM8pCKLJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720340824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZFJq99cRrVpFdbGjaQAOcEkCS5wr5Uww391pCw7GQrY=;
+	b=JM8pCKLJFNoD/E3+AYl4JrLfBvPiDtj8isbMmx7Z0m2XMhiMMhu6C/70RgPchj3SECH2Vr
+	zKxVB7yruXJPjzdKlONd0emWBf7ucHcw91rfAeDHunjTudYqcbij0iT2Rk9eyvZvAJKi8j
+	zXVmYJYCGSFZ2fi2ofmA6GNa6aGG9U4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-553-Gj842JbxN0GJPdFt7YKVAw-1; Sun, 07 Jul 2024 04:27:02 -0400
+X-MC-Unique: Gj842JbxN0GJPdFt7YKVAw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4257db9d71fso23283375e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 01:27:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720340821; x=1720945621;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZFJq99cRrVpFdbGjaQAOcEkCS5wr5Uww391pCw7GQrY=;
+        b=WybuFpi2hLAAW7YXRWfjm7svPRUeKzeblu9Z878rBJZ/d4iySSu7yKeGf0lCRgpsr1
+         lGEzW6RCWIxYBmjNvAkoKofNJYUZtGdVFKZ7KtxCsIb+tuhH7r9IpQvVyMETRsq/HLoa
+         FJC2/tWUJ28VIDzJ7FvqI/K8tdmvSBaWtORoKC/fIVPavWzViiqRHy4pZns8vA6izjTx
+         o1fcvOW777U00G5PBVRy2M9YDTIxwBP1pMqs4janRZSl+L3yxBIjJeEZyWMdSS0/jKxZ
+         tVbOTHojKkrHMAN6HKvmBkrxTKY9Pfy2+yMN4YY2mhbAbcaDV0QZLuyC38nF8M3be8vS
+         APmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGrvl+r7Xrq5hw9U8OZulnzr5ZuuUjIjdWpsi3iKY9xohsuGNTFLI1+lgzw3Tfu2rJwTMJQaefgj18XM+bOpkQZHwltmEUn0KMYZCb
+X-Gm-Message-State: AOJu0YztTCkUXKrgQxKWpeOBtzNPzDGeyqblRMhH+p7LXoRPAH1QN+5s
+	2sPPTEVaBPKmITewXeMQk2ploMCu2j/68J6m2oE+54QcS36n2nr2wrsOLDuUg3JEKbCVuA8OHPP
+	PVg35xGJn6bDs5EjiImCTpFo16doMDicMrFrfmCIBCRcMHKSK0gk57dGIWqbcjw==
+X-Received: by 2002:a05:600c:48a1:b0:426:5471:12e2 with SMTP id 5b1f17b1804b1-4265471145emr42272015e9.4.1720340821270;
+        Sun, 07 Jul 2024 01:27:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGsR1GhISub8sMIvLPq9JIwL70uvt6AQVbMO9tqAlT2YwA8PN2oV//rNBmcX1sSakwVgndcUw==
+X-Received: by 2002:a05:600c:48a1:b0:426:5471:12e2 with SMTP id 5b1f17b1804b1-4265471145emr42271905e9.4.1720340820875;
+        Sun, 07 Jul 2024 01:27:00 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c72f:c00:10f0:d1a8:c206:17ac? (p200300cbc72f0c0010f0d1a8c20617ac.dip0.t-ipconnect.de. [2003:cb:c72f:c00:10f0:d1a8:c206:17ac])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42662a21066sm31957355e9.22.2024.07.07.01.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Jul 2024 01:27:00 -0700 (PDT)
+Message-ID: <82ca055a-4b51-4db4-be7d-27b84aa70bd7@redhat.com>
+Date: Sun, 7 Jul 2024 10:26:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240705085937.1644229-2-huangjunxian6@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/7] synchronously scan and reclaim empty user PTE
+ pages
+To: Qi Zheng <zhengqi.arch@bytedance.com>,
+ the arch/x86 maintainers <x86@kernel.org>
+Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
+ muchun.song@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1719570849.git.zhengqi.arch@bytedance.com>
+ <e7a8ddb2-52b5-4267-859b-e212644440b1@bytedance.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <e7a8ddb2-52b5-4267-859b-e212644440b1@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 05, 2024 at 04:59:29PM +0800, Junxian Huang wrote:
-> 8 bytes is the only supported length of atomic. Return an error if
-> it is not.
-> 
-> Fixes: 384f88185112 ("RDMA/hns: Add atomic support")
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_device.h |  2 ++
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 19 +++++++++++++++----
->  2 files changed, 17 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-> index ff0b3f68ee3a..05005079258c 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
-> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-> @@ -91,6 +91,8 @@
->  /* Configure to HW for PAGE_SIZE larger than 4KB */
->  #define PG_SHIFT_OFFSET				(PAGE_SHIFT - 12)
->  
-> +#define ATOMIC_WR_LEN				8
-> +
->  #define HNS_ROCE_IDX_QUE_ENTRY_SZ		4
->  #define SRQ_DB_REG				0x230
->  
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> index 4287818a737f..a5d746a5cc68 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> @@ -164,15 +164,23 @@ static void set_frmr_seg(struct hns_roce_v2_rc_send_wqe *rc_sq_wqe,
->  	hr_reg_clear(fseg, FRMR_BLK_MODE);
->  }
->  
-> -static void set_atomic_seg(const struct ib_send_wr *wr,
-> -			   struct hns_roce_v2_rc_send_wqe *rc_sq_wqe,
-> -			   unsigned int valid_num_sge)
-> +static int set_atomic_seg(struct hns_roce_dev *hr_dev,
-> +			  const struct ib_send_wr *wr,
-> +			  struct hns_roce_v2_rc_send_wqe *rc_sq_wqe,
-> +			  unsigned int valid_num_sge, u32 msg_len)
->  {
->  	struct hns_roce_v2_wqe_data_seg *dseg =
->  		(void *)rc_sq_wqe + sizeof(struct hns_roce_v2_rc_send_wqe);
->  	struct hns_roce_wqe_atomic_seg *aseg =
->  		(void *)dseg + sizeof(struct hns_roce_v2_wqe_data_seg);
->  
-> +	if (msg_len != ATOMIC_WR_LEN) {
-> +		ibdev_err_ratelimited(&hr_dev->ib_dev,
-> +				      "invalid atomic wr len, len = %u.\n",
-> +				      msg_len);
-> +		return -EINVAL;
+On 04.07.24 09:16, Qi Zheng wrote:
+> Add the x86 mailing list that I forgot to CC before.
 
-1. Please don't add prints in data-path.
-2. You most likely need to add this check before calling to set_atomic_seg().
-3. You shouldn't continue to process the WQE if the length is invalid.
-Need to return from set_rc_wqe() and not continue.
-4. I wonder if it is right place to put this limitation and can't be
-enforced much earlier.
+Hi,
 
-Thanks
+I'm planning on looking into this (again, I'm very interested!), but 
+I'll be a bit (understatement) busy the next 1.5 weeks.
+
+If I don't look into this within the next 3 weeks, an you please remind 
+me? Thanks!
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
