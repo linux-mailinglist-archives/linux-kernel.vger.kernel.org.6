@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-243496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7678C9296E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:53:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 820959296E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 08:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02983B213D8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CE01F21733
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 06:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F545E54C;
-	Sun,  7 Jul 2024 06:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0149DD27E;
+	Sun,  7 Jul 2024 06:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOIq+nqi"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjqAzrPk"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FB2CA62
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F9218029
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 06:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720335172; cv=none; b=dKbu0LYPwlHSGTZQ5jZQWpWHJlR63Bu11FyyWJmXPSTifzeAMVb2iDpLeOT4dX8yL+UVQXQ82iAjfwVQrqn/9F9HjgoGMngjruVwS0WlBzeZDwS0l4mwXvRnQ+ACetiZ39WyN/9SAJGHfilDDeJKNBD23jitUFjfPlVGuBlkLYI=
+	t=1720335182; cv=none; b=lztWNMeDTtbozwhpj9QhViHE5jZe+mjDazSj7xQvAjcZs1tX7ThfDp9rrOUD/M4k4XXBS8oClSbKws08LflsExPdo4B1UA+alUHcgHSTh7laqpxAEYJOJjeOEMN2Wgr17CaSf+Sii2o/wj0SU4zroG10NGHQn09GIIAPfTXjbTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720335172; c=relaxed/simple;
-	bh=eTcdbviIPXnaBScX/lCwCkx4UwxG0OeM942lVs5Y1aA=;
+	s=arc-20240116; t=1720335182; c=relaxed/simple;
+	bh=+OdeM7Q25FxSsSEoW4motBu9ZOsamZSAM/sERqWT5bs=;
 	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ar5XYd2i5PPPchhLQKm9HLAkKRt7BsZcCFaxA/0Xhu0GXh5W9huUJYz4xCBvyE4XdrdHCa0Zv9DNL195dtUGczzvjNhMc2c5bVGx1fKmm7hkeyjAMZJM+17ju5dTTaug93HiZW+O/lq+uh+r+822QNPkx3NLfH8iModWEl++Ch0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOIq+nqi; arc=none smtp.client-ip=209.85.128.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aq6Lho4fOSH/DZNNEqnDB2xjboVhbS2d2Q3wMCjKtLqndyFDryTMTePBm+eNeUtTVztUuuRo/FYr7LlEW1S3lu5rAxrR5Clfbp1/WjwCcRe1AUQ+hun0+2guOrYapIcMmenoR09mC+5wjb9xZhLm6W7R78U1i+yKZyG8s1bDN8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NjqAzrPk; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-426659ff58bso323105e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 23:52:51 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4212b102935so3367795e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Jul 2024 23:53:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720335170; x=1720939970; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720335179; x=1720939979; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ilGTpNzNmztcyPOmCQQUHGh9qBBEQhne1jUpgHqVUc4=;
-        b=fOIq+nqih1muse871PKVaHtDAPbzPtbThQmgWv2iAYzxpKRwzFNTEA3Ixi0s9M1sfT
-         1x2LZC8pGsShga5HFDbDv7k0Wj0Y1f4SHebSpOOaoPnm+r/eto49rgo77xjX39ybPZ3J
-         gXlZtb0KkpPn8bBzMa9SfTJcwKhb0r1KDSiCmfS5eRACpT41A/veCcqH1LHJKuzA0LuY
-         hUS4BrAnD3MyAxiHlg8GwMXvnssB1tpEY3Ui350RDdsqCyfk3y4Oonx9slamitvel4aM
-         qjfykR3jpqcR1azn7l3cXS38j5HiylHZ7aurxDflHawI78PusDBUDvijuoEYtFT36Gz2
-         MP6A==
+        bh=6pDyIeoKRhiuoeVnWhq04lCY4A6A3zeGOBt63c/XD6g=;
+        b=NjqAzrPktUYWJ+5w7RVYi8dam0xW4Nutm7OBQatWW9hYkPxsQyy8Wei4RI8U11ykT8
+         mRlDg6V7VFS1wAa/qjIkbuSWDlVQPPRtQJS9JU/4oJp0PPW1Fq4xfK9kI8bi7794y1x0
+         zxxVWhr1MdyL19nKk5PrLvZDRsRe4e1fXLG8YSgDbWNfa9ykbCn/TfO5Q4/5tyt/wpEU
+         xBWeyRjn8k/L/scpHoLw0Uur9/6+aUjS4SDPkCYdlw29VernVcwOQ/cuwqGwe8etRBZS
+         p/4vd1O6l+QnOVnbSX7yvMhlnhzMGTBJwtoyV5bDtsZ27mbEaJarFDpC+JihgGv/4zTT
+         FuDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720335170; x=1720939970;
+        d=1e100.net; s=20230601; t=1720335179; x=1720939979;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ilGTpNzNmztcyPOmCQQUHGh9qBBEQhne1jUpgHqVUc4=;
-        b=UqtVWfDJwXXsmNd/6des740GPpDJbI2ZwRg49jNaN4nlaAfMZ033yNX820RAnfZ9R7
-         qR22gqIiiVzQcr4JTXt73rBNHq0l5UKbJQDcpzD5Oe1BUunJGlws12qw1vQnG9mq6qRl
-         VxydK71jMWB9TlDj6mhqmqhQ8pZsClSx+x6KUL+YovJoylADFlXmUfKDkLJVx1Zl1Pxr
-         eswKMFaRJ8Pu6xjZWqwTpd2ntnZxbqJa/R5BQ/zXjtyvZJU2jrcKPmkWftxedkKRPxbe
-         hq+NGtvPZKFXQGGuBG/CCs1q2eGPjPLRC++bprysM9tMtHma06oyAYbmrJqG/hjQlcab
-         eXMA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6S8ZeCO4PjQaMIi6CJEzMGqX9SJiL3kM3sUfg7rGis0ZUiL/AX/TddFuCyErLPXk1EurL0uEjE6Y+X3CpMReRtRySsgv9/i/nRJ1W
-X-Gm-Message-State: AOJu0YwEC998DU+sdit5BBmjUUbbfTstbVq/kdv9U9aZ/JRbiXeTJjU/
-	Z9u/S0bx8rAFJwXsSn8QBrZRifq/MExNdlFErDDRfU2CrnT12mld
-X-Google-Smtp-Source: AGHT+IExqykmCMe6GXQZ7zesU7eaEDbMJuHK4G7VD3P5t8/8k+npWYx4FTyVgA1r/OC/yRGdjBMOnw==
-X-Received: by 2002:a05:600c:4f03:b0:426:6358:7c5d with SMTP id 5b1f17b1804b1-4266358805emr10599065e9.4.1720335169931;
-        Sat, 06 Jul 2024 23:52:49 -0700 (PDT)
+        bh=6pDyIeoKRhiuoeVnWhq04lCY4A6A3zeGOBt63c/XD6g=;
+        b=UyFD4HJEEY4GRDxW8Q2WQHGvqwJLhOgZD6MDUdB7jmRZGUfrn2liuF0mMqVCCxne3g
+         dImZYDIEyqdQkVe0NZ2uXPykSbjpE7rGUxp/oWrccEIi45Pk9LR4MX9eqYQklPELBwCt
+         vljdR8JWaahIucXzOXgKFZxi4YW6znFn4DFHD2vEFW/3CtL6QH7M5tnNMh/U7cpIzEDR
+         EHs6rDbSB18f1WU4IATRrCwxX2xtNAcAyNAlkGbP+Le1r4x6v99RIcFb1gZL0tK3NVOI
+         M14pyQnerFRByYAThP7K4cyShfBy2+Y/a2ZCNDnEWcvv67glwiZvWPz32BBtWkBAyTPF
+         Jm+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVLGKzfPTYB6yEzdcduEvqumdbIdEk41lpOsMTYFxemOd+6tDa13XurmbuTB15s99GwDoNabkcXHbYlIGwb8iiaogbxFOw0ccrSAyp0
+X-Gm-Message-State: AOJu0YzuNqsuIDQIJRtkmCD7IEf2P7qDJxamdYAbFAgCaUo65tBjt+Mz
+	4D0kzM/105MO5r8BxIwWbcdOzdm46OWS2y1Vn8ljY4MeS7iC36oI
+X-Google-Smtp-Source: AGHT+IHWHB8202JzynzPEhTs+hGiUNfyPqzhtxQkibO3EG+cddHGQdZuHA9BmvdYc/DgzSyYpk3RvA==
+X-Received: by 2002:a05:600c:3b17:b0:426:668f:5ed7 with SMTP id 5b1f17b1804b1-426668f622fmr4682225e9.2.1720335179082;
+        Sat, 06 Jul 2024 23:52:59 -0700 (PDT)
 Received: from matrix-ESPRIMO-P710 (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367b164799csm4214321f8f.56.2024.07.06.23.52.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42659fc902csm68702045e9.5.2024.07.06.23.52.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jul 2024 23:52:49 -0700 (PDT)
-Date: Sun, 7 Jul 2024 08:52:47 +0200
+        Sat, 06 Jul 2024 23:52:58 -0700 (PDT)
+Date: Sun, 7 Jul 2024 08:52:56 +0200
 From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/13] staging: rtl8723bs: Move last macro from
- hal_phy_reg_8723b.h
-Message-ID: <7e1e5591af85a452415fb137767e21d0d1d163a1.1720245061.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 06/13] staging: rtl8723bs: Delete file hal_phy_reg_8723b.h
+Message-ID: <04db91723915fc5e542a49b37d07ac85f1f853f4.1720245061.git.philipp.g.hortmann@gmail.com>
 References: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,41 +82,47 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
 
-Move last macro from hal_phy_reg_8723b.h to Hal8192CPhyReg.h to prepare
-removal of hal_phy_reg_8723b.h.
+Delete file hal_phy_reg_8723b.h to increase overview.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
- drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h    | 1 +
- drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h | 5 -----
- 2 files changed, 1 insertion(+), 5 deletions(-)
+ .../staging/rtl8723bs/include/hal_phy_reg_8723b.h   | 13 -------------
+ drivers/staging/rtl8723bs/include/rtl8723b_hal.h    |  2 +-
+ 2 files changed, 1 insertion(+), 14 deletions(-)
+ delete mode 100644 drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
 
-diff --git a/drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h b/drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h
-index 586a3dabc5ca..292c18b62537 100644
---- a/drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h
-+++ b/drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h
-@@ -1108,5 +1108,6 @@
- 
- /*--------------------------Define Parameters-------------------------------*/
- 
-+#define rDPDT_control				0x92c
- 
- #endif	/* __INC_HAL8192SPHYREG_H */
 diff --git a/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h b/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
-index 0791b85b7c57..da549b773243 100644
+deleted file mode 100644
+index da549b773243..000000000000
 --- a/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
-+++ b/drivers/staging/rtl8723bs/include/hal_phy_reg_8723b.h
-@@ -9,10 +9,5 @@
++++ /dev/null
+@@ -1,13 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/******************************************************************************
+- *
+- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
+- *
+- ******************************************************************************/
+-#ifndef __INC_HAL8723BPHYREG_H__
+-#define __INC_HAL8723BPHYREG_H__
+-
+-#include <Hal8192CPhyReg.h>
+-
+-
+-#endif
+diff --git a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
+index c1d7249e3e9d..f9ecd9047d52 100644
+--- a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
++++ b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
+@@ -17,7 +17,7 @@
+ #include "rtl8723b_cmd.h"
+ #include "rtw_mp.h"
+ #include "hal_pwr_seq.h"
+-#include "hal_phy_reg_8723b.h"
++#include "Hal8192CPhyReg.h"
+ #include "hal_phy_cfg.h"
  
- #include <Hal8192CPhyReg.h>
- 
--/*  BB Register Definition */
--/*  */
--/*  4. Page9(0x900) */
--/*  */
--#define rDPDT_control				0x92c
- 
- #endif
+ /*  */
 -- 
 2.45.2
 
