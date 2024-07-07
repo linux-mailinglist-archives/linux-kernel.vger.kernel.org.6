@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-243699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A8B929958
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 20:38:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88F392995A
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 20:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 630371F210DE
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA1C01C20973
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 18:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694D26BFBA;
-	Sun,  7 Jul 2024 18:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294A76BFB5;
+	Sun,  7 Jul 2024 18:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="uuAWwvrk"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BVLl0olF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pte65TeL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A363A8CE;
-	Sun,  7 Jul 2024 18:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D316F2E0;
+	Sun,  7 Jul 2024 18:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720377527; cv=none; b=oS+sJFwfOpfuybLmlUXpMMDFmIRE+Rup3YyhR37vkVEXpULvBqypO6E7m4R9kPG4sBBqq4iPVWna88QCNAPdSb7uKqzOOehoI7fc8op2l3uD5/ChMZByXg8U1Nn7T5XALaNrPy7pAytjuW2DODeL1gfVyJ9yBbXlPSNNzsQO6qU=
+	t=1720377575; cv=none; b=Mt1pzvEU+eJs4Rb82P8JTLV2u9c8CtChQPH/GioT/mi4ahkVsnpLlYjg+MIq0G3XL1P2ZOLY+u0UEuTEioejjFXUXZ0d6Afvwgk6AS0lvEc9+I9k/AVMt1bgchRNoDQ8h7lilRbH82RmqeS2bHSG5N8JZISKs04R7X01w1Cu3tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720377527; c=relaxed/simple;
-	bh=LVr3tRclo8ZSpQufLCLswBMa+2uinA7dOqT96FAwCNI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qG8IWMZKWauobkD/Wh80qCmAmYC6EkG7LJ59mGBzUaXRZrI5JcHnGTNAGQtltVVHo3myECHUrzg2hYElIQnRD/FzpIlkUaoL+pa9cM17dlt5q66P90aGDbkyiWIz4uiLAGc4ZvxfRKNb3zk8tkJA3puAG5SJBDaOOkzOmHXgMeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=uuAWwvrk; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720377511; x=1720982311; i=spasswolf@web.de;
-	bh=vY+U/NbiVls8p8YZ5s4QJvHYWjm0ZgxhAbarEss/IXY=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=uuAWwvrkWw9aghOwwgO0bok/v0Nde2eMu0j/ypMn4IzUFcRSU87shTk6Vzsk6exR
-	 kpAacfMEkxS8Nrf2gV+WC9mgUUi+2IH/8vEUEgaFGajvpZsDhlfJQjqgfAo0KAMvR
-	 ZixkHneu9LC1DbIojAMOALhNEjjWXahvt79TqhEGKVtvGy7ncd7XnBeqv/axveUCy
-	 O/G3O8p1cqhEyYbzPqBaoR8D7pPfBfQHabF4mTIvXGN26PDrtlGuGM8KdooJVjPdn
-	 PP9+7rsAVa8Bl/RDLR14p58QVGHi9EAs+/NjeqCqd5DvpAapodBv6vbzGHO6S0piB
-	 /LJjeDwjKQ8tsB8Ekg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
- (mrweb006 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1MG9DE-1sccf53IGi-006R0T; Sun, 07 Jul 2024 20:38:31 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	caleb.connolly@linaro.org,
-	bhelgaas@google.com,
-	amit.pundir@linaro.org,
-	neil.armstrong@linaro.org,
-	Lukas Wunner <lukas@wunner.de>,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH v2] pci: bus: only call of_platform_populate() if CONFIG_OF is enabled
-Date: Sun,  7 Jul 2024 20:38:28 +0200
-Message-ID: <20240707183829.41519-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: ZoqYz-MWD06GmKPJ@wunner.de
-References: 
+	s=arc-20240116; t=1720377575; c=relaxed/simple;
+	bh=GvtyekW3cPtgMryxGojlHzw6d60XNdyQNpLAwvJFYCg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Trq7ZcXszCduITEqKjbgV9hBNDd1WxL3tZZ3cm6eyV7rzmFWWBA/Nl3UHzL6fVkxUyCuWfzkU+X/36TMyoEl4E3dHlPD/XCrCqFKIhtsyMxGDBw8jLI9H/vX8M8w85V8gv10+G2h8xtahM3EvaUne74QR9aqOJw24UWBYraTkBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BVLl0olF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pte65TeL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720377572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HvnkGbIJ9LI7seSBE7vWaAv++oO2Ma6c/yEoKk5eGss=;
+	b=BVLl0olFwyM4DlgzdlxxKXuIh6v3+fuPF3sY/qLCTy9CAxCDUWgUpi+nBgFdU7nmZbyQNK
+	CBG8PeZPIpjXTB0+6zBhvxKlcb7EwLInlXnFT0kNqVEyxS1WMDvzo6yokryEw1mFwg68sE
+	JRkN/jwzuMjMrhEscgaEnFvxAV3SFfDmEvJFApW7MfOxxxOfQHs990Ajqxmhj9tBoAJMDA
+	GyzdtDbnBhp5MAiZZ/DpiWzi68dzxcykPu05pRfQHz5K5cyihJPmgipOCxrZ8Vdopo76ev
+	8Bv53XUb7PN+niJiVxRhsFWP2KShEAYNG0hht5GIhseegbcbDiTyar0P1aWKWw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720377572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HvnkGbIJ9LI7seSBE7vWaAv++oO2Ma6c/yEoKk5eGss=;
+	b=Pte65TeL3YedPESL1FUXkQ2ZZMonCYOrSp1INe9vGmxtLtsqc0F9jeq520zTO9fGGdU5Iv
+	9XnhsUJ3/HxDMQBg==
+To: Pete Swain <swine@google.com>, linux-kernel@vger.kernel.org
+Cc: Pete Swain <swine@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] FIXUP: genirq: defuse spurious-irq timebomb
+In-Reply-To: <20240615044307.359980-1-swine@google.com>
+References: <20240615044307.359980-1-swine@google.com>
+Date: Sun, 07 Jul 2024 20:39:31 +0200
+Message-ID: <87jzhxvyfw.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JjcgykCTbZr5RWCfTelcTrxzSuuD/k8Zxh3nM7zerAHPHT1F4at
- hKNyoXSGsb52A1xH2EiyEMPx8VVVtquianUVPESQxwPMkoltp1mNW8lHwkscubA+Z5rxaD9
- Xe4mOUs+FLK6MmghQnfFs3ETichfjgtWluRvGoHdn6PZDwHDjfSy5/pbX3nM84QAyYYruQH
- +1zzxU1yyffKIkdPDZc7w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/HGvqpGB1JU=;ZSI24ds3OQwUxZT5uva5Kzz3uZE
- u58uxIY6OhIjlFGqC20rRxlShcoezqmSsIIU+7B5J4E8t0sjejQSyM78n58ySP8SwHdVqZ8c0
- WzJWpJlRGwLgZOMnYuXxpnQTkIO1KoQD2U4dQJebVy41JX/22zMFscdW1XBdukwC87hXP5PaK
- LJwqaKBHOmaIwJDsvMxEGPGRmOAxUQoFyzys8UvY+rVUGtQYBud7e9Lh/CxZUIxI/zcom6xyG
- yW1u7Qh0oR2ehKkEknM74Mtp3TXdxulZupzD/GTKigpxhPXkxsqZ8hzdZgBW7tsBdx0OsjbZ9
- QaTkf4KNpJHy/ujbgsGNG9g8Ws7YOSBAu5RO0KI1uBWRqpnCzWM1ojp/vF3Iw4LF/3rHPGAKd
- oYsyP5TZ9odV9KoMkVNYmma33TEfr5Nsj/U+70wX2mKD0CAKwBQFfoMcLkkj57/ZzbvzGgVL8
- AVABVCCCSJi1qq/YpOdKcAKuyYVY04BpYJYTpz8M1U5Z2NbWJRq14vWmy/1Mirvh1OWM2huW0
- a8Aq5ZYnkmWDJDoGTlwKUW30bW9+hO4xP5cmQgAffZafSvO1kNf9qr79VHh4IXfkPfJksTr3c
- Zmeb5B5PIFwftSpJrJLoEJk/bTFM5pjMjksl+IwWytdr18BxBGrq6upSrlS9A2fWrP1dwUgF7
- s8WE3zATicm94dbxedmjsSNthreqd8zxo6uQUUyT3zCGhDO3YR5UKi0hSv+cBXEA6UBU+J0iO
- njQRoDgfRxkp0npZa2pmPYrnnlmQbSLxcXTWNIaf7/A9VIIU4Yx2Zjiqel9su6pKs+/DAQyI2
- LN0Flmsgl5TasAQLwWWv7Gpb51ROPXOtKdcF9O0dYYSSQ=
+Content-Type: text/plain
 
-If of_platform_populate() is called when CONFIG_OF is not defined this
-leads to spurious error messages of the following type:
- pci 0000:00:01.1: failed to populate child OF nodes (-19)
- pci 0000:00:02.1: failed to populate child OF nodes (-19)
+Pete!
 
-Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nod=
-es of the port node")
+On Fri, Jun 14 2024 at 21:42, Pete Swain wrote:
+> The flapping-irq detector still has a timebomb.
+>
+> A pathological workload, or test script,
+> can arm the spurious-irq timebomb described in
+>   4f27c00bf80f ("Improve behaviour of spurious IRQ detect")
+>
+> This leads to irqs being moved the much slower polled mode,
+> despite the actual unhandled-irq rate being well under the
+> 99.9k/100k threshold that the code appears to check.
+>
+> How?
+>   - Queued completion handler, like nvme, servicing events
+>     as they appear in the queue, even if the irq corresponding
+>     to the event has not yet been seen.
+>
+>   - queues frequently empty, so seeing "spurious" irqs
+>     whenever the last events of a threaded handler's
+>       while (events_queued()) process_them();
+>     ends with those events' irqs posted while thread was scanning.
+>     In this case the while() has consumed last event(s),
+>     so next handler says IRQ_NONE.
+>
+>   - In each run of "unhandled" irqs, exactly one IRQ_NONE response
+>     is promoted from IRQ_NONE to IRQ_HANDLED, by note_interrupt()'s
+>     SPURIOUS_DEFERRED logic.
+>
+>   - Any 2+ unhandled-irq runs will increment irqs_unhandled.
+>     The time_after() check in note_interrupt() resets irqs_unhandled
+>     to 1 after an idle period, but if irqs are never spaced more
+>     than HZ/10 apart, irqs_unhandled keeps growing.
+>
+>   - During processing of long completion queues, the non-threaded
+>     handlers will return IRQ_WAKE_THREAD, for potentially thousands
+>     of per-event irqs. These bypass note_interrupt()'s irq_count++ logic,
+>     so do not count as handled, and do not invoke the flapping-irq
+>     logic.
+>
+>   - When the _counted_ irq_count reaches the 100k threshold,
+>     it's possible for irqs_unhandled > 99.9k to force a move
+>     to polling mode, even though many millions of _WAKE_THREAD
+>     irqs have been handled without being counted.
+>
+> Solution: include IRQ_WAKE_THREAD events in irq_count.
+> Only when IRQ_NONE responses outweigh (IRQ_HANDLED + IRQ_WAKE_THREAD)
+> by the old 99:1 ratio will an irq be moved to polling mode.
 
-Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-=2D--
- drivers/pci/bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Nice detective work. Though I'm not entirely sure whether that's the
+correct approach as it might misjudge the situation where
+IRQ_WAKE_THREAD is issued but the thread does not make progress at all.
 
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index e4735428814d..3bab78cc68f7 100644
-=2D-- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -350,7 +350,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+Let me think about it some more.
 
- 	pci_dev_assign_added(dev, true);
+Thanks,
 
--	if (pci_is_bridge(dev)) {
-+	if (IS_ENABLED(CONFIG_OF) && pci_is_bridge(dev)) {
- 		retval =3D of_platform_populate(dev->dev.of_node, NULL, NULL,
- 					      &dev->dev);
- 		if (retval)
-=2D-
-2.45.2
-
-Just in case this is needed.
-
-Bert Karwatzki
+        tglx
 
