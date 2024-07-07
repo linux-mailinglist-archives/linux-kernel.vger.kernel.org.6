@@ -1,186 +1,532 @@
-Return-Path: <linux-kernel+bounces-243642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F999298B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:40:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877AB9298B9
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 17:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03DE02850AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF301C218D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5201636134;
-	Sun,  7 Jul 2024 15:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FDA3EA86;
+	Sun,  7 Jul 2024 15:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKa+uu17"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIxA49Ji"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFB51865B;
-	Sun,  7 Jul 2024 15:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E091865B;
+	Sun,  7 Jul 2024 15:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720366849; cv=none; b=UxpZcwQJU/t9UFyVn6iwr7ybUHYUcvuPbNt1J+hRVlrBRuo2ceAVwZyo2YELkFyf31L0VbLGoegr0SitAmM41no8ok9UOvq2KKhjRilGdh2zTR8iOiu7XLlMCRI2tlaRo+wNLtUxP8HyQTP78JwsQWYQb/lNLQtENEcIa9dkZHw=
+	t=1720367829; cv=none; b=oAXJxxQqKNK6e7GwNd9Do35SfYNXacHYDA/o/bZk8vF5kbbtr3iKFER+SIU369aK2LBbwm8xVCVPU+mR4TpEHOh+rsWCRqQi7XiTtCNSHZvTcXHoKMsjlQYgQ+6PaDxakUKGkNA7dYNiufMHG/8TGt+o9KQeYc4U/dcRGYdC3pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720366849; c=relaxed/simple;
-	bh=Ebpk4xmCeSnhCg+GU2h3gK6yRFEje2anfveX6+FCeos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QeamhivTynEz8gCuJaQdRhensBeRxUznAC92UhPT9g1zSHivvyme9w/GV28CXcrlUwv+2doAsVNYl4UhwL5hG/lkTM7hlHh6PQ42A3SHJbVrSby+fZy/b1bDZ7paeVyGzml8ElDTebrh9r64B2mFH6ZTvwrTQVgI78aCzfC0SQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKa+uu17; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E4B4C3277B;
-	Sun,  7 Jul 2024 15:40:49 +0000 (UTC)
+	s=arc-20240116; t=1720367829; c=relaxed/simple;
+	bh=DTdvOgwG23eVmAx9XhyNfEBKt3kTMhzJMd4iX1LvhOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=llAf5JbkgDE6i4TMGeely4wpAuqDWSk70A7GCROrOO1Xo4g9tHXPBrHtrACIg3N7HV7NizI5MwmhT2UkOiz/yyyDyvzRb8UndTp4M97uOszQMVEkYP4/2Aeyl63/Wr5LCSG+I6NH256bUaHSQ5Z81OJSRYbciYnqM22Ay3KkONU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIxA49Ji; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 233B6C3277B;
+	Sun,  7 Jul 2024 15:57:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720366849;
-	bh=Ebpk4xmCeSnhCg+GU2h3gK6yRFEje2anfveX6+FCeos=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eKa+uu17RbhrCsgJp0jLOARZJD60InlJdl5yw/Q4GxU84wbRG52kLmXQ3nUHvZkF1
-	 AS3zY3lgEugXpP5nVMtuoBTcJUUdD9gijCGWHwToEry9AFcV3Hm3zBGfigBuoT2oiH
-	 crOiE3b0Z/TV0PgTQna6B3mByS/Zb+o+BJ2RbrjPCF+lqkRVPYNP+qAY85FB3K/QZ6
-	 suArffe6jZEMAfgovB8GTEEgouYwdoEDG/UkR8Z765gbncBXmNQ6eN4LDeiIPDiVVj
-	 iDGKVDFVslwBl+6picTJPx4t0jaEOxwyLnBByH1OFNMCTcVxDmtL5Tq9fv39uWuFE7
-	 A+AC9ebnp5NLw==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52e9a550e9fso3580453e87.0;
-        Sun, 07 Jul 2024 08:40:48 -0700 (PDT)
-X-Gm-Message-State: AOJu0YxBp6YQAWZXcvcqQa4oqdbmeMH9f05Vc5cjQFg0ABc+mBFVRl3Y
-	FXskegyf/aowqe2svfHvzKun0Ox3n6QS51YCcb5j+jqXC70jtCTdd51fL1FqQdeMfyb25axOSiv
-	WPHLrJ7NH78/vPmN/31esm+RoyKQ=
-X-Google-Smtp-Source: AGHT+IFEzbOjTWB2ykT2MNNANIPfDMTbw6aphNsdhMO2wfQT018J6OSNZ1W1kadGeiO2TQ6SilV43mMhW8ZC8/GEj1U=
-X-Received: by 2002:a05:6512:2009:b0:52c:89b3:6d74 with SMTP id
- 2adb3069b0e04-52ea0dcc74cmr3044865e87.6.1720366847616; Sun, 07 Jul 2024
- 08:40:47 -0700 (PDT)
+	s=k20201202; t=1720367828;
+	bh=DTdvOgwG23eVmAx9XhyNfEBKt3kTMhzJMd4iX1LvhOs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KIxA49JiolXzXE0VrpFZBE2qQTrsEOsj9ojKRRxMfSlmEWGjLt3oAcbH6498YH1/z
+	 Nl7xfhDkDDNEst54YRx5fbqTxdpD+QVAXKja/TQQp8IVXMyv+I/8QdDXWk7+EhQZA/
+	 G0dVdWsmi4E76dMjZoksIcYcryD0w10ukWzqp85HMDuTSyrru0yI2ZK1OUTEOL3mFT
+	 JyOlsM1gg5XVByJW4/B8aQ4B6W7ONX6vOvjV15LFJZybStsmFb8y5zXkDVMsr28XmY
+	 M1OyE9kd/o/blaUFJLmClzjm5yK9S+Y5Pylc8MDhImmcNRD4aZMeQD1f0fdyQBUF3b
+	 PnKK6bKITHjcw==
+Date: Sun, 7 Jul 2024 16:57:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yasin Lee <yasin.lee.x@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ yasin.lee.x@outlook.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v9 3/3] iio: proximity: Add driver support for TYHX's
+ HX9023S capacitive proximity sensor
+Message-ID: <20240707165700.76896f6b@jic23-huawei>
+In-Reply-To: <20240702-add-tyhx-hx9023s-sensor-driver-v9-3-c030f1801d9b@gmail.com>
+References: <20240702-add-tyhx-hx9023s-sensor-driver-v9-0-c030f1801d9b@gmail.com>
+	<20240702-add-tyhx-hx9023s-sensor-driver-v9-3-c030f1801d9b@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240707153856.2483047-1-masahiroy@kernel.org> <20240707153856.2483047-3-masahiroy@kernel.org>
-In-Reply-To: <20240707153856.2483047-3-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 8 Jul 2024 00:40:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT2cZJAkFjOT=-pkV83TW_mCaymoeNt9xMNGSPYrti_mw@mail.gmail.com>
-Message-ID: <CAK7LNAT2cZJAkFjOT=-pkV83TW_mCaymoeNt9xMNGSPYrti_mw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] kconfig: remove P_CHOICEVAL property
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-P_CHOICEVAL -> SYMBOL_CHOICEVAL
+On Tue, 02 Jul 2024 22:12:34 +0800
+Yasin Lee <yasin.lee.x@gmail.com> wrote:
+
+> A SAR sensor from NanjingTianyihexin Electronics Ltd.
+> 
+> The device has the following entry points:
+> 
+> Usual frequency:
+> - sampling_frequency
+> 
+> Instant reading of current values for different sensors:
+> - in_proximity0_raw
+> - in_proximity1_raw
+> - in_proximity2_raw
+> - in_proximity3_raw
+> - in_proximity4_raw
+> and associated events in events/
+> 
+> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+
+Hi Yasin, A few comments inline, but rather than waste time getting you to do
+a v10, I've made the following modes. Please check them (it wouldn't be the first
+time if I've messed something up with 'trivial' tidy up!)
+
+With this change set applied to the testing branch of iio.git.
+I'll be rebasing on 6.11-rc1 once available at which point this will be in the togreg
+branch and picked up by linux-next.
+
+Thanks,
+
+Jonathan
 
 
-On Mon, Jul 8, 2024 at 12:39=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> This flag is unneeded because a choice member can be detected by
-> other means.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->
->  scripts/kconfig/expr.h   | 1 -
->  scripts/kconfig/gconf.c  | 2 +-
->  scripts/kconfig/lkc.h    | 5 +----
->  scripts/kconfig/menu.c   | 5 -----
->  scripts/kconfig/symbol.c | 6 ++++++
->  5 files changed, 8 insertions(+), 11 deletions(-)
->
-> diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-> index 54b008c0161d..6e47e0ad6e6e 100644
-> --- a/scripts/kconfig/expr.h
-> +++ b/scripts/kconfig/expr.h
-> @@ -131,7 +131,6 @@ struct symbol {
->
->  #define SYMBOL_CONST      0x0001  /* symbol is const */
->  #define SYMBOL_CHECK      0x0008  /* used during dependency checking */
-> -#define SYMBOL_CHOICEVAL  0x0020  /* used as a value in a choice block *=
-/
->  #define SYMBOL_VALID      0x0080  /* set when symbol.curr is calculated =
-*/
->  #define SYMBOL_WRITE      0x0200  /* write symbol to file (KCONFIG_CONFI=
-G) */
->  #define SYMBOL_WRITTEN    0x0800  /* track info to avoid double-write to=
- .config */
-> diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
-> index 6b50e25133e3..c0f46f189060 100644
-> --- a/scripts/kconfig/gconf.c
-> +++ b/scripts/kconfig/gconf.c
-> @@ -1070,7 +1070,7 @@ static gchar **fill_row(struct menu *menu)
->                 row[COL_BTNVIS] =3D GINT_TO_POINTER(FALSE);
->                 return row;
->         }
-> -       if (sym->flags & SYMBOL_CHOICEVAL)
-> +       if (sym_is_choice_value(sym))
->                 row[COL_BTNRAD] =3D GINT_TO_POINTER(TRUE);
->
->         stype =3D sym_get_type(sym);
-> diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
-> index 3fa46610f25f..401bdf36323a 100644
-> --- a/scripts/kconfig/lkc.h
-> +++ b/scripts/kconfig/lkc.h
-> @@ -128,10 +128,7 @@ static inline bool sym_is_choice(const struct symbol=
- *sym)
->         return sym->name =3D=3D NULL;
->  }
->
-> -static inline bool sym_is_choice_value(const struct symbol *sym)
-> -{
-> -       return sym->flags & SYMBOL_CHOICEVAL ? true : false;
-> -}
-> +bool sym_is_choice_value(const struct symbol *sym);
->
->  static inline bool sym_has_value(const struct symbol *sym)
->  {
-> diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
-> index 2a9b4c4f4428..cd34cc5aefcf 100644
-> --- a/scripts/kconfig/menu.c
-> +++ b/scripts/kconfig/menu.c
-> @@ -467,11 +467,6 @@ static void _menu_finalize(struct menu *parent, bool=
- inside_choice)
->                 sym->dir_dep.expr =3D expr_alloc_or(sym->dir_dep.expr, pa=
-rent->dep);
->         }
->         for (menu =3D parent->list; menu; menu =3D menu->next) {
-> -               if (sym && sym_is_choice(sym) &&
-> -                   menu->sym && !sym_is_choice_value(menu->sym)) {
-> -                       menu->sym->flags |=3D SYMBOL_CHOICEVAL;
-> -               }
-> -
->                 /*
->                  * This code serves two purposes:
->                  *
-> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-> index 3255bf310cb2..6c6f238c4f7b 100644
-> --- a/scripts/kconfig/symbol.c
-> +++ b/scripts/kconfig/symbol.c
-> @@ -871,6 +871,11 @@ bool sym_is_changeable(const struct symbol *sym)
->         return !sym_is_choice(sym) && sym->visible > sym->rev_dep.tri;
->  }
->
-> +bool sym_is_choice_value(const struct symbol *sym)
+diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
+index e3f3fee2c94a..63e3b56d4f4c 100644
+--- a/drivers/iio/proximity/hx9023s.c
++++ b/drivers/iio/proximity/hx9023s.c
+@@ -312,16 +312,19 @@ static int hx9023s_interrupt_disable(struct hx9023s_data *data)
+ static int hx9023s_data_lock(struct hx9023s_data *data, bool locked)
+ {
+ 	if (locked)
+-		return regmap_update_bits(data->regmap, HX9023S_DSP_CONFIG_CTRL1,
+-					HX9023S_DATA_LOCK_MASK, HX9023S_DATA_LOCK_MASK);
++		return regmap_update_bits(data->regmap,
++					  HX9023S_DSP_CONFIG_CTRL1,
++					  HX9023S_DATA_LOCK_MASK,
++					  HX9023S_DATA_LOCK_MASK);
+ 	else
+-		return regmap_update_bits(data->regmap, HX9023S_DSP_CONFIG_CTRL1,
+-					HX9023S_DATA_LOCK_MASK, 0);
++		return regmap_update_bits(data->regmap,
++					  HX9023S_DSP_CONFIG_CTRL1,
++					  HX9023S_DATA_LOCK_MASK, 0);
+ }
+ 
+ static int hx9023s_ch_cfg(struct hx9023s_data *data)
+ {
+-	u8 reg_list[HX9023S_CH_NUM * 2];
++	__le16 reg_list[HX9023S_CH_NUM];
+ 	u8 ch_pos[HX9023S_CH_NUM];
+ 	u8 ch_neg[HX9023S_CH_NUM];
+ 	/* Bit positions corresponding to input pin connections */
+@@ -336,10 +339,11 @@ static int hx9023s_ch_cfg(struct hx9023s_data *data)
+ 			HX9023S_NOT_CONNECTED : conn_cs[data->ch_data[i].channel_negative];
+ 
+ 		reg = (HX9023S_POS << ch_pos[i]) | (HX9023S_NEG << ch_neg[i]);
+-		put_unaligned_le16(reg, &reg_list[i * 2]);
++		reg_list[i] = cpu_to_le16(reg);
+ 	}
+ 
+-	return regmap_bulk_write(data->regmap, HX9023S_CH0_CFG_7_0, reg_list, HX9023S_CH_NUM * 2);
++	return regmap_bulk_write(data->regmap, HX9023S_CH0_CFG_7_0, reg_list,
++				 sizeof(reg_list));
+ }
+ 
+ static int hx9023s_write_far_debounce(struct hx9023s_data *data, int val)
+@@ -387,17 +391,17 @@ static int hx9023s_read_near_debounce(struct hx9023s_data *data, int *val)
+ static int hx9023s_get_thres_near(struct hx9023s_data *data, u8 ch, int *val)
+ {
+ 	int ret;
+-	u8 buf[2];
++	__le16 buf;
+ 	unsigned int reg, tmp;
+ 
+ 	reg = (ch == 4) ? HX9023S_PROX_HIGH_DIFF_CFG_CH4_0 :
+ 		HX9023S_PROX_HIGH_DIFF_CFG_CH0_0 + (ch * 2);
+ 
+-	ret = regmap_bulk_read(data->regmap, reg, buf, sizeof(buf));
++	ret = regmap_bulk_read(data->regmap, reg, &buf, sizeof(buf));
+ 	if (ret)
+ 		return ret;
+ 
+-	tmp = (get_unaligned_le16(buf) & GENMASK(9, 0)) * 32;
++	tmp = (le16_to_cpu(buf) & GENMASK(9, 0)) * 32;
+ 	data->ch_data[ch].thres.near = tmp;
+ 	*val = tmp;
+ 
+@@ -407,17 +411,17 @@ static int hx9023s_get_thres_near(struct hx9023s_data *data, u8 ch, int *val)
+ static int hx9023s_get_thres_far(struct hx9023s_data *data, u8 ch, int *val)
+ {
+ 	int ret;
+-	u8 buf[2];
++	__le16 buf;
+ 	unsigned int reg, tmp;
+ 
+ 	reg = (ch == 4) ? HX9023S_PROX_LOW_DIFF_CFG_CH4_0 :
+ 		HX9023S_PROX_LOW_DIFF_CFG_CH0_0 + (ch * 2);
+ 
+-	ret = regmap_bulk_read(data->regmap, reg, buf, sizeof(buf));
++	ret = regmap_bulk_read(data->regmap, reg, &buf, sizeof(buf));
+ 	if (ret)
+ 		return ret;
+ 
+-	tmp = (get_unaligned_le16(buf) & GENMASK(9, 0)) * 32;
++	tmp = (le16_to_cpu(buf) & GENMASK(9, 0)) * 32;
+ 	data->ch_data[ch].thres.far = tmp;
+ 	*val = tmp;
+ 
+@@ -608,7 +612,9 @@ static int hx9023s_property_get(struct hx9023s_data *data)
+ 				data->ch_data[reg].channel_positive = array[0];
+ 				data->ch_data[reg].channel_negative = array[1];
+ 			} else {
+-				return dev_err_probe(dev, ret, "Property read failed: %d\n", reg);
++				return dev_err_probe(dev, ret,
++						     "Property read failed: %d\n",
++						     reg);
+ 			}
+ 		}
+ 	}
+@@ -670,7 +676,8 @@ static int hx9023s_get_samp_freq(struct hx9023s_data *data, int *val, int *val2)
+ 	return IIO_VAL_INT_PLUS_MICRO;
+ }
+ 
+-static int hx9023s_read_raw(struct iio_dev *indio_dev, const struct iio_chan_spec *chan,
++static int hx9023s_read_raw(struct iio_dev *indio_dev,
++			    const struct iio_chan_spec *chan,
+ 			    int *val, int *val2, long mask)
+ {
+ 	struct hx9023s_data *data = iio_priv(indio_dev);
+@@ -714,7 +721,8 @@ static int hx9023s_set_samp_freq(struct hx9023s_data *data, int val, int val2)
+ 	return regmap_write(data->regmap, HX9023S_PRF_CFG, i);
+ }
+ 
+-static int hx9023s_write_raw(struct iio_dev *indio_dev, const struct iio_chan_spec *chan,
++static int hx9023s_write_raw(struct iio_dev *indio_dev,
++			     const struct iio_chan_spec *chan,
+ 			     int val, int val2, long mask)
+ {
+ 	struct hx9023s_data *data = iio_priv(indio_dev);
+@@ -759,10 +767,12 @@ static void hx9023s_push_events(struct iio_dev *indio_dev)
+ 	for_each_set_bit(chan, &prox_changed, HX9023S_CH_NUM) {
+ 		unsigned int dir;
+ 
+-		dir = (data->prox_state_reg & BIT(chan)) ? IIO_EV_DIR_FALLING : IIO_EV_DIR_RISING;
++		dir = (data->prox_state_reg & BIT(chan)) ?
++			IIO_EV_DIR_FALLING : IIO_EV_DIR_RISING;
+ 
+ 		iio_push_event(indio_dev,
+-			       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, chan, IIO_EV_TYPE_THRESH, dir),
++			       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, chan,
++						    IIO_EV_TYPE_THRESH, dir),
+ 			       timestamp);
+ 	}
+ 	data->chan_prox_stat = data->prox_state_reg;
+@@ -869,7 +879,8 @@ static int hx9023s_write_event_config(struct iio_dev *indio_dev,
+ 
+ 	if (test_bit(chan->channel, &data->chan_in_use)) {
+ 		hx9023s_ch_en(data, chan->channel, !!state);
+-		__assign_bit(chan->channel, &data->chan_event, data->ch_data[chan->channel].enable);
++		__assign_bit(chan->channel, &data->chan_event,
++			     data->ch_data[chan->channel].enable);
+ 	}
+ 
+ 	return 0;
+@@ -930,7 +941,8 @@ static irqreturn_t hx9023s_trigger_handler(int irq, void *private)
+ 		data->buffer.channels[i++] = cpu_to_le16(data->ch_data[index].diff);
+ 	}
+ 
+-	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer, pf->timestamp);
++	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
++					   pf->timestamp);
+ 
+ out:
+ 	iio_trigger_notify_done(indio_dev->trig);
+@@ -992,7 +1004,7 @@ static int hx9023s_probe(struct i2c_client *client)
+ 	struct hx9023s_data *data;
+ 	int ret;
+ 
+-	indio_dev = devm_iio_device_alloc(dev, sizeof(struct hx9023s_data));
++	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+ 	if (!indio_dev)
+ 		return -ENOMEM;
+ 
+@@ -1001,7 +1013,8 @@ static int hx9023s_probe(struct i2c_client *client)
+ 
+ 	data->regmap = devm_regmap_init_i2c(client, &hx9023s_regmap_config);
+ 	if (IS_ERR(data->regmap))
+-		return dev_err_probe(dev, PTR_ERR(data->regmap), "regmap init failed\n");
++		return dev_err_probe(dev, PTR_ERR(data->regmap),
++				     "regmap init failed\n");
+ 
+ 	ret = hx9023s_property_get(data);
+ 	if (ret)
+@@ -1036,17 +1049,20 @@ static int hx9023s_probe(struct i2c_client *client)
+ 		return dev_err_probe(dev, ret, "regcache sync failed\n");
+ 
+ 	if (client->irq) {
+-		ret = devm_request_threaded_irq(dev, client->irq, hx9023s_irq_handler,
+-						hx9023s_irq_thread_handler, IRQF_ONESHOT,
++		ret = devm_request_threaded_irq(dev, client->irq,
++						hx9023s_irq_handler,
++						hx9023s_irq_thread_handler,
++						IRQF_ONESHOT,
+ 						"hx9023s_event", indio_dev);
+ 		if (ret)
+ 			return dev_err_probe(dev, ret, "irq request failed\n");
+ 
+-		data->trig = devm_iio_trigger_alloc(dev, "%s-dev%d", indio_dev->name,
++		data->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
++						    indio_dev->name,
+ 						    iio_device_id(indio_dev));
+ 		if (!data->trig)
+ 			return dev_err_probe(dev, -ENOMEM,
+-					"iio trigger alloc failed\n");
++					     "iio trigger alloc failed\n");
+ 
+ 		data->trig->ops = &hx9023s_trigger_ops;
+ 		iio_trigger_set_drvdata(data->trig, indio_dev);
+@@ -1054,11 +1070,13 @@ static int hx9023s_probe(struct i2c_client *client)
+ 		ret = devm_iio_trigger_register(dev, data->trig);
+ 		if (ret)
+ 			return dev_err_probe(dev, ret,
+-					"iio trigger register failed\n");
++					     "iio trigger register failed\n");
+ 	}
+ 
+-	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, iio_pollfunc_store_time,
+-					      hx9023s_trigger_handler, &hx9023s_buffer_setup_ops);
++	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
++					      iio_pollfunc_store_time,
++					      hx9023s_trigger_handler,
++					      &hx9023s_buffer_setup_ops);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret,
+ 				"iio triggered buffer setup failed\n");
+@@ -1087,7 +1105,8 @@ static int hx9023s_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static DEFINE_SIMPLE_DEV_PM_OPS(hx9023s_pm_ops, hx9023s_suspend, hx9023s_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(hx9023s_pm_ops, hx9023s_suspend,
++				hx9023s_resume);
+ 
+ static const struct of_device_id hx9023s_of_match[] = {
+ 	{ .compatible = "tyhx,hx9023s" },
+
+
+> diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
+> new file mode 100644
+> index 000000000000..e3f3fee2c94a
+> --- /dev/null
+> +++ b/drivers/iio/proximity/hx9023s.c
+> @@ -0,0 +1,1124 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 NanjingTianyihexin Electronics Ltd.
+> + * http://www.tianyihexin.com
+> + *
+> + * Driver for NanjingTianyihexin HX9023S Cap Sensor.
+> + * Datasheet available at:
+> + * http://www.tianyihexin.com/ueditor/php/upload/file/20240614/1718336303992081.pdf
+> + */
+
+
+> +
+> +static int hx9023s_ch_cfg(struct hx9023s_data *data)
 > +{
-> +       return !list_empty(&sym->choice_link);
+> +	u8 reg_list[HX9023S_CH_NUM * 2];
+
+Array of __le16 seems more appropriate.
+
+> +	u8 ch_pos[HX9023S_CH_NUM];
+> +	u8 ch_neg[HX9023S_CH_NUM];
+> +	/* Bit positions corresponding to input pin connections */
+> +	u8 conn_cs[HX9023S_CH_NUM] = { 0, 2, 4, 6, 8 };
+> +	unsigned int i;
+> +	u16 reg;
+> +
+> +	for (i = 0; i < HX9023S_CH_NUM; i++) {
+> +		ch_pos[i] = data->ch_data[i].channel_positive == HX9023S_NOT_CONNECTED ?
+> +			HX9023S_NOT_CONNECTED : conn_cs[data->ch_data[i].channel_positive];
+> +		ch_neg[i] = data->ch_data[i].channel_negative == HX9023S_NOT_CONNECTED ?
+> +			HX9023S_NOT_CONNECTED : conn_cs[data->ch_data[i].channel_negative];
+> +
+> +		reg = (HX9023S_POS << ch_pos[i]) | (HX9023S_NEG << ch_neg[i]);
+> +		put_unaligned_le16(reg, &reg_list[i * 2]);
+> +	}
+> +
+> +	return regmap_bulk_write(data->regmap, HX9023S_CH0_CFG_7_0, reg_list, HX9023S_CH_NUM * 2);
+> +}
+
+> +
+> +static int hx9023s_get_thres_near(struct hx9023s_data *data, u8 ch, int *val)
+> +{
+> +	int ret;
+> +	u8 buf[2];
+> +	unsigned int reg, tmp;
+> +
+> +	reg = (ch == 4) ? HX9023S_PROX_HIGH_DIFF_CFG_CH4_0 :
+> +		HX9023S_PROX_HIGH_DIFF_CFG_CH0_0 + (ch * 2);
+> +
+> +	ret = regmap_bulk_read(data->regmap, reg, buf, sizeof(buf));
+> +	if (ret)
+> +		return ret;
+> +
+> +	tmp = (get_unaligned_le16(buf) & GENMASK(9, 0)) * 32;
+Same as below.
+
+> +	data->ch_data[ch].thres.near = tmp;
+> +	*val = tmp;
+> +
+> +	return IIO_VAL_INT;
 > +}
 > +
->  HASHTABLE_DEFINE(sym_hashtable, SYMBOL_HASHSIZE);
->
->  struct symbol *sym_lookup(const char *name, int flags)
-> @@ -908,6 +913,7 @@ struct symbol *sym_lookup(const char *name, int flags=
-)
->         symbol->type =3D S_UNKNOWN;
->         symbol->flags =3D flags;
->         INIT_LIST_HEAD(&symbol->menus);
-> +       INIT_LIST_HEAD(&symbol->choice_link);
->
->         hash_add(sym_hashtable, &symbol->node, hash);
->
-> --
-> 2.43.0
->
+> +static int hx9023s_get_thres_far(struct hx9023s_data *data, u8 ch, int *val)
+> +{
+> +	int ret;
+> +	u8 buf[2];
+
+Why not use an __le16 here?
+
+> +	unsigned int reg, tmp;
+> +
+> +	reg = (ch == 4) ? HX9023S_PROX_LOW_DIFF_CFG_CH4_0 :
+> +		HX9023S_PROX_LOW_DIFF_CFG_CH0_0 + (ch * 2);
+> +
+> +	ret = regmap_bulk_read(data->regmap, reg, buf, sizeof(buf));
+> +	if (ret)
+> +		return ret;
+> +
+> +	tmp = (get_unaligned_le16(buf) & GENMASK(9, 0)) * 32;
+then le16_to_cpu() here
+
+> +	data->ch_data[ch].thres.far = tmp;
+> +	*val = tmp;
+> +
+> +	return IIO_VAL_INT;
+> +}
 
 
---=20
-Best Regards
-Masahiro Yamada
+
+> +static int hx9023s_write_event_config(struct iio_dev *indio_dev,
+> +				      const struct iio_chan_spec *chan,
+> +				      enum iio_event_type type,
+> +				      enum iio_event_direction dir,
+> +				      int state)
+> +{
+> +	struct hx9023s_data *data = iio_priv(indio_dev);
+> +
+> +	if (test_bit(chan->channel, &data->chan_in_use)) {
+> +		hx9023s_ch_en(data, chan->channel, !!state);
+> +		__assign_bit(chan->channel, &data->chan_event, data->ch_data[chan->channel].enable);
+
+very long line.
+
+> +	}
+> +
+> +	return 0;
+> +}
+
+
+...
+
+> +static int hx9023s_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct iio_dev *indio_dev;
+> +	struct hx9023s_data *data;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(struct hx9023s_data));
+
+sizeof(*data)
+
+preferred as then I don't need to figure out if there is a match with
+
+data = iio_priv(indio_dev)
+
+below.
+
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	data = iio_priv(indio_dev);
+> +	mutex_init(&data->mutex);
+> +
+> +	data->regmap = devm_regmap_init_i2c(client, &hx9023s_regmap_config);
+> +	if (IS_ERR(data->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(data->regmap), "regmap init failed\n");
+> +
+> +	ret = hx9023s_property_get(data);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "dts phase failed\n");
+> +
+> +	ret = devm_regulator_get_enable(dev, "vdd");
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "regulator get failed\n");
+> +
+> +	ret = hx9023s_id_check(indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "id check failed\n");
+> +
+> +	indio_dev->name = "hx9023s";
+> +	indio_dev->channels = hx9023s_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(hx9023s_channels);
+> +	indio_dev->info = &hx9023s_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	i2c_set_clientdata(client, indio_dev);
+> +
+> +	ret = regmap_multi_reg_write(data->regmap, hx9023s_reg_init_list,
+> +				     ARRAY_SIZE(hx9023s_reg_init_list));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "device init failed\n");
+> +
+> +	ret = hx9023s_ch_cfg(data);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "channel config failed\n");
+> +
+> +	ret = regcache_sync(data->regmap);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "regcache sync failed\n");
+> +
+> +	if (client->irq) {
+> +		ret = devm_request_threaded_irq(dev, client->irq, hx9023s_irq_handler,
+> +						hx9023s_irq_thread_handler, IRQF_ONESHOT,
+> +						"hx9023s_event", indio_dev);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "irq request failed\n");
+> +
+> +		data->trig = devm_iio_trigger_alloc(dev, "%s-dev%d", indio_dev->name,
+> +						    iio_device_id(indio_dev));
+> +		if (!data->trig)
+> +			return dev_err_probe(dev, -ENOMEM,
+> +					"iio trigger alloc failed\n");
+> +
+> +		data->trig->ops = &hx9023s_trigger_ops;
+> +		iio_trigger_set_drvdata(data->trig, indio_dev);
+> +
+> +		ret = devm_iio_trigger_register(dev, data->trig);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					"iio trigger register failed\n");
+> +	}
+> +
+> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, iio_pollfunc_store_time,
+> +					      hx9023s_trigger_handler, &hx9023s_buffer_setup_ops);
+
+Trivial but preferred wrap remains 80 chars unless there is a good reason
+to go longer.
+
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				"iio triggered buffer setup failed\n");
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
+> +}
 
