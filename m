@@ -1,232 +1,246 @@
-Return-Path: <linux-kernel+bounces-243526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F424929734
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AAA92973D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 11:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9C61C209C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 09:01:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6932B281AC7
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 09:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B7011CA9;
-	Sun,  7 Jul 2024 09:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB6512E55;
+	Sun,  7 Jul 2024 09:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="bIkt82a7"
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3N9EzFY"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BBD6AB6
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 09:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB4F79F2;
+	Sun,  7 Jul 2024 09:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720342913; cv=none; b=M9k78ZrvAd4KY2VhaR+KNvswUOFrZJy1u5rV9yzevYnzwQsdE9oOKJ3pvP5gSzgj1cuZgmsdpLwPQvivkubSms5XuJDZdcRbXQz3rWrSu+ynyfK5AdK46n6vaUDYeYYmrL65etYyryh6L3fZY3EianTIsxZx3HONCHNJbunWcZs=
+	t=1720343772; cv=none; b=E+3BDvmTHos+MTTLAxHiyofaCx81MTHyPFlAIRnDgD8ueD9nDF7h1KZK7eCLgNW7yV59O3eI7oGyhixjCed5Pe2NGDDJYe2iROHWKk7TVi9SKudePeERBsFNMFCLCl4iTd2i9PYIfbiYh59UiTVydOeIi4cOYjYZWSvz956v0Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720342913; c=relaxed/simple;
-	bh=8vDD3Vs0nX7RWoUIPW9UfV0zdvhLtFiF3W2BsPp7AJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PWN+TrGEXgGuFvv19Z64fZrV0dV8MaPXG4IEJ00CDgRqbyvjuJZeseFQwCUz/HS/vhy44E/pz39UfMvsl+FA48ZIdRqm3Ot5DYc08WRxLC/IQ8q3qLBZJM7KzE7ln0+oAxnXueBfbqxpvjZeGU8weLahWMkXK4vu4hOU9d7sr40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=bIkt82a7; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WH1TM21N8zf5n;
-	Sun,  7 Jul 2024 11:01:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720342903;
-	bh=ccGFCfJj+0USx7pg3qPSDeXuTuHIjg7grW1wNNxHys8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bIkt82a7I8VPRqv3rTQdA+pgpoxitwyozvqGeJ4KUWValN2cRICPwmkUdzbgGzxDa
-	 IUWbccgD9cibggSsBHFiciIxPs5pAFPXpwu5dk9dvBHycOPrRLo9DcjvGweGvSvlz3
-	 hjjD6U5FN41zUmMGThnwwb0k4cncBRpi7n+Dw6bw=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WH1TH2v0lzFns;
-	Sun,  7 Jul 2024 11:01:39 +0200 (CEST)
-Date: Sun, 7 Jul 2024 11:01:36 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240706.fiquaeCodoo8@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com>
+	s=arc-20240116; t=1720343772; c=relaxed/simple;
+	bh=ydNFNYEIYmbYL4flftPV+UX9TvfxUFWYUJPOtpa6yMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MlsTBRLrhr7RxfXZUX/7cQsRl/XVqc6VotjCOK2YQ6gKk4lHBwTAirbSokULFwMNI9p6c6OrBO8WH5HYzOMOcnJmXJfPedfMc4Vd4UoJ+RXxSLVbwolCpdgk5RJlQvzygRmG5r4EoNmNjIsZJN572kg/KGFZw4qPC2WaAdJS1e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3N9EzFY; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7f6841b6cc3so75117739f.1;
+        Sun, 07 Jul 2024 02:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720343769; x=1720948569; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wO019b4mVqD7G+2psdVM824ZYHOu6XzURu8wfc6C8YQ=;
+        b=S3N9EzFYny1Uz54Mm+f6F399LGq3OKNRSeboXJFNc3BwXiDUiHKfCkbSFA3CfM69hw
+         TkpGqp12h8bYFnvKWE1vML0AemnDwEE/u64vs+t4pUX5I8thuHkOTT5uB/XPS0Lr0OIm
+         4UNhWq3iDNz5WRn70gDAngDLioqqPWc3F7OEpxN7x1HA7UORqndCiOIqJ6frI/Z27p3D
+         TjC1kJRl8SuvtGed/ZE3VeeO8USdxHQOs1o2sJY5B5jG/P0FxEUNddqhKnwVwWhTOlCU
+         zRXZfhNIrygXIAwk2twippmf8fcGnHBg4rQ8qn5TfAW0DBZ7E/gU3hm6L9T3FDMKl1x7
+         wYMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720343769; x=1720948569;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wO019b4mVqD7G+2psdVM824ZYHOu6XzURu8wfc6C8YQ=;
+        b=QHT8sl0Am0XyQlZxmy4V1gbgQSFIhhIUO12RLRI2g2mN++t6dZE8ahZeD+Hx/yasVo
+         2aKBVyTeKC+FBDA1HmL9vKaR6dfHPjhLQ7gSNZ7+Cj3dMP3UqP2Zz5HmpgC3IfWV6aAW
+         X1IIawCqqWBir/I1ZSqZT8I2+kEWh1GamrRepXkVfE69cNIhcojyrFtkqalTGjsr7DIY
+         V5JafPzyJVDl3Tt8m5S7+C1H99K0GQ5hHvnvww2LvttutjoSA3M8Hhx0YrFcPAvS8xYG
+         yHnYvuu3Bz8vqkAxkVhEXIGBF03E0uIMtTBnXd1BupVhwsSK0VV4e9tRwV1YCn+nVGQW
+         cIBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuesZjsM+fyt7zGX4PbBNCVW8yINedPkiOwbINu05yZGzkDsqZi0n/Xughn+HaQ0wz8ivSIL3k78OQILAWvTsOJB78Pnyo9JUAuULZ4jt+iUNPbxkbXJzIfFaR20FxO08SSiVGy5UVCw==
+X-Gm-Message-State: AOJu0Yxfrx+nq2hpWN9nXNxc1P21yMjX8Psw54lLWo3qLjBKeM57pksP
+	Df71kUr2Li5ZzUCuGDIq+5NOAN00OZl9G+NYE9U0ALLCyh4E/FQU
+X-Google-Smtp-Source: AGHT+IEa37RO3Pj/DcXH28CRIjq9XM5K9gK+G9rsnp/N6R99j1OHyvizJiprmMKpf0yPan2T4GTjtQ==
+X-Received: by 2002:a05:6602:234f:b0:7fa:d9e6:14d6 with SMTP id ca18e2360f4ac-7fad9e61c79mr152328539f.5.1720343769631;
+        Sun, 07 Jul 2024 02:16:09 -0700 (PDT)
+Received: from localhost.localdomain ([122.161.53.80])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a95b572sm6107944a91.18.2024.07.07.02.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jul 2024 02:16:09 -0700 (PDT)
+From: Shresth Prasad <shresthprasad7@gmail.com>
+To: vkoul@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	hdegoede@redhat.com
+Cc: dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	Shresth Prasad <shresthprasad7@gmail.com>
+Subject: [PATCH v2] dt-bindings: dma: mv-xor-v2: Convert to dtschema
+Date: Sun,  7 Jul 2024 14:43:33 +0530
+Message-ID: <20240707091331.127520-3-shresthprasad7@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Sat, Jul 06, 2024 at 04:52:42PM +0800, Andy Lutomirski wrote:
-> On Fri, Jul 5, 2024 at 3:03 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > allowed for execution.  The main use case is for script interpreters and
-> > dynamic linkers to check execution permission according to the kernel's
-> > security policy. Another use case is to add context to access logs e.g.,
-> > which script (instead of interpreter) accessed a file.  As any
-> > executable code, scripts could also use this check [1].
-> >
-> 
-> Can you give a worked-out example of how this is useful?
+Convert txt bindings of Marvell XOR v2 engines to dtschema to allow
+for validation.
 
-Which part?  Please take a look at CLIP OS, chromeOS, and PEP 578 use
-cases and related code (see cover letter).
+Also add missing property `dma-coherent` as `drivers/dma/mv_xor_v2.c`
+calls various dma-coherent memory functions.
 
-> 
-> I assume the idea is that a program could open a file, then pass the
-> fd to execveat() to get the kernel's idea of whether it's permissible
-> to execute it.  And then the program would interpret the file, which
-> is morally like executing it.  And there would be a big warning in the
-> manpage that passing a *path* is subject to a TOCTOU race.
+Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
+---
+Changes in v2:
+    - Update commit message to indicate addition of `dma-coherent`
+    - Change maintainer
+    - Change compatible section
+    - Add `minItems` to `clock-names`
+    - Remove "location and length" from reg description
+    - List out `clock-names` items in `if:`
+    - Create two variants of `if:`
 
-yes
+Tested against `marvell/armada-7040-db.dtb`, `marvell/armada-7040-mochabin.dtb`
+and `marvell/armada-8080-db.dtb`
 
-> 
-> This type of usage will do the wrong thing if LSM policy intends to
-> lock down the task if the task were to actually exec the file.  I
+ .../bindings/dma/marvell,xor-v2.yaml          | 86 +++++++++++++++++++
+ .../devicetree/bindings/dma/mv-xor-v2.txt     | 28 ------
+ 2 files changed, 86 insertions(+), 28 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
+ delete mode 100644 Documentation/devicetree/bindings/dma/mv-xor-v2.txt
 
-Why? LSMs should currently only change the bprm's credentials not the
-current's credentials.  If needed, we can extend the current patch
-series with LSM specific patches for them to check bprm->is_check.
+diff --git a/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml b/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
+new file mode 100644
+index 000000000000..da58f6e0feab
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
+@@ -0,0 +1,86 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/marvell,xor-v2.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell XOR v2 engines
++
++maintainers:
++  - Hans de Goede <hdegoede@redhat.com>
++
++properties:
++  compatible:
++    oneOf:
++      - const: marvell,xor-v2
++      - items:
++          - enum:
++              - marvell,armada-7k-xor
++          - const: marvell,xor-v2
++
++  reg:
++    items:
++      - description: DMA registers
++      - description: global registers
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: core
++      - const: reg
++
++  msi-parent:
++    description:
++      Phandle to the MSI-capable interrupt controller used for
++      interrupts.
++    maxItems: 1
++
++  dma-coherent: true
++
++required:
++  - compatible
++  - reg
++  - msi-parent
++  - dma-coherent
++
++allOf:
++  - if:
++      properties:
++        clocks:
++          maxItems: 1
++    then:
++      properties:
++        clock-names:
++          items:
++            - const: core
++  - if:
++      properties:
++        clocks:
++          minItems: 2
++      required:
++        - clocks
++    then:
++      properties:
++        clock-names:
++          items:
++            - const: core
++            - const: reg
++      required:
++        - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    xor0@6a0000 {
++        compatible = "marvell,armada-7k-xor", "marvell,xor-v2";
++        reg = <0x6a0000 0x1000>, <0x6b0000 0x1000>;
++        clocks = <&ap_clk 0>, <&ap_clk 1>;
++        clock-names = "core", "reg";
++        msi-parent = <&gic_v2m0>;
++        dma-coherent;
++    };
+diff --git a/Documentation/devicetree/bindings/dma/mv-xor-v2.txt b/Documentation/devicetree/bindings/dma/mv-xor-v2.txt
+deleted file mode 100644
+index 9c38bbe7e6d7..000000000000
+--- a/Documentation/devicetree/bindings/dma/mv-xor-v2.txt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-* Marvell XOR v2 engines
+-
+-Required properties:
+-- compatible: one of the following values:
+-    "marvell,armada-7k-xor"
+-    "marvell,xor-v2"
+-- reg: Should contain registers location and length (two sets)
+-    the first set is the DMA registers
+-    the second set is the global registers
+-- msi-parent: Phandle to the MSI-capable interrupt controller used for
+-  interrupts.
+-
+-Optional properties:
+-- clocks: Optional reference to the clocks used by the XOR engine.
+-- clock-names: mandatory if there is a second clock, in this case the
+-   name must be "core" for the first clock and "reg" for the second
+-   one
+-
+-
+-Example:
+-
+-	xor0@400000 {
+-		compatible = "marvell,xor-v2";
+-		reg = <0x400000 0x1000>,
+-		      <0x410000 0x1000>;
+-		msi-parent = <&gic_v2m0>;
+-		dma-coherent;
+-	};
+-- 
+2.45.2
 
-> personally think this is a mis-design (let the program doing the
-> exec-ing lock itself down, possibly by querying a policy, but having
-> magic happen on exec seems likely to do the wrong thing more often
-> that it does the wright thing), but that ship sailed a long time ago.
-
-The execveat+AT_CHECK is only a check that doesn't impact the caller.
-Maybe you're talking about process transition with future LSM changes?
-In this case, we could add another flag, but I'm convinced it would be
-confusing for users.  Anyway, let LSMs experiment with that and we'll
-come up with a new flag if needed.  The current approach is a good and
-useful piece to fill a gap in Linux access control systems.
-
-> 
-> So maybe what's actually needed is a rather different API: a way to
-> check *and perform* the security transition for an exec without
-> actually execing.  This would need to be done NO_NEW_PRIVS style for
-> reasons that are hopefully obvious, but it would permit:
-
-NO_NEW_PRIVS is not that obvious in this case because the restrictions
-are enforced by user space, not the kernel.  NO_NEW_PRIVS makes sense to
-avoid kernel restrictions be requested by a malicious/unprivileged
-process to change the behavior of a (child) privileged/trusted process.
-We are not in this configuration here.  The only change would be for
-ptrace, which is a good thing either way and should not harm SUID
-processes but avoid confused deputy attack for them too.
-
-If this is about an LSM changing the caller's credentials, then yes it
-might want to set additional flags, but that would be specific to their
-implementation, not part of this patch.
-
-> 
-> fd = open(some script);
-> if (do_exec_transition_without_exec(fd) != 0)
->   return;  // don't actually do it
-> 
-> // OK, we may have just lost privileges.  But that's okay, because we
-> meant to do that.
-> // Make sure we've munmapped anything sensitive and erased any secrets
-> from memory,
-> // and then interpret the script!
-> 
-> I think this would actually be straightforward to implement in the
-> kernel -- one would need to make sure that all the relevant
-> no_new_privs checks are looking in the right place (as the task might
-> not actually have no_new_privs set, but LSM_UNSAFE_NO_NEW_PRIVS would
-> still be set), but I don't see any reason this would be
-> insurmountable, nor do I expect there would be any fundamental
-> problems.
-
-OK, that's what is described below with security_bprm_creds_for_exec().
-Each LSM can implement this change with the current patch series, but
-that should be part of a dedicated patch series per LSM, for those
-willing to leverage this new feature.
-
-> 
-> 
-> > This is different than faccessat(2) which only checks file access
-> > rights, but not the full context e.g. mount point's noexec, stack limit,
-> > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > Since the use of AT_CHECK follows the exact kernel semantic as for a
-> > real execution, user space gets the same error codes.
-> >
-> > With the information that a script interpreter is about to interpret a
-> > script, an LSM security policy can adjust caller's access rights or log
-> > execution request as for native script execution (e.g. role transition).
-> > This is possible thanks to the call to security_bprm_creds_for_exec().
-> >
-> > Because LSMs may only change bprm's credentials, use of AT_CHECK with
-> > current kernel code should not be a security issue (e.g. unexpected role
-> > transition).  LSMs willing to update the caller's credential could now
-> > do so when bprm->is_check is set.  Of course, such policy change should
-> > be in line with the new user space code.
-> >
-> > Because AT_CHECK is dedicated to user space interpreters, it doesn't
-> > make sense for the kernel to parse the checked files, look for
-> > interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
-> > if the format is unknown.  Because of that, security_bprm_check() is
-> > never called when AT_CHECK is used.
-> >
-> > It should be noted that script interpreters cannot directly use
-> > execveat(2) (without this new AT_CHECK flag) because this could lead to
-> > unexpected behaviors e.g., `python script.sh` could lead to Bash being
-> > executed to interpret the script.  Unlike the kernel, script
-> > interpreters may just interpret the shebang as a simple comment, which
-> > should not change for backward compatibility reasons.
-> >
-> > Because scripts or libraries files might not currently have the
-> > executable permission set, or because we might want specific users to be
-> > allowed to run arbitrary scripts, the following patch provides a dynamic
-> > configuration mechanism with the SECBIT_SHOULD_EXEC_CHECK and
-> > SECBIT_SHOULD_EXEC_RESTRICT securebits.
-> 
-> Can you explain what those bits do?  And why they're useful?
-
-I didn't want to duplicate the comments above their definition
-explaining their usage.  Please let me know if it's not enough.
-
-> 
-> >
-> > This is a redesign of the CLIP OS 4's O_MAYEXEC:
-> > https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> > This patch has been used for more than a decade with customized script
-> > interpreters.  Some examples can be found here:
-> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
-> 
-> This one at least returns an fd, so it looks less likely to get
-> misused in a way that adds a TOCTOU race.
-
-We can use both an FD or a path name with execveat(2).  See discussion
-with Kees and comment from Linus.
 
