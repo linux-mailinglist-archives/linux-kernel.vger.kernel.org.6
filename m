@@ -1,157 +1,122 @@
-Return-Path: <linux-kernel+bounces-243589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6157192981A
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:14:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B420192981D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 15:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF581C2144D
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64082282242
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Jul 2024 13:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA8F21345;
-	Sun,  7 Jul 2024 13:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFEE1F934;
+	Sun,  7 Jul 2024 13:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuHfne8S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="QMPzPjEp"
+Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CF5210E4;
-	Sun,  7 Jul 2024 13:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B13C1CFA8
+	for <linux-kernel@vger.kernel.org>; Sun,  7 Jul 2024 13:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720358057; cv=none; b=pCTsJdjCAYmCbZCT1qIQGXe6n+EwIVPga060ESTihQFvebEAczdrM2pTubPRrGhYmIuO3SCLwilI3INTWRRm9KMONcPzlMuQgxUG/+VCWU/HcbKRauBdffctCPfOBmXZdIE0K6bztI06POZ24bCNMsgDMfqVbo0FencxCyClLnI=
+	t=1720358645; cv=none; b=IYw68Dx91zhLDjKNt2mXx71aSMRsrB3fdzGil7Vr0Aq9v13qfL9sjyB4m+mnGLCE2nR9D4dTTMvVe7npL3mjjLSzRW9LiuU80016hl5gH3ZyzBMXwd9yW2lLXJ7ae/l5RgYBp7A2MAPlPQllYo8FMOGpbCq30zlLe69G05OC+LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720358057; c=relaxed/simple;
-	bh=BBQT9o8bXWzBYLEg/2ibzEJ8MHtapLUOHuUVrNbntjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r3RjQlVs6hwP9r4dn2hCPLyMi5ej2CIpUxSEiE7IyYnd2uwsYbCct5hpA+BkObNB6a8/t3b64jTEV+iz335AjZLhuV1hhTXcoR2eAyeZLBjQUnOMAjvJDlZ69qdmLO7qMpJBoUqL5y8C5CLyhZerNWz7t6Pmbjj32m1MDoRkbew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UuHfne8S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3408EC3277B;
-	Sun,  7 Jul 2024 13:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720358056;
-	bh=BBQT9o8bXWzBYLEg/2ibzEJ8MHtapLUOHuUVrNbntjY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UuHfne8SRi3T/moNEqYz6Wv/3dJWpoKHAzlBMZABwjIz/7VNxJfZbpg3Hnhx5SQan
-	 Il7XwP9f/1UWO0dwkiSlfMHTewTowrGOaPszcOQR4q4/nIqlqsQO6+t3IIpsjpYter
-	 fJ6s0Tv9NNMSJqGbLjTT1ctTXP9MqFgBjICMU306DJVoql8bhi54MhNLowDrDCSGZy
-	 KCCYUH46POVgYcFVEN6oLQRwetzFyqm/Ub+PGwQjUOAHQgYblkXCoZuUPzezdU4gs6
-	 wbvesqTN8IM27uD4gZoDJzVLK6t6l3QbLJvC0pZdA2lF07+8ZWjOOpZ/OVRJC59kPX
-	 fuSWO81nUk6sg==
-Date: Sun, 7 Jul 2024 14:14:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] iio: bu27034: Add a read only HWARDWAREGAIN
-Message-ID: <20240707141410.16e6dbbe@jic23-huawei>
-In-Reply-To: <ec349847cc994f3bd632e99b408a31e7c70581d0.1720176341.git.mazziesaccount@gmail.com>
-References: <cover.1720176341.git.mazziesaccount@gmail.com>
-	<ec349847cc994f3bd632e99b408a31e7c70581d0.1720176341.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720358645; c=relaxed/simple;
+	bh=hOtfMf7YITsToXKe0Sm30k+rl8ivMg9h0b6/sWLTt3o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Drr5yrl/NkMXODPvwC9ancUiGkg/LA9YWY31xp8j+kUBT18Gr7T0jeb3+FO7GX+rkERwLGQBTssqs2QbjQvVT6/Pp6iBS36IJ7/rhX/NBgskwM499iEHyhczpBzQ7w1MQfCo+Xzt7OlsFelD01G4vs1gttkVMOvX+f58DMjSwe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=QMPzPjEp; arc=none smtp.client-ip=17.58.6.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1720358643;
+	bh=SXMLlX0Aj8KdHWLHBTcDsTgIPAEEfy0Fi8U2zAC91Fs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=QMPzPjEpjp4kSVn/xBw2RTh8AgajxLPAPGg0Hd3g64fNdGsphCGWUkVUiRQOI3G77
+	 DMeQ5KJHB6DFzZG2oOu18BjZjE+2LWBHs4hp5nTzI8nIXZL28hWf1EYpxt0mQ/5RXw
+	 iaIceUt9IfsCLTAYPDu/QO651W9noIdQPFKyjeXxApKOWyJhrgsSdtmDGKFhMgO8xM
+	 UZedDVfMBoYzY5VfjAojr6XS6eS1xjhn/pElrydGykHvY4OwwMOVBcbEFw3F164Llj
+	 2aBNG02buYsVEzt07WKPj8xwyF9Re35dfEq11cO8cbUFgWcQCO3mopsAnvLaVbGaix
+	 n6UordDi4zM8A==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPSA id B1D6768008D;
+	Sun,  7 Jul 2024 13:23:59 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Sun, 07 Jul 2024 21:23:15 +0800
+Subject: [PATCH] driver core: Fix size calculation of symlink name for
+ devlink_(add|remove)_symlinks()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240707-devlink_fix-v1-1-623acb431cd8@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMKWimYC/x2MQQqAIBAAvyJ7TrCwpL4SEZJrLYWFggTi31s6z
+ sBMgYSRMMEkCkTMlOgODG0jYDts2FGSY4ZOdVoZZaTDfFE4V0+vVN7qwaHzOPbAxROR9X+bl1o
+ /OQI/C10AAAA=
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Saravana Kannan <saravanak@google.com>
+Cc: linux-kernel@vger.kernel.org, zijun_hu@icloud.com, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.0
+X-Proofpoint-GUID: lV9OVF1A11SGedNhLxWxen53mteYY7_2
+X-Proofpoint-ORIG-GUID: lV9OVF1A11SGedNhLxWxen53mteYY7_2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-07_06,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=759 mlxscore=0 phishscore=0 spamscore=0
+ adultscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2407070109
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On Fri, 5 Jul 2024 13:55:49 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-Typo in patch title. If nothing much else comes up I can fix whilst applying.
+devlink_(add|remove)_symlinks() wants to kzalloc() memory to save symlink
+name for either supplier or consumer, but forget to consider consumer
+prefix when calclulate memory size, fixed by considering prefix for both
+supplier and consumer.
 
-> The ROHM BU27034 light sensor has two data channels for measuring
-> different frequencies of light. The result from these channels is
-> combined into Lux value while the raw channel values are reported via
-> intensity channels.
-> 
-> Both of the intensity channels have adjustable gain setting which
-> impacts the scale of the raw channels. Eg, doubling the gain will double
-> the values read from the raw channels, which halves the scale value. The
-> integration time can also be set for the sensor. This does also have an
-> impact to the scale of the intensity channels because increasing the
-> integration time will also increase the values reported via the raw
-> channels.
-> 
-> Impact of integration time to the scale and the fact that the scale value
-> does not start from '1', can make it hard for a human reader to compute the
-> gain values based on the scale.
-> 
-> Add read-only HARDWAREGAIN to help debugging.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Fixes: 287905e68dd2 ("driver core: Expose device link details in sysfs")
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+ drivers/base/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Rest of this series looks good to me and I'm fine making appropriate tweaks
-for stuff I identified whilst applying.
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 2b4c0624b704..f14cfe5c97b7 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -572,7 +572,7 @@ static int devlink_add_symlinks(struct device *dev)
+ 	len = max(strlen(dev_bus_name(sup)) + strlen(dev_name(sup)),
+ 		  strlen(dev_bus_name(con)) + strlen(dev_name(con)));
+ 	len += strlen(":");
+-	len += strlen("supplier:") + 1;
++	len += max(strlen("supplier:"), strlen("consumer:")) + 1;
+ 	buf = kzalloc(len, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+@@ -623,7 +623,7 @@ static void devlink_remove_symlinks(struct device *dev)
+ 	len = max(strlen(dev_bus_name(sup)) + strlen(dev_name(sup)),
+ 		  strlen(dev_bus_name(con)) + strlen(dev_name(con)));
+ 	len += strlen(":");
+-	len += strlen("supplier:") + 1;
++	len += max(strlen("supplier:"), strlen("consumer:")) + 1;
+ 	buf = kzalloc(len, GFP_KERNEL);
+ 	if (!buf) {
+ 		WARN(1, "Unable to properly free device link symlinks!\n");
 
-Will give a bit of time for DT maintainers to look at the renames and check
-we haven't missed anything subtle there.
+---
+base-commit: c6653f49e4fd3b0d52c12a1fc814d6c5b234ea15
+change-id: 20240707-devlink_fix-0fa46dedfe95
 
-Jonathan
-
-
-> 
-> ---
-> Revision history:
-> v1 => v2:
->  - fix switch case fallthrough warning by adding explicit return
-> ---
->  drivers/iio/light/rohm-bu27034.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/rohm-bu27034.c b/drivers/iio/light/rohm-bu27034.c
-> index ec4f9bef83f8..76711c3cdf7c 100644
-> --- a/drivers/iio/light/rohm-bu27034.c
-> +++ b/drivers/iio/light/rohm-bu27034.c
-> @@ -148,7 +148,8 @@ static const struct iio_itime_sel_mul bu27034_itimes[] = {
->  	.type = IIO_INTENSITY,						\
->  	.channel = BU27034_CHAN_##_name,				\
->  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |			\
-> -			      BIT(IIO_CHAN_INFO_SCALE),			\
-> +			      BIT(IIO_CHAN_INFO_SCALE) |		\
-> +			      BIT(IIO_CHAN_INFO_HARDWAREGAIN),		\
->  	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),	\
->  	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),		\
->  	.info_mask_shared_by_all_available =				\
-> @@ -989,6 +990,13 @@ static int bu27034_read_raw(struct iio_dev *idev,
->  
->  		return IIO_VAL_INT_PLUS_MICRO;
->  
-> +	case IIO_CHAN_INFO_HARDWAREGAIN:
-> +		ret = bu27034_get_gain(data, chan->channel, val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		return IIO_VAL_INT;
-> +
->  	case IIO_CHAN_INFO_SCALE:
->  		return bu27034_get_scale(data, chan->channel, val, val2);
->  
-> @@ -1033,12 +1041,17 @@ static int bu27034_write_raw_get_fmt(struct iio_dev *indio_dev,
->  				     struct iio_chan_spec const *chan,
->  				     long mask)
->  {
-> +	struct bu27034_data *data = iio_priv(indio_dev);
->  
->  	switch (mask) {
->  	case IIO_CHAN_INFO_SCALE:
->  		return IIO_VAL_INT_PLUS_NANO;
->  	case IIO_CHAN_INFO_INT_TIME:
->  		return IIO_VAL_INT_PLUS_MICRO;
-> +	case IIO_CHAN_INFO_HARDWAREGAIN:
-> +		dev_dbg(data->dev,
-> +			"HARDWAREGAIN is read-only, use scale to set\n");
-> +		return -EINVAL;
->  	default:
->  		return -EINVAL;
->  	}
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
