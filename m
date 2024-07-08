@@ -1,218 +1,131 @@
-Return-Path: <linux-kernel+bounces-244478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2938592A4BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:32:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D23A92A4BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEDA5283DAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71561F21A05
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7338B13DBB2;
-	Mon,  8 Jul 2024 14:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3798313DDBF;
+	Mon,  8 Jul 2024 14:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNuHDxCT"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UHnOiCUb"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2921E49D;
-	Mon,  8 Jul 2024 14:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204841C06
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720449102; cv=none; b=grpA3ywCiHn5PkDdECkCUFFY4kl10ePq8pP++vt9PvKicAPiLqBk8KDDH+Fu989m4hNV96hxdnsbIlEo0Ia1suhfYC1djtSBuvNQCiTyigKS0A8BhCsIS6OBEHtQiquSuxk41xgD/L+T0bFzJTKoexs+2B1X4O6TFZ/uzs7hBeE=
+	t=1720449103; cv=none; b=PLa3JW+ROSc6ijbFUtlUK69BTkHJ2clnN98mLzRLM6jitenu6y594Qq1YaNqyY0T892mVJUOlYVaygXvEVfMffZuPLAenqs8eVFDVHe0NYeRBJj8TraCWGBRhijTApAD7hT1w2CCpRVn80o/n+9kRqH7yNAwLUBdQ3gshuhjIEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720449102; c=relaxed/simple;
-	bh=kMrshSTmecURhMbKKK8nqMHHvXdCCxbmVjYBrZd92/4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fyq1ijAjJ3SsanHq8OJn1evcJkT+N94GliLoT8R3eMitLEHUpaPPLAxCUwhCviqfxhRRjhh/y/UEyaBm3iuil86OGG9Vmjk6XzSG22zbBPOtrrWe7+paSFxHMFcimEe3x9T/y71qMbZNTC+eSxDJyWQjgvV/Hgyq0pqS/FQ5dhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNuHDxCT; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1fafc9e07f8so28371125ad.0;
-        Mon, 08 Jul 2024 07:31:41 -0700 (PDT)
+	s=arc-20240116; t=1720449103; c=relaxed/simple;
+	bh=FVix9PGTN8lxYiJDQpGSkaeKIY8jzSQ4Vgfu7npWV+M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rM5GJZm+nQyXvafxeRUDSRS0CaPe3/IDjBppy4w8N49msXujgnHnivqH52bYEN0P/eiX2EgvhS4I1AxvSP0ZERCr5/yH7PZ164y3jfUsSTTZYLKuTrvHPkaseAWYNPkAZ3fcU49DXlXr6CSu0Wkzkuv87IoEcd3y4Pm7RW5ERBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UHnOiCUb; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3678f36f154so2153986f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 07:31:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720449100; x=1721053900; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Z5ePQJB5dOQGJQCphJ1+uf0wfSAbQJ0SNQqkQJeuxI=;
-        b=NNuHDxCTkraHPrUVcg9bKhpjF2Nf+3ZnTb8oWxb66nkIoU+o8WqiHEN6ywp92XfuRt
-         RcCvZg6FCPZSk0Oij6QyQShm9S+257XAv79GXC293gW1uFzLaCoLq3lio78MHAt20pyE
-         pKoJI5RttPE9Ig4GZWjbCf15QZMpdCNp7lmyoN+1oXSaHrFbd5+cAc8PwXuIfpqr7iNu
-         VGRUB9UvARe2W/5+2AIVI5N9GhzG37GmQ25JFY2rWc1ar1UzRGnQ1JPpWwkPwy9N8uj5
-         rUuQO8uRqgSFWaRr4T6tXLuOjLeTAuQUZx4r/6Zoh3FIpy2G1ViyUgM7pl0q8Xis6khc
-         0IiQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720449099; x=1721053899; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xjykrm0qdIAVFxBsv88U7CygsnsEAm9sI6Tg1UFxFS4=;
+        b=UHnOiCUby35FLF0bAi3j3u9g8HH3271qPgUaVreom/pjRvfBCKwiXhh+x2BbCOpUMj
+         SPVEMtdoRAPpHhM6iY0HHl8VcAKRyF8Jwiu4d4s50XI3CssRrQiGDE6nGZSn/tY8Fepc
+         s7hnMKzhTeezLTJnQpfouUfNtJN4eanXoLQwgam9LbFk+z5Y3m6VDFRLJCPEOpPDAzib
+         yswxRFEJ8rLHPk7a6oIu8yRmB3PDK4QH+O+wU6hh6yRwQSrbrTwYs+nTx69bn8v+1mEE
+         Fj1xS3Np5Qushl4jn+k1Bk1UziOA6btJLYG0i4wf9THZJ1TBHDmumEgaI7TTvwRUQKeu
+         4fFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720449100; x=1721053900;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Z5ePQJB5dOQGJQCphJ1+uf0wfSAbQJ0SNQqkQJeuxI=;
-        b=gRyu+mYwwjH2BF6u/IEvjq1IZDrdn+2izKl43ZWWrXnj+o74dmu4cz3+bV6s0PdcSg
-         GtRMv6SvS74Ib2/S/NJcJJCkCuk1R9KIAd9ADgXm70T72+PNtGHL55hF/PwJVuFQ/FUM
-         5fJH4/WB5PJLh+7dGKErLvJQ9eOh5Q1HEXroWTClbiojCzA4zuDJRkhEYbbsEapdhAQq
-         7v/nvvGLgpJNp1cORjmSG6GU1ooIj6Iua6xfHfr4z8c0ToHA5/ip6bh+SKWXJwsCmqFF
-         KrOeX9gV1pkf+1T5zft+Kp/BGs2dsr8wuv5RCenY2PU+3oCOyHdKeTKDPr282Ir38e/3
-         8E3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVLDXZyS9AVenD4VxAXw6ebYikVfHTfDDObOK528qKli/rqFDLpoqOPLdFgwgG91dQ6V/9UcN7MJbku3lCEI6DturUcEoRn8l6weJPPdczVTbse+bdkxqkJOZ02XoWauqxYm79lFJteZM6oV/kXR1VisDrdKZPmWNGz
-X-Gm-Message-State: AOJu0Yy6LE/ZCrSKtNxrvxJk5isKVpKtsxEOWBWS2HQq1abx9hq6/JtM
-	YHyg6vMxj1TWJhJUYE9iP78nwx6JVrWIWBsQpYPISj5i/qV2tW4h
-X-Google-Smtp-Source: AGHT+IHP4QzAFCeP/vVvj4DDRWwEV4DH0pf8dJlcvV4O7jZzKiPKQ52DkeI7YSmRUpt5sE8ZqXgQWw==
-X-Received: by 2002:a17:902:ea02:b0:1fb:5c54:36c8 with SMTP id d9443c01a7336-1fb5c543ac1mr85586715ad.50.1720449100327;
-        Mon, 08 Jul 2024 07:31:40 -0700 (PDT)
-Received: from localhost.localdomain ([240e:604:203:6020:ecac:5335:e70e:6fe7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb77e9f378sm33597645ad.271.2024.07.08.07.31.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        d=1e100.net; s=20230601; t=1720449099; x=1721053899;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xjykrm0qdIAVFxBsv88U7CygsnsEAm9sI6Tg1UFxFS4=;
+        b=DA+/0uUy3zF+1Qr/KhqcReMZj+lWM4y+jRCM6LD9JkAOT6JZ9P29MPvHnZKDXSlDe/
+         1tbUOLPBzH4efK6VTc6CcMgnXGMDp4gcv03JWpBhUWft/CB4TL1RZRM2Q2cQN4Wq6Ll6
+         PhlidMD0+zXOI7XoXG/bQRdoiZsJ0NNe6apoMjQqRrS+lVXpWTXboM4H8IM/pRb2Vr3M
+         SKy9zpUUhTOuSGotJUUZn/FYpdDN2iicO6MOxRFSa3dXmez3VmLsX7Ka9DPiULbO7NhK
+         DbBbYodZxyXLlTVrM8R77WuDsrBGUXz7rd/fW1bXF+8QKuSU8KDPf6oD3RT+RqcEG610
+         oNBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTxxME1JeLZu2B8oW4KkzjSV23dBJNXPGUTCSw8NqSa/6tIzejUzeG9B2R5sT7kbIzLAIvH+InFBpAVNZ9QdVRs0s62zvJmWPgsl/L
+X-Gm-Message-State: AOJu0YwR1wH0IP9k7CQjffqsH+APxOeuOJRPA4NOhH64b4wKeqSC9bqi
+	I1LALN8ii8J+0Vf8r9Ux0bmRdMmRRqhVk7rPvZ1dvsCGh9Rnv9bP8J+dLkF3Tug=
+X-Google-Smtp-Source: AGHT+IFksh0qJqPcgvljfvOJSGe/8r6NpboWiPMrGWrNvjV7kq6Y9vcQaCk0D8KpOPRSTn4r33kXnw==
+X-Received: by 2002:a5d:664b:0:b0:364:3ba5:c5af with SMTP id ffacd0b85a97d-3679de96b30mr8282279f8f.61.1720449099459;
         Mon, 08 Jul 2024 07:31:39 -0700 (PDT)
-From: Fred Li <dracodingfly@gmail.com>
-To: willemdebruijn.kernel@gmail.com
-Cc: aleksander.lobakin@intel.com,
-	andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	davem@davemloft.net,
-	dracodingfly@gmail.com,
-	edumazet@google.com,
-	haoluo@google.com,
-	hawk@kernel.org,
-	herbert@gondor.apana.org.au,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@weissschuh.net,
-	martin.lau@linux.dev,
-	mkhalfella@purestorage.com,
-	nbd@nbd.name,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	sashal@kernel.org,
-	sdf@google.com,
-	song@kernel.org,
-	yonghong.song@linux.dev
-Subject: [PATCH] net: linearizing skb when downgrade gso_size
-Date: Mon,  8 Jul 2024 22:31:28 +0800
-Message-Id: <20240708143128.49949-1-dracodingfly@gmail.com>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
-In-Reply-To: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
-References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
+Received: from [127.0.1.1] (2a01cb09d029b5a2628cea6c7082b40d.ipv6.abo.wanadoo.fr. [2a01:cb09:d029:b5a2:628c:ea6c:7082:b40d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a043a16sm28353580f8f.0.2024.07.08.07.31.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 07:31:38 -0700 (PDT)
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Mon, 08 Jul 2024 16:31:34 +0200
+Subject: [PATCH net-next v2] net: ti: icssg-prueth: add missing deps
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240708-net-deps-v2-1-b22fb74da2a3@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAEX4i2YC/2WNQQ7CIBBFr9LMWkwHSwRX3sN0Ae1oJ1FooCFtm
+ t5dZOvy5b+8v0OiyJTg1uwQKXPi4AvIUwPDZP2LBI+FQbaya6+tFp4WMdKcBCnsLJJyiBKKPkd
+ 68lpTD/hZntYF+rJMnJYQt/qRse7/uYwChb4ogwqNGbW+O7u92UU6D+ED/XEcX5r0jCOtAAAA
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, MD Danish Anwar <danishanwar@ti.com>, 
+ Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Guillaume La Roque <glaroque@baylibre.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720449097; l=1105;
+ i=glaroque@baylibre.com; s=20240708; h=from:subject:message-id;
+ bh=FVix9PGTN8lxYiJDQpGSkaeKIY8jzSQ4Vgfu7npWV+M=;
+ b=MJ92ygnHd12XNiES5m8Se7X9BA+3gEAuiRE10jTK5E9e8BFjhV1HQjPcOLX1V6hdRd6WsBmY7
+ C7vVdnJj1pLDwkShZGqyZVvmancne016d7EVpuhE2Za69D8m3OAruxU
+X-Developer-Key: i=glaroque@baylibre.com; a=ed25519;
+ pk=xmoWMxCw4Oles0YCggjXh0FCCnECZvaDU0PaXVPxm/Y=
 
-Here is a patch that linearizing skb when downgrade
-gso_size and sg should disabled, If there are no issues,
-I will submit a formal patch shortly.
+Add missing dependency on NET_SWITCHDEV.
 
-Signed-off-by: Fred Li <dracodingfly@gmail.com>
+Fixes: abd5576b9c57 ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
 ---
- include/linux/skbuff.h | 22 ++++++++++++++++++++++
- net/core/filter.c      | 16 ++++++++++++----
- net/core/skbuff.c      | 19 ++-----------------
- 3 files changed, 36 insertions(+), 21 deletions(-)
+Changes in v2:
+- Fixes shaone: put upstream shaone and not internal one.
+- Link to v1: https://lore.kernel.org/r/20240708-net-deps-v1-1-835915199d88@baylibre.com
+---
+ drivers/net/ethernet/ti/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 5f11f9873341..99b7fc1e826a 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2400,6 +2400,28 @@ static inline unsigned int skb_headlen(const struct sk_buff *skb)
- 	return skb->len - skb->data_len;
- }
- 
-+static inline bool skb_is_nonsg(const struct sk_buff *skb)
-+{
-+	struct sk_buff *list_skb = skb_shinfo(skb)->frag_list;
-+	struct sk_buff *check_skb;
-+	for (check_skb = list_skb; check_skb; check_skb = check_skb->next) {
-+		if (skb_headlen(check_skb) && !check_skb->head_frag) {
-+			/* gso_size is untrusted, and we have a frag_list with
-+                         * a linear non head_frag item.
-+                         *
-+                         * If head_skb's headlen does not fit requested gso_size,
-+                         * it means that the frag_list members do NOT terminate
-+                         * on exact gso_size boundaries. Hence we cannot perform
-+                         * skb_frag_t page sharing. Therefore we must fallback to
-+                         * copying the frag_list skbs; we do so by disabling SG.
-+                         */
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
- static inline unsigned int __skb_pagelen(const struct sk_buff *skb)
- {
- 	unsigned int i, len = 0;
-diff --git a/net/core/filter.c b/net/core/filter.c
-index df4578219e82..c0e6e7f28635 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3525,13 +3525,21 @@ static int bpf_skb_net_grow(struct sk_buff *skb, u32 off, u32 len_diff,
- 	if (skb_is_gso(skb)) {
- 		struct skb_shared_info *shinfo = skb_shinfo(skb);
- 
--		/* Due to header grow, MSS needs to be downgraded. */
--		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO))
--			skb_decrease_gso_size(shinfo, len_diff);
--
- 		/* Header must be checked, and gso_segs recomputed. */
- 		shinfo->gso_type |= gso_type;
- 		shinfo->gso_segs = 0;
-+
-+		/* Due to header grow, MSS needs to be downgraded.
-+		 * There is BUG_ON When segment the frag_list with
-+		 * head_frag true so linearize skb after downgrade
-+		 * the MSS.
-+		 */
-+		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO)) {
-+			skb_decrease_gso_size(shinfo, len_diff);
-+			if (skb_is_nonsg(skb))
-+				return skb_linearize(skb) ? : 0;
-+		}
-+
- 	}
- 
- 	return 0;
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index b1dab1b071fc..81e018185527 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4458,23 +4458,8 @@ struct sk_buff *skb_segment(struct sk_buff *head_skb,
- 
- 	if ((skb_shinfo(head_skb)->gso_type & SKB_GSO_DODGY) &&
- 	    mss != GSO_BY_FRAGS && mss != skb_headlen(head_skb)) {
--		struct sk_buff *check_skb;
--
--		for (check_skb = list_skb; check_skb; check_skb = check_skb->next) {
--			if (skb_headlen(check_skb) && !check_skb->head_frag) {
--				/* gso_size is untrusted, and we have a frag_list with
--				 * a linear non head_frag item.
--				 *
--				 * If head_skb's headlen does not fit requested gso_size,
--				 * it means that the frag_list members do NOT terminate
--				 * on exact gso_size boundaries. Hence we cannot perform
--				 * skb_frag_t page sharing. Therefore we must fallback to
--				 * copying the frag_list skbs; we do so by disabling SG.
--				 */
--				features &= ~NETIF_F_SG;
--				break;
--			}
--		}
-+		if (skb_is_nonsg(head_skb))
-+			features &= ~NETIF_F_SG;
- 	}
- 
- 	__skb_push(head_skb, doffset);
+diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
+index f160a3b71499..0d5a862cd78a 100644
+--- a/drivers/net/ethernet/ti/Kconfig
++++ b/drivers/net/ethernet/ti/Kconfig
+@@ -188,6 +188,7 @@ config TI_ICSSG_PRUETH
+ 	select TI_ICSS_IEP
+ 	select TI_K3_CPPI_DESC_POOL
+ 	depends on PRU_REMOTEPROC
++	depends on NET_SWITCHDEV
+ 	depends on ARCH_K3 && OF && TI_K3_UDMA_GLUE_LAYER
+ 	depends on PTP_1588_CLOCK_OPTIONAL
+ 	help
+
+---
+base-commit: 5483cbfd863f01126c08703898a9e71d991a9bfe
+change-id: 20240708-net-deps-e514a1e5b112
+
+Best regards,
 -- 
-2.33.0
+Guillaume La Roque <glaroque@baylibre.com>
 
 
