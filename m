@@ -1,106 +1,226 @@
-Return-Path: <linux-kernel+bounces-244933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9641692ABCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2647E92ABE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495D11F22F6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996941F22F9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415AB14F9F0;
-	Mon,  8 Jul 2024 22:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989AC152164;
+	Mon,  8 Jul 2024 22:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKxLyBY1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="fOpUOtxc"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5522814F9C9
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 22:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3898A146D40;
+	Mon,  8 Jul 2024 22:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720476817; cv=none; b=HVqKl+M4SM2Eo8W2IzHZCjbb8h2FI/r1gsFzaI8F2txwosDrTrez654pIhsjDb1G/UMeaIBGsP+EAkXblcK9pRO0F9uUHLEvPzHHWXKs3vlXXCsyCIVe8tczGu2v2vAJLRtACHBJos21CGJNz6pOKdgzpJ8QubGdYiRYIXkEcuk=
+	t=1720476900; cv=none; b=AoPHUP6IhSm9V3cnVd9AiQf7C0RRuSLv9059zUeAxos5RRGcSFvG699pK1IdFquFX2BIHgJhd5OrWd+h9Q9C00lexYCWP4R9opYUlJfeaR890UOwWyouaZBGh3UdR0Mu+vuF2bajzwN7uypqn7jPM4WvA6FlGZlxilcL1RgCDfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720476817; c=relaxed/simple;
-	bh=DC1LlKEm1w/fgZ5XPSPBySuVhFHJDQTj+rDfpvB5IkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Eqvpx2d4s6y8vz9crdYseRdVHaqDnKKgE/fXc0GB9dHMY6owMKTL6LccHHexMG6ZMLmorxn+i8fFpFuJ1YOuFVNk0vrv2VL+fItbvS8kSHB1xziisSBtJsCC0Krk8NiN44YbTtHhhxa0w4nazQIDPLE4wo2vC5T84feZMhJ1WdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKxLyBY1; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720476815; x=1752012815;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=DC1LlKEm1w/fgZ5XPSPBySuVhFHJDQTj+rDfpvB5IkM=;
-  b=nKxLyBY1AlbkBj1YcMZT4pRvWf/7QCp7PkU/QaxgCwUEk23Ous06K4Jx
-   B1fpc6bMPTZepczKr8UIbTjzj63N/dmm3Tj4LUdUgcNOtJgANmiv8YDs0
-   NzlCYAW2ZnSoMW2lvyMBMIDb7gEfx8gXdrsihjAfYN/7WBK+wFbZizFwv
-   nkQVeBuL+Q7VMMQrTmmqkGZ0jg4O2UhG9mlkR98Rg6nfqHXfaG/6YGrIW
-   HraPFaIQvxP4x+LwVvZ31hv/MVpFAPOuVtH9Hf0oPHfWC/XxgAQ9bBVgz
-   IoHTAa8qQb4kcS5fj8IJN4tHesCsTfwcNQuRJABUER/ro5JTUopRkr0NS
-   w==;
-X-CSE-ConnectionGUID: 289eLXdyQ+qNm6ekzVYxQw==
-X-CSE-MsgGUID: bAkANgONQlCNPma+IbFPcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17838410"
-X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
-   d="scan'208";a="17838410"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 15:13:34 -0700
-X-CSE-ConnectionGUID: v5l4vE8VTBq8584fL3wZqg==
-X-CSE-MsgGUID: 62LySIIERn+SGYdHH6Gf6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
-   d="scan'208";a="47560606"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 08 Jul 2024 15:13:32 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sQwby-000W4w-0L;
-	Mon, 08 Jul 2024 22:13:30 +0000
-Date: Tue, 9 Jul 2024 06:13:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Kees Cook <keescook@chromium.org>
-Subject: WARNING: modpost: vmlinux: section mismatch in reference:
- alloc_tag_save+0x24 (section: .text.unlikely) -> initcall_level_names
- (section: .init.data)
-Message-ID: <202407090645.ruIapj8y-lkp@intel.com>
+	s=arc-20240116; t=1720476900; c=relaxed/simple;
+	bh=zjqI610N9pRC4EqJF11m9EzDbN8ZaWHPOimS03zeegI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KPKbjBXRO5dUCAplE/WodTqsaGRmJlqs+C2mSPPCQ1yW4ecrP2mvqlPFxl3CqhVeoaGOnuY4kRqKYZ3RbAWFN3LrSIkzvdOqTlpMX0Rt/SbZt+WjkgOl3el8GIOkOvrdETIOlcZXtRmihVnzoW5W4/yxYZETpFM5euoldnoAZYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=fOpUOtxc; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1720476883; x=1721081683; i=quwenruo.btrfs@gmx.com;
+	bh=uvtjxh9hgaU0yCTPP3uwX4bGR8q3uFMSBV8Qqx9BXR0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=fOpUOtxcBOaHyeQloPHyN2K/bWbvP/mgj1wC14EtRsbhbQq0P1cRC/0UxGXKDQgs
+	 EA+CX35fGnhQyZDsMpl7b3svpUg2+TMHC13U26oJH48niSZMZr7By3v9YXSA/1CpH
+	 008t3IWQWsB+CdOkNQsMCpeiYyAePyVDmZOnjoyDoWEfqQcmuYjSXp/CcPjYpXb+a
+	 lI9RW5dpWipHw6tjgph0K/Sc2F1g297ptFN++PX81phc1yd1B2G39g2j4+T1xxWfR
+	 1vce2BZZKzjwAGtN1o3ZYAV5/9uhxbRh70eY5RH2wCbwHTA8xcItSpg/Knlv7dWll
+	 VAZFK4NLh5ePIk4rcQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MRmjw-1spbIX1Tb8-00M4dd; Tue, 09
+ Jul 2024 00:14:43 +0200
+Message-ID: <51eebc20-94f7-4e3d-8a44-741dad2e9900@gmx.com>
+Date: Tue, 9 Jul 2024 07:44:39 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] btrfs: replace stripe extents
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240705-b4-rst-updates-v4-0-f3eed3f2cfad@kernel.org>
+ <20240705-b4-rst-updates-v4-1-f3eed3f2cfad@kernel.org>
+ <e51d0042-ec10-4a50-bd76-3d3d3cbc9bfc@gmx.com>
+ <9d7f7acf-8077-481c-926e-d29b4b90d46f@wdc.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <9d7f7acf-8077-481c-926e-d29b4b90d46f@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:NNYgIL5doO/PSd9LmDlanHV7Gw8um2ZcHnj+kHMe2FX4fhuzJW+
+ ylq/tlzaRt/gaVkaQohEg94ltKac2JSEJUDovj25QtfjgixkHWdTdUTlhfM8UGSy10Fray8
+ q4d8a8z68IHkx7blY5ZQDOQwsnzRi3U54dfXk/dVQm2Pwhqd2PwNSuqjjXZ2c/6qMhCdXBI
+ Y7qs3VWtXVwmulfvuSlfg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6rbF/bWaBpw=;ncmFMcqiS6WuPSjb5M5vHqJh83T
+ iwrbeA12a9VB7CFa5rUc8GtnYaiiVK3jCxIFpMLDfpM1GgnF49EVO0WiqjmqxCp09bTF/MMeN
+ NGYC7XA7R1zFDWO5q4andsGHcmAUbochUjlnAmL3hHzanNbqEXWZX8Ktzi2zE1tZT/R/C1EOx
+ Ykzl0pZJePHRlkHHs/NRA2EFENcE9tepWaQtHrLBe+oR8dQe3ZL0+8JlGdXRi6NVNa+NI/s4U
+ o9j1HH+OZGjcM0Vlp3gBFed4XNQXOwcxU9tgwpHyTrh+9RLNqqoyBoeXKtPDgDEUIWb6JG2Kp
+ BMn3rQl9tkFzb0N9Tqi7XjGx9mqZ8rCCCp3NZIoMeB2p2N16au2rK8SQh64Rgn0Z5N+Nm5Vsk
+ nicEveHMdjgNdtEgiaFIZaOAVJ3/YE1i3RX2NTETJ3s/xTnqfxTPO1aeNgytU6yDf4LwVu2Xp
+ OJ0ymIcv8KpsCk6hcsRgYxb0r4G+1QZBiv1vhekUJN3eZD7w9LGDRktwmBNqOsFBeE+POGtF2
+ swe5PnFhgy3apsXMjNOVN+h+mokjN2xu0d58fFDwZYHP4k4/wn4SYyuzRJ/cjKCJjCx5JmdJP
+ pBMcK2dUTTv8fGsE4GHgAwEzGqvnefxhRhiOJVKapsw7sWcEjclVUO6aSEAcpRM5msFYVbBdT
+ Hhyae1vBvSxrK1sJvQxQb99J3hi97FMVLfZilKm+/FsulhZyslHO6whZ6MGpi0oN+m0oS2IXx
+ gT0ubKVuW05pnXAic9ctBFWfouMot4sKImSI7a8jxF3jS6gY8Hc5lJxvwWm4BU1DdzgFzLj9R
+ 7umrCCE0LgnP7LW+jSiO5LViiVptd+2oO2X0fEZ0oiWOk=
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   256abd8e550ce977b728be79a74e1729438b4948
-commit: b951aaff503502a7fe066eeed2744ba8a6413c89 mm: enable page allocation tagging
-date:   2 months ago
-config: xtensa-randconfig-r132-20240707 (https://download.01.org/0day-ci/archive/20240709/202407090645.ruIapj8y-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240709/202407090645.ruIapj8y-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407090645.ruIapj8y-lkp@intel.com/
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+=E5=9C=A8 2024/7/8 21:13, Johannes Thumshirn =E5=86=99=E9=81=93:
+> On 06.07.24 01:19, Qu Wenruo wrote:
+>>
+>>
+>> =E5=9C=A8 2024/7/6 00:43, Johannes Thumshirn =E5=86=99=E9=81=93:
+>>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>>>
+>>> If we can't insert a stripe extent in the RAID stripe tree, because
+>>> the key that points to the specific position in the stripe tree is
+>>> already existing, we have to remove the item and then replace it by a
+>>> new item.
+>>>
+>>> This can happen for example on device replace operations.
+>>
+>> In that case, can we just modify the targeted dev stripe?
+>>
+>> Or do we have other call sites that can lead to such conflicts?
+>>
+>> As I'm not that confident if such replace behavior would mask some real
+>> problems.
+>
+> I've just tested the following patch and it looks like it's working:
+>
+>
+> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
+> index e6f7a234b8f6..7bfd8654c110 100644
+> --- a/fs/btrfs/raid-stripe-tree.c
+> +++ b/fs/btrfs/raid-stripe-tree.c
+> @@ -73,6 +73,53 @@ int btrfs_delete_raid_extent(struct
+> btrfs_trans_handle *trans, u64 start, u64 le
+>           return ret;
+>    }
+>
+> +static int update_raid_extent_item(struct btrfs_trans_handle *trans,
+> +				   struct btrfs_key *key,
+> +				   struct btrfs_io_context *bioc)
+> +{
+> +	struct btrfs_path *path;
+> +	struct extent_buffer *leaf;
+> +	struct btrfs_stripe_extent *stripe_extent;
+> +	int num_stripes;
+> +	int ret;
+> +	int slot;
+> +
+> +	path =3D btrfs_alloc_path();
+> +	if (!path)
+> +		return -ENOMEM;
+> +
+> +	ret =3D btrfs_search_slot(trans, trans->fs_info->stripe_root, key, pat=
+h,
+> +				0, 1);
+> +	if (ret)
+> +		return ret =3D=3D 1 ? ret : -EINVAL;
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
->> WARNING: modpost: vmlinux: section mismatch in reference: alloc_tag_save+0x24 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
-WARNING: modpost: vmlinux: section mismatch in reference: bitmap_copy_clear_tail+0x5c (section: .text.unlikely) -> __setup_str_initcall_blacklist (section: .init.rodata)
+Looks good to me overall.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Considering in this case the bioc should match the existing rst entry,
+can we add an extra ASSERT() to check the length of the entry against
+the bioc?
+
+Thanks,
+Qu
+> +
+> +	leaf =3D path->nodes[0];
+> +	slot =3D path->slots[0];
+> +
+> +	btrfs_item_key_to_cpu(leaf, key, slot);
+> +	num_stripes =3D btrfs_num_raid_stripes(btrfs_item_size(leaf, slot));
+> +	stripe_extent =3D btrfs_item_ptr(leaf, slot, struct btrfs_stripe_exten=
+t);
+> +
+> +	for (int i =3D 0; i < num_stripes; i++) {
+> +		u64 devid =3D bioc->stripes[i].dev->devid;
+> +		u64 physical =3D bioc->stripes[i].physical;
+> +		u64 length =3D bioc->stripes[i].length;
+> +		struct btrfs_raid_stride *raid_stride =3D
+> +			&stripe_extent->strides[i];
+> +
+> +		if (length =3D=3D 0)
+> +			length =3D bioc->size;
+> +
+> +		btrfs_set_raid_stride_devid(leaf, raid_stride, devid);
+> +		btrfs_set_raid_stride_physical(leaf, raid_stride, physical);
+> +	}
+> +
+> +	btrfs_mark_buffer_dirty(trans, leaf);
+> +	btrfs_free_path(path);
+> +
+> +	return ret;
+> +}
+> +
+>    static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *tr=
+ans,
+> 					struct btrfs_io_context *bioc)
+>    {
+> @@ -112,6 +159,8 @@ static int btrfs_insert_one_raid_extent(struct
+> btrfs_trans_handle *trans,
+>
+> 	ret =3D btrfs_insert_item(trans, stripe_root, &stripe_key, stripe_exten=
+t,
+> 				item_size);
+> +	if (ret =3D=3D -EEXIST)
+> +		ret =3D update_raid_extent_item(trans, &stripe_key, bioc);
+> 	if (ret)
+> 		btrfs_abort_transaction(trans, ret);
+>
 
