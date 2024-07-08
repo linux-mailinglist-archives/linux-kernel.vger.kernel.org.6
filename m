@@ -1,111 +1,181 @@
-Return-Path: <linux-kernel+bounces-244847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C3E92AA46
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:04:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC09592AA4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B05282BF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39DAC1F22E73
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E6E22EE5;
-	Mon,  8 Jul 2024 20:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5136208B0;
+	Mon,  8 Jul 2024 20:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3PWHRlJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bE7c3Ouw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246D11CF9B;
-	Mon,  8 Jul 2024 20:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB231BDD0
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720469073; cv=none; b=BjLBvdf4jChZZu8GNiXhYHyzi5obeOIjOc+/TIZDo2+av5fZ5JvE2dZir19W2clRlzUNUlKLKP9EM2dnNiTwUlSH/k7ZEiN20MyViaj1vAtFP1MHBtCe1uW7GHv0xMraMNguuW6qigMiPSZ5sSTfVIRdeEyb99iv5gbKBzldtOw=
+	t=1720469164; cv=none; b=EgxqfE0gpr4/DSJ186iD4932rSAUfkUX5sIHLYDwMyrkhgMyLR/lYd2ghLQcRO95mM7hK/Imgad3t+XyInDWUAEJ7j8RKGlvef/dPxI8ApOGrTA5874K2CI6ODo9YF2tHnB7dwDvhh9hU8nzNY4GLV8DWF6ZOKn6BLrJTafKSJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720469073; c=relaxed/simple;
-	bh=+LGYnoamoS4zfZqMrzKzYDviwFlUv6xLADZa36LTO0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qRo8aLl/EqUroEqU1UpvD+g2r2HCVaWVuTli6CgoP6t+P3aYiNMgFPjQ1nanws+i4J0OAqHi9C8HLv7eOrEBpuVBRXGtqqVnk4jZwSCqIKG/O8doqeuT2Uw/OQFAVuxif4YN2YJzv4oHrLsI7V7nwgvQEMzs4V54DQiCZaX6/go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3PWHRlJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74967C116B1;
-	Mon,  8 Jul 2024 20:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720469072;
-	bh=+LGYnoamoS4zfZqMrzKzYDviwFlUv6xLADZa36LTO0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S3PWHRlJ0VCjKO1lj50fEwf/58isiHjCmzm7NgA9+k3pMwfnIopSOatyfxItxA4st
-	 Rnft84KW6cOJ3zTX2writ+/UVW1fs/hqOqmNiCrIpTIGQA0Lr9EnJVk7dhEHKVU/aY
-	 LGvP6aGWDFLnFyX9uqpf6hPRdx7IAAhydYmOF7CXvA7DP5Z1rJHFVD8lrkTp+i0t7o
-	 ZOoa75Ju8biYaHc2XvmaoeQoR3pzMTzomvqGPSII2E+bcdc2FwvhixjGxcUvu/BuV8
-	 v2bVClheX+wE9OOOn55kW2Wq8PdUvmc6TJSDDvYQiVbEGpcwZaWivSw5SmL27cGG1x
-	 1wnkCCu8XVFGg==
-Date: Mon, 8 Jul 2024 14:04:31 -0600
-From: Rob Herring <robh@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, tglx@linutronix.de
-Subject: Re: [PATCH 01/10] dt-bindings: display: imx: Add some i.MX8qxp
- Display Controller processing units
-Message-ID: <20240708200431.GA3492466-robh@kernel.org>
-References: <20240705090932.1880496-1-victor.liu@nxp.com>
- <20240705090932.1880496-2-victor.liu@nxp.com>
- <eec3d2a7-0197-4196-bf6f-71d0e29777de@kernel.org>
- <9a911f88-7fbf-4484-997c-98b6c3ec045b@nxp.com>
+	s=arc-20240116; t=1720469164; c=relaxed/simple;
+	bh=aRagdgTlsE3MWGFlwzI6ef72f+KQMUPg1M2pXIo5ZqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VKvM5ADg6+Zy41hu22GVLZyg0bAVnSBwwl+Ub2Hx5M2C6HG9dDsW90d4ZiTfqcIbC1biPWX1YucLwFBVWlF96bf4DKg+Ot/2RuM/agUaRI1Y5tD64Y2NLGQyeSUqPsDeVemGHd967pIxgn3HaeHatEe666GHvMNFZGm4tfoRSXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bE7c3Ouw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720469162;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=j2lTC/uV+6KmvXYNZup4rA4eKjMMz1SsHbPB0aVLD3U=;
+	b=bE7c3OuwjhP+5SSY4w9lA9AF/MWu9vn+gZ60p3zN3xjHUikoo9oOgbcpmDq+6Bd/fgQ4Rt
+	uxDSer4WVMpeLL8QR6Kn5f50+b08L6Aq7wee1QBkR9uK5OAzt45glSPa60jd0XPf0Jp1YY
+	AAKTAGbSETbxkdF4klet6mLzXCuF5zA=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-257-PtNVF0mYMSqgNizEiaK3jA-1; Mon, 08 Jul 2024 16:06:01 -0400
+X-MC-Unique: PtNVF0mYMSqgNizEiaK3jA-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52ea63885d3so3374032e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:06:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720469159; x=1721073959;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=j2lTC/uV+6KmvXYNZup4rA4eKjMMz1SsHbPB0aVLD3U=;
+        b=AsqDHZ2a1TNVmC1VY3itXbB6tBy5UVtvLZcqJBZcNtZVguAHDI2ezOHNxFtZJLgxX4
+         bbvUHsoXm1t6fW19oxPwDerv9iI08fcAsBj8jIpSr8p6PYoHYGnSCipFgB/OfwkROSCW
+         k/obGbfjqaaWx99YSp5g6Uo/uLgo4w6nSwlvGkdz+DIO4kh+QyxQp77bsIoQrxIyz0y2
+         Vv8TEt6JKn4wckXkNwORuKHVKVMUFh6KVFfR4KvV+jOA5Tyyud1Ly/gWvvFFIZEWOqRf
+         0VxyT+5E1cnk/4jm3j4MWLY+fK4vzXL5EfxrLuBA2gUJhFyp333LJzXkNELC06bzM7fT
+         87kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhpQjVjslxRVGiTdp+mbxwR7ZkYZ9uQ95OSauJdKaqWRuQYVbNTuMWsmgmYSMLpCnDoMMV/5Ml9zpzmwqOnvNr5R2i3Q3tH+88KXgR
+X-Gm-Message-State: AOJu0Yy7FyIRqtshSvaqc+28CYzL9W0Sl/U3T7b9kK1y5CMBV5C/0DHr
+	etyDexM2sBJmt3Vfok7z+lc3fHfaf2AHZsN5Z5bTgm+bxQp7UsRRg5hO9UYvix1el/mg43X36Is
+	bQV8lk36ZrdJLEzWbEXq7f8dDqv7f8wA+Gt+YSruyJUhcCvz0pN1M26GN5ropkw==
+X-Received: by 2002:a19:ac4b:0:b0:52c:84a2:d848 with SMTP id 2adb3069b0e04-52eb99d5f90mr212444e87.65.1720469159544;
+        Mon, 08 Jul 2024 13:05:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEOutunBjtATYlYPcPc2RtJuaPBHwhpp2F+6BNL1SdYd55rueYzXjB88TMPhrVMThULXxhZ7w==
+X-Received: by 2002:a19:ac4b:0:b0:52c:84a2:d848 with SMTP id 2adb3069b0e04-52eb99d5f90mr212419e87.65.1720469159140;
+        Mon, 08 Jul 2024 13:05:59 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c744:2200:bad7:95bd:e25e:a9e? (p200300cbc7442200bad795bde25e0a9e.dip0.t-ipconnect.de. [2003:cb:c744:2200:bad7:95bd:e25e:a9e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5a27sm10282465e9.23.2024.07.08.13.05.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 13:05:58 -0700 (PDT)
+Message-ID: <3492ea69-54cd-4ba3-b328-2e76542ccc32@redhat.com>
+Date: Mon, 8 Jul 2024 22:05:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a911f88-7fbf-4484-997c-98b6c3ec045b@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
+ linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <20240707002658.1917440-1-Jason@zx2c4.com>
+ <20240707002658.1917440-2-Jason@zx2c4.com>
+ <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
+ <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
+ <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
+ <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+ <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
+ <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+ <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
+ <8bf64731-9e5c-4c8c-b46b-5b18ae3110a1@redhat.com>
+ <ZovwO8KJ5Cv5fa26@zx2c4.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZovwO8KJ5Cv5fa26@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 08, 2024 at 02:30:37PM +0800, Liu Ying wrote:
-> On 07/07/2024, Krzysztof Kozlowski wrote:
-> > On 05/07/2024 11:09, Liu Ying wrote:
-> >> Freescale i.MX8qxp Display Controller is implemented as construction set of
-> >> building blocks with unified concept and standardized interfaces.
-> >>
-> >> Document some processing units to support two display outputs.
-> > 
-> > 
-> >> +maintainers:
-> >> +  - Liu Ying <victor.liu@nxp.com>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: fsl,imx8qxp-dc-tcon
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  fsl,dc-tc-id:
-> >> +    description: Timing Controller unit instance number
-> > 
-> > No instance numbering. This applies to your entire patchset.
+On 08.07.24 15:57, Jason A. Donenfeld wrote:
+> On Mon, Jul 08, 2024 at 10:23:10AM +0200, David Hildenbrand wrote:
+>>> As a side note, I'll raise that I am not a particular fan of the
+>>> "droppable" terminology, at least with the "read 0s" approach.
+>>>
+>>>    From a user perspective, the memory might suddenly lose its state and
+>>> read as 0s just like volatile memory when it loses power. "dropping
+>>> pages" sounds more like an implementation detail.
+>>
+>> Long story short: it's the hypervisor that could be effectively
+>> dropping/zeroing out that memory, not the guest VM. "NONVOLATILE" might
+>> be clearer than "DROPPABLE".
 > 
-> Then, I'll call of_alias_get_id() from the drivers to get
-> instance number instead.
+> Surely you mean "VOLATILE", not "NONVOLATILE", right?
 
-Ideally, no.
+Yes, typo :)
 
-> As i.MX8qm SoC embeds two Display Controllers, the alias
-> stem would contain the Display Controller instance
-> number, like "dc0-tcon" and "dc1-tcon".  Is this ok?
+-- 
+Cheers,
 
-The format of aliases is fooN, so no. Aliases should also be generic 
-rather than vendor specific.
+David / dhildenb
 
-If you need to describe the connection of components in the display 
-pipeline, then use the graph binding.
-
-Rob
 
