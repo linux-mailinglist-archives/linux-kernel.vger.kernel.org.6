@@ -1,106 +1,119 @@
-Return-Path: <linux-kernel+bounces-244536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47C192A5A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:29:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C15592A5AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE3F2812B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:29:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A504BB21581
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06685145323;
-	Mon,  8 Jul 2024 15:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C72145B1C;
+	Mon,  8 Jul 2024 15:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="KU5FpEh8"
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED49142E80;
-	Mon,  8 Jul 2024 15:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="EQm+8gvE"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF2714431B;
+	Mon,  8 Jul 2024 15:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720452571; cv=none; b=rF3B97KaFtUIuGqyhhe5JkKEr897wXl2BMiAD0DTg9/JqSDRdTmVks6udxka1f7ZvEfnl/fZ+jSwIToz21OboFR7G+Uq6eb1lc+mW4JXntQx9udiidEAFJTUM1iFoOsDSKjlyPdLGcZdCpMzpb95CpAS696WPfLPKdp9ePhdWX8=
+	t=1720452596; cv=none; b=T8rlZIotmYVnXJoyzxvNC2vjoQOQwQA6U1thCs9e2HjlmQFB/FqZxtVgS5wtl/axtIwKRTN8b0hz0RcucRKf/DuZ12fvRhsdzaWYzdgDQDa957vMHoycI8xdWorSR5e7d89DOOgaWsCldhS56xOPstZMU0Ea3VA/6YzLRG9PQz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720452571; c=relaxed/simple;
-	bh=pHGrU06dDgIohfOZNyTOXRGFIfPJGLhM05zDRXQwlIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ABwqTDGga2U8aIBMS9VoUC2/DsSYHqHK7ucekrAHld9XZiTL2vhWZlmCaWADTSJ2ZylFh+IQYlqZzlcXqOG7viunLqrb32k4STw9n/PJfXvGWeb4OUXXuW1teKjYpDhXUP6Apr6vXQUkg1VsUaDzgc/Cv16B3b6CbTLFQZbh71I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=pass (1024-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=KU5FpEh8; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
-	Message-ID:MIME-Version:Content-Transfer-Encoding; bh=jpG9/lUJIA
-	huGAbBRSauqWsUisuORJ+1OpZD4Zt02hY=; b=KU5FpEh8pSwVYDeS0VgumKDCGA
-	FxgPTXY0PVxaILalUASm/BRhtyLBT/H7Jwc30mK0MXkoJeHeueR4TqYf4H3WXTKd
-	P5/nlgik4La5rxsQP9xidv3mtSamvCZe1b/tFnvJnbbtu6ZwEYxVgtqnsKmXkDTT
-	W1jc71x0WrPQh4MJw=
-Received: from gp-VMware-Virtual-Platform.localdomain (unknown [139.227.253.190])
-	by coremail-app2 (Coremail) with SMTP id Nyz+CgD3UfXABYxmOvOYAA--.32315S2;
-	Mon, 08 Jul 2024 23:29:18 +0800 (CST)
-From: peng guo <engguopeng@buaa.edu.cn>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wyguopeng@163.com,
-	peng guo <engguopeng@buaa.edu.cn>
-Subject: [PATCH] cxl core:wrong value of macro definition
-Date: Mon,  8 Jul 2024 23:29:02 +0800
-Message-ID: <20240708152902.5853-1-engguopeng@buaa.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720452596; c=relaxed/simple;
+	bh=+WbYP/ASZE0Fc29CvTr3L/Q+sOkCaRxupWDJeEoQrBU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rD/Swy9KADzCosphZF5ZWjM7qZ6AXIPN0exzMM9joxXj6nOUev6lYK/VdgZvzanL22AafBrjiEABlO8Y4ryox9I4Zhy3MVroMPBUkK+BNoRhX/lJtDwW0x7bU7Avf3XpYOW6Gi4wFyS0unE3LXnxwcgpViY+/FMa6XEC1xraclU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=EQm+8gvE; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=p34bz90eb2CO67g2ifIO9gi0Uadhuo4uIRkThb3fbK8=; b=EQm+8gvE2upzrKgSaRC8+Uu1US
+	wrBfoPqGX8PiU+6uFPY9MVtD4jfnM0eUDnJ/NBFIHzHKfTIdpTTKiEfPjDmSLNmeDo3hKM9i+ZKRu
+	eMTFr4ENi/T0mLeosoN1uECMjO8e9xXayvS4sKDbMZiKFjbykYe5TEbqmCdj09KOmw5rzFDybhRH1
+	za4PxzRqHgFfr06cDEgfwcjNnGKEqBWbD5TCQ95Au6KQANwWq8TStqGiJv/npnTYO3VwavX6YRqgp
+	u4KN5PSO4ofTucwotclAEfy8sRenZnoReb6vl7ESjd14Od7JQdBeRSgKMBR6ztn0NRhM7WCfKiK3y
+	0k14XJqw==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sQqJB-000Cue-U4; Mon, 08 Jul 2024 17:29:41 +0200
+Received: from [178.197.248.35] (helo=linux.home)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sQqIg-0002ra-13;
+	Mon, 08 Jul 2024 17:29:10 +0200
+Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
+To: KP Singh <kpsingh@kernel.org>, Puranjay Mohan <puranjay@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Manu Bretelle <chantra@meta.com>,
+ Florent Revest <revest@google.com>
+References: <20240705145009.32340-1-puranjay@kernel.org>
+ <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+ <mb61pjzhwvshc.fsf@kernel.org>
+ <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net>
+Date: Mon, 8 Jul 2024 17:29:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Nyz+CgD3UfXABYxmOvOYAA--.32315S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw4DZFWxZr4kKF4fury8Zrb_yoW3Wrg_Gr
-	1rWrZxZa1FvF9rKFnIgr4rC3yS9a1kXr1FvFn5Kr4akayakrs8Wry09r47ZrW2vrW8tr1D
-	J34DJr18tr47tjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbakFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AK
-	wVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20x
-	vE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2
-	jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52
-	x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWU
-	XwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY02Avz4vE
-	14v_XrWl42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW7tr1UJr1l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjfU5Q6JUUUUU
-X-CM-SenderInfo: d2isijirrujqpexdthxhgxhubq/
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27330/Mon Jul  8 10:36:43 2024)
 
-The first value of the macro definition DEFINE_CXL_VENDOR_DEBUG_UUID
-does not match the definition in the CXL 2.0 specification table 170.
+On 7/8/24 5:26 PM, KP Singh wrote:
+> On Mon, Jul 8, 2024 at 5:00 PM Puranjay Mohan <puranjay@kernel.org> wrote:
+>>
+>> Daniel Borkmann <daniel@iogearbox.net> writes:
+>>
+>>> On 7/5/24 4:50 PM, Puranjay Mohan wrote:
+>>>> fexit_sleep test runs successfully now on the CI so remove it from the
+>>>> deny list.
+>>>
+>>> Do you happen to know which commit fixed it? If yes, might be nice to have it
+>>> documented in the commit message.
+>>
+>> Actually, I never saw this test failing on my local setup and yesterday
+>> I tried running it on the CI where it passed as well. So, I assumed that
+>> this would be fixed by some commit. I am not sure which exact commit
+>> might have fixed this.
+>>
+>> Manu, Martin
+>>
+>> When this was added to the deny list was this failing every time and did
+>> you have some reproducer for this. If there is a reproducer, I can try
+>> fixing it but when ran normally this test never fails for me.
+> 
+> I think this never worked until
+> https://lore.kernel.org/lkml/20230405180250.2046566-1-revest@chromium.org/
+> was merged, FTrace direct calls was blocking tracing programs on ARM,
+> since then it has always worked.
 
-Signed-off-by: peng guo <engguopeng@buaa.edu.cn>
----
- drivers/cxl/cxlmem.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-index af8169ccdbc0..feb1106559d2 100644
---- a/drivers/cxl/cxlmem.h
-+++ b/drivers/cxl/cxlmem.h
-@@ -563,7 +563,7 @@ enum cxl_opcode {
- 		  0x3b, 0x3f, 0x17)
- 
- #define DEFINE_CXL_VENDOR_DEBUG_UUID                                           \
--	UUID_INIT(0xe1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
-+	UUID_INIT(0x5e1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
- 		  0x40, 0x3d, 0x86)
- 
- struct cxl_mbox_get_supported_logs {
--- 
-2.43.0
-
+Awesome, thanks! I'll add this to the commit desc then when applying.
 
