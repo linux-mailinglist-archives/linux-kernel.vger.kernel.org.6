@@ -1,163 +1,133 @@
-Return-Path: <linux-kernel+bounces-244992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E594992AC9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:45:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DF292ACA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1CC0281075
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:45:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E4E282D0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5F715098C;
-	Mon,  8 Jul 2024 23:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs/zcZI4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0CD1534F9;
+	Mon,  8 Jul 2024 23:49:06 +0000 (UTC)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253BF8C06;
-	Mon,  8 Jul 2024 23:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE2A14F9D9
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 23:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720482338; cv=none; b=qA5JYem4qwgS/ilV61czkTbbeH4DCnzMDQwWpn6m0uFjsL+xaNhjtQCml8FEEi0NJDtCoqzMngWUy1LQ9mfr+B9+Wsd/kC94iMn5GiYvtz3sZtRHQhg+8ZFNY9dXiqDRmfCL071qRogbxJYuuhFK8VpNyfBsiZOikPgMjS4HkvY=
+	t=1720482546; cv=none; b=qDeHge7VG/4xt4atx5duCyrDF57RMdBSTW0MGf3Nvyr1g0XvGZAau15MzjsAzZCNTwWZuUAMrRXMl24wBlq9YAM6BFxqx6tdLtZjRokUeEcvQnO2a4X0mu5x8WaJMSfkOGS/H+Zw9wKQz1G+5hLMUj8cmLGq2FHbnHRkGaO/e00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720482338; c=relaxed/simple;
-	bh=WqB5mcEHwiCIHO2AodxjmxYg6envP+/XTNIhdG5D+Gg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q/u8r1FX9hhHjKlTaudxQCqBhp42+3FaE0TXV4KEC4cinCTzZ4gsqgwpvVMXQRxGLfRdpxCx9tTrBUL/c0m/lKE2L1U5TiHkq300xP/dYV0Diu8NWLNBPufDVf205uh1h4V/fOVvEEbsxtaV9rbhr4bptKMTdbQctRBuAEPmfkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs/zcZI4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8DE6C116B1;
-	Mon,  8 Jul 2024 23:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720482337;
-	bh=WqB5mcEHwiCIHO2AodxjmxYg6envP+/XTNIhdG5D+Gg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Qs/zcZI4QGLJGiJy64tsy8MMYvRXyXJdPDctlgPbVTZkl9n61vmplTE6ce7XLfNuv
-	 aF0SA98VKqz0ogKbWOezbeWiSajmdo+K1tOVua0vlurvnZGR81SGpUlvXQt7C2TB97
-	 wzh2/RlBDKu9WZ7BVX41yi9vx3Phznfpv99QmWemvV7z5nRU6bQQRbPB/Ogr+XZmWr
-	 pa1U73IYd7Z0gAQIjdo7OZexbM3mxE1XtM0zo34bqAaIDqteB7ei/silQ9TKUNBLjn
-	 BjGvZDtX0WaMQsU0rIvXCw9U/HP5NSO1M4n6h1ZzZlcmveUEwrin9ivRjlc3FDzZUu
-	 bBA30jwlLKd0g==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so5482498e87.1;
-        Mon, 08 Jul 2024 16:45:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEf4EUCcaJMDLfXW8j41RRatetkVJICpvuLpBLfrC8ww1TW1KXmy0oqgLHZx3iJ9GWzKlY69XiSAKMbQmM3lyvfbA4AFVuXaK3YgNnLxbD4BIe46Mc3WTISVeVN0al2P35c17OIcS/eA==
-X-Gm-Message-State: AOJu0YzGL3hDA74hkR7H+6+LI83Fsp/e2tQAnEck8pE0Hzz1bk6KsXsa
-	KoJwqvjLKTcdIL+4zhYJ5Lx8J7C5j7xOgBEVTsISRZApiJHbnqwMdZs4OfRlb793P+cDndjgZsp
-	WgUnRVuU4W7BXp6ZvptaHTqdqGw==
-X-Google-Smtp-Source: AGHT+IEKV5wyLcV1ycT2TnwArtJJGSVvXo4evQIYo01RZ05YOMAGpPEpsNQdQXNMhV0FFsl4PP9NkeD2EVDivivCbNQ=
-X-Received: by 2002:a05:6512:29e:b0:52c:d80e:55a5 with SMTP id
- 2adb3069b0e04-52eb99a35d4mr362953e87.41.1720482336134; Mon, 08 Jul 2024
- 16:45:36 -0700 (PDT)
+	s=arc-20240116; t=1720482546; c=relaxed/simple;
+	bh=585OTXLduml4b44q7SgXj9FJO/8XEJO2jUdcjWdYPno=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XW9Ejj1kRRXPmWfO4r2mXph27G7lgj6UNbsI11yR32s4FIoyLc12rxx4sOI+04DozG2Ut3GgQxfFPc7vjeSH6fO+SB8QPyx/C31tsqtzsuPdgJMgVo1H4i8vW9WMbaiYS9zvon9Q92DVrHF1/a2ZIu7VH3WQMWYgDQg01HR3LfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c2dee9d9cfso2593148a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 16:49:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720482543; x=1721087343;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KTCvURDHt1Ehhy2ogJ4G2eNRAbN+TU2XGb1d5J/SBYc=;
+        b=oQBm7WNlFGYuRrXiotw57l8+vum95gpAL+TOy6vPiUoqzUL2k6SDjTf4p1BZguBune
+         CL8IfDaodbNjartbLX99g1zDgihtuRERduuznsIhgrVsxponZUmxZuJKnGS6IWhwvJzP
+         z4F56qRERYlHZWepZalQ+vpZqC3K0UMVkBaqsW4JJi2sPwX8nJmStvCTrdMnmQB0G9MO
+         fWlvGxwxfsWaBXxrj0IkX0W0SFjtPtkxHAgCJEoPZNNXHmFZkDScX6NBH4jClOHISvO9
+         jk9rI5gHuHClTEj3sKh7i4vfHWte1+SstyIO+AUqKy41I29uZkFWLnWpjJ4ymWaS6qZN
+         JXcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUsYI7DG4e8mLtaOjeBccdVsjAWwW5dyO1A9jOZ9sOMUBTH6A73A6tZqBcZJ16zlER3cK5DmW80Ayfc1zrjhSdjNqGRLwie4I7TD6G
+X-Gm-Message-State: AOJu0Yyu/1B3NYxZh4WzmC+8xWsLdth5EKcflq85pzF/ApZpDwNqsJfV
+	oNOnScfnhJ98Z7XJYAF1aqCSU2+A0jz/CMUWuP3t28/L/s6Tjw9u1swQpGeJTCM=
+X-Google-Smtp-Source: AGHT+IF2sRCcp1Qt2ncA7/dcBS7eQVYhbuVP4CESqTDlDqz8AWSIBYQ0ftySS6HXoODFEfyN2bXeTQ==
+X-Received: by 2002:a17:90a:a10d:b0:2c4:dfa6:df00 with SMTP id 98e67ed59e1d1-2ca35be0661mr981011a91.8.1720482542878;
+        Mon, 08 Jul 2024 16:49:02 -0700 (PDT)
+Received: from localhost (97-126-77-189.tukw.qwest.net. [97.126.77.189])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca344c399csm596679a91.5.2024.07.08.16.49.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 16:49:02 -0700 (PDT)
+From: Kevin Hilman <khilman@kernel.org>
+To: Celeste Liu <coelacanthushex@gmail.com>, Heinrich Schuchardt
+ <heinrich.schuchardt@canonical.com>, Anup Patel <anup@brainfault.org>, Guo
+ Ren <guoren@kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Vladimir Kondratiev
+ <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT
+ <gregory.clement@bootlin.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, Sven Joachim
+ <svenjoac@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, Rich
+ Felker <dalias@libc.org>, John Paul Adrian Glaubitz
+ <glaubitz@physik.fu-berlin.de>, Russell King <linux@armlinux.org.uk>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
+ internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Tony
+ Lindgren <tony@atomide.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>,
+ Mykola Lysenko <mykolal@fb.com>, linux-riscv@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+ linux-tegra@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sh@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lennart Poettering <lennart@poettering.net>,
+ Icenowy Zheng <uwu@icenowy.me>, Celeste Liu <CoelacanthusHex@gmail.com>
+Subject: Re: [PATCH 6/6] arm: defconfig: drop RT_GROUP_SCHED=y from
+ bcm2855/tegra/omap2plus
+In-Reply-To: <20240530111947.549474-14-CoelacanthusHex@gmail.com>
+References: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
+ <20240530111947.549474-14-CoelacanthusHex@gmail.com>
+Date: Mon, 08 Jul 2024 16:49:01 -0700
+Message-ID: <7hv81f78cy.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528223650.619532-1-quic_obabatun@quicinc.com>
- <20240528223650.619532-4-quic_obabatun@quicinc.com> <986361f4-f000-4129-8214-39f2fb4a90da@gmail.com>
- <4905e651-4c37-4fb4-bbc1-af9633013134@gmail.com> <1684910a-54e2-4df5-a076-de9c2de4277b@quicinc.com>
-In-Reply-To: <1684910a-54e2-4df5-a076-de9c2de4277b@quicinc.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 8 Jul 2024 17:45:23 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLU6z5huedWcrBkP0utLH3=y-zZa0jen1K_LJfFsTXVBQ@mail.gmail.com>
-Message-ID: <CAL_JsqLU6z5huedWcrBkP0utLH3=y-zZa0jen1K_LJfFsTXVBQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] of: reserved_mem: Use unflatten_devicetree APIs to
- scan reserved memory nodes
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-Cc: Klara Modin <klarasmodin@gmail.com>, saravanak@google.com, hch@lst.de, 
-	m.szyprowski@samsung.com, robin.murphy@arm.com, will@kernel.org, 
-	catalin.marinas@arm.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, kernel@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Jul 8, 2024 at 5:12=E2=80=AFPM Oreoluwa Babatunde
-<quic_obabatun@quicinc.com> wrote:
->
->
-> On 7/5/2024 8:38 AM, Klara Modin wrote:
-> > On 2024-07-05 15:05, Klara Modin wrote:
-> >> Hi,
-> >>
-> >> On 2024-05-29 00:36, Oreoluwa Babatunde wrote:
-> >>> The unflatten_devicetree APIs have been setup and are available to be
-> >>> used by the time the fdt_init_reserved_mem() function is called.
-> >>> Since the unflatten_devicetree APIs are a more efficient way of scann=
-ing
-> >>> through the DT nodes, switch to using these APIs to facilitate the re=
-st
-> >>> of the reserved memory processing.
-> >>
-> >> With this patch series, I've observed significantly less memory availa=
-ble to userspace on my Raspberry Pi 1 and 3.
-> >>
-> >> I see this message on the kernel console:
-> >> Jul  4 23:13:49 bonnet kernel: OF: reserved mem: 0x1b000000..0x1efffff=
-f (65536 KiB) map non-reusable linux
-> >>
-> >> where it was previously marked as reusable:
-> >> Jul  4 22:23:22 bonnet kernel: OF: reserved mem: 0x1b000000..0x1efffff=
-f (65536 KiB) map reusable linux,cma
-> >>
-> >> If I look at bcm283x.dtsi, it definitely has the reusable property.
-> >>
-> >> I've below pointed out the snippet I think could be suspicous.
-> >>
-> >>>
-> >>> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-> >>> ---
-> >>>   drivers/of/of_reserved_mem.c    | 93 ++++++++++++++++++++----------=
----
-> >>>   include/linux/of_reserved_mem.h |  2 +-
-> >>>   kernel/dma/coherent.c           | 10 ++--
-> >>>   kernel/dma/contiguous.c         |  8 +--
-> >>>   kernel/dma/swiotlb.c            | 10 ++--
-> >>>   5 files changed, 72 insertions(+), 51 deletions(-)
-> >>>
-> >>> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_me=
-m.c
-> >>> index 113d593ea031..05283cd24c3b 100644
-> >>> --- a/drivers/of/of_reserved_mem.c
-> >>> +++ b/drivers/of/of_reserved_mem.c
-> >
-> >>> @@ -447,7 +476,7 @@ static int __init __reserved_mem_alloc_size(unsig=
-ned long node, const char *unam
-> >>>                  uname, (unsigned long)(size / SZ_1M));
-> >>>           return -ENOMEM;
-> >>>       }
-> >>
-> >>
-> >>> -    fdt_reserved_mem_save_node(node, uname, base, size);
-> >>> +    fdt_reserved_mem_save_node(NULL, uname, base, size);
-> >>
-> >> This could perhaps be suspicious?
-> >>
-> >> The above message seems to come from of_init_reserved_mem_node when
-> >> called from of_reserved_mem_save_node when called from here. This woul=
-d mean that the node is not actually saved to rmem and thus not marked reus=
-able?
-> >>
-> >>
-> >>>       return 0;
-> >>>   }
-> >
-> >>
-> >> Regards,
-> >> Klara Modin
-> >
-> > Attaching kernel logs of old and new behavior, and my config for refere=
-nce.
-> Hi Klara,
->
-> Thanks for pointing this out. I have uploaded a fix here:
-> https://lore.kernel.org/all/20240708230613.448846-1-quic_obabatun@quicinc=
-.com/
+Celeste Liu <coelacanthushex@gmail.com> writes:
 
-Sorry, but I'm not taking reverts of half the series. I've dropped it
-all for 6.11.
+> Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
+> with systemd") said it's because of recommendation from systemd. But
+> systemd changed their recommendation later.[1]
+>
+> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
+> needs an RT budget assigned, otherwise the processes in it will not be able to
+> get RT at all. The problem with RT group scheduling is that it requires the
+> budget assigned but there's no way we could assign a default budget, since the
+> values to assign are both upper and lower time limits, are absolute, and need to
+> be sum up to < 1 for each individal cgroup. That means we cannot really come up
+> with values that would work by default in the general case.[2]
+>
+> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
+> can only be enabled when all RT processes are in the root cgroup. But it will
+> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
+>
+> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
+> support it.
+>
+> [1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1be321c31d5299f69f
+> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
+>
+> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+> ---
+>  arch/arm/configs/bcm2835_defconfig   | 1 -
+>  arch/arm/configs/omap2plus_defconfig | 1 -
+>  arch/arm/configs/tegra_defconfig     | 1 -
 
-Rob
+For omap2plus_defconfig:
+
+Acked-by: Kevin Hilman <khilman@baylibre.com>
+
 
