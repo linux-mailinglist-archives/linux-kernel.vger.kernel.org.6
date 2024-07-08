@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-244882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE51492AACE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:57:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2088292AAD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA891C215F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:57:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFDB1283155
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B1614D6F9;
-	Mon,  8 Jul 2024 20:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9C314D702;
+	Mon,  8 Jul 2024 20:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E/k3570U"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b="WDLABT2r"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934201EA74
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD3F14BFB4
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720472242; cv=none; b=YuQp5BHkmFQzsk9hp0ltTfV/FUtYBSsZt/TwLXM7j/NCaNU4EtsdYewcEJRPAc8x5ZOzqlBtj9vwDFPRedHR7f2UGlXMDZk7f58lWJCGt0jYtHy//Aktv6Nzb2aaRFthfjHVjX+K804Ef4izTbeQWd2xiXmIVptfPvdPNlMKDKk=
+	t=1720472321; cv=none; b=gkK5E++bhAjIUubeJCUT0reX/9/+yr86nAHac4laxJACz5bdju/9aHmwrKULbg1Ph+GpAVgyJPJBFN5GZMkeqq0I/wRIkDQBKTf5yf+vXcHJHD2BAYS1kCG7rS4b5sZYO3AlDKCURR4FzraxAsY1O2Svip7oqmnBc/fCoxn6LQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720472242; c=relaxed/simple;
-	bh=NH2r/X8iV4qDEMmn+x38kpLhuWVZfY0ai+grUTUcP2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QV8wo6pswz2Laucv/Vkd83OvnUds7OFoZMVH2uM0Fw2Nz1TlyzlfVvrN7WYwB4o0sMfDJ3Z2cfMkI2YK9jvFGH9qARewC5VDvkyYdUGGA9CzpDhBV/creRJG0bmAgeIMKQHZrei+V2NhIwJBuunSvE3tJJHEv5OOZqJlz1wSh84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E/k3570U; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-79f014a53b7so235785685a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720472238; x=1721077038; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r3bRIc+iREACl7d76GifVlBEhZSKcdfkiZIocigdrSs=;
-        b=E/k3570UybUu2K1h+c3FtPbtkX1yHuU2sS6nL5j2GWZtE+sv+WxW21H/1nyFSMkpWw
-         l3EiD3GV4XxY3EZlWUIfUcbf8YzZ+6I4/I/X2263K99VyyPcbEKrYnuPMGT3mpCg9Rhu
-         q/waNjhHJkDx/V1Pp1eaZOCDQgpy6vJe8SyVw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720472238; x=1721077038;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r3bRIc+iREACl7d76GifVlBEhZSKcdfkiZIocigdrSs=;
-        b=tPfLxaWjEdaLmrCOoujIfDREhhkmX3/pH97j3HtICRUQe+HXef3DEcK0bXBRFfAuzN
-         g9t1b+gPnUxfKqWIN9DnRZT5y0iVIjxSI3k5gRRipjA0ZQlDWRk0QND3wXQR9FJGeBvO
-         Akd0ttZugbWMjBocKcdTCvszdqc7avePvHMiK13feNtPkV+C3fYzbUGA1RNx6uDhsmE4
-         J4+Ilv72EJbc4LkPXe501ExTOzBtZ/WdcpxPYk/ZYBLGM/8yTmr8a/V+VzBSRANmrijb
-         dmH7h81omyEJXazIK6Y3ZPbR5FfDXe8KM0sC4bC5A6E8FdcIlo0oIpoRM4sZ++zannU9
-         SSQA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5tEdCuZDuPUOFW+UvM2SV6RMV+g2SqvFv5b7Hn6pEPAu6TcTsgsokdBjFJR/4AqtqVj2W50ABc6t2MqjkHX1AtWQFVPkdgAXdiE2r
-X-Gm-Message-State: AOJu0Yy7+w0Xeqj0gRqDu+4/jSv0skEBh5iWSjOrwLh+4V8Q3j/CKhbR
-	mQQEIeCsT1vu8w9n/BDwYeoNJOL9JZq9vaNOo9pWgj8mPaOySiK/lkdP2gf4WNpvwUgHZAztf20
-	=
-X-Google-Smtp-Source: AGHT+IFyzSvIUPcDcpx9IutbZywD4R+UWDQ2toSM21sSdpplECOH0hN9f+SUTaohgSh4IZcfelWwiw==
-X-Received: by 2002:a37:de0a:0:b0:79f:18b8:5de6 with SMTP id af79cd13be357-79f199e5d22mr67601785a.7.1720472237863;
-        Mon, 08 Jul 2024 13:57:17 -0700 (PDT)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f1908ae97sm27079885a.98.2024.07.08.13.57.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 13:57:17 -0700 (PDT)
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-447dabd9562so96101cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:57:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUU1gDu87WpiPxjkKuE/tGxxrPRb/S1XRANmpQQl3Bmh30+y/ojxhksBQK+aohuSm6/mF5F4G0sONgqxZAQ1SqPLTNFGGyl7ihZsdrI
-X-Received: by 2002:ac8:7f4e:0:b0:447:e76a:c04b with SMTP id
- d75a77b69052e-447fb2f9b6dmr1122301cf.10.1720472236373; Mon, 08 Jul 2024
- 13:57:16 -0700 (PDT)
+	s=arc-20240116; t=1720472321; c=relaxed/simple;
+	bh=2rlB6Ojmu/l2PeRGxUrHBKpnhbN+d/Ky2sKmjrKGSmc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IvjM2/jRK7mTaLYHOOzTCE7uWBXLTTHA50MYai0s688hgUPkYn8K/ss49LZ8xE3u0TzzxVk6v/da09NG3hKvPwvvsAsdN81PELtTJZZSwVuCCkvpT+WPGRr+Rfuc7bV5xOFB/wB036YQi5680HyTKHTogP4qSiGT7fSFm41pTFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b=WDLABT2r; arc=none smtp.client-ip=212.77.101.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 12442 invoked from network); 8 Jul 2024 22:58:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
+          t=1720472308; bh=8NPN9/UQ4HRsQkyCMpM5BM9NHCb9hWs4MwzCmNnUzXg=;
+          h=From:To:Cc:Subject;
+          b=WDLABT2r6r44jOMC8rcdJ/CZ0CtNva2y/qOZZm0PJXGsK+VEDrP6pbRvuB0xSLqFp
+           jkoPcz26t5LwfBnyIAOGlhHwwwcEvS9F0SctnVcLGDM5o9/oio+0NnRXN3wzLvWuht
+           yxlOY69+WObM0m0qnh9IxajosJMziFd0Fe86iRr0=
+Received: from 83.5.170.55.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.5.170.55])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <davem@davemloft.net>; 8 Jul 2024 22:58:28 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	jacob.e.keller@intel.com,
+	shannon.nelson@amd.com,
+	horms@kernel.org,
+	sd@queasysnail.net,
+	olek2@wp.pl,
+	u.kleine-koenig@pengutronix.de,
+	ralf@linux-mips.org,
+	ralph.hempel@lantiq.com,
+	john@phrozen.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Joe Perches <joe@perches.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH net v3] net: ethernet: lantiq_etop: fix double free in detach
+Date: Mon,  8 Jul 2024 22:58:26 +0200
+Message-Id: <20240708205826.5176-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612222435.3188234-1-dianders@chromium.org>
- <20240612152336.v2.3.Ifb4450979b62976fd5a98847dade2e5b377d47c8@changeid> <D2ALRV4G5SZF.229WKTA9B95QN@gmail.com>
-In-Reply-To: <D2ALRV4G5SZF.229WKTA9B95QN@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 8 Jul 2024 13:57:04 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xs16yXRDURfW_7QA_t4nZhOmpPXiibsLs2BBzJr_h+4Q@mail.gmail.com>
-Message-ID: <CAD=FV=Xs16yXRDURfW_7QA_t4nZhOmpPXiibsLs2BBzJr_h+4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] drm/tegra: Call drm_atomic_helper_shutdown() at
- shutdown time
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 88c14d6ea541429c80222df60077a39f
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000B [sUO0]                               
 
-Hi,
+The number of the currently released descriptor is never incremented
+which results in the same skb being released multiple times.
 
-On Wed, Jun 26, 2024 at 11:58=E2=80=AFPM Thierry Reding
-<thierry.reding@gmail.com> wrote:
->
-> On Thu Jun 13, 2024 at 12:23 AM CEST, Douglas Anderson wrote:
-> > Based on grepping through the source code this driver appears to be
-> > missing a call to drm_atomic_helper_shutdown() at system shutdown
-> > time. Among other things, this means that if a panel is in use that it
-> > won't be cleanly powered off at system shutdown time.
-> >
-> > The fact that we should call drm_atomic_helper_shutdown() in the case
-> > of OS shutdown/restart comes straight out of the kernel doc "driver
-> > instance overview" in drm_drv.c.
-> >
-> > Suggested-by: Maxime Ripard <mripard@kernel.org>
-> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > This commit is only compile-time tested.
-> >
-> > (no changes since v1)
-> >
-> >  drivers/gpu/drm/tegra/drm.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
->
-> Acked-by: Thierry Reding <treding@nvidia.com>
+Fixes: 504d4721ee8e ("MIPS: Lantiq: Add ethernet driver")
+Reported-by: Joe Perches <joe@perches.com>
+Closes: https://lore.kernel.org/all/fc1bf93d92bb5b2f99c6c62745507cc22f3a7b2d.camel@perches.com/
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+ drivers/net/ethernet/lantiq_etop.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Pushed this one to drm-misc-next:
+diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ethernet/lantiq_etop.c
+index 5352fee62d2b..0b9982804370 100644
+--- a/drivers/net/ethernet/lantiq_etop.c
++++ b/drivers/net/ethernet/lantiq_etop.c
+@@ -217,9 +217,9 @@ ltq_etop_free_channel(struct net_device *dev, struct ltq_etop_chan *ch)
+ 	if (ch->dma.irq)
+ 		free_irq(ch->dma.irq, priv);
+ 	if (IS_RX(ch->idx)) {
+-		int desc;
++		struct ltq_dma_channel *dma = &ch->dma;
+ 
+-		for (desc = 0; desc < LTQ_DESC_NUM; desc++)
++		for (dma->desc = 0; dma->desc < LTQ_DESC_NUM; dma->desc++)
+ 			dev_kfree_skb_any(ch->skb[ch->dma.desc]);
+ 	}
+ }
+-- 
+2.39.2
 
-[3/8] drm/tegra: Call drm_atomic_helper_shutdown() at shutdown time
-      commit: bc5846d3d3dff9f057e2897a736b51584785da30
 
