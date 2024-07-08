@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-244609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B39492A6CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:06:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E6D92A6E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0852B21033
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3DF31C22116
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693461442FE;
-	Mon,  8 Jul 2024 16:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CD5145A05;
+	Mon,  8 Jul 2024 16:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Loi3SDcF"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQFBJcmA"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D360EC7
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E805F139D07
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454767; cv=none; b=PHFkf/m9Nk1hVa0jRFFT58UgcBZlGqm1qN7fN5EU4ORotaRmSuQp4LSBOV3//RPsfcutydw+sBhaT//d850YPkIM1LqbGhIWofoUpptwvGM3JeRRQVz+6Yuw+2uI3c3R1s4D6WQrhsngSouLW7s4LlySzBRzANx/o9UZ/1pSPp4=
+	t=1720454964; cv=none; b=cntK7Xt1SXHvoBw/RN5qV6vmnxK9RNBQEczVoXAISX459svDTCl0JCRXW6qLQ7AcqcSCEdLuTn4EiR7jO7LSxl0CFOyNth/kBA/qgmrm+OTrIlV3mWxtUpqAAVy/9/rvCQC6c5uksxYfPZAz25sum4TvNrj6wEKRTShpmPMl6lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454767; c=relaxed/simple;
-	bh=lGPmJeUaHAtXVao18UW/KktsnLKISywsTLBsKiL//kY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpEL6AdaDf7XuDA/lSV4qzPSDID4crYzR9qurLvjZWrMKA2S9Rh8fl80W7P9AvShzKbK9745+aYihpa1AP8KO7zpG4n1vDVS60jJdHAu20DoQAJ0+9qf3s/xFGOX2xtZc8MoNMocjtmnmdC7CXXkKDrQ8K5oQbuoSHfK/Xyy2uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Loi3SDcF; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7201cb6cae1so1972286a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:06:06 -0700 (PDT)
+	s=arc-20240116; t=1720454964; c=relaxed/simple;
+	bh=1hyrMvUmTrLThb3BPu5SecNYjPVq4I35yMc98VTDyJI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MT+5f+O0+L4X8K8PV6vBGV0hq6Au6utQRTb/cCX1HVoR3J9wXUG5uUmeuXadDrA+zpEoZ6utk77N8aQTY4MriFyYq9SWgtvO/8V3dC6+TrTc2ELZ4O5RVUDI0qpbABhSqDmZacM9R6/yFHEp9mpiBFayv4G473yHNKddgX7NBqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQFBJcmA; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fb3cf78ff3so24969015ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:09:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720454765; x=1721059565; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3yotOwh1dtE5DgMK4jrp0VM5GfIPbQCVEmdEcJAa+qI=;
-        b=Loi3SDcF4sto1qJme4c15I7DvUwCgu8huwCjqFA9+FnIIZLHLTt1VtyyZbjF/VDYVe
-         RrVJFo6yhUk/SoZgiFWLNGxie6zitgbB58GH77424EBea0ITPYdryXJ2MrAI13mhDNMf
-         7GIPi6mYTniVj/6vO7lVIOO0wJ3uIVS/8REj+wFI0A9L5oiCJ82YZEFL40ywyFpqFcYd
-         ghg1mpR/MDINfUAvTDOuGJtrua/Gs8Z0PMURXzIN5/QZ39fp1oqo7EI9pU8K/G48HDxY
-         8TzLi1E+rAdJD9Y/DOr6vAZdAaoVzl7ZblNnmp5Vx9Zi1KQ6cisoZDwi1GW0XcJQHd3T
-         ni9w==
+        d=gmail.com; s=20230601; t=1720454962; x=1721059762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qd9Dr+L7Fb98s7uPfWDn40nWo8gZpQe2KQvaLhVreGQ=;
+        b=KQFBJcmAVigFfkL4nzwk374fvLKE6dZZQi9i369xrYndqzAgOCJ8mdPOv7exTX3xyH
+         WMf+52lC9ygPSw1FSQqvU7C5TtbH6SnxLexpaFnoupnEYp4vi5+ygScITGHUhG7f7EUT
+         YfyfVlBzFsu0exkedryV9mvEchwQ8QA00PcU2Fo127HZfvtwDGf5X7n1+zM2FitOKznf
+         Z9OVcz1QseTigQgEkSPzaz1mrP6TeFe5E2AWXtOFELjHSZAMiZ33MFdhd/FM+GlXJGer
+         WWF9eNJXytCNDX4RrnlDFEQZauLXEQOd2wuPO11M/VNLnYCfj2HXpnKqsvYHdiLrfxvf
+         navQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720454765; x=1721059565;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3yotOwh1dtE5DgMK4jrp0VM5GfIPbQCVEmdEcJAa+qI=;
-        b=da2M7E2J3wru8b39JxqQFCYvmhQbFQxFhDl+iizNw/18RpTJFlHC5V976Vw4YdM7WA
-         Ayh91oFeQ4Djoyc3CuTjEkhbC2NiMwVrOPOfOyvxfg6PgJUfTxUEprf6YdPmw22jDIjd
-         INBO/5SceXEmgrbNlNiaqBZTx/4KBO6xecbCc5LIr+H0l6Nv7S2ZH0vWH05D6E4Gj4ad
-         1RFcYtPgeCw2YQBpiYw871kLssYAwDjQhbEyh4sdQSOMDGCu7Un2nDy5rjqR8dJ9lqu4
-         +MJorLwn6hJS4qry3zKiB505xAY4fvbOs8zGZWO4ESePA9KQ1EP5wE0SOO18G8u6fX4Z
-         C/aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSR5bbIU7ZMrGHDeAoUoMG1SbvyzUdfTNnlmn0Nk3paeSFQru/iSXig2bo1khiaFGZ154zzM20ZbAuWhtpPpPOqv+PNXm9wvr8l3qo
-X-Gm-Message-State: AOJu0Yx4NDRI89LI9onOKOrhfx9JfwrueS5s1SVLE3YboyJtMFIIrVvF
-	p/6vJefrVlkZOcQR8+2azmwCIjsgG5W3+s0nHKojSzLjyv5ReCeFPAc38sE1JRQ=
-X-Google-Smtp-Source: AGHT+IF4pL8APdY3c5DhYc7WskK7MW7W4Z9fYaj4VTZU8WRclPesMbXiUmaRA3FuKwavhdhGST/T1Q==
-X-Received: by 2002:a05:6a20:db0c:b0:1c2:8a36:29d with SMTP id adf61e73a8af0-1c28a3613d0mr2559231637.6.1720454765685;
-        Mon, 08 Jul 2024 09:06:05 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:f189:baee:28ea:c31c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b5585sm20701b3a.188.2024.07.08.09.06.03
+        d=1e100.net; s=20230601; t=1720454962; x=1721059762;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qd9Dr+L7Fb98s7uPfWDn40nWo8gZpQe2KQvaLhVreGQ=;
+        b=ll9lXkwPVk2B0M52LJXSC5Kx1TQxVEmhPDw85TMMwBavjE/M2Cnu4hclPicWzk6zd5
+         qjUDbh0tdLew/ekETXMtLVdKNu+ejAsvZLEk0gGj9JUj9URo+Y2GtUgWisQUVJEzmDUd
+         OUl5Ubp/L/wA9ebuDwJ9F7zXl5K3BNFgTxXTdVtGow4ggfCmbzUsWsbbrcWnIcwaqNGb
+         tiP9wDvO2m6OMul6VPlFVuHoLUSTcy2rrWU23MdUWUEqdbj5Vhv8qFAO7SV4Et56JIWp
+         IviEA0wVT9vDU0pxd19bLRoeDI8crWr+4VABwypnwDPmYCOmYTyDrseOh1vJTetW2F99
+         f5LQ==
+X-Gm-Message-State: AOJu0YzpREsugFffbXLLk8xWuIDWwVmZeGsaEQxmW1KmA6il6JAque6i
+	PlrU5oAdw/xjN+ChVPLR0lHfye1ogZn/3VxraSM9XSmAuaLQ+91Jckj8fw==
+X-Google-Smtp-Source: AGHT+IEluhfAcYD0yesaKTDMbCVEB/FSh6VZTrk/LMlueM7BnoX1U4q0AUzwwm4iXrrHl8/4pyzFYQ==
+X-Received: by 2002:a17:903:41cd:b0:1fb:58b8:2fbc with SMTP id d9443c01a7336-1fb58b8323amr53357385ad.29.1720454962057;
+        Mon, 08 Jul 2024 09:09:22 -0700 (PDT)
+Received: from cheng.localdomain (218-164-83-170.dynamic-ip.hinet.net. [218.164.83.170])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6acf3a3sm305305ad.245.2024.07.08.09.09.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 09:06:05 -0700 (PDT)
-Date: Mon, 8 Jul 2024 10:06:01 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Jason Chen <Jason-ch.Chen@mediatek.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] remoteproc: mediatek: Increase MT8188/MT8195 SCP core0
- DRAM size
-Message-ID: <ZowOaQ7Atf9D4uoM@p14s>
-References: <20240703034409.698-1-Jason-ch.Chen@mediatek.com>
- <f9cbd088-c00c-455f-912b-cc119566e62c@collabora.com>
+        Mon, 08 Jul 2024 09:09:21 -0700 (PDT)
+From: ChengChaoChun <abc21531050@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: ChengChaoChun <abc21531050@gmail.com>
+Subject: [PATCH] linux/interrupt.h: fix struct irqaction comment order inconsistency
+Date: Tue,  9 Jul 2024 00:06:51 +0800
+Message-Id: <20240708160651.54239-1-abc21531050@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9cbd088-c00c-455f-912b-cc119566e62c@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 11:05:59AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 03/07/24 05:44, Jason Chen ha scritto:
-> > The current DRAM size is insufficient for the HEVC feature, which
-> > requires more memory for proper functionality. This change ensures the
-> > feature has the necessary resources.
-> > 
-> > Signed-off-by: Jason Chen <Jason-ch.Chen@mediatek.com>
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->
+Rearrange struct irqaction comment to match member order in the code.
 
-I have applied this patch.
+Signed-off-by: ChengChaoChun <abc21531050@gmail.com>
+---
+ include/linux/interrupt.h | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-Thanks,
-Mathieu
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 5c9bdd3ffccc..b405e181829b 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -104,19 +104,19 @@ typedef irqreturn_t (*irq_handler_t)(int, void *);
+ 
+ /**
+  * struct irqaction - per interrupt action descriptor
+- * @handler:	interrupt handler function
+- * @name:	name of the device
+- * @dev_id:	cookie to identify the device
+- * @percpu_dev_id:	cookie to identify the device
+- * @next:	pointer to the next irqaction for shared interrupts
+- * @irq:	interrupt number
+- * @flags:	flags (see IRQF_* above)
+- * @thread_fn:	interrupt handler function for threaded interrupts
+- * @thread:	thread pointer for threaded interrupts
+- * @secondary:	pointer to secondary irqaction (force threading)
+- * @thread_flags:	flags related to @thread
+- * @thread_mask:	bitmask for keeping track of @thread activity
+- * @dir:	pointer to the proc/irq/NN/name entry
++ * @handler:    interrupt handler function
++ * @dev_id:     cookie to identify the device
++ * @percpu_dev_id:      cookie to identify the device
++ * @next:       pointer to the next irqaction for shared interrupts
++ * @thread_fn:  interrupt handler function for threaded interrupts
++ * @thread:     thread pointer for threaded interrupts
++ * @secondary:  pointer to secondary irqaction (force threading)
++ * @irq:        interrupt number
++ * @flags:      flags (see IRQF_* above)
++ * @thread_flags:       flags related to @thread
++ * @thread_mask:        bitmask for keeping track of @thread activity
++ * @name:       name of the device
++ * @dir:        pointer to the proc/irq/NN/name entry
+  */
+ struct irqaction {
+ 	irq_handler_t		handler;
+-- 
+2.34.1
 
-> 
 
