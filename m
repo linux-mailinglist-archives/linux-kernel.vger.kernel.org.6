@@ -1,180 +1,317 @@
-Return-Path: <linux-kernel+bounces-244486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F6D92A4D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:35:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17E992A4DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2991F21BC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:35:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE0C1F219FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F6F7CF3A;
-	Mon,  8 Jul 2024 14:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F2113D272;
+	Mon,  8 Jul 2024 14:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KObOKQeN"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2050.outbound.protection.outlook.com [40.107.94.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bt1d5Nrv"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DD61E50B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720449331; cv=fail; b=pDtVR2gj94tG/SLLYnwc1ZGqQHgdGd1DatNtAfDLQcqLZYXpgyYtYon+3Dw/3X7GkwYshz8fw0tSx/e4SwG+vbF4aa7Eq/79R1atNXID9PFmNZNAIpFAvjPyg9w/+s8u5Li04rEmRVVUft4JIsDYHAvsCOWK1UOdZ1W9yRF+c0U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720449331; c=relaxed/simple;
-	bh=p2JJcP6qEYhOuRZA81FLQHekUswDvOjJGTarWifhG9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fcBVtt79Fv5VTfRMvEAVLl8J7iziSsSCw30JxY3M0g2UAtFWCRWIBg5HQyNLCaBL+Eo+w8idcd3WkTXwtDBUh2SOg73F4oFT78pqNA6M5X9wC77xgt9d1Tt/nu6QVbpRuTxfeqIosBAXTP/gen0i7YH2c8uz5LQRKl5K2DBEE9U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KObOKQeN; arc=fail smtp.client-ip=40.107.94.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XMzaDTKhvT2w0TNhBZ5bnk/DiHXdTlnPWB53xme8fOV5i4PQKxHcDD5Z7kOJtFUpgdOLUFGdOFSmoIW1eO6KuotUtptYk4r4lJeaJNJU16NhAZ8TSdNzA1m87I3fK33UOkYIjgHt3QMEjdvm7LxoE6t0RrFDpe7hpbcK+ZX+fqx2uOBnr24+1Bu3ZmGNegKv733pETnA6UwpHfhC96+hlZGBOaEKq5ChD3d8hfeTHUV1TQ93dcUlT9GCbZVj5zyRFC2afrsOEPOjm4nP+fRYSxT/5tFVCYAnXPfSVqs6dXRjg1XWgkUyMq8x31XbUD9FrvBWGQO9r5z5/PntW0nk7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qTVpVnNXZFGrQVaVpPadvTCaiLGqq9J3BIGfjWFLHis=;
- b=iCmBcAHib4tduqT4mpLyg0ASrN5GTicyOx6hcH8E1Oec5hEiBDFABZ4yJw0E4YdPvTuuFICBUDTC+t2scoYNCDb+tAJZgF1F0CPPFreLrhZjhu09zBwQ+mSF+CbQZWoFjm6BRl4HLZmt5sFqrrmicFBFz976g0y9TQ+45S8mVGLMkeWILjXlB6v++cKl8AMS+h/baZxu3r5WICKr0Kghx+6X8u5dYAF+ZmyQLYahT4V/wMkOatRHUVuaqeUd7l5JInN9/AM0FfHWrGcEgNZQL20qGo0T+4aAdr6Vc/4QxyeLPZTw6OC6JIrtrMTsrCq1cwsqHBhxSBRgTHwXdjkSvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qTVpVnNXZFGrQVaVpPadvTCaiLGqq9J3BIGfjWFLHis=;
- b=KObOKQeNWCI+VvPCQYvFvwzU96jx3M4FVxK+v5c0aeygDcluim1sIX6GxtWLBlShi+w0sVCqNWsWoX5Tv13OPDBhY+iWDYuSR5gF2EPBgSP2oCL8w978Ou/tZM3vh0XoubxUc30ZKibH7xQFOy0qT83Nl0vYJGEdGo6MuI3SJQceEwalPnke6VYh9RAydof2hzTTLUmoyhHNbZ4uNbt0dWjdq53CF87rjfNOp7e9ALJ4kS+BrGgriISvzeJHtrinRKaTHQqTgd0wnMFFXbN0Htc43APNPRGERXWp/sJdFJZBVKJ/jVynsKqIi1znp//byvHl/kMM1lDeX7CVr27Tdw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by DS0PR12MB7772.namprd12.prod.outlook.com (2603:10b6:8:138::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 14:35:27 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%5]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 14:35:27 +0000
-Date: Mon, 8 Jul 2024 11:35:26 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>, SeongJae Park <sj@kernel.org>,
-	Miaohe Lin <linmiaohe@huawei.com>, Michal Hocko <mhocko@suse.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH 00/45] hugetlb pagewalk unification
-Message-ID: <20240708143526.GE14004@nvidia.com>
-References: <20240704043132.28501-1-osalvador@suse.de>
- <617169bc-e18c-40fa-be3a-99c118a6d7fe@redhat.com>
- <Zoax9nwi5qmgTQR4@x1n>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zoax9nwi5qmgTQR4@x1n>
-X-ClientProxiedBy: MN0PR04CA0004.namprd04.prod.outlook.com
- (2603:10b6:208:52d::6) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC03F2744C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720449526; cv=none; b=ft4upVNcSRxLXnW/hxirar7tR0lHuJmZHzaGQXrh3FmD4b+PkOvP5U62wV9Vgvkc48SUDkeItM9/qIfKyEKLd8hpyw3tZmFzkz/YYgglcqBT+4mDSxV8i1dwgpOnfzSmIe6F+t9dmzgGzlFYPhna/GcJXSv4Nx4s+7qiEUxLKZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720449526; c=relaxed/simple;
+	bh=u/jJTGjzaxKcXpc0BpxyGDnrlOEBaX8nzYi8urwcCt8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gBA9GC2hCYXqbKwcrtfcEuAdIOebv2IXpEryZbGDHJZG2aN4YLfb/AVtGao0WwoAsmAmvkNMI976xOuZWkY1+cjE1LnXaMLj2j3x2bbBtB6fr3GkJYdIYay1gWkk1cXT2IuW7ysFik4e/mCI246nO+3eR3C6D54LsdZooc1VX1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bt1d5Nrv; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so4156345e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 07:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1720449523; x=1721054323; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IIOTX40ZzZF9MDyWEhY/bkjCAIq3mxkjNt2649kVSoo=;
+        b=bt1d5Nrvnng9lYME1RcdZNq15bFuiP09dA3Ytu3NlAx6t1F0/QyY5X1JITmf5DWGrc
+         YuMQdKZ0XmjjGtuYBEtU599b2t8thqZJrT5NqH4jk4mddDSO2rMPMAquGk1dqTQRjrZf
+         9A9K5hyNI8mFbP2CKGoEUHJ0v7Z57/uWMdI5c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720449523; x=1721054323;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IIOTX40ZzZF9MDyWEhY/bkjCAIq3mxkjNt2649kVSoo=;
+        b=ckDidw3tPxtU6s1o2ZOnlXkt9lmuyjdfqozZKEsAXEZd3yS3GKPWKF8fDEE1LMqu7C
+         7C6P7E2CXeJvniQOcqCJtaOvTHdMI8w1IFKht2DEh+I54IzwS+nmAr/aueFu2+RQax/t
+         XB1RA2vcnX/Ih6kDfaVqA6gvDGlqBhfuF7UnL0IFbsh+xnKfz2AAkM6LQ6Td2Mmu+c2g
+         4yXxzAw/hfCwU0+LMckmpVXdXN6sFrI6VJKuYA9eMuQKorxfgfmyU0sxvKrhNgnzd0VZ
+         uBhpi10kQYuSitaw7h787YzZHaYHLqIhzf51Nwdc8ZPFvdbCLhCqEHNQUgMV4l6dANC+
+         5QTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJg/1PTfeHF3L5ib4pYMGpMGmwIUqfZRJiHAvA3ZzHxy/YkCS11APxyFFyVBPoJABr/JbVwnyf1Fd5dOkOTomuXZqhYvtxlDXjGPb7
+X-Gm-Message-State: AOJu0Ywec09rWVcvuzne8tk4qX75BjhlG8IIXuD5dsLQl5VhWooH38bD
+	iweOTfC1qNC4aP0JdzwdnCyHVNWAHxbNTSDnYqjqpgenso89l+DGSklx7p56f8G3UvR4Ok0iblo
+	pV10VH3opvNnzrVI19mgilcYICb9SBBT5Vbtg
+X-Google-Smtp-Source: AGHT+IFcSPILMhghRpL6i2daNPsKNgeaZT6tK+kpJLAPAw01EVsQ5XBjWbh3Z6yMI92hoLVfP2kIALjOs3Ru8U2BK4w=
+X-Received: by 2002:ac2:555b:0:b0:52c:9413:d02f with SMTP id
+ 2adb3069b0e04-52ea0632accmr8234824e87.17.1720449522996; Mon, 08 Jul 2024
+ 07:38:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|DS0PR12MB7772:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2f9d59a-1ff0-4530-d8a1-08dc9f5b35da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nLs0XRCtYIllqdq2gh/HVFvcyXTSNn23n+BY7w4RbpoUTDNnMO/cdovqJ1t1?=
- =?us-ascii?Q?7zBbqLNuE8JckowHk8fp8WwAn1btCK5/pica55CJdX4VaLle2b3k3CpbgmDJ?=
- =?us-ascii?Q?JiyekbeSNxRZ4avlrl3YrqSGb/TUJaWsMv66Dx/91cqPoN5pwKQnyyGRI+80?=
- =?us-ascii?Q?T4sj9iW7xZOskpH7929LFolMGSuFT3prC1CZkq1KY76ZuF25zRZWHWBdU9BY?=
- =?us-ascii?Q?gu6xO5eTX666eo9Tp9q4PYLbHDMN/539fTiO7dleabJoCAAp2ui54m/zaM9I?=
- =?us-ascii?Q?0P1+UKImwRd8r/V9RhlMn6P2ml0RIE3HVt6glCVldf5J196nowJ+1rdeO3Ei?=
- =?us-ascii?Q?EITCtw7wGXB3Y+mXI39t85zwVMiu4/XoQ++trjhcz2Iea4bgiQdJhFZjd+wP?=
- =?us-ascii?Q?rwVxZ4zMyeARy6cLIxOJHr4g50w/aCWLw9Ey6vMp9cWs6fFXAYfVun7nYP2D?=
- =?us-ascii?Q?PSnoK0SVrNtTgYusPQWd4NfBwXCwZzunGGxTuKknO4w1y6cUenLaUkH9VN6q?=
- =?us-ascii?Q?bh3zVoqBJ9AHYqLffewI6PD/scPGzasD3W4p+nyEydgNjxseT1vPlRTOf8Hp?=
- =?us-ascii?Q?v6u/EhzU+AYJ0UbgYgjOOqjEefXNDP4a/6YcOiTdZmnR8nJ18dtCwy9C2jbb?=
- =?us-ascii?Q?XXd1I8cxe5rN+T28mWCT/50GWOv1eapWLagM5SbfjxaeV/a0TmnhikzYS+vY?=
- =?us-ascii?Q?iT3L89cHXp/6wffNM6g8JApMVaGhHH6RhIxvIdZmeqTwv+Wwi5+UyerCaIZH?=
- =?us-ascii?Q?u0DDrAiXAQgEBQOfAcOXsclvrY7Al6sw5xSykAFpA8nPHTEagG0VqVmwYdGL?=
- =?us-ascii?Q?/5YeojGVlkBVJNygUIdZnaGqg8S2d418DocNo/lZ0KpNAqEVDnogDo5SQeqy?=
- =?us-ascii?Q?KGlw7/Zsvjs/u8mbY85lEAbQIbXGO+r3mcix9ZbK+nqaJiNp3i34OrkbQR8n?=
- =?us-ascii?Q?KyKYAjwBVA/MzhbdP+dkQD2F7uK0/VLV1AR8zdarNRUAbc1grZZp7UmgxHBX?=
- =?us-ascii?Q?a/C0vBsC45FXxxv4r9KceaDrDCQW3DYQhydSdKIXAyhlIEgIaew8lai8XmyR?=
- =?us-ascii?Q?BePegEe7JOwdmnKN+iW/1oA9Ia2qKLr0vRMM4pZPewwgTd0S3AitZo8cQAkX?=
- =?us-ascii?Q?byB//xu8Mqj+KgdpaMmEfqyZsVYVxVVtIhtqT9YqrjplhzgGSYlIZkk2Ir+0?=
- =?us-ascii?Q?ZM2/FCLcKHpt5F0adEG3mugnZoCgGNJ/cS57EPT0KP7vBsOE9Vfh/EZqtVhU?=
- =?us-ascii?Q?pGo1y3+hVCDjiHhPyPWTwzgwMwI8b9AGYuGRNvuWMA/0/8F0uMD3SggeLS1A?=
- =?us-ascii?Q?SMjAGdNBvR4ZIQnCP8fvFhk4+kclutOfgnemFOmBqrZgMw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?czCMt31WLq/pTJraiuXl7QAh0k2g6gPTdB4fRkt9romcWqVdhkvLwYgHk4ri?=
- =?us-ascii?Q?VS38VGNsrczIFHPTeu4kxXpXPWaxi8mVfdu+azwCgn6escCNp0oaijBvTo3p?=
- =?us-ascii?Q?GApHeblU87LZCbyKfNDGrhAptfs6OfOd3siNBw8uiMuQaXiuxIHVaipW2vSk?=
- =?us-ascii?Q?By7er3D+OEzbTSnabGKO8ivqm9Xwx3G4Xy/pM8aS2CNqByJFyKHHoVNec+mm?=
- =?us-ascii?Q?a1NOFnRHBtuJWM3yUSqe4YQ4t7Gu06K6ZdyDfD9P5o1nmcYZpu9FIO5rhHM6?=
- =?us-ascii?Q?MbVoH92lFPCELvFSMDhSPqtOWD4lpCdtW+yjDU2zjR6Chj++oH6NHE7Kw7qT?=
- =?us-ascii?Q?rh8wabVSzGIMOXXIlpIMKQ7wOccSDdsCOiOSsEzEAC+Aw54hsCUFJUJURrIp?=
- =?us-ascii?Q?waFDdg/wZSIeZvAgYpKcyPOlAcle8nWPCNIoA51QRgl8O6OXAp8TNeP1Ih0r?=
- =?us-ascii?Q?sVT1Zb6XjgRKCKH8Bp0vn9cIAoom7e5UYROpCl9YqpvFquYJVZSsKblLSpSS?=
- =?us-ascii?Q?uARUasF7EvNHfaqknBdyh5c2foIrdO3OfY4xziCn4CmCzWjZtKnqn85Ky8pQ?=
- =?us-ascii?Q?bzmzLq+dtYD8i1uMiYDeCX1nGFjxdQH7NuCNqQvJQ3zpGCi7qag+kZGp2SkD?=
- =?us-ascii?Q?fBlTnbu/hP4uDuJRnvyaUTUsQilOU2J0oKRsuMzEzE8pPcoa0vqnx0hEqib0?=
- =?us-ascii?Q?Co1jBe5E600kA4Urhj062lYLUqj/cFaD1IjfDnHyRL46YlxAjdInxWH4/NAi?=
- =?us-ascii?Q?PWMQZ2Gon5SrkNrrCFz5GaANR0YWCOT48vJxFeucDVtpkvz5rJAwyQSBXtg1?=
- =?us-ascii?Q?l7crgZrtrtw3zYhHceyucNEKCFS3nK1Y5uVb3Zfb9mCExpzE370qZyehs+hd?=
- =?us-ascii?Q?R0KXDhdltTxqLR72nTd3T7HlFs9d99RDPbVM5vGlx/cIF8baoztxajFpZAq4?=
- =?us-ascii?Q?4sx4YVOK+NDYI5ErwG00DGLNnHpJa1aZ+5iuAM5hOYq8/5GXWfDs3WPXwIuo?=
- =?us-ascii?Q?EhzUxOKHA0rXdoQ0s37GAZIJ45YTqVsORp6kpTtLBs11Cr94RfM3ZkUo5LZ6?=
- =?us-ascii?Q?Xs/6t+nbQ+B2qge4BPO1rZJ4Yav8xet5OpLXcYduP7IQRmDjvIYbE5K0TBz3?=
- =?us-ascii?Q?bNoBJgrNl87ZUuldQs0raXSCkcFrzcmeMsdIbSggYLAmgblsx68Jcey/ndNL?=
- =?us-ascii?Q?kjajiFi8g//hX6vKFBFk1P9p+BldPOkveTu462x/3S+h2PQFRwvkrWFSvt9N?=
- =?us-ascii?Q?8jeUIXY8e5iRdDL08GNzlH03UCnBXHCodYv4Vw+lL4KB9uETQMTugZzcK0TF?=
- =?us-ascii?Q?FJm8OxfCVrUb7tCoi5DF0R2UqAWFRkIgWyUNpHLOXJ3I1q/Kmw0dy2DIvogY?=
- =?us-ascii?Q?gp5Yhs5RxypOevGt+ib9uS5kiD+UbO3/khSFgbyGRys7EfkKShPA7iqkI6kb?=
- =?us-ascii?Q?kIJAQHQwZpE8z9Nbg+OKC2X1s4ZFnKVYIaT1d+Rv4ouiJlvBx4U2JcE5BMKX?=
- =?us-ascii?Q?2fr6oVRNK43097ZnFzDn4Ra/DVR3TJprzJxFEnGIq/r2X9mcvAMvWF6h9Ypl?=
- =?us-ascii?Q?s6nn6VWR6N9jIYI9Jx6HhtHwi+jssvKELMf/G7vT?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2f9d59a-1ff0-4530-d8a1-08dc9f5b35da
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 14:35:27.5232
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X+rdXffOAnXt/tDohXwR8A294LaixkYdptY9if5CV3DfnmC7CPMrW4zZADmrd0lo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7772
+References: <20240703180300.42959-1-james.quinlan@broadcom.com>
+ <20240703180300.42959-5-james.quinlan@broadcom.com> <362a728f-5487-47da-b7b9-a9220b27d567@suse.de>
+ <CA+-6iNynwxcBAbRQ18TfJXwCctf+Ok7DnFyjgv4wNasX9MjV1Q@mail.gmail.com>
+ <7b03c38f44f295a5484d0162a193f41b39039b85.camel@pengutronix.de>
+ <f89d7f45-5d2b-4d8b-9d6a-2d83cd584756@suse.de> <39583bdf7e79d33240e7dd5f09123b94cab4147c.camel@pengutronix.de>
+In-Reply-To: <39583bdf7e79d33240e7dd5f09123b94cab4147c.camel@pengutronix.de>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Mon, 8 Jul 2024 10:38:31 -0400
+Message-ID: <CA+-6iNzGP3E7xkSk2N4=ms5TR4ozMPUf-KAstD9CBjpA=HoyHQ@mail.gmail.com>
+Subject: Re: [PATCH v2 04/12] PCI: brcmstb: Use swinit reset if available
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, linux-pci@vger.kernel.org, 
+	Nicolas Saenz Julienne <nsaenz@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Cyril Brulebois <kibi@debian.org>, 
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000b2969e061cbd5eb4"
 
-On Thu, Jul 04, 2024 at 10:30:14AM -0400, Peter Xu wrote:
-> Hey, David,
-> 
-> On Thu, Jul 04, 2024 at 12:44:38PM +0200, David Hildenbrand wrote:
-> > There are roughly two categories of page table walkers we have:
-> > 
-> > 1) We actually only want to walk present folios (to be precise, page
-> >    ranges of folios). We should look into moving away from the walk the
-> >    page walker API where possible, and have something better that
-> >    directly gives us the folio (page ranges). Any PTE batching would be
-> >    done internally.
+--000000000000b2969e061cbd5eb4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This seems like a good direction for some users as well to me.
+On Mon, Jul 8, 2024 at 9:26=E2=80=AFAM Philipp Zabel <p.zabel@pengutronix.d=
+e> wrote:
+>
+> Hi Stanimir,
+>
+> On Mo, 2024-07-08 at 14:14 +0300, Stanimir Varbanov wrote:
+> > Hi Philipp,
+> >
+> > On 7/8/24 12:37, Philipp Zabel wrote:
+> > > On Fr, 2024-07-05 at 13:46 -0400, Jim Quinlan wrote:
+> > > > On Thu, Jul 4, 2024 at 8:56=E2=80=AFAM Stanimir Varbanov <svarbanov=
+@suse.de> wrote:
+> > > > >
+> > > > > Hi Jim,
+> > > > >
+> > > > > On 7/3/24 21:02, Jim Quinlan wrote:
+> > > > > > The 7712 SOC adds a software init reset device for the PCIe HW.
+> > > > > > If found in the DT node, use it.
+> > > > > >
+> > > > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > > > > > ---
+> > > > > >  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
+> > > > > >  1 file changed, 19 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pc=
+i/controller/pcie-brcmstb.c
+> > > > > > index 4104c3668fdb..69926ee5c961 100644
+> > > > > > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > > > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > > > > > @@ -266,6 +266,7 @@ struct brcm_pcie {
+> > > > > >       struct reset_control    *rescal;
+> > > > > >       struct reset_control    *perst_reset;
+> > > > > >       struct reset_control    *bridge;
+> > > > > > +     struct reset_control    *swinit;
+> > > > > >       int                     num_memc;
+> > > > > >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
+> > > > > >       u32                     hw_rev;
+> > > > > > @@ -1626,6 +1627,13 @@ static int brcm_pcie_probe(struct platfo=
+rm_device *pdev)
+> > > > > >               dev_err(&pdev->dev, "could not enable clock\n");
+> > > > > >               return ret;
+> > > > > >       }
+> > > > > > +
+> > > > > > +     pcie->swinit =3D devm_reset_control_get_optional_exclusiv=
+e(&pdev->dev, "swinit");
+> > > > > > +     if (IS_ERR(pcie->swinit)) {
+> > > > > > +             ret =3D dev_err_probe(&pdev->dev, PTR_ERR(pcie->s=
+winit),
+> > > > > > +                                 "failed to get 'swinit' reset=
+\n");
+> > > > > > +             goto clk_out;
+> > > > > > +     }
+> > > > > >       pcie->rescal =3D devm_reset_control_get_optional_shared(&=
+pdev->dev, "rescal");
+> > > > > >       if (IS_ERR(pcie->rescal)) {
+> > > > > >               ret =3D PTR_ERR(pcie->rescal);
+> > > > > > @@ -1637,6 +1645,17 @@ static int brcm_pcie_probe(struct platfo=
+rm_device *pdev)
+> > > > > >               goto clk_out;
+> > > > > >       }
+> > > > > >
+> > > > > > +     ret =3D reset_control_assert(pcie->swinit);
+> > > > > > +     if (ret) {
+> > > > > > +             dev_err_probe(&pdev->dev, ret, "could not assert =
+reset 'swinit'\n");
+> > > > > > +             goto clk_out;
+> > > > > > +     }
+> > > > > > +     ret =3D reset_control_deassert(pcie->swinit);
+> > > > > > +     if (ret) {
+> > > > > > +             dev_err(&pdev->dev, "could not de-assert reset 's=
+winit' after asserting\n");
+> > > > > > +             goto clk_out;
+> > > > > > +     }
+> > > > >
+> > > > > why not call reset_control_reset(pcie->swinit) directly?
+> > > > Hi Stan,
+> > > >
+> > > > There is no reset_control_reset() method defined for reset-brcmstb.=
+c.
+> > > > The only reason I can
+> > > > think of for this is that it allows the callers of assert/deassert =
+to
+> > > > insert a delay if desired.
+> > >
+> > > The main reason for the existence of reset_control_reset() is that
+> > > there are reset controllers that can only be triggered (e.g. by writi=
+ng
+> > > a bit to a self-clearing register) to produce a complete reset pulse,
+> > > with assertion, delay, and deassertion all handled by the reset
+> > > controller.
+> >
+> > Got it. Thank you for explanation.
+> >
+> > But, IMO that means that the consumer driver should have knowledge of
+> > low-level reset implementation, which is not generic API?
+>
+> Kind of. If the reset controller hardware has self-clearing resets, it
+> is impossible to implement manual reset_control_assert/deassert() on
+> top. So if a reset consumer requires that level of control, it just
+> can't work with a self-deasserting controller. The other way around, a
+> reset controller driver can emulate self-deasserting resets, iff it
+> knows the timing requirements of all consumers.
+>
+> If the reset consumer only needs to see a pulse on the reset line, and
+> there are no ordering requirements with other resets or clocks, and the
+> device either doesn't care about timing or the reset controller knows
+> how to produce the required delay, then using reset_control_reset()
+> would be semantically correct.
+>
+> > Otherwise, I don't see a problem to implement asset/deassert sequence i=
+n
+> > .reset op in this particular reset-brcmstb.c low-level driver.
+>
+> When reset_control_reset() is used, every reset controller that can be
+> paired with this consumer needs to implement the .reset method,
+> requiring to know the delay requirements for all of their consumers.
+> The reset-simple driver implements this with a configurable worst-case
+> delay, for example. As far as I can see, that has never been used.
+>
+> So yes, in this particular case, pcie-brcmstb only ever being paired
+> with reset-brcmstb, it might be no problem to implement .reset in
+> reset-brcmstb correctly, if all its consumers and their required delays
+> are known.
 
-If we can reduce the number of places touching the pud/pmd/pte APIs
-that is a nice abstraction to reach toward.
+This will not work.  reset-brcmstb.c is a reset provider; it provides
+resets for dozens of different HW blocks.  Forcing  dozens of the
+resets  to operate at the worst-case delay of the slowest one of them
+is unacceptable, especially if a particular HW block uses its reset
+often  and/or requires timely execution.
 
-It naturally would remove hugepte users too.
+Regards,
+Jim Quinlan
+Broadcom STB/CM
 
-Jason
+
+>
+> regards
+> Philipp
+
+--000000000000b2969e061cbd5eb4
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDTpDyKGp6WN4Vr9+9rNpQIhDPbj834
+2i9E/lWxJ0h2gDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
+MDgxNDM4NDNaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAfBku4bZC0rFoNLf/rlv0pFLzsM8Lbwvxv3Z5qo6hmW6BIWxy
+70EG80CfKS9MF6Wrzscw8aS4IAx0rTz5qadAFmll0j/xMZ6ha+XUNwJA4qYT5NC/gPlrNkJP+hGO
+88B63GQz05p9tw4ywvhmIQHIxQZ9sfjmCFK1rGc5wcxo9o34EaxyvvMeyrXgiVQsskLMpjEV+JIL
+JC0HynBRtlVY+rKPL7vQ2t+OnJwiW/ONivE5Oh2IremH7rYcEwXs8/TbSrgCZnhRuL3cqfPx5y+M
+KcYK39LmR6v9TGHA2D1hlHsVACeaxO5qth0pQiAYhX506g/IPOZwHom53Eipf2xWrQ==
+--000000000000b2969e061cbd5eb4--
 
