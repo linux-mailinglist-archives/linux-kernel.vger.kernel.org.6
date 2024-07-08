@@ -1,138 +1,143 @@
-Return-Path: <linux-kernel+bounces-244817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3B292A9DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F7392A9E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67180282D44
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55F8F283070
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59B514EC57;
-	Mon,  8 Jul 2024 19:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571B51CF8A;
+	Mon,  8 Jul 2024 19:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OCJG12EX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C3qIIK/v"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C3C14900C;
-	Mon,  8 Jul 2024 19:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048E579FD
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720467168; cv=none; b=sN8kTPLPj/eS9Xp7Fc3Tcj2X4RfJeG1n2iG9tjORaD936VpWKYJ85FbW2ZnAkw0WBTlUaHCVggvQdW6bSDKo7TowDLEGNbh61Sw4GRJdg6NwqqpivvOS5VlhLWMLoStqS7m7EyDuxuHLQYAKVhPIA2WPP3xMVwCkmERcQoK7zvU=
+	t=1720467352; cv=none; b=d5qylckSjOMjDWa0YZGfc7TjTVAaMs9fbtb6fmhjeV2Ka3ji+czYbOnbo8NsB2YI9HVZpMYKmlfcQGT24PKBFtbWfMjI+jnVRvkvuxG6FjIMmMD22yKUmbPrwZ5mmrSPGUqZJe7OjjlAoQ2y12I1tSTH391Y3idORpKo4d3FNvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720467168; c=relaxed/simple;
-	bh=PQRWnOx82i3fG2doBPseySJto3zDK3NV4Mn8e9GyrTY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qkDpp3E/6bGhMTOt4dG4rovUQKvcpBpfYoJ/JfNUMb3aXkPtztR4AoeztUnBa+pP37+XQkE9L2ky7nNZ6TvvdbYcSbSupq5Q59FS9+jF1qexnjQMTKnMKgKprcnGvtapScCuGUuKmZ1ZJu+D7Rk1gkPftncTq1uObXsJCF4a1VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OCJG12EX; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720467166; x=1752003166;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PQRWnOx82i3fG2doBPseySJto3zDK3NV4Mn8e9GyrTY=;
-  b=OCJG12EX5DwJd+SSDwV/7QWN8uUNzKdAA8BJuz3Y5ZLPtqlpMmD0ZQR2
-   88KEHflkFHz+yAaRO53c41BjpBBUxpy8FUXdECMQYhbR3uteusWLgkz3R
-   eAUks8223hJ3zAmoKPgtqEo9ZAUfPQ89e9tQmUT7Hnw8X8ah46JtNoeM7
-   HAzVh8qYbXDwef9GxKtBrF+9JnjUp4C4nGiT3UimUWPxeteyEXaWboHfh
-   m27duOLj1I7mkGvRhilpO78OwIWkLlylSa2nkmimNUbmjYkKdAshWTW1n
-   WNQCOOONSz+44EJp9EN5oMlpt5QHxV6SlKtbCnxB5RO6y+pAJI1PLWlJI
-   w==;
-X-CSE-ConnectionGUID: MXhKG6/iT9a9ZUweaPEI5A==
-X-CSE-MsgGUID: aT+sJGZwQs+D14kctfAd9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17520497"
-X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
-   d="scan'208";a="17520497"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 12:32:42 -0700
-X-CSE-ConnectionGUID: TRnwzIJdTVOWbRO8PJilvg==
-X-CSE-MsgGUID: aK+CzMhgQU2ZUlCUsjL8ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
-   d="scan'208";a="48265602"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa007.jf.intel.com with ESMTP; 08 Jul 2024 12:32:42 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@kernel.org,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com,
-	linux-kernel@vger.kernel.org
-Cc: ak@linux.intel.com,
-	eranian@google.com,
-	Kan Liang <kan.liang@linux.intel.com>,
-	"Bayduraev, Alexey V" <alexey.v.bayduraev@intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 3/3] perf/x86/intel/ds: Fix non 0 retire latency on Raptorlake
-Date: Mon,  8 Jul 2024 12:33:36 -0700
-Message-Id: <20240708193336.1192217-4-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20240708193336.1192217-1-kan.liang@linux.intel.com>
-References: <20240708193336.1192217-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1720467352; c=relaxed/simple;
+	bh=0OBzSXiRb9v5GMOlfMYcQ/AMJWi6hFBtmioN+HVjr58=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aWT5m4QYP4jnvbaQLIBubLw8qCGGrCg7PubquckbowoMLVaOQvNwV9soW0DaZig9Afe6j1Pa509HNsPxCKUHMFnwZngWKSPnd7kvN6fsGV4ZO9TvEN5BQLlq8C97uieuUCC+eQtHT+jg45emALyRftsfDtMiYIFe3ho63pzzypE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C3qIIK/v; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720467349;
+	bh=0OBzSXiRb9v5GMOlfMYcQ/AMJWi6hFBtmioN+HVjr58=;
+	h=From:Date:Subject:To:Cc:From;
+	b=C3qIIK/vnI3mCTcPc66XWoXaZbiz+9uf2fXh1pfWwFj+9suhveLcIMm1kD+ikzZ6F
+	 rJ+WtOnd6HbIO9O87WMq8ZLlUaviA0wfEIUf6CSBp3Pfknocos3ri/+mFgqoDRGIwq
+	 lex/vwE0ifxWI64BFvO/TCIGzYmtA/QClvxvXazvdTUtdpEVgbS+xF7CMI0JqP0JQw
+	 LKQr5IqmKeculWUaVfuSUiAltUW6C1pGRDxQoXcMfTc0lYNPhoT7icMHxFckapUdHP
+	 N0mThcI4PV9RIaVPgjEn3XxAZ/SRPLJrYD1k7+IlafnVg/Z1GEiVlUe0ay+m6gKL98
+	 nEKBXu8f+lXhA==
+Received: from [192.168.1.242] (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 497FB378042B;
+	Mon,  8 Jul 2024 19:35:47 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Mon, 08 Jul 2024 15:35:42 -0400
+Subject: [PATCH] nvmem: mtk-efuse: Only register socinfo device if needed
+ cells are there
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20240708-mtk-socinfo-no-data-probe-err-v1-1-fb2acd3a47bf@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAI0/jGYC/x3MQQqEMAwAwK9IzhuoVbHsV2QPtY0aZBtJRQTx7
+ xaPc5kLMilThm91gdLBmSUV1J8KwuLTTMixGKyxremNw/++YpbAaRJMgtHvHjeVkZBUMfZd55q
+ 2icFZKMemNPH5/sPvvh+c3U9+bwAAAA==
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chen-Yu Tsai <wenst@chromium.org>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.0
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Not every efuse region has cells storing SoC information. Only register
+an socinfo device if the required cells are present.
 
-A non-0 retire latency can be observed on a Raptorlake which doesn't
-support the retire latency feature.
-By design, the retire latency shares the PERF_SAMPLE_WEIGHT_STRUCT
-sample type with other types of latency. That could avoid adding too
-many different sample types to support all kinds of latency. For the
-machine which doesn't support some kind of latency, 0 should be
-returned.
+This prevents the pointless process of creating an socinfo device,
+probing it with the socinfo driver only to ultimately error out like so
 
-Perf doesn’t clear/init all the fields of a sample data for the sake
-of performance. It expects the later perf_{prepare,output}_sample() to
-update the uninitialized field. However, the current implementation
-doesn't touch the field of the retire latency if the feature is not
-supported. The memory garbage is dumped into the perf data.
+  mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
+  mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
 
-Clear the retire latency if the feature is not supported.
+This issue is observed on the mt8183-kukui-jacuzzi-juniper-sku16
+platform, which has two efuse regions, but only one of them contains the
+SoC data.
 
-Fixes: c87a31093c70 ("perf/x86: Support Retire Latency")
-Reported-by: "Bayduraev, Alexey V" <alexey.v.bayduraev@intel.com>
-Tested-by: "Bayduraev, Alexey V" <alexey.v.bayduraev@intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 ---
- arch/x86/events/intel/ds.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/nvmem/mtk-efuse.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index b9cc520b2942..fa5ea65de0d0 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1944,8 +1944,12 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
- 	set_linear_ip(regs, basic->ip);
- 	regs->flags = PERF_EFLAGS_EXACT;
+diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
+index 9caf04667341..79300c91ced2 100644
+--- a/drivers/nvmem/mtk-efuse.c
++++ b/drivers/nvmem/mtk-efuse.c
+@@ -60,6 +60,8 @@ static void mtk_efuse_fixup_dt_cell_info(struct nvmem_device *nvmem,
+ 		cell->read_post_process = mtk_efuse_gpu_speedbin_pp;
+ }
  
--	if ((sample_type & PERF_SAMPLE_WEIGHT_STRUCT) && (x86_pmu.flags & PMU_FL_RETIRE_LATENCY))
--		data->weight.var3_w = format_size >> PEBS_RETIRE_LATENCY_OFFSET & PEBS_LATENCY_MASK;
-+	if (sample_type & PERF_SAMPLE_WEIGHT_STRUCT) {
-+		if (x86_pmu.flags & PMU_FL_RETIRE_LATENCY)
-+			data->weight.var3_w = format_size >> PEBS_RETIRE_LATENCY_OFFSET & PEBS_LATENCY_MASK;
-+		else
-+			data->weight.var3_w = 0;
++static const char socinfo_data_first_name[] = "socinfo-data1";
++
+ static int mtk_efuse_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -69,6 +71,7 @@ static int mtk_efuse_probe(struct platform_device *pdev)
+ 	struct mtk_efuse_priv *priv;
+ 	const struct mtk_efuse_pdata *pdata;
+ 	struct platform_device *socinfo;
++	struct device_node *np;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -92,10 +95,16 @@ static int mtk_efuse_probe(struct platform_device *pdev)
+ 	if (IS_ERR(nvmem))
+ 		return PTR_ERR(nvmem);
+ 
+-	socinfo = platform_device_register_data(&pdev->dev, "mtk-socinfo",
+-						PLATFORM_DEVID_AUTO, NULL, 0);
+-	if (IS_ERR(socinfo))
+-		dev_info(dev, "MediaTek SoC Information will be unavailable\n");
++	np = of_get_child_by_name(pdev->dev.of_node, socinfo_data_first_name);
++	if (np) {
++		of_node_put(np);
++		socinfo = platform_device_register_data(&pdev->dev, "mtk-socinfo",
++							PLATFORM_DEVID_AUTO, NULL, 0);
++		if (IS_ERR(socinfo))
++			dev_info(dev, "MediaTek SoC Information will be unavailable\n");
++	} else {
++		dev_info(dev, "Efuse region does not contain SoC information - skipping socinfo driver setup\n");
 +	}
  
- 	/*
- 	 * The record for MEMINFO is in front of GP
+ 	platform_set_drvdata(pdev, socinfo);
+ 	return 0;
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240708-mtk-socinfo-no-data-probe-err-d7558343dc82
+
+Best regards,
 -- 
-2.38.1
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 
