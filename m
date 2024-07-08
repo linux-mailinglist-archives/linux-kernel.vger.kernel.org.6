@@ -1,252 +1,288 @@
-Return-Path: <linux-kernel+bounces-244655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5522292A772
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:38:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8890592A779
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C5B42814A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:38:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1B66B20C4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596261474A2;
-	Mon,  8 Jul 2024 16:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24761465A1;
+	Mon,  8 Jul 2024 16:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fX8uSA2T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JNnPfbrk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD10C13A3FF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720456677; cv=none; b=Z/sYM/kGmteWTNZ+AlVPNQ9B9i3Hcyjxb9Ix8CNb6w28fo+qOk3kjMZywaIrKY/yNd8E47HbwRKxLc7uT9mL4OgPw/j3kR9uTEzPWV/cY6ki4OExMh3vR+8+WnB9uS+tEzE9eHFLJ+pk0cuZxLJZjpbB1St4ql2zMnCXwV8TaDE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720456677; c=relaxed/simple;
-	bh=FuvC9f3INUPjGe5sGL9qL48+5PEpoGObV+5XOaC8FC0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=u4/0Oj1BXgyuOZE2snK/+FhWw5JR0UIcLQbzRc3nCzznsWoWQxZB8Bo1WVAStyBCMu4FPKyc8GfBfRnG0Xojlr84peHF5ydGj2+4EKvApyYeCYaHTe1AWVYPlfVFwLaBtcF731ISyuw79Cfi50qQNXA55dUOMlBVahNe5ZG134o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fX8uSA2T; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720456674;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MpE9tc6GwVBdyYEbRi90TJl4jv833e7Ek5Pw4E3TGJE=;
-	b=fX8uSA2TkzAr1ioFIKYhuHpG0jv6nSBtLVPpRuAb7CjTg9S5IumTwc3AYBqlQwccOpEHKH
-	dt+1ahr0q2zWCw6XqVP09Sd0lcU9Ku3k3aB/1IouWbJsz1JVigEkr3EQWcjLy4n7Hhqxj5
-	AEu8lOBaHXE26PC6yj3zW9D9Lk4A2B0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-597-S3QDT4-CPfOc0o7haGvhuw-1; Mon,
- 08 Jul 2024 12:37:52 -0400
-X-MC-Unique: S3QDT4-CPfOc0o7haGvhuw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 260D71955F41;
-	Mon,  8 Jul 2024 16:37:38 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.113])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC4371955F3B;
-	Mon,  8 Jul 2024 16:37:17 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Kees Cook <keescook@chromium.org>,  Linus Torvalds
- <torvalds@linux-foundation.org>,  Paul Moore <paul@paul-moore.com>,
-  Theodore Ts'o <tytso@mit.edu>,  Alejandro Colomar <alx@kernel.org>,
-  Aleksa Sarai <cyphar@cyphar.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Andy Lutomirski <luto@kernel.org>,  Arnd
- Bergmann <arnd@arndb.de>,  Casey Schaufler <casey@schaufler-ca.com>,
-  Christian Heimes <christian@python.org>,  Dmitry Vyukov
- <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,  Eric Chiang
- <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,  Geert
- Uytterhoeven <geert@linux-m68k.org>,  James Morris
- <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
- <jannh@google.com>,  Jeff Xu <jeffxu@google.com>,  Jonathan Corbet
- <corbet@lwn.net>,  Jordan R Abrahams <ajordanr@google.com>,  Lakshmi
- Ramasubramanian <nramas@linux.microsoft.com>,  Luca Boccassi
- <bluca@debian.org>,  Luis Chamberlain <mcgrof@kernel.org>,  "Madhavan T .
- Venkataraman" <madvenka@linux.microsoft.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
- <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
- Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
- <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
- <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
- Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
- Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-security-module@vger.kernel.org, Eric Biederman
- <ebiederm@xmission.com>, linux-mm@kvack.org
-Subject: [PATCH] binfmt_elf: Fail execution of shared objects with ELIBEXEC
- (was: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to
- execveat(2))
-In-Reply-To: <20240708.zooj9Miaties@digikod.net> (=?utf-8?Q?=22Micka=C3=AB?=
- =?utf-8?Q?l_Sala=C3=BCn=22's?= message
-	of "Mon, 8 Jul 2024 10:56:59 +0200")
-References: <20240704190137.696169-1-mic@digikod.net>
-	<20240704190137.696169-2-mic@digikod.net>
-	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
-	<20240706.poo9ahd3La9b@digikod.net>
-	<871q46bkoz.fsf@oldenburg.str.redhat.com>
-	<20240708.zooj9Miaties@digikod.net>
-Date: Mon, 08 Jul 2024 18:37:14 +0200
-Message-ID: <878qybet6t.fsf_-_@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40FB81751;
+	Mon,  8 Jul 2024 16:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720456750; cv=fail; b=EYqd1TBNlWMwO6SzY02WQ9tHFzP/tPn3GJBToWf6t5szMeGnwdELVNe491AUrD8dUV3GK5l/nFc5xxtYoExlZ9ElX8UBtcHILI40oeewyMMCwsHWlNPLH147CDM/lu2W6Bke1RzI35B1bkVmvMXUC7BoTkQ2H5geZbeiMpZSlYc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720456750; c=relaxed/simple;
+	bh=PHzK7RoDyoTFYi9aTEmbB7K2cOf4B2nCoIu/Wg0yCps=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Y0+WrDOUH0tPUuotkpGMPtkrGaUUBFoeFSA1DTl0rP8dC1SaiLNQ9jtdatuHna2jve3dklkqVVJsVq6BX6NES6IUVfrYPa4namNigglactHQZUbg0ZkH3UiR6WLIyVSgXxlOggusKYSJB+6NSB1MzVft1Q14CEBAkFDo6bdZqqs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JNnPfbrk; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720456748; x=1751992748;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PHzK7RoDyoTFYi9aTEmbB7K2cOf4B2nCoIu/Wg0yCps=;
+  b=JNnPfbrkBHzTDR+YumwQ8uuusIG0LogIEpD8xdLIFntd4+WEfUXDQDoU
+   6Op9IW9qXcM8NeaovuJb52h/ZXWxj8C439JqhPMZYDNtIqwogimWpQhlG
+   w6+7dEsB18ReWTVsRDFRqk8BAoKTVRLFQZeAygLKavqlOMFq+Cgq9PVrO
+   WqGNJlfON5SR2D99AZSwll0+rcl/zDWLytN8YXUM43fVL8bsjSgxuWPKt
+   1CLQSB3Ju2PrLP3GIBNF9pH1711hMGxw/Yezi6ojx3MRtxx8AVkkrfqfc
+   NWXVy+Gl95gfSHQYVZipnqyxB90tZU/pjFLl1ESRtKUCMCArappgrRCry
+   A==;
+X-CSE-ConnectionGUID: v5jrtlsJQIWub/ra1gMzag==
+X-CSE-MsgGUID: 1vGHTCCBT0Gx1Yc0NYAyKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="35205547"
+X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
+   d="scan'208";a="35205547"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 09:39:08 -0700
+X-CSE-ConnectionGUID: gg/E1ghbRx2C9KM3E78ilg==
+X-CSE-MsgGUID: x/6XBmX3QaGT0wzl4rfvWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
+   d="scan'208";a="70769644"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Jul 2024 09:39:08 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 8 Jul 2024 09:39:07 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 8 Jul 2024 09:39:07 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 8 Jul 2024 09:39:07 -0700
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.44) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 8 Jul 2024 09:39:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gmJk4pclNmKOfJkTmozLAa8tRaonQXKjJDvGRsnvGrnu5ZnNBmTrxHBvz7QmRmvGdAWOayuDX2PGi4YZV2a/LTGJVfF1xCFOUt52sNMPwjsSDbXROtle1595bcOkru8ZqYHF+ktms3ZA9Ae9EIqRQ9bIm0OGQl1th0SN0M6Lxu8CNlLrQzZ8Wh81a7zRl4osSr5+w9MuJungqODYiXIf0HfdD3iieoPFNqKpbcjBvFFCcf8chWgXPQSwTVPbAL8b8DMjW98gFpaGvOD4ymIWeYphcVmk7dSMQXAoNViuKIryGyo6+VQjKfd7J8aKKUzLlA3tf9ojSd9J4mh/l8k20Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3HMCc8lKVXorHGxZ1eDhh8SOpegG9YLkVHWu6GlEu1s=;
+ b=YfmdWGyshxp3x2xVaVFtFqbn9o87jnOtN9gjED8PPUshUVYElLdTrMXi7FWF3V7n0n74IkLodXXr7cBWvfPhe0N6lDDnuBtvx4O/mgajzyJf/PYUxdZ+tGainWBSoThSXcQ+5B3XGz52rR+uL/sgs8HhEBm3EfC412gscpeDPHbJbEbIA4xaar9iIPTBVEb20ZxoIZgu+P633SdN0fEgcKWE/47GYkKHKrLu/udwokUkfE3KyN3UMN5PD8qS2NR5zXrnfBK5+figayudJDCftPtxwxsTGSjz0/ibWTpx0z4MsIx7V9dtMyFhsic3fMD0liWtIysTPGBjoqF+aQxmqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DM4PR11MB8204.namprd11.prod.outlook.com (2603:10b6:8:17d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Mon, 8 Jul
+ 2024 16:39:05 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
+ 16:39:05 +0000
+Message-ID: <fda4f2d4-b0b1-4fb9-ae0d-0a5c4c1b65fb@intel.com>
+Date: Mon, 8 Jul 2024 09:39:02 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] selftests/resctrl: Adjust SNC support messages
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+CC: <shuah@kernel.org>, <fenghua.yu@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<ilpo.jarvinen@linux.intel.com>, <tony.luck@intel.com>
+References: <cover.1719842207.git.maciej.wieczor-retman@intel.com>
+ <484aef5f10e2a13a7c4f575f4a0b3eb726271277.1719842207.git.maciej.wieczor-retman@intel.com>
+ <c1ec4e04-20cd-4717-83ed-da6a55c91889@intel.com>
+ <0b9210d3-2e47-4ff3-ac06-f6347627b0d3@intel.com>
+ <d5bd6275-ab86-439a-887f-17c04a586716@intel.com>
+ <xfhv744t2ol274w6lddon77rn5dkf7dzbwqcoknok4kk4guehz@hwjsusvhoerb>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <xfhv744t2ol274w6lddon77rn5dkf7dzbwqcoknok4kk4guehz@hwjsusvhoerb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW2PR16CA0041.namprd16.prod.outlook.com
+ (2603:10b6:907:1::18) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DM4PR11MB8204:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5505d44-a18d-4ad2-57da-08dc9f6c7b04
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Q1FWRzJCWnFWZHlSM25sQjJyYlkyUXRTTFVPM0dmcU5mN21RMlc5eVkwa3F4?=
+ =?utf-8?B?bXFFenlRQW9Xb0FIOUV0QkNQRW5Dbzh0ZFkybnh1cVl6b0lrcXJXd20reXQ5?=
+ =?utf-8?B?ejN4d2tXckVuTyt1NWtCcnVKWEpLYjQyNFdNanZLamRSdHJXUk1DYk05TzdC?=
+ =?utf-8?B?R1VUaUw0V1hSRTN0NlZqeThMWFZYMUhCZGVhQU04SC83UVdCTksxRExrMGdQ?=
+ =?utf-8?B?Ny94cWUrNVdVNXVPa3N4NUxvdXJrYXFYYjBnblY4bGR4Q2wwcCtab2lkOFU2?=
+ =?utf-8?B?TTl1Uzc1RVdjQllrSkRtdytPUER3aWVjYXNwRytyOGNnMTJuQ1k4STQ5NTk0?=
+ =?utf-8?B?bUdieHRLc3RvZ3BqTU9BU3d2SEdIcDNCU05YeEtJTWpGRW1QL1ZPVWhtZjA4?=
+ =?utf-8?B?ekVLcHNBWmRIRm1lQmovRWcwZEovN3BydXdha2ZWZzV6Qy9pT0pSVDNBK1dz?=
+ =?utf-8?B?VGNEcVFxS2E5MU1rUmlqS0FqNk8rc1ZwaUpjSVdHZVhMd1pQT3ZIWVF6alNO?=
+ =?utf-8?B?d2Y1VCt5NjYzTW9rakxyTFlsVDY1MTd2MlF4cVdNOG1EeVBLa0svQWdLVThH?=
+ =?utf-8?B?UFE2ZDRoR1E1MWVLbEFTaVN0WURPYXN3dFBGN3ZPYlFtYmUwekNIMnVHWlBy?=
+ =?utf-8?B?N1gwcEdDREJZRGNzN0xRSjNoZHJVa3VqU2NaZElHeXlQdWUwVVhTbTdPbnM2?=
+ =?utf-8?B?ZnFQWHZ1Wk1MMCtwaDlRQktnY2lvRllJNmtYYmh3dHlNSGFvcSs5UVFTNjlF?=
+ =?utf-8?B?WHh4UFBZR1ByRDlMQzRudi9YakVhM25pRitLUmpuc3EvU2x3WkNpa0JHUlph?=
+ =?utf-8?B?c2p2MEN1MDVGcXBHYWN0bWswbm9xS0NwQXBVc1AwUEVwWktxZmFrTjhCUG1J?=
+ =?utf-8?B?dmRtWkxWc1kvT0lKaE16QTZLZGZObzhvYlZYOFBMUURlUDVGeHlmajJ2OSsv?=
+ =?utf-8?B?Tm5tV2RHUW1qNGZOdEtEcTdDeWpVVEQxQjMxQld2eXNyQnNDbFJDR3FHazBu?=
+ =?utf-8?B?L3VuWWRxdFJQSlhKd2JQSml0WE1NdUhTNFc5ejBoT1FtYlZldGlGNisyUi9i?=
+ =?utf-8?B?NUIzSlJpUElCdE1tZTBET0R6dUZtUmhXS0R5c3NTcHY4ZnUrVy9pc0FpVHQ4?=
+ =?utf-8?B?dU4yNTlJcytTUXI0dFBCYnZvbmNlSlJIRndoeVZURzEyck9QNXc4N1k2amlD?=
+ =?utf-8?B?eFd2QjFVS3d5dW50Zk9TK01wSjNZUFRtaURjczdDZEpqR3hZMUZUS0U1K24w?=
+ =?utf-8?B?UWVKVFhUTjVGQ1JVYU9WOTdyRFBhM08yUWJJaE05YndObldKNzlUNkJLbGc2?=
+ =?utf-8?B?L2xjcU9peU5wOTkyaHpFY0d5d0J2M2ZhZEhEb3VnUE5xY2lpRmZaSWRqQWJ6?=
+ =?utf-8?B?WG5RMjI3SStScXhnbDdKQ1JjamlnSXF5Z2pLYk14VXRvTngwd0JPVmxJN0FX?=
+ =?utf-8?B?dXZqazQ2YlVDYkNDMG5CUWplVDVRb3BhZ2FUelM4WjRiYjdQa0pFWWcraTkv?=
+ =?utf-8?B?cEpHS3VQK0thZC81c1dnaFhrelB3S3lka3pySmFsNGIyYVZNSzlybDZaWHJC?=
+ =?utf-8?B?TzlFNUNXWlRrblQrcmUwbnRndnJsTHAxZkV6TFFDYWMxVlR3MVdqWUcwS2Q5?=
+ =?utf-8?B?STkrTDlBWmpBN2Z0R2lSbkxJdEFvSTFWbmJ5OFhqaUVhUEtKVmtRNzJCWUpa?=
+ =?utf-8?B?aUI1dElVM2lWVWJES2lOM2oyUDFWNkVJVkwrZEx0alpJbEt2a0lBVVc0Z3lt?=
+ =?utf-8?B?eWd1U3JMU1NLam1aYnRLUjVaMDhHL09SWi9QSjVPY0J0ZmtmMDQvRkxsT2JE?=
+ =?utf-8?B?TERpSDJ5VE85Ym9RWkVRZz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Skl1UHZWRXRSbVZMbTdFb3BQL0c4VURybGtoekNVVVByVURFa3pWOVF3TEpX?=
+ =?utf-8?B?WUx6NTBVWUlqVTVlMHNkbWlWcXV3VVpSdW5qeGUxMGVjbTVBWVYzczA5MndK?=
+ =?utf-8?B?c2hLODl3Tk11SExLWkF4RXIrU0lDcDBHajlvM1hNeGIwbWhYVStFVEIzYjE2?=
+ =?utf-8?B?d3dDazBhb1c0UUxweUJaeE9WdWNKa1hCLzNkVkt6N0ljZlpyM2gwMm8zSnNS?=
+ =?utf-8?B?Sm1SZzFuZG1tSFJUeEtqeTZsNjZ2cGRkYmQ5ZmkzUGdEaGY2WkF3bG5reGU1?=
+ =?utf-8?B?TmRoQmUxYXIwc0NZbm16ZkpObW1qQ1Q2aXVzZTlkQXJkc2hIMHhUazd1clIz?=
+ =?utf-8?B?MmxraHUrd0lYNHRUSnQ2ekljZ3R5K2pzNDlONlo0c25wdzEwdWhMY2E1VmRz?=
+ =?utf-8?B?MFVNQnpWS0lJb29VWlhNRCt6Vmp3Q3dKQUp3V2RCeXVQc0o0R1cwbHNaRGg4?=
+ =?utf-8?B?L1NyS3NPajRweHpaWHVYNTdSaFdwZW5nU3lxKzdJNkV2YVFBakZpT05QZTJq?=
+ =?utf-8?B?T05ZVzFFTlZnUFFqaElzY0t3djI4VHdmcUw3aGxhWEswMUk0eXhTOVc2dUpi?=
+ =?utf-8?B?aDhhcS9BOHpua1RtZXJacmNqYURNUXNPUUtkNDhFc0tLUCt4N0I3YUpmS0xH?=
+ =?utf-8?B?dVc4ZGl1Y0ExNmRPaDBxditHQTE0am1sTmRUWmd0SWJ4VnFaQjRNbzdyUnhE?=
+ =?utf-8?B?YWptaXFOcmtrMDlpYWd5akxUSERZamlCL1NxaFBrMm9mRlZMYVphVFhuR012?=
+ =?utf-8?B?QTJiMGZMQmtzaUYvTVhveHNoZExRcUxFL0VLT0hna2tpcUxrT2tBRVpMbld4?=
+ =?utf-8?B?Rk1PdFdHYTZtZzROb2daYk5YbVFPOWRzbHhVOW5xTDJBSlhJM2ttQm1yNVJh?=
+ =?utf-8?B?d0RuZkd0T2RQRTU0RCtEQmFXYW41L0grSnV3c3hCMXd2djFyeUJSZGJmZzBN?=
+ =?utf-8?B?d29VMXRuVmU5UEx5NEY1VEQ5RGp1NHFoRFJHWVNXeUJPcUx4MkFtWnBEU2RM?=
+ =?utf-8?B?d3Myeko5c3FESVl4bXV1ZktHTGFuQW5kT1gxTG0wcDFPbjlFSCsvSzRjbWtX?=
+ =?utf-8?B?RXBRMFZEbWxYZjE4MFVIRDMvMlQ2MXlzOVNDdTcvT3hISEtzUzQ2ZHJVT0Jq?=
+ =?utf-8?B?V3BLTXlIUzAxRDZ4bDhxOWpRZGxzR0liM1VsaXhVbmRzMWZhc1dkbjZDSUJ2?=
+ =?utf-8?B?U3FpUUtwVDRNOEQ5V2szM2EzdmlpM21pdjJRU2NLekNMK2hoQ1dGRTR0NVBH?=
+ =?utf-8?B?RG95am1yeVdRekxqME5iZDJTdUpYRU9mcTFGRk55YVhOYTJBRTdOOGpCVkI2?=
+ =?utf-8?B?OFpQN0lmR2hXVHZpMnNObEU0OFFrWUFNdDc4RklJZ1BzYk9KR3NxWXBPRDdv?=
+ =?utf-8?B?TXBOZWJMYXdKQng4TWN5dVBlUDhGWThCcSsreWEwVERXOURpTlV4WXZXY21m?=
+ =?utf-8?B?ZXp4cEFKUmR0bjFOZDY1aTViMEVOYU8yUWNEeWdXdlYrYU9QMTBjNCt3T3Fv?=
+ =?utf-8?B?eDZKZjlXV2ZKcEtnbjJSQ2dZaDRjbVR2M3psZ3FOeW1sR3pPM3VrQlFjS25u?=
+ =?utf-8?B?YkJGWTRPdG0zYW9jb0hMa21pMFNWdkU3YTVmTVhrdSszNzYwNis4UUxVRm1k?=
+ =?utf-8?B?OHZ4UmtuWTE4YlFxTTYrU01naHdGK0txYkIrV2FYOWNjWWViNE9hdVluS3di?=
+ =?utf-8?B?SWFOYjE2eUVwSWw3ZFNEbEYzeWNEdHlDTkpGMDliL3BxR05lblB6QVRUalFt?=
+ =?utf-8?B?VjFpYk8xd1ZacGRmUG1yUld5MnpxSjgvUUpxY0kwUWZHRlRTZjZzVS80dW5R?=
+ =?utf-8?B?YzlRNmdPVTRySkZkZkp2ek5KeUFDWG1zc1BmemZnYkM3eWM5REhDWHpRbFg2?=
+ =?utf-8?B?ZjVLbDRXdlUwTmNSaytCODQ0Q0xkbzFKeHowenBGblhDS0tTOTZCUTE2ODlp?=
+ =?utf-8?B?MnFwVy9rR3NQeFFmbFlSUUZmRE5KY2JPNkFwTGx1ZlU5aUxnY3hIN0tXb1ht?=
+ =?utf-8?B?S1dZbTI4Y1lGMGZjNjJrOUNuM0lmNzZVNjh1VXdPc3NGMlkydmpFUkhDOFlI?=
+ =?utf-8?B?ZThXRjdPaWNicnZhN0VmU1lhcGtMNmk2bVFDVG9GUVg4bjlsZExNWS80ekhw?=
+ =?utf-8?B?Ujk3MlJwamFtclRnc1JKcXBDUnVJeW5LL3NGMk90ZnFObW9FNjVJeXJqbXpv?=
+ =?utf-8?B?YlE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5505d44-a18d-4ad2-57da-08dc9f6c7b04
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 16:39:05.0116
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EYf1VeC8RBZ1RpXDFGj5lM2yrKuLgBRFwZvk1O1iBhL2b1joonvOwXQtxn7+DmIOtCYtk6KuH29c3DjB7gO4eztv0MdUvQGfdO8MRMolaf0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8204
+X-OriginatorOrg: intel.com
 
-* Micka=C3=ABl Sala=C3=BCn:
+Hi Maciej,
 
-> On Sat, Jul 06, 2024 at 05:32:12PM +0200, Florian Weimer wrote:
->> * Micka=C3=ABl Sala=C3=BCn:
->>=20
->> > On Fri, Jul 05, 2024 at 08:03:14PM +0200, Florian Weimer wrote:
->> >> * Micka=C3=ABl Sala=C3=BCn:
->> >>=20
->> >> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
->> >> > allowed for execution.  The main use case is for script interpreter=
-s and
->> >> > dynamic linkers to check execution permission according to the kern=
-el's
->> >> > security policy. Another use case is to add context to access logs =
-e.g.,
->> >> > which script (instead of interpreter) accessed a file.  As any
->> >> > executable code, scripts could also use this check [1].
->> >>=20
->> >> Some distributions no longer set executable bits on most shared objec=
-ts,
->> >> which I assume would interfere with AT_CHECK probing for shared objec=
-ts.
->> >
->> > A file without the execute permission is not considered as executable =
-by
->> > the kernel.  The AT_CHECK flag doesn't change this semantic.  Please
->> > note that this is just a check, not a restriction.  See the next patch
->> > for the optional policy enforcement.
->> >
->> > Anyway, we need to define the policy, and for Linux this is done with
->> > the file permission bits.  So for systems willing to have a consistent
->> > execution policy, we need to rely on the same bits.
->>=20
->> Yes, that makes complete sense.  I just wanted to point out the odd
->> interaction with the old binutils bug and the (sadly still current)
->> kernel bug.
->>=20
->> >> Removing the executable bit is attractive because of a combination of
->> >> two bugs: a binutils wart which until recently always set the entry
->> >> point address in the ELF header to zero, and the kernel not checking =
-for
->> >> a zero entry point (maybe in combination with an absent program
->> >> interpreter) and failing the execve with ELIBEXEC, instead of doing t=
-he
->> >> execve and then faulting at virtual address zero.  Removing the
->> >> executable bit is currently the only way to avoid these confusing
->> >> crashes, so I understand the temptation.
->> >
->> > Interesting.  Can you please point to the bug report and the fix?  I
->> > don't see any ELIBEXEC in the kernel.
->>=20
->> The kernel hasn't been fixed yet.  I do think this should be fixed, so
->> that distributions can bring back the executable bit.
->
-> Can you please point to the mailing list discussion or the bug report?
+On 7/4/24 12:23 AM, Maciej Wieczor-Retman wrote:
+> On 2024-07-03 at 13:51:03 -0700, Reinette Chatre wrote:
+>> On 7/3/24 12:43 AM, Maciej Wieczór-Retman wrote:
+>>> On 3.07.2024 00:21, Reinette Chatre wrote:
+>>>> On 7/1/24 7:18 AM, Maciej Wieczor-Retman wrote:
 
-I'm not sure if this was ever reported upstream as an RFE to fail with
-ELIBEXEC.  We have downstream bug report:
+...
 
-  Prevent executed .so files with e_entry =3D=3D 0 from attempting to become
-  a process.
-  <https://bugzilla.redhat.com/show_bug.cgi?id=3D2004942>
+>>> SNC might not be enabled at all so there would be no reason to send the user
+>>> to check their BIOS - instead they can learn they have offline CPUs and they can
+>>> work on fixing that. In my opinion it could be beneficial to have more specialized
+>>> messages in the selftests to help users diagnose problems quicker.
+>>
+>> My goal is indeed to have specialized messages. There cannot be a specialized message
+>> if snc_reliable == 1. In this case it needs to be generic since SNC may or may not be
+>> enabled and it is up to the user to investigate further.
+> 
+> How about this in cmt_run_test() for example:
+> 
+> 	if (snc_unreliable)
+> 		ksft_print_msg("Intel CMT may be inaccurate or inefficient when Sub-NUMA Clustering is enabled and not properly detected.\n");
 
-I've put together a patch which seems to work, see below.
+It is ok with me if you want to keep the message even if the test succeeds. Without seeing
+the new implementation it is unclear to me why the SNC check below is guarded by an ARCH_INTEL
+check while the one above is not. Ideally this should be consistent to not confuse how
+the architectures need to be treated here.
 
-I don't think there's any impact on AT_CHECK with execveat because that
-mode will never get to this point.
+The message does sound a bit vague to me about being able to detect SNC. How about something
+like:
+	Sub-NUMA Clustering could not be detected properly (see earlier messages for details).
+	Intel CMT may be inaccurate.
 
-Thanks,
-Florian
 
----8<-----------------------------------------------------------------
-Subject: binfmt_elf: Fail execution of shared objects with ELIBEXEC
-=20=20=20=20
-Historically, binutils has used the start of the text segment as the
-entry point if _start was not defined.  Executing such files results
-in crashes with random effects, depending on what code resides there.
-However, starting with binutils 2.38, BFD ld uses a zero entry point,
-due to commit 5226a6a892f922ea672e5775c61776830aaf27b7 ("Change the
-linker's heuristic for computing the entry point for binaries so that
-shared libraries default to an entry point of 0.").  This means
-that shared objects with zero entry points are becoming more common,
-and it makes sense for the kernel to recognize them and refuse
-to execute them.
+> 	else if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
+> 		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled. Check BIOS configuration.\n");
 
-For backwards compatibility, if a load segment does not map the ELF
-header at file offset zero, the kernel still proceeds as before, in
-case the file is very non-standard and can actually start executing
-at virtual offset zero.
+The "Check BIOS configuration" guidance is not clear to me. If the kernel does not
+support SNC then the user could also be guided to upgrade their kernel? Perhaps that
+snippet can just be dropped? To be more specific that SNC enabling is not a kernel
+configuration but a system configuration this can read (please feel free to improve):
+	Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.
+  
+> This way there is a generic message when snc_unreliable == 1.
+> 
+> And as you mentioned at the end of this email, the user can be expected to
+> backtrack to the beginning of the test if there are any problems so they can
+> discover the exact source of the issue - offline cpus.
+> 
+>>
+>>>
+>>> Having only this one message wihtout the "if snc unreliable" messages would
+>>> mean nothing would get printed at the end on success with unreliable SNC detection.
+>>
+>> Having a pass/fail is what user will focus on. If the test passes then SNC detection
+>> should not matter. The messages are just there to help user root cause where a failure
+>> may be.
+> 
+> My train of thought was that if test passes with broken SNC detection it means
+> SNC was used inefficiently right? (either the portion of L3 used was bigger or
+> smaller than that allocated for one cluster)
+> 
+> It's not exactly a failure but I thought it deserves a warning at the very end
+> to alert the user.
+> 
+> If you don't think the warning should be printed on success I guess the
+> condition can be:
+> 	if (ret && snc_unreliable)
+> and the user can look at the start of the test if they care about more
+> information. And the message can lose the "inefficient" word since it would only
+> happen on error.
 
-Signed-off-by: Florian Weimer <fweimer@redhat.com>
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index a43897b03ce9..ebd7052eb616 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -830,6 +830,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	unsigned long e_entry;
- 	unsigned long interp_load_addr =3D 0;
- 	unsigned long start_code, end_code, start_data, end_data;
-+	bool elf_header_mapped =3D false;
- 	unsigned long reloc_func_desc __maybe_unused =3D 0;
- 	int executable_stack =3D EXSTACK_DEFAULT;
- 	struct elfhdr *elf_ex =3D (struct elfhdr *)bprm->buf;
-@@ -865,6 +866,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 			continue;
- 		}
-=20
-+		if (elf_ppnt->p_type =3D=3D PT_LOAD && !elf_ppnt->p_offset)
-+			elf_header_mapped =3D true;
-+
- 		if (elf_ppnt->p_type !=3D PT_INTERP)
- 			continue;
-=20
-@@ -921,6 +925,20 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		goto out_free_ph;
- 	}
-=20
-+	/*
-+	 * A zero value for e_entry means that the ELF file has no
-+	 * entry point.  If the ELF header is mapped, this is
-+	 * guaranteed to crash (often even on the first instruction),
-+	 * so fail the execve system call instead.  (This is most
-+	 * likely to happen for a shared object.)  If the object has a
-+	 * program interpreter, dealing with the situation is its
-+	 * responsibility.
-+	 */
-+	if (elf_header_mapped && !elf_ex->e_entry && !interpreter) {
-+		retval =3D -ELIBEXEC;
-+		goto out_free_dentry;
-+	}
-+
- 	elf_ppnt =3D elf_phdata;
- 	for (i =3D 0; i < elf_ex->e_phnum; i++, elf_ppnt++)
- 		switch (elf_ppnt->p_type) {
-
+Reinette
 
