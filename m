@@ -1,116 +1,129 @@
-Return-Path: <linux-kernel+bounces-244505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138D892A52E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0DC92A536
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3EAB28212C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D5F1F23A70
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3E81420D0;
-	Mon,  8 Jul 2024 14:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XL1CqNZw"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904A3142E6F;
+	Mon,  8 Jul 2024 14:55:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5E413F45F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CDF13FD69;
+	Mon,  8 Jul 2024 14:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720450430; cv=none; b=d2EVMpIgB40vjodliygrn1AeWdL7YEnwQ73lRXxmPOL+NxyQKjTHRndVK7jhV1GmdY4mvaZrqgo3IqZNbnvwkrhRAFwTEGh6jGcyYrptleKM3LvZFYHoWddUD6/T6S2PGOxBLDbvd8nmAofTVV1HkenEds4XDQ0X1eHGWYRPndA=
+	t=1720450538; cv=none; b=KVlpL10JU8p92Ginxov8GG/aAKnWSOqoWsMaIgQrSsjMTdNe842S/bu2miA9IDCJcYgfrIwnp8lLEcC+kToaNVtS8W80DYHr71Y8KFvXnZ+1ae2s8N1S+TTaHidJ+/cWMA8ff4TS4IJvEoZOdSwWFyi4EW98kx8wB+X2jWtTKtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720450430; c=relaxed/simple;
-	bh=oS/9j3dsYpP59idtGgIC4uuWK33USwlviNFf2Yb9edY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UbBYsw0BztKTzR0w5PWK95UQrgXZEohx0zgzhT3jgDKFDDraM/x3h6d6fLAA00RDqYA+r/WkbYtlIvcPzRt630Vm6FVC8B24IjKAvFzQe/Upy7JAKeIvk9iZw6iLsfaXgPJQ+GbM8kGh0q5/NosmF8rQLUzQ0vXyf2SbFepEaBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XL1CqNZw; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so34622225e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 07:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720450427; x=1721055227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EyqFib4M3rqlBFw/ZGzz1LaByQHFqZPSGdvyPY+IPB0=;
-        b=XL1CqNZwkkWELRYJEe9haeA07ZsDwWWm3PbUZF6DzOWI9yTLS72PRr5QecEoUmuh8J
-         0GfgCfxRnSi6ULMkKakl8H2DB0negyPnLI8hfGTZvLI3lSBGAkWJZBgKhItFFd6FxT6U
-         tiqxTPMdbygQQGo7b8KysReMrE0+rAWzf8LiS65c59/lIRE0p38E8ug9RD/XlqCysSzO
-         KkeNopZ0pVr3RHd4LKMrZ6SaMdohrnT1BaxughNmfw4DP3+5Xlq/lw+ybwLZIYiB3xk4
-         sX3yM4vAQYNhJjAeivmQL1nxKvH4oghdPG2rng5EehQHriKFJe0dFTyL/RRV7Oi8KShr
-         HNuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720450427; x=1721055227;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EyqFib4M3rqlBFw/ZGzz1LaByQHFqZPSGdvyPY+IPB0=;
-        b=a3ihCGRdTQHIzs1nrBkSFzoGyAUiTB3LM+cqldJ9xZmhbVlzH1TwEXz4d2UFGn1LCZ
-         z8Eluk3ycKd6CcmhIhuDJWqPbZZoWCzptEDlfvrdplgHYrh7a5kV/UvLboG42VzCY92D
-         DLY2W42u8HCJowzQRcWdUkGArOEKy2ssF++hN3XvDeymHyaKzHE4AK5ENvSs14Srof69
-         JeqiZE2Y6wm8jBLVqrkuDzrMYiW8ktvXP/OfxbRFq7enKHn6ai7EZYzpsOwiV7p6g8nS
-         38rRyGEH0021AVRuUKeC1iAxfNkms2d4Z0hTSbzZ3PtSiNLIZy0b80FBprQAAZlwCYzF
-         cwng==
-X-Forwarded-Encrypted: i=1; AJvYcCVE3Mqww9exGLnJ8AyyvAp+67uQDrDI23f8d/ncWyaZWBme6e0sFtnMxk+P7yDUcrU6lRYYkXvM1Mv+CChBZws9hmtl9msQGjdKY6s7
-X-Gm-Message-State: AOJu0YzYTx4+sK2gbDtfW3JyJ0gKc7hpnVYoiL0fK7iKFGHUrGi2CE4F
-	zeg0TcbbLSJw61x6Og0ukdiywpHd0LuRmA3htWaMdnIo3RPKuCojc52+AT6D6ZM=
-X-Google-Smtp-Source: AGHT+IEBuhdhAHUYp56NAUgYnKaRIraX3CZBvDDbgKXiz0kpyc8NLn1O5Tq1/i1agiHJxKvs5l9b7Q==
-X-Received: by 2002:a05:600c:378b:b0:426:6f87:65fc with SMTP id 5b1f17b1804b1-4266f876712mr488425e9.17.1720450427358;
-        Mon, 08 Jul 2024 07:53:47 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a2a3:9ebc:2cb5:a86a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e09fcsm1933645e9.4.2024.07.08.07.53.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 07:53:47 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Stefan Agner <stefan@agner.ch>,
-	Frieder Schrempf <frieder@fris.de>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: gpio: vf610: Allow gpio-line-names to be set
-Date: Mon,  8 Jul 2024 16:53:45 +0200
-Message-ID: <172045041379.123415.15663684790489482699.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240708084107.38986-2-frieder@fris.de>
-References: <20240708084107.38986-1-frieder@fris.de> <20240708084107.38986-2-frieder@fris.de>
+	s=arc-20240116; t=1720450538; c=relaxed/simple;
+	bh=rZn/8V7891ztCyBoITFmD/bjaD3U4PWwzcFKpmpp2gQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T3nybfBir11++C+Plg6W69LkAKF2W5YaFjN/STWKxB8unUlmaB8LXM7ko3ezUXDmj4yS1e3d5gBH9+GXXFywU4aXOjonM1//1GeHcyHcRHNMQmhw/mnjIgcz9G0rDryulEZkDf0aRbPdeGkWrq32yv3JdCe8jCxCYJGT5v02iNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WHnFW35V5z6K6Hm;
+	Mon,  8 Jul 2024 22:54:07 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id F1AB1140A70;
+	Mon,  8 Jul 2024 22:55:26 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
+ 2024 15:55:26 +0100
+Date: Mon, 8 Jul 2024 15:55:25 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, "Daniel
+ Ferguson" <danielf@os.amperecomputing.com>, Ard Biesheuvel <ardb@kernel.org>,
+	James Morse <james.morse@arm.com>, Len Brown <lenb@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Shiju Jose <shiju.jose@huawei.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Dan
+ Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, "Shuai Xue" <xueshuai@linux.alibaba.com>,
+	<linux-acpi@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] RAS: ACPI: APEI: add conditional compilation to ARM
+ error report functions
+Message-ID: <20240708155525.00005e5b@Huawei.com>
+In-Reply-To: <20240708141025.3e5ddd51@foz.lan>
+References: <cover.1720436039.git.mchehab+huawei@kernel.org>
+	<f520f2529bb27d452a2dee762b6968939df42f45.1720436039.git.mchehab+huawei@kernel.org>
+	<20240708113234.GDZovOUgjXFt2XoNg6@fat_crate.local>
+	<20240708141025.3e5ddd51@foz.lan>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, 8 Jul 2024 14:10:25 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-
-On Mon, 08 Jul 2024 10:40:31 +0200, Frieder Schrempf wrote:
-> Describe common "gpio-line-names" property to allow DTs to
-> specify names for GPIO lines.
+> Em Mon, 8 Jul 2024 13:32:34 +0200
+> Borislav Petkov <bp@alien8.de> escreveu:
 > 
+> > On Mon, Jul 08, 2024 at 01:18:10PM +0200, Mauro Carvalho Chehab wrote:  
+> > > From: Daniel Ferguson <danielf@os.amperecomputing.com>
+> > > 
+> > > This prevents the unnecessary inclusion of ARM specific RAS error    
+> > 
+> > s/This prevents/Prevent/
+> > 
+> > Avoid having "This patch" or "This commit" or "This does <bla>" in the commit
+> > message. It is tautologically useless.
+> > 
+> > "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+> > instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+> > to do frotz", as if you are giving orders to the codebase to change
+> > its behaviour."
+> > 
+> > From Documentation/process/submitting-patches.rst
+> >   
+> > > handling routines in non-ARM platforms.    
+> > 
+> > Ok, this does "something". Why does it do it?
+> > 
+> > Otherwise it won't build on other architectures or is it going to cause code
+> > bloat or why are we doing this?  
 > 
+> Probably a better description would be:
+> 
+>     RAS: ACPI: APEI: add conditional compilation to ARM error report functions
+>     
+>     Don't include ARM Processor specific error handling routines in 
+>     non-ARM platforms, preparing it to the next patch, as arm-specific
+>     kAPI symbols will be used, thus avoiding build breakages when ARM
+>     is not selected.
+>     
+>     [mchehab: avoid unneeded ifdefs and fix coding style issues]
+>     Signed-off-by: Daniel Ferguson <danielf@os.amperecomputing.com>
+>     Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+With that change log seems fine to me.
 
-Applied, thanks!
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-[1/5] dt-bindings: gpio: vf610: Allow gpio-line-names to be set
-      commit: 8060be2489f9bfa0c603373fa71cc2f93e46e462
+> 
+> This patch itself just add conditionals to optimize out code on
+> non-ARM architectures. The next one will add some ARM-specific bits
+> inside ARM processor CPER trace, thus causing compilation breakages
+> on non-ARM, due to arm-specific kAPI bits that will be used then.
+> 
+> Thanks,
+> Mauro
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
