@@ -1,178 +1,224 @@
-Return-Path: <linux-kernel+bounces-243989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299C3929D78
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:46:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A302929D7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92F64B22996
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3178D281808
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3232E3EB;
-	Mon,  8 Jul 2024 07:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gh9N9Uw0"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE493839C;
+	Mon,  8 Jul 2024 07:46:36 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B232D381B8;
-	Mon,  8 Jul 2024 07:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6973528DC3;
+	Mon,  8 Jul 2024 07:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720424750; cv=none; b=TzBRCckqXM5SfyviwBxEwhzlafk6gCiqryPxVxdyHYDD3GUsQ4sdy2YBi6pASH+WLV9RMTSZ0h526bRJJNgC0AnAe1D/y3AKPDUfDkjDPlv5eif4x73WzfCtJREGPH1+uZiipfJWh3wOaza4C+uPM/LFoXOOw+t076SxmWAZuPU=
+	t=1720424796; cv=none; b=B1HjHewm98MTKLJR35++2GihozNMG0nkvD+2TJ+gVCALVcy7hktU66DMaYrVqS/+xHTVBKXze7uiSRP+qkRi+BIQ5iBwFIuPeUSTLxhJL84anguQH6lUycnLk+avMEyyZSf0LDs0GyDvOrHhrh6B3/pbzEzKPN1kPQ8vV6bdV+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720424750; c=relaxed/simple;
-	bh=Ctg0u/mGa+VwyDSlNuzK+P613udK8Frsp14C56Ebnqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyoFKImpPMGN9sOnaJ8QVsZej0C6uOujQmNd6mYfLuIcZcFzEAyefJAQdrUqXzs28ZM0V4pr/iF0nHPtakwg6hsuXJooE90kNjNAmpeReUPOtsbgYjwY34V0iqh3PW0XjizHa/1KLpn7J7RPzwHUi5/LFTq+wi26IV0FDK6pvNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gh9N9Uw0; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: luca.ceresoli@bootlin.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720424745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6r0t4bqCeyTcKMQipHqJ13XIJ0M/NNLgBRa8TFFkq0k=;
-	b=gh9N9Uw0u8C6T2INQwENuJbySC4x56TU/bCYId7J19tXTNv2leS8YvS59ZHGfqV5iEcc2W
-	giRbXLJT0kVM9blL6cZF0eI0W/NaGwdLwsoCYd+qWtWL+ssOTOGgYIaHoZkEp8DXV+BDKD
-	QBEscHkTSbtdZ0QzmCUfJBvJe1gdrAw=
-X-Envelope-To: ojeda@kernel.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: saravanak@google.com
-X-Envelope-To: nathan@kernel.org
-X-Envelope-To: mturquette@baylibre.com
-X-Envelope-To: sboyd@kernel.org
-X-Envelope-To: tony@atomide.com
-X-Envelope-To: andersson@kernel.org
-X-Envelope-To: emilio@elopez.com.ar
-X-Envelope-To: wens@csie.org
-X-Envelope-To: jernej.skrabec@gmail.com
-X-Envelope-To: samuel@sholland.org
-X-Envelope-To: krzk@kernel.org
-X-Envelope-To: daniel.lezcano@linaro.org
-X-Envelope-To: tglx@linutronix.de
-X-Envelope-To: florian.fainelli@broadcom.com
-X-Envelope-To: bcm-kernel-feedback-list@broadcom.com
-X-Envelope-To: linus.walleij@linaro.org
-X-Envelope-To: brgl@bgdev.pl
-X-Envelope-To: jic23@kernel.org
-X-Envelope-To: lee@kernel.org
-X-Envelope-To: shawnguo@kernel.org
-X-Envelope-To: kernel@pengutronix.de
-X-Envelope-To: ukleinek@kernel.org
-X-Envelope-To: gregkh@linuxfoundation.org
-X-Envelope-To: jirislaby@kernel.org
-X-Envelope-To: lgirdwood@gmail.com
-X-Envelope-To: broonie@kernel.org
-X-Envelope-To: nicolas.ferre@microchip.com
-X-Envelope-To: mpe@ellerman.id.au
-X-Envelope-To: npiggin@gmail.com
-X-Envelope-To: christophe.leroy@csgroup.eu
-X-Envelope-To: naveen.n.rao@linux.ibm.com
-X-Envelope-To: dlemoal@kernel.org
-X-Envelope-To: peng.fan@oss.nxp.com
-X-Envelope-To: thomas.petazzoni@bootlin.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: llvm@lists.linux.dev
-X-Envelope-To: linux-clk@vger.kernel.org
-X-Envelope-To: linux-omap@vger.kernel.org
-X-Envelope-To: linux-arm-msm@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-sunxi@lists.linux.dev
-X-Envelope-To: linux-samsung-soc@vger.kernel.org
-X-Envelope-To: linux-gpio@vger.kernel.org
-X-Envelope-To: linux-iio@vger.kernel.org
-X-Envelope-To: linux-pwm@vger.kernel.org
-X-Envelope-To: linux-serial@vger.kernel.org
-X-Envelope-To: linux-usb@vger.kernel.org
-X-Envelope-To: patches@opensource.cirrus.com
-X-Envelope-To: linux-sound@vger.kernel.org
-X-Envelope-To: linuxppc-dev@lists.ozlabs.org
-X-Envelope-To: linux-riscv@lists.infradead.org
-Date: Mon, 8 Jul 2024 09:45:39 +0200
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-usb@vger.kernel.org, patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 15/20] usb: usb251xb: convert to
- of_property_for_each_u32_new()
-Message-ID: <34bbebxag4neccfkb4isi4bx5uvi2dk446bqqmfmtru4vwbehk@hp7vufvfyon4>
-References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
- <20240703-of_property_for_each_u32-v1-15-42c1fc0b82aa@bootlin.com>
+	s=arc-20240116; t=1720424796; c=relaxed/simple;
+	bh=69My5GLVF+kHwIfbakYCcE8YK5SoS9CHF5Q1fsCb0PA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bwWzv1l1RarMev3qoW4MFgS3GCtKHJlfyEolq9kD4TyL3R28oEXd3HyvMwxJmK2yBcMuJGbxd932bF7cUIUxanxJXxMBdwK/VS0K9RF5GoVhQa0rcJpMweaOEFGQAxBDj17wC8Hhy6Im/w7V+s8xY2GYxHZ8e1uvAL4gBhVY2EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WHblb3fCNznZfR;
+	Mon,  8 Jul 2024 15:46:03 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id C1B8D140485;
+	Mon,  8 Jul 2024 15:46:27 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 8 Jul 2024 15:46:27 +0800
+Message-ID: <0bac285b-c8ae-8c9f-7c42-ee345f8682d1@hisilicon.com>
+Date: Mon, 8 Jul 2024 15:46:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703-of_property_for_each_u32-v1-15-42c1fc0b82aa@bootlin.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.0
+Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
+ during reset
+Content-Language: en-US
+To: Leon Romanovsky <leon@kernel.org>
+CC: <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
+ <20240705085937.1644229-3-huangjunxian6@hisilicon.com>
+ <20240707083007.GE6695@unreal>
+ <42e9f7dd-05bd-176f-c5c0-02e200b3f58c@hisilicon.com>
+ <20240708053850.GA6788@unreal>
+ <7cae577b-e469-9357-8375-d14746a7787b@hisilicon.com>
+ <20240708073315.GC6788@unreal>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20240708073315.GC6788@unreal>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-Hi Luca,
 
-On Wed, Jul 03, 2024 at 12:36:59PM GMT, Luca Ceresoli wrote:
-> Simplify code using of_property_for_each_u32_new() as the two additional
-> parameters in of_property_for_each_u32() are not used here.
+
+On 2024/7/8 15:33, Leon Romanovsky wrote:
+> On Mon, Jul 08, 2024 at 02:50:50PM +0800, Junxian Huang wrote:
+>>
+>>
+>> On 2024/7/8 13:38, Leon Romanovsky wrote:
+>>> On Mon, Jul 08, 2024 at 10:29:54AM +0800, Junxian Huang wrote:
+>>>>
+>>>>
+>>>> On 2024/7/7 16:30, Leon Romanovsky wrote:
+>>>>> On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
+>>>>>> From: wenglianfa <wenglianfa@huawei.com>
+>>>>>>
+>>>>>> During reset, cmdq events won't be reported, leading to a long and
+>>>>>> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
+>>>>>> of reset.
+>>>>>>
+>>>>>> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
+>>>>>> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
+>>>>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+>>>>>> ---
+>>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
+>>>>>>  1 file changed, 18 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>>>> index a5d746a5cc68..ff135df1a761 100644
+>>>>>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>>>> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+>>>>>>  
+>>>>>>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
+>>>>>>  }
+>>>>>> +
+>>>>>> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
+>>>>>> +{
+>>>>>> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
+>>>>>> +	int i;
+>>>>>> +
+>>>>>> +	if (!hr_dev->cmd_mod)
+>>>>>
+>>>>> What prevents cmd_mod from being changed?
+>>>>>
+>>>>
+>>>> It's set when the device is being initialized, and won't be changed after that.
+>>>
+>>> This is exactly the point, you are assuming that the device is already
+>>> ininitialized or not initialized at all. What prevents hns_roce_v2_reset_notify_cmd()
+>>> from being called in the middle of initialization?
+>>>
+>>> Thanks
+>>>
+>>
+>> This is ensured by hns3 NIC driver.
+>>
+>> Initialization and reset of hns RoCE are both called by hns3. It will check the state
+>> of RoCE device (see line 3798), and notify RoCE device to reset (hns_roce_v2_reset_notify_cmd()
+>> is called) only if the RoCE device has been already initialized:
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
-please feel free to add:
-
-Acked-by: Richard Leitner <richard.leitner@linux.dev>
-
-> ---
->  drivers/usb/misc/usb251xb.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> So why do you have "if (!hr_dev->cmd_mod)" check in the code?
 > 
-> diff --git a/drivers/usb/misc/usb251xb.c b/drivers/usb/misc/usb251xb.c
-> index 7da404f55a6d..490004dbb9d8 100644
-> --- a/drivers/usb/misc/usb251xb.c
-> +++ b/drivers/usb/misc/usb251xb.c
-> @@ -382,11 +382,9 @@ static void usb251xb_get_ports_field(struct usb251xb *hub,
->  				    bool ds_only, u8 *fld)
->  {
->  	struct device *dev = hub->dev;
-> -	struct property *prop;
-> -	const __be32 *p;
->  	u32 port;
->  
-> -	of_property_for_each_u32(dev->of_node, prop_name, prop, p, port) {
-> +	of_property_for_each_u32_new(dev->of_node, prop_name, port) {
->  		if ((port >= ds_only ? 1 : 0) && (port <= port_cnt))
->  			*fld |= BIT(port);
->  		else
+> Thanks
 > 
-> -- 
-> 2.34.1
 
+cmd_mod indicates the mode of cmdq (0: poll mode, 1: event mode).
+This patch only affects event mode because HW won't report events during reset.
+
+Junxian
+
+>>
+>>  3791 static int hclge_notify_roce_client(struct hclge_dev *hdev,
+>>  3792                                     enum hnae3_reset_notify_type type)
+>>  3793 {
+>>  3794         struct hnae3_handle *handle = &hdev->vport[0].roce;
+>>  3795         struct hnae3_client *client = hdev->roce_client;
+>>  3796         int ret;
+>>  3797
+>>  3798         if (!test_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state) || !client)
+>>  3799                 return 0;
+>>  3800
+>>  3801         if (!client->ops->reset_notify)
+>>  3802                 return -EOPNOTSUPP;
+>>  3803
+>>  3804         ret = client->ops->reset_notify(handle, type);
+>>  3805         if (ret)
+>>  3806                 dev_err(&hdev->pdev->dev, "notify roce client failed %d(%d)",
+>>  3807                         type, ret);
+>>  3808
+>>  3809         return ret;
+>>  3810 }
+>>
+>> And the bit is set (see line 11246) after the initialization has been done (line 11242):
+>>
+>> 11224 static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
+>> 11225                                            struct hclge_vport *vport)
+>> 11226 {
+>> 11227         struct hclge_dev *hdev = ae_dev->priv;
+>> 11228         struct hnae3_client *client;
+>> 11229         int rst_cnt;
+>> 11230         int ret;
+>> 11231
+>> 11232         if (!hnae3_dev_roce_supported(hdev) || !hdev->roce_client ||
+>> 11233             !hdev->nic_client)
+>> 11234                 return 0;
+>> 11235
+>> 11236         client = hdev->roce_client;
+>> 11237         ret = hclge_init_roce_base_info(vport);
+>> 11238         if (ret)
+>> 11239                 return ret;
+>> 11240
+>> 11241         rst_cnt = hdev->rst_stats.reset_cnt;
+>> 11242         ret = client->ops->init_instance(&vport->roce);
+>> 11243         if (ret)
+>> 11244                 return ret;
+>> 11245
+>> 11246         set_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state);
+>> 11247         if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
+>> 11248             rst_cnt != hdev->rst_stats.reset_cnt) {
+>> 11249                 ret = -EBUSY;
+>> 11250                 goto init_roce_err;
+>> 11251         }
+>>
+>> Junxian
+>>
+>>>>
+>>>> Junxian
+>>>>
+>>>>>> +		return;
+>>>>>> +
+>>>>>> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
+>>>>>> +		hr_cmd->context[i].result = -EBUSY;
+>>>>>> +		complete(&hr_cmd->context[i].done);
+>>>>>> +	}
+>>>>>> +}
+>>>>>> +
+>>>>>>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+>>>>>>  {
+>>>>>>  	struct hns_roce_dev *hr_dev;
+>>>>>> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+>>>>>>  	hr_dev->dis_db = true;
+>>>>>>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
+>>>>>>  
+>>>>>> +	/* Complete the CMDQ event in advance during the reset. */
+>>>>>> +	hns_roce_v2_reset_notify_cmd(hr_dev);
+>>>>>> +
+>>>>>>  	return 0;
+>>>>>>  }
+>>>>>>  
+>>>>>> -- 
+>>>>>> 2.33.0
+>>>>>>
+>>>>
+>>
 
