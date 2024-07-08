@@ -1,105 +1,181 @@
-Return-Path: <linux-kernel+bounces-244517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EAB92A560
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:08:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AD492A561
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB16281A1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB22283BEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5044E1428E6;
-	Mon,  8 Jul 2024 15:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FE614263B;
+	Mon,  8 Jul 2024 15:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWuKePE8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H56G5tDh"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9405D78C9D;
-	Mon,  8 Jul 2024 15:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D814178C9D
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720451306; cv=none; b=Q9C+EJAvOjGnOCNPbL0gynVzuLQNiwPTTRkBEBPF0qCRHe2zRuF2E0EltkdGbL/SvwWyJV1T76H+v1F46OBH2i/tI29P3fzGx3o8T8VspD7gbkR0+Vk/p9oSsQFPFxlDKSvGBMPnzahzAB0q7321LL9PD6LfJXdtDsp2GslSxVM=
+	t=1720451321; cv=none; b=M96NdhLqpWh3qAmqLAIJWQqa1bE0duuBrCAi2Iud8aVhdmxQQhXzUdhX5irsxDGBs/iv6mY1//I6hkARHEz9UPzMe23gXbI81FVP9HTA48bmeGDINBQYS8Wn9YtV0cSI3nJ+8iVGLijDbVB1I4blpcShbXnbdMLXF4YYl+MelyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720451306; c=relaxed/simple;
-	bh=FR7jjvSXa/ZvMmA3hkEdqnmuyyo9SUfn1KCnFEf/n9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HhyyKbGenk0ww7gTktl/KhWLiOLKLgQ69OjqYunglrYV62KbI3KGUF7sjxxN7miHSieZyzU0U+EuXu8M/koYikuxBbhinsG3UfH3an2gdsQSKC9Vx4Fw0cvFcJLP1WNqhzQ35jLBmSVExP+kvXlrCkAztGjf8uJvtp8wP6RWmV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWuKePE8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C43D3C116B1;
-	Mon,  8 Jul 2024 15:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720451304;
-	bh=FR7jjvSXa/ZvMmA3hkEdqnmuyyo9SUfn1KCnFEf/n9s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fWuKePE8b3zo10AiOZEeozCNx9hhka7TALHkzQzjoC8OudOum6Niy8p9QHX3Xx6mc
-	 7e1i99PNeEjJlgYKvrA1vyBcy4JIIKJGUFWkuKSt4JpLUzZUgrTAq+3p/jnteFo7iF
-	 0e73t4qEl+gr3lYnYCYnlRUraw9t+pgl+mozPstCP6IcuTOfkEobzZEFJJYNt+qkF/
-	 ZkhDps8Gl1dEOLaBD/oSr8j/OQgOuN9647BPg/3meUgqBETn5RFhn3pN/RPmEk706J
-	 Td7NEUbrKO9FAvS5AUip01b+IA061W5bfjXVU5rdYdYiKqxHlS0pZ9NL5G7NvRxf7M
-	 8xAvfCs+uOfeg==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [GIT PULL] perf-tools-fixes for v6.10
-Date: Mon,  8 Jul 2024 08:08:20 -0700
-Message-ID: <20240708150820.404000-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+	s=arc-20240116; t=1720451321; c=relaxed/simple;
+	bh=ec9DRnZ6AXHntMvIKjk9tqd+ROrj/W7AUqVrHVmtpL8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IwTQ3RfntO15w3eVvSDSIc574LVUWTYbPrOWgLPgMjq93dKWUKWHzEYYrKouk/NTRQCizQA0gOIc5iZFV1tobjVYJhVOiYzTBGV9d8M33kIuiJ+J2Eg5fb8XyhPnLm22W0KDAOLLMj0Rdxoa4H+q1UNrXvGmc6IRFPFv7qgZvYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H56G5tDh; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-380dacc983eso868875ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 08:08:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720451319; x=1721056119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WlR/ZxnAxJSn5Q8IXWJoT32s9sznE6MlqMAy3EMPwdA=;
+        b=H56G5tDhpCtPKYKT6xt30hn6La8ke4fdfznTvuPUF/yPm9UyESnhif+XtPuHnsEQIL
+         m/k0QlZugnpBJZlGsKwUrLzVUdKzzqWwZu7BasCctz7PttgSsOOzPALwdJL/pEvYVfxR
+         VAxrPYxeBQTf4jeQgGw7SnJ29c6VWDu+hwwvtytofA/S4d3xIIQjN8rUMhkn0aHkhiNX
+         g45hnDQDTOX7hj6SP2LjQ6xAmwrUVcxo/2ArN06/kgd8iZJnrbE0/A/Jm18AwP5AjMba
+         k1tij0H5wCJhW/Iu7lx0q9Kao9BuhWK/54nUrqxvmMQkNx4wvSVoHXi528s+x4acbocg
+         nurA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720451319; x=1721056119;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WlR/ZxnAxJSn5Q8IXWJoT32s9sznE6MlqMAy3EMPwdA=;
+        b=UAeSyZokEk59Ok81jkHrzJdxOpk1aRafty52N/ahZSQs9u+e/8InZVSP2NkXx+DmDy
+         OPPs41XFec6+z9yC5qpS7i3lW0TBCCyk7bEFGfQ786lzWv1LlcMc0lu7CBQkX2mwrxWm
+         /R2+dELTD2Kl0dDqFmQivJ2b7ko4w5zIKMYzNAmMNQpvKGhD1wDmA2NXeDkBLdPE2n0+
+         oNjjn5EL6yLU/3tDPf4RdXuqlO7Ljc/WPHFvy/FdR/l19InipNCytHDojR7rhrqEPidi
+         WiRz5ArDnmgFNoN+4G8A2VuSFX18KoXryAKMbhHSzBt0DTvXNl3Me4Z6frWwq9aWvSU5
+         +kSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF87cy0g6HrF6YJ4aF4Nl5VQDsglgmi52aWKFSfh4ipDTbZP1uEH+Coq9+NOj4LqFXhbUfrrYwysSN6o5ETHRNsCaRgAFgK2pjikdu
+X-Gm-Message-State: AOJu0Ywixmgr4SFrQNkwB2zyx8cgcPAyDmdLuNwXkdiUeGwaHf30dqzd
+	OIkkpV5fUWS7QMKHejsyBtsyG9Wm5Rt6Bbtqep8gLaUcP1dZvsKxqofZ+HYFix0+pVQT5D1AXn+
+	PbMIthdKlURueGQoSJuwj6PaGLQIltEHLbkCd
+X-Google-Smtp-Source: AGHT+IEzzZTS/j4gIIRy4epGbvww/dDzSNB0viSxystMhI0SyTqP23bqtsSRmtrJSmUZwz6t499tlZ7K6BFAoZ9q/6E=
+X-Received: by 2002:a92:c24e:0:b0:375:d859:59cf with SMTP id
+ e9e14a558f8ab-3834ebc274emr9943265ab.14.1720451318710; Mon, 08 Jul 2024
+ 08:08:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240708144204.839486-1-dapeng1.mi@linux.intel.com> <20240708144204.839486-4-dapeng1.mi@linux.intel.com>
+In-Reply-To: <20240708144204.839486-4-dapeng1.mi@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 8 Jul 2024 08:08:26 -0700
+Message-ID: <CAP-5=fVPb4JGR3RxfPBGrihrra8bFzdJfFt2iASSs2xHOy=U4g@mail.gmail.com>
+Subject: Re: [Patch v2 3/5] perf x86/topdown: Don't move topdown metrics
+ events when sorting events
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Mon, Jul 8, 2024 at 12:40=E2=80=AFAM Dapeng Mi <dapeng1.mi@linux.intel.c=
+om> wrote:
+>
+> when running below perf command, we say error is reported.
+>
+> perf record -e "{slots,instructions,topdown-retiring}:S" -vv -C0 sleep 1
+>
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             4 (cpu)
+>   size                             168
+>   config                           0x400 (slots)
+>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   disabled                         1
+>   sample_id_all                    1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 =3D 5
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             4 (cpu)
+>   size                             168
+>   config                           0x8000 (topdown-retiring)
+>   { sample_period, sample_freq }   4000
+>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   freq                             1
+>   sample_id_all                    1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
+> sys_perf_event_open failed, error -22
+>
+> Error:
+> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for=
+ event (topdown-retiring).
+>
+> The reason of error is that the events are regrouped and
+> topdown-retiring event is moved to closely after the slots event and
+> topdown-retiring event needs to do the sampling, but Intel PMU driver
+> doesn't support to sample topdown metrics events.
+>
+> For topdown metrics events, it just requires to be in a group which has
+> slots event as leader. It doesn't require topdown metrics event must be
+> closely after slots event. Thus it's a overkill to move topdown metrics
+> event closely after slots event in events regrouping and furtherly cause
+> the above issue.
+>
+> Thus delete the code that moving topdown metrics events to fix the
+> issue.
 
-Please consider pulling the following changes in perf tools for v6.10.
+I think this is wrong. The topdown events may not be in a group, such
+cases can come from metrics due to grouping constraints, and so they
+must be sorted together so that they may be gathered into a group to
+avoid the perf event opens failing for ungrouped topdown events. I'm
+not understanding what these patches are trying to do, if you want to
+prioritize the event for leader sampling why not modify it to compare
+first?
 
 Thanks,
-Namhyung
+Ian
 
-
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
-
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.10-2024-07-08
-
-for you to fetch changes up to 7b2450bb40275802b73593331b0db2fc147ae2b7:
-
-  perf dsos: When adding a dso into sorted dsos maintain the sort order (2024-07-07 22:26:29 -0700)
-
-----------------------------------------------------------------
-perf tools: Fix the performance issue for v6.10
-
-These addresses the performance issues reported by Matt, Namhyung and
-Linus.  Recently it changed processing comm string and DSO with sorted
-arrays but it required to sort the array whenever it adds a new entry.
-This caused a performance issue and fix is to enhance the sorting by
-finding the insertion point in the sorted array and to shift righthand
-side using memmove().
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-
-----------------------------------------------------------------
-Ian Rogers (2):
-      perf comm str: Avoid sort during insert
-      perf dsos: When adding a dso into sorted dsos maintain the sort order
-
- tools/perf/util/comm.c | 29 ++++++++++++++++++-----------
- tools/perf/util/dsos.c | 26 +++++++++++++++++++++-----
- 2 files changed, 39 insertions(+), 16 deletions(-)
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  tools/perf/arch/x86/util/evlist.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util=
+/evlist.c
+> index 332e8907f43e..6046981d61cf 100644
+> --- a/tools/perf/arch/x86/util/evlist.c
+> +++ b/tools/perf/arch/x86/util/evlist.c
+> @@ -82,11 +82,6 @@ int arch_evlist__cmp(const struct evsel *lhs, const st=
+ruct evsel *rhs)
+>                         return -1;
+>                 if (arch_is_topdown_slots(rhs))
+>                         return 1;
+> -               /* Followed by topdown events. */
+> -               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metr=
+ics(rhs))
+> -                       return -1;
+> -               if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metr=
+ics(rhs))
+> -                       return 1;
+>         }
+>
+>         /* Default ordering by insertion index. */
+> --
+> 2.40.1
+>
 
