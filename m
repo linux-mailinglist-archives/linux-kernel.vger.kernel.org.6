@@ -1,136 +1,281 @@
-Return-Path: <linux-kernel+bounces-244797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9695D92A9B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:17:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D316692A9B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6207728204B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:17:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 385E4B21FD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA26114D29A;
-	Mon,  8 Jul 2024 19:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45E714E2D7;
+	Mon,  8 Jul 2024 19:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YzW+5sAM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mntH/O55"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87683148833;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E17146D74;
 	Mon,  8 Jul 2024 19:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720466246; cv=none; b=UxSGw6uWQeg1JMEbt1AHVBidSZ53KhrJd1jHVGuwcPt/FP9w2vS0n6NINeerrvY/fjlUFj5CoF3ea1U+Fdjf/timpNaAYPHqmBHjm3szQfc6J28EmyX91TOcMBrNEFRC9cKMEO42wChWeDeBXp5+lXNt0r2FCvdS3oGbRkDqkzk=
+	t=1720466247; cv=none; b=Q+jpjvNyMfiGqoUGVn4Xa0ORuYIOVReHFHuslxZLEaZRocKd0guO3uF2SN4UX29x5onb9fPyW4BGfyl9G5sU0te2RyMX+zxqEFfa1IzGl3YVGVRwzCpkBCIW06CgG8P6BDFL1xKQz9y5WehMpRSEan9LJ/g4H9jto5w5A0OkCvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720466246; c=relaxed/simple;
-	bh=jfjaeLNh4I5mGiVYqVP5eL/KmwkIqLSdjDlPg+iogdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Klo7DkdyoPkurpUZC+6CmrtLugvtZMEuU3ioLYMn+mXpE9Bj0srZl0075gcyB1+4Nit/hnht9OUOTgfw38itptTIp8/quIn6sbODFdEoXZ39+MeUjYMm0f57Qi6Oak6IyUXeXq0IzKv2BDBRu6sWi9JwCxlrxLfNO8hBgByp/mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YzW+5sAM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6CBAA40E019D;
-	Mon,  8 Jul 2024 19:17:22 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id n4K8qAoRIsLN; Mon,  8 Jul 2024 19:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720466238; bh=0e5ovUUtXQgTZyUAr4S3+sI3n7TZtAlcadWL7hRqI1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YzW+5sAMamOZiL8yNdR/hQFmbo22zTgrAXM8OsmEA/zNrujp4f9zcy+mnU6dLBV/V
-	 SGjEZZN9THps7N+qw0Lk2JHPyeD2q9ndRC+7ggi4kR32mtGHqc1bojdX0paV2VdX4E
-	 xCWfOm1E9t4DkFkKcuKhENagRTD5twr+SGCvL/wen874TkZUQBqjelhd4zpL0mIVOU
-	 Wln0zQWgrmqswHtsFKNuctmBfpY8SUcDtmHREo5+Cwb30A5vXoa61DRTggnWEzeP+x
-	 vBwTzAFfELbbhEPpIz5zNGbm0gSJOW6JN90q4pTKvqEMKBuhvEw0F6h9fSwf9Hi3Y6
-	 7ikmJbMGoljdYdfEGmWL2J9HOMfvc7MSYJ8XyBBcePnWbT9YSb12Go6vnOFeyu7vXi
-	 nFRoJLLjAhy9ZOYgWhJTsrjwHsEAdNO8BGg4xkAsjkciaxNIcRNDacRIw3ftTzpVWl
-	 1tMBqNV+d+uSyLxqipxOWe6TyLLJJuNpSj2+aCn7Xp2MJJDn8ZWW+ojHRhjcCSy0RA
-	 Rl/BivVYVQASwkdPbU38bE6xkLyD2mHExybZF2a6ajLqEFl8Hkg8JyYo6Xk3uvfADy
-	 O7fIaPisUoZ5A2YH5IjScRUIsm7L1Mj8udaPuraQVSjFp1bTPaEsGCRlLp1o8WKe3l
-	 vJHDYjwTC1Vbd1Ay9XUXtp+8=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 454FA40E0192;
-	Mon,  8 Jul 2024 19:17:04 +0000 (UTC)
-Date: Mon, 8 Jul 2024 21:17:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dexuan Cui <decui@microsoft.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"open list:X86 TRUST DOMAIN EXTENSIONS (TDX)" <linux-coco@lists.linux.dev>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	Michael Kelley <mikelley@microsoft.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Kai Huang <kai.huang@intel.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
-Message-ID: <20240708191703.GJZow7L9DBNZVBXE95@fat_crate.local>
-References: <20240708183946.3991-1-decui@microsoft.com>
+	s=arc-20240116; t=1720466247; c=relaxed/simple;
+	bh=K4f4eJD+xtTkg747FWbJ8u+ZmkC0YWeWXjMD5iy1An0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T+OMsxXlX/Yvjq6lo1lBRCkxLMuUNDhnXiHVUdY7rpV7FxbI6oMQpDNzuDonPhylumFQLqnjJtYMb5C+O87namEvCrLTDFj9ql7IfqPtclGLi6umbLjr5Ppv6q75J8PgQNZcQxPDjICkdDaZ8YLffHBVIXkCYdwqShV82T1Fqms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mntH/O55; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b5eb69e04cso25905656d6.1;
+        Mon, 08 Jul 2024 12:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720466244; x=1721071044; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LoMHwWvMZITG0MKYsYImhjMa8QW8VMCVVEOqRiLhyAE=;
+        b=mntH/O55YoMr7eU+nu7DclFOmI7y6dg/+unSre4uybEgovuXlVtKTHjooALJiQygA2
+         UmQRwxfnnGc2YiDytmuPXuGnNHaSQBkIxQp5wNDOzZ9pz7E6p8rFlyeNnbioUC8Nu6mO
+         WylLs4nOlCDH6Uk/0rTj6fUJOQlGG+Rumsp+WjEQvSyVqVb5YkD0V8+QugddH8+STs7B
+         KZPhiWX9HRIfSwJ4l9SQExp0WiauNbShY4HRBg1KD/xLeeFsct2Y3lx/mNV6C8TpFeHI
+         3lGHIMbtMtT7CAOjead67VmqnVoYGiqVIdb25YF8CE6mss15Bm0pr0+KBek80QH/5UGv
+         Ohuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720466244; x=1721071044;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LoMHwWvMZITG0MKYsYImhjMa8QW8VMCVVEOqRiLhyAE=;
+        b=c+vrwRT0hRS4q2hU2c6p9/7F98FOBV9xMMSrVxp0O4gxneB1i4F8lTXzd/6P+REVKM
+         +brm1RWUoxZHXRCnwsuG9rAwN6nwRHuWuON1+n7eIjBAL2VQv6fAM+1VVxXth8fkO9nJ
+         qbH9FpCHtEfottXPiG7zFgQDvTXOiyX9OZeIh9MyP8IqxFZxJd/vnSoMjPkXQKFC3n2I
+         X5K8oqCzaMOzzM506xxsKy3Yyv4nkeJGdLX/S5hSIMKQmYxXQOTsG+exlmpRVJ7wwxKx
+         3SW+kfQdaiDwAoyMzmO8qlizEOJ93qQakR8mg/SLezzLm3l2DAPS9EtAAddsklXNypXP
+         bK7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXpq+d8Nj7PHkwdA9l9+ioi34LjWLDRAyroUo+4gZ3fwBpPLYyr/hrHjPWsSsHWz3LmS5n0+1OhhifbSyTQc3t7KVpYMaAgFax4gl1+ujRkJFWBijkqgXcJLZny1KlvDdtUyzfa62K3
+X-Gm-Message-State: AOJu0YyriYYf0qtmdw2H8DGmuwhlSABu7hjUxgvY9xryaca54pR3j0MU
+	lsGaoOoQ7+zCaM8b9S5L7FTarodHe9+AmxTdpc/VZSWG+oU8GUfRJJllm+2HmibIhJNLYPOJ5K9
+	YRhm+Xnat9Szd7CauCYxIrDKxqpU=
+X-Google-Smtp-Source: AGHT+IHLnrS5ones95lU+A08RP/q9bJ3HfGVZ7UcfmdzyCJdzEaMdABPZHSXmlD8dlGsauWpvoWXzWX85VWrrG+uDmM=
+X-Received: by 2002:a05:6214:acf:b0:6b5:db70:b980 with SMTP id
+ 6a1803df08f44-6b61bc83bfcmr7678756d6.4.1720466243938; Mon, 08 Jul 2024
+ 12:17:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240708183946.3991-1-decui@microsoft.com>
+References: <20240706022523.1104080-1-flintglass@gmail.com> <20240706022523.1104080-7-flintglass@gmail.com>
+In-Reply-To: <20240706022523.1104080-7-flintglass@gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 8 Jul 2024 12:17:12 -0700
+Message-ID: <CAKEwX=NzLWSO4oiNBFhsqurOCX=cYVWTUkhRdmOsrqxOz+xi0g@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] mm: zswap: interrupt shrinker writeback while
+ pagein/out IO
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 08, 2024 at 06:39:45PM +0000, Dexuan Cui wrote:
-> When a TDX guest runs on Hyper-V, the hv_netvsc driver's netvsc_init_buf()
-> allocates buffers using vzalloc(), and needs to share the buffers with the
-> host OS by calling set_memory_decrypted(), which is not working for
-> vmalloc() yet. Add the support by handling the pages one by one.
+On Fri, Jul 5, 2024 at 7:25=E2=80=AFPM Takero Funaki <flintglass@gmail.com>=
+ wrote:
+>
+> To prevent the zswap global shrinker from writing back pages
+> simultaneously with IO performed for memory reclaim and faults, delay
+> the writeback when zswap_store() rejects pages or zswap_load() cannot
+> find entry in pool.
+>
+> When the zswap shrinker is running and zswap rejects an incoming page,
+> simulatenous zswap writeback and the rejected page lead to IO contention
+> on swap device. In this case, the writeback of the rejected page must be
+> higher priority as it is necessary for actual memory reclaim progress.
+> The zswap global shrinker can run in the background and should not
+> interfere with memory reclaim.
 
-"Add support..." and the patch is cc:stable?
+Do you see this problem actually manifesting in real life? Does not
+sound infeasible to me, but I wonder how likely this is the case.
 
-This looks like it is fixing something and considering how you're rushing
-this, I'd let this cook for a whole round and queue it after 6.11-rc1. So that
-it gets tested properly.
+Do you have any userspace-visible metrics, or any tracing logs etc.
+that proves that it actually happens?
 
-> Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Acked-by: Kai Huang <kai.huang@intel.com>
+This might also affect the dynamic shrinker as well FWIW.
 
-When were you able to collect all those tags on a newly submitted patch?
+>
+> The same logic applies to zswap_load(). When zswap cannot find requested
+> page from pool and read IO is performed, shrinker should be interrupted.
+>
+> To avoid IO contention, save the timestamp jiffies when zswap cannot
+> buffer the pagein/out IO and interrupt the global shrinker. The shrinker
+> resumes the writeback in 500 msec since the saved timestamp.
+>
+> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> ---
+>  mm/zswap.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 45 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index def0f948a4ab..59ba4663c74f 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -35,6 +35,8 @@
+>  #include <linux/pagemap.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/list_lru.h>
+> +#include <linux/delay.h>
+> +#include <linux/jiffies.h>
+>
+>  #include "swap.h"
+>  #include "internal.h"
+> @@ -176,6 +178,14 @@ static bool zswap_next_shrink_changed;
+>  static struct work_struct zswap_shrink_work;
+>  static struct shrinker *zswap_shrinker;
+>
+> +/*
+> + * To avoid IO contention between pagein/out and global shrinker writeba=
+ck,
+> + * track the last jiffies of pagein/out and delay the writeback.
+> + * Default to 500msec in alignment with mq-deadline read timeout.
 
-Do you even know what the meaning of those tags is or you just slap them
-willy-nilly, just for fun?
+If there is a future version, could you include the reason why you
+select 500msec in the patch's changelog as well?
 
-> Cc: stable@vger.kernel.org
+> + */
+> +#define ZSWAP_GLOBAL_SHRINKER_DELAY_MS 500
+> +static unsigned long zswap_shrinker_delay_start;
+> +
+>  /*
+>   * struct zswap_entry
+>   *
+> @@ -244,6 +254,14 @@ static inline struct xarray *swap_zswap_tree(swp_ent=
+ry_t swp)
+>         pr_debug("%s pool %s/%s\n", msg, (p)->tfm_name,         \
+>                  zpool_get_type((p)->zpools[0]))
+>
+> +static inline void zswap_shrinker_delay_update(void)
+> +{
+> +       unsigned long now =3D jiffies;
+> +
+> +       if (now !=3D zswap_shrinker_delay_start)
+> +               zswap_shrinker_delay_start =3D now;
+> +}
 
-Why?
+Hmmm is there a reason why we do not just do:
 
-Fixes: what?
+zswap_shrinker_delay_start =3D jiffies;
 
-From reading this, it seems to me you need to brush up on
+or, more unnecessarily:
 
-https://kernel.org/doc/html/latest/process/submitting-patches.html
+unsigned long now =3D jiffies;
 
-while waiting.
+zswap_shrinker_delay_start =3D now;
 
-Thx.
+IOW, why the branching here? Does not seem necessary to me, but
+perhaps there is a correctness/compiler reason I'm not seeing?
 
--- 
-Regards/Gruss,
-    Boris.
+In fact, if it's the first version, then we could manually inline it.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Additionally/alternatively, I wonder if it is more convenient to do it
+at the mm/page_io.c zswap callsites, i.e whenever zswap_store() and
+zswap_load() returns false, then delay the shrinker before proceeding
+with the IO steps.
+
+> +
+>  /*********************************
+>  * pool functions
+>  **********************************/
+> @@ -1378,6 +1396,8 @@ static void shrink_worker(struct work_struct *w)
+>         struct mem_cgroup *memcg;
+>         int ret, failures =3D 0, progress;
+>         unsigned long thr;
+> +       unsigned long now, sleepuntil;
+> +       const unsigned long delay =3D msecs_to_jiffies(ZSWAP_GLOBAL_SHRIN=
+KER_DELAY_MS);
+>
+>         /* Reclaim down to the accept threshold */
+>         thr =3D zswap_accept_thr_pages();
+> @@ -1405,6 +1425,21 @@ static void shrink_worker(struct work_struct *w)
+>          * until the next run of shrink_worker().
+>          */
+>         do {
+> +               /*
+> +                * delay shrinking to allow the last rejected page comple=
+tes
+> +                * its writeback
+> +                */
+> +               sleepuntil =3D delay + READ_ONCE(zswap_shrinker_delay_sta=
+rt);
+
+I assume we do not care about racy access here right? Same goes for
+updates - I don't see any locks protecting these operations (but I
+could be missing something).
+
+
+> +               now =3D jiffies;
+> +               /*
+> +                * If zswap did not reject pages for long, sleepuntil-now=
+ may
+> +                * underflow.  We assume the timestamp is valid only if
+> +                * now < sleepuntil < now + delay + 1
+> +                */
+> +               if (time_before(now, sleepuntil) &&
+> +                               time_before(sleepuntil, now + delay + 1))
+> +                       fsleep(jiffies_to_usecs(sleepuntil - now));
+> +
+>                 spin_lock(&zswap_shrink_lock);
+>
+>                 /*
+> @@ -1526,8 +1561,10 @@ bool zswap_store(struct folio *folio)
+>         VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+>
+>         /* Large folios aren't supported */
+> -       if (folio_test_large(folio))
+> +       if (folio_test_large(folio)) {
+> +               zswap_shrinker_delay_update();
+>                 return false;
+> +       }
+>
+>         if (!zswap_enabled)
+>                 goto check_old;
+> @@ -1648,6 +1685,8 @@ bool zswap_store(struct folio *folio)
+>         zswap_entry_cache_free(entry);
+>  reject:
+>         obj_cgroup_put(objcg);
+> +       zswap_shrinker_delay_update();
+> +
+>         if (need_global_shrink)
+>                 queue_work(shrink_wq, &zswap_shrink_work);
+>  check_old:
+> @@ -1691,8 +1730,10 @@ bool zswap_load(struct folio *folio)
+>         else
+>                 entry =3D xa_load(tree, offset);
+>
+> -       if (!entry)
+> +       if (!entry) {
+> +               zswap_shrinker_delay_update();
+>                 return false;
+> +       }
+>
+>         if (entry->length)
+>                 zswap_decompress(entry, page);
+> @@ -1835,6 +1876,8 @@ static int zswap_setup(void)
+>         if (ret)
+>                 goto hp_fail;
+>
+> +       zswap_shrinker_delay_update();
+> +
+>         shrink_wq =3D alloc_workqueue("zswap-shrink",
+>                         WQ_UNBOUND, 1);
+>         if (!shrink_wq)
+> --
+> 2.43.0
+>
 
