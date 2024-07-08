@@ -1,152 +1,196 @@
-Return-Path: <linux-kernel+bounces-244890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A694892AAF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:15:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1963492AAF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE0F283286
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:15:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE891F22968
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF4214EC42;
-	Mon,  8 Jul 2024 21:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A805514EC5C;
+	Mon,  8 Jul 2024 21:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nbIApz44"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jj86IJEN"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ED212E75;
-	Mon,  8 Jul 2024 21:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6766A12E75;
+	Mon,  8 Jul 2024 21:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720473318; cv=none; b=eQ1C5pnYfE/ONdCnw/vI+seH8g67rmt0W+q2vsN5WqsAg3BTwIZRPZbX0a2evtq5Q7NEH2rXoOhu9l273XCb4I/KhugxXMtI4WZ3hR5/wF+twhqbjchZPCfETkJJW5CBmvApXs5Wd4hgvk6Y6tZZw3FIWAshwPH+b8eWZdpKZjQ=
+	t=1720473371; cv=none; b=TK1ba2slEjDx3L99L4KV6pdmDOblHqeX2H4LUs4vCnFoZFCRFLB7WcKYZCzCkosQ/CzFYGeR4zKlulDJ1q9BgigsO+WNRyJ+Lnuy0nhaLcu7dTvSMv/NgTbN8eUbDtHgQssfxFhNvngAqWK9f1HAuGh0EEjkK4g4s5JT/Ln7mi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720473318; c=relaxed/simple;
-	bh=kAc6w7ha10sYNCEe/V6aYJmYQvnIrUSX27i4gmDVeaw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tb/wi7aUNdBvleFLUXCEEO9vix/3W9QDc568McfGeoeV6bbCMqFNVTjNvRRdUD0isj0i93cmFvFwblt/RMxAKU5SYOy5gkUK+YTMTq8/jn45F1i+obPqG3E8rzXL6W7Z9Gwv78DnjJR4h7Z5Ncu4IDU7K+4xyTUlw9ZfSMowcRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nbIApz44; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468BwTvk025637;
-	Mon, 8 Jul 2024 21:15:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=HIraQW69nRCntJylblT984
-	/L8ukZ5pc+efMd0GeGwhk=; b=nbIApz44TDoEtAqJlDyc7uwdWdfby7UYYXUqCn
-	vQTbPL8awqp7TxGcNAinhnPY2mDILZoFi2exaBiyZJUnpBsfFd8HrXYwJCYcIQ/s
-	7SQvCqMGhXP6KMu0+bfIB0H+Bqn5bDzh/GBfCYrti1RWA9tjYgtup8b/5lJOlcu+
-	pnopY0uC77fNKnGup4GNA241JY/yyNxu2hPXLcYlF8yMrPo9HjsMeehSv/r5sXur
-	5G2EKAJJlkzhZgaFqlqhyERsHk7N+RRSSlg3LOk4bfER56gKeLEnTv27SIz+ChtO
-	ORjCmEOgSbQFL/FwFlgwCGxOpeWQjL9gjCdiUvqwZcBLxuHw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8vt0p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 21:15:08 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468LF6gk030793
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 8 Jul 2024 21:15:06 GMT
-Received: from hu-scheluve-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 8 Jul 2024 14:15:03 -0700
-From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Date: Mon, 8 Jul 2024 14:14:47 -0700
-Subject: [PATCH] arm64: dts: qcom: sa8775p: Add interconnects for ethernet
+	s=arc-20240116; t=1720473371; c=relaxed/simple;
+	bh=VH8tKY8HIgy0R/VaatE6NX0uuriJv+k4IsFvPZEoIdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5JZ8zTcOr53UsLif4HPwrQf3q3mT+89oZYkZt/bxVbFNBDXY0/Pkzo51F6Ru4bqMR3A4Jda0tv6jZc9oMRtyVUiNmOHJaUKL3vf16gv3S39pa49Dx1vO8s9cLw2UX49gF/8C0hYAaW5AS/OtIurZG/G8J6MAGZcrqHAfHBC6pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jj86IJEN; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-447e2f35af4so9497241cf.0;
+        Mon, 08 Jul 2024 14:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720473369; x=1721078169; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KpXpHV4wzuVc816SuKjPkuf7FlW2BEjL44243S4NidM=;
+        b=jj86IJENC8EVh4XH6jbT87BY+DfndXbb13rLcyak0rtF/jZzSeHcixx0KQRvRP0+TT
+         Npk2cvTrs6PPI7FEt0ShT4RjH1pxsovrnofsuylCDqVrE4r87+FOzjfOhv9xng/6MqbT
+         6WFGc/iwNlpSDGEy8Xh8Thh2/mFGeClR6gPVN67TZfAJgO9UYQL9nz2iEI+gqC28vgwi
+         NoOz0Wt/L+zORO/kScjW+HmeCSPwnIwVglwOzejKNDKacEjcQu5PbSBk8b8j52gzygl1
+         wFWiB3fh0uyZr0A8qydMXDtE//BZYRZrFp1bm/5gvo+UHNdljd5ySiDnybdmsle4KV57
+         4u2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720473369; x=1721078169;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KpXpHV4wzuVc816SuKjPkuf7FlW2BEjL44243S4NidM=;
+        b=lZcIUil/C9oMkrtGPflK+kvcK5BqEkbskRfrI7ugQIODM/H7uq2Lom2L+ERt/BtpAl
+         hUmxDk562956Y6hlepRfL/rdCmM7gNn6NrO9+deWVDGQ8A5gA1tOB6idcxhnyeHWWSyQ
+         zAhQRrBOyZfNm7bSuRbzR0zsg4cWxJYQU1GU7vNFJ1Kw/vEEAfT36mpkyDKF//Erj0vh
+         XW9Uo4bRu3HNYViDKxWvkp7bnA84ZoN+pziJ2VpV3GcfGlQ5jlkMD9279O9Gcbqlzgkj
+         X7mWOQ/hGPXSEz5hUogH4Q76vG73pfyHcpLgkp0lTf2p5imtaBSVyqlfqCMRTltnuX/h
+         oTcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3BxULsZTXvM1Ivvm5QTh1gCnJZDtjYer28VnoPbOgDheOOTmUeTRQzX6rOSLhKtk/3lKWkRpQHgXXElbgk7gh6FSHSsFz+gczHL1CPtcBPCVK+MUVXxReMycqee/pXe5MbGTkZkyP+ChoxYY=
+X-Gm-Message-State: AOJu0YzizQVkgYReujYWZcZ2QO0pxjseftK9Ncz6uXon3DcrEv3w6zLc
+	IXuMpruN0ltdJiRLoLisePYBrECD6rLeq5kRDJGnd08KpekOlxQQ
+X-Google-Smtp-Source: AGHT+IGh7YmOKTjpBvaBK1AGC/5oiF772oYJB8sAOU/Zlh+Uuf+FIRHXwIXOBVsYWryoPw0PjSD6KQ==
+X-Received: by 2002:a05:622a:1995:b0:447:e58e:a881 with SMTP id d75a77b69052e-447fa8a6833mr10763051cf.30.1720473369217;
+        Mon, 08 Jul 2024 14:16:09 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b26c9dsm3282771cf.14.2024.07.08.14.16.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 14:16:08 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id E25011200085;
+	Mon,  8 Jul 2024 17:16:07 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 08 Jul 2024 17:16:07 -0400
+X-ME-Sender: <xms:FleMZjLQkDZdJPL0m2xLNlh46qFskrb7jOzkQaCg9vpr9lLT767YgQ>
+    <xme:FleMZnKtw-gsMBXn30_POEHRPabRFZCVFOuOmVqRaodq1GVcuAOOB7GWjj1akl280
+    vXFMXWCIsr_b9UYDQ>
+X-ME-Received: <xmr:FleMZrudnaHc2tfY8Nysn-T5kbkuWmMXEBKB_MZHwzgkboNXkoz4X9bS9d4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejgdduheelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteehuddujedvkedtkeefgedv
+    vdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
+    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
+    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:FleMZsaWGUPOwY0iUwtmN_tPs4Dvi0jdZSEn8_xh9kr5bp36N0VhVA>
+    <xmx:FleMZqbaJn7LxDjXgZ7G1EqSrJdmZr-zxiIlMlNYTh81UXbjAgp06g>
+    <xmx:FleMZgDZ6qQG44w8WFaRCWpqfNCIf27rcMRSRFzTkyJFxhPEUHsrLQ>
+    <xmx:FleMZob2kbWYA9jZFJJKi0h6RqCQ3ilOK_o56QrLRi9GNEreMqAqkA>
+    <xmx:F1eMZuon2_JJMV2aFPcJLmh1yce5GpjstY6fIaOllAPqWFs3xzEmxFB5>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Jul 2024 17:16:06 -0400 (EDT)
+Date: Mon, 8 Jul 2024 14:14:50 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] rust: kernel: add `drop_contents` to `BoxExt`
+Message-ID: <ZoxWyr3fL8GkyOAR@boqun-archlinux>
+References: <20240708205325.1275473-1-benno.lossin@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240708-icc_bw_voting_emac_dtsi-v1-1-4b091b3150c0@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMZWjGYC/x3MQQqAIBBA0avIrBPUgrKrRIjZVLNIQ6WC6O5Jy
- 7f4/4GEkTBBzx6IeFKi4AtkxcBt1q/IaS4GJVQjWlFzcs5MlzlDJr8a3K0zc07ElRV60VZ2sm2
- g1EfEhe7/PIzv+wFnY8UVaQAAAA==
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Andrew Halaney
-	<ahalaney@redhat.com>, <kernel@quicinc.com>,
-        Sagar Cheluvegowda
-	<quic_scheluve@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bqWY1VxPVVcV1HvT7K3kLRKBqr30oM4O
-X-Proofpoint-ORIG-GUID: bqWY1VxPVVcV1HvT7K3kLRKBqr30oM4O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_11,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- malwarescore=0 priorityscore=1501 clxscore=1011 impostorscore=0
- lowpriorityscore=0 spamscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407080157
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240708205325.1275473-1-benno.lossin@proton.me>
 
-Define interconnect properties for ethernet hardware.
+On Mon, Jul 08, 2024 at 08:53:38PM +0000, Benno Lossin wrote:
+> Sometimes (see [1]) it is necessary to drop the value inside of a
+> `Box<T>`, but retain the allocation. For example to reuse the allocation
+> in the future.
+> Introduce a new function `drop_contents` that turns a `Box<T>` into
+> `Box<MaybeUninit<T>>` by dropping the value.
+> 
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> Link: https://lore.kernel.org/rust-for-linux/20240418-b4-rbtree-v3-5-323e134390ce@google.com/ [1]
+> ---
+>  rust/kernel/alloc/box_ext.rs | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/rust/kernel/alloc/box_ext.rs b/rust/kernel/alloc/box_ext.rs
+> index cdbb5ad166d9..6cf79f96d6c7 100644
+> --- a/rust/kernel/alloc/box_ext.rs
+> +++ b/rust/kernel/alloc/box_ext.rs
+> @@ -5,6 +5,7 @@
+>  use super::{AllocError, Flags};
+>  use alloc::boxed::Box;
+>  use core::mem::MaybeUninit;
+> +use core::ptr;
+>  use core::result::Result;
+>  
+>  /// Extensions to [`Box`].
+> @@ -18,6 +19,18 @@ pub trait BoxExt<T>: Sized {
+>      ///
+>      /// The allocation may fail, in which case an error is returned.
+>      fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError>;
+> +
+> +    /// Drops the contents, but keeps the allocation.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let value = Box::new([0; 32], flags::GFP_KERNEL)
+> +    /// let value = value.drop_contents();
+> +    /// // Now we can re-use `value`:
+> +    /// Box::write(value, [1; 32]);
+> +    /// ```
+> +    fn drop_contents(self) -> Box<MaybeUninit<T>>;
+>  }
+>  
+>  impl<T> BoxExt<T> for Box<T> {
+> @@ -54,4 +67,12 @@ fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError> {
+>          // zero-sized types, we use `NonNull::dangling`.
+>          Ok(unsafe { Box::from_raw(ptr) })
+>      }
+> +
+> +    fn drop_contents(self) -> Box<MaybeUninit<T>> {
+> +        let ptr = Box::into_raw(self);
+> +        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
+> +        unsafe { ptr::drop_in_place(ptr) };
+> +        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
 
-Suggested-by: Andrew Halaney <ahalaney@redhat.com>
-Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
----
-Adding interconnect dtsi properties within ethernet node of SA8775P,
-this patch is adding support for the interconnect properties defined
-in the series ->  
-https://lore.kernel.org/all/20240703-icc_bw_voting_from_ethqos-v3-0-8f9148ac60a3@quicinc.com/
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Maybe add
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 23f1b2e5e624..7ebf03953b7b 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -3464,6 +3464,12 @@ ethernet1: ethernet@23000000 {
- 				      "ptp_ref",
- 				      "phyaux";
- 
-+			interconnect-names = "mac-mem", "cpu-mac";
-+			interconnects = <&aggre1_noc MASTER_EMAC_1 QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &config_noc SLAVE_EMAC1_CFG QCOM_ICC_TAG_ALWAYS>;
-+
- 			power-domains = <&gcc EMAC1_GDSC>;
- 
- 			phys = <&serdes1>;
-@@ -3499,6 +3505,12 @@ ethernet0: ethernet@23040000 {
- 				      "ptp_ref",
- 				      "phyaux";
- 
-+			interconnect-names = "mac-mem", "cpu-mac";
-+			interconnects = <&aggre1_noc MASTER_EMAC QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &config_noc SLAVE_EMAC_CFG QCOM_ICC_TAG_ALWAYS>;
-+
- 			power-domains = <&gcc EMAC0_GDSC>;
- 
- 			phys = <&serdes0>;
+	// And `ptr.cast()` is a valid pointer to `MaybeUninit<T>`,
+	// since `MaybeUninit<T>` and `T` has the same layout.
 
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240703-icc_bw_voting_emac_dtsi-2a09f9a18174
+?
 
-Best regards,
--- 
-Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+> +        unsafe { Box::from_raw(ptr.cast()) }
+> +    }
 
+With the above or similar:
+
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+
+Regards,
+Boqun
+
+>  }
+> -- 
+> 2.44.0
+> 
+> 
 
