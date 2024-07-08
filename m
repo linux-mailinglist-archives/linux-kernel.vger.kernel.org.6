@@ -1,59 +1,81 @@
-Return-Path: <linux-kernel+bounces-244701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48C992A818
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:14:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7318792A81B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 750DBB219DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A9D280639
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27246149C6C;
-	Mon,  8 Jul 2024 17:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A974149DFA;
+	Mon,  8 Jul 2024 17:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKvjLsTm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSLnUyJO"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57697148FF2;
-	Mon,  8 Jul 2024 17:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1241D149C7E;
+	Mon,  8 Jul 2024 17:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720458655; cv=none; b=Q05WeGIFJ13r10LkTg6+WWdJOJ7fRPQ8uhTxefrUAYzc9tDYkfTK0KOsgZc4YIkSEGxX4m6qdxHds+RBVYfI/yDfsbZfj7359O06Njl471XUzwtRR4sdk9+hePItpwr9c1Gr08oJWg/xsmPAQt0j15voufNpvqnLEr2r6m7q7sE=
+	t=1720458704; cv=none; b=gheTHKav1OmdscMFu/RBT0FNjwcIKIfEQyTd5uG9ySSRzZsIC508jDtpSZo2O+0zvxLb0KlouPcu1v+dzb2GWVISEMW3CIz9CAOhhyYKrEG08HQ3GzrthVHDrq28MIJwZwti7LUWy7D0YfsAJVcfSxKLFrcGGY1eKJvWRawsdbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720458655; c=relaxed/simple;
-	bh=WKIwnezwdqKkfmKHL941rSU5Nnnh9+YX9sLJNtc4aME=;
+	s=arc-20240116; t=1720458704; c=relaxed/simple;
+	bh=APOKFIr1SgMd2jyTWNlNrszt1hUq4EMwIy0rdhYMZ58=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PR3da1u39m93Q/x4VOv7D9R4zsnb1rxvMxUcw6ercYZgKkAOxOq6yqB3NhOadMgqnwVfxKfGbo9fvN9w/YoSCfyQ6GCkfjpypuEbnoGDnKIcdWpb2nIHiIV8DcvGld0ZI9j5u8oectSJl8z127VW7D/DTE7ATzwMA7j2ko3Ea3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKvjLsTm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC30DC4AF0A;
-	Mon,  8 Jul 2024 17:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720458655;
-	bh=WKIwnezwdqKkfmKHL941rSU5Nnnh9+YX9sLJNtc4aME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jKvjLsTm0UlhwoN86vZR+LgSFSgiU4fGPkFglFI0OXqPCvb4bH7Vz/uh9Phc31e/0
-	 4jtsbL9rBY36+qV0ycsMYpyfcy4HvgmmlRlBqn4piJRti53Rh931C07B5UiUzUQGvz
-	 3yht5I4ccZo+llv26k2J4WKUyb3+NUt88WUkKT8w8To8bbfRjzPMqk8mpb6h3aIKo0
-	 ussCDYkTm4Po0GQvz5iBHMN/zY6RLYgP9tKmZc+7jXJ4eh2zgkf69OeoElqdh/0eNY
-	 g2rKhEiaBy/UMs3kl7DKKmYcqrFq+/AU9fXezv/db3u56d+o0vrGJaCPMTht9jECpK
-	 sGESCL+96YC5Q==
-Date: Mon, 8 Jul 2024 11:10:52 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 1/1] dt-bindings: PCI: host-generic-pci: Drop minItems
- and maxItems of ranges
-Message-ID: <172045865135.3461600.11204852988221577437.robh@kernel.org>
-References: <20240704164019.611454-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WAW/5j6Qw4ltYIRYPP9mh05HVjJSc2MzEV4ebNOZ/5pqcnEB2M+hi0KzaQDlyIn9KqX7IgMNUBWapNTHuj1w4NRS/zwI0Hz/IG3D0eNJ9KiwxzkcX/3fUC2mw7j7WmQYXIA7ar9q4X5X6PGKkZ4KulQ9Y64njcJibFj3qkMYzfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSLnUyJO; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70b0e9ee7bcso2379704b3a.1;
+        Mon, 08 Jul 2024 10:11:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720458702; x=1721063502; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dt0tMUEkzdV0wxc/818/AlxwGzejskA1bdOrhHyCTrg=;
+        b=BSLnUyJOnUyC4JfMsGEYlEo4umt4hSGnt51yq+Rao0IB1l839D8+hln3+TxLmwj5bY
+         MBDVW53Kq82LlaK9AVLeUPPt/MN/ss0wwvdCVuq2p+U6jYZ8nUBKDhhAiJZ9KCdu7OKA
+         kMoqwFafo8jT4EKG8tXUVjLyuWpkv3/vt5GpGm8sJ0Nq1gkAkDC1rJVAk3TIReZ5T7E+
+         HiNK1jGiZWnRIZhmFSBdr/WSik4D3ndhOAgxtqVZYnXRxuQvFeAtldFfUE7eQZRfdtm5
+         I8S2J2PYKtuc/5nu31zpbUiOIIdRewDbP2yh/k6E9kFY5pfPlA0aIPXMff2Wj80h2aTA
+         jF2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720458702; x=1721063502;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dt0tMUEkzdV0wxc/818/AlxwGzejskA1bdOrhHyCTrg=;
+        b=UCcRF3SxpYotcuIABAxRDZoIbF+j7TPG58GK+Jwf8beRrI7kgM3PRjxVkbhh6agZ9Y
+         lcxrwFWf2HG7F8VnMeieW11ZVclqZQDzfyTMi1rBNnXC8SUja4ht8T4PGFGliEcy7I1+
+         eNBmJx/ig3D+epJkyXI7V3Nsq/3wcva4dZaK35Pv8MK16cLoEFoi/mUOleSQHAWWSp4J
+         uK7up5lEhswLjqdJXsRjathVtTSC7MAUX9/niGiYYzpG2d/UMv6paBDPW6SdDqf/lR66
+         UhH0PLu2CbzCR/3hGwtRA+iSRP3fAdFnIUcXocWMNj1sa3Zdzc5ZIded53hGODHMaEU2
+         l0yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy3b1q8eApq+VBOAu+qT0568TxWHLK383ndY1U8y3uaK2+YR+yf8XHnkb09ZCr/Do8vTsS/xjSjImPlPyEjq92uvkryqZCbFYcaK3ZB8AR6rOG29LPwJZFRQ2YqctRIRWi4nmycAWIWX8=
+X-Gm-Message-State: AOJu0Yx8xTcPbltrTG7EIUstj3zJ6eJCMaVRob4MmFkSNjpcvAUYgVsY
+	sMOcsFunS3PF9FXNZaadOp/CVI0iBHUzq1nX4hXcLj/0sBSSu8TK
+X-Google-Smtp-Source: AGHT+IGjYAlk0pW4CoJmEyH/1a3UARBmiHebpaD6kWN9BLP4vvc3l+Bv+VjXM07O9HMcU6UhnE0RFQ==
+X-Received: by 2002:a05:6a00:1ad0:b0:702:24b3:d036 with SMTP id d2e1a72fcca58-70b435e7827mr429688b3a.22.1720458702262;
+        Mon, 08 Jul 2024 10:11:42 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:d2a4:59f0:2144:2c00])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b64d0sm96863b3a.189.2024.07.08.10.11.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 10:11:42 -0700 (PDT)
+Date: Mon, 8 Jul 2024 10:11:39 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] Input - constify read-only struct regmap_config
+Message-ID: <Zowdy6eeTEZMZyH1@google.com>
+References: <20240705-input-const-regmap_config-v1-0-f712a4494883@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,34 +84,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240704164019.611454-1-Frank.Li@nxp.com>
+In-Reply-To: <20240705-input-const-regmap_config-v1-0-f712a4494883@gmail.com>
 
-
-On Thu, 04 Jul 2024 12:40:19 -0400, Frank Li wrote:
-> The ranges description states that "at least one non-prefetchable memory
-> and one or both of prefetchable memory and IO space may also be provided."
+On Fri, Jul 05, 2024 at 07:38:49PM +0200, Javier Carrasco wrote:
+> This series adds the const modifier to the remaining regmap_config
+> structs in the input subsystem that are effectively used as const
+> (i.e., only read after their declaration), but kept as writtable data.
 > 
-> However, it should not limit the maximum number of ranges to 3.
-> 
-> Freescale LS1028 and iMX95 use more than 3 ranges because the space splits
-> some discontinuous prefetchable and non-prefetchable segments.
-> 
-> Drop minItems and maxItems. The number of entries will be limited to 32
-> in pci-bus-common.yaml in dtschema, which should be sufficient.
-> 
-> Fix the below CHECK_DTBS warning.
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dtb: pcie@1f0000000: ranges: [[2181038080, 1, 4160749568, 1, 4160749568, 0, 1441792], [3254779904, 1, 4162191360, 1, 4162191360, 0, 458752], [2181038080, 1, 4162650112, 1, 4162650112, 0, 131072], [3254779904, 1, 4162781184, 1, 4162781184, 0, 131072], [2181038080, 1, 4162912256, 1, 4162912256, 0, 131072], [3254779904, 1, 4163043328, 1, 4163043328, 0, 131072], [2181038080, 1, 4227858432, 1, 4227858432, 0, 4194304]] is too long
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > ---
-> Change from v1 to v2
-> - Rework commit message
-> - drop minItems and maxItems according to Rob's comments.
-> ---
->  Documentation/devicetree/bindings/pci/host-generic-pci.yaml | 2 --
->  1 file changed, 2 deletions(-)
+> Javier Carrasco (2):
+>       Input: qt1050 - constify struct regmap_config
+>       Input: fsl-imx25-tcq - constify struct regmap_config
 > 
+>  drivers/input/keyboard/qt1050.c           | 2 +-
+>  drivers/input/touchscreen/fsl-imx25-tcq.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Applied the lot, thank you.
 
+-- 
+Dmitry
 
