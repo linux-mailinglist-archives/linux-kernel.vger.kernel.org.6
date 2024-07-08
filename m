@@ -1,129 +1,135 @@
-Return-Path: <linux-kernel+bounces-244058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3955C929E88
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:55:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F13929E91
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33CE01C226F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:55:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AE3DB231A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81A34D8A1;
-	Mon,  8 Jul 2024 08:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A74558A5;
+	Mon,  8 Jul 2024 08:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="W8zPPwr8"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0MfGmOLJ"
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340602D05D;
-	Mon,  8 Jul 2024 08:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491E7481B9
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 08:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720428941; cv=none; b=J/wzhCNcWOjFpXjXqFhOvc0anY9C5QCbximXDHygxMwWFvg3va5RhqFThJbAQ1I6yPda1YlyKpGnKOjk1t44rspK7FqBFfNVCBSvfOm7uOhQEHdl+aTnrhcTX9yasd+Vf4uq6Gniqdt26a71IAA/Oz9jSCIEE0bezzG3vcV2BG0=
+	t=1720429040; cv=none; b=WtbuuPzUHCsJb3Xj6q+aKZYmgPDHIdShGfDJYNU2+rLBtirbjFPUNkKceqthH/kTbdKQrDklJNoSld6YJJ/JtT4vUNUYQeYsa8Bb2upVGqIzK4b094W/x12cFdtg2eQ163Id1lybQg60KbGTVHkfzQnGTygd84cFdb6iEAMisE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720428941; c=relaxed/simple;
-	bh=6loMpFpx3P9PFnAc28r8p2yWuBnloCE5jWkAX0Wzl64=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Dj4WK5opKxyhl9qhrcgyneT6YBcnSk5HEPOM+GP9NeSbd4d3EyOQyYUVOkh/3anGZyERw1Vi/s0zdHOZNDoue7DuUeRJAqrjF6LNlDnjrkeL0Anxc+xAYJz9CVhY1r5Ytrc1l3VWZ0w2lyTeFV2DkVVGUQlNnodt9FvYaa51UXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=W8zPPwr8; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2ADABFF80B;
-	Mon,  8 Jul 2024 08:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720428936;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LIRhsvv/pIVr36oyhlkGcGkygXhvNc+0sDuKltZxyyM=;
-	b=W8zPPwr8wJbYRqqZpfKafh/ovWZuVi2za8KrcBuLYz3qvWIpVLfBqwmX4NVwBYfIw8bj75
-	H+v+nYE9nusa7Bfn+XAKacQbLoFLhDcr0sediO5uEy4EA86wXpPBxFaiMJVRwPjUBAN53x
-	g2NuFqKwf5MLB5BE0T0r0emF7QvKMqBKpc0oL+HxSiO+OXEnoqp7e6yavuyCGj0NpcSj/O
-	d5U2gt/3JkH1l90kStRdKZUzhi3xf09rX2blvRlyw5vbLFpK5BB2PsNyI1cQkniDoR9ZD4
-	gM3+fGVSF4/aemsVMKaOekLu1cPhmsdcjE2IFyP979CIVx3qmRvK/v8jp5rrZQ==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Mon, 08 Jul 2024 10:55:31 +0200
-Subject: [PATCH] of: replace of_match_node() macro by a function when
- !CONFIG_OF
+	s=arc-20240116; t=1720429040; c=relaxed/simple;
+	bh=Cb1AF0mLzMpKLDzenlvnWCSwmMf5JIIi0U9107W5+ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAk31DnJzBvjmUQjMC5yhwpmuwlQg64nqJ3Qw29xNkhYU5rX29cgJmS8pc9w56DZ6ENv2KpuMsp2AXGY5/DUPpCiOCxz8fwxGzh1dIbzNOWHUH1kdJKwPosw1r6vmeVkN4CaNtTcrVNeo9VjK/hrKs2kR0dmwF/rrsBTVdIxZcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0MfGmOLJ; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHdKc1k4lzkyc;
+	Mon,  8 Jul 2024 10:57:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720429028;
+	bh=7bLt7WxO3ulEYXhk1rhXT6KKMcWMaVDQidRXNgAZAWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0MfGmOLJXnmucGesfHgTcGIrV1AuYeLm7OPKPfCmEW0e1L+aQfqE3m5322nbHkmbp
+	 o/g25CO5nyDvvCCX0mNrl+9Vxi2omD86s/oTmd2DYsR4YvIMPmAftfijfVaZPvAxYt
+	 1uPPfRCpd1M7aQnk90+oYq6XmUBltSw7ahYrQLDs=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHdKV00tCzWdS;
+	Mon,  8 Jul 2024 10:57:01 +0200 (CEST)
+Date: Mon, 8 Jul 2024 10:56:59 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240708.zooj9Miaties@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+ <20240706.poo9ahd3La9b@digikod.net>
+ <871q46bkoz.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240708-of-match-node-v1-1-90aaa7c2d21d@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAIKpi2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDcwML3fw03dzEkuQM3bz8lFTdxBRjA0MTg0SDRMtkJaCegqLUtMwKsHn
- RsbW1AGJjFPRfAAAA
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.0
-X-GND-Sasl: theo.lebrun@bootlin.com
+In-Reply-To: <871q46bkoz.fsf@oldenburg.str.redhat.com>
+X-Infomaniak-Routing: alpha
 
-In the !CONFIG_OF case, replace the of_match_node() macro implementation
-by a static function. This ensures drivers calling of_match_node() can
-be COMPILE_TESTed.
+On Sat, Jul 06, 2024 at 05:32:12PM +0200, Florian Weimer wrote:
+> * Mickaël Salaün:
+> 
+> > On Fri, Jul 05, 2024 at 08:03:14PM +0200, Florian Weimer wrote:
+> >> * Mickaël Salaün:
+> >> 
+> >> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> >> > allowed for execution.  The main use case is for script interpreters and
+> >> > dynamic linkers to check execution permission according to the kernel's
+> >> > security policy. Another use case is to add context to access logs e.g.,
+> >> > which script (instead of interpreter) accessed a file.  As any
+> >> > executable code, scripts could also use this check [1].
+> >> 
+> >> Some distributions no longer set executable bits on most shared objects,
+> >> which I assume would interfere with AT_CHECK probing for shared objects.
+> >
+> > A file without the execute permission is not considered as executable by
+> > the kernel.  The AT_CHECK flag doesn't change this semantic.  Please
+> > note that this is just a check, not a restriction.  See the next patch
+> > for the optional policy enforcement.
+> >
+> > Anyway, we need to define the policy, and for Linux this is done with
+> > the file permission bits.  So for systems willing to have a consistent
+> > execution policy, we need to rely on the same bits.
+> 
+> Yes, that makes complete sense.  I just wanted to point out the odd
+> interaction with the old binutils bug and the (sadly still current)
+> kernel bug.
+> 
+> >> Removing the executable bit is attractive because of a combination of
+> >> two bugs: a binutils wart which until recently always set the entry
+> >> point address in the ELF header to zero, and the kernel not checking for
+> >> a zero entry point (maybe in combination with an absent program
+> >> interpreter) and failing the execve with ELIBEXEC, instead of doing the
+> >> execve and then faulting at virtual address zero.  Removing the
+> >> executable bit is currently the only way to avoid these confusing
+> >> crashes, so I understand the temptation.
+> >
+> > Interesting.  Can you please point to the bug report and the fix?  I
+> > don't see any ELIBEXEC in the kernel.
+> 
+> The kernel hasn't been fixed yet.  I do think this should be fixed, so
+> that distributions can bring back the executable bit.
 
-include/linux/of.h declares of_match_node() like this:
-
-	#ifdef CONFIG_OF
-	extern const struct of_device_id *of_match_node(
-		const struct of_device_id *matches, const struct device_node *node);
-	#else
-	#define of_match_node(_matches, _node)	NULL
-	#endif
-
-When used inside an expression, those two implementations behave truly
-differently. The macro implementation has (at least) two pitfalls:
-
- - Arguments are removed by the preprocessor meaning they do not appear
-   to the compiler. This can give "defined but not used" warnings.
-
- - The returned value type is (void *)
-   versus (const struct of_device_id *).
-   It works okay if the value is stored in a variable, thanks to C's
-   implicit void pointer casting rules. It causes build errors if used
-   like `of_match_data(...)->data`.
-
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- include/linux/of.h | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/of.h b/include/linux/of.h
-index a0bedd038a05..f973ae119504 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -891,7 +891,13 @@ static inline const void *of_device_get_match_data(const struct device *dev)
- }
- 
- #define of_match_ptr(_ptr)	NULL
--#define of_match_node(_matches, _node)	NULL
-+
-+static inline const struct of_device_id *of_match_node(
-+	const struct of_device_id *matches, const struct device_node *node)
-+{
-+	return NULL;
-+}
-+
- #endif /* CONFIG_OF */
- 
- /* Default string compare functions, Allow arch asm/prom.h to override */
-
----
-base-commit: 256abd8e550ce977b728be79a74e1729438b4948
-change-id: 20240708-of-match-node-ad30140a0a9c
-
-Best regards,
--- 
-Théo Lebrun <theo.lebrun@bootlin.com>
-
+Can you please point to the mailing list discussion or the bug report?
 
