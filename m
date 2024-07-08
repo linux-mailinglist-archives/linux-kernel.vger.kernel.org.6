@@ -1,153 +1,167 @@
-Return-Path: <linux-kernel+bounces-244172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658C592A039
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B068792A03C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893EE1C21909
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:30:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43DD1C216E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9447D3EF;
-	Mon,  8 Jul 2024 10:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7517E591;
+	Mon,  8 Jul 2024 10:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="SVj1RND2"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RL3mhze6"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4E17C081;
-	Mon,  8 Jul 2024 10:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708624D8A9;
+	Mon,  8 Jul 2024 10:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720434532; cv=none; b=gTL0HlLqjb6GGePhB4sBOJ/XB7aIx70pKbbkDodlRIX6BGkbwq1XiIBk130NT3Lek5ne5QnIdnbP4vS8fy0EfwH75E2mRQgbKOo0zEIK6tNGbbuviP7tCodnd1LRt2wac7Lw905TO7Kf5gGlWtfReIm2ACiFG7MzKc5nlYl97hU=
+	t=1720434558; cv=none; b=cqjUfSULhO7la9l1OBn19S4fAqklGQOYxC3Zf2mVjMBlGGlqAWoga+NsN3wXAS9enjwIUKUCHYeurdDb4ZuP8uj/AYnDlW5IF0ayTOGvqmfChEXw+kOB5OESliWlcgAumoV01sQXroCsjZCcKPZa5FN1Pbnjrtd47VYsUDApTFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720434532; c=relaxed/simple;
-	bh=2r3DNPEzj/wQbKvfTrp1wPLKF/BAwlKvXqtPxJ1qJ9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jJ08LYS6hgoD6VWGsgCSyo413R8j7Pr3alFwMCAfRyHnrkw1lmKbPBOSozXMdElE1NVFw1kA7LVlEFG7FfjGQGLrNviuTwwBLp8l5TdERvNhgndtbTGrKwHVr1Nw9A7VchsCygsmYFQKeF+5CBpXDKFrfRApQdUUsuEWRm8fCnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=SVj1RND2; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1720434515; x=1721039315; i=deller@gmx.de;
-	bh=I1gYTLcVw0gXZoZ9Ilgn+lc2dfK4AhJQ9D7jZiy+2Jg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=SVj1RND2SP8elBLOFlsPkgO572y+VlT+27KzhU856rgYT2hFOazng8OUv4ldeZIS
-	 YCAxxhRFIW4/ISE2s1iJ1waUFrI2FJsjHne/zGliivLXCztj3cLxu02F1dRMlTWXG
-	 hkPhOWNvz8eDJivW+muyWGrBv0cd2u/VfJPjk1d7YQk83RTQNHJMrqqiK1xHoMqIU
-	 372Lzo3yK6K15MaJu3bodspq0REgoUcRFzLNRAWql+Su30ZTfi++JR2o4Rk747gF0
-	 kMzds5rkn4rNq5pD+j8u8h/iX6IjM55eqcU9C1PMBkV+OaYb6DGFQ+JUC1FzMKPxA
-	 DxRBW9BMTa2pitwzkg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.33]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5fMe-1sSOAT2hQo-008rOP; Mon, 08
- Jul 2024 12:28:35 +0200
-Message-ID: <e5bac456-1760-48ff-9759-382ef7f3f392@gmx.de>
-Date: Mon, 8 Jul 2024 12:28:33 +0200
+	s=arc-20240116; t=1720434558; c=relaxed/simple;
+	bh=UkOFXWGuw2BgLaxpDmUV6yQ/P5AbU9pHwMHoCnn9EOU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=IDeN4ScLcyRGCF9AcRQOozcpNWVIHOVVkiFJ7MRnz09mgygBZ7FlPWD7dNi2K1ToZIzeQYCb+KmLaBJ8p1IT6JVmCfzOQrp+mT0yHWycB5CgIcW3MDhvW7lsrQSyvxOVtAEhEHmrGt8oqKBv6mjeTjI/EhQZmlEIzMRYxB4wiC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RL3mhze6; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a77e5929033so200233266b.0;
+        Mon, 08 Jul 2024 03:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720434555; x=1721039355; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UkOFXWGuw2BgLaxpDmUV6yQ/P5AbU9pHwMHoCnn9EOU=;
+        b=RL3mhze6uPo4Uj21hlPqwd/5pRs4QvclHyOou85YrZ1QYubRsyH5coU2fWvy2SVsB+
+         ckBc8TYCpIQM1kLLMu4YW+dYR7a8e6h/hm9fbZAicaaEuErItGj5uAjbEcpgNfHBh/lM
+         ymvrXWqemzkiQvRF8xpWA+/pKtPr5eX85EcZyPv9gduwYcPHQwfM9eJDMg+ToMfFdX0V
+         eTDFyO09STEEFcWsyW08tGCbtxSa3jqjYU0Eu2qHWTSx4V5tUdLkww30ya4HUAztQTkQ
+         iBbEZVkKVUAxpUFUlSqJHXWfOF+Lwd2nJRjH6ijSmfsz9wDRqV+MrZX1tRENSSMIQUq6
+         xhRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720434555; x=1721039355;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UkOFXWGuw2BgLaxpDmUV6yQ/P5AbU9pHwMHoCnn9EOU=;
+        b=S14nb1Gid6YneT19aK023pmpVnFMbhjhLKGoqcWwXtHIMHGhZZNivs3NxrhVci+uwo
+         jtuVcb0SxmWeMP3N3yhwtS4VVUMKgpUf5XzQsSSW/SWeuSlLtZb6h0yHgY62EfnyYTH4
+         C81ZUhKS2nlTt+tHt5yBzh53NAl9f2AjH0PkH2vvjwJHWunJ2dwfobd0UNEf1r/PiASs
+         a7iWS1+JKcuVY4d0WW7JQXTg59uX69k4oEVcTk3suSzagAINs56bWzjLJLfwXPKXQN/1
+         LWV38xDofdEVycN5zD3dl4GE0bUnJJ3paDUjf8sGT4WP5+5LleSJ0aCpxE3sBwO6B0BJ
+         Ubyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYmavzXANxQ6o4SwyQICle0n6vxSJPOYAex6i9lz+jLpvHfq/GEapxzu2nn3+os7uej/DKXYLPlpohMOtBAxZsXe0E9xpNhBiMuT3wTwMBFcwpevTwjCwLMHDlgNjmBDq0kxkOiAIPBw==
+X-Gm-Message-State: AOJu0YzZNo8+KUgZivsYQ9Ep5JJEmAqOT+jfKs2R+yOX7UMFMDdOu7Fk
+	sXZw3knk8tFQalo+Ja3Uc60AQYhdlvM4MCusGAoHLjpT92h7yKCh
+X-Google-Smtp-Source: AGHT+IF8QzD8gF4amt85JoD0kaL9nDjpaIsKJ+OHLgAO+stKLPNnAyIyw9LcMeIssI6YfBg75oM6JA==
+X-Received: by 2002:a17:906:3b12:b0:a6f:4fc8:2666 with SMTP id a640c23a62f3a-a77ba70e48emr793543766b.44.1720434554514;
+        Mon, 08 Jul 2024 03:29:14 -0700 (PDT)
+Received: from smtpclient.apple (84-10-100-139.static.chello.pl. [84.10.100.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77cbb3ef7asm292277366b.74.2024.07.08.03.29.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2024 03:29:14 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: xor - fix template benchmarking
-To: Herbert Xu <herbert@gondor.apana.org.au>, Helge Deller <deller@kernel.org>
-Cc: linux-crypto@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ZnMWDdKJHfYQLDzS@p100> <ZoiKD2A4pJhaEWpW@gondor.apana.org.au>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <ZoiKD2A4pJhaEWpW@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.15\))
+Subject: Re: [PATCH v5 0/8] RK3588 and Rock 5B dts additions: thermal, OPP and
+ fan
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <CABjd4YyY68dcA+Z0nWAUq1UmVLeLw52Pg6NGpzcW=WMNX8ioqA@mail.gmail.com>
+Date: Mon, 8 Jul 2024 12:29:12 +0200
+Cc: Heiko Stuebner <heiko@sntech.de>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Dragan Simic <dsimic@manjaro.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Chen-Yu Tsai <wens@kernel.org>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4gnEIKZwOc7F1KNOy6SDMVuSLkGFl5k4O8hHqW5PizzyGufM9BK
- 5ytvx0m86b1fUTkmckyfKX1/j6P/qGk8k2HUhTSo7f0qQcZSyvwT25SbkB2uJ6EvqDUyrGZ
- gPdPVHzbWV8TWiBsyvSCyiUSHGgGVC/gjD712t5hW33+zuEKzF7USPQFGgCl7FpWUO47Rvk
- 2AqGnU06vS7K9WHqr7qag==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZcU8CC2TWnU=;PInqwIhf/Yd+DiyY0edES811vxi
- UxwnsTT7Qkdrh8mZTrnrSIqV8iEnr+58wsDPV12DA59QPftU6H0ew0tDLDVnu0V4OwX9rUfTf
- QHlPUPrqveURJ0PSIkujKUpzf0w3lPwJouTscXDevvMX815I82lxQIVCLOWzOtj02to9Uldas
- KTS0AzIZS9tpnAcF3Kz1DlI+mASJe99Xc//K+3mURgMOBizc/nXH1sUcHm6eqis7kOoWcyxAl
- r4LLPlLS0DGqDX8f36p9TVMjaN+EDg6fHVBZHbnrdxQ2vpr/jT/QVtqjKc0K8SRz3cly9Ij1F
- Yjr1xH4iC2k9F1uclk8fASBU4sUvg6Iol/llxQfb87Bp1YVrr/In3mEG79DAY327S7i0HyJCo
- jiyE7xSLj9FMW8kze+rFnvk+w/l/jRjruCHukkB3InVzosWKTboDqfSLcv4qkIi2G8X3VOAqR
- nvMNfUtdC9U4vst2ZxGozDE5G6j128qNn9/ZigO5zGg8UBhC/JHTcWVpq1PWLHi+X1knlYRxP
- LOdZL+IE26qWm52U0ipvpoWmGy0K1UI8Ob88NPaXu2vZSsws5FtIzmWbT5cRmX/sU8M9MkaAX
- H9BkLoUGixjB1B25ijtG+IxDyvx5ApN0gvLe/XPTvb1CA0HNAfk1j9KKEDU1r0Qr44kgyV/xq
- gPw7bhKqrnaRaIO7DMBYh2qVwQ2yX9kIPl5xBZ7few084nCUaPlyf9WmBjNQJySLvaeA6P4tt
- TxblKZlFpohbKqLIZyaHBtadI0qiCIeaA/idWwtbJtxTwMauAgaEHFJqUz+CwDQ+HDRA6Kx9S
- IJvpx2Hg7AMevM/VDMoU5Xg5+3xlqPPGhZWO5nJNv/EaY=
+Message-Id: <B28C503C-B1A6-49E4-ADF0-82FA9A412D40@gmail.com>
+References: <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
+ <0418B5BB-6759-4BFA-BE6E-F5C7FA0CBF4F@gmail.com> <2236519.ZfL8zNpBrT@diego>
+ <1E6ED98C-BD49-485D-9FE9-9E7CAEDB4564@gmail.com>
+ <503ECE3A-CA1C-43A7-AEB2-C0000A930B3A@gmail.com>
+ <CABjd4YyY68dcA+Z0nWAUq1UmVLeLw52Pg6NGpzcW=WMNX8ioqA@mail.gmail.com>
+To: Alexey Charkov <alchark@gmail.com>
+X-Mailer: Apple Mail (2.3654.120.0.1.15)
 
-On 7/6/24 02:04, Herbert Xu wrote:
-> On Wed, Jun 19, 2024 at 07:31:57PM +0200, Helge Deller wrote:
->>
->> +	t0 =3D ktime_get();
->> +	/* delay start until time has advanced */
->> +	do { start =3D ktime_get(); } while (start =3D=3D t0);
->
-> Please rewrite this loop in the usual kernel coding style.
+Alexey,
+pls see inline
 
-Ok.
+> Wiadomo=C5=9B=C4=87 napisana przez Alexey Charkov <alchark@gmail.com> =
+w dniu 08.07.2024, o godz. 09:59:
+>=20
+> Hi Piotr,
+>=20
+> On Sun, Jul 7, 2024 at 9:32=E2=80=AFPM Piotr Oniszczuk
+> <piotr.oniszczuk@gmail.com> wrote:
+>>=20
+>> Heiko, Alexey,
+>>=20
+>> After some more tests: is varying fan-speeds working stable for you?
+>=20
+> Yes, in my testing on Rock 5B it's been stable.
+>=20
+>> In my case - 1 per few reboots results with board enters state with: =
+constant full speed and no any reaction for cpu temp.
+>> In such state - I need multiple hw poweroffs (remove usb-c plug) to =
+get fan-speeds working again.
+>> When board is such state - all seems to work ok (frequency scaling, =
+etc) except fan is constantly full speed=E2=80=A6
+>=20
+> One thought: could you please check which thermal governor gets
+> loaded? I used stepwise in my testing.
+>=20
 
-> What about adding a cpu_relax() in there if ktime_get doesn't
-> advance? Something like
->
-> 	while ((start =3D ktime_get()) =3D=3D t0)
-> 		cpu_relax();
+this is from system when - after boot - i have constant full speed of =
+fan=20
 
-Yes, looks better.
-Will send updated patch.
+root@myth-frontend-3614ae04f23f:~ # cat =
+/sys/class/thermal/thermal_zone0/policy
+step_wise
+root@myth-frontend-3614ae04f23f:~ # cat =
+/sys/class/thermal/thermal_zone1/policy
+step_wise
+root@myth-frontend-3614ae04f23f:~ # cat =
+/sys/class/thermal/thermal_zone2/policy
+step_wise
+root@myth-frontend-3614ae04f23f:~ # cat =
+/sys/class/thermal/thermal_zone3/policy
+step_wise
+root@myth-frontend-3614ae04f23f:~ # cat =
+/sys/class/thermal/thermal_zone4/policy
+step_wise
+root@myth-frontend-3614ae04f23f:~ # cat =
+/sys/class/thermal/thermal_zone5/policy
+step_wise
+root@myth-frontend-3614ae04f23f:~ # cat =
+/sys/class/thermal/thermal_zone6/policy
+step_wise
+root@myth-frontend-3614ae04f23f:~ # cat =
+/sys/class/thermal/thermal_zone7/policy
 
-Helge
+dmesg: https://gist.github.com/warpme/5d12df382ce353205c6ff0c37f5b4791
+
+lsmod: https://gist.github.com/warpme/1c74b3be2cabe85366f227594d8a3e90
+
+pls let me know is there anything else i can provide to investigate this =
+issue...
+
 
