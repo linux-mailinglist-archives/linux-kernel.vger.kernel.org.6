@@ -1,199 +1,161 @@
-Return-Path: <linux-kernel+bounces-244107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF62929F30
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81014929F3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 750FCB223A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:37:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DA6EB23E91
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B6556766;
-	Mon,  8 Jul 2024 09:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qU8h94+u"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8279E6BB4B;
+	Mon,  8 Jul 2024 09:37:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F815381B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3A653362
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720431421; cv=none; b=VcUEBWmLZYPiFm2H6CjuKwtIAKY7aGVDEg44kBDyASPMT588KM8n60PBX9yV7xbY3GuLM0Ej5e4YP5je+oEwcMUWx5KACHKU3DcuMlsVmKdcqaSDfRfnfPYaj7LmhbPnvJGBePzXePmpgFYyUwIZ1/991AsutvsBMgdAm9yY+RI=
+	t=1720431477; cv=none; b=f+RAMmANXKWhTkzd7OJl1adm3Jfchciqerhv7fIOdJ34j9bS27FxToh4r77Cv7MH+VNbo5dFn6hW27ehe05POQKNOHmxjro96Bh+KXLx/nD8fdQlcwvaGkMPaEb6ef8P7vvtDKXwhTENcLBgxT82kSOusYQ8oCBgBhwNlL5z838=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720431421; c=relaxed/simple;
-	bh=DUT2qfyHnBiSJswKU9IBPVcRdLDUr47dwJz4WyHcfk4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k7MRgHrMKSnXEeVEQDrrtkULDAL3GyJhtyrblaCGVzUxs4hPdbrlnNNaYBmwIMm5OdFKF7YfOGxjiGQ7pMA9k0cDh83pi9R7r5BdTzNFJBFPvrndyhDKqPEkQrjFToNIUYWzJzVOXPbDQYbLPftRD9gjZxPu6bSV8+kgaNbFGMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qU8h94+u; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso36469471fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 02:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720431418; x=1721036218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t/fDaFsT8bVF74YZaw1dcXDPONZE3lh/2d8bp4xBoeE=;
-        b=qU8h94+umLg4DCBsm8JHYfr8ydS/X8yO9fbu8tauPN5MKq8I4OwpykY7agKQgG0ocB
-         IYSO3aGreEMnHAPw8XBSBhJ8w8mFBmAv4sY/E2LuCxro0dxZOlXmhZdCwqVVTONHwwbP
-         dznW9++G6Pw+1yay8BotT5/B7VVkjnvL+uxBV2QOmJzKebwvXtLbE4Rt8QBY9UWEqWNS
-         sPfI+3zO1iE68Fx5y1yXBA9zs5MlLIiEffKWsjjhWNOEowdsAGdMZMF0W7TRIMwNaP1u
-         4S1wy2yFj090HoAVR2rVvmepWHpyu0rHReH6+A1h59oZcXBSwQjJv9xdEuCPayVJSbTa
-         2AyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720431418; x=1721036218;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t/fDaFsT8bVF74YZaw1dcXDPONZE3lh/2d8bp4xBoeE=;
-        b=hEgT96VjPdYgb/haY/UON5pMns7yrL+ZSY91eq0AxfuSDsAPN8DXrPB2l78zxK6i3/
-         WLkoN7ffgbhbAyqx8NfpQtA5ohDQtetmIL0xLy46jyGxafHK9pMYoGivfZAA5neqfRd0
-         Vsk+108xvn3WMcxidruXA+8Ic8Pb6QKJvtFbNKaFQeEgNZ784LzcmHi67Zl+h+zhD5OS
-         MJiX+ug6IuUK7smspDYel61nbYhsNBTHELE4vwvdkqwzs5BYzeyJJyldAfUu/gpvJPBV
-         EizC3H+swIXY+WVA3corOuB+MxHWAoWfsTPkDM4iDrBUuYPzquyy57CpkzzgaE9Pep5g
-         zCZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMJ3zEZLS1K3br1JQE9B6tTfODwIhng23byAU8ONAJ8591OOKFOpCSgGOoG8/5it4R9AvyDm/WNvCnGo66LvCUJmz0fz+67AiSNATi
-X-Gm-Message-State: AOJu0YwmhdIkyqLDS8keWGDv90cvXd9nZr+I4qNObDrHTdfn+P7/IPTs
-	Hq+MMSkz/S6A/9Bp/NF5XI7r+PJ6sPxfA0lqY5DoQ3wX855H9oQpzrjQwWfvrPHCy5mkUBqhhCe
-	ZH98W2HbWZ/zLi1XWEl51FtEtsTvFFco1e53q8w==
-X-Google-Smtp-Source: AGHT+IEJMNPJRZ4ikmMySY61VYumW34qVN8KfZiDAw4e13a6IxOH1mxxtIHzIHcKSJJmLmuyxIw8TtR3feufoV7jpQU=
-X-Received: by 2002:a05:6512:3d29:b0:52e:a63f:16e8 with SMTP id
- 2adb3069b0e04-52ea63f1808mr5972739e87.33.1720431417658; Mon, 08 Jul 2024
- 02:36:57 -0700 (PDT)
+	s=arc-20240116; t=1720431477; c=relaxed/simple;
+	bh=DXnAO9oTLT+9nHV2nOnL2+Hmnnpe2sgFkKUdaKBOwkg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Uxlyg8g62SQgx3E/ukB1Xv3L/HzokQigTNa0oyb8f+PRR3xfqG0G9lBhFU77nwmkRnRj2RlWCMmYKiW3QD/ngPkj1KA2QOxZ+1vDU+wxDEEKJE2DsfIJc6qTOF0hF1EJI4hipvDsfl6aplqj+5TdQ6JQMpTz2ctrxFJfIRZnFTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sQko6-000785-St; Mon, 08 Jul 2024 11:37:14 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sQko5-0080kk-Js; Mon, 08 Jul 2024 11:37:13 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sQko5-00058U-1i;
+	Mon, 08 Jul 2024 11:37:13 +0200
+Message-ID: <7b03c38f44f295a5484d0162a193f41b39039b85.camel@pengutronix.de>
+Subject: Re: [PATCH v2 04/12] PCI: brcmstb: Use swinit reset if available
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Jim Quinlan <james.quinlan@broadcom.com>, Stanimir Varbanov
+	 <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
+ <lorenzo.pieralisi@arm.com>, Cyril Brulebois <kibi@debian.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,  Florian
+ Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
+ <kw@linux.com>, Rob Herring <robh@kernel.org>, "moderated list:BROADCOM
+ BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>, open list
+ <linux-kernel@vger.kernel.org>
+Date: Mon, 08 Jul 2024 11:37:13 +0200
+In-Reply-To: <CA+-6iNynwxcBAbRQ18TfJXwCctf+Ok7DnFyjgv4wNasX9MjV1Q@mail.gmail.com>
+References: <20240703180300.42959-1-james.quinlan@broadcom.com>
+	 <20240703180300.42959-5-james.quinlan@broadcom.com>
+	 <362a728f-5487-47da-b7b9-a9220b27d567@suse.de>
+	 <CA+-6iNynwxcBAbRQ18TfJXwCctf+Ok7DnFyjgv4wNasX9MjV1Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
- <20240705-pwrseq-v1-1-31829b47fc72@amlogic.com> <a4d08999-55ea-4674-bb0f-6d618b7bdea7@kernel.org>
- <9c550278-2205-4663-917c-c303c65726ad@amlogic.com> <726a0561-b3fc-46bb-a834-3ed8b0e993e1@kernel.org>
- <91e42fbc-712e-44b4-8200-23aaf1fade43@amlogic.com> <7d109ab0-ebd0-4739-a15e-958e82552a7d@kernel.org>
- <2c51fff5-bc63-4f30-bb6d-f5fe91854d6d@amlogic.com> <aab8fae1-c0ba-4fab-8690-88c6cfe569e5@kernel.org>
-In-Reply-To: <aab8fae1-c0ba-4fab-8690-88c6cfe569e5@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 8 Jul 2024 11:36:46 +0200
-Message-ID: <CAMRc=Mckr4EE+TWgwHb5iLYTiPT0=2ES9Kkf27XTJmESPAxAgw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: power: Add power sequence for Amloigc
- WCN chips
-To: Yang Li <yang.li@amlogic.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Jul 8, 2024 at 11:10=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 08/07/2024 10:21, Yang Li wrote:
-> >
-> > On 2024/7/8 15:32, Krzysztof Kozlowski wrote:
-> >> On 08/07/2024 08:32, Yang Li wrote:
-> >>> =E5=9C=A8 2024/7/8 14:11, Krzysztof Kozlowski wrote:
-> >>>> On 08/07/2024 08:04, Yang Li wrote:
-> >>>>>>> +
-> >>>>>>> +required:
-> >>>>>>> +  - compatible
-> >>>>>>> +  - clocks
-> >>>>>>> +  - clock-names
-> >>>>>>> +  - amlogic,chip-enable-gpios
-> >>>>>>> +  - amlogic,bt-enable-gpios
-> >>>>>>> +
-> >>>>>>> +additionalProperties: false
-> >>>>>>> +
-> >>>>>>> +examples:
-> >>>>>>> +  - |
-> >>>>>>> +    #include <dt-bindings/gpio/gpio.h>
-> >>>>>>> +    wcn_pwrseq {
-> >>>>>> No underscores in node names, generic node names.
-> >>>>>>
-> >>>>>> There is no device as "pwrseq". I also do not get what "wcn" means=
- here.
-> >>>>> Yes, I understand.
-> >>>>>
-> >>>>> Can I change "wcn_pwrseq" to "pmu", and do I need to change the bin=
-ding
-> >>>> What is pmu for your device? What is this device in the first place =
-you
-> >>>> are documenting? Where is the datasheet?
-> >>> ^_^ Well, You are right, the "pmu" wasn't really fit in here.
->
-> So no datasheet? Then you are on your own.
->
-> >>>
-> >>> I'd like to explain the current usage first, and could you please giv=
-e
-> >>> me a suggestion?
-> >>>
-> >>> This module(pwrseq) used to power on Bluetooth & Wi-Fi combo chip, bo=
-th
-> >>> Bluetooth and
-> >>>
-> >>> Wi-Fi driver need to control "chip-en-gpios" pins, so we introduced t=
-he
-> >>> power sequence module.
-> >>>
-> >>> What should we call it in this case?
-> >> Sorry, you describe driver, not a device.
-> >>
-> >> That would be a no-go for entire binding. Please describe the hardware=
+On Fr, 2024-07-05 at 13:46 -0400, Jim Quinlan wrote:
+> On Thu, Jul 4, 2024 at 8:56=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.=
+de> wrote:
+> >=20
+> > Hi Jim,
+> >=20
+> > On 7/3/24 21:02, Jim Quinlan wrote:
+> > > The 7712 SOC adds a software init reset device for the PCIe HW.
+> > > If found in the DT node, use it.
+> > >=20
+> > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > > ---
+> > >  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
+> > >  1 file changed, 19 insertions(+)
+> > >=20
+> > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/cont=
+roller/pcie-brcmstb.c
+> > > index 4104c3668fdb..69926ee5c961 100644
+> > > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > > @@ -266,6 +266,7 @@ struct brcm_pcie {
+> > >       struct reset_control    *rescal;
+> > >       struct reset_control    *perst_reset;
+> > >       struct reset_control    *bridge;
+> > > +     struct reset_control    *swinit;
+> > >       int                     num_memc;
+> > >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
+> > >       u32                     hw_rev;
+> > > @@ -1626,6 +1627,13 @@ static int brcm_pcie_probe(struct platform_dev=
+ice *pdev)
+> > >               dev_err(&pdev->dev, "could not enable clock\n");
+> > >               return ret;
+> > >       }
+> > > +
+> > > +     pcie->swinit =3D devm_reset_control_get_optional_exclusive(&pde=
+v->dev, "swinit");
+> > > +     if (IS_ERR(pcie->swinit)) {
+> > > +             ret =3D dev_err_probe(&pdev->dev, PTR_ERR(pcie->swinit)=
 ,
-> >> not what you want to achieve in Linux drivers.
-> > W155s2 is a Bluetooth and WiFi combination chip. Bluetooth requires the
->
-> I asked about this device here.
->
-> You speak now about W155s2 but everywhere else you were using "WCN".
-> What is that WCN?
->
-> > bt-en pin to be pulled up, the chip-en pin to be pulled up, and the
-> > 32.768KHz clock. WiFi requires the chip-en pin to be pulled up, and the
-> > 32.768KHz clock. It can be seen that Bluetooth and WiFi are coupled to
-> > the chip-en pin and the 32.768KHz clock. When Bluetooth and WiFi are
-> > working at the same time, no matter which one is turned off, it will
-> > affect the other device. Therefore, a pwrseq device is now abstracted t=
-o
->
-> It is the first time you mention pwrseq device from above paragraph.
-> Nothing above describes pwrseq.
->
-> Stop describing your problem, we all know it exactly if you follow the
-> discussions about power sequencing. Instead describe this particular
-> device you add binding for. What is this pwrseq in hardware? How does it
-> look? Where is it located? What are its pins? What are its supplies?
->
-> > manage the chip-en pin, bt-en pin, and the 32.768KHz clock.
->
-> >
-> > There is currently no matching device name for the pwrseq composite dev=
-ice.
->
-> ? No clue what does this mean.
-> >
-> > Could you please give me some advice?
->
-> Again, you do not describe the device for the binding but something
-> else. Something for your drivers, sorry. No.
->
-> If you disagree, respond accurately to all questions above, not to only
-> some of them...
->
-> Best regards,
-> Krzysztof
->
+> > > +                                 "failed to get 'swinit' reset\n");
+> > > +             goto clk_out;
+> > > +     }
+> > >       pcie->rescal =3D devm_reset_control_get_optional_shared(&pdev->=
+dev, "rescal");
+> > >       if (IS_ERR(pcie->rescal)) {
+> > >               ret =3D PTR_ERR(pcie->rescal);
+> > > @@ -1637,6 +1645,17 @@ static int brcm_pcie_probe(struct platform_dev=
+ice *pdev)
+> > >               goto clk_out;
+> > >       }
+> > >=20
+> > > +     ret =3D reset_control_assert(pcie->swinit);
+> > > +     if (ret) {
+> > > +             dev_err_probe(&pdev->dev, ret, "could not assert reset =
+'swinit'\n");
+> > > +             goto clk_out;
+> > > +     }
+> > > +     ret =3D reset_control_deassert(pcie->swinit);
+> > > +     if (ret) {
+> > > +             dev_err(&pdev->dev, "could not de-assert reset 'swinit'=
+ after asserting\n");
+> > > +             goto clk_out;
+> > > +     }
+> >=20
+> > why not call reset_control_reset(pcie->swinit) directly?
+> Hi Stan,
+>=20
+> There is no reset_control_reset() method defined for reset-brcmstb.c.
+> The only reason I can
+> think of for this is that it allows the callers of assert/deassert to
+> insert a delay if desired.
 
-Yang, please look at the existing pwrseq-qcom-wcn.c driver and its
-bindings. They do exactly what you most likely want to do here. They
-describe the power management unit of the chipset, its inputs from
-host and outputs consumed by the WLAN and BT modules. Please try to
-follow it for your device.
+The main reason for the existence of reset_control_reset() is that
+there are reset controllers that can only be triggered (e.g. by writing
+a bit to a self-clearing register) to produce a complete reset pulse,
+with assertion, delay, and deassertion all handled by the reset
+controller.
 
-Bart
+regards
+Philipp
 
