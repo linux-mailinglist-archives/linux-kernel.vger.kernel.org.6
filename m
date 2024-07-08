@@ -1,402 +1,1169 @@
-Return-Path: <linux-kernel+bounces-244402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1248C92A3C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:39:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A1392A3CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357591C21997
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:39:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DFE01C203DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECE5138490;
-	Mon,  8 Jul 2024 13:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4E4139D15;
+	Mon,  8 Jul 2024 13:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ky7zI10l"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6hRnEnS"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD4C80638;
-	Mon,  8 Jul 2024 13:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F87D1171D;
+	Mon,  8 Jul 2024 13:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720445942; cv=none; b=k18bGVgEFSJL0fqPMxPvtc0vS0pIrpsIFwgxIPcc996s2pKYsd7IADLC60Ldll3vjLKhRg3x7ktLJFnkv4fFMp63m0Mvu6VSf8SlvalP8VY4mhvykFWwp/rRaUDx5EHBCAfnJftWj8c0TZkFBqeNDunjqLXN/GU2XnD2Qdf6CEk=
+	t=1720446002; cv=none; b=SEd72HocL2IF0yMrkWeZ7w4GtFuH68Io+5DT0AhbpMk3wcSVWysprCOl2h+WvIoDbJYG1BiAtCESaZP4Tg154H/j3YBpV/Ro/LRt3mHs/dHtHqkZvYsSooEeGy9F+6SZhMv5T/OpVsTp0ctGOKgFpiGcRSqZvP8fAETrPqd6zsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720445942; c=relaxed/simple;
-	bh=uk2Y45eS4ivodPkMU8DFezTOStSRkEEgl61phSx3r8s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JhuQKRl562cn9mL9sXpE7GxC1H+rMW0+wvtqSDMEBC8Q0tEKjFowQKzmPM6oxx8oznAa6mdKEvlTC0yb9ZRCu+D8I0AhkxaBTj9u1bNKt7Ibdu5agjQOvN1nh87pXfC4gcf6Pb+gnb5PvUzG2M4P1RH46koCx1ALRcN7jIRSBqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ky7zI10l; arc=none smtp.client-ip=209.85.208.173
+	s=arc-20240116; t=1720446002; c=relaxed/simple;
+	bh=GtQ3ES9dM6tnHOMKDsx+I9bktE5ptx3fCniyNfd35EM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=cQewEY+ARdpF+H2t5xkGYU8Cw8FrJxSM6+0wH+/GB1hY8WhV+ktA6Ac9aRk8j8FpKKH/SMko9Q5IK5gFKdjj7XttRPZoYLuun57PIncv53OUuNNWdULqFIWQnlm04H8JnZtuiL/bSQHdkCB0zMdKZWaOgoaQQao2eC28If0Ch0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D6hRnEnS; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so51385661fa.3;
-        Mon, 08 Jul 2024 06:39:00 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ee90dc1dc1so37924741fa.3;
+        Mon, 08 Jul 2024 06:39:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720445938; x=1721050738; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720445998; x=1721050798; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Cx9W65GHK3l2uSoCoYiyvNBp+enD15zymQ09Ony5qNw=;
-        b=Ky7zI10lJ6XH7RRWJeL+vRVWtuWS1z4FzFfrp0Du/KRVl2Ev/TEUJwYQ9EPcA5kIx4
-         v0sC/Tv/eQZQf8q957bO1Cc+4z35wIxAKM6mDxLJLp4ItKXFWGQdlRX5LfxcmKI5gyBd
-         9nDI+bwpNckMWPqz+Hm/giRSvwrVUSYCVvengeK1BGtBkmdoPkbwTiD6zKkZvKf2p7cg
-         yu03TsQYW+iiG6RExrxydZo33qQmD9p3Ih2sfmiMTcABLXVMr3Md+qrtXXz6xhwKnX8D
-         +OGCuXcl9RXShevxvemr0GrEfhuv+mUaep3GrzQQLVG1qkE+lCJ7Jnb92VVx6v21q6hl
-         6+TA==
+        bh=Eesy2pn3itcP1WMJLgHgMe6OQpUXtPho+emPCzI/UAQ=;
+        b=D6hRnEnSa+TsycJiNvIFs2gUiXbjuoFfULLW7Hn4l9CQAe7PExX7ylKi+aaFWbzrd5
+         kEGpT8I0yKpoKpGeJxcMLUkG/NjkvFFVGhNC9al9wohE8i42lD020l2YWkdS43aon3jz
+         AYJlGg6GIxUplW5ZYm09qRV/SMqtz48LmrzWnH1wrr9rTy2ZOst2ntX3//Xa+76gUf2K
+         QBvQ+Sc3VtgS2vJxyyEO+Si9lOAglJtbxb+dTgghIEGCBOz146+P5JTGxe5lEgMVbp+h
+         2ZM2Kb9OnLpqg4Yv45LLiHYme2xtT40ccCqX9HZIbB0wS2r7BSlJvke5TxbXTjHp9HOn
+         4S5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720445938; x=1721050738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cx9W65GHK3l2uSoCoYiyvNBp+enD15zymQ09Ony5qNw=;
-        b=A7voZXmSF1SBDyzFQCWqp0JaoN8MGsMP2tYQ9yPixWQedaGn9IVx2TtexwvFkyp21x
-         xlZldrVPfO8am+KorW2qOuvQ6O64xoAJLwIrsbwK8InF4Ve6rpJTRsKf2NM70J6jSR2o
-         YcxTadtBWHaqRdcgbOgnREq6MklkuQ6xAKYTvi1LgcfNhfZF5tmHm6iUywJLHLB68M6a
-         3tiwArjuQVguPhr45W26UHHfYAxBvksa9xvaKcvs5Se6WAJVpQe3W8bfK/mX22eWmYKD
-         rhKpeDDZPOHg3Wu7BmiMvwjJLwQ2n0+5PLQhKDe735KNopFlTnpbaOzTlH93s1VTL9U4
-         0MjA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4KPyUS8sv89p3IJsL7J4LJHx0nAqt/sCh1qW9Jn2ls71e/TizX/Hxk0m7OKKXWOW7PZCJqYlHN2/ymdVq3PK6ywMFcHM/o57n7C7aZYVSqjdUQvUmHLSPDDRnV5SG8X/x
-X-Gm-Message-State: AOJu0YxwGI9iSC2vqC7eEK/yWcLqzDgZIq/2vNpVqL7mbwh3XP+rEtn2
-	S5itg1jYpwGnTGj4SXBkHjcZMhkZHLm8KXIuH+F6QvcdvqPqkroJNq4re9OgDToxGH2E9VF935Y
-	NnzlBFHI0CIL02riTJk6dlW+/qAI=
-X-Google-Smtp-Source: AGHT+IFCS9NMv9wdLuzfWo0tETRcCeFENcPIznD4mzzRQQ1LQCLTxY5aSfks+W94yTwVVgHrM3m1PGBymXg6NtHxyD8=
-X-Received: by 2002:a2e:bb85:0:b0:2ee:8817:422b with SMTP id
- 38308e7fff4ca-2ee8ed8f728mr65378571fa.19.1720445938107; Mon, 08 Jul 2024
- 06:38:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720445998; x=1721050798;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Eesy2pn3itcP1WMJLgHgMe6OQpUXtPho+emPCzI/UAQ=;
+        b=ikAqNhXJOnSIpmklq61bMPcCaxDh4HzQqQzL+wJ3ZLCJQMqcH2wLQO19Clm/KJCLM7
+         tT2Rwr9BaN+NZAjTSEhqW96igAjD3oBd9CbBziY8lEoASIMlTlmxu7fXcC7vQsEPLEyA
+         VLmV3FzdP5Mu6EN8ukMg3UntmBfVMFk5bJGGsT7GcPC9mBXCxA6TRgXZ02vXWKkEg+so
+         MASZjBkwp19STLxzNZoRtYVc38i5g8Arbc9xdYQjHkAIuWwhlnVn7VePG54ZhFFDT7GW
+         SBQ0aW9tKkh/jXOmHzJ+W3UA8WI6yCYjHkvcuFtNfDvqtlAu+PNm2bsI1Q+Rcm7Ex9rY
+         O9EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIt9oqptMOyX54J7bNHV5w46z++h3AjO2BlLscnR8U9BzO+e5m/l3Ll+oPXP/kRDP4xHgeP4l9S2qDg2m7VeoUMLQydQLIcJZjW2ypgIN3moA29PAZVoj0k+9odBBCJTtL6Uq8GZilr/ojSqV0Jh4nZy4iJeVqw43HcyCAVXqCgZS1gg==
+X-Gm-Message-State: AOJu0YwCLZy88gA3UieB+hSCyrPeVMg5Hb+zBfz79kcQOxp5VnLYOaAG
+	FnJQw9X4rr+MPdmmlPLq36uvU6XPskM/sq1hWeEL66Rn1R9pKvfh
+X-Google-Smtp-Source: AGHT+IFleR+qG5VXdGG7tlCzE5DvpbBFSkgR0u6McYQ15nHs6qMOvBecwfkk6vaqC7NMQ5BNx1tBpg==
+X-Received: by 2002:a2e:be0f:0:b0:2ec:5699:5e6 with SMTP id 38308e7fff4ca-2ee8ed9fc91mr99444291fa.26.1720445997123;
+        Mon, 08 Jul 2024 06:39:57 -0700 (PDT)
+Received: from localhost (host-79-55-57-217.retail.telecomitalia.it. [79.55.57.217])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42666680fa5sm59059845e9.22.2024.07.08.06.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 06:39:56 -0700 (PDT)
+Date: Mon, 08 Jul 2024 15:39:54 +0200
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marius Cristea <marius.cristea@microchip.com>, 
+ Matteo Martelli <matteomartelli3@gmail.com>, 
+ linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <668bec2a8b23a_6e037017@njaxe.notmuch>
+In-Reply-To: <20240707160442.6bab64c9@jic23-huawei>
+References: <20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com>
+ <20240704-iio-pac1921-v2-2-0deb95a48409@gmail.com>
+ <20240707160442.6bab64c9@jic23-huawei>
+Subject: Re: [PATCH v2 2/2] iio: adc: add support for pac1921
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240604085401.14733-1-qiang.zhang1211@gmail.com>
-In-Reply-To: <20240604085401.14733-1-qiang.zhang1211@gmail.com>
-From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Date: Mon, 8 Jul 2024 19:08:45 +0530
-Message-ID: <CAFwiDX-fFSHmHxKyM8U1Eu89hj5ZZjLJMsW2Q2z6gqsdoaem9g@mail.gmail.com>
-Subject: Re: [PATCH v2] rcu-tasks: Fix access non-existent percpu rtpcp
- variable in rcu_tasks_need_gpcb()
-To: Zqiang <qiang.zhang1211@gmail.com>
-Cc: paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org, 
-	joel@joelfernandes.org, urezki@gmail.com, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, zhixu.liu@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hi Zqiang,
+Jonathan Cameron wrote:
+> On Thu, 04 Jul 2024 19:42:02 +0200
+> Matteo Martelli <matteomartelli3@gmail.com> wrote:
+> 
+> > Add support for Microchip PAC1921 Power/Current monitor.
+> > 
+> > Implemented features:
+> > * capture of bus voltage, sense voltage, current and power measurements
+> >   in free-run integration mode
+> > * support for both raw and triggered buffer reading
+> > * support for overflow events
+> > * userspace controls for voltage and current gains, measurement
+> >   resolution, integration samples and filters enabling/disabling
+> > * simple power management support
+> > 
+> > Limitations:
+> > * operation mode fixed to free-run integration
+> > * measurement resolution and filters controls are applied to both VSENSE
+> >   and VBUS measurements
+> > 
+> > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+> 
+> Hi Matteo,
+> 
+> A little too fast for sending a new version.  Result is Marius reviewed
+> v1. I may replicate some of Marius' comments but do make sure you
+> cover them all for v3.
+> 
+> One big question I have here, is do typical usecases for this device care
+> much about reducing integration time? I'd have thought they were all
+> relatively slow.  As such it may make sense to not support some
+> of the modes that need to lower integration time (this is a common thing
+> to decide to skip in the interests of maintainability and user interface
+> complexity reduction).
+> 
+> Looks reasonably speedy to me, unless very high numbers of samples
+> are used.  So that control makes sense to expose, perhaps not
+> the resolution one.
+> 
+> Note that custom ABI is almost always a bad idea.  We enable it for the
+> cases where there is no other choice, but reality is those cases then
+> all need custom userspace software, so the controls are much less likely
+> to actually used :(
+> 
+> 
+> Jonathan
+>
 
+Hi Jonathan,
 
-On Tue, Jun 4, 2024 at 2:24=E2=80=AFPM Zqiang <qiang.zhang1211@gmail.com> w=
-rote:
->
-> For kernels built with CONFIG_FORCE_NR_CPUS=3Dy, the nr_cpu_ids is
-> defined as NR_CPUS instead of the number of possible cpus, this
-> will cause the following system panic:
->
-> [    0.015349][    T0] smpboot: Allowing 4 CPUs, 0 hotplug CPUs
-> ...
-> [    0.021342][    T0] setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_c=
-pu_ids:512 nr_node_ids:1
-> ...
-> [    3.681252][   T15] BUG: unable to handle page fault for address: ffff=
-ffff9911c8c8
-> [    3.689415][   T45] ehci-pci 0000:00:1a.0: debug port 2
-> [    3.697008][   T15] #PF: supervisor read access in kernel mode
-> [    3.697009][   T15] #PF: error_code(0x0000) - not-present page
-> [    3.706233][   T45] ehci-pci 0000:00:1a.0: irq 16, io mem 0xf7e3c000
-> [    3.708152][   T15] PGD 40fa24067 P4D 40fa24067 PUD 40fa25063 PMD 410b=
-ff063
-> [    3.720380][   T45] ehci-pci 0000:00:1a.0: USB 2.0 started, EHCI 1.00
-> [    3.720430][   T15] PTE 800ffffbefee3062
-> [    3.720431][   T15] Oops: 0000 [#1] PREEMPT SMP PTI
-> [    3.727873][   T45] usb usb2: New USB device found, idVendor=3D1d6b, i=
-dProduct=3D0002, bcdDevice=3D 6.06
-> [    3.734009][   T15] CPU: 0 PID: 15 Comm: rcu_tasks_trace Tainted: G W =
-         6.6.21 #1 5dc7acf91a5e8e9ac9dcfc35bee0245691283ea6
-> [    3.734011][   T15] Hardware name: Dell Inc. OptiPlex 9020/005T15, BIO=
-S A14 09/14/2015
-> [    3.734012][   T15] RIP: 0010:rcu_tasks_need_gpcb+0x25d/0x2c0
-> [    3.737962][   T45] usb usb2: New USB device strings: Mfr=3D3, Product=
-=3D2, SerialNumber=3D1
-> [    3.742877][   T15] RSP: 0018:ffffa371c00a3e60 EFLAGS: 00010082
-> [    3.751891][   T45] usb usb2: Product: EHCI Host Controller
-> [    3.764495][   T15]
-> [    3.764496][   T15] RAX: ffffffff98929ca0 RBX: ffffffff98b3b328 RCX: 0=
-000000000021880
-> [    3.764497][   T15] RDX: ffffffff9911c880 RSI: 0000000000000000 RDI: 0=
-000000000000000
-> [    3.772461][   T45] usb usb2: Manufacturer: Linux 6.6.21 ehci_hcd
-> [    3.778248][   T15] RBP: 0000000000000202 R08: 0000000000000000 R09: 0=
-000000000000000
-> [    3.778249][   T15] R10: 0000000000000000 R11: 0000000000000000 R12: 0=
-000000000000003
-> [    3.778249][   T15] R13: 0000000000000000 R14: 0000000000000001 R15: f=
-fffffff98b3b320
-> [    3.786216][   T45] usb usb2: SerialNumber: 0000:00:1a.0
-> [    3.805811][   T15] FS:  0000000000000000(0000) GS:ffff8c781ea00000(00=
-00) knlGS:0000000000000000
-> [    3.805813][   T15] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    3.811993][   T45] hub 2-0:1.0: USB hub found
-> [    3.817383][   T15] CR2: ffffffff9911c8c8 CR3: 000000040fa20005 CR4: 0=
-0000000001706f0
-> [    3.817385][   T15] Call Trace:
-> [    3.817386][   T15]  <TASK>
-> [    3.817388][   T15]  ? __die+0x23/0x80
-> [    3.819643][   T45] hub 2-0:1.0: 2 ports detected
-> [    3.827481][   T15]  ? page_fault_oops+0xa4/0x180
-> [    3.827485][   T15]  ? exc_page_fault+0x152/0x180
-> [    3.922376][   T15]  ? asm_exc_page_fault+0x26/0x40
-> [    3.927289][   T15]  ? rcu_tasks_need_gpcb+0x25d/0x2c0
-> [    3.932459][   T15]  ? __pfx_rcu_tasks_kthread+0x40/0x40
-> [    3.937806][   T15]  rcu_tasks_one_gp+0x69/0x180
-> [    3.942451][   T15]  rcu_tasks_kthread+0x94/0xc0
-> [    3.947096][   T15]  kthread+0xe8/0x140
-> [    3.950956][   T15]  ? __pfx_kthread+0x40/0x40
-> [    3.955425][   T15]  ret_from_fork+0x34/0x80
-> [    3.959721][   T15]  ? __pfx_kthread+0x40/0x40
-> [    3.964192][   T15]  ret_from_fork_asm+0x1b/0x80
-> [    3.968841][   T15]  </TASK>
->
-> Consider that there may be holes in the CPU numbers, this commit
-> use the maxcpu variable to store the CPU numbers after traversing
-> possible cpu, and generate the rcu_task_cpu_ids variable and assign
-> it to (maxcpu +1) instead of nr_cpu_ids.
->
-> Closes: https://lore.kernel.org/linux-input/CALMA0xaTSMN+p4xUXkzrtR5r6k7h=
-goswcaXx7baR_z9r5jjskw@mail.gmail.com/T/#u
-> Reported-by: Zhixu Liu <zhixu.liu@gmail.com>
-> Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
-> ---
->  kernel/rcu/tasks.h | 78 +++++++++++++++++++++++++++++-----------------
->  1 file changed, 49 insertions(+), 29 deletions(-)
->
-> diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-> index e362f72bb65d..22310965acc7 100644
-> --- a/kernel/rcu/tasks.h
-> +++ b/kernel/rcu/tasks.h
-> @@ -49,6 +49,7 @@ struct rcu_tasks_percpu {
->         struct list_head rtp_blkd_tasks;
->         struct list_head rtp_exit_list;
->         int cpu;
-> +       int index;
->         struct rcu_tasks *rtpp;
->  };
->
-> @@ -110,6 +111,7 @@ struct rcu_tasks {
->         call_rcu_func_t call_func;
->         unsigned int wait_state;
->         struct rcu_tasks_percpu __percpu *rtpcpu;
-> +       struct rcu_tasks_percpu **rtpcp_array;
->         int percpu_enqueue_shift;
->         int percpu_enqueue_lim;
->         int percpu_dequeue_lim;
-> @@ -182,6 +184,8 @@ module_param(rcu_task_collapse_lim, int, 0444);
->  static int rcu_task_lazy_lim __read_mostly =3D 32;
->  module_param(rcu_task_lazy_lim, int, 0444);
->
-> +static int rcu_task_cpu_ids;
-> +
->  /* RCU tasks grace-period state for debugging. */
->  #define RTGS_INIT               0
->  #define RTGS_WAIT_WAIT_CBS      1
-> @@ -245,6 +249,8 @@ static void cblist_init_generic(struct rcu_tasks *rtp=
-)
->         int cpu;
->         int lim;
->         int shift;
-> +       int maxcpu;
-> +       int index =3D 0;
->
->         if (rcu_task_enqueue_lim < 0) {
->                 rcu_task_enqueue_lim =3D 1;
-> @@ -254,14 +260,9 @@ static void cblist_init_generic(struct rcu_tasks *rt=
-p)
->         }
->         lim =3D rcu_task_enqueue_lim;
->
-> -       if (lim > nr_cpu_ids)
-> -               lim =3D nr_cpu_ids;
-> -       shift =3D ilog2(nr_cpu_ids / lim);
-> -       if (((nr_cpu_ids - 1) >> shift) >=3D lim)
-> -               shift++;
-> -       WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
-> -       WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
-> -       smp_store_release(&rtp->percpu_enqueue_lim, lim);
-> +       rtp->rtpcp_array =3D kcalloc(num_possible_cpus(), sizeof(struct r=
-cu_tasks_percpu *), GFP_KERNEL);
-> +       BUG_ON(!rtp->rtpcp_array);
-> +
->         for_each_possible_cpu(cpu) {
->                 struct rcu_tasks_percpu *rtpcp =3D per_cpu_ptr(rtp->rtpcp=
-u, cpu);
->
-> @@ -273,14 +274,29 @@ static void cblist_init_generic(struct rcu_tasks *r=
-tp)
->                 INIT_WORK(&rtpcp->rtp_work, rcu_tasks_invoke_cbs_wq);
->                 rtpcp->cpu =3D cpu;
->                 rtpcp->rtpp =3D rtp;
-> +               rtpcp->index =3D index;
-> +               rtp->rtpcp_array[index] =3D rtpcp;
-> +               index++;
->                 if (!rtpcp->rtp_blkd_tasks.next)
->                         INIT_LIST_HEAD(&rtpcp->rtp_blkd_tasks);
->                 if (!rtpcp->rtp_exit_list.next)
->                         INIT_LIST_HEAD(&rtpcp->rtp_exit_list);
-> +               maxcpu =3D cpu;
->         }
->
-> -       pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adjust=
-=3D%d.\n", rtp->name,
-> -                       data_race(rtp->percpu_enqueue_shift), data_race(r=
-tp->percpu_enqueue_lim), rcu_task_cb_adjust);
-> +       rcu_task_cpu_ids =3D maxcpu + 1;
-> +       if (lim > rcu_task_cpu_ids)
-> +               lim =3D rcu_task_cpu_ids;
-> +       shift =3D ilog2(rcu_task_cpu_ids / lim);
-> +       if (((rcu_task_cpu_ids - 1) >> shift) >=3D lim)
-> +               shift++;
-> +       WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
-> +       WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
-> +       smp_store_release(&rtp->percpu_enqueue_lim, lim);
-> +
-> +       pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adjust=
-=3D%d rcu_task_cpu_ids=3D%d.\n",
-> +                       rtp->name, data_race(rtp->percpu_enqueue_shift), =
-data_race(rtp->percpu_enqueue_lim),
-> +                       rcu_task_cb_adjust, rcu_task_cpu_ids);
->  }
->
->  // Compute wakeup time for lazy callback timer.
-> @@ -348,7 +364,7 @@ static void call_rcu_tasks_generic(struct rcu_head *r=
-hp, rcu_callback_t func,
->                         rtpcp->rtp_n_lock_retries =3D 0;
->                 }
->                 if (rcu_task_cb_adjust && ++rtpcp->rtp_n_lock_retries > r=
-cu_task_contend_lim &&
-> -                   READ_ONCE(rtp->percpu_enqueue_lim) !=3D nr_cpu_ids)
-> +                   READ_ONCE(rtp->percpu_enqueue_lim) !=3D rcu_task_cpu_=
-ids)
->                         needadjust =3D true;  // Defer adjustment to avoi=
-d deadlock.
->         }
->         // Queuing callbacks before initialization not yet supported.
-> @@ -368,10 +384,10 @@ static void call_rcu_tasks_generic(struct rcu_head =
-*rhp, rcu_callback_t func,
->         raw_spin_unlock_irqrestore_rcu_node(rtpcp, flags);
->         if (unlikely(needadjust)) {
->                 raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
-> -               if (rtp->percpu_enqueue_lim !=3D nr_cpu_ids) {
-> +               if (rtp->percpu_enqueue_lim !=3D rcu_task_cpu_ids) {
->                         WRITE_ONCE(rtp->percpu_enqueue_shift, 0);
-> -                       WRITE_ONCE(rtp->percpu_dequeue_lim, nr_cpu_ids);
-> -                       smp_store_release(&rtp->percpu_enqueue_lim, nr_cp=
-u_ids);
-> +                       WRITE_ONCE(rtp->percpu_dequeue_lim, rcu_task_cpu_=
-ids);
-> +                       smp_store_release(&rtp->percpu_enqueue_lim, rcu_t=
-ask_cpu_ids);
->                         pr_info("Switching %s to per-CPU callback queuing=
-.\n", rtp->name);
->                 }
->                 raw_spin_unlock_irqrestore(&rtp->cbs_gbl_lock, flags);
-> @@ -481,7 +497,7 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
->         if (rcu_task_cb_adjust && ncbs <=3D rcu_task_collapse_lim) {
->                 raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
->                 if (rtp->percpu_enqueue_lim > 1) {
-> -                       WRITE_ONCE(rtp->percpu_enqueue_shift, order_base_=
-2(nr_cpu_ids));
-> +                       WRITE_ONCE(rtp->percpu_enqueue_shift, order_base_=
-2(rcu_task_cpu_ids));
->                         smp_store_release(&rtp->percpu_enqueue_lim, 1);
->                         rtp->percpu_dequeue_gpseq =3D get_state_synchroni=
-ze_rcu();
->                         gpdone =3D false;
-> @@ -496,7 +512,9 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
->                         pr_info("Completing switch %s to CPU-0 callback q=
-ueuing.\n", rtp->name);
->                 }
->                 if (rtp->percpu_dequeue_lim =3D=3D 1) {
-> -                       for (cpu =3D rtp->percpu_dequeue_lim; cpu < nr_cp=
-u_ids; cpu++) {
-> +                       for (cpu =3D rtp->percpu_dequeue_lim; cpu < rcu_t=
-ask_cpu_ids; cpu++) {
-> +                               if (!cpu_possible(cpu))
-> +                                       continue;
+Thanks for your feedback, this clarified a lot.
 
-Do we also need a `!cpu_possible(cpu)` check in `for (cpu =3D 0; cpu <
-dequeue_limit; cpu++)`
-loop in the same function rcu_tasks_need_gpcb()?
+I agree to keep the user interface simple, so I will remove the
+controls that don't look necessary, based on your comments below. Anyway note
+that some of the comments from Marius (from patch v1) are in contrasts with
+this, suggesting to actually extend the interface, by exposing the
+shunt-resistor and controls for the OUT analog pin.
 
+I could add the shunt-resistor controls to allow calibration as Marius
+suggested, but that's also a custom ABI, what are your thoughts on this?
 
-- Neeraj
+Instead I would not introduce controls for the OUT pin, at least not for the
+moment, since it would require some more considerations on the additional
+custom controls and an implementation extension to support the pin-controlled
+integration mode. Right now I defaulted the device operation mode to the
+free-run power integration mode, which to me it looks like the more versatile
+since in this way the device exposes all three measurements of voltage, current
+and power, but the OUT pin setting is fixed to output the power value in a
+fixed range.
+I think that the OUT pin might not be used at all in many use cases so I would
+leave the OUT pin setting as fixed for now and maybe extend it in the future
+when more use cases arise. I am open to reconsider this though.
 
+> 
+> > ---
+> >  .../ABI/testing/sysfs-bus-iio-adc-pac1921          |   45 +
+> >  MAINTAINERS                                        |    7 +
+> >  drivers/iio/adc/Kconfig                            |   10 +
+> >  drivers/iio/adc/Makefile                           |    1 +
+> >  drivers/iio/adc/pac1921.c                          | 1038 ++++++++++++++++++++
+> >  5 files changed, 1101 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921 b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921
+> > new file mode 100644
+> > index 000000000000..4a32e2d4207b
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921
+> Quite a bit of custom ABI in here.
+> 
+> Rule of thumb is that custom ABI is more or less pointless ABI for 99% of users
+> because standard userspace won't use it.  So keep that in mind when defining it.
+> 
+> > @@ -0,0 +1,45 @@
+> > +What:		/sys/bus/iio/devices/iio:deviceX/resolution_bits
+> > +KernelVersion:	6.10
+> > +Contact:	linux-iio@vger.kernel.org
+> > +Description:
+> > +		ADC measurement resolution. Can be either 11 bits or 14 bits
+> > +		(default). The driver sets the same resolution for both VBUS and
+> > +		VSENSE measurements even if the hardware could be configured to
+> > +		measure VBUS and VSENSE with different resolutions.
+> > +		This attribute affects the integration time: with 14 bits
+> > +		resolution the integration time is increased by a factor of
+> > +		1.9 (the driver considers a factor of 2). See Table 4-5 in
+> > +		device datasheet for details.
+> 
+> Is the integration time ever high enough that it matters?
+> People tend not to do power measurement 'quickly'. 
+> 
+> If we are doing it quickly then you'll probably want to be providing buffered
+> support and that does allow you to 'read' the resolution for a part where
+> it changes for some other reason.   I haven't yet understood this case.
 
+I will remove this control and fix the resolution bits to 14 (highest value),
+same as the HW default.
 
->                                 struct rcu_tasks_percpu *rtpcp =3D per_cp=
-u_ptr(rtp->rtpcpu, cpu);
+> > +
+> > +What:		/sys/bus/iio/devices/iio:deviceX/resolution_bits_available
+> > +KernelVersion:	6.10
+> > +Contact:	linux-iio@vger.kernel.org
+> > +Description:
+> > +		List all possible ADC measurement resolutions: "11 14"
+> > +
+> > +What:		/sys/bus/iio/devices/iio:deviceX/integration_samples
+> > +KernelVersion:	6.10
+> > +Contact:	linux-iio@vger.kernel.org
+> > +Description:
+> > +		Number of samples taken during a full integration period. Can be
+> > +		set to any power of 2 value from 1 (default) to 2048.
+> > +		This attribute affects the integration time: higher the number
+> > +		of samples, longer the integration time. See Table 4-5 in device
+> > +		datasheet for details.
+> 
+> Sounds like oversampling_ratio which is standards ABI. So use that or explain
+> why you can't here.
+
+I am not sure that this is an oversampling ratio but correct me if I am wrong:
+generally by increasing the oversampling you would have additional samples in a
+fixed time period, while in this case by increasing the number of samples you
+would still have the same number of samples in a fixed time period, but you
+would have a longer integration period. So maybe the comment is not very
+clear since this parameter actually means "the number of samples required to
+complete the integration period".
+
+Initially I thought to let the user edit this by writing the integration_time
+control (which is currently read-only), but since the integration period
+depends also on the resolution and whether filters are enabled or not, it would
+have introduced some confusion: what parameter is being changed upon
+integretion_time write? Maybe after removing resolution and filter controls
+there would be no such confusion anymore.
+
+> > +
+> > +What:		/sys/bus/iio/devices/iio:deviceX/integration_samples_available
+> > +KernelVersion:	6.10
+> > +Contact:	linux-iio@vger.kernel.org
+> > +Description:
+> > +		List all possible numbers of integration samples:
+> > +		"1 2 4 8 16 32 64 128 256 512 1024 2048"
+> > +
+> > +What:		/sys/bus/iio/devices/iio:devices/filters_en
+> > +KernelVersion:	6.10
+> > +Contact:	linux-iio@vger.kernel.org
+> > +Description:
+> > +		Attribute to enable/disable ADC post filters. Enabled by
+> > +		default.
+> > +		This attribute affects the integration time: with filters
+> > +		enabled the integration time is increased by 50%. See Table 4-5
+> > +		in device datasheet for details.
+> 
+> Do we have any idea what this filter is? Datasheet seems very vague indeed and from
+> a control point of view that makes this largely useless. How does userspace know
+> whether to turn it on?
+> 
+> We have an existing filter ABI but with so little information no way to fit this in.
+> Gut feeling, leave it on all the time and drop the control interface.
+
+I will remove this control and leave it on all the time as the HW default.
+
+> > diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> > index f60fe85a30d5..b56e494da970 100644
+> > --- a/drivers/iio/adc/Kconfig
+> > +++ b/drivers/iio/adc/Kconfig
+> > @@ -991,6 +991,16 @@ config NPCM_ADC
+> >  	  This driver can also be built as a module. If so, the module
+> >  	  will be called npcm_adc.
+> >  
+> > +config PAC1921
+> > +	tristate "Microchip Technology PAC1921 driver"
+> > +	depends on I2C
+> 
+> Needs to ensure REGMAP_I2C as well I think.  Check similar cases.
+
+Yes, I missed it. I think I also need to ensure IIO_BUFFER and
+IIO_TRIGGERED_BUFFER.
+
+> > +	help
+> > +	  Say yes here to build support for Microchip Technology's PAC1921
+> > +	  High-Side Power/Current Monitor with Analog Output.
+> > +
+> > +	  This driver can also be built as a module. If so, the module
+> > +	  will be called pac1921.
+> > +
+> >  config PAC1934
+> 
+> > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+> > new file mode 100644
+> > index 000000000000..879753466093
+> > --- /dev/null
+> > +++ b/drivers/iio/adc/pac1921.c
+> > @@ -0,0 +1,1038 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * IIO driver for PAC1921 High-Side Power/Current Monitor
+> > + *
+> > + * Copyright (C) 2024 Matteo Martelli <matteomartelli3@gmail.com>
+> > + */
+> > +
+> > +#include <linux/i2c.h>
+> > +#include <linux/iio/events.h>
+> > +#include <linux/iio/iio.h>
+> > +#include <linux/iio/trigger_consumer.h>
+> > +#include <linux/iio/triggered_buffer.h>
+> > +#include <linux/regmap.h>
+> > +
+> > +/* pac1921 registers */
+> > +#define PAC1921_REG_GAIN_CFG		0x00
+> > +#define PAC1921_REG_INT_CFG		0x01
+> > +#define PAC1921_REG_CONTROL		0x02
+> > +#define PAC1921_REG_VBUS		0x10
+> > +#define PAC1921_REG_VSENSE		0x12
+> > +#define PAC1921_REG_OVERFLOW_STS	0x1C
+> > +#define PAC1921_REG_VPOWER		0x1D
+> > +
+> > +/* pac1921 gain configuration bits */
+> > +#define PAC1921_GAIN_I_RES		BIT(7)
+> > +#define PAC1921_GAIN_V_RES		BIT(6)
+> > +#define PAC1921_GAIN_DI_GAIN_SHIFT	3
+> > +#define PAC1921_GAIN_DI_GAIN_MASK	GENMASK(5, PAC1921_GAIN_DI_GAIN_SHIFT)
+> > +#define PAC1921_GAIN_DI_GAIN_MAX	7
+> > +#define PAC1921_GAIN_DV_GAIN_SHIFT	0
+> > +#define PAC1921_GAIN_DV_GAIN_MASK	GENMASK(2, PAC1921_GAIN_DV_GAIN_SHIFT)
+> 
+> Define only the MASKs not SHIFTs and use FIELD_GET(), FIELD_PREP() throughout.
+> Gives more readable code in general as well as halving the number of defines.
+> 
+I was not aware of FIELD_GET() and FIELD_PREP() macros, thanks for pointing
+them out. I will use them indeed.
+
+> > +#define PAC1921_GAIN_DV_GAIN_MAX	5
+> > +
+> > +/* pac1921 integration configuration bits */
+> > +#define PAC1921_INT_CFG_SMPL_SHIFT	4
+> > +#define PAC1921_INT_CFG_SMPL_MASK	GENMASK(7, PAC1921_INT_CFG_SMPL_SHIFT)
+> > +#define PAC1921_INT_CFG_SMPL_MAX	11
+> > +#define PAC1921_INT_CFG_VSFEN		BIT(3)
+> > +#define PAC1921_INT_CFG_VBFEN		BIT(2)
+> > +#define PAC1921_INT_CFG_RIOV		BIT(1)
+> > +#define PAC1921_INT_CFG_INTEN		BIT(0)
+> > +
+> > +/* pac1921 control bits */
+> > +#define PAC1921_CONTROL_MXSL_SHIFT	6
+> > +enum pac1921_mxsl {
+> > +	PAC1921_MXSL_VPOWER_PIN = 0,
+> > +	PAC1921_MXSL_VSENSE_FREE_RUN = 1,
+> > +	PAC1921_MXSL_VBUS_FREE_RUN = 2,
+> > +	PAC1921_MXSL_VPOWER_FREE_RUN = 3,
+> > +};
+> > +#define PAC1921_CONTROL_SLEEP		BIT(2)
+> > +
+> > +/* pac1921 overflow status bits */
+> > +#define PAC1921_OVERFLOW_VSOV		BIT(2)
+> > +#define PAC1921_OVERFLOW_VBOV		BIT(1)
+> > +#define PAC1921_OVERFLOW_VPOV		BIT(0)
+> > +
+> > +/* pac1921 constants */
+> > +#define PAC1921_MAX_VSENSE_MV		100
+> > +#define PAC1921_MAX_VBUS_V		32
+> > +#define PAC1921_RES_RESOLUTION		1023 /* Result registers resolution */
+> > +
+> > +/* pac1921 defaults */
+> > +#define PAC1921_DEFAULT_DV_GAIN		0 /* 2^(value): 1x gain */
+> > +#define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain */
+> > +#define PAC1921_DEFAULT_HIGH_RES	true /* 14-bit measurement resolution */
+> > +#define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample */
+> > +#define PAC1921_DEFAULT_FILTERS_ENABLED true
+> > +
+> > +/* pac1921 tables to create iio available parameters */
+> > +static const unsigned int pac1921_di_gains[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+> > +static const unsigned int pac1921_dv_gains[] = { 1, 2, 4, 8, 16, 32 };
+> > +enum pac1921_meas_resolution_idx {
+> > +	PAC1921_MEAS_RESOLUTION_IDX_LOW = 0,
+> > +	PAC1921_MEAS_RESOLUTION_IDX_HIGH,
+> > +};
+> > +static const char *const pac1921_meas_resolutions[] = { "11", "14" };
+> > +static const char *const pac1921_integr_num_samples[] = {
+> > +	"1",  "2",   "4",   "8",   "16",   "32",
+> > +	"64", "128", "256", "512", "1024", "2048"
+> > +};
+> > +
+> > +/* pac1921 regmap configuration */
+> > +static const struct regmap_range pac1921_regmap_wr_ranges[] = {
+> > +	regmap_reg_range(PAC1921_REG_GAIN_CFG, PAC1921_REG_CONTROL),
+> > +};
+> 
+> Trivial but I'd like a blank line here.
+> 
+Ok.
+
+> > +static const struct regmap_access_table pac1921_regmap_wr_table = {
+> > +	.yes_ranges = pac1921_regmap_wr_ranges,
+> > +	.n_yes_ranges = ARRAY_SIZE(pac1921_regmap_wr_ranges),
+> > +};
+> 
+> here
+> 
+Ok.
+
+> > +static const struct regmap_range pac1921_regmap_rd_ranges[] = {
+> > +	regmap_reg_range(PAC1921_REG_GAIN_CFG, PAC1921_REG_CONTROL),
+> > +	regmap_reg_range(PAC1921_REG_VBUS, PAC1921_REG_VPOWER + 1),
+> > +};
+> 
+> here
 >
->                                 WARN_ON_ONCE(rcu_segcblist_n_cbs(&rtpcp->=
-cblist));
-> @@ -511,30 +529,32 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rt=
-p)
->  // Advance callbacks and invoke any that are ready.
->  static void rcu_tasks_invoke_cbs(struct rcu_tasks *rtp, struct rcu_tasks=
-_percpu *rtpcp)
->  {
-> -       int cpu;
-> -       int cpunext;
->         int cpuwq;
->         unsigned long flags;
->         int len;
-> +       int index;
->         struct rcu_head *rhp;
->         struct rcu_cblist rcl =3D RCU_CBLIST_INITIALIZER(rcl);
->         struct rcu_tasks_percpu *rtpcp_next;
+Ok.
+
+> > +static const struct regmap_access_table pac1921_regmap_rd_table = {
+> > +	.yes_ranges = pac1921_regmap_rd_ranges,
+> > +	.n_yes_ranges = ARRAY_SIZE(pac1921_regmap_rd_ranges),
+> > +};
+> 
+> and here as my eyes stuggle a bit with parsing this without the
+> separations. Similar applies above.
+> 
+Ok.
+
+> > +static const struct regmap_config pac1921_regmap_config = {
+> > +	.reg_bits = 8,
+> > +	.val_bits = 8,
+> > +	.rd_table = &pac1921_regmap_rd_table,
+> > +	.wr_table = &pac1921_regmap_wr_table,
+> > +};
+> 
+> > +
+> > +/* Check if overflow occurred and if so, push the corresponding events.
+> 
+> As mentioned below, without controls I don't think userspace has any way to know
+> these are coming.   It is useful even for overflow events to provide
+> a) A way to mask them off.
+> b) The threshold values.  So that userspace can see that they are overflow events.
+>    These will be readonly of course.
+> 
+I see your point, I will add controls. About thresholds, should they be related
+to raw values or to scaled values? In the first case they would always be
+fixed to 1023 being the measurement resolution, regardless of the selected
+gains. In the latter case they would depend on the current gains and I guess
+that they would be in the same unit of the scale (mV/mA/mW).
+
+> > + *
+> > + * Must be called with lock held.
+> > + */
+> > +static int pac1921_check_push_overflow(struct iio_dev *indio_dev, s64 timestamp)
+> > +{
+> > +	struct pac1921_priv *priv = iio_priv(indio_dev);
+> > +	unsigned int flags;
+> > +
+> > +	int ret = regmap_read(priv->regmap, PAC1921_REG_OVERFLOW_STS, &flags);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (flags & PAC1921_OVERFLOW_VBOV &&
+> > +	    !(priv->prev_ovf_flags & PAC1921_OVERFLOW_VBOV)) {
+> > +		iio_push_event(indio_dev,
+> > +			       IIO_UNMOD_EVENT_CODE(
+> > +				       IIO_VOLTAGE, PAC1921_CHAN_VBUS,
+> > +				       IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
+> > +			       timestamp);
+> > +	}
+> > +	if (flags & PAC1921_OVERFLOW_VSOV &&
+> > +	    !(priv->prev_ovf_flags & PAC1921_OVERFLOW_VSOV)) {
+> > +		iio_push_event(indio_dev,
+> > +			       IIO_UNMOD_EVENT_CODE(
+> > +				       IIO_VOLTAGE, PAC1921_CHAN_VSENSE,
+> > +				       IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
+> > +			       timestamp);
+> > +		iio_push_event(indio_dev,
+> > +			       IIO_UNMOD_EVENT_CODE(
+> > +				       IIO_CURRENT, PAC1921_CHAN_CURRENT,
+> > +				       IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
+> > +			       timestamp);
+> > +	}
+> > +	if (flags & PAC1921_OVERFLOW_VPOV &&
+> > +	    !(priv->prev_ovf_flags & PAC1921_OVERFLOW_VPOV)) {
+> > +		iio_push_event(indio_dev,
+> > +			       IIO_UNMOD_EVENT_CODE(
+> > +				       IIO_POWER, PAC1921_CHAN_POWER,
+> > +				       IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
+> > +			       timestamp);
+> > +	}
+> > +
+> > +	priv->prev_ovf_flags = (u8)flags;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/* Read the value from a result register
+> > + *
+> > + * Result registers contain the most recent averaged values of Vbus, Vsense and
+> > + * Vpower. Each value is 10 bits wide and spread across two consecutive 8 bit
+> > + * registers, with 6 bit LSB zero padding.
+> > + */
+> > +static int pac1921_read_res(struct pac1921_priv *priv, unsigned long reg,
+> > +			    int *val)
+> > +{
+> > +	u8 val_buf[2];
+> > +
+> > +	int ret = regmap_bulk_read(priv->regmap, (unsigned int)reg, &val_buf,
+> > +				   sizeof(val_buf));
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	*val = (val_buf[0] << 8 | val_buf[1]) >> 6;
+> 
+> Looks like it could be done with the self documenting combination of
+> 
+> get_unaligned_be16() + FIELD_GET()
+> 
+> or use a __b16 for the read and the be16_to_cpu() approach.
+
+Ok.
+
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int pac1921_read_raw(struct iio_dev *indio_dev,
+> > +			    struct iio_chan_spec const *chan, int *val,
+> > +			    int *val2, long mask)
+> > +{
+> > +	struct pac1921_priv *priv = iio_priv(indio_dev);
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_RAW: {
+> > +		guard(mutex)(&priv->lock);
+> 
+> Given you grab this in all but error paths, I'd just grab it always
+> and avoid need for the guard() and careful scoping in all these case blocks.
+> 
+Ok. So just a guard(mutex)(&priv->lock) call at the beginning of the function.
+
+> > +
+> > +		if (!pac1921_data_ready(priv))
+> > +			return -EBUSY;
+> > +
+> > +		s64 ts = iio_get_time_ns(indio_dev);
+> > +
+> > +		int ret = pac1921_check_push_overflow(indio_dev, ts);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		ret = pac1921_read_res(priv, chan->address, val);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		return IIO_VAL_INT;
+> > +	}
+> > +	case IIO_CHAN_INFO_SCALE:
+> > +		switch (chan->channel) {
+> > +		case PAC1921_CHAN_VBUS: {
+> > +			/* Vbus scale factor in mV:
+> > +			 * max_vbus (mV) / vgain / resolution
+> > +			 */
+> > +			guard(mutex)(&priv->lock);
+> > +
+> > +			*val = PAC1921_MAX_VBUS_V * 1000;
+> > +			*val2 = PAC1921_RES_RESOLUTION << (int)priv->dv_gain;
+> > +
+> > +			return IIO_VAL_FRACTIONAL;
+> > +		}
+> > +		case PAC1921_CHAN_VSENSE: {
+> > +			/* Vsense voltage scale factor in mV:
+> > +			 * max_vsense (mV) / igain / resolution
+> > +			 */
+> > +			guard(mutex)(&priv->lock);
+> > +
+> > +			*val = PAC1921_MAX_VSENSE_MV;
+> > +			*val2 = PAC1921_RES_RESOLUTION << (int)priv->di_gain;
+> > +
+> > +			return IIO_VAL_FRACTIONAL;
+> > +		}
+> > +		case PAC1921_CHAN_CURRENT: {
+> > +			/* Current scale factor in mA:
+> > +			 * Vsense LSB (nV) / shunt (uOhm)
+> > +			 */
+> > +			guard(mutex)(&priv->lock);
+> > +
+> > +			*val = pac1921_vsense_lsb(priv->di_gain);
+> > +			*val2 = (int)priv->rshunt;
+> > +
+> > +			return IIO_VAL_FRACTIONAL;
+> > +		}
+> > +		case PAC1921_CHAN_POWER: {
+> > +			/* Power scale factor in mW:
+> > +			 * Vsense LSB (nV) * max_vbus (V) / vgain / shunt (uOhm)
+> > +			 */
+> > +			guard(mutex)(&priv->lock);
+> > +
+> > +			*val = pac1921_vsense_lsb(priv->di_gain) *
+> > +			       (PAC1921_MAX_VBUS_V >> (int)priv->dv_gain);
+> > +			*val2 = (int)priv->rshunt;
+> > +
+> > +			return IIO_VAL_FRACTIONAL;
+> > +		}
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +		break;
+> > +
+> > +	case IIO_CHAN_INFO_HARDWAREGAIN:
+> > +		switch (chan->channel) {
+> > +		case PAC1921_CHAN_VBUS: {
+> > +			guard(mutex)(&priv->lock);
+> > +			*val = 1 << (int)priv->dv_gain;
+> > +			return IIO_VAL_INT;
+> > +		}
+> > +		case PAC1921_CHAN_VSENSE:
+> > +		case PAC1921_CHAN_CURRENT: {
+> > +			guard(mutex)(&priv->lock);
+> > +			*val = 1 << (int)priv->di_gain;
+> > +			return IIO_VAL_INT;
+> > +		}
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +	case IIO_CHAN_INFO_INT_TIME: {
+> > +		/* Integration time is read only: it depends on the number of
+> > +		 * integration samples, measurement resolution and post filters
+> > +		 */
+> > +		*val2 = 1000000; /* From usecs to fractional secs */
+> > +		guard(mutex)(&priv->lock);
+> > +		*val = (int)priv->integr_period;
+> > +		return IIO_VAL_FRACTIONAL;
+> > +	}
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +}
+> 
+> > +static int pac1921_update_cfg_reg(struct pac1921_priv *priv, unsigned int reg,
+> > +				  unsigned int mask, unsigned int val)
+> > +{
+> > +	/* Enter READ state before configuration */
+> > +	int ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
+> > +				     PAC1921_INT_CFG_INTEN, 0);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Update configuration value */
+> > +	ret = regmap_update_bits(priv->regmap, reg, mask, val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Re-enable integration and reset start time */
+> > +	ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
+> > +				 PAC1921_INT_CFG_INTEN, PAC1921_INT_CFG_INTEN);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	priv->integr_start_time = jiffies;
+> 
+> Add a comment for why this value.
 >
-> -       cpu =3D rtpcp->cpu;
-> -       cpunext =3D cpu * 2 + 1;
-> -       if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
-> -               rtpcp_next =3D per_cpu_ptr(rtp->rtpcpu, cpunext);
-> -               cpuwq =3D rcu_cpu_beenfullyonline(cpunext) ? cpunext : WO=
-RK_CPU_UNBOUND;
-> -               queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
-> -               cpunext++;
-> -               if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim))=
- {
-> -                       rtpcp_next =3D per_cpu_ptr(rtp->rtpcpu, cpunext);
-> -                       cpuwq =3D rcu_cpu_beenfullyonline(cpunext) ? cpun=
-ext : WORK_CPU_UNBOUND;
-> +       index =3D rtpcp->index * 2 + 1;
-> +       if (index < num_possible_cpus()) {
-> +               rtpcp_next =3D rtp->rtpcp_array[index];
-> +               if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_deque=
-ue_lim)) {
-> +                       cpuwq =3D rcu_cpu_beenfullyonline(rtpcp_next->cpu=
-) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
->                         queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_=
-work);
-> +                       index++;
-> +                       if (index < num_possible_cpus()) {
-> +                               rtpcp_next =3D rtp->rtpcp_array[index];
-> +                               if (rtpcp_next->cpu < smp_load_acquire(&r=
-tp->percpu_dequeue_lim)) {
-> +                                       cpuwq =3D rcu_cpu_beenfullyonline=
-(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
-> +                                       queue_work_on(cpuwq, system_wq, &=
-rtpcp_next->rtp_work);
-> +                               }
-> +                       }
->                 }
->         }
+Could you elaborate what's confusing here? The comment above states "reset
+start time", maybe I should move it above the assignment of
+priv->integr_start_time? Or it's the use of jiffies that it's confusing?
+
+> > +	priv->first_integr_done = false;
+> Will default to this anyway, so you could skip it unless you feel this is
+> useful from documentation point of view.
 >
-> -       if (rcu_segcblist_empty(&rtpcp->cblist) || !cpu_possible(cpu))
-> +       if (rcu_segcblist_empty(&rtpcp->cblist))
->                 return;
->         raw_spin_lock_irqsave_rcu_node(rtpcp, flags);
->         rcu_segcblist_advance(&rtpcp->cblist, rcu_seq_current(&rtp->tasks=
-_gp_seq));
-> --
-> 2.17.1
+That variable is being asserted after the first integration period is complete
+to avoid spurious data (see pac1921_data_ready()). Here it is being reset after
+a configuration change to invalidate previous data. So the assignment is
+necessary.
+
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >
+> 
+> > +static int pac1921_set_int_num_samples(struct iio_dev *indio_dev,
+> > +				       const struct iio_chan_spec *chan,
+> > +				       unsigned int val)
+> > +{
+> > +	struct pac1921_priv *priv = iio_priv(indio_dev);
+> > +
+> > +	if (WARN_ON_ONCE(val > PAC1921_INT_CFG_SMPL_MAX))
+> > +		return -EINVAL;
+> > +
+> > +	guard(mutex)(&priv->lock);
+> > +
+> > +	if (priv->n_samples == val)
+> > +		return 0;
+> > +
+> > +	int ret = pac1921_update_cfg_reg(priv, PAC1921_REG_INT_CFG,
+> > +					 PAC1921_INT_CFG_SMPL_MASK,
+> > +					 val << PAC1921_INT_CFG_SMPL_SHIFT);
+> 
+> FIELD_PREP() etc.
+> 
+Ok.
+
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	priv->n_samples = (u8)val;
+> > +
+> > +	return pac1921_update_integr_period(priv);
+> > +}
+> > +
+> > +static ssize_t pac1921_read_filters_enabled(struct iio_dev *indio_dev,
+> > +					    uintptr_t private,
+> > +					    const struct iio_chan_spec *chan,
+> > +					    char *buf)
+> > +{
+> > +	struct pac1921_priv *priv = iio_priv(indio_dev);
+> > +	bool enabled;
+> > +
+> > +	scoped_guard(mutex, &priv->lock) {
+> > +		enabled = priv->filters_en;
+> > +	}
+> > +	return sysfs_emit(buf, "%d\n", enabled);
+> 
+> It's not a fast path hence holding the lock a little longer than necessary doesn't
+> matter, so I'd do the simpler.
+> 
+> 	guard(mutex)(&priv->lock);
+> 
+> 	return sysfs_emit(buf, "%d\n", enabled);
 >
+Ok, but I think you mean:
+
+	guard(mutex)(&priv->lock);
+	return sysfs_emit(buf, "%d\n", priv->filters_en);
+> > +}
+> 
+> 
+> > +};
+> > +static const struct iio_chan_spec_ext_info pac1921_ext_info[] = {
+> > +	IIO_ENUM("resolution_bits", IIO_SHARED_BY_ALL,
+> > +		 &pac1921_resolution_enum),
+> > +	IIO_ENUM_AVAILABLE("resolution_bits", IIO_SHARED_BY_ALL,
+> > +			   &pac1921_resolution_enum),
+> > +	IIO_ENUM("integration_samples", IIO_SHARED_BY_ALL,
+> > +		 &pac1921_int_num_samples_enum),
+> > +	IIO_ENUM_AVAILABLE("integration_samples", IIO_SHARED_BY_ALL,
+> > +			   &pac1921_int_num_samples_enum),
+> > +	{
+> > +		.name = "filters_en",
+> > +		.read = pac1921_read_filters_enabled,
+> > +		.write = pac1921_write_filters_enabled,
+> > +		.shared = IIO_SHARED_BY_ALL,
+> 
+> I address these above with the documentation.
+>
+Answered above as well.
+
+> > +	},
+> > +	{},
+> No need for a comma after a terminator like this as we will never add anything
+> after it.
+>
+Ok.
+
+> 
+> > +};
+> > +
+> > +static const struct iio_event_spec pac1921_overflow_event[] = {
+> > +	{
+> > +		.type = IIO_EV_TYPE_THRESH,
+> > +		.dir = IIO_EV_DIR_RISING,
+> 
+> No controls at all?  Without some form of enable userspace won't
+> be able to tell these even exist.  If the device doesn't support
+> disabling the interrupt, we can fallback to to irq_enable/disable()
+> on the host end of the wire.  Ideally disable / enable at the device
+> though.
+I will add controls, please see my question about thresholds above.
+
+> > +	},
+> > +};
+> > +
+> > +static const struct iio_chan_spec pac1921_channels[] = {
+> > +	{
+> > +		.type = IIO_VOLTAGE,
+> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> > +				      BIT(IIO_CHAN_INFO_SCALE) |
+> > +				      BIT(IIO_CHAN_INFO_HARDWAREGAIN),
+> Marius pointed out that hardware gain is rarely the way to go.
+> It is typically used when the gain is not directly affecting the
+> thing being read.  E.g. light sensitivity of a time of flight sensor.
+> 
+> In order to maintain a simple userspace inteface we squash gain related
+> stuff into the scale attributes.  There a user can easily see what
+> flexibility is available to them and understand what affect it has on
+> the values they will read back.
+> 
+I see, thanks for clarify this, I would do it via iio_info.read_avail() callback.
+
+> > +		.info_mask_separate_available = BIT(IIO_CHAN_INFO_HARDWAREGAIN),
+> > +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
+> > +		.channel = PAC1921_CHAN_VBUS,
+> > +		.address = PAC1921_REG_VBUS,
+> > +		.scan_index = PAC1921_CHAN_VBUS,
+> > +		.scan_type = {
+> > +			.sign = 'u',
+> > +			.realbits = 10,
+> > +			.storagebits = 16,
+> > +			.endianness = IIO_CPU
+> > +		},
+> > +		.indexed = 1,
+> > +		.event_spec = pac1921_overflow_event,
+> > +		.num_event_specs = ARRAY_SIZE(pac1921_overflow_event),
+> > +		.ext_info = pac1921_ext_info,
+> > +	},
+> > +	{
+> > +		.type = IIO_VOLTAGE,
+> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> > +				      BIT(IIO_CHAN_INFO_SCALE) |
+> > +				      BIT(IIO_CHAN_INFO_HARDWAREGAIN),
+> > +		.info_mask_separate_available = BIT(IIO_CHAN_INFO_HARDWAREGAIN),
+> > +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
+> > +		.channel = PAC1921_CHAN_VSENSE,
+> > +		.address = PAC1921_REG_VSENSE,
+> > +		.scan_index = PAC1921_CHAN_VSENSE,
+> > +		.scan_type = {
+> > +			.sign = 'u',
+> > +			.realbits = 10,
+> > +			.storagebits = 16,
+> > +			.endianness = IIO_CPU
+> > +		},
+> > +		.indexed = 1,
+> > +		.event_spec = pac1921_overflow_event,
+> > +		.num_event_specs = ARRAY_SIZE(pac1921_overflow_event),
+> > +		.ext_info = pac1921_ext_info,
+> > +	},
+> > +	{
+> > +		.type = IIO_CURRENT,
+> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> > +				      BIT(IIO_CHAN_INFO_SCALE) |
+> > +				      BIT(IIO_CHAN_INFO_HARDWAREGAIN),
+> > +		.info_mask_separate_available = BIT(IIO_CHAN_INFO_HARDWAREGAIN),
+> > +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
+> > +		.channel = PAC1921_CHAN_CURRENT,
+> > +		.address = PAC1921_REG_VSENSE,
+> > +		.scan_index = PAC1921_CHAN_CURRENT,
+> > +		.scan_type = {
+> > +			.sign = 'u',
+> > +			.realbits = 10,
+> > +			.storagebits = 16,
+> > +			.endianness = IIO_CPU
+> > +		},
+> > +		.event_spec = pac1921_overflow_event,
+> > +		.num_event_specs = ARRAY_SIZE(pac1921_overflow_event),
+> > +		.ext_info = pac1921_ext_info,
+> > +	},
+> > +	{
+> > +		.type = IIO_POWER,
+> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> > +				      BIT(IIO_CHAN_INFO_SCALE),
+> > +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
+> > +		.channel = PAC1921_CHAN_POWER,
+> > +		.address = PAC1921_REG_VPOWER,
+> > +		.scan_index = PAC1921_CHAN_POWER,
+> > +		.scan_type = {
+> > +			.sign = 'u',
+> > +			.realbits = 10,
+> > +			.storagebits = 16,
+> > +			.endianness = IIO_CPU
+> > +		},
+> > +		.event_spec = pac1921_overflow_event,
+> > +		.num_event_specs = ARRAY_SIZE(pac1921_overflow_event),
+> > +		.ext_info = pac1921_ext_info,
+> > +	},
+> > +	IIO_CHAN_SOFT_TIMESTAMP(PAC1921_NUM_MEAS_CHANS),
+> > +};
+> > +
+> > +static irqreturn_t pac1921_trigger_handler(int irq, void *p)
+> > +{
+> > +	struct iio_poll_func *pf = p;
+> > +	struct iio_dev *idev = pf->indio_dev;
+> > +	struct pac1921_priv *priv = iio_priv(idev);
+> > +
+> > +	guard(mutex)(&priv->lock);
+> > +
+> > +	if (!pac1921_data_ready(priv))
+> > +		goto done;
+> > +
+> > +	int ret = pac1921_check_push_overflow(idev, pf->timestamp);
+> > +	if (ret)
+> > +		goto done;
+> > +
+> > +	memset(&priv->scan, 0, sizeof(priv->scan));
+> 
+> We normally don't bother.  The worse that can happen here is that
+> gaps can contain stale data.  We can't leak anything beyond that and
+> such stale data should be harmless.
+> 
+Ok.
+
+> > +
+> > +	int bit, ch = 0;
+> 
+> Move definitions to the top of the function.
+> Also, don't mix items that assign with ones that don't.  Just use separate
+> lines.  Obviously fine here as only two of them, but when we get 10+ on
+> a line and only some of them are set, it can be easy to miss bugs.
+> 
+Ok.
+
+> 
+> > +	for_each_set_bit(bit, idev->active_scan_mask, idev->masklength) {
+> > +		int val;
+> > +
+> > +		ret = pac1921_read_res(priv, idev->channels[ch].address, &val);
+> > +		if (ret)
+> > +			goto done;
+> > +
+> > +		priv->scan.chan[ch++] = (u16)val;
+> 
+> Why not make read_res take a u16 * and pass in the destination directly?
+> 
+pac1921_read_res() takes an int *val so that pac1921_read_raw() can pass its
+int *val argument directly and to avoid an additional u16 var. However I don't
+mind changing it if that looks more clear.
+
+> > +	}
+> > +
+> > +	iio_push_to_buffers_with_timestamp(idev, &priv->scan, pf->timestamp);
+> > +
+> > +done:
+> > +	iio_trigger_notify_done(idev->trig);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int pac1921_init(struct pac1921_priv *priv)
+> > +{
+> > +	/* Time after power-up before ready to begin communications */
+> > +	msleep(20);
+> 
+> I'd move that to the caller where we can see the power up happening.
+> If this code gets reorganized in future, the delay may end up in the wrong
+> place.
+> 
+Ok.
+
+> > +
+> > +	/* Enter READ state before configuration */
+> > +	int ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
+> > +				 PAC1921_INT_CFG_INTEN, 0);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Configure gains and measurements resolution */
+> > +	unsigned int val = priv->di_gain << PAC1921_GAIN_DI_GAIN_SHIFT |
+> > +			   priv->dv_gain << PAC1921_GAIN_DV_GAIN_SHIFT;
+> FIELD_PREP() throughout.
+> 
+Ok.
+
+> > +	if (!priv->high_res)
+> > +		val |= PAC1921_GAIN_I_RES | PAC1921_GAIN_V_RES;
+> > +	ret = regmap_write(priv->regmap, PAC1921_REG_GAIN_CFG, val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Configure integration:
+> Comment style for multiline comments in IIO is
+> 	/*
+> 	 * Configure...
+>
+All right. I will change all multiline comments accordingly.
+
+> > +	 * - num of integration samples, filters enabled/disabled
+> > +	 * - set READ/INT pin override (RIOV) to control operation mode via
+> > +	 *   register instead of pin
+> > +	 */
+> > +	val = priv->n_samples << PAC1921_INT_CFG_SMPL_SHIFT |
+> > +	      PAC1921_INT_CFG_RIOV;
+> > +	if (priv->filters_en)
+> > +		val |= PAC1921_INT_CFG_VSFEN | PAC1921_INT_CFG_VBFEN;
+> > +	ret = regmap_write(priv->regmap, PAC1921_REG_INT_CFG, val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Init control register:
+> > +	 * - VPower free run integration mode
+> > +	 * - OUT pin full scale range: 3V (HW detault)
+> > +	 * - no timeout, no sleep, no sleep override, no recalc (HW defaults)
+> > +	 */
+> > +	val = PAC1921_MXSL_VPOWER_FREE_RUN << PAC1921_CONTROL_MXSL_SHIFT;
+> > +	ret = regmap_write(priv->regmap, PAC1921_REG_CONTROL, val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Enable integration */
+> > +	ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
+> > +				 PAC1921_INT_CFG_INTEN, PAC1921_INT_CFG_INTEN);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	priv->first_integr_started = true;
+> > +	priv->integr_start_time = jiffies;
+> > +
+> > +	return pac1921_update_integr_period(priv);
+> > +}
+> > +
+> 
+> > +
+> > +static int pac1921_resume(struct device *dev)
+> > +{
+> > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > +	struct pac1921_priv *priv = iio_priv(indio_dev);
+> > +
+> > +	guard(mutex)(&priv->lock);
+> > +
+> > +	int ret = regulator_enable(priv->vdd);
+>  
+> As below. Local variable definitions at the top (old school c style).
+> It obviously doesn't matter here, but it's what reviewers are used to for
+> kernel code.
+> 
+> Please fix all cases for v3.
+> 
+Ok.
+
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return pac1921_init(priv);
+> > +}
+> > +
+> > +static DEFINE_SIMPLE_DEV_PM_OPS(pac1921_pm_ops, pac1921_suspend,
+> > +				pac1921_resume);
+> > +
+> > +static void pac1921_regulator_disable(void *data)
+> > +{
+> > +	struct pac1921_priv *priv = data;
+> > +
+> > +	regulator_disable(priv->vdd);
+> I'd pass in the regulator rather than the private structure.
+> Then this can just be
+> 
+> 	regulator_disable(data);
+> 
+Ok.
+
+> > +}
+> > +
+> > +static int pac1921_probe(struct i2c_client *client)
+> > +{
+> > +	struct device *dev = &client->dev;
+> > +	struct pac1921_priv *priv;
+> > +
+> > +	struct iio_dev *indio_dev = devm_iio_device_alloc(dev, sizeof(*priv));
+> 
+> checkpatch probably warns about this.  Blank line here.
+> 
+Ok.
+
+> > +	if (!indio_dev)
+> > +		return -ENOMEM;
+> > +
+> > +	priv = iio_priv(indio_dev);
+> > +	priv->client = client;
+> > +	i2c_set_clientdata(client, indio_dev);
+> > +
+> > +	priv->regmap = devm_regmap_init_i2c(client, &pac1921_regmap_config);
+> > +	if (IS_ERR(priv->regmap))
+> > +		dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> > +			      "Cannot initialize register map\n");
+> > +
+> > +	mutex_init(&priv->lock);
+> 
+> Whilst mutex cleanup only matters in lock debugging cases and isn't really important
+> for this sort of mutex, we now have devm_mutex_init() so good to use
+> that just to avoid anyone having to think if we should cleanup the mutex or not.
+> 
+Ok.
+
+> > +
+> > +	priv->dv_gain = PAC1921_DEFAULT_DV_GAIN;
+> > +	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
+> > +	priv->high_res = PAC1921_DEFAULT_HIGH_RES;
+> > +	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
+> > +	priv->filters_en = PAC1921_DEFAULT_FILTERS_ENABLED;
+> > +
+> > +	int ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
+> local variable declarations still belong at the top unless there is a strong
+> readson to do otherwise.
+> 
+The reason in general is just to keep the variable scope as tight as possible
+to avoid unwanted use of such variable earlier than its wanted usage, and since
+this is allowed with recent C versions, I thought it would be good to start
+applying it. However, I understand this could make the code harder to read for
+many people so I will stick to declare variables at the top.
+
+> > +					   &priv->rshunt);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret,
+> > +				     "Cannot read shunt resistor property\n");
+> > +	if (priv->rshunt == 0 || priv->rshunt > INT_MAX)
+> > +		return dev_err_probe(dev, -EINVAL,
+> > +				     "Invalid shunt resistor: %u\n",
+> > +				     priv->rshunt);
+> > +
+> > +	priv->vdd = devm_regulator_get(dev, "vdd");
+> > +	if (IS_ERR(priv->vdd))
+> > +		return dev_err_probe(dev, (int)PTR_ERR(priv->vdd),
+> > +				     "Cannot get vdd regulator\n");
+> > +
+> > +	ret = regulator_enable(priv->vdd);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "Cannot enable vdd regulator\n");
+> > +
+> > +	ret = devm_add_action_or_reset(dev, pac1921_regulator_disable, priv);
+> 
+> Check ret.
+> 
+Indeed! Thanks for the catch.
+
+> > +
+> > +	ret = pac1921_init(priv);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "Cannot initialize device\n");
+> > +
+> > +	priv->iio_info = pac1921_iio;
+> > +
+> > +	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+> We still mostly (exception is cleanup.h magic) stick to c style of
+> local variable declarations before code.  I'd just move this to the top
+> fo this fucntion.
+> 
+Ok.
+
+> > +
+> > +	indio_dev->name = id->name;
+> > +	indio_dev->info = &priv->iio_info;
+> > +	indio_dev->modes = INDIO_DIRECT_MODE;
+> > +	indio_dev->channels = pac1921_channels;
+> > +	indio_dev->num_channels = ARRAY_SIZE(pac1921_channels);
+> > +
+> > +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> > +					      &iio_pollfunc_store_time,
+> > +					      &pac1921_trigger_handler, NULL);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret,
+> > +				     "Cannot setup IIO triggered buffer\n");
+> > +
+> > +	ret = devm_iio_device_register(dev, indio_dev);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "Cannot register IIO device\n");
+> > +
+> > +	return 0;
+> > +}
+> 
+
+Thanks again,
+Matteo
 
