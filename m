@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-244524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F2392A57D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:18:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4363E92A580
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9957D1C21189
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:18:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089AB283944
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C2213D2BB;
-	Mon,  8 Jul 2024 15:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6120013EFEF;
+	Mon,  8 Jul 2024 15:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKCXQuhR"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKmCIaXj"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FC39461
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229C313F426;
+	Mon,  8 Jul 2024 15:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720451904; cv=none; b=Yzc2GYWAOddP+cQExRGDwJ/VIkESwzPXLtSMTyX/Cb9Yj3U/LFInCcPhFwcCIQfQxQPc2Dl6X0vDRNWPVN7pE/QbwdJ1ON72Q5kaXDq2PLOLz0a0DljSESgoRn7mKR8GR1uCSqA41jgkAHqzdNu/KnDrWXTRE674xhzmVapNT+s=
+	t=1720451942; cv=none; b=iZ4ZHtU/nLEaMUKyGVhPhjdIjEYKRsrtHZ1AVz+bldAzcXBOFQvNd2ezqIHOOpuxdlkJV525FlqesGCvje+Rq0ZyO6or6T4ahjVxBJXu44jQsBDI1sEkFK/bWj9GpgQAPk7D3dP3vcKe2wNhpWAYE1dyHAVSLQNRl+iFy5UJSRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720451904; c=relaxed/simple;
-	bh=m1CbKS6sjooBIqxjkSHZJlp9SunXGeoor/qdb8eDVgo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hQLYDC77CMM9zpG7ApQefY4Oyxsnj46DRsiBU8jCrmKAi76Z7an3ivdJLu4cAZwj3inY/QsHCMQXYXTIv67OsUpTtrZ5HXUGPFawqYPynLXz7pj+oAh3wyRDa8terzRa4YbcXI5QlxV8GPlPGLf3qhcoBL8dccr7Eak4TVTOBTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKCXQuhR; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1720451942; c=relaxed/simple;
+	bh=S4wdFE5mYwdlzL98v6PKiIlzLusgf9RSFez0pzc7VpY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o2c/aaRes4W+qyARkgtcrwjFnOpE3kWmCHbBN3/DAoqIvttDJqQexbSIEt4UsKTGLA7JEW/fj5kZCmvdwctu3oewsthSbUMOKOgGKtZYtOlGfBcgRX3iWRyD7vWONz99uop2MGlUkbhK0mVvCPah8iXLNFlZGgdhxDLTujDAZ+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKmCIaXj; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c25beae1so432152666b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 08:18:22 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso40148201fa.3;
+        Mon, 08 Jul 2024 08:19:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720451901; x=1721056701; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720451939; x=1721056739; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oGCrVrBGIrx7MPLgB/KlykXRMIJJJRJ81UrBbePvOHg=;
-        b=WKCXQuhR7DirFIu7WO06Z/JtF9pLYyMYYwtqFZXuaC79p/dNNdnIN2a4hEGHjVktnq
-         OESoMiuYvueJJ+1AQtbOdSdpeItIFsI4BS/j37riIiEW4hX0U7UAUiXAdEpqs1teEZBC
-         DqynlMz29mvbX0pkqCk0l827eVpXi/+Fzpv2TIJ5Jrkoo/USqRTnkv2O/JES/JeoCoIw
-         gGa67eiXRDI5GTEg+2YLpCnpwGVfKfHxMzfbY8muqBKTO58ozgz6zmjll7//4JR/JnP2
-         bngBOTH1VJU2daLePElKV36B7Nvz8Np2pL5K3z+brboCOq9OWJ1vCRjdnp7bRmRwluRm
-         CwOg==
+        bh=TSBUSiGrKda6Rclc8JKjTu2mlczLCGQS71CjDrMpfKo=;
+        b=hKmCIaXjeybNMkJwvAg9cv4JJH9DxKnUh48bvUDGSrmL/n4IVtISFfsZLtDMT+EEp+
+         Ycmk0h0UlRKchD2tVjG3fd029+Msii7T5CVOIe+N3aAcdctY7NIRt06ncxWmwg7yjeyJ
+         XC1fC+e/wsYP5+0ecRf261FUnN1UcMWquX1WXRIu3Djp7q8mmaxL3dtctfeqlaUd/Vln
+         KHQlPgCqsN9namqFjrzYcQ0ySdWv8dvyTeU4n1C4BB6Tt21M9Cv7OxWXu267HBYE1qrZ
+         1VhbpTLjcW5QCZxiKGvWQAMx7kTjTDmyrjneQVN110wNbMAIEJVqxc3NfhO/iSiPCbm0
+         0+3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720451901; x=1721056701;
+        d=1e100.net; s=20230601; t=1720451939; x=1721056739;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oGCrVrBGIrx7MPLgB/KlykXRMIJJJRJ81UrBbePvOHg=;
-        b=aoED+ss3+qqBEMxiqtATWJFStLq+NovXO7ufoLsNdawvnWTSz93BbaI6YzVXl9nk9f
-         u+eTkD+a0Uudx086MxhMaupVn+zh/MImjraO5OR3pVHBmnaLqsmzEOqLMPqRLqYMKkzT
-         qdrsQ4YyuLTcvPNWFt71j9wANHKL5nX8hBHsFTwOcdXRWwJa6WX+fMHxVS1UGRGIlXqt
-         mbqH0NhdNQVGs2FfYx6J1FpCgFmFNkIjc9CrvlhEmab1przQNybGfrqWDTX7HILB12s3
-         ryfCoxfL8SJwQlv+79kjgUu6d5Ojm6GxtwPYdcJEhmitBtDluHDSKG9Hc4xw4p2sLrAn
-         fVAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPuOsWZfQrOiq5Os9MY5jnWU/uI8J9RLRetSyIvJfn02YabYhp10JVwNmNTYt/hC72n3tcDUZQglEQzdSPQfwJItYlNt5VvCmohrzz
-X-Gm-Message-State: AOJu0YxFIeyBKWD370dEoOC+INhKdAxftdI69uKfYl3dULLe4V/Thuib
-	sOTNTlW/PZ2aGbKtmN+1dbaBJieQw1V1Of/YfxSxIUvH2M7DHk+D
-X-Google-Smtp-Source: AGHT+IHDkYDqBWV7jiUx3ikaGrYl0qJ1VuVd0nwfS410p0DwAQ9ZE96/NVk3RbpvQFL4gy7OZyyFHA==
-X-Received: by 2002:a17:906:ccd2:b0:a77:dd1c:6274 with SMTP id a640c23a62f3a-a77dd1c6efamr481461566b.69.1720451901111;
-        Mon, 08 Jul 2024 08:18:21 -0700 (PDT)
+        bh=TSBUSiGrKda6Rclc8JKjTu2mlczLCGQS71CjDrMpfKo=;
+        b=rfn9dc7hcrIe6MnRWlVgcVX60SKTnQktIRCXujs9RcEfdl0TQhXh6cNkYrrsc46XMv
+         MSKock91bUCHpPEanC9cvE/Q4pOsz0ERPU7OPhsc2N+2lQHzPDVz2VvPDghPopdcsLT7
+         8vYz7TF8ixvDdoc9FU7cIDrKf+glbxI8c8XbQywHnJ7pLnZaM78z8/7FRX42vodBj3Oj
+         Z55q8bnyrACq9UJPiQgoR6surKjUdYdjAiUL3APl7cd0PUS+kQLwSHIz0M+Rw/55koQ0
+         x57woM5ZoP4m1wJ77WNafALOVj6uF2vUWpZPga39ZQ6Wq27YAgowSdK+BUHTkQJCCRSl
+         MTkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWa0A3zuktjFT5wHUorCWACdlRyX9wCdUcS4ENai58Y1EzSTBC/hvWhT+VgVwsJR7z/faQWnTaDhbEBK4A4ETPJ1gOpFv0WNJIDVByB6jp5XRwWmo/M8ichUdZh9u+/Gy8/iTkxc4PUmA==
+X-Gm-Message-State: AOJu0Yzyl43/rHfQK8VArgdh7PfgiAHytCkrgPXk0A8GjiY8y7D1PPBK
+	yCupnkZsMdELNjidkWbkGEtPDhJhtc/G5N1piZey2i0eUA2F70uc
+X-Google-Smtp-Source: AGHT+IHBOpU2TpGoqEtMyb1uE3hxIskr/IILSBqTmPyQ+zwbgIxWLN7Nwf+BZwShchhySLprAWHYaw==
+X-Received: by 2002:a2e:86cc:0:b0:2ed:275d:aa44 with SMTP id 38308e7fff4ca-2eeb30fcd17mr242501fa.28.1720451939038;
+        Mon, 08 Jul 2024 08:18:59 -0700 (PDT)
 Received: from GLaDOS.tastitalia.local ([37.77.97.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6dc721sm3142766b.53.2024.07.08.08.18.19
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58e113d1c45sm5537837a12.64.2024.07.08.08.18.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 08:18:20 -0700 (PDT)
+        Mon, 08 Jul 2024 08:18:58 -0700 (PDT)
 From: stefano.radaelli21@gmail.com
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -71,18 +71,23 @@ To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	Jonas Karlman <jonas@kwiboo.se>,
 	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marex@denx.de>,
 	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Stefano Radaelli <stefano.radaelli21@gmail.com>,
 	"Noah J . Rosa" <noahj.rosa@gmail.com>
-Subject: [PATCH] drm/bridge: ti-sn65dsi83: Add Non-Burst mode property
-Date: Mon,  8 Jul 2024 17:18:19 +0200
-Message-Id: <20240708151819.40457-1-stefano.radaelli21@gmail.com>
+Subject: [PATCH] dt-bindings: display: bridge: ti,sn65dsi83: add burst-mode-disabled
+Date: Mon,  8 Jul 2024 17:18:56 +0200
+Message-Id: <20240708151857.40538-1-stefano.radaelli21@gmail.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -94,60 +99,29 @@ Content-Transfer-Encoding: 7bit
 
 From: Stefano Radaelli <stefano.radaelli21@gmail.com>
 
-The video mode can be divided into two methods for sending packet data:
-burst mode and non-burst mode.
-In burst mode, pixel data is compressed to save time for the interface
-to return to low power.
-Non-burst modes transmit pixel data in a stream controlled by sync
-pulses or sync events.
-
-Adding this property in the DTS gives the programmer the ability to
-disable Burst Mode, depending on how the MIPI controller is configured.
+It allows to disable Burst video mode
 
 Co-developed-by: Noah J. Rosa <noahj.rosa@gmail.com>
 Signed-off-by: Noah J. Rosa <noahj.rosa@gmail.com>
 Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
 ---
- drivers/gpu/drm/bridge/ti-sn65dsi83.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/display/bridge/ti,sn65dsi83.yaml       | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-index 57a7ed13f996..6314c03ce1e6 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-@@ -145,6 +145,7 @@ struct sn65dsi83 {
- 	struct drm_bridge		*panel_bridge;
- 	struct gpio_desc		*enable_gpio;
- 	struct regulator		*vcc;
-+	bool				burst_mode;
- 	bool				lvds_dual_link;
- 	bool				lvds_dual_link_even_odd_swap;
- };
-@@ -581,6 +582,7 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
- 	struct drm_bridge *panel_bridge;
- 	struct device *dev = ctx->dev;
+diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+index 48a97bb3e2e0..eb9c8b6b6813 100644
+--- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+@@ -35,6 +35,9 @@ properties:
+   vcc-supply:
+     description: A 1.8V power supply (see regulator/regulator.yaml).
  
-+	ctx->burst_mode = !(of_property_read_bool(dev->of_node, "burst-mode-disabled"));
- 	ctx->lvds_dual_link = false;
- 	ctx->lvds_dual_link_even_odd_swap = false;
- 	if (model != MODEL_SN65DSI83) {
-@@ -654,10 +656,15 @@ static int sn65dsi83_host_attach(struct sn65dsi83 *ctx)
- 
- 	dsi->lanes = dsi_lanes;
- 	dsi->format = MIPI_DSI_FMT_RGB888;
--	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
- 			  MIPI_DSI_MODE_VIDEO_NO_HFP | MIPI_DSI_MODE_VIDEO_NO_HBP |
- 			  MIPI_DSI_MODE_VIDEO_NO_HSA | MIPI_DSI_MODE_NO_EOT_PACKET;
- 
-+	if (ctx->burst_mode)
-+		dsi->mode_flags |= MIPI_DSI_MODE_VIDEO_BURST;
-+	else
-+		dsi->mode_flags |= MIPI_DSI_MODE_VIDEO_SYNC_PULSE;
++  burst-mode-disabled:
++    description: Set Video Mode in Non-Burst Mode
 +
- 	ret = devm_mipi_dsi_attach(dev, dsi);
- 	if (ret < 0) {
- 		dev_err(dev, "failed to attach dsi to host: %d\n", ret);
+   ports:
+     $ref: /schemas/graph.yaml#/properties/ports
+ 
 -- 
 2.34.1
 
