@@ -1,119 +1,204 @@
-Return-Path: <linux-kernel+bounces-244587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD4392A686
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:59:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1691892A68B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D3A1F212D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:59:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02311F21E46
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B486148FF6;
-	Mon,  8 Jul 2024 15:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03638145325;
+	Mon,  8 Jul 2024 15:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuYXxDIw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jdYD5G+X"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54D81442FB;
-	Mon,  8 Jul 2024 15:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29787EC7;
+	Mon,  8 Jul 2024 15:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454130; cv=none; b=EfoRHoj8qpRyYYd3BvpbYnngjzQrGvZMDvJvISUO3XNkBCc3fuQq7qYV1CA+JhcD3NOuqwiHBvOPEg2cTkACt3HunOIYnRnf2UZP8GCjygQ7WMCCQl38e3DzBcRHTX2KRP3nSQ8I4kCF+I65Y8mFcrKUFjgsrywKwcIYGWdOaV8=
+	t=1720454219; cv=none; b=AsLcWuOR+xjVVrT2yEHSTYCOGfswJRvYLgvxIe8NvevInALVjxFNsxTcKgDp0/j+Cfr+DAGv5QmimH+gtIQAUzLTotpmXSIqaynoffStD+q8tyYyT0+32kF4xP3hAnQKW/i7cSZdITFeYYT21sCdllwY9sCcR9fAgNNLNEQr+x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454130; c=relaxed/simple;
-	bh=klBVxy8IiZUybk4NUjWGo9X6b6GwYIN3vkEddYVTDBM=;
+	s=arc-20240116; t=1720454219; c=relaxed/simple;
+	bh=ELgLOLfZp8pULd50kbfoMBhVzoyv22ylbX9tUd2mbWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HmKs9WnhwUv1M2xY40cgQdBt1hhB8F2z8p0PYJc3HR/X21eK1DeuqJyvaicxOudVuMtbvyWGZwwwY8qBKiZCvt0UUoJGDs9lVTe37/rdUCa9vpMXEQn8sXlJYU6CjTs/1AgiJuvzsHXRMZn4hZQQE70OkqSesoLtSLbka38g5kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UuYXxDIw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F2E3C116B1;
-	Mon,  8 Jul 2024 15:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720454130;
-	bh=klBVxy8IiZUybk4NUjWGo9X6b6GwYIN3vkEddYVTDBM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFRcKDlIOywtp6L0pIeKVHlresl2x3Bwqa/oD/4JuSWY8gLeL2uodTwFoS/U5vHQHiNMrLx+BgTfzDfjKbUjoKqIQUNLFVXBiA8OTzDQQCzjKqXPCSF612DxWVYv+t7gSOVNHePsjL5WRZorYQp1srwBzKfhJ6l0T/X4p/F3NhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jdYD5G+X; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1720454205;
+	bh=ELgLOLfZp8pULd50kbfoMBhVzoyv22ylbX9tUd2mbWk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UuYXxDIwcX4c9njAFXgqD6kPCnPvkqX13R4dwZkTjIwWzz9OlnkW+7lI2+BXng8Ex
-	 HlueLCAKnas2BmaNAh8QSG+hNMLtbnRy4vkD6hZIxgpC9QQluc2SdJPnXlJrlZMWf6
-	 28++49Pxyc8yqDP+VuaugpaSlF+qhCUagZeOQc+WrV9NL6UtEW3Klsz7G68LZWFZTo
-	 QEySb4mqzeqfsZCdbu5dyK0D4OF8BzcNmgLCSKA4/RbdAIQM8L04RHG2DgZNQ8Uuh4
-	 9G3rpoNOteMmvTxDGL2r26Udlv6QoM0cnjch5TTdK42W/BPN8UVVs5rMiTpjJ5Glfq
-	 dZykVd8kygQfg==
-Date: Mon, 8 Jul 2024 09:55:29 -0600
-From: Rob Herring <robh@kernel.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, angelogioacchino.delregno@collabora.com,
-	andersson@kernel.org, konrad.dybcio@linaro.org,
-	mturquette@baylibre.com, ilia.lin@kernel.org, rafael@kernel.org,
-	ulf.hansson@linaro.org, quic_sibis@quicinc.com,
-	quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com,
-	abel.vesa@linaro.org, otto.pflueger@abscue.de, danila@jiaxyga.com,
-	quic_ipkumar@quicinc.com, luca@z3ntu.xyz,
-	stephan.gerhold@kernkonzept.com, nks@flawful.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 09/10] dt-bindings: opp: v2-qcom-level: Update
- minItems for oloop-vadj & cloop-vadj
-Message-ID: <20240708155529.GA3244015-robh@kernel.org>
-References: <20240703091651.2820236-1-quic_varada@quicinc.com>
- <20240703091651.2820236-10-quic_varada@quicinc.com>
+	b=jdYD5G+XEtSDuCkLnqmVFG3CYJPO6aMkyq6BE6Iw/odnfeScHELwJbv1/UcQnUpaA
+	 iafJA2KJwOupi0gsACrAphm3n8+ziI9h/vQqIQ8b07jHQ4qO2mTS5LVO0NxPT0YXzu
+	 IrVwuYBLK9n8h8sbHgfVk9K1e1Yz5q6mICwOKv7s=
+Date: Mon, 8 Jul 2024 17:56:44 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: add script and target to generate pacman
+ package
+Message-ID: <9884e892-1d45-4854-971c-5963e4661a1b@t-8ch.de>
+References: <20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net>
+ <20240708055046.GB1968570@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240703091651.2820236-10-quic_varada@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240708055046.GB1968570@thelio-3990X>
 
-On Wed, Jul 03, 2024 at 02:46:50PM +0530, Varadarajan Narayanan wrote:
-> Since IPQ9574 has only one CPR thread it will specify
-> only one voltage adjustment value. Hence update min items
-> accordingly for oloop-vadj and cloop-vadj. Without
-> constraining min items, dt_binding_check gives errors
-> 
-> 	opp-table-cpr4:opp-0:qcom,opp-cloop-vadj:0: [0] is too short
-> 	opp-table-cpr4:opp-0:qcom,opp-oloop-vadj:0: [0] is too short
-> 
-> 	Failed validating 'minItems' in schema . . .
-> 		{'maxItems': 2, 'minItems': 2}
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v4: Fix dt_bindings_check error
-> ---
->  Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+Hi Nathan,
 
-This is going to need to be rolled into your dependency because it needs 
-the same fix.
+On 2024-07-07 22:50:46+0000, Nathan Chancellor wrote:
+> On Sat, Jul 06, 2024 at 09:33:46AM +0200, Thomas Weißschuh wrote:
+> > pacman is the package manager used by Arch Linux and its derivates.
+> > Creating native packages from the kernel tree has multiple advantages:
+> > 
+> > * The package triggers the correct hooks for initramfs generation and
+> >   bootloader configuration
+> > * Uninstallation is complete and also invokes the relevant hooks
+> > * New UAPI headers can be installed without any manual bookkeeping
+> > 
+> > The PKGBUILD file is a simplified version of the one used for the
+> > downstream Arch Linux "linux" package.
+> > Extra steps that should not be necessary for a development kernel have
+> > been removed and an UAPI header package has been added.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> 
+> Thanks a lot for addressing my comments. From a PKGBUILD perspective,
+> this looks good to me (I have a couple more comments below). I am not as
+> familiar with the Kbuild packaging infrastructure, so Masahiro might
+> have more comments on that, but it works for me in my basic testing so
+> consider it:
+> 
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
+
+Thanks!
 
 > 
-> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
-> index b203ea01b17a..1c1a9e12d57a 100644
-> --- a/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
-> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
-> @@ -39,6 +39,7 @@ patternProperties:
->            An array of per-thread values representing the closed-loop
->            voltage adjustment value associated with this OPP node.
->          $ref: /schemas/types.yaml#/definitions/int32-array
-> +        minItems: 1
->          maxItems: 2
+> > ---
+> > Changes in v2:
+> > - Replace ${MAKE} with $MAKE for consistency with other variables
+> > - Use $MAKE for "-s image_name"
+> > - Avoid permission warnings from build directory
+> > - Clarify reason for /build symlink removal
+> > - Install System.map and config
+> > - Install dtbs where available
+> > - Allow cross-build through arch=any
+> > - Sort Contributor/Maintainer chronologically
+> > - Disable some unneeded makepkg options
+> > - Use DEPMOD=true for consistency with rpm-package
+> > - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
+> > ---
+> >  .gitignore               |  6 ++++
+> >  scripts/Makefile.package | 15 +++++++++
+> >  scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 104 insertions(+)
+
+<snip>
+
+> > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > new file mode 100644
+> > index 000000000000..fe899c77a976
+> > --- /dev/null
+> > +++ b/scripts/package/PKGBUILD
+> > @@ -0,0 +1,83 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > +
+> > +pkgbase=linux-upstream
+> > +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
+> > +pkgver="${KERNELRELEASE//-/_}"
+> > +pkgrel="$KBUILD_REVISION"
+> > +pkgdesc='Linux'
+> > +url='https://www.kernel.org/'
+> > +arch=(any)
+> 
+> I see why you went this way but this feels a little dangerous because
+> this means the package will be installable on architectures other than
+> the one that it is built for. I think a better solution for this problem
+> would be moving arch back to $UTS_MACHINE but setting CARCH to that same
+> value in scripts/Makefile.package above. This diff works for me,
+> allowing me to build an aarch64 package on x86_64:
+
+This is what I used in v1 of the patch.
+But I felt that this only works by pure chance.
+IMO users of this feature should know what they are doing.
+
+That said, if anybody has strong opinions on this, I'll be happy to change it.
+
+> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> index 8c0c80f8bec0..a5b5b899d90c 100644
+> --- a/scripts/Makefile.package
+> +++ b/scripts/Makefile.package
+> @@ -151,6 +151,7 @@ pacman-pkg:
+>  		srctree="$(realpath $(srctree))" \
+>  		objtree="$(realpath $(objtree))" \
+>  		BUILDDIR="$(realpath $(objtree))/pacman" \
+> +		CARCH="$(UTS_MACHINE)" \
+>  		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+>  		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
+>  		makepkg
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index fe899c77a976..7f1a4588c3d3 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -8,7 +8,7 @@ pkgver="${KERNELRELEASE//-/_}"
+>  pkgrel="$KBUILD_REVISION"
+>  pkgdesc='Linux'
+>  url='https://www.kernel.org/'
+> -arch=(any)
+> +arch=($UTS_MACHINE)
+>  options=(!debug !strip !buildflags !makeflags)
+>  license=(GPL-2.0-only)
 >  
->        qcom,opp-oloop-vadj:
-> @@ -46,6 +47,7 @@ patternProperties:
->            An array of per-thread values representing the open-loop
->            voltage adjustment value associated with this OPP node.
->          $ref: /schemas/types.yaml#/definitions/int32-array
-> +        minItems: 1
->          maxItems: 2
->  
->      required:
-> -- 
-> 2.34.1
 > 
+> > +options=(!debug !strip !buildflags !makeflags)
+> > +license=(GPL-2.0-only)
+> > +
+
+<snip>
+
+> > +
+> > +package_linux-upstream-headers() {
+> > +  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+> > +
+> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > +  cd "$objtree"
+> > +  local builddir="$pkgdir/usr/$MODLIB/build"
+> > +
+> > +  echo "Installing build files..."
+> > +  "$srctree/scripts/package/install-extmod-build" "$builddir"
+> > +
+> > +  echo "Installing System.map and config..."
+> > +  cp System.map "$builddir/System.map"
+> > +  cp .config "$builddir/.config"
+> 
+> Remove the dot on the installation location so that it is more visible.
+
+This is the location used by the downstream linux-headers package.
+I can add a symlink for better visibility, though.
+
+> > +  echo "Adding symlink..."
+> > +  mkdir -p "$pkgdir/usr/src"
+> > +  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+> > +}
+> > +
+
+<snip>
 
