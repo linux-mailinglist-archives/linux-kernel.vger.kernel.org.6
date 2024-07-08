@@ -1,164 +1,144 @@
-Return-Path: <linux-kernel+bounces-244396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E81E92A3B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:34:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE7B92A3BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B9DF1F22016
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:34:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0F26B20D93
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1607F48C;
-	Mon,  8 Jul 2024 13:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O4W42dZA"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F19C137C35;
+	Mon,  8 Jul 2024 13:36:20 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3D36A022
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902186A022
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720445689; cv=none; b=XvujXmqhug+QPSoFTAlz4PwfrpY/4OCM1+QoRzqxQj6mYMjRqLF6b/mwEhXUMeQjByOxOlMW/MLQZR30LgepaN43LJMmevGRQpEcXCydQvRgReKFSDfJ+leg/PjRDcujGtTn8Dg/EMDcvy7ZdNdkufQx14ojJbKga+ua7HduWqM=
+	t=1720445780; cv=none; b=oA6FUXaqzk3V9JQkX81PAPMS1/KKHm0GS4nwHyUl6habjQFaFe9d0alm3K3w+/BozdKxYkELwebrvaDPzefG3+eDhInuHyFkB7sdZ8sAR6cB12t/FgpKy6dBnz8z3oeu4F4maI/inpCSewnu22+UlWfO2LUBdo5Z0jy7BQHeruU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720445689; c=relaxed/simple;
-	bh=ZEzWRO2LpDgyJB3Z+NE8SgN6LUV6fHcQtsqrgS8Yc10=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WNHnHq2/Q28xtXbFr+KngXpSmYtvW7g0UOKd4tI1EG2zN8m6Uv+/boET38EIQEFHqsPO+CWa3bH6/rEENMnZy7AzPl031/QdyzZBcY+o8BqKWGdAWQKaK+ZDatmlUKg+g60YLO2j9o/DBKliNq7OSvjsYwqsd43ZOgBEz8HRk3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O4W42dZA; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4266f344091so611265e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 06:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720445686; x=1721050486; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZEzWRO2LpDgyJB3Z+NE8SgN6LUV6fHcQtsqrgS8Yc10=;
-        b=O4W42dZAnR8unNf7Ibw16d5DKnl83zlDTzZbIPAPjZjzMD2Q6KHMbq3GqQBRXuhhgS
-         zZeX9upqcOGtsAkdTUP5PEAoaWSs6bBp560fdb3EPJmWECWBhWkHJBRmE0Z/c1q31pVq
-         F/BBHZga+Oh33kx7+Jr++HuzHhQ8lTqOFF/nyeCVhnhdTC4Ivh/OMT6gu6cKYiHWD/8p
-         t+0I4yY1QTjowHQDebos3PY1XzP7kTWpO1lfklvgQ6NHxyQG0OI9QGv2phuPL8bxPL2s
-         /MKBGICHc7dEJSaa2PmNDMLTCXzv0WoPwBohhETaGTzsaSUEgWDA5E7oMAuUfFz0XdLO
-         d93w==
+	s=arc-20240116; t=1720445780; c=relaxed/simple;
+	bh=N1ZWZ3bo5JoAmtuEnkMdV7IWB0Ho/PjH0hWmEJYK9J8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=s9yw3AyJTA6d6f6B5AjwrREROR2vD+zu/zTJiC5GScod4Eoliq/CpCS2ISZ70WzBvDua+MJSNiqs0AGFuaTXC4IdrKXBLcwiq5tV0MIVFUwlxMPkJmjUY4TXmoWivZyzKiSMPjyXQM42tltily9DrhREad6z7qbePZDHYb5AUrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-389cc381cdfso2341215ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 06:36:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720445686; x=1721050486;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZEzWRO2LpDgyJB3Z+NE8SgN6LUV6fHcQtsqrgS8Yc10=;
-        b=DounzjqPzJ06U5lMe3a4qOjlMaePe88PNU0XXmx+LAWYNBBDdv7VLZv8Rt8tdW0ljm
-         bBzk3FzH62FaL7IvkKaGrkJsQ+v7R3psEbQliJPVPRyIWJCccm1mSG0AieJsY8OLepKk
-         H+2F+NxZcQG2+GWaHVuBFR4xv/xhejw4OnIS94+WkZK/C7UjC3SiU7JnSy4rg2Ne8VTy
-         YATZbvIKhwUvqWQkSmQLMPS32cuCD+5r0c/Yvx/k4zr/x1ydlAMtkM7itSjB5UkeXDJt
-         N/weRxPfzQP49zk3+kYAGuEz7J2sEbc6FsomFOirIzO/82HryNyRJQ5KqeSl2llFeKT3
-         LnaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPEZ0oSz8Xdfa69uK4nnsPTCkdO1U/JI2ai17thQDBry50xePI5+6+tO1fRDX5lvXnSweugRHVD4QG48Xk1cUrcxFrMfb2PuReh02u
-X-Gm-Message-State: AOJu0YzfzpMgIevODAbVDImkgsl7+5H4GsRbL8EIGV+qrZon20q38xYl
-	awO6ROZIA3vJtux+oKIVtV59Z93Z+tywSuH6RNotYWpODCiUwepEOjpjRAr9aJo=
-X-Google-Smtp-Source: AGHT+IGRHXzVP8vWodoy2IVaw2YC8m/sDvIPSISv1qKc25IfTFheIsZdbD3qEGLVm1zTHYZ1DPNdZQ==
-X-Received: by 2002:a05:600c:22d0:b0:426:5e1c:1ad0 with SMTP id 5b1f17b1804b1-4265e1c1db8mr42383885e9.37.1720445685795;
-        Mon, 08 Jul 2024 06:34:45 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:5158:f510:c35c:9d0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42649dec1cbsm66323985e9.1.2024.07.08.06.34.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 06:34:45 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?=
- <amadeuszx.slawinski@linux.intel.com>,  Mark Brown
- <broonie@kernel.org>,  Liam Girdwood <lgirdwood@gmail.com>,  Takashi Iwai
- <tiwai@suse.com>,  Jaroslav Kysela <perex@perex.cz>,
-  alsa-devel@alsa-project.org,  linux-sound@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ALSA: pcm: add support for 128kHz sample rate
-In-Reply-To: <874j99434a.wl-tiwai@suse.de> (Takashi Iwai's message of "Mon, 01
-	Jul 2024 16:07:49 +0200")
-References: <20240628122429.2018059-1-jbrunet@baylibre.com>
-	<20240628122429.2018059-2-jbrunet@baylibre.com>
-	<326792b9-e706-4ab0-a1e8-cc48943e357d@linux.intel.com>
-	<874j99434a.wl-tiwai@suse.de>
-Date: Mon, 08 Jul 2024 15:34:44 +0200
-Message-ID: <1j4j90hurv.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1720445777; x=1721050577;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+IHGena9P8FERgV/kb9IntFswJIG09J91rs9ZYDJEsI=;
+        b=r+nX6D+CAkJKlyJbXO0474IGyIiWvbNrS0hlZZFk02vkWoNsBnaY+RRMlQLjVCOpi+
+         3rkz3v3bZA/0O6nNcU76o4u4ErBNY5JylFmoj7MTSFIDtdh2+8/XeNn461Ly0VZe7N2e
+         vfifXl0cyysoa76ce1XISv4PhQeHHAEJk4lW46WD/syiYWBkuOb3zd09vmUVzxDFW/sL
+         1Hr3Jzx52aEprGpzXoT0rt0g75hFR4NYqZ7XrfifB2MuYiCr3BT2PP7WKrWe14ONewRl
+         N3AUTtuLQXIqiA/Y2Biwc2hrJNH4+YQzVoywc8WT+siR0KNlHde4jubllsXVcyTZw+jw
+         jQsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlPOlE51t/Gmbfd4a2Du4n78kZ/974NsrslUPv2oIwQJtrWoXj3R4+V1qAmOJ0YVBJeMl8S3ykOV5rW9plvnwPCUVdBiHws2QcAAkA
+X-Gm-Message-State: AOJu0YytJDrEIXczV5CShZ1B7SWNxXxGnABolgvfIJROuHHJFTST/Rby
+	Wv7sPkkdD6WnnUth+4ghOxLdRALuMxYKgBrAUxvmClf8+riE2IFHYXtCL7FVOZvxMCf20nhprM0
+	nnGTbqSa589dzGw9hzL6aCr+vxHdRuOQkabro0Ks8PGXDkop0uLzVuxo=
+X-Google-Smtp-Source: AGHT+IF3dJFDKfP9CYz5J+z6tw+MQ+pqiBuZlukOFKMQXu5xy/FCrpq5LWbqSiPG4spRJ2eaW75ac6ywld1bkOfGWKRdBgH0PWAs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:168d:b0:382:2f47:a82e with SMTP id
+ e9e14a558f8ab-383cb1332a5mr10177335ab.1.1720445777719; Mon, 08 Jul 2024
+ 06:36:17 -0700 (PDT)
+Date: Mon, 08 Jul 2024 06:36:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006fc563061cbc7f9c@google.com>
+Subject: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbFindBits
+From: syzbot <syzbot+e38d703eeb410b17b473@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon 01 Jul 2024 at 16:07, Takashi Iwai <tiwai@suse.de> wrote:
+Hello,
 
-> On Mon, 01 Jul 2024 10:50:02 +0200,
-> Amadeusz S=C5=82awi=C5=84ski wrote:
->>=20
->> On 6/28/2024 2:23 PM, Jerome Brunet wrote:
->> > The usual sample rate possible on an SPDIF link are
->> > 32k, 44.1k, 48k, 88.2k, 96k, 172.4k and 192k.
->> >=20
->> > With higher bandwidth variant, such as eARC, and the introduction of 8
->> > channels mode, the spdif frame rate may be multiplied by 4. This happe=
-ns
->> > when the interface use an IEC958_SUBFRAME format.
->> >=20
->> > The spdif 8 channel mode rate list is:
->> > 128k, 176.4k, 192k, 352.8k, 384k, 705.4k and 768k.
->> >=20
->> > All are already supported by ASLA expect for the 128kHz one.
->> > Add support for it but do not insert it the SNDRV_PCM_RATE_8000_192000
->> > macro. Doing so would silently add 128k support to a lot of HW which
->> > probably do not support it.
->> >=20
->> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> > ---
->>=20
->> From what I remember the recommendation is to not add new rates, but
->> use SNDRV_PCM_RATE_KNOT for all rates not included already.
->
-> In general yes -- unless the new rate is used for significant amount
-> of drivers.
->
-> So this case is a sort of on a border line; if it's only for ASoC
-> SPDIF codec driver, I'd rather implement with an extra rate list
-> instead of extending the common bits (that has some potential risks by
-> breaking the existing numbers).
+syzbot found the following issue on:
 
-At the moment it would be used by ASoC spdif codec yes (and with Amlogic
-eARC support reasonnably soon, hopefully)=20
+HEAD commit:    795c58e4c7fc Merge tag 'trace-v6.10-rc6' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14663285980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1ace69f521989b1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e38d703eeb410b17b473
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-However it is likely to be a common rate of any derivative of an IEC958
-interface, with a sufficiently high bandwidth. I suspect there might be
-more of those in the future. Also, it is not an exotic rate for some obscure
-codec no one really has. It is part of specified interface that every TV
-with HDMI 2 is likely to have nowadays. This is why I thought it made
-sense to add it to the usual list. It is the only rate missing,
-everything else is already there.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Changing the spdif codecs with SNDRV_PCM_RATE_KNOT and a custom rate
-list is doable I suppose, if the new ID is not OK.=20
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/947727e7be17/disk-795c58e4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8898920020bb/vmlinux-795c58e4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9aed6052df98/bzImage-795c58e4.xz
 
-BTW, I tried not changing the existing numbers and add 128k last but that
-broke. I guess something requires the IDs to be ordered. I did not check
-this further since updating the IDs worked fine (for me, at least :) )
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e38d703eeb410b17b473@syzkaller.appspotmail.com
 
-> OTOH, if we can take this for further
-> cleanups of the existing requirement of 128khz rate, we can go with
-> it.
->
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/jfs/jfs_dmap.c:3023:47
+shift exponent 32 is too large for 32-bit type 'u32' (aka 'unsigned int')
+CPU: 0 PID: 7225 Comm: syz.0.177 Not tainted 6.10.0-rc6-syzkaller-00069-g795c58e4c7fc #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ dbFindBits+0x11a/0x1d0 fs/jfs/jfs_dmap.c:3023
+ dbAllocDmapLev+0x1e9/0x4a0 fs/jfs/jfs_dmap.c:1983
+ dbAllocCtl+0x113/0x920 fs/jfs/jfs_dmap.c:1823
+ dbAllocAG+0x28f/0x10b0 fs/jfs/jfs_dmap.c:1364
+ dbDiscardAG+0x352/0xa10 fs/jfs/jfs_dmap.c:1613
+ jfs_ioc_trim+0x433/0x670 fs/jfs/jfs_discard.c:100
+ jfs_ioctl+0x2d0/0x3e0 fs/jfs/ioctl.c:131
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3713f75bd9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3714cd5048 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f37141042c0 RCX: 00007f3713f75bd9
+RDX: 0000000020000080 RSI: 00000000c0185879 RDI: 0000000000000007
+RBP: 00007f3713fe4aa1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f37141042c0 R15: 00007ffe646d6a68
+ </TASK>
+---[ end trace ]---
 
-Apart from the problem reported in sound/usb/caiaq/audio.c, is there
-another clean up expected ?
 
->
-> thanks,
->
-> Takashi
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---=20
-Jerome
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
