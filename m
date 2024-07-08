@@ -1,132 +1,140 @@
-Return-Path: <linux-kernel+bounces-244408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB3192A3D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:42:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C69792A3EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76551B2264C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:42:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33761F22456
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A9813A250;
-	Mon,  8 Jul 2024 13:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F24713C67D;
+	Mon,  8 Jul 2024 13:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0kQToWS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YS/RinjD"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1723137756;
-	Mon,  8 Jul 2024 13:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6ED1386BF;
+	Mon,  8 Jul 2024 13:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446120; cv=none; b=d4Oi8y0dCblkiwLOdE+zRpb3nP8fgopETWBWggLI9m1TUl5c4BoJ21T897D16vE1dXbXbC1ZYeD831AmRLe8ZTJYvFCwCOFaVpsBFA86OxA+DY4BlrlOhsCZrxFUxRhPx8j1xczq76rvME5jnho0c63TgNB5AopAV08LZOcH3ZQ=
+	t=1720446214; cv=none; b=B56RReGJ9eOeJXsn3NNcCna7OwqJXo3PKRc0nz9snTWYhl5hM0vdYxXBfXRXgmPNBRCsq81TdbupZKB8SGMGJf2uff46o6eFW8njjZ0CST98hYQ8zQXbZVS8BpvSBjm+ifUG7LpJ3gBnO8vOTX9zjP+1rri2aTOfACKf1dCi6xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446120; c=relaxed/simple;
-	bh=Jj4vAHxYg8R4Fyjft9iJg1dQ2fuZNmD4LJxaXm147r0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eDv7dm6qYUl+DmNJG4UOAICkhScG1qynK0HXnTgKgG7sVd384tVRG0PlO3CSODY0RvNtngOhgvxE2SGBDIwHyXOL5zkniy/Ez3oUhEzvA3wiGMLFxfdMa3X/+C3jhAqcYuL6reg5Watw1ZrQyfFyGwIcV4M1iyp82B6JmGkG/aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0kQToWS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD48DC116B1;
-	Mon,  8 Jul 2024 13:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720446120;
-	bh=Jj4vAHxYg8R4Fyjft9iJg1dQ2fuZNmD4LJxaXm147r0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=C0kQToWSCQA6gCHh9QU32LHJ7dwyPGBEb0Sj9Wgp0tWwdRpcMU3aA0rt/NH6Qjfhg
-	 RtXws0vnfYWaCqkLPN84K69sgT6meQixx/fzYpLBDDFVNoN6XbrGwRC7tK9P8/bUMJ
-	 TxkDH0o+zkDb/itmuIl8NO0vwGIK1tMaGJSVeL/yvgPVVABx35UYUejRHhwaSrQLew
-	 /WgaaWbasy5ATneuI0nvOTFMKr3IHJVd3rBfk+yreICNbk3n8FOm2lyDUeC58mUNgv
-	 8gKyg17Ijp+vk1wCc/50ieULLgu+qFHqPc5/CYCpZBvhxJQ8qEHcduM1fCQzeaD69u
-	 flRRmwtnDWc6w==
-Message-ID: <dfd9822e-6aa7-4873-abaa-f6d8996fb3de@kernel.org>
-Date: Mon, 8 Jul 2024 15:41:53 +0200
+	s=arc-20240116; t=1720446214; c=relaxed/simple;
+	bh=wxw4f8Ohz34hP/KIG3Mwx+JS06fgGytbZfPDRVqxS/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3pKCCLjXaoEzaCt+uDTmSoTXXYU/3StUHLGFNHUBiB8wS+QOyb/bM5oUPLaG2D/WSlpsqpv2/nAv/h7usmsG9VTlxuKvsv2agSHHl/ICoDfJLhQMhYeIyOcKWDmGLb9FVOsQB/LYdiVeC66/ByylYWh5qPXW9wYFMMOkUkNqx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YS/RinjD; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4265c2b602aso15621635e9.3;
+        Mon, 08 Jul 2024 06:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720446211; x=1721051011; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=H/H78dV2CQyOKZtgy53vprQZIn/cmX0k21n4Wz6mxpk=;
+        b=YS/RinjDPf6xszfVf72dmgOQ5PFYMqy/75sqeT2FvCP7dor8IgsONUEXrVs+VWa6Ru
+         IwdgkH+yTsexQQqE/hB2iSs9E7QDUZcP1VObEN5wptBclg22eVm//8sFD2iy5uLC9Y+c
+         PM+zI+y2/nK8tjZaOtOaGjHPdmxAo70Pmb2o1JUsqtAr8DZnk2X1rGeKZghlebJCrPoQ
+         Abi13fUpJd7A+eMUBU1WWPrRHQkiJ6Sk8jfjpULd9YWwwdanq+sAjzlB3JNOwiJHLQNa
+         are4VOEdR7kagV/aBzLY4EXxRxTBt24yD4Zw/mZw4lobT0XDhTwrQRVSTV9ka/QwoxS6
+         7Kxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720446211; x=1721051011;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/H78dV2CQyOKZtgy53vprQZIn/cmX0k21n4Wz6mxpk=;
+        b=EWk/8JlP92rilb8Y7VlRzQguQnwZS0RdN8A65Ag0M7R20coccC7WBzaGbZGt/rY8T3
+         o/DUEzXVCM9iFQsYugfB8UDlhloPPZCSf2H8CqGUOOc+b9EPufU8D+3/mSG0aPEAYMq7
+         A4AZwT82X6iJ7vn0HK97hYjqw84ultVrdK+k28AWwW1qUcDf58MMOQSSS8IEvUPIm2JY
+         DVlamby6ETOIUOuwr5hsz4PF2gGdiRqG7VpjEDACN2q0p5fjeWVL0oxS78j6HGgjCPME
+         TAbb2gLh5CMIZdU6kvmna8Qs0LS0urIWusDXx5T65Z87MOrqSg5t/l7b+aNf9NdfOZjX
+         nqWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzVc3Mr4n2XuMBYKfS7fksMY23eEud63ulKChREHV18iXsR7kjyIC5gPRZ2IlCblWdq299kcldv+FLb/U/jZ+IFDj0OUbD1bA7ch2m1pO1zQRFAqjVPj/qh6qJG1/Lkk3XKvJe
+X-Gm-Message-State: AOJu0YzsZ6fl2BZjKwuCHekHNU2ZoYurpyAyd7GUmptWbWM/q+4faBbA
+	xmmYVbmikXyglkVDm3O6Sr2sIqnTWmZMf22ahS5GMdVMLMpl2fUX
+X-Google-Smtp-Source: AGHT+IGYrebj0t6Sz6CR6eFUr5wmQS1bM2olcs7f1zh32jh5ZLmrYMWuQY6AoOum12kv8PhheSWyNg==
+X-Received: by 2002:adf:f8cd:0:b0:367:9224:9623 with SMTP id ffacd0b85a97d-3679dd0d323mr6925452f8f.7.1720446211105;
+        Mon, 08 Jul 2024 06:43:31 -0700 (PDT)
+Received: from skbuf ([188.25.110.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367963fa692sm13084965f8f.85.2024.07.08.06.43.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 06:43:30 -0700 (PDT)
+Date: Mon, 8 Jul 2024 16:43:28 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Daniel Golle <daniel@makrotopia.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Landen Chao <Landen.Chao@mediatek.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v5] net: dsa: mt7530: fix impossible MDIO address and
+ issue warning
+Message-ID: <20240708134328.hgwthqwcif5pjaig@skbuf>
+References: <f485d1d4f7b34cc2ebf3d60030d1c67b4016af3c.1720107535.git.daniel@makrotopia.org>
+ <20240708133359.rylvvmpcwlsxtrs5@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] riscv: dts: sophgo: add nodes for USB phy and
- controller
-To: Yao Zi <ziyao@disroot.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jisheng Zhang <jszhang@kernel.org>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20240708120830.5785-1-ziyao@disroot.org>
- <20240708120830.5785-3-ziyao@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240708120830.5785-3-ziyao@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240708133359.rylvvmpcwlsxtrs5@skbuf>
 
-On 08/07/2024 14:08, Yao Zi wrote:
->  
-> +		usb_phy: usb-phy@3006000 {
-> +			compatible = "sophgo,cv1800-usb-phy";
-> +			reg = <0x3006000 0x60>, <0x3000048 0x4>;
-> +			reg-names = "phy", "pin";
-> +			clocks = <&clk CLK_APB_USB>,
-> +				 <&clk CLK_USB_125M>,
-> +				 <&clk CLK_USB_33K>,
-> +				 <&clk CLK_USB_12M>;
-> +			clock-names = "apb", "125m", "33k", "12m";
+On Mon, Jul 08, 2024 at 04:33:59PM +0300, Vladimir Oltean wrote:
+> On Fri, Jul 05, 2024 at 11:48:40AM +0100, Daniel Golle wrote:
+> > The MDIO address of the MT7530 and MT7531 switch ICs can be configured
+> > using bootstrap pins. However, there are only 4 possible options for the
+> > switch itself: 7, 15, 23 and 31. As in MediaTek's SDK the address of the
+> > switch is wrongly stated in the device tree as 0 (while in reality it is
+> > 31), warn the user about such broken device tree and make a good guess
+> > what was actually intended.
+> > 
+> > This is necessary to not break compatibility with existing Device Trees
+> > wrongly declaring the switch to be present at address 0 or 1, as with
+> > commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of switch
+> > from device tree") the address in device tree will be taken into
+> > account, while before it was hard-coded in the driver to 0x1f
+> > independently of the value in Device Tree.
+> > 
+> > Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> > Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> > Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> > ---
+> 
+> Despite having commented on v3, I am not going to leave a review tag on
+> this patch. Its contents has nothing to do with DSA, so I have no
+> technical objections of my own, plus little authority for an ack.
+> It basically boils down to whether the phylib maintainers are okay with
+> this use of mdio_device_remove() API from mdio_device drivers
+> themselves.
+> 
+> I did have a technical concern in v3 about a race between the finishing
+> of probe() and the call to mdio_device_remove(), which Daniel did not
+> respond to, but I suspect that __device_driver_lock() from
+> drivers/base/dd.c will serialize those.
 
-Why are not you using dr_role property here?
-
-Best regards,
-Krzysztof
-
+Having that said, I noticed that this particular patch revision is not
+entirely under their attention, so this is a heads up for them.
+https://lore.kernel.org/netdev/f485d1d4f7b34cc2ebf3d60030d1c67b4016af3c.1720107535.git.daniel@makrotopia.org/
 
