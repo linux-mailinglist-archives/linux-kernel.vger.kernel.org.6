@@ -1,213 +1,179 @@
-Return-Path: <linux-kernel+bounces-244438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477EE92A442
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:02:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE3092A446
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4501C2141D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:02:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724E31C21B01
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9383A80024;
-	Mon,  8 Jul 2024 14:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B20413B798;
+	Mon,  8 Jul 2024 14:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OO76dY1X"
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIaYTtGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DC727713
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1823365;
+	Mon,  8 Jul 2024 14:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447370; cv=none; b=XqP5hxDwIJF/SXCICRsC40p7xynbBcEWDQOMGukKNDMMGlMMhAW4IsJXqCHgEV2CLe2JrJv2YQWknzkB3pmC3NHX3F3uAx23GEnDSybMeJu21CTNvoxxJYXf8YVpE9bV/KvE0cscxmZloYeikrCPXrOT/dly5duUc4cEm9Enoh4=
+	t=1720447425; cv=none; b=g8gcqm62GWMm19F3QrM4rDQrSsnrYpidT3E48c4jiskIghoJWCAn9gjNFsw5qcWyj/K+f/2rJjPME/9GQcLuhlpc81wwh0WnJv6ArxVyF5pHGfvgLgypzvzZovpoKINS3FKGR+RA99UVymERWhPQc2gLMvzdgia8DozneKXI8mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447370; c=relaxed/simple;
-	bh=3ZL+UxfHVTnQCW3P0TgjacZwLOPmj/zWG4mbdfo03w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=etvkQMt4FP9tbh/PXClA8Mt+mJ3uBNdVrWZXyxLiLgFgFYreG0vxO/OOdXi/oU1LKL0h+0t8hUZSLSWzbg/zGwBRnTwYFjhTMcN9txMjVad27oId2bO7aZmaW1T1AmpBw+2IlYDuXvX/Qmlpmx0ctCC/2anvSAEZZ4MEUUgRmCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OO76dY1X; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHm671nD6zNXj;
-	Mon,  8 Jul 2024 16:02:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720447359;
-	bh=A84/Z2GsiV0zhoFzsTRv4BZHSh1D21rJmnJ84FxKGj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OO76dY1Xr79Tn2Ly+t1mUU/av2s/poE8AQFJu8y15CVae4nLKb5cW4zTZ9D9f2O7S
-	 65+MiPdKYNdQP6r47OQRli2g+E08IvJt6CcEwmth+kFmAWo6MfrEjXeuyJSiULUiz6
-	 DmGsYpnSS3Y0tuIO7I564spr3AmprAmFe6X6JykE=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHm65438NzlH8;
-	Mon,  8 Jul 2024 16:02:37 +0200 (CEST)
-Date: Mon, 8 Jul 2024 16:02:34 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [syzbot] [lsm?] general protection fault in
- hook_inode_free_security
-Message-ID: <20240708.hohNgieja0av@digikod.net>
-References: <00000000000076ba3b0617f65cc8@google.com>
- <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
- <20240515.Yoo5chaiNai9@digikod.net>
- <20240516.doyox6Iengou@digikod.net>
- <20240627.Voox5yoogeum@digikod.net>
- <202406271019.BF8123A5@keescook>
+	s=arc-20240116; t=1720447425; c=relaxed/simple;
+	bh=A/3ZjjFes8GuhpOGOj2FY+YGzFu892sLxdZ3QKkwKlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aCytS9Iyg5cprOsf6Jp9c47vKpCyALDkcfPP36jRBn8mFq5cgXEH7NO3mauz3fKZGGleAy//6fLi/AI78iqWoDZlFTqeDGLOEMoKi1RPMyRycTYuiqDzpGihi4b0qCrLVsoRoqu7vkDDxoeIBwlMaeA6ZIjYeNXxdEdHJYidKr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIaYTtGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FB2AC116B1;
+	Mon,  8 Jul 2024 14:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720447425;
+	bh=A/3ZjjFes8GuhpOGOj2FY+YGzFu892sLxdZ3QKkwKlE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oIaYTtGTt8v4gWfDBR1je0+oi32IadA86dWZjrRR1cCG86MprUjOIkDVARhKj+2a6
+	 SWHLAesXxqy6Gy1LW1iJCYJ6lpeqGg7/CAeqFdDThMSq4AuXjlBi6yXrM+j6+dWuV6
+	 gb3tkO5LwSV3uLZACz1spIIQvJKSsDnk1jWPc98rK5jXdGgGbSzyhS1qLuBqaCAGc6
+	 Wp3jI6GOQVh88wIyZy2Yv3L9VKC7YKZrwpUNa5dtecnj7sWrrqRwd73EcmXgsH8gIR
+	 fDdU/BXZNf2HA5AoSDEGBP3UZc/XFXGNGr1ZBdidkRIe/czFH8POWNap2jhwUGPbDd
+	 FuN5EIl1ew/vg==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c665d8345dso66930eaf.2;
+        Mon, 08 Jul 2024 07:03:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6Mx1JzFn+cr32asgrBg1Jy/tfiz/wtJQMUlXDtJus7gNSyQQsd39qxZouYfgf0tOomuLHFCx5hJvkIILd/lWDZkocXAmgQWmJWF3OmOOtf8w8Q1IIR47X8/8iBs4VhBzdhxwWjD8=
+X-Gm-Message-State: AOJu0Yzerpxh0zHUypHcS1w+onLMf17rFv60m0L9tIPToN3klaxVRAhW
+	xFhs0ETUr5Mrw+rjwNRO7HBe5ezXpDfcNQ+YWosikBvyCw9gbe1aWm25uZIM1sSKIMBhpvEFcVm
+	ApeSDdgQNK0LtFVkDSnRYT2RN3sM=
+X-Google-Smtp-Source: AGHT+IEl2JwqTjYTZp4XOuoPpIdEzHVejZ87NwADjNwIkEh8f7/pazmJMZpUo3rvQZMxCvkCsxQ3auk+d5/qRxUPulo=
+X-Received: by 2002:a05:6820:1011:b0:5c6:67b7:41dd with SMTP id
+ 006d021491bc7-5c667b74e38mr5176178eaf.0.1720447424404; Mon, 08 Jul 2024
+ 07:03:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202406271019.BF8123A5@keescook>
-X-Infomaniak-Routing: alpha
+References: <2746673.mvXUDI8C0e@rjwysocki.net> <4940808.31r3eYUQgx@rjwysocki.net>
+ <402ede79-5eda-48fc-8eb8-5d89ffe6bd41@linaro.org> <CAJZ5v0jgTN+6WC9nPGCidMnMjSsYMcMe+m=8Ge7Hr--utefM2Q@mail.gmail.com>
+ <a5188c05-cd06-4678-8fb4-1f0b55c18b04@linaro.org>
+In-Reply-To: <a5188c05-cd06-4678-8fb4-1f0b55c18b04@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 8 Jul 2024 16:03:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i89BJD8AayxqJR912rkg+P8m9qq=GubCXJxmdPuj7DmQ@mail.gmail.com>
+Message-ID: <CAJZ5v0i89BJD8AayxqJR912rkg+P8m9qq=GubCXJxmdPuj7DmQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] thermal: core: Add sanity check for polling_delay
+ and passive_delay
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 11:12:43AM -0700, Kees Cook wrote:
-> On Thu, Jun 27, 2024 at 03:34:41PM +0200, Mickaël Salaün wrote:
-> > I didn't find specific issues with Landlock's code except the extra
-> > check in hook_inode_free_security().  It looks like inode->i_security is
-> > a dangling pointer, leading to UAF.
-> > 
-> > Reading security_inode_free() comments, two things looks weird to me:
-> > > /**
-> > >  * security_inode_free() - Free an inode's LSM blob
-> > >  * @inode: the inode
-> > >  *
-> > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
-> > 
-> > I don't see where i_security is set to NULL.
-> 
-> Yeah, I don't either...
-> 
-> > >  */
-> > > void security_inode_free(struct inode *inode)
-> > > {
-> > 
-> > Shouldn't we add this check here?
-> > if (!inode->i_security)
-> > 	return;
-> 
-> Probably, yes. The LSMs that check for NULL i_security in the free hook
-> all do so right at the beginning...
-> 
-> > 
-> > > 	call_void_hook(inode_free_security, inode);
-> > > 	/*
-> > > 	 * The inode may still be referenced in a path walk and
-> > > 	 * a call to security_inode_permission() can be made
-> > > 	 * after inode_free_security() is called. Ideally, the VFS
-> > > 	 * wouldn't do this, but fixing that is a much harder
-> > > 	 * job. For now, simply free the i_security via RCU, and
-> > > 	 * leave the current inode->i_security pointer intact.
-> > > 	 * The inode will be freed after the RCU grace period too.
-> > 
-> > It's not clear to me why this should be safe if an LSM try to use the
-> > partially-freed blob after the hook calls and before the actual blob
-> > free.
-> 
-> Yeah, it's not clear to me what the expected lifetime is here. How is
-> inode_permission() being called if all inode reference counts are 0? It
-> does seem intentional, though.
-> 
-> The RCU logic was introduced in commit 3dc91d4338d6 ("SELinux: Fix possible
-> NULL pointer dereference in selinux_inode_permission()"), with much
-> discussion:
-> https://lore.kernel.org/lkml/20140109101932.0508dec7@gandalf.local.home/
-> (This commit seems to remove setting "i_security = NULL", though, which
-> the comment implies is intended, but then it also seems to depend on
-> finding a NULL?)
-> 
-> LSMs using i_security are:
-> 
-> security/bpf/hooks.c:   .lbs_inode = sizeof(struct bpf_storage_blob),
-> security/integrity/evm/evm_main.c:      .lbs_inode = sizeof(struct evm_iint_cache),
-> security/integrity/ima/ima_main.c:      .lbs_inode = sizeof(struct ima_iint_cache *),
-> security/landlock/setup.c:      .lbs_inode = sizeof(struct landlock_inode_security),
-> security/selinux/hooks.c:       .lbs_inode = sizeof(struct inode_security_struct),
-> security/smack/smack_lsm.c:     .lbs_inode = sizeof(struct inode_smack),
-> 
-> SELinux is still checking for NULL. See selinux_inode() and
-> selinux_inode_free_security(), as do bpf_inode() and
-> bpf_inode_storage_free(). evm and ima also check for NULL.
-> 
-> landlock_inode() does not, though.
-> 
-> Smack doesn't hook the free, but it should still check for NULL, and it's not.
-> 
-> So I think this needs fixing in Landlock and Smack.
-> 
-> I kind of think that the LSM infrastructure needs to provide a common
-> helper for the "access the blob" action, as we've got it repeated in
-> each LSM, and we have 2 implementations that are missing NULL checks...
-> 
-> > 
-> > > 	 */
-> > > 	if (inode->i_security)
-> > > 		call_rcu((struct rcu_head *)inode->i_security,
-> > > 			 inode_free_by_rcu);
-> > 
-> > And then:
-> > inode->i_security = NULL;
-> > 
-> > But why call_rcu()?  i_security is not protected by RCU barriers.
-> 
-> I assume it's because security_inode_free() via __destroy_inode() via
-> destroy_inode() via evict() via iput_final() via iput() may be running
-> in interrupt context?
-> 
-> But I still don't see where i_security gets set to NULL. This won't fix
-> the permissions hook races for Landlock and Smack, but should make
-> lifetime a bit more clear?
+On Mon, Jul 8, 2024 at 3:58=E2=80=AFPM Daniel Lezcano <daniel.lezcano@linar=
+o.org> wrote:
+>
+> On 08/07/2024 15:38, Rafael J. Wysocki wrote:
+> > On Mon, Jul 8, 2024 at 2:12=E2=80=AFPM Daniel Lezcano <daniel.lezcano@l=
+inaro.org> wrote:
+> >>
+> >> On 05/07/2024 21:46, Rafael J. Wysocki wrote:
+> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>
+> >>> If polling_delay is nonzero and passive_delay is 0, the thermal zone
+> >>> will use polling except when tz->passive is nonzero, which does not m=
+ake
+> >>> sense.
+> >>>
+> >>> Also if polling_delay is nonzero and passive_delay is greater than
+> >>> polling_delay, the thermal zone temperature will be updated less ofte=
+n
+> >>> when tz->passive is nonzero.  This does not make sense either.
+> >>>
+> >>> Ensure that none of the above will happen.
+> >>>
+> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>> ---
+> >>>
+> >>> v1 -> v2: The patch actually matches the changelog
+> >>>
+> >>> ---
+> >>>    drivers/thermal/thermal_core.c |    3 +++
+> >>>    1 file changed, 3 insertions(+)
+> >>>
+> >>> Index: linux-pm/drivers/thermal/thermal_core.c
+> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> >>> +++ linux-pm/drivers/thermal/thermal_core.c
+> >>> @@ -1440,6 +1440,9 @@ thermal_zone_device_register_with_trips(
+> >>>                td->threshold =3D INT_MAX;
+> >>>        }
+> >>>
+> >>> +     if (polling_delay && (passive_delay > polling_delay || !passive=
+_delay))
+> >>> +             passive_delay =3D polling_delay;
+> >>
+> >> Given this is a system misconfiguration, it would make more sense to
+> >> bail out with -EINVAL. Assigning a default value in the back of the
+> >> caller will never raise its attention and can make a bad configuration
+> >> staying for a long time.
+> >
+> > This works except for the case mentioned below.
+> >
+> > I think that passive_delay > polling_delay can trigger a -EINVAL, but
+> > (polling_delay && !passive_delay) cannot do it because it is regarded
+> > as a valid case as per the below.
+>
+> Right I can see ATM only this as an illogic combination:
+>
+>         polling_delay && passive_delay &&
+>         (polling_delay < passive_delay)
+>
+> >> That said, there are configurations with a passive delay set to zero b=
+ut
+> >> with a non zero polling delay. For instance, a thermal zone mitigated
+> >> with a fan, so active trip points are set. Another example is when the=
+re
+> >> is only critical trip points for a thermal zone.
+> >>
+> >> Actually there are multiple combinations with delays value which may
+> >> look invalid but which are actually valid.
+> >>
+> >> For example, a setup with polling_delay > 0, passive_delay =3D 0, acti=
+ve
+> >> trip points, cooling map to this active trips, passive trip points
+> >> without cooling map.
+> >>
+> >> IMHO, it is better to do the configuration the system is asking for,
+> >> even if it sounds weird
+> >
+> > Except that it doesn't work as expected because if passive_delay =3D 0,
+> > polling is paused when tz->passive is set.
+>
+> Yes, but as there is no cooling map, there is no governor action, thus
+> tz->passive is never set.
 
-It should not change anything.  I don't see how inode->i_security can be
-NULL and when such an inode can be passed to an LSM hook.
+In current linux-next, it is set when a passive trip is crossed on the way =
+up.
 
-> 
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 9c3fb2f60e2a..a8658ebcaf0c 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1613,7 +1613,8 @@ static void inode_free_by_rcu(struct rcu_head *head)
->   */
->  void security_inode_free(struct inode *inode)
->  {
-> -	call_void_hook(inode_free_security, inode);
-> +	struct rcu_head *inode_blob = inode->i_security;
-> +
->  	/*
->  	 * The inode may still be referenced in a path walk and
->  	 * a call to security_inode_permission() can be made
-> @@ -1623,9 +1624,11 @@ void security_inode_free(struct inode *inode)
->  	 * leave the current inode->i_security pointer intact.
->  	 * The inode will be freed after the RCU grace period too.
->  	 */
-> -	if (inode->i_security)
-> -		call_rcu((struct rcu_head *)inode->i_security,
-> -			 inode_free_by_rcu);
-> +	if (inode_blob) {
-> +		call_void_hook(inode_free_security, inode);
-> +		inode->i_security = NULL;
+> So we can have a passive polling equal to zero
+> without being illegal as no passive mitigation will happen.
+>
+> The passive delay is really there only if there is a passive cooling
+> device mapped to a passive trip point.
 
-If a path walk is ongoing, couldn't this lead to an LSM's security check
-bypass?  Shouldn't we call all the inode_free_security() hooks in
-inode_free_by_rcu()?  That would mean to reserve an rcu_head and then
-probably use inode->i_rcu instead.
+Well, shouldn't user space get notified more often when passive
+cooling is under way?
 
-I think your patch is correct though.  Could you please send a full
-patch?
+> The polling delay is in charge of mitigating the active cooling device
+> like a fan. So it is possible to mix an active trip point to mitigate
+> with a fan and then put at a higher temperature a passive trip point
+> with a higher sampling resolution.
 
-> +		call_rcu(inode_blob, inode_free_by_rcu);
-> +	}
->  }
+But it is not correct to pause polling when tz->passive is set.
 
