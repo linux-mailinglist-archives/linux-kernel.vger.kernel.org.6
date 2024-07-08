@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-244432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AEF92A434
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1789892A436
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CBFFB2253D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A651F21F02
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6913D639;
-	Mon,  8 Jul 2024 13:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E8313B7BE;
+	Mon,  8 Jul 2024 13:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVlpEur2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N7AAqXq8"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD2C137923;
-	Mon,  8 Jul 2024 13:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A9013B7A9
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447114; cv=none; b=Mwcn/sOVkxDTGCuyQXUNKWxvSutl0nuWbANU4XmAl/uf/9wk7FfuBF0b9W6YH8XkHyySbIzOBV6LnMKZ5BzTm1fRpKMC8vfoMPyWhn2qi/cB1qxHGmPtbSzFhaLlTO9l4xegRdPZQkXvfhR7Xw3IPg6vzkDWxxxQ7zptumMet+Y=
+	t=1720447129; cv=none; b=s5jSOriiNgIw9rG0Hk2392bFeKB+wU2OMG7PM9XvfnfLwgH2dNxIn7tnvnwfYv/6d3w0NU1BosUMKloCnCUXrECxWBWdG2W4q9LArOGDKyw8tdUkt6HhTXETbDdvmqjAFzEsEBQIHqVwpybEyG21Uw3k8JQ1ZTZEwJl1y8E0euM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447114; c=relaxed/simple;
-	bh=HVmCLKs7Dxyy/ms3P7PoXodZyzMQsqaqhS3Jq50CZ44=;
+	s=arc-20240116; t=1720447129; c=relaxed/simple;
+	bh=DPDcoM8CC8jvCSEhQCQlhv6vFfsOT5R303uBcZoIJVM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uyLXDwP6YkLIMYEoXNSM/8wGucSHXPQQTIyCBVWc/sLOiee3REKrg3Urq0fNT+wjuEPfVPnvcbz3MlJDoJfXf+SIY9J4cEZL0Y/xSNGHWRUQK/qjW2TK8tajfA/nRm1f1BcaFQJ1zgELaHH4JUJc6Hv1HpHDeOcj5m/GBZt/eko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVlpEur2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8740C32786;
-	Mon,  8 Jul 2024 13:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720447114;
-	bh=HVmCLKs7Dxyy/ms3P7PoXodZyzMQsqaqhS3Jq50CZ44=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iVlpEur2h3EdCJrCH5veolHk4TjgbIw7fRKPpzxzNsNPkV5tsmSXc+VQedmb3wfg7
-	 AyL1oAc5HQVgJdLGWp0U6kuT8yr2wXJkqI+VxWQdkd3oepjwdZpnXw5QOAlFGX/MCq
-	 0Aaj3XPM38ZHtwuPmbXRssWyQmMm5UvJkFp5yiDvm6QQsQgQapmF28q44Z/JwUzled
-	 x0f8sOxKhZCee6vBkwTDX9ya99iAlNkIXsxPHE/giQdBHRxZz05jFVAxj8hztSyceI
-	 sdotTNBEm0iHAYaGkaJlgT/ylD0VOv9gk0IUWj9aVDOFmwNFoB/DEBSLGf93b+JaX7
-	 lK5KLZgTTEPHw==
-Message-ID: <9d53eba5-e4bc-4a98-bd26-e37eb61d56dc@kernel.org>
-Date: Mon, 8 Jul 2024 15:58:30 +0200
+	 In-Reply-To:Content-Type; b=bcoP/Stb8Uxs0r1CXHUzEG31El0I39Y2bkYtz3yZ+odqmEZ57a9NcsPPlA1q16dFm3f+oVjDtZZfpD6TPHUQ25IaWkVfLla06mpaAsH5SvdQcI/rNqvouyKS5ZQQqpfRU3MDL6MCHGPKo7df4dnFYCkDnqYmJPf9dlU0fnre3LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N7AAqXq8; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52e9c6b5a62so4356620e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 06:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720447125; x=1721051925; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z2aXk52r/aGzZ3te3K9Jzl6AoOV8NP7cU/QYGC7AXUU=;
+        b=N7AAqXq8QKcJBbeBFg3etgLGK3CSc1Rn8flVHtKFA+yfpk5J9m+laslMxhWUTaUNFS
+         H+YhgItXmimr1qSpC/4EtNrH2sXxY2Oi8hq0EMKn0nVkRZk9983elJStzPi9IdaH2BWf
+         zkvi9aOlToW/rE4WPS4qdz5WgPzQ7p9U1VLbXi+dz5EVacUAlQ/zqtDbbhfLO+DvFtx1
+         E0D43HJ1us1EIwdbBpjtOkQwBYPp0cDdU55ZH+5YLhKt5i5p5VoyCDxZKkNL6CrbO+5h
+         mVkHTWBGET7q9l86w/mTBSPuQB8llWoCBQX/JLcYf0c1V9pOaXAWR8Ulz30yFwYe12/V
+         QaYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720447125; x=1721051925;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z2aXk52r/aGzZ3te3K9Jzl6AoOV8NP7cU/QYGC7AXUU=;
+        b=g89iTvtDIn/3vsFs34dsDZ90XLhONDdeX5OWGndGlKOQQg9BJOxqAu1wOLAi3HLLS4
+         UPrSFLQfyiLeuefs+lmfu9GYhBTUIb3luSQbxmere8Y/dbIbCp3YXCfQpGcGJK0TIPuv
+         6h3Ke1hNQ7m3JOivg6IJ1gdQww436YNXXrxayVjmquvml5GcYykQNe/IivMeT4PLKmW9
+         INnYHxYwRSOAi+Trzm7gdEO5gyJhV+h83lilHTWnM/JN1CbarZ/UeR54ZyyyrJ1OwwgO
+         u99R61ZOmF+71M5f0TQ3tclSB8nqd/Mf4VW2Js/OEESWEeyujHtE1UTBLt+YNaEPguNp
+         IeAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUS8bZZeVYumHaAWyaGdEspN/6Ysa0PYwOy26e8jZOOzqmzWO/uKfasFWoWm15AqLFedmz6sl7tsXsu0L+Usx9GoDUZyE4/LeFF0qnS
+X-Gm-Message-State: AOJu0YzhWY+zCddVyg4UsNdwtBj6AVtcb1NSXSxs/mJsP82yTIFJpyGp
+	oDGbUkfOW+EBeRzIDz397bu0J0TnLlAnuWAI8OR8/Pzafdp4lCl3+znDa527j94=
+X-Google-Smtp-Source: AGHT+IFgb9DNOdpJeTNRb41kwxqf/5nzVESIqIDomzdLxIbT0RDkHTOABF6fJOuR/ZmrXxvOMSs4KA==
+X-Received: by 2002:ac2:4c33:0:b0:52e:9958:1a66 with SMTP id 2adb3069b0e04-52ea064c58cmr7433160e87.23.1720447125475;
+        Mon, 08 Jul 2024 06:58:45 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42668b87496sm47911185e9.8.2024.07.08.06.58.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 06:58:44 -0700 (PDT)
+Message-ID: <a5188c05-cd06-4678-8fb4-1f0b55c18b04@linaro.org>
+Date: Mon, 8 Jul 2024 15:58:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,78 +75,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] dt-bindings: regulator: pca9450: Make interrupt
- optional
-To: Frieder Schrempf <frieder@fris.de>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Robin Gong <yibin.gong@nxp.com>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, Joy Zou
- <joy.zou@nxp.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240708084107.38986-1-frieder@fris.de>
- <20240708084107.38986-3-frieder@fris.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 2/2] thermal: core: Add sanity check for polling_delay
+ and passive_delay
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>
+References: <2746673.mvXUDI8C0e@rjwysocki.net>
+ <4940808.31r3eYUQgx@rjwysocki.net>
+ <402ede79-5eda-48fc-8eb8-5d89ffe6bd41@linaro.org>
+ <CAJZ5v0jgTN+6WC9nPGCidMnMjSsYMcMe+m=8Ge7Hr--utefM2Q@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240708084107.38986-3-frieder@fris.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0jgTN+6WC9nPGCidMnMjSsYMcMe+m=8Ge7Hr--utefM2Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 08/07/2024 10:40, Frieder Schrempf wrote:
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On 08/07/2024 15:38, Rafael J. Wysocki wrote:
+> On Mon, Jul 8, 2024 at 2:12 PM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 05/07/2024 21:46, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> If polling_delay is nonzero and passive_delay is 0, the thermal zone
+>>> will use polling except when tz->passive is nonzero, which does not make
+>>> sense.
+>>>
+>>> Also if polling_delay is nonzero and passive_delay is greater than
+>>> polling_delay, the thermal zone temperature will be updated less often
+>>> when tz->passive is nonzero.  This does not make sense either.
+>>>
+>>> Ensure that none of the above will happen.
+>>>
+>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>> ---
+>>>
+>>> v1 -> v2: The patch actually matches the changelog
+>>>
+>>> ---
+>>>    drivers/thermal/thermal_core.c |    3 +++
+>>>    1 file changed, 3 insertions(+)
+>>>
+>>> Index: linux-pm/drivers/thermal/thermal_core.c
+>>> ===================================================================
+>>> --- linux-pm.orig/drivers/thermal/thermal_core.c
+>>> +++ linux-pm/drivers/thermal/thermal_core.c
+>>> @@ -1440,6 +1440,9 @@ thermal_zone_device_register_with_trips(
+>>>                td->threshold = INT_MAX;
+>>>        }
+>>>
+>>> +     if (polling_delay && (passive_delay > polling_delay || !passive_delay))
+>>> +             passive_delay = polling_delay;
+>>
+>> Given this is a system misconfiguration, it would make more sense to
+>> bail out with -EINVAL. Assigning a default value in the back of the
+>> caller will never raise its attention and can make a bad configuration
+>> staying for a long time.
 > 
-> The interrupt is optional in hardware and not connected on
-> some boards. Make it optional in the binding.
+> This works except for the case mentioned below.
 > 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> ---
+> I think that passive_delay > polling_delay can trigger a -EINVAL, but
+> (polling_delay && !passive_delay) cannot do it because it is regarded
+> as a valid case as per the below.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Right I can see ATM only this as an illogic combination:
 
-Best regards,
-Krzysztof
+	polling_delay && passive_delay &&
+	(polling_delay < passive_delay)
+
+>> That said, there are configurations with a passive delay set to zero but
+>> with a non zero polling delay. For instance, a thermal zone mitigated
+>> with a fan, so active trip points are set. Another example is when there
+>> is only critical trip points for a thermal zone.
+>>
+>> Actually there are multiple combinations with delays value which may
+>> look invalid but which are actually valid.
+>>
+>> For example, a setup with polling_delay > 0, passive_delay = 0, active
+>> trip points, cooling map to this active trips, passive trip points
+>> without cooling map.
+>>
+>> IMHO, it is better to do the configuration the system is asking for,
+>> even if it sounds weird
+> 
+> Except that it doesn't work as expected because if passive_delay = 0,
+> polling is paused when tz->passive is set.
+
+Yes, but as there is no cooling map, there is no governor action, thus 
+tz->passive is never set. So we can have a passive polling equal to zero 
+without being illegal as no passive mitigation will happen.
+
+The passive delay is really there only if there is a passive cooling 
+device mapped to a passive trip point.
+
+The polling delay is in charge of mitigating the active cooling device 
+like a fan. So it is possible to mix an active trip point to mitigate 
+with a fan and then put at a higher temperature a passive trip point 
+with a higher sampling resolution.
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
 
