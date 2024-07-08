@@ -1,113 +1,224 @@
-Return-Path: <linux-kernel+bounces-244668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A928A92A797
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:49:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC5C92A79C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8801F21601
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:49:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F5C1F21339
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72392146586;
-	Mon,  8 Jul 2024 16:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830D21474D4;
+	Mon,  8 Jul 2024 16:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JarX0xlZ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CKwtyjKJ"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D2B1D69E
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CB3142E92
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720457382; cv=none; b=YPNKd3eCtzjj2JdMNcN23ZQJZNxSC8qBmOExIa/W9wBnR5JiU0yzkR6uG9zHJE8F8G1DhkHm6D0ruQ4HytJcgeWVJ6AGBwxqT5aOE/p8OoMIubbwVxG7YSZGAtKoIdSEoAZpL3oDEzLYuHGhN/iWVfv519E6p7TvzjHHl7AKUs0=
+	t=1720457490; cv=none; b=GVjq6/q/qEZSP8UQSN6O54U9yiOR5HY+Vz7iwgbfSU3SiZa7WmE0N3n20jNCV7jepyro5nwppzDN5N4bL5EQ2FjJmpCS1z1YOoL8lfO3UdLjlOJ5AYXfJXVbfqGGjTrj7LSco1Xlu9HVrem5Ni2zrIP+f3OGoiwTkGYX7C4TLHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720457382; c=relaxed/simple;
-	bh=38O5tYiUeu6BQ0UCErCZy/FI2MURCpJPkePGIDgKNxM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q3KntVPqBjRYfbzgw/mO0/wNbMMl1FaFScD3ywfxz/S1H3lp8FmYnQQ/aAHAVOwYPJr7vuTYDZ4i0BgpzwMbgai2ZfEXKEswZVNfJFcUepfgsFQcUGhwrbNKdSOB+mG0zRMQ7CHqG75uyEzYzFcrRK5hCnFGqdJdqbYkAsbHcfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JarX0xlZ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4266f535e82so1749735e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:49:40 -0700 (PDT)
+	s=arc-20240116; t=1720457490; c=relaxed/simple;
+	bh=bT7f63TQT0nCVI2e044tDWWSBtyBG+UKBLYM/Q2ACJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pRnwQ0/WwYuaE/PR/XIb/l1A7YWtY3yGlbTSdJZnWgKTufttTMkvk0iJxPPCXe7bEbaYWgly1WOdt//0LOJ4wkhSxt/dkQxWa3adPmNsk/ovMjA0M0TF7evagzDAMWErp0hKuUr7PYpMSxyl5IYHGEwW9k2RFqDGzpQvX3/2rYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CKwtyjKJ; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fb67f59805so3985ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:51:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720457379; x=1721062179; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rp3R4cib1Zeaxm8jFtF9C6khZfb6CGKVgyOo5y3pEDw=;
-        b=JarX0xlZfU62RV2K3VJZJ3kZn18cZeLZTK04ZSh/a0Gw33MlnHHvmBZ9ruZ1zknyUg
-         8e1tK+EnB6MaKfmQBxt2Px7fuGuu67lC3htV5lI8UIxqFxWD/WNyvxSERySAl+hbdxgr
-         srE6W1w3n95VMzM4yIWvyCfNrCEsmvtpk4786PGnFLU609bux1TKQf3OmvNdgIC+xE+o
-         Z0uQJsiQEizTxLQ0TkOvWSEABm+ZEEjz/HqQA0Q4FnraHNZpEb0QnSYayTJzbyQMxohh
-         f6Cyeii8WwGHsxZThxR0uvCCp0Lbme7jHcoouETvo9agTdrLhWjKIwdeGutt4hr7Iuta
-         UEbQ==
+        d=google.com; s=20230601; t=1720457488; x=1721062288; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZTLNn4LGmic6uz3SST2MPov4JwAtgFvBXVkhyUNj6Ls=;
+        b=CKwtyjKJf+SJzdT9BMAE2zgNNJESaz26MmRxY5V9XkOp6g8TDVYbg92xAJq0Bqa1D5
+         pQpO+c+aAm7YTNq5IApktSnyKs6GE4W+6Ytl2mb/hzEaJsFvpVpeQCb3MkjM2ghmE9uG
+         MJGEqG5Ym5YL/YW5cltx62c3fQJgEFuoxQz3JOJlEr9JK0M/8vwfIkpfiIuFB16I1HCA
+         wi7rnEuLPbhEhmH9F93rjJTWu/lzkc1kS/bOsp6vsMNFRtAkvovkd63ykGSndybQeHh7
+         F9WpEEGz4VVJvoz1zE4Fe/Q/JPCu2vlkTNA+sSLSoCfxMb1+0qkK0qG/LvsprA/IANXo
+         AzJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720457379; x=1721062179;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rp3R4cib1Zeaxm8jFtF9C6khZfb6CGKVgyOo5y3pEDw=;
-        b=d1YdZYaEvTyW/400GsX20Pre9VXTBpmv5QfVFkk1d7qUhMKps4zataZAnjRM0pljds
-         sPO71tfXy75V94vs7TilwiJlYG6LUKywF9/fGFJmQEe+miCiDK6wiNy+R4DPbDpO1W7c
-         5QTu8Rq7FKmOkGITEbFmmZvP86eehRPx6Kk3q8nGOVXNy++tFpekJGUZUdYsskosqRvj
-         A+r4fC1IwXTrV1EviFkIUTZ8ulvN7b+4tSW/9hihhsHP806cn631U1L4TNztUhnl0YVW
-         5Ad0F60pvdjDbjVxEwBb6NyAS/J8A5njNUcuLYTqZyahWBs7P6Ma78hrQCW4Tc3vUwiy
-         sBDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgT1aq+f9yOs7oDJJG/mouXulblA1BTIZjV57WlJDgswxMwjJGRlNgmSVErlxWxSqihEiR0GPCXhA/pVJhh9kqFC8FuFyDEACNtH+b
-X-Gm-Message-State: AOJu0YxaKVhqo2Ib2hGCCVRV0K+pVnQgrkHZ/BrBLVDtw8wWNph35svU
-	l9NyZBClmxV8TNCxQCYS2fdZmpWlzS9TD4PPffoVU7UeIR/4pXIp6pvKJvPD+Nw=
-X-Google-Smtp-Source: AGHT+IFKead1I13aWVfFHtBOYYoWJyJxwmMF203zfTMM0cnTLZDUD7Yzpi8BOWx2qpDlTcn/ijTd8Q==
-X-Received: by 2002:a05:600c:1587:b0:426:5e91:3920 with SMTP id 5b1f17b1804b1-426708f1df1mr1071645e9.29.1720457379381;
-        Mon, 08 Jul 2024 09:49:39 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:cf24:cce:17df:12ab? ([2a05:6e02:1041:c10:cf24:cce:17df:12ab])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4266f7361b5sm5261415e9.29.2024.07.08.09.49.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 09:49:39 -0700 (PDT)
-Message-ID: <2b946a68-dcdd-4a1e-b7c3-416725033c2e@linaro.org>
-Date: Mon, 8 Jul 2024 18:49:38 +0200
+        d=1e100.net; s=20230601; t=1720457488; x=1721062288;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZTLNn4LGmic6uz3SST2MPov4JwAtgFvBXVkhyUNj6Ls=;
+        b=KqRSQlWc+Bp5G/gZlaVOSu4BpS3//YAUuYp4UEOgCIl6f38gdMOyKMUPxwyITO+5w+
+         5a994osnmmURxqrrm347X/C5msPPFpDA2GWooyiuMrcTM3UCbc5LjBcrTLFdbgydJ3Se
+         yxK3NCtn5uud7AJRmOSdt9+JgqG+TRUC53eu8A3PlHmlkeYyd2ZiBc2BtkYK8Jw2mmKy
+         oOlpfEUfC1bC7fM6Ex95kXWu5Hazr2//n047/FThUZZEf1xddxnv5rn4pwI7RWLuTf4E
+         f1E8bRqESisc3/A/sEy1nGAjPnZZkNRJVtPmYG3vuFyQ976BxdKr2ahS0DDZitC/tril
+         Apug==
+X-Forwarded-Encrypted: i=1; AJvYcCXAUsS2Hbbqj2CObbvZaPxh53yoYQ68iBMevyeZ6Mv5R3BQrMeVrJDCHxoisB5L3vXN8oWZBunuVKDwk4tOZXoUn1pBTNLsZjJYSCaO
+X-Gm-Message-State: AOJu0YydMHoSdB6H53XfsA0S+YNWEOy1SW8uLgU6lqvvkV6nNOZSsZ7D
+	WFvl69dzkR2l8CYV7STYUJjj1v0BKCyysjq9GXnXks5B/6m0f0AN+CRMJkHltqSJ5TDr5k3VNuv
+	p3NNxqR5ylugbqXof2Z9hinIG21QMfLKpm1Ls
+X-Google-Smtp-Source: AGHT+IGMZBuODG5Qg+BsiQ0JMRrEsApbDVZodAf/W97JpFbZBYOVdGRDLcd2wERkfLVJkW8bcAp1r3ymFzBf2tplW5Q=
+X-Received: by 2002:a17:903:6d0:b0:1fa:cd15:985e with SMTP id
+ d9443c01a7336-1fb30b895c8mr9496525ad.6.1720457488179; Mon, 08 Jul 2024
+ 09:51:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: sp804: Make user selectable
-To: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- David Abdurachmanov <david.abdurachmanov@gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Ross Burton <ross.burton@arm.com>
-References: <20240529-arm64-vexpress-sp804-v2-1-c542a80af33a@kernel.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240529-arm64-vexpress-sp804-v2-1-c542a80af33a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAOUHufYGqbd45shZkGCpqeTV9wcBDUoo3iw1SKiDeFLmrP0+=w@mail.gmail.com>
+ <CADrL8HVHcKSW3hiHzKTit07gzo36jtCZCnM9ZpueyifgNdGggw@mail.gmail.com>
+ <ZmioedgEBptNoz91@google.com> <CADrL8HU_FKHTz_6d=xhVLZFDQ_zQo-zdB2rqdpa2CKusa1uo+A@mail.gmail.com>
+ <ZmjtEBH42u7NUWRc@google.com> <CADrL8HUW2q79F0FsEjhGW0ujij6+FfCqas5UpQp27Epfjc94Nw@mail.gmail.com>
+ <ZmxsCwu4uP1lGsWz@google.com> <CADrL8HVDZ+m_-jUCaXf_DWJ92N30oqS=_9wNZwRvoSp5fo7asg@mail.gmail.com>
+ <ZmzPoW7K5GIitQ8B@google.com> <CADrL8HW3rZ5xgbyGa+FXk50QQzF4B1=sYL8zhBepj6tg0EiHYA@mail.gmail.com>
+ <ZnCCZ5gQnA3zMQtv@google.com> <CADrL8HW=kCLoWBwoiSOCd8WHFvBdWaguZ2ureo4eFy9D67+owg@mail.gmail.com>
+In-Reply-To: <CADrL8HW=kCLoWBwoiSOCd8WHFvBdWaguZ2ureo4eFy9D67+owg@mail.gmail.com>
+From: James Houghton <jthoughton@google.com>
+Date: Mon, 8 Jul 2024 09:50:51 -0700
+Message-ID: <CADrL8HUv6T4baOi=VTFV6ZA=Oyn3dEc6Hp9rXXH0imeYkwUhew@mail.gmail.com>
+Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
+To: Sean Christopherson <seanjc@google.com>
+Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29/05/2024 21:48, Mark Brown wrote:
-> The sp804 is currently only user selectable if COMPILE_TEST, this was
-> done by commit dfc82faad725 ("clocksource/drivers/sp804: Add
-> COMPILE_TEST to CONFIG_ARM_TIMER_SP804") in order to avoid it being
-> spuriously offered on platforms that won't have the hardware since it's
-> generally only seen on Arm based platforms.  This config is overly
-> restrictive, while platforms that rely on the SP804 do select it in
-> their Kconfig there are others such as the Arm fast models which have a
-> SP804 available but currently unused by Linux.  Relax the dependency to
-> allow it to be user selectable on arm and arm64 to avoid surprises and
-> in case someone comes up with a use for extra timer hardware.
+On Fri, Jun 28, 2024 at 7:38=E2=80=AFPM James Houghton <jthoughton@google.c=
+om> wrote:
+>
+> On Mon, Jun 17, 2024 at 11:37=E2=80=AFAM Sean Christopherson <seanjc@goog=
+le.com> wrote:
+> >
+> > On Mon, Jun 17, 2024, James Houghton wrote:
+> > > On Fri, Jun 14, 2024 at 4:17=E2=80=AFPM Sean Christopherson <seanjc@g=
+oogle.com> wrote:
+> > > > Ooh!  Actually, after fiddling a bit to see how feasible fast-aging=
+ in the shadow
+> > > > MMU would be, I'm pretty sure we can do straight there for nested T=
+DP.  Or rather,
+> > > > I suspect/hope we can get close enough for an initial merge, which =
+would allow
+> > > > aging_is_fast to be a property of the mmu_notifier, i.e. would simp=
+lify things
+> > > > because KVM wouldn't need to communicate MMU_NOTIFY_WAS_FAST for ea=
+ch notification.
+> > > >
+> > > > Walking KVM's rmaps requires mmu_lock because adding/removing rmap =
+entries is done
+> > > > in such a way that a lockless walk would be painfully complex.  But=
+ if there is
+> > > > exactly _one_ rmap entry for a gfn, then slot->arch.rmap[...] point=
+s directly at
+> > > > that one SPTE.  And with nested TDP, unless L1 is doing something u=
+ncommon, e.g.
+> > > > mapping the same page into multiple L2s, that overwhelming vast maj=
+ority of rmaps
+> > > > have only one entry.  That's not the case for legacy shadow paging =
+because kernels
+> > > > almost always map a pfn using multiple virtual addresses, e.g. Linu=
+x's direct map
+> > > > along with any userspace mappings.
+>
+> Hi Sean, sorry for taking so long to get back to you.
+>
+> So just to make sure I have this right: if L1 is using TDP, the gfns
+> in L0 will usually only be mapped by a single spte. If L1 is not using
+> TDP, then all bets are off. Is that true?
+>
+> If that is true, given that we don't really have control over whether
+> or not L1 decides to use TDP, the lockless shadow MMU walk will work,
+> but, if L1 is not using TDP, it will often return false negatives
+> (says "old" for an actually-young gfn). So then I don't really
+> understand conditioning the lockless shadow MMU walk on us (L0) using
+> the TDP MMU[1]. We care about L1, right?
 
-Would it make sense to add the option in the platform so it selects the 
-timer ?
+Ok I think I understand now. If L1 is using shadow paging, L2 is
+accessing memory the same way L1 would, so we use the TDP MMU at L0
+for this case (if tdp_mmu_enabled). If L1 is using TDP, then we must
+use the shadow MMU, so that's the interesting case.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> (Maybe you're saying that, when the TDP MMU is enabled, the only cases
+> where the shadow MMU is used are cases where gfns are practically
+> always mapped by a single shadow PTE. This isn't how I understood your
+> mail, but this is what your hack-a-patch[1] makes me think.)
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+So it appears that this interpretation is actually what you meant.
 
+>
+> [1] https://lore.kernel.org/linux-mm/ZmzPoW7K5GIitQ8B@google.com/
+>
+> >
+> > ...
+> >
+> > > Hmm, interesting. I need to spend a little bit more time digesting th=
+is.
+> > >
+> > > Would you like to see this included in v6? (It'd be nice to avoid the
+> > > WAS_FAST stuff....) Should we leave it for a later series? I haven't
+> > > formed my own opinion yet.
+> >
+> > I would say it depends on the viability and complexity of my idea.  E.g=
+. if it
+> > pans out more or less like my rough sketch, then it's probably worth ta=
+king on
+> > the extra code+complexity in KVM to avoid the whole WAS_FAST goo.
+> >
+> > Note, if we do go this route, the implementation would need to be tweak=
+ed to
+> > handle the difference in behavior between aging and last-minute checks =
+for eviction,
+> > which I obviously didn't understand when I threw together that hack-a-p=
+atch.
+> >
+> > I need to think more about how best to handle that though, e.g. skippin=
+g GFNs with
+> > multiple mappings is probably the worst possible behavior, as we'd risk=
+ evicting
+> > hot pages.  But falling back to taking mmu_lock for write isn't all tha=
+t desirable
+> > either.
+>
+> I think falling back to the write lock is more desirable than evicting
+> a young page.
+>
+> I've attached what I think could work, a diff on top of this series.
+> It builds at least. It uses rcu_read_lock/unlock() for
+> walk_shadow_page_lockless_begin/end(NULL), and it puts a
+> synchronize_rcu() in kvm_mmu_commit_zap_page().
+>
+> It doesn't get rid of the WAS_FAST things because it doesn't do
+> exactly what [1] does. It basically makes three calls now: lockless
+> TDP MMU, lockless shadow MMU, locked shadow MMU. It only calls the
+> locked shadow MMU bits if the lockless bits say !young (instead of
+> being conditioned on tdp_mmu_enabled). My choice is definitely
+> questionable for the clear path.
+
+I still don't think we should get rid of the WAS_FAST stuff.
+
+The assumption that the L1 VM will almost never share pages between L2
+VMs is questionable. The real question becomes: do we care to have
+accurate age information for this case? I think so.
+
+It's not completely trivial to get the lockless walking of the shadow
+MMU rmaps correct either (please see the patch I attached here[1]).
+And the WAS_FAST functionality isn't even that complex to begin with.
+
+Thanks for your patience.
+
+[1]: https://lore.kernel.org/linux-mm/CADrL8HW=3DkCLoWBwoiSOCd8WHFvBdWaguZ2=
+ureo4eFy9D67+owg@mail.gmail.com/
 
