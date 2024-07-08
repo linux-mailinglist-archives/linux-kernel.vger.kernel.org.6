@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-244704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577E492A81F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37FD492A825
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8797C1C210C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685F61C211A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCA414884F;
-	Mon,  8 Jul 2024 17:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269FF1487C5;
+	Mon,  8 Jul 2024 17:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3HDmOWM"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSVYJBJQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761F5146D74;
-	Mon,  8 Jul 2024 17:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE9BAD55;
+	Mon,  8 Jul 2024 17:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720458890; cv=none; b=LfAG03Qv9GDI7iGxeA1R7M62MlD2UyL6yaZsEBn3I4hjI+oLjlEiw9wHsxFkxt4779+3o8CeWiJEU6UftsSEqpO1dPzuiQnjsABp9XPFv7kU/LLFh3cOocHzQ8TvdOx2EYPqLL0rufUHGBBfbKDPdSXWyIPbKYwLSOAPRZu/ECY=
+	t=1720459067; cv=none; b=s8MkHOsN7rWKndcr96FRkUVs6O0cfxIjznZiskAMyRIXtWHh/g11cGGnmr5bBKPZ652SiS79WXWr75FAa0YMPYoW95aKwySci2hABEvwfipO+qFuhejENgO7aHyKX/M0yYniOgdtsbbW79L/y4vcFhQiFGOKOZJkvtsiKTtPBcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720458890; c=relaxed/simple;
-	bh=98KZVehEnsd3PhQXr987y4Edy9ytXgP3wLgPB/Ivc0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GZ4Pm1VLUVJvXWS0OROVNHaWy42oM6WzzzZDt9ChvPGyNKF8U+3RwiCp+k9xxlsmqNYVz/r1XE1giXQbbDmEoJwUeH1cMrNd5tEARJqOgeQw3jYGrASwRLSA1vieoqCUlRsLdkYUf5drjoj4kj1RfXBi6eEcp0IX+6qWmb/yM0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3HDmOWM; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ee8911b451so52117271fa.2;
-        Mon, 08 Jul 2024 10:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720458886; x=1721063686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AH6LUdcBA2pznTYvrbFIdQvAbh5slbBjvxCpyNIT8HU=;
-        b=e3HDmOWMCNOKg2k+JYr3F5uQkV3ja3LD3R9d8yoD1NJxM6UZjlcNMzhfJ981sYkeZi
-         EwLjgFS07FfvIeOCkFHv6nHaCrnz8kzvVwQSIP2fLDA86QoNhXhsp7BK6h2e+Pe74WVO
-         ObUlWPdf4u1hlbdRR3vZxt6vvkeH3UhD7SRpA8BG9PcYUc3SaOdLeWbu8tHCPXKFq1jd
-         cmS1sZinnVRLegYqAfbrgOLZoBEuiE48wFnF4oIwRYnnKNwb/Q5b65N0hNumvISk4/BD
-         a0rSdp4iB/me7BemB8aeML7otIh32DewcvhOWWqsLkuQmBJ3apPF3Rf2JbZzTY3B0aaH
-         RUZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720458886; x=1721063686;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AH6LUdcBA2pznTYvrbFIdQvAbh5slbBjvxCpyNIT8HU=;
-        b=ItiDu4h9o26rHcftxkWryUNqaOZmtw4cnhTfeOCpvtud+EiHLh5WnvbSS6gEl78N5I
-         i6LepZya0lf+oBeLFooRbK7ce8ZMpUnkVuCQIXzq2an1kg76YyN3pdTUmXeCLFS5A40z
-         /sYdJ7ZaqjWIf6PUMAZqHONlpLifpPZ4UtqNBbRH1DvMIsD6O8kgXsj13E47fYchnwdH
-         1zPCEHdATJ7XoELqibIn96rkdzaBukt2nk8nTyU6Voc16UZbYNVWnZqt+ND3xLxQ1Nvz
-         Yc4EaPGGVz1LqjNRIj0m3XYpxhH39CmCVO5Sl0sDqjQ+0/Rgasd7Zja/jZ/0KVOV4/ia
-         954Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVlzTvlLUstUPrx+4UHElc11K2hxXZqynQTgjBCdq+uBi8Hjh6MdZd8DIq4f3/lRHCrnxBaAvwTz7UfkBE+aTTb+00hn0uLdcBihMvNmrhVsP09JcNIieeUTUmde0cncaq7jBseMVw=
-X-Gm-Message-State: AOJu0YyA8hCYdgCnCG5+dnb2hrMAY1cQ3mjE9oTrHf6xxH8NeE7tBsqt
-	d1pIRtCZkYu639IrcSqCmj0loWDMjxNedHwoCPJ37T3s+w3m+aLa
-X-Google-Smtp-Source: AGHT+IEN5DfkubDT5gfgqNhNr0gKh0isbiFIhj+wDr5xuXU5SvAS70bUQlCMHGeHRici2j9JlCnHmQ==
-X-Received: by 2002:a05:651c:4c9:b0:2ee:8171:8e13 with SMTP id 38308e7fff4ca-2eeb318a3a4mr2723491fa.44.1720458885961;
-        Mon, 08 Jul 2024 10:14:45 -0700 (PDT)
-Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5a27sm6034055e9.23.2024.07.08.10.14.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 10:14:45 -0700 (PDT)
-From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
-	"'Rafael J . Wysocki'" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: sti: fix build warning
-Date: Mon,  8 Jul 2024 19:14:34 +0200
-Message-ID: <20240708171434.111623-1-rgallaispou@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720459067; c=relaxed/simple;
+	bh=ZUZObWhSbMSxsYVODKwPis9fWvoPX61U5GmyBYrA5Do=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=kXGZmPxkMnSE58fTBMC3LjKsZOS2uPxhQqq5IIMu2V8cgOYEl7SPV+WB2iZ/0V9Ge15iN8KLvOBmCXc8Vt3p1YZe4aKZbMU3WmHuc9FS/d9jiQ/TuOxaoieDX2q9e3TXkzpE7BZJ66Hij++PAZCZNFgVDg4BNNuPa5dM2uyiJPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSVYJBJQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1076C116B1;
+	Mon,  8 Jul 2024 17:17:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720459066;
+	bh=ZUZObWhSbMSxsYVODKwPis9fWvoPX61U5GmyBYrA5Do=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=YSVYJBJQyryGmTGrjhJ6DPlK1HX9PujCxuyVTwz8FTMFuigd8FfK/km4TVmQNoAtw
+	 4xiTYi+FWekUIPrbz2uUvQzdkqoi8eq0XDyLb913qvE85f5QzWUsVE/Vgnus0UnQFp
+	 7UqCj8q2kG3etfZTY0uZJ0ONXDPBtitTjbtZIV7fsArracR0c2J52+qaCsgcdtYR3I
+	 o0K4W9EvdrHeGcaLYCDoYCHpzrH+GtwT8mtNNqmptzyMZExpuQGxWFclH5TIVlggF2
+	 eI8aBEuuvfp+ZkzroBGoYy3Nhi1qDo9AV45bU35BMhkP8KcE1oQmvYSBDG6fo3H+qs
+	 qEfVrKJJA/1gQ==
+Date: Mon, 08 Jul 2024 11:17:45 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Farouk Bouabid <farouk.bouabid@cherry.de>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+ Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>, Peter Rosin <peda@axentia.se>, 
+ Guenter Roeck <linux@roeck-us.net>, linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240708-dev-mule-i2c-mux-v5-3-71446d3f0b8d@cherry.de>
+References: <20240708-dev-mule-i2c-mux-v5-0-71446d3f0b8d@cherry.de>
+ <20240708-dev-mule-i2c-mux-v5-3-71446d3f0b8d@cherry.de>
+Message-Id: <172045906545.3469012.7420722768425918930.robh@kernel.org>
+Subject: Re: [PATCH v5 3/8] dt-bindings: i2c: add support for tsd,mule
 
-Building this driver yields the following:
 
-.../drivers/cpufreq/sti-cpufreq.c:215:50: warning: ‘%d’ directive output may be truncated writing between 1 and 10 bytes into a region of size 2 [-Wformat-truncation=]
-  215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
-      |                                                  ^~
-.../drivers/cpufreq/sti-cpufreq.c:215:44: note: directive argument in the range [0, 2147483647]
-  215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
-      |                                            ^~~~~~~~~
-.../drivers/cpufreq/sti-cpufreq.c:215:9: note: ‘snprintf’ output between 7 and 16 bytes into a destination of size 7
-  215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On Mon, 08 Jul 2024 18:12:14 +0200, Farouk Bouabid wrote:
+> Theobroma Systems Mule is an MCU that emulates a set of I2C devices,
+> among which is an amc6821 and other devices that are reachable through
+> an I2C-mux. The devices on the mux can be selected by writing the
+> appropriate device number to an I2C config register (amc6821: reg 0xff)
+> 
+> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
+> ---
+>  .../devicetree/bindings/i2c/tsd,mule.yaml          | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+> 
 
-Fix the buffer size to avoid the warning at build time.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
----
- drivers/cpufreq/sti-cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+yamllint warnings/errors:
 
-diff --git a/drivers/cpufreq/sti-cpufreq.c b/drivers/cpufreq/sti-cpufreq.c
-index 1ffa23dd8907..8e2e703c3865 100644
---- a/drivers/cpufreq/sti-cpufreq.c
-+++ b/drivers/cpufreq/sti-cpufreq.c
-@@ -18,7 +18,7 @@
- #include <linux/regmap.h>
- 
- #define VERSION_ELEMENTS	3
--#define MAX_PCODE_NAME_LEN	7
-+#define MAX_PCODE_NAME_LEN	16
- 
- #define VERSION_SHIFT		28
- #define HW_INFO_INDEX		1
--- 
-2.45.2
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/i2c/tsd,mule.example.dtb: /example-0/i2c/fan@18/i2c-mux: failed to match any schema with compatible: ['tsd,mule-i2c-mux']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240708-dev-mule-i2c-mux-v5-3-71446d3f0b8d@cherry.de
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
