@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-244845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C3D92AA3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:00:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9EC92AA40
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19BDC1F22EE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:00:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FEC11C216E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4BF21103;
-	Mon,  8 Jul 2024 20:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6EE2233A;
+	Mon,  8 Jul 2024 20:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="TgsODtK7"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NDj5Ntu9"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AAC7494;
-	Mon,  8 Jul 2024 20:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83429208B0
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720468850; cv=none; b=u0SMjW/E3vTvxG7d2bNd5uDD3Ba0mRRHr/y7Xq0yKnejLg8BwUlyeehf2ImrsJIbF+61WjTbZIhWT+I6Wha8GrtBbJZsaZ71uIQt78u+jylXUWZGVUrC/vmvWksUALZwUs6A0t1yb2MQ7XOUf/rKcGlGRuJJoFvH96z6ruqXgYM=
+	t=1720468867; cv=none; b=BKy/u4KMrdw5HUWfaDsXgXF+fUeo5uyT8bBLQFqlwAX7SsrbG7FjRbKnUj+b+woNaoMBr/m2sQZPb+Ue3ZHFUozcSt9OVb49UOG7s4V/9A5HghTwrLCXBBszol5Y5zDVfnHzQZDraiz2Mj9lbAQw+PsIMBYVERzgNrWCpTHE9M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720468850; c=relaxed/simple;
-	bh=DuceHzwjAxWY+4M0ma5lxpxvTWPvntTV8l4RN0/Kcek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcMFDsYfi8DgG4hz6S4nJW9T9fsrMnKF/YZ1255U6JQdN3jgQI29L9KwlAroBMYR2GluxcmYDy/UCxwCHB4qnhRwApY7RXNYtRrXkI9PaIvg38LJ5w6C9ULkFTcYjvdydSeZaa7CQUybUGqrZU65SHdwsjWRC6UXnSeMbLXRu4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=TgsODtK7; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1720468840;
-	bh=DuceHzwjAxWY+4M0ma5lxpxvTWPvntTV8l4RN0/Kcek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TgsODtK7AQfwTMAzYmozq+DH13XZFmOW4jOxqdiaVgOJukWVypS3g1bsjfJzt2grZ
-	 ljl0Lu3hNw8Zse8/WbQwGJ3pT3QSKrPDBMzJ1AG+QAaX+kiqW/RV9pHyACAcTdIyh6
-	 mgbNa0g2AvsISf6W9WPlHf5ds0Lo5+p43QkpRlz0=
-Date: Mon, 8 Jul 2024 22:00:39 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: add script and target to generate pacman
- package
-Message-ID: <005e1bca-0061-452e-b8ce-0b8e99bda757@t-8ch.de>
-References: <20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net>
- <20240708055046.GB1968570@thelio-3990X>
- <9884e892-1d45-4854-971c-5963e4661a1b@t-8ch.de>
- <20240708165342.GA2417540@thelio-3990X>
+	s=arc-20240116; t=1720468867; c=relaxed/simple;
+	bh=h90f6fLktIu1HBZ8opHuxfw9LxTv8oTTaF1DCZ5fFZo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jptJfwWXWRN+O2jcsNwHqRs0FBBjGSeel3SngkEnWSIzqgFZ8UtS+w5hsgVyA9eIo9pIXPOv6gdE8W+EBoLZrkrltsoDxcLh1gT1adA4W2uIfVVYQlEV2CSeKYVFnyPtGU7Y3EuepBTwWOkTK0dcyDfxuP22b2hxWhr0GPwCJTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NDj5Ntu9; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c9a7323e62so2145297a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720468865; x=1721073665; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JKofRGCVbdBaxylVyvWkAtca/dIYQIMpyiEB7Yojpz4=;
+        b=NDj5Ntu9qFsgZCT+CouRtObh50WDTxR1AtKJ4HalD+tgfDXbiY0EdsUO+Uhc6zvu/4
+         OAJZcqA99aLrncdyJMOGMHri2BQFPrPWJTjwqggcWGXqGF5/jA6fQyvuzLEevhVJV2OS
+         XjF203eHeUobS/VKvTtYwqtE5yomRqWKqJF880u6VocuZQuPC5+VzvXxW3Ww0Ke1YVKq
+         gK5uh4bou2tmqeKVfiYCxIV4qtadwefpY0V1r/zp5MpDK1Mkrs1s5baZxoJL+GZp9CWY
+         lonwzhp/ruaniQtAlTHiBaCYSzVbpKpxlyTP85xNm6xySGAlfRl9GmGG0OVwLKuhj6yb
+         msIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720468865; x=1721073665;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JKofRGCVbdBaxylVyvWkAtca/dIYQIMpyiEB7Yojpz4=;
+        b=SlGorTWrKn7FZmWSaXUSfrXNtj/kY5WixV4NpKuPw5XZqiF5WzWcpfzfML8ouwfT0a
+         O4X+EbRMZFcd10lTgr2h/oelOPABCFJ9ajUGF0fWpzYekRfxDQvB5xBj9v4Yf01PdTb7
+         PV92FzhfJ64Z3mO6YonMf208t4If5uHV4CUH3mQOFVMtIdMgv1I+RU6mKJPlRMftuC3P
+         nzE/gcuZjg+DYXhnivZzwWawt/kJSBCQTvuouOZQeJnmQR3UHiTzr/CbUewv82q1lwQ2
+         IXwpTI8BhWSh+1UxFPBZDhdqCEGkLhb1PcIO3+xPI+0acgyHJBEHZMfvtwfC/8xm7EB5
+         vHug==
+X-Forwarded-Encrypted: i=1; AJvYcCU3M+Cy7iFP2mR+CRMx3MzkzQd6jVC29krsyrE/CRmXl8b0RIibJRegnJhDP5Gw4G/FVojszy+NmI1mB8Sb0JK0EcBQ5RrtP7bzRzG3
+X-Gm-Message-State: AOJu0YxkEfybYBu/ED5iBxnSd71ZTVGtzqzAq3ulpibXA0Tfihvhf5Cq
+	bFopCGSC2Dzdk9cytkIsZiHY9TuiHdKc3zCUkEvE7Ivy+CU4m6QP9Ja3kmke49W/EX7SL5fdK68
+	aGfrJGCVGQ9c9cUvOBFtKAzQdkioGF+8egEuMtA==
+X-Google-Smtp-Source: AGHT+IFztnCuCRrbApG1GuZVo5/3MzzM9skVkiyuEleO8prqkTs5JqjFclMOe/J0WMPG/dXnaF3KupnbFOLmkqgWyaE=
+X-Received: by 2002:a17:90a:fd83:b0:2c8:7330:68b3 with SMTP id
+ 98e67ed59e1d1-2ca35d3da20mr571322a91.39.1720468864736; Mon, 08 Jul 2024
+ 13:01:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708165342.GA2417540@thelio-3990X>
+References: <20240708075752.GF11386@noisy.programming.kicks-ass.net>
+ <alpine.DEB.2.21.2407081038350.38148@angie.orcam.me.uk> <20240708095520.GI11386@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240708095520.GI11386@noisy.programming.kicks-ass.net>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 8 Jul 2024 22:00:53 +0200
+Message-ID: <CAKfTPtBiYfoDWAA+wzk0=MiztZzWz_232fjvhnJrHz6XTgZwaQ@mail.gmail.com>
+Subject: Re: sched: Update MAINTAINERS
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, Ingo Molnar <mingo@kernel.org>, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-07-08 09:53:42+0000, Nathan Chancellor wrote:
-> On Mon, Jul 08, 2024 at 05:56:44PM +0200, Thomas Weißschuh wrote:
-> > On 2024-07-07 22:50:46+0000, Nathan Chancellor wrote:
-> > > On Sat, Jul 06, 2024 at 09:33:46AM +0200, Thomas Weißschuh wrote:
+On Mon, 8 Jul 2024 at 11:55, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Jul 08, 2024 at 10:47:18AM +0100, Maciej W. Rozycki wrote:
+> > On Mon, 8 Jul 2024, Peter Zijlstra wrote:
+> >
+> > >   Thank you for having been our friend!
+> > >
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > ---
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -19929,7 +19929,6 @@ R:  Dietmar Eggemann <dietmar.eggemann@ar
+> > >  R: Steven Rostedt <rostedt@goodmis.org> (SCHED_FIFO/SCHED_RR)
+> > >  R: Ben Segall <bsegall@google.com> (CONFIG_CFS_BANDWIDTH)
+> > >  R: Mel Gorman <mgorman@suse.de> (CONFIG_NUMA_BALANCING)
+> > > -R: Daniel Bristot de Oliveira <bristot@redhat.com> (SCHED_DEADLINE)
+> >
+> >  I think perhaps a CREDITS entry would be due rather than just dropping
+> > from MAINTAINERS.
+>
+> Ah, I was not aware of that file. Yes we can add a few lines there.
+>
+> Thank you for the suggestion.
 
-<snip>
+For the patch and this
 
-> > > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> > > > new file mode 100644
-> > > > index 000000000000..fe899c77a976
-> > > > --- /dev/null
-> > > > +++ b/scripts/package/PKGBUILD
-> > > > @@ -0,0 +1,83 @@
-> > > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > > +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
-> > > > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-> > > > +
-> > > > +pkgbase=linux-upstream
-> > > > +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
-> > > > +pkgver="${KERNELRELEASE//-/_}"
-> > > > +pkgrel="$KBUILD_REVISION"
-> > > > +pkgdesc='Linux'
-> > > > +url='https://www.kernel.org/'
-> > > > +arch=(any)
-> > > 
-> > > I see why you went this way but this feels a little dangerous because
-> > > this means the package will be installable on architectures other than
-> > > the one that it is built for. I think a better solution for this problem
-> > > would be moving arch back to $UTS_MACHINE but setting CARCH to that same
-> > > value in scripts/Makefile.package above. This diff works for me,
-> > > allowing me to build an aarch64 package on x86_64:
-> > 
-> > This is what I used in v1 of the patch.
-> 
-> You had $UTS_MACHINE as arch but I don't see where CARCH was set for
-> makepkg? If you tried to cross compile with v1, there was an error
-> because the default CARCH value (the host) does not match the arch
-> value, but explicitly passing CARCH to makepkg with $UTS_MACHINE should
-> allow makepkg to build a package that is only installable on that
-> machine?
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Indeed.
-
-> > But I felt that this only works by pure chance.
-> 
-> I don't think it is by pure chance, it should be entirely based off of the
-> builder's ARCH value, no? I might be misunderstanding something though.
-
-"Chance" for the fact that UTS_MACHINE and Arch Linux CARCH are
-matching.
-
-> > IMO users of this feature should know what they are doing.
-> > 
-> > That said, if anybody has strong opinions on this, I'll be happy to change it.
-> 
-> I don't feel strongly about it but I think this is different from pretty
-> much all of the other package builds, which only build a package that is
-> installable/usable on one archictecture, and the solution seems
-> simple/robust enough.
-
-I'll pick up your proposal and will send v3 with it and your tags.
+>
+> ---
+> diff --git a/CREDITS b/CREDITS
+> index 1a1a54555e11..a58066be6d73 100644
+> --- a/CREDITS
+> +++ b/CREDITS
+> @@ -271,6 +271,9 @@ D: Driver for WaveFront soundcards (Turtle Beach Maui, Tropez, Tropez+)
+>  D: Various bugfixes and changes to sound drivers
+>  S: USA
+>
+> +N: Daniel Bristot de Oliveira
+> +D: Scheduler contributions, notably: SCHED_DEADLINE
+> +
+>  N: Carlos Henrique Bauer
+>  E: chbauer@acm.org
+>  E: bauer@atlas.unisinos.br
 
