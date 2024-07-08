@@ -1,315 +1,384 @@
-Return-Path: <linux-kernel+bounces-244562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E7E92A610
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:47:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C12892A614
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9B0284CF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:47:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91116B20C60
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170011459E4;
-	Mon,  8 Jul 2024 15:47:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918691422CA;
-	Mon,  8 Jul 2024 15:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEB8143C45;
+	Mon,  8 Jul 2024 15:49:36 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A178B139568;
+	Mon,  8 Jul 2024 15:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720453630; cv=none; b=ONC/w0+yymuPeJ89cAppaGZmV9MGB7ewArrx5yiAj3fE07YwJXPCF87F8hj5GfJWpVsc4KiRn/6EQzHSTNktz0Vg7lrbII2BwpQ2dgqnMs98mT20+edutemChrm2zjsBC+u4n7fdWggESGsv1plkvtje3JZi27EU4RlsULq9pSQ=
+	t=1720453775; cv=none; b=MGTlNJTnKcTObUGeUdd5eXHxzHA5FV1ARB2w/6sm94PcV+E0z2bWBI5mrJFiaTZjVRY+llmfZqrshL2w6Dpq9PejNzHcG+YO4GKwo+7bEVG+CSaMWdAU8/L6NClSvpH+FaVPA7knuVYXTJZ2kHqOoAEgAxRyW0DA6V3iZnvDW34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720453630; c=relaxed/simple;
-	bh=KLVGlhF6Z55bmANIemfjPgqIJ/dq6Wbtj3SNiIcgf6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LWpe2/W3Y7FMQ2ignAtNUMHej1HCSwBAygMrUlFjjAjZEv4x8O2WLlqjw+Vd5BUoNwX07YRIZGymOKj+vxTjsD2bPGRydlIYrhgdtdrZQMIi2AO3BRRZZOnAdSTgRirj04xJ4HoSMMjJX89FMiJDfCDSuxCHapVbYyjQeoNOR2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCE541042;
-	Mon,  8 Jul 2024 08:47:31 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87F9B3F641;
-	Mon,  8 Jul 2024 08:47:04 -0700 (PDT)
-Date: Mon, 8 Jul 2024 16:47:02 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	ptosi@google.com, dan.carpenter@linaro.org,
-	souvik.chakravarty@arm.com, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 5/8] firmware: arm_scmi: Make SMC transport a standalone
- driver
-Message-ID: <ZowJ9m3uMfImEulE@pluto>
-References: <20240707002055.1835121-1-cristian.marussi@arm.com>
- <20240707002055.1835121-6-cristian.marussi@arm.com>
- <ffb76411-7119-4024-acaa-3cf40f81ed95@quicinc.com>
- <Zov3VppLHotmIO3l@pluto>
- <273d23f5-c354-43cf-8903-d07f42778c3a@quicinc.com>
+	s=arc-20240116; t=1720453775; c=relaxed/simple;
+	bh=pxWBLEk2UQU8nvbFz/xYfMoy1P/qeGKpcNWlo102pF4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NffMl6iy+pvOTmwh0EPj1B+eb4ckvlRX7xyz4USE4EN0nezGj8p9honkodAOpqy8/UxtgNFgoPRPM3L6Vag4ulG15Z2Z3zXWa4+IxnFLAxgQmKk/ierHVkJNilGLnpwV7zp5vwvPZYFBaXiVLcDnigbPHnDWRroHpi+Yh7+zpYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a77bf336171so631593066b.1;
+        Mon, 08 Jul 2024 08:49:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720453772; x=1721058572;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pmo+Kz3W/4CgPYAKIlEmDnFYVhpVrFLEk5bjngkNVjs=;
+        b=q2f3QjHSbPVJI8qC8owi1arzo9p4hYm2+VTE9McVf/64pIIrWu7AztUkdeARPBTj1/
+         GcAjYMhYASXqy7bAgXeu0vh9rxkwRtWlSdwS7OnqV6eN37nju5oL0FxBss0crkmjc8N4
+         FeiHAP8KyHzejAA8rzojpu2FWpqQuxk/r2nSIx9NrTjWxYwXtKoNpzGDuHAL+yL+9hOB
+         IcJ/jnU3KcNeo/+SXbwgUjWNpYnHQhE5WuNaGWa2Rcx92wyVcxGpo2A3ON5o+FCAlgCB
+         qvGn/cUm+s+nBJinnMWz2bNfuMfyKB+hRPY9ic3zqy/MMo/VssYF2MQxzPsPQVxPCjM9
+         4WZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrReSeEDDZZBQp9vaGLSCPPwAM9BxBydpPxRYPkBqvnMjgOyBSUV7vhJk1w1uwlXsCCe108iobckl0RxtsuqTv74+ATFWOjI8R
+X-Gm-Message-State: AOJu0YzdgqvpbAz3X0lEi596Uj9gUxAXsNWLjb3bb0GRBbiptH+/VUvT
+	qpB5d2on0t0ZZqSTvVim0tRrvRfeEeXW4WYnN+OrZnZHuHdJO2dUHD6ggQ==
+X-Google-Smtp-Source: AGHT+IHbeceXrzmye1crDiPtFeZ7DLm7IHJa6vrog+fq9lUfSUxFony2bzmRMluaWfhD4zHcOImiCg==
+X-Received: by 2002:a17:906:158c:b0:a77:e031:bb86 with SMTP id a640c23a62f3a-a77e031bd42mr541670166b.7.1720453771650;
+        Mon, 08 Jul 2024 08:49:31 -0700 (PDT)
+Received: from [127.0.1.1] (p54ad9947.dip0.t-ipconnect.de. [84.173.153.71])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a780a6bd010sm5403666b.18.2024.07.08.08.49.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 08:49:31 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Date: Mon, 08 Jul 2024 17:49:28 +0200
+Subject: [PATCH v3] spi: add ch341a usb2spi driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <273d23f5-c354-43cf-8903-d07f42778c3a@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240708-spi-ch341a-v3-1-cf7f9b2c1e31@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAIcKjGYC/23OTQ6DIBCG4asY1sUAQoSueo/GBego9EfMYEwb4
+ 92Lrlx0+S6+Z2YlCTBAItdiJQhLSCGOOapLQVpvxwFo6HITwYRkNdM0TYG2vpLc0to4C7xjUjl
+ F8mBC6MPnwO5N7h7jm84ewZ4JxaXilS6VFjXl9DH72xNwhFcZcdgZH9Ic8Xu8tIgd+3t9EXntj
+ La9BMONa89Ms23bD4f7UJrcAAAA
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
+ Johannes Thumshirn <jth@kernel.org>
+X-Mailer: b4 0.13.0
 
-On Mon, Jul 08, 2024 at 08:23:56AM -0700, Nikunj Kela wrote:
-> 
-> On 7/8/2024 7:27 AM, Cristian Marussi wrote:
-> > On Sun, Jul 07, 2024 at 09:52:49AM -0700, Nikunj Kela wrote:
-> >> On 7/6/2024 5:20 PM, Cristian Marussi wrote:
-> >>> Make SCMI SMC transport a standalone driver that can be optionally
-> >>> loaded as a module.
-> >>>
-> >>> CC: Peng Fan <peng.fan@nxp.com>
-> >>> CC: Nikunj Kela <quic_nkela@quicinc.com>
-> >>> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> >>> ---
-> >>>  drivers/firmware/arm_scmi/Kconfig             |  4 ++-
-> >>>  drivers/firmware/arm_scmi/Makefile            |  2 +-
-> >>>  drivers/firmware/arm_scmi/common.h            |  3 --
-> >>>  drivers/firmware/arm_scmi/driver.c            |  5 ---
-> >>>  .../arm_scmi/{smc.c => scmi_transport_smc.c}  | 31 +++++++++++++++----
-> >>>  5 files changed, 29 insertions(+), 16 deletions(-)
-> >>>  rename drivers/firmware/arm_scmi/{smc.c => scmi_transport_smc.c} (89%)
-> >>>
-> >>> diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-> >>> index 135e34aefd70..a4d44ef8bf45 100644
-> >>> --- a/drivers/firmware/arm_scmi/Kconfig
-> >>> +++ b/drivers/firmware/arm_scmi/Kconfig
-> >>> @@ -102,7 +102,7 @@ config ARM_SCMI_TRANSPORT_OPTEE
-> >>>  	  transport based on OP-TEE SCMI service, answer Y.
-> >>>  
-> >>>  config ARM_SCMI_TRANSPORT_SMC
-> >>> -	bool "SCMI transport based on SMC"
-> >>> +	tristate "SCMI transport based on SMC"
-> >>>  	depends on HAVE_ARM_SMCCC_DISCOVERY
-> >>>  	select ARM_SCMI_HAVE_TRANSPORT
-> >>>  	select ARM_SCMI_HAVE_SHMEM
-> >>> @@ -112,6 +112,8 @@ config ARM_SCMI_TRANSPORT_SMC
-> >>>  
-> >>>  	  If you want the ARM SCMI PROTOCOL stack to include support for a
-> >>>  	  transport based on SMC, answer Y.
-> >>> +	  This driver can also be built as a module.  If so, the module
-> >>> +	  will be called scmi_transport_smc.
-> >>>  
-> >>>  config ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE
-> >>>  	bool "Enable atomic mode support for SCMI SMC transport"
-> >>> diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-> >>> index 121612d75f0b..6868a47fa4ab 100644
-> >>> --- a/drivers/firmware/arm_scmi/Makefile
-> >>> +++ b/drivers/firmware/arm_scmi/Makefile
-> >>> @@ -5,7 +5,6 @@ scmi-core-objs := $(scmi-bus-y)
-> >>>  scmi-driver-y = driver.o notify.o
-> >>>  scmi-driver-$(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
-> >>>  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_SHMEM) = shmem.o
-> >>> -scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += smc.o
-> >>>  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_MSG) += msg.o
-> >>>  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_VIRTIO) += virtio.o
-> >>>  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += optee.o
-> >>> @@ -13,6 +12,7 @@ scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o system.o vol
-> >>>  scmi-protocols-y += pinctrl.o
-> >>>  scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
-> >>>  
-> >>> +obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += scmi_transport_smc.o
-> >>>  obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
-> >>>  
-> >>>  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
-> >>> diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-> >>> index c03f30db92e0..b5bd27eccf24 100644
-> >>> --- a/drivers/firmware/arm_scmi/common.h
-> >>> +++ b/drivers/firmware/arm_scmi/common.h
-> >>> @@ -286,9 +286,6 @@ int scmi_xfer_raw_inflight_register(const struct scmi_handle *handle,
-> >>>  int scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info *cinfo,
-> >>>  					    struct scmi_xfer *xfer,
-> >>>  					    unsigned int timeout_ms);
-> >>> -#ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
-> >>> -extern const struct scmi_desc scmi_smc_desc;
-> >>> -#endif
-> >>>  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
-> >>>  extern const struct scmi_desc scmi_virtio_desc;
-> >>>  #endif
-> >>> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> >>> index 96cf8ab4421e..b14c5326930a 100644
-> >>> --- a/drivers/firmware/arm_scmi/driver.c
-> >>> +++ b/drivers/firmware/arm_scmi/driver.c
-> >>> @@ -3254,11 +3254,6 @@ static const struct of_device_id scmi_of_match[] = {
-> >>>  #ifdef CONFIG_ARM_SCMI_TRANSPORT_OPTEE
-> >>>  	{ .compatible = "linaro,scmi-optee", .data = &scmi_optee_desc },
-> >>>  #endif
-> >>> -#ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
-> >>> -	{ .compatible = "arm,scmi-smc", .data = &scmi_smc_desc},
-> >>> -	{ .compatible = "arm,scmi-smc-param", .data = &scmi_smc_desc},
-> >>> -	{ .compatible = "qcom,scmi-smc", .data = &scmi_smc_desc},
-> >>> -#endif
-> >>>  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
-> >>>  	{ .compatible = "arm,scmi-virtio", .data = &scmi_virtio_desc},
-> >>>  #endif
-> >>> diff --git a/drivers/firmware/arm_scmi/smc.c b/drivers/firmware/arm_scmi/scmi_transport_smc.c
-> >>> similarity index 89%
-> >>> rename from drivers/firmware/arm_scmi/smc.c
-> >>> rename to drivers/firmware/arm_scmi/scmi_transport_smc.c
-> >>> index cb26b8aee01d..44da1a8d5387 100644
-> >>> --- a/drivers/firmware/arm_scmi/smc.c
-> >>> +++ b/drivers/firmware/arm_scmi/scmi_transport_smc.c
-> >>> @@ -3,7 +3,7 @@
-> >>>   * System Control and Management Interface (SCMI) Message SMC/HVC
-> >>>   * Transport driver
-> >>>   *
-> >>> - * Copyright 2020 NXP
-> >>> + * Copyright 2020-2024 NXP
-> >>>   */
-> >>>  
-> >>>  #include <linux/arm-smccc.h>
-> >>> @@ -16,6 +16,7 @@
-> >>>  #include <linux/of_address.h>
-> >>>  #include <linux/of_irq.h>
-> >>>  #include <linux/limits.h>
-> >>> +#include <linux/platform_device.h>
-> >>>  #include <linux/processor.h>
-> >>>  #include <linux/slab.h>
-> >>>  
-> >>> @@ -69,12 +70,14 @@ struct scmi_smc {
-> >>>  	unsigned long cap_id;
-> >>>  };
-> >>>  
-> >>> +static struct scmi_transport_core_operations *core;
-> >>> +
-> >>>  static irqreturn_t smc_msg_done_isr(int irq, void *data)
-> >>>  {
-> >>>  	struct scmi_smc *scmi_info = data;
-> >>>  
-> >>> -	scmi_rx_callback(scmi_info->cinfo,
-> >>> -			 scmi_shmem_ops.read_header(scmi_info->shmem), NULL);
-> >>> +	core->rx_callback(scmi_info->cinfo,
-> >>> +			  core->shmem->read_header(scmi_info->shmem), NULL);
-> >>>  
-> >>>  	return IRQ_HANDLED;
-> >>>  }
-> >>> @@ -142,7 +145,7 @@ static int smc_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
-> >>>  	if (!scmi_info)
-> >>>  		return -ENOMEM;
-> >>>  
-> >>> -	scmi_info->shmem = scmi_shmem_ops.setup_iomap(cinfo, dev, tx);
-> >>> +	scmi_info->shmem = core->shmem->setup_iomap(cinfo, dev, tx);
-> >>>  	if (IS_ERR(scmi_info->shmem))
-> >>>  		return PTR_ERR(scmi_info->shmem);
-> >>>  
-> >>> @@ -226,7 +229,7 @@ static int smc_send_message(struct scmi_chan_info *cinfo,
-> >>>  	 */
-> >>>  	smc_channel_lock_acquire(scmi_info, xfer);
-> >>>  
-> >>> -	scmi_shmem_ops.tx_prepare(scmi_info->shmem, xfer, cinfo);
-> >>> +	core->shmem->tx_prepare(scmi_info->shmem, xfer, cinfo);
-> >>>  
-> >>>  	if (scmi_info->cap_id != ULONG_MAX)
-> >>>  		arm_smccc_1_1_invoke(scmi_info->func_id, scmi_info->cap_id, 0,
-> >>> @@ -250,7 +253,7 @@ static void smc_fetch_response(struct scmi_chan_info *cinfo,
-> >>>  {
-> >>>  	struct scmi_smc *scmi_info = cinfo->transport_info;
-> >>>  
-> >>> -	scmi_shmem_ops.fetch_response(scmi_info->shmem, xfer);
-> >>> +	core->shmem->fetch_response(scmi_info->shmem, xfer);
-> >>>  }
-> >>>  
-> >>>  static void smc_mark_txdone(struct scmi_chan_info *cinfo, int ret,
-> >>> @@ -286,3 +289,19 @@ const struct scmi_desc scmi_smc_desc = {
-> >>>  	.sync_cmds_completed_on_ret = true,
-> >>>  	.atomic_enabled = IS_ENABLED(CONFIG_ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE),
-> >>>  };
-> >>> +
-> >>> +static const struct of_device_id scmi_of_match[] = {
-> >>> +	{ .compatible = "arm,scmi-smc" },
-> >>> +	{ .compatible = "arm,scmi-smc-param" },
-> >>> +	{ .compatible = "qcom,scmi-smc" },
-> >>> +	{ /* Sentinel */ },
-> >>> +};
-> >>> +
-> >> Hi Cristian,
-> >>
-> > Hi Nikunj,
-> >
-> > thanks for having a look first of all !
-> >
-> >> Would it make sense to associate scmi descriptor(scmi_smc_desc) with
-> >> compatible as driver/platform data so we have flexibility to replicate
-> >> it and modify parameters such as max_timeout_ms etc. for our platform?
-> >>
-> > Mmmm...not sure to have understood, because the scmi_smc_desc is
-> > effecetively passed from this driver to the core via a bit of
-> > (questionable) magic in the mega-macro
-> >
-> > DEFINE_SCMI_TRANSPORT_DRIVER(scmi_smc, scmi_of_match, &core);
-> >
-> > ...and it will end-up being set into the dev.platform_data and then
-> > retrieved by the core SCMI stack driver in scmi_probe...
-> >
-> > ...OR...do you mean being able to somehow define 3 different
-> > scmi_smc_desc* and then associate them to the different compatibles
-> > and then, depending on which compatible is matched by this isame driver
-> > at probe time, passing the related platform-specific desc to the core...
-> >
-> > ...in this latter case I suppose I can do it by playing with the macros
-> > defs but maybe it is also the case to start thinking about splitting out
-> > configuration stuff from the transport descriptor...
-> >
-> > I'll give it a go at passing the data around, and see how it plays out
-> > if you confirm that this is what you meant...
-> 
-> Hi Cristian,
-> 
+Add a driver for the QiHeng Electronics ch341a USB-to-SPI adapter.
 
-Hi,
+This driver is loosely based on the ch341a module from the flashrom project.
 
-> I wanted to send a patch for review(with older driver code) that will
-> allow us to override transport parameters(e.g. max_timeout_ms,
-> max_msg_size etc.) on Qualcomm platform. There could be multiple
-> approaches- 1) add callbacks (similar to get_msg_size) in transport_ops
-> and override the default or 2) replicate the descriptors for different
-> compatible and change those values as needed. I was going with the
-> second option but then I saw your patch and thought of throwing this at
+Signed-off-by: Johannes Thumshirn <jth@kernel.org>
+---
+Changes to v1:
+- Change C style to C++ style comments in header
+- Sort Kconfig snippet alphabetically
+- Don't cast away usb_bulk_msg() return value
+- Call spi_unregister_device() on remove
+- Don't pass constant speed to ch341_config_stream()
+Link to v1:
+https://lore.kernel.org/linux-spi/20240705145138.5827-1-jth@kernel.org
 
-:P 
+Changes to v2:
+- Sorted Makefile part alphabetically as well
+- Link to v2: https://lore.kernel.org/r/20240708-spi-ch341a-v2-1-b98af4e919bc@kernel.org
+---
+ drivers/spi/Kconfig     |   6 ++
+ drivers/spi/Makefile    |   1 +
+ drivers/spi/spi-ch341.c | 241 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 248 insertions(+)
 
-> you ;) I don't want you to hold your patch series for this but if you
-> have a better way to achieve or a preferred way between the two
-> mentioned before, please let me know. If you do want to add this feature
-> in this patch series, that would be great!
-> 
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index a2c99ff33e0a..ec1550c698d5 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -277,6 +277,12 @@ config SPI_CADENCE_XSPI
+ 	  device with a Cadence XSPI controller and want to access the
+ 	  Flash as an MTD device.
+ 
++config SPI_CH341
++	tristate "CH341 USB2SPI adapter"
++	depends on SPI_MASTER && USB
++	help
++	  Enables the SPI controller on the CH341a USB to serial chip
++
+ config SPI_CLPS711X
+ 	tristate "CLPS711X host SPI controller"
+ 	depends on ARCH_CLPS711X || COMPILE_TEST
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index e694254dec04..e697d5fd8611 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -39,6 +39,7 @@ obj-$(CONFIG_SPI_BUTTERFLY)		+= spi-butterfly.o
+ obj-$(CONFIG_SPI_CADENCE)		+= spi-cadence.o
+ obj-$(CONFIG_SPI_CADENCE_QUADSPI)	+= spi-cadence-quadspi.o
+ obj-$(CONFIG_SPI_CADENCE_XSPI)		+= spi-cadence-xspi.o
++obj-$(CONFIG_SPI_CH341)			+= spi-ch341.o
+ obj-$(CONFIG_SPI_CLPS711X)		+= spi-clps711x.o
+ obj-$(CONFIG_SPI_COLDFIRE_QSPI)		+= spi-coldfire-qspi.o
+ obj-$(CONFIG_SPI_CS42L43)		+= spi-cs42l43.o
+diff --git a/drivers/spi/spi-ch341.c b/drivers/spi/spi-ch341.c
+new file mode 100644
+index 000000000000..d2351812d310
+--- /dev/null
++++ b/drivers/spi/spi-ch341.c
+@@ -0,0 +1,241 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// QiHeng Electronics ch341a USB-to-SPI adapter driver
++//
++// Copyright (C) 2024 Johannes Thumshirn <jth@kernel.org>
++//
++// Based on ch341a_spi.c from the flashrom project.
++
++#include <linux/module.h>
++#include <linux/usb.h>
++#include <linux/spi/spi.h>
++
++#define CH341_PACKET_LENGTH 32
++#define CH341_DEFAULT_TIMEOUT 1000
++
++#define CH341A_CMD_UIO_STREAM 0xab
++
++#define CH341A_CMD_UIO_STM_END 0x20
++#define CH341A_CMD_UIO_STM_DIR 0x40
++#define CH341A_CMD_UIO_STM_OUT 0x80
++
++#define CH341A_CMD_I2C_STREAM 0xaa
++#define CH341A_CMD_I2C_STM_SET 0x60
++#define CH341A_CMD_I2C_STM_END 0x00
++
++#define CH341A_CMD_SPI_STREAM 0xa8
++
++#define CH341A_STM_I2C_100K 0x01
++
++struct ch341_spi_dev {
++	struct spi_controller *ctrl;
++	struct usb_device *udev;
++	unsigned int write_pipe;
++	unsigned int read_pipe;
++	int rx_len;
++	void *rx_buf;
++	u8 *tx_buf;
++	struct urb *rx_urb;
++	struct spi_device *spidev;
++};
++
++static void ch341_set_cs(struct spi_device *spi, bool is_high)
++{
++	struct ch341_spi_dev *ch341 =
++		spi_controller_get_devdata(spi->controller);
++	int err;
++
++	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
++	ch341->tx_buf[0] = CH341A_CMD_UIO_STREAM;
++	ch341->tx_buf[1] = CH341A_CMD_UIO_STM_OUT | (is_high ? 0x36 : 0x37);
++
++	if (is_high) {
++		ch341->tx_buf[2] = CH341A_CMD_UIO_STM_DIR | 0x3f;
++		ch341->tx_buf[3] = CH341A_CMD_UIO_STM_END;
++	} else {
++		ch341->tx_buf[2] = CH341A_CMD_UIO_STM_END;
++	}
++
++	err = usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf,
++			   (is_high ? 4 : 3), NULL, CH341_DEFAULT_TIMEOUT);
++	if (err)
++		dev_err(&spi->dev,
++			"error sending USB message for setting CS (%d)\n", err);
++}
++
++static int ch341_transfer_one(struct spi_controller *host,
++			      struct spi_device *spi,
++			      struct spi_transfer *trans)
++{
++	struct ch341_spi_dev *ch341 =
++		spi_controller_get_devdata(spi->controller);
++	int len;
++	int ret;
++
++	len = min(CH341_PACKET_LENGTH, trans->len + 1);
++
++	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
++
++	ch341->tx_buf[0] = CH341A_CMD_SPI_STREAM;
++
++	memcpy(ch341->tx_buf + 1, trans->tx_buf, len);
++
++	ret = usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf, len,
++			   NULL, CH341_DEFAULT_TIMEOUT);
++	if (ret)
++		return ret;
++
++	return usb_bulk_msg(ch341->udev, ch341->read_pipe, trans->rx_buf,
++			    len - 1, NULL, CH341_DEFAULT_TIMEOUT);
++}
++
++static void ch341_recv(struct urb *urb)
++{
++	struct ch341_spi_dev *ch341 = urb->context;
++	struct usb_device *udev = ch341->udev;
++
++	switch (urb->status) {
++	case 0:
++		/* success */
++		break;
++	case -ENOENT:
++	case -ECONNRESET:
++	case -EPIPE:
++	case -ESHUTDOWN:
++		dev_dbg(&udev->dev, "rx urb terminated with status: %d\n",
++			urb->status);
++		return;
++	default:
++		dev_dbg(&udev->dev, "rx urb error: %d\n", urb->status);
++		break;
++	}
++}
++
++static int ch341_config_stream(struct ch341_spi_dev *ch341)
++{
++	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
++	ch341->tx_buf[0] = CH341A_CMD_I2C_STREAM;
++	ch341->tx_buf[1] = CH341A_CMD_I2C_STM_SET | CH341A_STM_I2C_100K;
++	ch341->tx_buf[2] = CH341A_CMD_I2C_STM_END;
++
++	return usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf, 3,
++			    NULL, CH341_DEFAULT_TIMEOUT);
++}
++
++static int ch341_enable_pins(struct ch341_spi_dev *ch341, bool enable)
++{
++	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
++	ch341->tx_buf[0] = CH341A_CMD_UIO_STREAM;
++	ch341->tx_buf[1] = CH341A_CMD_UIO_STM_OUT | 0x37;
++	ch341->tx_buf[2] = CH341A_CMD_UIO_STM_DIR | (enable ? 0x3f : 0x00);
++	ch341->tx_buf[3] = CH341A_CMD_UIO_STM_END;
++
++	return usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf, 4,
++			    NULL, CH341_DEFAULT_TIMEOUT);
++}
++
++static struct spi_board_info chip = {
++	.modalias = "spi-ch341a",
++};
++
++static int ch341_probe(struct usb_interface *intf,
++		       const struct usb_device_id *id)
++{
++	struct usb_device *udev = interface_to_usbdev(intf);
++	struct usb_endpoint_descriptor *in, *out;
++	struct ch341_spi_dev *ch341;
++	struct spi_controller *ctrl;
++	int ret;
++
++	ret = usb_find_common_endpoints(intf->cur_altsetting, &in, &out, NULL,
++					NULL);
++	if (ret)
++		return ret;
++
++	ctrl = devm_spi_alloc_master(&udev->dev, sizeof(struct ch341_spi_dev));
++	if (!ctrl)
++		return -ENOMEM;
++
++	ch341 = spi_controller_get_devdata(ctrl);
++	ch341->ctrl = ctrl;
++	ch341->udev = udev;
++	ch341->write_pipe = usb_sndbulkpipe(udev, usb_endpoint_num(out));
++	ch341->read_pipe = usb_rcvbulkpipe(udev, usb_endpoint_num(in));
++
++	ch341->rx_len = usb_endpoint_maxp(in);
++	ch341->rx_buf = devm_kzalloc(&udev->dev, ch341->rx_len, GFP_KERNEL);
++	if (!ch341->rx_buf)
++		return -ENOMEM;
++
++	ch341->rx_urb = usb_alloc_urb(0, GFP_KERNEL);
++	if (!ch341->rx_urb)
++		return -ENOMEM;
++
++	ch341->tx_buf =
++		devm_kzalloc(&udev->dev, CH341_PACKET_LENGTH, GFP_KERNEL);
++	if (!ch341->tx_buf)
++		return -ENOMEM;
++
++	usb_fill_bulk_urb(ch341->rx_urb, udev, ch341->read_pipe, ch341->rx_buf,
++			  ch341->rx_len, ch341_recv, ch341);
++
++	ret = usb_submit_urb(ch341->rx_urb, GFP_KERNEL);
++	if (ret) {
++		usb_free_urb(ch341->rx_urb);
++		return -ENOMEM;
++	}
++
++	ctrl->bus_num = -1;
++	ctrl->mode_bits = SPI_CPHA;
++	ctrl->transfer_one = ch341_transfer_one;
++	ctrl->set_cs = ch341_set_cs;
++	ctrl->auto_runtime_pm = false;
++
++	usb_set_intfdata(intf, ch341);
++
++	ret = ch341_config_stream(ch341);
++	if (ret)
++		return ret;
++
++	ret = ch341_enable_pins(ch341, true);
++	if (ret)
++		return ret;
++
++	ret = spi_register_controller(ctrl);
++	if (ret)
++		return ret;
++
++	ch341->spidev = spi_new_device(ctrl, &chip);
++	if (!ch341->spidev)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static void ch341_disconnect(struct usb_interface *intf)
++{
++	struct ch341_spi_dev *ch341 = usb_get_intfdata(intf);
++
++	spi_unregister_device(ch341->spidev);
++	spi_unregister_controller(ch341->ctrl);
++	ch341_enable_pins(ch341, false);
++	usb_free_urb(ch341->rx_urb);
++}
++
++static const struct usb_device_id ch341_id_table[] = {
++	{ USB_DEVICE(0x1a86, 0x5512) },
++	{ }
++};
++MODULE_DEVICE_TABLE(usb, ch341_id_table);
++
++static struct usb_driver ch341a_usb_driver = {
++	.name = "spi-ch341",
++	.probe = ch341_probe,
++	.disconnect = ch341_disconnect,
++	.id_table = ch341_id_table,
++};
++module_usb_driver(ch341a_usb_driver);
++
++MODULE_AUTHOR("Johannes Thumshirn <jth@kernel.org>");
++MODULE_DESCRIPTION("QiHeng Electronics ch341 USB2SPI");
++MODULE_LICENSE("GPL v2");
 
-Interesting, because there is also this thread flying around from Peng:
+---
+base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
+change-id: 20240708-spi-ch341a-79bae1d045b5
 
-https://lore.kernel.org/linux-arm-kernel/20240703031715.379815-1-peng.fan@oss.nxp.com/
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
 
-...which I was planning in embedding in this series; Peng's proposal is
-limited to timeout and based on DT (and title is a bit misleading...the
-series is not mailbox-only related)....
-
-...now I am NOT saying that we should dump all configs into the DT, but
-just that this issue about configurability of transports is already sort
-of a known-problem, and it is a while that it floats in the back of my mind...
-i.e. the fact that the transport runtime configurations should be *somehow*
-independent of the transport descriptor and *somehow* configurable....so now
-only remains to *somehow* figure out how to do it :D
-
-... I'll have a though and maybe cannibalize your ideas and Peng's one and then
-we could have a discussion around this on the list to address eveybody's needs...
-
-...and maybe, in the meantime, you could also post your proposed series about
-this even though based on the old code, but as an RFC, just to make a point and
-detail the needs...but yeah only if it does not require a bunch of extra work from
-you given that it is only to be used as a basis for discussion ....
-
-...up to you what do you prefer.
-
-Thanks,
-Cristian
 
