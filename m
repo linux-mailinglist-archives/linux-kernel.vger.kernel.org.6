@@ -1,72 +1,75 @@
-Return-Path: <linux-kernel+bounces-244424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7D892A41D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:53:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDEC092A427
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC10FB2232B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:53:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBC81C212B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456AE13B7A9;
-	Mon,  8 Jul 2024 13:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FFF13B798;
+	Mon,  8 Jul 2024 13:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="idMvzb3t";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M13IblR0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fKEF+5bg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BE813A3FF;
-	Mon,  8 Jul 2024 13:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AB47F490;
+	Mon,  8 Jul 2024 13:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446795; cv=none; b=fmMNrWuKzB4vJOMK585U37yM9IvO0qeAF+Lw7uixp+wSRI/zsPL497PzSI0CvQ7oKvOdcEcy7qF/PoMzPbrsjJDEZVVxeMJZrrLuoOJAJGDbEbxhgrYhwwSZCEQbH92H0i96h8IS4okFbfOugsqVYaMEvkbdgjjjx0+swuk8tQY=
+	t=1720446957; cv=none; b=tj0Wc9uIMZzdXEThazGHdroUXs4uwAQ23LcYb/nMHHl0mpIid0MhbK/sYBfjP8CfnKuv43A6HoQsPoA8ekV17bljDRXEk3muQtse81cqw1g05SHZPhCwgWqBmhFZ0pEAihSPjo23dmUOgLCndYOjrtinZ7RZ7Q+w2/xp+inX838=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446795; c=relaxed/simple;
-	bh=/r+/nMzPahn0eESG2XANrb9OH0ViDm6C4ibSsbg1d6A=;
+	s=arc-20240116; t=1720446957; c=relaxed/simple;
+	bh=Ix+CY7nDRbdObz8mmrJCCRjvbh7+LChLXk0TnsBGW6I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gTZtxyQ6G5Gcx4prFln0oq10IyqUNQw0olsZ+xeEr0TeW8ueJ7X28BDfVCgRmIZTuCh9pnRsS2/RSVSvrSgnfANssctlv0+Ccq4eXYd102TnJPAVjQogcYbFjalYVInz0i+QkZCyfledlWSWLngXz7fneiOxGFMxXcJqIZgDz8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=idMvzb3t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M13IblR0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 8 Jul 2024 15:53:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720446791;
+	 Content-Type:Content-Disposition:In-Reply-To; b=RywdKlDzC+72WCQR4Gr3C10AvV1G6IublPtaXZDHalxHb/flPWvWREm/l3qD2HNopcA9iVjPnErDY/Ab9OnKfOxDwwpzlVJj7+6xJbvA5d7LVEYgCaVNy+1yTwoIgLDVIWZ51N6RF4flJQES8PlYwiT+UYg2W6KmUePQQOzILjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=fKEF+5bg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C058C116B1;
+	Mon,  8 Jul 2024 13:55:55 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fKEF+5bg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720446953;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3Msuqgjwb5He6YYwNRjzMabQUnm6Wy6XzGH5sueeY8Q=;
-	b=idMvzb3tG0e27yENCyIPgOaUlpXrpKSEMlndewY3UuHO9wv93LN1IkvziRk/3yQGls+NSs
-	IalS3y3r6+317icTSIpFhdcDtnpjEMoeVn4MrcNenLwPq0xMQhlaF92atj+HV95lSLhMRu
-	8hIrHYBEth7PpA2EDYnnATFUeE4Cwqri2yRvD/GQycfnzzgSPM2aNAFP2qhQPirChEe5Dj
-	KZ3MrpHQA+Pj+Xlw6cCKd+JERxP7jDPP+yZyibwjKG7sNs+5RInafnnd3g2wh4HPNoNbUc
-	ekA2jXzXG70NIuheP5ot0ZzGxhRG2YDYa91GdfMrFXrFk3+bnk6i9tBhUCv1Cw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720446791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Msuqgjwb5He6YYwNRjzMabQUnm6Wy6XzGH5sueeY8Q=;
-	b=M13IblR0AfHP6xSVuJw+Ty5KFZaCF8douxAxyPoEdDQhvo1kTOoyk5738csvtak+08cDmb
-	TwDqqBYx9O73bEAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Maulik Shah <quic_mkshah@quicinc.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-rt-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] pmdomain/cpuidle-psci: Support s2idle/s2ram on
- PREEMPT_RT
-Message-ID: <20240708135310.3VRFnmk1@linutronix.de>
-References: <20240527142557.321610-1-ulf.hansson@linaro.org>
+	bh=Iu6qhhCoMzUJkFRbUZLPznGqNINA8RQkyC6Q++VnYXI=;
+	b=fKEF+5bgvuym74Awlfw6+rIloM7/boI8OJjwFPIg6g1nMLKqYvnDY5N+gaL+OOHRNyujht
+	o88kxldv7C1LwvNlGdWlyaztkLchIGGBNdfgdMccAxG/iKlNQ9HX0WEhiGEIGEZLQQvLsU
+	uq8SAjGuRr4l647sMPUUcGy2iR+StF4=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 7bef63ad (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 8 Jul 2024 13:55:53 +0000 (UTC)
+Date: Mon, 8 Jul 2024 15:55:46 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <Zovv4lzM38EHtnms@zx2c4.com>
+References: <20240707002658.1917440-1-Jason@zx2c4.com>
+ <20240707002658.1917440-2-Jason@zx2c4.com>
+ <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
+ <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
+ <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
+ <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+ <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
+ <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+ <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,34 +78,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240527142557.321610-1-ulf.hansson@linaro.org>
+In-Reply-To: <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
 
-On 2024-05-27 16:25:50 [+0200], Ulf Hansson wrote:
-> Updates in v2:
-> 	- Rebased and fixed a small issue in genpd, see patch3.
-> 	- Re-tested on v6.9-rt5 (PREEMPT_RT enabled)
-> 	- Re-tested on v6.10-rc1 (for regressions, PREEMPT_RT disabled)
+Hi David,
+
+On Mon, Jul 08, 2024 at 10:11:24AM +0200, David Hildenbrand wrote:
+> The semantics are much more intuitive. No need for separate mmap flags.
+
+Agreed.
+ 
+> Likely we'll have to adjust mlock() as well. Also, I think we should 
+> just bail out with hugetlb as well.
+
+Ack.
+
+> Further, maybe we want to disallow madvise() clearing these flags here, 
+> just to be consistent.
+
+Good thinking.
+
+> As a side note, I'll raise that I am not a particular fan of the 
+> "droppable" terminology, at least with the "read 0s" approach.
 > 
-> The hierarchical PM domain topology and the corresponding domain-idle-states
-> are currently disabled on a PREEMPT_RT based configuration. The main reason is
-> because spinlocks are turned into sleepable locks on PREEMPT_RT, which means
-> genpd and runtime PM can't be use in the atomic idle-path when
-> selecting/entering an idle-state.
+>  From a user perspective, the memory might suddenly lose its state and 
+> read as 0s just like volatile memory when it loses power. "dropping 
+> pages" sounds more like an implementation detail.
 > 
-> For s2idle/s2ram this is an unnecessary limitation that this series intends to
-> address. Note that, the support for cpuhotplug is left to future improvements.
-> More information about this are available in the commit messages.
+> Something like MAP_VOLATILE might be more intuitive (similar to the 
+> proposed MADV_VOLATILE).
+> 
+> But naming is hard, just mentioning to share my thought :)
 
-I looked at it and it seems limited to pmdomain/core.c, also I don't
-know if there is a ->set_performance_state callback set since the one I
-checked have mutex_t locking ;)
-So if this is needed, then be it. s2ram wouldn't be used in "production"
-but in "safe state" so I wouldn't worry too much about latency spikes.
-Not sure what it means for the other modes.
-I am not to worried for now, please don't let spread more than needed ;)
+Naming is hard, but *renaming* is annoying. I like droppable simply
+because that's what I've been calling it in my head. MAP_VOLATILE is
+fine with me though, and seems reasonable enough. So I'll name it that,
+and then please don't change your mind about it later so I won't have to
+rename everything again. :)
 
-> Kind regards
-> Ulf Hansson
-
-Sebastian
+Jason
 
