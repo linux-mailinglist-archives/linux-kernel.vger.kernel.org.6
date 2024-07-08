@@ -1,101 +1,115 @@
-Return-Path: <linux-kernel+bounces-244748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD65392A8E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:20:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79EC92A8E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF1121C21517
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:20:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85641C21646
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF721494A9;
-	Mon,  8 Jul 2024 18:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C86149C7E;
+	Mon,  8 Jul 2024 18:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nd5HyoRZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3TceRZu"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB7C79FD;
-	Mon,  8 Jul 2024 18:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AED979FD;
+	Mon,  8 Jul 2024 18:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720462803; cv=none; b=iBMw8woUzblh3nzM+9nBSAldZprlI5O1arCMnODR+LUbJhP6gWGtBJJru8EoyaWFNJoRlq1id3Fp2qhD2hlEvFGgMbpvA7VNiBlH41POjXY3q81UoJYqQort4Aw37Ixm1qtvw9PGUUj6fy40NvQ/hlWq6W9ShIbREe9UVefbWxs=
+	t=1720462834; cv=none; b=NM/8phQA4SyvOXn4B2JTL+4etja7Omka2/qUPuk0AATQsWMXOGUNMvdtd6q2YuWJn2+eNpni/nx6IgT3mL7T/Crgeqv0paXyLwC3L6JCN2C9WgQ3jMGZ+vGwSi37dfA9EyQm+fJk+qBv5/rwjFj0V8a0IX8iGT6mOHkGvVZ3gJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720462803; c=relaxed/simple;
-	bh=QOFBs3lyd5kSuHcIUTuqmRKn5lA/nl/6CEtMFJTqhtc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=q3sGLy0e0QQw9rwK2qUVJuHgA9FQZ8LU8hzAIKmbtlvg4kyR+/+Y5S4JtJnsyyL3ffSjyNW3cHG2xf1TJ3CLCelb2AjEPCdoClIM1EAmTKDDFzwFhUdNeQjgYHgJqKGi5dUd10C8a+YG/YbihXPl/2WLbFNJyRYn3+/oKoIvFPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nd5HyoRZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7267FC116B1;
-	Mon,  8 Jul 2024 18:20:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720462802;
-	bh=QOFBs3lyd5kSuHcIUTuqmRKn5lA/nl/6CEtMFJTqhtc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=nd5HyoRZ+1/kD1ldDYLBg+Olhz35hv8qT9ebD+RTFRANdyUkbH9VMmaUzOHWaJWs6
-	 n4WD7AksMoznOpTSs5aov6yh2bPVYMFkfabXXNsZ8drFPI1v7n6SO59UpuEM1BN4EL
-	 DeSTOcORPfPfSI+BWEcJTClSxyAoyMHQiUFlMqXZdZ/wQ9ouVBKYKQm33zC3hZ48D6
-	 gV49G4gP0SBQ2EiVM1E7V+mrJ7avvJ82oDRJT1SRxRHIqcumXg1JGNRE1ByUvkIFGe
-	 e7zANNhZ89mL3Jd790X3aF6GC9Z4UCRwZdz+nvoZxWjZlhbZd+JF8PI66ftHN9Oigb
-	 Z15bp8bt8DwWw==
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-In-Reply-To: <20240708144855.385332-1-rf@opensource.cirrus.com>
-References: <20240708144855.385332-1-rf@opensource.cirrus.com>
-Subject: Re: [PATCH] firmware: cs_dsp: Use strnlen() on name fields in V1
- wmfw files
-Message-Id: <172046280115.106387.10683882240697864309.b4-ty@kernel.org>
-Date: Mon, 08 Jul 2024 19:20:01 +0100
+	s=arc-20240116; t=1720462834; c=relaxed/simple;
+	bh=0Ot1C3XCfv9H3+leeuLXAjpAiNRjVc9eAfmODEiiDd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uG9LwnDu/8KRulA8xMRlJvEl/a+nFx3ssU4gRoxE/sOC7q2Md+2byYCipqb/uSHoK/OWmEMgu7wayDWiLbIF/eVy8p5F35XuF/efPJL6rxDgyKLCFBFsKtRYrxmZg3oujMj+1T4KflDZlwGACpb/jKGYtsKKLYR/rgFkb6x8hOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3TceRZu; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-707040e3018so2760234a12.1;
+        Mon, 08 Jul 2024 11:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720462832; x=1721067632; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0vwQyNgx5l06JN6vKVkGLyfa4vRNR4YaNZWudr9WkWI=;
+        b=H3TceRZup/gbnW2MvDxm8h+FZ3ELiyAzKJTCXWYoUax5GL+0kW+qEAX88K0iqnMAzN
+         rdMLq1DIpkgiLrmXUs4q6/J7mfmqzfBPFKgmK5UIbVaHdyNtLm6/3x+FzsYUC+JBuYpi
+         KVxo41k5pAufRIZMoRe8KO4S0fM1MUBOfwpdxmtnHqoJmRB5LU4xWw5eg3pzrif9dyN1
+         sVK96eTMUjxjhgG6PoqNdEgoZz23Nq7ZOEG2hKtUNS6KlK0I5fP3pZiTCLE11QA85O7T
+         ohjsgfjDy+nd3vP7uT9oOGeQSXGWWndAVsRZ9i+PYshkxnSrMQEpkkCT9n0PSrvqqzk/
+         bB0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720462832; x=1721067632;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0vwQyNgx5l06JN6vKVkGLyfa4vRNR4YaNZWudr9WkWI=;
+        b=bfOOdjLM/vLN1F+t3Hoitf4KkI18Nqv5HiR/5A8a6NK6qSnSpO1xpjYzsNey2O9WCv
+         HIreDaak6h49uG7xDm2E2PBpj42CblMiQMJ8D230eiJcjFwtQ1q3MviiBY2BVGtv5Qk0
+         5WE4t7JWmiFFR7lr5gfq9eLfUSsT3YzkdePmzS5bzwDD2d4BDlIsbMjSdBoPsKO2Al7o
+         iF5wxucbByPIzzFTsbLegdRovqLPT375SNLg9NtmxKoyQ7wNbChN7z5EqHjVlFNNBmc+
+         nxEC3lnn5Edz2tGhTdfhCIIdMZoBGnh/UOCzOBZM26xtlDE/uEF7OaqlWx+Uqoj7YYjm
+         F1bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWp5kp97kICGGSAGRdGO0B5ZPwMQS3O8rdCyHJtt+mZ+521RN6DGCuxgUnTk05tovaVSH0MHYwXzFk8/IoB/HASsLTALcXOjzA8iPXwXKf0beDvrTil8WB+lzNRyH6JIY1F+z6FQNE=
+X-Gm-Message-State: AOJu0YwxQPRzGaieA4yqfT/RVraOSiNFDa4b0Emtr+SAFfzbAsrmQfVU
+	VU82BxMmLhYvMLWJVoTiP4cBDLtyWOBugdkPvzvfVxa0QANABTdc
+X-Google-Smtp-Source: AGHT+IGrhAkN3YE/mZDFUIgozy1SbQ4lc6JYKiA8I+DDJenl3jj7q9rT0rcHmwsupEvVBxJTezmEag==
+X-Received: by 2002:a05:6a21:1a7:b0:1c0:f20c:5ba5 with SMTP id adf61e73a8af0-1c2984d7a93mr222577637.51.1720462832521;
+        Mon, 08 Jul 2024 11:20:32 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43898e3csm180758b3a.3.2024.07.08.11.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 11:20:32 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 8 Jul 2024 08:20:30 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+	void@manifault.com, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
+	David Vernet <dvernet@meta.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v2 2/2] sched_ext: Add cpuperf support
+Message-ID: <Zowt7pVWFB-Of-me@slm.duckdns.org>
+References: <20240619031250.2936087-1-tj@kernel.org>
+ <20240619031250.2936087-3-tj@kernel.org>
+ <ZnM2ywDVRZbrN6OC@slm.duckdns.org>
+ <CAKfTPtBPObGdcaQF5nKqr4042f-+5obTMm_S6S+=3_Ct33ZMyw@mail.gmail.com>
+ <Zog5-Yd5wV0-Y76y@slm.duckdns.org>
+ <CAKfTPtDeA4OTPJmEHd-wKToYwDVizcny-_qxEuDUA-OcaVm2Uw@mail.gmail.com>
+ <ZonzAdyd6zb2Sm06@slm.duckdns.org>
+ <CAKfTPtDE2rWbRouf8zRyM3UpTfK1k_xrWmvAs-zfoRZqM3zGsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtDE2rWbRouf8zRyM3UpTfK1k_xrWmvAs-zfoRZqM3zGsw@mail.gmail.com>
 
-On Mon, 08 Jul 2024 15:48:55 +0100, Richard Fitzgerald wrote:
-> Use strnlen() instead of strlen() on the algorithm and coefficient name
-> string arrays in V1 wmfw files.
-> 
-> In V1 wmfw files the name is a NUL-terminated string in a fixed-size
-> array. cs_dsp should protect against overrunning the array if the NUL
-> terminator is missing.
-> 
-> [...]
+Hello, Vincent.
 
-Applied to
+On Mon, Jul 08, 2024 at 08:37:06AM +0200, Vincent Guittot wrote:
+> I prefer to minimize (if not remove) sched_ext related calls in the
+> fair path so we can easily rework it if needed. And this will also
+> ensure that all fair task are cleanly removed when they are all
+> switched to sched_ext
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Unless we add a WARN_ON_ONCE, if it doesn't behave as expected, the end
+result will most likely be cpufreq sometimes picking a higher freq than
+requested, which won't be the easiest to notice. Would you be against adding
+WARN_ON_ONCE(scx_switched_all && !util) too?
 
-Thanks!
+Thanks.
 
-[1/1] firmware: cs_dsp: Use strnlen() on name fields in V1 wmfw files
-      commit: 680e126ec0400f6daecf0510c5bb97a55779ff03
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+tejun
 
