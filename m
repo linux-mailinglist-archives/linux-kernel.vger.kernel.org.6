@@ -1,100 +1,105 @@
-Return-Path: <linux-kernel+bounces-244512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75F892A54C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A82BB92A551
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7A31F218CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC1A1F218EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C7313D29A;
-	Mon,  8 Jul 2024 15:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC6614290E;
+	Mon,  8 Jul 2024 15:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="L/eUG8A8"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRRSeseX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F98849C;
-	Mon,  8 Jul 2024 15:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AD281745;
+	Mon,  8 Jul 2024 15:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720450828; cv=none; b=g5y8pjVbJ3eT5vYSy+NS45FD7tpG2vmMEYCKuMGzAQvhw/cw8/8hWF+zmZONDX/g6noCiXuTz1fbojmEHfxfVBi7muqftfnul2pXrpakZmZbMGoQ8UskxIgwnab9DRKCEXeJBKmIw5JpCTo+ssPNNE4os3b7ufH+LtOzkQFrqXY=
+	t=1720450840; cv=none; b=sfqZV5fIbJOxmKYhblhZ/zflsubHCBnrU0Vt9kIriPFA6E8wZhOnFcjtLlrnYs0KhU46AwYDD7wHryqsYFCklpxpefDA43f7ItuLDlI1RgtQPWy7cK8CizjS/5v8+m1y52hZkm+03pmTnLMScFQkO3hr5bgLNcnEj+bsalT2Hhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720450828; c=relaxed/simple;
-	bh=GkJPSDPVlqWkpaY7O36uwo7fVzHGxLGGcvZQxBA2Hb4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=osh24IKx8MFKdpfcAQ/C9H6wdQ2JqpDF8xJLuLQWKly7+Z/Ba6mjOP9X5/DFusUFfBdLdcBw9bWc/NeWugDEZcVoBteBrUp5sDxKGO8ikEFdKSTCAl5iGI1hibdmH/hrm5yacEhgRc3F4n0I9t+m60vj3kKGu3P00av6wWchCb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=L/eUG8A8; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4685b6Vr018003;
-	Mon, 8 Jul 2024 10:00:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=cvmmguTLgovTIrwesbPF/aWvLQBDAGZHlCL6dk/5Sa0=; b=
-	L/eUG8A8gVOU81nEl+n2uyuBVMcM79jrgACyzVhP84xJuVlQPkZONrumw53p8zjP
-	SNOg2iekxcAXD5QSLkVbdKKFibSXQYHjne4GNl4B0Z8SEJcgK26jNNLMVhjOHyZF
-	yJY/LqN2ZcDskzYZoP40h8kPkohdMnlMkya4cEX/oV//Eg3P/Duj2jtKl9W+63/h
-	3CLZB/Q4+evq+lvUg9o5WmO5+yVpbRFsMnEv0RnnREzxGsw62zrqKi25yV0lxp9H
-	1EJIVmjHlrWW+b34Kc7d41WCnkvxA3EguhU5YUEDuh0TliWvUIfbuD28sGtHNylP
-	ZSvOkf2A8Wutl0dtcUKkQQ==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 4072bj9mfn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 10:00:08 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
- 16:00:07 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 8 Jul 2024 16:00:07 +0100
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 37878820244;
-	Mon,  8 Jul 2024 15:00:07 +0000 (UTC)
-Message-ID: <de44f274-4e02-4c66-b784-41031e99c33e@opensource.cirrus.com>
-Date: Mon, 8 Jul 2024 16:00:07 +0100
+	s=arc-20240116; t=1720450840; c=relaxed/simple;
+	bh=9tWDZ4ouMiehsT9Ap8iEFsMYys+iRi1AtI6U10gq75A=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PgisXtpRaeUfDxXJzEzABWT2vfhUTyQUt8Ux230z31PPJFUBYXZRrmfbud8j2tGHYOkwPkpiphCuHEKhr4WH6GKu5KLH69XZ9lQWJbodTP9DBK5kENNTL1fHEEpx3ArgJD+V/SL86wjbYsevkZCk4mid3xgVRbyu1dgM2ScXWNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SRRSeseX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0639AC116B1;
+	Mon,  8 Jul 2024 15:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720450840;
+	bh=9tWDZ4ouMiehsT9Ap8iEFsMYys+iRi1AtI6U10gq75A=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=SRRSeseX86QpkhoGOvxnidA5zEKA1zYTMbJ9+HDGCgSyN0TMtinPbB/FThsSrLhSL
+	 BMSSQLCwIn0oeShZxtPRRltz9DHvXNv0GY5/MbKZ+lugr/ZpTmuEZSoccSDR8GvMJ/
+	 C4ewt01hkpw/7t3GaMYtZhj4atsLRRzYErAMkPGmB/J9CVbQcQndP+GGqUOjnYGDK6
+	 0EoiDGwMDW23b0vU5tNbieJ2DRuwg2AgWgJMKdnZPTfPbK08RR+qsUsaMQsDMvgraj
+	 Z/vPF2m1zhpVRGLE6zTKqFOxb9AUY/tIeq+G1Bcanv8x/Ij4Icif+mMIU0qmrngX2a
+	 nXDuH4IOCqURw==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko
+ <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
+ Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Shuah Khan
+ <shuah@kernel.org>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Manu Bretelle <chantra@meta.com>
+Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
+In-Reply-To: <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+References: <20240705145009.32340-1-puranjay@kernel.org>
+ <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+Date: Mon, 08 Jul 2024 15:00:31 +0000
+Message-ID: <mb61pjzhwvshc.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: cs_dsp: Use strnlen() on name fields in V1 wmfw
- files
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
-References: <20240708144855.385332-1-rf@opensource.cirrus.com>
-Content-Language: en-GB
-In-Reply-To: <20240708144855.385332-1-rf@opensource.cirrus.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: D4bEonTxS4WC1HX6qRWzBqepH8NnP1Oc
-X-Proofpoint-GUID: D4bEonTxS4WC1HX6qRWzBqepH8NnP1Oc
-X-Proofpoint-Spam-Reason: safe
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On 08/07/2024 15:48, Richard Fitzgerald wrote:
-> Use strnlen() instead of strlen() on the algorithm and coefficient name
-> string arrays in V1 wmfw files.
-> 
-> In V1 wmfw files the name is a NUL-terminated string in a fixed-size
-> array. cs_dsp should protect against overrunning the array if the NUL
-> terminator is missing.
-> 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Fixes: f6bc909e7673 ("firmware: cs_dsp: add driver to support firmware loading on Cirrus Logic DSPs")
+--=-=-=
+Content-Type: text/plain
 
-Don't take this. It applies to 6.11 but not to 6.10.
-I'll try to sort out one that applies to new and old code, or
-send separate 6.11 and backport versions.
+Daniel Borkmann <daniel@iogearbox.net> writes:
 
-Sorry about that.
+> On 7/5/24 4:50 PM, Puranjay Mohan wrote:
+>> fexit_sleep test runs successfully now on the CI so remove it from the
+>> deny list.
+>
+> Do you happen to know which commit fixed it? If yes, might be nice to have it
+> documented in the commit message.
+
+Actually, I never saw this test failing on my local setup and yesterday
+I tried running it on the CI where it passed as well. So, I assumed that
+this would be fixed by some commit. I am not sure which exact commit
+might have fixed this.
+
+Manu, Martin
+
+When this was added to the deny list was this failing every time and did
+you have some reproducer for this. If there is a reproducer, I can try
+fixing it but when ran normally this test never fails for me.
+
+Thanks,
+Puranjay
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZov/EBQccHVyYW5qYXlA
+a2VybmVsLm9yZwAKCRCwwPkjG3B2nd39AP9EBMWza1kS6tLoAj30iwUT8Rq62Spe
+uPJ3oe/ze53tMQEAw96OjLRvasQ6jnDH9Igoh1iUcLlnsR6LnZ5TvEpO9gQ=
+=mXSa
+-----END PGP SIGNATURE-----
+--=-=-=--
 
