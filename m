@@ -1,155 +1,176 @@
-Return-Path: <linux-kernel+bounces-244585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576EE92A67F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:58:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322D892A681
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E041F21A9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2F81F210C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2BA1474C3;
-	Mon,  8 Jul 2024 15:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02FA1442FE;
+	Mon,  8 Jul 2024 15:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="kRJkI7N5"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nDxomOkm"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF95A1474A2
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F152E1442FB
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454081; cv=none; b=mqwL5zlAWGnNvzqQUBfZCMmiLkb4/s2CpKLoy/1tV+i0xEIxl9JgDjUDmloe6MRBcnp13Xep+MZaIckh6QyDb/1kwMf2WNmz5bcpNLj0F2zTQj31Oo7Ok5v6FcdZ/+mg/u8Wyem1b4bkT9chKj0wP8rgS5ulmdFeM9T+Wtlg/nA=
+	t=1720454118; cv=none; b=erqY2+HS1lFlg6VPC4CdAm3kOUX56g7IU8PQE+CaxJqypDn9nqGtUhONbyyZ6kqCDY+3NqlDAMTMXeCOQiTnXHGpuGRfkmldpTzZWmLZQ6jTtlzWWV2G0JMQZIRNTRHz5PqolZDEYtT/HexeqS9dHmZ011snBl8/IaBNUxphh+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454081; c=relaxed/simple;
-	bh=Kt5KUWdxd+J5SzA+sJLjT1CTq0d6T7GN684Xz0uIAtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SuSE63rpn2hU0oX9itxedJpjrCmLWhVZgLXsgnYUdZXqjSA6lhebDqLUERBOaEf1mPjcJQMbfs48de3/Cpevsb4XgujXx07EI1F83g3D/gc6Dx3sLqyJBJnO5f0Z4MOF3ncH/y8D5YSnEaPHL4Q1qVnjWt3et44aWRWeX1C2CFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=kRJkI7N5; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1720454065; x=1721058865; i=wahrenst@gmx.net;
-	bh=Ub6J2Z53f3wUO+xk78tLgojAcxeSDWJYJRW9UqqTXuU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=kRJkI7N5Y5kwc2auIa/1TDvEI+sDMNgZ97XaMnH9duurji6mq9RSsZbl9WBCDeIy
-	 +Df6n3PiB0BDLDfPYavI6TxaVul1QDpW1VwN4uC6fAUn0fk58aoOQ9FbnJ6lJWzbn
-	 Xl4yD9ZPEWZ7hns2Leyx/r697OEOtNCmmT3PDBRvul9xwJEJH83EpFDwa+PEmcpxX
-	 j+1KJF6088qELty6kLKsv5DCM1AIhKpL8Xk17008MxQxhJ5U5+jrd4GBvh3S+Ed39
-	 hwQQxLjN1U9HAnbsP+XTu3l+YdvfVl+iVcf/zOxNDsItDFqWg9xHHtMU98W8P6wNe
-	 GsEVeWg1R1UcXdN8BQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MI5UD-1sdpFG3JKh-00DhVy; Mon, 08
- Jul 2024 17:54:25 +0200
-Message-ID: <a5c69147-c0fe-4cda-8996-e46698c5e9e8@gmx.net>
-Date: Mon, 8 Jul 2024 17:54:25 +0200
+	s=arc-20240116; t=1720454118; c=relaxed/simple;
+	bh=cvBWKng3YeJPwbCLrAjHXr8nxo5lDxnqr7GqSHo/A44=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LDbxfFjo22BcBYtdihxSarG39qt5LkbxRa4ooOUVmxdDPdBh+HZEEgOtQuoXYEHAlVVSlY9YXwQX+iAynIr/mmeBaFhd98aD4Iu1YDh8rj9eepV2omuTy/7tBx8OJT5osTaT4GKWpJWHamIaDVYw4HmIgT0Y44V3P3uEcFFl7XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nDxomOkm; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7036e383089so584162a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 08:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720454116; x=1721058916; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BJuaMngDvL/ozTXoGo0oV92KGi7PV5ovmEPBZpZiQRY=;
+        b=nDxomOkmsy9XVF2XZC9GhRhpHnhv4y/murUcxpTEn3fTfPZgpECpNzuYd39Q/AFh74
+         zfU0Uc3vQ8LoHIO+dLnYMSlN+sqTDlGdLQZkYod/f9u53w+UVBD5kUfwGzF6N72knVIK
+         9gd3WVqzxgn1w1W4euCTF3rzel0M0SdnCoAkYypLn2GU4lc78iosoGnw8msMa65q+JNP
+         d2hztIbRLdfHSdDbxX/rrVqrZhXPkbHFXSddC2BHLfWC1zpfYumniSn+8E3gpqqRCNe+
+         89g4D80RGTnm+LGiYt+k8f4SjXDO23hFKZRNs/HPkk0of0OuR4zw6LW3/uSnsJYbbKyl
+         WPuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720454116; x=1721058916;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BJuaMngDvL/ozTXoGo0oV92KGi7PV5ovmEPBZpZiQRY=;
+        b=bEHKmcjeKBsF0nO8skzCC0UhenfqFLSCmfyOz+/QSgHganvzQxaO4lV6NP0240KLx5
+         bk3P6bxIZbcisaE/oGmaRamuGiSDYHmBU0uXwIkVu3UJZ1BLg7xrUvmj/M5X+Qz0itrL
+         /z0zizBwL2R9Ax6h08UKCSJblIbGnirZLVZ87+IIRSW9Ylw35hjssF6z/zx4SrN9Yvnt
+         ogr1Tm9cF2xdvBP63/pg4Ql6r+3OkyjuYgWdjRVJ4J8pzxyDs1CGsUN1h+lzxpRiW6yS
+         zpI2eeoPMgMRsuQg7NP3uruSD/Kb5LUZwyidlyqhJ+Z6EvLLY6Q9hn77u5JBSkWy3lQa
+         HseA==
+X-Forwarded-Encrypted: i=1; AJvYcCWV4SY30vwvoDPEvgZaK2Zpqpem4StBNS5ovao1oSsk1lJXF+iLY1Txdfj+9fLiN+6SaEKxTFnC+YRMPZzALvZfMv/nkCZKqBUhIK1E
+X-Gm-Message-State: AOJu0YylJFLAt2KBPcPjx7q1zXlVablNePQSJGvvsqv8udsO1KmcI7ak
+	MwFI/gbDZGXO54FzxDRcqEGVZNPsg4LzoYxC16XtziwoEElhBBlQ+BQlFOFXmCs=
+X-Google-Smtp-Source: AGHT+IG6B3+NMl1Hiaxxb/+k2s6LmYwoH7OVJEFQUH5dePCXbN3KkTq+YCAQZ0+N/4FRlQumpJ6Ocw==
+X-Received: by 2002:a05:6870:b50b:b0:25d:fab0:b6f3 with SMTP id 586e51a60fabf-25e2bf6358fmr9556896fac.59.1720454115970;
+        Mon, 08 Jul 2024 08:55:15 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:6fc:b7f5:4853:aff3])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25ea9feb5a5sm45381fac.19.2024.07.08.08.55.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 08:55:15 -0700 (PDT)
+Date: Mon, 8 Jul 2024 17:55:13 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, yskelg@gmail.com,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, shjy180909@gmail.com,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: Re: [PATCH] s390/zcrypt: optimize memory allocation in online_show()
+Message-ID: <ebe44c83-19bd-43e9-8999-99e3ccc7b417@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ARM: bcm2835_defconfig: Enable SMP support
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
- Russell King <linux@armlinux.org.uk>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>
-Cc: linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240707-raspi-config-v1-0-3e122f2122e9@gmx.net>
- <20240707-raspi-config-v1-2-3e122f2122e9@gmx.net>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240707-raspi-config-v1-2-3e122f2122e9@gmx.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dwXQtn/8x3viNcyK+GebOAFG6pbReHTLNl/d7R07Vf/unMTjnLj
- mcjo0bhnR0mkq9SfP4cO5zu6iyEwNXwqgxXk6aaEOM443I65G5hs82sNK41InPQyTZ7bh8i
- U/UEv70ZzFqkvLLNHXW9of4aE2nQyJDZpYdJyc5st+f5e8zcJD9bhYNcbXf3P1u/ZkbXvgG
- 0K3xNRl/4+2mX3KMnjsdg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vj6fKrjzQ6s=;wQoKj+lLp8+q55CJrsYQWZWBxxh
- /HNuQtmM3he53oXLIdv0ycxXIuGqNygYA6WsU+QaTrdwA0K6/CWfk7G5d0JX84NDQDbDR6vvn
- f4GH4DyH6bWJXZ7gi6eg+VCsHOvTN878MGg4X2jiUFcG8ZTZlUYMglAWd8yID0zKNONGrB47j
- JouaPSI0iigOZvJEthUHBZKLxK1TAGZi+6PwUaZyzOLI462LEIq2h21cMfW3TlOH96qP+HW66
- EsQFdch+ojtultor7H5InF/7BPzk4FJq/zEsotd92EOI2tEimW/ysTv3WTXaAgYXiKcx8cqrE
- MbadPNR45D0C6ASMrgeu9kZ8af7iNUvMTAmxRNfkS0IRaXCteWKY2lpyQ498txOoUQhGph4AT
- mm8wcV/4ct7k0Dr4TVuy3pWOxVbyPTFrv4ylvUdUPj7RzlwA+js77IycfYMCD2g8jMhDZSw9J
- 5VwrTt140W9gGOgs0KB2CsA77jfbXDhyXND8tDqAxfCq95BbqE9OE0YaM36MAAttLZM5WY3O1
- I1qNkDJK5R7dLYetpfwwP9JY/7wsarw73k7UUFGcGREuaEzImacwHslmQ1OD95v2SnbnBecKZ
- Ez23GF4XzDuqEP0UrQYfpsD1AetTCnxovDEfNBLDhMHdwjYjbyNA13j8ou3BzsRr7U+h7F305
- NmoXEvMt5djOJhy2Cp1zZfexWSKHSGzq335JGj8+FTyizKdeVMV2MG+N9LKOOj2waUPS4A2hE
- 8yzlhV1T/ugOzFuK1gL1IUvoyxqOLFCS+kA9FqmlvGStoogHQvpZUQq5gAjVrS0OcsuMdg3Rc
- Ljy2O+EkvWr0DgMA7GA1sL0da7PVeu9x3MJ1+FYtAF8Os=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240623120147.35554-3-yskelg@gmail.com>
 
-Hi Jonathan,
+Hi,
 
-Am 07.07.24 um 23:48 schrieb Jonathan Neusch=C3=A4fer:
-> Since there is only one Raspberry Pi related defconfig in the mainline
-> kernel, it's useful to have to work well on all 32-bit Raspberry Pis.
-this wasn't intention of bcm2835_defconfig. It's more focused on BCM2835
-SOC and kernel-ci (both non-SMP). If you want to use the BCM2836 &
-BCM2837 (incl. SMP), please use multi_v7_defconfig instead. Applying
-this change would decrease the test coverage.
-> To that end, this patch enables CONFIG_SMP and CONFIG_SMP_ON_UP, which
-> allows the kernel to run well on multi- and single-CPU systems.
->
-> PM and suspend support is necessary in order to keep KEXEC enabled.
-In this case the subject contains only half of the truth.
+kernel test robot noticed the following build warnings:
 
-Regards
-> - Raspberry Pi 2 Model B V1.1 (BCM2836, SMP)
-> - Raspberry Pi Model B (BCM2835, UP)
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> ---
->   arch/arm/configs/bcm2835_defconfig | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm28=
-35_defconfig
-> index da49dcfd359050..d505058715b66f 100644
-> --- a/arch/arm/configs/bcm2835_defconfig
-> +++ b/arch/arm/configs/bcm2835_defconfig
-> @@ -24,6 +24,7 @@ CONFIG_KEXEC=3Dy
->   CONFIG_ARCH_MULTI_V6=3Dy
->   CONFIG_ARCH_BCM=3Dy
->   CONFIG_ARCH_BCM2835=3Dy
-> +CONFIG_SMP=3Dy
->   CONFIG_CPU_FREQ=3Dy
->   CONFIG_CPU_FREQ_STAT=3Dy
->   CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=3Dy
-> @@ -33,8 +34,6 @@ CONFIG_CPU_FREQ_GOV_ONDEMAND=3Dy
->   CONFIG_CPUFREQ_DT=3Dy
->   CONFIG_ARM_RASPBERRYPI_CPUFREQ=3Dy
->   CONFIG_VFP=3Dy
-> -# CONFIG_SUSPEND is not set
-> -CONFIG_PM=3Dy
->   CONFIG_JUMP_LABEL=3Dy
->   CONFIG_MODULES=3Dy
->   CONFIG_MODULE_UNLOAD=3Dy
-> @@ -175,6 +174,7 @@ CONFIG_DEBUG_FS=3Dy
->   CONFIG_KGDB=3Dy
->   CONFIG_KGDB_KDB=3Dy
->   CONFIG_DEBUG_MEMORY_INIT=3Dy
-> +# CONFIG_RCU_TRACE is not set
->   CONFIG_FUNCTION_PROFILER=3Dy
->   CONFIG_STACK_TRACER=3Dy
->   CONFIG_SCHED_TRACER=3Dy
->
-> --
-> 2.43.0
->
->
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/yskelg-gmail-com/s390-zcrypt-optimize-memory-allocation-in-online_show/20240626-071004
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
+patch link:    https://lore.kernel.org/r/20240623120147.35554-3-yskelg%40gmail.com
+patch subject: [PATCH] s390/zcrypt: optimize memory allocation in online_show()
+config: s390-randconfig-r081-20240707 (https://download.01.org/0day-ci/archive/20240707/202407071714.4AUEoeUD-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 13.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202407071714.4AUEoeUD-lkp@intel.com/
+
+smatch warnings:
+drivers/s390/crypto/zcrypt_card.c:103 online_store() warn: iterator used outside loop: 'zq'
+
+vim +/zq +103 drivers/s390/crypto/zcrypt_card.c
+
+ac2b96f351d7d2 Harald Freudenberger 2018-08-17   60  static ssize_t online_store(struct device *dev,
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   61  			    struct device_attribute *attr,
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   62  			    const char *buf, size_t count)
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   63  {
+b5adbbf896d837 Julian Wiedmann      2021-06-07   64  	struct zcrypt_card *zc = dev_get_drvdata(dev);
+4f2fcccdb547b0 Harald Freudenberger 2020-07-02   65  	struct ap_card *ac = to_ap_card(dev);
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   66  	struct zcrypt_queue *zq;
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   67  	int online, id, i = 0, maxzqs = 0;
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   68  	struct zcrypt_queue **zq_uelist = NULL;
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   69  
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   70  	if (sscanf(buf, "%d\n", &online) != 1 || online < 0 || online > 1)
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   71  		return -EINVAL;
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   72  
+cfaef6516e9ac6 Ingo Franzki         2023-10-26   73  	if (online && (!ac->config || ac->chkstop))
+4f2fcccdb547b0 Harald Freudenberger 2020-07-02   74  		return -ENODEV;
+4f2fcccdb547b0 Harald Freudenberger 2020-07-02   75  
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   76  	zc->online = online;
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   77  	id = zc->card->id;
+cccd85bfb7bf67 Harald Freudenberger 2016-11-24   78  
+3f74eb5f78198a Harald Freudenberger 2021-10-15   79  	ZCRYPT_DBF_INFO("%s card=%02x online=%d\n", __func__, id, online);
+cccd85bfb7bf67 Harald Freudenberger 2016-11-24   80  
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   81  	ap_send_online_uevent(&ac->ap_dev, online);
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   82  
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   83  	spin_lock(&zcrypt_list_lock);
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   84  	/*
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   85  	 * As we are in atomic context here, directly sending uevents
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   86  	 * does not work. So collect the zqueues in a dynamic array
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   87  	 * and process them after zcrypt_list_lock release. As we get/put
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   88  	 * the zqueue objects, we make sure they exist after lock release.
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   89  	 */
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   90  	list_for_each_entry(zq, &zc->zqueues, list)
+2ff6be56a27c2d Yunseong Kim         2024-06-23   91  		if (!!zq->online != !!online)
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   92  			maxzqs++;
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   93  	if (maxzqs > 0)
+2ff6be56a27c2d Yunseong Kim         2024-06-23   94  		zq_uelist = kcalloc(maxzqs, sizeof(*zq_uelist), GFP_ATOMIC);
+e28d2af43614eb Ingo Tuchscherer     2016-08-25   95  	list_for_each_entry(zq, &zc->zqueues, list)
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   96  		if (zcrypt_queue_force_online(zq, online))
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   97  			if (zq_uelist) {
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   98  				zcrypt_queue_get(zq);
+df6f508c68dbc6 Harald Freudenberger 2021-04-13   99  				zq_uelist[i++] = zq;
+df6f508c68dbc6 Harald Freudenberger 2021-04-13  100  			}
+e28d2af43614eb Ingo Tuchscherer     2016-08-25  101  	spin_unlock(&zcrypt_list_lock);
+2ff6be56a27c2d Yunseong Kim         2024-06-23  102  	while (i--) {
+df6f508c68dbc6 Harald Freudenberger 2021-04-13 @103  		ap_send_online_uevent(&zq->queue->ap_dev, online);
+                                                                                       ^^
+zq is an invalid pointer here.  It's an offset off the list head.
+There used to be a "zq = zq_uelist[i];" before this function call but
+the patch deleted it.
+
+2ff6be56a27c2d Yunseong Kim         2024-06-23  104  		zcrypt_queue_put(zq_uelist[i]);
+df6f508c68dbc6 Harald Freudenberger 2021-04-13  105  	}
+df6f508c68dbc6 Harald Freudenberger 2021-04-13  106  	kfree(zq_uelist);
+df6f508c68dbc6 Harald Freudenberger 2021-04-13  107  
+e28d2af43614eb Ingo Tuchscherer     2016-08-25  108  	return count;
+e28d2af43614eb Ingo Tuchscherer     2016-08-25  109  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
