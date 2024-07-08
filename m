@@ -1,171 +1,174 @@
-Return-Path: <linux-kernel+bounces-244146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F15F929FC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:58:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B69DB929FCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A001C23151
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:58:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18D21C212C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BAA74BF8;
-	Mon,  8 Jul 2024 09:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31FB75808;
+	Mon,  8 Jul 2024 10:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Y3YY9Ufw"
-Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SNhNnXbM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD04E6F2E9
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21C4B66F;
+	Mon,  8 Jul 2024 10:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720432698; cv=none; b=ijYdyDRIh06N/v3yabOxNXzYI1nEl/fhSKI4jpJSYiY6qxcP+GRoCRIwvciwVdeLdjIwUJjcyVNe+TL41mZCGyvyTMiQL6XvnwhBvhXwC35Vfdth7LBMjF+CsT8D8cuN2Haz3/6CFwmnRB87GIygB6tQ6JbAYSWvh4BNtTn2qVg=
+	t=1720433049; cv=none; b=B55ezsV3GvPMp8bSdRTw5E6UTJhIJt2FriZhkese9Tn5bAcPpSBhi/edYsL9JVgWIT67oY6qPigyIWZ+uEhVpe8aRgEVDVqaXSJ1BnvRS1EMUjPJbYgRMhAFYIMcCCG8YJo4sNyfrgeKw40nFVc4AaVxroK8msSRZGo9Vlt7OKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720432698; c=relaxed/simple;
-	bh=09A+agkF70Psqu3YtBvHyqdgSuOLGsFlv3gsDiU0ohM=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=m1mmqQN+ihK1a7U4iHsy6NWeuizFkWls7miSb5Ro7ms6R9wvUqYjuQQPOp0Twf+c+DX0et/3UJ+fMSMMmhNSeU8/4bwmsnzM/Xfx2Mdu9osU41KUbgdTWrskVK3/GlNgbNUEfn1AY8vdKogvP5Mho9yuQNcbE5K8wAlE8IOVtKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Y3YY9Ufw; arc=none smtp.client-ip=207.171.188.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1720432697; x=1751968697;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=09A+agkF70Psqu3YtBvHyqdgSuOLGsFlv3gsDiU0ohM=;
-  b=Y3YY9Ufwe2cfpexOUXkCOzM4iMJtpoOaLG6zZ0PuNgESMYpcNxn1fs2N
-   UXjbrO3Mf2ZN5q4wb0lLlga0fUM16y2Is11BooGUfBvGiUcaHcXCcDUf7
-   5oo+rmELWkI0U8o3+Awz0jZ0TVApfWdPZzDdBbe0eQdilZ2I8MvyMuxfP
-   4=;
-X-IronPort-AV: E=Sophos;i="6.09,191,1716249600"; 
-   d="scan'208";a="739537399"
-Subject: Re: [linux-next-6.10-rc6-20240703] Warning at mm/memblock.c:1447
-Thread-Topic: [linux-next-6.10-rc6-20240703] Warning at mm/memblock.c:1447
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 09:58:11 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.7.35:27253]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.8.53:2525] with esmtp (Farcaster)
- id a71911b4-fbfc-41cd-9f48-f63e4cd08bdb; Mon, 8 Jul 2024 09:58:10 +0000 (UTC)
-X-Farcaster-Flow-ID: a71911b4-fbfc-41cd-9f48-f63e4cd08bdb
-Received: from EX19D020UWA003.ant.amazon.com (10.13.138.254) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 8 Jul 2024 09:58:10 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D020UWA003.ant.amazon.com (10.13.138.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 8 Jul 2024 09:58:10 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1258.034; Mon, 8 Jul 2024 09:58:09 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "mpe@ellerman.id.au" <mpe@ellerman.id.au>, "christophe.leroy@csgroup.eu"
-	<christophe.leroy@csgroup.eu>, "naveen.n.rao@linux.ibm.com"
-	<naveen.n.rao@linux.ibm.com>, "venkat88@linux.vnet.ibm.com"
-	<venkat88@linux.vnet.ibm.com>, "npiggin@gmail.com" <npiggin@gmail.com>,
-	"rppt@kernel.org" <rppt@kernel.org>
-CC: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-mm@vger.kernel.org"
-	<linux-mm@vger.kernel.org>, "Graf (AWS), Alexander" <graf@amazon.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Thread-Index: AQHa0RrhQT/K7aCq10aAtnfUXeDICrHsmHGA
-Date: Mon, 8 Jul 2024 09:58:09 +0000
-Message-ID: <e6dbf04ca92a021856d8da2a4e795908290c6c9c.camel@amazon.com>
-References: <a70e4064-a040-447b-8556-1fd02f19383d@linux.vnet.ibm.com>
-In-Reply-To: <a70e4064-a040-447b-8556-1fd02f19383d@linux.vnet.ibm.com>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D852B9AC5E18A342A700FD9ADA77C286@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1720433049; c=relaxed/simple;
+	bh=J+Z6jMXhU/yw+wHs214cID6sbP15ukU/eqWQzLC8dOE=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OFTCf6FDS8Mz2kPAIPrmfCLp7Xo5sPRV16qsUx99LKUvU6TReqexvcMbPUQHRnWvoUpULjgsi/tqBZkHn9aHspBqQO7Iq6XBpr3sg1KojKQD8LNRBPruvqbcuMiTYvnj9peODMxcT/udUupwjBjdNz5mkDpMcdeU0kO3pLSy1Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SNhNnXbM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4681PbDv009360;
+	Mon, 8 Jul 2024 10:04:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9OU9NZ4RxDV8X4ZhAcTVOT9q0olNCw16TW0+r0rOjEU=; b=SNhNnXbM5/3F2BUB
+	SWtxeC1RNI3Dg8+jmSBrP8BtD9fW2ccb4m8eQ4Tnd41xbRnDh1vkWqKgmbEtpnAY
+	kEyDVQLwphbjoTSgAV8bhFf8qSa7SywBZlIKhm0d8yzk1Yh1a83H8PGIbixPttpB
+	XJUDOIDQfs1R6YiInRrdiugKqmhPTJA2pYR5bzIkmR0z9YgAm6e8i8PgqqS5XtrY
+	dAE4k42guzasEDkI4JRBesjaMiO06lDItHd00D7+lXA098uRbfJe277QNGNRYwjp
+	05bZ9HtkiUV93LejVP/lGFrWpr1bTgnFcHhmNDaLyrj8uxV9q8EffwtVWqKUMyCj
+	hsFGpQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t38kx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 10:04:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468A42wP031947
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 10:04:02 GMT
+Received: from [10.214.67.176] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 03:04:00 -0700
+Subject: Re: [PATCH v2] firmware: qcom_scm: Add a padded page to ensure DMA
+ memory from lower 4GB
+To: Mukesh Ojha <quic_mojha@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>
+CC: <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1716564705-9929-1-git-send-email-quic_mojha@quicinc.com>
+ <h6omxqre7pod3ztn7x3sckjbgcg32u4btfmtxwn2rkjw7uwsgd@ncdmu5ed4gm3>
+ <d85bf913-b6dc-e9fd-7c54-fe52b79c2593@quicinc.com>
+ <jcvu2irnung4u6v6ticafrqze73kqenpqpy6le6du2q6ag734u@jeqxv5y7pumm>
+ <ZnmK7Nc50gM3HbVI@hu-mojha-hyd.qualcomm.com>
+From: Prakash Gupta <quic_guptap@quicinc.com>
+Message-ID: <b645a400-a932-f7e0-de03-e88833541538@quicinc.com>
+Date: Mon, 8 Jul 2024 15:33:57 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ZnmK7Nc50gM3HbVI@hu-mojha-hyd.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XL5FmoLoaI5xb4UH78wBCIL6YqFdreXi
+X-Proofpoint-ORIG-GUID: XL5FmoLoaI5xb4UH78wBCIL6YqFdreXi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_05,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080078
 
-SGkgVmVua2F0LA0KDQpPbiBNb24sIDIwMjQtMDctMDggYXQgMTU6MDkgKzA1MzAsIFZlbmthdCBS
-YW8gQmFnYWxrb3RlIHdyb3RlOg0KPiBHcmVldGluZ3MhISENCj4gDQo+IA0KPiBPYnNlcnZpbmcg
-YmVsb3cgd2FybmluZyB3aGlsZSBib290aW5nLCB3aGVuIGZhZHVtcCBpcyBjb25maWd1cmVkIHdp
-dGggbm9jYW0uDQo+IA0KPiANCj4gW8KgwqDCoCAwLjA2MTMyOV0gLS0tLS0tLS0tLS0tWyBjdXQg
-aGVyZSBdLS0tLS0tLS0tLS0tDQo+IFvCoMKgwqAgMC4wNjEzMzJdIFdBUk5JTkc6IENQVTogMCBQ
-SUQ6IDEgYXQgbW0vbWVtYmxvY2suYzoxNDQ3DQo+IG1lbWJsb2NrX2FsbG9jX3JhbmdlX25pZCsw
-eDI0Yy8weDI3OA0KPiBbwqDCoMKgIDAuMDYxMzM3XSBNb2R1bGVzIGxpbmtlZCBpbjoNCj4gW8Kg
-wqDCoCAwLjA2MTMzOV0gQ1BVOiAwIFVJRDogMCBQSUQ6IDEgQ29tbTogc3dhcHBlci8wIE5vdCB0
-YWludGVkDQo+IDYuMTAuMC1yYzYtbmV4dC0yMDI0MDcwMy1hdXRvICMxDQo+IFvCoMKgwqAgMC4w
-NjEzNDFdIEhhcmR3YXJlIG5hbWU6IElCTSw5MDgwLUhFWCBQT1dFUjEwIChhcmNoaXRlY3RlZCkN
-Cj4gMHg4MDAyMDAgMHhmMDAwMDA2IG9mOklCTSxGVzEwNjAuMDAgKE5IMTA2MF8wMTYpIGh2OnBo
-eXAgcFNlcmllcw0KPiBbwqDCoMKgIDAuMDYxMzQyXSBOSVA6ICBjMDAwMDAwMDAyMDYxNjEwIExS
-OiBjMDAwMDAwMDAyMDYxNDI0IENUUjoNCj4gMDAwMDAwMDAwMDAwMDAwMA0KPiBbwqDCoMKgIDAu
-MDYxMzQ0XSBSRUdTOiBjMDAwMDAwMDA0ZDJmNzgwIFRSQVA6IDA3MDAgICBOb3QgdGFpbnRlZA0K
-PiAoNi4xMC4wLXJjNi1uZXh0LTIwMjQwNzAzLWF1dG8pDQo+IFvCoMKgwqAgMC4wNjEzNDVdIE1T
-UjogIDgwMDAwMDAwMDIwMjkwMzMgPFNGLFZFQyxFRSxNRSxJUixEUixSSSxMRT7CoCBDUjoNCj4g
-NDQwMDAyNDIgIFhFUjogMjAwNDAwMTANCj4gW8KgwqDCoCAwLjA2MTM1MF0gQ0ZBUjogYzAwMDAw
-MDAwMjA2MTQyYyBJUlFNQVNLOiAwDQo+IFvCoMKgwqAgMC4wNjEzNTBdIEdQUjAwOiBjMDAwMDAw
-MDAyMDYxNDI0IGMwMDAwMDAwMDRkMmZhMjAgYzAwMDAwMDAwMTVhM2QwMA0KPiAwMDAwMDAwMDAw
-MDAwMDAxDQo+IFvCoMKgwqAgMC4wNjEzNTBdIEdQUjA0OiAwMDAwMDAwMDAwMDAwODAwIDAwMDAw
-MDEyYzAwMDAwMDAgMDAwMDAwMjU4MDAwMDAwMA0KPiBmZmZmZmZmZmZmZmZmZmZmDQo+IFvCoMKg
-wqAgMC4wNjEzNTBdIEdQUjA4OiAwMDAwMDAwMDAwMDAwMDAwIDAwMDAwMDAwMDAwMDAwMDIgYzAw
-MDAwMDAwMmY1OGMwOA0KPiAwMDAwMDAwMDI0MDAwMjQyDQo+IFvCoMKgwqAgMC4wNjEzNTBdIEdQ
-UjEyOiBjMDAwMDAwMDAwNDU0NDA4IGMwMDAwMDAwMDMwMTAwMDAgYzAwMDAwMDAwMDAxMTJhYw0K
-PiAwMDAwMDAwMDAwMDAwMDAwDQo+IFvCoMKgwqAgMC4wNjEzNTBdIEdQUjE2OiAwMDAwMDAwMDAw
-MDAwMDAwIDAwMDAwMDAwMDAwMDAwMDAgMDAwMDAwMDAwMDAwMDAwMA0KPiAwMDAwMDAwMDAwMDAw
-MDAwDQo+IFvCoMKgwqAgMC4wNjEzNTBdIEdQUjIwOiAwMDAwMDAwMDAwMDAwMDAwIDAwMDAwMDAw
-MDAwMDAwMDAgMDAwMDAwMDAwMDAwMDAwMA0KPiBjMDAwMDAwMDAxNDlkMzkwDQo+IFvCoMKgwqAg
-MC4wNjEzNTBdIEdQUjI0OiBjMDAwMDAwMDAyMDA0NjZjIGZmZmZmZmZmZmZmZmZmZmYgMDAwMDAw
-MjU4MDAwMDAwMA0KPiAwMDAwMDAxMmMwMDAwMDAwDQo+IFvCoMKgwqAgMC4wNjEzNTBdIEdQUjI4
-OiAwMDAwMDAwMDAwMDAwODAwIDAwMDAwMDAwMDAwMDAwMDUgMDAwMDAwMDAwMDAwMDAwMA0KPiAw
-MDAwMDAwMDAwMDAwMDAwDQo+IFvCoMKgwqAgMC4wNjEzNjVdIE5JUCBbYzAwMDAwMDAwMjA2MTYx
-MF0gbWVtYmxvY2tfYWxsb2NfcmFuZ2VfbmlkKzB4MjRjLzB4Mjc4DQo+IFvCoMKgwqAgMC4wNjEz
-NjhdIExSIFtjMDAwMDAwMDAyMDYxNDI0XSBtZW1ibG9ja19hbGxvY19yYW5nZV9uaWQrMHg2MC8w
-eDI3OA0KPiBbwqDCoMKgIDAuMDYxMzcwXSBDYWxsIFRyYWNlOg0KPiBbwqDCoMKgIDAuMDYxMzcx
-XSBbYzAwMDAwMDAwNGQyZmEyMF0gW2MwMDAwMDAwMDRkMmZhNjBdIDB4YzAwMDAwMDAwNGQyZmE2
-MA0KPiAodW5yZWxpYWJsZSkNCj4gW8KgwqDCoCAwLjA2MTM3M10gW2MwMDAwMDAwMDRkMmZhZTBd
-IFtjMDAwMDAwMDAyMDYxNzhjXQ0KPiBtZW1ibG9ja19waHlzX2FsbG9jX3JhbmdlKzB4NjAvMHhl
-NA0KPiBbwqDCoMKgIDAuMDYxMzc2XSBbYzAwMDAwMDAwNGQyZmI2MF0gW2MwMDAwMDAwMDIwMTdh
-NjBdDQo+IHNldHVwX2ZhZHVtcCsweDExNC8weDI0NA0KPiBbwqDCoMKgIDAuMDYxMzc5XSBbYzAw
-MDAwMDAwNGQyZmJlMF0gW2MwMDAwMDAwMDAwMTBlNzhdDQo+IGRvX29uZV9pbml0Y2FsbCsweDYw
-LzB4Mzk4DQo+IFvCoMKgwqAgMC4wNjEzODFdIFtjMDAwMDAwMDA0ZDJmY2MwXSBbYzAwMDAwMDAw
-MjAwNmI1Y10NCj4gZG9faW5pdGNhbGxzKzB4MTJjLzB4MjE4DQo+IFvCoMKgwqAgMC4wNjEzODNd
-IFtjMDAwMDAwMDA0ZDJmZDcwXSBbYzAwMDAwMDAwMjAwNmYyOF0NCj4ga2VybmVsX2luaXRfZnJl
-ZWFibGUrMHgyMzgvMHgzNzANCj4gW8KgwqDCoCAwLjA2MTM4Nl0gW2MwMDAwMDAwMDRkMmZkZTBd
-IFtjMDAwMDAwMDAwMDExMmQ4XSBrZXJuZWxfaW5pdCsweDM0LzB4MjZjDQo+IFvCoMKgwqAgMC4w
-NjEzODhdIFtjMDAwMDAwMDA0ZDJmZTUwXSBbYzAwMDAwMDAwMDAwZGY3Y10NCj4gcmV0X2Zyb21f
-a2VybmVsX3VzZXJfdGhyZWFkKzB4MTQvMHgxYw0KPiBbwqDCoMKgIDAuMDYxMzg5XSAtLS0gaW50
-ZXJydXB0OiAwIGF0IDB4MA0KPiBbwqDCoMKgIDAuMDYxMzkwXSBDb2RlOiBlYjgxZmZlMCBlYmMx
-ZmZmMCBlYmUxZmZmOCA3YzA4MDNhNiA3ZDcxMDEyMA0KPiA3ZDcwODEyMCA0ZTgwMDAyMCA2MDAw
-MDAwMCA0YWZiZjIxOSA2MDAwMDAwMCAzYjgwMDA4MCA0YmZmZmU0MA0KPiA8MGZlMDAwMDA+IGU4
-NjEwMDY4IDdmMjZjYjc4IDM4YTAyOTAwDQo+IFvCoMKgwqAgMC4wNjEzOTZdIC0tLVsgZW5kIHRy
-YWNlIDAwMDAwMDAwMDAwMDAwMDAgXS0tLQ0KDQpUaGUgcHVycG9zZSBvZiB0aGF0IG5ld2x5IGlu
-dHJvZHVjZWQgd2FybmluZyBpcyB0byBkZXRlY3QgaW5jb3JyZWN0DQp1c2FnZSBvZiB0aGUgbWVt
-YmxvY2sgYWxsb2NhdG9yLiBTcGVjaWZpY2FsbHksIHRvIGZpbmQgd2hlbiBhDQpkcml2ZXIvc3Vi
-c3lzdGVtIHRyaWVzIHRvIGRvIGEgbWVtYmxvY2sgYWxsb2MgYWZ0ZXIgbWVtYmxvY2sgaGFzIGdp
-dmVuDQphbGwgc3lzdGVtIFJBTSB0byB0aGUgYnVkZHkgYWxsb2NhdG9yLiBJdCBoYXMgbWF5YmUg
-Y2F1Z2h0IHN1Y2ggYSBjYXNlDQpub3cuLi4NCg0KSSBkb24ndCBoYXZlIGEgcG93ZXJwYyBzeXN0
-ZW0gaGFuZHkgdG8gcmVwcm8geW91ciBmYWlsdXJlLCBidXQgbG9va2luZw0KYXQgdGhlIGNvZGUs
-IGl0IGxvb2tzIGxpa2U6DQoxLiBmYWR1bXBfc2V0dXBfcGFyYW1fYXJlYSBhbGxvY3MgYSBwaHlz
-aWNhbCByYW5nZSBmb3INCmZ3X2R1bXAucGFyYW1fYXJlYSBhbmQgemVyb2VzIHRoYXQgcmFuZ2Uu
-DQoyLiBmYWR1bXBfYXBwZW5kX2Jvb3RhcmdzKCkgbWFya3MgaXQgYXMgcmVzZXJ2ZWQNCg0KQnV0
-IEkgYmVsaWV2ZSB0aGF0IGJ5IHRoaXMgcG9pbnQgdGhlIG1lbW9yeSBoYXMgYWxyZWFkeSBiZWVu
-IGhhbmRlZCB0bw0KdGhlIGJ1ZGR5IGFsbG9jYXRvci4gU28gaXQncyBwb3NzaWJsZSBmb3IgdGhh
-dCB6ZXJvaW5nIHRvIGJlIGNsb2JiZXJpbmcNCnNvbWVvbmUgZWxzZSdzIG1lbW9yeSwgYXMgdGhl
-IGZhZHVtcCBjb2RlIGluY29ycmVjdGx5IGFzc3VtZXMgdGhhdCBpdA0KaGFzIGV4Y2x1c2l2ZSB1
-c2Ugb2YgdGhpcyByZWdpb24uDQoNCkkgbWF5IGJlIHdpbGRseSBvZmYsIGJ1dCB0aGF0IHdhcyB0
-aGUgKmludGVudGlvbiogb2YgdGhlIHdhcm5pbmcuDQoNCkFkZGluZyBQb3dlclBDIG1haW50YWlu
-ZXJzIGhlcmUgZm9yIHRoZWlyIG9waW5pb24gb24gd2hldGhlciBmYWR1bXAgaXMNCmRvaW5nIHRo
-ZSByaWdodCB0aGluZyBoZXJlIG9yIG5vdC4NCg0KPiANCj4gDQo+IGNhdCAvcHJvYy9jbWRsaW5l
-DQo+IEJPT1RfSU1BR0U9KGllZWUxMjc1Ly92ZGV2aWNlL3ZmYy1jbGllbnRAMzAwMDAwZDQvZGlz
-a0A1MDA1MDc2ODEwMTUzNWU1LG1zZG9zMykvYm9vdC92bWxpbnV6LTYuMTAuMC1yYzYtbmV4dC0y
-MDI0MDcwMw0KPiByb290PVVVSUQ9MmM5MGFiNDctMzM4OS00MDE3LTlmMDYtMGM5NDUzNGZkOWNi
-IHJvDQo+IGNyYXNoa2VybmVsPTJHLTRHOjM4NE0sNEctMTZHOjUxMk0sMTZHLTY0RzoxRyw2NEct
-MTI4RzoyRywxMjhHLTo0Rw0KPiBmYWR1bXA9bm9jbWENCj4gDQo+IA0KPiBSZXZlcnRpbmcgdGhl
-IGJlbG93IGNvbW1pdCwgaXNzdWUgaXMgbm90IHNlZW4uDQo+IA0KPiANCj4gQ29tbWl0IElEOiAw
-ZmE0YWM2NzIyMTI3ZjRhYWUyZWE5ODEzYmEyNDZjZTJiZWM4MzI2DQo+IA0KPiANCj4gUmVnYXJk
-cywNCj4gDQo+IFZlbmthdC4NCj4gDQoNCg==
+
+
+On 6/24/2024 8:34 PM, Mukesh Ojha wrote:
+> On Sun, Jun 23, 2024 at 07:25:23PM -0500, Bjorn Andersson wrote:
+>> On Wed, May 29, 2024 at 05:24:29PM GMT, Mukesh Ojha wrote:
+>>>
+>>>
+>>> On 5/27/2024 2:16 AM, Bjorn Andersson wrote:
+>>>> On Fri, May 24, 2024 at 09:01:45PM GMT, Mukesh Ojha wrote:
+>>>>> For SCM protection, memory allocation should be physically contiguous,
+>>>>> 4K aligned, and non-cacheable to avoid XPU violations. This granularity
+>>>>> of protection applies from the secure world. Additionally, it's possible
+>>>>> that a 32-bit secure peripheral will access memory in SoCs like
+>>>>> sm8{4|5|6}50 for some remote processors. Therefore, memory allocation
+>>>>> needs to be done in the lower 4 GB range. To achieve this, Linux's CMA
+>>>>> pool can be used with dma_alloc APIs.
+>>>>>
+>>>>> However, dma_alloc APIs will fall back to the buddy pool if the requested
+>>>>> size is less than or equal to PAGE_SIZE. It's also possible that the remote
+>>>>> processor's metadata blob size is less than a PAGE_SIZE. Even though the
+>>>>> DMA APIs align the requested memory size to PAGE_SIZE, they can still fall
+>>>>> back to the buddy allocator, which may fail if `CONFIG_ZONE_{DMA|DMA32}`
+>>>>> is disabled.
+>>>>
+>>>> Does "fail" here mean that the buddy heap returns a failure - in some
+>>>> case where dma_alloc would have succeeded, or that it does give you
+>>>> a PAGE_SIZE allocation which doesn't meeting your requirements?
+>>>
+>>> Yes, buddy will also try to allocate memory and may not get PAGE_SIZE memory
+>>> in lower 4GB(for 32bit capable device) if CONFIG_ZONE_{DMA|DMA32} is
+>>> disabled.
+>>
+>> Is that -ENOMEM or does "not get" mean that the buddy fallback will
+>> provide an allocation above 4GB?
+> 
+> dma_alloc_coherent() returns NULL in that situation.
+> 
+> https://elixir.bootlin.com/linux/v6.10-rc5/source/kernel/dma/direct.c#L142
+> 
+> -Mukesh
+> 
+
+scm device is using DMA mask as 32b. With size <= PAGE_SIZE, call to 
+dma_alloc_contiguous() at [1] will return NULL.
+
+With DMA mask as 32b and CONFIG_ZONE_{DMA|DMA32} disabled, the allocation 
+can't be guaranteed within 32b with buddy. Hence will return page as NULL.
+
+Adding a padded page should allow allocation from CMA region.
+
+Thanks,
+Prakash
+
+[1] https://elixir.bootlin.com/linux/v6.10-rc5/source/kernel/dma/direct.c#L131
+>>
+>> Regards,
+>> Bjorn
+>>
+>>> However, DMA memory would have successful such case if
+>>> padding is added to size to cross > PAGE_SIZE.
+>>>
+>>>>
+>>>>  From this I do find the behavior of dma_alloc unintuitive, do we know if
+>>>> there's a reason for the "equal to PAGE_SIZE" case you describe here?
+>>>
+>>> I am not a memory expert but the reason i can think of could be, <=
+>>> PAGE_SIZE can anyway possible to be requested outside DMA coherent api's
+>>> with kmalloc and friends api and that could be the reason it is falling
+>>> back to buddy pool in DMA api.
+>>>
+>>> -Mukesh
+> 
+
+> 
 
