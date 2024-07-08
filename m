@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-244684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8A792A7D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:08:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A265992A7DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866BC281116
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:08:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 037CAB2155C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3190B1487C5;
-	Mon,  8 Jul 2024 17:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D53149C40;
+	Mon,  8 Jul 2024 17:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/unPdKq"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJ3EEjpJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AA378C73;
-	Mon,  8 Jul 2024 17:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B0A148FEE;
+	Mon,  8 Jul 2024 17:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720458505; cv=none; b=ILgre8i0lPx4geBV2uAnwLVUPUOstVTm93057ciF6NVMM6S91oOS8u2Qh2DWrSbss/DN0aO0KhIsmvKQ1OJt9qDReYSAVONZcCwKLLGZ6PIeW8hZoPNDtOrb1FP4GtLTgaceUSD7tFWgbzNRcWTlrmy4cnSNtfiPxQq5aZJApUc=
+	t=1720458508; cv=none; b=kPmOW+t1eHUvTprr2mPDj3RcR2gAMDSJAr3YrWlHWPjFUsYRdMlewXh3kn3rNrjkDw/k1KHmVSfvldfM9LJ8DPMwb95BHSNFMQpY48ULIpKOTEcBJFlsPBvW97paddvVrd414mmvb3UfOR5VXPQcdqgprtsULduLDpvdPmbsRys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720458505; c=relaxed/simple;
-	bh=BqTgLx+0wRcTK/3ZMMN47PaeHKnWPpAqUgTXj7Nuc90=;
+	s=arc-20240116; t=1720458508; c=relaxed/simple;
+	bh=Y3aHN1NmCiICEtufO9VLeJIX/a8wyoqvGJdPF9we2rQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1Sge4j5AEqaaym1p1HIsWMQbVJST86BM4tyS1ktkjyqmDFNTt88QXOKiHQUEr5B6SzLEywI4X0pQ6itrK3559RkjyMS3atw1tgVRcB7kPEbAB/1WyJh42OXj2kFs4Yar6J13hNbpZSCXyXBjxj7JdWbNRJmCbS0HpL7EHsgvc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/unPdKq; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70af8062039so2516029b3a.0;
-        Mon, 08 Jul 2024 10:08:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720458503; x=1721063303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q+xCwo0Qll+B7YIHIpiMJLZUhkmJAp1xH4lUbp6PMrE=;
-        b=E/unPdKqBGNx8xTiL5f15VmUhfUysxFM8UK4ajlSLoRScKO9QTwvCgLQOZYqDWlj8A
-         XewCBZYB3wDo+ukjS+wA9Qby50VgW1UJ8Ija+mCA6uT5gVg46VtbjdAmeHEAypM4VW1s
-         tbrVP2bB3dUoyjarQDA/unGfpYFQDQRmVsQhqEDJvVDiEERiZpb2tC5QhOIkeggLIgIc
-         Q7fFSqf45jak8Xh1oAvvWy014A30zvJ/8Brjs9OjRA0aYkmNgFKh/nvnKcEWBUFbeKhD
-         dkeHZx72qy1AfwuBlOSM25c31AWETsLQcGEUd+0rNlYmb7RNqhd22Nu5hA5OOJtyugzJ
-         F9hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720458503; x=1721063303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q+xCwo0Qll+B7YIHIpiMJLZUhkmJAp1xH4lUbp6PMrE=;
-        b=aTDkTFinvDEVHDK4hUIxLoe+CgSMbTS+2XUysoxQquvp8ORn9FRqcACe9lDM8kWdA/
-         oI5OEl1b4QKKNPVAMhg11kwGfauLsqXyKqofFqBcLYrWVRK0HouRFCNF9TOCxc4cmfU/
-         8Pzw1IOqTAiUeNEoKt+FbvJk97QvkSD6TWCfxe/u9Akb9AWZMVWiIOzxj8xdi9hV/TNX
-         uU04cD+WPyLWwQYTez5KH0mbBKCbEkT/Mn25MT8gPVBjaAboHTjESIzUlQqhHamOiYdc
-         Zx9DmEF0WWHwwlt4tkVPCL27fMiyC2nIlsR+v7+4919C5H0/0e7s5CLiXcBN1dYiQjNH
-         uthQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvk8fUPNpXu+lqJI6jGliBRmi10buK7LZKsgdomhQ95C+WzeTIvdJ3SUaa3BvFeySUxD3BOrPtQUCviacAZT+iN+BCkEbfgK9A52QUfYm1mzA/QjHYxCRGD/kgy0nbxqBLpIzGaaxBwhUd9Ev+t4b2ZsmeQsHcBLSbtca0mdyM9V2vyCG4
-X-Gm-Message-State: AOJu0Yzb9osVcv07CJR8jRNCKoKVu1+qoC9RvV2jyOPjBWaJauzr6X+f
-	wYi5CxLSZUjtrBBK4QzowNW+Kk9XHg6DF7/OL6AnNVtn2dWlWR0HQZMmEw==
-X-Google-Smtp-Source: AGHT+IG8qhGDhkqEpLeGA+8Lo44gyRZPNrfK68aS83rLNSUglQ0AfX4k1FsXSCL9weU/AY3jlMhoOA==
-X-Received: by 2002:a05:6a20:918c:b0:1c2:8904:14c2 with SMTP id adf61e73a8af0-1c29824364dmr12068637.37.1720458503494;
-        Mon, 08 Jul 2024 10:08:23 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:d2a4:59f0:2144:2c00])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a950c37sm8440917a91.13.2024.07.08.10.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 10:08:23 -0700 (PDT)
-Date: Mon, 8 Jul 2024 10:08:20 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andrew Davis <afd@ti.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: input: ti,nspire-keypad: convert to YAML
- format
-Message-ID: <ZowdBObFaYMEASR5@google.com>
-References: <20240612150711.26706-1-afd@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FusKsrserFArVkMr6TV0UFgJ1ofma4KtlIxADxaw3g8d9FAnc6nEQKLIY5170IBw9wXnTN8JAfK2/DyDMvGbwqf3PI9bRKens6SZxkAyyEsbcIYA08GqbA83VGB5g75T+PYqC7ssm+C79X8JMQ0DROT5CSxdmMipDPnf0Jx6k9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJ3EEjpJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC899C32786;
+	Mon,  8 Jul 2024 17:08:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720458508;
+	bh=Y3aHN1NmCiICEtufO9VLeJIX/a8wyoqvGJdPF9we2rQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KJ3EEjpJQ7KhLsBB1ZzRBnG2cF+rHHd/CNFLUWehzYoGgnDC/ydRyoxwpMMWB1c1U
+	 d64dEgd9+rJ4fqSar4OYyvZ32TIKvoD5U/fbKVq3cMwGBBDvsoniJFYljs1jg+0nO3
+	 XgDypjRFCNXY8AhYMNn4ve/nAwpdAntsO7XBecmWAis7kJk+RsS3o8+/FTdxZvf+Ih
+	 ITY4Mw0Fy0ljYlYqQW9N/6BZqHJrTAHlK3kcuCCPucieJtpTCMYafNhb4bD//+NU7K
+	 heUPMFFOcvGY2pub23LOyPaH810AZW66VSp3NXkOvDr5STkoOvtri9old3uQlbY79X
+	 6yQ+qdHhjo9eg==
+Date: Mon, 8 Jul 2024 11:08:26 -0600
+From: Rob Herring <robh@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: fabrice.gasnier@foss.st.com,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	alsa-devel@alsa-project.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/8] dt-bindings: iio: dfsdm: move to backend framework
+Message-ID: <20240708170826.GA3381590-robh@kernel.org>
+References: <20240704155338.2387858-1-olivier.moysan@foss.st.com>
+ <20240704155338.2387858-5-olivier.moysan@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,15 +67,295 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612150711.26706-1-afd@ti.com>
+In-Reply-To: <20240704155338.2387858-5-olivier.moysan@foss.st.com>
 
-On Wed, Jun 12, 2024 at 10:07:11AM -0500, Andrew Davis wrote:
-> Convert TI-NSPIRE Keypad controller bindings to DT schema.
+On Thu, Jul 04, 2024 at 05:53:32PM +0200, Olivier Moysan wrote:
+> Change the DFSDM binding to use the new IIO backend framework,
+> along with the adoption of IIO generic channels.
+> This binding change allows to add scaling support to the DFSDM.
 > 
-> Signed-off-by: Andrew Davis <afd@ti.com>
+> Keep the legacy binding as deprecated for backward compatibility.
+> 
+> The io-backends property is supported only in generic IIO channel
+> binding.
+> 
+> - Channel description with the generic binding (Audio and Analog):
+> 
+>   Properties superseded by generic properties:
+>     st,adc-channels: becomes "reg" property in channel node
+>     st,adc-channel-names: becomes "label" property in channel node
+>   Properties moved to channel child node:
+>     st,adc-channel-types: becomes st,adc-channel-type
+>     st,adc-channel-clk-src, st,adc-alt-channel
+> 
+> - Analog binding:
+> 
+>   DFSDM filter channel is configured as an IIO backend consumer.
+>   Add io-backends property in channel child nodes.
+> 
+>   DFSDM is no more configured as a channel consumer from SD modulator.
+>   Use of io-channels in DFSDM node is deprecated.
+> 
+> - Audio binding:
+> 
+>   DFSDM audio DAI is configured as a channel consumer from DFSDM filter.
+>   No change compare to legacy.
+> 
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
+>  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  | 153 +++++++++++++++++-
+>  1 file changed, 147 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+> index 2722edab1d9a..5a5bc8b96402 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+> @@ -102,9 +102,11 @@ patternProperties:
+>          items:
+>            minimum: 0
+>            maximum: 7
+> +        deprecated: true
+>  
+>        st,adc-channel-names:
+>          description: List of single-ended channel names.
+> +        deprecated: true
+>  
+>        st,filter-order:
+>          description: |
+> @@ -118,6 +120,12 @@ patternProperties:
+>        "#io-channel-cells":
+>          const: 1
+>  
+> +      '#address-cells':
+> +        const: 1
+> +
+> +      '#size-cells':
+> +        const: 0
+> +
+>        st,adc-channel-types:
+>          description: |
+>            Single-ended channel input type.
+> @@ -128,6 +136,7 @@ patternProperties:
+>          items:
+>            enum: [ SPI_R, SPI_F, MANCH_R, MANCH_F ]
+>          $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +        deprecated: true
+>  
+>        st,adc-channel-clk-src:
+>          description: |
+> @@ -139,6 +148,7 @@ patternProperties:
+>          items:
+>            enum: [ CLKIN, CLKOUT, CLKOUT_F, CLKOUT_R ]
+>          $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +        deprecated: true
+>  
+>        st,adc-alt-channel:
+>          description:
+> @@ -147,6 +157,7 @@ patternProperties:
+>            If not set, channel n is connected to SPI input n.
+>            If set, channel n is connected to SPI input n + 1.
+>          type: boolean
+> +        deprecated: true
+>  
+>        st,filter0-sync:
+>          description:
+> @@ -165,11 +176,60 @@ patternProperties:
+>        - compatible
+>        - reg
+>        - interrupts
+> -      - st,adc-channels
+> -      - st,adc-channel-names
+>        - st,filter-order
+>        - "#io-channel-cells"
+>  
+> +    patternProperties:
+> +      "^channel@([0-7])$":
+> +        type: object
+> +        $ref: adc.yaml
+> +        unevaluatedProperties: false
+> +        description: Represents the external channels which are connected to the DFSDM.
+> +
+> +        properties:
+> +          reg:
+> +            maxItems: 1
 
-Applied, thank you.
+Instead:
 
--- 
-Dmitry
+maximum: 7
+
+> +
+> +          label:
+> +            description:
+> +              Unique name to identify which channel this is.
+> +
+> +          st,adc-channel-type:
+> +            description: |
+> +              Single-ended channel input type.
+> +              - "SPI_R": SPI with data on rising edge (default)
+> +              - "SPI_F": SPI with data on falling edge
+> +              - "MANCH_R": manchester codec, rising edge = logic 0, falling edge = logic 1
+> +              - "MANCH_F": manchester codec, rising edge = logic 1, falling edge = logic 0
+> +            $ref: /schemas/types.yaml#/definitions/string
+> +            enum: [ SPI_R, SPI_F, MANCH_R, MANCH_F ]
+> +
+> +          st,adc-channel-clk-src:
+> +            description: |
+> +              Conversion clock source.
+> +              - "CLKIN": external SPI clock (CLKIN x)
+> +              - "CLKOUT": internal SPI clock (CLKOUT) (default)
+> +              - "CLKOUT_F": internal SPI clock divided by 2 (falling edge).
+> +              - "CLKOUT_R": internal SPI clock divided by 2 (rising edge).
+> +            $ref: /schemas/types.yaml#/definitions/string
+> +            enum: [ CLKIN, CLKOUT, CLKOUT_F, CLKOUT_R ]
+> +
+> +          st,adc-alt-channel:
+> +            description:
+> +              Must be defined if two sigma delta modulators are
+> +              connected on same SPI input.
+> +              If not set, channel n is connected to SPI input n.
+> +              If set, channel n is connected to SPI input n + 1.
+> +            type: boolean
+> +
+> +          io-backends:
+> +            description:
+> +              Used to pipe external sigma delta modulator or internal ADC backend to DFSDM channel.
+> +            maxItems: 1
+> +
+> +        required:
+> +          - reg
+> +
+>      allOf:
+>        - if:
+>            properties:
+> @@ -199,9 +259,19 @@ patternProperties:
+>                description:
+>                  From common IIO binding. Used to pipe external sigma delta
+>                  modulator or internal ADC output to DFSDM channel.
+> +              deprecated: true
+>  
+> -          required:
+> -            - io-channels
+> +          if:
+> +            required:
+> +              - st,adc-channels
+> +          then:
+> +            required:
+> +              - io-channels
+> +
+> +          patternProperties:
+> +            "^channel@([0-9])$":
+
+Is it 8 or 10 channels?
+
+> +              required:
+> +                - io-backends
+>  
+>        - if:
+>            properties:
+> @@ -298,7 +368,77 @@ examples:
+>        #address-cells = <1>;
+>        #size-cells = <0>;
+>  
+> +      // Example 1: Audio use case with generic binding
+>        dfsdm0: filter@0 {
+> +        compatible = "st,stm32-dfsdm-dmic";
+> +        reg = <0>;
+> +        interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+> +        dmas = <&dmamux1 101 0x400 0x01>;
+> +        dma-names = "rx";
+> +        #io-channel-cells = <1>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        st,filter-order = <5>;
+> +
+> +        channel@1 {
+> +          reg = <1>;
+> +          label = "dmic0";
+> +          st,adc-channel-type = "SPI_R";
+> +          st,adc-channel-clk-src = "CLKOUT";
+> +          st,adc-alt-channel;
+> +        };
+> +
+> +        asoc_pdm0: dfsdm-dai {
+> +          compatible = "st,stm32h7-dfsdm-dai";
+> +          #sound-dai-cells = <0>;
+> +          io-channels = <&dfsdm0 0>;
+> +        };
+> +      };
+> +
+> +      // Example 1: Analog use case with generic binding
+
+2nd example 1?
+
+> +      dfsdm1: filter@1 {
+> +        compatible = "st,stm32-dfsdm-adc";
+> +        reg = <1>;
+> +        interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
+> +        dmas = <&dmamux1 102 0x400 0x01>;
+> +        dma-names = "rx";
+> +        st,filter-order = <1>;
+> +        #io-channel-cells = <1>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        channel@2 {
+> +          reg = <2>;
+> +          label = "in2";
+> +          st,adc-channel-type = "SPI_F";
+> +          st,adc-channel-clk-src = "CLKOUT";
+> +          st,adc-alt-channel;
+> +          io-backends = <&sd_adc2>;
+> +        };
+> +
+> +        channel@3 {
+> +          reg = <3>;
+> +          label = "in3";
+> +          st,adc-channel-type = "SPI_R";
+> +          st,adc-channel-clk-src = "CLKOUT";
+> +          io-backends = <&sd_adc3>;
+> +        };
+> +      };
+> +    };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +    dfsdm_2: dfsdm@4400d000 {
+> +      compatible = "st,stm32mp1-dfsdm";
+> +      reg = <0x4400d000 0x800>;
+> +      clocks = <&rcc DFSDM_K>, <&rcc ADFSDM_K>;
+> +      clock-names = "dfsdm", "audio";
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      // Example 3: Audio use case with legacy binding
+
+I don't think it is worthwhile to show how to use the deprecated 
+binding.
+
+> +      dfsdm0_2: filter@0 {
+>          compatible = "st,stm32-dfsdm-dmic";
+>          reg = <0>;
+>          interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+> @@ -311,14 +451,15 @@ examples:
+>          st,adc-channel-clk-src = "CLKOUT";
+>          st,filter-order = <5>;
+>  
+> -        asoc_pdm0: dfsdm-dai {
+> +        asoc_pdm0_2: dfsdm-dai {
+>            compatible = "st,stm32h7-dfsdm-dai";
+>            #sound-dai-cells = <0>;
+>            io-channels = <&dfsdm0 0>;
+>          };
+>        };
+>  
+> -      dfsdm_pdm1: filter@1 {
+> +      // Example 3: Analog use case with legacy binding
+> +      dfsdm1_2: filter@1 {
+>          compatible = "st,stm32-dfsdm-adc";
+>          reg = <1>;
+>          interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
+> -- 
+> 2.25.1
+> 
 
