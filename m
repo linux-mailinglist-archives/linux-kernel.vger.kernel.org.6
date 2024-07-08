@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-244335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6404F92A2D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:32:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4416592A2D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9186B288C8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EC561C21125
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A6B7E0F1;
-	Mon,  8 Jul 2024 12:32:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F6454277;
-	Mon,  8 Jul 2024 12:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E2A78C73;
+	Mon,  8 Jul 2024 12:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cL/b5PO0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC5C80624
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720441932; cv=none; b=dbUYbax23lMMuhYc09JFoJil4qvJSJDicRwaHhWvG7C263us2HIQaFCoP8RZtzLyvIY1zSTD2ihSWQyV04M6FaXycozgZxblbNUTG1ch3pzyvehvccXblDic4C/h8oLAFZphsax98dq32aPpKM2pBBYhYOT2zVzbw3uD/8qTJw0=
+	t=1720442081; cv=none; b=WLuBxVkYwAU9lAJ+JFr4mU6XFWyngARd0heihDqQlCap5rDK01fA8I4VLF+6kCm+CuEDrdBvFP5a2Yrb+BgVX1VoAwQI70BnzZuCS/WfOBKaZsTb+YCTmmsIdEy/9oaDwG0WdShYWgctNmmmkQJsf5yTN41DKhTQkLtmSACPH2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720441932; c=relaxed/simple;
-	bh=DMnLTqC6BUcFBeBvAD31PCj2jQEyHSG/XGFN5/YEEjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KxS0REWP+7MEoQ+32PLQFzGqWfrW5ltTQpwnznW7LgUPH/6YzcdXb8LnhPwZ/M0AMC/vUVzqhSaPLyU+dQsfk+YCa9jDIFkTFBdYmSHqn4IP2jD2nZYXx5wTVGFkzBW1+iJ//1qeNg4WXWGzgy2KzIAGpJTGOF8o9y2Ay+5AZRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEF221042;
-	Mon,  8 Jul 2024 05:32:35 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB56F3F766;
-	Mon,  8 Jul 2024 05:32:09 -0700 (PDT)
-Message-ID: <9f65c70f-7b7e-40be-9726-5e4d83d33817@arm.com>
-Date: Mon, 8 Jul 2024 13:32:08 +0100
+	s=arc-20240116; t=1720442081; c=relaxed/simple;
+	bh=WMj07N05UMWmeIXTX/HCnph9LPCAByFEaqK3k+OW6BE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ES7sfPTms77HLTGIKpkdvOE6N9tUZR57Pt6BjaA28UYXuZ+aFy2PraWkPJau8IyEHHM9FaNSftNVNwWJew2eAMLEfBDlMnk0f7uBvcXKEMRdjMmvFPVYbWYAZb0CEX+2kQcCMYOSfpHZ43ggiNgAyXwmcU2L5MO4S/e3vx1Hh8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cL/b5PO0; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720442079; x=1751978079;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WMj07N05UMWmeIXTX/HCnph9LPCAByFEaqK3k+OW6BE=;
+  b=cL/b5PO0CRuVYilLBrdF33dl+Fh5lq+Q0uvye/je3OusnOMnZ9h6v+6F
+   tDdOkPZR+Zn5m9PsLgNtbszKHNF9Ep78ANyG579EtZXSQ7VqPlg+2nFFk
+   ynw1KIe7bIcsEHdlYMeb0zXCpSlxHFHsI/nMK6ikdY7vEMARxKR2Rhz2V
+   JXT7JtRBAhKnZlC2zJd9nZ+DB+5DMUaHRavjERdPy+f6Ym5Kt2CIOKqC9
+   Wis3zxylUXOnFi2/RAASOBDYD5G+nQoKCifZ355OF7jcULWCdymEOaG8r
+   5NiEupfXhx5kTvD1inW2R1ugyVzXQhOHiUIva7KuHRfWAtBNh8oT+6Y78
+   g==;
+X-CSE-ConnectionGUID: eniXV3gGSu+xt5ATB+6xKQ==
+X-CSE-MsgGUID: AtPQ7Fz+T/mQbExJXWXdRQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17781148"
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="17781148"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 05:34:39 -0700
+X-CSE-ConnectionGUID: WqXTWIFRQj+MsUiEOfvuvg==
+X-CSE-MsgGUID: mJLbFBfISW6lNqfPSZ3eBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="47367020"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 08 Jul 2024 05:34:36 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id D5F4E1AC; Mon, 08 Jul 2024 15:34:34 +0300 (EEST)
+Date: Mon, 8 Jul 2024 15:34:34 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dexuan Cui <decui@microsoft.com>
+Cc: Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Michael Kelley <mikelley@microsoft.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/tdx: Fix crash on kexec
+Message-ID: <uewczuxr5foiwe6wklhcgzi6ejfwgacxxoa67xadey62s46yro@quwpodezpxh5>
+References: <20240629130621.1671544-1-kirill.shutemov@linux.intel.com>
+ <20240629135933.GAZoATRVAubo7ZDdKB@fat_crate.local>
+ <poxeykijyqrz5hxrey46s6hh2qd6byirbevwuwec2gtbfq266c@npegk7sn3ot7>
+ <SA1PR21MB1317A2E38083B300256AD5F1BFD12@SA1PR21MB1317.namprd21.prod.outlook.com>
+ <20240629194103.GCZoBjTzC4m9a9yw1k@fat_crate.local>
+ <SA1PR21MB1317B5850E4274CC31EDFBF8BFDD2@SA1PR21MB1317.namprd21.prod.outlook.com>
+ <nx7jjplwvtmxsq675omsi5hc5oxceiffpmkqx754azuv7ee2zh@7fttse2hssti>
+ <SA1PR21MB131745AD18D9E91D2ACA1964BFDE2@SA1PR21MB1317.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] perf build: Conditionally add feature check flags
- for libtrace{event,fs}
-To: Guilherme Amadio <amadio@gentoo.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Thorsten Leemhuis <linux@leemhuis.info>, linux-perf-users@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20240628202608.3273329-1-amadio@gentoo.org>
- <20240628203432.3273625-1-amadio@gentoo.org>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20240628203432.3273625-1-amadio@gentoo.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SA1PR21MB131745AD18D9E91D2ACA1964BFDE2@SA1PR21MB1317.namprd21.prod.outlook.com>
 
-Hi Guilherme,
+On Thu, Jul 04, 2024 at 02:48:49PM +0000, Dexuan Cui wrote:
+> > From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > > [...]
+> > > Hi Kirill, Dave,
+> > > Do you think if it's a good idea if I post a new patch that combines
+> > >     e1b8ac3aae58 ("x86/tdx: Support vmalloc() for
+> > > tdx_enc_status_changed()")
+> > > and
+> > >     your patch "[PATCH] x86/tdx: Fix crash on kexec"?
+> > 
+> > Yeah, IIUC, that's what Borislav wanted. After proper testing.
+> > 
+> > --
+> >   Kiryl Shutsemau / Kirill A. Shutemov
+> 
+> Hi Kirill,  
+> I tested the 2 patches for a Linux VM on Hyper-V and all worked fine.
+> 
+> When you finish testing, please let me know so that I can post
+> a combined patch; alternatively, it would be better if you can help post
+> a combined patch.
 
-On 6/28/24 21:34, Guilherme Amadio wrote:
-> 
-> This avoids reported warnings when the packages are not installed.
-> 
-> Fixes: 0f0e1f44569061e3dc590cd0b8cb74d8fd53706b
-> Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
-> ---
->   tools/perf/Makefile.config | 28 +++++++++++++++-------------
->   1 file changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index 5271a4c1d2b3..5387babb8f04 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -182,13 +182,21 @@ endif
->   FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
->   FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
-> 
-> -# for linking with debug library, run like:
-> -# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> -FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> -FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> -
-> -FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> -FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
-> +ifneq ($(NO_LIBTRACEEVENT),1)
-> +  ifeq ($(call get-executable,$(PKG_CONFIG)),)
-> +  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
-> +  endif
-> +endif
-> +ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
-> +  # for linking with debug library, run like:
-> +  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> +  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> +  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> +endif
-> +ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
-> +  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> +  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
-> +endif
+Go ahead, post the new version.
 
-Seems to me, the patch 03 uses a more neat way for appending CFLAGS and
-LDFLAGS of libtraceevent and libtracefs, should not use the same code
-in patch 01?
+Borislav, could you drop the original patch from tip tree?
 
-Thanks,
-Leo
-
->   FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
->   # include ARCH specific config
-> @@ -208,12 +216,6 @@ ifeq ($(call get-executable,$(BISON)),)
->     $(error Error: $(BISON) is missing on this system, please install it)
->   endif
-> 
-> -ifneq ($(NO_LIBTRACEEVENT),1)
-> -  ifeq ($(call get-executable,$(PKG_CONFIG)),)
-> -  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
-> -  endif
-> -endif
-> -
->   ifneq ($(OUTPUT),)
->     ifeq ($(shell expr $(shell $(BISON) --version | grep bison | sed -e 's/.\+ \([0-9]\+\).\([0-9]\+\).\([0-9]\+\)/\1\2\3/g') \>\= 371), 1)
->       BISON_FILE_PREFIX_MAP := --file-prefix-map=$(OUTPUT)=
-> --
-> 2.45.2
-> 
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
