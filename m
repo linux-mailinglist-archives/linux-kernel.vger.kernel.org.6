@@ -1,68 +1,112 @@
-Return-Path: <linux-kernel+bounces-244929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E3A92ABB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:03:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6FFC92ABC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C621C2124F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:03:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06E75B21EE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CED14F9EB;
-	Mon,  8 Jul 2024 22:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413FD14F9EC;
+	Mon,  8 Jul 2024 22:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fl+ilK0H"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6c9A7LX"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65BA14D28A;
-	Mon,  8 Jul 2024 22:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF185674E;
+	Mon,  8 Jul 2024 22:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720476204; cv=none; b=OK+2PPLzHnM++OyoQiEOKOZ8P7ALTy8JyjrjcHeS7PP9hwaEI25Y2L02iHFS4h9BXbJTNyLvDR9uGmzeamFB9Ja7EIQ/IGGkv5fctjuw3fZkqJFmwBbun7aC9b15VnSovlHszKSoNY15btgOlJCjcFePuLJnEOEYBIyOMF8rFHc=
+	t=1720476779; cv=none; b=fwL7XLn36I6puAHZPpYXVI+Q+Sp4XCX88mK4ikAnH+psYsMtSUZCbX5GD5jgnBzkX7cJE7kFDOc6DYD28P0kyN9cLyyip8EdBvXL3OJTFyA9sQQmNjH/LoDsVpVmU+xfj9gMOaUrwRr1fSK6arNuIjWzMgvZQdctxr7xkFb47j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720476204; c=relaxed/simple;
-	bh=FD0PEdwlKnRybCD0FuQS/RkB7rVD1rm+iz/Cz00kSMY=;
+	s=arc-20240116; t=1720476779; c=relaxed/simple;
+	bh=4n1Vc9tXg+YIewhgBSUCESwYVFBpDzFDKw3KRl/z55s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bdskg3VqPLXJxBmtCQNvy6hT9sFicYIAO4w6SqKVPOCTgR4BqOBmDkiwLyuw+jJWCpZFN8+vTmGuZi8gnpoNuviKW8JfJ3oivi/ZPeRecfO6yabzoyN+emJOLeVJ97m7ibL9s5857+1IJmHHqH8PaDCDvQCv45h0gtEipEGaWt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fl+ilK0H; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=gAgXCvUKwhxWf6sDpKACJ8dGQFibYCWvhGf+QFQgbO8=; b=fl+ilK0HbmEB7zLU2AV6qHW8V2
-	wUuk9Hk+QHWh6pQwk81LXXFO8MKSswj0LXA9Ql9BHf6E7E1mFcr2atdMhjFLDYCjKsxkvTmXf/5FS
-	ioZxO9dBuqadbUSJTVh+b7TZrC0Iv2eD9Mlo3F6X3muOGt6zCTEcf4grBdVufPvOq0LE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sQwRy-002512-08; Tue, 09 Jul 2024 00:03:10 +0200
-Date: Tue, 9 Jul 2024 00:03:09 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
-	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] net: stmmac: Add interconnect support
-Message-ID: <0f83f143-09b3-4d0d-b1a2-c27b88a50317@lunn.ch>
-References: <20240708-icc_bw_voting_from_ethqos-v4-0-c6bc3db86071@quicinc.com>
- <20240708-icc_bw_voting_from_ethqos-v4-2-c6bc3db86071@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9PRg8a68vMp2wP8/dBZRGMEAX+MK8N16y9ehqW2fSk72JUpiYx8GMJi+ZkBMIQFrMrMs/RH9sXzxbG5687X2CKfqiXeqFeegzsOQDl3/CwrrS23ixhM9tLKAl+u7xCmWW+9oyDJ1ZX7WvnMqOK6D+yZdcH+EKSCd3q5QdS37gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6c9A7LX; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-79f0c08aa45so127984385a.0;
+        Mon, 08 Jul 2024 15:12:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720476777; x=1721081577; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dAOsl3qu4A6KcPFJBGEr5mKU1d6JWC06nIXsQ3Qf2RE=;
+        b=J6c9A7LXYBkqDd9TS26+l8B+XRlDWF2P8cgXPomW8RVd83q+mr1lE0HKWv/7ZHt317
+         qxIIx5XzRSLOQUt3Lyj5es+qyLyWTo7mJ+oFtYTyTGljo3ek9xTIQw9geVzOgH2ha6qP
+         BVjPZc1p7d9rAYxcxjbctZ5nPJeamCqcLimcMkMJAvrr9JM+9EZrLuMujqg0lq0r+/Wy
+         tZWRMVKOLduQnUfs33MV/4clqHe/PWAJGoAmsTiFx+AwXcr9GGWA5CFngAc1MEiaf4WZ
+         J2O+tHnWDw7+VSo/8Whihubd/1Z0F56L5XPFvjxl4JmuK1TTBjs4sA2OhS4/IF0i3nqe
+         CHtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720476777; x=1721081577;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dAOsl3qu4A6KcPFJBGEr5mKU1d6JWC06nIXsQ3Qf2RE=;
+        b=POfiLR78u29HzkDWfSRXptPb4nNWQ9kzFBGuWMOV9+lR1XwWuJqsfHEJM4h/zAk9U8
+         h4RypOLYx4AV6Q0YX/KMAotennnJFzhfV0t70Q3+knBsCl2uhJUnwRKHs/xXBbAz4j6T
+         wCIGG8nCzpKjaKicWp9ncUalI6STDl8MrouF+6NMgbdwuqGoh32ZZ+SDejjT7HnOFxyx
+         zvgmZM1kGB7H625D5+1Tq8pHxBmTYde2FW6Cr0NnEXUcY0Z8B13oUD/tGpPCyeBATdfw
+         DkwqjaZHdRjXUyi3M5plTGm80+IezZFfNHOMyhXkqxOkD0OjmmaNQXcDnAVMbreT4kJO
+         5O4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXd7dbVRV2U/C/NJGUe6L9CKc/F6dvLGlVYLY9yB8ZcvJ4S5vClrsG1mqk/OGZutnHSRxUH85NLBYVa3jmA8Nf1z3a1dP8NEqHzvAbW1L77XzWhI9MvplMLg4I+TxzYICsz633bSZ2RihL5wa4=
+X-Gm-Message-State: AOJu0YzVerKzTYRSI+eurSXuXDeiAW90vhpLQl4p6ZKYTRCwaM99GWIs
+	yJOqDiLSmYUJol8YDNf2ZWv3NOmt0x60J7Ko1Fc65ipsGj76CfsL
+X-Google-Smtp-Source: AGHT+IFF6zvtjUtSil3YQCaVuVBNZbAuGL+crIdVkcP96QT4wqN0NXECjqWbfVLB7+eaHeRG9plJbg==
+X-Received: by 2002:a05:620a:2989:b0:79f:e70:ceef with SMTP id af79cd13be357-79f19a78e07mr121230785a.44.1720476776921;
+        Mon, 08 Jul 2024 15:12:56 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b3d293sm3736921cf.25.2024.07.08.15.12.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 15:12:56 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id CE84D1200071;
+	Mon,  8 Jul 2024 17:53:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 08 Jul 2024 17:53:30 -0400
+X-ME-Sender: <xms:2V-MZtrSqomAxyL4CFJRZ2BVZ4Tgj_7x_raReQGwWxpHzCvf_0l-QQ>
+    <xme:2V-MZvq-Gcyb2lTQBEHuy3v1r6L08KGYajEzj_0Aaj_vA78QVhdCSyxbNljvCNYPj
+    kwFlAfN1IFZCstj3Q>
+X-ME-Received: <xmr:2V-MZqNEY9qAhysLdO1gmbetpsqRwNk1Mf-L6r1sXb4v6lHxF88dHJeTsXzmkg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgddtfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdetheduudejvdektdekfeegvddv
+    hedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhp
+    vghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrd
+    hfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:2V-MZo4XFhEo3ZnDNGXr8xeZmGHOgFcHbGJqM-I465jpCJ3Pft4pQg>
+    <xmx:2V-MZs5fvTaXVRFyaUZyjnfMNyCigoCgWRpzuLjii7HETn2ixdJ9RQ>
+    <xmx:2V-MZgh7g-ku1Ejh7KILunmEQOouq0peDGZfQO9ULjcSAsXSmGvorw>
+    <xmx:2V-MZu4jgls2Q4ESYghYIeJELgWSeZvAhER6QJjIVnjnF0NTaG-fOQ>
+    <xmx:2l-MZjLtyW62YwbYJ1PWv7-qwbbuHcWirAf7zder1u3sCuceX6qkoJqz>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Jul 2024 17:53:29 -0400 (EDT)
+Date: Mon, 8 Jul 2024 14:52:13 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] rust: kernel: add `drop_contents` to `BoxExt`
+Message-ID: <Zoxfjfl9Izaz2Wtj@boqun-archlinux>
+References: <20240708205325.1275473-1-benno.lossin@proton.me>
+ <ZoxWyr3fL8GkyOAR@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,20 +115,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240708-icc_bw_voting_from_ethqos-v4-2-c6bc3db86071@quicinc.com>
+In-Reply-To: <ZoxWyr3fL8GkyOAR@boqun-archlinux>
 
-On Mon, Jul 08, 2024 at 02:30:01PM -0700, Sagar Cheluvegowda wrote:
-> Add interconnect support to vote for bus bandwidth based
-> on the current speed of the driver.
-> Adds support for two different paths - one from ethernet to
-> DDR and the other from CPU to ethernet, Vote from each
-> interconnect client is aggregated and the on-chip interconnect
-> hardware is configured to the most appropriate bandwidth profile.
-> 
-> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
-> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+On Mon, Jul 08, 2024 at 02:14:50PM -0700, Boqun Feng wrote:
+> On Mon, Jul 08, 2024 at 08:53:38PM +0000, Benno Lossin wrote:
+> > Sometimes (see [1]) it is necessary to drop the value inside of a
+> > `Box<T>`, but retain the allocation. For example to reuse the allocation
+> > in the future.
+> > Introduce a new function `drop_contents` that turns a `Box<T>` into
+> > `Box<MaybeUninit<T>>` by dropping the value.
+> > 
+> > Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> > Link: https://lore.kernel.org/rust-for-linux/20240418-b4-rbtree-v3-5-323e134390ce@google.com/ [1]
+> > ---
+> >  rust/kernel/alloc/box_ext.rs | 21 +++++++++++++++++++++
+> >  1 file changed, 21 insertions(+)
+> > 
+> > diff --git a/rust/kernel/alloc/box_ext.rs b/rust/kernel/alloc/box_ext.rs
+> > index cdbb5ad166d9..6cf79f96d6c7 100644
+> > --- a/rust/kernel/alloc/box_ext.rs
+> > +++ b/rust/kernel/alloc/box_ext.rs
+> > @@ -5,6 +5,7 @@
+> >  use super::{AllocError, Flags};
+> >  use alloc::boxed::Box;
+> >  use core::mem::MaybeUninit;
+> > +use core::ptr;
+> >  use core::result::Result;
+> >  
+> >  /// Extensions to [`Box`].
+> > @@ -18,6 +19,18 @@ pub trait BoxExt<T>: Sized {
+> >      ///
+> >      /// The allocation may fail, in which case an error is returned.
+> >      fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError>;
+> > +
+> > +    /// Drops the contents, but keeps the allocation.
+> > +    ///
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+(I spoke too soon ;-))
 
-    Andrew
+> > +    /// # Examples
+> > +    ///
+> > +    /// ```
+
+need a `use` here:
+
+	use kernel::alloc::{flags, box_ext::BoxExt};
+
+> > +    /// let value = Box::new([0; 32], flags::GFP_KERNEL)
+
+missing a '?' and a ';' at the end of this line.
+
+> > +    /// let value = value.drop_contents();
+> > +    /// // Now we can re-use `value`:
+> > +    /// Box::write(value, [1; 32]);
+
+Need a line:
+
+	# Ok::<(), Error>(())
+
+here.
+> > +    /// ```
+> > +    fn drop_contents(self) -> Box<MaybeUninit<T>>;
+> >  }
+> >  
+[...]
+
+I queued this patch in rust-dev with these fixes applied, FYI.
+
+Regards,
+Boqun
 
