@@ -1,114 +1,171 @@
-Return-Path: <linux-kernel+bounces-243988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B45929D6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:45:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31905929D8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBB68B2271B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5473B1C21B38
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAD4364CD;
-	Mon,  8 Jul 2024 07:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAE03F9D5;
+	Mon,  8 Jul 2024 07:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EhGYtmth"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D/V89zxl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4C48C04
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA11364A9;
+	Mon,  8 Jul 2024 07:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720424717; cv=none; b=uGEHKDFcZF8Jjp5RDxcdiz92cwv5S/wJF8qzILPVAR6ZeCvPy3jxkDegEdP0p/IaAc2Ekzu9/hBfu8IKomAIpmkdvMPSgvDXHu7L0tcRC8IcUcL2FWoLcnLYYpB1nlr/C9IsCFDnSe1uA8kAlHMUFw/taR9ZFTBwVr5s3C9ESvE=
+	t=1720424865; cv=none; b=iyhAA7ZvexI2e3wnmUlT60xmGG9oF3mN434/I0O/AZDJCMQiwgYq/IIPxyKFPZpneiMBy+6ad2gVBq3jKvTMmOy3wJdvgKwGjA8FVNfMx7Pfi7mNAlyZ8mHQdDg+fkj6aCZ3DN33XW87udu8j6Ng5U2nHUVqJo8tBkKmNB7mKw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720424717; c=relaxed/simple;
-	bh=CIpq+tHXooEAZzxw0fF4yhNIHvERWGGg1G8htwhDg8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UqsWsasK8m17T/0GlcadgtOy2fTGNQ2hZYiyt+ITGEGDL+kwXY9Ml/XdHbrGlZ4RtXNiXb3HBk1U9aMHfOiENtqzG9/81Q5/iPuPAhTe2+KoKzss6E2m7mwRBzyeUk2Mgcyo6b5Io68znAWyopbT/tpy5NvZTaCQyMwrDhjg9gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EhGYtmth; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720424714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bQ6oO+NBE5KmHBrK1egMaXWpdDDzquNgOi2z2wMWGCY=;
-	b=EhGYtmthK0LQciWEsxpwia2d6nmyJyHRh65SRiLOOM1utwx/X2i+j2TR06whCIoIlIFUMh
-	qqe0vbF9sUI9zrLN0oIB8cSbWk0mbJjSWX7VICIVI3h8rHBWlUGPuivS6aiTuRr3bIllhX
-	tRoC2WejYAOfjNz+FE5HwQJpeCAr1s0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-343-OMIDTzpzN0qtc5a682khwQ-1; Mon,
- 08 Jul 2024 03:45:12 -0400
-X-MC-Unique: OMIDTzpzN0qtc5a682khwQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A08481954229;
-	Mon,  8 Jul 2024 07:45:09 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.131])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DB4E119560AA;
-	Mon,  8 Jul 2024 07:45:07 +0000 (UTC)
-Date: Mon, 8 Jul 2024 09:45:06 +0200
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, mst@redhat.com, jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	pbonzini@redhat.com, hare@suse.de, kbusch@kernel.org, hch@lst.de,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH 4/5] virtio_blk: Don't bother validating blocksize
-Message-ID: <20240708074506.GB38033@dynamic-pd01.res.v6.highway.a1.net>
-References: <20240705115127.3417539-1-john.g.garry@oracle.com>
- <20240705115127.3417539-5-john.g.garry@oracle.com>
+	s=arc-20240116; t=1720424865; c=relaxed/simple;
+	bh=Lx/WHfEkN4fKqekm+wR2P2juLha3QSRRkg4Husro9WE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G/uDOftfZz69zO+FyZwVtZ7PP2WSkAgOEyLLUlRTJizwndeLUJ2p7D3Wlzr6r//L7KQNzmcSh/ZbE6yDEN3QSpoLVe/fEVmPuflHX1fzpn0X21b7Lr1YadIHrMdu89uhIsWGaLiRioj8JW/POACNgnxHxS8Eqtljn8oDI/+kEqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D/V89zxl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4680RHHV026697;
+	Mon, 8 Jul 2024 07:45:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CUrEaasZcP96iIVmL1qwVUoCV1iP6X5mUSGG7CJe278=; b=D/V89zxlYAEunKVV
+	toXEImY8NtvS7EfmU+slUSikwYNAgmwpxd7w5ysNiQ0l84+NrueWdaD/xJgNCbxG
+	SaXkk1QGER6Nuw4lW9w8nuqtgGK21EFlouL+xu4MDOMBfwKaCioqDfAoznjCPTDz
+	GsvssgaqSIftpgiAKM4+eUjMwZ/xyBKcMBq8jnhbnr4NfTry/Fp5Cw556pYG+tq+
+	Wpvg7lKvqtRiupzJNMsIbH0IOkAXTAk2iHkyNOeNQpHXfy0lpkEuuYqbPsHvW92I
+	gG/KnbmYFFObHu1kSHWBa6Yn7Hy/+Mm+6LQEYb2tfQoaf1hXOCgTM5NEUZDdsbLs
+	L3vOYg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8txru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 07:45:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4687jr5h002187
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 07:45:53 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 00:45:31 -0700
+Message-ID: <7dba494a-54e2-4032-88a1-0a50f301b5da@quicinc.com>
+Date: Mon, 8 Jul 2024 15:45:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OkGs/uj0FPvoaRGC"
-Content-Disposition: inline
-In-Reply-To: <20240705115127.3417539-5-john.g.garry@oracle.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 29/47] dt-bindings: net: qcom,ethqos: add description for
+ qcs9100
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Andrew Halaney <ahalaney@redhat.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
+        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
+        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>,
+        <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
+        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
+        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
+        <quic_tdas@quicinc.com>, <robin.murphy@arm.com>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
+        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
+        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <krzysztof.kozlowski@linaro.org>,
+        <u.kleine-koenig@pengutronix.de>, <dmitry.baryshkov@linaro.org>,
+        <quic_cang@quicinc.com>, <danila@jiaxyga.com>,
+        <quic_nitirawa@quicinc.com>, <mantas@8devices.com>,
+        <athierry@redhat.com>, <quic_kbajaj@quicinc.com>,
+        <quic_bjorande@quicinc.com>, <quic_msarkar@quicinc.com>,
+        <quic_devipriy@quicinc.com>, <quic_tsoni@quicinc.com>,
+        <quic_rgottimu@quicinc.com>, <quic_shashim@quicinc.com>,
+        <quic_kaushalk@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703025850.2172008-30-quic_tengfan@quicinc.com>
+ <u5ekupjqvgoehkl76pv7ljyqqzbnnyh6ci2dilfxfkcdvdy3dp@ehdujhkul7ow>
+ <f4162b7f-d957-4dd6-90a0-f65c1cbc213a@quicinc.com>
+ <add1bdda-2321-4c47-91ef-299f99385bc8@lunn.ch>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <add1bdda-2321-4c47-91ef-299f99385bc8@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sFPwXVmKHEHL1PGsOXMibBQUqRsvod3U
+X-Proofpoint-GUID: sFPwXVmKHEHL1PGsOXMibBQUqRsvod3U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_02,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=703 malwarescore=0 mlxscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407080059
 
 
---OkGs/uj0FPvoaRGC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 05, 2024 at 11:51:26AM +0000, John Garry wrote:
-> The block queue limits validation does this for us now.
->=20
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  drivers/block/virtio_blk.c | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
+On 7/5/2024 12:03 AM, Andrew Lunn wrote:
+> On Thu, Jul 04, 2024 at 09:13:59AM +0800, Tengfei Fan wrote:
+>>
+>>
+>> On 7/3/2024 11:09 PM, Andrew Halaney wrote:
+>>> On Wed, Jul 03, 2024 at 10:58:32AM GMT, Tengfei Fan wrote:
+>>>> Add the compatible for the MAC controller on qcs9100 platforms. This MAC
+>>>> works with a single interrupt so add minItems to the interrupts property.
+>>>> The fourth clock's name is different here so change it. Enable relevant
+>>>> PHY properties. Add the relevant compatibles to the binding document for
+>>>> snps,dwmac as well.
+>>>
+>>> This description doesn't match what was done in this patch, its what
+>>> Bart did when he made changes to add the sa8775 changes. Please consider
+>>> using a blurb indicating that this is the same SoC as sa8775p, just with
+>>> different firmware strategies or something along those lines?
+>>
+>> I will update this commit message as you suggested.
+> 
+> Hi Andrew, Tengfei
+> 
+> Please trim emails when replying to just the needed context.
+> 
+> Thanks
+> 	Andrew
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Thank you for pointing out this. In the future, I will pay attention to 
+trimming emails when I reply.
 
---OkGs/uj0FPvoaRGC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmaLmQIACgkQnKSrs4Gr
-c8hD7wgAmE3KWfwdfsZ1kkFHXdSkQnTns0LGYPW3TJVUFza6nLhXDjMDTnrcOqHv
-M7V7FEEXj23V44hk/RTx5HmhyDTSCfbOEFi2gMaOlVcJZzNDcMrEEgEcMOrEapKd
-imlRGIuR6WAC4jMsd8nJ/mjI1l/oNOdh7dibQnvCUQLSjv/Orr+pAAnlDrS6Lnkn
-o9aI4PUAK+5yLET/h1gTnA4I78m/Im/tGUnZeLKv4tchMpk9LowGaEe8Bp5p7VqI
-meQPYlhxU5jI/1atRzE29/ICNkoMrqetnEy3mwvxUDIg074Hk/JNszHBRESHpfsi
-OApRPcfaygQyrjQtlVUye2lMvE8iJg==
-=5G7c
------END PGP SIGNATURE-----
-
---OkGs/uj0FPvoaRGC--
-
+-- 
+Thx and BRs,
+Tengfei Fan
 
