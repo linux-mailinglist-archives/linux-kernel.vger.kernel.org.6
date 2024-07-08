@@ -1,187 +1,159 @@
-Return-Path: <linux-kernel+bounces-244931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FFC92ABC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D05092ABC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06E75B21EE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBBED1C219C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413FD14F9EC;
-	Mon,  8 Jul 2024 22:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C199D14F9FF;
+	Mon,  8 Jul 2024 22:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6c9A7LX"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c6txaJqS"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF185674E;
-	Mon,  8 Jul 2024 22:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84696A29
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 22:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720476779; cv=none; b=fwL7XLn36I6puAHZPpYXVI+Q+Sp4XCX88mK4ikAnH+psYsMtSUZCbX5GD5jgnBzkX7cJE7kFDOc6DYD28P0kyN9cLyyip8EdBvXL3OJTFyA9sQQmNjH/LoDsVpVmU+xfj9gMOaUrwRr1fSK6arNuIjWzMgvZQdctxr7xkFb47j0=
+	t=1720476485; cv=none; b=J9zWdIgZvt0/lSaV5RMAVwi0H4lG1extNQrOd1TE88QqfX+QN+0cC523eoYlOARGpyfA1j5LT+c7o63ETOYAprmglWfljsS27HKPP1zIlhST2fqyT027pI3KeOGoalxwZ2KFeVKKJqZyi8idEOPb/HCs/PYp1DMLk8DC9KGw3tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720476779; c=relaxed/simple;
-	bh=4n1Vc9tXg+YIewhgBSUCESwYVFBpDzFDKw3KRl/z55s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N9PRg8a68vMp2wP8/dBZRGMEAX+MK8N16y9ehqW2fSk72JUpiYx8GMJi+ZkBMIQFrMrMs/RH9sXzxbG5687X2CKfqiXeqFeegzsOQDl3/CwrrS23ixhM9tLKAl+u7xCmWW+9oyDJ1ZX7WvnMqOK6D+yZdcH+EKSCd3q5QdS37gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6c9A7LX; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-79f0c08aa45so127984385a.0;
-        Mon, 08 Jul 2024 15:12:57 -0700 (PDT)
+	s=arc-20240116; t=1720476485; c=relaxed/simple;
+	bh=l03sVvdiatScP8Ji7LS+51efo1XSZO8mK8zgUFzmJb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PVVY75mdUTrjEpw+8u9AvQz+GkNxhMZbTDE2CUtm4DQAK+TCD6p5VbxAoCaOlml2cboc4qD3hozR9u05CFGhhBRVKLnJVOIM5q4IuftiDtX1Wqcz0kzSCuH+/GJOFCDoFOcd4MGb1+CBiwci8BzIcUoSlpGHKXINUN+Z6ZvDvEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c6txaJqS; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-58ce966a1d3so2782a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 15:08:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720476777; x=1721081577; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1720476482; x=1721081282; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dAOsl3qu4A6KcPFJBGEr5mKU1d6JWC06nIXsQ3Qf2RE=;
-        b=J6c9A7LXYBkqDd9TS26+l8B+XRlDWF2P8cgXPomW8RVd83q+mr1lE0HKWv/7ZHt317
-         qxIIx5XzRSLOQUt3Lyj5es+qyLyWTo7mJ+oFtYTyTGljo3ek9xTIQw9geVzOgH2ha6qP
-         BVjPZc1p7d9rAYxcxjbctZ5nPJeamCqcLimcMkMJAvrr9JM+9EZrLuMujqg0lq0r+/Wy
-         tZWRMVKOLduQnUfs33MV/4clqHe/PWAJGoAmsTiFx+AwXcr9GGWA5CFngAc1MEiaf4WZ
-         J2O+tHnWDw7+VSo/8Whihubd/1Z0F56L5XPFvjxl4JmuK1TTBjs4sA2OhS4/IF0i3nqe
-         CHtQ==
+        bh=Z7bTn4O9eTr2aCFrLSGHovaOIDt2y0TRFcSEpZcps+A=;
+        b=c6txaJqS6Ki2CUPrvyQzKfnl8agf/jflzpSrhBegMCgJMdzWyE1yPGl3EHeUnjRqS7
+         FZr0smtAZkCeRoGHgRD8zKTFVpxlbw2DDkrZ9FZE4KLkobwe6E8L4CReaAT2jeid8VOq
+         R5+U+p/a3RvQxjOwd/XAte1z9TrMsmVWV3Mtqf2+KssLNK/Px1qL3+4aVyEBhsi7xlK+
+         jcY3AqzrUE3bak3fj25i6lrQbtSDnzaRHqx6dIkzvPYqI6qZwQsjnaAP2+e4PJTeWSCK
+         c/JKePu8wg4B2VJn6c4DrJTSM7FbdWLPNQYErl5x6m2cpqmJdaiX44c7d0oug5cU0V6w
+         agZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720476777; x=1721081577;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720476482; x=1721081282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dAOsl3qu4A6KcPFJBGEr5mKU1d6JWC06nIXsQ3Qf2RE=;
-        b=POfiLR78u29HzkDWfSRXptPb4nNWQ9kzFBGuWMOV9+lR1XwWuJqsfHEJM4h/zAk9U8
-         h4RypOLYx4AV6Q0YX/KMAotennnJFzhfV0t70Q3+knBsCl2uhJUnwRKHs/xXBbAz4j6T
-         wCIGG8nCzpKjaKicWp9ncUalI6STDl8MrouF+6NMgbdwuqGoh32ZZ+SDejjT7HnOFxyx
-         zvgmZM1kGB7H625D5+1Tq8pHxBmTYde2FW6Cr0NnEXUcY0Z8B13oUD/tGpPCyeBATdfw
-         DkwqjaZHdRjXUyi3M5plTGm80+IezZFfNHOMyhXkqxOkD0OjmmaNQXcDnAVMbreT4kJO
-         5O4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXd7dbVRV2U/C/NJGUe6L9CKc/F6dvLGlVYLY9yB8ZcvJ4S5vClrsG1mqk/OGZutnHSRxUH85NLBYVa3jmA8Nf1z3a1dP8NEqHzvAbW1L77XzWhI9MvplMLg4I+TxzYICsz633bSZ2RihL5wa4=
-X-Gm-Message-State: AOJu0YzVerKzTYRSI+eurSXuXDeiAW90vhpLQl4p6ZKYTRCwaM99GWIs
-	yJOqDiLSmYUJol8YDNf2ZWv3NOmt0x60J7Ko1Fc65ipsGj76CfsL
-X-Google-Smtp-Source: AGHT+IFF6zvtjUtSil3YQCaVuVBNZbAuGL+crIdVkcP96QT4wqN0NXECjqWbfVLB7+eaHeRG9plJbg==
-X-Received: by 2002:a05:620a:2989:b0:79f:e70:ceef with SMTP id af79cd13be357-79f19a78e07mr121230785a.44.1720476776921;
-        Mon, 08 Jul 2024 15:12:56 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b3d293sm3736921cf.25.2024.07.08.15.12.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 15:12:56 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id CE84D1200071;
-	Mon,  8 Jul 2024 17:53:30 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 08 Jul 2024 17:53:30 -0400
-X-ME-Sender: <xms:2V-MZtrSqomAxyL4CFJRZ2BVZ4Tgj_7x_raReQGwWxpHzCvf_0l-QQ>
-    <xme:2V-MZvq-Gcyb2lTQBEHuy3v1r6L08KGYajEzj_0Aaj_vA78QVhdCSyxbNljvCNYPj
-    kwFlAfN1IFZCstj3Q>
-X-ME-Received: <xmr:2V-MZqNEY9qAhysLdO1gmbetpsqRwNk1Mf-L6r1sXb4v6lHxF88dHJeTsXzmkg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgddtfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdetheduudejvdektdekfeegvddv
-    hedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhp
-    vghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrd
-    hfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:2V-MZo4XFhEo3ZnDNGXr8xeZmGHOgFcHbGJqM-I465jpCJ3Pft4pQg>
-    <xmx:2V-MZs5fvTaXVRFyaUZyjnfMNyCigoCgWRpzuLjii7HETn2ixdJ9RQ>
-    <xmx:2V-MZgh7g-ku1Ejh7KILunmEQOouq0peDGZfQO9ULjcSAsXSmGvorw>
-    <xmx:2V-MZu4jgls2Q4ESYghYIeJELgWSeZvAhER6QJjIVnjnF0NTaG-fOQ>
-    <xmx:2l-MZjLtyW62YwbYJ1PWv7-qwbbuHcWirAf7zder1u3sCuceX6qkoJqz>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Jul 2024 17:53:29 -0400 (EDT)
-Date: Mon, 8 Jul 2024 14:52:13 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] rust: kernel: add `drop_contents` to `BoxExt`
-Message-ID: <Zoxfjfl9Izaz2Wtj@boqun-archlinux>
-References: <20240708205325.1275473-1-benno.lossin@proton.me>
- <ZoxWyr3fL8GkyOAR@boqun-archlinux>
+        bh=Z7bTn4O9eTr2aCFrLSGHovaOIDt2y0TRFcSEpZcps+A=;
+        b=rA0m83/4R0aQoNHqkEZpQQd3NmXsFf8vXg98qywnVx03oGPcmSHOcmtxf2hC0r0KMq
+         JL8JKOfhrGhG1kzgx29AqjfTnSZ1QvUtxRa55QJX28DGWwyc97uId1mG+uaHV0HTvUeT
+         u4SiXWALa5cAIs09eNioqXraZBiK9a+XjIzRLV78PcG91LU0db7OUuJAueZqm0NfdPj0
+         VKMAAiD5KyedZQkYmgY2vVhoOdkWhBISC1rvpUdF6o14rcBPAAX0vAGTOxpu7VoSgLXZ
+         W2rOvCUbwD4y0OJU3JCvDzLIIXAPo1giua4cTH0Q0MU4ASH0iISmgvgD9v/YoObpwXSa
+         /zag==
+X-Forwarded-Encrypted: i=1; AJvYcCUE+zSB9pWEGrabcPKAUS42qbwdWbKb3cINDyBcMvFryEPl0RlGfmTP2454W+sqsLxI1C8uAjQO7QWVo5RpiCPdY5D6ZvcA4Wir4sNX
+X-Gm-Message-State: AOJu0Yw6YatiDzk+W0AqejGs7M6G1T+TvPuol96gkfRJwxnhew55l3vB
+	zk57JcHpcZ7Wi32eqHbW6Wpf7JMXm1so8ZRfy8C7CCrojtAcG9FpuAcZAwW9fh3NzctqrmYANf2
+	ZWfxb8qFf5Y3yu5ntJpgn9bVA39Ldzxt1fHU7
+X-Google-Smtp-Source: AGHT+IHvwrZF+sD8hiUMuOI0mETWWoP7JD1Mi+rw83YkQOqjyP7kYFiISHKE1V9Tv7EGbEO+Y6qMxWIETtxF0JNU+kY=
+X-Received: by 2002:a50:9fc1:0:b0:58b:21f2:74e6 with SMTP id
+ 4fb4d7f45d1cf-594cf64511dmr86189a12.0.1720476481691; Mon, 08 Jul 2024
+ 15:08:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoxWyr3fL8GkyOAR@boqun-archlinux>
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-3-mic@digikod.net>
+ <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
+ <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
+ <20240708.quoe8aeSaeRi@digikod.net> <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
+ <ef3281ad-48a5-4316-b433-af285806540d@python.org>
+In-Reply-To: <ef3281ad-48a5-4316-b433-af285806540d@python.org>
+From: Jeff Xu <jeffxu@google.com>
+Date: Mon, 8 Jul 2024 15:07:24 -0700
+Message-ID: <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+To: Steve Dower <steve.dower@python.org>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 08, 2024 at 02:14:50PM -0700, Boqun Feng wrote:
-> On Mon, Jul 08, 2024 at 08:53:38PM +0000, Benno Lossin wrote:
-> > Sometimes (see [1]) it is necessary to drop the value inside of a
-> > `Box<T>`, but retain the allocation. For example to reuse the allocation
-> > in the future.
-> > Introduce a new function `drop_contents` that turns a `Box<T>` into
-> > `Box<MaybeUninit<T>>` by dropping the value.
-> > 
-> > Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> > Link: https://lore.kernel.org/rust-for-linux/20240418-b4-rbtree-v3-5-323e134390ce@google.com/ [1]
-> > ---
-> >  rust/kernel/alloc/box_ext.rs | 21 +++++++++++++++++++++
-> >  1 file changed, 21 insertions(+)
-> > 
-> > diff --git a/rust/kernel/alloc/box_ext.rs b/rust/kernel/alloc/box_ext.rs
-> > index cdbb5ad166d9..6cf79f96d6c7 100644
-> > --- a/rust/kernel/alloc/box_ext.rs
-> > +++ b/rust/kernel/alloc/box_ext.rs
-> > @@ -5,6 +5,7 @@
-> >  use super::{AllocError, Flags};
-> >  use alloc::boxed::Box;
-> >  use core::mem::MaybeUninit;
-> > +use core::ptr;
-> >  use core::result::Result;
-> >  
-> >  /// Extensions to [`Box`].
-> > @@ -18,6 +19,18 @@ pub trait BoxExt<T>: Sized {
-> >      ///
-> >      /// The allocation may fail, in which case an error is returned.
-> >      fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocError>;
-> > +
-> > +    /// Drops the contents, but keeps the allocation.
-> > +    ///
+On Mon, Jul 8, 2024 at 2:25=E2=80=AFPM Steve Dower <steve.dower@python.org>=
+ wrote:
+>
+> On 08/07/2024 22:15, Jeff Xu wrote:
+> > IIUC:
+> > CHECK=3D0, RESTRICT=3D0: do nothing, current behavior
+> > CHECK=3D1, RESTRICT=3D0: permissive mode - ignore AT_CHECK results.
+> > CHECK=3D0, RESTRICT=3D1: call AT_CHECK, deny if AT_CHECK failed, no exc=
+eption.
+> > CHECK=3D1, RESTRICT=3D1: call AT_CHECK, deny if AT_CHECK failed, except
+> > those in the "checked-and-allowed" list.
+>
+> I had much the same question for Micka=C3=ABl while working on this.
+>
+> Essentially, "CHECK=3D0, RESTRICT=3D1" means to restrict without checking=
+.
+> In the context of a script or macro interpreter, this just means it will
+> never interpret any scripts. Non-binary code execution is fully disabled
+> in any part of the process that respects these bits.
+>
+I see, so Micka=C3=ABl does mean this will block all scripts.
+I guess, in the context of dynamic linker, this means: no more .so
+loading, even "dlopen" is called by an app ?  But this will make the
+execve()  fail.
 
-(I spoke too soon ;-))
+> "CHECK=3D1, RESTRICT=3D1" means to restrict unless AT_CHECK passes. This
+> case is the allow list (or whatever mechanism is being used to determine
+> the result of an AT_CHECK check). The actual mechanism isn't the
+> business of the script interpreter at all, it just has to refuse to
+> execute anything that doesn't pass the check. So a generic interpreter
+> can implement a generic mechanism and leave the specifics to whoever
+> configures the machine.
+>
+In the context of dynamic linker. this means:
+if .so passed the AT_CHECK, ldopen() can still load it.
+If .so fails the AT_CHECK, ldopen() will fail too.
 
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
+Thanks
+-Jeff
 
-need a `use` here:
-
-	use kernel::alloc::{flags, box_ext::BoxExt};
-
-> > +    /// let value = Box::new([0; 32], flags::GFP_KERNEL)
-
-missing a '?' and a ';' at the end of this line.
-
-> > +    /// let value = value.drop_contents();
-> > +    /// // Now we can re-use `value`:
-> > +    /// Box::write(value, [1; 32]);
-
-Need a line:
-
-	# Ok::<(), Error>(())
-
-here.
-> > +    /// ```
-> > +    fn drop_contents(self) -> Box<MaybeUninit<T>>;
-> >  }
-> >  
-[...]
-
-I queued this patch in rust-dev with these fixes applied, FYI.
-
-Regards,
-Boqun
+> The other two case are more obvious. "CHECK=3D0, RESTRICT=3D0" is the
+> zero-overhead case, while "CHECK=3D1, RESTRICT=3D0" might log, warn, or
+> otherwise audit the result of the check, but it won't restrict execution.
+>
+> Cheers,
+> Steve
 
