@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-244868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D15F92AAA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:32:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B4C92AAA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E789428356B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97E21C21C8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F9344C64;
-	Mon,  8 Jul 2024 20:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3726543AC0;
+	Mon,  8 Jul 2024 20:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eiKpcWLC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMQaNt/b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBFDA29;
-	Mon,  8 Jul 2024 20:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704F82E64A;
+	Mon,  8 Jul 2024 20:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720470751; cv=none; b=nudisVaMVsLN+9uAUdha6Ge7KhyPttTth0wInXxa2Ep54m78IeHK+7w7OR+pQyWIH4O6BUmL+KEc+GmVdRrrmTv3VAkQmK6N1bZSi51CXgL96skhwZElXemYBbj6zQGnAFvuCeicMletC2vLJhb5ywwuFG09elSXu0Kl7Es5YIU=
+	t=1720470774; cv=none; b=lJCqXwEQicb4Y7wgG7GcscXHz/q04CnfU+qPERWK8N3yf8875H4eTr7SLUrKD6MFYfPbASR5pNLjO8vDiehTeZi5iKcO0EhGliajztJhTp1ME+DWPuhG49xN5DU9H6N/dzb+rCoqOng1B8G0KqChli1iLMfFEuc7MpMI5iluAJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720470751; c=relaxed/simple;
-	bh=o6bbEfjjZfn+HQSX2vDZxVVpP++ERSsjFMMXPHwb5bA=;
+	s=arc-20240116; t=1720470774; c=relaxed/simple;
+	bh=6+dCUea6mQ/szR3n13tThGhbyNduM++Q1F0ysCdACjk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=mfmUtGi60u9JKfGjPfxwHRPonTSjvZh9c9QbZV3+mecy9QmS1uDGM4viJwOmGFv4Fick9onqhm2wuag2+wXwVwvRAUfBzrN7KOob34POmomD4BlFsGQ9mjn+q92k+ozlRgmU53eAuosXIbexJzgzAoTflJayESxP1GBDt8fFPM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eiKpcWLC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D495C116B1;
-	Mon,  8 Jul 2024 20:32:31 +0000 (UTC)
+	 Subject:From:Cc:To:Date; b=hkGdJn8xyeh645EkrdXP1KYNsah9NwbJR76p9kQ4jK6UYRTXLECAsEOHYAlNE6YocX6GymUYQdpKGJS/KQk3ZYDzJrQ2+qwVdhP/rWahUu+6ETUV0JCe4F+5dsrvcZPlwQj6ABR0sU9bLolSZ8kxXwz3UBpe103DA3sxz+gPOZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMQaNt/b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07CCFC116B1;
+	Mon,  8 Jul 2024 20:32:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720470751;
-	bh=o6bbEfjjZfn+HQSX2vDZxVVpP++ERSsjFMMXPHwb5bA=;
+	s=k20201202; t=1720470774;
+	bh=6+dCUea6mQ/szR3n13tThGhbyNduM++Q1F0ysCdACjk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=eiKpcWLCEfGFJ6LRC5eoBLHbP2zqqmeWz/IfTsZtRAMLM2qvMWY2lP2qMIRQka5gC
-	 wb3X2QF8fbnKauRurzMotlMOvU74hVGOb28RtDkzvio/Xjz959K3WacjHjy9WNBMFe
-	 /GMMyGGc3Ao9qfkH8g55dJfIG1ePkUO10nT21Q8MBSK3wN3WOnKXra29Fx0u0w4nYZ
-	 0XP8sO4ZVMXxxys0EBbaxcmDaOl2BXwpYCvicLL6VLaWf1jQFks0w3TfsZzfkWbnWO
-	 xcDfTJoWjwPeMuNKoO59ITQzh78qOjnrD+nar/ffgySAfX3mqtCEHR2oRRcjjRi/34
-	 EsrHnePZm6fRA==
-Message-ID: <b0c2d9ac495de65039fdaa8494b7d0f5.sboyd@kernel.org>
+	b=DMQaNt/b3lm6XqOqOzFvmzXMi0QE2NMzNX74unf5v1Rwzkz+wNGdz9rO5KlivDtBM
+	 aS0YDhlNI1NvK1muhfK5+9K1XAEsmc3CdiBexhynOTBzDslmu/2Hd2rCZClB6QCF6u
+	 9nLGL131B1HLm7j6ie1OQC0OBqE+3qgytUZw//D71Cd1nQvRf1cGbF4QYb+MYwJfuB
+	 Q9YEBuB40Pe9RHIrq32eyvSIy6m0xp03KBVOLwfTCh8NtKwks5aT1LKWzClEQ0f3SO
+	 H6wPSAqo9SRHpHNDcNMr7vFkvMFZZ6iYvGkVR4afcJAfVusTAnRl6iewO2w0OBVBL1
+	 0QZDGvm7Ru/aw==
+Message-ID: <ee7380278b81195fbaac652c99c29936.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,18 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240703-clk-const-regmap-v1-10-7d15a0671d6f@gmail.com>
-References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com> <20240703-clk-const-regmap-v1-10-7d15a0671d6f@gmail.com>
-Subject: Re: [PATCH 10/10] clk: xilinx: Constify struct regmap_config
+In-Reply-To: <20240703-clk-const-regmap-v1-7-7d15a0671d6f@gmail.com>
+References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com> <20240703-clk-const-regmap-v1-7-7d15a0671d6f@gmail.com>
+Subject: Re: [PATCH 07/10] clk: lpc32xx: Constify struct regmap_config
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev, Javier Carrasco <javier.carrasco.cruz@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Neil Armstrong <neil.armstrong@linaro.org>, Samuel Holland <samuel@sholland.org>, Vladimir Zapolskiy <vz@mleia.com>
-Date: Mon, 08 Jul 2024 13:32:29 -0700
+Date: Mon, 08 Jul 2024 13:32:51 -0700
 User-Agent: alot/0.10
 
-Quoting Javier Carrasco (2024-07-03 02:50:23)
-> `vcu_settings_regmap_config` is not modified and can be declared as
-> const to move its data to a read-only section.
+Quoting Javier Carrasco (2024-07-03 02:50:20)
+> `lpc32xx_scb_regmap_config` is not modified and can be declared as const
+> to move its data to a read-only section.
 >=20
 > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > ---
