@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-244428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB1892A42A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:57:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62DF392A42D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901F51C21692
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:57:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C22F1F21D0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05D413B7A3;
-	Mon,  8 Jul 2024 13:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BC8137923;
+	Mon,  8 Jul 2024 13:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="HdCVbyr/"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6384E13A400;
-	Mon,  8 Jul 2024 13:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="SnMYoczp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533C913B5B0;
+	Mon,  8 Jul 2024 13:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447025; cv=none; b=CjJQFBp7BQ7ZahmjCg0AtCz3aloGWlG0O79XZNKj6ehA240dFoAwkuYyx+Gk4FJqOSKnGGlTP88SO1omKr13aQuDqtOnuDUUfsyRIZxf+BW53LBxckyQkkXrqXU4AuZ7VtljIMMJ/jY5QwWZt9YSkHl1rNd/7wire/7QrSnOp/Q=
+	t=1720447047; cv=none; b=G5GK5iH0EbHVJzMTRl1OFOzwTbGm6jQse7zyJN+JKIP+9/jni6WbUjjQw4GWQzjw33eBdVtRUmkNS6ywJEmmtvoRfex65IZZ7YyyKWxlsdAND+fE/M9etsiNIcV/7OzV5wy2yCiGwJOGPCwQRgcwS/cJNIZMcpjMWWqcNbT3jts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447025; c=relaxed/simple;
-	bh=qQB5jmiieWyiL7crIJzqQevemxMQaJz5FAAaFGbXwKE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=hliqcTd5i7XPuvFJn3fSE3OesZ9RrGHfVhaNrSZfnfhvlGQizIlppqae1U8KIjl6Vl2DZeEvj/+/7WhgiGV/sZ3C0+JrQR2yIjbGiGjP8MmHp5+4b6pJ/uqS/hg5FJ7ijyx2ojA8aSVBqYvfnFSKo9urILqWxxZozw4Hh91bYsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=HdCVbyr/; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from [IPV6:2a02:8010:6359:2:e181:9992:7c46:d034] (unknown [IPv6:2a02:8010:6359:2:e181:9992:7c46:d034])
-	(Authenticated sender: james)
-	by mail.katalix.com (Postfix) with ESMTPSA id 46C487D926;
-	Mon,  8 Jul 2024 14:57:02 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1720447022; bh=qQB5jmiieWyiL7crIJzqQevemxMQaJz5FAAaFGbXwKE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:From;
-	z=Message-ID:=20<a65127e4-544b-27e6-a1e1-e20e5fb4d480@katalix.com>|
-	 Date:=20Mon,=208=20Jul=202024=2014:57:02=20+0100|MIME-Version:=201
-	 .0|To:=20Hillf=20Danton=20<hdanton@sina.com>|Cc:=20netdev@vger.ker
-	 nel.org,=20linux-kernel@vger.kernel.org,=0D=0A=20syzkaller-bugs@go
-	 oglegroups.com,=20tparkin@katalix.com,=0D=0A=20syzbot+b471b7c93630
-	 1a59745b@syzkaller.appspotmail.com,=0D=0A=20syzbot+c041b4ce3a6dfd1
-	 e63e2@syzkaller.appspotmail.com|References:=20<20240708115940.892-
-	 1-hdanton@sina.com>|From:=20James=20Chapman=20<jchapman@katalix.co
-	 m>|Subject:=20Re:=20[PATCH=20net-next=20v2]=20l2tp:=20fix=20possib
-	 le=20UAF=20when=20cleaning=20up=0D=0A=20tunnels|In-Reply-To:=20<20
-	 240708115940.892-1-hdanton@sina.com>;
-	b=HdCVbyr/sESYRlL6ctYK7IaT+8mna1yGitopRzjpKY1rFPwkEk/U4uZ4HldLDXp+Z
-	 69V/TWz7RCtd4v79cPZM4L8cjKt0o3Xge7gvNux85/eeBxFaAbtTYdjqpj9ol7Xdhj
-	 VzN0zn2x0ssL79jgC+PZlptZS1GKsii5QeZy/hdbIJIeAH7BbUuEA3gMiZThG53xi7
-	 +DZwmETm/e8dpQKl6GOSWTFlTcpEr5mrYAg16WX46EJRxZy3uJq6nE73dAHd8cB6s+
-	 H2LVCvTRsQIsvUYUPYLPXiS7FtyMBX0tzeA7CCudvCx5qXQElIdT89rsGi/w7J6WuP
-	 YE80sGtT6cDkw==
-Message-ID: <a65127e4-544b-27e6-a1e1-e20e5fb4d480@katalix.com>
-Date: Mon, 8 Jul 2024 14:57:02 +0100
+	s=arc-20240116; t=1720447047; c=relaxed/simple;
+	bh=KSSrR7qGwTlnhGxF/OI1532hLGUrE9uEYAyW05fv5Bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZ7aqUoD4YXD22TxC1xk/Y346ja/CelaA/3KawjwitvkcDT5wK5BD4M96Wx37+F9hhs0ovqP+teWbTbAD6qhJdfHidW3S4siAFV1u1TknLwGc78GnZfylnXGPwjbJ3OfeFCMz5E58J5eQdygtsZ3U8BAT+gAIu7ttfxGt/ZUtBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=SnMYoczp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A9EC116B1;
+	Mon,  8 Jul 2024 13:57:24 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="SnMYoczp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720447043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQS7o58P8S+fD6b6Xl0FX6qQoG7SltctZM9n2MeErPs=;
+	b=SnMYoczpIqtVETwJZjcPvUi1E4GJvhKnnduPkqxwOF+4q1XAKAl7L8prIQgXO9aveN+mWe
+	uc76z7aEtLFPzORTo6uo6uqht3WmJwe7bCzzJ7fn2uVUyapZvYTJL6xtIanEXfzjFjYa/S
+	08iAL3feVEh70xvG3TE1qjpqjUz9khU=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8c531bf0 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 8 Jul 2024 13:57:22 +0000 (UTC)
+Date: Mon, 8 Jul 2024 15:57:15 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <ZovwO8KJ5Cv5fa26@zx2c4.com>
+References: <20240707002658.1917440-1-Jason@zx2c4.com>
+ <20240707002658.1917440-2-Jason@zx2c4.com>
+ <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
+ <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
+ <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
+ <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+ <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
+ <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+ <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
+ <8bf64731-9e5c-4c8c-b46b-5b18ae3110a1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-To: Hillf Danton <hdanton@sina.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, tparkin@katalix.com,
- syzbot+b471b7c936301a59745b@syzkaller.appspotmail.com,
- syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
-References: <20240708115940.892-1-hdanton@sina.com>
-Content-Language: en-US
-From: James Chapman <jchapman@katalix.com>
-Organization: Katalix Systems Ltd
-Subject: Re: [PATCH net-next v2] l2tp: fix possible UAF when cleaning up
- tunnels
-In-Reply-To: <20240708115940.892-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8bf64731-9e5c-4c8c-b46b-5b18ae3110a1@redhat.com>
 
-On 08/07/2024 12:59, Hillf Danton wrote:
-> On Mon, 8 Jul 2024 11:06:25 +0100 James Chapman <jchapman@katalix.com>
->> On 05/07/2024 11:32, Hillf Danton wrote:
->>> On Thu,  4 Jul 2024 16:25:08 +0100 James Chapman <jchapman@katalix.com>
->>>> --- a/net/l2tp/l2tp_core.c
->>>> +++ b/net/l2tp/l2tp_core.c
->>>> @@ -1290,17 +1290,20 @@ static void l2tp_session_unhash(struct l2tp_session *session)
->>>>    static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
->>>>    {
->>>>    	struct l2tp_session *session;
->>>> -	struct list_head *pos;
->>>> -	struct list_head *tmp;
->>>>    
->>>>    	spin_lock_bh(&tunnel->list_lock);
->>>>    	tunnel->acpt_newsess = false;
->>>> -	list_for_each_safe(pos, tmp, &tunnel->session_list) {
->>>> -		session = list_entry(pos, struct l2tp_session, list);
->>>> +	for (;;) {
->>>> +		session = list_first_entry_or_null(&tunnel->session_list,
->>>> +						   struct l2tp_session, list);
->>>> +		if (!session)
->>>> +			break;
->>>> +		l2tp_session_inc_refcount(session);
->>>>    		list_del_init(&session->list);
->>>>    		spin_unlock_bh(&tunnel->list_lock);
->>>>    		l2tp_session_delete(session);
->>>>    		spin_lock_bh(&tunnel->list_lock);
->>>> +		l2tp_session_dec_refcount(session);
->>>
->>> Bumping refcount up makes it safe for the current cpu to go thru race
->>> after releasing lock, and if it wins the race, dropping refcount makes
->>> the peer head on uaf.
->>
->> Thanks for reviewing this. Can you elaborate on what you mean by "makes
->> the peer head on uaf", please?
->>
-> Given race, there are winner and loser. If the current cpu wins the race,
-> the loser hits uaf once winner drops refcount.
+On Mon, Jul 08, 2024 at 10:23:10AM +0200, David Hildenbrand wrote:
+> > As a side note, I'll raise that I am not a particular fan of the
+> > "droppable" terminology, at least with the "read 0s" approach.
+> > 
+> >   From a user perspective, the memory might suddenly lose its state and
+> > read as 0s just like volatile memory when it loses power. "dropping
+> > pages" sounds more like an implementation detail.
+>
+> Long story short: it's the hypervisor that could be effectively 
+> dropping/zeroing out that memory, not the guest VM. "NONVOLATILE" might 
+> be clearer than "DROPPABLE".
 
-I think the session's dead flag would protect against threads racing in 
-l2tp_session_delete to delete the same session.
-Any thread with a pointer to a session should hold a reference on it to 
-prevent the session going away while it is accessed. Am I missing a 
-codepath where that's not the case?
+Surely you mean "VOLATILE", not "NONVOLATILE", right?
 
+Jason
 
