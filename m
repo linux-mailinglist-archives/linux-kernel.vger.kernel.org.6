@@ -1,95 +1,267 @@
-Return-Path: <linux-kernel+bounces-244201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B6A92A0B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:12:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F166692A0BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81DBE1F21B41
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 255C71C20FCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF917CF3A;
-	Mon,  8 Jul 2024 11:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDCB7E0FF;
+	Mon,  8 Jul 2024 11:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="evuMQzB4"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Og30+bJE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1F3482DE;
-	Mon,  8 Jul 2024 11:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D8B6F305
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 11:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720437125; cv=none; b=d0EKQBzQnJ0nKorvDZ2idmHaFnPLhb0exYRUx2ksmAzWIzBQsRU/HJX44Gv5Z9Y+BJ4fp8WfP9zok4uqgsHTVX8kfeilsYmZWhehRUYqrEDcVNDApC2n72NXS4+S9SzNR6JIOmrG3zxcXEiOnxrsPfqZd7XSpBYEkL5E030OvDQ=
+	t=1720437130; cv=none; b=Y6jnpsSQ+2hMdN9hJV3/BpBMlsSYRte3LsgfX26z7iAzuQlEAMZ3iNk+7hdhIZgvIJGMGGUPyJqC8gOozOrSjMTOvl4MNh9qNXHIjFIDIEp9FaMmNyrYtb+9mo4XlX1FSP1vlVCj1X67kbOi2/bzQUThevsn8KV5pewVNS3TzRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720437125; c=relaxed/simple;
-	bh=EYvd8/6a40rLnTFvrM7ilLg/ECtaPmwgpRnoz6Mhw8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UB4PvSuPIrqGbfk9T5FieBIwTFaweE7jnM7lpyOqdMPUXIi3X4ucn84i4KUinqiQawInY0sX52ZA5+y+1SlBNQRYzhuWeXybwW88znu2SrEksUn2WD/isXn5+u3D490hfIF3E6XQ/SzbHHRG9vBaNK6XRDuFLHtmB/qgobAlFIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=evuMQzB4; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1720437112;
-	bh=EYvd8/6a40rLnTFvrM7ilLg/ECtaPmwgpRnoz6Mhw8U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=evuMQzB4rPHOYerp94tBUMG55hxqnDx1emnqziCh/IKUSGgkB9r7o1ZmHshIl15rt
-	 xVH2zUb+25phZbhJRvkSZjtNLGpCQ7zATZR/B4kNGzbUn103sSXp49ChWe2b3zZqEI
-	 WaaT2CzV4wudUpLsewvNYbebZ8R74Wktphnl9hkKbFvTsPfuZkxpmDbmRkskrnFwaq
-	 qKJ8I8B2+4VeO3YKp2Kn21o30L9DAqIL+C//fmSHCfuLinZ+Ye5qR2s4xInvys9p1U
-	 IQBmqKmhMDhnARP2NVmb3bE3NUJjsKPmuEXF6OTpgODR4zgHGIxcwYRWHPjwuKCTox
-	 iWa3vWOhtpDPQ==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id D2B6860078;
-	Mon,  8 Jul 2024 11:11:51 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by x201s (Postfix) with ESMTP id D0866201E4B;
-	Mon, 08 Jul 2024 11:11:44 +0000 (UTC)
-Message-ID: <aadf8f7c-2f99-4282-b94e-9c46c55975dd@fiberby.net>
-Date: Mon, 8 Jul 2024 11:11:44 +0000
+	s=arc-20240116; t=1720437130; c=relaxed/simple;
+	bh=qWnjy7Y5pHAW7UV2TE7pDAG6zxOsaMqL85xaLWWOj7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmzXdSlrB38Mzr9IRO8eHip66M3IfffHRApJ92PfYSTIyC6dN332oRIHX9KM5RIxk9jkO6RQ6GrT0Sv1dWNk8nFDbjOSRc+/2yRI+/BFK4t9KSZiktIM/oOqj/ocT9PBB6nR0Ekv87ZeyMLCxc2HAx432sdh5monuap05na21fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Og30+bJE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720437127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hwRxo3am+BH28tltDF3Sm1iQk0SpyWcyddEqFxpN47k=;
+	b=Og30+bJEGHh5ZOmbzxUXedeBsrBG6hHuywDSRjCqOBDO/dyGITiJ9QRROEnCsQRAd4q1OU
+	8hI8u/KQ1LaJJnR3gWIyqMpMFLHdnYbYfyItFQ1tBA90qo/hNfITUlzTXXKTGaW6eGFsqi
+	TG+8BJVlIFxqUQNaueLDphJi8eIcIkE=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-325-C67c8kuSNy29hC-tnBf1rQ-1; Mon, 08 Jul 2024 07:11:58 -0400
+X-MC-Unique: C67c8kuSNy29hC-tnBf1rQ-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52e994d8e26so4085648e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 04:11:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720437116; x=1721041916;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwRxo3am+BH28tltDF3Sm1iQk0SpyWcyddEqFxpN47k=;
+        b=fMqGhsYj/WDmvnxlEd02nB9zukZyHk50EhSi1rb4zUH2ctcbqZhmTrsyX7Jh4IN7cF
+         rFqx1P7ONNartZtn6XwLZyIylVO2ixu7O7d+Jn3VWQWsqlVQZ/hGpa/X7QSzuu0aNmfK
+         DsrtOOfXVwFqURrLzKFK0mAPjSIaWKGH1Vtojwdn9NWTAd+Uy1o2I/eUN4zJTfyh0PBv
+         DHvXUY3u90kXukZDmusYuGly2y1eALImdAkFHU/wHusJ0W5d0AsURo40mgpWZWZA+z9K
+         pXf6iEKPJxcdjdQLpzNR42uZVkFqSKQQzUowtBzv7qi9gpvVSeEcAnzyv9iu4IF5Iu9v
+         HcqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLVpBFFXakJ6qsaSXNdVKHes7BoilDSwwyJKfhKMyPg5sk1sFxE1gMDANIitoamT4qGrDIxzlzssG6DeM4s3WFqR7bK6UFqM1E4fsk
+X-Gm-Message-State: AOJu0YxixkmqaphQ35wcPGxRH75AsKThDgYIABDbUMnQ1E9QTzgRoQm6
+	OmSTDLwLuahko6G9UgyZRcHUb5BQDjr+2/GTjaOxtG/8kODJt9CTr4tgD5ogpihubcOdS9k0L7q
+	NQsza9gqK33JdJtgf8INUhyIaPilSx4x/MA1QzjF8Q/f1V1TFRtVZImBxt/6Siw==
+X-Received: by 2002:a19:ee12:0:b0:52e:74d5:4bf9 with SMTP id 2adb3069b0e04-52ea06b2c85mr7572721e87.54.1720437116329;
+        Mon, 08 Jul 2024 04:11:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGeEKuXNCSRpv6QLGrM808zaQwAlNiRzR9v23kEbEO2+nfzlRZd7OeERy4dYwGIpxAQPDLwsg==
+X-Received: by 2002:a19:ee12:0:b0:52e:74d5:4bf9 with SMTP id 2adb3069b0e04-52ea06b2c85mr7572697e87.54.1720437115663;
+        Mon, 08 Jul 2024 04:11:55 -0700 (PDT)
+Received: from redhat.com ([2.52.29.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fc8bcsm161168965e9.44.2024.07.08.04.11.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 04:11:55 -0700 (PDT)
+Date: Mon, 8 Jul 2024 07:11:44 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "eperezma@redhat.com" <eperezma@redhat.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"xuanzhuo@linux.alibaba.com" <xuanzhuo@linux.alibaba.com>,
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Cosmin Ratiu <cratiu@nvidia.com>,
+	"jasowang@redhat.com" <jasowang@redhat.com>,
+	"si-wei.liu@oracle.com" <si-wei.liu@oracle.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	"leon@kernel.org" <leon@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH vhost 20/23] vdpa/mlx5: Pre-create hardware VQs at vdpa
+ .dev_add time
+Message-ID: <20240708071005-mutt-send-email-mst@kernel.org>
+References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com>
+ <20240617-stage-vdpa-vq-precreate-v1-20-8c0483f0ca2a@nvidia.com>
+ <CAJaqyWd3yiPUMaGEmzgHF-8u+HcqjUxBNB3=Xg6Lon-zYNVCow@mail.gmail.com>
+ <308f90bb505d12e899e3f4515c4abc93c39cfbd5.camel@nvidia.com>
+ <CAJaqyWeHDD0drkAZQqEP_ZfbUPscOmM7T8zXRie5Q14nfAV0sg@mail.gmail.com>
+ <c6dc541919a0cc78521364dbf4db32293cf1071e.camel@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 01/10] net/sched: flower: refactor tunnel flag
- definitions
-To: netdev@vger.kernel.org
-Cc: Davide Caratti <dcaratti@redhat.com>, Ilya Maximets <i.maximets@ovn.org>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
- Simon Horman <horms@kernel.org>, Ratheesh Kannoth <rkannoth@marvell.com>,
- Florian Westphal <fw@strlen.de>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- linux-kernel@vger.kernel.org, David Ahern <dsahern@kernel.org>,
- Stephen Hemminger <stephen@networkplumber.org>
-References: <20240705133348.728901-1-ast@fiberby.net>
- <20240705133348.728901-2-ast@fiberby.net>
-Content-Language: en-US
-From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-In-Reply-To: <20240705133348.728901-2-ast@fiberby.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c6dc541919a0cc78521364dbf4db32293cf1071e.camel@nvidia.com>
 
-On 7/5/24 1:33 PM, Asbjørn Sloth Tønnesen wrote:
- > net/sched: flower: refactor tunnel flag definitions
+On Mon, Jul 08, 2024 at 11:01:39AM +0000, Dragos Tatulea wrote:
+> On Wed, 2024-07-03 at 18:01 +0200, Eugenio Perez Martin wrote:
+> > On Wed, Jun 26, 2024 at 11:27 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+> > > 
+> > > On Wed, 2024-06-19 at 17:54 +0200, Eugenio Perez Martin wrote:
+> > > > On Mon, Jun 17, 2024 at 5:09 PM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+> > > > > 
+> > > > > Currently, hardware VQs are created right when the vdpa device gets into
+> > > > > DRIVER_OK state. That is easier because most of the VQ state is known by
+> > > > > then.
+> > > > > 
+> > > > > This patch switches to creating all VQs and their associated resources
+> > > > > at device creation time. The motivation is to reduce the vdpa device
+> > > > > live migration downtime by moving the expensive operation of creating
+> > > > > all the hardware VQs and their associated resources out of downtime on
+> > > > > the destination VM.
+> > > > > 
+> > > > > The VQs are now created in a blank state. The VQ configuration will
+> > > > > happen later, on DRIVER_OK. Then the configuration will be applied when
+> > > > > the VQs are moved to the Ready state.
+> > > > > 
+> > > > > When .set_vq_ready() is called on a VQ before DRIVER_OK, special care is
+> > > > > needed: now that the VQ is already created a resume_vq() will be
+> > > > > triggered too early when no mr has been configured yet. Skip calling
+> > > > > resume_vq() in this case, let it be handled during DRIVER_OK.
+> > > > > 
+> > > > > For virtio-vdpa, the device configuration is done earlier during
+> > > > > .vdpa_dev_add() by vdpa_register_device(). Avoid calling
+> > > > > setup_vq_resources() a second time in that case.
+> > > > > 
+> > > > 
+> > > > I guess this happens if virtio_vdpa is already loaded, but I cannot
+> > > > see how this is different here. Apart from the IOTLB, what else does
+> > > > it change from the mlx5_vdpa POV?
+> > > > 
+> > > I don't understand your question, could you rephrase or provide more context
+> > > please?
+> > > 
+> > 
+> > My main point is that the vdpa parent driver should not be able to
+> > tell the difference between vhost_vdpa and virtio_vdpa. The only
+> > difference I can think of is because of the vhost IOTLB handling.
+> > 
+> > Do you also observe this behavior if you add the device with "vdpa
+> > add" without the virtio_vdpa module loaded, and then modprobe
+> > virtio_vdpa?
+> > 
+> Aah, now I understand what you mean. Indeed in my tests I was loading the
+> virtio_vdpa module before adding the device. When doing it the other way around
+> the device doesn't get configured during probe.
+>  
+> 
+> > At least the comment should be something in the line of "If we have
+> > all the information to initialize the device, pre-warm it here" or
+> > similar.
+> Makes sense. I will send a v3 with the commit + comment message update.
 
-Should have been: "net/sched: flower: refactor control flag definitions"
 
-After the split, tunnel control flags are first introduced in the next patch.
+Is commit update the only change then?
 
-I will properly do a new spin tomorrow.
+> > 
+> > > Thanks,
+> > > Dragos
+> > > 
+> > > > > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> > > > > Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+> > > > > ---
+> > > > >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 37 ++++++++++++++++++++++++++++++++-----
+> > > > >  1 file changed, 32 insertions(+), 5 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > > > > index 249b5afbe34a..b2836fd3d1dd 100644
+> > > > > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > > > > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > > > > @@ -2444,7 +2444,7 @@ static void mlx5_vdpa_set_vq_ready(struct vdpa_device *vdev, u16 idx, bool ready
+> > > > >         mvq = &ndev->vqs[idx];
+> > > > >         if (!ready) {
+> > > > >                 suspend_vq(ndev, mvq);
+> > > > > -       } else {
+> > > > > +       } else if (mvdev->status & VIRTIO_CONFIG_S_DRIVER_OK) {
+> > > > >                 if (resume_vq(ndev, mvq))
+> > > > >                         ready = false;
+> > > > >         }
+> > > > > @@ -3078,10 +3078,18 @@ static void mlx5_vdpa_set_status(struct vdpa_device *vdev, u8 status)
+> > > > >                                 goto err_setup;
+> > > > >                         }
+> > > > >                         register_link_notifier(ndev);
+> > > > > -                       err = setup_vq_resources(ndev, true);
+> > > > > -                       if (err) {
+> > > > > -                               mlx5_vdpa_warn(mvdev, "failed to setup driver\n");
+> > > > > -                               goto err_driver;
+> > > > > +                       if (ndev->setup) {
+> > > > > +                               err = resume_vqs(ndev);
+> > > > > +                               if (err) {
+> > > > > +                                       mlx5_vdpa_warn(mvdev, "failed to resume VQs\n");
+> > > > > +                                       goto err_driver;
+> > > > > +                               }
+> > > > > +                       } else {
+> > > > > +                               err = setup_vq_resources(ndev, true);
+> > > > > +                               if (err) {
+> > > > > +                                       mlx5_vdpa_warn(mvdev, "failed to setup driver\n");
+> > > > > +                                       goto err_driver;
+> > > > > +                               }
+> > > > >                         }
+> > > > >                 } else {
+> > > > >                         mlx5_vdpa_warn(mvdev, "did not expect DRIVER_OK to be cleared\n");
+> > > > > @@ -3142,6 +3150,7 @@ static int mlx5_vdpa_compat_reset(struct vdpa_device *vdev, u32 flags)
+> > > > >                 if (mlx5_vdpa_create_dma_mr(mvdev))
+> > > > >                         mlx5_vdpa_warn(mvdev, "create MR failed\n");
+> > > > >         }
+> > > > > +       setup_vq_resources(ndev, false);
+> > > > >         up_write(&ndev->reslock);
+> > > > > 
+> > > > >         return 0;
+> > > > > @@ -3836,8 +3845,21 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
+> > > > >                 goto err_reg;
+> > > > > 
+> > > > >         mgtdev->ndev = ndev;
+> > > > > +
+> > > > > +       /* For virtio-vdpa, the device was set up during device register. */
+> > > > > +       if (ndev->setup)
+> > > > > +               return 0;
+> > > > > +
+> > > > > +       down_write(&ndev->reslock);
+> > > > > +       err = setup_vq_resources(ndev, false);
+> > > > > +       up_write(&ndev->reslock);
+> > > > > +       if (err)
+> > > > > +               goto err_setup_vq_res;
+> > > > > +
+> > > > >         return 0;
+> > > > > 
+> > > > > +err_setup_vq_res:
+> > > > > +       _vdpa_unregister_device(&mvdev->vdev);
+> > > > >  err_reg:
+> > > > >         destroy_workqueue(mvdev->wq);
+> > > > >  err_res2:
+> > > > > @@ -3863,6 +3885,11 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_dev *v_mdev, struct vdpa_device *
+> > > > > 
+> > > > >         unregister_link_notifier(ndev);
+> > > > >         _vdpa_unregister_device(dev);
+> > > > > +
+> > > > > +       down_write(&ndev->reslock);
+> > > > > +       teardown_vq_resources(ndev);
+> > > > > +       up_write(&ndev->reslock);
+> > > > > +
+> > > > >         wq = mvdev->wq;
+> > > > >         mvdev->wq = NULL;
+> > > > >         destroy_workqueue(wq);
+> > > > > 
+> > > > > --
+> > > > > 2.45.1
+> > > > > 
+> > > > 
+> > > 
+> > 
+> 
 
-Davide, I think David Ahern would be happy [1] if you could post a new iproute2 patch,
-since the kernel patches should preferably hit net-next this week (due to uAPI breakage).
-
-[1] https://lore.kernel.org/c83bb901-686e-4507-b4b1-020ae86d2381@kernel.org/
-
--- 
-pw-bot: changes-requested
 
