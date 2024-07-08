@@ -1,243 +1,124 @@
-Return-Path: <linux-kernel+bounces-244055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C44F929E74
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1D1929E76
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C849B284F3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:45:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8FBD1C21691
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269A147F53;
-	Mon,  8 Jul 2024 08:45:42 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F46548CCD;
+	Mon,  8 Jul 2024 08:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mb2PhkP7"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DEFA3D;
-	Mon,  8 Jul 2024 08:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C381DA5E;
+	Mon,  8 Jul 2024 08:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720428341; cv=none; b=uy2RfUYCWkObZ37H4Ubr8zRyikobRpepMcXE9Yiu3JVYWtNmKIeCWtpuRsgcXmDhgzqVzlbvXQqov/s0ri2dIYXvhcxDRPB5wPF4ehWZsS9YVh+VYAzZS7aEbksUdhibhAiwEr3m9MIfCvq6qCi2swNB7g/3gJHjZL695d9Eeo8=
+	t=1720428364; cv=none; b=mPeUVE/dyXER5z6JtyCArg9eX92mqW8KbS90sqiacX6afINH0cc49UDTI7MIoYnAP+03ppFj8ZJhQr9SjGtB/W+z/xgIg7y8pX2dwJrYcmtPaGjta1sYNXBlmZ3MLIlnI3FyCAEJjn+gMv7G+TliGG/QIpKq8gFz8C9/omEsK3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720428341; c=relaxed/simple;
-	bh=aSF+JuXt3lHGaA3gHvvWwHo30UzYjyr+XZpKEIg4aNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Vw6KYTh8JCQA5KZ+10X/mFw9fCBAR9BBLc7GvIdmSJSHptyu462Vk/Yye0x+6WBp/Lf7FA5liN0zInjtGFUCWnaAjfd+jdGQ82THArHzhzLF1mz99ZjGCXCji4fo7x8vh9nrjZvs0RzuZKBhi+NdidYfZ9ZdmmqxnU0w1CoOpS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WHd3q2MPVznXkg;
-	Mon,  8 Jul 2024 16:45:11 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id A541D14011A;
-	Mon,  8 Jul 2024 16:45:35 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Jul 2024 16:45:35 +0800
-Message-ID: <26c02b2b-4232-2049-5c9f-f757fef759a0@hisilicon.com>
-Date: Mon, 8 Jul 2024 16:45:34 +0800
+	s=arc-20240116; t=1720428364; c=relaxed/simple;
+	bh=HZtHo05hPphqk4S6sWcGv5dS2QEo74V8XVbFSm4zlxg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mPV07G74ry7gCvt4/82/MV+742bDdaZ54zxVbb1wVV8Q3iY5dfb5HGEnqLNbKYWeFEh+wFNEP9sJhWUS01JHvPpHfIIHgt5a/7iV6qjNbcHuFSqncUcBxQsJOmMAjWSx0LkrgVe3lsKHF1OoD9IOd8J3IY4vGVmC/dvajYYEPtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mb2PhkP7; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-4265c2b602aso13629155e9.3;
+        Mon, 08 Jul 2024 01:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720428362; x=1721033162; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yf9c+gWWyHhDNT8WR0f5legPZdyoGSsszOe0uE9no8M=;
+        b=mb2PhkP7a1T2v2xlB6hMxEjsOTUl0X1d2kgg+vK7LTFXAuWGq0WZDZYB/iIa4IdCVr
+         Di5f+iq+uGOB20oIVm7rAcRqIyzHvsrr0ZyO6smjpiedsHoajfM0HSIZW8ygr7/d1SpE
+         /8fgE0dTjea5RKZDOhpo/ld+l4NATC6oQL7XfiDMxooiTIVA7GcyVGPm19fnafOK36kd
+         4PhlnDhXvmuGpsi0u5FfPXfER6PabhsxcoyifyJ6/g5m3706MTvsT3/7wIRYxDyF/FAa
+         EcVAiGAM81rTffM01+BvlFp/NdMZjOEwQrQpS5YqNZqgg3VxX/K3iGwQ9L1BuNDF1mIf
+         MZqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720428362; x=1721033162;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yf9c+gWWyHhDNT8WR0f5legPZdyoGSsszOe0uE9no8M=;
+        b=DNpcf7iWQi/KSX+OFiY+zn4Z/IzCoXO4H2/cseiLsUobRM7nE+ZnJvBn8jig7xAfhL
+         cmmupCf/On1A7R/W1nTY8kl2cG79Kh9OjggFXzR/RGMGAxYRN0+n1Npz7IM2axhainIt
+         phb1yDGhRgfpZInl9/lcAqEepJYkfLR4yS9pdgQMw87e5x3PeeFfZcLYsBH5FILiwMy/
+         F/yapkysVfq/3TZOEUSx9Tkf7nUKicjoVD6KfDwqurN94FuAfh54lm8QBH/WCuksM4Tx
+         bdcazJCnugEKkxbgEGuGL1R4O2eLyuFnIN5i8o9K1xeCe6pNqvbQ4VTwLrWroH/h3mhw
+         tXIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkrasMQLVogv4c1Gs3q5WNmat7XFiid4cut76PoQGYJuvm29JSLZq3Jj6t061GrSCnQZBlQ3/F11HUmygVqAIhkPxIhFjqY8C5mt/aoYDcDUYWKh2W7VUR1hTvG89bXKD7WYFc
+X-Gm-Message-State: AOJu0Yxs9IRfIuJk9KUCu1NZxHBUhhVm4FQVKwVdOJtaHHVaQWDBVZRX
+	SPEBQ3Kl42ijfPFYZBPcB6b1ltgNJwcKEPhlCbsrdcvTjKu64ISpWh1idK8i
+X-Google-Smtp-Source: AGHT+IFEwH3xuMN5oA1+hyVVEJZIpInjOfNy6kq4NSBG2Ia1UyiFCWX8Q5VwZgCpeUt4MNXYKsU/6Q==
+X-Received: by 2002:a05:600c:3ba2:b0:426:627e:37af with SMTP id 5b1f17b1804b1-426627e3c7fmr27791205e9.3.1720428361443;
+        Mon, 08 Jul 2024 01:46:01 -0700 (PDT)
+Received: from localhost ([45.130.85.5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266e84a34csm3002525e9.12.2024.07.08.01.45.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 01:46:01 -0700 (PDT)
+Message-ID: <b6fcb866-f24e-4508-97f5-eb2b63f6eec7@gmail.com>
+Date: Mon, 8 Jul 2024 10:45:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
- during reset
+Subject: Re: [PATCH net-next v2 2/4] net: dst_cache: add input_dst_cache API
 Content-Language: en-US
-To: Leon Romanovsky <leon@kernel.org>
-CC: <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
- <20240705085937.1644229-3-huangjunxian6@hisilicon.com>
- <20240707083007.GE6695@unreal>
- <42e9f7dd-05bd-176f-c5c0-02e200b3f58c@hisilicon.com>
- <20240708053850.GA6788@unreal>
- <7cae577b-e469-9357-8375-d14746a7787b@hisilicon.com>
- <20240708073315.GC6788@unreal>
- <0bac285b-c8ae-8c9f-7c42-ee345f8682d1@hisilicon.com>
- <20240708082755.GD6788@unreal>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20240708082755.GD6788@unreal>
-Content-Type: text/plain; charset="UTF-8"
+To: Eric Dumazet <edumazet@google.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ dsahern@kernel.org, willemb@google.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240702142406.465415-1-leone4fernando@gmail.com>
+ <20240702142406.465415-3-leone4fernando@gmail.com>
+ <CANn89iKLWtyVP9-YU4a8cnE4Mj0zMNtzQkzkHgM0uqdQV-mcPQ@mail.gmail.com>
+From: Leone Fernando <leone4fernando@gmail.com>
+In-Reply-To: <CANn89iKLWtyVP9-YU4a8cnE4Mj0zMNtzQkzkHgM0uqdQV-mcPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100018.china.huawei.com (7.202.181.17)
 
+Hi Eric
 
+> It targets IPv4 only, which some of us no longer use.
 
-On 2024/7/8 16:27, Leon Romanovsky wrote:
-> On Mon, Jul 08, 2024 at 03:46:26PM +0800, Junxian Huang wrote:
->>
->>
->> On 2024/7/8 15:33, Leon Romanovsky wrote:
->>> On Mon, Jul 08, 2024 at 02:50:50PM +0800, Junxian Huang wrote:
->>>>
->>>>
->>>> On 2024/7/8 13:38, Leon Romanovsky wrote:
->>>>> On Mon, Jul 08, 2024 at 10:29:54AM +0800, Junxian Huang wrote:
->>>>>>
->>>>>>
->>>>>> On 2024/7/7 16:30, Leon Romanovsky wrote:
->>>>>>> On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
->>>>>>>> From: wenglianfa <wenglianfa@huawei.com>
->>>>>>>>
->>>>>>>> During reset, cmdq events won't be reported, leading to a long and
->>>>>>>> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
->>>>>>>> of reset.
->>>>>>>>
->>>>>>>> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
->>>>>>>> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
->>>>>>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->>>>>>>> ---
->>>>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
->>>>>>>>  1 file changed, 18 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>> index a5d746a5cc68..ff135df1a761 100644
->>>>>>>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
->>>>>>>>  
->>>>>>>>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
->>>>>>>>  }
->>>>>>>> +
->>>>>>>> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
->>>>>>>> +{
->>>>>>>> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
->>>>>>>> +	int i;
->>>>>>>> +
->>>>>>>> +	if (!hr_dev->cmd_mod)
->>>>>>>
->>>>>>> What prevents cmd_mod from being changed?
->>>>>>>
->>>>>>
->>>>>> It's set when the device is being initialized, and won't be changed after that.
->>>>>
->>>>> This is exactly the point, you are assuming that the device is already
->>>>> ininitialized or not initialized at all. What prevents hns_roce_v2_reset_notify_cmd()
->>>>> from being called in the middle of initialization?
->>>>>
->>>>> Thanks
->>>>>
->>>>
->>>> This is ensured by hns3 NIC driver.
->>>>
->>>> Initialization and reset of hns RoCE are both called by hns3. It will check the state
->>>> of RoCE device (see line 3798), and notify RoCE device to reset (hns_roce_v2_reset_notify_cmd()
->>>> is called) only if the RoCE device has been already initialized:
->>>
->>> So why do you have "if (!hr_dev->cmd_mod)" check in the code?
->>>
->>> Thanks
->>>
->>
->> cmd_mod indicates the mode of cmdq (0: poll mode, 1: event mode).
->> This patch only affects event mode because HW won't report events during reset.
-> 
-> You set cmd_mod to 1 in hns_roce_hw_v2_init_instance() without any
-> condition, I don't see when hns v2 IB device is created and continue
-> to operate in polling mode. 
-> 
-> Thanks
->
+The same optimization can be implemented and applied to IPv6 as well and
+I'm planning to do so.
 
-Event mode is the default. In hns_roce_cmd_use_events(), if kcalloc() fails
-then it'll be set to polling mode instead.
+> Also, what is the behavior (loss of performance) of this cache under
+> flood, when 16 slots need to be looked up for each packet ?
 
-Junxian
+I did some more measurements under flood as you asked, those are the results:
+Total PPS:
+number of IPs(x# cache size)    mainline        patched         delta
+                                  Kpps            Kpps            %
+        20000(x40)                6498            6123          -5.7
+        35000(x70)                6502            5261          -19
+        50000(x100)               6503            4986          -23.3
 
->>
->> Junxian
->>
->>>>
->>>>  3791 static int hclge_notify_roce_client(struct hclge_dev *hdev,
->>>>  3792                                     enum hnae3_reset_notify_type type)
->>>>  3793 {
->>>>  3794         struct hnae3_handle *handle = &hdev->vport[0].roce;
->>>>  3795         struct hnae3_client *client = hdev->roce_client;
->>>>  3796         int ret;
->>>>  3797
->>>>  3798         if (!test_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state) || !client)
->>>>  3799                 return 0;
->>>>  3800
->>>>  3801         if (!client->ops->reset_notify)
->>>>  3802                 return -EOPNOTSUPP;
->>>>  3803
->>>>  3804         ret = client->ops->reset_notify(handle, type);
->>>>  3805         if (ret)
->>>>  3806                 dev_err(&hdev->pdev->dev, "notify roce client failed %d(%d)",
->>>>  3807                         type, ret);
->>>>  3808
->>>>  3809         return ret;
->>>>  3810 }
->>>>
->>>> And the bit is set (see line 11246) after the initialization has been done (line 11242):
->>>>
->>>> 11224 static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
->>>> 11225                                            struct hclge_vport *vport)
->>>> 11226 {
->>>> 11227         struct hclge_dev *hdev = ae_dev->priv;
->>>> 11228         struct hnae3_client *client;
->>>> 11229         int rst_cnt;
->>>> 11230         int ret;
->>>> 11231
->>>> 11232         if (!hnae3_dev_roce_supported(hdev) || !hdev->roce_client ||
->>>> 11233             !hdev->nic_client)
->>>> 11234                 return 0;
->>>> 11235
->>>> 11236         client = hdev->roce_client;
->>>> 11237         ret = hclge_init_roce_base_info(vport);
->>>> 11238         if (ret)
->>>> 11239                 return ret;
->>>> 11240
->>>> 11241         rst_cnt = hdev->rst_stats.reset_cnt;
->>>> 11242         ret = client->ops->init_instance(&vport->roce);
->>>> 11243         if (ret)
->>>> 11244                 return ret;
->>>> 11245
->>>> 11246         set_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state);
->>>> 11247         if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
->>>> 11248             rst_cnt != hdev->rst_stats.reset_cnt) {
->>>> 11249                 ret = -EBUSY;
->>>> 11250                 goto init_roce_err;
->>>> 11251         }
->>>>
->>>> Junxian
->>>>
->>>>>>
->>>>>> Junxian
->>>>>>
->>>>>>>> +		return;
->>>>>>>> +
->>>>>>>> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
->>>>>>>> +		hr_cmd->context[i].result = -EBUSY;
->>>>>>>> +		complete(&hr_cmd->context[i].done);
->>>>>>>> +	}
->>>>>>>> +}
->>>>>>>> +
->>>>>>>>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
->>>>>>>>  {
->>>>>>>>  	struct hns_roce_dev *hr_dev;
->>>>>>>> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
->>>>>>>>  	hr_dev->dis_db = true;
->>>>>>>>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
->>>>>>>>  
->>>>>>>> +	/* Complete the CMDQ event in advance during the reset. */
->>>>>>>> +	hns_roce_v2_reset_notify_cmd(hr_dev);
->>>>>>>> +
->>>>>>>>  	return 0;
->>>>>>>>  }
->>>>>>>>  
->>>>>>>> -- 
->>>>>>>> 2.33.0
->>>>>>>>
->>>>>>
->>>>
+I found out that most of the negative effect under extreme flood is
+as a result of the atomic operations.
+I have some ideas on how to solve this problem. it will demand a bit more memory
+percpu, if that's reasonable I can do V3.
+IMO the boost in the average case is worth the flood case penalty.
+
+> This patch adds 10MB of memory per netns on host with 512 cpus,
+> and adds netns creation and dismantle costs (45% on a host with 256 cpus)
+
+Is such a memory penalty a deal breaker considering the performance gain?
+Also I think adding a sysctl to control the size of the cache might be a good
+solution for those who want to keep their memory usage lower. what do you think?
+
+Thanks,
+Leone
 
