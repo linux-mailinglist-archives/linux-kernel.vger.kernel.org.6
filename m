@@ -1,270 +1,272 @@
-Return-Path: <linux-kernel+bounces-244234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFDD92A14A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:36:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F5192A15C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E03B28238A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE9BBB20E9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101482B9D4;
-	Mon,  8 Jul 2024 11:36:46 +0000 (UTC)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621697E56C;
+	Mon,  8 Jul 2024 11:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="dQPwoe9X"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013029.outbound.protection.outlook.com [52.101.67.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C286C101E2
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 11:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720438605; cv=none; b=EG5saoIBCvlZllDak5t275FmWuayO2jXcLPvAfCpwqCaTYXcHq6NM8fZE5oVkYQy8KxzJgY2MgDRbk1FYYA+FoQ9dhrikF4Xy7uiEMgwY9rgFicNdBh5mk/Bmcyjmkv2tuulMbGAFYwpf460E4jFkdN2SB7Keu9euer6TOjq6tQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720438605; c=relaxed/simple;
-	bh=7F6Kp7PjtMwYyOaOeM67KI3nyJH4rgdxkPIIo3IJI2o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dpDVWAEyz5bLxUWtbYAMmlpF5TR3jCefnBYnXdh3u8STixGBRXgwp5Ai0O2nk6pGB1cwFgsgtoz3QKwg2aLilvkHjS9lp34ngnhxIHXqjVRX7kkQZNEGHsz9rA4TwVSstc8lr80rxf+epLOtmD6d3uw9JUtvGNGjyauSUaTLJiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-48fde3a2b17so1298097137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 04:36:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720438602; x=1721043402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mcw6UNrBJv8rAqjjTUhPR1XEJKbzTv66sPWbmXvxFww=;
-        b=jr2DfsivQR+Qt1j2b43iinOylJBa0tAAM34BDPJHsXTRhHIlwUsL2fkX5gmhkiHA9w
-         1m6uG2TcydOFmjNqHOoKxZ+wAPE7/OIjJKSlKM+aAwgFHTACLAGtDo5qK2TcmArTRXia
-         YTvOQYAi5QDp0HFCBeX3Im3w8sSHZuW+EQpc9Lxg/YALnrTzi4pgyjaZcvWlCM2y3bAI
-         ONx1bVBNWVur5bDP32ulhQtiWBbFGUCbwqb2iwcHXX8oPWaW87HMIoXU1zmXVxRaKc/1
-         rKbJQ1unWWa5/6J3ZIoM4hAVjXeEGX1maf3XYe8SW8pqvJRWGs9Dw72psSFwdvrcFtY9
-         rEJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG1iuBZBy0R4zsxDkFrt4qzkIasUfRb5Dx2AJBEM1KnQAnGZamoIK9+VsmVMyxbu0GQ4K1dM7K9VwFqZeh9QdGoFLMB0PFXHfI9Gb6
-X-Gm-Message-State: AOJu0Yx/9s19GEDijtG4mdHE4QN4x/Uz/TJqz0rNaX1QegN69kBykIa4
-	Waehr80Cu7utVHwInhH+TN/1BXYQOwj6ktqHZ9Us0PQorPvH+Z/vEZosxKMkIgCw+l9iHmurr53
-	4bKWU9cRM+9wMRPalRE9sQ5LtgvI=
-X-Google-Smtp-Source: AGHT+IHAhIdUk9D9MXk/PrnUS4YRbkVtUJ0XMVFt2+q9PpbWqoAja6N72rk/4Gy6UkQoFGKnVETbzpwi51GmbcjCiFA=
-X-Received: by 2002:a05:6102:d7:b0:48f:df86:db3 with SMTP id
- ada2fe7eead31-48fee64f3b0mr11713010137.3.1720438602575; Mon, 08 Jul 2024
- 04:36:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E59101E2;
+	Mon,  8 Jul 2024 11:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720438958; cv=fail; b=P2Bmee+exmFummERzOZYZfRc2FD+y85oIJsIFluherdA8xrzWgcdEduHtN1LAWWXb/Rd8/d1WNw8QTsAsi7D/xTcC5da78w4Kz/6Et52yPDbG87O6UeXFpAyItZ2wtdT1oC65Teo91PLD6vMYleQNa3h0fjy1JaRaE71th4iGxU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720438958; c=relaxed/simple;
+	bh=X7+9YeT/+ZDgN88nMmQuQtLJCEi6hyWaJWM3+k4M/30=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dZJX6LF7DGaC2hlXf/FooLsdiGLbr/BfQsRZH0hzsM9PF/F9zuQJsJVLrhm7B0E20KTmVNNnPWZL01owHfpHjqhwM0z+ItEM9AfCvfTTEC48p3I+t1Nyedppz7bQqz1PgA7+2yj50Nbx+n+PtpYeFdIjU3pMoMMBh89nt4o2pc4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=dQPwoe9X; arc=fail smtp.client-ip=52.101.67.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nY3R+gd/3Eknv9s5pp+7ItqgkInPBUXK1+10S+ZSLhwSaqPv7M2vJTCvcwgq9OKagqL3EoeNCgY1GGIanBAtt3uZmjo2ixRnAFCXR9m3SIHqPyEX3C7/uJ92Xn1Z9VnR5XStHZ9Oei15lZ0nJIAObUAAC6gC117pK1zSt4vITcV910SSm6/8qp7DQrr2SOL8CbWyEm6Tol2rOGJNtVu4TnkmcUBNnOm9pgm709M38SpcHnzjauKcEXoknRraISC4yrG6kGE81mKw8npmw8BnEBWMZeaDM9HS72CGhWQyX+HvEoOxNHEPSv1cMQPHexMjvWlT9warjjlM5orL9y46+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nE/r2t89XnFfc3mVPBjdpR6cMj1if032yFlHxMtczh0=;
+ b=oE5DhHZ3Yh/d11x5CqNuZVUrZaXNwa9cNLQ7uzU4dEoahdHbyPJFK37y7F2xcfF0JdoXvA4mFqC42ArYELNEFrRkuoQDb5y1Z5x8hMbdg4OQ0D+RDxDFgjbqfqaYYlrGqEHtv8rYQZVNOehPCQEUKn1h3ufWNSXhQ0ctfeDgOAQJbl7obDVF6kiYvGbeGPZZZuDG6mTKM+u/469eGfYwrPO3EeTikerpu6AeYlNo13wmsdjFpHuaF/T3cRDsq9uF4wk73F0xqkmSA4/nhyd17nBVcKPzkXQJ4InwUlW0EnjssuksvQtxQhSRnOi8Ufc9EJOdsYDDC1bf7rbD6dYpqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nE/r2t89XnFfc3mVPBjdpR6cMj1if032yFlHxMtczh0=;
+ b=dQPwoe9XOP45ynNaQR4hLJv5Ry3oMnZrF/WWBj5xdypSKpbPiI9AKmQlhi7fA12o/zcORyHuMNeWXFjY0wwIM4YfkiLMtcnvgHf1d5CWVEygDeYQ2USSyb1HJQVbRTqDvaNsmd8cnGJ5muR8ugn2wu2bpes60Wy1Jjb4tUFKKLk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by VI1PR04MB7055.eurprd04.prod.outlook.com (2603:10a6:800:123::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
+ 2024 11:42:31 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%5]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
+ 11:42:31 +0000
+Message-ID: <39ea3a66-a874-4266-9788-50e87b9160e5@oss.nxp.com>
+Date: Mon, 8 Jul 2024 14:42:26 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] mmc: sdhci-esdhc-imx: add option to not change
+ pinctrl state in suspend
+To: Bough Chen <haibo.chen@nxp.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, dl-S32 <S32@nxp.com>
+References: <20240705134647.3524969-1-ciprianmarian.costea@oss.nxp.com>
+ <20240705134647.3524969-4-ciprianmarian.costea@oss.nxp.com>
+ <DU0PR04MB9496E9EBCF92568D459F3F4290DA2@DU0PR04MB9496.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <DU0PR04MB9496E9EBCF92568D459F3F4290DA2@DU0PR04MB9496.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM0PR03CA0027.eurprd03.prod.outlook.com
+ (2603:10a6:208:14::40) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708112445.2690631-1-ryan.roberts@arm.com>
-In-Reply-To: <20240708112445.2690631-1-ryan.roberts@arm.com>
-From: Barry Song <baohua@kernel.org>
-Date: Mon, 8 Jul 2024 23:36:31 +1200
-Message-ID: <CAGsJ_4zH72FyLq5gJm215oiWrtd6uf40L_F1UO6cFZ4sy7qt0A@mail.gmail.com>
-Subject: Re: [PATCH v1] mm: shmem: Rename mTHP shmem counters
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang <ioworker0@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|VI1PR04MB7055:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44a70a96-ddb7-44a8-df10-08dc9f430cf9
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eXdyVUJnQmR6bDBrQXF4OFlGditGT2UxWlFGaEJNL2tXNElNWjhNMGFEWUNn?=
+ =?utf-8?B?Z29IcldobUdydm9nc3dJWVp3NktJcmE0bVdoTjRxZ1Z4MGJqV1JKMlVDSUo4?=
+ =?utf-8?B?UWFvdy9zVFNYaDYvazZqaXlLVkNPaTBIN096Zmk1V0hsdEF2U1BpdEhENG9s?=
+ =?utf-8?B?NmU4OTdFai9PYXFxR2krcG9tUWNmdExTL0Ywb1h6Ry9RWk1vWVhHTUtuc09H?=
+ =?utf-8?B?RUFYV2RlRkpDLzUvRWNya3JFbmdrUG1LaGZwTVJGVjh4ZVNnNVNoMDFzZ29Z?=
+ =?utf-8?B?eFBFdmc0WUhJUVVtcWQvSkk5N1lEWFNYZXNhaysvdzZEMkQxU3RHakxhRjNU?=
+ =?utf-8?B?Y1FxZGNZK2ZWRlVhY3NMVTl5Y20xMGRFSUszdmJRWkRYNkJXSlZkbVRyYVZX?=
+ =?utf-8?B?dEcyM1dHSFB1RkZqa3VKZ2xrVnZ0U0xoazNha3hHK1l3c241d0ZJRlc0dUF6?=
+ =?utf-8?B?cVFhaE1SZUlHdk1rVzEyT2JMdVRKWGdhaXByaENLNXB6aFZ5SkNSWStFam85?=
+ =?utf-8?B?djArNnpJVmg5M1g0TldsM3lKMlZCYnM2bVNpZXczUXl3ODlqcG5KdFdHWFJ2?=
+ =?utf-8?B?VmtiSlFiS05NeXI2RmJjV2RxYVpuNlFBNnB0U2NQSlRCRFdOcEt4ajc5UFFP?=
+ =?utf-8?B?QjcxSHJ3RmFBVGxZOExhWVJ2UlUxVXBYeEFqVTdkT09URGRQNTRCQUNTYXRR?=
+ =?utf-8?B?L2dEWi93Y3RNV29rVDZqMjFlU2I4UzJsYjMydC9uaS9nd09UMy9yZ2dYdytE?=
+ =?utf-8?B?aEhmNnFTRWdWMjh0bmY4UmF5KzRqRmZhQ1R3RFMrQzZ2RUJnUGRDazJRYnZl?=
+ =?utf-8?B?d3dicTBNYllrQjZQWUsvVUFha1pZdHhqTFNrVnBIZzhPNnJ4MUR1ZnBZa0dw?=
+ =?utf-8?B?bWMrUE5DZEVVVnZKNWY5OTZkZWtoeXJMK0liZkRNclFZeFdPT0twWlBOSGdi?=
+ =?utf-8?B?d0JCSWFOVmhZWW1DcE51YTFSMHdtdGlzM1VPZFBGQU9WbGc2RHp6RTJMdVQ1?=
+ =?utf-8?B?ZFhTTTRzYTZtTklOaElCSkRXbCtOTzEzUlFIbzUzK0tmNFl2c2x5QkhRRlla?=
+ =?utf-8?B?Yk5ndDVPa2RkSjFzRG51bkJ6RlZqTUxnN3gxWmxxdGRrcEFhMjJEZDh5ME03?=
+ =?utf-8?B?SlV4NWowb3hwbDVyYUFwVkw0c1pNY2NBQnFwaFpPeXl0b0JjV2R4cEdoUnl0?=
+ =?utf-8?B?QWQ2dzl3QWh5YUhOQTNha21JNkhpL2ZKa2M0cGZUZDdESDlaMkRrTHZlLy9w?=
+ =?utf-8?B?RmJRWFhwYnVSRiswVEFreHlrd3krdlQ4N1VDWVJ2aERXSXdFVVQ0cnJ3Qk5X?=
+ =?utf-8?B?VnZOMXdkdyt5OVArZzlUKy9tN2Z4M3VkbTR0dnpCYzVlblc2alJWY2NKVmRN?=
+ =?utf-8?B?bG9PZkt3endUWUJuZkpYV0RrbmJER1NmVklrVUpPMFBDcjJSZHhKNVdWTjln?=
+ =?utf-8?B?aldmTytReUR2V1pOSThiNVR0NXJ5Q2xpZnl6S0tiWHdEeDg4NGJHdVprak4r?=
+ =?utf-8?B?RHZ0N3hsUVBTQ0NwM2t2eWtHdEdkRWpUVkFtV1lnc1FEMkErMW9CV0NUc3lN?=
+ =?utf-8?B?NWZ3dHBzczFrVUZaTldqN21tdVYzMzRxK3grZHMyNmc2a1pRcmtwT2hJRjkv?=
+ =?utf-8?B?dFJjaHY3Y2o0R1MwT1MyTDVLZUcwcmpSaWI0QlAwTU5NWnJMaFZmNk5kU2Nk?=
+ =?utf-8?B?aDltRDVHTGdxRmVZZlcycUE4Yld0ejNFWEptaUp3LzZBT282NU9uV1MvbWts?=
+ =?utf-8?B?dDBOSDZqenRNSlY4RnRyQStkL3ZiRWdReHVuYW5Fd1IxdmJ1b1hGaGhrcHo0?=
+ =?utf-8?B?bTdWR1lxQ3RTVnJqZlE5QT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QlFwR0k1VDJyamd0Y1lqTHQrdlZoMTdpb0JOQ05hNXIwQ0xjWmlBUk1ISkJz?=
+ =?utf-8?B?aVhSamJaUlhtWWFQeXZCMkRieHY1OTY4OStZNjh4clNrVXd3WGtsSEwzc3JR?=
+ =?utf-8?B?cGZNSm1SV0x6dVYzRmdUWFVkQk9pYW85UFBReFRwa2xRSG9ZV1V3QW4wMlY0?=
+ =?utf-8?B?aWhiZm16a2xPeXdWZlZvclpxcVpVbGVDdnJuL0JmU3E1d2RVd01GbFNsbHdW?=
+ =?utf-8?B?RDUzc1JsODROcTE1UE9OZVluc3BvTkV4UkdGejJqOU00MkxHUHpzSVdvaVhH?=
+ =?utf-8?B?Ui9KUW9ta2swNVFTcUNKWHpCSlJBeVdhNU9JYkxVWS9xdExNRXVnL2VmZElJ?=
+ =?utf-8?B?OXBoRTExaW9KNEpoRzB3RHJwRjg2ZldQMGR2eUhyK3A4VEM1ZHhuSTJsMHBi?=
+ =?utf-8?B?YzdrWkUycGVMc0hLU0M3c0pBVTZtMDFYZWxMTUlnczFpMWFVNXlvNDdGNy84?=
+ =?utf-8?B?ekQzRnBWTnYyMkwxOUorVFBCUXk3Q2NoOTVhSTJEeWxISmVsenBObmNJd2xx?=
+ =?utf-8?B?cGVQaGtSK21kZlc5d3BsOW13ZSszdC9tOTJYWkRiam1VNHQvdm5xQ2MrLy91?=
+ =?utf-8?B?Rkc0MGlLdEJ1ZWhFNUgrVG5EMllzczVFb0d4cnI0Wm1JNkN1VFAzSUNVZ0tK?=
+ =?utf-8?B?bmc5QitiUzg4NlIxejREWDkxZFhERG9zKzVuZ0hLclV6OVZvKzhZMWlvcUE1?=
+ =?utf-8?B?a0t1bFl3R3B4VE9LdkVBK0xYdTFJSjJOVjVNeHhlU0I2dG13dWk2bVNlREI0?=
+ =?utf-8?B?NFViL2JXbU0xZDNZQ1BMaXJRb3R5TmpqY081dTdGM0xuVDNpN1B0MWE5Rzl2?=
+ =?utf-8?B?TG1qeHBmR0V5ZW9Xc1hWellqRnlmOENtMUtFSG00eUczVEpiR2RiUnJ6a2RQ?=
+ =?utf-8?B?Ykg0TVF3YkdEWXdMUjdKRmIrZWdEZUIzeU44NWx4eXpKaWR4WXRKdWsrdGZy?=
+ =?utf-8?B?OUR2MThnUVZKWVJGTVdPOWpsNFQxU1M1QjRTdGkvdjBTZmJpOVdsaWlSckpn?=
+ =?utf-8?B?MWJhLzNiU2lBTmtUZU1GVDBrL2pKZUxaektIWHpuU0liMjVMZnRDRW43Tjdi?=
+ =?utf-8?B?eHhXVjRGSHU3dEJyWEJzbGFSWG9hUkNZa1hJUE53UU1KYXU4WFhRRm84cC9u?=
+ =?utf-8?B?Q0QwamlvS0wvWVhQOHdpMTZqMjNuSVE3S1JwQXFjWG5FYnptVXQ0V1dUK1Vl?=
+ =?utf-8?B?TmdCQng4Q2tIaEFJUnMzR1dLQWVkelFEZkZQZFZ0bzk0SGZOSFkxMHpNL1pQ?=
+ =?utf-8?B?V2c5bFZMdzVmVjJTa1VKNElBYjhNakl4Q0s3QzB0MzZaRUtYbC9wbk4vekgz?=
+ =?utf-8?B?d3dTYVNXdFdNS0o4SkR4RXUzclFJOFl4T1c2ZElDL0NOUGZIYlhqYjhvNWJY?=
+ =?utf-8?B?ZXVIUC9rTGZLdkhmcWhqU21VbzNrOUQ4dDVReUV3c1l0bFdwMnJoOFlBWTBo?=
+ =?utf-8?B?bWxKdm9CNWt3dHFlQ1Z5SDY1ckVqYjFYeVBaUnVTTnR1MitHVHpLdVRLaDFv?=
+ =?utf-8?B?VmV3NmtPMndHeEROaU0zNSs1SGh2TXB3cStzREZUTU9IU00ydnp5eTZBRk5N?=
+ =?utf-8?B?bDRjc2MzNnJSdGtLUHRORlRQN1h3d3pablpFMkNBcTFmTmdlQTJUSDNMOGtQ?=
+ =?utf-8?B?cXhrUU5ya3Z3QzRiamlSYXR2S054cWpEZURUWjVKL3BqZTZaNW5nMXE1bmNV?=
+ =?utf-8?B?SzdpcVZUUUdjRXBzdi9maloyNUN6SkkweXNFN21QU2tGNk1mb3pkZ1NJV0FC?=
+ =?utf-8?B?VTgyNU9HRXRXTUY0RklYa05lL1VoMDdxS2YzSkFLYzdoU09OK2hXL0NLbTBa?=
+ =?utf-8?B?WmVNRXo1K0RueDlJS29xaVpyT0lVbm9HOHBqemk3Z2dPMnRzL1pnY09UMWdG?=
+ =?utf-8?B?OFE3TjE4ZTFOb3R3Y2dCM1dSYkxDWFhwR2FUcFFUb0lkUHlBRVNvTGRwVnRM?=
+ =?utf-8?B?ZTZZamNLWXRiRnU4TTZmM28xNHVWS29ZcURrc1dUZzBkYi9wMEFZZ0psWXNr?=
+ =?utf-8?B?TlVIZTdKdSsrWXZDcS9Odm5IWlE1M0tUa3FXM1RuOXp1MEdmNXZsK2x5eDA4?=
+ =?utf-8?B?TjlPYm4vbXc1VUZJSTBsMm5NbkhZTXFHN2UybmtuSTA5bjBhU1ZRZHZJNHQ3?=
+ =?utf-8?B?YlluU1pSQ05md1kyK0JTNFJPZWdRTWd1VVgvT2JoRWh0VlJKYXg0TWxFa1hB?=
+ =?utf-8?Q?Jf0+390bUEyp07mB4MoFcaQ=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44a70a96-ddb7-44a8-df10-08dc9f430cf9
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 11:42:31.1222
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rCk0oxi25/QBazHM2RiJcV54vKzOYxNsNacwYVBhdtPFYCqUGR5aBgXa3UJ0douu90warKo1nPWGbmzxBROnDZz6RUvfduIEArM+QQjuc/w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7055
 
-On Mon, Jul 8, 2024 at 11:24=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com>=
- wrote:
->
-> The legacy PMD-sized THP counters at /proc/vmstat include
-> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
-> rather confusingly refer to shmem THP and do not include any other types
-> of file pages. This is inconsistent since in most other places in the
-> kernel, THP counters are explicitly separated for anon, shmem and file
-> flavours. However, we are stuck with it since it constitutes a user ABI.
->
-> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
-> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
-> same "file_" prefix in the names. But in future, we may want to add
-> extra stats to cover actual file pages, at which point, it would all
-> become very confusing.
->
-> So let's take the opportunity to rename these new counters "shmem_"
-> before the change makes it upstream and the ABI becomes immutable.
+On 7/8/2024 5:33 AM, Bough Chen wrote:
+>> -----Original Message-----
+>> From: Ciprian Marian Costea (OSS) <ciprianmarian.costea@oss.nxp.com>
+>> Sent: 2024年7月5日 21:47
+>> To: Bough Chen <haibo.chen@nxp.com>; Adrian Hunter
+>> <adrian.hunter@intel.com>; Ulf Hansson <ulf.hansson@linaro.org>; Shawn Guo
+>> <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
+>> Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+>> <festevam@gmail.com>
+>> Cc: linux-kernel@vger.kernel.org; linux-mmc@vger.kernel.org;
+>> imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org; dl-S32
+>> <S32@nxp.com>; Ciprian Marian Costea (OSS)
+>> <ciprianmarian.costea@oss.nxp.com>
+>> Subject: [PATCH 3/4] mmc: sdhci-esdhc-imx: add option to not change pinctrl
+>> state in suspend
+>>
+>> On some boards such as S32G based, changing the pinctrl state in suspend
+>> routine may not be supported.
+> 
+> If so, why not dop the "sleep" pinctrl in device tree file?
+> 
+> Best Regards
+> Haibo Chen
 
-Personally, I think this approach is much clearer. However, I recall
-we discussed this
-before [1], and it seems that inconsistency is a concern?
+Thanks for this suggestion. I verified and pinctrl node is not yet 
+upstream'ed for S32G2/S32G3 SoC.
+Indeed, 'pinctrl_pm_select_sleep_state' would not report any errors in 
+case 'sleep' pinctrl is not defined in the device tree file.
+I will drop this commit in version 2 of this patchset.
 
-[1] https://lore.kernel.org/linux-mm/05d0096e4ec3e572d1d52d33a31a661321ac15=
-51.1713755580.git.baolin.wang@linux.alibaba.com/
+Best Regards,
+Ciprian
 
+>>
+>> For this scenario the newly introduced flag 'ESDHC_FLAG_SKIP_PINCTRL_SLEEP'
+>> is used.
+>>
+>> Signed-off-by: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+>> ---
+>>   drivers/mmc/host/sdhci-esdhc-imx.c | 14 ++++++++++----
+>>   1 file changed, 10 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c
+>> b/drivers/mmc/host/sdhci-esdhc-imx.c
+>> index 8f0bc6dca2b0..c3ff7fccd051 100644
+>> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+>> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+>> @@ -204,6 +204,9 @@
+>>   /* The IP does not have GPIO CD wake capabilities */
+>>   #define ESDHC_FLAG_SKIP_CD_WAKE		BIT(18)
+>>
+>> +/* The IP does not support transition to pinctrl sleep state */ #define
+>> +ESDHC_FLAG_SKIP_PINCTRL_SLEEP  BIT(19)
+>> +
+>>   enum wp_types {
+>>   	ESDHC_WP_NONE,		/* no WP, neither controller nor gpio */
+>>   	ESDHC_WP_CONTROLLER,	/* mmc controller internal WP */
+>> @@ -301,7 +304,8 @@ static struct esdhc_soc_data usdhc_s32g2_data = {
+>>   	.flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_MAN_TUNING
+>>   			| ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
+>>   			| ESDHC_FLAG_HS400 | ESDHC_FLAG_HS400_ES
+>> -			| ESDHC_FLAG_SKIP_ERR004536 |
+>> ESDHC_FLAG_SKIP_CD_WAKE,
+>> +			| ESDHC_FLAG_SKIP_ERR004536 |
+>> ESDHC_FLAG_SKIP_CD_WAKE
+>> +			| ESDHC_FLAG_SKIP_PINCTRL_SLEEP,
+>>   };
+>>
+>>   static struct esdhc_soc_data usdhc_imx7ulp_data = { @@ -1884,9 +1888,11
+>> @@ static int sdhci_esdhc_suspend(struct device *dev)
+>>   	if (ret)
+>>   		return ret;
+>>
+>> -	ret = pinctrl_pm_select_sleep_state(dev);
+>> -	if (ret)
+>> -		return ret;
+>> +	if (!(imx_data->socdata->flags & ESDHC_FLAG_SKIP_PINCTRL_SLEEP)) {
+>> +		ret = pinctrl_pm_select_sleep_state(dev);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>>
+>>   	ret = mmc_gpio_set_cd_wake(host->mmc, true);
+>>
+>> --
+>> 2.45.2
+> 
 
->
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->
-> Hi All,
->
-> Applies on top of today's mm-unstable (2073cda629a4) and tested with mm
-> selftests; no regressions observed.
->
-> The backstory here is that I'd like to introduce some counters for regula=
-r file
-> folio allocations to observe how often large folio allocation succeeds, b=
-ut
-> these shmem counters are named "file" which is going to make things confu=
-sing.
-> So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add mTHP
-> counters for anonymous shmem") goes upstream (it is currently in mm-stabl=
-e).
->
-> Admittedly, this change means the mTHP stat names are not the same as the=
- legacy
-> PMD-size THP names, but I think that's a smaller issue than having "file_=
-" mTHP
-> stats that only count shmem, then having to introduce "file2_" or "pgcach=
-e_"
-> stats for the regular file memory, which is even more inconsistent IMHO. =
-I guess
-> the alternative is to count both shmem and file in these mTHP stats (that=
-'s how
-> they were documented anyway) but I think it's better to be able to consid=
-er them
-> separately like we do for all the other counters.
->
-> Thanks,
-> Ryan
->
->  Documentation/admin-guide/mm/transhuge.rst | 12 ++++++------
->  include/linux/huge_mm.h                    |  6 +++---
->  mm/huge_memory.c                           | 12 ++++++------
->  mm/shmem.c                                 |  8 ++++----
->  4 files changed, 19 insertions(+), 19 deletions(-)
->
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
-dmin-guide/mm/transhuge.rst
-> index 747c811ee8f1..8b891689fc13 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -496,16 +496,16 @@ swpout_fallback
->         Usually because failed to allocate some continuous swap space
->         for the huge page.
->
-> -file_alloc
-> -       is incremented every time a file huge page is successfully
-> +shmem_alloc
-> +       is incremented every time a shmem huge page is successfully
->         allocated.
->
-> -file_fallback
-> -       is incremented if a file huge page is attempted to be allocated
-> +shmem_fallback
-> +       is incremented if a shmem huge page is attempted to be allocated
->         but fails and instead falls back to using small pages.
->
-> -file_fallback_charge
-> -       is incremented if a file huge page cannot be charged and instead
-> +shmem_fallback_charge
-> +       is incremented if a shmem huge page cannot be charged and instead
->         falls back to using small pages even though the allocation was
->         successful.
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index acb6ac24a07e..cff002be83eb 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -269,9 +269,9 @@ enum mthp_stat_item {
->         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
->         MTHP_STAT_SWPOUT,
->         MTHP_STAT_SWPOUT_FALLBACK,
-> -       MTHP_STAT_FILE_ALLOC,
-> -       MTHP_STAT_FILE_FALLBACK,
-> -       MTHP_STAT_FILE_FALLBACK_CHARGE,
-> +       MTHP_STAT_SHMEM_ALLOC,
-> +       MTHP_STAT_SHMEM_FALLBACK,
-> +       MTHP_STAT_SHMEM_FALLBACK_CHARGE,
->         MTHP_STAT_SPLIT,
->         MTHP_STAT_SPLIT_FAILED,
->         MTHP_STAT_SPLIT_DEFERRED,
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 9ec64aa2be94..f9696c94e211 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_=
-ANON_FAULT_FALLBACK);
->  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_F=
-ALLBACK_CHARGE);
->  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
->  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
-> -DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
-> -DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
-> -DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHAR=
-GE);
-> +DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
-> +DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
-> +DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CH=
-ARGE);
->  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
->  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
->  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
-> @@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] =3D {
->         &anon_fault_fallback_charge_attr.attr,
->         &swpout_attr.attr,
->         &swpout_fallback_attr.attr,
-> -       &file_alloc_attr.attr,
-> -       &file_fallback_attr.attr,
-> -       &file_fallback_charge_attr.attr,
-> +       &shmem_alloc_attr.attr,
-> +       &shmem_fallback_attr.attr,
-> +       &shmem_fallback_charge_attr.attr,
->         &split_attr.attr,
->         &split_failed_attr.attr,
->         &split_deferred_attr.attr,
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 921d59c3d669..f24dfbd387ba 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio(stru=
-ct vm_fault *vmf,
->                         if (pages =3D=3D HPAGE_PMD_NR)
->                                 count_vm_event(THP_FILE_FALLBACK);
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
-> +                       count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
->  #endif
->                         order =3D next_order(&suitable_orders, order);
->                 }
-> @@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio(stru=
-ct vm_fault *vmf,
->                                 count_vm_event(THP_FILE_FALLBACK_CHARGE);
->                         }
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
-E_FALLBACK);
-> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
-E_FALLBACK_CHARGE);
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHM=
-EM_FALLBACK);
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHM=
-EM_FALLBACK_CHARGE);
->  #endif
->                 }
->                 goto unlock;
-> @@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *inode,=
- pgoff_t index,
->                         if (folio_test_pmd_mappable(folio))
->                                 count_vm_event(THP_FILE_ALLOC);
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
-E_ALLOC);
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHM=
-EM_ALLOC);
->  #endif
->                         goto alloced;
->                 }
-> --
-> 2.43.0
->
-
-Thanks
-Barry
 
