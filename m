@@ -1,157 +1,82 @@
-Return-Path: <linux-kernel+bounces-244008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80AFA929DCD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:58:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85E2929DCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16C41C223D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675BA285A3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D3138FB9;
-	Mon,  8 Jul 2024 07:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F422238FB0;
+	Mon,  8 Jul 2024 07:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mPPZfiIP"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FFDAOOsZ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1CA22625
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34D53BBE8
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720425475; cv=none; b=TFUDGtpUxe0JksZEy5JIB0NDZfCktlhfYlOwPoWlCFbY00Me9T/wDphXqWnRXxtsVccNIrz+wsxOjZFL/EC6H83Y0ELb9irbHD2YmMjYHc9EEEJA4/g6rr+WNP/PTXxPtwx35kqUcQAgv3V85NXILNCP5zgKVAw+cHU1kmMnL0A=
+	t=1720425484; cv=none; b=W1QuBXePyWJVOxRO7dlZvqt2Xkhaxs9jne/PKLDqjFvTwQdhV02h3yD113hmYw0RxuLsgNmMl876Ay8QKwDABFlc4+ocNhI0MI6FOM3jxdgY/SFH3Az67BL7i71d6B6NP/AXh9LLxs81cHpNlXNzsK7bBFd5svqtsn4RPtJxx18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720425475; c=relaxed/simple;
-	bh=gJ2XP5CnA4wlvhXXz7nVhqB9mSHpbF+Q5WmqQ0jdGBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t5sMIjg4G/fNaex3yLLwnwlR/lTgOzywMW9eKx9lNz00VjnwugV1TFICK1TUHkX1rUyVPgmfW7I/SlSAR8or2++vyhdowz5gvAa9ZUNGSS0DWuXUnEwhk18kpBn/0MTvaPR/BYd2j9n1ZuIqIGzZ/QoW9LYkndPmt8ZQbhsSJCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mPPZfiIP; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: huangjunxian6@hisilicon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720425471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vd5x/ux/YJAPr13UISfFPy2aS6qkTR3fwPYaSqocOhI=;
-	b=mPPZfiIPC6SXjtKEJMBD2DLkIg0jWUo4K0Qs59KF2V6WOPK4DK1mk2vBGURCecI/AZNTYO
-	KBMlmYMWMZqdsfekjiJYNNGeCUNuZcEtG2x80YSa26VJWbe3nI6dp9Y4lRpqf+b2n+/Fhs
-	sLIj42iEsS0rIFvQeTIhzjMIX4D9Zhk=
-X-Envelope-To: jgg@ziepe.ca
-X-Envelope-To: leon@kernel.org
-X-Envelope-To: linux-rdma@vger.kernel.org
-X-Envelope-To: linuxarm@huawei.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <ccd00d9d-4cad-4b18-ae73-e618d669959e@linux.dev>
-Date: Mon, 8 Jul 2024 15:57:49 +0800
+	s=arc-20240116; t=1720425484; c=relaxed/simple;
+	bh=twaeYzFSn/1h1d9xhwS1tJhtyc/6QNjEWD6skPomBNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cqLqQ14idmggWuZsfHgJ0Q9Yv0lcXHiO64omko/K+3dxDlR55KiQFrofWBrHS6gi93psnctr19QT0uWuf5Uy1Pd04pTVojXPqzWPkQRIvw273eDZhOrXAnuCmjJZRDcO4XzYZ23JJyTMreDkJIj2ij9Y7N3GOQqcH+2CbDobaGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FFDAOOsZ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=GHePrlKh36QSGwKVJ3OqNArqPsDNDuyy0iY4WXPrnn4=; b=FFDAOOsZgk415dXO7SwRQzbFWg
+	hBfwCl7djiLf12yI0AUhLhM/WmtSmf84kj7HWoYyz2ilhfDVvzG2VhcYoNsDCAwLgCLVG10TfX3xG
+	2cRvyPHrlt0UJu8PlP2YljdfGHInryAoy9qQSpo7KVwic4zd9nyeOcBxV2yYn1iKRWg+pOvt9zFWr
+	l5Hci+ckMx2sLKa3cfQd7x71H1x6XxAv/sz1oN1k1y7Dnl7DznydXtuVhMq5tQnb+bI3oFH2ZIo0f
+	n0m/QGS/bhpvf+h7vVSaQ1IUqX6YFupPJ9auRPc2DKkY49WciZtefbcN0LBMU4lYuCSo7Wxx+52H2
+	aF2FBzFA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sQjFy-00000006ddV-2ncE;
+	Mon, 08 Jul 2024 07:57:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 85FDD3006B7; Mon,  8 Jul 2024 09:57:52 +0200 (CEST)
+Date: Mon, 8 Jul 2024 09:57:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org
+Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de
+Subject: sched: Update MAINTAINERS
+Message-ID: <20240708075752.GF11386@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-rc 5/9] RDMA/hns: Fix missing pagesize and alignment
- check in FRMR
-To: Junxian Huang <huangjunxian6@hisilicon.com>, jgg@ziepe.ca, leon@kernel.org
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com,
- linux-kernel@vger.kernel.org
-References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
- <20240705085937.1644229-6-huangjunxian6@hisilicon.com>
- <eba4bfaf-5986-489b-9ae5-8f5618501290@linux.dev>
- <849ed8b9-e826-7211-3e90-7fdeff9d945a@hisilicon.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <849ed8b9-e826-7211-3e90-7fdeff9d945a@hisilicon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-在 2024/7/8 10:44, Junxian Huang 写道:
-> 
-> 
-> On 2024/7/7 17:16, Zhu Yanjun wrote:
->> 在 2024/7/5 16:59, Junxian Huang 写道:
->>> From: Chengchang Tang <tangchengchang@huawei.com>
->>>
->>> The offset requires 128B alignment and the page size ranges from
->>> 4K to 128M.
->>>
->>> Fixes: 68a997c5d28c ("RDMA/hns: Add FRMR support for hip08")
->>
->> https://patchwork.kernel.org/project/linux-rdma/patch/2eee7e35-504e-4f2a-a364-527e90669108@CMEXHTCAS1.ad.emulex.com/
->> In the above link, from Bart, it seems that FRMR is renamed to FRWR.
->> "
->> There are already a few drivers upstream in which the fast register
->> memory region work request is abbreviated as FRWR. Please consider
->> renaming FRMR into FRWR in order to avoid confusion and in order to
->> make it easier to find related code with grep in the kernel tree.
->> "
->>
->> So is it possible to rename FRMR to FRWR?
->>
-> 
-> I think the rename is irrelevant to this bugfix, and if it needs to be done,
-> we'll need a single patch to rename all existing 'FRMR' in hns driver.
-> 
-> So let's leave it as is for now.
 
-Exactly. FRMR is obsolete. We do need a single patch to rename all 
-existing "FRMR" to "FRWR" in RDMA.
+  Thank you for having been our friend!
 
-@Leon, please let me know your suggestions.
-Thanks,
-
-Zhu Yanjun
-
-> 
-> Thanks,
-> Junxian
-> 
->>> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
->>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->>> ---
->>>    drivers/infiniband/hw/hns/hns_roce_device.h | 4 ++++
->>>    drivers/infiniband/hw/hns/hns_roce_mr.c     | 5 +++++
->>>    2 files changed, 9 insertions(+)
->>>
->>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
->>> index 5a2445f357ab..15b3b978a601 100644
->>> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
->>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
->>> @@ -83,6 +83,7 @@
->>>    #define MR_TYPE_DMA                0x03
->>>      #define HNS_ROCE_FRMR_MAX_PA            512
->>> +#define HNS_ROCE_FRMR_ALIGN_SIZE        128
->>>      #define PKEY_ID                    0xffff
->>>    #define NODE_DESC_SIZE                64
->>> @@ -189,6 +190,9 @@ enum {
->>>    #define HNS_HW_PAGE_SHIFT            12
->>>    #define HNS_HW_PAGE_SIZE            (1 << HNS_HW_PAGE_SHIFT)
->>>    +#define HNS_HW_MAX_PAGE_SHIFT            27
->>> +#define HNS_HW_MAX_PAGE_SIZE            (1 << HNS_HW_MAX_PAGE_SHIFT)
->>> +
->>>    struct hns_roce_uar {
->>>        u64        pfn;
->>>        unsigned long    index;
->>> diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
->>> index 1a61dceb3319..846da8c78b8b 100644
->>> --- a/drivers/infiniband/hw/hns/hns_roce_mr.c
->>> +++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
->>> @@ -443,6 +443,11 @@ int hns_roce_map_mr_sg(struct ib_mr *ibmr, struct scatterlist *sg, int sg_nents,
->>>        struct hns_roce_mtr *mtr = &mr->pbl_mtr;
->>>        int ret, sg_num = 0;
->>>    +    if (!IS_ALIGNED(*sg_offset, HNS_ROCE_FRMR_ALIGN_SIZE) ||
->>> +        ibmr->page_size < HNS_HW_PAGE_SIZE ||
->>> +        ibmr->page_size > HNS_HW_MAX_PAGE_SIZE)
->>> +        return sg_num;
->>> +
->>>        mr->npages = 0;
->>>        mr->page_list = kvcalloc(mr->pbl_mtr.hem_cfg.buf_pg_count,
->>>                     sizeof(dma_addr_t), GFP_KERNEL);
->>
-
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19929,7 +19929,6 @@ R:	Dietmar Eggemann <dietmar.eggemann@ar
+ R:	Steven Rostedt <rostedt@goodmis.org> (SCHED_FIFO/SCHED_RR)
+ R:	Ben Segall <bsegall@google.com> (CONFIG_CFS_BANDWIDTH)
+ R:	Mel Gorman <mgorman@suse.de> (CONFIG_NUMA_BALANCING)
+-R:	Daniel Bristot de Oliveira <bristot@redhat.com> (SCHED_DEADLINE)
+ R:	Valentin Schneider <vschneid@redhat.com> (TOPOLOGY)
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
 
