@@ -1,186 +1,175 @@
-Return-Path: <linux-kernel+bounces-243836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137FB929B4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40383929B4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9521C203AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 04:29:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62E1F1C20BE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 04:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97325AD49;
-	Mon,  8 Jul 2024 04:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B6B11712;
+	Mon,  8 Jul 2024 04:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KDDjJCPV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="bGYZm3GJ"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF160AD21;
-	Mon,  8 Jul 2024 04:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B33AD2C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 04:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720412936; cv=none; b=OMRFwBVXO+5z7xhhomr7SmMAhMh/NkBa3gDZtFDe1OTUEL8zfemhkljgR31z8GRzxy+fRRJxDGxFJbp75Lfez/CUEWEXLY2Xo06XIG0Wblgyp3xZCONM4Gleodcj3EuKrPOR9vZ2PT/dv5tVLQiUv26DCrFz3In1cNOZ4t24LCQ=
+	t=1720412939; cv=none; b=dLmjx3jau2nlllp4ax7dYv+uqwvdSKhHl48DBzz7DSZ+KD1gQCQnkC9MRPwhW2vpzuMgmzMSV+WtTeHwSRxRIDN54Ozs06houiVF/ehiFtacoLY5QeYWDYoYS+iR1wsnfma6OM5Zo51KUbxzSPf04izUzyR0NuxuIydrStN5gqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720412936; c=relaxed/simple;
-	bh=u2dvuQpQzqhCs0g4IjQ4wZu0OThTOkRlkLcVW5za8e0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WO1FrKtMr+HEptE7ox65sUm9iAOGsk3DUVb1zUA0D7QKFQhBfFU0MUfUScdxBpyNn3rlCD9LOifvE2pRaXJIvXx+EGe6kzVnm9hDjF4h8J/jbgnjyBa6mPC/jIBYd0jt5LhQrO9b63LqNLWJemlLNhKS/zkynpkAvMHV5L43aG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KDDjJCPV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 467Moh8P017926;
-	Mon, 8 Jul 2024 04:28:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TAV6s6XApo1U20XEbYHTaWuf5u8aUOnk4RbEr7gq3qs=; b=KDDjJCPVj7MVkc7D
-	q+o9QFF8mMDjLShVQGmCIJm59eDnG34DHldbfZqUDr99uaeZyjzph5BQkO0f8C4R
-	3R5TQyD3uYRlyeu8L9sL2ANhBr3p4zlPNytlGvqt2jYFh9X3BbfUz3ggbU5ml9Yz
-	S9zuFiztE1iy3gynzlHty55jTsB9M4niHKHMhMS18WK6YCO+Xp0UZYTVTBYxMfKJ
-	U5wHE/RxbIBCgt8aTenx+/VPwatOzc0b2Nvh5sx6ZaM9J8ZQRZopgLE5us5fp5lk
-	JCEpANzj2zIhPIgvNDh9eIkKfv8nxRJYjPg/7+u57IM6EB/I+LLixhoiOkkGxtI7
-	vgp4Bg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wg3tmtj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 04:28:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4684Sla5005382
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 8 Jul 2024 04:28:47 GMT
-Received: from [10.216.31.252] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 7 Jul 2024
- 21:28:44 -0700
-Message-ID: <31f75b20-7e7b-c070-bd52-9343276a43e3@quicinc.com>
-Date: Mon, 8 Jul 2024 09:58:40 +0530
+	s=arc-20240116; t=1720412939; c=relaxed/simple;
+	bh=UO3JORI2UOnt/4q3O0io81GEdlOXjO/zMH+DQBTTuwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KSN1LKU1HlQ64xvKPzshp285S5vWoVX/bKB+S+7ojvyAomsVmZGPd8QUp8zSbYY+7x+JvnrbjyinO1nNfYGqu327ImrOFrnN+mZ8p6IjUYct7YnxR03pg25R/4vSOo1YpdKfYG7aEu0QlWdSxKS3a3iaWMAW43kpYcAj7u1DMK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=bGYZm3GJ; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-b985-910f-39e1-703f.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:b985:910f:39e1:703f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id C9E381E1B09;
+	Mon,  8 Jul 2024 06:28:46 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1720412928; bh=1pPgaaAUuuvdjbvYPtznmd4G2eWylFU6nvLlq3caKLY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bGYZm3GJbhcqN6KWJO6/rE2w8EeV+lF3OIJ8bEMkcrtNulH0q61e0gZgIJhwCG4Kn
+	 kNhOjURA3dbzNo3tTDH+HAugNR2yRSIeytI52xUtesIyclt6L9F3RUWSpkhVlk+qob
+	 YlqHN7lp8V13++PYy+Y5VZbYx/4ggIKzj2L23SZB93IxpeOFA772wfxgmUWIdUY+qY
+	 rQEbyBptSnAZRgHlHeKNpZeGNfIp8Z9JOlQPyruAIZJQAhliyNc7E8xpmANTmQyjKF
+	 wiWZ8BYwYKKTKVj2dSd8+bPK8xFV9h7ViNLOK6Qwx9cZbBXk/ZrxcPDZFWjfcwzwhN
+	 gGK6uuFMvPhfQ==
+Date: Mon, 8 Jul 2024 06:28:45 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Christoph Hellwig <hch@lst.de>, "robin.murphy@arm.com"
+ <robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
+ "will@kernel.org" <will@kernel.org>, "jgross@suse.com" <jgross@suse.com>,
+ "sstabellini@kernel.org" <sstabellini@kernel.org>,
+ "oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
+ "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH v2 1/1] swiotlb: Reduce swiotlb pool lookups
+Message-ID: <20240708062845.10e379b3@meshulam.tesarici.cz>
+In-Reply-To: <SN6PR02MB4157141FBF8252BDEAD831C1D4D92@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240701165746.1358-1-mhklinux@outlook.com>
+	<20240706055019.GA13280@lst.de>
+	<SN6PR02MB4157141FBF8252BDEAD831C1D4D92@SN6PR02MB4157.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3] PCI: Enable runtime pm of the host bridge
-Content-Language: en-US
-To: Mayank Rana <quic_mrana@quicinc.com>, Bjorn Helgaas <bhelgaas@google.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Rafael J.
- Wysocki" <rjw@rjwysocki.net>, <quic_vbadigan@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_parass@quicinc.com>
-References: <20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com>
- <4b81e0f0-ecc6-44b3-9388-aacf54230788@quicinc.com>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <4b81e0f0-ecc6-44b3-9388-aacf54230788@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xkaQo6iEjunOtJ1z9jUWT4C8JDmNR5K_
-X-Proofpoint-GUID: xkaQo6iEjunOtJ1z9jUWT4C8JDmNR5K_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_01,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 clxscore=1011 impostorscore=0 malwarescore=0 mlxscore=0
- bulkscore=0 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407080033
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, 7 Jul 2024 02:11:48 +0000
+Michael Kelley <mhklinux@outlook.com> wrote:
 
+> From: Christoph Hellwig <hch@lst.de> Sent: Friday, July 5, 2024 10:50 PM
+> >=20
+> > Hi Michael,
+> >=20
+> > I like the idea behind this, but can you respin it to avoid some of
+> > the added code duplication.  We have a lot of this pattern:
+> >=20
+> > 	pool =3D swiotlb_find_pool(dev, paddr);
+> > 	if (pool)
+> > 		swiotlb_foo(dev, ...
+> >=20
+> > duplicated in all three swiotlb users.  If we rename the original
+> > swiotlb_foo to __swiotlb_foo and add a little inline wrapper this is
+> > de-duplicated and also avoids exposing swiotlb_find_pool to the
+> > callers. =20
+>=20
+> This works pretty well. It certainly avoids the messiness of declaring
+> a "pool" local variable and needing a separate assignment before the
+> "if" statement, in each of the 9 call sites. The small downside is that
+> it looks like a swiotlb function is called every time, even though
+> there's usually an inline bailout. But that pattern occurs throughout
+> the kernel, so not a big deal.
+>=20
+> I initially coded this change as a separate patch that goes first. But
+> the second patch ends up changing about 20 lines that are changed
+> by the first patch. It's hard to cleanly tease them apart. So I've gone
+> back to a single unified patch. But let me know if you think it's worth
+> the extra churn to break them apart.
+>=20
+> >=20
+> > If we then stub out swiotlb_find_pool to return NULL for !CONFIG_SWIOTL=
+B,
+> > we also don't need extra stubs for all the __swiotlb_ helpers as the
+> > compiler will eliminate the calls as dead code. =20
+>=20
+> Yes, this works as long as the declarations for the __swiotlb_foo
+> functions are *not* under CONFIG_SWIOTLB. But when compiling with
+> !CONFIG_SWIOTLB on arm64 with gcc-8.5.0, two tangentially related
+> compile errors occur. iommu_dma_map_page() references
+> swiotlb_tlb_map_single(). The declaration for the latter is under
+> CONFIG_SWIOTLB. A similar problem occurs with dma_direct_map_page()
+> and swiotlb_map(). Do later versions of gcc not complain when the
+> reference is in dead code? Or are these just bugs that occurred because
+> !CONFIG_SWIOTLB is rare? If the latter, I can submit a separate patch to
+> move the declarations out from under CONFIG_SWIOTLB.
+>=20
+> >=20
+> > I might be missing something, but what is the reason for using the
+> > lower-level __swiotlb_find_pool in swiotlb_map and xen_swiotlb_map_page?
+> > I can't see a reason why the simple checks in swiotlb_find_pool itself
+> > are either wrong or a performance problem there.   =20
+>=20
+> Yes, swiotlb_find_pool() could be used instead of __swiotlb_find_pool().
+>=20
+> > Because if we don't
+> > need these separate calls we can do away with __swiotlb_find_pool
+> > for !CONFIG_SWIOTLB_DYNAMIC and simplify swiotlb_find_pool quite
+> > a bit like this:
+> >=20
+> > 	...
+> >=20
+> > 	if (!mem)
+> > 		return NULL;
+> >=20
+> > 	if (IS_ENABLED(CONFIG_SWIOTLB_DYNAMIC)) { =20
+>=20
+> The "IS_ENABLED" doesn't work because the dma_uses_io_tlb
+> field in struct dev is under CONFIG_SWIOTLB_DYNAMIC. I guess
+> it could be moved out, but that's going further afield. So I'm back
+> to using #ifdef.
+>=20
+> > 		smp_rmb();
+> > 		if (!READ_ONCE(dev->dma_uses_io_tlb))
+> > 			return NULL;
+> > 		return __swiotlb_find_pool(dev, paddr);
+> > 	}
+> >=20
+> > 	if (paddr < mem->defpool.start || paddr >=3D mem->defpool.end)
+> > 		return NULL;
+> > 	return &dev->dma_io_tlb_mem->defpool; =20
+>=20
+> Petr Tesa=C5=99=C3=ADk had commented [1] on my original RFC suggesting th=
+at
+> __swiotlb_find_pool() be used here instead of open coding it. With
+> the changes you suggest, __swiotlb_find_pool() is needed only in
+> the CONFIG_SWIOTLB_DYNAMIC case, and I would be fine with just
+> open coding the address of defpool here. Petr -- are you OK with
+> removing __swiotlb_find_pool when !CONFIG_SWIOTLB_DYNAMIC,
+> since this is the only place it would be used?
 
-On 6/11/2024 12:04 AM, Mayank Rana wrote:
-> 
-> On 6/8/2024 8:14 PM, Krishna chaitanya chundru wrote:
->> The Controller driver is the parent device of the PCIe host bridge,
->> PCI-PCI bridge and PCIe endpoint as shown below.
->>
->>          PCIe controller(Top level parent & parent of host bridge)
->>                          |
->>                          v
->>          PCIe Host bridge(Parent of PCI-PCI bridge)
->>                          |
->>                          v
->>          PCI-PCI bridge(Parent of endpoint driver)
->>                          |
->>                          v
->>                  PCIe endpoint driver
->>
->> Now, when the controller device goes to runtime suspend, PM framework
->> will check the runtime PM state of the child device (host bridge) and
->> will find it to be disabled. So it will allow the parent (controller
->> device) to go to runtime suspend. Only if the child device's state was
->> 'active' it will prevent the parent to get suspended.
->>
->> Since runtime PM is disabled for host bridge, the state of the child
->> devices under the host bridge is not taken into account by PM framework
->> for the top level parent, PCIe controller. So PM framework, allows
->> the controller driver to enter runtime PM irrespective of the state
->> of the devices under the host bridge. And this causes the topology
->> breakage and also possible PM issues like controller driver goes to
->> runtime suspend while endpoint driver is doing some transfers.
->>
->> So enable runtime PM for the host bridge, so that controller driver
->> goes to suspend only when all child devices goes to runtime suspend.
->>
->> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> ---
->> Changes in v3:
->> - Moved the runtime API call's from the dwc driver to PCI framework
->>    as it is applicable for all (suggested by mani)
->> - Updated the commit message.
->> - Link to v3: 
->> https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
->> Changes in v2:
->> - Updated commit message as suggested by mani.
->> - Link to v1: 
->> https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
->> ---
->>
->> ---
->>   drivers/pci/probe.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
->> index 20475ca30505..b7f9ff75b0b3 100644
->> --- a/drivers/pci/probe.c
->> +++ b/drivers/pci/probe.c
->> @@ -3108,6 +3108,10 @@ int pci_host_probe(struct pci_host_bridge *bridge)
->>           pcie_bus_configure_settings(child);
->>       pci_bus_add_devices(bus);
->> +
->> +    pm_runtime_set_active(&bridge->dev);
->> +    pm_runtime_enable(&bridge->dev);
-> Can you consider using devm_pm_runtime_enable() instead of 
-> pm_runtime_enable() ?
-> It serves calling pm_runtime_disable() when bridge device is removed as 
-> seeing pcie driver is using pci_host_probe() after allocating bridge 
-> device, and as part of pcie driver removal calls pci_remove_host_bus(), 
-> and bridge device would be freed, but it doesn't call 
-> pm_runtime_disable() on it. I don't see any specific functionality issue 
-> here as bridge device would be freed anyway, although as we have way to 
-> undo what is probe() is doing when bridge device is binding with bridge 
-> device. Perhaps we can use available mechanism.
-> 
-> Regards,
-> Mayank
-Sure I will add as suggested in my next patch.
+Yes. I have never had strong opinion about it, I merely saw the
+opportunity when it was low-hanging fruit, but it's definitely not
+worth adding complexity.
 
-- Krishna Chaitanya
->>       return 0;
->>   }
->>   EXPORT_SYMBOL_GPL(pci_host_probe);
->>
->> ---
->> base-commit: 30417e6592bfc489a78b3fe564cfe1960e383829
->> change-id: 20240609-runtime_pm-7e6de1190113
->>
->> Best regards,
+Petr T
 
