@@ -1,84 +1,65 @@
-Return-Path: <linux-kernel+bounces-244586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322D892A681
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:59:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD4392A686
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2F81F210C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:59:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D3A1F212D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02FA1442FE;
-	Mon,  8 Jul 2024 15:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B486148FF6;
+	Mon,  8 Jul 2024 15:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nDxomOkm"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuYXxDIw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F152E1442FB
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54D81442FB;
+	Mon,  8 Jul 2024 15:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454118; cv=none; b=erqY2+HS1lFlg6VPC4CdAm3kOUX56g7IU8PQE+CaxJqypDn9nqGtUhONbyyZ6kqCDY+3NqlDAMTMXeCOQiTnXHGpuGRfkmldpTzZWmLZQ6jTtlzWWV2G0JMQZIRNTRHz5PqolZDEYtT/HexeqS9dHmZ011snBl8/IaBNUxphh+M=
+	t=1720454130; cv=none; b=EfoRHoj8qpRyYYd3BvpbYnngjzQrGvZMDvJvISUO3XNkBCc3fuQq7qYV1CA+JhcD3NOuqwiHBvOPEg2cTkACt3HunOIYnRnf2UZP8GCjygQ7WMCCQl38e3DzBcRHTX2KRP3nSQ8I4kCF+I65Y8mFcrKUFjgsrywKwcIYGWdOaV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454118; c=relaxed/simple;
-	bh=cvBWKng3YeJPwbCLrAjHXr8nxo5lDxnqr7GqSHo/A44=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=LDbxfFjo22BcBYtdihxSarG39qt5LkbxRa4ooOUVmxdDPdBh+HZEEgOtQuoXYEHAlVVSlY9YXwQX+iAynIr/mmeBaFhd98aD4Iu1YDh8rj9eepV2omuTy/7tBx8OJT5osTaT4GKWpJWHamIaDVYw4HmIgT0Y44V3P3uEcFFl7XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nDxomOkm; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7036e383089so584162a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 08:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720454116; x=1721058916; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BJuaMngDvL/ozTXoGo0oV92KGi7PV5ovmEPBZpZiQRY=;
-        b=nDxomOkmsy9XVF2XZC9GhRhpHnhv4y/murUcxpTEn3fTfPZgpECpNzuYd39Q/AFh74
-         zfU0Uc3vQ8LoHIO+dLnYMSlN+sqTDlGdLQZkYod/f9u53w+UVBD5kUfwGzF6N72knVIK
-         9gd3WVqzxgn1w1W4euCTF3rzel0M0SdnCoAkYypLn2GU4lc78iosoGnw8msMa65q+JNP
-         d2hztIbRLdfHSdDbxX/rrVqrZhXPkbHFXSddC2BHLfWC1zpfYumniSn+8E3gpqqRCNe+
-         89g4D80RGTnm+LGiYt+k8f4SjXDO23hFKZRNs/HPkk0of0OuR4zw6LW3/uSnsJYbbKyl
-         WPuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720454116; x=1721058916;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BJuaMngDvL/ozTXoGo0oV92KGi7PV5ovmEPBZpZiQRY=;
-        b=bEHKmcjeKBsF0nO8skzCC0UhenfqFLSCmfyOz+/QSgHganvzQxaO4lV6NP0240KLx5
-         bk3P6bxIZbcisaE/oGmaRamuGiSDYHmBU0uXwIkVu3UJZ1BLg7xrUvmj/M5X+Qz0itrL
-         /z0zizBwL2R9Ax6h08UKCSJblIbGnirZLVZ87+IIRSW9Ylw35hjssF6z/zx4SrN9Yvnt
-         ogr1Tm9cF2xdvBP63/pg4Ql6r+3OkyjuYgWdjRVJ4J8pzxyDs1CGsUN1h+lzxpRiW6yS
-         zpI2eeoPMgMRsuQg7NP3uruSD/Kb5LUZwyidlyqhJ+Z6EvLLY6Q9hn77u5JBSkWy3lQa
-         HseA==
-X-Forwarded-Encrypted: i=1; AJvYcCWV4SY30vwvoDPEvgZaK2Zpqpem4StBNS5ovao1oSsk1lJXF+iLY1Txdfj+9fLiN+6SaEKxTFnC+YRMPZzALvZfMv/nkCZKqBUhIK1E
-X-Gm-Message-State: AOJu0YylJFLAt2KBPcPjx7q1zXlVablNePQSJGvvsqv8udsO1KmcI7ak
-	MwFI/gbDZGXO54FzxDRcqEGVZNPsg4LzoYxC16XtziwoEElhBBlQ+BQlFOFXmCs=
-X-Google-Smtp-Source: AGHT+IG6B3+NMl1Hiaxxb/+k2s6LmYwoH7OVJEFQUH5dePCXbN3KkTq+YCAQZ0+N/4FRlQumpJ6Ocw==
-X-Received: by 2002:a05:6870:b50b:b0:25d:fab0:b6f3 with SMTP id 586e51a60fabf-25e2bf6358fmr9556896fac.59.1720454115970;
-        Mon, 08 Jul 2024 08:55:15 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:6fc:b7f5:4853:aff3])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25ea9feb5a5sm45381fac.19.2024.07.08.08.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 08:55:15 -0700 (PDT)
-Date: Mon, 8 Jul 2024 17:55:13 +0200
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, yskelg@gmail.com,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, shjy180909@gmail.com,
-	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yunseong Kim <yskelg@gmail.com>
-Subject: Re: [PATCH] s390/zcrypt: optimize memory allocation in online_show()
-Message-ID: <ebe44c83-19bd-43e9-8999-99e3ccc7b417@suswa.mountain>
+	s=arc-20240116; t=1720454130; c=relaxed/simple;
+	bh=klBVxy8IiZUybk4NUjWGo9X6b6GwYIN3vkEddYVTDBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmKs9WnhwUv1M2xY40cgQdBt1hhB8F2z8p0PYJc3HR/X21eK1DeuqJyvaicxOudVuMtbvyWGZwwwY8qBKiZCvt0UUoJGDs9lVTe37/rdUCa9vpMXEQn8sXlJYU6CjTs/1AgiJuvzsHXRMZn4hZQQE70OkqSesoLtSLbka38g5kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UuYXxDIw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F2E3C116B1;
+	Mon,  8 Jul 2024 15:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720454130;
+	bh=klBVxy8IiZUybk4NUjWGo9X6b6GwYIN3vkEddYVTDBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UuYXxDIwcX4c9njAFXgqD6kPCnPvkqX13R4dwZkTjIwWzz9OlnkW+7lI2+BXng8Ex
+	 HlueLCAKnas2BmaNAh8QSG+hNMLtbnRy4vkD6hZIxgpC9QQluc2SdJPnXlJrlZMWf6
+	 28++49Pxyc8yqDP+VuaugpaSlF+qhCUagZeOQc+WrV9NL6UtEW3Klsz7G68LZWFZTo
+	 QEySb4mqzeqfsZCdbu5dyK0D4OF8BzcNmgLCSKA4/RbdAIQM8L04RHG2DgZNQ8Uuh4
+	 9G3rpoNOteMmvTxDGL2r26Udlv6QoM0cnjch5TTdK42W/BPN8UVVs5rMiTpjJ5Glfq
+	 dZykVd8kygQfg==
+Date: Mon, 8 Jul 2024 09:55:29 -0600
+From: Rob Herring <robh@kernel.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, angelogioacchino.delregno@collabora.com,
+	andersson@kernel.org, konrad.dybcio@linaro.org,
+	mturquette@baylibre.com, ilia.lin@kernel.org, rafael@kernel.org,
+	ulf.hansson@linaro.org, quic_sibis@quicinc.com,
+	quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com,
+	abel.vesa@linaro.org, otto.pflueger@abscue.de, danila@jiaxyga.com,
+	quic_ipkumar@quicinc.com, luca@z3ntu.xyz,
+	stephan.gerhold@kernkonzept.com, nks@flawful.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 09/10] dt-bindings: opp: v2-qcom-level: Update
+ minItems for oloop-vadj & cloop-vadj
+Message-ID: <20240708155529.GA3244015-robh@kernel.org>
+References: <20240703091651.2820236-1-quic_varada@quicinc.com>
+ <20240703091651.2820236-10-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,90 +68,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240623120147.35554-3-yskelg@gmail.com>
+In-Reply-To: <20240703091651.2820236-10-quic_varada@quicinc.com>
 
-Hi,
+On Wed, Jul 03, 2024 at 02:46:50PM +0530, Varadarajan Narayanan wrote:
+> Since IPQ9574 has only one CPR thread it will specify
+> only one voltage adjustment value. Hence update min items
+> accordingly for oloop-vadj and cloop-vadj. Without
+> constraining min items, dt_binding_check gives errors
+> 
+> 	opp-table-cpr4:opp-0:qcom,opp-cloop-vadj:0: [0] is too short
+> 	opp-table-cpr4:opp-0:qcom,opp-oloop-vadj:0: [0] is too short
+> 
+> 	Failed validating 'minItems' in schema . . .
+> 		{'maxItems': 2, 'minItems': 2}
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v4: Fix dt_bindings_check error
+> ---
+>  Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-kernel test robot noticed the following build warnings:
+This is going to need to be rolled into your dependency because it needs 
+the same fix.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/yskelg-gmail-com/s390-zcrypt-optimize-memory-allocation-in-online_show/20240626-071004
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
-patch link:    https://lore.kernel.org/r/20240623120147.35554-3-yskelg%40gmail.com
-patch subject: [PATCH] s390/zcrypt: optimize memory allocation in online_show()
-config: s390-randconfig-r081-20240707 (https://download.01.org/0day-ci/archive/20240707/202407071714.4AUEoeUD-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 13.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202407071714.4AUEoeUD-lkp@intel.com/
-
-smatch warnings:
-drivers/s390/crypto/zcrypt_card.c:103 online_store() warn: iterator used outside loop: 'zq'
-
-vim +/zq +103 drivers/s390/crypto/zcrypt_card.c
-
-ac2b96f351d7d2 Harald Freudenberger 2018-08-17   60  static ssize_t online_store(struct device *dev,
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   61  			    struct device_attribute *attr,
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   62  			    const char *buf, size_t count)
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   63  {
-b5adbbf896d837 Julian Wiedmann      2021-06-07   64  	struct zcrypt_card *zc = dev_get_drvdata(dev);
-4f2fcccdb547b0 Harald Freudenberger 2020-07-02   65  	struct ap_card *ac = to_ap_card(dev);
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   66  	struct zcrypt_queue *zq;
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   67  	int online, id, i = 0, maxzqs = 0;
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   68  	struct zcrypt_queue **zq_uelist = NULL;
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   69  
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   70  	if (sscanf(buf, "%d\n", &online) != 1 || online < 0 || online > 1)
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   71  		return -EINVAL;
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   72  
-cfaef6516e9ac6 Ingo Franzki         2023-10-26   73  	if (online && (!ac->config || ac->chkstop))
-4f2fcccdb547b0 Harald Freudenberger 2020-07-02   74  		return -ENODEV;
-4f2fcccdb547b0 Harald Freudenberger 2020-07-02   75  
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   76  	zc->online = online;
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   77  	id = zc->card->id;
-cccd85bfb7bf67 Harald Freudenberger 2016-11-24   78  
-3f74eb5f78198a Harald Freudenberger 2021-10-15   79  	ZCRYPT_DBF_INFO("%s card=%02x online=%d\n", __func__, id, online);
-cccd85bfb7bf67 Harald Freudenberger 2016-11-24   80  
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   81  	ap_send_online_uevent(&ac->ap_dev, online);
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   82  
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   83  	spin_lock(&zcrypt_list_lock);
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   84  	/*
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   85  	 * As we are in atomic context here, directly sending uevents
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   86  	 * does not work. So collect the zqueues in a dynamic array
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   87  	 * and process them after zcrypt_list_lock release. As we get/put
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   88  	 * the zqueue objects, we make sure they exist after lock release.
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   89  	 */
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   90  	list_for_each_entry(zq, &zc->zqueues, list)
-2ff6be56a27c2d Yunseong Kim         2024-06-23   91  		if (!!zq->online != !!online)
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   92  			maxzqs++;
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   93  	if (maxzqs > 0)
-2ff6be56a27c2d Yunseong Kim         2024-06-23   94  		zq_uelist = kcalloc(maxzqs, sizeof(*zq_uelist), GFP_ATOMIC);
-e28d2af43614eb Ingo Tuchscherer     2016-08-25   95  	list_for_each_entry(zq, &zc->zqueues, list)
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   96  		if (zcrypt_queue_force_online(zq, online))
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   97  			if (zq_uelist) {
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   98  				zcrypt_queue_get(zq);
-df6f508c68dbc6 Harald Freudenberger 2021-04-13   99  				zq_uelist[i++] = zq;
-df6f508c68dbc6 Harald Freudenberger 2021-04-13  100  			}
-e28d2af43614eb Ingo Tuchscherer     2016-08-25  101  	spin_unlock(&zcrypt_list_lock);
-2ff6be56a27c2d Yunseong Kim         2024-06-23  102  	while (i--) {
-df6f508c68dbc6 Harald Freudenberger 2021-04-13 @103  		ap_send_online_uevent(&zq->queue->ap_dev, online);
-                                                                                       ^^
-zq is an invalid pointer here.  It's an offset off the list head.
-There used to be a "zq = zq_uelist[i];" before this function call but
-the patch deleted it.
-
-2ff6be56a27c2d Yunseong Kim         2024-06-23  104  		zcrypt_queue_put(zq_uelist[i]);
-df6f508c68dbc6 Harald Freudenberger 2021-04-13  105  	}
-df6f508c68dbc6 Harald Freudenberger 2021-04-13  106  	kfree(zq_uelist);
-df6f508c68dbc6 Harald Freudenberger 2021-04-13  107  
-e28d2af43614eb Ingo Tuchscherer     2016-08-25  108  	return count;
-e28d2af43614eb Ingo Tuchscherer     2016-08-25  109  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+> 
+> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
+> index b203ea01b17a..1c1a9e12d57a 100644
+> --- a/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
+> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
+> @@ -39,6 +39,7 @@ patternProperties:
+>            An array of per-thread values representing the closed-loop
+>            voltage adjustment value associated with this OPP node.
+>          $ref: /schemas/types.yaml#/definitions/int32-array
+> +        minItems: 1
+>          maxItems: 2
+>  
+>        qcom,opp-oloop-vadj:
+> @@ -46,6 +47,7 @@ patternProperties:
+>            An array of per-thread values representing the open-loop
+>            voltage adjustment value associated with this OPP node.
+>          $ref: /schemas/types.yaml#/definitions/int32-array
+> +        minItems: 1
+>          maxItems: 2
+>  
+>      required:
+> -- 
+> 2.34.1
+> 
 
