@@ -1,109 +1,138 @@
-Return-Path: <linux-kernel+bounces-243850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304E0929BB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:39:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A67929BBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7CE28139E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:38:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340C02813B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57848BA53;
-	Mon,  8 Jul 2024 05:38:54 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B32134C4;
+	Mon,  8 Jul 2024 05:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ua/eAVb3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5611F6FC7
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 05:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343711171D;
+	Mon,  8 Jul 2024 05:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720417133; cv=none; b=tbZCEj49icWfNJP2kTGvFJURDK8Eh0YBZ+egi/MP9JFiAVRX1Fbe1pm3tl1RYpu8kyXpOlqUD7N2WBhjFobfTrBcikgkGuTreebNqqjfW4QPdtzDktFVJ4hNSTT82J7Rsy9b9Vc2LYNjkBHYHP3nv2RYqvjMfUENuADWBH2uhWQ=
+	t=1720417135; cv=none; b=lutE5W/kDnjMJNRJcl9y3xpD4R2Q4X+41114Oi8J53V/zUII+GNCYddmdBlIOGqj7v7BMIoJDvI4eBZsqUyVuqn9zj1373MaTX/6kRSOBd8L++P6D7jek8qF0eMzl7Xsea1eFuoZ25RScmoJDS94zDw2vB9I5mKZeGprfYu1pyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720417133; c=relaxed/simple;
-	bh=6WmoFW3kX8vRWRIT1OSBOf/H/5xbjkoi1RldU0V74ZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=coxyWOS/O+yjUOUP/QIp+7gFXuGNvBnJkXuyaAdwpvObrtSPkExh5qDzwe9ACoBZF/fVHemAfuHtT6Uh4pCx81Vgz7Id1fOwnGksxHnYiSy4uKLjHUxOoGITHivkej6b52+oEGSbhP3sEOP3YGIRCoSnS3sBsF+KvI1SLTLnvpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BC3F41A09B0;
-	Mon,  8 Jul 2024 07:38:44 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 85B8A1A168E;
-	Mon,  8 Jul 2024 07:38:44 +0200 (CEST)
-Received: from lsv03083.swis.in-blr01.nxp.com (lsv03083.swis.in-blr01.nxp.com [92.120.146.80])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9DF57181D0F9;
-	Mon,  8 Jul 2024 13:38:43 +0800 (+08)
-From: Bhoomik Gupta <bhoomik.gupta@nxp.com>
-To: alexandre.belloni@bootlin.com,
-	linux-i3c@lists.infradead.org,
+	s=arc-20240116; t=1720417135; c=relaxed/simple;
+	bh=XaxsjptBXuiC1ZskjgvasAVnY1pY/HQs37wr55JsqEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxPKHoP2OIzPmPUXBtJpK/GG7LyID0BLP/R15e0cCb1b0LHA/1WVeFnTzl27uWC6L+2jk0lxvbv1ZxaQe0mWamlubm1mEZ/aLPZ+hEH/G0hz9j7RkC7WoDkqoYxQ0iJTtBdlTIL/HXNYMdW4dJAAvhmlCCs2RtS/2jTJdTa51aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ua/eAVb3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55795C32786;
+	Mon,  8 Jul 2024 05:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720417134;
+	bh=XaxsjptBXuiC1ZskjgvasAVnY1pY/HQs37wr55JsqEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ua/eAVb37Fd5p/5x2U6PJhzj41jG41YZ0PvUUHPeQH4gilF1+Ul+sQG2HdFD48vjP
+	 8uEd/7Xxzpsl1XvQVBRHsYD008rCRX71t19n/Wulu4XBbP/FPeMcKQ9qH6T0xFVe6E
+	 ueGJ+c5lYelEivGZSMJA7xkJuGywTdFwWJ54JgQrrFXBdTRerXfSgokpDz1kabbHK0
+	 45jcXJlwAmq3FH1OdVPbnL+CHDd5AQfmqhxdLQQXlrUdZcJrQepY8LqRFiFGCpobc7
+	 p6OBpsw48pWu5JJaBfmToQMPZKPqWHlB2M7U52XlFDv6Hwcm0b4MmFyZOhDG0f2eJR
+	 cW4XCE9ZUtRfA==
+Date: Mon, 8 Jul 2024 08:38:50 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
 	linux-kernel@vger.kernel.org
-Cc: Frank.Li@nxp.com,
-	Bhoomik Gupta <bhoomik.gupta@nxp.com>
-Subject: [PATCH] i3c: master: Enhance i3c_bus_type visibility for device searching & event monitoring
-Date: Mon,  8 Jul 2024 11:08:35 +0530
-Message-ID: <20240708053835.3003986-1-bhoomik.gupta@nxp.com>
-X-Mailer: git-send-email 2.45.2
+Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
+ during reset
+Message-ID: <20240708053850.GA6788@unreal>
+References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
+ <20240705085937.1644229-3-huangjunxian6@hisilicon.com>
+ <20240707083007.GE6695@unreal>
+ <42e9f7dd-05bd-176f-c5c0-02e200b3f58c@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42e9f7dd-05bd-176f-c5c0-02e200b3f58c@hisilicon.com>
 
-Improve the visibility of i3c_bus_type to facilitate searching for
-i3c devices attached to the i3c bus. Enable other drivers to use
-bus_register_notifier to monitor i3c bus device events.
+On Mon, Jul 08, 2024 at 10:29:54AM +0800, Junxian Huang wrote:
+> 
+> 
+> On 2024/7/7 16:30, Leon Romanovsky wrote:
+> > On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
+> >> From: wenglianfa <wenglianfa@huawei.com>
+> >>
+> >> During reset, cmdq events won't be reported, leading to a long and
+> >> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
+> >> of reset.
+> >>
+> >> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
+> >> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
+> >> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+> >> ---
+> >>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
+> >>  1 file changed, 18 insertions(+)
+> >>
+> >> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >> index a5d746a5cc68..ff135df1a761 100644
+> >> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+> >>  
+> >>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
+> >>  }
+> >> +
+> >> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
+> >> +{
+> >> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
+> >> +	int i;
+> >> +
+> >> +	if (!hr_dev->cmd_mod)
+> > 
+> > What prevents cmd_mod from being changed?
+> > 
+> 
+> It's set when the device is being initialized, and won't be changed after that.
 
-Signed-off-by: Bhoomik Gupta <bhoomik.gupta@nxp.com>
----
- drivers/i3c/internals.h    | 2 --
- drivers/i3c/master.c       | 1 +
- include/linux/i3c/master.h | 1 +
- 3 files changed, 2 insertions(+), 2 deletions(-)
+This is exactly the point, you are assuming that the device is already
+ininitialized or not initialized at all. What prevents hns_roce_v2_reset_notify_cmd()
+from being called in the middle of initialization?
 
-diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
-index 4d99a3524171..433f6088b7ce 100644
---- a/drivers/i3c/internals.h
-+++ b/drivers/i3c/internals.h
-@@ -10,8 +10,6 @@
- 
- #include <linux/i3c/master.h>
- 
--extern const struct bus_type i3c_bus_type;
--
- void i3c_bus_normaluse_lock(struct i3c_bus *bus);
- void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
- 
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 3b4d6a8edca3..a211dc4d25bb 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -342,6 +342,7 @@ const struct bus_type i3c_bus_type = {
- 	.probe = i3c_device_probe,
- 	.remove = i3c_device_remove,
- };
-+EXPORT_SYMBOL_GPL(i3c_bus_type);
- 
- static enum i3c_addr_slot_status
- i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u16 addr)
-diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
-index 0ca27dd86956..074f632868d9 100644
---- a/include/linux/i3c/master.h
-+++ b/include/linux/i3c/master.h
-@@ -33,6 +33,7 @@ enum {
- struct i3c_master_controller;
- struct i3c_bus;
- struct i3c_device;
-+extern const struct bus_type i3c_bus_type;
- 
- /**
-  * struct i3c_i2c_dev_desc - Common part of the I3C/I2C device descriptor
--- 
-2.45.2
+Thanks
 
+> 
+> Junxian
+> 
+> >> +		return;
+> >> +
+> >> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
+> >> +		hr_cmd->context[i].result = -EBUSY;
+> >> +		complete(&hr_cmd->context[i].done);
+> >> +	}
+> >> +}
+> >> +
+> >>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+> >>  {
+> >>  	struct hns_roce_dev *hr_dev;
+> >> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+> >>  	hr_dev->dis_db = true;
+> >>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
+> >>  
+> >> +	/* Complete the CMDQ event in advance during the reset. */
+> >> +	hns_roce_v2_reset_notify_cmd(hr_dev);
+> >> +
+> >>  	return 0;
+> >>  }
+> >>  
+> >> -- 
+> >> 2.33.0
+> >>
+> 
 
