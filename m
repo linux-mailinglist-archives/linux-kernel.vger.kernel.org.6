@@ -1,188 +1,136 @@
-Return-Path: <linux-kernel+bounces-244710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C9692A839
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B60D92A842
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B1428279A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3DE2282905
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E739BAD2C;
-	Mon,  8 Jul 2024 17:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E329E14659F;
+	Mon,  8 Jul 2024 17:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFaZVUys"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8P8LZit"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2003114372C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20B3149C60
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720459922; cv=none; b=J8EqY4FFOLk5iIxdkmR1UxdGMJSxIFXGDaAAEc41npiFV59C13kSYGDCPtl3XQNxjJwFixeFOJ+8/eF01FJ4kb5tnJllUQtlRiFGAPIIXv+A1oFUrl5ZKEXUwgaMw3gtr3oh2Yt84T5JHHLv7w/AKHOwpQG4lD9jjdAxVtl9M/s=
+	t=1720460018; cv=none; b=drAe5tB4gxEikfMigFroCrzZvd+lF2QKGm4x1zL4b7wEc7mPiEjUDnG1vt/AM3/k0ZJlu2UTw3NINamwdKYKWqPkBHCKUfgjeg2R1Xh0Ujd3eXSsBc22EWuyLsu0wEVt4s1BJAoGARK78h4bbd9B4qtVErpeJop7/Z0RAO4YdLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720459922; c=relaxed/simple;
-	bh=zsEq83nm7Ozv8Eb4jLEb08q+BCcaa6z3adsiWS4LS28=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UmvK2mqS1ThFLelm/wA5//IHWmeBZ8aEWGKnVgpCe4olRmV8HcsnqcoTeNjz9uNqTcYFCzppGVtXXxLTyOa0C+TS6BsoLNlOQhJWdOB5ZTv9XG8ksW+8jEBhEtTzuBfGuqiGvFbVURYWf3KKk9+XhYxCihHoPbLX9wlOVcSmrCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFaZVUys; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D3EC116B1;
-	Mon,  8 Jul 2024 17:32:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720459921;
-	bh=zsEq83nm7Ozv8Eb4jLEb08q+BCcaa6z3adsiWS4LS28=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kFaZVUysheBnN0iK09LLpNTdgO3oIbTk3x+n8v+jUpAIyf+3FDBr2MD+XsR4Mgvoe
-	 uNlV08Jg6VUcZRfN0v0p30CKsIU70pB2Um/2C0DZAkI3keBVtdyFCoL8t0MAHiSTti
-	 98B9JClhalu8HIkqGrpg/3fgip+KKOdqIBZ8wfdwmY29pVIcarS9r47gB+wG6U2c+D
-	 m2d/435NRLsw8H5M3EQ+ogaAuJqd1JLpqtMXSZyhHSAtE4UquMFQsVGlrsNLDo7Fif
-	 kfIVpqVsscNtxbz6VuajnJrB+5nrHxO7Z+qPSeK1HR8dFmXiz9cSwmsvxTzGNZCC9P
-	 UVTK7S2TIXnrw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sQsDW-00Aftu-7Y;
-	Mon, 08 Jul 2024 18:31:58 +0100
-Date: Mon, 08 Jul 2024 18:31:57 +0100
-Message-ID: <865xtf4woi.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: MSIs not freed in GICv3 ITS driver
-In-Reply-To: <20240708153933.GC5745@thinkpad>
-References: <20240708153933.GC5745@thinkpad>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1720460018; c=relaxed/simple;
+	bh=SGGTfSOeRUwxz6VC/qRrj5DKzqlNaTgG40wQSssXK7c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SxYPZD480LqlNTC0Mz73gH//oDoGW5nxMd0ptm+Qt7sY8nuiLowULrwZk740dfnmQElUipkIVLIcwqgiXe5pFOF4RfHdLk8pccwLWAciwI07cJss+h1GcrxrW/XtFaJuhGUnIOSUQMzb6CFMVHIXIkSYJf5QJxfoFq0he/QvfRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e8P8LZit; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720460015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NzysFrdc8w10bKEbWw8ppHuT/B9oi64/ANDYqxDHLjs=;
+	b=e8P8LZit6wLglcAZcL+dzOY6pkf3XHaUC2u+bHpp5HbjI1GM665GPOb1uMyHYNimjUzo7f
+	IPnnpLrpXaKHxoKvZ2Qmx/o+WQXAfULo8MgGvMFNchjx/3Gg0637rzyqSzmuqw0OaWBU0u
+	b2OKv7SM1AFULpIPH6boNzak8nAF2aw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-i2EE8bhrPTu-d51vmcgTDg-1; Mon,
+ 08 Jul 2024 13:33:32 -0400
+X-MC-Unique: i2EE8bhrPTu-d51vmcgTDg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9014B1956046;
+	Mon,  8 Jul 2024 17:33:24 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.113])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CE9B19560AE;
+	Mon,  8 Jul 2024 17:33:05 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Jeff Xu <jeffxu@google.com>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,  Al Viro
+ <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Kees Cook
+ <keescook@chromium.org>,  Linus Torvalds <torvalds@linux-foundation.org>,
+  Paul Moore <paul@paul-moore.com>,  "Theodore Ts'o" <tytso@mit.edu>,
+  Alejandro Colomar <alx.manpages@gmail.com>,  Aleksa Sarai
+ <cyphar@cyphar.com>,  Andrew Morton <akpm@linux-foundation.org>,  Andy
+ Lutomirski <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Casey
+ Schaufler <casey@schaufler-ca.com>,  Christian Heimes
+ <christian@python.org>,  Dmitry Vyukov <dvyukov@google.com>,  Eric Biggers
+ <ebiggers@kernel.org>,  Eric Chiang <ericchiang@google.com>,  Fan Wu
+ <wufan@linux.microsoft.com>,  Geert Uytterhoeven <geert@linux-m68k.org>,
+  James Morris <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,
+  Jann Horn <jannh@google.com>,  Jonathan Corbet <corbet@lwn.net>,  Jordan
+ R Abrahams <ajordanr@google.com>,  Lakshmi Ramasubramanian
+ <nramas@linux.microsoft.com>,  Luca Boccassi <bluca@debian.org>,  Luis
+ Chamberlain <mcgrof@kernel.org>,  "Madhavan T . Venkataraman"
+ <madvenka@linux.microsoft.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
+  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
+ <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
+ Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
+ <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
+ <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
+ Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
+ <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
+ <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
+ Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+In-Reply-To: <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+	(Jeff Xu's message of "Mon, 8 Jul 2024 09:40:45 -0700")
+References: <20240704190137.696169-1-mic@digikod.net>
+	<20240704190137.696169-2-mic@digikod.net>
+	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+	<CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
+	<87ed83etpk.fsf@oldenburg.str.redhat.com>
+	<CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+Date: Mon, 08 Jul 2024 19:33:03 +0200
+Message-ID: <87r0c3dc1c.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Mani,
+* Jeff Xu:
 
-On Mon, 08 Jul 2024 16:39:33 +0100,
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
-> 
-> Hi Marc, Thomas,
-> 
-> I'm seeing a weird behavior with GICv3 ITS driver while allocating MSIs from
-> PCIe devices. When the PCIe driver (I'm using virtio_pci_common.c) tries to
-> allocate non power of 2 MSIs (like 3), then the GICv3 MSI driver always rounds
-> the MSI count to power of 2 to find the order. In this case, the order becomes 2
-> in its_alloc_device_irq().
+> On Mon, Jul 8, 2024 at 9:26=E2=80=AFAM Florian Weimer <fweimer@redhat.com=
+> wrote:
+>>
+>> * Jeff Xu:
+>>
+>> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
+>> > libraries too ?  or just the main executable itself.
+>>
+>> I expect that dynamic linkers will have to do this for everything they
+>> map.
+> Then all the objects (.so, .sh, etc.) will go through  the check from
+> execveat's main  to security_bprm_creds_for_exec(), some of them might
+> be specific for the main executable ?
 
-That's because we can only allocate EventIDs as a number of ID
-bits. So you can't have *1* MSI, nor 3. You can have 2, 4, 8, or
-2^24. This is a power-of-two architecture.
+If we want to avoid that, we could have an agreed-upon error code which
+the LSM can signal that it'll never fail AT_CHECK checks, so we only
+have to perform the extra system call once.
 
-> So 4 entries are allocated by bitmap_find_free_region().
+Thanks,
+Florian
 
-Assuming you're calling about its_alloc_device_irq(), it looks like a
-bug. Or rather, some laziness on my part. The thing is, this bitmap is
-only dealing with sub-allocation in the pool that has been given to
-the endpoint. So the power-of-two crap doesn't really matter unless
-you are dealing with Multi-MSI, which has actual alignment
-requirements.
-
->
-> But since the PCIe driver has only requested 3 MSIs, its_irq_domain_alloc()
-> will only allocate 3 MSIs, leaving one bitmap entry unused.
-> 
-> And when the driver frees the MSIs using pci_free_irq_vectors(), only 3
-> allocated MSIs were freed and their bitmap entries were also released. But the
-> entry for the additional bitmap was never released. Due to this,
-> its_free_device() was also never called, resulting in the ITS device not getting
-> freed.
-> 
-> So when the PCIe driver tries to request the MSIs again (PCIe device being
-> removed and inserted back), because the ITS device was not freed previously,
-> MSIs were again requested for the same ITS device. And due to the stale bitmap
-> entry, the ITS driver refuses to allocate 4 MSIs as only 3 bitmap entries were
-> available. This forces the PCIe driver to reduce the MSI count, which is sub
-> optimal.
-> 
-> This behavior might be applicable to other irqchip drivers handling MSI as well.
-> I want to know if this behavior is already known with MSI and irqchip drivers?
-> 
-> For fixing this issue, the PCIe drivers could always request MSIs of power of 2,
-> and use a dummy MSI handler for the extra number of MSIs allocated. This could
-> also be done in the generic MSI driver itself to avoid changes in the PCIe
-> drivers. But I wouldn't say it is the best possible fix.
-
-No, that's terrible. This is just papering over a design mistake, and
-I refuse to go down that road.
-
-> 
-> Is there any other way to address this issue? Or am I missing something
-> completely?
-
-Well, since each endpoint handled by an ITS has its allocation tracked
-by a bitmap, it makes more sense to precisely track the allocation.
-
-Here's a quick hack that managed to survive a VM boot. It may even
-work. The only problem with it is that it probably breaks a Multi-MSi
-device sitting behind a non-transparent bridge that would get its MSIs
-allocated after another device. In this case, we wouldn't honor the
-required alignment and things would break.
-
-So take this as a proof of concept. If that works, I'll think of how
-to deal with this crap in a more suitable way...
-
-	M.
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 3c755d5dad6e6..43479c9e7f8d2 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -3475,15 +3475,16 @@ static void its_free_device(struct its_device *its_dev)
- 
- static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number_t *hwirq)
- {
--	int idx;
-+	unsigned long idx;
- 
- 	/* Find a free LPI region in lpi_map and allocate them. */
--	idx = bitmap_find_free_region(dev->event_map.lpi_map,
--				      dev->event_map.nr_lpis,
--				      get_count_order(nvecs));
--	if (idx < 0)
-+	idx = bitmap_find_next_zero_area(dev->event_map.lpi_map,
-+					 dev->event_map.nr_lpis, 0, nvecs, 0);
-+	if (idx >= dev->event_map.nr_lpis)
- 		return -ENOSPC;
- 
-+	bitmap_set(dev->event_map.lpi_map, idx, nvecs);
-+
- 	*hwirq = dev->event_map.lpi_base + idx;
- 
- 	return 0;
-@@ -3653,9 +3654,9 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
- 	struct its_node *its = its_dev->its;
- 	int i;
- 
--	bitmap_release_region(its_dev->event_map.lpi_map,
--			      its_get_event_id(irq_domain_get_irq_data(domain, virq)),
--			      get_count_order(nr_irqs));
-+	bitmap_clear(its_dev->event_map.lpi_map,
-+		     its_get_event_id(irq_domain_get_irq_data(domain, virq)),
-+		     nr_irqs);
- 
- 	for (i = 0; i < nr_irqs; i++) {
- 		struct irq_data *data = irq_domain_get_irq_data(domain,
-
--- 
-Without deviation from the norm, progress is not possible.
 
