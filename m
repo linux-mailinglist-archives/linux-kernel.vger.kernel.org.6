@@ -1,140 +1,116 @@
-Return-Path: <linux-kernel+bounces-243808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51163929AEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 04:45:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4B9929AF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 04:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A33E1C20A7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 02:45:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C20CB20C31
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 02:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6E54C99;
-	Mon,  8 Jul 2024 02:45:05 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EDA4C8D;
+	Mon,  8 Jul 2024 02:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Uzbm57Xn"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6AD469D;
-	Mon,  8 Jul 2024 02:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16AC1C36
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 02:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720406705; cv=none; b=OhBNnLAX22C82FzqRk25jdRaMJvggL7FvIeu3UkcrmXsYclNMY7irxObz7Z6fywgirWCTfpEs4mdfZofFbw27Pdj5Jla9rawbiD59wpWUcksUFZaGkiLa1YFRdXNct8RGltYVRUDDg1CKyMYEh2Qzl2LQAL4AD7jxSQOX9OoU10=
+	t=1720406789; cv=none; b=aM11cbI532Yj+AT0LcphheBQEG/LBb8oyESTAcCeFuGEQiPm1bQ24ev1SjSwuAXImaAuCEelgMLZfBNqHUe3VldvXqyae8ylqMncOqDhN/V4Zhj2GqSp9Ei6ptxgATulfcc3mzN9BxZQzhI1Qzqn7XFx7Jfs2oSBH4lGTYUCYHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720406705; c=relaxed/simple;
-	bh=/ESStp0zOGCzcavEfIgFbh1zL12uPrvYRTiTvwFshR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=svNZw5gGzG0yfEQGf3TTKgC6ziN5Q6eHE4k7CodmxBnkrzoT7FBPP6qGT8tqSnbp33YRVp4W7Wu73UVGconP82dLpmSN9rz1cczvwVUMvVkQRD/wWl9fS30ivZcYKrhU9NSoK7CImdbUnFeipm2hjyBmN1obreeCQvaxS3AG01o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WHT3d1mpPznZZQ;
-	Mon,  8 Jul 2024 10:44:29 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 34BE014041B;
-	Mon,  8 Jul 2024 10:44:53 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Jul 2024 10:44:52 +0800
-Message-ID: <849ed8b9-e826-7211-3e90-7fdeff9d945a@hisilicon.com>
-Date: Mon, 8 Jul 2024 10:44:52 +0800
+	s=arc-20240116; t=1720406789; c=relaxed/simple;
+	bh=jvWlI6H0WzHbB3vruWgcGdEKEnTqBXSXrtLsYjKuARw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QPPMRChs2/4uAkyNX06narUbBu+HuWsxC2IcS6/PNqX556RyDaYWsFlTsIxZLGD3fqddpBUzzJJik0YrPBX6/iTby18oQmM+zPFVSLPA/6kYgLPwFNyVBJmQEft1E1eewgXBMQaneTZAFeH70un34DxVRivazSdKiwKyZbM75H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Uzbm57Xn; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c2e736dfdeso262532a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 19:46:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1720406787; x=1721011587; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UVpAXYgcvPfCEfmxtTavg7ve0TgKAAsQb7KIVF0qpyg=;
+        b=Uzbm57Xnux24uGsLLmWk3seo4qqKsvORMpCjqANk8ewzgi3Hg5wval/2w+ZK74yXGJ
+         ZYt9/uWtDy6zVN7iFbvAlDmyOMDIy8xsG+M0HwWNujWStXbrTItu9kmUmArasLUQIHcL
+         7LkcMWHaN/W+L+WJo6RtmDVcpyV+jyWzxeM1h4Z62NmxFADMT13BsNjgYjTfpmQdajYM
+         VmaiCOywYj5N8bhsv+WEIPlNMnakpB+ypOL32ckjJfJYHTuDlpFYMzKt927FaEUjjhwS
+         VkCqE61yfKkLYrO8lHekpUPvkoA0JKryGRGEwDGFSSjuOpaj2pG+UioGOzo8Xd678yGd
+         rs8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720406787; x=1721011587;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVpAXYgcvPfCEfmxtTavg7ve0TgKAAsQb7KIVF0qpyg=;
+        b=IN1y1OTLKWOCheoEyIgiiCeS42ZO0grGc6Apc+xsHenW3i4PP+A9mWoDA79cdSNarl
+         2MhE2QkOy+M19az3zpix4KKiMV3UiLaIcFl3E5okFUMJ/U5BuxntptSI9dIZDnugCWIe
+         9ZhKfZn83I5UDYgV7k9lHIou+3wS6QO07k3n7LJTYiJh1xy3AEcqxZWfBUuT6wCvrNKV
+         3AWJ/yAHBisRIpVeUfhPl+y5G/qTPEcc9ayn9uWL7t2l2KORw5mp8Tg2TmBsjfOT5swi
+         veO9R0PK8FjEJfWRDxG9ID1am3h6A59RpELUj3gshsV8ejmStk8Q+J7E1jEbRhu01b8h
+         3nhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuiZX7Kzxzt3Uy1EETQRQkH4Kah3gxacdVKSIb/G6WPnVMyNH1qY6Wxax/uYLBnnh0VnRS3iI2hrJ+FEl8o+ZfSDAmOAolXw3CL+ss
+X-Gm-Message-State: AOJu0YzqPfZh9QbZDZZ9fEdfqmHRxU0gDELBRGeDZr/wLe1TgJdM2n7r
+	C9W1AklejzYBO0Fb6FipbLhgiY/LhIhtJ7EjR1Z2iNoUqDdWZmlihy/dn43EhQI=
+X-Google-Smtp-Source: AGHT+IGn4ELA4XAuUfxMDlOqGohCBEVXdW9lZ2PIzjr8qX3CAkKoCnH/wR/ukKp1frR5S7cDNc2uCg==
+X-Received: by 2002:a17:902:cec3:b0:1f9:b19b:4255 with SMTP id d9443c01a7336-1fb33feb2c7mr132780435ad.4.1720406787111;
+        Sun, 07 Jul 2024 19:46:27 -0700 (PDT)
+Received: from [10.255.188.228] ([139.177.225.227])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fafb9c3fbfsm107627395ad.12.2024.07.07.19.46.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Jul 2024 19:46:26 -0700 (PDT)
+Message-ID: <722e3aba-e911-4a81-9c45-1111d706a279@bytedance.com>
+Date: Mon, 8 Jul 2024 10:46:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH for-rc 5/9] RDMA/hns: Fix missing pagesize and alignment
- check in FRMR
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/7] synchronously scan and reclaim empty user PTE
+ pages
 Content-Language: en-US
-To: Zhu Yanjun <yanjun.zhu@linux.dev>, <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
- <20240705085937.1644229-6-huangjunxian6@hisilicon.com>
- <eba4bfaf-5986-489b-9ae5-8f5618501290@linux.dev>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <eba4bfaf-5986-489b-9ae5-8f5618501290@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+To: David Hildenbrand <david@redhat.com>
+Cc: the arch/x86 maintainers <x86@kernel.org>, hughd@google.com,
+ willy@infradead.org, mgorman@suse.de, muchun.song@linux.dev,
+ akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1719570849.git.zhengqi.arch@bytedance.com>
+ <e7a8ddb2-52b5-4267-859b-e212644440b1@bytedance.com>
+ <82ca055a-4b51-4db4-be7d-27b84aa70bd7@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <82ca055a-4b51-4db4-be7d-27b84aa70bd7@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi David,
 
-
-On 2024/7/7 17:16, Zhu Yanjun wrote:
-> 在 2024/7/5 16:59, Junxian Huang 写道:
->> From: Chengchang Tang <tangchengchang@huawei.com>
->>
->> The offset requires 128B alignment and the page size ranges from
->> 4K to 128M.
->>
->> Fixes: 68a997c5d28c ("RDMA/hns: Add FRMR support for hip08")
+On 2024/7/7 16:26, David Hildenbrand wrote:
+> On 04.07.24 09:16, Qi Zheng wrote:
+>> Add the x86 mailing list that I forgot to CC before.
 > 
-> https://patchwork.kernel.org/project/linux-rdma/patch/2eee7e35-504e-4f2a-a364-527e90669108@CMEXHTCAS1.ad.emulex.com/
-> In the above link, from Bart, it seems that FRMR is renamed to FRWR.
-> "
-> There are already a few drivers upstream in which the fast register
-> memory region work request is abbreviated as FRWR. Please consider
-> renaming FRMR into FRWR in order to avoid confusion and in order to
-> make it easier to find related code with grep in the kernel tree.
-> "
+> Hi,
 > 
-> So is it possible to rename FRMR to FRWR?
+> I'm planning on looking into this (again, I'm very interested!), but 
+> I'll be a bit (understatement) busy the next 1.5 weeks.
+
+Thank you very much! Looking forward to your feedback. :)
+
 > 
+> If I don't look into this within the next 3 weeks, an you please remind 
+> me? Thanks!
 
-I think the rename is irrelevant to this bugfix, and if it needs to be done,
-we'll need a single patch to rename all existing 'FRMR' in hns driver.
-
-So let's leave it as is for now.
+My pleasure! ;)
 
 Thanks,
-Junxian
+Qi
 
->> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
->> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->> ---
->>   drivers/infiniband/hw/hns/hns_roce_device.h | 4 ++++
->>   drivers/infiniband/hw/hns/hns_roce_mr.c     | 5 +++++
->>   2 files changed, 9 insertions(+)
->>
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
->> index 5a2445f357ab..15b3b978a601 100644
->> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
->> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
->> @@ -83,6 +83,7 @@
->>   #define MR_TYPE_DMA                0x03
->>     #define HNS_ROCE_FRMR_MAX_PA            512
->> +#define HNS_ROCE_FRMR_ALIGN_SIZE        128
->>     #define PKEY_ID                    0xffff
->>   #define NODE_DESC_SIZE                64
->> @@ -189,6 +190,9 @@ enum {
->>   #define HNS_HW_PAGE_SHIFT            12
->>   #define HNS_HW_PAGE_SIZE            (1 << HNS_HW_PAGE_SHIFT)
->>   +#define HNS_HW_MAX_PAGE_SHIFT            27
->> +#define HNS_HW_MAX_PAGE_SIZE            (1 << HNS_HW_MAX_PAGE_SHIFT)
->> +
->>   struct hns_roce_uar {
->>       u64        pfn;
->>       unsigned long    index;
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
->> index 1a61dceb3319..846da8c78b8b 100644
->> --- a/drivers/infiniband/hw/hns/hns_roce_mr.c
->> +++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
->> @@ -443,6 +443,11 @@ int hns_roce_map_mr_sg(struct ib_mr *ibmr, struct scatterlist *sg, int sg_nents,
->>       struct hns_roce_mtr *mtr = &mr->pbl_mtr;
->>       int ret, sg_num = 0;
->>   +    if (!IS_ALIGNED(*sg_offset, HNS_ROCE_FRMR_ALIGN_SIZE) ||
->> +        ibmr->page_size < HNS_HW_PAGE_SIZE ||
->> +        ibmr->page_size > HNS_HW_MAX_PAGE_SIZE)
->> +        return sg_num;
->> +
->>       mr->npages = 0;
->>       mr->page_list = kvcalloc(mr->pbl_mtr.hem_cfg.buf_pg_count,
->>                    sizeof(dma_addr_t), GFP_KERNEL);
 > 
 
