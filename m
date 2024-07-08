@@ -1,105 +1,188 @@
-Return-Path: <linux-kernel+bounces-244709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE7092A838
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:32:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C9692A839
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3E21F21C76
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:32:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B1428279A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FBB148FE4;
-	Mon,  8 Jul 2024 17:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E739BAD2C;
+	Mon,  8 Jul 2024 17:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="wrHC8FpA"
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFaZVUys"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C225C1487F6
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2003114372C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720459911; cv=none; b=BEi3uYW8NFvLGimLUjlmN7wsTR/zbcpZ2Yv6u2L8o0yYdp/tznMxQuMzf9ot8tNe+0Vo3TYAliRnOKNepGRenb4RWqcrtPLtNOO7Q5q9c0AEJzDQ3bKMQUpaZojoBpWSeJQ/hZ9Wy0uneKZKVKRWek1qQUOXTidY5nGuTqM5VRk=
+	t=1720459922; cv=none; b=J8EqY4FFOLk5iIxdkmR1UxdGMJSxIFXGDaAAEc41npiFV59C13kSYGDCPtl3XQNxjJwFixeFOJ+8/eF01FJ4kb5tnJllUQtlRiFGAPIIXv+A1oFUrl5ZKEXUwgaMw3gtr3oh2Yt84T5JHHLv7w/AKHOwpQG4lD9jjdAxVtl9M/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720459911; c=relaxed/simple;
-	bh=lJ2932qDkC0LYg+crodmOu1OYYAGfPXir2mvX7XuYlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZmbhFvRxmo/SFLv12iwAvr7vSd5LbW8+wKw7L87hdML2agVrYNQXCPQES0ws7Uj2/4HnPkDw/FCNT+XoU27V2J5OpCnL09ZWB7HFnqUT0GaRSKRoQzXxvmdQXQC6FK+P9R/4s03eykvYk/yBDODi2tmZBnfYm1rd7HRZdYw+50M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=wrHC8FpA; arc=none smtp.client-ip=83.166.143.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHrlH2nGgz7CV;
-	Mon,  8 Jul 2024 19:31:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720459899;
-	bh=mQnW5NCn1TmU2xbMOO/R79KgJurHxMXyQn21myAso+g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wrHC8FpAa0Nrl6MDhZVLEh2IeCdDaKszP59Loyn9h+Zj4ecIdUMCDDZKe7nSZkOwP
-	 uzWsImMOqfvVuCwR+BC6UzTKJmdW3P8jRIgpiH2ZG68a9aMTMVELy+D/AFwLi4zKW1
-	 hotUiwgj3pzOluGti7Y3vY2hLM6TYdSwJLXo5s3g=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHrlG41Ygz3C2;
-	Mon,  8 Jul 2024 19:31:38 +0200 (CEST)
-Date: Mon, 8 Jul 2024 19:31:35 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH 0/2] Landlock: Add abstract unix socket connect
- reastriction
-Message-ID: <20240708.nujahgh6Zeec@digikod.net>
-References: <cover.1720203255.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1720459922; c=relaxed/simple;
+	bh=zsEq83nm7Ozv8Eb4jLEb08q+BCcaa6z3adsiWS4LS28=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UmvK2mqS1ThFLelm/wA5//IHWmeBZ8aEWGKnVgpCe4olRmV8HcsnqcoTeNjz9uNqTcYFCzppGVtXXxLTyOa0C+TS6BsoLNlOQhJWdOB5ZTv9XG8ksW+8jEBhEtTzuBfGuqiGvFbVURYWf3KKk9+XhYxCihHoPbLX9wlOVcSmrCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFaZVUys; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D3EC116B1;
+	Mon,  8 Jul 2024 17:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720459921;
+	bh=zsEq83nm7Ozv8Eb4jLEb08q+BCcaa6z3adsiWS4LS28=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kFaZVUysheBnN0iK09LLpNTdgO3oIbTk3x+n8v+jUpAIyf+3FDBr2MD+XsR4Mgvoe
+	 uNlV08Jg6VUcZRfN0v0p30CKsIU70pB2Um/2C0DZAkI3keBVtdyFCoL8t0MAHiSTti
+	 98B9JClhalu8HIkqGrpg/3fgip+KKOdqIBZ8wfdwmY29pVIcarS9r47gB+wG6U2c+D
+	 m2d/435NRLsw8H5M3EQ+ogaAuJqd1JLpqtMXSZyhHSAtE4UquMFQsVGlrsNLDo7Fif
+	 kfIVpqVsscNtxbz6VuajnJrB+5nrHxO7Z+qPSeK1HR8dFmXiz9cSwmsvxTzGNZCC9P
+	 UVTK7S2TIXnrw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sQsDW-00Aftu-7Y;
+	Mon, 08 Jul 2024 18:31:58 +0100
+Date: Mon, 08 Jul 2024 18:31:57 +0100
+Message-ID: <865xtf4woi.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: tglx@linutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: MSIs not freed in GICv3 ITS driver
+In-Reply-To: <20240708153933.GC5745@thinkpad>
+References: <20240708153933.GC5745@thinkpad>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1720203255.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Please send inline patches, and don't forget to set the patch series
-version.  Because the difference with the previous series is only about
-formatting, I'l only review the previous one.
+Mani,
 
-On Fri, Jul 05, 2024 at 12:58:10PM -0600, Tahera Fahimi wrote:
-> This patch series introduces the optional scoping of abstract unix
-> sockets. This feature aims to scope the connection of an abstract socket
-> from a sandbox process to other sockets outside of the sandbox domain.
-> (see [1, 2])
+On Mon, 08 Jul 2024 16:39:33 +0100,
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
 > 
-> The following changes are included in this series:
->   [PATCH 1/2]: Introduce the "scoped" field to the ruleset structure in
->                the user space interface, and add the restriction
->                mechanism to Landlock.
->   [PATCH 2/2]: Add three comprehensive tests for the new feature.
+> Hi Marc, Thomas,
 > 
-> Tahera Fahimi (2):
->   Landlock: Add abstract unix socket connect restriction
->   Landlock: Abstract unix socket restriction tests
-> 
->  include/uapi/linux/landlock.h                 |  29 +
->  security/landlock/limits.h                    |   3 +
->  security/landlock/ruleset.c                   |   7 +-
->  security/landlock/ruleset.h                   |  23 +-
->  security/landlock/syscalls.c                  |  12 +-
->  security/landlock/task.c                      |  62 ++
->  .../testing/selftests/landlock/ptrace_test.c  | 786 ++++++++++++++++++
->  7 files changed, 916 insertions(+), 6 deletions(-)
-> 
-> [1]: https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
-> [2]: https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
-> -- 
-> 2.34.1
-> 
+> I'm seeing a weird behavior with GICv3 ITS driver while allocating MSIs from
+> PCIe devices. When the PCIe driver (I'm using virtio_pci_common.c) tries to
+> allocate non power of 2 MSIs (like 3), then the GICv3 MSI driver always rounds
+> the MSI count to power of 2 to find the order. In this case, the order becomes 2
+> in its_alloc_device_irq().
 
+That's because we can only allocate EventIDs as a number of ID
+bits. So you can't have *1* MSI, nor 3. You can have 2, 4, 8, or
+2^24. This is a power-of-two architecture.
 
+> So 4 entries are allocated by bitmap_find_free_region().
 
+Assuming you're calling about its_alloc_device_irq(), it looks like a
+bug. Or rather, some laziness on my part. The thing is, this bitmap is
+only dealing with sub-allocation in the pool that has been given to
+the endpoint. So the power-of-two crap doesn't really matter unless
+you are dealing with Multi-MSI, which has actual alignment
+requirements.
+
+>
+> But since the PCIe driver has only requested 3 MSIs, its_irq_domain_alloc()
+> will only allocate 3 MSIs, leaving one bitmap entry unused.
+> 
+> And when the driver frees the MSIs using pci_free_irq_vectors(), only 3
+> allocated MSIs were freed and their bitmap entries were also released. But the
+> entry for the additional bitmap was never released. Due to this,
+> its_free_device() was also never called, resulting in the ITS device not getting
+> freed.
+> 
+> So when the PCIe driver tries to request the MSIs again (PCIe device being
+> removed and inserted back), because the ITS device was not freed previously,
+> MSIs were again requested for the same ITS device. And due to the stale bitmap
+> entry, the ITS driver refuses to allocate 4 MSIs as only 3 bitmap entries were
+> available. This forces the PCIe driver to reduce the MSI count, which is sub
+> optimal.
+> 
+> This behavior might be applicable to other irqchip drivers handling MSI as well.
+> I want to know if this behavior is already known with MSI and irqchip drivers?
+> 
+> For fixing this issue, the PCIe drivers could always request MSIs of power of 2,
+> and use a dummy MSI handler for the extra number of MSIs allocated. This could
+> also be done in the generic MSI driver itself to avoid changes in the PCIe
+> drivers. But I wouldn't say it is the best possible fix.
+
+No, that's terrible. This is just papering over a design mistake, and
+I refuse to go down that road.
+
+> 
+> Is there any other way to address this issue? Or am I missing something
+> completely?
+
+Well, since each endpoint handled by an ITS has its allocation tracked
+by a bitmap, it makes more sense to precisely track the allocation.
+
+Here's a quick hack that managed to survive a VM boot. It may even
+work. The only problem with it is that it probably breaks a Multi-MSi
+device sitting behind a non-transparent bridge that would get its MSIs
+allocated after another device. In this case, we wouldn't honor the
+required alignment and things would break.
+
+So take this as a proof of concept. If that works, I'll think of how
+to deal with this crap in a more suitable way...
+
+	M.
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 3c755d5dad6e6..43479c9e7f8d2 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -3475,15 +3475,16 @@ static void its_free_device(struct its_device *its_dev)
+ 
+ static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number_t *hwirq)
+ {
+-	int idx;
++	unsigned long idx;
+ 
+ 	/* Find a free LPI region in lpi_map and allocate them. */
+-	idx = bitmap_find_free_region(dev->event_map.lpi_map,
+-				      dev->event_map.nr_lpis,
+-				      get_count_order(nvecs));
+-	if (idx < 0)
++	idx = bitmap_find_next_zero_area(dev->event_map.lpi_map,
++					 dev->event_map.nr_lpis, 0, nvecs, 0);
++	if (idx >= dev->event_map.nr_lpis)
+ 		return -ENOSPC;
+ 
++	bitmap_set(dev->event_map.lpi_map, idx, nvecs);
++
+ 	*hwirq = dev->event_map.lpi_base + idx;
+ 
+ 	return 0;
+@@ -3653,9 +3654,9 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+ 	struct its_node *its = its_dev->its;
+ 	int i;
+ 
+-	bitmap_release_region(its_dev->event_map.lpi_map,
+-			      its_get_event_id(irq_domain_get_irq_data(domain, virq)),
+-			      get_count_order(nr_irqs));
++	bitmap_clear(its_dev->event_map.lpi_map,
++		     its_get_event_id(irq_domain_get_irq_data(domain, virq)),
++		     nr_irqs);
+ 
+ 	for (i = 0; i < nr_irqs; i++) {
+ 		struct irq_data *data = irq_domain_get_irq_data(domain,
+
+-- 
+Without deviation from the norm, progress is not possible.
 
