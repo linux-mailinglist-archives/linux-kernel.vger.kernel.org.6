@@ -1,275 +1,320 @@
-Return-Path: <linux-kernel+bounces-244102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA63929F1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:32:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708A8929F1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AED99B25781
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7FA28778F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4A4481B7;
-	Mon,  8 Jul 2024 09:31:06 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD7F6F2FE;
+	Mon,  8 Jul 2024 09:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxeDCgNE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED0F47A7C;
-	Mon,  8 Jul 2024 09:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C305466B;
+	Mon,  8 Jul 2024 09:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720431065; cv=none; b=E8c6ZDAWDEAZtMWBjAxqAzxNewk4BcksOYCGV2+n3BsB2Y6V3DG91MpnSmFzqZBVD1dlDpvp6qCrYfOG+BXbIIKLwyUvd9RkG5YqL70ha5uf3PeSxD5kJhumZNKaMSSYGNsVlRHVe5RGxac0TmnaGsfgGR+5biBfuVn8P3CZifk=
+	t=1720431125; cv=none; b=qj9miY0oRYv6xXmcjrrAnl7pvUVq+wgsQGFuwbL43VbqUXaxq1X+OY8cajjxUXxkvBiLAWak6XaKTiKrFUGJI1nu2vyscyNDmc3sLz7D//xh7GNpSwPFk4fHryAt70+0o2SGpHzma84RcSCNJ2oFqLggnCDsAe9gC2C/53uQips=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720431065; c=relaxed/simple;
-	bh=GsA3bm6NBZQI26C+2kneW5Tu34t29nAm1lqIheL3ekk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O3thgaWkz959HrnYVaf9vR0XXM6LiLQdkWwzYp6OO5WS8cUSX5Mgu097ZboRaxMfQqMoV33+pAbfEHDiCBkZMt1xaFtntrMIJUZnzPzpr3m8NvMW76D8/qUQf8NPLI05eQ9idLd/KenX5s+QuyUJNnXxDVNC2UqO9mCG6bfg7MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WHdzH5Ttzz1T5k3;
-	Mon,  8 Jul 2024 17:26:19 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9260C140156;
-	Mon,  8 Jul 2024 17:30:59 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 8 Jul 2024 17:30:59 +0800
-Message-ID: <188e9f5d-b66c-9318-601c-ed3aab96115d@hisilicon.com>
-Date: Mon, 8 Jul 2024 17:30:58 +0800
+	s=arc-20240116; t=1720431125; c=relaxed/simple;
+	bh=PSxQJUpdzgyKLJoY9ztDBUzNUgu33n/mFOB+EZ35Res=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jE0nV6PhDoQt1ib4768LEOBPz4p0vGsI5f1ZYHCpzN4v5XK2GpgINPSUJJ2Bauf+dZbn1t7LZbPt/wSxa8LFp2XLN6pelfXJarECOpLk3uABsNY4atkHsweBbLf+vJIFH7Ov5KyHdZ9jmSRnkct9vLgzTf8+pkh5qLra+zIg5+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxeDCgNE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D8C8DC116B1;
+	Mon,  8 Jul 2024 09:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720431124;
+	bh=PSxQJUpdzgyKLJoY9ztDBUzNUgu33n/mFOB+EZ35Res=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=bxeDCgNEcAlRzBsyoNuXrC7t/SmAs9R3ksxeZnuu8YhJJLTUj2Bj887a1F1cNV359
+	 P/xZBsGCnGCLtTqROVcHH6A/5NjGp3L/cuPEj3zCIM8nf2ncp4bukEnLYSYxg8I6zB
+	 WB+++IFF6u9avgtM2FPv+VEPhTs7yMsZbpEY1kKRB6yjALSJTMochxEmZQji+ON4/5
+	 wDhhrbILuHjIrK0sgYIIOeEEHpaolBtYzZIGcKSnZBZFTDDudQHRkzRzmPaOzPoBIm
+	 sydRx6cwDKv+g/mAoFkE2kXCbpnOy1JH0/nrQ+mW/sPjZwnziwNwSNyXwxfMUYlR6R
+	 Vz7DeS3BLF6ig==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C094AC3271E;
+	Mon,  8 Jul 2024 09:32:04 +0000 (UTC)
+From: Rodrigo Cataldo via B4 Relay <devnull+rodrigo.cadore.l-acoustics.com@kernel.org>
+Date: Mon, 08 Jul 2024 11:31:57 +0200
+Subject: [PATCH iwl-net] igc: Ensure PTM request is completed before
+ timeout has started
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
- during reset
-Content-Language: en-US
-To: Leon Romanovsky <leon@kernel.org>
-CC: <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
- <20240705085937.1644229-3-huangjunxian6@hisilicon.com>
- <20240707083007.GE6695@unreal>
- <42e9f7dd-05bd-176f-c5c0-02e200b3f58c@hisilicon.com>
- <20240708053850.GA6788@unreal>
- <7cae577b-e469-9357-8375-d14746a7787b@hisilicon.com>
- <20240708073315.GC6788@unreal>
- <0bac285b-c8ae-8c9f-7c42-ee345f8682d1@hisilicon.com>
- <20240708082755.GD6788@unreal>
- <26c02b2b-4232-2049-5c9f-f757fef759a0@hisilicon.com>
- <20240708085902.GF6788@unreal>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20240708085902.GF6788@unreal>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+Message-Id: <20240708-igc-flush-ptm-request-before-timeout-6-10-v1-1-70e5ebec9efe@l-acoustics.com>
+X-B4-Tracking: v=1; b=H4sIAAyyi2YC/x3NSwqDMBRG4a3IHfdCDDal3UrpwMY/ekETm0cVx
+ L03dPhNzjkoIQoSPZqDIr6SJPiK9tKQnXo/gmWoJq10p27qyjJadnNJE6954YhPQcr8hgsRnGV
+ BKJkNt4qdgdL2bpwZOqq9NcLJ/n89SbaZPTK9zvMHM7PALoQAAAA=
+To: Jesse Brandeburg <jesse.brandeburg@intel.com>, 
+ Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>, 
+ Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>, 
+ "Christopher S. Hall" <christopher.s.hall@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11903;
+ i=rodrigo.cadore@l-acoustics.com; h=from:subject:message-id;
+ bh=Wfg75g71XmXkv4d1mekMWpTpqpPeT5sIegVpLSTXqac=;
+ b=owGbwMvMwCGWd67IourLsUDG02pJDGndm4SDe2rWaU5LS9nG91Q5ameo1u2GTUn/a/imP74VF
+ 7DqSvuljlIWBjEOBlkxRRb933xOq8uUjDgSJ6+EmcPKBDKEgYtTACZSE8bwP1HI4VDd85nKhh//
+ LTjbek16i3PDpzXdZ1ds8LjxaeNxkzKGf3Y7eF7fZmVQcktRZ51/WK306uHtpwpNlbwXhigFsT1
+ cyAcA
+X-Developer-Key: i=rodrigo.cadore@l-acoustics.com; a=openpgp;
+ fpr=E0F4E67DE69A235AC356157D2DDD1455748BC38F
+X-Endpoint-Received: by B4 Relay for rodrigo.cadore@l-acoustics.com/default
+ with auth_id=109
+X-Original-From: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
+Reply-To: rodrigo.cadore@l-acoustics.com
+
+From: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
+
+When a PTM is requested via wr32(IGC_PTM_STAT), the operation may only
+be completed by the next read operation (flush). Unfortunately, the next
+read operation in the PTM request loop happens after we have already
+started evaluating the response timeout.
+
+Thus, the following behavior has been observed::
+
+  phc2sys-1655  [010]   103.233752: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
+  phc2sys-1655  [010]   103.233754: funcgraph_entry:                    |    igc_phc_get_syncdevice_time() {
+  phc2sys-1655  [010]   103.233755: funcgraph_entry:                    |      igc_rd32() {
+  phc2sys-1655  [010]   103.233931: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
+  phc2sys-1655  [010]   103.233932: local_timer_entry: vector=236
+  phc2sys-1655  [010]   103.233932: hrtimer_cancel: hrtimer=0xffff8edeef526118
+  phc2sys-1655  [010]   103.233933: hrtimer_expire_entry: hrtimer=0xffff8edeef526118 now=103200127876 function=tick_nohz_handler/0x0
+
+  ... tick handler ...
+
+  phc2sys-1655  [010]   103.233971: funcgraph_exit:       !  215.559 us |      }
+  phc2sys-1655  [010]   103.233972: funcgraph_entry:                    |      igc_rd32() {
+  phc2sys-1655  [010]   103.234135: funcgraph_exit:       !  164.370 us |      }
+  phc2sys-1655  [010]   103.234136: funcgraph_entry:         1.942 us   |      igc_rd32();
+  phc2sys-1655  [010]   103.234147: console:              igc 0000:03:00.0 enp3s0: Timeout reading IGC_PTM_STAT register
+
+Based on the (simplified) code::
+
+	ctrl = rd32(IGC_PTM_CTRL);
+        /* simplified: multiple writes here */
+	wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
+
+	err = readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
+				 stat, IGC_PTM_STAT_SLEEP,
+				 IGC_PTM_STAT_TIMEOUT);
+	if (err < 0) {
+		netdev_err(adapter->netdev, "Timeout reading IGC_PTM_STAT register\n");
+		return err;
+	}
+
+Where readx_poll_timeout() starts the timeout evaluation before calling
+the rd32() parameter (rd32() is a macro for igc_rd32()).
+
+In the trace shown, the read operation of readx_poll_timeout() (second
+igc_rd32()) took so long that the timeout (IGC_PTM_STAT_VALID) has expired
+and no sleep has been performed.
+
+With this patch, a write flush is added (which is an additional
+igc_rd32() in practice) that can wait for the write before the timeout
+is evaluated::
+
+  phc2sys-1615  [010]    74.517954: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
+  phc2sys-1615  [010]    74.517956: funcgraph_entry:                    |    igc_phc_get_syncdevicetime() {
+  phc2sys-1615  [010]    74.517957: funcgraph_entry:                    |      igc_rd32() {
+  phc2sys-1615  [010]    74.518127: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
+  phc2sys-1615  [010]    74.518128: local_timer_entry: vector=236
+  phc2sys-1615  [010]    74.518128: hrtimer_cancel: hrtimer=0xffff96466f526118
+  phc2sys-1615  [010]    74.518128: hrtimer_expire_entry: hrtimer=0xffff96466f526118 now=74484007229 function=tick_nohz_handler/0x0
+
+  ... tick handler ...
+
+  phc2sys-1615  [010]    74.518180: funcgraph_exit:       !  222.282 us |      }
+  phc2sys-1615  [010]    74.518181: funcgraph_entry:                    |      igc_rd32() {
+  phc2sys-1615  [010]    74.518349: funcgraph_exit:       !  168.160 us |      }
+  phc2sys-1615  [010]    74.518349: funcgraph_entry:         1.970 us   |      igc_rd32();
+  phc2sys-1615  [010]    74.518352: hrtimer_init: hrtimer=0xffffa6f9413a3940 clockid=CLOCK_MONOTONIC mode=0x0
+  phc2sys-1615  [010]    74.518352: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
+  phc2sys-1615  [010]    74.518353: hrtimer_start: hrtimer=0xffffa6f9413a3940 function=hrtimer_wakeup/0x0 expires=74484232878 softexpires=74484231878
+
+  .. hrtimer setup and return ...
+
+  kworker/10:1-242   [010]    74.518382: sched_switch: kworker/10:1:242 [120] W ==> phc2sys:1615 [120]
+  phc2sys-1615  [010]    74.518383: preempt_enable: caller=schedule+0x36 parent=schedule+0x36
+  phc2sys-1615  [010]    74.518384: funcgraph_entry:      !  100.088 us |      igc_rd32();
+  phc2sys-1615  [010]    74.518484: funcgraph_entry:         1.958 us   |      igc_rd32();
+  phc2sys-1615  [010]    74.518488: funcgraph_entry:         2.019 us   |      igc_rd32();
+  phc2sys-1615  [010]    74.518490: funcgraph_entry:         1.956 us   |      igc_rd32();
+  phc2sys-1615  [010]    74.518492: funcgraph_entry:         1.980 us   |      igc_rd32();
+  phc2sys-1615  [010]    74.518494: funcgraph_exit:       !  539.386 us |    }
+
+Now the sleep is called as expected, and the operation succeeds.
+Therefore, regardless of how long it will take for the write to be
+completed, we will poll+sleep at least for the time specified in
+IGC_PTM_STAT_TIMEOUT.
+
+Fixes: a90ec8483732 ("igc: Add support for PTP getcrosststamp()")
+Signed-off-by: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
+---
+I have been searching for the proper solution for this PTM issue for a long
+time. The issue was observed on a 13700 (Raptor Lake). We also use a 8500
+(Coffee Lake) that is much less susceptible for this issue, but still
+happens. Both are using I225-LM cards.
+
+For a 24 hours test, idle system, I have observed with 13700::
+
+	number of timeouts in 86400 seconds: 2509
+
+The same test on a 8500::
+
+        number of timeouts in 86400 seconds: 9
+
+Where one PTM request is sent per second. Test was done this script::
+
+  record_multiple_timeout_param()
+  {
+  	local taskset_cpu=$1
+  	local cur_limit=$((SECONDS + LIMIT_SECONDS ))
+  	local timeouts=0
+  
+  	while [ $SECONDS -lt $cur_limit ]
+  	do
+  		REL_TO=$((cur_limit - SECONDS))
+  
+  		timeout $REL_TO taskset $taskset_cpu \
+  			phc2sys -c $ITF_NAME -s CLOCK_REALTIME -O 37 -m 1>/dev/null
+  		if [ $? -eq 255 ]; then
+  			timeouts=$((timeouts + 1))
+  		fi
+  	done
+  	printf "\tnumber of timeouts in %s seconds: %d\n" $LIMIT_SECONDS $timeouts
+  }
+
+  record_multiple_timeout_param $NON_ISOLCPU_MASK
+
+Firmware version for the cards::
+
+  # lshw -class network -json | jq '.[0].product,.[0].configuration.firmware'
+  "Ethernet Controller I225-LM"
+  "1057:8754"
+
+  # lshw -class network -json | jq '.[2].product,.[2].configuration.firmware'
+  "Ethernet Controller I225-LM"
+  "1057:8754
+
+A couple of attempts were made that did not lead to solving the
+issue (disabling ASPM in kernel and boot, using periodic tick), and a couple
+of solutions that worked but that were subpar:
+
+1. The issue was not observed for a phc2sys(8) running on a fully
+   isolated nohz_full core. We do not have the luxury of dedicating a a
+   core for it.
+2. Bumping the IGC_PTM_STAT_TIMEOUT value. Other machines may need
+   another value though.
+3. Retry (multiple times) readx_poll_timeout() in case of failure. This may
+   significantly increase the function latency, because each
+   readx_poll_timeout() can take more than 100 us.
+4. Disabling preemption during the PTM request. Horrible.
+
+For the Coffee Lake machine, the issue tends to be avoided because the
+read does not take so long. Here is basically the same trace using the
+Cofee Lake machine::
+
+  phc2sys-1204  [002]  1778.220288: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
+  phc2sys-1204  [002]  1778.220290: funcgraph_entry:                    |    igc_phc_get_syncdevicetime() {
+  phc2sys-1204  [002]  1778.220291: funcgraph_entry:                    |      igc_rd32() {
+  phc2sys-1204  [002]  1778.220373: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
+  phc2sys-1204  [002]  1778.220374: local_timer_entry: vector=236
+  phc2sys-1204  [002]  1778.220375: hrtimer_cancel: hrtimer=0xffff894027326118
+  phc2sys-1204  [002]  1778.220376: hrtimer_expire_entry: hrtimer=0xffff894027326118 now=1778228034802 function=tick_nohz_handler/0x0
+
+  ... tick handler ...
+
+  phc2sys-1204  [002]  1778.220411: funcgraph_exit:       !  119.843 us |      }
+  phc2sys-1204  [002]  1778.220412: funcgraph_entry:                    |      igc_rd32() {
+  phc2sys-1204  [002]  1778.220492: funcgraph_exit:       + 80.094 us   |      }
+  phc2sys-1204  [002]  1778.220493: funcgraph_entry:        2.951 us    |      igc_rd32();
+  phc2sys-1204  [002]  1778.220497: hrtimer_init: hrtimer=0xffffa504c0d83aa0 clockid=CLOCK_MONOTONIC mode=0x0
+  phc2sys-1204  [002]  1778.220498: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
+  phc2sys-1204  [002]  1778.220499: hrtimer_start: hrtimer=0xffffa504c0d83aa0 function=hrtimer_wakeup/0x0 expires=1778228158866 softexpires=1778228157866
+
+  ... timer setup ....
+
+  phc2sys-1204  [002]  1778.220509: preempt_enable: caller=_raw_spin_unlock_irqrestore+0x2b parent=hrtimer_start_range_ns+0x12d
+  phc2sys-1204  [002]  1778.220511: funcgraph_entry:        7.338 us   |      igc_rd32();
+  phc2sys-1204  [002]  1778.220519: funcgraph_entry:        2.769 us   |      igc_rd32();
+  phc2sys-1204  [002]  1778.220522: funcgraph_entry:        2.798 us   |      igc_rd32();
+  phc2sys-1204  [002]  1778.220525: funcgraph_entry:        2.736 us   |      igc_rd32();
+  phc2sys-1204  [002]  1778.220529: funcgraph_entry:        2.750 us   |      igc_rd32();
+  phc2sys-1204  [002]  1778.220532: funcgraph_exit:       !  242.656 us |    }
+
+For both machines, I observed that the first igc_rd32() after an idle
+period (more than 10us) tends to take significantly more time. I assume
+this is a hardware power-saving technique, but I could not find any
+mention in the manuals. This is very easily observable with an idle
+system running phc2sys, since it will request only once every second.
+
+This is the typical trace of the operation::
+
+  phc2sys-1204  [002]  1749.209397: funcgraph_entry:                   |  igc_ptp_getcrosststamp() {
+  phc2sys-1204  [002]  1749.209398: funcgraph_entry:                   |    igc_phc_get_syncdevicetime() {
+  phc2sys-1204  [002]  1749.209400: funcgraph_entry:      + 81.491 us  |      igc_rd32();
+  phc2sys-1204  [002]  1749.209482: funcgraph_entry:        3.691 us   |      igc_rd32();
+  phc2sys-1204  [002]  1749.209487: funcgraph_entry:        2.942 us   |      igc_rd32();
+  phc2sys-1204  [002]  1749.209490: hrtimer_init: hrtimer=0xffffa504c0d83a00 clockid=CLOCK_MONOTONIC mode=0x0
+  phc2sys-1204  [002]  1749.209491: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
+  ... timer setup and it goes on like before ...
+
+The preemption needs to happen for this issue, so that this power-saving
+mode is triggered, making the igc_rd32 'slow enough' so that all of the
+timeout is consumed before the card has time to answer.
+
+I believe flushing the write solves the issue definitely, since the
+write should be completed before the timeout has started. So that, even
+if the timeout is consumed by a slow read operation, the write has been
+received before and the card had time to process the request.
+---
+ drivers/net/ethernet/intel/igc/igc_ptp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
+index 1bb026232efc..d7269e4f1a21 100644
+--- a/drivers/net/ethernet/intel/igc/igc_ptp.c
++++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
+@@ -1005,6 +1005,10 @@ static int igc_phc_get_syncdevicetime(ktime_t *device,
+ 		 * VALID bit.
+ 		 */
+ 		wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
++		/* Ensure the hardware receives the ptm request before the
++		 * response timeout starts.
++		 */
++		wrfl();
+ 
+ 		err = readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
+ 					 stat, IGC_PTM_STAT_SLEEP,
+
+---
+base-commit: 0005b2dc43f96b93fc5b0850d7ca3f7aeac9129c
+change-id: 20240705-igc-flush-ptm-request-before-timeout-6-10-f6e02c96f6d4
+
+Best regards,
+-- 
+Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
 
 
-
-On 2024/7/8 16:59, Leon Romanovsky wrote:
-> On Mon, Jul 08, 2024 at 04:45:34PM +0800, Junxian Huang wrote:
->>
->>
->> On 2024/7/8 16:27, Leon Romanovsky wrote:
->>> On Mon, Jul 08, 2024 at 03:46:26PM +0800, Junxian Huang wrote:
->>>>
->>>>
->>>> On 2024/7/8 15:33, Leon Romanovsky wrote:
->>>>> On Mon, Jul 08, 2024 at 02:50:50PM +0800, Junxian Huang wrote:
->>>>>>
->>>>>>
->>>>>> On 2024/7/8 13:38, Leon Romanovsky wrote:
->>>>>>> On Mon, Jul 08, 2024 at 10:29:54AM +0800, Junxian Huang wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2024/7/7 16:30, Leon Romanovsky wrote:
->>>>>>>>> On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
->>>>>>>>>> From: wenglianfa <wenglianfa@huawei.com>
->>>>>>>>>>
->>>>>>>>>> During reset, cmdq events won't be reported, leading to a long and
->>>>>>>>>> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
->>>>>>>>>> of reset.
->>>>>>>>>>
->>>>>>>>>> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
->>>>>>>>>> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
->>>>>>>>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->>>>>>>>>> ---
->>>>>>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
->>>>>>>>>>  1 file changed, 18 insertions(+)
->>>>>>>>>>
->>>>>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>>>> index a5d746a5cc68..ff135df1a761 100644
->>>>>>>>>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>>>> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
->>>>>>>>>>  
->>>>>>>>>>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
->>>>>>>>>>  }
->>>>>>>>>> +
->>>>>>>>>> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
->>>>>>>>>> +{
->>>>>>>>>> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
->>>>>>>>>> +	int i;
->>>>>>>>>> +
->>>>>>>>>> +	if (!hr_dev->cmd_mod)
->>>>>>>>>
->>>>>>>>> What prevents cmd_mod from being changed?
->>>>>>>>>
->>>>>>>>
->>>>>>>> It's set when the device is being initialized, and won't be changed after that.
->>>>>>>
->>>>>>> This is exactly the point, you are assuming that the device is already
->>>>>>> ininitialized or not initialized at all. What prevents hns_roce_v2_reset_notify_cmd()
->>>>>>> from being called in the middle of initialization?
->>>>>>>
->>>>>>> Thanks
->>>>>>>
->>>>>>
->>>>>> This is ensured by hns3 NIC driver.
->>>>>>
->>>>>> Initialization and reset of hns RoCE are both called by hns3. It will check the state
->>>>>> of RoCE device (see line 3798), and notify RoCE device to reset (hns_roce_v2_reset_notify_cmd()
->>>>>> is called) only if the RoCE device has been already initialized:
->>>>>
->>>>> So why do you have "if (!hr_dev->cmd_mod)" check in the code?
->>>>>
->>>>> Thanks
->>>>>
->>>>
->>>> cmd_mod indicates the mode of cmdq (0: poll mode, 1: event mode).
->>>> This patch only affects event mode because HW won't report events during reset.
->>>
->>> You set cmd_mod to 1 in hns_roce_hw_v2_init_instance() without any
->>> condition, I don't see when hns v2 IB device is created and continue
->>> to operate in polling mode. 
->>>
->>> Thanks
->>>
->>
->> Event mode is the default. In hns_roce_cmd_use_events(), if kcalloc() fails
->> then it'll be set to polling mode instead.
-> 
-> 1. Awesome, and we are returning back to the question. What prevents
->    hns_roce_v2_reset_notify_cmd() from being called in the middle of
->    changing cmd_mod from 1 to 0 and from 0 to 1?
-
-The changing of cmd_mod is during the initialization of a device. The call
-of hns_roce_v2_reset_notify_cmd() is during reset. As I said previously,
-the hns3 NIC driver ensures that there will be no concurrency between
-initialization and reset, and therefore hns_roce_v2_reset_notify_cmd() won't
-be called in the middle of changing cmd_mod.
-
-> 2. This cmd_mode swtich from 1 to 0 should be removed. Failure to
->    allocate memory is not a reason to switch to polling mode. The reason
->    can be HW limitation, but not OS limitation.
-> 
-
-But event mode relies on the allocated resource. If the allocation fails and
-we don't switch to polling mode, the driver won't work any more. Are you suggesting
-we should return an error and fail the initialization in this case?
-
-Junxian
-
-> Thanks
-> 
->>
->> Junxian
->>
->>>>
->>>> Junxian
->>>>
->>>>>>
->>>>>>  3791 static int hclge_notify_roce_client(struct hclge_dev *hdev,
->>>>>>  3792                                     enum hnae3_reset_notify_type type)
->>>>>>  3793 {
->>>>>>  3794         struct hnae3_handle *handle = &hdev->vport[0].roce;
->>>>>>  3795         struct hnae3_client *client = hdev->roce_client;
->>>>>>  3796         int ret;
->>>>>>  3797
->>>>>>  3798         if (!test_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state) || !client)
->>>>>>  3799                 return 0;
->>>>>>  3800
->>>>>>  3801         if (!client->ops->reset_notify)
->>>>>>  3802                 return -EOPNOTSUPP;
->>>>>>  3803
->>>>>>  3804         ret = client->ops->reset_notify(handle, type);
->>>>>>  3805         if (ret)
->>>>>>  3806                 dev_err(&hdev->pdev->dev, "notify roce client failed %d(%d)",
->>>>>>  3807                         type, ret);
->>>>>>  3808
->>>>>>  3809         return ret;
->>>>>>  3810 }
->>>>>>
->>>>>> And the bit is set (see line 11246) after the initialization has been done (line 11242):
->>>>>>
->>>>>> 11224 static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
->>>>>> 11225                                            struct hclge_vport *vport)
->>>>>> 11226 {
->>>>>> 11227         struct hclge_dev *hdev = ae_dev->priv;
->>>>>> 11228         struct hnae3_client *client;
->>>>>> 11229         int rst_cnt;
->>>>>> 11230         int ret;
->>>>>> 11231
->>>>>> 11232         if (!hnae3_dev_roce_supported(hdev) || !hdev->roce_client ||
->>>>>> 11233             !hdev->nic_client)
->>>>>> 11234                 return 0;
->>>>>> 11235
->>>>>> 11236         client = hdev->roce_client;
->>>>>> 11237         ret = hclge_init_roce_base_info(vport);
->>>>>> 11238         if (ret)
->>>>>> 11239                 return ret;
->>>>>> 11240
->>>>>> 11241         rst_cnt = hdev->rst_stats.reset_cnt;
->>>>>> 11242         ret = client->ops->init_instance(&vport->roce);
->>>>>> 11243         if (ret)
->>>>>> 11244                 return ret;
->>>>>> 11245
->>>>>> 11246         set_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state);
->>>>>> 11247         if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
->>>>>> 11248             rst_cnt != hdev->rst_stats.reset_cnt) {
->>>>>> 11249                 ret = -EBUSY;
->>>>>> 11250                 goto init_roce_err;
->>>>>> 11251         }
->>>>>>
->>>>>> Junxian
->>>>>>
->>>>>>>>
->>>>>>>> Junxian
->>>>>>>>
->>>>>>>>>> +		return;
->>>>>>>>>> +
->>>>>>>>>> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
->>>>>>>>>> +		hr_cmd->context[i].result = -EBUSY;
->>>>>>>>>> +		complete(&hr_cmd->context[i].done);
->>>>>>>>>> +	}
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
->>>>>>>>>>  {
->>>>>>>>>>  	struct hns_roce_dev *hr_dev;
->>>>>>>>>> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
->>>>>>>>>>  	hr_dev->dis_db = true;
->>>>>>>>>>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
->>>>>>>>>>  
->>>>>>>>>> +	/* Complete the CMDQ event in advance during the reset. */
->>>>>>>>>> +	hns_roce_v2_reset_notify_cmd(hr_dev);
->>>>>>>>>> +
->>>>>>>>>>  	return 0;
->>>>>>>>>>  }
->>>>>>>>>>  
->>>>>>>>>> -- 
->>>>>>>>>> 2.33.0
->>>>>>>>>>
->>>>>>>>
->>>>>>
->>
-> 
 
