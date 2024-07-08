@@ -1,186 +1,317 @@
-Return-Path: <linux-kernel+bounces-244373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF36992A362
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:01:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28DE692A36C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F094D1C20E57
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6BB1C20F25
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51FC81729;
-	Mon,  8 Jul 2024 13:01:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E639C134402;
-	Mon,  8 Jul 2024 13:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B4F1369AC;
+	Mon,  8 Jul 2024 13:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ITwbCiOE"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAD013541E;
+	Mon,  8 Jul 2024 13:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720443669; cv=none; b=CaReRR3lzAvwtRdHz9hO2kAOT6PjHJ1u42nml/ZZYMsMD/MD4TXd23FG75jqqYOxMVppOLaNBLGYYNj8K9+/RcWDO3m33yVB2FQ+CspcTcpEyfvslXa9X+STSmo5Hl3ki4ZxHkvjE4azj7JWpNydWjjvEWaQaoApaHu1nAvUz2E=
+	t=1720443917; cv=none; b=BHzo3M0n9SSYECCFogPRpepH4+UNF4VHv71ZM8d9kf4mRuK/BiT+UAh4iPQLWUQs+bvvBaSyj70C0tU1T2/EWgNj0kd+1DsqjV/A6wUoACK72TNx+awNrb0o7OpM/P8r1XMd1dGC8P3YCLRi/i3nCHYcIdBS50EZ/AM37J2J7nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720443669; c=relaxed/simple;
-	bh=kgbLhehsyq6qo0dFoejiRWYMllGkYQM6goGKO/w7wO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVFH6X4IYHBWQrdY+0AavTPgCpamzoCbdX+yvsrCADeyeWix3hOCcPJjJA3TmfSFTHB9lUzpSkIKMqNQBcAnkAPn2RIw+eEv8F6ai4ItpnqP5LIyzA1timdVXCFPfQWqdDo1jA7bGJAoFKvM91owbdSpIiOZ86Lf4EJTzuVFxCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C8BB1042;
-	Mon,  8 Jul 2024 06:01:31 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E74C3F766;
-	Mon,  8 Jul 2024 06:01:05 -0700 (PDT)
-Date: Mon, 8 Jul 2024 14:01:03 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com
-Subject: Re: [PATCH v2 2/4] firmware: arm_scmi: Add support for tracking
- statistics
-Message-ID: <ZovjDxQyMl6jFhkx@pluto>
-References: <20240703143738.2007457-1-luke.parkin@arm.com>
- <20240703143738.2007457-3-luke.parkin@arm.com>
+	s=arc-20240116; t=1720443917; c=relaxed/simple;
+	bh=kAnBC4cPP4TigxhgUDYmEgJxQ3enxKsMkmrjeHAwj8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ra4Z9CCMRAkKxyQoIyFSIYbCZRkpAwFpzgbS9VQ2WGoykcOXkH2O6vHY7PWjw1UeI377VZ8QqMgvyDru4ztdaOxrjYmyeBKOmRJW7fQh4UlI+HB9iG8chqgnYtnYijiSVFEG46UaRGRvTweFTw/9GdhHlTigV5IwDdMt4X18wA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ITwbCiOE; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720443915; x=1751979915;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kAnBC4cPP4TigxhgUDYmEgJxQ3enxKsMkmrjeHAwj8I=;
+  b=ITwbCiOEpteSLh+PhnLHGx1OMwSnVyxRJVHAdyN3dCDOuPeNHLLmnOa6
+   YJSt8VyI72moVJuTOxRhQY3tSg+F3ZCfDJKwPDvhg4Ql2Nq/3TmDYLWHX
+   XrKBMbmbObyFhJPv5M8D3OawCXvFVQyk6ocrygBwcHwEOCQSpLgB2L04b
+   rxPAFrt59BFOSY0NjXB0F9Id5YhAn+Mo5S4rU6rwYU2Zud8z3ght28vkj
+   SzVRYw3ZMQ9EXzjYqbnz3rc+yZ6/tv9/RCxUV20Wz+r9tZUGtwLqhrJ51
+   konRTzjkqcIRYcoqOXFhxh/E1MlpsCXqhmN3KQrCU3gAOMq1EifKTBQPC
+   A==;
+X-CSE-ConnectionGUID: 0LdZ85tlTg+hosdCmeYfqQ==
+X-CSE-MsgGUID: RPr7992ET7uDhognVecjJQ==
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="31593266"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Jul 2024 06:04:51 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 8 Jul 2024 06:04:29 -0700
+Received: from [10.180.117.27] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 8 Jul 2024 06:04:26 -0700
+Message-ID: <01ba4ebd-a4cf-4e9d-bf2e-b7f9afa5417c@microchip.com>
+Date: Mon, 8 Jul 2024 15:04:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703143738.2007457-3-luke.parkin@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: microchip: sam9x60: Move i2c address/size to
+ dtsi
+To: Alexander Dahl <ada@thorsis.com>, <devicetree@vger.kernel.org>, "Claudiu
+ Beznea" <claudiu.beznea@tuxon.dev>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Manikandan M <Manikandan.M@microchip.com>,
+	Hari Prasath <Hari.PrasathGE@microchip.com>, Durai Manickam
+	<Durai.ManickamKR@microchip.com>
+References: <20240528153109.439407-1-ada@thorsis.com>
+Content-Language: en-US, fr-FR
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20240528153109.439407-1-ada@thorsis.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 03:37:36PM +0100, Luke Parkin wrote:
-> Add a new config option for statistic tracking in SCMI subsystem
-> Add a struct for tracking statistics
-> Add scmi_log_stats op/no-op function for incrementing statistics
+Hi Alexander,
+
+On 28/05/2024 at 17:31, Alexander Dahl wrote:
+> These properties are common for all i2c subnodes, and marked as
+> 'required' in atmel/microchip i2c bindings.
+
+Yes, indeed.
+
+>  Allows to add i2c device
+> nodes (like an rtc for example) in other .dts files including
+> sam9x60.dtsi without requiring to repeat these properties for each i2c
+> device again and again.
 > 
+> Found on a custom board after adding this in .dts:
+> 
+>      &flx5 {
+>              atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
+>              status = "okay";
+> 
+>              i2c5: i2c@600 {
+>                      pinctrl-0 = <&pinctrl_flx5_default>;
+>                      status = "okay";
+> 
+>                      pcf8523: rtc@68 {
+>                              compatible = "nxp,pcf8523";
+>                              reg = <0x68>;
+>                      };
+>              };
+>      };
+> 
+> … which created a warning like this:
+> 
+>      […]:236.4-17: Warning (reg_format): /ahb/apb/flexcom@f0004000/i2c@600/rtc@68:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+>      […]: Warning (pci_device_reg): Failed prerequisite 'reg_format'
+>      […]: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+>      […]: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+>      […]/linux-6.6.25/arch/arm/boot/dts/microchip/sam9x60.dtsi:283.19-299.7: Warning (i2c_bus_bridge): /ahb/apb/flexcom@f0004000/i2c@600: incorrect #address-cells for I2C bus also defined at […]:228.16-238.4
+>      […]/linux-6.6.25/arch/arm/boot/dts/microchip/sam9x60.dtsi:283.19-299.7: Warning (i2c_bus_bridge): /ahb/apb/flexcom@f0004000/i2c@600: incorrect #size-cells for I2C bus also defined at […]:228.16-238.4
+>      […]: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+>      […]: Warning (i2c_bus_reg): Failed prerequisite 'i2c_bus_bridge'
+>      […]: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+>      […]:234.19-237.5: Warning (avoid_default_addr_size): /ahb/apb/flexcom@f0004000/i2c@600/rtc@68: Relying on default #address-cells value
+>      […]:234.19-237.5: Warning (avoid_default_addr_size): /ahb/apb/flexcom@f0004000/i2c@600/rtc@68: Relying on default #size-cells value
+>      […]: Warning (avoid_unnecessary_addr_size): Failed prerequisite 'avoid_default_addr_size'
+>      […]: Warning (unique_unit_address): Failed prerequisite 'avoid_default_addr_size'
+> 
+> This probably should have been done with commit 84f23f3284d5 ("ARM: dts:
+> at91: sam9x60: move flexcom definitions") already, where those
 
-Hi Luke,
+Yes, and I think it was mentioned by Claudiu back then.
 
-good that you keep a summary of viersion changes in the series you
-are posting to aid in review....but...
+> address-cells and size-cells properties were left in the board .dts
+> files instead of moving them to the dtsi.
 
-> Signed-off-by: Luke Parkin <luke.parkin@arm.com>
+I agree with the move, plus you addressed both of the current mainline 
+boards:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-...you need a 
+Thanks Alexander, best regards,
+   Nicolas
 
----
-
-...separator here before the summary
-
-> v1->v2
-> Config option now depends on DEBUG_FS
-> Add scmi_log_stats rather than if(IS_ENABLED)
-> Move location of scmi_debug_stats in the scmi_info struct
-
-...if not this sumamry info will be kept in the final merged commit
-message, which is not what we want...this is only for the sake of
-reviews...
-
+> 
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
 > ---
->  drivers/firmware/arm_scmi/Kconfig  | 11 +++++++++++
->  drivers/firmware/arm_scmi/common.h |  9 +++++++++
->  drivers/firmware/arm_scmi/driver.c | 18 ++++++++++++++++++
->  3 files changed, 38 insertions(+)
+>   .../dts/microchip/at91-sam9x60_curiosity.dts  |  2 --
+>   .../arm/boot/dts/microchip/at91-sam9x60ek.dts |  4 ---
+>   arch/arm/boot/dts/microchip/sam9x60.dtsi      | 26 +++++++++++++++++++
+>   3 files changed, 26 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-> index aa5842be19b2..45e8e7df927e 100644
-> --- a/drivers/firmware/arm_scmi/Kconfig
-> +++ b/drivers/firmware/arm_scmi/Kconfig
-> @@ -55,6 +55,17 @@ config ARM_SCMI_RAW_MODE_SUPPORT_COEX
->  	  operate normally, thing which could make an SCMI test suite using the
->  	  SCMI Raw mode support unreliable. If unsure, say N.
->  
-> +config ARM_SCMI_DEBUG_STATISTICS
-> +	bool "Enable SCMI Raw mode statistic tracking"
-> +	select ARM_SCMI_NEED_DEBUGFS
-> +	depends on DEBUG_FS
-> +	help
-> +	  Enables statistic tracking for the SCMI subsystem.
-> +
-> +	  Enable this option to create a new debugfs directory which contains
-> +	  several useful statistics on various SCMI features. This can be useful
-> +	  for debugging and SCMI monitoring. If unsure, say N.
-> +
->  config ARM_SCMI_HAVE_TRANSPORT
->  	bool
->  	help
-> diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-> index b5ac25dbc1ca..1f50c4a209d7 100644
-> --- a/drivers/firmware/arm_scmi/common.h
-> +++ b/drivers/firmware/arm_scmi/common.h
-> @@ -301,6 +301,15 @@ extern const struct scmi_desc scmi_optee_desc;
->  
->  void scmi_rx_callback(struct scmi_chan_info *cinfo, u32 msg_hdr, void *priv);
->  
-> +#ifdef CONFIG_ARM_SCMI_DEBUG_STATISTICS
-> +static inline void scmi_log_stats(atomic_t *atm)
-> +{
-> +	atomic_inc(atm);
-> +}
-> +#else
-> +static inline void scmi_log_stats(atomic_t *atm) {}
-> +#endif
-> +
->  enum scmi_bad_msg {
->  	MSG_UNEXPECTED = -1,
->  	MSG_INVALID = -2,
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index 56a93d20bf23..df3eb17cf439 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -125,6 +125,22 @@ struct scmi_debug_info {
->  	bool is_atomic;
->  };
->  
-> +/**
-> + * struct scmi_debug_stats - Debug statistics
-> + * @sent_ok: Count of successful sends
-> + * @sent_fail: Count of failed sends
-> + * @response_ok: Count of successful responses
-> + * @dlyd_response_ok: Count of successful delayed responses
-> + * @xfers_response_timeout: Count of xfer response timeouts
-> + */
-> +struct scmi_debug_stats {
-> +	atomic_t sent_ok;
-> +	atomic_t sent_fail;
-> +	atomic_t response_ok;
-> +	atomic_t dlyd_response_ok;
-> +	atomic_t xfers_response_timeout;
-> +};
-> +
->  /**
->   * struct scmi_info - Structure representing a SCMI instance
->   *
-> @@ -161,6 +177,7 @@ struct scmi_debug_info {
->   *		bus
->   * @devreq_mtx: A mutex to serialize device creation for this SCMI instance
->   * @dbg: A pointer to debugfs related data (if any)
-> + * @stats: Contains several atomic_t's for tracking various statistics
->   * @raw: An opaque reference handle used by SCMI Raw mode.
->   */
->  struct scmi_info {
-> @@ -187,6 +204,7 @@ struct scmi_info {
->  	/* Serialize device creation process for this instance */
->  	struct mutex devreq_mtx;
->  	struct scmi_debug_info *dbg;
-> +	struct scmi_debug_stats stats;
->  	void *raw;
->  };
-
-Once the above nitpicks are fixed, I think this is good enough for our
-purposes for now; optionally we could quickly move to a macro-based machinery
-to avoid carrying the stats field in full even when STATS=n if someone
-prefers that way... 
-
-.... but...I will ask you anyway to add a few more stats in the next patch
-by splitting a few of the existing ones...
-
-Thanks,
-Cristian
+> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+> index c6fbdd29019f..b9ffd9e5faac 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+> @@ -198,8 +198,6 @@ i2c0: i2c@600 {
+>                  dmas = <0>, <0>;
+>                  pinctrl-names = "default";
+>                  pinctrl-0 = <&pinctrl_flx0_default>;
+> -               #address-cells = <1>;
+> -               #size-cells = <0>;
+>                  i2c-analog-filter;
+>                  i2c-digital-filter;
+>                  i2c-digital-filter-width-ns = <35>;
+> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+> index f3cbb675cea4..3b38707d736e 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+> @@ -207,8 +207,6 @@ &flx0 {
+>          status = "okay";
+> 
+>          i2c0: i2c@600 {
+> -               #address-cells = <1>;
+> -               #size-cells = <0>;
+>                  dmas = <0>, <0>;
+>                  pinctrl-names = "default";
+>                  pinctrl-0 = <&pinctrl_flx0_default>;
+> @@ -254,8 +252,6 @@ &flx6 {
+>          status = "okay";
+> 
+>          i2c6: i2c@600 {
+> -               #address-cells = <1>;
+> -               #size-cells = <0>;
+>                  dmas = <0>, <0>;
+>                  pinctrl-names = "default";
+>                  pinctrl-0 = <&pinctrl_flx6_default>;
+> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> index 291540e5d81e..551b46894f47 100644
+> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> @@ -215,6 +215,8 @@ i2c4: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -284,6 +286,8 @@ i2c5: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <14 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -394,6 +398,8 @@ i2c11: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <32 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 32>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -443,6 +449,8 @@ i2c12: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 33>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -600,6 +608,8 @@ i2c6: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <9 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -649,6 +659,8 @@ i2c7: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <10 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -698,6 +710,8 @@ i2c8: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <11 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -766,6 +780,8 @@ i2c0: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <5 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -834,6 +850,8 @@ i2c1: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -902,6 +920,8 @@ i2c2: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <7 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -970,6 +990,8 @@ i2c3: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -1074,6 +1096,8 @@ i2c9: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <15 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -1123,6 +1147,8 @@ i2c10: i2c@600 {
+>                                          compatible = "microchip,sam9x60-i2c";
+>                                          reg = <0x600 0x200>;
+>                                          interrupts = <16 IRQ_TYPE_LEVEL_HIGH 7>;
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                          clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
+>                                          dmas = <&dma0
+>                                                  (AT91_XDMAC_DT_MEM_IF(0) |
+> 
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> --
+> 2.39.2
+> 
 
 
