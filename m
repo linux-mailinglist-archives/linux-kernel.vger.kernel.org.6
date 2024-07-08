@@ -1,220 +1,109 @@
-Return-Path: <linux-kernel+bounces-244182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E41092A05D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C7B92A04D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC211C21500
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:41:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 047CA1C2145F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1A678C83;
-	Mon,  8 Jul 2024 10:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48740757FD;
+	Mon,  8 Jul 2024 10:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="si4lGhfo"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqHtdiKc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDE71DA303;
-	Mon,  8 Jul 2024 10:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EFC1DA303;
+	Mon,  8 Jul 2024 10:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720435273; cv=none; b=HTj3Wg/eXVaW/cP/b/53FN+iaksW4YxlxlC9jpfuOEAafzXJuuIxJnZaSBBQvDJaYOiMWbAOFPPsIiUvsODOYJLTjGeIk/vtOBdos7pKSWs/GZ2Vdsj0/o2+q2pKnxa959B1v481ak5VxNTMjbuGBSJ1em7jZ8G7ap5CkfRuNJE=
+	t=1720435006; cv=none; b=rkHnnt8fN0sk/c02vINCVmF62NkEmtyLDPe9bk4+L887Pi6rMPctXlWA/xfk35SFBEikkPf2ZEADeqsDO9L041Fj8Xi39lGdR0c7g9qv+hpJvIwobLVkz3IGs158mLU2LXBfdO9YtRfrLt6BK8WiYjL68f5n33m59TwHB7L4ZyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720435273; c=relaxed/simple;
-	bh=XskS0maRgQZBHDKIK+8SstCfUi84xbdyiEgDFbw91do=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pqVi7qOig4bBFMme7NMc/iW34EEYnBkGoGUkrdllQm7frEjSE1LrX4ksEw6SVAq3Y7IrNpPx/Jk+frWjrsrX2c19YjtU/EIAnsHxbKZc/pTA2NBCyiyXbskmOkqpxsFAme6KcqaPbcSmhcKMlbkWKUzIl2QhXuBDJlTMy4rkjt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=si4lGhfo; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 622EC120008;
-	Mon,  8 Jul 2024 13:33:41 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 622EC120008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720434821;
-	bh=kBbfq6zVIOZORkXhMU7x0H9PE5kCZaCWJAnTAIPXkmY=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
-	b=si4lGhfoSQTWKP9/NbaYbHvz1faTyy/JNf1vI3yqVkRZayYWHD0xzEnShKSZ2tZrE
-	 a6IloUlEQ8PY/QvFvgUp6SxqspX0cQirhGdr7EK7Gr9NJ/Cqq1ObfH7s4ssHLk+Fcd
-	 daX9+ezpKZO2aF8WU1BoVM/v1Xaf+Kv5We7VFzajZDsJE4KImCpoS/d3WmZwMwQ1c+
-	 v6hJRRJJZb1MPNuGq+LFkyyiW3JkGJZnHMJ0THBrA4gQGvaC9fX+Uf2YroFHT8kYFY
-	 x3iuKAmuVw3i4UIpFU3z5+nQ5QI7MUcXW4Vcb8KKGsBKa0lyTB9yYxOgUAHofDp/UG
-	 UZ+CVfBeS7faw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon,  8 Jul 2024 13:33:41 +0300 (MSK)
-Received: from p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 8 Jul 2024 13:33:40 +0300
-Received: from p-i-exch-sc-m02.sberdevices.ru ([fe80::81d7:3d68:fdfd:518]) by
- p-i-exch-sc-m02.sberdevices.ru ([fe80::81d7:3d68:fdfd:518%9]) with mapi id
- 15.02.1118.040; Mon, 8 Jul 2024 13:33:40 +0300
-From: Alexey Romanov <avromanov@salutedevices.com>
-To: Rob Herring <robh@kernel.org>
-CC: "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "khilman@baylibre.com"
-	<khilman@baylibre.com>, "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-	"martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, kernel <kernel@sberdevices.ru>
-Subject: Re: [PATCH v8 17/23] dt-bindings: crypto: meson: correct clk and
- remove second interrupt line
-Thread-Topic: [PATCH v8 17/23] dt-bindings: crypto: meson: correct clk and
- remove second interrupt line
-Thread-Index: AQHauOTSAXN6fA211UWCwBG9LZMwhLHBZvKAgCs5hgA=
-Date: Mon, 8 Jul 2024 10:33:40 +0000
-Message-ID: <20240708103330.w2krusjlyoucsvcn@cab-wsm-0029881.sigma.sbrf.ru>
-References: <20240607141242.2616580-1-avromanov@salutedevices.com>
- <20240607141242.2616580-18-avromanov@salutedevices.com>
- <20240610222827.GA3166929-robh@kernel.org>
-In-Reply-To: <20240610222827.GA3166929-robh@kernel.org>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <79D38F7E409215488E684887CF215ECF@sberdevices.ru>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1720435006; c=relaxed/simple;
+	bh=3Nxqm3JLpo/2FtZzwnd9TEiW+RAk0KUEjOFh9w97bxg=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=DyzDVheliz2TZHqMUcAC8NEqH5CuCvvoQMnS05RR3EaBy0G0fnJE8gW/vIfyGIYQiJQtq+OvdrpZlPUAPYsUxMxHqETLyO/jPIhX5nBjmKj1CLwTYO0oWsys1AOns+3DashihYQ8o6q4CJIvIWK5YYNrGxsQe3fw1IBN22H6GY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqHtdiKc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3DEAC116B1;
+	Mon,  8 Jul 2024 10:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720435006;
+	bh=3Nxqm3JLpo/2FtZzwnd9TEiW+RAk0KUEjOFh9w97bxg=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=bqHtdiKcDbR5oKuI2SUSQjjlOJ3EOawsksDOjfas2zNslxhQPIxVFzo36sLkheSPF
+	 qetIqmyf7fwnH6jDdn2Ok6U+ZmEyJR7fT2PAXFXtmnGijNwHiMcuP4jaBhGvRk8rhb
+	 3UC8PQ7mEDM9Z40FhIZdH/D/JqB3bFmPMhahOwH8mLeinP+B0c2Qxyo4ZlMVHukkor
+	 9JlTXPYzwo0zzK7vottWFfSqfNZ1HTjxrdHJGSQRbHTG9PoE9TfkRtqJpuAw+AEKB6
+	 WnlIGujYVoTo/GKpvRo7kKf3lMBozTEn7n7YQAha72BYAb9HWmE7RiCWNZuRKfRLIo
+	 vAvaOJs5EMrSQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>,  James Prestwood
+ <prestwoj@gmail.com>,  <linux-wireless@vger.kernel.org>,
+  <ath10k@lists.infradead.org>,  LKML <linux-kernel@vger.kernel.org>,  Chun
+ Wu <chunwu@qti.qualcomm.com>
+Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
+References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
+	<1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com>
+	<87iky7mvxt.fsf@kernel.org>
+	<37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com>
+	<875xu6mtgh.fsf@kernel.org>
+	<f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
+	<082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de>
+	<462c97dc-f366-4f75-9327-04d9424b819a@quicinc.com>
+	<b30307fd-4417-4220-a3ac-e3e80f23105e@molgen.mpg.de>
+	<ceddb62b-61dd-44c9-babd-cd375c5a147d@quicinc.com>
+	<fb8acc69-89aa-4b26-91b4-e768ae4c2238@molgen.mpg.de>
+	<82e10a1a-ed23-4d5c-b691-02e39296a91e@quicinc.com>
+Date: Mon, 08 Jul 2024 13:36:42 +0300
+In-Reply-To: <82e10a1a-ed23-4d5c-b691-02e39296a91e@quicinc.com> (Baochen
+	Qiang's message of "Mon, 8 Jul 2024 09:53:08 +0800")
+Message-ID: <87o778cgqt.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186370 [Jul 08 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: avromanov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;cab-wsm-0029881.sigma.sbrf.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/08 09:16:00 #25900162
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain
 
-Hi Rob,
+Baochen Qiang <quic_bqiang@quicinc.com> writes:
 
-thank you for the review.
+>>> Checked with firmware team and just know that, the TX rate info is
+>>> generated by firmware directly but for RX rate it is from phy side.
+>>> From firmware TX rate generation code seems NSS 3 is an impossible
+>>> value, so it might be an RX rate generated by phy side. But I could
+>>> not tell for now since the log is not complete. Paul, could you
+>>> enable full ath10k log and try to reproduce? With full log we can
+>>> check whether it is a RX rate issue,
+>> 
+>> Please tell me how I enable full logging.
+>
+> once boot, first unload ath10k modules by 
+>
+> sudo modprobe -r ath10k_pci
+>
+> then load ath10k modules with
+>
+> sudo modprobe ath10k_core debug_mask=0xffffffff
+> sudo modprobe ath10k_pci
+>
+> you should see lots of prints now
 
-On Mon, Jun 10, 2024 at 04:28:27PM -0600, Rob Herring wrote:
-> On Fri, Jun 07, 2024 at 05:12:36PM +0300, Alexey Romanov wrote:
-> > GXL and newer SoC's uses the DMA engine (not blkmv) for crypto HW.
-> > Crypto HW doesn't actually use the blkmv clk. At RTL level, crypto
-> > engine is hard weired to a clk81 (CLKID_CLK81).
->=20
-> typo.
->=20
-> >=20
-> > Also, GXL crypto IP isn't to seconnd interrput line. So we must
->=20
-> 2 more typos. Spell checkers exist. Use them instead of me please.
->=20
-> I think you forgot the word 'connected' too.
+BTW the extensive debug messages can slow down the system so there's
+also the option of using tracing which is a lot faster:
 
-Yep, sorry, I will fix all typos.
+https://wireless.wiki.kernel.org/en/users/drivers/ath10k/debug#tracing
 
->=20
-> > remove it from dt-bindings.
->=20
->=20
-> So did this binding not work at all?=20
+Though I have not tested that for a long time but I hope it still works.
 
-Yes.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-> Are there any users?=20
-
-No.
-
-> You need a bit=20
-> more justification for an ABI breaking change.
-
-I will add more clarification information in commit message in V9.
-
->=20
-> >=20
-> > Fixes: 7f7d115dfb51 ("dt-bindings: crypto: Add DT bindings
-> > documentation for amlogic-crypto")
->=20
-> This line should not be wrapped.
-> >=20
->=20
-> Drop the blank line.
->=20
-> > Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-> > ---
-> >  .../bindings/crypto/amlogic,gxl-crypto.yaml          | 12 +++++++-----
-> >  1 file changed, 7 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypt=
-o.yaml b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > index 948e11ebe4ee..aff6f3234dc9 100644
-> > --- a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > +++ b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > @@ -20,13 +20,15 @@ properties:
-> >    interrupts:
-> >      items:
-> >        - description: Interrupt for flow 0
-> > -      - description: Interrupt for flow 1
-> > =20
-> >    clocks:
-> >      maxItems: 1
-> > =20
-> >    clock-names:
-> > -    const: blkmv
-> > +    const: clk81
->=20
-> Clocks are supposed be named local to the block like what function or=20
-> part of the block they clock. This sounds like something global.=20
->=20
-> With only 1 clock, I'd just drop the name altogether.
-
-I think I have to remove clock-names field in V9.
-
->=20
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > =20
-> >  required:
-> >    - compatible
-> > @@ -46,7 +48,7 @@ examples:
-> >      crypto: crypto-engine@c883e000 {
-> >          compatible =3D "amlogic,gxl-crypto";
-> >          reg =3D <0xc883e000 0x36>;
-> > -        interrupts =3D <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>, <GIC_SPI 18=
-9 IRQ_TYPE_EDGE_RISING>;
-> > -        clocks =3D <&clkc CLKID_BLKMV>;
-> > -        clock-names =3D "blkmv";
-> > +        interrupts =3D <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>;
-> > +        clocks =3D <&clkc CLKID_CLK81>;
-> > +        clock-names =3D "clk81";
-> >      };
-> > --=20
-> > 2.34.1
-> >=20
-
---=20
-Thank you,
-Alexey=
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
