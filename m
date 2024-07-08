@@ -1,155 +1,167 @@
-Return-Path: <linux-kernel+bounces-244359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A47892A31C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:43:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A8F92A318
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E260282A20
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:43:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34F98B21273
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF022811E6;
-	Mon,  8 Jul 2024 12:43:44 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC76824AC;
+	Mon,  8 Jul 2024 12:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtwQDajp"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3180D84A4E;
-	Mon,  8 Jul 2024 12:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40F281211;
+	Mon,  8 Jul 2024 12:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720442624; cv=none; b=MN/Dmu2cYNQY0X5njvD1dgZMztiI3iMSQxxm3V4Tr3xXXMX2HLDfoKR4/KPy0/G2IgovHHpEpsvF9UwovU+tz7omtkuNDnEZeGx9Sfbaw4l/Zx0iSbWUcyAO9s1M8D0USfJ1K5Wp56refmGGscET/yEQf9tOVTMw1Kb6oTJc0wY=
+	t=1720442615; cv=none; b=JixMjr3dpF183ijIOnxVvA7uHC+867PJJF4pn3IkU/4VpBsP8xeot81aAAj4YeCUk94pdBu1pg43Qysy9Q4P514emJB+gtaLQBBzvGW1QOn0DzpTbhUzPhr6W12ube8TdMx0OMq3o8LTfuuUpg4ZqomD7edvIWn1Q/3LsQOW1Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720442624; c=relaxed/simple;
-	bh=gDa1dHlAzEEcgrgD0zGK62WUiLry4su1EZRLvoZm7fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dngGiBarltVrXC9UHUKepGq6HvswmNYUIAfF7wnKtTgytwHYH30JpoPVGTidDV92HpxIwM0ivPFjpEopaM7+kMLCebj94mssAJsw+GCfAuplwluCX5ZPUrd0iIzN8/G5Q1vtUYIA/I2UjKxzT8GjMWG7AFira8C22CpILDJlpsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1sQniK-0000rn-SW; Mon, 08 Jul 2024 14:43:28 +0200
-Date: Mon, 8 Jul 2024 14:43:28 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Florian Westphal <fw@strlen.de>, Tejun Heo <tj@kernel.org>,
-	netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
-Subject: Re: [PATCH nf] netfilter: nf_tables: unconditionally flush pending
- work before notifier
-Message-ID: <20240708124328.GA2748@breakpoint.cc>
-References: <20240708115831.GA1289@breakpoint.cc>
- <20240708121727.944-1-hdanton@sina.com>
+	s=arc-20240116; t=1720442615; c=relaxed/simple;
+	bh=BI28wz5XInTgMXnFdy8HZ6+ujkFpibqozOzg9QsIMI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SeGE7/PWKuNzA8WxyqbV7pT47ig4ycvP6PxdgajqhqvD+7rMpDkSJEeeDC6fMLTICRDv0KDZfOoKyKcUcH+1tXAVX4i1qqZUzmzvKpVQtasEj7nMOWx0NwyiMhUiYPwAXrD2arK1nkE4Gvw/1c82+aYERmQxASVJ7AieGE7v4MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PtwQDajp; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52e9fe05354so5657360e87.1;
+        Mon, 08 Jul 2024 05:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720442612; x=1721047412; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tE4/Xw/cTAW7KhMX9aTxF+9g4e51k+vLuUCkv+6bpaI=;
+        b=PtwQDajpW9YriSdltVhsOZo8EtXVyXm1UF6m7I0EXWbTYl7lW57mkWALIp2VY0Taty
+         bgx5bg3DVQ9sZhQahU9jVo7hR7K27O402Hn9Tj+2fOu4uYWStlB03wg/LMBwhzvf2I1X
+         jsL7KsL8IAojdOI4GgYsjEyhLDltThrfZpJc/he2Kkzr01mv8lc3c2ecGUdhymN8xOM3
+         LMR2oU+irvGUJh7uX+iO1Va9y1dGxYfNHSL2t9FzK8Pv/Ovgn36obgHPhX+h09mEEx8p
+         jAduzkGfiTAyyIyOl0oAQWHCpJImYq140kTArOOCo7Jzcax6yPVfOkRKc/cgC1QDZ3qu
+         D8ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720442612; x=1721047412;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tE4/Xw/cTAW7KhMX9aTxF+9g4e51k+vLuUCkv+6bpaI=;
+        b=bPTUG37651Z1a3SL/D57ycSvu1iPgRWwTZV80StbFU7e9CmVWLqEOh0z5J1Xnb58uN
+         CtiEbFeiVefGpfs8jS6jPdPWIUwBHdzEAcl20EpbeMv9vR7da50I6hZ+oolWVUPq/D24
+         KkfFe3H22QlRHmvzM1KSXe8/Jxl+bjsyzOSUe7P3EDDBq7OGOFALLo2dqYgpNAJA2BBD
+         FA4YXA35IECBOnZhI4+FNrH0lkkc1UxprbRlogF9g8q18lSG5e5Mj0jeTnf2fwEwPYMJ
+         w8pOmLK8CpJKUgM/96OSdJN0waIEA1DuAJR2FixdUyPcclJs1xlK71kVUmwi1L+s65sB
+         bTaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlG5Ls+4TqR+dJ1UU/+nDb/Go4gdXuYOp4diBflknEK84phh9JRLHTQlgl6GsrSJMLG7sBH/QAqLUxC2WFEybKBmV+wXuJkDHmIqC8T5N9oooQPKTDgs1L7AF3uu+H8Z3YTnJoYJ8dha9kIVxyKSrWjedN9WF6cIhGQhoieQV+KvRDSQ==
+X-Gm-Message-State: AOJu0Yy63JdclNuykdJ+Z6wYt1VX6EASJ7R6f1HrEBaqTarkF37WBkVj
+	chBoW4TcMjT43SQD+iupHj+9uSd2L8kgTU9SxfDrAsRi/gM/+k6b
+X-Google-Smtp-Source: AGHT+IFxhmAI/t2baGo+8FHPDAJctn5KhZOEAfWFa+hD/m+yvpkjzx7stU+T+XnzM4iZBgNF6eESyA==
+X-Received: by 2002:a19:7702:0:b0:52c:dba6:b4c8 with SMTP id 2adb3069b0e04-52ea0619e3cmr9176706e87.13.1720442611240;
+        Mon, 08 Jul 2024 05:43:31 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ea90ba285sm723630e87.127.2024.07.08.05.43.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 05:43:30 -0700 (PDT)
+Message-ID: <622f5382-10c9-4bd5-84ab-544d7c16f1fe@gmail.com>
+Date: Mon, 8 Jul 2024 15:43:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708121727.944-1-hdanton@sina.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] dt-bindings: iio: BU27034 => BU27034ANUC
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1720176341.git.mazziesaccount@gmail.com>
+ <c39f9c67b3c07a27d7a13109c7b69cff9cfd2b9b.1720176341.git.mazziesaccount@gmail.com>
+ <20240707140536.1dbb989b@jic23-huawei>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240707140536.1dbb989b@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hillf Danton <hdanton@sina.com> wrote:
-> On Mon, 8 Jul 2024 13:58:31 +0200 Florian Westphal <fw@strlen.de>
-> > Hillf Danton <hdanton@sina.com> wrote:
-> > > On Sun, 7 Jul 2024 10:08:24 +0200 Florian Westphal <fw@strlen.de>
-> > > > Hillf Danton <hdanton@sina.com> wrote:
-> > > > > > I think this change might be useful as it also documents
-> > > > > > this requirement.
-> > > > > 
-> > > > > Yes it is boy and the current reproducer triggered another warning [1,2].
-> > > > > 
-> > > > > [1] https://lore.kernel.org/lkml/20240706231332.3261-1-hdanton@sina.com/
-> > > > 
-> > > > The WARN is incorrect.  The destroy list can be non-empty; i already
-> > > > tried to explain why.
-> > > >
-> > > That warning as-is could be false positive but it could be triggered with a
-> > > single netns.
-> > 
-> > How?
-> > 
-> You saw the below cpu diagram, no?
+On 7/7/24 16:05, Jonathan Cameron wrote:
+> On Fri, 5 Jul 2024 13:54:12 +0300
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> 
+>> The BU27034NUC was cancelled before it entered mass production. It was
+>> replaced by a new variant BU27034ANUC (note, added 'A'). The new
+>> variant gained a few significant changes, like removal of the 3.rd data
+>> channel and dropping some of the gain settings. This means that, from
+>> software point of view these ICs are incompatible. Lux calculation based
+>> on the data from the sensors needs to be done differently, and on the
+>> BU27034ANUC the channel 3 data is missing. Also, the gain setting
+>> differencies matter.
+>>
+>> Unfortunately, the identification register was not changed so there is no
+>> safe way for the software to distinguish the variants.
+>>
+>> According to the ROHM HQ engineers, the old BU27034NUC should not be
+>> encountered in the wild. Hence it makes sense to remove the support for
+>> the old BU27034NUC and add support for the new BU27034ANUC. Change the
+>> compatible in order to not load the incompatible old driver for new sensor
+>> (or, if someone had the old sensor, the new driver for it).
+>>
+>> Drop the compatible for old sensor which should not be in the wild and
+>> add a new compatible for the new model with accurate model suffix
+>> 'anuc'.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Rename indeed makes sense.  One minor, 'whilst you are here' comment inline.
+> 
+>>
+>> ---
+>> A patch renaming the file according to the new compatible will follow.
+>> If renaming is not needed or appropriate, that patch can be dropped.
+>>
+>> Revision history:
+>> v2: New patch
+>> ---
+>>   .../devicetree/bindings/iio/light/rohm,bu27034.yaml      | 9 ++++-----
+>>   1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+>> index 30a109a1bf3b..535bd18348ac 100644
+>> --- a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+>> +++ b/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+>> @@ -4,20 +4,19 @@
+>>   $id: http://devicetree.org/schemas/iio/light/rohm,bu27034.yaml#
+>>   $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>   
+>> -title: ROHM BU27034 ambient light sensor
+>> +title: ROHM BU27034ANUC ambient light sensor
+>>   
+>>   maintainers:
+>>     - Matti Vaittinen <mazziesaccount@gmail.com>
+>>   
+>>   description: |
+>> -  ROHM BU27034 is an ambient light sesnor with 3 channels and 3 photo diodes
+>> +  ROHM BU27034ANUC is an ambient light sesnor with 2 channels and 2 photo diodes
+> 
+>   sensor
 
-It did not explain the problem in a way I understand.
+Thanks Jonathan!
 
->	cpu1		cpu2		cpu3
->	---		---		---
->					nf_tables_trans_destroy_work()
->					spin_lock(&nf_tables_destroy_list_lock);
->
->					// 1) clear the destroy list
->					list_splice_init(&nf_tables_destroy_list, &head);
->					spin_unlock(&nf_tables_destroy_list_lock);
+I won't re-spin this unless you ask me to because you wrote you can fix 
+it whilist applying... Please, let me know if you wish me to fix and 
+re-spin :)
 
-This means @work is running on cpu3 and made a snapshot of the list.
-I don't even understand how thats relevant, but OK.
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
 
->			nf_tables_commit_release()
->			spin_lock(&nf_tables_destroy_list_lock);
->			// 2) refill the destroy list
->			list_splice_tail_init(&nft_net->commit_list, &nf_tables_destroy_list);
->			spin_unlock(&nf_tables_destroy_list_lock);
->			schedule_work(&trans_destroy_work);
->			mutex_unlock(&nft_net->commit_mutex);
+~~ When things go utterly wrong vim users can always type :help! ~~
 
-Means CPU2 has added transaction structures that could
-reference @table to list.
-
-It also called schedule_work BEFORE releasing the mutex and
-after placing entries on destroy list.
-
-> nft_rcv_nl_event()
-> mutex_lock(&nft_net->commit_mutex);
-> flush_work(&trans_destroy_work);
-
-Means cpu1 serializes vs. cpu2, @work
-was scheduled.
-
-flush_work() must only return if @work is idle, without
-any other pending execution.
-
-If it gets scheduled again right after flush_work
-returns that is NOT a problem, as I tried to explain several times.
-
-We hold the transaction mutex, only a different netns can queue more
-work, and such foreign netns can only see struct nft_table structures
-that are private to their namespaces.
-
-> // 3) flush work ends with the refilled destroy list left intact
-> tear tables down
-
-Again, I do not understand how its possible.
-
-The postcondition after flush_work returns is:
-
-1. nf_tables_destroy_list must be empty, UNLESS its from unrelated
-   net namespaces, they cannot see the tables we're tearing down in 3),
-   so they cannot reference them.
-
-2. nf_tables_trans_destroy_work() is NOT running, unless its
-   processing entries queued by other netns, after flush work
-   returned.
-
-
-cpu2 does:
-   -> add trans->table to @nf_tables_destroy_list
-   -> unlock list spinlock
-   -> schedule_work
-   -> unlock mutex
-
-cpu1 does:
- -> lock mutex
- -> flush work
-
-You say its not enough and that trans->table queued by cpu2 can still
-be on @nf_tables_destroy_list.
-
-I say flush_work after taking the mutex guarantees strans->table has been
-processed by @work in all cases.
 
