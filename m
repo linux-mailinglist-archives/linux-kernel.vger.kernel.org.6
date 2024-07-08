@@ -1,144 +1,128 @@
-Return-Path: <linux-kernel+bounces-244454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CB992A47C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:19:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A9192A47D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11C151F22056
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BBA280C71
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850C813C681;
-	Mon,  8 Jul 2024 14:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB80E13B2B9;
+	Mon,  8 Jul 2024 14:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rr8PHOkB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dnq/5zEj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA17225745;
-	Mon,  8 Jul 2024 14:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB8C25745;
+	Mon,  8 Jul 2024 14:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720448361; cv=none; b=RG4ilEGOhJczA7qjIzAdBA2K4ZX0VsR4WTv37RaT924H1e0BWKb7lUS9eYducOsYu9WwlSyc2r8Cf9/FrpzRXLHRxo08JzyPrcr6NtYm7zx5+xsv6UPVLAPJqqOLKjD8HMdoAsvEh1SrvbjkbBFSyYmqe2CbXYKxE+EgN5q9QAQ=
+	t=1720448469; cv=none; b=RKjqNK+B9knfxc/GvE127SBSf3jqOSP3OsmYkYZccxhLpjxiR6qnnwNcRM81kUgMi5FdIw7W3RA1AXrMU9PUAfEYo9aS2sLDbOXva1Nc3lA+JR059YygG2UTjx/Eh6ya0OE4wNZZwiOlWZj95XcPN3/DvmK+EIwvKZ7/huDPurc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720448361; c=relaxed/simple;
-	bh=zxDS7ZUzuVyJRAnDAenP+Tt2MHcowuCTzWPQAP8b5bU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GmNUHjOQ/LjwGcOUu5fsuu1MmpGiC+AoB7iTJcs2grrw7FtpEkQZTuknBdGbN8UaO4TkatgL1Dmb+kDuL5xbvB3qKj3ZxS0W7PQtZpbH7molV+TXXzz752jkcSNggazVwnHIzql3eoHu1Umn6yJlQhwBs8o9SAmmA4EnRZVxXFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rr8PHOkB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA38C116B1;
-	Mon,  8 Jul 2024 14:19:13 +0000 (UTC)
+	s=arc-20240116; t=1720448469; c=relaxed/simple;
+	bh=AS//5zgMCQN/h1qCnz0G1cBSnKG6FpnCnY7qDhGUZuE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gbQD86iNWzeNcZaSWg/n5NDlf4UY1T/m7Fk88T6dziCb14kAWKsWcg7oO7CaPI6grgcQfjy85Fnuf36vbfUKmaGyJBImug+xdGFVc0EzeoF6aCgLxwczb1rLpsUwCfztQmjp8ZEejNsANfYJ74M17vBPKRfyv5RP4BVF6Vyo+oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dnq/5zEj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E50C116B1;
+	Mon,  8 Jul 2024 14:21:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720448360;
-	bh=zxDS7ZUzuVyJRAnDAenP+Tt2MHcowuCTzWPQAP8b5bU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rr8PHOkBA+MypK2Sd8j0QxA+3OGVV+8iHxKhsADOGIJBGZxz0mugTsM384G65pjEe
-	 pfXtTNUQh25QwUGxrt9U0ct6JKQhDew3luY7P1BJTc4b5iKF6uzdLE3qVnjhbLvkfn
-	 PhLjimxafdmBLkdxrwFCHgX8obUuE2pAPszhnhMw8YQVcFE3ymT6P9UqBAEsnYgUPs
-	 SvTGpHWdcTOGDU/v/WKbnT4v1KMUAZtNbTeWKG5ECbDgsg7jC0aB2gFjFmr/CYwByO
-	 QOnLMxuCEMj3G7UvI+if3KntCBy2iWy7Fva+qKxPUBcqbWt8GQiI2Q3ku7HZXPLmTd
-	 T2VZwRYPEKzxw==
-Message-ID: <d1422b93-b111-41f6-8537-a837a48e5743@kernel.org>
-Date: Mon, 8 Jul 2024 16:19:11 +0200
+	s=k20201202; t=1720448468;
+	bh=AS//5zgMCQN/h1qCnz0G1cBSnKG6FpnCnY7qDhGUZuE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Dnq/5zEjN2yOZE4iZG9mtW07zJP+fMvDtYuso1bL6rGikEeD0lCTzGd6Q1nDw2u4e
+	 xXsr+N/InzfML8PECmci+pssxMxQP8XV471auGR0hnC5EvfYkkP9vfZxvm4Fl77zed
+	 CS1L9HHWC0Y1l75NRCoRE/B6RgxJnnHfp0X2ncSTok6exHe+Sdu2qQypP8aGcffluF
+	 kmTGow6mvyTy2lS+NqtV4udy6v0GXmECRklxdLK1Zon27VXDY2spbYQBedJ1ZoJwN+
+	 /ELM9ldefmo1dEJrM2bQIlYlBwHToPb69RuJtNbDkFhcxzxcRfSeuczsG1tl7jwlkC
+	 ZoVUhqVjyU+uw==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v5 0/4] KVM: arm64: Fix underallocation of storage for SVE
+ state
+Date: Mon, 08 Jul 2024 15:19:12 +0100
+Message-Id: <20240708-kvm-arm64-fix-pkvm-sve-vl-v5-0-d2175738456b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
- MA35D1 SDHCI controller
-To: Shan-Chun Hung <shanchun1218@gmail.com>, ulf.hansson@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
- serghox@gmail.com, mcgrof@kernel.org,
- prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
- tmaimon77@gmail.com, andy.shevchenko@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ychuang3@nuvoton.com, schung@nuvoton.com
-References: <20240704062623.1480062-1-shanchun1218@gmail.com>
- <20240704062623.1480062-2-shanchun1218@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240704062623.1480062-2-shanchun1218@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGH1i2YC/33QzYrCMBDA8VeRnB3JxzSJnnwP2UOTTDWobUkku
+ EjffVNhURF6/A+Z30AeLFOKlNlu9WCJSsxx6Gs06xXzp7Y/EsRQm0kukWuOcC5XaNNVI3TxDuO
+ cuRCUCwjlgxFdMMFxVvfHRPXJ0z781D7FfBvS7/NUkfP0X9ULapHAwVvbITl0At3+TKmny2ZIR
+ zazRbxTzRIlKqUtD9qhcujFF6XeKbNEqUo1WzJWGK6Dbr4ofFFm8dsKVsppu7Wtkyp4/KCmafo
+ DlX/GUqQBAAA=
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kvmarm@lists.linux.dev, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-d4707
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2069; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=AS//5zgMCQN/h1qCnz0G1cBSnKG6FpnCnY7qDhGUZuE=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmi/XJsOHfwdNXbXkCWTEMGhwVLSVC2tlTEcQYF4is
+ 6q7AEWqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZov1yQAKCRAk1otyXVSH0IAyB/
+ 9Lsqizk8r96lkyMqZtxNGsCwlbxxTf0t6UUi03eVRoXykw24Qli5z8PvHw0SjJtJujr+vDSUk1/xdq
+ pLIym0hJCTcTgzXVAj9mdv3cKBS5Y3f62PY8yP/FXjX+w7YUeQDsYvOYfjaVM+hdIhMfizdIoLVo+l
+ cJSqxKasaNksxBQqkG9IB1/Iu4fRh4eG6co2SJRmBNOcKGqUwFvWNRTtWnYV5Puv4/kys0LGvvJNno
+ OJMB73bBOQdMrmSkpiG5zS70z1mf4PE8VdQ4inStSyIpqO6mb/QC/apq9frCIpfUco0xoVug9ghy+X
+ 9vRBjNll+DPI67eKkU4BPg8Vo3yGkZ
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 04/07/2024 08:26, Shan-Chun Hung wrote:
-> Add binding for Nuvoton MA35D1 SDHCI controller.
-> 
-> Signed-off-by: Shan-Chun Hung <shanchun1218@gmail.com>
-> ---
+As observed during review the pKVM support for saving host SVE state is
+broken if an asymmetric system has VLs larger than the maximum shared
+VL, fix this by discovering then using the maximum VL for allocations
+and using RDVL during the save/restore process.
 
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v5:
+- Clarify commit message on patch 3.
+- Link to v4: https://lore.kernel.org/r/20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org
 
-> +
-> +  nuvoton,sys:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: phandle to access GCR (Global Control Register) registers.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - pinctrl-names
-> +  - pinctrl-0
-> +  - resets
-> +  - nuvoton,sys
+Changes in v4:
+- Roll in Catalin's acks.
+- Link to v3: https://lore.kernel.org/r/20240607-kvm-arm64-fix-pkvm-sve-vl-v3-0-59e781706d65@kernel.org
 
-Keep the same order as in list of properties.
+Changes in v3:
+- Replace %u with %lu in late CPU error message.
+Changes in v2:
+- Downgrade check for a late CPU increasing maximum VL to a warning only
+  but do it unconditionally since pKVM prevents late CPUs anyway.
+- Commit log tweaks.
+- Link to v1: https://lore.kernel.org/r/20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org
 
-Normally I would give conditional review tag, but not that case because
-in the past you kept ignoring review comments.
+---
+Mark Brown (4):
+      arm64/fpsimd: Introduce __bit_to_vl() helper
+      arm64/fpsimd: Discover maximum vector length implemented by any CPU
+      KVM: arm64: Fix FFR offset calculation for pKVM host state save and restore
+      KVM: arm64: Avoid underallocating storage for host SVE state
+
+ arch/arm64/include/asm/fpsimd.h         | 17 +++++++++++++++
+ arch/arm64/include/asm/kvm_host.h       |  2 +-
+ arch/arm64/include/asm/kvm_hyp.h        |  3 ++-
+ arch/arm64/include/asm/kvm_pkvm.h       |  2 +-
+ arch/arm64/kernel/fpsimd.c              | 38 +++++++++++++++++++++++++++------
+ arch/arm64/kvm/hyp/fpsimd.S             |  5 +++++
+ arch/arm64/kvm/hyp/include/hyp/switch.h |  2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      |  6 +++---
+ arch/arm64/kvm/hyp/nvhe/pkvm.c          |  2 +-
+ arch/arm64/kvm/reset.c                  |  6 +++---
+ 10 files changed, 65 insertions(+), 18 deletions(-)
+---
+base-commit: afb91f5f8ad7af172d993a34fde1947892408f53
+change-id: 20240604-kvm-arm64-fix-pkvm-sve-vl-13cd71fd7db0
 
 Best regards,
-Krzysztof
+-- 
+Mark Brown <broonie@kernel.org>
 
 
