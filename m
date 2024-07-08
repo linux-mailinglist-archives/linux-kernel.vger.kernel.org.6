@@ -1,83 +1,87 @@
-Return-Path: <linux-kernel+bounces-244944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63FF92AC06
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:26:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CB892AC0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E82561C2207C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 511541C220FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA22E150990;
-	Mon,  8 Jul 2024 22:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C0A1509BF;
+	Mon,  8 Jul 2024 22:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jly/SpBk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oFVtHkX6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51B43CF63;
-	Mon,  8 Jul 2024 22:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7633D3CF63;
+	Mon,  8 Jul 2024 22:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720477603; cv=none; b=tm2yd9E01NIwglW6GIL0aAIQCZWVQuhzDrPffUxJo9s022je+Zh1OS7Z7wC9q9sSQy7e1g8JXScniy2axmes1Dfh9o+0tFOXDmUEee1boBAkVi/lyDNbhYDEvNhdZNsaHpLnddDrMbgXAQhp1ZgiGR4cyKcCSP4N6kNpHgm2a6s=
+	t=1720477665; cv=none; b=PtR4E0+aO8TriNZKHNLIz6h9n1XJN+O9g89EFb8MIsLC73OgnILC3Jr5arGXJ18OipJ1OzhuOBfiG5RA9qL/ce83mh0C9RX71FKUueOCWJ8WsNZaal8KnEaBQmzcXYjZHZKgK0RoK7k1ueXn5ZhYULgQG4b3huEkny8MSSOrKu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720477603; c=relaxed/simple;
-	bh=cXOksX8i8kMxB3z6SFQbhz7mh95szg7WejnNbiRlTpg=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPt7NL+pmHO+yKUFBHyq74VwF+ZJPk+GeAUwbOJFAbxtA8UEcLNa5aMMKe7QwEQzE/pnzAHZYTADhZe10wx/fILGvfcYPvRySUpTESBKcwv0NtCvR6kwqA3SKW3Oel/J1c34/t2CqHglr8FnDvkL/FniegEiJKPgl/DltOibCzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jly/SpBk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 005A3C116B1;
-	Mon,  8 Jul 2024 22:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720477602;
-	bh=cXOksX8i8kMxB3z6SFQbhz7mh95szg7WejnNbiRlTpg=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=Jly/SpBk8CZAZ4gHL252Cto104of5S2XaXCjviTe0PAsDmrwr/JIUpnAtrKrarEei
-	 ELvHFEuAscaqppWfc2Ajjj3Gml3GmJonH4HJmoluEoLLyrC6pkak0+nIpLZrVBrPg7
-	 auVMkF4RCtjWY1VyMFPiP53vZkZwAk2FhV4ertYqpjXqwSAJmc6Lcnwx6oi2e30Uiw
-	 DaGMLtW0ccwhLvCExT/4PEqMEeblWnUEcygK1BMIm28NsyKzzG4hMlv6lSCxfI3SR+
-	 V2zI531VIP3vz1fbZJZkCDU0WeZ4QbRhyQ7ejJRiDRavJU8+xHePjvq4QF1BDaIUt1
-	 5nJYnSqLRhecw==
-Date: Tue, 9 Jul 2024 00:26:39 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: Re: [PATCH v2 3/3] i2c: rcar: minor changes to adhere to coding style
-Message-ID: <5trq7ondxem43rfnckonywhrucvjvecc52pvyik2fsz64ivknv@r22caitz5y3s>
-References: <20240707082848.5424-4-wsa+renesas@sang-engineering.com>
- <f93eda7e-e65f-42e9-b96d-e88290201ca0@web.de>
- <Zop2vNCrzDmEKKiO@shikoro>
- <Zou2g8nGBD7Pv8kR@shikoro>
+	s=arc-20240116; t=1720477665; c=relaxed/simple;
+	bh=cdy5zILmTkrtUAEBPhlgJpgFPWVDym+4zvsbx+LMWhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IqOvWvCSWVPmOga+5IWzV/PRZe//AOmRji63GWYsa7dnGFXzsYPrS5MdbbhinUarTMoN0tSwwsSzz4Ig8l8Zse6d8/eVrMQddUnExPDl7yeJnjbqJ7YX8VJ5czMmy6T7aBMXLvFUViuBnBZk+Y9O7bg9jNjB3lOiGPF9PN1Y02w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oFVtHkX6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BLVcL2EPYuo10mpXkM4Nfciy2mqtNKXtJyWcJeoaAt4=; b=oFVtHkX65Mdb3qO4D7Uvvgsbml
+	8c4tUiCT3xY/DCu6RB3bVaMNqlRV+lb2FOXjosFbBJHVAr63YwHbThYh7koJNrDX2lA2R/4+4/WKJ
+	w50l+aSFHWR2MaVqLfQxDla7Qkgx1sZP95/6HbgmdGUbwZIW3+E5eLxQlwH4lOkHAYen/dYygSqGf
+	NeAl8RqvfW8qi3nWArf+VF7tqCfjuuOysFgIg5rBpTTE96/K8OdxlB3emyGS7kY42LtKZV/Vo2raX
+	PefjkiI2QJriZYRUr8oyb7szDRq9rezDOhQVBMMv9dGuS86ryJhKmpDwocNtawGZqsGI2YDmQXUvS
+	tVb/IBqQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sQwpT-00000007EGt-3hi4;
+	Mon, 08 Jul 2024 22:27:27 +0000
+Date: Mon, 8 Jul 2024 23:27:27 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	Chandan Babu R <chandan.babu@oracle.com>, djwong@kernel.org,
+	david@fromorbit.com, Christian Brauner <brauner@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	akpm@linux-foundation.org, yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, p.raghav@samsung.com, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
+	Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v9 00/10] enable bs > ps in XFS
+Message-ID: <Zoxnz7R5EBb6SCR7@casper.infradead.org>
+References: <20240704112320.82104-1-kernel@pankajraghav.com>
+ <Zoxkap1DtwZ-1tjI@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zou2g8nGBD7Pv8kR@shikoro>
+In-Reply-To: <Zoxkap1DtwZ-1tjI@bombadil.infradead.org>
 
-Hi Wolfram,
-
-On Mon, Jul 08, 2024 at 11:50:59AM GMT, Wolfram Sang wrote:
-> 
-> > > > -};
-> > > > +}
-> > > …
-> > > 
-> > > How do you think about to omit any blank lines at such source code places?
+On Mon, Jul 08, 2024 at 03:12:58PM -0700, Luis Chamberlain wrote:
+> On Thu, Jul 04, 2024 at 11:23:10AM +0000, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
 > > 
-> > Oh yes, that newline should go as well. Thanks!
+> > This is the ninth version of the series that enables block size > page size
+> > (Large Block Size) in XFS.
 > 
-> Andi, is it okay if I only resend this patch?
+> It's too late to get this in for v6.11, but I'd like to get it more exposure
+> for testing. Anyone oppose getting this to start being merged now into
+> linux-next so we can start testing for *more* than a kernel release cycle?
 
-That's OK... if you want I can remove those blank lines before
-applying them, it's just two cases in your patch.
-
-Andi
+That's not how linux-next works.  It's only for patches which are
+destined for the next merge window, not for the one after that.
 
