@@ -1,135 +1,183 @@
-Return-Path: <linux-kernel+bounces-244772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF8F592A93B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:48:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A49C92A93E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB862811A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAE291F223BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AFE14A62B;
-	Mon,  8 Jul 2024 18:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FE714B07B;
+	Mon,  8 Jul 2024 18:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dDi6WSpO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jO1hYhMl"
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A7614D719;
-	Mon,  8 Jul 2024 18:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5069117C9E
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 18:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720464502; cv=none; b=I2WYKD9w/TNn4OS5qkQbPF4LmOxLu9ZNiZAtdBBZXnD3kbitxR2jGt3rFKRz9uj12AWcK3T1P+GRmuTpejwYNo7MlTqsDWlVIA6ETd6v579nGR8YRR5qvWvQv1dviI2s4zv2OfBdL/mPa8q1I50iGRZ1e2U5XFGTRgh5ZCr2t7E=
+	t=1720464541; cv=none; b=lLdHmQJFCNzxONBRc+2stxWlnMMND7Fcqcp9XhZlOB2TjfqTMfvi3GvoMu81+s8Mm9WSIL2gNCHRVGsdLWcTcpv9SSnCkSNvpVF7F2IgoxQnzFShU35V58NXrf4qqKuoD4c2iVCwsWDDR8dhI32pmqeJQgwcYwVG/um4S+5f0og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720464502; c=relaxed/simple;
-	bh=mWnrxFzxRxRPZXsKclXyaLzr4JzxLzVBGfeEsqZzZd0=;
+	s=arc-20240116; t=1720464541; c=relaxed/simple;
+	bh=Hl4YvBV8go4slZ9IoVL2J+Wu0va4qX9+10GlwhRiRZM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKexjjPfmcnZUniZ2lKRAMhiGssVSHZ8qUEOaxwOyCbDY6tfriwX9W+aRHjDGOeJdShCN6RLFnxrbe6ccrlHxOAcSUBSSOJwRX/KKDW+MBqi4Q5tLn6SaHEuVNEJreXrSigYw4sz1nrr7v4X3dB9wiJA2gxvk6GWuLczfuoM1j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dDi6WSpO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FN0xHQUi1wWiU1wm9z2Xelr6TBiXkz9A1M2VlZ8zZZE=; b=dDi6WSpOtb1mlx2n4FI5sO9Bqt
-	jF9BBvQr+AIxjPamFcI8QgMj/NPk62vMlxHNC44+bzLW6qXAGF018j+GQKY6guEmJK3deBYUDGErm
-	SxA+zZRxjlqM2iK8vSDvZ4SNL+9X0foBjwogUyjL8FgSOG1w3AtWmlusidb8r1eD4K2jdgY1UnqaT
-	Vr8vptPnlTEZLoRy+SM47Sw8W8aApYL9AAmNxvJGMOoFpqhRytzFfVnnXscjxx4DTHLgKF9BY9JTp
-	aplF1S1tAih/J/pkGEFkAr+4kto1cAwN7QhW2W0brjvJOHa/SGPHrtAR2xRWCasyFxHYmOh9F34xq
-	b5O/BnCA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sQtPL-000000074iU-49y0;
-	Mon, 08 Jul 2024 18:48:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0E90C300694; Mon,  8 Jul 2024 20:48:15 +0200 (CEST)
-Date: Mon, 8 Jul 2024 20:48:14 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, io-uring@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Julian Orth <ju.orth@gmail.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-Message-ID: <20240708184814.GD27299@noisy.programming.kicks-ass.net>
-References: <cover.1720368770.git.asml.silence@gmail.com>
- <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
- <20240708104221.GA18761@redhat.com>
- <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LcX/U+JPOX7N5AiErAOafDXere3uxppFALZltHWWCEXYnRyCzZ5iYQ6+2E9hcf9D3qcpy/h5ckp0+LZLN6APRur9GiwU+0vVFwbsFTpDkC7v8UNYkfkf2Bjy5RzEvynBwUYciiotr0PMz/b7SbB53R6AHSQCNUuQdbnNQubLi04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jO1hYhMl; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHtSQ1wggzLb3;
+	Mon,  8 Jul 2024 20:48:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720464534;
+	bh=iGXt0xsa3rS+/5ZnuSgBxf26AIJNKWTQ+ZK/8T1K4CM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jO1hYhMlGqC2ihtxiG/svAn1L92DGAbJ6eAS3yD5ZKxhQ3AdxbeN5fJriToJdDSgg
+	 ryDPCfrGOoXTm2F/V6eUSsZFDxd6tFLvQnTTac3vdlzGuPXg/qcukz0bhempjggIVm
+	 AdQj8yI4MkSKKodTr+Dx8IwSZGUsdXAtS/AOWeLo=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHtSL2dRBzWFC;
+	Mon,  8 Jul 2024 20:48:50 +0200 (CEST)
+Date: Mon, 8 Jul 2024 20:48:47 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+Message-ID: <20240708.quoe8aeSaeRi@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-3-mic@digikod.net>
+ <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
+ <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 08, 2024 at 04:40:07PM +0100, Pavel Begunkov wrote:
+On Mon, Jul 08, 2024 at 10:53:11AM -0700, Jeff Xu wrote:
+> On Mon, Jul 8, 2024 at 9:17 AM Jeff Xu <jeffxu@google.com> wrote:
+> >
+> > Hi
+> >
+> > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > >
+> > > These new SECBIT_SHOULD_EXEC_CHECK, SECBIT_SHOULD_EXEC_RESTRICT, and
+> > > their *_LOCKED counterparts are designed to be set by processes setting
+> > > up an execution environment, such as a user session, a container, or a
+> > > security sandbox.  Like seccomp filters or Landlock domains, the
+> > > securebits are inherited across proceses.
+> > >
+> > > When SECBIT_SHOULD_EXEC_CHECK is set, programs interpreting code should
+> > > check executable resources with execveat(2) + AT_CHECK (see previous
+> > > patch).
+> > >
+> > > When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
+> > > execution of approved resources, if any (see SECBIT_SHOULD_EXEC_CHECK).
+> > >
+> > Do we need both bits ?
+> > When CHECK is set and RESTRICT is not, the "check fail" executable
+> > will still get executed, so CHECK is for logging ?
+> > Does RESTRICT imply CHECK is set, e.g. What if CHECK=0 and RESTRICT = 1 ?
+> >
+> The intention might be "permissive mode"?  if so, consider reuse
+> existing selinux's concept, and still with 2 bits:
+> SECBIT_SHOULD_EXEC_RESTRICT
+> SECBIT_SHOULD_EXEC_RESTRICT_PERMISSIVE
 
-> > > --- a/kernel/signal.c
-> > > +++ b/kernel/signal.c
-> > > @@ -2694,6 +2694,10 @@ bool get_signal(struct ksignal *ksig)
-> > >   	try_to_freeze();
-> > >   relock:
-> > > +	clear_notify_signal();
-> > > +	if (unlikely(task_work_pending(current)))
-> > > +		task_work_run();
-> > > +
-> > >   	spin_lock_irq(&sighand->siglock);
-> > 
-> > Well, but can't we kill the same code at the start of get_signal() then?
-> > Of course, in this case get_signal() should check signal_pending(), not
-> > task_sigpending().
+SECBIT_SHOULD_EXEC_CHECK is for user space to check with execveat+AT_CHECK.
+
+SECBIT_SHOULD_EXEC_RESTRICT is for user space to restrict execution by
+default, and potentially allow some exceptions from the list of
+checked-and-allowed files, if SECBIT_SHOULD_EXEC_CHECK is set.
+
+Without SECBIT_SHOULD_EXEC_CHECK, SECBIT_SHOULD_EXEC_RESTRICT is to deny
+any kind of execution/interpretation.
+
+With only SECBIT_SHOULD_EXEC_CHECK, user space should just check and log
+any denied access, but ignore them.  So yes, it is similar to the
+SELinux's permissive mode.
+
+This is explained in the next patch as comments.
+
+The *_LOCKED variants are useful and part of the securebits concept.
+
 > 
-> Should be fine, but I didn't want to change the
-> try_to_freeze() -> __refrigerator() path, which also reschedules.
 > 
-> > Or perhaps something like the patch below makes more sense? I dunno...
+> -Jeff
 > 
-> It needs a far backporting, I'd really prefer to keep it
-> lean and without more side effects if possible, unless
-> there is a strong opinion on that.
-
-It's been a minute since I dug my way through the signal code, but I
-think I slightly favour Oleg's version for not duplicating that
-task_work_run().
-
-
-> > diff --git a/kernel/signal.c b/kernel/signal.c
-> > index 1f9dd41c04be..e2ae85293fbb 100644
-> > --- a/kernel/signal.c
-> > +++ b/kernel/signal.c
-> > @@ -2676,6 +2676,7 @@ bool get_signal(struct ksignal *ksig)
-> >   	struct signal_struct *signal = current->signal;
-> >   	int signr;
-> > +start:
-> >   	clear_notify_signal();
-> >   	if (unlikely(task_work_pending(current)))
-> >   		task_work_run();
-> > @@ -2760,10 +2761,11 @@ bool get_signal(struct ksignal *ksig)
-> >   			if (current->jobctl & JOBCTL_TRAP_MASK) {
-> >   				do_jobctl_trap();
-> >   				spin_unlock_irq(&sighand->siglock);
-> > +				goto relock;
-> >   			} else if (current->jobctl & JOBCTL_TRAP_FREEZE)
-> >   				do_freezer_trap();
-> > -
-> > -			goto relock;
-> > +				goto start;
-> > +			}
-> >   		}
-> >   		/*
-> > 
 > 
-> -- 
-> Pavel Begunkov
+> 
+> 
+> > > For a secure environment, we might also want
+> > > SECBIT_SHOULD_EXEC_CHECK_LOCKED and SECBIT_SHOULD_EXEC_RESTRICT_LOCKED
+> > > to be set.  For a test environment (e.g. testing on a fleet to identify
+> > > potential issues), only the SECBIT_SHOULD_EXEC_CHECK* bits can be set to
+> > > still be able to identify potential issues (e.g. with interpreters logs
+> > > or LSMs audit entries).
+> > >
+> > > It should be noted that unlike other security bits, the
+> > > SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT bits are
+> > > dedicated to user space willing to restrict itself.  Because of that,
+> > > they only make sense in the context of a trusted environment (e.g.
+> > > sandbox, container, user session, full system) where the process
+> > > changing its behavior (according to these bits) and all its parent
+> > > processes are trusted.  Otherwise, any parent process could just execute
+> > > its own malicious code (interpreting a script or not), or even enforce a
+> > > seccomp filter to mask these bits.
+> > >
+> > > Such a secure environment can be achieved with an appropriate access
+> > > control policy (e.g. mount's noexec option, file access rights, LSM
+> > > configuration) and an enlighten ld.so checking that libraries are
+> > > allowed for execution e.g., to protect against illegitimate use of
+> > > LD_PRELOAD.
+> > >
+> > > Scripts may need some changes to deal with untrusted data (e.g. stdin,
+> > > environment variables), but that is outside the scope of the kernel.
+> > >
+> > > The only restriction enforced by the kernel is the right to ptrace
+> > > another process.  Processes are denied to ptrace less restricted ones,
+> > > unless the tracer has CAP_SYS_PTRACE.  This is mainly a safeguard to
+> > > avoid trivial privilege escalations e.g., by a debugging process being
+> > > abused with a confused deputy attack.
+> > >
+> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > Link: https://lore.kernel.org/r/20240704190137.696169-3-mic@digikod.net
+> > > ---
 
