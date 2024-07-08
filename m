@@ -1,115 +1,187 @@
-Return-Path: <linux-kernel+bounces-244150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE2B929FD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:06:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E662929FDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BBD21C21567
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0381C20C6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E5C76025;
-	Mon,  8 Jul 2024 10:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="HbnVZgRC"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1831E13ACC;
-	Mon,  8 Jul 2024 10:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F25770ED;
+	Mon,  8 Jul 2024 10:06:56 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA35A76025;
+	Mon,  8 Jul 2024 10:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720433194; cv=none; b=hnQkFGA7W1aFx0CxiPch+GxIXwzUjEVWrMCpvaqZB2QbOQEARsaworR0CWUnvJa6aVlWZVmB5xqsCqpzBijHMRrPepnPILYvfa6m13v+xNlVuuwHBS3USYiYCv1eqPmxSsRpxDgdAGVpZn1MpZWOOXuks4cQVmdQQO/UomUTjDA=
+	t=1720433215; cv=none; b=CMkAFm6EhGOHFhIPoldnaamFMaJS/TLkzsmA4y4POPhP0X2V/G44lGc9WOjHuSNppfipIB5qnJrFL4I0lAIi81giQj3m/pgt8GcTMXse0bdgTrTyBAHI3ZJC/ac0roo2o+X+VdSG7HNCz/e9trG+NvDEz0nvhqaxKVyDKdYVTwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720433194; c=relaxed/simple;
-	bh=dxHrFPe2Oclcjmv0GLPO4gTX01NRE6R2X4oSLDjQhko=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=JKark3fg+Gv34DrjEVP9sVk8D7YZWhKJOfM1CQt2qFgCqx4UyD1nqinNkOKffpTgJ9eR/aCi6pguA/u+4BjNL9q+rd0pF8k0YnoBx5Zc+y9EiYvILfJV2ZFo49wVErmmAcMeS8UI16Q8dphn+0qsWzIPBVBUZWG2jHjtEa+hkB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=HbnVZgRC; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from [IPV6:2a02:8010:6359:2:e181:9992:7c46:d034] (unknown [IPv6:2a02:8010:6359:2:e181:9992:7c46:d034])
-	(Authenticated sender: james)
-	by mail.katalix.com (Postfix) with ESMTPSA id B47167D926;
-	Mon,  8 Jul 2024 11:06:25 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1720433185; bh=dxHrFPe2Oclcjmv0GLPO4gTX01NRE6R2X4oSLDjQhko=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:From;
-	z=Message-ID:=20<cfee59ae-4807-f384-b525-ce47fa4135e6@katalix.com>|
-	 Date:=20Mon,=208=20Jul=202024=2011:06:25=20+0100|MIME-Version:=201
-	 .0|To:=20Hillf=20Danton=20<hdanton@sina.com>|Cc:=20netdev@vger.ker
-	 nel.org,=20linux-kernel@vger.kernel.org,=0D=0A=20syzkaller-bugs@go
-	 oglegroups.com,=20tparkin@katalix.com,=0D=0A=20syzbot+b471b7c93630
-	 1a59745b@syzkaller.appspotmail.com,=0D=0A=20syzbot+c041b4ce3a6dfd1
-	 e63e2@syzkaller.appspotmail.com|References:=20<20240705103250.3144
-	 -1-hdanton@sina.com>|From:=20James=20Chapman=20<jchapman@katalix.c
-	 om>|Subject:=20Re:=20[PATCH=20net-next=20v2]=20l2tp:=20fix=20possi
-	 ble=20UAF=20when=20cleaning=20up=0D=0A=20tunnels|In-Reply-To:=20<2
-	 0240705103250.3144-1-hdanton@sina.com>;
-	b=HbnVZgRC6k6bL5IzcY0F2hUALh6H0tiQ3R2NYZipLKTBxDacmi5dEgs834RxG70u8
-	 IrtEpz/hMGslrB2sPVguDSAu9MIlqIrQujX/dmL0jjip8PmYPwA1ESLKpp4lwfpQZw
-	 pCqdqBg4sZsDrFenOwCGFR94SyrB8+9hsVJDertZ04jD7K7NUmPK6lRGaVpoUhiyUT
-	 EmItYLpzWRzeEjFKnnAc0ZV3tJTHBop2hSRJs/9LyivRPjbErjh8A6zaaMTgWTMhTT
-	 JqxYIJofXvJ2IRmjvZHkbInS909hoYvlyWZDayXHLkGp+wWBlOKMj26KI5iGntN6wy
-	 jlJbGX1UBz+Qw==
-Message-ID: <cfee59ae-4807-f384-b525-ce47fa4135e6@katalix.com>
-Date: Mon, 8 Jul 2024 11:06:25 +0100
+	s=arc-20240116; t=1720433215; c=relaxed/simple;
+	bh=VEZ06fzVYpy++9icFhiWFSzQWhDVs2na3vsap9PM6ug=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=EjgW9l2am/1m7vqCWAhVRYmbxdfWye3Lljge7dH4jfRq9MqIA7crWZQvfxOJY76BH14k75uB2eXNYS12bDHrEbZu0Js9+Pk2Fc5LkTm6Olq18PS0X0cLMbWRVbr9+ZUHLDRW7GAWwJ5plqpa80AjuhQRXypkbkpWQ88L0sy7PE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Cx8PE7uotmVPYBAA--.6462S3;
+	Mon, 08 Jul 2024 18:06:51 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxvsc3uotmT30_AA--.16015S3;
+	Mon, 08 Jul 2024 18:06:48 +0800 (CST)
+Subject: Re: [PATCH v2 1/3] perf: Add perf_event_attr::bp_priv
+To: Peter Zijlstra <peterz@infradead.org>
+References: <20240621073910.8465-1-yangtiezhu@loongson.cn>
+ <20240621073910.8465-2-yangtiezhu@loongson.cn>
+ <20240705103413.GA8971@willie-the-truck>
+ <7522fc14-aacc-a8e3-3258-9064d7e2936f@loongson.cn>
+ <20240708073652.GE11386@noisy.programming.kicks-ass.net>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Oleg Nesterov <oleg@redhat.com>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <da0c95e7-c676-e0c0-8b90-b1ea5fc7b72f@loongson.cn>
+Date: Mon, 8 Jul 2024 18:06:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-To: Hillf Danton <hdanton@sina.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, tparkin@katalix.com,
- syzbot+b471b7c936301a59745b@syzkaller.appspotmail.com,
- syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
-References: <20240705103250.3144-1-hdanton@sina.com>
-Content-Language: en-US
-From: James Chapman <jchapman@katalix.com>
-Organization: Katalix Systems Ltd
-Subject: Re: [PATCH net-next v2] l2tp: fix possible UAF when cleaning up
- tunnels
-In-Reply-To: <20240705103250.3144-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20240708073652.GE11386@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:AQAAf8Dxvsc3uotmT30_AA--.16015S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxZF4UKF17ArW7Zr4DGrWrCrX_yoWrAry7pr
+	s8CFnIkrWkJryYvw13Kw12vw15twsrKr4UW343G34jyFsI93s5Wa1kKF1a9Fn5Ars7AFWF
+	qw4qqF9ru34UurXCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2-VyUU
+	UUU
 
-On 05/07/2024 11:32, Hillf Danton wrote:
-> On Thu,  4 Jul 2024 16:25:08 +0100 James Chapman <jchapman@katalix.com>
->> --- a/net/l2tp/l2tp_core.c
->> +++ b/net/l2tp/l2tp_core.c
->> @@ -1290,17 +1290,20 @@ static void l2tp_session_unhash(struct l2tp_session *session)
->>   static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
->>   {
->>   	struct l2tp_session *session;
->> -	struct list_head *pos;
->> -	struct list_head *tmp;
->>   
->>   	spin_lock_bh(&tunnel->list_lock);
->>   	tunnel->acpt_newsess = false;
->> -	list_for_each_safe(pos, tmp, &tunnel->session_list) {
->> -		session = list_entry(pos, struct l2tp_session, list);
->> +	for (;;) {
->> +		session = list_first_entry_or_null(&tunnel->session_list,
->> +						   struct l2tp_session, list);
->> +		if (!session)
->> +			break;
->> +		l2tp_session_inc_refcount(session);
->>   		list_del_init(&session->list);
->>   		spin_unlock_bh(&tunnel->list_lock);
->>   		l2tp_session_delete(session);
->>   		spin_lock_bh(&tunnel->list_lock);
->> +		l2tp_session_dec_refcount(session);
-> 
-> Bumping refcount up makes it safe for the current cpu to go thru race
-> after releasing lock, and if it wins the race, dropping refcount makes
-> the peer head on uaf.
+On 07/08/2024 03:36 PM, Peter Zijlstra wrote:
+> On Sat, Jul 06, 2024 at 01:31:03PM +0800, Tiezhu Yang wrote:
+>>
+>>
+>> On 07/05/2024 06:34 PM, Will Deacon wrote:
+>>> On Fri, Jun 21, 2024 at 03:39:08PM +0800, Tiezhu Yang wrote:
+>>>> Add a member "bp_priv" at the end of the uapi struct perf_event_attr
+>>>> to make a bridge between ptrace and hardware breakpoint.
+>>>>
+>>>> This is preparation for later patch on some archs such as ARM, ARM64
+>>>> and LoongArch which have privilege level of breakpoint.
+>>>>
+>>>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+>>>> ---
+>>>>  include/uapi/linux/perf_event.h | 3 +++
+>>>>  kernel/events/hw_breakpoint.c   | 1 +
+>>>>  2 files changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+>>>> index 3a64499b0f5d..f9f917e854e6 100644
+>>>> --- a/include/uapi/linux/perf_event.h
+>>>> +++ b/include/uapi/linux/perf_event.h
+>>>> @@ -379,6 +379,7 @@ enum perf_event_read_format {
+>>>>  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
+>>>>  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
+>>>>  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
+>>>> +#define PERF_ATTR_SIZE_VER9	144	/* add: bp_priv */
+>>>>
+>>>>  /*
+>>>>   * Hardware event_id to monitor via a performance monitoring event:
+>>>> @@ -522,6 +523,8 @@ struct perf_event_attr {
+>>>>  	__u64	sig_data;
+>>>>
+>>>>  	__u64	config3; /* extension of config2 */
+>>>> +
+>>>> +	__u8	bp_priv; /* privilege level of breakpoint */
+>>>>  };
+>>>
+>>> Why are we extending the user ABI for this? Perf events already have the
+>>> privilege encoded (indirectly) by the exclude_{user,kernel,hv} fields in
+>>> 'struct perf_event_attr'.
+>>
+>> IMO, add bp_priv is to keep consistent with the other fields
+>> bp_type, bp_addr and bp_len, the meaning of bp_priv field is
+>> explicit and different with exclude_{user,kernel,hv} fields.
+>
+> In case it wasn't obvious, this structure has __u64 granularity. You
+> don't just add a __u8 to the end. Also, since you mention consistency,
+> you might have noticed those other bp_ fields are in a union on
+> config[12], so why can't this live in a union on config3 ?
 
-Thanks for reviewing this. Can you elaborate on what you mean by "makes 
-the peer head on uaf", please?
+Looks good, I will do it in v3, like this:
+(no need to define PERF_ATTR_SIZE_VER9	144)
+
+diff --git a/include/uapi/linux/perf_event.h 
+b/include/uapi/linux/perf_event.h
+index 3a64499b0f5d..abe8da7a1f60 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -521,7 +521,10 @@ struct perf_event_attr {
+          */
+         __u64   sig_data;
+
+-       __u64   config3; /* extension of config2 */
++       union {
++               __u8    bp_priv; /* privilege level of breakpoint */
++               __u64   config3; /* extension of config2 */
++       };
+  };
+
+>> Additionally, there is only 1 bit for exclude_{user,kernel,hv},
+>> but bp_priv field has at least 2 bit according to the explanation
+>> of Arm Reference Manual. At last, the initial aim is to remove
+>> the check condition to assign the value of hw->ctrl.privilege.
+>>
+>> https://developer.arm.com/documentation/ddi0487/latest/
+>>
+>> 1. D23: AArch64 System Register Descriptions (Page 8562)
+>>    D23.3.11 DBGWCR<n>_EL1, Debug Watchpoint Control Registers, n = 0 - 63
+>>    PAC, bits [2:1]
+>>    Privilege of access control. Determines the Exception level or levels at
+>> which a Watchpoint debug
+>>    event for watchpoint n is generated.
+>>
+>> 2. G8: AArch32 System Register Descriptions (Page 12334)
+>>    G8.3.26 DBGWCR<n>, Debug Watchpoint Control Registers, n = 0 - 15
+>>    PAC, bits [2:1]
+>>    Privilege of access control. Determines the Exception level or levels at
+>> which a Watchpoint debug
+>>    event for watchpoint n is generated.
+>
+> That's all clear as mud for someone that don't speak arm. Can you please
+> provide a coherent reason for all this that does not rely on external
+> resources?
+
+In short, when developing hardware watchpoint on LoongArch, we want to
+set the same privilege passed by the ptrace user data, but there is no
+a middle bridge to save this value like bp_addr, bp_type and bp_len, I
+think this is a common issue for the archs which have privilege level
+of breakpoint.
+
+Thanks,
+Tiezhu
 
 
