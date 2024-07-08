@@ -1,128 +1,104 @@
-Return-Path: <linux-kernel+bounces-244415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487E392A400
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:47:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D554492A405
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7AB81F227E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:47:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B0D9B21963
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D65713D275;
-	Mon,  8 Jul 2024 13:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89AC813AD07;
+	Mon,  8 Jul 2024 13:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4+J9ZaO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJmTuOFz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F30D770F3;
-	Mon,  8 Jul 2024 13:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C397B2746D;
+	Mon,  8 Jul 2024 13:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446435; cv=none; b=dALAEssrgr5l8ZyL/IF6AVunTxAVtne1YMgPqLFnO929yaVULWk9T2c6o4Y5JhejLHkHOYy/wn0zW4QlZDtQ9S+KikC/P/67YAEyALf6grBGCbiQq9nPcnBaeTMboQ2inVxBjFdKVmMa1NYy2b1uv9riLzE66TZvVp2XMN0ATJQ=
+	t=1720446451; cv=none; b=O6ebkvWcPjUN7CU1fnffQCMUBAhl+okFp9xrZxuIklzOY9LjteE+ZM13xFAQHNliqzIwD0w9rtTPcSvsL9thrhFALhQl0vBe3O+F1lUrkqevJjlyAnIj2cJ9zglPwboLDRRqSH0YIWYbfK3FqJf4e4uvhGAi+/CMaFAFuXTMKFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446435; c=relaxed/simple;
-	bh=2vomq8mEESeFfhHmhQ5eoZsQ2DEc5hIHJUkmN3qwLnk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=JZDGCsf0s0tsQW9V7SLkIgy1RSjMlVO47w7azzyzdg6N93XIZudcSNGD9tMoz0o5WV4bpvcPFJOSi2Xv8RiLO3Yw/j66H246+HUc4gzddrJjyNWF3hEOmuGikdL2kgr/WIeMweDWtkJODvFR9KeKkJPaMhwY68Kp56duoTOwnTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4+J9ZaO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F10C116B1;
-	Mon,  8 Jul 2024 13:47:14 +0000 (UTC)
+	s=arc-20240116; t=1720446451; c=relaxed/simple;
+	bh=7hu3e9/Hj8XC7xexm2FHFjZJcixRqYd55unsbK3uK94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q79Fo0Wp23bf9OBWf0hyssl9m4JvQFPPHFrJaqvppq3kfCMDfhDHPx9LbWNs3LuJChlZII2TyV3T8UgjiTPKjAVtd/894eRqn4aYu9hFTjehlvLngp8kGeZPQS3u836hATnfN1pPfY9/9ngiRifdCsfEOtGZm4g4IYJb711fsTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJmTuOFz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E71C116B1;
+	Mon,  8 Jul 2024 13:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720446435;
-	bh=2vomq8mEESeFfhHmhQ5eoZsQ2DEc5hIHJUkmN3qwLnk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=U4+J9ZaO/WP8O9id+1gpZf41+qJtJ56JjqlQnnetfmgZDX/p2Em4SdLADSZVpPvsY
-	 yS8b1uvRqw5fvEeCWqd5acaYwMZ+r4Ny51XKZVYXdYJ8GRaJR/PnKMN+hCAWpn1XK0
-	 tcoTG+akL0rGlgz9YTzEun1YKj8dZfT4TP8lhM+nTshNRQBQ7adqOKom/SVyp83lFO
-	 IrbNk41MFFgQ3C10uLFXioOZ1hH5j/phbVMoNQZeZTZOru2a6OUwFIZgIkXtK6MxZs
-	 F5E72UiQ6UfWD066+LPn76RavHu0coAoqv0FxPL7CZ2Y7c2IdBVi1KfIzaKNULk1IT
-	 CZX6WsUHtwoxw==
-Date: Mon, 08 Jul 2024 07:47:13 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1720446451;
+	bh=7hu3e9/Hj8XC7xexm2FHFjZJcixRqYd55unsbK3uK94=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YJmTuOFz9YUaZVvSbeZHVgmn99MOvvOkPPiu3F3d7+5/m5qwDzOZPIyuVKx4O3U1p
+	 1FfRqxlNExaCIF0AtJa8O8k8vDj4tqtbl/7XsHVFb8iuTuGwXU50sMnr/skst8U8Vs
+	 TMuSFeqpmtLZZ+nFYW7bh2UrvJXdFnyUaHV4PQKhhuZxD38t2kmzvfFrWjIQ2HPimE
+	 CQGsCDfOF7yWoRatQHQByGWHGUerIz+V1thfMUIFmJhwJK+k9Ujnun0xRrnU5KByBr
+	 UUA7ivjC8UF8z4BtLu8yQnTNVwlZKOyi9I+ge5s6ZnR4YU88xqTXFsY8vRw2kGgY4r
+	 LOKXviKqq9olw==
+Date: Mon, 8 Jul 2024 07:47:30 -0600
+From: Rob Herring <robh@kernel.org>
+To: Eddie James <eajames@linux.ibm.com>
+Cc: linux-fsi@lists.ozlabs.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ninad@linux.ibm.com,
+	lakshmiy@us.ibm.com, linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	andrew@codeconstruct.com.au, joel@jms.id.au, conor+dt@kernel.org,
+	krzk+dt@kernel.org, andi.shyti@kernel.org, broonie@kernel.org
+Subject: Re: [PATCH v6 00/20] ARM: dts: aspeed: Add IBM P11 BMC systems
+Message-ID: <20240708134730.GA2916637-robh@kernel.org>
+References: <20240522192524.3286237-1-eajames@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, 
- Viresh Kumar <vireshk@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>, 
- Andy Gross <agross@kernel.org>, Nishanth Menon <nm@ti.com>, 
- linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
- Robert Marko <robimarko@gmail.com>, linux-kernel@vger.kernel.org, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- Ulf Hansson <ulf.hansson@linaro.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Rob Herring <robh+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Niklas Cassel <nks@flawful.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-In-Reply-To: <20240708-topic-cpr3h-v15-4-5bc8b8936489@linaro.org>
-References: <20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org>
- <20240708-topic-cpr3h-v15-4-5bc8b8936489@linaro.org>
-Message-Id: <172044643349.2927781.3846230770478390037.robh@kernel.org>
-Subject: Re: [PATCH v15 04/10] dt-bindings: soc: qcom: cpr3: Add bindings
- for CPR3+ driver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522192524.3286237-1-eajames@linux.ibm.com>
 
-
-On Mon, 08 Jul 2024 14:22:35 +0200, Konrad Dybcio wrote:
-> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+On Wed, May 22, 2024 at 02:25:04PM -0500, Eddie James wrote:
+> Add the Blueridge and Fuji BMC systems. Document many missing FSI related
+> properties, and fix existing warnings. Make some minor fixes in OCC and
+> SCOM drivers for the updated bindings.
 > 
-> Add the bindings for the Qualcomm CPR3+ hardware.
+> Changes since v5:
+>  - Switch from clock-frequency to bus-frequency for common FSI controller
+>    properties
+>  - Add reg properties for AST2700 FSI controller
+>  - Fix patternProperties for i2c bus nodes under FSI-based I2C controller
+>  - Add bus-frequency for P11 FSI device tree node
+>  - Change model name from Blueridge to Blueridge 2U
+>  - Add missing reset gpio to led controller on Fuji
+>  - Add Huygens (Rainier with modified FSI wiring)
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-> [Konrad: Make binding check pass, some other changes]
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  .../devicetree/bindings/soc/qcom/qcom,cpr3.yaml    | 286 +++++++++++++++++++++
->  1 file changed, 286 insertions(+)
-> 
+> Eddie James (20):
+>   spi: dt-bindings: Document the IBM FSI-attached SPI controller
+>   dt-bindings: fsi: fsi2spi: Document SPI controller child nodes
+>   dt-bindings: fsi: Document the IBM SCOM engine
+>   dt-bindings: fsi: p9-occ: Convert to json-schema
+>   dt-bindings: fsi: Document the IBM SBEFIFO engine
+>   dt-bindings: fsi: Document the FSI controller common properties
+>   dt-bindings: fsi: ibm,i2cr-fsi-master: Reference common FSI controller
+>   dt-bindings: fsi: ast2600-fsi-master: Convert to json-schema
+>   dt-bindings: fsi: Document the AST2700 FSI controller
+>   dt-bindings: fsi: Document the FSI Hub Controller
+>   dt-bindings: i2c: i2c-fsi: Convert to json-schema
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Looks like these haven't been applied, so I applied patches 2-11.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-1:qcom,opp-cloop-vadj:0: [0] is too short
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-1:qcom,opp-oloop-vadj:0: [0] is too short
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-2:qcom,opp-cloop-vadj:0: [0] is too short
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-2:qcom,opp-oloop-vadj:0: [0] is too short
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-3:qcom,opp-cloop-vadj:0: [0] is too short
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-3:qcom,opp-oloop-vadj:0: [0] is too short
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240708-topic-cpr3h-v15-4-5bc8b8936489@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+>   dt-bindings: arm: aspeed: add IBM P11 BMC boards
+>   ARM: dts: aspeed: Add IBM P11 FSI devices
+>   ARM: dts: aspeed: Add IBM P11 Blueridge BMC system
+>   ARM: dts: aspeed: Add IBM P11 Blueridge 4U BMC system
+>   ARM: dts: aspeed: Add IBM P11 Fuji BMC system
+>   ARM: dts: aspeed: Add IBM Huygens BMC system
+>   fsi: occ: Get device number from FSI minor number API
+>   fsi: occ: Find next available child rather than node name match
+>   fsi: scom: Update compatible string to match documentation
 
