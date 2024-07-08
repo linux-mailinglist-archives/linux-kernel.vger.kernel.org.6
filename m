@@ -1,82 +1,72 @@
-Return-Path: <linux-kernel+bounces-244766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D8C92A923
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8046692A927
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE8D1F21B50
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36CA51F21A90
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1281DFC7;
-	Mon,  8 Jul 2024 18:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF07714D28A;
+	Mon,  8 Jul 2024 18:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCEM8HEd"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="axskcSQs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B646B17C9E;
-	Mon,  8 Jul 2024 18:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DCF14BFA8;
+	Mon,  8 Jul 2024 18:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720464321; cv=none; b=T51zzVF3Zyer6tn9pwxiI1t33CqrOtfoWWXTFh8hrV0aFyurhU+zuNNR4F1dcT4yVmUr5L7ED32exc5T8tyIuA4Vj1FPznpz66BEl2B4BrOVLJp7UKvn6AJAzBUugBemUhBLQOynEH1Q40YQsUjMSzt6KKaLVxoti7VNtBfZC4I=
+	t=1720464392; cv=none; b=Pv64waKKN4tDd/yRyNAE3/DWEPKFyHFX61ToIKjfb8GfN+Vzza4fy4VrZWZriwmVox2L0tm2NVG3biq0EL5YAXRTdgI1rWuCyIM6b1Uzs8Au6wzFf4wsHdVrPJS9mCdzfsbBBiFmipmG0yKUgGSGDwDk6klXrHsql19huMpPrhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720464321; c=relaxed/simple;
-	bh=x+md8Yw2vlsX1Vo5jhFawgklg5cgaDj76s25DaKsTuE=;
+	s=arc-20240116; t=1720464392; c=relaxed/simple;
+	bh=nWsKkWowCIBu+p5sjvVUVjNIp23bl9SMKEPKGmLp4tc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t0fGe2MAo3WC+rHyeh4QEXvptMYFu5V3pbfr4XrQ9EKtFsecH75w5iVfEqz7e/lNGYrWuInGusrGK0E7Vq3RgyhSmn/VaUSf7Ox8FJSTdH6twH3GxPy9XS4434Kq/0HMVTH3xGBekcYrt2sBrKfJcI77PD5KxY2CEtqtVZsAsok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCEM8HEd; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c9df3eb0edso1559576a91.3;
-        Mon, 08 Jul 2024 11:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720464319; x=1721069119; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C7TXhObjjg10CfoE/exetflVyceR3Yc7EDIa0HGfVmw=;
-        b=UCEM8HEdPBFx8Q5xsqK/g8FKKKecjMH4F5HhUcDXePz/yXlgaueH1flB3P+hGHMPZP
-         4uO0xqwzZVdjgom4sj7Vx5B8hUD1LdDvW5w8VKsZbp2C4z6qhYvodNqMSEsmg6QbpX0I
-         v0O8soFYcpMRoKXcwHjvvEhOLvDRXVFp8UOM+SpK0xo3GeCqYJh+W4w+4Vl9SDNDIcP+
-         bkOdt9uKCZo1uW7bbqbHWAnjJGAGn/DxhMtJrwdyQ8Hag69NCtdlqa3r4QneVqgz3zmA
-         rfknvEsP/y48by+xjcQ0HHPxje5KfVLnBhiiWEvGfRwLBKYblzeDzeNySJJJhagUyA58
-         fcgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720464319; x=1721069119;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C7TXhObjjg10CfoE/exetflVyceR3Yc7EDIa0HGfVmw=;
-        b=Xeipmx+lAMci+PU3b/FkhrPxgvmyk4QPdMXAdHt0iscuejLkGusjv0p2XrPNQEnBcL
-         XYVbv6dBy3eur0TM8UUajp5/TaopLs8ihXzVUWuj8qr1JoF/aRsH/On/0gdv+JEOODH/
-         yd/kQtTTkVk7gIWb2frOQdDFY/rnvkpu5/AdQBCTcWT86v9SY32XDhO/2wqtEFZhnSHm
-         xSFkIRpSvfQarMjkMCltQgaCnN84mVNQ1sQYD7R+SR1NOdYEZVqtjlg6GCJTzWU0KXbd
-         yoA9SAYBjFkI0B8aD5X97qMDNryNND3WPwKgmxUAsNgrnxy+4sfRhCMK5mkGCCLxDcYn
-         Rukw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwVK9fYxU7Pyo2qvhHVQ7ZUdKlk3fuQbrh8LebKnAGK/YD8m03JGQEn4n3MBaFDNpOXALBpadmftBRzwPsYjMdRcKCBcGA/RPa/ALudipGM7hvrBm/Hw9a2b+1g5+x3hC7bvb4ag==
-X-Gm-Message-State: AOJu0YzY7npsb1cj/V3wLVR4ojit3Zbs+BXWkVC2R+asQ8haw5kd+/sB
-	fbN4hzhSVF5IwE/Rar/dJDKKPIBu9GYOG7iE5+2NZPWXMYWJFRLF
-X-Google-Smtp-Source: AGHT+IFVh9il2ma4+p1y4h18bpW6blOTWcBiQJgR4kCqbGo/4tYu2OhH+kzL5lAsaEDZZR9TkOARhg==
-X-Received: by 2002:a17:90a:e610:b0:2c9:8d45:7bdd with SMTP id 98e67ed59e1d1-2ca35be7c96mr463994a91.10.1720464318934;
-        Mon, 08 Jul 2024 11:45:18 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a97c196sm8568745a91.26.2024.07.08.11.45.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 11:45:18 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 8 Jul 2024 08:45:17 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH-cgroup 1/2] cgroup: Show # of subsystem CSSes in
- /proc/cgroups
-Message-ID: <Zowzvf2NEOzgXYr3@slm.duckdns.org>
-References: <20240706005622.2003606-1-longman@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rsD08Ls0r1mJV4hgX1NslexkUq+mUWsgbejYGP4o30urF+mK6NT0//ZOEizU646D6Ky9rAuTMHkCl+XA47wFV5hA+dRO+4lm0Tx8BDCu9Z4EI/QkCpAM/g4mjwRKZ3BEGoGJDs/04oYF9S1cwoKX0iRMpmbaiD0JseSMw4uNFDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=axskcSQs; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720464390; x=1752000390;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nWsKkWowCIBu+p5sjvVUVjNIp23bl9SMKEPKGmLp4tc=;
+  b=axskcSQszyy9taC6iLt7nKXnhU7imk7ovy84sB3UFRYPWriWLOTsVLJ5
+   LcJNBi83fu6cwGCV+WVsD3UGaiW7J0afN/z8gENfO2hcbjv2A6hKpbbRg
+   7n+rEqWnyHWAkX3PW8NrCx1SlcgdENGUsNMC53HqLhtKqpyBCM2dbxW2c
+   FEL3A91er620EHWZGQjXpJjcy5CkhWal5zGHu6uEvGzvoKwg0y49/jWg8
+   +IO3BoIwRI8Pi+qmnPOXRk+/PtwUaWd72dlJ77+P6EJb90VOu16RSafHN
+   2JFXtiSHFL1EyKCMjQ90Fm5wmzS8j/xoTjpJNcQMePBnNrBaybk1uhEdy
+   g==;
+X-CSE-ConnectionGUID: /4mzYbb8RvedRjCFGFlGtA==
+X-CSE-MsgGUID: luO3H9uWT42Pd7Cn1bZuRQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="40194942"
+X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
+   d="scan'208";a="40194942"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 11:46:29 -0700
+X-CSE-ConnectionGUID: 6zaTBzB8TcKx8bpQm7yTCg==
+X-CSE-MsgGUID: mUB86ChdRU6fPZ2trmZSvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
+   d="scan'208";a="48327202"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.105.241])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 11:46:29 -0700
+Date: Mon, 8 Jul 2024 11:46:27 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: peng guo <engguopeng@buaa.edu.cn>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, wyguopeng@163.com
+Subject: Re: [PATCH] cxl core:wrong value of macro definition
+Message-ID: <Zow0Aw+vrXShXv+n@aschofie-mobl2>
+References: <20240708152902.5853-1-engguopeng@buaa.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,27 +75,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240706005622.2003606-1-longman@redhat.com>
+In-Reply-To: <20240708152902.5853-1-engguopeng@buaa.edu.cn>
 
-Hello, Waiman.
+On Mon, Jul 08, 2024 at 11:29:02PM +0800, peng guo wrote:
+> The first value of the macro definition DEFINE_CXL_VENDOR_DEBUG_UUID
+> does not match the definition in the CXL 2.0 specification table 170.
 
-On Fri, Jul 05, 2024 at 08:56:21PM -0400, Waiman Long wrote:
-> The /proc/cgroups file shows the number of cgroups for each of the
-> subsystems.  With cgroup v1, the number of CSSes is the same as the
-> number of cgroups. That is not the case anymore with cgroup v2. The
-> /proc/cgroups file cannot show the actual number of CSSes for the
-> subsystems that are bound to cgroup v2.
+Please update commit message format and make it specific, like:
+cxl/core: Support mbox op clear log of vendor debug logs
+
+Isn't that what this is actually doing? It's correcting a typo to enable
+the clearing of those logs. If that's true, let's not bury the impact
+in a typo headline.
+
+See cxl_payload_from_user_allowed(). I'm guessing that's how you
+found this.
+
+--Alison
+
 > 
-> So if a v2 cgroup subsystem is leaking cgroups (typically memory
-> cgroup), we can't tell by looking at /proc/cgroups which cgroup
-> subsystems may be responsible.  This patch adds a css counter in the
-> cgroup_subsys structure to keep track of the number of CSSes for each
-> of the cgroup subsystems.
-
-The count sounds useful to me but can we add it in cgroup.stats instead?
-
-Thanks.
-
--- 
-tejun
+> Signed-off-by: peng guo <engguopeng@buaa.edu.cn>
+> ---
+>  drivers/cxl/cxlmem.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index af8169ccdbc0..feb1106559d2 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+> @@ -563,7 +563,7 @@ enum cxl_opcode {
+>  		  0x3b, 0x3f, 0x17)
+>  
+>  #define DEFINE_CXL_VENDOR_DEBUG_UUID                                           \
+> -	UUID_INIT(0xe1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
+> +	UUID_INIT(0x5e1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
+>  		  0x40, 0x3d, 0x86)
+>  
+>  struct cxl_mbox_get_supported_logs {
+> -- 
+> 2.43.0
+> 
 
