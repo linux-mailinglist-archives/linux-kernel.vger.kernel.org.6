@@ -1,140 +1,117 @@
-Return-Path: <linux-kernel+bounces-244682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0C992A7D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:06:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A5C92A7D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ACDF1C20F1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C104C1F219B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5700D148310;
-	Mon,  8 Jul 2024 17:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181D814831C;
+	Mon,  8 Jul 2024 17:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ETihcGGp"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFChjORz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F9114386F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D6E78C73;
+	Mon,  8 Jul 2024 17:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720458362; cv=none; b=TYoT5ZL1mR+IQTbgAMAydKO85YWyOtPWxm/U5qBc22IUkPWJGk3G3YpYPT0U912uVqeXChcm6ncEo+UXJnZBF7qLN41WYWL49ZmtYKkqAwKuX+cKCLswi0I6QH9JXKqfLoKeZstNhHsU68PHUnt4KOmne0omRbCGRa3+ZlLtRdE=
+	t=1720458400; cv=none; b=MoUJ7V7vLRdrodF9uDg0jPIrUIZaholCULIFkWzeEEQILh28+BH3PA6VXYdkTn/pc1lD8fo6oQmdBylyfmrSRSZWTVYAhgb/I4DdiGC8Sc/GKh0f3yYo79EliQY6jrhTtss8zQW++qLqC5uT+W5twpdd0UiiMTHATdaMxBSmUh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720458362; c=relaxed/simple;
-	bh=Ish0rUcGrNM6Y64WRYX4W3v6raEfzTe4xQ8BUWA9+C4=;
+	s=arc-20240116; t=1720458400; c=relaxed/simple;
+	bh=2f8q+yRV/YZzbTa6kjlhS3zOQvqRz+hKZA8xbKefsrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/dnTWCL8CUveh13jDtbiel9GvaE7Z4Rq18liyq6eBWjScCY4b64ScbZhVOePfxZ1CD9d3fgz+UtIBBF1CYF3pnjIOiowc1RVFIKRyVKE11beNaUX33L3JBm7byLq5W8dGaH6dvC19Jxikk9jWheCd8tbPmrRLwS/HrkYwzXgFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ETihcGGp; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9700F40E019C;
-	Mon,  8 Jul 2024 17:05:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 6zurUK6Kdl7H; Mon,  8 Jul 2024 17:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720458352; bh=qvpshdjcai+bu5YyaX5ecqH8SNfEteGnaGQ1BUGaRuk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=bx6aSBgNZ2jrPk2YUBj6XUyRbzYKe4uwriF3I87NraeKt3k2k+A10JR060prL7w5tokWBoWdogoDvw6nYRWrn6LyKwCSzqJBZPyCbf6Pee10mbW8Gxn34Fvv/lVvAAWxQ+Q4In7HfibarUnC1u+9j1RqlRX9dxILNR14zpkFACA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFChjORz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01740C116B1;
+	Mon,  8 Jul 2024 17:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720458400;
+	bh=2f8q+yRV/YZzbTa6kjlhS3zOQvqRz+hKZA8xbKefsrw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ETihcGGp2WBVa/arC/4Y2wVTsBhyCGqBARR9EhgjRvJ97d69lVhplPmPbknNsahiu
-	 1UITU9vFVN4jCeKlZ44faix2m9nWUG6Zv2AdOaI753D7G0rTVZ6xYFe3PD2g7JjuvC
-	 D+xfz2zva0rV4h/fJtVjaYCBpt0aaFv4yhT+Gm6+ddgY3R/zB9o4F0gx7gqw1dclLY
-	 WQk1AOu4mMZv7SSdWThXqGWnzldfiRBLdPeM7UEUZg/X2jARbIibNXt7J9FAe4i2S6
-	 ubyUpM6yOKmAQa1YF9P4xtyPJ+Ckur9tONDCBwCsu4Tcz1FSnESatJPON7sDb5y8dz
-	 cX2TS0T+gt5ogrEnBMZtz0iRxcPbOAudcSfEIR/ouUH1vSiUxxOOlG4I2XyWNshlry
-	 9rN8rslcflxq2+HzcYlW6kUpW+LBMuuMN+TmB9zlKocZLdcwJnKuqiDVxnjopohjFZ
-	 X5Nwq1qJX2kxG3ZFJUAzpXCXpLr7evxUHK9m0x6DaJqJUhYuntr3Xl3UCA9lnvN+ZQ
-	 sygHjA1Czt/8G7UlBw9V/X86nOTvofgmt/kUszDq7kmUc55mAemuasOke7WTiwvrJi
-	 XfzBOh5UAAtjr4PidSad2ZHE4/6qZRJUAyeeWxkI05sIBXrpdubosI1u1HrmJfLiQl
-	 P0VxQttSutgtRChvu5Om1f5Q=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A4EA440E0192;
-	Mon,  8 Jul 2024 17:05:46 +0000 (UTC)
-Date: Mon, 8 Jul 2024 19:05:41 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jim Mattson <jmattson@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Greg Thelen <gthelen@google.com>
-Subject: Re: [PATCH 5.10] x86/retpoline: Move a NOENDBR annotation to the
- SRSO dummy return thunk
-Message-ID: <20240708170541.GGZowcZZ0tZmt7znYA@fat_crate.local>
-References: <20240708164319.3801778-1-jmattson@google.com>
+	b=YFChjORzkrSRvpg0qf9hHSbnArYrOkY2sDIzeW6p9z7TqmeC+oJ+lqIgmqsWPWaeb
+	 /7ehneH/7J8a87SH/FobPdKtg1kLkzFzs5LKXvgu6MWhxlXfN+vFA6MTC1pWY1xjr6
+	 81c/TamG9SfB12BBHulwa/DwF/6k/alnZ4ZpWZrsoH595EycNULqwhjDeltiMQ6my8
+	 b4OHVObh09TD7m5mKkw/ht1cK55lt3T5VKIVEtoyLyyZTUaT/Gr9tkoLmGsPKm18OR
+	 onmyzQ/y6Kkhqy6afMMv5jQBss2zA3ejKWoDv5dYLWRirE+jXHF4qlMUmoOraH1Rps
+	 j40p/oiBWYNyA==
+Date: Mon, 8 Jul 2024 18:06:35 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] dt-bindings: iio: BU27034 => BU27034ANUC
+Message-ID: <20240708-tropical-stifle-0aca848ad340@spud>
+References: <cover.1720176341.git.mazziesaccount@gmail.com>
+ <c39f9c67b3c07a27d7a13109c7b69cff9cfd2b9b.1720176341.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="v12WfoeUb24sNLN2"
 Content-Disposition: inline
-In-Reply-To: <20240708164319.3801778-1-jmattson@google.com>
+In-Reply-To: <c39f9c67b3c07a27d7a13109c7b69cff9cfd2b9b.1720176341.git.mazziesaccount@gmail.com>
 
-On Mon, Jul 08, 2024 at 09:43:05AM -0700, Jim Mattson wrote:
-> The linux-5.10-y backport of commit b377c66ae350 ("x86/retpoline: Add
-> NOENDBR annotation to the SRSO dummy return thunk") misplaced the new
-> NOENDBR annotation, repeating the annotation on __x86_return_thunk,
-> rather than adding the annotation to the !CONFIG_CPU_SRSO version of
-> srso_alias_untrain_ret, as intended.
-> 
-> Move the annotation to the right place.
-> 
-> Fixes: 0bdc64e9e716 ("x86/retpoline: Add NOENDBR annotation to the SRSO dummy return thunk")
-> Reported-by: Greg Thelen <gthelen@google.com>
-> Signed-off-by: Jim Mattson <jmattson@google.com>
-> ---
->  arch/x86/lib/retpoline.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
-> index ab9b047790dd..d1902213a0d6 100644
-> --- a/arch/x86/lib/retpoline.S
-> +++ b/arch/x86/lib/retpoline.S
-> @@ -105,6 +105,7 @@ __EXPORT_THUNK(srso_alias_untrain_ret)
->  /* dummy definition for alternatives */
->  SYM_START(srso_alias_untrain_ret, SYM_L_GLOBAL, SYM_A_NONE)
->  	ANNOTATE_UNRET_SAFE
-> +	ANNOTATE_NOENDBR
->  	ret
->  	int3
->  SYM_FUNC_END(srso_alias_untrain_ret)
-> @@ -258,7 +259,6 @@ SYM_CODE_START(__x86_return_thunk)
->  	UNWIND_HINT_FUNC
->  	ANNOTATE_NOENDBR
->  	ANNOTATE_UNRET_SAFE
-> -	ANNOTATE_NOENDBR
 
-Whoops, those two here didn't look right, thanks for catching this.
+--v12WfoeUb24sNLN2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+On Fri, Jul 05, 2024 at 01:54:12PM +0300, Matti Vaittinen wrote:
+> The BU27034NUC was cancelled before it entered mass production. It was
+> replaced by a new variant BU27034ANUC (note, added 'A'). The new
+> variant gained a few significant changes, like removal of the 3.rd data
+> channel and dropping some of the gain settings. This means that, from
+> software point of view these ICs are incompatible. Lux calculation based
+> on the data from the sensors needs to be done differently, and on the
+> BU27034ANUC the channel 3 data is missing. Also, the gain setting
+> differencies matter.
+>=20
+> Unfortunately, the identification register was not changed so there is no
+> safe way for the software to distinguish the variants.
+>=20
+> According to the ROHM HQ engineers, the old BU27034NUC should not be
+> encountered in the wild. Hence it makes sense to remove the support for
+> the old BU27034NUC and add support for the new BU27034ANUC. Change the
+> compatible in order to not load the incompatible old driver for new sensor
+> (or, if someone had the old sensor, the new driver for it).
+>=20
+> Drop the compatible for old sensor which should not be in the wild and
+> add a new compatible for the new model with accurate model suffix
+> 'anuc'.
 
-And looking at 6.1, it is wrong there too. :-\
+Since you say that the "old" device should never be encountered "in the
+wild", this change seems fine. If it turns out that it is in the wild,
+the new compatible means we could resurrect the old driver etc.
 
-commit 7ef6a7f9b32fdfc8bec0a10e6d5ac5374d4f02e7
-Author: Borislav Petkov (AMD) <bp@alien8.de>
-Date:   Fri Apr 5 16:46:37 2024 +0200
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-    x86/retpoline: Add NOENDBR annotation to the SRSO dummy return thunk
-    
-    commit b377c66ae3509ccea596512d6afb4777711c4870 upstream.
+Cheers,
+Conor.
 
-Greg (KH - there's another Greg on CC too :-)), do you prefer such stable-only
-fixes like that or should we revert the wrong backports and redo them?
+--v12WfoeUb24sNLN2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thx!
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Regards/Gruss,
-    Boris.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZowcmwAKCRB4tDGHoIJi
+0tiaAP4sGu3u4NXB0ToW0RMaH2jH1yXUHtCuWfIAvY3lKfNlfwD/UqcHOyuamhTn
+WUqCY0E3qrPVCZPbSm10PgDJrOGqiQE=
+=j56h
+-----END PGP SIGNATURE-----
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--v12WfoeUb24sNLN2--
 
