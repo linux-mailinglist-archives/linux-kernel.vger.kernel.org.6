@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-244832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22E792AA08
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:47:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D8592AA09
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3181F285DA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:47:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6546B21CD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939ED14B95B;
-	Mon,  8 Jul 2024 19:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FB114D444;
+	Mon,  8 Jul 2024 19:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mxpqE81a"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ADflN0E0"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842D320DC3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E564714A4D4
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720468022; cv=none; b=XK98qYwDJSwhlCEAM6DUk7Eln2gDT7qiGb86SvVU6STzwRFB+1xIxEEtxvwDeZ4rZBu9zQIeRenJ+/SbKyLMTIC7qi19Qa+pOBF+ksxWmn8ubxuqizbn3RcTK040B7wfhmjmrbQIwMX9rUE9ai00GEm1gfrETNuMgnaQltF/kKw=
+	t=1720468044; cv=none; b=OK8D37slgZLlxdBQJePXx9MfDyukxQ3UyNx6LyKlT8WIZi4xZQ7TSbtgvfwpMHem1Y0qOk1VcpWIvyfMu3v6uuFn5JhSMi0thh9kbUf7YcOYRC2ZFBJWWIsXS6bUodMg6dnIN+estDXLLO8gxd9cWYBOD/nUmeCpp0oEQy3NGNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720468022; c=relaxed/simple;
-	bh=xfUwHFgIQzzqJP6stxoZusU7xDn7i1MUCcKHTwTW1G0=;
+	s=arc-20240116; t=1720468044; c=relaxed/simple;
+	bh=VdK4TPeL/42YAoYOAkneiryFkLJeGzbNBCM/oO/MmV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N2tPX942RBu/2axGlHu7Td/4vYhXq47tt5IxveLjaBJp6h1FcmjWYN5JdmK+eNBsZqmrThmI4pdSwsv5WoH6od/3KaTZqHZOUkrQvtFpSc7JJZrqp7BolIUnAv6V3dS0NgM2SAn7NaxjpuproOAKR4FlhoOpsC+8PUlBtdDESYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mxpqE81a; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3818c2d364cso19681295ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 12:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720468020; x=1721072820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NWkzAQQtVxjkKH80LNYbBQ6QWoqweGmef12U+XNbKY8=;
-        b=mxpqE81aQWiTYlUnXRU+rSop04gIYr92zHo69qkzfebkHfTEVQRFhy4VEUrPdSQw2H
-         89P+4envOytRCs1/0Ic0eE5xPYMkLZEgt0d29jnwhWMULUBhDugBjq/4JkQuQ9RWZmjl
-         oUoUiJdw4Gkf9g+xpFuS/jk6ANezqkUIA9L4U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720468020; x=1721072820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NWkzAQQtVxjkKH80LNYbBQ6QWoqweGmef12U+XNbKY8=;
-        b=sz3hkp2bQoD9SLFSJkKT7QiWXlS1zx9FW4yFKJIfE5xgxUw393q95SpwOJbWcMkD3s
-         Pw75dYwxXcVda+awR3n/tqvVwwzScFvHVUFmTlSnjrhMp3RWlPX2y6Qam664AR2r9IFj
-         JqTOlOYFHjDfkEltPZnSxV//2aTczQwXzpgTfCxrdOZbGmPLw2ZrYOjUviceN0h+pF1X
-         Me/Q0kdufY/9dp12Ib5ovmWkhNHIBhXHmuIkjPNpmwu7lbCmwpxvnpkxqbiifHFVS+Yr
-         4uv7ESXv35NpSDlD6VnoxxAqPwvEAP60gxqtxMa2Bnbkjk1QLORBdjm8HQxRvf87NSrs
-         WnIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXT4nKlf5T94JvNBdD/sEPRnsauEgfUCRi1Q893BG7bwNEafYpI4OPqH7G9hMeAe+iiNRBljyNwshVjV1LVbjbq41KroJaEJ38Zffgs
-X-Gm-Message-State: AOJu0Yw64Nn6eLdgT8Dt4BmYzxa16i98jw+bRnTXxognk/6XV6vhb84m
-	TwVSG2lYAx+1nLvtJ25MB0XwjHk32Uggab5MufeW+BalZEV7DBJoKJCkgIx/qg==
-X-Google-Smtp-Source: AGHT+IErjqc2QuiwhjqsE6ydLSlVepI8J8lRB04ybk799vAbtxt2hOpEu1DCYDbIFaBbcAs4+l8Lkg==
-X-Received: by 2002:a05:6e02:18cc:b0:375:9e20:beef with SMTP id e9e14a558f8ab-38a53e858b0mr7958815ab.0.1720468019700;
-        Mon, 08 Jul 2024 12:46:59 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:3e22:9cde:6b65:e5e8])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-77d603f9bfasm192237a12.30.2024.07.08.12.46.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 12:46:59 -0700 (PDT)
-Date: Mon, 8 Jul 2024 12:46:58 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>, llvm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Justin Stitt <justinstitt@google.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH] cpumask: Switch from inline to __always_inline
-Message-ID: <ZoxCMp_ZQ-Su-r0D@google.com>
-References: <20240514204910.1383909-1-briannorris@chromium.org>
- <ZnsML1RYMmEhhdPP@google.com>
- <ZoWhPFJIvGpMGKm4@yury-ThinkPad>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mAfY2h54OTCfQOeqTjFPEG7tjNnDV8/E/+/YG0e5cUXCTpPZFmxs0wXv+ySnrQ/KL8BlmHOF/bCjFdrvLRKckT/q2Hco+EuveTViYlkT7MPOyk8w2R0vvjRZymwQYGERFGCIDW1Uo5s+x24equX5DSJDEu2WdMwCYMDzcEekdtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ADflN0E0; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: sebastianene@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720468040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F08eTq/6nl01fY8iwc+0cvJBVd8iVm6DBYfEM30lJgk=;
+	b=ADflN0E0yjOghOgax/9LJATZ6vo0QSa/QR9voOkwD3KwJ/jYzDhMGuA2vSEOMFa4ui11mq
+	w7kebZgojfFpY42MyVdzXYr+mNohvsZJqsF9hujVgmQAtv3nbcphuRRKPYjePZN4eDbRlS
+	SvZCp6hs5yRxVxUEjDsXQXze2O7Bv9A=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: alexghiti@rivosinc.com
+X-Envelope-To: ankita@nvidia.com
+X-Envelope-To: ardb@kernel.org
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: christophe.leroy@csgroup.eu
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: vdonnefort@google.com
+X-Envelope-To: mark.rutland@arm.com
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: rananta@google.com
+X-Envelope-To: ryan.roberts@arm.com
+X-Envelope-To: shahuang@redhat.com
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: yuzenghui@huawei.com
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: kernel-team@android.com
+Date: Mon, 8 Jul 2024 19:47:13 +0000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
+	ardb@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, james.morse@arm.com,
+	vdonnefort@google.com, mark.rutland@arm.com, maz@kernel.org,
+	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
+	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v7 5/6] KVM: arm64: Initialize the ptdump parser with
+ stage-2 attributes
+Message-ID: <ZoxCQTub5NH3lLrE@linux.dev>
+References: <20240621123230.1085265-1-sebastianene@google.com>
+ <20240621123230.1085265-6-sebastianene@google.com>
+ <Zn8omLmCSIHun1uq@linux.dev>
+ <ZoK6kW1FJiQ0ip0e@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,33 +87,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZoWhPFJIvGpMGKm4@yury-ThinkPad>
+In-Reply-To: <ZoK6kW1FJiQ0ip0e@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 03, 2024 at 12:06:36PM -0700, Yury Norov wrote:
-> Hi Brian,
+On Mon, Jul 01, 2024 at 02:17:53PM +0000, Sebastian Ene wrote:
+> > <snip>
+> > 
+> > > +	}, {
+> > > +		.mask	= PTE_NG,
+> > > +		.val	= PTE_NG,
+> > > +		.set	= "FnXS",
+> > > +		.clear	= "  ",
+> > > +	}, {
+> > > +		.mask	= PTE_CONT | PTE_VALID,
+> > > +		.val	= PTE_CONT | PTE_VALID,
+> > > +		.set	= "CON",
+> > > +		.clear	= "   ",
+> > > +	}, {
+> > 
+> > </snip>
+> > 
+> > Neither of these bits are used at stage-2, why have descriptors for
+> > them?
+> > 
 > 
-> I never received the original email, only this reply, and can't recover
-> any context.
+> Atm, we don't make use of the contiguous bit in stage-2 in upstream (but
+> we have it in some experimental patches). I can remove this, no hard
+> feelings for them.
 
-That's unfortunate! I don't know what happened there. My usual culprit
-would be something in the DMARC/DKIM/SPF spam-filtering space, but:
+Yes, please drop them. I'll nag whoever adds contpte support for stage-2
+to add them back :)
 
-(a) it made it to the archives, such as:
-https://lore.kernel.org/all/20240514204910.1383909-1-briannorris@chromium.org/
-
-and
-
-(b) I don't see any red flags in the mail headers on lore
-(https://lore.kernel.org/all/20240514204910.1383909-1-briannorris@chromium.org/raw)
-such as DKIM, SPF, or DMARC failures.
-
-Anyway, if you just want the original mail contents that I stripped from
-my "ping" reply, they are available in the above archives.
-
-Since I don't know what went wrong on v1, I don't really know what to
-fix on a v2. But if I send a v2 and don't hear anything for a while ...
-I suppose I can "ping" again!
-
-Regards,
-Brian
+-- 
+Thanks,
+Oliver
 
