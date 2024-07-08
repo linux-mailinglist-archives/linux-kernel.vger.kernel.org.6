@@ -1,128 +1,134 @@
-Return-Path: <linux-kernel+bounces-244323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6664592A2B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:26:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3136C92A2B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1A42872B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:26:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91529B23011
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452D084E1F;
-	Mon,  8 Jul 2024 12:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C785A135A6D;
+	Mon,  8 Jul 2024 12:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dJ9+nW/o"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n6yzKALS"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E6F770ED;
-	Mon,  8 Jul 2024 12:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A059B80635
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720441437; cv=none; b=WYsn3JU5u4HuVW4TczxOGC+HYlG/uQoW6XoTFfLw7G5MrH7i1TRICEqGqBsD/nbhECY1aTAKLy1asbwYfBUH3M5Qt33fA+lLluhy3DoncBFr2QaG7LB44kgAOja3yXmgfTIJFLYZSS8lwg+6vpvojkLwWf/8t5zY5k+zCfeGQjw=
+	t=1720441466; cv=none; b=MMAqmNS6NoqghcRUxI4KOr3aFlMz7PRC0H7NfSgUlOKieD2wcneQJZYjemEuKb96kFNMyPdyuZMG3oUa6ceBGJYU/5IdIXDmU1R6lzMoD7yG+oAFJaZm76no8vN3Ykq501pLBnFsp/oRN11IKhNGvAZhnPKNjgNyTrk6Bz15nPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720441437; c=relaxed/simple;
-	bh=InWFRraJhjJs8nNqG5Zk68Lze7SlKIkvLxXki5G6lTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BEwp/MTmHSe3MLU4DSjLtE+vwvVyd2QY6roZQV0lud7yLLU09/L9F3expBCPQvUcPSOvxRZ2JYoGouHGdl2+etb0iiENH+Wnfm6iwbBiJLmOEHb3Hw5qRKX68ELUJUTMulugGqPcg8a+xZqlQAXyjufsP7alW3BFh94SB5Kx66c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dJ9+nW/o; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7847540006;
-	Mon,  8 Jul 2024 12:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720441427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7JsbKApEK51Bmx24wtoB9YLZiYCpQ37ANs0wnRzdLyY=;
-	b=dJ9+nW/o+fVVXF1/oX60X3/1FFNguSv7QqTgpSH6ISm1XaTz7AKXh9iLkm92nIsZXzGC/D
-	JV+ZzNriHyLW5xA3/ERIvMSATBKDgZ5ZUQDrrUYZXAE+RlXyy9Q7Cvb61DbjBZ5oUVREy6
-	zXwEvCvGD6Walndgld/sFqpFxVKTamIihqLHfUYpuqKboPZjfr9LN+Th5MGVrzwqQqRFKy
-	HHM6DPQQjQkmMeqT+jabUeQ/nTyNPIPqbYahiPHOXbliqyUwrXWDBEMeYdtp8E9H5PXPuM
-	Tev+LzF9Ibbq9vbj/L/RXYdvcthJKR5KlTkvK0adv+6LvGRSUKAqBEr/8VEgfQ==
-Date: Mon, 8 Jul 2024 14:23:44 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Thomas Bonnefille
- <thomas.bonnefille@bootlin.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
- <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc:
- sophgo,cv18xx-saradc.yaml: Add Sophgo SARADC binding documentation
-Message-ID: <20240708142344.47da466e@xps-13>
-In-Reply-To: <304b7bb1-d315-4147-820b-1ec0aa63e759@kernel.org>
-References: <20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com>
-	<20240705-sg2002-adc-v2-1-83428c20a9b2@bootlin.com>
-	<20240705-unaired-pesticide-4135eaa04212@spud>
-	<6b5459fd-2873-4c26-b986-882413b8d95b@bootlin.com>
-	<20240706-remote-undergo-3b9dfe44d16f@spud>
-	<20240708083011.058d0c57@xps-13>
-	<304b7bb1-d315-4147-820b-1ec0aa63e759@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720441466; c=relaxed/simple;
+	bh=1xFKym8dQ8FXh+MVHNBwonqkHzr6DWBX3Kyt4hlGpiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r0CraLvaWLcl8ZrL50Yovfsr/CmzOlfhw0T6kv6uFFbdT5K/eanS0P3rDos41//mPApwnnjiiL+vwMjo+KD7kNc7vna3egZWKx5D9wESrAENn3wWjGpctwpp/0GAmNQ3Jee56Hg1HZ17QdEYdq9gHqNc0q2AXgNnBbm/Kj88XOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n6yzKALS; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e03618fc78bso3743011276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 05:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720441463; x=1721046263; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tQ1ByCKJaiGZVgPD6N72f5VJmXfUYBIFakOZFv4yIy0=;
+        b=n6yzKALSlfEj8SXDR9BzNCKnuLis5d4Vpa859AWztKYs1E7xp0RUgugodp1mdqpZ9I
+         yXBuZyyqQsCm/Xh7FoI9ov8nJwVOvmbNAcfeslsGM4q3EwBxiP6mq9hNP6ABt8wqBhCG
+         n9udafhjSFGl5Cqq8CoiGtct78mLt8ThTcFpPN+BrhcDiEkigoYixielTPWDXyjPRVDN
+         dVkgHzso66T+xtZDm71CNFKaKh2GUiyVfIID1O4fkic33gdgdOotD29j7XtDuRcg030w
+         iMzsRqIBj+k0EmGY4p0l8FCMbtVJ1B/AXtYv/LbnW/TM/4tCUGvyfE3Uv6fjaZQZODke
+         NICQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720441464; x=1721046264;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tQ1ByCKJaiGZVgPD6N72f5VJmXfUYBIFakOZFv4yIy0=;
+        b=Lzc7J3n0N57cW7pae2NzCLU4hwfNqY0YRWo93ntYFGlJcb9lPrxXMjEs2nuYTkG0/D
+         qm+yXNtRhGFEZrx/wZvvlWK3jCl+KlGvvOF80SuYHt+WXJ0DdlBdzc8i398GZC3V6uJI
+         UY0AtD2m53brdXroOOb4hC+4vet9t0aNTW39WhQ1vVY6eYPTw0B71a7u6luU1Iem66QA
+         5XQoGti7drFX2CnFgcCXmQEOkvHYAiA4zvA9OUiAD0t/HNpfTDHCp850pWaxtIV5I2ne
+         azn+QOHh/isIJLPer1jO+MAQZzxdWjTHRlZmiwqYmU3TOhBvnKWTJC9D1lokq4QcrwbX
+         nNeA==
+X-Gm-Message-State: AOJu0YwUHAizkK7nLocw+RokOkf56ariyCEiTkRtt7xvuNS7VfZMhs3K
+	PAn1CCYo4qCRPrJf4oXDgGmWTl9hr5MdGxsHl8g83ZMwCIIvYOTFe7+Xw6Y+kD77zyMwtzmm6CW
+	IiJgW5fqEyg3TEG+Fv+7zr4SCnxYZvM2i+a9Ang==
+X-Google-Smtp-Source: AGHT+IHXRCpDO5w5I6A8pgDd0kHVsaSbPwgXD0RiAPY/CcfQGVwHI08Dh7BT8l+lLl1/7EtPVj7YMrFfreV6YKbUjqo=
+X-Received: by 2002:a25:dc01:0:b0:e03:6544:1678 with SMTP id
+ 3f1490d57ef6-e03c1a006bemr12917519276.56.1720441463735; Mon, 08 Jul 2024
+ 05:24:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+References: <20240625-gigantic-frown-1ef4afa3e6fa@wendy>
+In-Reply-To: <20240625-gigantic-frown-1ef4afa3e6fa@wendy>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 8 Jul 2024 14:23:47 +0200
+Message-ID: <CAPDyKFoswLvgopz+cXCsxjZs4VRg-mrA66HTmfux57eY=--JMw@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: mmc_spi: allow for spi controllers incapable of
+ getting as low as 400k
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: linux-kernel@vger.kernel.org, conor@kernel.org, 
+	Cyril Jean <cyril.jean@microchip.com>, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
+On Tue, 25 Jun 2024 at 14:34, Conor Dooley <conor.dooley@microchip.com> wrote:
+>
+> Some controllers may not be able to reach a bus clock as low as 400 KHz
+> due to a lack of sufficient divisors. In these cases, the SD card slot
+> becomes non-functional as Linux continuously attempts to set the bus
+> clock to 400 KHz. If the controller is incapable of getting that low,
+> set its minimum frequency instead. While this may eliminate some SD
+> cards, it allows those capable of operating at the controller's minimum
+> frequency to be used.
+>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 
-krzk@kernel.org wrote on Mon, 8 Jul 2024 09:33:04 +0200:
+Applied for next, thanks!
 
-> On 08/07/2024 08:30, Miquel Raynal wrote:
-> > Hi Conor,
-> >  =20
-> >>>>> +properties:
-> >>>>> +  compatible:
-> >>>>> +    oneOf:
-> >>>>> +      - items:
-> >>>>> +          - enum:
-> >>>>> +              - sophgo,cv1800b-saradc
-> >>>>> +          - const: sophgo,cv18xx-saradc   =20
-> >>>>
-> >>>> I don't think the fallback here makes sense. If there's other devices
-> >>>> with a compatible programming model added later, we can fall back to=
- the
-> >>>> cv1800b. =20
-> >=20
-> > I'm sorry but isn't this slightly disagreeing with the "writing
-> > bindings" doc pointed in v1? It says,
-> >=20
-> > * DO use fallback compatibles when devices are the same as or a subset
-> >   of prior implementations.
-> >=20
-> > I believe we fall in the "devices are the same" category, so I would
-> > have myself wrote a similar binding here with a compatible matching
-> > them all, plus a hardware-implementation-specific compatible as well;
-> > just in case. =20
->=20
-> Fallback from one model to another. There is no "another" model here,
-> but wildcard. There is no such device as cv18xx, right?
+Kind regards
+Uffe
 
-No there is not. But I don't think there is a "base" model either.
-Just multiple SoCs named cv18<something> with apparently the same ADC.
 
-So actually I guess the discussion here is about the wildcard
-compatible. It feels strange to me to have no generic compatible either
-with a wildcard or with a "base" implementation (because there is
-probably none). So I guess the solution here is to just list a single
-specific compatible in the end.
-
-Thanks,
-Miqu=C3=A8l
+> ---
+>
+> Without the RFC tag, but otherwise unchanged.
+>
+> rfc/v1: https://lore.kernel.org/all/20240612-dense-resample-563f07c30185@spud/
+>
+> CC: Ulf Hansson <ulf.hansson@linaro.org>
+> CC: Cyril Jean <cyril.jean@microchip.com>
+> CC: linux-mmc@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  drivers/mmc/host/mmc_spi.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
+> index 09d7a6a0dc1aa..c9caa1ece7ef9 100644
+> --- a/drivers/mmc/host/mmc_spi.c
+> +++ b/drivers/mmc/host/mmc_spi.c
+> @@ -1208,7 +1208,10 @@ static int mmc_spi_probe(struct spi_device *spi)
+>          * that's the only reason not to use a few MHz for f_min (until
+>          * the upper layer reads the target frequency from the CSD).
+>          */
+> -       mmc->f_min = 400000;
+> +       if (spi->controller->min_speed_hz > 400000)
+> +               dev_warn(&spi->dev,"Controller unable to reduce bus clock to 400 KHz\n");
+> +
+> +       mmc->f_min = max(spi->controller->min_speed_hz, 400000);
+>         mmc->f_max = spi->max_speed_hz;
+>
+>         host = mmc_priv(mmc);
+> --
+> 2.43.2
+>
 
