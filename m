@@ -1,203 +1,98 @@
-Return-Path: <linux-kernel+bounces-244068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C0C929EB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:10:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0AF929F0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E49E1C218E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:10:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0311C22EED
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D22C55E53;
-	Mon,  8 Jul 2024 09:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000AC78C83;
+	Mon,  8 Jul 2024 09:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mT+SLy+D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="itifBmbl"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31039219F3;
-	Mon,  8 Jul 2024 09:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19713307B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720429824; cv=none; b=AID0PTitW5TPqgGZ06Ael6lmM6212f5wHhzxOnHlD7J7K3/ZLXy7BJiYqo/B2LSX+WqKCTe6NvYGvXMIok/7w3AR1iac0zeCrdcx8nOOeEFlH97ydzE4a96n5/LsGQ//j2G3O6v+mgsd31sh3bsWJOrbz/e9ePLF62dkQmNUw8I=
+	t=1720430969; cv=none; b=th9RgMdjnC8gsrkvN32a4qnwiW9xVFLdJOv0WYh2bcMLHUjos5h0SZQcwOzkdbvpqJSiUdL8FF4QOwB45Tg2Zk5fDtqwuv/749YD6r/6kykBgYBvarbpgX3+ccnFhTUJDU1wVYcR60tz1GEhEktYpEHghZUKnHUYx2oxa0tPcbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720429824; c=relaxed/simple;
-	bh=AuzOmWIxG3jTWVum4y8+8Lc6vfI9lgPYT1Wp/Q8wmms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M8rij5c+nXLOAx36q3kJuva7Jt1PT7Y6V1CLYjh4a+Kz1Si3uaEabk1iGlv3y6OWNiNEpf4hKEmgjV5wS8M8PfqtQNTCRfjL2MeemkD1FoFqmbQQfGRWwCy5IKTYZxC6pcmgckFikyhJt9zqUaWfj5/oMhA6P8jVWhBK3B1VOdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mT+SLy+D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C550AC116B1;
-	Mon,  8 Jul 2024 09:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720429823;
-	bh=AuzOmWIxG3jTWVum4y8+8Lc6vfI9lgPYT1Wp/Q8wmms=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mT+SLy+DopjjwCiD7ovp5hicIF7srnkLzzCJTsCMeH7WWwOeoD1+Y0vKDzpKl9kIv
-	 OpOr8maktMyHQXUgYVVgVESlE1S+zKzrhlfFyeVkQbseh58GDMIVen/EqHFYxl/xFG
-	 pLjI7hXz9Cgaja2eXExClzHNb6fBeeQyL3vbBHTBgq/rPQUdUWKelJ0tcfZVk8q/od
-	 aAe+eh0MetBQWBMVL9qaEl30hkOazVsaHAeq3VtPBsgzbKo4sSQfsCKMWksCVp1Nnd
-	 0+iXi3r78oJ3GEp7VOBkIavMDZh2o93SZ7kgvtfvkSbCHkZY1exAgit0vsy9Jxgbkt
-	 L5GbUM8LW2n5Q==
-Message-ID: <aab8fae1-c0ba-4fab-8690-88c6cfe569e5@kernel.org>
-Date: Mon, 8 Jul 2024 11:10:18 +0200
+	s=arc-20240116; t=1720430969; c=relaxed/simple;
+	bh=73nF+R8eVlM7mp2KegjQ4cMqnN49AihYWm5Yc5ZvDc0=;
+	h=Message-Id:Date:From:To:Cc:Subject; b=j5IB3urbXQhsbSlTT9eps8RuczSPE3bWzzHPzKHUeobKdDr8ioYiJ9s+7lj9wRZmnCSeQWpfNE9bYHGwc39TVCI+u2vR113Rj6LUAqraneYVd4Bu34FOirJKAEhpsEuaamHYdF+29FQKSn/xTLVs4eRjnrTxTF+2NzwdgFOmGjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=itifBmbl; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Subject:Cc:To:From:Date:Message-Id:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=YuiBq3EzGvP18V89XAoxc1fedsEk5gXONSPhflBT1L8=; b=itifBmblk2w1ctPlg9bUq1Pa4M
+	QmDrNu3QrDjvSfzX0TEXXFb8/7BunQw+XVWTrnSteoEy/ZyvIb7W5LcQO3yJJ6xLemhuS3XTVJMJg
+	O2vT+Z42JhVuxSxesTvkx276DkbC4LVLNRO00cPIqv18lp9DHf41EvevWBgwUgDHWCjqEowsrvo5x
+	dD99aVumlh72YOtJBdjGNaQ081mxX6SLTzAqL33io9zQrvk/X+y3Sh55q/IsvgsFfi2m9DaKjjEyU
+	R+MI2m6qObL4cxqhp0W6x0CaY/0bbAfDdPdMB1e00GtmyznKDgHuMpCvKvd1rJ8RFaAjZ4S6LgJGT
+	MMeAVbyA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sQkgO-00000000ZsM-01vu;
+	Mon, 08 Jul 2024 09:29:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id 02037300694; Mon,  8 Jul 2024 11:29:12 +0200 (CEST)
+Message-Id: <20240708091241.544262971@infradead.org>
+User-Agent: quilt/0.65
+Date: Mon, 08 Jul 2024 11:12:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org,
+ andrii@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ peterz@infradead.org,
+ rostedt@goodmis.org,
+ mhiramat@kernel.org,
+ oleg@redhat.com,
+ jolsa@kernel.org,
+ clm@meta.com,
+ paulmck@kernel.org
+Subject: [PATCH 00/10] perf/uprobe: Optimize uprobes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: power: Add power sequence for Amloigc
- WCN chips
-To: Yang Li <yang.li@amlogic.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
- <20240705-pwrseq-v1-1-31829b47fc72@amlogic.com>
- <a4d08999-55ea-4674-bb0f-6d618b7bdea7@kernel.org>
- <9c550278-2205-4663-917c-c303c65726ad@amlogic.com>
- <726a0561-b3fc-46bb-a834-3ed8b0e993e1@kernel.org>
- <91e42fbc-712e-44b4-8200-23aaf1fade43@amlogic.com>
- <7d109ab0-ebd0-4739-a15e-958e82552a7d@kernel.org>
- <2c51fff5-bc63-4f30-bb6d-f5fe91854d6d@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2c51fff5-bc63-4f30-bb6d-f5fe91854d6d@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 08/07/2024 10:21, Yang Li wrote:
-> 
-> On 2024/7/8 15:32, Krzysztof Kozlowski wrote:
->> On 08/07/2024 08:32, Yang Li wrote:
->>> 在 2024/7/8 14:11, Krzysztof Kozlowski wrote:
->>>> On 08/07/2024 08:04, Yang Li wrote:
->>>>>>> +
->>>>>>> +required:
->>>>>>> +  - compatible
->>>>>>> +  - clocks
->>>>>>> +  - clock-names
->>>>>>> +  - amlogic,chip-enable-gpios
->>>>>>> +  - amlogic,bt-enable-gpios
->>>>>>> +
->>>>>>> +additionalProperties: false
->>>>>>> +
->>>>>>> +examples:
->>>>>>> +  - |
->>>>>>> +    #include <dt-bindings/gpio/gpio.h>
->>>>>>> +    wcn_pwrseq {
->>>>>> No underscores in node names, generic node names.
->>>>>>
->>>>>> There is no device as "pwrseq". I also do not get what "wcn" means here.
->>>>> Yes, I understand.
->>>>>
->>>>> Can I change "wcn_pwrseq" to "pmu", and do I need to change the binding
->>>> What is pmu for your device? What is this device in the first place you
->>>> are documenting? Where is the datasheet?
->>> ^_^ Well, You are right, the "pmu" wasn't really fit in here.
+Hi!
 
-So no datasheet? Then you are on your own.
+These patches implement the (S)RCU based proposal to optimize uprobes.
 
->>>
->>> I'd like to explain the current usage first, and could you please give
->>> me a suggestion?
->>>
->>> This module(pwrseq) used to power on Bluetooth & Wi-Fi combo chip, both
->>> Bluetooth and
->>>
->>> Wi-Fi driver need to control "chip-en-gpios" pins, so we introduced the
->>> power sequence module.
->>>
->>> What should we call it in this case?
->> Sorry, you describe driver, not a device.
->>
->> That would be a no-go for entire binding. Please describe the hardware,
->> not what you want to achieve in Linux drivers.
-> W155s2 is a Bluetooth and WiFi combination chip. Bluetooth requires the 
+On my c^Htrusty old IVB-EP -- where each (of the 40) CPU calls 'func' in a
+tight loop:
 
-I asked about this device here.
+  perf probe -x ./uprobes test=func
+  perf stat -ae probe_uprobe:test  -- sleep 1
 
-You speak now about W155s2 but everywhere else you were using "WCN".
-What is that WCN?
+  perf probe -x ./uprobes test=func%return
+  perf stat -ae probe_uprobe:test__return -- sleep 1
 
-> bt-en pin to be pulled up, the chip-en pin to be pulled up, and the 
-> 32.768KHz clock. WiFi requires the chip-en pin to be pulled up, and the 
-> 32.768KHz clock. It can be seen that Bluetooth and WiFi are coupled to 
-> the chip-en pin and the 32.768KHz clock. When Bluetooth and WiFi are 
-> working at the same time, no matter which one is turned off, it will 
-> affect the other device. Therefore, a pwrseq device is now abstracted to 
+PRE:
 
-It is the first time you mention pwrseq device from above paragraph.
-Nothing above describes pwrseq.
+  4,038,804      probe_uprobe:test
+  2,356,275      probe_uprobe:test__return
 
-Stop describing your problem, we all know it exactly if you follow the
-discussions about power sequencing. Instead describe this particular
-device you add binding for. What is this pwrseq in hardware? How does it
-look? Where is it located? What are its pins? What are its supplies?
+POST:
 
-> manage the chip-en pin, bt-en pin, and the 32.768KHz clock.
+  7,216,579      probe_uprobe:test
+  6,744,786      probe_uprobe:test__return
 
-> 
-> There is currently no matching device name for the pwrseq composite device.
 
-? No clue what does this mean.
-> 
-> Could you please give me some advice?
+Patches also available here:
 
-Again, you do not describe the device for the binding but something
-else. Something for your drivers, sorry. No.
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/uprobes
 
-If you disagree, respond accurately to all questions above, not to only
-some of them...
-
-Best regards,
-Krzysztof
 
 
