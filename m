@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-244503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C015692A525
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0521092A52B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F20581C20BC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFFC41F235FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2B31411E7;
-	Mon,  8 Jul 2024 14:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8646E14263B;
+	Mon,  8 Jul 2024 14:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dF6QKyWy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="mpE2C+6C"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D53F1E521;
-	Mon,  8 Jul 2024 14:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55497140363;
+	Mon,  8 Jul 2024 14:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720450325; cv=none; b=sA1qIAuQZHVFBjTthdHsU0BTn9vD8NiTOVOZorjBDvqMzX0EmzHQ3Xdj5lPFu/17kCFIraJM50Kcdtwjqt8Ik+uXs6Ggo35AuLQHxcTaoeXSVg1jrPonlzXt0Clk2lGFg+qLt6V4xdhde9eF+6AkpAc8z5y04eS4mal3sAl10hc=
+	t=1720450362; cv=none; b=XKj9KairqyVReo59Tyu0Kcht7f2lUHWSmyNrog8MGSrIhL4z+x/o1ifNssM1k7s38ViGALVzY5O/e54spfyz5xSc+AbRktvu8Ywcd8vmO9L1T6/Erl4O2YJjTiLrNyhRg/i3TAdns7w5ZNfrBsak1/sFPdr5Z5fTMdB1yYz7FXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720450325; c=relaxed/simple;
-	bh=YERbyHj9XHJH1vnRDd/SgiY4nsJmsp/2GcWPpPbtfJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YODAzrTD5L5FuLHyC1zCZBx/cGFkEwDBUlwnH0g6EtKlDXGg3lUktUpcpuFUinRRL7LYvNBRm452qiWWLcKEPPItBd0Ssdq5fqslpIdj7sTzxAirINLlUzZfHQfyyJzeBAc8W+WcbYloR75hr0helaTQfWobHrJAcRWDwlQmPsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dF6QKyWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B657EC116B1;
-	Mon,  8 Jul 2024 14:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720450325;
-	bh=YERbyHj9XHJH1vnRDd/SgiY4nsJmsp/2GcWPpPbtfJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dF6QKyWybB4iV14aqAs6X/0kRJirLWH9Dhl/v5hDAlCJAOSythcdcW/1hnjlqE9sr
-	 R2BLQl75V9Jpad23dD0XD4vkDSO00IY0Lq4IPOJefvrygD1LD9H3ektcAkDLALaAfF
-	 wSWrhHLtj+xCOV5v3gyEmlfVkJklXM20RQomfWafNtYu959NdnZ9ex/38H+tuuIqf+
-	 WQsQeuzTFVYpK1tCgL1Cv5XK4YW61N5jcZnmDrHVmGFSD7yPGV6uyDsgnTIjzBlrqN
-	 H92ZBcigzizLyhOLAYBV/iyy3yKmGD4JBFF+1Do02uip0FG3mOuTeWkm7RCYv1DCSH
-	 NGBPJ616rRy0A==
-Date: Mon, 8 Jul 2024 16:52:02 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, tglx@linutronix.de
-Subject: Re: [PATCH 02/10] dt-bindings: display: imx: Add i.MX8qxp Display
- Controller display engine
-Message-ID: <20240708-mega-nautilus-of-champagne-cd4be6@houat>
-References: <20240705090932.1880496-1-victor.liu@nxp.com>
- <20240705090932.1880496-3-victor.liu@nxp.com>
- <cd558335-6e72-46d1-911b-68ccbb211136@kernel.org>
- <b9583c86-b5ed-4642-9baf-2ac850656ee3@nxp.com>
- <eda90514-e40c-4edd-8c15-18717a5e9784@kernel.org>
+	s=arc-20240116; t=1720450362; c=relaxed/simple;
+	bh=SWfxqNvEQHUIRLFcSx1RPYodXo0um4YMYeD8T3xN4q4=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=HARGEtGhp3QEBg0HnjmvEJJlxCuzbVuhaIAv4G7DsydzADFHpfBsuv006JrIpjM+XIPdtwWYZv+7V4F6K6MHT83hVZ1u6D/QfMvCRJOJWGlm1zunT4GbDG+4G8TJekZkA1PTywyH+acQhpXk1NSHAZRzLz2t74w0IFpBi4Jav8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=mpE2C+6C; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=Gr9nzYTnjLIvdAktR9C6XyzRXUeRKDF2h70qQ3BO/nM=; b=mpE2C+6C9pLKrTktJ69VTKHbs2
+	jZioccEXrQFzU7I29QZ21iv0aM+0OjXpQb2y8AFA5qt3woXNvpzjKV3cIkxPImCrzvuQEZi2/wRqc
+	kZ45W371v028sO/97RVBdJLX5Cccb74Gx5h9cPSjuxV+eoUTlPzL+k3K0lMvQ0CTTzBAa2pip1U8z
+	0CjxUsmsWXPQKYP3JyeeKucare0Ui+Lkj9RvVV749jxJaN0Z6lmzlRNu+mZO618pbzs8rcnYaH7Ov
+	nDGgLLZRHZL3899HEvR/md53H+gIF07zc+FG1JUlJVJiZWI3lNEdbkvAtR/tAEmvdqwaNPszdQQKB
+	BRglPnfg==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sQpjE-0008Bk-R6; Mon, 08 Jul 2024 16:52:32 +0200
+Received: from [178.197.248.35] (helo=linux.home)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sQpjD-000Mue-0M;
+	Mon, 08 Jul 2024 16:52:31 +0200
+Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
+To: Puranjay Mohan <puranjay@kernel.org>, Andrii Nakryiko
+ <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, puranjay12@gmail.com
+References: <20240705145009.32340-1-puranjay@kernel.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+Date: Mon, 8 Jul 2024 16:52:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="hwztwzscqtxaisoz"
-Content-Disposition: inline
-In-Reply-To: <eda90514-e40c-4edd-8c15-18717a5e9784@kernel.org>
+In-Reply-To: <20240705145009.32340-1-puranjay@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27330/Mon Jul  8 10:36:43 2024)
 
+On 7/5/24 4:50 PM, Puranjay Mohan wrote:
+> fexit_sleep test runs successfully now on the CI so remove it from the
+> deny list.
 
---hwztwzscqtxaisoz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do you happen to know which commit fixed it? If yes, might be nice to have it
+documented in the commit message.
 
-On Mon, Jul 08, 2024 at 04:04:21PM GMT, Krzysztof Kozlowski wrote:
-> On 08/07/2024 08:40, Liu Ying wrote:
-> >>> +
-> >>> +  "^framegen@[0-9a-f]+$":
-> >>> +    type: object
-> >>> +    additionalProperties: true
-> >>> +
-> >>> +    properties:
-> >>> +      compatible:
-> >>> +        const: fsl,imx8qxp-dc-framegen
-> >>> +
-> >>> +  "^gammacor@[0-9a-f]+$":
-> >>
-> >> This looks like you are organizing bindings per your driver architectu=
-re.
-> >=20
-> > As I mentioned in cover letter, this series addresses Maxime's
-> > comment for the previous series - split the display controller
-> > into multiple internal devices.  Maxime insisted on doing this.
->=20
-> But these are not separate devices. Look:
-> 1. parent DC:
-> reg =3D <0x56180000 0x40000>;
->=20
-> 2. child interrupt controller:
-> reg =3D <0x56180040 0x60>;
->=20
-> That address is within parent.
->=20
-> 3. Then we go to things like:
-> reg =3D <0x5618b400 0x14>, <0x5618b800 0x1c00>;
->=20
-> Still within parent's range and just few words in address range. That's
-> a clear indication that you choose few registers and call it a "device".
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> ---
+>   tools/testing/selftests/bpf/DENYLIST.aarch64 | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/DENYLIST.aarch64 b/tools/testing/selftests/bpf/DENYLIST.aarch64
+> index e865451e90d2..2bf981c80180 100644
+> --- a/tools/testing/selftests/bpf/DENYLIST.aarch64
+> +++ b/tools/testing/selftests/bpf/DENYLIST.aarch64
+> @@ -1,6 +1,5 @@
+>   bpf_cookie/multi_kprobe_attach_api               # kprobe_multi_link_api_subtest:FAIL:fentry_raw_skel_load unexpected error: -3
+>   bpf_cookie/multi_kprobe_link_api                 # kprobe_multi_link_api_subtest:FAIL:fentry_raw_skel_load unexpected error: -3
+> -fexit_sleep                                      # The test never returns. The remaining tests cannot start.
+>   kprobe_multi_bench_attach                        # needs CONFIG_FPROBE
+>   kprobe_multi_test                                # needs CONFIG_FPROBE
+>   module_attach                                    # prog 'kprobe_multi': failed to auto-attach: -95
+> 
 
-That's never really been a metric though?
-
-If not, one could just create a "soc" device node covering the entire
-register map, and since it would overlap despite clearly defined
-features, you would claim it's a single device?
-
-Maxime
-
---hwztwzscqtxaisoz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZov9DgAKCRAnX84Zoj2+
-dkUHAYDd6QPLRCe/rIwamlM0RQXWTfISioM+Bfl577L8uSU4MMjj3TeJBgCqmeVK
-LJ0ey5QBf2qzE6bXOEcjZgciImlWol3ZdG7vHmEWfdiqGRQY4lQA+t9T11YMNhVe
-hA01YtfCWQ==
-=lXFJ
------END PGP SIGNATURE-----
-
---hwztwzscqtxaisoz--
 
