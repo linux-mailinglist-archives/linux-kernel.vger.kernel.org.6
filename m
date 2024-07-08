@@ -1,64 +1,76 @@
-Return-Path: <linux-kernel+bounces-244228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED6792A130
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:29:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FC292A132
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA03F1C22680
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:29:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7B31F21FB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92097E103;
-	Mon,  8 Jul 2024 11:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tg6KtiW1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BA77F484;
+	Mon,  8 Jul 2024 11:29:36 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D497E0E9;
-	Mon,  8 Jul 2024 11:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2AD7E0E8;
+	Mon,  8 Jul 2024 11:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720438175; cv=none; b=agdfLQ90/cDoblvvIKdpLSyj1Vc4BP4G57TTq2pHCoy24NuUoldnPv25JJvywhBj2dn1mYQ9Um1JZ0CseByMCaE4tZsXGrCnF+psD3a/E8EheOwu+tFLCYltLfr1HRF9j+/GHmqh3+2z5mZHJUe8C++KGjo9QvAHViFdfpi/DWQ=
+	t=1720438175; cv=none; b=NfDyE9eETJ403+tsQzJljXxItdE4mJKdC4+ZIqz5wUn3VQHKuQ+2VIgWxeDiOZcZNfnqKDGDNURpwoAjpc7fLbrqxSJ7brpMHc8EzEjTEB51AiecKjqoC0bU79H2QmdnywxBSPxF88VsS4CjzTq2yLBKgKPPSznbIP72G22M1Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720438175; c=relaxed/simple;
-	bh=v4E8/lwbejDpaEpC/wq68LE/jQ6r1xobIe9EIBTwuWU=;
+	bh=l8tNADpvGTAgcZk4owxgrOrsGJwZxT/6zV7fMI1w4KE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzwKVqs32g6P4W9Cd8ks1gZfG74xNhqmUrzGU+JC+gQJjmvKYdjMJSMZP3bzUtPHenLEtbN4n97YrmUPa0e+AJQHLo4wZFuUh+1Er+c1Lx4RMZw9SRNWmEld95ypLeBrHNoU/V31kEEzldqtnesT4CmrbZmACBF2ImSk/387EqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tg6KtiW1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615AFC116B1;
-	Mon,  8 Jul 2024 11:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720438174;
-	bh=v4E8/lwbejDpaEpC/wq68LE/jQ6r1xobIe9EIBTwuWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tg6KtiW1r4oh4bhcLIXPgu++Qz0zTUs+0zYlScgKv/zml/y05EssquyEfaaGULhKa
-	 jD5azOeTx2sDIe80rmJyCOP8+6lQudEUXrMkAYBiMETL5F8hPbee4hhYRH7SqyY+Bo
-	 LvD1sl1w1TxKNfPslDZDwSGEJAwSlo1sWiKkHW7ODJ9u+SeYBYiqdJXfEYQ97MW4Kq
-	 rE5KU9DrubcmTk3w+H9nT8fw3pcCrUpNB2ZP+crMQkGcS107MOLKt9iaNIp+RXZ1pa
-	 F7JPrhoAKs6zwc5J24EdR0+gtqRldDIXRbMgMEgo7r+Air5VpyzrbUmeICj8oMFd4W
-	 dj/lV0J1SWSfg==
-Date: Mon, 8 Jul 2024 12:29:28 +0100
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v9 4/6] iommu/arm-smmu-v3: Add CS_NONE quirk for
- CONFIG_TEGRA241_CMDQV
-Message-ID: <20240708112928.GB11567@willie-the-truck>
-References: <cover.1718228494.git.nicolinc@nvidia.com>
- <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
- <20240702174307.GB4740@willie-the-truck>
- <ZoREzIAqzyamQBWL@Asurada-Nvidia>
- <20240702184942.GD5167@willie-the-truck>
- <ZoRZP4k1A3G7nH9q@Asurada-Nvidia>
- <ZoReq/kNi368x79q@Asurada-Nvidia>
- <20240705152721.GA9485@willie-the-truck>
- <Zog3IgdmYRU7VbJB@Asurada-Nvidia>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mtDp9s6HaRNvn32D34+5YPGhNG/RkiFm4P0iqSMbFujm4t+745EyTry7/QlSabFg0PtunzRKi34RCsF6JGTSFLF2ZYkobpO8Z7rlv78RMqbR37M7cNol7OlxBTT64+Ob+NM3oNG19fZg09LdJ7hLTwZ1nCeBfSOp9bs0jOd+gc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77e7420697so212988266b.1;
+        Mon, 08 Jul 2024 04:29:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720438172; x=1721042972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bcz3nh3P1QPB93IkBWiwLYfGJ8ranmn0k42SqHg0GD8=;
+        b=KBxJV8VtoZW9livy3cmtY4zLtcFta8OBWPhqiF3qLosCcnYqTBDzj/ZH8ydfB6emdq
+         6YueJJd8+DkP2pppcwVv1PkGx96kCbMKTA6OZKdVucEuzZzx5UyIaaBjwGVwt940vK2L
+         8qWFl9CU8SD9aZxE2Ic99xz9KK6HPnudUl57nGS6BPKgW/XWIC4p83aE1uklVokaI6on
+         z8hUuz50Y97i9UtyIxZHsWKLtZ+FdE1AKGmSQt6EiodggIDt6Z8qPqoaskcf79B2dDfb
+         Ipnj6dgNU6q1BP+znejYXwLhMwMDEqFXqLLMNccN8vBbeT6UgMm0hAW7gBhpHXlkQq6n
+         o0jA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKPQOyRM8/35gJOqgc8ZV3gg6hLmpfJC0q2NmR8BgB5z7tnwPqCR0Yid+ouSZTt25gDLd7xhjEX9x9OpCFUtgwwgImeTGRUkQuK55VWn0CD9os9jiVCN+rfFInDTpZGNyRmpz2gReo3cpT/Ziup3ifJ23gZMU6dLMM04ZOuuoKak8o
+X-Gm-Message-State: AOJu0YxfWgp5DatKvuQ6Ngh79vrrEAJ3mrt3ado7K9pmUfrQyjgoXKig
+	evr5O1NkQtZ71TUigd241qeqNvIefHrg4NvI41zL0kzKDXzciQY4
+X-Google-Smtp-Source: AGHT+IGwnmeCQCgRGyXdVA7s26btz7dHrIerUo2cdeyLDKvuIPKNqvP0pyiSx+yPrX1vGERkl5IksA==
+X-Received: by 2002:a17:906:3403:b0:a77:da14:840f with SMTP id a640c23a62f3a-a77da1485f2mr546194766b.9.1720438172279;
+        Mon, 08 Jul 2024 04:29:32 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77e1417c3dsm223512566b.92.2024.07.08.04.29.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 04:29:31 -0700 (PDT)
+Date: Mon, 8 Jul 2024 04:29:29 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Horia Geanta <horia.geanta@nxp.com>
+Cc: "kuba@kernel.org" <kuba@kernel.org>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH net-next v3 1/4] crypto: caam: Avoid unused
+ imx8m_machine_match variable
+Message-ID: <ZovNme6LSqxdYpS4@gmail.com>
+References: <20240702185557.3699991-1-leitao@debian.org>
+ <20240702185557.3699991-2-leitao@debian.org>
+ <ffcb4e2a-22f2-4ce2-a2cd-ad05763c91f4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,90 +79,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zog3IgdmYRU7VbJB@Asurada-Nvidia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ffcb4e2a-22f2-4ce2-a2cd-ad05763c91f4@nxp.com>
 
-On Fri, Jul 05, 2024 at 11:10:42AM -0700, Nicolin Chen wrote:
-> On Fri, Jul 05, 2024 at 04:27:21PM +0100, Will Deacon wrote:
-> > On Tue, Jul 02, 2024 at 01:10:19PM -0700, Nicolin Chen wrote:
-> > > On Tue, Jul 02, 2024 at 12:47:14PM -0700, Nicolin Chen wrote:
-> > > > @@ -345,6 +345,11 @@ static void arm_smmu_cmdq_build_sync_cmd(u64 *cmd, struct arm_smmu_device *smmu,
-> > > >             FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH) |
-> > > >             FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
-> > > >
-> > > > +   if (cmdq->type == TEGRA241_VCMDQ) {
-> > > > +           cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_NONE);
-> > > > +           return;
-> > > > +   }
-> > > > +
-> > > >     if (!(smmu->options & ARM_SMMU_OPT_MSIPOLL)) {
-> > > >             cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
-> > > >             return;
-> > > > @@ -690,7 +695,8 @@ static int arm_smmu_cmdq_poll_until_sync(struct arm_smmu_device *smmu,
-> > > >                                     struct arm_smmu_cmdq *cmdq,
-> > > >                                     struct arm_smmu_ll_queue *llq)
-> > > >  {
-> > > > -   if (smmu->options & ARM_SMMU_OPT_MSIPOLL)
-> > > > +   if (smmu->options & ARM_SMMU_OPT_MSIPOLL &&
-> > > > +       cmdq->type != TEGRA241_VCMDQ) {
-> > > >             return __arm_smmu_cmdq_poll_until_msi(smmu, cmdq, llq);
-> > > >
-> > > > --------------------------------------------------------------
-> > > >
-> > > > Would you prefer this one? I feel CMDQ_QUIRK_SYNC_CS_NONE_ONLY
-> > > > is more general looking though..
-> > >
-> > > And we would need some additional lines of comments for the two
-> > > pieces above, explaining why TEGRA241_VCMDQ type needs the first
-> > > one while bypasses the second one. Again, it feels even worse :(
-> > 
-> > I hacked the code around a bit this afternoon. Please can you see if:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-nicolin/grace-vcmdq-wip
-> > 
-> > does roughly what you need?
-> 
-> I appreciate the patch. Yet, we cannot use IORT's model field.
-> This would need to go through IORT documentation, for A. And B,
-> we had a very long discussion with ARM (Robin was there) years
-> ago, and concluded that this CMDQV would not be a model in IORT
-> but a DSDT node as an extension. So, this is firm...
+Hello Horia,
 
-Seems like a bad outcome given that you've clearly modified the IP, but
-whatever. We can parse the DSDT when we detect whatever the model
-actually is; I don't think that's a huge issue.
+On Fri, Jul 05, 2024 at 10:11:40AM +0000, Horia Geanta wrote:
+> On 7/2/2024 9:56 PM, Breno Leitao wrote:
 
-> With that, we cannot avoid an unconditional hard-coding tegra
-> function call even if we switch to an impl design:
-> 
-> +static int acpi_smmu_impl_init(u32 model, struct arm_smmu_device *smmu)
-> +{
-> +	/*
-> +	 * unconditional go through ACPI table to detect if there is a tegra241
-> +	 * implementation that extends SMMU with a CMDQV. The probe() will fill
-> +	 * the smmu->impl pointer upon success. Otherwise, fall back to regular
-> +	 * SMMU CMDQ.
-> +	 */
-> +	tegra241_impl_acpi_probe(smmu);
+> > diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+> > index bd418dea586d..d4b39184dbdb 100644
+> > --- a/drivers/crypto/caam/ctrl.c
+> > +++ b/drivers/crypto/caam/ctrl.c
+> > @@ -80,6 +80,7 @@ static void build_deinstantiation_desc(u32 *desc, int handle)
+> >  	append_jump(desc, JUMP_CLASS_CLASS1 | JUMP_TYPE_HALT);
+> >  }
+> >  
+> > +#ifdef CONFIG_OF
+> >  static const struct of_device_id imx8m_machine_match[] = {
+> >  	{ .compatible = "fsl,imx8mm", },
+> >  	{ .compatible = "fsl,imx8mn", },
+> > @@ -88,6 +89,7 @@ static const struct of_device_id imx8m_machine_match[] = {
+> >  	{ .compatible = "fsl,imx8ulp", },
+> >  	{ }
+> >  };
+> > +#endif
 
-In-line the minimal DSDT parsing to figure out if we're on a Tegra part.
-If it's that bad, put it in a static inline in arm-smmu-v3.h.
+> Shouldn't using __maybe_unused instead of the ifdeffery be preferred
+> in this case?
 
-> +	return 0;
-> +}
-> 
-> As for arm_smmu_cmdq_needs_busy_polling, it doesn't really look
-> very optimal to me.
+That is an option as well. Not sure if it makes any difference, tho.
 
-"optimal" in what sense? In that you don't like how it smells, or that
-it's measurably bad?
+If you prefer __maybe_unused, I am more than happy to send a follow-up
+patch to convert the #ifdef to __maybe_unused. Up to you.
 
-> But if you insist on having an smmu option, we still have to take in the
-> PATCH-3 in this series, enforcing an arm_smmu_cmdq_build_sync_cmd() call
-> in the IRQ handler too.  So, it would eventually look like [attachment].
-
-With my hacks, I think you can just call arm_smmu_cmdq_build_sync_cmd()
-from the irqhandler and it will work.
-
-Will
+Thanks!
 
