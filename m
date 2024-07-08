@@ -1,154 +1,213 @@
-Return-Path: <linux-kernel+bounces-244437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4602A92A43D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:02:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 477EE92A442
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 657821C21AAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4501C2141D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9FA5381B;
-	Mon,  8 Jul 2024 14:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9383A80024;
+	Mon,  8 Jul 2024 14:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vwd7FWBy"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OO76dY1X"
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF9D27713
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DC727713
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447351; cv=none; b=MyN1TBoUHUPQAAETL/J7nmxJUzEa/eLy48bHQXim5lIO3I24l5zBUStFqYCorPr9NdLPON0YYTPMZYhnAm9n9KeLSiAMfg39uI3fnA+fDXuCA9MpWtIuDQL5MED1ToyjluOgjwU9wzCVlDauza2hSiSAFetZCFaDoYxumIthpNg=
+	t=1720447370; cv=none; b=XqP5hxDwIJF/SXCICRsC40p7xynbBcEWDQOMGukKNDMMGlMMhAW4IsJXqCHgEV2CLe2JrJv2YQWknzkB3pmC3NHX3F3uAx23GEnDSybMeJu21CTNvoxxJYXf8YVpE9bV/KvE0cscxmZloYeikrCPXrOT/dly5duUc4cEm9Enoh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447351; c=relaxed/simple;
-	bh=XVI1sPWzwf0EC4+VDcRWpuDpJgYiTCP5xfU9hMnPeQE=;
+	s=arc-20240116; t=1720447370; c=relaxed/simple;
+	bh=3ZL+UxfHVTnQCW3P0TgjacZwLOPmj/zWG4mbdfo03w4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5m+WOsmSsiXFs3fbo7UmQmeIMLZ4s4sRlD6tiNfwItNJFkc7tjOFhYdHzI1mtISpmg4SkVs7v3x4KUxx/qR7A5s4tOBVztoq+ELWHHv0J8Pjy9+IXLOZqLtw2eyUxpujzTLiVq9hn/Uj93Z0i+7p6dHzax78aUzHl9oZ2Id0r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vwd7FWBy; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so4111291e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 07:02:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720447347; x=1721052147; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNkP0Bt8Z9z+t2BG5svCbmD1UB8JpC5ZP0x//z98M3I=;
-        b=vwd7FWByCg2Nhz2Hd6DMciRxxJFVGPI2LkrgL+OdtaxwLhSvBneFw71vjBSAokHVOm
-         CQlAXRDcFTBgtwpmsizLH7GZVmoItHmZ+6IrMCq6cqTsaNg9bQo9c4u3ffOGPyQJjjgJ
-         eS+MrB0PR71RFhYDImCXmym9ug8GeRhMHAIDbWMqnNKRSUSO9RwMUxIyuQWqW1GYCukR
-         OQ9iKkjuZupONV/E5nLCx72OxYZe2sXR3j71R6CBgu334wj3KtUsTX+upgag+Az7ezjU
-         j0q/D+YQsKsfrjqLA9m8Bmb94m28/T2iXoL/QALV8SvPwOIEgYopE4+Y5SgJhHRWFlQW
-         doQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720447347; x=1721052147;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HNkP0Bt8Z9z+t2BG5svCbmD1UB8JpC5ZP0x//z98M3I=;
-        b=hBHUtNmiv5FrZrJ4Ht9zPQSuWh5f8Frt/eh4qPutFu1pjh/fEJxhPGjiFAGQmx3oyp
-         H9T2i4hah24vzIhPSx8/7kwMahk3a23waCLd6E8xk4euB7l2iQPG6+Ge2e9wc1YlyVv3
-         C7BQbh9AnbWQriKyn8THNpqaaqpjhUtL1Wzg9Xh4s5HvUCmOPZyPi71N3YgLKM47RfDg
-         RZ+ARes23lMv0euvLVbgIIfjumIpYodnNiLa41Uo13wqEXVFfExV+LpbEBJIUu2464Jz
-         P9WuxtnDRdWPBMfwWoe9+pM0KlEJppEpDysl9Lqt+yNtQtFiah+eSlsiyfTt4f7xoyeA
-         PxVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFwxleyf9fXvEUdIkKnMM2xg5nQ0OCDUFHOpwahZ9+XRk39Yc6bJPE/uE9bdOSwgRM1wJuJMkJwIzOHGbMmhzzxkvnTfh5nEyNyakr
-X-Gm-Message-State: AOJu0Yxx5pHR0xnJ8CT8m006BrVsYf3HnF+zyr/Ef9jYIpQPm0EuFY3G
-	BHO9oXuuqVYmrZg+p3ckKrJ8JThRrfDR724UBPjA+riyHtJ+SSL4K8tBoWJtPlw=
-X-Google-Smtp-Source: AGHT+IF/QaQIW5rohmTJn5zHc68r4oDJHttb39KSQE+SaXaKxy3w9B6lXQX2UKAIvJTa9lxjTmfx9Q==
-X-Received: by 2002:ac2:5228:0:b0:52c:daa7:8975 with SMTP id 2adb3069b0e04-52ea063230amr8500079e87.18.1720447347349;
-        Mon, 08 Jul 2024 07:02:27 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ead695f29sm509185e87.109.2024.07.08.07.02.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 07:02:26 -0700 (PDT)
-Date: Mon, 8 Jul 2024 17:02:24 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] dt-bindings: clock: qcom: Remove required-opps from
- required list on SM8650
-Message-ID: <rbej7rbjiwtgf4reiomtmlv3ef3ljfys5yfzypigrertylucu7@be3v65aeuimb>
-References: <20240708130836.19273-1-quic_jkona@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=etvkQMt4FP9tbh/PXClA8Mt+mJ3uBNdVrWZXyxLiLgFgFYreG0vxO/OOdXi/oU1LKL0h+0t8hUZSLSWzbg/zGwBRnTwYFjhTMcN9txMjVad27oId2bO7aZmaW1T1AmpBw+2IlYDuXvX/Qmlpmx0ctCC/2anvSAEZZ4MEUUgRmCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OO76dY1X; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHm671nD6zNXj;
+	Mon,  8 Jul 2024 16:02:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720447359;
+	bh=A84/Z2GsiV0zhoFzsTRv4BZHSh1D21rJmnJ84FxKGj0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OO76dY1Xr79Tn2Ly+t1mUU/av2s/poE8AQFJu8y15CVae4nLKb5cW4zTZ9D9f2O7S
+	 65+MiPdKYNdQP6r47OQRli2g+E08IvJt6CcEwmth+kFmAWo6MfrEjXeuyJSiULUiz6
+	 DmGsYpnSS3Y0tuIO7I564spr3AmprAmFe6X6JykE=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHm65438NzlH8;
+	Mon,  8 Jul 2024 16:02:37 +0200 (CEST)
+Date: Mon, 8 Jul 2024 16:02:34 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Kees Cook <kees@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240708.hohNgieja0av@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net>
+ <202406271019.BF8123A5@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240708130836.19273-1-quic_jkona@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202406271019.BF8123A5@keescook>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 08, 2024 at 06:38:36PM GMT, Jagadeesh Kona wrote:
-> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
-> sufficient for clock controllers to operate and there is no need to specify
-> the required-opps. Hence remove the required-opps property from the list of
-> required properties for SM8650 camcc and videocc bindings.
+On Thu, Jun 27, 2024 at 11:12:43AM -0700, Kees Cook wrote:
+> On Thu, Jun 27, 2024 at 03:34:41PM +0200, Mickaël Salaün wrote:
+> > I didn't find specific issues with Landlock's code except the extra
+> > check in hook_inode_free_security().  It looks like inode->i_security is
+> > a dangling pointer, leading to UAF.
+> > 
+> > Reading security_inode_free() comments, two things looks weird to me:
+> > > /**
+> > >  * security_inode_free() - Free an inode's LSM blob
+> > >  * @inode: the inode
+> > >  *
+> > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
+> > 
+> > I don't see where i_security is set to NULL.
 > 
-> This fixes:
-> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
-> 'required-opps' is a required property
+> Yeah, I don't either...
 > 
-> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
-> 'required-opps' is a required property
+> > >  */
+> > > void security_inode_free(struct inode *inode)
+> > > {
+> > 
+> > Shouldn't we add this check here?
+> > if (!inode->i_security)
+> > 	return;
 > 
-> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
-> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Probably, yes. The LSMs that check for NULL i_security in the free hook
+> all do so right at the beginning...
+> 
+> > 
+> > > 	call_void_hook(inode_free_security, inode);
+> > > 	/*
+> > > 	 * The inode may still be referenced in a path walk and
+> > > 	 * a call to security_inode_permission() can be made
+> > > 	 * after inode_free_security() is called. Ideally, the VFS
+> > > 	 * wouldn't do this, but fixing that is a much harder
+> > > 	 * job. For now, simply free the i_security via RCU, and
+> > > 	 * leave the current inode->i_security pointer intact.
+> > > 	 * The inode will be freed after the RCU grace period too.
+> > 
+> > It's not clear to me why this should be safe if an LSM try to use the
+> > partially-freed blob after the hook calls and before the actual blob
+> > free.
+> 
+> Yeah, it's not clear to me what the expected lifetime is here. How is
+> inode_permission() being called if all inode reference counts are 0? It
+> does seem intentional, though.
+> 
+> The RCU logic was introduced in commit 3dc91d4338d6 ("SELinux: Fix possible
+> NULL pointer dereference in selinux_inode_permission()"), with much
+> discussion:
+> https://lore.kernel.org/lkml/20140109101932.0508dec7@gandalf.local.home/
+> (This commit seems to remove setting "i_security = NULL", though, which
+> the comment implies is intended, but then it also seems to depend on
+> finding a NULL?)
+> 
+> LSMs using i_security are:
+> 
+> security/bpf/hooks.c:   .lbs_inode = sizeof(struct bpf_storage_blob),
+> security/integrity/evm/evm_main.c:      .lbs_inode = sizeof(struct evm_iint_cache),
+> security/integrity/ima/ima_main.c:      .lbs_inode = sizeof(struct ima_iint_cache *),
+> security/landlock/setup.c:      .lbs_inode = sizeof(struct landlock_inode_security),
+> security/selinux/hooks.c:       .lbs_inode = sizeof(struct inode_security_struct),
+> security/smack/smack_lsm.c:     .lbs_inode = sizeof(struct inode_smack),
+> 
+> SELinux is still checking for NULL. See selinux_inode() and
+> selinux_inode_free_security(), as do bpf_inode() and
+> bpf_inode_storage_free(). evm and ima also check for NULL.
+> 
+> landlock_inode() does not, though.
+> 
+> Smack doesn't hook the free, but it should still check for NULL, and it's not.
+> 
+> So I think this needs fixing in Landlock and Smack.
+> 
+> I kind of think that the LSM infrastructure needs to provide a common
+> helper for the "access the blob" action, as we've got it repeated in
+> each LSM, and we have 2 implementations that are missing NULL checks...
+> 
+> > 
+> > > 	 */
+> > > 	if (inode->i_security)
+> > > 		call_rcu((struct rcu_head *)inode->i_security,
+> > > 			 inode_free_by_rcu);
+> > 
+> > And then:
+> > inode->i_security = NULL;
+> > 
+> > But why call_rcu()?  i_security is not protected by RCU barriers.
+> 
+> I assume it's because security_inode_free() via __destroy_inode() via
+> destroy_inode() via evict() via iput_final() via iput() may be running
+> in interrupt context?
+> 
+> But I still don't see where i_security gets set to NULL. This won't fix
+> the permissions hook races for Landlock and Smack, but should make
+> lifetime a bit more clear?
 
-You are mentioning just sm8650, but your change applies to other
-platforms. Could you please check whether other platforms supported by
-these bindings required the opps or not. Make required: conditional and
-enabled only for those platforms?
+It should not change anything.  I don't see how inode->i_security can be
+NULL and when such an inode can be passed to an LSM hook.
 
-> ---
->  Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml   | 1 -
->  Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 1 -
->  2 files changed, 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> index f58edfc10f4c..bd9612d9d7f7 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> @@ -57,7 +57,6 @@ required:
->    - compatible
->    - clocks
->    - power-domains
-> -  - required-opps
->  
->  unevaluatedProperties: false
->  
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> index b2792b4bb554..8a42e2a1a158 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> @@ -44,7 +44,6 @@ required:
->    - compatible
->    - clocks
->    - power-domains
-> -  - required-opps
->    - '#power-domain-cells'
->  
->  allOf:
-> -- 
-> 2.43.0
 > 
+> diff --git a/security/security.c b/security/security.c
+> index 9c3fb2f60e2a..a8658ebcaf0c 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1613,7 +1613,8 @@ static void inode_free_by_rcu(struct rcu_head *head)
+>   */
+>  void security_inode_free(struct inode *inode)
+>  {
+> -	call_void_hook(inode_free_security, inode);
+> +	struct rcu_head *inode_blob = inode->i_security;
+> +
+>  	/*
+>  	 * The inode may still be referenced in a path walk and
+>  	 * a call to security_inode_permission() can be made
+> @@ -1623,9 +1624,11 @@ void security_inode_free(struct inode *inode)
+>  	 * leave the current inode->i_security pointer intact.
+>  	 * The inode will be freed after the RCU grace period too.
+>  	 */
+> -	if (inode->i_security)
+> -		call_rcu((struct rcu_head *)inode->i_security,
+> -			 inode_free_by_rcu);
+> +	if (inode_blob) {
+> +		call_void_hook(inode_free_security, inode);
+> +		inode->i_security = NULL;
 
--- 
-With best wishes
-Dmitry
+If a path walk is ongoing, couldn't this lead to an LSM's security check
+bypass?  Shouldn't we call all the inode_free_security() hooks in
+inode_free_by_rcu()?  That would mean to reserve an rcu_head and then
+probably use inode->i_rcu instead.
+
+I think your patch is correct though.  Could you please send a full
+patch?
+
+> +		call_rcu(inode_blob, inode_free_by_rcu);
+> +	}
+>  }
 
