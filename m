@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-244985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A33B92AC88
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:23:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817E392AC89
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139381F22C47
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:23:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B388A1C225F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADA315357A;
-	Mon,  8 Jul 2024 23:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF48153837;
+	Mon,  8 Jul 2024 23:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="R5dI8yCa"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="J7fz5MBP"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2B3152DEB
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 23:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF8C152798
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 23:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720480997; cv=none; b=eCG1PKyI/mFy7dx5JYERLfh6fnhC30WVrs+Oyj9coiUA838VpKl89ogR2MGoowOLkX0Z2keak/JVTekhPdAgfSvhAZ4yT5ezqDn+T8B1fcv4AJx2F7VSYX99YzSPFFyhlGZMVZ4fBi25L0FVTMva3RzZDfwTVQWKJukCYolnt/0=
+	t=1720481004; cv=none; b=hUeDOH8M1Lg97tWVOMTNelhmYaFuyH5poMr8S4Cl5MnLrGtLaG/tpOegMhuRsACswUIfyUdOt6RARBGHOrElo3kOBnCsZrCwXTc0z8VQlde0jWqu1evWnk++K6pmqeY0GhcPY1RH9Xzqly+yzIQPMLQ9V1cVcujLPNmhNhYnBbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720480997; c=relaxed/simple;
-	bh=dKVJuxjCf0BQnbqMmoa6AIWyIAUk9r4xcxNXHBemsa8=;
+	s=arc-20240116; t=1720481004; c=relaxed/simple;
+	bh=6psedXWiVhgGXMWXvYNxOstdCMvuxEuuwfA7iWcmcGU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fkab8njJ9MtjZ/mQ9IscQVLjCbvCz68eyOmQi5Fq8kGFmft2G+3ivoUbxT/kkj+mylW6EqTqcmIW+Rkg94uJwhHAmsliqakQ5QzjOiVtn1WDokDSwJ95f50oJ4bpDr3vgkk/NzeG39mHuzbHD1HBtmWETlWFY5m/NZ0A0C6mctM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=R5dI8yCa; arc=none smtp.client-ip=209.85.210.175
+	 MIME-Version; b=dAK60qiORE1m98zDr/7ZE1y9UpWd2/UPXmZ/Yn0kaud02sAGndBkCSospSbPpB8mFexvHUj6iHG5o8u3deiNwtGCaWJ7VMh1D3C7UqfXCRKQO8M6CNdxactEJyvXDQUGbu4Uuz30LKznwHRmTzj9dkjrgy8F60b0ocSbjyVmjPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=J7fz5MBP; arc=none smtp.client-ip=209.85.161.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70b07f27788so2490710b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 16:23:15 -0700 (PDT)
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c669a0b5d1so1390781eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 16:23:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1720480995; x=1721085795; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1720481002; x=1721085802; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vl+9UgjBrvfTiNM4jLErKbUr93/lCxlDJ5aAiE7eoSw=;
-        b=R5dI8yCa6A18z9ebzl+qHIIMyRsSEXv49WAFW4a8DIklcuUdQVZ6/3qInh2JPn2gwm
-         lk1n40GMdgTV6WeSpeXEn0awkhOMungqerdNMy8RLAPcu+iBLYdJ2CrLh7IWj9nU+VO2
-         cL96ZYt7oSHxLpBBygmbkOQVB7T58zowcgsDwLQckaeDEya8798fzSo85uz1Lh14mtfd
-         swvuCSaxBuIBSawLHiRGwK9qFnY9iU4TXC8tAFjB8yCR8wJ0grNGgVS2X0mDXWVATmx4
-         491VKlpFoBB9+cFIZInhAFeiyQGgDrZS//5cNZd/J0KWCkQw0ki5urUVjIOHQwpCFWu2
-         Lgfw==
+        bh=qPQjFOQJrmmumJb1CUQeupQXr/aSCBOnaBJ4NRUg9Dk=;
+        b=J7fz5MBPnO7ZcRAM1NEBK6HhCyqgLuxeeR7JFnPDgN0OT786Ey2UmZztDThJ8+7xac
+         G0hOt/ezroK3iASmFcIqkXLxKqWUlT+3zePAzfq+1AalgBgWQevISLNC6v5SixHWnaZj
+         q93g9mgVht9kZ8oKP3IUt9b3p0j7eAWxZblRsOysCEhG2F8NI+QezNw4FFf9jFT2N+Ak
+         rPyqs7UDXYwbKhTj3OiIwyr4qTC2E1yrh8mroiIyw202hk0J3FKfcuKIYVjDNnwLg4EG
+         aXmpcIhzZI04j2xQFsln2mjjEWZXC20kcXyFkNgmv/F7Q5XDkGk8rd+/20zKFu7l3CCi
+         H6dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720480995; x=1721085795;
+        d=1e100.net; s=20230601; t=1720481002; x=1721085802;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vl+9UgjBrvfTiNM4jLErKbUr93/lCxlDJ5aAiE7eoSw=;
-        b=AXo6+Ctii0wcbbKPnh9hovfonF0cA9iYuhNEGZw4basSpR8e3CPQvjEM46Jaq5va4S
-         cTCusGUyHkgCg0diWkOsKwq7gYfpDPKyB9nwPj0OywcjGAflq/QSRtqv72FjVjwFDNyi
-         x6y0Ye6wzXD/BEyjo7Tu98wgCMjiMUIITcqfUJckdnFYb5w0Ujy9RKiPxQYRXkNPV83i
-         6yHTLxx3lM3Jeu5125cHkbLaKeIUOE7EF1x6Z37W7jMrbSFAbKhyE9Bj+3RabCEwW3DV
-         WVTllJ1BisUZWfmlqofvLYnbhuEw3uKRYWG/vfrVV/87O2weXDy0OGyGhTnMMDYrmgmP
-         wNtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkZ3Szduup7Cj9mCDlXr4qyyZBCvH40EPKALkZwLcweN/0wRruVSCMPA4m8EH4LrH7VeEzxHHKsO6/oKX5noQAET5HeauTAbB/sKg8
-X-Gm-Message-State: AOJu0Yz/i2cGx7/mrJYBb6+lOkSfSFG+iCqHjc3zOZSefCgE95V9+ttE
-	PRGihVPERKO1JTvze97QDoJy0CQ9E5ITArk2rEDlBAcvSDHO47dE/dQriMwBo6U=
-X-Google-Smtp-Source: AGHT+IHIfjKQBGz+sOL7hxhDniw3kzOJc5gpk3Em03wnByh2TJarAT6JpXF6BaTPAd2VR/ahmPWk0A==
-X-Received: by 2002:a05:6a00:21d0:b0:706:7577:c564 with SMTP id d2e1a72fcca58-70b4364ff1amr1115559b3a.21.1720480995043;
-        Mon, 08 Jul 2024 16:23:15 -0700 (PDT)
+        bh=qPQjFOQJrmmumJb1CUQeupQXr/aSCBOnaBJ4NRUg9Dk=;
+        b=oBFj3izZULnnA29XbEP5qeeTaW5/j1Joq8htBN9KQNnMF5bGCMxM+5+Y82a2geJout
+         8ngVHlge+aqFv2f3NV0GvOYSQIHHpZUvS8aG2Op+m3jc27PwaKRfJ9/Q5elbJ6ZmKFyI
+         Kl7Ygreo+1o6Hlf8d+4yE+M/xE/zlPY6mYpd2EpwwUOjjmfQKIib4CZkA6jBWM1jhn/A
+         ZosFTSz0PpPyzbxKHB7f8J9ubsdZ7CIyotzaIjabFDfsXFagXZnJAfCUZ28UUp5DAy6Y
+         hVakXtASNDiTa1Cq5WQY4pcNP24dqf37x87U1ABUpqCYqfivuI1xvLs6STZySLNhBL6Y
+         QcSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnSRytTK/kFAbRZvEuH362JiXYu13QAxWZLSTnU0+51yJb672zdvPqRMsitR1FTU/qAOrPYJWCHmuqL/Ddt6DP2dOsKvOHnnCzibAL
+X-Gm-Message-State: AOJu0YzWY92AjP+N/xzNXoAt1m5XRP7FVR9q0cXok6GJ3QMrPxz29SVY
+	xSbsIGNOVIDC3k68v4mnT0TytvqbZJbyrSiaGuaOiMVkuw2KutgR9ozz8HjGJhA=
+X-Google-Smtp-Source: AGHT+IHgvnicgkruRjYUzVyfO9REfGDXS1M/onpZY0ms8UA43OsIKnZ+wnQ7WF0Kfvrq6b8u0H6N7A==
+X-Received: by 2002:a05:6871:24e0:b0:25e:56a:9665 with SMTP id 586e51a60fabf-25eaebc6866mr612181fac.43.1720481001985;
+        Mon, 08 Jul 2024 16:23:21 -0700 (PDT)
 Received: from dev-cachen.dev.purestorage.com ([208.88.159.129])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b438bfa86sm437775b3a.47.2024.07.08.16.23.13
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b438bfa86sm437775b3a.47.2024.07.08.16.23.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 16:23:14 -0700 (PDT)
+        Mon, 08 Jul 2024 16:23:21 -0700 (PDT)
 From: Casey Chen <cachen@purestorage.com>
 To: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: yzhong@purestorage.com,
 	Casey Chen <cachen@purestorage.com>
-Subject: [PATCH 1/1] perf tool: fix handling NULL al->maps returned from thread__find_map
-Date: Mon,  8 Jul 2024 17:23:01 -0600
-Message-ID: <20240708232302.15267-2-cachen@purestorage.com>
+Subject: [PATCH] debug patch for perf report segfault
+Date: Mon,  8 Jul 2024 17:23:02 -0600
+Message-ID: <20240708232302.15267-3-cachen@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240708232302.15267-1-cachen@purestorage.com>
 References: <20240708232302.15267-1-cachen@purestorage.com>
@@ -85,85 +85,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
-thread__find_map() would return with al->maps or al->map being NULL
-when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
-later deferencing on it would crash.
+Debug patch to apply on 0dd5041c9a0e ("perf addr_location: Add
+init/exit/copy functions")
 
-Fix callers of thread__find_map() or thread__find_symbol() to handle
-this.
 ---
- tools/perf/arch/powerpc/util/skip-callchain-idx.c | 10 ++++++----
- tools/perf/util/machine.c                         |  5 +++++
- tools/perf/util/unwind-libdw.c                    |  6 ++++--
- 3 files changed, 15 insertions(+), 6 deletions(-)
+ tools/perf/util/callchain.c | 4 ++++
+ tools/perf/util/callchain.h | 9 +++++++++
+ tools/perf/util/machine.c   | 8 ++++++--
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/arch/powerpc/util/skip-callchain-idx.c b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-index 5f3edb3004d8..25b0804df4c4 100644
---- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-+++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-@@ -255,13 +255,14 @@ int arch_skip_callchain_idx(struct thread *thread, struct ip_callchain *chain)
+diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+index b0dafc758173..2c1d9b8ff8d9 100644
+--- a/tools/perf/util/callchain.c
++++ b/tools/perf/util/callchain.c
+@@ -1067,6 +1067,10 @@ int callchain_cursor_append(struct callchain_cursor *cursor,
+ 	node->ip = ip;
+ 	map__zput(node->ms.map);
+ 	node->ms = *ms;
++    if (ms && !ms->maps) {
++        pr_info("%s addr of node->ms %p ms %p has no maps map %p symbol %p\n",
++                __func__, &node->ms, ms, ms->map, ms->sym);
++    }
+ 	node->ms.map = map__get(node->ms.map);
+ 	node->branch = branch;
+ 	node->nr_loop_iter = nr_loop_iter;
+diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
+index d95615daed73..8bba51be33a9 100644
+--- a/tools/perf/util/callchain.h
++++ b/tools/perf/util/callchain.h
+@@ -6,6 +6,7 @@
+ #include <linux/rbtree.h>
+ #include "map_symbol.h"
+ #include "branch.h"
++#include "debug.h"
  
- 	thread__find_symbol(thread, PERF_RECORD_MISC_USER, ip, &al);
- 
--	if (al.map)
--		dso = map__dso(al.map);
-+	if (!al.map)
-+		goto out;
-+
-+	dso = map__dso(al.map);
- 
- 	if (!dso) {
- 		pr_debug("%" PRIx64 " dso is NULL\n", ip);
--		addr_location__exit(&al);
--		return skip_slot;
-+		goto out;
- 	}
- 
- 	rc = check_return_addr(dso, map__start(al.map), ip);
-@@ -282,6 +283,7 @@ int arch_skip_callchain_idx(struct thread *thread, struct ip_callchain *chain)
- 		skip_slot = 3;
- 	}
- 
-+out:
- 	addr_location__exit(&al);
- 	return skip_slot;
+ struct addr_location;
+ struct evsel;
+@@ -213,6 +214,14 @@ static inline void callchain_cursor_commit(struct callchain_cursor *cursor)
+ {
+ 	cursor->curr = cursor->first;
+ 	cursor->pos = 0;
++    if (cursor->curr) {
++       struct callchain_cursor_node *curr = cursor->curr;
++       struct map_symbol *ms = &curr->ms;
++          if (ms && !ms->maps) {
++            pr_info("%s: cursor %p curr %p ms %p\n", __func__, cursor, curr, ms);
++            dump_stack();
++          }
++    }
  }
+ 
+ /* Cursor reading iteration helpers */
 diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 8477edefc299..fa4037d7f3d4 100644
+index 9fcf357a4d53..e6c90bb6b842 100644
 --- a/tools/perf/util/machine.c
 +++ b/tools/perf/util/machine.c
-@@ -2098,7 +2098,12 @@ static int add_callchain_ip(struct thread *thread,
- 			}
+@@ -2357,6 +2357,10 @@ static int add_callchain_ip(struct thread *thread,
  			goto out;
  		}
-+
  		thread__find_symbol(thread, *cpumode, ip, &al);
-+		if (!al.maps || !al.map) {
-+			err = 1;
-+			goto out;
-+		}
++        if (!al.maps) {
++            pr_info("%s: i'm here! al.map %p al.sym %p ip >= PERF_CONTEXT_MAX: %d cpumode %d ip 0x%lx\n",
++                    __func__, al.map, al.sym, ip >= PERF_CONTEXT_MAX, *cpumode, ip);
++        }
  	}
  
  	if (al.sym != NULL) {
-diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
-index b38d322734b4..fb038ef55be2 100644
---- a/tools/perf/util/unwind-libdw.c
-+++ b/tools/perf/util/unwind-libdw.c
-@@ -53,8 +53,10 @@ static int __report_module(struct addr_location *al, u64 ip,
- 	 */
- 	thread__find_symbol(ui->thread, PERF_RECORD_MISC_USER, ip, al);
+@@ -2384,8 +2388,8 @@ static int add_callchain_ip(struct thread *thread,
+ 	ms.map = map__get(al.map);
+ 	ms.sym = al.sym;
  
--	if (al->map)
--		dso = map__dso(al->map);
-+	if (!al->map)
-+		return -1;
-+
-+	dso = map__dso(al->map);
+-	if (!branch && append_inlines(cursor, &ms, ip) == 0)
+-		goto out;
++//	if (!branch && append_inlines(cursor, &ms, ip) == 0)
++//		goto out;
  
- 	if (!dso)
- 		return 0;
+ 	srcline = callchain_srcline(&ms, al.addr);
+ 	err = callchain_cursor_append(cursor, ip, &ms,
 -- 
-2.45.2
+2.34.1
 
 
