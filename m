@@ -1,99 +1,143 @@
-Return-Path: <linux-kernel+bounces-244119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC473929F6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC445929F6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99251283E05
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FEB286116
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86614770E5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EFE77111;
+	Mon,  8 Jul 2024 09:42:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CB8770E8;
 	Mon,  8 Jul 2024 09:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SSOGol7g"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CC44F88C;
-	Mon,  8 Jul 2024 09:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720431718; cv=none; b=qQ+VInCZSJv69Ks/lMVHTFoQz/p3020XaLLuc0HLgkhV9nyhNaSPcCJaJjETNUuF2jpKGCC9jZJFCvIHK87GeRLeV31Ll69CEjfBYs0Hq4Uc0sU6Vh4oqr6xzDxPSKEzLIjx7SgaArDLtjHryiCOX9Mz+XwAOP+4tqDGD7Nn0d0=
+	t=1720431722; cv=none; b=sXqneOOaDFtyFMEOgYsZht5IYHUuF3cFOkHX/8W+VMHm1KVmocc/ifeXx70v4xc9qoDIFG6IByCPLWGlNFM+GcCtdR6aETdsS9Tlr5uXuNZR3xFqPR59tcEkLwS4gkM9r+eiNnjm77L9V2QVTTld8eXDQXvIhxv+NMEiC+KmDkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720431718; c=relaxed/simple;
-	bh=ZlxeEDjHIcofzfH902WiH0niH94aGCc5LSZ68+IVe+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=utPY4LDv1TZpBkP76Qj6AQsj57H5pWEl7Hg+nlloCpAKDNekjCq8fLBm/7lERhEMZmXi6BIuEZp1jRZ6a0zSlM82w3Iqz90QpbIPcrzP2xEssaS2XWbmvFf8YZKzWgWb+2CaXQmTSwG3Zk+z8gPegigyluyVgqI4un6J7Bfklgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SSOGol7g; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pKS+oSufz1eafXT5eQa4h84xYuDBPKzlEApXrtYxFeM=; b=SSOGol7g9Ouuq5bzRMTs9TPTdf
-	bxfJDiNRe9AYmR2Su0dkmTB9KpZnzBV8u1UpIMyRRXWjD85UglyZPIbo5SXBaxE1iAQhlP4+5oMTJ
-	Gb8wuLEwQ4Y/zMlSDUmm18ujvPgpc4Nv9LYS0XSmID9+g/6XkSkomrjfmzDuQDnhnesAvMpoOHH9w
-	f8eVIljRB8rTcbJn1xpB1VyGtD/4wpptt124Wg/tEAO8V81Av7jngZcp/CQ+kjZbjbpCpd0yNXET/
-	8NwoCUFgdSJ8eCDafpcc7JC1iaeY/1s6ZYNY3sxhuv/BjGx5B6eM1dPpDobg/Fjz9u2hIfUtsur/0
-	mgKoUZUg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sQksW-00000006hzd-22Z2;
-	Mon, 08 Jul 2024 09:41:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 20FB5300694; Mon,  8 Jul 2024 11:41:48 +0200 (CEST)
-Date: Mon, 8 Jul 2024 11:41:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <20240708094148.GH11386@noisy.programming.kicks-ass.net>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
- <20240703085533.820f90544c3fc42edf79468d@kernel.org>
- <CAEf4Bzbn+jky3hb+tUwmDCUgUmgCBxL5Ru_9G5SO3=uTWpi=kA@mail.gmail.com>
- <ZoV3rRUHEdvTmJjG@krava>
- <CAEf4BzYKVbCEGupX47fwM0XSzwwmXs+0sVpcAdp3poFLkjMA6Q@mail.gmail.com>
- <20240705173544.9ef034c30ae93c52164ecc1b@kernel.org>
- <Zof3RIqSl6TgaVKq@krava>
+	s=arc-20240116; t=1720431722; c=relaxed/simple;
+	bh=vtN+WW/X2RVGMOt7ANxJqvnLxl7gNECcMeB+/jYJOFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bONVPAE3m0t7kI2tF4u/KjcXVG/3CZNweytAaOcr5BDV5M1qRXy+GD+RY88+Iexoi9b/owaGQxgl407Tz2gu0AQ59MRA9bESZryUFQe0Q26D9jWcjhFX8695MhQa6LXfdOBVcdHs1MhYb97ZBpue71wMxdWHGfKxsVVrPy+2DzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E97821042;
+	Mon,  8 Jul 2024 02:42:23 -0700 (PDT)
+Received: from [10.57.74.191] (unknown [10.57.74.191])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FF0F3F641;
+	Mon,  8 Jul 2024 02:41:56 -0700 (PDT)
+Message-ID: <208b3861-6898-4506-9152-c9d770ef1555@arm.com>
+Date: Mon, 8 Jul 2024 10:41:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zof3RIqSl6TgaVKq@krava>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] dt-bindings: arm: Add binding document for
+ Coresight Control Unit device.
+To: Jie Gan <quic_jiegan@quicinc.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ James Clark <james.clark@arm.com>
+Cc: Jinlong Mao <quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Tao Zhang <quic_taozha@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>,
+ Song Chai <quic_songchai@quicinc.com>, linux-arm-msm@vger.kernel.org
+References: <20240705090049.1656986-1-quic_jiegan@quicinc.com>
+ <20240705090049.1656986-3-quic_jiegan@quicinc.com>
+Content-Language: en-GB
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20240705090049.1656986-3-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 05, 2024 at 03:38:12PM +0200, Jiri Olsa wrote:
+On 05/07/2024 10:00, Jie Gan wrote:
+> Add binding document for Coresight Control Unit device.
 
-> > Agreed. BTW, even if the uprobe is removed, the ret_handler should be called?
-> > I think both 1 and 2 case, we should skip ret_handler.
+nit: This is again too generic ? corsight-tmc-control-unit ? After all
+thats what it is and not a *generic* coresight control unit ?
+
 > 
-> do you mean what happens when the uretprobe is installed and its consumer
-> is unregistered before it's triggered?
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> ---
+>   .../bindings/arm/qcom,coresight-ccu.yaml      | 87 +++++++++++++++++++
+>   1 file changed, 87 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
 > 
-> I think it won't get executed, because the consumer is removed right away,
-> even if the uprobe object stays because the return_instance holds ref to it
+> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
+> new file mode 100644
+> index 000000000000..9bb8ced393a7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/qcom,coresight-ccu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: CoreSight Control Unit
+> +
+> +maintainers:
+> +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
+> +  - Jie Gan <quic_jiegan@quicinc.com>
+> +
+> +description:
+> +  The Coresight Control unit controls various Coresight behaviors.
+> +  Used to enable/disable ETR’s data filter function based on trace ID.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,coresight-ccu
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: apb_pclk
+> +
+> +  reg-names:
+> +    items:
+> +      - const: ccu-base
+> +
+> +  in-ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    unevaluatedProperties:
+> +      patternProperties:
+> +        '^port(@[0-7])?$':
+> +          description: Input connections from CoreSight Trace bus
+> +          $ref: /schemas/graph.yaml#/properties/port
+> +
+> +          properties:
+> +            qcom,ccu-atid-offset:
 
-Yep, that is my understanding too. RI keeps the uprobe object around,
-but the consumers can go at any time.
+Why do we need this atid offset ? Couldn't this be mapped to the "port"
+number ?
+
+e.g, input-port 0 on CCU => Offset x
+      input-port 1 on CCU => (Offset x + Size of 1 region)
+
+I believe I mentioned this in the previous posting too ?
+
+Suzuki
 
 
