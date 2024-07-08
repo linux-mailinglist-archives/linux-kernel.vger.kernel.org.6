@@ -1,106 +1,126 @@
-Return-Path: <linux-kernel+bounces-244407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC9892A3D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:41:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604BE92A3CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9731F227E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91BFA1C21A5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ED11386C6;
-	Mon,  8 Jul 2024 13:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JOPtNYSE"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7251D137756
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF7113AD13;
+	Mon,  8 Jul 2024 13:40:48 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78BB137C35;
+	Mon,  8 Jul 2024 13:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446108; cv=none; b=FD9/OOLTgHyhqIflFroX10EynUGOBQVi2nIZZpbvMjfbuiPlui58ZAR8JoqM3Yqe/LrncKCqGoQob+GPj/Bv/RRSZIjvtgSigS2UxjtZvueQYD/F6RGGl1P0TmBuXZi6cJzw6Tczgi/n5QTV7bN5MG4Ah/EpX7JjMVnlqmNQUJ4=
+	t=1720446047; cv=none; b=PlruYR/lWY2i1UA/XEV/DmFhZDSD0e/A/fRyE5H0+mG+0TwDOZ5oGvT1E+McvgNdKJWBcdas6dHrRImtyGhwzO5Zr5vQDpHC/tWtcEUhqtI7+9jxJou8S2Oy9+Th4sHIrWFUqa+QDFoYVFqV/ufWcgX2ShtclYVdCCGoXHuVx0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446108; c=relaxed/simple;
-	bh=Zc8wsCIQE4QkcpxF2KwUhLk6aeniGtxftQtx16r6/tY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=CCZwzoCevNpJUXUCJo/kTugXXocFq9fanYC3SUiRv+YBknxSS7J7RgC/nenMGs3FlH2A8wgRGcR9E5+1GLo4B3NV6bvHBPYyiO6dQPoiXGJOSq2xvMIyT0p+SNBoQAuz4s5mWhaL31t/T9q7r3hr+nWaXRFR/0chrRTdt+N/lqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JOPtNYSE; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=9uM3U88wltXFJ7XyMg
-	8j/4gf8aCYXSRp+GUIrje91R0=; b=JOPtNYSEJ/ZLAeCExnPqzyUviqVxBzoivN
-	ZVU8RnZkcj7yQBRfd+8TojIWeMFEn5k0Po2jJ9B3p2/M5fhLLDnkM6qtF0I7NzIw
-	Q67vtLI6CmujAkU9ua7gDRMwFrmAT09RnMuewYiQSkfP5HCEekUl7rOYmUkrjwhs
-	1hqZmGSEo=
-Received: from localhost.localdomain (unknown [114.92.56.131])
-	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wDXf2lY7ItmLIiECA--.681S2;
-	Mon, 08 Jul 2024 21:40:58 +0800 (CST)
-From: Lizhe <sensor1010@163.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Lizhe <sensor1010@163.com>
-Subject: [PATCH v2] driver:core: no need to invert the return value of the call_driver_probe()
-Date: Mon,  8 Jul 2024 06:40:28 -0700
-Message-Id: <20240708134028.3508-1-sensor1010@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:_____wDXf2lY7ItmLIiECA--.681S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WF1DGr4xXrW5CFy8AryxKrg_yoW8GryxpF
-	4DAFWYvFZ8uayvkFWUGry0yFyFya1xCrW09F18G39a9w17Jry5GayxKrWYqr18XrW09FWr
-	tFW5Z3yrGFWUAF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pix9NxUUUUU=
-X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/1tbiSAoWq2XAmKXSVwAAsi
+	s=arc-20240116; t=1720446047; c=relaxed/simple;
+	bh=8H1ig13FFkRAj4yqBY4MhnQGTyMG3U690diuLbRAvKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Yta65/aRXaopkyavV0uoht7HBWxJVnbtcBJR+TOznN6EOFvEsgKO/FpFOD1DudgSUfv2Kv21kKCGZVewaiRg7d80qBIwXE5GAdibL98wXfGZy54gT6e9jc4OwF7vi+dcbs7gIgE+xZ/usl6TFcoCAGeJfXJnaaV6d1s9tmLt50g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WHlXG2MTbzQkvM;
+	Mon,  8 Jul 2024 21:36:46 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 18ABB140156;
+	Mon,  8 Jul 2024 21:40:40 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 8 Jul 2024 21:40:39 +0800
+Message-ID: <5ce7be39-ac42-98c9-65fc-589385b8f65b@huawei.com>
+Date: Mon, 8 Jul 2024 21:40:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next] mm/hugetlb_cgroup: introduce peak and rsvd.peak to
+ v2
+To: Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>
+CC: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<corbet@lwn.net>, <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, Sidhartha Kumar
+	<sidhartha.kumar@oracle.com>, Miaohe Lin <linmiaohe@huawei.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>
+References: <20240702125728.2743143-1-xiujianfeng@huawei.com>
+ <20240702185851.e85a742f3391857781368f6c@linux-foundation.org>
+ <6843023e-3e80-0c1c-6aab-b386ffebd668@huawei.com>
+ <20240703133804.1d8ddf90f738a7d546399b3b@linux-foundation.org>
+ <ZovgDfGFJdc6lVN3@tiehlicka>
+Content-Language: en-US
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <ZovgDfGFJdc6lVN3@tiehlicka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-If drv->probe() or drv->bus->probe() returns EPROBE_DEFER,
-then there is no need to invert the sign. Similarly,
-if it returns -EPROBE_DEFER, no sign inversion is needed either
 
-In the probe function (either bus->probe() or drv->probe()),
-there is no return value of EPROBE_DEFER.
-v2:
-        Delete the judgment with the return value of EPROBEDEFER
-        from the _driver_probe.device()
-v1:
-        Add the judgment with the return value of EPROBEDEFER
-        from the _driver_probe.device()
 
-Signed-off-by: Lizhe <sensor1010@163.com>
----
- drivers/base/dd.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+On 2024/7/8 20:48, Michal Hocko wrote:
+> On Wed 03-07-24 13:38:04, Andrew Morton wrote:
+>> On Wed, 3 Jul 2024 10:45:56 +0800 xiujianfeng <xiujianfeng@huawei.com> wrote:
+>>
+>>>
+>>>
+>>> On 2024/7/3 9:58, Andrew Morton wrote:
+>>>> On Tue, 2 Jul 2024 12:57:28 +0000 Xiu Jianfeng <xiujianfeng@huawei.com> wrote:
+>>>>
+>>>>> Introduce peak and rsvd.peak to v2 to show the historical maximum
+>>>>> usage of resources, as in some scenarios it is necessary to configure
+>>>>> the value of max/rsvd.max based on the peak usage of resources.
+>>>>
+>>>> "in some scenarios it is necessary" is not a strong statement.  It
+>>>> would be helpful to fully describe these scenarios so that others can
+>>>> better understand the value of this change.
+>>>>
+>>>
+>>> Hi Andrew,
+>>>
+>>> Is the following description acceptable for you?
+>>>
+>>>
+>>> Since HugeTLB doesn't support page reclaim, enforcing the limit at
+>>> page fault time implies that, the application will get SIGBUS signal
+>>> if it tries to fault in HugeTLB pages beyond its limit. Therefore the
+>>> application needs to know exactly how many HugeTLB pages it uses before
+>>> hand, and the sysadmin needs to make sure that there are enough
+>>> available on the machine for all the users to avoid processes getting
+>>> SIGBUS.
+> 
+> yes, this is pretty much a definition of hugetlb.
+> 
+>>> When running some open-source software, it may not be possible to know
+>>> the exact amount of hugetlb it consumes, so cannot correctly configure
+>>> the max value. If there is a peak metric, we can run the open-source
+>>> software first and then configure the max based on the peak value.
+> 
+> I would push back on this. Hugetlb workloads pretty much require to know
+> the number of hugetlb pages ahead of time. Because you need to
+> preallocate them for the global hugetlb pool. What I am really missing
+> in the above justification is an explanation of how come you know how to
+> configure the global pool but you do not know that for a particular
+> cgroup. How exactly do you configure the global pool then?
 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 83d352394fdf..d047919d1f5e 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -664,11 +664,6 @@ static int really_probe(struct device *dev, struct device_driver *drv)
- 		if (link_ret == -EAGAIN)
- 			ret = -EPROBE_DEFER;
- 
--		/*
--		 * Return probe errors as positive values so that the callers
--		 * can distinguish them from other errors.
--		 */
--		ret = -ret;
- 		goto probe_failed;
- 	}
- 
-@@ -826,7 +821,7 @@ static int driver_probe_device(struct device_driver *drv, struct device *dev)
- 
- 	atomic_inc(&probe_count);
- 	ret = __driver_probe_device(drv, dev);
--	if (ret == -EPROBE_DEFER || ret == EPROBE_DEFER) {
-+	if (ret == -EPROBE_DEFER) {
- 		driver_deferred_probe_add(dev);
- 
- 		/*
--- 
-2.17.1
-
+Yes, in this scenario, it's indeed challenging to determine the
+appropriate size for the global pool. Therefore, a feasible approach is
+to initially configure a larger value. Once the software is running
+within the container successfully, the maximum value for the container
+and the size of the system's global pool can be determined based on the
+peak value, otherwise, increase the size of the global pool and try
+again. so I believe the peak metric is useful for this scenario.
 
