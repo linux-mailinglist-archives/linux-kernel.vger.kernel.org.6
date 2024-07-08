@@ -1,141 +1,267 @@
-Return-Path: <linux-kernel+bounces-244812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6278E92A9D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:30:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E0492A9D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931181C211CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACEFE1F228C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648481DA2F;
-	Mon,  8 Jul 2024 19:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBfJrmbq"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6E21465BD;
+	Mon,  8 Jul 2024 19:32:17 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C092079FD;
-	Mon,  8 Jul 2024 19:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7276C79FD;
+	Mon,  8 Jul 2024 19:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720467043; cv=none; b=itO4MN/HozEg1XWBzWQ4hu/3V1UYY9e87Q8Dep3LMplzjkg4hjsMCE4vIGFOD2VNMZjtwjsjI68t9AW2yGAss0aIIusH4yxNtmEOqySRvJdnFEH8GItwY22nwtOhxP271yZMpQ8b5wNzcYmAZ03gL1XjByP6BKOoOvJTzzPNKFE=
+	t=1720467136; cv=none; b=C1TELwx4ZA67IXIFLy/pyBih3zORZMNLmhQIDeXohRp7fQD5I5tLcXkdoyy3FzUx2S9Wt8ErcaSJCdgSNygx+c2oeOIC/iWJNH9Zloz1JJWvTxtqReaC1inIzdV7c1p2yK9WwYWeCB5Hod4C9DxcdIp2bpvynnzBN+b6Ie+oovM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720467043; c=relaxed/simple;
-	bh=QqsIjAwAx9n+inGkLP22a0n82rYg97l4n/OFS3+ObVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQBCRnqNZWKb3UweaN3pDYw+POLsDl8zfGXbtOqJdIicS8T37Hms4NvJTXqtgEAVJMiwdUE/lvv0Gbkg2hevjaeQQxpZGsTRdrYA6iw/wLZSH28Q+mq0QCworwsb1d37kwTMnNoGPfCK7znTf7th7lpxrKVDBlLaSw9iWWY9Qqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBfJrmbq; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-75ee39f1ffbso3156357a12.2;
-        Mon, 08 Jul 2024 12:30:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720467041; x=1721071841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8KmNcC+I9gtqNl0qK6Sv3GvWp2GJox/ne1ngUcC0thQ=;
-        b=SBfJrmbq+IN4WdB+zrWafp7X5AZuLq/dX3eEqNtAJKR2U5gdTinF+3dpNrEbmNtD+e
-         ZbQCbqnKbqBwPAM5tdpxvH4d6VtRqEIHbGoaskjn2PRNPi7eKX3cX2bmFQAY2TpdFXIk
-         Yfbfpy4NBqHFOOmaCCaIr2fPVw09LY3MCVWoRVvBClesm3B/1NOhTn/buefhvRPF0Zl8
-         Y8VM0/PxBvuDaD7UNF0ZEEyacabyHM7E1rEJZsol/rC214ejwOom6DMwo3NWpd5fxtgK
-         UHZ5obQFvPf0R44JjwyrcTv9qPrrzeiDUJxRKPDNF1gDwWINJiSxD5Gclccdzsd2tWg0
-         sr5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720467041; x=1721071841;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8KmNcC+I9gtqNl0qK6Sv3GvWp2GJox/ne1ngUcC0thQ=;
-        b=m06S0oesH+bZZRiZsXnPvR4Ni64qDshFtRkg4YczKtINGZclhanUaihts1LOrKYo3m
-         iF+vll5LzGQiETrkx7EvfrNYKV4L1wADRfLYsAkQJ4XnNLxZcXdBV6iIPDqkO8O6J2N+
-         RaDK4QcNruAghXtTSe+UqG4dmARq8Ke0iZxJDKoQyJBLI5G1yJy3ZVjx/Xgw2owdtSMD
-         IxrnkZHSAIcJ704eTzJ1IuC7AaR8WyDcY7fyn1X6QKdViNCi+zQ/3s/oJBQ3YqCuLERD
-         JYDHBmosF8miJ75jiyCEP4gwe47vjnXRh1ZbrRy/UVHZ5N0UEw/SYG56Sv7Lg2tW3xFc
-         aPQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNrztED0U/kcpuI3A7MHh9DsjE3MmsdAd2XT7AEPCSymvOVuO/0EaXRml0bvys1P0gwEyfPRbHuL7YhkJ3CYzqRB6ld+Gyv6RR2o//hWHqgVmXmukElDjNycWHdI8k/K+S
-X-Gm-Message-State: AOJu0YzwUZTaB0vFV07YoZ7uxJd9qsKeYQiCNCFDcfdRQyBaW992/IXt
-	ydXocpvno1xTQkW2Wp3EeUh3TNCfPum1FPNmLXhM0X8xtGIefc+I
-X-Google-Smtp-Source: AGHT+IGyl/jS9MvDQyLMzLqanEZPeD0lXGN0ufhqi4CP0RDFUXeihZ73BJMdoiaHHL2bgtohShPEDg==
-X-Received: by 2002:a05:6a21:3086:b0:1c2:8d3f:796 with SMTP id adf61e73a8af0-1c29822d057mr349495637.25.1720467040914;
-        Mon, 08 Jul 2024 12:30:40 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab75a8sm2201765ad.156.2024.07.08.12.30.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 12:30:39 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 8 Jul 2024 09:30:38 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com, Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH sched_ext/for-6.11] sched_ext: Disallow loading BPF
- scheduler if isolcpus= domain isolation is in effect
-Message-ID: <Zow-XrnYpDmdyg9O@slm.duckdns.org>
-References: <20240501151312.635565-1-tj@kernel.org>
- <20240501151312.635565-10-tj@kernel.org>
- <20240624113212.GL31592@noisy.programming.kicks-ass.net>
- <ZnnijsMAQYgCnrZF@slm.duckdns.org>
- <20240625082926.GT31592@noisy.programming.kicks-ass.net>
- <ZntVjZ3a2k5IGbzE@slm.duckdns.org>
- <20240626082342.GY31592@noisy.programming.kicks-ass.net>
- <ZnxXej8h46lmzrAP@slm.duckdns.org>
- <Zny_5syk1K74HP0D@slm.duckdns.org>
+	s=arc-20240116; t=1720467136; c=relaxed/simple;
+	bh=f8U5dwa1tcDAE9u6GF0FKU/4zaD9eRSS/JNLzhMMRfM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=s7QnTTPSuRrDq9ZOXUl83nS0k9rErDANshNHR0Zy20jMj2YjKjxGjO7qaYD7hFnfeWVWL9d75hTGmDB/WCIKlFsmEecSmI7UCeVlD9xmOJ+236nHXdqrIKmJmntlFR7iF57WiiG/7XKCFFskXHzOazWAPYbqpu0rPJ7ffLrGq7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D5BD420002;
+	Mon,  8 Jul 2024 19:31:59 +0000 (UTC)
+Message-ID: <0fd40aed-04d1-43a3-ab3d-c7459a63f753@ovn.org>
+Date: Mon, 8 Jul 2024 21:31:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zny_5syk1K74HP0D@slm.duckdns.org>
+User-Agent: Mozilla Thunderbird
+Cc: dev@openvswitch.org, Paolo Abeni <pabeni@redhat.com>,
+ linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ linux-kselftest@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ i.maximets@ovn.org, Aaron Conole <aconole@redhat.com>
+Subject: Re: [ovs-dev] [PATCH v1] selftests: openvswitch: retry instead of
+ sleep
+To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
+References: <20240708134451.3489802-1-amorenoz@redhat.com>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <20240708134451.3489802-1-amorenoz@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: i.maximets@ovn.org
 
-On Wed, Jun 26, 2024 at 03:27:02PM -1000, Tejun Heo wrote:
-> sched_domains regulate the load balancing for sched_classes. A machine can
-> be partitioned into multiple sections that are not load-balanced across
-> using either isolcpus= boot param or cpuset partitions. In such cases, tasks
-> that are in one partition are expected to stay within that partition.
+On 7/8/24 15:44, Adrian Moreno wrote:
+> There are a couple of places where the test script "sleep"s to wait for
+> some external condition to be met.
 > 
-> cpuset configured partitions are always reflected in each member task's
-> cpumask. As SCX always honors the task cpumasks, the BPF scheduler is
-> automatically in compliance with the configured partitions.
+> This is error prone, specially in slow systems (identified in CI by
+> "KSFT_MACHINE_SLOW=yes").
 > 
-> However, for isolcpus= domain isolation, the isolated CPUs are simply
-> omitted from the top-level sched_domain[s] without further restrictions on
-> tasks' cpumasks, so, for example, a task currently running in an isolated
-> CPU may have more CPUs in its allowed cpumask while expected to remain on
-> the same CPU.
+> To fix this, add a "ovs_wait" function that tries to execute a command
+> a few times until it succeeds. The timeout used is set to 5s for
+> "normal" systems and doubled if a slow CI machine is detected.
 > 
-> There is no straightforward way to enforce this partitioning preemptively on
-> BPF schedulers and erroring out after a violation can be surprising.
-> isolcpus= domain isolation is being replaced with cpuset partitions anyway,
-> so keep it simple and simply disallow loading a BPF scheduler if isolcpus=
-> domain isolation is in effect.
+> This should make the following work:
 > 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Link: http://lkml.kernel.org/r/20240626082342.GY31592@noisy.programming.kicks-ass.net
-> Cc: David Vernet <void@manifault.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
+> $ vng --build  \
+>     --config tools/testing/selftests/net/config \
+>     --config kernel/configs/debug.config
+> 
+> $ vng --run . --user root -- "make -C tools/testing/selftests/ \
+>     KSFT_MACHINE_SLOW=yes TARGETS=net/openvswitch run_tests"
+> 
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> ---
+>  .../selftests/net/openvswitch/openvswitch.sh  | 49 ++++++++++++++++---
+>  .../selftests/net/openvswitch/ovs-dpctl.py    |  1 +
+>  2 files changed, 42 insertions(+), 8 deletions(-)
+> 
 
-Applied to cgroup/for-6.11.
+Hi, Adrian.  See a small pile of nitpicks below.
 
-Thanks.
+None of them are blocking from my perspective, except for a typo.
+Just listed them since there is a typo anyway.
 
--- 
-tejun
+> diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+> index bc71dbc18b21..83407b42073a 100755
+> --- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
+> +++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+> @@ -11,6 +11,7 @@ ksft_skip=4
+>  PAUSE_ON_FAIL=no
+>  VERBOSE=0
+>  TRACING=0
+> +WAIT_TIMEOUT=5
+>  
+>  tests="
+>  	arp_ping				eth-arp: Basic arp ping between two NS
+> @@ -29,6 +30,32 @@ info() {
+>  	[ $VERBOSE = 0 ] || echo $*
+>  }
+>  
+> +ovs_wait() {
+> +	info "waiting $WAIT_TIMEOUT s for: $@"
+> +
+> +	"$@"
+> +	if [[ $? -eq 0 ]]; then
+
+Maybe just 'if "$@"; then' ?
+
+> +		info "wait succeeded inmediately"
+
+* immediately
+
+> +		return 0
+> +	fi
+> +
+> +	# A quick re-check helps speed up small races in fast systems.
+> +	# However, fractional sleeps might not necessarily work.
+> +	local start=0
+> +	sleep 0.1 || { sleep 1; start=1; }
+> +
+> +	for (( i=start; i<WAIT_TIMEOUT; i++ )); do
+
+for i in $(seq ${start} ${WAIT_TIMEOUT}); do
+
+Will need to initialize start to 1 and 2.
+
+It works, but seems like an unnecessary use of non-POSIX constructs.
+
+> +		"$@"
+> +		if [[ $? -eq 0 ]]; then
+
+if "$@"; then
+
+> +			info "wait succeeded after $i seconds"
+> +			return 0
+> +		fi
+> +		sleep 1
+> +	done
+> +	info "wait failed after $i seconds"
+> +	return 1
+> +}
+> +
+>  ovs_base=`pwd`
+>  sbxs=
+>  sbx_add () {
+> @@ -278,20 +305,21 @@ test_psample() {
+>  
+>  	# Record psample data.
+>  	ovs_spawn_daemon "test_psample" python3 $ovs_base/ovs-dpctl.py psample-events
+> +	ovs_wait grep -q "listening for psample events" ${ovs_dir}/stdout
+>  
+>  	# Send a single ping.
+> -	sleep 1
+>  	ovs_sbx "test_psample" ip netns exec client ping -I c1 172.31.110.20 -c 1 || return 1
+> -	sleep 1
+>  
+>  	# We should have received one userspace action upcall and 2 psample packets.
+> -	grep -E "userspace action command" $ovs_dir/s0.out >/dev/null 2>&1 || return 1
+> +	ovs_wait grep -q "userspace action command" $ovs_dir/s0.out
+> +	[[ $? -eq 0 ]] || return 1
+
+Why checking separately and not one the same line with || return 1 ?
+Also double brackets seem unnecessary.
+
+>  
+>  	# client -> server samples should only contain the first 14 bytes of the packet.
+> -	grep -E "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" \
+> -			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+> -	grep -E "rate:4294967295,group:2,cookie:eeff0c" \
+> -			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+> +	ovs_wait grep -qE "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" $ovs_dir/stdout
+> +	[[ $? -eq 0 ]] || return 1
+> +
+> +	ovs_wait grep -q "rate:4294967295,group:2,cookie:eeff0c" $ovs_dir/stdout
+> +	[[ $? -eq 0 ]] || return 1
+
+Same for above two.
+
+>  
+>  	return 0
+>  }
+> @@ -711,7 +739,8 @@ test_upcall_interfaces() {
+>  	ovs_add_netns_and_veths "test_upcall_interfaces" ui0 upc left0 l0 \
+>  	    172.31.110.1/24 -u || return 1
+>  
+> -	sleep 1
+> +	ovs_wait grep -q "listening on upcall packet handler" ${ovs_dir}/left0.out
+> +
+>  	info "sending arping"
+>  	ip netns exec upc arping -I l0 172.31.110.20 -c 1 \
+>  	    >$ovs_dir/arping.stdout 2>$ovs_dir/arping.stderr
+> @@ -811,6 +840,10 @@ shift $(($OPTIND-1))
+>  IFS="	
+>  "
+>  
+> +if test "X$KSFT_MACHINE_SLOW" == "Xyes"; then
+> +	WAIT_TIMEOUT=10
+> +fi
+
+Should this be done closer to the first initialization of WAIT_TIMEOUT ?
+
+> +
+>  for arg do
+>  	# Check first that all requested tests are available before running any
+>  	command -v > /dev/null "test_${arg}" || { echo "=== Test ${arg} not found"; usage; }
+> diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> index 1e15b0818074..8a0396bfaf99 100644
+> --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> @@ -2520,6 +2520,7 @@ class PsampleEvent(EventSocket):
+>      marshal_class = psample_msg
+>  
+>      def read_samples(self):
+> +        print("listening for psample events", flush=True)
+>          while True:
+>              try:
+>                  for msg in self.get():
+
 
