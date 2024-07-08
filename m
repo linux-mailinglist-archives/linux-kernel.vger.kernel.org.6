@@ -1,105 +1,105 @@
-Return-Path: <linux-kernel+bounces-243911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16900929C4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:33:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E1C929C25
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A891F20EED
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B7E281440
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6A71946F;
-	Mon,  8 Jul 2024 06:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C50013AF9;
+	Mon,  8 Jul 2024 06:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fzG1gRqm"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJIjQAs5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF9D13ACC;
-	Mon,  8 Jul 2024 06:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803E9125DE
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720420333; cv=none; b=tuDz8uFP7CL91DJajQL89BnOgk+UaWQaKX/MsUxfPqJjGL/XFQSq88IpqwbNEfmqGMlklGP67IbW8XetMHXFh75ySjpsBwBOxd9vL03fjxazk2bjPbhYs8ZL+mpf9i90uBreYgvSmpiUpFvmKcU57V/qE34s5PCAvd//far0GHM=
+	t=1720420052; cv=none; b=rMbdqCebda8K7VwlZfTSV0OCnKXpSdme501ft8d2n08fZ1JZW16J9n6ZhFAdZbnq5GC8ppZR+ap1BDDapDOyIOsqg7nZ0m3wHxlB8/ITKGmf2Hn/CFTv7VPSxAqCbdC/FWHBhi+Uiqs9I4LYqrldHw3turozQ49/pCBQK9IyDmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720420333; c=relaxed/simple;
-	bh=MfvnS3Fr/pK2xtlWcPjC9k8Ba/za3rBMtC1UX2N6TEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oIZlebAL7coKd1/dSsLY8rqtCizrJdan5tW11bVHyR946G+tlBrP4Q6mORNoMoGqMFuvFZFaMxXQkrRGtW5TH4jEhrzYdVPz3h/iSjHNhmX00Z0kJYu9RSlCgEkorURwVN8EjCSkxFO/JcTQAXs3oxqLoos5Dm8W9uD6vM7qpGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fzG1gRqm; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C2FCA240002;
-	Mon,  8 Jul 2024 06:32:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720420329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zswb2gaNk97IllrUQU0TFGiZRh24Vb8Y3fvPz5plUKU=;
-	b=fzG1gRqmIDEWc3fYATYksDzGI8ZrqUI/CfhwYuLiIopj8ghqO3wCtDZ8/imikhLkjXIKPs
-	W1ITFue87n7DHbcqz3vN/DgUebRyjMCbCjUuacSWTzUa9tycPA51XtiNbr8mG9b1IMwBrr
-	jACBN/4ZB8B8ft3woQFQGgpODB+DvdCeeAo2x/4SwoG+0WzTT9eafTX7J6NWCdPlUZSjew
-	McPfkYaTTzZnY7HfxW97VqLGF8T88JivBP2KWitplNheLfKK3+QUu+3Evs76sq+/8i790u
-	Ua3TZXSml0RTF20SvzP8zDvUccqmeJVPu6bHLiP7xCZGkFo6DxFC3N08HOnXQg==
-Date: Mon, 8 Jul 2024 08:32:08 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Walle <michael@walle.cc>, devicetree@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- u-boot@lists.denx.de, linux-kernel@vger.kernel.org, =?UTF-8?B?UmFmYcWC?=
- =?UTF-8?B?IE1pxYJlY2tp?= <rafal@milecki.pl>
-Subject: Re: [PATCH] dt-bindings: nvmem: convert U-Boot env to a layout
-Message-ID: <20240708083208.322f4418@xps-13>
-In-Reply-To: <20240705225821.13196-1-zajec5@gmail.com>
-References: <20240705225821.13196-1-zajec5@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720420052; c=relaxed/simple;
+	bh=q7EkaLpJ/goiOKVT9D8Ig3s/2pCWyrNA2sFi+gAcE8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ckvjXmFZdljpGpLFA5/EuJqSoL6JJVIc97EUJzTf06nAOG4H2SkI/TRCV356NX5KxoKoJbZhhuj0688vc6AEIYMOKLCUlms5xaz70DWPBOBhnADeaz7mr4iDMNDCd/gsdqYoT/d6ci4q6gbVNnLu8DH3BzhnqzahO+mKWktyRZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJIjQAs5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D60DDC116B1;
+	Mon,  8 Jul 2024 06:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720420052;
+	bh=q7EkaLpJ/goiOKVT9D8Ig3s/2pCWyrNA2sFi+gAcE8c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sJIjQAs5ZGXjbLeP++6RmvZHC0YRyCHMnt4tZx/Lf73m6icR9LOiXmmd1a0oQjGku
+	 Yuw7ZthHhCeghr1avEhndKIk1BKh38M2/GVn/LWQrlKvPcXNjoy1plYUUxcL7MPStE
+	 enWR5fw3NWaZbH+wbGROz1htD1r2m+/IJuEUhCmLE3+YaOUA1KAEJ6Sjw5jNmcZEH+
+	 B0wjq/rJCnxq3Dp9n9NQj1ZmsSmlK20m/+T1ZXk9LyGzVdDX6H+OsvGx9R4mjwfEhe
+	 JiIAJhq3CEBmoP1CPOIaNuQnttD665cV2Ent+9OIkpduOPxd4BQaFT1DnvRVXitVVn
+	 OABcqRzNRkSHg==
+From: alexs@kernel.org
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org (open list)
+Cc: "Alex Shi (Tencent)" <alexs@kernel.org>
+Subject: [PATCH] mm/memcg: alignment memcg_data define condition
+Date: Mon,  8 Jul 2024 14:32:36 +0800
+Message-ID: <20240708063236.1096395-1-alexs@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Rafa=C5=82,
+From: "Alex Shi (Tencent)" <alexs@kernel.org>
 
-zajec5@gmail.com wrote on Sat,  6 Jul 2024 00:58:21 +0200:
+commit 21c690a349ba ("mm: introduce slabobj_ext to support slab object
+extensions") changed the folio/page->memcg_data define condition from
+MEMCG to SLAB_OBJ_EXT. The code works well, since config SLAB_OBJ_EXT is
+fold into MEMCG in init/Kconfig.
 
-> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
->=20
-> U-Boot environment variables can be stored in various data sources. MTD
-> is just one of available options. Refactor DT binding into a layout so
-> it can be used with UBI volumes and other NVMEM devices.
->=20
-> Link: https://lore.kernel.org/all/20231221173421.13737-1-zajec5@gmail.com/
-> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
-> ---
-> I'm sending this PATCH without Linux changes to see if this is the
-> right approach - for developers and (DT) maintainers to review it first.
->=20
-> My previous attempt (see above Link) turned out in refusal so I'm just
-> trying to save some time in case this one goes wrong as well.
->=20
-> Hopefully the included example (which I really think we should add)
-> explains well how I think this binding should be used with layouts.
->=20
-> If I get some positive feedback I'll work on V2 with actual Linux
-> changes.
->=20
+But many related functions that deal with memcg_data still defined under
+MEMCG instead of SLAB_OBJ_EXT, and FOLIO_MATCH with memcg_data are defined
+under MEMCG too. That looks weird and incorrect with memcg_data raw
+meaning.
 
-I am still in favor of this change. I know from a binding perspective
-it might be questionable; but from an OS perspective it makes total
-sense to deprecated the old U-Boot env "device" driver in favor of this.
+So let's put memcg_data under MEMCG config to alignment the definition
+with FOLIO_MATCH and its usage in functions.
 
-Thanks,
-Miqu=C3=A8l
+Signed-off-by: Alex Shi (Tencent) <alexs@kernel.org>
+---
+ include/linux/mm_types.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index ef09c4eef6d3..c067db6fa711 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -180,7 +180,7 @@ struct page {
+ 	/* Usage count. *DO NOT USE DIRECTLY*. See page_ref.h */
+ 	atomic_t _refcount;
+ 
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ 	unsigned long memcg_data;
+ #endif
+ 
+@@ -343,7 +343,7 @@ struct folio {
+ 			};
+ 			atomic_t _mapcount;
+ 			atomic_t _refcount;
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ 			unsigned long memcg_data;
+ #endif
+ #if defined(WANT_PAGE_VIRTUAL)
+-- 
+2.43.0
+
 
