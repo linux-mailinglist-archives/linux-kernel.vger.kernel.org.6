@@ -1,226 +1,176 @@
-Return-Path: <linux-kernel+bounces-244934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2647E92ABE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:16:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A98E92ABF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996941F22F9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EAC21C2207F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989AC152164;
-	Mon,  8 Jul 2024 22:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317D4152DF2;
+	Mon,  8 Jul 2024 22:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="fOpUOtxc"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="cApNb++L"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02olkn2077.outbound.protection.outlook.com [40.92.44.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3898A146D40;
-	Mon,  8 Jul 2024 22:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720476900; cv=none; b=AoPHUP6IhSm9V3cnVd9AiQf7C0RRuSLv9059zUeAxos5RRGcSFvG699pK1IdFquFX2BIHgJhd5OrWd+h9Q9C00lexYCWP4R9opYUlJfeaR890UOwWyouaZBGh3UdR0Mu+vuF2bajzwN7uypqn7jPM4WvA6FlGZlxilcL1RgCDfI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720476900; c=relaxed/simple;
-	bh=zjqI610N9pRC4EqJF11m9EzDbN8ZaWHPOimS03zeegI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KPKbjBXRO5dUCAplE/WodTqsaGRmJlqs+C2mSPPCQ1yW4ecrP2mvqlPFxl3CqhVeoaGOnuY4kRqKYZ3RbAWFN3LrSIkzvdOqTlpMX0Rt/SbZt+WjkgOl3el8GIOkOvrdETIOlcZXtRmihVnzoW5W4/yxYZETpFM5euoldnoAZYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=fOpUOtxc; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1720476883; x=1721081683; i=quwenruo.btrfs@gmx.com;
-	bh=uvtjxh9hgaU0yCTPP3uwX4bGR8q3uFMSBV8Qqx9BXR0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=fOpUOtxcBOaHyeQloPHyN2K/bWbvP/mgj1wC14EtRsbhbQq0P1cRC/0UxGXKDQgs
-	 EA+CX35fGnhQyZDsMpl7b3svpUg2+TMHC13U26oJH48niSZMZr7By3v9YXSA/1CpH
-	 008t3IWQWsB+CdOkNQsMCpeiYyAePyVDmZOnjoyDoWEfqQcmuYjSXp/CcPjYpXb+a
-	 lI9RW5dpWipHw6tjgph0K/Sc2F1g297ptFN++PX81phc1yd1B2G39g2j4+T1xxWfR
-	 1vce2BZZKzjwAGtN1o3ZYAV5/9uhxbRh70eY5RH2wCbwHTA8xcItSpg/Knlv7dWll
-	 VAZFK4NLh5ePIk4rcQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MRmjw-1spbIX1Tb8-00M4dd; Tue, 09
- Jul 2024 00:14:43 +0200
-Message-ID: <51eebc20-94f7-4e3d-8a44-741dad2e9900@gmx.com>
-Date: Tue, 9 Jul 2024 07:44:39 +0930
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FDD39AFD;
+	Mon,  8 Jul 2024 22:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.44.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720476981; cv=fail; b=U1f3ThjH1gFPxLWVqXqM59UcefG7HUDTR3l1pTx+WM3zM6I7r+Im8TNiK1UOtmm/fXTk3O1xxroyvouxlObziHXJEpqiJUwJhQ0xZ6bRyFgF1KNn6HACC2AZ163MHxYhUHgPUFmHvUtgs61VUEZZM1JZ8NoCw+Y6g2WUxEIlEZs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720476981; c=relaxed/simple;
+	bh=XauxVu0WABWxbCGod7D4FDvSFamnH5KE+1jB3nSV7Ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uqNTK2EBGYnVkDXYNiVOc0wuJkNSF1QEr+/MczRlAAsY7hWQUONNXOCf1QU0sfsc6pXZb0mhIL0X9mJItmylBJ60DOFhQEwBb9aJHeO/2nhNDXMcOGMDZXNnf6N2wlq3MM840ba8AcjL2IM5rEYquzR8sNbda/Dg3GnR2z5vqNs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=cApNb++L; arc=fail smtp.client-ip=40.92.44.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kgPC09x7e4KNsI7/0EcNs2sV0A7HT7lGaFaMFZ79u2rE2sJpKBvjqR8BZSTDczRGkGQSmNYpAK4i8kMDVgVED6++taGTPbPRVqjFjNFxy/L/qfUbO88w0omlhE8Hpr1L0khEAYkNj107j1t0BIBySwKsXxtbQpyKey+M/44iN3ZFD+hkqeYdFwPczKjFftY94cLN/UvC/Vpf/rlwmOBy4Wh8JbuYXh0P0dvou995iI3mgl1einhXqcRslVfAxVFoHKbGsFu76f77hiqu+US8uXuaxH2tHvbvfQWsR/nKntt9Jh51z+O2BYUJgybbBbcDyGh2Z3+7IA+yoxP4xF9a9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XO9fUZO6x0zYtoWSkXRVi3VFwWwomR8OJn0q9N0TmJk=;
+ b=WCChUqqGPavV9QSRg/1gY5vYzbP3SApv0QpFbIPlzE6Z3XAdnMSB1Ih7JaFrzAErXkXn6zSgoizu+Lz2P/NnlwxoocxJytloZEVxL/d2a64fbWZoTi+l3Iy+G7+RLmR2qqZdlppZWjtLAZZgU8NG8ffUnjczDn/HO855NIbEZeMWxqxLvc3SZlH7l/lhtsYmW9GNT92SUDCxxjIspvZxDLVXUtDYPdOmwVRE+Co96NwNSMvioIX89gJ5sRVqazP0y9UMzui7/0uMJxRoJyqU1VEXqUB3DEOhIsYN7LAKuKVyjK3esnH9RCSKeRfTcm3na/BwAwpoP/jxi6LM7KZaXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XO9fUZO6x0zYtoWSkXRVi3VFwWwomR8OJn0q9N0TmJk=;
+ b=cApNb++LEzn14LbXnArf3GGag7ArD/MHKrqOTe+3cfF/3AEKn6omSwkIKGjBmA4Xc3MLKurXDe+wI/FXkS6RqCfbF/cw3B3QZ91fm68ZxYJjKxF76wZP4f1Rxu1PLJjgE2LLXlA46aO+n1QGWo0oNWDRROXpPHxQQrpt3KwAmCG2Y/a5apcQjJSQ6429lLJa1qIadPi/ZQJQ+d0FKApXIUKcMACEqeOwJuUDKAYBTcYI8OzZOCsaYr+in6iyniiwOBwQgnAvpRjeEHChf6ZdsSgVv/99xNYiTB7vJDITgi5ZdXLhmGjWOZ6Be4d5K5KLSy4UGiCeKe4lAYrQbgpufQ==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by SN7PR20MB6035.namprd20.prod.outlook.com (2603:10b6:806:358::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Mon, 8 Jul
+ 2024 22:16:17 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%6]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
+ 22:16:17 +0000
+Date: Tue, 9 Jul 2024 06:15:39 +0800
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v6 2/2] drivers: hwmon: sophgo: Add SG2042 external
+ hardware monitor support
+Message-ID:
+ <IA1PR20MB495309AA07F1B77D4DA1EF6BBBDA2@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB4953967EA6AF3A6EFAE6AB10BBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953EC4C486B8D4B186BB848BBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <MA0P287MB2822935DEA9EE418F3411CFAFEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <IA1PR20MB4953230DCEDD7DF01134A8A9BBDA2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <MA0P287MB2822676C9CF9443B9A3CB657FEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MA0P287MB2822676C9CF9443B9A3CB657FEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+X-TMN: [QSFSlv4DpVhTXGSbGCBHt/Thw7nSUOUjQejCPGo3v/o=]
+X-ClientProxiedBy: PS2PR01CA0048.apcprd01.prod.exchangelabs.com
+ (2603:1096:300:58::36) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <umzw6ckzltd4gbznxnfpubbz7gsgiu3ivgkllv2q5mrnya5pfp@mma4vhbz2q6e>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] btrfs: replace stripe extents
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
- Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240705-b4-rst-updates-v4-0-f3eed3f2cfad@kernel.org>
- <20240705-b4-rst-updates-v4-1-f3eed3f2cfad@kernel.org>
- <e51d0042-ec10-4a50-bd76-3d3d3cbc9bfc@gmx.com>
- <9d7f7acf-8077-481c-926e-d29b4b90d46f@wdc.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <9d7f7acf-8077-481c-926e-d29b4b90d46f@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NNYgIL5doO/PSd9LmDlanHV7Gw8um2ZcHnj+kHMe2FX4fhuzJW+
- ylq/tlzaRt/gaVkaQohEg94ltKac2JSEJUDovj25QtfjgixkHWdTdUTlhfM8UGSy10Fray8
- q4d8a8z68IHkx7blY5ZQDOQwsnzRi3U54dfXk/dVQm2Pwhqd2PwNSuqjjXZ2c/6qMhCdXBI
- Y7qs3VWtXVwmulfvuSlfg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6rbF/bWaBpw=;ncmFMcqiS6WuPSjb5M5vHqJh83T
- iwrbeA12a9VB7CFa5rUc8GtnYaiiVK3jCxIFpMLDfpM1GgnF49EVO0WiqjmqxCp09bTF/MMeN
- NGYC7XA7R1zFDWO5q4andsGHcmAUbochUjlnAmL3hHzanNbqEXWZX8Ktzi2zE1tZT/R/C1EOx
- Ykzl0pZJePHRlkHHs/NRA2EFENcE9tepWaQtHrLBe+oR8dQe3ZL0+8JlGdXRi6NVNa+NI/s4U
- o9j1HH+OZGjcM0Vlp3gBFed4XNQXOwcxU9tgwpHyTrh+9RLNqqoyBoeXKtPDgDEUIWb6JG2Kp
- BMn3rQl9tkFzb0N9Tqi7XjGx9mqZ8rCCCp3NZIoMeB2p2N16au2rK8SQh64Rgn0Z5N+Nm5Vsk
- nicEveHMdjgNdtEgiaFIZaOAVJ3/YE1i3RX2NTETJ3s/xTnqfxTPO1aeNgytU6yDf4LwVu2Xp
- OJ0ymIcv8KpsCk6hcsRgYxb0r4G+1QZBiv1vhekUJN3eZD7w9LGDRktwmBNqOsFBeE+POGtF2
- swe5PnFhgy3apsXMjNOVN+h+mokjN2xu0d58fFDwZYHP4k4/wn4SYyuzRJ/cjKCJjCx5JmdJP
- pBMcK2dUTTv8fGsE4GHgAwEzGqvnefxhRhiOJVKapsw7sWcEjclVUO6aSEAcpRM5msFYVbBdT
- Hhyae1vBvSxrK1sJvQxQb99J3hi97FMVLfZilKm+/FsulhZyslHO6whZ6MGpi0oN+m0oS2IXx
- gT0ubKVuW05pnXAic9ctBFWfouMot4sKImSI7a8jxF3jS6gY8Hc5lJxvwWm4BU1DdzgFzLj9R
- 7umrCCE0LgnP7LW+jSiO5LViiVptd+2oO2X0fEZ0oiWOk=
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SN7PR20MB6035:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4bfce0c-cd05-4929-f1d6-08dc9f9b9630
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|461199028|8060799006|3412199025|440099028|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	x+4bBCKMsWd5/HKAtARHeCxDI79f+ttcW6PPta5G8qvAf/aEV1csA0pqGGP/SFBMN0rJGuUigmAarl1dfalhopQhXDjTr94JMhe42DzuIU/8L2SNc/NOk1TwlUe7DZSyXO6JXW/soLY/iTK0yauhuE803JKqjKxgl4c7s0Xp6ck6dsYlZ28XBx0xLjz5q+un/9VudkGIo1SM6ZOoX+tc/aK2phIbnnopJVWFfUuJi564Y9URYQhQaOwmgeSeUzSB6slmkACtRMPbhLij3M+SAHcoMnbDS6GUzGXYHJAUBJiR1dAysNfXUaDE/IGLMdlpp7/pUCIw5QS1Bvrtj0MGcYKHIELTCEkpa5lix3SYifAi47SoYXUthOQsr43ywqgcA+UTP9WPgK0jvsCuPb6hh12KqeH4MylEDUV9yUZHOpnOiOEu4gzF44bAwNYbcJH2pqz+Qw4XUTCh6fYTUsKKAdzl3Zy/NNO3g62FuRh7CYaRBwMGzNwd4yHrwllgeOYf0e7hAJDMsMR2hR1bsLcgYdrcfFeCFn5bRuJ7S7U0tLiissgU59rC6puBZgj2gBYiLxFi/1jpkBsEkJEBHcVg+6wnwFIjnW0cFe/C3xucnOne+iPBA+KMNgagDsULf2s2q7j6INTstkb4NhFiXqWW20Tvcvi553/rAXZnvuDUPCGrVSryOQT6Jjnh8k0fME+L
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pORryrrSWAJlgfIo9z9eetpp1RHQQh13RqJfQfpZRr8zqyF0Gv+QZmIMNgbI?=
+ =?us-ascii?Q?JGevnIW0C2n0OJTP28KmVBrovRuKVTetxOOITEEzXpyVh68Q/IeCW52MT4XD?=
+ =?us-ascii?Q?yFoHqFqQQBSlLihiySKJu60G2ZOxZgr+hXraxeUd1OF2RxU7J2HJq7NWwRQC?=
+ =?us-ascii?Q?ntmqr78JSzhxtnQu5JnrCA3Eot4JUie7KcKzfHmAm+wx8PK9Z4HQbUJ3HGMA?=
+ =?us-ascii?Q?k9XtJbYDGyHbJu6WC8AvZIgbdB624rojp0uCwFRPJJNb/ihYlpFEsfFcQuhv?=
+ =?us-ascii?Q?aAecBtBIgjj/VxWisGmYMNsF7L3LwEJnONwrtMIuwhKVYIWSkble83qy99m3?=
+ =?us-ascii?Q?hiIg+OPgvXIVlXFsmeMQO1/pxQi8CiZ0Z4PkdvimIb/SKCfdUgSnc5OspcEZ?=
+ =?us-ascii?Q?QjaX5sn/gIh3lH35V0gKtnALbw9N2I5eECd5Jq5zPCvmtRryvTz3OR+DTNPL?=
+ =?us-ascii?Q?NXbhp7XDEvAu9MU9W6Vavm8DQTe0+QWG55nyjTF+jDSfosUXcXqAFHKXfk0h?=
+ =?us-ascii?Q?rU5gYJr62Wj3dLj6SqxAStMRyVtSDlwVm2t2QCbJyz76GGCqt0gEpnBovOKn?=
+ =?us-ascii?Q?XucHuWHVgg59s2Z68IAA9ZFTsncRSsJeBJmfkZWL6hjaCl2fQ00Q3rATU1zF?=
+ =?us-ascii?Q?QLCgD3R/mm0e4Pbz0JSB1cfEQqQDTKkKONqc3Op7kQk4egzqZTYQSvmLpR4A?=
+ =?us-ascii?Q?mNy/flcJvXs+gCKurmOCUwNVZ2TBCvzeIGCewgpjBONfG08qWsgtXNp4BPzK?=
+ =?us-ascii?Q?7m3+Gz7jdQvhY1U/30fVGxnEesRq6jc/2wvAyyuBqA2sfU9mpi67mODhgE51?=
+ =?us-ascii?Q?RMdvTs36aXND+tv4mc1S4dAo9ap+pkULWgd4J2JVwhUX5xnCvFB2VELCioAz?=
+ =?us-ascii?Q?GFfSlR9O5bbeQfn+3m8WSaDnaygAe2ktgF7H/4omSmX+Jg1jIxtsNqNJEhEI?=
+ =?us-ascii?Q?DKirOVKLO86+HIZfgDkUHg69asakAzEqYpshW6VUcYgArs1Qy6fSBiMTjNWI?=
+ =?us-ascii?Q?crxFR0Q2zdqZ137BDFy+T77QtcYV5lAS2rJO7+tfhwxrdSJ3drD0+jmgKOlG?=
+ =?us-ascii?Q?3OI9K0uqFLFJC3u81Hrg3gnP43IbxCOZt1t6+hCBZFIW/sCMeeA71RLEZRBF?=
+ =?us-ascii?Q?M2ra1nkieO/07OmiwAEn3yQvsWKENg/bohqJESlYUwdATcjcgiE1WOIvdZag?=
+ =?us-ascii?Q?OlfqfuDqXKPcZnFMnQaDGvrFG05OjzFwgZwxk33/KYJzh6CUfaIaIu+V5V7l?=
+ =?us-ascii?Q?+AHHvbvK8uu4K+IhZkM6?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4bfce0c-cd05-4929-f1d6-08dc9f9b9630
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 22:16:17.0970
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR20MB6035
 
+On Mon, Jul 08, 2024 at 03:11:37PM GMT, Chen Wang wrote:
+> 
+> On 2024/7/8 8:53, Inochi Amaoto wrote:
+> > On Mon, Jul 08, 2024 at 08:25:55AM GMT, Chen Wang wrote:
+> > > On 2024/7/3 10:30, Inochi Amaoto wrote:
+> > > > SG2042 use an external MCU to provide basic hardware information
+> > > > and thermal sensors.
+> > > > 
+> > > > Add driver support for the onboard MCU of SG2042.
+> > > > 
+> > > > Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> > > > ---
+> > > >    Documentation/hwmon/index.rst |   1 +
+> > > >    Documentation/hwmon/sgmcu.rst |  44 +++
+> > > >    drivers/hwmon/Kconfig         |  11 +
+> > > >    drivers/hwmon/Makefile        |   1 +
+> > > >    drivers/hwmon/sgmcu.c         | 585 ++++++++++++++++++++++++++++++++++
+> > > >    5 files changed, 642 insertions(+)
+> > > >    create mode 100644 Documentation/hwmon/sgmcu.rst
+> > > >    create mode 100644 drivers/hwmon/sgmcu.c
+> > > > 
+> > > > diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+> > > > index 03d313af469a..189626b3a055 100644
+> > > > --- a/Documentation/hwmon/index.rst
+> > > > +++ b/Documentation/hwmon/index.rst
+> > > > @@ -203,6 +203,7 @@ Hardware Monitoring Kernel Drivers
+> > > >       sch5636
+> > > >       scpi-hwmon
+> > > >       sfctemp
+> > > > +   sgmcu
+> > > This driver is for sg2042 only, right? "sgmcu" looks be general for all
+> > > sophgo products.
+> > Yes, according to sophgo, it use this mechanism for multiple products,
+> > so I switch to a general name.
+> 
+> But multiple != ALL.
+> 
+> [......]
+> 
+> 
 
-
-=E5=9C=A8 2024/7/8 21:13, Johannes Thumshirn =E5=86=99=E9=81=93:
-> On 06.07.24 01:19, Qu Wenruo wrote:
->>
->>
->> =E5=9C=A8 2024/7/6 00:43, Johannes Thumshirn =E5=86=99=E9=81=93:
->>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>
->>> If we can't insert a stripe extent in the RAID stripe tree, because
->>> the key that points to the specific position in the stripe tree is
->>> already existing, we have to remove the item and then replace it by a
->>> new item.
->>>
->>> This can happen for example on device replace operations.
->>
->> In that case, can we just modify the targeted dev stripe?
->>
->> Or do we have other call sites that can lead to such conflicts?
->>
->> As I'm not that confident if such replace behavior would mask some real
->> problems.
->
-> I've just tested the following patch and it looks like it's working:
->
->
-> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
-> index e6f7a234b8f6..7bfd8654c110 100644
-> --- a/fs/btrfs/raid-stripe-tree.c
-> +++ b/fs/btrfs/raid-stripe-tree.c
-> @@ -73,6 +73,53 @@ int btrfs_delete_raid_extent(struct
-> btrfs_trans_handle *trans, u64 start, u64 le
->           return ret;
->    }
->
-> +static int update_raid_extent_item(struct btrfs_trans_handle *trans,
-> +				   struct btrfs_key *key,
-> +				   struct btrfs_io_context *bioc)
-> +{
-> +	struct btrfs_path *path;
-> +	struct extent_buffer *leaf;
-> +	struct btrfs_stripe_extent *stripe_extent;
-> +	int num_stripes;
-> +	int ret;
-> +	int slot;
-> +
-> +	path =3D btrfs_alloc_path();
-> +	if (!path)
-> +		return -ENOMEM;
-> +
-> +	ret =3D btrfs_search_slot(trans, trans->fs_info->stripe_root, key, pat=
-h,
-> +				0, 1);
-> +	if (ret)
-> +		return ret =3D=3D 1 ? ret : -EINVAL;
-
-Looks good to me overall.
-
-Considering in this case the bioc should match the existing rst entry,
-can we add an extra ASSERT() to check the length of the entry against
-the bioc?
-
-Thanks,
-Qu
-> +
-> +	leaf =3D path->nodes[0];
-> +	slot =3D path->slots[0];
-> +
-> +	btrfs_item_key_to_cpu(leaf, key, slot);
-> +	num_stripes =3D btrfs_num_raid_stripes(btrfs_item_size(leaf, slot));
-> +	stripe_extent =3D btrfs_item_ptr(leaf, slot, struct btrfs_stripe_exten=
-t);
-> +
-> +	for (int i =3D 0; i < num_stripes; i++) {
-> +		u64 devid =3D bioc->stripes[i].dev->devid;
-> +		u64 physical =3D bioc->stripes[i].physical;
-> +		u64 length =3D bioc->stripes[i].length;
-> +		struct btrfs_raid_stride *raid_stride =3D
-> +			&stripe_extent->strides[i];
-> +
-> +		if (length =3D=3D 0)
-> +			length =3D bioc->size;
-> +
-> +		btrfs_set_raid_stride_devid(leaf, raid_stride, devid);
-> +		btrfs_set_raid_stride_physical(leaf, raid_stride, physical);
-> +	}
-> +
-> +	btrfs_mark_buffer_dirty(trans, leaf);
-> +	btrfs_free_path(path);
-> +
-> +	return ret;
-> +}
-> +
->    static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *tr=
-ans,
-> 					struct btrfs_io_context *bioc)
->    {
-> @@ -112,6 +159,8 @@ static int btrfs_insert_one_raid_extent(struct
-> btrfs_trans_handle *trans,
->
-> 	ret =3D btrfs_insert_item(trans, stripe_root, &stripe_key, stripe_exten=
-t,
-> 				item_size);
-> +	if (ret =3D=3D -EEXIST)
-> +		ret =3D update_raid_extent_item(trans, &stripe_key, bioc);
-> 	if (ret)
-> 		btrfs_abort_transaction(trans, ret);
->
+We can add new driver when there is new mechanism.
 
