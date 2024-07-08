@@ -1,45 +1,55 @@
-Return-Path: <linux-kernel+bounces-244014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8161D929DF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:05:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9559B929DF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2640C1F231C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:05:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21BBFB20C83
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF28E39FD7;
-	Mon,  8 Jul 2024 08:05:15 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C603A1B0;
+	Mon,  8 Jul 2024 08:05:40 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464EB38FA5
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 08:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F6822086
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 08:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720425915; cv=none; b=SjNpvhZfJYSzq0dD8KXdR2749ZfpPIjSsfosEHBHiA2iYbEcPKJIJxwAUPqaact18KDyjKcbzpa+aH08F4SJFMxh2xfo0gRQG64gQ/uR1C6EUgJOeAbvvHNkWk8ZKgVaxjB2uGZ/7wHrueC6bJvyF21ZYuul2YWJZKZjFZSjCtw=
+	t=1720425940; cv=none; b=LqAEAGAod+r3IFah8TDm5CW0y9iKWQltTuPPM0tBqBCBtYathlJ17ikMidA6S5RjDhm1BA96QGalyPAjyWRwDij6gKKNjISLcI2rQZFlqbrOD4hbpAhuJxPKT6GmOELiv+NcjybjIqh61X3RB5jvfYws+s2XAi5Wu5/N7QXPvPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720425915; c=relaxed/simple;
-	bh=xQoNS1Tk+szSoOCXFIOMqOkk0zQn1dyH3JBGi5nkLqU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G09IatdDFF90DGQ8lZPXuSHG9VhtbczDKdHac+dUs/cAX71Jj1GSFoc2L7eglNUGYa7ESVhTkHpkQFV+odsQRgsX6BPkyOc1tyxe4wDabrPshkxYzcAmiUkS372Et4AXtDjp3e1NUX5DXr2Pg3Lxzw0RU418l81Us3Cq+7oTwcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowABnbsqsnYtmDZM0Ag--.7496S2;
-	Mon, 08 Jul 2024 16:05:00 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: jlayton@kernel.org,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ipc: mqueue: remove assignment from IS_ERR argument
-Date: Mon,  8 Jul 2024 16:04:04 +0800
-Message-Id: <20240708080404.3859094-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720425940; c=relaxed/simple;
+	bh=k6mNQUCpF4Qz1sq9oT3OR4ETJ182daDc+9X0vieWYwE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bsh7z3j24ZObNc10MrLHyzLy/8Ij7gtA98srWX96DMfowVPl1AopEw3NapMuks3vW79obHU68zYFpvLmx8sFeralMfXaxpsEfPB04AlWHq6Vp1Pbxyqaa0gOGTR6hXF1nmjde+jjyoKPVY/jSpBj0za/yqQQPZNWEGELukkdS+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpsz5t1720425874t3q8pg0
+X-QQ-Originating-IP: ZnVcAnGJKStHEky1gc++tWSUaLvH5mmJxdMrsXMmIRE=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 08 Jul 2024 16:04:32 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 647173472075735977
+From: tuhaowen <tuhaowen@uniontech.com>
+To: gregkh@linuxfoundation.org
+Cc: alexander.deucher@amd.com,
+	huangbibo@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	tuhaowen@uniontech.com,
+	wangyuli@uniontech.com
+Subject: [PATCH v2] dev/parport: fix the array out-of-bounds risk
+Date: Mon,  8 Jul 2024 16:04:30 +0800
+Message-Id: <20240708080430.8221-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <2024070820-corncob-kelp-f50c@gregkh>
+References: <2024070820-corncob-kelp-f50c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,47 +57,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABnbsqsnYtmDZM0Ag--.7496S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrWw4xurW8uFWkAFW5KF45Wrg_yoWxGFXEga
-	1UZ3WvqFy7GFnI9w47urWaqF1UCw18W3s7Ga1qyFW3GFy5Arn5urWrAr9FqrW8JrZ0gFyf
-	Crn7A3yDCw43GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbcxFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
-	ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjH5lUUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Remove assignment from IS_ERR() argument.
-This is detected by coccinelle.
+Fixed array out-of-bounds issues caused by sprintf
+by replacing it with snprintf for safer data copying,
+ensuring the destination buffer is not overflowed.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Below is the stack trace I encountered during the actual issue:
+
+[ 66.575408s] [pid:5118,cpu4,QThread,4]Kernel panic - not syncing: stack-protector:
+Kernel stack is corrupted in: do_hardware_base_addr+0xcc/0xd0 [parport]
+[ 66.575408s] [pid:5118,cpu4,QThread,5]CPU: 4 PID: 5118 Comm:
+QThread Tainted: G S W O 5.10.97-arm64-desktop #7100.57021.2
+[ 66.575439s] [pid:5118,cpu4,QThread,6]TGID: 5087 Comm: EFileApp
+[ 66.575439s] [pid:5118,cpu4,QThread,7]Hardware name: HUAWEI HUAWEI QingYun
+PGUX-W515x-B081/SP1PANGUXM, BIOS 1.00.07 04/29/2024
+[ 66.575439s] [pid:5118,cpu4,QThread,8]Call trace:
+[ 66.575469s] [pid:5118,cpu4,QThread,9] dump_backtrace+0x0/0x1c0
+[ 66.575469s] [pid:5118,cpu4,QThread,0] show_stack+0x14/0x20
+[ 66.575469s] [pid:5118,cpu4,QThread,1] dump_stack+0xd4/0x10c
+[ 66.575500s] [pid:5118,cpu4,QThread,2] panic+0x1d8/0x3bc
+[ 66.575500s] [pid:5118,cpu4,QThread,3] __stack_chk_fail+0x2c/0x38
+[ 66.575500s] [pid:5118,cpu4,QThread,4] do_hardware_base_addr+0xcc/0xd0 [parport]
+
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
 ---
- ipc/mqueue.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes in v2:
+- Replaced `sprintf` with `snprintf` to prevent array out-of-bounds issues.
+- Link to v1: https://lore.kernel.org/all/20240626021136.12282-1-tuhaowen@uniontech.com
+---
+ drivers/parport/procfs.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 5eea4dc0509e..a7cbd69efbef 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -903,7 +903,8 @@ static int do_mq_open(const char __user *u_name, int oflag, umode_t mode,
+diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
+index bd388560ed59..c2e371c50dcf 100644
+--- a/drivers/parport/procfs.c
++++ b/drivers/parport/procfs.c
+@@ -51,12 +51,12 @@ static int do_active_device(struct ctl_table *table, int write,
+ 	
+ 	for (dev = port->devices; dev ; dev = dev->next) {
+ 		if(dev == port->cad) {
+-			len += sprintf(buffer, "%s\n", dev->name);
++			len += snprintf(buffer, sizeof(buffer), "%s\n", dev->name);
+ 		}
+ 	}
  
- 	audit_mq_open(oflag, mode, attr);
+ 	if(!len) {
+-		len += sprintf(buffer, "%s\n", "none");
++		len += snprintf(buffer, sizeof(buffer), "%s\n", "none");
+ 	}
  
--	if (IS_ERR(name = getname(u_name)))
-+	name = getname(u_name);
-+	if (IS_ERR(name))
- 		return PTR_ERR(name);
+ 	if (len > *lenp)
+@@ -87,19 +87,19 @@ static int do_autoprobe(struct ctl_table *table, int write,
+ 	}
+ 	
+ 	if ((str = info->class_name) != NULL)
+-		len += sprintf (buffer + len, "CLASS:%s;\n", str);
++		len += snprintf (buffer + len, sizeof(buffer) - len, "CLASS:%s;\n", str);
  
- 	fd = get_unused_fd_flags(O_CLOEXEC);
+ 	if ((str = info->model) != NULL)
+-		len += sprintf (buffer + len, "MODEL:%s;\n", str);
++		len += snprintf (buffer + len, sizeof(buffer) - len, "MODEL:%s;\n", str);
+ 
+ 	if ((str = info->mfr) != NULL)
+-		len += sprintf (buffer + len, "MANUFACTURER:%s;\n", str);
++		len += snprintf (buffer + len, sizeof(buffer) - len, "MANUFACTURER:%s;\n", str);
+ 
+ 	if ((str = info->description) != NULL)
+-		len += sprintf (buffer + len, "DESCRIPTION:%s;\n", str);
++		len += snprintf (buffer + len, sizeof(buffer) - len, "DESCRIPTION:%s;\n", str);
+ 
+ 	if ((str = info->cmdset) != NULL)
+-		len += sprintf (buffer + len, "COMMAND SET:%s;\n", str);
++		len += snprintf (buffer + len, sizeof(buffer) - len, "COMMAND SET:%s;\n", str);
+ 
+ 	if (len > *lenp)
+ 		len = *lenp;
+@@ -117,7 +117,7 @@ static int do_hardware_base_addr(struct ctl_table *table, int write,
+ 				 void *result, size_t *lenp, loff_t *ppos)
+ {
+ 	struct parport *port = (struct parport *)table->extra1;
+-	char buffer[20];
++	char buffer[64];
+ 	int len = 0;
+ 
+ 	if (*ppos) {
+@@ -128,7 +128,7 @@ static int do_hardware_base_addr(struct ctl_table *table, int write,
+ 	if (write) /* permissions prevent this anyway */
+ 		return -EACCES;
+ 
+-	len += sprintf (buffer, "%lu\t%lu\n", port->base, port->base_hi);
++	len += snprintf (buffer, sizeof(buffer), "%lu\t%lu\n", port->base, port->base_hi);
+ 
+ 	if (len > *lenp)
+ 		len = *lenp;
+@@ -155,7 +155,7 @@ static int do_hardware_irq(struct ctl_table *table, int write,
+ 	if (write) /* permissions prevent this anyway */
+ 		return -EACCES;
+ 
+-	len += sprintf (buffer, "%d\n", port->irq);
++	len += snprintf (buffer, sizeof(buffer), "%d\n", port->irq);
+ 
+ 	if (len > *lenp)
+ 		len = *lenp;
+@@ -182,7 +182,7 @@ static int do_hardware_dma(struct ctl_table *table, int write,
+ 	if (write) /* permissions prevent this anyway */
+ 		return -EACCES;
+ 
+-	len += sprintf (buffer, "%d\n", port->dma);
++	len += snprintf (buffer, sizeof(buffer), "%d\n", port->dma);
+ 
+ 	if (len > *lenp)
+ 		len = *lenp;
+@@ -213,7 +213,7 @@ static int do_hardware_modes(struct ctl_table *table, int write,
+ #define printmode(x)							\
+ do {									\
+ 	if (port->modes & PARPORT_MODE_##x)				\
+-		len += sprintf(buffer + len, "%s%s", f++ ? "," : "", #x); \
++		len += snprintf(buffer + len, sizeof(buffer) - len, "%s%s", f++ ? "," : "", #x); \
+ } while (0)
+ 		int f = 0;
+ 		printmode(PCSPP);
 -- 
-2.25.1
+2.20.1
 
 
