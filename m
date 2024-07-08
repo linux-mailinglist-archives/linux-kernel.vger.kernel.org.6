@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-243957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8798929D04
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:23:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14348929D00
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CAEBB20B2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B83928152A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5908C1F94D;
-	Mon,  8 Jul 2024 07:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436C31CD15;
+	Mon,  8 Jul 2024 07:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ldOEqU0z"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="naJtVH36"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D81AEDF;
-	Mon,  8 Jul 2024 07:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9AE1C17
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720423391; cv=none; b=U7mFcUbYoYKif77pMB5X4KDYkC+d6KdQeSe816ALg06tviUdN35twA2SnXSl8gC884HT/zdvlxDDveLoRK3iwoiNMGlHCOxm9a5ZBmVFVHTkhAd/T/w1NJRbMRYzzFi1AtLHGLCyhHbdZ9U8Oxutpc/FOfImhWacmkZKxFbZOBw=
+	t=1720423353; cv=none; b=U4pYuevzHKWLxLM+JSilgaAQ2pmWrtJcvFADgH/tfyZAUMzLyxU7+Ls5JqGa76ix75Kb2iTMgWU0vfzJMsEQ5fR0IT0pEE+ZOiKKVAgntmJNvIoaejV9H4GoIQgL4TXJBcyIbnSuo8EoLxjCR8uBtvEurbHRH+46esro315iVsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720423391; c=relaxed/simple;
-	bh=STaX1vcUu7uY/uYmJmwcUdFRYIW7vppHsn7l8Uq2u60=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AWbXLX3kaWOKZPqXOZdiP1M4m7Smrpx0juCgj9MtLOSQCLJ+Iwmk3dlZm0qIHzuEH+4mtjoC1B5ciG7agDtE87uJrzTuDRXVM2ELtpFIhsHbRWruTdCkmZaNimq3Vy+KuAVWIoT3XY87gi8oHYRyesVwfVKzfA7QE2qHCpX3A8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ldOEqU0z; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: eb0381623cfa11ef8b8f29950b90a568-20240708
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=vJkwzRahuAD6qT9OiVCPZe9NczY4Z6Ju4rXLGq9EF/Y=;
-	b=ldOEqU0z8WEFhFr6Kx78onUFlezztM/ASaiXmGGEEeGLTeqlNQncwoP5AlYJQR4jUvu9gLjwFF+sJ0ItH5RNpj/E6R2Ky7z+QzSv42ZTpDcb38nuDD2V5on2vrFGAER5NNKWKUVgSOgblk8NZ/VGF+HpNg8wwxPGyk6habUZkSI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:a7aced1f-0d47-4d79-9ec8-29dc833e9e67,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:e9910845-a117-4f46-a956-71ffeac67bfa,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: eb0381623cfa11ef8b8f29950b90a568-20240708
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <ed.tsai@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 849706814; Mon, 08 Jul 2024 15:23:05 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 8 Jul 2024 00:23:04 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 8 Jul 2024 15:23:04 +0800
-From: <ed.tsai@mediatek.com>
-To: Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino
- Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <chun-hung.wu@mediatek.com>, Ed Tsai <ed.tsai@mediatek.com>,
-	<linux-fsdevel@vger.kernel.org>, <linux-unionfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-Subject: [PATCH 1/1] backing-file: convert to using fops->splice_write
-Date: Mon, 8 Jul 2024 15:22:06 +0800
-Message-ID: <20240708072208.25244-1-ed.tsai@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1720423353; c=relaxed/simple;
+	bh=idrcO3j6ZJtjys03L4/z16VLpQLwc7Vr6ABcCm9c4rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PcHtVvplTD6rBZhillqk71KteggXe3rNLYSzkp9LlEInScr7/fwidtI6SM085tjr7eocA+anRDTTp54mJAJ+C95Jpti0NcxG2vMLs7h/m8yB9pmhYBzCGgxnNlWdrGY35vSDE/in39IBRyH53PZ36BP8aH9zqqEZVDZtP5hlfbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=naJtVH36; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c980b55741so1976305a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 00:22:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720423351; x=1721028151; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WBYy4DFhtHluGvHK6v5yjGoMYZnZkSaBjiQQhAn19qs=;
+        b=naJtVH36XF1jE7eLb7qFGnd0s0CnBklb/R39zYap08YrXaBuLp78z7BBvXdSrpE081
+         dyGO9RSJQTN7tv8YG7K9z1n99aJgSvVw1cL8tswEV6SfYzr7hbU8wAVwUG0wJOgsBMvU
+         At9CxJ5F/uAkyQVEupaqc0nejtYCzSKggO1r3eRIGfuTq7vPq2YwCdAuK7Xjr7xp40dM
+         /9xgz9n1i8vgFDGwapEbewocYCDWiPAxhQ5ULRNn02BeqDeUyHH6jF9QmHWwdex98qN6
+         uzsPXMlhc47SYLlmdC8sCIw7hBqcOi1M0t2TrbmsoG8nGj2PvapGR+s50K/dFCoSlwxK
+         Psnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720423351; x=1721028151;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WBYy4DFhtHluGvHK6v5yjGoMYZnZkSaBjiQQhAn19qs=;
+        b=uBuwghFPdtl3qA88yFDPs7oNllocLT/julPTEnbB/cFqamtlrI1foLE/6HhBx9VCPl
+         QGn9Zj7+XHgC6+JnmrH8DJ+nObXwMdhyTTbXC9zSZkFk7w1KyWfQ6egs+zLxDOtJG1JF
+         oKu7VYvKrVcM+h5y6j+GmAYaDzPWIv9Z596nybUbzZbMiK0Z4TSCV71VOQ/QBTK48Xuq
+         VAt+yL99jlG2oQKKBqxh2L1uYWS0uLS2PLXXB4jFG96mGKRdEP2UfU11ompErZm1nMW6
+         05z3zyTtCq4Vh+eKQwtYDqVbCaXi0mTRocUTmN3AhcvS9g3QV0O2nFkoFAHk7huHRdsM
+         yd3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUL5HgpTr4YyzN4HfN2AqMFOZP9jHSerQFj5aRgVLTCEmUlS9YSg+RJzuqTRzzKIoOsEk1WGpVQ0cHbvNGcD6lic/brdXk+LF4uIuLr
+X-Gm-Message-State: AOJu0Yzwi7P0Wvdqu3OKxHMw/j0bZJdVpW/5qCjJVHf/7gN2tgkwcbfE
+	TseSgSRoYtnIr3tLVBgMeoltTu05jhAxbhlyybEVjXcd4Grg6snlww1N9q9YcQ==
+X-Google-Smtp-Source: AGHT+IFngwXllRFZcKK0nuNe7EQX8bnOyVP4qDVSraN9DPENqjrGFBeOrH4P+ZLdpGIK4/tpQ4aKPg==
+X-Received: by 2002:a17:90a:f0d6:b0:2c9:8d5d:d175 with SMTP id 98e67ed59e1d1-2c99c825acbmr5927647a91.48.1720423351318;
+        Mon, 08 Jul 2024 00:22:31 -0700 (PDT)
+Received: from thinkpad ([120.56.204.122])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99aab8e04sm7429684a91.56.2024.07.08.00.22.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 00:22:30 -0700 (PDT)
+Date: Mon, 8 Jul 2024 12:52:26 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	caleb.connolly@linaro.org, bhelgaas@google.com,
+	amit.pundir@linaro.org, neil.armstrong@linaro.org,
+	Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] pci: bus: only call of_platform_populate() if
+ CONFIG_OF is enabled
+Message-ID: <20240708072226.GB3866@thinkpad>
+References: <20240707183829.41519-1-spasswolf@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240707183829.41519-1-spasswolf@web.de>
 
-From: Ed Tsai <ed.tsai@mediatek.com>
+On Sun, Jul 07, 2024 at 08:38:28PM +0200, Bert Karwatzki wrote:
+> If of_platform_populate() is called when CONFIG_OF is not defined this
+> leads to spurious error messages of the following type:
+>  pci 0000:00:01.1: failed to populate child OF nodes (-19)
+>  pci 0000:00:02.1: failed to populate child OF nodes (-19)
+> 
+> Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nodes of the port node")
+> 
+> Signed-off-by: Bert Karwatzki <spasswolf@web.de>
 
-Filesystems may define their own splice write. Therefore, use the file
-fops instead of invoking iter_file_splice_write() directly.
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Ed Tsai <ed.tsai@mediatek.com>
----
- fs/backing-file.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+- Mani
 
-diff --git a/fs/backing-file.c b/fs/backing-file.c
-index afb557446c27..8860dac58c37 100644
---- a/fs/backing-file.c
-+++ b/fs/backing-file.c
-@@ -303,13 +303,16 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
- 	if (WARN_ON_ONCE(!(out->f_mode & FMODE_BACKING)))
- 		return -EIO;
- 
-+	if (!out->f_op->splice_write)
-+		return -EINVAL;
-+
- 	ret = file_remove_privs(ctx->user_file);
- 	if (ret)
- 		return ret;
- 
- 	old_cred = override_creds(ctx->cred);
- 	file_start_write(out);
--	ret = iter_file_splice_write(pipe, out, ppos, len, flags);
-+	ret = out->f_op->splice_write(pipe, out, ppos, len, flags);
- 	file_end_write(out);
- 	revert_creds(old_cred);
- 
+> ---
+>  drivers/pci/bus.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index e4735428814d..3bab78cc68f7 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -350,7 +350,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+> 
+>  	pci_dev_assign_added(dev, true);
+> 
+> -	if (pci_is_bridge(dev)) {
+> +	if (IS_ENABLED(CONFIG_OF) && pci_is_bridge(dev)) {
+>  		retval = of_platform_populate(dev->dev.of_node, NULL, NULL,
+>  					      &dev->dev);
+>  		if (retval)
+> --
+> 2.45.2
+> 
+> Just in case this is needed.
+> 
+> Bert Karwatzki
+> 
+
 -- 
-2.18.0
-
+மணிவண்ணன் சதாசிவம்
 
