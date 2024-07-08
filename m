@@ -1,354 +1,175 @@
-Return-Path: <linux-kernel+bounces-244726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF7B92A88A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:00:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F383992A890
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24F351C20F83
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:00:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24FCAB20D82
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C2D142642;
-	Mon,  8 Jul 2024 18:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5F914388F;
+	Mon,  8 Jul 2024 18:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FWyjEsFD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lh0ffxK8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B40A14388F;
-	Mon,  8 Jul 2024 18:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96F81465BD
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 18:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720461603; cv=none; b=HYDoWhGd87tTqYxqullwgbve9qFmQsp0A/Coql3kAr3GntWRuo79nhInu47+fqlh9nuZRyjKOz2b1CbgNlAzN6nIAHuPsCKOWB7Iy7FyMdEthSpDcYF+NwFUcCNt28Q7RMclKmM04NQZDasZORBI4eUHTanpHBw0i8/t6qXzt/s=
+	t=1720461625; cv=none; b=WKX+3n89qmlXO238wJtsaY6QaeGMkBD4u7hIBtA6XOv2nUVx8C4oevtgJU0u090uQzXPGGXa98BXAUra1LWA+IWihVbd7Ya7/xzgOGYudibw4ZqvnFLMGRue7UutfapzGsSnPLO8v5x/U2u6nmWlCISoAYhDVI+S4pTjs5eaM44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720461603; c=relaxed/simple;
-	bh=0pIT7qZkHiCIgVTGZ5dvjJkLD7r3MocUO421qACBAw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=L4g8qD6FQxOx6rSVW6HsOuWcCOyuoZU+JKABx9wDB+HZ9bmQ0gzXkIRvIQ8FxIrnAL8hWgtZI5W16rwbkiee7PlIIXT8H78Fw0x7bkhnLAGpOTJmEAhTQ63Tu706NKfodEsWi/HJw9/tj3nmZbkgSNygfIiJqxBKny5DLoAokIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FWyjEsFD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468C73pQ024563;
-	Mon, 8 Jul 2024 17:59:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IaJb+PETvq7g3aOwj2sxGHfs7FuI3lps1sYrTFMHv70=; b=FWyjEsFDlBEym5bF
-	/dCN5J7fMB4+nleZBnIfp/x0Od1QmWxEYnmtUWULoGFtGADJirM4+nJHbZASpSxN
-	Mr8/RHHFBw/MNMUnyoA4rdK/KHDPRjdCiGSfdkcIo+xZOMTlGhDCFy3XMsu+XKbV
-	bRu4lDseX3ecvtI9b9ORdD+9Z9/AMpH4rh+MQYxyNRSi/HlfX+FOizFrjhBzSpKR
-	RSN6NzXIcl89zTlpZ7210f7Ox3K92cL/OyPMHXN+hmssQRdH35bai9XBbkVgy+vh
-	Z6GXgZgZ9ce4JFfe0aTjjnA/3C9PFVUZw+ZQJy7MRQetiEtZbf0pdo6nyV65q7Bd
-	AX+RuA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xpdm6bw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 17:59:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468HxYUC019165
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 8 Jul 2024 17:59:34 GMT
-Received: from [10.110.78.14] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
- 10:59:33 -0700
-Message-ID: <c93cb17d-8f4f-40c9-87af-e5965593b603@quicinc.com>
-Date: Mon, 8 Jul 2024 10:59:33 -0700
+	s=arc-20240116; t=1720461625; c=relaxed/simple;
+	bh=G2eT1PidgYA5S25gC19Hg0ZQz21aenhcmJENyToU1tw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TG2dXuUj0TWL8C+jJIhrUkG4Y22+rw2uyD6EwQkVv0fb5EW9o67+E6uK0dUyVAaaxApGjr7mheW5++oD6C8bDR2mfRx1SlUt2sTFXGQ3n5MoDAV+K6e2we7/UpwjGtu8klVn/5jX6kXOXntuQF2/N8II2eeEmNKDU290O/1W3j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lh0ffxK8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720461622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ur8aidqR86eMlg5hVh3kQFIlHZgeTOY5AvM2A0WS6wI=;
+	b=Lh0ffxK8m9v9H/733gYuiKVIRHlB2ZcxbQ9wdG1EryDicy+ZcZFu22c/t+kl8gxhrX6j9S
+	bAVZoR7odXKsfUDCjiUIYMaitmS4H/Ghoye3NYKZZnqdd/ODIVYjPKdeJDSts7Or88UgIL
+	tKtxFSYWuy+d60JfHVbKa7vOv3w9FCU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-BLTMqZN-MRiC1hCbXOT78Q-1; Mon,
+ 08 Jul 2024 14:00:17 -0400
+X-MC-Unique: BLTMqZN-MRiC1hCbXOT78Q-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB5361956048;
+	Mon,  8 Jul 2024 18:00:07 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.113])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A030B1955F40;
+	Mon,  8 Jul 2024 17:59:48 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,  Al Viro
+ <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Kees Cook
+ <keescook@chromium.org>,  Linus Torvalds <torvalds@linux-foundation.org>,
+  Paul Moore <paul@paul-moore.com>,  Theodore Ts'o <tytso@mit.edu>,
+  Alejandro Colomar <alx@kernel.org>,  Aleksa Sarai <cyphar@cyphar.com>,
+  Andrew Morton <akpm@linux-foundation.org>,  Andy Lutomirski
+ <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Casey Schaufler
+ <casey@schaufler-ca.com>,  Christian Heimes <christian@python.org>,
+  Dmitry Vyukov <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,
+  Eric Chiang <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,
+  Geert Uytterhoeven <geert@linux-m68k.org>,  James Morris
+ <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
+ <jannh@google.com>,  Jeff Xu <jeffxu@google.com>,  Jonathan Corbet
+ <corbet@lwn.net>,  Jordan R Abrahams <ajordanr@google.com>,  Lakshmi
+ Ramasubramanian <nramas@linux.microsoft.com>,  Luca Boccassi
+ <bluca@debian.org>,  Luis Chamberlain <mcgrof@kernel.org>,  "Madhavan T .
+ Venkataraman" <madvenka@linux.microsoft.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
+  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
+ <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
+ Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
+ <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
+ <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
+ Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
+ <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
+ <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
+ Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  linux-mm@kvack.org
+Subject: Re: [PATCH] binfmt_elf: Fail execution of shared objects with ELIBEXEC
+In-Reply-To: <87cynn3hzv.fsf@email.froward.int.ebiederm.org> (Eric
+	W. Biederman's message of "Mon, 08 Jul 2024 12:34:28 -0500")
+References: <20240704190137.696169-1-mic@digikod.net>
+	<20240704190137.696169-2-mic@digikod.net>
+	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+	<20240706.poo9ahd3La9b@digikod.net>
+	<871q46bkoz.fsf@oldenburg.str.redhat.com>
+	<20240708.zooj9Miaties@digikod.net>
+	<878qybet6t.fsf_-_@oldenburg.str.redhat.com>
+	<87cynn3hzv.fsf@email.froward.int.ebiederm.org>
+Date: Mon, 08 Jul 2024 19:59:45 +0200
+Message-ID: <87msmrdasu.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] firmware: arm_scmi: Make SMC transport a standalone
- driver
-To: Cristian Marussi <cristian.marussi@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <arm-scmi@vger.kernel.org>, <sudeep.holla@arm.com>,
-        <james.quinlan@broadcom.com>, <f.fainelli@gmail.com>,
-        <vincent.guittot@linaro.org>, <etienne.carriere@foss.st.com>,
-        <peng.fan@oss.nxp.com>, <michal.simek@amd.com>,
-        <quic_sibis@quicinc.com>, <ptosi@google.com>,
-        <dan.carpenter@linaro.org>, <souvik.chakravarty@arm.com>,
-        Peng Fan <peng.fan@nxp.com>
-References: <20240707002055.1835121-1-cristian.marussi@arm.com>
- <20240707002055.1835121-6-cristian.marussi@arm.com>
- <ffb76411-7119-4024-acaa-3cf40f81ed95@quicinc.com> <Zov3VppLHotmIO3l@pluto>
- <273d23f5-c354-43cf-8903-d07f42778c3a@quicinc.com> <ZowJ9m3uMfImEulE@pluto>
-Content-Language: en-US
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <ZowJ9m3uMfImEulE@pluto>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MHIYSteg_QSIJGjSxqqsaGgYASLFjaAJ
-X-Proofpoint-ORIG-GUID: MHIYSteg_QSIJGjSxqqsaGgYASLFjaAJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_09,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- adultscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407080134
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+* Eric W. Biederman:
 
-On 7/8/2024 8:47 AM, Cristian Marussi wrote:
-> On Mon, Jul 08, 2024 at 08:23:56AM -0700, Nikunj Kela wrote:
->> On 7/8/2024 7:27 AM, Cristian Marussi wrote:
->>> On Sun, Jul 07, 2024 at 09:52:49AM -0700, Nikunj Kela wrote:
->>>> On 7/6/2024 5:20 PM, Cristian Marussi wrote:
->>>>> Make SCMI SMC transport a standalone driver that can be optionally
->>>>> loaded as a module.
->>>>>
->>>>> CC: Peng Fan <peng.fan@nxp.com>
->>>>> CC: Nikunj Kela <quic_nkela@quicinc.com>
->>>>> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
->>>>> ---
->>>>>  drivers/firmware/arm_scmi/Kconfig             |  4 ++-
->>>>>  drivers/firmware/arm_scmi/Makefile            |  2 +-
->>>>>  drivers/firmware/arm_scmi/common.h            |  3 --
->>>>>  drivers/firmware/arm_scmi/driver.c            |  5 ---
->>>>>  .../arm_scmi/{smc.c => scmi_transport_smc.c}  | 31 +++++++++++++++----
->>>>>  5 files changed, 29 insertions(+), 16 deletions(-)
->>>>>  rename drivers/firmware/arm_scmi/{smc.c => scmi_transport_smc.c} (89%)
->>>>>
->>>>> diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
->>>>> index 135e34aefd70..a4d44ef8bf45 100644
->>>>> --- a/drivers/firmware/arm_scmi/Kconfig
->>>>> +++ b/drivers/firmware/arm_scmi/Kconfig
->>>>> @@ -102,7 +102,7 @@ config ARM_SCMI_TRANSPORT_OPTEE
->>>>>  	  transport based on OP-TEE SCMI service, answer Y.
->>>>>  
->>>>>  config ARM_SCMI_TRANSPORT_SMC
->>>>> -	bool "SCMI transport based on SMC"
->>>>> +	tristate "SCMI transport based on SMC"
->>>>>  	depends on HAVE_ARM_SMCCC_DISCOVERY
->>>>>  	select ARM_SCMI_HAVE_TRANSPORT
->>>>>  	select ARM_SCMI_HAVE_SHMEM
->>>>> @@ -112,6 +112,8 @@ config ARM_SCMI_TRANSPORT_SMC
->>>>>  
->>>>>  	  If you want the ARM SCMI PROTOCOL stack to include support for a
->>>>>  	  transport based on SMC, answer Y.
->>>>> +	  This driver can also be built as a module.  If so, the module
->>>>> +	  will be called scmi_transport_smc.
->>>>>  
->>>>>  config ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE
->>>>>  	bool "Enable atomic mode support for SCMI SMC transport"
->>>>> diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
->>>>> index 121612d75f0b..6868a47fa4ab 100644
->>>>> --- a/drivers/firmware/arm_scmi/Makefile
->>>>> +++ b/drivers/firmware/arm_scmi/Makefile
->>>>> @@ -5,7 +5,6 @@ scmi-core-objs := $(scmi-bus-y)
->>>>>  scmi-driver-y = driver.o notify.o
->>>>>  scmi-driver-$(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
->>>>>  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_SHMEM) = shmem.o
->>>>> -scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += smc.o
->>>>>  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_MSG) += msg.o
->>>>>  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_VIRTIO) += virtio.o
->>>>>  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += optee.o
->>>>> @@ -13,6 +12,7 @@ scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o system.o vol
->>>>>  scmi-protocols-y += pinctrl.o
->>>>>  scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
->>>>>  
->>>>> +obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += scmi_transport_smc.o
->>>>>  obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
->>>>>  
->>>>>  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
->>>>> diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
->>>>> index c03f30db92e0..b5bd27eccf24 100644
->>>>> --- a/drivers/firmware/arm_scmi/common.h
->>>>> +++ b/drivers/firmware/arm_scmi/common.h
->>>>> @@ -286,9 +286,6 @@ int scmi_xfer_raw_inflight_register(const struct scmi_handle *handle,
->>>>>  int scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info *cinfo,
->>>>>  					    struct scmi_xfer *xfer,
->>>>>  					    unsigned int timeout_ms);
->>>>> -#ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
->>>>> -extern const struct scmi_desc scmi_smc_desc;
->>>>> -#endif
->>>>>  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
->>>>>  extern const struct scmi_desc scmi_virtio_desc;
->>>>>  #endif
->>>>> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
->>>>> index 96cf8ab4421e..b14c5326930a 100644
->>>>> --- a/drivers/firmware/arm_scmi/driver.c
->>>>> +++ b/drivers/firmware/arm_scmi/driver.c
->>>>> @@ -3254,11 +3254,6 @@ static const struct of_device_id scmi_of_match[] = {
->>>>>  #ifdef CONFIG_ARM_SCMI_TRANSPORT_OPTEE
->>>>>  	{ .compatible = "linaro,scmi-optee", .data = &scmi_optee_desc },
->>>>>  #endif
->>>>> -#ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
->>>>> -	{ .compatible = "arm,scmi-smc", .data = &scmi_smc_desc},
->>>>> -	{ .compatible = "arm,scmi-smc-param", .data = &scmi_smc_desc},
->>>>> -	{ .compatible = "qcom,scmi-smc", .data = &scmi_smc_desc},
->>>>> -#endif
->>>>>  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
->>>>>  	{ .compatible = "arm,scmi-virtio", .data = &scmi_virtio_desc},
->>>>>  #endif
->>>>> diff --git a/drivers/firmware/arm_scmi/smc.c b/drivers/firmware/arm_scmi/scmi_transport_smc.c
->>>>> similarity index 89%
->>>>> rename from drivers/firmware/arm_scmi/smc.c
->>>>> rename to drivers/firmware/arm_scmi/scmi_transport_smc.c
->>>>> index cb26b8aee01d..44da1a8d5387 100644
->>>>> --- a/drivers/firmware/arm_scmi/smc.c
->>>>> +++ b/drivers/firmware/arm_scmi/scmi_transport_smc.c
->>>>> @@ -3,7 +3,7 @@
->>>>>   * System Control and Management Interface (SCMI) Message SMC/HVC
->>>>>   * Transport driver
->>>>>   *
->>>>> - * Copyright 2020 NXP
->>>>> + * Copyright 2020-2024 NXP
->>>>>   */
->>>>>  
->>>>>  #include <linux/arm-smccc.h>
->>>>> @@ -16,6 +16,7 @@
->>>>>  #include <linux/of_address.h>
->>>>>  #include <linux/of_irq.h>
->>>>>  #include <linux/limits.h>
->>>>> +#include <linux/platform_device.h>
->>>>>  #include <linux/processor.h>
->>>>>  #include <linux/slab.h>
->>>>>  
->>>>> @@ -69,12 +70,14 @@ struct scmi_smc {
->>>>>  	unsigned long cap_id;
->>>>>  };
->>>>>  
->>>>> +static struct scmi_transport_core_operations *core;
->>>>> +
->>>>>  static irqreturn_t smc_msg_done_isr(int irq, void *data)
->>>>>  {
->>>>>  	struct scmi_smc *scmi_info = data;
->>>>>  
->>>>> -	scmi_rx_callback(scmi_info->cinfo,
->>>>> -			 scmi_shmem_ops.read_header(scmi_info->shmem), NULL);
->>>>> +	core->rx_callback(scmi_info->cinfo,
->>>>> +			  core->shmem->read_header(scmi_info->shmem), NULL);
->>>>>  
->>>>>  	return IRQ_HANDLED;
->>>>>  }
->>>>> @@ -142,7 +145,7 @@ static int smc_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
->>>>>  	if (!scmi_info)
->>>>>  		return -ENOMEM;
->>>>>  
->>>>> -	scmi_info->shmem = scmi_shmem_ops.setup_iomap(cinfo, dev, tx);
->>>>> +	scmi_info->shmem = core->shmem->setup_iomap(cinfo, dev, tx);
->>>>>  	if (IS_ERR(scmi_info->shmem))
->>>>>  		return PTR_ERR(scmi_info->shmem);
->>>>>  
->>>>> @@ -226,7 +229,7 @@ static int smc_send_message(struct scmi_chan_info *cinfo,
->>>>>  	 */
->>>>>  	smc_channel_lock_acquire(scmi_info, xfer);
->>>>>  
->>>>> -	scmi_shmem_ops.tx_prepare(scmi_info->shmem, xfer, cinfo);
->>>>> +	core->shmem->tx_prepare(scmi_info->shmem, xfer, cinfo);
->>>>>  
->>>>>  	if (scmi_info->cap_id != ULONG_MAX)
->>>>>  		arm_smccc_1_1_invoke(scmi_info->func_id, scmi_info->cap_id, 0,
->>>>> @@ -250,7 +253,7 @@ static void smc_fetch_response(struct scmi_chan_info *cinfo,
->>>>>  {
->>>>>  	struct scmi_smc *scmi_info = cinfo->transport_info;
->>>>>  
->>>>> -	scmi_shmem_ops.fetch_response(scmi_info->shmem, xfer);
->>>>> +	core->shmem->fetch_response(scmi_info->shmem, xfer);
->>>>>  }
->>>>>  
->>>>>  static void smc_mark_txdone(struct scmi_chan_info *cinfo, int ret,
->>>>> @@ -286,3 +289,19 @@ const struct scmi_desc scmi_smc_desc = {
->>>>>  	.sync_cmds_completed_on_ret = true,
->>>>>  	.atomic_enabled = IS_ENABLED(CONFIG_ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE),
->>>>>  };
->>>>> +
->>>>> +static const struct of_device_id scmi_of_match[] = {
->>>>> +	{ .compatible = "arm,scmi-smc" },
->>>>> +	{ .compatible = "arm,scmi-smc-param" },
->>>>> +	{ .compatible = "qcom,scmi-smc" },
->>>>> +	{ /* Sentinel */ },
->>>>> +};
->>>>> +
->>>> Hi Cristian,
->>>>
->>> Hi Nikunj,
->>>
->>> thanks for having a look first of all !
->>>
->>>> Would it make sense to associate scmi descriptor(scmi_smc_desc) with
->>>> compatible as driver/platform data so we have flexibility to replicate
->>>> it and modify parameters such as max_timeout_ms etc. for our platform?
->>>>
->>> Mmmm...not sure to have understood, because the scmi_smc_desc is
->>> effecetively passed from this driver to the core via a bit of
->>> (questionable) magic in the mega-macro
->>>
->>> DEFINE_SCMI_TRANSPORT_DRIVER(scmi_smc, scmi_of_match, &core);
->>>
->>> ...and it will end-up being set into the dev.platform_data and then
->>> retrieved by the core SCMI stack driver in scmi_probe...
->>>
->>> ...OR...do you mean being able to somehow define 3 different
->>> scmi_smc_desc* and then associate them to the different compatibles
->>> and then, depending on which compatible is matched by this isame driver
->>> at probe time, passing the related platform-specific desc to the core...
->>>
->>> ...in this latter case I suppose I can do it by playing with the macros
->>> defs but maybe it is also the case to start thinking about splitting out
->>> configuration stuff from the transport descriptor...
->>>
->>> I'll give it a go at passing the data around, and see how it plays out
->>> if you confirm that this is what you meant...
->> Hi Cristian,
->>
-> Hi,
+> As written I find the logic of the patch confusing, and slightly wrong.
 >
->> I wanted to send a patch for review(with older driver code) that will
->> allow us to override transport parameters(e.g. max_timeout_ms,
->> max_msg_size etc.) on Qualcomm platform. There could be multiple
->> approaches- 1) add callbacks (similar to get_msg_size) in transport_ops
->> and override the default or 2) replicate the descriptors for different
->> compatible and change those values as needed. I was going with the
->> second option but then I saw your patch and thought of throwing this at
-> :P 
->
->> you ;) I don't want you to hold your patch series for this but if you
->> have a better way to achieve or a preferred way between the two
->> mentioned before, please let me know. If you do want to add this feature
->> in this patch series, that would be great!
->>
-> Interesting, because there is also this thread flying around from Peng:
->
-> https://lore.kernel.org/linux-arm-kernel/20240703031715.379815-1-peng.fan@oss.nxp.com/
-Thanks Cristian for the link. I was under the impression that DT binding
-that don't describe HW are not acceptable to DT maintainer. But if this
-patch goes through, I am fine using it. I would also like to have
-max_msg_size(and maybe max_msg) configurable.
->
-> ...which I was planning in embedding in this series; Peng's proposal is
-> limited to timeout and based on DT (and title is a bit misleading...the
-> series is not mailbox-only related)....
->
-> ...now I am NOT saying that we should dump all configs into the DT, but
-> just that this issue about configurability of transports is already sort
-> of a known-problem, and it is a while that it floats in the back of my mind...
-> i.e. the fact that the transport runtime configurations should be *somehow*
-> independent of the transport descriptor and *somehow* configurable....so now
-> only remains to *somehow* figure out how to do it :D
->
-> ... I'll have a though and maybe cannibalize your ideas and Peng's one and then
-> we could have a discussion around this on the list to address eveybody's needs...
->
-> ...and maybe, in the meantime, you could also post your proposed series about
-> this even though based on the old code, but as an RFC, just to make a point and
-> detail the needs...but yeah only if it does not require a bunch of extra work from
-> you given that it is only to be used as a basis for discussion ....
->
-> ...up to you what do you prefer.
->
-> Thanks,
-> Cristian
+> The program header value e_entry is a virtual address, possibly adjusted
+> by load_bias.  Which makes testing it against the file offset of a
+> PT_LOAD segment wrong.  It needs to test against elf_ppnt->p_vaddr.
+
+I think we need to test both against zero, or maybe invert the logic: if
+something is mapped at virtual address zero that doesn't come from a
+zero file offset, we disable the ELIBEXEC check.
+
+> I think performing an early sanity check to avoid very confusing crashes
+> seems sensible (as long as it is inexpensive).  This appears inexpensive
+> enough that we don't care.  This code is also before begin_new_exec
+> so it is early enough to be meaningful.
+
+Yeah, it was quite confusing when it was after begin_new_exec because
+the ELIBEXEC error is visible under strace, and then the SIGSEGV comes =E2=
+=80=A6
+
+> I think the check should simply test if e_entry is mapped.  So a range
+> check please to see if e_entry falls in a PT_LOAD segment.
+
+It's usually mapped even with e_entry =3D=3D0 because the ELF header is
+loaded at virtual address zero for ET_DYN using the default linker flags
+(and this is the case we care about).  With -z noseparate-code, it is
+even mapped executable.
+
+> Having code start at virtual address 0 is a perfectly fine semantically
+> and might happen in embedded scenarios.
+
+To keep supporting this case, we need to check that the ELF header is at
+address zero, because we make a leap of faith and assume it's not really
+executable even if it is mapped as such because due to its role in the
+file format, it does not contain executable instructions.  That's why
+the patch is focused on the ELF header.
+
+I could remove all these checks and just return ELIBEXEC for a zero
+entry point.  I think this is valid based on the ELF specification, but
+it may have a backwards compatibility impact.
+
+> The program header is not required to be mapped or be first, (AKA
+> p_offset and p_vaddr can have a somewhat arbitrary relationship) so any
+> mention of the program header in your logic seems confusing to me.
+
+It's the ELF header.
+
+> I think your basic structure will work.  Just the first check needs to
+> check if e_entry is lands inside the virtual address of a PT_LOAD
+> segment.  The second check should just be checking a variable to see if
+> e_entry was inside any PT_LOAD segment, and there is no interpreter.
+
+I think the range check doesn't help here.  Just checking p_vaddr for
+zero in addition to p_offset should be sufficient.  If you agree, can
+test and send an updated patch.
+
+Thanks,
+Florian
+
 
