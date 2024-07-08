@@ -1,268 +1,127 @@
-Return-Path: <linux-kernel+bounces-244361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA8392A321
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6404F92A2D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA532808B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9186B288C8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A95F839E3;
-	Mon,  8 Jul 2024 12:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIhtQM98"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F10038FA1;
-	Mon,  8 Jul 2024 12:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A6B7E0F1;
+	Mon,  8 Jul 2024 12:32:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F6454277;
+	Mon,  8 Jul 2024 12:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720442763; cv=none; b=nC9edYOVvvw5rWY6rkKrILcHq+mDSPBpNUrb4cE3Dc7rDbQyXz/R+oL9KftNDyFDkYq0GS37el0ZpnK9EMXIzKlZ5VzVLoCY8DP6iSPCR8tPBc3jZPjM4ETjLDSWbmi7TSoSWrXBybBcTrMrsWJ1UGsDfR2IGzS9rcCPznB3jJQ=
+	t=1720441932; cv=none; b=dbUYbax23lMMuhYc09JFoJil4qvJSJDicRwaHhWvG7C263us2HIQaFCoP8RZtzLyvIY1zSTD2ihSWQyV04M6FaXycozgZxblbNUTG1ch3pzyvehvccXblDic4C/h8oLAFZphsax98dq32aPpKM2pBBYhYOT2zVzbw3uD/8qTJw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720442763; c=relaxed/simple;
-	bh=05BE5QIkNqGHLnlozE+/nCBRDY5C8lMe8j3HBLlQiBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ym9qyAV5yniPCifMi9++I35L6xJ9sCP2eSl/J3/EjTgWOyAGibm5kS6MGiv2sUlrOx/R8UpaTN86MaOUH6w9R2L11LhnxFjvtI2qt7Mz9ZV6fOGOFuttziTV7/f8ORYo9tN9v3O6cRsNUAJkbRIvkifFla0BGu0/mhEKiu4Nv8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIhtQM98; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 610ACC116B1;
-	Mon,  8 Jul 2024 12:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720442763;
-	bh=05BE5QIkNqGHLnlozE+/nCBRDY5C8lMe8j3HBLlQiBI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIhtQM98DRc+Q3iqGQRKLHhd1DctOduNh0S+DNqGQ1ehzrJNcvWpyNZv65htncc4N
-	 KOc5BnykMyZ87lhvedTdLfpcJ00LCEb46+qrMMaRLBQ8rT+uTH5p69T/6rIy78q9MB
-	 nWgeZfMdJu1mwB01HOdNcJy/Y4Ff60SKMWjB/KzUJznx/m9dmG9nZvXjYaBv/hK0Hx
-	 gErwQ67NLvpC8mBv53u+vgyY1NpeHyIt/qLHMRDNGd0aGkjyEcBPofjo2T/AsGUegO
-	 MndmCKSd8GGntzi4SYRvtDbcXW3a1QamjfVyrhVSgPE6AsfOibebqcn/nT+JU/C9S6
-	 LAGss79wiDclg==
-Date: Mon, 8 Jul 2024 20:31:45 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>
-Subject: Re: [PATCH v3 08/11] riscv: dts: add initial SpacemiT K1 SoC device
- tree
-Message-ID: <ZovcMYs1jnmPCWVE@xhacker>
-References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
- <20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org>
- <Zoanxksn0nio4MPg@xhacker>
- <20240705063839.GA3042186@ofsar>
- <ZojEEAdUwxPJwqIS@xhacker>
- <20240706050556.GA3590714@ofsar>
- <ZokfBzjvwN0IUQIX@xhacker>
- <20240706142403.GYA4138928.dlan.gentoo>
+	s=arc-20240116; t=1720441932; c=relaxed/simple;
+	bh=DMnLTqC6BUcFBeBvAD31PCj2jQEyHSG/XGFN5/YEEjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KxS0REWP+7MEoQ+32PLQFzGqWfrW5ltTQpwnznW7LgUPH/6YzcdXb8LnhPwZ/M0AMC/vUVzqhSaPLyU+dQsfk+YCa9jDIFkTFBdYmSHqn4IP2jD2nZYXx5wTVGFkzBW1+iJ//1qeNg4WXWGzgy2KzIAGpJTGOF8o9y2Ay+5AZRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEF221042;
+	Mon,  8 Jul 2024 05:32:35 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB56F3F766;
+	Mon,  8 Jul 2024 05:32:09 -0700 (PDT)
+Message-ID: <9f65c70f-7b7e-40be-9726-5e4d83d33817@arm.com>
+Date: Mon, 8 Jul 2024 13:32:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240706142403.GYA4138928.dlan.gentoo>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] perf build: Conditionally add feature check flags
+ for libtrace{event,fs}
+To: Guilherme Amadio <amadio@gentoo.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Thorsten Leemhuis <linux@leemhuis.info>, linux-perf-users@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20240628202608.3273329-1-amadio@gentoo.org>
+ <20240628203432.3273625-1-amadio@gentoo.org>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240628203432.3273625-1-amadio@gentoo.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 06, 2024 at 02:24:03PM +0000, Yixun Lan wrote:
-> On 18:40 Sat 06 Jul     , Jisheng Zhang wrote:
-> > On Sat, Jul 06, 2024 at 05:05:56AM +0000, Yixun Lan wrote:
-> > > 
-> > > On 12:12 Sat 06 Jul     , Jisheng Zhang wrote:
-> > > > On Fri, Jul 05, 2024 at 06:38:39AM +0000, Yixun Lan wrote:
-> > > > > 
-> > > > > On 21:46 Thu 04 Jul     , Jisheng Zhang wrote:
-> > > > > > On Wed, Jul 03, 2024 at 02:55:11PM +0000, Yixun Lan wrote:
-> > > > > > > From: Yangyu Chen <cyy@cyyself.name>
-> > > > > > > 
-> > > > > > > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
-> > > > > > > 
-> > > > > > > Key features:
-> > > > > > > - 4 cores per cluster, 2 clusters on chip
-> > > > > > > - UART IP is Intel XScale UART
-> > > > > > > 
-> > > > > > > Some key considerations:
-> > > > > > > - ISA string is inferred from vendor documentation[2]
-> > > > > > > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
-> > > > > > > - No coherent DMA on this board
-> > > > > > >     Inferred by taking vendor ethernet and MMC drivers to the mainline
-> > > > > > >     kernel. Without dma-noncoherent in soc node, the driver fails.
-> > > > > > > - No cache nodes now
-> > > > > > >     The parameters from vendor dts are likely to be wrong. It has 512
-> > > > > > >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
-> > > > > > >     When the size of the cache line is 64B, it is a directly mapped
-> > > > > > >     cache rather than a set-associative cache, the latter is commonly
-> > > > > > >     used. Thus, I didn't use the parameters from vendor dts.
-> > > > > > > 
-> > > > > > > Currently only support booting into console with only uart, other
-> > > > > > > features will be added soon later.
-> > > > > > > 
-> > > > > > > Link: https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1_datasheet [1]
-> > > > > > > Link: https://developer.spacemit.com/#/documentation?token=BWbGwbx7liGW21kq9lucSA6Vnpb [2]
-> > > > > > > Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/boot/dts/spacemit/k1-x.dtsi [3]
-> > > > > > > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-> > > > > > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > > > > > > ---
-> > > > > > >  arch/riscv/boot/dts/spacemit/k1.dtsi | 376 +++++++++++++++++++++++++++++++++++
-> > > > > > >  1 file changed, 376 insertions(+)
-> > > > > > > 
-> > > > > > > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > > > > > > new file mode 100644
-> > > > > > > index 0000000000000..a076e35855a2e
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > > > > > > @@ -0,0 +1,376 @@
-> > > > > > > +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> > > > > > > +/*
-> > > > > > > + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-> > > > > > > + */
-> > > > > > > +
-> > > > > > > +/dts-v1/;
-> > > > > > > +/ {
-> > > > > > > +	#address-cells = <2>;
-> > > > > > > +	#size-cells = <2>;
-> > > > > > > +	model = "SpacemiT K1";
-> > > > > > > +	compatible = "spacemit,k1";
-> > > > > > > +
-> > > > > > > +
-> > ...
-> > > > > > > +	soc {
-> > > > > > > +		compatible = "simple-bus";
-> > > > > > > +		interrupt-parent = <&plic>;
-> > > > > > > +		#address-cells = <2>;
-> > > > > > > +		#size-cells = <2>;
-> > > > > > > +		dma-noncoherent;
-> > > > > > > +		ranges;
-> > > > > > > +
-> > > > > > > +		uart0: serial@d4017000 {
-> > > > > > > +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> > > > > > 
-> > > > > > no, this is not a correct hw modeling. The doc on spacemit says
-> > > > > > all the uart support 64 bytes FIFO, declaring xscale only makes
-> > > > > > use of 32 bytes FIFO.
-> > > > > yes, I also noticed it's 64 bytes FIFO
-> > > > > 
-> > > > > > 
-> > > > > > IIRC, 8250_pxa is a xscale uart with 64 bytes FIFO, so this should be
-> > > > > > "mrvl,pxa-uart" or "mrvl,mmp-uart"
-> > > > > 
-> > > > > 
-> > > > > for mrvl,pxa-uart, I think you imply to use drivers/tty/serial/8250/8250_pxa.c,
-> > > > > which turn out doesn't work on k1 SoC, for the record, we need to adjust
-> > > > 
-> > > > Really? I just tried "mrvl,pxa-uart" with rc6, it works perfectly, and the FIFO
-> > > > in the driver logic is 64bytes now. Am I misssing something or you never tried it?
-> > > > 
-> > > Ok, I realised it's the clock issue
-> > > 
-> > > still, I'm not fully convinced about using "mrvl,pxa-uart",
-> > > e.g this driver hardcoded tz_loadsz to 32, not sure if K1 suffer same problem
-> > > 5208e7ced520 ("serial: 8250_pxa: Configure tx_loadsz to match FIFO IRQ level")
-> > 
-> > I believe the problem commit 5208e7ced520 tries to solve is: the
-> > mmp|pxa-uart only support threshold up to 32Bytes, tz_loadsz will be
-> > fifo size by default, this will cause probleme with 64Bytes FIFO.
-> > 
-> yes, exactly
+Hi Guilherme,
+
+On 6/28/24 21:34, Guilherme Amadio wrote:
 > 
-> > > 
-> > > also, what's the preference when choosing driver between 8250_pxa.c vs 8250_of.c?
-> > 
-> > Good question. I have no preference. But there are two problems with
-> > 8250_of, I have sent out patches[1][2] to address them.
-> > 
-> > After these two patches, both the earlycon and uart FIFO logic work too
-> > with below dts properties:
-> > 		uart0: serial@d4017000 {
-> > 			compatible = "mrvl,mmp-uart";
-> to be precise, I think here should be compatible = "mrvl,mmp-uart", "intel,xscale-uart"
-
-see below.
-
+> This avoids reported warnings when the packages are not installed.
 > 
-> but can you check this patch below? it should be ok with your two proposed patches applied
-> https://lore.kernel.org/all/20240703-k1-01-basic-dt-v3-6-12f73b47461e@gentoo.org/
+> Fixes: 0f0e1f44569061e3dc590cd0b8cb74d8fd53706b
+> Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
+> ---
+>   tools/perf/Makefile.config | 28 +++++++++++++++-------------
+>   1 file changed, 15 insertions(+), 13 deletions(-)
 > 
-> > 			...
-> >                         reg-shift = <2>;
-> >                         reg-io-width = <4>;
-> >                         tx-threshold = <32>;
-> >                         fifo-size = <64>;
-
-I just tried, the previous "spacemit,k1-uart", "intel,xscale-uart"; with above properties
-work too, and the fifo size in driver logic seems correct as well.
-
-> ..
-> >                         no-loopback-test;
->             need to check, from vendor docs, there is a loopback mode
-
-oh, this property is from the UPF_SKIP_TEST of 8250_pxa.c. This
-property can be removed.
-
->             see 16.2.4.1 SSCR register description, bit12
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index 5271a4c1d2b3..5387babb8f04 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -182,13 +182,21 @@ endif
+>   FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
+>   FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
 > 
-> https://developer.spacemit.com/#/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf
-> > 			...
-> > 		}
-> > 
-> > Link: https://lore.kernel.org/linux-riscv/20240706082928.2238-1-jszhang@kernel.org/ [1]
-> I have some comments for this patch, and I believe it's a valid fix,
-> without this patch, K1 will also have problem duo to "UART_CAP_UUE | UART_CAP_RTOIE" lost
-> 
-> > Link: https://lore.kernel.org/linux-riscv/20240706101856.3077-1-jszhang@kernel.org/ [2]
-> > 
-> > > it occur to me that 8250_pxa.c is more specially tailored for pxa hardware, while
-> > > 8250_of.c is more generic.. besides, should we consider one more step if we want to
-> > 
-> > there's a work around for Erratum #74 in 8250_pxa, while I believe the
-> do you have any link for this Erratum? let's double check it..
+> -# for linking with debug library, run like:
+> -# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+> -FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
+> -FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
+> -
+> -FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+> -FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+> +ifneq ($(NO_LIBTRACEEVENT),1)
+> +  ifeq ($(call get-executable,$(PKG_CONFIG)),)
+> +  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
+> +  endif
+> +endif
+> +ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
+> +  # for linking with debug library, run like:
+> +  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+> +  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
+> +  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
+> +endif
+> +ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
+> +  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+> +  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+> +endif
 
-I can't find any link now :(
+Seems to me, the patch 03 uses a more neat way for appending CFLAGS and
+LDFLAGS of libtraceevent and libtracefs, should not use the same code
+in patch 01?
 
+Thanks,
+Leo
+
+>   FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+>   # include ARCH specific config
+> @@ -208,12 +216,6 @@ ifeq ($(call get-executable,$(BISON)),)
+>     $(error Error: $(BISON) is missing on this system, please install it)
+>   endif
 > 
-> > Errata doesn't exisit in K1, so from this PoV it seems 8250_of is
-> > better, no?
-> > 
-> > > support DMA mode in the future (vendor uart driver has DMA support)?
-> > 
-> > Adding dma engine support to 8250_of is doable.
-> Ok, sounds good to me
-> > 
-> > > 
-> > > 
-> > > > >  drivers/tty/serial/8250/Kconfig to enable the driver for ARCH_SPACEMIT,
-> > > > >  and change uart compatible to "spacemit,k1-uart", "mrvl,pxa-uart"
-> > > > > 
-> > > > > for mrvl,mmp-uart, I see two choices, one using 8250_pxa.c which has same result
-> > > > > as mrvl,pxa-uart, another choice would using the driver of 8250_of.c 
-> > > > > and it work as same as "intel,xscale-uart", I don't see any difference..
-> > > > > 
-> > > > > P.S: there is possibly a side problem that "mrvl,mmp-uart" from 8250_of.c doesn't 
-> > > > > really compatile with "mrvl,mmp-uart" from 8250_pxa.c, but I think it's another story
-> > > 
-> > > -- 
-> > > Yixun Lan (dlan)
-> > > Gentoo Linux Developer
-> > > GPG Key ID AABEFD55
+> -ifneq ($(NO_LIBTRACEEVENT),1)
+> -  ifeq ($(call get-executable,$(PKG_CONFIG)),)
+> -  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
+> -  endif
+> -endif
+> -
+>   ifneq ($(OUTPUT),)
+>     ifeq ($(shell expr $(shell $(BISON) --version | grep bison | sed -e 's/.\+ \([0-9]\+\).\([0-9]\+\).\([0-9]\+\)/\1\2\3/g') \>\= 371), 1)
+>       BISON_FILE_PREFIX_MAP := --file-prefix-map=$(OUTPUT)=
+> --
+> 2.45.2
 > 
-> -- 
-> Yixun Lan (dlan)
-> Gentoo Linux Developer
-> GPG Key ID AABEFD55
 
