@@ -1,172 +1,115 @@
-Return-Path: <linux-kernel+bounces-244831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB2792AA07
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:46:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22E792AA08
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431A11C2123D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3181F285DA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274EA14D439;
-	Mon,  8 Jul 2024 19:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939ED14B95B;
+	Mon,  8 Jul 2024 19:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="14o6G+kt"
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mxpqE81a"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A23320B35
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842D320DC3
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720467961; cv=none; b=P4w4iNzr0oQC2qlHqo6ezKoWmMAySnWvd28RVIWpX5pf5e+nyk16h9xfqvpg+JPYAhIpTIadPR+K3cLaReTuqtWjvm+/l5pMg158EDrOLueywuEVIbMj2a5qKfG5zGCIgacEF1M5MHyWWrgfix17xANpwJ+35hWqdSiPl5jkf6Y=
+	t=1720468022; cv=none; b=XK98qYwDJSwhlCEAM6DUk7Eln2gDT7qiGb86SvVU6STzwRFB+1xIxEEtxvwDeZ4rZBu9zQIeRenJ+/SbKyLMTIC7qi19Qa+pOBF+ksxWmn8ubxuqizbn3RcTK040B7wfhmjmrbQIwMX9rUE9ai00GEm1gfrETNuMgnaQltF/kKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720467961; c=relaxed/simple;
-	bh=f6J3SyMoDlZnX07mleC15lOwC8e7IIONVGk8M5fMiVc=;
+	s=arc-20240116; t=1720468022; c=relaxed/simple;
+	bh=xfUwHFgIQzzqJP6stxoZusU7xDn7i1MUCcKHTwTW1G0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jqa0CcfcFpjrKoXkuOSlsiZ7Ayh9HdN5rtaiZmyqMa6Jx03euOtWWANwRPzeiaHDurvEZzbYA4CTKCfSXmwmYWX0zvGdEzRop1SKl8nSuI7UPj9Ow1t1VCGe+XS+teVzR34Vl+ptLEALs/KC0jNS43tvILn9ChsHtS9pwbIweqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=14o6G+kt; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHvkC0RZ8zTJk;
-	Mon,  8 Jul 2024 21:45:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720467954;
-	bh=ilehYGP+q5fwPfEBN5/iUyPlmWRy6d513iG8m2WrmI8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=14o6G+ktpNaLu4raXbCfVq0pepd/8UsG3XShk47o7zGTN4rGazuD5syQSYmnD2Ihg
-	 HDnlDIQIBwCMAmSJvEgcJrk1d4Vl4+PGEy4YdG4h/kYYXX1STAfivnR+7paePaMWTU
-	 7u8oCJK5OknQp9bCFzbLfNGwFSuL0rNel1zR3/IY=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHvkB1W56zm5b;
-	Mon,  8 Jul 2024 21:45:54 +0200 (CEST)
-Date: Mon, 8 Jul 2024 21:45:42 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v1] landlock: Abstract unix socket restriction tests
-Message-ID: <20240708.rootai6weiXe@digikod.net>
-References: <Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N2tPX942RBu/2axGlHu7Td/4vYhXq47tt5IxveLjaBJp6h1FcmjWYN5JdmK+eNBsZqmrThmI4pdSwsv5WoH6od/3KaTZqHZOUkrQvtFpSc7JJZrqp7BolIUnAv6V3dS0NgM2SAn7NaxjpuproOAKR4FlhoOpsC+8PUlBtdDESYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mxpqE81a; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3818c2d364cso19681295ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 12:47:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1720468020; x=1721072820; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NWkzAQQtVxjkKH80LNYbBQ6QWoqweGmef12U+XNbKY8=;
+        b=mxpqE81aQWiTYlUnXRU+rSop04gIYr92zHo69qkzfebkHfTEVQRFhy4VEUrPdSQw2H
+         89P+4envOytRCs1/0Ic0eE5xPYMkLZEgt0d29jnwhWMULUBhDugBjq/4JkQuQ9RWZmjl
+         oUoUiJdw4Gkf9g+xpFuS/jk6ANezqkUIA9L4U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720468020; x=1721072820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NWkzAQQtVxjkKH80LNYbBQ6QWoqweGmef12U+XNbKY8=;
+        b=sz3hkp2bQoD9SLFSJkKT7QiWXlS1zx9FW4yFKJIfE5xgxUw393q95SpwOJbWcMkD3s
+         Pw75dYwxXcVda+awR3n/tqvVwwzScFvHVUFmTlSnjrhMp3RWlPX2y6Qam664AR2r9IFj
+         JqTOlOYFHjDfkEltPZnSxV//2aTczQwXzpgTfCxrdOZbGmPLw2ZrYOjUviceN0h+pF1X
+         Me/Q0kdufY/9dp12Ib5ovmWkhNHIBhXHmuIkjPNpmwu7lbCmwpxvnpkxqbiifHFVS+Yr
+         4uv7ESXv35NpSDlD6VnoxxAqPwvEAP60gxqtxMa2Bnbkjk1QLORBdjm8HQxRvf87NSrs
+         WnIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXT4nKlf5T94JvNBdD/sEPRnsauEgfUCRi1Q893BG7bwNEafYpI4OPqH7G9hMeAe+iiNRBljyNwshVjV1LVbjbq41KroJaEJ38Zffgs
+X-Gm-Message-State: AOJu0Yw64Nn6eLdgT8Dt4BmYzxa16i98jw+bRnTXxognk/6XV6vhb84m
+	TwVSG2lYAx+1nLvtJ25MB0XwjHk32Uggab5MufeW+BalZEV7DBJoKJCkgIx/qg==
+X-Google-Smtp-Source: AGHT+IErjqc2QuiwhjqsE6ydLSlVepI8J8lRB04ybk799vAbtxt2hOpEu1DCYDbIFaBbcAs4+l8Lkg==
+X-Received: by 2002:a05:6e02:18cc:b0:375:9e20:beef with SMTP id e9e14a558f8ab-38a53e858b0mr7958815ab.0.1720468019700;
+        Mon, 08 Jul 2024 12:46:59 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:3e22:9cde:6b65:e5e8])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-77d603f9bfasm192237a12.30.2024.07.08.12.46.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 12:46:59 -0700 (PDT)
+Date: Mon, 8 Jul 2024 12:46:58 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Justin Stitt <justinstitt@google.com>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH] cpumask: Switch from inline to __always_inline
+Message-ID: <ZoxCMp_ZQ-Su-r0D@google.com>
+References: <20240514204910.1383909-1-briannorris@chromium.org>
+ <ZnsML1RYMmEhhdPP@google.com>
+ <ZoWhPFJIvGpMGKm4@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <ZoWhPFJIvGpMGKm4@yury-ThinkPad>
 
-These are good tests!  However, I get errors when running some of them (using
-the latest formatted patches):
-
-#  RUN           unix_socket.allow_without_domain_connect_to_parent.abstract_unix_socket ...
-# ptrace_test.c:845:abstract_unix_socket:Expected 0 (0) == bind(self->server, (struct sockaddr *)&addr, addrlen) (-1)
-# abstract_unix_socket: Test terminated by assertion
-#          FAIL  unix_socket.allow_without_domain_connect_to_parent.abstract_unix_socket
-not ok 9 unix_socket.allow_without_domain_connect_to_parent.abstract_unix_socket
-#  RUN           unix_socket.allow_without_domain_connect_to_child.abstract_unix_socket ...
-# ptrace_test.c:793:abstract_unix_socket:Expected 0 (0) == bind(self->server, (struct sockaddr *)&addr, addrlen) (-1)
-# ptrace_test.c:826:abstract_unix_socket:Expected 1 (1) == read(pipe_child[0], &buf_parent, 1) (0)
-# abstract_unix_socket: Test terminated by assertion
-#          FAIL  unix_socket.allow_without_domain_connect_to_child.abstract_unix_socket
-not ok 10 unix_socket.allow_without_domain_connect_to_child.abstract_unix_socket
-
-
-On Thu, Jun 27, 2024 at 05:30:48PM -0600, Tahera Fahimi wrote:
-> Tests for scoping abstract unix sockets. The patch has three types of tests:
-> i) unix_socket: tests the scoping mechanism for a landlocked process, same as
-> ptrace test.
-> ii) optional_scoping: generates three processes with different domains and tests if
-> a process with a non-scoped domain can connect to other processes.
-> iii) unix_sock_special_cases: since the socket's creator credentials are used for
-> scoping datagram sockets, this test examine the cases where the socket's credentials
-> are different from the process who is using it.
+On Wed, Jul 03, 2024 at 12:06:36PM -0700, Yury Norov wrote:
+> Hi Brian,
 > 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
+> I never received the original email, only this reply, and can't recover
+> any context.
 
-> +/* clang-format off */
-> +FIXTURE(optional_scoping)
-> +{
-> +	int parent_server, child_server, client;
-> +};
-> +/* clang-format on */
-> +
-> +/* Domain is defined as follows:
-> + * 0 --> no domain
-> + * 1 --> have domain
-> + * 2 --> have domain and is scoped
+That's unfortunate! I don't know what happened there. My usual culprit
+would be something in the DMARC/DKIM/SPF spam-filtering space, but:
 
-You should use an enum instead of these hardcoded values.  This is
-better to understand/document, to review, and to maintain.
+(a) it made it to the archives, such as:
+https://lore.kernel.org/all/20240514204910.1383909-1-briannorris@chromium.org/
 
-> + **/
-> +FIXTURE_VARIANT(optional_scoping)
-> +{
-> +	int domain_all;
-> +	int domain_parent;
-> +	int domain_children;
-> +	int domain_child;
-> +	int domain_grand_child;
-> +	int type;
-> +};
-> +/*
-> + * .-----------------.
-> + * |         ####### |  P3 -> P2 : allow
-> + * |   P1----# P2  # |  P3 -> P1 : deny
-> + * |         #  |  # |
-> + * |         # P3  # |
-> + * |         ####### |
-> + * '-----------------'
-> + */
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(optional_scoping, deny_scoped) {
-> +	.domain_all = 1,
-> +	.domain_parent = 0,
-> +	.domain_children = 2,
-> +	.domain_child = 0,
-> +	.domain_grand_child = 0,
-> +	.type = SOCK_DGRAM,
-> +	/* clang-format on */
-> +};
-> +/*
-> + * .-----------------.
-> + * |         .-----. |  P3 -> P2 : allow
-> + * |   P1----| P2  | |  P3 -> P1 : allow
-> + * |         |     | |
-> + * |         | P3  | |
-> + * |         '-----' |
-> + * '-----------------'
-> + */
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(optional_scoping, allow_with_domain) {
-> +	.domain_all = 1,
-> +	.domain_parent = 0,
-> +	.domain_children = 1,
-> +	.domain_child = 0,
-> +	.domain_grand_child = 0,
-> +	.type = SOCK_DGRAM,
-> +	/* clang-format on */
-> +};
+and
 
-I guess this should failed with the current kernel patch (see my review
-of the kernel patch), but something like that should be tested:
+(b) I don't see any red flags in the mail headers on lore
+(https://lore.kernel.org/all/20240514204910.1383909-1-briannorris@chromium.org/raw)
+such as DKIM, SPF, or DMARC failures.
 
-FIXTURE_VARIANT_ADD(optional_scoping, allow_with_one_domain) {
-	.domain_parent = 0,
-	.domain_child = 2,
-	.domain_grand_child = 0,
-};
+Anyway, if you just want the original mail contents that I stripped from
+my "ping" reply, they are available in the above archives.
 
-grand_child should be able to connect to its parent (child), but not its
-grand parent (parent).
+Since I don't know what went wrong on v1, I don't really know what to
+fix on a v2. But if I send a v2 and don't hear anything for a while ...
+I suppose I can "ping" again!
+
+Regards,
+Brian
 
