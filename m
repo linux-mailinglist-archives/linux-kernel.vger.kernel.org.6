@@ -1,177 +1,162 @@
-Return-Path: <linux-kernel+bounces-244064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1074C929EA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:04:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0725929EA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 794E9B22F32
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:04:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182451C217EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44865481B9;
-	Mon,  8 Jul 2024 09:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CAD4D8B7;
+	Mon,  8 Jul 2024 09:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aqcgCVnp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N2qEmVWR"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BD58C06;
-	Mon,  8 Jul 2024 09:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCA82EAF9
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720429480; cv=none; b=aNQj0VVjJs+/ZE7bCaqNZOC1Z9nCOnQpA9nNJ37ck7/m1O5KxoTuQfdkSPKXjpSNi0OAaqCLi6Ow1WuKa42m6BnWjleT/Tk6zU4bF78lY0BR6oh2ovqyrpQrxKphX4+nbxfm7RlsKZ80UCjslIvJNr5l3BrNqSsE/EQc3qDxqYU=
+	t=1720429502; cv=none; b=QkFWIzyK7Lv6/fW0JONLVSvf5rjITkFJHHaLQ/T8UGSh6IZV/r8Y1D2I9PC8nvcJZpyLXEdIkb7ApR06D17GS7axT/YQMnm7XvYvBmtNBUpfbunabGAIiJC5uKJhDvQhdCAJbpoo4vezdk5WM5jIUaKX9fbVy4YOYrJC4ZYcf8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720429480; c=relaxed/simple;
-	bh=0aI49ZEwUflNdgkB5KmEXIC466KnmIbQc17d0H6wyiU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=osKWboFTnp69XNse+EQO3hVt2cwHDXi4gvNoAEAbmUNSr13r1d6SGL6DnqhHNXU134pn1pvrSutpzJH/UHWWMJVDlGtUvODF3pjEcDNSQPYvwYhmDPaRUZYSTDjukb/sjPt6NsOr781ZNIqqB/fizZ20ZMFU1qlFTcfI46nF/eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aqcgCVnp; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720429478; x=1751965478;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=0aI49ZEwUflNdgkB5KmEXIC466KnmIbQc17d0H6wyiU=;
-  b=aqcgCVnpKzoDolEw0GMjEa2sryv8aUSJi4rndyUe3Qpnh0jK1q9AKGXe
-   WGGkKJXHLXnvMiy3e6wvM0LQN9141uSFpWuus8SyK8Uk08bkvh+a3i8XW
-   ZcjOUVCA9Or+Gi81wWg69RM5Ni+xxjsE8eVhDLcLRJqpz/+gUuEW5g06r
-   I3dDOii7+Klm0g1jDCn9C1mkyBZuLPRMrQB8X9bk3TsDpgfTUmmvzN/MH
-   7GoEDBKsvkaJjKZ5SAsqVoEKspOWkpHcQHF0DKOws2as3Y8y9/UPhtyKH
-   0hU1+F961LjAAaX5KUReSipPjUb1vv3AMNOTA01TQ6ZKkrYJi67T2v6gU
-   w==;
-X-CSE-ConnectionGUID: n3GQKVskT0GimjxTotXspA==
-X-CSE-MsgGUID: DTq9CWWWQMuSC2MfGgmo0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="17754111"
-X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
-   d="scan'208";a="17754111"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 02:04:38 -0700
-X-CSE-ConnectionGUID: q9lJAyFqTYyN1F2sobzr4w==
-X-CSE-MsgGUID: VMNX/6kuSp24CnC+3hRKRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
-   d="scan'208";a="47323026"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.115])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 02:04:34 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 8 Jul 2024 12:04:31 +0300 (EEST)
-To: daire.mcnamara@microchip.com
-cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-    conor.dooley@microchip.com, lpieralisi@kernel.org, kw@linux.com, 
-    robh@kernel.org, bhelgaas@google.com, LKML <linux-kernel@vger.kernel.org>, 
-    linux-riscv@lists.infradead.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v6 1/3] PCI: microchip: Fix outbound address translation
- tables
-In-Reply-To: <20240628115923.4133286-2-daire.mcnamara@microchip.com>
-Message-ID: <6c879527-4578-e3b5-2cc2-cf0638901f24@linux.intel.com>
-References: <20240628115923.4133286-1-daire.mcnamara@microchip.com> <20240628115923.4133286-2-daire.mcnamara@microchip.com>
+	s=arc-20240116; t=1720429502; c=relaxed/simple;
+	bh=XMF2MqDns5pCwE8CcsNuQXiO25HOfipCVkWhVX+41Io=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i7po3NNDOtdpF6V3UhDJZBZGfdgaNpAA8XDOPuR1dRD/V9NqD9coiuVJGRKK5tG0qZwofncLNPRKi+FH1Rbn9OQs0uZZsuFA8XipPpH2R/VOD33u+ywb4bRVmu88vdGOAG+EJQ3PFlupaM8+HkpofGCBEFutvi5FszOSw/5cHzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N2qEmVWR; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a77e392f59fso174563066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 02:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1720429497; x=1721034297; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CLguUnqOILj2nltoMSMd+O56+i+Df9CclOmYvB+j5Mk=;
+        b=N2qEmVWRa/O01O195gtQXeqZRs4SRgaDPcUKHHDphEc6YiJzVbbaP0eNYT4wNB8Te5
+         M2LmsfWKcExG1exTEYMPL4uWBWIaZmZOGiF2GXy3L/3GjD9wIp4GKXOJ4BI1oUjH8rQf
+         Qx0yK9K++UieXKD75LFl1Rz1yvDxZS90xfR8ZzyF2T8MZsaLCvihufYaT43s7hDc6IfI
+         uU3el560Yq57B6zBeJoIC428+UtO3LlA4oDU7M5cFAlWlxAId19dxfgPdk2UaQpOYeCh
+         HB0fRwdXTyVRm/m44SoVK8rgmx0wBKie4AqmPDYpDua70CqQ4QWun53Ue/DS6KasOxD2
+         hpPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720429497; x=1721034297;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CLguUnqOILj2nltoMSMd+O56+i+Df9CclOmYvB+j5Mk=;
+        b=kf0F8HRX0wm0GVN03aXc0411ZR4KJLSxArLhwIaJIROy2U19LIUvPIxnWCZzRTIefs
+         N/+4DAonM6JTES0DYFd7uLCjhgZvHJCZblKqUHsWe6bkDoVgYf+cfZH9id7LS8tqqEdJ
+         1s7a1QHgqu6J1vFPuA6btS/G7ffZfYnBpMqREymhsgNN00eqgLSV3HwTbJSwn0kh+Vkj
+         qShtY594VWmy8zh1tboDvj5UtkSTX+dU0gufB6A8GI0fZzHunE/UaruhuOf1RNmLJlPc
+         0kFnKpYocW0mc+siqL6us5fnl+Q2CCOE/pTYVzijELRmyTyhMgp0OEyeDl3GxVrGY/59
+         NWFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVL6cfzptaQtx0Fh/8BDzKKIj+4w4J6eOBQzYO5WEybfjqH99YsxEm4n0FjcfwqyJABQLOCKOSIp1iwxXRNjHZr2vQNUPCgrRu8vBH
+X-Gm-Message-State: AOJu0Ywu8nSdojf+kV9jJ91zWs1XQvPfRanPEPpSE6RTH7q1FQ1SK27b
+	z7jkAVwXktxljxVSsSo39vD4xQ1Xo55iC4DhKrN2NoPpxG0jHnuuxOo74BSahP0=
+X-Google-Smtp-Source: AGHT+IEfKmbjb7PP9nIF3X70+mcGNp57v/tF5rZEvNSyggSxpN3frMu/fbTIhNoinwcH4OyrIkBJcw==
+X-Received: by 2002:a17:907:118e:b0:a72:7c0d:8fdc with SMTP id a640c23a62f3a-a77ba45525dmr798422866b.14.1720429496940;
+        Mon, 08 Jul 2024 02:04:56 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab065208sm911918466b.118.2024.07.08.02.04.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 02:04:56 -0700 (PDT)
+Message-ID: <2d9ffe19-1663-499c-9699-c13ab7a341ee@suse.com>
+Date: Mon, 8 Jul 2024 11:04:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-728995024-1720429471=:1343"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen: make multicall debug boot time selectable
+To: boris.ostrovsky@oracle.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+ linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ xen-devel@lists.xenproject.org
+References: <20240703115620.25772-1-jgross@suse.com>
+ <d28f8da5-7903-41c8-9213-4e24e376c837@oracle.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <d28f8da5-7903-41c8-9213-4e24e376c837@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 06.07.24 00:36, boris.ostrovsky@oracle.com wrote:
+> 
+> 
+> On 7/3/24 7:56 AM, Juergen Gross wrote:
+> 
+>>   #define MC_BATCH    32
+>> -#define MC_DEBUG    0
+>> -
+>>   #define MC_ARGS        (MC_BATCH * 16)
+>>   struct mc_buffer {
+>>       unsigned mcidx, argidx, cbidx;
+>>       struct multicall_entry entries[MC_BATCH];
+>> -#if MC_DEBUG
+>> -    struct multicall_entry debug[MC_BATCH];
+>> -    void *caller[MC_BATCH];
+>> -#endif
+>>       unsigned char args[MC_ARGS];
+>>       struct callback {
+>>           void (*fn)(void *);
+>> @@ -50,13 +46,84 @@ struct mc_buffer {
+>>       } callbacks[MC_BATCH];
+>>   };
+>> +struct mc_debug_data {
+>> +    struct multicall_entry debug[MC_BATCH];
+> 
+> 'entries'? It's a mc_debug_data's copy of mc_buffer's entries.
 
---8323328-728995024-1720429471=:1343
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Yes, this is better.
 
-On Fri, 28 Jun 2024, daire.mcnamara@microchip.com wrote:
+> Also, would it be better to keep these fields as a struct of scalars and instead 
+> have the percpu array of this struct? Otherwise there is a whole bunch of 
+> [MC_BATCH] arrays, all of them really indexed by the same value. (And while at 
+> it, there is no reason to have callbacks[MC_BATCH] sized like that -- it has 
+> nothing to do with batch size and can probably be made smaller)
 
-> From: Daire McNamara <daire.mcnamara@microchip.com>
->=20
-> On Microchip PolarFire SoC (MPFS) the PCIe Root Port can be behind one of
-> three general-purpose Fabric Interface Controller (FIC) buses that
-> encapsulate an AXI-M interface. That FIC is responsible for managing
-> the translations of the upper 32-bits of the AXI-M address. On MPFS,
-> the Root Port driver needs to take account of that outbound address
-> translation done by the parent FIC bus before setting up its own
-> outbound address translation tables.  In all cases on MPFS,
-> the remaining outbound address translation tables are 32-bit only.
->=20
-> Limit the outbound address translation tables to 32-bit only.
->=20
-> This necessitates changing a size_t in mc_pcie_setup_window
-> to a resource_size_t to avoid a compile error on 32-bit platforms.
+As today the mc_buffer's entries are copied via a single memcpy(), there
+are 3 options:
 
-Do you really mean "a compile error" here, that is, building 32-bit kernel=
-=20
-fails during compile stage? If not, it would be good to rephrase this line.
+- make mc_debug_data a percpu pointer to a single array, requiring to
+   copy the mc_buffer's entries in a loop
 
-Other than that,
+- let struct mc_debug_data contain two arrays (entries[] and struct foo {}[],
+   with struct foo containing the other pointers/values)
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+- keep the layout as in my patch
 
---
- i.
+Regarding the callbacks: I think the max number of callbacks is indeed MC_BATCH,
+as for each batch member one callback might be requested. So I'd rather keep it
+the way it is today.
 
-> Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe contro=
-ller driver")
-> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  drivers/pci/controller/pcie-microchip-host.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/c=
-ontroller/pcie-microchip-host.c
-> index 137fb8570ba2..47c397ae515a 100644
-> --- a/drivers/pci/controller/pcie-microchip-host.c
-> +++ b/drivers/pci/controller/pcie-microchip-host.c
-> @@ -23,6 +23,8 @@
->  /* Number of MSI IRQs */
->  #define MC_MAX_NUM_MSI_IRQS=09=09=0932
-> =20
-> +#define MC_OUTBOUND_TRANS_TBL_MASK=09=09GENMASK(31, 0)
-> +
->  /* PCIe Bridge Phy and Controller Phy offsets */
->  #define MC_PCIE1_BRIDGE_ADDR=09=09=090x00008000u
->  #define MC_PCIE1_CTRL_ADDR=09=09=090x0000a000u
-> @@ -933,7 +935,7 @@ static int mc_pcie_init_irq_domains(struct mc_pcie *p=
-ort)
-> =20
->  static void mc_pcie_setup_window(void __iomem *bridge_base_addr, u32 ind=
-ex,
->  =09=09=09=09 phys_addr_t axi_addr, phys_addr_t pci_addr,
-> -=09=09=09=09 size_t size)
-> +=09=09=09=09 resource_size_t size)
->  {
->  =09u32 atr_sz =3D ilog2(size) - 1;
->  =09u32 val;
-> @@ -983,7 +985,8 @@ static int mc_pcie_setup_windows(struct platform_devi=
-ce *pdev,
->  =09=09if (resource_type(entry->res) =3D=3D IORESOURCE_MEM) {
->  =09=09=09pci_addr =3D entry->res->start - entry->offset;
->  =09=09=09mc_pcie_setup_window(bridge_base_addr, index,
-> -=09=09=09=09=09     entry->res->start, pci_addr,
-> +=09=09=09=09=09     entry->res->start & MC_OUTBOUND_TRANS_TBL_MASK,
-> +=09=09=09=09=09     pci_addr,
->  =09=09=09=09=09     resource_size(entry->res));
->  =09=09=09index++;
->  =09=09}
-> @@ -1117,9 +1120,8 @@ static int mc_platform_init(struct pci_config_windo=
-w *cfg)
->  =09int ret;
-> =20
->  =09/* Configure address translation table 0 for PCIe config space */
-> -=09mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start,
-> -=09=09=09     cfg->res.start,
-> -=09=09=09     resource_size(&cfg->res));
-> +=09mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start & MC_OUTBOUN=
-D_TRANS_TBL_MASK,
-> +=09=09=09     0, resource_size(&cfg->res));
-> =20
->  =09/* Need some fixups in config space */
->  =09mc_pcie_enable_msi(port, cfg->win);
+>> +    void *caller[MC_BATCH];
+>> +    size_t argsz[MC_BATCH];
+>> +};
+>> +
+>>   static DEFINE_PER_CPU(struct mc_buffer, mc_buffer);
+>> +static struct mc_debug_data __percpu *mc_debug_data;
+>> +static struct mc_debug_data mc_debug_data_early __initdata;
+> 
+> How about (I think this should work):
+> 
+> static struct mc_debug_data __percpu *mc_debug_data __refdata = 
+> &mc_debug_data_early;
+> 
+> Then you won't need get_mc_debug_ptr().
+
+I like this idea.
 
 
---8323328-728995024-1720429471=:1343--
+Juergen
 
