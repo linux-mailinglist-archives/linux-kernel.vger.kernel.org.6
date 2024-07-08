@@ -1,127 +1,172 @@
-Return-Path: <linux-kernel+bounces-244891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFD992AAF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8E492AB0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284C51F22983
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC61B1C219F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161B714EC55;
-	Mon,  8 Jul 2024 21:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECF014EC77;
+	Mon,  8 Jul 2024 21:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hrz3z6OW"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pB0h5bSd"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C4E14372B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 21:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4098181211
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 21:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720473350; cv=none; b=cKvhZu7aEfaLZScJcp5dKOXHnOmoL+YSvUSJfH3rTXjntIC0cifJ2pZbY0LhxmlrjNst01c9ilocxXuFj+zNYhN4Er0hMQEoaanL5WddIM6rZMrEiirDivsRstmOokUEjbr9Gj6Bh+rl9H6AwyLd+8PAcNKqpYX7BKh8MdTORKY=
+	t=1720473534; cv=none; b=KeZA49fgjMERKPHR8HeZmN24R17elk1UbiQmVMZuHq7uIg+Fy3W2+zgRNJDKVqkezq6+wOYuzlNBbU9Umuhp2DXSId/gCGOE8gbflLQCL5Rdxh5vPvqVpEFhLI5opddEXVLqxywqaS8xwk9/E+Cbe/qV22KsE9njr0h3zJy+HCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720473350; c=relaxed/simple;
-	bh=rhLMzhnBr1fmJn4hsQMzNNrDyhSsV9+nyDHGBNMD9LQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p/xeIUU8C47YoyyRffERPr3qwAu/AAP0adUrfQSPJZvOMyAoicvLzHy26wQhLUl4N9ZfZsPbUkrPOWDkNnFRSou3fEiXhLRcbWL3tIlZtollcBtN8KQ75zMtcRXECgYRWRDr/k/ll01n+Dt8XxN7Gdj3gybI/5BksLmQsbIqnV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hrz3z6OW; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7035d5eec5aso1702067a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 14:15:47 -0700 (PDT)
+	s=arc-20240116; t=1720473534; c=relaxed/simple;
+	bh=4tpbHtGgkrRcpM7dGHbd69PC5ucXnx833z8uv+u3LPc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XLTaGGf7mEN6v3DBWwY87BecjeGxWmsnCJqMe2xMLdzaZzIXzXm3pOV3iIJb/Kf6YRrVMmNKZ/jyNICjwMar5wpHsGf+yg042Re276AA6ciYl7opY0CPhEvFog/L1pwytVCoZiK1cvYTjBW90fwjVTUgWqZ3wMEKqqJhpCNIPMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pB0h5bSd; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7276dd142b4so3568042a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 14:18:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720473347; x=1721078147; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0uy9ikK6i2ce0Lmsca9PL3vsPP0xYz4tW9STZ+9c+oE=;
-        b=hrz3z6OW3ATt5CSB4mfO5xjFlxqwUs6Lo/q/HKft1Js9CilVhTs/Y4SGBf/dIqNMSq
-         nsCYuBpZRNHDb9jyyrez8V/6qZMgIHz2EZn3ORg2SB17NxPMPKmWYhd66/LrCbQfbS+E
-         /JVYjpIfQwnE3PxGZfvNddZSnCFoyOmFeiNfmcJVtvuV7tvADNdkJQraZfk3Xp/xBQyG
-         F4HnMoaVRTkL7VchWJNgQq7VHxxTaG+AzgsI/xdwSLcod/x2s4UMHngt7frp2WjwytBm
-         b0RcZTcQlbQ8eHGAHpLRaPEQeDkbh1UyP1KRIWQzf5hYlwyFA8RhR8e6gJcNd8KbmnMZ
-         lxuQ==
+        d=google.com; s=20230601; t=1720473531; x=1721078331; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tj1ms3U8LTm4UyZ4fve/C+MAzvup9uK9AJzLieincvc=;
+        b=pB0h5bSdO/5rrnI90Jl1oytkGKots4VSA3dFWsODbfmkNedZ2PZL+wG5EAJdxpuYim
+         tJzuttGDaSjLKTTeHoetoHT/yVZQmmCs2YQ60xsWXWLTMwKFA2RxdImErAHMociHVj4l
+         vDfMdaop0CdV4xKUAA86qpS/dnmQWmoj9dHM8BhcC0DLqMt6d/qGlbRlalnxWZc17rh0
+         jPHe6JnlFwtptlHkV9vXqwLRk72hQ3L76kFtTnDZ+1AGXFheI38d7QC3jGxDYEtV6MMH
+         sWNpxbGdpqHwARW+POUx4ZfdVtR0ZnIWP6QilLOt0MsSFQwD6Oz14O9UT/QfmXaJXzzI
+         mAAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720473347; x=1721078147;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0uy9ikK6i2ce0Lmsca9PL3vsPP0xYz4tW9STZ+9c+oE=;
-        b=V22VqTR+LmZW8bJMeftoNDGZVb2mg/5tyIVxBSKfKt6DqcwzB5OXGvoiA/82KuUFvp
-         Yt/HwDq05Gj4xD7yv0AQNi4JEKSdv/tocwIE4Nzscqc1NwE+zW1gERiREhci2rbj7ZcR
-         GxLb3VfdcesthyjfVFNi8ATjMdtX96D1/w4SkxDtmPdzeeXDeM2n23BV5Pfavb7kMAAu
-         ayUfa435QqkNPyan3ouhy9qW2Qx2sjU3WWOlC4O/1flYpT7ojsOdpDksGl+qmRVv9pFv
-         UNgsRObXf3dGSRr9PxS3HPyNAJhhc+CzSXuBz3UhIPtYYT3jaQ/Q8UQKqxn6iayDtdIL
-         pDew==
-X-Forwarded-Encrypted: i=1; AJvYcCUYeOOrbT8e+P3XqPJl0FHwpVb1Fb9FGufPaKr4zFnFFDveq044Bil+1koBnppxr3QSb09Qm9/y4a+aECGxHJRJ6hH0hdpzoFho2jGA
-X-Gm-Message-State: AOJu0Yy4/ApKR5YvbT5n2yz0NKN5FQ/nMAuzn6jEW/fNmBPQ9UBCag/n
-	zf1y2R1RaxdV1hBaFTqz/AWqP5p4mdzzJv+msBy5XHtsk8l9gdOxIwEyAupYq9c=
-X-Google-Smtp-Source: AGHT+IFCFAiZRzRwOpzCyq4dZt7m1IKHP5ZbEcsTgsYyiNk5cHylYqzh4ru8zGjJ0H54yTk3AdBIWw==
-X-Received: by 2002:a9d:6316:0:b0:703:64d4:8e12 with SMTP id 46e09a7af769-70375a06a12mr723275a34.2.1720473346891;
-        Mon, 08 Jul 2024 14:15:46 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70374fc0af5sm157297a34.62.2024.07.08.14.15.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 14:15:46 -0700 (PDT)
-Message-ID: <bc88e0c7-516f-4eef-a9d9-ce0250d6a570@baylibre.com>
-Date: Mon, 8 Jul 2024 16:15:45 -0500
+        d=1e100.net; s=20230601; t=1720473531; x=1721078331;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tj1ms3U8LTm4UyZ4fve/C+MAzvup9uK9AJzLieincvc=;
+        b=Jtuz5bNLI/qbR2MN7NYK9X4s1+kJ9WQ2Rxr118KB+oSqVObF+Rbv7dFxOuhi9HsXWb
+         DqA3TI5EdlrfngbZXSq8BE43L8WyX8sRQGh/lixgzid8iQYWQjz4YPXj3n4NAS1spMc3
+         F8R5kO4C3VVjXt0jfTiiHqdShvNR9LZ02N3zgTLvYqOoFJp+pCWVcJonpREi7o4NxF0b
+         9xSvDRRjDZChbiylFCE/NmLscV/POLOYn8O3oEHyobsBg/amgYdFyx2qcFOMR1Sg+JS9
+         IJ5UOYbigUND0BHVOhRh7gdePc308OW4Amf2fnSSJHq818ljpN13ipUvFdmDVai2AFTd
+         uIQA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6RxcsLIcfYUKetcK6PvmY6yIGv9owZ0PqgpGE55V0i+5blPZXjEx/2ZMQIlMzx2B87EE+S3qwlkpTfI3Tf8EzLklbWj5lU6h2bOXW
+X-Gm-Message-State: AOJu0YxnEhha+bQfrp40h8yPagRfvg7tC0XJ3OOHLky7u4C5lxrQSoyt
+	7bht0XeEzul49LsIDUPctLZLs4E4ga00wEnnhxcmD/WIjlQUBB+qTJp0LqFQwzKD9uErfo6W/lW
+	uTg==
+X-Google-Smtp-Source: AGHT+IGg5p5OadF9zVGv2d0hOmKOT17RVRkOTmycs6tdmWNfiB6T/IuUOm5CedZTAAwwzx7oc6rsO31VX+Y=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90b:4a0a:b0:2c8:632:7efe with SMTP id
+ 98e67ed59e1d1-2ca3a833655mr8182a91.4.1720473531440; Mon, 08 Jul 2024 14:18:51
+ -0700 (PDT)
+Date: Mon, 8 Jul 2024 14:18:50 -0700
+In-Reply-To: <7bf9838f2df676398f7b22f793b3478addde6ff0.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/7] spi: Enable controllers to extend the SPI protocol
- with MOSI idle configuration
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
- lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- nuno.sa@analog.com, corbet@lwn.net, marcelo.schmitt1@gmail.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1719686465.git.marcelo.schmitt@analog.com>
- <7eb23146ad6bf6090183c6340e4d59cb269d83a7.1719686465.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <7eb23146ad6bf6090183c6340e4d59cb269d83a7.1719686465.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-24-seanjc@google.com>
+ <7bf9838f2df676398f7b22f793b3478addde6ff0.camel@redhat.com>
+Message-ID: <ZoxXur7da11tP3aO@google.com>
+Subject: Re: [PATCH v2 23/49] KVM: x86: Handle kernel- and KVM-defined CPUID
+ words in a single helper
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 6/29/24 2:04 PM, Marcelo Schmitt wrote:
-> The behavior of an SPI controller data output line (SDO or MOSI or COPI
-> (Controller Output Peripheral Input) for disambiguation) is usually not
-> specified when the controller is not clocking out data on SCLK edges.
-> However, there do exist SPI peripherals that require specific MOSI line
-> state when data is not being clocked out of the controller.
+On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
+> > Merge kvm_cpu_cap_init() and kvm_cpu_cap_init_kvm_defined() into a single
+> > helper.  The only advantage of separating the two was to make it somewhat
+> > obvious that KVM directly initializes the KVM-defined words, whereas using
+> > a common helper will allow for hardening both kernel- and KVM-defined
+> > CPUID words without needing copy+paste.
+> > 
+> > No functional change intended.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/x86/kvm/cpuid.c | 44 +++++++++++++++-----------------------------
+> >  1 file changed, 15 insertions(+), 29 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > index f2bd2f5c4ea3..8efffd48cdf1 100644
+> > --- a/arch/x86/kvm/cpuid.c
+> > +++ b/arch/x86/kvm/cpuid.c
+> > @@ -622,37 +622,23 @@ static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
+> >  	return *__cpuid_entry_get_reg(&entry, cpuid.reg);
+> >  }
+> >  
+> > -/* Mask kvm_cpu_caps for @leaf with the raw CPUID capabilities of this CPU. */
+> > -static __always_inline void __kvm_cpu_cap_mask(unsigned int leaf)
+> > +static __always_inline void kvm_cpu_cap_init(u32 leaf, u32 mask)
+> >  {
+> >  	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
+> >  
+> > -	reverse_cpuid_check(leaf);
+> > +	/*
+> > +	 * For kernel-defined leafs, mask the boot CPU's pre-populated value.
+> > +	 * For KVM-defined leafs, explicitly set the leaf, as KVM is the one
+> > +	 * and only authority.
+> > +	 */
+> > +	if (leaf < NCAPINTS)
+> > +		kvm_cpu_caps[leaf] &= mask;
+> > +	else
+> > +		kvm_cpu_caps[leaf] = mask;
 > 
-> Conventional SPI controllers may set the MOSI line on SCLK edges then bring
-> it low when no data is going out or leave the line the state of the last
-> transfer bit. More elaborated controllers are capable to set the MOSI idle
-> state according to different configurable levels and thus are more suitable
-> for interfacing with demanding peripherals.
+> Hi,
 > 
-> Add SPI mode bits to allow peripherals to request explicit MOSI idle state
-> when needed.
+> I have an idea, how about we just initialize the kvm only leafs to 0xFFFFFFFF
+> and then treat them exactly in the same way as kernel regular leafs?
 > 
-> When supporting a particular MOSI idle configuration, the data output line
-> state is expected to remain at the configured level when the controller is
-> not clocking out data. When a device that needs a specific MOSI idle state
-> is identified, its driver should request the MOSI idle configuration by
-> setting the proper SPI mode bit.
+> Then the user won't have to figure out (assuming that the user doesn't read
+> the comment, who does?) why we use mask as init value.
 > 
-> Acked-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
+> But if you prefer to leave it this way, I won't object either.
 
-Tested both valid and invalid combinations of flags and saw expected
-behavior/error messages in all cases.
+Huh, hadn't thought of that.  It's a small code change, but I'm leaning towards
+keeping the current code as we'd still need a comment to explain why KVM sets
+all bits by default.  And in the unlikely case that we royally screw up and fail
+to call kvm_cpu_cap_init() on a word, starting with 0xff would result in all
+features in the uninitialized word being treated as supported.
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Tested-by: David Lechner <dlechner@baylibre.com>
+For posterity...
 
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 18ded0e682f2..6fcfb0fa4bd6 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -762,11 +762,7 @@ do {                                                                       \
+        u32 kvm_cpu_cap_emulated = 0;                                   \
+        u32 kvm_cpu_cap_synthesized = 0;                                \
+                                                                        \
+-       if (leaf < NCAPINTS)                                            \
+-               kvm_cpu_caps[leaf] &= (mask);                           \
+-       else                                                            \
+-               kvm_cpu_caps[leaf] = (mask);                            \
+-                                                                       \
++       kvm_cpu_caps[leaf] &= (mask);                                   \
+        kvm_cpu_caps[leaf] &= (raw_cpuid_get(cpuid) |                   \
+                               kvm_cpu_cap_synthesized);                \
+        kvm_cpu_caps[leaf] |= kvm_cpu_cap_emulated;                     \
+@@ -780,7 +776,7 @@ do {                                                                        \
+ 
+ void kvm_set_cpu_caps(void)
+ {
+-       memset(kvm_cpu_caps, 0, sizeof(kvm_cpu_caps));
++       memset(kvm_cpu_caps, 0xff, sizeof(kvm_cpu_caps));
+ 
+        BUILD_BUG_ON(sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)) >
+                     sizeof(boot_cpu_data.x86_capability));
 
