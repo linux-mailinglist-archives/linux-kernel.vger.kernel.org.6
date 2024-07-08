@@ -1,102 +1,153 @@
-Return-Path: <linux-kernel+bounces-244605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC28B92A6BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:04:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A79B92A6C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8392283C50
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 566751C2199B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB51144D29;
-	Mon,  8 Jul 2024 16:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA352145340;
+	Mon,  8 Jul 2024 16:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zv64vPdr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mq1Ore2X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F1578C99;
-	Mon,  8 Jul 2024 16:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F0013D2BB;
+	Mon,  8 Jul 2024 16:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454664; cv=none; b=RlgdY8Z7MdzdAXUjLYuo1ptLldTPOqwCDvspPgcOygABn1gU7roPTwFKRUyGtpVlhFdCMciEwJNEQh2C9/dk0ZFm0p8RmEEpL0sB2AIaFEQp40V59q92FHJ65/xCfOni8azsQzEwrRbfyvlb6veazbWLGXiZUa0qRtwvW5LqjEY=
+	t=1720454677; cv=none; b=A5FdQqYGodWZ97Wi6sUYQyCL9eWaI2XFQLPptwECwFSnS8Vrtsy1JzvgKDs2UFI1f4KtBNLZXDUqbza6rxsvlW+iODxv7BfxbsYD+xDP02mwFw5vrar8Ex/5RKCyVyYeDt0u8kMvjWmTUZxJhF0ax0Z6X2H7kHqMS/8whfATtJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454664; c=relaxed/simple;
-	bh=B+wgdQOGBCJumVIrWn6svGrdoWlDkgcqo510Z+SmmF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CEcW1APp1N85J3w6IEONwPokSEufidb0KZA+x2aFgmMcjzMByHuw5reOW5hg2V8zg+O4p6qwy6vwZEkyrrueSp+rc7SvXHYmRXXDdaZT0rPCYRVQnYYmU980R3QcQbHpA9qQ9dcvW+901gxFa84nQJc6RrQl7Ul1isydv7q5368=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zv64vPdr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D915C116B1;
-	Mon,  8 Jul 2024 16:04:22 +0000 (UTC)
+	s=arc-20240116; t=1720454677; c=relaxed/simple;
+	bh=U2GzGgVJuhn8INjRvm9ABRcDQNTGoYmx4QuO/9HiNyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y2gzbILIZ2A+nA6OWNcwhcWaTN0tokm5kAYt2s/qo1kjHkYDbDabWBDBciPg91zRJLcqS73zMasJ+C18GXULhUKG1+Yx6MWyTU9/mpRoEmIxWyWLYyMu1GmXjIhtZ+B8tqZyCuWBkEOb/2yka+JM2ISeDISbrzUVYSjIAlQu2IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mq1Ore2X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25B82C32786;
+	Mon,  8 Jul 2024 16:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720454663;
-	bh=B+wgdQOGBCJumVIrWn6svGrdoWlDkgcqo510Z+SmmF4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zv64vPdrwmX3RZ/8XTQyyyazgJhxqmXoVpgxynC7Ym2Gx2kfPGByiTvjznRhIyWjU
-	 Yw78ddCOk9aQNqKbk9ErcZh6E36/AQGcPsKsDtRRXic4NuJ41yirYE3ij0OOsXHIh6
-	 G2FbBQxAbTdHadfYYJQ0mZIyxKKiGkzM2HTOWFL9swaxQkpu+2lwT5q3BIjH9q/JcR
-	 sBm7fdCCoXdZqX74/js6i58mE6060hAT8ZgCR2UCqHMLvZByzZeqQ8jQsD+U0g/xJf
-	 MSb0oFXcaEgbirQZKm8hvDmNRFCjwN1xom6zl/mNfI26he0kUX0p5ZWhphdZKirnAv
-	 2zDpv6wAZBEcw==
-Date: Mon, 8 Jul 2024 10:04:21 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: soc: fsl: cpm_qe: convert to yaml format
-Message-ID: <172045465945.3262448.18446369145755550940.robh@kernel.org>
-References: <20240703-ls_qe_warning-v1-0-7fe4af5b0bb0@nxp.com>
- <20240703-ls_qe_warning-v1-1-7fe4af5b0bb0@nxp.com>
+	s=k20201202; t=1720454676;
+	bh=U2GzGgVJuhn8INjRvm9ABRcDQNTGoYmx4QuO/9HiNyY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mq1Ore2XxEKg7NflqkziCTNipEsYveNInKgSa9mkg2h6AK5PcQv0z+ddVgjO9qhmP
+	 vmoNk7g1tKOE7KlnXoTle1O5Pa8d+2RjEkOWWb+MN5gP7OvxiwrWvXKtAhk7d2p6Vt
+	 jO3kJ/NcBmoeeeL2MdkzimznkJ66g+qys4IdROz+Jy2l4i4ZV7g0PjhOVvbvMT+gzD
+	 wke+3bDzwRyCiVBwCz0F8g4wtjbm3hP+vOYIoM6Kc/ey3SBv0+yLJX6LIuLPppBXnE
+	 MEQbsVMKQKT94vBuBtvTlkKQgNJ7b7Vb1WzUYhRH2IDC9R++74UFHlQpGbGna71c5V
+	 i1zkMZig+aQBQ==
+Message-ID: <fd4905c3-a046-42f1-a285-1696f126b057@kernel.org>
+Date: Mon, 8 Jul 2024 18:04:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703-ls_qe_warning-v1-1-7fe4af5b0bb0@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: display: bridge: ti,sn65dsi83: add
+ burst-mode-disabled
+To: stefano.radaelli21@gmail.com, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: "Noah J . Rosa" <noahj.rosa@gmail.com>
+References: <20240708151857.40538-1-stefano.radaelli21@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240708151857.40538-1-stefano.radaelli21@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 03 Jul 2024 12:49:39 -0400, Frank Li wrote:
-> Convert binding doc qe.txt to yaml format. Split it to
-> fsl,qe-firmware.yaml, fsl,qe-ic.yaml, fsl,qe-muram.yaml, fsl,qe-si.yaml
-> fsl,qe-siram.yaml, fsl,qe.yaml.
+On 08/07/2024 17:18, stefano.radaelli21@gmail.com wrote:
+> From: Stefano Radaelli <stefano.radaelli21@gmail.com>
 > 
-> Additional Changes:
-> - Fix error in example.
-> - Change to low case for hex value.
-> - Remove fsl,qe-num-riscs and fsl,qe-snums from required list.
-> - Add #address-cell and #size-cell.
-> - Add interrupts description for qe-ic.
-> - Add compatible string fsl,ls1043-qe-si for fsl,qe-si.yaml
-> - Add compatible string fsl,ls1043-qe-siram for fsl,qe-siram.yaml
-> - Add child node for fsl,qe.yaml
+> It allows to disable Burst video mode
 > 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: /soc/uqe@2400000/muram@10000: failed to match any schema with compatible: ['fsl,qe-muram', 'fsl,cpm-muram']
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: /soc/uqe@2400000/muram@10000: failed to match any schema with compatible: ['fsl,qe-muram', 'fsl,cpm-muram']
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: /soc/uqe@2400000/muram@10000/data-only@0: failed to match any schema with compatible: ['fsl,qe-muram-data', 'fsl,cpm-muram-data']
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: /soc/uqe@2400000: failed to match any schema with compatible: ['fsl,qe', 'simple-bus']
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: /soc/uqe@2400000/muram@10000/data-only@0: failed to match any schema with compatible: ['fsl,qe-muram-data', 'fsl,cpm-muram-data']
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: /soc/uqe@2400000/qeic@80: failed to match any schema with compatible: ['fsl,qe-ic']
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Co-developed-by: Noah J. Rosa <noahj.rosa@gmail.com>
+> Signed-off-by: Noah J. Rosa <noahj.rosa@gmail.com>
+> Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
 > ---
->  .../bindings/soc/fsl/cpm_qe/fsl,qe-firmware.yaml   |  48 ++++++
->  .../bindings/soc/fsl/cpm_qe/fsl,qe-ic.yaml         |  47 ++++++
->  .../bindings/soc/fsl/cpm_qe/fsl,qe-muram.yaml      |  71 ++++++++
->  .../bindings/soc/fsl/cpm_qe/fsl,qe-si.yaml         |  40 +++++
->  .../bindings/soc/fsl/cpm_qe/fsl,qe-siram.yaml      |  39 +++++
->  .../devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml | 148 +++++++++++++++++
->  .../devicetree/bindings/soc/fsl/cpm_qe/qe.txt      | 178 ---------------------
->  7 files changed, 393 insertions(+), 178 deletions(-)
+>  .../devicetree/bindings/display/bridge/ti,sn65dsi83.yaml       | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+> index 48a97bb3e2e0..eb9c8b6b6813 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+> +++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+> @@ -35,6 +35,9 @@ properties:
+>    vcc-supply:
+>      description: A 1.8V power supply (see regulator/regulator.yaml).
+>  
+> +  burst-mode-disabled:
 
-Applied, thanks!
+You described the desired Linux feature or behavior, not the actual
+hardware. The bindings are about the latter, so instead you need to
+rephrase the property and its description to match actual hardware
+capabilities/features/configuration etc.
+
+Also: missing type, vendor prefix and never tested.
+
+It does not look like you tested the bindings, at least after quick
+look. Please run `make dt_binding_check` (see
+Documentation/devicetree/bindings/writing-schema.rst for instructions).
+Maybe you need to update your dtschema and yamllint.
+
+Best regards,
+Krzysztof
 
 
