@@ -1,131 +1,252 @@
-Return-Path: <linux-kernel+bounces-244653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4051C92A76B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:36:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5522292A772
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7168B1C21211
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C5B42814A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8FE14659F;
-	Mon,  8 Jul 2024 16:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596261474A2;
+	Mon,  8 Jul 2024 16:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WNRjkqbl"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fX8uSA2T"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D69145B37
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD10C13A3FF
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720456573; cv=none; b=bgcfhuJuQ2lHJl3RkhWyT0j4PmsJ/PpsUuXBccTSLRMXHv9sbcx3AwPkeaQ5SR8WI4PrJMlz84nDcaBEoX05oh6uDOKP8SDlvMn7N5f/PeGrtVHIuxD4yFEkJhX+t7H5t5CpD1JNMzYr5cFW/EWf2Q95smVuVuagfMdCo+TXeJ0=
+	t=1720456677; cv=none; b=Z/sYM/kGmteWTNZ+AlVPNQ9B9i3Hcyjxb9Ix8CNb6w28fo+qOk3kjMZywaIrKY/yNd8E47HbwRKxLc7uT9mL4OgPw/j3kR9uTEzPWV/cY6ki4OExMh3vR+8+WnB9uS+tEzE9eHFLJ+pk0cuZxLJZjpbB1St4ql2zMnCXwV8TaDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720456573; c=relaxed/simple;
-	bh=kF79k4M0wfI5NybhocxG/V7HbuwRgXY/PbwykoiZ0u4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gXQ14C24zVlp8Sl/I5PKVdgwWfc+drBAPb+B2I1m1dSVIjGyR2Ulkq7OT+0FZkvk7NjuZ11YVbjgmK26oZ8Xhg6NTKxk8nph0N1FfpEcPXl+pEblST5QqwfZJluRMR/SbkSKlcJV4d6OrKIjIrzk284LqPW6MTHCaSBMrSbi0jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WNRjkqbl; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee75ffce77so50627811fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720456569; x=1721061369; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QXr0BWZGWxSKsJl1B6BOaJ9LQX+PHNjm3zoOsNxl8ZY=;
-        b=WNRjkqbloxri6luzKllXA5AfQc2ky71ytz6BqIkRQk96rqQG8aW5AeOcwXWA1G580x
-         4KmMK0RygLZK463xytq8u9eVTEjv9FkSV1nXd7yHorchpyMAkh8nsj7ysZIdYFbRh02u
-         uvg7DpyYAwiDhQgZa40yHx97o5+OC8yrxwERODd81iDXIYoRP51cW5MLuzZuKONz/4AX
-         wmYUqmn4Sqh0jWijlKsngzCecWEi5hXnUG+pRKD8C0ygEqiFYCRtVLb5irzRkGpYa5tq
-         y95Gt5nY5s7YxxalWjJ6UVhhs9bcP6NzcZMu6ur87JlrcZyKQ7vgrdYs1SmjvgsMqa71
-         DjoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720456569; x=1721061369;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QXr0BWZGWxSKsJl1B6BOaJ9LQX+PHNjm3zoOsNxl8ZY=;
-        b=VTwDRMIxe0shFAkS369N51Xzf/RB3e58GFVdaRM1SVQDd8WdGhv3kPFA/GmN2nenfJ
-         MgxK2OY30zibClAHK2/9j2pY5uqWZUUhW+V14LgwSpdaT0RfymA+FakeyTddRvdKcqKL
-         rUBxqrtQvblPB/CrvY+R8DV4Xly31OHWadvdUaN3hde1ZlVtnz3ILcjeCDWIULL3mV7A
-         DgT4rKMwY0kOBPkUX3bZsTRP8l4RDpxhfFJeeOu78AJ9jJ2Vk10xRIr4w/Rr5amvhAQp
-         l724MBzM2MyopDkWGm89P+dGgIpiypx/SE72mxpz51Jgj22FObksNqcNAhGbtsySch+Q
-         Jv9A==
-X-Forwarded-Encrypted: i=1; AJvYcCV8OsZ/fo4moLPIBY73/wVRCpU74t9NUKL2fZXyfdq8OIQfAacBXEGnkz+8iPqbQgfIVTE4b/nYu7kt5EncQBD9Y5dvu6dMRFE9f7gB
-X-Gm-Message-State: AOJu0YzTWTvHPS9CX4Xd2cSirkz5d2mbLHr0hGASkw4dizL6aSaAPc6t
-	Rl38aPzUNVMiVe6mfirHybPIBVT22985ptYK+Whe1RIBigtSQp88yCi9d+F30hY=
-X-Google-Smtp-Source: AGHT+IFwhURRS94WBKV1QcWHN4yHD3pCaXhUL3ZA3yoqhHrsgcoWidzDCWKI/z1AIwjXQyKRTVK+EA==
-X-Received: by 2002:a2e:a792:0:b0:2ec:4f0c:36f9 with SMTP id 38308e7fff4ca-2eeb3169f11mr2339051fa.36.1720456569321;
-        Mon, 08 Jul 2024 09:36:09 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:cf24:cce:17df:12ab? ([2a05:6e02:1041:c10:cf24:cce:17df:12ab])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5f51sm5021515e9.25.2024.07.08.09.36.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 09:36:08 -0700 (PDT)
-Message-ID: <bf4a45e9-4ed3-4d3b-bb96-add20a71b04c@linaro.org>
-Date: Mon, 8 Jul 2024 18:36:07 +0200
+	s=arc-20240116; t=1720456677; c=relaxed/simple;
+	bh=FuvC9f3INUPjGe5sGL9qL48+5PEpoGObV+5XOaC8FC0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u4/0Oj1BXgyuOZE2snK/+FhWw5JR0UIcLQbzRc3nCzznsWoWQxZB8Bo1WVAStyBCMu4FPKyc8GfBfRnG0Xojlr84peHF5ydGj2+4EKvApyYeCYaHTe1AWVYPlfVFwLaBtcF731ISyuw79Cfi50qQNXA55dUOMlBVahNe5ZG134o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fX8uSA2T; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720456674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MpE9tc6GwVBdyYEbRi90TJl4jv833e7Ek5Pw4E3TGJE=;
+	b=fX8uSA2TkzAr1ioFIKYhuHpG0jv6nSBtLVPpRuAb7CjTg9S5IumTwc3AYBqlQwccOpEHKH
+	dt+1ahr0q2zWCw6XqVP09Sd0lcU9Ku3k3aB/1IouWbJsz1JVigEkr3EQWcjLy4n7Hhqxj5
+	AEu8lOBaHXE26PC6yj3zW9D9Lk4A2B0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-597-S3QDT4-CPfOc0o7haGvhuw-1; Mon,
+ 08 Jul 2024 12:37:52 -0400
+X-MC-Unique: S3QDT4-CPfOc0o7haGvhuw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 260D71955F41;
+	Mon,  8 Jul 2024 16:37:38 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.113])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC4371955F3B;
+	Mon,  8 Jul 2024 16:37:17 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Kees Cook <keescook@chromium.org>,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  Paul Moore <paul@paul-moore.com>,
+  Theodore Ts'o <tytso@mit.edu>,  Alejandro Colomar <alx@kernel.org>,
+  Aleksa Sarai <cyphar@cyphar.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Andy Lutomirski <luto@kernel.org>,  Arnd
+ Bergmann <arnd@arndb.de>,  Casey Schaufler <casey@schaufler-ca.com>,
+  Christian Heimes <christian@python.org>,  Dmitry Vyukov
+ <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,  Eric Chiang
+ <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,  Geert
+ Uytterhoeven <geert@linux-m68k.org>,  James Morris
+ <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
+ <jannh@google.com>,  Jeff Xu <jeffxu@google.com>,  Jonathan Corbet
+ <corbet@lwn.net>,  Jordan R Abrahams <ajordanr@google.com>,  Lakshmi
+ Ramasubramanian <nramas@linux.microsoft.com>,  Luca Boccassi
+ <bluca@debian.org>,  Luis Chamberlain <mcgrof@kernel.org>,  "Madhavan T .
+ Venkataraman" <madvenka@linux.microsoft.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
+  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
+ <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
+ Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
+ <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
+ <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
+ Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
+ <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
+ <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
+ Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-security-module@vger.kernel.org, Eric Biederman
+ <ebiederm@xmission.com>, linux-mm@kvack.org
+Subject: [PATCH] binfmt_elf: Fail execution of shared objects with ELIBEXEC
+ (was: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to
+ execveat(2))
+In-Reply-To: <20240708.zooj9Miaties@digikod.net> (=?utf-8?Q?=22Micka=C3=AB?=
+ =?utf-8?Q?l_Sala=C3=BCn=22's?= message
+	of "Mon, 8 Jul 2024 10:56:59 +0200")
+References: <20240704190137.696169-1-mic@digikod.net>
+	<20240704190137.696169-2-mic@digikod.net>
+	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+	<20240706.poo9ahd3La9b@digikod.net>
+	<871q46bkoz.fsf@oldenburg.str.redhat.com>
+	<20240708.zooj9Miaties@digikod.net>
+Date: Mon, 08 Jul 2024 18:37:14 +0200
+Message-ID: <878qybet6t.fsf_-_@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/14] clocksource: mips-gic-timer: Always use cluster
- 0 counter as clocksource
-To: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Aleksandar Rikalo <arikalo@gmail.com>, Chao-ying Fu <cfu@wavecomp.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>,
- Hauke Mehrtens <hauke@hauke-m.de>,
- Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
- Paul Burton <paulburton@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Serge Semin <fancer.lancer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
- <20240511104341.151550-8-aleksandar.rikalo@syrmia.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240511104341.151550-8-aleksandar.rikalo@syrmia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 11/05/2024 12:43, Aleksandar Rikalo wrote:
-> From: Paul Burton <paulburton@kernel.org>
-> 
-> In a multi-cluster MIPS system we have multiple GICs - one in each
-> cluster - each of which has its own independent counter. The counters in
-> each GIC are not synchronised in any way, so they can drift relative to
-> one another through the lifetime of the system. This is problematic for
-> a clocksource which ought to be global.
-> 
-> Avoid problems by always accessing cluster 0's counter, using
-> cross-cluster register access. This adds overhead so we only do so on
-> systems where we actually have CPUs present in multiple clusters.
-> For now, be extra conservative and don't use gic counter for vdso or
-> sched_clock in this case.
-> 
-> Signed-off-by: Paul Burton <paulburton@kernel.org>
-> Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
-> Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
-> Signed-off-by: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>
-> ---
+* Micka=C3=ABl Sala=C3=BCn:
 
-Applied patch 7 and 8
+> On Sat, Jul 06, 2024 at 05:32:12PM +0200, Florian Weimer wrote:
+>> * Micka=C3=ABl Sala=C3=BCn:
+>>=20
+>> > On Fri, Jul 05, 2024 at 08:03:14PM +0200, Florian Weimer wrote:
+>> >> * Micka=C3=ABl Sala=C3=BCn:
+>> >>=20
+>> >> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+>> >> > allowed for execution.  The main use case is for script interpreter=
+s and
+>> >> > dynamic linkers to check execution permission according to the kern=
+el's
+>> >> > security policy. Another use case is to add context to access logs =
+e.g.,
+>> >> > which script (instead of interpreter) accessed a file.  As any
+>> >> > executable code, scripts could also use this check [1].
+>> >>=20
+>> >> Some distributions no longer set executable bits on most shared objec=
+ts,
+>> >> which I assume would interfere with AT_CHECK probing for shared objec=
+ts.
+>> >
+>> > A file without the execute permission is not considered as executable =
+by
+>> > the kernel.  The AT_CHECK flag doesn't change this semantic.  Please
+>> > note that this is just a check, not a restriction.  See the next patch
+>> > for the optional policy enforcement.
+>> >
+>> > Anyway, we need to define the policy, and for Linux this is done with
+>> > the file permission bits.  So for systems willing to have a consistent
+>> > execution policy, we need to rely on the same bits.
+>>=20
+>> Yes, that makes complete sense.  I just wanted to point out the odd
+>> interaction with the old binutils bug and the (sadly still current)
+>> kernel bug.
+>>=20
+>> >> Removing the executable bit is attractive because of a combination of
+>> >> two bugs: a binutils wart which until recently always set the entry
+>> >> point address in the ELF header to zero, and the kernel not checking =
+for
+>> >> a zero entry point (maybe in combination with an absent program
+>> >> interpreter) and failing the execve with ELIBEXEC, instead of doing t=
+he
+>> >> execve and then faulting at virtual address zero.  Removing the
+>> >> executable bit is currently the only way to avoid these confusing
+>> >> crashes, so I understand the temptation.
+>> >
+>> > Interesting.  Can you please point to the bug report and the fix?  I
+>> > don't see any ELIBEXEC in the kernel.
+>>=20
+>> The kernel hasn't been fixed yet.  I do think this should be fixed, so
+>> that distributions can bring back the executable bit.
+>
+> Can you please point to the mailing list discussion or the bug report?
 
-Thanks
+I'm not sure if this was ever reported upstream as an RFE to fail with
+ELIBEXEC.  We have downstream bug report:
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+  Prevent executed .so files with e_entry =3D=3D 0 from attempting to become
+  a process.
+  <https://bugzilla.redhat.com/show_bug.cgi?id=3D2004942>
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+I've put together a patch which seems to work, see below.
+
+I don't think there's any impact on AT_CHECK with execveat because that
+mode will never get to this point.
+
+Thanks,
+Florian
+
+---8<-----------------------------------------------------------------
+Subject: binfmt_elf: Fail execution of shared objects with ELIBEXEC
+=20=20=20=20
+Historically, binutils has used the start of the text segment as the
+entry point if _start was not defined.  Executing such files results
+in crashes with random effects, depending on what code resides there.
+However, starting with binutils 2.38, BFD ld uses a zero entry point,
+due to commit 5226a6a892f922ea672e5775c61776830aaf27b7 ("Change the
+linker's heuristic for computing the entry point for binaries so that
+shared libraries default to an entry point of 0.").  This means
+that shared objects with zero entry points are becoming more common,
+and it makes sense for the kernel to recognize them and refuse
+to execute them.
+
+For backwards compatibility, if a load segment does not map the ELF
+header at file offset zero, the kernel still proceeds as before, in
+case the file is very non-standard and can actually start executing
+at virtual offset zero.
+
+Signed-off-by: Florian Weimer <fweimer@redhat.com>
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index a43897b03ce9..ebd7052eb616 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -830,6 +830,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	unsigned long e_entry;
+ 	unsigned long interp_load_addr =3D 0;
+ 	unsigned long start_code, end_code, start_data, end_data;
++	bool elf_header_mapped =3D false;
+ 	unsigned long reloc_func_desc __maybe_unused =3D 0;
+ 	int executable_stack =3D EXSTACK_DEFAULT;
+ 	struct elfhdr *elf_ex =3D (struct elfhdr *)bprm->buf;
+@@ -865,6 +866,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 			continue;
+ 		}
+=20
++		if (elf_ppnt->p_type =3D=3D PT_LOAD && !elf_ppnt->p_offset)
++			elf_header_mapped =3D true;
++
+ 		if (elf_ppnt->p_type !=3D PT_INTERP)
+ 			continue;
+=20
+@@ -921,6 +925,20 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		goto out_free_ph;
+ 	}
+=20
++	/*
++	 * A zero value for e_entry means that the ELF file has no
++	 * entry point.  If the ELF header is mapped, this is
++	 * guaranteed to crash (often even on the first instruction),
++	 * so fail the execve system call instead.  (This is most
++	 * likely to happen for a shared object.)  If the object has a
++	 * program interpreter, dealing with the situation is its
++	 * responsibility.
++	 */
++	if (elf_header_mapped && !elf_ex->e_entry && !interpreter) {
++		retval =3D -ELIBEXEC;
++		goto out_free_dentry;
++	}
++
+ 	elf_ppnt =3D elf_phdata;
+ 	for (i =3D 0; i < elf_ex->e_phnum; i++, elf_ppnt++)
+ 		switch (elf_ppnt->p_type) {
 
 
