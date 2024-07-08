@@ -1,118 +1,131 @@
-Return-Path: <linux-kernel+bounces-243930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26E0929C8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:55:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0D7929C8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D3A2280DF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:55:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6988D1C214E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82731862A;
-	Mon,  8 Jul 2024 06:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227B218AEA;
+	Mon,  8 Jul 2024 06:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cqYXGThg"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UYJSlCBe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA9219470
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE81101F7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720421713; cv=none; b=Ehj25BF3wk8oFP+JT3IaqwBrzPTpVSp2aNuKiLHY/1OlQo9IFI5swD6M3LFowkfoc3+qvpSo6ChIHkJ9OyqWRWxVlAo9/+69wG4kVzN6/f4qHCv/EKzqb1cGEjsCxs7M6cIKzX/d/U5pliZpSaJvJrKRsdPY8pALJtShzyyKrQk=
+	t=1720421772; cv=none; b=e1REFm+MnrOwinBBfV1ZKG8+6XqtKga3YCjAvW7xnGQjdfhYIIVSOxBK3rzeSXVA3/9ui5APOq+iIQRte4kZY178vc+F+Gm0Zt9TDoe/z5yaIdQ+lak65cZDNWwp6V8I6zivs4dabLwB8M7p0cGMbZ48Lm3E2Yubk1CuaOiyufE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720421713; c=relaxed/simple;
-	bh=gMa1AnG73phwoi1O9zSXqiYTQMB/Zb8kbkt5rz+/6DE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aVNEp9VPCHJF3eSEdm6C++fdPuv21gDQqwjfmyQvNvXsoCnexr//pwyNKRhXZtdTbeBt1MdD8gxuNqkAa1Z3g5MKe6DWISaDS3Qii8KQO7SghfAR5U1BDgYwBfb75rudoCj/TciQKyoIgp+4PLhvgVhS7R1x8lVWTvHlWJI+Dj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cqYXGThg; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42666b89057so27225e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 23:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720421710; x=1721026510; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9dKihFJHBQH2LQzDK9e9Ag8pP7Kbhb37n4OfA5zMJnE=;
-        b=cqYXGThgNyFRHid0Q0nRrOrXxHLHUUPwdgAuq3ElwqgnpOCRWG98dKtsjOtGMdykzW
-         nnL3NgCMF8Fy5THOmJGQbw7GTGlr/JbTdHmo6H8KyAo9MoDxLJlg67qLdbkuUbBUoOgL
-         2cbAn9Z4H4MnzROLqHAf7PUD6K8Y5U9OBP9VWxN4xBBaiiuURD2AyDzp9kUdESC2R1eh
-         EtVeXjLGzgnA610SsxdzCwwgQL830jNFwdupwSX8+YySmom2Y/x1p3bj3CJbPb3p+ayQ
-         GLdpk4PZ48pIaHg4DHKeB+8TcVff/spKvFugGi8OhklPMdOBJYMj84B9crMyWyvH1XfE
-         Erhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720421710; x=1721026510;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9dKihFJHBQH2LQzDK9e9Ag8pP7Kbhb37n4OfA5zMJnE=;
-        b=u6I69ENXCa5dBGOdBJbwIO727BoKhkQV5oUfLSGoMO2JtNjtIB9Enps+G37fo5ufA/
-         UNuQSoSXzI3pdJXAw8XeKUIWa/6AxwMLBXuOdEX6HVe8ey74483J1pXnWSfFXNe3bzju
-         Wm/WJWDCwjFcwH82QskTEBhovm6v53wd11G94279LDP1SRDmePn9LfqCsWH8i6+thd8I
-         Uyn8wmnddDUkrp3VyBhye2zUYssiS+VqIPKygimifwXTZ4bD7dVbXNMlnJ6b95PtLG2G
-         GwcLwPdpjnTj/VsXHeC/LUGvraHAR0T4ssQFq53nOErwZ2Zz2twy7/g5vChVzVLNsCo1
-         iH7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXvTrDMRhC6j9UbO/0GWRlsX7xgxG3LZ+fl2jS6oNaiOZ8wHWAkw3NcjaPF9mmtp0hio8lJU29Z/DzPQ7gBDAZcOmOYVZnw/5NPZL8E
-X-Gm-Message-State: AOJu0YzUFFr3MqhgREZ3wHkb45hH/mqe1zbzMHN7Af9X4pKsrKG8cgkD
-	6BIkv6yMqQnms3/LhmLuBBM2xc09sw33BzDVg3/rDTZnLUc+foZLcBMSDKpvTDanAoeV/sj2MOu
-	/rAFEfSLMET5w6FP78dJep25SA2QokaHQ78IL
-X-Google-Smtp-Source: AGHT+IFzE0MPudZsChYf45D5gI2oMz4/GllXHmTshHhW8Z3byNHJpVQJhhEw9gGlaRpCEoWZQolwNdVRB2+kKaoORCs=
-X-Received: by 2002:a05:600c:4687:b0:426:5d89:896d with SMTP id
- 5b1f17b1804b1-4265d898b4amr2397475e9.1.1720421709782; Sun, 07 Jul 2024
- 23:55:09 -0700 (PDT)
+	s=arc-20240116; t=1720421772; c=relaxed/simple;
+	bh=4Hp4Do4UGAJLQIKtQ3aFJElV4VFL6fW2NU15zapyEDo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=pHnwnvvCTPSgRFphIiDqIWszOBRgDMexn0lvt3Z3GC/HN1zCEubBj0rJDRk/8in1hS5j2aWItXGnqQEFX50Kx5U21u41vTtChi/p6qFw0WCCUYrBlFOFoeipS+w72g5vTySWrEwGZt6gWvGzmgzjpfZeTBWn6CHJtvMFdcgOSok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UYJSlCBe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720421770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C5uJuthEpMTO2qIM2IpHkOPsYvzc+S5T4gK4tXYNDBE=;
+	b=UYJSlCBeJyT/qb8Lc6EgwPNBveaBpX83xRakg9VmYIm2pDWRpLv8IFdiFiApLQpYNWsksO
+	6ynMwb9BAJzqVZl6ILTMaFYemYdS3FNx5IrrgRKlSPVZSskifJiGMpnyoLsCzzh25UaGeZ
+	1r7VnoKgICi0HNCSG7SpHF476vf2mi0=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-653-ReXQtQdXOoyQ04FFfwRPgQ-1; Mon,
+ 08 Jul 2024 02:56:07 -0400
+X-MC-Unique: ReXQtQdXOoyQ04FFfwRPgQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3272A19560B0;
+	Mon,  8 Jul 2024 06:56:06 +0000 (UTC)
+Received: from server.redhat.com (unknown [10.72.112.123])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 64A9B19560AE;
+	Mon,  8 Jul 2024 06:55:59 +0000 (UTC)
+From: Cindy Lu <lulu@redhat.com>
+To: lulu@redhat.com,
+	dtatulea@nvidia.com,
+	mst@redhat.com,
+	jasowang@redhat.com,
+	parav@nvidia.com,
+	sgarzare@redhat.com,
+	netdev@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [PATCH] vdpa/mlx5: Add the support of set mac address
+Date: Mon,  8 Jul 2024 14:55:49 +0800
+Message-ID: <20240708065549.89422-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACT4Y+ZWjUE6-q1YF=ZaPjKgGZBw4JLD1v2DphSgCAVf1RzE8g@mail.gmail.com>
- <20240705135250.3587041-1-lizhi.xu@windriver.com>
-In-Reply-To: <20240705135250.3587041-1-lizhi.xu@windriver.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 8 Jul 2024 08:54:57 +0200
-Message-ID: <CACT4Y+YrjD=3Tn6o4FJFefDYsOCbUFWahPUp87PXXcHQsr0xXg@mail.gmail.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com, Kees Cook <keescook@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, 5 Jul 2024 at 15:52, Lizhi Xu <lizhi.xu@windriver.com> wrote:
->
-> On Thu, 4 Jul 2024 15:44:02 +0200, Dmitry Vyukov wrote:
-> > > index 53629b1f65e9..a435df98c2b1 100644
-> > > --- a/fs/ntfs3/record.c
-> > > +++ b/fs/ntfs3/record.c
-> > > @@ -243,14 +243,14 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
-> > >                 off += asize;
-> > >         }
-> > >
-> > > -       asize = le32_to_cpu(attr->size);
-> > > -
-> > >         /* Can we use the first field (attr->type). */
-> > >         if (off + 8 > used) {
-> > >                 static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
-> > >                 return NULL;
-> > >         }
-> > >
-> > > +       asize = le32_to_cpu(attr->size);
-> > > +
-> > >         if (attr->type == ATTR_END) {
-> > >                 /* End of enumeration. */
-> > >                 return NULL;
-> >
-> > Hi Lizhi,
-> >
-> > I don't see this fix mailed as a patch. Do you plan to submit it officially?
-> Hi Dmitry Vyukov,
-> Here: https://lore.kernel.org/all/20240202033334.1784409-1-lizhi.xu@windriver.com
+Add the function to support setting the MAC address.
+For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
+to set the mac address
 
-I don't see this patch merged upstream.  Was it lost? Perhaps it needs
-to be resent.
+Tested in ConnectX-6 Dx device
+
+Signed-off-by: Cindy Lu <lulu@redhat.com>
+---
+ drivers/vdpa/mlx5/net/mlx5_vnet.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index 26ba7da6b410..f78701386690 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -3616,10 +3616,33 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_dev *v_mdev, struct vdpa_device *
+ 	destroy_workqueue(wq);
+ 	mgtdev->ndev = NULL;
+ }
++static int mlx5_vdpa_set_attr_mac(struct vdpa_mgmt_dev *v_mdev,
++				  struct vdpa_device *dev,
++				  const struct vdpa_dev_set_config *add_config)
++{
++	struct mlx5_vdpa_dev *mvdev = to_mvdev(dev);
++	struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
++	struct mlx5_core_dev *mdev = mvdev->mdev;
++	struct virtio_net_config *config = &ndev->config;
++	int err;
++	struct mlx5_core_dev *pfmdev;
++
++	if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
++		if (!is_zero_ether_addr(add_config->net.mac)) {
++			memcpy(config->mac, add_config->net.mac, ETH_ALEN);
++			pfmdev = pci_get_drvdata(pci_physfn(mdev->pdev));
++			err = mlx5_mpfs_add_mac(pfmdev, config->mac);
++			if (err)
++				return -1;
++		}
++	}
++	return 0;
++}
+ 
+ static const struct vdpa_mgmtdev_ops mdev_ops = {
+ 	.dev_add = mlx5_vdpa_dev_add,
+ 	.dev_del = mlx5_vdpa_dev_del,
++	.dev_set_attr = mlx5_vdpa_set_attr_mac,
+ };
+ 
+ static struct virtio_device_id id_table[] = {
+-- 
+2.45.0
+
 
