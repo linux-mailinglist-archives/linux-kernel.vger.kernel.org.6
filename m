@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-243868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C60929BF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:11:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C5E929BFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8013B20DFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:11:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78399B20F39
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9791F13AF2;
-	Mon,  8 Jul 2024 06:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CEE14A85;
+	Mon,  8 Jul 2024 06:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHvw6W3s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGBLTY++"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B061862A;
-	Mon,  8 Jul 2024 06:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24CE125B2;
+	Mon,  8 Jul 2024 06:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720419087; cv=none; b=ENACzOIgLV1tyvQr3ASdU31l0kpj+jAPH2jZeLtfoLlq+QHAw32MCH0LMsxg5MphMTAHH1YXOd8FKaQCU6tJIZ7Shw7X+r/ODZ8RY6EfJSqM1dTtKsPnpzga5LKuJYRq9a2zhJsGvsapWvYHeVEY5K/uFfckWC6qY28feHAOPvg=
+	t=1720419113; cv=none; b=RTlPQK9duRFd/rUWwFzFyDHmtVyiGJQH/RMSjEIEby+QI1uG+++pNQgQSBfsno1VEOtLo1z898Nam/wjw7gfyfNdfOmX0lTPJz5o3H+bMChMY9EHZoNkm4ZFFHeLQFp+jEhyFgRLNnq9LCz78psVOwMlJtNWR6sYpeQaiVUzt2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720419087; c=relaxed/simple;
-	bh=TXpQjrSP6SIln3AsA5G6lliuWQCcWV9RsgH/JGn4KBI=;
+	s=arc-20240116; t=1720419113; c=relaxed/simple;
+	bh=X2KVL6YQOgnPBKLUq269h6w9whJt0F4SHH/PlyLx5Fg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mQ3u5g5VeGaF6DVUsw8IKPfHBa7LuSLO5qm4tfqppRuH1Zwczzoql6vTKKagKOkVhDNM88I8NKUeJfjp0vsesqXmeqMX5XwI2b2svvnPQQls5AsEJvG8GmlritVILhBhqbMDPyOf5tUX1M0y8pTs7MoQ4DZ0CKCLvbRMCmFPpnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHvw6W3s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F404C116B1;
-	Mon,  8 Jul 2024 06:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720419087;
-	bh=TXpQjrSP6SIln3AsA5G6lliuWQCcWV9RsgH/JGn4KBI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CHvw6W3sIjQBLWzH0WAj8ltGBCpqDj9pqVaKFVuxARX9vRi64UNb7gVfcsNXt1I+V
-	 UbncHiCAMC/GLPVjj+VjqyFH/xeadCT/sOobtxwLrTAv7pDg43lddUN79JpUCqe8Jj
-	 cNvVDTkoCnTW5DgaKbneW3wuW6xWVtsifxpS35sQjDtu3leJ1TiY11+Jt481fX+17Z
-	 fxSd6Fbbz4JrXpGvP3VIEXtq6baQCqooq32BDkwMDjD2pBml2/aK+PRDbny4mG7Tfg
-	 OXG1akmiZ1Nnixw5RMGhbq2skxNdBjgUrqnfu3oMiVqF4cWovjQH5gblIjALg965fn
-	 rraI75oBbfydQ==
-Message-ID: <726a0561-b3fc-46bb-a834-3ed8b0e993e1@kernel.org>
-Date: Mon, 8 Jul 2024 08:11:22 +0200
+	 In-Reply-To:Content-Type; b=dRUlmN8pti+JkobghpAOkG5QqpDuGnmABZAtFCv5v8U+hj5bJ/KYHgpt6looQ+bTb7Ax+k3vA3hRp/zORfsJ3Bs2nORIbThZ3hT/vDg3K5gi/kMWRyXlm0Umr4q/Vuo304mm7BU4AyxBeMwAYimHjB2OGktjcNpDilRUxKK7YXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGBLTY++; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720419111; x=1751955111;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=X2KVL6YQOgnPBKLUq269h6w9whJt0F4SHH/PlyLx5Fg=;
+  b=iGBLTY++ehT/fvpzWr/tbHnNzOQxbQumH2ARSWqP1G5o4MmmVar19Hb4
+   fCB16FmW64ibYhhBlkWlRPqgAPXEG81bqLBw2AqXhdvNQqNIGxw8ZqNkq
+   DEJ3uQDLsDFMckPcx8PGd04a7ZeesuMe50d1sCzh4ZJSxHbXxCLo3/rSm
+   oVZcSoqdSwxRUjFtg+ApwXMMFh/eMl0fM/EhKd0N4SwUtu0aQ5/wbEj1C
+   917J8ftKVrDOjwcrm6vj3qJLPls4mL5DAS1J1soHoUicVW2papNhSeWyQ
+   9mJEkuMp0/HZ5xVPFlxfTDAvu2gTlvFGOVJSP+NNVxko/ucGV6ZipfdPD
+   A==;
+X-CSE-ConnectionGUID: 5T0c9RmAQMSTBqlehaqNcA==
+X-CSE-MsgGUID: 4jEdGuQGSPmg5jostYk/DQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="28994616"
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="28994616"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 23:11:50 -0700
+X-CSE-ConnectionGUID: Xrm0uJ7vSSGiyufFvIQFKw==
+X-CSE-MsgGUID: uFMFVtEyQpSwkRwIEEIq9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="78143283"
+Received: from chungegx-mobl1.ccr.corp.intel.com (HELO [10.238.1.52]) ([10.238.1.52])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 23:11:46 -0700
+Message-ID: <ba11a01a-c299-43a0-bef1-0e71497946aa@linux.intel.com>
+Date: Mon, 8 Jul 2024 14:11:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,98 +66,212 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: power: Add power sequence for Amloigc
- WCN chips
-To: Yang Li <yang.li@amlogic.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
- <20240705-pwrseq-v1-1-31829b47fc72@amlogic.com>
- <a4d08999-55ea-4674-bb0f-6d618b7bdea7@kernel.org>
- <9c550278-2205-4663-917c-c303c65726ad@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v19 085/130] KVM: TDX: Complete interrupts after tdexit
+To: Yuan Yao <yuan.yao@linux.intel.com>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: isaku.yamahata@intel.com, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+ erdemaktas@google.com, Sagi Shahar <sagis@google.com>,
+ Kai Huang <kai.huang@intel.com>, chen.bo@intel.com, hang.yuan@intel.com,
+ tina.zhang@intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, avi@redhat.com,
+ dzickus@redhat.com, Chao Gao <chao.gao@intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <aa6a927214a5d29d5591a0079f4374b05a82a03f.1708933498.git.isaku.yamahata@intel.com>
+ <20240617080729.j5nottky5bjmgdmf@yy-desk-7060>
+ <c1426d14-3c00-4956-89a3-c06336905330@linux.intel.com>
+ <20240618032834.a6tuv353vk6vqybw@yy-desk-7060>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <9c550278-2205-4663-917c-c303c65726ad@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240618032834.a6tuv353vk6vqybw@yy-desk-7060>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 08/07/2024 08:04, Yang Li wrote:
->>> +
->>> +required:
->>> +  - compatible
->>> +  - clocks
->>> +  - clock-names
->>> +  - amlogic,chip-enable-gpios
->>> +  - amlogic,bt-enable-gpios
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/gpio/gpio.h>
->>> +    wcn_pwrseq {
->> No underscores in node names, generic node names.
+
+
+On 6/18/2024 11:28 AM, Yuan Yao wrote:
+> On Mon, Jun 17, 2024 at 05:07:56PM +0800, Binbin Wu wrote:
 >>
->> There is no device as "pwrseq". I also do not get what "wcn" means here.
-> 
-> Yes, I understand.
-> 
-> Can I change "wcn_pwrseq" to "pmu", and do I need to change the binding 
+>> On 6/17/2024 4:07 PM, Yuan Yao wrote:
+>>> On Mon, Feb 26, 2024 at 12:26:27AM -0800, isaku.yamahata@intel.com wrote:
+>>>> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>>>>
+>>>> This corresponds to VMX __vmx_complete_interrupts().  Because TDX
+>>>> virtualize vAPIC, KVM only needs to care NMI injection.
+>>>>
+>>>> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+>>>> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+>>>> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+>>>> ---
+>>>> v19:
+>>>> - move tdvps_management_check() to this patch
+>>>> - typo: complete -> Complete in short log
+>>>> ---
+>>>>    arch/x86/kvm/vmx/tdx.c | 10 ++++++++++
+>>>>    arch/x86/kvm/vmx/tdx.h |  4 ++++
+>>>>    2 files changed, 14 insertions(+)
+>>>>
+>>>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+>>>> index 83dcaf5b6fbd..b8b168f74dfe 100644
+>>>> --- a/arch/x86/kvm/vmx/tdx.c
+>>>> +++ b/arch/x86/kvm/vmx/tdx.c
+>>>> @@ -535,6 +535,14 @@ void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+>>>>    	 */
+>>>>    }
+>>>>
+>>>> +static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
+>>>> +{
+>>>> +	/* Avoid costly SEAMCALL if no nmi was injected */
+>>>> +	if (vcpu->arch.nmi_injected)
+>>>> +		vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
+>>>> +							      TD_VCPU_PEND_NMI);
+>>>> +}
+>>> Looks this leads to NMI injection delay or even won't be
+>>> reinjected if KVM_REQ_EVENT is not set on the target cpu
+>>> when more than 1 NMIs are pending there.
+>>>
+>>> On normal VM, KVM uses NMI window vmexit for injection
+>>> successful case to rasie the KVM_REQ_EVENT again for remain
+>>> pending NMIs, see handle_nmi_window(). KVM also checks
+>>> vectoring info after VMEXIT for case that the NMI is not
+>>> injected successfully in this vmentry vmexit round, and
+>>> raise KVM_REQ_EVENT to try again, see __vmx_complete_interrupts().
+>>>
+>>> In TDX, consider there's no way to get vectoring info or
+>>> handle nmi window vmexit, below checking should cover both
+>>> scenarios for NMI injection:
+>>>
+>>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+>>> index e9c9a185bb7b..9edf446acd3b 100644
+>>> --- a/arch/x86/kvm/vmx/tdx.c
+>>> +++ b/arch/x86/kvm/vmx/tdx.c
+>>> @@ -835,9 +835,12 @@ void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+>>>    static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
+>>>    {
+>>>           /* Avoid costly SEAMCALL if no nmi was injected */
+>>> -       if (vcpu->arch.nmi_injected)
+>>> +       if (vcpu->arch.nmi_injected) {
+>>>                   vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
+>>>                                                                 TD_VCPU_PEND_NMI);
+>>> +               if (vcpu->arch.nmi_injected || vcpu->arch.nmi_pending)
+>>> +                       kvm_make_request(KVM_REQ_EVENT, vcpu);
+>> For nmi_injected, it should be OK because TD_VCPU_PEND_NMI is still set.
+>> But for nmi_pending, it should be checked and raise event.
+> Right, I just forgot the tdx module can do more than "hardware":
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index e9c9a185bb7b..3530a4882efc 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -835,9 +835,16 @@ void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+>   static void tdx_complete_interrupts(struct kvm_vcpu *vcpu)
+>   {
+>          /* Avoid costly SEAMCALL if no nmi was injected */
+> -       if (vcpu->arch.nmi_injected)
+> +       if (vcpu->arch.nmi_injected) {
+>                  vcpu->arch.nmi_injected = td_management_read8(to_tdx(vcpu),
+>                                                                TD_VCPU_PEND_NMI);
+> +               /*
+> +                  tdx module will retry injection in case of TD_VCPU_PEND_NMI,
+> +                  so don't need to set KVM_REQ_EVENT for it again.
+> +                */
+> +               if (!vcpu->arch.nmi_injected && vcpu->arch.nmi_pending)
+> +                       kvm_make_request(KVM_REQ_EVENT, vcpu);
+> +       }
+>   }
+>
+>> I remember there was a discussion in the following link:
+>> https://lore.kernel.org/kvm/20240402065254.GY2444378@ls.amr.corp.intel.com/
+>> It said  tdx_vcpu_run() will ignore force_immediate_exit.
+>> If force_immediate_exit is igored for TDX, then the nmi_pending handling
+>> could still be delayed if the previous NMI was injected successfully.
+> Yes, not sure the possibility of meeting this in real use
+> case, I know it happens in some testing, e.g. the kvm
+> unit test's multiple NMI tesing.
 
-What is pmu for your device? What is this device in the first place you
-are documenting? Where is the datasheet?
+Delay the pending NMI to the next VM exit will have problem.
+Current Linux kernel code on NMI handling, it will check back-to-back 
+NMI when handling unknown NMI.
+Here are the comments in arch/x86/kernel/nmi.c
+         /*
+          * Only one NMI can be latched at a time.  To handle
+          * this we may process multiple nmi handlers at once to
+          * cover the case where an NMI is dropped.  The downside
+          * to this approach is we may process an NMI prematurely,
+          * while its real NMI is sitting latched.  This will cause
+          * an unknown NMI on the next run of the NMI processing.
+          *
+          * We tried to flag that condition above, by setting the
+          * swallow_nmi flag when we process more than one event.
+          * This condition is also only present on the second half
+          * of a back-to-back NMI, so we flag that condition too.
+          *
+          * If both are true, we assume we already processed this
+          * NMI previously and we swallow it. ...
+          */
+Assume there are two NMIs pending in KVM, i.e. nmi_pending is 2.
+KVM injects one NMI by settting TD_VCPU_PEND_NMI field and the 
+nmi_pending is decreased to 1.
+The pending NMI will be delayed until the next VM Exit, it will not be 
+detected as the second half of back-to-back NMI in guest.
+Then it will be considered as a real unknown NMI, and if no one handles 
+it (because it could have been handled in the previous NMI handler).
+At last, guest kernel will fire error message for the "unhandled" 
+unknown NMI, and even panic if unknown_nmi_panic or 
+panic_on_unrecovered_nmi is set true.
 
-> file name to "amlogic,w155s2-pmu"
 
-Yes, compatible should also match proper device.
+Since KVM doesn't have the capability to get NMI blocking status or 
+request NMI-window exit for TDX, how about limiting the nmi pending to 1 
+for TDX?
+I.e. if TD_VCPU_PEND_NMI is not set, limit nmi_pending to 1 in 
+process_nmi();
+      if TD_VCPU_PEND_NMI is set, limit nmi_pending to 0 in process_nmi().
 
+Had some checks about the history when nmi_pending limit changed to 2.
+The discussion in the 
+link https://lore.kernel.org/all/4E723A8A.7050405@redhat.com/ said:
+" ... the NMI handlers are now being reworked to handle
+just one NMI source (hopefully the cheapest) in the handler, and if we
+detect a back-to-back NMI, handle all possible NMI sources."
+IIUC, the change in NMI handlers described above is referring to the 
+patch set "x86, nmi: new NMI handling routines"
+https://lore.kernel.org/all/1317409584-23662-1-git-send-email-dzickus@redhat.com/
 
-Best regards,
-Krzysztof
+I noticed that in v6 of the patch series, there was an optimization, but 
+removed in v7.
+v6 link: 
+https://lore.kernel.org/all/1316805435-14832-5-git-send-email-dzickus@redhat.com/
+v7 link: 
+https://lore.kernel.org/all/1317409584-23662-5-git-send-email-dzickus@redhat.com/
+The Optimization code in v6, but removed in v7:
+           -static int notrace __kprobes nmi_handle(unsigned int type, 
+struct pt_regs *regs)
+           +static int notrace __kprobes nmi_handle(unsigned int type, 
+struct pt_regs *regs, bool b2b)
+           {
+                struct nmi_desc *desc = nmi_to_desc(type);
+                struct nmiaction *a;
+           @@ -89,6 +89,15 @@ static int notrace __kprobes 
+nmi_handle(unsigned int type, struct pt_regs *regs)
+
+                handled += a->handler(type, regs);
+
+           +        /*
+           +          * Optimization: only loop once if this is not a
+           +          * back-to-back NMI.  The idea is nothing is dropped
+           +          * on the first NMI, only on the second of a 
+back-to-back
+           +          * NMI.  No need to waste cycles going through all the
+           +          * handlers.
+           +          */
+           +        if (!b2b && handled)
+           +            break;
+                }
+
+At last, back-to-back NMI optimization is not used in Linux kernel.
+So the kernel is able to handle NMI sources if we drop later NMIs when 
+there is already one virtual NMI pending for TDX.
+
 
 
