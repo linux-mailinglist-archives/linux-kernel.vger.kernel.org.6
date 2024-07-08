@@ -1,152 +1,152 @@
-Return-Path: <linux-kernel+bounces-243855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5149929BC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:50:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FB7929BCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83922281388
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:50:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 444F4B20B12
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C20810953;
-	Mon,  8 Jul 2024 05:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263D51171D;
+	Mon,  8 Jul 2024 05:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="u218QpYg"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010039.outbound.protection.outlook.com [52.101.228.39])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="p2luHbaO"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2089.outbound.protection.outlook.com [40.107.105.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C986A171A1;
-	Mon,  8 Jul 2024 05:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6643B156E4;
+	Mon,  8 Jul 2024 05:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.89
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720417797; cv=fail; b=o7NyPWH4NMymhFljVUpEL/wjyjrajF9Y3lPessZMXNeEXobyYE17JEKJAtAjPJSKshU0TRVgJyd0vdRzq2fCFJ+n+xpEpcR7b7WelMbQvM+iPu9eCstkDEcbCpY8E2ynWE4YlplMpNsD685aNzcCcP0g7Uj8VS4rEABiY8NasCI=
+	t=1720417827; cv=fail; b=Ine2MN0GzKep1thIC6ZfDqQOc44Gdqy01JWPVtJ4wSSISG3gZHXvEHNyjeNwLS7iaTo0Wb2OQL3voWF+qqLrs2K7QrFvIRe65h/ghSTE/FXelIyLUB60J4voQURLIsyHgr9KWoODSeuz12VVFjZ9h3nTKEW7DcSYP6c9ClvD1aI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720417797; c=relaxed/simple;
-	bh=bhnruczJ6G7VeTtavRqT8/3QzNUb4k4LmyhITQW0toY=;
+	s=arc-20240116; t=1720417827; c=relaxed/simple;
+	bh=LeqOBuwaV+bXxzF8ycZDVgpv1zjyY5bnzgNF8JF5DIo=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=M6iGPYoaYmFVigo8ekWySJgGTUAxSDlRRc0SMY/YabQa0sdFEvsCXrfR3Hy0xAw5Gs68Cr0w/2O9ioKGJvQWVt8izD/jj2Hy2aOfwwHoWMi6S7qxBRiSY8XW9V1WlYdVD+/w3W2g69x0xixrNuljD1kJh6wTna9HBTOSfkcLpJc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=u218QpYg; arc=fail smtp.client-ip=52.101.228.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	 Content-Type:MIME-Version; b=lINuCQOKfd0s5SCo00aFvXwxdi3pRzcDiB9Hv/a/1YDgF19KOWHRtXIW9sAu48DFvX3p/x3DHp64jIVorg+PDngHccF0pxl5LTy9Emn31uppebJMbnm733dXeaLFLQ0LbXqbdJjj+fcxvqJnSFFUIR4KdHsfUCM8betHyfUFxvs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=p2luHbaO; arc=fail smtp.client-ip=40.107.105.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gQF6Q9d8K9sKzozQdjAAPGEwQoJQMD3Kq1bOp0VxyI+c5gEuSriW2uv/yRYQM3v9O+k/PiQqieg1ThpTxCZOiqIgtVGKDkBNoAs4KoCBTBHecy0Gl/HtZMkqi1Fg34Y7/SUfx1RoFZnG7zchjTg8cPaHzgv/fyg1bTV448678QkeLVm8hNn+AEgiPdm7G7bQBhrfpv3F27B8yKaD8P5dIwg6jE+Ja5+Tcgcxt4Ta2cJjQvCjP+13NR/XdqB1cY6xFQoPuqyp/NAIsQh+YjRUi2QeaJJpUWgZz7HTF1O5FLHMYByJ2bS6jMSkeTIEGhcZPF5h7zuq3MWu8Nt1ypIMBA==
+ b=klsSiNOYldBGyBoTPyBMSE4GXBkajfK7XCLhiHYtiJy5VnId3D6DBsPOb5SSSiTUnacWaa0WCn8HEkhCx+K/qPSBhyO2azGU4Prc6dHQBY0tHVMABHLgkx1j0NBOmi91KL4QJK+hLi0CvGjsjjx2gIY7tzC4ggnb9DnO7s6kjWwxW5kEsDGD07vOecSz9uB1ff5NzrQgprPlCOp+HVCx+OzH5x8SCIP8h5atlpM9jDAuMK2SIujqhp3EePWHeiuyStDWYExPDbtwVAzAStzPYXzXsyaZJ3q0H/X5t3WTnqo8MAv10FVmXx+ZVaU2Ml1BClJq8jxmAlbeV6SvhdT40g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=69v0Ecb1V97sxoZS2prJIF8dpJFPyUCiiVKHbXELj3E=;
- b=CAs7HTme3mtyAqD0ghM6j4HRQ2fN4WDxl0vgXZgP1wfYTJoBspZ1GjpZLQJnZ6L1r0cUGzBJ1UnxW2jTTmNvzPaLUo7tBe6tW+fr8GKDzbPLMGyY/0pxdCF7f3LssUrL4lNYxjZtKvZD/xN2939tb7AdQz+IRtattgKKCuRZ18Xx7f7LHQiCxajswp3mGO7mqY5JpldejspTQVDjoAAUr9uVR7GzkAQEQIbLAX1nx0gcNQalTFJZtI/B5sq5hLTW15C7pKV+8n7PbtTXAl0Xy2bMe1nSVs/lf6un3I+wovP1YIg9VlpoQhuBEvip5wkff+U6q3Dcxuqwd/qLAooEhw==
+ bh=Z7sm1YqeEh1t0zg7V7VCqI4p9Qzx7y4PVbrOdGYx5Qc=;
+ b=dySjKrEJUIOwX/o0tiWshPAOxcCmnHitymqkz4hNb3YgS2sx+hqkPDmJ/5/Z4SFksYDYrYspMcNcdS41E5bIIkP+XayNo7FaQt5Aoi7RVUOvZhsjfq1N2HSd4bVB10oEFRCIuoYSeLwwzCQfUbUpkti9h3GXZSJSKQcrGKjl+iPXooFr2qTHXJuhtMMh7dSoeD81I+h6NlmerH8259LSAXDWOo6rod8x5HFH69OAD3rcDgvMbcBwBmVQJuRsnW4L7ya+0iy1JO+rx/rcQbgRTN9s7cA3mAIey6nnSVqdV/W/WR/hU08h2b7XNKDpUXI8YwIQYEg24tJ/0pc5nVoC/A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=69v0Ecb1V97sxoZS2prJIF8dpJFPyUCiiVKHbXELj3E=;
- b=u218QpYgmjfrIvbTI9d70xe9si7HzFOGTnVhLhRhvEXlnuD2BiIGYL6rV5yFH2lS7mayREFVCi9vQT8c6iK18H6olDW9ibVnVjRgQsfiQ5nDGIsDHNdTXTgYQKe4cw2xk5W7K61dCnoSt1dFDyH+zQoc3WSVxufwsUyCYmTNakM=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYCPR01MB8325.jpnprd01.prod.outlook.com (2603:1096:400:15a::13) with
+ bh=Z7sm1YqeEh1t0zg7V7VCqI4p9Qzx7y4PVbrOdGYx5Qc=;
+ b=p2luHbaOOCvQnpC8IsbuPCvgRofxq8tN1SgwwY2PhbB6SiMrCFl5zVFfUVvtsH1nQVXMYMTvFK2yVbT9lC5Csmlb+RpnShxpvZFyq9szgTAmPjWhx49nPSvRLbhsvhjnCMwT2xvw73QnrKlnuLY03Beuw1pEfI8Q43HQCa5FFy4=
+Received: from AM9PR04MB8604.eurprd04.prod.outlook.com (2603:10a6:20b:43b::21)
+ by PAXPR04MB9008.eurprd04.prod.outlook.com (2603:10a6:102:20d::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 05:49:51 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 05:49:51 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>, Wim Van Sebroeck
-	<wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC: "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ 2024 05:50:21 +0000
+Received: from AM9PR04MB8604.eurprd04.prod.outlook.com
+ ([fe80::e751:223e:aa3d:5827]) by AM9PR04MB8604.eurprd04.prod.outlook.com
+ ([fe80::e751:223e:aa3d:5827%3]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
+ 05:50:21 +0000
+From: Pankaj Gupta <pankaj.gupta@nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Fabrizio Castro
-	<fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v2 2/2] watchdog: Add Watchdog Timer driver for RZ/V2H(P)
-Thread-Topic: [PATCH v2 2/2] watchdog: Add Watchdog Timer driver for RZ/V2H(P)
-Thread-Index: AQHaxluPD8e/8wTjTkShg0nws3niO7HsaFkA
-Date: Mon, 8 Jul 2024 05:49:50 +0000
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [EXT] Re: [PATCH v4 2/5] dt-bindings: arm: fsl: add imx-se-fw
+ binding doc
+Thread-Topic: [EXT] Re: [PATCH v4 2/5] dt-bindings: arm: fsl: add imx-se-fw
+ binding doc
+Thread-Index: AQHazuMSrg3adK0l6E2Y9DEwTEglUrHrNmCAgAETJjA=
+Date: Mon, 8 Jul 2024 05:50:21 +0000
 Message-ID:
- <TY3PR01MB113463BA0262EA0B73AE2990186DA2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20240624172509.106912-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240624172509.106912-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240624172509.106912-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Accept-Language: en-GB, en-US
+ <AM9PR04MB8604B9A9F3D22C35679AD1D195DA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+References: <20240705-imx-se-if-v4-0-52d000e18a1d@nxp.com>
+ <20240705-imx-se-if-v4-2-52d000e18a1d@nxp.com>
+ <450d1575-c9b3-413b-bfa9-8dc4352fa263@kernel.org>
+In-Reply-To: <450d1575-c9b3-413b-bfa9-8dc4352fa263@kernel.org>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+ header.d=none;dmarc=none action=none header.from=nxp.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYCPR01MB8325:EE_
-x-ms-office365-filtering-correlation-id: 05bbddb0-af8e-4649-fb58-08dc9f11c8b6
+x-ms-traffictypediagnostic: AM9PR04MB8604:EE_|PAXPR04MB9008:EE_
+x-ms-office365-filtering-correlation-id: 9ddc2123-b273-4a6f-4010-08dc9f11dabf
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|366016|1800799024|376014|38070700018|921020;
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018|921020;
 x-microsoft-antispam-message-info:
- =?us-ascii?Q?pbK6srzAz9JVkCHx9e7NUuZAXRn5Yf63ApP/pYIToMtPZLuo0VDQ/VOTpRM6?=
- =?us-ascii?Q?mS1vfEBI+xbTqvVR1MF82JbKafvBvth6dOz4ImYua5sXb4IorvGJen8ceR64?=
- =?us-ascii?Q?PHgtXxMJo0umeFXS0lT7nS4zblysuThRlOOgygj2BQ0FDszcXgsvrFBgNS+i?=
- =?us-ascii?Q?9Vfkrc9S8LCyM53MW0y/HHFS9E57pGGwz7kmXK9uBY7svRUJuO3UokHgf595?=
- =?us-ascii?Q?0x7Bp3NOu2wpjcnTDOq1t3UvnU6fNhHjXsVAty1uJ98oJ4gZQmj/c5iKdySB?=
- =?us-ascii?Q?FIuJO702cmzT1548LEwjquY+//F6N1aspC0J9VNyAwyPr+TXcmGHF+8QnEa2?=
- =?us-ascii?Q?P/Viiemyr612MTT8vQWHQzrbHZYDPGIk5AjqcSkHo/jKMZU0VNXzmbjXzPOo?=
- =?us-ascii?Q?oZ/WiVmm1a7Gip3wwA3v3AkZPKPSmyPOvgsCXfOtOPvxm/OK2ENMcfUDRw/C?=
- =?us-ascii?Q?NY9RKKz6o+/xRg9CPFPZd52VJw7OU7E+1Wt/CbxdYITgfgbRVcrjn3pvsSXG?=
- =?us-ascii?Q?uBaiKF/tpWe+TdCBn2NrvLDUzXBXaycBP/2kgzicxNw+5SRH9ByMJSsY2L8v?=
- =?us-ascii?Q?2H2c3BjPen4VYabemaLw2ytsBn7ZZJ85CDJHIA4TUNoT9uyzm2HiiQlWwiDg?=
- =?us-ascii?Q?ZBipWrVhTEYV44lsNAHm4kMmTIhEGM6V1DQqXgo0RcP83ajTeEXGX6aFInhE?=
- =?us-ascii?Q?f6qRgP8je/K/r6cGOxHbxirpfqa9t7WSBcKXBL9W7Z4XKZ98dHt0I+DXToii?=
- =?us-ascii?Q?AS28HYmuGEcLXSEEXoCBYObsTwiAbEkVM/06alfDjQDvGd9mLWarEctnILwZ?=
- =?us-ascii?Q?zV8eCxUzNgkdp1kT2Pqt56y8gWRp3Q58xHKAaFH1eEZEuNLs5X8wK0v1Oci+?=
- =?us-ascii?Q?GaBO40bBKxS7FYezWpiGqKFPuuuybCqwR0l3YHrkMEigrz+NyF8X6Zm4kJtA?=
- =?us-ascii?Q?XmyTQy/0TCL8+K4ja6QttxIpUVY4CKOWX86uXC2al9w0WCD+KXNdLJmd+Ok4?=
- =?us-ascii?Q?InCBPd0Qdz7US6oYzbqus+/1xMuA3ssfjis1uP8HZCoePzULMhT6dvqcY0fv?=
- =?us-ascii?Q?sTzVWnHgR6TVkYarg5ks2/YFmz9L21YIAYvLBFDlejZjbJOxAEZWf6L/SwJ9?=
- =?us-ascii?Q?j1dddBHZvbKu6xTeW1LHRjhaQVHFxtHr8N+kf+YUML5gkQEUxkAhSYNmUhni?=
- =?us-ascii?Q?oF4ABqFQTs/mkSnziqn0vpUwFM43CHXRwNtL6kI3HMn53z0vVG4VLPg5RQUC?=
- =?us-ascii?Q?igLeZLGrJeLJsugwiHGuLPYQF2oFLJwJVuWZHNobEZ+syaOijTgc+Yn3wsCp?=
- =?us-ascii?Q?qxVAHH0Y4vN3unO2Fwj3qYm+pcjbGSxkmE8z2qmaqr6++bx3QR67OLzWCcni?=
- =?us-ascii?Q?IRupXvE7qTVN/a9h1GCXcaCrNna6?=
+ =?us-ascii?Q?10jXETw22UCVUDDDuyuJfB3y95aYIHZ4RDWQe1Z4LvxhFVZtQTg/TXk1M2Qx?=
+ =?us-ascii?Q?GE7EaNlCmtgeu4ABeEdUsn9QnHDpO6G++rjytYJFXwwRrhihQCeMYGawI4EB?=
+ =?us-ascii?Q?MDlMlmdV+CmvUKvx0kv8c/uwOOomKlB26bW+8TXVuX+XopbS/xPdr7eriQL3?=
+ =?us-ascii?Q?xgCZBbB5KbY6xa6TU9PGF6uctMvWhQ8jCcUU1+e6ECytNbgODGCwotElzxnK?=
+ =?us-ascii?Q?/WlTZd6VXB6ZOveUETGi6CrXWk4TZGjO9MmrZEPLMnJCPgbMqpyd6J/ZFmzj?=
+ =?us-ascii?Q?Zfi9sjXKBeLFfqOvO5ownH1RtjIzvb3ih21+QL17IiOt8xybK2q721OgKyGy?=
+ =?us-ascii?Q?IuepPERkV0XsTTIi/4mv70uIPQaxTCs57DIdJrJhktjkRrhCAzm8GR54BTc1?=
+ =?us-ascii?Q?rGX0gaum/gONbohJfRAd/VR+aA0VSpbCcfQKR/AcG2oVZPkWsBzchHzJMP8Q?=
+ =?us-ascii?Q?WLMRHjtftP0BwNkueAp/VlZTBArVnVVrbsq5JfmaFzGQZvS23GizHGwAXm42?=
+ =?us-ascii?Q?0aC+jXjODbocnjYqY1/inGNJuMO8U5lPh37tgQepObSjv3F+CJmqrQVxnU0z?=
+ =?us-ascii?Q?6zvzEgniMs1J/V60We/IOYCMleR8dvvOEIKI0SLRRsex04WrTDtlA5pQB5i9?=
+ =?us-ascii?Q?YH1SJwADYyoAyjwmgnWRLCEJ0r78dSTSjljugnBUoFx3wyr6wFysh++o9/WT?=
+ =?us-ascii?Q?I33QhqguOkQtdX+X+kATKZJwPZLQNyk1+HqoW9A6hfU+WUpepehLGIrLs1aU?=
+ =?us-ascii?Q?/WjoYcmKaijcPAbrOedAbasLs5919dzDyXejoCx93+1o+p3A17QcC+MqzRak?=
+ =?us-ascii?Q?B5CoOqPJ60BfJ1Do3318APIObCMa015DwvptEx+Nd41s0OOESqrZHVAMm84v?=
+ =?us-ascii?Q?VGHXYJfTcm7PJ1sT8adg+2XlaWx/AHX5JTSFhYl1pntaWkx/FJkB7tKy3rxT?=
+ =?us-ascii?Q?mjwxuDEQ8z0FNWkac/SOjyWz9TFAcRGdjcTgmjo0h2kPBCNd9aCH5oKQriRk?=
+ =?us-ascii?Q?AqYPCnITzldy5nsuBo9mgaW7k5ejUHcxrt1B4y7oep9SYVf7RuFBpBSck1Xi?=
+ =?us-ascii?Q?WtNnc89diSwCX9S2vgycYsFyMZCfPMod/wVOlBJWcOWxMPKV4oNGD9RIt5Vp?=
+ =?us-ascii?Q?qAmXOoUfDqU2zExEuYyo0fPvLqwBLPZFs+I//dJyfafT5lMxKwA1bmULwrkt?=
+ =?us-ascii?Q?ScAMbySUPlPFLRa86eaLQTlRUPRI6GZ5/ij7kON3lmqwILKG2MHSytmQMR20?=
+ =?us-ascii?Q?r6OcnHiBuimDlBFRLUfstTbIPDERurW36nCndnUOIAjBausAFq0w8IEH24pq?=
+ =?us-ascii?Q?IgDBKDCvbao/jsSEqBxckGFcYGgNCbEZHmz16iT9wqY0Rhv7vjsIQGctFQdy?=
+ =?us-ascii?Q?/3iQ6K6qXiMmvB7EjNUFeN3m0WLnReGZpkxraReIjlIqEd50yC3yiZJl2Zfk?=
+ =?us-ascii?Q?QoYAvP0XyFs=3D?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(38070700018)(921020);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8604.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018)(921020);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?6cE9VmKSi+Xj3/l4cp1ZcSLSChUVDZD1dF+08eJDSLtA0DU2YGxt+HzuvO2v?=
- =?us-ascii?Q?YJbZXCmuUwC/AOndVc54PYAHU7A3tgaHyVYovEOjxHEWsBDf5O57goEptj9o?=
- =?us-ascii?Q?8fgmUYTnvvaA4yhu1G78Ma2ZsRTJWQkv23goici8PtBGnTJ7B6GvR0gZXNk0?=
- =?us-ascii?Q?ZgW/ZMRoNjpz8lHDcbAHZD3gvtnJjXkZCgw3R4ezyYQc8DYn+D/QUZ0nSlVD?=
- =?us-ascii?Q?nRcH9Bk4wcEeIpabcAfAJBSRRZf0TnUgaOUFQEhEtDPbPOTQ+kanuiiLlMIn?=
- =?us-ascii?Q?hRXBzUSFM3tDvoozESlvou4gRK0mmsMmxDXs8yodeRISUgGfCAOdQr3f/Hwl?=
- =?us-ascii?Q?WrExKWvQmgmPRGfi0ZJs659msTEORLRbAcvJMDhI7uXA7/U4BtnbdmDQrJDj?=
- =?us-ascii?Q?Pad+Tn5unRoCKaW+XxAhJyn40PC9LjpQyZ/0q6HEdhTh7PhZws3S/Qa21wyh?=
- =?us-ascii?Q?VPW6m/rajtD+i4lFKdRh7HItwxRlHybP2M189FOLRm6yk2OBmn3XYhGDS3q3?=
- =?us-ascii?Q?z5a2Teq13RytRhySD5v0lvfizR8kKjHX5VyKbPcUnHFRUrl65VJ95ldu/X1y?=
- =?us-ascii?Q?Mgx076uTHYsa0ADrZSsEyx5KpeFripC7fDZpkEHJqj/zuuRcYwkvYA9sf6oa?=
- =?us-ascii?Q?sHjAXoWOvk9MpVITxOsxFgl2E6F880XjFmyF+IIbTfwuLah5N70zMrif1YuS?=
- =?us-ascii?Q?+N5myV8TAnTExUtBodab2IiRsO4/QeH9+ri9dvvtUy/kOivNuMlG1isbZ+JS?=
- =?us-ascii?Q?XhmfP0kre7q34bAlAnPsUbpyg4YH7iFCa7YMI5h3FM1YzBI4GK/BvS/SO0HI?=
- =?us-ascii?Q?eQDHl7iQam9WS+ZvMVbJYNXj7ZoU/Y1pL10HDMCMQDW1vaYC3n8ZxXQBwztk?=
- =?us-ascii?Q?gJtFgurn+mO+AIOPpRE3w5w90Q19xpKRQzATlxZr6w8v6SHy/uFoLVGDrq8w?=
- =?us-ascii?Q?UIsi/rg4BBzJ0AOqCnraHsj5lMCv0rfSRdfXzqjox0Ok0myuH5uG7EsWyGlg?=
- =?us-ascii?Q?pPy46mNZ2mr/VGStdaq7Zs/XoFYNp/i6EU/40s4DL8h8PtFGMkx8s9yoSU08?=
- =?us-ascii?Q?2+tuCzc73CKUoozqywALl09jVMm9RKnbd/lH7CVydl+r3PJDoAftoTUMhDTm?=
- =?us-ascii?Q?yOrm8f28Vof9Yt6BIJMUNXAJjsHDrJvZEhNrFWAsjF6V/G/RS3KVw7P2vvQ8?=
- =?us-ascii?Q?CfPkkRQQ5SKnLkCOyRqbNDkx8K916kp2qhqwOVRKBMyvLLj1cgwbUmxkcP9w?=
- =?us-ascii?Q?JnE2i2ILJL4TF9Hvok8ZcWRgF5VMlFG3IlmraRgev+fWt7ykp/NKwwda8feF?=
- =?us-ascii?Q?SzgLY5ZAL/7kF9cW8lPMSiptycKMZa6fXFezftMThhJ6Zt1EVXtwT5f4twW3?=
- =?us-ascii?Q?hS3+FBRclh/diydO/lRJuAmpbksfNMOaHDvX6D+jU5bRLI6rUy6FPgXYb3Mc?=
- =?us-ascii?Q?vwmnDxQmTjisILfX798CzS8Sh7/m4ShHIS5to5sfmY2/5yO/4dN1ljZbXEJW?=
- =?us-ascii?Q?b344kgguA9BpZxrESKljP1NmKNQ3DnjLPjUjCJ0Un1k5nZ+J83Y07TyyoHSy?=
- =?us-ascii?Q?tioeMpO3FtFU9zFPcPWsHztIb/+eSeVFIyW5ffh9M1/ETGl6jjR8OvZ5M8Dh?=
- =?us-ascii?Q?Jw=3D=3D?=
+ =?us-ascii?Q?z0fRGsJfwz1Ab2EQGdQW+pPsCmEV17+jwvOsxzmHL3HPq4rMJz8e4G5Drota?=
+ =?us-ascii?Q?v6BxzZy+kGxZD/+tYqmxJOyDFPg3Vgh2koxYMAXXCSh4+ah/jWkl3kkWSMjx?=
+ =?us-ascii?Q?+BDTQkq9nU263oIFWrVVO8BWKGmVz0xX60tvBlmsqhl4H7K5YqLRVcWECepu?=
+ =?us-ascii?Q?W/oQwihhGVbnZFtoD7V4fuZM6fHEV84dzhh6g0KFEQZmfvRiKWZgyZfiKClv?=
+ =?us-ascii?Q?n1cBjrYjAlDqSU7cvcXMmqV2qQBUyCaZ+B9edl2arZ7JFjYNmhSYCe/ZntTC?=
+ =?us-ascii?Q?JpJxYvOwFPYPAer0MS94uW1IjEV3WKKKPD+80oEaaOpg59kED19hUVTvCYk1?=
+ =?us-ascii?Q?eRZAArN8WtiXWtYYhfij+K0tIHQN7OyKXXjQH59ZvoRXg/1xv5m9GknmUaye?=
+ =?us-ascii?Q?lATD/WRpm2Pgm5ypLUwttimcFT+sNqcVN8Uxd4CkT5Z6ERwRBGBZg9A6RiDS?=
+ =?us-ascii?Q?eZmzon98xOurH8nY0f2n2Wv14yjDe2F2yf/OUJs2fq3K7IJn256ZPXvGJ2mO?=
+ =?us-ascii?Q?PEi3uaPt9fl1Ptsu4DTroa7p8EsnM1Cibghl5iWnwmy524z2OIEX3bm8Iek9?=
+ =?us-ascii?Q?NFJqvrvyWyWSudKNX1WHSPBTzcoXBKBS2Q0PS2WhxxOXbPfOgtABI3c1ufFg?=
+ =?us-ascii?Q?ys9co+TUf9XJWhvZglmSJHwRiGYGLuSU2N/biSAMPqDcFUXzMrcI8U2BHp+t?=
+ =?us-ascii?Q?IclvlEw2fhAZxoAmjMpCayJtz7gx4hHEBV92OIvvBHx7LU5brK8yABcwaups?=
+ =?us-ascii?Q?3yuXK8L838xBm+jXpTc5NYTaIyaex9gfkzpU0c8VwjXh1EKcWP/mYg982phG?=
+ =?us-ascii?Q?Gr++NTM/muUuJ8YgJDYZ/cZJtCdcGP0bUZeQhw66C/bDWmmpvGaBXqDy+TOZ?=
+ =?us-ascii?Q?dEamSx3Y51Ro55NaUAzQtfqkIpKq85TITiWuvwm2U5BdazowT+egExSqMJ/m?=
+ =?us-ascii?Q?MfcmpTT0AbgE+x3VGAgnxu3eFAJjKJ7cXRHNuhikwVAAveMFC8wy2oXsACvs?=
+ =?us-ascii?Q?/Mmnu4PcOTeoLbfTyF3swHVdFmWHioSqWRj84BEI5i/IBpPAGUgF5ZylXyUH?=
+ =?us-ascii?Q?z3J409ONRh1GgpBq27Cwe44VsxCuNtLnjU5QKMkhiIw9pxu/sDxgiopI07p/?=
+ =?us-ascii?Q?Cyn0kyOXPDLX8mDNySwvpFRmKCTx9p0WB803Phf1qjgLwVmCCuE7vtPExDxk?=
+ =?us-ascii?Q?tLpXUmy/eqOwYKkUhN9iJGx4FP8V7dN63WY7VWLHf3RK7gMP4my5jBzEpDG1?=
+ =?us-ascii?Q?2tUJrP3QlPzlc3drxJmhseXRgljU7X54mtZD3sI2a8IVmdjU1VOGiBTGxtu8?=
+ =?us-ascii?Q?WfdSUPFoghplaaapRypfkksVGDxW4+KNd/GNl2mCBSpnaY5z+zsxbJ+lBX/U?=
+ =?us-ascii?Q?4QjypklKCuAKrbSTiEtAu1iTmqVgCzDBU18AgR8NsrI6hC28Z7tG1cvI4Ih1?=
+ =?us-ascii?Q?jX2+KrX2OMgJ1BhzB8YZZqjT0+1oUmE6qyh644vlPzCAxq5w8dy079VT9Wmx?=
+ =?us-ascii?Q?1KcyvNJ/oO+BpcwhFpA6zedAFeEoODbk8EvA4EKi1FONm8Olxsmzaa3VfDHb?=
+ =?us-ascii?Q?MlK8P7VoVRgymcsZvSXEWKKM2zimR3Z9gsg2QQkZ?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -155,338 +155,289 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
+X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05bbddb0-af8e-4649-fb58-08dc9f11c8b6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2024 05:49:51.0053
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8604.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ddc2123-b273-4a6f-4010-08dc9f11dabf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2024 05:50:21.2507
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mTb5LDMEr2WBp9CyRTXSjNhiYOzJ9azBHAN48VePm3+QZP81GR295gmjiU8DwZZxOEgDKVRaHrAozQ4LfCXP3g97o7OjbQNZcKFL/w6zE4s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8325
+X-MS-Exchange-CrossTenant-userprincipalname: Q1UgGJgNsYgApiB8/hMJMFVcXXFF47Vu1N2kQMPrkpZB8bRfy6UOmkJHE7GscfpSfZTLA0uSnktbP5GxluM6Ug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9008
 
-Hi Prabhakar,
+
 
 > -----Original Message-----
-> From: Prabhakar <prabhakar.csengg@gmail.com>
-> Sent: Monday, June 24, 2024 6:25 PM
-> Subject: [PATCH v2 2/2] watchdog: Add Watchdog Timer driver for RZ/V2H(P)
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Sunday, July 7, 2024 6:05 PM
+> To: Pankaj Gupta <pankaj.gupta@nxp.com>; Jonathan Corbet
+> <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn Guo
+> <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
+> Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> <festevam@gmail.com>; Rob Herring <robh+dt@kernel.org>; Krzysztof
+> Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> Cc: linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+> kernel@lists.infradead.org
+> Subject: [EXT] Re: [PATCH v4 2/5] dt-bindings: arm: fsl: add imx-se-fw bi=
+nding
+> doc
 >=20
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Caution: This is an external email. Please take care when clicking links =
+or
+> opening attachments. When in doubt, report the message using the 'Report
+> this email' button
 >=20
-> Add Watchdog Timer driver for RZ/V2H(P) SoC.
 >=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2
-> - Stopped using PM runtime calls in restart handler
-> - Dropped rstc deassert from probe
-> ---
->  drivers/watchdog/Kconfig     |   8 ++
->  drivers/watchdog/Makefile    |   1 +
->  drivers/watchdog/rzv2h_wdt.c | 251 +++++++++++++++++++++++++++++++++++
->  3 files changed, 260 insertions(+)
->  create mode 100644 drivers/watchdog/rzv2h_wdt.c
+> On 05/07/2024 15:52, Pankaj Gupta wrote:
+> > The NXP security hardware IP(s) like: i.MX EdgeLock Enclave, V2X etc.,
+> > creates an embedded secure enclave within the SoC boundary to enable
+> > features like:
+> > - HSM
+> > - SHE
+> > - V2X
+> >
+> > Secure-Enclave(s) communication interface are typically via message
+> > unit, i.e., based on mailbox linux kernel driver. This driver enables
+> > communication ensuring well defined message sequence protocol between
+> > Application Core and enclave's firmware.
+> >
+> > Driver configures multiple misc-device on the MU, for multiple
+> > user-space applications, to be able to communicate over single MU.
+> >
+> > It exists on some i.MX processors. e.g. i.MX8ULP, i.MX93 etc.
 >=20
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig index 85=
-eea38dbdf4..e5a7aaa2edcb
-> 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -938,6 +938,14 @@ config RENESAS_RZG2LWDT
->  	  This driver adds watchdog support for the integrated watchdogs in the
->  	  Renesas RZ/G2L SoCs. These watchdogs can be used to reset a system.
+> This binding is not improving, even though it is v5.
+
+I have disposed-off all the comments received by Conor and Rob.
+Expecting there Reviewed-By on the v4, if they had no more comments.
+
+I will ensure to address your comments on this mail chain, in the best way =
+I could.
+
 >=20
-> +config RENESAS_RZV2HWDT
-> +	tristate "Renesas RZ/V2H(P) WDT Watchdog"
-> +	depends on ARCH_R9A09G011 || COMPILE_TEST
-> +	select WATCHDOG_CORE
-> +	help
-> +	  This driver adds watchdog support for the integrated watchdogs in the
-> +	  Renesas RZ/V2H(P) SoCs. These watchdogs can be used to reset a system=
+> >
+> > Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> > ---
+> >  .../devicetree/bindings/firmware/fsl,imx-se.yaml   | 133
+> +++++++++++++++++++++
+> >  1 file changed, 133 insertions(+)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/firmware/fsl,imx-se.yaml
+> > b/Documentation/devicetree/bindings/firmware/fsl,imx-se.yaml
+> > new file mode 100644
+> > index 000000000000..b9018645101d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/firmware/fsl,imx-se.yaml
+> > @@ -0,0 +1,133 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:
+> >
+> +https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fdevi
+> > +cetree.org%2Fschemas%2Ffirmware%2Ffsl%2Cimx-
+> se.yaml%23&data=3D05%7C02%7
+> >
+> +Cpankaj.gupta%40nxp.com%7Cb43d043a91934c0c094c08dc9e813c2f%7C
+> 686ea1d3
+> >
+> +bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638559525096552364%7CUn
+> known%7CTWF
+> >
+> +pbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJ
+> XVCI6
+> >
+> +Mn0%3D%7C0%7C%7C%7C&sdata=3DzmZkwos2LRrAdtPBr0pCJxCrztncKCQS2
+> 4ECYMIjSnw
+> > +%3D&reserved=3D0
+> > +$schema:
+> >
+> +https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fdevi
+> > +cetree.org%2Fmeta-
+> schemas%2Fcore.yaml%23&data=3D05%7C02%7Cpankaj.gupta%
+> >
+> +40nxp.com%7Cb43d043a91934c0c094c08dc9e813c2f%7C686ea1d3bc2b4
+> c6fa92cd9
+> >
+> +9c5c301635%7C0%7C0%7C638559525096560485%7CUnknown%7CTWF
+> pbGZsb3d8eyJWI
+> >
+> +joiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7
+> C0%7C%
+> >
+> +7C%7C&sdata=3DWNl9M3G%2BPIl4xPx4w74Tsv7OIBkTRiR0Er5uj7PAt5o%3D
+> &reserved
+> > +=3D0
+> > +
+> > +title: NXP i.MX HW Secure Enclave(s) EdgeLock Enclave
+> > +
+> > +maintainers:
+> > +  - Pankaj Gupta <pankaj.gupta@nxp.com>
+> > +
+> > +description: |
+> > +  NXP's SoC may contain one or multiple embedded secure-enclave HW
+> > +  IP(s) like i.MX EdgeLock Enclave, V2X etc. These NXP's HW IP(s)
+> > +  enables features like
+> > +    - Hardware Security Module (HSM),
+> > +    - Security Hardware Extension (SHE), and
+> > +    - Vehicular to Anything (V2X)
+> > +
+> > +  Communication interface to the secure-enclaves is based on the
+> > + messaging unit(s).
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    pattern: "firmware@[0-9a-f]+$"
+> > +
+> > +  compatible:
+> > +    enum:
+> > +      - fsl,imx8ulp-se
+> > +      - fsl,imx93-se
+> > +      - fsl,imx95-se
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +    description: Identifier of the communication interface to secure-e=
+nclave.
+> > +
+> > +  mboxes:
+> > +    description: contain a list of phandles to mailboxes.
+>=20
+> Drop, obvious.
+Will remove the line "- description: contain a list of phandles to mailboxe=
+s."
+
+>=20
+> > +    items:
+> > +      - description: Specify the mailbox used to send message to se fi=
+rmware
+> > +      - description: Specify the mailbox used to receive message from
+> > + se firmware
+>=20
+> Drop redundant/obvious parts.
+Will replace above two description line with the below two.
+      - description: mailbox phandle to send message to se firmware
+      - description: mailbox phandle to receive message from se firmware
+
+>=20
+> So two mailboxes?
+Two handles of the same mailbox.
+
+>=20
+> > +
+> > +  mbox-names:
+> > +    items:
+> > +      - const: tx
+> > +      - const: rx
+> > +      - const: txdb
+> > +      - const: rxdb
+>=20
+> 4 mailboxes? This cannot be different.
+mbox-names can have any of the above mentioned 4 values.
+And  two values are minimum, required.
+
+>=20
+> > +    minItems: 2
+> > +
+> > +  memory-region:
+> > +    description: contains the phandle to reserved external memory.
+>=20
+> Drop
+Will remove the line " description: contains the phandle to reserved extern=
+al memory."
+
+>=20
+> > +    items:
+> > +      - description: It is used by secure-enclave firmware. It is an o=
+ptional
+> > +          property based on compatible and identifier to communication
+> interface.
+> > +          (see bindings/reserved-memory/reserved-memory.txt)
+> > +
+> > +  sram:
+> > +    description: contains the phandle to sram.
+>=20
+> Drop
+Will remove " description: contains the phandle to sram."
+
+>=20
+> > +    items:
+> > +      - description: Phandle to the device SRAM. It is an optional pro=
+perty
+> > +          based on compatible and identifier to communication interfac=
+e.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - mboxes
+> > +  - mbox-names
+> > +
+> > +additionalProperties: false
+>=20
+> Keep it after allOf block
+
+In V2, it is after allOf block.
+In previous comments, it was commented to place allOf block, after required=
 .
-> +
->  config ASPEED_WATCHDOG
->  	tristate "Aspeed BMC watchdog support"
->  	depends on ARCH_ASPEED || COMPILE_TEST diff --git a/drivers/watchdog/Ma=
-kefile
-> b/drivers/watchdog/Makefile index 2d1117564f5b..295909a1b3b9 100644
-> --- a/drivers/watchdog/Makefile
-> +++ b/drivers/watchdog/Makefile
-> @@ -86,6 +86,7 @@ obj-$(CONFIG_RENESAS_WDT) +=3D renesas_wdt.o
->  obj-$(CONFIG_RENESAS_RZAWDT) +=3D rza_wdt.o
->  obj-$(CONFIG_RENESAS_RZN1WDT) +=3D rzn1_wdt.o
->  obj-$(CONFIG_RENESAS_RZG2LWDT) +=3D rzg2l_wdt.o
-> +obj-$(CONFIG_RENESAS_RZV2HWDT) +=3D rzv2h_wdt.o
->  obj-$(CONFIG_ASPEED_WATCHDOG) +=3D aspeed_wdt.o
->  obj-$(CONFIG_STM32_WATCHDOG) +=3D stm32_iwdg.o
->  obj-$(CONFIG_UNIPHIER_WATCHDOG) +=3D uniphier_wdt.o diff --git a/drivers=
-/watchdog/rzv2h_wdt.c
-> b/drivers/watchdog/rzv2h_wdt.c new file mode 100644 index 000000000000..c=
-950d73ee7a8
-> --- /dev/null
-> +++ b/drivers/watchdog/rzv2h_wdt.c
-> @@ -0,0 +1,251 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Renesas RZ/V2H(P) WDT Watchdog Driver
-> + *
-> + * Copyright (C) 2024 Renesas Electronics Corporation.
-> + */
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
-> +#include <linux/units.h>
-> +#include <linux/watchdog.h>
-> +
-> +#define WDTRR			0x00	/* RW, 8  */
-> +#define WDTCR			0x02	/* RW, 16 */
-> +#define WDTRCR			0x06	/* RW, 8  */
-> +
-> +#define WDTCR_TOPS_1024		0x00
-> +#define WDTCR_TOPS_16384	0x03
-> +
-> +#define WDTCR_CKS_CLK_1		0x00
-> +#define WDTCR_CKS_CLK_256	0x50
-> +
-> +#define WDTCR_RPES_0		0x300
-> +#define WDTCR_RPES_75		0x000
-> +
-> +#define WDTCR_RPSS_25		0x00
-> +#define WDTCR_RPSS_100		0x3000
-> +
-> +#define WDTRCR_RSTIRQS         BIT(7)
-> +
-> +#define CLOCK_DIV_BY_256	256
-> +
-> +#define WDT_DEFAULT_TIMEOUT	60U
-> +
-> +static bool nowayout =3D WATCHDOG_NOWAYOUT; module_param(nowayout, bool,
-> +0); MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started
-> +(default=3D"
-> +		 __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-> +
-> +struct rzv2h_wdt_priv {
-> +	void __iomem *base;
-> +	struct clk *pclk;
-> +	struct clk *oscclk;
-> +	struct reset_control *rstc;
-> +	struct watchdog_device wdev;
-> +	unsigned long oscclk_rate;
-> +};
-> +
-> +static int rzv2h_wdt_ping(struct watchdog_device *wdev) {
-> +	struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> +	static unsigned long delay;
-> +
-> +	writeb(0x0, priv->base + WDTRR);
-> +	writeb(0xFF, priv->base + WDTRR);
-> +
-> +	/*
-> +	 * Refreshing the down-counter requires up to 4 cycles
-> +	 * of the signal for counting
-> +	 */
-> +	if (!delay)
-> +		delay =3D 4 * div64_ul(CLOCK_DIV_BY_256 * MICRO, priv->oscclk_rate);
-> +	udelay(delay);
-> +
-> +	return 0;
-> +}
-> +
-> +static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr) {
-> +	struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> +
-> +	writew(wdtcr, priv->base + WDTCR);
-> +
-> +	/* LSI needs RSTIRQS to be cleared */
-> +	writeb(readb(priv->base + WDTRCR) & ~WDTRCR_RSTIRQS, priv->base +
-> +WDTRCR); }
-> +
-> +static int rzv2h_wdt_start(struct watchdog_device *wdev) {
-> +	struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> +	int ret;
-> +
-> +	ret =3D reset_control_deassert(priv->rstc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D pm_runtime_resume_and_get(wdev->parent);
-> +	if (ret)
-> +		return ret;
+I am little confused.
 
-Checking ret will lead to imbalance. It should be ret < 0 as ret =3D 1 corr=
-esponds to RPM_ACTIVE and the API does not call put() when ret =3D 1; see [=
-1] and [2]
+>=20
+>=20
+> > +
+> > +allOf:
+> > +  # memory-region
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - fsl,imx8ulp-se
+> > +              - fsl,imx93-se
+> > +    then:
+> > +      required:
+> > +        - memory-region
+> > +    else:
+> > +      properties:
+> > +        memory-region: false
+> > +
+> > +  # sram
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - fsl,imx8ulp-se
+> > +    then:
+> > +      required:
+> > +        - sram
+> > +
+> > +    else:
+> > +      properties:
+> > +        sram: false
+> > +
+> > +examples:
+> > +  - |
+> > +    firmware {
+> > +      #address-cells =3D <1>;
+> > +      #size-cells =3D <0>;
+> > +      firmware@0 {
+> > +        compatible =3D "fsl,imx95-se";
+> > +        reg =3D <0x0>;
+> > +        mboxes =3D <&ele_mu0 0 0>, <&ele_mu0 1 0>;
+> > +        mbox-names =3D "tx", "rx";
+> > +      };
+>=20
+> One example is enough.
+Accepted.
 
-[1] https://elixir.bootlin.com/linux/v6.10-rc6/source/drivers/base/power/ru=
-ntime.c#L778
-
-[2] https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/pm_runt=
-ime.h#L431
-
-Cheers,
-Biju
-
-> +
-> +	/*
-> +	 * WDTCR
-> +	 * - CKS[7:4] - Clock Division Ratio Select - 0101b: oscclk/256
-> +	 * - RPSS[13:12] - Window Start Position Select - 11b: 100%
-> +	 * - RPES[9:8] - Window End Position Select - 11b: 0%
-> +	 * - TOPS[1:0] - Timeout Period Select - 11b: 16384 cycles (3FFFh)
-> +	 */
-> +	rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_256 | WDTCR_RPSS_100 |
-> +			WDTCR_RPES_0 | WDTCR_TOPS_16384);
-> +
-> +	rzv2h_wdt_ping(wdev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rzv2h_wdt_stop(struct watchdog_device *wdev) {
-> +	struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> +	int ret;
-> +
-> +	ret =3D pm_runtime_put(wdev->parent);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return reset_control_assert(priv->rstc); }
-> +
-> +static const struct watchdog_info rzv2h_wdt_ident =3D {
-> +	.options =3D WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
-> +	.identity =3D "Renesas RZ/V2H WDT Watchdog", };
-> +
-> +static int rzv2h_wdt_restart(struct watchdog_device *wdev,
-> +			     unsigned long action, void *data) {
-> +	if (!watchdog_active(wdev)) {
-> +		struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> +		int ret;
-> +
-> +		ret =3D reset_control_deassert(priv->rstc);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret =3D clk_enable(priv->pclk);
-> +		if (ret) {
-> +			reset_control_assert(priv->rstc);
-> +			return ret;
-> +		}
-> +		ret =3D clk_enable(priv->oscclk);
-> +		if (ret) {
-> +			clk_disable(priv->pclk);
-> +			reset_control_assert(priv->rstc);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * WDTCR
-> +	 * - CKS[7:4] - Clock Division Ratio Select - 0000b: oscclk/1
-> +	 * - RPSS[13:12] - Window Start Position Select - 00b: 25%
-> +	 * - RPES[9:8] - Window End Position Select - 00b: 75%
-> +	 * - TOPS[1:0] - Timeout Period Select - 00b: 1024 cycles (03FFh)
-> +	 */
-> +	rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_1 | WDTCR_RPSS_25 |
-> +			WDTCR_RPES_75 | WDTCR_TOPS_1024);
-> +	rzv2h_wdt_ping(wdev);
-> +
-> +	/* wait for underflow to trigger... */
-> +	mdelay(500);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct watchdog_ops rzv2h_wdt_ops =3D {
-> +	.owner =3D THIS_MODULE,
-> +	.start =3D rzv2h_wdt_start,
-> +	.stop =3D rzv2h_wdt_stop,
-> +	.ping =3D rzv2h_wdt_ping,
-> +	.restart =3D rzv2h_wdt_restart,
-> +};
-> +
-> +static int rzv2h_wdt_probe(struct platform_device *pdev) {
-> +	struct device *dev =3D &pdev->dev;
-> +	struct rzv2h_wdt_priv *priv;
-> +	unsigned long rate;
-> +	int ret;
-> +
-> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->base =3D devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	priv->pclk =3D devm_clk_get_prepared(&pdev->dev, "pclk");
-> +	if (IS_ERR(priv->pclk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(priv->pclk), "no pclk");
-> +
-> +	priv->oscclk =3D devm_clk_get_prepared(&pdev->dev, "oscclk");
-> +	if (IS_ERR(priv->oscclk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(priv->oscclk), "no oscclk");
-> +
-> +	priv->oscclk_rate =3D clk_get_rate(priv->oscclk);
-> +	if (!priv->oscclk_rate)
-> +		return dev_err_probe(&pdev->dev, -EINVAL, "oscclk rate is 0");
-> +
-> +	priv->rstc =3D devm_reset_control_get_exclusive(&pdev->dev, NULL);
-> +	if (IS_ERR(priv->rstc))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(priv->rstc),
-> +				     "failed to get cpg reset");
-> +
-> +	rate =3D priv->oscclk_rate / 256;
-> +	priv->wdev.max_hw_heartbeat_ms =3D (1000 * 16383) / rate;
-> +	dev_dbg(dev, "max hw timeout of %dms\n",
-> +		priv->wdev.max_hw_heartbeat_ms);
-> +
-> +	priv->wdev.min_timeout =3D 1;
-> +	priv->wdev.timeout =3D WDT_DEFAULT_TIMEOUT;
-> +	priv->wdev.info =3D &rzv2h_wdt_ident;
-> +	priv->wdev.ops =3D &rzv2h_wdt_ops;
-> +	priv->wdev.parent =3D dev;
-> +	watchdog_set_drvdata(&priv->wdev, priv);
-> +	watchdog_set_nowayout(&priv->wdev, nowayout);
-> +	watchdog_stop_on_unregister(&priv->wdev);
-> +
-> +	ret =3D watchdog_init_timeout(&priv->wdev, 0, dev);
-> +	if (ret)
-> +		dev_warn(dev, "Specified timeout invalid, using default");
-> +
-> +	ret =3D devm_pm_runtime_enable(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_watchdog_register_device(&pdev->dev, &priv->wdev); }
-> +
-> +static const struct of_device_id rzv2h_wdt_ids[] =3D {
-> +	{ .compatible =3D "renesas,r9a09g057-wdt", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, rzv2h_wdt_ids);
-> +
-> +static struct platform_driver rzv2h_wdt_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "rzv2h_wdt",
-> +		.of_match_table =3D rzv2h_wdt_ids,
-> +	},
-> +	.probe =3D rzv2h_wdt_probe,
-> +};
-> +module_platform_driver(rzv2h_wdt_driver);
-> +MODULE_AUTHOR("Lad Prabhakar
-> +<prabhakar.mahadev-lad.rj@bp.renesas.com>");
-> +MODULE_DESCRIPTION("Renesas RZ/V2H(P) WDT Watchdog Driver");
-> --
-> 2.34.1
+>=20
+>=20
+> Best regards,
+> Krzysztof
 
 
