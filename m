@@ -1,148 +1,128 @@
-Return-Path: <linux-kernel+bounces-244776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF4F92A952
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FEF492A957
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E45B21273
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:54:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF96C1F22661
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD2E14B94E;
-	Mon,  8 Jul 2024 18:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9236014B96A;
+	Mon,  8 Jul 2024 18:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UcQC/9iG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBRBSqI7"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BD514884B;
-	Mon,  8 Jul 2024 18:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3D3143C47;
+	Mon,  8 Jul 2024 18:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720464880; cv=none; b=QvL2mzavfT9jVKtYOj7DcIbysmSVbqZljrymAMdbzEDZzvXVOUovbf8BVq4Y7VNiaEUYhscipceiW/OVI/bGV0heq/U2l/c3HIYVXqeeilQSZb6492vf0/uwbyAOrdpkzTcQywlgDiveJHdV+Zsx/uvogwyGOYanJ5rR5cDPdLw=
+	t=1720464966; cv=none; b=GcLAo3/ilzS7FPBBBMFZioKj2M9cn1Pt92bAXR3+jyZCNvsioWK9DqjUHLMA0OCBvRSif2XcP4bPeiyaJI994pt4E0IEihBW3KrmlzutXqYgStXT3UNHYUYtEfwoqmJEONHcuu9sh5xwdCm89wj/2WsU2Aw4Ic1Pma+htM3oybs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720464880; c=relaxed/simple;
-	bh=RGobAnthjkgsb/QzuzeMGs8pm1LeGhwCVTyS3CsT0Qo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LE2d9yODGsZELlloZdlAJ8l86360+QuXA6QjovFAEUnqV9NpgF2B3OmhYWw4LcDhcrurpUTG7qhxwG3dye1VJ5VfTS3iHe6CwRz/ecambVblxzB/8ZYs37QzDo9O03fiwJDzun9FWOM9hRfH7I/DiMB18fBU+zQEkvn3wm+ax4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UcQC/9iG; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720464879; x=1752000879;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=RGobAnthjkgsb/QzuzeMGs8pm1LeGhwCVTyS3CsT0Qo=;
-  b=UcQC/9iGn8k43t8NzwATs7YuwSs/TQW3SnamfmIeuUs817t9ZrBrfN7/
-   exGuy0QT4KE9YnUX34Trf0/8EJH5u/BS3P83F3kL0yM/xKdvbJtvIhh8K
-   6OLawh6jegv0H51XldX6YYhYYRXU6wrrBQCa5XctlW4QgQBVPhwL3E0bb
-   T/mX6a9tdaEeKm1RRm/M/ov6UjGIkY+qNm1OEzXwdcJg0ZJ5jpOlLTmvp
-   wPDVjraiHgtTNqnBBRZT0BUNC9Uy9Srhsr2UfggotzVtyUko41EExUIC1
-   I9FA7d46Kq8XpoWW7T8tzjCOUjcjT6ml1RGoohOkaRQsUCf+D49NjYyav
-   Q==;
-X-CSE-ConnectionGUID: 12ujBxCORxOIPsVYiSUp4A==
-X-CSE-MsgGUID: BgcurYY5RT+PY8i/t9P6mw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17789384"
-X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
-   d="scan'208";a="17789384"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 11:54:38 -0700
-X-CSE-ConnectionGUID: fQQNpucPQZq/rBYKUn0T5A==
-X-CSE-MsgGUID: E7YIioPMRCuT4dEjJ2sIdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
-   d="scan'208";a="52004138"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa005.fm.intel.com with ESMTP; 08 Jul 2024 11:54:37 -0700
-From: kan.liang@linux.intel.com
-To: acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	peterz@infradead.org,
-	mingo@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: adrian.hunter@intel.com,
-	ak@linux.intel.com,
-	eranian@google.com,
-	Kan Liang <kan.liang@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [RESEND PATCH] perf/x86/intel/uncore: Fix the bits of the CHA extended umask for SPR
-Date: Mon,  8 Jul 2024 11:55:24 -0700
-Message-Id: <20240708185524.1185505-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1720464966; c=relaxed/simple;
+	bh=YBhwDk8+/hN+5WEzRNlXfwzDdZvi/xKGXK5EZzUR9sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KkILDJSWxOfeQOWrAdhX5T1gKp7Cyys+TZg230ObMEMAE6+NCMSenxC+oOZAUaX9c4HU4+ZPUTaoxaoXVlR0SXA6YfyUr6KFTHrF0asgPYPzhm6Ws7vMZbmxPDhB9hoQG+v+FYckF1YxRI/0Sr3npgHeTdDeByYkeRJrprKz+qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBRBSqI7; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-75fe9e62048so2171907a12.0;
+        Mon, 08 Jul 2024 11:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720464965; x=1721069765; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GLQr+BhZ7vYI0wjrn/T3ufkFu6pcWZl0xbw8E+/p0jQ=;
+        b=QBRBSqI7MzpfOD4lMGRDbPFCHadytOtSxuxcha7Y5f11uyHKuSU2x4p9WGUi7oLGRX
+         z0yEuRZ4RjyoikqEKxNfMfv1DRNNJs9NzPQ0+uR3xPJxRwtSfGAg59HQTmE/oZibPyZX
+         5LFr/nTctf94x2HqrSFB/gsoEZpoueHUqMu/16nrGhsCQ4IflMxkEUD6GVtvctcObaRM
+         lODlxVqmWKujDdFcvKhd5NXjBkXmGy0alg0rV+h81iuCO7rTRR6C3rOMrnhUpeU3V4Lu
+         1ZW3JcQM2ZBqjAhRN7taevlt+9mT0XWD0mWF+S1ArQ9jC22MfNgezuDOqtVHq5SquXgx
+         ZK3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720464965; x=1721069765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GLQr+BhZ7vYI0wjrn/T3ufkFu6pcWZl0xbw8E+/p0jQ=;
+        b=PqO2ZU21Tu0CBUSiHhaixWvX9++IGVrGzKpNG7R13Be3hcSNvqSwflMHOdstVNRmz0
+         Cg/Zfc5ImJB16T4N3tNkGXjueSrYBuX80lZHB+Uw14j4B7E5VsYmbCXhLWa5316CsmYv
+         MQcm7tl0Jwm8uNDxKLR21oRURl9MBhUqhg7sV7L3VjSsyfSGx68F5qd6Z69u+NsQy+FT
+         lT8gzRx1XKb4jH9ZBJMXmDNSinyS1hHrbYWeTf5ShH0d2m2uKdyztcd//IiNkNp204kQ
+         dMzWSUJYya4Gq48yn49SIU32W2W0inWL33zD34Cb/NkCtn2BvahM46/zCJXYtxmWd8jH
+         jRiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUN9H7Az9jNftB32mW+FY2embODtGDfBxlby3gni6HnyhMrY7EXwMuEMSGyeLmT6McQo3oe8GWCxTH5ttVagwsdgh44XqEJ0IyyMTk0kQ4SU/mPeduuYIBnfr/NkzeTrazW
+X-Gm-Message-State: AOJu0YwPFVxns2u5MBtLwjA45UiLevzfUdnmkyRwruNT/4+/o31FQvyY
+	+nLDOsN0yyHMY1soEWRLKTbGt9Ld4QIkBIlIz38Q+PR6rOJh4J3P
+X-Google-Smtp-Source: AGHT+IH26Zo8WJAu4rCBLnw9sASpbiPTAVlg6hndnpS6v5JoxYckJeB+RIdcSE0Gno4/9LhfN8w69g==
+X-Received: by 2002:a05:6a20:a112:b0:1c0:f2d9:a453 with SMTP id adf61e73a8af0-1c29820b87fmr362570637.8.1720464964791;
+        Mon, 08 Jul 2024 11:56:04 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab6d0dsm1944165ad.167.2024.07.08.11.56.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 11:56:04 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 8 Jul 2024 08:56:02 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
+	pjt@google.com, derkling@google.com, haoluo@google.com,
+	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
+	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
+	memxor@gmail.com, andrea.righi@canonical.com,
+	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Simplify dl_prio()
+ case handling in sched_fork()
+Message-ID: <Zow2Qls3UF26u5Y1@slm.duckdns.org>
+References: <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
+ <871q4rpi2s.ffs@tglx>
+ <ZnSJ67xyroVUwIna@slm.duckdns.org>
+ <20240624093426.GH31592@noisy.programming.kicks-ass.net>
+ <ZnnUZp-_-igk1E3m@slm.duckdns.org>
+ <ZnncZcJFbN86-b4Y@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnncZcJFbN86-b4Y@slm.duckdns.org>
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Mon, Jun 24, 2024 at 10:51:49AM -1000, Tejun Heo wrote:
+> From: Tejun Heo <tj@kernel.org>
+> 
+> sched_fork() returns with -EAGAIN if dl_prio(@p). a7a9fc549293 ("sched_ext:
+> Add boilerplate for extensible scheduler class") added scx_pre_fork() call
+> before it and then scx_cancel_fork() on the exit path. This is silly as the
+> dl_prio() block can just be moved above the scx_pre_fork() call.
+> 
+> Move the dl_prio() block above the scx_pre_fork() call and remove the now
+> unnecessary scx_cancel_fork() invocation.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: David Vernet <void@manifault.com>
 
-The perf stat errors out with UNC_CHA_TOR_INSERTS.IA_HIT_CXL_ACC_LOCAL
-event.
+Applying to sched_ext/for-6.11.
 
- $perf stat -e uncore_cha_55/event=0x35,umask=0x10c0008101/ -a -- ls
-    event syntax error: '..0x35,umask=0x10c0008101/'
-                                      \___ Bad event or PMU
+Thanks.
 
-The definition of the CHA umask is config:8-15,32-55, which is 32bit.
-However, the umask of the event is bigger than 32bit.
-This is an error in the original uncore spec.
-
-Add a new umask_ext5 for the new CHA umask range.
-
-Fixes: 949b11381f81 ("perf/x86/intel/uncore: Add Sapphire Rapids server CHA support")
-Closes: https://lore.kernel.org/linux-perf-users/alpine.LRH.2.20.2401300733310.11354@Diego/
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: stable@vger.kernel.org
----
- arch/x86/events/intel/uncore_snbep.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index a96496bef678..7924f315269a 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -461,6 +461,7 @@
- #define SPR_UBOX_DID				0x3250
- 
- /* SPR CHA */
-+#define SPR_CHA_EVENT_MASK_EXT			0xffffffff
- #define SPR_CHA_PMON_CTL_TID_EN			(1 << 16)
- #define SPR_CHA_PMON_EVENT_MASK			(SNBEP_PMON_RAW_EVENT_MASK | \
- 						 SPR_CHA_PMON_CTL_TID_EN)
-@@ -477,6 +478,7 @@ DEFINE_UNCORE_FORMAT_ATTR(umask_ext, umask, "config:8-15,32-43,45-55");
- DEFINE_UNCORE_FORMAT_ATTR(umask_ext2, umask, "config:8-15,32-57");
- DEFINE_UNCORE_FORMAT_ATTR(umask_ext3, umask, "config:8-15,32-39");
- DEFINE_UNCORE_FORMAT_ATTR(umask_ext4, umask, "config:8-15,32-55");
-+DEFINE_UNCORE_FORMAT_ATTR(umask_ext5, umask, "config:8-15,32-63");
- DEFINE_UNCORE_FORMAT_ATTR(qor, qor, "config:16");
- DEFINE_UNCORE_FORMAT_ATTR(edge, edge, "config:18");
- DEFINE_UNCORE_FORMAT_ATTR(tid_en, tid_en, "config:19");
-@@ -5957,7 +5959,7 @@ static struct intel_uncore_ops spr_uncore_chabox_ops = {
- 
- static struct attribute *spr_uncore_cha_formats_attr[] = {
- 	&format_attr_event.attr,
--	&format_attr_umask_ext4.attr,
-+	&format_attr_umask_ext5.attr,
- 	&format_attr_tid_en2.attr,
- 	&format_attr_edge.attr,
- 	&format_attr_inv.attr,
-@@ -5993,7 +5995,7 @@ ATTRIBUTE_GROUPS(uncore_alias);
- static struct intel_uncore_type spr_uncore_chabox = {
- 	.name			= "cha",
- 	.event_mask		= SPR_CHA_PMON_EVENT_MASK,
--	.event_mask_ext		= SPR_RAW_EVENT_MASK_EXT,
-+	.event_mask_ext		= SPR_CHA_EVENT_MASK_EXT,
- 	.num_shared_regs	= 1,
- 	.constraints		= skx_uncore_chabox_constraints,
- 	.ops			= &spr_uncore_chabox_ops,
 -- 
-2.35.1
-
+tejun
 
