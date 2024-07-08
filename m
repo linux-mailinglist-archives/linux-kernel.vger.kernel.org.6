@@ -1,122 +1,95 @@
-Return-Path: <linux-kernel+bounces-244232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C8092A13F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:33:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BAB92A13A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3130AB244E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:33:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5DCDB23930
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042737F7F7;
-	Mon,  8 Jul 2024 11:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114F07E56C;
+	Mon,  8 Jul 2024 11:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fRX2I3a0"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+k2dce5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E7178C71;
-	Mon,  8 Jul 2024 11:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AD91DA23;
+	Mon,  8 Jul 2024 11:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720438388; cv=none; b=qEtIbTW9OQ4knCTld/9DnigiIeOPvSgCkfb6Ss2ET3xrs0bQyhPoHot6nSok3puw7dGjY6RLpLZN2ZnfjM7/bVmxLaxTm+6vX/BXYyoNxqJTguyAEg6jaMMQxHA/gsxzuogovowVTVfoNf1WaYGLtrrtDxUqmaJb9/WtEp686wg=
+	t=1720438366; cv=none; b=G7g1x08UfedtYJKuvE8cFSYbjWwD4+qLO46gy2PpAjsHdiJai/DIJaCn67in//gZ0t9DcnQN00r9zL+EKIkkY9s5s2e0aGZWJfQcc87Dcto1tofkCv4EzE9NN/sHuQkFpCUGVdD3bzgPtz7ZH+mWpTC+zFIIfCdzegxf7ByEuXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720438388; c=relaxed/simple;
-	bh=dFFJJG9Tv0yV8hLsrWcb1qsk+IDaWZR+WQxuHjFGonY=;
+	s=arc-20240116; t=1720438366; c=relaxed/simple;
+	bh=TaP69O1AcTHwGGnpWBb+wF1ItMcV2MzDgm63vJ/vqws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WoK6/krTeN2Zqz4ZidD/3O7K8r7SYeo1gZnlVDqvqchsMwb6S3KljpA6KnmnE20nrWzSiS2rVyb1AAiAcacb3KHiGEh5MK+4JXhQbjqn3pHPqo4PJlTD7O2RggmdleYj1cz93YoIwp6m8+9baELQg+6tQKcJ9TXYBHRPT9FlFNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fRX2I3a0; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4D1BE40E019C;
-	Mon,  8 Jul 2024 11:33:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id voEHiw6jkDoV; Mon,  8 Jul 2024 11:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720438378; bh=G5jHbispPX02n3p90WHOG32tsmDkm7uX+JrmT88T9+s=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzgVbywkEVblOBzpNwPLHtbpDmOTvQDYjgnEaDYyGYajRARBxT5w7w9ZXs1+5A1Nc7F5abnUsARxfIt/yIb/OFrjxESQgagbE5YRu/NjmorrrciFmLUaEC+1o+RC5roaqD06Qyiwx4fPvyZIkvHLxlJzrHJU44mq8xwwy0JskMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+k2dce5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E097C116B1;
+	Mon,  8 Jul 2024 11:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720438365;
+	bh=TaP69O1AcTHwGGnpWBb+wF1ItMcV2MzDgm63vJ/vqws=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fRX2I3a0D5ejzfoJtSDRDB6WUlG9gBmRdARteRbHN2PCbBrYqaOf3IhB5gh+f2oBn
-	 eD0p9Q0qTdiAGMnJQPQ2WWeogfJpw93wnh2kXPMHnYVy5qZBbkvUitIVS2N5EKzivq
-	 R6kbrbVuKBuwktrAQ7akOprkDseiC66wSdHVPXF7UTEJtm18LpAp2+3pZphbgn1yPX
-	 ljztvbAwL5sD36u2plJooTfYXEd2WVhxWsf9Q+VgSHFKXzt+HxhC/oQKhXgCjHct+a
-	 5Aj3gPLQigG9RnlTODvQXKP8KmAjRLXVFL9cpFn3njaKvW39MwyRP3adbHGivvUatz
-	 oXE/ceNJo32cqCU6JhzSv2smnwvt0Lyqyui3n3K6OaIobcZrZyN8n5Cx/rA0J6Ecme
-	 ZgfUEHwPqSat6AnON6RHFib/dyQuu4pSA00rFfzKmnmYVwdLZ5dsya03VH44LtnXuB
-	 rJ8hkRlPRF9a6/A5ZHBVvP6Kfc5L9uBVFL1C4+4YXwAABOzDy3XB5eFntucSwaXgpi
-	 nk21tl2O+5Mp9VF66bQr0KJPE7LLLqzA8jHym3bjL/wNplSB4M0GuhBADOENmWiLsS
-	 seSQXUagZTd/q6UDnPcvjA/milU/SfmBISDNJi/jhFE0nZuq+9uQIj2xpO/b60x3Ct
-	 KI3DhxSuSFtws89WfNoUaxZg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2B28640E0192;
-	Mon,  8 Jul 2024 11:32:40 +0000 (UTC)
-Date: Mon, 8 Jul 2024 13:32:34 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>,
-	Daniel Ferguson <danielf@os.amperecomputing.com>,
-	Ard Biesheuvel <ardb@kernel.org>, James Morse <james.morse@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Len Brown <lenb@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Shuai Xue <xueshuai@linux.alibaba.com>, linux-acpi@vger.kernel.org,
-	linux-edac@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] RAS: ACPI: APEI: add conditional compilation to ARM
- error report functions
-Message-ID: <20240708113234.GDZovOUgjXFt2XoNg6@fat_crate.local>
-References: <cover.1720436039.git.mchehab+huawei@kernel.org>
- <f520f2529bb27d452a2dee762b6968939df42f45.1720436039.git.mchehab+huawei@kernel.org>
+	b=t+k2dce5TnT1WRk3788Sn38Aoem0o9jftgrTRomrVEtm0jrcR2nux9hbucmBGK0Oq
+	 JrP+5xcfchMMeZ0Z6tWe2Q2cxWBC3GgHWGoaKeEC7ESFNkWHGsB5VlL5FVe3WbPXqT
+	 e4lBrwFnBqgt4EVl39B96rGiMmmuvp5Li4xaMSS2TiBW61XWd2MvqET+benYLiFrHS
+	 b3VKFcM9CUlPCQFfQ+8IjlfV2Zjlh4JN1jCB4HNt4OX91Yj1GC5/XURSTYUXbt52zy
+	 v8VChEX9QD/X6BpmTr5j1JwDQipXr5DK4AsXkmm6imjZJ6kfWPUvH+fgGrYpCKhvoA
+	 oDBQOzuHf43wg==
+Date: Mon, 8 Jul 2024 12:32:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH] spi: add ch341a usb2spi driver
+Message-ID: <5890754d-50a7-4db6-a33e-bba64ca1389d@sirena.org.uk>
+References: <20240705145138.5827-1-jth@kernel.org>
+ <aa3c79a0-ecbc-4f12-b540-6570350a7909@sirena.org.uk>
+ <8a2467b9-4eb5-4ab4-a4c8-da37875fe4c9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kxlYLbY8/HSZ+yg0"
 Content-Disposition: inline
-In-Reply-To: <f520f2529bb27d452a2dee762b6968939df42f45.1720436039.git.mchehab+huawei@kernel.org>
+In-Reply-To: <8a2467b9-4eb5-4ab4-a4c8-da37875fe4c9@kernel.org>
+X-Cookie: Many are cold, but few are frozen.
 
-On Mon, Jul 08, 2024 at 01:18:10PM +0200, Mauro Carvalho Chehab wrote:
-> From: Daniel Ferguson <danielf@os.amperecomputing.com>
-> 
-> This prevents the unnecessary inclusion of ARM specific RAS error
 
-s/This prevents/Prevent/
+--kxlYLbY8/HSZ+yg0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Avoid having "This patch" or "This commit" or "This does <bla>" in the commit
-message. It is tautologically useless.
+On Mon, Jul 08, 2024 at 10:04:41AM +0200, Johannes Thumshirn wrote:
+> On 05/07/2024 19:41, Mark Brown wrote:
 
-"Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-to do frotz", as if you are giving orders to the codebase to change
-its behaviour."
+> > No validation of speed?
 
-From Documentation/process/submitting-patches.rst
+> TBH I haven't found a command that reads the current settings of the device.
 
-> handling routines in non-ARM platforms.
+Why would reading things from the device be relevant to validating what
+we are writing?
 
-Ok, this does "something". Why does it do it?
+--kxlYLbY8/HSZ+yg0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Otherwise it won't build on other architectures or is it going to cause code
-bloat or why are we doing this?
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Regards/Gruss,
-    Boris.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaLzlkACgkQJNaLcl1U
+h9DnRwf+NTQGAhTVqssU45qKbbkktImuHudAFa8Bjn4ZP1dMFrSJ1ZxxpX6dHi7W
+zRtP/gHvK2WYJ/tXPqvbDKl6qlGzMouUpKQ40pIBZRMNEBsZa+0UWGTIiTz7w+6T
+mJYdjgv/wv8AawKE8+KcSeUCCZVEyPbtb5MerXc5yq328xv8phflMNdg5YTXVKPn
+Sy+hrifX6Q7puMYrJG6vcFdONPWFTswSMrbzY0m8dla/Lvbq7KTzk/HafCRgmwEj
+eoJ+N0K78E5n2CewDY/dHGFZOC+0PsIa7YXrUZoUGiwiwOEyrIpzXqLict4r2SpH
+F93d6xnWNp6isRyDy+MJG1DoD3a0Ow==
+=Vlwg
+-----END PGP SIGNATURE-----
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--kxlYLbY8/HSZ+yg0--
 
