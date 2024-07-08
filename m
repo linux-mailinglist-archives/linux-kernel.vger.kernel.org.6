@@ -1,189 +1,160 @@
-Return-Path: <linux-kernel+bounces-244284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0573E92A22E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:10:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B204792A242
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5412821A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7311F22CA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A85414E2F5;
-	Mon,  8 Jul 2024 12:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fd2xfHsO"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED38823A9;
+	Mon,  8 Jul 2024 12:07:41 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53D514D2A3;
-	Mon,  8 Jul 2024 12:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720440181; cv=fail; b=o/ZWxikE/Sus8vNZ5yEtEyJlizxHrbBcuN3c1D5I01SvpTqCHrKDc/MnRRdvOti3IFw+C21NVLMgdjtwHs+0YerXGIsYH6cluPvb0GC1b2iuF1s8FwJ0zl/3Yry/9YW+KDhhij/Fs799pw9qjL4bWHCDCtfSffdcKIBV3TgR+NA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720440181; c=relaxed/simple;
-	bh=A5VrFzTMxPT0EgZnn+WGlbgID/a3a77z+U7WttivrBw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ewtbQ9BR04Jlv2Mg1/zny1bguLSfYSulAmXGxww1QKQhZEdusrpLniuBi1jnMxa3zHKDElW2dAIaf+w4OSQ3ou48PavSnJB2Nh8Si1Oi1v5zgrYnHDtzASZDpaSl7LPxNrJ6cCBwlxpq7fwy9KkgPS3F3l+BZoYvF6262Hi36ng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fd2xfHsO; arc=fail smtp.client-ip=40.107.223.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZZFvIAdoYcsZaq4CtIfrgvC/UKS5MzlV4tj4ltWdc/YPf00hQJoHJRi16eqxeuhJC9RM9c81ID44dabHEPWxlkL3yJy/4EoWTZRu8+YwoPEbrUfWZZKSDhIDba6YHYlz9mEacTo1XyIbzj5iFmxbHxYz/Q1UzpNg/MbMFgJ1kstwTXSfNstswjOWVQI7i2/RteqOAAIaTws1GC4dtgzv3llSV2FidEFqptUL3kISAfTVnySKCXm3shgCwUNheiR0NABFd3kwurLHqWPftYM2MvNxcBpSFwgxZT4RY7Ey/zgJkiMSnp9xTXVZk6Vp2rFNq7fOI9fX5nLsM2DJugfZoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Q6lmaZBID6zQ2E9GNyKHsYArsrVBmSblcaZV7VcHDo=;
- b=BpImp1B0POFI/+nyBWkw5ewncqEmrhZGZf24uXobayjVMm+9jKjBeHUm/jPFgXgccMIg0kQk636PyH2onXUjXv+jdaBrX6VPZuZFpt4KKdLdYuX2oEqaAs7ArMroZzEBS6dPDmE2KO72ea7zZLggBp3aatXT2cLeqoibnyQGMM2/XqcF9NpIpUuiQpnXxF5ZjMPZHYTbbrEiSBEeKR9WBMhzBOvvHTOh0WF+Mr7pZDWJquqB7WMoqyMrald+8B2Emj6i3vAQ9P8eaYsFllkKuMdrCbRrhQgFTkzuwNMauKaC81LA6y8gZoZo5SivxEd/A7bUP0wH2xn8Zw4+ebCenw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=oracle.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9Q6lmaZBID6zQ2E9GNyKHsYArsrVBmSblcaZV7VcHDo=;
- b=fd2xfHsOOiEDtYDNSptOz80Ihl8ToTSSC4+Lp2sARiCCYZ/DAPHyWm+/09o2C7410yQtqFKRtF9/OjnaPpITgUrv7Y3lPMcvMXJJZDF0yRTvEYsM1RQfeVZEtYgjVhRMAc01tx2rtZ6Kpln4SITZ6q7HTRPNjUkVu4MQnEVUaBNm6XSE4psWJGUrv5t5Q9NKRRaBeUlNevMA+kV3dQy5/14SOhi8r2e3NVzl51MMoAVFtV09OUROnhwDF8mfe0HpkTja9jcZ3DBoXf8sT89CQUJv/1Db31WjQs7VjbzTm5e7+qot5C09l+adkM3cHS1Vshn44ZrJvIWEPBW9ZugYig==
-Received: from MN2PR01CA0016.prod.exchangelabs.com (2603:10b6:208:10c::29) by
- DS7PR12MB5767.namprd12.prod.outlook.com (2603:10b6:8:76::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.42; Mon, 8 Jul 2024 12:02:55 +0000
-Received: from BL6PEPF0001AB71.namprd02.prod.outlook.com
- (2603:10b6:208:10c:cafe::8e) by MN2PR01CA0016.outlook.office365.com
- (2603:10b6:208:10c::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34 via Frontend
- Transport; Mon, 8 Jul 2024 12:02:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB71.mail.protection.outlook.com (10.167.242.164) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7762.17 via Frontend Transport; Mon, 8 Jul 2024 12:02:55 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 8 Jul 2024
- 05:02:35 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 8 Jul 2024
- 05:02:35 -0700
-Received: from dev-l-177.mtl.labs.mlnx (10.127.8.11) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 8 Jul 2024 05:02:32 -0700
-From: Dragos Tatulea <dtatulea@nvidia.com>
-Date: Mon, 8 Jul 2024 15:00:48 +0300
-Subject: [PATCH vhost v3 24/24] vdpa/mlx5: Don't enable non-active VQs in
- .set_vq_ready()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811F380BEC
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720440461; cv=none; b=CyVIdxZlznmyWsZPQtm4UMNANWMCiZJYKjqA96AlRSKVUdBT0wGra5OSsu7T1rw19E0MGY9xfO//N66RegsbBzREBHWaZP/Nl+WWBbQosBKrrQL+B9RE7YVQEbf7p//1NJjw9T5RHADLGbVVTa7nB7MajiuRxf1P0o30LO30IeI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720440461; c=relaxed/simple;
+	bh=io01hl0mtesneL2LZ5G5Ith3zDY7NttBBQHX2oUhV+8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N/RpIZS6O22BOkgbWUqIseuBuf1xEw+LkfmyKs5srDlAMssLMKz+on9ORKlIykVkJ8QfFs6Lz4itl5ZTOxg1kIkdxsGCysxApVBD5fWGL9Io6K9kxABUtzAE3QJZPV5owdIev1mK5gje4LyPaE1Nd3/SE0rvue5JEEo3uPb03LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WHjXt4M1hznYfQ;
+	Mon,  8 Jul 2024 20:07:10 +0800 (CST)
+Received: from kwepemf500005.china.huawei.com (unknown [7.202.181.243])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2B176180AA6;
+	Mon,  8 Jul 2024 20:07:35 +0800 (CST)
+Received: from huawei.com (10.67.174.161) by kwepemf500005.china.huawei.com
+ (7.202.181.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 8 Jul
+ 2024 20:07:34 +0800
+From: Cheng Yu <serein.chengyu@huawei.com>
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>,
+	<changhuaixin@linux.alibaba.com>, <shanpeic@linux.alibaba.com>,
+	<dtcccc@linux.alibaba.com>, <vishalc@linux.ibm.com>, <tj@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <zhangqiao22@huawei.com>, <judy.chenhui@huawei.com>,
+	<yusongping@huawei.com>, <zhaowenhui8@huawei.com>,
+	<serein.chengyu@huawei.com>
+Subject: [PATCH v2] sched/fair: set burst to 0 when remove the restriction on cfs bandwidth
+Date: Mon, 8 Jul 2024 20:00:53 +0800
+Message-ID: <20240708120053.861037-1-serein.chengyu@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20240708-stage-vdpa-vq-precreate-v3-24-afe3c766e393@nvidia.com>
-References: <20240708-stage-vdpa-vq-precreate-v3-0-afe3c766e393@nvidia.com>
-In-Reply-To: <20240708-stage-vdpa-vq-precreate-v3-0-afe3c766e393@nvidia.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?utf-8?q?Eugenio_P=C3=A9rez?=
-	<eperezma@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
-	<leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu
-	<si-wei.liu@oracle.com>
-CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>, Cosmin Ratiu
-	<cratiu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
-X-Mailer: b4 0.13.0
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB71:EE_|DS7PR12MB5767:EE_
-X-MS-Office365-Filtering-Correlation-Id: a759b9cf-1057-4fc8-7a05-08dc9f45e6e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dTRXS3NEdXFTMWcvcGhlZHhNMDVIMU5sTjdGcWcycFRYMDRGdG1HcWRZL29a?=
- =?utf-8?B?RVBDY1p1dVNBMmU4NlluYUxzdVdabUZBS2RzbVgvOC9haUVpYVVzMlZMdEl6?=
- =?utf-8?B?MGwyTkFOSDRQZVlXRzlITjR0OEY2d2QvNW1BUVc5QU82dGx3RktqTnM2cWYz?=
- =?utf-8?B?cEVxbUNVVk03TkV0L0tiSzhjc29MOGdyRUpFN0pTUXlURFBPaWUvb0trbUNa?=
- =?utf-8?B?VFVtaWc2MDBOMmw5bTZVYmNGOG8wSGV2Zm9CaHRjV1RybUtQVjcrdG1UR2hC?=
- =?utf-8?B?c0RYNDIvZi9MMnZad2pZNGQ0Nm5vYVJ1dUVGWk1BN3hTV2VtbXU2dnZBVlF5?=
- =?utf-8?B?Wnlqd1ZVOVBlcHpkRVBXdE5DdGx6YSszaEFGTCtZYW92ZnQ3TFV4NUdOSGhJ?=
- =?utf-8?B?WTcxME43S05GN0Z2Z3lFd3Z4WkhPc1VWRHFVb1VTSGZLdG9QYlNGbmMzbkU4?=
- =?utf-8?B?c3Y5Q0hyc0NCekkraU1yaUM0RXBGdlB1YkZaT2NzUDVBZ1Y5ZWhBUUZkcFlz?=
- =?utf-8?B?cUN0U25zOVpCRGV2UWgzVTRrNWJmcFhYcEtpTFk4QTRjOG83TFA5OTZkdVVF?=
- =?utf-8?B?ZXZxcnB5ek5NQjIvcUdzNHFFMk9tQW1iZkhaUnY4Wk1RbFFxcUcveVlFM1Vh?=
- =?utf-8?B?K2hrMTI4elV6ZGxDSEhaMEJyMlNGMm9LcUIzcGxqdG9aNnprOEU2YVZtelU4?=
- =?utf-8?B?QVRlenptSlZmbkM2T1NTQ0NYeWtUT3dqZ21GbjUvNUJCQzRacjE0V085NW5U?=
- =?utf-8?B?QUFySmZFRm9naVlkZVdydldVZmVVY0htYXU0dnVpbU1mSmxucEFtams0akFo?=
- =?utf-8?B?ZzhMbjYwRjZJd25MK3U2WDVXT3UrZHU3dkpZMlZBTHhDdzRsNktTRWhiK0lo?=
- =?utf-8?B?ZXc2UlZPZit2Z0dCcCtPV2U0am5wWWh6VnVHV3ZvNGQ3L1U0bTNzUlFNVUNV?=
- =?utf-8?B?YmVRdXRJVjlPNHB4QlBYUXVQT3hkVytWakZNcmhzaTFTbFpBSGZMQnZQa0F4?=
- =?utf-8?B?N0xvakczcGU5SXVDbERURDlKK0pHR1k4RnVocWxTdUljUmpxdHZGRlllRXhv?=
- =?utf-8?B?SmNoQU5BMGJveVJEbTBEbjF2eHdTdjZscjdWQTI5TzBMU0FucGFBeHg3OVhk?=
- =?utf-8?B?a1BsTWNrMGF5WG1XWUhGenNDaFI3WGJGNm5JeXFMVjIwb3RLdytBY1NsVmhJ?=
- =?utf-8?B?RVpxeUtXTXpxdmkxeVE5dlEyYkxSVXRiTmZNTy9SSTV3WTdLT0RTZUNmTHBw?=
- =?utf-8?B?cHpqS2pwVk9VYUw3dXhlTWcyVFFiTW81OFNib2QvTGVISTBIVWFIcXZnVTNr?=
- =?utf-8?B?dnRjRTdpRlhjbHJ6U0FuUHdyT3ZITjNrSkEzTEt1bi9kWTNMZk5lcVRsUy92?=
- =?utf-8?B?bTZVazhSN01SdGU2NENDRnAxb25uMXY4YXU2L1dMdTR4YzdTdDZhSS9QYnFv?=
- =?utf-8?B?WGxBUGVtNG8ycHdOREFRbnBXTWxuWW1mSUR3RjJyR2poZzlyTDVKVnZUcmxO?=
- =?utf-8?B?U09KYktZQi9ZVTNDNTdRMmVnZUh4TGhtMkszY0VQV0k0amllempoU2ZrN3kv?=
- =?utf-8?B?T09oRFBrYjRWcG1mNW92T1BzUmpZRXdSdldNQmp3UWxjeGdmaVg3S2hWNkV0?=
- =?utf-8?B?WHQ4QjAzQWVxUklGT0dzRDRrVTljMFE2MUdOQyszeFZod250aDR4dFR3VzFm?=
- =?utf-8?B?bWJjS0phd0xkNDBFNkxGb0xZb01yamdKc3RIa0xaYksrVlNhT2tXU0drSFVN?=
- =?utf-8?B?d2NIY25HZXlGcjVUZmI3enRvbDg1amZnbzJrM2ZwdSt6RW1NeTVYNFpwejI5?=
- =?utf-8?B?VUdZUllpVThkSUgxckQ5VWtUY3dTMzBPQVJoSzJ0cmhSNjhSeUZaOVVBNUZo?=
- =?utf-8?B?OGdZRXV5WUpKaTliNDQxc2k1aHp1QkZ1SlZ2dG5BMTRlYitDczJYRG5nUm1y?=
- =?utf-8?Q?zVpb1eufPMh465YcaHHFlFFEhRvzkqfH?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 12:02:55.2898
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a759b9cf-1057-4fc8-7a05-08dc9f45e6e2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB71.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5767
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemf500005.china.huawei.com (7.202.181.243)
 
-VQ indices in the range [cur_num_qps, max_vqs) represent queues that
-have not yet been activated. .set_vq_ready should not activate these
-VQs.
+From: Zhao Wenhui <zhaowenhui8@huawei.com>
 
-Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
-Acked-by: Eugenio Pérez <eperezma@redhat.com>
-Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+In the cpu subsystem of cgroup v1 and v2, we set the restriction on cfs
+bandwidth by setting the quota and burst value. Later, when we remove
+the restriction by setting the quota to the default value, the burst
+value should also be forced to the its default value of zero.
+
+In the cgroup v1 cpu subsystem, assuming we have a cgroup named 'test',
+and we set cpu.cfs_quota_us and cpu.cfs_burst_us:
+    # echo 100000 > cpu.cfs_quota_us
+    # echo 100000 > cpu.cfs_burst_us
+
+Next we remove the restriction on cfs bandwidth:
+    # echo -1 > cpu.cfs_quota_us
+    # cat cpu.cfs_quota_us
+    -1
+    # cat cpu.cfs_burst_us
+    100000
+
+Now we expect that the value of burst should be zero. When the burst is
+zero, it means that the restriction on burst is removed.
+
+The same situation exists for cgroup v2. The difference is that the
+interface definition of the cpu subsystem and the default value of
+quota. In v2, we remove the restriction on cfs bandwidth by setting max
+to cpu.max.
+
+Fixes: f4183717b370 ("sched/fair: Introduce the burstable CFS controller")
+Reported-by: Zhao Gongyi <zhaogongyi@huawei.com>
+Reported-by: Qixin Liao <liaoqixin@huawei.com>
+Signed-off-by: Zhao Wenhui <zhaowenhui8@huawei.com>
+Signed-off-by: Cheng Yu <serein.chengyu@huawei.com>
+Tested-by: Vishal Chourasia <vishalc@linux.ibm.com>
+Reviewed-by: Tianchen Ding <dtcccc@linux.alibaba.com>
+Reviewed-by: Ben Segall <bsegall@google.com>
 ---
- drivers/vdpa/mlx5/net/mlx5_vnet.c | 3 +++
- 1 file changed, 3 insertions(+)
+Change log:
+----------
+v2:
+ - Put the modifications to cgroup v1 and v2 in one patch
+v1:
+ - patch for cgroup v1:
+   https://lore.kernel.org/all/20220809120320.19496-1-zhaowenhui8@huawei.com/
+ - patchset for cgroup v1 and v2:
+   https://lore.kernel.org/all/20240522031007.643498-1-serein.chengyu@huawei.com/
+---
+ kernel/sched/core.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-index 4e464a22381b..4557b2d29c02 100644
---- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-@@ -1575,6 +1575,9 @@ static int resume_vq(struct mlx5_vdpa_net *ndev, struct mlx5_vdpa_virtqueue *mvq
- 	if (!mvq->initialized)
- 		return 0;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index bcf2c4cc0522..982d357b3983 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -10840,6 +10840,12 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota,
+ 				     burst + quota > max_cfs_runtime))
+ 		return -EINVAL;
  
-+	if (mvq->index >= ndev->cur_num_vqs)
-+		return 0;
++	/*
++	 * Ensure burst equals to zero when quota is -1.
++	 */
++	if (quota == RUNTIME_INF && burst)
++		return -EINVAL;
 +
- 	switch (mvq->fw_state) {
- 	case MLX5_VIRTIO_NET_Q_OBJECT_STATE_INIT:
- 		/* Due to a FW quirk we need to modify the VQ fields first then change state.
-
+ 	/*
+ 	 * Prevent race between setting of cfs_rq->runtime_enabled and
+ 	 * unthrottle_offline_cfs_rqs().
+@@ -10899,8 +10905,10 @@ static int tg_set_cfs_quota(struct task_group *tg, long cfs_quota_us)
+ 
+ 	period = ktime_to_ns(tg->cfs_bandwidth.period);
+ 	burst = tg->cfs_bandwidth.burst;
+-	if (cfs_quota_us < 0)
++	if (cfs_quota_us < 0) {
+ 		quota = RUNTIME_INF;
++		burst = 0;
++	}
+ 	else if ((u64)cfs_quota_us <= U64_MAX / NSEC_PER_USEC)
+ 		quota = (u64)cfs_quota_us * NSEC_PER_USEC;
+ 	else
+@@ -11406,8 +11414,11 @@ static ssize_t cpu_max_write(struct kernfs_open_file *of,
+ 	int ret;
+ 
+ 	ret = cpu_period_quota_parse(buf, &period, &quota);
+-	if (!ret)
++	if (!ret) {
++		if (quota == RUNTIME_INF)
++			burst = 0;
+ 		ret = tg_set_cfs_bandwidth(tg, period, quota, burst);
++	}
+ 	return ret ?: nbytes;
+ }
+ #endif
 -- 
-2.45.2
+2.25.1
 
 
