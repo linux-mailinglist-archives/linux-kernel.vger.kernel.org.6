@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-244539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5092592A5AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:30:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3315B92A5B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF8C9B21451
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBC7B1F21AD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E3713EFF3;
-	Mon,  8 Jul 2024 15:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2187613C3D2;
+	Mon,  8 Jul 2024 15:31:00 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49561EA84
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC25E1E4AD;
+	Mon,  8 Jul 2024 15:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720452640; cv=none; b=JmrYUnFK2Py8Y38FzVcfAnWyJI/5qDo40mCthwjtMlAhD7bTEW/sSToULs47dwg5acCvl79dK00bMOPRd99ult8QkS35A/Jc7ihw4laJo3HflZGZ0P+vk0I6pANUFphimmElb6DyeO3U4dbC3eSK2J76+EpVZs5tknWyj9L031g=
+	t=1720452659; cv=none; b=OkPaoOVvn1poh9RruD7Sm87kIbpJhdEvYybsaBV2sFnPJuHI+KJwYLqTWNvyHz/1/YhLcNdIJCJB0/Sgvw86bRPD3GQcS2Rj4vIXJX+G7hCTd5CxAfJnxd7IkGDznTOqnl/7R+R83hMcyLgF/QFYTC6y34rjKM5U5QfCSqZ6XGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720452640; c=relaxed/simple;
-	bh=dQTtY3SoxZiiFNuasIQ2nT+tyAbwIFDezaf6yGDD4RA=;
+	s=arc-20240116; t=1720452659; c=relaxed/simple;
+	bh=Lwo56LEJ+JzdObtQ/rKRAwmMqlyi5w4m3mqotYQ3LZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcMqoNlmYohaZ2yKE5LeskbWNSTpQ1TItIbSZRRhzCuflaDv68oYcZRWKB6aAjrhf/gjYOUSjtD/lZO9R220cFaSbx4ejXba2Wy77t4tatBI771y/4N5e/tCNIOojdciiv/f7GzqilldjovfA1OXKykb/4Oje6Pr5VR41+hPrSw=
+	 Content-Type:Content-Disposition:In-Reply-To; b=G6/DZkX0ZccI9/uVEi6xgOKCgxZQsQQ1S/QWVxumZR9FcQ1WbTany3LdpYW2slzZtLoThpRT6Z1KGJU9PZN42Nzk3c4LD1BNN9UeLq7n/GpT66838sjQrEnc07hWtKg3UK/e4ESy6vi1hr8PEtnPMUglbD2uvhA4ZldFh+fZut8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EABE21042;
-	Mon,  8 Jul 2024 08:31:02 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0ABAF3F641;
-	Mon,  8 Jul 2024 08:30:35 -0700 (PDT)
-Date: Mon, 8 Jul 2024 16:30:30 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>,
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 080AB1042;
+	Mon,  8 Jul 2024 08:31:22 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6FE03F641;
+	Mon,  8 Jul 2024 08:30:54 -0700 (PDT)
+Date: Mon, 8 Jul 2024 16:30:52 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 0/4] KVM: arm64: Fix underallocation of storage for
- SVE state
-Message-ID: <ZowGFl/1AEuevh96@e133380.arm.com>
-References: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
- <86a5iw3ri2.wl-maz@kernel.org>
- <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
+	Jisheng Zhang <jszhang@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] riscv: uaccess: optimizations
+Message-ID: <ZowGLMX1xpuxlpqA@J2N7QTR9R3>
+References: <20240625040500.1788-1-jszhang@kernel.org>
+ <4d8e0883-6a8c-4eb5-bf61-604e2b98356a@app.fastmail.com>
+ <CAHk-=wjDrx1XW1oEuUap=MN+Ku_FqFXQAwDJhyC5Q1CJkgBbFA@mail.gmail.com>
+ <CAHk-=wiv=9zGSwsu+=tKNgDg8oBUJn_25OEy_0wqO+rvz7p8wg@mail.gmail.com>
+ <20240705112502.GC9231@willie-the-truck>
+ <CAHk-=wgRgDy8_=uZPZr4LRyF7BiN1nDNzUx7iRzrD0g8O+bh3A@mail.gmail.com>
+ <20240708135243.GA11898@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,84 +61,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
+In-Reply-To: <20240708135243.GA11898@willie-the-truck>
 
-Hi all,
-
-On Fri, Jul 05, 2024 at 06:18:50PM +0100, Mark Brown wrote:
-> On Fri, Jul 05, 2024 at 02:20:05PM +0100, Marc Zyngier wrote:
-> > Mark Brown <broonie@kernel.org> wrote:
+On Mon, Jul 08, 2024 at 02:52:43PM +0100, Will Deacon wrote:
+> On Fri, Jul 05, 2024 at 10:58:29AM -0700, Linus Torvalds wrote:
+> > On Fri, 5 Jul 2024 at 04:25, Will Deacon <will@kernel.org> wrote:
+> > So on x86-64, the simple solution is to just say "we know if the top
+> > bit is clear, it cannot ever touch kernel code, and if the top bit is
+> > set we have to make the address fault". So just duplicating the top
+> > bit (with an arithmetic shift) and or'ing it with the low bits, we get
+> > exactly what we want.
+> > 
+> > But my knowledge of arm64 is weak enough that while I am reading
+> > assembly language and I know that instead of the top bit, it's bit55,
+> > I don't know what the actual rules for the translation table registers
+> > are.
+> > 
+> > If the all-bits-set address is guaranteed to always trap, then arm64
+> > could just use the same thing x86 does (just duplicating bit 55
+> > instead of the sign bit)?
 > 
-> > > As observed during review the pKVM support for saving host SVE state is
-> > > broken if an asymmetric system has VLs larger than the maximum shared
-> > > VL, fix this by discovering then using the maximum VL for allocations
-> > > and using RDVL during the save/restore process.
-> 
-> > I really don't see why we need such complexity here.
+> Perhaps we could just force accesses with bit 55 set to the address
+> '1UL << 55'? That should sit slap bang in the middle of the guard
+> region between the TTBRs
 
-The first patch is orthogonal cleanup, and the rest doesn't really add
-complexity IIUC.
+Yep, that'll work until we handle FEAT_D128 where (1UL << 55) will be
+the start of the TTBR1 range in some configurations.
 
-> > Fuad did post something[1] that did the trick with a far less invasive
-> > change, and it really feels like we are putting the complexity at the
-> > wrong place.
-> 
-> > So what's wrong with that approach? I get that you want to shout about
-> > secondary CPUs, but that's an orthogonal problem.
-> 
-> As I've said from a clarity/fragility point of view I'm not happy with
-> configuring the vector length to one value then immediately doing things
-> that assume another value, even if everything is actually lined up
-> in a way that works.  Having uncommented code where you have to go and
-> check correctness when you see it isn't great, seeing an inconsistency
-> just raises alarm bells.  It is much clearer to write the code in a way
-> that makes it obvious that the VL we are using is the one the hardware
-> is using, for the host save/restore reading the actual VL back seemed
-> like the most straightforward way to do that.
-> 
-> A similar thing applies with the enumeration code - like I said in reply
-> to one of Fuad's postings I originally wrote something that's basically
-> the same as the patch Faud posted but because it is not consistent with
-> the surrounding code in how it approaches things it was just raising
-> questions about if the new code was missing something, or if there was
-> some problem that should be addressed in the existing code.  Rather than
-> write an extensive changelog and/or comments covering these
-> considerations it seemed more better to just write the code in a
-> consistent manner so the questions aren't prompted.  Keeping the
-> approach consistent is a bit more code right now but makes the result
-> much easier to reason about.
-> 
-> The late CPUs thing is really just an answer to the initial "why is this
-> different, what might we have missed?" question rather than a particular
-> goal itself.  Adding a warning is as much about documenting the handling
-> of late CPUs as it is about highlighting any unfortunate implementation
-> choices we run into.
-> 
-> Basically it's maintainability concerns, especially with the enumeration
-> code.
+> and I think it would resolve any issues we may have with wrapping. It
+> still means effectively reverting 2305b809be93 ("arm64: uaccess:
+> simplify uaccess_mask_ptr()"), though.
 
-I tend to agree here.
+If we do bring that back, it'd be nice if we could do that without the
+CSEL+CSDB, as the CSDB is liable to be expensive on some parts (e.g.
+it's an alias of DSB on older designs).
 
-It's probably best to stick to one convention everywhere about how the
-SVE regs are laid out for a given VL.  There's nothing wrong with Fuad's
-fixed sve_ffr_offset(), but it's different from the VL-dependent offset
-already used elsewhere and so risks causing confusion further down the
-line.
+> Dunno. Mark, Catalin, what do you guys reckon?
 
+I think there's a slight variant of the x86 approach that might work,
+I've posted in my reply at
 
-One thing confuses me:
+  https://lore.kernel.org/lkml/ZowD3LQT_KTz2g4X@J2N7QTR9R3/
 
-The host could never use over-max VLs except in non-preemptible kernel
-code, since code doing that would be non-migratable to other physical
-CPUs.  This is done to probe SVE only, and the extra bits in the vector
-registers are never used at all.
-
-Can't pKVM just hide the non symmetrically supported VLs using ZCR_EL2,
-just as regular KVM does for the guest?
-
-(I may be making bad assumptions about pKVM's relationship with the host
-kernel.)
-
-Cheers
----Dave
+Mark.
 
