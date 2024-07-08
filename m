@@ -1,217 +1,290 @@
-Return-Path: <linux-kernel+bounces-244222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7891092A0FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:25:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8FB92A11C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8981C20C98
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:25:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12023282FE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDC97CF3E;
-	Mon,  8 Jul 2024 11:24:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553B57BAE7
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 11:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294EF86126;
+	Mon,  8 Jul 2024 11:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AhP/sgOR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375AB81204
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 11:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720437899; cv=none; b=tzLSnRe4bNLsTc++FxibGeOtkwOjsIOrOcHB5lQxmpyCv+v3JRVh1urjPe1biDptzA3MZrxg+4OT70qKVc7XBYSwiBPi1paOhE50RI1ilLkwKheRTBK9tSKH9LPbv5jXWRF9Eie/cOskVkxESADzLC/YXjdveCB3fpiFe2ijS/Q=
+	t=1720437954; cv=none; b=chy191wBgbUvt2KBD2SNRb6c8nHyVudIa/WVQWwY2wKGMemHnZ1bpKfS7bm9ETazmcksHyKKUyVl5V6Dn3AIIg1eJeKi4xRdcRSm4m9xZy3ZWyRvBa+NhKVL6cuuNEWsYkmzYISx8CHMm/2BgqIDNnYhDFEnNGuemevlI/AFm7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720437899; c=relaxed/simple;
-	bh=vCsnIG9iyyxJSFn463wx8Akn0jXBpPBcjIhrlNIw/Dc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=by7rgURkUn8bgnz4zRoqu97nyFYqLankWJj7J4MqvcRqml0nxvTSVVkWlegQdX1bHnzrcMtuVzTNWPYQ/lNDzES9oLuaQC2Xq4kQiu8R+XPxDEQhzsz6yW6TcC/n2QGCBjSypTyNJbVHn94wJcONUNjfQCWyUAn8CDs5wvUyDrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C7191042;
-	Mon,  8 Jul 2024 04:25:20 -0700 (PDT)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FDCB3F641;
-	Mon,  8 Jul 2024 04:24:53 -0700 (PDT)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Barry Song <baohua@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Daniel Gomez <da.gomez@samsung.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH v1] mm: shmem: Rename mTHP shmem counters
-Date: Mon,  8 Jul 2024 12:24:43 +0100
-Message-ID: <20240708112445.2690631-1-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720437954; c=relaxed/simple;
+	bh=wSXAufGS33A+g31uLFNE5gMkFnYRYUjMJqfaxxbqvlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EmQD8rocIDUlHnnp6a0js1TEP7ePLLkkdfr6wX4NoRjlQgHomKnL6MMWuaNwgMQeWiOya1+pnEmIUFHuJzlQbQALDSroSgK22/FZDasrN7NNsrmv9FH0kTWHROpLDq2tc/1pF51/i2u2e4KfINfiS2gi3vg25vlJJukqJXKiPy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AhP/sgOR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720437951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PbjlsnNLRZ3Y3h4bS5hjT+as3LF63nqqhBb1T5h2agU=;
+	b=AhP/sgOR4RG0aO4Hh+ZvnK3lv1TGibiKLbkis8ZJl6ZuvMSlUdE2/+miW/he8DoiVpta+Z
+	DAwHNkcjm89o3bYeRFU0uu/wwsNdR+rNlMR2K7Rr9tLhiPx34O7ix8Z8Qty+ELdAx7jyxK
+	V/oUHWsQrAcWTyxjAUGXJMYWtstrFlo=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-wzaOTSodO9WDre1Xhu6E0A-1; Mon, 08 Jul 2024 07:25:50 -0400
+X-MC-Unique: wzaOTSodO9WDre1Xhu6E0A-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52e9557e312so3512616e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 04:25:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720437948; x=1721042748;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PbjlsnNLRZ3Y3h4bS5hjT+as3LF63nqqhBb1T5h2agU=;
+        b=d5roCXV31oj/5cVnxFAUHh7D4o+lO//hjJBb6YvmS6ndUO3VLGOcokMZBf1rsQ4IT7
+         XtyYMqBCLQ/ckLX7E6G17eHvnO5BfHCY9D6a74yjblqy6f6G0kcpWku7BIiWAtyVmRJM
+         72ccV1VBngdudbsXMDihz33Z3DHkBEmml3SGZB8GrR9o4xPnVoL457sWK+pm6NWUqIKW
+         3Wk2QRAhbkjytiFqHa43gcVZ5APmgbUjp5KCAFyeBheA3wx6QOLdIK/Ki0mPjDwvE4ZR
+         pGZmsqwn10b1SVbVvJ4HO44N0oaCOTn4QY9xPnsZn/OW+I/0pb8nM1SZh0jOZ2+Mm24Q
+         Rmkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcw0SmgNk6x8aoFz0jL78dvrBIT/1iB3XWtjgBSzzm4sZRrqM+4t05+IxMA0szOH5GWmPNqa48OXh+kg43LBep/G2shBX6NLlMnnM1
+X-Gm-Message-State: AOJu0YwMLjIunj2ALF+8xVj6RMknAJptQdPx/VYM+dbTSnJGm/ZgIkZF
+	a9+z8J4oLs3obxrNA94wA50yLRzPI25h0VUW+rG9VTsjTeJ+HsPHSLBHiks2ArQqBiRJZPzyWEF
+	LKxETf5I4XMxGYv13+cZAl4UjHV9QW3quHI7y+XskeLOLpLpjJtIw4kc6wsks3Q==
+X-Received: by 2002:ac2:5dcb:0:b0:52c:dda1:5db1 with SMTP id 2adb3069b0e04-52ea0719788mr6849928e87.67.1720437948512;
+        Mon, 08 Jul 2024 04:25:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4an8RKcAHlkP4SpdhvIfOcH9d3f3yG6Oc24mAEVDoPz82fV114LsKh2i7viRb5K4t/8C0bw==
+X-Received: by 2002:ac2:5dcb:0:b0:52c:dda1:5db1 with SMTP id 2adb3069b0e04-52ea0719788mr6849913e87.67.1720437947876;
+        Mon, 08 Jul 2024 04:25:47 -0700 (PDT)
+Received: from redhat.com ([2.52.29.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2519a4sm160086225e9.35.2024.07.08.04.25.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 04:25:47 -0700 (PDT)
+Date: Mon, 8 Jul 2024 07:25:42 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"xuanzhuo@linux.alibaba.com" <xuanzhuo@linux.alibaba.com>,
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"eperezma@redhat.com" <eperezma@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Cosmin Ratiu <cratiu@nvidia.com>,
+	"jasowang@redhat.com" <jasowang@redhat.com>,
+	"leon@kernel.org" <leon@kernel.org>,
+	"si-wei.liu@oracle.com" <si-wei.liu@oracle.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH vhost 20/23] vdpa/mlx5: Pre-create hardware VQs at vdpa
+ .dev_add time
+Message-ID: <20240708072443-mutt-send-email-mst@kernel.org>
+References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com>
+ <20240617-stage-vdpa-vq-precreate-v1-20-8c0483f0ca2a@nvidia.com>
+ <CAJaqyWd3yiPUMaGEmzgHF-8u+HcqjUxBNB3=Xg6Lon-zYNVCow@mail.gmail.com>
+ <308f90bb505d12e899e3f4515c4abc93c39cfbd5.camel@nvidia.com>
+ <CAJaqyWeHDD0drkAZQqEP_ZfbUPscOmM7T8zXRie5Q14nfAV0sg@mail.gmail.com>
+ <c6dc541919a0cc78521364dbf4db32293cf1071e.camel@nvidia.com>
+ <20240708071005-mutt-send-email-mst@kernel.org>
+ <27ef979aff26d3614091a4b966fc8b1d866e236f.camel@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <27ef979aff26d3614091a4b966fc8b1d866e236f.camel@nvidia.com>
 
-The legacy PMD-sized THP counters at /proc/vmstat include
-thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
-rather confusingly refer to shmem THP and do not include any other types
-of file pages. This is inconsistent since in most other places in the
-kernel, THP counters are explicitly separated for anon, shmem and file
-flavours. However, we are stuck with it since it constitutes a user ABI.
+On Mon, Jul 08, 2024 at 11:17:06AM +0000, Dragos Tatulea wrote:
+> On Mon, 2024-07-08 at 07:11 -0400, Michael S. Tsirkin wrote:
+> > On Mon, Jul 08, 2024 at 11:01:39AM +0000, Dragos Tatulea wrote:
+> > > On Wed, 2024-07-03 at 18:01 +0200, Eugenio Perez Martin wrote:
+> > > > On Wed, Jun 26, 2024 at 11:27 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+> > > > > 
+> > > > > On Wed, 2024-06-19 at 17:54 +0200, Eugenio Perez Martin wrote:
+> > > > > > On Mon, Jun 17, 2024 at 5:09 PM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+> > > > > > > 
+> > > > > > > Currently, hardware VQs are created right when the vdpa device gets into
+> > > > > > > DRIVER_OK state. That is easier because most of the VQ state is known by
+> > > > > > > then.
+> > > > > > > 
+> > > > > > > This patch switches to creating all VQs and their associated resources
+> > > > > > > at device creation time. The motivation is to reduce the vdpa device
+> > > > > > > live migration downtime by moving the expensive operation of creating
+> > > > > > > all the hardware VQs and their associated resources out of downtime on
+> > > > > > > the destination VM.
+> > > > > > > 
+> > > > > > > The VQs are now created in a blank state. The VQ configuration will
+> > > > > > > happen later, on DRIVER_OK. Then the configuration will be applied when
+> > > > > > > the VQs are moved to the Ready state.
+> > > > > > > 
+> > > > > > > When .set_vq_ready() is called on a VQ before DRIVER_OK, special care is
+> > > > > > > needed: now that the VQ is already created a resume_vq() will be
+> > > > > > > triggered too early when no mr has been configured yet. Skip calling
+> > > > > > > resume_vq() in this case, let it be handled during DRIVER_OK.
+> > > > > > > 
+> > > > > > > For virtio-vdpa, the device configuration is done earlier during
+> > > > > > > .vdpa_dev_add() by vdpa_register_device(). Avoid calling
+> > > > > > > setup_vq_resources() a second time in that case.
+> > > > > > > 
+> > > > > > 
+> > > > > > I guess this happens if virtio_vdpa is already loaded, but I cannot
+> > > > > > see how this is different here. Apart from the IOTLB, what else does
+> > > > > > it change from the mlx5_vdpa POV?
+> > > > > > 
+> > > > > I don't understand your question, could you rephrase or provide more context
+> > > > > please?
+> > > > > 
+> > > > 
+> > > > My main point is that the vdpa parent driver should not be able to
+> > > > tell the difference between vhost_vdpa and virtio_vdpa. The only
+> > > > difference I can think of is because of the vhost IOTLB handling.
+> > > > 
+> > > > Do you also observe this behavior if you add the device with "vdpa
+> > > > add" without the virtio_vdpa module loaded, and then modprobe
+> > > > virtio_vdpa?
+> > > > 
+> > > Aah, now I understand what you mean. Indeed in my tests I was loading the
+> > > virtio_vdpa module before adding the device. When doing it the other way around
+> > > the device doesn't get configured during probe.
+> > >  
+> > > 
+> > > > At least the comment should be something in the line of "If we have
+> > > > all the information to initialize the device, pre-warm it here" or
+> > > > similar.
+> > > Makes sense. I will send a v3 with the commit + comment message update.
+> > 
+> > 
+> > Is commit update the only change then?
+> I was planning to drop the paragraph in the commit message (it is confusing) and
+> edit the comment below (scroll down to see which).
+> 
+> Let me know if I should send the v3 or not. I have it prepared.
 
-Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
-anonymous shmem") added equivalent mTHP stats for shmem, keeping the
-same "file_" prefix in the names. But in future, we may want to add
-extra stats to cover actual file pages, at which point, it would all
-become very confusing.
+You can do this but pls document that the only change is in commit log.
 
-So let's take the opportunity to rename these new counters "shmem_"
-before the change makes it upstream and the ABI becomes immutable.
 
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
-
-Hi All,
-
-Applies on top of today's mm-unstable (2073cda629a4) and tested with mm
-selftests; no regressions observed.
-
-The backstory here is that I'd like to introduce some counters for regular file
-folio allocations to observe how often large folio allocation succeeds, but
-these shmem counters are named "file" which is going to make things confusing.
-So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add mTHP
-counters for anonymous shmem") goes upstream (it is currently in mm-stable).
-
-Admittedly, this change means the mTHP stat names are not the same as the legacy
-PMD-size THP names, but I think that's a smaller issue than having "file_" mTHP
-stats that only count shmem, then having to introduce "file2_" or "pgcache_"
-stats for the regular file memory, which is even more inconsistent IMHO. I guess
-the alternative is to count both shmem and file in these mTHP stats (that's how
-they were documented anyway) but I think it's better to be able to consider them
-separately like we do for all the other counters.
-
-Thanks,
-Ryan
-
- Documentation/admin-guide/mm/transhuge.rst | 12 ++++++------
- include/linux/huge_mm.h                    |  6 +++---
- mm/huge_memory.c                           | 12 ++++++------
- mm/shmem.c                                 |  8 ++++----
- 4 files changed, 19 insertions(+), 19 deletions(-)
-
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 747c811ee8f1..8b891689fc13 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -496,16 +496,16 @@ swpout_fallback
- 	Usually because failed to allocate some continuous swap space
- 	for the huge page.
-
--file_alloc
--	is incremented every time a file huge page is successfully
-+shmem_alloc
-+	is incremented every time a shmem huge page is successfully
- 	allocated.
-
--file_fallback
--	is incremented if a file huge page is attempted to be allocated
-+shmem_fallback
-+	is incremented if a shmem huge page is attempted to be allocated
- 	but fails and instead falls back to using small pages.
-
--file_fallback_charge
--	is incremented if a file huge page cannot be charged and instead
-+shmem_fallback_charge
-+	is incremented if a shmem huge page cannot be charged and instead
- 	falls back to using small pages even though the allocation was
- 	successful.
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index acb6ac24a07e..cff002be83eb 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -269,9 +269,9 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
- 	MTHP_STAT_SWPOUT,
- 	MTHP_STAT_SWPOUT_FALLBACK,
--	MTHP_STAT_FILE_ALLOC,
--	MTHP_STAT_FILE_FALLBACK,
--	MTHP_STAT_FILE_FALLBACK_CHARGE,
-+	MTHP_STAT_SHMEM_ALLOC,
-+	MTHP_STAT_SHMEM_FALLBACK,
-+	MTHP_STAT_SHMEM_FALLBACK_CHARGE,
- 	MTHP_STAT_SPLIT,
- 	MTHP_STAT_SPLIT_FAILED,
- 	MTHP_STAT_SPLIT_DEFERRED,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 9ec64aa2be94..f9696c94e211 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
- DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
--DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
--DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
--DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
-+DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
-+DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
-+DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
- DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
- DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
- DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
-@@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] = {
- 	&anon_fault_fallback_charge_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
--	&file_alloc_attr.attr,
--	&file_fallback_attr.attr,
--	&file_fallback_charge_attr.attr,
-+	&shmem_alloc_attr.attr,
-+	&shmem_fallback_attr.attr,
-+	&shmem_fallback_charge_attr.attr,
- 	&split_attr.attr,
- 	&split_failed_attr.attr,
- 	&split_deferred_attr.attr,
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 921d59c3d669..f24dfbd387ba 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 			if (pages == HPAGE_PMD_NR)
- 				count_vm_event(THP_FILE_FALLBACK);
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--			count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
-+			count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
- #endif
- 			order = next_order(&suitable_orders, order);
- 		}
-@@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 				count_vm_event(THP_FILE_FALLBACK_CHARGE);
- 			}
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
--			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK);
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK_CHARGE);
- #endif
- 		}
- 		goto unlock;
-@@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 			if (folio_test_pmd_mappable(folio))
- 				count_vm_event(THP_FILE_ALLOC);
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_ALLOC);
- #endif
- 			goto alloced;
- 		}
---
-2.43.0
+> > 
+> > > > 
+> > > > > Thanks,
+> > > > > Dragos
+> > > > > 
+> > > > > > > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> > > > > > > Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+> > > > > > > ---
+> > > > > > >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 37 ++++++++++++++++++++++++++++++++-----
+> > > > > > >  1 file changed, 32 insertions(+), 5 deletions(-)
+> > > > > > > 
+> > > > > > > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > > > > > > index 249b5afbe34a..b2836fd3d1dd 100644
+> > > > > > > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > > > > > > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > > > > > > @@ -2444,7 +2444,7 @@ static void mlx5_vdpa_set_vq_ready(struct vdpa_device *vdev, u16 idx, bool ready
+> > > > > > >         mvq = &ndev->vqs[idx];
+> > > > > > >         if (!ready) {
+> > > > > > >                 suspend_vq(ndev, mvq);
+> > > > > > > -       } else {
+> > > > > > > +       } else if (mvdev->status & VIRTIO_CONFIG_S_DRIVER_OK) {
+> > > > > > >                 if (resume_vq(ndev, mvq))
+> > > > > > >                         ready = false;
+> > > > > > >         }
+> > > > > > > @@ -3078,10 +3078,18 @@ static void mlx5_vdpa_set_status(struct vdpa_device *vdev, u8 status)
+> > > > > > >                                 goto err_setup;
+> > > > > > >                         }
+> > > > > > >                         register_link_notifier(ndev);
+> > > > > > > -                       err = setup_vq_resources(ndev, true);
+> > > > > > > -                       if (err) {
+> > > > > > > -                               mlx5_vdpa_warn(mvdev, "failed to setup driver\n");
+> > > > > > > -                               goto err_driver;
+> > > > > > > +                       if (ndev->setup) {
+> > > > > > > +                               err = resume_vqs(ndev);
+> > > > > > > +                               if (err) {
+> > > > > > > +                                       mlx5_vdpa_warn(mvdev, "failed to resume VQs\n");
+> > > > > > > +                                       goto err_driver;
+> > > > > > > +                               }
+> > > > > > > +                       } else {
+> > > > > > > +                               err = setup_vq_resources(ndev, true);
+> > > > > > > +                               if (err) {
+> > > > > > > +                                       mlx5_vdpa_warn(mvdev, "failed to setup driver\n");
+> > > > > > > +                                       goto err_driver;
+> > > > > > > +                               }
+> > > > > > >                         }
+> > > > > > >                 } else {
+> > > > > > >                         mlx5_vdpa_warn(mvdev, "did not expect DRIVER_OK to be cleared\n");
+> > > > > > > @@ -3142,6 +3150,7 @@ static int mlx5_vdpa_compat_reset(struct vdpa_device *vdev, u32 flags)
+> > > > > > >                 if (mlx5_vdpa_create_dma_mr(mvdev))
+> > > > > > >                         mlx5_vdpa_warn(mvdev, "create MR failed\n");
+> > > > > > >         }
+> > > > > > > +       setup_vq_resources(ndev, false);
+> > > > > > >         up_write(&ndev->reslock);
+> > > > > > > 
+> > > > > > >         return 0;
+> > > > > > > @@ -3836,8 +3845,21 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
+> > > > > > >                 goto err_reg;
+> > > > > > > 
+> > > > > > >         mgtdev->ndev = ndev;
+> > > > > > > +
+> > > > > > > +       /* For virtio-vdpa, the device was set up during device register. */
+> > > > > > > +       if (ndev->setup)
+> > > > > > > +               return 0;
+> > > > > > > +
+> This comment updated to:
+> 
+> /* The VQs might have been pre-created during device register.
+>  * This happens when virtio_vdpa is loaded before the vdpa device is added.
+>  */
+> 
+> 
+> > > > > > > +       down_write(&ndev->reslock);
+> > > > > > > +       err = setup_vq_resources(ndev, false);
+> > > > > > > +       up_write(&ndev->reslock);
+> > > > > > > +       if (err)
+> > > > > > > +               goto err_setup_vq_res;
+> > > > > > > +
+> > > > > > >         return 0;
+> > > > > > > 
+> > > > > > > +err_setup_vq_res:
+> > > > > > > +       _vdpa_unregister_device(&mvdev->vdev);
+> > > > > > >  err_reg:
+> > > > > > >         destroy_workqueue(mvdev->wq);
+> > > > > > >  err_res2:
+> > > > > > > @@ -3863,6 +3885,11 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_dev *v_mdev, struct vdpa_device *
+> > > > > > > 
+> > > > > > >         unregister_link_notifier(ndev);
+> > > > > > >         _vdpa_unregister_device(dev);
+> > > > > > > +
+> > > > > > > +       down_write(&ndev->reslock);
+> > > > > > > +       teardown_vq_resources(ndev);
+> > > > > > > +       up_write(&ndev->reslock);
+> > > > > > > +
+> > > > > > >         wq = mvdev->wq;
+> > > > > > >         mvdev->wq = NULL;
+> > > > > > >         destroy_workqueue(wq);
+> > > > > > > 
+> > > > > > > --
+> > > > > > > 2.45.1
+> > > > > > > 
+> > > > > > 
+> > > > > 
+> > > > 
+> > > 
+> > 
+> Thanks,
+> Dragos
+> 
 
 
