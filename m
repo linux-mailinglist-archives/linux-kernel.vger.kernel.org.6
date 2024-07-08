@@ -1,86 +1,65 @@
-Return-Path: <linux-kernel+bounces-244420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 243A792A40E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:51:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9631192A419
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C1B1F217DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:51:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30F26B22106
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F0C132121;
-	Mon,  8 Jul 2024 13:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F167413AD07;
+	Mon,  8 Jul 2024 13:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S26sOscc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKOWXfac"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5593C5381B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425171B970;
+	Mon,  8 Jul 2024 13:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446678; cv=none; b=TyHvJMntRGDFtJ9npAPkVYi5ICG6/yv5txhMt5pZ9wkO4oaaBs02WGuVkVCTmquPcKc8mEy7uMiOm0gFmm7+tnSCefNpGPb+skE2FCdCZraJZRJQcmHj64kcqWCMH7OgiIvZvgvb1wlx7jXJNtGU8hkM0FCG35hBuSKXCLSEZQM=
+	t=1720446769; cv=none; b=ptERqDGIdB4ar3tij/E80ApKJn6Y8NS3q3urYawBrN6RgTe8vSJRRdTWXE6vyacqf8T/EiyfhxSxkE81uFyedKgXqixttjS7On2eu0i3Z0GMK1wrVX1Gj9kTtMOHcNKZa7EDHW+WImHtbRhfNLbDl7/yd4zSF1Ob1qt6gNpbw+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446678; c=relaxed/simple;
-	bh=pWko05GGof4j2Z/fCXj05ykEWE4MVmDniId2gQhLqWg=;
+	s=arc-20240116; t=1720446769; c=relaxed/simple;
+	bh=qJjk7aS0JUEnJMP/IcWZ9dq3cQUIML8i3O7nI1+q8P0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gCsnqL+kSbFsq0ai1N7T3t7WZNg4a35J6vNPmkdWtzZm8UvQg2dh568pfAlPPBhdChp7Uecu9kDP/jxz4gTMl3MmsdTOQ3HaP9xTE2mCmNAfO2vA2FdmghB76qZJHT6Kqgg+P0GDXQCOYxnDT0noNuPLd6M5NQJe4WYRHObLb8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S26sOscc; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720446678; x=1751982678;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pWko05GGof4j2Z/fCXj05ykEWE4MVmDniId2gQhLqWg=;
-  b=S26sOscckzjEN++Yh39sGbdJi1NjTX90YUTxnGvQXzR8GExJJnMMLN4e
-   QtzdRyAdK3sJtGOwkLD8N1aBtttzRZVX6Y0LG+ZEz93nUPoopihDNXlms
-   b6pZgCpG+jE6idKeJ5rm6mw04iDqkRXyIQa7sCF9nZ51a6ipshdn9ghnz
-   w6/sZtHceBYZEkj3Sr5dWiM5RfXFR8oYYpkKjFve+LT7S56amx+EwGIxr
-   0LbPKgFuolOoCF5GHil+IqFXM5crvxNh+5bKwqSF/gXAgZ2pM/3JZAMA8
-   5BUWZUpvpGCcRqZJD2pN3h7uCk7Mqh//tkj06hBD0xkP2F9gHpMh6cD69
-   g==;
-X-CSE-ConnectionGUID: FNRS86EqT0i3akdriFNvdQ==
-X-CSE-MsgGUID: fxILOCybR46aobxAA6+vbw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="20548791"
-X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
-   d="scan'208";a="20548791"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 06:51:17 -0700
-X-CSE-ConnectionGUID: 6UCAwG2CSB+EgeDtur6MlQ==
-X-CSE-MsgGUID: MjDdKtFgQe6Sv2NLZ2LUjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
-   d="scan'208";a="47281776"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 08 Jul 2024 06:51:13 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id DFC8E1AC; Mon, 08 Jul 2024 16:51:12 +0300 (EEST)
-Date: Mon, 8 Jul 2024 16:51:12 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Dexuan Cui <decui@microsoft.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Michael Kelley <mikelley@microsoft.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/tdx: Fix crash on kexec
-Message-ID: <xa4zdohlxg2xeq3qjpaeycd5ixpkm3b4bjwm6mcoore6dfhiqt@xxbajpzq24je>
-References: <20240629130621.1671544-1-kirill.shutemov@linux.intel.com>
- <20240629135933.GAZoATRVAubo7ZDdKB@fat_crate.local>
- <poxeykijyqrz5hxrey46s6hh2qd6byirbevwuwec2gtbfq266c@npegk7sn3ot7>
- <SA1PR21MB1317A2E38083B300256AD5F1BFD12@SA1PR21MB1317.namprd21.prod.outlook.com>
- <20240629194103.GCZoBjTzC4m9a9yw1k@fat_crate.local>
- <SA1PR21MB1317B5850E4274CC31EDFBF8BFDD2@SA1PR21MB1317.namprd21.prod.outlook.com>
- <nx7jjplwvtmxsq675omsi5hc5oxceiffpmkqx754azuv7ee2zh@7fttse2hssti>
- <SA1PR21MB131745AD18D9E91D2ACA1964BFDE2@SA1PR21MB1317.namprd21.prod.outlook.com>
- <uewczuxr5foiwe6wklhcgzi6ejfwgacxxoa67xadey62s46yro@quwpodezpxh5>
- <20240708133242.GCZovqepGsDSL72tjZ@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCiBVYKlwKNhl79kz/xBHOr1c+ew5JkbKshAYgosofkT9XY3+ecAvBGowQIO7huu7NQBCsqygQUa9mp7+ZfGb+2freNuSaFz7AFNPgF2v5mORRAz3vLgmvb5AbgrZq1LGTx44obXErizXmlw9UKsE/rRNUf+hkFfVjtY+tk2HnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKOWXfac; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227D1C116B1;
+	Mon,  8 Jul 2024 13:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720446769;
+	bh=qJjk7aS0JUEnJMP/IcWZ9dq3cQUIML8i3O7nI1+q8P0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qKOWXfacIrPrjs2mon60OPe2CAMWqCusXuoaliTMaI325BnUCgl9hc5oob0h09FWR
+	 jjyYxiEvlkELFtVjm3YJU1WlPCoh83j+jZ3xL17MvSOcVW9HLkTGyWCkOGyyuJNbPG
+	 53WtcqAy993FpNvze6amPwB5XEsLsaseHL3faBpjJzL/r8PubXnVB0NxZdPUqVI8Wc
+	 BtsebfusN4LQesQR3TIag4Qn6NyXu5p3FRSwshiI/UdqC3n3I5/f5IWcD6ZKxMSzjd
+	 xtCj7BiwoBSqIwzBezL+Icfwn7CMdzDoxdQJse5tTXiKBtJS3JElicOHs98XHSTfo3
+	 Xf+TLZJmO4kyw==
+Date: Mon, 8 Jul 2024 14:52:43 +0100
+From: Will Deacon <will@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com
+Subject: Re: [PATCH 0/4] riscv: uaccess: optimizations
+Message-ID: <20240708135243.GA11898@willie-the-truck>
+References: <20240625040500.1788-1-jszhang@kernel.org>
+ <4d8e0883-6a8c-4eb5-bf61-604e2b98356a@app.fastmail.com>
+ <CAHk-=wjDrx1XW1oEuUap=MN+Ku_FqFXQAwDJhyC5Q1CJkgBbFA@mail.gmail.com>
+ <CAHk-=wiv=9zGSwsu+=tKNgDg8oBUJn_25OEy_0wqO+rvz7p8wg@mail.gmail.com>
+ <20240705112502.GC9231@willie-the-truck>
+ <CAHk-=wgRgDy8_=uZPZr4LRyF7BiN1nDNzUx7iRzrD0g8O+bh3A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,16 +68,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240708133242.GCZovqepGsDSL72tjZ@fat_crate.local>
+In-Reply-To: <CAHk-=wgRgDy8_=uZPZr4LRyF7BiN1nDNzUx7iRzrD0g8O+bh3A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Jul 08, 2024 at 03:32:42PM +0200, Borislav Petkov wrote:
-> On Mon, Jul 08, 2024 at 03:34:34PM +0300, Kirill A. Shutemov wrote:
-> > Borislav, could you drop the original patch from tip tree?
+On Fri, Jul 05, 2024 at 10:58:29AM -0700, Linus Torvalds wrote:
+> On Fri, 5 Jul 2024 at 04:25, Will Deacon <will@kernel.org> wrote:
+> >
+> > we'd probably want to use an address that lives between the two TTBRs
+> > (i.e. in the "guard region" you mentioned above), just in case somebody
+> > has fscked around with /proc/sys/vm/mmap_min_addr.
 > 
-> Long gone already.
+> Yes, I don't want to use a NULL pointer and rely on mmap_min_addr.
+> 
+> For x86-64, we have two "guard regions" that can be used to generate
+> an address that is guaranteed to fault:
+> 
+>  - the kernel always lives in the "top bit set" part of the address
+> space (and any address tagging bits don't touch that part), and does
+> not map the highest virtual address because that's used for error
+> pointers, so the "all bits set" address always faults
+> 
+>  - the region between valid user addresses and kernel addresses is
+> also always going to fault, and we don't have them adjacent to each
+> other (unlike, for example, 32-bit i386, where the kernel address
+> space is directly adjacent to the top of user addresses)
 
-Hm. I still see it in tip/x86/cc branch which is merged in tip/master.
+I think we're very similar on arm64. The kernel lives at the top (i.e.
+virtual address space descends below 0) and is mapped by TTBR1.
+Userspace lives at the bottom (i.e. virtual address space ascends from
+0) and is mapped by TTBR0. There's an unaddressable gap in the middle
+and it's bit 55 of the address which determines user vs kernel (well, it
+selects the TTBR to be precise).
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+The kernel doesn't map the top 8MiB of its VA space, although talking to
+Mark, it sounds like we might not be as robust as x86 if there's a stray
+dereference of an unaligned error pointer that straddles 0. He can
+elaborate, but we probably can't rely on a pointer of all-ones faulting
+safely for the same reason.
+
+> So on x86-64, the simple solution is to just say "we know if the top
+> bit is clear, it cannot ever touch kernel code, and if the top bit is
+> set we have to make the address fault". So just duplicating the top
+> bit (with an arithmetic shift) and or'ing it with the low bits, we get
+> exactly what we want.
+> 
+> But my knowledge of arm64 is weak enough that while I am reading
+> assembly language and I know that instead of the top bit, it's bit55,
+> I don't know what the actual rules for the translation table registers
+> are.
+> 
+> If the all-bits-set address is guaranteed to always trap, then arm64
+> could just use the same thing x86 does (just duplicating bit 55
+> instead of the sign bit)?
+
+Perhaps we could just force accesses with bit 55 set to the address
+'1UL << 55'? That should sit slap bang in the middle of the guard
+region between the TTBRs and I think it would resolve any issues we may
+have with wrapping. It still means effectively reverting 2305b809be93
+("arm64: uaccess: simplify uaccess_mask_ptr()"), though.
+
+Dunno. Mark, Catalin, what do you guys reckon?
+
+Will
 
