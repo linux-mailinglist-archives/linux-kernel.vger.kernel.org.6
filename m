@@ -1,97 +1,104 @@
-Return-Path: <linux-kernel+bounces-244421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A239692A411
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:51:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243A792A40E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584361F22259
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:51:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C1B1F217DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6EC13C67D;
-	Mon,  8 Jul 2024 13:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F0C132121;
+	Mon,  8 Jul 2024 13:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Ltc/kfe5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S26sOscc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89E713A3FF;
-	Mon,  8 Jul 2024 13:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5593C5381B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446686; cv=none; b=jG4O44GrUUS1Ikh0T2QVDv+caRwUueWWV+lCw3IB3ivwOUOXx47b6W7SvtWS60T5d6TKMxbzEVwqNsZuvHHcWzeZp4PyEvdGqwVWO3y4gcgsYVyFZ4aLkb2JcIIXhkovpKb4F0X+NxaeuM9L7l3flpcIr9LdCX69HmjmbZWDhYQ=
+	t=1720446678; cv=none; b=TyHvJMntRGDFtJ9npAPkVYi5ICG6/yv5txhMt5pZ9wkO4oaaBs02WGuVkVCTmquPcKc8mEy7uMiOm0gFmm7+tnSCefNpGPb+skE2FCdCZraJZRJQcmHj64kcqWCMH7OgiIvZvgvb1wlx7jXJNtGU8hkM0FCG35hBuSKXCLSEZQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446686; c=relaxed/simple;
-	bh=G87kDnZnqvGSMs4uyhWZ60F6IU9JHQtUsJOPR1HoP5Q=;
+	s=arc-20240116; t=1720446678; c=relaxed/simple;
+	bh=pWko05GGof4j2Z/fCXj05ykEWE4MVmDniId2gQhLqWg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bQUf8Q8Jikni7d9Cd5X0vyA/QEyszSbAXYksJVf8+hbuNZpaTMWwURpkdNPR5+TY62L1j9JbD/RTKZ4ZPAZwUSnskUiVDpsrSF3KQ/oUn+JMX+YO37AxP6wkjw+o/kq3hMb8zS4LTUpxjQA3BzTHnwBpb6oEmoxdn4+FYHcDQ4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Ltc/kfe5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D134FC116B1;
-	Mon,  8 Jul 2024 13:51:23 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Ltc/kfe5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720446682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wmWJs2g1W7bIdx4gchsYMHASAqH5Nl1Wal5e/OBuZ4E=;
-	b=Ltc/kfe55weFCdOPd0v5+eIU/rru8g1L280RLc2zXVS6Gdi2G5cohudgE4+0timl4c4NpZ
-	Sk6U7XWXuosGL3CAcmi9GVlppDikr4+SBsuWnFkL8ljOP1yXMGhK/dY+nnIxyUlybiKT1s
-	sJy1/yE9zue6HOFfwY78jZt9CLz7nyE=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 173f7d39 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 8 Jul 2024 13:51:20 +0000 (UTC)
-Date: Mon, 8 Jul 2024 15:50:57 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, tglx@linutronix.de,
-	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
-	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
- lazily freeable mappings
-Message-ID: <Zovuwesu_RaSixe6@zx2c4.com>
-References: <20240707002658.1917440-1-Jason@zx2c4.com>
- <20240707002658.1917440-2-Jason@zx2c4.com>
- <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
- <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
- <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
- <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
- <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
- <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gCsnqL+kSbFsq0ai1N7T3t7WZNg4a35J6vNPmkdWtzZm8UvQg2dh568pfAlPPBhdChp7Uecu9kDP/jxz4gTMl3MmsdTOQ3HaP9xTE2mCmNAfO2vA2FdmghB76qZJHT6Kqgg+P0GDXQCOYxnDT0noNuPLd6M5NQJe4WYRHObLb8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S26sOscc; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720446678; x=1751982678;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pWko05GGof4j2Z/fCXj05ykEWE4MVmDniId2gQhLqWg=;
+  b=S26sOscckzjEN++Yh39sGbdJi1NjTX90YUTxnGvQXzR8GExJJnMMLN4e
+   QtzdRyAdK3sJtGOwkLD8N1aBtttzRZVX6Y0LG+ZEz93nUPoopihDNXlms
+   b6pZgCpG+jE6idKeJ5rm6mw04iDqkRXyIQa7sCF9nZ51a6ipshdn9ghnz
+   w6/sZtHceBYZEkj3Sr5dWiM5RfXFR8oYYpkKjFve+LT7S56amx+EwGIxr
+   0LbPKgFuolOoCF5GHil+IqFXM5crvxNh+5bKwqSF/gXAgZ2pM/3JZAMA8
+   5BUWZUpvpGCcRqZJD2pN3h7uCk7Mqh//tkj06hBD0xkP2F9gHpMh6cD69
+   g==;
+X-CSE-ConnectionGUID: FNRS86EqT0i3akdriFNvdQ==
+X-CSE-MsgGUID: fxILOCybR46aobxAA6+vbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="20548791"
+X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
+   d="scan'208";a="20548791"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 06:51:17 -0700
+X-CSE-ConnectionGUID: 6UCAwG2CSB+EgeDtur6MlQ==
+X-CSE-MsgGUID: MjDdKtFgQe6Sv2NLZ2LUjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
+   d="scan'208";a="47281776"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 08 Jul 2024 06:51:13 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id DFC8E1AC; Mon, 08 Jul 2024 16:51:12 +0300 (EEST)
+Date: Mon, 8 Jul 2024 16:51:12 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Dexuan Cui <decui@microsoft.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Michael Kelley <mikelley@microsoft.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/tdx: Fix crash on kexec
+Message-ID: <xa4zdohlxg2xeq3qjpaeycd5ixpkm3b4bjwm6mcoore6dfhiqt@xxbajpzq24je>
+References: <20240629130621.1671544-1-kirill.shutemov@linux.intel.com>
+ <20240629135933.GAZoATRVAubo7ZDdKB@fat_crate.local>
+ <poxeykijyqrz5hxrey46s6hh2qd6byirbevwuwec2gtbfq266c@npegk7sn3ot7>
+ <SA1PR21MB1317A2E38083B300256AD5F1BFD12@SA1PR21MB1317.namprd21.prod.outlook.com>
+ <20240629194103.GCZoBjTzC4m9a9yw1k@fat_crate.local>
+ <SA1PR21MB1317B5850E4274CC31EDFBF8BFDD2@SA1PR21MB1317.namprd21.prod.outlook.com>
+ <nx7jjplwvtmxsq675omsi5hc5oxceiffpmkqx754azuv7ee2zh@7fttse2hssti>
+ <SA1PR21MB131745AD18D9E91D2ACA1964BFDE2@SA1PR21MB1317.namprd21.prod.outlook.com>
+ <uewczuxr5foiwe6wklhcgzi6ejfwgacxxoa67xadey62s46yro@quwpodezpxh5>
+ <20240708133242.GCZovqepGsDSL72tjZ@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+In-Reply-To: <20240708133242.GCZovqepGsDSL72tjZ@fat_crate.local>
 
-Hi Linus,
+On Mon, Jul 08, 2024 at 03:32:42PM +0200, Borislav Petkov wrote:
+> On Mon, Jul 08, 2024 at 03:34:34PM +0300, Kirill A. Shutemov wrote:
+> > Borislav, could you drop the original patch from tip tree?
+> 
+> Long gone already.
 
-On Sun, Jul 07, 2024 at 05:08:29PM -0700, Linus Torvalds wrote:
->    +                    vm_flags |= VM_DROPPABLE;
->    +                    vm_flags |= VM_WIPEONFORK | VM_DONTDUMP;
-> which looks rather simple.
+Hm. I still see it in tip/x86/cc branch which is merged in tip/master.
 
-That is nice, though I would add that if we're implying things that are
-sensible to imply, it really also needs to add VM_NORESERVE too.
-DROPPABLE doesn't make sense semantically without it.
-
-Anyway, rather than adding PROT_xyz for v+1, I'll try adding this
-MAP_DROPPABLE (or a different name for David) with the implications as
-you've suggested.
-
-Jason
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
