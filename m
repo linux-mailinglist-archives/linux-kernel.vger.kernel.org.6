@@ -1,175 +1,141 @@
-Return-Path: <linux-kernel+bounces-243846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B3AA929B83
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:20:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6B4929B85
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3CEB20B7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:20:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52BA1F2162F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F0FC2FC;
-	Mon,  8 Jul 2024 05:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9A313AF9;
+	Mon,  8 Jul 2024 05:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="WnsO9vuh"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bgsJegKJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Rg6wh3yg"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74E36FCC;
-	Mon,  8 Jul 2024 05:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C03C12E48;
+	Mon,  8 Jul 2024 05:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720416029; cv=none; b=rX4rh5sC9VPFURb7PljYZ12cxenoTx+m16LcrrVwD5iEiv2HjzbvtYdhNwOwakUHBT0lb2RW63W2I8BUgaAJCt788MBAgq902+ry0e8EuH2IlJn2hwu1UDxQpYKEc7ZmgIDlGdhx1leGein6OlpdCDlb5Vmk+Zv9uhGostiM0C0=
+	t=1720416089; cv=none; b=FVbvcX5NHNr1ohjDXVxycj/lRXzlIGx7G48kyD8asHKb3WKL9xpIPlYPFVQ2BfDb+jjAbCv+JzT4EP4EzO6oXKxebXxgMVsPRen8JxseqKzgzILEpn20WcAT0BfIrYtGqtwN0YOnqFhRFM86qKsAL590cLo8XDJxxvU+UIzYOr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720416029; c=relaxed/simple;
-	bh=GckL64D37jrZIlvJDo0KtMZP1iFZsTMxQ7mIvSziZnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cJzuoE3iQUlCWJaxrWZPKRBRDwg1w2xGkGpwTWkmfOG14CnePTPWAaPWi3LVSMQl7qhjvPH/zKuZjjNsvqkZQTqngYVvxFG1YmN9dnJd2P4ww1W1cFRU76I/jyrNS+FYNH9WDgK78RAwNJLLAQ7twv+F1WCGxllvc7KqYQDkIBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=WnsO9vuh; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1720416012; x=1721020812; i=quwenruo.btrfs@gmx.com;
-	bh=xh1PC1KpvsfDiu3WYc24IbhjgduzYppmOJMHenWUC68=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WnsO9vuh+b90gj7H1I+rpl8oBonOjtWk6IgUE4MpoKXc8rzT2XrsY4Eo5NsNIgY7
-	 22DdGZvHi+ADpa0/cqXUvmQStcRiJMqWXxp/BT+NdSj3s3k6rt7pokr0Kgr0PHiP3
-	 XF6BIoJ9U0LjAAKYr/dxxZIUGDeJQd7YWF3Ak3y9Jh0EqX1RBh3tY+M8PZciLtIQu
-	 9n5ZKdRnlftkh3O2ikf8B6wO2tsWossNGNSba8h5XLroxe4kTjYbOxh2+mTQd1tAV
-	 uuM6oCNAMoZn+r4IaeKR0z0p5OBnS3b3/0unYv9WUhFe9Eha8X1ZettprTER/+lU6
-	 4nOz7V0rCHhkX12cBA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MLiCu-1siDgB3y1g-00Ys8D; Mon, 08
- Jul 2024 07:20:12 +0200
-Message-ID: <ecd368a8-2582-4d23-a89d-549abb8c4902@gmx.com>
-Date: Mon, 8 Jul 2024 14:50:07 +0930
+	s=arc-20240116; t=1720416089; c=relaxed/simple;
+	bh=D+YA0EdV8mwqi8DbHhgLkiqZ4m1XY/+zf+eyz01wBAI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Jz46zYgDuyrRCxPu6zy66QDggLuj8d2v2SXKj7+O3oEbDaHOzZRVVTqaFUW5wnDjFpyRoVxEe3v+MjPbTuRyP4/69mJD+cEKhbSvY5Q7CtH+RyVZbb8F/z8/4bvYTQo5zJDabh0/QSUVIOnnsTpJDTMMrDJfqstP1nGS7e/5qRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bgsJegKJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Rg6wh3yg; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 39BFA1380630;
+	Mon,  8 Jul 2024 01:21:25 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 08 Jul 2024 01:21:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720416085; x=1720502485; bh=9cw3liCa6J
+	OsDHRRWnPpBkVEUBgrmVrocIAJhOArXc0=; b=bgsJegKJQtUX4O+YwZBoocDCZ6
+	V2F49kfn1XQjFQxutRlp/HdyI7jCRhLB2PniU9qy4gg6Y5bCFeEAXL8SGTW18Azw
+	JYvDa6snBN6rAwMsWbxdGdt+oX5hxOxR3hEaQjxBr6k2NqV5mEf0vsDDHtI6eYrO
+	g8MXfcHXJzixAac5zVknYJ3w0v2Vj3XW03OVKRPLhh4SH1g2hbelI3dps+aSDot5
+	hAelZzi/l/+WwWKfbtcHwrcUmuyPVHM9hzzlyC18yJ6dIdmLboRKVP03YZI/VxRH
+	VdSziY1n0gEQzkwLWzuGeso8XLeKR15WBlP0P6QodTxEe3jllZdKEpz3Vd0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720416085; x=1720502485; bh=9cw3liCa6JOsDHRRWnPpBkVEUBgr
+	mVrocIAJhOArXc0=; b=Rg6wh3ygiXlKw5cMykah+BB3buiJXWN1/bxJjbSUtkvH
+	F2FLx7jgPssSfcyB+tdshnjq7GKrvnONTyE/cgM5fVYzJM+Py2eKs0+OLDYd6wtq
+	FDduAyQoZHvnBANL3EQSPYzenEzAZmsOgAIfMjaFiLD0Xp/yN8DdsUWBdTQbFjmJ
+	knD1YymeorefaZfh5dpGNtO3TOD4aa0Pi/W0f68DtMgoIRjx8qYYstHcbrxXBtkl
+	11WmJaFQVdVKFXvNrcY+AAi+frts2sti9rAmZuoj+AQxC6eni+3i9Vb1TyWEyQcU
+	rtGb8HN3JuGLoEkxbj1YqXzBK1MkavOwHYYSZez9wA==
+X-ME-Sender: <xms:U3eLZjS2HvC3YeYtZ2CyihkvG-USKvHruVlnDzpcQyyWG8-9xcfKCQ>
+    <xme:U3eLZkxorCyx9VjGvFWwr5bcWE89A2yizFM8gEEci5lfuU-hgBeu2-XkFK0fL7OQA
+    VSsHdne_N6xpPHBeHQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeigdeliecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:VHeLZo0IjfBFyeOSniCX5pKiV9LCw6pEGP88OsCKSJo5N8mO7qGmCw>
+    <xmx:VHeLZjC-mo7oKSmwuoPLw3hzhZbKBYp2iqj-c1cgaC89OP2BrwGfAQ>
+    <xmx:VHeLZsjeRe8wWEhEb8Bna0xFYutsCOzo4_8lUTaueiIX9XFqyu8pgA>
+    <xmx:VHeLZnonLvj0tp2X132j89X6g0xiEtKJSp-Gpni4pLUwB1WUNVUILQ>
+    <xmx:VXeLZltCwghKpDk280Q6cEc8zxM4b8M3yRyHDX8UtsP9hRIEwPj6n4Mq>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id DEA44B6008F; Mon,  8 Jul 2024 01:21:23 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/7] btrfs: split RAID stripes on deletion
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
- Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240705-b4-rst-updates-v4-0-f3eed3f2cfad@kernel.org>
- <20240705-b4-rst-updates-v4-3-f3eed3f2cfad@kernel.org>
- <e0041c2d-f888-41cb-adb8-52c82ca0d03f@gmx.com>
- <e3927e86-d85e-4003-9ce5-e9e88741afa3@wdc.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <e3927e86-d85e-4003-9ce5-e9e88741afa3@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HPL/K+hCXncaMbuI5AbXTGUtBZX6CYPY7mmBYaMYTMHcq9AIG29
- tCThzsFrBY3hXlzVM6PA0r1NfPsdT15xClFkkbeyIo6R+cOh/cs94T9G/+LSBHYl6OyFR2v
- H+jf4M4gtZz7FJWQ28MX95DCDKVo+V4H4y3jadjjBbN185i6B5WhEzYs+oAHqI2uwrwZui9
- 3CLuMTDeeAE2dcLaZ3vmQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:P916Mzac2hU=;rC7JTAKPnmwG/lw2OzdT/9ij7JG
- vxg+0+YNZScE+aB87UUiLzkw3X9Ga0mzdgE2XmlEXR/iyRA7aWEyAFXXWXC3/EC0xwrBE1RwJ
- R7dJ9AlDfW5zI+DP8pb9B84Uo07kCNa+4JeZxzhGswtVScKCeRBpctU4oyLE1YI0VYvr6etFc
- w5P+Eut9Z1Dh2xGnD3RMihM/wzIdTIVpMaOt9q8OP/58YV9hEc0QWnMltzbv6GVPjpJvXRGtn
- q5LHR8qlXpjN4U3FysIm3+EVwuo25DrPeD5/q34ThqNVzNaC2Od73XM52S/UM3R24LwzK+c1L
- PjUqVOxVxWq+nFLVuNsN6g5pX80m3BVgFgouEPzcNtLJ82b/ivAa0r6u8kOVBijPZoInFgeMa
- WlPYuy/BwJmupNlQn0kU8dWHQ0Wa24NrGppKzmnAcI1k8I0W7Fb4iJ8pNp6+oReBDXP1rMVDe
- 8MeGn4Y5mQCTTEhhcYhbRZwH5SUP9DqMdTF7N4VM++dRIfZnKc76Tw8Mc0pF9H3IKZk/N4flq
- jrALpRZVVJTos5k0NsewZ8wmcSx4N6cEPdVfnA0ARvKlsGAa7y9P+C1KGgIki6aXjfxOnAO+N
- xZJg0mprVtYzfX/kMMjIxYTESXaX2UpaJpKSw/pkP4iSv7DGWHaZ0311E6fe/0i0Pke8zxHby
- WyihQVUftJIcqZWjh4z5Ks84PsBpVU/uEgx58HIWe6zYz7b+0QBERRak0tQunDWTMBivSDYnq
- 92IGGTGbokOSuNQuR1MDE3rnSg0sbBIRm4fxRtZGiR7P3m991UccVFU8RsTAdOIcW5GTufOQL
- ePcVLaYgzWKI7Nt87tv7FDTAgBd92BbnJqUgaAg25OCy0=
+Message-Id: <6fa4d8af-0f9e-4525-adf6-8c3c3d059b2f@app.fastmail.com>
+In-Reply-To: <57srp3ps-n7p8-orqq-86rq-p04o2246pn7s@syhkavp.arg>
+References: <20240707171919.1951895-1-nico@fluxnic.net>
+ <20240707171919.1951895-5-nico@fluxnic.net>
+ <55a8cff0-1d73-4743-9c56-2792616426c7@app.fastmail.com>
+ <8251045r-26sn-4674-p820-4qp6s5o322qq@syhkavp.arg>
+ <3dc8f89e-4525-4084-9d4a-facb6105239c@app.fastmail.com>
+ <57srp3ps-n7p8-orqq-86rq-p04o2246pn7s@syhkavp.arg>
+Date: Mon, 08 Jul 2024 07:21:02 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nicolas Pitre" <nico@fluxnic.net>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] __arch_xprod64(): make __always_inline when optimizing for
+ performance
+Content-Type: text/plain
 
+On Mon, Jul 8, 2024, at 03:21, Nicolas Pitre wrote:
+> On Sun, 7 Jul 2024, Arnd Bergmann wrote:
+>> On Sun, Jul 7, 2024, at 21:14, Nicolas Pitre wrote:
+>
+> Oh, most likely yes. The non-constant base has to go through the whole 
+> one-bit-at-a-time division loop whereas the constant base with 
+> __div64_const32 results in 4 64-bits multiply and add. Moving 
+> __arch_xprod_64() out of line adds the argument shuffling overhead and 
+> it can't skip overflow handling, but still.
+>
+> Here's some numbers. With latest patches using __always_inline:
+>
+> test_div64: Starting 64bit/32bit division and modulo test
+> test_div64: Completed 64bit/32bit division and modulo test, 0.048285584s elapsed
+>
+> Latest patches but __always_inline left out:
+>
+> test_div64: Starting 64bit/32bit division and modulo test
+> test_div64: Completed 64bit/32bit division and modulo test, 0.053023584s elapsed
+>
+> Forcing both constant and non-constant base through the same path:
+>
+> test_div64: Starting 64bit/32bit division and modulo test
+> test_div64: Completed 64bit/32bit division and modulo test, 0.103263776s elapsed
+>
+> It is worth noting that test_div64 does half the test with non constant 
+> divisors already so the impact is greater than what those numbers show.
+>
+> And for what it is worth, those numbers were obtained using QEMU. The 
+> gcc version is 14.1.0.
 
+Right, so with the numbers in qemu matching your explanation,
+that seems reasonable to assume it will behave the same way
+across a wide range of physical CPUs.
 
-=E5=9C=A8 2024/7/8 14:26, Johannes Thumshirn =E5=86=99=E9=81=93:
-> On 06.07.24 01:26, Qu Wenruo wrote:
->>
->>
->> =E5=9C=A8 2024/7/6 00:43, Johannes Thumshirn =E5=86=99=E9=81=93:
->>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>
->>> The current RAID stripe code assumes, that we will always remove a
->>> whole stripe entry.
->>>
->>> But if we're only removing a part of a RAID stripe we're hitting the
->>> ASSERT()ion checking for this condition.
->>>
->>> Instead of assuming the complete deletion of a RAID stripe, split the
->>> stripe if we need to.
->>
->> Sorry to be so critical, but if I understand correctly,
->> btrfs_insert_one_raid_extent() does not do any merge of stripe extent.
->
-> No problem at all. I want to solve bugs, not increase my patch count ;).
->
->>
->> Thus one stripe extent always means part of a data extent.
->>
->> In that case a removal of a data extent should always remove all its
->> stripe extents.
->>
->> Furthermore due to the COW nature on zoned/rst devices, the space of a
->> deleted data extent should not be re-allocated until a transaction
->> commitment.
->>
->> Thus I'm wonder if this split is masking some bigger problems.
->
-> Hmm now that you're saying it. The reason I wrote this path is, that I
-> did hit the following ASSERT() in my testing:
->
->>> -		ASSERT(found_start >=3D start && found_end <=3D end);
->
-> This indicates a partial delete of a stripe extent. But I agree as
-> stripe extents are tied to extent items, this shouldn't really happen.
->
-> So maybe most of this series (apart from the deadlock fix) masks problem=
-s?
->
-> I'm back to the drawing board :(.
-
-Can the ASSERT() be reproduced without a zoned device? (I'm really not a
-fan of the existing tcmu emulated solution, meanwhile libvirt still
-doesn't support ZNS devices)
-
-If it can be reproduced just with RST feature, I may provide some help
-digging into the ASSERT().
-
-Thanks,
-Qu
+    Arnd
 
