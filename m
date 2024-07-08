@@ -1,185 +1,163 @@
-Return-Path: <linux-kernel+bounces-244991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4685A92AC9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:45:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E594992AC9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E0A2812D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1CC0281075
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4675152DE3;
-	Mon,  8 Jul 2024 23:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5F715098C;
+	Mon,  8 Jul 2024 23:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="XpaciIi1"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs/zcZI4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E605054FAD
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 23:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253BF8C06;
+	Mon,  8 Jul 2024 23:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720482301; cv=none; b=N+c2wYPh6iVVmcfbgoWxZI9hGHNAZ++6QEhNYT1y0wCIoimctpw/Y2hpk0Cjt/IjuTCKDQX+HOEP9D7R4XljVXg1XC7bK+wKkqNX6ZRsTHPrt46UShkpvdXuLDC4YoJyzWKSDLN2SEsA/+k1UXEqUIgxWsKqT3YeewYaElf+dTg=
+	t=1720482338; cv=none; b=qA5JYem4qwgS/ilV61czkTbbeH4DCnzMDQwWpn6m0uFjsL+xaNhjtQCml8FEEi0NJDtCoqzMngWUy1LQ9mfr+B9+Wsd/kC94iMn5GiYvtz3sZtRHQhg+8ZFNY9dXiqDRmfCL071qRogbxJYuuhFK8VpNyfBsiZOikPgMjS4HkvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720482301; c=relaxed/simple;
-	bh=AuzHgZOLjpR176vDzbu1ba2zU5kfS/Q5uYsYWaRIEO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jKUvPNoZyV5QSsEPvLooUe/NRe2hJD8HywPOeYbLsDlQ9u2ht/Dn1f8MjcB8Uxf2flmhpYye/Opvx7i9oGtNC/xDmceFoBs9RbpJKtUCGHb+XbtfQBnLDNXnYegXmhoBON/NPO4319MXspNkANZesBAHpmBqMHiyZpQH6syhvP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=XpaciIi1; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
-	by cmsmtp with ESMTPS
-	id QuMMs7p9kjZAYQy2OsSGVn; Mon, 08 Jul 2024 23:44:52 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id Qy2Ns6tXfDkWaQy2Ns4JVj; Mon, 08 Jul 2024 23:44:51 +0000
-X-Authority-Analysis: v=2.4 cv=MO5mmtZl c=1 sm=1 tr=0 ts=668c79f3
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=pGLkceISAAAA:8
- a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=oGMlB6cnAAAA:8
- a=1XWaLZrsAAAA:8 a=YATm3ayRHBIWB40sf30A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=NdAtdrkLVvyUPsUoGJp4:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=DRXxuRgGv2q11f8yChcm9SHFs2TQBg0qlsQgA2M+2v0=; b=XpaciIi1s0oNqork12yhyqLV8b
-	45ZKicGftoeA/3DmsBPs6wHS29appxz3W6eZwyCR5UvTM6YIGfuDEaSNkxRxcQ+DsQPXBOI1/e1ab
-	6brsb/y5+W1dL76naIR0s1Of9xj3WKPJLYDcy8Y7GypKspo9BVk746JaUapB7poPyaMsO35DUFivF
-	Lr1knQNKOqRByuQR/Pl9BJdXtVf+KVe0zCPocJLUgclzBXOATQAqRxyVQ6eJAg2DVgVxmypyUsU1o
-	eEDx76IoAYgCee+ksN60JJUlnOhlorHcPsMFaNyz4H0z8DWz7HsMDVvRHQXR25SxerGyRDlmwLeTt
-	xj6uE9/A==;
-Received: from [201.172.173.139] (port=48468 helo=[192.168.15.10])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sQy2L-0039pb-0k;
-	Mon, 08 Jul 2024 18:44:49 -0500
-Message-ID: <e95852cf-231a-4525-9075-fad42930d328@embeddedor.com>
-Date: Mon, 8 Jul 2024 17:44:42 -0600
+	s=arc-20240116; t=1720482338; c=relaxed/simple;
+	bh=WqB5mcEHwiCIHO2AodxjmxYg6envP+/XTNIhdG5D+Gg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q/u8r1FX9hhHjKlTaudxQCqBhp42+3FaE0TXV4KEC4cinCTzZ4gsqgwpvVMXQRxGLfRdpxCx9tTrBUL/c0m/lKE2L1U5TiHkq300xP/dYV0Diu8NWLNBPufDVf205uh1h4V/fOVvEEbsxtaV9rbhr4bptKMTdbQctRBuAEPmfkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs/zcZI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8DE6C116B1;
+	Mon,  8 Jul 2024 23:45:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720482337;
+	bh=WqB5mcEHwiCIHO2AodxjmxYg6envP+/XTNIhdG5D+Gg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Qs/zcZI4QGLJGiJy64tsy8MMYvRXyXJdPDctlgPbVTZkl9n61vmplTE6ce7XLfNuv
+	 aF0SA98VKqz0ogKbWOezbeWiSajmdo+K1tOVua0vlurvnZGR81SGpUlvXQt7C2TB97
+	 wzh2/RlBDKu9WZ7BVX41yi9vx3Phznfpv99QmWemvV7z5nRU6bQQRbPB/Ogr+XZmWr
+	 pa1U73IYd7Z0gAQIjdo7OZexbM3mxE1XtM0zo34bqAaIDqteB7ei/silQ9TKUNBLjn
+	 BjGvZDtX0WaMQsU0rIvXCw9U/HP5NSO1M4n6h1ZzZlcmveUEwrin9ivRjlc3FDzZUu
+	 bBA30jwlLKd0g==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so5482498e87.1;
+        Mon, 08 Jul 2024 16:45:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEf4EUCcaJMDLfXW8j41RRatetkVJICpvuLpBLfrC8ww1TW1KXmy0oqgLHZx3iJ9GWzKlY69XiSAKMbQmM3lyvfbA4AFVuXaK3YgNnLxbD4BIe46Mc3WTISVeVN0al2P35c17OIcS/eA==
+X-Gm-Message-State: AOJu0YzGL3hDA74hkR7H+6+LI83Fsp/e2tQAnEck8pE0Hzz1bk6KsXsa
+	KoJwqvjLKTcdIL+4zhYJ5Lx8J7C5j7xOgBEVTsISRZApiJHbnqwMdZs4OfRlb793P+cDndjgZsp
+	WgUnRVuU4W7BXp6ZvptaHTqdqGw==
+X-Google-Smtp-Source: AGHT+IEKV5wyLcV1ycT2TnwArtJJGSVvXo4evQIYo01RZ05YOMAGpPEpsNQdQXNMhV0FFsl4PP9NkeD2EVDivivCbNQ=
+X-Received: by 2002:a05:6512:29e:b0:52c:d80e:55a5 with SMTP id
+ 2adb3069b0e04-52eb99a35d4mr362953e87.41.1720482336134; Mon, 08 Jul 2024
+ 16:45:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
- syscall_get_arguments()
-To: Kees Cook <kees@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240708202202.work.477-kees@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240708202202.work.477-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sQy2L-0039pb-0k
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.10]) [201.172.173.139]:48468
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfCO3NThfb/0eK9ltPCakEFKsD1URPrIk2+QuAMTfUxYDBGrpIA0ngPWX7PLtiQjQuoPUkDgtDdoUmVijahJGNEDMiqbC9PpB5kHf0hdJQEyLNsEPXjN9
- 5Vk7Kz4AfuZBv7kF6SBz9vujViT48uRsXuA68i/DP0j/FxGmqx27nTt8861lUpqVyI6urQRqgQL974rCEhkD0aYXrx+pc0J7RlQ1DVEZptCjFww9BP/77hzS
+References: <20240528223650.619532-1-quic_obabatun@quicinc.com>
+ <20240528223650.619532-4-quic_obabatun@quicinc.com> <986361f4-f000-4129-8214-39f2fb4a90da@gmail.com>
+ <4905e651-4c37-4fb4-bbc1-af9633013134@gmail.com> <1684910a-54e2-4df5-a076-de9c2de4277b@quicinc.com>
+In-Reply-To: <1684910a-54e2-4df5-a076-de9c2de4277b@quicinc.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 8 Jul 2024 17:45:23 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLU6z5huedWcrBkP0utLH3=y-zZa0jen1K_LJfFsTXVBQ@mail.gmail.com>
+Message-ID: <CAL_JsqLU6z5huedWcrBkP0utLH3=y-zZa0jen1K_LJfFsTXVBQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] of: reserved_mem: Use unflatten_devicetree APIs to
+ scan reserved memory nodes
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+Cc: Klara Modin <klarasmodin@gmail.com>, saravanak@google.com, hch@lst.de, 
+	m.szyprowski@samsung.com, robin.murphy@arm.com, will@kernel.org, 
+	catalin.marinas@arm.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, kernel@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 8, 2024 at 5:12=E2=80=AFPM Oreoluwa Babatunde
+<quic_obabatun@quicinc.com> wrote:
+>
+>
+> On 7/5/2024 8:38 AM, Klara Modin wrote:
+> > On 2024-07-05 15:05, Klara Modin wrote:
+> >> Hi,
+> >>
+> >> On 2024-05-29 00:36, Oreoluwa Babatunde wrote:
+> >>> The unflatten_devicetree APIs have been setup and are available to be
+> >>> used by the time the fdt_init_reserved_mem() function is called.
+> >>> Since the unflatten_devicetree APIs are a more efficient way of scann=
+ing
+> >>> through the DT nodes, switch to using these APIs to facilitate the re=
+st
+> >>> of the reserved memory processing.
+> >>
+> >> With this patch series, I've observed significantly less memory availa=
+ble to userspace on my Raspberry Pi 1 and 3.
+> >>
+> >> I see this message on the kernel console:
+> >> Jul  4 23:13:49 bonnet kernel: OF: reserved mem: 0x1b000000..0x1efffff=
+f (65536 KiB) map non-reusable linux
+> >>
+> >> where it was previously marked as reusable:
+> >> Jul  4 22:23:22 bonnet kernel: OF: reserved mem: 0x1b000000..0x1efffff=
+f (65536 KiB) map reusable linux,cma
+> >>
+> >> If I look at bcm283x.dtsi, it definitely has the reusable property.
+> >>
+> >> I've below pointed out the snippet I think could be suspicous.
+> >>
+> >>>
+> >>> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+> >>> ---
+> >>>   drivers/of/of_reserved_mem.c    | 93 ++++++++++++++++++++----------=
+---
+> >>>   include/linux/of_reserved_mem.h |  2 +-
+> >>>   kernel/dma/coherent.c           | 10 ++--
+> >>>   kernel/dma/contiguous.c         |  8 +--
+> >>>   kernel/dma/swiotlb.c            | 10 ++--
+> >>>   5 files changed, 72 insertions(+), 51 deletions(-)
+> >>>
+> >>> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_me=
+m.c
+> >>> index 113d593ea031..05283cd24c3b 100644
+> >>> --- a/drivers/of/of_reserved_mem.c
+> >>> +++ b/drivers/of/of_reserved_mem.c
+> >
+> >>> @@ -447,7 +476,7 @@ static int __init __reserved_mem_alloc_size(unsig=
+ned long node, const char *unam
+> >>>                  uname, (unsigned long)(size / SZ_1M));
+> >>>           return -ENOMEM;
+> >>>       }
+> >>
+> >>
+> >>> -    fdt_reserved_mem_save_node(node, uname, base, size);
+> >>> +    fdt_reserved_mem_save_node(NULL, uname, base, size);
+> >>
+> >> This could perhaps be suspicious?
+> >>
+> >> The above message seems to come from of_init_reserved_mem_node when
+> >> called from of_reserved_mem_save_node when called from here. This woul=
+d mean that the node is not actually saved to rmem and thus not marked reus=
+able?
+> >>
+> >>
+> >>>       return 0;
+> >>>   }
+> >
+> >>
+> >> Regards,
+> >> Klara Modin
+> >
+> > Attaching kernel logs of old and new behavior, and my config for refere=
+nce.
+> Hi Klara,
+>
+> Thanks for pointing this out. I have uploaded a fix here:
+> https://lore.kernel.org/all/20240708230613.448846-1-quic_obabatun@quicinc=
+.com/
 
+Sorry, but I'm not taking reverts of half the series. I've dropped it
+all for 6.11.
 
-On 7/8/24 14:22, Kees Cook wrote:
-> Modern (fortified) memcpy() prefers to avoid writing (or reading) beyond
-> the end of the addressed destination (or source) struct member:
-> 
-> In function ‘fortify_memcpy_chk’,
->      inlined from ‘syscall_get_arguments’ at ./arch/x86/include/asm/syscall.h:85:2,
->      inlined from ‘populate_seccomp_data’ at kernel/seccomp.c:258:2,
->      inlined from ‘__seccomp_filter’ at kernel/seccomp.c:1231:3:
-> ./include/linux/fortify-string.h:580:25: error: call to ‘__read_overflow2_field’ declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
->    580 |                         __read_overflow2_field(q_size_field, size);
->        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> As already done for x86_64 and compat mode, do not use memcpy() to
-> extract syscall arguments from struct pt_regs but rather just perform
-> direct assignments. Binary output differences are negligible, and actually
-> ends up using less stack space:
-> 
-> -       sub    $0x84,%esp
-> +       sub    $0x6c,%esp
-> 
-> and less text size:
-> 
->     text    data     bss     dec     hex filename
->    10794     252       0   11046    2b26 gcc-32b/kernel/seccomp.o.stock
->    10714     252       0   10966    2ad6 gcc-32b/kernel/seccomp.o.after
-> 
-> Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-> Closes: https://lore.kernel.org/lkml/9b69fb14-df89-4677-9c82-056ea9e706f5@gmail.com/
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: x86@kernel.org
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Brian Gerst <brgerst@gmail.com>
-> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-> Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Cc: Peter Collingbourne <pcc@google.com>
-
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Thanks
---
-Gustavo
-
-> ---
->   arch/x86/include/asm/syscall.h | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-> index 2fc7bc3863ff..7c488ff0c764 100644
-> --- a/arch/x86/include/asm/syscall.h
-> +++ b/arch/x86/include/asm/syscall.h
-> @@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struct *task,
->   					 struct pt_regs *regs,
->   					 unsigned long *args)
->   {
-> -	memcpy(args, &regs->bx, 6 * sizeof(args[0]));
-> +	args[0] = regs->bx;
-> +	args[1] = regs->cx;
-> +	args[2] = regs->dx;
-> +	args[3] = regs->si;
-> +	args[4] = regs->di;
-> +	args[5] = regs->bp;
->   }
->   
->   static inline int syscall_get_arch(struct task_struct *task)
+Rob
 
