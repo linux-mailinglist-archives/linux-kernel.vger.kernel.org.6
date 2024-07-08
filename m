@@ -1,131 +1,174 @@
-Return-Path: <linux-kernel+bounces-244987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DBE092AC8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:27:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B7D92AC92
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E0E21C225DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:27:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E16B1282B76
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB20152E0D;
-	Mon,  8 Jul 2024 23:27:23 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C0E152E17;
+	Mon,  8 Jul 2024 23:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9qZmD4B"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E1114534C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 23:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259698C06;
+	Mon,  8 Jul 2024 23:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720481242; cv=none; b=RglhX4WokYFTc4kuWC9Lojoo6kbJGtqwvqqpoyXSDZZa/I68AadPPERcq+FpuMpPwndJ917/7k2Q1xTfboEIJDuR6VD73X2TcBkNLaOny2vPrFN4IqNISUNBVx/v/5ZO9lU0351EHdWxFdcHI3Yy5tcTnVSKMUFqf/2XEb52qkU=
+	t=1720482048; cv=none; b=hZCCDE3mhXHwqYVY6eavTP1ByM3qLI28kqRuW7BVyREECsR44olHG0gadPGS/5XQgIQGiU7zXnx1ybpXw5do3mBG0z5esAjTaCiAHq20dXLlhmIHiTrGktI86+nYgu1pZd4Hq6NKM9GcRjJOel4Go9C57RCg4nAVtJWrAND3sm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720481242; c=relaxed/simple;
-	bh=V+9VyyFEUU5Tt0/zldChMRUa7x7UuysycddEsA6gplQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Zaj69+bNFnyPAL7vkg7jnD/eAJPuBatApJeFAiHzjuil0BC/ljBdwBgoLQ6L1aSZ34NyoOsif5eaUkfXogTQE2HmldnMi/l67mVTELQPUC8e4RgsdEM/oPBadS8f9TJ6KuEHKC/pWl8mKbu4ph+8HBw8RGyF8EfGQLAJ4kiNyMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f61da4d7beso555899039f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 16:27:21 -0700 (PDT)
+	s=arc-20240116; t=1720482048; c=relaxed/simple;
+	bh=WDzDyGwxTgPZl9cq95FJdwhpZkmi7Sw4SDaI8id1C6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mzfEn7484OZ4HZ3DIF4PLcF9bvgoFa6CwYImQUnYEpXmmthIuQF4E2ekLODVGZwTLZT5age2vPgGNNj/7sVId71O4Hl3mbREK1NwI7x+lalm9pcVDcP66jZxEvYaI05Ak7ovFoQjou5xMBWINoWgrV+WhM6hKg24CMtdOnr8a/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9qZmD4B; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d9306100b5so1037882b6e.1;
+        Mon, 08 Jul 2024 16:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720482046; x=1721086846; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vW/81UX4t/tUsTA9sWlBeD8YuK3csS1v63vL09aNdGE=;
+        b=L9qZmD4BwAJV+lGmDxzXnoM/7X5il0R//dFEiYuPxIZOvtwcj5P3PB3o7DEA+XtlFl
+         YbUJCwQFv2eXTnqPD7uXU3gI8SVXeupn/wUxhCcXP8ThFQ+XrGtcj8lg60ikRRjzk/6m
+         K/vS9H5aVimNpHBtGHa/xXmVapW5Fa8GMKcLBe2jY0Mfr50cglKqzC6kEuj7YsTlBQWn
+         6omPOknGQ1CBvebmMCYXjT0bBuS3WrS6gY7PtQ7njegvBI/eydPz6+HSXtt2GoIj74w3
+         sS34ngooihXQ6Cfil70BopO85YOGvziCNJmK3p9jJaLcDJkFeW+28EZ2WTptRpk1m0GG
+         TI+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720481240; x=1721086040;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PagM1HHYLYDwKyHAo5/GE81TCstWTLOvOaKxe8EMN2E=;
-        b=ahh2YreYxZ0yBYOIAMvExX7+Xo3/WqX8j/Mv9F94pHNAE/j3ss6yZ6tREeMfZXYqf2
-         SjXB+ltsAJgegO6B6jh6dVC8FXjR/7Ea4ehqPjOF6OiWnKCNS1DWVW0MuQ7rR4MSP9M+
-         JhmE7hgBpqyiwigSINmYdMDrWH6a8Vn6tT1A25CcW8Rw7WA9HERrZht0mSNGqjaGdRvn
-         CFBzz1TNbmQHN/AET7038VwpGKbD9Ct/jbCzdV+HfNa8i6cw02SHfVSBklSrTwrcaUM0
-         Z9IZUGo+Q6jurnaIEcqYci8/EzLwEiJSIzBj9NEi05JMlmep5sqHFYJ6tPTvz+8Y/lHO
-         uOdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgyw/7JdeM5epWn3Ds70Hjxt4/Wm+mrbJbebR3+G9hsOOUiEECjmXknS9PktAYAphY4I5zAi7LEImu2hCoWAD9R/zf2UmjOOoLM5b0
-X-Gm-Message-State: AOJu0Yz/VHnhDHhiwJF0xdrI/T+f2bMo/PbUH221tURhWnE1F5EMfF7Q
-	+o1/XE+GdHrRIjLs5Vx5icHsLNqVhnzvCJFW71bd4fCZdUzSwD4WOhoNRs0PhI6RxKmVPjSpPXd
-	gUaqy38k0W+vJl6Un8PHynmS0DZKHKhSU9hbmhW3oBoScnEy/JLU4qJw=
-X-Google-Smtp-Source: AGHT+IHP4GE2cKxixBz5JFaBEuv2wNkbPf7C3VKDUwFVLPxxU5KtaWowJms+mFYtdJyJPvGznU/vO1hi9uTCEjiAirxob37L21Ko
+        d=1e100.net; s=20230601; t=1720482046; x=1721086846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vW/81UX4t/tUsTA9sWlBeD8YuK3csS1v63vL09aNdGE=;
+        b=ZqYxqlS73mcDDBtITOFnQEDRpfTQvNyIvyBn/zYFqs5d2Ohu2g3mB1LyXLhBo5Plai
+         CdZaKTvov7Gnm5mfLlZJnXXUIsY/AKJyihwjvNRv1OQVVllWfFD5zsJ6HYw+VyFkqfMR
+         Hf9uWhrDYuICbtydBHyGkDAsbGmLup4zDJAhXxYmEiuMQBDTl9oUkn5+KJ7NEcrg2LTh
+         tRnt19YzzZtvHsnuejN1g4G71VK+XpHn9ptfRZJdPYq3+fBaOC5PUygRyXVrX40mNEKC
+         hx8Y5RHfAPqoCWW4Jpa49d/8vdJ0De9BFgApp7fVmB7XIoObWojBzUECWV3hVxwRkf1N
+         2J+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+SA5GR6iDCwTHa9cVm9YUvwmcFud6BMbZtFBZOqTxFvfWUr6/LjJkbTGzNq4aknRGTaaemHOmryuWiOAxYRfKw9sgYCuhA3rhGSomX1n5Yf6V+Z+UZLnDA47FKFXSKzs0
+X-Gm-Message-State: AOJu0Yz+yneUjgjEWC69qxlvwOntK61XHEj9uBRISo5/ELtG+QmT85N9
+	E4BXpie+GL8/cV4oofwoVJXTKQlIepABY8yCupZPW5v0YwegVQEFZoKqQg==
+X-Google-Smtp-Source: AGHT+IEQT8XcljQEe+LmA6l3MYAxEJZwnq2V9/5qhF44hpyDm8VSOXMM+PeURCTYW78/hvv7KhFeiA==
+X-Received: by 2002:a05:6808:2128:b0:3d9:2043:e170 with SMTP id 5614622812f47-3d93c0b333bmr943658b6e.57.1720482046075;
+        Mon, 08 Jul 2024 16:40:46 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4389ba28sm448599b3a.9.2024.07.08.16.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 16:40:45 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 8 Jul 2024 13:40:44 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+	David Vernet <void@manifault.com>,
+	Kernel Team <kernel-team@meta.com>
+Subject: Re: [PATCH v4 sched_ext/for-6.11 2/2] sched_ext: Implement DSQ
+ iterator
+Message-ID: <Zox4_MHR9HiwmtHt@slm.duckdns.org>
+References: <Zn9oEjsm_1aWb35J@slm.duckdns.org>
+ <Zoh4kp7-jAFZXhe6@slm.duckdns.org>
+ <CAADnVQJ6o-ikfnHiatbNwS8+MKi44kcBfVtnDQkYLdDUZ80Rtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:710a:b0:4b9:def5:3dcb with SMTP id
- 8926c6da1cb9f-4c0b29ba495mr74461173.2.1720481240704; Mon, 08 Jul 2024
- 16:27:20 -0700 (PDT)
-Date: Mon, 08 Jul 2024 16:27:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000031fb62061cc4c118@google.com>
-Subject: [syzbot] [bluetooth?] BUG: workqueue leaked atomic, lock or RCU: kworker/u9:NUM[NUM]
-From: syzbot <syzbot+733a96463546d3026b60@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAADnVQJ6o-ikfnHiatbNwS8+MKi44kcBfVtnDQkYLdDUZ80Rtg@mail.gmail.com>
 
-Hello,
+Hello, Alexei.
 
-syzbot found the following issue on:
+On Mon, Jul 08, 2024 at 03:41:48PM -0700, Alexei Starovoitov wrote:
+> In the future pls resubmit the whole series as v4
+> (all patches not just one).
+> It was difficult for me to find the patch 1/2 without any vN tag
+> that corresponds to this v4 patch.
+> lore helped at the end.
 
-HEAD commit:    c6653f49e4fd Merge tag 'powerpc-6.10-4' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=170a1059980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1ace69f521989b1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=733a96463546d3026b60
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Sorry about that. That's me being lazy. It looks like even `b4 am` can't
+figure out this threading.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> > @@ -1415,7 +1487,7 @@ static void dispatch_enqueue(struct scx_
+> >                  * tested easily when adding the first task.
+> >                  */
+> >                 if (unlikely(RB_EMPTY_ROOT(&dsq->priq) &&
+> > -                            !list_empty(&dsq->list)))
+> > +                            nldsq_next_task(dsq, NULL, false)))
+> 
+> There is also consume_dispatch_q() that is doing
+> list_empty(&dsq->list) check.
+> Does it need to be updated as well?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a56f9eb616fa/disk-c6653f49.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2f09515c2f1b/vmlinux-c6653f49.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fdc471b5cbac/bzImage-c6653f49.xz
+The one in consume_dispatch_q() is an opportunistic unlocked test as by the
+time consume_dispatch_q() is called list head update should be visible
+without locking. The test should fail if there's anythingn on the list and
+then the code locks the dsq and does proper nldsq_for_each_task(). So, yeah,
+that should be a naked list_empty() test. I'll add a comment explaining
+what's going on there.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+733a96463546d3026b60@syzkaller.appspotmail.com
+...
+> > @@ -6118,6 +6298,9 @@ BTF_KFUNCS_START(scx_kfunc_ids_any)
+> >  BTF_ID_FLAGS(func, scx_bpf_kick_cpu)
+> >  BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued)
+> >  BTF_ID_FLAGS(func, scx_bpf_destroy_dsq)
+> > +BTF_ID_FLAGS(func, bpf_iter_scx_dsq_new, KF_ITER_NEW | KF_RCU_PROTECTED)
+> > +BTF_ID_FLAGS(func, bpf_iter_scx_dsq_next, KF_ITER_NEXT | KF_RET_NULL)
+> > +BTF_ID_FLAGS(func, bpf_iter_scx_dsq_destroy, KF_ITER_DESTROY)
+> >  BTF_ID_FLAGS(func, scx_bpf_exit_bstr, KF_TRUSTED_ARGS)
+> >  BTF_ID_FLAGS(func, scx_bpf_error_bstr, KF_TRUSTED_ARGS)
+> >  BTF_ID_FLAGS(func, scx_bpf_dump_bstr, KF_TRUSTED_ARGS)
+> > --- a/tools/sched_ext/include/scx/common.bpf.h
+> > +++ b/tools/sched_ext/include/scx/common.bpf.h
+> > @@ -39,6 +39,9 @@ u32 scx_bpf_reenqueue_local(void) __ksym
+> >  void scx_bpf_kick_cpu(s32 cpu, u64 flags) __ksym;
+> >  s32 scx_bpf_dsq_nr_queued(u64 dsq_id) __ksym;
+> >  void scx_bpf_destroy_dsq(u64 dsq_id) __ksym;
+> > +int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id, u64 flags) __ksym __weak;
+> > +struct task_struct *bpf_iter_scx_dsq_next(struct bpf_iter_scx_dsq *it) __ksym __weak;
+> > +void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it) __ksym __weak;
+> >  void scx_bpf_exit_bstr(s64 exit_code, char *fmt, unsigned long long *data, u32 data__sz) __ksym __weak;
+> >  void scx_bpf_error_bstr(char *fmt, unsigned long long *data, u32 data_len) __ksym;
+> >  void scx_bpf_dump_bstr(char *fmt, unsigned long long *data, u32 data_len) __ksym __weak;
+> > --- a/tools/sched_ext/scx_qmap.bpf.c
+> > +++ b/tools/sched_ext/scx_qmap.bpf.c
+> 
+> We typically split kernel changes vs bpf prog and selftests changes
+> into separate patches.
 
-BUG: workqueue leaked atomic, lock or RCU: kworker/u9:0[53]
-     preempt=0x00000000 lock=0->1 RCU=0->0 workfn=hci_rx_work
-1 lock held by kworker/u9:0/53:
- #0: ffff88802f56d518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
- #0: ffff88802f56d518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_conless_channel net/bluetooth/l2cap_core.c:6764 [inline]
- #0: ffff88802f56d518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_recv_frame+0x7ca/0x10830 net/bluetooth/l2cap_core.c:6830
-CPU: 1 PID: 53 Comm: kworker/u9:0 Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: hci1 hci_rx_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- process_one_work kernel/workqueue.c:3269 [inline]
- process_scheduled_works+0x1121/0x1830 kernel/workqueue.c:3329
- worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Let me think about that. I kinda like putting them into the same patch as
+long as they're small as it makes the patch more self-contained but yeah
+separating out does have its benefits (e.g. for backporting).
 
+> > +"  -P            Print out DSQ content to trace_pipe every second, use with -b\n"
+> 
+> tbh the demo of the iterator is so-so. Could have done something more
+> interesting :)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Yeah, it's difficult to do something actually interesting with scx_qmap.
+Once the scx_bpf_consume_task() part lands, the example can become more
+interesting. scx_lavd is already using the iterator. Its usage is a lot more
+interesting and actually useful (note that the syntax is a bit different
+right now, will be synced soon):
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  https://github.com/sched-ext/scx/blob/main/scheds/rust/scx_lavd/src/bpf/main.bpf.c#L2041
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+tejun
 
