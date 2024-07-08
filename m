@@ -1,62 +1,59 @@
-Return-Path: <linux-kernel+bounces-244700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BEE92A815
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:13:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E48C992A818
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F59280C19
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:13:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 750DBB219DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1AE14D452;
-	Mon,  8 Jul 2024 17:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27246149C6C;
+	Mon,  8 Jul 2024 17:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovbQ7qeS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKvjLsTm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C78C148FED;
-	Mon,  8 Jul 2024 17:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57697148FF2;
+	Mon,  8 Jul 2024 17:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720458619; cv=none; b=Wy4HamL2safaBFigyvY/ycRQjiSqzcTR59FXdSC+m4murbuj0+PiWtP20Y6DfR5DGiPNVgpLhhqyWMyQmSDF81OloUfQzbFog5jUSoj7/+KZyCuhsbzvjzXTWf7a4CfODsrKTo4t66R/oE3hUhTR0iaZqAPz2UKa5+8jCrGN9Vo=
+	t=1720458655; cv=none; b=Q05WeGIFJ13r10LkTg6+WWdJOJ7fRPQ8uhTxefrUAYzc9tDYkfTK0KOsgZc4YIkSEGxX4m6qdxHds+RBVYfI/yDfsbZfj7359O06Njl471XUzwtRR4sdk9+hePItpwr9c1Gr08oJWg/xsmPAQt0j15voufNpvqnLEr2r6m7q7sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720458619; c=relaxed/simple;
-	bh=EoBYZ2wYoOgkBX7O+AbPYANnMMKtKHC70TexwJ93RT0=;
+	s=arc-20240116; t=1720458655; c=relaxed/simple;
+	bh=WKIwnezwdqKkfmKHL941rSU5Nnnh9+YX9sLJNtc4aME=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GcvJm9DzKQNqpUMmJvlunfWtGbb043QcPb3JJPtGvJ9iOLIv6r0u+BDIpTRGCa+fEldpJ9cVSoFcLGj5+klIGUZRDDhlDCQsp047uZYM32gU7DpFGlLL3arzPkf2b+TALs8MYnRrQxoydisik4F3n2p7mIz4idKegrG1YTIs12c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovbQ7qeS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0D7C32786;
-	Mon,  8 Jul 2024 17:10:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PR3da1u39m93Q/x4VOv7D9R4zsnb1rxvMxUcw6ercYZgKkAOxOq6yqB3NhOadMgqnwVfxKfGbo9fvN9w/YoSCfyQ6GCkfjpypuEbnoGDnKIcdWpb2nIHiIV8DcvGld0ZI9j5u8oectSJl8z127VW7D/DTE7ATzwMA7j2ko3Ea3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKvjLsTm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC30DC4AF0A;
+	Mon,  8 Jul 2024 17:10:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720458619;
-	bh=EoBYZ2wYoOgkBX7O+AbPYANnMMKtKHC70TexwJ93RT0=;
+	s=k20201202; t=1720458655;
+	bh=WKIwnezwdqKkfmKHL941rSU5Nnnh9+YX9sLJNtc4aME=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ovbQ7qeSc/FSQpWMKlY0AFMgFanwOO9T9wZx2d0DzkLPW0mi0ONlO8ivn3VEC4V40
-	 XezEoL7Ako206L2pjNeMhhKKa5JEeRx7zLWbH+xUUt4TClIUNBSD7Am4PsAGmPXunZ
-	 7U1XQt7Tatho14qVmYEba8waenVjWsMuyc2qg+xZID8RMbeFUzzIlw9s3FzAOmsr0U
-	 M2qwI+yhhlQ4enCTvuHxgBMXTIcTejhK38Ez06fFdMP0xRZRikw+TN68LHhEBiSuxP
-	 olZstNunF8PpPF4+WOyLRQW+94TNpZlClOh7SrYTJGjGOBu2tn7N/YV0pEnieHQLvX
-	 ggMT6gwz5cQEg==
-Date: Mon, 8 Jul 2024 11:10:17 -0600
-From: Rob Herring <robh@kernel.org>
+	b=jKvjLsTm0UlhwoN86vZR+LgSFSgiU4fGPkFglFI0OXqPCvb4bH7Vz/uh9Phc31e/0
+	 4jtsbL9rBY36+qV0ycsMYpyfcy4HvgmmlRlBqn4piJRti53Rh931C07B5UiUzUQGvz
+	 3yht5I4ccZo+llv26k2J4WKUyb3+NUt88WUkKT8w8To8bbfRjzPMqk8mpb6h3aIKo0
+	 ussCDYkTm4Po0GQvz5iBHMN/zY6RLYgP9tKmZc+7jXJ4eh2zgkf69OeoElqdh/0eNY
+	 g2rKhEiaBy/UMs3kl7DKKmYcqrFq+/AU9fXezv/db3u56d+o0vrGJaCPMTht9jECpK
+	 sGESCL+96YC5Q==
+Date: Mon, 8 Jul 2024 11:10:52 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Frank Li <Frank.Li@nxp.com>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>,
-	Sean Anderson <sean.anderson@seco.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:FREESCALE QORIQ DPAA FMAN DRIVER" <netdev@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v3 1/2] dt-bindings: net: fsl,fman: allow dma-coherence
- property
-Message-ID: <20240708171017.GA3458907-robh@kernel.org>
-References: <20240704161731.572537-1-Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 1/1] dt-bindings: PCI: host-generic-pci: Drop minItems
+ and maxItems of ranges
+Message-ID: <172045865135.3461600.11204852988221577437.robh@kernel.org>
+References: <20240704164019.611454-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,28 +62,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240704161731.572537-1-Frank.Li@nxp.com>
+In-Reply-To: <20240704164019.611454-1-Frank.Li@nxp.com>
 
-On Thu, Jul 04, 2024 at 12:17:30PM -0400, Frank Li wrote:
-> Add dma-coherent property to fix below warning.
-> arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dtb: fman@1a00000: 'dma-coherent', 'ptimer-handle' do not match any of the regexes: '^ethernet@[a-f0-9]+$', '^mdio@[a-f0-9]+$', '^muram@[a-f0-9]+$', '^phc@[a-f0-9]+$', '^port@[a-f0-9]+$', 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/net/fsl,fman.yaml#
+
+On Thu, 04 Jul 2024 12:40:19 -0400, Frank Li wrote:
+> The ranges description states that "at least one non-prefetchable memory
+> and one or both of prefetchable memory and IO space may also be provided."
+> 
+> However, it should not limit the maximum number of ranges to 3.
+> 
+> Freescale LS1028 and iMX95 use more than 3 ranges because the space splits
+> some discontinuous prefetchable and non-prefetchable segments.
+> 
+> Drop minItems and maxItems. The number of entries will be limited to 32
+> in pci-bus-common.yaml in dtschema, which should be sufficient.
+> 
+> Fix the below CHECK_DTBS warning.
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dtb: pcie@1f0000000: ranges: [[2181038080, 1, 4160749568, 1, 4160749568, 0, 1441792], [3254779904, 1, 4162191360, 1, 4162191360, 0, 458752], [2181038080, 1, 4162650112, 1, 4162650112, 0, 131072], [3254779904, 1, 4162781184, 1, 4162781184, 0, 131072], [2181038080, 1, 4162912256, 1, 4162912256, 0, 131072], [3254779904, 1, 4163043328, 1, 4163043328, 0, 131072], [2181038080, 1, 4227858432, 1, 4227858432, 0, 4194304]] is too long
 > 
 > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> Change from v2 to v3
-> - Fix missed one rob's comments about 'dma-coherent property' in commit
-
-What about the subject?
-
-> message.
 > Change from v1 to v2
-> - Fix paste wrong warning mesg.
+> - Rework commit message
+> - drop minItems and maxItems according to Rob's comments.
 > ---
->  Documentation/devicetree/bindings/net/fsl,fman.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-
-Otherwise,
+>  Documentation/devicetree/bindings/pci/host-generic-pci.yaml | 2 --
+>  1 file changed, 2 deletions(-)
+> 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
