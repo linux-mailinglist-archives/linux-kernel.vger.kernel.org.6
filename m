@@ -1,203 +1,144 @@
-Return-Path: <linux-kernel+bounces-244012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AE7929DD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:01:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCFF929D47
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731241C21C46
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8BC1F21479
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6363B2A2;
-	Mon,  8 Jul 2024 08:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D0524211;
+	Mon,  8 Jul 2024 07:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A541Ds1U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ebG30Ovx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529716FB6
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 08:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C586822616;
+	Mon,  8 Jul 2024 07:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720425698; cv=none; b=j/vkrK/YO3glNjuroU3FndYXF4BbIm4OOvD8rKiue9Wjr7A2oap9A6gIbgvGICx81nJsSU+vPMOyhjZXK/+35jOsiCJdHg/GnsLAb4zbhZibLwXB/k98U123kig0sBtjJq8emkdFtpS1DhgvrNOAvAZHwhjDRVfCVYsvyTx23ag=
+	t=1720424439; cv=none; b=BEyjtIFdnWzq2KsR8shxB0nxXEcdol6AXgmITuAuZo1RlW1wfJcrAG1kI1cKrUAhFsUCjLs1Kszm0oLXE70ZLF1NzRtT642jDFz8qNAqxVbclPttAE5HppLsqN0zLunrEyrLHqwCxOO8UU8YQGbNCNl1O0CXQaSVGjLU3VztLMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720425698; c=relaxed/simple;
-	bh=nlLhLflDa5bMvjhaApP9IsLVRkmOHEF5QWS4D2zNHw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qkpE8zsrcCmD0nYh4zql5zbWS8byiTWt1ePsNKVZjrLhn4Pskdt1ksgTSO8pucVfUjRPGSaxnppMWZ1ANQk1ZSV7QSMU0tl/1b7gbgy6yj9TGi0m0KXSJhVnzyqgurjrK3Kr50YqUewRtvav15V/GO4pSydatc5Zw9tyk3UiemM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A541Ds1U; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720425696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=27lMaNCb81p4YFFh+LEEn0k8qDHH12ozaV7hZRSJBCA=;
-	b=A541Ds1UNKLuuKJascZpBcI80MUldrG4DCXZb5Yx8tfuXw10eFM9cMhWLcHEW1Zz+shOra
-	uPC/9J+NaLfKWAq/Drza7eSdFVDaEGVafNmQDzLOBSlSbV2TkjOPTGyKvPTsioUJOtZty9
-	DaRjtBy2g7gRXRIao9Jlf9wmD0LQJTQ=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-35-m2uWCiRbPvK08OXI7YCTUg-1; Mon, 08 Jul 2024 04:01:34 -0400
-X-MC-Unique: m2uWCiRbPvK08OXI7YCTUg-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1fb4e7cc5d5so10704125ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 01:01:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720425693; x=1721030493;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=27lMaNCb81p4YFFh+LEEn0k8qDHH12ozaV7hZRSJBCA=;
-        b=V4GNDSXsWquKJ7zpOfkIUSn1pcggfGHIHM0dfO5s0/ieUBU9M74C0bJgnm2zaRd5UJ
-         3iqlINZIXPwnixQ7YSN2IlJcGhwwRH6fGoa77XeVYxItJ9Iyrf77mOO7y2Cnlh+DnqTp
-         2pzYPwaEPHtoUt30FPGHO9fmLNRkl4YmMkBw/QA9YvSCSGmAV97ZO94iWzo6UsWhzO1T
-         L/4pYw6K0PP1BhkB/yD/Dme/NhqvRrP8BfkJ6M2IGDrwIOO+S+IChAiTEt1tBIl2v9SG
-         xsHioRR9Z9/I2IxxDeofcWjQUcI5DTs24bch8NSZL6a9aK+ON0LlyjJ0+mxc62ciulrE
-         kmtA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0fBMtQurmA3x5xvU+wnet4IMR5mJgYXxVWqsXD0/yceIPjzCQGZj/4cUF0atzU965L3FECq1xGofLr0zqHd5J7oxVe4xJab0NLhj2
-X-Gm-Message-State: AOJu0YympQTNGMjomuxp1PFPSoxGF/FRIqg6b9no8LkWWc0+jis5VXuO
-	bZNb1M7XmwPAAt7VcoNzf3PtqyEbx0ByUfIC6DiWXHC+V07qjRMfh5iIF+uV2YsELLY8hVCMvLa
-	P6crfPah7Kj1O40KLTJ6Vmb523AuW2OVE6D/d0V1UOamA0YscRtRal0Igoa7Vr1a+FeL1xnWrEw
-	lI0Iq5pBFa6oGvyTcuT5FLPvKOgOvqlsOhlXEC
-X-Received: by 2002:a17:903:1252:b0:1fb:a1c6:db75 with SMTP id d9443c01a7336-1fba1c6de04mr6881665ad.6.1720425693354;
-        Mon, 08 Jul 2024 01:01:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7tEwJUQ3jL/FURLCL1Fmxt7rfHgT6zXgifTSPRjjPgC0FTxqJiDiptLT5gVxmpCf9aR+PWLt24EtwHzQHJqA=
-X-Received: by 2002:a17:903:1252:b0:1fb:a1c6:db75 with SMTP id
- d9443c01a7336-1fba1c6de04mr6881415ad.6.1720425692886; Mon, 08 Jul 2024
- 01:01:32 -0700 (PDT)
+	s=arc-20240116; t=1720424439; c=relaxed/simple;
+	bh=zSvI+p4Ny5m13sQ7qbhFPTOZZkOCzC7O2DHTDoL4nSU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tKn7lD2zyPC8ZjuFwEZmUnKgilmlFAx97vdS7IwM+Fs9oVx9DEC68L/Kb5a9dUR/7cKzaJaP4+khsxMpaGO4PYHEVkldnLG6nz4671PXB8+BBSkeg5pXxg7azLdEmwyYkWayHXIsWWLAVuQ2v7G8W/rHvZCKPTOhErCWJ2Rbeic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ebG30Ovx; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720424438; x=1751960438;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=zSvI+p4Ny5m13sQ7qbhFPTOZZkOCzC7O2DHTDoL4nSU=;
+  b=ebG30OvxS/3F8eeqefQKVMoF4xKKZZridyRwgNDNlrBGiAkz35uQsrmF
+   M7wotYmjlFxrxL58lkG6S61SuXk2BjxxaB4e9V3P7/q5ZzHBmOkXK/9jS
+   G16Y03SfaXB4F3tgI9cI5XSRZJPh7mCUdl+WGu25hxdyyJhQw88QEG/ZT
+   c0P90lkz1fMRHg6HYO0HLMtyWXPManA0n93IGXtN6CahUVcSZkfTsPHXo
+   DB0RLIC/akOF+/XPZgyF19HyIebtTzsYsBTkxAdZIbJgnNTpkf5xsnORW
+   fqcCDjqZhrTZk/XtXaJ2PAVW2Oou9Bfm7bGfiGqu02drB+A0LVVN6/UyB
+   A==;
+X-CSE-ConnectionGUID: VEqAt8k+SiSybknAdCRNzA==
+X-CSE-MsgGUID: 8mtccSmFRpSCYlxhmBSdfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="17819206"
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="17819206"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 00:40:37 -0700
+X-CSE-ConnectionGUID: pUdCrYU+QvaJwKKIYbVVFQ==
+X-CSE-MsgGUID: +fzL/5rXQv2bPKvgpyZLCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="51774068"
+Received: from emr.sh.intel.com ([10.112.229.56])
+  by fmviesa003.fm.intel.com with ESMTP; 08 Jul 2024 00:40:34 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yongwei Ma <yongwei.ma@intel.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [Patch v2 0/5] Bug fixes on topdown events reordering 
+Date: Mon,  8 Jul 2024 14:41:59 +0000
+Message-Id: <20240708144204.839486-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708064820.88955-1-lulu@redhat.com> <20240708064820.88955-3-lulu@redhat.com>
- <CACGkMEum7Ufgkez9p4-o9tfYBqfvPUA+BPrxZD8gF7PmWVhE2g@mail.gmail.com> <CACLfguXdL_FvdvReQrzvKvzJrHnE9gcTv+rLYsCNB0HtvXC74w@mail.gmail.com>
-In-Reply-To: <CACLfguXdL_FvdvReQrzvKvzJrHnE9gcTv+rLYsCNB0HtvXC74w@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 8 Jul 2024 16:01:21 +0800
-Message-ID: <CACGkMEuOz_fsBnX8BNnbUHMdNo48S8cEUT4M6O0_oBsSKRJmLQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vdpa_sim_net: Add the support of set mac address
-To: Cindy Lu <lulu@redhat.com>
-Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
-	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 8, 2024 at 3:19=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
->
-> On Mon, 8 Jul 2024 at 15:06, Jason Wang <jasowang@redhat.com> wrote:
-> >
-> > On Mon, Jul 8, 2024 at 2:48=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote=
-:
-> > >
-> > > Add the function to support setting the MAC address.
-> > > For vdpa_sim_net, the driver will write the MAC address
-> > > to the config space, and other devices can implement
-> > > their own functions to support this.
-> > >
-> > > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > > ---
-> > >  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 19 ++++++++++++++++++-
-> > >  1 file changed, 18 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa=
-_sim/vdpa_sim_net.c
-> > > index cfe962911804..a472c3c43bfd 100644
-> > > --- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
-> > > +++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
-> > > @@ -414,6 +414,22 @@ static void vdpasim_net_get_config(struct vdpasi=
-m *vdpasim, void *config)
-> > >         net_config->status =3D cpu_to_vdpasim16(vdpasim, VIRTIO_NET_S=
-_LINK_UP);
-> > >  }
-> > >
-> > > +static int vdpasim_net_set_attr(struct vdpa_mgmt_dev *mdev,
-> > > +                               struct vdpa_device *dev,
-> > > +                               const struct vdpa_dev_set_config *con=
-fig)
-> > > +{
-> > > +       struct vdpasim *vdpasim =3D container_of(dev, struct vdpasim,=
- vdpa);
-> > > +
-> > > +       struct virtio_net_config *vio_config =3D vdpasim->config;
-> > > +       if (config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
-> > > +               if (!is_zero_ether_addr(config->net.mac)) {
-> > > +                       memcpy(vio_config->mac, config->net.mac, ETH_=
-ALEN);
-> > > +                       return 0;
-> > > +               }
-> > > +       }
-> > > +       return -EINVAL;
-> >
-> > I think in the previous version, we agreed to have a lock to
-> > synchronize the writing here?
-> >
-> > Thanks
-> >
-> Hi Jason
-> I have moved the down_write(&vdev->cf_lock) and
-> up_write(&vdev->cf_lock) to the function vdpa_dev_net_device_attr_set
-> in vdpa/vdpa.c. Then the device itself doesn't need to call it again.
-> Do you think this is ok?
+Changes:
+v1 -> v2"
+  * Use event/umask code instead of event name to indentify if an event
+    is a topdown slots/metric event (patch 1/5).
+  * Add perf tests to validate topdown events reordering including raw
+    format topdown events (patch 5/5).
+  * Drop the v1 patch 3/4 which doesn't move slots event if no topdown
+    metrics event in group.
 
-I meant we have another path to modify the mac:
+Currently whether an event is a topdown slots/metric event is only
+identified by comparing event name. It's inaccurate since topdown events
+can be assigned by raw format and the event name is null in this case,
+e.g.
 
-static virtio_net_ctrl_ack vdpasim_handle_ctrl_mac(struct vdpasim *vdpasim,
-                                                   u8 cmd)
-{
-        struct virtio_net_config *vio_config =3D vdpasim->config;
-        struct vdpasim_virtqueue *cvq =3D &vdpasim->vqs[2];
-        virtio_net_ctrl_ack status =3D VIRTIO_NET_ERR;
-        size_t read;
+perf stat -e '{instructions,cpu/r400/,cpu/r8300/}' sleep 1
 
-        switch (cmd) {
-case VIRTIO_NET_CTRL_MAC_ADDR_SET:
-                read =3D vringh_iov_pull_iotlb(&cvq->vring, &cvq->in_iov,
-                                             vio_config->mac, ETH_ALEN);
-                if (read =3D=3D ETH_ALEN)
-            status =3D VIRTIO_NET_OK;
-        break;
-        default:
-                break;
-        }
+ Performance counter stats for 'sleep 1':
 
-        return status;
-}
+     <not counted>      instructions
+     <not counted>      cpu/r400/
+   <not supported>      cpu/r8300/
 
-We need to serialize between them.
+       1.002917796 seconds time elapsed
 
-Thanks
+       0.002955000 seconds user
+       0.000000000 seconds sys
 
-> Thanks
-> Cindy
-> > > +}
-> > > +
-> > >  static void vdpasim_net_setup_config(struct vdpasim *vdpasim,
-> > >                                      const struct vdpa_dev_set_config=
- *config)
-> > >  {
-> > > @@ -510,7 +526,8 @@ static void vdpasim_net_dev_del(struct vdpa_mgmt_=
-dev *mdev,
-> > >
-> > >  static const struct vdpa_mgmtdev_ops vdpasim_net_mgmtdev_ops =3D {
-> > >         .dev_add =3D vdpasim_net_dev_add,
-> > > -       .dev_del =3D vdpasim_net_dev_del
-> > > +       .dev_del =3D vdpasim_net_dev_del,
-> > > +       .dev_set_attr =3D vdpasim_net_set_attr
-> > >  };
-> > >
-> > >  static struct virtio_device_id id_table[] =3D {
-> > > --
-> > > 2.45.0
-> > >
-> >
->
+In this case slots and topdown-be-bound events are assigned by raw
+format (slots:r400, topdown-be-bound:r8300) and they are not reordered
+correctly.
+
+The reason of dropping the patch "don't move slots event if no topdown
+metric events in group" is that no any function issues but a warning is
+introduced, and the cost of fixing this issue is expensive.
+
+History:
+  v1: https://lore.kernel.org/all/20240702224037.343958-1-dapeng1.mi@linux.intel.com/
+
+Dapeng Mi (5):
+  perf x86/topdown: Complete topdown slots/metrics events check
+  perf x86/topdown: Correct leader selection with sample_read enabled
+  perf x86/topdown: Don't move topdown metrics events when sorting
+    events
+  perf tests: Add leader sampling test in record tests
+  perf tests: Add topdown events counting and sampling tests
+
+ tools/perf/arch/x86/util/evlist.c  |  9 ++---
+ tools/perf/arch/x86/util/evsel.c   |  3 +-
+ tools/perf/arch/x86/util/topdown.c | 57 ++++++++++++++++++++++++++++--
+ tools/perf/arch/x86/util/topdown.h |  2 ++
+ tools/perf/tests/shell/record.sh   | 34 ++++++++++++++++++
+ tools/perf/tests/shell/stat.sh     |  6 ++++
+ 6 files changed, 101 insertions(+), 10 deletions(-)
+
+
+base-commit: 73e931504f8e0d42978bfcda37b323dbbd1afc08
+-- 
+2.40.1
 
 
