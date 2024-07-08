@@ -1,268 +1,157 @@
-Return-Path: <linux-kernel+bounces-244157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79434929FF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:13:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DB5929FF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B1881C214A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:13:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2BB1C2087C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0707E768E1;
-	Mon,  8 Jul 2024 10:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533336A022;
+	Mon,  8 Jul 2024 10:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OGCiPkoe"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ak0UNpGH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDC176025
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27A276025
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720433596; cv=none; b=f4gJ2WOjqLO2DjqVdLMgxEb9hPTqX2ASuagvj5aglmYgdHNE9xEcadtgwP9K2gNFa45/nOT99ptZoeFgh6Lk0QwL98yrRb01F8J3TnW0JJzzAQ0+fzWWHmTJnW+bRJtbdammZBZJTMyHJIXKRQzBeYaO7oOHOzq4jss1RiabTic=
+	t=1720433602; cv=none; b=lqV7OurxoXytVBMh/i08sYfVo8PB079k/v/3E857TLO0WayvNO/byY0Ok2A0+6CnTYKeUdzr4SrA/XHB5hcpqUVLLi3NCUcpRnJJZNJuCOuv1C5zcz2htAinzVxOSpTolvbc/bjzICUj3+ETVPfMn6WB+8kxWLjJgefols9EUNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720433596; c=relaxed/simple;
-	bh=HEeGDhbwnZOacLYf46vwc5wEABZGEKWDdQ4rW5ANr88=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BPA1NGWjab7tc12LoD4U7rVCacUrZaVVv37A6JqBOzIZU12dG+UnRz6dhq2eldC+hJvwje4td/bXnOZutuxIIYjQCVZReHxofPWRuZ8Z/Gv5qpmy55jSIubQCoc7OgAeOd/vVgw+rj3VW7UhFqyeHmQMRk+KLeBx6wD8b17c8TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OGCiPkoe; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d9306100b5so573868b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1720433593; x=1721038393; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8XXKAYmfVFyA7thhyLqvFeZE7qEz3+PJWR4pQ61AWUw=;
-        b=OGCiPkoekjCd5ni1KJe+51ayTspB3tGnDgEsabGMQmiRgCJcGxB0C2blxPJewhs8sh
-         vCzRNk/C/YagZOrOxlni+44QsU05LbV/vknTFV/5Lm/2yFqidrWCc0RFKRrzUveFDzM4
-         mXSLYqYUX1GipBnAgtu+9EJp+LM3Il6jV6N6aQJ8afT6P5lKsPTc0sYLwFF5krjW1Nwh
-         ydwBUaBH3QkiDnKtA3UcojpDDxrDrdjZhxFrl+y1PKzK873upQA7FrXyZ0YP98b5t4CP
-         jUiulY0KdC+gWxwumbcEf5ls2W/gD5A9/GJNNlGSca4m4wVEFBgatC6Z7T/oiExIevB8
-         oFSg==
+	s=arc-20240116; t=1720433602; c=relaxed/simple;
+	bh=y6dqBqOENd6UqWyt7+MMtufQwArRT0fZ1eNZ2YYAgSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j8HBqFbJwuVtHT1rOEOJf4YhG02KXHGPFS6SZfD7JLRXY5WaOJZYHcYHwxeTFvbiPnbYlfws3im9+81Os1E2iB9DknGPJC29+Kbvc8ceHbczA5a34IKGNHLAdUEiEtP/3mpgQ0Zhhl1EX0bgra09/lS78qwXsKiYn6gOcuMW5jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ak0UNpGH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720433599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Aq4i8tkGqnPmW+VQcfJOnDtTidOU14j4o+JFRh6Zy9k=;
+	b=ak0UNpGHGfGm81gC8W8HRGT+geLgoufjK3XKFuaDT1bA4g/cU9lMfsUu1Hau23eTjzvPXd
+	HxFCwNjZwX140hTjAixoI8MrUTQaLcNV8gj/kXZwgiGCRKGogSMkrmc2pIDedYm9rWVwwq
+	lxn/+38fGn/rIuvmyehGTGS4EShgcFc=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-RN8xGMwvOneK3Dl430JOWA-1; Mon, 08 Jul 2024 06:13:18 -0400
+X-MC-Unique: RN8xGMwvOneK3Dl430JOWA-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ee90339092so45930561fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:13:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720433593; x=1721038393;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8XXKAYmfVFyA7thhyLqvFeZE7qEz3+PJWR4pQ61AWUw=;
-        b=wMjMVpxsftH7Wb4W1me+ngtMhIUDkM0RDNpKAcMG+HimyxF9mpOdL0TF2XYRIxwJUD
-         cmlEzn+Z39qb3tPePden0+y5a5BAlEpzLRtEI9Wjpff/4V2bf0zhEsQ4YJVS61goSCd0
-         4m+j7VBydWp+qnTlXf/H54KKY7JGWYow7P/VOfp8zBgVbw40L3eealLmFUaqe6nbnWfX
-         d7PDc+IxjptQ9LpvEoE7osnWK04Pm39RbtArxcEa90HG0XA12TYs8lD4AYzpw9ZF/+Pw
-         toek1vR5m52f7R1nJNOEPnUDxIjz35HmTCFwVI8WU1L8sN6h242hUfNzCiIDZp6i9/25
-         VX+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUPwWtfAqGrzwFCjRm8AFb6svMKVqC/SmkJy0qpbtItI5T0SrJ4N6PHUdxUNr5EWYkeo3q/iDE4JRuSPlZeKPLGbUp9oW9R9W0qGROJ
-X-Gm-Message-State: AOJu0YyZ35s0c6AqjFpsMfxp7ifKBEfQyVMSWBeM7GrXO/D8WsZ+htQ6
-	nin3bSZ6a89w5kCZ4dPPjv6I4JWMlL5PqyqbyJO2IkFK2jpCQA2XbTa94ju/ZQ==
-X-Google-Smtp-Source: AGHT+IE7xxHxLr5inoKXU+i7LdrQmrl5bVJRW4SAjjiIiQkXir4NQfGD8V6du1EKKer2WLBHscQzBg==
-X-Received: by 2002:a05:6808:1984:b0:3d2:1b1b:ec1 with SMTP id 5614622812f47-3d914da9b46mr17267596b6e.45.1720433592875;
-        Mon, 08 Jul 2024 03:13:12 -0700 (PDT)
-Received: from lizhigang-HP-Elite-Tower-880-G9-Desktop-PC.bytedance.net ([61.213.176.6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a8df0e3sm14902961a12.36.2024.07.08.03.13.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 03:13:12 -0700 (PDT)
-From: lizhigang <lizhigang.1220@bytedance.com>
-To: jack@suse.cz
-Cc: amir73il@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lizhigang <lizhigang.1220@bytedance.com>
-Subject: [PATCH] inotify: Added pid and uid information in inotify event.
-Date: Mon,  8 Jul 2024 18:12:57 +0800
-Message-Id: <20240708101257.3367614-1-lizhigang.1220@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1720433596; x=1721038396;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aq4i8tkGqnPmW+VQcfJOnDtTidOU14j4o+JFRh6Zy9k=;
+        b=AuNNQxnTkGL2n9GESs0Cp73OJv6ijU7ojgIfGel15qoxSrImDII4TOccOY2y5Aq9c5
+         5vB/iqaxPNWJ/rlG/LTZ5NdwuqJQzdJgr1lqfXSppIT/o1o6qefoOJbtCFE66NSMv7Do
+         AAfWD42C587RRqsnAKzx/iwbOeuReG2cHrLIMDgv41VmL5UXRk0qxmwLyT2R1ANwefNi
+         MaH2Q6arJy5nTjInu00ZfTBNrNrpuXYDowyY5gfh4UOb6aDo5RpbHpLqGdgHL4q9nAPa
+         16Bp5lCDAS9LN0fOKUB72u1CpPpcvuiVD3/D/qsB82Guyer4p3xeMrsOUy/WeN81A4YQ
+         gd0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWvg+YU825xdwybi1jRC8X/jiNJu2tXQg91U3NYp6g4fATmX+Mi5kUDWu54ikh1x2PqZvuVYsXs14bAbHAjMo/nIyMSegbqGTn1sHUs
+X-Gm-Message-State: AOJu0YxpUM1ivHcF1M37xwTwXwTKt268j9FX32ywA1L6xZBXl2JP3+0+
+	gZ68RQkj5bxq74pkTmACp+uqqet5m9seqY2A0KocIKEn4rbOJ91ipQc3hSgD8D4Qi0TKfAzSlYZ
+	GmVH7/JM0/hwdlLIA8prwPT9jbg8UKEhxKwz5D1cnFze+vEXL0SBqrtQs0RudLlkAMhIfE87Z
+X-Received: by 2002:a05:651c:114b:b0:2ec:3dd4:75f4 with SMTP id 38308e7fff4ca-2ee8edc23d3mr87781801fa.38.1720433596518;
+        Mon, 08 Jul 2024 03:13:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGToWaHMDwnE+0LYJZlu71A2tXExVAesgAxkzanSdp2VXAZygrzzoU3ofCUOmJX18NzvdXxw==
+X-Received: by 2002:a05:651c:114b:b0:2ec:3dd4:75f4 with SMTP id 38308e7fff4ca-2ee8edc23d3mr87781641fa.38.1720433596129;
+        Mon, 08 Jul 2024 03:13:16 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58de4581536sm5537092a12.16.2024.07.08.03.13.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 03:13:15 -0700 (PDT)
+Message-ID: <b2f69fb8-d87a-4cf4-8d45-11cf1a396e54@redhat.com>
+Date: Mon, 8 Jul 2024 12:13:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] acpi video: force native for some T2 macbooks
+To: Aditya Garg <gargaditya08@live.com>, Lukas Wunner <lukas@wunner.de>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Orlando Chamberlain <orlandoch.dev@gmail.com>
+References: <3DA0EAE3-9EB7-492B-96FC-988503BBDCCC@live.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <3DA0EAE3-9EB7-492B-96FC-988503BBDCCC@live.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The inotify event only contains file name information. Sometimes we
-also want to know user or process information,such as who created
-or deleted a file. This patch adds information such as COMM, PID
-and UID to the end of filename, which allowing us to implement
-this function without modifying the current Inotify mechanism.
+Hi,
 
-This function is not enabled by default and is enabled through an IOCTL
+On 7/5/24 3:56 PM, Aditya Garg wrote:
+> From: Orlando Chamberlain <orlandoch.dev@gmail.com>
+> 
+> The intel backlight is needed for these, previously users had nothing in
+> /sys/class/backlight.
+> 
+> Signed-off-by: Orlando Chamberlain <orlandoch.dev@gmail.com>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
 
-When enable this function, inotify_event->name will contain comm,
-pid and uid information, with the following specific format:
+Thanks, patch looks good to me:
 
-filename____XXX,pid:YYY__uid:ZZZ
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Pseudo code to enable this function:
-int rc, bytes_to_read, inotify_fd;
+Regards,
 
-inotify_fd = inotify_init();
-...
-// enable padding uid,pid information
-rc = ioctl( inotify_fd, TIOCLINUX, &bytes_to_read);
+Hans
 
-Log example with this function:
-CREATE,ISDIR /home/peter/testdir____mkdir,pid:3626__uid:1000
-CREATE /home/peter/test.txt____bash,pid:3582__uid:1000
-OPEN /home/peter/test.txt____bash,pid:3582__uid:1000
-MODIFY /home/peter/test.txt____bash,pid:3582__uid:1000
-CLOSE_WRITE,CLOSE /home/peter/test.txt____bash,pid:3582__uid:1000
-OPEN,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
-ACCESS,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
-ACCESS,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
-CLOSE_NOWRITE,CLOSE,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
-DELETE,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
 
-Signed-off-by: lizhigang <lizhigang.1220@bytedance.com>
----
- fs/notify/inotify/Kconfig            | 24 +++++++++++++++++++++++
- fs/notify/inotify/inotify_fsnotify.c | 29 +++++++++++++++++++++++++++-
- fs/notify/inotify/inotify_user.c     | 11 ++++++++++-
- include/linux/fsnotify_backend.h     |  5 ++++-
- 4 files changed, 66 insertions(+), 3 deletions(-)
 
-diff --git a/fs/notify/inotify/Kconfig b/fs/notify/inotify/Kconfig
-index 1cc8be25df7e..1b2d6aef5dda 100644
---- a/fs/notify/inotify/Kconfig
-+++ b/fs/notify/inotify/Kconfig
-@@ -15,3 +15,27 @@ config INOTIFY_USER
- 	  For more information, see <file:Documentation/filesystems/inotify.rst>
- 
- 	  If unsure, say Y.
-+
-+config INOTIFY_NAME_UID
-+	bool "Inotify filename with uid information"
-+	default n
-+	help
-+	  Say Y here to enable inotify file name with uid, pid and comm information.
-+	  Added the current context information with file name.
-+	  The inotify event only contains file name information. Sometimes we
-+	  also want to know user or process information,such as who created
-+	  or deleted a file. This patch adds information such as COMM, PID
-+	  and UID to the end of filename, which allowing us to implement
-+	  this function without modifying the current Inotify mechanism.
-+	  This function is not enabled by default and is enabled through an IOCTL
-+	  When enable this function, inotify_event->name will contain comm,
-+	  pid and uid information, with the following specific format:
-+	  filename____XXX,pid:YYY__uid:ZZZ
-+	  Pseudo code to enable this function:
-+	  int rc, bytes_to_read, inotify_fd;
-+	  inotify_fd = inotify_init();
-+	  ...
-+	  // enable padding uid,pid information
-+	  rc = ioctl( inotify_fd, TIOCLINUX, &bytes_to_read);
-+
-+	  If unsure, say n.
-diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-index 993375f0db67..d6d2d11f1e8c 100644
---- a/fs/notify/inotify/inotify_fsnotify.c
-+++ b/fs/notify/inotify/inotify_fsnotify.c
-@@ -23,9 +23,16 @@
- #include <linux/sched.h>
- #include <linux/sched/user.h>
- #include <linux/sched/mm.h>
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+#include <linux/cred.h>
-+#endif
- 
- #include "inotify.h"
- 
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+#define UID_INFO_MAX_SIZE   64
-+#endif
-+
- /*
-  * Check if 2 events contain the same information.
-  */
-@@ -68,9 +75,21 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
- 	int len = 0, wd;
- 	int alloc_len = sizeof(struct inotify_event_info);
- 	struct mem_cgroup *old_memcg;
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	char uid_info[UID_INFO_MAX_SIZE];
-+	struct user_struct *user_info;
-+#endif
- 
- 	if (name) {
- 		len = name->len;
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+		if (group->user_flag & USER_FLAG_TASK_INFO) {
-+			user_info = current_user();
-+			sprintf(uid_info, "____%s,pid:%d__uid:%d",
-+				current->comm, current->pid, user_info->uid.val);
-+			len += strlen(uid_info);
-+		}
-+#endif
- 		alloc_len += len + 1;
- 	}
- 
-@@ -120,9 +139,17 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
- 	event->wd = wd;
- 	event->sync_cookie = cookie;
- 	event->name_len = len;
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	if (len) {
-+		if (group->user_flag & USER_FLAG_TASK_INFO)
-+			sprintf(event->name, "%s%s", name->name, uid_info);
-+		else
-+			strcpy(event->name, name->name);
-+	}
-+#else
- 	if (len)
- 		strcpy(event->name, name->name);
--
-+#endif
- 	ret = fsnotify_add_event(group, fsn_event, inotify_merge);
- 	if (ret) {
- 		/* Our event wasn't used in the end. Free it. */
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 4ffc30606e0b..f1538cafdc1d 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -349,6 +349,13 @@ static long inotify_ioctl(struct file *file, unsigned int cmd,
- 		}
- 		break;
- #endif /* CONFIG_CHECKPOINT_RESTORE */
-+
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	case TIOCLINUX:
-+		group->user_flag |=  USER_FLAG_TASK_INFO;
-+		ret = 0;
-+		break;
-+#endif /* CONFIG_INOTIFY_NAME_UID */
- 	}
- 
- 	return ret;
-@@ -674,7 +681,9 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
- 
- 	group->max_events = max_events;
- 	group->memcg = get_mem_cgroup_from_mm(current->mm);
--
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	group->user_flag = 0;
-+#endif
- 	spin_lock_init(&group->inotify_data.idr_lock);
- 	idr_init(&group->inotify_data.idr);
- 	group->inotify_data.ucounts = inc_ucount(current_user_ns(),
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 4dd6143db271..d4f57b16f1d3 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -234,7 +234,10 @@ struct fsnotify_group {
- 						 * full */
- 
- 	struct mem_cgroup *memcg;	/* memcg to charge allocations */
--
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	#define USER_FLAG_TASK_INFO     1   /* output task infor with filename */
-+	unsigned int user_flag;             /* user added control flag */
-+#endif
- 	/* groups can define private fields here or use the void *private */
- 	union {
- 		void *private;
--- 
-2.25.1
+> ---
+>  drivers/acpi/video_detect.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
+> index 442396f6ed1f..baf7264d7b94 100644
+> --- a/drivers/acpi/video_detect.c
+> +++ b/drivers/acpi/video_detect.c
+> @@ -513,6 +513,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
+>  		DMI_MATCH(DMI_PRODUCT_NAME, "iMac12,2"),
+>  		},
+>  	},
+> +	{
+> +	 .callback = video_detect_force_native,
+> +	 /* Apple MacBook Air 9,1 */
+> +	 .matches = {
+> +		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
+> +		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookAir9,1"),
+> +		},
+> +	},
+>  	{
+>  	 /* https://bugzilla.redhat.com/show_bug.cgi?id=1217249 */
+>  	 .callback = video_detect_force_native,
+> @@ -522,6 +530,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
+>  		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro12,1"),
+>  		},
+>  	},
+> +	{
+> +	 .callback = video_detect_force_native,
+> +	 /* Apple MacBook Pro 16,2 */
+> +	 .matches = {
+> +		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
+> +		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro16,2"),
+> +		},
+> +	},
+>  	{
+>  	 .callback = video_detect_force_native,
+>  	 /* Dell Inspiron N4010 */
 
 
