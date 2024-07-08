@@ -1,94 +1,121 @@
-Return-Path: <linux-kernel+bounces-244241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1EC92A17E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:49:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5648D92A18A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4CC1C210BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:49:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005A21F22242
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9797F7C6;
-	Mon,  8 Jul 2024 11:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5BF7FBCE;
+	Mon,  8 Jul 2024 11:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kpM29nd7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xpfouwIG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MXI7X8dU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8E37C081;
-	Mon,  8 Jul 2024 11:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A20B7E57F;
+	Mon,  8 Jul 2024 11:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720439334; cv=none; b=EO9QYmM9IHW+zJrHRpAka9p1ehdUt2NKC5Jclx9X0BoTqmwvTHGASteg+2fGYAKmzzaFJq/DnGcFa/PkwN9YKaDBn2Ncb3+j/j3MD/A64bPAZamfuk4r7VMUP79DlYzJyybUbkBdpOyu8NypQo+cmAWVaYFp5bOFaXA6RN7q/3M=
+	t=1720439369; cv=none; b=hdqU57YdwOvfqn/jqGI8XjwN0OP+2oydxoo8beRrVRq3dp9cYICgDCxZYfo7ZWyNpkagd152KIQoIqdcDF5Sy0oWNYMSUmGSlqY12s/opDFa8Vw5zXXCFICS5YhoMWu7SMuMMz+3AzYNfu+ImSPGQX2VFRp1IQuLcIIeO4tGaaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720439334; c=relaxed/simple;
-	bh=aS0g16LlmzLraDi70hLNiR0Upx3Nm/PgrSsD8O55+6g=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=GZ1WWxol95gNWLVbKIrzhUinweriSDulIwhftxF9Fb80E+vSJaMg0ZHEumdE/i1vckllEID5dxG8Iti3UyoqRp2Lc/54dajK0coQ2c/r0wadVpTCE4a6TbnnZNJ+c42KEP3yJUGqI0ahQtgDKVQhRsH3jhgfNpxZisSnxKbCZCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kpM29nd7; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720439333; x=1751975333;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=aS0g16LlmzLraDi70hLNiR0Upx3Nm/PgrSsD8O55+6g=;
-  b=kpM29nd7JY84iSogDdXuUk6eRUtnrdFUbQGQEbVxuzwqpbPYO+FNFWOh
-   A6Jvo1/qa7yTxxMdjzBDfEOsgH8v+d4zKOIymdxlERnb6FI2eUL4+IZx8
-   sz5sc5fTSw3x6+aJ+nCTkqR4rDBXg1KhvkqpV/hYkivRwiiknIbCmsk/1
-   SrwKKvHsUGIfm8R1UpNfVqJbf5xhzBkyXVkDmyIVGrPDjnoyyhglXRtIv
-   WmHJfkCyjqXN0dJGq3252feDSeedGLaGWEgbfLp5I0R5zBtaaKhIK4VzT
-   vqf3kl9YcZj7IaRoiCRUbPGHI88sEps/tHXJQR1DV/HNTGkJeKhE3j1hO
-   g==;
-X-CSE-ConnectionGUID: b2GEv2xQSOOM18TU/FlEUw==
-X-CSE-MsgGUID: E6hW8TUbSxuqJkGl5IHjZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="28242067"
-X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
-   d="scan'208";a="28242067"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 04:48:52 -0700
-X-CSE-ConnectionGUID: C1CYfNmxQCSddArW/f0+uQ==
-X-CSE-MsgGUID: hSjjsO+8TOKCW6pXb2WBXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
-   d="scan'208";a="52680457"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.246.119.97])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 08 Jul 2024 04:48:50 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
- corbet@lwn.net, kamalesh.babulal@oracle.com, "Xiu Jianfeng"
- <xiujianfeng@huawei.com>
-Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1720439369; c=relaxed/simple;
+	bh=yxYuWUOiEzMPIr9eIOnEB2yA+hic/+m5MEj2MEoVLV8=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=mF9cX8Kzqn7aQqq7PXBOFpxRR7hwc9PQoCscWuWtlBJQqjulwhRFA4mHJay60LVJIsR3GnmdffI9pYKvV3Tf92+NyaqAc+1U0ZqGt6t2lmqXcwQTNlZ6+KOgZ72hXhhKoGrNgkU7xZ8XPd1pBUeD6RlMiCw3D0J6HNX+jpdKlrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xpfouwIG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MXI7X8dU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 08 Jul 2024 11:49:24 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720439365;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=BbwMPylEy43ltkm0sAu8CCcR6tMz1LHrMTFmPccd4QQ=;
+	b=xpfouwIG4+ng1/ewzPRVi3CPMmhyjqCHx7BoLboUtSe9N+QTE92REgbNkOHdV2rIdKSYWs
+	kEvvVnW1EziFmFZ8s8Uil0RSGW7nRP9VTfP2tRFqGyUqdJ3kEs6dUIVdRIrwh9uSWO4hbZ
+	6bpixROJ5QkWDOY5Sgvi79Z4XT3pByAjoGwD45rGcDfSIC1S3/hzcwEt5GtQmoqn1Eh9sI
+	S/CXR3lrGR2mrbLyK/T1eMLZJQXBt53f++JohtBO3EkwDyNWd4RkLaeAxIUllH7dzr56uX
+	oKmX4EXsa7x+P5nThzqbloyelwCI1y5e/yPsVUrfBwY+lXn/cVaPyOUA4uLaCw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720439365;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=BbwMPylEy43ltkm0sAu8CCcR6tMz1LHrMTFmPccd4QQ=;
+	b=MXI7X8dU3qVdf2O+tk5ksSuFigntHWnmuPWRoTkOB0pFt7ikoYA79tfKyquf/6Dj5ZXbs5
+	e1g6OjUDmup4eRBQ==
+From: "tip-bot2 for Siddh Raman Pant" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/core] objtool: Use "action" in error message to be
+ consistent with help
+Cc: Siddh Raman Pant <siddh.raman.pant@oracle.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 -next] cgroup/misc: Introduce misc.peak
-References: <20240703003646.2762150-1-xiujianfeng@huawei.com>
-Date: Mon, 08 Jul 2024 06:48:48 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <172043936486.2215.15811418345178205978.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2qk9rmcawjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <20240703003646.2762150-1-xiujianfeng@huawei.com>
-User-Agent: Opera Mail/1.0 (Win32)
 
-On Tue, 02 Jul 2024 19:36:46 -0500, Xiu Jianfeng <xiujianfeng@huawei.com>  
-wrote:
+The following commit has been merged into the objtool/core branch of tip:
 
-> Introduce misc.peak to record the historical maximum usage of the
-> resource, as in some scenarios the value of misc.max could be
-> adjusted based on the peak usage of the resource.
->
-Acked-by: haitao.huang@linux.intel.com
-BTW, from SGX point of view, I think it also makes sense to show peak  
-usage in the root group.
-Thanks
-Haitao
+Commit-ID:     b13e9f6da4cc34240dae05418b9876b2758ebe35
+Gitweb:        https://git.kernel.org/tip/b13e9f6da4cc34240dae05418b9876b2758ebe35
+Author:        Siddh Raman Pant <siddh.raman.pant@oracle.com>
+AuthorDate:    Fri, 10 May 2024 15:02:57 +05:30
+Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
+CommitterDate: Tue, 02 Jul 2024 23:40:24 -07:00
+
+objtool: Use "action" in error message to be consistent with help
+
+The help message mentions the main options as "actions", which is
+different from the optional "options". But the check error messages
+outputs "option" or "command" for referring to actions.
+
+Make the error messages consistent with help.
+
+Signed-off-by: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ tools/objtool/builtin-check.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
+index 5e21cfb..387d56a 100644
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -144,7 +144,7 @@ static bool opts_valid(void)
+ 	    opts.static_call		||
+ 	    opts.uaccess) {
+ 		if (opts.dump_orc) {
+-			ERROR("--dump can't be combined with other options");
++			ERROR("--dump can't be combined with other actions");
+ 			return false;
+ 		}
+ 
+@@ -159,7 +159,7 @@ static bool opts_valid(void)
+ 	if (opts.dump_orc)
+ 		return true;
+ 
+-	ERROR("At least one command required");
++	ERROR("At least one action required");
+ 	return false;
+ }
+ 
 
