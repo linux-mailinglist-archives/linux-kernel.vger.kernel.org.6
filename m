@@ -1,129 +1,268 @@
-Return-Path: <linux-kernel+bounces-244334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED01A92A2D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:32:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA8392A321
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A3A71C20E29
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:32:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA532808B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0D878285;
-	Mon,  8 Jul 2024 12:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A95F839E3;
+	Mon,  8 Jul 2024 12:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="FDl15BYd"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIhtQM98"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D34F3C08A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F10038FA1;
+	Mon,  8 Jul 2024 12:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720441919; cv=none; b=rCDRBjoQ96TGLsRUjvvSDeIHjGgYVft4Z7xU5+8EuytFhcegOYiWVUKpV5X1fOdg3u+4huFpY+KAL2r9yG1naGeTcK9xDyeNX9mLl599bemu0+dfxFDtFHcduZUP1MOnXKQmp8GWxm1M0FxxDMQS8rgPDouxEynUTRGn/1uq6V8=
+	t=1720442763; cv=none; b=nC9edYOVvvw5rWY6rkKrILcHq+mDSPBpNUrb4cE3Dc7rDbQyXz/R+oL9KftNDyFDkYq0GS37el0ZpnK9EMXIzKlZ5VzVLoCY8DP6iSPCR8tPBc3jZPjM4ETjLDSWbmi7TSoSWrXBybBcTrMrsWJ1UGsDfR2IGzS9rcCPznB3jJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720441919; c=relaxed/simple;
-	bh=Kl5nUKYm6zGxZClFeL76kQHq2+ADhXs616WjkcIg2lQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NeFzxQDE7V+SUdRtCusumSBOkgDP7y5eZOI82RRHqY5NkblEF+3pKCM3xxPC7gYlVtbtNV0NxrGlk8dLl+dww46t+K4wNn4n+pBdWYesIk4fGF1PcVrP99F71RDNB1fG3T0EyYZoDlhbnjnPk+PM3hTGSJ3I4cjDZequRvXDySg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=FDl15BYd; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1720441907; x=1723033907;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Kl5nUKYm6zGxZClFeL76kQHq2+ADhXs616WjkcIg2lQ=;
-	b=FDl15BYdVYG9naBa6n6BcP3GKt7/JaFPG7RpQXVs8+AuQ7EfAuGg4Pf/VKT4Xe3a
-	kjl9auJQm2pNxHOgWvPu+MHhhG56bJ65HBjkQid6+0qoGe+yY9szo+YKJzce8qZV
-	iXQsEATq3zEFBct1wA8kvQMDusU5eMbjTi75FA7zb2g=;
-X-AuditID: ac14000a-03251700000021bc-58-668bdc3261cf
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id B1.83.08636.23CDB866; Mon,  8 Jul 2024 14:31:46 +0200 (CEST)
-Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 8 Jul 2024
- 14:31:45 +0200
-Message-ID: <871dab7c-3158-451f-8938-dc1ab477e725@phytec.de>
-Date: Mon, 8 Jul 2024 14:31:44 +0200
+	s=arc-20240116; t=1720442763; c=relaxed/simple;
+	bh=05BE5QIkNqGHLnlozE+/nCBRDY5C8lMe8j3HBLlQiBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ym9qyAV5yniPCifMi9++I35L6xJ9sCP2eSl/J3/EjTgWOyAGibm5kS6MGiv2sUlrOx/R8UpaTN86MaOUH6w9R2L11LhnxFjvtI2qt7Mz9ZV6fOGOFuttziTV7/f8ORYo9tN9v3O6cRsNUAJkbRIvkifFla0BGu0/mhEKiu4Nv8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIhtQM98; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 610ACC116B1;
+	Mon,  8 Jul 2024 12:45:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720442763;
+	bh=05BE5QIkNqGHLnlozE+/nCBRDY5C8lMe8j3HBLlQiBI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KIhtQM98DRc+Q3iqGQRKLHhd1DctOduNh0S+DNqGQ1ehzrJNcvWpyNZv65htncc4N
+	 KOc5BnykMyZ87lhvedTdLfpcJ00LCEb46+qrMMaRLBQ8rT+uTH5p69T/6rIy78q9MB
+	 nWgeZfMdJu1mwB01HOdNcJy/Y4Ff60SKMWjB/KzUJznx/m9dmG9nZvXjYaBv/hK0Hx
+	 gErwQ67NLvpC8mBv53u+vgyY1NpeHyIt/qLHMRDNGd0aGkjyEcBPofjo2T/AsGUegO
+	 MndmCKSd8GGntzi4SYRvtDbcXW3a1QamjfVyrhVSgPE6AsfOibebqcn/nT+JU/C9S6
+	 LAGss79wiDclg==
+Date: Mon, 8 Jul 2024 20:31:45 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>,
+	Inochi Amaoto <inochiama@outlook.com>, linux-serial@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>
+Subject: Re: [PATCH v3 08/11] riscv: dts: add initial SpacemiT K1 SoC device
+ tree
+Message-ID: <ZovcMYs1jnmPCWVE@xhacker>
+References: <20240703-k1-01-basic-dt-v3-0-12f73b47461e@gentoo.org>
+ <20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org>
+ <Zoanxksn0nio4MPg@xhacker>
+ <20240705063839.GA3042186@ofsar>
+ <ZojEEAdUwxPJwqIS@xhacker>
+ <20240706050556.GA3590714@ofsar>
+ <ZokfBzjvwN0IUQIX@xhacker>
+ <20240706142403.GYA4138928.dlan.gentoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] arm64: dts: ti: k3-am642-evm: add ICSSG1 Ethernet
- support
-To: MD Danish Anwar <danishanwar@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>, Nishanth Menon <nm@ti.com>
-CC: Andrew Lunn <andrew@lunn.ch>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring
-	<robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Tero
- Kristo <kristo@kernel.org>, <srk@ti.com>, <r-gunasekaran@ti.com>, Roger
- Quadros <rogerq@kernel.org>, Daniel Schultz <D.Schultz@phytec.de>
-References: <20240215103036.2825096-1-danishanwar@ti.com>
- <20240215103036.2825096-3-danishanwar@ti.com>
-Content-Language: en-US
-From: Wadim Egorov <w.egorov@phytec.de>
-In-Reply-To: <20240215103036.2825096-3-danishanwar@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWyRpKBR9f4TneaQd8yJovzdw8xW6zZe47J
-	4ueGXhaL+UfOsVos/zyb3aLvxUNmi02Pr7FaXN41h83izY+zTBZdr9vZLVr3HmG3OHdvHatF
-	9/YJTBb/z35gd+Dz2LSqk83jzrU9bB6bl9R77Nzxmcnj+I3tTB6fN8kFsEVx2aSk5mSWpRbp
-	2yVwZbxq7WcrOMhd8XXacqYGxs2cXYycHBICJhK/Np5l6mLk4hASWMIkcfHTbTYI5w6jxIHO
-	sywgVbwCNhLtB1Yzg9gsAioSnzpbWSHighInZz4BqxEVkJe4f2sGO4gtLBAu0XlrJli9iECu
-	xJ83P5hBhjILzGeW+PtqI9A6DqANmRKHJhaD1DALiEvcejKfCcRmE1CXuLPhG9h8TgEriYPv
-	X7NA1FhILH5zkB3ClpfY/nYO2HwhIPvFpeUsEN/IS0w795oZwg6V2PplO9MERuFZSE6dhWTd
-	LCRjZyEZu4CRZRWjUG5mcnZqUWa2XkFGZUlqsl5K6iZGUDyKMHDtYOyb43GIkYmD8RCjBAez
-	kgjv/BvdaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5V3cEpwoJpCeWpGanphakFsFkmTg4pRoY
-	bQRVFl5r3H77zGrjSUsZLuQ0KDpMXz9Rp2ily6XQw4ZZKhO/x4c1eaTYqZ08pmsR/N7pdnik
-	1arP5y/N6rrH7nRiuoPSlANWHcyra/70727aLL0qQtbNuu7j0RvRzjr+fp2N984tXle7TOYA
-	66z/+W28f648rqmo3GgquiRsS4WDrLflg7V5SizFGYmGWsxFxYkAleZUHLUCAAA=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240706142403.GYA4138928.dlan.gentoo>
 
-Hi,
-
-Am 15.02.24 um 11:30 schrieb MD Danish Anwar:
-> ICSSG1 provides dual Gigabit Ethernet support with proper FW loaded.
+On Sat, Jul 06, 2024 at 02:24:03PM +0000, Yixun Lan wrote:
+> On 18:40 Sat 06 Jul     , Jisheng Zhang wrote:
+> > On Sat, Jul 06, 2024 at 05:05:56AM +0000, Yixun Lan wrote:
+> > > 
+> > > On 12:12 Sat 06 Jul     , Jisheng Zhang wrote:
+> > > > On Fri, Jul 05, 2024 at 06:38:39AM +0000, Yixun Lan wrote:
+> > > > > 
+> > > > > On 21:46 Thu 04 Jul     , Jisheng Zhang wrote:
+> > > > > > On Wed, Jul 03, 2024 at 02:55:11PM +0000, Yixun Lan wrote:
+> > > > > > > From: Yangyu Chen <cyy@cyyself.name>
+> > > > > > > 
+> > > > > > > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
+> > > > > > > 
+> > > > > > > Key features:
+> > > > > > > - 4 cores per cluster, 2 clusters on chip
+> > > > > > > - UART IP is Intel XScale UART
+> > > > > > > 
+> > > > > > > Some key considerations:
+> > > > > > > - ISA string is inferred from vendor documentation[2]
+> > > > > > > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
+> > > > > > > - No coherent DMA on this board
+> > > > > > >     Inferred by taking vendor ethernet and MMC drivers to the mainline
+> > > > > > >     kernel. Without dma-noncoherent in soc node, the driver fails.
+> > > > > > > - No cache nodes now
+> > > > > > >     The parameters from vendor dts are likely to be wrong. It has 512
+> > > > > > >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
+> > > > > > >     When the size of the cache line is 64B, it is a directly mapped
+> > > > > > >     cache rather than a set-associative cache, the latter is commonly
+> > > > > > >     used. Thus, I didn't use the parameters from vendor dts.
+> > > > > > > 
+> > > > > > > Currently only support booting into console with only uart, other
+> > > > > > > features will be added soon later.
+> > > > > > > 
+> > > > > > > Link: https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1_datasheet [1]
+> > > > > > > Link: https://developer.spacemit.com/#/documentation?token=BWbGwbx7liGW21kq9lucSA6Vnpb [2]
+> > > > > > > Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/boot/dts/spacemit/k1-x.dtsi [3]
+> > > > > > > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> > > > > > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > > > > > > ---
+> > > > > > >  arch/riscv/boot/dts/spacemit/k1.dtsi | 376 +++++++++++++++++++++++++++++++++++
+> > > > > > >  1 file changed, 376 insertions(+)
+> > > > > > > 
+> > > > > > > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > > > > > new file mode 100644
+> > > > > > > index 0000000000000..a076e35855a2e
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > > > > > @@ -0,0 +1,376 @@
+> > > > > > > +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> > > > > > > +/*
+> > > > > > > + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+> > > > > > > + */
+> > > > > > > +
+> > > > > > > +/dts-v1/;
+> > > > > > > +/ {
+> > > > > > > +	#address-cells = <2>;
+> > > > > > > +	#size-cells = <2>;
+> > > > > > > +	model = "SpacemiT K1";
+> > > > > > > +	compatible = "spacemit,k1";
+> > > > > > > +
+> > > > > > > +
+> > ...
+> > > > > > > +	soc {
+> > > > > > > +		compatible = "simple-bus";
+> > > > > > > +		interrupt-parent = <&plic>;
+> > > > > > > +		#address-cells = <2>;
+> > > > > > > +		#size-cells = <2>;
+> > > > > > > +		dma-noncoherent;
+> > > > > > > +		ranges;
+> > > > > > > +
+> > > > > > > +		uart0: serial@d4017000 {
+> > > > > > > +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> > > > > > 
+> > > > > > no, this is not a correct hw modeling. The doc on spacemit says
+> > > > > > all the uart support 64 bytes FIFO, declaring xscale only makes
+> > > > > > use of 32 bytes FIFO.
+> > > > > yes, I also noticed it's 64 bytes FIFO
+> > > > > 
+> > > > > > 
+> > > > > > IIRC, 8250_pxa is a xscale uart with 64 bytes FIFO, so this should be
+> > > > > > "mrvl,pxa-uart" or "mrvl,mmp-uart"
+> > > > > 
+> > > > > 
+> > > > > for mrvl,pxa-uart, I think you imply to use drivers/tty/serial/8250/8250_pxa.c,
+> > > > > which turn out doesn't work on k1 SoC, for the record, we need to adjust
+> > > > 
+> > > > Really? I just tried "mrvl,pxa-uart" with rc6, it works perfectly, and the FIFO
+> > > > in the driver logic is 64bytes now. Am I misssing something or you never tried it?
+> > > > 
+> > > Ok, I realised it's the clock issue
+> > > 
+> > > still, I'm not fully convinced about using "mrvl,pxa-uart",
+> > > e.g this driver hardcoded tz_loadsz to 32, not sure if K1 suffer same problem
+> > > 5208e7ced520 ("serial: 8250_pxa: Configure tx_loadsz to match FIFO IRQ level")
+> > 
+> > I believe the problem commit 5208e7ced520 tries to solve is: the
+> > mmp|pxa-uart only support threshold up to 32Bytes, tz_loadsz will be
+> > fifo size by default, this will cause probleme with 64Bytes FIFO.
+> > 
+> yes, exactly
 > 
-> The ICSSG1 MII0 (RGMII1) has DP83869 PHY attached to it. The ICSSG1 shares
-> MII1 (RGMII2) PHY DP83869 with CPSW3g and it's assigned by default to
-> CPSW3g. The MDIO access to MII1 (RGMII2) PHY DP83869 is controlled by MDIO
-> bus switch and also assigned to CPSW3g. Therefore the ICSSG1 MII1 (RGMII2)
-> port is kept disable and ICSSG1 is enabled in single MAC mode by
-> default.
+> > > 
+> > > also, what's the preference when choosing driver between 8250_pxa.c vs 8250_of.c?
+> > 
+> > Good question. I have no preference. But there are two problems with
+> > 8250_of, I have sent out patches[1][2] to address them.
+> > 
+> > After these two patches, both the earlycon and uart FIFO logic work too
+> > with below dts properties:
+> > 		uart0: serial@d4017000 {
+> > 			compatible = "mrvl,mmp-uart";
+> to be precise, I think here should be compatible = "mrvl,mmp-uart", "intel,xscale-uart"
 
-sorry for bumping this old thread, but I was about to add PRU-ICSSG 
-nodes for the phyBOARD-Electra and noticed a difference in the firmware 
-names.
+see below.
 
-[snip]
-> +	icssg1_eth: icssg1-eth {
-> +		compatible = "ti,am642-icssg-prueth";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&icssg1_rgmii1_pins_default>;
-> +		sram = <&oc_sram>;
-> +		ti,prus = <&pru1_0>, <&rtu1_0>, <&tx_pru1_0>, <&pru1_1>, <&rtu1_1>, <&tx_pru1_1>;
-> +		firmware-name = "ti-pruss/am64x-sr2-pru0-prueth-fw.elf",
-> +				"ti-pruss/am64x-sr2-rtu0-prueth-fw.elf",
-> +				"ti-pruss/am64x-sr2-txpru0-prueth-fw.elf",
-> +				"ti-pruss/am64x-sr2-pru1-prueth-fw.elf",
-> +				"ti-pruss/am64x-sr2-rtu1-prueth-fw.elf",
-> +				"ti-pruss/am64x-sr2-txpru1-prueth-fw.elf";
+> 
+> but can you check this patch below? it should be ok with your two proposed patches applied
+> https://lore.kernel.org/all/20240703-k1-01-basic-dt-v3-6-12f73b47461e@gentoo.org/
+> 
+> > 			...
+> >                         reg-shift = <2>;
+> >                         reg-io-width = <4>;
+> >                         tx-threshold = <32>;
+> >                         fifo-size = <64>;
 
-Where do these firmware names come from? All references I can find use 
-am65x-sr2*: ti-linux-firmware, meta-ti and so on.
-Are we expecting the the names to be renamed for linux-firmware?
+I just tried, the previous "spacemit,k1-uart", "intel,xscale-uart"; with above properties
+work too, and the fifo size in driver logic seems correct as well.
 
-Regards,
-Wadim
+> ..
+> >                         no-loopback-test;
+>             need to check, from vendor docs, there is a loopback mode
+
+oh, this property is from the UPF_SKIP_TEST of 8250_pxa.c. This
+property can be removed.
+
+>             see 16.2.4.1 SSCR register description, bit12
+> 
+> https://developer.spacemit.com/#/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf
+> > 			...
+> > 		}
+> > 
+> > Link: https://lore.kernel.org/linux-riscv/20240706082928.2238-1-jszhang@kernel.org/ [1]
+> I have some comments for this patch, and I believe it's a valid fix,
+> without this patch, K1 will also have problem duo to "UART_CAP_UUE | UART_CAP_RTOIE" lost
+> 
+> > Link: https://lore.kernel.org/linux-riscv/20240706101856.3077-1-jszhang@kernel.org/ [2]
+> > 
+> > > it occur to me that 8250_pxa.c is more specially tailored for pxa hardware, while
+> > > 8250_of.c is more generic.. besides, should we consider one more step if we want to
+> > 
+> > there's a work around for Erratum #74 in 8250_pxa, while I believe the
+> do you have any link for this Erratum? let's double check it..
+
+I can't find any link now :(
+
+> 
+> > Errata doesn't exisit in K1, so from this PoV it seems 8250_of is
+> > better, no?
+> > 
+> > > support DMA mode in the future (vendor uart driver has DMA support)?
+> > 
+> > Adding dma engine support to 8250_of is doable.
+> Ok, sounds good to me
+> > 
+> > > 
+> > > 
+> > > > >  drivers/tty/serial/8250/Kconfig to enable the driver for ARCH_SPACEMIT,
+> > > > >  and change uart compatible to "spacemit,k1-uart", "mrvl,pxa-uart"
+> > > > > 
+> > > > > for mrvl,mmp-uart, I see two choices, one using 8250_pxa.c which has same result
+> > > > > as mrvl,pxa-uart, another choice would using the driver of 8250_of.c 
+> > > > > and it work as same as "intel,xscale-uart", I don't see any difference..
+> > > > > 
+> > > > > P.S: there is possibly a side problem that "mrvl,mmp-uart" from 8250_of.c doesn't 
+> > > > > really compatile with "mrvl,mmp-uart" from 8250_pxa.c, but I think it's another story
+> > > 
+> > > -- 
+> > > Yixun Lan (dlan)
+> > > Gentoo Linux Developer
+> > > GPG Key ID AABEFD55
+> 
+> -- 
+> Yixun Lan (dlan)
+> Gentoo Linux Developer
+> GPG Key ID AABEFD55
 
