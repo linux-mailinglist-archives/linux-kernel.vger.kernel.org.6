@@ -1,221 +1,218 @@
-Return-Path: <linux-kernel+bounces-244476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5764592A4B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:31:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2938592A4BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7801A1C21D13
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEDA5283DAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802801E49D;
-	Mon,  8 Jul 2024 14:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7338B13DBB2;
+	Mon,  8 Jul 2024 14:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WYMZoiUs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XYZHZaeq";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WYMZoiUs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XYZHZaeq"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNuHDxCT"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCF41C06
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2921E49D;
+	Mon,  8 Jul 2024 14:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720449069; cv=none; b=ILYIQTSOfkIhU76a19gETormb0AJcXfIO8HScePZBZSX+YAcvqgKcyPXBPxSCwXEDV0Jtxhvzt7scYvmEmudynFIUSuRlMY69OMQCfLr4C4cAmprZX718fpCkuJkSBcOf15nj1wqwYMR1C60A1CXZ/Zc0i/pKK/W53ppWbG+wL0=
+	t=1720449102; cv=none; b=grpA3ywCiHn5PkDdECkCUFFY4kl10ePq8pP++vt9PvKicAPiLqBk8KDDH+Fu989m4hNV96hxdnsbIlEo0Ia1suhfYC1djtSBuvNQCiTyigKS0A8BhCsIS6OBEHtQiquSuxk41xgD/L+T0bFzJTKoexs+2B1X4O6TFZ/uzs7hBeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720449069; c=relaxed/simple;
-	bh=gh1/PWFgGrxall/XB1msQXOn5ksQS/KIyqMn8i4NuwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGDz4BtOBUduQwuL0kv90suCL4dZrkBjq7B7o/CmNJ6D22rZ7RI7akKjUOi4BOFnXqoFVqrwL6Reykr5ztuoUW3U6RBphZwT0dHL0aq1Q8mmxwit65sdhSFe4xDbB6O4+vcYAdIwF6NjrvUmQA3j3USbj5foSLzSAnRVsi+iy+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WYMZoiUs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XYZHZaeq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WYMZoiUs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XYZHZaeq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6250421B34;
-	Mon,  8 Jul 2024 14:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720449066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=F1CqYDoNEUl6AAlnyQ9v6tqW7pwAW5fdAuhVlvNq4Qg=;
-	b=WYMZoiUst34y24W58dZbTnw+37762RBADQwq0iv/E7Kamibypb93Pyqf3yNYWN0hX5beSZ
-	swS57Fu2adNVoZJ4NYOW8I6u1HcTKQt65GaGOsI7sJWJRXqZ8OgpnvGwZvtjMaygApIsZn
-	/LN1UBJK+8vLgZGkuzRyE52PlzsF9e0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720449066;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=F1CqYDoNEUl6AAlnyQ9v6tqW7pwAW5fdAuhVlvNq4Qg=;
-	b=XYZHZaeq0G5AHfAXYQZKltbVw9iYm7r9XFwc9X2f8qwWkb352ECFJz3oYx1GSzkCtddaxs
-	XSfwldcgQBLNO3Dg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WYMZoiUs;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XYZHZaeq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720449066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=F1CqYDoNEUl6AAlnyQ9v6tqW7pwAW5fdAuhVlvNq4Qg=;
-	b=WYMZoiUst34y24W58dZbTnw+37762RBADQwq0iv/E7Kamibypb93Pyqf3yNYWN0hX5beSZ
-	swS57Fu2adNVoZJ4NYOW8I6u1HcTKQt65GaGOsI7sJWJRXqZ8OgpnvGwZvtjMaygApIsZn
-	/LN1UBJK+8vLgZGkuzRyE52PlzsF9e0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720449066;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=F1CqYDoNEUl6AAlnyQ9v6tqW7pwAW5fdAuhVlvNq4Qg=;
-	b=XYZHZaeq0G5AHfAXYQZKltbVw9iYm7r9XFwc9X2f8qwWkb352ECFJz3oYx1GSzkCtddaxs
-	XSfwldcgQBLNO3Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20C1A1396E;
-	Mon,  8 Jul 2024 14:31:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 80+dBir4i2aDEQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 08 Jul 2024 14:31:06 +0000
-Message-ID: <405f59b3-fa5c-485b-b334-1ea60d929dc2@suse.de>
-Date: Mon, 8 Jul 2024 16:31:05 +0200
+	s=arc-20240116; t=1720449102; c=relaxed/simple;
+	bh=kMrshSTmecURhMbKKK8nqMHHvXdCCxbmVjYBrZd92/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fyq1ijAjJ3SsanHq8OJn1evcJkT+N94GliLoT8R3eMitLEHUpaPPLAxCUwhCviqfxhRRjhh/y/UEyaBm3iuil86OGG9Vmjk6XzSG22zbBPOtrrWe7+paSFxHMFcimEe3x9T/y71qMbZNTC+eSxDJyWQjgvV/Hgyq0pqS/FQ5dhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNuHDxCT; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1fafc9e07f8so28371125ad.0;
+        Mon, 08 Jul 2024 07:31:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720449100; x=1721053900; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Z5ePQJB5dOQGJQCphJ1+uf0wfSAbQJ0SNQqkQJeuxI=;
+        b=NNuHDxCTkraHPrUVcg9bKhpjF2Nf+3ZnTb8oWxb66nkIoU+o8WqiHEN6ywp92XfuRt
+         RcCvZg6FCPZSk0Oij6QyQShm9S+257XAv79GXC293gW1uFzLaCoLq3lio78MHAt20pyE
+         pKoJI5RttPE9Ig4GZWjbCf15QZMpdCNp7lmyoN+1oXSaHrFbd5+cAc8PwXuIfpqr7iNu
+         VGRUB9UvARe2W/5+2AIVI5N9GhzG37GmQ25JFY2rWc1ar1UzRGnQ1JPpWwkPwy9N8uj5
+         rUuQO8uRqgSFWaRr4T6tXLuOjLeTAuQUZx4r/6Zoh3FIpy2G1ViyUgM7pl0q8Xis6khc
+         0IiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720449100; x=1721053900;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Z5ePQJB5dOQGJQCphJ1+uf0wfSAbQJ0SNQqkQJeuxI=;
+        b=gRyu+mYwwjH2BF6u/IEvjq1IZDrdn+2izKl43ZWWrXnj+o74dmu4cz3+bV6s0PdcSg
+         GtRMv6SvS74Ib2/S/NJcJJCkCuk1R9KIAd9ADgXm70T72+PNtGHL55hF/PwJVuFQ/FUM
+         5fJH4/WB5PJLh+7dGKErLvJQ9eOh5Q1HEXroWTClbiojCzA4zuDJRkhEYbbsEapdhAQq
+         7v/nvvGLgpJNp1cORjmSG6GU1ooIj6Iua6xfHfr4z8c0ToHA5/ip6bh+SKWXJwsCmqFF
+         KrOeX9gV1pkf+1T5zft+Kp/BGs2dsr8wuv5RCenY2PU+3oCOyHdKeTKDPr282Ir38e/3
+         8E3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLDXZyS9AVenD4VxAXw6ebYikVfHTfDDObOK528qKli/rqFDLpoqOPLdFgwgG91dQ6V/9UcN7MJbku3lCEI6DturUcEoRn8l6weJPPdczVTbse+bdkxqkJOZ02XoWauqxYm79lFJteZM6oV/kXR1VisDrdKZPmWNGz
+X-Gm-Message-State: AOJu0Yy6LE/ZCrSKtNxrvxJk5isKVpKtsxEOWBWS2HQq1abx9hq6/JtM
+	YHyg6vMxj1TWJhJUYE9iP78nwx6JVrWIWBsQpYPISj5i/qV2tW4h
+X-Google-Smtp-Source: AGHT+IHP4QzAFCeP/vVvj4DDRWwEV4DH0pf8dJlcvV4O7jZzKiPKQ52DkeI7YSmRUpt5sE8ZqXgQWw==
+X-Received: by 2002:a17:902:ea02:b0:1fb:5c54:36c8 with SMTP id d9443c01a7336-1fb5c543ac1mr85586715ad.50.1720449100327;
+        Mon, 08 Jul 2024 07:31:40 -0700 (PDT)
+Received: from localhost.localdomain ([240e:604:203:6020:ecac:5335:e70e:6fe7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb77e9f378sm33597645ad.271.2024.07.08.07.31.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 07:31:39 -0700 (PDT)
+From: Fred Li <dracodingfly@gmail.com>
+To: willemdebruijn.kernel@gmail.com
+Cc: aleksander.lobakin@intel.com,
+	andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	dracodingfly@gmail.com,
+	edumazet@google.com,
+	haoluo@google.com,
+	hawk@kernel.org,
+	herbert@gondor.apana.org.au,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@weissschuh.net,
+	martin.lau@linux.dev,
+	mkhalfella@purestorage.com,
+	nbd@nbd.name,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	sashal@kernel.org,
+	sdf@google.com,
+	song@kernel.org,
+	yonghong.song@linux.dev
+Subject: [PATCH] net: linearizing skb when downgrade gso_size
+Date: Mon,  8 Jul 2024 22:31:28 +0800
+Message-Id: <20240708143128.49949-1-dracodingfly@gmail.com>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+In-Reply-To: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
+References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/fbdev-dma: Fix framebuffer mode for big endian
- devices
-To: Thomas Huth <thuth@redhat.com>, dri-devel@lists.freedesktop.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
- Javier Martinez Canillas <javierm@redhat.com>
-References: <20240702121737.522878-1-thuth@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240702121737.522878-1-thuth@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,ffwll.ch,redhat.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 6250421B34
-X-Spam-Flag: NO
-X-Spam-Score: -4.50
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Here is a patch that linearizing skb when downgrade
+gso_size and sg should disabled, If there are no issues,
+I will submit a formal patch shortly.
 
-I've added a Fixes tag and merged the patch into drm-misc-next-fixes.
+Signed-off-by: Fred Li <dracodingfly@gmail.com>
+---
+ include/linux/skbuff.h | 22 ++++++++++++++++++++++
+ net/core/filter.c      | 16 ++++++++++++----
+ net/core/skbuff.c      | 19 ++-----------------
+ 3 files changed, 36 insertions(+), 21 deletions(-)
 
-Best regards
-Thomas
-
-Am 02.07.24 um 14:17 schrieb Thomas Huth:
-> The drm_mode_legacy_fb_format() function only generates formats suitable
-> for little endian devices. switch to drm_driver_legacy_fb_format() here
-> instead to take the device endianness into consideration, too.
->
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
-> ---
->   Note: Patch has only been compile-tested since I lack an environment
->         for testing it. But it's the same fix as I required for the
->         drm_mode_legacy_fb_format() in drm_fbdev_generic.c / drm_fbdev_ttm.c
->         so I think this should be fine.
->
->   drivers/gpu/drm/drm_fbdev_dma.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
-> index 97ef6300d47e..fdef4a2f883f 100644
-> --- a/drivers/gpu/drm/drm_fbdev_dma.c
-> +++ b/drivers/gpu/drm/drm_fbdev_dma.c
-> @@ -101,7 +101,8 @@ static int drm_fbdev_dma_helper_fb_probe(struct drm_fb_helper *fb_helper,
->   		    sizes->surface_width, sizes->surface_height,
->   		    sizes->surface_bpp);
->   
-> -	format = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
-> +	format = drm_driver_legacy_fb_format(dev, sizes->surface_bpp,
-> +					     sizes->surface_depth);
->   	buffer = drm_client_framebuffer_create(client, sizes->surface_width,
->   					       sizes->surface_height, format);
->   	if (IS_ERR(buffer))
-
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 5f11f9873341..99b7fc1e826a 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -2400,6 +2400,28 @@ static inline unsigned int skb_headlen(const struct sk_buff *skb)
+ 	return skb->len - skb->data_len;
+ }
+ 
++static inline bool skb_is_nonsg(const struct sk_buff *skb)
++{
++	struct sk_buff *list_skb = skb_shinfo(skb)->frag_list;
++	struct sk_buff *check_skb;
++	for (check_skb = list_skb; check_skb; check_skb = check_skb->next) {
++		if (skb_headlen(check_skb) && !check_skb->head_frag) {
++			/* gso_size is untrusted, and we have a frag_list with
++                         * a linear non head_frag item.
++                         *
++                         * If head_skb's headlen does not fit requested gso_size,
++                         * it means that the frag_list members do NOT terminate
++                         * on exact gso_size boundaries. Hence we cannot perform
++                         * skb_frag_t page sharing. Therefore we must fallback to
++                         * copying the frag_list skbs; we do so by disabling SG.
++                         */
++			return true;
++		}
++	}
++
++	return false;
++}
++
+ static inline unsigned int __skb_pagelen(const struct sk_buff *skb)
+ {
+ 	unsigned int i, len = 0;
+diff --git a/net/core/filter.c b/net/core/filter.c
+index df4578219e82..c0e6e7f28635 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -3525,13 +3525,21 @@ static int bpf_skb_net_grow(struct sk_buff *skb, u32 off, u32 len_diff,
+ 	if (skb_is_gso(skb)) {
+ 		struct skb_shared_info *shinfo = skb_shinfo(skb);
+ 
+-		/* Due to header grow, MSS needs to be downgraded. */
+-		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO))
+-			skb_decrease_gso_size(shinfo, len_diff);
+-
+ 		/* Header must be checked, and gso_segs recomputed. */
+ 		shinfo->gso_type |= gso_type;
+ 		shinfo->gso_segs = 0;
++
++		/* Due to header grow, MSS needs to be downgraded.
++		 * There is BUG_ON When segment the frag_list with
++		 * head_frag true so linearize skb after downgrade
++		 * the MSS.
++		 */
++		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO)) {
++			skb_decrease_gso_size(shinfo, len_diff);
++			if (skb_is_nonsg(skb))
++				return skb_linearize(skb) ? : 0;
++		}
++
+ 	}
+ 
+ 	return 0;
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index b1dab1b071fc..81e018185527 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -4458,23 +4458,8 @@ struct sk_buff *skb_segment(struct sk_buff *head_skb,
+ 
+ 	if ((skb_shinfo(head_skb)->gso_type & SKB_GSO_DODGY) &&
+ 	    mss != GSO_BY_FRAGS && mss != skb_headlen(head_skb)) {
+-		struct sk_buff *check_skb;
+-
+-		for (check_skb = list_skb; check_skb; check_skb = check_skb->next) {
+-			if (skb_headlen(check_skb) && !check_skb->head_frag) {
+-				/* gso_size is untrusted, and we have a frag_list with
+-				 * a linear non head_frag item.
+-				 *
+-				 * If head_skb's headlen does not fit requested gso_size,
+-				 * it means that the frag_list members do NOT terminate
+-				 * on exact gso_size boundaries. Hence we cannot perform
+-				 * skb_frag_t page sharing. Therefore we must fallback to
+-				 * copying the frag_list skbs; we do so by disabling SG.
+-				 */
+-				features &= ~NETIF_F_SG;
+-				break;
+-			}
+-		}
++		if (skb_is_nonsg(head_skb))
++			features &= ~NETIF_F_SG;
+ 	}
+ 
+ 	__skb_push(head_skb, doffset);
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.33.0
 
 
