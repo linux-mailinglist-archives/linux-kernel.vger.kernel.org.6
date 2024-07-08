@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-244312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC62692A287
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:23:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC12692A28B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27AB9B22BA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:23:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECDED1C215D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3E680638;
-	Mon,  8 Jul 2024 12:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FA081751;
+	Mon,  8 Jul 2024 12:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vkLbade8"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q/oWj3bK"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A885B48CDD
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B0480046
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720441378; cv=none; b=TNVfDOeWBF1U0/NqbAVA1N7pr7BleIz9Ed2MlYjCSq9RaprsHa0dQEloNFM1m19k5kdL5Nq3H5th9JxDH8JOx14S5JFJ/gmcNWVnbe+Em5e9TZFOCEUrBz5Pc+NBl9PcxL/6zRLZO09JEjyhRPJpC0vfV1pil17kLuIzxyPNNwY=
+	t=1720441382; cv=none; b=JROeZWu8vJkbpygvpJIrNUIyDcnyca/FGpghhr0k5GxcZkCip0kjYJGWngtaOrpJ+pEVgsTcqYI6qQqn/XxhBNWQmLSPpxWESLWL1jGazIVUmOjxBbWTrkZqcW7QUzCHaxAZsDeZtmSsF6T2poSohO6jm10vq0mtXHRtveJ7EkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720441378; c=relaxed/simple;
-	bh=MAHjih4/z8a5oFeoIniEUkXxcdOXeRNLt/JayAbbDow=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ciVG2WT853/60NQ89+mHSHKNJcyPXtYFSWbV0dqOWyi0YaEYXYwE9Hi7gTXNtl/WF0WeVpTxlnkD9pEUn6sSBfWBvHNKKxA+7a5hLDnb2IytNzvFTvgMQdOe/mmCAOkFea57Ed9sn3Siz3vy/hgH/gadhCaBb8ZFXiwn9vNjc+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vkLbade8; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1720441382; c=relaxed/simple;
+	bh=zdfsoAzyLAbSewXaL8pr+o+HVHsk0A6l8l6d96EVyr8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=biL+k1KwACgJuYObGE3dGMGx7xkQ6bU7at+Y+g+tFeGOwBqOhZf61t+UTfA0y1mp2VvUH93a66M0oBdJlTkH9Bc+8yayo/9wtk0dXwtX7wo160ss/OmmlEaFHvW7frrXS5D5V8eAupJI9QpBOpeNxwCHrmKx+g5bTluiewxWXs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q/oWj3bK; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77bf336171so590997566b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 05:22:56 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so53528251fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 05:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720441375; x=1721046175; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bq79+KMVKV19LMA76rLpTjDXYJBOLbA44znePN4XGqI=;
-        b=vkLbade8MYXZVrFVjxC+iyS2o1YtKup08Gdykb0qHJU3N8XfzWPYIhZW1Hjtgkc6aW
-         srqu81jTUnKiAJgIOw8Gl/z3hLH8quBL6QxsSAYH+GA2HnJS/QBcGtS8IDE0h+tqjbib
-         GeKA2OHOz5PJYYNQHDVipRLKJwMvrSOPFrumMoNIl5SqBo3bT9FePO7ySJ8cHQ3RPCxu
-         yo25VAzLRHMK5P6BsYBFBrOX6sUDMLpOcZ/NuraV2bnXDKEB+rCSyeENHEyF7KCS4/Yu
-         /n1nW4tEai/U3ZJJZfoFAdItKteMVZmfdED2GFXvEyoBbfVYAajbIuHpQPwxOh+M8sl1
-         WiLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720441375; x=1721046175;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1720441378; x=1721046178; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bq79+KMVKV19LMA76rLpTjDXYJBOLbA44znePN4XGqI=;
-        b=Rbhypvxh+SFUDwY1EP4M7l1GSRGKKfCGT4zUzN2kH8HrrWwtI1x3qZXT7Bbqx8TBWv
-         tZG7OUGiCccTY0BE2OODiAhPS09q6/a7uTVgfBS8AdDWyeEGOfJqTLe8DGDxmdaY066k
-         bTcEqRCxXxqQqm7Qct0U/OxuKewyNC0fzNuYArX+SiiEW7UhDWJvBCIw5N5h9/X4tbNV
-         SBpmFpypnQMZZC65/Kii7NMYSTA4Xm+p9AYq4y+kt1a4o0L+Pw3AvgEItC9dldiwPqf6
-         Q1RRIR0Z2kQS9HcS1ZgQk5YB+lXdqGX6YE4cR4Ghn+xM0ppVw2XcFyo5ptCj7jGtAF4P
-         WYhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTpERM2kJWFOaXXalSg09Se6boJP6d1pvvIlB6OygJ4KnCMEYiXSr/6oFWF9gwcmHQs88Mkj08vwLWi7JZViEehRwPGI+d4lIvgVbt
-X-Gm-Message-State: AOJu0YxI4clDK3LYNyBjNkkS9/euemRoSdSQj3Xfb+7sqdvwZspSlciC
-	RIpK4/4pYjxi5YsCAbEnhZTz3UfKOuC/8wmsTiY9wThalKmDsLcp+qVjCdpoeg8=
-X-Google-Smtp-Source: AGHT+IH7U0uVpJeA0Ty3MuvcRh0QSliM+atpFry3MmGqLPZvauklqgd2sXsxvqr9mrrvh3+MWmdzEQ==
-X-Received: by 2002:a17:906:6a93:b0:a77:a1f1:cfa0 with SMTP id a640c23a62f3a-a77bdae45eamr842007766b.36.1720441374772;
-        Mon, 08 Jul 2024 05:22:54 -0700 (PDT)
+        bh=PbLszSI/br9z0FG/eAMCh9e/nJJvaShjV+30v8TNl/U=;
+        b=Q/oWj3bKCiKPckqHELh720Jig2MQETxY8RwxmOFm10uPs82rH00A/k+YI4TeXU9kuS
+         jDWeWu847YZVv6gVXnOwQI2XfGm7u4XerevceId1DQQ9CdwsNVi9astNRA91/tT96+iR
+         vs3pDXENd2g60yHKugLOqz3CktjXUfcU+k7jahFg0E8FX1ASxYkywahYyXdps1wKLoK5
+         ID8J/DFtZ+DCxHNrKHScKExQjpgpjzALyuf9ZJ4ZX6rX+O4bch4QxWq9mJ9kXjhlFMik
+         5QTB2NOEBrl9R5dry6/NEwJb+CSBMsztJEvox+TmkyxKPIfIvcG2mRM3A7qyqwtak9QY
+         OS0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720441378; x=1721046178;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PbLszSI/br9z0FG/eAMCh9e/nJJvaShjV+30v8TNl/U=;
+        b=usQNzjFtYwLrPgwKnWSYJLDEJ3qtgHdbOoPyumnbj7Rw6mdu92FlbENxPbQFizjHSn
+         VA9vxkRJcmaA1LADg3ifSvt0PjySxLlVYD9utPWVDRMiR2yiEdEKOVrlLOT7Bmy3lv56
+         egosgFwSK7G/pXlggN8ruv6WmIxisCx+rkh0il+Vi3Cr5/+D1RqBiC1qtdv/eeog7673
+         LB+bU9ZL8435sKCtDsv97lBE7S4DUQpZC2k7su5dSiaUEBpi4tF/SpPqACysNbNQwUo1
+         gbb0VD4DzBeIQCKjIeVqrYDCEeqXbTP/pWUh6ddEQhKOLU2VsQi7pFnoqQdETaXPy+p4
+         T8UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwDdUunj/tCggNU9R1N+CmP3KtIYyzQsf3HPOW+2KAljMa2MPO42bjiynGLaQoEtOb5LEJiGqLcYmKlFssZEWK8ZS+TwqnH63w8jDh
+X-Gm-Message-State: AOJu0YxhHCM3iBKjq1Ab3A4ON1bU8dQ7PSqD4/bT+nXUY4cQG7Oemz0W
+	Sy8VWhhJ2uVeQIkaTyMKhoxFMXShXZKHguNSlnv8ko+pHnhK8kbXkjRIQWLrrA8=
+X-Google-Smtp-Source: AGHT+IFn77trltQqWJUC7HwUwAV9/FoLFv40dOZn7MBfPPSTS8mslfo9giZi2I2GuxPjd5Q2CxipSw==
+X-Received: by 2002:a2e:891a:0:b0:2ee:4a67:3d82 with SMTP id 38308e7fff4ca-2ee8eda7b6amr103735721fa.28.1720441377480;
+        Mon, 08 Jul 2024 05:22:57 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77e52ccf19sm208983666b.147.2024.07.08.05.22.52
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77e52ccf19sm208983666b.147.2024.07.08.05.22.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 05:22:54 -0700 (PDT)
+        Mon, 08 Jul 2024 05:22:57 -0700 (PDT)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: [PATCH v15 00/10] Add support for Core Power Reduction v3, v4 and
- Hardened
-Date: Mon, 08 Jul 2024 14:22:31 +0200
-Message-Id: <20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org>
+Date: Mon, 08 Jul 2024 14:22:32 +0200
+Subject: [PATCH v15 01/10] MAINTAINERS: Include new Qualcomm CPR drivers in
+ the file list
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,11 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAfai2YC/33QwWrDMAwG4FcpPs/Dsp1k7WnvMXaQLbkxBCfYX
- dgoefepvY2MHPWL7xforhrXzE1dTndVec0tz0UG6F5OKo5YrqwzSaCssc5YGPRtXnLUcalu1MT
- W2ZCCHzgqEQEb61CxxFFM+ZomCZfKKX8/b3x8yjzmdpvrz/PkCuYR/98uS210PyDTW6KEPbxPu
- WCdX+d6VY+qFeCIg/CA1gZPiB31e26PuBUO6Ml0hoH7Yc/dEXfCyUBMCWLnY9pzf8S98HMiebA
- Hf3b0h2/b9gsLZPUuuwEAAA==
+Message-Id: <20240708-topic-cpr3h-v15-1-5bc8b8936489@linaro.org>
+References: <20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org>
+In-Reply-To: <20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
  Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
  Rob Herring <robh+dt@kernel.org>, 
@@ -99,264 +98,48 @@ Cc: Robert Marko <robimarko@gmail.com>, linux-kernel@vger.kernel.org,
  Marijn Suijten <marijn.suijten@somainline.org>, 
  Konrad Dybcio <konradybcio@kernel.org>, 
  Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+ Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720441372; l=10219;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720441372; l=1035;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=MAHjih4/z8a5oFeoIniEUkXxcdOXeRNLt/JayAbbDow=;
- b=TEnHuTS02MwkDmnGUgOjQfQKhm7k3OlUT/8DfyQoF1cDqhVSKbrYYYdOqGDPWMPAqQ3ul0ntf
- H4PqTqyXOePCaTjVR2k5HdahRu52zZ934XRdLi6q134nJ0ZfQiKbqot
+ bh=zdfsoAzyLAbSewXaL8pr+o+HVHsk0A6l8l6d96EVyr8=;
+ b=LpwqLXpJhzhQfa8V5wMBtIxnsqOXE/ulRmNbkCS+oEfoVwQUK1E//z2KbxitZfkiSCZH8wb+x
+ 8M2euuAiPRACqG/MjCHRX/sPC9Xiys3gtAm9GuPfIP3GLvj6TvPw8fd
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Changes in v15:
-- Rebase (incl. genpd -> pmdomain rename)
-- Change the maintainer to myself
-- Drop tested-bys
-- Rewrite some commit messages
-- Temporarily drop CPR3 support (easy to add back, adds complexity and
-  requires more testing.. unnecessarily slowing down this already 3+
-  years old series)
-- Boring style changes (fix indentation etc.)
-- Sprinkle a lot of dev_err_probe to make failures meaningful at all
-- Fix some misleading comments
-- Rename the "cprh" power domain to "perf"
-- Allow and mark the CPR OPPs as shared
-- Include fixes equivalent to Varadarajan's (over at:
-  https://github.com/quic-varada/cpr/commit/f025f13a2e64b13c8e7866bedc3bfa73f2aaf162)
-
-DT check for the last patch fails with:
-
-Warning (unique_unit_address_if_enabled): /soc@0/qfprom@784000/rosel3-pwrcl@218: duplicate unit-address (also used in node /soc@0/qfprom@784000/rosel2-pwrcl@218)
-
-but that's.. intended.. so I assume it's fine for now..
-
-This can be fully tested along with the CPUFREQ changes, which can be
-found (in a bit of a dirty/not-100%-ready but working state) here:
-* https://github.com/SoMainline/linux/commits/topic/cpr3hh/
-
-- Link to v14: https://lore.kernel.org/r/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org
-
-Changes in v14:
-- Rebase
-- Drop cpufreq probing block (merged)
-- Pick up tags
-- Drop quotes from CPR3 bindings $id:
-- Drop useless description: under compatible:
-- Link to v13: https://lore.kernel.org/r/20230217-topic-cpr3h-v13-0-d01cff1c54cf@linaro.org
-
-Changes in v13:
-- blacklist -> blocklist in cpufreq commit message
-- rebase atop drivers/genpd introduction
-- remove quotes in cpr bindings
-- describe reg entries in cpr bindings
-- define the # of power-domains in cpr bindings
-- pick up tags
-- Link to v12: https://lore.kernel.org/r/20230217-topic-cpr3h-v12-0-1a4d050e1e67@linaro.org
-
-Changes in v12:
-- Add the !independent! patch to block cpufreq-dt from probing on 8998 (it tries
-  to when we attach OPP tables to the CPU nodes)
-- Include all promised changes to the CPR3 driver from v11 (I managed to
-  send the wrong version of that patch last time around..)
-- Partially rewrite debugfs code (to make it work and be cleaner)
-- use FIELD_PREP/GET throughout the driver (managed to squash a bug when
-  exploring that)
-- Fix and finish the removal of cpr_get_ro_factor() by introducing
-  cpr_thread_desc.ro_scaling_factor_common
-- Replace underscores in node names with '-'
-- Fix some formatstring issues that clang apparently doesn't care about
-- Link to v11: https://lore.kernel.org/r/20230217-topic-cpr3h-v11-0-ba22b4daa5d6@linaro.org
-
-Changes in v11:
-
-CPR COMMON:
-- split the commonizing patch, make it actually do what it says on the
-  tin..
-- fix some overflow bugs
-
-CPR3:
-- fix some overflow bugs
-- don't assume "lack of qcom,opp-?loop-vadj" means val=0"
-
-CPR BINDINGS:
-- drop quotes in items
-- drop clock-names (there's just a single one)
-- rewrite the description a bit
-- fix up the example
-- drop bogus minItems
-- "acc-syscon" -> "qcom,acc"
-
-DTS:
-- fix qfprom children so that the bits=<> doesn't overflow reg[size]
-- drop unrelated changes
-- place one reg entry per line
-
-Link to v10: https://lore.kernel.org/r/20230217-topic-cpr3h-v10-0-67aed8fdfa61@linaro.org
-
-Changes in v10:
-- Skip "Let qcom,opp-fuse-level be a 2-long array" (Applied by Viresh)
-- Use b4 (it may be the first time you're receiving this if git send-email
-  omitted you before..)
-- +Cc Robert Marko (expressed interest in previous revisions)
-- Add "Document CPR3 open/closed loop volt adjustment"
-CPR:
-- %hhu -> %u (checkpatch)
-CPR BINDINGS:
-- Drop QCS404 fuse set (it doesn't use this driver, what did I even think..)
-  but leave the allOf:if: block for expansion (sdm660, msm8996, ipqABCD should
-  follow soon..)
-- Drop Rob's R-b (as things changed *again*, please take one more look to make
-  sure you're okay with this file, Rob..)
-
-Link to v9:
-https://lore.kernel.org/linux-arm-msm/20230116093845.72621-1-konrad.dybcio@linaro.org/
-
-Changes in v9:
-- Restore forgotten MAINTAINERS patch (oops)
-CPR:
-- Include the missing header (big oops!)
-- Fix kconfig dependencies
-CPR bindings:
-- Fix cpu reg in example (why didn't dt_binding_check scream at that)
-- Add newlines between nodes in example
-- Change opp table node names to opp-table-cpu[04]
-- Change opp table labels to cpu[04]_opp_table
-- Change CPRh opp subnode names to opp-N from oppN
-- Remove some stray newlines
-- Bring back nvmem-cell-names and add the 8998's set
-- Allow power-domains for VDDCX_AO voting
-- Remove Rob's r-b, there's been quite a bit of changes..
-CPR DT:
-- Send the correct revision of the patch this time around..
-OPP bindings:
-- Add Rob's ack
-
-Link to v8:
-https://lore.kernel.org/linux-arm-msm/20230110175605.1240188-1-konrad.dybcio@linaro.org/
-
-Changes in v8:
-- Overtake this series from AGdR
-- Apply all review comments from v7 except Vladimir's request to
-  not create the include/ header; it will be strictly necessary for
-  OSM-aware cpufreq_hw programming, which this series was more or
-  less created just for..
-- Drop QCS404 dtsi change, account for not breaking backwards compat
-  in [3/5]
-- Add type phandle type reference to acc-syscon in [1/5]
-- Update AGdR's email addresses for maintainer entries
-- Add [2/5] to make dt_binding_check happy
-- Separate the CPRh DT addition from cpufreq_hw addition, sort and
-  properly indent new nodes
-- Drop CPR yaml conversion, that happened in meantime
-- Reorder the patches to make a bit more sense
-- Tested again on MSM8998 Xperia XZ Premium (Maple)
-- I take no responsibility for AGdR's cheeky jokes, only the code!
-
-Link to v7:
-https://lore.kernel.org/lkml/20210901155735.629282-1-angelogioacchino.delregno@somainline.org/
-
-Changes in v7:
-- Rebased on linux-next as of 210901
-- Changed cpr_read_efuse calls to nvmem_cell_read_variable_le_u32,
-  following what was done in commit c77634b9d916
-
-Changes in v6:
-- Fixes from Bjorn's review
-- After a conversation with Viresh, it turned out I was abusing the
-  OPP API to pass the APM and MEM-ACC thresholds to qcom-cpufreq-hw,
-  so now the driver is using the genpd created virtual device and
-  passing drvdata instead to stop the abuse
-- Since the CPR commonization was ignored for more than 6 months,
-  it is now included in the CPRv3/4/h series, as there is no point
-  in commonizing without having this driver
-- Rebased on v5.13
-
-Changes in v5:
-- Fixed getting OPP table when not yet installed by the caller
-  of power domain attachment
-
-Changes in v4:
-- Huge patch series has been split for better reviewability,
-  as suggested by Bjorn
-
-Changes in v3:
-- Fixed YAML doc issues
-- Removed unused variables and redundant if branch
-
-Changes in v2:
-- Implemented dynamic Memory Accelerator corners support, needed
-  by MSM8998
-- Added MSM8998 Silver/Gold parameters
-
-This commit introduces a new driver, based on the one for cpr v1,
-to enable support for the newer Qualcomm Core Power Reduction
-hardware, known downstream as CPR3, CPR4 and CPRh, and support
-for MSM8998 and SDM630 CPU power reduction.
-
-In these new versions of the hardware, support for various new
-features was introduced, including voltage reduction for the GPU,
-security hardening and a new way of controlling CPU DVFS,
-consisting in internal communication between microcontrollers,
-specifically the CPR-Hardened and the Operating State Manager.
-
-The CPR v3, v4 and CPRh are present in a broad range of SoCs,
-from the mid-range to the high end ones including, but not limited
-to, MSM8953/8996/8998, SDM630/636/660/845.
-
-As to clarify, SDM845 does the CPR/SAW/OSM setup in TZ firmware, but
-this is limited to the CPU context; despite GPU CPR support being not
-implemented in this series, it is planned for the future, and some
-SDM845 need the CPR (in the context of GPU CPR) to be configured from
-this driver.
-
-It is also planned to add the CPR data for MSM8996, since this driver
-does support the CPRv4 found on that SoC, but I currently have no time
-to properly test that on a real device, so I prefer getting this big
-implementation merged before adding more things on top.
-
-As for MSM8953, we (read: nobody from SoMainline) have no device with
-this chip: since we are unable to test the cpr data and the entire
-driver on that one, we currently have no plans to do this addition
-in the future. This is left to other nice developers: I'm sure that
-somebody will come up with that, sooner or later
+Expand the Qualcomm Core Power Reduction section to include the files
+concerning CPR3+ support.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
-AngeloGioacchino Del Regno (6):
-      dt-bindings: soc: qcom: cpr3: Add bindings for CPR3+ driver
-      soc: qcom: cpr: Move common functions to new file
-      soc: qcom: cpr-common: Add support for flat fuse adjustment
-      soc: qcom: cpr-common: Add threads support
-      soc: qcom: Add a driver for CPR3+
-      arm64: dts: qcom: msm8998: Configure CPRh
+ MAINTAINERS | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Konrad Dybcio (4):
-      MAINTAINERS: Include new Qualcomm CPR drivers in the file list
-      dt-bindings: opp: v2-qcom-level: Document CPR3 open/closed loop volt adjustment
-      dt-bindings: opp: v2-qcom-level: Allow opp-shared
-      soc: qcom: cpr: Use u64 for frequency
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dcb37b635f2c..f3e013a52c16 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18687,14 +18687,15 @@ F:	Documentation/accel/qaic/
+ F:	drivers/accel/qaic/
+ F:	include/uapi/drm/qaic_accel.h
+ 
+-QUALCOMM CORE POWER REDUCTION (CPR) AVS DRIVER
++QUALCOMM CORE POWER REDUCTION (CPR) AVS DRIVERS
+ M:	Bjorn Andersson <andersson@kernel.org>
+ M:	Konrad Dybcio <konrad.dybcio@linaro.org>
+ L:	linux-pm@vger.kernel.org
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/power/avs/qcom,cpr.yaml
+-F:	drivers/pmdomain/qcom/cpr.c
++F:	Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.yaml
++F:	drivers/pmdomain/qcom/cpr*.c
+ 
+ QUALCOMM CPUFREQ DRIVER MSM8996/APQ8096
+ M:	Ilia Lin <ilia.lin@kernel.org>
 
- .../devicetree/bindings/opp/opp-v2-qcom-level.yaml |   16 +
- .../devicetree/bindings/soc/qcom/qcom,cpr3.yaml    |  286 +++
- MAINTAINERS                                        |    5 +-
- arch/arm64/boot/dts/qcom/msm8998.dtsi              |  760 ++++++
- drivers/pmdomain/qcom/Kconfig                      |   22 +
- drivers/pmdomain/qcom/Makefile                     |    2 +
- drivers/pmdomain/qcom/cpr-common.c                 |  362 +++
- drivers/pmdomain/qcom/cpr-common.h                 |  109 +
- drivers/pmdomain/qcom/cpr.c                        |  394 +--
- drivers/pmdomain/qcom/cpr3.c                       | 2711 ++++++++++++++++++++
- include/soc/qcom/cpr.h                             |   17 +
- 11 files changed, 4314 insertions(+), 370 deletions(-)
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20230217-topic-cpr3h-de232bfb47ec
-
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+2.45.2
 
 
