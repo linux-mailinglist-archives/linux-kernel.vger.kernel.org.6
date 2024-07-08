@@ -1,61 +1,70 @@
-Return-Path: <linux-kernel+bounces-244051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A13AA929E6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:42:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF4E929E6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D56A0B214A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:42:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC3F1F235A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7CF5674E;
-	Mon,  8 Jul 2024 08:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE75B7406F;
+	Mon,  8 Jul 2024 08:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="SLV7V94N"
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="gRy4PEcO"
 Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEC33B290;
-	Mon,  8 Jul 2024 08:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBAA50276;
+	Mon,  8 Jul 2024 08:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720428096; cv=none; b=hN+wl/TbkCGHTsPR3fbUbZQHRo07qHhe48VRUsFgaljv0t5jfx/oV0h9WdqochQWugtkFnyWBYpKogakvO0FgqtBKwRP2mjU6u5zhQtDEZVqjothmAI1AcDKseER4qrdJnMcflYkuL+ldqa7Qwoh6HQPTt63pXbeTopbXEccFeA=
+	t=1720428098; cv=none; b=TCsLRETAGKh6BEtgsPMKqYGWfcRgDYJQiZneQl8IlfTqHS7U5eqzuNcsbU+dXwKoYGfy7llyepTUM7HZJTPEkxrm38I/8FTkFax3NvSdGJM2iFOHyghnLZeJURQ9EpFlY0Z04LsRW9JMRXtnYscEg4T3uQ7qusy09xirgClS1hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720428096; c=relaxed/simple;
-	bh=2cglFmVz1Xpw1R2sFVulz1T3QnWmHmbSEE+yMLLZFoA=;
+	s=arc-20240116; t=1720428098; c=relaxed/simple;
+	bh=VDC1D0H6FRPHVF2lVtnTQz7uJqjeGfJhvGsyEQA9a+Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HBHczwk9hUjlrdHPhjH2AZlpnLquhddRlOCWZ+Bgrkqyycwnhzuv0qF2KTgX13w1virHbuYN55cwjAdISsGUcJizLiey47dsi/Q+PzBRVyYihcF9wRX+rotYyQe1OVAMq2xJvm0vl5afjG7SOXvl5tcKERwHQrBbKKpFUVt2nvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=SLV7V94N; arc=none smtp.client-ip=116.203.77.234
+	 MIME-Version; b=jf6zF5zTlNI58OQMq1eaSqX/f3paXBsWkIFSZQVlAIqSg9r1E1TK6G1Qr1puvole/Hl8nRZykI6C5SL3tpPIym9yZ9TiBR8l70jwbsU7Vq5GVbktbmI8oV2kx4S9Ouh3bnngLIK76Kdb6ZDFFTPvfqMxvruLPZiY1SLsQd6ztUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=gRy4PEcO; arc=none smtp.client-ip=116.203.77.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3F9AEBFBA8;
-	Mon,  8 Jul 2024 10:41:27 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 715A6BFBAB;
+	Mon,  8 Jul 2024 10:41:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1720428087; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1720428088; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=D9oTaUMXzjcTo6Wf10s0ulRO2OkpFnNvTpduNNFrDRM=;
-	b=SLV7V94NOqUs3KUx9onVyY3+nteYPa0rymNGgqQumEOUBCH7E0zxK0Dc+y05kqDsOk37f+
-	4AwNiHgAA/E80SyJv5B4FkqQ+Sb+8sJR9SyGVQA1+NPUR9LGJ6ap7Wvj2XLSsHQnprq53v
-	cKLtGrFMd8SIKZwhu5Jf8WO/0FRpAbEEBN2N1zdQ6lWrbQfxweInyO3Tmh8EaCRjcdkWQ9
-	V/A6toWTj2SC1aPgNmXwtmDuLTIpPN4ftVibzBgNe8gUtBp+oOAGRrj0DLXNn2t3cJca63
-	hH38D6yWArP/y3asGeFcuAQGCee4g3QftsfSPzZUTdIXEHdJFasZel+FgnEg6w==
+	bh=YMcfbKShlC6yhIcdj/UB0uMGVB2w1gBHYsj3ySGDcHY=;
+	b=gRy4PEcOremjDqhdsoBCrKVn9Uc6OnDETntMVeRK4k9Xse7D3Y6JNjW2qLzmWsj1hDU20F
+	0fV/ycC8DILLp8GzyJn11hABwPGHsaIMwcjBuFEymeAKEf3hhfx/s7+5x+8lMCjSuPrnMd
+	jwpjjz6BVhGjK6YRwMW121cPCgA1Ws2KfPFXsPHv3YUYirQGJEPIWxFpHWhAIVU7M7UBfD
+	j9TDnaMK4PYP5XQCVwnSgveLooNsm4NjX2Y6dc1xjgscMe2OqQNOrNFxyehJ4h3FLa5N9K
+	SvWW265CmoFo5glgHuJC4lxc12OtfLKjw7/1Mbx8AS8Ao9zhAK+XSYav0nuGNQ==
 From: Frieder Schrempf <frieder@fris.de>
 To: Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
+	Li Yang <leoyang.li@nxp.com>,
 	Rob Herring <robh@kernel.org>,
-	Robin Gong <yibin.gong@nxp.com>
+	Shawn Guo <shawnguo@kernel.org>
 Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Joy Zou <joy.zou@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 2/5] dt-bindings: regulator: pca9450: Make interrupt optional
-Date: Mon,  8 Jul 2024 10:40:32 +0200
-Message-ID: <20240708084107.38986-3-frieder@fris.de>
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH v2 3/5] dt-bindings: arm: fsl: Add Kontron i.MX93 OSM-S based boards
+Date: Mon,  8 Jul 2024 10:40:33 +0200
+Message-ID: <20240708084107.38986-4-frieder@fris.de>
 In-Reply-To: <20240708084107.38986-1-frieder@fris.de>
 References: <20240708084107.38986-1-frieder@fris.de>
 Precedence: bulk
@@ -69,29 +78,35 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-The interrupt is optional in hardware and not connected on
-some boards. Make it optional in the binding.
+Add the bindings for the Kontron i.MX93 OSM-S SoM and BL carrier
+board.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
 Changes for v2:
-* improve commit message
+* add tag from Krzysztof (thanks!)
 ---
- .../devicetree/bindings/regulator/nxp,pca9450-regulator.yaml     | 1 -
- 1 file changed, 1 deletion(-)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
-index 849bfa50bdbab..f8057bba747a5 100644
---- a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
-+++ b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
-@@ -96,7 +96,6 @@ properties:
- required:
-   - compatible
-   - reg
--  - interrupts
-   - regulators
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 6d185d09cb6ae..5fa1494435011 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -1318,6 +1318,12 @@ properties:
+           - const: variscite,var-som-mx93
+           - const: fsl,imx93
  
- additionalProperties: false
++      - description: Kontron OSM-S i.MX93 SoM based boards
++        items:
++          - const: kontron,imx93-bl-osm-s # Kontron BL i.MX93 OSM-S board
++          - const: kontron,imx93-osm-s    # Kontron OSM-S i.MX93 SoM
++          - const: fsl,imx93
++
+       - description:
+           Freescale Vybrid Platform Device Tree Bindings
+ 
 -- 
 2.45.2
 
