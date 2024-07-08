@@ -1,335 +1,581 @@
-Return-Path: <linux-kernel+bounces-243860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09804929BD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:55:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A232929BD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE021C20DCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:55:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67D0EB20C1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825F811C83;
-	Mon,  8 Jul 2024 05:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE669125AC;
+	Mon,  8 Jul 2024 05:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="nmJNk/m7"
-Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZC3Q3kjA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D88BA5E;
-	Mon,  8 Jul 2024 05:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.139.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720418126; cv=fail; b=gALVJtnR+833+FHndQy/Nxe/sBVEnKjodm+HB6qFwDAxOecXjDYBO40Al5GTHuQOWqj77xeM5wgE3StfUUHvCRUOn4Q7Jq/ydFrFyIGXx/JA49A3OudunySdVVQcXSVaJXLEAM8MVeU2BWP+5AWgObuKO2YLQoBOv7y36eTrnGs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720418126; c=relaxed/simple;
-	bh=0wS0V1RqJ530jHlq97dYazcvL2/Q3uxHSSTC/l4BI84=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NU6KnkZGlxX5Njdfbzl509/M8onT52xRDPD/4n2uyWj1NTzfL4yEdXeWjLO9GHTO4xXZATJQuCq5MPMEKyrfun0BLUOVvrdbMWpTJpHEI+n1ong98SorOCW0Tn6PvQuxnWNVCreDUOHV8hHNZWa5d2NvvXaM4z9Lx3ge145x3lo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=nmJNk/m7; arc=fail smtp.client-ip=148.163.139.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375854.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4682tiN4022857;
-	Mon, 8 Jul 2024 01:55:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=0wS0V
-	1RqJ530jHlq97dYazcvL2/Q3uxHSSTC/l4BI84=; b=nmJNk/m7KfdITpXLfcd8f
-	OO3YzbGBSxCLCI2f99Rs3qvZ3CWVarRkb1w0bH1abB/fYbaAtksNx1xc+IJKbxXp
-	mWmvoUhCHMep/kAmrDby6tsIc05byfc8yGxkQ0LlP3P67qrjbkg0HlOhG77TpOPl
-	XkRg787svyiIG3QFpTztUY4euS6NORGHR4AP4+5PEPK085/11hkcKr37hCSRYQNi
-	Hfn/mq6YLFVbH0oBDrr3Ftmqs6jBtxP+2N4UtGdt7yTfcYydYJXNsw/QrM+/3SA8
-	VlKrMhBVlI28xPwGiyxilJPuMPlfa91uS8d072WtwRhHMNWqBRGIKm/3hsJHZSIo
-	Q==
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2047.outbound.protection.outlook.com [104.47.70.47])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 4087rsgdpr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 01:55:08 -0400 (EDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V4OqV+BZfUYgyB+u5IxVlZzP9SMtLrs/3gkwEBBv9Adqel5RIM6wCoLVlkHUmRjzfLndHKNtgP2uRY2jHSBqN1qRaTVyHIMYWQS1kOPVzP3fd0JWIhcrRjYoTx24QJkVx/IGeYPBpT/9LuN2gt+NmtS6EOh0yvpvpAZ+UELh+MQMXn6hQh200q5NJldGw7VKvOPOwX21L8dGruci+th1plCIcrlS19jwvFiCqg0DV2vVF1yxeMOJ+/f6vlmufHRcfN3T1buV0jh2BBTPJ+Aum6Y02eZucBZmTLOcCF0IaxhYL/rP/QI2aTxDzQUY6GJNCzzvOZnR9qRB2x2/Tl41rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0wS0V1RqJ530jHlq97dYazcvL2/Q3uxHSSTC/l4BI84=;
- b=dX1pSuUb7FygmslcSD+xJsuPDaGDAFhzH1GM0ingxA8UV8faynSfIfqN3Y9EL7EYOdipnIaTLZjJKMI0odtKoBEhIAZnti2rXaqqajVwCWYpewFGreV3CXFOkl/1Do+c9ZAJpKvjdMeHIaiQzs4MUicsdaK+qxSOMwagJJXpxBMWJzRu2rUApoUqOIy/gtowGUKH6vdcyw+a2XHLEKBlEqph60fdQDI8DgyL3mKQ6H2jORR+wPjTA0rAPnQNnmyk3nWziOc1GMDkZI78jh/Yx1F5tcZiZ9z+fK5kim8qPziMzFOXO0vecCULq2HmxEXt2a66AaCdb4NjHLA06/0NTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
- dkim=pass header.d=analog.com; arc=none
-Received: from PH0PR03MB7141.namprd03.prod.outlook.com (2603:10b6:510:296::20)
- by DM8PR03MB6232.namprd03.prod.outlook.com (2603:10b6:8:3d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 05:55:05 +0000
-Received: from PH0PR03MB7141.namprd03.prod.outlook.com
- ([fe80::c559:3d31:1af3:b01]) by PH0PR03MB7141.namprd03.prod.outlook.com
- ([fe80::c559:3d31:1af3:b01%5]) with mapi id 15.20.7741.029; Mon, 8 Jul 2024
- 05:55:05 +0000
-From: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
-To: Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-CC: Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dimitri Fedrau <dima.fedrau@gmail.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        =?utf-8?B?TnVubyBTw6E=?=
-	<noname.nuno@gmail.com>
-Subject: RE: [PATCH v5 4/6] dt-bindings: iio: dac: Add adi,ltc2664.yaml
-Thread-Topic: [PATCH v5 4/6] dt-bindings: iio: dac: Add adi,ltc2664.yaml
-Thread-Index: AQHazCwcEXgGXk1JKUunDqCkQHNHm7Hjkt6AgAKTpICABjFb0A==
-Date: Mon, 8 Jul 2024 05:55:05 +0000
-Message-ID: 
- <PH0PR03MB7141B14FAC992C1BA0C95112F9DA2@PH0PR03MB7141.namprd03.prod.outlook.com>
-References: <20240702030025.57078-1-kimseer.paller@analog.com>
- <20240702030025.57078-5-kimseer.paller@analog.com>
- <bba8a12a-9d1e-467b-a7c1-8a027d5c2f89@baylibre.com>
- <PH0PR03MB71417A3455B24590982C0716F9DE2@PH0PR03MB7141.namprd03.prod.outlook.com>
-In-Reply-To: 
- <PH0PR03MB71417A3455B24590982C0716F9DE2@PH0PR03MB7141.namprd03.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: 
- =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jYTNCaGJHeGxjakpjWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
- =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
- =?utf-8?B?elhHMXpaeTA1WkdJNE5UZ3paUzB6WTJWbExURXhaV1l0WVdGbU55MW1PR1Uw?=
- =?utf-8?B?TTJJek0yUTJObVZjWVcxbExYUmxjM1JjT1dSaU9EVTROREF0TTJObFpTMHhN?=
- =?utf-8?B?V1ZtTFdGaFpqY3RaamhsTkROaU16TmtOalpsWW05a2VTNTBlSFFpSUhONlBT?=
- =?utf-8?B?SXhNREE1TmlJZ2REMGlNVE16TmpRNE9URTNNREkzT1RVNE1qTTNJaUJvUFNK?=
- =?utf-8?B?bWJVMWhja3B2ZG1jM1YyMTJTelo2TjNSMmQyOUNNRGRQT0RROUlpQnBaRDBp?=
- =?utf-8?B?SWlCaWJEMGlNQ0lnWW04OUlqRWlJR05wUFNKalFVRkJRVVZTU0ZVeFVsTlNW?=
- =?utf-8?B?VVpPUTJkVlFVRkZiME5CUVVSa1RGSkdaeXM1UkdGQlkwMUtablYzZWs1aE1r?=
- =?utf-8?B?NTNkMndyTjBSTk1YSlpNRVJCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJTRUZCUVVGRVlVRlJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlJVRkJVVUZDUVVGQlFUTk1hRk5tWjBGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VW8wUVVGQlFtaEJSMUZCWVZGQ1prRklUVUZhVVVKcVFVaFZRV05uUW14QlJq?=
- =?utf-8?B?aEJZMEZDZVVGSE9FRmhaMEpzUVVkTlFXUkJRbnBCUmpoQldtZENhRUZIZDBG?=
- =?utf-8?B?amQwSnNRVVk0UVZwblFuWkJTRTFCWVZGQ01FRkhhMEZrWjBKc1FVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGRlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFXZEJRVUZCUVVGdVowRkJRVWRGUVZwQlFuQkJSamhCWTNkQ2JFRkhUVUZr?=
- =?utf-8?B?VVVKNVFVZFZRVmgzUW5kQlNFbEJZbmRDY1VGSFZVRlpkMEl3UVVoTlFWaDNR?=
- =?utf-8?B?akJCUjJ0QldsRkNlVUZFUlVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJV?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVU5CUVVGQlFVRkRaVUZCUVVGWlVVSnJRVWRyUVZoM1Fu?=
- =?utf-8?B?cEJSMVZCV1hkQ01VRklTVUZhVVVKbVFVaEJRV05uUW5aQlIyOUJXbEZDYWtG?=
- =?utf-8?B?SVVVRmpkMEptUVVoUlFXRlJRbXhCU0VsQlRXZEJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUWtGQlFVRkJRVUZCUVVGSlFVRkJRVUZCUVQwOUlpOCtQQzl0?=
- =?utf-8?B?WlhSaFBnPT0=?=
-x-dg-rorf: true
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR03MB7141:EE_|DM8PR03MB6232:EE_
-x-ms-office365-filtering-correlation-id: 3df047e6-0f9d-423b-543d-08dc9f1283e0
-x-ld-processed: eaa689b4-8f87-40e0-9c6f-7228de4d754a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?elFjNm5zenhpbGx1NlF3eWhZNVpoTVlXNXdIZE0xTENXZXJkYjJGVFBnVlEy?=
- =?utf-8?B?OEora0g5RHdNNUlkbzNWRThwN3N3MzdPK2lMcDNsanNmOVo2ZXNhN1NYNi9L?=
- =?utf-8?B?UU1NOUppZUN4alFLQTZnTkxpTXUwT0xwU3dUZ2hMaTNtN2l4UC9rQkxsWUx1?=
- =?utf-8?B?RG4rREZOMmJWbUxsTlV1bkJCOTRkUUpTS3FmMjZXbzA1UHFZM3FUT2c5RGl1?=
- =?utf-8?B?T04wanlYU0FKTEErUXJ4SmZzN3VoZHpGdkFoUkoyNTVkZHpXVGtIYW80QWtw?=
- =?utf-8?B?YXdQUGdaQTJOeWR3T0YvMjJwcVBKOVhPTTRGOTVzSjF3SVlTNFRmK3NEUHdQ?=
- =?utf-8?B?cDBzR2lsb3FhTm5GeW5WaXN0eitSRWUxdWg0Q2xYajR3emNvQXo3WGM0ekYy?=
- =?utf-8?B?WjVmTzhqUnd4elhvSGNDMFdFZHhrMjdvWEZCcm5mM3RXZTkxbzhKT2FDL0dC?=
- =?utf-8?B?ZWpuT20xUkQ3ZGROYjErazZNaDQ4OGpZcFB3SkhjQ2xkK0Q2M2lNNTZJdGYw?=
- =?utf-8?B?Vy9NTm5qd2RSbHo2YVF1SjZmREppSzI5MDI1WER2OTRtWVpRRWczZUFkSnk5?=
- =?utf-8?B?dmRWSEpoKzZidHh3RHpMVGRPdnRpOWhQUlU1b0t0TTJ5Y01ITEJhOHFHOWFC?=
- =?utf-8?B?UnNIZVBPZnpmU09xV0l1aXFpVStzMWU2ZTBtOHVDNFVCRTQ2czJxdDJzSlVk?=
- =?utf-8?B?cGVLVnd3K1BuM2pzb1k0VGFVa0kxSTFlZEcydXUrZ3hvb21YNVNqbGhPdFR5?=
- =?utf-8?B?aWpRdWlXNnRCdnFKdXhUV3BxSHNaZ3JDNFZXVXpoQ09OMTUvZFdBQy9YUXE2?=
- =?utf-8?B?cUwyWkNVRmFrTmg2L1cvclhvTVdTaWJkdU1ja3Y4d3RLOHhwdGxhajVmV2Rw?=
- =?utf-8?B?cEVFZTc0alZUcnhMQWJuUFI5WUlvTERLdTV5YU8xZHh5akNZMmY4SFh4OEtY?=
- =?utf-8?B?VkROc3FnNjlPSGYwYkcwcVZ6YjU3L0k3TjFMZlphS3B5Q2NoUEc0ZVUxODly?=
- =?utf-8?B?amx2RlhjWlEvR25VdnVhcjY5R0ZqR3o1WWdyaGFwVjZQSGpwQjNPZ3RpSThw?=
- =?utf-8?B?ZGJCR2xYRmlTOHZmdHRPQkMzRVZyL0RJYWo1UXpiSWlMbmU1U3ppaUl3dVNm?=
- =?utf-8?B?ZzB5V0tiSnJuMENqZzRjcndzbVcwOW5FMkdLZk1aT3BJRG5BR3pIRENPSHR3?=
- =?utf-8?B?Vk1XYmdPMTM0dTNnQk04TTVkMVR2dFByUGhqL3F6dmU5MERJWS9IY0lHR0lI?=
- =?utf-8?B?c1N0TDhTWkR0c05EcGxwc3FrMkZhOXhNOE95NlN2M1BralhXTng2MGtrUlZ3?=
- =?utf-8?B?ZmZaVG1rbjl5TVRCTzk5R3hVK0o3K1gvYVV0ZzlsU0l0Mmw3YkZEQitCby82?=
- =?utf-8?B?SDlNYTM4dHF4ZTNVVEJTV0J0MkhUZnVEYmxoclhVWmRITldVOTd2ZnM4MGRk?=
- =?utf-8?B?L3l2RlZLZ1NLVXRsczhieEE0b3NuUzNnRzYyd1NweCt6WWx4L1NQVGw5MkI3?=
- =?utf-8?B?ZHUrN3Y2YWY4YUZWSVlRRFk3Vi9QalAyMERDSnhDYi9jWTM1blBmWTNSM05C?=
- =?utf-8?B?TGE4aENrVWlpYnBPMFl2R2hjQTdMUFk2ZWQzQmY5M3hMMUM0WGpjTzlTck4x?=
- =?utf-8?B?ZjJUSkd6ckx0RVF6MTRWOUoxUmZkWlZZUFJ0UXRqWGlyU2paRDh1WDZHLzBJ?=
- =?utf-8?B?MnVCa2tKeFVsOEhlL0Zhd2tFbFM4Q0l1TlNxYWpwZWdWbjcxa203WXl0cXRK?=
- =?utf-8?B?a0RwbjRubXVMMlphMzdhRTBIZjI3YjNMN2FRbElGZHU1ejJ2dFVaNmZnYlZX?=
- =?utf-8?B?MFE1dWJCVldnQnBIdnZNMFFNejBZdzBJMW1sellVdCtYSVBZKzNlYW15QUVF?=
- =?utf-8?B?Z3U1d2szK01uRDlqT016NE93QzhUQ0xsRGlDQ29iaVB5cmc9PQ==?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB7141.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?bWU0Vi9XRWdyTit1cE5TVWVoTTdQcnlXL0puL1FIaDVjemZLTnpTakdLTkVF?=
- =?utf-8?B?djFWNmJ6UkNiMEVVQjRIWktuMk5KNFd0SmFEdlQ1cmVBcTFZL3pCNkdLaHFW?=
- =?utf-8?B?bG00UFRKZEZCMWxUa0ZwYnJ0SDNocDJnaENCcXp6aFltZFh4U0lqUXhFaUlP?=
- =?utf-8?B?VXN2UEJIMVowOFp4bTFoTVk4aWhyZk45aCtDMk9FY1BiOHpqeWRaS1JDSWxh?=
- =?utf-8?B?OEUxR2pid0E0QW5DQXZ6cW9YWitoQys5RkswSnBMS2p6T1BaZjNqdy9RZU5O?=
- =?utf-8?B?Ny9kWGc4YW9lMXQvMEo1RGtNS3pBU0x6cE5JaWcwVmJpTDZrdUJDbXErSW9k?=
- =?utf-8?B?ZTg0SDB2bnRmL0lUYnNIZ1locWtXZEtxNEhIUE1DL00rd00zT1J3Y1ZpMmNn?=
- =?utf-8?B?eFR1OVhHNVY2MXVEN2hxTUIrWlZrc3JBTHBKam1UWjdCL0d2Tmpkc2kyK1RW?=
- =?utf-8?B?V0hNSjkwMGl0b0lERU9hNGE1d3VNVUpGVXZPUzU4OFJScDl3YjdGOWZ0dE9Y?=
- =?utf-8?B?RWdhUGxVNWpLUHN3WmNFL1N5bisrc0NLbTRIdnA1YzNTM2RWd0Y3dGxWSzdp?=
- =?utf-8?B?S3hFbk9KM0dmcCsyWUZUOEMzbmVHSnJIdmFXa3Q0Z3pDTG9zc2JKWVhhQmhq?=
- =?utf-8?B?NWhTMDBzM1dLYVJnOHE1UHFCb010Tk5jL2hUbVcwSlpLWVc2TEk2UUx1bEVS?=
- =?utf-8?B?NW1ISmM4YkllMHdiRDdZU2JUSGhCeVBleUIzT0NwMXR6Rkt1clgzM0pXRUE1?=
- =?utf-8?B?YWU0WTR0UEV2MGFqYTVpb2c4YlFSWEJDYmsrUVhkaURnUVppMmNjdFI3bVlJ?=
- =?utf-8?B?SGxRRS94d2JHK0JQWVhxYk44ay8yanA1SUpYVkloL1h1dmMrTkRsbUFTYzFM?=
- =?utf-8?B?Sjgvb1FPVVk0eWRCdnBKRTVraXJKamZpaDVSSUJSR3JpM1dROEMzdEx5Q2lY?=
- =?utf-8?B?WDltdFlIaUE4L2w2RHBQTGRhZmFVa2hYWU1JRWFCUFdoK3hHUk5xVlR6Szhq?=
- =?utf-8?B?T0IvK1M5TmJWNW5IdzBTKzd4REdHMGNZWVFJVUIyRGdiTkdCdi92NUhENUdi?=
- =?utf-8?B?UEVDSjNma2JMMFlNV014S0dMUmpJNzhRbERLZXFqUVZuVzRwOTVRZ0dqY2VW?=
- =?utf-8?B?NWZTZ0RGLzZQV2N5NlFuRVRYZStORnVUazAzZnA4UmU3bjI2ZGZ3c1pSWks2?=
- =?utf-8?B?WkdOMHZQZnljSERHczRhZ0dIRzVhWlpCQWdmRjRROHZhbU1QRkkwNmY5T1dE?=
- =?utf-8?B?NkJaK0ZsUi8rd0F3MkhNa3Z1RVVZV1YreGllV1dHbDNxc1ZRenIwVkRtNDlv?=
- =?utf-8?B?TGhNd2FZM3NyYVdsbHJqa21VT1R3WUtjRjRJbkgzdmgwcFNYdjF5MFlMM1N5?=
- =?utf-8?B?bWs5Yno4WWpMVXVNRlRwTU90S2YvSXlHQkJPMVAvMURBa2FtVktLZzcvOW90?=
- =?utf-8?B?aTJuN3c3NVJZbDdrRm9rRW5jMFBJWStuL0ExdTJSbUtRSUF4K3ZrQnhtdFhJ?=
- =?utf-8?B?TVFSRExLajJlL2hOQ09xa0MvNWR6NTZIK1dHa3BDWVk1VndtOFdZZE1uNlJn?=
- =?utf-8?B?a213SThXM3c3S01kZjFWVG5UcVhMVWorMThTV3c0U3M2dEZzamI0TGQ2MGpt?=
- =?utf-8?B?TXI0Q2FXR1FBR2FBcFNzbnBRSVhndHRUbzVZT3pRVWFyWG9Bd2xEK1AySnFw?=
- =?utf-8?B?NnNOeDRwVTBOSUovQURsWC82ZnVkK0tXWUt2U0lrZVY1dUthbDV1KzdtNVZk?=
- =?utf-8?B?T1NOc2lKd0ZJTWNJcU5IOWxtV1k1YXRqRzRuN25EdEJ0RHczVEV6b2RqUU1T?=
- =?utf-8?B?dnhQRUVwQy9QaGJzY2c4WFlTVEcwQUZWYkZtb3l4UFpZSG9nSmEwNi9ralND?=
- =?utf-8?B?YlRoTGdidGxmSE1rUStLc0dLY25TcUdTOWxSMU93Um90UHRtTlBPamhGcHlv?=
- =?utf-8?B?YkcwOHp3NXBNa2JaMTZnMlowbCs3ZXRjMHY3NmwrTzNXT3NlU294RXFrbG1a?=
- =?utf-8?B?SmxVeHJKZy8wM1BjT3E5bkwrczlJeE5ZcHJRcHEzemFuUjMzTUtqOFA4RTd0?=
- =?utf-8?B?Tk9ndzd5bE1DUGNYSXErRk5STUMxTHh3RGpzYzRBYmN6aHkwSmlEamE2dnZH?=
- =?utf-8?Q?pEhispMKNuoI3AkCSfiJjnP7R?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAA5171C2;
+	Mon,  8 Jul 2024 05:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720418167; cv=none; b=pkZ2ueirAiQRCzn4cjhwTRXbYcuut1I6NjSuco+c0Dce5un+D+l+XDXBBOQpOrEhqIgWg0SBxYZmd2f0o9L71VYAnRAKcip+GB9eAlTe7rzEFwps8r4VoYwULYtukkUwcMHi0sqnMGhKlKYT133soglVB5IqzZoCuy/NKY+0X5Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720418167; c=relaxed/simple;
+	bh=fVnw4Bj8q0usrFxXHnjxvc9swJLTMEqCRv0t650qfiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMdip8OB71U9hjEdshwPeIlfU8gSpcA65DDKVZaW0JBzzOJ+02U4IC6SuLq0kELCFvNdPDUx2Yx2GATa0/8P27vLroGpbP6QXOPkgyK7r8PtOqFosQri6LXaGmiUWItXLTgQq24L++Qc5tfRxYR+OxJhhEg6XKJwqvNJwSZ6TSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZC3Q3kjA; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720418165; x=1751954165;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=fVnw4Bj8q0usrFxXHnjxvc9swJLTMEqCRv0t650qfiw=;
+  b=ZC3Q3kjA7mbff9gaCliTNmTtoTxGgjIHV8zorpoA6PReahQ6Mzr46Msj
+   VHF7Z7/cfdmTIrahUOLuTswsG4WxAjYaqoRqW6mBN2xqIl6qLBl9iNoxC
+   jS89dua0ZhmxwyHtcFVWOXnb74cxmokq2MVsIOuphvAbdghuYBhS7Qic0
+   KfdgrJI/qpf94gvgFpg+be5WPXzriFY+J/jG+1/7eT8cJAHJDpM2A7JZd
+   6QIlLybJ9E92uVeqkR5pj8MrH4UIefqFh0s8C3WmKjCHebbwbCUGxm31N
+   lw8aYkt/wlvOF10IprbGTXUWVzMPZ2jLJLvwAIHstYJ1ysZq9dw7AWUbF
+   Q==;
+X-CSE-ConnectionGUID: 3Az+pAFeSU2UYVUrgZifaA==
+X-CSE-MsgGUID: 0KzjAmtQTUO92CHfoxeqwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="35135580"
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="35135580"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2024 22:56:04 -0700
+X-CSE-ConnectionGUID: mtRzB10PS36VYDIwUipRag==
+X-CSE-MsgGUID: b0LvFIxhTCG+EF5zYWO9LA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="47455805"
+Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
+  by fmviesa010.fm.intel.com with ESMTP; 07 Jul 2024 22:56:00 -0700
+Date: Mon, 8 Jul 2024 13:55:59 +0800
+From: Yuan Yao <yuan.yao@linux.intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, isaku.yamahata@intel.com,
+	pbonzini@redhat.com, erdemaktas@google.com, vkuznets@redhat.com,
+	vannapurve@google.com, jmattson@google.com, mlevitsk@redhat.com,
+	xiaoyao.li@intel.com, chao.gao@intel.com,
+	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, "Hao, Xudong" <xudong.hao@intel.com>
+Subject: Re: VMX Preemption Timer appears to be buggy on SKX, CLX, and ICX
+Message-ID: <20240708055559.rl4w5xfhj3uru6j2@yy-desk-7060>
+References: <cover.1718214999.git.reinette.chatre@intel.com>
+ <2fccf35715b5ba8aec5e5708d86ad7015b8d74e6.1718214999.git.reinette.chatre@intel.com>
+ <Zn9X0yFxZi_Mrlnt@google.com>
+ <8a34f1d4-9f43-4fa7-9566-144b5eeda4d9@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB7141.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3df047e6-0f9d-423b-543d-08dc9f1283e0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2024 05:55:05.0162
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9oh4Ytpzvu+w/VToA+LJGkKavJBOs0tpptFY3S/i8eX2JbUs5stIBmGMf7ybnfIME+q2Ee+Z7+6hDi12J+lKhknNACFOTJY4zQkFBC26k7A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR03MB6232
-X-Proofpoint-GUID: XZhZNi70Uk-FdzCiPWDNDrxLxOGWbU-M
-X-Proofpoint-ORIG-GUID: XZhZNi70Uk-FdzCiPWDNDrxLxOGWbU-M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_02,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- clxscore=1011 mlxscore=0 phishscore=0 spamscore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407080043
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8a34f1d4-9f43-4fa7-9566-144b5eeda4d9@intel.com>
+User-Agent: NeoMutt/20171215
 
-Li4uDQo+ID4gPiArICBhZGksbWFudWFsLXNwYW4tb3BlcmF0aW9uLWNvbmZpZzoNCj4gPiA+ICsg
-ICAgZGVzY3JpcHRpb246DQo+ID4gPiArICAgICAgVGhpcyBwcm9wZXJ0eSBtdXN0IG1pbWljIHRo
-ZSBNU1BBTiBwaW4gY29uZmlndXJhdGlvbnMuIEJ5DQo+ID4gPiArIHR5aW5nIHRoZQ0KPiA+IE1T
-UEFODQo+ID4gPiArICAgICAgcGlucyAoTVNQMiwgTVNQMSBhbmQgTVNQMCkgdG8gR05EIGFuZC9v
-ciBWQ0MsIGFueSBvdXRwdXQNCj4gPiA+ICsgcmFuZ2UgY2FuDQo+ID4gYmUNCj4gPiA+ICsgICAg
-ICBoYXJkd2FyZS1jb25maWd1cmVkIHdpdGggZGlmZmVyZW50IG1pZC1zY2FsZSBvciB6ZXJvLXNj
-YWxlDQo+ID4gPiArIHJlc2V0DQo+ID4gb3B0aW9ucy4NCj4gPiA+ICsgICAgICBUaGUgaGFyZHdh
-cmUgY29uZmlndXJhdGlvbiBpcyBsYXRjaGVkIGR1cmluZyBwb3dlciBvbiByZXNldCBmb3IgcHJv
-cGVyDQo+ID4gPiArICAgICAgb3BlcmF0aW9uLg0KPiA+ID4gKyAgICAgICAgMCAtIE1QUzI9R05E
-LCBNUFMxPUdORCwgTVNQMD1HTkQgKCstMTBWLCByZXNldCB0byAwVikNCj4gPiA+ICsgICAgICAg
-IDEgLSBNUFMyPUdORCwgTVBTMT1HTkQsIE1TUDA9VkNDICgrLTVWLCByZXNldCB0byAwVikNCj4g
-PiA+ICsgICAgICAgIDIgLSBNUFMyPUdORCwgTVBTMT1WQ0MsIE1TUDA9R05EICgrLTIuNVYsIHJl
-c2V0IHRvIDBWKQ0KPiA+ID4gKyAgICAgICAgMyAtIE1QUzI9R05ELCBNUFMxPVZDQywgTVNQMD1W
-Q0MgKDBWIHRvIDEwLCByZXNldCB0byAwVikNCj4gPiA+ICsgICAgICAgIDQgLSBNUFMyPVZDQywg
-TVBTMT1HTkQsIE1TUDA9R05EICgwViB0byAxMFYsIHJlc2V0IHRvIDVWKQ0KPiA+ID4gKyAgICAg
-ICAgNSAtIE1QUzI9VkNDLCBNUFMxPUdORCwgTVNQMD1WQ0MgKDBWIHRvIDVWLCByZXNldCB0byAw
-VikNCj4gPiA+ICsgICAgICAgIDYgLSBNUFMyPVZDQywgTVBTMT1WQ0MsIE1TUDA9R05EICgwViB0
-byA1ViwgcmVzZXQgdG8gMi41VikNCj4gPiA+ICsgICAgICAgIDcgLSBNUFMyPVZDQywgTVBTMT1W
-Q0MsIE1TUDA9VkNDICgwViB0byA1ViwgcmVzZXQgdG8gMFYsDQo+ID4gPiArIGVuYWJsZXMNCj4g
-PiBTb2Z0U3BhbikNCj4gPiA+ICsgICAgJHJlZjogL3NjaGVtYXMvdHlwZXMueWFtbCMvZGVmaW5p
-dGlvbnMvdWludDMyDQo+ID4gPiArICAgIGVudW06IFswLCAxLCAyLCAzLCA0LCA1LCA2LCA3XQ0K
-PiA+ID4gKyAgICBkZWZhdWx0OiA3DQo+ID4gPiArDQo+ID4gPiArICBpby1jaGFubmVsczoNCj4g
-PiA+ICsgICAgZGVzY3JpcHRpb246DQo+ID4gPiArICAgICAgQURDIGNoYW5uZWwgdG8gbW9uaXRv
-ciB2b2x0YWdlcyBhbmQgdGVtcGVyYXR1cmUgYXQgdGhlIE1VWE9VVCBwaW4uDQo+ID4gPiArICAg
-IG1heEl0ZW1zOiAxDQo+ID4gPiArDQo+ID4gPiArICAnI2FkZHJlc3MtY2VsbHMnOg0KPiA+ID4g
-KyAgICBjb25zdDogMQ0KPiA+ID4gKw0KPiA+ID4gKyAgJyNzaXplLWNlbGxzJzoNCj4gPiA+ICsg
-ICAgY29uc3Q6IDANCj4gPiA+ICsNCj4gPiA+ICtwYXR0ZXJuUHJvcGVydGllczoNCj4gPiA+ICsg
-ICJeY2hhbm5lbEBbMC0zXSQiOg0KPiA+ID4gKyAgICAkcmVmOiBkYWMueWFtbA0KPiA+ID4gKyAg
-ICB0eXBlOiBvYmplY3QNCj4gPiA+ICsgICAgYWRkaXRpb25hbFByb3BlcnRpZXM6IGZhbHNlDQo+
-ID4gPiArDQo+ID4gPiArICAgIHByb3BlcnRpZXM6DQo+ID4gPiArICAgICAgcmVnOg0KPiA+ID4g
-KyAgICAgICAgZGVzY3JpcHRpb246IFRoZSBjaGFubmVsIG51bWJlciByZXByZXNlbnRpbmcgdGhl
-IERBQyBvdXRwdXQNCj4gY2hhbm5lbC4NCj4gPiA+ICsgICAgICAgIG1heGltdW06IDMNCj4gPiA+
-ICsNCj4gPiA+ICsgICAgICBhZGksdG9nZ2xlLW1vZGU6DQo+ID4gPiArICAgICAgICBkZXNjcmlw
-dGlvbjoNCj4gPiA+ICsgICAgICAgICAgU2V0IHRoZSBjaGFubmVsIGFzIGEgdG9nZ2xlIGVuYWJs
-ZWQgY2hhbm5lbC4gVG9nZ2xlIG9wZXJhdGlvbg0KPiBlbmFibGVzDQo+ID4gPiArICAgICAgICAg
-IGZhc3Qgc3dpdGNoaW5nIG9mIGEgREFDIG91dHB1dCBiZXR3ZWVuIHR3byBkaWZmZXJlbnQgREFD
-DQo+ID4gPiArIGNvZGVzDQo+ID4gd2l0aG91dA0KPiA+ID4gKyAgICAgICAgICBhbnkgU1BJIHRy
-YW5zYWN0aW9uLg0KPiA+ID4gKyAgICAgICAgdHlwZTogYm9vbGVhbg0KPiA+ID4gKw0KPiA+ID4g
-KyAgICAgIG91dHB1dC1yYW5nZS1taWNyb3ZvbHQ6DQo+ID4NCj4gPiBDb3VsZCBiZSBoZWxwZnVs
-IHRvIGFkZCBhIGRlc2NyaXB0aW9uIHRoYXQgc2F5cyB0aGlzIHByb3BlcnR5IGlzIG9ubHkNCj4g
-PiBhbGxvd2VkIHdoZW4gU29mdFNwYW4gaXMgZW5hYmxlZCByYXRoZXIgdGhhbiByZXF1aXJpbmcg
-cGVvcGxlIHRvDQo+ID4gcmVhc29uIHRocm91Z2ggdGhlIGxvZ2ljLg0KPiA+DQo+ID4gPiArICAg
-ICAgICBvbmVPZjoNCj4gPiA+ICsgICAgICAgICAgLSBpdGVtczoNCj4gPiA+ICsgICAgICAgICAg
-ICAgIC0gY29uc3Q6IDANCj4gPiA+ICsgICAgICAgICAgICAgIC0gZW51bTogWzUwMDAwMDAsIDEw
-MDAwMDAwXQ0KPiA+ID4gKyAgICAgICAgICAtIGl0ZW1zOg0KPiA+ID4gKyAgICAgICAgICAgICAg
-LSBjb25zdDogLTUwMDAwMDANCj4gPiA+ICsgICAgICAgICAgICAgIC0gY29uc3Q6IDUwMDAwMDAN
-Cj4gPiA+ICsgICAgICAgICAgLSBpdGVtczoNCj4gPiA+ICsgICAgICAgICAgICAgIC0gY29uc3Q6
-IC0xMDAwMDAwMA0KPiA+ID4gKyAgICAgICAgICAgICAgLSBjb25zdDogMTAwMDAwMDANCj4gPiA+
-ICsgICAgICAgICAgLSBpdGVtczoNCj4gPiA+ICsgICAgICAgICAgICAgIC0gY29uc3Q6IC0yNTAw
-MDAwDQo+ID4gPiArICAgICAgICAgICAgICAtIGNvbnN0OiAyNTAwMDAwDQo+ID4NCj4gPiAgICAg
-ICAgICAgIGRlZmF1bHQ6IFswLCA1MDAwMDAwXQ0KPiANCj4gQWRkaW5nIGEgZGVmYXVsdCB2YWx1
-ZSBkaXJlY3RseSB3aXRoaW4gdGhlIHNjaGVtYSBjYXVzZXMgdmFsaWRhdGlvbiBlcnJvci4NCj4g
-R2l2ZW4gdGhpcywgaXMgaXQgYWNjZXB0YWJsZSBkb2N1bWVudGluZyB0aGUgaW50ZW5kZWQgZGVm
-YXVsdCB2YWx1ZSB3aXRoaW4gdGhlDQo+IGRlc2NyaXB0aW9uPw0KDQpCZWZvcmUgc2VuZGluZyB0
-aGUgcGF0Y2gsIEkgd291bGQgbGlrZSB0byBjb25maXJtIGlmIGl0IGlzIGFjY2VwdGFibGUgdG8g
-anVzdA0KZG9jdW1lbnQgdGhlIGludGVuZGVkIGRlZmF1bHQgdmFsdWUgd2l0aGluIHRoZSBkZXNj
-cmlwdGlvbiwgc2luY2UgYWRkaW5nIGEgZGVmYXVsdA0KdmFsdWUgZGlyZWN0bHkgdG8gdGhlIHNj
-aGVtYSBjYXVzZXMgdmFsaWRhdGlvbiBlcnJvciBhbmQgY29uc2lkZXJpbmcgYWRkaW5nIHRoZSBs
-b2dpYywNCg0KICAgICAtIGlmOg0KICAgICAgICAgbm90Og0KICAgICAgICAgICBwcm9wZXJ0aWVz
-Og0KICAgICAgICAgICAgIGFkaSxtYW51YWwtc3Bhbi1vcGVyYXRpb24tY29uZmlnOg0KICAgICAg
-ICAgICAgICAgY29uc3Q6IDcNCiAgICAgICAgIHRoZW46DQogICAgICAgICAgIHBhdHRlcm5Qcm9w
-ZXJ0aWVzOg0KICAgICAgICAgICAgICJeY2hhbm5lbEBbMC0zXSQiOg0KICAgICAgICAgICAgICAg
-cHJvcGVydGllczoNCiAgICAgICAgICAgICAgICAgb3V0cHV0LXJhbmdlLW1pY3Jvdm9sdDogZmFs
-c2UNCg0KPiA+DQo+ID4gPiArDQo+ID4gPiArICAgIHJlcXVpcmVkOg0KPiA+ID4gKyAgICAgIC0g
-cmVnDQo+ID4gPiArDQo+ID4gPiArICAgIGFsbE9mOg0KPiA+ID4gKyAgICAgIC0gaWY6DQo+ID4g
-PiArICAgICAgICAgIHByb3BlcnRpZXM6DQo+ID4gPiArICAgICAgICAgICAgYWRpLG1hbnVhbC1z
-cGFuLW9wZXJhdGlvbi1jb25maWc6DQo+ID4gPiArICAgICAgICAgICAgICBjb25zdDogNw0KPiA+
-ID4gKyAgICAgICAgdGhlbjoNCj4gPiA+ICsgICAgICAgICAgcGF0dGVyblByb3BlcnRpZXM6DQo+
-ID4gPiArICAgICAgICAgICAgIl5jaGFubmVsQFswLTNdJCI6DQo+ID4gPiArICAgICAgICAgICAg
-ICByZXF1aXJlZDogW291dHB1dC1yYW5nZS1taWNyb3ZvbHRdDQo+ID4NCj4gPg0KPiA+IFRoaXMg
-bG9naWMgZG9lc24ndCBsb29rIHJpZ2h0IHRvIG1lLiBJZg0KPiA+IGFkaSxtYW51YWwtc3Bhbi1v
-cGVyYXRpb24tY29uZmlnIGlzIG5vdCA3LCB0aGVuIFNvZnRTcGFuIGlzIGRpc2FibGVkLCBzbyB3
-ZQ0KPiBzaG91bGQgaGF2ZToNCj4gPg0KPiA+ICAgICBvdXRwdXQtcmFuZ2UtbWljcm92b2x0OiBm
-YWxzZQ0KPiA+DQo+ID4gSW4gdGhhdCBjYXNlIHNpbmNlIGluZGl2aWR1YWwgY2hhbm5lbHMgY2Fu
-J3QgaGF2ZSBhIHBlci1jaGFubmVsDQo+ID4gY29uZmlndXJhdGlvbiBiZWNhdXNlIFNvZnRTcGFu
-IGlzIG5vdCBlbmFibGVkICh1bmxlc3MgSSBhbQ0KPiA+IG1pc3VuZGVyc3RhbmRpbmcgdGhlIGRh
-dGFzaGVldD8pLg0KPiA+DQo+ID4gQWxzbywgb3V0cHV0LXJhbmdlLW1pY3Jvdm9sdCBzaG91bGQg
-bmV2ZXIgYmUgcmVxdWlyZWQsIGV2ZW4gd2hlbg0KPiA+IGFkaSxtYW51YWwtc3Bhbi1vcGVyYXRp
-b24tY29uZmlnIGlzIDcgYmVjYXVzZSB0aGVyZSBpcyBhbHJlYWR5IGENCj4gPiBkZWZhdWx0IHZh
-bHVlIHJhbmdlICgwViB0byA1Vikgc3BlY2lmaWVkIGJ5IHRoZQ0KPiA+IGFkaSxtYW51YWwtc3Bh
-bi1vcGVyYXRpb24tY29uZmlnIHByb3BlcnR5Lg0KPiA+DQo+ID4gSSB0aGluayB0aGUgY29ycmVj
-dCBsb2dpYyB3b3VsZCBiZToNCj4gPg0KPiA+ICAgICAtIGlmOg0KPiA+ICAgICAgICAgbm90Og0K
-PiA+ICAgICAgICAgICBwcm9wZXJ0aWVzOg0KPiA+ICAgICAgICAgICAgIGFkaSxtYW51YWwtc3Bh
-bi1vcGVyYXRpb24tY29uZmlnOg0KPiA+ICAgICAgICAgICAgICAgY29uc3Q6IDcNCj4gPiAgICAg
-ICAgIHRoZW46DQo+ID4gICAgICAgICAgIHBhdHRlcm5Qcm9wZXJ0aWVzOg0KPiA+ICAgICAgICAg
-ICAgICJeY2hhbm5lbEBbMC0zXSQiOg0KPiA+ICAgICAgICAgICAgICAgcHJvcGVydGllczoNCj4g
-PiAgICAgICAgICAgICAgICAgb3V0cHV0LXJhbmdlLW1pY3Jvdm9sdDogZmFsc2UNCg0K
+On Wed, Jul 03, 2024 at 01:14:09PM -0700, Reinette Chatre wrote:
+> Hi Sean,
+>
+> On 6/28/24 5:39 PM, Sean Christopherson wrote:
+> > Forking this off to try and avoid confusion...
+> >
+> > On Wed, Jun 12, 2024, Reinette Chatre wrote:
+>
+> ...
+>
+> > > +
+> > > +		freq = (tmict - tmcct) * tdcrs[i].divide_count * tsc_hz / (tsc1 - tsc0);
+> > > +		/* Check if measured frequency is within 1% of configured frequency. */
+> > > +		GUEST_ASSERT(freq < apic_hz * 101 / 100);
+> > > +		GUEST_ASSERT(freq > apic_hz * 99 / 100);
+> > > +	}
+> >
+> > This test fails on our SKX, CLX, and ICX systems due to what appears to be a CPU
+> > bug.  It looks like something APICv related is clobbering internal VMX timer state?
+> > Or maybe there's a tearing or truncation issue?
+>
+> It has been a few days. Just a note to let you know that we are investigating this.
+> On my side I have not yet been able to reproduce this issue. I tested
+> kvm-x86-next-2024.06.28 on an ICX and an CLX system by running 100 iterations of
+> apic_bus_clock_test and they all passed. Since I have lack of experience here there are
+> some Intel virtualization experts helping out with this investigation and I hope that
+> they will be some insights from the analysis and testing that you already provided.
+>
+> Reinette
+>
+
+I can reproduce this on my side, even with apicv disabled by
+'insmod $kernel_path/arch/x86/kvm/kvm-intel.ko enable_apicv=N'.
+@Sean I think we're observing same issue, please see the details
+below:
+
+apic_bus_clock_test can't reproduce this may because the
+preemption timer value calculation relies on apic bus
+frequency/TMICT/Divide count/host TSC frequency and ratio
+between preemption timer and host TSC frequency, too many
+factors to generate the 'magic' value there. So I changed
+KVM and added a small KVM kselftest tool to set the
+preemption timer value directly from guest, this makes the
+reproducing easily. The changes are attached at end of this
+comment.
+
+The trace I captured below came form host with 1.7GHz TSC,
+the VM_EXIT_SAVE_VMX_PREEMPTION_TIMER is enabled to get the
+cpu saved vmcs.VMX_PREEMPTION_TIMER_VALUE after VMEXIT. I
+set the vmcs.VMX_PREEMPTION_TIMER_VALUE to 0x880042ad which
+is the 'magic' number on this 1.7Ghz TSC machine:
+
+preempt_test  20677.199521: kvm:kvm_vmx_debug: kvm_vmx_debug: 3, a0:0x77fd5554 a1:0x880042ad a2:0x880042ad a3:0x20462e98d9b9
+  a0: The previous vmcs.VMX_PREEMPTION_TIMER_VALUE value
+      saved by CPU when VMEXIT.
+  a1: The new preemption timer value wrote to
+      vmcs.VMX_PREEMPTION_TIMER_VALUE.
+  a2: The value read back from
+      vmcs.VMX_PREEMPTION_TIMER_VALUE, for double confirmation.
+  a3: The host tsc at the time point, debug only.
+
+preempt_test  20677.199579:      kvm:kvm_exit: reason PREEMPTION_TIMER rip 0x40274d info 0 0 intr 0
+
+preempt_test  20677.199579: kvm:kvm_vmx_debug: kvm_vmx_debug: 2, a0:0x34 a1:0x0 a2:0x87fea9b0 a3:0x20462e9a5749
+  a0: The VMEXIT reason, 0x34 is preemption timer VMEXIT.
+  a1: The read back vmcs.VMX_PREEMPTION_TIMER_VALUE value, here 0.
+  a2: The next preemption timer value should be written to
+      vmcs, calculates from the (target tsc - current tsc) >>
+      7. Now the preemption timer vmexit happend only after
+      ~58 microseconds elapsed, it should happen after
+      ~171.79 seconds but not such soon, the issue is
+      reproduced.
+
+Another more easy way to observe this symptom w/o care the
+'magic' preemption timer vlaue is use the maximum preemption
+timer value 0xffffffff, below log w/ 0xffffffff is captured
+from same machine:
+
+preempt_test 20530.456589: kvm:kvm_vmx_debug: kvm_vmx_debug: 3, a0:0x77fd5551 a1:0xffffffff a2:0xffffffff a3:0x200c1971ca5d
+
+  a0: The previous vmcs.VMX_PREEMPTION_TIMER_VALUE value
+      saved by CPU when VMEXIT.
+  a1: The new preemption timer value wrote to
+      vmcs.VMX_PREEMPTION_TIMER_VALUE.
+  a2: The read back value from
+      vmcs.VMX_PREEMPTION_TIMER_VALUE, double confirmation.
+  a3: the host tsc at the time point, debug only.
+
+preempt_test 20530.456690:      kvm:kvm_exit: reason VMCALL rip 0x4131a0 info 0 0 intr 0
+  The preempt_test checks preemption timer state every
+  100us, this VMEXIT is expected behavior.
+
+preempt_test 20530.456691:     kvm:kvm_entry: vcpu 0, rip 0x4131a3
+
+preempt_test 20530.456691: kvm:kvm_vmx_debug: kvm_vmx_debug: 3, a0:0x77ff82cc a1:0xfffe900b a2:0xfffe900b a3:0x200c19746d45
+  a0: The previous vmcs.VMX_PREEMPTION_TIMER_VALUE value
+      saved by CPU when VMEXIT. The difference value
+      shouldn't be such huge number 0xffffffff - 0x77ff82cc
+      = 0x88007D33 when just ~100us elapsed from previous
+      VMENTRY, the issue is reproduced.
+
+Use 0x88000000 as preemption timer value to verify this
+preempt_test tool, the preemption timer VMEXIT happend after
+~171.45 seconds which is expected behavior on the host
+1.7Ghz TSC system:
+
+The preemption timer VMEXIT should happen after:
+2281701376 × 128 / 1700000000 = 171.79 seconds.
+
+Attached my changes in KVM and kselftest tool for
+reproducing here, based on:
+https://github.com/kvm-x86/linux.git
+tag:kvm-x86-next-2024.06.28
+
+Patch 01:
+
+From a977bf12a8cd1bbe401e68d3702c0b5aa3bf66e4 Mon Sep 17 00:00:00 2001
+From: Yao Yuan <yuan.yao@intel.com>
+Date: Thu, 4 Jul 2024 09:59:55 +0800
+Subject: [PATCH 1/2] KVM: x86: Introudce trace_kvm_vmx_debug()
+
+debug only common trace.
+
+Signed-off-by: Yao Yuan <yuan.yao@intel.com>
+---
+ arch/x86/kvm/trace.h | 28 ++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.c   |  1 +
+ 2 files changed, 29 insertions(+)
+
+diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+index d3aeffd6ae75..7b9eb23d71d3 100644
+--- a/arch/x86/kvm/trace.h
++++ b/arch/x86/kvm/trace.h
+@@ -34,6 +34,34 @@ TRACE_EVENT(kvm_entry,
+ 		  __entry->immediate_exit ? "[immediate exit]" : "")
+ );
+
++TRACE_EVENT(kvm_vmx_debug,
++	    TP_PROTO(unsigned long n, unsigned long a0,
++		     unsigned long a1,
++		     unsigned long a2,
++		     unsigned long a3),
++	    TP_ARGS(n, a0, a1, a2, a3),
++
++	TP_STRUCT__entry(
++		 __field(	unsigned long,	n		)
++		__field(	unsigned long,	a0		)
++		__field(	unsigned long,	a1		)
++		__field(	unsigned long,	a2		)
++		__field(	unsigned long,	a3		)
++	),
++
++	TP_fast_assign(
++		__entry->n      = n;
++		__entry->a0		= a0;
++		__entry->a1		= a1;
++		__entry->a2		= a2;
++		__entry->a3		= a3;
++	),
++
++	TP_printk("kvm_vmx_debug: %ld, a0:0x%lx a1:0x%lx a2:0x%lx a3:0x%lx",
++		  __entry->n, __entry->a0, __entry->a1, __entry->a2, __entry->a3)
++);
++
++
+ /*
+  * Tracepoint for hypercall.
+  */
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 994743266480..6d1972d6c988 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -14036,6 +14036,7 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_vmgexit_exit);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_vmgexit_msr_protocol_enter);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_vmgexit_msr_protocol_exit);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_rmp_fault);
++EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_vmx_debug);
+
+ static int __init kvm_x86_init(void)
+ {
+--
+2.27.0
+
+Patch 02:
+
+From a3bdce4f2f93810372f6068396776ac702946d16 Mon Sep 17 00:00:00 2001
+From: Yao Yuan <yuan.yao@intel.com>
+Date: Wed, 3 Jul 2024 14:08:02 +0800
+Subject: [PATCH 2/2] [DEBUG] preempt timer debug test
+
+A specific kselftesting based program to allow set the VMX
+preempt timer value from VM directly.
+
+Introduce 2 hypercall 0x56780001/2, 01 to set the preempt
+timer value, 02 to wait for the preemption time expired.
+
+Usage:
+Reload kvm applied this change, then:
+$KRNEL_SRC_ROOT/tools/testing/selftests/kvm/x86_64/preempt_test -p 'preempt_timer_vale'
+
+'preempt_timer_vale' is the preempt timer value in DEC format, HEX is not supported.
+
+For example:
+
+perf record -e "kvm:*" tools/testing/selftests/kvm/x86_64/preempt_test -p 2281718445
+
+Above set the preempt value to 2281718445(0x880042AD) and
+capture the trace, then check the kvm_vmx_debug in the trace
+to know the preempt timer behavior.
+
+Signed-off-by: Yao Yuan <yuan.yao@intel.com>
+---
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ arch/x86/kvm/vmx/vmx.h                        |   5 +
+ arch/x86/kvm/vmx/vmx.c                        | 113 +++++++++++++++++-
+ .../selftests/kvm/x86_64/preempt_test.c       |  82 +++++++++++++
+ 4 files changed, 198 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/preempt_test.c
+
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index ad8b5d15f2bd..957509957f80 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -129,6 +129,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/amx_test
+ TEST_GEN_PROGS_x86_64 += x86_64/max_vcpuid_cap_test
+ TEST_GEN_PROGS_x86_64 += x86_64/triple_fault_event_test
+ TEST_GEN_PROGS_x86_64 += x86_64/recalc_apic_map_test
++TEST_GEN_PROGS_x86_64 += x86_64/preempt_test
+ TEST_GEN_PROGS_x86_64 += access_tracking_perf_test
+ TEST_GEN_PROGS_x86_64 += demand_paging_test
+ TEST_GEN_PROGS_x86_64 += dirty_log_test
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 42498fa63abb..82ea0ccc7a63 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -368,6 +368,11 @@ struct vcpu_vmx {
+
+ 	/* ve_info must be page aligned. */
+ 	struct vmx_ve_information *ve_info;
++
++	volatile bool debug_timer;
++	bool debug_timer_set_to_hardware;
++	u32 debug_timer_val;
++	u64 debug_timer_deadline_tsc;
+ };
+
+ struct kvm_vmx {
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f18c2d8c7476..73f084c29f9a 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -4431,8 +4431,9 @@ static u32 vmx_vmexit_ctrl(void)
+ 	 * Not used by KVM and never set in vmcs01 or vmcs02, but emulated for
+ 	 * nested virtualization and thus allowed to be set in vmcs12.
+ 	 */
+-	vmexit_ctrl &= ~(VM_EXIT_SAVE_IA32_PAT | VM_EXIT_SAVE_IA32_EFER |
+-			 VM_EXIT_SAVE_VMX_PREEMPTION_TIMER);
++	vmexit_ctrl &= ~(VM_EXIT_SAVE_IA32_PAT | VM_EXIT_SAVE_IA32_EFER);
++	pr_info("Set VM_EXIT_SAVE_VMX_PREEMPTION_TIMER forcedly for preempt timer debug\n");
++
+
+ 	if (vmx_pt_mode_is_system())
+ 		vmexit_ctrl &= ~(VM_EXIT_PT_CONCEAL_PIP |
+@@ -5993,11 +5994,41 @@ static int handle_pml_full(struct kvm_vcpu *vcpu)
+ 	return 1;
+ }
+
++static fastpath_t handle_fastpath_debug_timer(struct kvm_vcpu *vcpu,
++					      bool force_immediate_exit)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	u64 tscl;
++	u32 delta;
++
++	tscl = rdtsc();
++
++	if (vmx->debug_timer_deadline_tsc > tscl)
++		delta = (u32)((vmx->debug_timer_deadline_tsc - tscl) >>
++			      cpu_preemption_timer_multi);
++	else
++		delta = 0;
++
++	trace_kvm_vmx_debug(2UL,
++			    (unsigned long)vmcs_read32(VM_EXIT_REASON),
++			    (unsigned long)vmcs_read32(VMX_PREEMPTION_TIMER_VALUE),
++			    (unsigned long)delta, tscl);
++
++	vmx->debug_timer = false;
++
++	return EXIT_FASTPATH_REENTER_GUEST;
++}
++
+ static fastpath_t handle_fastpath_preemption_timer(struct kvm_vcpu *vcpu,
+ 						   bool force_immediate_exit)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+
++	WARN_ON(vmx->debug_timer && force_immediate_exit);
++	if (vmx->debug_timer)
++		return handle_fastpath_debug_timer(vcpu,
++						   force_immediate_exit);
++
+ 	/*
+ 	 * In the *extremely* unlikely scenario that this is a spurious VM-Exit
+ 	 * due to the timer expiring while it was "soft" disabled, just eat the
+@@ -6096,6 +6127,60 @@ static int handle_notify(struct kvm_vcpu *vcpu)
+ 	return 1;
+ }
+
++static unsigned long vmx_debug_set_preempt_timer(struct kvm_vcpu *vcpu,
++						 unsigned long a0,
++						 unsigned long a1,
++						 unsigned long a2,
++						 unsigned long a3)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++
++	vmx->debug_timer = true;
++	vmx->debug_timer_set_to_hardware = false;
++	vmx->debug_timer_val = a0;
++	vmx->debug_timer_deadline_tsc = rdtsc() + (a0 << cpu_preemption_timer_multi);
++	pr_info("debug_timer = %u\n", (u32)a0);
++
++	return 0;
++}
++
++
++static unsigned long vmx_debug_get_preempt_timer_result(struct kvm_vcpu *vcpu,
++							unsigned long a0,
++							unsigned long a1,
++							unsigned long a2,
++							unsigned long a3)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++
++	if (vmx->debug_timer)
++		return 1;
++	return 0;
++}
++
++static int vmx_emulate_hypercall(struct kvm_vcpu *vcpu)
++{
++	unsigned long nr, a0, a1, a2, a3;
++	unsigned long ret;
++
++	nr = kvm_rax_read(vcpu);
++	if (nr != 0x87650001 && nr != 0x87650002)
++		return kvm_emulate_hypercall(vcpu);
++
++	a0 = kvm_rbx_read(vcpu);
++	a1 = kvm_rcx_read(vcpu);
++	a2 = kvm_rdx_read(vcpu);
++	a3 = kvm_rsi_read(vcpu);
++
++	if (nr == 0x87650001)
++		ret = vmx_debug_set_preempt_timer(vcpu, a0, a1, a2, a3);
++	else
++		ret = vmx_debug_get_preempt_timer_result(vcpu, a0, a1, a2, a3);
++
++	kvm_rax_write(vcpu, ret);
++	return kvm_skip_emulated_instruction(vcpu);
++}
++
+ /*
+  * The exit handlers return 1 if the exit was handled fully and guest execution
+  * may resume.  Otherwise they set the kvm_run parameter to indicate what needs
+@@ -6117,7 +6202,7 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
+ 	[EXIT_REASON_INVD]		      = kvm_emulate_invd,
+ 	[EXIT_REASON_INVLPG]		      = handle_invlpg,
+ 	[EXIT_REASON_RDPMC]                   = kvm_emulate_rdpmc,
+-	[EXIT_REASON_VMCALL]                  = kvm_emulate_hypercall,
++	[EXIT_REASON_VMCALL]                  = vmx_emulate_hypercall,
+ 	[EXIT_REASON_VMCLEAR]		      = handle_vmx_instruction,
+ 	[EXIT_REASON_VMLAUNCH]		      = handle_vmx_instruction,
+ 	[EXIT_REASON_VMPTRLD]		      = handle_vmx_instruction,
+@@ -7199,6 +7284,28 @@ static void vmx_update_hv_timer(struct kvm_vcpu *vcpu, bool force_immediate_exit
+ 	if (force_immediate_exit) {
+ 		vmcs_write32(VMX_PREEMPTION_TIMER_VALUE, 0);
+ 		vmx->loaded_vmcs->hv_timer_soft_disabled = false;
++	} else if (vmx->debug_timer) {
++		u32 old;
++
++		tscl = rdtsc();
++
++		if (!vmx->debug_timer_set_to_hardware) {
++			delta_tsc = vmx->debug_timer_val;
++			vmx->debug_timer_set_to_hardware = true;
++		} else {
++			if (vmx->debug_timer_deadline_tsc > tscl)
++				delta_tsc = (u32)((vmx->debug_timer_deadline_tsc - tscl)
++						  >> cpu_preemption_timer_multi);
++			else
++				delta_tsc = 0;
++		}
++
++		old = vmcs_read32(VMX_PREEMPTION_TIMER_VALUE);
++		vmcs_write32(VMX_PREEMPTION_TIMER_VALUE, delta_tsc);
++		trace_kvm_vmx_debug(3UL, old,
++				    vmcs_read32(VMX_PREEMPTION_TIMER_VALUE),
++				    delta_tsc, tscl);
++		vmx->loaded_vmcs->hv_timer_soft_disabled = false;
+ 	} else if (vmx->hv_deadline_tsc != -1) {
+ 		tscl = rdtsc();
+ 		if (vmx->hv_deadline_tsc > tscl)
+diff --git a/tools/testing/selftests/kvm/x86_64/preempt_test.c b/tools/testing/selftests/kvm/x86_64/preempt_test.c
+new file mode 100644
+index 000000000000..2e58cfee61d0
+--- /dev/null
++++ b/tools/testing/selftests/kvm/x86_64/preempt_test.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2024 Intel Corporation
++ *
++ * Debug the preemption timer behavior
++ */
++
++#include "test_util.h"
++#include "processor.h"
++#include "ucall_common.h"
++
++uint32_t preempt_timer_val = 0x1000000;
++static void guest_code(uint64_t apic_hz, uint64_t delay_ms)
++{
++	volatile unsigned long r;
++
++	kvm_hypercall(0x87650001, preempt_timer_val, 0, 0, 0);
++	do {
++		udelay(100);
++		r = kvm_hypercall(0x87650002, 0, 0, 0, 0);
++	} while(r != 0);
++
++	GUEST_DONE();
++}
++
++static void do_test(struct kvm_vcpu *vcpu)
++{
++	bool done = false;
++	struct ucall uc;
++
++	while (!done) {
++		vcpu_run(vcpu);
++
++		switch (get_ucall(vcpu, &uc)) {
++		case UCALL_DONE:
++			done = true;
++			break;
++		case UCALL_ABORT:
++			REPORT_GUEST_ASSERT(uc);
++			break;
++		default:
++			break;
++		}
++	}
++}
++
++static void run_test(void)
++{
++	struct kvm_vcpu *vcpu;
++	struct kvm_vm *vm;
++
++	vm = vm_create(1);
++
++	sync_global_to_guest(vm, preempt_timer_val);
++
++	vcpu = vm_vcpu_add(vm, 0, guest_code);
++
++	do_test(vcpu);
++
++	kvm_vm_free(vm);
++}
++
++
++int main(int argc, char *argv[])
++{
++	int opt;
++
++	while ((opt = getopt(argc, argv, "p:h")) != -1) {
++		switch (opt) {
++		case 'p':
++			preempt_timer_val = atoi(optarg);
++			break;
++		default:
++			exit(KSFT_SKIP);
++		}
++	}
++
++	printf("preempt timer value:%u(0x%x)\n",
++	       preempt_timer_val, preempt_timer_val);
++
++	run_test();
++}
+--
+2.27.0
 
