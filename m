@@ -1,90 +1,164 @@
-Return-Path: <linux-kernel+bounces-243935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA73929CAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 525D6929CB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED43128185B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3BA2819AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10621B5A4;
-	Mon,  8 Jul 2024 07:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528671BF53;
+	Mon,  8 Jul 2024 07:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LyfU1B3B"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NYNGoYBm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5884817C66
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3193F1CD15
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720422123; cv=none; b=qONLFSOl9iH05rSRWoz0XHyWsbqAjwRDEa1j8C7H2zAy1OQHlaZCOPfTizc5aY3d1dXm+ryQa3xF0ixHrvTdxg8UErC0lqjBq043N1JWZYBja0n8ppEJZwEnIwc+ZaX9pRM5XBfbUwyBIUlcyUyHnuKscVFy/95Cl5qHcll3QzE=
+	t=1720422203; cv=none; b=p64V75RB20g7PxvD9dPFAMj/VwcTacD+e2dKHLFJtTw2IUhnGOtVkzQL5F2RBo98WO3SDhDTlm28G0o7JPAiuo4MboAWSFglpX14QbqD0sorgoEp3QW5xSMAXDnwJLhVKJX4relEMOSZMmyxA3+Avsi/xdOG3OPCirS54PxPzXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720422123; c=relaxed/simple;
-	bh=q/bgiJfm/HdA6Cv5ovtlFies0lVWr9NNP3EY1Gbk/ko=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YpfSnwFYAaWQ53HgGeZHQfxqEoPD/ABRKsPGwDpVqYUadcuiiWkTMQPcm57dPEWSgXoDPMrfeB0qz+KC7+CBmP0V3vmCobhTRoX7NPkKaQUt87TF28BUAajhueRvs8qmBhkIS+rJGj0H+RLX1Z60vvnBZszJKY+awuduvkHdFn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LyfU1B3B; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4B88F20007;
-	Mon,  8 Jul 2024 07:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720422114;
+	s=arc-20240116; t=1720422203; c=relaxed/simple;
+	bh=4b92oNgXX3IO0nNjCs2UGVAK+tN4/8tvmYGO2+9x2s4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OH+ljS4ezSUvNUkqK0MGTzKdNIwm0qvRbiUyn2yrk+Ag8y4WwnQMdnPl2qMYwdtbQC7A4aJBPItH+aRzmI6uIHx2RpzxmBgE5OtD0cgrmB9hr6cmGVa4FWuhAtwGyVwbHNVoi70jyNHveI9RX4dAitLuV8pODHfJd+V03EekYxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NYNGoYBm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720422201;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=X+I3UPmsCQqa7VNrWRNTEA+DBLGE5VNKe5lzl9UQuF8=;
-	b=LyfU1B3BwJ8dUJv9SKTWE7K8enxz23xs4syYwBby3SGdAvHwr0StbteCkbeXIllsLQYpte
-	4u477vOwS8ZThtOMDyq5fAPlPg3Z0a0nt8Mqlpw1VEBtMwcih3NbSXS65i3RWaYWzcykAM
-	i8uZrb7JLuWAucR/cdjkbOe3H1CM5HkMxM+3UVfBDTQ3lXcRUxSU82DZXboU/Rc5MK71G1
-	j1WrC15+260BAOn6K47cOErVHrTPcl8NHT888iYXg7uQUt7u3wfDXjsRhfI9H016U4Wayh
-	RmTg1iM3GA7k79E1zIoopNUif5EfdZkcbe0itEXx54XTp3erV6Hsosen48vS6Q==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Cheng Ming Lin <linchengming884@gmail.com>,
-	miquel.raynal@bootlin.com,
-	vigneshr@ti.com
-Cc: richard@nod.at,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH v2 1/2] mtd: spinand: macronix: Add support for reading Device ID 2
-Date: Mon,  8 Jul 2024 09:01:51 +0200
-Message-Id: <20240708070151.12247-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240704024839.241101-2-linchengming884@gmail.com>
-References: 
+	bh=xafKe1ETPl2hs7RC1pIf/UXEnXlhBd+TTx+fx4z1CYs=;
+	b=NYNGoYBmPZ14AQRQ8dC8PwEji/QVOzOYvIwaA8xptva5ui9M5PCX8lCBhJXRvI4qlcXrx6
+	Vzhjtz8WwuEbAK1B6JjY8kWXXnfrnTUkS6HLFknaBymYAj2xrxW+6jx83QoslNqOW8Lpjx
+	7ys0lCJap7yaaLW0DvA0z04ZSQ6IJZc=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-292-KNahkkh9P5Ku_P0jeLfcWg-1; Mon, 08 Jul 2024 03:03:19 -0400
+X-MC-Unique: KNahkkh9P5Ku_P0jeLfcWg-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2c95f737113so3758626a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 00:03:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720422198; x=1721026998;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xafKe1ETPl2hs7RC1pIf/UXEnXlhBd+TTx+fx4z1CYs=;
+        b=g7cz3+EDKKbkgBMQhsVGiZvI7MwH4wtDp6lCHCFByJqqJ1LNY2WfSewDXr5J9IQIJa
+         qUuGNfv3Z6tCmE/SqtUgWNj1DGrckPiEG0J8t9e1+ZVZHCdv9XqCvnvBwFgKTzeVsjk7
+         hdOqAHsnLJwnQTFN7ItW1cpWEgnZrmw+3T1+tg1wCrD7WuIqxwkb8Zs9gCDYHhtJoJJ7
+         ispHSpGkAVw9tF8KSTmuqfrT9aLx/9ydQQs1cJPBjAcO5bLTwDCGAcLJMJrFG7PH92eF
+         i14LwYnV3b7eavH3ZrBEn/nSlV/xvuwSXTA5PxrIxv36zq2Eu5/TDVewLOOdUcCrIWys
+         jwRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWj9r5GWQHuBcxoHlWSbhg/Qk6ULYN6d5Q96QzricrYxTnBQEmiiumHOyFjURU4pa8W4M6KfkQt4ppEstiU5AQLk5S7KXb2YG67sXh9
+X-Gm-Message-State: AOJu0Yx5wsJKD677pXUgZF8qgzTFJwtsfxPjIoEBnQGoRJmsuEpZ79/k
+	NOjfpz4VHwfBeJN3ug69DqhLJV62aoKysELzWszFI49XL3buxk2YOsrEEKB9ElxWkkIO2hCZloW
+	qSEhxK0o1AzzFy5RSahR8PvNpE7LC6XQN5y3s76UVwUoMFPwyZjajReTv3wMsgoZ4bsCNA0FX9g
+	Na94iFU0kRicjAxZTZM/+bls0Lywi7nOw17cBG
+X-Received: by 2002:a17:90a:c24d:b0:2c9:5a8b:ff7e with SMTP id 98e67ed59e1d1-2c99c5596e5mr8326626a91.25.1720422198727;
+        Mon, 08 Jul 2024 00:03:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGK2xxHaGnbVCuiq17bw6Hrfo1LzM8sgBjdKSXFir13Qe5R6l6dUaQH4ufWN/M6OQHtNf5RO7L457uGVag88zo=
+X-Received: by 2002:a17:90a:c24d:b0:2c9:5a8b:ff7e with SMTP id
+ 98e67ed59e1d1-2c99c5596e5mr8326615a91.25.1720422198391; Mon, 08 Jul 2024
+ 00:03:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'20dc4c711a2a3260f02f15e1cdd4f34cc38e8b4f'
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+References: <20240708065549.89422-1-lulu@redhat.com>
+In-Reply-To: <20240708065549.89422-1-lulu@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 8 Jul 2024 15:03:07 +0800
+Message-ID: <CACGkMEtOP_Hz=SO+r5WQfWow3Pb-Sz552xnt0BqTgyGSuvJz_A@mail.gmail.com>
+Subject: Re: [PATCH] vdpa/mlx5: Add the support of set mac address
+To: Cindy Lu <lulu@redhat.com>
+Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
+	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-07-04 at 02:48:38 UTC, Cheng Ming Lin wrote:
-> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> 
-> Adding the Device ID 2 on Macronix serial NAND flash.
-> 
-> When the number of flashes increases, we need to utilize
-> Device ID 2 to distinguish between different flashes.
-> 
-> These flashes have been validated on Xilinx zynq-picozed
-> board which included Macronix SPI Host.
-> 
-> Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+On Mon, Jul 8, 2024 at 2:56=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
+>
+> Add the function to support setting the MAC address.
+> For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
+> to set the mac address
+>
+> Tested in ConnectX-6 Dx device
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+Great.
 
-Miquel
+>
+> Signed-off-by: Cindy Lu <lulu@redhat.com>
+
+I guess this should be part of the series "vdpa: support set mac
+address from vdpa tool" ?
+
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index 26ba7da6b410..f78701386690 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -3616,10 +3616,33 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_de=
+v *v_mdev, struct vdpa_device *
+>         destroy_workqueue(wq);
+>         mgtdev->ndev =3D NULL;
+>  }
+> +static int mlx5_vdpa_set_attr_mac(struct vdpa_mgmt_dev *v_mdev,
+> +                                 struct vdpa_device *dev,
+> +                                 const struct vdpa_dev_set_config *add_c=
+onfig)
+> +{
+> +       struct mlx5_vdpa_dev *mvdev =3D to_mvdev(dev);
+> +       struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
+> +       struct mlx5_core_dev *mdev =3D mvdev->mdev;
+> +       struct virtio_net_config *config =3D &ndev->config;
+> +       int err;
+> +       struct mlx5_core_dev *pfmdev;
+> +
+> +       if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
+> +               if (!is_zero_ether_addr(add_config->net.mac)) {
+> +                       memcpy(config->mac, add_config->net.mac, ETH_ALEN=
+);
+> +                       pfmdev =3D pci_get_drvdata(pci_physfn(mdev->pdev)=
+);
+> +                       err =3D mlx5_mpfs_add_mac(pfmdev, config->mac);
+> +                       if (err)
+> +                               return -1;
+> +               }
+> +       }
+> +       return 0;
+> +}
+>
+>  static const struct vdpa_mgmtdev_ops mdev_ops =3D {
+>         .dev_add =3D mlx5_vdpa_dev_add,
+>         .dev_del =3D mlx5_vdpa_dev_del,
+> +       .dev_set_attr =3D mlx5_vdpa_set_attr_mac,
+
+Let's rename this as we will add the support for mtu as well or not?
+
+Thanks
+
+>  };
+>
+>  static struct virtio_device_id id_table[] =3D {
+> --
+> 2.45.0
+>
+
 
