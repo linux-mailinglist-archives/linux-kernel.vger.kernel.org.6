@@ -1,204 +1,150 @@
-Return-Path: <linux-kernel+bounces-244588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1691892A68B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:59:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1804192A68F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02311F21E46
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494B91C20D60
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03638145325;
-	Mon,  8 Jul 2024 15:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jdYD5G+X"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3885514A095;
+	Mon,  8 Jul 2024 15:57:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29787EC7;
-	Mon,  8 Jul 2024 15:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41425EC7;
+	Mon,  8 Jul 2024 15:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454219; cv=none; b=AsLcWuOR+xjVVrT2yEHSTYCOGfswJRvYLgvxIe8NvevInALVjxFNsxTcKgDp0/j+Cfr+DAGv5QmimH+gtIQAUzLTotpmXSIqaynoffStD+q8tyYyT0+32kF4xP3hAnQKW/i7cSZdITFeYYT21sCdllwY9sCcR9fAgNNLNEQr+x4=
+	t=1720454246; cv=none; b=EvppT0JB0mHwqD0uAX0rmtRsOcs9+qkP6ZC5GURMmFrMAUOtKdqnJHcsW8rTzxlg56dllkUU3E1t7WydjYu1VZrbTjMRHG3Z7fZJC/gj6Bz08uHP5eWURSC2al8DE7RToTKv14yBjZjraaJ+J8QWIgE4+Urk8hrE6wHLsfpimyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454219; c=relaxed/simple;
-	bh=ELgLOLfZp8pULd50kbfoMBhVzoyv22ylbX9tUd2mbWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KFRcKDlIOywtp6L0pIeKVHlresl2x3Bwqa/oD/4JuSWY8gLeL2uodTwFoS/U5vHQHiNMrLx+BgTfzDfjKbUjoKqIQUNLFVXBiA8OTzDQQCzjKqXPCSF612DxWVYv+t7gSOVNHePsjL5WRZorYQp1srwBzKfhJ6l0T/X4p/F3NhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jdYD5G+X; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1720454205;
-	bh=ELgLOLfZp8pULd50kbfoMBhVzoyv22ylbX9tUd2mbWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jdYD5G+XEtSDuCkLnqmVFG3CYJPO6aMkyq6BE6Iw/odnfeScHELwJbv1/UcQnUpaA
-	 iafJA2KJwOupi0gsACrAphm3n8+ziI9h/vQqIQ8b07jHQ4qO2mTS5LVO0NxPT0YXzu
-	 IrVwuYBLK9n8h8sbHgfVk9K1e1Yz5q6mICwOKv7s=
-Date: Mon, 8 Jul 2024 17:56:44 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: add script and target to generate pacman
- package
-Message-ID: <9884e892-1d45-4854-971c-5963e4661a1b@t-8ch.de>
-References: <20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net>
- <20240708055046.GB1968570@thelio-3990X>
+	s=arc-20240116; t=1720454246; c=relaxed/simple;
+	bh=CZH5/kjytJ3jx7EIEdxQVlVUXsBWoEKmLZ3ROVPx8k0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IkAWF0ioHzro4+5SFrHFiajZqligxJ9vmyovCxAwbnU/WqsfUL9phXNRNVwC+rvZmCoTLi3LiuHDLNadw9KUltBZO8UnyI9MFcgxwP3/z+nUeuaWkSAqAdra9Cyo3AhYcLJjSCBWHiy+FN1/zgLXhpq9G3E8rJP72zCKGBkiwU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WHpcw5ts8z6K5r4;
+	Mon,  8 Jul 2024 23:56:00 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7E4AF1400CF;
+	Mon,  8 Jul 2024 23:57:20 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
+ 2024 16:57:19 +0100
+Date: Mon, 8 Jul 2024 16:57:19 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Jonathan Cameron
+	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
+	<inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, "Palmer
+ Dabbelt" <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc:
+ sophgo,cv18xx-saradc.yaml: Add Sophgo SARADC binding documentation
+Message-ID: <20240708165719.000021b9@Huawei.com>
+In-Reply-To: <20240708142344.47da466e@xps-13>
+References: <20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com>
+	<20240705-sg2002-adc-v2-1-83428c20a9b2@bootlin.com>
+	<20240705-unaired-pesticide-4135eaa04212@spud>
+	<6b5459fd-2873-4c26-b986-882413b8d95b@bootlin.com>
+	<20240706-remote-undergo-3b9dfe44d16f@spud>
+	<20240708083011.058d0c57@xps-13>
+	<304b7bb1-d315-4147-820b-1ec0aa63e759@kernel.org>
+	<20240708142344.47da466e@xps-13>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708055046.GB1968570@thelio-3990X>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi Nathan,
+On Mon, 8 Jul 2024 14:23:44 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-On 2024-07-07 22:50:46+0000, Nathan Chancellor wrote:
-> On Sat, Jul 06, 2024 at 09:33:46AM +0200, Thomas Weißschuh wrote:
-> > pacman is the package manager used by Arch Linux and its derivates.
-> > Creating native packages from the kernel tree has multiple advantages:
-> > 
-> > * The package triggers the correct hooks for initramfs generation and
-> >   bootloader configuration
-> > * Uninstallation is complete and also invokes the relevant hooks
-> > * New UAPI headers can be installed without any manual bookkeeping
-> > 
-> > The PKGBUILD file is a simplified version of the one used for the
-> > downstream Arch Linux "linux" package.
-> > Extra steps that should not be necessary for a development kernel have
-> > been removed and an UAPI header package has been added.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> 
-> Thanks a lot for addressing my comments. From a PKGBUILD perspective,
-> this looks good to me (I have a couple more comments below). I am not as
-> familiar with the Kbuild packaging infrastructure, so Masahiro might
-> have more comments on that, but it works for me in my basic testing so
-> consider it:
-> 
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> Tested-by: Nathan Chancellor <nathan@kernel.org>
+> Hi Krzysztof,
+>=20
+> krzk@kernel.org wrote on Mon, 8 Jul 2024 09:33:04 +0200:
+>=20
+> > On 08/07/2024 08:30, Miquel Raynal wrote: =20
+> > > Hi Conor,
+> > >    =20
+> > >>>>> +properties:
+> > >>>>> +  compatible:
+> > >>>>> +    oneOf:
+> > >>>>> +      - items:
+> > >>>>> +          - enum:
+> > >>>>> +              - sophgo,cv1800b-saradc
+> > >>>>> +          - const: sophgo,cv18xx-saradc     =20
+> > >>>>
+> > >>>> I don't think the fallback here makes sense. If there's other devi=
+ces
+> > >>>> with a compatible programming model added later, we can fall back =
+to the
+> > >>>> cv1800b.   =20
+> > >=20
+> > > I'm sorry but isn't this slightly disagreeing with the "writing
+> > > bindings" doc pointed in v1? It says,
+> > >=20
+> > > * DO use fallback compatibles when devices are the same as or a subset
+> > >   of prior implementations.
+> > >=20
+> > > I believe we fall in the "devices are the same" category, so I would
+> > > have myself wrote a similar binding here with a compatible matching
+> > > them all, plus a hardware-implementation-specific compatible as well;
+> > > just in case.   =20
+> >=20
+> > Fallback from one model to another. There is no "another" model here,
+> > but wildcard. There is no such device as cv18xx, right? =20
+>=20
+> No there is not. But I don't think there is a "base" model either.
+> Just multiple SoCs named cv18<something> with apparently the same ADC.
+>=20
+> So actually I guess the discussion here is about the wildcard
+> compatible. It feels strange to me to have no generic compatible either
+> with a wildcard or with a "base" implementation (because there is
+> probably none). So I guess the solution here is to just list a single
+> specific compatible in the end.
 
-Thanks!
+It comes from long experience of silicon vendors not being consistent
+with part naming.  Far too often we've had a nice generic wild card
+entry and along comes the vendor with a new part in the middle
+of that range that is completely incompatible.  Then we end up with
+people assuming the wildcard means it will work and a bunch of bug
+reports.  Hence no wild cards, just define first supported part as your
+'base' and go from there.
 
-> 
-> > ---
-> > Changes in v2:
-> > - Replace ${MAKE} with $MAKE for consistency with other variables
-> > - Use $MAKE for "-s image_name"
-> > - Avoid permission warnings from build directory
-> > - Clarify reason for /build symlink removal
-> > - Install System.map and config
-> > - Install dtbs where available
-> > - Allow cross-build through arch=any
-> > - Sort Contributor/Maintainer chronologically
-> > - Disable some unneeded makepkg options
-> > - Use DEPMOD=true for consistency with rpm-package
-> > - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
-> > ---
-> >  .gitignore               |  6 ++++
-> >  scripts/Makefile.package | 15 +++++++++
-> >  scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 104 insertions(+)
+It's even more fun when a vendor driver papers over the differences
+and so it 'works', but the upstream one doesn't.  In extreme case
+because a different driver entirely is required.
 
-<snip>
+So basically we don't trust silicon vendors :)
+Speaking as someone who works for one - I think that's entirely
+reasonable!!
 
-> > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> > new file mode 100644
-> > index 000000000000..fe899c77a976
-> > --- /dev/null
-> > +++ b/scripts/package/PKGBUILD
-> > @@ -0,0 +1,83 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
-> > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-> > +
-> > +pkgbase=linux-upstream
-> > +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
-> > +pkgver="${KERNELRELEASE//-/_}"
-> > +pkgrel="$KBUILD_REVISION"
-> > +pkgdesc='Linux'
-> > +url='https://www.kernel.org/'
-> > +arch=(any)
-> 
-> I see why you went this way but this feels a little dangerous because
-> this means the package will be installable on architectures other than
-> the one that it is built for. I think a better solution for this problem
-> would be moving arch back to $UTS_MACHINE but setting CARCH to that same
-> value in scripts/Makefile.package above. This diff works for me,
-> allowing me to build an aarch64 package on x86_64:
+Jonathan
 
-This is what I used in v1 of the patch.
-But I felt that this only works by pure chance.
-IMO users of this feature should know what they are doing.
+>=20
+> Thanks,
+> Miqu=E8l
+>=20
+>=20
 
-That said, if anybody has strong opinions on this, I'll be happy to change it.
-
-> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> index 8c0c80f8bec0..a5b5b899d90c 100644
-> --- a/scripts/Makefile.package
-> +++ b/scripts/Makefile.package
-> @@ -151,6 +151,7 @@ pacman-pkg:
->  		srctree="$(realpath $(srctree))" \
->  		objtree="$(realpath $(objtree))" \
->  		BUILDDIR="$(realpath $(objtree))/pacman" \
-> +		CARCH="$(UTS_MACHINE)" \
->  		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
->  		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
->  		makepkg
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> index fe899c77a976..7f1a4588c3d3 100644
-> --- a/scripts/package/PKGBUILD
-> +++ b/scripts/package/PKGBUILD
-> @@ -8,7 +8,7 @@ pkgver="${KERNELRELEASE//-/_}"
->  pkgrel="$KBUILD_REVISION"
->  pkgdesc='Linux'
->  url='https://www.kernel.org/'
-> -arch=(any)
-> +arch=($UTS_MACHINE)
->  options=(!debug !strip !buildflags !makeflags)
->  license=(GPL-2.0-only)
->  
-> 
-> > +options=(!debug !strip !buildflags !makeflags)
-> > +license=(GPL-2.0-only)
-> > +
-
-<snip>
-
-> > +
-> > +package_linux-upstream-headers() {
-> > +  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-> > +
-> > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> > +  cd "$objtree"
-> > +  local builddir="$pkgdir/usr/$MODLIB/build"
-> > +
-> > +  echo "Installing build files..."
-> > +  "$srctree/scripts/package/install-extmod-build" "$builddir"
-> > +
-> > +  echo "Installing System.map and config..."
-> > +  cp System.map "$builddir/System.map"
-> > +  cp .config "$builddir/.config"
-> 
-> Remove the dot on the installation location so that it is more visible.
-
-This is the location used by the downstream linux-headers package.
-I can add a symlink for better visibility, though.
-
-> > +  echo "Adding symlink..."
-> > +  mkdir -p "$pkgdir/usr/src"
-> > +  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
-> > +}
-> > +
-
-<snip>
 
