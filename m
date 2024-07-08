@@ -1,200 +1,184 @@
-Return-Path: <linux-kernel+bounces-244877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B327792AAC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:50:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0593292AAC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD12628153C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5564928147F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCBC146D53;
-	Mon,  8 Jul 2024 20:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B651A14A08D;
+	Mon,  8 Jul 2024 20:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MzzOQvHu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1NbJ7Sjr"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FF938FA5
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758D738FA5
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720471837; cv=none; b=TCYu+bGX1unSe1I+wuQ5JKg1iMj+3/ULp5/D65wlteCAU7F43j3Qlq9Ju7fTyB+EaTQKYaAqOqgyqGcUiDux4kSqyYmBO0iXdYMPniYIFzaSQWWZAe4SXY0sKbgk7f8IgPDUmboj6dDug6y+fVipvdX9Ul8eZxcdlrujJ4rrCK8=
+	t=1720471986; cv=none; b=T6botU094lYASvGIW1EkztjaiC8SZhkuzMUs8UHPqMwNnXsrafSzWd+6iT3Cfhukgsxb6haMucq9m43LSyXcaQ/j8bWBnMEElVcwAzlDidtwiNCt8dhGJ4aM4A4QPCkr5O2/GOZiFqNNn7OgM7IPArP/S1GOYNbpts22gxaF3cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720471837; c=relaxed/simple;
-	bh=x6SXe8X+r2t9DP9tnD/wGWVHCLmHzgk3z5xVT1TFKN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a9iYC310/JT3SKpGhv8QYLldtSduz2m1wXznHaPDqC3h/Z+I49VKSq0boMuAGKqVHSVpYrg7HcEHlgMg3NFdyyBfD1Zl7hMSF+OnSQpwGrnlSoHC/arJjH3qf/ORveDYHiyb7IykwaKkKalfPK9z98zEZsrfELBVD7XEMytGdn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MzzOQvHu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720471834;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=21FSmDblZNftZJXSTYoJSkCrLdlQhBfb2VdBCJvg3Zo=;
-	b=MzzOQvHuzx3vi+otzvYBvOJ/AMdz8a7VPfBfolFMpFSDNUXgXI3SS9vIm+dCMNorf24HnG
-	wQo71x+AH6R18eM6FBEniaMsTnOYBQjAIJOrCFyEipHDrMEi274p/HBXTSe8vO3C5UAL6R
-	PCkul58j6qtCah1RECGXhUY7JzSnXw8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-678-O_bZ4K3nNAWGerQz-try_g-1; Mon, 08 Jul 2024 16:50:33 -0400
-X-MC-Unique: O_bZ4K3nNAWGerQz-try_g-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4266945770eso10263515e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:50:33 -0700 (PDT)
+	s=arc-20240116; t=1720471986; c=relaxed/simple;
+	bh=w1eGUfmQukYrQ1cZQTzQcmd1BC6BzYFQ+hgv8a6ff2s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GHHjgYC6dGO/OJErG5dt6Bcx5yaPOWLjojWvXbddNCnhUEQRmSo52eed/q5ssaWoaXzyyjyV4K0VaU+xAA2ZEEKYoBRygu51JkI426sz3b0OaCkerm7t2rJrGeIPnikwlWAFaZEen+8bh3pNy6nd/dX/fIA99LdpZ/MJARTizzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1NbJ7Sjr; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fb20902842so19652295ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720471985; x=1721076785; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWSLYXxu+J9SS0caWJhnx/Ez21q/MXAxgdHC6l0lFnE=;
+        b=1NbJ7SjrzeiVh8byFBEuzjH9V82gqhTkuulKakKaOZeXUEkVBI0T6/LmleEslIut31
+         V86F3JFduMK8A2nXoGk9fQqs/CaRILebpDlOyL3lbse2mRC9NU/IhSg1S200fsUOzMaX
+         YodceaXNi5Y7WIuiGRN619Z6aZBbXPUr7qTgFHG6+S+1Xe3L5LpO7kEaJQ+8/thmn7YA
+         Z8zrgifzlwPWAU73ZNJOqHi8iwKieMpvDhCEil8j5Cd9IJRdLgDdsSsDu4fRpDtmurhM
+         WArSB0Nys/ysTdFWFszWbsYowLR1hkNx81zj/+RiyHoYK/U4OJsnWL5LlDlrJyjKaEEQ
+         Miqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720471832; x=1721076632;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=21FSmDblZNftZJXSTYoJSkCrLdlQhBfb2VdBCJvg3Zo=;
-        b=mCeoDZtra8odCYen5l4a1nTUyJR5FP0Y7jAnFMOa7qyW965jPRsGsc5fDbQ7eWKSY6
-         7ti2H9jvBsINzJQzR0be/sp6vXOzTqsrIBCCb/e67ylt6aNESZy3A/nBGf1dt1xSXGPG
-         clZH+q2ij6S9bx770r6kg8RcjnITYOpKY9tu4ZsG1wMx8SsbOuauDgJA/IH8ESDBqsG/
-         dXLdWPltgVVD6+0n5L4uCVTbGCSXr/EBAQI4RyBgaLJqjLcdH4xznPwBRd5zk5TCbYJu
-         +Oh7hDq9kpF70w1EYTB5WOHC+cqRRxuUKFj1A3736iuXmAu7Nr4JhlDxIvRjtky818Ev
-         LuvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWoGUjFP1A1eOYBpwJ57fgqfTrjqOFOcb4i8eQX6e57eRTXxc/FFaO8hxAtlmvnzBHj4pbQOKpfFgfmxO+btP9EFV2SVbhxqlYjlGN
-X-Gm-Message-State: AOJu0Ywp3anNyG2EqNtKrnyNVUTCLNU2QcipGMe+DhXLJ4E8rwVFar9C
-	3uV0SS7NYfbeS6++mb3GMPTwV46l+1El0dluyTCIY2qcuKfZYFA9oJCOhuIQU22wcpuU84G5vt6
-	xmwLe5WZmHgfMhv4oCaH2Wfj8B8DdG9U635y8qrV/qmH6fzd8t3pOE1P375d/Kg==
-X-Received: by 2002:a05:600c:5354:b0:425:649b:60e8 with SMTP id 5b1f17b1804b1-426707e31b9mr4097865e9.18.1720471832264;
-        Mon, 08 Jul 2024 13:50:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtxbpqTayz8+tqxhqDfKyeA6P7Tebp5iyqPQHQc68t4qPt882CDQY4q8lmd/xMxLNHU5VH+w==
-X-Received: by 2002:a05:600c:5354:b0:425:649b:60e8 with SMTP id 5b1f17b1804b1-426707e31b9mr4097745e9.18.1720471831835;
-        Mon, 08 Jul 2024 13:50:31 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c744:2200:bad7:95bd:e25e:a9e? (p200300cbc7442200bad795bde25e0a9e.dip0.t-ipconnect.de. [2003:cb:c744:2200:bad7:95bd:e25e:a9e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f7361b5sm11232735e9.29.2024.07.08.13.50.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 13:50:31 -0700 (PDT)
-Message-ID: <10b201b1-53d3-4f62-be8e-996aa95d2b99@redhat.com>
-Date: Mon, 8 Jul 2024 22:50:30 +0200
+        d=1e100.net; s=20230601; t=1720471985; x=1721076785;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWSLYXxu+J9SS0caWJhnx/Ez21q/MXAxgdHC6l0lFnE=;
+        b=PSGvUZKIoClAEk4dN+M9D1n2oRVZd4jy+7xPdo5Xluo6A9hPFn221VpTRgmJFcb7Y8
+         zFHnihfiV+a12tb4DhvzzVjZRt2xBapq4Ad62n67JZmaku/wiNdqJaNao+xdTEkSqq15
+         DdEsUzU3bl8F28I4Q7cVpjNCBa7G0RoThctvPMLlpvYYVC1lQ4l2yrzGFFIkFCIZEwKO
+         ZrZX2H7V2rG4ijh8UDwqt9IFf6RMGMzlKNhOrZWLXOWL9woqMRstdfQDiT0WqXK/aMCn
+         I8pQ+t/LrQsPvREd9/mZGz0E78HCCzphK+4pFWYClfyQ0K7v1ftMWwJgR0SGSTageXII
+         v7Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxbi6f5z5UCD5sdnk/Js9jTYpwZu+yYuirFBjW4PobImo/g/xrBoGv3gxBsctZdhTZ3TYxk+i8qR/lRg91DVBEON2aCHsF8Ctf42WX
+X-Gm-Message-State: AOJu0YzjtSI0gVvNzlT4KYXkrj+wSqGuo/kLBts8+7Yi/4jLOLncYyVd
+	mwqDUElJPykT/VBTSSFUwvKwKSWJFz2hblvKnXRK2bzR2J7I8pQhp7Jo1ipsHRrWvV3klQo0RTh
+	UjA==
+X-Google-Smtp-Source: AGHT+IFBEPudpxzXPGD3b7GHY/rlOfg3GHBadGfCs8OKmROTsv++oDFCm4MUUoarwdiwvag8YzR3rF++haQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:f546:b0:1fa:2b89:f550 with SMTP id
+ d9443c01a7336-1fbb6d0f6a5mr629255ad.1.1720471984746; Mon, 08 Jul 2024
+ 13:53:04 -0700 (PDT)
+Date: Mon, 8 Jul 2024 13:53:03 -0700
+In-Reply-To: <2a4052ba67970ce41e79deb0a0931bb54e2c2a86.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm: shmem: Rename mTHP shmem counters
-To: Ryan Roberts <ryan.roberts@arm.com>, Barry Song <baohua@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
- <ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>,
- Zi Yan <ziy@nvidia.com>, Daniel Gomez <da.gomez@samsung.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240708112445.2690631-1-ryan.roberts@arm.com>
- <CAGsJ_4zH72FyLq5gJm215oiWrtd6uf40L_F1UO6cFZ4sy7qt0A@mail.gmail.com>
- <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-20-seanjc@google.com>
+ <2a4052ba67970ce41e79deb0a0931bb54e2c2a86.camel@redhat.com>
+Message-ID: <ZoxRr9P85f03w0vk@google.com>
+Subject: Re: [PATCH v2 19/49] KVM: x86: Add a macro to init CPUID features
+ that ignore host kernel support
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 08.07.24 14:29, Ryan Roberts wrote:
-> On 08/07/2024 12:36, Barry Song wrote:
->> On Mon, Jul 8, 2024 at 11:24 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>
->>> The legacy PMD-sized THP counters at /proc/vmstat include
->>> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
->>> rather confusingly refer to shmem THP and do not include any other types
->>> of file pages. This is inconsistent since in most other places in the
->>> kernel, THP counters are explicitly separated for anon, shmem and file
->>> flavours. However, we are stuck with it since it constitutes a user ABI.
->>>
->>> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
->>> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
->>> same "file_" prefix in the names. But in future, we may want to add
->>> extra stats to cover actual file pages, at which point, it would all
->>> become very confusing.
->>>
->>> So let's take the opportunity to rename these new counters "shmem_"
->>> before the change makes it upstream and the ABI becomes immutable.
->>
->> Personally, I think this approach is much clearer. However, I recall
->> we discussed this
->> before [1], and it seems that inconsistency is a concern?
+On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
+> > Add a macro for use in kvm_set_cpu_caps() to automagically initialize
+> > features that KVM wants to support based solely on the CPU's capabilities,
+> > e.g. KVM advertises LA57 support if it's available in hardware, even if
+> > the host kernel isn't utilizing 57-bit virtual addresses.
+> > 
+> > Take advantage of the fact that kvm_cpu_cap_mask() adjusts kvm_cpu_caps
+> > based on raw CPUID, i.e. will clear features bits that aren't supported in
+> > hardware, and simply force-set the capability before applying the mask.
+> > 
+> > Abusing kvm_cpu_cap_set() is a borderline evil shenanigan, but doing so
+> > avoid extra CPUID lookups, and a future commit will harden the entire
+> > family of *F() macros to assert (at compile time) that every feature being
+> > allowed is part of the capability word being processed, i.e. using a macro
+> > will bring more advantages in the future.
 > 
-> Embarrassingly, I don't recall that converstation at all :-| but at least what I
-> said then is consistent with what I've done in this patch.
+> Could you explain what do you mean by "extra CPUID lookups"?
+
+cpuid_ecx(7) incurs a CPUID to read the raw info, on top of the CPUID that is
+executed by kvm_cpu_cap_init() (kvm_cpu_cap_mask() as of this patch).  Obviously
+not a big deal, but it's an extra VM-Exit when running as a VM.
+
+> > +/*
+> > + * Raw Feature - For features that KVM supports based purely on raw host CPUID,
+> > + * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
+> > + * Simply force set the feature in KVM's capabilities, raw CPUID support will
+> > + * be factored in by kvm_cpu_cap_mask().
+> > + */
+> > +#define RAW_F(name)						\
+> > +({								\
+> > +	kvm_cpu_cap_set(X86_FEATURE_##name);			\
+> > +	F(name);						\
+> > +})
+> > +
+> >  /*
+> >   * Magic value used by KVM when querying userspace-provided CPUID entries and
+> >   * doesn't care about the CPIUD index because the index of the function in
+> > @@ -682,15 +694,12 @@ void kvm_set_cpu_caps(void)
+> >  		F(AVX512VL));
+> >  
+> >  	kvm_cpu_cap_mask(CPUID_7_ECX,
+> > -		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+> > +		F(AVX512VBMI) | RAW_F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+> >  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+> >  		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
+> >  		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
+> >  		F(SGX_LC) | F(BUS_LOCK_DETECT)
+> >  	);
+> > -	/* Set LA57 based on hardware capability. */
+> > -	if (cpuid_ecx(7) & F(LA57))
+> > -		kvm_cpu_cap_set(X86_FEATURE_LA57);
+> >  
+> >  	/*
+> >  	 * PKU not yet implemented for shadow paging and requires OSPKE
 > 
-> I think David's conclusion from that thread was to call them FILE_, and add both
-> shmem and pagecache counts to those counters, meaning we can keep the same name
-> as legacy THP counters. But those legacy THP counters only count shmem, and I
-> don't think we would get away with adding pagecache counts to those at this
-> point? (argument: they have been around for long time and there is a risk that
-> user space relies on them and if they were to dramatically increase due to
-> pagecache addition now that could break things). In that case, there is still
-> inconsistency, but its worse; the names are consistent but the semantics are
-> inconsistent.
+> Putting a function call into a macro which evaluates into a bitmask is
+> somewhat misleading, but let it be...
 > 
-> So my vote is to change to SHMEM_ as per this patch :)
+> IMHO in long term, it might be better to rip the whole huge 'or'ed mess, and replace
+> it with a list of statements, along with comments for all unusual cases.
 
-I also forgot most of the discussion, but these 3 legacy counters are 
-really only (currently) incremented for shmem. I think my idea was to 
-keep everything as FILE_ for now, maybe at some point make the pagecache 
-also use them, and then maybe have separate FILE_ + SHMEM_.
+As in something like this?
 
-But yeah, likely it's best to only have "shmem" here for now, because 
-who knows what we can actually change about the legacy counters. But 
-it's always though messing with legacy stuff that is clearly suboptimal ...
+	kvm_cpu_cap_init(AVX512VBMI);
+	kvm_cpu_cap_init_raw(LA57);
+	kvm_cpu_cap_init(PKU);
+	...
+	kvm_cpu_cap_init(BUS_LOCK_DETECT);
 
--- 
-Cheers,
+	kvm_cpu_cap_init_aliased(CPUID_8000_0001_EDX, FPU);
 
-David / dhildenb
+	...
 
+	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX1);
+	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX2);
+	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX_EDECCSSA);
+
+The tricky parts are incorporating raw CPUID into the masking and handling features
+that KVM _doesn't_ support.  For raw CPUID, we could simply do CPUID every time, or
+pre-fill an array to avoid hundreds of CPUIDs that are largely redudant.
+
+But I don't see a way to mask off unsupported features without losing the
+compile-time protections that the current code provides.  And even if we took a
+big hammer approach, e.g. finalized masking for all words at the very end, we'd
+still need to carry state across each statement, i.e. we'd still need the bitwise-OR
+and mask  behavior, it would just be buried in helpers/macros.
+
+I suspect the generated code will be larger, but I doubt that will actually be
+problematic.  The written code will also be more verbose (roughly 4x since we
+tend to squeeze 4 features per line), and it will be harder to ensure initialization
+of features in a given word are all co-located.
+
+I definitely don't hate the idea, but I don't think it will be a clear "win" either.
+Unless someone feels strongly about pursuing this approach, I'll add to the "things
+to explore later" list.
 
