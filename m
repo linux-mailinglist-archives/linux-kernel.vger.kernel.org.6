@@ -1,229 +1,210 @@
-Return-Path: <linux-kernel+bounces-244949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4559992AC1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:31:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 914CC92AC1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687001C220BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:31:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E67F8B2130D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D3115216A;
-	Mon,  8 Jul 2024 22:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ED51514F8;
+	Mon,  8 Jul 2024 22:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pBE8gWBf"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="J+rwN3KV"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C3914F11E
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 22:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114F9BA46
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 22:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720477862; cv=none; b=QdGREiSJG7N4xwH3heEbPnD67lrbxC2xs2kdK3hV8cFzFEVffjkpuYvwW0oZTuTYqy4B6jyRG2H6rd0BjOm7ORLvaQMIlPs1ARoplDjhexdxh+VxYQWegX1LEue/5XOpw7R3H1D36wniGK3S713YI2XfWOesqnu+OBvzd/MUD34=
+	t=1720477961; cv=none; b=SIcb3y2iCOoa7x0ave08QtAawcgy3ZO2BItl5mgYf0QuzKyb7gpGQewf0IYjXjJ6qjsg4dTAM4CNlAU1X22R2Xl/2SJQqEB9t0cJFRAl3mbc9d9x61mZw0/akWddp5Uh5yPeDcGxzv7sLoN6BhJb2R1xXdfq3RnT5FIqtAW8hrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720477862; c=relaxed/simple;
-	bh=DxjFH2LzZhZ8hr43nYQ/YVK+kwb9tNIvqThsgQH5ic4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YUrLEUDsEIWvnjcmYQpaO+GckfdKKcGFXRfY5BVQxS8tgsYVKChhYOmd11Ytf4cHJ9tuZCNU0KWMWf/XJNFg8polwt9S0vmYXlPAmt/rvpTmDpkGMj5DwIy5I5j4N1oQ72GHLzL3/3Ac1tBuuXku0yFZm65wyfcGe3v6Hfb98JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pBE8gWBf; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c9f8793a71so1792551a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 15:30:59 -0700 (PDT)
+	s=arc-20240116; t=1720477961; c=relaxed/simple;
+	bh=Slf7pI4DfRhx+s6iAFxWcyZpHfJvMkT4k4utjlxCMko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zm+Rv/7OivK9AwtYr1i7tp7mwKFRFbq1D7+UlzlOgm/otDTlZJXZYXFQqgg02rXySKpccSFP4tadM5gFTE9OHrZeP8Wolednk0pxYp8hx+UJCuTgo3eEo9rDY0RzF1tN3HmHrKtr1YIDF1wCJNajzeQAMs5LmJRrh6oBdaP4G2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=J+rwN3KV; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so4654783276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 15:32:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720477859; x=1721082659; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOryehqZgXhKzfmyM95QSSUzBz/WwHvTtSuB+5Cszfg=;
-        b=pBE8gWBfXT4sWvHfq7LzB0hYSH7A7kSewTHPLx4NtqULVYwEw21wt1TyekwJw3B9wf
-         Qm3l4DysWAC1vnJHoQkpjZHBvM7kvAffmPMsJ/6u2kPq8lSTNi6PLkVPeb+pKrlBqsJn
-         XYgnQoHD2MCYol3Ox3PgutU4bFWBEKfBndbwWFVRKd9Ba+SkaafvjJGINKXG2a3w2uG9
-         7m+hJ2tz3XSeWOHwso/gOUqYULigqBZYwD8uG+M+9Ix6V6KHAmjto6ZA2cF7HaOO3XfE
-         Y2D9gXyL+Q3Qor705zQBFDwyiWEbvLSq9+k/CABRs3/jypRyLv/ZlL7fQVh6O9yCitXf
-         gGsQ==
+        d=paul-moore.com; s=google; t=1720477959; x=1721082759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pnZIiITzAlGiaKrePmoZvp8ITih5adJJfAX3T737Yr8=;
+        b=J+rwN3KVa41rqkq41J8rpIsFk6ovPBW5sEXrYDJzK07sjmRusjxVEY4QD4KMX2ALuo
+         bJk1KCYVRYVpY0aT7WZnmB48X45ecDgDB1oLgJnQN/RWlGL2EF7LQEJjDOFM5lQa7qyr
+         NRFLXHQSz5azkqYWh7rCXZOcgWTZC+1oYSoG9BWIgtoywRZ7tM6GhrKOhL36/szOpX4W
+         HckrZi84b1Bu+bmFx2gUoDbYmfPJL3l2OCM0CTEMPAxDVzVNLDKyyI9AU6oKWuzYHUt7
+         +TCUMNkW5izC7vIE+8G8BtfL3QtdfKNkr080bqZx+py8bgfAHYmzzC9WJzyP5UgUvOE5
+         0q4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720477859; x=1721082659;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOryehqZgXhKzfmyM95QSSUzBz/WwHvTtSuB+5Cszfg=;
-        b=gIX12972/V68fhxgcfZpIzFdm3y24HU47iLyHd7qtseRxhuHM1InzWrDJsuMWrmHpQ
-         nPDNNnenFAtlbgzxPiU8HqLO4vH3JXQBhU4HJrSGjTdNp9SxULH83bvaR2kMdxQsgNoD
-         FtmMusaXeapF6j66Ez+OuNEYgp/Gz9yTSWtZvlOeaLz/342cc3+ze9+EDyMZSx1XLhy8
-         Sw4ge9t+XtTDX+ZHsItMCaKEWFDUgupB1HinVQ2Zte/mSHqeyR/wB09O6jk1kq1Def4M
-         xjO9ePihWB6D/7OH7gMgvNHPLFCz7FGMNfd3sjFXvraAIfn8JwJEBggKzjIY8qlt9yy4
-         cT4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVhmL83GQk5jWSPPKZKFWR4ZxL4paBnZncGxh+tZdPGoXCvowKlPpLVw3fy9u/xb6WTNHEEmd1pHC7qw1nPAOBIWaohKOVY9SI8+hAj
-X-Gm-Message-State: AOJu0Yxq6jUSbBQWY/+fZNMoDgDnHw7oxJ/2wIgBV4BOOiWmdfhPP7+V
-	94vQEQhlbyRoNKvkNT0ve+4P4tr8kUJz0ppbKwIXg0s+/Qn5KrBIV0NsDrETmLTzhDlIVOv+sKD
-	3AA==
-X-Google-Smtp-Source: AGHT+IFAx9k6pwvDeFOFaAqWDu2AAJ+nznsxuC8v6PQ+pdxu4kNuK/fLrVvTDpomnhqbDnInY7xFrdM7jMk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:e610:b0:2c9:6903:a427 with SMTP id
- 98e67ed59e1d1-2ca35be7eb9mr44941a91.1.1720477859108; Mon, 08 Jul 2024
- 15:30:59 -0700 (PDT)
-Date: Mon, 8 Jul 2024 15:30:57 -0700
-In-Reply-To: <2e0f3fb63c810dd924907bccf9256f6f193b02ec.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1720477959; x=1721082759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pnZIiITzAlGiaKrePmoZvp8ITih5adJJfAX3T737Yr8=;
+        b=wwV0xifrz5oxtfU5CkNvAn5KPnc+z4EGJ7M/IplYWdZR8UXcMfijwjNuRXQIkoin0w
+         CxDvDpNhxOAkcoWARymNTu8WHXnAplNC6osCoq3C9dM+jXlPyuUNWQzJRxzyQ87x2k3u
+         OwpNtWj29EomTvmNcogJbtMXXVgNv8jWuSdfHOkvwxEi2NpPvahahDwmxjjA206tGrsD
+         bQyFDxOBwvyEsfSu7HskVw+g0auVKVBP7PKKKD85spwkCVYvRs1ghTyyNvjzBrQ5Yaxg
+         ErSfjgI7G2V2nIJbKWtGQq+gtb4ubWAoWOMNefCB+tzYukn6Px/8ih4qJm5QmXkFvLoP
+         rOFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBZPZD7gG4bPqFpGgN2zLPsoHfa84dKouZhzYJ8CmOMwkDhJrVnUbrYlPhkPPIGiNSJzCdZch3gT1v1boH/sfuMSVhnMmi1AsyrF65
+X-Gm-Message-State: AOJu0YwtxiSzdh/QXooYVzBVTF9ioO9JGDYofgOtegj7EhYRcojTqXss
+	xHhfooPJDCRuUYGFyf80mwxD46dFoKStap93ggylySCcAaziSVEe/57GG2tL4BIztAXQQ696D9A
+	G5zdwxmBdPPcKfXy9voeT8U99SdE3rBaYxGRr
+X-Google-Smtp-Source: AGHT+IF99Y+36stRXyUuKOt7oxt+1NAUpeQDk7zd7+zaGmS1bdJrisu3ORJ0M4042grDrNCzCJVzjwAKw5zafDfSk7U=
+X-Received: by 2002:a25:c5d0:0:b0:e03:5f05:7566 with SMTP id
+ 3f1490d57ef6-e041b079cd3mr1183336276.34.1720477958973; Mon, 08 Jul 2024
+ 15:32:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-27-seanjc@google.com>
- <2e0f3fb63c810dd924907bccf9256f6f193b02ec.camel@redhat.com>
-Message-ID: <ZoxooTvO5vIEnS5V@google.com>
-Subject: Re: [PATCH v2 26/49] KVM: x86: Add a macro to init CPUID features
- that KVM emulates in software
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <00000000000076ba3b0617f65cc8@google.com> <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net> <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net> <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+ <20240708.ig8Kucapheid@digikod.net>
+In-Reply-To: <20240708.ig8Kucapheid@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 8 Jul 2024 18:32:28 -0400
+Message-ID: <CAHC9VhT6oz_04EjQEovKvmafyFDZCEevqwBHZ+7omJHJ9=t_WQ@mail.gmail.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in hook_inode_free_security
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Jann Horn <jannh@google.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <keescook@chromium.org>, 
+	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> > Now that kvm_cpu_cap_init() is a macro with its own scope, add EMUL_F() to
-> > OR-in features that KVM emulates in software, i.e. that don't depend on
-> > the feature being available in hardware.  The contained scope
-> > of kvm_cpu_cap_init() allows using a local variable to track the set of
-> > emulated leaves, which in addition to avoiding confusing and/or
-> > unnecessary variables, helps prevent misuse of EMUL_F().
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/kvm/cpuid.c | 36 +++++++++++++++++++++---------------
-> >  1 file changed, 21 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> > index 1064e4d68718..33e3e77de1b7 100644
-> > --- a/arch/x86/kvm/cpuid.c
-> > +++ b/arch/x86/kvm/cpuid.c
-> > @@ -94,6 +94,16 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
-> >  	F(name);						\
-> >  })
-> >  
-> > +/*
-> > + * Emulated Feature - For features that KVM emulates in software irrespective
-> > + * of host CPU/kernel support.
-> > + */
-> > +#define EMUL_F(name)						\
-> > +({								\
-> > +	kvm_cpu_cap_emulated |= F(name);			\
-> > +	F(name);						\
-> > +})
-> 
-> To me it feels more and more that this patch series doesn't go into the right
-> direction.
-> 
-> How about we just abandon the whole concept of masks and instead just have a
-> list of statements
-> 
-> Pretty much the opposite of the patch series I confess:
+On Mon, Jul 8, 2024 at 10:11=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
+> > On Thu, Jun 27, 2024 at 9:34=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > I didn't find specific issues with Landlock's code except the extra
+> > > check in hook_inode_free_security().  It looks like inode->i_security=
+ is
+> > > a dangling pointer, leading to UAF.
+> > >
+> > > Reading security_inode_free() comments, two things looks weird to me:
+> > >
+> > > > /**
+> > > >  * security_inode_free() - Free an inode's LSM blob
+> > > >  * @inode: the inode
+> > > >  *
+> > > >  * Deallocate the inode security structure and set @inode->i_securi=
+ty to NULL.
+> > >
+> > > I don't see where i_security is set to NULL.
+> >
+> > The function header comments are known to be a bit suspect, a side
+> > effect of being detached from the functions for many years, this may
+> > be one of those cases.  I tried to fix up the really awful ones when I
+> > moved the comments back, back I didn't have time to go through each
+> > one in detail.  Patches to correct the function header comments are
+> > welcome and encouraged! :)
+> >
+> > > >  */
+> > > > void security_inode_free(struct inode *inode)
+> > > > {
+> > >
+> > > Shouldn't we add this check here?
+> > > if (!inode->i_security)
+> > >         return;
+> >
+> > Unless I'm remembering something wrong, I believe we *should* always
+> > have a valid i_security pointer each time we are called, if not
+> > something has gone wrong, e.g. the security_inode_free() hook is no
+> > longer being called from the right place.  If we add a NULL check, we
+> > should probably have a WARN_ON(), pr_err(), or something similar to
+> > put some spew on the console/logs.
+> >
+> > All that said, it would be good to hear some confirmation from the VFS
+> > folks that the security_inode_free() hook is located in a spot such
+> > that once it exits it's current RCU critical section it is safe to
+> > release the associated LSM state.
+> >
+> > It's also worth mentioning that while we always allocate i_security in
+> > security_inode_alloc() right now, I can see a world where we allocate
+> > the i_security field based on need using the lsm_blob_size info (maybe
+> > that works today?  not sure how kmem_cache handled 0 length blobs?).
+> > The result is that there might be a legitimate case where i_security
+> > is NULL, yet we still want to call into the LSM using the
+> > inode_free_security() implementation hook.
+> >
+> > > >       call_void_hook(inode_free_security, inode);
+> > > >       /*
+> > > >        * The inode may still be referenced in a path walk and
+> > > >        * a call to security_inode_permission() can be made
+> > > >        * after inode_free_security() is called. Ideally, the VFS
+> > > >        * wouldn't do this, but fixing that is a much harder
+> > > >        * job. For now, simply free the i_security via RCU, and
+> > > >        * leave the current inode->i_security pointer intact.
+> > > >        * The inode will be freed after the RCU grace period too.
+> > >
+> > > It's not clear to me why this should be safe if an LSM try to use the
+> > > partially-freed blob after the hook calls and before the actual blob
+> > > free.
+> >
+> > I had the same thought while looking at this just now.  At least in
+> > the SELinux case I think this "works" simply because SELinux doesn't
+> > do much here, it just drops the inode from a SELinux internal list
+> > (long story) and doesn't actually release any memory or reset the
+> > inode's SELinux state (there really isn't anything to "free" in the
+> > SELinux case).  I haven't checked the other LSMs, but they may behave
+> > similarly.
+> >
+> > We may want (need?) to consider two LSM implementation hooks called
+> > from within security_inode_free(): the first where the existing
+> > inode_free_security() implementation hook is called, the second inside
+> > the inode_free_by_rcu() callback immediately before the i_security
+> > data is free'd.
+>
+> Couldn't we call everything in inode_free_by_rcu()?
 
-FWIW, I think it's actually largely the same code under the hood.  The code for
-each concept/flavor ends up being very similar, it's mostly just handling the
-bitwise-OR in the callers vs. in the helpers.
+My two concerns would be 1) an LSM needed to mark the inode
+immediately (to be fair, I'm not sure how plausible that is, and it
+would likely require LSM specific locking/sync) and 2) if an LSM
+needed more context than would be valid in the RCU callback case
+(although that is questionable, I don't believe any of the current
+users need anything like that, e.g. task_struct).  I'm not opposed to
+just moving everything to a single hook done when the inode is
+actually dropped from memory as long as the current LSMs which make
+use of it are okay with that (Landlock, IMA, SELinux).
 
-> #define CAP_PASSTHOUGH		0x01
-> #define CAP_EMULATED		0x02
-> #define CAP_AMD_ALIASED		0x04 // for AMD aliased features
-> #define CAP_SCATTERED		0x08
-> #define CAP_X86_64		0x10 // supported only on 64 bit hypervisors
-> ...
-> 
-> 
-> /* CPUID_1_ECX*/
-> 
-> 				/* TMA is not passed though because: xyz*/
-> kvm_cpu_cap_init(TMA,           0);
-> 
-> kvm_cpu_cap_init(SSSE3,         CAP_PASSTHOUGH);
-> 				/* CNXT_ID is not passed though because: xyz*/
-> kvm_cpu_cap_init(CNXT_ID,       0);
-> kvm_cpu_cap_init(RESERVED,      0);
-> kvm_cpu_cap_init(FMA,           CAP_PASSTHOUGH);
-> ...
-> 				/* KVM always emulates TSC_ADJUST */
-> kvm_cpu_cap_init(TSC_ADJUST,    CAP_EMULATED | CAP_SCATTERED);
-> 
-> ...
-> 
-> /* CPUID_D_1_EAX*/
-> 				/* XFD is disabled on 32 bit systems because: xyz*/
-> kvm_cpu_cap_init(XFD, 		CAP_PASSTHOUGH | CAP_X86_64)
-> 
-> 
-> 'kvm_cpu_cap_init' can be a macro if needed to have the compile checks.
-> 
-> There are several advantages to this:
-> 
-> - more readability, plus if needed each statement can be amended with a comment.
-> - No weird hacks in 'F*' macros, which additionally eventually evaluate into a bit,
->   which is confusing.
->   In fact no need to even have them at all.
-> - No need to verify that bitmask belongs to a feature word.
+> > ... or we find a better placement in the VFS for
+> > security_inode_free(), is that is possible.  It may not be, our VFS
+> > friends should be able to help here.
+>
+> Christian? Al?
 
-Yes, but the downside is that there is no enforcement of features in a word being
-bundled together.
+I poked around a bit more and it looks like bcachefs has some error
+handling code that frees the inodes synchronously instead of using the
+i_callback/inode::free_inode approach; xfs has its own thing too.
+Although if it really is just some bcachefs/xfs error handlers maybe
+inserting a LSM hook in the proper
+the-memory-is-actually-being-dropped code path  (with adjustments for
+bcachefs/xfs) isn't too bad.  Once again, we would need to hear from
+the VFS folks regarding their thoughts on this, it wouldn't surprise
+me if there is some detail missing in the above, or if they are
+opposed to this for some other reason not mentioned yet in this
+thread.
 
-> - Merge friendly - each capability has its own line.
-
-That's almost entirely convention though.  Other than inertia, nothing is stopping
-us from doing:
-
-	kvm_cpu_cap_init(CPUID_12_EAX,
-		SF(SGX1) |
-		SF(SGX2) |
-		SF(SGX_EDECCSSA)
-	);
-
-I don't see a clean way of avoiding the addition of " |" on the last existing
-line, but in practice I highly doubt that will ever be a source of meaningful pain.
-
-Same goes for the point about adding comments.  We could do that with either
-approach, we just don't do so today.
-
-> Disadvantages:
-> 
-> - Longer list - IMHO not a problem, since it is very easy to read / search
->   and can have as much comments as needed.
->   For example this is how the kernel lists the CPUID features and this list IMHO
->   is very manageable.
-
-There's one big difference: KVM would need to have a line for every feature that
-KVM _doesn't_ support.  For densely populated words, that's not a huge issue,
-but it's problematic for sparsely populated words, e.g. CPUID_12_EAX would have
-29 reserved/unsupport entries, which IMO ends up being a big net negative for
-code readability and ongoing maintenance.
-
-We could avoid that cost (and the danger of a missed bit) by collecting the set
-of features that have been initialized for each word, and then masking off the
-uninitialized/unsupported at the end.  But then we're back to the bitwise-OR and
-mask logic.
-
-And while I agree that having the F*() macros set state _and_ evaulate to a bit
-is imperfect, it does have its advantages.  E.g. to avoid evaluating to a value,
-we could have F() modify a local variable that is scoped to kvm_cpu_cap_init(),
-a las kvm_cpu_cap_emulated.  But then we'd need explicit code and/or comments
-to call out that VMM_F() and the like intentionally don't set kvm_cpu_cap_supported,
-whereas evualating to a value is a relatively self-documenting "0;".
-
-> - Slower - kvm_set_cpu_caps is called exactly once per KVM module load, thus
->   performance is the last thing I would care about in this function.
-> 
-> Another note about this patch: It is somewhat confusing that EMUL_F just
-> forces a feature in kvm caps, regardless of CPU support, because KVM also has
-> KVM_GET_EMULATED_CPUID and it has a different meaning.
-
-Yeah, but IMO that's a problem with KVM_GET_EMULATED_CPUID being poorly defined.
-
-> Users can easily confuse the EMUL_F for something that sets a feature bit in
-> the KVM_GET_EMULATED_CPUID.
-
-I'll see if I can find a good spot for a comment to try and convenient
+--=20
+paul-moore.com
 
