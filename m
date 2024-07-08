@@ -1,287 +1,120 @@
-Return-Path: <linux-kernel+bounces-244442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2732392A44E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:06:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5488F92A44F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D16FA2832A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:06:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820BC1C21B25
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5156213C3F6;
-	Mon,  8 Jul 2024 14:05:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7741E526
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1EA13BAD7;
+	Mon,  8 Jul 2024 14:07:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39F177F12;
+	Mon,  8 Jul 2024 14:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447557; cv=none; b=cDJEW5x2gcIr1H0QVEsn44K72uMmf70eYkLu0GPnj0czaMA5xAtJvG2N9heVffLyfpBnFXWHF25l94X4zBZlBDdsxHyffw07mEzfLyVEia0ykH3hIO5mjpA7ode/2wvQz2hhyK4t2RSN8MV7FBQFykdqFbBIxrQ1X6VfReKsAo8=
+	t=1720447671; cv=none; b=Ouu2SN7ks5JSsylpvjqQtsp+8Su94NHAjNhT05HNde6CwGizExQI1JgjtyIMibvSsKOznM31QOE1VzFz6c/0qcbvBXeaduiG3X+98DnN9wRDn9dfzeUoU09LKj5X8EQ/YDIifOlfTEm0qTNXpHSwtX/OPZlAg63mlLMzD//qEA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447557; c=relaxed/simple;
-	bh=tI8qnwMblf0E1xUtIPkd8PDAZjv+xvfOlBhAJDpVRd4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DwUrxdIpVH2nIxXdWVYBkrQ/5f5LE1hTxtqIHWArVkXz/lfEoJAhuz1Z9FbaEGtm5hz2wKhBII9PaK9P72lJubRTlo1rL6F+j8O4bQ/1q7SJt0DTO6TOpuGdfZx51eHaaM/fEO+cj/FZAGg4KhPaLSD1IMQd7rFvzYPTs2OlnVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sQozw-0004Ex-LZ; Mon, 08 Jul 2024 16:05:44 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sQozv-0083eE-Bg; Mon, 08 Jul 2024 16:05:43 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sQozv-00AAoU-0x;
-	Mon, 08 Jul 2024 16:05:43 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v1 1/1] net: phy: dp83td510: add cable testing support
-Date: Mon,  8 Jul 2024 16:05:42 +0200
-Message-Id: <20240708140542.2424824-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720447671; c=relaxed/simple;
+	bh=GXvobha2JzShyhfYlZQuvNRXc9iCXnhgxT/SEcvqLkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SX2OxvyBYEE9QdgaCT6W7gp0//f4dIqdQausSXNdkKSZc1bIn7ft+2ogx652iaBL/XKxRDqH3LoIRwxzEnd5tD8tO2jqLYr7uD7fJbXWN0OgybPw08bVtke1QTFgZOYPp0iPhNJPcTEs5i+WkBAnbN7EdvAgV1WLbBCLAnGOgBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7CDF11042;
+	Mon,  8 Jul 2024 07:08:13 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AB6B3F766;
+	Mon,  8 Jul 2024 07:07:47 -0700 (PDT)
+Date: Mon, 8 Jul 2024 15:07:45 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Luke Parkin <luke.parkin@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	cristian.marussi@arm.com
+Subject: Re: [PATCH v2 4/4] firmware: arm_scmi: Create debugfs files for
+ statistics
+Message-ID: <ZovysXW92kgiKlet@pluto>
+References: <20240703143738.2007457-1-luke.parkin@arm.com>
+ <20240703143738.2007457-5-luke.parkin@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703143738.2007457-5-luke.parkin@arm.com>
 
-Implement the TDR test procedure as described in "Application Note
-DP83TD510E Cable Diagnostics Toolkit revC", section 3.2.
+On Wed, Jul 03, 2024 at 03:37:38PM +0100, Luke Parkin wrote:
+> Create debugfs files for the statistics in the scmi_debug_stats struct
+> 
+> Signed-off-by: Luke Parkin <luke.parkin@arm.com>
 
-The procedure was tested with "draka 08 signalkabel 2x0.8mm". The reported
-cable length was 5 meters more for each 20 meters of actual cable length.
-For instance, a 20-meter cable showed as 25 meters, and a 40-meter cable
-showed as 50 meters. Since other parts of the diagnostics provided by this
-PHY (e.g., Active Link Cable Diagnostics) require accurate cable
-characterization to provide proper results, this tuning can be implemented
-in a separate patch/interface.
+Missing ---
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/dp83td510.c | 158 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 158 insertions(+)
+> v1->v2
+> Only create stats pointer if stats are enabled
+> Move stats debugfs creation into a seperate helper function
+> ---
+>  drivers/firmware/arm_scmi/driver.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+> index 937546397cf2..10cd9a319ffb 100644
+> --- a/drivers/firmware/arm_scmi/driver.c
+> +++ b/drivers/firmware/arm_scmi/driver.c
+> @@ -2858,6 +2858,24 @@ static int scmi_device_request_notifier(struct notifier_block *nb,
+>  	return NOTIFY_OK;
+>  }
+>  
+> +static void scmi_debugfs_stats_setup(struct scmi_info *info,
+> +				     struct dentry *trans)
+> +{
+> +	struct dentry *stats;
+> +
+> +	stats = debugfs_create_dir("stats", trans);
+> +	debugfs_create_atomic_t("response_ok", 0400, stats,
+> +				&info->stats.response_ok);
+> +	debugfs_create_atomic_t("dlyd_response_ok", 0400, stats,
+> +				&info->stats.dlyd_response_ok);
+> +	debugfs_create_atomic_t("sent_ok", 0400, stats,
+> +				&info->stats.sent_ok);
+> +	debugfs_create_atomic_t("sent_fail", 0400, stats,
+> +				&info->stats.sent_fail);
+> +	debugfs_create_atomic_t("xfers_response_timeout", 0400, stats,
+> +				&info->stats.xfers_response_timeout);
+> +}
+> +
+>  static void scmi_debugfs_common_cleanup(void *d)
+>  {
+>  	struct scmi_debug_info *dbg = d;
+> @@ -2924,6 +2942,9 @@ static struct scmi_debug_info *scmi_debugfs_common_setup(struct scmi_info *info)
+>  	debugfs_create_u32("rx_max_msg", 0400, trans,
+>  			   (u32 *)&info->rx_minfo.max_msg);
+>  
+> +	if (IS_ENABLED(CONFIG_ARM_SCMI_DEBUG_STATISTICS))
+> +		scmi_debugfs_stats_setup(info, trans);
+> +
 
-diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-index d7616b13c5946..3375fa82927d0 100644
---- a/drivers/net/phy/dp83td510.c
-+++ b/drivers/net/phy/dp83td510.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/ethtool_netlink.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/phy.h>
-@@ -29,6 +30,42 @@
- #define DP83TD510E_INT1_LINK			BIT(13)
- #define DP83TD510E_INT1_LINK_EN			BIT(5)
- 
-+#define DP83TD510E_TDR_CFG			0x1e
-+#define DP83TD510E_TDR_START			BIT(15)
-+#define DP83TD510E_TDR_DONE			BIT(1)
-+#define DP83TD510E_TDR_FAIL			BIT(0)
-+
-+#define DP83TD510E_CTRL				0x1f
-+#define DP83TD510E_CTRL_HW_RESET		BIT(15)
-+#define DP83TD510E_CTRL_SW_RESET		BIT(14)
-+
-+#define DP83TD510E_TDR_CFG1			0x300
-+/* TX_TYPE: Transmit voltage level for TDR. 0 = 1V, 1 = 2.4V */
-+#define DP83TD510E_TDR_TX_TYPE			BIT(12)
-+
-+#define DP83TD510E_TDR_CFG2			0x301
-+#define DP83TD510E_TDR_END_TAP_INDEX_1		GENMASK(14, 8)
-+#define DP83TD510E_TDR_END_TAP_INDEX_1_DEF	36
-+#define DP83TD510E_TDR_START_TAP_INDEX_1	GENMASK(6, 0)
-+#define DP83TD510E_TDR_START_TAP_INDEX_1_DEF	3
-+
-+#define DP83TD510E_TDR_FAULT_CFG1		0x303
-+#define DP83TD510E_TDR_FLT_LOC_OFFSET_1		GENMASK(14, 8)
-+#define DP83TD510E_TDR_FLT_LOC_OFFSET_1_DEF	4
-+#define DP83TD510E_TDR_FLT_INIT_1		GENMASK(7, 0)
-+#define DP83TD510E_TDR_FLT_INIT_1_DEF		62
-+
-+#define DP83TD510E_TDR_FAULT_STAT		0x30c
-+#define DP83TD510E_TDR_PEAK_DETECT		BIT(11)
-+#define DP83TD510E_TDR_PEAK_SIGN		BIT(10)
-+#define DP83TD510E_TDR_PEAK_LOCATION		GENMASK(9, 0)
-+
-+/* Not documented registers and values but recommended according to
-+ * "DP83TD510E Cable Diagnostics Toolkit revC"
-+ */
-+#define DP83TD510E_UNKN_030E			0x30e
-+#define DP83TD510E_030E_VAL			0x2520
-+
- #define DP83TD510E_AN_STAT_1			0x60c
- #define DP83TD510E_MASTER_SLAVE_RESOL_FAIL	BIT(15)
- 
-@@ -198,6 +235,124 @@ static int dp83td510_get_sqi_max(struct phy_device *phydev)
- 	return DP83TD510_SQI_MAX;
- }
- 
-+/**
-+ * dp83td510_cable_test_start - Start the cable test for the DP83TD510 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This sequence is implemented according to the "Application Note DP83TD510E
-+ * Cable Diagnostics Toolkit revC".
-+ *
-+ * Return: 0 on success, a negative error code on failure.
-+ */
-+static int dp83td510_cable_test_start(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_CTRL,
-+			       DP83TD510E_CTRL_HW_RESET);
-+	if (ret)
-+		return ret;
-+
-+	ret = genphy_c45_an_disable_aneg(phydev);
-+	if (ret)
-+		return ret;
-+
-+	/* Force master mode */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_PMAPMD, MDIO_PMA_PMD_BT1_CTRL,
-+			       MDIO_PMA_PMD_BT1_CTRL_CFG_MST);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG2,
-+			    FIELD_PREP(DP83TD510E_TDR_END_TAP_INDEX_1,
-+				       DP83TD510E_TDR_END_TAP_INDEX_1_DEF) |
-+			    FIELD_PREP(DP83TD510E_TDR_START_TAP_INDEX_1,
-+				       DP83TD510E_TDR_START_TAP_INDEX_1_DEF));
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_FAULT_CFG1,
-+			    FIELD_PREP(DP83TD510E_TDR_FLT_LOC_OFFSET_1,
-+				       DP83TD510E_TDR_FLT_LOC_OFFSET_1_DEF) |
-+			    FIELD_PREP(DP83TD510E_TDR_FLT_INIT_1,
-+				       DP83TD510E_TDR_FLT_INIT_1_DEF));
-+	if (ret)
-+		return ret;
-+
-+	/* Undocumented register, from the "Application Note DP83TD510E Cable
-+	 * Diagnostics Toolkit revC".
-+	 */
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_UNKN_030E,
-+			    DP83TD510E_030E_VAL);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_CTRL,
-+			       DP83TD510E_CTRL_SW_RESET);
-+	if (ret)
-+		return ret;
-+
-+	return phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG,
-+				DP83TD510E_TDR_START);
-+}
-+
-+/**
-+ * dp83td510_cable_test_get_status - Get the status of the cable test for the
-+ *                                   DP83TD510 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ * @finished: Pointer to a boolean that indicates whether the test is finished.
-+ *
-+ * The function sets the @finished flag to true if the test is complete, and
-+ * returns 0 on success or a negative error code on failure.
-+ */
-+static int dp83td510_cable_test_get_status(struct phy_device *phydev,
-+					   bool *finished)
-+{
-+	int ret, stat;
-+
-+	*finished = false;
-+
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!(ret & DP83TD510E_TDR_DONE))
-+		return 0;
-+
-+	if (!(ret & DP83TD510E_TDR_FAIL)) {
-+		int location;
-+
-+		ret = phy_read_mmd(phydev, MDIO_MMD_VEND2,
-+				   DP83TD510E_TDR_FAULT_STAT);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (ret & DP83TD510E_TDR_PEAK_DETECT) {
-+			if (ret & DP83TD510E_TDR_PEAK_SIGN)
-+				stat = ETHTOOL_A_CABLE_RESULT_CODE_OPEN;
-+			else
-+				stat = ETHTOOL_A_CABLE_RESULT_CODE_SAME_SHORT;
-+
-+			location = FIELD_GET(DP83TD510E_TDR_PEAK_LOCATION,
-+					     ret) * 100;
-+			ethnl_cable_test_fault_length(phydev,
-+						      ETHTOOL_A_CABLE_PAIR_A,
-+						      location);
-+		} else {
-+			stat = ETHTOOL_A_CABLE_RESULT_CODE_OK;
-+		}
-+	} else {
-+		/* Most probably we have active link partner */
-+		stat = ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
-+	}
-+
-+	*finished = true;
-+
-+	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A, stat);
-+
-+	return phy_init_hw(phydev);
-+}
-+
- static int dp83td510_get_features(struct phy_device *phydev)
- {
- 	/* This PHY can't respond on MDIO bus if no RMII clock is enabled.
-@@ -221,6 +376,7 @@ static struct phy_driver dp83td510_driver[] = {
- 	PHY_ID_MATCH_MODEL(DP83TD510E_PHY_ID),
- 	.name		= "TI DP83TD510E",
- 
-+	.flags          = PHY_POLL_CABLE_TEST,
- 	.config_aneg	= dp83td510_config_aneg,
- 	.read_status	= dp83td510_read_status,
- 	.get_features	= dp83td510_get_features,
-@@ -228,6 +384,8 @@ static struct phy_driver dp83td510_driver[] = {
- 	.handle_interrupt = dp83td510_handle_interrupt,
- 	.get_sqi	= dp83td510_get_sqi,
- 	.get_sqi_max	= dp83td510_get_sqi_max,
-+	.cable_test_start = dp83td510_cable_test_start,
-+	.cable_test_get_status = dp83td510_cable_test_get_status,
- 
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
--- 
-2.39.2
+Nothing to say here if not that more entries will need to be added as said.
 
+Moreover, You could take the chance in V3 to add in this patch the
+support to handle resetting each single counter (hint...this is a low hanging
+fruit :D) and also to support something like:
+
+	transports/stats/reset
+
+which will be a WOnly booolean entry that will reset ALL the counters in
+one go.
+
+Thanks,
+Cristian
 
