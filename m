@@ -1,167 +1,230 @@
-Return-Path: <linux-kernel+bounces-244358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A8F92A318
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:43:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D484392A324
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34F98B21273
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:43:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BFD1C20C0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC76824AC;
-	Mon,  8 Jul 2024 12:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95289824A1;
+	Mon,  8 Jul 2024 12:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtwQDajp"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UlCNFTe2"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40F281211;
-	Mon,  8 Jul 2024 12:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AA07E0EA
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720442615; cv=none; b=JixMjr3dpF183ijIOnxVvA7uHC+867PJJF4pn3IkU/4VpBsP8xeot81aAAj4YeCUk94pdBu1pg43Qysy9Q4P514emJB+gtaLQBBzvGW1QOn0DzpTbhUzPhr6W12ube8TdMx0OMq3o8LTfuuUpg4ZqomD7edvIWn1Q/3LsQOW1Tc=
+	t=1720442868; cv=none; b=udnnjk5+5TsaDWN9rPKF8ySKzCoPub7eZWrPijSkV4wJgGFha+U7iVDMGdebZTZhlO5c1/weRdQCdyDDD8ZegvU5QYTB4miQig69fdbrXMHb3DEA96KtfAWiLL86TdOdRMMbW8hZ9K4Cs7emBvfaUEaap/Jsiw7+XdQwM9I4etA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720442615; c=relaxed/simple;
-	bh=BI28wz5XInTgMXnFdy8HZ6+ujkFpibqozOzg9QsIMI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SeGE7/PWKuNzA8WxyqbV7pT47ig4ycvP6PxdgajqhqvD+7rMpDkSJEeeDC6fMLTICRDv0KDZfOoKyKcUcH+1tXAVX4i1qqZUzmzvKpVQtasEj7nMOWx0NwyiMhUiYPwAXrD2arK1nkE4Gvw/1c82+aYERmQxASVJ7AieGE7v4MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PtwQDajp; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52e9fe05354so5657360e87.1;
-        Mon, 08 Jul 2024 05:43:33 -0700 (PDT)
+	s=arc-20240116; t=1720442868; c=relaxed/simple;
+	bh=3Ak5xUBHyaHOdfMhs/mCfmmplbSl0ZIAZgXlRgGAfTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MzS+yh69le09ehCGKiz0ZXlHOCMa4NU57oqnHgBgOvAtph/D5t/4y+pO5rLrMecJX5wrV0rJ0dXH7WcpTTCiB4X7+l48zHh6MTV/ivm4DZL3qJoiNJpNUXHKYZd7z3G96f4DKMe78yIoF6Z6iAoUMRpeDU6aW6+3d3Va8kmiDWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UlCNFTe2; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fb70169c23so6278105ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 05:47:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720442612; x=1721047412; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tE4/Xw/cTAW7KhMX9aTxF+9g4e51k+vLuUCkv+6bpaI=;
-        b=PtwQDajpW9YriSdltVhsOZo8EtXVyXm1UF6m7I0EXWbTYl7lW57mkWALIp2VY0Taty
-         bgx5bg3DVQ9sZhQahU9jVo7hR7K27O402Hn9Tj+2fOu4uYWStlB03wg/LMBwhzvf2I1X
-         jsL7KsL8IAojdOI4GgYsjEyhLDltThrfZpJc/he2Kkzr01mv8lc3c2ecGUdhymN8xOM3
-         LMR2oU+irvGUJh7uX+iO1Va9y1dGxYfNHSL2t9FzK8Pv/Ovgn36obgHPhX+h09mEEx8p
-         jAduzkGfiTAyyIyOl0oAQWHCpJImYq140kTArOOCo7Jzcax6yPVfOkRKc/cgC1QDZ3qu
-         D8ig==
+        d=linaro.org; s=google; t=1720442866; x=1721047666; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TlTxrHUn7mwk/tnpYeQaN++XyU41zDkCIyIHXuoEzmw=;
+        b=UlCNFTe2gKLvTgAE79GvnpmI8Wlb5yQZVn4kwEgG0Ltcq+fBSBXv4jjWsfM/Rx9ls1
+         G38acQOD+QKbZtftbseVOMxJz7mzrUdTsGMYZVwIqy8ytdnyq869kaJuOdlQun12x/12
+         ITd42IxPqiZVgp6JV9bPlotyWBXjIG4H1CGUxJN2LK5MhmsHwy0z5WMnRGaRR28N760P
+         mSpqckZXibBeNpmb1MIVLd+DTQybHhRWjUjzsGi0rAcKRC/WaWLGldTagVCmjrjsAHva
+         mlpV90OC6QtKPhOF+B8A84GSSCHm2WCah5abf+izqtn/va1iRqpRGP25qHDbJUHJs2Sa
+         tQ+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720442612; x=1721047412;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tE4/Xw/cTAW7KhMX9aTxF+9g4e51k+vLuUCkv+6bpaI=;
-        b=bPTUG37651Z1a3SL/D57ycSvu1iPgRWwTZV80StbFU7e9CmVWLqEOh0z5J1Xnb58uN
-         CtiEbFeiVefGpfs8jS6jPdPWIUwBHdzEAcl20EpbeMv9vR7da50I6hZ+oolWVUPq/D24
-         KkfFe3H22QlRHmvzM1KSXe8/Jxl+bjsyzOSUe7P3EDDBq7OGOFALLo2dqYgpNAJA2BBD
-         FA4YXA35IECBOnZhI4+FNrH0lkkc1UxprbRlogF9g8q18lSG5e5Mj0jeTnf2fwEwPYMJ
-         w8pOmLK8CpJKUgM/96OSdJN0waIEA1DuAJR2FixdUyPcclJs1xlK71kVUmwi1L+s65sB
-         bTaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlG5Ls+4TqR+dJ1UU/+nDb/Go4gdXuYOp4diBflknEK84phh9JRLHTQlgl6GsrSJMLG7sBH/QAqLUxC2WFEybKBmV+wXuJkDHmIqC8T5N9oooQPKTDgs1L7AF3uu+H8Z3YTnJoYJ8dha9kIVxyKSrWjedN9WF6cIhGQhoieQV+KvRDSQ==
-X-Gm-Message-State: AOJu0Yy63JdclNuykdJ+Z6wYt1VX6EASJ7R6f1HrEBaqTarkF37WBkVj
-	chBoW4TcMjT43SQD+iupHj+9uSd2L8kgTU9SxfDrAsRi/gM/+k6b
-X-Google-Smtp-Source: AGHT+IFxhmAI/t2baGo+8FHPDAJctn5KhZOEAfWFa+hD/m+yvpkjzx7stU+T+XnzM4iZBgNF6eESyA==
-X-Received: by 2002:a19:7702:0:b0:52c:dba6:b4c8 with SMTP id 2adb3069b0e04-52ea0619e3cmr9176706e87.13.1720442611240;
-        Mon, 08 Jul 2024 05:43:31 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ea90ba285sm723630e87.127.2024.07.08.05.43.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 05:43:30 -0700 (PDT)
-Message-ID: <622f5382-10c9-4bd5-84ab-544d7c16f1fe@gmail.com>
-Date: Mon, 8 Jul 2024 15:43:29 +0300
+        d=1e100.net; s=20230601; t=1720442866; x=1721047666;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TlTxrHUn7mwk/tnpYeQaN++XyU41zDkCIyIHXuoEzmw=;
+        b=e067LdqIA1mBEj/Awp5Hk+17PU6ck+C20Q87LGgzlhlS7EBSwyHZpxlsGPK/AVlJY9
+         0mduzrmQc4AfXlnwvq/RADrXBefDlp2Ty/8sKZpMkSqHdLpSJriF4ffm8iythoK3E3r1
+         jJKVGkVWK9v7bDsg1Pd1xe9r48+6a+eEbuAYe6XsiK+yR+Au8bRuM/m2QajclosWt1TP
+         UF+ANHkXvED8z73TvifW3bvQ0Fbn0rii5KJ2IEfgcveTAbL3JrJP7njEbMnwLz/fgaMN
+         kwz6scZf7Rm2ZhcYwLpwh0IgGcWSti/K35BTb47dvKYYXnraVzvUXG4cokV8rLnqpb2y
+         IOKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzB+F2PIBvV64sldTDg6Xp2xlPpU+py8keLPoRBK/L8c+rJnHtzJ9XVWRLhTc5sRHDe+S5L0wflqPyfGDkRvWe4Ogaju/YqEZg9e7Z
+X-Gm-Message-State: AOJu0YzGv59/ZD0jzK0MPoJGKPcl4nZCxgHnlToX3l5v9Fra35hOR/Op
+	CDinuFIKoSbzblb+nd8kYwAQiupebcaHVd2LSHVdd01ybeAv1rECN+sZpSdFyfvqenGwbIDvPS9
+	6/c1cfRko+npSfwa+sHIb4XLSyQLcGnI9mXC0gg==
+X-Google-Smtp-Source: AGHT+IGgSzvZ8Vjg+cCCxFTfIyMnGzcjLhYPG5WHmlvXiHzjVsWh+Qmco5WQkXlzKtgYVsGEedDjDY9AMoeenXRSZCo=
+X-Received: by 2002:a17:903:41c9:b0:1fb:57e7:5bba with SMTP id
+ d9443c01a7336-1fb57e75c96mr35913635ad.20.1720442866205; Mon, 08 Jul 2024
+ 05:47:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: iio: BU27034 => BU27034ANUC
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1720176341.git.mazziesaccount@gmail.com>
- <c39f9c67b3c07a27d7a13109c7b69cff9cfd2b9b.1720176341.git.mazziesaccount@gmail.com>
- <20240707140536.1dbb989b@jic23-huawei>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240707140536.1dbb989b@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240626023505.1332596-1-dtcccc@linux.alibaba.com> <20240708120254.GA27299@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240708120254.GA27299@noisy.programming.kicks-ass.net>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 8 Jul 2024 14:47:34 +0200
+Message-ID: <CAKfTPtDxdLpm6cC-vv1PpHaEtiOeLtuCwChgZ6Ypg6owz3Vvsw@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/fair: Make SCHED_IDLE entity be preempted in
+ strict hierarchy
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tianchen Ding <dtcccc@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Josh Don <joshdon@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/7/24 16:05, Jonathan Cameron wrote:
-> On Fri, 5 Jul 2024 13:54:12 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> The BU27034NUC was cancelled before it entered mass production. It was
->> replaced by a new variant BU27034ANUC (note, added 'A'). The new
->> variant gained a few significant changes, like removal of the 3.rd data
->> channel and dropping some of the gain settings. This means that, from
->> software point of view these ICs are incompatible. Lux calculation based
->> on the data from the sensors needs to be done differently, and on the
->> BU27034ANUC the channel 3 data is missing. Also, the gain setting
->> differencies matter.
->>
->> Unfortunately, the identification register was not changed so there is no
->> safe way for the software to distinguish the variants.
->>
->> According to the ROHM HQ engineers, the old BU27034NUC should not be
->> encountered in the wild. Hence it makes sense to remove the support for
->> the old BU27034NUC and add support for the new BU27034ANUC. Change the
->> compatible in order to not load the incompatible old driver for new sensor
->> (or, if someone had the old sensor, the new driver for it).
->>
->> Drop the compatible for old sensor which should not be in the wild and
->> add a new compatible for the new model with accurate model suffix
->> 'anuc'.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Rename indeed makes sense.  One minor, 'whilst you are here' comment inline.
-> 
->>
->> ---
->> A patch renaming the file according to the new compatible will follow.
->> If renaming is not needed or appropriate, that patch can be dropped.
->>
->> Revision history:
->> v2: New patch
->> ---
->>   .../devicetree/bindings/iio/light/rohm,bu27034.yaml      | 9 ++++-----
->>   1 file changed, 4 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
->> index 30a109a1bf3b..535bd18348ac 100644
->> --- a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
->> +++ b/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
->> @@ -4,20 +4,19 @@
->>   $id: http://devicetree.org/schemas/iio/light/rohm,bu27034.yaml#
->>   $schema: http://devicetree.org/meta-schemas/core.yaml#
->>   
->> -title: ROHM BU27034 ambient light sensor
->> +title: ROHM BU27034ANUC ambient light sensor
->>   
->>   maintainers:
->>     - Matti Vaittinen <mazziesaccount@gmail.com>
->>   
->>   description: |
->> -  ROHM BU27034 is an ambient light sesnor with 3 channels and 3 photo diodes
->> +  ROHM BU27034ANUC is an ambient light sesnor with 2 channels and 2 photo diodes
-> 
->   sensor
+On Mon, 8 Jul 2024 at 14:02, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Wed, Jun 26, 2024 at 10:35:05AM +0800, Tianchen Ding wrote:
+> > Consider the following cgroup:
+> >
+> >                        root
+> >                         |
+> >              ------------------------
+> >              |                      |
+> >        normal_cgroup            idle_cgroup
+> >              |                      |
+> >    SCHED_IDLE task_A           SCHED_NORMAL task_B
+> >
+> > According to the cgroup hierarchy, A should preempt B. But current
+> > check_preempt_wakeup_fair() treats cgroup se and task separately, so B
+> > will preempt A unexpectedly.
+> > Unify the wakeup logic by {c,p}se_is_idle only. This makes SCHED_IDLE of
+> > a task a relative policy that is effective only within its own cgroup,
+> > similar to the behavior of NICE.
+> >
+> > Also fix se_is_idle() definition when !CONFIG_FAIR_GROUP_SCHED.
+> >
+> > Fixes: 304000390f88 ("sched: Cgroup SCHED_IDLE support")
+> > Signed-off-by: Tianchen Ding <dtcccc@linux.alibaba.com>
+> > Reviewed-by: Josh Don <joshdon@google.com>
+> > Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> > v2:
+> > Use entity_is_task() to check whether pse is a task.
+> > Improve comments and commit log.
+> >
+> > v1: https://lore.kernel.org/all/20240624073900.10343-1-dtcccc@linux.alibaba.com/
+> > ---
+> >  kernel/sched/fair.c | 24 ++++++++++++------------
+> >  1 file changed, 12 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 41b58387023d..f0b038de99ce 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -511,7 +511,7 @@ static int cfs_rq_is_idle(struct cfs_rq *cfs_rq)
+> >
+> >  static int se_is_idle(struct sched_entity *se)
+> >  {
+> > -     return 0;
+> > +     return task_has_idle_policy(task_of(se));
+> >  }
+> >
+> >  #endif       /* CONFIG_FAIR_GROUP_SCHED */
+> > @@ -8382,16 +8382,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+> >       if (test_tsk_need_resched(curr))
+> >               return;
+> >
+> > -     /* Idle tasks are by definition preempted by non-idle tasks. */
+> > -     if (unlikely(task_has_idle_policy(curr)) &&
+> > -         likely(!task_has_idle_policy(p)))
+> > -             goto preempt;
+> > -
+> > -     /*
+> > -      * Batch and idle tasks do not preempt non-idle tasks (their preemption
+> > -      * is driven by the tick):
+> > -      */
+> > -     if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
+> > +     if (!sched_feat(WAKEUP_PREEMPTION))
+> >               return;
+> >
+> >       find_matching_se(&se, &pse);
+> > @@ -8401,7 +8392,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+> >       pse_is_idle = se_is_idle(pse);
+> >
+> >       /*
+> > -      * Preempt an idle group in favor of a non-idle group (and don't preempt
+> > +      * Preempt an idle entity in favor of a non-idle entity (and don't preempt
+> >        * in the inverse case).
+> >        */
+> >       if (cse_is_idle && !pse_is_idle)
+> > @@ -8409,6 +8400,15 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+> >       if (cse_is_idle != pse_is_idle)
+> >               return;
+> >
+> > +     /*
+> > +      * Batch tasks do not preempt non-idle tasks (their preemption
+> > +      * is driven by the tick).
+> > +      * We've done the check about "only one of the entities is idle",
+> > +      * so cse must be non-idle if p is a batch task.
+> > +      */
+> > +     if (unlikely(entity_is_task(pse) && p->policy == SCHED_BATCH))
+> > +             return;
+>
+> I'm not convinced this condition is right. The current behaviour of
+> SCHED_BATCH doesn't care about pse, only p.
+>
+> That is, if p is SCHED_BATCH it will not preempt -- except an
+> SCHED_IDLE.
+>
+> So I'm tempted to delete this first part of your condition and have it
+> be:
+>
+>         if (p->policy == SCHED_BATCH)
+>                 return;
+>
+> That is, suppose you have:
+>
+>                         root
+>                          |
+>               ------------------------
+>               |                      |
+>         normal_cgroup          normal_cgroup
+>               |                      |
+>         SCHED_BATCH task_A     SCHED_BATCH task_B
+>
+> Then the preemption crud will end up comparing the groups to one another
+> and still allow A to preempt B -- except we explicitly do not want this.
+>
+> The 'problem' is that the whole BATCH thing isn't cgroup aware ofcourse,
+> but I'm not sure we want to go fix that -- esp. not in this patch.
+>
+> Hmm?
 
-Thanks Jonathan!
+Good question, but do we want to make SCHED_BATCH tasks behave
+differently than SCHED_IDLE tasks in a group in this case ?
 
-I won't re-spin this unless you ask me to because you wrote you can fix 
-it whilist applying... Please, let me know if you wish me to fix and 
-re-spin :)
+With this patch, we don't want task_B to preempt task_A for the case
+but task_A will preempt task_B whereas task A is SCHED_IDLE
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+                         root
+                          |
+               ------------------------
+               |                      |
+         normal_cgroup          idle_cgroup
+               |                      |
+         SCHED_IDLE task_A     SCHED_NORMAL task_B
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+As we only look at the common level of hierarchy between the tasks,
+the below will make A to preempt B whereas both are SCHED_IDLE
 
+                         root
+                          |
+               ------------------------
+               |                      |
+         normal_cgroup          normal_cgroup
+               |                      |
+         SCHED_IDLE task_A     SCHED_IDLE task_B
 
