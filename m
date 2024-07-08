@@ -1,123 +1,115 @@
-Return-Path: <linux-kernel+bounces-244564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631CE92A617
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:50:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF1E92A61D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 012CFB20CCB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 870D61F223A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582621448C0;
-	Mon,  8 Jul 2024 15:50:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533B613D281;
-	Mon,  8 Jul 2024 15:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56255144307;
+	Mon,  8 Jul 2024 15:51:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423621EA6F;
+	Mon,  8 Jul 2024 15:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720453799; cv=none; b=d0htTrxFKqclRBLgiGxE0aeaAew4hkg1rl9K+OTp/JbBhxbTOZuufAp96Duuxxr2GjC/p5ZGTQ8+fi1TpSQcZQMAePB2Lm9l6gyjjzYsivTtfajroSua/HC90K0txsEPyD+Lsy50UGmGNKx/2g2Scmg9M9TAF0z65EAbFapJQ4o=
+	t=1720453864; cv=none; b=KZWbQqmvem4WqrvpE0usX+rnarJSuLiGBHkaYdDC1N7snSnC44OMBGM8QYp0lZf1DxbnuALKkDoUMSy7IUZ/kbR22r2OyXpqmTkhWdO0kwTi8LJWYAgBbLGafHIEaa9ilbDxywlcD3GADCGwlTcOS4Kx4wpScyrc4z9fXeBHAKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720453799; c=relaxed/simple;
-	bh=ogOl0ipcrNilhuvwQ0+LIidbO/TV8MjrdeKk9e/EV0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WYmLb6etxaICf1LEcXHJhOQlmsX2qRD1m4Jo3SN+E7YrzhW4HOn+OscIZUcC3WI/MTuick4hBPDA1sTrLMudJFaI/khJI5RZe4rqRLY+c08VPo3ncwhLu96GmC/aPq9TAUdKMCiJMrD2KK3STEhjb0HYMNCvO0rxz6k1fm2lQT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBD161042;
-	Mon,  8 Jul 2024 08:50:22 -0700 (PDT)
-Received: from [10.57.74.191] (unknown [10.57.74.191])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 489683F641;
-	Mon,  8 Jul 2024 08:49:55 -0700 (PDT)
-Message-ID: <2fdaac53-3695-45cd-a57a-1afaf365a19a@arm.com>
-Date: Mon, 8 Jul 2024 16:49:53 +0100
+	s=arc-20240116; t=1720453864; c=relaxed/simple;
+	bh=e6iRe+vk5faRCS1xAM7strjnGBRYRb8V/i/6DrOfI9g=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r34P+S+usX3c3sK8ke8yDaMFyFbUaXNlr8BeuAmB4TJiJ9a8h30TI10PJ8VK9rbSl/Zq70ti+CeDV7tYuYTYJpJcEim2SL4VhgeDK6wxDJt/b3GO7ctTfTupqnYnmiTvAspoNHne4sis+HWbdRoOCbKjuvqg/vFVJyzwYurpTT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WHpV75tJsz6JB3Z;
+	Mon,  8 Jul 2024 23:50:07 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id EA4F2140AA7;
+	Mon,  8 Jul 2024 23:51:00 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
+ 2024 16:51:00 +0100
+Date: Mon, 8 Jul 2024 16:50:56 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, "Ard
+ Biesheuvel" <ardb@kernel.org>, James Morse <james.morse@arm.com>, "Len Brown"
+	<lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Shiju Jose"
+	<shiju.jose@huawei.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>, Alison Schofield
+	<alison.schofield@intel.com>, Dan Williams <dan.j.williams@intel.com>, "Dave
+ Jiang" <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, Shuai Xue
+	<xueshuai@linux.alibaba.com>, <linux-acpi@vger.kernel.org>,
+	<linux-edac@vger.kernel.org>, <linux-efi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/6] efi/cper: align ARM CPER type with UEFI 2.9A/2.10
+ specs
+Message-ID: <20240708165056.000012d9@Huawei.com>
+In-Reply-To: <ecdee36a787c1ec2c3982e376db3d09576e07a27.1720436039.git.mchehab+huawei@kernel.org>
+References: <cover.1720436039.git.mchehab+huawei@kernel.org>
+	<ecdee36a787c1ec2c3982e376db3d09576e07a27.1720436039.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] coresight-tpda: Optimize the function of reading
- element size
-Content-Language: en-GB
-To: Tao Zhang <quic_taozha@quicinc.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- James Clark <james.clark@arm.com>
-Cc: Jinlong Mao <quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Trilok Soni <quic_tsoni@quicinc.com>, Song Chai <quic_songchai@quicinc.com>,
- linux-arm-msm@vger.kernel.org, Jie Gan <quic_jiegan@quicinc.com>
-References: <20240705085152.9063-1-quic_taozha@quicinc.com>
- <20240705085152.9063-4-quic_taozha@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240705085152.9063-4-quic_taozha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 05/07/2024 09:51, Tao Zhang wrote:
-> Since the new funnel device supports multi-port output scenarios,
-> there may be more than one TPDM connected to one TPDA. In this
-> way, when reading the element size of the TPDM, TPDA driver needs
-> to find the expected TPDM corresponding to the filter source.
-> When TPDA finds a TPDM or a filter source from a input connection,
-> it will read the Devicetree to get the expected TPDM's element
-> size.
+On Mon,  8 Jul 2024 13:18:14 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> Up to UEFI spec, the type byte of CPER struct for ARM processor was
+
+Up to UEFI spec XXX?
+
+> defined simply as:
 > 
-> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
-> ---
->   drivers/hwtracing/coresight/coresight-tpda.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
+> Type at byte offset 4:
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
-> index 52b0201090fb..fc5a4e46cf5d 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpda.c
-> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
-> @@ -110,9 +110,12 @@ static int tpda_get_element_size(struct tpda_drvdata *drvdata,
->   		    csdev->pdata->in_conns[i]->dest_port != inport)
->   			continue;
->
-		
+> 	- Cache error
+> 	- TLB Error
+> 	- Bus Error
+> 	- Micro-architectural Error
+> 	All other values are reserved
+> 
+> Yet, there was no information about how this would be encoded.
+> 
+> Spec 2.9A errata corrected it by defining:
+> 
+> 	- Bit 1 - Cache Error
+> 	- Bit 2 - TLB Error
+> 	- Bit 3 - Bus Error
+> 	- Bit 4 - Micro-architectural Error
+> 	All other values are reserved
+> 
+> That actually aligns with the values already defined on older
+> versions at N.2.4.1. Generic Processor Error Section.
+> 
+> Spec 2.10 also preserve the same encoding as 2.9A
+> 
+> Adjust CPER and GHES handling code for both generic and ARM
+> processors to properly handle UEFI 2.9A and 2.10 encoding.
+> 
+> Link: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-information
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-> -		if (coresight_device_is_tpdm(in)) {
-> +		if (coresight_device_is_tpdm(in)
-> +		    || csdev->pdata->in_conns[i]->filter_src_dev) {
+With above tidied up.
 
-How can we assume that the filter-source device is always TPDM ?
-It may be true for your test board, but driver must handle all
-possible cases. I would rather prefer:
-
-diff --git a/drivers/hwtracing/coresight/coresight-tpda.c 
-b/drivers/hwtracing/coresight/coresight-tpda.c
-index bfca103f9f84..b1d6f1dd60e3 100644
---- a/drivers/hwtracing/coresight/coresight-tpda.c
-+++ b/drivers/hwtracing/coresight/coresight-tpda.c
-@@ -110,6 +110,13 @@ static int tpda_get_element_size(struct 
-tpda_drvdata *drvdata,
-                     csdev->pdata->in_conns[i]->dest_port != inport)
-                         continue;
-
-+               /*
-+                * If this port is tied to a source device,
-+                * jump to that directly.
-+                */
-+               if (csdev->pdata->in_conns[i]->filter_src)
-+                       in = csdev->pdata->in_conns[i]->filter_src;
-+
-                 if (coresight_device_is_tpdm(in)) {
-                         if (drvdata->dsb_esize || drvdata->cmb_esize)
-                                 return -EEXIST;
-
-
-Suzuki
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 
