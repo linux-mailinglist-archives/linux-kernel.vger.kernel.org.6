@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-243795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A9B929AA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 04:02:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DEB929AB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 04:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48B91F2121E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 02:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20063281184
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 02:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31D81C06;
-	Mon,  8 Jul 2024 02:02:13 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635A846BF;
+	Mon,  8 Jul 2024 02:11:42 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200C51878
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 02:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55431C17;
+	Mon,  8 Jul 2024 02:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720404133; cv=none; b=eLVdQfIjiMAtTyCD61p48wYJiYhq02Rldlzw3CASaB6YGlKxxWtTBQ6Seqa1J+hYkl3L/rdFqJOwQkO9ApIrnQKlarW9kp3NtPvtFs5r+IZ1g0khGcA9wbLts3i+noa0BXfPo0hYK3L4Y1vUbyW/H+bKWvh89wVSuEk/bsuPJo0=
+	t=1720404702; cv=none; b=ojfWiZJUHAXiJfZDBrmYL3vjc0P+slft310e/NWYk9yvVEEqwr+s74LPqqumXSPaKJdb3afp0P1QBSwvPxLhuGPUlHTkECpH29elh++KylqkaCLo1swBTRVP1Hhyk7ZoJeo05qS+lGTcuO4YZIQNxg5hHWsgSzOG9fkS/j5jKQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720404133; c=relaxed/simple;
-	bh=UZDZrlSP7/QdDQHoliOTVBazrZJQYxlDlAH1qse8axQ=;
+	s=arc-20240116; t=1720404702; c=relaxed/simple;
+	bh=9nD53nRrte+kAzCjSb9QVY/6h91GoXPMMNzBGJ+2RLU=;
 	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Yz1eHHm1JZoJ5gMCpHqWEmGmJywt1W2tznqsT6se/1WLNb7fzRA2zuuDMBWAduEItZL6DEUtrdL2++aWXYOACOEjBfoRavj9EaLGNPilB/9H+Lhry6PysDVoBT32Lc5mKMPXGIGaCgw+oKVnFM51XFElknm75cwdDQchR6Yd30o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	 In-Reply-To:Content-Type; b=S6C68M7bkyjI8pmivn8rYdEu8IS/pVnYh05C12Nspc3/qbYRHW3ssmpo8B7UAm/zoHTtzWXo2a2BwB0db9cHI4ZIT+xfVT1jaaltRJTr4q86cmZGRtjC1R4k0EsHH6PFOrPlhIdgMMIghy6xxDE6Z3rHUq1wqMLdiLE6N6m0K7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WHS294lFQzQkl2;
-	Mon,  8 Jul 2024 09:58:09 +0800 (CST)
-Received: from kwepemd500014.china.huawei.com (unknown [7.221.188.63])
-	by mail.maildlp.com (Postfix) with ESMTPS id D85AB18006C;
-	Mon,  8 Jul 2024 10:02:02 +0800 (CST)
-Received: from [10.67.146.137] (10.67.146.137) by
- kwepemd500014.china.huawei.com (7.221.188.63) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WHRw71Nvnz1xtLf;
+	Mon,  8 Jul 2024 09:52:55 +0800 (CST)
+Received: from kwepemm600009.china.huawei.com (unknown [7.193.23.164])
+	by mail.maildlp.com (Postfix) with ESMTPS id E019A1400DD;
+	Mon,  8 Jul 2024 09:54:29 +0800 (CST)
+Received: from [10.174.176.73] (10.174.176.73) by
+ kwepemm600009.china.huawei.com (7.193.23.164) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 8 Jul 2024 10:02:02 +0800
-Subject: Re: [PATCH 0/3] irqchip/gic-v4: Fix VMAPP/VMOVP races
-To: Marc Zyngier <maz@kernel.org>, <kvmarm@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, "guoyang (C)" <guoyang2@huawei.com>,
-	jiangkunkun <jiangkunkun@huawei.com>, wangwudi <wangwudi@hisilicon.com>
-References: <20240705093155.871070-1-maz@kernel.org>
-From: Tangnianyao <tangnianyao@huawei.com>
-Message-ID: <ce1c797f-1b00-2f14-de1d-b3524acf3c1f@huawei.com>
-Date: Mon, 8 Jul 2024 10:02:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ 15.1.2507.39; Mon, 8 Jul 2024 09:54:29 +0800
+Subject: Re: [REGRESSION] Cannot start degraded RAID1 array with device with
+ write-mostly flag
+To: =?UTF-8?Q?Mateusz_Jo=c5=84czyk?= <mat.jonczyk@o2.pl>,
+	<linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <regressions@lists.linux.dev>, Song Liu <song@kernel.org>, Paul Luse
+	<paul.e.luse@linux.intel.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240706143038.7253-1-mat.jonczyk@o2.pl>
+From: Yu Kuai <yukuai3@huawei.com>
+Message-ID: <a703ec45-6cd5-4970-db22-fb9e7469332a@huawei.com>
+Date: Mon, 8 Jul 2024 09:54:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240705093155.871070-1-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500014.china.huawei.com (7.221.188.63)
+In-Reply-To: <20240706143038.7253-1-mat.jonczyk@o2.pl>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600009.china.huawei.com (7.193.23.164)
 
+Hi,
 
+‘⁄ 2024/07/06 22:30, Mateusz Jo®Ωczyk –¥µ¿:
+> Subject: [RFC PATCH] md/raid1: fill in max_sectors
+> 
+> 
+> 
+> Not yet fully tested or carefully investigated.
+> 
+> 
+> 
+> Signed-off-by: Mateusz Jo≈Ñczyk<mat.jonczyk@o2.pl>
+> 
+> 
+> 
+> ---
+> 
+>   drivers/md/raid1.c | 1 +
+> 
+>   1 file changed, 1 insertion(+)
+> 
+> 
+> 
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> 
+> index 7b8a71ca66dd..82f70a4ce6ed 100644
+> 
+> --- a/drivers/md/raid1.c
+> 
+> +++ b/drivers/md/raid1.c
+> 
+> @@ -680,6 +680,7 @@ static int choose_slow_rdev(struct r1conf *conf, struct r1bio *r1_bio,
+> 
+>   		len = r1_bio->sectors;
+> 
+>   		read_len = raid1_check_read_range(rdev, this_sector, &len);
+> 
+>   		if (read_len == r1_bio->sectors) {
+> 
+> +			*max_sectors = read_len;
+> 
+>   			update_read_sectors(conf, disk, this_sector, read_len);
+> 
+>   			return disk;
+> 
+>   		}
 
-On 7/5/2024 17:31, Marc Zyngier wrote:
-> In 20240701072305.4129823-1-tangnianyao@huawei.com, Nianyao reports
-> a number of possible races that can trigger on GICv4 implementations
-> using the ITSList feature.
->
-> These races involve concurrent VMOVP and VMAPP, the former happening
-> on vcpu load, while the latter is triggered on the first device being
-> MAPTI'd on a given ITS for this particular guest.
->
-> The main issue is that we want to establish the affinity at VMAPP time,
-> while vcpu_load wants to set the affinity where the vcpu actually runs.
-> Lock ordering constraints mean that we can't lock the VPE on VMAPP,
-> so things are modified without any lock. What could possibly go wrong?
->
-> THe fix is a bit involved, and relies on 3 things:
->
-> - Making sure that the initial affinity of a VPE is fixed at activate
->   time, which is done early in the life of the vcpup, before it can run.
->
-> - Add a per-VM lock that can be taken instead of the global vmovp_lock,
->   paving the way for a more manageable lock order.
->
-> - Take the per-VPE lock whenever modifying the VPE affinity, as expected
->   everywhere else in the code.
->
-> With that, VMAPP and VMOVP can now run concurrently and still lead to
-> sensible results.
->
-> Marc Zyngier (3):
->   irqchip/gic-v4: Always configure affinity on VPE activation
->   irqchip/gic-v4: Substitute vmovp_lock for a per-VM lock
->   irqchip/gic-v4: Make sure a VPE is locked when VMAPP is issued
->
->  drivers/irqchip/irq-gic-v3-its.c   | 48 ++++++++++++++----------------
->  include/linux/irqchip/arm-gic-v4.h |  8 +++++
->  2 files changed, 30 insertions(+), 26 deletions(-)
->
+This looks correct, can you give it a test and cook a patch?
 
-I've tested this patch series. It works.
-
-Tested-by: Nianyao Tang <tangnianyao@huawei.com>
+Thanks,
+Kuai
 
