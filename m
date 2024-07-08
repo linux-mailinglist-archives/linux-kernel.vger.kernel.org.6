@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-244427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDEC092A427
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB1892A42A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBC81C212B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901F51C21692
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FFF13B798;
-	Mon,  8 Jul 2024 13:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05D413B7A3;
+	Mon,  8 Jul 2024 13:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fKEF+5bg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AB47F490;
-	Mon,  8 Jul 2024 13:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="HdCVbyr/"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6384E13A400;
+	Mon,  8 Jul 2024 13:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446957; cv=none; b=tj0Wc9uIMZzdXEThazGHdroUXs4uwAQ23LcYb/nMHHl0mpIid0MhbK/sYBfjP8CfnKuv43A6HoQsPoA8ekV17bljDRXEk3muQtse81cqw1g05SHZPhCwgWqBmhFZ0pEAihSPjo23dmUOgLCndYOjrtinZ7RZ7Q+w2/xp+inX838=
+	t=1720447025; cv=none; b=CjJQFBp7BQ7ZahmjCg0AtCz3aloGWlG0O79XZNKj6ehA240dFoAwkuYyx+Gk4FJqOSKnGGlTP88SO1omKr13aQuDqtOnuDUUfsyRIZxf+BW53LBxckyQkkXrqXU4AuZ7VtljIMMJ/jY5QwWZt9YSkHl1rNd/7wire/7QrSnOp/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446957; c=relaxed/simple;
-	bh=Ix+CY7nDRbdObz8mmrJCCRjvbh7+LChLXk0TnsBGW6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RywdKlDzC+72WCQR4Gr3C10AvV1G6IublPtaXZDHalxHb/flPWvWREm/l3qD2HNopcA9iVjPnErDY/Ab9OnKfOxDwwpzlVJj7+6xJbvA5d7LVEYgCaVNy+1yTwoIgLDVIWZ51N6RF4flJQES8PlYwiT+UYg2W6KmUePQQOzILjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=fKEF+5bg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C058C116B1;
-	Mon,  8 Jul 2024 13:55:55 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fKEF+5bg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720446953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iu6qhhCoMzUJkFRbUZLPznGqNINA8RQkyC6Q++VnYXI=;
-	b=fKEF+5bgvuym74Awlfw6+rIloM7/boI8OJjwFPIg6g1nMLKqYvnDY5N+gaL+OOHRNyujht
-	o88kxldv7C1LwvNlGdWlyaztkLchIGGBNdfgdMccAxG/iKlNQ9HX0WEhiGEIGEZLQQvLsU
-	uq8SAjGuRr4l647sMPUUcGy2iR+StF4=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 7bef63ad (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 8 Jul 2024 13:55:53 +0000 (UTC)
-Date: Mon, 8 Jul 2024 15:55:46 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
- lazily freeable mappings
-Message-ID: <Zovv4lzM38EHtnms@zx2c4.com>
-References: <20240707002658.1917440-1-Jason@zx2c4.com>
- <20240707002658.1917440-2-Jason@zx2c4.com>
- <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
- <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
- <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
- <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
- <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
- <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
- <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
+	s=arc-20240116; t=1720447025; c=relaxed/simple;
+	bh=qQB5jmiieWyiL7crIJzqQevemxMQaJz5FAAaFGbXwKE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=hliqcTd5i7XPuvFJn3fSE3OesZ9RrGHfVhaNrSZfnfhvlGQizIlppqae1U8KIjl6Vl2DZeEvj/+/7WhgiGV/sZ3C0+JrQR2yIjbGiGjP8MmHp5+4b6pJ/uqS/hg5FJ7ijyx2ojA8aSVBqYvfnFSKo9urILqWxxZozw4Hh91bYsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=HdCVbyr/; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from [IPV6:2a02:8010:6359:2:e181:9992:7c46:d034] (unknown [IPv6:2a02:8010:6359:2:e181:9992:7c46:d034])
+	(Authenticated sender: james)
+	by mail.katalix.com (Postfix) with ESMTPSA id 46C487D926;
+	Mon,  8 Jul 2024 14:57:02 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1720447022; bh=qQB5jmiieWyiL7crIJzqQevemxMQaJz5FAAaFGbXwKE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:From;
+	z=Message-ID:=20<a65127e4-544b-27e6-a1e1-e20e5fb4d480@katalix.com>|
+	 Date:=20Mon,=208=20Jul=202024=2014:57:02=20+0100|MIME-Version:=201
+	 .0|To:=20Hillf=20Danton=20<hdanton@sina.com>|Cc:=20netdev@vger.ker
+	 nel.org,=20linux-kernel@vger.kernel.org,=0D=0A=20syzkaller-bugs@go
+	 oglegroups.com,=20tparkin@katalix.com,=0D=0A=20syzbot+b471b7c93630
+	 1a59745b@syzkaller.appspotmail.com,=0D=0A=20syzbot+c041b4ce3a6dfd1
+	 e63e2@syzkaller.appspotmail.com|References:=20<20240708115940.892-
+	 1-hdanton@sina.com>|From:=20James=20Chapman=20<jchapman@katalix.co
+	 m>|Subject:=20Re:=20[PATCH=20net-next=20v2]=20l2tp:=20fix=20possib
+	 le=20UAF=20when=20cleaning=20up=0D=0A=20tunnels|In-Reply-To:=20<20
+	 240708115940.892-1-hdanton@sina.com>;
+	b=HdCVbyr/sESYRlL6ctYK7IaT+8mna1yGitopRzjpKY1rFPwkEk/U4uZ4HldLDXp+Z
+	 69V/TWz7RCtd4v79cPZM4L8cjKt0o3Xge7gvNux85/eeBxFaAbtTYdjqpj9ol7Xdhj
+	 VzN0zn2x0ssL79jgC+PZlptZS1GKsii5QeZy/hdbIJIeAH7BbUuEA3gMiZThG53xi7
+	 +DZwmETm/e8dpQKl6GOSWTFlTcpEr5mrYAg16WX46EJRxZy3uJq6nE73dAHd8cB6s+
+	 H2LVCvTRsQIsvUYUPYLPXiS7FtyMBX0tzeA7CCudvCx5qXQElIdT89rsGi/w7J6WuP
+	 YE80sGtT6cDkw==
+Message-ID: <a65127e4-544b-27e6-a1e1-e20e5fb4d480@katalix.com>
+Date: Mon, 8 Jul 2024 14:57:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+To: Hillf Danton <hdanton@sina.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, tparkin@katalix.com,
+ syzbot+b471b7c936301a59745b@syzkaller.appspotmail.com,
+ syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
+References: <20240708115940.892-1-hdanton@sina.com>
+Content-Language: en-US
+From: James Chapman <jchapman@katalix.com>
+Organization: Katalix Systems Ltd
+Subject: Re: [PATCH net-next v2] l2tp: fix possible UAF when cleaning up
+ tunnels
+In-Reply-To: <20240708115940.892-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi David,
+On 08/07/2024 12:59, Hillf Danton wrote:
+> On Mon, 8 Jul 2024 11:06:25 +0100 James Chapman <jchapman@katalix.com>
+>> On 05/07/2024 11:32, Hillf Danton wrote:
+>>> On Thu,  4 Jul 2024 16:25:08 +0100 James Chapman <jchapman@katalix.com>
+>>>> --- a/net/l2tp/l2tp_core.c
+>>>> +++ b/net/l2tp/l2tp_core.c
+>>>> @@ -1290,17 +1290,20 @@ static void l2tp_session_unhash(struct l2tp_session *session)
+>>>>    static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
+>>>>    {
+>>>>    	struct l2tp_session *session;
+>>>> -	struct list_head *pos;
+>>>> -	struct list_head *tmp;
+>>>>    
+>>>>    	spin_lock_bh(&tunnel->list_lock);
+>>>>    	tunnel->acpt_newsess = false;
+>>>> -	list_for_each_safe(pos, tmp, &tunnel->session_list) {
+>>>> -		session = list_entry(pos, struct l2tp_session, list);
+>>>> +	for (;;) {
+>>>> +		session = list_first_entry_or_null(&tunnel->session_list,
+>>>> +						   struct l2tp_session, list);
+>>>> +		if (!session)
+>>>> +			break;
+>>>> +		l2tp_session_inc_refcount(session);
+>>>>    		list_del_init(&session->list);
+>>>>    		spin_unlock_bh(&tunnel->list_lock);
+>>>>    		l2tp_session_delete(session);
+>>>>    		spin_lock_bh(&tunnel->list_lock);
+>>>> +		l2tp_session_dec_refcount(session);
+>>>
+>>> Bumping refcount up makes it safe for the current cpu to go thru race
+>>> after releasing lock, and if it wins the race, dropping refcount makes
+>>> the peer head on uaf.
+>>
+>> Thanks for reviewing this. Can you elaborate on what you mean by "makes
+>> the peer head on uaf", please?
+>>
+> Given race, there are winner and loser. If the current cpu wins the race,
+> the loser hits uaf once winner drops refcount.
 
-On Mon, Jul 08, 2024 at 10:11:24AM +0200, David Hildenbrand wrote:
-> The semantics are much more intuitive. No need for separate mmap flags.
+I think the session's dead flag would protect against threads racing in 
+l2tp_session_delete to delete the same session.
+Any thread with a pointer to a session should hold a reference on it to 
+prevent the session going away while it is accessed. Am I missing a 
+codepath where that's not the case?
 
-Agreed.
- 
-> Likely we'll have to adjust mlock() as well. Also, I think we should 
-> just bail out with hugetlb as well.
-
-Ack.
-
-> Further, maybe we want to disallow madvise() clearing these flags here, 
-> just to be consistent.
-
-Good thinking.
-
-> As a side note, I'll raise that I am not a particular fan of the 
-> "droppable" terminology, at least with the "read 0s" approach.
-> 
->  From a user perspective, the memory might suddenly lose its state and 
-> read as 0s just like volatile memory when it loses power. "dropping 
-> pages" sounds more like an implementation detail.
-> 
-> Something like MAP_VOLATILE might be more intuitive (similar to the 
-> proposed MADV_VOLATILE).
-> 
-> But naming is hard, just mentioning to share my thought :)
-
-Naming is hard, but *renaming* is annoying. I like droppable simply
-because that's what I've been calling it in my head. MAP_VOLATILE is
-fine with me though, and seems reasonable enough. So I'll name it that,
-and then please don't change your mind about it later so I won't have to
-rename everything again. :)
-
-Jason
 
