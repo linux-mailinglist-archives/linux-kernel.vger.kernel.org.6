@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-244048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F1D929E65
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:41:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A13AA929E6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E792830B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:41:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D56A0B214A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8663482D7;
-	Mon,  8 Jul 2024 08:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7CF5674E;
+	Mon,  8 Jul 2024 08:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="Mdvazh3a"
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="SLV7V94N"
 Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6520B38FB0;
-	Mon,  8 Jul 2024 08:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEC33B290;
+	Mon,  8 Jul 2024 08:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720428095; cv=none; b=WVkyh8lck18ntuqhwnDrktn89YO4nIE1+OOaJSmECWjfd4RVuCws7ayzAzew56zH+yr/Toxbx9mdk9o62/GIv24g3PSYRhM658I4CKA2Kthqh6pgLMcbNosTv/y/ce5x0yUHPVdy8phDjJrYPzjLhBtJTZcBBrQ2938whHK0P0M=
+	t=1720428096; cv=none; b=hN+wl/TbkCGHTsPR3fbUbZQHRo07qHhe48VRUsFgaljv0t5jfx/oV0h9WdqochQWugtkFnyWBYpKogakvO0FgqtBKwRP2mjU6u5zhQtDEZVqjothmAI1AcDKseER4qrdJnMcflYkuL+ldqa7Qwoh6HQPTt63pXbeTopbXEccFeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720428095; c=relaxed/simple;
-	bh=OlqDzkICZh/rXle1yN3cbMo0i3pUWIT0ry1t2Or0OBE=;
+	s=arc-20240116; t=1720428096; c=relaxed/simple;
+	bh=2cglFmVz1Xpw1R2sFVulz1T3QnWmHmbSEE+yMLLZFoA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bzBB3Z6tFNKhnrfdcNyEJ6g+mdDjTZoE+fHuKSlxSqHwmWNTJvz+jZjLp/SXsBo1wiWTuhNBtCNwmmn8/d3+z6kLcufQEtCTI6mmsbpumg7+U9XHsdjo1kkm3wuldhigGRajC8fI/GITkUVzQWLaJ9MjmgO5HYUSwEZYE6jyKeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=Mdvazh3a; arc=none smtp.client-ip=116.203.77.234
+	 MIME-Version; b=HBHczwk9hUjlrdHPhjH2AZlpnLquhddRlOCWZ+Bgrkqyycwnhzuv0qF2KTgX13w1virHbuYN55cwjAdISsGUcJizLiey47dsi/Q+PzBRVyYihcF9wRX+rotYyQe1OVAMq2xJvm0vl5afjG7SOXvl5tcKERwHQrBbKKpFUVt2nvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=SLV7V94N; arc=none smtp.client-ip=116.203.77.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0FA9DBFB4D;
-	Mon,  8 Jul 2024 10:41:26 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3F9AEBFBA8;
+	Mon,  8 Jul 2024 10:41:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1720428086; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1720428087; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=8b9WEdH6nX/uhqStbhCkxjbUTBocln+2zCJ0wjlz2TM=;
-	b=Mdvazh3as5WxPvN2jOz6c7pNkuYrl00UjJ8Xt4UlUDINGARD/zK1yFD7tFfH1V8oRmNzOW
-	9J6lBuVIfboFtllMmf+D6/tCkeNfK6aNQqlKfM8P3c2n9QMPdrlLkQsNbwaLGHzfRK8/ND
-	mqVnTgkENTszZAPB3C73dUKZbUh8qLrOuFz9KjwJMqvDA0azx+TWNrjZAVeM5l9pDQqzz+
-	Yur5ZeoEW9LKud5jkhL2P3ylAeYS/Km5qvdfl6u+ZhL77Zb23XRDqv8P0lATdnYoXm2Lb6
-	jLD55CCtRNYwCUmZiuZXTtl6QBpTmRLM5bMlg5nJ/VjXLjR+EDm7eGQ4rMFK4A==
+	bh=D9oTaUMXzjcTo6Wf10s0ulRO2OkpFnNvTpduNNFrDRM=;
+	b=SLV7V94NOqUs3KUx9onVyY3+nteYPa0rymNGgqQumEOUBCH7E0zxK0Dc+y05kqDsOk37f+
+	4AwNiHgAA/E80SyJv5B4FkqQ+Sb+8sJR9SyGVQA1+NPUR9LGJ6ap7Wvj2XLSsHQnprq53v
+	cKLtGrFMd8SIKZwhu5Jf8WO/0FRpAbEEBN2N1zdQ6lWrbQfxweInyO3Tmh8EaCRjcdkWQ9
+	V/A6toWTj2SC1aPgNmXwtmDuLTIpPN4ftVibzBgNe8gUtBp+oOAGRrj0DLXNn2t3cJca63
+	hH38D6yWArP/y3asGeFcuAQGCee4g3QftsfSPzZUTdIXEHdJFasZel+FgnEg6w==
 From: Frieder Schrempf <frieder@fris.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
 	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Stefan Agner <stefan@agner.ch>
+	Robin Gong <yibin.gong@nxp.com>
 Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v2 1/5] dt-bindings: gpio: vf610: Allow gpio-line-names to be set
-Date: Mon,  8 Jul 2024 10:40:31 +0200
-Message-ID: <20240708084107.38986-2-frieder@fris.de>
+	Joy Zou <joy.zou@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 2/5] dt-bindings: regulator: pca9450: Make interrupt optional
+Date: Mon,  8 Jul 2024 10:40:32 +0200
+Message-ID: <20240708084107.38986-3-frieder@fris.de>
 In-Reply-To: <20240708084107.38986-1-frieder@fris.de>
 References: <20240708084107.38986-1-frieder@fris.de>
 Precedence: bulk
@@ -71,33 +69,29 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Describe common "gpio-line-names" property to allow DTs to
-specify names for GPIO lines.
+The interrupt is optional in hardware and not connected on
+some boards. Make it optional in the binding.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
 Changes for v2:
-* change commit message (remove non-existing warning)
-* add minItems and maxItems
+* improve commit message
 ---
- Documentation/devicetree/bindings/gpio/gpio-vf610.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/regulator/nxp,pca9450-regulator.yaml     | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
-index a27f929502575..cabda2eab4a23 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
-+++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
-@@ -51,6 +51,10 @@ properties:
+diff --git a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
+index 849bfa50bdbab..f8057bba747a5 100644
+--- a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
++++ b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
+@@ -96,7 +96,6 @@ properties:
+ required:
+   - compatible
+   - reg
+-  - interrupts
+   - regulators
  
-   gpio-controller: true
- 
-+  gpio-line-names:
-+    minItems: 1
-+    maxItems: 32
-+
-   clocks:
-     items:
-       - description: SoC GPIO clock
+ additionalProperties: false
 -- 
 2.45.2
 
