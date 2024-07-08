@@ -1,100 +1,152 @@
-Return-Path: <linux-kernel+bounces-244030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE55B929E2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94149929E2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6AF2855D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBDDE1C21EE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424AF38FB0;
-	Mon,  8 Jul 2024 08:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D2A3FB94;
+	Mon,  8 Jul 2024 08:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GESB/u6F"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="OUZwZNkU"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B628A2F2E;
-	Mon,  8 Jul 2024 08:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B1F481B4;
+	Mon,  8 Jul 2024 08:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720426829; cv=none; b=cZQkzJ7h/2k0X9UbYnwC1rL2Zmk/milCWT/UrjrDAMLdBBvKGnKdtQQ/XIm2QmuuyBTcDImAKPMvXBJCw0kHN2XSAXZYQb07mhSIo43vzPHdFXOfyrHp4/wKClhz6NGvzV7yz1L0qe0OwCyOyEYmGulm2CduMuuwqUWTqS0eGAw=
+	t=1720426844; cv=none; b=Y9SUXV7ySxZkun+F1CdT289mxvW5ANUi3AwTUOay8QIehpX4rpOFPD9YaH0pDtWc33ptpLkQYGYK2ww2R6mltwmagw+AmjuNLgYdYbiSWxsTDm1oCBOctQ2tNuakBCmg+Z8sA+pioftHkChFlw4Y4CawsnM4ue8vT1PXatpOx4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720426829; c=relaxed/simple;
-	bh=ZQXA+LK7Kz1RVNL3/xiLr4QZlg5mI99hARSwXjB+SP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hw1nH81oM1TLJpPROxwb6lrP7ZAq/XqXI6d2kES+XpZdO1C2N43gpdeXR4KxXG0Kf/c5fh0Z+0OPVnhND/mQHI22i3BlCil+ITnJ3K30zNjDWPPcq1UAhvwQOsFQuNkqmBaISwD5DS7IMhpAl/0Koq5zxTKSz86BM5E1IGqpFPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GESB/u6F; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720426826;
-	bh=UxFrdZVfKTEW0ZdGoiqsMKCXYsm4uo+y3fpQX60KMhI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GESB/u6FfIGUYPHg3N4BRWtMLl/QF5B4LcKUAHBoOOHRmXSwMuhgwbpg2GGMqI5A4
-	 Mn4xJXX6cRJqjWPF1MuTb6wHH1hGPr3rcbOsAUMvCvl3qFzPpZ3rP81OStsOik2da1
-	 bl2JMVpYutcQeyKVI55ZACMef99H+BiT8M2kLlrcQExjvm1XuKqsigTYn2GqZMusVi
-	 0K/uYb6CkvgXLdcNN1jxdXLko6GHHqrkCwzw8xGgzkeFC6OnvC/gkEFpE6JqT6eZIV
-	 8KT531BbwSn/hIAhHD3a0Q+xNCynfesTWj/u3ew3rYrsOokSa6JkhYVEXiMEtrg1Kq
-	 pKHuyjfU+8Z8g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WHcWF6jzPz4xPg;
-	Mon,  8 Jul 2024 18:20:25 +1000 (AEST)
-Date: Mon, 8 Jul 2024 18:20:25 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the device-mapper
- tree
-Message-ID: <20240708182025.5f2e36cf@canb.auug.org.au>
+	s=arc-20240116; t=1720426844; c=relaxed/simple;
+	bh=jsjA2w2tuCyc0S3i6dcfthTOHKejeUdEeiJCj0gu6xM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oFCPjjArhmIr8VjJUCDaE4wbrdSzWTulCs6GabRObQwFsFICs93AQcdzNmvJcvhNHwj2VFp02QbgtcQ9MBELLntrIahQs81r8eWoeMc3sbj33UFsYX5XO29AAgf16Q1/1sBomv5vyMVHc8JPRqGOY8CPQrV1jBLUIimCLqnGQNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=OUZwZNkU; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=DQyi8H+P/p/fhoombAxqVcGrAB/hkjbMv7lfmWP5EsA=;
+	t=1720426842; x=1720858842; b=OUZwZNkU3Y79COL5B+fVktYNG4efb3rgU/jYTcSiDpYgRpI
+	dDHyzFYdqH0ILFIYfwLKpG+E6d7pQTfzSYoxPQAwvoHlmRrMI5eORwzXKUwgjlius6kRrzVfNQTVl
+	RUfsAp+S39MKEJt0eLv6e6RcwzvqtypZuB8yk2+8d1vD8I0ZMUHcDd+bgfa1+2cJZBw4izi+tb7Nu
+	ys3NokyjtU8QZm+rVJ2KmIf64aQ2i22OXc02y9Y9mk2Ri2sQ4fKLKfp5b1GFl3s+KxQh7jfaaId2c
+	jYONOT2xoD9z87cwEhT9Gi043UtA0vgd9XqPuE+Ess63HB466opDf36Wkpx2LzFg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sQjbv-0000dn-3S; Mon, 08 Jul 2024 10:20:35 +0200
+Message-ID: <270804d4-b751-4ac9-99b2-80e364288c37@leemhuis.info>
+Date: Mon, 8 Jul 2024 10:20:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/C=M/=V/LxVEbhYbRow/JYQh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH RESEND] bpf: fix order of args in call to bpf_map_kvcalloc
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Christian Kujau <lists@nerdbynature.de>,
+ =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@intel.com>,
+ Lorenzo Stoakes <lstoakes@gmail.com>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240612-master-v1-1-a95f24339dab@gmail.com>
+ <CAADnVQJLgo4zF5SVf-P5U_nOaiFW--mCe-zY6_Dec98z_QE24A@mail.gmail.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <CAADnVQJLgo4zF5SVf-P5U_nOaiFW--mCe-zY6_Dec98z_QE24A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1720426842;145f35d6;
+X-HE-SMSGID: 1sQjbv-0000dn-3S
 
---Sig_/C=M/=V/LxVEbhYbRow/JYQh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+[CCing the regressions list and people mentioned below]
 
-Hi all,
+On 12.06.24 16:53, Alexei Starovoitov wrote:
+> On Wed, Jun 12, 2024 at 2:51 AM Mohammad Shehar Yaar Tausif
+> <sheharyaar48@gmail.com> wrote:
+>>
+>> The original function call passed size of smap->bucket before the number of
+>> buckets which raises the error 'calloc-transposed-args' on compilation.
+>>
+>> Fixes: 62827d612ae5 ("bpf: Remove __bpf_local_storage_map_alloc")
+>> Reviewed-by: Andrii Nakryiko <andrii@kernel.org>
+>> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+>> ---
+>> - already merged in linux-next
+>> - [1] suggested sending as a fix for 6.10 cycle
+> 
+> No. It's not a fix.
 
-Commits
+If you have a minute, could you please explain why that is? From what I
+can see a quite a few people run into build problems with 6.10-rc
+recently that are fixed by the patch:
 
-  eb5f088474c7 ("dm vdo indexer: use swap() instead of open coding it")
-  feb0cdc1d47d ("dm vdo: remove unused struct 'uds_attribute'")
+* Péter Ujfalusi
+https://lore.kernel.org/bpf/363ad8d1-a2d2-4fca-b66a-3d838eb5def9@intel.com/
 
-are missing a Signed-off-by from their committer.
+* Christian Kujau
+https://lore.kernel.org/bpf/48360912-b239-51f2-8f25-07a46516dc76@nerdbynature.de/
+https://lore.kernel.org/lkml/d0dd2457-ab58-1b08-caa4-93eaa2de221e@nerdbynature.de/
 
---=20
-Cheers,
-Stephen Rothwell
+* Lorenzo Stoakes
+https://fosstodon.org/@ljs@social.kernel.org/112734050799590482
 
---Sig_/C=M/=V/LxVEbhYbRow/JYQh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+At the same time I see that the culprit mentioned above is from 6.4-rc1,
+so I guess it there must be some other reason why a few people seem to
+tun into this now. Did some other change expose this problem? Or are
+updated compilers causing this?
 
------BEGIN PGP SIGNATURE-----
+Ciao, Thorsten
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaLoUkACgkQAVBC80lX
-0GyfTgf/TP7m1ZoHzbhMXFTXyQhJ/Bi8IzsP/peqnFYc2tH/bL+uxvRNsBI+x43j
-kxTH3m/VdBkAgTjNv6uC3r/2mvKau0t9hyh188dIid7SrZ1QLB0FtrxwgwlTtx+n
-eDOAxzCjetdShqJtcPgrQJc7whTOGVS5gJ4YeP3+P1d/kK8kg2MKDmohXwDpTGCL
-HrBh9miLSTgI7ynTlkFET01netvJ9lwCXvJhmoo+Z/kt8u45YIF02SjqlAojjNXH
-XmUo2+Osq2T3SmQc7FOH3F7URcFVlw8H1tJF21RkMxnRTCiGJbKZ5tI2/O10B6yA
-U9rvBqCruhPzghHEEQyqPCVmthbFcw==
-=qVbp
------END PGP SIGNATURE-----
-
---Sig_/C=M/=V/LxVEbhYbRow/JYQh--
+>> [1] https://lore.kernel.org/all/363ad8d1-a2d2-4fca-b66a-3d838eb5def9@intel.com/
+>> ---
+>>  kernel/bpf/bpf_local_storage.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storage.c
+>> index 976cb258a0ed..c938dea5ddbf 100644
+>> --- a/kernel/bpf/bpf_local_storage.c
+>> +++ b/kernel/bpf/bpf_local_storage.c
+>> @@ -782,8 +782,8 @@ bpf_local_storage_map_alloc(union bpf_attr *attr,
+>>         nbuckets = max_t(u32, 2, nbuckets);
+>>         smap->bucket_log = ilog2(nbuckets);
+>>
+>> -       smap->buckets = bpf_map_kvcalloc(&smap->map, sizeof(*smap->buckets),
+>> -                                        nbuckets, GFP_USER | __GFP_NOWARN);
+>> +       smap->buckets = bpf_map_kvcalloc(&smap->map, nbuckets,
+>> +                                        sizeof(*smap->buckets), GFP_USER | __GFP_NOWARN);
+>>         if (!smap->buckets) {
+>>                 err = -ENOMEM;
+>>                 goto free_smap;
+>>
+>> ---
+>> base-commit: 2ef5971ff345d3c000873725db555085e0131961
+>> change-id: 20240612-master-fe9e63ab5c95
+>>
+>> Best regards,
+>> --
+>> Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+>>
 
