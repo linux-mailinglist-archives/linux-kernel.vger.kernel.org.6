@@ -1,103 +1,112 @@
-Return-Path: <linux-kernel+bounces-244304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C4192A26F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:16:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5375C92A271
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7771F21A35
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070D41F210CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D4A78C7F;
-	Mon,  8 Jul 2024 12:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CF47CF3E;
+	Mon,  8 Jul 2024 12:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYM6ElBb"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LZtLy5Ko"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F50611712;
-	Mon,  8 Jul 2024 12:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010D33C08A
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720440839; cv=none; b=g2bmmQIy9mDaN592qzGpOqAfl/b3N8P8rby4ohvdpqGvhIvmczMUjiLjKPiOMt5PbXI6uVuj8gUxeFBYR8HSkqQvLP40PO54ldTOoiVvyBuJIKPZfMHrY/CdWfvn53HB7laOEQDi4DOFjpWAD2Z5dNC+P0XeEiDCur3YFXLQfRs=
+	t=1720441032; cv=none; b=WSYpy4adHEw4YIYDZsqaJgeKULvCmZNmIQYLY5Cx6CLpVQ4S7IuHpQkWo1BqDFHBtMzDVqjgYt0KVdWiBkQGyyXGhFIc51Y+kMXkTiXE+7szxXPNywsR5FsmZ3VDlj/2Coqd+8HJ/nH8kpwx+C3Hgg6OuZZ8+gRXdXey1zMOjTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720440839; c=relaxed/simple;
-	bh=VIxaSTJMP4e83SuwPanq+HI++XObKHsfmXv0NSHYuak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOezLPetDYrrzKr9Z92wa1B0JtzDOQL3rka7t1+ZTYM2StTJGs2uIW8spLlbXrFp942l3yJUSZMrRPHW97vnwXti/GlTFXRIWd1rGEqIRqQVIfQAfM0uW1yvNomw2G2itxR3wEbxEw4uFRHnfk0jvKYWSBIuWG6l5P+OWjn+xfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYM6ElBb; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4265921b0f6so16629695e9.2;
-        Mon, 08 Jul 2024 05:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720440836; x=1721045636; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SeeftVXSInefzAV8X4+3PNovL2BBN2pSERX3ct9/JzM=;
-        b=MYM6ElBbpldImEVXZgfNzUNjWP2NP4dfy7bex08y7BEJhuBZrJ+/4Iint+l4a/c8Gq
-         Wjw/1wdraUdHvDJLuaziMT3sox956ZqKyDb3Ahyn+VwV5qKamiJSv5PH4zZsGx+t/ABL
-         qQXH+8WhqfzpqG4XANr76AmMs1hZnmUiPkoIXS3Ueaq7h/a5nYXHqZmL1U25HX6qUc4k
-         afO2U57zsQLsghAmqLCpF5j4MKjxxUiVIH/S6aFudbZji4Ko03o/ADe5iyLG/NpoPjEY
-         W2ONxyb23GLDZsDmmQhOQLb0xt1M2dwVKraRCFsij1dHggtD16smoDaX+zxt7fv8V6tk
-         Ii0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720440836; x=1721045636;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SeeftVXSInefzAV8X4+3PNovL2BBN2pSERX3ct9/JzM=;
-        b=GM0uMTkn1FsfIdnGofzmGpsSMXC8UjFipWCSgPReZaKb0DuVv/hBx0mUQ0pnVjl8Ah
-         gW/F5531wyVPkzNmr5jSCUXOCoQUGNkjNeHW+8xW8r4bOB7dFg/3aBShnegjgo53Canm
-         Pvd4mbnxW/K+Y0tdSgKrRwdPKOm6rk3UuNlChNVGVT8sbjQ+ccwdXTLHRJ9YOremlObD
-         1bW2EwqqPGV6uS8CFf0btbeMnajgGdp8khP6BKmX4gQEiShfDI6psemqx0c2iYF7h5Xk
-         xx/dfS1HY5h/slY3byYbeOORrTlToJdIzbozUdiKZbAVRHSCXoccdNfHWCC8P9D/FOGy
-         njJg==
-X-Forwarded-Encrypted: i=1; AJvYcCV09pZktzKnr/qPQMGi/T3v7Uybfv5eL+kd/Vr0FiiqN6vt5hK3ATZcIa/4dedeeEu0uwBu/lMQBXyPGFxtW0PKDn1+DpzlycAO3jKxgbfTuCE/GfrYRxOej2AFJbvwnMY6crPN
-X-Gm-Message-State: AOJu0YwAolfscrzidqM62kpe3h/qCdUvQ5hop0zTwNVVH3c9d67YaFog
-	34wEjYvBVPuFP/vHFk1oFP/WdZgn+Xug2wfMpMwOEZdZ1mcokqt0
-X-Google-Smtp-Source: AGHT+IEPUB/CE/7/FTo9q3R9Q6EzwdPWS0D+NTCJD5ZMdzk4Th99z0AuoS1Pisg/BbLh/WUr+c69Kg==
-X-Received: by 2002:a05:600c:2253:b0:426:5b3e:daa6 with SMTP id 5b1f17b1804b1-4265b3edee4mr51235845e9.35.1720440835759;
-        Mon, 08 Jul 2024 05:13:55 -0700 (PDT)
-Received: from skbuf ([188.25.110.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266303ded9sm70801745e9.34.2024.07.08.05.13.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 05:13:55 -0700 (PDT)
-Date: Mon, 8 Jul 2024 15:13:52 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Christian Eggers <ceggers@arri.de>, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Juergen Beisert <jbe@pengutronix.de>, Stefan Roese <sr@denx.de>,
-	Juergen Borleis <kernel@pengutronix.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 2/2] dsa: lan9303: consistent naming for PHY address
- parameter
-Message-ID: <20240708121352.gnhhjuvvoxpjhtpv@skbuf>
-References: <20240703145718.19951-1-ceggers@arri.de>
- <20240703145718.19951-2-ceggers@arri.de>
- <20240704192034.23304ee8@kernel.org>
+	s=arc-20240116; t=1720441032; c=relaxed/simple;
+	bh=QXRPhjyeTJAXjPvsuowDft2z1JMupmKnRIyGAGOAty0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F23wujIgVVdVQyeMOt/+V4Jk5xMC9Bczg5RZZjGNqwddPLG6DUG8bGD6jxDM+o0XXq6isJQiNF7Ou2TPzpOkEtymdLvkT454kKwxKjXwz1QNc3IoYI7rTNx3idFFs2JQiw2Emg0405VBqMgc4tCvvNAQkY3VtrGtmpGN31sOzHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LZtLy5Ko; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720441031; x=1751977031;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QXRPhjyeTJAXjPvsuowDft2z1JMupmKnRIyGAGOAty0=;
+  b=LZtLy5KoiDhJSyaxBtu3RbkZwv8TtVwE64kjgCg9z30JUYk5GfAXvSrh
+   +QEffM1v5s2ln2XgVVMGNq3pK5YWvvz0dhXnyF7OEze43BXa3XEZfuGwO
+   f+MfkJB5ELEGnwfB69x7jx41OxW9CH6Q8PMXEdQ1/5nqLPcdCpmZFVmDJ
+   U3LljzOno3hU8oFT4V+3ZfocGAFBumZOXudVIcGFHpKjwk3K1S3e8iNPV
+   lFVXPJ9bGodxJTCSTW70ew1LQVbXRz+5IS3gXXnWQoSQA7nrz/7oBJJGd
+   JYxWfm8DRMgb3GjBk7ZdyhsscmpwZY3kg/uE+OFtIvknOrIaYMIYINuny
+   Q==;
+X-CSE-ConnectionGUID: bz+ouNH1QXiMZbW9Z4UMeg==
+X-CSE-MsgGUID: jZI4bQVGSHqxbmpCEVacjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17843940"
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="17843940"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 05:17:10 -0700
+X-CSE-ConnectionGUID: AuI47fOlTlC7raMfskdFXg==
+X-CSE-MsgGUID: b41/eL8ARr+xZ4B1Tr+nyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="51908113"
+Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
+  by fmviesa005.fm.intel.com with ESMTP; 08 Jul 2024 05:17:08 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Louis Maliyam <louispm@google.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu/vt-d: Fix aligned pages in calculate_psi_aligned_address()
+Date: Mon,  8 Jul 2024 20:14:17 +0800
+Message-Id: <20240708121417.18705-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704192034.23304ee8@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 04, 2024 at 07:20:34PM -0700, Jakub Kicinski wrote:
-> On Wed, 3 Jul 2024 16:57:18 +0200 Christian Eggers wrote:
-> > Name it 'addr' instead of 'port' or 'phy'.
-> 
-> Unfortunately the fix has narrowly missed today's PR.
-> Please resend this for net-next in a week+.
+The helper calculate_psi_aligned_address() is used to convert an arbitrary
+range into a size-aligned one.
 
-How does this work? You're no longer taking 'net' patches through the
-'net' tree in the last week before the net-next pull request?
+The aligned_pages variable is calculated from input start and end, but is
+not adjusted when the start pfn is not aligned and the mask is adjusted,
+which results in an incorrect number of pages returned.
+
+The number of pages is used by qi_flush_piotlb() to flush caches for the
+first-stage translation. With the wrong number of pages, the cache is not
+synchronized, leading to inconsistencies in some cases.
+
+Fixes: c4d27ffaa8eb ("iommu/vt-d: Add cache tag invalidation helpers")
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/cache.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/iommu/intel/cache.c b/drivers/iommu/intel/cache.c
+index e8418cdd8331..113834742107 100644
+--- a/drivers/iommu/intel/cache.c
++++ b/drivers/iommu/intel/cache.c
+@@ -246,6 +246,7 @@ static unsigned long calculate_psi_aligned_address(unsigned long start,
+ 		 */
+ 		shared_bits = ~(pfn ^ end_pfn) & ~bitmask;
+ 		mask = shared_bits ? __ffs(shared_bits) : BITS_PER_LONG;
++		aligned_pages = 1UL << mask;
+ 	}
+ 
+ 	*_pages = aligned_pages;
+-- 
+2.34.1
+
 
