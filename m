@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-244231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BAB92A13A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:32:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE04192A147
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5DCDB23930
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69069282199
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114F07E56C;
-	Mon,  8 Jul 2024 11:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EF27F7F7;
+	Mon,  8 Jul 2024 11:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+k2dce5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XsDoAPbD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AD91DA23;
-	Mon,  8 Jul 2024 11:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E2A101E2;
+	Mon,  8 Jul 2024 11:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720438366; cv=none; b=G7g1x08UfedtYJKuvE8cFSYbjWwD4+qLO46gy2PpAjsHdiJai/DIJaCn67in//gZ0t9DcnQN00r9zL+EKIkkY9s5s2e0aGZWJfQcc87Dcto1tofkCv4EzE9NN/sHuQkFpCUGVdD3bzgPtz7ZH+mWpTC+zFIIfCdzegxf7ByEuXQ=
+	t=1720438534; cv=none; b=rMtvLvHfDZuy2QKdzSjWgf3x4wsSLdifFPctKND5vRswnjbDScJN+2iWXv8Mf+e3/49HDM09N1RdB6QGJ/zIGeo75wYYAzmR4rW2Vf3NoDYQH9HMuAFTHx7D+CWILNeZYWZwjgaaBs9d2ThcHqAbsExYpjCgpqb7S3Gim3W4Wq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720438366; c=relaxed/simple;
-	bh=TaP69O1AcTHwGGnpWBb+wF1ItMcV2MzDgm63vJ/vqws=;
+	s=arc-20240116; t=1720438534; c=relaxed/simple;
+	bh=0q5Ds8WIeOv5Y3nTVZNg0tKqv7bBejypl3Rg0QFJqmI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dzgVbywkEVblOBzpNwPLHtbpDmOTvQDYjgnEaDYyGYajRARBxT5w7w9ZXs1+5A1Nc7F5abnUsARxfIt/yIb/OFrjxESQgagbE5YRu/NjmorrrciFmLUaEC+1o+RC5roaqD06Qyiwx4fPvyZIkvHLxlJzrHJU44mq8xwwy0JskMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+k2dce5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E097C116B1;
-	Mon,  8 Jul 2024 11:32:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9WPUCZY0oh592sGKdXVmYB6fysso1qerFhGIAPUJh4200o+E8PqYUocBDGYAYM6hCDUuEZ8HBowjmDAE7wMy55GCmRT8/lB0SaQHuBfaPv5GGtjdzfexNiVY9UH50adyBn8yjEMZJASz8MnInqoHhL6xqYE32nYXBs0Rf1rZLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XsDoAPbD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACDD9C116B1;
+	Mon,  8 Jul 2024 11:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720438365;
-	bh=TaP69O1AcTHwGGnpWBb+wF1ItMcV2MzDgm63vJ/vqws=;
+	s=k20201202; t=1720438534;
+	bh=0q5Ds8WIeOv5Y3nTVZNg0tKqv7bBejypl3Rg0QFJqmI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t+k2dce5TnT1WRk3788Sn38Aoem0o9jftgrTRomrVEtm0jrcR2nux9hbucmBGK0Oq
-	 JrP+5xcfchMMeZ0Z6tWe2Q2cxWBC3GgHWGoaKeEC7ESFNkWHGsB5VlL5FVe3WbPXqT
-	 e4lBrwFnBqgt4EVl39B96rGiMmmuvp5Li4xaMSS2TiBW61XWd2MvqET+benYLiFrHS
-	 b3VKFcM9CUlPCQFfQ+8IjlfV2Zjlh4JN1jCB4HNt4OX91Yj1GC5/XURSTYUXbt52zy
-	 v8VChEX9QD/X6BpmTr5j1JwDQipXr5DK4AsXkmm6imjZJ6kfWPUvH+fgGrYpCKhvoA
-	 oDBQOzuHf43wg==
-Date: Mon, 8 Jul 2024 12:32:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: add ch341a usb2spi driver
-Message-ID: <5890754d-50a7-4db6-a33e-bba64ca1389d@sirena.org.uk>
-References: <20240705145138.5827-1-jth@kernel.org>
- <aa3c79a0-ecbc-4f12-b540-6570350a7909@sirena.org.uk>
- <8a2467b9-4eb5-4ab4-a4c8-da37875fe4c9@kernel.org>
+	b=XsDoAPbDuJawip0mO7VPHOcAtC8umkEX+3mruYsdiHMQTMSnCjk6khCQQhBFOVU2q
+	 szsII3oJXeXPXn/TD1fBgYjrRriwN7ffC0ijh8PvFS/JWshQeFdlZKBesvFDDo5JNp
+	 ebFxkePURnK0zM1B3jsYHT4MNNEkTpuSUbDOJ0wqE7eJfaQfSWxRo0vWoC5QTabCIW
+	 I9ZALOcwRGl2VBpOZP15lKg6qpE8NWgViVA291vGz6q0ajZOlvg0o3swDvw0f3PyCc
+	 eOMz086l52tHH0De4Ngoa9ZI+DYKXoJrjaUifAz9HtEFirAu5kGY4AnRE4k3HNrj2S
+	 wF50L1Ci27E9g==
+Date: Mon, 8 Jul 2024 12:35:25 +0100
+From: Will Deacon <will@kernel.org>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
+	ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
+	tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
+	peterx@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	david@fromorbit.com
+Subject: Re: [PATCH 13/13] mm: Remove devmap related functions and page table
+ bits
+Message-ID: <20240708113524.GD11567@willie-the-truck>
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kxlYLbY8/HSZ+yg0"
-Content-Disposition: inline
-In-Reply-To: <8a2467b9-4eb5-4ab4-a4c8-da37875fe4c9@kernel.org>
-X-Cookie: Many are cold, but few are frozen.
-
-
---kxlYLbY8/HSZ+yg0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Jul 08, 2024 at 10:04:41AM +0200, Johannes Thumshirn wrote:
-> On 05/07/2024 19:41, Mark Brown wrote:
+On Thu, Jun 27, 2024 at 10:54:28AM +1000, Alistair Popple wrote:
+> Now that DAX and all other reference counts to ZONE_DEVICE pages are
+> managed normally there is no need for the special devmap PTE/PMD/PUD
+> page table bits. So drop all references to these, freeing up a
+> software defined page table bit on architectures supporting it.
+> 
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> ---
+>  Documentation/mm/arch_pgtable_helpers.rst     |  6 +--
+>  arch/arm64/Kconfig                            |  1 +-
+>  arch/arm64/include/asm/pgtable-prot.h         |  1 +-
+>  arch/arm64/include/asm/pgtable.h              | 24 +--------
 
-> > No validation of speed?
+Not only do you exclusively remove code, but you also give us back a
+pte bit! What's not to like?
 
-> TBH I haven't found a command that reads the current settings of the device.
+Acked-by: Will Deacon <will@kernel.org> # arm64
 
-Why would reading things from the device be relevant to validating what
-we are writing?
-
---kxlYLbY8/HSZ+yg0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaLzlkACgkQJNaLcl1U
-h9DnRwf+NTQGAhTVqssU45qKbbkktImuHudAFa8Bjn4ZP1dMFrSJ1ZxxpX6dHi7W
-zRtP/gHvK2WYJ/tXPqvbDKl6qlGzMouUpKQ40pIBZRMNEBsZa+0UWGTIiTz7w+6T
-mJYdjgv/wv8AawKE8+KcSeUCCZVEyPbtb5MerXc5yq328xv8phflMNdg5YTXVKPn
-Sy+hrifX6Q7puMYrJG6vcFdONPWFTswSMrbzY0m8dla/Lvbq7KTzk/HafCRgmwEj
-eoJ+N0K78E5n2CewDY/dHGFZOC+0PsIa7YXrUZoUGiwiwOEyrIpzXqLict4r2SpH
-F93d6xnWNp6isRyDy+MJG1DoD3a0Ow==
-=Vlwg
------END PGP SIGNATURE-----
-
---kxlYLbY8/HSZ+yg0--
+Will
 
