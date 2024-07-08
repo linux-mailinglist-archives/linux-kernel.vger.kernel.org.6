@@ -1,176 +1,336 @@
-Return-Path: <linux-kernel+bounces-244938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A98E92ABF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:17:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA4D92ABE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EAC21C2207F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5A0328305C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317D4152DF2;
-	Mon,  8 Jul 2024 22:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A6E14F9FF;
+	Mon,  8 Jul 2024 22:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="cApNb++L"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02olkn2077.outbound.protection.outlook.com [40.92.44.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lass6E3i"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FDD39AFD;
-	Mon,  8 Jul 2024 22:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.44.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720476981; cv=fail; b=U1f3ThjH1gFPxLWVqXqM59UcefG7HUDTR3l1pTx+WM3zM6I7r+Im8TNiK1UOtmm/fXTk3O1xxroyvouxlObziHXJEpqiJUwJhQ0xZ6bRyFgF1KNn6HACC2AZ163MHxYhUHgPUFmHvUtgs61VUEZZM1JZ8NoCw+Y6g2WUxEIlEZs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720476981; c=relaxed/simple;
-	bh=XauxVu0WABWxbCGod7D4FDvSFamnH5KE+1jB3nSV7Ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uqNTK2EBGYnVkDXYNiVOc0wuJkNSF1QEr+/MczRlAAsY7hWQUONNXOCf1QU0sfsc6pXZb0mhIL0X9mJItmylBJ60DOFhQEwBb9aJHeO/2nhNDXMcOGMDZXNnf6N2wlq3MM840ba8AcjL2IM5rEYquzR8sNbda/Dg3GnR2z5vqNs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=cApNb++L; arc=fail smtp.client-ip=40.92.44.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kgPC09x7e4KNsI7/0EcNs2sV0A7HT7lGaFaMFZ79u2rE2sJpKBvjqR8BZSTDczRGkGQSmNYpAK4i8kMDVgVED6++taGTPbPRVqjFjNFxy/L/qfUbO88w0omlhE8Hpr1L0khEAYkNj107j1t0BIBySwKsXxtbQpyKey+M/44iN3ZFD+hkqeYdFwPczKjFftY94cLN/UvC/Vpf/rlwmOBy4Wh8JbuYXh0P0dvou995iI3mgl1einhXqcRslVfAxVFoHKbGsFu76f77hiqu+US8uXuaxH2tHvbvfQWsR/nKntt9Jh51z+O2BYUJgybbBbcDyGh2Z3+7IA+yoxP4xF9a9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XO9fUZO6x0zYtoWSkXRVi3VFwWwomR8OJn0q9N0TmJk=;
- b=WCChUqqGPavV9QSRg/1gY5vYzbP3SApv0QpFbIPlzE6Z3XAdnMSB1Ih7JaFrzAErXkXn6zSgoizu+Lz2P/NnlwxoocxJytloZEVxL/d2a64fbWZoTi+l3Iy+G7+RLmR2qqZdlppZWjtLAZZgU8NG8ffUnjczDn/HO855NIbEZeMWxqxLvc3SZlH7l/lhtsYmW9GNT92SUDCxxjIspvZxDLVXUtDYPdOmwVRE+Co96NwNSMvioIX89gJ5sRVqazP0y9UMzui7/0uMJxRoJyqU1VEXqUB3DEOhIsYN7LAKuKVyjK3esnH9RCSKeRfTcm3na/BwAwpoP/jxi6LM7KZaXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XO9fUZO6x0zYtoWSkXRVi3VFwWwomR8OJn0q9N0TmJk=;
- b=cApNb++LEzn14LbXnArf3GGag7ArD/MHKrqOTe+3cfF/3AEKn6omSwkIKGjBmA4Xc3MLKurXDe+wI/FXkS6RqCfbF/cw3B3QZ91fm68ZxYJjKxF76wZP4f1Rxu1PLJjgE2LLXlA46aO+n1QGWo0oNWDRROXpPHxQQrpt3KwAmCG2Y/a5apcQjJSQ6429lLJa1qIadPi/ZQJQ+d0FKApXIUKcMACEqeOwJuUDKAYBTcYI8OzZOCsaYr+in6iyniiwOBwQgnAvpRjeEHChf6ZdsSgVv/99xNYiTB7vJDITgi5ZdXLhmGjWOZ6Be4d5K5KLSy4UGiCeKe4lAYrQbgpufQ==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by SN7PR20MB6035.namprd20.prod.outlook.com (2603:10b6:806:358::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Mon, 8 Jul
- 2024 22:16:17 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%6]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 22:16:17 +0000
-Date: Tue, 9 Jul 2024 06:15:39 +0800
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@outlook.com>, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v6 2/2] drivers: hwmon: sophgo: Add SG2042 external
- hardware monitor support
-Message-ID:
- <IA1PR20MB495309AA07F1B77D4DA1EF6BBBDA2@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB4953967EA6AF3A6EFAE6AB10BBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953EC4C486B8D4B186BB848BBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <MA0P287MB2822935DEA9EE418F3411CFAFEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <IA1PR20MB4953230DCEDD7DF01134A8A9BBDA2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <MA0P287MB2822676C9CF9443B9A3CB657FEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MA0P287MB2822676C9CF9443B9A3CB657FEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-X-TMN: [QSFSlv4DpVhTXGSbGCBHt/Thw7nSUOUjQejCPGo3v/o=]
-X-ClientProxiedBy: PS2PR01CA0048.apcprd01.prod.exchangelabs.com
- (2603:1096:300:58::36) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <umzw6ckzltd4gbznxnfpubbz7gsgiu3ivgkllv2q5mrnya5pfp@mma4vhbz2q6e>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EB614EC44;
+	Mon,  8 Jul 2024 22:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720476950; cv=none; b=G9VMXy6d2yipXj5o9XWZ42IYQTDwR/pr/TnbLUjyC7TORk2V/oARQFdDYcjn971W4uJrLhqYUtJYCU8nUzdjUuYHqccpl95CQzPnLwDLX4uENxZztVnqcvGxmwVvXju5W5OoFxyqlkUTBUK+J+PQKJvEAP5sVQ5n9kLCnLiziRk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720476950; c=relaxed/simple;
+	bh=ymbu5+bIDcpN0rmlC5oWU/KXdLu7wOWeG7hHztdx8Gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q0RfamCXKDGdJWErg7ymbttbbUO7VdjsJudaB8ud+8wvkwFWierb2H/PYgKaDNkKWANyUXczzeaUxvb9KsnLQu/EyBumhaxMoP2eNs9JLSGkIhY1Y5gui+emNciwhLF8QV4gBLOp/0p+QOtRQM1+YNR+EQnHX7KnqenUj7TLPgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lass6E3i; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a77c080b521so488829166b.3;
+        Mon, 08 Jul 2024 15:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720476946; x=1721081746; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WakRVrhzYTWXcephGvejlAmFzJ/7jV1NnXpteDXimuk=;
+        b=Lass6E3iMA+UWW4RV+iMJ7WfgOsRHUIiLS+iP7l/NGf2U79oJT4T0SBR+VCJH7f7J2
+         0hLfKPc3jVuiYECqICoqrpdsSGwN8MCcRNTnb+wy82wGEElnJBU+jUgYBgShv0vtJAXR
+         jXTF6/DrM7ntJDg4yAcx5XQAzUf148SHpQuUNUbN89JwQl+4wo/z/cg9601cINj2lyzt
+         rkbaB6iQJ2fKMa8O5o30lm24T552W2Opo78lTQktigPakDiIfTa5Gdqw5FAyjHipBfZ7
+         42OUeHP6zIIdfH6qH8tGS9kGL8iRshRLaXe6d9MczLV/j2RBRmiVIOaGzi0uRM4DZjt3
+         x4Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720476946; x=1721081746;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WakRVrhzYTWXcephGvejlAmFzJ/7jV1NnXpteDXimuk=;
+        b=Jko+iYb7CSaYgr5EzxweH0xUGdhsCnQZ6FGfSCg8jmltppfVv1a/9BE9s56TIZL3Xn
+         WiZM0eJvXdvNf5yYswy9L3mR5JkKdwdHkM3rhqO3PeZkHfd7cT41viR8j12p0U6NQ2pC
+         UAPdcNq1kxxL+vzPzul0gC0V8P6tUBM+DeIasgfy8Nxl9m0JZQB8IuEti9XI2zWxosr9
+         rHjJLd7XOQ1CS3xPAa/vURWAJqHCBP/GRoWN4IB7nvBKErlHrqGWzv35RHfrQDgVWRJe
+         ajd+nzLNOvX1W2t4YDj7xSd7rS5PSMJxiJdpb06csFwLEUNf1ZWBTvpbyFsHisdMMKWE
+         y6Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2zvRMPalTUNAa8JXmR9BdsgT3Mocwt4d8d66gnQqbpoVsWJxr7xcpOeTt124obv7WuFysAiY+AingCVRfArVuV+FMU9pQ7NynGIeAk3DiyXPbbrA4pGl868CZrKvdYLNvvA5Zr4Mvif1NgYDhCXfGsM+/S9pW6T/WIjy3TJwO
+X-Gm-Message-State: AOJu0Ywavk2W69P8HGKgDL9NoW1MfptdGOWadsBLq4bFStvIvjflbELV
+	qRT2/ukQvhWiwcJdcz20NUKwjpYyKun8cKjBqyUSVJg4Vx3dzvNU
+X-Google-Smtp-Source: AGHT+IEZcHx32uwM0SrELtiDJgoF/S5vkZBXbHEgN/9T6mcWUeRzj4UwPkYWYyBBm364aazg6hohtw==
+X-Received: by 2002:a17:906:11ca:b0:a75:1006:4f23 with SMTP id a640c23a62f3a-a780b6fe8d0mr40318666b.34.1720476946294;
+        Mon, 08 Jul 2024 15:15:46 -0700 (PDT)
+Received: from ?IPV6:2a01:c22:7b0c:a200:89f2:32cc:d63b:a6ad? (dynamic-2a01-0c22-7b0c-a200-89f2-32cc-d63b-a6ad.c22.pool.telefonica.de. [2a01:c22:7b0c:a200:89f2:32cc:d63b:a6ad])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a780a6dc626sm26656866b.46.2024.07.08.15.15.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 15:15:45 -0700 (PDT)
+Message-ID: <e1ed82cb-6d20-4ca8-b047-4a02dde115a8@gmail.com>
+Date: Tue, 9 Jul 2024 00:15:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SN7PR20MB6035:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4bfce0c-cd05-4929-f1d6-08dc9f9b9630
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|461199028|8060799006|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	x+4bBCKMsWd5/HKAtARHeCxDI79f+ttcW6PPta5G8qvAf/aEV1csA0pqGGP/SFBMN0rJGuUigmAarl1dfalhopQhXDjTr94JMhe42DzuIU/8L2SNc/NOk1TwlUe7DZSyXO6JXW/soLY/iTK0yauhuE803JKqjKxgl4c7s0Xp6ck6dsYlZ28XBx0xLjz5q+un/9VudkGIo1SM6ZOoX+tc/aK2phIbnnopJVWFfUuJi564Y9URYQhQaOwmgeSeUzSB6slmkACtRMPbhLij3M+SAHcoMnbDS6GUzGXYHJAUBJiR1dAysNfXUaDE/IGLMdlpp7/pUCIw5QS1Bvrtj0MGcYKHIELTCEkpa5lix3SYifAi47SoYXUthOQsr43ywqgcA+UTP9WPgK0jvsCuPb6hh12KqeH4MylEDUV9yUZHOpnOiOEu4gzF44bAwNYbcJH2pqz+Qw4XUTCh6fYTUsKKAdzl3Zy/NNO3g62FuRh7CYaRBwMGzNwd4yHrwllgeOYf0e7hAJDMsMR2hR1bsLcgYdrcfFeCFn5bRuJ7S7U0tLiissgU59rC6puBZgj2gBYiLxFi/1jpkBsEkJEBHcVg+6wnwFIjnW0cFe/C3xucnOne+iPBA+KMNgagDsULf2s2q7j6INTstkb4NhFiXqWW20Tvcvi553/rAXZnvuDUPCGrVSryOQT6Jjnh8k0fME+L
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pORryrrSWAJlgfIo9z9eetpp1RHQQh13RqJfQfpZRr8zqyF0Gv+QZmIMNgbI?=
- =?us-ascii?Q?JGevnIW0C2n0OJTP28KmVBrovRuKVTetxOOITEEzXpyVh68Q/IeCW52MT4XD?=
- =?us-ascii?Q?yFoHqFqQQBSlLihiySKJu60G2ZOxZgr+hXraxeUd1OF2RxU7J2HJq7NWwRQC?=
- =?us-ascii?Q?ntmqr78JSzhxtnQu5JnrCA3Eot4JUie7KcKzfHmAm+wx8PK9Z4HQbUJ3HGMA?=
- =?us-ascii?Q?k9XtJbYDGyHbJu6WC8AvZIgbdB624rojp0uCwFRPJJNb/ihYlpFEsfFcQuhv?=
- =?us-ascii?Q?aAecBtBIgjj/VxWisGmYMNsF7L3LwEJnONwrtMIuwhKVYIWSkble83qy99m3?=
- =?us-ascii?Q?hiIg+OPgvXIVlXFsmeMQO1/pxQi8CiZ0Z4PkdvimIb/SKCfdUgSnc5OspcEZ?=
- =?us-ascii?Q?QjaX5sn/gIh3lH35V0gKtnALbw9N2I5eECd5Jq5zPCvmtRryvTz3OR+DTNPL?=
- =?us-ascii?Q?NXbhp7XDEvAu9MU9W6Vavm8DQTe0+QWG55nyjTF+jDSfosUXcXqAFHKXfk0h?=
- =?us-ascii?Q?rU5gYJr62Wj3dLj6SqxAStMRyVtSDlwVm2t2QCbJyz76GGCqt0gEpnBovOKn?=
- =?us-ascii?Q?XucHuWHVgg59s2Z68IAA9ZFTsncRSsJeBJmfkZWL6hjaCl2fQ00Q3rATU1zF?=
- =?us-ascii?Q?QLCgD3R/mm0e4Pbz0JSB1cfEQqQDTKkKONqc3Op7kQk4egzqZTYQSvmLpR4A?=
- =?us-ascii?Q?mNy/flcJvXs+gCKurmOCUwNVZ2TBCvzeIGCewgpjBONfG08qWsgtXNp4BPzK?=
- =?us-ascii?Q?7m3+Gz7jdQvhY1U/30fVGxnEesRq6jc/2wvAyyuBqA2sfU9mpi67mODhgE51?=
- =?us-ascii?Q?RMdvTs36aXND+tv4mc1S4dAo9ap+pkULWgd4J2JVwhUX5xnCvFB2VELCioAz?=
- =?us-ascii?Q?GFfSlR9O5bbeQfn+3m8WSaDnaygAe2ktgF7H/4omSmX+Jg1jIxtsNqNJEhEI?=
- =?us-ascii?Q?DKirOVKLO86+HIZfgDkUHg69asakAzEqYpshW6VUcYgArs1Qy6fSBiMTjNWI?=
- =?us-ascii?Q?crxFR0Q2zdqZ137BDFy+T77QtcYV5lAS2rJO7+tfhwxrdSJ3drD0+jmgKOlG?=
- =?us-ascii?Q?3OI9K0uqFLFJC3u81Hrg3gnP43IbxCOZt1t6+hCBZFIW/sCMeeA71RLEZRBF?=
- =?us-ascii?Q?M2ra1nkieO/07OmiwAEn3yQvsWKENg/bohqJESlYUwdATcjcgiE1WOIvdZag?=
- =?us-ascii?Q?OlfqfuDqXKPcZnFMnQaDGvrFG05OjzFwgZwxk33/KYJzh6CUfaIaIu+V5V7l?=
- =?us-ascii?Q?+AHHvbvK8uu4K+IhZkM6?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4bfce0c-cd05-4929-f1d6-08dc9f9b9630
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 22:16:17.0970
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR20MB6035
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
+To: George-Daniel Matei <danielgeorgem@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, nic_swsd@realtek.com, netdev@vger.kernel.org,
+ Bjorn Helgaas <helgaas@kernel.org>
+References: <20240708172339.GA139099@bhelgaas>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20240708172339.GA139099@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 08, 2024 at 03:11:37PM GMT, Chen Wang wrote:
+On 08.07.2024 19:23, Bjorn Helgaas wrote:
+> [+cc r8169 folks]
 > 
-> On 2024/7/8 8:53, Inochi Amaoto wrote:
-> > On Mon, Jul 08, 2024 at 08:25:55AM GMT, Chen Wang wrote:
-> > > On 2024/7/3 10:30, Inochi Amaoto wrote:
-> > > > SG2042 use an external MCU to provide basic hardware information
-> > > > and thermal sensors.
-> > > > 
-> > > > Add driver support for the onboard MCU of SG2042.
-> > > > 
-> > > > Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> > > > ---
-> > > >    Documentation/hwmon/index.rst |   1 +
-> > > >    Documentation/hwmon/sgmcu.rst |  44 +++
-> > > >    drivers/hwmon/Kconfig         |  11 +
-> > > >    drivers/hwmon/Makefile        |   1 +
-> > > >    drivers/hwmon/sgmcu.c         | 585 ++++++++++++++++++++++++++++++++++
-> > > >    5 files changed, 642 insertions(+)
-> > > >    create mode 100644 Documentation/hwmon/sgmcu.rst
-> > > >    create mode 100644 drivers/hwmon/sgmcu.c
-> > > > 
-> > > > diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-> > > > index 03d313af469a..189626b3a055 100644
-> > > > --- a/Documentation/hwmon/index.rst
-> > > > +++ b/Documentation/hwmon/index.rst
-> > > > @@ -203,6 +203,7 @@ Hardware Monitoring Kernel Drivers
-> > > >       sch5636
-> > > >       scpi-hwmon
-> > > >       sfctemp
-> > > > +   sgmcu
-> > > This driver is for sg2042 only, right? "sgmcu" looks be general for all
-> > > sophgo products.
-> > Yes, according to sophgo, it use this mechanism for multiple products,
-> > so I switch to a general name.
+> On Mon, Jul 08, 2024 at 03:38:15PM +0000, George-Daniel Matei wrote:
+>> Added aspm suspend/resume hooks that run
+>> before and after suspend and resume to change
+>> the ASPM states of the PCI bus in order to allow
+>> the system suspend while trying to prevent card hangs
 > 
-> But multiple != ALL.
-> 
-> [......]
-> 
+> Why is this needed?  Is there a r8169 defect we're working around?
+> A BIOS defect?  Is there a problem report you can reference here?
 > 
 
-We can add new driver when there is new mechanism.
+Basically the same question from my side. Apparently such a workaround
+isn't needed on any other system. And Realtek NICs can be found on more
+or less every consumer system. What's the root cause of the issue?
+A silicon bug on the host side?
+
+What is the RTL8168 chip version used on these systems?
+
+ASPM L1 is disabled per default in r8169. So why is the patch needed
+at all?
+
+> s/Added/Add/
+> 
+> s/aspm/ASPM/ above
+> 
+> s/PCI bus/device and parent/
+> 
+> Add period at end of sentence.
+> 
+> Rewrap to fill 75 columns.
+> 
+>> Signed-off-by: George-Daniel Matei <danielgeorgem@chromium.org>
+>> ---
+>>  drivers/pci/quirks.c | 142 +++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 142 insertions(+)
+>>
+>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>> index dc12d4a06e21..aa3dba2211d3 100644
+>> --- a/drivers/pci/quirks.c
+>> +++ b/drivers/pci/quirks.c
+>> @@ -6189,6 +6189,148 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56b0, aspm_l1_acceptable_latency
+>>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56b1, aspm_l1_acceptable_latency);
+>>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c0, aspm_l1_acceptable_latency);
+>>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c1, aspm_l1_acceptable_latency);
+>> +
+>> +static const struct dmi_system_id chromebox_match_table[] = {
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Brask"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Aurash"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +		{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Bujia"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Gaelin"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Gladios"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Hahn"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Jeev"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Kinox"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Kuldax"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Lisbon"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{
+>> +			.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "Moli"),
+>> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+>> +		}
+>> +	},
+>> +	{ }
+>> +};
+>> +
+>> +static void rtl8169_suspend_aspm_settings(struct pci_dev *dev)
+>> +{
+>> +	u16 val = 0;
+>> +
+>> +	if (dmi_check_system(chromebox_match_table)) {
+>> +		//configure parent
+>> +		pcie_capability_clear_and_set_word(dev->bus->self,
+>> +						   PCI_EXP_LNKCTL,
+>> +						   PCI_EXP_LNKCTL_ASPMC,
+>> +						   PCI_EXP_LNKCTL_ASPM_L1);
+>> +
+>> +		pci_read_config_word(dev->bus->self,
+>> +				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
+>> +				     &val);
+>> +		val = (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
+>> +		      PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1_2 |
+>> +		      PCI_L1SS_CTL1_ASPM_L1_1;
+>> +		pci_write_config_word(dev->bus->self,
+>> +				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
+>> +				      val);
+>> +
+>> +		//configure device
+>> +		pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
+>> +						   PCI_EXP_LNKCTL_ASPMC,
+>> +						   PCI_EXP_LNKCTL_ASPM_L1);
+>> +
+>> +		pci_read_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, &val);
+>> +		val = (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
+>> +		      PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1_2 |
+>> +		      PCI_L1SS_CTL1_ASPM_L1_1;
+>> +		pci_write_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, val);
+>> +	}
+>> +}
+>> +
+>> +DECLARE_PCI_FIXUP_SUSPEND(PCI_VENDOR_ID_REALTEK, 0x8168,
+>> +			  rtl8169_suspend_aspm_settings);
+>> +
+>> +static void rtl8169_resume_aspm_settings(struct pci_dev *dev)
+>> +{
+>> +	u16 val = 0;
+>> +
+>> +	if (dmi_check_system(chromebox_match_table)) {
+>> +		//configure device
+>> +		pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
+>> +						   PCI_EXP_LNKCTL_ASPMC, 0);
+>> +
+>> +		pci_read_config_word(dev->bus->self,
+>> +				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
+>> +				     &val);
+>> +		val = val & ~PCI_L1SS_CTL1_L1SS_MASK;
+>> +		pci_write_config_word(dev->bus->self,
+>> +				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
+>> +				      val);
+>> +
+>> +		//configure parent
+>> +		pcie_capability_clear_and_set_word(dev->bus->self,
+>> +						   PCI_EXP_LNKCTL,
+>> +						   PCI_EXP_LNKCTL_ASPMC, 0);
+>> +
+>> +		pci_read_config_word(dev->bus->self,
+>> +				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
+>> +				     &val);
+>> +		val = val & ~PCI_L1SS_CTL1_L1SS_MASK;
+>> +		pci_write_config_word(dev->bus->self,
+>> +				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
+>> +				      val);
+> 
+> Updates the parent (dev->bus->self) twice; was the first one supposed
+> to update the device (dev)?
+> 
+> This doesn't restore the state as it existed before suspend.  Does
+> this rely on other parts of restore to do that?
+> 
+>> +	}
+>> +}
+>> +
+>> +DECLARE_PCI_FIXUP_RESUME(PCI_VENDOR_ID_REALTEK, 0x8168,
+>> +			 rtl8169_resume_aspm_settings);
+>>  #endif
+>>  
+>>  #ifdef CONFIG_PCIE_DPC
+>> -- 
+>> 2.45.2.803.g4e1b14247a-goog
+>>
+
 
