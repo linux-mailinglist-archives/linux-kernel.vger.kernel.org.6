@@ -1,113 +1,203 @@
-Return-Path: <linux-kernel+bounces-244164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C0592A017
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:24:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CD592A01A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4771F2288D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C0A11F227BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28A577113;
-	Mon,  8 Jul 2024 10:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6783F77F13;
+	Mon,  8 Jul 2024 10:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="voTcisUh"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OsV8IwhO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7C97406F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2357D156E4;
+	Mon,  8 Jul 2024 10:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720434242; cv=none; b=M7wldM7Z26vC4nBNCr2jk+64+H1z6oEDD1RSbL+1nnqTBQE6xdzh0Q9v3rElQbK+qJyWt919DLu6iHsul5gytlRmzQNSIc2wti+ReRzdFbtGebsNEpuyRwp7ZUVuO2ViEjLO7Ym/JVQsbD8aLvKZK5FHB7FjlxSVBZJxPaAuiHQ=
+	t=1720434329; cv=none; b=WWMda+xZrxYuWI6xjX2KXRdcSdPsvcwPNoYX2jXzLLcQ3/7u30kzDxYRQv2OeuHnIlvidCFqkUopkQTyVd95GaEbcHE9Bb4iW3GiI4A5u8dhEMOfEz19ARDa6BsWOgZVzMX8T2DhUG/orxWJyY47qW1Hl3Bool5up68aOyWRt4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720434242; c=relaxed/simple;
-	bh=SmSR9+Zy5h+7+91csxjnolavjIEWaulnUtgKd7wHjBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ke4+bxCDw+z2LDTCxejnUgn1dTuTA+UQLGbwKNowqkv11aXDcv57TcCWFL867eKN210Spth+UeT+fOqEU/Gyb+uNGeFjqy7cs89nQGAVBku4nBSB4zJYQPcWOC0ee/+v6nMBXReryE2evG3cVemm0x5aefRco91m57uoLhZZtZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=voTcisUh; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so49939181fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720434237; x=1721039037; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SdHyc3E9lDPINEIoBlnhtvfdKjc0jZ+mb9i/W3sps1Y=;
-        b=voTcisUhgwers2jzBYpNlrDV0MozMtxd2gnT1RtnCHLhNX6JKmN5vOgc+JudQmugZI
-         sPkcfQyNcxZ/YM3qVtt47uqUbkkg2zyxeRb36YiCfJsle0G6YWCQClnoY5KzNTCd9m7O
-         yXkDTUpBETX4cigabAHbj3QFh6lwq7fDpwA29J1qdm6tG5a+MjcjS5MliAFqKTjrmjJd
-         IZAZBbxUdawQ9rwh5NOoTSEkseALXSQWiwlmHn7dJD2sjzh3KOZYciVh/Iy3JtOinEfF
-         DfJko7C+AERH24qUDIdMBDqWueCuEP0fqPbK6cSxpFSZr+GpjyuSlKUuAq52gXJxUWFw
-         egjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720434237; x=1721039037;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SdHyc3E9lDPINEIoBlnhtvfdKjc0jZ+mb9i/W3sps1Y=;
-        b=xI29VgWwQKVJq0w2/EwP7oQbHTPpRs8fH3AaE0pxJLnk3eRteAqdh7w9as2LYOWVvg
-         aY4b4CFqXoTUZZT2qo8G4RKh17x3A2kQj44YLBddQCCDQwgUND5C52qHWIzxLjIwfTV9
-         jW8u2C/L3vcs4VZC5bSigP5OOQyyftn0MFCjcgMGg9rcIKAHrD5PSboA9psh1PgF2pN0
-         zgmvgVQbjWueCc2Lsjrdg1lA6hBM2/yBI+nyOtjQVwaUL8ADQmZXvk4nf0UQveuW9uVJ
-         LwDzGseI2Pjd0mljah7XOKfAr/A73KXzwEFwVNNkFqAuAt/24gehnfZtTXJmCFJbrWgr
-         hhSA==
-X-Gm-Message-State: AOJu0YzL0gdBcYPutyoxpt/V7FrwdlgT0V6gEW6yASN2Y9b9t/LVo/tc
-	BMn0dGBpPD5340taLFNXhtUOG5Ah8oY5kkdMEzyrp44PA/4zucMoHyg6Gn5koo0=
-X-Google-Smtp-Source: AGHT+IGtGJ2uxprR9XwTilWfavRjiJbPES5/C+lYbwqGMTXjQPenf6skImCxag9NiDg4gG3mANhDtQ==
-X-Received: by 2002:a05:651c:1071:b0:2ee:8698:10e8 with SMTP id 38308e7fff4ca-2ee8ed5ed71mr68114851fa.20.1720434237238;
-        Mon, 08 Jul 2024 03:23:57 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4264a1f22acsm159963515e9.24.2024.07.08.03.23.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 03:23:56 -0700 (PDT)
-Message-ID: <4069f1b9-658e-4b18-8219-b575903b627b@linaro.org>
-Date: Mon, 8 Jul 2024 12:23:56 +0200
+	s=arc-20240116; t=1720434329; c=relaxed/simple;
+	bh=rsO9G6u+DInOIMb5qAqVA0ZwFy9KXDFgraLSMovYcOY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q756HRsszp8v3oqKqqtEpsHjOO3f3q40vG1SbySi/ojFan3iwi8NoZu6dz0gq0ITpviBUmX8si2y3gjlb0IRcdc84d1zw4Qg9QWd+15F0mFtffLbuq+olDTyt5Y0pqjnQSOYZX/DAkudKWSRs3XkTV4CCAa3zyu1OLwxRTdNjew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OsV8IwhO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4680BsBZ009429;
+	Mon, 8 Jul 2024 10:25:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6rUTywwaukb7isS5o6FNw2xsqn0CHrrYOywNy9T/mHA=; b=OsV8IwhODkrNKVgL
+	qGgobYv7+Wf0En03iU8FesCVz2wPF7iM7LWXo75fVO2xLVf+hvCoWDBkzC88wxy0
+	OqRNJQ+PNka4s7iCRxlyzC1P4UG/nhEWW8q9Euzi0oVO/wyhI2POYqTDNE+Lfm6E
+	lI2YFlp/yqYcl3SDKd5uvKkZCxbgdq5NXCtb84NhGKK6jhXr9UXLHUouEtwD8ZTT
+	W6wq2veL4AnsmG/5ujalKUNpbkoe/tidudIysCAFAqd53cIwaYqY5AAoCFm3rxn5
+	KywuwIKvBtid0TbDvCdKX72+epcchz2zcRXACgc+KSm+sBHHESaUvAUwuve60OBW
+	xI2gMQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmkafn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 10:25:18 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468APHm4006976
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 10:25:17 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 8 Jul 2024 03:25:06 -0700
+Date: Mon, 8 Jul 2024 18:25:02 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Mike Leach <mike.leach@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        James Clark <james.clark@arm.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Tingwei Zhang
+	<quic_tingweiz@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        "Tao
+ Zhang" <quic_taozha@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Song
+ Chai" <quic_songchai@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] dt-bindings: arm: Add binding document for
+ Coresight Control Unit device.
+Message-ID: <Zou+fmUJoyzamWcw@jiegan-gv.ap.qualcomm.com>
+References: <20240705090049.1656986-1-quic_jiegan@quicinc.com>
+ <20240705090049.1656986-3-quic_jiegan@quicinc.com>
+ <208b3861-6898-4506-9152-c9d770ef1555@arm.com>
+ <Zou7FA2Av7CJO+ds@jiegan-gv.ap.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] thermal: core: Change passive_delay and
- polling_delay data type
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
-References: <2746673.mvXUDI8C0e@rjwysocki.net>
- <5803791.DvuYhMxLoT@rjwysocki.net>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <5803791.DvuYhMxLoT@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zou7FA2Av7CJO+ds@jiegan-gv.ap.qualcomm.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AS9dMf-4Hfpk0A-KTOTsQRzPu7rDmu1H
+X-Proofpoint-ORIG-GUID: AS9dMf-4Hfpk0A-KTOTsQRzPu7rDmu1H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_05,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=2
+ impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080081
 
-On 05/07/2024 21:44, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, Jul 08, 2024 at 06:10:28PM +0800, JieGan wrote:
+> On Mon, Jul 08, 2024 at 10:41:55AM +0100, Suzuki K Poulose wrote:
+> > On 05/07/2024 10:00, Jie Gan wrote:
+> > > Add binding document for Coresight Control Unit device.
+> > 
+> > nit: This is again too generic ? corsight-tmc-control-unit ? After all
+> > thats what it is and not a *generic* coresight control unit ?
+> >
+> coresight-tmc-control-unit is much better. We will check it.
+>  
+> > > 
+> > > Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> > > ---
+> > >   .../bindings/arm/qcom,coresight-ccu.yaml      | 87 +++++++++++++++++++
+> > >   1 file changed, 87 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
+> > > new file mode 100644
+> > > index 000000000000..9bb8ced393a7
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
+> > > @@ -0,0 +1,87 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/arm/qcom,coresight-ccu.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: CoreSight Control Unit
+> > > +
+> > > +maintainers:
+> > > +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> > > +  - Mao Jinlong <quic_jinlmao@quicinc.com>
+> > > +  - Jie Gan <quic_jiegan@quicinc.com>
+> > > +
+> > > +description:
+> > > +  The Coresight Control unit controls various Coresight behaviors.
+> > > +  Used to enable/disable ETR’s data filter function based on trace ID.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: qcom,coresight-ccu
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    maxItems: 1
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: apb_pclk
+> > > +
+> > > +  reg-names:
+> > > +    items:
+> > > +      - const: ccu-base
+> > > +
+> > > +  in-ports:
+> > > +    $ref: /schemas/graph.yaml#/properties/ports
+> > > +
+> > > +    unevaluatedProperties:
+> > > +      patternProperties:
+> > > +        '^port(@[0-7])?$':
+> > > +          description: Input connections from CoreSight Trace bus
+> > > +          $ref: /schemas/graph.yaml#/properties/port
+> > > +
+> > > +          properties:
+> > > +            qcom,ccu-atid-offset:
+> > 
+> > Why do we need this atid offset ? Couldn't this be mapped to the "port"
+> > number ?
+> > 
+> > e.g, input-port 0 on CCU => Offset x
+> >      input-port 1 on CCU => (Offset x + Size of 1 region)
+> If the first ATID offset remains constant, it appears to be feasible.
+> We will consider the possibility of this solution.
+We just checked the ATID offset varies across different hardware platforms.
+It defined as 0xf4 on some platforms, and some others defined as 0xf8.
+
+So I think it should be better to define it in device tree node.
+
 > 
-> It is better to use unsigned int as the data type for the passive_delay
-> and polling_delay arguments of thermal_zone_device_register_with_trips()
-> because they are implicitly cast to unsigned int anyway in
-> thermal_set_delay_jiffies() and if they happen to be negative at that
-> point, the resulting behavior may not be as desired.
+> >
+> > I believe I mentioned this in the previous posting too ?
+> Yes, you mentioned before. I moved it from TMC filed to CCU filed.
 > 
-> Update the thermal_zone_device_register_with_trips() definition
-> accordingly.
+> > 
+> > Suzuki
+> > 
 > 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
 
