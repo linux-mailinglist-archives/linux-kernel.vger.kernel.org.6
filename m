@@ -1,100 +1,435 @@
-Return-Path: <linux-kernel+bounces-243959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9326F929D0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA73929D10
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EFD5B20BA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:30:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81C44B20C9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244D620DE8;
-	Mon,  8 Jul 2024 07:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FAC1CD16;
+	Mon,  8 Jul 2024 07:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LegcvPgf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ms/eYmjK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PI1o+UW+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ms/eYmjK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PI1o+UW+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653B41CD15;
-	Mon,  8 Jul 2024 07:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6758C1862A
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720423796; cv=none; b=Pp/453zdfJV7LoKFJh2itY3G9NlRUqiHNluqVhTMgYw5wn4y1J6U9WN3xahDIQdrkrWjbFIN3oCy2Jf9sVcy4/35owt24eKo2u6nrSanskVb8AjWrrtDUDsAdDdrcZGHPqkYUJWxmSp+nxIBnKwnv66cTvXF/LHjao5lITmDh/g=
+	t=1720423839; cv=none; b=uiMGltzAQojtJNz3h459Gjc/CtC624T0iIJxLiXkx0HQB10nUc038kcocz9Zm+EvJzMbhEemmQ/QVWOsK0PC3BqwYkqtPWadxb1w7Sz58wf1gqgAkbISoi6G24NcdP1wb3mW9CxtxqXLd//nhnjBbk/yL1Vtz+unPoNdnIwrccc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720423796; c=relaxed/simple;
-	bh=A0I4MzbtTvvJyJRp/JKnljUts9C+tJ9eYvgSqnXk+fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=okZcPYdIii2WLfMkAA7clrYuKWW6gcrVIFOFxNYrg5YkVtQ5u1JKjtVy7V8F3TMN2mavXgVAGKfqUKDGjSPRqVk744mQFU18xAEsoni4APzUVlHM5nKc29nvGwnwkO8jWNaxgJopLtUdZBTlyBKSPF+qgNF6okGBzp4ZwETAxnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LegcvPgf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F36C116B1;
-	Mon,  8 Jul 2024 07:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720423796;
-	bh=A0I4MzbtTvvJyJRp/JKnljUts9C+tJ9eYvgSqnXk+fY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LegcvPgfnxhyjE3ZR5ztSBdKfj41ZUFxx9ukexiWhuRoebuEsGdT/SMlWmHX34FaD
-	 VSBCQ49fxtDb1tBMYZisJHpk+s7kGfKbTRxusze8fg6S+QoTlm4fMsTMrpCDw3U2j+
-	 x7PG4XEort6jBSpDWMDBfLnnSk1FYSYagJzmiX301zhXA2kj1G1WfKVInU7Zvz8l/g
-	 xODBMX5473EfNgGuerxBisMJKRPE9iTmQQ4DwI7Ihd1c4GQE4PxvR5zPXXwCc6d1dK
-	 bJOBkzb5YBekS8wGoOe65SqvskxqjsPkoq7v7it5cFLuRc929B9szuVhDxCC5TWY7P
-	 6IZYMGOvu7aZg==
-Date: Mon, 8 Jul 2024 08:29:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH net-next v2] ice: Adjust over allocation of memory in
- ice_sched_add_root_node() and ice_sched_add_node()
-Message-ID: <20240708072951.GG1481495@kernel.org>
-References: <20240706140518.9214-1-amishin@t-argos.ru>
+	s=arc-20240116; t=1720423839; c=relaxed/simple;
+	bh=txCgXmC0JLp6LjmGwjTk+rnfYeDcSFwf4hBk+AKpSck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tKXIqkdO2tEkgpkA69noyk9T9i4W6IJIRESWGOk8fMlkmbfEDAAtLOEn79KvDHShC5NwJnz0pUXNzc+VwWXmfsQpeinni9TxfLrAv/TkRX0rpC39wDqgfxQQs2gTcvKETLwOLqlwyLVEqHlmYJUGdbHjPosVhaOwVchrJ9W3wyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ms/eYmjK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PI1o+UW+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ms/eYmjK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PI1o+UW+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 311881FBFA;
+	Mon,  8 Jul 2024 07:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720423834; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nBEO13J3V8TnyxpdAPEXkHPJJFXuP/cBSX1L3f2H1iw=;
+	b=ms/eYmjKoFWW7gmzB7JP0MgggjZvS5OWPl0Qk1h6ZqSZNMxqE9087jDmMs8VgpFMz83RRh
+	ZKwgpTgEdjXIYGcNV2gzIg07Yako4R0URoKOhIna7j6+bekk6nCIaS2p5MWKGaRvj+FSMa
+	ETgSnjyQd9XoAlzxW0Mb0hbzBsKxVzU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720423834;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nBEO13J3V8TnyxpdAPEXkHPJJFXuP/cBSX1L3f2H1iw=;
+	b=PI1o+UW+v6yRmTbHllRW0hEvrUxUpCDifNMMessHLSlDK75UNaInKdsMOJSciikTH3DBx6
+	lSSumv80qTIsqjDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="ms/eYmjK";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=PI1o+UW+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720423834; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nBEO13J3V8TnyxpdAPEXkHPJJFXuP/cBSX1L3f2H1iw=;
+	b=ms/eYmjKoFWW7gmzB7JP0MgggjZvS5OWPl0Qk1h6ZqSZNMxqE9087jDmMs8VgpFMz83RRh
+	ZKwgpTgEdjXIYGcNV2gzIg07Yako4R0URoKOhIna7j6+bekk6nCIaS2p5MWKGaRvj+FSMa
+	ETgSnjyQd9XoAlzxW0Mb0hbzBsKxVzU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720423834;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nBEO13J3V8TnyxpdAPEXkHPJJFXuP/cBSX1L3f2H1iw=;
+	b=PI1o+UW+v6yRmTbHllRW0hEvrUxUpCDifNMMessHLSlDK75UNaInKdsMOJSciikTH3DBx6
+	lSSumv80qTIsqjDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DC3BF13A7F;
+	Mon,  8 Jul 2024 07:30:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NDvYM5mVi2aMDgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 08 Jul 2024 07:30:33 +0000
+Message-ID: <37c0df72-498b-44ad-9a47-d69f0515edd7@suse.de>
+Date: Mon, 8 Jul 2024 09:30:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240706140518.9214-1-amishin@t-argos.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/format-helper: Add conversion from XRGB8888 to BGR888
+To: Aditya Garg <gargaditya08@live.com>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>
+Cc: Orlando Chamberlain <orlandoch.dev@gmail.com>,
+ Kerem Karabay <kekrby@gmail.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <4C98332B-4E56-4314-8BDA-709AD3974899@live.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <4C98332B-4E56-4314-8BDA-709AD3974899@live.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 311881FBFA
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[live.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	FREEMAIL_CC(0.00)[gmail.com,lists.freedesktop.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Sat, Jul 06, 2024 at 05:05:18PM +0300, Aleksandr Mishin wrote:
-> In ice_sched_add_root_node() and ice_sched_add_node() there are calls to
-> devm_kcalloc() in order to allocate memory for array of pointers to
-> 'ice_sched_node' structure. But in this calls there are 'sizeof(*root)'
-> instead of 'sizeof(root)' and 'sizeof(*node)' instead of 'sizeof(node)'.
-> So memory is allocated for structures instead pointers. This lead to
-> significant over allocation of memory.
-> 
-> Adjust over allocation of memory by correcting devm_kcalloc() parameters.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Suggested-by: Simon Horman <horms@kernel.org>
+Hi
 
-FTR, I did provide some review of v1.
-But I don't think that counts as suggesting this patch.
+Am 05.07.24 um 13:38 schrieb Aditya Garg:
+> From: Kerem Karabay <kekrby@gmail.com>
+>
+> Add XRGB8888 emulation helper for devices that only support BGR888.
 
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+Nothing wrong with that, but it needs a caller. Do you have a driver 
+that uses this routine?
+
+Best regards
+Thomas
+
+>
+> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
 > ---
-> v2:
->   - Update comment, remove 'Fixes' tag and change the tree from 'net' to
->     'net-next' as suggested by Simon
-> 	(https://lore.kernel.org/all/20240706095258.GB1481495@kernel.org/)
-> v1: https://lore.kernel.org/all/20240705163620.12429-1-amishin@t-argos.ru/
+>   drivers/gpu/drm/drm_format_helper.c           | 54 +++++++++++++
+>   .../gpu/drm/tests/drm_format_helper_test.c    | 81 +++++++++++++++++++
+>   include/drm/drm_format_helper.h               |  3 +
+>   3 files changed, 138 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_format_helper.c
+> index b1be458ed..28c0e76a1 100644
+> --- a/drivers/gpu/drm/drm_format_helper.c
+> +++ b/drivers/gpu/drm/drm_format_helper.c
+> @@ -702,6 +702,57 @@ void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *dst_pi
+>   }
+>   EXPORT_SYMBOL(drm_fb_xrgb8888_to_rgb888);
+>   
+> +static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, unsigned int pixels)
+> +{
+> +	u8 *dbuf8 = dbuf;
+> +	const __le32 *sbuf32 = sbuf;
+> +	unsigned int x;
+> +	u32 pix;
+> +
+> +	for (x = 0; x < pixels; x++) {
+> +		pix = le32_to_cpu(sbuf32[x]);
+> +		/* write red-green-blue to output in little endianness */
+> +		*dbuf8++ = (pix & 0x00FF0000) >> 16;
+> +		*dbuf8++ = (pix & 0x0000FF00) >> 8;
+> +		*dbuf8++ = (pix & 0x000000FF) >> 0;
+> +	}
+> +}
+> +
+> +/**
+> + * drm_fb_xrgb8888_to_bgr888 - Convert XRGB8888 to BGR888 clip buffer
+> + * @dst: Array of BGR888 destination buffers
+> + * @dst_pitch: Array of numbers of bytes between the start of two consecutive scanlines
+> + *             within @dst; can be NULL if scanlines are stored next to each other.
+> + * @src: Array of XRGB8888 source buffers
+> + * @fb: DRM framebuffer
+> + * @clip: Clip rectangle area to copy
+> + * @state: Transform and conversion state
+> + *
+> + * This function copies parts of a framebuffer to display memory and converts the
+> + * color format during the process. Destination and framebuffer formats must match. The
+> + * parameters @dst, @dst_pitch and @src refer to arrays. Each array must have at
+> + * least as many entries as there are planes in @fb's format. Each entry stores the
+> + * value for the format's respective color plane at the same index.
+> + *
+> + * This function does not apply clipping on @dst (i.e. the destination is at the
+> + * top-left corner).
+> + *
+> + * Drivers can use this function for BGR888 devices that don't natively
+> + * support XRGB8888.
+> + */
+> +void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *dst_pitch,
+> +			       const struct iosys_map *src, const struct drm_framebuffer *fb,
+> +			       const struct drm_rect *clip, struct drm_format_conv_state *state)
+> +{
+> +	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] = {
+> +		3,
+> +	};
+> +
+> +	drm_fb_xfrm(dst, dst_pitch, dst_pixsize, src, fb, clip, false, state,
+> +		    drm_fb_xrgb8888_to_bgr888_line);
+> +}
+> +EXPORT_SYMBOL(drm_fb_xrgb8888_to_bgr888);
+> +
+>   static void drm_fb_xrgb8888_to_argb8888_line(void *dbuf, const void *sbuf, unsigned int pixels)
+>   {
+>   	__le32 *dbuf32 = dbuf;
+> @@ -1035,6 +1086,9 @@ int drm_fb_blit(struct iosys_map *dst, const unsigned int *dst_pitch, uint32_t d
+>   		} else if (dst_format == DRM_FORMAT_RGB888) {
+>   			drm_fb_xrgb8888_to_rgb888(dst, dst_pitch, src, fb, clip, state);
+>   			return 0;
+> +		} else if (dst_format == DRM_FORMAT_BGR888) {
+> +			drm_fb_xrgb8888_to_bgr888(dst, dst_pitch, src, fb, clip, state);
+> +			return 0;
+>   		} else if (dst_format == DRM_FORMAT_ARGB8888) {
+>   			drm_fb_xrgb8888_to_argb8888(dst, dst_pitch, src, fb, clip, state);
+>   			return 0;
+> diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/drm/tests/drm_format_helper_test.c
+> index 08992636e..e54f0f6e7 100644
+> --- a/drivers/gpu/drm/tests/drm_format_helper_test.c
+> +++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
+> @@ -60,6 +60,11 @@ struct convert_to_rgb888_result {
+>   	const u8 expected[TEST_BUF_SIZE];
+>   };
+>   
+> +struct convert_to_bgr888_result {
+> +	unsigned int dst_pitch;
+> +	const u8 expected[TEST_BUF_SIZE];
+> +};
+> +
+>   struct convert_to_argb8888_result {
+>   	unsigned int dst_pitch;
+>   	const u32 expected[TEST_BUF_SIZE];
+> @@ -107,6 +112,7 @@ struct convert_xrgb8888_case {
+>   	struct convert_to_argb1555_result argb1555_result;
+>   	struct convert_to_rgba5551_result rgba5551_result;
+>   	struct convert_to_rgb888_result rgb888_result;
+> +	struct convert_to_bgr888_result bgr888_result;
+>   	struct convert_to_argb8888_result argb8888_result;
+>   	struct convert_to_xrgb2101010_result xrgb2101010_result;
+>   	struct convert_to_argb2101010_result argb2101010_result;
+> @@ -151,6 +157,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
+>   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
+>   			.expected = { 0x00, 0x00, 0xFF },
+>   		},
+> +		.bgr888_result = {
+> +			.dst_pitch = TEST_USE_DEFAULT_PITCH,
+> +			.expected = { 0xFF, 0x00, 0x00 },
+> +		},
+>   		.argb8888_result = {
+>   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
+>   			.expected = { 0xFFFF0000 },
+> @@ -217,6 +227,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
+>   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
+>   			.expected = { 0x00, 0x00, 0xFF },
+>   		},
+> +		.bgr888_result = {
+> +			.dst_pitch = TEST_USE_DEFAULT_PITCH,
+> +			.expected = { 0xFF, 0x00, 0x00 },
+> +		},
+>   		.argb8888_result = {
+>   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
+>   			.expected = { 0xFFFF0000 },
+> @@ -330,6 +344,15 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
+>   				0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
+>   			},
+>   		},
+> +		.bgr888_result = {
+> +			.dst_pitch = TEST_USE_DEFAULT_PITCH,
+> +			.expected = {
+> +				0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
+> +				0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00,
+> +				0x00, 0x00, 0xFF, 0xFF, 0x00, 0xFF,
+> +				0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
+> +			},
+> +		},
+>   		.argb8888_result = {
+>   			.dst_pitch = TEST_USE_DEFAULT_PITCH,
+>   			.expected = {
+> @@ -468,6 +491,17 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
+>   				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+>   			},
+>   		},
+> +		.bgr888_result = {
+> +			.dst_pitch = 15,
+> +			.expected = {
+> +				0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05, 0xA8, 0xF3, 0x03,
+> +				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +				0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05,
+> +				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +				0xA8, 0x03, 0x03, 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C,
+> +				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +			},
+> +		},
+>   		.argb8888_result = {
+>   			.dst_pitch = 20,
+>   			.expected = {
+> @@ -914,6 +948,52 @@ static void drm_test_fb_xrgb8888_to_rgb888(struct kunit *test)
+>   	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+>   }
+>   
+> +static void drm_test_fb_xrgb8888_to_bgr888(struct kunit *test)
+> +{
+> +	const struct convert_xrgb8888_case *params = test->param_value;
+> +	const struct convert_to_bgr888_result *result = &params->bgr888_result;
+> +	size_t dst_size;
+> +	u8 *buf = NULL;
+> +	__le32 *xrgb8888 = NULL;
+> +	struct iosys_map dst, src;
+> +
+> +	struct drm_framebuffer fb = {
+> +		.format = drm_format_info(DRM_FORMAT_XRGB8888),
+> +		.pitches = { params->pitch, 0, 0 },
+> +	};
+> +
+> +	dst_size = conversion_buf_size(DRM_FORMAT_BGR888, result->dst_pitch,
+> +				       &params->clip, 0);
+> +	KUNIT_ASSERT_GT(test, dst_size, 0);
+> +
+> +	buf = kunit_kzalloc(test, dst_size, GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buf);
+> +	iosys_map_set_vaddr(&dst, buf);
+> +
+> +	xrgb8888 = cpubuf_to_le32(test, params->xrgb8888, TEST_BUF_SIZE);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xrgb8888);
+> +	iosys_map_set_vaddr(&src, xrgb8888);
+> +
+> +	/*
+> +	 * BGR888 expected results are already in little-endian
+> +	 * order, so there's no need to convert the test output.
+> +	 */
+> +	drm_fb_xrgb8888_to_bgr888(&dst, &result->dst_pitch, &src, &fb, &params->clip,
+> +				  &fmtcnv_state);
+> +	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+> +
+> +	buf = dst.vaddr; /* restore original value of buf */
+> +	memset(buf, 0, dst_size);
+> +
+> +	int blit_result = 0;
+> +
+> +	blit_result = drm_fb_blit(&dst, &result->dst_pitch, DRM_FORMAT_BGR888, &src, &fb, &params->clip,
+> +				  &fmtcnv_state);
+> +
+> +	KUNIT_EXPECT_FALSE(test, blit_result);
+> +	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+> +}
+> +
+>   static void drm_test_fb_xrgb8888_to_argb8888(struct kunit *test)
+>   {
+>   	const struct convert_xrgb8888_case *params = test->param_value;
+> @@ -1851,6 +1931,7 @@ static struct kunit_case drm_format_helper_test_cases[] = {
+>   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb1555, convert_xrgb8888_gen_params),
+>   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgba5551, convert_xrgb8888_gen_params),
+>   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgb888, convert_xrgb8888_gen_params),
+> +	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_bgr888, convert_xrgb8888_gen_params),
+>   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb8888, convert_xrgb8888_gen_params),
+>   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_xrgb2101010, convert_xrgb8888_gen_params),
+>   	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb2101010, convert_xrgb8888_gen_params),
+> diff --git a/include/drm/drm_format_helper.h b/include/drm/drm_format_helper.h
+> index f13b34e0b..b53cf85ca 100644
+> --- a/include/drm/drm_format_helper.h
+> +++ b/include/drm/drm_format_helper.h
+> @@ -95,6 +95,9 @@ void drm_fb_xrgb8888_to_rgba5551(struct iosys_map *dst, const unsigned int *dst_
+>   void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *dst_pitch,
+>   			       const struct iosys_map *src, const struct drm_framebuffer *fb,
+>   			       const struct drm_rect *clip, struct drm_format_conv_state *state);
+> +void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *dst_pitch,
+> +			       const struct iosys_map *src, const struct drm_framebuffer *fb,
+> +			       const struct drm_rect *clip, struct drm_format_conv_state *state);
+>   void drm_fb_xrgb8888_to_argb8888(struct iosys_map *dst, const unsigned int *dst_pitch,
+>   				 const struct iosys_map *src, const struct drm_framebuffer *fb,
+>   				 const struct drm_rect *clip, struct drm_format_conv_state *state);
 
-Also, v2 was sent less than 24h after v1,
-please don't do that when posting patches to netdev.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Please do read
-https://docs.kernel.org/process/maintainer-netdev.html
-
-...
 
