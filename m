@@ -1,146 +1,150 @@
-Return-Path: <linux-kernel+bounces-244658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2654F92A77B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:41:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3279892A787
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF58D1F21737
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5653C1C209FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656EB1465A1;
-	Mon,  8 Jul 2024 16:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F87C146D4D;
+	Mon,  8 Jul 2024 16:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QPQDRduS"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhl2y14B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BD581751
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DD381751
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720456855; cv=none; b=mlt/nmforYwdJ0OoG/T0tcSjuoKyOmvTRpi488I0wdiX+h9/JlqJTJc3dGiAcnbklmEu0qhAYbUFEkfvXcLjkkIphqwaCvW0SLhokU8iFytdRp15Qq/ewh5mpvIOhoZAqu1brCT4oj6zBn5/hRcJ4ya1g+hOIW2TijepIHjpmbI=
+	t=1720456965; cv=none; b=PMbCMEtJvmHXn2GveiwJHp9C5qBnUHcOgundbQS7hRonELvckRVKynTP5Vf6qYavhIMseWbrj4X9bWCs9gLGH5S4TmbbivicIB1WfvgkT5ZGVQ1rcbc87cdSyogQE3wqKawkT0iD4ciuyyyJmEAp8BvzqBRDh7xV88fyqdRRUGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720456855; c=relaxed/simple;
-	bh=NMY7IXINjFtBIuRr/zxt90U+bZTuOpMWeifpxOkmw3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uodeQv9PKUTm+AxYCAVXImFhVhytUc1ajQSB0c2CnGQy98BYLys+tMK6nJ+qyZ5OOZKqw6rZbfVvrBVzojJ4pSq0mkKW/y9TvXaYmlhqzWzRq0RXduMVcK75uLlhz7YDMGWjx4GAvGV9UgS3cSAM5OqBqhbrEO/VWhoDXrQXVAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QPQDRduS; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so35542485e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720456852; x=1721061652; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=94KAr4ELE0QjzDMH+V3YBSBrsKILCzYBksersdMzaIM=;
-        b=QPQDRduSancfLKhnP4chtl/sGXPdEPtaBHPm6R73mDK2WKhs5u9gd5UV6yCR1vFoTv
-         BuB7/dXp+bP6Jr2Guf1+adk/FEcn7k1VWHqugrB2elr4ww+FnFCZ4LVmZ4Q2ditIoJuK
-         mSvkgXvfLTjJLaSYLgQk0MsG0K6VzySsDSsx1cTViL3lsmJtAkIMg/7uitLS0phaeKt+
-         kJn/miZmRvA+OOcdRYgfWg2gyq1BvLjl9Bz5RTniSOYi5OeyTOV2r+lIyAfhV3YipTZo
-         4z7gpo2scLcf9+AaQjgVdeXzpISkZ9H2duDpjxsqIsRCxU0TsuX9ejvoTVsTx7LYOyUg
-         C2Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720456852; x=1721061652;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=94KAr4ELE0QjzDMH+V3YBSBrsKILCzYBksersdMzaIM=;
-        b=V6h1hSIa4qk274R2Qa3xmJEls+79VZA1iM0p5wJtAtZi6AumQ84m3EbVvxYKH9BcQc
-         PtaSAZXBA7OSavv1RcyC7kmwseF/c8pH/xl1HdEeUl8MqvwCiNkLtoWYX/1fo6tXoEfr
-         NKv6xa2r51Oux5Chl5Ctym0y+jT2+g9zO7YnANs1D9GMrzUehVQvSmJoVXvUSFhMP8PE
-         oIpHFHF+sRN/CA/9yT+Ft7U8fXbJ8FCLSJhehqtoH2S9Zz1hpyiKY91MrkgAMPDz+Jo1
-         kWfvPlQrfC0YQX1YB/G/Oq1fdfpGOTGKgtmtJNth+McCzfVJRQsyyeQjyFfvfEag4RkB
-         0FgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXH1M8xU4GakpSb745+SO+iCBYza/+A5CR9PjozFoi6o0i0O7CEzxOEj7bE+tsbRsFG88V+dqV0q7nGG8KMHSw060qgtEqBU9wwgZ16
-X-Gm-Message-State: AOJu0YwafNqjlG1yXwkYSLCxMqaXyk+kNpN3i0HXoAx3aVyOkZ59Amqv
-	Gn6zZsWB2lZbMWdSpKjIHJ7l1f9vAW/V6tosHmMvRH3/zMzLSNfOtZ9UWRCwQaI=
-X-Google-Smtp-Source: AGHT+IGs6bQ7nWrRNkbA7g34usxnJIV4s3YfBwqStJkvqaMPUVvz/yZhmMFC7Sllw6GqcdmCDXqyFQ==
-X-Received: by 2002:a05:600c:22d4:b0:425:81bd:e5ee with SMTP id 5b1f17b1804b1-426707d07c5mr1322845e9.16.1720456852193;
-        Mon, 08 Jul 2024 09:40:52 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:cf24:cce:17df:12ab? ([2a05:6e02:1041:c10:cf24:cce:17df:12ab])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4266f6f20c0sm5077845e9.20.2024.07.08.09.40.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 09:40:51 -0700 (PDT)
-Message-ID: <b2c8b349-4834-4b67-a970-c0aaaca9489d@linaro.org>
-Date: Mon, 8 Jul 2024 18:40:51 +0200
+	s=arc-20240116; t=1720456965; c=relaxed/simple;
+	bh=SMSXQy/4fLhK2QipqoruTLc7ydPAgk2ANoH8rp63Jis=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HT1fi70WqfYT5gfHov71Y3J2qqNi76Q1Q1z0/hTjmke+K7Fmza4hbc+70nncgKMPfvYhUT1SRRxpxFp5hsGBYkfH9XMyJm8IB1DsXP7yAvF94N01i0ZS4grHkc44t5HF4RI8gILF3uLIyjTvyCk/YXA1qlnMCRBG55qmc1hbSik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhl2y14B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80999C4AF0C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720456964;
+	bh=SMSXQy/4fLhK2QipqoruTLc7ydPAgk2ANoH8rp63Jis=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qhl2y14BeeVEDy0eOdkxoyxNmMv8hqiDNQJgwyj2Pg46zbeonXs4u3EEqCgbwBLCJ
+	 UGJf0D30adjef4PsCZ22JcIIYa3V9aiKPoqDvl5sFSkb439bS5actA3gdrWy46ObFu
+	 oLN1ltT1EN20hnT8iFWB6GA7rRyFnnnX6218pht7REdmV3Jqz5x1Hd5E+vD38zOnEB
+	 2TvSuDNPNaE4VaeJRtvmsauBVyNUa1ExJymnd+Ea7vyIVTt8PZRcCiL4Evu+D6iYvs
+	 NEwmOa16Jk7idZj8YS2okepnHTkOoeCUky3CU+nG0l/2Eo4AyiP9puDdv5IlN/fO37
+	 8KAhuuRCYWsNg==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so4800242a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:42:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOKtBYvqqf3HVdXt49bKEXjTBRrp2C3juAocNiOIgHJps5SS6jUrlVvJC4KDOMSZXSs9ppGFLoHJLYUJmWAuOLP4VqwC+0cD/4Hlyj
+X-Gm-Message-State: AOJu0YwRp9idTmqErMd164Bjkyfsg50ukgB289VK5c5MaqLmfteKTKGT
+	xzoKivPcUAOn0VNkMswS3Mwh3jmMjCkv5RVZtUUvSg1i4VzDebFUJ0TTXhaz0lFC5v1FjMj4GJD
+	S4XpaZJugBShzC8Wf6E+ZRL/1TqCQbWrlOM34
+X-Google-Smtp-Source: AGHT+IEn/+zjOxNlsBbi8sx43v/ohZLMhX0KlqE0oZIG6iZ1BHYOnNlwXxTHtOhQXzhPvikWp9mzFU3o7Y7l6KCRW/o=
+X-Received: by 2002:a05:6402:354f:b0:57d:2c9:6497 with SMTP id
+ 4fb4d7f45d1cf-594bab80106mr125789a12.3.1720456963027; Mon, 08 Jul 2024
+ 09:42:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] MIPS: clocksource cumulative enhancements
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, "Maciej W. Rozycki"
- <macro@orcam.me.uk>, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?=
- <philmd@linaro.org>
-References: <20240612-mips-clks-v2-0-a57e6f49f3db@flygoat.com>
- <ZoVtHkn1HuRy4SDw@alpha.franken.de>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <ZoVtHkn1HuRy4SDw@alpha.franken.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240705145009.32340-1-puranjay@kernel.org> <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+ <mb61pjzhwvshc.fsf@kernel.org> <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
+ <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net> <mb61ped836gn7.fsf@kernel.org>
+ <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
+In-Reply-To: <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
+From: KP Singh <kpsingh@kernel.org>
+Date: Mon, 8 Jul 2024 18:42:31 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
+Message-ID: <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
+Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Puranjay Mohan <puranjay@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Manu Bretelle <chantra@meta.com>, 
+	Florent Revest <revest@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/07/2024 17:24, Thomas Bogendoerfer wrote:
-> On Wed, Jun 12, 2024 at 09:54:27AM +0100, Jiaxun Yang wrote:
->> Hi all,
->>
->> This series combined many enhancements for MIPS clocksource subsystems,
->> It improved r4k count synchronisation process, clock source rating for
->> selection, sched_clock eligibility and so on.
->>
->> It seems fixed random RCU stall issue on Loongson 3A4000 multi-node
->> system and some boot failures on QEMU.
->>
->> Please review.
->>
->> Thanks
->>
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->> Changes in v2:
->> - Fix number of zeros in rating computation (Maciej)
->> - Only select HAVE_UNSTABLE_SCHED_CLOCK for SMP (Maciej)
->> - Link to v1: https://lore.kernel.org/r/20240511-mips-clks-v1-0-ddb4a10ee9f9@flygoat.com
->>
->> ---
->> Jiaxun Yang (7):
->>        MIPS: csrc-r4k: Refine rating computation
->>        MIPS: csrc-r4k: Apply verification clocksource flags
->>        MIPS: csrc-r4k: Select HAVE_UNSTABLE_SCHED_CLOCK if SMP && 64BIT
->>        MIPS: csrc-r4k: Don't register as sched_clock if unfit
->>        MIPS: sync-r4k: Rework based on x86 tsc_sync
-> 
-> applied these patches to mips-next.
-> 
->>        clocksource: mips-gic-timer: Refine rating computation
->>        clocksource: mips-gic-timer: Correct sched_clock width
-> 
-> looks like the remaining patches don't have any dependency to the other
-> five patches, so they could just go via clocksource tree. BTW it would
-> be good to split series in such cases.
+On Mon, Jul 8, 2024 at 6:09=E2=80=AFPM Daniel Borkmann <daniel@iogearbox.ne=
+t> wrote:
+>
+> On 7/8/24 5:35 PM, Puranjay Mohan wrote:
+> > Daniel Borkmann <daniel@iogearbox.net> writes:
+> >
+> >> On 7/8/24 5:26 PM, KP Singh wrote:
+> >>> On Mon, Jul 8, 2024 at 5:00=E2=80=AFPM Puranjay Mohan <puranjay@kerne=
+l.org> wrote:
+> >>>>
+> >>>> Daniel Borkmann <daniel@iogearbox.net> writes:
+> >>>>
+> >>>>> On 7/5/24 4:50 PM, Puranjay Mohan wrote:
+> >>>>>> fexit_sleep test runs successfully now on the CI so remove it from=
+ the
+> >>>>>> deny list.
+> >>>>>
+> >>>>> Do you happen to know which commit fixed it? If yes, might be nice =
+to have it
+> >>>>> documented in the commit message.
+> >>>>
+> >>>> Actually, I never saw this test failing on my local setup and yester=
+day
+> >>>> I tried running it on the CI where it passed as well. So, I assumed =
+that
+> >>>> this would be fixed by some commit. I am not sure which exact commit
+> >>>> might have fixed this.
+> >>>>
+> >>>> Manu, Martin
+> >>>>
+> >>>> When this was added to the deny list was this failing every time and=
+ did
+> >>>> you have some reproducer for this. If there is a reproducer, I can t=
+ry
+> >>>> fixing it but when ran normally this test never fails for me.
+> >>>
+> >>> I think this never worked until
+> >>> https://lore.kernel.org/lkml/20230405180250.2046566-1-revest@chromium=
+.org/
+> >>> was merged, FTrace direct calls was blocking tracing programs on ARM,
+> >>> since then it has always worked.
+> >>
+> >> Awesome, thanks! I'll add this to the commit desc then when applying.
+> >
+> > The commit that added this to the deny list said:
+> > 31f4f810d533 ("selftests/bpf: Add fexit_sleep to DENYLIST.aarch64")
+> >
+> > ```
+> > It is reported that the fexit_sleep never returns in aarch64.
+> > The remaining tests cannot start.
+> > ```
 
-Applied patches 6 and 7
+It may also have something to do with sleepable programs. But I think
+it's generally in the category of "BPF tracing was catching up with
+ARM", it has now.
 
-Thanks
+- KP
 
-   -- Daniel
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+> >
+> > So, if the lack of Ftrace direct calls would be the reason then the
+> > failure would be due to fexit programs not being supported on arm64.
+> >
+> > But this says that the selftest never returns therefore is not related
+> > to ftrace direct call support but another bug?
+>
+> Fwiw, at least it is passing in the BPF CI now.
+>
+> https://github.com/kernel-patches/bpf/actions/runs/9841781347/job/2716961=
+0006
 
