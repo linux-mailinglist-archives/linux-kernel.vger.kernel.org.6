@@ -1,124 +1,262 @@
-Return-Path: <linux-kernel+bounces-244385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730EA92A39D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD6792A39E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47291C21472
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9007A28184C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CA7137937;
-	Mon,  8 Jul 2024 13:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A4C1386BF;
+	Mon,  8 Jul 2024 13:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BdQ3oy5q"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O5zs9cIA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66AAB665
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1025EB665;
+	Mon,  8 Jul 2024 13:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720445268; cv=none; b=NIfa2ZUZouOXvKHjpxXZFffREhiPFMatdYuIynjASjkFMsGcTu5sgo4b++2NNOPeQLzuljnwV+yu3aHunV0Qt2zCPATWGfvhjXa1wE6tXAQ1L7t5kA5nfzPwdMCbVS70OwrAnewqzTowU6SQvUK0ugfu9frJBSiHMu9ROVKkdNg=
+	t=1720445313; cv=none; b=beIwPPqW5+V8SIfI18Tgm+XXTeCkBT0q2mw0HxPt6T5Jqpz4V49P0nEapmay5csVos6Q/aRYEO1aUcDnz+VVbMrEFDs/ZONfhzFt3mc7O+QvxkMjCUQ3LMJcdyOUeIFelsztHv4ELXewVSkggpRSsuO00/nCUNy/v8fxnPM3I/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720445268; c=relaxed/simple;
-	bh=73VJ3oRcmaW0D5gYS80xsbaqZzrj0Skp8XVKmterxcY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sl48mzN9+VvLeaS90RHpaoGtY5UA0vAQkQ/Ie0z0PC6KKGC4CoeEbGhM64+GLUPGRtFL4x6Q2Yt5VnovEOs4HGmSkNoh/ATY11290GfIefW3SLDGcb55/9PhhlvRqBRu1/nIvY1ZKVZkb6q8KH9IrgkGw6mNONDOQlscY/teZW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BdQ3oy5q; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so4071291e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 06:27:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720445265; x=1721050065; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xLz+pzXsJ6l5mFHOSKbiVfzHPETHq+grSYLHo5ZTzRY=;
-        b=BdQ3oy5qEq0qxFqbn8H4lv0fEa3N/ifQDFXJHNu7yukbPyHsgP6RQxGTjwtxA/h4cr
-         uE6kotKekGO8KR8KAF2wx98aMw7AXYvrcjBUJTR9+Ykb3prOBSEMwAjRwgf68A8JjjHg
-         E1clGTruQZcETw+VUEhKBmxHMx/nD2W1OLM7rwsySpfbH3TS8N8Dy2BtYzwidKdh6W3i
-         cRms9vw/iw8Sls3OXlpKltVJbVI4YNIp4ydKXFyMjKfPHH7nx4xIuoIEaXqIhNiyc2hu
-         /7PZ5GXVB104HzwFnrT8BTrDlbBRNDbr77xlCQyEnqFI2u1f96Ke+1uWUHP8BQhzvAlK
-         k1/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720445265; x=1721050065;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xLz+pzXsJ6l5mFHOSKbiVfzHPETHq+grSYLHo5ZTzRY=;
-        b=hJ6pIBU5ZK3hKGV9jFAc+JLkSWoj+Chld8E+d7lqdfwFOyYueC+vKOMxfLmBMt/FzX
-         sk297twwRZ3nEspcpBTUMVKjjq7ZvNFMA1uKI1cMjwiFGtspb3fAWbeOmEIRnBOdjfCv
-         MAaYK92S/2dD1m62Ugfpy/vtEnWsPDTh5ySJgpuAKmvEFOqej0Y+wb/HS6K7Mf6OdelW
-         g8JuKM10MZISdDNLni+xHTKd0MBqa6lRMkcJS21CdOqezYG0fzpkPxGIzgiU+nAOQXdy
-         Ju9Wtp2Vaczz/8YtndhKYr3ncZ+aTPSkQevH+6SMzBV9Fp+cv0xvUbwo8Qc/xHo6FBA9
-         CVvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSwCpgOYJuCUMyMdPPIwpIkw0Tz03Ld4zh0pIHtPIsHfQtvD/hXIHqWPJimnsuz0rFjtJxQPa2pQHP1T+1YJOUbPXLPRfuJ7ECoVbQ
-X-Gm-Message-State: AOJu0Yz3w7XQ0H+yefn2pOyD3tpEB7zr1jQyR3WlJ0Zhm5pF4CCbouC6
-	TNKz/gh+enQVztwIK6JguSwgsQk1wrtPRuvA/EFJFY5qh5Cud7JU3MSM8qRG/1Y=
-X-Google-Smtp-Source: AGHT+IFzFef/Tv8RS12QfjZA7cDHgbrsywJxw7p2DpGff9CwZ0w/u5TnUJ6q/+bCZgefSX1bAM+WBQ==
-X-Received: by 2002:a19:c204:0:b0:52c:8df9:2e6f with SMTP id 2adb3069b0e04-52ea06cc913mr7432147e87.42.1720445265038;
-        Mon, 08 Jul 2024 06:27:45 -0700 (PDT)
-Received: from eriador.lan (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ea910a4b8sm728047e87.202.2024.07.08.06.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 06:27:42 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: dri-devel@lists.freedesktop.org,
-	Adam Ford <aford173@gmail.com>
-Cc: aford@beaconembedded.com,
-	Liu Ying <victor.liu@nxp.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] drm/bridge: adv7511: Fix Intermittent EDID failures
-Date: Mon,  8 Jul 2024 16:27:38 +0300
-Message-ID: <172044524823.2537680.15499072146875099672.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240630221931.1650565-1-aford173@gmail.com>
-References: <20240630221931.1650565-1-aford173@gmail.com>
+	s=arc-20240116; t=1720445313; c=relaxed/simple;
+	bh=ZTDXg4OQinuqoAKxEKT5YEUVgjuRVHhh+W+7j5PtCBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LOtMmfQK7uSDeqOY4Ej4OK6DfTK2tfr24GZ6Bjj+YfIy/HJ2rVtYp5VP1DLsTg8pITdTFDbF8jchp2YaDAn7kiwms1+kcX8j1mplLBfiXYKaV8Wbw1HzP391dl97EPdU/FtjqbNgy6iAmfvLNKg7rnOFvE9Yh/fJ6PymUmgYMQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O5zs9cIA; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720445312; x=1751981312;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZTDXg4OQinuqoAKxEKT5YEUVgjuRVHhh+W+7j5PtCBk=;
+  b=O5zs9cIAcV1TVs7/O9dKGzpJxOeCBEvh7GSAR3XGS2fGk1O7uti8y9Wj
+   vFMV3d1niGH/eE8hXPd/yafpsUSByvrmhS64Mbd71IW5xV4MAqp+xJs3j
+   YJy5iikHpBDe/GFjC2pLsJap4Z2O8a8uDbLiCo2bYqy44L+Zt+lngln1O
+   WpLrJRzKBswu596jrrJdNCISDfOphYPmSrP6Ec5D7LSkNnBDbs53gD3UG
+   Unc57XMatrd1BH50GigbwlBwInovrvYx2aUcoiNGtLPdmmXlpXVDY2yKL
+   WhVJE6HneUE36iA9dD9CYtMu257Dwwi3Kplhei32GnOXonZeEh5MbH/hu
+   w==;
+X-CSE-ConnectionGUID: +xOVz17bTViiuu1EQkgymw==
+X-CSE-MsgGUID: nhg+D+a4QQihiw/U7zmkow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17774873"
+X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
+   d="scan'208";a="17774873"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 06:28:31 -0700
+X-CSE-ConnectionGUID: RNEK6+qzRqe7kDck+n1zOQ==
+X-CSE-MsgGUID: h4D1KXmWQtqBCKxaT9OQ8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
+   d="scan'208";a="47578161"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 06:28:31 -0700
+Received: from [10.212.126.29] (kliang2-mobl1.ccr.corp.intel.com [10.212.126.29])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 981BF20738D4;
+	Mon,  8 Jul 2024 06:28:29 -0700 (PDT)
+Message-ID: <821ea427-aeef-4269-9af8-4cdb8cf32ca8@linux.intel.com>
+Date: Mon, 8 Jul 2024 09:28:28 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 1/5] perf x86/topdown: Complete topdown slots/metrics
+ events check
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240708144204.839486-1-dapeng1.mi@linux.intel.com>
+ <20240708144204.839486-2-dapeng1.mi@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240708144204.839486-2-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 30 Jun 2024 17:19:31 -0500, Adam Ford wrote:
-> In the process of adding support for shared IRQ pins, a scenario
-> was accidentally created where adv7511_irq_process returned
-> prematurely causing the EDID to fail randomly.
+
+
+On 2024-07-08 10:42 a.m., Dapeng Mi wrote:
+> It's not complete to check whether an event is a topdown slots or
+> topdown metrics event by only comparing the event name since user
+> may assign the event by RAW format, e.g.
 > 
-> Since the interrupt handler is broken up into two main helper functions,
-> update both of them to treat the helper functions as IRQ handlers. These
-> IRQ routines process their respective tasks as before, but if they
-> determine that actual work was done, mark the respective IRQ status
-> accordingly, and delay the check until everything has been processed.
+> perf stat -e '{instructions,cpu/r400/,cpu/r8300/}' sleep 1
 > 
-> [...]
+>  Performance counter stats for 'sleep 1':
+> 
+>      <not counted>      instructions
+>      <not counted>      cpu/r400/
+>    <not supported>      cpu/r8300/
+> 
+>        1.002917796 seconds time elapsed
+> 
+>        0.002955000 seconds user
+>        0.000000000 seconds sys
+> 
+> The RAW format slots and topdown-be-bound events are not recognized and
+> not regroup the events, and eventually cause error.
+> 
+> Thus add two helpers arch_is_topdown_slots()/arch_is_topdown_metrics()
+> to detect whether an event is topdown slots/metrics event by comparing
+> the event config directly, and use these two helpers to replace the
+> original event name comparisons.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  tools/perf/arch/x86/util/evlist.c  |  8 +++---
+>  tools/perf/arch/x86/util/evsel.c   |  3 ++-
+>  tools/perf/arch/x86/util/topdown.c | 43 +++++++++++++++++++++++++++++-
+>  tools/perf/arch/x86/util/topdown.h |  2 ++
+>  4 files changed, 50 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+> index b1ce0c52d88d..332e8907f43e 100644
+> --- a/tools/perf/arch/x86/util/evlist.c
+> +++ b/tools/perf/arch/x86/util/evlist.c
+> @@ -78,14 +78,14 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+>  	if (topdown_sys_has_perf_metrics() &&
+>  	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
+>  		/* Ensure the topdown slots comes first. */
+> -		if (strcasestr(lhs->name, "slots") && !strcasestr(lhs->name, "uops_retired.slots"))
+> +		if (arch_is_topdown_slots(lhs))
+>  			return -1;
+> -		if (strcasestr(rhs->name, "slots") && !strcasestr(rhs->name, "uops_retired.slots"))
+> +		if (arch_is_topdown_slots(rhs))
+>  			return 1;
+>  		/* Followed by topdown events. */
+> -		if (strcasestr(lhs->name, "topdown") && !strcasestr(rhs->name, "topdown"))
+> +		if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>  			return -1;
+> -		if (!strcasestr(lhs->name, "topdown") && strcasestr(rhs->name, "topdown"))
+> +		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+>  			return 1;
+>  	}
+>  
+> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/evsel.c
+> index 090d0f371891..181f2ba0bb2a 100644
+> --- a/tools/perf/arch/x86/util/evsel.c
+> +++ b/tools/perf/arch/x86/util/evsel.c
+> @@ -6,6 +6,7 @@
+>  #include "util/pmu.h"
+>  #include "util/pmus.h"
+>  #include "linux/string.h"
+> +#include "topdown.h"
+>  #include "evsel.h"
+>  #include "util/debug.h"
+>  #include "env.h"
+> @@ -44,7 +45,7 @@ bool arch_evsel__must_be_in_group(const struct evsel *evsel)
+>  	    strcasestr(evsel->name, "uops_retired.slots"))
+>  		return false;
+>  
+> -	return strcasestr(evsel->name, "topdown") || strcasestr(evsel->name, "slots");
+> +	return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(evsel);
+>  }
+>  
+>  int arch_evsel__hw_name(struct evsel *evsel, char *bf, size_t size)
+> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+> index 3f9a267d4501..e805065bb7e1 100644
+> --- a/tools/perf/arch/x86/util/topdown.c
+> +++ b/tools/perf/arch/x86/util/topdown.c
+> @@ -32,6 +32,47 @@ bool topdown_sys_has_perf_metrics(void)
+>  }
+>  
+>  #define TOPDOWN_SLOTS		0x0400
+> +bool arch_is_topdown_slots(const struct evsel *evsel)
+> +{
+> +	if (evsel->core.attr.config == TOPDOWN_SLOTS)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +static int compare_topdown_event(void *vstate, struct pmu_event_info *info)
+> +{
+> +	int *config = vstate;
+> +	int event = 0;
+> +	int umask = 0;
+> +	char *str;
+> +
 
-Applied to drm-misc-fixes, thanks!
+The compare is only needed for the "topdown" event.
+Check the name first before the sscanf and compare.
 
-[1/1] drm/bridge: adv7511: Fix Intermittent EDID failures
-      commit: 91f9f4a37124044089debb02a3965c59b5b10c21
+	if (!strcasestr(info->name, "topdown"))
+		return 0;
 
-Best regards,
--- 
-With best wishes
-Dmitry
+> +	str = strcasestr(info->str, "event=");
+> +	if (str)
+> +		sscanf(str, "event=%x", &event);
+> +
+> +	str = strcasestr(info->str, "umask=");
+> +	if (str)
+> +		sscanf(str, "umask=%x", &umask);
+> +
+> +	if (strcasestr(info->name, "topdown") && event == 0 &&
+> +	    *config == (event | umask << 8))
+> +		return 1;
+> +
+> +	return 0;
+> +}
+> +
+> +bool arch_is_topdown_metrics(const struct evsel *evsel)
+> +{
+> +	struct perf_pmu *pmu = evsel__find_pmu(evsel);
+> +	int config = evsel->core.attr.config;
+> +
 
+The topdown events are only available for the core PMU.
+You may want to return earlier for the !core PMUs.
+
+	if (!pmu || !pmu->is_core)
+		return false;
+
+Thanks,
+Kan
+> +	if (pmu && perf_pmu__for_each_event(pmu, false, &config,
+> +					    compare_topdown_event))
+> +		return true;
+> +
+> +	return false;
+> +}
+>  
+>  /*
+>   * Check whether a topdown group supports sample-read.
+> @@ -44,7 +85,7 @@ bool arch_topdown_sample_read(struct evsel *leader)
+>  	if (!evsel__sys_has_perf_metrics(leader))
+>  		return false;
+>  
+> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
+> +	if (arch_is_topdown_slots(leader))
+>  		return true;
+>  
+>  	return false;
+> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
+> index 46bf9273e572..1bae9b1822d7 100644
+> --- a/tools/perf/arch/x86/util/topdown.h
+> +++ b/tools/perf/arch/x86/util/topdown.h
+> @@ -3,5 +3,7 @@
+>  #define _TOPDOWN_H 1
+>  
+>  bool topdown_sys_has_perf_metrics(void);
+> +bool arch_is_topdown_slots(const struct evsel *evsel);
+> +bool arch_is_topdown_metrics(const struct evsel *evsel);
+>  
+>  #endif
 
