@@ -1,143 +1,138 @@
-Return-Path: <linux-kernel+bounces-244819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F7392A9E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:35:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D8292A9E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55F8F283070
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:35:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B05761C21BF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571B51CF8A;
-	Mon,  8 Jul 2024 19:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A54E14A635;
+	Mon,  8 Jul 2024 19:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C3qIIK/v"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jfb5YOAv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048E579FD
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DD11CD2B;
+	Mon,  8 Jul 2024 19:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720467352; cv=none; b=d5qylckSjOMjDWa0YZGfc7TjTVAaMs9fbtb6fmhjeV2Ka3ji+czYbOnbo8NsB2YI9HVZpMYKmlfcQGT24PKBFtbWfMjI+jnVRvkvuxG6FjIMmMD22yKUmbPrwZ5mmrSPGUqZJe7OjjlAoQ2y12I1tSTH391Y3idORpKo4d3FNvw=
+	t=1720467500; cv=none; b=m8lvAYbmfdg7QGGB3g4zlHOpR2PePe/K+7c3j27mbHxbeGd2+XLshTqNySSqJ/lNoZQcPfhvxCYzeyfZ5UbgT1Etqk2lpSMOmL4B6HUgv06j+xiPyG8/XKlWuipPhk6CZRthwyk9tEePKQOUkDrVoyJ4ULJ4vqDmvChX9ASy7q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720467352; c=relaxed/simple;
-	bh=0OBzSXiRb9v5GMOlfMYcQ/AMJWi6hFBtmioN+HVjr58=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aWT5m4QYP4jnvbaQLIBubLw8qCGGrCg7PubquckbowoMLVaOQvNwV9soW0DaZig9Afe6j1Pa509HNsPxCKUHMFnwZngWKSPnd7kvN6fsGV4ZO9TvEN5BQLlq8C97uieuUCC+eQtHT+jg45emALyRftsfDtMiYIFe3ho63pzzypE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C3qIIK/v; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720467349;
-	bh=0OBzSXiRb9v5GMOlfMYcQ/AMJWi6hFBtmioN+HVjr58=;
-	h=From:Date:Subject:To:Cc:From;
-	b=C3qIIK/vnI3mCTcPc66XWoXaZbiz+9uf2fXh1pfWwFj+9suhveLcIMm1kD+ikzZ6F
-	 rJ+WtOnd6HbIO9O87WMq8ZLlUaviA0wfEIUf6CSBp3Pfknocos3ri/+mFgqoDRGIwq
-	 lex/vwE0ifxWI64BFvO/TCIGzYmtA/QClvxvXazvdTUtdpEVgbS+xF7CMI0JqP0JQw
-	 LKQr5IqmKeculWUaVfuSUiAltUW6C1pGRDxQoXcMfTc0lYNPhoT7icMHxFckapUdHP
-	 N0mThcI4PV9RIaVPgjEn3XxAZ/SRPLJrYD1k7+IlafnVg/Z1GEiVlUe0ay+m6gKL98
-	 nEKBXu8f+lXhA==
-Received: from [192.168.1.242] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 497FB378042B;
-	Mon,  8 Jul 2024 19:35:47 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Mon, 08 Jul 2024 15:35:42 -0400
-Subject: [PATCH] nvmem: mtk-efuse: Only register socinfo device if needed
- cells are there
+	s=arc-20240116; t=1720467500; c=relaxed/simple;
+	bh=e5oHiwwZ0DY7Dmv393o9ZUxAt+dMtNFWFPwbkMtnVJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CX0O0owb6TOb/HBNhzyL41pecY2E1nykaC0pGCVIZB8F5lCNhtNuC0SqNZ1oxw253Ql/Q3hBXHpYDRBShzuvxy01bp//5Dn7Jin0xSqL/egb5Wb5U0StawqspLaDnjbB8aLCmIQcSysaZdEhyWniMuYzQX9xIQ3rjtSXbIVeBnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jfb5YOAv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 050BFC116B1;
+	Mon,  8 Jul 2024 19:38:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720467500;
+	bh=e5oHiwwZ0DY7Dmv393o9ZUxAt+dMtNFWFPwbkMtnVJQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jfb5YOAvhFAWSlZd9EaSBneZ/YcVipzNxWs4j8tWUSij/ubtl3hRK2uYE+qVesZk8
+	 L+ZMtxuh+PC5igYpPTqAUN1mef7sfB2u6n/PWF0O8s3cbQmc0OxIs49tnpe/fdX6Q7
+	 P/yKUh0CNat8czIKYGHk/p/ioGlbNn8Dn4gMc15PHkuUQ/VC2/GkSGooGnAXzMVgpb
+	 2rkWcXcpWR3oZIR4MGr5SJPDPwtdVVOLu+uft6AMPYOl0CGNmO0vg1F2Q9Kc/xWLCB
+	 REf//u5kAPiLeRho9Yfk8b8TcVfRACOr0RIAzQibnvhTJ03AjzgTNn2CDd9k86IOj2
+	 5XOChLcu7orZQ==
+Date: Mon, 8 Jul 2024 12:38:19 -0700
+From: Kees Cook <kees@kernel.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	Yin Fengwei <fengwei.yin@intel.com>,
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <202407081237.42C50C2F7@keescook>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <202407041656.3A05153@keescook>
+ <20240705.uch1saeNi6mo@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240708-mtk-socinfo-no-data-probe-err-v1-1-fb2acd3a47bf@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAI0/jGYC/x3MQQqEMAwAwK9IzhuoVbHsV2QPtY0aZBtJRQTx7
- xaPc5kLMilThm91gdLBmSUV1J8KwuLTTMixGKyxremNw/++YpbAaRJMgtHvHjeVkZBUMfZd55q
- 2icFZKMemNPH5/sPvvh+c3U9+bwAAAA==
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.0
+In-Reply-To: <20240705.uch1saeNi6mo@digikod.net>
 
-Not every efuse region has cells storing SoC information. Only register
-an socinfo device if the required cells are present.
+On Fri, Jul 05, 2024 at 07:53:10PM +0200, Mickaël Salaün wrote:
+> On Thu, Jul 04, 2024 at 05:04:03PM -0700, Kees Cook wrote:
+> > On Thu, Jul 04, 2024 at 09:01:33PM +0200, Mickaël Salaün wrote:
+> > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > allowed for execution.  The main use case is for script interpreters and
+> > > dynamic linkers to check execution permission according to the kernel's
+> > > security policy. Another use case is to add context to access logs e.g.,
+> > > which script (instead of interpreter) accessed a file.  As any
+> > > executable code, scripts could also use this check [1].
+> > > 
+> > > This is different than faccessat(2) which only checks file access
+> > > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > > real execution, user space gets the same error codes.
+> > 
+> > Nice! I much prefer this method of going through the exec machinery so
+> > we always have a single code path for these kinds of checks.
+> > 
+> > > Because AT_CHECK is dedicated to user space interpreters, it doesn't
+> > > make sense for the kernel to parse the checked files, look for
+> > > interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
+> > > if the format is unknown.  Because of that, security_bprm_check() is
+> > > never called when AT_CHECK is used.
+> > 
+> > I'd like some additional comments in the code that reminds us that
+> > access control checks have finished past a certain point.
+> 
+> Where in the code? Just before the bprm->is_check assignment?
 
-This prevents the pointless process of creating an socinfo device,
-probing it with the socinfo driver only to ultimately error out like so
+Yeah, that's what I was thinking.
 
-  mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
-  mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
-
-This issue is observed on the mt8183-kukui-jacuzzi-juniper-sku16
-platform, which has two efuse regions, but only one of them contains the
-SoC data.
-
-Signed-off-by: NÃ­colas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/nvmem/mtk-efuse.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
-index 9caf04667341..79300c91ced2 100644
---- a/drivers/nvmem/mtk-efuse.c
-+++ b/drivers/nvmem/mtk-efuse.c
-@@ -60,6 +60,8 @@ static void mtk_efuse_fixup_dt_cell_info(struct nvmem_device *nvmem,
- 		cell->read_post_process = mtk_efuse_gpu_speedbin_pp;
- }
- 
-+static const char socinfo_data_first_name[] = "socinfo-data1";
-+
- static int mtk_efuse_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -69,6 +71,7 @@ static int mtk_efuse_probe(struct platform_device *pdev)
- 	struct mtk_efuse_priv *priv;
- 	const struct mtk_efuse_pdata *pdata;
- 	struct platform_device *socinfo;
-+	struct device_node *np;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -92,10 +95,16 @@ static int mtk_efuse_probe(struct platform_device *pdev)
- 	if (IS_ERR(nvmem))
- 		return PTR_ERR(nvmem);
- 
--	socinfo = platform_device_register_data(&pdev->dev, "mtk-socinfo",
--						PLATFORM_DEVID_AUTO, NULL, 0);
--	if (IS_ERR(socinfo))
--		dev_info(dev, "MediaTek SoC Information will be unavailable\n");
-+	np = of_get_child_by_name(pdev->dev.of_node, socinfo_data_first_name);
-+	if (np) {
-+		of_node_put(np);
-+		socinfo = platform_device_register_data(&pdev->dev, "mtk-socinfo",
-+							PLATFORM_DEVID_AUTO, NULL, 0);
-+		if (IS_ERR(socinfo))
-+			dev_info(dev, "MediaTek SoC Information will be unavailable\n");
-+	} else {
-+		dev_info(dev, "Efuse region does not contain SoC information - skipping socinfo driver setup\n");
-+	}
- 
- 	platform_set_drvdata(pdev, socinfo);
- 	return 0;
-
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240708-mtk-socinfo-no-data-probe-err-d7558343dc82
-
-Best regards,
 -- 
-NÃ­colas F. R. A. Prado <nfraprado@collabora.com>
-
+Kees Cook
 
