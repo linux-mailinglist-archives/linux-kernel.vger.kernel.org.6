@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-244945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CB892AC0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:27:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6EC392AC11
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 511541C220FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825721F2291F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C0A1509BF;
-	Mon,  8 Jul 2024 22:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oFVtHkX6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E233815252E;
+	Mon,  8 Jul 2024 22:27:51 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7633D3CF63;
-	Mon,  8 Jul 2024 22:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2F53CF63;
+	Mon,  8 Jul 2024 22:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720477665; cv=none; b=PtR4E0+aO8TriNZKHNLIz6h9n1XJN+O9g89EFb8MIsLC73OgnILC3Jr5arGXJ18OipJ1OzhuOBfiG5RA9qL/ce83mh0C9RX71FKUueOCWJ8WsNZaal8KnEaBQmzcXYjZHZKgK0RoK7k1ueXn5ZhYULgQG4b3huEkny8MSSOrKu8=
+	t=1720477671; cv=none; b=QqFdLeV9EVnXxUdUPdiDpXo+tAHJhFGrT+JCGRVIN3YZ704S29ALeoo83xEKdO5KcYpdxtOSuQGuXfnkhbOCAUsxwa92cSoACnOOXsSXi0Kwjve9KRNxWIszrlZueQ6AKyZyWVQVpo1baIC33/e28DI47J5nhjQM/ZSE58RvDQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720477665; c=relaxed/simple;
-	bh=cdy5zILmTkrtUAEBPhlgJpgFPWVDym+4zvsbx+LMWhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IqOvWvCSWVPmOga+5IWzV/PRZe//AOmRji63GWYsa7dnGFXzsYPrS5MdbbhinUarTMoN0tSwwsSzz4Ig8l8Zse6d8/eVrMQddUnExPDl7yeJnjbqJ7YX8VJ5czMmy6T7aBMXLvFUViuBnBZk+Y9O7bg9jNjB3lOiGPF9PN1Y02w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oFVtHkX6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BLVcL2EPYuo10mpXkM4Nfciy2mqtNKXtJyWcJeoaAt4=; b=oFVtHkX65Mdb3qO4D7Uvvgsbml
-	8c4tUiCT3xY/DCu6RB3bVaMNqlRV+lb2FOXjosFbBJHVAr63YwHbThYh7koJNrDX2lA2R/4+4/WKJ
-	w50l+aSFHWR2MaVqLfQxDla7Qkgx1sZP95/6HbgmdGUbwZIW3+E5eLxQlwH4lOkHAYen/dYygSqGf
-	NeAl8RqvfW8qi3nWArf+VF7tqCfjuuOysFgIg5rBpTTE96/K8OdxlB3emyGS7kY42LtKZV/Vo2raX
-	PefjkiI2QJriZYRUr8oyb7szDRq9rezDOhQVBMMv9dGuS86ryJhKmpDwocNtawGZqsGI2YDmQXUvS
-	tVb/IBqQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sQwpT-00000007EGt-3hi4;
-	Mon, 08 Jul 2024 22:27:27 +0000
-Date: Mon, 8 Jul 2024 23:27:27 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	Chandan Babu R <chandan.babu@oracle.com>, djwong@kernel.org,
-	david@fromorbit.com, Christian Brauner <brauner@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	akpm@linux-foundation.org, yang@os.amperecomputing.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, p.raghav@samsung.com, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v9 00/10] enable bs > ps in XFS
-Message-ID: <Zoxnz7R5EBb6SCR7@casper.infradead.org>
-References: <20240704112320.82104-1-kernel@pankajraghav.com>
- <Zoxkap1DtwZ-1tjI@bombadil.infradead.org>
+	s=arc-20240116; t=1720477671; c=relaxed/simple;
+	bh=7keSjNKjUQZHP6i7oY/3+jzUHcGs9ywO2e3Ox+NNw7M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b9PdNhXD5V0jHeunmd7oRsGyRbgFuouynfzStnRlfVQEGfzBm2oXrGVRRZpaOb9a7rGoTbOS9qAGBUHx548NxaeUe4wwxMZFvRwx+IBCASUPAlDYvpVLuSdfKdfLhKQdnB8vW/wFcpJIXVPyEheFVXBwuxVj8hFIjAcHm4LkdCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e8616d7.versanet.de ([94.134.22.215] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sQwpj-0006Hg-2v; Tue, 09 Jul 2024 00:27:43 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+Date: Tue,  9 Jul 2024 00:27:40 +0200
+Message-Id: <172047765645.1423318.42844340203979.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240626230319.1425316-1-jonas@kwiboo.se>
+References: <20240626230319.1425316-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zoxkap1DtwZ-1tjI@bombadil.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 08, 2024 at 03:12:58PM -0700, Luis Chamberlain wrote:
-> On Thu, Jul 04, 2024 at 11:23:10AM +0000, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> > 
-> > This is the ninth version of the series that enables block size > page size
-> > (Large Block Size) in XFS.
+On Wed, 26 Jun 2024 23:03:10 +0000, Jonas Karlman wrote:
+> This series adds initial support for the Xunlong Orange Pi 3B board.
 > 
-> It's too late to get this in for v6.11, but I'd like to get it more exposure
-> for testing. Anyone oppose getting this to start being merged now into
-> linux-next so we can start testing for *more* than a kernel release cycle?
+> The Xunlong Orange Pi 3B is a single-board computer based on the
+> Rockchip RK3566 SoC.
+> 
+> Schematic for Orange Pi 3B can be downloaded from:
+> http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-3B.html
+> 
+> [...]
 
-That's not how linux-next works.  It's only for patches which are
-destined for the next merge window, not for the one after that.
+Applied, thanks!
+
+[1/2] dt-bindings: arm: rockchip: Add Xunlong Orange Pi 3B
+      commit: 6d48d5045d99a938b42ee875ae6be80b832e6d77
+[2/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+      commit: d79d713d602e8b32cf935ddfdf61769cb74ba1dc
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
