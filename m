@@ -1,90 +1,134 @@
-Return-Path: <linux-kernel+bounces-244970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D62692AC5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:04:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D34292AC5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE341C21C2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:04:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3921E2818CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18841514F2;
-	Mon,  8 Jul 2024 23:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7257B152786;
+	Mon,  8 Jul 2024 23:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="t9Si7Qwp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I9oq3bVg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E325656452
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 23:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD714F9E6;
+	Mon,  8 Jul 2024 23:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720479849; cv=none; b=pJRULCP817IFqy1ETpaPZqrB/DK0V49T25r74oDXjcozhsnv77n/rGn8s/JyfG6SiVYuo7dqq0/yVPfFnIkl8ECEFX5ooUqTBqK+XJ0+/+HhEKwIAqclMyuDzAPzPYC2FQXfgBVDwUdMJZ7XiVrc0k8XGDqESsDykcXLumhv8vI=
+	t=1720480024; cv=none; b=IA7M6zUpKgluQ3RbQhOp3ssLOC4ohn9DSuKn7xIKG7qwgQI8m00AgilWXsHh2Tb6n+p4YvgWRSKQiBRKxJfWnukx8yoYgslmIbIke1ORG8bZCyZW7ArmBW9jUq8/Rp77UluI8D/wfyreIBgNmpbK3ggOA8/EeQDp2leSfXMXmiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720479849; c=relaxed/simple;
-	bh=Tq/hhqS1+OnXToUn2WEmCEW7BwxSDuDaStLoeFV6yFk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OlwD+NdPnD56V7bLsf8SK5h7Cc5i+IGuwy5NLq/QW1Pmv6Sgh6rdT4JuF6EyQ+T+/ZSuazAgKBi4W/gpOOJ6r4WhRKa98D+RipJmYyLWOQYjK59twJZcDQz3UKwuhxEzkb9sCm1w4s8VpmivyF5dLT84ZK42bUNpreG3s/jr1O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=t9Si7Qwp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D316C116B1;
-	Mon,  8 Jul 2024 23:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720479848;
-	bh=Tq/hhqS1+OnXToUn2WEmCEW7BwxSDuDaStLoeFV6yFk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=t9Si7QwppVqej3YsdEFVrKl5GM6emLtHJ1fJ+xuPG01qx9MyQGoGlu2mYP62tv7qt
-	 PSqlT3IXnpNLcpyQDo6HlLidTBk37OUeAcPfovTBFwpT4zjtIqYB00vps1Tqc8As8N
-	 q2vWJ87LBnRwBmY4iDAJN0mhCTEq+FK8ZU1QrRjA=
-Date: Mon, 8 Jul 2024 16:04:07 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Zi Yan
- <ziy@nvidia.com>, Yang Shi <shy828301@gmail.com>, Hugh Dickins
- <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Huang Ying
- <ying.huang@intel.com>, David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH] mm/migrate: Putback split folios when numa hint
- migration fails
-Message-Id: <20240708160407.a0c51eb11d0403c161d27540@linux-foundation.org>
-In-Reply-To: <20240708215537.2630610-1-peterx@redhat.com>
-References: <20240708215537.2630610-1-peterx@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720480024; c=relaxed/simple;
+	bh=qt1XEsOk5vXNGPRWZWnyoZrrno6rZqqFm/L8YdIS0kI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GcHpTyq+TovyAMy93kM+9r9pqEeCuMygjtC8fm6TtrC9/VkFwp4YaRWCSCC+X4IBi+2giXfKA1Wt1+Y12ttpMvMmsFBchTWAELMKddL2MO0eWG4McLR69VbGTVdKHwlH2gGg6vOQKKL4rdzPXmECD+kS/DoW26P4r6rhvdKhR0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I9oq3bVg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468Aq7Ei006130;
+	Mon, 8 Jul 2024 23:06:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=8nKoI01F6Z4EuurtlDnpb+
+	wjt4ns0mL+M/RbDFOpneU=; b=I9oq3bVg+SpnTfY1Y3CXTGBanWO1jX5sqMOvfH
+	e8PsMlJu/gUyg/8xbv2ypoNaLvsU6OgFPjed186QO5Y+9pm0gXdA3+m/kpXxQM8M
+	yJBe5E2AXM3Ia29Ln9P/hDTrVH68G/jYn444WXssyZ+ObQ29GopEMAGThEACtDRq
+	b4+OciIC9VfB0DhZgm95pSQKs1T3uTvHK+DCuB1rrh1+vZLynYvZxj8Edqlyueer
+	7AFbpYI5DrJ6bR0VOJbowUeubwf9aIzc8oVmwXUxgix6xyZSHCckuYFcSAA9+kkz
+	Keqc0/tA1QrxDrr2/tbiFjhuNGKzJf+p4CKWwPa0P4eoj54g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa64tev-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 23:06:44 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468N6hX3002213
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 23:06:43 GMT
+Received: from hu-obabatun-lv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 8 Jul 2024 16:06:39 -0700
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+To: <robh@kernel.org>, <saravanak@google.com>, <klarasmodin@gmail.com>,
+        <aisheng.dong@nxp.com>
+CC: <hch@lst.de>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <will@kernel.org>, <catalin.marinas@arm.com>,
+        <kernel@quicinc.com>, Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+Subject: [PATCH 0/4] Revert use of Unflatten_devicetree APIs from reserved_mem
+Date: Mon, 8 Jul 2024 16:06:09 -0700
+Message-ID: <20240708230613.448846-1-quic_obabatun@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FM60Zs7zcx79mNLOdFsyTJKXzE2_eRNI
+X-Proofpoint-ORIG-GUID: FM60Zs7zcx79mNLOdFsyTJKXzE2_eRNI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_13,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=883
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
+ clxscore=1011 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080172
 
-On Mon,  8 Jul 2024 17:55:37 -0400 Peter Xu <peterx@redhat.com> wrote:
+With recent changes made to initialize the cma regions before the page
+tables are setup, commit f2a524d9ef5b ("of: reserved_mem: Restructure
+code to call reserved mem init functions earlier"), an issue was
+introduced where the initialization of the cma regions fail and are
+initialized as "non-reusable" regions instead of "reusable". [1], [2]
 
-> This issue is not from any report yet, but by code observation only.
-> 
-> This is yet another fix besides Hugh's patch [1] but on relevant code path,
-> where eager split of folio can happen if the folio is already on deferred
-> list during a folio migration.
-> 
-> Here the issue is NUMA path (migrate_misplaced_folio()) may start to
-> encounter such folio split now even with MR_NUMA_MISPLACED hint applied.
-> Then when migrate_pages() didn't migrate all the folios, it's possible the
-> split small folios be put onto the list instead of the original folio.
-> Then putting back only the head page won't be enough.
-> 
-> Fix it by putting back all the folios on the list.
+This issue occurs because the device_node of the regions are not yet
+created by the time the cma regions are being initialized.
 
-mm/migrate.c: In function 'migrate_misplaced_folio':
-mm/migrate.c:2624:13: error: unused variable 'nr_pages' [-Werror=unused-variable]
- 2624 |         int nr_pages = folio_nr_pages(folio);
-      |             ^~~~~~~~
+The cma regions need to be initialized before the page tables are setup
+for them to be configured correctly as was realized in [3].
 
-Worrisome.  Which kernel version was this tested against?
+Hence, since the unflatten_devicetree APIs are not available until after
+the page tables have been setup, revert back to using the fdt APIs. This
+makes it possible to store a reference to each cma node in the
+reserved_mem array by the time it is needed in the init function.
 
-> Don't need to copy stable if this can still hit 6.10..  Only smoke tested.
+[1] https://lore.kernel.org/all/DU0PR04MB9299C3EC247E1FE2C373440F80DE2@DU0PR04MB9299.eurprd04.prod.outlook.com/
 
-Also worrisome.  Are we to take an only-smoke-tested patch which
-doesn't apply to mainline and which doesn't compile on mm-unstable into
-mainline based on "only smoke tested"?
+[2] https://lore.kernel.org/all/986361f4-f000-4129-8214-39f2fb4a90da@gmail.com/
+
+[3] https://lore.kernel.org/all/20240610213403.GA1697364@thelio-3990X/
+
+Oreoluwa Babatunde (4):
+  Revert "of: reserved_mem: Restructure code to call reserved mem init
+    functions earlier"
+  Revert "of: reserved_mem: Rename fdt_* functions to refelct the change
+    from using fdt APIs"
+  Revert "of: reserved_mem: Use unflatten_devicetree APIs to scan
+    reserved memory nodes"
+  of: reserved_mem: Restructure code to call rmem init functions earlier
+
+ drivers/of/fdt.c                |   2 +-
+ drivers/of/of_private.h         |   2 +-
+ drivers/of/of_reserved_mem.c    | 103 +++++++++++++++++---------------
+ include/linux/of_reserved_mem.h |   2 +-
+ kernel/dma/coherent.c           |  10 ++--
+ kernel/dma/contiguous.c         |   8 +--
+ kernel/dma/swiotlb.c            |  10 ++--
+ 7 files changed, 72 insertions(+), 65 deletions(-)
+
+-- 
+2.34.1
+
 
