@@ -1,114 +1,205 @@
-Return-Path: <linux-kernel+bounces-244784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62BF692A983
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:02:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EBA92A982
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F3481F2268E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:02:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E308B21C34
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF18914E2DA;
-	Mon,  8 Jul 2024 19:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759FA14D43E;
+	Mon,  8 Jul 2024 19:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vz9cR2jS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqkkvI/h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470C11474AF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B771474AF;
+	Mon,  8 Jul 2024 19:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720465312; cv=none; b=aTaOOH3RSA0441P3n/aubAc7h+B0aolp7C9X0Z2cg6Qu5m8yIA34fhvbYYUObhy/pfW4JGe7I76qbVy9551ZmEvj15T5jEcuN5LvSGDLKfqzt0MGdLlN4gq8GSwix1wVEjL4uJby9l5MMotzF+E4IHnzcVY4hzn3jboZukbCMGU=
+	t=1720465306; cv=none; b=rIq5L1ZV2cy4T18DPgNZuzQZ2KGQvyX419fQ71rb9z545n02NTw4Z+ZL1uWrIvG6nfoYb2WJeR5oLmui74mQF+gT69TkKPRWZPwpfrh57hVE0pPZxbWZ18wHbXhLJn1T2rk3S/iM3MMNe5IKRI9Mi/m1vBa6g2Yj/yS0V83x0Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720465312; c=relaxed/simple;
-	bh=jP2M0JpMs2wAYT7RmW+K09ipvg9NM/5VSFNHQgyu+uk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QejtaBQw2aSa925wg42LmkmXeCThLJJUAuA39vbX/+iwPJ4wynPLwzVu81cuFFWzS+ovTtRDp+QG6+ua1QhuMWe0/rMPd08zTtuKza99HTr6Yg4tYXnO3YTYlIhS2oGnktOdbcS9ws5J0qA4pPFTOfFUnNSjBueKvHXTimnX3e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vz9cR2jS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720465309;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XLGoCNz9DClhgM4ZV9QmfktXdqX3rAlfMW12nS2PwS8=;
-	b=Vz9cR2jSIxHCjCZQUAeEw3Qpg1MsL/tAB7IFl7xW4B2l92ZbP3MUJzIgWs9XjKXJSEdz+L
-	Tnhqh4BKVYG1ESkioQ3087Sc5OaW1rywqgQftUPbx9lsMx4XCbOn250gdM8fYz4fDJSJUF
-	K+sjPT/9MDN+HMVU+6hoLw3jRzC6NVk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-HdacGquzPCOi2M7P_MpIWw-1; Mon,
- 08 Jul 2024 15:01:44 -0400
-X-MC-Unique: HdacGquzPCOi2M7P_MpIWw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C6E1519560B0;
-	Mon,  8 Jul 2024 19:01:41 +0000 (UTC)
-Received: from [10.22.33.83] (unknown [10.22.33.83])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 57C253000181;
-	Mon,  8 Jul 2024 19:01:40 +0000 (UTC)
-Message-ID: <b505c15b-8fd2-44f2-8e33-46ae29c2696e@redhat.com>
-Date: Mon, 8 Jul 2024 15:01:39 -0400
+	s=arc-20240116; t=1720465306; c=relaxed/simple;
+	bh=1hW/kypdr+uaGZf3TpRDZkCzjeuosv/ANU6YTGTLXeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfctVvaoVW7aGUJSAhUFAOfSdZd8cehcmigPdbCmBkIK5rkOjzsH82l2P5irM6r+6sOoV8NIgEHC86EyfydLwTTAKFCWqmVbchNwMXEksk13zF/LtcEeyQ5WJGJiu4/aIzXz/XMwULzwaAc53RoY2i6Ovf0qXmAaqhxcIunrb0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqkkvI/h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F6DC116B1;
+	Mon,  8 Jul 2024 19:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720465306;
+	bh=1hW/kypdr+uaGZf3TpRDZkCzjeuosv/ANU6YTGTLXeI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iqkkvI/hBM0I8W+ZlvH3nLQoPJO9QM8LmBrpuyAneOgy7NF+RSRTyrPIWVCAxl5OK
+	 Qj7h38Si0auCjMoYaBibCpq8aDetMl4COkWD0P6xktZmsKwRtdqJ2x55/O2ja9TXot
+	 SLWLacZcZ+Ayzt6msQoyxlKdrXzStPcaO4ML88Q1wl5xuA1dOmXa1k4i3ZjM9ak3fT
+	 Q4fOFD8pQY0YtIHBbyjIuL67+JTPJXsN6RpcsGvIOgkW1o/JtRgcMxa6vARj9gM0RD
+	 eGE9ck/XLn75yxhkgIqQ1RohuU0oxUUxLiizAAfuEVRq0M3xm29w8uUJ17fmIRfiEP
+	 EsVzG2aeV0ySQ==
+Date: Mon, 8 Jul 2024 12:01:45 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 6/9] xfs: switch to multigrain timestamps
+Message-ID: <20240708190145.GR612460@frogsfrogsfrogs>
+References: <20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org>
+ <20240708-mgtime-v4-6-a0f3c6fb57f3@kernel.org>
+ <20240708184739.GP612460@frogsfrogsfrogs>
+ <28e7a6c193674f2aa41ab1eec9bb8747ddba1a4c.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-cgroup 1/2] cgroup: Show # of subsystem CSSes in
- /proc/cgroups
-To: Tejun Heo <tj@kernel.org>
-Cc: Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240706005622.2003606-1-longman@redhat.com>
- <Zowzvf2NEOzgXYr3@slm.duckdns.org>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <Zowzvf2NEOzgXYr3@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28e7a6c193674f2aa41ab1eec9bb8747ddba1a4c.camel@kernel.org>
 
+On Mon, Jul 08, 2024 at 02:51:07PM -0400, Jeff Layton wrote:
+> On Mon, 2024-07-08 at 11:47 -0700, Darrick J. Wong wrote:
+> > On Mon, Jul 08, 2024 at 11:53:39AM -0400, Jeff Layton wrote:
+> > > Enable multigrain timestamps, which should ensure that there is an
+> > > apparent change to the timestamp whenever it has been written after
+> > > being actively observed via getattr.
+> > > 
+> > > Also, anytime the mtime changes, the ctime must also change, and those
+> > > are now the only two options for xfs_trans_ichgtime. Have that function
+> > > unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
+> > > always set.
+> > > 
+> > > Finally, stop setting STATX_CHANGE_COOKIE in getattr, since the ctime
+> > > should give us better semantics now.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/xfs/libxfs/xfs_trans_inode.c |  6 +++---
+> > >  fs/xfs/xfs_iops.c               | 10 +++-------
+> > >  fs/xfs/xfs_super.c              |  2 +-
+> > >  3 files changed, 7 insertions(+), 11 deletions(-)
+> > > 
+> > > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+> > > index 69fc5b981352..1f3639bbf5f0 100644
+> > > --- a/fs/xfs/libxfs/xfs_trans_inode.c
+> > > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
+> > > @@ -62,12 +62,12 @@ xfs_trans_ichgtime(
+> > >  	ASSERT(tp);
+> > >  	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
+> > >  
+> > > -	tv = current_time(inode);
+> > > +	/* If the mtime changes, then ctime must also change */
+> > > +	ASSERT(flags & XFS_ICHGTIME_CHG);
+> > >  
+> > > +	tv = inode_set_ctime_current(inode);
+> > >  	if (flags & XFS_ICHGTIME_MOD)
+> > >  		inode_set_mtime_to_ts(inode, tv);
+> > > -	if (flags & XFS_ICHGTIME_CHG)
+> > > -		inode_set_ctime_to_ts(inode, tv);
+> > >  	if (flags & XFS_ICHGTIME_CREATE)
+> > >  		ip->i_crtime = tv;
+> > >  }
+> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > index a00dcbc77e12..d25872f818fa 100644
+> > > --- a/fs/xfs/xfs_iops.c
+> > > +++ b/fs/xfs/xfs_iops.c
+> > > @@ -592,8 +592,9 @@ xfs_vn_getattr(
+> > >  	stat->gid = vfsgid_into_kgid(vfsgid);
+> > >  	stat->ino = ip->i_ino;
+> > >  	stat->atime = inode_get_atime(inode);
+> > > -	stat->mtime = inode_get_mtime(inode);
+> > > -	stat->ctime = inode_get_ctime(inode);
+> > > +
+> > > +	fill_mg_cmtime(stat, request_mask, inode);
+> > 
+> > Sooo... for setting up a commit-range operation[1], XFS_IOC_START_COMMIT
+> > could populate its freshness data by calling:
+> > 
+> > 	struct kstat dummy;
+> > 
+> > 	fill_mg_ctime(&dummy, STATX_CTIME | STATX_MTIME, inode);
+> > 
+> > and then using dummy.[cm]time to populate the freshness data that it
+> > gives to userspace, right?  Having set QUERIED, a write to the file
+> > immediately afterwards will cause a (tiny) increase in ctime_nsec which
+> > will cause the XFS_IOC_COMMIT_RANGE to reject the commit[2].  Right?
+> > 
+> 
+> Yes. Once you call fill_mg_ctime, the first write after that point
+> should cause the kernel to ensure that there is a distinct change in
+> the ctime.
+> 
+> IOW, I think this should alleviate the concerns I had before with using
+> timestamps with the XFS_IOC_COMMIT_RANGE interface.
 
-On 7/8/24 14:45, Tejun Heo wrote:
-> Hello, Waiman.
->
-> On Fri, Jul 05, 2024 at 08:56:21PM -0400, Waiman Long wrote:
->> The /proc/cgroups file shows the number of cgroups for each of the
->> subsystems.  With cgroup v1, the number of CSSes is the same as the
->> number of cgroups. That is not the case anymore with cgroup v2. The
->> /proc/cgroups file cannot show the actual number of CSSes for the
->> subsystems that are bound to cgroup v2.
->>
->> So if a v2 cgroup subsystem is leaking cgroups (typically memory
->> cgroup), we can't tell by looking at /proc/cgroups which cgroup
->> subsystems may be responsible.  This patch adds a css counter in the
->> cgroup_subsys structure to keep track of the number of CSSes for each
->> of the cgroup subsystems.
-> The count sounds useful to me but can we add it in cgroup.stats instead?
+Cool, thank you!  Apologies for roaring earlier.
 
-That information is certainly useful to display to cgroup.stat which 
-currently only shows nr_descendants and nr_dying_descendants. So does 
-"nr_<subsys_name> <cnt>" for each cgroup subsystems look good to you or 
-do you have other suggestion?
+--D
 
-The reason for this patch is because I got a bug report about leaking 
-blkio cgroup due to the information shown in /proc/cgroups. I know you 
-want do deprecate it for cgroup v2. How about adding a iine like "# 
-Deprecated for cgroup v2, use cgroup.stats file for cgroup counts" at 
-the top of /proc/cgroups when cgroup v2 is active?
-
-Cheers,
-Longman
-
-
+> > --D
+> > 
+> > [1] https://lore.kernel.org/linux-xfs/20240227174649.GL6184@frogsfrogsfrogs/
+> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=atomic-file-commits&id=0520d89c2698874c1f56ddf52ec4b8a3595baa14
+> > 
+> > > +
+> > >  	stat->blocks = XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks);
+> > >  
+> > >  	if (xfs_has_v3inodes(mp)) {
+> > > @@ -603,11 +604,6 @@ xfs_vn_getattr(
+> > >  		}
+> > >  	}
+> > >  
+> > > -	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
+> > > -		stat->change_cookie = inode_query_iversion(inode);
+> > > -		stat->result_mask |= STATX_CHANGE_COOKIE;
+> > > -	}
+> > > -
+> > >  	/*
+> > >  	 * Note: If you add another clause to set an attribute flag, please
+> > >  	 * update attributes_mask below.
+> > > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> > > index 27e9f749c4c7..210481b03fdb 100644
+> > > --- a/fs/xfs/xfs_super.c
+> > > +++ b/fs/xfs/xfs_super.c
+> > > @@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type = {
+> > >  	.init_fs_context	= xfs_init_fs_context,
+> > >  	.parameters		= xfs_fs_parameters,
+> > >  	.kill_sb		= xfs_kill_sb,
+> > > -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> > > +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+> > >  };
+> > >  MODULE_ALIAS_FS("xfs");
+> > >  
+> > > 
+> > > -- 
+> > > 2.45.2
+> > > 
+> > > 
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
 
