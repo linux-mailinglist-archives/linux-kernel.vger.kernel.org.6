@@ -1,157 +1,137 @@
-Return-Path: <linux-kernel+bounces-244158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59DB5929FF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:13:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BCE92A008
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2BB1C2087C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:13:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E16ABB2B271
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533336A022;
-	Mon,  8 Jul 2024 10:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8BF76C61;
+	Mon,  8 Jul 2024 10:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ak0UNpGH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ttOvH8Ce"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27A276025
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549BA76C76
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720433602; cv=none; b=lqV7OurxoXytVBMh/i08sYfVo8PB079k/v/3E857TLO0WayvNO/byY0Ok2A0+6CnTYKeUdzr4SrA/XHB5hcpqUVLLi3NCUcpRnJJZNJuCOuv1C5zcz2htAinzVxOSpTolvbc/bjzICUj3+ETVPfMn6WB+8kxWLjJgefols9EUNg=
+	t=1720433690; cv=none; b=bvJ/XtWEvgfG/AQr+GK770Qewflwu11B27IPqTcXzj8aoKiuO8Ce8XQNoQd4jIg53samIdWhIb6+zn1D/H0mDF+kie7c/6hjmHYLRLRrFUPCCg+TAH/tIqtBTNL61weTA2HcTaeXms1Ed/gO/b48BScY5k2NRIrUp+XtypJFn7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720433602; c=relaxed/simple;
-	bh=y6dqBqOENd6UqWyt7+MMtufQwArRT0fZ1eNZ2YYAgSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j8HBqFbJwuVtHT1rOEOJf4YhG02KXHGPFS6SZfD7JLRXY5WaOJZYHcYHwxeTFvbiPnbYlfws3im9+81Os1E2iB9DknGPJC29+Kbvc8ceHbczA5a34IKGNHLAdUEiEtP/3mpgQ0Zhhl1EX0bgra09/lS78qwXsKiYn6gOcuMW5jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ak0UNpGH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720433599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Aq4i8tkGqnPmW+VQcfJOnDtTidOU14j4o+JFRh6Zy9k=;
-	b=ak0UNpGHGfGm81gC8W8HRGT+geLgoufjK3XKFuaDT1bA4g/cU9lMfsUu1Hau23eTjzvPXd
-	HxFCwNjZwX140hTjAixoI8MrUTQaLcNV8gj/kXZwgiGCRKGogSMkrmc2pIDedYm9rWVwwq
-	lxn/+38fGn/rIuvmyehGTGS4EShgcFc=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-RN8xGMwvOneK3Dl430JOWA-1; Mon, 08 Jul 2024 06:13:18 -0400
-X-MC-Unique: RN8xGMwvOneK3Dl430JOWA-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ee90339092so45930561fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:13:18 -0700 (PDT)
+	s=arc-20240116; t=1720433690; c=relaxed/simple;
+	bh=SkWEHtSDPfXsyLQ1VAkX/uYzEH+1I/9hiZephDJ7+KI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k0PoO9RHAch5PkFPDX81ZBVqH2kjeFxk2o8iibliYCAtwrXokuELVa2AMqB2aDgnJ857k+li69496FarkDef7wLh92qhjI47PwRap6gl/joe8pSii9E21kkKqOz8+6eIqfULzHI/IL8Hoh05UBYwUB6rYxS3KkBiAucb+otBxHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ttOvH8Ce; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c6661bca43so790402eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1720433687; x=1721038487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8o4FeBTkQydEY+E5Ft9ergtCpLoarVxrr2b76p2ARdE=;
+        b=ttOvH8Ceg7X7g8zwWCa5c2nAM8Mf5a9A6s7VILm8t+Zb/ug2x24s79sKi7UOx82QvE
+         P7SPRuQoYYbDomxDfRiM8iDjfeHl0O9Gltw9Q28TqxeYDu6JX+TJrVPoJjHrtnmRQCLQ
+         lEPq7KQV5/lwA9cwYI7v9uY3pTZCKXaiMGzMfSFWK0QQKVgYxTFBb5RlAX6P8wbcQzUh
+         3wPfN3K2AhOGUltm1T93z/gLb+N2PBy2VsmT05gTBTErFPvhnD3Rib3u7VWTbiUss+sU
+         qjqtlcGWAPsNx1+Itn/O9GqQwuYgE1dhcnZy5C605FS+L/V6X8pLJNLnEcZWR1qvhdi8
+         ordA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720433596; x=1721038396;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Aq4i8tkGqnPmW+VQcfJOnDtTidOU14j4o+JFRh6Zy9k=;
-        b=AuNNQxnTkGL2n9GESs0Cp73OJv6ijU7ojgIfGel15qoxSrImDII4TOccOY2y5Aq9c5
-         5vB/iqaxPNWJ/rlG/LTZ5NdwuqJQzdJgr1lqfXSppIT/o1o6qefoOJbtCFE66NSMv7Do
-         AAfWD42C587RRqsnAKzx/iwbOeuReG2cHrLIMDgv41VmL5UXRk0qxmwLyT2R1ANwefNi
-         MaH2Q6arJy5nTjInu00ZfTBNrNrpuXYDowyY5gfh4UOb6aDo5RpbHpLqGdgHL4q9nAPa
-         16Bp5lCDAS9LN0fOKUB72u1CpPpcvuiVD3/D/qsB82Guyer4p3xeMrsOUy/WeN81A4YQ
-         gd0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWvg+YU825xdwybi1jRC8X/jiNJu2tXQg91U3NYp6g4fATmX+Mi5kUDWu54ikh1x2PqZvuVYsXs14bAbHAjMo/nIyMSegbqGTn1sHUs
-X-Gm-Message-State: AOJu0YxpUM1ivHcF1M37xwTwXwTKt268j9FX32ywA1L6xZBXl2JP3+0+
-	gZ68RQkj5bxq74pkTmACp+uqqet5m9seqY2A0KocIKEn4rbOJ91ipQc3hSgD8D4Qi0TKfAzSlYZ
-	GmVH7/JM0/hwdlLIA8prwPT9jbg8UKEhxKwz5D1cnFze+vEXL0SBqrtQs0RudLlkAMhIfE87Z
-X-Received: by 2002:a05:651c:114b:b0:2ec:3dd4:75f4 with SMTP id 38308e7fff4ca-2ee8edc23d3mr87781801fa.38.1720433596518;
-        Mon, 08 Jul 2024 03:13:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGToWaHMDwnE+0LYJZlu71A2tXExVAesgAxkzanSdp2VXAZygrzzoU3ofCUOmJX18NzvdXxw==
-X-Received: by 2002:a05:651c:114b:b0:2ec:3dd4:75f4 with SMTP id 38308e7fff4ca-2ee8edc23d3mr87781641fa.38.1720433596129;
-        Mon, 08 Jul 2024 03:13:16 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58de4581536sm5537092a12.16.2024.07.08.03.13.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 03:13:15 -0700 (PDT)
-Message-ID: <b2f69fb8-d87a-4cf4-8d45-11cf1a396e54@redhat.com>
-Date: Mon, 8 Jul 2024 12:13:14 +0200
+        d=1e100.net; s=20230601; t=1720433687; x=1721038487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8o4FeBTkQydEY+E5Ft9ergtCpLoarVxrr2b76p2ARdE=;
+        b=fZgKrpkI53BRFaXz+W7bW8QK8IvlVsdIcesrkskrdUmY/Z4Q73rXIBpiKjyoq1/J9N
+         +bizFFaypv8MXw/r+wm3Gqjpb+yignXxjyQln06BtWGU7Y8ak1thq1p3Ch0bDUxFidrq
+         BvinveuZ12dlNEKYjOGnlGKxsn2kowKdJAOQAxTrPzlUTqh6HZzzoib/+TpnX1CTI2P7
+         KC8s8r9lYNZYDRehIecdS2op5BPX8aiOIEJxk8inFwsMHe5vffAtPwvgZhF0VSjsmZzL
+         7JO1WN+tJp5rcAzsyC9sd6WBC5KJbO640hdRPytvlVm/ZR135QIuhnFnAjg5v3N7jARz
+         IBtg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/nDp1l76slnvEe6NcoBDA+2V1KSm8EigUpPFpeJuogKr72KKDtun92l61CetsOPLDU+l6vIugx0cyp8RDsgCDbC8Tni2zh4fJ9Vi/
+X-Gm-Message-State: AOJu0YxH1WWmiUG6s/x8ZtaxkR2jg4+1r5P+D1S7On2GJFbCecdSI/Eh
+	mXpdXk4GBT4S9U8712NU8N7rLxDEWYnzKWteemAaECrAnEMqPQDNzbKezn2hPWdOdMQ2J5An+wu
+	v
+X-Google-Smtp-Source: AGHT+IE/zS6WEa6AYR9d5DtByxCxkrGdmxNX7wGLzq43cS2MXgaaIKi+XNyuyDfoV7t+ibOfdSJHMw==
+X-Received: by 2002:a05:6870:5b81:b0:25e:15c1:257e with SMTP id 586e51a60fabf-25e2b9de8cfmr11531140fac.6.1720433687408;
+        Mon, 08 Jul 2024 03:14:47 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b03a9d996sm7596909b3a.96.2024.07.08.03.14.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 03:14:47 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sQlOO-008PAB-1z;
+	Mon, 08 Jul 2024 20:14:44 +1000
+Date: Mon, 8 Jul 2024 20:14:44 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Alex Shi <seakeel@gmail.com>
+Cc: linux-xfs@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: xfs deadlock on mm-unstable kernel?
+Message-ID: <Zou8FCgPKqqWXKyS@dread.disaster.area>
+References: <e5814465-b39a-44d8-aa3d-427773c9ae16@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] acpi video: force native for some T2 macbooks
-To: Aditya Garg <gargaditya08@live.com>, Lukas Wunner <lukas@wunner.de>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Cc: "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Orlando Chamberlain <orlandoch.dev@gmail.com>
-References: <3DA0EAE3-9EB7-492B-96FC-988503BBDCCC@live.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <3DA0EAE3-9EB7-492B-96FC-988503BBDCCC@live.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5814465-b39a-44d8-aa3d-427773c9ae16@gmail.com>
 
-Hi,
+On Mon, Jul 08, 2024 at 04:36:08PM +0800, Alex Shi wrote:
+>   372.297234][ T3001] ============================================
+> [  372.297530][ T3001] WARNING: possible recursive locking detected
+> [  372.297827][ T3001] 6.10.0-rc6-00453-g2be3de2b70e6 #64 Not tainted
+> [  372.298137][ T3001] --------------------------------------------
+> [  372.298436][ T3001] cc1/3001 is trying to acquire lock:
+> [  372.298701][ T3001] ffff88802cb910d8 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_reclaim_inode+0x59e/0x710
+> [  372.299242][ T3001] 
+> [  372.299242][ T3001] but task is already holding lock:
+> [  372.299679][ T3001] ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
+> [  372.300258][ T3001] 
+> [  372.300258][ T3001] other info that might help us debug this:
+> [  372.300650][ T3001]  Possible unsafe locking scenario:
+> [  372.300650][ T3001] 
+> [  372.301031][ T3001]        CPU0
+> [  372.301231][ T3001]        ----
+> [  372.301386][ T3001]   lock(&xfs_dir_ilock_class);
+> [  372.301623][ T3001]   lock(&xfs_dir_ilock_class);
+> [  372.301860][ T3001] 
+> [  372.301860][ T3001]  *** DEADLOCK ***
+> [  372.301860][ T3001] 
+> [  372.302325][ T3001]  May be due to missing lock nesting notation
+> [  372.302325][ T3001] 
+> [  372.302723][ T3001] 3 locks held by cc1/3001:
+> [  372.302944][ T3001]  #0: ffff88800e146078 (&inode->i_sb->s_type->i_mutex_dir_key){++++}-{3:3}, at: walk_component+0x2a5/0x500
+> [  372.303554][ T3001]  #1: ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
+> [  372.304183][ T3001]  #2: ffff8880040190e0 (&type->s_umount_key#48){++++}-{3:3}, at: super_cache_scan+0x82/0x4e0
 
-On 7/5/24 3:56 PM, Aditya Garg wrote:
-> From: Orlando Chamberlain <orlandoch.dev@gmail.com>
-> 
-> The intel backlight is needed for these, previously users had nothing in
-> /sys/class/backlight.
-> 
-> Signed-off-by: Orlando Chamberlain <orlandoch.dev@gmail.com>
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+False positive. Inodes above allocation must be actively referenced,
+and inodes accees by xfs_reclaim_inode() must have no references and
+been evicted and destroyed by the VFS. So there is no way that an
+unreferenced inode being locked for reclaim in xfs_reclaim_inode()
+can deadlock against the refrenced inode locked by the inode lookup
+code.
 
-Thanks, patch looks good to me:
+Unfortunately, we don't have enough lockdep subclasses available to
+annotate this correctly - we're already using all
+MAX_LOCKDEP_SUBCLASSES to tell lockdep about all the ways we can
+nest inode locks. That leaves us no space to add a "reclaim"
+annotation for locking done from super_cache_scan() paths that would
+avoid these false positives....
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/acpi/video_detect.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-> index 442396f6ed1f..baf7264d7b94 100644
-> --- a/drivers/acpi/video_detect.c
-> +++ b/drivers/acpi/video_detect.c
-> @@ -513,6 +513,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
->  		DMI_MATCH(DMI_PRODUCT_NAME, "iMac12,2"),
->  		},
->  	},
-> +	{
-> +	 .callback = video_detect_force_native,
-> +	 /* Apple MacBook Air 9,1 */
-> +	 .matches = {
-> +		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
-> +		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookAir9,1"),
-> +		},
-> +	},
->  	{
->  	 /* https://bugzilla.redhat.com/show_bug.cgi?id=1217249 */
->  	 .callback = video_detect_force_native,
-> @@ -522,6 +530,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
->  		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro12,1"),
->  		},
->  	},
-> +	{
-> +	 .callback = video_detect_force_native,
-> +	 /* Apple MacBook Pro 16,2 */
-> +	 .matches = {
-> +		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
-> +		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro16,2"),
-> +		},
-> +	},
->  	{
->  	 .callback = video_detect_force_native,
->  	 /* Dell Inspiron N4010 */
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
