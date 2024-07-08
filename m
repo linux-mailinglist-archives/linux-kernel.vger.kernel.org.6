@@ -1,189 +1,150 @@
-Return-Path: <linux-kernel+bounces-244445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C6E92A455
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:12:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F41692A458
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26EA2B219DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977471F2227B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB8113C667;
-	Mon,  8 Jul 2024 14:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0acH4c+/"
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EAC13C801;
+	Mon,  8 Jul 2024 14:12:29 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE3B200DB
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EA384FA0;
+	Mon,  8 Jul 2024 14:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447916; cv=none; b=tGzIbG6OHGugnB1EtDwBSozWhOxoOOaehMtjze1ZAZfkmxyx2D6Z4X+8NcMOezUwq7LQqYzAIbaCAN78wvfR4QO+yG32v0DqoeSjC7ri3PT1S/4ilhwGP0OGR+6BnME1BY6H2jW7paB8Abw0ZvW8jYEniiKlfQfXKqDdO0ymuFQ=
+	t=1720447949; cv=none; b=dQsDI2AaN5T//jCvQ1lSaqbW0WR4t22L50Vp3f8Qd1OXIz23I21WokXoYeLRqT1wY8WZKdUDR8MtCVDxxEA8FT4OyWTg0fuubbkHQQ/icXatQfhAeiCxgjeWUGP51qE7u84m0SBmK7JJGPM7Vo1vXcm0mSOvY1LFQzKecyDcQAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447916; c=relaxed/simple;
-	bh=1ByY6PXW2xxzSd22cVMso9XpgM+bCV0UwLxue8k786U=;
+	s=arc-20240116; t=1720447949; c=relaxed/simple;
+	bh=LLpg0T+VHX0EmEi5jcvfsJM7Nmdg3e6rcc+656CDa8Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4vlPmk9sIZyCQ9MK7kab6MDUS8Wwi3zUefBwNXoS9kkKxHxyggRd2jyZZQhKzojoWwKnzpArRC/1cHh2+h6ebqWcAqeu2e6GPlBMMcwrcINrBMSxCoZ62VDKkGQcUXBVN9TM2nmhRSbMzxQs+vNCfjxga6jwUpP/jvTDacDktY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0acH4c+/; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHmJc6gmyzj4P;
-	Mon,  8 Jul 2024 16:11:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720447904;
-	bh=SWoeWAKcGmuLJ7xgWkDxhZp8KgZj+OA6pwC+rCsx6wA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0acH4c+/M6ebmADvJWrr2AgaJxbdxA1pjxR68UDUuNpv1tSf5MfgrTg0+iehNiNql
-	 A4AXYGVpuT7vBw6mKyLNfvcxGphJDln0LhjwL+RXbQO7E7OGpARkqJPJJaBQlolaqN
-	 73HbuXMjlnqwuaHK0vXVmo0UwglZYUxw/YC3O8Rs=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHmJb6cmdzwJh;
-	Mon,  8 Jul 2024 16:11:43 +0200 (CEST)
-Date: Mon, 8 Jul 2024 16:11:41 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jann Horn <jannh@google.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <keescook@chromium.org>, 
-	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [syzbot] [lsm?] general protection fault in
- hook_inode_free_security
-Message-ID: <20240708.ig8Kucapheid@digikod.net>
-References: <00000000000076ba3b0617f65cc8@google.com>
- <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
- <20240515.Yoo5chaiNai9@digikod.net>
- <20240516.doyox6Iengou@digikod.net>
- <20240627.Voox5yoogeum@digikod.net>
- <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFOETrCh/ldfbH1EBtNh4ioHLIFltOtVdvVtatqOpAxi+hKbkdFxeRkZBDNO4VLh2TNk8DD0ldM2eaiH30lbCZStL6EmaEKOvGyFRLzHDp9epoBF6xN/W9S9a+10wLhwQDMRvYPF4APwgOIg0IBBa3fZTg0NFrx58mDFxhiGp6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1sQp66-0001V5-Uq; Mon, 08 Jul 2024 16:12:06 +0200
+Date: Mon, 8 Jul 2024 16:12:06 +0200
+From: Florian Westphal <fw@strlen.de>
+To: yyxRoy <yyxroy22@gmail.com>
+Cc: fw@strlen.de, 979093444@qq.com, coreteam@netfilter.org,
+	davem@davemloft.net, edumazet@google.com,
+	gregkh@linuxfoundation.org, kadlec@blackhole.kfki.hu,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	pabeni@redhat.com, pablo@netfilter.org
+Subject: Re: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE
+ for in-window RSTs
+Message-ID: <20240708141206.GA5340@breakpoint.cc>
+References: <20240706170432.GA7766@breakpoint.cc>
+ <20240708085940.300976-1-979093444@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20240708085940.300976-1-979093444@qq.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
-> On Thu, Jun 27, 2024 at 9:34 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > I didn't find specific issues with Landlock's code except the extra
-> > check in hook_inode_free_security().  It looks like inode->i_security is
-> > a dangling pointer, leading to UAF.
-> >
-> > Reading security_inode_free() comments, two things looks weird to me:
-> >
-> > > /**
-> > >  * security_inode_free() - Free an inode's LSM blob
-> > >  * @inode: the inode
-> > >  *
-> > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
-> >
-> > I don't see where i_security is set to NULL.
+yyxRoy <yyxroy22@gmail.com> wrote:
+> On Fri, 5 Jul 2024 at 17:43, Florian Westphal <fw@strlen.de> wrote:
+> > Also, one can send train with data packet + rst and we will hit
+> > the immediate close conditional:
+> > 
+> >    /* Check if rst is part of train, such as
+> >     *   foo:80 > bar:4379: P, 235946583:235946602(19) ack 42
+> >     *   foo:80 > bar:4379: R, 235946602:235946602(0)  ack 42
+> >     */
+> >     if (ct->proto.tcp.last_index == TCP_ACK_SET &&
+> >         ct->proto.tcp.last_dir == dir &&
+> >         seq == ct->proto.tcp.last_end)
+> >             break;
+> > 
+> > So even if we'd make this change it doesn't prevent remote induced
+> > resets.
 > 
-> The function header comments are known to be a bit suspect, a side
-> effect of being detached from the functions for many years, this may
-> be one of those cases.  I tried to fix up the really awful ones when I
-> moved the comments back, back I didn't have time to go through each
-> one in detail.  Patches to correct the function header comments are
-> welcome and encouraged! :)
-> 
-> > >  */
-> > > void security_inode_free(struct inode *inode)
-> > > {
-> >
-> > Shouldn't we add this check here?
-> > if (!inode->i_security)
-> >         return;
-> 
-> Unless I'm remembering something wrong, I believe we *should* always
-> have a valid i_security pointer each time we are called, if not
-> something has gone wrong, e.g. the security_inode_free() hook is no
-> longer being called from the right place.  If we add a NULL check, we
-> should probably have a WARN_ON(), pr_err(), or something similar to
-> put some spew on the console/logs.
-> 
-> All that said, it would be good to hear some confirmation from the VFS
-> folks that the security_inode_free() hook is located in a spot such
-> that once it exits it's current RCU critical section it is safe to
-> release the associated LSM state.
-> 
-> It's also worth mentioning that while we always allocate i_security in
-> security_inode_alloc() right now, I can see a world where we allocate
-> the i_security field based on need using the lsm_blob_size info (maybe
-> that works today?  not sure how kmem_cache handled 0 length blobs?).
-> The result is that there might be a legitimate case where i_security
-> is NULL, yet we still want to call into the LSM using the
-> inode_free_security() implementation hook.
-> 
-> > >       call_void_hook(inode_free_security, inode);
-> > >       /*
-> > >        * The inode may still be referenced in a path walk and
-> > >        * a call to security_inode_permission() can be made
-> > >        * after inode_free_security() is called. Ideally, the VFS
-> > >        * wouldn't do this, but fixing that is a much harder
-> > >        * job. For now, simply free the i_security via RCU, and
-> > >        * leave the current inode->i_security pointer intact.
-> > >        * The inode will be freed after the RCU grace period too.
-> >
-> > It's not clear to me why this should be safe if an LSM try to use the
-> > partially-freed blob after the hook calls and before the actual blob
-> > free.
-> 
-> I had the same thought while looking at this just now.  At least in
-> the SELinux case I think this "works" simply because SELinux doesn't
-> do much here, it just drops the inode from a SELinux internal list
-> (long story) and doesn't actually release any memory or reset the
-> inode's SELinux state (there really isn't anything to "free" in the
-> SELinux case).  I haven't checked the other LSMs, but they may behave
-> similarly.
-> 
-> We may want (need?) to consider two LSM implementation hooks called
-> from within security_inode_free(): the first where the existing
-> inode_free_security() implementation hook is called, the second inside
-> the inode_free_by_rcu() callback immediately before the i_security
-> data is free'd.
+> Thank you for your time and prompt reply and for bringing to my attention the case
+> I had overlooked. I acknowledge that as a middlebox, Netfilter faces significant
+> challenges in accurately determining the correct sequence and acknowledgment
+> numbers. However, it is crucial to consider the security implications as well.
 
-Couldn't we call everything in inode_free_by_rcu()?
-I replied here instead:
-https://lore.kernel.org/r/20240708.hohNgieja0av@digikod.net
+Yes, but we have to make do with the information we have (or we can
+observe) and we have to trade this vs. occupancy of the conntrack table.
 
+> For instance, previously, an in-window RST could switch the mapping to the
+> CLOSE state with a mere 10-second timeout. The recent patch, 
+>  (netfilter: conntrack: tcp: only close if RST matches exact sequence),
+> has aimed to improve security by keeping the mapping in the established state
+> and extending the timeout to 300 seconds upon receiving a Challenge ACK.
+
+be0502a3f2e9 ("netfilter: conntrack: tcp: only close if RST matches
+exact sequence")?
+
+Yes, that is a side effect.  It was about preventing nat mapping from going
+away because of RST packet coming from an unrelated previous connection
+(Carrier-Grade NAT makes this more likely, unfortunately).
+
+I don't know how to prevent it for RST flooding with known address/port
+pairs.
+
+> However, this patch's efforts are still insufficient to completely prevent attacks.
+> As I mentioned, attackers can manipulate the TTL to prevent the peer from
+> responding to the Challenge ACK, thereby reverting the mapping to the
+> 10-second timeout. This duration is quite short and potentially dangerous,
+> leading to various attacks, including TCP hijacking (I have included a detailed 
+> report on potential attacks if time permits). 
+> else if (unlikely(index == TCP_RST_SET))
+>        timeout = timeouts[TCP_CONNTRACK_CLOSE];
 > 
-> ... or we find a better placement in the VFS for
-> security_inode_free(), is that is possible.  It may not be, our VFS
-> friends should be able to help here.
+> The problem is that current netfilter only checks if the packet has the RST flag
+> (index == TCP_RST_SET) and lowers the timeout to that of CLOSE (10 seconds only).
+> I strongly recommend implementing measures to prevent such vulnerabilities.
 
-Christian? Al?
+I don't know how.
 
-> 
-> > >        */
-> > >       if (inode->i_security)
-> > >               call_rcu((struct rcu_head *)inode->i_security,
-> > >                        inode_free_by_rcu);
-> >
-> > And then:
-> > inode->i_security = NULL;
-> 
-> According to the comment we may still need i_security for permission
-> checks.  See my comment about decomposing the LSM implementation into
-> two hooks to better handle this for LSMs.
+We can track TTL/NH.
+We can track TCP timestamps.
 
-That was my though too, but maybe not if the path walk just ends early.
+But how would we use such extra information?
+E.g. what I we observe:
 
-> 
-> > But why call_rcu()?  i_security is not protected by RCU barriers.
-> 
-> I believe the issue is that the inode is protected by RCU and that
-> affects the lifetime of the i_security blob.
+ACK, TTL 32
+ACK, TTL 31
+ACK, TTL 30
+ACK, TTL 29
 
-It seems to be related to commit fa0d7e3de6d6 ("fs: icache RCU free
-inodes").
+... will we just refuse to update TTL?
+If we reduce it, any attacker can shrink it to needed low value
+to prevent later RST from reaching end host.
+
+If we don't, connection could get stuck on legit route change?
+What about malicious entities injecting FIN/SYN packets rather than RST?
+
+If we have last ts.echo from remote side, we can make it harder, but
+what do if RST doesn't carry timestamp?
+
+Could be perfectly legal when machine lost state, e.g. power-cycled.
+So we can't ignore such RSTs.
+
+> For example, in the case of an in-window RST, could we consider lowering
+> the timeout to 300 seconds or else?
+
+Yes, but I don't see how it helps.
+Attacker can prepend data packet and we'd still move to close.
+
+And I don't really want to change that because it helps to get rid
+of stale connection with real/normal traffic.
+
+I'm worried that adding cases where we do not act on RSTs will cause
+conntrack table to fill up.
 
