@@ -1,103 +1,122 @@
-Return-Path: <linux-kernel+bounces-244703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281CE92A81C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:14:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 577E492A81F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3F191F21B80
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8797C1C210C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF9C14A08D;
-	Mon,  8 Jul 2024 17:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCA414884F;
+	Mon,  8 Jul 2024 17:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5AME/I6"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3HDmOWM"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3124F81751
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761F5146D74;
+	Mon,  8 Jul 2024 17:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720458768; cv=none; b=c2IuVi6UR91KAhSYgkqy0YXOpzPe1ZPa1GfeBzAVsXmlmAfI6vuPnq+CVYP0ezHwoFZQ785s2nCmR+oQvMj11hy+lLkugv987DDBdJMPgWhliIQ5V3MqmaK6tqATm68lYOqGEPobzlA7Ycp/L5d9fgq+4ms06OarcYZxSM4KyV4=
+	t=1720458890; cv=none; b=LfAG03Qv9GDI7iGxeA1R7M62MlD2UyL6yaZsEBn3I4hjI+oLjlEiw9wHsxFkxt4779+3o8CeWiJEU6UftsSEqpO1dPzuiQnjsABp9XPFv7kU/LLFh3cOocHzQ8TvdOx2EYPqLL0rufUHGBBfbKDPdSXWyIPbKYwLSOAPRZu/ECY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720458768; c=relaxed/simple;
-	bh=FSZowTiHHR086TOD1V2AHR4FZ9TOUyVbCKoQI61eks0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f1XI6GZykFCcMX2yehMFwhMeIOuMGFrd4cTzYSbI3gq0XK1QFnPzCWISAvmsNgpT9rVEqfBS4lghCbAQyYbdppz0LtrtkdZq2Iz7RkVjJeG82UqQl8jTjhVINTUKz4KAja/8y+7Y8QwwBBAn+LY9zrFiJgKO9y3+8WrrPJ2GCIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5AME/I6; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1720458890; c=relaxed/simple;
+	bh=98KZVehEnsd3PhQXr987y4Edy9ytXgP3wLgPB/Ivc0Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GZ4Pm1VLUVJvXWS0OROVNHaWy42oM6WzzzZDt9ChvPGyNKF8U+3RwiCp+k9xxlsmqNYVz/r1XE1giXQbbDmEoJwUeH1cMrNd5tEARJqOgeQw3jYGrASwRLSA1vieoqCUlRsLdkYUf5drjoj4kj1RfXBi6eEcp0IX+6qWmb/yM0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3HDmOWM; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-375af3538f2so18251315ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 10:12:46 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ee8911b451so52117271fa.2;
+        Mon, 08 Jul 2024 10:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720458766; x=1721063566; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mx10B1dlf0nDqTxOJR8GqKC+ICenZNRBy4aC5Tbp6MA=;
-        b=j5AME/I6veqVn65eFNnMepBaYPGEtFGfiWLUr8tNu3XmO7qIfaBKlYODPMoX5gl8GW
-         cDJFqDxI39pqsQj9vrmhEHAr0ZfBdSv2rWY7Kdk6rjNFsNxECTieNXaFRwZuKeOQ87ZH
-         ZxPXPlf4xdhzBitE5JJk5s4XnDpBBqJHoDNJq5xpH57f7dxanxpRg7NAkKkpz1LUHYR1
-         V35cM0/d4UqQU7nklkqyOzLx8elFeXhpU07K98+T/bv4PEv6Ioo9LwKFpPsKcaXZl832
-         z95mfqlBU0H/j5dEX5/ANdAe15Y/KL3Rfe8vk1QRFn/+KThu+oQlrCiTTsXbNfANEypF
-         E1nw==
+        d=gmail.com; s=20230601; t=1720458886; x=1721063686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AH6LUdcBA2pznTYvrbFIdQvAbh5slbBjvxCpyNIT8HU=;
+        b=e3HDmOWMCNOKg2k+JYr3F5uQkV3ja3LD3R9d8yoD1NJxM6UZjlcNMzhfJ981sYkeZi
+         EwLjgFS07FfvIeOCkFHv6nHaCrnz8kzvVwQSIP2fLDA86QoNhXhsp7BK6h2e+Pe74WVO
+         ObUlWPdf4u1hlbdRR3vZxt6vvkeH3UhD7SRpA8BG9PcYUc3SaOdLeWbu8tHCPXKFq1jd
+         cmS1sZinnVRLegYqAfbrgOLZoBEuiE48wFnF4oIwRYnnKNwb/Q5b65N0hNumvISk4/BD
+         a0rSdp4iB/me7BemB8aeML7otIh32DewcvhOWWqsLkuQmBJ3apPF3Rf2JbZzTY3B0aaH
+         RUZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720458766; x=1721063566;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mx10B1dlf0nDqTxOJR8GqKC+ICenZNRBy4aC5Tbp6MA=;
-        b=j3VJ/6XDv7DSiqokWU6QkoLLXsrpg38qoKKYAkmbgnRL7qGOspCzCKmrEzUE+KJQ28
-         0iIb6QCkWQb7cAyzywwiLrB/bFh1VyyAcG7M9bXAzs2rBQDoPt8HtmZlXHVKA1Ye4yNq
-         kr+ZCzQk2l+rdbgl2gWHnY2P3nJzI5v893IQSuns0xwD5AgwMDElfuYgQavdLFxLpVi3
-         vmeRP2M57pMZUtG0HLPIE0jlNafOL/YfRIRixPCOHGYAkgXup9aHMcYuQTNrBoKiauHi
-         /FkoJmlDzc041AOfH973zVQ7ptoqRGdQxQmWhKln8zt4OPRjLGL6BwKoQcpx75BdRhV3
-         jZ1w==
-X-Gm-Message-State: AOJu0YxC+GbTTApe+DqN8OaTcCCECUDICZ6FBiwC3YucejXUvBqYy56l
-	jLdE1RS7zXQBgqVwoThOtKM7QkKDuMr3Q0lF9KpR7nLsEfy33cOlvAwRYw==
-X-Google-Smtp-Source: AGHT+IHszQtugxvFyPbUqk3LQ4hlgAqyM5BiiqIW/cqxtEeSLXezknJBbfhIX35/I1S8JVEDhk2Szg==
-X-Received: by 2002:a05:6e02:1aad:b0:382:fae5:16cf with SMTP id e9e14a558f8ab-38a57214070mr2032455ab.5.1720458766107;
-        Mon, 08 Jul 2024 10:12:46 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d682b4611sm104145a12.84.2024.07.08.10.12.45
+        d=1e100.net; s=20230601; t=1720458886; x=1721063686;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AH6LUdcBA2pznTYvrbFIdQvAbh5slbBjvxCpyNIT8HU=;
+        b=ItiDu4h9o26rHcftxkWryUNqaOZmtw4cnhTfeOCpvtud+EiHLh5WnvbSS6gEl78N5I
+         i6LepZya0lf+oBeLFooRbK7ce8ZMpUnkVuCQIXzq2an1kg76YyN3pdTUmXeCLFS5A40z
+         /sYdJ7ZaqjWIf6PUMAZqHONlpLifpPZ4UtqNBbRH1DvMIsD6O8kgXsj13E47fYchnwdH
+         1zPCEHdATJ7XoELqibIn96rkdzaBukt2nk8nTyU6Voc16UZbYNVWnZqt+ND3xLxQ1Nvz
+         Yc4EaPGGVz1LqjNRIj0m3XYpxhH39CmCVO5Sl0sDqjQ+0/Rgasd7Zja/jZ/0KVOV4/ia
+         954Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVlzTvlLUstUPrx+4UHElc11K2hxXZqynQTgjBCdq+uBi8Hjh6MdZd8DIq4f3/lRHCrnxBaAvwTz7UfkBE+aTTb+00hn0uLdcBihMvNmrhVsP09JcNIieeUTUmde0cncaq7jBseMVw=
+X-Gm-Message-State: AOJu0YyA8hCYdgCnCG5+dnb2hrMAY1cQ3mjE9oTrHf6xxH8NeE7tBsqt
+	d1pIRtCZkYu639IrcSqCmj0loWDMjxNedHwoCPJ37T3s+w3m+aLa
+X-Google-Smtp-Source: AGHT+IEN5DfkubDT5gfgqNhNr0gKh0isbiFIhj+wDr5xuXU5SvAS70bUQlCMHGeHRici2j9JlCnHmQ==
+X-Received: by 2002:a05:651c:4c9:b0:2ee:8171:8e13 with SMTP id 38308e7fff4ca-2eeb318a3a4mr2723491fa.44.1720458885961;
+        Mon, 08 Jul 2024 10:14:45 -0700 (PDT)
+Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5a27sm6034055e9.23.2024.07.08.10.14.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 10:12:45 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 8 Jul 2024 07:12:44 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Hongyan Xia <hongyan.xia2@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/ext: Add BPF function to fetch rq
-Message-ID: <ZoweDMHAqRLwB3kZ@slm.duckdns.org>
-References: <7359b5cd17d56837bc15f4883b21837163c51d37.1720441953.git.hongyan.xia2@arm.com>
+        Mon, 08 Jul 2024 10:14:45 -0700 (PDT)
+From: Raphael Gallais-Pou <rgallaispou@gmail.com>
+To: Patrice Chotard <patrice.chotard@foss.st.com>,
+	"'Rafael J . Wysocki'" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: sti: fix build warning
+Date: Mon,  8 Jul 2024 19:14:34 +0200
+Message-ID: <20240708171434.111623-1-rgallaispou@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7359b5cd17d56837bc15f4883b21837163c51d37.1720441953.git.hongyan.xia2@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Building this driver yields the following:
 
-On Mon, Jul 08, 2024 at 03:01:18PM +0100, Hongyan Xia wrote:
-> rq contains many useful fields to implement a custom scheduler. For
-> example, various clock signals like clock_task and clock_pelt can be
-> used to track load. It also contains stats in other sched_classes, which
-> are useful to drive scheduling decisions in ext.
-> 
-> Signed-off-by: Hongyan Xia <hongyan.xia2@arm.com>
+.../drivers/cpufreq/sti-cpufreq.c:215:50: warning: ‘%d’ directive output may be truncated writing between 1 and 10 bytes into a region of size 2 [-Wformat-truncation=]
+  215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
+      |                                                  ^~
+.../drivers/cpufreq/sti-cpufreq.c:215:44: note: directive argument in the range [0, 2147483647]
+  215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
+      |                                            ^~~~~~~~~
+.../drivers/cpufreq/sti-cpufreq.c:215:9: note: ‘snprintf’ output between 7 and 16 bytes into a destination of size 7
+  215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Applied to sched_ext/for-6.11. I moved the new helper below
-scx_bpf_task_cpu() as that's the block for more generic accessors.
+Fix the buffer size to avoid the warning at build time.
 
-Thanks.
+Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+---
+ drivers/cpufreq/sti-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/cpufreq/sti-cpufreq.c b/drivers/cpufreq/sti-cpufreq.c
+index 1ffa23dd8907..8e2e703c3865 100644
+--- a/drivers/cpufreq/sti-cpufreq.c
++++ b/drivers/cpufreq/sti-cpufreq.c
+@@ -18,7 +18,7 @@
+ #include <linux/regmap.h>
+ 
+ #define VERSION_ELEMENTS	3
+-#define MAX_PCODE_NAME_LEN	7
++#define MAX_PCODE_NAME_LEN	16
+ 
+ #define VERSION_SHIFT		28
+ #define HW_INFO_INDEX		1
 -- 
-tejun
+2.45.2
+
 
