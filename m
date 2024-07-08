@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-244513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82BB92A551
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:00:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7685C92A558
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC1A1F218EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:00:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01C21B21ABC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC6614290E;
-	Mon,  8 Jul 2024 15:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00581422C8;
+	Mon,  8 Jul 2024 15:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRRSeseX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tG5J7xrK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AD281745;
-	Mon,  8 Jul 2024 15:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB5178C9D;
+	Mon,  8 Jul 2024 15:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720450840; cv=none; b=sfqZV5fIbJOxmKYhblhZ/zflsubHCBnrU0Vt9kIriPFA6E8wZhOnFcjtLlrnYs0KhU46AwYDD7wHryqsYFCklpxpefDA43f7ItuLDlI1RgtQPWy7cK8CizjS/5v8+m1y52hZkm+03pmTnLMScFQkO3hr5bgLNcnEj+bsalT2Hhs=
+	t=1720451105; cv=none; b=t5vGdJT3W45w5B+6creaaED2cr9bZs0zbezfZne1yDzhacxOdjalSXFUQ5BPUNoL5HfsmlP4B1FZzZbsAt+6vskzQjfq0sSCV0P1WwBUN/aY7n4JifcvIeb9cF7ph48XNSawjN2xxH2oO0unJMRaZxffugEAFsUERSR0kcys6Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720450840; c=relaxed/simple;
-	bh=9tWDZ4ouMiehsT9Ap8iEFsMYys+iRi1AtI6U10gq75A=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PgisXtpRaeUfDxXJzEzABWT2vfhUTyQUt8Ux230z31PPJFUBYXZRrmfbud8j2tGHYOkwPkpiphCuHEKhr4WH6GKu5KLH69XZ9lQWJbodTP9DBK5kENNTL1fHEEpx3ArgJD+V/SL86wjbYsevkZCk4mid3xgVRbyu1dgM2ScXWNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SRRSeseX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0639AC116B1;
-	Mon,  8 Jul 2024 15:00:39 +0000 (UTC)
+	s=arc-20240116; t=1720451105; c=relaxed/simple;
+	bh=UezjPL3T/OnCXTBp0Y+/oH1ev/RmhW9z8IKaXU4tL0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEsqPyjwQi4JrAEHJGJmubY4sVv5M4m8VkVx+3AWCJ76a/d8I5+6IhcfwC5opFCzjehmGapHYl72pJpaXx4WFD5Ss8Qsgm/+h7EQt2a6iV7oXNHj7kM4c5gjFLn42jZ+2ygsHAtttUm21j6W3UCbAP4XXazMAHd1IIr9S8rklqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tG5J7xrK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A794C116B1;
+	Mon,  8 Jul 2024 15:05:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720450840;
-	bh=9tWDZ4ouMiehsT9Ap8iEFsMYys+iRi1AtI6U10gq75A=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=SRRSeseX86QpkhoGOvxnidA5zEKA1zYTMbJ9+HDGCgSyN0TMtinPbB/FThsSrLhSL
-	 BMSSQLCwIn0oeShZxtPRRltz9DHvXNv0GY5/MbKZ+lugr/ZpTmuEZSoccSDR8GvMJ/
-	 C4ewt01hkpw/7t3GaMYtZhj4atsLRRzYErAMkPGmB/J9CVbQcQndP+GGqUOjnYGDK6
-	 0EoiDGwMDW23b0vU5tNbieJ2DRuwg2AgWgJMKdnZPTfPbK08RR+qsUsaMQsDMvgraj
-	 Z/vPF2m1zhpVRGLE6zTKqFOxb9AUY/tIeq+G1Bcanv8x/Ij4Icif+mMIU0qmrngX2a
-	 nXDuH4IOCqURw==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko
- <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Shuah Khan
- <shuah@kernel.org>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Manu Bretelle <chantra@meta.com>
-Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
-In-Reply-To: <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
-References: <20240705145009.32340-1-puranjay@kernel.org>
- <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
-Date: Mon, 08 Jul 2024 15:00:31 +0000
-Message-ID: <mb61pjzhwvshc.fsf@kernel.org>
+	s=k20201202; t=1720451104;
+	bh=UezjPL3T/OnCXTBp0Y+/oH1ev/RmhW9z8IKaXU4tL0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tG5J7xrKMKXjfrdzywSEEU68edCUx0b2WlZo9owO4MQoXFUjdT5xmgmR5Y9wCwckR
+	 Y2KhZVTXP58z0mNAsXWSfFdt3qp4e0rr2H7W16fM6fI+Df6RfF5kAqwVryN8enEXut
+	 MwmOR3BPuAZ4pNeYyIIXaT7qqN7sR432ICwTCNReiE7pubh91rnobWtj3sMWMV+g+U
+	 z3E2LBQ1zB3QIicAK3RMI/fr0YiUtRiVkpvCp8K3iFIFgUR/DiodextZ4b8Hf+j/V0
+	 9s7VvXLvmloztonCr0swBAqIrYtqxVwlc+O/+XQRVhSZkfi+9OEfE7CWG1AvtyouWp
+	 fpTOE0RVhgCKA==
+Date: Mon, 8 Jul 2024 16:05:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH] firmware: cs_dsp: Use strnlen() on name fields in V1
+ wmfw files
+Message-ID: <91fc7cb3-6a00-4b3b-abed-a3a41b191912@sirena.org.uk>
+References: <20240708144855.385332-1-rf@opensource.cirrus.com>
+ <de44f274-4e02-4c66-b784-41031e99c33e@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FJRKTcPs+sZ0rFsq"
+Content-Disposition: inline
+In-Reply-To: <de44f274-4e02-4c66-b784-41031e99c33e@opensource.cirrus.com>
+X-Cookie: Many are cold, but few are frozen.
 
---=-=-=
-Content-Type: text/plain
 
-Daniel Borkmann <daniel@iogearbox.net> writes:
+--FJRKTcPs+sZ0rFsq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On 7/5/24 4:50 PM, Puranjay Mohan wrote:
->> fexit_sleep test runs successfully now on the CI so remove it from the
->> deny list.
->
-> Do you happen to know which commit fixed it? If yes, might be nice to have it
-> documented in the commit message.
+On Mon, Jul 08, 2024 at 04:00:07PM +0100, Richard Fitzgerald wrote:
 
-Actually, I never saw this test failing on my local setup and yesterday
-I tried running it on the CI where it passed as well. So, I assumed that
-this would be fixed by some commit. I am not sure which exact commit
-might have fixed this.
+> Don't take this. It applies to 6.11 but not to 6.10.
+> I'll try to sort out one that applies to new and old code, or
+> send separate 6.11 and backport versions.
 
-Manu, Martin
+> Sorry about that.
 
-When this was added to the deny list was this failing every time and did
-you have some reproducer for this. If there is a reproducer, I can try
-fixing it but when ran normally this test never fails for me.
+git seemed to be able to figure out the context for 6.10 (I apply
+everything with am -3).
 
-Thanks,
-Puranjay
-
---=-=-=
+--FJRKTcPs+sZ0rFsq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZov/EBQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2nd39AP9EBMWza1kS6tLoAj30iwUT8Rq62Spe
-uPJ3oe/ze53tMQEAw96OjLRvasQ6jnDH9Igoh1iUcLlnsR6LnZ5TvEpO9gQ=
-=mXSa
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaMABsACgkQJNaLcl1U
+h9CkAgf+IM6nyhh313jQKBcO3PnBflDEBf25Duajbv1xDQK0DncEyWpkOgueuvie
+RdCQg214wCJPCALfND/tzHHfPMcqoi+uraGIpdRDPM4V4jnMQ6k/TaPs+5jx4gjR
+a8p17voU62DKumtQWr+G2CtdsByV3M7XK/+qM28W+NJGuFXCmbxRmgOajhAFr9zR
+y8Ioftmk0fiE3DDeYXCm6S2qHql3PnDoD144PynUkzrLy0eBwmJZQoBxn9ttAIaX
+FxGuaXRvWimj4+fFmKBZ71IV3YSaBW9rVSo+d1ldkKUQGNUNOEl8AuDtVz9eyuV5
+VNfrT33uRnQB+tIlnuxuSAr1ednNGw==
+=ftUo
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--FJRKTcPs+sZ0rFsq--
 
