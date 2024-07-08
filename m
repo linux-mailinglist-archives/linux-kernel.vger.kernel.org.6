@@ -1,430 +1,220 @@
-Return-Path: <linux-kernel+bounces-244723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568BF92A883
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE28892A886
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F62E1C20C6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DBE81C21031
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A3B14A4F0;
-	Mon,  8 Jul 2024 17:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A2B149C64;
+	Mon,  8 Jul 2024 17:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DOM37vNm"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJv9ohke"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845A184A4E
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099E3145B06;
+	Mon,  8 Jul 2024 17:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720461234; cv=none; b=KvH2Bqd34Z5MCI5hZMX16Cy+EDs5MrOGW5FlFqXJDDWrZ/NLl3BaNEtbe/qhO8eRc+VT85RCEPseLSITZtMP+KEENKM8IUU+Yhy089Kk+2KtFjj7ExQ3jIB3Z2ocY0CiRNrN/Afx9zSFqX1HhaDE8WLsWHFA4EiRD8l5RpQPM0g=
+	t=1720461393; cv=none; b=aPdJjiOPMVjnyuYdkmcyPH4WOwBRR6Tll4x1Q7o0UU28HZtfCtOghTXV+q2EVicWQ4XEcp0BjKdCQdVhTbyJ6VjNdN+7r1jtHrf4NvdXfTgzKxvzF6CDCOTJmEVTteQbMdZzDHmuDadEnpPT2X/PRp6vo3uhJgTjV2yGlwry8rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720461234; c=relaxed/simple;
-	bh=3XinkdWe+xUVSW1xoxyBRSCGxBOW8f6bCDLBVDAt5MI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HtLQfiVIZereDh7rT9DXDyt1vOiww4xKUaZarbqasdLqv8fL1Njvj4Dw7+ZVEyGTn6jyfmPAVksYW5riXmkNQUIvWnnJ9nWJ+vP91w0j5E6wiC/3gaGfv7Xk5RG7ysVNdGpVO7XrdXInsQNeCccH+TLbFavBZrmyOZDKkepVL8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DOM37vNm; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4266edcc54cso10915e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 10:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720461230; x=1721066030; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S3iukyGY/BvvExHHA5iKe3vA1LJWdwn37FnnTjaIVHQ=;
-        b=DOM37vNmi2ISfjb1Eahj1N1hTY/ILi/mK20luEBZSgq3m0hE3lSCn/hN0GjUwXgtil
-         2weRMMdd7mL6EtPXIdQSqXATd2j68jHqsbFwN9nHtHC4VJY9fTXuofuw+uBtzff9Icld
-         Tk/7Jh80QW1ipvRSF5wByz8C2OkpDqKXUF0F0JvlKFgyUakfrwRUDOW6rGLLoogdvV26
-         rqexgYtJyMnGhpsYqz3wAi/duBzOYdWB92Y19S3zy6o6oG2225ySKgVq96YM6DQaOt4A
-         WDC+zFNGEw52/eDj0nSma+Q/rl/GxF//K5UucY6Ne3WGW/s+NqVg8titR0mxDxN+JZcv
-         2kIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720461230; x=1721066030;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S3iukyGY/BvvExHHA5iKe3vA1LJWdwn37FnnTjaIVHQ=;
-        b=Tpp/xnm7whrtAWet6bMaRSTP6j4p8oY0yffzI4rD8L+duEfiRouyTa6RA2vF/e6ify
-         N0YX5oc7m7g/JSgKnqe1KfWTplGjOybXbAIDQeEof9vk7Qn6fXH9VMg3WeHeBo0O6IES
-         Eo2ONPQ758gJFJtZUwffDUavU7v3GwcK+ZGVo5TwXwwUVPub05flDD984TlXMdYpoUEW
-         FGNZXyDjS6oETYWWhAvJ/KTPFyDC54qAtTpxWQOjGjGOaD/Z76VBHHRka2HC2jlOLeho
-         miE1KvQUxj5LZb1QCv7mkB8uaSvQiL06o3ZsAJVQ7K812Fod2Wc9DMWoiLVle9GacLbJ
-         QncA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFL+yNMppxBRcYIUvRuzIIcpDKoeqzRyQuK9RpFohPuncq5aUKo/KQThSfZp+gCfnwpESaSr2iMcXKGfZJlhfpk/VlGtcbw58jV6yu
-X-Gm-Message-State: AOJu0YwETDvex9/9v6ycU5m2GqD+ykO0jt+P5TESyYGCLIVhhuUdI5bZ
-	gasPqGj1vTLidQ0Kz0QbX+ZbUFA+KJgepKG64XQ2Y5YBK4eTL6ziDMFdjNiicbl6sltm4+xZ0HB
-	g01eL3OoJ6dZWb4JbPbXRjrEhefuHyCgmn1kN
-X-Google-Smtp-Source: AGHT+IGCxCI8BZYpKRwfqjmfBRiI0yinmXSJ2UDS50+8jgqFrfyLYmBIj0Sr4PfXC2bn4uG4lbt5DOwFV03GrDTYrwU=
-X-Received: by 2002:a05:600c:68cd:b0:424:898b:522b with SMTP id
- 5b1f17b1804b1-42671c24e4fmr48555e9.1.1720461229674; Mon, 08 Jul 2024 10:53:49
- -0700 (PDT)
+	s=arc-20240116; t=1720461393; c=relaxed/simple;
+	bh=ldSMonw09uowixZAG1w7HeV2XNqsw5Kv87tLzoOwdXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DaCPu8VkHqSyiPKxyu29MVvXH3Ppdwxs0Jaaq5m5Y6aOi6laJDExQLXvoXQyMLvJqNeSa4APmek6FXqZHrkQzq4+iBXMkMJp8vHWYhsGOnDbw+58nCQbt/cF949Mi4E8z4/CgYe1GqwGg09acY7BlQY8iL7Gg/c1FCGTXrm3JLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJv9ohke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB550C116B1;
+	Mon,  8 Jul 2024 17:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720461392;
+	bh=ldSMonw09uowixZAG1w7HeV2XNqsw5Kv87tLzoOwdXQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gJv9ohketiz/NpEQGPeC5qk/25+t69iW3iLJwpGL/37k69xJDPLpEfAxXmEzGHnzU
+	 woca85oEUKtEpgCWuQmK6nVraDF+biAkOBoQxcS525F5qJJhtFBtXWN83HgtxkSymP
+	 AU5BJlEdrXd8mSSE9sLbg/y9OVSbUy97jZVHMHmGXVKqdw+Q10uz916PoiaRDQrF3n
+	 l4BBY1rU2u+JBGW7bT6a5IsmgQauUGSH/g6KsAnskUGQEBtlGJ/GCieaiJPSG1idlf
+	 WIKkZob0AkBEIkWwMj4SNbk4ULHYUVMolsas5qwUyuNgUr5hhnh13pZiAnO7IY1gJs
+	 5ml8sQtFz2/qQ==
+Date: Mon, 8 Jul 2024 10:56:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v9 06/10] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <20240708175632.GN612460@frogsfrogsfrogs>
+References: <20240704112320.82104-1-kernel@pankajraghav.com>
+ <20240704112320.82104-7-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-3-mic@digikod.net>
- <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
-In-Reply-To: <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
-From: Jeff Xu <jeffxu@google.com>
-Date: Mon, 8 Jul 2024 10:53:11 -0700
-Message-ID: <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704112320.82104-7-kernel@pankajraghav.com>
 
-On Mon, Jul 8, 2024 at 9:17=E2=80=AFAM Jeff Xu <jeffxu@google.com> wrote:
->
-> Hi
->
-> On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@dig=
-ikod.net> wrote:
-> >
-> > These new SECBIT_SHOULD_EXEC_CHECK, SECBIT_SHOULD_EXEC_RESTRICT, and
-> > their *_LOCKED counterparts are designed to be set by processes setting
-> > up an execution environment, such as a user session, a container, or a
-> > security sandbox.  Like seccomp filters or Landlock domains, the
-> > securebits are inherited across proceses.
-> >
-> > When SECBIT_SHOULD_EXEC_CHECK is set, programs interpreting code should
-> > check executable resources with execveat(2) + AT_CHECK (see previous
-> > patch).
-> >
-> > When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
-> > execution of approved resources, if any (see SECBIT_SHOULD_EXEC_CHECK).
-> >
-> Do we need both bits ?
-> When CHECK is set and RESTRICT is not, the "check fail" executable
-> will still get executed, so CHECK is for logging ?
-> Does RESTRICT imply CHECK is set, e.g. What if CHECK=3D0 and RESTRICT =3D=
- 1 ?
->
-The intention might be "permissive mode"?  if so, consider reuse
-existing selinux's concept, and still with 2 bits:
-SECBIT_SHOULD_EXEC_RESTRICT
-SECBIT_SHOULD_EXEC_RESTRICT_PERMISSIVE
+On Thu, Jul 04, 2024 at 11:23:16AM +0000, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
+> 
+> iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
+> < fs block size. iomap_dio_zero() has an implicit assumption that fs block
+> size < page_size. This is true for most filesystems at the moment.
+> 
+> If the block size > page size, this will send the contents of the page
+> next to zero page(as len > PAGE_SIZE) to the underlying block device,
+> causing FS corruption.
+> 
+> iomap is a generic infrastructure and it should not make any assumptions
+> about the fs block size and the page size of the system.
+> 
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>  fs/iomap/buffered-io.c |  4 ++--
+>  fs/iomap/direct-io.c   | 45 ++++++++++++++++++++++++++++++++++++------
+>  2 files changed, 41 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index f420c53d86acc..d745f718bcde8 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -2007,10 +2007,10 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_writepages);
+>  
+> -static int __init iomap_init(void)
+> +static int __init iomap_buffered_init(void)
+>  {
+>  	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+>  			   offsetof(struct iomap_ioend, io_bio),
+>  			   BIOSET_NEED_BVECS);
+>  }
+> -fs_initcall(iomap_init);
+> +fs_initcall(iomap_buffered_init);
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f3b43d223a46e..c02b266bba525 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/iomap.h>
+>  #include <linux/backing-dev.h>
+>  #include <linux/uio.h>
+> +#include <linux/set_memory.h>
+>  #include <linux/task_io_accounting_ops.h>
+>  #include "trace.h"
+>  
+> @@ -27,6 +28,13 @@
+>  #define IOMAP_DIO_WRITE		(1U << 30)
+>  #define IOMAP_DIO_DIRTY		(1U << 31)
+>  
+> +/*
+> + * Used for sub block zeroing in iomap_dio_zero()
+> + */
+> +#define IOMAP_ZERO_PAGE_SIZE (SZ_64K)
+> +#define IOMAP_ZERO_PAGE_ORDER (get_order(IOMAP_ZERO_PAGE_SIZE))
+> +static struct page *zero_page;
+> +
+>  struct iomap_dio {
+>  	struct kiocb		*iocb;
+>  	const struct iomap_dio_ops *dops;
+> @@ -232,13 +240,20 @@ void iomap_dio_bio_end_io(struct bio *bio)
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_dio_bio_end_io);
+>  
+> -static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+> +static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>  		loff_t pos, unsigned len)
+>  {
+>  	struct inode *inode = file_inode(dio->iocb->ki_filp);
+> -	struct page *page = ZERO_PAGE(0);
+>  	struct bio *bio;
+>  
+> +	if (!len)
+> +		return 0;
+> +	/*
+> +	 * Max block size supported is 64k
+> +	 */
+> +	if (WARN_ON_ONCE(len > IOMAP_ZERO_PAGE_SIZE))
+> +		return -EINVAL;
+> +
+>  	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+>  	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+>  				  GFP_KERNEL);
+> @@ -246,8 +261,9 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>  	bio->bi_private = dio;
+>  	bio->bi_end_io = iomap_dio_bio_end_io;
+>  
+> -	__bio_add_page(bio, page, len, 0);
+> +	__bio_add_page(bio, zero_page, len, 0);
+>  	iomap_dio_submit_bio(iter, dio, bio, pos);
+> +	return 0;
+>  }
+>  
+>  /*
+> @@ -356,8 +372,10 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	if (need_zeroout) {
+>  		/* zero out from the start of the block to the write offset */
+>  		pad = pos & (fs_block_size - 1);
+> -		if (pad)
+> -			iomap_dio_zero(iter, dio, pos - pad, pad);
+> +
+> +		ret = iomap_dio_zero(iter, dio, pos - pad, pad);
+> +		if (ret)
+> +			goto out;
+>  	}
+>  
+>  	/*
+> @@ -431,7 +449,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  		/* zero out from the end of the write to the end of the block */
+>  		pad = pos & (fs_block_size - 1);
+>  		if (pad)
+> -			iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
+> +			ret = iomap_dio_zero(iter, dio, pos,
+> +					     fs_block_size - pad);
+>  	}
+>  out:
+>  	/* Undo iter limitation to current extent */
+> @@ -753,3 +772,17 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	return iomap_dio_complete(dio);
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_dio_rw);
+> +
+> +static int __init iomap_dio_init(void)
+> +{
+> +	zero_page = alloc_pages(GFP_KERNEL | __GFP_ZERO,
+> +				IOMAP_ZERO_PAGE_ORDER);
+> +
+> +	if (!zero_page)
+> +		return -ENOMEM;
+> +
+> +	set_memory_ro((unsigned long)page_address(zero_page),
+> +		      1U << IOMAP_ZERO_PAGE_ORDER);
+> +	return 0;
+> +}
+> +fs_initcall(iomap_dio_init);
 
+This ^^^ could be refactored into a zeropage.ko module some day as a
+separate patch to amortize the cost of the 64k buffer that never goes
+away.
 
--Jeff
+This patch looks ok though, so:
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
+--D
 
-
-
-> > For a secure environment, we might also want
-> > SECBIT_SHOULD_EXEC_CHECK_LOCKED and SECBIT_SHOULD_EXEC_RESTRICT_LOCKED
-> > to be set.  For a test environment (e.g. testing on a fleet to identify
-> > potential issues), only the SECBIT_SHOULD_EXEC_CHECK* bits can be set t=
-o
-> > still be able to identify potential issues (e.g. with interpreters logs
-> > or LSMs audit entries).
-> >
-> > It should be noted that unlike other security bits, the
-> > SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT bits are
-> > dedicated to user space willing to restrict itself.  Because of that,
-> > they only make sense in the context of a trusted environment (e.g.
-> > sandbox, container, user session, full system) where the process
-> > changing its behavior (according to these bits) and all its parent
-> > processes are trusted.  Otherwise, any parent process could just execut=
-e
-> > its own malicious code (interpreting a script or not), or even enforce =
-a
-> > seccomp filter to mask these bits.
-> >
-> > Such a secure environment can be achieved with an appropriate access
-> > control policy (e.g. mount's noexec option, file access rights, LSM
-> > configuration) and an enlighten ld.so checking that libraries are
-> > allowed for execution e.g., to protect against illegitimate use of
-> > LD_PRELOAD.
-> >
-> > Scripts may need some changes to deal with untrusted data (e.g. stdin,
-> > environment variables), but that is outside the scope of the kernel.
-> >
-> > The only restriction enforced by the kernel is the right to ptrace
-> > another process.  Processes are denied to ptrace less restricted ones,
-> > unless the tracer has CAP_SYS_PTRACE.  This is mainly a safeguard to
-> > avoid trivial privilege escalations e.g., by a debugging process being
-> > abused with a confused deputy attack.
-> >
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20240704190137.696169-3-mic@digikod.net
-> > ---
-> >
-> > New design since v18:
-> > https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
-> > ---
-> >  include/uapi/linux/securebits.h | 56 ++++++++++++++++++++++++++++-
-> >  security/commoncap.c            | 63 ++++++++++++++++++++++++++++-----
-> >  2 files changed, 110 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/secur=
-ebits.h
-> > index d6d98877ff1a..3fdb0382718b 100644
-> > --- a/include/uapi/linux/securebits.h
-> > +++ b/include/uapi/linux/securebits.h
-> > @@ -52,10 +52,64 @@
-> >  #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
-> >                         (issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCK=
-ED))
-> >
-> > +/*
-> > + * When SECBIT_SHOULD_EXEC_CHECK is set, a process should check all ex=
-ecutable
-> > + * files with execveat(2) + AT_CHECK.  However, such check should only=
- be
-> > + * performed if all to-be-executed code only comes from regular files.=
-  For
-> > + * instance, if a script interpreter is called with both a script snip=
-ped as
-> > + * argument and a regular file, the interpreter should not check any f=
-ile.
-> > + * Doing otherwise would mislead the kernel to think that only the scr=
-ipt file
-> > + * is being executed, which could for instance lead to unexpected perm=
-ission
-> > + * change and break current use cases.
-> > + *
-> > + * This secure bit may be set by user session managers, service manage=
-rs,
-> > + * container runtimes, sandboxer tools...  Except for test environment=
-s, the
-> > + * related SECBIT_SHOULD_EXEC_CHECK_LOCKED bit should also be set.
-> > + *
-> > + * Ptracing another process is deny if the tracer has SECBIT_SHOULD_EX=
-EC_CHECK
-> > + * but not the tracee.  SECBIT_SHOULD_EXEC_CHECK_LOCKED also checked.
-> > + */
-> > +#define SECURE_SHOULD_EXEC_CHECK               8
-> > +#define SECURE_SHOULD_EXEC_CHECK_LOCKED                9  /* make bit-=
-8 immutable */
-> > +
-> > +#define SECBIT_SHOULD_EXEC_CHECK (issecure_mask(SECURE_SHOULD_EXEC_CHE=
-CK))
-> > +#define SECBIT_SHOULD_EXEC_CHECK_LOCKED \
-> > +                       (issecure_mask(SECURE_SHOULD_EXEC_CHECK_LOCKED)=
-)
-> > +
-> > +/*
-> > + * When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allo=
-w
-> > + * execution of approved files, if any (see SECBIT_SHOULD_EXEC_CHECK).=
-  For
-> > + * instance, script interpreters called with a script snippet as argum=
-ent
-> > + * should always deny such execution if SECBIT_SHOULD_EXEC_RESTRICT is=
- set.
-> > + * However, if a script interpreter is called with both
-> > + * SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT, they shou=
-ld
-> > + * interpret the provided script files if no unchecked code is also pr=
-ovided
-> > + * (e.g. directly as argument).
-> > + *
-> > + * This secure bit may be set by user session managers, service manage=
-rs,
-> > + * container runtimes, sandboxer tools...  Except for test environment=
-s, the
-> > + * related SECBIT_SHOULD_EXEC_RESTRICT_LOCKED bit should also be set.
-> > + *
-> > + * Ptracing another process is deny if the tracer has
-> > + * SECBIT_SHOULD_EXEC_RESTRICT but not the tracee.
-> > + * SECBIT_SHOULD_EXEC_RESTRICT_LOCKED is also checked.
-> > + */
-> > +#define SECURE_SHOULD_EXEC_RESTRICT            10
-> > +#define SECURE_SHOULD_EXEC_RESTRICT_LOCKED     11  /* make bit-8 immut=
-able */
-> > +
-> > +#define SECBIT_SHOULD_EXEC_RESTRICT (issecure_mask(SECURE_SHOULD_EXEC_=
-RESTRICT))
-> > +#define SECBIT_SHOULD_EXEC_RESTRICT_LOCKED \
-> > +                       (issecure_mask(SECURE_SHOULD_EXEC_RESTRICT_LOCK=
-ED))
-> > +
-> >  #define SECURE_ALL_BITS                (issecure_mask(SECURE_NOROOT) |=
- \
-> >                                  issecure_mask(SECURE_NO_SETUID_FIXUP) =
-| \
-> >                                  issecure_mask(SECURE_KEEP_CAPS) | \
-> > -                                issecure_mask(SECURE_NO_CAP_AMBIENT_RA=
-ISE))
-> > +                                issecure_mask(SECURE_NO_CAP_AMBIENT_RA=
-ISE) | \
-> > +                                issecure_mask(SECURE_SHOULD_EXEC_CHECK=
-) | \
-> > +                                issecure_mask(SECURE_SHOULD_EXEC_RESTR=
-ICT))
-> >  #define SECURE_ALL_LOCKS       (SECURE_ALL_BITS << 1)
-> >
-> > +#define SECURE_ALL_UNPRIVILEGED (issecure_mask(SECURE_SHOULD_EXEC_CHEC=
-K) | \
-> > +                                issecure_mask(SECURE_SHOULD_EXEC_RESTR=
-ICT))
-> > +
-> >  #endif /* _UAPI_LINUX_SECUREBITS_H */
-> > diff --git a/security/commoncap.c b/security/commoncap.c
-> > index 162d96b3a676..34b4493e2a69 100644
-> > --- a/security/commoncap.c
-> > +++ b/security/commoncap.c
-> > @@ -117,6 +117,33 @@ int cap_settime(const struct timespec64 *ts, const=
- struct timezone *tz)
-> >         return 0;
-> >  }
-> >
-> > +static bool ptrace_secbits_allowed(const struct cred *tracer,
-> > +                                  const struct cred *tracee)
-> > +{
-> > +       const unsigned long tracer_secbits =3D SECURE_ALL_UNPRIVILEGED =
-&
-> > +                                            tracer->securebits;
-> > +       const unsigned long tracee_secbits =3D SECURE_ALL_UNPRIVILEGED =
-&
-> > +                                            tracee->securebits;
-> > +       /* Ignores locking of unset secure bits (cf. SECURE_ALL_LOCKS).=
- */
-> > +       const unsigned long tracer_locked =3D (tracer_secbits << 1) &
-> > +                                           tracer->securebits;
-> > +       const unsigned long tracee_locked =3D (tracee_secbits << 1) &
-> > +                                           tracee->securebits;
-> > +
-> > +       /* The tracee must not have less constraints than the tracer. *=
-/
-> > +       if ((tracer_secbits | tracee_secbits) !=3D tracee_secbits)
-> > +               return false;
-> > +
-> > +       /*
-> > +        * Makes sure that the tracer's locks for restrictions are the =
-same for
-> > +        * the tracee.
-> > +        */
-> > +       if ((tracer_locked | tracee_locked) !=3D tracee_locked)
-> > +               return false;
-> > +
-> > +       return true;
-> > +}
-> > +
-> >  /**
-> >   * cap_ptrace_access_check - Determine whether the current process may=
- access
-> >   *                        another
-> > @@ -146,7 +173,8 @@ int cap_ptrace_access_check(struct task_struct *chi=
-ld, unsigned int mode)
-> >         else
-> >                 caller_caps =3D &cred->cap_permitted;
-> >         if (cred->user_ns =3D=3D child_cred->user_ns &&
-> > -           cap_issubset(child_cred->cap_permitted, *caller_caps))
-> > +           cap_issubset(child_cred->cap_permitted, *caller_caps) &&
-> > +           ptrace_secbits_allowed(cred, child_cred))
-> >                 goto out;
-> >         if (ns_capable(child_cred->user_ns, CAP_SYS_PTRACE))
-> >                 goto out;
-> > @@ -178,7 +206,8 @@ int cap_ptrace_traceme(struct task_struct *parent)
-> >         cred =3D __task_cred(parent);
-> >         child_cred =3D current_cred();
-> >         if (cred->user_ns =3D=3D child_cred->user_ns &&
-> > -           cap_issubset(child_cred->cap_permitted, cred->cap_permitted=
-))
-> > +           cap_issubset(child_cred->cap_permitted, cred->cap_permitted=
-) &&
-> > +           ptrace_secbits_allowed(cred, child_cred))
-> >                 goto out;
-> >         if (has_ns_capability(parent, child_cred->user_ns, CAP_SYS_PTRA=
-CE))
-> >                 goto out;
-> > @@ -1302,21 +1331,39 @@ int cap_task_prctl(int option, unsigned long ar=
-g2, unsigned long arg3,
-> >                      & (old->securebits ^ arg2))                       =
- /*[1]*/
-> >                     || ((old->securebits & SECURE_ALL_LOCKS & ~arg2))  =
- /*[2]*/
-> >                     || (arg2 & ~(SECURE_ALL_LOCKS | SECURE_ALL_BITS))  =
- /*[3]*/
-> > -                   || (cap_capable(current_cred(),
-> > -                                   current_cred()->user_ns,
-> > -                                   CAP_SETPCAP,
-> > -                                   CAP_OPT_NONE) !=3D 0)              =
-   /*[4]*/
-> >                         /*
-> >                          * [1] no changing of bits that are locked
-> >                          * [2] no unlocking of locks
-> >                          * [3] no setting of unsupported bits
-> > -                        * [4] doing anything requires privilege (go re=
-ad about
-> > -                        *     the "sendmail capabilities bug")
-> >                          */
-> >                     )
-> >                         /* cannot change a locked bit */
-> >                         return -EPERM;
-> >
-> > +               /*
-> > +                * Doing anything requires privilege (go read about the
-> > +                * "sendmail capabilities bug"), except for unprivilege=
-d bits.
-> > +                * Indeed, the SECURE_ALL_UNPRIVILEGED bits are not
-> > +                * restrictions enforced by the kernel but by user spac=
-e on
-> > +                * itself.  The kernel is only in charge of protecting =
-against
-> > +                * privilege escalation with ptrace protections.
-> > +                */
-> > +               if (cap_capable(current_cred(), current_cred()->user_ns=
-,
-> > +                               CAP_SETPCAP, CAP_OPT_NONE) !=3D 0) {
-> > +                       const unsigned long unpriv_and_locks =3D
-> > +                               SECURE_ALL_UNPRIVILEGED |
-> > +                               SECURE_ALL_UNPRIVILEGED << 1;
-> > +                       const unsigned long changed =3D old->securebits=
- ^ arg2;
-> > +
-> > +                       /* For legacy reason, denies non-change. */
-> > +                       if (!changed)
-> > +                               return -EPERM;
-> > +
-> > +                       /* Denies privileged changes. */
-> > +                       if (changed & ~unpriv_and_locks)
-> > +                               return -EPERM;
-> > +               }
-> > +
-> >                 new =3D prepare_creds();
-> >                 if (!new)
-> >                         return -ENOMEM;
-> > --
-> > 2.45.2
-> >
+> -- 
+> 2.44.1
+> 
+> 
 
