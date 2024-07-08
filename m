@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-244962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C3F92AC48
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:52:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB2092AC4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C87B282A56
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:52:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D251C21816
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EC315216F;
-	Mon,  8 Jul 2024 22:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805DB14F9F4;
+	Mon,  8 Jul 2024 22:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="D6P78czQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kx8czMfD"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0748E2EAE5;
-	Mon,  8 Jul 2024 22:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4552EAE5
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 22:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720479163; cv=none; b=ZjpTRuwZSGM4zl+iUBjZurlTrBb3d96wCxe2hN4Mc90uM/mXQ484ITLhR62dYIGlOJXtFnaU/pE0SGUNQZk12xfx6V/zEtKvoKGWNZqEAQ9YEPORAvmWRSTVYdNERtLsGZGr6gkD1ttEy3R6/IP3AVMnMwqnugIFRX+cMSQ7OyA=
+	t=1720479279; cv=none; b=FhFFeFzc1dUhHe6TXCtLEB6hd/eZVFFR/FYj30enCb0qzTrxjb3KDMJgUB6jktIo5UEtdBpxLY1g7RTANso1IBTuekw5twl7/VdTyvYwIog9XqsYEgTI/m45GEKfhlVgjjytOZrVP0QIIvVnhPIXhscI7D6SG86cIyF8Bz4VfD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720479163; c=relaxed/simple;
-	bh=zdgn84TjlMpphOw9oMR446Ua2/KrSt2it2DmjQwp8qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CFrdww0V7nwK/nC8bHRjhECkxhkROBzh1dIikb3xtZC+y4lhBw4RXs1KSaDJdn2v5NO4Jx9AGX+lG4+7ylM5MB5OxK1BrioZnowXpM7u4kFQNtrf/36XOY3iQ8rZpxii679VmL1FPf/Wcex9H49rTShq8dxs8q+565fhBnx8aHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=D6P78czQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720479159;
-	bh=zdgn84TjlMpphOw9oMR446Ua2/KrSt2it2DmjQwp8qc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=D6P78czQxNWh5+Kyz+aaGB3LxWpIlceo0aZEAePhVIB97nqnImWIhh0W6X8fMCv91
-	 tO8+V6Ppph7f/PerxQK9gGZzze+s+1RYWflSVEk5XReFUNAcyReh58zqobdcBWi/q7
-	 IGqRD6jOclJDclaI9Xpat7be06Xz7nDZ1o/9OU899LWQo4BO/sN0o6PKrS5wIgD3Ls
-	 Ggp+WrJbjct6PGgtUC8GVKGO/2V4P0EN505ZRITMCJVblg/3uT759HbTZQ1510o6HY
-	 zpXPH6f7XwryDyjUyLCqS2ZDUoBIf9RcgtgcmXfMk32KpzWMhkfPm6E1IjWKEloRom
-	 fL6fZKjHQvkeA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WHzsg2QWWz4wc4;
-	Tue,  9 Jul 2024 08:52:39 +1000 (AEST)
-Date: Tue, 9 Jul 2024 08:52:38 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: error when fetching the drm-msm-lumag tree
-Message-ID: <20240709085238.1fbc301d@canb.auug.org.au>
+	s=arc-20240116; t=1720479279; c=relaxed/simple;
+	bh=M1teXtEqzBNMemfd7v+9SUr6KAqOs1d1qIm6KT4egzE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c8J22uxRf/13ir8EqUVmMZfWe7uypXf4F7/uXJeWZPi+QLwhvRsyKt4ajn7jgqfIFCcnizOPcZ0K+zxDCEY2K551L/liMUCeCEwYlt8/k8IP4lNkwr3Kd8fgEuLdY46H50Jmw9x9XbX9rQsLLIXk8LnXMyXpKWYPyD8R6O5QiNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kx8czMfD; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e036eabc97dso4467153276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 15:54:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720479277; x=1721084077; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BpMVBXpONIC3Eu1OWrK8ZtjErK/z9AKePwun/fM/jmc=;
+        b=Kx8czMfDGVSqQIYq/ZfoRjhcmrUxSwONcn3+IBvhyfjZEDY2ycsvfGrSADkKh09q9z
+         7xivVC7bZZIclJe6b46/v4eldCzuBp1jMyRHAYIjXpaRr9HJEB7ZNlNkaBgUkHz5lKX5
+         84m0B/y/f9wFrtAFagwc1IBvUSvQFxm33pu2Eyp7Kt4tHeF5tA1zBdHASaj/GhamUhLl
+         ghWhKRYUh7HGuveJ1ATJg1UG7t+iJlYkSSHxMKUzO71NzEF4cKZ/iaKu5yPHmvEcrIMh
+         lwWvbPm5DPhsDFDf14F92IMzAgvV+SKMCoBZbneohc6hofvh4rCQj0LLpieniDWRIQGl
+         tlTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720479277; x=1721084077;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BpMVBXpONIC3Eu1OWrK8ZtjErK/z9AKePwun/fM/jmc=;
+        b=TTq8Mx7yiBo2QSV0vth2qrN/Vz7bxiHnryW0RzwSyOsCF80Lnu4SUvKFQTut6ic2q8
+         Fa189GS8OQtfLlb+86p0AjGGy7OybPzHNN6FEqTZqIR14kAKRP5WR8olP2NT5zyxZPJ7
+         Ho+g2LNcZDemZOTmy9z0hw6wo8JcrB08GbiDTX6fmNfsSEMOV6JSBa8akBZPyijvfprp
+         32lxbvB/9aueMgnK/c+KhYisEkUfJm9qq8PfuDal/y6MbD+jkujJPTT+VoW3nvckdQ9+
+         QP1O+V+sSzhLT0GVxoX9i4q7IoJaDHhhNxVcV1MVdTbc5NsgQRnVQ6qtFVkq5+/ZZPqH
+         aGnw==
+X-Gm-Message-State: AOJu0Yzb/TBV19b9qc7HdNt+8fwDTQr3HbkpF4kXrQRy09X37DUiM3ey
+	GTGbxtbN1BPRCecxywZdHwXwYUy35yOV7GQClZCNl9VIY5B3+dP63BNH28BQqJarvCL//6Wm6Pq
+	v2oDZt/lDeGQmDE+YlulpfmXXjzLY14j54cFPkw==
+X-Google-Smtp-Source: AGHT+IHd7gushZ3fFJI6Z5/9daSH7WjN5Kth+2qfzwWNdWdQpkpmbQyT7N11rbO1k5F3rGB/Xbfge+MrIJrcQbxIxgg=
+X-Received: by 2002:a25:4cc1:0:b0:dfd:b3bb:ac11 with SMTP id
+ 3f1490d57ef6-e041b1c2cc4mr1140503276.59.1720479277314; Mon, 08 Jul 2024
+ 15:54:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bRZO1NnApjCsw8iiRTSbWDY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20240709085238.1fbc301d@canb.auug.org.au>
+In-Reply-To: <20240709085238.1fbc301d@canb.auug.org.au>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 9 Jul 2024 01:54:25 +0300
+Message-ID: <CAA8EJppPsTniX-0XJ-aX26hzO2GKEF_Y_qAjN3tYhQctfzJOww@mail.gmail.com>
+Subject: Re: linux-next: error when fetching the drm-msm-lumag tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/bRZO1NnApjCsw8iiRTSbWDY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+On Tue, 9 Jul 2024 at 01:52, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Fetching the drm-msm-lumag tree
+> (https://gitlab.freedesktop.org/lumag/msm.git#msm-next-lumag) produces
+> this error:
+>
+> fatal: couldn't find remote ref refs/heads/msm-next-lumag
 
-Fetching the drm-msm-lumag tree
-(https://gitlab.freedesktop.org/lumag/msm.git#msm-next-lumag) produces
-this error:
+Probably it got removed by gitlab when the MR was merged. I reinstated
+the branch. Thanks for the info.
 
-fatal: couldn't find remote ref refs/heads/msm-next-lumag
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bRZO1NnApjCsw8iiRTSbWDY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaMbbYACgkQAVBC80lX
-0GzVegf9HK+iyY6v6N+dJfnbLoQfwGIHZ4rndR52qNaF9KwHOWyI8KzsoUZ9FoCl
-zXJ0k0gPN3x+Ohn1HIFzgmUg4ABO9e+eAt89c9wJ4Q/SkXIOfRBnhVKgmmslOknW
-LEr8ITX4gIjxfsAA2VN9StC2h6V1DEXJwLyEdM+rsQ/5vz1Lhv5JFq/kAK9/IYZY
-tJmYIrO5dCWbuAt0Sh17k9BnZp31ehrLc3YeHsTcmLlXE128M3kG+yANywNOFRyz
-GrR+NxF1mvPHY/+euSML6WOxwLPBacnyN/8cBNF1EuLzXdGsbaiXrZzVZ0R7ophN
-yHuvkgaALGa742Wf7eSPKXvC0uQCPw==
-=NrLd
------END PGP SIGNATURE-----
-
---Sig_/bRZO1NnApjCsw8iiRTSbWDY--
+-- 
+With best wishes
+Dmitry
 
