@@ -1,160 +1,197 @@
-Return-Path: <linux-kernel+bounces-243872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B74E929C02
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:15:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2C0929C05
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAAE4B21227
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:15:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1163B2121B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FB711720;
-	Mon,  8 Jul 2024 06:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4048114287;
+	Mon,  8 Jul 2024 06:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6Pn+AKa"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EznK2/Nd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6176FB9
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA583C0C;
+	Mon,  8 Jul 2024 06:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720419320; cv=none; b=drjCbP8lnBscmtaV65UwOt2msEv6u28P0jVleI2DjW4aSbVapoIa88G5OmkZ5qy66NhlQn3WPZ2wGlIIDBW7ZgtQsQp9lN0UU5es0ZJzP35br6HgZckXjOG1R3VawGkKDfpbABIMqwD/mDyWeIr6LgZkmK4NlFIea63i16HgpNw=
+	t=1720419381; cv=none; b=PKMXydOEdpVmzNaleCU+jkRu0W6ckW14icQqA303/qR8inz/0OCGkDxukEwYmRCTSnKl805miaiLPhs+1nPQFZ3shgE0Sl87drExdltmdZyNPeIt7tdKzwwmZVvjHJxLR5DlFAI6kKiYLwdCIBd0/fr4h50r73wmIxr2n4Uxcug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720419320; c=relaxed/simple;
-	bh=YjzZtIyHJ+7V+oR2e3ex1aJEqT0DA9k9DYoSUGGgSF4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OAO6dXPz2eHW1AvZvCzkwRMPq31ATaYnCgif7S8+CoXoN4qstUaaYZxsRhk+EgHP4I1Rh9z0363i2NO/foK9z4EUXyNixyZUhQDpO8W0CkWVMOhRSFxccPNJSRimX7HrEBmTe5mQQVJDZFv5/jP3u2lRCFEJrjL7rWUvKlA0J7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T6Pn+AKa; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-38713b03039so6516165ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 23:15:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720419318; x=1721024118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EQIqWVaUpLW7tNHj4brQfTw/7FKBab3/cxzq1ObVSc8=;
-        b=T6Pn+AKanDuLYMh1sxAiqRIQ0VcyRWpoXY9QZp/ejJMKiM7FQHYh3CO7QjEyBtrcG+
-         42SxwGy87SIXJj9mOwn8N9mv7t4RbsU24fJElH/m8qFYuLt+AfWLtFP6fP9CEsR0GBV3
-         IyTLyFwKf6rC0kr3GN+wHFtjmhAEdKXLoLhkSg0DXSFnFAZ7S1TXd3bXHX4wA79AMyq7
-         NJmbFaD8KYnEYOwN3tfVcIY2duMZIfW8kOR9UIenmalneiPVTBOViPIj45C3xuCmTTKH
-         E+LI8/3CxIPc7r729Y5CdDKB4DI2DMuKtHe3XDFK5OaUaF+SitBDYquy892DWajTPI89
-         3ssA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720419318; x=1721024118;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EQIqWVaUpLW7tNHj4brQfTw/7FKBab3/cxzq1ObVSc8=;
-        b=pSxnIW9RxMm4HmiVP7977zb4Aez7lM5yUFkzkavVk//vrDojNopqTyyXzucZggEXdk
-         EOGun3RID8TPWt4pVKONj0oP94y8SsaLaSvDfEd1P86VjQACClak5h8pKwgByJuhTF3h
-         EHhf61d0mY8VarlL9irnzN2jhAWVzmNY6vK/aSIDhIYl838nZaFjnO4ysiWF8KcWvMq3
-         g6uV5H2eYNsUCdsUAxYm/Of0hCqSMz7LOlfpEkDknfeKJh/3Iy9j1WA11VE4puhoZhxg
-         QFAln2fM932hpNWO0huEati/1exjb50XJotf2zG7iUT0ZxR+EERn9w+BxYAdLahRkqlH
-         4Tmg==
-X-Gm-Message-State: AOJu0Yz6bLgZNEk3N4PEM1gIAOVDDS5HbRqAd4+w5XBng0Qof4WyeECd
-	X8Fv2sGimflKbdJ7nIXZ1NsP03UTNn722J7CMOLgDvZozGMJpl7Z
-X-Google-Smtp-Source: AGHT+IGHGlicSVY55FROKSe9KZmtjkxvug0KMI9c/n0YLb3ZClpmuNJ7SGyya4Xv5GO73u8uYJv2lg==
-X-Received: by 2002:a05:6e02:20ed:b0:375:a3d8:97a5 with SMTP id e9e14a558f8ab-38398b02a27mr156595925ab.5.1720419317691;
-        Sun, 07 Jul 2024 23:15:17 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b2585e8c7sm2425736b3a.171.2024.07.07.23.15.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jul 2024 23:15:17 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	Barry Song <v-songbaohua@oppo.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Chris Li <chrisl@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Kairui Song <kasong@tencent.com>,
-	David Hildenbrand <david@redhat.com>,
-	Chuanhua Han <hanchuanhua@oppo.com>
-Subject: [PATCH] mm: Extend 'usage' parameter so that cluster_swap_free_nr() can be reused
-Date: Mon,  8 Jul 2024 18:15:02 +1200
-Message-Id: <20240708061502.9006-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720419381; c=relaxed/simple;
+	bh=nDJE18CH1b2XqBPQyCOcOyZPkrflQJKDXEmzhbVH/d0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PVPpjL1ianNI4V7cNRKQ1Tnm1zO1ExKyNjKsqQTPCpjfOkaZDeZ8Qu6RVNbAuILNpW98f63b0RpOofFcdwKRmJTRkj6n3kEDNx/+s2o6xrKlD98tr9/QKVFJMH5FN+oTRNEyaaWNPS4PN4sJir2eHov/EYvdoBHcI1aSBITtzDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EznK2/Nd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBBFC116B1;
+	Mon,  8 Jul 2024 06:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720419380;
+	bh=nDJE18CH1b2XqBPQyCOcOyZPkrflQJKDXEmzhbVH/d0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EznK2/Nd6OwMmaJ6awGlqGtUBD1CFQ4THI0QacinMh1DrN0C4KAP651dhbIFtaeMV
+	 yP2Ek2X8MszbHtltYQA9p+KKBr9W/+zDm4HzPVYHdpSPkZemT0AGmX1lRF8ra4iJ06
+	 eve73KWFK8hqxxsb661+fH542zTFyOMkIjjWDkRZibDM6/QERJm6DnlMhfzqmj0zLF
+	 iuKc8rXpA32NniMgS01CUpkUb44kEN3addek9++e1jEvkJbsufETRBsCZTfUF6Ke8d
+	 A0IjbUtBGKn9y+VJ8GJBg9NMHlEa0MKi1gXPCB6MN2K767L90+6+OKDGLFQqCnbeMI
+	 gbELR/8G+2aBg==
+Message-ID: <c7688fba-0570-4dc6-80c4-23cd75ed29aa@kernel.org>
+Date: Mon, 8 Jul 2024 08:16:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXT] Re: [PATCH v4 2/5] dt-bindings: arm: fsl: add imx-se-fw
+ binding doc
+To: Pankaj Gupta <pankaj.gupta@nxp.com>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240705-imx-se-if-v4-0-52d000e18a1d@nxp.com>
+ <20240705-imx-se-if-v4-2-52d000e18a1d@nxp.com>
+ <450d1575-c9b3-413b-bfa9-8dc4352fa263@kernel.org>
+ <AM9PR04MB8604B9A9F3D22C35679AD1D195DA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <AM9PR04MB8604B9A9F3D22C35679AD1D195DA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Barry Song <v-songbaohua@oppo.com>
+On 08/07/2024 07:50, Pankaj Gupta wrote:
+>> Drop redundant/obvious parts.
+> Will replace above two description line with the below two.
+>       - description: mailbox phandle to send message to se firmware
+>       - description: mailbox phandle to receive message from se firmware
+> 
+>>
+>> So two mailboxes?
+> Two handles of the same mailbox.
+> 
+>>
+>>> +
+>>> +  mbox-names:
+>>> +    items:
+>>> +      - const: tx
+>>> +      - const: rx
+>>> +      - const: txdb
+>>> +      - const: rxdb
+>>
+>> 4 mailboxes? This cannot be different.
+> mbox-names can have any of the above mentioned 4 values.
+> And  two values are minimum, required.
 
-Extend a usage parameter so that cluster_swap_free_nr() can be reused by
-both swapcache_clear() and swap_free().
-__swap_entry_free() is quite similar but more tricky as it requires the
-return value of __swap_entry_free_locked() which cluster_swap_free_nr()
-doesn't support.
+No, I said it cannot be different. If two are minimum, then you can have
+here 4, right? But earlier you said you can have only 2. It does not
+make any sense.
 
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Chris Li <chrisl@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Kairui Song <kasong@tencent.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Chuanhua Han <hanchuanhua@oppo.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- mm/swapfile.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+> 
+>>
+>>> +    minItems: 2
+>>> +
+>>> +  memory-region:
+>>> +    description: contains the phandle to reserved external memory.
+>>
+>> Drop
+> Will remove the line " description: contains the phandle to reserved external memory."
+> 
+>>
+>>> +    items:
+>>> +      - description: It is used by secure-enclave firmware. It is an optional
+>>> +          property based on compatible and identifier to communication
+>> interface.
+>>> +          (see bindings/reserved-memory/reserved-memory.txt)
+>>> +
+>>> +  sram:
+>>> +    description: contains the phandle to sram.
+>>
+>> Drop
+> Will remove " description: contains the phandle to sram."
+> 
+>>
+>>> +    items:
+>>> +      - description: Phandle to the device SRAM. It is an optional property
+>>> +          based on compatible and identifier to communication interface.
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - mboxes
+>>> +  - mbox-names
+>>> +
+>>> +additionalProperties: false
+>>
+>> Keep it after allOf block
+> 
+> In V2, it is after allOf block.
+> In previous comments, it was commented to place allOf block, after required.
+> I am little confused.
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index f7224bc1320c..70c4a9132672 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1352,7 +1352,8 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
- }
- 
- static void cluster_swap_free_nr(struct swap_info_struct *sis,
--		unsigned long offset, int nr_pages)
-+		unsigned long offset, int nr_pages,
-+		unsigned char usage)
- {
- 	struct swap_cluster_info *ci;
- 	DECLARE_BITMAP(to_free, BITS_PER_LONG) = { 0 };
-@@ -1363,7 +1364,7 @@ static void cluster_swap_free_nr(struct swap_info_struct *sis,
- 		nr = min(BITS_PER_LONG, nr_pages);
- 		for (i = 0; i < nr; i++) {
- 			if (!__swap_entry_free_locked(sis, offset + i, 1))
--				bitmap_set(to_free, i, 1);
-+				bitmap_set(to_free, i, usage);
- 		}
- 		if (!bitmap_empty(to_free, BITS_PER_LONG)) {
- 			unlock_cluster_or_swap_info(sis, ci);
-@@ -1396,7 +1397,7 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
- 
- 	while (nr_pages) {
- 		nr = min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
--		cluster_swap_free_nr(sis, offset, nr);
-+		cluster_swap_free_nr(sis, offset, nr, 1);
- 		offset += nr;
- 		nr_pages -= nr;
- 	}
-@@ -3492,15 +3493,9 @@ int swapcache_prepare(swp_entry_t entry)
- 
- void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
- {
--	struct swap_cluster_info *ci;
- 	unsigned long offset = swp_offset(entry);
--	unsigned char usage;
- 
--	ci = lock_cluster_or_swap_info(si, offset);
--	usage = __swap_entry_free_locked(si, offset, SWAP_HAS_CACHE);
--	unlock_cluster_or_swap_info(si, ci);
--	if (!usage)
--		free_swap_slot(entry);
-+	cluster_swap_free_nr(si, offset, 1, SWAP_HAS_CACHE);
- }
- 
- struct swap_info_struct *swp_swap_info(swp_entry_t entry)
--- 
-2.39.2
+So why did you implement it entirely different? Read the comment from
+Conor and from me again. I am sorry, but repeating the same three times
+(once by Conor, twice by me) is quite a waste of time.
+
+Open example-schema. How is it done there?
+
+Best regards,
+Krzysztof
 
 
