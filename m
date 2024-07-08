@@ -1,202 +1,142 @@
-Return-Path: <linux-kernel+bounces-244851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4487492AA51
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:06:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6540892AA53
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D47282EE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:06:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8F61B20E62
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAFE328B6;
-	Mon,  8 Jul 2024 20:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2337E328B6;
+	Mon,  8 Jul 2024 20:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LnqwapQA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iM4sdBN8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D1721103
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BADF14C5B8
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720469210; cv=none; b=lZ/K7RkX63Rl/fgZ6fBnReiC59c58CNljMVwqzy50Hs6uX4L/9gBC8FGibQe/orEovikn3Jc//310ef4cwFBly60Khmi5xHJOfRxWGHrNMjS6tdX8M/p+MeTDC8WV/oIrWZzxGmgTzKrknd9KNeK2VqOdSrvGhm7cnCKETEMb4c=
+	t=1720469254; cv=none; b=uLY9f5GJAGe9UJPU0EAatYhxXnquRFUFkgslKfTB0iK5TEJQfInmW9j3sTYOrUr4P2rvlwV7xfX7kAnskP8OImECvqlhjpDKqvFcx93uSvNTh9oTB5gB8hORalL63DoKIeEFv7Hz/6hXOXz1dt4In+wsmGzKuRxnFAYDZ1Y6et0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720469210; c=relaxed/simple;
-	bh=lopMJKNUkM5mdilFcbxOlowjhB72XNJu1hZbshGnERQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J+FXun+vTk2bngmh+BKgpwcHfOoj4oG2FOU4Ivkn0gg+0y0fBPcgauQt/Aw+un8PfITMmocXIp6UDS+Y9KzX6h4rb5OvMSptXdr3YvKwXte0MLJsdLElbWITSu/e9thk8KrW9vtYcYXcQwIqyqNmusVj9IasCxz8lzsvkMz1VJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LnqwapQA; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1720469254; c=relaxed/simple;
+	bh=bdhvU9UNHx8t9DL/tSkNjaiRfS1x2EaARCAwMAwHCUs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DUAsxFfDah44mm1R5SAo0OkvpZleBr08aZULu2OTYYCkMdGTLQ4R/il5wr/eq2KA7byFPDn/onaZVAcv0OVT8KRWNIOyX0kfc3xvob7cvf9N0BLD0q6SxzTzztFooDyJmXvTwd96j7SCkAq1NjoMEExDa8h1RWEeUX6N8NPnNCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iM4sdBN8; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720469208;
+	s=mimecast20190719; t=1720469251;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ufhtylmYb0l9ME9pQ71j54Ozfhc8pZ6jpAyIxmjbQ/M=;
-	b=LnqwapQASNNRRiG/ufczNJ479981WcHAjexfiyDWV/ZWDk6NjKPHdft9Ez1vt1PxCvPe06
-	4wEAFFrQTDZ3r33chllkkCujFVyK0k7rRDdCmJ0qrcoOEsatVGdB71pz83swror8WlhjYW
-	F1NB8qW2JXHIlUwj7NY0pi8lX4lId2I=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yL5D2HYEXnL7bQRI7uUNDG51u5Y8rGadc9gkXbyKQGA=;
+	b=iM4sdBN8+WN8dUV5WpsC9iOKo03qqcwAl/fj8WTf3rS0gYxmznL0V8le+CHBksehwFsztZ
+	NlsnNVoJTG3sARhbKprJ2gCiVTZmnNqbNP1jWHyNijEgRrness25cGdfxLSZm3AN5s/oN0
+	/MbWtxMs1zgDEeH/XT1gp7xAkrNT/lU=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-215-v_oVmEALOq-dlPY5ED8s6g-1; Mon, 08 Jul 2024 16:06:46 -0400
-X-MC-Unique: v_oVmEALOq-dlPY5ED8s6g-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42668796626so10756755e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:06:46 -0700 (PDT)
+ us-mta-660-S1ySGP9aPVimmO0DZXhMSQ-1; Mon, 08 Jul 2024 16:07:30 -0400
+X-MC-Unique: S1ySGP9aPVimmO0DZXhMSQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-367963c4f52so3084432f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:07:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720469205; x=1721074005;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ufhtylmYb0l9ME9pQ71j54Ozfhc8pZ6jpAyIxmjbQ/M=;
-        b=n0jQzB4NJHNSaAa1jc2V2guM7X0hf9f7erKDUAoY/Hcg5vS+u+PQeRsiMBLbZcnxBO
-         nL4ZKSCkPH1JDsh5D3iXbSts+sJRv+t4lYVkzBuUR0VUPktHkOrOW9ldxXWoZWGzumkt
-         K5TceTfe8sAQgJuDAc8FXZYzwxEM6JnHeVJWRu1vEhOASQcjSNlwOvK4Q7yEWCcr2ctM
-         3mf7ipnf5keevnkKV6XQpE5or8fpjfBzPYyVj+McOyVxtD1eyyJ2Sa2Y26ooeqGAXulz
-         zdvmIBoa+KaOcTDTGqRQrjM8XLV+0qAXlsAwK45L08LRDGo6vBPYS7FuMcDYfAbNUmdv
-         9pCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLcC+z1QwGlgR1WrVUrKJktnqtU30TfxzZOl+RVJwXVQ7Hnbcv8eeMNL865AspKo4+QKGKRnxH454UHxQP6sGXqabnQdsv89YOVASt
-X-Gm-Message-State: AOJu0Yz0diYML6VqKHe8qLyJhWoCNVAIXUpqQvkGGUolHiueacQb+36D
-	m2VtH4JOg8ceHKY7tP98Jr3A1OW6mdTZSHqGC6qCmapol7ZrYlfFBGY5wDQgBK+KSC5imAmAjiy
-	10Q5vGaD2mZrb9s+EWUI7wrmVA+nwwh45LxHVGgiNv2qSs6rNyuo4ys0NRq8x0w==
-X-Received: by 2002:a05:600c:896:b0:426:64a2:5375 with SMTP id 5b1f17b1804b1-426707cbf60mr4187885e9.1.1720469205673;
-        Mon, 08 Jul 2024 13:06:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFY3cy8KO7R2bm9GD3OsyrOijDD4r+Wzecwv9hQQdddOHxtAoBS7yAbuwECbpXjcjqzix6Adw==
-X-Received: by 2002:a05:600c:896:b0:426:64a2:5375 with SMTP id 5b1f17b1804b1-426707cbf60mr4187585e9.1.1720469205258;
-        Mon, 08 Jul 2024 13:06:45 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c744:2200:bad7:95bd:e25e:a9e? (p200300cbc7442200bad795bde25e0a9e.dip0.t-ipconnect.de. [2003:cb:c744:2200:bad7:95bd:e25e:a9e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5f25sm10628625e9.26.2024.07.08.13.06.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 13:06:44 -0700 (PDT)
-Message-ID: <75cf01cd-8a45-4a79-b06c-cdf2d68cdd53@redhat.com>
-Date: Mon, 8 Jul 2024 22:06:43 +0200
+        d=1e100.net; s=20230601; t=1720469249; x=1721074049;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yL5D2HYEXnL7bQRI7uUNDG51u5Y8rGadc9gkXbyKQGA=;
+        b=owVVCuCuuJbBM+4U2rm32aMfqy0/s4q8/uajKog2FXvDB+3nzAHtcMR4/c8KVsPrcN
+         THCIUXZCfC/GxRWcFKOxbas7s+w2Wkw6eq19X1unuaWNSyhL1c87bnwmvr07/TKBhY83
+         ZDSX7DJ1KF3VakWNKLng33+uOgUoHnAHDN99B+SzduariYmZ0F0104t1hXIeKCrFbN9J
+         pwi6YgAk8MQW3Rh8ZM5l81bCuedBCuatleBnqorGFuv3B49w9aMzstpu844A/n9zHkK0
+         pmXx8fEh8z4uVOP50i9tCrV+ppBStOFavuemsCVFr5+Vf83jqhnQnvlkc1jwOWaTmzi9
+         JaVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfgfSjN+Cm1wxMEos2fBMQqJpsYRJnsCbdact0t8ujl8JE3Z0LBuTxi2yRWsBuSghg/Fr9LIf5fW/Luj/gSAvf22A3dYx8ApIr18PQ
+X-Gm-Message-State: AOJu0YzN3OKh4DX0ui5YtXr1iXyIpuP8quhNm4ljeM6rTywl6awZQFqy
+	0mUUtxzr6r9W8Otq7ikN5veMLxPsNNJ9/10znRHQJp4trxDC0o6wqj4jdyzw2e4e053lxCoUwDr
+	g6Do2KMYUvEPNSRBrykHh4Gfk3PktqkP6r9voLyVDHnsw8nA4YP+K5Em2vfNIhg==
+X-Received: by 2002:adf:ffc8:0:b0:367:4e05:bb7b with SMTP id ffacd0b85a97d-367cead1ed1mr404419f8f.53.1720469249403;
+        Mon, 08 Jul 2024 13:07:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH63gQqjJCEcokYKLmBaEJmumwTy7f+NP2A4sWqUyKY29gIBVynPTjxXAGDrCc3mTaIESJUug==
+X-Received: by 2002:adf:ffc8:0:b0:367:4e05:bb7b with SMTP id ffacd0b85a97d-367cead1ed1mr404405f8f.53.1720469248992;
+        Mon, 08 Jul 2024 13:07:28 -0700 (PDT)
+Received: from cassiopeiae.. ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4267259a118sm572885e9.1.2024.07.08.13.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 13:07:28 -0700 (PDT)
+From: Danilo Krummrich <dakr@redhat.com>
+To: mcgrof@kernel.org,
+	russ.weight@linux.dev,
+	gregkh@linuxfoundation.org
+Cc: chrisi.schrefl@gmail.com,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>
+Subject: [PATCH v2 1/2] firmware_loader: annotate doctests as `no_run`
+Date: Mon,  8 Jul 2024 22:07:20 +0200
+Message-ID: <20240708200724.3203-1-dakr@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
- lazily freeable mappings
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
- linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
- Christian Brauner <brauner@kernel.org>,
- David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-References: <20240707002658.1917440-1-Jason@zx2c4.com>
- <20240707002658.1917440-2-Jason@zx2c4.com>
- <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
- <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
- <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
- <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
- <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
- <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
- <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
- <Zovv4lzM38EHtnms@zx2c4.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zovv4lzM38EHtnms@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08.07.24 15:55, Jason A. Donenfeld wrote:
-> Hi David,
-> 
-> On Mon, Jul 08, 2024 at 10:11:24AM +0200, David Hildenbrand wrote:
->> The semantics are much more intuitive. No need for separate mmap flags.
-> 
-> Agreed.
->   
->> Likely we'll have to adjust mlock() as well. Also, I think we should
->> just bail out with hugetlb as well.
-> 
-> Ack.
-> 
->> Further, maybe we want to disallow madvise() clearing these flags here,
->> just to be consistent.
-> 
-> Good thinking.
-> 
->> As a side note, I'll raise that I am not a particular fan of the
->> "droppable" terminology, at least with the "read 0s" approach.
->>
->>   From a user perspective, the memory might suddenly lose its state and
->> read as 0s just like volatile memory when it loses power. "dropping
->> pages" sounds more like an implementation detail.
->>
->> Something like MAP_VOLATILE might be more intuitive (similar to the
->> proposed MADV_VOLATILE).
->>
->> But naming is hard, just mentioning to share my thought :)
-> 
-> Naming is hard, but *renaming* is annoying. I like droppable simply
-> because that's what I've been calling it in my head. MAP_VOLATILE is
-> fine with me though, and seems reasonable enough. So I'll name it that,
-> and then please don't change your mind about it later so I won't have to
-> rename everything again. :)
+The doctests of `Firmware` are compile-time only tests, since they
+require a proper `Device` and a valid path to a (firmware) blob in order
+to do something sane on runtime - we can't satisfy both of those
+requirements.
 
-:) Nah. But wait with any remaining until more than one person thinks 
-it's a good idea.
+Hence, configure the example as `no_run`.
 
+Unfortunately, the kernel's Rust build system can't consider the
+`no_run` attribute yet. Hence, for the meantime, wrap the example code
+into a new function and never actually call it.
+
+Fixes: de6582833db0 ("rust: add firmware abstractions")
+Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+---
+v2: (no changes)
+---
+ rust/kernel/firmware.rs | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+index 386c8fb44785..106a928a535e 100644
+--- a/rust/kernel/firmware.rs
++++ b/rust/kernel/firmware.rs
+@@ -26,14 +26,18 @@
+ ///
+ /// # Examples
+ ///
+-/// ```
++/// ```no_run
+ /// # use kernel::{c_str, device::Device, firmware::Firmware};
+ ///
++/// # fn no_run() -> Result<(), Error> {
+ /// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
+ /// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
+ ///
+-/// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev).unwrap();
++/// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
+ /// let blob = fw.data();
++///
++/// # Ok(())
++/// # }
+ /// ```
+ pub struct Firmware(NonNull<bindings::firmware>);
+ 
+
+base-commit: 997197b58bf6e22b8c6ef88a168d8292fa9acec9
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
