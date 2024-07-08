@@ -1,131 +1,101 @@
-Return-Path: <linux-kernel+bounces-244596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A4792A6A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:01:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0387B92A6B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B65B1F224F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02BFE1C216D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2068149C7E;
-	Mon,  8 Jul 2024 16:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4A214430B;
+	Mon,  8 Jul 2024 16:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GJ+2cbp9"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k86mSvuD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772C1148855;
-	Mon,  8 Jul 2024 16:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C73C1EA6F;
+	Mon,  8 Jul 2024 16:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454415; cv=none; b=MQ4cf0N90BQccFtHRBcNELGLj+jHyApeJx6exmVPIY7ZrWuYnMxXdiJZfUD2LAzONx6evNvZX2gKCWV5hZVoZbcizffkYIfGqJPMPP/lA7hLK2VM3ZQp6wKS1kGIrosbd+H6n8LhE7Fe9P9siCHFT5xTCR6XGVHLsF9XOZvo0w0=
+	t=1720454474; cv=none; b=NLwOhPG/4uB2iZMSi2k5Ytb9ard83wWi1Qn3iLOd99tBe7YDzRDZVOg8/0kRAmRxvxV/Oda8GOeA/7dhyz07pAv64fT9RD+M8fLTb+o6SNqGOGwBhXa4fFZrve3mkgWq/y0gDlppMaIciskrCO5v5FN7esxsii73fHdaeOp4Fgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454415; c=relaxed/simple;
-	bh=TBwnL3wQbc4QRf7j9akENyB348Gia8jiwKmTJHW1ai0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P7gTOfFV5rVqsMIfM/tf+rL6g10vqzskg+gtAs1i9h2N+/Bopt6CXL3TUz226Qmq1RCtmtfV0Oc72JJQzfS+wVzkGUt9GMuWwJAc1IBP/hJd+XL7Kfp6eWpgA31O71p5HW/xAr1fIrGD638pUxrJxsZoKIUhHSu4gUOmVaithMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GJ+2cbp9; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 468Fxric046208;
-	Mon, 8 Jul 2024 10:59:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720454393;
-	bh=nqty+XynRb9yhSMGja4MzmxCzRnKyzh3bIOszbGtJeg=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=GJ+2cbp9poQRrJGgNk55dSebq0oXq4sKCJ2cl7QR+MEG9cuFrua3Af+0+gmJ8262f
-	 otMb5PDI8bTk/9ocLrcE+DZwEnTtCXFQF2BsomM07SLWp46OiXm6F/kooHCE5Hen70
-	 8omF1YPsYT5Ei6xARLJNeIPPhs1FMqyeC+PmtqK4=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 468FxrVM023160
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 8 Jul 2024 10:59:53 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 8
- Jul 2024 10:59:53 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 8 Jul 2024 10:59:53 -0500
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 468Fxqh9103605;
-	Mon, 8 Jul 2024 10:59:53 -0500
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sebastian.fricke@collabora.com>, <andriy.shevchenko@linux.intel.com>,
-        <jani.nikula@intel.com>, <jirislaby@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <rdunlap@infradead.org>,
-        <linux-doc@vger.kernel.org>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <devarsht@ti.com>, <andi.shyti@linux.intel.com>,
-        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
-Subject: [PATCH 6/6] media: imagination: Round to closest multiple for cropping region
-Date: Mon, 8 Jul 2024 21:29:43 +0530
-Message-ID: <20240708155943.2314427-7-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240708155943.2314427-1-devarsht@ti.com>
-References: <20240708155943.2314427-1-devarsht@ti.com>
+	s=arc-20240116; t=1720454474; c=relaxed/simple;
+	bh=I0c/LK8KrZzZFHZcOEqRu28OsPSObo3IAzNk0eUwkQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ML051E38YmLcsRSEoD2YmnClSxLqVBYnwg6sk3jf0OQc+JfJtU6gnfUdBzkoYi9wcu4OHFiG25RXra44hMwF7Gj6Cn5Qd0lszJaNRLZwenoj8Now165btEPuzeb8cYGMac2/r4GwYZ9cH6xx4NNbnZBAuE5r9/zNKiMsqkUSXdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k86mSvuD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A995C116B1;
+	Mon,  8 Jul 2024 16:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720454474;
+	bh=I0c/LK8KrZzZFHZcOEqRu28OsPSObo3IAzNk0eUwkQ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k86mSvuDac5y3aLfYN7mRyoU0IBxkdcBVw1ZKegWSjWlcCMtgxdVOXIxvc3mKrZp8
+	 t9h/DhnBaKdKNdeNhxx/W34Gfj1cdDSdAFGHqUpuK7/heTNIBAEVaM5FQrf+KqeHvf
+	 CmnxWL5o50kwp4x8QmZGmDkkXUHyIXdee1ELMdDvtffUyxUSc7NPeTVs51RVlhfUT4
+	 mBvwq21FzWzRnqL1CSzsEdxJfagGi2vZF8tvGMM6kcSiqpEnOcf4LKW61TnZPmT6VF
+	 UBggMeX8fDz2QN9FCPuWgrWIBIJP8DwUaHl1jMfspTctSSTS03D+B4bj3X7QYwuxEg
+	 NCc+HcBq11DJw==
+Message-ID: <81a93b15-2791-4eec-8164-f141fae9a5f1@kernel.org>
+Date: Mon, 8 Jul 2024 11:01:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] pci: bus: only call of_platform_populate() if
+ CONFIG_OF is enabled
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Lukas Wunner <lukas@wunner.de>, Bert Karwatzki <spasswolf@web.de>,
+ caleb.connolly@linaro.org, bhelgaas@google.com, amit.pundir@linaro.org,
+ neil.armstrong@linaro.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, Praveenkumar Patil <PraveenKumar.Patil@amd.com>
+References: <20240707183829.41519-1-spasswolf@web.de>
+ <Zoriz1XDMiGX_Gr5@wunner.de> <20240708003730.GA586698@rocinante>
+ <CACMJSevHmnuDk8hpK8W+R7icySmNF8nT1T9+dJDE_KMd4CbGNg@mail.gmail.com>
+ <20240708083317.GA3715331@rocinante>
+ <6e57dbc0-f47a-464e-af6b-abd45c450dc6@kernel.org>
+ <CACMJSetAKtPp_Gua2S7m_+aC-f9HSUyfF1YoHUPdtcibLtQxpA@mail.gmail.com>
+ <20240708154401.GD5745@thinkpad>
+ <664619a9-c80f-4f81-b302-b9c5258b5e0e@kernel.org>
+ <CAMRc=Mf2pE5JVHzcntO5b+5so_=ekuHGzrY=xJpKatURJFpGZA@mail.gmail.com>
+ <8838b5c3-0c51-42f6-9842-186139822be7@kernel.org>
+ <CAMRc=MdHSsctXYor2ycWqRJHCUciweRTie_TjW9h0yfN7wZhOA@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <CAMRc=MdHSsctXYor2ycWqRJHCUciweRTie_TjW9h0yfN7wZhOA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-If neither of the flags to round down (V4L2_SEL_FLAG_LE) or round up
-(V4L2_SEL_FLAG_GE) are specified by the user, then round to nearest
-multiple of requested value while updating the crop rectangle coordinates.
+On 7/8/2024 10:58, Bartosz Golaszewski wrote:
+> On Mon, Jul 8, 2024 at 5:53 PM Mario Limonciello <superm1@kernel.org> wrote:
+>>
+>> On 7/8/2024 10:49, Bartosz Golaszewski wrote:
+>>
+>>>
+>>> If you have CONFIG_OF enabled then of_platform_populate() will go the
+>>> normal path and actually try to populate sub-nodes of the host bridge
+>>> node. If there are no OF nodes (not a device-tree system) then it will
+>>> fail.
+>>>
+>>> Bart
+>>
+>> So how about keep both patches then?
+> 
+> No, it doesn't make sense. If CONFIG_OF is enabled then -ENODEV is a
+> valid error. I was wrong to apply the previous patch as it would lead
+> to hiding actual errors on OF-enabled systems.
+> 
+> Bart
 
-Use the rounding macro which gives preference to rounding down in case two
-nearest values (high and low) are possible to raise the probability of
-cropping rectangle falling inside the bound region.
-
-This complies with the VIDIOC_G_SELECTION, VIDIOC_S_SELECTION ioctl
-description as documented in v4l uapi [1] which specifies that driver
-should choose crop rectangle as close as possible if no flags are passed by
-user-space, as quoted below :
-
-"``0`` - The driver can adjust the rectangle size freely and shall choose a
-crop/compose rectangle as close as possible to the requested
- one."
-
-Link: https://www.kernel.org/doc/Documentation/userspace-api/media/v4l/vidioc-g-selection.rst [1]
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
----
- drivers/media/platform/imagination/e5010-jpeg-enc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/imagination/e5010-jpeg-enc.c b/drivers/media/platform/imagination/e5010-jpeg-enc.c
-index 187f2d8abfbb..6c3687445803 100644
---- a/drivers/media/platform/imagination/e5010-jpeg-enc.c
-+++ b/drivers/media/platform/imagination/e5010-jpeg-enc.c
-@@ -514,10 +514,10 @@ static int e5010_s_selection(struct file *file, void *fh, struct v4l2_selection
- 
- 	switch (s->flags) {
- 	case 0:
--		s->r.width = round_down(s->r.width, queue->fmt->frmsize.step_width);
--		s->r.height = round_down(s->r.height, queue->fmt->frmsize.step_height);
--		s->r.left = round_down(s->r.left, queue->fmt->frmsize.step_width);
--		s->r.top = round_down(s->r.top, 2);
-+		s->r.width = round_closest_down(s->r.width, queue->fmt->frmsize.step_width);
-+		s->r.height = round_closest_down(s->r.height, queue->fmt->frmsize.step_height);
-+		s->r.left = round_closest_down(s->r.left, queue->fmt->frmsize.step_width);
-+		s->r.top = round_closest_down(s->r.top, 2);
- 
- 		if (s->r.left + s->r.width > queue->width)
- 			s->r.width = round_down(s->r.width + s->r.left - queue->width,
--- 
-2.39.1
-
+Got it; thanks.
 
