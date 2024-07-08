@@ -1,221 +1,106 @@
-Return-Path: <linux-kernel+bounces-244070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03D8929EC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:16:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD0E929EC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDBC1F228B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:16:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 902A31F22884
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B96F6A332;
-	Mon,  8 Jul 2024 09:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEF958AD0;
+	Mon,  8 Jul 2024 09:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KxY8xRGs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmwCAmDP"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B8F433CA;
-	Mon,  8 Jul 2024 09:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C464B44C76;
+	Mon,  8 Jul 2024 09:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720430157; cv=none; b=qFgWzjI0XYoheppo38nsQ3Flc/FwRb/yreQZ886yE5K7La5PT4qtVO+wSJU9gtEsP8uqFNaF4yEeh8G95W4qCHfJ+9LpQ1WhATsXCa4AO/4T/ROKWsBDCYqYD6gzmWoe6d8wTVavAk7Mu/w3OQgezk1RXkFn/Z8l9kY+rhR7P9Y=
+	t=1720430209; cv=none; b=EEafbfoGqoD6s4N0JRAGA+5oZsuh0L/SsF1tMVcc+XTf4kbG8xlMv5whjqnV7OFciM60STsEYH/v0T/b/hekv39FEdtP9w8MYHSe8PejmDl4/PR6g6WpF5pKWuXH5zNdWig/nuFefLrLw1WHTfgQMJIi5tdiaFUdQkBaBALID2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720430157; c=relaxed/simple;
-	bh=hgN66bAz8IkkTy8CvtHp3JUw6MLJpCYUWOaeBYIssMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sXVvPIi3tfdOK39cAoX97GG+9X2X7Vlmc90GAIuN8fsFb3yHXBESnwD9b5H6WclRRI0DBWLWVxzCNhiLa2M/HVYRqiu3vsp8B2unoo4SNSKwbbhU/uH15GWzXx9S9aNMSS1+PTwJl97NVd6H+SFI8IV9ye358l5MFlTBfKiQ6Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KxY8xRGs; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720430156; x=1751966156;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hgN66bAz8IkkTy8CvtHp3JUw6MLJpCYUWOaeBYIssMU=;
-  b=KxY8xRGsbd3BfyVE/R2N5+YRZGwtBnkkRG4HvzhVf3SBWU1oyIhqzt7Y
-   73eq7M+pCMgTff/EMQJTDuHQaKhj/mo5TxvhP0rUVEn/chKtu4WrijXRg
-   VbfJtrCoBiZOQzBMa1lW0+xL08SfaRhQs0HLfljiMBm4JFtTZuE5p+twm
-   yhjLF35orJVhFCO25aH12kPzMtEddz3ehXl/DSneCUEeWFLHjgHLPrAA5
-   K3U8I7ToWufxaFnYJgbJjGn/YhtG2aQlnOHLTWnqIDS2yW0Wjf2EM8s/d
-   2V58eGuPeRKMgjRTzMC0NryvNOJwtmfiVlylRGEJuyOa01zaBcjzn+noe
-   Q==;
-X-CSE-ConnectionGUID: 58YOtsXYQxultniENuwPcg==
-X-CSE-MsgGUID: rmxa/o0uSzikG/hy/tWVvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="17437027"
-X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
-   d="scan'208";a="17437027"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 02:15:56 -0700
-X-CSE-ConnectionGUID: GrQZXYTkQeW7szw5V2SzlQ==
-X-CSE-MsgGUID: 5eqphG5pS+y70DV+Iv/DwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
-   d="scan'208";a="70652136"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 08 Jul 2024 02:15:52 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sQkTO-000Ve0-01;
-	Mon, 08 Jul 2024 09:15:50 +0000
-Date: Mon, 8 Jul 2024 17:15:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cindy Lu <lulu@redhat.com>, dtatulea@nvidia.com, mst@redhat.com,
-	jasowang@redhat.com, parav@nvidia.com, sgarzare@redhat.com,
-	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v3 1/2] vdpa: support set mac address from vdpa tool
-Message-ID: <202407081733.FCiMubD8-lkp@intel.com>
-References: <20240708064820.88955-2-lulu@redhat.com>
+	s=arc-20240116; t=1720430209; c=relaxed/simple;
+	bh=2V4N8nJ37tLEvQApDYOWQg4gMTHKYKHF0mA5M+vKsy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NJ06hubueHe+0S9EwVeMdnm7WKi9Tc1dDbnn64b+2lXipm77y6Bt2fD5fpS3/dYM6T9jHrK+YSTILlImvO9rcTW79dRnBdv6L9s+/v6m7RaJ7UiZQNaNMQl66s/fJVTURZUE0erVn1ecqZO7J0NAlocz7TeCu8YVVggGXRh5Jws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmwCAmDP; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f6a837e9a3so14737025ad.1;
+        Mon, 08 Jul 2024 02:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720430207; x=1721035007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iFqGm3yI9OnUkznduf63K0BFhweBnxH+Ps1Ldye9VmI=;
+        b=WmwCAmDPd26/zo7UVSfb42Q2SawD32iAt9NcOWySWAXXQgDwWMDgFzu8jooxvWJUIz
+         3yXw1J8Wo3bb6JdDTjyLosHHm40RNlwYgXFoNgAgBa2mh79tmAw2k0mie5NRxkyUXEQZ
+         YmKw0t997Srg1vmzccQdPVs8i7xjq1Sa0yN1EdGM5iof7gzDM3fM598yaLlQahiaoCc4
+         yjwnif9lVjjlSv8CXO5QAX+09QIHdv4QY+NqlWCe7/Lgbz618SK58vhRyYVCqicUvGDD
+         8LTtXIuy74JoBVjN2u/JtLBz3AwujFIE1jd2rARXMMrYU77bMGNNzxAjj5l8icM/cGW7
+         sg4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720430207; x=1721035007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iFqGm3yI9OnUkznduf63K0BFhweBnxH+Ps1Ldye9VmI=;
+        b=wlh9W5gxnO/x3pWgAy5a3y7o4Lrb3+rBt2aMAtgDHHftUQqOuV6NBFDg90JQTitAMp
+         6+6TaRpK0daSBRX5+m9zsTtegZvRpnJYUvQo4gsJ6y3INFf61nGCmyaHQKe7CBuZgltJ
+         AZdRPi9ocmFq9DwlTofVQJ9r2BhPRUus7WQlaFZkae3FBFqCw5uQoORnaAnSMSPnrL+t
+         KsY+6NyldHFaxeYi9uQp5ATZmOyRXF1O9TBBa8MNYY5iQW+KiiCnwnVxKWAPZOdtmsFE
+         FH7kMroDZ2gP+iPgXNVEq7645eX4kNNbRg30rP5/M/QaIbLRlgInXr67htVGM+AdVrxG
+         qo1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWt3fhWS92yFWeEiK/klqLsvqjnMS33joGzqqTLuZo6wAG+zAF3cgNjIZcjM+RWld1mLQP57uh7vE8HVfMALs/fsgNC1YvqjdWCP30tIO4=
+X-Gm-Message-State: AOJu0YwLc6qS4rqOT+1ja6o0Wo1AoLugYNFSRr1I9lwkzyr0Ue+x0Sic
+	r4Q++dX/AbrtSs70McnNo7F7ACsYFx1l7vpv3zz6V49OLsgIGUCiGzQrD5eHDg5FAMZ95Yuk3+o
+	sziK0yhJtDxGX4/RDDhuKvL3raMeLb9rZ
+X-Google-Smtp-Source: AGHT+IHHKpH+Z/eQxrz/DZkFNJgPRTQXTnAdJWL7jTfHsy0i05RsSYMDvJ4Ls32LH9Fl3i9r2bSsKh54jEz6PCJgzzM=
+X-Received: by 2002:a17:90b:2890:b0:2c9:7849:4e22 with SMTP id
+ 98e67ed59e1d1-2c99c69f245mr6261798a91.8.1720430207002; Mon, 08 Jul 2024
+ 02:16:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708064820.88955-2-lulu@redhat.com>
+References: <20240708090615.2267476-1-andrewjballance@gmail.com>
+In-Reply-To: <20240708090615.2267476-1-andrewjballance@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 8 Jul 2024 11:16:34 +0200
+Message-ID: <CANiq72mB3hA6GeN2XSqRpV4m+rCbr2+NLHgmfpphjm1Wo1wBBw@mail.gmail.com>
+Subject: Re: [PATCH] rust: firmware: fix invalid rustdoc link
+To: Andrew Ballance <andrewjballance@gmail.com>
+Cc: linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org, 
+	mcgrof@kernel.org, russ.weight@linux.dev, dakr@redhat.com, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@samsung.com, aliceryhl@google.com, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Cindy,
+On Mon, Jul 8, 2024 at 11:07=E2=80=AFAM Andrew Ballance
+<andrewjballance@gmail.com> wrote:
+>
+> rustdoc generates a link to a nonexistent file because of a extra quote
+>
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
 
-kernel test robot noticed the following build warnings:
+Thanks for the patch!
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on horms-ipvs/master v6.10-rc7 next-20240703]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I guess this is meant for staging/rust-device, but I think this should
+be a review comment here:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cindy-Lu/vdpa-support-set-mac-address-from-vdpa-tool/20240708-144942
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240708064820.88955-2-lulu%40redhat.com
-patch subject: [PATCH v3 1/2] vdpa: support set mac address from vdpa tool
-config: i386-buildonly-randconfig-005-20240708 (https://download.01.org/0day-ci/archive/20240708/202407081733.FCiMubD8-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240708/202407081733.FCiMubD8-lkp@intel.com/reproduce)
+    https://lore.kernel.org/rust-for-linux/20240618154841.6716-3-dakr@redha=
+t.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407081733.FCiMubD8-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/vdpa/vdpa.c:1377:6: warning: variable 'err' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    1377 |         if ((mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC)) &&
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1378 |             nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
-         |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/vdpa/vdpa.c:1394:9: note: uninitialized use occurs here
-    1394 |         return err;
-         |                ^~~
-   drivers/vdpa/vdpa.c:1377:2: note: remove the 'if' if its condition is always true
-    1377 |         if ((mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC)) &&
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1378 |             nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
-         |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/vdpa/vdpa.c:1377:6: warning: variable 'err' is used uninitialized whenever '&&' condition is false [-Wsometimes-uninitialized]
-    1377 |         if ((mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC)) &&
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/vdpa/vdpa.c:1394:9: note: uninitialized use occurs here
-    1394 |         return err;
-         |                ^~~
-   drivers/vdpa/vdpa.c:1377:6: note: remove the '&&' if its condition is always true
-    1377 |         if ((mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC)) &&
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/vdpa/vdpa.c:1371:9: note: initialize the variable 'err' to silence this warning
-    1371 |         int err;
-         |                ^
-         |                 = 0
-   2 warnings generated.
-
-
-vim +1377 drivers/vdpa/vdpa.c
-
-  1363	
-  1364	static int vdpa_dev_net_device_attr_set(struct vdpa_device *vdev,
-  1365						struct genl_info *info)
-  1366	{
-  1367		struct vdpa_dev_set_config set_config = {};
-  1368		const u8 *macaddr;
-  1369		struct vdpa_mgmt_dev *mdev = vdev->mdev;
-  1370		struct nlattr **nl_attrs = info->attrs;
-  1371		int err;
-  1372	
-  1373		if (!vdev->mdev)
-  1374			return -EINVAL;
-  1375	
-  1376		down_write(&vdev->cf_lock);
-> 1377		if ((mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC)) &&
-  1378		    nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
-  1379			set_config.mask |= BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MACADDR);
-  1380			macaddr = nla_data(nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]);
-  1381			memcpy(set_config.net.mac, macaddr, ETH_ALEN);
-  1382	
-  1383			if (mdev->ops->dev_set_attr) {
-  1384				err = mdev->ops->dev_set_attr(mdev, vdev, &set_config);
-  1385			} else {
-  1386				NL_SET_ERR_MSG_FMT_MOD(info->extack,
-  1387						       "features 0x%llx not supported",
-  1388						       BIT_ULL(VIRTIO_NET_F_MAC));
-  1389				err = -EINVAL;
-  1390			}
-  1391		}
-  1392		up_write(&vdev->cf_lock);
-  1393	
-  1394		return err;
-  1395	}
-  1396	static int vdpa_nl_cmd_dev_attr_set_doit(struct sk_buff *skb,
-  1397						 struct genl_info *info)
-  1398	{
-  1399		const char *name;
-  1400		int err = 0;
-  1401		struct device *dev;
-  1402		struct vdpa_device *vdev;
-  1403		u64 classes;
-  1404	
-  1405		if (!info->attrs[VDPA_ATTR_DEV_NAME])
-  1406			return -EINVAL;
-  1407	
-  1408		name = nla_data(info->attrs[VDPA_ATTR_DEV_NAME]);
-  1409	
-  1410		down_write(&vdpa_dev_lock);
-  1411		dev = bus_find_device(&vdpa_bus, NULL, name, vdpa_name_match);
-  1412		if (!dev) {
-  1413			NL_SET_ERR_MSG_MOD(info->extack, "device not found");
-  1414			err = -ENODEV;
-  1415			goto dev_err;
-  1416		}
-  1417		vdev = container_of(dev, struct vdpa_device, dev);
-  1418		if (!vdev->mdev) {
-  1419			NL_SET_ERR_MSG_MOD(
-  1420				info->extack,
-  1421				"Fail to find the specified management device");
-  1422			err = -EINVAL;
-  1423			goto mdev_err;
-  1424		}
-  1425		classes = vdpa_mgmtdev_get_classes(vdev->mdev, NULL);
-  1426		if (classes & BIT_ULL(VIRTIO_ID_NET)) {
-  1427			err = vdpa_dev_net_device_attr_set(vdev, info);
-  1428		} else {
-  1429			NL_SET_ERR_MSG_FMT_MOD(info->extack, "%s device not supported",
-  1430					       name);
-  1431		}
-  1432	
-  1433	mdev_err:
-  1434		put_device(dev);
-  1435	dev_err:
-  1436		up_write(&vdpa_dev_lock);
-  1437		return err;
-  1438	}
-  1439	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Miguel
 
