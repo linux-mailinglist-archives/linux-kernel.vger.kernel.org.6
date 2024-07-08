@@ -1,82 +1,165 @@
-Return-Path: <linux-kernel+bounces-249338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAD592EA3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:05:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E8092EA7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B3891C21627
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:05:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AB04B2166E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0E71607A0;
-	Thu, 11 Jul 2024 14:05:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0763514BFA2;
-	Thu, 11 Jul 2024 14:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC9F169382;
+	Thu, 11 Jul 2024 14:16:30 +0000 (UTC)
+Received: from mx2.mythic-beasts.com (mx2.mythic-beasts.com [46.235.227.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6DD80BF8;
+	Thu, 11 Jul 2024 14:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720706751; cv=none; b=Mhd/VXxKWvBHHPS57vkteWuKACwwrkho+13zUEfol8sDMWQ42LR9oag4gGdDFH5l/fEeRXVHTTPJ0EFI65nkgrxCcrFdNc2Ih4nSRIPWB7NskNenEf5uTMRTFX/b2i1vEedwW5iSUB3jd18hFLNHzL854BQwVfSHuDx8emKUB54=
+	t=1720707389; cv=none; b=NcpzENcfta8t+jw81Rqjga925Zt4O5E4svvVH3WjeDj9TT1W9nJuwspSyaAo6BfRyZ83uzKeSL8E3oGb9KCupoINcA4dSp5CjnrtpaHxbHd61yIGIL/QIb7tycOPDmlgRLvjGKXqr0WeDA1SECHC7R/me+UsKZ2CyxkF7jEmQy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720706751; c=relaxed/simple;
-	bh=PhHroz5/iQCubztv7+fwgm7+eMtiP9Lp0KUxRWIxtXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFQRnLZ+0dp5BDZY2IFSJKZ9DI1dTV8STu9DA85IK7oxCU3D9DGPYWrtSqRQi71VnsXAHt4eTvB98J+xEB/4MtHPf/rX1Ui4cdEk57v6MhiQzCcbmbXuGUMm/DMp6iSvsgKpXwoLz6gJyEzSPC5PakQ+6xNvHMxpcptBFXoxtY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F328FEC;
-	Thu, 11 Jul 2024 07:06:13 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EEFC3F766;
-	Thu, 11 Jul 2024 07:05:45 -0700 (PDT)
-Date: Thu, 11 Jul 2024 15:05:42 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v5 0/7] firmware: support i.MX95 SCMI BBM/MISC Extenstion
-Message-ID: <Zo_mtiEI_79F9wit@pluto>
-References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
+	s=arc-20240116; t=1720707389; c=relaxed/simple;
+	bh=a9pdGR6wfxP8Mqh0V6yErEEF9QRi8fjHjcnxSjYsoJk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ia/J7COLeWXcGAc2RHB/kU3RYJtdjXqBYlci/Z3v/RmOIlVka7q/td3i6tDCcu+7f2LHf9WZpzwTOHNp+PXavO1c3itR8+bPuyvIMBcfgCY5NBTGBRAmggCQEQ6o7Qq+X44HNFgeFGMgWwP/BvpjesfKBbqYHsIvpf3VlzKXLE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk; spf=pass smtp.mailfrom=jic23.retrosnub.co.uk; arc=none smtp.client-ip=46.235.227.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jic23.retrosnub.co.uk
+Received: by mailhub-hex-d.mythic-beasts.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <jic23@jic23.retrosnub.co.uk>)
+	id 1sRuaU-002GpR-2F; Thu, 11 Jul 2024 15:15:58 +0100
+Date: Mon, 08 Jul 2024 09:28:18 +0100
+From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rob Herring <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_3/6=5D_leds=3A_bd2606mvv=3A_use_device=5Ffor?=
+ =?US-ASCII?Q?=5Feach=5Fchild=5Fnode=28=29_to_access_device_child_nodes?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <4cf71de7-dc47-475c-bba0-a9e755f66d49@gmail.com>
+References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com> <20240706-device_for_each_child_node-available-v1-3-8a3f7615e41c@gmail.com> <20240707175713.4deb559f@jic23-huawei> <4cf71de7-dc47-475c-bba0-a9e755f66d49@gmail.com>
+Message-ID: <6119CC81-5F47-4DA3-8C9C-98C7C87C9734@jic23.retrosnub.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-BlackCat-Spam-Score: 36
 
-On Fri, Jun 21, 2024 at 03:04:35PM +0800, Peng Fan (OSS) wrote:
-> i.MX95 System Manager Firmware source: https://github.com/nxp-imx/imx-sm
-> To generate html from the repo: make html
-> 
+No
 
-Hi Peng,
+On 8 July 2024 09:14:44 BST, Javier Carrasco <javier=2Ecarrasco=2Ecruz@gma=
+il=2Ecom> wrote:
+>On 07/07/2024 18:57, Jonathan Cameron wrote:
+>> On Sat, 06 Jul 2024 17:23:35 +0200
+>> Javier Carrasco <javier=2Ecarrasco=2Ecruz@gmail=2Ecom> wrote:
+>>=20
+>>> The iterated nodes are direct children of the device node, and the
+>>> `device_for_each_child_node()` macro accounts for child node
+>>> availability=2E
+>>>
+>>> `fwnode_for_each_available_child_node()` is meant to access the child
+>>> nodes of an fwnode, and therefore not direct child nodes of the device
+>>> node=2E
+>>>
+>>> Use `device_for_each_child_node()` to indicate device's direct child
+>>> nodes=2E
+>>>
+>>> Signed-off-by: Javier Carrasco <javier=2Ecarrasco=2Ecruz@gmail=2Ecom>
+>> Why not the scoped variant?
+>> There look to be two error paths in there which would be simplified=2E
+>>=20
+>
+>I did not use the scoped variant because "child" is used outside the loop=
+=2E
 
-thanks for upstreaming this Vendor protocol.
+Ah missed that=2E  Good sign that things are wrong=2E=2E=2E
 
-LGTM, beside minor nitpicks I mentioned.
+>
+>On the other hand, I think an fwnode_handle_get() is missing for every
+>"led_fwnodes[reg] =3D child" because a simple assignment does not
+>increment the refcount=2E
 
-Please run checkpatch.pl --strict on series before next rebase, though,
-that I spotted a few minor not-so-stylish things :D
+Yes=2E Looks like a bug to me as well=2E
 
-Thanks,
-Cristian
+
+>
+>After adding fwnode_handle_get(), the scoped variant could be used, and
+>the call to fwnode_handle_put() would act on led_fwnodes[reg] instead=2E
+
+There looks to be another bug as it only frees one handle on error=2E  Rig=
+ht now it shouldnt free any but once you fix that you will need to free any=
+ not freed otherwise=2E
+
+Can it be squashed into one loop?
+
+J
+
+
+>
+>>> ---
+>>>  drivers/leds/leds-bd2606mvv=2Ec | 7 +++----
+>>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/leds/leds-bd2606mvv=2Ec b/drivers/leds/leds-bd260=
+6mvv=2Ec
+>>> index 3fda712d2f80=2E=2E4f38b7b4d9d1 100644
+>>> --- a/drivers/leds/leds-bd2606mvv=2Ec
+>>> +++ b/drivers/leds/leds-bd2606mvv=2Ec
+>>> @@ -69,7 +69,7 @@ static const struct regmap_config bd2606mvv_regmap =
+=3D {
+>>> =20
+>>>  static int bd2606mvv_probe(struct i2c_client *client)
+>>>  {
+>>> -	struct fwnode_handle *np, *child;
+>>> +	struct fwnode_handle *child;
+>>>  	struct device *dev =3D &client->dev;
+>>>  	struct bd2606mvv_priv *priv;
+>>>  	struct fwnode_handle *led_fwnodes[BD2606_MAX_LEDS] =3D { 0 };
+>>> @@ -77,8 +77,7 @@ static int bd2606mvv_probe(struct i2c_client *client=
+)
+>>>  	int err, reg;
+>>>  	int i;
+>>> =20
+>>> -	np =3D dev_fwnode(dev);
+>>> -	if (!np)
+>>> +	if (!dev_fwnode(dev))
+>>>  		return -ENODEV;
+>>> =20
+>>>  	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>>> @@ -94,7 +93,7 @@ static int bd2606mvv_probe(struct i2c_client *client=
+)
+>>> =20
+>>>  	i2c_set_clientdata(client, priv);
+>>> =20
+>>> -	fwnode_for_each_available_child_node(np, child) {
+>>> +	device_for_each_child_node(dev, child) {
+>>>  		struct bd2606mvv_led *led;
+>>> =20
+>>>  		err =3D fwnode_property_read_u32(child, "reg", &reg);
+>>>
+>>=20
+>
 
