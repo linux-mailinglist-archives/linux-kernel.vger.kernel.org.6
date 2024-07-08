@@ -1,167 +1,167 @@
-Return-Path: <linux-kernel+bounces-243972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9D2929D38
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8F8929D3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2941C21611
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:38:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506021C20E4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CC624205;
-	Mon,  8 Jul 2024 07:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE9623775;
+	Mon,  8 Jul 2024 07:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYCUH+1L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="jAeEtlw8"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B96224F6;
-	Mon,  8 Jul 2024 07:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77A921345
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720424286; cv=none; b=iBg+/GOMuQUb31CmaeJJa9h9BlvUD6yXP60EHlb34zuOR8K9CQVk+NKnoKAa8evW9EmZ+G1LfDULlVwdEfOwDPdLx1FcHmCr4pnn9QVDcsW+I3F8GfhPIsIgnZNaxqH63e7nrFdfdBBDSUyve9pwqdGreBuEiIB72u/BJAZhrEU=
+	t=1720424352; cv=none; b=JCh/bTe6aCBHrVI3L0XxLZLBnT1+uOWoUyTMUmz8ZfEPau/ACdeltC4+qxLqvds5Bl8hzL3mZ7E+3KhGkgBi7WKaOz1bTn4nXAcS6qSUcwLKbbyORbuFq5GFTilBb3lsZwOzd9QfXTywpPu/sGkWe4an8byexrR7pehSMjlNz/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720424286; c=relaxed/simple;
-	bh=oMiPUlVaYyVu66rjInYRHiAkIAq9At6rRlylsvOCCRg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S8aKCAVPk3u7ZcPlMfYOxq6gne8FZVkqwvxmPWqMULUk/iFoqKSUc/5xIm3BRG9SfnpbV5USz5SgM4W7AEjSBw481uZFniWbhQXl6xPT08X65d16yEgCvLZUsAz/hggdBgceziWRAUdD8ErNSkVt4UWy6Bs6L9pXbZkkz7H6DDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYCUH+1L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1A3C4AF0B;
-	Mon,  8 Jul 2024 07:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720424286;
-	bh=oMiPUlVaYyVu66rjInYRHiAkIAq9At6rRlylsvOCCRg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MYCUH+1LfF/A77Udmoga7d/Y0/f0zG6df7Lu3TuZqh7G3RUuvvC55SnUyNSB39rTm
-	 9oK2MO9Tk5xWW7zyZl2c/LxIL4F88KrPUhOr1yPY7T+JiVDeDXGSD5R2BkPpaaESQU
-	 0qk0r4v+sM2pR7XHwIHpj8Aeczo58K6fMTdwh4TF+eXGackWMBIrjXnpe6FyYmV6lN
-	 /Bu5X06faISlUWnIVfoiwPH/348Q+/9TGXHDYeMnC0x8wW1UXeDqbU2LlQX7l3qlW4
-	 N8TsBvsgm758oqTKzbtWAER2jCFeMQJRRXGGcMZ/3KbufKq4J6M03UkZkff2+zIPEK
-	 Xt/AHctork+Xw==
-Message-ID: <3d40f02f-529b-45ac-aa31-c4342f6f4f55@kernel.org>
-Date: Mon, 8 Jul 2024 09:37:58 +0200
+	s=arc-20240116; t=1720424352; c=relaxed/simple;
+	bh=OdHQYffnI1MnKOFjaCBGe1+olPDrFei83GYzc+nRjDM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=eyhDOUJE12UmBA3VMmjecNzMzXADXf65/jan/+ePWANQudtrYwuF0FyN5yz0M+ZakkQNKuDf1p2Ol08PG0BfnuM/lbHf1z60ngSDRCa+2ZAA0PaFoDooaQOq+7SIhod5y0KnDYJOZWTNwVqzjkumdQ/6LXE+FNwOxJPsFFDJGoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=jAeEtlw8; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77af4cd570so207612466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 00:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1720424349; x=1721029149; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OdHQYffnI1MnKOFjaCBGe1+olPDrFei83GYzc+nRjDM=;
+        b=jAeEtlw8UVE8r9CzT/9i7D+8PKaNdOkI2syezy1hOIfZ3dKNIBBzV5YE4TITL2GQuW
+         hNWsxWEPGwk8Y+qNClW4DbDQKwAXBdneTFOFReSsoNTdsTmFA84CYXaKCFRTxBJG8FzB
+         sqf3GJu3XTtCz1cMscu/nzVCX5Wve1aDhDp/docqYdMNCRnmH6b/A7dUqXAsT+xisgQa
+         MAyF4ViOyge59UpHnBRhk98IPeakCPaDHl2NiHg8xt0DfFJb/qoSo8JWq+LVHNxyuHwM
+         icaK66dJEstTNAwsuHoKdkeeLli3Cws8ktSuJtwfwYW0jeBEgET0B910tjlhPsJCqHsW
+         V6UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720424349; x=1721029149;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OdHQYffnI1MnKOFjaCBGe1+olPDrFei83GYzc+nRjDM=;
+        b=Rz2L9xispuvYX0nHNQgqmf2YWQsmVkZUZOUpGVm4nUOBy4oNlCD8XgXmTZuNPCCNJh
+         OmGlOalw1g3hk5V9eonvR0VyiVXrc1VNNZQbYzz8ZucEPqAQ2UYVZibxp9f3lkYuN4Tu
+         XhMvRH8iaMuFYwjN9Yh5Prk+Ru6zLeKvsr8kc3Eh9c43Hc48axOZ8QHu/ump4nqlXJI3
+         4dKupS5hJ7l1twY8JuOZeVDl4v0dkbIcp1ChPVEjFyLH+vz4spOfTsdaGRMeEFCyLluK
+         EF7PiqVpG8puPPZs+17Er5nSYrbbESNNCajMODSeuNZoUbDUP5/8O/N2IGyggdYzDRx8
+         cz5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ94dsdJ2+sdoAqlxxj9NOsGJIqpk60hnt0AmjgIMb+6Cm1nPHWO/66EfYBu/kIztaI5InvMxjrcTNqBDZtxdSix85syqEd3JKIlix
+X-Gm-Message-State: AOJu0Yw3OdblLFv0P/uFtPsaFWVqvSwOYvMIAsjDB+NMvaGI53qct9+w
+	2JNACbse6QnRRlYX5pz0BG6+P0oEtCL1T1M2f7LLgQy9y6yQgXbBdB/cx4RQaKM=
+X-Google-Smtp-Source: AGHT+IF/1aWOT6fhzPZTuQqzZjdB1GINtas402gNSeNFQ4i1cR0zwoyXLbvlvs8ayC989dd4FtVW9g==
+X-Received: by 2002:a05:6402:1e91:b0:58b:f46f:ae45 with SMTP id 4fb4d7f45d1cf-58e5a4098c6mr9923869a12.23.1720424349166;
+        Mon, 08 Jul 2024 00:39:09 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77d808b81esm256852266b.151.2024.07.08.00.39.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 00:39:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: cirrus,cs4270: Convert to dtschema
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, patches@opensource.cirrus.com,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240707062702.174390-1-animeshagarwal28@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240707062702.174390-1-animeshagarwal28@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Mon, 08 Jul 2024 09:39:08 +0200
+Message-Id: <D2JZJ6OV854S.JBNP47IB708D@fairphone.com>
+Subject: Re: [PATCH RESEND v3] leds: flash: leds-qcom-flash: limit LED
+ current based on thermal condition
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Fenglin Wu" <quic_fenglinw@quicinc.com>, <kernel@quicinc.com>,
+ <linux-arm-msm@vger.kernel.org>, "Pavel Machek" <pavel@ucw.cz>, "Lee Jones"
+ <lee@kernel.org>
+Cc: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David
+ Collins" <quic_collinsd@quicinc.com>, "Subbaraman Narayanamurthy"
+ <quic_subbaram@quicinc.com>
+X-Mailer: aerc 0.17.0-0-g6ea74eb30457
+References: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com> <D2HO9CAE81NA.3UIL5UZ1N5I4W@fairphone.com> <40dfeb9c-e420-4695-939f-ef9b1985d61c@quicinc.com>
+In-Reply-To: <40dfeb9c-e420-4695-939f-ef9b1985d61c@quicinc.com>
 
-On 07/07/2024 08:26, Animesh Agarwal wrote:
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    description:
-> +      This pin will be deasserted before communication to the codec starts.
-> +    maxItems: 1
-> +
-> +  va-supply:
-> +    description: Voltage regulator phandle for the VA supply.
+On Mon Jul 8, 2024 at 4:59 AM CEST, Fenglin Wu wrote:
+>
+>
+> On 7/5/2024 10:23 PM, Luca Weiss wrote:
+> > On Fri Jul 5, 2024 at 9:55 AM CEST, Fenglin Wu via B4 Relay wrote:
+> >> From: Fenglin Wu <quic_fenglinw@quicinc.com>
+> >>
+> >> The flash module has status bits to indicate different thermal
+> >> conditions which are called as OTSTx. For each OTSTx status,
+> >> there is a recommended total flash current for all channels to
+> >> prevent the flash module entering into higher thermal level.
+> >> For example, the total flash current should be limited to 1000mA/500mA
+> >> respectively when the HW reaches the OTST1/OTST2 thermal level.
+> >=20
+> > Hi Fenglin,
+> >=20
+> > Only semi-related to this patch, but I wanted to ask.
+> >=20
+> > Since most phones with a flash also have a thermistor for the flash led=
+,
+> > is there any plan to add support to be able to declare the flash led to
+> > be a "cooling-device" for the relevant thermal zone? That way from a
+> > Linux thermal API standpoint when the zone gets too hot that it can ask
+> > the driver to throttle the brightness or turn the LED off completely.
+> >=20
+> > Right now the only action the kernel can take is with type 'critical' t=
+o
+> > just kill the entire system to mitigate the thermal situation.
+> >=20
+> > Regards
+> > Luca
+> >=20
+>
+> Hi Luca,
+>
+> This change provides the ability to throttle flash current based on the=
+=20
+> thermal status sensed by the temperature sensor inside the flash module=
+=20
+> HW , it doesn't need to register anything in Linux thermal framework.
+>
+> For the case that you mentioned, when an external thermistor is=20
+> installed nearby the flash LED component and normally the ADC_TM driver=
+=20
+> registers a thermal_zone device with it, I agree that having the flash=20
+> LED driver providing a thermal_cooling device so that any cooling=20
+> mapping policy could be defined between the thermal sensor and the=20
+> cooling device would be a good option for better system level thermal=20
+> control. I would assume that this could be added in flash LED framework=
+=20
+> driver instead of the client drivers considering this should be a common=
+=20
+> request because of the big thermal dissipation of flash LED?
 
-Your description is redundant: you did not say anything more than it is
-already said in the property name. This could be in such case just:
-": true"
+Right, the LED core getting the ability to register a cooling device
+would probably be a reasonable solution, that way any flash LED driver
+would be cooling-ready. Apart from decreasing brightness - or worst case
+turning the LED off completely I can't think of many other actions that
+could be taken anyways?
 
-Please keep this feedback for any future work (I feel I already said it
-once...).
+Pavel, Lee, your opinion?
 
-> +
-> +  vd-supply:
-> +    description: Voltage regulator phandle for the VD supply.
-> +
-> +  vlc-supply:
-> +    description: Voltage regulator phandle for the VLC supply.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
+Regards
+Luca
 
-This won't validate DTS... test the DTS. You miss dai-common.
-
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      codec: cs4270@48 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-e.g. audio-codec or codec
-
-And drop unused label "codec:"
-
-
-Best regards,
-Krzysztof
+>
+> Fenglin
+> >>
+> >> ---
+> >> base-commit: ca66b10a11da3c445c9c0ca1184f549bbe9061f2
+> >> change-id: 20240507-qcom_flash_thermal_derating-260b1f3c757c
+> >>
+> >> Best regards,
+> >=20
 
 
