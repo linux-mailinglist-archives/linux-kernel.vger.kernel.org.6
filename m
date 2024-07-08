@@ -1,97 +1,55 @@
-Return-Path: <linux-kernel+bounces-244844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8F392AA3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:59:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C3D92AA3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3BC1F22E64
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:59:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19BDC1F22EE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79B914B959;
-	Mon,  8 Jul 2024 19:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4BF21103;
+	Mon,  8 Jul 2024 20:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="e9Pubnss"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="TgsODtK7"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813CC1FA3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AAC7494;
+	Mon,  8 Jul 2024 20:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720468733; cv=none; b=sekaqti5SQg0sBV9hnaG5vT6w7EMv1SDi0v7M/fm8RaTcgVyk+EAaYeSuaRk7adMOqMmfLFdQzkcvywwTQsgPfzT8E5aOzqf+hjTNvO02PhbJMJCkTQBQoAplmh6DYVBSo01Z/gYmFCbz1hfVSjp8r3jnCBMEjbFxyyr87Y4guk=
+	t=1720468850; cv=none; b=u0SMjW/E3vTvxG7d2bNd5uDD3Ba0mRRHr/y7Xq0yKnejLg8BwUlyeehf2ImrsJIbF+61WjTbZIhWT+I6Wha8GrtBbJZsaZ71uIQt78u+jylXUWZGVUrC/vmvWksUALZwUs6A0t1yb2MQ7XOUf/rKcGlGRuJJoFvH96z6ruqXgYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720468733; c=relaxed/simple;
-	bh=GsUfFcB6M36UY4rgWpA54r3QbUNVx88bFrUbU2Ku70c=;
+	s=arc-20240116; t=1720468850; c=relaxed/simple;
+	bh=DuceHzwjAxWY+4M0ma5lxpxvTWPvntTV8l4RN0/Kcek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FhqVu+1++UlZYkqF0efq9THW6ffnm7yvTIBtr9vFyBHeIel+JGqzhZwhX3Jtb45vluER7AEgbXJUFKhSQ3uZ430QBteHeonbQj0HMZr6vxC9VhVkGT5ZV4sN5sm5cWvV+SyzGlvkRwXKaajunB8FYOeFQfb5wkBauBork+UoWnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=e9Pubnss; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BB00340E019D;
-	Mon,  8 Jul 2024 19:58:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8q5sUzVCfdGL; Mon,  8 Jul 2024 19:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720468723; bh=3vHLLBOF7qwRhaGK9IxTFmmDZWOslx4PEvWUeucnhIE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcMFDsYfi8DgG4hz6S4nJW9T9fsrMnKF/YZ1255U6JQdN3jgQI29L9KwlAroBMYR2GluxcmYDy/UCxwCHB4qnhRwApY7RXNYtRrXkI9PaIvg38LJ5w6C9ULkFTcYjvdydSeZaa7CQUybUGqrZU65SHdwsjWRC6UXnSeMbLXRu4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=TgsODtK7; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1720468840;
+	bh=DuceHzwjAxWY+4M0ma5lxpxvTWPvntTV8l4RN0/Kcek=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e9PubnssoQHJVb77CYCKn8KITLipJDqqsxzgsVJx8gdhbK8sgblZrILtIA0kkxa61
-	 gJSPq0GUpMbv6jAd2ItCUMBJmLzkaLaupIvmNwVFkq+/FA1+VVp+KrRDQhQby5xfRD
-	 UGhffTmKY6IdDBL4Zs3tObH92lgruTGHnBMX4gw/ik0oj8CFYSROdtgBZ8EZR7Zgs5
-	 MI+04rXfbPGL559+/OtPb4+UhPvXEo3JWZwqQjU13WnfrdUNtDtsvKW3luWeCPdZq4
-	 cIxwzThR4PbmUXkm73EhNslCS/v3SJkw3V1d4Ml1NDsCqYcLSwFXU1mxLNDxnkloqT
-	 xuL7zZqpn8cIdaiYBW0sEAtztZ5tJ3qUUrgc5r5XeujVktAPuptmt9Poa8hfNr6B7K
-	 l9ZwWNhA+GQew+mPbAxATh9UJwSnj80LlQsAZysRuupVKDf+B/I75SJB2y/1vDXkkF
-	 5tzv+0AsQ96ATevw3xG7sUHxN45qQEGytqZb4dYOu15mTn2Izna4iYn/0cxlbJKXaW
-	 O6BqB2GhywXS+m8GPVe69/eh/mq+LyeIFJnPioFP8VKD/hfWBKqUfYyxngFjFk1fF0
-	 phhOpEZJvzQnX4/BcJWwslQdsqBKN8ZHroqd+Rm2WAPJffh8qROui2bDYGF1wSjcpb
-	 JKkGfLru93W2G7syi43qd03c=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B598040E019C;
-	Mon,  8 Jul 2024 19:58:16 +0000 (UTC)
-Date: Mon, 8 Jul 2024 21:58:10 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Steve Wahl <steve.wahl@hpe.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ashish Kalra <ashish.kalra@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Pavin Joseph <me@pavinjoseph.com>,
-	Eric Hagberg <ehagberg@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
-	Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <20240708195810.GKZoxE0pRWHEUljjnQ@fat_crate.local>
-References: <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com>
- <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
- <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local>
- <CAMj1kXGsjU5CpF655me1XNA8-5nbk3020vT2Bu5ZoFY25igovg@mail.gmail.com>
- <20240703154301.GEZoVxhREtHjk0vtaL@fat_crate.local>
- <ZowI9w7huVfcKJ7I@swahl-home.5wahls.com>
- <20240708181133.GHZowr1eznPqgvdtRw@fat_crate.local>
- <CAMj1kXG8hZ86BFbar9S5mmvKMH4a0XF0oCm36WwZxYNqc0+pjQ@mail.gmail.com>
- <20240708190724.GIZow47G0J8vO6J3ee@fat_crate.local>
- <Zow-AXsLHjU6gfET@swahl-home.5wahls.com>
+	b=TgsODtK7AQfwTMAzYmozq+DH13XZFmOW4jOxqdiaVgOJukWVypS3g1bsjfJzt2grZ
+	 ljl0Lu3hNw8Zse8/WbQwGJ3pT3QSKrPDBMzJ1AG+QAaX+kiqW/RV9pHyACAcTdIyh6
+	 mgbNa0g2AvsISf6W9WPlHf5ds0Lo5+p43QkpRlz0=
+Date: Mon, 8 Jul 2024 22:00:39 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: add script and target to generate pacman
+ package
+Message-ID: <005e1bca-0061-452e-b8ce-0b8e99bda757@t-8ch.de>
+References: <20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net>
+ <20240708055046.GB1968570@thelio-3990X>
+ <9884e892-1d45-4854-971c-5963e4661a1b@t-8ch.de>
+ <20240708165342.GA2417540@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,30 +58,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zow-AXsLHjU6gfET@swahl-home.5wahls.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240708165342.GA2417540@thelio-3990X>
 
-On Mon, Jul 08, 2024 at 02:29:05PM -0500, Steve Wahl wrote:
-> Yes, this is about AMD machines which support SEV, running bare metal.
-> ("Server" is in question, one of my testers is known to be using a
-> laptop, so the facilities must be present in non-servers as well.)
+On 2024-07-08 09:53:42+0000, Nathan Chancellor wrote:
+> On Mon, Jul 08, 2024 at 05:56:44PM +0200, Thomas Weißschuh wrote:
+> > On 2024-07-07 22:50:46+0000, Nathan Chancellor wrote:
+> > > On Sat, Jul 06, 2024 at 09:33:46AM +0200, Thomas Weißschuh wrote:
 
-No, they can't be. SEV is supported only on server, not on client. This laptop
-has a different problem it seems.
+<snip>
 
-> As far as I can see it, the effort you're putting into finding a
-> different solution must mean you find something less than desirable
-> about the solution I have offered.  But at this point, I don't
-> understand why;
+> > > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > > new file mode 100644
+> > > > index 000000000000..fe899c77a976
+> > > > --- /dev/null
+> > > > +++ b/scripts/package/PKGBUILD
+> > > > @@ -0,0 +1,83 @@
+> > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> > > > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > > > +
+> > > > +pkgbase=linux-upstream
+> > > > +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
+> > > > +pkgver="${KERNELRELEASE//-/_}"
+> > > > +pkgrel="$KBUILD_REVISION"
+> > > > +pkgdesc='Linux'
+> > > > +url='https://www.kernel.org/'
+> > > > +arch=(any)
+> > > 
+> > > I see why you went this way but this feels a little dangerous because
+> > > this means the package will be installable on architectures other than
+> > > the one that it is built for. I think a better solution for this problem
+> > > would be moving arch back to $UTS_MACHINE but setting CARCH to that same
+> > > value in scripts/Makefile.package above. This diff works for me,
+> > > allowing me to build an aarch64 package on x86_64:
+> > 
+> > This is what I used in v1 of the patch.
+> 
+> You had $UTS_MACHINE as arch but I don't see where CARCH was set for
+> makepkg? If you tried to cross compile with v1, there was an error
+> because the default CARCH value (the host) does not match the arch
+> value, but explicitly passing CARCH to makepkg with $UTS_MACHINE should
+> allow makepkg to build a package that is only installable on that
+> machine?
 
-Why would we parse the CC blob which is destined *solely* for a SEV- *guest*,
-when booting the baremetal kernel which is *not* a guest?
+Indeed.
 
-This is the solution I'm chasing - don't do something you're not supposed to
-or needed to do.
+> > But I felt that this only works by pure chance.
+> 
+> I don't think it is by pure chance, it should be entirely based off of the
+> builder's ARCH value, no? I might be misunderstanding something though.
 
--- 
-Regards/Gruss,
-    Boris.
+"Chance" for the fact that UTS_MACHINE and Arch Linux CARCH are
+matching.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> > IMO users of this feature should know what they are doing.
+> > 
+> > That said, if anybody has strong opinions on this, I'll be happy to change it.
+> 
+> I don't feel strongly about it but I think this is different from pretty
+> much all of the other package builds, which only build a package that is
+> installable/usable on one archictecture, and the solution seems
+> simple/robust enough.
+
+I'll pick up your proposal and will send v3 with it and your tags.
 
