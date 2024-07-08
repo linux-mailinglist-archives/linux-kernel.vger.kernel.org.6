@@ -1,225 +1,139 @@
-Return-Path: <linux-kernel+bounces-243912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DEBC929C4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:33:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C681E929C2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561B5281D11
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:33:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 817DC282691
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1821C287;
-	Mon,  8 Jul 2024 06:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C37A14287;
+	Mon,  8 Jul 2024 06:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="lSAjGkQu"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2098.outbound.protection.outlook.com [40.107.117.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfPlvnzf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161AE13ACC;
-	Mon,  8 Jul 2024 06:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720420394; cv=fail; b=S7q69WIkKfjqvhl9AmQkOseMxAjPwynyVtTQRwBckjDd4mwMOAScX8kSKo8mFhbVBkewKNrNbsFYVPKPtnqMpFYcZlSN9T2Bs0TJOdr6ycaKp3RfNgXHPKgBO//8cPZ72VttOhdSYcDX8BMfEkj9fjqs4BSAQx5AtfY8YToXBBc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720420394; c=relaxed/simple;
-	bh=mqFOfGKsqgxzpW1xgPo2aZ9/Xm3LZUmWCTT9dficmdw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SiclTG+HeMfQpmFlydTd9Lln8SRk0vOkVbhr6xmOCMLOs0MhF3l8FwH7IJxEShBIh7ivZKouCG2DuWwAIXW0FSv0zGXMVPOsEyjQVTT2lFG7qQ8Ynkdcu0OYE/tO8qrswv/gFLhwIBx9TLwQgfjAdi15zYfeXclbsAw4PJN6no4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=lSAjGkQu; arc=fail smtp.client-ip=40.107.117.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ej/RcClHDUOt653oD2J4JtPNhEtlrnp9MQZWkTYmtDdv0arl7c066VQkIbPsJot9KZDQVc1tjUdUOG7BcxTT9OvrH34qWs4pCQWRoeFafth04wFwTUojv3hA+XyynJZpvu1efKMe5eEOPnXnMs+wasZTImfxJfo92SdDTuN2u6RnGQAqLg/LxwU1IvCJb0dgPhyW7gJqFMyzNJ4IX6Y7yZDDQ2wiPjH5BXb8bzOn7vjE7/+KyTBDx0Wgt2m5t9RaAqq80YGuu3SBEFnmc6wlJ2x/sNfQ9v+gio59uYC2nUSj2HeYRqInvIqL5/JFjuFJaNFbBx9/ljyplJ4v9YSL2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aLbMBh9VRryxIC8fLOZ5tLWaumzOHHCH3QrOy4NOSLA=;
- b=iBE78XybXC4Ilap5NQoWPGu/vuGW/VeTcWbfZHTdO+vauCCaoq7+iqiGtxpJ60xVd1gw0Og6+aelzovmgnyfqi9y+/arxSdN30UdBBI/TsEDPMvSLJpc4NXJKQKSpCngsxfh/bTNNY/kVlMVNgzHMhS1dQsxg0jvHbgZS796CD++uLZ8qVPnPlp3V4gdQ4UqlsIHT3VVpoA0gKf1ecBdTJq3klS3DslkM6oJPWy3Lnd6rjHoBOOk3bL3zvZbwlb9s/yzVHNYFnLggTvIRAmXiGYBKOmfwunRJDvMHQ1ipgFmkxnkdXYrgK0zqrDqrYCljc6kUMuVqV44caue2t+K1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aLbMBh9VRryxIC8fLOZ5tLWaumzOHHCH3QrOy4NOSLA=;
- b=lSAjGkQu6hOdorL+0s+yKQcjgkuypwIJoFEKQLjp8WrD/sTB4byv6pjJ3BxXZ0fzhy1k73awgPrJTgvQpJ3tdpfToj3/Y69L+l/SL/ISzxp6Hak6JvbuauNjiRLW477qyqTc/a5iFi2QhBT5Y7vosEANrAdRjkay3yp0V6AvxA4TZ5MplwPBWk3u6eiocyWixmNY0CDb4aYcofEehud8N2gdh9C7eXOhYYx+8jqwqTUwijeAQkMuzkMppTBUZ+z8Q87nlL6XThMWkhDBKAxxBtWDMbnORGp6Fzqo14EdBgBUsdRec13cR/svC6dOLjMu+dCNun2MGvjVtbYeCypSHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from JH0PR03MB7468.apcprd03.prod.outlook.com (2603:1096:990:16::12)
- by KL1PR03MB7199.apcprd03.prod.outlook.com (2603:1096:820:c9::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 06:33:09 +0000
-Received: from JH0PR03MB7468.apcprd03.prod.outlook.com
- ([fe80::4128:9446:1a0f:11fd]) by JH0PR03MB7468.apcprd03.prod.outlook.com
- ([fe80::4128:9446:1a0f:11fd%6]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 06:33:09 +0000
-Message-ID: <91e42fbc-712e-44b4-8200-23aaf1fade43@amlogic.com>
-Date: Mon, 8 Jul 2024 14:32:45 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: power: Add power sequence for Amloigc
- WCN chips
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
- <20240705-pwrseq-v1-1-31829b47fc72@amlogic.com>
- <a4d08999-55ea-4674-bb0f-6d618b7bdea7@kernel.org>
- <9c550278-2205-4663-917c-c303c65726ad@amlogic.com>
- <726a0561-b3fc-46bb-a834-3ed8b0e993e1@kernel.org>
-From: Yang Li <yang.li@amlogic.com>
-In-Reply-To: <726a0561-b3fc-46bb-a834-3ed8b0e993e1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2P153CA0027.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::22) To JH0PR03MB7468.apcprd03.prod.outlook.com
- (2603:1096:990:16::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC792125DE
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720420121; cv=none; b=a3H2myIvwr0elt2pfnaw1CzD3x0gcQr9qZNovhhLjykE6rZm4O8qEMXsrVpCmZEY8575uJ0GNi9r+Ku5EPxdg0mS2C4OlQ6Mj2JMnp/wKZdmYeD+3m2m2MiHR6TdcEO2BkzkXLIXK1pDIxIoLAuLX7k84PpSCcprbYSClePIGLs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720420121; c=relaxed/simple;
+	bh=PygjdzSV6SpcBpLpxkEt0f2pdR/RuCc/C0kYkbdkhs0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L1cQA50FwYbZ5hP3w/gvtzTM7gOoviv1V9181DiZGryQQyVXlxyrFyaaHOBmFqhxWuHAXmhvD4ApLPJNhIQaKWPhvaU1bO+UXTbDjiVg1kskIY8VNozhNxFTwsW+fsEx4XqZk2iQ1xyQSenaYafOz4wU15Nvsv/AGm7o3xNayQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfPlvnzf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A95C116B1;
+	Mon,  8 Jul 2024 06:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720420121;
+	bh=PygjdzSV6SpcBpLpxkEt0f2pdR/RuCc/C0kYkbdkhs0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cfPlvnzfcKFaWjdjjnAmZ2m7n+TdCgGEfSAB+HvrSbcNZkj71mTAAQTqCpgVnpYlg
+	 UcbjJZU5jAJVOd1rBPNbncXnj3hT2/kjjFlXOmivBNbBhE316jitv3xlJkS6v8CbwN
+	 xdt+TxYPjg286s/ke13z/uypE48Cy1Qvpx6Ux9T0MoQ0y9TJp9vCrFIMGfFYsCqpoU
+	 8Uz7xTj+jaBkX3cw7wDKb0YX8q4mdP7mZP1orDqaDR06QVTRdwfnfmJjNKrtR+iNCf
+	 BePIs5y81HMDegsGP//PKKF9cKhFsmDmDq5PryvaapCYIbuE+KMhhd5lV1n5kQUFbH
+	 QkLyK0gjan05g==
+From: alexs@kernel.org
+To: Vitaly Wool <vitaly.wool@konsulko.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	minchan@kernel.org,
+	willy@infradead.org,
+	senozhatsky@chromium.org,
+	david@redhat.com,
+	42.hyeyoo@gmail.com,
+	Yosry Ahmed <yosryahmed@google.com>,
+	nphamcs@gmail.com
+Cc: Alex Shi <alexs@kernel.org>
+Subject: [PATCH v3 00/20] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
+Date: Mon,  8 Jul 2024 14:33:21 +0800
+Message-ID: <20240708063344.1096626-1-alexs@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR03MB7468:EE_|KL1PR03MB7199:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4b0a5b1-a0e3-4551-a99d-08dc9f17d546
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?My84bjg4YTMxelZEWDgyUFJ5dEQrOUNFanNzSksxbUptem9yMHBLWkxFbmlm?=
- =?utf-8?B?SkQza0FlTEpRSEs5UUYzRGpBL2pYSHR1RUI4c3VoYUFPS2VYOWdOTXdmTkxE?=
- =?utf-8?B?SmlCLzIwVThMaFVETzVicWNsVHhSd3dBcHR5YnRYbkxUNlJwdkZMZTJNRUNa?=
- =?utf-8?B?S3dpZ1ZsVmQ5L2JxQ1k1aDNWYjZVcGs4K3JBVXA5MUREOWVlT3JtQk5kMlVP?=
- =?utf-8?B?NGZYQ21XZXV1bk5LWmVCb1hJUmFGU2hrSDE0blExWFBWdUFyMzVtVFQzOTlv?=
- =?utf-8?B?MTgrZTM4WkEyTTJFUGFrS2gzMUZ2QUFkc1gxYi9tVDdnKytNbUZpZVhRS3Fr?=
- =?utf-8?B?QkhPWEdyKzUxRUZYam1HNW9pNzcydjU3allDZks0SXVpV1l5R3pWQUh1ZXFV?=
- =?utf-8?B?d0J2NDlzU2JaWWlSV0E3RWVpSnZJOUNJNWwzcVB5Y0hqWUxhNDdLazcxYWxa?=
- =?utf-8?B?RU1QRHczZ3lLNHJneUF1MVZMcDJleWpJZmh5dTQ5RHFQUmU3QmJBeHgzNmZT?=
- =?utf-8?B?TTVPb2pwU1NMV2EwVFhmSlptRTJvRGUyNTJhRlZqYXhPckNUNHlnRjhRTzg4?=
- =?utf-8?B?WW51cE93anBHWXBxYkJUdmdkUzJHektQaXVZRGRpOHU0SzZRT0xwOU03T3hQ?=
- =?utf-8?B?eUFCV3luQ0Y1b3E1Tm45UGRaZW9KVTlOd0ZNNXdYQU5xOW9JQnZKcFBTYnI2?=
- =?utf-8?B?YW1Ba1d4cE1YNlJveFpjWDFoV0xsbnd4cWFTVHJqRldteENUWUQ0NHZWS1d3?=
- =?utf-8?B?eTRwQ1gxOFEveWhvSEgzL2Q1bkk0aGtsaWxra0RrRU9nUitlVUpmT0hxRjZx?=
- =?utf-8?B?UHViblEvYXoveUhsUDh6dnVwMndMRFBKQk5xb2hPTnR4Y0RWTnRTNEdzcDQ4?=
- =?utf-8?B?NEw0Ri9WRnJnd1plWkxob0lOajVIbG5uZUlKZWhIbjRiUXV3K1FKUGtqRitT?=
- =?utf-8?B?dWVIaXdHVlFjOHZmaFdjZWdncDg0eEg5dFRWd21QWFNPM3AzeE0yUGFIQ3cr?=
- =?utf-8?B?clBDcFhINWlxZy90VldaaEJzbXkvNnVraFZKSW5JVko3N3BvNjFwNUJEYk9I?=
- =?utf-8?B?MTVQcDVxeXhPbG50ZmhBbElUeVlKckJyS21pb0JvMFdTeFcwaFd5alRLbWdn?=
- =?utf-8?B?cUdUd1AybkFMaDVxUDB3YWtDaXdjdUYwS0IwR0NyQTkzdEErYi9KbFIwK2xt?=
- =?utf-8?B?N0VkZ3NkYXdtUVlaRXFFWFNqaElsZ0dPV0ZVcFpFUkNUenNtMkQrWDZndytY?=
- =?utf-8?B?U3E4a2QwdlBrdUV4aW9TNGRzcC8vRlFzeUU4MExnM2U1MVZvVUxmMThwa3Zt?=
- =?utf-8?B?NGlPS2NKSDQxOWlkWVlIUExQbGN1aEt3UnFUWksycFNST3FNOEpyVTJaeDBj?=
- =?utf-8?B?VmFlT1NEajJxQkk1M0Jma1d4cXJRVFMrM1craVpzckU1VXpiRXM5OFhMVjF1?=
- =?utf-8?B?TlA0a3lHdUF5YVVrWFVJNmx6TXFFbDdkdkIyZUVCSnE4UG43K3IwcWxhNS8r?=
- =?utf-8?B?SFlZWHc5ZmZ6RGZEbUpHZjJqL3N5amtJSkp0SlJrLzhneS9ncUJ3MWdsZE9t?=
- =?utf-8?B?RHI5Q1VXT0xzaUVQREN5bWFReS9CN3UxT2owa3Z1eUZ1U1hNSzhZak1SaWU5?=
- =?utf-8?B?dGxQNDJwVjNQUW5UeFJOdTRnd0RTaEIvWmtJeVRqUmg3Zlhzb0ozcTRkUlVl?=
- =?utf-8?B?UmtQaHhUYlg5Z00zUUl6d3pTY29pRGZwWEgwSWljTTBwR2piVDYwNVA1alNy?=
- =?utf-8?B?dFVrdnllR2piQWlzbWVxRkdzS0FRRU1zNjFkQkFnQnFmcmdKK3BOV1E3bWxT?=
- =?utf-8?B?SlVQejIySUdmSHhmTlJXZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB7468.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UkJGREFoWkhFWk0wVEtkTUM3VVRuamZzNElDOU92NWlaUmNKNjRMRURWaWFP?=
- =?utf-8?B?SmdvakxoMFJnK05aYTlFZmJzN0NyMVZCU0lIZTRSeXBnQTZpb2N3ZDFKNEJV?=
- =?utf-8?B?aEhzOTVkRjBVZVAzMCt0cnp3TGJnMFNwSnhXYlovbXc2djVwdG9hcmt5K2dk?=
- =?utf-8?B?QjZOUDR1ZDh5NDZ5U3VZdkZHU0haOHpaZG1XS1BTd05QeHhWQis3NEFyR1pw?=
- =?utf-8?B?SVVRZzBYUTczc3FFQ0I4NlNaQi9WdG9NUXdOUkhWY2w1blZPaTZEVk5vd2ln?=
- =?utf-8?B?NHEvRFc2bzhWUW1uZ0x1MmxDYlNpZ00rRVBhUFBWWC9vZmVkM2RUNGtzNkhH?=
- =?utf-8?B?c0dSdXJvaHhkU3Z0MUxYZFR0alI1VDVRNXpwbzVOMWE3YVljUWgyVlNsOVFS?=
- =?utf-8?B?dXUwS3d3bnA4OElpTzhCalE1aWU4RkhmZENSdkNmSDN1YThWams2TlRNV3V4?=
- =?utf-8?B?d1RvVVB4dGp2N3U5QVBVYnhjQTg4UTFGeThaY2crZ1ZpaDBYWW80MFR1WUE3?=
- =?utf-8?B?Vk56NVByRERDR1h4d3l1WnRnbFIrVll3eHVvcEN6UjRva1BtRlRKYTVYWW9w?=
- =?utf-8?B?RFlZOXBvS1N1cTJyLzdJbUJDTDRUOFdZY1l2YldveVFpTjNOQ1ZPeFVQMTVX?=
- =?utf-8?B?TXJCYkEyQzg3NWo5Zk42TWtIcGF5Q29IemFDNDgwZVpYSGU0YUtJQzZjUTFy?=
- =?utf-8?B?dThIbWgxSVowT0QvV0k1eVFiNW1FbWE0eEcwdG50MUU4WmRuN0NxZnNCMEVr?=
- =?utf-8?B?VmU2Ykd2MUNyZ0VJMkJZNmE0Um1zeFh6b0dYdkZudCs5ajIrSEpZT3pTQUJs?=
- =?utf-8?B?bS8wN2llbGFUUVdIb0UwSTFGNlV0YjRGaFU3amM5SWl5R2hRWnQycnVnbW1v?=
- =?utf-8?B?c0l3dVZRd3FjN2o1eU1vcm9nM1NLVndMVHE2NjFQS1JVZWZZS2k0RFZsVGpo?=
- =?utf-8?B?MWxPcHc4Um80MW5mTmdLN0xtRU1na3ZKZFNoRWdMNzBzemNHbDdaR2FFRHFv?=
- =?utf-8?B?cXNUY1o1QTVnaElSMmp3a1JvcXozc2dja0MrcktqeXhndDNSb3NwWkRzcURt?=
- =?utf-8?B?cG5NYS9tMUtnSDVUYS9GOXNFZDZpQVZuZy9uN3pOUExEZEVEd052bjhFazd1?=
- =?utf-8?B?VlpFaXpDS2dIcGZkbW52Z2cxU2dMeXROZ3N5RHkzNmpydmQ1Y1ZZL3IweVlj?=
- =?utf-8?B?OGhsVlJKZlB4N1RxVnlXVFBhV3JZK2N6QXpYMWtqTWp3eEdIZVovSTA4MThl?=
- =?utf-8?B?bDRYdDVKbEdkL2pwVjRjWFI5NC9JMERLOVRBVjFteUc0R1dsaHdoMjBWTVND?=
- =?utf-8?B?WlM0MEZxVDVsZkhqNlR4Q1BNVndMdzJMREVsb0FDaWVxMFdlR1lMRlpLaUU4?=
- =?utf-8?B?clNqeklSMnp4K1Byc2JzM0VnZ0pVbmdmNzl2MUlqb3VEVHRpR2wxMCtYU2c5?=
- =?utf-8?B?TnpPbUppNUpwbys2YmhGeDdGZXduRFRxbTVNNms3UDdVSTY4ZytTbXZRaktF?=
- =?utf-8?B?UTF0RjJKU3lOaDZUa3Nrc3cxZFVFVEhHM1dTRU5ZS3R5Q3JUOFF0OElwOHlo?=
- =?utf-8?B?T3ZvWDgzN1RXa3BiekUwamIwWWo2VmR4cUk1RXVrUkVoWWU4eUYxb0hrWmdE?=
- =?utf-8?B?ZC9wTTFka2l3UTUvYk5QblB3d01sU2FtVEVRb1JVak02MGU5V0wvazNacXl0?=
- =?utf-8?B?bFExb2h1NTN2NDF2OU5oRS9BK2p1VS9iVTRqcklySElXVkFuSlVCaUhtaHVB?=
- =?utf-8?B?eVQ0OS9yd1NEcE5SS2N6SVZHbWtiUnBEK2E4Y0pHNXl5K25zbE5QcWZGakpD?=
- =?utf-8?B?WUtJL1pvaUxQc25pd1A5aTkyUHQ4NThjSVdadGVxenlVQjhMYlJCaFlVMGp2?=
- =?utf-8?B?S3VxU0FJTGJsOHdwY3BXM2praHBXOTJmclZkU1JyclVXOFN6c2k1Z2tSeWNu?=
- =?utf-8?B?elh0MEFpVVFYWllMSi9BUjF2a2tIcjBsdnV1MTJycW1wWHhQazVSaVFHRlFo?=
- =?utf-8?B?aUw3b2I0aUh6MVJFMm9WNGZyZVVoRklvc1Vvek0vV1o0RXRneWN3bkp1N3NK?=
- =?utf-8?B?ZlU0bmYrd2p1ZFNTaElPdTZtdGk5eFhsVE1uMTd0UFNvSnJ0TmFmbS9hanZj?=
- =?utf-8?Q?mQHmpwbXAzQfLVbdSKy3LlMss?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4b0a5b1-a0e3-4551-a99d-08dc9f17d546
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB7468.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 06:33:09.1801
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2QyB0zmbFopIkPWWeWUIcPk6rmAv58AxsiHaWrqSz2QAlBD3OPb5KqXhLr3HDVeK9AgVzP1IrgTWTagheQ2uxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7199
+Content-Transfer-Encoding: 8bit
 
+From: Alex Shi (Tencent) <alexs@kernel.org>
 
-在 2024/7/8 14:11, Krzysztof Kozlowski 写道:
-> [ EXTERNAL EMAIL ]
->
-> On 08/07/2024 08:04, Yang Li wrote:
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - clocks
->>>> +  - clock-names
->>>> +  - amlogic,chip-enable-gpios
->>>> +  - amlogic,bt-enable-gpios
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    #include <dt-bindings/gpio/gpio.h>
->>>> +    wcn_pwrseq {
->>> No underscores in node names, generic node names.
->>>
->>> There is no device as "pwrseq". I also do not get what "wcn" means here.
->> Yes, I understand.
->>
->> Can I change "wcn_pwrseq" to "pmu", and do I need to change the binding
-> What is pmu for your device? What is this device in the first place you
-> are documenting? Where is the datasheet?
+According to Metthew's plan, the page descriptor will be replace by a 8
+bytes mem_desc on destination purpose.
+https://lore.kernel.org/lkml/YvV1KTyzZ+Jrtj9x@casper.infradead.org/
 
-^_^ Well, You are right, the "pmu" wasn't really fit in here.
+Here is a implement on zsmalloc to replace page descriptor by 'zpdesc',
+which is still overlay on struct page now. but it's a step move forward
+above destination.
 
-I'd like to explain the current usage first, and could you please give 
-me a suggestion?
+To name the struct zpdesc instead of zsdesc, since there are still 3
+zpools under zswap: zbud, z3fold, zsmalloc for now(z3fold maybe removed
+soon), and we could easyly extend it to other zswap.zpool in needs.
 
-This module(pwrseq) used to power on Bluetooth & Wi-Fi combo chip, both 
-Bluetooth and
+For all zswap.zpools, they are all using single page since often used
+under memory pressure. So the conversion via folio series helper is
+better than page's for compound_head check saving.
 
-Wi-Fi driver need to control "chip-en-gpios" pins, so we introduced the 
-power sequence module.
+For now, all zpools are using some page struct members, like page.flags
+for PG_private/PG_locked. and list_head lru, page.mapping for page migration.
 
-What should we call it in this case?
+This patachset does not increase the descriptor size nor introduce any
+functional changes, and could save about 122Kbytes zsmalloc.o size.
 
->> file name to "amlogic,w155s2-pmu"
-> Yes, compatible should also match proper device.
->
->
-> Best regards,
-> Krzysztof
->
+Thanks
+Alex
+
+---
+v3->v2:
+- Fix LKP reported build issue
+- Update the Usage of struct zpdesc fields.
+- Rebase onto latest mm-unstable commit 2073cda629a4
+
+v1->v2: 
+- Take Yosry and Yoo's suggestion to add more members in zpdesc,
+- Rebase on latest mm-unstable commit 31334cf98dbd
+---
+
+Alex Shi (Tencent) (9):
+  mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
+  mm/zsmalloc: use zpdesc in trylock_zspage/lock_zspage
+  mm/zsmalloc: convert create_page_chain() and its users to use zpdesc
+  mm/zsmalloc: rename reset_page to reset_zpdesc and use zpdesc in it
+  mm/zsmalloc: convert SetZsPageMovable and remove unused funcs
+  mm/zsmalloc: convert get/set_first_obj_offset() to take zpdesc
+  mm/zsmalloc: introduce __zpdesc_clear_movable
+  mm/zsmalloc: introduce __zpdesc_clear_zsmalloc
+  mm/zsmalloc: introduce __zpdesc_set_zsmalloc()
+
+Hyeonggon Yoo (11):
+  mm/zsmalloc: convert __zs_map_object/__zs_unmap_object to use zpdesc
+  mm/zsmalloc: add and use pfn/zpdesc seeking funcs
+  mm/zsmalloc: convert obj_malloc() to use zpdesc
+  mm/zsmalloc: convert obj_allocated() and related helpers to use zpdesc
+  mm/zsmalloc: convert init_zspage() to use zpdesc
+  mm/zsmalloc: convert obj_to_page() and zs_free() to use zpdesc
+  mm/zsmalloc: add zpdesc_is_isolated/zpdesc_zone helper for
+    zs_page_migrate
+  mm/zsmalloc: convert __free_zspage() to use zdsesc
+  mm/zsmalloc: convert location_to_obj() to take zpdesc
+  mm/zsmalloc: convert migrate_zspage() to use zpdesc
+  mm/zsmalloc: convert get_zspage() to take zpdesc
+
+ mm/zpdesc.h   | 146 ++++++++++++++++
+ mm/zsmalloc.c | 460 +++++++++++++++++++++++++++-----------------------
+ 2 files changed, 398 insertions(+), 208 deletions(-)
+ create mode 100644 mm/zpdesc.h
+
+-- 
+2.43.0
+
 
