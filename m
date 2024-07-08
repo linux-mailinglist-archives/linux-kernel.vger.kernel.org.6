@@ -1,476 +1,327 @@
-Return-Path: <linux-kernel+bounces-244131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FF8929F91
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:52:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D49929F93
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6539EB25789
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:51:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC4D1F2256B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F65874076;
-	Mon,  8 Jul 2024 09:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BA274429;
+	Mon,  8 Jul 2024 09:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uc/sem5X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JvHjk7ON"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E56077F0B;
-	Mon,  8 Jul 2024 09:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720432304; cv=none; b=Z4h43qYqOrunsz49W259ltmwRWTQ57LZmulADfwYR1iSX6U2VBvkk9kXf3NiWxeYWCDrmaszenEdheA2Gc8vxOQCEmwHQFvS1GokPusTITFbRX3HrlzM6jFN74TdFDperFUCsu9mAPue1faX32+2BnR2yuaHV5RSjA2Dmk6XJJE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720432304; c=relaxed/simple;
-	bh=aF5h1IXbYlhT2JKmsHLe4KKrp9Hsu7Hlo7FByZ+0aRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ISJq+gvq2sDSl37rm7q/Cn+rcf9mqm7oHX5W7DWOuCX0WTO+fMLCHjUXFzGzMvmGjDsM0bOoBNz+YcYKn/kOYlLx1QlUipU9182zsAmgK+HIGVGzYu6B+aHUsEGTVpKYqlB7snxytxC2ivB3+KrLdN2RaVnCMNEnBrYZXQhj0NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uc/sem5X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8731C4AF0B;
-	Mon,  8 Jul 2024 09:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720432304;
-	bh=aF5h1IXbYlhT2JKmsHLe4KKrp9Hsu7Hlo7FByZ+0aRw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Uc/sem5X09ApcG6DKSXpofr6WUuQl5F2oIUxBW6kCWku6UPBsPzxQyge+WDXPoIv+
-	 heumxOnxA1FLSHFtKnUvshcaPs89IN7v2TzvgLHlhsiGnXUIiCEzykIgEdxmvG2baX
-	 VuRLRsI28ipYEqApxB2jsksMroQ8LtCvxUc/GOfhayWqpMpcK1jiA4N6LepZK/oEo1
-	 x4v/XW++OyEGYB+FgF7ASnME9eHWF/y2eSAJ1tP4ywVyTuAUMlbUgpzC19y6fgg5WH
-	 oJoAtuL2D7zCe4IJZqKFCFazFBokS5a2TF6oBSiSBmJwWbEBkw//tn7SbwhYWkSMbA
-	 4FQh8lZr1Erbg==
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a77e2f51496so200896366b.0;
-        Mon, 08 Jul 2024 02:51:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXI/jkUWiSfqfwuzNSJpSG1FpNGIlavfna58NyWaZJkMWG+QTR/WhBHAmHwO93EWts5Fq4k032G5jdLZvnCNHFwg4dpLac6mn6M+Aktzxvjr18VM1esIJ1uHLQW0KDOEs6m
-X-Gm-Message-State: AOJu0Yw0BHz7Hpwf/mg6BqMnWR4J19hS4T+762r6YcvrNolhthHMx86L
-	2RMT/vzuByMH5eOlRrXmD+heoBV5fZmd2YIDFsSg0M0yBvMzq3lmdN8smQm8S8qNZPrd5/AUgh1
-	uATFsGCqR8GkzULswYl5dqIFhQi0=
-X-Google-Smtp-Source: AGHT+IEfTHH6m1cAOk+7KHobDNGbFu5dAC9Na0+gfKk757fy9VEX/2qBfWHZAG7HegQ0snBiNfCd5YxRKzIGOGtZ0ko=
-X-Received: by 2002:a17:906:3652:b0:a77:c6c4:2bb7 with SMTP id
- a640c23a62f3a-a77c6c42d80mr561150166b.1.1720432302388; Mon, 08 Jul 2024
- 02:51:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B61D6A332;
+	Mon,  8 Jul 2024 09:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720432327; cv=fail; b=FfhHLHVT92SGWb1LEG4LiywBfi3Bz2+XiZdmia4TuBE0jDdCC7t0SRjo/xyiMcMkL1/oAysF6NWyKz4eZi8e0cYK6kytDso10Tul6CVHsBKdy1z5la0jdcydla3NtXFGVw809f9nxDbZD/6nLo2NlIMy3hYPEgl6+3QZ02hs6SU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720432327; c=relaxed/simple;
+	bh=ogOPzC73k2nyMUuO1lDdCtB3rV89xKw8daHRTnW4ibg=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZGmt+E3tdzniDpWhaAmPjGlj/xYYg33lCUq1d4xCU7DbFMxaeDbE5IW5bcWH2j6NKsvcTrkfc+so+iUauM56g1Dt/27urbx8zhe5tBfxv9OJ/u2nKo99biRndrhTyyuBeg3ggape1AxsQvGrErgz2goUL3uUWXFcZxlOqnHMwa8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JvHjk7ON; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720432326; x=1751968326;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=ogOPzC73k2nyMUuO1lDdCtB3rV89xKw8daHRTnW4ibg=;
+  b=JvHjk7ON5MwDTULqf0QJAOw8jav9fhp4VfySuA+8meeXcHAHal5LUTXm
+   c7Pa0B1nVCd4wMDFdbLHC4h3DzVcjMFQzooghVJhLkiDZNAkRC9kOrx6L
+   V8D0uW/0KqXFi+le6ckK8ghOsx+oX/8Y+PwJzkOV2WTtFilO9M3n+iNLF
+   034/huqrnY4jsaRIs7+vxNYUCHhPAEIbXwN5aDGyt7daAbV/WNYcGl2ko
+   2cjCYu34o3cP2BY+4OfcZR/+dLRiLcX7GB5HLgRs9oNIanQZ1sNSDQ3kj
+   vfBb20uzbIUKDxv+c/8jGE3Qzz314NrjOpaNN8JCWFTmonfc3Ky+8pzVZ
+   g==;
+X-CSE-ConnectionGUID: N6ax2yDWT1ChERaMB8RltA==
+X-CSE-MsgGUID: n+apIfU0THGIl84g0xrkKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="43046370"
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="43046370"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 02:52:03 -0700
+X-CSE-ConnectionGUID: qL1MUNFIQl2R0U4yo9+iGg==
+X-CSE-MsgGUID: JHoHkgbCRai/FzDIGzyThA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="48119287"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Jul 2024 02:52:02 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 8 Jul 2024 02:52:01 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 8 Jul 2024 02:52:01 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 8 Jul 2024 02:52:01 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.171)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 8 Jul 2024 02:52:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ie0NavUwSO/rLqOWpmoYHQnbw8foxwnN5nalHy0s5FlEmc17ZWWgRHAu1YasIPfq6NONlu0VGjzyZsQvEgjHb3jFaSxvw30nkBSMd1JcF0BB01t9DGIVg1p0TXD1JZS609O7aKO8pyhmz+5+G2mxF0W3M4vaSOkMohqs+r/drenUhPEx298RXxTqVePc4VaUQEYOBMtJlLtU3RC2EqTfLeODihLksc8e+XiDlcB996rLpUdGc0Q9bUgQQRuRQ1g5CBo2zVglC7AkOQ7lE/6MJG7oOVH5UV/CtuuSC1lERTcnq4BsQoUkP25/uI4ZTOxwkj2NWkArfEPXG8Oal1QLYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AkxittvGFnmLoprfENXbx/HqA/FuwYW2tVtUsqe6H40=;
+ b=Y7nS+C3yGNH+wqX+/nSpPinHQipTZyCwVqle+FHSbVUJpiE1qDPydCuJVjxV9IKhEdG6dPLoVmufs0ruVXFzEm58Vuq30XlnYtc6s/Elr2wT4LHIkJzvcVem9mPI1D80q731Zf2kDJE9kapaBu/ILG+PcH69t9oGqefaOkERO2kQY92sQjzqrgFGFb/n7ujsvftX6Jo94nUV5m71VvlTEaRuZnq8Fcsmr5H2r6dopIGqVW1upqzcHbwmLOhR8OparQ1zqyWhqZqBJN8lI0yF49MzMwj+kTzwsutKnIcyk2ffOLEsWSwltn6sYpzJEf7YnBFau0SL9ADaPHNS7YNXJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by SJ2PR11MB7575.namprd11.prod.outlook.com (2603:10b6:a03:4ce::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
+ 2024 09:51:54 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%7]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
+ 09:51:53 +0000
+Message-ID: <e53db011-fe6a-4e63-b740-a7d2ff33dfa9@intel.com>
+Date: Mon, 8 Jul 2024 11:51:47 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 3/5] netdev_features: convert NETIF_F_LLTX to
+ dev->lltx
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>, Andrew Lunn <andrew@lunn.ch>,
+	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240703150342.1435976-1-aleksander.lobakin@intel.com>
+ <20240703150342.1435976-4-aleksander.lobakin@intel.com>
+ <668946c1ddef_12869e29412@willemb.c.googlers.com.notmuch>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <668946c1ddef_12869e29412@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU6P191CA0053.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:53e::23) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626063239.3722175-1-maobibo@loongson.cn> <20240626063239.3722175-3-maobibo@loongson.cn>
- <CAAhV-H4O8QNb61xkErd9y_1tK_70=Y=LNqzy=9Ny5EQK1XZJaQ@mail.gmail.com>
- <79dcf093-614f-2737-bb03-698b0b3abc57@loongson.cn> <CAAhV-H5bQutcLcVaHn-amjF6_NDnCf2BFqqnGSRT_QQ_6q6REg@mail.gmail.com>
- <9c7d242e-660b-8d39-b69e-201fd0a4bfbf@loongson.cn> <CAAhV-H4wwrYyMYpL1u5Z3sFp6EeW4eWhGbBv0Jn9XYJGXgwLfg@mail.gmail.com>
- <059d66e4-dd5d-0091-01d9-11aaba9297bd@loongson.cn> <CAAhV-H41B3_dLgTQGwT-DRDbb=qt44A_M08-RcKfJuxOTfm3nw@mail.gmail.com>
- <7e6a1dbc-779a-4669-4541-c5952c9bdf24@loongson.cn> <CAAhV-H7jY8p8eY4rVLcMvVky9ZQTyZkA+0UsW2JkbKYtWvjmZg@mail.gmail.com>
- <81dded06-ad03-9aed-3f07-cf19c5538723@loongson.cn> <CAAhV-H520i-2N0DUPO=RJxtU8Sn+eofQAy7_e+rRsnNdgv8DTQ@mail.gmail.com>
- <0e28596c-3fe9-b716-b193-200b9b1d5516@loongson.cn> <CAAhV-H6vgb1D53zHoe=BJD1crB9jcdZy7RM-G0YY0UD+ubDi4g@mail.gmail.com>
- <aac97476-0a3a-657d-9340-c129bc710791@loongson.cn>
-In-Reply-To: <aac97476-0a3a-657d-9340-c129bc710791@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 8 Jul 2024 17:51:29 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7Pqf6_MLwhe8eC0XvspMnUvxB=HdLvPsAT6U=m5SozCg@mail.gmail.com>
-Message-ID: <CAAhV-H7Pqf6_MLwhe8eC0XvspMnUvxB=HdLvPsAT6U=m5SozCg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] LoongArch: KVM: Add LBT feature detection function
-To: maobibo <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|SJ2PR11MB7575:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae660f92-87ad-4751-1476-08dc9f3398d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bXFIZnN5dSsrNGV3QktTVWY3Sk54Tld3S2MrcTRhY1QrOHJTNDhDL3kxb25r?=
+ =?utf-8?B?Yk5ia2E5SElmcmV2VklmTXFtaW43RUF2V1dsL2ZVdGx3TEROemMvMFhFajFp?=
+ =?utf-8?B?TkJwaEhrdmdOWW1qR0dWaHFMSmIxd2sxQWRPODY2eTdpRDVaSTZjMk4wYWxK?=
+ =?utf-8?B?RmQ5dktxNDBJRUFkQjFGZnVGS21RNk9Vd1VLVnFiTEZPZFFlMDEyRFgrWFk0?=
+ =?utf-8?B?UW0xSGpvU1ZPc0dUS2hZVHZaa0tqd1V1N1c1NnE1N1JJMlJmc1poL0RobFY0?=
+ =?utf-8?B?WTQ2MDBzbVhNeVBITGdsd3M3dnU1ejNqWEV0MEZydnJVcXY1d3ZMKzliWVhj?=
+ =?utf-8?B?Tm91c2VxdXYvNFF5c29wSlZlYXNBSEFqTDgwd051WVkwSjFqcHpmcVNNU1lC?=
+ =?utf-8?B?L0prMFVQQ0RzUHlrOUpZMEY4SEd2cC8wNmYrdDl3OU8zMUlEMVF6MmdyNUpC?=
+ =?utf-8?B?bWtzZ1psMjk1ajhyaG5TSlN1RmN6TnBYSGIwZUVPdkZmWkVHa0RmK2JWU3pr?=
+ =?utf-8?B?d3BjVTJIWHVOek0zZTBUeWo1TXRGenA0OCt2WkN5SHZ4dzNoUzlIRUpEbnlY?=
+ =?utf-8?B?eUFTeGVuTFFua1E1QytwanB0NVNlOXA0RUR0eXI5M1lsTXN6YXV6WXdJblhV?=
+ =?utf-8?B?QVRJWlRWZHpON0ZwVzhrc0xqNzdMazRRampNblRRcDgza0dYUy85bmZ2Z0Iw?=
+ =?utf-8?B?TzlkeEdvNzRmSFprY3FaK2NpUUhMV0t3QmNTVktGc2xjK2V4c1psajlEYXhq?=
+ =?utf-8?B?dGxWWEtoQU9nbmxvT2pjOThPbThpRENicGp0djd1VnVkOXVwWVdTSXdoMVgx?=
+ =?utf-8?B?TGtTbm9zUFFud05BdU42N2hNZ0M4ZDJ6TW4vQU5LVFdoWUExZXU0YVAvd2pL?=
+ =?utf-8?B?ODhaQ0psdmwzdFdoMjlESXRyeXdqckVhL01yc0tNK09zZkFwSmcvdEUvQkN4?=
+ =?utf-8?B?dm9vQUV0VWJUclRKNnJWYll0WjhWaWM2WDdxdlUwbWh5QTZhSFprcHFuTnZM?=
+ =?utf-8?B?TEFJLzJoK3BkWFBiVUMyK3E5a05BUzFWaGNxT0lER0pVNlg4NlQ1eFQrbVRy?=
+ =?utf-8?B?M2djdjlVblFnVnQ4Nmhxbk1xbFFkS2VMbmF6OGU0amhPN0JjKzljOVpBRTZZ?=
+ =?utf-8?B?eHJGRk04UmphaFZWVURSREMzbGR3UkZoRnpscnRNU0ZiK0I3V3NXOXdhRlJq?=
+ =?utf-8?B?RFV3SmhlaHVaM0JyTitpOGZBOUpUc0JvNHRtcmp5RzM3eVVIWGJIV3VSeEJm?=
+ =?utf-8?B?dElVbTh1ODhPdFpMcW1ZUUROaWZwbGJFUDRMd2ZwNnY5VzhPcEpvUzk5blcv?=
+ =?utf-8?B?NE9aQjFVdm1kcFQ2Z3BvR3E1ZEJmdk1ybGVzU3JzK3IybzIyOTRMOWdWb3Jo?=
+ =?utf-8?B?NjM1UkcvcnJLTnE5SUthMnQ0UnVRdTFVUU8rUnVqNG9IVHpja0pjZFRMbE5u?=
+ =?utf-8?B?NFNLYSthYm9mTERaWGt6ZURmbWE0NTJ3Q0tmRzhLK2RISk5uamhRLzVORnY1?=
+ =?utf-8?B?Q2NSZXdwVDFoeGd6S0h0Zm1ERWxUWE81WGVicTNPUGJIakpsd1RRT1RVb3Z4?=
+ =?utf-8?B?VWRUTHgyWXJZS0k2YUxHQkUrdVh3bTdQRDF0S0VIa09qcFhyODhYU0JHTE9m?=
+ =?utf-8?B?MzVHZ1JxK3hha2Nhc3M5S3lRdndBSGExeWVIRHdUNm1KR1VBNmtQOG1sTHpt?=
+ =?utf-8?B?NmsvNEJhRngwQ0hNcHJUdGxKRFNiYmpoeWJqMjZWQ2h2ZjRoQ3NWckdTeW9K?=
+ =?utf-8?B?VE9rYm9uYzhweWF3M2tFQllhT0VKYWNpNDNzMURhWFJYQjZGRFZzaTR0Z0Er?=
+ =?utf-8?B?aGtxS2xIL3JMRk83WXQ2Zz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SUpIeDZydEN1T1NMR3BkR1hMaXl3MnJWQWQ4UUtWMndIUTZxTElWWDBnZEVL?=
+ =?utf-8?B?ZkwwZlhSR1g0OFFQS3R1amYwZXFxNTBrUTFCSFM1NWtrOU9vOEFIMk10dUs0?=
+ =?utf-8?B?QjU2a3Naa1N2RGhRQ09IUlIzS1d0cjIvbkZ3TkJwUWthdnJWQjFIR0pBYnR4?=
+ =?utf-8?B?Ukk0QXpKcGlaQzV1cnBwOWdrN25OWTlBb3creGFMcnlIRzNDUDZLMW5DTk5I?=
+ =?utf-8?B?OGtkZ3pxRk9KSHVFTGRHUnM1d29lMGxRa29rRFlmOGFkK05VS0swUEpkc1JB?=
+ =?utf-8?B?VzBvd1NIUFZVcDFJVk92Mi9FNytHU0xrVGdZRElUYnBRdFVoVDFZSktuMzgz?=
+ =?utf-8?B?SnlsbkZKZnBURzRkTUs2eG9SbFlQNE4rdGZTcHRHcVBFSzQrTmFpeE9QOG14?=
+ =?utf-8?B?MFd3ZDNXOWJHaW1DcW1NbWNGaVFhRDM3WmgzYm5EMTBjVWR4OXZIMGFMV2Fj?=
+ =?utf-8?B?ZTVleGd3Tlc4R0QwN2F1Myt5K2RENGtjcVZjOTgwSktnVjhjWHlBWDhJNEM4?=
+ =?utf-8?B?SHVTMWFSQTVXRlR1OENRcEc0NEdVeXZoWC9udUJoZUNwV1AwMFRuWlllSEQ1?=
+ =?utf-8?B?QkMwQU9Gb2YwZzNRMzlQNEwvOWxWazUyRHNNb250MktJWGdXTHlZd0NzejhX?=
+ =?utf-8?B?MnlLb0R0QlZ2UTVJa1BIbk4vQ2FsSzl4SlRLOVprZ3lJendDU1ZUL0U5c0hW?=
+ =?utf-8?B?cjErNlcyRzQ5QW9oQ1J0RjNWaWxmeTA0S3ZnU1V6Q0Q1YmFBUnlxOThzMnBZ?=
+ =?utf-8?B?WnRQRnlFRVNlZWVtOTU2aWZmWFRFMVU5REdyTFVnS3pDZlZ1dUc0MkJEaThD?=
+ =?utf-8?B?RTNyazNXVHd5RXhQcmpSZHJ2UmZnaUFTMm1aaG4zVFFFbTQ5aTNrOGY1YWww?=
+ =?utf-8?B?UmMzS2NUa0NpVVFVcERMRWlDc1V2MFZHRkk4eWlyK3FhT3NIRXpTU2QvME55?=
+ =?utf-8?B?ZnpNU1lvem82UGJqVGNwL0d3cUZjR3R6N3A5Vkw4L2hqSkhBWG1kYlc4ZVJM?=
+ =?utf-8?B?b1dyUUg0QXhTclorRllFZVBDUjRjU0tDRXpZSHlDRWNhQ0QxWWhSbWhwVlF1?=
+ =?utf-8?B?VmdkN1hsSTEwcTlQdEZHSDZhc1lTRTFnZFUvNVBGRzU1TlZKdW0zVjBtNEI1?=
+ =?utf-8?B?djI0MzNZaUxNTU5Dd3E3RFhPYVVEc3ZxQXAzdUtVeEJQSEx6eXdUL0ZDclB0?=
+ =?utf-8?B?bnpJU1VGcERaczR4YWZEM1FLbkltSEtaRFpoM3JkbEVRKysvbXlNTGlIU1NC?=
+ =?utf-8?B?OFo0NTZsVWdaZmlPdCsxTjFQajdlM2ZvVTljcFVMNm9xdURXdVJQTzhVaEp5?=
+ =?utf-8?B?elRyb3BqWUdoL2ozcU9BQlJGVlZqTGs0MCtaemVqZWhQOFJ4ZVh3ZmcyTi8w?=
+ =?utf-8?B?SDdkK0FFQTliQWhERGZIaVVkV2dRaWhXYnFxbkExL2E4UjB3UktWK0Z0cldr?=
+ =?utf-8?B?dHZ3TFpxaTB6c1ltRXV2bHBTbG5NSXBIVnREckVxa0tDRWEvOTRjSmlzUXI0?=
+ =?utf-8?B?SmN2ektVcVVVT0hLck92UVhuclNyZFVYdzJ6NjZuVURSeThMNWRPYWwyb3JT?=
+ =?utf-8?B?VHhQcGhVb0Q3cHByNzAyczZ6aVFLMEN0MENrOVZCUmNpMkVLVU5jWXowWnNY?=
+ =?utf-8?B?TjlhMkRqTkljS2t0Y0FDdmlyNk9hTTV0c1pHMjlJTmZZbUdLL2Ewa3YrY1Nv?=
+ =?utf-8?B?OTg1dVBjYlRoODliVkMvVlRISUZEOTkxbEE1eXNNZ1VxV1J0TVhKRHRRaUtJ?=
+ =?utf-8?B?bmI4WnNOaUJqOXdDOWtQa0pkSFRjWEhvclVUcUtBM3VjVHJxV29pUnc0UlFW?=
+ =?utf-8?B?STBoUUJMQ1VFWFdwQVZqaGtYa1FQV05lTlByMUhyZks0UzY4ejV1dEdRVlA1?=
+ =?utf-8?B?Z0wrZHltNUU3YWRJUUFPMmsrTWZIbW1ac1JYZEU3RXA3NjNQV3N0YVRNc2dY?=
+ =?utf-8?B?RkdFWWpidjFJNG1HSWNZTFdRbEM4eUcreHcvMWg3czNEZGpDSS9HSVRid1cy?=
+ =?utf-8?B?cG5LTm1vaFI2eldPaytPMno4QktPS0VkZCtIRjJsbDB6SkZwZHlUSXY4ZTZp?=
+ =?utf-8?B?K1lxUXU0YVZTNFQyQ2pBamU0R09nOS9qQ3VnUXVNRHVndWRiMVpaZjNNM0gw?=
+ =?utf-8?B?aXl0ODVwZktLYktaTUFiNkY0NHNZQUZlZjlrZ1N4eVhXd3hDMGNKNmlReCts?=
+ =?utf-8?B?c1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae660f92-87ad-4751-1476-08dc9f3398d5
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 09:51:53.8047
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T5wVjDSmMhvhfQRBj37RI497JSCelW7xvCzXoqo2IHAr8Y78S5lRaMn+gPo8nSJq+5sEAXFfU63v+eamJAIuSCAVnSmTz0vLtghlKsBBI+0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7575
+X-OriginatorOrg: intel.com
 
-On Thu, Jul 4, 2024 at 9:24=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote:
->
->
->
-> On 2024/7/3 =E4=B8=8B=E5=8D=8811:35, Huacai Chen wrote:
-> > On Wed, Jul 3, 2024 at 11:15=E2=80=AFAM maobibo <maobibo@loongson.cn> w=
-rote:
-> >>
-> >>
-> >>
-> >> On 2024/7/2 =E4=B8=8B=E5=8D=8811:43, Huacai Chen wrote:
-> >>> On Tue, Jul 2, 2024 at 4:42=E2=80=AFPM maobibo <maobibo@loongson.cn> =
-wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 2024/7/2 =E4=B8=8B=E5=8D=883:28, Huacai Chen wrote:
-> >>>>> On Tue, Jul 2, 2024 at 12:13=E2=80=AFPM maobibo <maobibo@loongson.c=
-n> wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>> On 2024/7/2 =E4=B8=8A=E5=8D=8810:34, Huacai Chen wrote:
-> >>>>>>> On Tue, Jul 2, 2024 at 10:25=E2=80=AFAM maobibo <maobibo@loongson=
-.cn> wrote:
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> On 2024/7/2 =E4=B8=8A=E5=8D=889:59, Huacai Chen wrote:
-> >>>>>>>>> On Tue, Jul 2, 2024 at 9:51=E2=80=AFAM maobibo <maobibo@loongso=
-n.cn> wrote:
-> >>>>>>>>>>
-> >>>>>>>>>> Huacai,
-> >>>>>>>>>>
-> >>>>>>>>>> On 2024/7/1 =E4=B8=8B=E5=8D=886:26, Huacai Chen wrote:
-> >>>>>>>>>>> On Mon, Jul 1, 2024 at 9:27=E2=80=AFAM maobibo <maobibo@loong=
-son.cn> wrote:
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Huacai,
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> On 2024/6/30 =E4=B8=8A=E5=8D=8810:07, Huacai Chen wrote:
-> >>>>>>>>>>>>> Hi, Bibo,
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> On Wed, Jun 26, 2024 at 2:32=E2=80=AFPM Bibo Mao <maobibo@l=
-oongson.cn> wrote:
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Two kinds of LBT feature detection are added here, one is =
-VCPU
-> >>>>>>>>>>>>>> feature, the other is VM feature. VCPU feature dection can=
- only
-> >>>>>>>>>>>>>> work with VCPU thread itself, and requires VCPU thread is =
-created
-> >>>>>>>>>>>>>> already. So LBT feature detection for VM is added also, it=
- can
-> >>>>>>>>>>>>>> be done even if VM is not created, and also can be done by=
- any
-> >>>>>>>>>>>>>> thread besides VCPU threads.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Loongson Binary Translation (LBT) feature is defined in re=
-gister
-> >>>>>>>>>>>>>> cpucfg2. Here LBT capability detection for VCPU is added.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Here ioctl command KVM_HAS_DEVICE_ATTR is added for VM, an=
-d macro
-> >>>>>>>>>>>>>> KVM_LOONGARCH_VM_FEAT_CTRL is added to check supported fea=
-ture. And
-> >>>>>>>>>>>>>> three sub-features relative with LBT are added as followin=
-g:
-> >>>>>>>>>>>>>>         KVM_LOONGARCH_VM_FEAT_X86BT
-> >>>>>>>>>>>>>>         KVM_LOONGARCH_VM_FEAT_ARMBT
-> >>>>>>>>>>>>>>         KVM_LOONGARCH_VM_FEAT_MIPSBT
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> >>>>>>>>>>>>>> ---
-> >>>>>>>>>>>>>>         arch/loongarch/include/uapi/asm/kvm.h |  6 ++++
-> >>>>>>>>>>>>>>         arch/loongarch/kvm/vcpu.c             |  6 ++++
-> >>>>>>>>>>>>>>         arch/loongarch/kvm/vm.c               | 44 +++++++=
-+++++++++++++++++++-
-> >>>>>>>>>>>>>>         3 files changed, 55 insertions(+), 1 deletion(-)
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/=
-loongarch/include/uapi/asm/kvm.h
-> >>>>>>>>>>>>>> index ddc5cab0ffd0..c40f7d9ffe13 100644
-> >>>>>>>>>>>>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
-> >>>>>>>>>>>>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
-> >>>>>>>>>>>>>> @@ -82,6 +82,12 @@ struct kvm_fpu {
-> >>>>>>>>>>>>>>         #define KVM_IOC_CSRID(REG)             LOONGARCH_R=
-EG_64(KVM_REG_LOONGARCH_CSR, REG)
-> >>>>>>>>>>>>>>         #define KVM_IOC_CPUCFG(REG)            LOONGARCH_R=
-EG_64(KVM_REG_LOONGARCH_CPUCFG, REG)
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> +/* Device Control API on vm fd */
-> >>>>>>>>>>>>>> +#define KVM_LOONGARCH_VM_FEAT_CTRL     0
-> >>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_X86BT   0
-> >>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_ARMBT   1
-> >>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_MIPSBT  2
-> >>>>>>>>>>>>>> +
-> >>>>>>>>>>>>>>         /* Device Control API on vcpu fd */
-> >>>>>>>>>>>>>>         #define KVM_LOONGARCH_VCPU_CPUCFG      0
-> >>>>>>>>>>>>>>         #define KVM_LOONGARCH_VCPU_PVTIME_CTRL 1
-> >>>>>>>>>>>>> If you insist that LBT should be a vm feature, then I sugge=
-st the
-> >>>>>>>>>>>>> above two also be vm features. Though this is an UAPI chang=
-e, but
-> >>>>>>>>>>>>> CPUCFG is upstream in 6.10-rc1 and 6.10-final hasn't been r=
-eleased. We
-> >>>>>>>>>>>>> have a chance to change it now.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> KVM_LOONGARCH_VCPU_PVTIME_CTRL need be attr percpu since eve=
-ry vcpu
-> >>>>>>>>>>>> has is own different gpa address.
-> >>>>>>>>>>> Then leave this as a vm feature.
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> For KVM_LOONGARCH_VCPU_CPUCFG attr, it will not changed. We =
-cannot break
-> >>>>>>>>>>>> the API even if it is 6.10-rc1, VMM has already used this. E=
-lse there is
-> >>>>>>>>>>>> uapi breaking now, still will be in future if we cannot cont=
-rol this.
-> >>>>>>>>>>> UAPI changing before the first release is allowed, which mean=
-s, we can
-> >>>>>>>>>>> change this before the 6.10-final, but cannot change it after
-> >>>>>>>>>>> 6.10-final.
-> >>>>>>>>>> Now QEMU has already synced uapi to its own directory, also I =
-never hear
-> >>>>>>>>>> about this, with my experience with uapi change, there is only=
- newly
-> >>>>>>>>>> added or removed deprecated years ago.
-> >>>>>>>>>>
-> >>>>>>>>>> Is there any documentation about UAPI change rules?
-> >>>>>>>>> No document, but learn from my more than 10 years upstream expe=
-rience.
-> >>>>>>>> Can you show me an example about with your rich upstream experie=
-nce?
-> >>>>>>> A simple example,
-> >>>>>>> e877d705704d7c8fe17b6b5ebdfdb14b84c revert
-> >>>>>>> 1dccdba084897443d116508a8ed71e0ac8a0 and it changes UAPI.
-> >>>>>>> 1dccdba084897443d116508a8ed71e0ac8a0 is upstream in 6.9-rc1, and
-> >>>>>>> e877d705704d7c8fe17b6b5ebdfdb14b84c can revert the behavior befor=
-e
-> >>>>>>> 6.9-final, but not after that.
-> >>>>>>>
-> >>>>>>> Before the first release, the code status is treated as "unstable=
-", so
-> >>>>>>> revert, modify is allowed. But after the first release, even if a=
-n
-> >>>>>>> "error" should also be treated as a "bad feature".
-> >>>>>> Huacai,
-> >>>>>>
-> >>>>>> Thanks for showing the example.
-> >>>>>>
-> >>>>>> For this issue, Can we adding new uapi and mark the old as depreca=
-ted?
-> >>>>>> so that it can be removed after years.
-> >>>>> Unnecessary, just remove the old one. Deprecation is for the usage
-> >>>>> after the first release.
-> >>>>>
-> >>>>>>
-> >>>>>> For me, it is too frequent to revert the old uapi, it is not bug a=
-nd
-> >>>>>> only that we have better method now. Also QEMU has synchronized th=
-e uapi
-> >>>>>> to its directory already.
-> >>>>> QEMU also hasn't been released after synchronizing the uapi, so it =
-is
-> >>>>> OK to remove the old api now.
-> >>>> No, I will not do such thing. It is just a joke to revert the uapi.
-> >>>>
-> >>>> So just create new world and old world on Loongarch system again?
-> >>> Again, code status before the first release is *unstable*, that statu=
-s
-> >>> is not enough to be a "world".
-> >>>
-> >>> It's your responsibility to make a good design at the beginning, but
-> >>> you fail to do that. Fortunately we are before the first release;
-> >>> unfortunately you don't want to do that.
-> >> Yes, this is flaw at the beginning, however it can works and new abi c=
-an
-> >> be added.
-> >>
-> >> If there is no serious bug and it is synced to QEMU already, I am not
-> >> willing to revert uabi. Different projects have its own schedule plan,
-> >> that is one reason. The most important reason may be that different
-> >> peoples have different ways handling these issues.
-> > In another thread I found that Jiaxun said he has a solution to make
-> > LBT be a vcpu feature and still works well. However, that may take
-> > some time and is too late for 6.11.
->
-> It is welcome if Jiaxun provide patch for host machine type, I have no
-> time give any feedback with suggestion of Jianxun now.
->
-> >
-> > But we have another choice now: just remove the UAPI and vm.c parts in
-> > this series, let the LBT main parts be upstream in 6.11, and then
-> > solve other problems after 6.11. Even if Jiaxun's solution isn't
-> > usable, we can still use this old vm feature solution then.
->
-> There is not useul if only LBT main part goes upstream. VMM cannot use
-> LBT if control part is not merged.
-There is no control part UAPI for LSX/LASX, but it works.
-If you insist that all should be merged together, there is probably
-not enough time for the 6.11 merge window.
+From: Willem De Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Sat, 06 Jul 2024 09:29:37 -0400
 
-Huacai
+> Alexander Lobakin wrote:
+>> NETIF_F_LLTX can't be changed via Ethtool and is not a feature,
+>> rather an attribute, very similar to IFF_NO_QUEUE (and hot).
+>> Free one netdev_features_t bit and make it a "hot" private flag.
+>>
+>> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 
->
->  From another side, what do you like to do? Reviewing patch of others
-> and give comments whatever grammar spelling or useful suggestions, or
-> Writing patch which needs much efforts rather than somethings like
-> feature configuration, BSP drivers.
->
-> Regards
-> Bibo Mao
->
-> >
-> >
-> > Huacai
-> >>
-> >> Regards
-> >> Bibo, Mao
-> >>>
-> >>>
-> >>> Huacai
-> >>>
-> >>>>
-> >>>> Regards
-> >>>> Bibo, Mao
-> >>>>
-> >>>>>
-> >>>>> Huacai
-> >>>>>
-> >>>>>>
-> >>>>>> Regards
-> >>>>>> Bibo, Mao
-> >>>>>>>
-> >>>>>>> Huacai
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> How about adding new extra features capability for VM such a=
-s?
-> >>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_LSX   3
-> >>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_LASX  4
-> >>>>>>>>>>> They should be similar as LBT, if LBT is vcpu feature, they s=
-hould
-> >>>>>>>>>>> also be vcpu features; if LBT is vm feature, they should also=
- be vm
-> >>>>>>>>>>> features.
-> >>>>>>>>>> On other architectures, with function kvm_vm_ioctl_check_exten=
-sion()
-> >>>>>>>>>>          KVM_CAP_XSAVE2/KVM_CAP_PMU_CAPABILITY on x86
-> >>>>>>>>>>          KVM_CAP_ARM_PMU_V3/KVM_CAP_ARM_SVE on arm64
-> >>>>>>>>>> These features are all cpu features, at the same time they are=
- VM features.
-> >>>>>>>>>>
-> >>>>>>>>>> If they are cpu features, how does VMM detect validity of thes=
-e features
-> >>>>>>>>>> passing from command line? After all VCPUs are created and sen=
-d bootup
-> >>>>>>>>>> command to these VCPUs? That is too late, VMM main thread is e=
-asy to
-> >>>>>>>>>> detect feature validity if they are VM features also.
-> >>>>>>>>>>
-> >>>>>>>>>> To be honest, I am not familiar with KVM still, only get furth=
-er
-> >>>>>>>>>> understanding after actual problems solving. Welcome to give c=
-omments,
-> >>>>>>>>>> however please read more backgroud if you insist on, else ther=
-e will be
-> >>>>>>>>>> endless argument again.
-> >>>>>>>>> I just say CPUCFG/LSX/LASX and LBT should be in the same class,=
- I
-> >>>>>>>>> haven't insisted on whether they should be vcpu features or vm
-> >>>>>>>>> features.
-> >>>>>>>> It is reasonable if LSX/LASX/LBT should be in the same class, si=
-nce
-> >>>>>>>> there is feature options such as lsx=3Don/off,lasx=3Don/off,lbt=
-=3Don/off.
-> >>>>>>>>
-> >>>>>>>> What is the usage about CPUCFG capability used for VM feature? I=
-t is not
-> >>>>>>>> a detailed feature, it is only feature-set indicator like cpuid.
-> >>>>>>>>
-> >>>>>>>> Regards
-> >>>>>>>> Bibo Mao
-> >>>>>>>>>
-> >>>>>>>>> Huacai
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Regards
-> >>>>>>>>>> Bibo, Mao
-> >>>>>>>>>>>
-> >>>>>>>>>>> Huacai
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Regards
-> >>>>>>>>>>>> Bibo Mao
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> Huacai
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kv=
-m/vcpu.c
-> >>>>>>>>>>>>>> index 233d28d0e928..9734b4d8db05 100644
-> >>>>>>>>>>>>>> --- a/arch/loongarch/kvm/vcpu.c
-> >>>>>>>>>>>>>> +++ b/arch/loongarch/kvm/vcpu.c
-> >>>>>>>>>>>>>> @@ -565,6 +565,12 @@ static int _kvm_get_cpucfg_mask(int i=
-d, u64 *v)
-> >>>>>>>>>>>>>>                                *v |=3D CPUCFG2_LSX;
-> >>>>>>>>>>>>>>                        if (cpu_has_lasx)
-> >>>>>>>>>>>>>>                                *v |=3D CPUCFG2_LASX;
-> >>>>>>>>>>>>>> +               if (cpu_has_lbt_x86)
-> >>>>>>>>>>>>>> +                       *v |=3D CPUCFG2_X86BT;
-> >>>>>>>>>>>>>> +               if (cpu_has_lbt_arm)
-> >>>>>>>>>>>>>> +                       *v |=3D CPUCFG2_ARMBT;
-> >>>>>>>>>>>>>> +               if (cpu_has_lbt_mips)
-> >>>>>>>>>>>>>> +                       *v |=3D CPUCFG2_MIPSBT;
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>                        return 0;
-> >>>>>>>>>>>>>>                case LOONGARCH_CPUCFG3:
-> >>>>>>>>>>>>>> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/=
-vm.c
-> >>>>>>>>>>>>>> index 6b2e4f66ad26..09e05108c68b 100644
-> >>>>>>>>>>>>>> --- a/arch/loongarch/kvm/vm.c
-> >>>>>>>>>>>>>> +++ b/arch/loongarch/kvm/vm.c
-> >>>>>>>>>>>>>> @@ -99,7 +99,49 @@ int kvm_vm_ioctl_check_extension(struct=
- kvm *kvm, long ext)
-> >>>>>>>>>>>>>>                return r;
-> >>>>>>>>>>>>>>         }
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> +static int kvm_vm_feature_has_attr(struct kvm *kvm, struc=
-t kvm_device_attr *attr)
-> >>>>>>>>>>>>>> +{
-> >>>>>>>>>>>>>> +       switch (attr->attr) {
-> >>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_X86BT:
-> >>>>>>>>>>>>>> +               if (cpu_has_lbt_x86)
-> >>>>>>>>>>>>>> +                       return 0;
-> >>>>>>>>>>>>>> +               return -ENXIO;
-> >>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_ARMBT:
-> >>>>>>>>>>>>>> +               if (cpu_has_lbt_arm)
-> >>>>>>>>>>>>>> +                       return 0;
-> >>>>>>>>>>>>>> +               return -ENXIO;
-> >>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_MIPSBT:
-> >>>>>>>>>>>>>> +               if (cpu_has_lbt_mips)
-> >>>>>>>>>>>>>> +                       return 0;
-> >>>>>>>>>>>>>> +               return -ENXIO;
-> >>>>>>>>>>>>>> +       default:
-> >>>>>>>>>>>>>> +               return -ENXIO;
-> >>>>>>>>>>>>>> +       }
-> >>>>>>>>>>>>>> +}
-> >>>>>>>>>>>>>> +
-> >>>>>>>>>>>>>> +static int kvm_vm_has_attr(struct kvm *kvm, struct kvm_de=
-vice_attr *attr)
-> >>>>>>>>>>>>>> +{
-> >>>>>>>>>>>>>> +       switch (attr->group) {
-> >>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_CTRL:
-> >>>>>>>>>>>>>> +               return kvm_vm_feature_has_attr(kvm, attr);
-> >>>>>>>>>>>>>> +       default:
-> >>>>>>>>>>>>>> +               return -ENXIO;
-> >>>>>>>>>>>>>> +       }
-> >>>>>>>>>>>>>> +}
-> >>>>>>>>>>>>>> +
-> >>>>>>>>>>>>>>         int kvm_arch_vm_ioctl(struct file *filp, unsigned =
-int ioctl, unsigned long arg)
-> >>>>>>>>>>>>>>         {
-> >>>>>>>>>>>>>> -       return -ENOIOCTLCMD;
-> >>>>>>>>>>>>>> +       struct kvm *kvm =3D filp->private_data;
-> >>>>>>>>>>>>>> +       void __user *argp =3D (void __user *)arg;
-> >>>>>>>>>>>>>> +       struct kvm_device_attr attr;
-> >>>>>>>>>>>>>> +
-> >>>>>>>>>>>>>> +       switch (ioctl) {
-> >>>>>>>>>>>>>> +       case KVM_HAS_DEVICE_ATTR:
-> >>>>>>>>>>>>>> +               if (copy_from_user(&attr, argp, sizeof(att=
-r)))
-> >>>>>>>>>>>>>> +                       return -EFAULT;
-> >>>>>>>>>>>>>> +
-> >>>>>>>>>>>>>> +               return kvm_vm_has_attr(kvm, &attr);
-> >>>>>>>>>>>>>> +       default:
-> >>>>>>>>>>>>>> +               return -EINVAL;
-> >>>>>>>>>>>>>> +       }
-> >>>>>>>>>>>>>>         }
-> >>>>>>>>>>>>>> --
-> >>>>>>>>>>>>>> 2.39.3
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>
-> >>>>>>
-> >>>>
-> >>
-> >>
->
->
+[...]
+
+>> @@ -23,8 +23,6 @@ enum {
+>>  	NETIF_F_HW_VLAN_CTAG_FILTER_BIT,/* Receive filtering on VLAN CTAGs */
+>>  	NETIF_F_VLAN_CHALLENGED_BIT,	/* Device cannot handle VLAN packets */
+>>  	NETIF_F_GSO_BIT,		/* Enable software GSO. */
+>> -	NETIF_F_LLTX_BIT,		/* LockLess TX - deprecated. Please */
+>> -					/* do not use LLTX in new drivers */
+>>  	NETIF_F_NETNS_LOCAL_BIT,	/* Does not change network namespaces */
+>>  	NETIF_F_GRO_BIT,		/* Generic receive offload */
+>>  	NETIF_F_LRO_BIT,		/* large receive offload */
+> 
+>> @@ -1749,6 +1749,8 @@ enum netdev_reg_state {
+>>   *			booleans combined, only to assert cacheline placement
+>>   *	@priv_flags:	flags invisible to userspace defined as bits, see
+>>   *			enum netdev_priv_flags for the definitions
+>> + *	@lltx:		device supports lockless Tx. Mainly used by logical
+>> + *			interfaces, such as tunnels
+> 
+> This loses some of the explanation in the NETIF_F_LLTX documentation.
+> 
+> lltx is not deprecated, for software devices, existing documentation
+> is imprecise on that point. But don't use it for new hardware drivers
+> should remain clear.
+
+It's still written in netdevices.rst. I rephrased that part as
+"deprecated" is not true.
+If you really think this may harm, I can adjust this one.
+
+> 
+>>   *
+>>   *	@name:	This is the first field of the "visible" part of this structure
+>>   *		(i.e. as seen by users in the "Space.c" file).  It is the name
+> 
+>> @@ -3098,7 +3098,7 @@ static void amt_link_setup(struct net_device *dev)
+>>  	dev->hard_header_len	= 0;
+>>  	dev->addr_len		= 0;
+>>  	dev->priv_flags		|= IFF_NO_QUEUE;
+>> -	dev->features		|= NETIF_F_LLTX;
+>> +	dev->lltx		= true;
+>>  	dev->features		|= NETIF_F_GSO_SOFTWARE;
+>>  	dev->features		|= NETIF_F_NETNS_LOCAL;
+>>  	dev->hw_features	|= NETIF_F_SG | NETIF_F_HW_CSUM;
+> 
+> Since this is an integer type, use 1 instead of true?
+
+I used integer type only to avoid reading new private flags byte by byte
+(bool is always 1 byte) instead of 4 bytes when applicable.
+true/false looks more elegant for on/off values than 1/0.
+
+> 
+> Type conversion will convert true to 1. But especially when these are
+> integer bitfields, relying on conversion is a minor unnecessary risk.
+
+Any examples when/where true can be non-1, but something else, e.g. 0?
+Especially given that include/linux/stddef.h says this:
+
+enum {
+	false	= 0,
+	true	= 1
+};
+
+No risk here. Thinking that way (really sounds like "are you sure NULL
+is always 0?") would force us to lose lots of stuff in the kernel for no
+good.
+
+> 
+>>  int dsa_user_suspend(struct net_device *user_dev)
+>> diff --git a/net/ethtool/common.c b/net/ethtool/common.c
+>> index 6b2a360dcdf0..44199d1780d5 100644
+>> --- a/net/ethtool/common.c
+>> +++ b/net/ethtool/common.c
+>> @@ -24,7 +24,6 @@ const char netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN] = {
+>>  	[NETIF_F_HW_VLAN_STAG_FILTER_BIT] = "rx-vlan-stag-filter",
+>>  	[NETIF_F_VLAN_CHALLENGED_BIT] =  "vlan-challenged",
+>>  	[NETIF_F_GSO_BIT] =              "tx-generic-segmentation",
+>> -	[NETIF_F_LLTX_BIT] =             "tx-lockless",
+>>  	[NETIF_F_NETNS_LOCAL_BIT] =      "netns-local",
+>>  	[NETIF_F_GRO_BIT] =              "rx-gro",
+>>  	[NETIF_F_GRO_HW_BIT] =           "rx-gro-hw",
+> 
+> Is tx-lockless no longer reported after this?
+> 
+> These features should ideally still be reported, even if not part of
+
+Why do anyone need tx-lockless in the output? What does this give to the
+users? I don't believe this carries any sensible/important info.
+
+> the features bitmap in the kernel implementation.
+> 
+> This removal is what you hint at in the cover letter with
+> 
+>   Even shell scripts won't most likely break since the removed bits
+>   were always read-only, meaning nobody would try touching them from
+>   a script.
+> 
+> It is a risk. And an avoidable one?
+
+What risk are you talking about? Are you aware of any scripts or
+applications that want to see this bit in Ethtool output? I'm not.
+
+Thanks,
+Olek
 
