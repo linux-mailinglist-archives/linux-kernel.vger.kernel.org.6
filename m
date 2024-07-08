@@ -1,88 +1,147 @@
-Return-Path: <linux-kernel+bounces-244572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B4392A62B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECEC92A667
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0CBD1F21B26
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:53:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E735B21997
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081751448F4;
-	Mon,  8 Jul 2024 15:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A74150981;
+	Mon,  8 Jul 2024 15:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPmLNWrk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zr4xsfIn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEAC143C45;
-	Mon,  8 Jul 2024 15:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF7714EC62;
+	Mon,  8 Jul 2024 15:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454001; cv=none; b=IbA2Q8c7ut1V5C40se08bvv1FAKl2eqepfZUbjv44mUhxVOt15c6cfNcXD/Vcdvs9ifO10HFx17DY5r33ri8KXTST3zI51QldhzI/3lvglWfjbYqwbBa2OGxcR19g8Gcs8BSSciqMZUga59bTIAHLAkoDZ/1/lw/xIFCUJrt0TY=
+	t=1720454045; cv=none; b=HW24p5qnxsBi2aoXPt9Fcqug2+KBZ0kYjxCMgsP1R5Mrrfg/P+oTrvV6COezu89CA8dMP8mv9KJqLAh94+ZqmFoLoxwru+bLP8Sc4TFmRof48YW08USOMrtJ5LoasPK519pPwkG6cA++DJ5kpHQfa8o0m1/CiZIld2N+mnKU9Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454001; c=relaxed/simple;
-	bh=0dT9DFcn0Y3bJSFpiEG8lTelzSISjIxepScHvkGxYNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nrDIDTmKHUdKufmJZt+sKXj2jWH8suUkfyDkRa7K0pqjFk0HVElOskbAk6DAr3fW2aCRC7O6R936up6ln7U6YxOCShow3wNuVk9hk5bzhF3eGn0OGL6Zhy5MnAs4egYcm7saMTJqImSXYAQI38TYtBFlp92H33PI2EdM9NomHpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPmLNWrk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E3DC116B1;
-	Mon,  8 Jul 2024 15:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720454001;
-	bh=0dT9DFcn0Y3bJSFpiEG8lTelzSISjIxepScHvkGxYNQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RPmLNWrkd14zClJcNi7XWX+RCWDX77i56aON0A9j6qkblIh7vmKzZZEKCcyl41/iZ
-	 f7LV3eu5tHAog52MkPDgIfH30vvXnRWhPtJFW2HI33XmX7dOnC6IU4bW5/DXSUSSaw
-	 cEVWbD44pf6ZG7hxjshzuOBka+1HfyYUJQkJb0dCUV6b9WQEcAJGs1/SZQr73m9fdu
-	 7QCt63j7nl1owRlw/26DoZ9INp1xO3x6loSb30i/pMZYnhV+0BYewLN9+Dwi2C7S19
-	 vm/AG2thUXfGmsABLYCXuxXVnwfG6ww5bShhJLcHuCKQC2gHJHhrO0/HugazetABrw
-	 SFymg5idKOr3g==
-Message-ID: <8838b5c3-0c51-42f6-9842-186139822be7@kernel.org>
-Date: Mon, 8 Jul 2024 10:53:18 -0500
+	s=arc-20240116; t=1720454045; c=relaxed/simple;
+	bh=Jv9Osj1MkLpJnopOQ2p6sePdzmKda/4nq+wQ2oK8DOM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rK7FU4gg0Fkn+Cq7QHTBW/rNNrz1AwkTWigXVTe5i9l3LNN/+Ihn6roB4Y8/+SMlOsKIXcrqUqHMom0H0LzW4StZEuWrlFfGGhgpgt/BO7myg0vIsB4PmUGPUrluRyDnMbIiL/xQucRb7jVpTeWUqBoLPY3gJcEQsUmIjudx8n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zr4xsfIn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468Bi7s4031378;
+	Mon, 8 Jul 2024 15:53:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Ry4a33oM2h+smvuuo7xpH1
+	VE6ViBwP9kkXd/cgX2QYI=; b=Zr4xsfIngMqSR3qf5curMx6x88rsFEMvSWLbok
+	m8PzMws9NoUELMigsbSnfkAQgPp/6ba/QPp51hq66sHCJ50CLHeiwkp8vk+BxM9+
+	l1fvOFniZtcenqi3QVM4xTDyrPHkNThFuUj4kbDZUEJq4LZezUDa53ePoU89CWED
+	yGiybw1bFAsxqIuhHWwcJ6PWiqlB95QnNdo3bArTRm2Gwz6j0+UpD3M9WQcZXGJF
+	4IibW1FXtIwvx28c8dSXfAFhQ2+dDbVyMVxtk4MTsTT9LaXe9EJOeS0aZdUoGbkx
+	hTIKKVFyjug+1Mk6SlL9NBMvmKsQpzYvxKkyThHeWB26xnwQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xpdkxd8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 15:53:59 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468FrwYV024988
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 15:53:58 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 8 Jul 2024 08:53:56 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <robimarko@gmail.com>,
+        Mukesh Ojha
+	<quic_mojha@quicinc.com>
+Subject: [PATCH v2] firmware: qcom: scm: Disable SDI and write no dump to dump mode
+Date: Mon, 8 Jul 2024 21:23:32 +0530
+Message-ID: <20240708155332.4056479-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pci: bus: only call of_platform_populate() if
- CONFIG_OF is enabled
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Lukas Wunner <lukas@wunner.de>, Bert Karwatzki <spasswolf@web.de>,
- caleb.connolly@linaro.org, bhelgaas@google.com, amit.pundir@linaro.org,
- neil.armstrong@linaro.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, Praveenkumar Patil <PraveenKumar.Patil@amd.com>
-References: <20240707183829.41519-1-spasswolf@web.de>
- <Zoriz1XDMiGX_Gr5@wunner.de> <20240708003730.GA586698@rocinante>
- <CACMJSevHmnuDk8hpK8W+R7icySmNF8nT1T9+dJDE_KMd4CbGNg@mail.gmail.com>
- <20240708083317.GA3715331@rocinante>
- <6e57dbc0-f47a-464e-af6b-abd45c450dc6@kernel.org>
- <CACMJSetAKtPp_Gua2S7m_+aC-f9HSUyfF1YoHUPdtcibLtQxpA@mail.gmail.com>
- <20240708154401.GD5745@thinkpad>
- <664619a9-c80f-4f81-b302-b9c5258b5e0e@kernel.org>
- <CAMRc=Mf2pE5JVHzcntO5b+5so_=ekuHGzrY=xJpKatURJFpGZA@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <CAMRc=Mf2pE5JVHzcntO5b+5so_=ekuHGzrY=xJpKatURJFpGZA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: j52KZ0MhL9fhPUEACbJQel7hqdiBPTBn
+X-Proofpoint-ORIG-GUID: j52KZ0MhL9fhPUEACbJQel7hqdiBPTBn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_09,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ adultscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1011 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080118
 
-On 7/8/2024 10:49, Bartosz Golaszewski wrote:
+SDI is enabled for most of the Qualcomm SoCs and as per commit
+ff4aa3bc9825 ("firmware: qcom_scm: disable SDI if required")
+it was recommended to disable SDI by mentioning it in device tree
+to avoid hang during watchdog or during reboot.
 
-> 
-> If you have CONFIG_OF enabled then of_platform_populate() will go the
-> normal path and actually try to populate sub-nodes of the host bridge
-> node. If there are no OF nodes (not a device-tree system) then it will
-> fail.
-> 
-> Bart
+However, for some cases if download mode tcsr register already
+configured from boot firmware to collect dumps and if SDI is
+disabled via means of mentioning it in device tree we could
+still end up with dump collection. Disabling SDI alone is
+not completely enough to disable dump mode and we also need to
+zero out the bits download bits from tcsr register.
 
-So how about keep both patches then?
+Current commit now, unconditionally call qcom_scm_set_download_mode()
+based on download_mode flag, at max if TCSR register is not mentioned
+or available for a SoC it will fallback to legacy way of setting
+download mode through command which may be no-ops or return error
+in case current firmware does not implements QCOM_SCM_INFO_IS_CALL_AVAIL
+so, at worst it does nothing if it fails.
+
+It also does to call SDI disable call if dload mode is disabled, which
+looks fine to do as intention is to disable dump collection even if
+system crashes.
+
+Fixes: ff4aa3bc9825 ("firmware: qcom_scm: disable SDI if required")
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+Changes in v2: https://lore.kernel.org/lkml/20240705120623.1424931-1-quic_mojha@quicinc.com/
+ - Modified the commit description to make the problem description more clearer. [eberman]
+ - Added Fixes tag and removed conditional operator from qcom_scm_set_download_mode()
+   argument. [eberman]
+
+ drivers/firmware/qcom/qcom_scm.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 00c379a3cceb..0f5ac346bda4 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -1954,14 +1954,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ 	 * will cause the boot stages to enter download mode, unless
+ 	 * disabled below by a clean shutdown/reboot.
+ 	 */
+-	if (download_mode)
+-		qcom_scm_set_download_mode(true);
+-
++	qcom_scm_set_download_mode(download_mode);
+ 
+ 	/*
+ 	 * Disable SDI if indicated by DT that it is enabled by default.
+ 	 */
+-	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled"))
++	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled") || !download_mode)
+ 		qcom_scm_disable_sdi();
+ 
+ 	ret = of_reserved_mem_device_init(__scm->dev);
+-- 
+2.34.1
+
 
