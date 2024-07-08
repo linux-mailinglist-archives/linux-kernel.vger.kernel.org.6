@@ -1,146 +1,309 @@
-Return-Path: <linux-kernel+bounces-244379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB3C92A37E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:15:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D639B92A380
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B15431C21360
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7CC282B8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9735D13AA26;
-	Mon,  8 Jul 2024 13:14:57 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96330137747;
+	Mon,  8 Jul 2024 13:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zgKTZb/+"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7421C2AF05;
-	Mon,  8 Jul 2024 13:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1388824BF;
+	Mon,  8 Jul 2024 13:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720444497; cv=none; b=ZuAQT78qp3uzOcZSnXzAkc+yYuNfdLEsRQhxG7oJls0vsUQv4ZluidLypjG9kA4EwHuxYvFHBIyIuBNhMGAF57cQB6yvmQkKM3dqm8PiVxN/6KbZB331KAFSgXV4Vv8pXrWQqtJudsSIyj4sABGLVhHFk3Zy4UWMbIwftHEWf7Q=
+	t=1720444520; cv=none; b=rDLj+gqp4hl+lUMTMz1xRXkkEn8Fd/7qXM68Wb0OOevoH9Y8JBIxeTLg4I8xg14Od1NovpzMeXNd0aJ7gnC5RiVlIp7vu3bDjOEvxOo112LwGv2OV8+a8rGWDIEcktgBDJY21wR57JiSkdOC6OlIdnDHnM7n/JGinBUr1yKaRfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720444497; c=relaxed/simple;
-	bh=m1fXyXqwx2KFFZE/0GK5tUG2v7NXfLNQ0nL+TMoXgb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ghvFS+TpeseoMaEUKhi60wyTv73PGuCm5lkiSr0cwlaFMC/uef/Shb43b5jH6YJKGnplDPcFtFJA90ilSQp3/2HqkuwBq828LTkO2hIIEzjlWYVLAgchS4/h6bsMxFwbeg7sfQaCqmRzKaNZLTciFg6iRTghlTmt9Z5z7bitsQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WHl2h4vMjz4f3lg7;
-	Mon,  8 Jul 2024 21:14:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 712A21A0184;
-	Mon,  8 Jul 2024 21:14:49 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP2 (Coremail) with SMTP id Syh0CgCnD4VF5otm3NscBg--.12840S3;
-	Mon, 08 Jul 2024 21:14:47 +0800 (CST)
-Message-ID: <e4a4a9a2-a7a7-67e6-a2ca-31f016fd3e2e@huaweicloud.com>
-Date: Mon, 8 Jul 2024 21:14:45 +0800
+	s=arc-20240116; t=1720444520; c=relaxed/simple;
+	bh=ov17mxicIUyS6HEtQslMSNSNcCOpJ/LXdUYLezDZ0O8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
+	 In-Reply-To:Content-Type; b=Qm/TQx8j/R6LOMa/vU/PcVweTnQNv7qZE3VGQT38Td3tEqKDE4LZk7Bvxvu8hSGXZ6Qy//EBTuL2zEmwhPtSVOTByB+3YVstC53EufqndDSrjeiZwi8GHgGDl3pZCzYajD1+980teI5m+7DAKZMg8SD3MuGdkgx2gLJ9M5JvAqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zgKTZb/+; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720444518; x=1751980518;
+  h=message-id:date:mime-version:subject:to:references:cc:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ov17mxicIUyS6HEtQslMSNSNcCOpJ/LXdUYLezDZ0O8=;
+  b=zgKTZb/+EIZ0SciGeyrEQT15g2dEGCbYYk/BFBuWhvxesW9iRsJviVin
+   lXB+GAqpAI4fiKBFIAffAOZoRxxa3JdwlSWDyYsXyzIH1DxrJisZecdJX
+   GkLKBB2Weo0rQZFXbsWZ6ZlLFY1+TyP0Oe1X8b0vTFCOXPwlvacX7Uk4Y
+   pNyB3GuO1T5S7MXmdf5WCKnVi/DRHX25NCGr4cdXHaPwGl9nIPk/JSzkf
+   qCYoRyRrcIIKUn6wlcyR8CozeKPdQgPCO7SHCKS1PKtyOcVDoNvjrxtbr
+   TB62iCG2MbdLepW7VDA/MAeO+fWSkVNuzbqf+D3Vrzfec4p77tidZUx1F
+   w==;
+X-CSE-ConnectionGUID: wEVA1JoOSxKaGP+LiI4ERQ==
+X-CSE-MsgGUID: M+bGeUdWTy2KIOpiFjcpPQ==
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="196351860"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Jul 2024 06:15:17 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 8 Jul 2024 06:15:04 -0700
+Received: from [10.180.117.27] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 8 Jul 2024 06:15:01 -0700
+Message-ID: <374d76aa-343e-4f28-8374-350316e91cb9@microchip.com>
+Date: Mon, 8 Jul 2024 15:15:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2] ublk_drv: fix NULL pointer dereference in
- ublk_ctrl_start_recovery()
-To: linan666@huaweicloud.com, axboe@kernel.dk
-Cc: czhong@redhat.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- houtao1@huawei.com, yangerkun@huawei.com
-References: <20240603065350.1619493-1-linan666@huaweicloud.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20240603065350.1619493-1-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: microchip: sam9x60: Move i2c address/size to
+ dtsi
+Content-Language: en-US, fr-FR
+To: <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+References: <20240528153109.439407-1-ada@thorsis.com>
+ <20240705-defection-septum-dd9202836b23@thorsis.com>
+CC: Manikandan M <Manikandan.M@microchip.com>, Durai Manickam
+	<Durai.ManickamKR@microchip.com>, Mihai Sain <mihai.sain@microchip.com>,
+	"Hari Prasath" <Hari.PrasathGE@microchip.com>, Patrice Vilchez
+	<patrice.vilchez@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20240705-defection-septum-dd9202836b23@thorsis.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCnD4VF5otm3NscBg--.12840S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWDAFy5KF1UXw4rCF15Arb_yoW8Kr1rpF
-	Z5Gw1xKrWkJa1UZa17twnrJry5W3WUKFy7WrsxJa4fWa90yr9xA3y3Ga1jgFZrK34xWFyU
-	JF4Dua4S93WUJrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWI
-	evJa73UjIFyTuYvjfUOlksUUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-friendly ping...
+On 05/07/2024 at 08:19, Alexander Dahl wrote:
+> Hei hei,
+> 
+> Am Tue, May 28, 2024 at 05:31:09PM +0200 schrieb Alexander Dahl:
+>> These properties are common for all i2c subnodes, and marked as
+>> 'required' in atmel/microchip i2c bindings.  Allows to add i2c device
+>> nodes (like an rtc for example) in other .dts files including
+>> sam9x60.dtsi without requiring to repeat these properties for each i2c
+>> device again and again.
+>>
+>> Found on a custom board after adding this in .dts:
+>>
+>>      &flx5 {
+>>              atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
+>>              status = "okay";
+>>
+>>              i2c5: i2c@600 {
+>>                      pinctrl-0 = <&pinctrl_flx5_default>;
+>>                      status = "okay";
+>>
+>>                      pcf8523: rtc@68 {
+>>                              compatible = "nxp,pcf8523";
+>>                              reg = <0x68>;
+>>                      };
+>>              };
+>>      };
+>>
+>> … which created a warning like this:
 
-在 2024/6/3 14:53, linan666@huaweicloud.com 写道:
-> From: Li Nan <linan122@huawei.com>
-> 
-> When two UBLK_CMD_START_USER_RECOVERY commands are submitted, the
-> first one sets 'ubq->ubq_daemon' to NULL, and the second one triggers
-> WARN in ublk_queue_reinit() and subsequently a NULL pointer dereference
-> issue.
-> 
-> Fix it by adding the check in ublk_ctrl_start_recovery() and return
-> immediately in case of zero 'ub->nr_queues_ready'.
-> 
->    BUG: kernel NULL pointer dereference, address: 0000000000000028
->    RIP: 0010:ublk_ctrl_start_recovery.constprop.0+0x82/0x180
->    Call Trace:
->     <TASK>
->     ? __die+0x20/0x70
->     ? page_fault_oops+0x75/0x170
->     ? exc_page_fault+0x64/0x140
->     ? asm_exc_page_fault+0x22/0x30
->     ? ublk_ctrl_start_recovery.constprop.0+0x82/0x180
->     ublk_ctrl_uring_cmd+0x4f7/0x6c0
->     ? pick_next_task_idle+0x26/0x40
->     io_uring_cmd+0x9a/0x1b0
->     io_issue_sqe+0x193/0x3f0
->     io_wq_submit_work+0x9b/0x390
->     io_worker_handle_work+0x165/0x360
->     io_wq_worker+0xcb/0x2f0
->     ? finish_task_switch.isra.0+0x203/0x290
->     ? finish_task_switch.isra.0+0x203/0x290
->     ? __pfx_io_wq_worker+0x10/0x10
->     ret_from_fork+0x2d/0x50
->     ? __pfx_io_wq_worker+0x10/0x10
->     ret_from_fork_asm+0x1a/0x30
->     </TASK>
-> 
-> Fixes: c732a852b419 ("ublk_drv: add START_USER_RECOVERY and END_USER_RECOVERY support")
-> Reported-and-tested-by: Changhui Zhong <czhong@redhat.com>
-> Closes: https://lore.kernel.org/all/CAGVVp+UvLiS+bhNXV-h2icwX1dyybbYHeQUuH7RYqUvMQf6N3w@mail.gmail.com
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> ---
-> v2: add the check to ublk_ctrl_start_recovery().
-> 
->   drivers/block/ublk_drv.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index 4e159948c912..ebd997095b65 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -2661,6 +2661,8 @@ static int ublk_ctrl_start_recovery(struct ublk_device *ub,
->   	mutex_lock(&ub->mutex);
->   	if (!ublk_can_use_recovery(ub))
->   		goto out_unlock;
-> +	if (!ub->nr_queues_ready)
-> +		goto out_unlock;
->   	/*
->   	 * START_RECOVERY is only allowd after:
->   	 *
+[..]
 
--- 
-Thanks,
-Nan
+>> This probably should have been done with commit 84f23f3284d5 ("ARM: dts:
+>> at91: sam9x60: move flexcom definitions") already, where those
+>> address-cells and size-cells properties were left in the board .dts
+>> files instead of moving them to the dtsi.
+> 
+> It's been a while.  Is something wrong with the patch?  Or with the
+> commit message?
+
+Sorry about that.
+
+> at91 support seems to have slowed down somehow lately? :-/
+
+Sorry for this feeling that you have. I guarantee it's not ;-)
+
+Thanks a lot for your contribution, we'll make sure to react in a timely 
+manner to your efforts on Microchip platforms.
+
+Best regards,
+   Nicolas
+
+>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+>> ---
+>>   .../dts/microchip/at91-sam9x60_curiosity.dts  |  2 --
+>>   .../arm/boot/dts/microchip/at91-sam9x60ek.dts |  4 ---
+>>   arch/arm/boot/dts/microchip/sam9x60.dtsi      | 26 +++++++++++++++++++
+>>   3 files changed, 26 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+>> index c6fbdd29019f..b9ffd9e5faac 100644
+>> --- a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+>> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+>> @@ -198,8 +198,6 @@ i2c0: i2c@600 {
+>>                dmas = <0>, <0>;
+>>                pinctrl-names = "default";
+>>                pinctrl-0 = <&pinctrl_flx0_default>;
+>> -             #address-cells = <1>;
+>> -             #size-cells = <0>;
+>>                i2c-analog-filter;
+>>                i2c-digital-filter;
+>>                i2c-digital-filter-width-ns = <35>;
+>> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+>> index f3cbb675cea4..3b38707d736e 100644
+>> --- a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+>> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+>> @@ -207,8 +207,6 @@ &flx0 {
+>>        status = "okay";
+>>
+>>        i2c0: i2c@600 {
+>> -             #address-cells = <1>;
+>> -             #size-cells = <0>;
+>>                dmas = <0>, <0>;
+>>                pinctrl-names = "default";
+>>                pinctrl-0 = <&pinctrl_flx0_default>;
+>> @@ -254,8 +252,6 @@ &flx6 {
+>>        status = "okay";
+>>
+>>        i2c6: i2c@600 {
+>> -             #address-cells = <1>;
+>> -             #size-cells = <0>;
+>>                dmas = <0>, <0>;
+>>                pinctrl-names = "default";
+>>                pinctrl-0 = <&pinctrl_flx6_default>;
+>> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+>> index 291540e5d81e..551b46894f47 100644
+>> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+>> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+>> @@ -215,6 +215,8 @@ i2c4: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -284,6 +286,8 @@ i2c5: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <14 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -394,6 +398,8 @@ i2c11: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <32 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 32>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -443,6 +449,8 @@ i2c12: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 33>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -600,6 +608,8 @@ i2c6: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <9 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -649,6 +659,8 @@ i2c7: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <10 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -698,6 +710,8 @@ i2c8: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <11 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -766,6 +780,8 @@ i2c0: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <5 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -834,6 +850,8 @@ i2c1: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -902,6 +920,8 @@ i2c2: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <7 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -970,6 +990,8 @@ i2c3: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -1074,6 +1096,8 @@ i2c9: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <15 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -1123,6 +1147,8 @@ i2c10: i2c@600 {
+>>                                        compatible = "microchip,sam9x60-i2c";
+>>                                        reg = <0x600 0x200>;
+>>                                        interrupts = <16 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +                                     #address-cells = <1>;
+>> +                                     #size-cells = <0>;
+>>                                        clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
+>>                                        dmas = <&dma0
+>>                                                (AT91_XDMAC_DT_MEM_IF(0) |
+>>
+>> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+>> --
+>> 2.39.2
+>>
+>>
 
 
