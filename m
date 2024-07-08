@@ -1,84 +1,58 @@
-Return-Path: <linux-kernel+bounces-243822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8018F929B18
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:32:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EF1929B19
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2F028124A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 03:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD1CA28127A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 03:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE19479C8;
-	Mon,  8 Jul 2024 03:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CF44C99;
+	Mon,  8 Jul 2024 03:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g8HneZJX"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UD2/ly6+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C9E184F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 03:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7DC79C8
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 03:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720409555; cv=none; b=f6LauvrWad092zO+z5v/VP0rS91Dff+dECn9k9QV/IJYcUZdCtFF/HvkdLDsK2KMRIN0uKTiiHlAPy+zW+sxEhZE61ifVmiQou9L9/Ni2b8y1jjYIzVVQxo6ZL+GacGRAgR+bq1Z5uNRf8Sj2uhqu8OwcmQjEBw+a1G+P5dSzNQ=
+	t=1720409664; cv=none; b=cE03VmB500BMW0UFn6Va4dvZ1Fc91RCq4JOfCGLCqev4vYfgRjxcEf9SYiuZov26LrQse1oRKFrmy57y70GnLTXeUKhJB2UnyMtlg3l2HgyqALaEMmtTA6sXQNwxMbtkO+b9DK4ARfh9LixHtl5IANovKKmtyIbJWOjfaxPKQTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720409555; c=relaxed/simple;
-	bh=5uPJt6ndXC3JLmQO14ovBQlb/bFzah8Bquk6QpCYuQg=;
+	s=arc-20240116; t=1720409664; c=relaxed/simple;
+	bh=XXJkcWJ9CeBIPpMba+VPQijB8Fbv2R0CPb+fyPo8DUU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQYsdnGRn+/0SBuN2VPgeThceU/FR8DnKMkic1vQNJQxeyw1RInXpplWeekCcYkTJsQ843BEB26TKks+NEQUxSHeLpZx06YrTOATuvNxjkmJk3tVRdB03tF8av3Sl0PPWLKsapVm5bvl3xydJg45wOIrQ/EwVqb/fWlLvxSRRmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g8HneZJX; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fa55dbf2e7so15578535ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 20:32:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720409553; x=1721014353; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zXCHivUeTgzK2s7c5iMX6VZA50wGYQ3SoObiW0cz39M=;
-        b=g8HneZJXvQZdZ5ZgHsi/2Qds4AmXsVmpQehbE69Z0g/bLLB1QaaDN/3CFDRRxrSRk5
-         MbeXOC8Ehw6JnmDZjN3CIhqNE0jek04v0C2r4ZdlrYOsTaWs5SF+yYZqk+z4vTVHrDwA
-         O90Yb4o02csvYZoJJ06e4/bq4uqSZsFNuugfY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720409553; x=1721014353;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zXCHivUeTgzK2s7c5iMX6VZA50wGYQ3SoObiW0cz39M=;
-        b=lrsndaS+Ao7hJSUcLrKmu3jGo+BaSiSphnwJvJiArYjojbt952+SAwsnFWLqSFuVrB
-         Ac2uX7wzaLJUXDwuAvP85uyHFam4Y9Wvta33FwXzTW+MVcKRTGU9DEJnn+a9RwrkB0gJ
-         ISEy1xg4Zsf6dDwlhFKxbbi+sWY9kEo2u2HA3lT3zgkCkXBoyneZlPo8rNat0urU5rBj
-         pXcc4txx93OY8EX7MG6uQ3fXJMiNSB046M3xFiM/VKXavj8qaGjtv48wpSu19L7qPjLB
-         9vegGfHUOj+7LqYvgvM9594r/QH91YfoOb7KGzhHqAITGYgm5O6AV0em+Cz19MTg97II
-         nXqw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+No8TIookQqd4RPpJDHFk7xLhyHLDKuiL6hUZLR6PGYeYZzsDA4eQORWKRMxTxfrHN702g0/zICpAB/EngJAENSmUPUszgh5QYS5n
-X-Gm-Message-State: AOJu0YzVI1XauJ04vpfLUF+4P/vPSh4UlwKuuR2HR1sDkoGj9NLSputF
-	fxJTSlUlpBNzJv0mo6IvSc9Ldf5Pq5IpwzYvS7pLxL8n7RI8kFn8McJJtjKOtg==
-X-Google-Smtp-Source: AGHT+IEQ9icmnoYZ5EiPLnYtHgy8R0QJ1szKIWGaEQlf865q5Czazs3nuA+XujWtDqFqWgak8oR8kA==
-X-Received: by 2002:a17:902:d512:b0:1fb:5c3d:b8ea with SMTP id d9443c01a7336-1fb5c3dc4aamr28446625ad.13.1720409553127;
-        Sun, 07 Jul 2024 20:32:33 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:eda0:6e46:c522:d0b1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb27bdc357sm75660155ad.177.2024.07.07.20.32.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jul 2024 20:32:32 -0700 (PDT)
-Date: Mon, 8 Jul 2024 12:32:28 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mike Galbraith <umgwanakikbuti@gmail.com>
-Subject: Re: [PATCH v2 1/3] zram: Replace bit spinlocks with a spinlock_t.
-Message-ID: <20240708033228.GB797471@google.com>
-References: <20240620153556.777272-1-bigeasy@linutronix.de>
- <20240620153556.777272-2-bigeasy@linutronix.de>
- <27fb4f62-d656-449c-9f3c-5d0b61a88cca@intel.com>
- <20240704121908.GjH4p40u@linutronix.de>
- <801cac51-1bd3-4f79-8474-251a7a81ca08@intel.com>
- <20240708030330.GA797471@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/ty1mE9fBKKHyogO7RYAdkvMU09fP+WDGKc6k1ES3c5S1ckEbLfdOTY+NYlBMZ1u3VKMtf0fJomLPevaZyr17dmOcHZEgPmO0TIYUErHkGDmG1YG6NkP1ba5In9rjEc43z0tEn8Y9kGWfO1Zm6kf9apzvBuZTPFe0ELCdDFP9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UD2/ly6+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lDiS3S66EExdt/3IE9jCdjT0bUuwhnzTrpGok8jEgno=; b=UD2/ly6+K1NUobueGrLIC1xdgU
+	U0qya1U2TwMVp5yPj5zyZiU0bkXtqwgvC0fgUvIIpMfjvsQ/aA98eyQQ5rvgdgCJbV+C/But1WrPq
+	rkdvAT+A4iRO4kgOUCPVBxS5zzgX6ZCzmKDy1sK8icrP3W9+6/yzbYU2j9W/zMCmzUigSYf6NmQNc
+	ruQzM8GvlDFKuwkwy6a42O5LaiE3v//WbggCYJ4h7d7FbOLaMMpLWI3CzdEtC776yGBpTC/VxjFC/
+	LPwyi0szZBbhov2C76pdtaL6AJxXDiTX0ciFoWSHZQzL97jvZCdx9PhpESJnBlzNEXQJLrZniogx7
+	N06QVUyA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sQf8r-00000006THx-1fFh;
+	Mon, 08 Jul 2024 03:34:17 +0000
+Date: Mon, 8 Jul 2024 04:34:17 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Zhiguo Jiang <justinjiang@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Barry Song <baohua@kernel.org>,
+	opensource.kernel@vivo.com,
+	Qianfeng Rong <rongqianfeng@vivo.corp-partner.google.com>
+Subject: Re: [PATCH v4] mm: shrink skip folio mapped by an exiting task
+Message-ID: <ZoteOYap1M4kxWV8@casper.infradead.org>
+References: <20240708031517.856-1-justinjiang@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,17 +61,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240708030330.GA797471@google.com>
+In-Reply-To: <20240708031517.856-1-justinjiang@vivo.com>
 
-On (24/07/08 12:03), Sergey Senozhatsky wrote:
-[..]
-> > I meant
-> > 
-> > 	for (size_t index = 0; index < num_pages; index++)
-> > 
-> > It's allowed and even recommended for a couple years already.
-> 
-> I wonder since when?  Do gcc 5.1 and clang 13.0.1 support this?
+On Mon, Jul 08, 2024 at 11:15:17AM +0800, Zhiguo Jiang wrote:
+> If an anon folio reclaimed by shrink_inactive_list is mapped by an
+> exiting task, this anon folio will be firstly swaped-out into
+> swapspace in shrink flow and then this swap folio is freed in task
+> exit flow. But if this folio mapped by an exiting task can skip
+> shrink and be freed directly in task exiting flow, which will save
+> swap-out time and alleviate the load of the tasks exiting process.
+> The file folio is also similar.
 
-Since C99.  gcc 5.1/clang 13.0.1 are fine with that.  TIL.
+How is the file folio similar?  File folios are never written to swap,
+and they'll be written back from the page cache whenever the filesystem
+decides it's a good time to do so.
+
+>  mm/rmap.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>  mode change 100644 => 100755 mm/rmap.c
+
+Uh, what?  Why would you make this file executable?
+
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 26806b49a86f..16b7ed04bcbe
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -843,6 +843,16 @@ static bool folio_referenced_one(struct folio *folio,
+>  	int referenced = 0;
+>  	unsigned long start = address, ptes = 0;
+>  
+> +	/* Skip the unshared folios mapped only by the single
+> +	 * exiting process.
+> +	 */
+
+Comments start with a /* on a line by itself.
+
+> +	if ((!atomic_read(&vma->vm_mm->mm_users) ||
+> +		test_bit(MMF_OOM_SKIP, &vma->vm_mm->flags)) &&
+> +		!test_bit(VM_SHARED, &vma->vm_flags)) {
+> +		pra->referenced = -1;
+> +		return false;
+
+This indentation is unreadable.  Follow the style used in the rest of
+the file.
+
 
