@@ -1,97 +1,156 @@
-Return-Path: <linux-kernel+bounces-244828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DB192AA00
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:42:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A1692AA05
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7031C215D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:42:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E47C61F2146F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C28A14F100;
-	Mon,  8 Jul 2024 19:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E3E1CD3D;
+	Mon,  8 Jul 2024 19:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMTv13EM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xr5Dcd4Q"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D8214B95B;
-	Mon,  8 Jul 2024 19:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929B210953
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720467746; cv=none; b=rUMIRL1RG+AO3QBja9c0PY2Xv4KU3Zz97/j9M2leKWIjpMnp0xm4Jac5TYz07kKTMjwQO8Ro04koeMFOXIKBLCLmihXfEAA4uLzkabSIQx97/wXXuGC5iETuQZg6UKD7V08ravMc7wtqiPYQr9HUsAeAxbc5MEyO1yfDi3bvXiE=
+	t=1720467812; cv=none; b=mf+jgz8z1/1BachrFrCxZF5nYE7s/TG878XXFkqTKg+aHC9eiYoe/XYTYUglrQtu9BiwPC3yI1/032ZxJ3MFWtfkoG6hPG64FSGcoiYnnzUgdBScZdTeMckVQOhYCo9P93vhgpl6e87xL3GpqJEwRFgvrDB+L/xe42q4l6y8z44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720467746; c=relaxed/simple;
-	bh=UYEkDikTrK4yUGHNdvG5X7alA+OBfYc03Q1rcRBDxok=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RHpep7a6+IX/HndLt5DCuu87HXA4WeFQrEvtF+YzeGjs2dN90gTtI2xQtVAOpYivr4N0wdkS9NGXSN58LluEOFd/xFrUl70ekGgLpJC6OvP+wP5IJjeTGZi/IAItMqgWqwKVbotTyDBK5fc4kVg8fNL9adov2/4dIGCGH/+N1rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMTv13EM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7924C3277B;
-	Mon,  8 Jul 2024 19:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720467746;
-	bh=UYEkDikTrK4yUGHNdvG5X7alA+OBfYc03Q1rcRBDxok=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bMTv13EMbkIVJRwr7CSLXUVzWa2fnxM1psAVIok12DIc+BoO+bqy5qhjS52mkK3TV
-	 wr0gDxVdbpcZmiYpWGPSys0n0bQZtOhPdLBf50hfjWMGufeMzfFrCZ9RAO3KlpDHw1
-	 NLyIdD2EmH6N2g6kgHL805hRjJO0+/CX64rKO2ELYRqtUJmOKIei/bdWiu6py5QNr/
-	 760c/u28g+h59M49Z5bNa+5IeRWZyDGZ5lHrqluZYPtZu5ETI9NzJXETTI6Slh57Iq
-	 6MOBwY2spaUDI6eCYLKTXmuNVb6lVV6LkE9H8Q7Zv668Fth7yEqBNKQWxytQ+fJuKN
-	 art3T7LQEkXfA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D2038DF3713;
-	Mon,  8 Jul 2024 19:42:25 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720467812; c=relaxed/simple;
+	bh=+rPOdVxxZZGW2sv/TAxO/m4SPgVBlYvpsQEukQOBf7E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VyAleerrWCOBQFMx5TJ/X3H/M7ERHTdnGKCX7ICoaZrUofESE35plzfJmIZKnUmIcr9mCWVRtPoqmyTM2K5GWAPxDTqNNXJyqQwREQxxnwEmWdUdfxAo4y87doOkifmCtqOXVlJIU1uHSv+0Z8YRi7zc2ddVQAiSg5g4Gux8wWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xr5Dcd4Q; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720467808;
+	bh=+rPOdVxxZZGW2sv/TAxO/m4SPgVBlYvpsQEukQOBf7E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Xr5Dcd4Q9woGLlxWKghbEDLCUucBe6HkFTW13hjInOqEXYSPQID1w3spxYVHVQZY6
+	 8Vzpz/2FXvdH4XOz5Cv62/GWI4S+qgRoOYeOlI90p9pOpT/YBIebapDxBSNooFUu+c
+	 WUuUKdZDV5Psg4nF4iOF2uxnn3DTIv/KRUuL1fLT/+58WsPgoCYreT3XPMDf8naxIz
+	 3VR5g6GYTexpMkm6Ql4LrCpAiBDiUYH+KHMyyl2qNma+kK/J+0lrk6zU5Ytx7hBi3I
+	 324rPqrBT194S79dlij6If5rf6lu9lhkfrhg5EATKbZfX+kYTR0qicsRtjtLus+Arj
+	 x2CY9AYZBLTjw==
+Received: from [192.168.1.242] (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id ED87A378042B;
+	Mon,  8 Jul 2024 19:43:26 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Mon, 08 Jul 2024 15:43:15 -0400
+Subject: [PATCH v2] nvmem: mtk-efuse: Only register socinfo device if
+ needed cells are there
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v2 0/2] Small API fix for bpf_wq
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172046774585.17805.5648980759770927798.git-patchwork-notify@kernel.org>
-Date: Mon, 08 Jul 2024 19:42:25 +0000
-References: <20240708-fix-wq-v2-0-667e5c9fbd99@kernel.org>
-In-Reply-To: <20240708-fix-wq-v2-0-667e5c9fbd99@kernel.org>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
+Message-Id: <20240708-mtk-socinfo-no-data-probe-err-v2-1-7ae252acbcc2@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAFNBjGYC/43NSw6CQBBF0a2QGlsGGgjEkfswDPorFaGLVBOiI
+ ezdlhU4PG9w3w7JC/kEt2IH8Rsl4pihLgXYUcenR3LZoErVlF3Z47y+MLGlGBgjo9OrxkXYePQ
+ i6Lq27eumdrZXkBuL+EDvs/8YskdKK8vnvNuq3/pveauwwmCUtq7WTWfC3fI0acOir5ZnGI7j+
+ AIAesF7zgAAAA==
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chen-Yu Tsai <wenst@chromium.org>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.0
 
-Hello:
+Not every efuse region has cells storing SoC information. Only register
+an socinfo device if the required cells are present.
 
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+This prevents the pointless process of creating an socinfo device,
+probing it with the socinfo driver only to ultimately error out like so
 
-On Mon, 08 Jul 2024 11:52:56 +0200 you wrote:
-> I realized this while having a map containing both a struct bpf_timer and
-> a struct bpf_wq: the third argument provided to the bpf_wq callback is
-> not the struct bpf_wq pointer itself, but the pointer to the value in
-> the map.
-> 
-> Which means that the users need to double cast the provided "value" as
-> this is not a struct bpf_wq *.
-> 
-> [...]
+  mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
+  mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
 
-Here is the summary with links:
-  - [bpf-next,v2,1/2] bpf: helpers: fix bpf_wq_set_callback_impl signature
-    https://git.kernel.org/bpf/bpf-next/c/f56f4d541eab
-  - [bpf-next,v2,2/2] selftests/bpf: amend for wrong bpf_wq_set_callback_impl signature
-    https://git.kernel.org/bpf/bpf-next/c/16e86f2e8199
+This issue is observed on the mt8183-kukui-jacuzzi-juniper-sku16
+platform, which has two efuse regions, but only one of them contains the
+SoC data.
 
-You are awesome, thank you!
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v2:
+- Added missing include for of.h
+- Link to v1: https://lore.kernel.org/r/20240708-mtk-socinfo-no-data-probe-err-v1-1-fb2acd3a47bf@collabora.com
+---
+ drivers/nvmem/mtk-efuse.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
+index 9caf04667341..74def409bc20 100644
+--- a/drivers/nvmem/mtk-efuse.c
++++ b/drivers/nvmem/mtk-efuse.c
+@@ -11,6 +11,7 @@
+ #include <linux/nvmem-provider.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
++#include <linux/of.h>
+ 
+ struct mtk_efuse_pdata {
+ 	bool uses_post_processing;
+@@ -60,6 +61,8 @@ static void mtk_efuse_fixup_dt_cell_info(struct nvmem_device *nvmem,
+ 		cell->read_post_process = mtk_efuse_gpu_speedbin_pp;
+ }
+ 
++static const char socinfo_data_first_name[] = "socinfo-data1";
++
+ static int mtk_efuse_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -69,6 +72,7 @@ static int mtk_efuse_probe(struct platform_device *pdev)
+ 	struct mtk_efuse_priv *priv;
+ 	const struct mtk_efuse_pdata *pdata;
+ 	struct platform_device *socinfo;
++	struct device_node *np;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -92,10 +96,16 @@ static int mtk_efuse_probe(struct platform_device *pdev)
+ 	if (IS_ERR(nvmem))
+ 		return PTR_ERR(nvmem);
+ 
+-	socinfo = platform_device_register_data(&pdev->dev, "mtk-socinfo",
+-						PLATFORM_DEVID_AUTO, NULL, 0);
+-	if (IS_ERR(socinfo))
+-		dev_info(dev, "MediaTek SoC Information will be unavailable\n");
++	np = of_get_child_by_name(pdev->dev.of_node, socinfo_data_first_name);
++	if (np) {
++		of_node_put(np);
++		socinfo = platform_device_register_data(&pdev->dev, "mtk-socinfo",
++							PLATFORM_DEVID_AUTO, NULL, 0);
++		if (IS_ERR(socinfo))
++			dev_info(dev, "MediaTek SoC Information will be unavailable\n");
++	} else {
++		dev_info(dev, "Efuse region does not contain SoC information - skipping socinfo driver setup\n");
++	}
+ 
+ 	platform_set_drvdata(pdev, socinfo);
+ 	return 0;
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240708-mtk-socinfo-no-data-probe-err-d7558343dc82
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 
