@@ -1,95 +1,147 @@
-Return-Path: <linux-kernel+bounces-244366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA3A92A333
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:50:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D61392A33F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E321F23159
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59527280E65
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80098527D;
-	Mon,  8 Jul 2024 12:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644B184D14;
+	Mon,  8 Jul 2024 12:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZUMSpRq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hJXWrUyK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E92824B5;
-	Mon,  8 Jul 2024 12:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5668172D;
+	Mon,  8 Jul 2024 12:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720443035; cv=none; b=Iot54r0bqdZ57+qptJxrtafQx8kRud80lWQnUQOzzAZmdp1WXYQ+uXHCMCRxQQf55UwKyvNYIoS8GNzEw5KLwCYKRneyRIFF6iLempOTnQsIw/y7l6fNrDkfxuk6Jt/9qWJ+JyL9eKF9Fn9NY73WVNuRszpHf8TAi49khzX7feY=
+	t=1720443104; cv=none; b=JiclR9ELqJ+VwRvhQqmEDoVXh6EzJ2OoiklFk05C1YKMTCXPKghydeZwgTREL3ssGxVHGYuAQZMxCuchLQKRgChHEE1zCv6QNDEBT0JmqSLoDtSX8yE2ufAoCVp4I6Slo9vN8fI9BXpzybaoGVxkaveXY0z3wJztC4lmTX9/s1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720443035; c=relaxed/simple;
-	bh=V3aqqYL6ua7qgetjLwetbv/p5bVprjmRsG1goa+0u+k=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sb29ilP6PI3ISw8DB0Q/cLXhd5ZuxhQO0u1zbp1YAWIgKInVokz65CGOCizftZtqWbVPcsjlMafLIRthrLlyHMlw79hkxNqtB+Ky938Ud6lQnSIv0F9JZE+HjG+INyFA3J0lJo71Fsyc6nicmupRy3CdpGLJgyZ25Fw3l3tsYJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZUMSpRq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 67C0FC4AF0A;
-	Mon,  8 Jul 2024 12:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720443034;
-	bh=V3aqqYL6ua7qgetjLwetbv/p5bVprjmRsG1goa+0u+k=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nZUMSpRqLKV3iLA1/JErWRtZIrsSJ/oWAuHHpeljt58UiH4CLC4fVmiwi02WvKcd7
-	 Y/uxwSinA8xqi9nOxM6VhlvXPPKXuBFXA+XUYaEJZfLQFlJgmgIS51peZ5bWHf5uhX
-	 pCSdd+7Nh/BaNwn1Zf4jnGydp3BX1zcLIEMtfwAZvzdgcipmIxkZqWRrYIEemw9/4G
-	 zq1Zb6PfucGEZCn4rMimKyj7ZCdKhWiLfjoy8EcRlq9/DpEVFxDr68+0OlQ8NL3jxV
-	 Z8XJdbpFGQeVxRT1nBXg39Erf/VKovscYOKIqZqAA9592y802G6zldfdQvM6LV8BfQ
-	 c9Fb/nXLbMIUw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55A3FDF3714;
-	Mon,  8 Jul 2024 12:50:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720443104; c=relaxed/simple;
+	bh=9W2e4gmgtezX/A4ILuBVxi1LeD5u3DXZykFEd7AcSxI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tRRx8kJU25TVouNWiSvIcYnUsRGISN9ENRmZpFx13+6gWjygEHoOipV5q5bQ+0FRErtQhEAKQmqkhcq0eRDsvOu7jWQUNVfu3j6ddRJUOxFgQ+yueo87aDPxbdYMyq2tXc+R/UM03tyysgjBmfeeQyajuD2dbt/Ys7fYrp4KXfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hJXWrUyK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468Bl4oo006726;
+	Mon, 8 Jul 2024 12:51:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=f5ioPdz2Nl4mAdl4bLw0Qfba
+	/5iLOvFYSIAbB4pPcO0=; b=hJXWrUyKU/ERmYCim9vFqq0JsPjINov1zp+of609
+	6ex3j+9dKbpHmIXiW9DWl9yYG+rb6g9gXWt0qeu6ayBIiKpw5DpvWrhb9H2ahLUA
+	XVWgAPxXpb96OknX0JRNlD8JCfFvhoCgflKORG9ewSMpREf6wu1FyuXMBN1fPJNe
+	vLy86PAQLEfdxBrXiznPhyNn/Ige9mCyThZROHQppDTE/LGkaq9D7YsBGJuf/62x
+	ZT9MmK66uvjGl7ezuy9xlI77SQV3eyNCPj87paxSj5N94GGgdz1i2Gmld+rMvJvW
+	quU0IMxFJvoB7EPGLr3DygvBQ05DdILAn7N8mrGtTFlwEQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406y3hbgag-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 12:51:39 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468CpcTi023832
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 12:51:38 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 8 Jul 2024 05:51:36 -0700
+Date: Mon, 8 Jul 2024 18:21:30 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH ] firmware: qcom: scm: Disable SDI and write no dump to
+ download mode register
+Message-ID: <ZovgiDPZBOpXdxOp@hu-mojha-hyd.qualcomm.com>
+References: <20240705120623.1424931-1-quic_mojha@quicinc.com>
+ <20240705113813958-0700.eberman@hu-eberman-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 1/1] net: dsa: microchip: lan9371/2: update MAC
- capabilities for port 4
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172044303434.27885.6700462773905874303.git-patchwork-notify@kernel.org>
-Date: Mon, 08 Jul 2024 12:50:34 +0000
-References: <20240705084715.82752-1-o.rempel@pengutronix.de>
-In-Reply-To: <20240705084715.82752-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: davem@davemloft.net, andrew@lunn.ch, edumazet@google.com,
- f.fainelli@gmail.com, kuba@kernel.org, pabeni@redhat.com, olteanv@gmail.com,
- woojung.huh@microchip.com, arun.ramadoss@microchip.com,
- florian.fainelli@broadcom.com, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240705113813958-0700.eberman@hu-eberman-lv.qualcomm.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KyZ-Bv2IL-we2sNz8m0wWQLLm1wADJda
+X-Proofpoint-GUID: KyZ-Bv2IL-we2sNz8m0wWQLLm1wADJda
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_08,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ clxscore=1015 mlxlogscore=999 impostorscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080096
 
-Hello:
+On Fri, Jul 05, 2024 at 11:55:52AM -0700, Elliot Berman wrote:
+> On Fri, Jul 05, 2024 at 05:36:23PM +0530, Mukesh Ojha wrote:
+> > SDI is enabled for most of the Qualcomm SoCs and as per commit
+> > ff4aa3bc9825 ("firmware: qcom_scm: disable SDI if required")
+> > it was recommended to disable SDI by mentioning it in device tree
+> > 
+> > However, for some cases download mode tcsr register already configured
+> > from boot firmware to collect dumps and in such cases if download
+> > mode is set to zero(nodump mode) from kernel side and SDI is disabled
+>                      ^^^^^^^^^^^^^
+> that's not what download_mode=0 does currently, but it's what you're
+> proposing it should be doing. I think that proposal is reasonable, but
+> can you call out in the commit text that the current behavior of
+> download_mode=0 is nop.
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+Correct..
 
-On Fri,  5 Jul 2024 10:47:15 +0200 you wrote:
-> Set proper MAC capabilities for port 4 on LAN9371 and LAN9372 switches with
-> integrated 100BaseTX PHY. And introduce the is_lan937x_tx_phy() function to
-> reuse it where applicable.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> > via means of mentioning it in device tree we could end up with dump
+> > collection.
+> > 
+> > To disable complete dump collection mode, SDI and dload mode register
+> > need to be set no dump mode.
+> > 
+> > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > 
-> [...]
+> Should this be?
+> 
+> Fixes: ff4aa3bc9825 ("firmware: qcom_scm: disable SDI if required")
 
-Here is the summary with links:
-  - [net-next,v2,1/1] net: dsa: microchip: lan9371/2: update MAC capabilities for port 4
-    https://git.kernel.org/netdev/net-next/c/5483cbfd863f
+Yes, SDI disablement can still result in dump collection and can cause
+a hang.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> 
+> > ---
+> >  drivers/firmware/qcom/qcom_scm.c | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> > index 00c379a3cceb..2e10f75a9cfd 100644
+> > --- a/drivers/firmware/qcom/qcom_scm.c
+> > +++ b/drivers/firmware/qcom/qcom_scm.c
+> > @@ -1954,14 +1954,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+> >  	 * will cause the boot stages to enter download mode, unless
+> >  	 * disabled below by a clean shutdown/reboot.
+> >  	 */
+> > -	if (download_mode)
+> > -		qcom_scm_set_download_mode(true);
+> > -
+> > +	qcom_scm_set_download_mode(download_mode ? true : false);
+> 
+> Just: qcom_scm_set_download_mode(download_mode);
 
+Sure.
 
+-Mukesh
 
