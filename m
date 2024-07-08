@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-244192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CABB392A093
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1775692A094
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B6D285607
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14CE285740
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A2A78C6B;
-	Mon,  8 Jul 2024 10:56:22 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5CD78C7F;
+	Mon,  8 Jul 2024 10:56:58 +0000 (UTC)
+Received: from smtp134-32.sina.com.cn (smtp134-32.sina.com.cn [180.149.134.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E398617721
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B02017721
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720436182; cv=none; b=L9BhJ3KxGSU3CJEL50hwjESo8ktCIjspXYuKFq0Cte83+EV83CK4llP/CsDOE9TrAIgT9NObqOU79OF9hKJAdbXp9nPMapN6vDpKrrAEYGmlUzfyr+n9TyQkTkIYyPNR/5kBsXwS0Lcmb22YBdMFkKm7LJpSdLs0kLGh0s0SWbE=
+	t=1720436218; cv=none; b=bAKztpTx2wXE2SHOp7DeFfJOCyYqp/i/ooqnCtY6+2eICc2lOULumVdW0TyM9qAcrZI+BQz8ns7mNEv/kBb/dUs7s26QBgr7Aa9wOR7ZFFn3k2DdjWKILLda31qmIg8LJIRkTL8hfAUozlJ+RWwly9eScUpR7o/Oyr07duS2ZOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720436182; c=relaxed/simple;
-	bh=Of8J21b9uvvAl/AlOsz7foY2sVQhphQEiZNlnPV7gzY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qdWY/q/pZ9T0MDSMOXn1DihkdxDzG2/Ujmflv8i5n4DmlhN0FmFk/cNFyY292ep/DbXUmIsPLMc/eqmqUtuywlEAJaFkhwR7PRdB//Fq+CtJIVrTiepOhia9KbTGw8r/ZZjsmj3l5xVU+TsLenzt/2Ff5CAlJ2TWTTKeT19hj5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f95699cabcso173123539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:56:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720436180; x=1721040980;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Of8J21b9uvvAl/AlOsz7foY2sVQhphQEiZNlnPV7gzY=;
-        b=s/zyMhCZ8ZztRCmqEDH6S6XyVGXSRVdT10lKI9NUW4nIkUqSNPNdHHQdCIkAYeEHBX
-         cCgrHem3K7i+zH3cZlS3Tbh61ECijxmUNGF1dVrBCMpgf13mo7rPPHEKp0fkdkinaYce
-         oU5BA4dW62GgIA98R5R3QMAJilg+WqCjbY49EPaD6wfPFcni/Y/UhHInSo2AjOzIrze/
-         QXqfVjk8OCdA1TpNKelptE3USiFutABLsLiE8sU5h41c3P38MsAgCNTbmxTmnMOtqNm4
-         gMYU1Y98AwWlcbJ+X94UkRN7GR00fVpDiesB/aYJ+/9Xfgz80FKCSu6yMuZL+5WMQaFq
-         ts3A==
-X-Gm-Message-State: AOJu0Yysqfalbayf3gyqW+BHE547GrlyzEd3zQ3Rn5ImrGMkV4uwDBYO
-	Yly9L+DLHxUcq7CEMkritpfOZqrvLiPHNC5N4SMvX8bdXiDSP+zACIuAVSc7w7XHRTr7rMmgJqa
-	gu0JKa+4RC3bCt0vUzOuQn0IB+83tn9MFuR1pALReq+kiFFrmSFjO5jw=
-X-Google-Smtp-Source: AGHT+IFfZl6F5msn0uL8iDuln4iUWl52gS+44Qf25qrxYmNe4N3zH+FZ3HZOiIy0MYaOYxL3cBfAYsdcf5+nWVIu43Vbr1zgUMb3
+	s=arc-20240116; t=1720436218; c=relaxed/simple;
+	bh=vnzHPyqhh9uqjyMMGYHiAx4MW+nRasQ0HWpUhG1eEsc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dnAIu9K4+WuX8TDwJ3iN0QlUlZprly3uxoDhXIQjZogmgK/M+z6SfakbiRWiS/8U0S5mvn5Z+dc6nm3w/ZPvKzXg8kbtHm/hThlGi7Alb/s7O0EiMexGEA4kGLKkxcBU/bXrKK9NmOGsonyo6C33BzMiE/kBVb3iC/Nv5ickANY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.64.123])
+	by sina.com (10.185.250.21) with ESMTP
+	id 668BC5E70000702C; Mon, 8 Jul 2024 18:56:41 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6985133408355
+X-SMAIL-UIID: 2A7656D9FD7C49829FA8CEF8239B8943-20240708-185641-1
+From: Hillf Danton <hdanton@sina.com>
+To: Florian Westphal <fw@strlen.de>
+Cc: Tejun Heo <tj@kernel.org>,
+	netfilter-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
+Subject: Re: [PATCH nf] netfilter: nf_tables: unconditionally flush pending work before notifier
+Date: Mon,  8 Jul 2024 18:56:31 +0800
+Message-Id: <20240708105631.841-1-hdanton@sina.com>
+In-Reply-To: <20240707080824.GA29318@breakpoint.cc>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:35aa:b0:4c0:9a3e:c26e with SMTP id
- 8926c6da1cb9f-4c09a3ed314mr223597173.0.1720436180090; Mon, 08 Jul 2024
- 03:56:20 -0700 (PDT)
-Date: Mon, 08 Jul 2024 03:56:20 -0700
-In-Reply-To: <000000000000051b2d06189716c3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005f9210061cba438f@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [usb?] INFO: rcu detected stall in
- schedule_timeout (6)
-From: syzbot <syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Sun, 7 Jul 2024 10:08:24 +0200 Florian Westphal <fw@strlen.de>
+> Hillf Danton <hdanton@sina.com> wrote:
+> > > I think this change might be useful as it also documents
+> > > this requirement.
+> > 
+> > Yes it is boy and the current reproducer triggered another warning [1,2].
+> > 
+> > [1] https://lore.kernel.org/lkml/20240706231332.3261-1-hdanton@sina.com/
+> 
+> The WARN is incorrect.  The destroy list can be non-empty; i already
+> tried to explain why.
+>
+That warning as-is could be false positive but it could be triggered with a
+single netns.
 
-***
+	cpu1		cpu2		cpu3
+	---		---		---
+					nf_tables_trans_destroy_work()
+					spin_lock(&nf_tables_destroy_list_lock);
 
-Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in schedule_timeout (=
-6)
-Author: marcello.bauer@9elements.com
+					// 1) clear the destroy list
+					list_splice_init(&nf_tables_destroy_list, &head);
+					spin_unlock(&nf_tables_destroy_list_lock);
 
-#syz test: https://github.com/9elements/linux.git
-test_patch_dummy_hcd_hrtimer_fix
+			nf_tables_commit_release()
+			spin_lock(&nf_tables_destroy_list_lock);
 
-On Thu, 2024-05-16 at 15:01 -0700, syzbot wrote:
-> syzbot has bisected this issue to:
->=20
-> commit a7f3813e589fd8e2834720829a47b5eb914a9afe
-> Author: Marcello Sylvester Bauer <sylv@sylv.io>
-> Date:=C2=A0=C2=A0 Thu Apr 11 14:51:28 2024 +0000
->=20
-> =C2=A0=C2=A0=C2=A0 usb: gadget: dummy_hcd: Switch to hrtimer transfer sch=
-eduler
->=20
-> bisection log:=C2=A0
-> https://syzkaller.appspot.com/x/bisect.txt?x=3D119318d0980000
-> start commit:=C2=A0=C2=A0 75fa778d74b7 Add linux-next specific files for
-> 20240510
-> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 linux-next
-> final oops:=C2=A0=C2=A0=C2=A0=C2=A0
-> https://syzkaller.appspot.com/x/report.txt?x=3D139318d0980000
-> console output:
-> https://syzkaller.appspot.com/x/log.txt?x=3D159318d0980000
-> kernel config:=C2=A0
-> https://syzkaller.appspot.com/x/.config?x=3Dccdd3ebd6715749a
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3Dc793a7eca38803212c61
-> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> https://syzkaller.appspot.com/x/repro.syz?x=3D16dcd598980000
-> C reproducer:=C2=A0=C2=A0
-> https://syzkaller.appspot.com/x/repro.c?x=3D151d9c78980000
->=20
-> Reported-by: syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com
-> Fixes: a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer
-> transfer scheduler")
->=20
-> For information about bisection process see:
-> https://goo.gl/tpsmEJ#bisection
+			// 2) refill the destroy list
+			list_splice_tail_init(&nft_net->commit_list, &nf_tables_destroy_list);
+			spin_unlock(&nf_tables_destroy_list_lock);
+			schedule_work(&trans_destroy_work);
+			mutex_unlock(&nft_net->commit_mutex);
+
+	nft_rcv_nl_event()
+	mutex_lock(&nft_net->commit_mutex);
+	flush_work(&trans_destroy_work);
+	  start_flush_work()
+	    insert_wq_barrier()
+	    /*
+	     * If @target is currently being executed, schedule the
+	     * barrier to the worker; otherwise, put it after @target.
+	     */
+
+	// 3) flush work ends with the refilled destroy list left intact
+	tear tables down
 
 
