@@ -1,188 +1,216 @@
-Return-Path: <linux-kernel+bounces-244410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F7792A3F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FE692A3F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92DF51C219C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC581C219C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAA913AA26;
-	Mon,  8 Jul 2024 13:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1742744C;
+	Mon,  8 Jul 2024 13:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMZSQhar"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G0ZZAFXY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D95785270;
-	Mon,  8 Jul 2024 13:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D44B26ACF
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446301; cv=none; b=j+KtAwa/5Oa7bXk01mLyarpNzC/FPMKtVrQ40+UfDlPoSPbXl45eM/S2mK+mutodOj+bRlkV7VWEx+Z+fXNEM6Z3irOWKutCpbfp3mk/9nVPgKDwMpe6pTac4pgUuJwGDLsKcRGrLR5pHAKsFynA2YapW4DzxHllsFnJGwaP51U=
+	t=1720446341; cv=none; b=rdUk/g3ZJcFi270QwrCx4E+60UJ5MmGst+Tpu1hNSLOiE3RdOZlbaJF5/ejslwDxH5CRJhXn4haK5IlBHNTeDL3mKWtSwg+Vf/k+BOgzyX17YzwRFaSQMlC3sT4i2JFrf8SeDQ2T9+78eQ49WBL3lFI1yU1ZPV5FWt1VtQDmBlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446301; c=relaxed/simple;
-	bh=47u4T5Is6Hg3oW455uKA/icqv/0zuyBXIRGCvD2r4kE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XBOWVE6jUHfl20JzRFtcpwrRFRw+xIBkwoyqZm3JarTFwclGrV7kbXSYbYDDz7Yp2pXTdLM5K1Wg/UM+ACeeoGin9G2rqtnyzOStg5XHxYTzZFS+ERk2gtxhcXu9leQfZDev49hFwEyiZ6hRwiZ2Cw5efO9DDndCzN1V5dB+sfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMZSQhar; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dff17fd97b3so4423561276.2;
-        Mon, 08 Jul 2024 06:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720446298; x=1721051098; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CNklU3B3LCdHJNFvg0ZFjz1p4iX08ixeg8SfmCVM7gg=;
-        b=LMZSQharGkcx8tY80N2LMU3mJ0je6sIIJQqutBU41PBJJoCSMZVlSMBd2iDXsHoBle
-         y+RZVyINgXjBN17tof21aHOKXclEjsyAGZo0BNgikunFa//Kb4E3d2AvqiVNPvE4+plr
-         3U0AvWiKnCQgQpcwqmKljYNKR+cMZwJQ6RbkzkBkxBmn8UUU64lUhFtG9oO6nsiZckxR
-         SO7PoMvb5Uzhm3CjLuPcrBmfHSmUKY94N353qiaKs7lVaLi1kmD/+qerGnfe1Eu9fxA9
-         ugCzDVCqrdeDL4GQ0Ko+s+7CCwrgyWKSs1SLdqetcU9AsVdzj77pMcX4toPCe9f/9i3B
-         YMQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720446298; x=1721051098;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CNklU3B3LCdHJNFvg0ZFjz1p4iX08ixeg8SfmCVM7gg=;
-        b=mPoDPfunmINNFChPBqbL1E08eKXy/zfpvz3/VQkpkI3F8GR4eY5HFKKyRwzUEROdGT
-         rMrRnAN3BzuXHnpfm9qPgD+sBnlpgWsu0M5W3hXAeQTW/bWhqpeB+KFPRwvwkdJ6NbtC
-         /8tJDdraNjBeuIJJdzvkOjxEbtPl3BZJMZxj7CaBfoccQdyI0kMolB45jGJHIQZIDMrN
-         wThXreNIU0PUQfbGuNo4Ff+y+Bz5Hhf/vUvrCm/2xJRaSsbGnfyPzMY7uWbKhhSwDlBc
-         CECWT1dpwHKWk/yNbyqX3vEQixMyoN3JMNbJHMg7FLXltCta+TANu0Hu75wgq16Pd0GO
-         ezRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNrwEXbfk9W0qc9XTTeq91nqi8dxPo0Uze6OEqkmSi3hjgtoofkbwAsfyYYcMahg5MqEZPp1zyBcKyrojgtJ9sUKrEVVTRKdw8iGx2lsErq+azuqE9+OPCtYKyeWAFV/Hf8VBFFyQa
-X-Gm-Message-State: AOJu0Yy5MLf6uc7ziK0QZSkZzFtWtjYEF1FQ6chZmzrXpukVSEJ5LPNX
-	ilw8iongFvtaXtU4CPjmKrlg6TR+8fzXOCX4dB2PpGgHqMkWBx7xHHVHrjOEj5akLOmrsi0mbOr
-	Ev6Ptkgg7lkiqdITHkDMePekOlMo=
-X-Google-Smtp-Source: AGHT+IG5pai14Ca8ZcqWdXxJhzsZ+YHnwUk7ftYSJ9kAfE0rgLhoSEmET5QIX/7olaCy1Gi7HDL+KOrFes0D/JETECw=
-X-Received: by 2002:a05:6902:1185:b0:dfe:fd16:cbc6 with SMTP id
- 3f1490d57ef6-e03c192b9c2mr18529559276.14.1720446298355; Mon, 08 Jul 2024
- 06:44:58 -0700 (PDT)
+	s=arc-20240116; t=1720446341; c=relaxed/simple;
+	bh=hKsC8hLKhAOme5JLNrdbUYNktX7OC48C0XxC+BBv+hY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OeLYv4p7BNI6FkATOnvqsppH53SteVhcwDtyGAleBXjQy3tLNxF6UA+d/tkpRJNnxJiy0+3isAkcsW1PuZpc1c4/R29G9ZotXUAskqy3lhG5kC/Z1i+tXy6t7E1mu/NZp7OZoIUrSXDrKnJ4Twparsi8FN8cLjBrNuvSqs6+8pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G0ZZAFXY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720446337;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oKoWxhmEZfLLj02S5HWOBt9H4nPDVhLNXef78/NS5KU=;
+	b=G0ZZAFXYhJH5Al/P05VUxwLUwt6w0FSZGKQf3NTnvZtWg+11FYTT42bLW2FGb2jRajXCTu
+	2Nkr6vDFQiGuHfhySpWMn5Z5fcKaRnPcNAA7sMOu4i/6lHpUw8skUiE4aiq6qmkV3KFeV3
+	CxrQPt2fAxMhCjGY+EU7IMR4lsAmmWE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-157-ocPFQvYHOBmBMUaUp-3xmQ-1; Mon,
+ 08 Jul 2024 09:45:34 -0400
+X-MC-Unique: ocPFQvYHOBmBMUaUp-3xmQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D9B91977338;
+	Mon,  8 Jul 2024 13:45:26 +0000 (UTC)
+Received: from antares.redhat.com (unknown [10.39.192.91])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9373C1955F40;
+	Mon,  8 Jul 2024 13:45:22 +0000 (UTC)
+From: Adrian Moreno <amorenoz@redhat.com>
+To: netdev@vger.kernel.org
+Cc: aconole@redhat.com,
+	Adrian Moreno <amorenoz@redhat.com>,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	dev@openvswitch.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] selftests: openvswitch: retry instead of sleep
+Date: Mon,  8 Jul 2024 15:44:49 +0200
+Message-ID: <20240708134451.3489802-1-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706022523.1104080-1-flintglass@gmail.com>
- <20240706022523.1104080-6-flintglass@gmail.com> <0afc769e-241a-404e-b2c9-a6a27bdd3c72@linux.dev>
-In-Reply-To: <0afc769e-241a-404e-b2c9-a6a27bdd3c72@linux.dev>
-From: Takero Funaki <flintglass@gmail.com>
-Date: Mon, 8 Jul 2024 22:44:47 +0900
-Message-ID: <CAPpoddfySkGpD5hKgqUAAMgMp2vWcivg1AzcyYh_NP1-ZsGkug@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] mm: zswap: store incompressible page as-is
-To: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-2024=E5=B9=B47=E6=9C=888=E6=97=A5(=E6=9C=88) 12:56 Chengming Zhou <chengmin=
-g.zhou@linux.dev>:
+There are a couple of places where the test script "sleep"s to wait for
+some external condition to be met.
 
-> >       comp_ret =3D crypto_wait_req(crypto_acomp_compress(acomp_ctx->req=
-), &acomp_ctx->wait);
-> >       dlen =3D acomp_ctx->req->dlen;
-> > -     if (comp_ret)
-> > +
-> > +     /* coa_compress returns -EINVAL for errors including insufficient=
- dlen */
-> > +     if (comp_ret && comp_ret !=3D -EINVAL)
-> >               goto unlock;
->
-> Seems we don't need to care about? "comp_ret" is useless anymore.
->
-> Just:
->
-> if (comp_ret || dlen > PAGE_SIZE - 64)
->         dlen =3D PAGE_SIZE;
->
-> And remove the checkings of comp_ret at the end.
->
+This is error prone, specially in slow systems (identified in CI by
+"KSFT_MACHINE_SLOW=yes").
 
->
-> We actually don't need to hold mutex if we are just copying folio.
->
-> Thanks.
->
+To fix this, add a "ovs_wait" function that tries to execute a command
+a few times until it succeeds. The timeout used is set to 5s for
+"normal" systems and doubled if a slow CI machine is detected.
 
-Thanks for reviewing.
+This should make the following work:
 
-For comp_ret, can we consolidate all possible error codes as
-incompressible data?
-if we do not need to distinguish -EINVAL and the others, diff v2..v3
-can be like:
+$ vng --build  \
+    --config tools/testing/selftests/net/config \
+    --config kernel/configs/debug.config
 
-@@ -62,8 +62,6 @@ static u64 zswap_pool_limit_hit;
- static u64 zswap_written_back_pages;
- /* Store failed due to a reclaim failure after pool limit was reached */
- static u64 zswap_reject_reclaim_fail;
--/* Store failed due to compression algorithm failure */
--static u64 zswap_reject_compress_fail;
- /* Compressed page was too big for the allocator to (optimally) store */
- static u64 zswap_reject_compress_poor;
- /* Store failed because underlying allocator could not get memory */
-@@ -1043,10 +1041,6 @@ static bool zswap_compress(struct folio *folio,
-struct zswap_entry *entry)
-        comp_ret =3D
-crypto_wait_req(crypto_acomp_compress(acomp_ctx->req),
-&acomp_ctx->wait);
-        dlen =3D acomp_ctx->req->dlen;
+$ vng --run . --user root -- "make -C tools/testing/selftests/ \
+    KSFT_MACHINE_SLOW=yes TARGETS=net/openvswitch run_tests"
 
--       /* coa_compress returns -EINVAL for errors including
-insufficient dlen */
--       if (comp_ret && comp_ret !=3D -EINVAL)
--               goto unlock;
--
-        /*
-         * If the data cannot be compressed well, store the data as-is.
-         * Switching by a threshold at
-@@ -1056,7 +1050,8 @@ static bool zswap_compress(struct folio *folio,
-struct zswap_entry *entry)
-         */
-        if (comp_ret || dlen > PAGE_SIZE - 64) {
-                /* we do not use compressed result anymore */
--               comp_ret =3D 0;
-+               mutex_unlock(&acomp_ctx->mutex);
-+               acomp_ctx =3D NULL;
-                dlen =3D PAGE_SIZE;
-        }
-        zpool =3D zswap_find_zpool(entry);
-@@ -1083,12 +1078,11 @@ static bool zswap_compress(struct folio
-*folio, struct zswap_entry *entry)
- unlock:
-        if (alloc_ret =3D=3D -ENOSPC)
-                zswap_reject_compress_poor++;
--       else if (comp_ret)
--               zswap_reject_compress_fail++;
-        else if (alloc_ret)
-                zswap_reject_alloc_fail++;
+Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+---
+ .../selftests/net/openvswitch/openvswitch.sh  | 49 ++++++++++++++++---
+ .../selftests/net/openvswitch/ovs-dpctl.py    |  1 +
+ 2 files changed, 42 insertions(+), 8 deletions(-)
 
--       mutex_unlock(&acomp_ctx->mutex);
-+       if (acomp_ctx)
-+               mutex_unlock(&acomp_ctx->mutex);
-        return comp_ret =3D=3D 0 && alloc_ret =3D=3D 0;
+diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+index bc71dbc18b21..83407b42073a 100755
+--- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
++++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+@@ -11,6 +11,7 @@ ksft_skip=4
+ PAUSE_ON_FAIL=no
+ VERBOSE=0
+ TRACING=0
++WAIT_TIMEOUT=5
+ 
+ tests="
+ 	arp_ping				eth-arp: Basic arp ping between two NS
+@@ -29,6 +30,32 @@ info() {
+ 	[ $VERBOSE = 0 ] || echo $*
  }
+ 
++ovs_wait() {
++	info "waiting $WAIT_TIMEOUT s for: $@"
++
++	"$@"
++	if [[ $? -eq 0 ]]; then
++		info "wait succeeded inmediately"
++		return 0
++	fi
++
++	# A quick re-check helps speed up small races in fast systems.
++	# However, fractional sleeps might not necessarily work.
++	local start=0
++	sleep 0.1 || { sleep 1; start=1; }
++
++	for (( i=start; i<WAIT_TIMEOUT; i++ )); do
++		"$@"
++		if [[ $? -eq 0 ]]; then
++			info "wait succeeded after $i seconds"
++			return 0
++		fi
++		sleep 1
++	done
++	info "wait failed after $i seconds"
++	return 1
++}
++
+ ovs_base=`pwd`
+ sbxs=
+ sbx_add () {
+@@ -278,20 +305,21 @@ test_psample() {
+ 
+ 	# Record psample data.
+ 	ovs_spawn_daemon "test_psample" python3 $ovs_base/ovs-dpctl.py psample-events
++	ovs_wait grep -q "listening for psample events" ${ovs_dir}/stdout
+ 
+ 	# Send a single ping.
+-	sleep 1
+ 	ovs_sbx "test_psample" ip netns exec client ping -I c1 172.31.110.20 -c 1 || return 1
+-	sleep 1
+ 
+ 	# We should have received one userspace action upcall and 2 psample packets.
+-	grep -E "userspace action command" $ovs_dir/s0.out >/dev/null 2>&1 || return 1
++	ovs_wait grep -q "userspace action command" $ovs_dir/s0.out
++	[[ $? -eq 0 ]] || return 1
+ 
+ 	# client -> server samples should only contain the first 14 bytes of the packet.
+-	grep -E "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" \
+-			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+-	grep -E "rate:4294967295,group:2,cookie:eeff0c" \
+-			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
++	ovs_wait grep -qE "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" $ovs_dir/stdout
++	[[ $? -eq 0 ]] || return 1
++
++	ovs_wait grep -q "rate:4294967295,group:2,cookie:eeff0c" $ovs_dir/stdout
++	[[ $? -eq 0 ]] || return 1
+ 
+ 	return 0
+ }
+@@ -711,7 +739,8 @@ test_upcall_interfaces() {
+ 	ovs_add_netns_and_veths "test_upcall_interfaces" ui0 upc left0 l0 \
+ 	    172.31.110.1/24 -u || return 1
+ 
+-	sleep 1
++	ovs_wait grep -q "listening on upcall packet handler" ${ovs_dir}/left0.out
++
+ 	info "sending arping"
+ 	ip netns exec upc arping -I l0 172.31.110.20 -c 1 \
+ 	    >$ovs_dir/arping.stdout 2>$ovs_dir/arping.stderr
+@@ -811,6 +840,10 @@ shift $(($OPTIND-1))
+ IFS="	
+ "
+ 
++if test "X$KSFT_MACHINE_SLOW" == "Xyes"; then
++	WAIT_TIMEOUT=10
++fi
++
+ for arg do
+ 	# Check first that all requested tests are available before running any
+ 	command -v > /dev/null "test_${arg}" || { echo "=== Test ${arg} not found"; usage; }
+diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+index 1e15b0818074..8a0396bfaf99 100644
+--- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
++++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+@@ -2520,6 +2520,7 @@ class PsampleEvent(EventSocket):
+     marshal_class = psample_msg
+ 
+     def read_samples(self):
++        print("listening for psample events", flush=True)
+         while True:
+             try:
+                 for msg in self.get():
+-- 
+2.45.2
 
-@@ -1886,8 +1880,6 @@ static int zswap_debugfs_init(void)
-                           zswap_debugfs_root, &zswap_reject_alloc_fail);
-        debugfs_create_u64("reject_kmemcache_fail", 0444,
-                           zswap_debugfs_root, &zswap_reject_kmemcache_fail=
-);
--       debugfs_create_u64("reject_compress_fail", 0444,
--                          zswap_debugfs_root, &zswap_reject_compress_fail)=
-;
-        debugfs_create_u64("reject_compress_poor", 0444,
-                           zswap_debugfs_root, &zswap_reject_compress_poor)=
-;
-        debugfs_create_u64("written_back_pages", 0444,
 
