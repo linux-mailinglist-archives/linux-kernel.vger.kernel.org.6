@@ -1,532 +1,273 @@
-Return-Path: <linux-kernel+bounces-244761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291B392A912
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:40:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8D192A915
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A017B1F21B99
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 942B41C213C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4350914C58E;
-	Mon,  8 Jul 2024 18:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253E814B07B;
+	Mon,  8 Jul 2024 18:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okIw/pzu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="M+zlEjg5"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2130.outbound.protection.outlook.com [40.107.243.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B5D15A8;
-	Mon,  8 Jul 2024 18:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720463976; cv=none; b=D1wfhtUj6YlH06yHZV0TZd2Fb9UEbteg6oGE+WOmXGcgfoOtI7P2lYJi7FJR/3qk7K+jT6W0wc6bqqIDZOgJWZXhz0dJFzajFT69i3DKxeY6BOh9Mr2/1opHTG4/cAF6Q/hrLNwYHySUWRlZZJ9lmYCAVa5+z6Mtv8BDkHUGYfY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720463976; c=relaxed/simple;
-	bh=ZfuNEYoOqOCSPJu9L+u4555sPJkVhSKzoTzDgt8B10g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uoYNjFc6Pw0zk8WJmgn5oqvv+1AA1k4+P07zLxI3TAVrIKT2bFAvIrQcDQRKgx2nviAjlZm2a6Cdc8K86rHccckyVnm9bmuTJCcl9fgvOKeR+zCOZhH4BPpnnwluLETC10Xn9z9gxpuqxFa43oO0VCBxPckVzK3JvooHb5Y4LWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okIw/pzu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F1AC116B1;
-	Mon,  8 Jul 2024 18:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720463975;
-	bh=ZfuNEYoOqOCSPJu9L+u4555sPJkVhSKzoTzDgt8B10g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=okIw/pzu3JfDI+SuRjRu6Lg2fZp59TABGNHzWtUMXi1yiV4im/7vbZvhr+yHyclWu
-	 b8pj1cCt7+dMkS3EMoClZpGKx4pIifLewsXrJj0jeCWztHaFeGJuioiwLFr3zN7Cvq
-	 F3ItIeCLtLwxhVCCaQvYTNKCIDaRbIcE+1VfvIN6mB0xOKOsV3dJUKK98XJN11zozX
-	 mZcawitHcP+3XP7RpcCbizP7HI0NE46D5X4wpRj8Mw/FJLB/17Tdyl8a+GvYD/7Wlu
-	 BqU8lVjWdx5gBP9TT1NDxEPhAg8Q7g1i58kXCA+/jDlt9rD6c7jEQjPvlBPbat14TE
-	 PeJy0uSWkPq3A==
-Date: Mon, 8 Jul 2024 11:39:34 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v4 1/9] fs: add infrastructure for multigrain timestamps
-Message-ID: <20240708183934.GO612460@frogsfrogsfrogs>
-References: <20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org>
- <20240708-mgtime-v4-1-a0f3c6fb57f3@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FB315A8;
+	Mon,  8 Jul 2024 18:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720464100; cv=fail; b=YBRUTUx4/Emb7znXtwVowMz6Kbz85gUlIUzM8+h0mWOwnAuPQgnfo830xL9oon5TzZQJ9QSKSfc359gQCCNFikarljU7QpcIf36BdrMqNclLKxIMW44/KN8RG/If2P2vuF0GFLZzcBCCXajTZhfbyoESOolOsLBQTl8cx9Ov1mc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720464100; c=relaxed/simple;
+	bh=2WZgdKNtpW+OneTpr/XXQ2vXPaQ/z07eBoAWoBv/r5o=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=um6XdMboMxKDvWGfV/vl3w5qL/vvY3ktzEjLUpi0rwGvc0QCr7+gi+tqGHT3T8czTElv0GCi+BaF4VC/zxh4p7PwlM8qf8hCkTuW1LeMFRY2XgbePHfXl2f/G1jDGHLtNPXRzuHySuQeXEkOiszbDVZKQ0i09/9umC6vp7UYDdQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=M+zlEjg5; arc=fail smtp.client-ip=40.107.243.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=llIPk+xVJHo6tI5E3lE2ZbavwqfMvjdPy4234lDTkY6HSOm/3ZLFEWN7+FKf0UaPxg275GLxX3+Q0i4+bsTDkHJkSbP7bQdG2oDFeQa9bii6OzhLpxS4al9OQ+Lh51NvFefRtoIjuFj5bn2orNKbUHt31q28+l9mCJxv02J244pLtzc6JfvjtnUeGUUnhE/7RVLZH/dtVC2RRZAvjA4J8bZIcI5waDGcHz0LKW4/HjR8qw/e9so0Zyl49TpDFXrZzPCzpPHhIrZLCz9+HLZfjsjOi2JBFKUvJmy5x/kzzhhi7s/71rmEQuDLfzmTuUS6mXAc/md62JLHP8jCKcucVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QhM3jk0nTtrM1qoyGwtf/AwVRYhob+LTEmey53LszAQ=;
+ b=xY2aGPot/jtFUTaaA9SBrkXdvA4OwuQioUwU61fFO6flgpmJT5IywyKXjtr7Er3oYLW2oVA/8OlGDkysu9VzhI0p8hNsLgYjmf1WTFDNVyzS5KAXweRP69hWx5d8UPC5HxtGcDBPl3wjDiBhJNcicfRaOxIH8KlIJrJa48/DDmSoCFQU+gNNMd/GM6Ocj2rwOIijLiSWndefCOEZRDl47fUNkyShGx4paPXwwv5kCO1zZYXHeVr0AMx4yHB8TM1/axYCaT5WMyAawT0iB6LmAB6CLTQtZzvIGCpYVDLQ6f1hpd1D8ECj/8EIhezTN6ppUpLCNlngN1Kw7Dch2YgDcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QhM3jk0nTtrM1qoyGwtf/AwVRYhob+LTEmey53LszAQ=;
+ b=M+zlEjg5fRtMowmTYQruLxVV1PGd0MxCf7+OXuEBGKDRBpjhx/lvw92bHuof/3dvpzlaRdbpV8XyXYrRItJQqHlz9U70rxbnhQD3R/GXOjntJnjIG/viIInF8LT9PHkJ2+DTo4HqDzPOav0shJSLe0XxA0zVzaRRlZdwa79+sxY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+Received: from SA3PR21MB3915.namprd21.prod.outlook.com (2603:10b6:806:300::22)
+ by MW4PR21MB2060.namprd21.prod.outlook.com (2603:10b6:303:11f::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.3; Mon, 8 Jul
+ 2024 18:41:35 +0000
+Received: from SA3PR21MB3915.namprd21.prod.outlook.com
+ ([fe80::d498:7336:91d0:7372]) by SA3PR21MB3915.namprd21.prod.outlook.com
+ ([fe80::d498:7336:91d0:7372%3]) with mapi id 15.20.7784.001; Mon, 8 Jul 2024
+ 18:41:35 +0000
+From: Dexuan Cui <decui@microsoft.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-coco@lists.linux.dev (open list:X86 TRUST DOMAIN EXTENSIONS (TDX)),
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Cc: Dexuan Cui <decui@microsoft.com>,
+	Michael Kelley <mikelley@microsoft.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
+Date: Mon,  8 Jul 2024 18:39:45 +0000
+Message-Id: <20240708183946.3991-1-decui@microsoft.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CY5PR03CA0009.namprd03.prod.outlook.com
+ (2603:10b6:930:8::19) To SA3PR21MB3915.namprd21.prod.outlook.com
+ (2603:10b6:806:300::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708-mgtime-v4-1-a0f3c6fb57f3@kernel.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR21MB3915:EE_|MW4PR21MB2060:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86679cd6-df82-4101-4225-08dc9f7d9764
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5HV5p+Ip+h43SwdMQbqh7ezsuFyIb5/64aSK/YD1j/Ht8Y+fycrzTeHyZltJ?=
+ =?us-ascii?Q?faW2p2xar3w9BL+ZNzpSwqOnO6SGx9Oyhrgwesf8r+I5+wXDZ7IDQH8V4cO6?=
+ =?us-ascii?Q?KYu8OxyapTPneKYjF8jKMdngoAV3zVA8GUmHZBjpoGcN1nosEIijOauTFOVz?=
+ =?us-ascii?Q?0zglvzvfPK8bUnZe3INSs4t8ULtf+hKd1w5qvRICg/3m9+guYraEB3I79S2j?=
+ =?us-ascii?Q?QKNP1XrsjCECzKyJj7pJGk3hds+YSA7wuLzUPLH8oS9ZndJ2O3fAU4T27UXL?=
+ =?us-ascii?Q?RTvbBUi7D/NY5UpMJiytijxa7GF79LR36RokM8F1jB6Ms4KE83u5boTNwbPJ?=
+ =?us-ascii?Q?PVmjkW4WnewBXvF76ABEuw5xDHQYkspautbuvFX6OkHO/p4Ihm8DbwTyJrql?=
+ =?us-ascii?Q?9A5I+uSUBOS59ZhMNYK92OvCCBRS5J9dpe4YIYtgrfwJ7v5kEE+UzvgwKMyq?=
+ =?us-ascii?Q?Fi3MG8iJ5qXqs6svauu/oYwgSngPQETymFX77+toJgI+n3NvrwQntoFMZKm9?=
+ =?us-ascii?Q?OE2K+P8yctROmsKhN3zNkS2VvY2v3+2+/TZ0yVpsmLI0WgWuIN5gE/yqmtov?=
+ =?us-ascii?Q?mbREJVqfUBwd/qVtdplHL3+6w1fsIjboLNVynWnPnqelfVFqU1dIQUW88Yo+?=
+ =?us-ascii?Q?hsPM8a+lFfrLh4f8GLS5CXtCJsJCtQf7LU0tZelu+3iozTl5cPYJZIWxi7NQ?=
+ =?us-ascii?Q?6PG+2ijZIPKIPIyz9zYLVTwmOxFKXb6CgkHnhcpJIcRqCcmFFCjJx51rtxDc?=
+ =?us-ascii?Q?YjDZvyx5roo2YRJ920v6Xi4tj0KT5xoESrzZ5bmby3ONlDrC54K7dBhcsPEd?=
+ =?us-ascii?Q?SJbfYt1A9b7mgFmbztw7mz2J3qgvekuwJRE8LC0MQO5jePqDKcXpAAdGNgeL?=
+ =?us-ascii?Q?cjr3ETkh+GplYiBx2kOpvoyTMPmTqofp0UygfvkOctKTrQbAyjqwdECrIwz4?=
+ =?us-ascii?Q?scPcdbz8KSAvQ4Lqa/N6v6vq1HsFzQn1uE8j018vDqX/Zq2eTzLBiFToT5eE?=
+ =?us-ascii?Q?q3RGAqFCOIFcvT+kJsBqAj6osDt1QnwwY0ua1VcD/hh1E3gP/XohyXvyYpEe?=
+ =?us-ascii?Q?hjuScpaCF09val8XW2uqabzZt0rUnPuH9TuJ5uI7d+Ia76rNLgDqHtOBHx2T?=
+ =?us-ascii?Q?HKCU/w5YX2kNcIs6GBKLgcVADxnmlrMQBvUiTrwhJ2fENhpCIXjhylahOFLt?=
+ =?us-ascii?Q?ecQlWFd7bhCP/51tikEUprPSiAuvxfbghJGB1KedYk5StGvm34KX1kQvi891?=
+ =?us-ascii?Q?QwEhPOnHbDFe3e6WxKcBucHvd4MuIb9KdNDeUFEWPYglVPJdYW3lzZPvHb+U?=
+ =?us-ascii?Q?0dQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR21MB3915.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?EkLfwItuQQeL81EekhoUHVT15GQi4Rz0P6eYK1YEZratuq8DbGh4o9anjPnC?=
+ =?us-ascii?Q?CqM4F2f1tINWdUbgFTAjxcRMU3XC1mlpsFf6JuFsd0JfBACrv1dyMN1ZrCJf?=
+ =?us-ascii?Q?3llN96RBnyr2k0Z4dacIKFRMssbmleo6sJN9seT0wJBZ2sXQf4++CRSXw/h9?=
+ =?us-ascii?Q?wv87PQFib9pcb9wmgXykvmuzHPkFFutit0Fk6G0g5rdbhYd0PF3/kVp8k6+V?=
+ =?us-ascii?Q?0HMKqeJFyJeyPvr2cqHmM+CpbUrtq2ddYIYgdLMXWyh/gNSRKy9x4BHRC5wF?=
+ =?us-ascii?Q?iUetbmRbPUINfoe1hDaKCdUteYg//nXo1U65nOIX4wIGpD46es3OyN0UkiOK?=
+ =?us-ascii?Q?57Gu8QbzsVJTWor1MqlU4OSKWjUg8qmlE5wKQTmvZ1f7MPBDR5z6zp9alGI1?=
+ =?us-ascii?Q?e89QKPqqh8M+9cZ/YT7SOXa5PO/oAOPtoPWvJudpz177TRg30Ts+N193VvwI?=
+ =?us-ascii?Q?DG0um5tvibKH91Sw+hz7/i0/EI6cL1FIVTv/TzVYmTp3eerAIqfyjprCgJhf?=
+ =?us-ascii?Q?OGG/KMvulXSfR6h8kxlcgeBIQVv4iq91VeGOimh3cUoia+sj98f3b6p7LHJK?=
+ =?us-ascii?Q?OdJaANA8ZXbYiDPh0cr13mNgbIaNA2sHSLuhsL2jZzefl6X066sgWNFeXuzQ?=
+ =?us-ascii?Q?oeZBn/SaRPw+a5uQACBRQYc60svE9Ilt6bBEfhLuBIoplvT+EjnAetKx20qo?=
+ =?us-ascii?Q?RhEvme5FYpfLoh8nC6M9EIkHaWlo2pkJsiK3m2Gcuz2UOq7jeSck5b6Ye2k4?=
+ =?us-ascii?Q?e2yW5wIhISJc2JZRN+nPepN8TF396IduxuexRuH56Q23aRbAB8K2uiGb+2JT?=
+ =?us-ascii?Q?fVHuP9/VtgGbiGRSyzORgnNvZFHAt+dYa3Kf3T6ms991hXg6DgSxJYE9kiS5?=
+ =?us-ascii?Q?VJBsbZE42q5XQxoi+tzNPopKbIpTf29M/7stAaE+/K1RXSR8VEp9f9cYuEJG?=
+ =?us-ascii?Q?xNHD966fPbtBJwEAOIu+vRsX5wmjK1Gx9zzb9rYiZiSPOFlYyHLSHc+HGbRv?=
+ =?us-ascii?Q?6+7rHAzzM4XuRFQ8hTzcde+i0O1Q6Ch1uTmb3CdagH+70GzRPlW1mjasqWCo?=
+ =?us-ascii?Q?6TksFtIfzKr+M5Cktmf+fYo3RypYFSwyGIHGVPsUbRsXBrDJgj8B9bCzVL9B?=
+ =?us-ascii?Q?5/YUwiFj7x7j2caDbHfgAl2uYAuQnyqdZQEoITIb0/qO010F6Yv1uDOTt231?=
+ =?us-ascii?Q?uxtPT4fhu54ESB5kDACc8cYHLUlh4WlW3pQp/oWu8NBTP77QF9DzJkljWpj0?=
+ =?us-ascii?Q?A8g9IXLIPmCbJ6bKChdHHhgttuH+LebRob2zyRYJvcXprqynnTUv1eekCR0D?=
+ =?us-ascii?Q?f2E3lNOUV+Rxw3UvNmHG7yl9kT1KnnO6oajG8otx+kLNCr+P5wy/kXEPqSQ5?=
+ =?us-ascii?Q?R5dZO9SpI3i4pzVeOQoMuZQLC5Ow3kfVNo6+qsoe01zswRhqnWPpk0V/q1x0?=
+ =?us-ascii?Q?r8PIrcZrH/YQeOROSprU/sryZ33+uInc4jP9xDBS1+ZIY6NAggCROSTLM1xP?=
+ =?us-ascii?Q?bTx5h8N+KSDacX0xKCA5j4dPOecwrINB/R9lmxiz14l5kgM2rFASj4q3fY0p?=
+ =?us-ascii?Q?hsdJNVqNhxo0PIlpeJnis0NquyBk5WN9NBMP4rNhy6ZeHuhCbxM335+NxY/y?=
+ =?us-ascii?Q?1zBVpoD7QHL5DZ8NTdSuimXLlxNWgncs7RdF2zxkKZer?=
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86679cd6-df82-4101-4225-08dc9f7d9764
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR21MB3915.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 18:41:34.9008
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6JbH6trWvxRRIQPEy7vpnQ8rrgwDc2GOAko/NCBHPaz8B6z1Ioj2idaH7VTPUAlZoLZtcDRypDIIp9E8fqeICA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR21MB2060
 
-On Mon, Jul 08, 2024 at 11:53:34AM -0400, Jeff Layton wrote:
-> The VFS has always used coarse-grained timestamps when updating the
-> ctime and mtime after a change. This has the benefit of allowing
-> filesystems to optimize away a lot metadata updates, down to around 1
-> per jiffy, even when a file is under heavy writes.
-> 
-> Unfortunately, this has always been an issue when we're exporting via
-> NFSv3, which relies on timestamps to validate caches. A lot of changes
-> can happen in a jiffy, so timestamps aren't sufficient to help the
-> client decide when to invalidate the cache. Even with NFSv4, a lot of
-> exported filesystems don't properly support a change attribute and are
-> subject to the same problems with timestamp granularity. Other
-> applications have similar issues with timestamps (e.g backup
-> applications).
-> 
-> If we were to always use fine-grained timestamps, that would improve the
-> situation, but that becomes rather expensive, as the underlying
-> filesystem would have to log a lot more metadata updates.
-> 
-> What we need is a way to only use fine-grained timestamps when they are
-> being actively queried. Use the (unused) top bit in inode->i_ctime_nsec
-> as a flag that indicates whether the current timestamps have been
-> queried via stat() or the like. When it's set, we allow the kernel to
-> use a fine-grained timestamp iff it's necessary to make the ctime show
-> a different value.
+When a TDX guest runs on Hyper-V, the hv_netvsc driver's netvsc_init_buf()
+allocates buffers using vzalloc(), and needs to share the buffers with the
+host OS by calling set_memory_decrypted(), which is not working for
+vmalloc() yet. Add the support by handling the pages one by one.
 
-I appreciate the v3->v4 change that we hide the QUERIED flag in the
-upper bit of the ctime nanoseconds, instead of all support for post-2262
-timestamps.  Thank you. :)
+Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Kai Huang <kai.huang@intel.com>
+Cc: stable@vger.kernel.org
+---
 
-> This solves the problem of being able to distinguish the timestamp
-> between updates, but introduces a new problem: it's now possible for a
-> file being changed to get a fine-grained timestamp. A file that is
-> altered just a bit later can then get a coarse-grained one that appears
-> older than the earlier fine-grained time. This violates timestamp
-> ordering guarantees.
-> 
-> To remedy this, keep a global monotonic ktime_t value that acts as a
-> timestamp floor.  When we go to stamp a file, we first get the latter of
-> the current floor value and the current coarse-grained time. If the
-> inode ctime hasn't been queried then we just attempt to stamp it with
-> that value.
-> 
-> If it has been queried, then first see whether the current coarse time
-> is later than the existing ctime. If it is, then we accept that value.
-> If it isn't, then we get a fine-grained time and try to swap that into
-> the global floor. Whether that succeeds or fails, we take the resulting
-> floor time, convert it to realtime and try to swap that into the ctime.
+Hi Boris, Kirill and all,
+This patch was posted on May 20, 2024:
+Link: https://lore.kernel.org/all/20240521021238.1803-1-decui%40microsoft.com
 
-Makes sense to me.  One question, though -- mgtime filesystems that want
-to persist a ctime to disk are going to have to do something like this,
-right?
+The patch caused an issue to Kirill's kexec TDX patchset, so Kirill fixed it:
+Link: https://lore.kernel.org/all/uewczuxr5foiwe6wklhcgzi6ejfwgacxxoa67xadey62s46yro@quwpodezpxh5/
+Kirill agreed that I should repost the patch with his fix combined, hence I'm
+posting this new version, which is based on tip's master today (at the moment,
+it's commit aa9d8caba6e4 ("Merge timers/core into tip/master")).
 
-di_ctime_ns = cpu_to_be32(atomic_read(&inode->i_ctime_nsec) &
-			  ~I_CTIME_QUERIED);
+I suppose the patch would go in the branch tip/master or x86/tdx.
 
-IOWs, they need to mask off the QUERIED flag (aka bit 31) so that they
-never store a strange looking nanoseconds value.  Probably they should
-already be doing this, but I wouldn't trust them already to be clamping
-the nsec value.
+Thanks,
+Dexuan
 
-I'm mostly thinking of xfs_inode_to_disk, which currently calls
-inode_get_ctime() but doesn't clamp nsec at all before writing it to
-disk.  Does that need to mask off I_CTIME_QUERIED explicitly?
+ arch/x86/coco/tdx/tdx.c | 43 ++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 7 deletions(-)
 
-> We take the result of the ctime swap whether it succeeds or fails, since
-> either is just as valid.
-> 
-> Filesystems can opt into this by setting the FS_MGTIME fstype flag.
-> Others should be unaffected (other than being subject to the same floor
-> value as multigrain filesystems).
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/inode.c         | 171 ++++++++++++++++++++++++++++++++++++++++++++---------
->  fs/stat.c          |  36 ++++++++++-
->  include/linux/fs.h |  34 ++++++++---
->  3 files changed, 204 insertions(+), 37 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index f356fe2ec2b6..10ed1d3d9b52 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -60,6 +60,13 @@ static unsigned int i_hash_shift __ro_after_init;
->  static struct hlist_head *inode_hashtable __ro_after_init;
->  static __cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_hash_lock);
->  
-> +/*
-> + * This represents the latest fine-grained time that we have handed out as a
-> + * timestamp on the system. Tracked as a monotonic value, and converted to the
-> + * realtime clock on an as-needed basis.
-> + */
-> +static __cacheline_aligned_in_smp ktime_t ctime_floor;
+diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+index 078e2bac25531..8f471260924f7 100644
+--- a/arch/x86/coco/tdx/tdx.c
++++ b/arch/x86/coco/tdx/tdx.c
+@@ -8,6 +8,7 @@
+ #include <linux/export.h>
+ #include <linux/io.h>
+ #include <linux/kexec.h>
++#include <linux/mm.h>
+ #include <asm/coco.h>
+ #include <asm/tdx.h>
+ #include <asm/vmx.h>
+@@ -782,6 +783,19 @@ static bool tdx_map_gpa(phys_addr_t start, phys_addr_t end, bool enc)
+ 	return false;
+ }
+ 
++static bool tdx_enc_status_changed_phys(phys_addr_t start, phys_addr_t end,
++					bool enc)
++{
++	if (!tdx_map_gpa(start, end, enc))
++		return false;
++
++	/* shared->private conversion requires memory to be accepted before use */
++	if (enc)
++		return tdx_accept_memory(start, end);
++
++	return true;
++}
++
+ /*
+  * Inform the VMM of the guest's intent for this physical page: shared with
+  * the VMM or private to the guest.  The VMM is expected to change its mapping
+@@ -789,15 +803,30 @@ static bool tdx_map_gpa(phys_addr_t start, phys_addr_t end, bool enc)
+  */
+ static bool tdx_enc_status_changed(unsigned long vaddr, int numpages, bool enc)
+ {
+-	phys_addr_t start = __pa(vaddr);
+-	phys_addr_t end   = __pa(vaddr + numpages * PAGE_SIZE);
++	unsigned long start = vaddr;
++	unsigned long end = start + numpages * PAGE_SIZE;
++	unsigned long step = end - start;
++	unsigned long addr;
++
++	/* Step through page-by-page for vmalloc() mappings */
++	if (is_vmalloc_addr((void *)vaddr))
++		step = PAGE_SIZE;
++
++	for (addr = start; addr < end; addr += step) {
++		phys_addr_t start_pa;
++		phys_addr_t end_pa;
++
++		/* The check fails on vmalloc() mappings */
++		if (virt_addr_valid(addr))
++			start_pa = __pa(addr);
++		else
++			start_pa = slow_virt_to_phys((void *)addr);
+ 
+-	if (!tdx_map_gpa(start, end, enc))
+-		return false;
++		end_pa = start_pa + step;
+ 
+-	/* shared->private conversion requires memory to be accepted before use */
+-	if (enc)
+-		return tdx_accept_memory(start, end);
++		if (!tdx_enc_status_changed_phys(start_pa, end_pa, enc))
++			return false;
++	}
+ 
+ 	return true;
+ }
+-- 
+2.25.1
 
-ktime_get claims that it stops when the system is suspended; will that
-cause problems after a resume?  I /think/ the answer is no because any
-change to the file after a resume will first determine the coarse grain
-ctime value, which will be far beyond the floor.  The new coarse grain
-ctime will be written to the inode and become the new floor, as provided
-by coarse_ctime().
-
-The rest of the code here makes sense to me.
-
---D
-
-> +
->  /*
->   * Empty aops. Can be used for the cases where the user does not
->   * define any of the address_space operations.
-> @@ -2127,19 +2134,72 @@ int file_remove_privs(struct file *file)
->  }
->  EXPORT_SYMBOL(file_remove_privs);
->  
-> +/**
-> + * coarse_ctime - return the current coarse-grained time
-> + * @floor: current (monotonic) ctime_floor value
-> + *
-> + * Get the coarse-grained time, and then determine whether to
-> + * return it or the current floor value. Returns the later of the
-> + * floor and coarse grained timestamps, converted to realtime
-> + * clock value.
-> + */
-> +static ktime_t coarse_ctime(ktime_t floor)
-> +{
-> +	ktime_t coarse = ktime_get_coarse();
-> +
-> +	/* If coarse time is already newer, return that */
-> +	if (!ktime_after(floor, coarse))
-> +		return ktime_mono_to_real(coarse);
-> +	return ktime_mono_to_real(floor);
-> +}
-> +
-> +/**
-> + * current_time - Return FS time (possibly fine-grained)
-> + * @inode: inode.
-> + *
-> + * Return the current time truncated to the time granularity supported by
-> + * the fs, as suitable for a ctime/mtime change. If the ctime is flagged
-> + * as having been QUERIED, get a fine-grained timestamp.
-> + */
-> +struct timespec64 current_time(struct inode *inode)
-> +{
-> +	ktime_t floor = smp_load_acquire(&ctime_floor);
-> +	ktime_t now = coarse_ctime(floor);
-> +	struct timespec64 now_ts = ktime_to_timespec64(now);
-> +	u32 cns;
-> +
-> +	if (!is_mgtime(inode))
-> +		goto out;
-> +
-> +	/* If nothing has queried it, then coarse time is fine */
-> +	cns = smp_load_acquire(&inode->i_ctime_nsec);
-> +	if (cns & I_CTIME_QUERIED) {
-> +		/*
-> +		 * If there is no apparent change, then
-> +		 * get a fine-grained timestamp.
-> +		 */
-> +		if (now_ts.tv_nsec == (cns & ~I_CTIME_QUERIED))
-> +			ktime_get_real_ts64(&now_ts);
-> +	}
-> +out:
-> +	return timestamp_truncate(now_ts, inode);
-> +}
-> +EXPORT_SYMBOL(current_time);
-> +
->  static int inode_needs_update_time(struct inode *inode)
->  {
-> +	struct timespec64 now, ts;
->  	int sync_it = 0;
-> -	struct timespec64 now = current_time(inode);
-> -	struct timespec64 ts;
->  
->  	/* First try to exhaust all avenues to not sync */
->  	if (IS_NOCMTIME(inode))
->  		return 0;
->  
-> +	now = current_time(inode);
-> +
->  	ts = inode_get_mtime(inode);
->  	if (!timespec64_equal(&ts, &now))
-> -		sync_it = S_MTIME;
-> +		sync_it |= S_MTIME;
->  
->  	ts = inode_get_ctime(inode);
->  	if (!timespec64_equal(&ts, &now))
-> @@ -2507,6 +2567,14 @@ void inode_nohighmem(struct inode *inode)
->  }
->  EXPORT_SYMBOL(inode_nohighmem);
->  
-> +struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 ts)
-> +{
-> +	inode->i_ctime_sec = ts.tv_sec;
-> +	inode->i_ctime_nsec = ts.tv_nsec & ~I_CTIME_QUERIED;
-> +	return ts;
-> +}
-> +EXPORT_SYMBOL(inode_set_ctime_to_ts);
-> +
->  /**
->   * timestamp_truncate - Truncate timespec to a granularity
->   * @t: Timespec
-> @@ -2538,38 +2606,87 @@ struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode)
->  }
->  EXPORT_SYMBOL(timestamp_truncate);
->  
-> -/**
-> - * current_time - Return FS time
-> - * @inode: inode.
-> - *
-> - * Return the current time truncated to the time granularity supported by
-> - * the fs.
-> - *
-> - * Note that inode and inode->sb cannot be NULL.
-> - * Otherwise, the function warns and returns time without truncation.
-> - */
-> -struct timespec64 current_time(struct inode *inode)
-> -{
-> -	struct timespec64 now;
-> -
-> -	ktime_get_coarse_real_ts64(&now);
-> -	return timestamp_truncate(now, inode);
-> -}
-> -EXPORT_SYMBOL(current_time);
-> -
->  /**
->   * inode_set_ctime_current - set the ctime to current_time
->   * @inode: inode
->   *
-> - * Set the inode->i_ctime to the current value for the inode. Returns
-> - * the current value that was assigned to i_ctime.
-> + * Set the inode's ctime to the current value for the inode. Returns the
-> + * current value that was assigned. If this is not a multigrain inode, then we
-> + * just set it to whatever the coarse_ctime is.
-> + *
-> + * If it is multigrain, then we first see if the coarse-grained timestamp is
-> + * distinct from what we have. If so, then we'll just use that. If we have to
-> + * get a fine-grained timestamp, then do so, and try to swap it into the floor.
-> + * We accept the new floor value regardless of the outcome of the cmpxchg.
-> + * After that, we try to swap the new value into i_ctime_nsec. Again, we take
-> + * the resulting ctime, regardless of the outcome of the swap.
->   */
->  struct timespec64 inode_set_ctime_current(struct inode *inode)
->  {
-> -	struct timespec64 now = current_time(inode);
-> +	ktime_t now, floor = smp_load_acquire(&ctime_floor);
-> +	struct timespec64 now_ts;
-> +	u32 cns, cur;
-> +
-> +	now = coarse_ctime(floor);
->  
-> -	inode_set_ctime_to_ts(inode, now);
-> -	return now;
-> +	/* Just return that if this is not a multigrain fs */
-> +	if (!is_mgtime(inode)) {
-> +		now_ts = ktime_to_timespec64(now);
-> +		inode_set_ctime_to_ts(inode, now_ts);
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * We only need a fine-grained time if someone has queried it,
-> +	 * and the current coarse grained time isn't later than what's
-> +	 * already there.
-> +	 */
-> +	cns = smp_load_acquire(&inode->i_ctime_nsec);
-> +	if (cns & I_CTIME_QUERIED) {
-> +		ktime_t ctime = ktime_set(inode->i_ctime_sec, cns & ~I_CTIME_QUERIED);
-> +
-> +		if (!ktime_after(now, ctime)) {
-> +			ktime_t old, fine;
-> +
-> +			/* Get a fine-grained time */
-> +			fine = ktime_get();
-> +
-> +			/*
-> +			 * If the cmpxchg works, we take the new floor value. If
-> +			 * not, then that means that someone else changed it after we
-> +			 * fetched it but before we got here. That value is just
-> +			 * as good, so keep it.
-> +			 */
-> +			old = floor;
-> +			if (!try_cmpxchg(&ctime_floor, &old, fine))
-> +				fine = old;
-> +			now = ktime_mono_to_real(fine);
-> +		}
-> +	}
-> +	now_ts = ktime_to_timespec64(now);
-> +	cur = cns;
-> +retry:
-> +	/* Try to swap the nsec value into place. */
-> +	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now_ts.tv_nsec)) {
-> +		/* If swap occurred, then we're (mostly) done */
-> +		inode->i_ctime_sec = now_ts.tv_sec;
-> +	} else {
-> +		/*
-> +		 * Was the change due to someone marking the old ctime QUERIED?
-> +		 * If so then retry the swap. This can only happen once since
-> +		 * the only way to clear I_CTIME_QUERIED is to stamp the inode
-> +		 * with a new ctime.
-> +		 */
-> +		if (!(cns & I_CTIME_QUERIED) && (cns | I_CTIME_QUERIED) == cur) {
-> +			cns = cur;
-> +			goto retry;
-> +		}
-> +		/* Otherwise, keep the existing ctime */
-> +		now_ts.tv_sec = inode->i_ctime_sec;
-> +		now_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
-> +	}
-> +out:
-> +	return timestamp_truncate(now_ts, inode);
->  }
->  EXPORT_SYMBOL(inode_set_ctime_current);
->  
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 6f65b3456cad..df7fdd3afed9 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -26,6 +26,32 @@
->  #include "internal.h"
->  #include "mount.h"
->  
-> +/**
-> + * fill_mg_cmtime - Fill in the mtime and ctime and flag ctime as QUERIED
-> + * @stat: where to store the resulting values
-> + * @request_mask: STATX_* values requested
-> + * @inode: inode from which to grab the c/mtime
-> + *
-> + * Given @inode, grab the ctime and mtime out if it and store the result
-> + * in @stat. When fetching the value, flag it as queried so the next write
-> + * will ensure a distinct timestamp.
-> + */
-> +void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
-> +{
-> +	atomic_t *pcn = (atomic_t *)&inode->i_ctime_nsec;
-> +
-> +	/* If neither time was requested, then don't report them */
-> +	if (!(request_mask & (STATX_CTIME|STATX_MTIME))) {
-> +		stat->result_mask &= ~(STATX_CTIME|STATX_MTIME);
-> +		return;
-> +	}
-> +
-> +	stat->mtime = inode_get_mtime(inode);
-> +	stat->ctime.tv_sec = inode->i_ctime_sec;
-> +	stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn)) & ~I_CTIME_QUERIED;
-> +}
-> +EXPORT_SYMBOL(fill_mg_cmtime);
-> +
->  /**
->   * generic_fillattr - Fill in the basic attributes from the inode struct
->   * @idmap:		idmap of the mount the inode was found from
-> @@ -58,8 +84,14 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
->  	stat->rdev = inode->i_rdev;
->  	stat->size = i_size_read(inode);
->  	stat->atime = inode_get_atime(inode);
-> -	stat->mtime = inode_get_mtime(inode);
-> -	stat->ctime = inode_get_ctime(inode);
-> +
-> +	if (is_mgtime(inode)) {
-> +		fill_mg_cmtime(stat, request_mask, inode);
-> +	} else {
-> +		stat->ctime = inode_get_ctime(inode);
-> +		stat->mtime = inode_get_mtime(inode);
-> +	}
-> +
->  	stat->blksize = i_blocksize(inode);
->  	stat->blocks = inode->i_blocks;
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index dc9f9c4b2572..f873f6c58669 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1608,6 +1608,17 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
->  	return inode_set_mtime_to_ts(inode, ts);
->  }
->  
-> +/*
-> + * Multigrain timestamps
-> + *
-> + * Conditionally use fine-grained ctime and mtime timestamps when there
-> + * are users actively observing them via getattr. The primary use-case
-> + * for this is NFS clients that use the ctime to distinguish between
-> + * different states of the file, and that are often fooled by multiple
-> + * operations that occur in the same coarse-grained timer tick.
-> + */
-> +#define I_CTIME_QUERIED		((u32)BIT(31))
-> +
->  static inline time64_t inode_get_ctime_sec(const struct inode *inode)
->  {
->  	return inode->i_ctime_sec;
-> @@ -1615,7 +1626,7 @@ static inline time64_t inode_get_ctime_sec(const struct inode *inode)
->  
->  static inline long inode_get_ctime_nsec(const struct inode *inode)
->  {
-> -	return inode->i_ctime_nsec;
-> +	return inode->i_ctime_nsec & ~I_CTIME_QUERIED;
->  }
->  
->  static inline struct timespec64 inode_get_ctime(const struct inode *inode)
-> @@ -1626,13 +1637,7 @@ static inline struct timespec64 inode_get_ctime(const struct inode *inode)
->  	return ts;
->  }
->  
-> -static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
-> -						      struct timespec64 ts)
-> -{
-> -	inode->i_ctime_sec = ts.tv_sec;
-> -	inode->i_ctime_nsec = ts.tv_nsec;
-> -	return ts;
-> -}
-> +struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 ts);
->  
->  /**
->   * inode_set_ctime - set the ctime in the inode
-> @@ -2490,6 +2495,7 @@ struct file_system_type {
->  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
->  #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
->  #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
-> +#define FS_MGTIME		64	/* FS uses multigrain timestamps */
->  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
->  	int (*init_fs_context)(struct fs_context *);
->  	const struct fs_parameter_spec *parameters;
-> @@ -2513,6 +2519,17 @@ struct file_system_type {
->  
->  #define MODULE_ALIAS_FS(NAME) MODULE_ALIAS("fs-" NAME)
->  
-> +/**
-> + * is_mgtime: is this inode using multigrain timestamps
-> + * @inode: inode to test for multigrain timestamps
-> + *
-> + * Return true if the inode uses multigrain timestamps, false otherwise.
-> + */
-> +static inline bool is_mgtime(const struct inode *inode)
-> +{
-> +	return inode->i_sb->s_type->fs_flags & FS_MGTIME;
-> +}
-> +
->  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
->  	int flags, const char *dev_name, void *data,
->  	int (*fill_super)(struct super_block *, void *, int));
-> @@ -3252,6 +3269,7 @@ extern void page_put_link(void *);
->  extern int page_symlink(struct inode *inode, const char *symname, int len);
->  extern const struct inode_operations page_symlink_inode_operations;
->  extern void kfree_link(void *);
-> +void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode);
->  void generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
->  void generic_fill_statx_attr(struct inode *inode, struct kstat *stat);
->  extern int vfs_getattr_nosec(const struct path *, struct kstat *, u32, unsigned int);
-> 
-> -- 
-> 2.45.2
-> 
-> 
 
