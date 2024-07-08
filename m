@@ -1,81 +1,129 @@
-Return-Path: <linux-kernel+bounces-244430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE60192A42E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CDEF92A432
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79A8A1F21708
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5731C211BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B5C13BAD7;
-	Mon,  8 Jul 2024 13:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0814113BAD7;
+	Mon,  8 Jul 2024 13:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wl4pPw3G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtw1fbI6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FDC13B28A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBDB137923;
+	Mon,  8 Jul 2024 13:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447073; cv=none; b=PggTmQGMrshWft1tD2DBKNtRW0DycmSiHxJVp7y+A8/KJ9mpNnRM7HMu8DaZKt15LrYob/O/jFasI60FZ55dF/jdx/Envyj0U1/GavsR3ltKzZed9kVbrOxNfUm63iRzbiomGO82/OI7BeyiixrIvJgr6tebUbVsFBAWtPDqgqg=
+	t=1720447110; cv=none; b=PFDUQrig2woHdFrdQbQ3P2B2+kykgQJooIgxzKd7+hMoZQThsX4V3vYCXvHMc2vzMbBp7JaZ4dHNU8e8EVINI72hI4NbBo2TX17fks2AxeemCWyVIgL2AflYFlagWZZjscPj6Y+Im51eoEq7OeN2u912zjFJj1bT60ghN+NojMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447073; c=relaxed/simple;
-	bh=NI2Va0dIBPRlNMM8PxX0A+c89MMRxbHjIsBSrjHfro4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPTKpS1hNzn4VYiWI/+pYZxMBzjzZ+VcZj9UndmR+mkOGRLJwnL5B7XBgA0cuQ4qcOq8njdFaEfyZCAgvusFPjijHj57GZFna3/RtR0667+tu8Srur9Nx6KUNb1D1RDDuA3IjTnIONoAIOFm+9KGcqO16EK6NrLi+2Rr4+uV7B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wl4pPw3G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BEF4C116B1;
-	Mon,  8 Jul 2024 13:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720447072;
-	bh=NI2Va0dIBPRlNMM8PxX0A+c89MMRxbHjIsBSrjHfro4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wl4pPw3G75v1J3FF/PtdqDy8acFTHGivUQNbU4l9zfH9dgom1XuCh0TSc8i1kpssN
-	 E1v3/ZWrOHFfmbajpSnHrSDNfhiBLQzhMImi7pd08Pu+y87kD99URsDzz2mYr6XMSR
-	 ISQqEsZNmPa8wkY+K5m/Mo0ucSIOxDqA1UpRmyyI=
-Date: Mon, 8 Jul 2024 15:57:49 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Lizhe <sensor1010@163.com>
-Cc: rafael@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] driver:core: no need to invert the return value of
- the call_driver_probe()
-Message-ID: <2024070829-zen-remake-6bfa@gregkh>
-References: <20240708134028.3508-1-sensor1010@163.com>
+	s=arc-20240116; t=1720447110; c=relaxed/simple;
+	bh=wouNF8BXEZ4escIBHpIcmwyAcz/iPh2eGVPERjaaqao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mVAiD+CPUQYLkW0sTnSjgwPMa6piMZOYFT0pypEXBAx787EHjI5Sb4vxgF7zpw8ypPOwtl138ybJbSe4u6x7ttDxQkQTwjASJrGxkWNdMCEsD44KzcNSyaqRO5CqdCOSLaEXBD4x76Sa1c0/gcu3se7pUS1JQ8TDO0nFJ+/WQK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtw1fbI6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C6EC116B1;
+	Mon,  8 Jul 2024 13:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720447109;
+	bh=wouNF8BXEZ4escIBHpIcmwyAcz/iPh2eGVPERjaaqao=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rtw1fbI6NfEPqJLhDMPj+Zq/6yh3YRxCtHJIZHWxUpJ5GQBvn5aG3/Nfnji4Sn4Wp
+	 /9Uaq6JQrk01k/YDnRE755ueLKQi9BKZFsECfsWzffN3kOC1yY8Zx548OyMXIIxWcz
+	 rNycKt4k4zEjef1GavNHedgDYbPaO3+WGN376lqDxaQ4anCA4AA/h+yaTXIAVw52Y1
+	 fgHb9ujqjIDxy7dC4cHJTfdvNnk18uvv2X+F6Gp8a5+Ium6Dlxag0y3nqyT+7oFpCW
+	 FaszMJFA03Ok+IMW/QqKWGeW0uZ5FiQ4cb6h3XSkpv8kY25jERYZHV5XR6iEmK+gYf
+	 FQa7NDGoNhiVA==
+Message-ID: <e7290b87-60a8-41ab-803b-3fbb06b27f67@kernel.org>
+Date: Mon, 8 Jul 2024 15:58:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708134028.3508-1-sensor1010@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: gpio: vf610: Allow gpio-line-names to
+ be set
+To: Frieder Schrempf <frieder@fris.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Stefan Agner <stefan@agner.ch>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Peng Fan <peng.fan@nxp.com>
+References: <20240708084107.38986-1-frieder@fris.de>
+ <20240708084107.38986-2-frieder@fris.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240708084107.38986-2-frieder@fris.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 08, 2024 at 06:40:28AM -0700, Lizhe wrote:
-> If drv->probe() or drv->bus->probe() returns EPROBE_DEFER,
-> then there is no need to invert the sign. Similarly,
-> if it returns -EPROBE_DEFER, no sign inversion is needed either
+On 08/07/2024 10:40, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> In the probe function (either bus->probe() or drv->probe()),
-> there is no return value of EPROBE_DEFER.
-> v2:
->         Delete the judgment with the return value of EPROBEDEFER
->         from the _driver_probe.device()
-> v1:
->         Add the judgment with the return value of EPROBEDEFER
->         from the _driver_probe.device()
+> Describe common "gpio-line-names" property to allow DTs to
+> specify names for GPIO lines.
+> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> ---
 
-Versions go below the --- line as the documentation says.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> Signed-off-by: Lizhe <sensor1010@163.com>
+Best regards,
+Krzysztof
 
-Full name?
-
-thanks,
-
-greg k-h
 
