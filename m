@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-244440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC9A92A449
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:04:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AA192A44C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9490B1F21FBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:04:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 898071C219DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADD713BC04;
-	Mon,  8 Jul 2024 14:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35E313BAD7;
+	Mon,  8 Jul 2024 14:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BThpioBs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jz0ItGeT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8D15381B;
-	Mon,  8 Jul 2024 14:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1A71E526;
+	Mon,  8 Jul 2024 14:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447470; cv=none; b=YJsMie1V3sSVpTd4VzdgvXMmJPIlFn5ZTrof0YTfVKwV7/0M3/KtZIkCj/UL7gyCqRhXigT3jUQbO5VFXHRWOyLZd3U/gK5/iPUtDmaT1/oBfIO6esVvwiuD1txHcCqfEEuV/ZyiE+6LtIim+GY622WMP/VyuYpdeQa5DxHY9eU=
+	t=1720447545; cv=none; b=W9rd7IWCSWGXHd/YvBbgdiQk3DZLf/S6ubFjx6rwsmqUqJ65N1BBg85KR84Oq1b/FzbLsEiWdRDaI9JoSs754bxs2CI1J7KK84JHKIQi6gb/fKG68IEh0CldBQyqerzZIsmJBGeywOisgSa8TOAZhAJkpY5/OXoCcoEQXbJI/Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447470; c=relaxed/simple;
-	bh=sU//YEXkZ7jfva2ENxty2a+qho5n0tDVgvY1hYo24wc=;
+	s=arc-20240116; t=1720447545; c=relaxed/simple;
+	bh=+5sJowFNHh88AAVHAZnFlV/b5GRSrKkSUc0cro9yWbg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X5PpgS7sbVL6t5s2jBurBCHeLC5K8adN2M4S5t51f6KRzKFnWCj1mYb+3Lru9FfBOZzsKvNEYfjHyMpVWMV4VrpoYbQt8UBhmPGGqqsFbWzhs+GbcX3DZItv0nPwr0guP7qXSAtI1yGFKpL/Fedp0LKKFInHDPS9fbDkcDycKw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BThpioBs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2695BC116B1;
-	Mon,  8 Jul 2024 14:04:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tF4wwYpZognJLoodY4/m+H5MfDsFQTi1CR1GWp5APvQr0aGszPc4YlzQb2X1izeaM+UoXnki1UfCW93qD9aYox2gXYaJH6VjEAbdJpBgUHFmNLxoiO5IbepS3+zyObCqPurdUPhBQKyrVL0biAA7kkuetWI7xpAHJ2OGRsydNVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jz0ItGeT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C31F0C116B1;
+	Mon,  8 Jul 2024 14:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720447469;
-	bh=sU//YEXkZ7jfva2ENxty2a+qho5n0tDVgvY1hYo24wc=;
+	s=k20201202; t=1720447544;
+	bh=+5sJowFNHh88AAVHAZnFlV/b5GRSrKkSUc0cro9yWbg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BThpioBsTdqrF5dMdzK2Cdsv1E7TZtDH7YeNe45ZR7Eo2RJTzOkGT1VwgzxYazt2m
-	 rEpB7sQLEtXqVg5Npk6q25gSCLE3vMsuqGVkZz4VkJ6Qu0jPCBRHlQUNYV8otQcYQI
-	 xVC6cJoNihv59O6h/VHQK0WeNSVk+QbJEQDdaSaCjtGtNG41cwQGIfYPSzIi2gjAqz
-	 3G9mRIRbe6LiVqu7TnazINfzE8gfglTgcSAxtfOVFpJGLM9ueSMzarc8eC2ItmWDHM
-	 CubnXFeZN7oWnEJG+z875pnFrem40xUzOyP3aklr4rRvWn8l/5k1HtkSwNxbiplqF2
-	 R2UNQgfe2lytw==
-Message-ID: <eda90514-e40c-4edd-8c15-18717a5e9784@kernel.org>
-Date: Mon, 8 Jul 2024 16:04:21 +0200
+	b=Jz0ItGeTm1B5gYEVArsTgaP8RK90PTBWcmNfOxb4r3YpNja1jF5puVPJnI53EEhqY
+	 v/FYgjRLevq0/2yN9k779/IuXPlpB/4fME+wWOPjv1MySFxum2kExcsJJkVPcXyt+z
+	 FIetRVE9w8HJ2OGuCnKlVcWiHpeIJj8F8QZiS2ndQnS6gR2CFwaLa8gXMRS+yopTgX
+	 F7afSzR/pPykOMztbzv6rWpl6YgfocZH68FpZUbXH4jHQxrFSu19SW4DONYUXgHtMX
+	 8CoHHW27BkrG+crG4h4XqIP9XaackpmPyimhCFb8II5pw07FoWsqel0XNp84in32Rk
+	 L/jYzfs4abBrw==
+Message-ID: <d4ad0701-231a-474f-927c-d21d6785f9ff@kernel.org>
+Date: Mon, 8 Jul 2024 16:05:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] dt-bindings: display: imx: Add i.MX8qxp Display
- Controller display engine
+Subject: Re: [PATCH 03/10] dt-bindings: display: imx: Add i.MX8qxp Display
+ Controller pixel engine
 To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
  devicetree@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -60,9 +60,9 @@ Cc: p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
  shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
  festevam@gmail.com, tglx@linutronix.de
 References: <20240705090932.1880496-1-victor.liu@nxp.com>
- <20240705090932.1880496-3-victor.liu@nxp.com>
- <cd558335-6e72-46d1-911b-68ccbb211136@kernel.org>
- <b9583c86-b5ed-4642-9baf-2ac850656ee3@nxp.com>
+ <20240705090932.1880496-4-victor.liu@nxp.com>
+ <35c70e6c-d4e1-45a0-8c8e-db530fd84aab@kernel.org>
+ <ea8a5f78-65a5-4be8-9e15-57351a839f52@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,42 +108,54 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <b9583c86-b5ed-4642-9baf-2ac850656ee3@nxp.com>
+In-Reply-To: <ea8a5f78-65a5-4be8-9e15-57351a839f52@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/07/2024 08:40, Liu Ying wrote:
->>> +
->>> +  "^framegen@[0-9a-f]+$":
->>> +    type: object
->>> +    additionalProperties: true
->>> +
->>> +    properties:
->>> +      compatible:
->>> +        const: fsl,imx8qxp-dc-framegen
->>> +
->>> +  "^gammacor@[0-9a-f]+$":
+On 08/07/2024 08:47, Liu Ying wrote:
+> On 07/07/2024, Krzysztof Kozlowski wrote:
+>> On 05/07/2024 11:09, Liu Ying wrote:
+>>> i.MX8qxp Display Controller pixel engine consists of all processing units
+>>> that operate in the AXI bus clock domain.  Command sequencer and interrupt
+>>> controller of the Display Controller work with AXI bus clock, but they are
+>>> not in pixel engine.
+>>>
+>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>>> ---
 >>
->> This looks like you are organizing bindings per your driver architecture.
+>>
+>>> +
+>>> +        extdst@56180a40 {
+>>> +            compatible = "fsl,imx8qxp-dc-extdst";
+>>> +            reg = <0x56180a40 0x7>, <0x56186000 0x400>;
+>>> +            reg-names = "pec", "cfg";
+>>> +            interrupt-parent = <&dc0_intc>;
+>>> +            interrupts = <12>, <13>, <14>;
+>>> +            interrupt-names = "shdload", "framecomplete", "seqcomplete";
+>>> +            fsl,dc-ed-id = <5>;
+>>> +        };
+>>> +
+>>> +        fetchwarp@56180a60 {
+>>> +            compatible = "fsl,imx8qxp-dc-fetchwarp";
+>>> +            reg = <0x56180a60 0x4>, <0x56186400 0x400>;
+>>
+>> Aha, one word for address range.
 > 
-> As I mentioned in cover letter, this series addresses Maxime's
-> comment for the previous series - split the display controller
-> into multiple internal devices.  Maxime insisted on doing this.
+> Sorry, I don't get your idea here.
 
-But these are not separate devices. Look:
-1. parent DC:
-reg = <0x56180000 0x40000>;
+How many words are in the first IO address range?
 
-2. child interrupt controller:
-reg = <0x56180040 0x60>;
+One.
 
-That address is within parent.
+That is not a separate device.
 
-3. Then we go to things like:
-reg = <0x5618b400 0x14>, <0x5618b800 0x1c00>;
+> 
+>>
+>> Sorry, these are not separate devices.
+> 
+> Hmm, again, Maxime suggested to use separate devices.
 
-Still within parent's range and just few words in address range. That's
-a clear indication that you choose few registers and call it a "device".
+To some level you can create separate devices, but for one register?
 
 Best regards,
 Krzysztof
