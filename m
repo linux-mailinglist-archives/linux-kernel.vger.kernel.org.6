@@ -1,131 +1,116 @@
-Return-Path: <linux-kernel+bounces-244499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D8C92A50F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:48:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A8692A51C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F180C1C21724
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:48:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610831C21AC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602211411E7;
-	Mon,  8 Jul 2024 14:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDB0140363;
+	Mon,  8 Jul 2024 14:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEq0iDly"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="p3UlSIKo"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFEC1E521;
-	Mon,  8 Jul 2024 14:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941DE13FD8C;
+	Mon,  8 Jul 2024 14:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720450109; cv=none; b=oTxTQphWaUoXK93SIw+vyacDdsgNGy+Cwa2KODe1OUfNgWk0ChCMFf8GxBgNMlfoFrHyGouPKD+ntIk9sgq9DP8lYFpfAkcIRn7ZCbPpGJSQK0OX6S8EDY9uktJau+yyOSuPwxBBYwb5+75GEcYzt+AN1NcPung9aIDL+QlkPFU=
+	t=1720450157; cv=none; b=VKqg1EQSFu290ZiPFB7RIfbrFYStJlbzV1h1t0dLrrMA/RzzwEdNJ2/t4fFP24ZEmMdx5VqJFfiyouUgEBnTLvV7xEiMBIM1iQ32R10RpU7lkKyqkJVN2icTpZQlRqcxzNtMrbaom2vqLDUobk3MNwikDVX0ShKWtysu+pIx86U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720450109; c=relaxed/simple;
-	bh=A/MOAoPDUmrA9Vft8lGfjPwVgRQfL71nhsLpKnCTpQ8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gD4k8L2A1FQ6kaIf4N3myHOuRmjnqaZknS+bDnKLCeJi7225gwGCsS+oNNhEpReCW5FHlhdv7ZF7e79iMZX9bdu+dT8EkA9oDoSjZ6W2PDU4llq9sEk3lu7Gf/FSCohfYSH+fFf0kdp8cgE9FNwGYU1/60LO8IsP2KThlXWW2I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEq0iDly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE46C116B1;
-	Mon,  8 Jul 2024 14:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720450109;
-	bh=A/MOAoPDUmrA9Vft8lGfjPwVgRQfL71nhsLpKnCTpQ8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=PEq0iDlygJzhZiW+d4mXEADIGfFA1ceL4Vm7bDox7tTMjoMBQuqvaGHlZkUJ1hfyp
-	 k2BZuIbUapyY9VljKTlDydZ0+3nrSujJ3uRxO+/ayg5FAoUztJBRDCiwLJ4aSXfRJK
-	 toHIItj45sjNOxYacjE7ICsrE3CmPHE2CPovTPkKb66OBDQhmwwdCzo2JHdyuDYMYz
-	 llJSISyoRvVGhToHCLhMvnrzEuzyG6fqDqGKrxJ8MQ8Az2EpvOe7ni++1sCJMcuqZT
-	 SLs63e+8FY6NzbhymxLPsDpBVVYAuSq4hWhebRL6e2IlzPL1qmDupQucu+GzVW/iY0
-	 zSnDJvtfvJ0mQ==
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>, 
- Rob Herring <robh@kernel.org>, Robin Gong <yibin.gong@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Stefan Agner <stefan@agner.ch>, Frieder Schrempf <frieder@fris.de>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Bo Liu <liubo03@inspur.com>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Fabio Estevam <festevam@gmail.com>, 
- Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
- Hiago De Franco <hiago.franco@toradex.com>, 
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
- Joao Paulo Goncalves <joao.goncalves@toradex.com>, 
- Joy Zou <joy.zou@nxp.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Marco Felsch <m.felsch@pengutronix.de>, 
- Markus Niebel <Markus.Niebel@ew.tq-group.com>, 
- Mathieu Othacehe <m.othacehe@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Tim Harvey <tharvey@gateworks.com>
-In-Reply-To: <20240708084107.38986-1-frieder@fris.de>
-References: <20240708084107.38986-1-frieder@fris.de>
-Subject: Re: (subset) [PATCH v2 0/5] Add support for Kontron OSM-S i.MX93
- SoM and carrier board
-Message-Id: <172045010254.68536.1973441424876478650.b4-ty@kernel.org>
-Date: Mon, 08 Jul 2024 15:48:22 +0100
+	s=arc-20240116; t=1720450157; c=relaxed/simple;
+	bh=z781XFgAu6Gb7mSdPzePCv03ZyJcZhjXm/dGiLnhcXQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GGGFijYQWphl9Gzx0Mndh3EdT2MSS7wcUYL3IVtDTUQOkzAYgZu/AtmX0xMFQA0ClTbH0rgFYLuk4vfUibaOOhM0oj/mgf6dB079M4MQRQ6Z3jgJortAWxzFtdtApC4IFnjZACthDqv0k1wt/V9FeG+AxKhNa/WmxfxIwnRwtLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=p3UlSIKo; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4687RE75025730;
+	Mon, 8 Jul 2024 09:48:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=EI1gyBEUL/L/gMbK
+	lNgm8TuixCJBNXmQ4JPs9SARDuw=; b=p3UlSIKoPCsxGT9w2op8UkULnqNufwjW
+	rrlDC2Eq+ozuxGf5sWK7UCP0ltfXWQCrTmhbjyye8vH1vKkRk3CMGDltnUOEye/g
+	QjYdWsdGxdZcVGn4f1K4+3zD+juLp3TDc03vL/2Clt4QEIy+dSngo5qedz01i5lw
+	iKgN4hXSYNTaeCQGa0GmkiIulz8L90BdNYrhQ2xsLncEFKsfQLmIvxRr6ZV789xD
+	FN1ForJWq6BSmBIv6QZoeyUlEa0p4ae2mglg5Yh4ClAdouiCDrWj6vM7Cfumvd/3
+	dP1VjJAQum+6mhrCPCkaC8l0jm7NBpS15rJ1MYbBigOnD1EkDLDCyA==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 4073axsm0r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 09:48:57 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 15:48:55 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 8 Jul 2024 15:48:55 +0100
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 13578820244;
+	Mon,  8 Jul 2024 14:48:55 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
+Subject: [PATCH] firmware: cs_dsp: Use strnlen() on name fields in V1 wmfw files
+Date: Mon, 8 Jul 2024 15:48:55 +0100
+Message-ID: <20240708144855.385332-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 0EfxtVBMUaeoF8YGw4iXUuD0UUPjf5u2
+X-Proofpoint-GUID: 0EfxtVBMUaeoF8YGw4iXUuD0UUPjf5u2
+X-Proofpoint-Spam-Reason: safe
 
-On Mon, 08 Jul 2024 10:40:30 +0200, Frieder Schrempf wrote:
-> Patch 1-2: small DT binding fixups
-> Patch 3: board DT bindings
-> Patch 4: support PMIC driver without IRQ
-> Patch 5: add devicetrees
-> 
-> Changes for v2:
-> * remove applied patches 1 and 2
-> * add tags
-> * improvements suggested by Krzysztof (thanks!)
-> * add missing Makefile entry for DT
-> 
-> [...]
+Use strnlen() instead of strlen() on the algorithm and coefficient name
+string arrays in V1 wmfw files.
 
-Applied to
+In V1 wmfw files the name is a NUL-terminated string in a fixed-size
+array. cs_dsp should protect against overrunning the array if the NUL
+terminator is missing.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Fixes: f6bc909e7673 ("firmware: cs_dsp: add driver to support firmware loading on Cirrus Logic DSPs")
+---
+ drivers/firmware/cirrus/cs_dsp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
-
-[2/5] dt-bindings: regulator: pca9450: Make interrupt optional
-      commit: ef0b29e744965e8abc14260503a559366219035c
-[4/5] regulator: pca9450: Make IRQ optional
-      commit: 83808c54064eef620ad8645dfdcaffe125551532
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/firmware/cirrus/cs_dsp.c b/drivers/firmware/cirrus/cs_dsp.c
+index d2aa0980ed78..0a504a3c4375 100644
+--- a/drivers/firmware/cirrus/cs_dsp.c
++++ b/drivers/firmware/cirrus/cs_dsp.c
+@@ -1166,7 +1166,7 @@ static inline void cs_dsp_coeff_parse_alg(struct cs_dsp *dsp, const u8 **data,
+ 
+ 		blk->id = le32_to_cpu(raw->id);
+ 		blk->name = raw->name;
+-		blk->name_len = strlen(raw->name);
++		blk->name_len = strnlen(raw->name, ARRAY_SIZE(raw->name));
+ 		blk->ncoeff = le32_to_cpu(raw->ncoeff);
+ 		break;
+ 	default:
+@@ -1199,7 +1199,7 @@ static inline void cs_dsp_coeff_parse_coeff(struct cs_dsp *dsp, const u8 **data,
+ 		blk->offset = le16_to_cpu(raw->hdr.offset);
+ 		blk->mem_type = le16_to_cpu(raw->hdr.type);
+ 		blk->name = raw->name;
+-		blk->name_len = strlen(raw->name);
++		blk->name_len = strnlen(raw->name, ARRAY_SIZE(raw->name));
+ 		blk->ctl_type = le16_to_cpu(raw->ctl_type);
+ 		blk->flags = le16_to_cpu(raw->flags);
+ 		blk->len = le32_to_cpu(raw->len);
+-- 
+2.39.2
 
 
