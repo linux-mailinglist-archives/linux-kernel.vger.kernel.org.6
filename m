@@ -1,202 +1,124 @@
-Return-Path: <linux-kernel+bounces-244384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F8092A39A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730EA92A39D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EEF8280EEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47291C21472
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD5F1386BF;
-	Mon,  8 Jul 2024 13:26:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CA7137937;
+	Mon,  8 Jul 2024 13:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BdQ3oy5q"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B4C137747
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66AAB665
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720445201; cv=none; b=A0dHgtrl4lByr4OvTzRcuyuwUopocsRBVAAW+R+WYS9kwVGR0Ix0rbMwRuqtsGSCd/G7YqEOuElgQCiDd5/ef2/X7ia5KfEC6vFgMZsPsUf6vknT+to9ISXx9pUEeuIUhQBYyKtZrMCFLKF+fmIx/LevX+xLSSkKjG6DtnqRrzs=
+	t=1720445268; cv=none; b=NIfa2ZUZouOXvKHjpxXZFffREhiPFMatdYuIynjASjkFMsGcTu5sgo4b++2NNOPeQLzuljnwV+yu3aHunV0Qt2zCPATWGfvhjXa1wE6tXAQ1L7t5kA5nfzPwdMCbVS70OwrAnewqzTowU6SQvUK0ugfu9frJBSiHMu9ROVKkdNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720445201; c=relaxed/simple;
-	bh=AvFqGfbnluOKabfJ1gbc14MMS0SNBJ1bdZX+YIROD1s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V68Ij7VQLsEAlJ8VW6sEOF/BA53ot+oFA9li02De+JvXL5UH+S5iPAnZIlV2lflGQ2mmURbSgdRamQWSgO1sZ/eswPZHbgYD2gOiuTqAox496F/447hYUHgth65r0nvt9Ie4BJ28ku3vovITAiDA5Fl4N+7L0qCf9Y3R9ToUOg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sQoNn-0000eo-AU; Mon, 08 Jul 2024 15:26:19 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sQoNl-0083J2-Sg; Mon, 08 Jul 2024 15:26:17 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sQoNl-000AG3-2b;
-	Mon, 08 Jul 2024 15:26:17 +0200
-Message-ID: <39583bdf7e79d33240e7dd5f09123b94cab4147c.camel@pengutronix.de>
-Subject: Re: [PATCH v2 04/12] PCI: brcmstb: Use swinit reset if available
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Stanimir Varbanov <svarbanov@suse.de>, Jim Quinlan
-	 <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
- <lorenzo.pieralisi@arm.com>, Cyril Brulebois <kibi@debian.org>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,  Florian
- Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>, Rob Herring <robh@kernel.org>, "moderated list:BROADCOM
- BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>, open list
- <linux-kernel@vger.kernel.org>
-Date: Mon, 08 Jul 2024 15:26:17 +0200
-In-Reply-To: <f89d7f45-5d2b-4d8b-9d6a-2d83cd584756@suse.de>
-References: <20240703180300.42959-1-james.quinlan@broadcom.com>
-	 <20240703180300.42959-5-james.quinlan@broadcom.com>
-	 <362a728f-5487-47da-b7b9-a9220b27d567@suse.de>
-	 <CA+-6iNynwxcBAbRQ18TfJXwCctf+Ok7DnFyjgv4wNasX9MjV1Q@mail.gmail.com>
-	 <7b03c38f44f295a5484d0162a193f41b39039b85.camel@pengutronix.de>
-	 <f89d7f45-5d2b-4d8b-9d6a-2d83cd584756@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1720445268; c=relaxed/simple;
+	bh=73VJ3oRcmaW0D5gYS80xsbaqZzrj0Skp8XVKmterxcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sl48mzN9+VvLeaS90RHpaoGtY5UA0vAQkQ/Ie0z0PC6KKGC4CoeEbGhM64+GLUPGRtFL4x6Q2Yt5VnovEOs4HGmSkNoh/ATY11290GfIefW3SLDGcb55/9PhhlvRqBRu1/nIvY1ZKVZkb6q8KH9IrgkGw6mNONDOQlscY/teZW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BdQ3oy5q; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so4071291e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 06:27:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720445265; x=1721050065; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xLz+pzXsJ6l5mFHOSKbiVfzHPETHq+grSYLHo5ZTzRY=;
+        b=BdQ3oy5qEq0qxFqbn8H4lv0fEa3N/ifQDFXJHNu7yukbPyHsgP6RQxGTjwtxA/h4cr
+         uE6kotKekGO8KR8KAF2wx98aMw7AXYvrcjBUJTR9+Ykb3prOBSEMwAjRwgf68A8JjjHg
+         E1clGTruQZcETw+VUEhKBmxHMx/nD2W1OLM7rwsySpfbH3TS8N8Dy2BtYzwidKdh6W3i
+         cRms9vw/iw8Sls3OXlpKltVJbVI4YNIp4ydKXFyMjKfPHH7nx4xIuoIEaXqIhNiyc2hu
+         /7PZ5GXVB104HzwFnrT8BTrDlbBRNDbr77xlCQyEnqFI2u1f96Ke+1uWUHP8BQhzvAlK
+         k1/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720445265; x=1721050065;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xLz+pzXsJ6l5mFHOSKbiVfzHPETHq+grSYLHo5ZTzRY=;
+        b=hJ6pIBU5ZK3hKGV9jFAc+JLkSWoj+Chld8E+d7lqdfwFOyYueC+vKOMxfLmBMt/FzX
+         sk297twwRZ3nEspcpBTUMVKjjq7ZvNFMA1uKI1cMjwiFGtspb3fAWbeOmEIRnBOdjfCv
+         MAaYK92S/2dD1m62Ugfpy/vtEnWsPDTh5ySJgpuAKmvEFOqej0Y+wb/HS6K7Mf6OdelW
+         g8JuKM10MZISdDNLni+xHTKd0MBqa6lRMkcJS21CdOqezYG0fzpkPxGIzgiU+nAOQXdy
+         Ju9Wtp2Vaczz/8YtndhKYr3ncZ+aTPSkQevH+6SMzBV9Fp+cv0xvUbwo8Qc/xHo6FBA9
+         CVvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSwCpgOYJuCUMyMdPPIwpIkw0Tz03Ld4zh0pIHtPIsHfQtvD/hXIHqWPJimnsuz0rFjtJxQPa2pQHP1T+1YJOUbPXLPRfuJ7ECoVbQ
+X-Gm-Message-State: AOJu0Yz3w7XQ0H+yefn2pOyD3tpEB7zr1jQyR3WlJ0Zhm5pF4CCbouC6
+	TNKz/gh+enQVztwIK6JguSwgsQk1wrtPRuvA/EFJFY5qh5Cud7JU3MSM8qRG/1Y=
+X-Google-Smtp-Source: AGHT+IFzFef/Tv8RS12QfjZA7cDHgbrsywJxw7p2DpGff9CwZ0w/u5TnUJ6q/+bCZgefSX1bAM+WBQ==
+X-Received: by 2002:a19:c204:0:b0:52c:8df9:2e6f with SMTP id 2adb3069b0e04-52ea06cc913mr7432147e87.42.1720445265038;
+        Mon, 08 Jul 2024 06:27:45 -0700 (PDT)
+Received: from eriador.lan (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ea910a4b8sm728047e87.202.2024.07.08.06.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 06:27:42 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: dri-devel@lists.freedesktop.org,
+	Adam Ford <aford173@gmail.com>
+Cc: aford@beaconembedded.com,
+	Liu Ying <victor.liu@nxp.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] drm/bridge: adv7511: Fix Intermittent EDID failures
+Date: Mon,  8 Jul 2024 16:27:38 +0300
+Message-ID: <172044524823.2537680.15499072146875099672.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240630221931.1650565-1-aford173@gmail.com>
+References: <20240630221931.1650565-1-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Stanimir,
+On Sun, 30 Jun 2024 17:19:31 -0500, Adam Ford wrote:
+> In the process of adding support for shared IRQ pins, a scenario
+> was accidentally created where adv7511_irq_process returned
+> prematurely causing the EDID to fail randomly.
+> 
+> Since the interrupt handler is broken up into two main helper functions,
+> update both of them to treat the helper functions as IRQ handlers. These
+> IRQ routines process their respective tasks as before, but if they
+> determine that actual work was done, mark the respective IRQ status
+> accordingly, and delay the check until everything has been processed.
+> 
+> [...]
 
-On Mo, 2024-07-08 at 14:14 +0300, Stanimir Varbanov wrote:
-> Hi Philipp,
->=20
-> On 7/8/24 12:37, Philipp Zabel wrote:
-> > On Fr, 2024-07-05 at 13:46 -0400, Jim Quinlan wrote:
-> > > On Thu, Jul 4, 2024 at 8:56=E2=80=AFAM Stanimir Varbanov <svarbanov@s=
-use.de> wrote:
-> > > >=20
-> > > > Hi Jim,
-> > > >=20
-> > > > On 7/3/24 21:02, Jim Quinlan wrote:
-> > > > > The 7712 SOC adds a software init reset device for the PCIe HW.
-> > > > > If found in the DT node, use it.
-> > > > >=20
-> > > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > > > > ---
-> > > > >  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
-> > > > >  1 file changed, 19 insertions(+)
-> > > > >=20
-> > > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/=
-controller/pcie-brcmstb.c
-> > > > > index 4104c3668fdb..69926ee5c961 100644
-> > > > > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > > > > @@ -266,6 +266,7 @@ struct brcm_pcie {
-> > > > >       struct reset_control    *rescal;
-> > > > >       struct reset_control    *perst_reset;
-> > > > >       struct reset_control    *bridge;
-> > > > > +     struct reset_control    *swinit;
-> > > > >       int                     num_memc;
-> > > > >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
-> > > > >       u32                     hw_rev;
-> > > > > @@ -1626,6 +1627,13 @@ static int brcm_pcie_probe(struct platform=
-_device *pdev)
-> > > > >               dev_err(&pdev->dev, "could not enable clock\n");
-> > > > >               return ret;
-> > > > >       }
-> > > > > +
-> > > > > +     pcie->swinit =3D devm_reset_control_get_optional_exclusive(=
-&pdev->dev, "swinit");
-> > > > > +     if (IS_ERR(pcie->swinit)) {
-> > > > > +             ret =3D dev_err_probe(&pdev->dev, PTR_ERR(pcie->swi=
-nit),
-> > > > > +                                 "failed to get 'swinit' reset\n=
-");
-> > > > > +             goto clk_out;
-> > > > > +     }
-> > > > >       pcie->rescal =3D devm_reset_control_get_optional_shared(&pd=
-ev->dev, "rescal");
-> > > > >       if (IS_ERR(pcie->rescal)) {
-> > > > >               ret =3D PTR_ERR(pcie->rescal);
-> > > > > @@ -1637,6 +1645,17 @@ static int brcm_pcie_probe(struct platform=
-_device *pdev)
-> > > > >               goto clk_out;
-> > > > >       }
-> > > > >=20
-> > > > > +     ret =3D reset_control_assert(pcie->swinit);
-> > > > > +     if (ret) {
-> > > > > +             dev_err_probe(&pdev->dev, ret, "could not assert re=
-set 'swinit'\n");
-> > > > > +             goto clk_out;
-> > > > > +     }
-> > > > > +     ret =3D reset_control_deassert(pcie->swinit);
-> > > > > +     if (ret) {
-> > > > > +             dev_err(&pdev->dev, "could not de-assert reset 'swi=
-nit' after asserting\n");
-> > > > > +             goto clk_out;
-> > > > > +     }
-> > > >=20
-> > > > why not call reset_control_reset(pcie->swinit) directly?
-> > > Hi Stan,
-> > >=20
-> > > There is no reset_control_reset() method defined for reset-brcmstb.c.
-> > > The only reason I can
-> > > think of for this is that it allows the callers of assert/deassert to
-> > > insert a delay if desired.
-> >=20
-> > The main reason for the existence of reset_control_reset() is that
-> > there are reset controllers that can only be triggered (e.g. by writing
-> > a bit to a self-clearing register) to produce a complete reset pulse,
-> > with assertion, delay, and deassertion all handled by the reset
-> > controller.
->=20
-> Got it. Thank you for explanation.
->=20
-> But, IMO that means that the consumer driver should have knowledge of
-> low-level reset implementation, which is not generic API?
+Applied to drm-misc-fixes, thanks!
 
-Kind of. If the reset controller hardware has self-clearing resets, it
-is impossible to implement manual reset_control_assert/deassert() on
-top. So if a reset consumer requires that level of control, it just
-can't work with a self-deasserting controller. The other way around, a
-reset controller driver can emulate self-deasserting resets, iff it
-knows the timing requirements of all consumers.
+[1/1] drm/bridge: adv7511: Fix Intermittent EDID failures
+      commit: 91f9f4a37124044089debb02a3965c59b5b10c21
 
-If the reset consumer only needs to see a pulse on the reset line, and
-there are no ordering requirements with other resets or clocks, and the
-device either doesn't care about timing or the reset controller knows
-how to produce the required delay, then using reset_control_reset()
-would be semantically correct.
+Best regards,
+-- 
+With best wishes
+Dmitry
 
-> Otherwise, I don't see a problem to implement asset/deassert sequence in
-> .reset op in this particular reset-brcmstb.c low-level driver.
-
-When reset_control_reset() is used, every reset controller that can be
-paired with this consumer needs to implement the .reset method,
-requiring to know the delay requirements for all of their consumers.
-The reset-simple driver implements this with a configurable worst-case
-delay, for example. As far as I can see, that has never been used.
-
-So yes, in this particular case, pcie-brcmstb only ever being paired
-with reset-brcmstb, it might be no problem to implement .reset in
-reset-brcmstb correctly, if all its consumers and their required delays
-are known.
-
-regards
-Philipp
 
