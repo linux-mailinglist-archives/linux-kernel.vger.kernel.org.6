@@ -1,128 +1,75 @@
-Return-Path: <linux-kernel+bounces-244777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEF492A957
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:56:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CF092A960
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF96C1F22661
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:56:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19EEFB21B3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9236014B96A;
-	Mon,  8 Jul 2024 18:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDE214BF8A;
+	Mon,  8 Jul 2024 18:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBRBSqI7"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaVPYfZW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3D3143C47;
-	Mon,  8 Jul 2024 18:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6532717C9E;
+	Mon,  8 Jul 2024 18:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720464966; cv=none; b=GcLAo3/ilzS7FPBBBMFZioKj2M9cn1Pt92bAXR3+jyZCNvsioWK9DqjUHLMA0OCBvRSif2XcP4bPeiyaJI994pt4E0IEihBW3KrmlzutXqYgStXT3UNHYUYtEfwoqmJEONHcuu9sh5xwdCm89wj/2WsU2Aw4Ic1Pma+htM3oybs=
+	t=1720465103; cv=none; b=RpW24MjBaTHeKj+1Ph4+AzeGmLaaco0rvIDVBG24ISVXIb6LVcnZK0OkZsNIo57bdFwJBtANYb28Yydtob/Z1VFaU1YAAfbkHmanXAva1FkR5nVFadEdvM6pGZeAVNF+9Vy9BsPGv4FrXGk7vjAcxo8KSbZU2dtRwEelZ7r8oYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720464966; c=relaxed/simple;
-	bh=YBhwDk8+/hN+5WEzRNlXfwzDdZvi/xKGXK5EZzUR9sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkILDJSWxOfeQOWrAdhX5T1gKp7Cyys+TZg230ObMEMAE6+NCMSenxC+oOZAUaX9c4HU4+ZPUTaoxaoXVlR0SXA6YfyUr6KFTHrF0asgPYPzhm6Ws7vMZbmxPDhB9hoQG+v+FYckF1YxRI/0Sr3npgHeTdDeByYkeRJrprKz+qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBRBSqI7; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-75fe9e62048so2171907a12.0;
-        Mon, 08 Jul 2024 11:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720464965; x=1721069765; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GLQr+BhZ7vYI0wjrn/T3ufkFu6pcWZl0xbw8E+/p0jQ=;
-        b=QBRBSqI7MzpfOD4lMGRDbPFCHadytOtSxuxcha7Y5f11uyHKuSU2x4p9WGUi7oLGRX
-         z0yEuRZ4RjyoikqEKxNfMfv1DRNNJs9NzPQ0+uR3xPJxRwtSfGAg59HQTmE/oZibPyZX
-         5LFr/nTctf94x2HqrSFB/gsoEZpoueHUqMu/16nrGhsCQ4IflMxkEUD6GVtvctcObaRM
-         lODlxVqmWKujDdFcvKhd5NXjBkXmGy0alg0rV+h81iuCO7rTRR6C3rOMrnhUpeU3V4Lu
-         1ZW3JcQM2ZBqjAhRN7taevlt+9mT0XWD0mWF+S1ArQ9jC22MfNgezuDOqtVHq5SquXgx
-         ZK3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720464965; x=1721069765;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GLQr+BhZ7vYI0wjrn/T3ufkFu6pcWZl0xbw8E+/p0jQ=;
-        b=PqO2ZU21Tu0CBUSiHhaixWvX9++IGVrGzKpNG7R13Be3hcSNvqSwflMHOdstVNRmz0
-         Cg/Zfc5ImJB16T4N3tNkGXjueSrYBuX80lZHB+Uw14j4B7E5VsYmbCXhLWa5316CsmYv
-         MQcm7tl0Jwm8uNDxKLR21oRURl9MBhUqhg7sV7L3VjSsyfSGx68F5qd6Z69u+NsQy+FT
-         lT8gzRx1XKb4jH9ZBJMXmDNSinyS1hHrbYWeTf5ShH0d2m2uKdyztcd//IiNkNp204kQ
-         dMzWSUJYya4Gq48yn49SIU32W2W0inWL33zD34Cb/NkCtn2BvahM46/zCJXYtxmWd8jH
-         jRiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUN9H7Az9jNftB32mW+FY2embODtGDfBxlby3gni6HnyhMrY7EXwMuEMSGyeLmT6McQo3oe8GWCxTH5ttVagwsdgh44XqEJ0IyyMTk0kQ4SU/mPeduuYIBnfr/NkzeTrazW
-X-Gm-Message-State: AOJu0YwPFVxns2u5MBtLwjA45UiLevzfUdnmkyRwruNT/4+/o31FQvyY
-	+nLDOsN0yyHMY1soEWRLKTbGt9Ld4QIkBIlIz38Q+PR6rOJh4J3P
-X-Google-Smtp-Source: AGHT+IH26Zo8WJAu4rCBLnw9sASpbiPTAVlg6hndnpS6v5JoxYckJeB+RIdcSE0Gno4/9LhfN8w69g==
-X-Received: by 2002:a05:6a20:a112:b0:1c0:f2d9:a453 with SMTP id adf61e73a8af0-1c29820b87fmr362570637.8.1720464964791;
-        Mon, 08 Jul 2024 11:56:04 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab6d0dsm1944165ad.167.2024.07.08.11.56.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 11:56:04 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 8 Jul 2024 08:56:02 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
-	pjt@google.com, derkling@google.com, haoluo@google.com,
-	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
-	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
-	memxor@gmail.com, andrea.righi@canonical.com,
-	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Simplify dl_prio()
- case handling in sched_fork()
-Message-ID: <Zow2Qls3UF26u5Y1@slm.duckdns.org>
-References: <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
- <871q4rpi2s.ffs@tglx>
- <ZnSJ67xyroVUwIna@slm.duckdns.org>
- <20240624093426.GH31592@noisy.programming.kicks-ass.net>
- <ZnnUZp-_-igk1E3m@slm.duckdns.org>
- <ZnncZcJFbN86-b4Y@slm.duckdns.org>
+	s=arc-20240116; t=1720465103; c=relaxed/simple;
+	bh=yDOevjl9/3Scra8njCk7go9N9fHFm7QgYzrojjkktOE=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ixQxgZEni3ajOYo5zeBzftt2xZCkk2CLAD2D5Qrv0wWQCLHy2cRi0TPyfCJVyuTDAieUIQlDq+V0gvH1naj94T9vOLhFFa/eb1IwmmvlEBtLECSScKassvkq0T7t/UDXfnAtEfkLTCN25VhM6K3XNMU/Cz3vpLa2HWUmFvA3lQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZaVPYfZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D71E2C116B1;
+	Mon,  8 Jul 2024 18:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720465103;
+	bh=yDOevjl9/3Scra8njCk7go9N9fHFm7QgYzrojjkktOE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ZaVPYfZWSlJqTSqII31rl/oKcbzNPFVfwkUHPNbXeF/lYHw7y3Jh2Ggnx6ypfA09x
+	 RAA5LLL37h4tzCd5cSzC1fYt6UiHdshAhTQ9zNoaRsViDz8RKzGrwS+erMgzKK5BYH
+	 1A8YCeEI/P9rjDOqvJIR0fTTOCQyvWOgsM2eo9X7cRLT86epvSeupKXky42nR3UGmB
+	 zkCopa1K29YmC1M7HH1G6O+ML/lY/s3vnzxPN+llMos6E6994dt5SjYicD+Fahx53k
+	 OTjmMR7/2uIDs71U4KqYGgs2IhEbzrf61L4VVDFD86YmuoV1aqZHVCp1hAIzA8bccg
+	 /hy7EtCdYWf/g==
+Message-ID: <e00b0f47acb3aefd9c936189d9442008.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnncZcJFbN86-b4Y@slm.duckdns.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240701205809.1978389-1-Frank.Li@nxp.com>
+References: <20240701205809.1978389-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/1] dt-bindings: clock: qoriq-clock: convert to yaml format
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev
+To: Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 08 Jul 2024 11:58:20 -0700
+User-Agent: alot/0.10
 
-On Mon, Jun 24, 2024 at 10:51:49AM -1000, Tejun Heo wrote:
-> From: Tejun Heo <tj@kernel.org>
-> 
-> sched_fork() returns with -EAGAIN if dl_prio(@p). a7a9fc549293 ("sched_ext:
-> Add boilerplate for extensible scheduler class") added scx_pre_fork() call
-> before it and then scx_cancel_fork() on the exit path. This is silly as the
-> dl_prio() block can just be moved above the scx_pre_fork() call.
-> 
-> Move the dl_prio() block above the scx_pre_fork() call and remove the now
-> unnecessary scx_cancel_fork() invocation.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: David Vernet <void@manifault.com>
+Quoting Frank Li (2024-07-01 13:58:08)
+> Convert qoria-clock DT binding to yaml format. Split to two files
+> qoriq-clock.yaml and qoriq-clock-legancy.yaml.
+>=20
+> Addtional change:
+> - Remove clock consumer part in example
+> - Fixed example dts error
+> - Deprecated legancy node
+> - fsl,b4420-clockgen and fsl,b4860-clockgen fallback to fsl,b4-clockgen.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
 
-Applying to sched_ext/for-6.11.
-
-Thanks.
-
--- 
-tejun
+Applied to clk-next
 
