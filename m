@@ -1,74 +1,108 @@
-Return-Path: <linux-kernel+bounces-244425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B5792A41F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:53:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7D892A41D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43011C21B40
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:53:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC10FB2232B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E559213D2BB;
-	Mon,  8 Jul 2024 13:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456AE13B7A9;
+	Mon,  8 Jul 2024 13:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rnQRsXHd"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="idMvzb3t";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M13IblR0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3BB13A3FF;
-	Mon,  8 Jul 2024 13:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BE813A3FF;
+	Mon,  8 Jul 2024 13:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446801; cv=none; b=qBxagUpdN0CXTXciV9U70OZQ8UJe8CbttKJx3KCagh4ykqm5/hcYEF0DqihQxn5OSpdTs/ZSOafmU5PYBl2hHprECRqCJas1ohW3b74RVKtxLOK+xu59vPx4U/gcPplgNZC48yWG7s46NN6unNd+ZRGtJYA+FjmC+nzwkkWjtSA=
+	t=1720446795; cv=none; b=fmMNrWuKzB4vJOMK585U37yM9IvO0qeAF+Lw7uixp+wSRI/zsPL497PzSI0CvQ7oKvOdcEcy7qF/PoMzPbrsjJDEZVVxeMJZrrLuoOJAJGDbEbxhgrYhwwSZCEQbH92H0i96h8IS4okFbfOugsqVYaMEvkbdgjjjx0+swuk8tQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446801; c=relaxed/simple;
-	bh=4gvVWnO+4ewFU4NAR/MX4F+pX/k1QNiJ4MV6c6MS9DY=;
+	s=arc-20240116; t=1720446795; c=relaxed/simple;
+	bh=/r+/nMzPahn0eESG2XANrb9OH0ViDm6C4ibSsbg1d6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GjlVs95jo52C9NJTGW/eGYt8tgh7ad9IaakaJMdtonkn4Xzh5KP5Nvnic9SlC4z+rMXv+tujUjB26BnaQob1GEL4XFQNlOz+wglPZj2tpqOTcPJ6xsCrERWvRFV3n1+9dWCRWq23nscm8/oBYXJtABJ0fRETwF1iPRUu08Smkv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rnQRsXHd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=p2QPqbHIw/JAoYCdkof+USdy7A/iEKc+/fFJ4UJPt/c=; b=rnQRsXHdB7EosNcr0XOiV0hM7S
-	kf9NaRiuOMX0H+80+f4/NyaZltvtNpaoX+OfQopSlOZEBTYQ8yPjincmwRnKXwjsFSmXJCLnosMeM
-	I9fc7w26QiqzaU7J4rZLt1tkLrItMGFsBJohgwto1F9loU/VaHNccT54FljMNYWKEIUk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sQonl-0022uM-SJ; Mon, 08 Jul 2024 15:53:09 +0200
-Date: Mon, 8 Jul 2024 15:53:09 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Guillaume La Roque <glaroque@baylibre.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	MD Danish Anwar <danishanwar@ti.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ti: icssg-prueth: add missing deps
-Message-ID: <1eec9f10-9eda-4f9b-b0f8-28f25a6153ca@lunn.ch>
-References: <20240708-net-deps-v1-1-835915199d88@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTZtxyQ6G5Gcx4prFln0oq10IyqUNQw0olsZ+xeEr0TeW8ueJ7X28BDfVCgRmIZTuCh9pnRsS2/RSVSvrSgnfANssctlv0+Ccq4eXYd102TnJPAVjQogcYbFjalYVInz0i+QkZCyfledlWSWLngXz7fneiOxGFMxXcJqIZgDz8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=idMvzb3t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M13IblR0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 8 Jul 2024 15:53:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720446791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Msuqgjwb5He6YYwNRjzMabQUnm6Wy6XzGH5sueeY8Q=;
+	b=idMvzb3tG0e27yENCyIPgOaUlpXrpKSEMlndewY3UuHO9wv93LN1IkvziRk/3yQGls+NSs
+	IalS3y3r6+317icTSIpFhdcDtnpjEMoeVn4MrcNenLwPq0xMQhlaF92atj+HV95lSLhMRu
+	8hIrHYBEth7PpA2EDYnnATFUeE4Cwqri2yRvD/GQycfnzzgSPM2aNAFP2qhQPirChEe5Dj
+	KZ3MrpHQA+Pj+Xlw6cCKd+JERxP7jDPP+yZyibwjKG7sNs+5RInafnnd3g2wh4HPNoNbUc
+	ekA2jXzXG70NIuheP5ot0ZzGxhRG2YDYa91GdfMrFXrFk3+bnk6i9tBhUCv1Cw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720446791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Msuqgjwb5He6YYwNRjzMabQUnm6Wy6XzGH5sueeY8Q=;
+	b=M13IblR0AfHP6xSVuJw+Ty5KFZaCF8douxAxyPoEdDQhvo1kTOoyk5738csvtak+08cDmb
+	TwDqqBYx9O73bEAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-rt-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] pmdomain/cpuidle-psci: Support s2idle/s2ram on
+ PREEMPT_RT
+Message-ID: <20240708135310.3VRFnmk1@linutronix.de>
+References: <20240527142557.321610-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240708-net-deps-v1-1-835915199d88@baylibre.com>
+In-Reply-To: <20240527142557.321610-1-ulf.hansson@linaro.org>
 
-On Mon, Jul 08, 2024 at 03:38:20PM +0200, Guillaume La Roque wrote:
-> Add missing dependency on NET_SWITCHDEV.
+On 2024-05-27 16:25:50 [+0200], Ulf Hansson wrote:
+> Updates in v2:
+> 	- Rebased and fixed a small issue in genpd, see patch3.
+> 	- Re-tested on v6.9-rt5 (PREEMPT_RT enabled)
+> 	- Re-tested on v6.10-rc1 (for regressions, PREEMPT_RT disabled)
 > 
-> Fixes: 5905de14c2a5 ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+> The hierarchical PM domain topology and the corresponding domain-idle-states
+> are currently disabled on a PREEMPT_RT based configuration. The main reason is
+> because spinlocks are turned into sleepable locks on PREEMPT_RT, which means
+> genpd and runtime PM can't be use in the atomic idle-path when
+> selecting/entering an idle-state.
+> 
+> For s2idle/s2ram this is an unnecessary limitation that this series intends to
+> address. Note that, the support for cpuhotplug is left to future improvements.
+> More information about this are available in the commit messages.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+I looked at it and it seems limited to pmdomain/core.c, also I don't
+know if there is a ->set_performance_state callback set since the one I
+checked have mutex_t locking ;)
+So if this is needed, then be it. s2ram wouldn't be used in "production"
+but in "safe state" so I wouldn't worry too much about latency spikes.
+Not sure what it means for the other modes.
+I am not to worried for now, please don't let spread more than needed ;)
 
-    Andrew
+> Kind regards
+> Ulf Hansson
+
+Sebastian
 
