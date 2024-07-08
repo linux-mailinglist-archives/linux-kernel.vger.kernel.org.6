@@ -1,133 +1,137 @@
-Return-Path: <linux-kernel+bounces-244993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DF292ACA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:49:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27DCF92ACAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E4E282D0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:49:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58FF21C208FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0CD1534F9;
-	Mon,  8 Jul 2024 23:49:06 +0000 (UTC)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAF31527B8;
+	Mon,  8 Jul 2024 23:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgULJloF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE2A14F9D9
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 23:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026C3A27B;
+	Mon,  8 Jul 2024 23:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720482546; cv=none; b=qDeHge7VG/4xt4atx5duCyrDF57RMdBSTW0MGf3Nvyr1g0XvGZAau15MzjsAzZCNTwWZuUAMrRXMl24wBlq9YAM6BFxqx6tdLtZjRokUeEcvQnO2a4X0mu5x8WaJMSfkOGS/H+Zw9wKQz1G+5hLMUj8cmLGq2FHbnHRkGaO/e00=
+	t=1720482609; cv=none; b=TpV6krs8P2/+Lr1R8VqKBUUK32kp5jUXxV1W670PSMv2EM61R4bbhneKLFuIQlT2tT2tYwJEyTcvrVmrX8WcYheavEfMW2yT7VrnD5E9PHd3nF4xPclB5p0f+egvODYzz0kKMXkhvtTVpD+sA7QBiy0OWi1jhW/7vI5dg9WIc40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720482546; c=relaxed/simple;
-	bh=585OTXLduml4b44q7SgXj9FJO/8XEJO2jUdcjWdYPno=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XW9Ejj1kRRXPmWfO4r2mXph27G7lgj6UNbsI11yR32s4FIoyLc12rxx4sOI+04DozG2Ut3GgQxfFPc7vjeSH6fO+SB8QPyx/C31tsqtzsuPdgJMgVo1H4i8vW9WMbaiYS9zvon9Q92DVrHF1/a2ZIu7VH3WQMWYgDQg01HR3LfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c2dee9d9cfso2593148a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 16:49:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720482543; x=1721087343;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KTCvURDHt1Ehhy2ogJ4G2eNRAbN+TU2XGb1d5J/SBYc=;
-        b=oQBm7WNlFGYuRrXiotw57l8+vum95gpAL+TOy6vPiUoqzUL2k6SDjTf4p1BZguBune
-         CL8IfDaodbNjartbLX99g1zDgihtuRERduuznsIhgrVsxponZUmxZuJKnGS6IWhwvJzP
-         z4F56qRERYlHZWepZalQ+vpZqC3K0UMVkBaqsW4JJi2sPwX8nJmStvCTrdMnmQB0G9MO
-         fWlvGxwxfsWaBXxrj0IkX0W0SFjtPtkxHAgCJEoPZNNXHmFZkDScX6NBH4jClOHISvO9
-         jk9rI5gHuHClTEj3sKh7i4vfHWte1+SstyIO+AUqKy41I29uZkFWLnWpjJ4ymWaS6qZN
-         JXcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUsYI7DG4e8mLtaOjeBccdVsjAWwW5dyO1A9jOZ9sOMUBTH6A73A6tZqBcZJ16zlER3cK5DmW80Ayfc1zrjhSdjNqGRLwie4I7TD6G
-X-Gm-Message-State: AOJu0Yyu/1B3NYxZh4WzmC+8xWsLdth5EKcflq85pzF/ApZpDwNqsJfV
-	oNOnScfnhJ98Z7XJYAF1aqCSU2+A0jz/CMUWuP3t28/L/s6Tjw9u1swQpGeJTCM=
-X-Google-Smtp-Source: AGHT+IF2sRCcp1Qt2ncA7/dcBS7eQVYhbuVP4CESqTDlDqz8AWSIBYQ0ftySS6HXoODFEfyN2bXeTQ==
-X-Received: by 2002:a17:90a:a10d:b0:2c4:dfa6:df00 with SMTP id 98e67ed59e1d1-2ca35be0661mr981011a91.8.1720482542878;
-        Mon, 08 Jul 2024 16:49:02 -0700 (PDT)
-Received: from localhost (97-126-77-189.tukw.qwest.net. [97.126.77.189])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca344c399csm596679a91.5.2024.07.08.16.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 16:49:02 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Celeste Liu <coelacanthushex@gmail.com>, Heinrich Schuchardt
- <heinrich.schuchardt@canonical.com>, Anup Patel <anup@brainfault.org>, Guo
- Ren <guoren@kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Vladimir Kondratiev
- <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT
- <gregory.clement@bootlin.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, Sven Joachim
- <svenjoac@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, Rich
- Felker <dalias@libc.org>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, Russell King <linux@armlinux.org.uk>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Tony
- Lindgren <tony@atomide.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>,
- Mykola Lysenko <mykolal@fb.com>, linux-riscv@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
- linux-tegra@vger.kernel.org, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-sh@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lennart Poettering <lennart@poettering.net>,
- Icenowy Zheng <uwu@icenowy.me>, Celeste Liu <CoelacanthusHex@gmail.com>
-Subject: Re: [PATCH 6/6] arm: defconfig: drop RT_GROUP_SCHED=y from
- bcm2855/tegra/omap2plus
-In-Reply-To: <20240530111947.549474-14-CoelacanthusHex@gmail.com>
-References: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
- <20240530111947.549474-14-CoelacanthusHex@gmail.com>
-Date: Mon, 08 Jul 2024 16:49:01 -0700
-Message-ID: <7hv81f78cy.fsf@baylibre.com>
+	s=arc-20240116; t=1720482609; c=relaxed/simple;
+	bh=9jdW4RDO/F1V/md+tqiw7JFPy3R6Vm6pJq19f3yXpAM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=LjQhsz45tYFU+YnhQAhojvyZj+HNcKsv5kE1xqTflS+P6kCtVTsx3suBqvVVEpLtUGX7VRNXXSM5qissKMylS99PI51Mr3DNC3wx1EkJWFKlAfNwxij2NvX7MugbQcQLX9dGfQKl/KdzOE/8lHbZ3HbEGfCNpYBqxPXFqUwyXww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgULJloF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEAC0C3277B;
+	Mon,  8 Jul 2024 23:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720482609;
+	bh=9jdW4RDO/F1V/md+tqiw7JFPy3R6Vm6pJq19f3yXpAM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CgULJloFLGGkbtNRNWJRp6zMRDqGHp/7uoHjEPeEu/vgsQO3S62QPq4X4dRPla4hg
+	 NqyaBf8vHBP6KWrvKJ20R1U59izqIY3FBhSu54KLY5BmI9x+ftpY2LRQxMnnoUP8gN
+	 tNwS5ci+genjX6R8DmsvZcgNMuKULwKG4Naq2ivquyBl2PLTDxwSTU+2DXyZKOpMyx
+	 NynR5TxBr0Iv/2E3I1bp6E+DoWr75euZPlQkrZGiGfE3SjoYE5DxcRaNyHtrceclSM
+	 CuMIw5e4A5loWbY8s++kPT8HTRO6DYCan4SHk6VX8oAnL3bJrDgV8g3Ptdmh477FQT
+	 PUhulxAA4NuEg==
+Date: Tue, 9 Jul 2024 08:50:05 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Len Brown <len.brown@intel.com>, Randy Dunlap <rdunlap@infradead.org>,
+ suleiman@google.com, briannorris@google.com, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH v8 0/1] PM: sleep: Expose last succeeded resumed
+ timestamp in sysfs
+Message-Id: <20240709085005.8a348fdfed6afcb8635aea11@kernel.org>
+In-Reply-To: <171993028355.95379.9391483220285994310.stgit@mhiramat.roam.corp.google.com>
+References: <171993028355.95379.9391483220285994310.stgit@mhiramat.roam.corp.google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Celeste Liu <coelacanthushex@gmail.com> writes:
+Hi Rafael,
 
-> Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
-> with systemd") said it's because of recommendation from systemd. But
-> systemd changed their recommendation later.[1]
->
-> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
-> needs an RT budget assigned, otherwise the processes in it will not be able to
-> get RT at all. The problem with RT group scheduling is that it requires the
-> budget assigned but there's no way we could assign a default budget, since the
-> values to assign are both upper and lower time limits, are absolute, and need to
-> be sum up to < 1 for each individal cgroup. That means we cannot really come up
-> with values that would work by default in the general case.[2]
->
-> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
-> can only be enabled when all RT processes are in the root cgroup. But it will
-> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
->
-> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
-> support it.
->
-> [1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1be321c31d5299f69f
-> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
->
-> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+Gentry ping. I would like to hear your comment on it.
+
+Thank you,
+
+On Tue,  2 Jul 2024 23:24:43 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> Hi,
+> 
+> Here is the 8th version of the patch to expose last succeeded resumed
+> timestamp in sysfs as /sys/power/suspend_stats/last_success_resume_time.
+> The previous version is here.
+> 
+> https://lore.kernel.org/lkml/170359668692.1864392.6909734045167510522.stgit@mhiramat.roam.corp.google.com/
+> 
+> This version is just update against for the upstream kernel.
+> 
+> 
+> On some system like the ChromeOS, the system suspend and resume are
+> controlled by a power management process. The user-space tasks will be
+> noticed the suspend and the resume signal from it.
+> To improve the suspend/resume performance and/or to find regressions,
+> we would like to know how long the resume processes are taken in kernel
+> and in user-space.
+> 
+> This patch introduces a last succeeded resumed timestamp (just before
+> thawing processes) on sysfs which allows us to find when the kernel
+> resume process successfully done in MONOTONIC clock. Thus user processes
+> can measure the elapsed time taken by its resume process at any point
+> in time.
+> 
+> This will help us to detect abnormal value (longer time) process in
+> the resuming and quickly decide the root cause is in the kernel or
+> user-space. The kernel side we can use many tools (e.g. printk or
+> ftrace) but for user-space we need to define the starting point of
+> the resuming process. Actually, the kernel side needs to use local
+> clock because the clock subsystem is also suspended. But in that
+> case, user space can not use that timestamp because the local clock
+> is not exposed.
+> 
+> So this will be used something like
+> 
+> where_the_user_space_resume_finish() {
+> 	clock_gettime(CLOCK_MONOTONIC, &etime_ts);
+> 	fileread("/sys/.../last_success_resume_time", stime);
+> 	convert_timespec(stime, &stime_ts);
+> 	user_resume_time = timespec_delta(&etime_ts, &stime_ts);
+> 	...
+> }
+> 
+> Thank you,
+> 
 > ---
->  arch/arm/configs/bcm2835_defconfig   | 1 -
->  arch/arm/configs/omap2plus_defconfig | 1 -
->  arch/arm/configs/tegra_defconfig     | 1 -
+> 
+> Masami Hiramatsu (1):
+>       PM: sleep: Expose last succeeded resumed timestamp in sysfs
+> 
+> 
+>  Documentation/ABI/testing/sysfs-power |   11 +++++++++++
+>  kernel/power/main.c                   |   28 ++++++++++++++++++++++++++++
+>  kernel/power/power.h                  |    1 +
+>  kernel/power/suspend.c                |    1 +
+>  4 files changed, 41 insertions(+)
+> 
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-For omap2plus_defconfig:
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
