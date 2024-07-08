@@ -1,120 +1,250 @@
-Return-Path: <linux-kernel+bounces-244706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4D792A82B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:23:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81BF92A82E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A6F51C20D53
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD82A1C21109
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB63148310;
-	Mon,  8 Jul 2024 17:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28EB14884F;
+	Mon,  8 Jul 2024 17:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epmia6mv"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8T9CkcH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D66AD55
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98EAD55;
+	Mon,  8 Jul 2024 17:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720459383; cv=none; b=q6mAU+x09C4YEVmRdADIKd0jGjV0+eHmYyv07gNqOpFRRZVD31qJXLxCBvORCXDzTibtA76LdYKLDUPxTFAXK3iSDgMro1OgH3voqhUZp3UTvyFgO1cFFQzlcnC6rj/rE5ZIowit2iLRrJlgPsoFU4gch9C35F4Gq8oMROyvQ+w=
+	t=1720459421; cv=none; b=GQgutaRYyqwBj0VJvsfA+/jXGyDNFaAdLdLGcGOlXwzeEvi1l8RbWCdxa83cDz5q5qu8KZekXMrqBJB7WhRsjCy3QEOsw1R9aRRTWHW4Q57TlKQPO2oo1ZICOt7hSKPCUytJU86OdZogcQd9I5eyLH6ErsqNZ2sjcRVqla32eYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720459383; c=relaxed/simple;
-	bh=qYq6s4bNLi2kzyWMR518+ntELHhG9kRHTZCMd61DDxk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OpJrIAL1FESQIO4Tey+dF7eX+QDfKCymodw3bEUCKuDpjm29VUWSMHGCy1uEpZI/GxiH3UBHNp9r062Hqw0nQ5FF2FUarBuaIJ2EQRPY89eJ/lpK4pl70tUJxH223PKTTEiNxJ7AZI74cu+dwjCw+WN20GNZpHtPqzaWxqilnIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epmia6mv; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1fb4a807708so32496785ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 10:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720459382; x=1721064182; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l8dssTOE5YtjaCpjIjX/bht9CAwJzQ5jf+TiBoCd/rc=;
-        b=epmia6mvNlD59kzjYzFuQwAXQ+RQt6nE+qY8UEp8RFwu9uUR0tWfhqwhTIxbqLWKDn
-         wwZEpN5o2N0qt9etGaFe/mnb1R86dHbPbBJrESW34VXVQwO1cZ3NXQgfyYLr4cogKzJf
-         7BV6rrNvxq4dHMIAhPYB6NkezRRS+hOj0bWAW21qP2Cg5lhMnRBz7p3oLpCx+E9ghx7B
-         qyUMOWtT3liVmC69R13fQJkcG2b2ydFn1E2t/Q4iafs/AHOZMd4TwWPhbB7sMt9QTZh/
-         KkmQrzFL0ZLz/x1Av+yKYlco39eEy3p4+XZ0dsdv6SlRhJou3Pd/TvIyrP2UWzHXvE6p
-         wC8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720459382; x=1721064182;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l8dssTOE5YtjaCpjIjX/bht9CAwJzQ5jf+TiBoCd/rc=;
-        b=RKOuZGFD98u9URsX4+9Agid+a74ECs7tV+gPIS7E/Yif13bW8i+jA8+oRZv6bfBKsy
-         1u1c2Iz0PsheturTO0hKv8Nus2qwpKJC4zcMDSOkqgUyyRqTYwaT9jb/1kfL40kQ26X8
-         Ox5pae0iUrXCx5cZc8D/lzrFezqGweUb+ubJv7H9qq7sswvxfekD1nWCPilmaz7AxgDW
-         Q1ceRlO3wzfHTNdkABjmVF0DhBHwnfQ6/JwtQwnaxDIXME0hNG3VENXfOKHNMTuWl/d8
-         NB7lvbXLxtSLfvgPkgnmPSaqbnct9aHgwQqnwElkyfFBsMGjF9Vgemp2dOrrg+j9Nptv
-         +QWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXROPbFUcGiG/2dnSQMPwk14CTMU5JX6DWXP5xwLdgVhtFFIiC8lO4kb1SrMV9ZM8JRPrYjUw+mLZ34GWocDY/78mvli5XCzm4AAJYw
-X-Gm-Message-State: AOJu0YzBV5vUQ/SyZtbfyPcnUJqbJse+nXHjHwJzqOrrzVMLef6lBS04
-	Tttp0xJoDkuZLLtDb4Hx1W0TTrcrBIsMG19pSv+LfeZDqO0CZQ+M
-X-Google-Smtp-Source: AGHT+IEnHd1r/rT95kPOKGYZBxgklx50F/DDhELRb5rGAwZPK7BNWUon2xTWMeDCG3gWIbiM3Cj76A==
-X-Received: by 2002:a17:902:e84f:b0:1fb:3b30:8ce0 with SMTP id d9443c01a7336-1fbb6ed5798mr1508735ad.44.1720459381664;
-        Mon, 08 Jul 2024 10:23:01 -0700 (PDT)
-Received: from embed-PC.. ([122.173.216.255])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a10852sm1190705ad.27.2024.07.08.10.22.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 10:23:00 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli24@gmail.com>
-To: airlied@gmail.com,
-	daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Abhishek Tamboli <abhishektamboli24@gmail.com>
-Subject: [PATCH] drm: Add documentation for struct drm_plane_size_hint members
-Date: Mon,  8 Jul 2024 22:52:24 +0530
-Message-Id: <20240708172224.46073-1-abhishektamboli24@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720459421; c=relaxed/simple;
+	bh=iDG5PVLfUhVuTtxCZMDuvVBUfkszB3K6aN+AKAT7Eak=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=HNMUeFpT4OLK7/ruUT5PD7XRdFsiaHLgb69I/FDbL49/7RLadtV36EwDK8ioxqE5a6rU14cYbTOTNPenwHnU2OFFPIFxYwHp+e0PsFgFp8r0P4JltQtYh4ew2u461uZHQk16kZFreKsu+J6LUlIivDacJfI6vlkdwtGU9ik/Vwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8T9CkcH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EBABC116B1;
+	Mon,  8 Jul 2024 17:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720459421;
+	bh=iDG5PVLfUhVuTtxCZMDuvVBUfkszB3K6aN+AKAT7Eak=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=C8T9CkcHsm6gt91UDMN3evQKKlxupHYDMsz1tkr6pWJ0KF2LZ+h3oudd0lT28ooo5
+	 Wyx7PlT1bv11RuXMeZxwvQdozYjC52MEwAFi1uKTSBCvBzr3hFvi9opQg4+8aAO8Wi
+	 +MbHIH140PBCvFgJGOy0z5TCi7Kkd6XyRL+/AuBRI1G0WkFrlWHMQK8ix06d0EeAnt
+	 YmX9gVNi6fTe97fT0ZCbJn8TdPa7XdPFYQldLyfhn5hbgnW+BCr43hQOEdo6Ze5CTo
+	 xTsxBROhSHA6MBIFdL6/ecVqOz3PEYcLsJdtYDM84Fa3qS7HVh6kS2o9I/70FbFZL3
+	 V5M8gbNS5eRWQ==
+Date: Mon, 8 Jul 2024 12:23:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: George-Daniel Matei <danielgeorgem@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+	nic_swsd@realtek.com, netdev@vger.kernel.org
+Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
+Message-ID: <20240708172339.GA139099@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240708153815.2757367-1-danielgeorgem@chromium.org>
 
-Add descriptions for 'width' and 'height' members in struct
-drm_plane_size_hint to improve clarity and documentation coverage.
+[+cc r8169 folks]
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli24@gmail.com>
----
- include/uapi/drm/drm_mode.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Mon, Jul 08, 2024 at 03:38:15PM +0000, George-Daniel Matei wrote:
+> Added aspm suspend/resume hooks that run
+> before and after suspend and resume to change
+> the ASPM states of the PCI bus in order to allow
+> the system suspend while trying to prevent card hangs
 
-diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-index 1ca5c7e418fd..25891a636e4f 100644
---- a/include/uapi/drm/drm_mode.h
-+++ b/include/uapi/drm/drm_mode.h
-@@ -872,7 +872,13 @@ struct drm_color_lut {
-  * array of struct drm_plane_size_hint.
-  */
- struct drm_plane_size_hint {
-+	/**
-+	 * @width: Width of the plane size hint.
-+	 */
- 	__u16 width;
-+	/**
-+	 * @height: Height of the plane size hint.
-+	 */
- 	__u16 height;
- };
- 
--- 
-2.34.1
+Why is this needed?  Is there a r8169 defect we're working around?
+A BIOS defect?  Is there a problem report you can reference here?
 
+s/Added/Add/
+
+s/aspm/ASPM/ above
+
+s/PCI bus/device and parent/
+
+Add period at end of sentence.
+
+Rewrap to fill 75 columns.
+
+> Signed-off-by: George-Daniel Matei <danielgeorgem@chromium.org>
+> ---
+>  drivers/pci/quirks.c | 142 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 142 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index dc12d4a06e21..aa3dba2211d3 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -6189,6 +6189,148 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56b0, aspm_l1_acceptable_latency
+>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56b1, aspm_l1_acceptable_latency);
+>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c0, aspm_l1_acceptable_latency);
+>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c1, aspm_l1_acceptable_latency);
+> +
+> +static const struct dmi_system_id chromebox_match_table[] = {
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Brask"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Aurash"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +		{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Bujia"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Gaelin"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Gladios"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Hahn"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Jeev"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Kinox"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Kuldax"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Lisbon"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{
+> +			.matches = {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "Moli"),
+> +			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> +		}
+> +	},
+> +	{ }
+> +};
+> +
+> +static void rtl8169_suspend_aspm_settings(struct pci_dev *dev)
+> +{
+> +	u16 val = 0;
+> +
+> +	if (dmi_check_system(chromebox_match_table)) {
+> +		//configure parent
+> +		pcie_capability_clear_and_set_word(dev->bus->self,
+> +						   PCI_EXP_LNKCTL,
+> +						   PCI_EXP_LNKCTL_ASPMC,
+> +						   PCI_EXP_LNKCTL_ASPM_L1);
+> +
+> +		pci_read_config_word(dev->bus->self,
+> +				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
+> +				     &val);
+> +		val = (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
+> +		      PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1_2 |
+> +		      PCI_L1SS_CTL1_ASPM_L1_1;
+> +		pci_write_config_word(dev->bus->self,
+> +				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
+> +				      val);
+> +
+> +		//configure device
+> +		pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
+> +						   PCI_EXP_LNKCTL_ASPMC,
+> +						   PCI_EXP_LNKCTL_ASPM_L1);
+> +
+> +		pci_read_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, &val);
+> +		val = (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
+> +		      PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1_2 |
+> +		      PCI_L1SS_CTL1_ASPM_L1_1;
+> +		pci_write_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, val);
+> +	}
+> +}
+> +
+> +DECLARE_PCI_FIXUP_SUSPEND(PCI_VENDOR_ID_REALTEK, 0x8168,
+> +			  rtl8169_suspend_aspm_settings);
+> +
+> +static void rtl8169_resume_aspm_settings(struct pci_dev *dev)
+> +{
+> +	u16 val = 0;
+> +
+> +	if (dmi_check_system(chromebox_match_table)) {
+> +		//configure device
+> +		pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
+> +						   PCI_EXP_LNKCTL_ASPMC, 0);
+> +
+> +		pci_read_config_word(dev->bus->self,
+> +				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
+> +				     &val);
+> +		val = val & ~PCI_L1SS_CTL1_L1SS_MASK;
+> +		pci_write_config_word(dev->bus->self,
+> +				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
+> +				      val);
+> +
+> +		//configure parent
+> +		pcie_capability_clear_and_set_word(dev->bus->self,
+> +						   PCI_EXP_LNKCTL,
+> +						   PCI_EXP_LNKCTL_ASPMC, 0);
+> +
+> +		pci_read_config_word(dev->bus->self,
+> +				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
+> +				     &val);
+> +		val = val & ~PCI_L1SS_CTL1_L1SS_MASK;
+> +		pci_write_config_word(dev->bus->self,
+> +				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
+> +				      val);
+
+Updates the parent (dev->bus->self) twice; was the first one supposed
+to update the device (dev)?
+
+This doesn't restore the state as it existed before suspend.  Does
+this rely on other parts of restore to do that?
+
+> +	}
+> +}
+> +
+> +DECLARE_PCI_FIXUP_RESUME(PCI_VENDOR_ID_REALTEK, 0x8168,
+> +			 rtl8169_resume_aspm_settings);
+>  #endif
+>  
+>  #ifdef CONFIG_PCIE_DPC
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
