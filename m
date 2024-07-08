@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-244583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5549C92A674
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7E992A67E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9E71F22319
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D50286E56
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D785152E17;
-	Mon,  8 Jul 2024 15:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49E4145A08;
+	Mon,  8 Jul 2024 15:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKGmbJG/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWpyd+WJ"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C750115253B;
-	Mon,  8 Jul 2024 15:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4AB145A01;
+	Mon,  8 Jul 2024 15:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454049; cv=none; b=Lbsyjndbh1jK6yEMpdB6UV0da/Ukv9aUX0Q9MCd8g+trlWpx5lASIwLvEgopLkJ4tGG3HAPA23C00Qlk0WgEWVkMpL6mY5/WsmZUP6xe9tPqqoU5dmyBzsOudtZZs7LR/+4FsrEzMV2du2VRJ4K02ybddMvRe5/y8oZsk5jjbf4=
+	t=1720454072; cv=none; b=IpnB6o7IFjpr8BUS40NqX0/PIqOgQPlyntlPuzgfOCrZ/mc5747FDdcrZlEgD6eHlKTEJYMH2h8mq1dMSJQW36BTMUKATbbGMk+TG0h3pzq4PXV059qwxxMjSPLoTk4vWjU64Fe075IKBjp4YiLSFGpBGHs2/TRON2QYisjsdu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454049; c=relaxed/simple;
-	bh=pHEQop1T1fiyamd9jcpDhT/4UZTaEZSdDGTRt6fHlCQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pProLFYyJcMk9tKQ6Ysv7W6yOuCABZdT0rgyfEs5x6+21JBGPo9D7ld0xHFZZc5xj9L6uSsxp9lC2eamXiV0D+m4pWUEsmpxcnR18iTMTcKr/dFE223o/18K9+ldaGw9i5G1/STJhxHaxA8wAajwcFsAP0EsDEbASQSlz+wTgpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKGmbJG/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB567C116B1;
-	Mon,  8 Jul 2024 15:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720454049;
-	bh=pHEQop1T1fiyamd9jcpDhT/4UZTaEZSdDGTRt6fHlCQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=UKGmbJG/7ixB3W/bGJpEZHxm4Uec9QfxZrgFj7++PEuKgl87p3bp8kWMv6leWLkSL
-	 SVE0ZwRWnyuoBKzcBAsY3hxdEa0X62Miv77RfoVOdaXSkuwwXlhguWYSVRCWyNSR8w
-	 UqoXJK6nxT/+k+DVz/Gl3FaKt6L25Cz9EQCL5H/2V/kCaXMFeFETwv0moyo4jhoEX4
-	 t/GJxOCYUspDoZ2uG4F5c2jWw9oAwJGe+MWpZhRyY2YBRCjpOE3bHMVzXy3RGvcUua
-	 XA3VRpPMWHL8cD2MZY1fzsiDd6vNFGncezD7lV3qig4l7B5Ga6JVX4VgJuYhxQ3ZER
-	 Zj6EIUg8C99vQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 08 Jul 2024 11:53:42 -0400
-Subject: [PATCH v4 9/9] tmpfs: add support for multigrain timestamps
+	s=arc-20240116; t=1720454072; c=relaxed/simple;
+	bh=TrC9tl/J8IWK07HqC0Jtxhbm3VnByPog6tc9bj27EIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u7wEpEPJMGdcqUJZfmo4u9XZHkQgTp2B1oI5Kyu7jp4T5kvhLB7kEqWyaHd9hTRA2ets1bUlX63pi+afPWr2+eCSNM3k6iJsy+2VvU0ZsIHd6573utL6uB1wIEgikFJYTl+1DUIiwnx5MeAPCeExAUDZer3f+zk6dy++h4iGEgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWpyd+WJ; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-810177d1760so1293087241.2;
+        Mon, 08 Jul 2024 08:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720454069; x=1721058869; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/jA0wRlSERdOUIy/qi57GffPjw/ZRlZpxkgmsgkKytY=;
+        b=GWpyd+WJly4QUzCEGbz3X2t7plZbhggDCNRPbS4VFXha03z0P2jzihULbUd26Jslwr
+         CTMzqnXEW3dOYNQY334FIfvzL0pfJ2FkK2q6NEV5HjdBguS8pmykDhzhJDF0Q+HjvUBw
+         UDIzz1zQf3YLwRax4F3sRShF3oy2w6emndJMbO3FTBjLTNEJI9YadSIp8WNQvpjq9Yli
+         DwUKSIDzig0HSd63l4Ru5rW7ryS7cn4REfrQTNjydSKtMMIJeebBLBOcKyDggd7YMD03
+         6zHzr+yal7Hd6gg6QXPhvPgg7sTLRWZ3+1eD+0D9WMpLJwPQWeE8C7HUYhVKgB1PPzOc
+         3u5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720454069; x=1721058869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/jA0wRlSERdOUIy/qi57GffPjw/ZRlZpxkgmsgkKytY=;
+        b=ZfIPn3qjqZ3BttO63JrOaYo+qIKq9GhxYZuzTVuJZG+KqS0P/5A1YgwrvTCSWmWMME
+         GcEStq+Mzs8asyNGYaCK3B4mR9yt9hWndGywDJLzjic/hjvmMbpqYE5OFnro27lggvCK
+         7/0EItkrF3jnrV0O22vpSWb/7nNN0RPVMY1U+UEu0I8bxGTUoV8s+dEe385XNLRGPMAa
+         NBtQC9bejRuMgkHxlZag72GAkflyytH6t6AWQu0Cusvrgkb71m5sNmFgmE5MHkPmO0DP
+         7ME9x+15eOHg1Bpcu7AfrqRfevvvrgg1YxsrHLTqCNWygQQcg6Q6FIOepAb5JEwvIeqH
+         I/6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXCHotjeM4tNX0u89KI9PiREfoGzbwsEv9lBI+M//90++TZO+QOh5c42iv9jadcGqH0gb9zkkq3wt7i3oIKJkq7PAMnNbpFY+g57UtSRFqXy7Eig1gOmHDEM+LX35MI6AWL2OSHpUdlr+N8TSig4WsS9Y+kiUK/s8MOcEmcIIczVBPgVjf9b3eGchncvfU0f6jjz1Dnxyrwbgwwg4VO9ngw8s3xVr9a6BUNEV0o6vkeUw/2+GmvDF+res7H+h8wQ1Ah+01ql0DW68Acfogv48B7B8YuTthFGleVOWWm4ylsOmipT+tatpQFIy6/dPaVWhXUYtEIXUNntqNPOLFxjxC3iMT+dE82fx7ouEscJePK6fGAWtpL1gZIpXzQO55AKiXe4qRaC/SLPwtDv7qRUtasYiKpaq0RQ85U7q3MMdrq2XkEl4x6Ii3X+I1LmuuF1dE=
+X-Gm-Message-State: AOJu0YywDrsVU/7FUPnOCt6b4gzyXPg6rAiHjIlrEXCht9iVZ8I9SwF9
+	glL7W5vxJ56R82scCtZ56FD/Ue4emt8S+uf06VJyXQYy/BuDzE5LTuTeIw+1hWV4VOfResmiTG1
+	86/auE7SfXofThq6z0Ej80jHGpGWE6lKB
+X-Google-Smtp-Source: AGHT+IEZBoFU3ZLzG609wCmA5rnXqDuMLd0d2n5SrJ2I0lXatTkHpvsta1P7z0S7Pi2hNjQpBbhQnvIV2JNr2DTMmOU=
+X-Received: by 2002:a67:e302:0:b0:48f:eabd:d72a with SMTP id
+ ada2fe7eead31-48fee8a4cb2mr13105031137.17.1720454069449; Mon, 08 Jul 2024
+ 08:54:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240708-mgtime-v4-9-a0f3c6fb57f3@kernel.org>
-References: <20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org>
-In-Reply-To: <20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Chandan Babu R <chandan.babu@oracle.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
- Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>, 
- Christoph Hellwig <hch@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, 
- Kent Overstreet <kent.overstreet@linux.dev>, kernel-team@fb.com, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
- linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=775; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=pHEQop1T1fiyamd9jcpDhT/4UZTaEZSdDGTRt6fHlCQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmjAuElSf4XFk52fOEHI6qnk5nkcaimuSsPCsyx
- xjkO5P9aUmJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZowLhAAKCRAADmhBGVaC
- FesvEADXYZRR3EQySwlhPXaMFRM3Jq6pfSUAjqchFJ5ZK46/YfRIrrnfJ4JbxYnbmshpJcBbFpR
- 0/5Av6Pr9UhcqUkFzuoN+lTegRgHwDiMg9lrS8JZ+RlrxJ/mI1jSkec7pdJeCA1o+uEspCwJlVV
- l2Cm9Wm5OJidm0vx4cGXlLZzmA4IHAdkNfWh2OXgnzFFtS0l40kW+3PF0/WGTPKccPdHhD862y6
- aGl4SZcQo2KyHwKsueuBZ4tdmXuTa0JkEAbMT4bH3FxqToAIDJA4U0MF44gKItQuNoJ2ZaL2Q80
- a3i190J0Loaigui6n9Cpypmy9nDd74qzubrfpMJbIqFWEwRZmDlHfRnv7nbY871QEYQ4xpJ3ili
- ceNhjnXNEO+drx5Re8ocxYDKT6KguzKI/aKc2WahemLhWKP7yaspe4q9VcpmjmlwAgf5tUCteyd
- vL0qw+tr6LTcIURjivpx/9GIxekvsxkhqUC8fzHzoPesyDiTUDc40q83qFeo7qhD1gSz4BEHkE9
- 0xREDDycM33VqUVh2mPB/yAqqTCv4QDPuSl6S7UbBkaTsKVuI4Ib3fx3f0H3D85+gcTUpsfJwua
- sVJEZzud7NP7tgknaFzBM7ymq8J2fUaKNM/KfI0Xna2HmKe/3idcid7UzQ8mWcD7n4ta6cF7NGN
- kEUJE/n2ZdSh2Sg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-23-e3f6662017ac@gmail.com> <13fea5c0-5906-4075-b734-52649e35eb69@linaro.org>
+In-Reply-To: <13fea5c0-5906-4075-b734-52649e35eb69@linaro.org>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Mon, 8 Jul 2024 18:54:18 +0300
+Message-ID: <CABTCjFDebBxf=XcvTbVtifROFHrQLXtArLtj0wHVF_e529NVAg@mail.gmail.com>
+Subject: Re: [PATCH v3 23/23] arm64: dts: qcom: starqltechn: add new features
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable multigrain timestamps, which should ensure that there is an
-apparent change to the timestamp whenever it has been written after
-being actively observed via getattr.
+=D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 17:12, Kon=
+rad Dybcio <konrad.dybcio@linaro.org>:
+>
+>
+...
+>
+> >       gpio-reserved-ranges =3D <0 4>, <27 4>, <81 4>, <85 4>;
+>
+> Do you know what these are for?
+>
+> Konrad
 
-tmpfs only requires the FS_MGTIME flag.
+<85 4> is spi for fingerprint.
+<27 4> is spi for eSE(embedded Secure Element)
+The rest shouldn't be reserved.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--=20
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 440e2a9d8726..6dc817064140 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4649,7 +4649,7 @@ static struct file_system_type shmem_fs_type = {
- 	.parameters	= shmem_fs_parameters,
- #endif
- 	.kill_sb	= kill_litter_super,
--	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
- };
- 
- void __init shmem_init(void)
-
--- 
-2.45.2
-
+Best regards,
+Dzmitry
 
