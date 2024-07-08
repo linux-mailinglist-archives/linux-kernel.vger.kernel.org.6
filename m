@@ -1,173 +1,152 @@
-Return-Path: <linux-kernel+bounces-244888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B1692AAE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A694892AAF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104E22824EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:09:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE0F283286
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB11814E2FC;
-	Mon,  8 Jul 2024 21:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF4214EC42;
+	Mon,  8 Jul 2024 21:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qhlytQDo"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nbIApz44"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BB414E2E3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 21:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ED212E75;
+	Mon,  8 Jul 2024 21:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720472943; cv=none; b=OwRa5Y6NjeSM/kzgThJ25fRrxnaRhnSCgCXDwL7F4EtpS4inbE2xGOfLnxWW4vUrNHPcgpowVB0B+3ZhAsA12MZJCCGkFB1kDKvPtyawWe+cnxDoic7kG5uB78zotlO32DYAM4uUr9LSij6RnrLQqxEFmmRPz3y2aszxCNL0Jao=
+	t=1720473318; cv=none; b=eQ1C5pnYfE/ONdCnw/vI+seH8g67rmt0W+q2vsN5WqsAg3BTwIZRPZbX0a2evtq5Q7NEH2rXoOhu9l273XCb4I/KhugxXMtI4WZ3hR5/wF+twhqbjchZPCfETkJJW5CBmvApXs5Wd4hgvk6Y6tZZw3FIWAshwPH+b8eWZdpKZjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720472943; c=relaxed/simple;
-	bh=UCY0oMT12cXbYGxiUb0whNTnVhKRKyO8T7T985QBy3g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XyJrnqmhDVaLg9glPVhRJuw8Whxu06nei1YymBO2WRXz4XBwzmrokkiooBk3DBB4Q65+lP33Cuj8DntGDIvY5CF7Aac3HJUlm5Mc2guFfFOGVaxhpAdk98V6vSPebgtq4Nzn7bXKb54muPHTsIIi/M69OAXquVPg7aa1AKzqaxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qhlytQDo; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-72c1d0fafb3so2842280a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 14:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720472941; x=1721077741; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kJc8hSvDaUDWo9RUDcvqIuOmjAm4LLBeUNho1Hv2CCU=;
-        b=qhlytQDo4yLTixTHN86gLToH8o14kiN9Xs/RhFWsu9MUVcUGa9NgmbL7p9J5L5PkxZ
-         P35hzZfyoieaYshkmDbie6XTY1Ol6ipmrFsCwCHc98nTC72x7jJKuAMG4hW0P+XDS8f3
-         8SFNIPPhKahfgvpa+F8a0Ud09RB6LyBQV9HYnedkFpTLaaJ+xGdNVHuROJBokip1j/fH
-         WmWZ3dk31bRQK1yWt3pLowjiQ3mqqMRLkBnvQ+VP2ODS1JfXp0TPl3ZXJI63FnmVDL1e
-         1fFfrYifoX8iXPb4vosJr2nI3mCV/t6K2osDQQVk6hWtNPIN5xPq9eh49o04o8ubil9c
-         ITUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720472941; x=1721077741;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kJc8hSvDaUDWo9RUDcvqIuOmjAm4LLBeUNho1Hv2CCU=;
-        b=A7aDAgtC7ni0F4M8uN1EaJbP25yH5r4lmxrdbMB7MGJLdM4YsqcLoAsOj87Pmk3uW2
-         m5jNEMVKIDPnUrucJkpiWeXA4FiR1NflL3HwZWgLJ6+AF2Mvi6OkpvMxUSILfCkac7pv
-         JEUJ5ngvKI2cThTFoQ3mRK0eJP7eTRt0gJ+Wm54sNfldmT+60wbEFbOP7IHPgsbPuAf9
-         yLNLciAXsDibyYmzBTOOxdB5hSlpxptJh5UQhDFDeUPfRNMJQLCXsGv3fct0iZP3VB8q
-         O2hzhzBLRUqlos8GofWAkbfn55cPZ+mD9xT6JejDrDtgwLkFYRS/bdE0miHv30oSVkE+
-         oR3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU4N2J8pY8gPDtO+qRqbF3pJtsm3Rhxqvl9uogyQal3+aaQun6w3RRAhLNh891dDOphZyWXnzaGZsnl9TwuVzFdmMGI37AXDdEClfRE
-X-Gm-Message-State: AOJu0Yy3M9g4AtjTfBsCeHaEXDJwLPVa9EhaI+6qJcG1x1tHJ5sSIajJ
-	MNQk75BYTPkPC2L/SC4i5QXAdtagDja2Gk+TY/OpW5M7sgcv+Ma5W/H6tQgDqq71JCH/xmfNS5m
-	8NQ==
-X-Google-Smtp-Source: AGHT+IGsVKL0cdx/QPl63vLzqZ+LYLCok44hWrS2+8LTAOBodGDenIuqrC8nG2+j+jaKbmFY7lnYYFb5VmQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:50a:b0:6e4:d411:7c64 with SMTP id
- 41be03b00d2f7-77db501c382mr1344a12.3.1720472940832; Mon, 08 Jul 2024 14:09:00
- -0700 (PDT)
-Date: Mon, 8 Jul 2024 14:08:59 -0700
-In-Reply-To: <43ef06aca700528d956c8f51101715df86f32a91.camel@redhat.com>
+	s=arc-20240116; t=1720473318; c=relaxed/simple;
+	bh=kAc6w7ha10sYNCEe/V6aYJmYQvnIrUSX27i4gmDVeaw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tb/wi7aUNdBvleFLUXCEEO9vix/3W9QDc568McfGeoeV6bbCMqFNVTjNvRRdUD0isj0i93cmFvFwblt/RMxAKU5SYOy5gkUK+YTMTq8/jn45F1i+obPqG3E8rzXL6W7Z9Gwv78DnjJR4h7Z5Ncu4IDU7K+4xyTUlw9ZfSMowcRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nbIApz44; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468BwTvk025637;
+	Mon, 8 Jul 2024 21:15:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=HIraQW69nRCntJylblT984
+	/L8ukZ5pc+efMd0GeGwhk=; b=nbIApz44TDoEtAqJlDyc7uwdWdfby7UYYXUqCn
+	vQTbPL8awqp7TxGcNAinhnPY2mDILZoFi2exaBiyZJUnpBsfFd8HrXYwJCYcIQ/s
+	7SQvCqMGhXP6KMu0+bfIB0H+Bqn5bDzh/GBfCYrti1RWA9tjYgtup8b/5lJOlcu+
+	pnopY0uC77fNKnGup4GNA241JY/yyNxu2hPXLcYlF8yMrPo9HjsMeehSv/r5sXur
+	5G2EKAJJlkzhZgaFqlqhyERsHk7N+RRSSlg3LOk4bfER56gKeLEnTv27SIz+ChtO
+	ORjCmEOgSbQFL/FwFlgwCGxOpeWQjL9gjCdiUvqwZcBLxuHw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8vt0p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 21:15:08 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468LF6gk030793
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 21:15:06 GMT
+Received: from hu-scheluve-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 8 Jul 2024 14:15:03 -0700
+From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Date: Mon, 8 Jul 2024 14:14:47 -0700
+Subject: [PATCH] arm64: dts: qcom: sa8775p: Add interconnects for ethernet
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-23-seanjc@google.com>
- <43ef06aca700528d956c8f51101715df86f32a91.camel@redhat.com>
-Message-ID: <ZoxVa55MIbAz-WnM@google.com>
-Subject: Re: [PATCH v2 22/49] KVM: x86: Add a macro to precisely handle
- aliased 0x1.EDX CPUID features
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240708-icc_bw_voting_emac_dtsi-v1-1-4b091b3150c0@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMZWjGYC/x3MQQqAIBBA0avIrBPUgrKrRIjZVLNIQ6WC6O5Jy
+ 7f4/4GEkTBBzx6IeFKi4AtkxcBt1q/IaS4GJVQjWlFzcs5MlzlDJr8a3K0zc07ElRV60VZ2sm2
+ g1EfEhe7/PIzv+wFnY8UVaQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Andrew Halaney
+	<ahalaney@redhat.com>, <kernel@quicinc.com>,
+        Sagar Cheluvegowda
+	<quic_scheluve@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bqWY1VxPVVcV1HvT7K3kLRKBqr30oM4O
+X-Proofpoint-ORIG-GUID: bqWY1VxPVVcV1HvT7K3kLRKBqr30oM4O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_11,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ malwarescore=0 priorityscore=1501 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080157
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> > Add a macro to precisely handle CPUID features that AMD duplicated from
-> > CPUID.0x1.EDX into CPUID.0x8000_0001.EDX.  This will allow adding an
-> > assert that all features passed to kvm_cpu_cap_init() match the word being
-> > processed, e.g. to prevent passing a feature from CPUID 0x7 to CPUID 0x1.
-> > 
-> > Because the kernel simply reuses the X86_FEATURE_* definitions from
-> > CPUID.0x1.EDX, KVM's use of the aliased features would result in false
-> > positives from such an assert.
-> > 
-> > No functional change intended.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/kvm/cpuid.c | 24 +++++++++++++++++-------
-> >  1 file changed, 17 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> > index 5e3b97d06374..f2bd2f5c4ea3 100644
-> > --- a/arch/x86/kvm/cpuid.c
-> > +++ b/arch/x86/kvm/cpuid.c
-> > @@ -88,6 +88,16 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
-> >  	F(name);						\
-> >  })
-> >  
-> > +/*
-> > + * Aliased Features - For features in 0x8000_0001.EDX that are duplicates of
-> > + * identical 0x1.EDX features, and thus are aliased from 0x1 to 0x8000_0001.
-> > + */
-> > +#define AF(name)								\
-> > +({										\
-> > +	BUILD_BUG_ON(__feature_leaf(X86_FEATURE_##name) != CPUID_1_EDX);	\
-> > +	feature_bit(name);							\
-> > +})
-> > +
-> >  /*
-> >   * Magic value used by KVM when querying userspace-provided CPUID entries and
-> >   * doesn't care about the CPIUD index because the index of the function in
-> > @@ -758,13 +768,13 @@ void kvm_set_cpu_caps(void)
-> >  	);
-> >  
-> >  	kvm_cpu_cap_init(CPUID_8000_0001_EDX,
-> > -		F(FPU) | F(VME) | F(DE) | F(PSE) |
-> > -		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
-> > -		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SYSCALL) |
-> > -		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
-> > -		F(PAT) | F(PSE36) | 0 /* Reserved */ |
-> > -		F(NX) | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
-> > -		F(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGES) | F(RDTSCP) |
-> > +		AF(FPU) | AF(VME) | AF(DE) | AF(PSE) |
-> > +		AF(TSC) | AF(MSR) | AF(PAE) | AF(MCE) |
-> > +		AF(CX8) | AF(APIC) | 0 /* Reserved */ | F(SYSCALL) |
-> > +		AF(MTRR) | AF(PGE) | AF(MCA) | AF(CMOV) |
-> > +		AF(PAT) | AF(PSE36) | 0 /* Reserved */ |
-> > +		F(NX) | 0 /* Reserved */ | F(MMXEXT) | AF(MMX) |
-> > +		AF(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGES) | F(RDTSCP) |
-> >  		0 /* Reserved */ | X86_64_F(LM) | F(3DNOWEXT) | F(3DNOW)
-> >  	);
-> >  
-> 
-> Hi,
-> 
-> What if we defined the aliased features instead.
-> Something like this:
-> 
-> #define __X86_FEATURE_8000_0001_ALIAS(feature) \
-> 	(feature + (CPUID_8000_0001_EDX - CPUID_1_EDX) * 32)
-> 
-> #define KVM_X86_FEATURE_FPU_ALIAS	__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_FPU)
-> #define KVM_X86_FEATURE_VME_ALIAS	__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_VME)
-> 
-> And then just use for example the 'F(FPU_ALIAS)' in the CPUID_8000_0001_EDX
+Define interconnect properties for ethernet hardware.
 
-At first glance, I really liked this idea, but after working through the
-ramifications, I think I prefer "converting" the flag when passing it to
-kvm_cpu_cap_init().  In-place conversion makes it all but impossible for KVM to
-check the alias, e.g. via guest_cpu_cap_has(), especially since the AF() macro
-doesn't set the bits in kvm_known_cpu_caps (if/when a non-hacky validation of
-usage becomes reality).
+Suggested-by: Andrew Halaney <ahalaney@redhat.com>
+Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+---
+Adding interconnect dtsi properties within ethernet node of SA8775P,
+this patch is adding support for the interconnect properties defined
+in the series ->  
+https://lore.kernel.org/all/20240703-icc_bw_voting_from_ethqos-v3-0-8f9148ac60a3@quicinc.com/
+---
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Side topic, if it's not already documented somewhere else, kvm/x86/cpuid.rst
-should call out that KVM only honors the features in CPUID.0x1, i.e. that setting
-aliased bits in CPUID.0x8000_0001 is supported if and only if the bit(s) is also
-set in CPUID.0x1.
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index 23f1b2e5e624..7ebf03953b7b 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -3464,6 +3464,12 @@ ethernet1: ethernet@23000000 {
+ 				      "ptp_ref",
+ 				      "phyaux";
+ 
++			interconnect-names = "mac-mem", "cpu-mac";
++			interconnects = <&aggre1_noc MASTER_EMAC_1 QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
++					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++					 &config_noc SLAVE_EMAC1_CFG QCOM_ICC_TAG_ALWAYS>;
++
+ 			power-domains = <&gcc EMAC1_GDSC>;
+ 
+ 			phys = <&serdes1>;
+@@ -3499,6 +3505,12 @@ ethernet0: ethernet@23040000 {
+ 				      "ptp_ref",
+ 				      "phyaux";
+ 
++			interconnect-names = "mac-mem", "cpu-mac";
++			interconnects = <&aggre1_noc MASTER_EMAC QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
++					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++					 &config_noc SLAVE_EMAC_CFG QCOM_ICC_TAG_ALWAYS>;
++
+ 			power-domains = <&gcc EMAC0_GDSC>;
+ 
+ 			phys = <&serdes0>;
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240703-icc_bw_voting_emac_dtsi-2a09f9a18174
+
+Best regards,
+-- 
+Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+
 
