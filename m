@@ -1,88 +1,64 @@
-Return-Path: <linux-kernel+bounces-244227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6230192A12B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:28:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED6792A130
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14E0D283C1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA03F1C22680
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEE67E107;
-	Mon,  8 Jul 2024 11:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92097E103;
+	Mon,  8 Jul 2024 11:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BhM/1KHn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tg6KtiW1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9C57D41C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 11:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D497E0E9;
+	Mon,  8 Jul 2024 11:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720438130; cv=none; b=Xz3NZzNMEHKNKoqbqLwOyTFP0NLADHpQppYqUbaTE/xYxC9/DDQbUT9knXxBYKXjC9rmv/aqBX23Sq/nAgdfTTxFu5Has+so2YSbUgQqW6PAZReW2nF4kezBYaWkyGbrDtrqy/irfAtIcwg4vxdWJMjUDyUWRtqYPOY1oT7E+mo=
+	t=1720438175; cv=none; b=agdfLQ90/cDoblvvIKdpLSyj1Vc4BP4G57TTq2pHCoy24NuUoldnPv25JJvywhBj2dn1mYQ9Um1JZ0CseByMCaE4tZsXGrCnF+psD3a/E8EheOwu+tFLCYltLfr1HRF9j+/GHmqh3+2z5mZHJUe8C++KGjo9QvAHViFdfpi/DWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720438130; c=relaxed/simple;
-	bh=YLEz2nxMe8+wpWlmygRPdtARH+mr6uUxXFx2jMYYd8s=;
+	s=arc-20240116; t=1720438175; c=relaxed/simple;
+	bh=v4E8/lwbejDpaEpC/wq68LE/jQ6r1xobIe9EIBTwuWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gSfNah5mT9seN5h02KLmhqEsmlxdhui05JvNqVIeh7KU7dUaNimo3A+VWE8XGS5xn+45i50LUd/uEWg00+lTQnzBRLrLEad50y+JfrEcNeXWUPdsZJE/KvnYIJA+vNnLiEGI4Y/HABY57xtjc7F1spkVXlaIqVwbq2kOaxYzOGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BhM/1KHn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720438127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ggF5ejO/txQzvQN281lQIDXsDHvIvFc8LKda5u6H7Cw=;
-	b=BhM/1KHnvmuLy8fe5dh1RNe152bGZvExkY9PLV3vQZMWTinbrpCV2xhu4ntXTMZGVSZwQQ
-	b7Yl5QhGJIB8RoWuC7eu0rejQCq7t72/154njQTnGt+KJ8sPznQvfmDPkkHykVjGdYkPaw
-	DShNMppb9dNcvKEQb3Mp2yEX0aWPWp0=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-u5lednAiOKGbl4Nt9_EeiQ-1; Mon, 08 Jul 2024 07:28:46 -0400
-X-MC-Unique: u5lednAiOKGbl4Nt9_EeiQ-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ee864483c2so36051501fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 04:28:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720438125; x=1721042925;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ggF5ejO/txQzvQN281lQIDXsDHvIvFc8LKda5u6H7Cw=;
-        b=UPABNMM/3fUJXi3gYUYLuTFQ9tSf5KxZRWLGlF7aiJEQOuSt01mtADiwNMRSzsQqgh
-         o2BVqpi4hdynVDIhQ8T6WjYEHvoDYc8rdcLbN2sr7yQZyipNeTUWhxMzfgLuaRjSYd23
-         aNdFfitm0e1549JyVIlzM0XSkp2lXTwawvb9OsynOpaRgRxFWdMpjm/LPqeDNEhL9VBq
-         2g5+lwH74SYQk/kQxWukeMEzDeiq89e262VB7w1sDQtV1g/Hm8of1FJx3kZmRggFDg2M
-         eBk6n4ea+fYLzfYEC4pCwkp9r2xAvbBLeUJNohswWYWmDetShIK1RiTcz0MQ6QAANmSA
-         ZKXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVutuZw/yD4fcxX0zwRmDyh92WIzGcaiT00dhNNt5xX55OjMbdqfVk0AY+OLakYowedUmn+2YaImv2gat2TsAG1KlgX3aD7DSiJ0AGs
-X-Gm-Message-State: AOJu0YxtztRChzTj+UOyZxEdLLqPHlj3Lj9JpZdtLU61t5Y+jA9L2ttx
-	FK7CUkEvTC5WeVDLtRKSrgygiEVKLdMUGuCJ2pUV1hmxHuua30laV2PxggE7z8STQblRM48nrla
-	uO55/HGrsQlTplzFje0yuohzpJzfX5IZYArKsys2yjl/PHNrPAoczyLYgqJGrBw==
-X-Received: by 2002:a2e:818d:0:b0:2ee:8777:f86b with SMTP id 38308e7fff4ca-2ee8edd3edbmr75131741fa.35.1720438124879;
-        Mon, 08 Jul 2024 04:28:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHH1Nsdje5001n1qOWAw4XX9RASw+K0ZvlbBfsk3SL/6HvLcu8zL4MIKOBiacj2ApWr0nCz3Q==
-X-Received: by 2002:a2e:818d:0:b0:2ee:8777:f86b with SMTP id 38308e7fff4ca-2ee8edd3edbmr75131551fa.35.1720438124455;
-        Mon, 08 Jul 2024 04:28:44 -0700 (PDT)
-Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2518f9sm162467895e9.31.2024.07.08.04.28.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 04:28:44 -0700 (PDT)
-Date: Mon, 8 Jul 2024 13:28:42 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Christian Schrefl <chrisi.schrefl@gmail.com>
-Cc: mcgrof@kernel.org, russ.weight@linux.dev, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Gary Guo <gary@garyguo.net>
-Subject: Re: [PATCH 2/2] firmware_loader: fix soundness issue in
- `request_internal`
-Message-ID: <ZovNap1NBusREw_-@pollux>
-References: <20240707003835.69090-1-dakr@redhat.com>
- <20240707003835.69090-2-dakr@redhat.com>
- <dd56a9d9-08fe-4bd4-83e2-dfdc44f8c637@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzwKVqs32g6P4W9Cd8ks1gZfG74xNhqmUrzGU+JC+gQJjmvKYdjMJSMZP3bzUtPHenLEtbN4n97YrmUPa0e+AJQHLo4wZFuUh+1Er+c1Lx4RMZw9SRNWmEld95ypLeBrHNoU/V31kEEzldqtnesT4CmrbZmACBF2ImSk/387EqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tg6KtiW1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615AFC116B1;
+	Mon,  8 Jul 2024 11:29:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720438174;
+	bh=v4E8/lwbejDpaEpC/wq68LE/jQ6r1xobIe9EIBTwuWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tg6KtiW1r4oh4bhcLIXPgu++Qz0zTUs+0zYlScgKv/zml/y05EssquyEfaaGULhKa
+	 jD5azOeTx2sDIe80rmJyCOP8+6lQudEUXrMkAYBiMETL5F8hPbee4hhYRH7SqyY+Bo
+	 LvD1sl1w1TxKNfPslDZDwSGEJAwSlo1sWiKkHW7ODJ9u+SeYBYiqdJXfEYQ97MW4Kq
+	 rE5KU9DrubcmTk3w+H9nT8fw3pcCrUpNB2ZP+crMQkGcS107MOLKt9iaNIp+RXZ1pa
+	 F7JPrhoAKs6zwc5J24EdR0+gtqRldDIXRbMgMEgo7r+Air5VpyzrbUmeICj8oMFd4W
+	 dj/lV0J1SWSfg==
+Date: Mon, 8 Jul 2024 12:29:28 +0100
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v9 4/6] iommu/arm-smmu-v3: Add CS_NONE quirk for
+ CONFIG_TEGRA241_CMDQV
+Message-ID: <20240708112928.GB11567@willie-the-truck>
+References: <cover.1718228494.git.nicolinc@nvidia.com>
+ <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
+ <20240702174307.GB4740@willie-the-truck>
+ <ZoREzIAqzyamQBWL@Asurada-Nvidia>
+ <20240702184942.GD5167@willie-the-truck>
+ <ZoRZP4k1A3G7nH9q@Asurada-Nvidia>
+ <ZoReq/kNi368x79q@Asurada-Nvidia>
+ <20240705152721.GA9485@willie-the-truck>
+ <Zog3IgdmYRU7VbJB@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,109 +67,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dd56a9d9-08fe-4bd4-83e2-dfdc44f8c637@gmail.com>
+In-Reply-To: <Zog3IgdmYRU7VbJB@Asurada-Nvidia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, Jul 07, 2024 at 10:57:31PM +0200, Christian Schrefl wrote:
-> Greetings.
+On Fri, Jul 05, 2024 at 11:10:42AM -0700, Nicolin Chen wrote:
+> On Fri, Jul 05, 2024 at 04:27:21PM +0100, Will Deacon wrote:
+> > On Tue, Jul 02, 2024 at 01:10:19PM -0700, Nicolin Chen wrote:
+> > > On Tue, Jul 02, 2024 at 12:47:14PM -0700, Nicolin Chen wrote:
+> > > > @@ -345,6 +345,11 @@ static void arm_smmu_cmdq_build_sync_cmd(u64 *cmd, struct arm_smmu_device *smmu,
+> > > >             FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH) |
+> > > >             FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
+> > > >
+> > > > +   if (cmdq->type == TEGRA241_VCMDQ) {
+> > > > +           cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_NONE);
+> > > > +           return;
+> > > > +   }
+> > > > +
+> > > >     if (!(smmu->options & ARM_SMMU_OPT_MSIPOLL)) {
+> > > >             cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
+> > > >             return;
+> > > > @@ -690,7 +695,8 @@ static int arm_smmu_cmdq_poll_until_sync(struct arm_smmu_device *smmu,
+> > > >                                     struct arm_smmu_cmdq *cmdq,
+> > > >                                     struct arm_smmu_ll_queue *llq)
+> > > >  {
+> > > > -   if (smmu->options & ARM_SMMU_OPT_MSIPOLL)
+> > > > +   if (smmu->options & ARM_SMMU_OPT_MSIPOLL &&
+> > > > +       cmdq->type != TEGRA241_VCMDQ) {
+> > > >             return __arm_smmu_cmdq_poll_until_msi(smmu, cmdq, llq);
+> > > >
+> > > > --------------------------------------------------------------
+> > > >
+> > > > Would you prefer this one? I feel CMDQ_QUIRK_SYNC_CS_NONE_ONLY
+> > > > is more general looking though..
+> > >
+> > > And we would need some additional lines of comments for the two
+> > > pieces above, explaining why TEGRA241_VCMDQ type needs the first
+> > > one while bypasses the second one. Again, it feels even worse :(
+> > 
+> > I hacked the code around a bit this afternoon. Please can you see if:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-nicolin/grace-vcmdq-wip
+> > 
+> > does roughly what you need?
 > 
-> On 07.07.24 2:38 AM, Danilo Krummrich wrote:
-> > `request_internal` must be called with one of the following function
-> > pointers: request_firmware(), firmware_request_nowarn(),
-> > firmware_request_platform() or request_firmware_direct().
-> > 
-> > The previous `FwFunc` alias did not guarantee this, which is unsound.
-> > 
-> > In order to fix this up, implement `FwFunc` as new type with a
-> > corresponding type invariant and unsafe `new` function.
-> > 
-> > Reported-by: Gary Guo <gary@garyguo.net>
-> > Closes: https://lore.kernel.org/lkml/20240620143611.7995e0bb@eugeo/
-> > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> > ---
-> >  rust/kernel/firmware.rs | 32 ++++++++++++++++++++++++++------
-> >  1 file changed, 26 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> > index 106a928a535e..d765ecc85d38 100644
-> > --- a/rust/kernel/firmware.rs
-> > +++ b/rust/kernel/firmware.rs
-> > @@ -7,11 +7,24 @@
-> >  use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
-> >  use core::ptr::NonNull;
-> >  
-> > -// One of the following: `bindings::request_firmware`, `bindings::firmware_request_nowarn`,
-> > -// `firmware_request_platform`, `bindings::request_firmware_direct`
-> > -type FwFunc =
-> > +type RawFwFunc =
-> >      unsafe extern "C" fn(*mut *const bindings::firmware, *const i8, *mut bindings::device) -> i32;
-> >  
-> > +/// # Invariants
-> > +///
-> > +/// One of the following: `bindings::request_firmware`, `bindings::firmware_request_nowarn`,
-> > +/// `firmware_request_platform`, `bindings::request_firmware_direct`
-> > +struct FwFunc(RawFwFunc);
-> > +
-> > +impl FwFunc {
-> > +    /// # Safety
-> > +    ///
-> > +    /// Must be one of the functions listed in the type invariants.
-> > +    unsafe fn from_raw(func: RawFwFunc) -> Self {
-> > +        Self(func)
-> > +    }
-> Why not write methods that construct each possible FwFunc?
+> I appreciate the patch. Yet, we cannot use IORT's model field.
+> This would need to go through IORT documentation, for A. And B,
+> we had a very long discussion with ARM (Robin was there) years
+> ago, and concluded that this CMDQV would not be a model in IORT
+> but a DSDT node as an extension. So, this is firm...
 
-Thanks, this is a good idea indeed, will send a v2.
+Seems like a bad outcome given that you've clearly modified the IP, but
+whatever. We can parse the DSDT when we detect whatever the model
+actually is; I don't think that's a huge issue.
 
-> That way the code that needs to know abut this invariant is only inside a single impl block.
-> Something like:
-> impl FwFunc {
->     fn request_firmware() -> Self {
->         // # Safety
->         // As per the Type Invariant `bindings::request_firmware` is a valid vaule.
->     	FwFunc(bindings::request_firmware)
->     }
-> }
+> With that, we cannot avoid an unconditional hard-coding tegra
+> function call even if we switch to an impl design:
 > 
-> > +}
-> > +
-> >  /// Abstraction around a C `struct firmware`.
-> >  ///
-> >  /// This is a simple abstraction around the C firmware API. Just like with the C API, firmware can
-> > @@ -48,7 +61,7 @@ fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
-> >  
-> >          // SAFETY: `pfw` is a valid pointer to a NULL initialized `bindings::firmware` pointer.
-> >          // `name` and `dev` are valid as by their type invariants.
-> > -        let ret = unsafe { func(pfw as _, name.as_char_ptr(), dev.as_raw()) };
-> > +        let ret = unsafe { func.0(pfw as _, name.as_char_ptr(), dev.as_raw()) };
-> >          if ret != 0 {
-> >              return Err(Error::from_errno(ret));
-> >          }
-> > @@ -60,13 +73,20 @@ fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
-> >  
-> >      /// Send a firmware request and wait for it. See also `bindings::request_firmware`.
-> >      pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
-> > -        Self::request_internal(name, dev, bindings::request_firmware)
-> > +        // SAFETY: `bindings::request_firmware` is valid by the safety requirement of `FwFunc`.
-> > +        let func = unsafe { FwFunc::from_raw(bindings::request_firmware) };
-> > +
-> > +        Self::request_internal(name, dev, func)
-> >      }
-> >  
-> >      /// Send a request for an optional firmware module. See also
-> >      /// `bindings::firmware_request_nowarn`.
-> >      pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
-> > -        Self::request_internal(name, dev, bindings::firmware_request_nowarn)
-> > +        // SAFETY: `bindings::firmware_request_nowarn` is valid by the safety requirement of
-> > +        // `FwFunc::new`.
-> > +        let func = unsafe { FwFunc::from_raw(bindings::firmware_request_nowarn) };
-> > +
-> > +        Self::request_internal(name, dev, func)
-> >      }
-> >  
-> >      fn as_raw(&self) -> *mut bindings::firmware {
-> 
-> Cheers,
-> Christian
-> 
+> +static int acpi_smmu_impl_init(u32 model, struct arm_smmu_device *smmu)
+> +{
+> +	/*
+> +	 * unconditional go through ACPI table to detect if there is a tegra241
+> +	 * implementation that extends SMMU with a CMDQV. The probe() will fill
+> +	 * the smmu->impl pointer upon success. Otherwise, fall back to regular
+> +	 * SMMU CMDQ.
+> +	 */
+> +	tegra241_impl_acpi_probe(smmu);
 
+In-line the minimal DSDT parsing to figure out if we're on a Tegra part.
+If it's that bad, put it in a static inline in arm-smmu-v3.h.
+
+> +	return 0;
+> +}
+> 
+> As for arm_smmu_cmdq_needs_busy_polling, it doesn't really look
+> very optimal to me.
+
+"optimal" in what sense? In that you don't like how it smells, or that
+it's measurably bad?
+
+> But if you insist on having an smmu option, we still have to take in the
+> PATCH-3 in this series, enforcing an arm_smmu_cmdq_build_sync_cmd() call
+> in the IRQ handler too.  So, it would eventually look like [attachment].
+
+With my hacks, I think you can just call arm_smmu_cmdq_build_sync_cmd()
+from the irqhandler and it will work.
+
+Will
 
