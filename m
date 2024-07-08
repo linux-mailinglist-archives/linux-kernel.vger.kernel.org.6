@@ -1,507 +1,234 @@
-Return-Path: <linux-kernel+bounces-244916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE2C92AB70
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:45:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09D692AB74
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ECFB1C21525
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721DD1F22753
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3591314D28A;
-	Mon,  8 Jul 2024 21:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066614F9C7;
+	Mon,  8 Jul 2024 21:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Bx+V4vpG"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11021106.outbound.protection.outlook.com [40.93.194.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5yEIF7M"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73403D3B8;
-	Mon,  8 Jul 2024 21:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.106
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720475130; cv=fail; b=ajN5CRMZ5LsqkdR2owBjQwW1DPJ3vIZl7Cc5ZHEmIMtMm3ESvUXxv0uL6snImgfxnA/xsJaz1suiZkQ6KoQfMv3dyhDEoLeIMSxw+thOl7I7Nc+zvgp1IUM5pE1sF0YIjapQH2Kq4YsoybQEKzS0Y1czjLPkbxoJcC+sC0dSyDc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720475130; c=relaxed/simple;
-	bh=1ythnx99xjm3OfEMHNPuSotHA2PhyypoaAv8inNSY0A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DOSUGFzzLfqm34HM7Hx+E4LWSFdW7njn9Z9StkIDd7uzg/1IVauvl3i5z1FhIuQZ7C6NEG66949vHB3RLO62e+lsxyTnVfY6L3JV5wFfyK1FHfNeIC9Uv0aaIuIe5QXUACc1efN6GfUAqovWSaAujZwcX7atGY8+hkkSFQYzX08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=Bx+V4vpG; arc=fail smtp.client-ip=40.93.194.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wl4xRz6w7+0LuIdLLYu2ifsV5Go9eZYkpU0+breZp14Je3zWyLPR+YlLMvrXnLdOEoiMSzF91myQjWDe+MKzHkOqSdjN1ckpmT1ybgVxCHhlxdNkJjbb96mA5FHKNkyGKlUHSdQCbY7PEfROFHSAKNCg8AHroZS351jiIMyZPXBWj+/4fAqUYeVkNqVKoRBL07FVZX4DIJPbzdXQJ7SX4+Cj7bl6BRVX7fFHdRwSolAgJFDfqPBJQVNwYTABYK0GEn15u6OUTku7S9+0uq1VG1IpyL4fPTN67lf0TqFOnA4y0xxQNMzmniS13cuufClM8H/zQXe+fl9k4A/17WHIyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g7iFKesKcn0jDAanuaDRdfd/ROmwl9XBFIkSjuYaTM4=;
- b=N9h5bhw238qHQ27e6/9Ib3wkPwSkLqiYx10UJha23fLoyoh16A7/m9l99zpAmsHDJrUzCUqph/afN/4VhJQjwqVHElFE2xgKPdz5Ivd+wTa6RZWT+JQesGsgtBFOtzRlrs5R0S+7fKxqIItGJZH+ijo8HOrQoQS47NFqTuxZdjiHi2E8NZKDYB/VTLdk+xR5q55zzJPwAyEdoxhJ2FQHTIAM85Mwg8PWpn1bFXwazPSIrasYccobIbEmDvTsv85Uxa/Xm/A4ElndYcxAG9YkN/JZDH+8sxmQSIhUwySRfxVKam2f6mQt9kkUIRxm+71m3bXNChLUj5VvFRElAtzNQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g7iFKesKcn0jDAanuaDRdfd/ROmwl9XBFIkSjuYaTM4=;
- b=Bx+V4vpGhCJA6AlXk3R+tPmIKa7S+AoAz250hul2DxHcDmqbpNMESn+XtEr80eZspKZcq0p63kzu2SiI1c30Qz45a3TWWmUB/7AgKB86x9MLa/fSBhoelZBk6cAuPMDiW4q/0XtWVzuX100lIwCo94Q5riDzINiuw1hjkL9BNPw=
-Received: from SA1PR21MB1317.namprd21.prod.outlook.com (2603:10b6:806:1f0::9)
- by BL1PR21MB3355.namprd21.prod.outlook.com (2603:10b6:208:39f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.4; Mon, 8 Jul
- 2024 21:45:24 +0000
-Received: from SA1PR21MB1317.namprd21.prod.outlook.com
- ([fe80::67ed:774d:42d4:f6ef]) by SA1PR21MB1317.namprd21.prod.outlook.com
- ([fe80::67ed:774d:42d4:f6ef%6]) with mapi id 15.20.7784.001; Mon, 8 Jul 2024
- 21:45:24 +0000
-From: Dexuan Cui <decui@microsoft.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "open list:X86 TRUST
- DOMAIN EXTENSIONS (TDX)" <linux-coco@lists.linux.dev>, "open list:X86
- ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, Michael
- Kelley <mikelley@microsoft.com>, Kuppuswamy Sathyanarayanan
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, Rick Edgecombe
-	<rick.p.edgecombe@intel.com>, Kai Huang <kai.huang@intel.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
-Thread-Topic: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
-Thread-Index: AQHa0Wtpz0U6bwgC9Ee4DSiEch1K2bHtOg4A
-Date: Mon, 8 Jul 2024 21:45:24 +0000
-Message-ID:
- <SA1PR21MB1317816DFCE6EF38A92CF254BFDA2@SA1PR21MB1317.namprd21.prod.outlook.com>
-References: <20240708183946.3991-1-decui@microsoft.com>
- <20240708191703.GJZow7L9DBNZVBXE95@fat_crate.local>
-In-Reply-To: <20240708191703.GJZow7L9DBNZVBXE95@fat_crate.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=20918404-b51e-4bb9-8c24-31d038cfe22e;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-07-08T19:38:45Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB1317:EE_|BL1PR21MB3355:EE_
-x-ms-office365-filtering-correlation-id: be0d4ea9-06b3-4160-c912-08dc9f9745f3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?ctXJJhPZq3DFVSjBloEaczawl5zpJeAG9ZgkVI1ypAIzO5R+HIdIAUvW5K3n?=
- =?us-ascii?Q?vv5tdtmjswVn+AxPbOil30imebDktGP8+ehd+Yq3C1zn3abzOATDaZY9Qtii?=
- =?us-ascii?Q?BEUvxvAVFVMiKW8DeVpKjqR9gi/TpeL3KPwCRXN07d2Ka5gg3xbdfgBBwuc6?=
- =?us-ascii?Q?lH+W4s/Vcb32Pkq8RD/KCqYJapQqmD25sKUHu+17QkavzR211bgVFzZKG5dV?=
- =?us-ascii?Q?E2koL0Ms0mFqJhgLOi1Rurk6IKCwkwVQNoiJ/ZmYly8KVfUwqcN5A5jMZgaL?=
- =?us-ascii?Q?Znzli8KTACzX5B1LYnpLlGIX4KXA7ulk9ymy4Makehka9e3rJuUJyR2Mg7BK?=
- =?us-ascii?Q?raLUEHvZhBZuYsHfqLPB+RBb7D9v0+/d2FCYhMdwBWFzdFEZAsWVIOvFie+R?=
- =?us-ascii?Q?mXEV4qn2KFK57UQgunyK2vCRwVIZXovzUKxLnIYOijnkhiwb7D5MGiusmH62?=
- =?us-ascii?Q?XqXV+tlT2a7d/dk/9R+3OFikNNmsAouCy4Fhtt3oGzJdjSfXf9QJUJ2bgVi5?=
- =?us-ascii?Q?byq7FXd/0zi2ep9pZuy1DcoK684AHtzZ7UXD9rtYp9IcxKERowFFcd0nFR/F?=
- =?us-ascii?Q?9men12/cYKNeGN2Q7JBKOpWIJyYYA1YlWG9BMUEqnfyngoZJ2JYqvoh+wc3j?=
- =?us-ascii?Q?Ewbmst8x79sEz4lVFgAMZ4gCHWeIxC/Qc60IEhaFFC/ABIdvioZIptJ8xfDd?=
- =?us-ascii?Q?+myQaHa2otyhHYuW/GmAsrs/0WXWuglgOGYHiK/k0As7WykMmhqzbThA+QAU?=
- =?us-ascii?Q?gnspCzpl04sMtvP5Cx2+9811/f9YAjOFbsa4j4L5LOmYhPFQNi7Enir2WGr4?=
- =?us-ascii?Q?C5AWyb6y+UBfqXtCD+ZWPnE5T9+4PhyFTjE+e7PqyGV0MEfUW26FWHxpFQMw?=
- =?us-ascii?Q?1sNy40TPl+wTUkyCZsU9FZGvmFoi4wk/OijpqDpeMgXBMBVdEb+OJ4dQ0Gy7?=
- =?us-ascii?Q?AM+JimRMaCpXOmgwbyiVWc6uBZ5NBH+67/plGXPf/r40gRueBLES8VQP8nLu?=
- =?us-ascii?Q?zXelVojmzsaQmtP7E+RHgdXjdMcRpeupepAlKZvj+5YF3yvC8JR04ew2f+a/?=
- =?us-ascii?Q?FHA8Hr8RM3ZCf0jmH8A9VXA9nad4QhkeweTuPH/f9OgUwNcfGzFDwToo6/vG?=
- =?us-ascii?Q?1kz8+XIbEUTUBRjcnyov0cYpA6G4W9r61o+mA+6+Hnr96IssiQBpBZzxDNI4?=
- =?us-ascii?Q?H6wtiQxuC9nELtZ6T/kY/ubhrq0wRNyw6n7cRCyx9By+nSPKQkkZ28L6gs0S?=
- =?us-ascii?Q?gcC7On9F87MoOts5GLLhQ0YfXjF5NE6riRfSzOSQpILL1ayOlUnpgHMdcgF5?=
- =?us-ascii?Q?isj5ftWvQId3JLsWEoTFtqtqu5s0qNpYOlktmmWHh42r94itwldKAVnUses6?=
- =?us-ascii?Q?5sqFO+4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR21MB1317.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?tyBxcMLv9S0exttDaeF8FkGtu7Kp2GuiGbX1bk0cAnOxV0I6p4WkkAXQI0uh?=
- =?us-ascii?Q?J5x0plMUNzPIJm5BshCizkV7aT8L0kB2ERDwci9Evjh9I3NwvHgO4rKyU7h7?=
- =?us-ascii?Q?dyRgjEROHtbdkf3XTocPOqwylJ/tErH/jcKJVDUjzuQpR+uKjUIPX835UueN?=
- =?us-ascii?Q?rj2QBVACKnZLFgfUzZH/nHB1bzCzWP2b9RC3nvS1QQVa8N8WD7rPWn+N8no2?=
- =?us-ascii?Q?sfecCPU09z+gIvurv7xHioQKvNYAEoFCd2FDogS/w2prsJDgy41Ne5W1HWXh?=
- =?us-ascii?Q?N7DLCfE8EptETdK0PbqNdJcSUGpRJum5wipmba6zfg55Ywx8crDxylq/VfW0?=
- =?us-ascii?Q?3OY0mEMjczBHytR7hjwQq4khThtdG+qsjC8YIilpcu7s/aNx0BzdbpJGRYpl?=
- =?us-ascii?Q?qsj0ImovecxwsQbmOt6AwqghmwVmelqpshbfiLm2VNqv9JT2BgekviW5cAT/?=
- =?us-ascii?Q?q8ErYb1ku9EnnEO6++jb6rKjoEAemaV9eGveiZZuE+VLWACqndLW/Yym/X24?=
- =?us-ascii?Q?ZMwjQ9JGQtIBiujW5/RfAt3djtXaFY4PKpDv0wEhQ0xYM7AJYtw9ECk2259r?=
- =?us-ascii?Q?g8IA06VBYXFCsykTqX5S1vaOg+NVKrHhsI0j5yPU25U6aMUSL5ok4QS78QnE?=
- =?us-ascii?Q?Jb7kD/8NUSk01UeGC4gzJiWW5wtRbVIu8uAwFnbi8mCTnZYu03V4HKMCGCAe?=
- =?us-ascii?Q?mb4WiNzTU2e8nRyn31lBMHyiXdNlOKM0MTAHgqB4X8esZp/xvFHideyXl/oj?=
- =?us-ascii?Q?+MX842WILXbZSWvq3QsUlJcCnDpJb1GKd4pgIdBC/PPPbB+QjggGjRSRo/oS?=
- =?us-ascii?Q?GlNy4Sd8dky+h7IwcMoMddA3DELfHTWlywCYfIE0gJYcKywIA9HoYNX7jnNS?=
- =?us-ascii?Q?Ddtyb9w+ZlLb+CcNB3nLa0EfsOgDMNb+SmILHFfWt4vkWCzFcoXIxuMbLRVI?=
- =?us-ascii?Q?M5Rk53m9XKrqMVAXVoQ2cALod/rM+ZJ4x4P6eMXoTlpUA2AhlsHenjqHqDeS?=
- =?us-ascii?Q?Hwg3SwvAaTZRlworC7+B9sMPuX2N4rIgxT69IbV8wmepKGj+M7pCmxuIviGs?=
- =?us-ascii?Q?DTl21IX1HVojlc8beY7yyfXwn2ZeRhN1lSBXAftumRxO2gbsPTbA+gnLEeYX?=
- =?us-ascii?Q?JcwiQkqNVqcnP/kHQfHJklm8Fyi96rfcRKaUCswmJ24V++XfbeZUVHscEjtH?=
- =?us-ascii?Q?LIjGwPfk72uzbxrmWDatXAxDvZ+xKgRw3R8y4/0NzpaPo8XnYIgMylbXcrqu?=
- =?us-ascii?Q?A40gAETajEmD2bsW0UmgSepRyhHgLAAfcmpfWtGxctfNJZRWKdq7pIux8d7b?=
- =?us-ascii?Q?yoHbu8tJD2MT1TUHW1VO5CyZ53L2QcJusDQvh/R23224ZcwLV97MmM8MVdFI?=
- =?us-ascii?Q?qHSoVpNn+hr2CVda5+j8hk3M6CmRgpxaOzLEVCGRqYZYYcq/eFxwlqnQ35Md?=
- =?us-ascii?Q?aJpcFceFDVqu65ACX29S57wd4LJGtbg6xsCA8G6EDQ4yp9kQxjh9Iw3p0Em7?=
- =?us-ascii?Q?fw3+9oZGmF0arJWUxEWR9MOfwbHJgwSWGc1wkof7iVAtzroF1pjcLVpKOjM9?=
- =?us-ascii?Q?pyUyE2RnBrOc80aQEeqzQI0p64VDUTNYv/KzdAl7tmxX7uzuXkqqRSj2me2j?=
- =?us-ascii?Q?H0mjUKRe1nbF3CH/6oyJGfs=3D?=
-Content-Type: multipart/mixed;
-	boundary="_002_SA1PR21MB1317816DFCE6EF38A92CF254BFDA2SA1PR21MB1317namp_"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C5E149C57;
+	Mon,  8 Jul 2024 21:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720475145; cv=none; b=Cn7BtTPCXMr109qOP8PzJGaNlmtgJ5JZ1wy2h8VcQ/3Myjd3TSQbqweost0t8ok2lx9glEBdHEo0WRFAtu43yvyR4GVpSmZs6w5pmMz91RKdGtvM7zBsbV8MD+v5UED+sbXDs0Y5q3EhwQ6wdzM8G4d9H5CWB0mJBtyFsH6mFVs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720475145; c=relaxed/simple;
+	bh=+ae8pg1lKkpGlOeMfZCLm0kbUy557ShXe/omxZLskjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dQ+LkZttQde+dhH0KD3Ti1fqZTqlNzPfWX0eNPu/i3YnMAYAjX54fSxDSYf6KOdidwBActzBOmon8uaKBoBpTUF0F54gm0PM8P80egRvqc6QUhxzNi1WXfFYGPIHWJiy7GBE0Rxqs3BHMczM18uta6fOLF0nbnmZ2dRvipkBls4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5yEIF7M; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-75a6c290528so2311825a12.1;
+        Mon, 08 Jul 2024 14:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720475143; x=1721079943; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZCU3c2nAd7aJdRcBLdbkRzXUYEZGaosmRWTEVwbkU6w=;
+        b=f5yEIF7M3s5j1N+3VTe+FSXAgIz/ejZRx7gRht8iQrJi7x/39XEqqh3M0SJo3Ti2P2
+         rlZgAutHcrUr876WvsW5IKWsS26Jgw8K04640/pSMYShiTdzzQQuupOEO6yHTuyArLb/
+         LUyT4ShKEjWV8tEMbMyVpfuqfJ4+qEkVjRQMd4SaDP1PwMSujXbrnU7au5ckgLiuL41D
+         ScvA4ofFrK3cCBTyixLXfq7I2wel8XLx6uH0wBW4wfx+nmHbVlTmthQkFvBfMrozPJWV
+         bK2WasaoWsBh6VBR4YttuWOAuoTPMqzZTckhUT1+WtbaYbcHEww1oe2RYnr3A+IywDKE
+         DsHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720475143; x=1721079943;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZCU3c2nAd7aJdRcBLdbkRzXUYEZGaosmRWTEVwbkU6w=;
+        b=X5xeWgbEBtAxjbqCBgJ7Zh1avKExbQc6XdH39o7BExUzIIpZT+h1trv0K+jkGacvOI
+         1zf/eYELmOm8/zX6LXXMb+AW7cOlQagmVKpVdZtBHHogapa5/pIAG3gWXplYICyPzmBj
+         UyV5KjUznaDUwo8xiYwEiMRhaBKPCZKO9WZyv1OOfwy8fFSUltsQqwnrFptLIdE+GK/X
+         9Wj7TcxR93xZRH78nsNLpyVZ44mcTM4VXs/j02wl9dogO86FJklg9AwDa3zLY1svDQN9
+         Orok5c2zUFUEmQnMLyB3p7Y21wqkk+JF8yQGoMzv2phRJ5WjId9GIKksU/aX1LiJaSBx
+         wsWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMUvEBjd4IVtJj1wkUQIg/QdCqld8jYZA9goC2M/ZtPRPCHKsN5Zr6j85CiJ1nJBJnJRspBl5zYTPSwfxoeK88GAu0aEfFZBcjwCp5EfDlUYioQkD3mIi7J+ukzxMMaJihv06bK7PfrMdbrjIzQgtqpzZZc0YpT0bZYEWVHmyrKbjLh+h0
+X-Gm-Message-State: AOJu0YyGMHINq64lbRAyFnC0tUafuTpk6zNQOBicyRvH62fycTBUjR0d
+	i5DDDyV2M90ga5vYdv3Rkm98LnmM1OeeaOGhgpR+q4fmhGFZ2XVr
+X-Google-Smtp-Source: AGHT+IGVa/Isf9H+e8+4NivDbgTeA4ktp0isulq+ODjXuA8oyJMRlgUb0nG0ofIfTiRW70PZb765yQ==
+X-Received: by 2002:a05:6a21:3393:b0:1c2:8e77:a813 with SMTP id adf61e73a8af0-1c298205f0dmr843724637.1.1720475143018;
+        Mon, 08 Jul 2024 14:45:43 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a0fc20sm3376065ad.2.2024.07.08.14.45.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 14:45:41 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <12045925-7876-492a-952b-7ecf04bcddb8@roeck-us.net>
+Date: Mon, 8 Jul 2024 14:45:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB1317.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be0d4ea9-06b3-4160-c912-08dc9f9745f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2024 21:45:24.1660
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: V15FbzX93XmW1xLiQF3eSzK6Jkw9aX/lRKtcAcH4S1KNLRuuMn0jwAwiLzqPSgh36CG+HX6Ld3FSsnQtNyismA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR21MB3355
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/8] hwmon: (amc6821) add support for tsd,mule
+To: Farouk Bouabid <farouk.bouabid@cherry.de>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>,
+ Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>,
+ Heiko Stuebner <heiko@sntech.de>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20240708-dev-mule-i2c-mux-v5-0-71446d3f0b8d@cherry.de>
+ <20240708-dev-mule-i2c-mux-v5-4-71446d3f0b8d@cherry.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240708-dev-mule-i2c-mux-v5-4-71446d3f0b8d@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---_002_SA1PR21MB1317816DFCE6EF38A92CF254BFDA2SA1PR21MB1317namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+On 7/8/24 09:12, Farouk Bouabid wrote:
+> Theobroma Systems Mule is an MCU that emulates a set of I2C devices,
+> among which is an amc6821 and other devices that are reachable through
+> an I2C-mux.
+> 
+> The devices on the mux can be selected by writing the appropriate device
+> number to an I2C config register (amc6821: reg 0xff)
+> 
+> Implement "tsd,mule" compatible to instantiate the I2C-mux platform device
+> when probing the amc6821.
+> 
+> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
+> ---
+>   drivers/hwmon/amc6821.c | 25 ++++++++++++++++++++++++-
+>   1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
+> index 0661cc6a6f8e..93c3b79b5f13 100644
+> --- a/drivers/hwmon/amc6821.c
+> +++ b/drivers/hwmon/amc6821.c
+> @@ -22,6 +22,7 @@
+>   #include <linux/minmax.h>
+>   #include <linux/module.h>
+>   #include <linux/mutex.h>
+> +#include <linux/of_platform.h>
+>   #include <linux/regmap.h>
+>   #include <linux/slab.h>
+>   
+> @@ -895,8 +896,17 @@ static const struct regmap_config amc6821_regmap_config = {
+>   	.cache_type = REGCACHE_MAPLE,
+>   };
+>   
+> +static const struct regmap_config amc6821_mule_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = 0xff,
 
-> From: Borislav Petkov <bp@alien8.de>
-> [...]
-> On Mon, Jul 08, 2024 at 06:39:45PM +0000, Dexuan Cui wrote:
-> > When a TDX guest runs on Hyper-V, the hv_netvsc driver's
-> >  netvsc_init_buf()
-> > allocates buffers using vzalloc(), and needs to share the buffers with =
-the
-> > host OS by calling set_memory_decrypted(), which is not working for
-> > vmalloc() yet. Add the support by handling the pages one by one.
->=20
-> "Add support..." and the patch is cc:stable?
+Unnecessary since the maximum possible register address is 0xff.
 
-I meant to use "Cc: stable@vger.kernel.org # 6.6+".=20
-Sorry for missing the "# 6.6+".=20
-=20
-> This looks like it is fixing something and considering how you're rushing
-> this, I'd let this cook for a whole round and queue it after 6.11-rc1. So=
- that
-> it gets tested properly.
+> +	.volatile_reg = amc6821_volatile_reg,
+> +	.cache_type = REGCACHE_MAPLE,
+> +};
+> +
 
-x86/tdx: Fix set_memory_decrypted() for vmalloc() buffers
-
-When a TD mode Linux TDX VM runs on Hyper-V, the Linux hv_netvsc driver
-needs to share a vmalloc()'d  buffer with the host OS: see
-netvsc_init_buf() -> vmbus_establish_gpadl() -> ... ->
-__vmbus_establish_gpadl() -> set_memory_decrypted().
-
-Currently set_memory_decrypted() doesn't work for a vmalloc()'d  buffer
-because tdx_enc_status_changed() uses __pa(vaddr), i.e., it assumes that
-the 'vaddr' can't be from vmalloc(), and consequently hv_netvsc fails
-to load.
-
-Fix this by handling the pages one by one.
-
-hv_netvsc is the first user of vmalloc() + set_memory_decrypted(), which
-is why nobody noticed this until now.
-
-v6.6 is a longterm kernel, which is used by some distros, so I hope
-this patch can be in v6.6.y and newer, so it won't be carried out of tree.
-
-I think the patch (without Kirill's kexec fix)  has been well tested, e.g.,
-it has been in Ubuntu's linux-azure kernel for about 2 years. Kirill's=20
-kexec fix works in my testing and it looks safe to me.=20
-
-I hope this can be in 6.11-rc1 if you see no high risks.=20
-It's also fine to me if you decide to queue the patch after 6.11-rc1.
-
-> > Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-https://lwn.net/ml/linux-kernel/20230412151937.pxfyralfichwzyv6@box/
-
-> > Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> > Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=3De1=
-b8ac3aae589bb57a2c2e49fa76235c687c4d23
-
-> > Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-https://lwn.net/ml/linux-kernel/BYAPR21MB16885F59B6F5594F31AE957AD79A9@BYAP=
-R21MB1688.namprd21.prod.outlook.com/
-
-> > Reviewed-by: Kuppuswamy Sathyanarayanan
-> <sathyanarayanan.kuppuswamy@linux.intel.com>
-https://lwn.net/ml/linux-kernel/d20baf1e-a736-667f-2082-0c0539013f2b@linux.=
-intel.com/
-
-> > Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-https://lwn.net/ml/linux-kernel/e8b1b0b5f32115c0ef8f1aeb0b805c4d9a953b31.ca=
-mel@intel.com/
-
-> > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-https://lwn.net/ml/linux-kernel/4732ef96-9a47-3513-4494-48e4684d65cd@intel.=
-com/
-
-> > Acked-by: Kai Huang <kai.huang@intel.com>
-https://lwn.net/ml/linux-kernel/6b6e7f943b7e28fa6ae6c77e1002ac61c41c1ee2.ca=
-mel@intel.com/
-
-> When were you able to collect all those tags on a newly submitted patch?
-
-This is not really a newly submitted patch :-)
-Please refer to the links above.
-
-v9 was posted here (Jun 2023):=20
-https://lwn.net/ml/linux-kernel/20230621191317.4129-3-decui@microsoft.com/
-
-v10 was posted here (Aug 2023):
-https://lwn.net/ml/linux-kernel/20230811214826.9609-3-decui%40microsoft.com=
-/
-
-The last submission was May 2024:
-https://lwn.net/ml/linux-kernel/20240521021238.1803-1-decui@microsoft.com/
-(Sorry, I should have made it clear that this is actually v11)
-
-> Do you even know what the meaning of those tags is or you just slap them
-> willy-nilly, just for fun?
-
-The original patch was submitted in Nov 2022:
-https://lwn.net/ml/linux-kernel/20221121195151.21812-4-decui@microsoft.com/
-
-I added Kirill's Co-developed-by in v4 (Apr 2023)
-https://lwn.net/ml/linux-kernel/20230412151937.pxfyralfichwzyv6@box/
-and added Kirill's Signed-off-by in v5, and added other people's Reviewed-b=
-y
-and Acked-by over time. There are only minor changes since v4, so I think
-it's appropriate to keep all the tags in the final commit.
-
-> > Cc: stable@vger.kernel.org
->=20
-> Why?
->=20
-> Fixes: what?
-
-Please refer to my reply above.=20
-
-This is not to fix a buggy commit. The described scenario never worked befo=
-re,
-so I suppose a "Fixes:" tag is not needed.
-
-> From reading this, it seems to me you need to brush up on=20
-> https://kernel.org/doc/html/latest/process/submitting-patches.html
-Thanks for the link! I read it and did learn something.
-
-> while waiting.
->=20
-> Thx.
->=20
-> --
-> Regards/Gruss,
->     Boris.
-
-I hope I have provided a satisfactory reply above.
-
-How do you like the v12 below? It's also attached.
-If this looks good to you, I can post it today or tomorrow.
+Anyway, don't bother. Just drop max_register from amc6821_regmap_config.
 
 Thanks,
-Dexuan
+Guenter
 
-From 132f656fdbf3b4f00752140aac10f3674b598b5a Mon Sep 17 00:00:00 2001
-From: Dexuan Cui <decui@microsoft.com>
-Date: Mon, 20 May 2024 19:12:38 -0700
-Subject: [PATCH v12] x86/tdx: Fix set_memory_decrypted() for vmalloc() buff=
-ers
+>   static int amc6821_probe(struct i2c_client *client)
+>   {
+> +	const struct regmap_config *config;
+>   	struct device *dev = &client->dev;
+>   	struct amc6821_data *data;
+>   	struct device *hwmon_dev;
+> @@ -907,7 +917,10 @@ static int amc6821_probe(struct i2c_client *client)
+>   	if (!data)
+>   		return -ENOMEM;
+>   
+> -	regmap = devm_regmap_init_i2c(client, &amc6821_regmap_config);
+> +	config = of_device_is_compatible(dev->of_node, "tsd,mule") ?
+> +		&amc6821_mule_regmap_config : &amc6821_regmap_config;
+> +
+> +	regmap = devm_regmap_init_i2c(client, config);
+>   	if (IS_ERR(regmap))
+>   		return dev_err_probe(dev, PTR_ERR(regmap),
+>   				     "Failed to initialize regmap\n");
+> @@ -917,6 +930,13 @@ static int amc6821_probe(struct i2c_client *client)
+>   	if (err)
+>   		return err;
+>   
+> +	if (of_device_is_compatible(dev->of_node, "tsd,mule")) {
+> +		err = devm_of_platform_populate(dev);
+> +		if (err)
+> +			return dev_err_probe(dev, err,
+> +				     "Failed to create sub-devices\n");
+> +	}
+> +
+>   	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name,
+>   							 data, &amc6821_chip_info,
+>   							 amc6821_groups);
+> @@ -934,6 +954,9 @@ static const struct of_device_id __maybe_unused amc6821_of_match[] = {
+>   	{
+>   		.compatible = "ti,amc6821",
+>   	},
+> +	{
+> +		.compatible = "tsd,mule",
+> +	},
+>   	{ }
+>   };
+>   
+> 
 
-When a TD mode Linux TDX VM runs on Hyper-V, the Linux hv_netvsc driver
-needs to share a vmalloc()'d  buffer with the host OS: see
-netvsc_init_buf() -> vmbus_establish_gpadl() -> ... ->
-__vmbus_establish_gpadl() -> set_memory_decrypted().
-
-Currently set_memory_decrypted() doesn't work for a vmalloc()'d  buffer
-because tdx_enc_status_changed() uses __pa(vaddr), i.e., it assumes that
-the 'vaddr' can't be from vmalloc(), and consequently hv_netvsc fails
-to load.
-
-Fix this by handling the pages one by one.
-
-hv_netvsc is the first user of vmalloc() + set_memory_decrypted(), which
-is why nobody noticed this until now.
-
-Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.i=
-ntel.com>
-Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Cc: stable@vger.kernel.org # 6.6+
----
- arch/x86/coco/tdx/tdx.c | 43 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 36 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index 078e2bac25531..8f471260924f7 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -8,6 +8,7 @@
- #include <linux/export.h>
- #include <linux/io.h>
- #include <linux/kexec.h>
-+#include <linux/mm.h>
- #include <asm/coco.h>
- #include <asm/tdx.h>
- #include <asm/vmx.h>
-@@ -782,6 +783,19 @@ static bool tdx_map_gpa(phys_addr_t start, phys_addr_t=
- end, bool enc)
- 	return false;
- }
-=20
-+static bool tdx_enc_status_changed_phys(phys_addr_t start, phys_addr_t end=
-,
-+					bool enc)
-+{
-+	if (!tdx_map_gpa(start, end, enc))
-+		return false;
-+
-+	/* shared->private conversion requires memory to be accepted before use *=
-/
-+	if (enc)
-+		return tdx_accept_memory(start, end);
-+
-+	return true;
-+}
-+
- /*
-  * Inform the VMM of the guest's intent for this physical page: shared wit=
-h
-  * the VMM or private to the guest.  The VMM is expected to change its map=
-ping
-@@ -789,15 +803,30 @@ static bool tdx_map_gpa(phys_addr_t start, phys_addr_=
-t end, bool enc)
-  */
- static bool tdx_enc_status_changed(unsigned long vaddr, int numpages, bool=
- enc)
- {
--	phys_addr_t start =3D __pa(vaddr);
--	phys_addr_t end   =3D __pa(vaddr + numpages * PAGE_SIZE);
-+	unsigned long start =3D vaddr;
-+	unsigned long end =3D start + numpages * PAGE_SIZE;
-+	unsigned long step =3D end - start;
-+	unsigned long addr;
-+
-+	/* Step through page-by-page for vmalloc() mappings */
-+	if (is_vmalloc_addr((void *)vaddr))
-+		step =3D PAGE_SIZE;
-+
-+	for (addr =3D start; addr < end; addr +=3D step) {
-+		phys_addr_t start_pa;
-+		phys_addr_t end_pa;
-+
-+		/* The check fails on vmalloc() mappings */
-+		if (virt_addr_valid(addr))
-+			start_pa =3D __pa(addr);
-+		else
-+			start_pa =3D slow_virt_to_phys((void *)addr);
-=20
--	if (!tdx_map_gpa(start, end, enc))
--		return false;
-+		end_pa =3D start_pa + step;
-=20
--	/* shared->private conversion requires memory to be accepted before use *=
-/
--	if (enc)
--		return tdx_accept_memory(start, end);
-+		if (!tdx_enc_status_changed_phys(start_pa, end_pa, enc))
-+			return false;
-+	}
-=20
- 	return true;
- }
---=20
-2.25.1
-
-
---_002_SA1PR21MB1317816DFCE6EF38A92CF254BFDA2SA1PR21MB1317namp_
-Content-Type: application/octet-stream;
-	name="0001-x86-tdx-Fix-set_memory_decrypted-for-vmalloc-buffers.patch"
-Content-Description:
- 0001-x86-tdx-Fix-set_memory_decrypted-for-vmalloc-buffers.patch
-Content-Disposition: attachment;
-	filename="0001-x86-tdx-Fix-set_memory_decrypted-for-vmalloc-buffers.patch";
-	size=3592; creation-date="Mon, 08 Jul 2024 21:42:15 GMT";
-	modification-date="Mon, 08 Jul 2024 21:45:23 GMT"
-Content-Transfer-Encoding: base64
-
-RnJvbSAxMzJmNjU2ZmRiZjNiNGYwMDc1MjE0MGFhYzEwZjM2NzRiNTk4YjVhIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBEZXh1YW4gQ3VpIDxkZWN1aUBtaWNyb3NvZnQuY29tPgpEYXRl
-OiBNb24sIDIwIE1heSAyMDI0IDE5OjEyOjM4IC0wNzAwClN1YmplY3Q6IFtQQVRDSCB2MTJdIHg4
-Ni90ZHg6IEZpeCBzZXRfbWVtb3J5X2RlY3J5cHRlZCgpIGZvciB2bWFsbG9jKCkgYnVmZmVycwoK
-V2hlbiBhIFREIG1vZGUgTGludXggVERYIFZNIHJ1bnMgb24gSHlwZXItViwgdGhlIExpbnV4IGh2
-X25ldHZzYyBkcml2ZXIKbmVlZHMgdG8gc2hhcmUgYSB2bWFsbG9jKCknZCAgYnVmZmVyIHdpdGgg
-dGhlIGhvc3QgT1M6IHNlZQpuZXR2c2NfaW5pdF9idWYoKSAtPiB2bWJ1c19lc3RhYmxpc2hfZ3Bh
-ZGwoKSAtPiAuLi4gLT4KX192bWJ1c19lc3RhYmxpc2hfZ3BhZGwoKSAtPiBzZXRfbWVtb3J5X2Rl
-Y3J5cHRlZCgpLgoKQ3VycmVudGx5IHNldF9tZW1vcnlfZGVjcnlwdGVkKCkgZG9lc24ndCB3b3Jr
-IGZvciBhIHZtYWxsb2MoKSdkICBidWZmZXIKYmVjYXVzZSB0ZHhfZW5jX3N0YXR1c19jaGFuZ2Vk
-KCkgdXNlcyBfX3BhKHZhZGRyKSwgaS5lLiwgaXQgYXNzdW1lcyB0aGF0CnRoZSAndmFkZHInIGNh
-bid0IGJlIGZyb20gdm1hbGxvYygpLCBhbmQgY29uc2VxdWVudGx5IGh2X25ldHZzYyBmYWlscwp0
-byBsb2FkLgoKRml4IHRoaXMgYnkgaGFuZGxpbmcgdGhlIHBhZ2VzIG9uZSBieSBvbmUuCgpodl9u
-ZXR2c2MgaXMgdGhlIGZpcnN0IHVzZXIgb2Ygdm1hbGxvYygpICsgc2V0X21lbW9yeV9kZWNyeXB0
-ZWQoKSwgd2hpY2gKaXMgd2h5IG5vYm9keSBub3RpY2VkIHRoaXMgdW50aWwgbm93LgoKQ28tZGV2
-ZWxvcGVkLWJ5OiBLaXJpbGwgQS4gU2h1dGVtb3YgPGtpcmlsbC5zaHV0ZW1vdkBsaW51eC5pbnRl
-bC5jb20+ClNpZ25lZC1vZmYtYnk6IEtpcmlsbCBBLiBTaHV0ZW1vdiA8a2lyaWxsLnNodXRlbW92
-QGxpbnV4LmludGVsLmNvbT4KU2lnbmVkLW9mZi1ieTogRGV4dWFuIEN1aSA8ZGVjdWlAbWljcm9z
-b2Z0LmNvbT4KU2lnbmVkLW9mZi1ieTogRGF2ZSBIYW5zZW4gPGRhdmUuaGFuc2VuQGxpbnV4Lmlu
-dGVsLmNvbT4KUmV2aWV3ZWQtYnk6IE1pY2hhZWwgS2VsbGV5IDxtaWtlbGxleUBtaWNyb3NvZnQu
-Y29tPgpSZXZpZXdlZC1ieTogS3VwcHVzd2FteSBTYXRoeWFuYXJheWFuYW4gPHNhdGh5YW5hcmF5
-YW5hbi5rdXBwdXN3YW15QGxpbnV4LmludGVsLmNvbT4KUmV2aWV3ZWQtYnk6IFJpY2sgRWRnZWNv
-bWJlIDxyaWNrLnAuZWRnZWNvbWJlQGludGVsLmNvbT4KUmV2aWV3ZWQtYnk6IERhdmUgSGFuc2Vu
-IDxkYXZlLmhhbnNlbkBsaW51eC5pbnRlbC5jb20+CkFja2VkLWJ5OiBLYWkgSHVhbmcgPGthaS5o
-dWFuZ0BpbnRlbC5jb20+CkNjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnICMgNi42KwotLS0KIGFy
-Y2gveDg2L2NvY28vdGR4L3RkeC5jIHwgNDMgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAzNiBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9u
-cygtKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2NvY28vdGR4L3RkeC5jIGIvYXJjaC94ODYvY29j
-by90ZHgvdGR4LmMKaW5kZXggMDc4ZTJiYWMyNTUzMS4uOGY0NzEyNjA5MjRmNyAxMDA2NDQKLS0t
-IGEvYXJjaC94ODYvY29jby90ZHgvdGR4LmMKKysrIGIvYXJjaC94ODYvY29jby90ZHgvdGR4LmMK
-QEAgLTgsNiArOCw3IEBACiAjaW5jbHVkZSA8bGludXgvZXhwb3J0Lmg+CiAjaW5jbHVkZSA8bGlu
-dXgvaW8uaD4KICNpbmNsdWRlIDxsaW51eC9rZXhlYy5oPgorI2luY2x1ZGUgPGxpbnV4L21tLmg+
-CiAjaW5jbHVkZSA8YXNtL2NvY28uaD4KICNpbmNsdWRlIDxhc20vdGR4Lmg+CiAjaW5jbHVkZSA8
-YXNtL3ZteC5oPgpAQCAtNzgyLDYgKzc4MywxOSBAQCBzdGF0aWMgYm9vbCB0ZHhfbWFwX2dwYShw
-aHlzX2FkZHJfdCBzdGFydCwgcGh5c19hZGRyX3QgZW5kLCBib29sIGVuYykKIAlyZXR1cm4gZmFs
-c2U7CiB9CiAKK3N0YXRpYyBib29sIHRkeF9lbmNfc3RhdHVzX2NoYW5nZWRfcGh5cyhwaHlzX2Fk
-ZHJfdCBzdGFydCwgcGh5c19hZGRyX3QgZW5kLAorCQkJCQlib29sIGVuYykKK3sKKwlpZiAoIXRk
-eF9tYXBfZ3BhKHN0YXJ0LCBlbmQsIGVuYykpCisJCXJldHVybiBmYWxzZTsKKworCS8qIHNoYXJl
-ZC0+cHJpdmF0ZSBjb252ZXJzaW9uIHJlcXVpcmVzIG1lbW9yeSB0byBiZSBhY2NlcHRlZCBiZWZv
-cmUgdXNlICovCisJaWYgKGVuYykKKwkJcmV0dXJuIHRkeF9hY2NlcHRfbWVtb3J5KHN0YXJ0LCBl
-bmQpOworCisJcmV0dXJuIHRydWU7Cit9CisKIC8qCiAgKiBJbmZvcm0gdGhlIFZNTSBvZiB0aGUg
-Z3Vlc3QncyBpbnRlbnQgZm9yIHRoaXMgcGh5c2ljYWwgcGFnZTogc2hhcmVkIHdpdGgKICAqIHRo
-ZSBWTU0gb3IgcHJpdmF0ZSB0byB0aGUgZ3Vlc3QuICBUaGUgVk1NIGlzIGV4cGVjdGVkIHRvIGNo
-YW5nZSBpdHMgbWFwcGluZwpAQCAtNzg5LDE1ICs4MDMsMzAgQEAgc3RhdGljIGJvb2wgdGR4X21h
-cF9ncGEocGh5c19hZGRyX3Qgc3RhcnQsIHBoeXNfYWRkcl90IGVuZCwgYm9vbCBlbmMpCiAgKi8K
-IHN0YXRpYyBib29sIHRkeF9lbmNfc3RhdHVzX2NoYW5nZWQodW5zaWduZWQgbG9uZyB2YWRkciwg
-aW50IG51bXBhZ2VzLCBib29sIGVuYykKIHsKLQlwaHlzX2FkZHJfdCBzdGFydCA9IF9fcGEodmFk
-ZHIpOwotCXBoeXNfYWRkcl90IGVuZCAgID0gX19wYSh2YWRkciArIG51bXBhZ2VzICogUEFHRV9T
-SVpFKTsKKwl1bnNpZ25lZCBsb25nIHN0YXJ0ID0gdmFkZHI7CisJdW5zaWduZWQgbG9uZyBlbmQg
-PSBzdGFydCArIG51bXBhZ2VzICogUEFHRV9TSVpFOworCXVuc2lnbmVkIGxvbmcgc3RlcCA9IGVu
-ZCAtIHN0YXJ0OworCXVuc2lnbmVkIGxvbmcgYWRkcjsKKworCS8qIFN0ZXAgdGhyb3VnaCBwYWdl
-LWJ5LXBhZ2UgZm9yIHZtYWxsb2MoKSBtYXBwaW5ncyAqLworCWlmIChpc192bWFsbG9jX2FkZHIo
-KHZvaWQgKil2YWRkcikpCisJCXN0ZXAgPSBQQUdFX1NJWkU7CisKKwlmb3IgKGFkZHIgPSBzdGFy
-dDsgYWRkciA8IGVuZDsgYWRkciArPSBzdGVwKSB7CisJCXBoeXNfYWRkcl90IHN0YXJ0X3BhOwor
-CQlwaHlzX2FkZHJfdCBlbmRfcGE7CisKKwkJLyogVGhlIGNoZWNrIGZhaWxzIG9uIHZtYWxsb2Mo
-KSBtYXBwaW5ncyAqLworCQlpZiAodmlydF9hZGRyX3ZhbGlkKGFkZHIpKQorCQkJc3RhcnRfcGEg
-PSBfX3BhKGFkZHIpOworCQllbHNlCisJCQlzdGFydF9wYSA9IHNsb3dfdmlydF90b19waHlzKCh2
-b2lkICopYWRkcik7CiAKLQlpZiAoIXRkeF9tYXBfZ3BhKHN0YXJ0LCBlbmQsIGVuYykpCi0JCXJl
-dHVybiBmYWxzZTsKKwkJZW5kX3BhID0gc3RhcnRfcGEgKyBzdGVwOwogCi0JLyogc2hhcmVkLT5w
-cml2YXRlIGNvbnZlcnNpb24gcmVxdWlyZXMgbWVtb3J5IHRvIGJlIGFjY2VwdGVkIGJlZm9yZSB1
-c2UgKi8KLQlpZiAoZW5jKQotCQlyZXR1cm4gdGR4X2FjY2VwdF9tZW1vcnkoc3RhcnQsIGVuZCk7
-CisJCWlmICghdGR4X2VuY19zdGF0dXNfY2hhbmdlZF9waHlzKHN0YXJ0X3BhLCBlbmRfcGEsIGVu
-YykpCisJCQlyZXR1cm4gZmFsc2U7CisJfQogCiAJcmV0dXJuIHRydWU7CiB9Ci0tIAoyLjI1LjEK
-Cg==
-
---_002_SA1PR21MB1317816DFCE6EF38A92CF254BFDA2SA1PR21MB1317namp_--
 
