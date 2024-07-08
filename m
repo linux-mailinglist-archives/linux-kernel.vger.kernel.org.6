@@ -1,232 +1,277 @@
-Return-Path: <linux-kernel+bounces-244899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A9C92AB2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:28:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BC392AB2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126511F22578
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:28:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487581F225FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3622614EC65;
-	Mon,  8 Jul 2024 21:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD70B14F105;
+	Mon,  8 Jul 2024 21:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mrRKOaDv"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0pc0Vv7"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD21A14900C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 21:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF0714900C;
+	Mon,  8 Jul 2024 21:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720474087; cv=none; b=kL8/wM0hQx8YzLrNn3XfGZWnQ3LzyuxJIw8aI4i59WdM58OH7f3cjm3aEp2Xsu1WFJNpEGwJxUoxTGWSepWQlvttpAmZqD5tKIOp/dnDyWBpd9blLkyDIEvjLZpjlEigIlSWm9QZUrFDPnmLEgt8QIwkuKYEuS38NwdWenkZOw4=
+	t=1720474157; cv=none; b=XMe2PrXGWKdd2DFEYw/lLcrdEUgrXL+cy4W7ndFgbSt6T7lG2Ghw7Z75CakUzNHLN3QqOttoSwhmng99Bf2JT/M0/GfW6rKeTk3Qc4brxN3TP6FG+PHNcAF0hlWkDDYVx1F1q68KzzslnDkaLoOdWkaL6v0aaMQagKyZv9SkhiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720474087; c=relaxed/simple;
-	bh=UfTEjRMJvJ/xQZLuLW5elQXN69itdp4CIsGCnxsu4HM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lnynhL59Ih0+89gRD12gAGzhcrEV6UKeWM/3NYI9HyaA+7Co3LSWxhG30GMH0EZRfTO04aZfsfVB8p5ZgF4Mtp0zFrzQN1cPtMPG+f/shdWHDQ4/FlVhLvHq5ZD2GSAptQlIkKcuB2JDkGKIkjtqPfIpHLfgIAXD8jLvCTFtjH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mrRKOaDv; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02b7adfb95so8349416276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 14:28:05 -0700 (PDT)
+	s=arc-20240116; t=1720474157; c=relaxed/simple;
+	bh=xeBNkjWne9In5zATuo6T4QppMdz0GTE1KgR0eO+Y9tc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CL1st/5nAVltDPdfDulrFszmTGTUWUY5X7qwao+EH8PUSu64YWc5IuOYuiN9z2i/0cP7aVtyyVWqwy9qRZrHPd6lIApjSli91rrv/jmVMLXTVOoO1HliXBRdQ3YVadKLVctCd5qYGrHDA3Cj5UM8j+77tkpFtBq9au0Ho4miF48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0pc0Vv7; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-79f178e62d1so48358585a.1;
+        Mon, 08 Jul 2024 14:29:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720474085; x=1721078885; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/TY24y9pPj6qKzi8Thkqn2Z0GLOC7Boxtia/ZunSEuA=;
-        b=mrRKOaDvDZyM7lhqq/dkAAESldnygYGIv+LEWSUwzCd8b7unVD9YUyayb1TVJeLKxh
-         J4UYEXtJkOwPpQlhMMbvmQk2MKipQfo9WgpjHVf6pFWcikW9xzO/fcasKQzJNTOp78x0
-         BZROn+Wqbb78SOXtn/VPUAThTqO8NSa4X6H29tMI6s+PzfEo51gjdSVltoOCS80EIptF
-         ysupjconB84eh4DaxW0eY3DR7S9GoZqhp0ejV1PEH38X5IgfCz6qJB7aHNTNQSYlOWqc
-         lqqbuvKBIQFhpaYC67phxJ17bQ3jX2qXgTqy/auTnr3PlKg1SxpGgnem2gRnNSLoXn3L
-         958A==
+        d=gmail.com; s=20230601; t=1720474155; x=1721078955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GPXeqS144wag80EgyVBckCNnTJy8NLX4sL/P+F5UtVU=;
+        b=b0pc0Vv7GhD6MM/W62cqOtJFL55qJk/c6tqpNsYGQxKwxVwpRzBmgoPVpkxavBSvHo
+         jYA8Ckct1tZLAmxqnrqaCqfgCActZSEedfyIIx2D7pi6qIi0+DWqg9poR5yGsHDsT9jA
+         MzgUlNEolclPcldugSKF+O/bUxRDBunKomWqhxabJPXRcDjdfx8ypq/v196caI/Ny3hp
+         iVcsf50LF/eDHfEsdgfVPxNBBi1BV800gHW15fgfZJ5Cpuu4QrzqNCLK83yycnEszSyO
+         3m+nW185ackazDgo4MN8w1A//9dRjjRBSHOuOatAcEUqQWxJFnrPhAgEJcBKY1NjdXo7
+         A8Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720474085; x=1721078885;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/TY24y9pPj6qKzi8Thkqn2Z0GLOC7Boxtia/ZunSEuA=;
-        b=aXda4O6mLuzggRCdAt2XIEFmwkad7h8OCFmvNc6FFpU155+xSQb0Qu8ioUcvGF9iAt
-         Yi+EguzLoaAclYTTXBaUeJM0P9N2uN7w4aLc/NpNJo42dAUTh44+3YsB21PqaWSTRqCH
-         QZDQFUNo2HiBzOP4UCYgqyexWFjI/6/FrPK+r5tPOf7GcxplE/zEr/C653kbKO3i/aDY
-         dgbQznKbs8DZGgNFFXGhd2K3lxhvwEkJf1LoxAOQ3bQbYkST3N6loU+zNlQpndJZAXR1
-         zzduT2GjRK4JGbJQyZYntY9vuGin5FMjqNew4gJeXog5nadCH3cEMXj+bypR1Shn/VQx
-         jA3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVymxyFvJhef5dnuRMAHEPKV/RsM7kJHr2uaxhpJmdqK7MHH7PWGUboBhp8aG4hbPSo1/6VaJnus4DKv+OLqe6ZJpl13R6AvQLKRFSD
-X-Gm-Message-State: AOJu0Yw1hL60+W9kvNw+jrEbMvNN0Utkhwgpeq2LVU+kXvD25JL9J/bN
-	b+5X21HlRmXuOciO3UNoJZKMfI/yv9e4F5jDBaOndTLBB0gxBR5s+PeQogQKRJWnJu+Rij9lCMd
-	vdg==
-X-Google-Smtp-Source: AGHT+IFPaoT+0JeZqOGBuuBQ7SnQNqAFXgIKe35KGee83N0v93aXFTJlMQQDVA/DV+kJteIJoGtx5mPKvcs=
-X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:386c:9fc4:1a37:2b64])
- (user=yuzhao job=sendgmr) by 2002:a05:6902:1106:b0:e03:3c8c:e82c with SMTP id
- 3f1490d57ef6-e041b17e019mr20463276.9.1720474084855; Mon, 08 Jul 2024 14:28:04
- -0700 (PDT)
-Date: Mon,  8 Jul 2024 15:27:53 -0600
+        d=1e100.net; s=20230601; t=1720474155; x=1721078955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GPXeqS144wag80EgyVBckCNnTJy8NLX4sL/P+F5UtVU=;
+        b=s3Ouz7y6VNZammkayJDlG4w35i8SW0pDz52s7mvIqLZFs9yvjP+/HLFaUMOzbSlD0k
+         LrwZGqstzzrT+7SpOC8eRoZPJJWMtTjtRDbpoTgiaJCj0nlC7nD/ezkyyBKExgbwnnxt
+         k9HNQQxRFNYDQEKtyJ2GZfI29fU8r66uKizgQi0Y+iVcU8rCR8un76f2ML54oAdVXPlz
+         p24918lrovmgsGb7gz01ixMO29Z9lLHhf0EDhITEoRnWMwLPOp9KlMLwM7h8iBAmZnmR
+         xyNQGNNbaPGLE8LwsMV4ahM71GBjzt67rFs7C9OeLlIm950p+PcDgdRmd5ZCP+zXflnY
+         2kbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYZJbLqllqu6wghA477O8nqq+ordgFWVyyISX5q3umeu5pd5uv66y+RAvspka8SvT1Fu47j9zF9rhsGJUx5RI3TgJqjZW4CB/lB4HNoleq90fc6MLW/u7o1GdvGAuhSqFhRkGjusNVQTZP2Rc=
+X-Gm-Message-State: AOJu0YyRz48oSZ67f5VEcjf/naiapd/tuoBH0d7ZXad+gfWjcGOn7g7z
+	4xU96Slry7XSXd5FOy9dPoc15m/b1OS6YiyI8n8mc0hAfpbX/cGk
+X-Google-Smtp-Source: AGHT+IFS9NsuzsGdab4p/3fKlkLxhvMyIlGAEERWcNCT3Os54UNxt4pMHNWm9FNNaThLz1S3V/AepQ==
+X-Received: by 2002:a05:620a:2147:b0:79d:6579:8853 with SMTP id af79cd13be357-79f19adc8eemr72408185a.73.1720474154891;
+        Mon, 08 Jul 2024 14:29:14 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f190ab741sm29330385a.118.2024.07.08.14.29.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 14:29:14 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id E37F0120006D;
+	Mon,  8 Jul 2024 17:29:13 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 08 Jul 2024 17:29:13 -0400
+X-ME-Sender: <xms:KFqMZvJuhiAup1oMPf5IYocfG-irCqZGfdnVIVKFCXuspeoQXPJ2BA>
+    <xme:KFqMZjLF-At4HG-Gwz37ATAFcJ869Q6OpwY16o0hI412ormbnOFGoQt83mudQB8JG
+    3VRcRtKOCGQXVvlYw>
+X-ME-Received: <xmr:KFqMZns6j7du0fAKGHkR0D5TXimuhZ7hAju7klx7EeXuA5zh1bNp8vLPHyZzXw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejgdduiedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteehuddujedvkedtkeefgedv
+    vdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
+    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
+    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:KFqMZobUza5O8zuG6UkLeI6-GTVjESTnvIP2lA2WZ_0uSMrfTANLew>
+    <xmx:KFqMZmalX7YAhicWnch-wCWh8lGm2Cmb4PU7be1bpVEuXvVpLrY_Jw>
+    <xmx:KFqMZsCsQQSB46gp9q0BRLAG7c9WfXDhp8hhs_QpWh5_kConqJSY4Q>
+    <xmx:KFqMZkafyASu7OiivRezW3-Dvt2Jio6HqV8dsebHJbNdnbVRaOGd1A>
+    <xmx:KVqMZqqBvdmWF7T4Boe8hGgOafyvTECXgd3yJEnhwD4ty2c-qwTcNtH9>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Jul 2024 17:29:12 -0400 (EDT)
+Date: Mon, 8 Jul 2024 14:27:55 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: init: add `write_[pin_]init` functions
+Message-ID: <ZoxZ261bwtWCj8fn@boqun-archlinux>
+References: <20240708205325.1275473-1-benno.lossin@proton.me>
+ <20240708205325.1275473-2-benno.lossin@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240708212753.3120511-1-yuzhao@google.com>
-Subject: [PATCH mm-unstable v1] mm/truncate: batch-clear shadow entries
-From: Yu Zhao <yuzhao@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Bharata B Rao <bharata@amd.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240708205325.1275473-2-benno.lossin@proton.me>
 
-Make clear_shadow_entry() clear shadow entries in `struct folio_batch`
-so that it can reduce contention on i_lock and i_pages locks, e.g.,
+On Mon, Jul 08, 2024 at 08:53:46PM +0000, Benno Lossin wrote:
+> Sometimes it is necessary to split allocation and initialization into
+> two steps. One such situation is when reusing existing allocations
+> obtained via `Box::drop_contents`. See [1] for an example.
+> In order to support this use case add `write_[pin_]init` functions to the
+> pin-init API. These functions operate on already allocated smart
+> pointers that wrap `MaybeUninit<T>`.
+> 
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 
-  watchdog: BUG: soft lockup - CPU#29 stuck for 11s! [fio:2701649]
-    clear_shadow_entry+0x3d/0x100
-    mapping_try_invalidate+0x117/0x1d0
-    invalidate_mapping_pages+0x10/0x20
-    invalidate_bdev+0x3c/0x50
-    blkdev_common_ioctl+0x5f7/0xa90
-    blkdev_ioctl+0x109/0x270
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 
-Reported-by: Bharata B Rao <bharata@amd.com>
-Closes: https://lore.kernel.org/d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com/
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- mm/truncate.c | 67 +++++++++++++++++++++++----------------------------
- 1 file changed, 30 insertions(+), 37 deletions(-)
+Regards,
+Boqun
 
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 5ce62a939e55..bc12e7ff7d6a 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -39,12 +39,24 @@ static inline void __clear_shadow_entry(struct address_space *mapping,
- 	xas_store(&xas, NULL);
- }
- 
--static void clear_shadow_entry(struct address_space *mapping, pgoff_t index,
--			       void *entry)
-+static void clear_shadow_entry(struct address_space *mapping,
-+			       struct folio_batch *fbatch, pgoff_t *indices)
- {
-+	int i;
-+
-+	if (shmem_mapping(mapping) || dax_mapping(mapping))
-+		return;
-+
- 	spin_lock(&mapping->host->i_lock);
- 	xa_lock_irq(&mapping->i_pages);
--	__clear_shadow_entry(mapping, index, entry);
-+
-+	for (i = 0; i < folio_batch_count(fbatch); i++) {
-+		struct folio *folio = fbatch->folios[i];
-+
-+		if (xa_is_value(folio))
-+			__clear_shadow_entry(mapping, indices[i], folio);
-+	}
-+
- 	xa_unlock_irq(&mapping->i_pages);
- 	if (mapping_shrinkable(mapping))
- 		inode_add_lru(mapping->host);
-@@ -105,36 +117,6 @@ static void truncate_folio_batch_exceptionals(struct address_space *mapping,
- 	fbatch->nr = j;
- }
- 
--/*
-- * Invalidate exceptional entry if easily possible. This handles exceptional
-- * entries for invalidate_inode_pages().
-- */
--static int invalidate_exceptional_entry(struct address_space *mapping,
--					pgoff_t index, void *entry)
--{
--	/* Handled by shmem itself, or for DAX we do nothing. */
--	if (shmem_mapping(mapping) || dax_mapping(mapping))
--		return 1;
--	clear_shadow_entry(mapping, index, entry);
--	return 1;
--}
--
--/*
-- * Invalidate exceptional entry if clean. This handles exceptional entries for
-- * invalidate_inode_pages2() so for DAX it evicts only clean entries.
-- */
--static int invalidate_exceptional_entry2(struct address_space *mapping,
--					 pgoff_t index, void *entry)
--{
--	/* Handled by shmem itself */
--	if (shmem_mapping(mapping))
--		return 1;
--	if (dax_mapping(mapping))
--		return dax_invalidate_mapping_entry_sync(mapping, index);
--	clear_shadow_entry(mapping, index, entry);
--	return 1;
--}
--
- /**
-  * folio_invalidate - Invalidate part or all of a folio.
-  * @folio: The folio which is affected.
-@@ -494,6 +476,7 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
- 	unsigned long ret;
- 	unsigned long count = 0;
- 	int i;
-+	bool xa_has_values = false;
- 
- 	folio_batch_init(&fbatch);
- 	while (find_lock_entries(mapping, &index, end, &fbatch, indices)) {
-@@ -503,8 +486,8 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
- 			/* We rely upon deletion not changing folio->index */
- 
- 			if (xa_is_value(folio)) {
--				count += invalidate_exceptional_entry(mapping,
--							     indices[i], folio);
-+				xa_has_values = true;
-+				count++;
- 				continue;
- 			}
- 
-@@ -522,6 +505,10 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
- 			}
- 			count += ret;
- 		}
-+
-+		if (xa_has_values)
-+			clear_shadow_entry(mapping, &fbatch, indices);
-+
- 		folio_batch_remove_exceptionals(&fbatch);
- 		folio_batch_release(&fbatch);
- 		cond_resched();
-@@ -616,6 +603,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 	int ret = 0;
- 	int ret2 = 0;
- 	int did_range_unmap = 0;
-+	bool xa_has_values = false;
- 
- 	if (mapping_empty(mapping))
- 		return 0;
-@@ -629,8 +617,9 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 			/* We rely upon deletion not changing folio->index */
- 
- 			if (xa_is_value(folio)) {
--				if (!invalidate_exceptional_entry2(mapping,
--						indices[i], folio))
-+				xa_has_values = true;
-+				if (dax_mapping(mapping) &&
-+				    !dax_invalidate_mapping_entry_sync(mapping, indices[i]))
- 					ret = -EBUSY;
- 				continue;
- 			}
-@@ -666,6 +655,10 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 				ret = ret2;
- 			folio_unlock(folio);
- 		}
-+
-+		if (xa_has_values)
-+			clear_shadow_entry(mapping, &fbatch, indices);
-+
- 		folio_batch_remove_exceptionals(&fbatch);
- 		folio_batch_release(&fbatch);
- 		cond_resched();
--- 
-2.45.2.803.g4e1b14247a-goog
-
+> Link: https://lore.kernel.org/rust-for-linux/f026532f-8594-4f18-9aa5-57ad3f5bc592@proton.me/ [1]
+> ---
+>  rust/kernel/init.rs    | 84 ++++++++++++++++++++++++++++++------------
+>  rust/kernel/prelude.rs |  2 +-
+>  2 files changed, 61 insertions(+), 25 deletions(-)
+> 
+> diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+> index 9608f2bd2211..35c4d9b75a97 100644
+> --- a/rust/kernel/init.rs
+> +++ b/rust/kernel/init.rs
+> @@ -1159,13 +1159,7 @@ fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>,
+>      where
+>          E: From<AllocError>,
+>      {
+> -        let mut this = <Box<_> as BoxExt<_>>::new_uninit(flags)?;
+> -        let slot = this.as_mut_ptr();
+> -        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+> -        // slot is valid and will not be moved, because we pin it later.
+> -        unsafe { init.__pinned_init(slot)? };
+> -        // SAFETY: All fields have been initialized.
+> -        Ok(unsafe { this.assume_init() }.into())
+> +        <Box<_> as BoxExt<_>>::new_uninit(flags)?.write_pin_init(init)
+>      }
+>  
+>      #[inline]
+> @@ -1173,13 +1167,7 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
+>      where
+>          E: From<AllocError>,
+>      {
+> -        let mut this = <Box<_> as BoxExt<_>>::new_uninit(flags)?;
+> -        let slot = this.as_mut_ptr();
+> -        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+> -        // slot is valid.
+> -        unsafe { init.__init(slot)? };
+> -        // SAFETY: All fields have been initialized.
+> -        Ok(unsafe { this.assume_init() })
+> +        <Box<_> as BoxExt<_>>::new_uninit(flags)?.write_init(init)
+>      }
+>  }
+>  
+> @@ -1189,13 +1177,7 @@ fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>,
+>      where
+>          E: From<AllocError>,
+>      {
+> -        let mut this = UniqueArc::new_uninit(flags)?;
+> -        let slot = this.as_mut_ptr();
+> -        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+> -        // slot is valid and will not be moved, because we pin it later.
+> -        unsafe { init.__pinned_init(slot)? };
+> -        // SAFETY: All fields have been initialized.
+> -        Ok(unsafe { this.assume_init() }.into())
+> +        UniqueArc::new_uninit(flags)?.write_pin_init(init)
+>      }
+>  
+>      #[inline]
+> @@ -1203,13 +1185,67 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
+>      where
+>          E: From<AllocError>,
+>      {
+> -        let mut this = UniqueArc::new_uninit(flags)?;
+> -        let slot = this.as_mut_ptr();
+> +        UniqueArc::new_uninit(flags)?.write_init(init)
+> +    }
+> +}
+> +
+> +/// Smart pointer containing uninitialized memory and that can write a value.
+> +pub trait InPlaceWrite<T> {
+> +    /// The type `Self` turns into when the contents are initialized.
+> +    type Initialized;
+> +
+> +    /// Use the given initializer to write a value into `self`.
+> +    ///
+> +    /// Does not drop the current value and considers it as uninitialized memory.
+> +    fn write_init<E>(self, init: impl Init<T, E>) -> Result<Self::Initialized, E>;
+> +
+> +    /// Use the given pin-initializer to write a value into `self`.
+> +    ///
+> +    /// Does not drop the current value and considers it as uninitialized memory.
+> +    fn write_pin_init<E>(self, init: impl PinInit<T, E>) -> Result<Pin<Self::Initialized>, E>;
+> +}
+> +
+> +impl<T> InPlaceWrite<T> for Box<MaybeUninit<T>> {
+> +    type Initialized = Box<T>;
+> +
+> +    fn write_init<E>(mut self, init: impl Init<T, E>) -> Result<Self::Initialized, E> {
+> +        let slot = self.as_mut_ptr();
+>          // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+>          // slot is valid.
+>          unsafe { init.__init(slot)? };
+>          // SAFETY: All fields have been initialized.
+> -        Ok(unsafe { this.assume_init() })
+> +        Ok(unsafe { self.assume_init() })
+> +    }
+> +
+> +    fn write_pin_init<E>(mut self, init: impl PinInit<T, E>) -> Result<Pin<Self::Initialized>, E> {
+> +        let slot = self.as_mut_ptr();
+> +        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+> +        // slot is valid and will not be moved, because we pin it later.
+> +        unsafe { init.__pinned_init(slot)? };
+> +        // SAFETY: All fields have been initialized.
+> +        Ok(unsafe { self.assume_init() }.into())
+> +    }
+> +}
+> +
+> +impl<T> InPlaceWrite<T> for UniqueArc<MaybeUninit<T>> {
+> +    type Initialized = UniqueArc<T>;
+> +
+> +    fn write_init<E>(mut self, init: impl Init<T, E>) -> Result<Self::Initialized, E> {
+> +        let slot = self.as_mut_ptr();
+> +        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+> +        // slot is valid.
+> +        unsafe { init.__init(slot)? };
+> +        // SAFETY: All fields have been initialized.
+> +        Ok(unsafe { self.assume_init() })
+> +    }
+> +
+> +    fn write_pin_init<E>(mut self, init: impl PinInit<T, E>) -> Result<Pin<Self::Initialized>, E> {
+> +        let slot = self.as_mut_ptr();
+> +        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
+> +        // slot is valid and will not be moved, because we pin it later.
+> +        unsafe { init.__pinned_init(slot)? };
+> +        // SAFETY: All fields have been initialized.
+> +        Ok(unsafe { self.assume_init() }.into())
+>      }
+>  }
+>  
+> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+> index b37a0b3180fb..4571daec0961 100644
+> --- a/rust/kernel/prelude.rs
+> +++ b/rust/kernel/prelude.rs
+> @@ -37,6 +37,6 @@
+>  
+>  pub use super::{str::CStr, ThisModule};
+>  
+> -pub use super::init::{InPlaceInit, Init, PinInit};
+> +pub use super::init::{InPlaceInit, InPlaceWrite, Init, PinInit};
+>  
+>  pub use super::current;
+> -- 
+> 2.44.0
+> 
+> 
 
