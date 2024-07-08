@@ -1,144 +1,107 @@
-Return-Path: <linux-kernel+bounces-243852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30EAE929BBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:41:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63988929BC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E16CC2813DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:41:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA02CB20C55
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360F5D531;
-	Mon,  8 Jul 2024 05:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E20111A1;
+	Mon,  8 Jul 2024 05:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEFGORmv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DPEKA8RC"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71110AD5A;
-	Mon,  8 Jul 2024 05:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2124CBA45;
+	Mon,  8 Jul 2024 05:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720417308; cv=none; b=BrkstXNwtMVmFg1kXfdnIS2ahRDC7ZlznYLRuvHE08O1XyCzlaAuarX85KK2OFMIV3tMvJlxHhWLJ7xmszHRfwT4NTUfpHAYLM+bsJYf0eILWkNnAdDpEAFmLym3cKcL1QNMKKQwHYkn+JTLp6BeUyJ6DrZTU4EM0QtHX9/t/AY=
+	t=1720417473; cv=none; b=MBMD04ICkzFXBdrAxlLelkH1PkRKQNTPtXRuVCiVtiMObpRHjyBLmivg2QvfPaVmJzhiulsZiEZHhWPyi8V3bcTosDib+21u6iM83/1bTctcOKmCVxjKWMW4aJ5t3KXwhThBqTIhVi0KbccyfTK0Bw7Sj+iC6XFLsEJnHxOWLJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720417308; c=relaxed/simple;
-	bh=OG+zUhKK1/GHQBgp4ByltQ57Fx04v00EykUypby03Dg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwhMK9UZTWcIc5FCh5Kn07aoSi5/94CFn2+C+4rvQpp82rycXgh4U49cRLKkXYULxQrPZOfsfelNpQWa5tvpjEi9oW4xugOcWBNN121C7MQ2F0iUcMuqvPQ9or7i6mc7k0u9X9uyG5f0VhqB8nGXi30dn7oM7EA3vPl1wPKnoAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dEFGORmv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A8D9C116B1;
-	Mon,  8 Jul 2024 05:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720417308;
-	bh=OG+zUhKK1/GHQBgp4ByltQ57Fx04v00EykUypby03Dg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dEFGORmvZs2BDPgVBGyClZxnXNnktAlpuT9frWF1I8ylmPgwmVmYdxXcg7nxDI/lz
-	 UUVuT1/BEn6UmpPIljx3iSRDRIPlEdW3OLMszN8uqk3aE2SpbY/7MDPkqUE4Nlwoc+
-	 yjtTB1yi66syCb+LyHk3+iq5hu/nS+L+gCo8rv7tP35MaqiCZ/CxHHE+d5pqPKD2ts
-	 1FbbdjTyPL+25vBPwemOumQprDxt519K/4YbIB5djb9FIqX9AGAbLsFFDA5t8B6eE8
-	 x16E8Jqp8FSW6iGGtQkTt1YmTgUK4SLiLnTfv6JR2C0bWSrmwbUjtyMO1mlMztZNL+
-	 cIrFn3+GFnhpw==
-Date: Mon, 8 Jul 2024 08:41:44 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: Zhu Yanjun <yanjun.zhu@linux.dev>, jgg@ziepe.ca,
-	linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-rc 5/9] RDMA/hns: Fix missing pagesize and alignment
- check in FRMR
-Message-ID: <20240708054144.GB6788@unreal>
-References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
- <20240705085937.1644229-6-huangjunxian6@hisilicon.com>
- <eba4bfaf-5986-489b-9ae5-8f5618501290@linux.dev>
- <849ed8b9-e826-7211-3e90-7fdeff9d945a@hisilicon.com>
+	s=arc-20240116; t=1720417473; c=relaxed/simple;
+	bh=DALaIj5D0ngUpE3QcDtL9Tx75VDgfDtCcQoihqem+eU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oN3SMbSksgLAdQSKIfNU73tG47sOTGppPfog9caKGyzvBzKBeg4yjTC04jsXwqJJt5mRQILGLgV+KIoo8d67sA2eQpJ4UDl2Xcr3C0fINJVUB3dgjcFT9CzSjlSmeJn80AUUZHYmMz9XfR6WGQ2HOuCjYkZsCIQ3/T4eCeb8wbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DPEKA8RC; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720417435; x=1721022235; i=markus.elfring@web.de;
+	bh=DALaIj5D0ngUpE3QcDtL9Tx75VDgfDtCcQoihqem+eU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=DPEKA8RCl31fbApspxGmofEe1CpWf/Y4h/qY77AaJpmutiCrlSQzE5Q8SCliwWMk
+	 jT7D48TDqlJtylnjHZCBstAo+D/MJS/UQ+bZqpefwR8PkpU8K/LxQiLd84XIu9Ssr
+	 qi4fX+teEcKS6CLwdDP4HQG5ofVMhkw3Do/SwbdZvPbEUHD2chRC4d1RYqo5SnMQN
+	 F5Xh9PoPKTkGpyx1YTXTTc1PpZQMZCu2GLaxSVn4vHaiIIKy4R/9rkwp6P35l/e5y
+	 jqfUREE2b/TdfCSvhRa2L0RtP+1aibPSM2Bgi2+Pb+XsaOt5zQpXC9fsWkj+a44Pc
+	 cfqvf8KG7B9F6q2Wvw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Md6y1-1rqoRs3EI7-00pRod; Mon, 08
+ Jul 2024 07:43:55 +0200
+Message-ID: <9d07628a-eadd-4e50-b7a8-02adb25981ab@web.de>
+Date: Mon, 8 Jul 2024 07:43:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <849ed8b9-e826-7211-3e90-7fdeff9d945a@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: blk-cgroup: add spin_lock for u64_stats_update
+To: =?UTF-8?B?Qm95IFd1ICjlkLPli4Poqrwp?= <Boy.Wu@mediatek.com>,
+ linux-mediatek@lists.infradead.org, linux-block@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Boris Burkov <boris@bur.io>, =?UTF-8?B?SXZlcmxpbiBXYW5nICjnjovoi7PpnJYp?=
+ <Iverlin.Wang@mediatek.com>, Jens Axboe <axboe@kernel.dk>,
+ Josef Bacik <josef@toxicpanda.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Tejun Heo <tj@kernel.org>
+References: <20240705075544.11315-1-boy.wu@mediatek.com>
+ <8f3765db-842d-4568-9ac5-1bd9cab9e952@web.de>
+ <554f09bc6fc8f3b2a71b346f5e363950a1f8cb18.camel@mediatek.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <554f09bc6fc8f3b2a71b346f5e363950a1f8cb18.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3sJU37sIvlaJq7Km1wDF5IIF4lzBgJzAmJNGao7ZbnmtFMNOGEX
+ a0M9mcYkZu6NHcupZ5lRmhoRGXAvsPZtDR5HnRyla7hrTOgSetDPKpk5MMaUq9uq37xcIBU
+ JTyw2tNXilctDrEL9RL5hkyqtv4YdR9V8Q2kRV9KYqGzVjcXA0zrjukgdO1SXx5zScIBBvb
+ x3REhI7jDbxSPP+oZ7Tpw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:THrU1lGh5FU=;odnaXHAtD4xNlL0C54CvnW5dGsU
+ vi0bGEuPK7OVwPaqNt5nY/qch3F0LELkYsaF1ZUmv4PFt4fX5XmFiOw9o6a9XpPOguq2QOOG+
+ kVbVbnRx90tteILmOYk2VRJ9O4wW0Kt65knqOOSJEt83KoueTrMqc2WNGy6qzH2ZeGR8s1aaW
+ FaDFs5cqbgz3upkkJMZRxItKUp4Q3t+UFPEasd82wM+Gkt5E/IfLcEi8oeSXg36PlCDc233n9
+ piLw9rhylMR/vWzfNmmEeN6ukRVq+Wg5zAUg2tK7daB89EXhfThnFRdtov5eKrqOP13lGpXJ5
+ 1t3EoDH4H3N+NKNLt7EhbMXDuP6G8HOdsgRS6N9rIwNx/jryZzTK5SZP4ObWXLUI/vxiMlRAP
+ 5O8LFZEThu97Jh2Xx0+ooSsOsIGdPOqmYtT0P0/TEIDwmjWX6NqrmzQxCmt6edTa0pwp62Kpm
+ vhpPxQlcCn2S2gRbWDZby6oj0Zb4sHy1CaP0HbgWU5CEJWs9VrJbxiTi3apBl27iO3ntiT16L
+ y+4WjAidinrjGY6Ub4fBmwfGgI52pjLsU7VIm9ZQqiOIWlLiwlD9iAhNLj3lDRuVAHiIjVOiy
+ CVCalkeyyr0d1N/Ya7SHfxvsE1gaHbmtte1tHo5i/ZlbRZfmwRjF+ZTeXR5LYh9KOoNwkW7Sv
+ +h5NxqoqTKOrBGCkKDW2d30m9V2gGUCPlt3iOIc1LOuJwqiEKP1xZ4OKvWXnB7GYWS/Gx4tkc
+ +3Lx1l7Q+1/1SElJv36H2dK8PUifBGWySckTJPv7meWdq72Yk+3FbPZKDwQXE3rUekzhDEpe2
+ ErGe3j+PwwEj+ggUGfPbebp2fiueh/HwaoZ90i/cdG24g=
 
-On Mon, Jul 08, 2024 at 10:44:52AM +0800, Junxian Huang wrote:
-> 
-> 
-> On 2024/7/7 17:16, Zhu Yanjun wrote:
-> > 在 2024/7/5 16:59, Junxian Huang 写道:
-> >> From: Chengchang Tang <tangchengchang@huawei.com>
-> >>
-> >> The offset requires 128B alignment and the page size ranges from
-> >> 4K to 128M.
-> >>
-> >> Fixes: 68a997c5d28c ("RDMA/hns: Add FRMR support for hip08")
-> > 
-> > https://patchwork.kernel.org/project/linux-rdma/patch/2eee7e35-504e-4f2a-a364-527e90669108@CMEXHTCAS1.ad.emulex.com/
-> > In the above link, from Bart, it seems that FRMR is renamed to FRWR.
-> > "
-> > There are already a few drivers upstream in which the fast register
-> > memory region work request is abbreviated as FRWR. Please consider
-> > renaming FRMR into FRWR in order to avoid confusion and in order to
-> > make it easier to find related code with grep in the kernel tree.
-> > "
-> > 
-> > So is it possible to rename FRMR to FRWR?
-> > 
-> 
-> I think the rename is irrelevant to this bugfix, and if it needs to be done,
-> we'll need a single patch to rename all existing 'FRMR' in hns driver.
-> 
-> So let's leave it as is for now.
+> ************* MEDIATEK Confidentiality Notice ********************
+=E2=80=A6
 
-+1
+Please omit such information from your patches for Linux software componen=
+ts.
+Such hints do probably not fit to communication characteristics of Linux m=
+ailing lists.
 
-> 
-> Thanks,
-> Junxian
-> 
-> >> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
-> >> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> >> ---
-> >>   drivers/infiniband/hw/hns/hns_roce_device.h | 4 ++++
-> >>   drivers/infiniband/hw/hns/hns_roce_mr.c     | 5 +++++
-> >>   2 files changed, 9 insertions(+)
-> >>
-> >> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-> >> index 5a2445f357ab..15b3b978a601 100644
-> >> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
-> >> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-> >> @@ -83,6 +83,7 @@
-> >>   #define MR_TYPE_DMA                0x03
-> >>     #define HNS_ROCE_FRMR_MAX_PA            512
-> >> +#define HNS_ROCE_FRMR_ALIGN_SIZE        128
-> >>     #define PKEY_ID                    0xffff
-> >>   #define NODE_DESC_SIZE                64
-> >> @@ -189,6 +190,9 @@ enum {
-> >>   #define HNS_HW_PAGE_SHIFT            12
-> >>   #define HNS_HW_PAGE_SIZE            (1 << HNS_HW_PAGE_SHIFT)
-> >>   +#define HNS_HW_MAX_PAGE_SHIFT            27
-> >> +#define HNS_HW_MAX_PAGE_SIZE            (1 << HNS_HW_MAX_PAGE_SHIFT)
-> >> +
-> >>   struct hns_roce_uar {
-> >>       u64        pfn;
-> >>       unsigned long    index;
-> >> diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
-> >> index 1a61dceb3319..846da8c78b8b 100644
-> >> --- a/drivers/infiniband/hw/hns/hns_roce_mr.c
-> >> +++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
-> >> @@ -443,6 +443,11 @@ int hns_roce_map_mr_sg(struct ib_mr *ibmr, struct scatterlist *sg, int sg_nents,
-> >>       struct hns_roce_mtr *mtr = &mr->pbl_mtr;
-> >>       int ret, sg_num = 0;
-> >>   +    if (!IS_ALIGNED(*sg_offset, HNS_ROCE_FRMR_ALIGN_SIZE) ||
-> >> +        ibmr->page_size < HNS_HW_PAGE_SIZE ||
-> >> +        ibmr->page_size > HNS_HW_MAX_PAGE_SIZE)
-> >> +        return sg_num;
-> >> +
-> >>       mr->npages = 0;
-> >>       mr->page_list = kvcalloc(mr->pbl_mtr.hem_cfg.buf_pg_count,
-> >>                    sizeof(dma_addr_t), GFP_KERNEL);
-> > 
+Regards,
+Markus
 
