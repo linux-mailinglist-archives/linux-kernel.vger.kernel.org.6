@@ -1,111 +1,124 @@
-Return-Path: <linux-kernel+bounces-243815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8768A929B00
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:03:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F00929B04
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C0001F2114C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 03:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4961C20A31
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 03:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF41748A;
-	Mon,  8 Jul 2024 03:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W1Ni2oe1"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD6B6FB6;
+	Mon,  8 Jul 2024 03:10:21 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E2E3D69
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 03:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AFD803;
+	Mon,  8 Jul 2024 03:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720407817; cv=none; b=p+gl6AB1TLUjkuVm41p+o47pFz0XbpNEES5kGuzny7A8Q53iFEpK7lGTNRMm3f5QssDwWQzh0+VEhSa+oMyJSd95GzENsmsujmyPTnmGvSXE0693ERjxkx6EAaxoeDPx7B1oqFXfIz3NzSYI6ZFWKqiF2NzTTCv2/ju0FL0Cb64=
+	t=1720408221; cv=none; b=p56Nd/JlCdI1JjUXLxC0KthCBaxO4a90Z5b8plHJPtQMx7YyQaSGAtUcQDD7Xx4OOx9/EA9mEWX9/vT7rq+Whx90Zu12WQdjGKW9+kzLdKwui/L6/kED/l4Xy4LOW9D0UNO5spxlXm9aK91aXKhN5M7AKIT8v/104eIp132Wfkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720407817; c=relaxed/simple;
-	bh=aHIrpcLG9ZGSgOStVeCA6IlxQzwGrCJ/ze2oZFMAcwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OZxbf9NUuZzF3T3OJKai/gfGilr/fLX1dlgq3IRuHUlLhiNvHJsbYVr/NVC/BVOjl1hTGqD28rKe1siPwWN6DrDguvBJHOBvcjg+auVwhG+kiPQtqTY5yuT9Q6dTSQrdPn40BRXC0AfeXQ63qz7r2nHQOLVeEtFf7LQzOWGcG5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W1Ni2oe1; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7036e383089so214047a34.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 20:03:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720407815; x=1721012615; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nyybtaZVEV2Z5gr/Xj5boxxbelx9NExLhjriH8Vzh8o=;
-        b=W1Ni2oe1VUI5IBB5YL/M5xlF7SALeQHBUsxk07jHQ/0oMU+krcT79PJfenuw+sfgwe
-         Imrz8HSpNG3x3MeZTy1qe9BwN40zPWy0l2mR9C6fBoXmKA+9i+/4f0CellhtgEZYyyyi
-         BcpqoklQtBPCOUR2tPGcypnvr9Pk6XqUKgSyQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720407815; x=1721012615;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nyybtaZVEV2Z5gr/Xj5boxxbelx9NExLhjriH8Vzh8o=;
-        b=IabfKwkZ4ev8FR59MAamP/zhpgjHS+b4vkawAEbAZLXw2cbsgJ6ivzSPwxOQ8wC+BT
-         p4tSAc1yiGJVT11xXoDcUL67q1W/7UtnBKmzRSi3m4fMd49DCd83y6ZFoVIuzg0+0fMP
-         aZqakcpK9fdpeJZEQ1R4cZqpNBUs96m0oTQYavUyJezVMMJ2J8ce+k0CNmBg7J8Oq/7K
-         Ujb7laBFOMvRqi5S6+Bei0K21gv3QaLUunWhrPqTZXwWU5LLPtnJOLRnTWRpsnyvm4Gz
-         Ec5Nb0cI7BdogirpWQa8iaLpUHT2UqRaEm7Mu4ECgD859O4aUoYaJypVl98Rnqfo9N17
-         j3ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVq0fYfud3+UEpX9bOcqpOa6Xz9nOM7mOFqiNG9ZyT6aY3PoxoV7oO30O1qouUdGPb+pkzEaF5UceMmG4kiNT9S5pbdxiUU/k5bp3zX
-X-Gm-Message-State: AOJu0YzPEb/3lSeZ70GGLC17UhKS/arSHX1aIOIldKjDi5VPMb7JjVfh
-	rxJqpXR6Hpn6sZw99x3PXb+ToGNbbbkcuV5L/Yeq9whIvGVSj1B97ChLnbKFuQ==
-X-Google-Smtp-Source: AGHT+IHkEqHP1B60srwbfsajdtk+7QXJojhM6E/s4AcD68sCwHx0psDiOmN7r1Vd47jUyzvqlJcdpw==
-X-Received: by 2002:a05:6830:1d7:b0:703:651b:382f with SMTP id 46e09a7af769-703651b3c18mr4473264a34.3.1720407814861;
-        Sun, 07 Jul 2024 20:03:34 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:eda0:6e46:c522:d0b1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b28c63ad5sm1794184b3a.27.2024.07.07.20.03.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jul 2024 20:03:34 -0700 (PDT)
-Date: Mon, 8 Jul 2024 12:03:30 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>,
-	Mike Galbraith <umgwanakikbuti@gmail.com>
-Subject: Re: [PATCH v2 1/3] zram: Replace bit spinlocks with a spinlock_t.
-Message-ID: <20240708030330.GA797471@google.com>
-References: <20240620153556.777272-1-bigeasy@linutronix.de>
- <20240620153556.777272-2-bigeasy@linutronix.de>
- <27fb4f62-d656-449c-9f3c-5d0b61a88cca@intel.com>
- <20240704121908.GjH4p40u@linutronix.de>
- <801cac51-1bd3-4f79-8474-251a7a81ca08@intel.com>
+	s=arc-20240116; t=1720408221; c=relaxed/simple;
+	bh=6QRBZZnKzv5EfLA6Znk0did6tqxKKmiAfCm/PptubKQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uKpkr8m/U8nkDgJDo8poWw9fWM2gsBf0o2UE9M3rvwg1D0nsEavCUWhT7zEFmW9g+qtc5kGvwLBq7HfnQvg+K6/OuC0NMGS3x8y1vJbMBj6sOcILZxjDURRyvyHumTciQ9i834VfRgfCXdPr5/eq7RvNoPT7jjbhRI+IltjwSnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WHTWz4ZyXzwWJg;
+	Mon,  8 Jul 2024 11:05:35 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id 47D81140F65;
+	Mon,  8 Jul 2024 11:10:15 +0800 (CST)
+Received: from huawei.com (10.173.127.72) by kwepemd200019.china.huawei.com
+ (7.221.188.193) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 8 Jul
+ 2024 11:10:14 +0800
+From: Miaohe Lin <linmiaohe@huawei.com>
+To: <akpm@linux-foundation.org>
+CC: <tony.luck@intel.com>, <bp@alien8.de>, <nao.horiguchi@gmail.com>,
+	<linmiaohe@huawei.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<linux-edac@vger.kernel.org>
+Subject: [PATCH] mm/memory-failure: remove obsolete MF_MSG_DIFFERENT_COMPOUND
+Date: Mon, 8 Jul 2024 11:05:44 +0800
+Message-ID: <20240708030544.196919-1-linmiaohe@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <801cac51-1bd3-4f79-8474-251a7a81ca08@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
-On (24/07/05 14:02), Alexander Lobakin wrote:
-> > On 2024-07-04 13:38:04 [+0200], Alexander Lobakin wrote:
-[..]
-> >>> +static void zram_meta_init_table_locks(struct zram *zram, size_t num_pages)
-> >>> +{
-> >>> +	size_t index;
-> >>> +
-> >>> +	for (index = 0; index < num_pages; index++)
-> >>
-> >> Maybe declare @index right here?
-> > 
-> > But why? Declarations at the top followed by code. 
-> 
-> I meant
-> 
-> 	for (size_t index = 0; index < num_pages; index++)
-> 
-> It's allowed and even recommended for a couple years already.
+The page cannot become compound pages again just after folio is splited
+as extra refcnt is held. So MF_MSG_DIFFERENT_COMPOUND case is obsolete and
+could be removed to get rid of this false assumption and code burden. But
+add one WARN_ON() here to keep the scene clear.
 
-I wonder since when?  Do gcc 5.1 and clang 13.0.1 support this?
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+ include/ras/ras_event.h |  1 -
+ mm/memory-failure.c     | 19 +++----------------
+ 2 files changed, 3 insertions(+), 17 deletions(-)
+
+diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+index 9bc707fe8819..e5f7ee0864e7 100644
+--- a/include/ras/ras_event.h
++++ b/include/ras/ras_event.h
+@@ -356,7 +356,6 @@ TRACE_EVENT(aer_event,
+ #define MF_PAGE_TYPE		\
+ 	EM ( MF_MSG_KERNEL, "reserved kernel page" )			\
+ 	EM ( MF_MSG_KERNEL_HIGH_ORDER, "high-order kernel page" )	\
+-	EM ( MF_MSG_DIFFERENT_COMPOUND, "different compound page after locking" ) \
+ 	EM ( MF_MSG_HUGE, "huge page" )					\
+ 	EM ( MF_MSG_FREE_HUGE, "free huge page" )			\
+ 	EM ( MF_MSG_GET_HWPOISON, "get hwpoison page" )			\
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 16f8651436d5..581d3e5c9117 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -919,7 +919,6 @@ static const char *action_name[] = {
+ static const char * const action_page_types[] = {
+ 	[MF_MSG_KERNEL]			= "reserved kernel page",
+ 	[MF_MSG_KERNEL_HIGH_ORDER]	= "high-order kernel page",
+-	[MF_MSG_DIFFERENT_COMPOUND]	= "different compound page after locking",
+ 	[MF_MSG_HUGE]			= "huge page",
+ 	[MF_MSG_FREE_HUGE]		= "free huge page",
+ 	[MF_MSG_GET_HWPOISON]		= "get hwpoison page",
+@@ -2349,22 +2348,10 @@ int memory_failure(unsigned long pfn, int flags)
+ 
+ 	/*
+ 	 * We're only intended to deal with the non-Compound page here.
+-	 * However, the page could have changed compound pages due to
+-	 * race window. If this happens, we could try again to hopefully
+-	 * handle the page next round.
++	 * The page cannot become compound pages again as folio has been
++	 * splited and extra refcnt is held.
+ 	 */
+-	if (folio_test_large(folio)) {
+-		if (retry) {
+-			ClearPageHWPoison(p);
+-			folio_unlock(folio);
+-			folio_put(folio);
+-			flags &= ~MF_COUNT_INCREASED;
+-			retry = false;
+-			goto try_again;
+-		}
+-		res = action_result(pfn, MF_MSG_DIFFERENT_COMPOUND, MF_IGNORED);
+-		goto unlock_page;
+-	}
++	WARN_ON(folio_test_large(folio));
+ 
+ 	/*
+ 	 * We use page flags to determine what action should be taken, but
+-- 
+2.33.0
+
 
