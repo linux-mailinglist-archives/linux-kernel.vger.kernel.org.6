@@ -1,163 +1,274 @@
-Return-Path: <linux-kernel+bounces-244858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D5B492AA6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:13:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2B792AA71
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD691C212BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FAA328303D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B714737703;
-	Mon,  8 Jul 2024 20:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E2A14659A;
+	Mon,  8 Jul 2024 20:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gnkhiXon"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hU+fI9s9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD95023775
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F51D22EE5
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720469593; cv=none; b=jfHOq/uoOXgrQTcWMmNuHbn+UvrH8P5I3GHw/zltgY6LbIBLVRcPOzDh0AMO7aobSLP02JB+qFn8aKFODF4Zd/4IlJ4hAj59kYSiJa/P13nCRS3HSsdlIx6FTxb0EzsoIok+PUsrckzm92v9IWQO2PPdTSqv10QLsBbNG98SNio=
+	t=1720470077; cv=none; b=DLmUmDXmN52Kt01kryvG4qSTUn7EMak91bR6ep2wp8XYfuVlRc+RAA7DQFJSd7RKUmH95+K4GDvPVq2Ug+JVmbFBdoIaw0+t88j1lOI3k1noVIVSFXNqDhZ/FR03DE020lGd0XFi4q1UbkcJlcDJA11DaBeLz0EEw2pdfaZ53mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720469593; c=relaxed/simple;
-	bh=/pHf0i0gH6zlSegAbbPZ0NUnVgOHYFQzHH8aB/cHLRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hR25unbVEhs7KCE9mgmBlnA9FuqNZv7BRl3poYzsbspaNMEtI6hD1gv3BvttilwOrGky30Im5JykzUUVKpZDtM7FoKvFeQ9avA4Yyc2VKWOF+aklvrcNCxzwuVw3f+AQWTJsUOKl3Hs/OkMMqZxpzO4Lw7Qff4B9Hs4H/P/6qAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gnkhiXon; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70af48692bcso2674702b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720469591; x=1721074391; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6G9Xf95AcgLfhqZrHsPzkb+DNyt19kkhpH3o27qWc+s=;
-        b=gnkhiXonTDmCDenCs4LQqdQsDg5V5cGHpBfsQrd7y+L1zGG4h64ggaQVQanazQFm3O
-         W40BCriK1MB35vGD1YowprXaJG274Wl/JYaZKRCksNYwPFzl6EYGPnPLoNMrXz14aVbU
-         8xEdYEYYd4HEGnIxMfIjSUoM8wXXCIVSeYC+RsTW+VvEHonpJpOJkb4P7ele+qpvM558
-         MrkfyWsPl0zuuVDPMKBdQfHlTSXmgroQKvy80OVHwXU6bUlj8WRWzvORfB4+p2swmjBo
-         5scDyALKMk/gEL943HuinX/IO1OO2ni9KCd+vuHudigW3z4dDyDtXGIpU0hdcfs6PK6x
-         2PXg==
+	s=arc-20240116; t=1720470077; c=relaxed/simple;
+	bh=dNXn4UIlKhRE5TBVs8kI24gLbeohXHAO07ly2n41evo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BVg25Pkxh0Vv2KSaaw8jna1gaZW9PwjuoTs/iRgAYvXwClqbsUb+rspZCotOl0fILxxiooTPZu5HtNmijwddpnJe2GDD48MeLIe/YpQBWabwC7apnbfSWKUOLwGTTyX+KUNlDbCn86LRCi66fudwH+AReHZ3fwfy50v6ZgofB2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hU+fI9s9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720470074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7oVPk684/Jee4fyU3Xo2I2OovbaYGuiC7tV3FtZZveo=;
+	b=hU+fI9s9ee8e0kLWzGR9y1NYz6Q3s/zoFu8sdTDR9wyw154QWxjP3yZdikta7w6ka3S3Op
+	MHRP3CGYqXCUsZBhigHBNYHW0qfskmwd7KXTKqX8bLG8/xXXrIvZCWOacWaKeTdrjoLpro
+	/USvML8PP5doEyfuJ5Bf1aTZX2vIhMg=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-161-OuZnKkkHOfahWvGCzbvA9A-1; Mon, 08 Jul 2024 16:21:13 -0400
+X-MC-Unique: OuZnKkkHOfahWvGCzbvA9A-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42666ed2d5fso12064835e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:21:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720469591; x=1721074391;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6G9Xf95AcgLfhqZrHsPzkb+DNyt19kkhpH3o27qWc+s=;
-        b=aBSCMkuwiUCvFb+xsmiDpPa4HNGX7VJv0f5JWvOW4xKpvNUwjU95MBQVb5cHOBBJyn
-         WpKLIhncTMeztyTlUrXiheE3xY+AleGqCtUytqP6rc2W32v2RTZdufLpV93rftZbqCwy
-         2LPFFQTCC6/jsprHAuaPmMx3CNkJFU17Ze7Tok2IyMXp+3QBvbEwwuvwQ84spMzmqs7S
-         T7t9EC0bHPQQOo0r6qsxAxf0qUP7YFZrc3JmyBXbC19yuzrUQQzBpIPFq49rZ5N1QzQn
-         WFH8YcepDor+T+rR3RjKvknBntfetsAuAD2RFkMGDt5JDCj6wZMJYS89GTK+pk9u+yap
-         DLTg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3xkjtHKgk5gdbcmTLLpX8arzV6tm+M4nyllkr4wX+ZoG9fYY4dHONpE/Zi0vmv9oepzwRg47FBsqtTTGCRojXS/K3/M1WiBjW6AZW
-X-Gm-Message-State: AOJu0YzGGQphZHl5gdhd4P3xgbQH9rYDv6tpyKdup80676sCR2MZrLEC
-	M4DVQRlGx8GA9Qu3Eczx9WF4a77sRsmbEfyJIfmIJioVil9CcPL0
-X-Google-Smtp-Source: AGHT+IGTRZ02xxBe64hPaomw/uSnXCNlhAjac6TxyA7yIzqRIq7Qh1fPwGJWHFSPGUTFtdkqRO9EnQ==
-X-Received: by 2002:a05:6a00:2e87:b0:706:747c:76ba with SMTP id d2e1a72fcca58-70b434f6409mr799246b3a.2.1720469590723;
-        Mon, 08 Jul 2024 13:13:10 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43968688sm272768b3a.114.2024.07.08.13.13.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 13:13:10 -0700 (PDT)
-Date: Mon, 8 Jul 2024 13:13:07 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>, llvm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH] cpumask: Switch from inline to __always_inline
-Message-ID: <ZoxIUz_-DRigH0Rg@yury-ThinkPad>
-References: <20240514204910.1383909-1-briannorris@chromium.org>
- <ZnsML1RYMmEhhdPP@google.com>
- <ZoWhPFJIvGpMGKm4@yury-ThinkPad>
- <20240703195724.GA292031@thelio-3990X>
- <ZoxA5cPpfcpKkzSM@google.com>
+        d=1e100.net; s=20230601; t=1720470072; x=1721074872;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7oVPk684/Jee4fyU3Xo2I2OovbaYGuiC7tV3FtZZveo=;
+        b=vD5Rt03VknWHs5I5QIpUbBFn1hLdvgwsNaWE1ODckhRRlWFb70fkEayq0N7fMgK7n+
+         yohUDLjCOx4Qfim8Ojkenmdq6K2ud0xfgkZqy4wFZ6682IchxsP7dxEdyTOA9BgwkGCp
+         q1qW24XSjxzbYrj9jrwOOJhiVkj6KPhzu0a3UJlLpqYk5AGBLYz3T5uGpfiSpU9KuZ3p
+         BYuWswJhHjH5p+KEoQUliCNJhtqt+Zfoz7hj7Bt8QG1bcUrNG7aXxDSjR1rNrhprPa3W
+         KV9KSWM6x+qQHaQgCmSWqVO5pym28nFH8fSmL4sKCClbUHfjl+XHgru+unHRQ3rzf8Ei
+         MTdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVh3YkZaajhQjyiFUWXVfxO4iOVMUufPe0r7Z3BwfJaWE0LJr+UGhLO1rF4DqHGc/E02MKPBhrASgvSwI2hyYEnriclWGKKN82lUxll
+X-Gm-Message-State: AOJu0Yw8fOzcXne2oiCZ7pWVqVmu2EQRKFipQY7Bzrml4XNdFDhMGvm6
+	ZgG6H8GWzuaj/L9+wV6rWNo3Kp5Zynl5qE8WH5TPd0rFiyda2FXob35bshmZlswoff3U5S4EP6B
+	uo04bcV4mo7MwsR7gEHn3W4EiYp/Ej22ShMTsA1gEZlF1X/mIFTCiF6CGADoBHg==
+X-Received: by 2002:a05:600c:3209:b0:426:593c:9351 with SMTP id 5b1f17b1804b1-426707ceec7mr3883805e9.6.1720470072127;
+        Mon, 08 Jul 2024 13:21:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEx3aLlmm5Hgrb2t4oVnTmEQf0lq/M/EC9E4x2oYM1/yFEsBUNemhv5NCCFcZmmLcHky8PICw==
+X-Received: by 2002:a05:600c:3209:b0:426:593c:9351 with SMTP id 5b1f17b1804b1-426707ceec7mr3883515e9.6.1720470071697;
+        Mon, 08 Jul 2024 13:21:11 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c744:2200:bad7:95bd:e25e:a9e? (p200300cbc7442200bad795bde25e0a9e.dip0.t-ipconnect.de. [2003:cb:c744:2200:bad7:95bd:e25e:a9e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f7361b5sm10565245e9.29.2024.07.08.13.21.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 13:21:11 -0700 (PDT)
+Message-ID: <75d6c45d-deea-464d-b0fd-b36e5d73b898@redhat.com>
+Date: Mon, 8 Jul 2024 22:21:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoxA5cPpfcpKkzSM@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
+ linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <20240707002658.1917440-1-Jason@zx2c4.com>
+ <20240707002658.1917440-2-Jason@zx2c4.com>
+ <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
+ <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
+ <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
+ <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+ <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
+ <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+ <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
+ <Zovv4lzM38EHtnms@zx2c4.com> <Zov6SZZCKrqmigua@zx2c4.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zov6SZZCKrqmigua@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 08, 2024 at 12:41:25PM -0700, Brian Norris wrote:
-> Hi Yury, Nathan,
+On 08.07.24 16:40, Jason A. Donenfeld wrote:
+> Hi David, Linus,
 > 
-> On Wed, Jul 03, 2024 at 12:57:24PM -0700, Nathan Chancellor wrote:
-> > On Wed, Jul 03, 2024 at 12:06:36PM -0700, Yury Norov wrote:
-> > > On Tue, Jun 25, 2024 at 11:27:59AM -0700, Brian Norris wrote:
-> > > > On Tue, May 14, 2024 at 01:49:01PM -0700, Brian Norris wrote:
-> > > > > This change (plus more) has been previously proposed for other reasons
-> > > > > -- that some of the bitmask 'const' machinery doesn't work without
-> > > > > inlining -- in the past as:
-> > > > > 
-> > > > >   Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
-> > > > >   https://lore.kernel.org/all/20221027043810.350460-2-yury.norov@gmail.com/
-> > > > > 
-> > > > > It seems like a good idea to at least make all cpumask functions use
-> > > > > __always_inline; several already do.
-> > 
-> > > I feel that if we decide making cpumask an __always_inline is the
-> > > right way, we also should make underlying bitmap API __always_inline
-> > > just as well. Otherwise, there will be a chance of having outlined
-> > > bitmap helpers, which may confuse clang again.
-> > 
-> > If this does not result in noticeable bloat, this may not be a bad
-> > idea. I seem to recall this being an issue in the past for us but I
-> > cannot seem to find the issue at this point. Commit 1dc01abad654
-> > ("cpumask: Always inline helpers which use bit manipulation functions")
-> > comes to mind.
+> Below is what I understand the suggestions about the UX to be. The full
+> commit is in https://git.zx2c4.com/linux-rng/log/ but here's the part
+> we've been discussing. I've held off on David's suggestion changing
+> "DROPPABLE" to "VOLATILE" to give Linus some time to wake up on the west
+> coast and voice his preference for "DROPPABLE". But the rest is in
+> place.
 > 
-> In the above quote, I already referenced Yury's previous post to do just
-> that (__always_inline for all of bitmask and cpumask). I don't know why
-> that wasn't ever merged, so I instead chose a smaller set that resolved
-> my current problems.
+> Jason
+> 
+> diff --git a/include/uapi/linux/mman.h b/include/uapi/linux/mman.h
+> index a246e11988d5..e89d00528f2f 100644
+> --- a/include/uapi/linux/mman.h
+> +++ b/include/uapi/linux/mman.h
+> @@ -17,6 +17,7 @@
+>   #define MAP_SHARED	0x01		/* Share changes */
+>   #define MAP_PRIVATE	0x02		/* Changes are private */
+>   #define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
+> +#define MAP_DROPPABLE	0x08		/* Zero memory under memory pressure. */
+>   
+>   /*
+>    * Huge page size encoding when MAP_HUGETLB is specified, and a huge page
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index a77893462b92..cba5bc652fc4 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1068,13 +1068,16 @@ static int madvise_vma_behavior(struct vm_area_struct *vma,
+>   		new_flags |= VM_WIPEONFORK;
+>   		break;
+>   	case MADV_KEEPONFORK:
+> +		if (vma->vm_flags & VM_DROPPABLE)
+> +			return -EINVAL;
+>   		new_flags &= ~VM_WIPEONFORK;
+>   		break;
+>   	case MADV_DONTDUMP:
+>   		new_flags |= VM_DONTDUMP;
+>   		break;
+>   	case MADV_DODUMP:
+> -		if (!is_vm_hugetlb_page(vma) && new_flags & VM_SPECIAL)
+> +		if ((!is_vm_hugetlb_page(vma) && new_flags & VM_SPECIAL) ||
+> +		    (vma->vm_flags & VM_DROPPABLE))
+>   			return -EINVAL;
+>   		new_flags &= ~VM_DONTDUMP;
+>   		break;
+> diff --git a/mm/mlock.c b/mm/mlock.c
+> index 30b51cdea89d..b87b3d8cc9cc 100644
+> --- a/mm/mlock.c
+> +++ b/mm/mlock.c
+> @@ -485,7 +485,7 @@ static int mlock_fixup(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>   
+>   	if (newflags == oldflags || (oldflags & VM_SPECIAL) ||
+>   	    is_vm_hugetlb_page(vma) || vma == get_gate_vma(current->mm) ||
+> -	    vma_is_dax(vma) || vma_is_secretmem(vma))
+> +	    vma_is_dax(vma) || vma_is_secretmem(vma) || (oldflags & VM_DROPPABLE))
+>   		/* don't set VM_LOCKED or VM_LOCKONFAULT and don't count */
+>   		goto out;
+>   
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 83b4682ec85c..b3d38179dd42 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1369,6 +1369,34 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+>   			pgoff = 0;
+>   			vm_flags |= VM_SHARED | VM_MAYSHARE;
+>   			break;
+> +		case MAP_DROPPABLE:
+> +			/*
+> +			 * A locked or stack area makes no sense to be droppable.
+> +			 *
+> +			 * Also, since droppable pages can just go away at any time
+> +			 * it makes no sense to copy them on fork or dump them.
+> +			 *
+> +			 * And don't attempt to combine with hugetlb for now.
+> +			 */
+> +			if (flags & (MAP_LOCKED | MAP_HUGETLB))
+> +			        return -EINVAL;
+> +			if (vm_flags & (VM_GROWSDOWN | VM_GROWSUP))
+> +			        return -EINVAL;
+> +
+> +			vm_flags |= VM_DROPPABLE;
+> +
+> +			/*
+> +			 * If the pages can be dropped, then it doesn't make
+> +			 * sense to reserve them.
+> +			 */
+> +			vm_flags |= VM_NORESERVE;
 
-Hi Brian,
+That is certainly interesting. Nothing that we might not be able to 
+reclaim these pages reliably in all cases: for example when long-term 
+pinning them.
 
-I felt like your observed growth of the .text is caused by inlining
-only part of bitmap-related functions, and if we do inline all of
-them that might help.
+In some environments (OVERCOMMIT_NEVER) MAP_NORESERE would never be 
+effective. I wonder if we want to stick to the same behavior here ... 
+but in theory I agree that we can set this here unconditionally, it's 
+just the corner case of "there are ways to prohibit reclaim" that makes 
+me wonder.
 
-I ran my own builds against this __always_inline thing for all bitmap
-functions and their wrappers, namely those located in:
- - bitmap.h
- - cpumask.h
- - find.h
- - nodemask.h
+BTW, I was just trying to understand how MADV_FREE + MAP_DROPPABLE would 
+behave without any swap space around.
 
-When all 'inline's are replaced with '__always_inline', I found that
-defconfig build saves ~1800 bytes with GCC9, and 100 bytes with
-clang 18:
-        add/remove: 0/8 grow/shrink: 18/6 up/down: 253/-353 (-100)
+Did you experiment with that?
 
-(I didn't test the build against a fresher GCC and older clang, and
-likely will not do that till the next weekend.)
+I'm reading can_reclaim_anon_pages(), and I'm wondering how 
+good/reliable that works when there is no swap configured.
 
-From my past experience, newer versions of compilers tend to inline
-more aggressively, and thus generate bigger binaries. In case of
-bitmaps and friends, however, we should always inline because this
-inline 'small_const_nbits()' part is always resolved at compile time.
-Thus, aggressive inlining is always a win.
+Also, the comment in get_scan_count(): "If we have no swap space, do not 
+bother scanning anon folios." makes me wonder if some work in that area 
+is needed.
 
-> I can dust that off, rebase it, and give it a bloat check if that's
-> preferable though.
+-- 
+Cheers,
 
-If you want to take over this work - please go ahead. To make it
-complete, we basically need to make sure that all bitmap APIs are
-inlined, and check that the build doesn't grow for fresh and older
-compilers - both clang and gcc.
+David / dhildenb
 
-Thanks,
-Yury
 
