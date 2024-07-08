@@ -1,150 +1,120 @@
-Return-Path: <linux-kernel+bounces-244660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3279892A787
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:42:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0261492A788
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5653C1C209FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A09591F216A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F87C146D4D;
-	Mon,  8 Jul 2024 16:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB8614659F;
+	Mon,  8 Jul 2024 16:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhl2y14B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s2bYR8Qx"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DD381751
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1E813E41F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720456965; cv=none; b=PMbCMEtJvmHXn2GveiwJHp9C5qBnUHcOgundbQS7hRonELvckRVKynTP5Vf6qYavhIMseWbrj4X9bWCs9gLGH5S4TmbbivicIB1WfvgkT5ZGVQ1rcbc87cdSyogQE3wqKawkT0iD4ciuyyyJmEAp8BvzqBRDh7xV88fyqdRRUGE=
+	t=1720457033; cv=none; b=p35xQjo0p53o5a+Cqc3wWXk/o5DQ8xXjhaQQ3G/GCiMW+/2PrU9HZNjtBvv2C4CO4oSKpDkfB4Pjx00ExB4HC4nycZjGgf6/kiqA/xzK1oYzhMTjV3jQ1lYHPUUKigoJ8bPmHY3a49z8oC3WB3j6rMqbgHmkBMN/4a1bz0gmNfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720456965; c=relaxed/simple;
-	bh=SMSXQy/4fLhK2QipqoruTLc7ydPAgk2ANoH8rp63Jis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HT1fi70WqfYT5gfHov71Y3J2qqNi76Q1Q1z0/hTjmke+K7Fmza4hbc+70nncgKMPfvYhUT1SRRxpxFp5hsGBYkfH9XMyJm8IB1DsXP7yAvF94N01i0ZS4grHkc44t5HF4RI8gILF3uLIyjTvyCk/YXA1qlnMCRBG55qmc1hbSik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhl2y14B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80999C4AF0C
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720456964;
-	bh=SMSXQy/4fLhK2QipqoruTLc7ydPAgk2ANoH8rp63Jis=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qhl2y14BeeVEDy0eOdkxoyxNmMv8hqiDNQJgwyj2Pg46zbeonXs4u3EEqCgbwBLCJ
-	 UGJf0D30adjef4PsCZ22JcIIYa3V9aiKPoqDvl5sFSkb439bS5actA3gdrWy46ObFu
-	 oLN1ltT1EN20hnT8iFWB6GA7rRyFnnnX6218pht7REdmV3Jqz5x1Hd5E+vD38zOnEB
-	 2TvSuDNPNaE4VaeJRtvmsauBVyNUa1ExJymnd+Ea7vyIVTt8PZRcCiL4Evu+D6iYvs
-	 NEwmOa16Jk7idZj8YS2okepnHTkOoeCUky3CU+nG0l/2Eo4AyiP9puDdv5IlN/fO37
-	 8KAhuuRCYWsNg==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so4800242a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:42:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOKtBYvqqf3HVdXt49bKEXjTBRrp2C3juAocNiOIgHJps5SS6jUrlVvJC4KDOMSZXSs9ppGFLoHJLYUJmWAuOLP4VqwC+0cD/4Hlyj
-X-Gm-Message-State: AOJu0YwRp9idTmqErMd164Bjkyfsg50ukgB289VK5c5MaqLmfteKTKGT
-	xzoKivPcUAOn0VNkMswS3Mwh3jmMjCkv5RVZtUUvSg1i4VzDebFUJ0TTXhaz0lFC5v1FjMj4GJD
-	S4XpaZJugBShzC8Wf6E+ZRL/1TqCQbWrlOM34
-X-Google-Smtp-Source: AGHT+IEn/+zjOxNlsBbi8sx43v/ohZLMhX0KlqE0oZIG6iZ1BHYOnNlwXxTHtOhQXzhPvikWp9mzFU3o7Y7l6KCRW/o=
-X-Received: by 2002:a05:6402:354f:b0:57d:2c9:6497 with SMTP id
- 4fb4d7f45d1cf-594bab80106mr125789a12.3.1720456963027; Mon, 08 Jul 2024
- 09:42:43 -0700 (PDT)
+	s=arc-20240116; t=1720457033; c=relaxed/simple;
+	bh=kKHIBXppE9qYJGu1+k6WzmdWhAFi7fTswCz+BXo1rFA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EXGjkXJmt/6lfjoGnYCDdRV4AxfhoXJfTBcQ0PFjz78gfr2cCdbwEgUtJkgi/usKqI8NsZvh8njPQA6Vrr7jaPOqCsX9NpEX3XFdwybT8YRmP3IxKp1Rtj2ew5kMWgK+3lFOXpOY2qQRB7M9cK0bEQQcg/DVmuAS84rrJT/1uIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s2bYR8Qx; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70af58f79d1so2732875b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720457031; x=1721061831; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SXNOCthqLJQnortAeUZNxjzSWuT7RLWdamWwh+6vmjM=;
+        b=s2bYR8QxhR0GlIqdl4SOfE5umxm22pa6wLitOzVB+UjnX4FPdp2o1filRBO0T4Pv5h
+         6T0bxJpkCSAfecZZkHsfFsX1fK+jBana2Db/jMdYIrDvDQL4wBdCPUcjF8UrQPL3Wjzi
+         I3NCiT1F9d0GiH/rSga49blTWr9N2OGeuNBiAmTMLffoNeU5CbDf29Q7rnfnDEoWt1CM
+         luOFgANVri2B/7UfKE0ehkof17eqP+NXW300qKAmZ7x7P58hnDAS/eycTuhWrtulrOIp
+         a6hL0Fkve0C9QKaWbUYPS3bvckeCGmbom2T72yXog4AlAZbuOlGRORgwg5bU6vOAblww
+         zMCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720457031; x=1721061831;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SXNOCthqLJQnortAeUZNxjzSWuT7RLWdamWwh+6vmjM=;
+        b=i+youL3QmGMoT1VJRMMhIX80dcrik0O71Y0r0ze2DKMVDSLn3eDZe8jCuHg11J6m6U
+         xkwAOKDFLgOdT1JiS/8bDn5s9LvKupo3m9YdPtLH5Ym8ny+bkQkRAmO9WB1xM7A7Nvth
+         Qt0VWMfd2KLa+XQDZmv2xzh39/djjgdivIzYhe1eHaQ7480jVJcTaJnp0FSBnYmRlOB0
+         B+Z0yyV6mcTPNKaOv6kdE5OaFoNJPygpyRGl7FugNtyXd/7Q74wGkHfTNVrxCI8Kl7Ga
+         YB38pYS0NvJNj+R9ySML3Ane19f7wyGUwbrLDow0uDDcpRF5pGoR4AzM8pMIwuG4wHa3
+         IaSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJrjK6rvtrhHE+DngLN9bbwHTXXM7fC/SDfH7kGRTN0d7u294veMESSOMa8TzVntZ6AKOLLYArxF0npV04i0SGhvBrV28SBRnjwD05
+X-Gm-Message-State: AOJu0Yzqq4apih2nJOsoNiYOUM2D8uj3SzwUn+0rmXt+sz3Ydyc1thA4
+	z6plcys9FW6+Mm9f4M81BH2NkQOVC2TUX4odRy3UAoUvPgMWNtEgrVSSk2dDH2PmRBDiU1ulWLH
+	wmYCsEyhDig==
+X-Google-Smtp-Source: AGHT+IGrXhwTR/D8bXTm4IJ9bVwt+ESYqbPcMEF9fZLPk3rs+FACAv0NYnr6s2EuvrKTjSkCwWY4ocFsdKvHrw==
+X-Received: from loggerhead.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:29a])
+ (user=jmattson job=sendgmr) by 2002:a05:6a00:124f:b0:704:338b:d556 with SMTP
+ id d2e1a72fcca58-70b4365a95emr5818b3a.3.1720457030957; Mon, 08 Jul 2024
+ 09:43:50 -0700 (PDT)
+Date: Mon,  8 Jul 2024 09:43:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240705145009.32340-1-puranjay@kernel.org> <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
- <mb61pjzhwvshc.fsf@kernel.org> <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
- <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net> <mb61ped836gn7.fsf@kernel.org>
- <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
-In-Reply-To: <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
-From: KP Singh <kpsingh@kernel.org>
-Date: Mon, 8 Jul 2024 18:42:31 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
-Message-ID: <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
-Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Puranjay Mohan <puranjay@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Manu Bretelle <chantra@meta.com>, 
-	Florent Revest <revest@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240708164319.3801778-1-jmattson@google.com>
+Subject: [PATCH 5.10] x86/retpoline: Move a NOENDBR annotation to the SRSO
+ dummy return thunk
+From: Jim Mattson <jmattson@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
+	Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+Cc: Jim Mattson <jmattson@google.com>, Greg Thelen <gthelen@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 8, 2024 at 6:09=E2=80=AFPM Daniel Borkmann <daniel@iogearbox.ne=
-t> wrote:
->
-> On 7/8/24 5:35 PM, Puranjay Mohan wrote:
-> > Daniel Borkmann <daniel@iogearbox.net> writes:
-> >
-> >> On 7/8/24 5:26 PM, KP Singh wrote:
-> >>> On Mon, Jul 8, 2024 at 5:00=E2=80=AFPM Puranjay Mohan <puranjay@kerne=
-l.org> wrote:
-> >>>>
-> >>>> Daniel Borkmann <daniel@iogearbox.net> writes:
-> >>>>
-> >>>>> On 7/5/24 4:50 PM, Puranjay Mohan wrote:
-> >>>>>> fexit_sleep test runs successfully now on the CI so remove it from=
- the
-> >>>>>> deny list.
-> >>>>>
-> >>>>> Do you happen to know which commit fixed it? If yes, might be nice =
-to have it
-> >>>>> documented in the commit message.
-> >>>>
-> >>>> Actually, I never saw this test failing on my local setup and yester=
-day
-> >>>> I tried running it on the CI where it passed as well. So, I assumed =
-that
-> >>>> this would be fixed by some commit. I am not sure which exact commit
-> >>>> might have fixed this.
-> >>>>
-> >>>> Manu, Martin
-> >>>>
-> >>>> When this was added to the deny list was this failing every time and=
- did
-> >>>> you have some reproducer for this. If there is a reproducer, I can t=
-ry
-> >>>> fixing it but when ran normally this test never fails for me.
-> >>>
-> >>> I think this never worked until
-> >>> https://lore.kernel.org/lkml/20230405180250.2046566-1-revest@chromium=
-.org/
-> >>> was merged, FTrace direct calls was blocking tracing programs on ARM,
-> >>> since then it has always worked.
-> >>
-> >> Awesome, thanks! I'll add this to the commit desc then when applying.
-> >
-> > The commit that added this to the deny list said:
-> > 31f4f810d533 ("selftests/bpf: Add fexit_sleep to DENYLIST.aarch64")
-> >
-> > ```
-> > It is reported that the fexit_sleep never returns in aarch64.
-> > The remaining tests cannot start.
-> > ```
+The linux-5.10-y backport of commit b377c66ae350 ("x86/retpoline: Add
+NOENDBR annotation to the SRSO dummy return thunk") misplaced the new
+NOENDBR annotation, repeating the annotation on __x86_return_thunk,
+rather than adding the annotation to the !CONFIG_CPU_SRSO version of
+srso_alias_untrain_ret, as intended.
 
-It may also have something to do with sleepable programs. But I think
-it's generally in the category of "BPF tracing was catching up with
-ARM", it has now.
+Move the annotation to the right place.
 
-- KP
+Fixes: 0bdc64e9e716 ("x86/retpoline: Add NOENDBR annotation to the SRSO dummy return thunk")
+Reported-by: Greg Thelen <gthelen@google.com>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+---
+ arch/x86/lib/retpoline.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> >
-> > So, if the lack of Ftrace direct calls would be the reason then the
-> > failure would be due to fexit programs not being supported on arm64.
-> >
-> > But this says that the selftest never returns therefore is not related
-> > to ftrace direct call support but another bug?
->
-> Fwiw, at least it is passing in the BPF CI now.
->
-> https://github.com/kernel-patches/bpf/actions/runs/9841781347/job/2716961=
-0006
+diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+index ab9b047790dd..d1902213a0d6 100644
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -105,6 +105,7 @@ __EXPORT_THUNK(srso_alias_untrain_ret)
+ /* dummy definition for alternatives */
+ SYM_START(srso_alias_untrain_ret, SYM_L_GLOBAL, SYM_A_NONE)
+ 	ANNOTATE_UNRET_SAFE
++	ANNOTATE_NOENDBR
+ 	ret
+ 	int3
+ SYM_FUNC_END(srso_alias_untrain_ret)
+@@ -258,7 +259,6 @@ SYM_CODE_START(__x86_return_thunk)
+ 	UNWIND_HINT_FUNC
+ 	ANNOTATE_NOENDBR
+ 	ANNOTATE_UNRET_SAFE
+-	ANNOTATE_NOENDBR
+ 	ret
+ 	int3
+ SYM_CODE_END(__x86_return_thunk)
+-- 
+2.45.2.803.g4e1b14247a-goog
+
 
