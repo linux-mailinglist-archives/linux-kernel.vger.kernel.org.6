@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-244718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C67F92A869
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:50:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D2492A871
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6A31C21277
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FEEB1F21E4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57AB1494C9;
-	Mon,  8 Jul 2024 17:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE3314A08D;
+	Mon,  8 Jul 2024 17:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kxMjx8y8"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UnL5EEnt"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962C01482F5
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DCC1487ED
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720461012; cv=none; b=JtBBVwg7MldKpzQiYO9hLjoZsKKXIMjzDh66Fx5GwbXSa3YS1b+rFBcpptHIfVEG6d9Vz7y8x0ZjzzQe8G51vL99ogj3zkzG6/Kd5Qd6nJ4xQAENA0htpziK/wEA5MdPo+V2CDAqe0Q7qsWbm7dO+g6cM4RcZXyjchQ+VsSyWAg=
+	t=1720461196; cv=none; b=n14SQIoGeyAmPWIvjMMJNY4LHJIFtfi6DyJPiXtHkX6vVLOj7/1hLAB0/FUmNL1AxQKloi1TLwaxbCZ0pg1fWoONBetZ+jn3m8tmYB5HbJ+b7dLe5ydnbiVY4payZTLlTyamjpOPURt6pS8pp25X6los2N8myU1ivvdkvy577vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720461012; c=relaxed/simple;
-	bh=Cgeu270hOmX3S5GZTXTxjnZltMxA5nAub89Ban01DjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZoxLrpjpZww+0QikNfYhTECxPxFKF1InHNpW36oLhThfoQdVpEh4hVEfVk1JY7FEAgJ5wyOADLaKZGN3pMg4u7Gh6UW0pECEAnG51qrgV1LEmbbQrrVpEMmZiWH7cWGGnb7BWNxmrAwMjUgUAOzpkOZrwUYpVngIqB9GTqXh1H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kxMjx8y8; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-df481bf6680so4080161276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 10:50:10 -0700 (PDT)
+	s=arc-20240116; t=1720461196; c=relaxed/simple;
+	bh=39EmKo6+oHW5UEs7Vadyrjy8hS/9NYPYOUNpwl73Ff4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EX72+nD50FDB5N1Jr0zqp100Jh8HnGEVauyPC1q5M6IKkPgzakR7HVGOU9H4y76QD0jeFcFyWFFcvLtyx4JIT2gKbia4xXTZaunpWsaew3kiC3zoGA40QTeYfu8ybHTkRP+ZXbwIlNv+pthKPq1Fxxe/7GS5SeId3tkEaUE4ClA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UnL5EEnt; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fb0d88fd25so27288495ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 10:53:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720461009; x=1721065809; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nESyMzGZXBtAqIeO/AYycg3VVtY82ta3I2iF0FVP4cE=;
-        b=kxMjx8y8+f//+s7hEupd9DKh37DXdEahAVb2tjOhRg3I+KR8cBC+wrlTsZAnearr09
-         poj2fR+HiezIpXAOvx/+j4SXmv+jxd0LUv5DwTlvGskBUXBE8x75i0fSPlD85ZY0TpUf
-         ljmRpZu75n+UXw9PVSFuH4+fI/ctN49/YzKmtyLM7aLkkeiPp92sAzp5BEO3nZ2O7Zov
-         Anr+kyAuj3iiTQB4BwPToWM9CnelVdJ+vWj3uZclatMRnAU5+NEzocQ5+gY6rptYn5U4
-         5SfYoxdr3MyxJSy59iWeIaFI31lEwYk7Hdi9y6LrbijHXCaf9kewubcp5GHXvOL186U2
-         exzQ==
+        d=chromium.org; s=google; t=1720461194; x=1721065994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O9BjDRQX7kj+10HbtsCDkp5kJ5lKfYRGsbWpWcg95/M=;
+        b=UnL5EEnt9LEgwd0WcsGA1ddQXX+kqPIhRTtnYp8Z8ilb9hLPDjJEz3dEFrUOFMd7RE
+         0sDV7FaY8Tk/wDHStPqjwXDNMj0a8+KV2veLhh55OskOXOcNz93zAA4koOfGFcCqj7+r
+         8GFupiDoaR88DJXhG/uQM6ZnPXLrj2CuuycSk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720461009; x=1721065809;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nESyMzGZXBtAqIeO/AYycg3VVtY82ta3I2iF0FVP4cE=;
-        b=aeLwtckJH9LuR7w3uumJ82CoXvOJuNOvqaEjzeTvarEvFyFIBOCx+oy1rR9WYAQkA7
-         CZcXc9yrnSWxAVbS/jysU9LAAr/Z42rlLXeQiAo7pVZYUQA4JkWU0ym7uxmg8h9pJTH8
-         qPxoZs/oUGTtYYWkO/Vc+iqxP6oBwRfXai6HJYRxlbyxYd6Cq3x67sWCZ/wFryk0ysEQ
-         v/p7Ay9UKJ8nlsDaIq8HzIWEWd8Km0jtCL9bt51LJor8peK3MX5g0ljXIBe+WPaqWOsK
-         a66T34lalNkSo16s27QTJOwKGtwqBm+H+uMaSIYf6ZdgDwlmw7pleuzQBWaQVrVHoZQO
-         iaBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpmrtZdLh8JeOy6s9c1dXx7naSSGF4oJJer99qGftYXBH0HFppd+pW4XIa/Ml43qDm8EkRzJ+MrqNsxL/cyIGgEdu7Zfn2mZ1ggIwv
-X-Gm-Message-State: AOJu0YxxhRV7RgLhLv7KCIDz8Kyo2NgBtWjL0ZzRl15sAjNi7pAKJbj5
-	nTz0WuGl6IEdGvSJtNfhTntjUK64Z2LyH9Ma+yz2WTRidvuQ54hZwLVpi1HhzLdjjK6vpFHFrqs
-	z/D8gs7VnyOdLIbdT/ruVJ9S6NH9c+KwohvfQ
-X-Google-Smtp-Source: AGHT+IHcxq/i9rzCxsEN5hnVo4LPbu8O3jBlhcP+IANI38Pst6MQnmRwrHXpKPTOw9a59dfbicjTNMHGzlIpXAxgcP4=
-X-Received: by 2002:a05:6902:1361:b0:e03:4e08:c93c with SMTP id
- 3f1490d57ef6-e041b03995dmr571404276.13.1720461009288; Mon, 08 Jul 2024
- 10:50:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720461194; x=1721065994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O9BjDRQX7kj+10HbtsCDkp5kJ5lKfYRGsbWpWcg95/M=;
+        b=BThHrKuY2zMsVqbVk/Q2quFa4vlp/dm8eUWAdEwU0/gRikxgjQHDfwNttS0D9Hoq4U
+         bp1QMf5dcG99RBR9HOPWalh4gXuFuxrSUj5HxDMHXkCmf5GPj4U3ZiUNQlZsV2pINrwl
+         Chk90qbT3Lt3fE1ZKT3nrWZzX6GTKeIxbJ+bUkoB/s0zHeDurt9/hq0rALrGfqQZPpVG
+         6CQvftcD8axCQf5+P4lg0clC/i9D9eyVsvL9KZD6sYwUU20OF46H3KJ1zvLaHXJsWilI
+         4JH9BMF1OkyeWuqoe3Ph8EyFkuzgjvVMqTG53cleD6KyqQ9IopVtd7Ft9KIkAfZuRwgp
+         g7XA==
+X-Forwarded-Encrypted: i=1; AJvYcCURABdbvmrd3/G05jA1yqPxMs0hVhqoAWDXIUT0w/V/FH+PBdTkHssVeE6gtEBk0Ul4PEyu/re281Rx+su+kvUUsJ8uuRD59ABqEiPY
+X-Gm-Message-State: AOJu0YyVtmgryExWTIrKKIJChlj3m7faQQ2eIZSxm+iA5wsjNVALXpzM
+	qd5LoFzHXtdF7TV+G7lw1YXBUas7udY+0h7W3iso3c9PLvvGMe+l7msARLQAKg==
+X-Google-Smtp-Source: AGHT+IHPFw3gZqk59xHeov3I6X4Z0L3gagGKfy7AhBoV0V+C3PC9P2uqs2UeYxrwQRh/JJc7gzOsvg==
+X-Received: by 2002:a17:902:ce8a:b0:1fb:3263:2e60 with SMTP id d9443c01a7336-1fb37046126mr172139675ad.13.1720461194560;
+        Mon, 08 Jul 2024 10:53:14 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:45f:e756:a603:fedf])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a3132csm1415315ad.112.2024.07.08.10.53.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 10:53:13 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: dri-devel@lists.freedesktop.org
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Thierry Reding <treding@nvidia.com>,
+	kernel test robot <lkp@intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panel: sharp-lq101r1sx01: Fixed reversed "if" in remove
+Date: Mon,  8 Jul 2024 10:52:21 -0700
+Message-ID: <20240708105221.1.I576751c661c7edb6b804dda405d10e2e71153e32@changeid>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708134654.1725-1-yuzenghui@huawei.com>
-In-Reply-To: <20240708134654.1725-1-yuzenghui@huawei.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Mon, 8 Jul 2024 10:49:57 -0700
-Message-ID: <CABdmKX1CXWuw0-gRukZeSoF=SZFi3eRPELe=EU_-q3OVKQHZzw@mail.gmail.com>
-Subject: Re: [PATCH] kselftests: dmabuf-heaps: Ensure the driver name is null-terminated
-To: Zenghui Yu <yuzenghui@huawei.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sumit.semwal@linaro.org, 
-	benjamin.gaignard@collabora.com, Brian.Starkey@arm.com, jstultz@google.com, 
-	shuah@kernel.org, wanghaibin.wang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 8, 2024 at 6:47=E2=80=AFAM Zenghui Yu <yuzenghui@huawei.com> wr=
-ote:
->
-> Even if a vgem device is configured in, we will skip the import_vgem_fd()
-> test almost every time.
->
->   TAP version 13
->   1..11
->   # Testing heap: system
->   # =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->   # Testing allocation and importing:
->   ok 1 # SKIP Could not open vgem -1
->
-> The problem is that we use the DRM_IOCTL_VERSION ioctl to query the drive=
-r
-> version information but leave the name field a non-null-terminated string=
-.
-> Terminate it properly to actually test against the vgem device.
+Commit d7d473d8464e ("drm/panel: sharp-lq101r1sx01: Don't call disable
+at shutdown/remove") had a subtle bug. We should be calling
+sharp_panel_del() when the "sharp" variable is non-NULL, not when it's
+NULL. Fix.
 
-Hm yeah. Looks like drm_copy_field resets version.name to the actual
-size of the name in the case of truncation, so maybe worth checking
-that too in case there is a name like "vgemfoo" that gets converted to
-"vgem\0" by this?
+Fixes: d7d473d8464e ("drm/panel: sharp-lq101r1sx01: Don't call disable at shutdown/remove")
+Cc: Thierry Reding <treding@nvidia.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202406261525.SkhtM3ZV-lkp@intel.com/
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
->
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-> ---
->  tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/t=
-esting/selftests/dmabuf-heaps/dmabuf-heap.c
-> index 5f541522364f..2fcc74998fa9 100644
-> --- a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-> +++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-> @@ -32,6 +32,8 @@ static int check_vgem(int fd)
->         if (ret)
->                 return 0;
->
-> +       name[4] =3D '\0';
-> +
->         return !strcmp(name, "vgem");
->  }
->
-> --
-> 2.33.0
->
+ drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
+index edc9425bb143..a0d76d588da1 100644
+--- a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
++++ b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
+@@ -362,7 +362,7 @@ static void sharp_panel_remove(struct mipi_dsi_device *dsi)
+ 		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", err);
+ 
+ 	/* only detach from host for the DSI-LINK2 interface */
+-	if (!sharp)
++	if (sharp)
+ 		sharp_panel_del(sharp);
+ }
+ 
+-- 
+2.45.2.803.g4e1b14247a-goog
+
 
