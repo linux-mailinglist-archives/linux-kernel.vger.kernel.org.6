@@ -1,85 +1,191 @@
-Return-Path: <linux-kernel+bounces-244983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014BE92AC84
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:20:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6055A92AC87
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DBF51F225EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:20:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142402818DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3241527B8;
-	Mon,  8 Jul 2024 23:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29BB152DE3;
+	Mon,  8 Jul 2024 23:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJ2oLztK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IQQ80gPm"
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248CD15217A;
-	Mon,  8 Jul 2024 23:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27C014534C
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 23:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720480794; cv=none; b=HoX89+j42nRVC5t7nrZWU+mH8nAJK+ldBES3KCXiSK6P3ETPMjHsCwM19yeYuFM8+jR+pxTpEpS9VzrMi45q3W0PDHAo5xonq1bVC78xAxVOD0pTCwkk2K6z85/o9teM1KEHxCsSUR+zDN6vKnnj3NaE+UkC0Zk9/JMN+ZivPWw=
+	t=1720480994; cv=none; b=BgXQq+TnbDcZ3qEt95nAD5Frq5PeB/2UMPVa7tlvaNLt6l1hvEfPbbqSFWVlfgUhV1aX0CyM+kJMgbVoCPZO23PgmqjYpj/XvTBW/9ZsPdUiQo2yULt7VZkF4NUU7Bc0k8Dezgl32crnoXH21sWvFiFcQncFk2u7MfTEUYpFzWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720480794; c=relaxed/simple;
-	bh=HR+H74d963O3GQH99PkWyBB+T2lOvOhnMuPhiokLJGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bCdcjUwLIj6Zsf2AaFgn6C7TNkubs5MsjQamgYD5G1axJqaZjB6DOWb0Bp/DC0eyyypVsYt1AGWkS344yetj1o98tVWJFUWJGekGCUTV/2H8L/TjfPxLFCdLmOTMhs3uY4r0CxnyFPrL4IafW5iW+cIz9wANPURBC1bQSKxRihM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJ2oLztK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09E28C116B1;
-	Mon,  8 Jul 2024 23:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720480793;
-	bh=HR+H74d963O3GQH99PkWyBB+T2lOvOhnMuPhiokLJGA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mJ2oLztKPqrBrBRX5w6uOaDBWZOQUNeUzwrNGcxGmZwhTSjUWFNcPkLIXIsDlJanq
-	 WwhkpIbDnvSG90IwwvjDc1sx7991cLANDyF08A51Kmmz54qS+dFonDr8Vhmrl9Cx0S
-	 lxy3uupFMLCKUX/F6wKdS5Z0dTCyQ27XFuxwWrkzgODN0n/4OiJCq/GuWz9xCJqVJP
-	 g7sIjGvcynfeOQWGcancUhAFq2VPedjHPd9R9qS4rTLVUbuwoRM9ex5zspwiZmgyqr
-	 uuIOGjfXmjA1dEm/O1TtWXpgV0GxjV9wOdNiaOjLqIq4Ej/feSiUVA4hdenvRo9iyW
-	 gc0xHyiPlWbow==
-Date: Tue, 9 Jul 2024 01:19:49 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Dirk Behme <dirk.behme@de.bosch.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] i2c: rcar: bring hardware to known state when
- probing
-Message-ID: <d6i3ojzbthieq52teugiuxdxjp2la6cjtsleq4esbfgup6cgqf@obfadtyrdpuh>
-References: <20240707082848.5424-1-wsa+renesas@sang-engineering.com>
- <20240707082848.5424-2-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1720480994; c=relaxed/simple;
+	bh=MFSGJD3nwcJI8ETw4DBy0zzHG4DY/83bE/eiWtvu90g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OxKR140/EhiakyHqeEAe0KJlFeLHrutFf+UjlEJaueA3sNtxqqoKsTBZqDGop5BNZuZ8QR0ZTN3Wg2JGPrDb7NrlOscmxBtxHdvM7wyN+aP+6KH0NN4RxUGlYBe3eAjWMZxuQXdZVtpqHprgjHjXlQw/9oaN/ArxjwMXCoWI6eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=IQQ80gPm; arc=none smtp.client-ip=209.85.210.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-701b0b0be38so3548885b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 16:23:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1720480992; x=1721085792; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HETypXtaF2wU7wCZrgMWj95uf6eaRfqAsfHPOMZKG/g=;
+        b=IQQ80gPmcw15xYFE2YFFPj7ZABqFGz6o1ZKdRvXVrnyLYE93+Q1amntj4u4sA/EOtx
+         XoegOPc/Wit6TQqGG8zwHuCmgR+Aanv8L5qxVKIIUosyN9o18N4PGhAJ4pBDxHoui2kj
+         ol53wKHYiGiLQejIfZzS72CiANycGi588IdrU1PRQkgd3M1bFvAbNfE6TEaBaLVzplaP
+         pzDM+kU9FIWZIb7N6Zm5ng8zcSgKudcHBZmevaAlwwjWN+12Qz8Al/5X59/lM8ZXs/nB
+         Ie6E6QaGm+iTpTek8Vd++zCnU1tdzqI3J5mZubufhKoEK7VtjxE9G5iLCX/wvh3o0dSM
+         wcNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720480992; x=1721085792;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HETypXtaF2wU7wCZrgMWj95uf6eaRfqAsfHPOMZKG/g=;
+        b=Ghho7PUU/raz7cqJmte6whm0ZZ+stPFk5eXqdjemLU5DDTLk6HjL6ODzeEvDTCa/SX
+         coR9/CirFZ9dbMhwkn+fPh7QH2dPBqrOQIvnC6aWYPhXQX3ssm2J0ENrMkf8YRc6zKKl
+         kNUXVfTxCeFOJx91f0ZGHud9dkeDjwGx49HUXVxYTnbqIuOTX8s6ERwKcv6kKInloZ0h
+         59eGKkC3F0dtdScNy8fRE/qVacg7F3d4w+s8oXUKrkuF8gHVCGlJ7xz2GhDwGwqvCqoK
+         QJdCulUBwnT3cnvRMGYNMMjGcWmOUmjUr2bs5b2DtCSIRBrc6ZBltSD/5/Nc0Jo5MBZH
+         jcLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtSUXVRe5xZ8dbBDGMTD0sBucsEsSFi6Hiutp8egQovVdVpzNXZUuiHfHjhSvXUTUgAAAEPHSDFr/zFBSd61kOCcroMXwks8q0D9ii
+X-Gm-Message-State: AOJu0YwJQCDajTLPhI5JUprGLdoX+bV7mzsjhaxgFGUqYD5I+yvRb7IU
+	jvxs1QcVb+aNjinDToWN1AvNacpPAXJfAjYoS9GmEqV++POeMI8s5sjqRyM9iRo=
+X-Google-Smtp-Source: AGHT+IFNrtTyBvb0fgUj6KjUtbR/KrfiOy3zb3MzTx+C91s82YYOt+aRk7pRE6MRy15FPO7Tqj22LQ==
+X-Received: by 2002:a05:6a00:4fc6:b0:706:741f:a77c with SMTP id d2e1a72fcca58-70b434f56a7mr1348102b3a.7.1720480991788;
+        Mon, 08 Jul 2024 16:23:11 -0700 (PDT)
+Received: from dev-cachen.dev.purestorage.com ([208.88.159.129])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b438bfa86sm437775b3a.47.2024.07.08.16.23.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 16:23:11 -0700 (PDT)
+From: Casey Chen <cachen@purestorage.com>
+To: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: yzhong@purestorage.com,
+	Casey Chen <cachen@purestorage.com>
+Subject: [PATCH 0/1] perf tool: fix handling NULL al->maps returned from thread__find_map
+Date: Mon,  8 Jul 2024 17:23:00 -0600
+Message-ID: <20240708232302.15267-1-cachen@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240707082848.5424-2-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+We found a segfault when run perf report on raw perf_data from perf record.
+Basically with 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
+thread__find_map() would return with al->maps being NULL when cpumode is 3
+(macro PERF_RECORD_MISC_HYPERVISOR). Later dereferencing maps->machine would crash.
 
-On Sun, Jul 07, 2024 at 10:28:46AM GMT, Wolfram Sang wrote:
-> When probing, the hardware is not brought into a known state. This may
-> be a problem when a hypervisor restarts Linux without resetting the
-> hardware, leaving an old state running. Make sure the hardware gets
-> initialized, especially interrupts should be cleared and disabled.
-> 
-> Reported-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Closes: https://lore.kernel.org/r/20240702045535.2000393-1-dirk.behme@de.bosch.com
-> Fixes: 6ccbe607132b ("i2c: add Renesas R-Car I2C driver")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Should go to for-current.
+The fix adds check to callers of thread__find_map() and thread__find_symbol(),
+please see 0001-perf-tool-fix-handling-NULL-al-maps-returned-from-th.patch,
+which is made and tested on afcd48134c58 ("Merge tag
+'mm-hotfixes-stable-2024-06-26-17-28' of
+git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm")
 
-merged in i2c/i2c-host-fixes.
+Debug diffs made on 0dd5041c9a0e is attached as
+0002-debug-patch-for-perf-report-segfault.patch
 
-Thanks,
-Andi
+Steps to reproduce and what are observed:
+1. Run 'gdb ./perf'
+2. Initial gdb output. cpumode is 3 and address of node->ms is 0x55555684aee8.
+
+(gdb) run report --stdio -v -i ~/perf_data
+...
+add_callchain_ip: i'm here! al.map (nil) al.sym (nil) ip >= PERF_CONTEXT_MAX: 0 cpumode 3 ip 0x8348fb8948535441
+callchain_cursor_append addr of node->ms 0x55555684aee8 ms 0x7fffffff9e70 has no maps map (nil) symbol (nil)
+Failed to open /tmp/perf-31239.map, continuing without symbols
+callchain_cursor_commit: cursor 0x7ffff7a17b98 curr 0x55555684aee0 ms 0x55555684aee8
+callchain_cursor_commit: cursor 0x7ffff7a17b98 curr 0x55555684aee0 ms 0x55555684aee8
+callchain_cursor_commit: cursor 0x7ffff7a17b98 curr 0x55555684aee0 ms 0x55555684aee8
+
+Program received signal SIGSEGV, Segmentation fault.
+fill_callchain_info (al=0x7fffffffa120, node=0x55555684aee0, hide_unresolved=false) at util/callchain.c:1119
+1119            struct machine *machine = maps__machine(node->ms.maps);
+
+3. Backtrace from gdb
+(gdb) bt
+#0  fill_callchain_info (al=0x7fffffffa120, node=0x55555684aee0, hide_unresolved=false) at util/callchain.c:1119
+#1  0x00005555556bdbc6 in hist_entry_iter__add (iter=iter@entry=0x7fffffffa160, al=al@entry=0x7fffffffa120, max_stack_depth=<optimized out>, arg=arg@entry=0x7fffffffb570) at util/hist.c:1245
+#2  0x00005555555cd098 in process_sample_event (tool=0x7fffffffb570, event=0x7fffeb58be78, sample=0x7fffffffa210, evsel=<optimized out>, machine=0x55555585b8e0) at builtin-report.c:332
+#3  0x00005555556958e3 in perf_session__deliver_event (session=0x55555585b730, event=0x7fffeb58be78, tool=0x7fffffffb570, file_offset=12656248, file_path=0x55555585ade0 "/root/perf_data/1/ct1/perf_data") at util/session.c:1645
+#4  0x000055555569a5c1 in do_flush (show_progress=false, oe=0x555555862268) at util/ordered-events.c:245
+#5  __ordered_events__flush (oe=0x555555862268, how=OE_FLUSH__ROUND, timestamp=<optimized out>) at util/ordered-events.c:324
+#6  0x0000555555695cf5 in perf_session__process_user_event (session=0x55555585b730, event=0x7fffec19f7f8, file_offset=25319416, file_path=<optimized out>) at util/session.c:1698
+#7  0x00005555556962a8 in reader__read_event (rd=rd@entry=0x7fffffffaef0, session=session@entry=0x55555585b730, prog=prog@entry=0x7fffffffaec0) at util/session.c:2371
+#8  0x0000555555697e41 in reader__process_events (prog=0x7fffffffaec0, session=0x55555585b730, rd=0x7fffffffaef0) at util/session.c:2420
+#9  __perf_session__process_events (session=0x55555585b730) at util/session.c:2467
+#10 perf_session__process_events (session=session@entry=0x55555585b730) at util/session.c:2633
+#11 0x00005555555cffcd in __cmd_report (rep=0x7fffffffb570) at builtin-report.c:991
+#12 cmd_report (argc=<optimized out>, argv=<optimized out>) at builtin-report.c:1711
+#13 0x0000555555631250 in run_builtin (p=p@entry=0x555555840d40 <commands+288>, argc=argc@entry=5, argv=argv@entry=0x7fffffffddd0) at perf.c:323
+#14 0x00005555555b6179 in handle_internal_command (argv=0x7fffffffddd0, argc=5) at perf.c:377
+#15 run_argv (argv=<synthetic pointer>, argcp=<synthetic pointer>) at perf.c:421
+#16 main (argc=5, argv=0x7fffffffddd0) at perf.c:537
+
+4. The line of code at fault. We can see that deferencing maps->machine caused segfault.
+(gdb) disas
+Dump of assembler code for function fill_callchain_info:
+   0x0000555555684100 <+0>:     endbr64
+   0x0000555555684104 <+4>:     push   %rbp
+   0x0000555555684105 <+5>:     mov    %rsp,%rbp
+   0x0000555555684108 <+8>:     push   %r14
+   0x000055555568410a <+10>:    push   %r13
+   0x000055555568410c <+12>:    mov    %rsi,%r13
+   0x000055555568410f <+15>:    push   %r12
+   0x0000555555684111 <+17>:    mov    %rdi,%r12
+   0x0000555555684114 <+20>:    push   %rbx
+   0x0000555555684115 <+21>:    mov    %edx,%ebx
+   0x0000555555684117 <+23>:    sub    $0x10,%rsp
+   0x000055555568411b <+27>:    mov    %fs:0x28,%rax
+   0x0000555555684124 <+36>:    mov    %rax,-0x28(%rbp)
+   0x0000555555684128 <+40>:    mov    0x8(%rsi),%rax
+=> 0x000055555568412c <+44>:    mov    0x40(%rax),%r14
+
+...
+(gdb) list *0x000055555568412c
+0x55555568412c is in fill_callchain_info (util/maps.h:81).
+76              return &RC_CHK_ACCESS(maps)->entries;
+77      }
+78
+79      static inline struct machine *maps__machine(struct maps *maps)
+80      {
+81              return RC_CHK_ACCESS(maps)->machine;
+82      }
+83
+84      static inline struct rw_semaphore *maps__lock(struct maps *maps)
+85      {
+
+(gdb) p/x &(((struct maps *)0)->machine)
+$1 = 0x40
+
+5. Data structure in trouble. struct maps from node->ms are empty. The address of node->ms is 0x55555684aee8.
+(gdb) p/x *node
+$2 = {ip = 0x8348fb8948535441, ms = {maps = 0x0, map = 0x0, sym = 0x0}, srcline = 0x0, valid = 0x0, branch = 0x0, branch_flags = {{value = 0x0, {mispred = 0x0, predicted = 0x0, in_tx = 0x0, abort = 0x0, cycles = 0x0, type = 0x0, spec = 0x0, new_type = 0x0, priv = 0x0,
+        reserved = 0x0}}}, branch_from = 0x0, nr_loop_iter = 0x0, iter_cycles = 0x0, next = 0x555556813730}
+(gdb) p/x &(node->ms)
+$3 = 0x55555684aee8
+
+*** BLURB HERE ***
+
+Casey Chen (1):
+  perf tool: fix handling NULL al->maps returned from thread__find_map
+
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c | 10 ++++++----
+ tools/perf/util/machine.c                         |  5 +++++
+ tools/perf/util/unwind-libdw.c                    |  6 ++++--
+ 3 files changed, 15 insertions(+), 6 deletions(-)
+
+-- 
+2.45.2
+
 
