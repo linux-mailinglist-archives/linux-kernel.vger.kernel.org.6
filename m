@@ -1,140 +1,188 @@
-Return-Path: <linux-kernel+bounces-244409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C69792A3EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:43:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F7792A3F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33761F22456
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92DF51C219C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F24713C67D;
-	Mon,  8 Jul 2024 13:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAA913AA26;
+	Mon,  8 Jul 2024 13:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YS/RinjD"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMZSQhar"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6ED1386BF;
-	Mon,  8 Jul 2024 13:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D95785270;
+	Mon,  8 Jul 2024 13:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446214; cv=none; b=B56RReGJ9eOeJXsn3NNcCna7OwqJXo3PKRc0nz9snTWYhl5hM0vdYxXBfXRXgmPNBRCsq81TdbupZKB8SGMGJf2uff46o6eFW8njjZ0CST98hYQ8zQXbZVS8BpvSBjm+ifUG7LpJ3gBnO8vOTX9zjP+1rri2aTOfACKf1dCi6xw=
+	t=1720446301; cv=none; b=j+KtAwa/5Oa7bXk01mLyarpNzC/FPMKtVrQ40+UfDlPoSPbXl45eM/S2mK+mutodOj+bRlkV7VWEx+Z+fXNEM6Z3irOWKutCpbfp3mk/9nVPgKDwMpe6pTac4pgUuJwGDLsKcRGrLR5pHAKsFynA2YapW4DzxHllsFnJGwaP51U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446214; c=relaxed/simple;
-	bh=wxw4f8Ohz34hP/KIG3Mwx+JS06fgGytbZfPDRVqxS/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3pKCCLjXaoEzaCt+uDTmSoTXXYU/3StUHLGFNHUBiB8wS+QOyb/bM5oUPLaG2D/WSlpsqpv2/nAv/h7usmsG9VTlxuKvsv2agSHHl/ICoDfJLhQMhYeIyOcKWDmGLb9FVOsQB/LYdiVeC66/ByylYWh5qPXW9wYFMMOkUkNqx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YS/RinjD; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1720446301; c=relaxed/simple;
+	bh=47u4T5Is6Hg3oW455uKA/icqv/0zuyBXIRGCvD2r4kE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XBOWVE6jUHfl20JzRFtcpwrRFRw+xIBkwoyqZm3JarTFwclGrV7kbXSYbYDDz7Yp2pXTdLM5K1Wg/UM+ACeeoGin9G2rqtnyzOStg5XHxYTzZFS+ERk2gtxhcXu9leQfZDev49hFwEyiZ6hRwiZ2Cw5efO9DDndCzN1V5dB+sfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMZSQhar; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4265c2b602aso15621635e9.3;
-        Mon, 08 Jul 2024 06:43:32 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dff17fd97b3so4423561276.2;
+        Mon, 08 Jul 2024 06:44:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720446211; x=1721051011; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=H/H78dV2CQyOKZtgy53vprQZIn/cmX0k21n4Wz6mxpk=;
-        b=YS/RinjDPf6xszfVf72dmgOQ5PFYMqy/75sqeT2FvCP7dor8IgsONUEXrVs+VWa6Ru
-         IwdgkH+yTsexQQqE/hB2iSs9E7QDUZcP1VObEN5wptBclg22eVm//8sFD2iy5uLC9Y+c
-         PM+zI+y2/nK8tjZaOtOaGjHPdmxAo70Pmb2o1JUsqtAr8DZnk2X1rGeKZghlebJCrPoQ
-         Abi13fUpJd7A+eMUBU1WWPrRHQkiJ6Sk8jfjpULd9YWwwdanq+sAjzlB3JNOwiJHLQNa
-         are4VOEdR7kagV/aBzLY4EXxRxTBt24yD4Zw/mZw4lobT0XDhTwrQRVSTV9ka/QwoxS6
-         7Kxg==
+        d=gmail.com; s=20230601; t=1720446298; x=1721051098; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CNklU3B3LCdHJNFvg0ZFjz1p4iX08ixeg8SfmCVM7gg=;
+        b=LMZSQharGkcx8tY80N2LMU3mJ0je6sIIJQqutBU41PBJJoCSMZVlSMBd2iDXsHoBle
+         y+RZVyINgXjBN17tof21aHOKXclEjsyAGZo0BNgikunFa//Kb4E3d2AvqiVNPvE4+plr
+         3U0AvWiKnCQgQpcwqmKljYNKR+cMZwJQ6RbkzkBkxBmn8UUU64lUhFtG9oO6nsiZckxR
+         SO7PoMvb5Uzhm3CjLuPcrBmfHSmUKY94N353qiaKs7lVaLi1kmD/+qerGnfe1Eu9fxA9
+         ugCzDVCqrdeDL4GQ0Ko+s+7CCwrgyWKSs1SLdqetcU9AsVdzj77pMcX4toPCe9f/9i3B
+         YMQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720446211; x=1721051011;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/H78dV2CQyOKZtgy53vprQZIn/cmX0k21n4Wz6mxpk=;
-        b=EWk/8JlP92rilb8Y7VlRzQguQnwZS0RdN8A65Ag0M7R20coccC7WBzaGbZGt/rY8T3
-         o/DUEzXVCM9iFQsYugfB8UDlhloPPZCSf2H8CqGUOOc+b9EPufU8D+3/mSG0aPEAYMq7
-         A4AZwT82X6iJ7vn0HK97hYjqw84ultVrdK+k28AWwW1qUcDf58MMOQSSS8IEvUPIm2JY
-         DVlamby6ETOIUOuwr5hsz4PF2gGdiRqG7VpjEDACN2q0p5fjeWVL0oxS78j6HGgjCPME
-         TAbb2gLh5CMIZdU6kvmna8Qs0LS0urIWusDXx5T65Z87MOrqSg5t/l7b+aNf9NdfOZjX
-         nqWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzVc3Mr4n2XuMBYKfS7fksMY23eEud63ulKChREHV18iXsR7kjyIC5gPRZ2IlCblWdq299kcldv+FLb/U/jZ+IFDj0OUbD1bA7ch2m1pO1zQRFAqjVPj/qh6qJG1/Lkk3XKvJe
-X-Gm-Message-State: AOJu0YzsZ6fl2BZjKwuCHekHNU2ZoYurpyAyd7GUmptWbWM/q+4faBbA
-	xmmYVbmikXyglkVDm3O6Sr2sIqnTWmZMf22ahS5GMdVMLMpl2fUX
-X-Google-Smtp-Source: AGHT+IGYrebj0t6Sz6CR6eFUr5wmQS1bM2olcs7f1zh32jh5ZLmrYMWuQY6AoOum12kv8PhheSWyNg==
-X-Received: by 2002:adf:f8cd:0:b0:367:9224:9623 with SMTP id ffacd0b85a97d-3679dd0d323mr6925452f8f.7.1720446211105;
-        Mon, 08 Jul 2024 06:43:31 -0700 (PDT)
-Received: from skbuf ([188.25.110.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367963fa692sm13084965f8f.85.2024.07.08.06.43.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 06:43:30 -0700 (PDT)
-Date: Mon, 8 Jul 2024 16:43:28 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Daniel Golle <daniel@makrotopia.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Landen Chao <Landen.Chao@mediatek.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v5] net: dsa: mt7530: fix impossible MDIO address and
- issue warning
-Message-ID: <20240708134328.hgwthqwcif5pjaig@skbuf>
-References: <f485d1d4f7b34cc2ebf3d60030d1c67b4016af3c.1720107535.git.daniel@makrotopia.org>
- <20240708133359.rylvvmpcwlsxtrs5@skbuf>
+        d=1e100.net; s=20230601; t=1720446298; x=1721051098;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CNklU3B3LCdHJNFvg0ZFjz1p4iX08ixeg8SfmCVM7gg=;
+        b=mPoDPfunmINNFChPBqbL1E08eKXy/zfpvz3/VQkpkI3F8GR4eY5HFKKyRwzUEROdGT
+         rMrRnAN3BzuXHnpfm9qPgD+sBnlpgWsu0M5W3hXAeQTW/bWhqpeB+KFPRwvwkdJ6NbtC
+         /8tJDdraNjBeuIJJdzvkOjxEbtPl3BZJMZxj7CaBfoccQdyI0kMolB45jGJHIQZIDMrN
+         wThXreNIU0PUQfbGuNo4Ff+y+Bz5Hhf/vUvrCm/2xJRaSsbGnfyPzMY7uWbKhhSwDlBc
+         CECWT1dpwHKWk/yNbyqX3vEQixMyoN3JMNbJHMg7FLXltCta+TANu0Hu75wgq16Pd0GO
+         ezRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNrwEXbfk9W0qc9XTTeq91nqi8dxPo0Uze6OEqkmSi3hjgtoofkbwAsfyYYcMahg5MqEZPp1zyBcKyrojgtJ9sUKrEVVTRKdw8iGx2lsErq+azuqE9+OPCtYKyeWAFV/Hf8VBFFyQa
+X-Gm-Message-State: AOJu0Yy5MLf6uc7ziK0QZSkZzFtWtjYEF1FQ6chZmzrXpukVSEJ5LPNX
+	ilw8iongFvtaXtU4CPjmKrlg6TR+8fzXOCX4dB2PpGgHqMkWBx7xHHVHrjOEj5akLOmrsi0mbOr
+	Ev6Ptkgg7lkiqdITHkDMePekOlMo=
+X-Google-Smtp-Source: AGHT+IG5pai14Ca8ZcqWdXxJhzsZ+YHnwUk7ftYSJ9kAfE0rgLhoSEmET5QIX/7olaCy1Gi7HDL+KOrFes0D/JETECw=
+X-Received: by 2002:a05:6902:1185:b0:dfe:fd16:cbc6 with SMTP id
+ 3f1490d57ef6-e03c192b9c2mr18529559276.14.1720446298355; Mon, 08 Jul 2024
+ 06:44:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708133359.rylvvmpcwlsxtrs5@skbuf>
+References: <20240706022523.1104080-1-flintglass@gmail.com>
+ <20240706022523.1104080-6-flintglass@gmail.com> <0afc769e-241a-404e-b2c9-a6a27bdd3c72@linux.dev>
+In-Reply-To: <0afc769e-241a-404e-b2c9-a6a27bdd3c72@linux.dev>
+From: Takero Funaki <flintglass@gmail.com>
+Date: Mon, 8 Jul 2024 22:44:47 +0900
+Message-ID: <CAPpoddfySkGpD5hKgqUAAMgMp2vWcivg1AzcyYh_NP1-ZsGkug@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] mm: zswap: store incompressible page as-is
+To: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 08, 2024 at 04:33:59PM +0300, Vladimir Oltean wrote:
-> On Fri, Jul 05, 2024 at 11:48:40AM +0100, Daniel Golle wrote:
-> > The MDIO address of the MT7530 and MT7531 switch ICs can be configured
-> > using bootstrap pins. However, there are only 4 possible options for the
-> > switch itself: 7, 15, 23 and 31. As in MediaTek's SDK the address of the
-> > switch is wrongly stated in the device tree as 0 (while in reality it is
-> > 31), warn the user about such broken device tree and make a good guess
-> > what was actually intended.
-> > 
-> > This is necessary to not break compatibility with existing Device Trees
-> > wrongly declaring the switch to be present at address 0 or 1, as with
-> > commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of switch
-> > from device tree") the address in device tree will be taken into
-> > account, while before it was hard-coded in the driver to 0x1f
-> > independently of the value in Device Tree.
-> > 
-> > Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> > Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
-> > Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
-> > ---
-> 
-> Despite having commented on v3, I am not going to leave a review tag on
-> this patch. Its contents has nothing to do with DSA, so I have no
-> technical objections of my own, plus little authority for an ack.
-> It basically boils down to whether the phylib maintainers are okay with
-> this use of mdio_device_remove() API from mdio_device drivers
-> themselves.
-> 
-> I did have a technical concern in v3 about a race between the finishing
-> of probe() and the call to mdio_device_remove(), which Daniel did not
-> respond to, but I suspect that __device_driver_lock() from
-> drivers/base/dd.c will serialize those.
+2024=E5=B9=B47=E6=9C=888=E6=97=A5(=E6=9C=88) 12:56 Chengming Zhou <chengmin=
+g.zhou@linux.dev>:
 
-Having that said, I noticed that this particular patch revision is not
-entirely under their attention, so this is a heads up for them.
-https://lore.kernel.org/netdev/f485d1d4f7b34cc2ebf3d60030d1c67b4016af3c.1720107535.git.daniel@makrotopia.org/
+> >       comp_ret =3D crypto_wait_req(crypto_acomp_compress(acomp_ctx->req=
+), &acomp_ctx->wait);
+> >       dlen =3D acomp_ctx->req->dlen;
+> > -     if (comp_ret)
+> > +
+> > +     /* coa_compress returns -EINVAL for errors including insufficient=
+ dlen */
+> > +     if (comp_ret && comp_ret !=3D -EINVAL)
+> >               goto unlock;
+>
+> Seems we don't need to care about? "comp_ret" is useless anymore.
+>
+> Just:
+>
+> if (comp_ret || dlen > PAGE_SIZE - 64)
+>         dlen =3D PAGE_SIZE;
+>
+> And remove the checkings of comp_ret at the end.
+>
+
+>
+> We actually don't need to hold mutex if we are just copying folio.
+>
+> Thanks.
+>
+
+Thanks for reviewing.
+
+For comp_ret, can we consolidate all possible error codes as
+incompressible data?
+if we do not need to distinguish -EINVAL and the others, diff v2..v3
+can be like:
+
+@@ -62,8 +62,6 @@ static u64 zswap_pool_limit_hit;
+ static u64 zswap_written_back_pages;
+ /* Store failed due to a reclaim failure after pool limit was reached */
+ static u64 zswap_reject_reclaim_fail;
+-/* Store failed due to compression algorithm failure */
+-static u64 zswap_reject_compress_fail;
+ /* Compressed page was too big for the allocator to (optimally) store */
+ static u64 zswap_reject_compress_poor;
+ /* Store failed because underlying allocator could not get memory */
+@@ -1043,10 +1041,6 @@ static bool zswap_compress(struct folio *folio,
+struct zswap_entry *entry)
+        comp_ret =3D
+crypto_wait_req(crypto_acomp_compress(acomp_ctx->req),
+&acomp_ctx->wait);
+        dlen =3D acomp_ctx->req->dlen;
+
+-       /* coa_compress returns -EINVAL for errors including
+insufficient dlen */
+-       if (comp_ret && comp_ret !=3D -EINVAL)
+-               goto unlock;
+-
+        /*
+         * If the data cannot be compressed well, store the data as-is.
+         * Switching by a threshold at
+@@ -1056,7 +1050,8 @@ static bool zswap_compress(struct folio *folio,
+struct zswap_entry *entry)
+         */
+        if (comp_ret || dlen > PAGE_SIZE - 64) {
+                /* we do not use compressed result anymore */
+-               comp_ret =3D 0;
++               mutex_unlock(&acomp_ctx->mutex);
++               acomp_ctx =3D NULL;
+                dlen =3D PAGE_SIZE;
+        }
+        zpool =3D zswap_find_zpool(entry);
+@@ -1083,12 +1078,11 @@ static bool zswap_compress(struct folio
+*folio, struct zswap_entry *entry)
+ unlock:
+        if (alloc_ret =3D=3D -ENOSPC)
+                zswap_reject_compress_poor++;
+-       else if (comp_ret)
+-               zswap_reject_compress_fail++;
+        else if (alloc_ret)
+                zswap_reject_alloc_fail++;
+
+-       mutex_unlock(&acomp_ctx->mutex);
++       if (acomp_ctx)
++               mutex_unlock(&acomp_ctx->mutex);
+        return comp_ret =3D=3D 0 && alloc_ret =3D=3D 0;
+ }
+
+@@ -1886,8 +1880,6 @@ static int zswap_debugfs_init(void)
+                           zswap_debugfs_root, &zswap_reject_alloc_fail);
+        debugfs_create_u64("reject_kmemcache_fail", 0444,
+                           zswap_debugfs_root, &zswap_reject_kmemcache_fail=
+);
+-       debugfs_create_u64("reject_compress_fail", 0444,
+-                          zswap_debugfs_root, &zswap_reject_compress_fail)=
+;
+        debugfs_create_u64("reject_compress_poor", 0444,
+                           zswap_debugfs_root, &zswap_reject_compress_poor)=
+;
+        debugfs_create_u64("written_back_pages", 0444,
 
