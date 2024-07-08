@@ -1,157 +1,309 @@
-Return-Path: <linux-kernel+bounces-244920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A0092AB7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:49:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19BA92AB60
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8E4B212B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:49:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3EA61C21A27
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460FF14EC53;
-	Mon,  8 Jul 2024 21:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3813914F11C;
+	Mon,  8 Jul 2024 21:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="yFadK6fY";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="hNHn5/CK"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SLWHmPh9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8257345B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 21:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720475345; cv=fail; b=OZ9h9d7x8AJZ67/ChnI6xJKtCvqS/OYLsxx3yGVdaQqGESTNqvolNo6XAzTOeRxi3O5HLCuEF28P91LTjqDhjczMnSi4Q9TvSLSPuKzJC3mgovbo0D1Xq5jvE1ELv6oPg/vInvej5gZacTF/gXn6xsBckvb6MpXu0Yz52I7Su2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720475345; c=relaxed/simple;
-	bh=4TtO2sntfGeQOH6q4WlC+yYcVRb75tRgpuRvumGtajY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kfegai9jmNxMU+rGRF2f/f+m5qwDWX4aL6SHDY7t+YFsaLa5P10Rjy5Z8R0xpu/mcZh3LDbzB9eckkbFnjrnUJjrCT4/NpqJ1ypjtkDm8fC9XScv1kruwRbZSF7XZFz8zr27CiYeYpBZaZXhecoeOwtFIxo9TTRk05m5a+X5RRM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=yFadK6fY; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=hNHn5/CK; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 22A814809B4;
-	Mon, 08 Jul 2024 17:39:27 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1720474767;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=S6XBRzh9DZg2tX9b2GATh0K63Iw+3VDyPu6Zm+GFSGE=;
- b=yFadK6fYZClrUUSqbjrUqWdX+CuOe+tZwiBYVMdm3NQxzGRQWmm+p6GOq0QWUH/XmJIlV
- pd/0fLmoBq0lEXKCQ==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1720474767;
-	cv=none; b=Y6aM1GPihBomft2cRY+L3F0qHviR8LJALidAQioa8TSmckWKaCUsKFkfotGb4uqnrxhaD+La+W/9B3XS1YCbdT3/QJA2j6upPpd9OUoxkYeaylFBC2K3UiaquNIfjK7WmHxzD3aoAJrtfvDuC5IT9bTBXgEHLwgOqIGbt63w4QBPAzAfSjQPf3xtl1u2RBYTK8C6gjpFfT0me7ohntT/eir2vmgOD4Lq3onOCy0DTUHNvw2WfSkILPyZ51/QeO7BzpFuHeZdZ3mUFkhn2laXyZuHu4ZC6nTvlRNZ3Cxvfu1CeCDdS0UUZBZETnHTYTuEkFvogCZKIALzjfHnCNHrpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1720474767; c=relaxed/simple;
-	bh=4TtO2sntfGeQOH6q4WlC+yYcVRb75tRgpuRvumGtajY=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=sOw3Y/dUovCQLzuOqXykvrWd72qzM27Co5QGXT+HkMyxfAw5IuWi0huiqGpZKovTzy9I18t09ki6QKiIkHqCK1KppIa4RfqK1Ewb3jrrNE1Ix1LrDYBDs4TSzLF6XR3fV9D/kj7pcrtOV91XqgP36Y6ygcKcm2LYSMlLn9zRfdNlG7YXi2Qu7iUUgXwh4PHZ+hHl+7kywnW9hJJj44Kt4g1CnLjhbpXogVXawREWk7t3WIjF5K3rJM7CaFnU2kxhhuujD5fXn6wMJpAYAr/ptZGq/HjQl32o5MeG9T7yUSR20K2lIfTP8x2CZhrBk0sl199n9A0mRvGkKmN3rokCaw==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1720474767;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=S6XBRzh9DZg2tX9b2GATh0K63Iw+3VDyPu6Zm+GFSGE=;
- b=hNHn5/CK6EHhd32MdfK/emAv/oNXE5yby7GAtXKB8hC2gWgdbl6TWtJR5RH4MEJlvmjGk
- P9X9U3uDrzS72C1gljKJ0T13VvxCa+KnTUttaNn/ybueQyG59Bg5WcYdCtuUTmeQEd2fL4x
- +i30Lueh6A4kSRsEwzWkEDLK6MH6xHaWPzDUJT6Sd7ABKvhSXrG6JWiLm0u4+2LXBVO0noj
- gzj4lttVd0n7PNhHQPyLY2VB8G9/xbsXqFdEAWFnCRcIUgnROJ8rb2wlxuFaRUwX/g0V3is
- vPcePJth0IJXXj2nhcO1KGAjvqUSaGbMnbqvEuVIsvXA0Zxy2mIbCvRxBk6w==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id EE9AF28001A;
-	Mon, 08 Jul 2024 17:39:26 -0400 (EDT)
-Message-ID: <a6e0a7d79f9599621a1b4a3263a7b7b5dd810300.camel@sapience.com>
-Subject: Re: crosstool: x86 kernel compiled with GCC 14.1 fails to boot
-From: Genes Lists <lists@sapience.com>
-To: Arnd Bergmann <arnd@arndb.de>, Kalle Valo <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, ath12k@lists.infradead.org
-Date: Mon, 08 Jul 2024 17:39:26 -0400
-In-Reply-To: <0ddafa32-1fc2-45e1-b71c-beb64f8cd589@app.fastmail.com>
-References: <87y16bbvgb.fsf@kernel.org>
-	 <0ddafa32-1fc2-45e1-b71c-beb64f8cd589@app.fastmail.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-iwKPurN+EOys0t/g2faq"
-User-Agent: Evolution 3.52.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76724145B06
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 21:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720474811; cv=none; b=EVe0Q71sVzKFYRC2Ob4YAskB2VeVshz5bg5s93hJkYVKf9imtIShhoAj6RkA08YvIhCtlBd9Ajedb4kCJXaLeXwaKw9FNDS0j0iR3ZBLCo9MenwgV4pADRL9A7X4TcoeeMvCLG4+GvXg0ezUd500dQBe6CFbnZocnbgd8afJnIA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720474811; c=relaxed/simple;
+	bh=ksWUl+7oU5im94h1dU1dhvwd56cmIXpc/qZXAFf5Rs4=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CdXuHzFU4Ijnq2F+B9l3ElGP3CWEz4AiSMNGZr/FZ8NLJuJZSTJAF7kfcmrXoukByiza0+X/qyrLAWo6pEo5d8n3ZKB19hS0UOYDfrSV9deS7PAOOyEjJ9UTem/TgL+hVcExOgRj1lDLVMTvzfKVUvyKh46A4R9HE0hjVJ6V8x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SLWHmPh9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720474808;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xrmMfuh6zl+J0VMmb+jXkVGZeQnzPMh5oQVddVrOdbk=;
+	b=SLWHmPh93gTaXfRS39V4mac1zkGdMRp1q1MzkgFbhXpsU7JkY6Gc2/8ftflDQIfnDv+TKM
+	gUXRHmZm+ssJIZLNgg2L36ivr5kO6l5Xx5fljVr5CdHxe/hBGCZadMGso5ZwgEJWfAkjMG
+	XVeACqD4KSYKerGoC6nQUJ7E272wkE8=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-yLdQE7mzMmaTP-9Bm881-Q-1; Mon, 08 Jul 2024 17:40:07 -0400
+X-MC-Unique: yLdQE7mzMmaTP-9Bm881-Q-1
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e03a59172dbso7712136276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 14:40:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720474806; x=1721079606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xrmMfuh6zl+J0VMmb+jXkVGZeQnzPMh5oQVddVrOdbk=;
+        b=wOjEIsGuGS7nzVLXpYMPli5M3ut9HjCpOHwbjm4reI0nx59BQbFvIR1bT0ii22SLD5
+         j7tfy7yXSKXT7JbeHQWIzPkgM5wL9LSko9fTdl8m1/z/j46IkgzY1iP/pPn6qJdLCqDX
+         qmIBdM1UII3NE7/Zo1hcxRAvyCN2LXwkWs4xwoQ/1gd2TWUq6K8LxKvXHg+wJaTkaGwP
+         uZ2RXuwGmMXoUwVND7qXkADJlUZz2Lr7Rt8Nrgyokz2cCFOa9tmQkm13oV5qMhrl9zSy
+         odsU/AnzNkRMuxU0bk8TxoIxGqpeOuoWLTg3XFAq0Y8ngGRecJCIq40xIMqEVBt9I+lW
+         a25Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWz7gEB9WX8wv3fKfeVFsfdJc2gLEzszlA/jfY+ivNSgXPHoV9b9kptcTo4UicHuie0GGsOb9+XBrzBkE4YLegja48wJ3E6PfNijujH
+X-Gm-Message-State: AOJu0YyBdobPZmU+WlGp0X39Ay4hBR2IuMeUZSaE9ADT7dLgxVrVyY0s
+	J2W0ql3MVHe/sSacqvoFhqAlAARtox72rUXPoDtQmVdY+LPVT5dH4OSgdNDRyGFEgtudbzG3CaG
+	VgviqDNJoYHU2qJmRGbT8IOOK3wvucm8miIWG+h8ZQgyAZu1YEoptd4LuJ14RMYifvIShgDZfwH
+	q9YdMjs4J8Ne1x753jmDW32h146gNt3Apo6mnb
+X-Received: by 2002:a25:dc91:0:b0:e03:4e3b:2a49 with SMTP id 3f1490d57ef6-e041b15b11amr1075166276.60.1720474806277;
+        Mon, 08 Jul 2024 14:40:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhcBFn0ofqIUHCwGg3OYl0O2Ng3lLsFfo+cuSb6XyWrWH/AvKTaMcedW1YcTsjxqISDHxVyzi9sPAVrwvwT+A=
+X-Received: by 2002:a25:dc91:0:b0:e03:4e3b:2a49 with SMTP id
+ 3f1490d57ef6-e041b15b11amr1075148276.60.1720474805979; Mon, 08 Jul 2024
+ 14:40:05 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 8 Jul 2024 14:40:05 -0700
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240708134451.3489802-1-amorenoz@redhat.com> <0fd40aed-04d1-43a3-ab3d-c7459a63f753@ovn.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-iwKPurN+EOys0t/g2faq
+In-Reply-To: <0fd40aed-04d1-43a3-ab3d-c7459a63f753@ovn.org>
+Date: Mon, 8 Jul 2024 14:40:05 -0700
+Message-ID: <CAG=2xmO3Je7W0pstvN_ALFcNFRqTLCaRhaCV=O+2VEu5_e+g-A@mail.gmail.com>
+Subject: Re: [ovs-dev] [PATCH v1] selftests: openvswitch: retry instead of sleep
+To: Ilya Maximets <i.maximets@ovn.org>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org, 
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, linux-kselftest@vger.kernel.org, 
+	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Aaron Conole <aconole@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-07-08 at 21:03 +0200, Arnd Bergmann wrote:
-> On Mon, Jul 8, 2024, at 20:16, Kalle Valo wrote:
-> > Hi Arnd,
-> >=20
-> > I installed GCC 14.1 from:
-> >=20
-> > https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_6
-> > 4/14.1.0/
-> >=20
-> > But I have a problem that a kernel compiled with that compiler
-> > fails to
-> > boot on my x86 NUC test box. I don't see any errors, just black
-> > screen
-...
+On Mon, Jul 08, 2024 at 09:31:58PM GMT, Ilya Maximets wrote:
+> On 7/8/24 15:44, Adrian Moreno wrote:
+> > There are a couple of places where the test script "sleep"s to wait for
+> > some external condition to be met.
+> >
+> > This is error prone, specially in slow systems (identified in CI by
+> > "KSFT_MACHINE_SLOW=3Dyes").
+> >
+> > To fix this, add a "ovs_wait" function that tries to execute a command
+> > a few times until it succeeds. The timeout used is set to 5s for
+> > "normal" systems and doubled if a slow CI machine is detected.
+> >
+> > This should make the following work:
+> >
+> > $ vng --build  \
+> >     --config tools/testing/selftests/net/config \
+> >     --config kernel/configs/debug.config
+> >
+> > $ vng --run . --user root -- "make -C tools/testing/selftests/ \
+> >     KSFT_MACHINE_SLOW=3Dyes TARGETS=3Dnet/openvswitch run_tests"
+> >
+> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> > ---
+> >  .../selftests/net/openvswitch/openvswitch.sh  | 49 ++++++++++++++++---
+> >  .../selftests/net/openvswitch/ovs-dpctl.py    |  1 +
+> >  2 files changed, 42 insertions(+), 8 deletions(-)
+> >
+>
+> Hi, Adrian.  See a small pile of nitpicks below.
+>
+> None of them are blocking from my perspective, except for a typo.
+> Just listed them since there is a typo anyway.
+>
+> > diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/t=
+ools/testing/selftests/net/openvswitch/openvswitch.sh
+> > index bc71dbc18b21..83407b42073a 100755
+> > --- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
+> > +++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+> > @@ -11,6 +11,7 @@ ksft_skip=3D4
+> >  PAUSE_ON_FAIL=3Dno
+> >  VERBOSE=3D0
+> >  TRACING=3D0
+> > +WAIT_TIMEOUT=3D5
+> >
+> >  tests=3D"
+> >  	arp_ping				eth-arp: Basic arp ping between two NS
+> > @@ -29,6 +30,32 @@ info() {
+> >  	[ $VERBOSE =3D 0 ] || echo $*
+> >  }
+> >
+> > +ovs_wait() {
+> > +	info "waiting $WAIT_TIMEOUT s for: $@"
+> > +
+> > +	"$@"
+> > +	if [[ $? -eq 0 ]]; then
+>
+> Maybe just 'if "$@"; then' ?
+>
 
->=20
->=20
-> Thanks for the report. Unfortunately I have no idea what the
-> problem may be, and so far nobody else has reported this.
->=20
-...
+In my head this is a bit less clean but I don't mind.
 
-> =C2=A0=C2=A0=C2=A0=C2=A0 Arnd
->=20
+> > +		info "wait succeeded inmediately"
+>
+> * immediately
 
-Another data point in case it's helpful.
+Thanks. Will fix the typo.
 
-I =C2=A0have been compiling on Archlinux using the native gcc 14.1 toolchai=
-n
-since early May.
+>
+> > +		return 0
+> > +	fi
+> > +
+> > +	# A quick re-check helps speed up small races in fast systems.
+> > +	# However, fractional sleeps might not necessarily work.
+> > +	local start=3D0
+> > +	sleep 0.1 || { sleep 1; start=3D1; }
+> > +
+> > +	for (( i=3Dstart; i<WAIT_TIMEOUT; i++ )); do
+>
+> for i in $(seq ${start} ${WAIT_TIMEOUT}); do
+>
+> Will need to initialize start to 1 and 2.
+>
+> It works, but seems like an unnecessary use of non-POSIX constructs.
 
-I have had no problems at all booting and running either stable or
-mainline on several x86-64 machines including 2 NUCs.
-One is NUC6i5SYB and the other is NUC10i5FNK.
+The reason why I chose this form is that I find it more robust on a
+script that changes IFS. If this function is called within a block that
+has changed IFS, "i" will take the entire sequence as the value for the
+first iteration.
 
-  Gene
+>
+> > +		"$@"
+> > +		if [[ $? -eq 0 ]]; then
+>
+> if "$@"; then
+>
+> > +			info "wait succeeded after $i seconds"
+> > +			return 0
+> > +		fi
+> > +		sleep 1
+> > +	done
+> > +	info "wait failed after $i seconds"
+> > +	return 1
+> > +}
+> > +
+> >  ovs_base=3D`pwd`
+> >  sbxs=3D
+> >  sbx_add () {
+> > @@ -278,20 +305,21 @@ test_psample() {
+> >
+> >  	# Record psample data.
+> >  	ovs_spawn_daemon "test_psample" python3 $ovs_base/ovs-dpctl.py psampl=
+e-events
+> > +	ovs_wait grep -q "listening for psample events" ${ovs_dir}/stdout
+> >
+> >  	# Send a single ping.
+> > -	sleep 1
+> >  	ovs_sbx "test_psample" ip netns exec client ping -I c1 172.31.110.20 =
+-c 1 || return 1
+> > -	sleep 1
+> >
+> >  	# We should have received one userspace action upcall and 2 psample p=
+ackets.
+> > -	grep -E "userspace action command" $ovs_dir/s0.out >/dev/null 2>&1 ||=
+ return 1
+> > +	ovs_wait grep -q "userspace action command" $ovs_dir/s0.out
+> > +	[[ $? -eq 0 ]] || return 1
+>
+> Why checking separately and not one the same line with || return 1 ?
 
+IMHO, passing complex commands to a function in bash can easily get very
+problematic. That's why I try to remove all pipes, redirections or
+logical operators like && and ||. At least for me it removes one extra
+cycle that my brain has to spend looking at quotes and figuring out if
+the operand will be interpreted inside the function or outside.
 
---=-iwKPurN+EOys0t/g2faq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+> Also double brackets seem unnecessary.
 
------BEGIN PGP SIGNATURE-----
+That's true.
 
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZoxcjgAKCRA5BdB0L6Ze
-2yH6APwIP/9tgi0VYheywdzzRJFHVlevvtmUOCp1cShuaG8gMAEAtBF/4xNIAvkI
-Na5bkoEp1j6pJIF8V0HND86pgnLeZQo=
-=XUoM
------END PGP SIGNATURE-----
+>
+> >
+> >  	# client -> server samples should only contain the first 14 bytes of =
+the packet.
+> > -	grep -E "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" \
+> > -			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+> > -	grep -E "rate:4294967295,group:2,cookie:eeff0c" \
+> > -			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+> > +	ovs_wait grep -qE "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f=
+]{28}$" $ovs_dir/stdout
+> > +	[[ $? -eq 0 ]] || return 1
+> > +
+> > +	ovs_wait grep -q "rate:4294967295,group:2,cookie:eeff0c" $ovs_dir/std=
+out
+> > +	[[ $? -eq 0 ]] || return 1
+>
+> Same for above two.
+>
+> >
+> >  	return 0
+> >  }
+> > @@ -711,7 +739,8 @@ test_upcall_interfaces() {
+> >  	ovs_add_netns_and_veths "test_upcall_interfaces" ui0 upc left0 l0 \
+> >  	    172.31.110.1/24 -u || return 1
+> >
+> > -	sleep 1
+> > +	ovs_wait grep -q "listening on upcall packet handler" ${ovs_dir}/left=
+0.out
+> > +
+> >  	info "sending arping"
+> >  	ip netns exec upc arping -I l0 172.31.110.20 -c 1 \
+> >  	    >$ovs_dir/arping.stdout 2>$ovs_dir/arping.stderr
+> > @@ -811,6 +840,10 @@ shift $(($OPTIND-1))
+> >  IFS=3D"=09
+> >  "
+> >
+> > +if test "X$KSFT_MACHINE_SLOW" =3D=3D "Xyes"; then
+> > +	WAIT_TIMEOUT=3D10
+> > +fi
+>
+> Should this be done closer to the first initialization of WAIT_TIMEOUT ?
+>
 
---=-iwKPurN+EOys0t/g2faq--
+My rationale was splitting "variable declaration" and "code". Sure
+we're not adding an explicit cli argument for this (as with TRACING or
+VERBOSE) but we kind-of are using KSFT_MACHINE_SLOW as an input so for
+me grouping input processing all together made some sense. Having said
+that, I don't have a very strong opinion. I guess we can move it up as
+well.
+
+> > +
+> >  for arg do
+> >  	# Check first that all requested tests are available before running a=
+ny
+> >  	command -v > /dev/null "test_${arg}" || { echo "=3D=3D=3D Test ${arg}=
+ not found"; usage; }
+> > diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/too=
+ls/testing/selftests/net/openvswitch/ovs-dpctl.py
+> > index 1e15b0818074..8a0396bfaf99 100644
+> > --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> > +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> > @@ -2520,6 +2520,7 @@ class PsampleEvent(EventSocket):
+> >      marshal_class =3D psample_msg
+> >
+> >      def read_samples(self):
+> > +        print("listening for psample events", flush=3DTrue)
+> >          while True:
+> >              try:
+> >                  for msg in self.get():
+>
+
+Thanks.
+Adri=C3=A1n
+
 
