@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-244749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79EC92A8E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A0A92A8E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85641C21646
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A35B31C2159A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C86149C7E;
-	Mon,  8 Jul 2024 18:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B5B149C60;
+	Mon,  8 Jul 2024 18:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3TceRZu"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jo7s0/tN"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AED979FD;
-	Mon,  8 Jul 2024 18:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF1079FD
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 18:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720462834; cv=none; b=NM/8phQA4SyvOXn4B2JTL+4etja7Omka2/qUPuk0AATQsWMXOGUNMvdtd6q2YuWJn2+eNpni/nx6IgT3mL7T/Crgeqv0paXyLwC3L6JCN2C9WgQ3jMGZ+vGwSi37dfA9EyQm+fJk+qBv5/rwjFj0V8a0IX8iGT6mOHkGvVZ3gJ0=
+	t=1720462927; cv=none; b=p+Nal1o8G3KcBfwUlo24IsZF6GBUGab5U3UbjkUsGiMrMZ3fBLnIcpJ+mcx4nJDgGS9Ll6/UcevdXwxFzsgh86fOyWDvzy7n482nu9GKS7b7LCwgjhD86ecmbergLX8yYdBMbvNzdfmPxynOvSrMtrgH53yjZ3LjcZedyakHquo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720462834; c=relaxed/simple;
-	bh=0Ot1C3XCfv9H3+leeuLXAjpAiNRjVc9eAfmODEiiDd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uG9LwnDu/8KRulA8xMRlJvEl/a+nFx3ssU4gRoxE/sOC7q2Md+2byYCipqb/uSHoK/OWmEMgu7wayDWiLbIF/eVy8p5F35XuF/efPJL6rxDgyKLCFBFsKtRYrxmZg3oujMj+1T4KflDZlwGACpb/jKGYtsKKLYR/rgFkb6x8hOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3TceRZu; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1720462927; c=relaxed/simple;
+	bh=ASD8hN8TG36mmr00aa5uBglHySNG5BqaqEcibqD+BlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PhoAX/7SflMGPlfsm2qJpoDqIiZY0YHXUxzqc+Iqa/Z27H16qHKRVSqgUMJCl29SmaWEhcrUIgENhaoR3RL1bC9kQdhoMvYhNiOLaPtif4UkZXBmwdgof0byXSihaQzWWp61kkXZFTLmoVM2gMg651/CNRDs52v7VYspcM16c5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jo7s0/tN; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-707040e3018so2760234a12.1;
-        Mon, 08 Jul 2024 11:20:33 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso6416016e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 11:22:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720462832; x=1721067632; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0vwQyNgx5l06JN6vKVkGLyfa4vRNR4YaNZWudr9WkWI=;
-        b=H3TceRZup/gbnW2MvDxm8h+FZ3ELiyAzKJTCXWYoUax5GL+0kW+qEAX88K0iqnMAzN
-         rdMLq1DIpkgiLrmXUs4q6/J7mfmqzfBPFKgmK5UIbVaHdyNtLm6/3x+FzsYUC+JBuYpi
-         KVxo41k5pAufRIZMoRe8KO4S0fM1MUBOfwpdxmtnHqoJmRB5LU4xWw5eg3pzrif9dyN1
-         sVK96eTMUjxjhgG6PoqNdEgoZz23Nq7ZOEG2hKtUNS6KlK0I5fP3pZiTCLE11QA85O7T
-         ohjsgfjDy+nd3vP7uT9oOGeQSXGWWndAVsRZ9i+PYshkxnSrMQEpkkCT9n0PSrvqqzk/
-         bB0g==
+        d=gmail.com; s=20230601; t=1720462923; x=1721067723; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IjyjnJnEQpeHd1oehAYH/Wv1ipq+Dn9NqOSMH3MKAP4=;
+        b=jo7s0/tNmu7LdUqGRUegNnCl/Ofc6rOG9W9OzH8vw7vdIo58tHbUX0ADyMwyytKOil
+         FQx1XvgW46Kh0ZvJ89aDPrD0k475baq4YToAiAIuC7OQiYjwAkwq3di+QiIpVwEYdjby
+         5N7FqdNHK6U/sI0G0QM0H7fJGORKK+BjvVhj8ZwxKfT8UT2Giar3HcVZhihUuGxdcFLa
+         +M+kbXSoZfopJ2yicnt8PD07EC041orNK3BZiVMayKlAZ+rYtrjLCPx4ddXAAFILT0jg
+         8QfMni8lIdZ/EXaq74CzG3S7XCjQvOpg7ZP50qtT3OdNHevhux+xr3LMO0X9hhiKn90X
+         CjYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720462832; x=1721067632;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0vwQyNgx5l06JN6vKVkGLyfa4vRNR4YaNZWudr9WkWI=;
-        b=bfOOdjLM/vLN1F+t3Hoitf4KkI18Nqv5HiR/5A8a6NK6qSnSpO1xpjYzsNey2O9WCv
-         HIreDaak6h49uG7xDm2E2PBpj42CblMiQMJ8D230eiJcjFwtQ1q3MviiBY2BVGtv5Qk0
-         5WE4t7JWmiFFR7lr5gfq9eLfUSsT3YzkdePmzS5bzwDD2d4BDlIsbMjSdBoPsKO2Al7o
-         iF5wxucbByPIzzFTsbLegdRovqLPT375SNLg9NtmxKoyQ7wNbChN7z5EqHjVlFNNBmc+
-         nxEC3lnn5Edz2tGhTdfhCIIdMZoBGnh/UOCzOBZM26xtlDE/uEF7OaqlWx+Uqoj7YYjm
-         F1bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWp5kp97kICGGSAGRdGO0B5ZPwMQS3O8rdCyHJtt+mZ+521RN6DGCuxgUnTk05tovaVSH0MHYwXzFk8/IoB/HASsLTALcXOjzA8iPXwXKf0beDvrTil8WB+lzNRyH6JIY1F+z6FQNE=
-X-Gm-Message-State: AOJu0YwxQPRzGaieA4yqfT/RVraOSiNFDa4b0Emtr+SAFfzbAsrmQfVU
-	VU82BxMmLhYvMLWJVoTiP4cBDLtyWOBugdkPvzvfVxa0QANABTdc
-X-Google-Smtp-Source: AGHT+IGrhAkN3YE/mZDFUIgozy1SbQ4lc6JYKiA8I+DDJenl3jj7q9rT0rcHmwsupEvVBxJTezmEag==
-X-Received: by 2002:a05:6a21:1a7:b0:1c0:f20c:5ba5 with SMTP id adf61e73a8af0-1c2984d7a93mr222577637.51.1720462832521;
-        Mon, 08 Jul 2024 11:20:32 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43898e3csm180758b3a.3.2024.07.08.11.20.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 11:20:32 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 8 Jul 2024 08:20:30 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-	void@manifault.com, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
-	David Vernet <dvernet@meta.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v2 2/2] sched_ext: Add cpuperf support
-Message-ID: <Zowt7pVWFB-Of-me@slm.duckdns.org>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-3-tj@kernel.org>
- <ZnM2ywDVRZbrN6OC@slm.duckdns.org>
- <CAKfTPtBPObGdcaQF5nKqr4042f-+5obTMm_S6S+=3_Ct33ZMyw@mail.gmail.com>
- <Zog5-Yd5wV0-Y76y@slm.duckdns.org>
- <CAKfTPtDeA4OTPJmEHd-wKToYwDVizcny-_qxEuDUA-OcaVm2Uw@mail.gmail.com>
- <ZonzAdyd6zb2Sm06@slm.duckdns.org>
- <CAKfTPtDE2rWbRouf8zRyM3UpTfK1k_xrWmvAs-zfoRZqM3zGsw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1720462923; x=1721067723;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjyjnJnEQpeHd1oehAYH/Wv1ipq+Dn9NqOSMH3MKAP4=;
+        b=qtfq1ju4HP5aCRFxGvuMtC2plE77FpkO9iTF2amDqrkgFFkoidPeYN5F2nUYRkaqQc
+         7xCET1ai88BgltxvGRjRmQPWAuJKKY05tjXY2kP8AMwgabsdBp2HjGbjs4r5dp00z+U4
+         mDFGdUO25zBUPRc/W0BQ67aoDL25H9P0qd32DEmnFHOoqqQxnF3UnIWmm3rKzeNXlDZ3
+         /9oIfbwk9/YPNhn2YR8EvamlP4f3oSQcBTaZEvN3NoZ8RrrWYrNoCEqrkCdQfLXmPz0l
+         txsAr7f0VRKL5wukt8LAvkBgxTvbV6NAN8R79aUr9IGQdwMRgf5taRn95x/wYQH0AiTT
+         Xy1A==
+X-Gm-Message-State: AOJu0YxyFma7ENw02J1PFFDTm8zYycniLk+dknCm3VQdhlkSY4Vo0CT1
+	VIP5L0jCqxJ/q8ry/WQvxaxfXieFgjmuqjlYSIj1JxCGijIXMufu
+X-Google-Smtp-Source: AGHT+IGXgcPAilWge1ehIvUcr17pjhv6gaJcvBP5bvXp5jfR9kVUTPVdA2vlBxhWymjq7djoKVn3Tw==
+X-Received: by 2002:a05:651c:a09:b0:2ec:4d8a:785a with SMTP id 38308e7fff4ca-2eeb30ba739mr5584751fa.4.1720462921061;
+        Mon, 08 Jul 2024 11:22:01 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-40-28.xnet.hr. [88.207.40.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a86f620sm13753366b.209.2024.07.08.11.21.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 11:22:00 -0700 (PDT)
+Message-ID: <6a0b3545-e401-4c06-a466-d60e6e7ef17a@gmail.com>
+Date: Mon, 8 Jul 2024 20:21:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDE2rWbRouf8zRyM3UpTfK1k_xrWmvAs-zfoRZqM3zGsw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PROBLEM] ./arch/x86/include/asm/pgtable_32.h:59:5: error:
+ "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Yuntao Wang <ytcoode@gmail.com>,
+ Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
+ Masahiro Yamada <masahiroy@kernel.org>
+References: <f79ee8f6-3fba-4c5f-9dc4-371906c529a8@gmail.com>
+ <20240708094958.GAZou2Rq4bCMCVln1C@fat_crate.local>
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+In-Reply-To: <20240708094958.GAZou2Rq4bCMCVln1C@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello, Vincent.
+Hi, Borislav,
 
-On Mon, Jul 08, 2024 at 08:37:06AM +0200, Vincent Guittot wrote:
-> I prefer to minimize (if not remove) sched_ext related calls in the
-> fair path so we can easily rework it if needed. And this will also
-> ensure that all fair task are cleanly removed when they are all
-> switched to sched_ext
+On 7/8/24 11:49, Borislav Petkov wrote:
+> On Fri, Jul 05, 2024 at 11:52:30PM +0200, Mirsad Todorovac wrote:
+>> Hi, all!
+>>
+>> This is the result of testing randconfig with KCONFIG_SEED=0xEE7AB52F in next-20240703 vanilla tree on
+>> Ubuntu 22.04 LTS. GCC used is gcc (Ubuntu 12.3.0-1ubuntu1~22.04) 12.3.0.
+>>
+>> The particular error is as follows:
+>>
+>> In file included from arch/x86/kernel/head_32.S:29:
+>> ./arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
+>>    59 | #if PTRS_PER_PMD > 1
+>>       |     ^~~~~~~~~~~~
+>> cc1: all warnings being treated as errors
+> 
+> I can't reproduce that with your config ontop of
+> 
+> commit 0b58e108042b0ed28a71cd7edf5175999955b233 (HEAD, tag: refs/tags/next-20240703, refs/remotes/linux-next/master)
+> Author: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date:   Wed Jul 3 16:14:20 2024 +1000
+> 
+>     Add linux-next specific files for 20240703
+>     
+>     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> 
+> $ make ARCH=i386 -j128 CC=gcc HOSTCC=gcc
+> ...
+> 
+>   OBJCOPY arch/x86/boot/setup.bin
+>   BUILD   arch/x86/boot/bzImage
+> Kernel: arch/x86/boot/bzImage is ready  (#1)
+> 
+> Something's missing.
+> 
+> Did you do
+> 
+> $ git clean -dqfx
+> 
+> before building?
+> 
+> Note that that cmd will clear *everything* so you better check your local tree
+> before you run it:
+> 
+> $ git status
+> 
+> and then
+> 
+> $ git clean -dqfx
+> 
+> after having saved the files which you still need.
+> 
+> HTH.
 
-Unless we add a WARN_ON_ONCE, if it doesn't behave as expected, the end
-result will most likely be cpufreq sometimes picking a higher freq than
-requested, which won't be the easiest to notice. Would you be against adding
-WARN_ON_ONCE(scx_switched_all && !util) too?
+
+Well, I tried your procedure and I got again this:
+
+In file included from arch/x86/kernel/head_32.S:29:
+./arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
+   59 | #if PTRS_PER_PMD > 1
+      |     ^~~~~~~~~~~~
+
+Maybe you should try 
+
+ 1019  2024-07-08 20:18:10  make clean
+ 1020  2024-07-08 20:18:17  make randconfig
+ 1021  2024-07-08 20:18:32  time nice make -k W=1 -j 36 bindeb-pkg |& tee ../err-next-20230705-04p.log; date
 
 Thanks.
 
--- 
-tejun
+Best regards,
+Mirsad Todorovac
 
