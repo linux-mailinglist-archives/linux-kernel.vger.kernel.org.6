@@ -1,109 +1,172 @@
-Return-Path: <linux-kernel+bounces-243882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC48929C1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:22:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D60A929C1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC060B21351
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE55728101E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D7E1D543;
-	Mon,  8 Jul 2024 06:21:33 +0000 (UTC)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CB013AF2;
+	Mon,  8 Jul 2024 06:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLFZVu3+"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCCD14F98;
-	Mon,  8 Jul 2024 06:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35FD1171D
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720419693; cv=none; b=LS40ih9RKz+/AqncGNxmUs3TXf4LANeWgxNBf0Yvq5pilXnAJ2BuwtTJcGV1gy6+kcYAeTQ7vrHrXoaQtZjPCIHG/+WwVD2IWgArFXf+b7ZChTzi8IbvD3SOjU5P8OPCbTLjwhPJ3EJtkv1iC574td+y4E+CE82suW5gfHTnk9E=
+	t=1720419740; cv=none; b=aSR/3LEDOfqW/+FVJHLz2rSc/CyeoPBLrvp5lmb/DuSDfBSP5TpSxPI335XSwdyUiZ+AZzDNXhyJOykx3imVfoN71dZsEpOcYuu/Da1KVwJZuaoHenoBqEj0XX4ySmVWiNCOumbnASS5weIKx6VfHTHhRgnPkK/Hwq1SvIu51iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720419693; c=relaxed/simple;
-	bh=NXqmtX9H4lGddM3GtDGBv4tkmQOCzeYrSZgUWYLBEvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IINysD8D3Efqz8F4kPYHR9q+dVQiA8f8Psz240DMr7aiw5EpkS/FN2H7U82csPq4Q83mWL01X8/XNGyoxUvSuETOZ3sDA0OTr4gu4RS0p6dxKgnPbTzmJyZDBxdS+C/J8bxdL7tVSC3VIyuPOV65Hm/Q5YtmnZxt/7E8Kfl6gZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	s=arc-20240116; t=1720419740; c=relaxed/simple;
+	bh=Bd5ESUhO2iksJ0+oegKWpQOyrcXRzCq5XJiTPZCIh+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qNY+YsbqpgyS1foaZJkv+6BvJeu1qzW+v3kXlNC2Fcou2UUa2tOyV+nnCPO1Q7WD8CNPWc5Z2h9IB06V+tcWZ45eqTCXcnmPwVXxgNiANhsmbfnh/Lv+fYNpJvHkvcFE8F5SwahHbM4hGp2lrvWoe1eH6xFz1Or1sSE82VBO2fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLFZVu3+; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42111cf2706so4081735e9.0;
-        Sun, 07 Jul 2024 23:21:30 -0700 (PDT)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4f2fad3fb8eso1409338e0c.0
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 23:22:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720419738; x=1721024538; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ifbBmc00s6PDs4jKRokz1EGyBAXHA5r+QHtuV6zq9aU=;
+        b=mLFZVu3+9uB7RY62NIj9Jrz9My3b3abfUH0fCw4v5BBwmpssP7Vf8S8BuORbZ1GA95
+         jUWulkb3KT9olKrDssmgKP9wC4tYXlCktZpmmm/llwAUiC/W0rnaADmuU9NZv8rLjPpA
+         aNdhQ/VZa0mUYIUESDSNBHWEgIrcHW83bMFGh+8rcdxuZWTOBEKgKWRT2QipecEyAUWo
+         bXzxcf6NFrCHMUxxJa4ZkoXFekWokW8Rwx5WBb/7FHrWA+zgj0O2eo25V2Gjw8Fn/uge
+         BhNzx7gCBBpDzD9ZBsrFFzQ/4+URpygZIQQzPUCIwTabmnNqPKszJ1k4ZOCXxMgxd/RU
+         FKJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720419689; x=1721024489;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uO72vVxQUZzkutSQqH00zSC8a8TLpd6bNH/lML+P6zY=;
-        b=I191wDsk6h8haTFJ8MNdeWmfqJUp2pmdYI9Rn9ZR1z877qPqhiSaIgWECa/3tRLiNl
-         p8u0zyK/svLU3CpsNJBvgn2wjCQiobpnAzYQrUrbA9b/Oo6BNpfb8s+BLWTxxA2dbW8C
-         KtT07/I6sqeA9qT4H3ezip9MvGlaUiDuvNQlSpVyGvymfarZ4XaKirbrUWEOHNjqPBh9
-         mbU7i40qd28g1b7Rx+CJChQVQq5Ac0tPFBzIWbhbhct7YZiw21sSEumG0nM8CJcN8dzZ
-         uzlpVDZCXiGJgf2Nj9LwKDa0XB0/H5AkHoFLHzkvDnwFQ0TUEdlsuielIWk8ehOtg3ts
-         Lhtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGBWHByWfO5G7gqBtBJBcMqX74gEJvIcGj+0SLy5zlCyMB0vh63qtzfk7Vc9Qa4WU1nNsEXGlpd/SNNt2jpX3A3wTWzXdXY4UbsUIcWeOWN9kqC+qWIUk+XvKi9JFYbv5au6YW
-X-Gm-Message-State: AOJu0YyjtTdZtP3AK/8sqZEabVehN55UOEP6050R4cFLar8iNzdiCgxk
-	UKnOAH4fJNsF0DP7iFOIkkveYGIoOfhdm7XNQiM78v1I1Eoz+TaM
-X-Google-Smtp-Source: AGHT+IGpyO4liVd2tgb7IiFu35V36A0cowb7nNkS2fWia1UPyanXjQOWtl2aQl5cAdG/V/YJzFI/Gw==
-X-Received: by 2002:a05:600c:1c85:b0:426:67e0:3aa with SMTP id 5b1f17b1804b1-42667e0075dmr17560075e9.1.1720419689162;
-        Sun, 07 Jul 2024 23:21:29 -0700 (PDT)
-Received: from [10.50.4.202] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d50f5sm150203565e9.9.2024.07.07.23.21.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jul 2024 23:21:28 -0700 (PDT)
-Message-ID: <ae4e55df-6fe6-4cab-ac44-3ed10a63bfbe@grimberg.me>
-Date: Mon, 8 Jul 2024 09:21:27 +0300
+        d=1e100.net; s=20230601; t=1720419738; x=1721024538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ifbBmc00s6PDs4jKRokz1EGyBAXHA5r+QHtuV6zq9aU=;
+        b=EGSq6GKDdY9Oe2T7hPkPZwWujZYpU6NCs8yUJYpXN0cs5UouyIanq8nk56FP6Yrd8M
+         bKBQ5goLGdnKnsBY4QNPNG+x0Bo3v8gFlmNdzhxYCyFwJvXavlTzhCEh64VZAlLAfikW
+         s3pZqM9429x/HKOMP5rMmqwGQHrcErbxL1Ni487f6nBFAapxA9h1sYKVZq4KmExJI0uE
+         hRhjzXZekuYytm34kJ+9+QsmpGp09XuXOqwq0ebGRYDi5jJ/Xw2Jd/DPR/nHF1pr+T6W
+         A2+fATBH+64wzhOfVjReTqp6Ij896qNM6+cUT7QLZCbWAoUe3BZSSBu8ZSoCWq5+uTt+
+         ECOg==
+X-Gm-Message-State: AOJu0YwoAU4+KFMfzdZJRE7hY6oTikMJrSuxtgMB84BO7/aCjChWwx1Y
+	VKL/0RNlHx7EDs9Ro9elHWz08aAQVMyESGAlyxKC1Itd3A5E4p1d6fiMrm1cv0gCOFLGc5CNQYJ
+	4ctArCIi4Z7pHDOzUqDiy7cpa1P1xSO+x
+X-Google-Smtp-Source: AGHT+IGrJQmhgXFsCY2qekC9LVQNgQRc/rdLVgJl+vebrSbBItHIhf9jN3LXtZ+VVv8NFhqfcLjpjX0XuCGP/9CgupY=
+X-Received: by 2002:a05:6122:1c0d:b0:4ef:66cf:8745 with SMTP id
+ 71dfb90a1353d-4f2f3f84f21mr11564421e0c.7.1720419737768; Sun, 07 Jul 2024
+ 23:22:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: fix rc7's __skb_datagram_iter()
-To: Hugh Dickins <hughd@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <58ad4867-6178-54bd-7e49-e35875d012f9@google.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <58ad4867-6178-54bd-7e49-e35875d012f9@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240708061502.9006-1-21cnbao@gmail.com>
+In-Reply-To: <20240708061502.9006-1-21cnbao@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 8 Jul 2024 18:22:06 +1200
+Message-ID: <CAGsJ_4xbnAS=rbQ=adq7X0ig8Vw9fGzW5d06e6CnP3oBwpUM3w@mail.gmail.com>
+Subject: Re: [PATCH] mm: Extend 'usage' parameter so that cluster_swap_free_nr()
+ can be reused
+To: akpm@linux-foundation.org, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Kairui Song <kasong@tencent.com>, 
+	David Hildenbrand <david@redhat.com>, Chuanhua Han <hanchuanhua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 08/07/2024 6:00, Hugh Dickins wrote:
-> X would not start in my old 32-bit partition (and the "n"-handling looks
-> just as wrong on 64-bit, but for whatever reason did not show up there):
-> "n" must be accumulated over all pages before it's added to "offset" and
-> compared with "copy", immediately after the skb_frag_foreach_page() loop.
-
-That is indeed strange. I see the issue. It didn't happen in my local 
-testing either.
-
+On Mon, Jul 8, 2024 at 6:15=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
+:
 >
-> Fixes: d2d30a376d9c ("net: allow skb_datagram_iter to be called from any context")
-> Signed-off-by: Hugh Dickins <hughd@google.com>
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> Extend a usage parameter so that cluster_swap_free_nr() can be reused by
+> both swapcache_clear() and swap_free().
+> __swap_entry_free() is quite similar but more tricky as it requires the
+> return value of __swap_entry_free_locked() which cluster_swap_free_nr()
+> doesn't support.
+>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Chris Li <chrisl@kernel.org>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Chuanhua Han <hanchuanhua@oppo.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 > ---
->   net/core/datagram.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>  mm/swapfile.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
 >
-> diff --git a/net/core/datagram.c b/net/core/datagram.c
-> index e9ba4c7b449d..ea69d01156e6 100644
-> --- a/net/core/datagram.c
-> +++ b/net/core/datagram.c
-> @@ -420,6 +420,7 @@ static int __skb_datagram_iter(const struct sk_buff *skb, int offset,
->   			struct page *p;
->   			u8 *vaddr;
->   
-> +			n = 0;
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index f7224bc1320c..70c4a9132672 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1352,7 +1352,8 @@ static void swap_entry_free(struct swap_info_struct=
+ *p, swp_entry_t entry)
+>  }
+>
+>  static void cluster_swap_free_nr(struct swap_info_struct *sis,
+> -               unsigned long offset, int nr_pages)
+> +               unsigned long offset, int nr_pages,
+> +               unsigned char usage)
+>  {
+>         struct swap_cluster_info *ci;
+>         DECLARE_BITMAP(to_free, BITS_PER_LONG) =3D { 0 };
+> @@ -1363,7 +1364,7 @@ static void cluster_swap_free_nr(struct swap_info_s=
+truct *sis,
+>                 nr =3D min(BITS_PER_LONG, nr_pages);
+>                 for (i =3D 0; i < nr; i++) {
+>                         if (!__swap_entry_free_locked(sis, offset + i, 1)=
+)
+> -                               bitmap_set(to_free, i, 1);
+> +                               bitmap_set(to_free, i, usage);
 
-I think its better to reset n right before the skb_frag_foreach_page() 
-iteration.
+I'm terribly sorry for the mis-operation(sent the wrong patch),
+I actually mean:
 
-Thanks Hugh for addressing this!
+if (!__swap_entry_free_locked(sis, offset + i, usage))
+           bitmap_set(to_free, i, 1);
+
+>                 }
+>                 if (!bitmap_empty(to_free, BITS_PER_LONG)) {
+>                         unlock_cluster_or_swap_info(sis, ci);
+> @@ -1396,7 +1397,7 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
+>
+>         while (nr_pages) {
+>                 nr =3D min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % S=
+WAPFILE_CLUSTER);
+> -               cluster_swap_free_nr(sis, offset, nr);
+> +               cluster_swap_free_nr(sis, offset, nr, 1);
+>                 offset +=3D nr;
+>                 nr_pages -=3D nr;
+>         }
+> @@ -3492,15 +3493,9 @@ int swapcache_prepare(swp_entry_t entry)
+>
+>  void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
+>  {
+> -       struct swap_cluster_info *ci;
+>         unsigned long offset =3D swp_offset(entry);
+> -       unsigned char usage;
+>
+> -       ci =3D lock_cluster_or_swap_info(si, offset);
+> -       usage =3D __swap_entry_free_locked(si, offset, SWAP_HAS_CACHE);
+> -       unlock_cluster_or_swap_info(si, ci);
+> -       if (!usage)
+> -               free_swap_slot(entry);
+> +       cluster_swap_free_nr(si, offset, 1, SWAP_HAS_CACHE);
+>  }
+>
+>  struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+> --
+> 2.39.2
+>
 
