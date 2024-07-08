@@ -1,152 +1,229 @@
-Return-Path: <linux-kernel+bounces-244122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D999929F76
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:46:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E2F929F78
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F76DB2817B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08AF91F25731
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE05A6A8D2;
-	Mon,  8 Jul 2024 09:46:23 +0000 (UTC)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C7253373;
+	Mon,  8 Jul 2024 09:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GnAcNpGW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBCD3C08A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697CC3C08A;
+	Mon,  8 Jul 2024 09:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720431983; cv=none; b=b6phTHKcZtj90byZaqTDbj7UAVAGlKURpuwN8ebVI2BGwt9OCWTSNrRoOwEwnfbsirJ2axTTWaA/fbV/K2XrhC23Y3Y4BjOpIfkfwE//o/0/ADh91Zd/wIp7bfmaUYNTd7zSwpm6FQkkAHlwROKK21m4r5rD/jtcvJRYcwbBGts=
+	t=1720431988; cv=none; b=IoSTi3IG0gaOg8nHAIGzZow6voclsAqQ7L6tF26F2PDk/A/MQjZo9iPyELyVvK8aSPiEiCEXK9xdn5AMx060/jkmWh2zhr3EE0Ei8LC3aU6kfLWq/Xn7VplUloYrjX4dO2Ioh3nan06u/xsiNZnaNjnNZey3EtiXOacgV7fDDRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720431983; c=relaxed/simple;
-	bh=acGpI95Z81dh1AlmKqkEh8/oj6bi4FcdQoAbNsD+yXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uCAcKFIO/gzuOZwI1HUn9zQ45c1EFP5VsGuw8/5s0YXdjmD4FV9zHuklePqwBbTWsAem/nM7+02HVHa/wiHXP7a7+HL/FVO3kdRsw894QVGWKfbOlxhavtY1VeHqbeV+D3rNTXb0e4uLL9o7Ar/9/r4xftkTzXRhwJbt61NWLFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8100eca5345so956662241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 02:46:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720431980; x=1721036780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SpLSB/CN2SDFiRQYc+S++TJqbe4+r/mJtlnD6MtwaQs=;
-        b=I+2W0tfJV9VsPB14LsHq0cLaqi/1MTXZjlvzPIimm//fvfl57a519uMDwg5DcuEZ70
-         HrXZfOxB5dG2aTL7ipoOsF6IhXML1Ag221wGfRsEIKkJIM+GjdUJ/J9i8F1BbU6kMzxu
-         /NR0MF7G1UsdG03fp8kX1rv/TjHeLSwd4pxH95KEuSdAmeSHKULpSVTABNhoXybMqM+1
-         iRMOxHor4UMmsuBBcgAK/CVztXE8DO7uxH8nqnjm+Couk8asGgAzJ1Y+HY5LWc89ChZh
-         j8/ciD4sB3LLP+Lxn7oEh/ijuscqz2zqTsjC1qgAVwnbscyEwKc4KCdV0b8Hirh/nCH3
-         gL8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWBvpP4U0Ug/d1Cyd7JUVFr6R/HlXF6O8MYV0fm+DjH3Ed9sIV24L0Ao8GZuv0TllcdX1yHZyBkkzZE+5K2wXU3MIlihz3pXKQi4qof
-X-Gm-Message-State: AOJu0Yy98OJgY+MUcrgvmxeWtexumYyumj+l1UKNkEoCx9uLC7kAmR1G
-	P0lQlyfeWshcENDF9oeMWM1ST51Di2iLUstBj40cweaP2e8Ml79HFyXEJd0d8DOyi4ZEvaMNg++
-	CKI+ms8FcF9r/MpB8IZL8vK+yZDE=
-X-Google-Smtp-Source: AGHT+IHqK7myHjemDaFxYt787o7c+4YGD60lg9B5FlPkiyuZ62jj9iBrgp0YtirZcF97qT59X1j+vMhhyx75N7KNzEg=
-X-Received: by 2002:a05:6102:4653:b0:48f:e9df:ec4d with SMTP id
- ada2fe7eead31-48fee6462d0mr11933834137.2.1720431980445; Mon, 08 Jul 2024
- 02:46:20 -0700 (PDT)
+	s=arc-20240116; t=1720431988; c=relaxed/simple;
+	bh=W2RFUdPcLsAwWyNftN8UrI7mtg9U+0+cL7YmjGhErfY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lnqKVSXwe3nNb0d7R0nOABrjb5nmUB4P5uAQ1XXqk0c7AK/ErQXn/PqELToS7DekVILmmpWZF8AsUoP43HoBxAMqsvkwOyDXYsV+G9/hb5TXxWoY4p5L1wteOdOaaw9eoq0ENKjTDGElqdCCFGnzcXRMcjvvRz5uGVXzxEZKh2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GnAcNpGW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 467NQgWr005107;
+	Mon, 8 Jul 2024 09:46:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VooEroP/kbsdiQI+qsI5MGttmZcrIEctQJhJfXss1YE=; b=GnAcNpGWtcUTEjjg
+	WwBpuq+y8KbdyjX9gvGOKlK/7Ss6eZf5HoFxFAA9/DFzw//YDVMElsPALWvQn56X
+	C/725/C2iI4lkA8POwpmg/2umwwCrZDVvjCUXHBqu4SSEdCMbxFzpNBEEAra5592
+	9wbqGzNJ6XFwrot1Lysht4lEDoHV7W9rakmAJtIdoHjpBN3LBAWX1kGCsm6mlnh8
+	gAssUzZ19iH3vSOqxYVJvLTgaJorIV+FslwW540dVyFzWFBbIbFApt8YHotKaTBP
+	2n8BMBimNpLtovx/hge+vBUhlck/Wbj7ju9F/Hcn5n/jAK0+koIYFmxqyjAIfVPY
+	mHY+Rg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406y77k4q0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 09:46:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4689kNsi030016
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 09:46:23 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 02:46:20 -0700
+Message-ID: <85dca40d-7c90-8a5f-50ae-996f7903082a@quicinc.com>
+Date: Mon, 8 Jul 2024 15:16:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708090413.888-1-justinjiang@vivo.com> <ad7873f4-9c98-45cc-b7be-0c1c36b65ade@redhat.com>
-In-Reply-To: <ad7873f4-9c98-45cc-b7be-0c1c36b65ade@redhat.com>
-From: Barry Song <baohua@kernel.org>
-Date: Mon, 8 Jul 2024 21:46:07 +1200
-Message-ID: <CAGsJ_4zN95hh6G15L=hCTmXx4Y_OC-ExpsU7iErZ2SiZZaxmhA@mail.gmail.com>
-Subject: Re: [PATCH v5] mm: shrink skip folio mapped by an exiting process
-To: David Hildenbrand <david@redhat.com>
-Cc: Zhiguo Jiang <justinjiang@vivo.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2] soc: qcom: icc-bwmon: Add tracepoints in
+ bwmon_intr_thread
+Content-Language: en-US
+To: Shivnandan Kumar <quic_kshivnan@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_rgottimu@quicinc.com>
+References: <20240625055611.1375273-1-quic_kshivnan@quicinc.com>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <20240625055611.1375273-1-quic_kshivnan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cVpiohXdFRaffGKHo-RS4wvgRjKyABD7
+X-Proofpoint-ORIG-GUID: cVpiohXdFRaffGKHo-RS4wvgRjKyABD7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_05,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxscore=0 clxscore=1015 priorityscore=1501 spamscore=0 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407080076
 
-On Mon, Jul 8, 2024 at 9:36=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 08.07.24 11:04, Zhiguo Jiang wrote:
-> > The releasing process of the non-shared anonymous folio mapped solely b=
-y
-> > an exiting process may go through two flows: 1) the anonymous folio is
-> > firstly is swaped-out into swapspace and transformed into a swp_entry
-> > in shrink_folio_list; 2) then the swp_entry is released in the process
-> > exiting flow. This will increase the cpu load of releasing a non-shared
-> > anonymous folio mapped solely by an exiting process, because the folio
-> > go through swap-out and the releasing the swapspace and swp_entry.
-> >
-> > When system is low memory, it is more likely to occur, because more
-> > backend applidatuions will be killed.
-> >
-> > The modification is that shrink skips the non-shared anonymous folio
-> > solely mapped by an exting process and the folio is only released
-> > directly in the process exiting flow, which will save swap-out time
-> > and alleviate the load of the process exiting.
-> >
-> > Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
-> > ---
-> >
-> > Change log:
-> > v4->v5:
-> > 1.Modify to skip non-shared anonymous folio only.
-> > 2.Update comments for pra->referenced =3D -1.
-> > v3->v4:
-> > 1.Modify that the unshared folios mapped only in exiting task are skip.
-> > v2->v3:
-> > Nothing.
-> > v1->v2:
-> > 1.The VM_EXITING added in v1 patch is removed, because it will fail
-> > to compile in 32-bit system.
-> >
-> >   mm/rmap.c   | 13 +++++++++++++
-> >   mm/vmscan.c |  7 ++++++-
-> >   2 files changed, 19 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/rmap.c b/mm/rmap.c
-> > index 26806b49a86f..5b5281d71dbb
-> > --- a/mm/rmap.c
-> > +++ b/mm/rmap.c
-> > @@ -843,6 +843,19 @@ static bool folio_referenced_one(struct folio *fol=
-io,
-> >       int referenced =3D 0;
-> >       unsigned long start =3D address, ptes =3D 0;
-> >
-> > +     /*
-> > +      * Skip the non-shared anonymous folio mapped solely by
-> > +      * the single exiting process, and release it directly
-> > +      * in the process exiting.
-> > +      */
-> > +     if ((!atomic_read(&vma->vm_mm->mm_users) ||
-> > +             test_bit(MMF_OOM_SKIP, &vma->vm_mm->flags)) &&
-> > +             folio_test_anon(folio) && folio_test_swapbacked(folio) &&
-> > +             !folio_likely_mapped_shared(folio)) {
->
-> I'm currently working on moving all folio_likely_mapped_shared() under
-> the PTL, where we are then sure that the folio is actually mapped by
-> this process (e.g., no concurrent unmapping poisslbe).
->
-> Can we do the same here directly?
 
-Implementing this is challenging because page_vma_mapped_walk() is
-responsible for
-traversing the page table to acquire and release the PTL. This becomes
-particularly
-complex with mTHP, as we may need to interrupt the page_vma_mapped_walk
-loop at the first PTE.
 
->
+On 6/25/24 11:26, Shivnandan Kumar wrote:
+> Add tracepoint for tracing the measured traffic in kbps,
+> up_kbps and down_kbps in bwmon. This information is valuable
+> for understanding what bwmon hw measures at the system cache
+> level and at the DDR level which is helpful in debugging
+> bwmon behavior.
+> 
+> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> ---
+> 
+> v2:
+> * Fix multiple assignments [Dmitry]
+> * Fix alignment [Dmitry]
+> 
+>   MAINTAINERS                        |  1 +
+>   drivers/soc/qcom/icc-bwmon.c       |  6 +++-
+>   drivers/soc/qcom/trace_icc-bwmon.h | 48 ++++++++++++++++++++++++++++++
+>   3 files changed, 54 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/soc/qcom/trace_icc-bwmon.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 242fc612fbc5..1b410c0183bb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18573,6 +18573,7 @@ M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>   L:	linux-arm-msm@vger.kernel.org
+>   S:	Maintained
+>   F:	Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
+> +F:	drivers/soc/qcom/trace_icc-bwmon.h
+
+[nit] The file addition is not in sorted order.
+
+Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
+
+
+>   F:	drivers/soc/qcom/icc-bwmon.c
+> 
+>   QUALCOMM IOMMU
+> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+> index fb323b3364db..fc391d077d93 100644
+> --- a/drivers/soc/qcom/icc-bwmon.c
+> +++ b/drivers/soc/qcom/icc-bwmon.c
+> @@ -17,6 +17,8 @@
+>   #include <linux/pm_opp.h>
+>   #include <linux/regmap.h>
+>   #include <linux/sizes.h>
+> +#define CREATE_TRACE_POINTS
+> +#include "trace_icc-bwmon.h"
+> 
+>   /*
+>    * The BWMON samples data throughput within 'sample_ms' time. With three
+> @@ -645,9 +647,10 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
+>   	struct icc_bwmon *bwmon = dev_id;
+>   	unsigned int irq_enable = 0;
+>   	struct dev_pm_opp *opp, *target_opp;
+> -	unsigned int bw_kbps, up_kbps, down_kbps;
+> +	unsigned int bw_kbps, up_kbps, down_kbps, meas_kbps;
+> 
+>   	bw_kbps = bwmon->target_kbps;
+> +	meas_kbps = bwmon->target_kbps;
+> 
+>   	target_opp = dev_pm_opp_find_bw_ceil(bwmon->dev, &bw_kbps, 0);
+>   	if (IS_ERR(target_opp) && PTR_ERR(target_opp) == -ERANGE)
+> @@ -679,6 +682,7 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
+>   	bwmon_clear_irq(bwmon);
+>   	bwmon_enable(bwmon, irq_enable);
+> 
+> +	trace_qcom_bwmon_update(dev_name(bwmon->dev), meas_kbps, up_kbps, down_kbps);
+>   	if (bwmon->target_kbps == bwmon->current_kbps)
+>   		goto out;
+> 
+> diff --git a/drivers/soc/qcom/trace_icc-bwmon.h b/drivers/soc/qcom/trace_icc-bwmon.h
+> new file mode 100644
+> index 000000000000..beb8e6b485a9
+> --- /dev/null
+> +++ b/drivers/soc/qcom/trace_icc-bwmon.h
+> @@ -0,0 +1,48 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM icc_bwmon
+> +
+> +#if !defined(_TRACE_ICC_BWMON_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_ICC_BWMON_H
+> +#include <linux/tracepoint.h>
+> +
+> +TRACE_EVENT(qcom_bwmon_update,
+> +	    TP_PROTO(const char *name,
+> +		     unsigned int meas_kbps, unsigned int up_kbps, unsigned int down_kbps),
+> +
+> +	    TP_ARGS(name, meas_kbps, up_kbps, down_kbps),
+> +
+> +	    TP_STRUCT__entry(
+> +			     __string(name, name)
+> +			     __field(unsigned int, meas_kbps)
+> +			     __field(unsigned int, up_kbps)
+> +			     __field(unsigned int, down_kbps)
+> +	    ),
+> +
+> +	    TP_fast_assign(
+> +			   __assign_str(name);
+> +			   __entry->meas_kbps = meas_kbps;
+> +			   __entry->up_kbps = up_kbps;
+> +			   __entry->down_kbps = down_kbps;
+> +	    ),
+> +
+> +	    TP_printk("name=%s meas_kbps=%u up_kbps=%u down_kbps=%u",
+> +		      __get_str(name),
+> +		      __entry->meas_kbps,
+> +		      __entry->up_kbps,
+> +		      __entry->down_kbps)
+> +);
+> +
+> +#endif /* _TRACE_ICC_BWMON_H */
+> +
+> +#undef TRACE_INCLUDE_PATH
+> +#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom/
+> +
+> +#undef TRACE_INCLUDE_FILE
+> +#define TRACE_INCLUDE_FILE trace_icc-bwmon
+> +
+> +#include <trace/define_trace.h>
 > --
-> Cheers,
->
-> David / dhildenb
->
-
-Thanks
-Barry
+> 2.25.1
+> 
+> 
 
