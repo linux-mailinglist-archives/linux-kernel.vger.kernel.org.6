@@ -1,79 +1,77 @@
-Return-Path: <linux-kernel+bounces-244246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46E092A190
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:49:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F348692A198
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2872824AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:49:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD9F1F22441
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D353580BF3;
-	Mon,  8 Jul 2024 11:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1516C839E4;
+	Mon,  8 Jul 2024 11:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EPGfe/Ja";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/NmVwn62"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DSVoFsne";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XoNLM1En"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2547E591;
-	Mon,  8 Jul 2024 11:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CED780631;
+	Mon,  8 Jul 2024 11:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720439370; cv=none; b=o31WLIGidHWf5gb1lv+zZIyY6K7maoX3D3chqL9M+y/p+whgo5doV8IgDxNnlpTMU+NuBR5z8W+nMxlC93KUwD/czhi0Ga++hT6ggSsTwCSyuYtLmyz/JOZGUzIsfSHAlhXisBs/rLyofntOA3WrOdnR/0LFk3H/wqiyR23tE0Q=
+	t=1720439372; cv=none; b=MPjzHHPcPgn05bUWNite2EUC5yJzTP1F08/obn4O0B5yInC9Gtk/N1H5im3J0FvY7NJizLJDlJQvebcjRcG9mCKxxuUOIzFCfDkcMHChEEQSr8PMs4jECq/6ZwyK774eacBfvTDiO4jVszy8ZkRGbaAEGhJWLM4MJu+N3uyHnBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720439370; c=relaxed/simple;
-	bh=g1nfFzJToez0FGGuBBOT9XQLEJS03rHD+uNOUfvEuL8=;
+	s=arc-20240116; t=1720439372; c=relaxed/simple;
+	bh=wokYTWcyBkpC5n1L6XsoYEfkYApHYqab+bnsIyqu++s=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ZJQP6tcI3YFb+fF79hSBIufuQg/B2ipt6goEHKZ2ZHqVxFtmjYYbbg/X1V8t9/Yxz7AMUy+ynPlaVupy2WpgXs0wvGFJSVg+XsgZNvdOrNhNsRKPttSsmbdxpsisXRd9WWMTqXccHnn3r+ia2I9nOcVWspunJzSW6bNtCUTLmnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EPGfe/Ja; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/NmVwn62; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=KcgNTx87lGhIO5KBn1KjORI/aGqwAQO9lzftgiCV9hh/L3dfhj1vDeS9z8qlMI56thH85NIUE3AK0zo2VDx5NMmUzRlU2yH3yojAprqWFW4EaHc0028U4fNaqXl2z8RnDllk1fi93OdP/tyQxEvmqBMXk7sUVVhcIX87nv51ykI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DSVoFsne; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XoNLM1En; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 08 Jul 2024 11:49:24 -0000
+Date: Mon, 08 Jul 2024 11:49:25 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720439365;
+	s=2020; t=1720439366;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=h02IQInx0e5JPLAorVUPa81kR5s8eeJxDL0sJYhqHWg=;
-	b=EPGfe/JaJVYJwW3peuHnBYDi85JDBcSybgfg2dnMCJtpi/E9fLrTrJLfw27JlA842736tH
-	2XtIxm7N01gAOSjFDdcQ9C3K4UMZR3X8yo2GKFHs666ZIyV9UobQdH1dMoyT8LjkzqGD9v
-	GQD7RLEs8/3hIaBzkjhqXO0ge8nFiodjhOmElALA40rLhPo7sz1a7/TPcGaOIsvBwNwcaa
-	eCaOvk3SGr9wPFJjcDxa6X0EvAJH1WunFksK1Eq92akUX2bVBBnro48uQXbgyB4Tu2qI3g
-	jWjR6LbGVZRwGzaBlJmwZBtQ7kHH9FRljUMUx70pSj0VLW0XW9GX7tvNjYRKwg==
+	bh=YTsF7AA+kqMcXTyp0AQsHoZMizTKW5ptwHVi/MyMvOs=;
+	b=DSVoFsneGrYSruX/OlFBVAECeD6i87//6upiuj6X7egDayLPgQ4xPEmw1h2k1/RU7l/IjB
+	e6FkR4YZv6udZcn+DKzuzRpvYvpLcDi613s0h/74/jrJ+38Ji6kTVzzWGntYPlp8i7Xdi3
+	ollHNWUqDTleoSGBt7jmV/6PxGP2NW5HRVNRVsHu1A2Aw4b7Psc7ORC27rlYFfUVJPyrXT
+	hJaPGyZVGd/sSW2LeksplxIhJGVaKlKQBNGMCF92igJv8gzh1tsmcEA4zm14Y6jWJLwwf6
+	9D1Of2wZIyWAVtxMYWe0gXNFGynGJYMmBFxHGjoixRYYjRxcU2YER4s1PWH+vA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720439365;
+	s=2020e; t=1720439366;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=h02IQInx0e5JPLAorVUPa81kR5s8eeJxDL0sJYhqHWg=;
-	b=/NmVwn62JgYaRH7XuhRSbsCqFN0WVtVs2Qwtmanspyl7jSGleNZIsxGasUbmUpkg8kcvnj
-	86eFjQZGWqRIeQAA==
-From: "tip-bot2 for Alexandre Chartre" <tip-bot2@linutronix.de>
+	bh=YTsF7AA+kqMcXTyp0AQsHoZMizTKW5ptwHVi/MyMvOs=;
+	b=XoNLM1EnctqyZbyf3iYQ4/6TONATGKN0wCHq5VaFdaSr40QT3emeTH0TGTBrcMiyXy1h/7
+	dPZfgkwbk9EvmeCw==
+From: "tip-bot2 for Brian Johannesmeyer" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: objtool/core] objtool/x86: objtool can confuse memory and stack access
-Cc: kernel test robot <lkp@intel.com>,
- Alexandre Chartre <alexandre.chartre@oracle.com>,
+Subject: [tip: objtool/core] scripts/faddr2line: Check vmlinux only once
+Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
  Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240620144747.2524805-1-alexandre.chartre@oracle.com>
-References: <20240620144747.2524805-1-alexandre.chartre@oracle.com>
+In-Reply-To: <20240415145538.1938745-4-bjohannesmeyer@gmail.com>
+References: <20240415145538.1938745-4-bjohannesmeyer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172043936454.2215.16620277258416300859.tip-bot2@tip-bot2>
+Message-ID: <172043936588.2215.1170658880953714160.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,71 +81,87 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     8e366d83edce3065ff3372bedc281c5e217c0550
-Gitweb:        https://git.kernel.org/tip/8e366d83edce3065ff3372bedc281c5e217c0550
-Author:        Alexandre Chartre <alexandre.chartre@oracle.com>
-AuthorDate:    Thu, 20 Jun 2024 16:47:47 +02:00
+Commit-ID:     2c809186ccf0e3a4cb952da181f9c28436133081
+Gitweb:        https://git.kernel.org/tip/2c809186ccf0e3a4cb952da181f9c28436133081
+Author:        Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+AuthorDate:    Mon, 15 Apr 2024 16:55:34 +02:00
 Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-CommitterDate: Tue, 02 Jul 2024 23:40:54 -07:00
+CommitterDate: Tue, 02 Jul 2024 23:38:36 -07:00
 
-objtool/x86: objtool can confuse memory and stack access
+scripts/faddr2line: Check vmlinux only once
 
-The encoding of an x86 instruction can include a ModR/M and a SIB
-(Scale-Index-Base) byte to describe the addressing mode of the
-instruction.
+Rather than checking whether the object file is vmlinux for each invocation
+of __faddr2line, check it only once beforehand.
 
-objtool processes all addressing mode with a SIB base of 5 as having
-%rbp as the base register. However, a SIB base of 5 means that the
-effective address has either no base (if ModR/M mod is zero) or %rbp
-as the base (if ModR/M mod is 1 or 2). This can cause objtool to confuse
-an absolute address access with a stack operation.
-
-For example, objtool will see the following instruction:
-
- 4c 8b 24 25 e0 ff ff    mov    0xffffffffffffffe0,%r12
-
-as a stack operation (i.e. similar to: mov -0x20(%rbp), %r12).
-
-[Note that this kind of weird absolute address access is added by the
- compiler when using KASAN.]
-
-If this perceived stack operation happens to reference the location
-where %r12 was pushed on the stack then the objtool validation will
-think that %r12 is being restored and this can cause a stack state
-mismatch.
-
-This kind behavior was seen on xfs code, after a minor change (convert
-kmem_alloc() to kmalloc()):
-
->> fs/xfs/xfs.o: warning: objtool: xfs_da_grow_inode_int+0x6c1: stack state mismatch: reg1[12]=-2-48 reg2[12]=-1+0
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202402220435.MGN0EV6l-lkp@intel.com/
-Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
-Link: https://lore.kernel.org/r/20240620144747.2524805-1-alexandre.chartre@oracle.com
+Signed-off-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+Link: https://lore.kernel.org/r/20240415145538.1938745-4-bjohannesmeyer@gmail.com
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- tools/objtool/arch/x86/decode.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ scripts/faddr2line | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
-index 3a1d80a..ed6bff0 100644
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -125,8 +125,14 @@ bool arch_pc_relative_reloc(struct reloc *reloc)
- #define is_RIP()   ((modrm_rm & 7) == CFI_BP && modrm_mod == 0)
- #define have_SIB() ((modrm_rm & 7) == CFI_SP && mod_is_mem())
+diff --git a/scripts/faddr2line b/scripts/faddr2line
+index f011bda..bb3b5f0 100755
+--- a/scripts/faddr2line
++++ b/scripts/faddr2line
+@@ -115,6 +115,17 @@ run_readelf() {
+ 	ELF_SYMS=$(echo "${out}" | sed -n '/Symbol table .* contains [0-9]* entries:/,$p')
+ }
  
-+/*
-+ * Check the ModRM register. If there is a SIB byte then check with
-+ * the SIB base register. But if the SIB base is 5 (i.e. CFI_BP) and
-+ * ModRM mod is 0 then there is no base register.
-+ */
- #define rm_is(reg) (have_SIB() ? \
--		    sib_base == (reg) && sib_index == CFI_SP : \
-+		    sib_base == (reg) && sib_index == CFI_SP && \
-+		    (sib_base != CFI_BP || modrm_mod != 0) :	\
- 		    modrm_rm == (reg))
++check_vmlinux() {
++	# vmlinux uses absolute addresses in the section table rather than
++	# section offsets.
++	IS_VMLINUX=0
++	local file_type=$(echo "${ELF_FILEHEADER}" |
++		${AWK} '$1 == "Type:" { print $2; exit }')
++	if [[ $file_type = "EXEC" ]] || [[ $file_type == "DYN" ]]; then
++		IS_VMLINUX=1
++	fi
++}
++
+ __faddr2line() {
+ 	local objfile=$1
+ 	local func_addr=$2
+@@ -125,8 +136,6 @@ __faddr2line() {
+ 	local func_offset=${func_addr#*+}
+ 	func_offset=${func_offset%/*}
+ 	local user_size=
+-	local file_type
+-	local is_vmlinux=0
+ 	[[ $func_addr =~ "/" ]] && user_size=${func_addr#*/}
  
- #define rm_is_mem(reg)	(mod_is_mem() && !is_RIP() && rm_is(reg))
+ 	if [[ -z $sym_name ]] || [[ -z $func_offset ]] || [[ $sym_name = $func_addr ]]; then
+@@ -135,14 +144,6 @@ __faddr2line() {
+ 		return
+ 	fi
+ 
+-	# vmlinux uses absolute addresses in the section table rather than
+-	# section offsets.
+-	local file_type=$(echo "${ELF_FILEHEADER}" |
+-		${AWK} '$1 == "Type:" { print $2; exit }')
+-	if [[ $file_type = "EXEC" ]] || [[ $file_type == "DYN" ]]; then
+-		is_vmlinux=1
+-	fi
+-
+ 	# Go through each of the object's symbols which match the func name.
+ 	# In rare cases there might be duplicates, in which case we print all
+ 	# matches.
+@@ -260,7 +261,7 @@ __faddr2line() {
+ 		# Pass section address to addr2line and strip absolute paths
+ 		# from the output:
+ 		local args="--functions --pretty-print --inlines --exe=$objfile"
+-		[[ $is_vmlinux = 0 ]] && args="$args --section=$sec_name"
++		[[ $IS_VMLINUX = 0 ]] && args="$args --section=$sec_name"
+ 		local output=$(${ADDR2LINE} $args $addr | sed "s; $dir_prefix\(\./\)*; ;")
+ 		[[ -z $output ]] && continue
+ 
+@@ -305,6 +306,8 @@ run_readelf $objfile
+ 
+ echo "${ELF_SECHEADERS}" | ${GREP} -q '\.debug_info' || die "CONFIG_DEBUG_INFO not enabled"
+ 
++check_vmlinux
++
+ DIR_PREFIX=supercalifragilisticexpialidocious
+ find_dir_prefix $objfile
+ 
 
