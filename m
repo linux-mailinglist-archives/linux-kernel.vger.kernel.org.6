@@ -1,484 +1,115 @@
-Return-Path: <linux-kernel+bounces-244135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36335929FA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:55:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C54929F9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A546B298E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:53:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51DB1C2134D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405A177111;
-	Mon,  8 Jul 2024 09:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A7474E09;
+	Mon,  8 Jul 2024 09:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XH9THa06"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IlOzgrDe"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EE37581F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0EB6BFBA
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720432393; cv=none; b=J6la9GECYm4URSVcckLeD6BSooIm7/UMVRPS/QdAii39gKh2jsZzFLqlqIcK7+LXaV+UTcYSJo4JIy4KawdtvJ1kJwXWuYyaplYEnmSzZB4F2jypdb/zsP1QtIYnJAvfQ+jDJN9umi9wBVcH/Id+aMA9GwhDLrH8/CPhtcCEEN4=
+	t=1720432459; cv=none; b=qyRGH5gyjyiigDDKFf5ZoaTlUZxZ48fvOeUYjvZTmRnZMlf6Tl70JaEm2K8Enwreqyd8ZxNs6acOO4P2JwW7cQUfg4I+3WRlfFrPBeuNvSS89S6bNw3Um1cwvxl/nNke8+2nZKJvYlSsuT49RZCGu0b+3lPnlU3EoLgH4sPX+Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720432393; c=relaxed/simple;
-	bh=1D0ZeFLSdCPOdySZLFpPq3ewPd/UeIpV8faGJ6yA+kg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=au451xTjgyTsmRYnkBUgTgjltEZdVNpMb1xNRO6oKSt8W4ItN2vLw21kE3kROfDRxsOdf5WYRu7NM0EREEofkULt6kIv94WVB6mZO9pn/UwAQ1McfclphdUhPM7EwT0guVFNURgTUOChZMM2NXbg1PiWJgYvg9RTyA0Ao5zF4Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XH9THa06; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-426685732dcso6088955e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 02:53:10 -0700 (PDT)
+	s=arc-20240116; t=1720432459; c=relaxed/simple;
+	bh=TEuaV52Fw3AReX5B2xdSJt9o36RSvuVuXFqTGWhfVpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aTUmhQAPsQgfjlV1jh7nn9mSrVr0iPIQuzt5CmTsTCkoJZHS66+6hUoqPYC8vyc9E6iBZDMi1MC//MsU0G8JqJsU18HXQ+oRNZqPnmLWsqs2RtDiQM3QkC+4mwi5voZpJaG5KW6H8s1amoXlN0Gcp9yVnnTbG0jUPpNWU01QtDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IlOzgrDe; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4256742f67fso26161625e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 02:54:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720432389; x=1721037189; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hbd4CF06AdDx314zRkdu6yhwP3Xtnhr/ETb0c04XqZ4=;
-        b=XH9THa062jV/DHllyPB28NIQMwmSJlnFDgZqF8Qi0h6Dkthj9bAasaijEqlNwD12SK
-         zBNDurSlCnF7tpF/dhp4r7UKP+ZNtOoRUU//d3u2P6NDWQh/V8le7T9wW48wwKNyt8WJ
-         k3OJs/ikyIU+X2psDhNU/FL7GveJn5kM1Cs0jymGNlwKum4WrlHmFpnCLaf3yey/10AD
-         eVzOznlqaVtixM4IEal53RmCe0wSrKUD+dSegMhGm9ZDUv0Cg5eOmoZVTMMHC43I51RC
-         oeaBIv/lUteN33E4Xb2wVzhJc5sQu1fyzM8S6T/YBACuKLbCPKRomXW7TmqMsT2QSMwL
-         w+sg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720432456; x=1721037256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PjLXoVowh+lTUTYcsGJih/+hXZkO7j1LpjGmonKAPpM=;
+        b=IlOzgrDe6lVxhrZPpytSjdk3s+/Jc3ZGIGBR4DVhOtAzSaDfVJxSX9iqYcKQGUOFSR
+         gNZHnnMi1Quo36S91TUYybd8EdmGgJXnHDKZDl0MEd6vzkzS2or6RYQ0k21yo/1UWGlG
+         NsAo1d32mmiEG0JwUxiWIiyiYYCy/98rH8BDUe0OOsD2r6tuzHCUznPzEONrD9M9tel5
+         YPs1mCuYeFGVgB3CBTOvdsPb2mV3aqU5boFzdKVDhyN3b/GYCRq3FRE9KlMFMzPvWVbt
+         LTXt7avF4Q/OkfF7OBmoPZ4AMHtXISMQzICFUvZPcaLnQTk4gCsPKmpyRy0W8z9ArkiT
+         Eidg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720432389; x=1721037189;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbd4CF06AdDx314zRkdu6yhwP3Xtnhr/ETb0c04XqZ4=;
-        b=K7+ZoWx10T2aFegwsmVB44hY9OudMvC+SZiA3fIOniBk2K/4kB1aXPZ3UStjNAbwig
-         QaPKJIopOSp/XhcR8ad6ZkAMmbN6jQvESASwbAlUGv2EsHPKJMFyuyU3Ys2SX7o2JPOJ
-         QB7fy5MMtIVOqfYCHfSDZO8Zwn+pbFnHvpRb4KLBlHBEOHSvkCLeCJnPBoZ4bSMKGYjs
-         fB9UMiUcUzYhmVSLiQgNVyCoAG9bgPLKDGe+G+FEPZmKJe/QDucjvEE7HHOsqGEo1z/3
-         deBw9/c2FNuOdAeuDyKFS05nKQUTxjL2gYKcuOBvY+UM3nXkoLTPhPaG61oW/a8GXqoi
-         OGXQ==
-X-Gm-Message-State: AOJu0Yyv15cyZGXK606UWbmZINcQrLlL1XAV7DDQ1QR+3QSsqPPwX9hn
-	pnmumIfCNjw9ca7JWgb2NhGQszEihZY7epxeemE7BXr7wtR5JxmRP7RLIeVN3hQ=
-X-Google-Smtp-Source: AGHT+IHG4ymayq+1yrJKL3U0BMu5df3ND1FqPrBL/f8W2lnWwyU5WsqJPmlqqP2c+FrMOpq/baOVig==
-X-Received: by 2002:a05:600c:a69d:b0:426:6158:9b54 with SMTP id 5b1f17b1804b1-42661589b6bmr33060885e9.6.1720432388960;
-        Mon, 08 Jul 2024 02:53:08 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4264a1d169dsm159129195e9.5.2024.07.08.02.53.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 02:53:08 -0700 (PDT)
-Message-ID: <1bd8c455-567c-4523-8d8e-0e7cbc8210fd@linaro.org>
-Date: Mon, 8 Jul 2024 11:53:07 +0200
+        d=1e100.net; s=20230601; t=1720432456; x=1721037256;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PjLXoVowh+lTUTYcsGJih/+hXZkO7j1LpjGmonKAPpM=;
+        b=Tkr/nVhT11yfyZ27rLWBYwQ28OpYMU0tNeeBnzQHJYSdPLEfrvt93rCL/acbva3+tK
+         +sFedTzH2FDL50iX7ZpDhVjdbHvEaTfRUWNZLJWhJRBkRLBF0i0ucxyEEFa0WGR6X65k
+         WQlalG9ak9/LSfzvboYsVEp5nz5vUcDd8xOyNTZXaiJgRdzuAcLazld+nw61YcNJsjHN
+         vgWUOCJ2NWin06yBqB0I6gx+NI7oY7y5ItEVzLYPxdsp1qiGqynUK/Z/S6gX6ha0tq15
+         3ubguZkxoQwK9GzB7yrJ1IdnmMs90C8SZ/oRLIdkTsleI3uZi2oTYVB4eS9gUzKVwdHH
+         a4wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/849W/uo53X23to2cYPM1rr71+mjO4je4tqkZPYwZ8odspzjJqfEgr1JBvrXrh3OgpmelPHXdNQN8dUgfcWwevwzgT4z2ch2IU/Dd
+X-Gm-Message-State: AOJu0YyP1VCOcFrvfQAneVfvQd5NElzj5gvZma52waXh+5tEL7xCTECL
+	HFvgonvQ90YfQ8Cwlzc3FGPi8CpJQi9I+UViAQHIMMJgx9wveH0P9wOEKhvYRrU=
+X-Google-Smtp-Source: AGHT+IHALUzocYPlrZWoFdTJs5DD33ZIq+V2Qy2yma1bExbYlrX6OlgqOmXWrumccKIJCVL4il+mUg==
+X-Received: by 2002:a05:600c:190b:b0:426:5e91:391e with SMTP id 5b1f17b1804b1-4265e913977mr38910635e9.26.1720432456186;
+        Mon, 08 Jul 2024 02:54:16 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a2a3:9ebc:2cb5:a86a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a5a31a1asm8628598f8f.7.2024.07.08.02.54.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 02:54:15 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	caleb.connolly@linaro.org,
+	bhelgaas@google.com,
+	amit.pundir@linaro.org,
+	neil.armstrong@linaro.org,
+	Lukas Wunner <lukas@wunner.de>,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] pci: bus: only call of_platform_populate() if CONFIG_OF is enabled
+Date: Mon,  8 Jul 2024 11:54:14 +0200
+Message-ID: <172043242741.96960.2619738362693641818.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240707183829.41519-1-spasswolf@web.de>
+References: <20240707183829.41519-1-spasswolf@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/9] clocksource: realtek: Add timer driver for
- rtl-otto platforms
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, paulburton@kernel.org, peterz@infradead.org,
- mail@birger-koblitz.de, bert@biot.com, john@phrozen.org, sander@svanheule.net
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com,
- Markus Stockhausen <markus.stockhausen@gmx.de>
-References: <20240705021520.2737568-1-chris.packham@alliedtelesis.co.nz>
- <20240705021520.2737568-8-chris.packham@alliedtelesis.co.nz>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240705021520.2737568-8-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 05/07/2024 04:15, Chris Packham wrote:
-> The timer/counter block on the Realtek SoCs provides up to 5 timers. It
-> also includes a watchdog timer which is handled by the
-> realtek_otto_wdt.c driver.
-> 
-> One timer will be used per CPU as a local clock event generator. An
-> additional timer will be used as an overal stable clocksource.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Does the mips arch have a local timer per cpu timer and a broadcast 
-timer already integrated in the GIC ?
 
-> Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
-> Signed-off-by: Sander Vanheule <sander@svanheule.net>
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
+On Sun, 07 Jul 2024 20:38:28 +0200, Bert Karwatzki wrote:
+> If of_platform_populate() is called when CONFIG_OF is not defined this
+> leads to spurious error messages of the following type:
+>  pci 0000:00:01.1: failed to populate child OF nodes (-19)
+>  pci 0000:00:02.1: failed to populate child OF nodes (-19)
 > 
-> Notes:
->      This is derrived from openwrt[1],[2]. I've retained the original signoff
->      and added my own.
->      
->      [1] https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob_plain;f=target/linux/realtek/files-5.15/drivers/clocksource/timer-rtl-otto.c;hb=HEAD
->      [2] https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob_plain;f=target/linux/realtek/patches-5.15/302-clocksource-add-otto-driver.patch;hb=HEAD
->      
->      Changes in v4:
->      - Reword comment about watchdog timer
->      - Add includes for cpumask.h, io.h, jiffies.h and printk.h
->      - Remove unnecessary casts
->      Changes in v3:
->      - Remove unnecessary select COMMON_CLK
->      - Use %p when printing pointer
->      Changes in v2
->      - None
+> Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nodes of the port node")
 > 
->   drivers/clocksource/Kconfig          |  10 +
->   drivers/clocksource/Makefile         |   1 +
->   drivers/clocksource/timer-rtl-otto.c | 291 +++++++++++++++++++++++++++
->   include/linux/cpuhotplug.h           |   1 +
->   4 files changed, 303 insertions(+)
->   create mode 100644 drivers/clocksource/timer-rtl-otto.c
-> 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 34faa0320ece..70ba57210862 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -134,6 +134,16 @@ config RDA_TIMER
->   	help
->   	  Enables the support for the RDA Micro timer driver.
->   
-> +config REALTEK_OTTO_TIMER
-> +	bool "Clocksource/timer for the Realtek Otto platform"
-> +	select TIMER_OF
-> +	help
-> +	  This driver adds support for the timers found in the Realtek RTL83xx
-> +	  and RTL93xx SoCs series. This includes chips such as RTL8380, RTL8381
-> +	  and RTL832, as well as chips from the RTL839x series, such as RTL8390
-> +	  RT8391, RTL8392, RTL8393 and RTL8396 and chips of the RTL930x series
-> +	  such as RTL9301, RTL9302 or RTL9303.
-> +
->   config SUN4I_TIMER
->   	bool "Sun4i timer driver" if COMPILE_TEST
->   	depends on HAS_IOMEM
-> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-> index 4bb856e4df55..22743785299e 100644
-> --- a/drivers/clocksource/Makefile
-> +++ b/drivers/clocksource/Makefile
-> @@ -59,6 +59,7 @@ obj-$(CONFIG_MILBEAUT_TIMER)	+= timer-milbeaut.o
->   obj-$(CONFIG_SPRD_TIMER)	+= timer-sprd.o
->   obj-$(CONFIG_NPCM7XX_TIMER)	+= timer-npcm7xx.o
->   obj-$(CONFIG_RDA_TIMER)		+= timer-rda.o
-> +obj-$(CONFIG_REALTEK_OTTO_TIMER)	+= timer-rtl-otto.o
->   
->   obj-$(CONFIG_ARC_TIMERS)		+= arc_timer.o
->   obj-$(CONFIG_ARM_ARCH_TIMER)		+= arm_arch_timer.o
-> diff --git a/drivers/clocksource/timer-rtl-otto.c b/drivers/clocksource/timer-rtl-otto.c
-> new file mode 100644
-> index 000000000000..8a3068b36e75
-> --- /dev/null
-> +++ b/drivers/clocksource/timer-rtl-otto.c
-> @@ -0,0 +1,291 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clockchips.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpuhotplug.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/jiffies.h>
-> +#include <linux/printk.h>
-> +#include <linux/sched_clock.h>
-> +#include "timer-of.h"
-> +
-> +#define RTTM_DATA		0x0
-> +#define RTTM_CNT		0x4
-> +#define RTTM_CTRL		0x8
-> +#define RTTM_INT		0xc
-> +
-> +#define RTTM_CTRL_ENABLE	BIT(28)
-> +#define RTTM_INT_PENDING	BIT(16)
-> +#define RTTM_INT_ENABLE		BIT(20)
-> +
-> +/*
-> + * The Otto platform provides multiple 28 bit timers/counters with the following
-> + * operating logic. If enabled the timer counts up. Per timer one can set a
-> + * maximum counter value as an end marker. If end marker is reached the timer
-> + * fires an interrupt. If the timer "overflows" by reaching the end marker or
-> + * by adding 1 to 0x0fffffff the counter is reset to 0. When this happens and
-> + * the timer is in operating mode COUNTER it stops. In mode TIMER it will
-> + * continue to count up.
-> + */
-> +#define RTTM_CTRL_COUNTER	0
-> +#define RTTM_CTRL_TIMER		BIT(24)
-> +
-> +#define RTTM_BIT_COUNT		28
-> +#define RTTM_MIN_DELTA		8
-> +#define RTTM_MAX_DELTA		CLOCKSOURCE_MASK(28)
-> +
-> +/*
-> + * Timers are derived from the LXB clock frequency. Usually this is a fixed
-> + * multiple of the 25 MHz oscillator. The 930X SOC is an exception from that.
-> + * Its LXB clock has only dividers and uses the switch PLL of 2.45 GHz as its
-> + * base. The only meaningful frequencies we can achieve from that are 175.000
-> + * MHz and 153.125 MHz. The greatest common divisor of all explained possible
-> + * speeds is 3125000. Pin the timers to this 3.125 MHz reference frequency.
-> + */
-> +#define RTTM_TICKS_PER_SEC	3125000
-> +
-> +struct rttm_cs {
-> +	struct timer_of		to;
-> +	struct clocksource	cs;
-> +};
-> +
-> +/* Simple internal register functions */
-> +static inline void rttm_set_counter(void __iomem *base, unsigned int counter)
-> +{
-> +	iowrite32(counter, base + RTTM_CNT);
-> +}
-> +
-> +static inline unsigned int rttm_get_counter(void __iomem *base)
-> +{
-> +	return ioread32(base + RTTM_CNT);
-> +}
-> +
-> +static inline void rttm_set_period(void __iomem *base, unsigned int period)
-> +{
-> +	iowrite32(period, base + RTTM_DATA);
-> +}
-> +
-> +static inline void rttm_disable_timer(void __iomem *base)
-> +{
-> +	iowrite32(0, base + RTTM_CTRL);
-> +}
-> +
-> +static inline void rttm_enable_timer(void __iomem *base, u32 mode, u32 divisor)
-> +{
-> +	iowrite32(RTTM_CTRL_ENABLE | mode | divisor, base + RTTM_CTRL);
-> +}
-> +
-> +static inline void rttm_ack_irq(void __iomem *base)
-> +{
-> +	iowrite32(ioread32(base + RTTM_INT) | RTTM_INT_PENDING, base + RTTM_INT);
-> +}
-> +
-> +static inline void rttm_enable_irq(void __iomem *base)
-> +{
-> +	iowrite32(RTTM_INT_ENABLE, base + RTTM_INT);
-> +}
-> +
-> +static inline void rttm_disable_irq(void __iomem *base)
-> +{
-> +	iowrite32(0, base + RTTM_INT);
-> +}
-> +
-> +/* Aggregated control functions for kernel clock framework */
-> +#define RTTM_DEBUG(base)			\
-> +	pr_debug("------------- %d %p\n",	\
-> +		 smp_processor_id(), base)
-> +
-> +static irqreturn_t rttm_timer_interrupt(int irq, void *dev_id)
-> +{
-> +	struct clock_event_device *clkevt = dev_id;
-> +	struct timer_of *to = to_timer_of(clkevt);
-> +
-> +	rttm_ack_irq(to->of_base.base);
-> +	RTTM_DEBUG(to->of_base.base);
-> +	clkevt->event_handler(clkevt);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static void rttm_stop_timer(void __iomem *base)
-> +{
-> +	rttm_disable_timer(base);
-> +	rttm_ack_irq(base);
-> +}
-> +
-> +static void rttm_start_timer(struct timer_of *to, u32 mode)
-> +{
-> +	rttm_set_counter(to->of_base.base, 0);
-> +	rttm_enable_timer(to->of_base.base, mode, to->of_clk.rate / RTTM_TICKS_PER_SEC);
-> +}
-> +
-> +static int rttm_next_event(unsigned long delta, struct clock_event_device *clkevt)
-> +{
-> +	struct timer_of *to = to_timer_of(clkevt);
-> +
-> +	RTTM_DEBUG(to->of_base.base);
-> +	rttm_stop_timer(to->of_base.base);
-> +	rttm_set_period(to->of_base.base, delta);
-> +	rttm_start_timer(to, RTTM_CTRL_COUNTER);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rttm_state_oneshot(struct clock_event_device *clkevt)
-> +{
-> +	struct timer_of *to = to_timer_of(clkevt);
-> +
-> +	RTTM_DEBUG(to->of_base.base);
-> +	rttm_stop_timer(to->of_base.base);
-> +	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
-> +	rttm_start_timer(to, RTTM_CTRL_COUNTER);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rttm_state_periodic(struct clock_event_device *clkevt)
-> +{
-> +	struct timer_of *to = to_timer_of(clkevt);
-> +
-> +	RTTM_DEBUG(to->of_base.base);
-> +	rttm_stop_timer(to->of_base.base);
-> +	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
-> +	rttm_start_timer(to, RTTM_CTRL_TIMER);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rttm_state_shutdown(struct clock_event_device *clkevt)
-> +{
-> +	struct timer_of *to = to_timer_of(clkevt);
-> +
-> +	RTTM_DEBUG(to->of_base.base);
-> +	rttm_stop_timer(to->of_base.base);
-> +
-> +	return 0;
-> +}
-> +
-> +static void rttm_setup_timer(void __iomem *base)
-> +{
-> +	RTTM_DEBUG(base);
-> +	rttm_stop_timer(base);
-> +	rttm_set_period(base, 0);
-> +}
-> +
-> +static u64 rttm_read_clocksource(struct clocksource *cs)
-> +{
-> +	struct rttm_cs *rcs = container_of(cs, struct rttm_cs, cs);
-> +
-> +	return rttm_get_counter(rcs->to.of_base.base);
-> +}
-> +
-> +/* Module initialization part. */
-> +static DEFINE_PER_CPU(struct timer_of, rttm_to) = {
-> +	.flags				= TIMER_OF_BASE | TIMER_OF_CLOCK | TIMER_OF_IRQ,
-> +	.of_irq = {
-> +		.flags			= IRQF_PERCPU | IRQF_TIMER,
-> +		.handler		= rttm_timer_interrupt,
-> +	},
-> +	.clkevt = {
-> +		.rating			= 400,
-> +		.features		= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> +		.set_state_periodic	= rttm_state_periodic,
-> +		.set_state_shutdown	= rttm_state_shutdown,
-> +		.set_state_oneshot	= rttm_state_oneshot,
-> +		.set_next_event		= rttm_next_event
-> +	},
-> +};
-> +
-> +static int rttm_enable_clocksource(struct clocksource *cs)
-> +{
-> +	struct rttm_cs *rcs = container_of(cs, struct rttm_cs, cs);
-> +
-> +	rttm_disable_irq(rcs->to.of_base.base);
-> +	rttm_setup_timer(rcs->to.of_base.base);
-> +	rttm_enable_timer(rcs->to.of_base.base, RTTM_CTRL_TIMER,
-> +			  rcs->to.of_clk.rate / RTTM_TICKS_PER_SEC);
-> +
-> +	return 0;
-> +}
-> +
-> +struct rttm_cs rttm_cs = {
-> +	.to = {
-> +		.flags	= TIMER_OF_BASE | TIMER_OF_CLOCK,
-> +	},
-> +	.cs = {
-> +		.name	= "realtek_otto_timer",
-> +		.rating	= 400,
-> +		.mask	= CLOCKSOURCE_MASK(RTTM_BIT_COUNT),
-> +		.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
-> +		.read	= rttm_read_clocksource,
-> +	}
-> +};
-> +
-> +static u64 notrace rttm_read_clock(void)
-> +{
-> +	return rttm_get_counter(rttm_cs.to.of_base.base);
-> +}
-> +
-> +static int rttm_cpu_starting(unsigned int cpu)
-> +{
-> +	struct timer_of *to = per_cpu_ptr(&rttm_to, cpu);
-> +
-> +	RTTM_DEBUG(to->of_base.base);
-> +	to->clkevt.cpumask = cpumask_of(cpu);
-> +	irq_force_affinity(to->of_irq.irq, to->clkevt.cpumask);
-> +	clockevents_config_and_register(&to->clkevt, RTTM_TICKS_PER_SEC,
-> +					RTTM_MIN_DELTA, RTTM_MAX_DELTA);
-> +	rttm_enable_irq(to->of_base.base);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init rttm_probe(struct device_node *np)
-> +{
-> +	unsigned int cpu, cpu_rollback;
-> +	struct timer_of *to;
-> +	unsigned int clkidx = num_possible_cpus();
-> +
-> +	/* Use the first n timers as per CPU clock event generators */
-> +	for_each_possible_cpu(cpu) {
-> +		to = per_cpu_ptr(&rttm_to, cpu);
-> +		to->of_irq.index = to->of_base.index = cpu;
-> +		if (timer_of_init(np, to)) {
-> +			pr_err("setup of timer %d failed\n", cpu);
-> +			goto rollback;
-> +		}
-> +		rttm_setup_timer(to->of_base.base);
-> +	}
-> +
-> +	/* Activate the n'th + 1 timer as a stable CPU clocksource. */
-> +	to = &rttm_cs.to;
-> +	to->of_base.index = clkidx;
-> +	timer_of_init(np, to);
-> +	if (rttm_cs.to.of_base.base && rttm_cs.to.of_clk.rate) {
-> +		rttm_enable_clocksource(&rttm_cs.cs);
-> +		clocksource_register_hz(&rttm_cs.cs, RTTM_TICKS_PER_SEC);
-> +		sched_clock_register(rttm_read_clock, RTTM_BIT_COUNT, RTTM_TICKS_PER_SEC);
-> +	} else
-> +		pr_err(" setup of timer %d as clocksource failed", clkidx);
-> +
-> +	return cpuhp_setup_state(CPUHP_AP_REALTEK_TIMER_STARTING,
-> +				"timer/realtek:online",
-> +				rttm_cpu_starting, NULL);
-> +rollback:
-> +	pr_err("timer registration failed\n");
-> +	for_each_possible_cpu(cpu_rollback) {
-> +		if (cpu_rollback == cpu)
-> +			break;
-> +		to = per_cpu_ptr(&rttm_to, cpu_rollback);
-> +		timer_of_cleanup(to);
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +TIMER_OF_DECLARE(otto_timer, "realtek,otto-timer", rttm_probe);
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index 7a5785f405b6..56b744dc1317 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -171,6 +171,7 @@ enum cpuhp_state {
->   	CPUHP_AP_ARMADA_TIMER_STARTING,
->   	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
->   	CPUHP_AP_ARC_TIMER_STARTING,
-> +	CPUHP_AP_REALTEK_TIMER_STARTING,
->   	CPUHP_AP_RISCV_TIMER_STARTING,
->   	CPUHP_AP_CLINT_TIMER_STARTING,
->   	CPUHP_AP_CSKY_TIMER_STARTING,
+> [...]
 
+Applied, thanks!
+
+[1/1] pci: bus: only call of_platform_populate() if CONFIG_OF is enabled
+      (no commit info)
+
+Best regards,
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
