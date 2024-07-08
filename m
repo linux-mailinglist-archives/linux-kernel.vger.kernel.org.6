@@ -1,197 +1,218 @@
-Return-Path: <linux-kernel+bounces-244160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A6D929FFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:15:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEC892A006
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FAA1F2507C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:15:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADCB41F22C98
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C974E59164;
-	Mon,  8 Jul 2024 10:15:20 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3BD76035;
+	Mon,  8 Jul 2024 10:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i2Pr6DjM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF61D2E3F2
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0DC208B8;
+	Mon,  8 Jul 2024 10:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720433720; cv=none; b=uN88l7WljA+qku50PjXjNRnmGS9QdokekO0fWK6ZeWljE2aE9yFaNwFP6aYJECBE8ThBlc78tI/GcQeGXBTNloYj8Fi1bPfeNe2fjODMTB4k4nN8yCppu+pF9fB6dm3o2Mnp96d5cqVX4QryaS8fBbm7lJ7ospcLyS1eTNlE/cY=
+	t=1720433975; cv=none; b=UmMFVlGT3vWhh9M7f3nXSX6wCnuFnssy2ZFWBCwCumb7LoTi5OrfEJndQYhsuEZ8BQd/aTAr5D4gWXGsSWUXTpdpMa8icSHbXaSx3xVx3MhegPXD2UQMSDx5g/TYZbPVT/FdTP/r0h5qr8AzYvVmaLTbKxZpVMpVRVbjnzMUwp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720433720; c=relaxed/simple;
-	bh=P+A8E0zkZTYhke4a2Ujh2jGsSdr3lzUCZCw10OWxTsQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dEk1HniuNuIc2KI0G6e7XqbKLI8Lim+lKzfk2dzrhkZqZeM8hyAJueR8TFMe/xeY8WOowOtIl+2SObWpSi4ZTSn8s6EHpIMgvZmqsjC0D54bS3lEHnPtgHcp4jGHF7A3VMJLhZsyJZ0VcoXWjHC8AtRz8YrKfa9/AEWvJcQm8Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7fb19ed628aso200996639f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:15:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720433718; x=1721038518;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mGfZ/xlazb6vQbChhVhL7rFha/pF23EZgGn4WVNLNJs=;
-        b=BsH4OnXSCetg0LbeEK87rPH7CpvtAP4BdE8y4otVMMPOeEv45s4Y8YBQaxYvbvqh9u
-         SFj9G+6pcVOUjMIhgNMbnHmgpvxStwIdHJX1w0bzm07dX0tG0P2xEcFxCVT0Ev1jw2gf
-         YvgWVbgri2iU0sEQ47vTlPAo1jVtkA9b+Qvpx/KqxKBIHvonGu/jUQ39QhMA08KVtxV0
-         E4+mS3lLJteGfftAf6IMilpLGY2HwXh+CBbK64S9huEBAYrv6+8EC1G2sI/xwTm90bUg
-         RhUTYWoNRWaPFOSpO0r/+aY7R0JP6Xvr1bttz/f8vbqAH3s8DvQFir1Zvg1kqb1K+u/W
-         OVuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUoKTw2FjrdGC8Pxwh4SeYNMT3z2jZ/tVfbYTkEARgEIaBlOI2B/vPj2+uBwmdlRWaqWhOwH02F6lr13+pQotsYTrz65B5ZWTH767A
-X-Gm-Message-State: AOJu0YxoRiECPoKpckrA132VpdOA3BQhTiHen8LiexsIqB8HvxpXc5TH
-	/4UZ0dTUQk7KLFxokhIiZuLFbCMNBbDkGaa0waqvI54UofAIWmH4ffIxuhE8skUJ6oUk7dq7c69
-	ayZWRws0bxE8JmNnblfBXB5ymcqC4ViWG8+SHlLebVlQKeQYvms36m70=
-X-Google-Smtp-Source: AGHT+IE0zhQknJ2gUGYF46ymFvAofXGJ2CUZ/XwesLS/ICqk5AxE8wI617eYEMR2Ohhzx5PgJ8iIAL+Jdhd1k/W88KDxH3qBnYce
+	s=arc-20240116; t=1720433975; c=relaxed/simple;
+	bh=3LmBQ5pj7lLO3tuAgIdTYWWnsfVcobp6ACv7w5pDOBg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CB1yqsxy5ogXF9Rymtum52Y9syT2AKTBOCsQsF3Kpw1G26bG3KcEFWUeJyRy29GU+1mr9ORBCcva9iEGWpiGSyM8BVrd4jsNW7prFkr1NoLthlitOQHsyUJv39rUKPaezva3Dth6lYszOfTK9nW+h5eGcuejdsh/xg+zYEsmbWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i2Pr6DjM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468ACZC7001275;
+	Mon, 8 Jul 2024 10:19:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ejnjm01v7wcJvQkMafFq++
+	rWAupVay7HrKi4Jsj6d+A=; b=i2Pr6DjMfEZoehM16lC3iUfz/vaH0xEE1z3XA3
+	TcosLCAuBzWEc5m+Cq263udIEUNfIIEtE08DRdjfvb8fF9SoqjfCVDT7hzVIJGJ2
+	mEKPNu0Is+phDP352Z/uEHArjyLWBgzJ+3aeEsgpVIqP1w6/O3hxqdeW+q2bbR51
+	WFKZW5gzWWTFppHDjE82A78Y3418xba7Asng29tKvemU6uGWaYeEJ/XZNdVwsusa
+	K35JXRPTin/ND++kmWSIrRo++yUNS55nlGOExfvwv7kSJNKLWdQ3952MrmzDWaES
+	KZQ/NMiOH4WZYYI+MLbKsM5mclBAZvGMApFdjQsPfiIRsykg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8ub4r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 10:19:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468AJQZ6029698
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 10:19:26 GMT
+Received: from hu-kshivnan-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 8 Jul 2024 03:19:23 -0700
+From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_rgottimu@quicinc.com>, <quic_sibis@quicinc.com>,
+        Shivnandan Kumar
+	<quic_kshivnan@quicinc.com>
+Subject: [PATCH v3] soc: qcom: icc-bwmon: Add tracepoints in bwmon_intr_thread
+Date: Mon, 8 Jul 2024 15:47:34 +0530
+Message-ID: <20240708101734.1999795-1-quic_kshivnan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:370c:b0:4c0:a8a5:81dc with SMTP id
- 8926c6da1cb9f-4c0a8a58dc1mr86879173.6.1720433717767; Mon, 08 Jul 2024
- 03:15:17 -0700 (PDT)
-Date: Mon, 08 Jul 2024 03:15:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009b85eb061cb9b0fc@google.com>
-Subject: [syzbot] [mm?] KCSAN: data-race in __swap_writepage /
- scan_swap_map_slots (2)
-From: syzbot <syzbot+da25887cc13da6bf3b8c@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: V2-ALqkpy5c24aGsXrr-nPcw16zdiduq
+X-Proofpoint-ORIG-GUID: V2-ALqkpy5c24aGsXrr-nPcw16zdiduq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_05,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ malwarescore=0 priorityscore=1501 clxscore=1015 impostorscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080080
 
-Hello,
+Add tracepoint for tracing the measured traffic in kbps,
+up_kbps and down_kbps in bwmon. This information is valuable
+for understanding what bwmon hw measures at the system cache
+level and at the DDR level which is helpful in debugging
+bwmon behavior.
 
-syzbot found the following issue on:
-
-HEAD commit:    256abd8e550c Linux 6.10-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=106f73b9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d41a21b8562873d8
-dashboard link: https://syzkaller.appspot.com/bug?extid=da25887cc13da6bf3b8c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb12c934492f/disk-256abd8e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a25b9e666500/vmlinux-256abd8e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ef2e7d0332d0/bzImage-256abd8e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+da25887cc13da6bf3b8c@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in __swap_writepage / scan_swap_map_slots
-
-read-write to 0xffff888103c5ee10 of 8 bytes by task 12496 on cpu 0:
- scan_swap_map_slots+0x51/0x10e0 mm/swapfile.c:868
- get_swap_pages+0x30b/0x480 mm/swapfile.c:1115
- folio_alloc_swap+0x3b7/0x490 mm/swap_slots.c:346
- shmem_writepage+0x43e/0x970 mm/shmem.c:1493
- pageout mm/vmscan.c:660 [inline]
- shrink_folio_list+0x194f/0x2560 mm/vmscan.c:1341
- shrink_inactive_list mm/vmscan.c:1944 [inline]
- shrink_list mm/vmscan.c:2179 [inline]
- shrink_lruvec+0xbd9/0x15f0 mm/vmscan.c:5703
- shrink_node_memcgs mm/vmscan.c:5889 [inline]
- shrink_node+0x9d1/0x13c0 mm/vmscan.c:5924
- shrink_zones mm/vmscan.c:6168 [inline]
- do_try_to_free_pages+0x3c6/0xc50 mm/vmscan.c:6230
- try_to_free_mem_cgroup_pages+0x1eb/0x4e0 mm/vmscan.c:6545
- try_charge_memcg+0x27a/0xcd0 mm/memcontrol.c:2944
- try_charge mm/memcontrol.c:3092 [inline]
- charge_memcg mm/memcontrol.c:7495 [inline]
- __mem_cgroup_charge+0x63/0x100 mm/memcontrol.c:7510
- mem_cgroup_charge include/linux/memcontrol.h:691 [inline]
- shmem_alloc_and_add_folio mm/shmem.c:1677 [inline]
- shmem_get_folio_gfp+0x480/0xb70 mm/shmem.c:2055
- shmem_get_folio mm/shmem.c:2160 [inline]
- shmem_write_begin+0xa0/0x1c0 mm/shmem.c:2743
- generic_perform_write+0x1d5/0x410 mm/filemap.c:4015
- shmem_file_write_iter+0xc8/0xf0 mm/shmem.c:2919
- __kernel_write_iter+0x24f/0x4e0 fs/read_write.c:523
- dump_emit_page fs/coredump.c:893 [inline]
- dump_user_range+0x3a7/0x550 fs/coredump.c:954
- elf_core_dump+0x1aeb/0x1c30 fs/binfmt_elf.c:2083
- do_coredump+0xff6/0x1860 fs/coredump.c:767
- get_signal+0xdc1/0x1080 kernel/signal.c:2894
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- irqentry_exit_to_user_mode+0x94/0x130 kernel/entry/common.c:231
- irqentry_exit+0x12/0x50 kernel/entry/common.c:334
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
-read to 0xffff888103c5ee10 of 8 bytes by task 12516 on cpu 1:
- __swap_writepage+0x88/0xc50 mm/page_io.c:387
- swap_writepage+0xa9/0x160 mm/page_io.c:209
- shmem_writepage+0x7be/0x970 mm/shmem.c:1518
- pageout mm/vmscan.c:660 [inline]
- shrink_folio_list+0x194f/0x2560 mm/vmscan.c:1341
- shrink_inactive_list mm/vmscan.c:1944 [inline]
- shrink_list mm/vmscan.c:2179 [inline]
- shrink_lruvec+0xbd9/0x15f0 mm/vmscan.c:5703
- shrink_node_memcgs mm/vmscan.c:5889 [inline]
- shrink_node+0x9d1/0x13c0 mm/vmscan.c:5924
- shrink_zones mm/vmscan.c:6168 [inline]
- do_try_to_free_pages+0x3c6/0xc50 mm/vmscan.c:6230
- try_to_free_mem_cgroup_pages+0x1eb/0x4e0 mm/vmscan.c:6545
- try_charge_memcg+0x27a/0xcd0 mm/memcontrol.c:2944
- try_charge mm/memcontrol.c:3092 [inline]
- charge_memcg mm/memcontrol.c:7495 [inline]
- __mem_cgroup_charge+0x63/0x100 mm/memcontrol.c:7510
- mem_cgroup_charge include/linux/memcontrol.h:691 [inline]
- shmem_alloc_and_add_folio mm/shmem.c:1677 [inline]
- shmem_get_folio_gfp+0x480/0xb70 mm/shmem.c:2055
- shmem_get_folio mm/shmem.c:2160 [inline]
- shmem_write_begin+0xa0/0x1c0 mm/shmem.c:2743
- generic_perform_write+0x1d5/0x410 mm/filemap.c:4015
- shmem_file_write_iter+0xc8/0xf0 mm/shmem.c:2919
- __kernel_write_iter+0x24f/0x4e0 fs/read_write.c:523
- dump_emit_page fs/coredump.c:893 [inline]
- dump_user_range+0x3a7/0x550 fs/coredump.c:954
- elf_core_dump+0x1aeb/0x1c30 fs/binfmt_elf.c:2083
- do_coredump+0xff6/0x1860 fs/coredump.c:767
- get_signal+0xdc1/0x1080 kernel/signal.c:2894
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- irqentry_exit_to_user_mode+0x94/0x130 kernel/entry/common.c:231
- irqentry_exit+0x12/0x50 kernel/entry/common.c:334
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
-value changed: 0x0000000000004083 -> 0x0000000000008083
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 12516 Comm: syz.2.2868 Not tainted 6.10.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-==================================================================
-
-
+Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+v3:
+* Add file in sorted order [Sibi]
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+v2:
+* Fix multiple assignments [Dmitry]
+* Fix alignment [Dmitry]
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+ MAINTAINERS                        |  1 +
+ drivers/soc/qcom/icc-bwmon.c       |  6 +++-
+ drivers/soc/qcom/trace_icc-bwmon.h | 48 ++++++++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/soc/qcom/trace_icc-bwmon.h
 
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 242fc612fbc5..7354cd4c2079 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18574,6 +18574,7 @@ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
+ F:	drivers/soc/qcom/icc-bwmon.c
++F:	drivers/soc/qcom/trace_icc-bwmon.h
+
+ QUALCOMM IOMMU
+ M:	Rob Clark <robdclark@gmail.com>
+diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+index fb323b3364db..fc391d077d93 100644
+--- a/drivers/soc/qcom/icc-bwmon.c
++++ b/drivers/soc/qcom/icc-bwmon.c
+@@ -17,6 +17,8 @@
+ #include <linux/pm_opp.h>
+ #include <linux/regmap.h>
+ #include <linux/sizes.h>
++#define CREATE_TRACE_POINTS
++#include "trace_icc-bwmon.h"
+
+ /*
+  * The BWMON samples data throughput within 'sample_ms' time. With three
+@@ -645,9 +647,10 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
+ 	struct icc_bwmon *bwmon = dev_id;
+ 	unsigned int irq_enable = 0;
+ 	struct dev_pm_opp *opp, *target_opp;
+-	unsigned int bw_kbps, up_kbps, down_kbps;
++	unsigned int bw_kbps, up_kbps, down_kbps, meas_kbps;
+
+ 	bw_kbps = bwmon->target_kbps;
++	meas_kbps = bwmon->target_kbps;
+
+ 	target_opp = dev_pm_opp_find_bw_ceil(bwmon->dev, &bw_kbps, 0);
+ 	if (IS_ERR(target_opp) && PTR_ERR(target_opp) == -ERANGE)
+@@ -679,6 +682,7 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
+ 	bwmon_clear_irq(bwmon);
+ 	bwmon_enable(bwmon, irq_enable);
+
++	trace_qcom_bwmon_update(dev_name(bwmon->dev), meas_kbps, up_kbps, down_kbps);
+ 	if (bwmon->target_kbps == bwmon->current_kbps)
+ 		goto out;
+
+diff --git a/drivers/soc/qcom/trace_icc-bwmon.h b/drivers/soc/qcom/trace_icc-bwmon.h
+new file mode 100644
+index 000000000000..beb8e6b485a9
+--- /dev/null
++++ b/drivers/soc/qcom/trace_icc-bwmon.h
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM icc_bwmon
++
++#if !defined(_TRACE_ICC_BWMON_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_ICC_BWMON_H
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(qcom_bwmon_update,
++	    TP_PROTO(const char *name,
++		     unsigned int meas_kbps, unsigned int up_kbps, unsigned int down_kbps),
++
++	    TP_ARGS(name, meas_kbps, up_kbps, down_kbps),
++
++	    TP_STRUCT__entry(
++			     __string(name, name)
++			     __field(unsigned int, meas_kbps)
++			     __field(unsigned int, up_kbps)
++			     __field(unsigned int, down_kbps)
++	    ),
++
++	    TP_fast_assign(
++			   __assign_str(name);
++			   __entry->meas_kbps = meas_kbps;
++			   __entry->up_kbps = up_kbps;
++			   __entry->down_kbps = down_kbps;
++	    ),
++
++	    TP_printk("name=%s meas_kbps=%u up_kbps=%u down_kbps=%u",
++		      __get_str(name),
++		      __entry->meas_kbps,
++		      __entry->up_kbps,
++		      __entry->down_kbps)
++);
++
++#endif /* _TRACE_ICC_BWMON_H */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom/
++
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE trace_icc-bwmon
++
++#include <trace/define_trace.h>
+--
+2.25.1
+
 
