@@ -1,835 +1,314 @@
-Return-Path: <linux-kernel+bounces-244053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F08929E6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:42:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700A3929E72
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ECF5284BD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69CB284EE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF84647F7A;
-	Mon,  8 Jul 2024 08:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EFD5579F;
+	Mon,  8 Jul 2024 08:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="GzgDePPF"
-Received: from mail.fris.de (mail.fris.de [116.203.77.234])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ArbiQ0LJ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CzSfmMag"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD39768EF;
-	Mon,  8 Jul 2024 08:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720428103; cv=none; b=a24K4dM5rTNv+CNOShJO8nc/YJ7AID6SsZbQ2k99Wd9+WtLhhwwZW7IMArfhk6eLy+QQRqYQEJJyy433rU7ADZWr7WOzhbs4tt97/kGrWGY4Vd6Fk+J1iyI+E1sa4975E2H0+ktAYmIN/H5eBK7+Q7k+2nCx9C6Dtose73iHgT4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720428103; c=relaxed/simple;
-	bh=81wpWMDbEp8XLa9WMhS3B4cC79HQ88fFMX5MHCrTZno=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iJFeq2hjJ7T295Kkq4W7mywq4vu70q/oBwct83W6CUR1sIdCnsBYNHE20sbGMYHbXMG5/82NbkZ83Mvh8w0adxxCKoL4qxpGHzD9WOgLiLpf3wbtRY48pbOjiVsAxFwWXo1S7lX3rIGfxexOGBR8rso5kLshz2UWg0SZXMv2geo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=GzgDePPF; arc=none smtp.client-ip=116.203.77.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4C515BFBA8;
-	Mon,  8 Jul 2024 10:41:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1720428098; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=j5c5NEwfDCzcK+X3ChRiJgZPE2mtbL8FXY+gGQit6RM=;
-	b=GzgDePPFKTrXZFr9oB/XNmOhfohjIkzvVirfcaJCsP05D/EboROXB4qd++azMIyd2eLDhx
-	Ppg6sR/lHSPu1dLtybzJ+jeN9KfllIfMfrIV6Kwn2MwGAxc/7SoTDqsAJSjitnjwCyAgB6
-	2wLEe3gRimhANOezQdMscWMJBaSOJsFZAESwTzLWXA7SwF4ZV0x3JHMC61SALGNUkm92pz
-	m5RU2w2D2gsecj8cp0H7Dow0vD2pbLk91rk+iPcMMEqV5RU9f0oGNCBwLnEvVB2FhnKute
-	zBw0fG4gN5MX49zE9OKbUUygnc4s4dkmvvTUak+Rx9uDaiRwmu5wYEy7wR6ciQ==
-From: Frieder Schrempf <frieder@fris.de>
-To: Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH v2 5/5] arm64: dts: Add support for Kontron i.MX93 OSM-S SoM and BL carrier board
-Date: Mon,  8 Jul 2024 10:40:35 +0200
-Message-ID: <20240708084107.38986-6-frieder@fris.de>
-In-Reply-To: <20240708084107.38986-1-frieder@fris.de>
-References: <20240708084107.38986-1-frieder@fris.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F5A50288;
+	Mon,  8 Jul 2024 08:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720428145; cv=fail; b=mahqUqhjlYPUUR0oeJXTyufmOX3hn60ARv4Sxpy6Gj3vB/lP3Ne3FJAMjZlE/yQqR3YDyKglJz6lFaVSeoZ9ZLEO1NB46hT+siSlq41fwgcAajokDeIrAWzdUyfcsHhWySkfv1cD4cYYnq1eTZuTGmKpmHBilynpYFidi82el0E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720428145; c=relaxed/simple;
+	bh=cnDO/6UsTeCciqF5GJoRDNckEk+wvGWWW8repTzGUVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=H/2NZznbgZbzaXQL6O/FkPb2H2uYdMa7W+mwqgKBuCy6YA0UMIP31TqUcylDD/KyJz0Zk6DUjnJddIFzQJDHGQZINYzQnhAq4GbZVU7f130VYKgVVwk0y/rDrdn0oTWhddYkuFCDSJnDNmcFw5ux38BEEiV65kM9utsm3v3OVzI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ArbiQ0LJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CzSfmMag; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4687fWjI018083;
+	Mon, 8 Jul 2024 08:41:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:content-transfer-encoding:in-reply-to:mime-version; s=
+	corp-2023-11-20; bh=iJ74KparJByS1pEp/wNe7YvTS4D5fgUvfyjD2adixO4=; b=
+	ArbiQ0LJVNrUt+QQqCNYuGjY9U24pj2QQY68T8cOMHlI5/H+znDFKlu1cU6TZie4
+	u4yRIBgcYWD6RxcfSTleKdN8PzdWzJCFxht2OoBIETsWILhES2uzihlE+m0+2+S7
+	39YjXBC/F0IIt94VDLD8w1ehzFLVOolxykcWkG5c3g6dTTxxdG4r5nvkC6vRQ360
+	6T9rr7hvqnLdVt/oGqj+Krdv1ZZ1yQ+MhyKfwxUD50XUgwy8UjBPOuCw3Ca+vBUo
+	eXgmjopNmtE+oYA5B9rK87mCE2LeaQvt5oz/Ar1YaJZ38rO4fpxJC0r52xUmlYXS
+	JuRsDCqOD1/8M0GslCxvbw==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 407emssgt0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 08 Jul 2024 08:41:38 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4686eRdR005809;
+	Mon, 8 Jul 2024 08:41:38 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 407tx0urg3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 08 Jul 2024 08:41:38 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HYB/ErIokcv5+369h1Db0XvPoRcKxNRsJnJbaox1tde3s72kL2I2/Mbb9lkJz5cXIb/P6SMBTEhQoe+CyIgt5QyYeipPqDB7FYN5sIZhKBv5lAGu9tHUY2O8MfGQETRbBNA5wrmlIjmKZ43FH3ttrkxnwKWOo8S/AjTGNM5JDUF3ALpmxA+xkbF+fPXgPWk3zz14IHIjsI4s+adxM13HH9T3+NALxsi1QLKY1LoUhTBBAaTss94VbMPj7Gbuc5f0rVHk/0KfwlA/hknUkeWCmKL31miGyKZHD4pkI6dhpnC0WyudJ2r4KRJNiRFQyrhih3R0cCEvfMWjCJ4Aix8xZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iJ74KparJByS1pEp/wNe7YvTS4D5fgUvfyjD2adixO4=;
+ b=GbWRcDVDfA4SAKmOfclyHAQGATB/JT8+XQTvLeL/mJVXiHBaYxQvoY+7hxJjOdNPd1efN/iJJkVHjS6oa2ZeWM8bRRTNhcm0HI+3tA0+zpjiVdpGKb/4DB13R5rdd7CLhiNQn1y6nY+EIebNXKXwgF4dOt5N+gpX1x8Z744gHggHZrMnh0kkVA7HS9pgiW5ZL9oduncF0Ueq6s7sSQoOmJyfa+2DtMtO6U4jD2227lm0IVifwRfrW4vCVevFFUFgEOoAZy4E5X1Wvz6/M2FHltrtHnfCWCvRAN97Duws1O1I2gCkDe2ZOeG3tighoLJaQ0aZzFzp8UVV3z8hMtsHsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iJ74KparJByS1pEp/wNe7YvTS4D5fgUvfyjD2adixO4=;
+ b=CzSfmMagjvtJijG8jiDrJURcTe98RHY4IwNBxqpGiLl+Ol71hTSFkmdCApuod3bXlZ8vFlu3UmQi6sNneQXAnmtDAJO992qk1Ul2HLMldiFT5jjyzs7W0dVV92YmkyxtCAgIh62/VF1E1KO8s4dzGOxPu7Nv6Q80IoUGa5Hb+kQ=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by SN7PR10MB6641.namprd10.prod.outlook.com (2603:10b6:806:2ac::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Mon, 8 Jul
+ 2024 08:41:34 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
+ 08:41:34 +0000
+Date: Mon, 8 Jul 2024 09:41:29 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+        Christian Kujau <lists@nerdbynature.de>,
+        =?utf-8?B?UMOpdGVy?= Ujfalusi <peter.ujfalusi@intel.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: Re: [PATCH RESEND] bpf: fix order of args in call to bpf_map_kvcalloc
+Message-ID: <4597fb15-a7ed-468b-a7e3-48618e6ff18e@lucifer.local>
+References: <20240612-master-v1-1-a95f24339dab@gmail.com>
+ <CAADnVQJLgo4zF5SVf-P5U_nOaiFW--mCe-zY6_Dec98z_QE24A@mail.gmail.com>
+ <270804d4-b751-4ac9-99b2-80e364288c37@leemhuis.info>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <270804d4-b751-4ac9-99b2-80e364288c37@leemhuis.info>
+X-ClientProxiedBy: LO4P265CA0163.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:312::7) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SN7PR10MB6641:EE_
+X-MS-Office365-Filtering-Correlation-Id: b93730f3-9204-4b8c-c436-08dc9f29c5cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?d3JUNnBTTWxmQUxIMHdCbUo4RVRleEFNVzUvRWdVckFjT2Q0VEh6dDVKYUJC?=
+ =?utf-8?B?T0tDd1N2dkUxSm1zTGhjbGMrWE9qTFdtamM3a0tqZ0FEbWFjSVBiVk9keEdk?=
+ =?utf-8?B?RC9zbVpQaG05UTMzRUIxWWhFQ3dHRzZlclE0ZmdlWGc5UGtPWmowZ1NQa0Rs?=
+ =?utf-8?B?ZEh1THFreWxlb0tSY1lOK21NTDl0eHVWMitpdkxzVFZrbzNhNndsV0NlVEE2?=
+ =?utf-8?B?UWtzaVJwWkdwWHMyOWhaa3FSeHk1WXVDUWdpc1BNKzljK0VoaFdrcWtMdkdU?=
+ =?utf-8?B?VkZLajlGSnhxckhEbFhTam5VbTZ1N0l3NHhlLzZwREZXOUxGLzF2RHMxOTds?=
+ =?utf-8?B?MUNGWlRyRjMwMm1nVy90VWIwT1I4MHZvRzBta2FFRGdwc3hQUjF5eG5aTDVJ?=
+ =?utf-8?B?SVZDeFdpbHNGNTUxNERCYjZxcVhYbFB2eGhtc0lXcGRvM0pZajZFWUhTaVZ3?=
+ =?utf-8?B?d0V0ZWZ0N1dCS05UczdWamdsQnlUTy9uMFowTGxPcjJLczQ4aTA1MitiZXVM?=
+ =?utf-8?B?YWhDUjlSbkpiM0hoMW13akdGNllKcnZOSXZkbVIvK0U5OXNrOGJrNW5mOHdr?=
+ =?utf-8?B?Q2tCSzhJQi9nbjgwb0ttNjdlOFdIbmZTRk9pZHVZcGtiMEJlM21HeEJqK0tQ?=
+ =?utf-8?B?Q3BQOUdYeTRGNHJyK3MvV3loaEZlOTQ4MWxUaUVwbFRXcmZ1ckZ0TTZvbGVy?=
+ =?utf-8?B?WUFBczdua0o1dXNKc29LQzBydkdQbGxFMStXY05aeDRtRFdRbzgyZEw3U2tD?=
+ =?utf-8?B?Yy80WXl3L1JNY28zR2UyRTlRWXJJUWJRY0ZyTitBZzhpNW44MGw0N1dOanRL?=
+ =?utf-8?B?R1RsSFJNcTlQSHVGN0ZNbDJGKzBhc0xGclZCeTlKRU8xN1dYSmNGWmJjL21J?=
+ =?utf-8?B?VVhSbzdtQmx4VzdaaVkxOXI3YUxCWUk1VWVOcEEwWHdSM2xiYkk1UkFkaG1G?=
+ =?utf-8?B?bUV5d0t6TjVnbnZGQUFWZ1RCOGt3Z21UeFcwbDJCR1MvTzdXNkJmL2ZCdlhs?=
+ =?utf-8?B?N1ovc2x4UU9KSFZMb3FpVjVKUTdnQVNPWEtYNGpicmRvR0ZNL2xOeHd3ek82?=
+ =?utf-8?B?M09KMWZGMDZ5RG11aFJGcmcwOSs5bU1IUkVNUWlabVljdGREQ0FwYVBtTW9s?=
+ =?utf-8?B?clptUjRDSkpsaG4yVmNtTkptZVlhZ0VIWlpzRUxIdmZwYnVkcnV5MXdpcGlP?=
+ =?utf-8?B?V3czRWhYQ2RYdkRkMHViRnNPb2UxUHBhMU51bFNRT2FPRUxqcS9DWFlOS3RZ?=
+ =?utf-8?B?L1pjek5iYmhYdWJROVBTai9PWVNZck1QSHBOazdRT2Z5TVNuMzhvWENDOE10?=
+ =?utf-8?B?cEJTOFNhWlJ0R1lMdWVBc2pDdHRsU1dTZW9lL0Q3V3J3OWQ5RGRuamhwS0pI?=
+ =?utf-8?B?SjdQcGxIYkZzMVBDczZiZlVHWGVDc2dMTjhLZTVCZVY5bldFdzAyTUM0U293?=
+ =?utf-8?B?anpVcUg5Y29BdHYwcDloNklKeXdiSWVOc1pzZ1hNQlpXTzRYN3h0NTRwUnFW?=
+ =?utf-8?B?UzJqY2JHZ1l6YWpoUmZZZXlkVzR0U3ZuNlhyekFwY3d5RTcyZXc1NUlSU3Bo?=
+ =?utf-8?B?cCswYk9kNTBtdW1rVXVsQUtDb2JnUXUzR1A1ZGp0ZXdPQ05tVFY5TWlMZGM4?=
+ =?utf-8?B?dkNLdzlnc1IyVUFGb3pJZm1ybTl0cHpqTE1NMDlwTmJ0VVpUSmhManVLZmpU?=
+ =?utf-8?B?M1ZBRVZudjJ2aDdwVGsvSU1JNitVNUh6N216VlpVTkpMME9aTllVNjZjcllD?=
+ =?utf-8?Q?eeMEhSfwASVlXBZc6Q=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?S3QrZlZjak5BRjllTytIcGQ3Y2dmTjNiMVBTQWxURWRoLzBsU0QzLzdMK01U?=
+ =?utf-8?B?SWtENVRNdlpkdC9QS3pYbDNHVlcwb0JJdnA3Szl2cUJNSzQxbGdldG9SZmZa?=
+ =?utf-8?B?SndDSjAxOE8waEFkUUtwWmJsUXVzQ1YvejRZN2J0bFgxL24xRkxaNDVBOXlJ?=
+ =?utf-8?B?TXB2dThMK0g4cEZ1NFFRbU5lYkJnU1krRlZXNFhwVFpVRWdaelhUV09nQXdu?=
+ =?utf-8?B?bm1qL01JK001cUlSck5uVW1YWEtJUm55TGJjZitaTUc0SUFOMVBGREIrT1hN?=
+ =?utf-8?B?QlN6bjlZNFdPWjNzTEh2OU5MOTQvcGVpSVk1K0lPZ25jM0JjcWhwd0tYMllq?=
+ =?utf-8?B?a3Y2SWRHQWlKUkU3ZktlK0tYWDRJWmgxMnEzd0wrVWJYMDlGSjZ3TlEvb1hy?=
+ =?utf-8?B?QkZmNFZsYUVzYmxrRHpScml6TnYvaUp3UmlZVWJ1Mk9lekRNMTFtTEpKUktv?=
+ =?utf-8?B?U1ltbWZCaXZEZ2IyM0VYdzZDUUhEVzhJc2JvOEFrMjZucHhZc2xGbW9nRGMv?=
+ =?utf-8?B?VFdiUmowclFBWkRSQTNwWkJEM3hJQUlTTXlMV0Zvalhuend6VEdqSFEzdVJt?=
+ =?utf-8?B?TGplNEVoM1JEVjVlRm10QjhjQXYzZVVKWGZOekx0dlhPSGNjWlhzdDBRQjhk?=
+ =?utf-8?B?UTIyWVlSV1FaRnozdXJJZlhxaHI0ZHI2N3UyMFNBMys3VktMZmRZVjBwZmVT?=
+ =?utf-8?B?UEhqc1R6bVk2SmJBazV6dmhaK3c1dktUTmZ6V2srVW11ZGZyNkQ5TUNqcEto?=
+ =?utf-8?B?WVVCaDVoMUFQOVhEeHVhaTd6SENjYlZtYnlzdFpLY0NRNGlGVGZTU1QzM1FW?=
+ =?utf-8?B?OWxkYm5mN25uZ2IrdGx6QVdGY04rY21yZUlUdlc1WEJvdmRzZWtRUVVrOFBo?=
+ =?utf-8?B?SWZ5WVBsWTBrTTg3ZGJNdTdZYzZiZ2JZNVRUanBGT1UvQXZWckdndzZYbEoy?=
+ =?utf-8?B?NFZKUXRoNkhSeUdTMU9DR1NmcDdhTWovSmRKR01EOU5uWmNrV01FcTIwZmlU?=
+ =?utf-8?B?RFdwV3ZjZjNiMzloN1M4YUoxMjFXLzRmUEdScnNwOGFsZGNSOFN1NDBnVUtr?=
+ =?utf-8?B?eWRCQ2RoampuK1pGK29wcWl1TXk0NDRTcitNNXlpL1RJVS91alIwOVN2Qlht?=
+ =?utf-8?B?Sy9Xc3V2QlI0ZUVsS21tZndNVlhSajVGRnZoQTQwM1ZmcUhOZDh2R0lJVm02?=
+ =?utf-8?B?ZjdGZHg2RjZ4b3dXRXNXd3BrMmdGQW5wMzRHMFQ0S1NWdVNTTlRjOHAxcVJ5?=
+ =?utf-8?B?aEl0UVhNUHl2VXRyYVFiZUcrRmN0YTlOWVpFNUJDTncvK2lOcTIzMEZWckgr?=
+ =?utf-8?B?RkowUHdRaGhPK0them1qWnloMzVmSUg4SERsSzNkYWorMmlkOVkyUXJRZEhR?=
+ =?utf-8?B?U0Z6eVpicWV2b3YybG8zdVVzUUxzNmZuNGVpSXVEZGtQNjVHRkFFRmQ0ak51?=
+ =?utf-8?B?ZTdZdEgrTksrWDRBWVA3OVAxSVFXTUZrV0kyZ1k5VEI3a1QyYXpjOWhOOWJu?=
+ =?utf-8?B?UjcxbThPS0Y3eVJabW55MUliTis0cURMdWdCaUxDWWhlSXV2TzRZV3ovRlNk?=
+ =?utf-8?B?dWFaSW5xSVRLQjFZZ2p5R3VzdC9lazA2SFV4RCtMbDl4aG5MZHc1dnk5UXl1?=
+ =?utf-8?B?N0xaZUgwOU5DdTNJK0xhQURxeHkwTXpNMHpKSjZ3ZWcyek5sa3BZUTBRelJH?=
+ =?utf-8?B?MkRHOVhZZWlMWExQSjRhRU0vUnU2UDlmeUM5QnBPT29ZcHhKQkNIR1c4Zjcy?=
+ =?utf-8?B?MkJsdnQ2MDd0eUZBM2ZGdCtyZGZMd1IxZDJDSThoRnNJTUpQZTRTVVpaVWU4?=
+ =?utf-8?B?RE9qbHR4V3JRa1Y0Uk9WbXplTWptNzlQeEgrVjVYNTZuTWhNNjZFdWZtZXRa?=
+ =?utf-8?B?eHRoZTJvcnN1R3gxZUdKVDJCRDhwSXAzZVNGZHlHVWV3bU5scWQweEp6SDF0?=
+ =?utf-8?B?ZktUTnVwWHBlQmg2enA3UVZuU3M3VTVxdGtIY2tmdVd6dFJpcVI3bkVkZm01?=
+ =?utf-8?B?a3RhVHFYS2lYeFgrQ2hWTDUrYXRFeVpudUZzZGViRy9YSHpGYzBCK2lXdG9S?=
+ =?utf-8?B?bVorMHBDNmVpZ3VoNXNyN1dFZERURmZ5UnpKdHdJY2RUOFpSV3p1bEVuOFlv?=
+ =?utf-8?B?QWVFS1YvZm1qLy95alJRMzFsTlNubEhKa0RDMTEyS05kNERvU3Frd2V3T01H?=
+ =?utf-8?B?a0E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	9j62cxveR81cFfgLIvRUpvTyg3TZc0fE5yOU2tbFjCEyYew6H32GINTaSSquplb5TdECAix+fnHKWdDA2OXSBwik3hv24s4sli1qB1enMXWYTI8eDnnqLOuIxnORWT3YV1g2euov5xF1ABGK2ZU4yPa9PYzb6b7Va5x+8r8Z3R0VD14ErcnoCtF32Qz4Mq5F/Te3dVDsQqwpFEPhK/OeKv8x1UsyceN0zb3NXqjO69eveW6GxgHtNnvMmKs6Pxzeqrstku4Nd9NT8yePubE7+uF50iy/2H5Eq4gJDBNVjE9BReX2cgA2OoGbAtgDvkPUdI3M4bU4gjYcmw7eghg9tYu2K7aOq3aD/jijGyCLYXzFRtqt5xYOmPn0nAfROynVEpbXdXXHAMWIi44klckyfK4R23IrdiGBE+myQise17493ExV9w8Lhzp/IvwU3pHK9SRqbVxqe+lXD/BHCuwwV8v2F5SLEzue9SounWBQ1H6T37LpUNLjououC5Dk82j9rJBHFUOul/es1OU/ED1Hqxn2aRtGJKX39CCYcMl+bbIuQeT2nIsXywj7MvZ59jj3fA3L36ZWF4AypVBUDoBONYhx7Powr0rh/dObiddjmRc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b93730f3-9204-4b8c-c436-08dc9f29c5cd
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 08:41:34.3197
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UCtqItD251gqElHVliW1Lsz4dLu3VPvieiXxvfaByw2qEi1r8XJboDQCvXJRDAayWsP08+YGTYPqwcLWA3XyRzQc/NsdKMW2OmOuGfjaxsY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6641
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_04,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407080067
+X-Proofpoint-GUID: mf0SPXlH6Zhbge1lMkOeO1HF8JcI0UXc
+X-Proofpoint-ORIG-GUID: mf0SPXlH6Zhbge1lMkOeO1HF8JcI0UXc
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Mon, Jul 08, 2024 at 10:20:33AM GMT, Linux regression tracking (Thorsten Leemhuis) wrote:
+> [CCing the regressions list and people mentioned below]
+>
+> On 12.06.24 16:53, Alexei Starovoitov wrote:
+> > On Wed, Jun 12, 2024 at 2:51 AM Mohammad Shehar Yaar Tausif
+> > <sheharyaar48@gmail.com> wrote:
+> >>
+> >> The original function call passed size of smap->bucket before the number of
+> >> buckets which raises the error 'calloc-transposed-args' on compilation.
+> >>
+> >> Fixes: 62827d612ae5 ("bpf: Remove __bpf_local_storage_map_alloc")
+> >> Reviewed-by: Andrii Nakryiko <andrii@kernel.org>
+> >> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+> >> ---
+> >> - already merged in linux-next
+> >> - [1] suggested sending as a fix for 6.10 cycle
+> >
+> > No. It's not a fix.
+>
+> If you have a minute, could you please explain why that is? From what I
+> can see a quite a few people run into build problems with 6.10-rc
+> recently that are fixed by the patch:
 
-This adds support for the Kontron Electronics OSM-S i.MX93 SoM
-and the matching baseboard BL i.MX93.
+This is explicitly breaking my build in Linus's kernel (and subsequently
+mm-unstable where I hit it first).
 
-The SoM hardware complies to the Open Standard Module (OSM) 1.1
-specification, size S (https://sget.org/standards/osm).
+I have gcc 14.1.1, and can easily repro this with a defconfig on x86-64 with:
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
-Changes for v2:
-* none
----
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../dts/freescale/imx93-kontron-bl-osm-s.dts  | 165 ++++++
- .../dts/freescale/imx93-kontron-osm-s.dtsi    | 547 ++++++++++++++++++
- 3 files changed, 713 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
+ make mrproper && make defconfig && scripts/config --enable bpf_syscall && \
+ make olddefconfig && make -j $(nproc)
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index bd443c2bc5a48..f848c4b69b000 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -232,6 +232,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqp-mba8xx.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-evk.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxca.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxla.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts b/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
-new file mode 100644
-index 0000000000000..2dfa2381f4691
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
-@@ -0,0 +1,165 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Kontron Electronics GmbH
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx93-kontron-osm-s.dtsi"
-+
-+/ {
-+	model = "Kontron BL i.MX93 OSM-S";
-+	compatible = "kontron,imx93-bl-osm-s", "kontron,imx93-osm-s", "fsl,imx93";
-+
-+	aliases {
-+		ethernet0 = &fec;
-+		ethernet1 = &eqos;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			label = "led1";
-+			gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	pwm-beeper {
-+		compatible = "pwm-beeper";
-+		pwms = <&tpm6 1 5000 0>;
-+	};
-+
-+	reg_vcc_panel: regulator-vcc-panel {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&gpio4 3 GPIO_ACTIVE_HIGH>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "VCC_PANEL";
-+	};
-+};
-+
-+&lpspi8 {
-+	status = "okay";
-+	assigned-clocks = <&clk IMX93_CLK_LPSPI8>;
-+	assigned-clock-parents = <&clk IMX93_CLK_SYS_PLL_PFD0_DIV2>;
-+	assigned-clock-rates = <100000000>;
-+
-+	eeram@0 {
-+		compatible = "microchip,48l640";
-+		reg = <0>;
-+		spi-max-frequency = <20000000>;
-+	};
-+};
-+
-+&eqos {	/* Second ethernet (OSM-S ETH_B) */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_eqos_rgmii>;
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&ethphy1>;
-+	status = "okay";
-+
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy1: ethernet-phy@1 {
-+			compatible = "ethernet-phy-id4f51.e91b";
-+			reg = <1>;
-+			reset-assert-us = <10000>;
-+			reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&fec { /* First ethernet (OSM-S ETH_A) */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet_rgmii>;
-+	phy-connection-type = "rgmii-id";
-+	phy-handle = <&ethphy0>;
-+	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy0: ethernet-phy@1 {
-+			compatible = "ethernet-phy-id4f51.e91b";
-+			reg = <1>;
-+			reset-assert-us = <10000>;
-+			reset-gpios = <&gpio2 18 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&flexcan1 {
-+	status = "okay";
-+};
-+
-+&lpi2c2 {
-+	status = "okay";
-+
-+	gpio_expander_dio: gpio@20 {
-+		compatible = "ti,tca6408";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "DIO1_OUT","DIO1_IN", "DIO2_OUT","DIO2_IN",
-+				  "DIO3_OUT","DIO3_IN", "DIO4_OUT","DIO4_IN";
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <28 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&lpuart1 {
-+	status = "okay";
-+};
-+
-+&lpuart7 {
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&lpuart6 {
-+	linux,rs485-enabled-at-boot-time;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&tpm6 {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	disable-over-current;
-+	dr_mode = "host";
-+	status = "okay";
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	usb1@1 {
-+		compatible = "usb424,2514";
-+		reg = <1>;
-+	};
-+};
-+
-+&usbotg2 {
-+	adp-disable;
-+	hnp-disable;
-+	srp-disable;
-+
-+	disable-over-current;
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	vmmc-supply = <&reg_vdd_3v3>;
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi b/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
-new file mode 100644
-index 0000000000000..926c622d380ee
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
-@@ -0,0 +1,547 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Kontron Electronics GmbH
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "imx93.dtsi"
-+
-+/ {
-+	model = "Kontron OSM-S i.MX93";
-+	compatible = "kontron,imx93-osm-s", "fsl,imx93";
-+
-+	aliases {
-+		rtc0 = &rv3028;
-+		rtc1 = &bbnsm_rtc;
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0 0x80000000>;
-+	};
-+
-+	chosen {
-+		stdout-path = &lpuart1;
-+	};
-+
-+	reg_usdhc2_vcc: regulator-usdhc2-vcc {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_usdhc2_vcc>;
-+		enable-active-high;
-+		gpio = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-name = "VCC_SDIO_A";
-+	};
-+
-+	reg_vdd_carrier: regulator-vdd-carrier {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_vdd_carrier>;
-+		enable-active-high;
-+		gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-name = "VDD_CARRIER";
-+
-+		regulator-state-standby {
-+			regulator-on-in-suspend;
-+		};
-+
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		};
-+
-+		regulator-state-disk {
-+			regulator-off-in-suspend;
-+		};
-+	};
-+};
-+
-+&lpspi1 { /* OSM-S SPI_A */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpspi1>;
-+	cs-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
-+};
-+
-+&lpspi8 { /* OSM-S SPI_B */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpspi8>;
-+	cs-gpios = <&gpio2 12 GPIO_ACTIVE_LOW>;
-+};
-+
-+&flexcan1 { /* OSM-S CAN_A */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan1>;
-+};
-+
-+&flexcan2 { /* OSM-S CAN_B */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan2>;
-+};
-+
-+&gpio1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio1>;
-+	gpio-line-names = "", "", "I2C_A_SCL", "I2C_A_SDA",
-+			  "UART_CON_RX", "UART_CON_TX", "UART_C_RX", "UART_C_TX",
-+			  "CAN_A_TX", "CAN_A_RX", "GPIO_A_0", "SPI_A_CS0",
-+			  "SPI_A_SDI", "SPI_A_SCK","SPI_A_SDO";
-+};
-+
-+&gpio2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio2>;
-+	gpio-line-names = "I2C_B_SDA", "I2C_B_SCL", "GPIO_B_1", "GPIO_A_2",
-+			  "UART_B_TX", "UART_B_RX", "UART_B_RTS", "UART_B_CTS",
-+			  "UART_A_TX", "UART_A_RX", "UART_A_RTS", "UART_A_CTS",
-+			  "SPI_B_CS0", "SPI_B_SDI", "SPI_B_SDO", "SPI_B_SCK",
-+			  "I2S_BITCLK", "I2S_MCLK", "GPIO_A_1", "I2S_A_DATA_OUT",
-+			  "I2S_A_DATA_IN", "PWM_2", "GPIO_A_3", "PWM_1",
-+			  "PWM_0", "CAN_B_TX", "I2S_LRCLK", "CAN_B_RX", "GPIO_A_4",
-+			  "GPIO_A_5";
-+};
-+
-+&gpio3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio3>;
-+	gpio-line-names = "SDIO_A_CD", "SDIO_A_CLK", "SDIO_A_CMD", "SDIO_A_D0",
-+			  "SDIO_A_D1", "SDIO_A_D2", "SDIO_A_D3", "SDIO_A_PWR_EN",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "SDIO_B_CLK", "SDIO_B_CMD", "SDIO_B_D0", "SDIO_B_D1",
-+			  "SDIO_B_D2", "SDIO_B_D3", "GPIO_A_6", "GPIO_A_7";
-+};
-+
-+&gpio4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio4>;
-+	gpio-line-names = "ETH_B_MDC", "ETH_B_MDIO", "ETH_B_TXD4", "ETH_B_TXD3",
-+			  "ETH_B_TXD2", "ETH_B_TXD1", "ETH_B_TX_EN", "ETH_B_TX_CLK",
-+			  "ETH_B_RX_CTL", "ETH_B_RX_CLK", "ETH_B_RXD0", "ETH_B_RXD1",
-+			  "ETH_B_RXD2", "ETH_B_RXD3", "ETH_MDC", "ETH_MDIO",
-+			  "ETH_A_TXD3", "ETH_A_TXD2", "ETH_A_TXD1", "ETH_A_TXD0",
-+			  "ETH_A_TX_EN", "ETH_A_TX_CLK", "ETH_A_RX_CTL", "ETH_A_RX_CLK",
-+			  "ETH_A_RXD0", "ETH_A_RXD1", "ETH_A_RXD2", "ETH_A_RXD3",
-+			  "GPIO_B_0", "CARRIER_PWR_EN";
-+};
-+
-+&lpi2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpi2c1>;
-+	status = "okay";
-+
-+	pca9451: pmic@25 {
-+		compatible = "nxp,pca9451a";
-+		reg = <0x25>;
-+		nxp,i2c-lt-enable;
-+
-+		regulators {
-+			reg_vdd_soc: BUCK1 { /* dual phase with BUCK3 */
-+				regulator-name = "+0V8_VDD_SOC (BUCK1)";
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <950000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <3125>;
-+			};
-+
-+			reg_vddq_ddr: BUCK2 {
-+				regulator-name = "+0V6_VDDQ_DDR (BUCK2)";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <600000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <3125>;
-+			};
-+
-+			reg_vdd_3v3: BUCK4 {
-+				regulator-name = "+3V3 (BUCK4)";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_vdd_1v8: BUCK5 {
-+				regulator-name = "+1V8 (BUCK5)";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_nvcc_dram: BUCK6 {
-+				regulator-name = "+1V1_NVCC_DRAM (BUCK6)";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_nvcc_snvs: LDO1 {
-+				regulator-name = "+1V8_NVCC_SNVS (LDO1)";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_vdd_ana: LDO4 {
-+				regulator-name = "+0V8_VDD_ANA (LDO4)";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_nvcc_sd: LDO5 {
-+				regulator-name = "NVCC_SD (LDO5)";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+		};
-+	};
-+
-+	eeprom@50 {
-+		compatible = "onnn,n24s64b", "atmel,24c64";
-+		reg = <0x50>;
-+		pagesize = <32>;
-+		size = <8192>;
-+		num-addresses = <1>;
-+	};
-+
-+	rv3028: rtc@52 {
-+		compatible = "microcrystal,rv3028";
-+		reg = <0x52>;
-+	};
-+};
-+
-+&lpi2c2 { /* OSM-S I2C_A */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpi2c2>;
-+};
-+
-+&lpi2c3 { /* OSM-S I2C_B */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpi2c3>;
-+};
-+
-+&tpm3 { /* OSM-S PWM_0 */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_tpm3>;
-+};
-+
-+&tpm4 { /* OSM-S PWM_2 */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_tpm4>;
-+};
-+
-+&tpm6 { /* OSM-S PWM_1 */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_tpm6>;
-+};
-+
-+&lpuart1 { /* OSM-S UART_CON */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpuart1>;
-+};
-+
-+&lpuart2 { /* OSM-S UART_C */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpuart2>;
-+};
-+
-+&lpuart6 { /* OSM-S UART_B */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpuart6>;
-+};
-+
-+&lpuart7 { /* OSM-S UART_A */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpuart7>;
-+};
-+
-+&usdhc1 { /* eMMC */
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	pinctrl-1 = <&pinctrl_usdhc1>;
-+	pinctrl-2 = <&pinctrl_usdhc1>;
-+	vmmc-supply = <&reg_vdd_3v3>;
-+	vqmmc-supply = <&reg_vdd_1v8>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&usdhc2 { /* OSM-S SDIO_A */
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-1 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-2 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-+	vmmc-supply = <&reg_usdhc2_vcc>;
-+	cd-gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
-+};
-+
-+&usdhc3 { /* OSM-S SDIO_B */
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc3>;
-+	pinctrl-1 = <&pinctrl_usdhc3>;
-+	pinctrl-2 = <&pinctrl_usdhc3>;
-+	vqmmc-supply = <&reg_vdd_1v8>;
-+};
-+
-+&wdog3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wdog>;
-+	fsl,ext-reset-output;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_lpspi1: lpspi1grp {
-+		fsl,pins = <
-+			MX93_PAD_SAI1_TXC__LPSPI1_SIN			0x3fe /* SPI_A_SDI_(IO0) */
-+			MX93_PAD_SAI1_RXD0__LPSPI1_SOUT			0x3fe /* SPI_A_SDO_(IO1) */
-+			MX93_PAD_SAI1_TXD0__LPSPI1_SCK			0x3fe /* SPI_A_SCK */
-+			MX93_PAD_SAI1_TXFS__GPIO1_IO11			0x3fe /* SPI_A_CS0# */
-+		>;
-+	};
-+
-+	pinctrl_lpspi8: lpspi8grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO13__LPSPI8_SIN			0x3fe /* SPI_B_SDI */
-+			MX93_PAD_GPIO_IO14__LPSPI8_SOUT			0x3fe /* SPI_B_SDO */
-+			MX93_PAD_GPIO_IO15__LPSPI8_SCK			0x3fe /* SPI_B_SCK */
-+			MX93_PAD_GPIO_IO12__GPIO2_IO12			0x3fe /* SPI_B_CS0# */
-+		>;
-+	};
-+
-+	pinctrl_enet_rgmii: enetrgmiigrp {
-+		fsl,pins = <
-+			MX93_PAD_ENET2_MDC__ENET1_MDC			0x57e /* ETH_MDC */
-+			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x57e /* ETH_MDIO */
-+			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x57e /* ETH_A_(S)(R)(G)MII_RXD0 */
-+			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x57e /* ETH_A_(S)(R)(G)MII_RXD1 */
-+			MX93_PAD_ENET2_RD2__ENET1_RGMII_RD2		0x57e /* ETH_A_(R)(G)MII_RXD2 */
-+			MX93_PAD_ENET2_RD3__ENET1_RGMII_RD3		0x57e /* ETH_A_(R)(G)MII_RXD3 */
-+			MX93_PAD_ENET2_RXC__ENET1_RGMII_RXC		0x5fe /* ETH_A_(R)(G)MII_RX_CLK */
-+			MX93_PAD_ENET2_RX_CTL__ENET1_RGMII_RX_CTL	0x57e /* ETH_A_(R)(G)MII_RX_DV(_ER) */
-+			MX93_PAD_ENET2_TD0__ENET1_RGMII_TD0		0x57e /* ETH_A_(S)(R)(G)MII_TXD0 */
-+			MX93_PAD_ENET2_TD1__ENET1_RGMII_TD1		0x57e /* ETH_A_(S)(R)(G)MII_TXD1 */
-+			MX93_PAD_ENET2_TD2__ENET1_RGMII_TD2		0x57e /* ETH_A_(S)(R)(G)MII_TXD2 */
-+			MX93_PAD_ENET2_TD3__ENET1_RGMII_TD3		0x57e /* ETH_A_(S)(R)(G)MII_TXD3 */
-+			MX93_PAD_ENET2_TXC__ENET1_RGMII_TXC		0x5fe /* ETH_A_(R)(G)MII_TX_CLK */
-+			MX93_PAD_ENET2_TX_CTL__ENET1_RGMII_TX_CTL	0x57e /* ETH_A_(R)(G)MII_TX_EN(_ER) */
-+		>;
-+	};
-+
-+	pinctrl_eqos_rgmii: eqosrgmiigrp {
-+		fsl,pins = <
-+			MX93_PAD_ENET1_MDC__ENET_QOS_MDC		0x57e /* ETH_B_MDC */
-+			MX93_PAD_ENET1_MDIO__ENET_QOS_MDIO		0x57e /* ETH_B_MDIO */
-+			MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0		0x57e /* ETH_B_(S)(R)(G)MII_RXD0 */
-+			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1		0x57e /* ETH_B_(S)(R)(G)MII_RXD1 */
-+			MX93_PAD_ENET1_RD2__ENET_QOS_RGMII_RD2		0x57e /* ETH_B_(R)(G)MII_RXD2 */
-+			MX93_PAD_ENET1_RD3__ENET_QOS_RGMII_RD3		0x57e /* ETH_B_(R)(G)MII_RXD3 */
-+			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK 0x57e /* ETH_B_(R)(G)MII_RX_CLK */
-+			MX93_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL	0x57e /* ETH_B_(R)(G)MII_RX_DV(_ER) */
-+			MX93_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0		0x57e /* ETH_B_(S)(R)(G)MII_TXD0 */
-+			MX93_PAD_ENET1_TD1__ENET_QOS_RGMII_TD1		0x57e /* ETH_B_(S)(R)(G)MII_TXD1 */
-+			MX93_PAD_ENET1_TD2__ENET_QOS_RGMII_TD2		0x57e /* ETH_B_(S)(R)(G)MII_TXD2 */
-+			MX93_PAD_ENET1_TD3__ENET_QOS_RGMII_TD3		0x57e /* ETH_B_(S)(R)(G)MII_TXD3 */
-+			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK 0x57e /* ETH_B_(R)(G)MII_TX_CLK */
-+			MX93_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL	0x57e /* ETH_B_(R)(G)MII_TX_EN(_ER) */
-+		>;
-+	};
-+
-+	pinctrl_flexcan1: flexcan1grp {
-+		fsl,pins = <
-+			MX93_PAD_PDM_CLK__CAN1_TX			0x139e /* CAN_A_TX */
-+			MX93_PAD_PDM_BIT_STREAM0__CAN1_RX		0x139e /* CAN_A_RX */
-+		>;
-+	};
-+
-+	pinctrl_flexcan2: flexcan2grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO25__CAN2_TX			0x139e /* CAN_B_TX */
-+			MX93_PAD_GPIO_IO27__CAN2_RX			0x139e /* CAN_B_RX */
-+		>;
-+	};
-+
-+	pinctrl_gpio1: gpio1grp {
-+		fsl,pins = <
-+			MX93_PAD_PDM_BIT_STREAM1__GPIO1_IO10		0x31e /* GPIO_A_0 */
-+		>;
-+	};
-+
-+	pinctrl_gpio2: gpio2grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO18__GPIO2_IO18			0x31e /* GPIO_A_1 */
-+			MX93_PAD_GPIO_IO03__GPIO2_IO03			0x31e /* GPIO_A_2 */
-+			MX93_PAD_GPIO_IO22__GPIO2_IO22			0x31e /* GPIO_A_3 */
-+			MX93_PAD_GPIO_IO28__GPIO2_IO28			0x31e /* GPIO_A_4 */
-+			MX93_PAD_GPIO_IO29__GPIO2_IO29			0x31e /* GPIO_A_5 */
-+			MX93_PAD_GPIO_IO02__GPIO2_IO02			0x31e /* GPIO_B_1 */
-+		>;
-+	};
-+
-+	pinctrl_gpio3: gpio3grp {
-+		fsl,pins = <
-+			MX93_PAD_CCM_CLKO1__GPIO3_IO26			0x31e /* GPIO_A_6 */
-+			MX93_PAD_CCM_CLKO2__GPIO3_IO27			0x31e /* GPIO_A_7 */
-+		>;
-+	};
-+
-+	pinctrl_gpio4: gpio4grp {
-+		fsl,pins = <
-+			MX93_PAD_CCM_CLKO3__GPIO4_IO28			0x31e /* GPIO_B_0 */
-+		>;
-+	};
-+
-+	pinctrl_lpi2c1: lpi2c1grp {
-+		fsl,pins = <
-+			MX93_PAD_I2C1_SCL__LPI2C1_SCL			0x40000b9e
-+			MX93_PAD_I2C1_SDA__LPI2C1_SDA			0x40000b9e
-+		>;
-+	};
-+
-+	pinctrl_lpi2c2: lpi2c2grp {
-+		fsl,pins = <
-+			MX93_PAD_I2C2_SCL__LPI2C2_SCL			0x40000b9e /* I2C_A_SCL */
-+			MX93_PAD_I2C2_SDA__LPI2C2_SDA			0x40000b9e /* I2C_A_SDA */
-+		>;
-+	};
-+
-+	pinctrl_lpi2c3: lpi2c3grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO01__LPI2C3_SCL			0x40000b9e /* I2C_B_SCL */
-+			MX93_PAD_GPIO_IO00__LPI2C3_SDA			0x40000b9e /* I2C_B_SDA */
-+		>;
-+	};
-+
-+	pinctrl_tpm3: tpm3grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO24__TPM3_CH3			0x57e /* PWM_0 */
-+		>;
-+	};
-+
-+	pinctrl_tpm4: tpm4grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO21__TPM4_CH1			0x57e /* PWM_2 */
-+		>;
-+	};
-+
-+	pinctrl_tpm6: tpm6grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO23__TPM6_CH1			0x57e /* PWM_1 */
-+		>;
-+	};
-+
-+	pinctrl_reg_usdhc2_vcc: regusdhc2vccgrp {
-+		fsl,pins = <
-+			MX93_PAD_SD2_RESET_B__GPIO3_IO07		0x31e /* SDIO_A_PWR_EN */
-+		>;
-+	};
-+
-+	pinctrl_reg_vdd_carrier: regvddcarriergrp {
-+		fsl,pins = <
-+			MX93_PAD_CCM_CLKO4__GPIO4_IO29			0x31e /* CARRIER_PWR_EN */
-+		>;
-+	};
-+
-+	pinctrl_sai3: sai3grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO20__SAI3_RX_DATA00		0x31e /* I2S_A_DATA_IN */
-+			MX93_PAD_GPIO_IO19__SAI3_TX_DATA00		0x31e /* I2S_A_DATA_OUT */
-+			MX93_PAD_GPIO_IO17__SAI3_MCLK			0x31e /* I2S_MCLK */
-+			MX93_PAD_GPIO_IO26__SAI3_TX_SYNC		0x31e /* I2S_LRCLK */
-+			MX93_PAD_GPIO_IO16__SAI3_TX_BCLK		0x31e /* I2S_BITCLK */
-+		>;
-+	};
-+
-+	pinctrl_lpuart1: lpuart1grp {
-+		fsl,pins = <
-+			MX93_PAD_UART1_RXD__LPUART1_RX			0x31e /* UART_CON_RX */
-+			MX93_PAD_UART1_TXD__LPUART1_TX			0x31e /* UART_CON_TX */
-+		>;
-+	};
-+
-+	pinctrl_lpuart2: lpuart2grp {
-+		fsl,pins = <
-+			MX93_PAD_UART2_RXD__LPUART2_RX			0x31e /* UART_C_RX */
-+			MX93_PAD_UART2_TXD__LPUART2_TX			0x31e /* UART_C_TX */
-+		>;
-+	};
-+
-+	pinctrl_lpuart6: lpuart6grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO05__LPUART6_RX			0x31e /* UART_B_RX */
-+			MX93_PAD_GPIO_IO04__LPUART6_TX			0x31e /* UART_B_TX */
-+			MX93_PAD_GPIO_IO07__LPUART6_RTS_B		0x31e /* UART_B_CTS */
-+			MX93_PAD_GPIO_IO06__LPUART6_CTS_B		0x31e /* UART_B_RTS */
-+		>;
-+	};
-+
-+	pinctrl_lpuart7: lpuart7grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO09__LPUART7_RX			0x31e /* UART_A_RX */
-+			MX93_PAD_GPIO_IO08__LPUART7_TX			0x31e /* UART_A_TX */
-+			MX93_PAD_GPIO_IO11__LPUART7_RTS_B		0x31e /* UART_A_CTS */
-+			MX93_PAD_GPIO_IO10__LPUART7_CTS_B		0x31e /* UART_A_RTS */
-+		>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			MX93_PAD_SD1_CLK__USDHC1_CLK			0x15fe
-+			MX93_PAD_SD1_CMD__USDHC1_CMD			0x13fe
-+			MX93_PAD_SD1_DATA0__USDHC1_DATA0		0x13fe
-+			MX93_PAD_SD1_DATA1__USDHC1_DATA1		0x13fe
-+			MX93_PAD_SD1_DATA2__USDHC1_DATA2		0x13fe
-+			MX93_PAD_SD1_DATA3__USDHC1_DATA3		0x13fe
-+			MX93_PAD_SD1_DATA4__USDHC1_DATA4		0x13fe
-+			MX93_PAD_SD1_DATA5__USDHC1_DATA5		0x13fe
-+			MX93_PAD_SD1_DATA6__USDHC1_DATA6		0x13fe
-+			MX93_PAD_SD1_DATA7__USDHC1_DATA7		0x13fe
-+			MX93_PAD_SD1_STROBE__USDHC1_STROBE		0x15fe
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX93_PAD_SD2_CLK__USDHC2_CLK			0x15fe /* SDIO_A_CLK */
-+			MX93_PAD_SD2_CMD__USDHC2_CMD			0x13fe /* SDIO_A_CMD */
-+			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x13fe /* SDIO_A_D0 */
-+			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x13fe /* SDIO_A_D1 */
-+			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x13fe /* SDIO_A_D2 */
-+			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x13fe /* SDIO_A_D3 */
-+			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT		0x1d0
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_gpio: usdhc2gpiogrp {
-+		fsl,pins = <
-+			MX93_PAD_SD2_CD_B__GPIO3_IO00			0x31e /* SDIO_A_CD# */
-+		>;
-+	};
-+
-+	pinctrl_usdhc3: usdhc3grp {
-+		fsl,pins = <
-+			MX93_PAD_SD3_CLK__USDHC3_CLK			0x15fe /* SDIO_B_CLK */
-+			MX93_PAD_SD3_CMD__USDHC3_CMD			0x13fe /* SDIO_B_CMD */
-+			MX93_PAD_SD3_DATA0__USDHC3_DATA0		0x13fe /* SDIO_B_D0 */
-+			MX93_PAD_SD3_DATA1__USDHC3_DATA1		0x13fe /* SDIO_B_D1 */
-+			MX93_PAD_SD3_DATA2__USDHC3_DATA2		0x13fe /* SDIO_B_D2 */
-+			MX93_PAD_SD3_DATA3__USDHC3_DATA3		0x13fe /* SDIO_B_D3 */
-+		>;
-+	};
-+
-+	pinctrl_wdog: wdoggrp {
-+		fsl,pins = <
-+			MX93_PAD_WDOG_ANY__WDOG1_WDOG_ANY		0xc6
-+		>;
-+	};
-+};
--- 
-2.45.2
+kernel/bpf/bpf_local_storage.c:785:60: error: ‘kvmalloc_array_node_noprof’ sizes
+specified with ‘sizeof’ in the earlier argument and not in the laterargument
+[-Werror=calloc-transposed-args]
+  785 |         smap->buckets = bpf_map_kvcalloc(&smap->map, sizeof(*smap->buckets),
 
+
+It's kind of surprising no build bot caught this (maybe somebody needs to
+look into that), but it's proactively causing problems right now, I have to
+keep the kernel patched in order for it to build.
+
+So a fix of some kind is needed, urgently.
+
+>
+> * Péter Ujfalusi
+> https://lore.kernel.org/bpf/363ad8d1-a2d2-4fca-b66a-3d838eb5def9@intel.com/
+>
+> * Christian Kujau
+> https://lore.kernel.org/bpf/48360912-b239-51f2-8f25-07a46516dc76@nerdbynature.de/
+> https://lore.kernel.org/lkml/d0dd2457-ab58-1b08-caa4-93eaa2de221e@nerdbynature.de/
+>
+> * Lorenzo Stoakes
+> https://fosstodon.org/@ljs@social.kernel.org/112734050799590482
+>
+> At the same time I see that the culprit mentioned above is from 6.4-rc1,
+> so I guess it there must be some other reason why a few people seem to
+> tun into this now. Did some other change expose this problem? Or are
+> updated compilers causing this?
+
+I suspect the latter. It seems x86-64 defconfig unables CONFIG_WERROR by default.
+
+>
+> Ciao, Thorsten
+>
+> >> [1] https://lore.kernel.org/all/363ad8d1-a2d2-4fca-b66a-3d838eb5def9@intel.com/
+> >> ---
+> >>  kernel/bpf/bpf_local_storage.c | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storage.c
+> >> index 976cb258a0ed..c938dea5ddbf 100644
+> >> --- a/kernel/bpf/bpf_local_storage.c
+> >> +++ b/kernel/bpf/bpf_local_storage.c
+> >> @@ -782,8 +782,8 @@ bpf_local_storage_map_alloc(union bpf_attr *attr,
+> >>         nbuckets = max_t(u32, 2, nbuckets);
+> >>         smap->bucket_log = ilog2(nbuckets);
+> >>
+> >> -       smap->buckets = bpf_map_kvcalloc(&smap->map, sizeof(*smap->buckets),
+> >> -                                        nbuckets, GFP_USER | __GFP_NOWARN);
+> >> +       smap->buckets = bpf_map_kvcalloc(&smap->map, nbuckets,
+> >> +                                        sizeof(*smap->buckets), GFP_USER | __GFP_NOWARN);
+> >>         if (!smap->buckets) {
+> >>                 err = -ENOMEM;
+> >>                 goto free_smap;
+> >>
+> >> ---
+> >> base-commit: 2ef5971ff345d3c000873725db555085e0131961
+> >> change-id: 20240612-master-fe9e63ab5c95
+> >>
+> >> Best regards,
+> >> --
+> >> Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+> >>
 
