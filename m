@@ -1,104 +1,173 @@
-Return-Path: <linux-kernel+bounces-243991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22796929D7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:47:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509C6929D9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5AA281031
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:47:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03803282451
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B963839C;
-	Mon,  8 Jul 2024 07:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D6C3D38E;
+	Mon,  8 Jul 2024 07:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="E2zQid4O"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C8H2jH4K"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289081F95E;
-	Mon,  8 Jul 2024 07:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B31364A9;
+	Mon,  8 Jul 2024 07:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720424844; cv=none; b=uHLTWJCCcTyfLfyi4+wHElmVMkx3Ckq3F54XFlSpeMTie4Zac7TcQvfQi9xtKkA7N8OXy9B8X98M5gqQp+vpA0Fzf6xlPbyKrEdckkLgBua8LtpUc1+yHQEkVrCUKOR5P6ulrTz2ACixoYLfZRgc72tI3PN6g7SFmYmZrKCt1PU=
+	t=1720424892; cv=none; b=YVRB8NuHnILEWvRjvE8Nif3g9Niv1yXRwKDe9vtQo1Vl9MbwIJXl3DL51Vs/YwUgkcqwZkCZ4l0fjJHcnU5fc0kch0zBgEg2WKvKEzr+yItdTUVAmZKAbxEAZ9ZmeoseqhKoDgrNgOJ+zATi+bl/5xnDVT6k/kPhUdZR+l7mhbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720424844; c=relaxed/simple;
-	bh=8Z2k3BZcwmPS5NZekmHHmhoLxoCPN9hUUCjEfOMVLVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jUvzTSjY9AcyZ2T49lDS5HcDXOZBOO4x91K06yZW/nvsoTs77HCGnFE/LkFEhoIsaWcMjdfV6dM5oW8SrBT4ACnD00MBPDaj92Pm8N5Kn5GMRfEETkWfuPaFQFyCfYN7TeO1N2jCul9Wn5QfjUjqSvNVnFZ3yIrtJ35VRsqc0ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=E2zQid4O; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720424831;
-	bh=09Zjy/rSrpJ72U2T+hum41Qx97pBBeO1XCvHM8jaFZE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=E2zQid4O1outyJKvdhhBUo5fNvJp2cQMm06jddT77Si+gYVTDaebxz10GmgXgRpEb
-	 piCBPo92dRuLjE82g+nBqxSNElur7Fglk+FztMwy7TEUXwTTw7sDRjdaT8Ck/D8Nfa
-	 AyUOWDP2z0CSzYr/hzmJ9dIaCn+iPdYBVw2tK6HB7OW06zExYl5U69XXVzEQHrBArZ
-	 KSz/3AorBStLbZ1ixIy5AF+pmZuTnLIQla3SAigE9wcFwv/cR+mIcFW4B6dgryZ95I
-	 WLtbfNnZphxEHfyOJ+GvPjIUYPiWR05X/8EPk4gfhTPnAJT3kQD3HKpj/nsr9xa39S
-	 OMIUGgcjbhVwA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WHbmv4GCSz4w2J;
-	Mon,  8 Jul 2024 17:47:11 +1000 (AEST)
-Date: Mon, 8 Jul 2024 17:46:40 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the mm-stable tree
-Message-ID: <20240708174640.3f489828@canb.auug.org.au>
+	s=arc-20240116; t=1720424892; c=relaxed/simple;
+	bh=rVBEw98YsMl1OrcDCG36qiCr3u6VVUckw8754YjmETM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u7D3Uvaw8xPwSwcfMQ12Rtc8R58HfXdbIxBlCbplny90CRq4/hYrfZT9w3vlSIdLvErZuE5iSM1YwQHmrNkSuv2yUK00QpOMMI9eQZmhhZOFjCQvm7kcSSruj7ieeefwUhl8zoVQy4TtZahWJL5SWw8HkvRrux2P0HqK+446Sfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C8H2jH4K; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4680W7K6001325;
+	Mon, 8 Jul 2024 07:47:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	i/uQYDKEprLvHhEtr15EIS+2LOUqtGYnciWz60brKUQ=; b=C8H2jH4Knqhy89w5
+	tqFeDHt6hlPjff5e1i7KCwZo3309m1ap0ZNrD071Jn3uzlSG4v8v8ewYLJdEZfSN
+	GJKKa99eekiaKcrdXjGyHuw/urdVYF1HTEn5VOepVeCoQJY/20W67edgOXEOm2ad
+	o5Di4F6Eyu3IiRTyHrfCbn8k5PNjzMrHSWG/ukDEc0gLDpLuz9CWXEhHlXKmeBCm
+	EqOtmEZH6+iDvMofCTH0bsR4YLVKoA1+nUHfxZYMdaxWJIGgulKB/vrGdGTndQXJ
+	gKxKzCsX8TvAJoMIGoy/02L8yfqMVZqhYfIx4jgQGbJdkR0BY62oStU0Jr5fgmdl
+	O3+5ow==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8txv0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 07:47:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4687lV2H006833
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 07:47:31 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 00:47:09 -0700
+Message-ID: <1b32168b-7d1c-4b18-b4f3-a4979232b515@quicinc.com>
+Date: Mon, 8 Jul 2024 15:47:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Fc80t19hb0462kiVFqyPKtw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/47] arm64: qcom: dts: add QCS9100 support
+To: Conor Dooley <conor.dooley@microchip.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <djakov@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <jassisinghbrar@gmail.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <manivannan.sadhasivam@linaro.org>,
+        <will@kernel.org>, <joro@8bytes.org>, <conor@kernel.org>,
+        <tglx@linutronix.de>, <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>,
+        <robimarko@gmail.com>, <quic_gurus@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <kishon@kernel.org>,
+        <quic_wcheng@quicinc.com>, <alim.akhtar@samsung.com>,
+        <avri.altman@wdc.com>, <bvanassche@acm.org>, <agross@kernel.org>,
+        <gregkh@linuxfoundation.org>, <quic_tdas@quicinc.com>,
+        <robin.murphy@arm.com>, <daniel.lezcano@linaro.org>,
+        <rui.zhang@intel.com>, <lukasz.luba@arm.com>,
+        <quic_rjendra@quicinc.com>, <ulf.hansson@linaro.org>,
+        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>,
+        <quic_rohiagar@quicinc.com>, <luca@z3ntu.xyz>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
+        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <ahalaney@redhat.com>,
+        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
+        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
+        <mantas@8devices.com>, <athierry@redhat.com>,
+        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
+        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703035735.2182165-1-quic_tengfan@quicinc.com>
+ <7417fd8c-e852-45ee-bac9-d92921036e2f@kernel.org>
+ <20240703-manager-armless-b13b18c79192@wendy>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <20240703-manager-armless-b13b18c79192@wendy>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: WJaCcFF2njxbbZhKA7uiH0ECQvUaDd6U
+X-Proofpoint-GUID: WJaCcFF2njxbbZhKA7uiH0ECQvUaDd6U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_02,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 mlxscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407080059
 
---Sig_/Fc80t19hb0462kiVFqyPKtw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+On 7/3/2024 2:28 PM, Conor Dooley wrote:
+> On Wed, Jul 03, 2024 at 06:45:00AM +0200, Krzysztof Kozlowski wrote:
+>> On 03/07/2024 05:56, Tengfei Fan wrote:
+>>> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+>>> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+>>> While the QCS9100 platform is still in the early design stage, the
+>>> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+>>> mounts the QCS9100 SoC instead of the SA8775p SoC.
+>>
+>> The same huge patchset, to huge number of recipients was sent twice.
+>> First, sorry, this is way too big. Second, it has way too many
+>> recipients, but this is partially a result of first point. Only
+>> partially because you put here dozen of totally unrelated emails. Sorry,
+>> that does not make even sense. See form letter at the end how this
+>> works. Third, sending it to everyone twice is a way to annoy them off
+>> twice... Fourth,
+>>
+>> Please split your work and do not cc dozen of unrelated folks.
+> 
+> One of the extra recipients is cos that of that patch I sent adding the
+> cache bindings to the cache entry, forgetting that that would CC the
+> riscv list on all cache bindings. I modified that patch to drop the riscv
+> list from the entry.
+> 
+> Cheers,
+> Conor.
 
-  1ab8425091db ("nilfs2: fix inode number range checks")
-  49ae997f8f0d ("nilfs2: add missing check for inode numbers on directory e=
-ntries")
-  68ed2a394a01 ("mm: avoid overflows in dirty throttling logic")
-  76ba6acfcce8 ("mm: optimize the redundant loop of mm_update_owner_next()")
-  8dfcffa37094 ("Revert "mm/writeback: fix possible divide-by-zero in wb_di=
-rty_limits(), again"")
-  f41e355f8b48 ("nilfs2: fix incorrect inode allocation from reserved inode=
-s")
 
---=20
-Cheers,
-Stephen Rothwell
+Thank you, Conor!
 
---Sig_/Fc80t19hb0462kiVFqyPKtw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaLmWAACgkQAVBC80lX
-0GxUVwf/W6flLKGxkIKLkJjlNsR2L9YWgiVbQFp583xQiz/8bHHxbZpmMN3M7KxZ
-TLfd29YDw+HqW7BxQDNXeg2WjuisDOvvRZ+E6I5/tCGwNfYmaHRGR+7oG8AU/fRV
-WBt82NGIEfPZ1VeYRfkHGJjOZ3bLzg0JxRj8D74ocbvKSaFxXWeo0ZCA3xSESoFp
-kut0M2rlrTK6ur/TKY9LcP99xcjoNPGtvQ6A0VeJ2jtWpPO2yfnnWOkzidFo5CPH
-m1Ii8FF17HWh6U9V/hkni2nTfgO/j3bHsGHqGZlE1BPfIKgQiv0Ze+lSdCVPp3pf
-8SyCMl1ekblv07FxPOsSCF3BSG/Kfw==
-=J/NE
------END PGP SIGNATURE-----
-
---Sig_/Fc80t19hb0462kiVFqyPKtw--
+-- 
+Thx and BRs,
+Tengfei Fan
 
