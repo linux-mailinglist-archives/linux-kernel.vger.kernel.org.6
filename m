@@ -1,92 +1,257 @@
-Return-Path: <linux-kernel+bounces-243771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B14929A62
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 02:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F86929A63
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 02:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1C751C20A5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 00:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68EB51C20AD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 00:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E60EDC;
-	Mon,  8 Jul 2024 00:42:16 +0000 (UTC)
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D327C1109;
+	Mon,  8 Jul 2024 00:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M/0oSxoW"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A277319B;
-	Mon,  8 Jul 2024 00:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FE180B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 00:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720399336; cv=none; b=XrDBKNUnBMe1aP4ityAm1/I8v4Jys81cDbRJgi7o/+zVpsq45wBdV9pAkLisHmKYGWfQd85AhRW0tzHPls/u795BEf24tYfX8HINTQIbMWGDL6nMxKKBd8Q3GafIM++4oi0qDp1L2s50wmaOy8MSu4kx7GSZf880/u0Vrr1cNIg=
+	t=1720399688; cv=none; b=W9yN3hLzZKLAjGiboQY1ohkoe7qME4hZGbJTY+TFG6rX0M06RNIePNkHrgN7mdNZkUcU8dtg51/CBQGjSUhRIJCP1DVZD5lC7KkEC0pOEUSIxK1kg4kAETxGCHm6SeANgl/UKDJR8bub7s4GmvWFrLOHYsvSsbvfo/GgOpCgTaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720399336; c=relaxed/simple;
-	bh=rLdbjPZH7envpFkLGjYM5DmpCb945hzkWuyJAqsLxdM=;
+	s=arc-20240116; t=1720399688; c=relaxed/simple;
+	bh=f6qGioRsyn9uhGA9FebTmGgZNz9tgz9fGqqE5XcRkRU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fJ71TVwsU9/zeHjDPlnKIG2jbw7ZTlzKq2vTLxirGZsWMjs5ZfabQKBVEPFv1UOnPO54dAeUDg10tHliwi9wAsl7497ouoSXiYu+lYgUPZPc1oZ2Iz6CiirMHVJdvAUzmkysHORT/aWYad8+nrwIfyMTDcB+OK7XRLuPbdklNXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-383dfcd8cdfso16022345ab.1;
-        Sun, 07 Jul 2024 17:42:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720399334; x=1721004134;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pF6KlgvxsG/QtM1VQrjR4t0OsgL33TCaqBMlwvoc/Tc=;
-        b=pKGmb6Zi9p7Rf7d2eXcV5OK+naVSOY8DF1W8nopcrarPIlnznAJoK5o0eQn9iDdiLO
-         n6YzEjl6cQsNfayBH324nzFva8iGFwOIC7UHJ071Afgvjc4JdsHmVwVJUOZDgDKIRaZI
-         xvilRYZZESv1UVtHUn3UnQbgDW8RpQlAYcaPmoV56Dg20Pm3HCeRZ4Gbq9w2/YXkA7Mb
-         n0Eu5vVQ8u99opEnscr30cg/Mua70DNi5p61ZtV0lNPutv1i7+L+CUR9V0EyHwfF3ubW
-         DHf9CmF+p+wQJFWq3ttbjTCBoV0LpLgDoQhoSIqmLYMQF5Xu5Bn+F8fGGyRbidlEq46Q
-         FbZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXHpiWYgE4gQ/EMqY1my5Qp3FxSUoM/CznGw8+T65g+Cf3ahYFRIMYZl6+9P7qc4Ab6Q1BSjIOaiVVwkSS7uLvMZ6jjrjZ9O4nDl2SKxqm20IGn6eWtIxiNtCTH5VgXr/pHlFKWP4L
-X-Gm-Message-State: AOJu0YyFFZfi3gscFo8HrJ8QfDsxU90SEnWdoPmgODLkchwetrP/DUlv
-	YS4snf4YKHeassU0VpSvr0vaneNhroP4q+01dOPssLXdj4gVDdBZ
-X-Google-Smtp-Source: AGHT+IGJmbb4qyMOfzbC7JloUZcrlgmZAZsjLKdGgF2dvgOJ2w/T8ITwK+O0BDWwP5ZwbcjgsKxMRg==
-X-Received: by 2002:a05:6e02:20c2:b0:375:8a71:4cc1 with SMTP id e9e14a558f8ab-3839b285940mr136401645ab.32.1720399333725;
-        Sun, 07 Jul 2024 17:42:13 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b20fb9215sm2792788b3a.5.2024.07.07.17.42.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jul 2024 17:42:13 -0700 (PDT)
-Date: Mon, 8 Jul 2024 09:42:11 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] PCI: kirin: cleanup (dev_err_probe() and scoped
- loop)
-Message-ID: <20240708004211.GB586698@rocinante>
-References: <20240707-pcie-kirin-dev_err_probe-v2-0-2fa94951d84d@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xq3a3u/W28/Yigj7KKkpfsLcPJ/Tc09fLETBHF6NtgygqeLVzmJnVzRDzVo2is2shE8ln0bhk8g7cwhPePn7bSGPrOFf0+ZCB7uj8j2zeQob54/p9iy3xLqszK85HwugvzZHOqZrR5/1pL5+BEa6PEqWvyJLfQ623e+GVs5+pBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M/0oSxoW; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: steven.price@arm.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720399683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4VqaCKhmSvsIIfQgRlt9NyheIU3+VMVh2mzlMHRF2pw=;
+	b=M/0oSxoW0w/WgmfthKAVRlZWxA75J2a6AU1Ji2362YaZS7s7DWfN/uYbDco41qKYKvmFiP
+	LcZ1/LwImQXgyNVpAHAV/J0wBYDeMK0DeZuQep7va8y/HJh7rRdJXIZP9SUp8z7WXboIK2
+	YQ/v/2VZF9jJofKjmpyQDZlGgaCvlio=
+X-Envelope-To: kvm@vger.kernel.org
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: will@kernel.org
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: oliver.upton@linux.dev
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: yuzenghui@huawei.com
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: joey.gouly@arm.com
+X-Envelope-To: alexandru.elisei@arm.com
+X-Envelope-To: christoffer.dall@arm.com
+X-Envelope-To: tabba@google.com
+X-Envelope-To: linux-coco@lists.linux.dev
+X-Envelope-To: gankulkarni@os.amperecomputing.com
+Date: Mon, 8 Jul 2024 09:47:52 +0900
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Itaru Kitayama <itaru.kitayama@linux.dev>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [v2] Support for Arm CCA VMs on Linux
+Message-ID: <Zos3OMcQ3EW-UBQ4@vm3>
+References: <20240412084056.1733704-1-steven.price@arm.com>
+ <ZnkOfTVAaCJ_-_bG@vm3>
+ <c6b49c81-58ba-40fc-9e17-892fdd79431d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240707-pcie-kirin-dev_err_probe-v2-0-2fa94951d84d@gmail.com>
+In-Reply-To: <c6b49c81-58ba-40fc-9e17-892fdd79431d@arm.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+Hi Steven,
 
-> This series removes some patterns that require multiple steps to achieve
-> what single calls can achieve.
+On Wed, Jun 26, 2024 at 02:39:27PM +0100, Steven Price wrote:
+> On 24/06/2024 07:13, Itaru Kitayama wrote:
+> > Hi Steven,
+> > On Fri, Apr 12, 2024 at 09:40:56AM +0100, Steven Price wrote:
+> >> We are happy to announce the second version of the Arm Confidential
+> >> Compute Architecture (CCA) support for the Linux stack. The intention is
+> >> to seek early feedback in the following areas:
+> >>  * KVM integration of the Arm CCA;
+> >>  * KVM UABI for managing the Realms, seeking to generalise the
+> >>    operations where possible with other Confidential Compute solutions;
+> >>  * Linux Guest support for Realms.
+> >>
+> >> See the previous RFC[1] for a more detailed overview of Arm's CCA
+> >> solution, or visible the Arm CCA Landing page[2].
+> >>
+> >> This series is based on the final RMM v1.0 (EAC5) specification[3].
+> >>
+> >> Quick-start guide
+> >> =================
+> >>
+> >> The easiest way of getting started with the stack is by using
+> >> Shrinkwrap[4]. Currently Shrinkwrap has a configuration for the initial
+> >> v1.0-EAC5 release[5], so the following overlay needs to be applied to
+> >> the standard 'cca-3world.yaml' file. Note that the 'rmm' component needs
+> >> updating to 'main' because there are fixes that are needed and are not
+> >> yet in a tagged release. The following will create an overlay file and
+> >> build a working environment:
+> >>
+> >> cat<<EOT >cca-v2.yaml
+> >> build:
+> >>   linux:
+> >>     repo:
+> >>       revision: cca-full/v2
+> >>   kvmtool:
+> >>     repo:
+> >>       kvmtool:
+> >>         revision: cca/v2
+> >>   rmm:
+> >>     repo:
+> >>       revision: main
+> >>   kvm-unit-tests:
+> >>     repo:
+> >>       revision: cca/v2
+> >> EOT
+> >>
+> >> shrinkwrap build cca-3world.yaml --overlay buildroot.yaml --btvar GUEST_ROOTFS='${artifact:BUILDROOT}' --overlay cca-v2.yaml
+> >>
+> >> You will then want to modify the 'guest-disk.img' to include the files
+> >> necessary for the realm guest (see the documentation in cca-3world.yaml
+> >> for details of other options):
+> >>
+> >>   cd ~/.shrinkwrap/package/cca-3world
+> >>   /sbin/e2fsck -fp rootfs.ext2 
+> >>   /sbin/resize2fs rootfs.ext2 256M
+> >>   mkdir mnt
+> >>   sudo mount rootfs.ext2 mnt/
+> >>   sudo mkdir mnt/cca
+> >>   sudo cp guest-disk.img KVMTOOL_EFI.fd lkvm Image mnt/cca/
+> >>   sudo umount mnt 
+> >>   rmdir mnt/
+> >>
+> >> Finally you can run the FVP with the host:
+> >>
+> >>   shrinkwrap run cca-3world.yaml --rtvar ROOTFS=$HOME/.shrinkwrap/package/cca-3world/rootfs.ext2
+> >>
+> >> And once the host kernel has booted, login (user name 'root') and start
+> >> a realm guest:
+> >>
+> >>   cd /cca
+> >>   ./lkvm run --realm --restricted_mem -c 2 -m 256 -k Image -p earlycon
+> >>
+> >> Be patient and you should end up in a realm guest with the host's
+> >> filesystem mounted via p9.
+> >>
+> >> It's also possible to use EFI within the realm guest, again see
+> >> cca-3world.yaml within Shrinkwrap for more details.
+> > 
+> > I am trying to see if libvirt can work with the CCA-aware KVM with minimal Ubuntu22.10 filesystem, however virt-install triggers a system failure:
+> > 
+> > $ sudo virt-install -v --name f39 --ram 4096        --disk path=fedora40.img,cache=none --nographics --os-variant fedora38         --import --arch aarch64 --vcpus 4
+> > [sudo] password for realm:
+> > [ 3694.176579] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000e00
+> > [ 3694.176687] Mem abort info:
+> > [ 3694.176745]   ESR = 0x0000000096000004
+> > [ 3694.176817]   EC = 0x25: DABT (current EL), IL = 32 bits
+> > [ 3694.176907]   SET = 0, FnV = 0
+> > [ 3694.176978]   EA = 0, S1PTW = 0
+> > [ 3694.177049]   FSC = 0x04: level 0 translation fault
+> > [ 3694.177132] Data abort info:
+> > [ 3694.177189]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> > [ 3694.177276]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> > [ 3694.177370]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> > [ 3694.177544] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000880f6e000
+> > [ 3694.177649] [0000000000000e00] pgd=0000000000000000, p4d=0000000000000000
+> > [ 3694.177788] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> > [ 3694.177887] Modules linked in:
+> > [ 3694.177966] CPU: 2 PID: 540 Comm: qemu-system-aar Not tainted 6.10.0-rc1-00058-gd901c27a1783 #149
+> > [ 3694.178105] Hardware name: FVP Base RevC (DT)
+> > [ 3694.178180] pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> > [ 3694.178315] pc : kvm_vm_ioctl_check_extension+0x1fc/0x3c4
+> > [ 3694.178447] lr : kvm_vm_ioctl_check_extension_generic+0x34/0x12c
+> > [ 3694.178587] sp : ffff800081523cb0
+> > [ 3694.178657] x29: ffff800081523cb0 x28: 0000000000000051 x27: 0000000000000000
+> > [ 3694.178840] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+> > [ 3694.179019] x23: 000000000000000a x22: 0000000000000051 x21: ffff000801075f00
+> > [ 3694.179200] x20: ffff000801075f01 x19: 000000000000ae03 x18: 0000000000000000
+> > [ 3694.179383] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > [ 3694.179565] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> > [ 3694.179745] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+> > [ 3694.179923] x8 : 0000000000000000 x7 : ffff000801075f18 x6 : 00000000401c5820
+> > [ 3694.180106] x5 : 000000000000000a x4 : 0000000000000800 x3 : 0000000000000000
+> > [ 3694.180285] x2 : 000000000000000b x1 : 0000000100061001 x0 : 0000000000000001
+> > [ 3694.180465] Call trace:
+> > [ 3694.180523]  kvm_vm_ioctl_check_extension+0x1fc/0x3c4
+> > [ 3694.180656]  kvm_vm_ioctl_check_extension_generic+0x34/0x12c
+> > [ 3694.180794]  kvm_dev_ioctl+0x3c8/0x8b8
+> > [ 3694.180938]  __arm64_sys_ioctl+0xac/0xf0
+> > [ 3694.181079]  invoke_syscall+0x48/0x114
+> > [ 3694.181220]  el0_svc_common.constprop.0+0x40/0xe0
+> > [ 3694.181367]  do_el0_svc+0x1c/0x28
+> > [ 3694.181507]  el0_svc+0x34/0xd8
+> > [ 3694.181608]  el0t_64_sync_handler+0x120/0x12c
+> > [ 3694.181723]  el0t_64_sync+0x190/0x194
+> > [ 3694.181865] Code: 17ffffbd 97fffc9d 12001c00 17ffff91 (39780060)
+> > [ 3694.181955] ---[ end trace 0000000000000000 ]---
+> > 
+> > I'd appreciate it if you could take a look at it.
+> 
+> Thanks for the bug report. I believe this is because 
+> kvm_vm_ioctl_check_extension() is being called with kvm==NULL and I've 
+> missed some checks. I believe the following should get things working - 
+> and it's probably better than attempting to remember to check with the 
+> NULL kvm at each call site.
+> 
+> ---8<----
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index 27c58bbdf50b..c85e5f566506 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -602,7 +602,7 @@ static __always_inline void kvm_reset_cptr_el2(struct kvm_vcpu *vcpu)
+>  
+>  static inline bool kvm_is_realm(struct kvm *kvm)
+>  {
+> -       if (static_branch_unlikely(&kvm_rme_is_available))
+> +       if (static_branch_unlikely(&kvm_rme_is_available) && kvm)
+>                 return kvm->arch.is_realm;
+>         return false;
+>  }
+> ---8<----
 
-Thank you!
+Sorry for my late reply I was away entire last week.
 
-Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+With the fix above, I was able to use the virt-install command on FVP without an issue.
 
-... for botch patches.
+Tested-by: Itaru Kitayama <itaru.kitayama@fujitsu.com>
 
-	Krzysztof
+Thanks,
+Itaru.
+
+> 
+> Thanks,
+> Steve
 
