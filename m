@@ -1,216 +1,2218 @@
-Return-Path: <linux-kernel+bounces-244472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28D792A4A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:29:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3180992A4AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDEA928210A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46FB21C21E7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302FB13D8A3;
-	Mon,  8 Jul 2024 14:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D673513D61E;
+	Mon,  8 Jul 2024 14:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="A7I7J3Ez"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2050.outbound.protection.outlook.com [40.107.243.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ptvz4N/K"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9618F13D887
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720448930; cv=fail; b=j0OsJV6yEm14CkqlQ1v9LmzTAc6w0otCV2n/Tun/t3aZEnpS17fAMX6yOL11jMMpzwSzq6kWFRg+FUBBndhky1zcNOpPQlt3mXvuM5htYB4UBLqVsWOs77ZxmLMdQZU+gQNTR10VC+ZqtwX4XKN/zKxl7n5HGORQc7lUV+B0psw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720448930; c=relaxed/simple;
-	bh=QtdaQ2UrmwCo2O1v8DrCW/NivQul+LGj0dZ0iDlgsXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TluYc44xQJgNUuBSlNMZKgN2UP3K0lBGlxuSh7rlcHSA7obcGMeJ6m0LEpWTj6WGaxEx6Saxl92aosZGLCWuAF2ehwzySOIoYHlMnMJWU5OdVgpBXmrW/4E63RnQYNHPoHJXytOJtQZi7S8slkSU/nUW8sjUp5xjxQkI9Kc5TAg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=A7I7J3Ez; arc=fail smtp.client-ip=40.107.243.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=btYVD7Sdf4+OJecfd6gwsmxwhaqNF6N0eoDDZb1elsrDxQ6/zz/FkQ3BldIqr3/PqEb6oNQEYQnT4bI9x0IXvXXRGrK2+cOsoSTJjyyvRkY8q+4lPiDRltCSPRgKRYr/LR/EnYOAUWdas3vZue+3Uv1vQriH/0V+tI+kKctxNGrRUmZWoly5LW4MHaqNYgiG0zfpzRRYFazocrLqYSX6MC8tAVs7fec0FlAzaGCadki7hMgKmkZtz/UnplWCzQxga4/whwYQ/Kjkn4WCVyKzaJby4By5PqsgcxcwYKJgHpm+g+Z1bbP2wDvVyIwY53a83gHWAQw/u8PSc8Yid2LoAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QtdaQ2UrmwCo2O1v8DrCW/NivQul+LGj0dZ0iDlgsXg=;
- b=VN58PdmIS0qCvvTNxCvElgU2WhxsAG3YGq9Z1uGkkXxYy6lXfPwsThECBS3W6+3TnPzOnwHVFaKP1UxNvu4pgzmrzNd4siVOlS2Vh56rWHIlS8EfwlQYTI2vBIA8VU6l0K5OAd24j325lo7v5fr0s9acFVTiCsWeBHZmHyDNSScNjJxFdvsROdUMkjnzbe9AJIJz1NZP+pX2slOdSS21Q7UdpsCNS9Ay3y3RSsXHjkW008bmXBY3yvZbz3EEh0onMf4Vhf/mMOg16OQNhHDrvT2+ArtQmNv3gnjFNjnbUV11xVau+ZlDJqvIwOK6MQ1wiRDLNGcMddbNYlpgazsM+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QtdaQ2UrmwCo2O1v8DrCW/NivQul+LGj0dZ0iDlgsXg=;
- b=A7I7J3EzyO0SRp6VsEeRb5BgzP8u5ansDfxt7WqmVd6aZCdHZQsAVqjxW0BNM44gqnxYN/xoPaZUlTXyQ7wkmSXK2rCq6AmSc8BIvWPqs5GQxKXhN7MUKa2/x/nIbxmTIOKwvdDAQdGly7P9HU8nB/T6hGaZh3xBAVmOC+yUe0hkLzrVoMXTYL3FHr3DgKL/UvCR5rJyI0rRD4VfImQGeHXIXFgFnFDP9LI58W1hd8gAXgxpWkj8JQoXNsJPf/jiz2pK8pQ5/7vNMvW9crvXHfyrrFAzhgM+6FD18nM6Kncq9lEneBryaCVmhEmfuU9ACFsdwO1Ep9kVB52MrpC0Kg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by CH2PR12MB4183.namprd12.prod.outlook.com (2603:10b6:610:7a::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Mon, 8 Jul
- 2024 14:28:45 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%5]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 14:28:45 +0000
-Date: Mon, 8 Jul 2024 11:28:43 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>, SeongJae Park <sj@kernel.org>,
-	Miaohe Lin <linmiaohe@huawei.com>, Michal Hocko <mhocko@suse.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH 00/45] hugetlb pagewalk unification
-Message-ID: <20240708142843.GC14004@nvidia.com>
-References: <20240704043132.28501-1-osalvador@suse.de>
- <617169bc-e18c-40fa-be3a-99c118a6d7fe@redhat.com>
- <Zoax9nwi5qmgTQR4@x1n>
- <84d4e799-90da-487e-adba-6174096283b5@redhat.com>
- <Zoug1swoTOqNUPJo@localhost.localdomain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zoug1swoTOqNUPJo@localhost.localdomain>
-X-ClientProxiedBy: BL1PR13CA0147.namprd13.prod.outlook.com
- (2603:10b6:208:2bb::32) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0ECC13C831
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 14:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720448961; cv=none; b=mJha6xKzqzAPTO14cL6N0Wu9TxZWHf7QFW5725z08IGj90xX6mCjLKhr2H+5VwahaaH/pYVMqLeV7eUx8AY2b7cQ45YWJ12q4IDydxN6tOt/FNrVm8MSB0to3NCYyGKBfjZsJjE9fN18mpyaNhimOLeXjyHH26wKLrp8kuUK58c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720448961; c=relaxed/simple;
+	bh=VDXOPc54gn6MSUFBmzRS3IYBqKbpIj39GQi+bQeofCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U0W3TxEedLdT82V2aawh+F45VpXROKl4G2a2fkMYSrVFaJ+W7/crRpMQWWEjh1Fh4tjQvMSuxxV6hgPe/OSpHNJFzCGzJzRwNks2OeR2pBrhDbwbJVzpR6FU2BQcZ17GOI5BHMIkt2oSHcQ0X2BnL59UuAMHEFXrBOhVSrl0t3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ptvz4N/K; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42662d80138so10821875e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 07:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720448956; x=1721053756; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcyqwxHujNgAShCy49BL5/i9ctIbB1Uoc3KlYp6dnlQ=;
+        b=ptvz4N/KMtFNkpZ0QkMl7wJhnI+yKLmCtK8Cfbm/qjoQMCU4+WlY2WuVfNqFtjtbCw
+         FM3F8zn1wJOmJZT4nYc73TL5w4/SjfzoWNsGlM1ZjRGIqA7yiTsC5MUr82lmJBO/lKNG
+         ig5zMtR6peuLU/aej+8acnZKinWOnWLKOXT785jHoSz0Zn1bjc7XALaI97evpxj3TzlD
+         0J1cLjpW63siqwTMp5Qi+0fxc0Lc5Kx4kd2pQp46wBVyBCkXutFzEw8GiKZ5MCQejSPS
+         lsPgOkfc3+GKNUEZLUulG0OCh8SpckZmdrfbPG8AjPZZYClJDIABlQ1gkTawexJwSVyY
+         ihWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720448956; x=1721053756;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hcyqwxHujNgAShCy49BL5/i9ctIbB1Uoc3KlYp6dnlQ=;
+        b=aOxYfgph91V+5I8sfpx3RhlYzpfkHb0SZen2Ih9MF5Go7xPHiDFt6dDdCMYswpeIWQ
+         q+JdasLoFi84CnUR5IjJOfVhRPNMdKp3BS5raptUdjIWg2fr0ge/Gkjl5ax3r3ZW7h/G
+         23UXnhYnZRl24N1AnhFHL2ouX+LMmVjXBzI4SYt6lVPRJr3DxjRfj0PE8TFuqkvCoZ+m
+         j3qkTfKRIOIBXbS/qE+IKc3LcbG7JPmzbOBdFvfKwFy/kBij/wWYhFXSSVT5Md1SvF8K
+         NBUAIK4tuZD8qOzWh6414/Idi7jDL+S6AosvFui4A4vkIj4N5HiQD/hS1416EEQCvK2a
+         LpHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXF5XIFoC85BQxSD96m2SvafQZi+10LL8pkejfqVjT5KlZECYEcySkgj5n1SKSEqtbbvss6KfJi5qwAO42qcq9zugrELcZzAgmcSiss
+X-Gm-Message-State: AOJu0YwXNfeS5I+DjXZF3L8Gm2GrjJs5QAvRkNOSW3SAIXpeFxjwDSUk
+	wyeSBkS0R6wFcMtuhe9MAhp9XqYw/s8jEv2Z+JNI79KohHsTHM+Exun4GLv1BMU=
+X-Google-Smtp-Source: AGHT+IGJkhR4UIHMMztdYzNwNE2aYtRwAa0YAy/3Hod57RrG4KbF66xz0Ei0Hmor/pR4lVogaoS5Qw==
+X-Received: by 2002:a05:600c:33a7:b0:426:6153:5318 with SMTP id 5b1f17b1804b1-42661535365mr35735285e9.19.1720448955513;
+        Mon, 08 Jul 2024 07:29:15 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a2a3:9ebc:2cb5:a86a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678e68a622sm15369598f8f.106.2024.07.08.07.29.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 07:29:15 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v10] gpio: virtuser: new virtual testing driver for the GPIO API
+Date: Mon,  8 Jul 2024 16:29:12 +0200
+Message-ID: <20240708142912.120570-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|CH2PR12MB4183:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3007fb4-0c39-4d37-9dd3-08dc9f5a4621
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?22EZGwlAU3YMmE3RNN+cSttEpInUV9ltPB86GWbXAfduE00yPN3G7CqoXOZB?=
- =?us-ascii?Q?cBLlvtX1GZim5nHbGFT1qUc4J3MLST70SKRB5SuVEwuq28e2CpzwGg7iBsCv?=
- =?us-ascii?Q?/JpRlqgn+wVFmINwWJ9Fkco13iI9ndHjZ4VcZfkO2rzqVMMBGyYuXPH6lr5z?=
- =?us-ascii?Q?gteKdf0PuR2+9JH7qgFkNiYsSvAfblJX27rCFEx1HCNlVo7z5HmuY3/qI3BX?=
- =?us-ascii?Q?DyT2EDZGUkcKGmj8dxiwFra+7Mu1QzW6CcTfpdJWyVI1tQ7KiXBmopYSl9bV?=
- =?us-ascii?Q?u8yAwTjz8RuX3Z7h1YO8ERo4woEPtWY8nuda4VUoII5fd+1reiW+nMuU5OLt?=
- =?us-ascii?Q?oU58oPpbrDXipE9FJ2THjnMYWsiaslCbj02tM0nlDPA3XdesQqP3I3MlksiO?=
- =?us-ascii?Q?o7BJIpndyUp58PQxJsTir3wUCCUN4bXJR78A38ErHB8kzx46Ik8u3lQbF14+?=
- =?us-ascii?Q?pYzqQt1EsNwjx5AdLWynQ13hFCLT9wfuZSESHF3uTVj4NAY7j1z2sdzC2O/h?=
- =?us-ascii?Q?vFy1tyZy5JlUSYE5Q6lzkoYwoWd14EdmH9Ys6iRuihh3xOHrh/GjD2cmbTHr?=
- =?us-ascii?Q?qU/740I+MgslRrGYZozkMoPNErTMMq1xL+nCikbR35ui0BqnsKl7hhWJ+9Lo?=
- =?us-ascii?Q?LwQ51jn41jJS3ENXP+CNggb0nifsi+w/2OH7mui644DpxtpF3eyUxouRRam+?=
- =?us-ascii?Q?yhvUreXloy0R5uCndYC0/lFc/CY+GMKVs+igdd20ZveqA0vInmhK+p2jeP1Y?=
- =?us-ascii?Q?ibfQn2VHpWwCQ54Cbg3csU19wjsqN+DWRZrCwI6omB+f/7s5HJsN8uotpiZJ?=
- =?us-ascii?Q?yLwyWLozubqFD4MIiLPmB+Q/Ufe+6/L2iGpjYaSlp/cDR1XcScu3P9+M3B8s?=
- =?us-ascii?Q?lnuoy+Bjo3CpFQPJVNaF3rfCOdPm2fXUz8ZhqYPG9JzWBkvb2FATDcpKNcWo?=
- =?us-ascii?Q?wAYA5sWltUvrzUsvEXilBv8xN4fdwdGyIacP3N3VR9ktoTd6ExrJOBB+hzGn?=
- =?us-ascii?Q?aSkkIGeYABQDNukWCFdlY72CarqONeyq5whQG/3myJEaDfmfc6WD9zIN4Tfs?=
- =?us-ascii?Q?FunLjPoeyZ3rOazmK6WrzF01LO/W/3AEfSX0NLvL9TVB1y1h50CJ40Ufosl5?=
- =?us-ascii?Q?+PGl4TvhJoP9nuHs8unSLGnEhQeX76QwsRUwgf+kDS21+D2hBO3q4kaNR0NU?=
- =?us-ascii?Q?oE7hMQcvcAZJdPudzs2gEjAeghWrqUxUu4OMJtYBE47FIBz8BiU/REu5VVHS?=
- =?us-ascii?Q?HwhsNa1Kd/nYXuTMtkpc2Z5EcjbsWb76ZH2rZG/kwWG9pWLmKye2SThy2cDn?=
- =?us-ascii?Q?jG98Ru0eadf349PNgCl4+DWJF51rgGEQhHUv3472GSDfKg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?t3t80pcGWJoqe8uCiDY2gqLhtamm4EHnEg4xNbMZopnqjYDNyazhhuJAdK+8?=
- =?us-ascii?Q?G8KubRoM8wmXbKHhny0owndoejnGH3pO6C5KALFB3gJX4sb4ChhEzCGa405z?=
- =?us-ascii?Q?eooQwaxuzF4fTFu8uwH0V16PBU9cOOSGvLrCbj1ANsXvMJ4qLeqcTSrK7/Qv?=
- =?us-ascii?Q?g37Topd4qGONTjJjwsoA1sE0BlZ32sj/if/ZzQdANUWxrr33cjM/X0cT41CK?=
- =?us-ascii?Q?Eoto8JqJtW0pHqNS3jlMpWrAaqHEDPr3VqHYYXz/6twA3l/Mnr41vwfeF2Ju?=
- =?us-ascii?Q?EfrapRgsiZpXlpN+1q+vi6tve3YHTfIUL0X6VzlMFowqNfVvfhofEqAOWRPZ?=
- =?us-ascii?Q?QkJHMPCKMDLjvYK6JYbHeEuUYrBL6K4rHmtr00ecHk4yC4OcnoAihlo8JtPr?=
- =?us-ascii?Q?4t8wvKQJCSK1Ny17UflLWC4/JoIqVggO3fzM+5KgjO4uOBUWSyGa43ZWg+CK?=
- =?us-ascii?Q?+/jxCO7v1X6qQ1bmxppjKwKxXmEhNn0oCDsQIRW94emtD/ySlOUrI1GcTKdx?=
- =?us-ascii?Q?8qO6x5p8cA0Zjwk2kD/EJhLW6CP/vFbZcgADhHIT0fCbG0rfNKCwcO2R6amx?=
- =?us-ascii?Q?r/IAibhEsrwXiRwmIstHsepgLXnb7bAyTSpV7lna3dO0OjbmDNpfek8eU06n?=
- =?us-ascii?Q?PMRkcbAOg+t63YVh8CazVLC6IIjGcqEVCGoCD3VIY+ieldgR0FPfVBG5Cxq/?=
- =?us-ascii?Q?uFVvCA10nvmuyc275ddY3z+1H/dWixfDtMA1ZcTVaOYClv6M9S6JneSOUOHI?=
- =?us-ascii?Q?pTj+6faq+IlbH+6m8n60Y1Ek8l0/Mu0M8tQSHhlB8YRHWqkODv1T95AWYVwA?=
- =?us-ascii?Q?3PGT796SRb61QT8FWv3vLAWdphxxQgQ8U2NP7VSu0elwpygi7xXsQOn1ceTd?=
- =?us-ascii?Q?qa6yoiHomeHGzsRg7GWrqW28OwtrgrR5dVGEZ6HN3JbZdWyFFqpKgt5TC5Zg?=
- =?us-ascii?Q?s9rYdyKG/tBbBQpmTIbxVnjcGqoUvTEnWUyH54SrgnvF0rkQyiGxjv7D6+p0?=
- =?us-ascii?Q?4ZxvPDztA+gl/ELs5P3H4QPYpHbhzG2SgWL6ejpQIaqAXaQMdj4+tkxyGn8Z?=
- =?us-ascii?Q?qM+F81MvM4choX0H7SQgMNXzUfldp9DpEYI26BH32NcYp6/ZVfFkd5RtgOYm?=
- =?us-ascii?Q?jWbEBrCEeYLzLlnb9+3U5Z/xB15lAbdaByWOFKuYEx5YQJJ/wMjry5PRXhm4?=
- =?us-ascii?Q?kMpyYZgriEpGPqwpxEBaIycBZD+CuDIAr5+OBDW86iKzoeWVdYwF3+2NU7sI?=
- =?us-ascii?Q?Ocf/iPfC+3BQa22lhMavaj2f5g7ste+FlsNrVSe6AyqvKb3LQB07oMEFt9ED?=
- =?us-ascii?Q?zNLrhmlh2tgcIGvQR+i6ZkrRMt9/DC3Mjg4jRGgfSXNfU9KN33MVD2tgmk6T?=
- =?us-ascii?Q?PwiwNe2D8UzKrxDaZE7FcNa3MgyAuUy+yg9OwlgswiIXUx6O9QCEO7la9wJ+?=
- =?us-ascii?Q?svotXhhhJhvW6ffmjsWm0weisFIikMlEX1BtvYDBGnTHvtxJmi3B9IsuO7XC?=
- =?us-ascii?Q?i2FPIGg9IUDIinP3Ty/pYOtRJI1YOaEPsTc2XTBxAUtf8Ssj0ku0eubm0goM?=
- =?us-ascii?Q?cNAQoA3yvVMZYE4P/mBfg9vhHz4wMIO+l3h/IFmz?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3007fb4-0c39-4d37-9dd3-08dc9f5a4621
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 14:28:45.3553
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iq97WJhX5vkIh9tCUm8AhSi3LcMvi69dcTapxA56ZTalzRiow8yhtgXC3lLDdg9O
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4183
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 08, 2024 at 10:18:30AM +0200, Oscar Salvador wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> IMHO, that was a mistake to start with, but I was not around when it was
-> introduced and maybe there were good reasons to deal with that the way
-> it is done.
+The GPIO subsystem used to have a serious problem with undefined behavior
+and use-after-free bugs on hot-unplug of GPIO chips. This can be
+considered a corner-case by some as most GPIO controllers are enabled
+early in the boot process and live until the system goes down but most
+GPIO drivers do allow unbind over sysfs, many are loadable modules that
+can be (force) unloaded and there are also GPIO devices that can be
+dynamically detached, for instance CP2112 which is a USB GPIO expender.
 
-It is a trade off, either you have to write out a lot of duplicated
-code for every level or you have this sort of level agnostic design.
+Bugs can be triggered both from user-space as well as by in-kernel users.
+We have the means of testing it from user-space via the character device
+but the issues manifest themselves differently in the kernel.
 
-> But, the thing is that my ultimate goal, is for hugetlb code to be able
-> to deal with PUD/PMD (pte and cont-pte is already dealt with) just like
-> mm core does for THP (PUD is not supported by THP, but you get me), and
-> that is not that difficult to do, as this patchset tries to prove.
+This is a proposition of adding a new virtual driver - a configurable
+GPIO consumer that can be configured over configfs (similarly to
+gpio-sim) or described on the device-tree.
 
-IMHO we need to get to an API that can understand everything in a page
-table. Having two APIs that are both disjoint is the problematic bit.
+This driver is aimed as a helper in spotting any regressions in
+hot-unplug handling in GPIOLIB.
 
-Improving the pud/pmd/etc API is a good direction
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+v9 -> v10:
+- fix potential buffer overflow in gpio_virtuser_consumer_write()
+Link to v9: https://lore.kernel.org/lkml/20240627115112.25769-1-brgl@bgdev.pl/
 
-Nobody has explored it, but generalizing to a 'non-level' API could
-also be a direction. 'non-level' means it works more like the huge API
-where the level is not part of the function names but somehow the
-level is encoded by the values/state/something.
+v8 -> v9:
+- use debugfs instead of sysfs for more flexibility on attribute formats
+- move the module back to drivers/gpio/
+- extend Kconfig description
+- minor tweaks and improvements across the driver
+Link to v8: https://lore.kernel.org/linux-doc/20240613092830.15761-1-brgl@bgdev.pl/
 
-This is appealing for things like page_walk where we have all these
-per-level ops which are kind of pointless code duplication.
+v7 -> v8:
+- move the driver to drivers/misc/ as it's not a GPIO provider and so
+  its place is not in drivers/gpio/
+- rework the data structures to make them more compact using unions
+- use correct string helpers for given use-cases
+- drop dependency on the gpio/driver.h, string.h and kernel.h headers
+- add a patch exporting to_ext_attribute() to be used by this driver
+- various minor improvements suggested by Andy
+Link to v7: https://lore.kernel.org/linux-gpio/20240527144054.155503-1-brgl@bgdev.pl/
 
-I've been doing some experiments on the iommu page table side on both
-these directions and so far I haven't come to something that is really
-great :\
+v6 -> v7:
+- this is a complete rewrite of the original idea, the entire interface
+  has changed so it warrants a new round of reviews
+Link to v6: https://lore.kernel.org/linux-gpio/20230817184356.25020-1-brgl@bgdev.pl/
 
-> Of course, for hugetlb to gain the hability to operate on PUD/PMD, this
-> means we need to add a fairly amount of code. e.g: for operating
-> hugepages on PUD level, code for markers on PUD/PMD level for
-> uffd/poison stuff (only dealt
-> on pmd/pte atm AFAIK), swap functions for PUD (is_swap_pud for PUD), etc.
-> Basically, almost all we did for PMD-* stuff we need it for PUD as well,
-> and that will be around when THP gains support for PUD if it ever does
-> (I guess that in a few years if memory capacity keeps increasing).
+v5 -> v6:
+- initialize the flags temp variables at declaration and hopefully make
+  Andy happy finally :)
 
-Right, this is the general pain of the mm's design is we have to
-duplicate so much stuff N-wise for each level, even though in alot of
-cases it isn't different for each level.
+v4 -> v5:
+- add the gpio-consumer docs to the admin-guide/gpio/ index (reported
+  by kernel test robot <lkp@intel.com>)
 
-> I will keep working on this patchset not because of pagewalk savings,
-> but because I think it will help us in have hugetlb more mm-core ready,
-> since the current pagewalk has to test that a hugetlb page can be
-> properly read on PUD/PMD/PTE level no matter what: uffd for hugetlb on PUD/PMD,
-> hwpoison entries for swp on PUD/PMD, pud invalidating, etc.
+v3 -> v4:
+- fix the toggle value assignment
+- use guard(mutex)() wherever we can return directly from the subsequent
+  function call
+- use skip_spaces() + strim() to avoid having to do a memmove() when
+  stripping strings off whitespaces
+- DON'T try to save a couple LOC in ifdefs if that makes them less
+  readable (Andy :) )
 
-Right, it would be nice if the page walk ops didn't have to touch huge
-stuff at all. pagewalk ops, as they are today, should just work with
-pud/pmd/pte normal functions in all cases.
+v2 -> v3:
+- use cleanup.h interfaces
+- add some clarifying commets
+- more minor code tweaks
 
-Jason
+RFC -> v2:
+- add documentation
+- fix various issues pointed out by Andy: use struct_size() where
+  applicable, improve the logic when storing the 'live' property,
+  improve log messages, remove commas in terminators, etc.
+
+ .../admin-guide/gpio/gpio-virtuser.rst        |  177 ++
+ Documentation/admin-guide/gpio/index.rst      |    1 +
+ drivers/gpio/Kconfig                          |   12 +
+ drivers/gpio/Makefile                         |    1 +
+ drivers/gpio/gpio-virtuser.c                  | 1807 +++++++++++++++++
+ 5 files changed, 1998 insertions(+)
+ create mode 100644 Documentation/admin-guide/gpio/gpio-virtuser.rst
+ create mode 100644 drivers/gpio/gpio-virtuser.c
+
+diff --git a/Documentation/admin-guide/gpio/gpio-virtuser.rst b/Documentation/admin-guide/gpio/gpio-virtuser.rst
+new file mode 100644
+index 000000000000..2aca70db9f3b
+--- /dev/null
++++ b/Documentation/admin-guide/gpio/gpio-virtuser.rst
+@@ -0,0 +1,177 @@
++.. SPDX-License-Identifier: GPL-2.0-only
++
++Virtual GPIO Consumer
++=====================
++
++The virtual GPIO Consumer module allows users to instantiate virtual devices
++that request GPIOs and then control their behavior over debugfs. Virtual
++consumer devices can be instantiated from device-tree or over configfs.
++
++A virtual consumer uses the driver-facing GPIO APIs and allows to cover it with
++automated tests driven by user-space. The GPIOs are requested using
++``gpiod_get_array()`` and so we support multiple GPIOs per connector ID.
++
++Creating GPIO consumers
++-----------------------
++
++The gpio-consumer module registers a configfs subsystem called
++``'gpio-virtuser'``. For details of the configfs filesystem, please refer to
++the configfs documentation.
++
++The user can create a hierarchy of configfs groups and items as well as modify
++values of exposed attributes. Once the consumer is instantiated, this hierarchy
++will be translated to appropriate device properties. The general structure is:
++
++**Group:** ``/config/gpio-virtuser``
++
++This is the top directory of the gpio-consumer configfs tree.
++
++**Group:** ``/config/gpio-consumer/example-name``
++
++**Attribute:** ``/config/gpio-consumer/example-name/live``
++
++**Attribute:** ``/config/gpio-consumer/example-name/dev_name``
++
++This is a directory representing a GPIO consumer device.
++
++The read-only ``dev_name`` attribute exposes the name of the device as it will
++appear in the system on the platform bus. This is useful for locating the
++associated debugfs directory under
++``/sys/kernel/debug/gpio-virtuser/$dev_name``.
++
++The ``'live'`` attribute allows to trigger the actual creation of the device
++once it's fully configured. The accepted values are: ``'1'`` to enable the
++virtual device and ``'0'`` to disable and tear it down.
++
++Creating GPIO lookup tables
++---------------------------
++
++Users can create a number of configfs groups under the device group:
++
++**Group:** ``/config/gpio-consumer/example-name/con_id``
++
++The ``'con_id'`` directory represents a single GPIO lookup and its value maps
++to the ``'con_id'`` argument of the ``gpiod_get()`` function. For example:
++``con_id`` == ``'reset'`` maps to the ``reset-gpios`` device property.
++
++Users can assign a number of GPIOs to each lookup. Each GPIO is a sub-directory
++with a user-defined name under the ``'con_id'`` group.
++
++**Attribute:** ``/config/gpio-consumer/example-name/con_id/0/key``
++
++**Attribute:** ``/config/gpio-consumer/example-name/con_id/0/offset``
++
++**Attribute:** ``/config/gpio-consumer/example-name/con_id/0/drive``
++
++**Attribute:** ``/config/gpio-consumer/example-name/con_id/0/pull``
++
++**Attribute:** ``/config/gpio-consumer/example-name/con_id/0/active_low``
++
++**Attribute:** ``/config/gpio-consumer/example-name/con_id/0/transitory``
++
++This is a group describing a single GPIO in the ``con_id-gpios`` property.
++
++For virtual consumers created using configfs we use machine lookup tables so
++this group can be considered as a mapping between the filesystem and the fields
++of a single entry in ``'struct gpiod_lookup'``.
++
++The ``'key'`` attribute represents either the name of the chip this GPIO
++belongs to or the GPIO line name. This depends on the value of the ``'offset'``
++attribute: if its value is >= 0, then ``'key'`` represents the label of the
++chip to lookup while ``'offset'`` represents the offset of the line in that
++chip. If ``'offset'`` is < 0, then ``'key'`` represents the name of the line.
++
++The remaining attributes map to the ``'flags'`` field of the GPIO lookup
++struct. The first two take string values as arguments:
++
++**``'drive'``:** ``'push-pull'``, ``'open-drain'``, ``'open-source'``
++**``'pull'``:** ``'pull-up'``, ``'pull-down'``, ``'pull-disabled'``, ``'as-is'``
++
++``'active_low'`` and ``'transitory'`` are boolean attributes.
++
++Activating GPIO consumers
++-------------------------
++
++Once the confiuration is complete, the ``'live'`` attribute must be set to 1 in
++order to instantiate the consumer. It can be set back to 0 to destroy the
++virtual device. The module will synchronously wait for the new simulated device
++to be successfully probed and if this doesn't happen, writing to ``'live'`` will
++result in an error.
++
++Device-tree
++-----------
++
++Virtual GPIO consumers can also be defined in device-tree. The compatible string
++must be: ``"gpio-virtuser"`` with at least one property following the
++standardized GPIO pattern.
++
++An example device-tree code defining a virtual GPIO consumer:
++
++.. code-block :: none
++
++    gpio-virt-consumer {
++        compatible = "gpio-virtuser";
++
++        foo-gpios = <&gpio0 5 GPIO_ACTIVE_LOW>, <&gpio1 2 0>;
++        bar-gpios = <&gpio0 6 0>;
++    };
++
++Controlling virtual GPIO consumers
++----------------------------------
++
++Once active, the device will export debugfs attributes for controlling GPIO
++arrays as well as each requested GPIO line separately. Let's consider the
++following device property: ``foo-gpios = <&gpio0 0 0>, <&gpio0 4 0>;``.
++
++The following debugfs attribute groups will be created:
++
++**Group:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo/``
++
++This is the group that will contain the attributes for the entire GPIO array.
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo/values``
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo/values_atomic``
++
++Both attributes allow to read and set arrays of GPIO values. User must pass
++exactly the number of values that the array contains in the form of a string
++containing zeroes and ones representing inactive and active GPIO states
++respectively. In this example: ``echo 11 > values``.
++
++The ``values_atomic`` attribute works the same as ``values`` but the kernel
++will execute the GPIO driver callbacks in interrupt context.
++
++**Group:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo:$index/``
++
++This is a group that represents a single GPIO with ``$index`` being its offset
++in the array.
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo:$index/consumer``
++
++Allows to set and read the consumer label of the GPIO line.
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo:$index/debounce``
++
++Allows to set and read the debounce period of the GPIO line.
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo:$index/direction``
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo:$index/direction_atomic``
++
++These two attributes allow to set the direction of the GPIO line. They accept
++"input" and "output" as values. The atomic variant executes the driver callback
++in interrupt context.
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo:$index/interrupts``
++
++If the line is requested in input mode, writing ``1`` to this attribute will
++make the module listen for edge interrupts on the GPIO. Writing ``0`` disables
++the monitoring. Reading this attribute returns the current number of registered
++interrupts (both edges).
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo:$index/value``
++
++**Attribute:** ``/sys/kernel/debug/gpio-virtuser/$dev_name/gpiod:foo:$index/value_atomic``
++
++Both attributes allow to read and set values of individual requested GPIO lines.
++They accept the following values: ``1`` and ``0``.
+diff --git a/Documentation/admin-guide/gpio/index.rst b/Documentation/admin-guide/gpio/index.rst
+index 460afd29617e..712f379731cb 100644
+--- a/Documentation/admin-guide/gpio/index.rst
++++ b/Documentation/admin-guide/gpio/index.rst
+@@ -10,6 +10,7 @@ GPIO
+     Character Device Userspace API <../../userspace-api/gpio/chardev>
+     gpio-aggregator
+     gpio-sim
++    gpio-virtuser
+     Obsolete APIs <obsolete>
+ 
+ .. only::  subproject and html
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 2b9bd1893863..ba93e640a8ab 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1908,6 +1908,18 @@ config GPIO_SLOPPY_LOGIC_ANALYZER
+ 	  If this driver is built as a module it will be called
+ 	  'gpio-sloppy-logic-analyzer'.
+ 
++config GPIO_VIRTUSER
++	tristate "GPIO Virtual User Testing Module"
++	select DEBUG_FS
++	select CONFIGFS_FS
++	select IRQ_WORK
++	help
++	  Say Y here to enable the configurable, configfs-based virtual GPIO
++	  consumer testing driver.
++
++	  This driver is aimed as a helper in spotting any regressions in
++	  hot-unplug handling in GPIOLIB.
++
+ endmenu
+ 
+ endif
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 9889f5b962bf..64dd6d9d730d 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -182,6 +182,7 @@ obj-$(CONFIG_GPIO_TWL6040)		+= gpio-twl6040.o
+ obj-$(CONFIG_GPIO_UNIPHIER)		+= gpio-uniphier.o
+ obj-$(CONFIG_GPIO_VF610)		+= gpio-vf610.o
+ obj-$(CONFIG_GPIO_VIPERBOARD)		+= gpio-viperboard.o
++obj-$(CONFIG_GPIO_VIRTUSER)		+= gpio-virtuser.o
+ obj-$(CONFIG_GPIO_VIRTIO)		+= gpio-virtio.o
+ obj-$(CONFIG_GPIO_VISCONTI)		+= gpio-visconti.o
+ obj-$(CONFIG_GPIO_VX855)		+= gpio-vx855.o
+diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
+new file mode 100644
+index 000000000000..2ac09c6a3763
+--- /dev/null
++++ b/drivers/gpio/gpio-virtuser.c
+@@ -0,0 +1,1807 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Configurable virtual GPIO consumer module.
++ *
++ * Copyright (C) 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/array_size.h>
++#include <linux/atomic.h>
++#include <linux/bitmap.h>
++#include <linux/cleanup.h>
++#include <linux/completion.h>
++#include <linux/configfs.h>
++#include <linux/debugfs.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/gpio/machine.h>
++#include <linux/idr.h>
++#include <linux/interrupt.h>
++#include <linux/irq_work.h>
++#include <linux/limits.h>
++#include <linux/list.h>
++#include <linux/lockdep.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/notifier.h>
++#include <linux/of.h>
++#include <linux/overflow.h>
++#include <linux/platform_device.h>
++#include <linux/printk.h>
++#include <linux/property.h>
++#include <linux/slab.h>
++#include <linux/string_helpers.h>
++#include <linux/types.h>
++
++#define GPIO_VIRTUSER_NAME_BUF_LEN 32
++
++static DEFINE_IDA(gpio_virtuser_ida);
++static struct dentry *gpio_virtuser_dbg_root;
++
++struct gpio_virtuser_attr_data {
++	union {
++		struct gpio_desc *desc;
++		struct gpio_descs *descs;
++	};
++	struct dentry *dbgfs_dir;
++};
++
++struct gpio_virtuser_line_array_data {
++	struct gpio_virtuser_attr_data ad;
++};
++
++struct gpio_virtuser_line_data {
++	struct gpio_virtuser_attr_data ad;
++	char consumer[GPIO_VIRTUSER_NAME_BUF_LEN];
++	struct mutex consumer_lock;
++	unsigned int debounce;
++	atomic_t irq;
++	atomic_t irq_count;
++};
++
++struct gpio_virtuser_dbgfs_attr_descr {
++	const char *name;
++	const struct file_operations *fops;
++};
++
++struct gpio_virtuser_irq_work_context {
++	struct irq_work work;
++	struct completion work_completion;
++	union {
++		struct {
++			struct gpio_desc *desc;
++			int dir;
++			int val;
++			int ret;
++		};
++		struct {
++			struct gpio_descs *descs;
++			unsigned long *values;
++		};
++	};
++};
++
++static struct gpio_virtuser_irq_work_context *
++to_gpio_virtuser_irq_work_context(struct irq_work *work)
++{
++	return container_of(work, struct gpio_virtuser_irq_work_context, work);
++}
++
++static void
++gpio_virtuser_init_irq_work_context(struct gpio_virtuser_irq_work_context *ctx)
++{
++	memset(ctx, 0, sizeof(*ctx));
++	init_completion(&ctx->work_completion);
++}
++
++static void
++gpio_virtuser_irq_work_queue_sync(struct gpio_virtuser_irq_work_context *ctx)
++{
++	irq_work_queue(&ctx->work);
++	wait_for_completion(&ctx->work_completion);
++}
++
++static void gpio_virtuser_dbgfs_emit_value_array(char *buf,
++						 unsigned long *values,
++						 size_t num_values)
++{
++	size_t i;
++
++	for (i = 0; i < num_values; i++)
++		buf[i] = test_bit(i, values) ? '1' : '0';
++
++	buf[i++] = '\n';
++}
++
++static void gpio_virtuser_get_value_array_atomic(struct irq_work *work)
++{
++	struct gpio_virtuser_irq_work_context *ctx =
++				to_gpio_virtuser_irq_work_context(work);
++	struct gpio_descs *descs = ctx->descs;
++
++	ctx->ret = gpiod_get_array_value(descs->ndescs, descs->desc,
++					 descs->info, ctx->values);
++	complete(&ctx->work_completion);
++}
++
++static int gpio_virtuser_get_array_value(struct gpio_descs *descs,
++					 unsigned long *values, bool atomic)
++{
++	struct gpio_virtuser_irq_work_context ctx;
++
++	if (!atomic)
++		return gpiod_get_array_value_cansleep(descs->ndescs,
++						      descs->desc,
++						      descs->info, values);
++
++	gpio_virtuser_init_irq_work_context(&ctx);
++	ctx.work = IRQ_WORK_INIT_HARD(gpio_virtuser_get_value_array_atomic);
++	ctx.descs = descs;
++	ctx.values = values;
++
++	gpio_virtuser_irq_work_queue_sync(&ctx);
++
++	return ctx.ret;
++}
++
++static ssize_t gpio_virtuser_value_array_do_read(struct file *file,
++						 char __user *user_buf,
++						 size_t size, loff_t *ppos,
++						 bool atomic)
++{
++	struct gpio_virtuser_line_data *data = file->private_data;
++	struct gpio_descs *descs = data->ad.descs;
++	size_t bufsize;
++	int ret;
++
++	unsigned long *values __free(bitmap) = bitmap_zalloc(descs->ndescs,
++							     GFP_KERNEL);
++	if (!values)
++		return -ENOMEM;
++
++	ret = gpio_virtuser_get_array_value(descs, values, atomic);
++	if (ret)
++		return ret;
++
++	bufsize = descs->ndescs + 2;
++
++	char *buf __free(kfree) = kzalloc(bufsize, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	gpio_virtuser_dbgfs_emit_value_array(buf, values, descs->ndescs);
++
++	return simple_read_from_buffer(user_buf, size, ppos, buf,
++				       descs->ndescs + 1);
++}
++
++static int gpio_virtuser_dbgfs_parse_value_array(const char *buf,
++						 size_t len,
++						 unsigned long *values)
++{
++	size_t i;
++
++	for (i = 0; i < len; i++) {
++		if (buf[i] == '0')
++			clear_bit(i, values);
++		else if (buf[i] == '1')
++			set_bit(i, values);
++		else
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
++static void gpio_virtuser_set_value_array_atomic(struct irq_work *work)
++{
++	struct gpio_virtuser_irq_work_context *ctx =
++				to_gpio_virtuser_irq_work_context(work);
++	struct gpio_descs *descs = ctx->descs;
++
++	ctx->ret = gpiod_set_array_value(descs->ndescs, descs->desc,
++					 descs->info, ctx->values);
++	complete(&ctx->work_completion);
++}
++
++static int gpio_virtuser_set_array_value(struct gpio_descs *descs,
++					 unsigned long *values, bool atomic)
++{
++	struct gpio_virtuser_irq_work_context ctx;
++
++	if (!atomic)
++		return gpiod_set_array_value_cansleep(descs->ndescs,
++						      descs->desc,
++						      descs->info, values);
++
++	gpio_virtuser_init_irq_work_context(&ctx);
++	ctx.work = IRQ_WORK_INIT_HARD(gpio_virtuser_set_value_array_atomic);
++	ctx.descs = descs;
++	ctx.values = values;
++
++	gpio_virtuser_irq_work_queue_sync(&ctx);
++
++	return ctx.ret;
++}
++
++static ssize_t gpio_virtuser_value_array_do_write(struct file *file,
++						  const char __user *user_buf,
++						  size_t count, loff_t *ppos,
++						  bool atomic)
++{
++	struct gpio_virtuser_line_data *data = file->private_data;
++	struct gpio_descs *descs = data->ad.descs;
++	int ret;
++
++	if (count - 1 != descs->ndescs)
++		return -EINVAL;
++
++	char *buf __free(kfree) = kzalloc(count, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	ret = simple_write_to_buffer(buf, count, ppos, user_buf, count);
++	if (ret < 0)
++		return ret;
++
++	unsigned long *values __free(bitmap) = bitmap_zalloc(descs->ndescs,
++							     GFP_KERNEL);
++	if (!values)
++		return -ENOMEM;
++
++	ret = gpio_virtuser_dbgfs_parse_value_array(buf, count - 1, values);
++	if (ret)
++		return ret;
++
++	ret = gpio_virtuser_set_array_value(descs, values, atomic);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
++static ssize_t gpio_virtuser_value_array_read(struct file *file,
++					      char __user *user_buf,
++					      size_t count, loff_t *ppos)
++{
++	return gpio_virtuser_value_array_do_read(file, user_buf, count, ppos,
++						 false);
++}
++
++static ssize_t gpio_virtuser_value_array_write(struct file *file,
++					       const char __user *user_buf,
++					       size_t count, loff_t *ppos)
++{
++	return gpio_virtuser_value_array_do_write(file, user_buf, count, ppos,
++						  false);
++}
++
++static const struct file_operations gpio_virtuser_value_array_fops = {
++	.read = gpio_virtuser_value_array_read,
++	.write = gpio_virtuser_value_array_write,
++	.open = simple_open,
++	.owner = THIS_MODULE,
++	.llseek = default_llseek,
++};
++
++static ssize_t
++gpio_virtuser_value_array_atomic_read(struct file *file, char __user *user_buf,
++				      size_t count, loff_t *ppos)
++{
++	return gpio_virtuser_value_array_do_read(file, user_buf, count, ppos,
++						 true);
++}
++
++static ssize_t
++gpio_virtuser_value_array_atomic_write(struct file *file,
++				       const char __user *user_buf,
++				       size_t count, loff_t *ppos)
++{
++	return gpio_virtuser_value_array_do_write(file, user_buf, count, ppos,
++						  true);
++}
++
++static const struct file_operations gpio_virtuser_value_array_atomic_fops = {
++	.read = gpio_virtuser_value_array_atomic_read,
++	.write = gpio_virtuser_value_array_atomic_write,
++	.open = simple_open,
++	.owner = THIS_MODULE,
++	.llseek = default_llseek,
++};
++
++static void gpio_virtuser_do_get_direction_atomic(struct irq_work *work)
++{
++	struct gpio_virtuser_irq_work_context *ctx =
++				to_gpio_virtuser_irq_work_context(work);
++
++	ctx->ret = gpiod_get_direction(ctx->desc);
++	complete(&ctx->work_completion);
++}
++
++static int gpio_virtuser_get_direction_atomic(struct gpio_desc *desc)
++{
++	struct gpio_virtuser_irq_work_context ctx;
++
++	gpio_virtuser_init_irq_work_context(&ctx);
++	ctx.work = IRQ_WORK_INIT_HARD(gpio_virtuser_do_get_direction_atomic);
++	ctx.desc = desc;
++
++	gpio_virtuser_irq_work_queue_sync(&ctx);
++
++	return ctx.ret;
++}
++
++static ssize_t gpio_virtuser_direction_do_read(struct file *file,
++					       char __user *user_buf,
++					       size_t size, loff_t *ppos,
++					       bool atomic)
++{
++	struct gpio_virtuser_line_data *data = file->private_data;
++	struct gpio_desc *desc = data->ad.desc;
++	char buf[32];
++	int dir;
++
++	if (!atomic)
++		dir = gpiod_get_direction(desc);
++	else
++		dir = gpio_virtuser_get_direction_atomic(desc);
++	if (dir < 0)
++		return dir;
++
++	snprintf(buf, sizeof(buf), "%s\n", dir ? "input" : "output");
++
++	return simple_read_from_buffer(user_buf, size, ppos, buf, strlen(buf));
++}
++
++static int gpio_virtuser_set_direction(struct gpio_desc *desc, int dir, int val)
++{
++	if (dir)
++		return gpiod_direction_input(desc);
++
++	return gpiod_direction_output(desc, val);
++}
++
++static void gpio_virtuser_do_set_direction_atomic(struct irq_work *work)
++{
++	struct gpio_virtuser_irq_work_context *ctx =
++				to_gpio_virtuser_irq_work_context(work);
++
++	ctx->ret = gpio_virtuser_set_direction(ctx->desc, ctx->dir, ctx->val);
++	complete(&ctx->work_completion);
++}
++
++static int gpio_virtuser_set_direction_atomic(struct gpio_desc *desc,
++					      int dir, int val)
++{
++	struct gpio_virtuser_irq_work_context ctx;
++
++	gpio_virtuser_init_irq_work_context(&ctx);
++	ctx.work = IRQ_WORK_INIT_HARD(gpio_virtuser_do_set_direction_atomic);
++	ctx.desc = desc;
++	ctx.dir = dir;
++	ctx.val = val;
++
++	gpio_virtuser_irq_work_queue_sync(&ctx);
++
++	return ctx.ret;
++}
++
++static ssize_t gpio_virtuser_direction_do_write(struct file *file,
++						const char __user *user_buf,
++						size_t count, loff_t *ppos,
++						bool atomic)
++{
++	struct gpio_virtuser_line_data *data = file->private_data;
++	struct gpio_desc *desc = data->ad.desc;
++	char buf[32], *trimmed;
++	int ret, dir, val = 0;
++
++	ret = simple_write_to_buffer(buf, sizeof(buf), ppos, user_buf, count);
++	if (ret < 0)
++		return ret;
++
++	trimmed = strim(buf);
++
++	if (strcmp(buf, "input") == 0) {
++		dir = 1;
++	} else if (strcmp(buf, "output-high") == 0) {
++		dir = 0;
++		val = 1;
++	} else if (strcmp(buf, "output-low") == 0) {
++		dir = val = 0;
++	} else {
++		return -EINVAL;
++	}
++
++	if (!atomic)
++		ret = gpio_virtuser_set_direction(desc, dir, val);
++	else
++		ret = gpio_virtuser_set_direction_atomic(desc, dir, val);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
++static ssize_t gpio_virtuser_direction_read(struct file *file,
++					    char __user *user_buf,
++					    size_t size, loff_t *ppos)
++{
++	return gpio_virtuser_direction_do_read(file, user_buf, size, ppos,
++					       false);
++}
++
++static ssize_t gpio_virtuser_direction_write(struct file *file,
++					     const char __user *user_buf,
++					     size_t count, loff_t *ppos)
++{
++	return gpio_virtuser_direction_do_write(file, user_buf, count, ppos,
++						false);
++}
++
++static const struct file_operations gpio_virtuser_direction_fops = {
++	.read = gpio_virtuser_direction_read,
++	.write = gpio_virtuser_direction_write,
++	.open = simple_open,
++	.owner = THIS_MODULE,
++	.llseek = default_llseek,
++};
++
++static ssize_t gpio_virtuser_direction_atomic_read(struct file *file,
++						   char __user *user_buf,
++						   size_t size, loff_t *ppos)
++{
++	return gpio_virtuser_direction_do_read(file, user_buf, size, ppos,
++					       true);
++}
++
++static ssize_t gpio_virtuser_direction_atomic_write(struct file *file,
++						    const char __user *user_buf,
++						    size_t count, loff_t *ppos)
++{
++	return gpio_virtuser_direction_do_write(file, user_buf, count, ppos,
++						true);
++}
++
++static const struct file_operations gpio_virtuser_direction_atomic_fops = {
++	.read = gpio_virtuser_direction_atomic_read,
++	.write = gpio_virtuser_direction_atomic_write,
++	.open = simple_open,
++	.owner = THIS_MODULE,
++	.llseek = default_llseek,
++};
++
++static int gpio_virtuser_value_get(void *data, u64 *val)
++{
++	struct gpio_virtuser_line_data *ld = data;
++	int ret;
++
++	ret = gpiod_get_value_cansleep(ld->ad.desc);
++	if (ret < 0)
++		return ret;
++
++	*val = ret;
++
++	return 0;
++}
++
++static int gpio_virtuser_value_set(void *data, u64 val)
++{
++	struct gpio_virtuser_line_data *ld = data;
++
++	if (val > 1)
++		return -EINVAL;
++
++	gpiod_set_value_cansleep(ld->ad.desc, (int)val);
++
++	return 0;
++}
++
++DEFINE_DEBUGFS_ATTRIBUTE(gpio_virtuser_value_fops,
++			 gpio_virtuser_value_get,
++			 gpio_virtuser_value_set,
++			 "%llu\n");
++
++static void gpio_virtuser_get_value_atomic(struct irq_work *work)
++{
++	struct gpio_virtuser_irq_work_context *ctx =
++				to_gpio_virtuser_irq_work_context(work);
++
++	ctx->val = gpiod_get_value(ctx->desc);
++	complete(&ctx->work_completion);
++}
++
++static int gpio_virtuser_value_atomic_get(void *data, u64 *val)
++{
++	struct gpio_virtuser_line_data *ld = data;
++	struct gpio_virtuser_irq_work_context ctx;
++
++	gpio_virtuser_init_irq_work_context(&ctx);
++	ctx.work = IRQ_WORK_INIT_HARD(gpio_virtuser_get_value_atomic);
++	ctx.desc = ld->ad.desc;
++
++	gpio_virtuser_irq_work_queue_sync(&ctx);
++
++	if (ctx.val < 0)
++		return ctx.val;
++
++	*val = ctx.val;
++
++	return 0;
++}
++
++static void gpio_virtuser_set_value_atomic(struct irq_work *work)
++{
++	struct gpio_virtuser_irq_work_context *ctx =
++			to_gpio_virtuser_irq_work_context(work);
++
++	gpiod_set_value(ctx->desc, ctx->val);
++	complete(&ctx->work_completion);
++}
++
++static int gpio_virtuser_value_atomic_set(void *data, u64 val)
++{
++	struct gpio_virtuser_line_data *ld = data;
++	struct gpio_virtuser_irq_work_context ctx;
++
++	if (val > 1)
++		return -EINVAL;
++
++	gpio_virtuser_init_irq_work_context(&ctx);
++	ctx.work = IRQ_WORK_INIT_HARD(gpio_virtuser_set_value_atomic);
++	ctx.desc = ld->ad.desc;
++	ctx.val = (int)val;
++
++	gpio_virtuser_irq_work_queue_sync(&ctx);
++
++	return 0;
++}
++
++DEFINE_DEBUGFS_ATTRIBUTE(gpio_virtuser_value_atomic_fops,
++			 gpio_virtuser_value_atomic_get,
++			 gpio_virtuser_value_atomic_set,
++			 "%llu\n");
++
++static int gpio_virtuser_debounce_get(void *data, u64 *val)
++{
++	struct gpio_virtuser_line_data *ld = data;
++
++	*val = READ_ONCE(ld->debounce);
++
++	return 0;
++}
++
++static int gpio_virtuser_debounce_set(void *data, u64 val)
++{
++	struct gpio_virtuser_line_data *ld = data;
++	int ret;
++
++	if (val > UINT_MAX)
++		return -E2BIG;
++
++	ret = gpiod_set_debounce(ld->ad.desc, (unsigned int)val);
++	if (ret)
++		/* Don't propagate errno unknown to user-space. */
++		return ret == -ENOTSUPP ? -EOPNOTSUPP : ret;
++
++	WRITE_ONCE(ld->debounce, (unsigned int)val);
++
++	return 0;
++}
++
++DEFINE_DEBUGFS_ATTRIBUTE(gpio_virtuser_debounce_fops,
++			 gpio_virtuser_debounce_get,
++			 gpio_virtuser_debounce_set,
++			 "%llu\n");
++
++static ssize_t gpio_virtuser_consumer_read(struct file *file,
++					   char __user *user_buf,
++					   size_t size, loff_t *ppos)
++{
++	struct gpio_virtuser_line_data *data = file->private_data;
++	char buf[GPIO_VIRTUSER_NAME_BUF_LEN + 1];
++	ssize_t ret;
++
++	memset(buf, 0x0, sizeof(buf));
++
++	scoped_guard(mutex, &data->consumer_lock)
++		ret = snprintf(buf, sizeof(buf), "%s\n", data->consumer);
++
++	return simple_read_from_buffer(user_buf, size, ppos, buf, ret);
++}
++
++static ssize_t gpio_virtuser_consumer_write(struct file *file,
++					    const char __user *user_buf,
++					    size_t count, loff_t *ppos)
++{
++	struct gpio_virtuser_line_data *data = file->private_data;
++	char buf[GPIO_VIRTUSER_NAME_BUF_LEN + 2];
++	int ret;
++
++	ret = simple_write_to_buffer(buf, GPIO_VIRTUSER_NAME_BUF_LEN, ppos,
++				     user_buf, count);
++	if (ret < 0)
++		return ret;
++
++	buf[strlen(buf) - 1] = '\0';
++
++	ret = gpiod_set_consumer_name(data->ad.desc, buf);
++	if (ret)
++		return ret;
++
++	scoped_guard(mutex, &data->consumer_lock)
++		strscpy(data->consumer, buf, sizeof(data->consumer));
++
++	return count;
++}
++
++static const struct file_operations gpio_virtuser_consumer_fops = {
++	.read = gpio_virtuser_consumer_read,
++	.write = gpio_virtuser_consumer_write,
++	.open = simple_open,
++	.owner = THIS_MODULE,
++	.llseek = default_llseek,
++};
++
++static int gpio_virtuser_interrupts_get(void *data, u64 *val)
++{
++	struct gpio_virtuser_line_data *ld = data;
++
++	*val = atomic_read(&ld->irq_count);
++
++	return 0;
++}
++
++static irqreturn_t gpio_virtuser_irq_handler(int irq, void *data)
++{
++	struct gpio_virtuser_line_data *ld = data;
++
++	atomic_inc(&ld->irq_count);
++
++	return IRQ_HANDLED;
++}
++
++static int gpio_virtuser_interrupts_set(void *data, u64 val)
++{
++	struct gpio_virtuser_line_data *ld = data;
++	int irq, ret;
++
++	if (val > 1)
++		return -EINVAL;
++
++	if (val) {
++		irq = gpiod_to_irq(ld->ad.desc);
++		if (irq < 0)
++			return irq;
++
++		ret = request_threaded_irq(irq, NULL,
++					   gpio_virtuser_irq_handler,
++					   IRQF_TRIGGER_RISING |
++					   IRQF_TRIGGER_FALLING |
++					   IRQF_ONESHOT,
++					   ld->consumer, data);
++		if (ret)
++			return ret;
++
++		atomic_set(&ld->irq, irq);
++	} else {
++		irq = atomic_xchg(&ld->irq, 0);
++		free_irq(irq, ld);
++	}
++
++	return 0;
++}
++
++DEFINE_DEBUGFS_ATTRIBUTE(gpio_virtuser_interrupts_fops,
++			 gpio_virtuser_interrupts_get,
++			 gpio_virtuser_interrupts_set,
++			 "%llu\n");
++
++static const struct gpio_virtuser_dbgfs_attr_descr
++gpio_virtuser_line_array_dbgfs_attrs[] = {
++	{
++		.name = "values",
++		.fops = &gpio_virtuser_value_array_fops,
++	},
++	{
++		.name = "values_atomic",
++		.fops = &gpio_virtuser_value_array_atomic_fops,
++	},
++};
++
++static const struct gpio_virtuser_dbgfs_attr_descr
++gpio_virtuser_line_dbgfs_attrs[] = {
++	{
++		.name = "direction",
++		.fops = &gpio_virtuser_direction_fops,
++	},
++	{
++		.name = "direction_atomic",
++		.fops = &gpio_virtuser_direction_atomic_fops,
++	},
++	{
++		.name = "value",
++		.fops = &gpio_virtuser_value_fops,
++	},
++	{
++		.name = "value_atomic",
++		.fops = &gpio_virtuser_value_atomic_fops,
++	},
++	{
++		.name = "debounce",
++		.fops = &gpio_virtuser_debounce_fops,
++	},
++	{
++		.name = "consumer",
++		.fops = &gpio_virtuser_consumer_fops,
++	},
++	{
++		.name = "interrupts",
++		.fops = &gpio_virtuser_interrupts_fops,
++	},
++};
++
++static int gpio_virtuser_create_debugfs_attrs(
++			const struct gpio_virtuser_dbgfs_attr_descr *attr,
++			size_t num_attrs, struct dentry *parent, void *data)
++{
++	struct dentry *ret;
++	size_t i;
++
++	for (i = 0; i < num_attrs; i++, attr++) {
++		ret = debugfs_create_file(attr->name, 0644, parent, data,
++					  attr->fops);
++		if (IS_ERR(ret))
++			return PTR_ERR(ret);
++	}
++
++	return 0;
++}
++
++static int gpio_virtuser_dbgfs_init_line_array_attrs(struct device *dev,
++						     struct gpio_descs *descs,
++						     const char *id,
++						     struct dentry *dbgfs_entry)
++{
++	struct gpio_virtuser_line_array_data *data;
++	char *name;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->ad.descs = descs;
++
++	name = devm_kasprintf(dev, GFP_KERNEL, "gpiod:%s", id);
++	if (!name)
++		return -ENOMEM;
++
++	data->ad.dbgfs_dir = debugfs_create_dir(name, dbgfs_entry);
++	if (IS_ERR(data->ad.dbgfs_dir))
++		return PTR_ERR(data->ad.dbgfs_dir);
++
++	return gpio_virtuser_create_debugfs_attrs(
++			gpio_virtuser_line_array_dbgfs_attrs,
++			ARRAY_SIZE(gpio_virtuser_line_array_dbgfs_attrs),
++			data->ad.dbgfs_dir, data);
++}
++
++static int gpio_virtuser_dbgfs_init_line_attrs(struct device *dev,
++					       struct gpio_desc *desc,
++					       const char *id,
++					       unsigned int index,
++					       struct dentry *dbgfs_entry)
++{
++	struct gpio_virtuser_line_data *data;
++	char *name;
++	int ret;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->ad.desc = desc;
++	sprintf(data->consumer, id);
++	atomic_set(&data->irq, 0);
++	atomic_set(&data->irq_count, 0);
++
++	name = devm_kasprintf(dev, GFP_KERNEL, "gpiod:%s:%u", id, index);
++	if (!name)
++		return -ENOMEM;
++
++	ret = devm_mutex_init(dev, &data->consumer_lock);
++	if (ret)
++		return ret;
++
++	data->ad.dbgfs_dir = debugfs_create_dir(name, dbgfs_entry);
++	if (IS_ERR(data->ad.dbgfs_dir))
++		return PTR_ERR(data->ad.dbgfs_dir);
++
++	return gpio_virtuser_create_debugfs_attrs(
++				gpio_virtuser_line_dbgfs_attrs,
++				ARRAY_SIZE(gpio_virtuser_line_dbgfs_attrs),
++				data->ad.dbgfs_dir, data);
++}
++
++static void gpio_virtuser_debugfs_remove(void *data)
++{
++	struct dentry *dbgfs_entry = data;
++
++	debugfs_remove_recursive(dbgfs_entry);
++}
++
++static int gpio_virtuser_prop_is_gpio(struct property *prop)
++{
++	char *dash = strrchr(prop->name, '-');
++
++	return dash && strcmp(dash, "-gpios") == 0;
++}
++
++/*
++ * If this is an OF-based system, then we iterate over properties and consider
++ * all whose names end in "-gpios". For configfs we expect an additional string
++ * array property - "gpio-virtuser,ids" - containing the list of all GPIO IDs
++ * to request.
++ */
++static int gpio_virtuser_count_ids(struct device *dev)
++{
++	struct device_node *of_node = dev_of_node(dev);
++	struct property *prop;
++	int ret = 0;
++
++	if (!of_node)
++		return device_property_string_array_count(dev,
++							  "gpio-virtuser,ids");
++
++	for_each_property_of_node(of_node, prop) {
++		if (gpio_virtuser_prop_is_gpio(prop))
++			++ret;
++	}
++
++	return ret;
++}
++
++static int gpio_virtuser_get_ids(struct device *dev, const char **ids,
++				 int num_ids)
++{
++	struct device_node *of_node = dev_of_node(dev);
++	struct property *prop;
++	size_t pos = 0, diff;
++	char *dash, *tmp;
++
++	if (!of_node)
++		return device_property_read_string_array(dev,
++							 "gpio-virtuser,ids",
++							 ids, num_ids);
++
++	for_each_property_of_node(of_node, prop) {
++		if (!gpio_virtuser_prop_is_gpio(prop))
++			continue;
++
++		dash = strrchr(prop->name, '-');
++		diff = dash - prop->name;
++
++		tmp = devm_kmemdup(dev, prop->name, diff + 1,
++				   GFP_KERNEL);
++		if (!tmp)
++			return -ENOMEM;
++
++		tmp[diff] = '\0';
++		ids[pos++] = tmp;
++	}
++
++	return 0;
++}
++
++static int gpio_virtuser_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct dentry *dbgfs_entry;
++	struct gpio_descs *descs;
++	int ret, num_ids = 0, i;
++	const char **ids;
++	unsigned int j;
++
++	num_ids = gpio_virtuser_count_ids(dev);
++	if (num_ids < 0)
++		return dev_err_probe(dev, num_ids,
++				     "Failed to get the number of GPIOs to request\n");
++
++	if (num_ids == 0)
++		return dev_err_probe(dev, -EINVAL, "No GPIO IDs specified\n");
++
++	ids = devm_kcalloc(dev, num_ids, sizeof(*ids), GFP_KERNEL);
++	if (!ids)
++		return -ENOMEM;
++
++	ret = gpio_virtuser_get_ids(dev, ids, num_ids);
++	if (ret < 0)
++		return dev_err_probe(dev, ret,
++				     "Failed to get the IDs of GPIOs to request\n");
++
++	dbgfs_entry = debugfs_create_dir(dev_name(dev), gpio_virtuser_dbg_root);
++	ret = devm_add_action_or_reset(dev, gpio_virtuser_debugfs_remove,
++				       dbgfs_entry);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < num_ids; i++) {
++		descs = devm_gpiod_get_array(dev, ids[i], GPIOD_ASIS);
++		if (IS_ERR(descs))
++			return dev_err_probe(dev, PTR_ERR(descs),
++					     "Failed to request the '%s' GPIOs\n",
++					     ids[i]);
++
++		ret = gpio_virtuser_dbgfs_init_line_array_attrs(dev, descs,
++								ids[i],
++								dbgfs_entry);
++		if (ret)
++			return dev_err_probe(dev, ret,
++					     "Failed to setup the debugfs array interface for the '%s' GPIOs\n",
++					     ids[i]);
++
++		for (j = 0; j < descs->ndescs; j++) {
++			ret = gpio_virtuser_dbgfs_init_line_attrs(dev,
++							descs->desc[j], ids[i],
++							j, dbgfs_entry);
++			if (ret)
++				return dev_err_probe(dev, ret,
++						     "Failed to setup the debugfs line interface for the '%s' GPIOs\n",
++						     ids[i]);
++		}
++	}
++
++	return 0;
++}
++
++static const struct of_device_id gpio_virtuser_of_match[] = {
++	{ .compatible = "gpio-virtuser" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, gpio_virtuser_of_match);
++
++static struct platform_driver gpio_virtuser_driver = {
++	.driver = {
++		.name = "gpio-virtuser",
++		.of_match_table = gpio_virtuser_of_match,
++	},
++	.probe = gpio_virtuser_probe,
++};
++
++struct gpio_virtuser_device {
++	struct config_group group;
++
++	struct platform_device *pdev;
++	int id;
++	struct mutex lock;
++
++	struct notifier_block bus_notifier;
++	struct completion probe_completion;
++	bool driver_bound;
++
++	struct gpiod_lookup_table *lookup_table;
++
++	struct list_head lookup_list;
++};
++
++static int gpio_virtuser_bus_notifier_call(struct notifier_block *nb,
++					   unsigned long action, void *data)
++{
++	struct gpio_virtuser_device *vdev;
++	struct device *dev = data;
++	char devname[32];
++
++	vdev = container_of(nb, struct gpio_virtuser_device, bus_notifier);
++	snprintf(devname, sizeof(devname), "gpio-virtuser.%d", vdev->id);
++
++	if (!device_match_name(dev, devname))
++		return NOTIFY_DONE;
++
++	switch (action) {
++	case BUS_NOTIFY_BOUND_DRIVER:
++		vdev->driver_bound = true;
++		break;
++	case BUS_NOTIFY_DRIVER_NOT_BOUND:
++		vdev->driver_bound = false;
++		break;
++	default:
++		return NOTIFY_DONE;
++	}
++
++	complete(&vdev->probe_completion);
++	return NOTIFY_OK;
++}
++
++static struct gpio_virtuser_device *
++to_gpio_virtuser_device(struct config_item *item)
++{
++	struct config_group *group = to_config_group(item);
++
++	return container_of(group, struct gpio_virtuser_device, group);
++}
++
++static bool
++gpio_virtuser_device_is_live(struct gpio_virtuser_device *dev)
++{
++	lockdep_assert_held(&dev->lock);
++
++	return !!dev->pdev;
++}
++
++struct gpio_virtuser_lookup {
++	struct config_group group;
++
++	struct gpio_virtuser_device *parent;
++	struct list_head siblings;
++
++	char *con_id;
++
++	struct list_head entry_list;
++};
++
++static struct gpio_virtuser_lookup *
++to_gpio_virtuser_lookup(struct config_item *item)
++{
++	struct config_group *group = to_config_group(item);
++
++	return container_of(group, struct gpio_virtuser_lookup, group);
++}
++
++struct gpio_virtuser_lookup_entry {
++	struct config_group group;
++
++	struct gpio_virtuser_lookup *parent;
++	struct list_head siblings;
++
++	char *key;
++	/* Can be negative to indicate lookup by name. */
++	int offset;
++	enum gpio_lookup_flags flags;
++};
++
++static struct gpio_virtuser_lookup_entry *
++to_gpio_virtuser_lookup_entry(struct config_item *item)
++{
++	struct config_group *group = to_config_group(item);
++
++	return container_of(group, struct gpio_virtuser_lookup_entry, group);
++}
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_key_show(struct config_item *item, char *page)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++
++	guard(mutex)(&dev->lock);
++
++	return sprintf(page, "%s\n", entry->key ?: "");
++}
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_key_store(struct config_item *item,
++					    const char *page, size_t count)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++
++	char *key __free(kfree) = kstrndup(skip_spaces(page), count,
++					   GFP_KERNEL);
++	if (!key)
++		return -ENOMEM;
++
++	strim(key);
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		return -EBUSY;
++
++	kfree(entry->key);
++	entry->key = no_free_ptr(key);
++
++	return count;
++}
++
++CONFIGFS_ATTR(gpio_virtuser_lookup_entry_config_, key);
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_offset_show(struct config_item *item,
++					      char *page)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++	unsigned int offset;
++
++	scoped_guard(mutex, &dev->lock)
++		offset = entry->offset;
++
++	return sprintf(page, "%d\n", offset);
++}
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_offset_store(struct config_item *item,
++					       const char *page, size_t count)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++	int offset, ret;
++
++	ret = kstrtoint(page, 0, &offset);
++	if (ret)
++		return ret;
++
++	/*
++	 * Negative number here means: 'key' represents a line name to lookup.
++	 * Non-negative means: 'key' represents the label of the chip with
++	 * the 'offset' value representing the line within that chip.
++	 *
++	 * GPIOLIB uses the U16_MAX value to indicate lookup by line name so
++	 * the greatest offset we can accept is (U16_MAX - 1).
++	 */
++	if (offset > (U16_MAX - 1))
++		return -EINVAL;
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		return -EBUSY;
++
++	entry->offset = offset;
++
++	return count;
++}
++
++CONFIGFS_ATTR(gpio_virtuser_lookup_entry_config_, offset);
++
++static enum gpio_lookup_flags
++gpio_virtuser_lookup_get_flags(struct config_item *item)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++
++	guard(mutex)(&dev->lock);
++
++	return entry->flags;
++}
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_drive_show(struct config_item *item, char *page)
++{
++	enum gpio_lookup_flags flags = gpio_virtuser_lookup_get_flags(item);
++	const char *repr;
++
++	if (flags & GPIO_OPEN_DRAIN)
++		repr = "open-drain";
++	else if (flags & GPIO_OPEN_SOURCE)
++		repr = "open-source";
++	else
++		repr = "push-pull";
++
++	return sprintf(page, "%s\n", repr);
++}
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_drive_store(struct config_item *item,
++					      const char *page, size_t count)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		return -EBUSY;
++
++	if (sysfs_streq(page, "push-pull")) {
++		entry->flags &= ~(GPIO_OPEN_DRAIN | GPIO_OPEN_SOURCE);
++	} else if (sysfs_streq(page, "open-drain")) {
++		entry->flags &= ~GPIO_OPEN_SOURCE;
++		entry->flags |= GPIO_OPEN_DRAIN;
++	} else if (sysfs_streq(page, "open-source")) {
++		entry->flags &= ~GPIO_OPEN_DRAIN;
++		entry->flags |= GPIO_OPEN_SOURCE;
++	} else {
++		count = -EINVAL;
++	}
++
++	return count;
++}
++
++CONFIGFS_ATTR(gpio_virtuser_lookup_entry_config_, drive);
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_pull_show(struct config_item *item, char *page)
++{
++	enum gpio_lookup_flags flags = gpio_virtuser_lookup_get_flags(item);
++	const char *repr;
++
++	if (flags & GPIO_PULL_UP)
++		repr = "pull-up";
++	else if (flags & GPIO_PULL_DOWN)
++		repr = "pull-down";
++	else if (flags & GPIO_PULL_DISABLE)
++		repr = "pull-disabled";
++	else
++		repr = "as-is";
++
++	return sprintf(page, "%s\n", repr);
++}
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_pull_store(struct config_item *item,
++					     const char *page, size_t count)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		return -EBUSY;
++
++	if (sysfs_streq(page, "pull-up")) {
++		entry->flags &= ~(GPIO_PULL_DOWN | GPIO_PULL_DISABLE);
++		entry->flags |= GPIO_PULL_UP;
++	} else if (sysfs_streq(page, "pull-down")) {
++		entry->flags &= ~(GPIO_PULL_UP | GPIO_PULL_DISABLE);
++		entry->flags |= GPIO_PULL_DOWN;
++	} else if (sysfs_streq(page, "pull-disabled")) {
++		entry->flags &= ~(GPIO_PULL_UP | GPIO_PULL_DOWN);
++		entry->flags |= GPIO_PULL_DISABLE;
++	} else if (sysfs_streq(page, "as-is")) {
++		entry->flags &= ~(GPIO_PULL_UP | GPIO_PULL_DOWN |
++				  GPIO_PULL_DISABLE);
++	} else {
++		count = -EINVAL;
++	}
++
++	return count;
++}
++
++CONFIGFS_ATTR(gpio_virtuser_lookup_entry_config_, pull);
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_active_low_show(struct config_item *item,
++						  char *page)
++{
++	enum gpio_lookup_flags flags = gpio_virtuser_lookup_get_flags(item);
++
++	return sprintf(page, "%c\n", flags & GPIO_ACTIVE_LOW ? '1' : '0');
++}
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_active_low_store(struct config_item *item,
++						   const char *page,
++						   size_t count)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++	bool active_low;
++	int ret;
++
++	ret = kstrtobool(page, &active_low);
++	if (ret)
++		return ret;
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		return -EBUSY;
++
++	if (active_low)
++		entry->flags |= GPIO_ACTIVE_LOW;
++	else
++		entry->flags &= ~GPIO_ACTIVE_LOW;
++
++	return count;
++}
++
++CONFIGFS_ATTR(gpio_virtuser_lookup_entry_config_, active_low);
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_transitory_show(struct config_item *item,
++						  char *page)
++{
++	enum gpio_lookup_flags flags = gpio_virtuser_lookup_get_flags(item);
++
++	return sprintf(page, "%c\n", flags & GPIO_TRANSITORY ? '1' : '0');
++}
++
++static ssize_t
++gpio_virtuser_lookup_entry_config_transitory_store(struct config_item *item,
++						   const char *page,
++						   size_t count)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++	bool transitory;
++	int ret;
++
++	ret = kstrtobool(page, &transitory);
++	if (ret)
++		return ret;
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		return -EBUSY;
++
++	if (transitory)
++		entry->flags |= GPIO_TRANSITORY;
++	else
++		entry->flags &= ~GPIO_TRANSITORY;
++
++	return count;
++}
++
++CONFIGFS_ATTR(gpio_virtuser_lookup_entry_config_, transitory);
++
++static struct configfs_attribute *gpio_virtuser_lookup_entry_config_attrs[] = {
++	&gpio_virtuser_lookup_entry_config_attr_key,
++	&gpio_virtuser_lookup_entry_config_attr_offset,
++	&gpio_virtuser_lookup_entry_config_attr_drive,
++	&gpio_virtuser_lookup_entry_config_attr_pull,
++	&gpio_virtuser_lookup_entry_config_attr_active_low,
++	&gpio_virtuser_lookup_entry_config_attr_transitory,
++	NULL
++};
++
++static ssize_t
++gpio_virtuser_device_config_dev_name_show(struct config_item *item,
++					  char *page)
++{
++	struct gpio_virtuser_device *dev = to_gpio_virtuser_device(item);
++	struct platform_device *pdev;
++
++	guard(mutex)(&dev->lock);
++
++	pdev = dev->pdev;
++	if (pdev)
++		return sprintf(page, "%s\n", dev_name(&pdev->dev));
++
++	return sprintf(page, "gpio-sim.%d\n", dev->id);
++}
++
++CONFIGFS_ATTR_RO(gpio_virtuser_device_config_, dev_name);
++
++static ssize_t gpio_virtuser_device_config_live_show(struct config_item *item,
++						     char *page)
++{
++	struct gpio_virtuser_device *dev = to_gpio_virtuser_device(item);
++	bool live;
++
++	scoped_guard(mutex, &dev->lock)
++		live = gpio_virtuser_device_is_live(dev);
++
++	return sprintf(page, "%c\n", live ? '1' : '0');
++}
++
++static size_t
++gpio_virtuser_get_lookup_count(struct gpio_virtuser_device *dev)
++{
++	struct gpio_virtuser_lookup *lookup;
++	size_t count = 0;
++
++	lockdep_assert_held(&dev->lock);
++
++	list_for_each_entry(lookup, &dev->lookup_list, siblings)
++		count += list_count_nodes(&lookup->entry_list);
++
++	return count;
++}
++
++static int
++gpio_virtuser_make_lookup_table(struct gpio_virtuser_device *dev)
++{
++	size_t num_entries = gpio_virtuser_get_lookup_count(dev);
++	struct gpio_virtuser_lookup_entry *entry;
++	struct gpio_virtuser_lookup *lookup;
++	struct gpiod_lookup *curr;
++	unsigned int i = 0;
++
++	lockdep_assert_held(&dev->lock);
++
++	struct gpiod_lookup_table *table __free(kfree) =
++		kzalloc(struct_size(table, table, num_entries + 1), GFP_KERNEL);
++	if (!table)
++		return -ENOMEM;
++
++	table->dev_id = kasprintf(GFP_KERNEL, "gpio-virtuser.%d", dev->id);
++	if (!table->dev_id)
++		return -ENOMEM;
++
++	list_for_each_entry(lookup, &dev->lookup_list, siblings) {
++		list_for_each_entry(entry, &lookup->entry_list, siblings) {
++			curr = &table->table[i];
++
++			curr->con_id = lookup->con_id;
++			curr->idx = i;
++			curr->key = entry->key;
++			curr->chip_hwnum = entry->offset < 0 ?
++						U16_MAX : entry->offset;
++			curr->flags = entry->flags;
++			i++;
++		}
++	}
++
++	gpiod_add_lookup_table(table);
++	dev->lookup_table = no_free_ptr(table);
++
++	return 0;
++}
++
++static struct fwnode_handle *
++gpio_virtuser_make_device_swnode(struct gpio_virtuser_device *dev)
++{
++	struct property_entry properties[2];
++	struct gpio_virtuser_lookup *lookup;
++	unsigned int i = 0;
++	size_t num_ids;
++
++	memset(properties, 0, sizeof(properties));
++
++	num_ids = list_count_nodes(&dev->lookup_list);
++	char **ids __free(kfree) = kcalloc(num_ids + 1, sizeof(*ids),
++					   GFP_KERNEL);
++	if (!ids)
++		return ERR_PTR(-ENOMEM);
++
++	list_for_each_entry(lookup, &dev->lookup_list, siblings)
++		ids[i++] = lookup->con_id;
++
++	properties[0] = PROPERTY_ENTRY_STRING_ARRAY_LEN("gpio-virtuser,ids",
++							ids, num_ids);
++
++	return fwnode_create_software_node(properties, NULL);
++}
++
++static int
++gpio_virtuser_device_activate(struct gpio_virtuser_device *dev)
++{
++	struct platform_device_info pdevinfo;
++	struct fwnode_handle *swnode;
++	struct platform_device *pdev;
++	int ret;
++
++	lockdep_assert_held(&dev->lock);
++
++	if (list_empty(&dev->lookup_list))
++		return -ENODATA;
++
++	swnode = gpio_virtuser_make_device_swnode(dev);
++	if (IS_ERR(swnode))
++		return PTR_ERR(swnode);
++
++	memset(&pdevinfo, 0, sizeof(pdevinfo));
++	pdevinfo.name = "gpio-virtuser";
++	pdevinfo.id = dev->id;
++	pdevinfo.fwnode = swnode;
++
++	ret = gpio_virtuser_make_lookup_table(dev);
++	if (ret) {
++		fwnode_remove_software_node(swnode);
++		return ret;
++	}
++
++	reinit_completion(&dev->probe_completion);
++	dev->driver_bound = false;
++	bus_register_notifier(&platform_bus_type, &dev->bus_notifier);
++
++	pdev = platform_device_register_full(&pdevinfo);
++	if (IS_ERR(pdev)) {
++		bus_unregister_notifier(&platform_bus_type, &dev->bus_notifier);
++		fwnode_remove_software_node(swnode);
++		return PTR_ERR(pdev);
++	}
++
++	wait_for_completion(&dev->probe_completion);
++	bus_unregister_notifier(&platform_bus_type, &dev->bus_notifier);
++
++	if (!dev->driver_bound) {
++		platform_device_unregister(pdev);
++		fwnode_remove_software_node(swnode);
++		return -ENXIO;
++	}
++
++	dev->pdev = pdev;
++
++	return 0;
++}
++
++static void
++gpio_virtuser_device_deactivate(struct gpio_virtuser_device *dev)
++{
++	struct fwnode_handle *swnode;
++
++	lockdep_assert_held(&dev->lock);
++
++	swnode = dev_fwnode(&dev->pdev->dev);
++	platform_device_unregister(dev->pdev);
++	fwnode_remove_software_node(swnode);
++	dev->pdev = NULL;
++	gpiod_remove_lookup_table(dev->lookup_table);
++	kfree(dev->lookup_table);
++}
++
++static ssize_t
++gpio_virtuser_device_config_live_store(struct config_item *item,
++				       const char *page, size_t count)
++{
++	struct gpio_virtuser_device *dev = to_gpio_virtuser_device(item);
++	int ret = 0;
++	bool live;
++
++	ret = kstrtobool(page, &live);
++	if (ret)
++		return ret;
++
++	guard(mutex)(&dev->lock);
++
++	if (live == gpio_virtuser_device_is_live(dev))
++		return -EPERM;
++
++	if (live)
++		ret = gpio_virtuser_device_activate(dev);
++	else
++		gpio_virtuser_device_deactivate(dev);
++
++	return ret ?: count;
++}
++
++CONFIGFS_ATTR(gpio_virtuser_device_config_, live);
++
++static struct configfs_attribute *gpio_virtuser_device_config_attrs[] = {
++	&gpio_virtuser_device_config_attr_dev_name,
++	&gpio_virtuser_device_config_attr_live,
++	NULL
++};
++
++static void
++gpio_virtuser_lookup_entry_config_group_release(struct config_item *item)
++{
++	struct gpio_virtuser_lookup_entry *entry =
++					to_gpio_virtuser_lookup_entry(item);
++	struct gpio_virtuser_device *dev = entry->parent->parent;
++
++	guard(mutex)(&dev->lock);
++
++	list_del(&entry->siblings);
++
++	kfree(entry->key);
++	kfree(entry);
++}
++
++static struct
++configfs_item_operations gpio_virtuser_lookup_entry_config_item_ops = {
++	.release	= gpio_virtuser_lookup_entry_config_group_release,
++};
++
++static const struct
++config_item_type gpio_virtuser_lookup_entry_config_group_type = {
++	.ct_item_ops	= &gpio_virtuser_lookup_entry_config_item_ops,
++	.ct_attrs	= gpio_virtuser_lookup_entry_config_attrs,
++	.ct_owner	= THIS_MODULE,
++};
++
++static struct config_group *
++gpio_virtuser_make_lookup_entry_group(struct config_group *group,
++				      const char *name)
++{
++	struct gpio_virtuser_lookup *lookup =
++				to_gpio_virtuser_lookup(&group->cg_item);
++	struct gpio_virtuser_device *dev = lookup->parent;
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		return ERR_PTR(-EBUSY);
++
++	struct gpio_virtuser_lookup_entry *entry __free(kfree) =
++				kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (!entry)
++		return ERR_PTR(-ENOMEM);
++
++	config_group_init_type_name(&entry->group, name,
++			&gpio_virtuser_lookup_entry_config_group_type);
++	entry->flags = GPIO_LOOKUP_FLAGS_DEFAULT;
++	entry->parent = lookup;
++	list_add_tail(&entry->siblings, &lookup->entry_list);
++
++	return &no_free_ptr(entry)->group;
++}
++
++static void gpio_virtuser_lookup_config_group_release(struct config_item *item)
++{
++	struct gpio_virtuser_lookup *lookup = to_gpio_virtuser_lookup(item);
++	struct gpio_virtuser_device *dev = lookup->parent;
++
++	guard(mutex)(&dev->lock);
++
++	list_del(&lookup->siblings);
++
++	kfree(lookup->con_id);
++	kfree(lookup);
++}
++
++static struct configfs_item_operations gpio_virtuser_lookup_config_item_ops = {
++	.release	= gpio_virtuser_lookup_config_group_release,
++};
++
++static struct
++configfs_group_operations gpio_virtuser_lookup_config_group_ops = {
++	.make_group     = gpio_virtuser_make_lookup_entry_group,
++};
++
++static const struct config_item_type gpio_virtuser_lookup_config_group_type = {
++	.ct_group_ops	= &gpio_virtuser_lookup_config_group_ops,
++	.ct_item_ops	= &gpio_virtuser_lookup_config_item_ops,
++	.ct_owner	= THIS_MODULE,
++};
++
++static struct config_group *
++gpio_virtuser_make_lookup_group(struct config_group *group, const char *name)
++{
++	struct gpio_virtuser_device *dev =
++				to_gpio_virtuser_device(&group->cg_item);
++
++	if (strlen(name) > (GPIO_VIRTUSER_NAME_BUF_LEN - 1))
++		return ERR_PTR(-E2BIG);
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		return ERR_PTR(-EBUSY);
++
++	struct gpio_virtuser_lookup *lookup __free(kfree) =
++				kzalloc(sizeof(*lookup), GFP_KERNEL);
++	if (!lookup)
++		return ERR_PTR(-ENOMEM);
++
++	lookup->con_id = kstrdup(name, GFP_KERNEL);
++	if (!lookup->con_id)
++		return ERR_PTR(-ENOMEM);
++
++	config_group_init_type_name(&lookup->group, name,
++				    &gpio_virtuser_lookup_config_group_type);
++	INIT_LIST_HEAD(&lookup->entry_list);
++	lookup->parent = dev;
++	list_add_tail(&lookup->siblings, &dev->lookup_list);
++
++	return &no_free_ptr(lookup)->group;
++}
++
++static void gpio_virtuser_device_config_group_release(struct config_item *item)
++{
++	struct gpio_virtuser_device *dev = to_gpio_virtuser_device(item);
++
++	guard(mutex)(&dev->lock);
++
++	if (gpio_virtuser_device_is_live(dev))
++		gpio_virtuser_device_deactivate(dev);
++
++	mutex_destroy(&dev->lock);
++	ida_free(&gpio_virtuser_ida, dev->id);
++	kfree(dev);
++}
++
++static struct configfs_item_operations gpio_virtuser_device_config_item_ops = {
++	.release	= gpio_virtuser_device_config_group_release,
++};
++
++static struct configfs_group_operations gpio_virtuser_device_config_group_ops = {
++	.make_group	= gpio_virtuser_make_lookup_group,
++};
++
++static const struct config_item_type gpio_virtuser_device_config_group_type = {
++	.ct_group_ops	= &gpio_virtuser_device_config_group_ops,
++	.ct_item_ops	= &gpio_virtuser_device_config_item_ops,
++	.ct_attrs	= gpio_virtuser_device_config_attrs,
++	.ct_owner	= THIS_MODULE,
++};
++
++static struct config_group *
++gpio_virtuser_config_make_device_group(struct config_group *group,
++				       const char *name)
++{
++	struct gpio_virtuser_device *dev __free(kfree) = kzalloc(sizeof(*dev),
++								 GFP_KERNEL);
++	if (!dev)
++		return ERR_PTR(-ENOMEM);
++
++	dev->id = ida_alloc(&gpio_virtuser_ida, GFP_KERNEL);
++	if (dev->id < 0)
++		return ERR_PTR(dev->id);
++
++	config_group_init_type_name(&dev->group, name,
++				    &gpio_virtuser_device_config_group_type);
++	mutex_init(&dev->lock);
++	INIT_LIST_HEAD(&dev->lookup_list);
++	dev->bus_notifier.notifier_call = gpio_virtuser_bus_notifier_call;
++	init_completion(&dev->probe_completion);
++
++	return &no_free_ptr(dev)->group;
++}
++
++static struct configfs_group_operations gpio_virtuser_config_group_ops = {
++	.make_group	= gpio_virtuser_config_make_device_group,
++};
++
++static const struct config_item_type gpio_virtuser_config_type = {
++	.ct_group_ops	= &gpio_virtuser_config_group_ops,
++	.ct_owner	= THIS_MODULE,
++};
++
++static struct configfs_subsystem gpio_virtuser_config_subsys = {
++	.su_group = {
++		.cg_item = {
++			.ci_namebuf	= "gpio-virtuser",
++			.ci_type	= &gpio_virtuser_config_type,
++		},
++	},
++};
++
++static int __init gpio_virtuser_init(void)
++{
++	int ret;
++
++	ret = platform_driver_register(&gpio_virtuser_driver);
++	if (ret) {
++		pr_err("Failed to register the platform driver: %d\n", ret);
++		return ret;
++	}
++
++	config_group_init(&gpio_virtuser_config_subsys.su_group);
++	mutex_init(&gpio_virtuser_config_subsys.su_mutex);
++	ret = configfs_register_subsystem(&gpio_virtuser_config_subsys);
++	if (ret) {
++		pr_err("Failed to register the '%s' configfs subsystem: %d\n",
++		       gpio_virtuser_config_subsys.su_group.cg_item.ci_namebuf,
++		       ret);
++		goto err_plat_drv_unreg;
++	}
++
++	gpio_virtuser_dbg_root = debugfs_create_dir("gpio-virtuser", NULL);
++	if (IS_ERR(gpio_virtuser_dbg_root)) {
++		ret = PTR_ERR(gpio_virtuser_dbg_root);
++		pr_err("Failed to create the debugfs tree: %d\n", ret);
++		goto err_configfs_unreg;
++	}
++
++	return 0;
++
++err_configfs_unreg:
++	configfs_unregister_subsystem(&gpio_virtuser_config_subsys);
++err_plat_drv_unreg:
++	mutex_destroy(&gpio_virtuser_config_subsys.su_mutex);
++	platform_driver_unregister(&gpio_virtuser_driver);
++
++	return ret;
++}
++module_init(gpio_virtuser_init);
++
++static void __exit gpio_virtuser_exit(void)
++{
++	configfs_unregister_subsystem(&gpio_virtuser_config_subsys);
++	mutex_destroy(&gpio_virtuser_config_subsys.su_mutex);
++	platform_driver_unregister(&gpio_virtuser_driver);
++	debugfs_remove_recursive(gpio_virtuser_dbg_root);
++}
++module_exit(gpio_virtuser_exit);
++
++MODULE_AUTHOR("Bartosz Golaszewski <bartosz.golaszewski@linaro.org>");
++MODULE_DESCRIPTION("Virtual GPIO consumer module");
++MODULE_LICENSE("GPL");
+-- 
+2.43.0
+
 
