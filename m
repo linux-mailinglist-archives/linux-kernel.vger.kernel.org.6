@@ -1,124 +1,193 @@
-Return-Path: <linux-kernel+bounces-244940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158F492ABF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:18:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D505092ABF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5A00282EA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2C01F22FE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E0514F9DF;
-	Mon,  8 Jul 2024 22:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BB114F9E7;
+	Mon,  8 Jul 2024 22:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="VTmwHshW"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uehsCfh6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4402D058
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 22:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B426B1CAB1;
+	Mon,  8 Jul 2024 22:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720477096; cv=none; b=XZctwNuWcXUdvtScT00hxHjO690UIEpuQH6QsnuJ5yIVq+BcseVzt5hW7yIm6iSsI8w3jmFXPfEewpbBO4gCWte+vJ8DcB0m9xxD0zJmFFjVfKN+6ANU22Cw8rWtjHzCAbMsEYiDFV09skr+7hYa+4etyaefLz/d38T91NFCu+s=
+	t=1720477126; cv=none; b=J9sXpaMTsw1/NS9jCxGYQN5N9LXqKvIC5MD5+cSzBO/LQ2TpMifprH1VJvdXkWhdTk7sFLCzKDNACUq9c328UZl/R58DQ+4nb5QWRC128EtlXESyq6fcOSMJ3fK1oCEp8SIObWYrlqHB+KCDMwXPjNm2T8xUOUi4LMuEIB25Ig0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720477096; c=relaxed/simple;
-	bh=DjHGuwWLZE6AYa2F05MnDHdTnkQ+OOihy3MKZKRy3Ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zw+mKjILWnPH1PTu/8YWMpNGwLNciaTge3AIuMMaXSvw48Dh/n7SRQf4R+ZAZ/s4ByfXgRuXTRExieUL2Y5+mYIBTNa+lKRUjXZqSfxjxvstA8YguIvJ5OkUK72I1u4R61lLu7UoSvRr/UL8IroBtGWZ10jqTGYEsSlgcwMfdsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=VTmwHshW; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70af2b1a35aso2813732b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 15:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1720477095; x=1721081895; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lynMa0qMQvKrU3+x9nFoEh4w764WLqy+q+oFFlPFpes=;
-        b=VTmwHshWBtH5N/BwmYN5EDxmv6b8C4eJRFOBmo3IopfhfABThpiQibAzbJN51PfUSj
-         858G4AE6Yd3DFUdk5lhHFDhjFw1NnszoEmFCHz8r2L1dtsnwaFDmrdo/j0pm2OgHYOc3
-         ghmkZy8oypSng+VsgMZEAr8IZaj9hsygNb7Q+D/ZhyaeQyoB4KTbR587o7qYqcTcykhd
-         PbbTwzh/s1544DQkjr+rQ/BMFnZIFCQUsjiTdUNuSaSI7gsnZjumxT4OeaWEyaOT8RTY
-         4/r7PZ44A9ind8IbFt8AdTBNvq5oQHrN09dfmP9bIW5dykTAgnmZKAc9ft7/rm72jc64
-         hDRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720477095; x=1721081895;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lynMa0qMQvKrU3+x9nFoEh4w764WLqy+q+oFFlPFpes=;
-        b=Sr08re/y2IfwVVVSn0AEscZ4Pc83huEShqbP3Yc48oufX0EtYF5TKZbVQSnIrE8YAm
-         TVqSjYUuf2TnMK9sUO7J9c+ZbORoyve+Rw9ocWHbrJMXo558T9iBGIhzz6bwM/442fpg
-         vt4bHcon7wc25ke9oshReZUWKNSquTYMGhVyT9JlLiKyD47GHK9JLrTcWTumGY3jVV5R
-         gUeaWwtBCLu9PvFI9N8E6cB7SaYQqx395RtaqnvrUJ2nyx+/qZQPWPhr6QR68Lai5NGY
-         47ebxx+bOweKwg/0kEim93VkILkB01fsSlJvEXIzr5SRqkJ3eMXdVO/CKXj+La17Dn3N
-         oI3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVg8LDQNqeqNRlaGI2qNl8MJZxsyrewCTqOy4wUNdrgJT/rF0+WgpmIDsFLxj3ds/I2xgcC4ZIpHW1OhV8IBJAX1VBKZ3lwPKdC0qgu
-X-Gm-Message-State: AOJu0Yyj70KSdKrB71aEPFkH73QyaDCZ5zwqqW2sVR81tMMJocEvOLlI
-	KI+bFE5/iPuJ1ahAx8tAHda+GEHcEpeNf662dMEJx1ITFTBEHQNK7ZIkEV3WXl0=
-X-Google-Smtp-Source: AGHT+IEjV9bBXGFmEQTeSIY+iK7kYcB7ABn6Uk4Yy8He+5O/cUUPNO91G+kyGhhILxTgai05zaVU7Q==
-X-Received: by 2002:a05:6a00:1885:b0:705:9a28:aa04 with SMTP id d2e1a72fcca58-70b43650817mr1185390b3a.23.1720477094695;
-        Mon, 08 Jul 2024 15:18:14 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4371fc2dsm406119b3a.0.2024.07.08.15.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 15:18:14 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sQwgV-008zrf-2q;
-	Tue, 09 Jul 2024 08:18:11 +1000
-Date: Tue, 9 Jul 2024 08:18:11 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v9 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <Zoxlo72QteVSz1Xj@dread.disaster.area>
-References: <20240704112320.82104-1-kernel@pankajraghav.com>
- <20240704112320.82104-7-kernel@pankajraghav.com>
+	s=arc-20240116; t=1720477126; c=relaxed/simple;
+	bh=cU8H6Bif4LESAVrZggzoDOjewrXPpFQprPeYSGmE6rk=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=g8cp0qqyREDo6NdZuOtIim76Kb30WBlGrTwdlWjbBAaEOrHhxEe14UTy/gvyVAq4xMb21j300VMV4HsKO492kcmj6lnh+olX3+EuU7Xql9IutRuyGvVFJ4sCSszvj7QHqeOkIAHXg29HpZLRxGpW/HXJZ4tboOM/KGGxFouBJp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uehsCfh6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0980BC116B1;
+	Mon,  8 Jul 2024 22:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720477126;
+	bh=cU8H6Bif4LESAVrZggzoDOjewrXPpFQprPeYSGmE6rk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=uehsCfh6UfBo77U0FtaULfdGBO4IIJUUsXQFPEiyns6oY7m67Jw4VijgoOlcCm2NU
+	 uKZStTPs2Rpq17fcaJnE0NaQoOFZY3zp9mlMzTywhJ8n/4JPzIeMRw0WMGPq2F+Pe1
+	 0XDU1S+FmVHtD9G4cK9UvGtA6CJPfFnTtaizpdiNX5TqXiyGpjpD/JzW3ho7TQLZj0
+	 mN0TxDFox76mxB9+DKDGluegcS9awx5G0nThr50Il21PXGH0uDQ3HvjLTVdKXg8evA
+	 zvI0CGrGs2NSMMlnLJjXRWGsv2lc9wvQ4I1iC4iDv3D/12NT4pjsV+arZz9ZhYkWPl
+	 Q3ZRhvlYPQ6mw==
+Message-ID: <6c5d6c0730698969ef613ec9ec4aa14a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704112320.82104-7-kernel@pankajraghav.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240617-ep93xx-v10-3-662e640ed811@maquefel.me>
+References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me> <20240617-ep93xx-v10-3-662e640ed811@maquefel.me>
+Subject: Re: [PATCH v10 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>, nikita.shubin@maquefel.me
+Date: Mon, 08 Jul 2024 15:18:43 -0700
+User-Agent: alot/0.10
 
-On Thu, Jul 04, 2024 at 11:23:16AM +0000, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
-> < fs block size. iomap_dio_zero() has an implicit assumption that fs block
-> size < page_size. This is true for most filesystems at the moment.
-> 
-> If the block size > page size, this will send the contents of the page
-> next to zero page(as len > PAGE_SIZE) to the underlying block device,
-> causing FS corruption.
-> 
-> iomap is a generic infrastructure and it should not make any assumptions
-> about the fs block size and the page size of the system.
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->  fs/iomap/buffered-io.c |  4 ++--
->  fs/iomap/direct-io.c   | 45 ++++++++++++++++++++++++++++++++++++------
->  2 files changed, 41 insertions(+), 8 deletions(-)
+Quoting Nikita Shubin via B4 Relay (2024-06-17 02:36:37)
+> diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+> new file mode 100644
+> index 000000000000..a0430a5ae4da
+> --- /dev/null
+> +++ b/drivers/clk/clk-ep93xx.c
+> @@ -0,0 +1,834 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+[...]
+> +
+> +static int ep93xx_clk_enable(struct clk_hw *hw)
+> +{
+> +       struct ep93xx_clk *clk =3D ep93xx_clk_from(hw);
+> +       struct ep93xx_clk_priv *priv =3D ep93xx_priv_from(clk);
+> +       u32 val;
+> +
+> +       guard(spinlock_irqsave)(&priv->lock);
 
-Looks fine.
+I thought guard() was most important when there were multiple exit paths
+from a function, but OK.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> +
+[...]
+> +
+> +static int ep93xx_plls_init(struct ep93xx_clk_priv *priv)
+> +{
+> +       const char fclk_divisors[] =3D { 1, 2, 4, 8, 16, 1, 1, 1 };
+> +       const char hclk_divisors[] =3D { 1, 2, 4, 5, 6, 8, 16, 32 };
+[...]
+> +       if (!(value & EP93XX_SYSCON_CLKSET2_NBYP2))
+> +               clk_pll2_rate =3D EP93XX_EXT_CLK_RATE;
+> +       else if (value & EP93XX_SYSCON_CLKSET2_PLL2_EN)
+> +               clk_pll2_rate =3D calc_pll_rate(EP93XX_EXT_CLK_RATE, valu=
+e);
+> +       else
+> +               clk_pll2_rate =3D 0;
+> +
+> +       hw =3D devm_clk_hw_register_fixed_rate(dev, "pll2", "xtali", 0, c=
+lk_pll2_rate);
 
--- 
-Dave Chinner
-david@fromorbit.com
+Please use clk_parent_data for topology descriptions.
+
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       priv->fixed[EP93XX_CLK_PLL2] =3D hw;
+> +
+> +       return 0;
+> +}
+> +
+> +static int ep93xx_clk_probe(struct auxiliary_device *adev,
+> +                              const struct auxiliary_device_id *id)
+> +{
+> +       struct ep93xx_regmap_adev *rdev =3D to_ep93xx_regmap_adev(adev);
+> +       struct clk_parent_data xtali =3D { .index =3D 0 };
+> +       struct clk_parent_data ddiv_pdata[3] =3D { };
+> +       unsigned int clk_spi_div, clk_usb_div;
+> +       struct clk_parent_data pdata =3D {};
+> +       struct device *dev =3D &adev->dev;
+> +       struct ep93xx_clk_priv *priv;
+> +       struct ep93xx_clk *clk;
+> +       struct clk_hw *hw;
+> +       unsigned int idx;
+> +       int ret;
+> +       u32 value;
+> +
+> +       priv =3D devm_kzalloc(dev, struct_size(priv, reg, 10), GFP_KERNEL=
+);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       spin_lock_init(&priv->lock);
+> +       priv->dev =3D dev;
+> +       priv->aux_dev =3D rdev;
+> +       priv->map =3D rdev->map;
+> +       priv->base =3D rdev->base;
+> +
+> +       ret =3D ep93xx_plls_init(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       regmap_read(priv->map, EP93XX_SYSCON_CLKSET2, &value);
+> +       clk_usb_div =3D (value >> 28 & GENMASK(3, 0)) + 1;
+> +       hw =3D devm_clk_hw_register_fixed_factor(dev, "usb_clk", "pll2", =
+0, 1, clk_usb_div);
+
+This one can use clk_hw to reference pll2.
+
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       priv->fixed[EP93XX_CLK_USB] =3D hw;
+> +
+> +       ret =3D ep93xx_uart_clock_init(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D ep93xx_dma_clock_init(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       clk_spi_div =3D id->driver_data;
+> +       hw =3D devm_clk_hw_register_fixed_factor(dev, "ep93xx-spi.0", "xt=
+ali",
+
+Are these clk names trying to match device names?
+
+> +                                              0, 1, clk_spi_div);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       priv->fixed[EP93XX_CLK_SPI] =3D hw;
+> +
+> +       /* PWM clock */
+> +       hw =3D devm_clk_hw_register_fixed_factor(dev, "pwm_clk", "xtali",=
+ 0, 1, 1);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       priv->fixed[EP93XX_CLK_PWM] =3D hw;
+> +
+> +       /* USB clock */
+> +       hw =3D devm_clk_hw_register_gate(priv->dev, "ohci-platform", "usb=
+_clk",
+> +                                      0, priv->base + EP93XX_SYSCON_PWRC=
+NT,
+> +                                      EP93XX_SYSCON_PWRCNT_USH_EN, 0,
+> +                                      &priv->lock);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
 
