@@ -1,131 +1,79 @@
-Return-Path: <linux-kernel+bounces-244613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B314C92A6DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D23292A6E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4BF21C213C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48941286E22
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3734D145341;
-	Mon,  8 Jul 2024 16:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EO8AopNT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09ABA147C71;
+	Mon,  8 Jul 2024 16:09:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E688AEC7;
-	Mon,  8 Jul 2024 16:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6379F145325;
+	Mon,  8 Jul 2024 16:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454945; cv=none; b=IUUrVWH/mhKnXLJWZ3r5sm3bjh0dTmavQuubmUpKWGqUJZwJUl2pkqeqNLhliZ79AsD083yS/+EnLJRMdTpaCcSOVtfAV9ZqxEAfPpF95jUJ2YcG9U54ST2GYAFO3rdsGj+ByfRG1vdaZHOgWqHmmdemXRQZiRbZ1tDRWFFthso=
+	t=1720454966; cv=none; b=pTZxRFLXDx3kDyAQMNdYm/HfK2MUWfwD42DqZPrW+NpjQESJz8qE9XSX3tMHodoJUwsH6rfYuRNbDSeoZTE2m1GJXgdggKq08NzjaRe3Q8P+TaPv4Iu+95wflhL0WwPd3xIzybNa8nO/bnIDmTtc6LvxWRRUEPN6oZl8ihjJnds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454945; c=relaxed/simple;
-	bh=Gaqv1F7HUUrf7r6YQfWOX71U7e5DKooiIPc+EJSlaZI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U0o+7Bh0r1jTAwgJ+OOI42W12OCA1QPUEBt8oJYlSCvd+GNqfLYn1uUPkQN/Cub/4hXyt4Mnjn4oTmdEa4Xou+AfAIJYkFqjVn6CBbhhs+BhCh+PfsCsE8lAjVpMvgKtbLkOahZBUkAAdwcLUW3jyfRHrBpX7LRf2ScotIgN5do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EO8AopNT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468AHe7K008024;
-	Mon, 8 Jul 2024 16:08:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=PNBE/PluTogbqN9ixTFzSKz+
-	dbIoyJJDQX37ZYDsHMo=; b=EO8AopNTjQZsJoLBBYXuDxtF4VHeTL1038I3wXRK
-	xaAuhJmHvOTq8eGjujvPzQ6GBYJ5GJ+KJ6avv0m+axWCrN/YxYqVieO0/HdF67EO
-	lDdT+lMQODeZILUX4l4aMWzrgt0kMZR3GeCF+pPkrRDpuOWmbsAt+a/NwVD+itcY
-	rC9JeZ9N/VGDc57+iyuen+sKv9te+nJzn5tdrvwlW4342EZ80KV4vsLZCNGRAPOv
-	47tXyh4zT91Uki9pWMdZ3kLZJMWcOl8yLi1syjJiQDdIcQLQfDsKbhnRnoZdXo4t
-	gjhU4o9PSfrpEvVpMXx6p0hp5cq91FI9NM+giGmfHbFdcg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8v3rp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 16:08:54 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468G8rTE009394
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 8 Jul 2024 16:08:53 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 8 Jul 2024 09:08:50 -0700
-Date: Mon, 8 Jul 2024 21:38:41 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p: Add TCSR halt register
- space
-Message-ID: <ZowPCeNFh/Mw8ev0@hu-mojha-hyd.qualcomm.com>
-References: <20240705153252.1571814-1-quic_mojha@quicinc.com>
- <20240705153252.1571814-2-quic_mojha@quicinc.com>
- <50d0bdd6-2262-4404-9a26-29b1f2e6fe92@kernel.org>
+	s=arc-20240116; t=1720454966; c=relaxed/simple;
+	bh=+YSFfZdBcRElqfc6eZRiCHjZW90d0oX/Mv7xgN23IB0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oLAF90REvkP3ciyqwCNTNf6x0gqXja/WfZlk4dH/g1N/KJ7WgKR4zerqduEx/hP1hOrsC79nkkPGDfIdHfAVEi5nP6Bw3ZTCF3K0iEnzUFBDkxkjP0WcG7Xt86Uw8gARxzHdP0IRpHfxEcIK13jeU61ujOLDfZ5y7J/AiRHfn7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WHptn6p7wz6K5pY;
+	Tue,  9 Jul 2024 00:08:01 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA9F1140C72;
+	Tue,  9 Jul 2024 00:09:21 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
+ 2024 17:09:21 +0100
+Date: Mon, 8 Jul 2024 17:09:20 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
+CC: Alexandru-Aleodor Ardelean <aardelean@baylibre.com>, "Gradinariu, Ramona"
+	<Ramona.Gradinariu@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>, Jonathan Cameron
+	<jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>, Jun Yan <jerrysteve1101@gmail.com>, Matti Vaittinen
+	<mazziesaccount@gmail.com>, Mario Limonciello <mario.limonciello@amd.com>,
+	Mehdi Djait <mehdi.djait.k@gmail.com>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] iio: accel: add ADXL380 driver
+Message-ID: <20240708170920.00003164@Huawei.com>
+In-Reply-To: <CY4PR03MB3399017B1616B06636DC0D0D9BDA2@CY4PR03MB3399.namprd03.prod.outlook.com>
+References: <20240701083138.15891-1-antoniu.miclaus@analog.com>
+	<20240701083138.15891-2-antoniu.miclaus@analog.com>
+	<CA+GgBR89nOCwrGgU=fsS_+woj9mDeqR_hizZMjNgLtxoZ+pY=Q@mail.gmail.com>
+	<CY4PR03MB3399017B1616B06636DC0D0D9BDA2@CY4PR03MB3399.namprd03.prod.outlook.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <50d0bdd6-2262-4404-9a26-29b1f2e6fe92@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 9aoOXSjaAJAO-s9OzL_BZPLAfjH03VNY
-X-Proofpoint-GUID: 9aoOXSjaAJAO-s9OzL_BZPLAfjH03VNY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_09,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- bulkscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=721 malwarescore=0 mlxscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407080120
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Sun, Jul 07, 2024 at 02:46:59PM +0200, Krzysztof Kozlowski wrote:
-> On 05/07/2024 17:32, Mukesh Ojha wrote:
-> > Enable download mode for sa8775p which can help collect
-> > ramdump for this SoC.
-> > 
-> > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > index 23f1b2e5e624..a46d00b1ddda 100644
-> > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > @@ -221,6 +221,7 @@ eud_in: endpoint {
-> >  	firmware {
-> >  		scm {
-> >  			compatible = "qcom,scm-sa8775p", "qcom,scm";
-> > +			qcom,dload-mode = <&tcsr 0x13000>;
-> >  			memory-region = <&tz_ffi_mem>;
-> >  		};
-> >  	};
-> > @@ -2824,6 +2825,11 @@ tcsr_mutex: hwlock@1f40000 {
-> >  			#hwlock-cells = <1>;
-> >  		};
-> >  
-> > +		tcsr: syscon@1fc0000 {
-> > +			compatible = "qcom,sa8775p-tcsr", "syscon";
-> 
-> The file is going away. This change is very confusing.
-> 
-> Please align first with your colleagues instead of sending conflicting
-> work without any explanation.
+*Grumpier*
 
-Sure, let me check with Tengfei if this can be sent along with his patches.
-
--Mukesh
+Crop to relevant parts of email.
 
