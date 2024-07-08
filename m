@@ -1,320 +1,166 @@
-Return-Path: <linux-kernel+bounces-244103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708A8929F1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:32:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4299929F21
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7FA28778F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690F7287C06
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD7F6F2FE;
-	Mon,  8 Jul 2024 09:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxeDCgNE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5197E56766;
+	Mon,  8 Jul 2024 09:33:48 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C305466B;
-	Mon,  8 Jul 2024 09:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCA1849C;
+	Mon,  8 Jul 2024 09:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720431125; cv=none; b=qj9miY0oRYv6xXmcjrrAnl7pvUVq+wgsQGFuwbL43VbqUXaxq1X+OY8cajjxUXxkvBiLAWak6XaKTiKrFUGJI1nu2vyscyNDmc3sLz7D//xh7GNpSwPFk4fHryAt70+0o2SGpHzma84RcSCNJ2oFqLggnCDsAe9gC2C/53uQips=
+	t=1720431227; cv=none; b=WEFF1fIj9He9eJvd/1iUaCdMUjmcwwa2ooVOJ04V6lovPDZLDlsC1WOEcRsu5TGLAh45HWRiQtfqlJuZimQLJxM5evE6+9BmyCVEvXFfE3yGme3attCqwund6tqMUtWM4QTuvI3rm4+Wn+Zgn6GYIDHsQcqpd4mifjiM1SLLb80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720431125; c=relaxed/simple;
-	bh=PSxQJUpdzgyKLJoY9ztDBUzNUgu33n/mFOB+EZ35Res=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jE0nV6PhDoQt1ib4768LEOBPz4p0vGsI5f1ZYHCpzN4v5XK2GpgINPSUJJ2Bauf+dZbn1t7LZbPt/wSxa8LFp2XLN6pelfXJarECOpLk3uABsNY4atkHsweBbLf+vJIFH7Ov5KyHdZ9jmSRnkct9vLgzTf8+pkh5qLra+zIg5+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxeDCgNE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D8C8DC116B1;
-	Mon,  8 Jul 2024 09:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720431124;
-	bh=PSxQJUpdzgyKLJoY9ztDBUzNUgu33n/mFOB+EZ35Res=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=bxeDCgNEcAlRzBsyoNuXrC7t/SmAs9R3ksxeZnuu8YhJJLTUj2Bj887a1F1cNV359
-	 P/xZBsGCnGCLtTqROVcHH6A/5NjGp3L/cuPEj3zCIM8nf2ncp4bukEnLYSYxg8I6zB
-	 WB+++IFF6u9avgtM2FPv+VEPhTs7yMsZbpEY1kKRB6yjALSJTMochxEmZQji+ON4/5
-	 wDhhrbILuHjIrK0sgYIIOeEEHpaolBtYzZIGcKSnZBZFTDDudQHRkzRzmPaOzPoBIm
-	 sydRx6cwDKv+g/mAoFkE2kXCbpnOy1JH0/nrQ+mW/sPjZwnziwNwSNyXwxfMUYlR6R
-	 Vz7DeS3BLF6ig==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C094AC3271E;
-	Mon,  8 Jul 2024 09:32:04 +0000 (UTC)
-From: Rodrigo Cataldo via B4 Relay <devnull+rodrigo.cadore.l-acoustics.com@kernel.org>
-Date: Mon, 08 Jul 2024 11:31:57 +0200
-Subject: [PATCH iwl-net] igc: Ensure PTM request is completed before
- timeout has started
+	s=arc-20240116; t=1720431227; c=relaxed/simple;
+	bh=XSyLWfuXMQi0H+g2rzt4cSb+GFD/9fQIsO2keu4kgGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OVwHVyR2U6kXYFxRZemLA1Q2r865PYr2/oN0BiDucJZwoDWpMvMWLt9VHNVExIsNwKYonV6Qyo/A+xG4lnDztqAL3emX+POMHF7nzqa+2r4MoCMZ1z6YAeEN9LTAx2z6pll8f3W8pDuT0FoA9bkHAFlhD/vsPc47c8TT4hZDrEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WHf7V5kS0z4f3jt8;
+	Mon,  8 Jul 2024 17:33:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 59C611A0184;
+	Mon,  8 Jul 2024 17:33:34 +0800 (CST)
+Received: from [10.67.111.192] (unknown [10.67.111.192])
+	by APP4 (Coremail) with SMTP id gCh0CgCn9_Bpsotmp+f9BQ--.47233S2;
+	Mon, 08 Jul 2024 17:33:31 +0800 (CST)
+Message-ID: <6a6f7a80-89aa-4fef-b489-262447dbdb1a@huaweicloud.com>
+Date: Mon, 8 Jul 2024 17:33:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2] arm64, bpf: Add 12-argument support for bpf
+ trampoline
+Content-Language: en-US
+To: Puranjay Mohan <puranjay@kernel.org>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240705125336.46820-1-puranjay@kernel.org>
+ <5c43f532-c849-41c9-92dc-83925f5835d7@huaweicloud.com>
+ <mb61py16c45rp.fsf@kernel.org>
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+In-Reply-To: <mb61py16c45rp.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240708-igc-flush-ptm-request-before-timeout-6-10-v1-1-70e5ebec9efe@l-acoustics.com>
-X-B4-Tracking: v=1; b=H4sIAAyyi2YC/x3NSwqDMBRG4a3IHfdCDDal3UrpwMY/ekETm0cVx
- L03dPhNzjkoIQoSPZqDIr6SJPiK9tKQnXo/gmWoJq10p27qyjJadnNJE6954YhPQcr8hgsRnGV
- BKJkNt4qdgdL2bpwZOqq9NcLJ/n89SbaZPTK9zvMHM7PALoQAAAA=
-To: Jesse Brandeburg <jesse.brandeburg@intel.com>, 
- Tony Nguyen <anthony.l.nguyen@intel.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Vinicius Costa Gomes <vinicius.gomes@intel.com>, 
- Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>, 
- "Christopher S. Hall" <christopher.s.hall@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11903;
- i=rodrigo.cadore@l-acoustics.com; h=from:subject:message-id;
- bh=Wfg75g71XmXkv4d1mekMWpTpqpPeT5sIegVpLSTXqac=;
- b=owGbwMvMwCGWd67IourLsUDG02pJDGndm4SDe2rWaU5LS9nG91Q5ameo1u2GTUn/a/imP74VF
- 7DqSvuljlIWBjEOBlkxRRb933xOq8uUjDgSJ6+EmcPKBDKEgYtTACZSE8bwP1HI4VDd85nKhh//
- LTjbek16i3PDpzXdZ1ds8LjxaeNxkzKGf3Y7eF7fZmVQcktRZ51/WK306uHtpwpNlbwXhigFsT1
- cyAcA
-X-Developer-Key: i=rodrigo.cadore@l-acoustics.com; a=openpgp;
- fpr=E0F4E67DE69A235AC356157D2DDD1455748BC38F
-X-Endpoint-Received: by B4 Relay for rodrigo.cadore@l-acoustics.com/default
- with auth_id=109
-X-Original-From: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
-Reply-To: rodrigo.cadore@l-acoustics.com
+X-CM-TRANSID:gCh0CgCn9_Bpsotmp+f9BQ--.47233S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFy3Aw15CF4DXFyfKrykZrb_yoW5AFyrpa
+	95Z3ZIkrWDZr1Sqw47Kw43Xr4Sv395uw4UurW3Jw1UAFWqkFy8JrWI93WY9ryDWrWkua42
+	yr1aqF9xGay3AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-From: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
+On 7/8/2024 5:00 PM, Puranjay Mohan wrote:
+> Xu Kuohai <xukuohai@huaweicloud.com> writes:
+> 
+>> On 7/5/2024 8:53 PM, Puranjay Mohan wrote:
+>>> The arm64 bpf JIT currently supports attaching the trampoline to
+>>> functions with <= 8 arguments. This is because up to 8 arguments can be
+>>> passed in registers r0-r7. If there are more than 8 arguments then the
+>>> 9th and later arguments are passed on the stack, with SP pointing to the
+>>> first stacked argument. See aapcs64[1] for more details.
+>>>
+>>> If the 8th argument is a structure of size > 8B, then it is passed fully
+>>> on stack and r7 is not used for passing any argument. If there is a 9th
+>>> argument, it will be passed on the stack, even though r7 is available.
+>>>
+>>> Add the support of storing and restoring arguments passed on the stack
+>>> to the arm64 bpf trampoline. This will allow attaching the trampoline to
+>>> functions that take up to 12 arguments.
+>>>
+>>> [1] https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst#parameter-passing
+>>>
+>>> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+>>> ---
+>>> Changes in V1 -> V2:
+>>> V1: https://lore.kernel.org/all/20240704173227.130491-1-puranjay@kernel.org/
+>>> - Fixed the argument handling for composite types (structs)
+>>> ---
+>>>    arch/arm64/net/bpf_jit_comp.c                | 139 ++++++++++++++-----
+>>>    tools/testing/selftests/bpf/DENYLIST.aarch64 |   3 -
+>>>    2 files changed, 107 insertions(+), 35 deletions(-)
+>>>
+> 
+> [SNIP]
+> 
+>>>    fill_link_info/kprobe_multi_invalid_ubuff        # bpf_program__attach_kprobe_multi_opts unexpected error: -95
+>>
+>> It looks like this patch, similar to [1], also does not handle
+>> parameter alignment properly [2].
+>>
+>> For example:
+>>
+>> int func(__int128 a, __int128 b, __int128 c, int64_t d, __int128 e, int64_t f, __int128 g)
+>> {
+>> }
+>>
+>> parameter a~d are passed through register x0~x6, while parameter
+>> e~g are passed through stack. Since __int128 is 16-byte aligned,
+>> parameter e, f, and g should be placed at sp + 0, +16, and +32
+>> respectively, with 8 bytes **padding** between f and g.
+>>
+>>
+>> And the compiler's alignment or packed attribute may make things
+>> worse, causing parameters to be placed on the stack at positions
+>> that are not naturally aligned.
+> 
+> Hi Xu,
+> Thanks for explaining this. I was not aware that you have already sent a
+> patch[1] to add this support to arm64.
+> 
+> So, I see that it will be non-trivial to calculate padding for each
+> argument passed on the stack. If you are not planning to work on this
+> then I can try to implement it.
+>
 
-When a PTM is requested via wr32(IGC_PTM_STAT), the operation may only
-be completed by the next read operation (flush). Unfortunately, the next
-read operation in the PTM request loop happens after we have already
-started evaluating the response timeout.
+Sure, go ahead and do it.
 
-Thus, the following behavior has been observed::
+> Alsoi, do we currently have a selftest that checks for this edge case? if
+> not I can try to add that too.
+>
 
-  phc2sys-1655  [010]   103.233752: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
-  phc2sys-1655  [010]   103.233754: funcgraph_entry:                    |    igc_phc_get_syncdevice_time() {
-  phc2sys-1655  [010]   103.233755: funcgraph_entry:                    |      igc_rd32() {
-  phc2sys-1655  [010]   103.233931: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
-  phc2sys-1655  [010]   103.233932: local_timer_entry: vector=236
-  phc2sys-1655  [010]   103.233932: hrtimer_cancel: hrtimer=0xffff8edeef526118
-  phc2sys-1655  [010]   103.233933: hrtimer_expire_entry: hrtimer=0xffff8edeef526118 now=103200127876 function=tick_nohz_handler/0x0
+Not yet, feel free to add it. Thanks.
 
-  ... tick handler ...
-
-  phc2sys-1655  [010]   103.233971: funcgraph_exit:       !  215.559 us |      }
-  phc2sys-1655  [010]   103.233972: funcgraph_entry:                    |      igc_rd32() {
-  phc2sys-1655  [010]   103.234135: funcgraph_exit:       !  164.370 us |      }
-  phc2sys-1655  [010]   103.234136: funcgraph_entry:         1.942 us   |      igc_rd32();
-  phc2sys-1655  [010]   103.234147: console:              igc 0000:03:00.0 enp3s0: Timeout reading IGC_PTM_STAT register
-
-Based on the (simplified) code::
-
-	ctrl = rd32(IGC_PTM_CTRL);
-        /* simplified: multiple writes here */
-	wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
-
-	err = readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
-				 stat, IGC_PTM_STAT_SLEEP,
-				 IGC_PTM_STAT_TIMEOUT);
-	if (err < 0) {
-		netdev_err(adapter->netdev, "Timeout reading IGC_PTM_STAT register\n");
-		return err;
-	}
-
-Where readx_poll_timeout() starts the timeout evaluation before calling
-the rd32() parameter (rd32() is a macro for igc_rd32()).
-
-In the trace shown, the read operation of readx_poll_timeout() (second
-igc_rd32()) took so long that the timeout (IGC_PTM_STAT_VALID) has expired
-and no sleep has been performed.
-
-With this patch, a write flush is added (which is an additional
-igc_rd32() in practice) that can wait for the write before the timeout
-is evaluated::
-
-  phc2sys-1615  [010]    74.517954: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
-  phc2sys-1615  [010]    74.517956: funcgraph_entry:                    |    igc_phc_get_syncdevicetime() {
-  phc2sys-1615  [010]    74.517957: funcgraph_entry:                    |      igc_rd32() {
-  phc2sys-1615  [010]    74.518127: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
-  phc2sys-1615  [010]    74.518128: local_timer_entry: vector=236
-  phc2sys-1615  [010]    74.518128: hrtimer_cancel: hrtimer=0xffff96466f526118
-  phc2sys-1615  [010]    74.518128: hrtimer_expire_entry: hrtimer=0xffff96466f526118 now=74484007229 function=tick_nohz_handler/0x0
-
-  ... tick handler ...
-
-  phc2sys-1615  [010]    74.518180: funcgraph_exit:       !  222.282 us |      }
-  phc2sys-1615  [010]    74.518181: funcgraph_entry:                    |      igc_rd32() {
-  phc2sys-1615  [010]    74.518349: funcgraph_exit:       !  168.160 us |      }
-  phc2sys-1615  [010]    74.518349: funcgraph_entry:         1.970 us   |      igc_rd32();
-  phc2sys-1615  [010]    74.518352: hrtimer_init: hrtimer=0xffffa6f9413a3940 clockid=CLOCK_MONOTONIC mode=0x0
-  phc2sys-1615  [010]    74.518352: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
-  phc2sys-1615  [010]    74.518353: hrtimer_start: hrtimer=0xffffa6f9413a3940 function=hrtimer_wakeup/0x0 expires=74484232878 softexpires=74484231878
-
-  .. hrtimer setup and return ...
-
-  kworker/10:1-242   [010]    74.518382: sched_switch: kworker/10:1:242 [120] W ==> phc2sys:1615 [120]
-  phc2sys-1615  [010]    74.518383: preempt_enable: caller=schedule+0x36 parent=schedule+0x36
-  phc2sys-1615  [010]    74.518384: funcgraph_entry:      !  100.088 us |      igc_rd32();
-  phc2sys-1615  [010]    74.518484: funcgraph_entry:         1.958 us   |      igc_rd32();
-  phc2sys-1615  [010]    74.518488: funcgraph_entry:         2.019 us   |      igc_rd32();
-  phc2sys-1615  [010]    74.518490: funcgraph_entry:         1.956 us   |      igc_rd32();
-  phc2sys-1615  [010]    74.518492: funcgraph_entry:         1.980 us   |      igc_rd32();
-  phc2sys-1615  [010]    74.518494: funcgraph_exit:       !  539.386 us |    }
-
-Now the sleep is called as expected, and the operation succeeds.
-Therefore, regardless of how long it will take for the write to be
-completed, we will poll+sleep at least for the time specified in
-IGC_PTM_STAT_TIMEOUT.
-
-Fixes: a90ec8483732 ("igc: Add support for PTP getcrosststamp()")
-Signed-off-by: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
----
-I have been searching for the proper solution for this PTM issue for a long
-time. The issue was observed on a 13700 (Raptor Lake). We also use a 8500
-(Coffee Lake) that is much less susceptible for this issue, but still
-happens. Both are using I225-LM cards.
-
-For a 24 hours test, idle system, I have observed with 13700::
-
-	number of timeouts in 86400 seconds: 2509
-
-The same test on a 8500::
-
-        number of timeouts in 86400 seconds: 9
-
-Where one PTM request is sent per second. Test was done this script::
-
-  record_multiple_timeout_param()
-  {
-  	local taskset_cpu=$1
-  	local cur_limit=$((SECONDS + LIMIT_SECONDS ))
-  	local timeouts=0
-  
-  	while [ $SECONDS -lt $cur_limit ]
-  	do
-  		REL_TO=$((cur_limit - SECONDS))
-  
-  		timeout $REL_TO taskset $taskset_cpu \
-  			phc2sys -c $ITF_NAME -s CLOCK_REALTIME -O 37 -m 1>/dev/null
-  		if [ $? -eq 255 ]; then
-  			timeouts=$((timeouts + 1))
-  		fi
-  	done
-  	printf "\tnumber of timeouts in %s seconds: %d\n" $LIMIT_SECONDS $timeouts
-  }
-
-  record_multiple_timeout_param $NON_ISOLCPU_MASK
-
-Firmware version for the cards::
-
-  # lshw -class network -json | jq '.[0].product,.[0].configuration.firmware'
-  "Ethernet Controller I225-LM"
-  "1057:8754"
-
-  # lshw -class network -json | jq '.[2].product,.[2].configuration.firmware'
-  "Ethernet Controller I225-LM"
-  "1057:8754
-
-A couple of attempts were made that did not lead to solving the
-issue (disabling ASPM in kernel and boot, using periodic tick), and a couple
-of solutions that worked but that were subpar:
-
-1. The issue was not observed for a phc2sys(8) running on a fully
-   isolated nohz_full core. We do not have the luxury of dedicating a a
-   core for it.
-2. Bumping the IGC_PTM_STAT_TIMEOUT value. Other machines may need
-   another value though.
-3. Retry (multiple times) readx_poll_timeout() in case of failure. This may
-   significantly increase the function latency, because each
-   readx_poll_timeout() can take more than 100 us.
-4. Disabling preemption during the PTM request. Horrible.
-
-For the Coffee Lake machine, the issue tends to be avoided because the
-read does not take so long. Here is basically the same trace using the
-Cofee Lake machine::
-
-  phc2sys-1204  [002]  1778.220288: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
-  phc2sys-1204  [002]  1778.220290: funcgraph_entry:                    |    igc_phc_get_syncdevicetime() {
-  phc2sys-1204  [002]  1778.220291: funcgraph_entry:                    |      igc_rd32() {
-  phc2sys-1204  [002]  1778.220373: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
-  phc2sys-1204  [002]  1778.220374: local_timer_entry: vector=236
-  phc2sys-1204  [002]  1778.220375: hrtimer_cancel: hrtimer=0xffff894027326118
-  phc2sys-1204  [002]  1778.220376: hrtimer_expire_entry: hrtimer=0xffff894027326118 now=1778228034802 function=tick_nohz_handler/0x0
-
-  ... tick handler ...
-
-  phc2sys-1204  [002]  1778.220411: funcgraph_exit:       !  119.843 us |      }
-  phc2sys-1204  [002]  1778.220412: funcgraph_entry:                    |      igc_rd32() {
-  phc2sys-1204  [002]  1778.220492: funcgraph_exit:       + 80.094 us   |      }
-  phc2sys-1204  [002]  1778.220493: funcgraph_entry:        2.951 us    |      igc_rd32();
-  phc2sys-1204  [002]  1778.220497: hrtimer_init: hrtimer=0xffffa504c0d83aa0 clockid=CLOCK_MONOTONIC mode=0x0
-  phc2sys-1204  [002]  1778.220498: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
-  phc2sys-1204  [002]  1778.220499: hrtimer_start: hrtimer=0xffffa504c0d83aa0 function=hrtimer_wakeup/0x0 expires=1778228158866 softexpires=1778228157866
-
-  ... timer setup ....
-
-  phc2sys-1204  [002]  1778.220509: preempt_enable: caller=_raw_spin_unlock_irqrestore+0x2b parent=hrtimer_start_range_ns+0x12d
-  phc2sys-1204  [002]  1778.220511: funcgraph_entry:        7.338 us   |      igc_rd32();
-  phc2sys-1204  [002]  1778.220519: funcgraph_entry:        2.769 us   |      igc_rd32();
-  phc2sys-1204  [002]  1778.220522: funcgraph_entry:        2.798 us   |      igc_rd32();
-  phc2sys-1204  [002]  1778.220525: funcgraph_entry:        2.736 us   |      igc_rd32();
-  phc2sys-1204  [002]  1778.220529: funcgraph_entry:        2.750 us   |      igc_rd32();
-  phc2sys-1204  [002]  1778.220532: funcgraph_exit:       !  242.656 us |    }
-
-For both machines, I observed that the first igc_rd32() after an idle
-period (more than 10us) tends to take significantly more time. I assume
-this is a hardware power-saving technique, but I could not find any
-mention in the manuals. This is very easily observable with an idle
-system running phc2sys, since it will request only once every second.
-
-This is the typical trace of the operation::
-
-  phc2sys-1204  [002]  1749.209397: funcgraph_entry:                   |  igc_ptp_getcrosststamp() {
-  phc2sys-1204  [002]  1749.209398: funcgraph_entry:                   |    igc_phc_get_syncdevicetime() {
-  phc2sys-1204  [002]  1749.209400: funcgraph_entry:      + 81.491 us  |      igc_rd32();
-  phc2sys-1204  [002]  1749.209482: funcgraph_entry:        3.691 us   |      igc_rd32();
-  phc2sys-1204  [002]  1749.209487: funcgraph_entry:        2.942 us   |      igc_rd32();
-  phc2sys-1204  [002]  1749.209490: hrtimer_init: hrtimer=0xffffa504c0d83a00 clockid=CLOCK_MONOTONIC mode=0x0
-  phc2sys-1204  [002]  1749.209491: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
-  ... timer setup and it goes on like before ...
-
-The preemption needs to happen for this issue, so that this power-saving
-mode is triggered, making the igc_rd32 'slow enough' so that all of the
-timeout is consumed before the card has time to answer.
-
-I believe flushing the write solves the issue definitely, since the
-write should be completed before the timeout has started. So that, even
-if the timeout is consumed by a slow read operation, the write has been
-received before and the card had time to process the request.
----
- drivers/net/ethernet/intel/igc/igc_ptp.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
-index 1bb026232efc..d7269e4f1a21 100644
---- a/drivers/net/ethernet/intel/igc/igc_ptp.c
-+++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
-@@ -1005,6 +1005,10 @@ static int igc_phc_get_syncdevicetime(ktime_t *device,
- 		 * VALID bit.
- 		 */
- 		wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
-+		/* Ensure the hardware receives the ptm request before the
-+		 * response timeout starts.
-+		 */
-+		wrfl();
- 
- 		err = readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
- 					 stat, IGC_PTM_STAT_SLEEP,
-
----
-base-commit: 0005b2dc43f96b93fc5b0850d7ca3f7aeac9129c
-change-id: 20240705-igc-flush-ptm-request-before-timeout-6-10-f6e02c96f6d4
-
-Best regards,
--- 
-Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
-
+> Thanks,
+> Puranjay
+> 
+>> [1] https://lore.kernel.org/bpf/20230917150752.69612-1-xukuohai@huaweicloud.com/
+>> [2] https://lore.kernel.org/bpf/CABRcYmLtk8aQEzoUFw+j5Rdd-MXf-q+i7RHXZtu-skjRz11ZDw@mail.gmail.com/
 
 
