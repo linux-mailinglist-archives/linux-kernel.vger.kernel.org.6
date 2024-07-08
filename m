@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-244607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746A692A6C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:05:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425EB92A6C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E56D1F21B94
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:05:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96245B21CF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7714C145340;
-	Mon,  8 Jul 2024 16:05:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC52B1465A9;
+	Mon,  8 Jul 2024 16:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="PDMAybxH"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11olkn2062.outbound.protection.outlook.com [40.92.19.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68005EC7;
-	Mon,  8 Jul 2024 16:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454711; cv=none; b=u20ztfDPwkPTxFi7TBQ1lu7hsklydEC3Ry0wpOf9ebG9gyPCltmXiXdnECsU++EKv3SEgtIQtvrE2lq2UV12lh2/ROykBVErfWHbK+Yh1aFgFMi2xg8gUYmHvgeOhua8u+liVEVXVxyFyvEjFh0KjLwkQesqLUQDQsdLqiMa1Yk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454711; c=relaxed/simple;
-	bh=b5IS1Acq/tg8kBzqe5Bf3up//5U7YHtHFF4sdNaYvdY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KocZRniZ7+4O1wr66BdIPU0Y/N+aj40hHcRHS9/SwQmvk/yX/IvFAdEK6mdF4La8sptaamKjczXRmFLpWXFCmA0pH8YrMpkrhaByYF/fa/Px0qAFk7a5bHT5hKMIg+BqZXZoKezWyU8RTeZipsZzHjh0mguQN5a7Kf+rNqx72WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WHpn4646fz6K9Y3;
-	Tue,  9 Jul 2024 00:03:04 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id F3DF31400D9;
-	Tue,  9 Jul 2024 00:05:05 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
- 2024 17:05:05 +0100
-Date: Mon, 8 Jul 2024 17:05:04 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Tinaco, Mariel" <Mariel.Tinaco@analog.com>
-CC: Jonathan Cameron <jic23@kernel.org>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "Mark
- Brown" <broonie@kernel.org>, "Hennerich, Michael"
-	<Michael.Hennerich@analog.com>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
-	Nuno Sa <nuno.sa@analog.com>
-Subject: Re: [PATCH 2/2] iio: dac: support the ad8460 Waveform DAC
-Message-ID: <20240708170504.00006c9d@Huawei.com>
-In-Reply-To: <SJ0PR03MB62246270CC24E70732D0288F91DA2@SJ0PR03MB6224.namprd03.prod.outlook.com>
-References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
-	<20240510064053.278257-3-Mariel.Tinaco@analog.com>
-	<20240511174405.10d7fce8@jic23-huawei>
-	<SJ0PR03MB62241801F72B21EEC9CDCCBD91D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
-	<20240628194546.2f608365@jic23-huawei>
-	<SJ0PR03MB62246270CC24E70732D0288F91DA2@SJ0PR03MB6224.namprd03.prod.outlook.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C70C145B37;
+	Mon,  8 Jul 2024 16:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.19.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720454714; cv=fail; b=salwziy41hKHm//VHH4jnUiuf7XJIqwOPp6/8zji+RAIME0ct/6HX19DRR0p0JfDrVLgRv2olMcn6owCgH7N8he5k04Gr9vclIqwGSy2an6+DyUoXRkNONTvG46w6VjrMD0/gLKV+MtsRNNWAEPKzqvqHME/AdujOJgL7Ce5N84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720454714; c=relaxed/simple;
+	bh=72K4Q0Qa2daTiMCo1UQNSnUr/y2IcLNWcEzFWNPJM5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YbD2G30lKDwxJut/aidBx+d2NrT2LczpyMD/6aj75GSSaYOyFn+vCtwPlvihxJSaUuc8hr0j4YGGfRJuDkKKY0TjWrbZZEzqws2LbAGL/vCMCbzN/5LxKPmqquyOWnH9YWiPHf+sDmWsO7nusj1p6dkOi79aAf2cH255XmR1wj4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=PDMAybxH; arc=fail smtp.client-ip=40.92.19.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RCBSInr57Y65wygVEd5rfq2u4FgxIM+2xQPZrkL1ohixuG1vmILhKK2ViTH1vTK+dUHhMm2izDrFMxhxbIM/SGm9VS/SiRroEP/tw9QHruELieNHjaRjKb0ZoD5DHtGxDCJEolSnc3YDjDTdcpM/Aea0bqN7x5Xlx0bLOR4SPYvIHA6wzlxI0degeleBsl55i0c77OlWHHfeXqIhcEP4dNsWSmZzndT34epbR/66tVbKau0rfZwJD4vyjVIG/sQ5Gtms2e3aRMDaCH8bx8BJXKPGl/fygLqnLBfX6ztUts9CY6VwtBnJuHqf6JrN6idOay/HSC1Gu1ny4fdjoJ9XZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nvjVBeqmCmf3mcF/9e25YeswOCAe81gKJ4iTc/beC4w=;
+ b=meiMQfHqrx5RFfzbUEG7fAvw3dgC8FQ8Cu+7AXaiEkOVXNJkJggBlhBU6AeLuV6nqCqbjg4U4wp93QVJPXL//vBeX2FGyRBvLjRXTP4VnnUviqQF61lhpACDRtf+dzP6CfBiZ/81F4z5SkB/2RHf/yXbBkQ6pjB/h1uCIPO1nsAzG94v8Bl4/jvbFLx4LfyCxoy8GkyQN6JPj8YLRkhu2VMVjzbLXjr56dIcDcXfXUXVKfx9HbEtULxWA3kTViB5Km9cvpfFCURtA9tKPAEAqaInsnP1trckXlcLCy4y1jfqBmCuCR0BhpL1tBG1a0u3cnS8ChK1WSAjrXaRk4ZajQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nvjVBeqmCmf3mcF/9e25YeswOCAe81gKJ4iTc/beC4w=;
+ b=PDMAybxHLXmVG7YnWjyfSs60cw1dAkqq51/UOmj9DMNsdi+m9ODtqEBj3s7mY4U7cazDBBRCXnkbnxfA3mehSS9fP2EfI2hOJKIkin8lCE5gyAnqorRckVtAvrqzFbhBrH1X3YMoBAFb+4FOiPAMp4SP2NS1y9J4vSgn+szb6Bnpvq/ZX+odYb/1Llirxk4ujcmEq1IO10JlW5VUTrfJoMA2CtRw7Jg3xEnrmlK9q/86PK/q2996Ncd9ZnEvoDwbQSxgu8cqzwjx92HdXupaMlQW2ZGcRYgcVgrdnP4BXVyQW+ppAVwK+3B9TYXUb/6V0uMMrIBbyJp+54uK7usYGA==
+Received: from MN2PR16MB2941.namprd16.prod.outlook.com (2603:10b6:208:e1::15)
+ by PH7PR16MB4597.namprd16.prod.outlook.com (2603:10b6:510:139::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Mon, 8 Jul
+ 2024 16:05:09 +0000
+Received: from MN2PR16MB2941.namprd16.prod.outlook.com
+ ([fe80::9d62:95ae:c373:c490]) by MN2PR16MB2941.namprd16.prod.outlook.com
+ ([fe80::9d62:95ae:c373:c490%3]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
+ 16:05:09 +0000
+Date: Mon, 8 Jul 2024 11:05:05 -0500
+From: Chris Morgan <macromorgan@hotmail.com>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Maximilian Weigand <mweigand@mweigand.net>,
+	Dragan Simic <dsimic@manjaro.org>,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Andy Yan <andyshrk@163.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Furkan Kardame <f.kardame@manjaro.org>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	Shengyu Qu <wiagn233@outlook.com>
+Subject: Re: arm64: dts: rockchip: Add dma-names to uart-bluetooth rk3566
+ devices
+Message-ID:
+ <MN2PR16MB29416FE9165FB72824266667A5DA2@MN2PR16MB2941.namprd16.prod.outlook.com>
+References: <20240705163004.29678-2-didi.debian@cknow.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705163004.29678-2-didi.debian@cknow.org>
+X-TMN: [+ChxQEWk9LmHnKIimUhbefbirTxsMlmN2VwdEK9KEF0=]
+X-ClientProxiedBy: SN7PR04CA0101.namprd04.prod.outlook.com
+ (2603:10b6:806:122::16) To MN2PR16MB2941.namprd16.prod.outlook.com
+ (2603:10b6:208:e1::15)
+X-Microsoft-Original-Message-ID: <ZowOMULv+jf7VPYa@wintermute.localhost.fail>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR16MB2941:EE_|PH7PR16MB4597:EE_
+X-MS-Office365-Filtering-Correlation-Id: 769dff78-b8ae-432b-b9d6-08dc9f67bd37
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|8060799006|19110799003|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	nF/A/+0Y6yzbo+63rEBLQ4rMGz4nSxo7X2BWAqjrRR+cX/+6Vk94Fa9EPkowmnzfssUcm358FPYOlTw1vIItsmS7+W1P9UJ+yDZ0aU8EodUWrQl40in6J+qQM9rv4QALiTBnVk7XrsZ4UNjW72QYFAbu2HpNzSyQ7JP36mluWk+zEhacfiOXRHj6LGjuUwSA7KmBvDS+Zgvyg623O+afidSRxbe12/tA5AnJ9bu4+fc58wVKhiPSz+lhRdKzyGKvSmrubj4udgX0oRqUT71n5u9S4LD4P4bK2NFUeW9UCaOrYTv72vHrwzatzGSbC6J2iVXm4lTNyuU2h9iNh23zudI9+lxxiFLexs6hf5rtFvCJBPSKis9gGRdgghZGvXwBRF0A+Mm8QwYr8W1kstXzKBQEdaycoI0WCV6OoLGXzumVNFofca19C8ZLAP36btSdvON6+A2bpRvwVqZSB8fBsV0QB0iKR4G32zHCmKs/t9nvUqqxp/ZxLIrYza/qv7U68Xi26c9GSe10U9iXT1pS5FfnuMjfiWdLkpMEAWGMmeNcztL0vZ75EU0BgELC31vBAc8kTOSjFD0A0YxO0gQd1Pt4OoBSIFWDRacma23ri5WQfw6GP4ef9OlMgu9J5SHQZaZMd7hGuqfHTG2Sd/PWLA==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hZSHS+P+7t3TOMFNW5pbtCA0WqUeI6TUDcer7YTNFPLg8DZ2Av5rbDUtP1Q2?=
+ =?us-ascii?Q?sCN4Fvjc/4PlFJEoyorouR48wCZByD7KPrPHHvIQke53//SNWMgkK3/W7FIW?=
+ =?us-ascii?Q?Xepzh4RVHo2tZe2lMDQwVCjwoQThBEqndRWOLazHkn19WN6HyZfwSOqCN0LE?=
+ =?us-ascii?Q?rSRxzM+Hx4YyZowVfcYMDWriTPhrXXgegmokGMN3szbcVqmLPH0fq+/wGTg9?=
+ =?us-ascii?Q?tRvSNUih9JbqVECNVPz7JPfh01vZzxMTnUE8f5W/VyyY3Lrv66UakWz0oggL?=
+ =?us-ascii?Q?R6eaJAf0QMRby2lojCtO64jCHZ5X8NbT7ZytShQ1AkTFSwueZkMeHbnEDsPE?=
+ =?us-ascii?Q?gLtf46H5tWqRPJ12pzFbJTHN76FTqwmvP2VrZOe10dMSEkzEeaO/JgU0UMSp?=
+ =?us-ascii?Q?hI0NSSDqJyamYXSeTumXNhjCWwjvN+3C24Pen2qvxnGweYpz8LH0030pYXnr?=
+ =?us-ascii?Q?StllCzfgto2y83zNB4ZUsOoS4sMH1CfqigjE2lxkVEItIMzT/FfPRLlOc11F?=
+ =?us-ascii?Q?0et7PUQwwmVVbHrOnRHdwxWb2nFXm3HBh8+AXBewNqxIGL7g3DPhvyeqBwyv?=
+ =?us-ascii?Q?GcXabUddnHNbjDKDClHZdzoU4Ub5Ztksp6BWp4AAICkTO/M/DftbmUcHyiKM?=
+ =?us-ascii?Q?AAj7xFoU/RPmSHNXAIcuIJeT9Icz8LnLlOsB7G0C31n4Uo2Bl160GeDdmQ8t?=
+ =?us-ascii?Q?a3zlFaIfbU1n/7wEhnbfifsoe/RDmD4et+Vlss+pW48mA72RK86j5jMI72z7?=
+ =?us-ascii?Q?NEYQFyCWktIax6zKpLyPRDYtnwVKSfBKTyfUTSdCoMrqw007WywItT/gh/b/?=
+ =?us-ascii?Q?20JK0xq4y+xo4s0VMr9Bt4FdO+EApbfvd1B8W98kacS9u8KI+6KbD7av6R3t?=
+ =?us-ascii?Q?bJ8nmD7NiuSxnGwX1g3LHerzTdKNDUOWtD8pUlZDCqkMAhvdidBwkzlA+kwF?=
+ =?us-ascii?Q?Cu7sePIVJGvmet+29TgulB5z9d9L6LsSP80yg8Tk4puT7hs1pG+FlYlhcl71?=
+ =?us-ascii?Q?d0O3foZ2AjOEOmSPJ6u5jZ4xqyZ6RcwM0WE07kDB1AVG+P/YyEpvd40rYeIg?=
+ =?us-ascii?Q?svMsljELz1SPMZobV1DoA39dx/SJ7hqdRJ6FKLcY//f94EHhpNRewNVkWzxv?=
+ =?us-ascii?Q?DCep8d8IYISuC9fsBxo+XsGdB2OT33wY72JAY9zimSFAnJzrXjqOQSIS7Ine?=
+ =?us-ascii?Q?V3OQn6VWC6ayy7z0msxrDTnTVxA9RuBpn0ZaW/BM9/lfv/r1VPHg0bbSoOY9?=
+ =?us-ascii?Q?fdtDZI7/TZQjkCQsGV3sv6HKJKR/iK8CQ9RDjekzDw=3D=3D?=
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-559fc.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 769dff78-b8ae-432b-b9d6-08dc9f67bd37
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR16MB2941.namprd16.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 16:05:09.3778
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR16MB4597
 
-On Mon, 8 Jul 2024 05:17:55 +0000
-"Tinaco, Mariel" <Mariel.Tinaco@analog.com> wrote:
-
-> > -----Original Message-----
-> > From: Jonathan Cameron <jic23@kernel.org>
-> > Sent: Saturday, June 29, 2024 2:46 AM
-> > To: Tinaco, Mariel <Mariel.Tinaco@analog.com>
-> > Cc: linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; Lars-Peter Clausen <lars@metafoo.de>; Rob Herring
-> > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> > <conor+dt@kernel.org>; Liam Girdwood <lgirdwood@gmail.com>; Mark Brown
-> > <broonie@kernel.org>; Hennerich, Michael <Michael.Hennerich@analog.com>;
-> > Marcelo Schmitt <marcelo.schmitt1@gmail.com>; Dimitri Fedrau
-> > <dima.fedrau@gmail.com>; Guenter Roeck <linux@roeck-us.net>
-> > Subject: Re: [PATCH 2/2] iio: dac: support the ad8460 Waveform DAC
-> > 
-> > [External]
-> >   
-> > > > > +};
-> > > > > +
-> > > > > +static int ad8460_get_powerdown_mode(struct iio_dev *indio_dev,
-> > > > > +				     const struct iio_chan_spec *chan) {
-> > > > > +	return 0;  
-> > > >
-> > > > Why have the stubs in here?  
-> > >
-> > > Should I move the stubs to a different place in the code or remove
-> > > them altogether since there is only a single powerdown mode available  
-> > Ah. I'd not really understood what was going on here.  This is fine as is.
-> >   
-> > > > AD8460_HVDAC_DATA_WORD_HIGH(index),  
-> > > > > +			    ((val >> 8) & 0xFF));  
-> > > >
-> > > > bulk write? or do these need to be ordered?  
-> > >
-> > > For this I used bulk read/write this way.
-> > >
-> > > static int ad8460_set_hvdac_word(struct ad8460_state *state,
-> > > 				 int index,
-> > > 				 int val)
-> > > {
-> > > 	u8 regvals[AD8460_DATA_BYTE_WORD_LENGTH];  
-> > regmap bulk accesses (when spi anyway) should be provided with DMA safe
-> > buffers.
-> > Easiest way to do that is add one with __aligned(IIO_DMA_MINALIGN) to the
-> > end of the ad8460_state structure.  Possibly you'll need a lock to protect it - I
-> > haven't checked.  
-> > >
-> > > 	regvals[0] = val & 0xFF;
-> > > 	regvals[1] = (val >> 8) & 0xFF;  
-> > 
-> > That is an endian conversion so use appropriate endian function to fill it
-> > efficiently and document clearly what is going on.
-> > 
-> > 
-> > 	put_unaligned_le16()
-> >   
-> > >
-> > > 	return regmap_bulk_write(state->regmap,  
-> > AD8460_HVDAC_DATA_WORD_LOW(index),  
-> > > 				 regvals,  
-> > AD8460_DATA_BYTE_WORD_LENGTH); }  
-> > >
-> > >  
-> > > > > +}  
-> >   
-> > > > > +	state->regmap = devm_regmap_init_spi(spi, &ad8460_regmap_config);
-> > > > > +	if (IS_ERR(state->regmap))
-> > > > > +		return dev_err_probe(&spi->dev, PTR_ERR(state->regmap),
-> > > > > +				     "Failed to initialize regmap");
-> > > > > +
-> > > > > +	ret = devm_iio_dmaengine_buffer_setup_ext(&spi->dev, indio_dev,
-> > > > > +"tx",
-> > > > > +  
-> > > > IIO_BUFFER_DIRECTION_OUT);
-> > > >
-> > > > Ah. I take back my binding comment. I assume this is mapping some
-> > > > non standard interface for the parallel data flow?  
-> > >
-> > > Yes, the HDL side doesn't follow yet the standard IIO backend from
-> > > which this driver was tested  
-> > 
-> > Hmm. I'd like to see this brought inline with the other iio backend drivers if
-> > possible.  
+On Fri, Jul 05, 2024 at 06:22:12PM +0200, Diederik de Haas wrote:
+> This is a single patch which adds the dma-names property to the uart
+> node with a bluetooth subnode on Pine64's rk356x devices.
 > 
-> Does this mean that we would need to implement an AXI IP core on the
-> FPGA side to be able to test this?
+> But that property can potentially be added to several other devices, but
+> I have zero familiarity with them or their community, so I choose not to
+> add it to those devices, but inform people via this cover letter.
 
-Don't think so.  That framework is meant to support any equivalent IP.
-So whatever you have should be supportable. Maybe it's somewhat of a stub
-driver though if there isn't anything controllable.
-
-It's Nuno's area of expertise though +CC.
+Thank you, but based on past experience the bluetooth failed to work
+when I had the DMA names present (which is why I removed them on my
+devices). I will however test it again to confirm that is still the
+case or not.
 
 > 
-> > 
-> > Jonathan
-> >   
-> 
-> 
-
+> The dts/dtsi files I found as potential candidates are:
+> - rk3566-anbernic-rgxx3.dtsi
+> - rk3566-box-demo.dts
+> - rk3566-powkiddy-rk2023.dtsi
+> - rk3566-powkiddy-x55.dts
+> - rk3566-radxa-cm3.dtsi
+> - rk3566-rock-3c.dts
+> - rk3566-roc-pc.dts
+> - rk3568-rock-3a.dts
 
