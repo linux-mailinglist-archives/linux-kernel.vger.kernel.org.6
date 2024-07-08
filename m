@@ -1,275 +1,214 @@
-Return-Path: <linux-kernel+bounces-244716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A27E92A862
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A1D92A864
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8293A1F21CCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:48:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72AA21F21CEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D93148317;
-	Mon,  8 Jul 2024 17:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92F814900C;
+	Mon,  8 Jul 2024 17:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ed/9eY5V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huxJos3v"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBDD13E41F
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720460891; cv=fail; b=ae58Kp5GacvO/RWaxjMGT/lVxk9Y+4I5f9iukj70DcX+Pbl9pf3uChuwBHFl3Wbmrb2QDbvwDJ+7W2+NuT/3LpmK+XtMR4yyWmxog/MKUwfHvhpjGeAAqMADAcEMrxBBxlezt+5LdtmhyBXix2yFEg3kQWGql1Rd8p97xQ/4aJk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720460891; c=relaxed/simple;
-	bh=yW6z9AB3cUTpEIY2pQuC/wN4lYXxWZLJAO68ML/B9lw=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=k26f6jEyWo1ipeZ7Wibnk7i4Q5Rre5OJ28nbTtgMjc2kZx6QgpRxVLISASQHk5GTamVFS6+KMY94mGGavpnMPFLGkosD47Gr+6eYoSAFzbyT7qs9OMy3NulgEYv9QG1Hynvr9ZxWDoILCIiIamnq46SlJSPmwLDYzHBbT2PgOZQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ed/9eY5V; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720460889; x=1751996889;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=yW6z9AB3cUTpEIY2pQuC/wN4lYXxWZLJAO68ML/B9lw=;
-  b=Ed/9eY5V2YKBPTVcWK3cn8wfesxVko0eTwYStFRqzlPmCnRLmC5TOnqD
-   uhOgSNPgJcc+hidlmQONJGMX6QwcbVeG1SetTPC0GjmSQ98fvZZRj27q3
-   h3rMExueyr4Bx5uPgnrDxTijO5XSUg2Ts7pGuigvT2lyo3SJ7Bz2MwprM
-   NN/V22ZIG7GpAokbH+DZoM6H5XVPu6RfqNi/Hr2MAdBa4ajHafDZvfgiw
-   PsFIb3bUCJ55Qks1ily6pXrqCC05PhdJfOLOs+G8cHI1wpqavVztqWtGg
-   FijmgYLsciV+oYgG052/PZx/Uq7QgOW86B174koDMHZQpjwm5PLaAjasy
-   Q==;
-X-CSE-ConnectionGUID: uLE6E/D1TJ+cCr8otfksWw==
-X-CSE-MsgGUID: 3uTnBu46QnOjPaQgwX9T3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="35214743"
-X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
-   d="scan'208";a="35214743"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 10:48:06 -0700
-X-CSE-ConnectionGUID: +w67OdKnRoGBql1WKpo0XA==
-X-CSE-MsgGUID: kf+D3DKHTM+Vc1uwp1Vvhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,192,1716274800"; 
-   d="scan'208";a="47677233"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Jul 2024 10:48:05 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 8 Jul 2024 10:48:04 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 8 Jul 2024 10:48:04 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.49) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 8 Jul 2024 10:48:03 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FafF3XEMoTGvvULi8Shk1FBBmTs+173Le2m2AK2n7aYRb5X665hLvnXGcPCusMHYBcED2RgWS1nHKt8CeUhOpUZyQh3ip5JDYxlr4KZyFkUOHp+Hjzt2nDWtPGQ+MAjYS6+I7XI4YsR6BaRxMkvSIRN1RJFj8iqKxIXqgitRpQo6s1wN06Nk3NnwsrVf2gHL4mF0FNcWHYHQDLoWBg6P0X7O5ZvrQ1YIqVWFt+qkX66RnDd/vJTTzXaAZos6IoQXZ6U45WLUJFaWQXgkfy8c2vhX2hAIzChonxcneX4FTTRs4FMl7sCBnDbkBaZm7i0we2/bNtyTrIOBIAzPv/YRMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2r+8ECzPDcLfs+uN65FmvrnSeGyZ/8cv+pX6ne/nhNQ=;
- b=HHnRdzU1g6X1nd6YosbVdQGSVY9RZCGxEUYJjf+sqXTzZXg/FZM28GuyjqvUxfr54Zp/j1FZDi/9QNBsH5bL/nJDyZ1Rnvtsj5LcVytvJzPU0mavXPLrJiLCyvOtAaNFtjAQmcG5aDmvYSxSOeqgjpYWqVaEglQALFmPL5ml7zqfBLxgWkeXF1oJZFTaFRt4zJIAM8adsVcMmIIX1pa7oWlZ7G/5zJMOZooR4BVWy1iZqpwDDckwdPHHzwTJIfMA3c443YVJQpgAJVLqasXXFJe++4wq+qEt9tJZVAuIYTr3Xn0uQvLlcJK0MgxAx3ptwCJ6RSkVffMi3RljpubF3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by IA1PR11MB6145.namprd11.prod.outlook.com (2603:10b6:208:3ef::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 17:48:00 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 17:48:00 +0000
-Message-ID: <20735ea0-2a3a-4230-92c6-6007c0777e24@intel.com>
-Date: Mon, 8 Jul 2024 10:47:57 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 31/38] x86/resctrl: resctrl_exit() teardown resctrl but
- leave the mount point
-To: James Morse <james.morse@arm.com>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, H Peter Anvin
-	<hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
-	"Dave Martin" <dave.martin@arm.com>, Shaopeng Tan
-	<tan.shaopeng@jp.fujitsu.com>
-References: <20240614150033.10454-1-james.morse@arm.com>
- <20240614150033.10454-32-james.morse@arm.com>
- <be5bae3d-a192-4ca0-9474-809774011f25@intel.com>
- <4b988afb-bc2e-4b4c-8ebe-e1db0b614f24@arm.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <4b988afb-bc2e-4b4c-8ebe-e1db0b614f24@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW2PR16CA0021.namprd16.prod.outlook.com (2603:10b6:907::34)
- To SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7716684A4E;
+	Mon,  8 Jul 2024 17:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720460954; cv=none; b=j/KQ2sWMsMC78rb12892klPIp0Uzo7hUi9aJ7z3LbH/HFrv+FzcL2kXtTB+Tm8G8UTzey5Qt9Vc+vTD7wIPueZOpveviM1wOKtD1qfijCPE0eYriNReRLa2/oQikmOm8Y3SM7jlMbrrM9I48pCmce4YZvk9qZaycGYOQBgwO1zE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720460954; c=relaxed/simple;
+	bh=ljvA7ZGwe6cs5dyKfeIfRfczHOFZV0hYLnUVsKu+hfo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m96j8pakXq1TtHts+7f1b9eW/zXzi4h1A+nQe+eHQFEIjd0DXt+s+1AfCnbXuMpdzIyLVWfHWruVv5eb5cy3U578Cb0/9zkh234j3GCVTwtCwB62Wk0lUg99g8NcICrBqKPQtFhNDYXLOKLcHDFI4p2pmWrojrplkcRgwEM5l4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huxJos3v; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b9776123a3so1974848eaf.0;
+        Mon, 08 Jul 2024 10:49:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720460951; x=1721065751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QLr4VpzoU0x7SxOx86Qw7mNibo7Vi7FJZVfERxotGP8=;
+        b=huxJos3vbmZL66pGQoTBn96BDZPd7cBxwGvF/v7q5MDmNwzwH+eNEgKC3GTh1R6Sd+
+         rtZxgTRxVyzmZS42zY5l8JHdtuzR8FpA/7HWrE86AacEuobO9QS/Pzwv6mQYVbAWIDC4
+         5yspSe3Nm5QOQ8t7GbSi3eAlKsLAo0mU5BKYeB7/Azd4CNRZrXFK7DIEauEVbOedoctg
+         uJoCVRi3L7Y9uWwOC4Esq1RRSvbskI5nXOpBdtso/AtOGvfBO/Qh8RBlguWY1P1PFSKM
+         5y1weAZ8WOk9cGwAj5+hQxDfggKOD0yOfoiZ00TMYGoZE+yRgRwrLOIey2MkBCdA7elO
+         f11g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720460951; x=1721065751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QLr4VpzoU0x7SxOx86Qw7mNibo7Vi7FJZVfERxotGP8=;
+        b=EIP1tHwXAxKYqEvIEHgV/ht/kTsRJG7N9BnCxJgOO0CfrVSG6R72msdXQ+NykR5+pI
+         R8Fu7uoQVrPbYVdSFCF1sbiK+znAgBRLs0kSuwWpOHU6VkFxuRwxOA04eZj47JFqzZPa
+         bdrxmEvtw/QiSIXevNXpxGkt8JApEVF7+SoU2slAaw4k+ckHfAuTnDpBiQ396dW1UF6K
+         FIZIIwle/W3ma6pxY6cnP87bEK0AGy4cTHf8QgPTY3YCcO/hieo3diNAJFHQ5fUcbaMG
+         ZxdrbaLCesVQqc71G5QQoxaSFkxt45gifVRsJ10ifgitK8oK9OGkADJgREPhG6KyEKQO
+         KPcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0jNQFwsELbLO10qGh1ydITVPZMypdhmJBsDNhxKYKs1wXAUwc0w2/lHuSTe1G42xsfz0xrWHqnZ5XZPgsjhdxdf86zBvs56kiAfAyyojt/sZNrgzN1DB0sqou9DgSu1JtrzVkqEoPU7ChBAmho15yM86K01ojURe52Fy+ywZ2cEBoD7YG
+X-Gm-Message-State: AOJu0YxwwIKeT8x1P+gFsVgpRlxonXJX8Y7xC2wMHPZmTXhcwFoeaZya
+	JsGi99WnVUk/o1Ljutl1+q/pzF0nHsDA5rJGaz2/NhfWrD9yxFACJuUHbRRRppd2EXc9qJHzWSq
+	acqgcCQu32teM6tJe7KfQW9dtKzO6Ew==
+X-Google-Smtp-Source: AGHT+IF3c3QRj8KXZ6xxR6LBcvnTrzUiRqpzoC/ZXbD4Pnmk7miQM7eU6tFAb1TgHTykhdnMryUbw68YNkeujU+eYCg=
+X-Received: by 2002:a05:6870:ac24:b0:254:963e:cc3f with SMTP id
+ 586e51a60fabf-25eae755eb3mr83265fac.1.1720460951456; Mon, 08 Jul 2024
+ 10:49:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA1PR11MB6145:EE_
-X-MS-Office365-Filtering-Correlation-Id: 327c1e61-3a49-4fe5-6309-08dc9f761c06
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?cGtGSVNpNENtNkJPVGdtNzBPZ2dxMTUrZTZJYWY3dXBjT282eVVlM0VUZmhT?=
- =?utf-8?B?T2N3cVpFdHNBZk9VNHFNVkUyYmFYYjc5enlOTFN0dHNmaDZUaGlYV1V5YlNN?=
- =?utf-8?B?bi9QMVpreHhyMkcwSG9Pa2J3cHpDOEVsd3M3bWNNYXc5Z2VpS0MrK1JGblJj?=
- =?utf-8?B?N1M3N2tMakhyaStsTGt3NXRKOG5xTUJIOFBsMVYrZXJTM2pFNk1NekpkejVa?=
- =?utf-8?B?bERQT0NtdWdVNGZDSnRiOHQ4amo0MndYMEx1aXpCRHlUbjJIdCtkQmdWK0Vi?=
- =?utf-8?B?ZWVZYms4TWZ6SU5qanlFK2YwcjVUaTdWYzIrTG5FYUdaZTZRbEpqY2JjaUpE?=
- =?utf-8?B?Vnk2aU5LWWRROUZTSzBYcHVUbzN5TDcwSTBBZzNSYm5ydEJxWkwyNEhtSyt1?=
- =?utf-8?B?cE1tOGZOYXo1enprTlNVN3VRNVZibCtpUUpqd2ExdTVzUDRKbmRwUk9EL2V5?=
- =?utf-8?B?OEZON1QwU0FnS2ozc0FpQ1NncW5jZ2lROUJoV3haemN3VW9LRDFRSVQ2ejJE?=
- =?utf-8?B?WS9kMjc4Ny9UZUErVUlhZGllNVM5bXlVZEhmcG14alh1MzFhRElnUnFkbjc2?=
- =?utf-8?B?QWVjL0EvdDI0MExRZ0JGV1JBbjUrK2xtbUVPQThDSDR1em8vYUVqWkRVQVMz?=
- =?utf-8?B?bHRIeUFGM3VsOE8vQjZIWUdrWUpJaGcvb3NmdkkzVHc1Z0VxZ3o3eEJyUzFv?=
- =?utf-8?B?WEQ2YU50MFN4MDBaaWdRNGIvSzUzOFpPeFZoTGlxUXVYZW41SmpKaVFxVEJS?=
- =?utf-8?B?ZGFHdEZLaW5TYmh0ODZIUE9PUzk1RVFHbWZDd25XRG83L3hTMS9adUxEdWIv?=
- =?utf-8?B?Sno0VHA4N2MxZ2NIaGI5WHh0NlNVRzFSUDNoWU52Vk83OUVRbXpaQ1p2b05o?=
- =?utf-8?B?TTZjU0tXN0UrYy9vMFhrZjI0Q29kRm05SlUrUGllaGlid0lCRWJIeCtRemZr?=
- =?utf-8?B?S2t1OHc3cVdidEMwRTdCaGV5cE0zUHhsVEtIcnFyYmFleU5peWc2Qit3RE1E?=
- =?utf-8?B?aXlZdWo1SkR1ZmhHaFlySU4yMG9XZHF2bWZ5bE0xN1hkRHAzSEhqOTRjdXRo?=
- =?utf-8?B?dWFBNFA1ZXEzMDA5cUFTZ1dsRWgvTE5qUTVKa2dNaW5MazRqemdJb2RmZXFh?=
- =?utf-8?B?UGc0U3hSK3J4U3B1NnRIclFSZVFrblVPb09LS3k4SzZldWU5Vk11MWdXSVky?=
- =?utf-8?B?MkNzU0htaXRwR2puc0lKQS9UdDVxbi9DdnNaeUtaUEpNdW1KeGh3cHZRQkoy?=
- =?utf-8?B?U01UamhUUytnK1dKcDI0Znc2bC9JVjJaQStFNzlsdzFmL21YdzNkZ1F4ZnJK?=
- =?utf-8?B?T1pSdTZsYkc0UlhVOWU0U3lPT2hWZkR1NDN4blJHSlIwVFh4TW9mWmdYZjR4?=
- =?utf-8?B?VmR0eVNjVWgzT05mVkNZczk5c2ZCZlhrdXVWYk1BZTM5SDk4SlhlZVRvS3lR?=
- =?utf-8?B?ZkswdHZzcHVYZWF6M1hVb0ZrZnV6NGlmS3FYNnFyRVdOaHRFNWtlOEhoZW84?=
- =?utf-8?B?SlY5ODhHTnh6UkMyc1JuSVVvY2NRbjZxZzVMa1dIVkFWb1ZIeG9EdnNWRGxx?=
- =?utf-8?B?VzF6RWVLcFB4eUJ0akJzRTBsbFpEZzhvYlYvTU1JSjd0dG8rWjg0SUIxTGRY?=
- =?utf-8?B?SFMybU1oSUhxUDExUDdISWFTVCtTM3FDMXB1Z2xvSzIweWZoS2JmajFuVklp?=
- =?utf-8?B?MzRPdlFNaGZhMHdidkVUYmdFUEk5dEZHMHZ1b3lBQStiMzBWdjgyeUpXbmZX?=
- =?utf-8?B?OURKOTM3Q2ZpZVIzbEk2Z2xSOFlEd0UzMXRGNXhyMi84aGc0WnBDR2JjK2t5?=
- =?utf-8?B?TUJSMlBIWWpXUGFUUnk0Zz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eFlnQ2lJd1VZUzdQTzR3K21YUnNTOTgwS216YzY1OS9zTEJnNGVodVBpSVJp?=
- =?utf-8?B?SXErbDlWUXl5ZDZibURDS0RkMUJWbTN1NS9JbkZoZG9wWWQ0TTR3ZzM4dGpn?=
- =?utf-8?B?QUduODMrbVI4UkRJTVZaWGFST1dDNnl1RWFJcSs3UWVtMnBlVVNSbGVUK3gr?=
- =?utf-8?B?Q2dkeEdJWVRTSXBxMnJPRC9yajQ1ZVNWRSt4UG1Td0R0ZFBvQnltdSt4NGUz?=
- =?utf-8?B?OVVvMnBYK1hudExYblJuaWNsQzlQZmxldEZCUkRIOU9DOUFmYjVWK0xsMUxK?=
- =?utf-8?B?Ky9FMzg3K3Y3NmUzUWJLaUJpZ1pIb3NmeEdMeE1WL0FyZk4yeXRrbjBVNFFZ?=
- =?utf-8?B?eUlzMkxKSW1JZ2Q0UFVucG9PMHVrblVkT2hsRGFoTzdSVUNzd1FNU3VGSHZH?=
- =?utf-8?B?TWZlSHpLRDRqREs1Ujk4ZXdFRmZmUXlyYnNEaE5UdWhaSmR1dERtSEpKYjJu?=
- =?utf-8?B?SWFwYVFEYnhteTFsRkpYT0JRUGwxUHdZNHArOEtERWpJcG1NK1hzaEdzV0VE?=
- =?utf-8?B?L25rOWFuNFVLK0hKSU5BS0NhOHh2OHRabHprM05iaFU2bWRIdW9ENXh0blBj?=
- =?utf-8?B?R1o5UzZSZkk2WVNYRmppTHhpWFpNdUVmV2lIK3JWemxnU3NxL2Zod1VpK2tu?=
- =?utf-8?B?dlI2WXJ6amRIZUIra3Y4TmljWVFnb285cW9teXIvazBqZ0pkaXBxb1h3VmIv?=
- =?utf-8?B?Z3NET2hhQm8vV01XdjdCSDA4SWNrbVVlZDBTcFRGbWlmSXQyZXRaWHFPNWlS?=
- =?utf-8?B?SWVOMmsvakp1aWZqdThBdzErT1lvMDBVblczczRJNnM5RHF5SUxlcU9uL3ZX?=
- =?utf-8?B?K00yMGtCMFpOVWZGSFkzRVpzQ08xWUFLZmtwRHJyMlo4OVBOSm02U3dkZWRB?=
- =?utf-8?B?YmpGNHZBYXlreDM4NStYU0FleThmVC9KUjV2dmlhTHpldUFLMk5hYUlsUis1?=
- =?utf-8?B?WHpvOVFtRnlkV1FlQm05Z3pMNWZkOFM3d0VLelRRSUxtTlA3bWtIanlLbzQz?=
- =?utf-8?B?NFlzVmFNQTZUaWxtNitscktnVWVQMVJrMmRMZmt4WGYvak5BUmoyZkVjT3ZZ?=
- =?utf-8?B?UGJmb3B3amdxTmc5b3NyUW9kQ0ZNRHNkZ25FblF6Q24xQmg4QzMyTG9oN0FF?=
- =?utf-8?B?MytiU0xpbTduT1BlWmltdVBLWFpoTWx5TFIzM1h3YVpUZmV4dVl5RU12eTJ2?=
- =?utf-8?B?Z3Q0ZTJGYlR6L1F0Z2pNQUVrWTR6WGlBQjVUZlJHR2NXeWxoMlNFTVdhUCsw?=
- =?utf-8?B?RmpBTG9xMTl0WVNUY0ZZOVo2cGhMOEJtTFpTeTJ0VkxEaDFhZHpubU5RQ2Qw?=
- =?utf-8?B?VjRkSnBpY3d6ZWJYWDJNVW5JMWhrdnVCdENxRlRONHNBUzMrbGVreko2VTFz?=
- =?utf-8?B?UERuWE41NHVtSElMWUxxaGd6NGhaR2tYRTNOdE5xR3NmdG1ydWtKYmcreU92?=
- =?utf-8?B?SGhPMmRRSkUra0kwaGtBbWZWL09VcXdJMisrLzFPanZ6aVZaaG9qcTIyY0U4?=
- =?utf-8?B?cDM3Um5Wem15ZENkcmpLWGVhdGRkeUdSQ2RDYzY0c2FYMHIvTmxKVWVrZ1Bx?=
- =?utf-8?B?TzFHNUd3V1hkU2VQcVBOenVmZ1pucmZYd2lZUXk0VExiRk5BWXVCY1E1d2Nm?=
- =?utf-8?B?dzNtSnZPQ3V3MlBYZGREN3J1eXBaNVk4T1EvZjI3R2pKMTI2aWVjMUpIZ2lx?=
- =?utf-8?B?NUtlbmdlLzFocWFCSXlvc0NLbkJtOHRHdWdKZ2kyVVQ2V05FVXd4ZmRjRVpQ?=
- =?utf-8?B?QS9hbFNjL1FnMVhUVWdMTm84OFE2UCtiVVRabUw0MEM5TmVhaXdhQStoVlVF?=
- =?utf-8?B?Vzg5ZmZTMmNXL1ZXS2hwU0N1MkwwYndpenZvWkdsMjMwUnNGWU9sK3ZQMXdR?=
- =?utf-8?B?R1dFbUljVWdKWHd3YTh3Q2J2OG83SHd6dmhEaGxkRWJUSGozNUhIMUFQaWRm?=
- =?utf-8?B?VzRVMTZzTDdYZ0phTnVRN1A4Yy84dnJGUGIzUUdud1VFM3lkVFlhbGRGQTR1?=
- =?utf-8?B?NlJGT0FCNkNHSUhvblE2Nnlxek1pK2svMHExR2tDZzg4Mm4wZWhDZWNDcFZt?=
- =?utf-8?B?N01VTW9uTFNmWDBzRDUvcGRCR3R3NDFNTmRhOXRia1VvRnRLblpVUXN6NmFI?=
- =?utf-8?B?UzQ0cDFISmorZUZXNldRZTJEc2RWSDM3eFJtRCs1YXVXcEZnWWpCMDFveGZj?=
- =?utf-8?B?c3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 327c1e61-3a49-4fe5-6309-08dc9f761c06
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 17:48:00.6321
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uHuHi39JCXv6mzgEPmo2mztftVQBDaz1DxaCIQ2wMBKtaCWWvolSQaKar/kHLbH+ZVUWRpLbBIZiO8EfequDS39RVpx7mT6NcOMShRAMxhA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6145
-X-OriginatorOrg: intel.com
+References: <20240701223935.3783951-1-andrii@kernel.org> <CAEf4BzaZhi+_MZ0M4Pz-1qmej6rrJeLO9x1+nR5QH9pnQXzwdw@mail.gmail.com>
+ <20240704091559.GS11386@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240704091559.GS11386@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 8 Jul 2024 10:48:59 -0700
+Message-ID: <CAEf4BzZxsyFGy9Ny5ekc=hvso7vu3=1toq0hW+jR_EukMn3M_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com, 
+	bpf@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, clm@meta.com, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+On Thu, Jul 4, 2024 at 2:16=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+> On Wed, Jul 03, 2024 at 02:33:06PM -0700, Andrii Nakryiko wrote:
+>
+> > 2. More tactically, RCU protection seems like the best way forward. We
+> > got hung up on SRCU vs RCU Tasks Trace. Thanks to Paul, we also
+> > clarified that RCU Tasks Trace has nothing to do with Tasks Rude
+> > flavor (whatever that is, I have no idea).
+> >
+> > Now, RCU Tasks Trace were specifically designed for least overhead
+> > hotpath (reader side) performance, at the expense of slowing down much
+> > rarer writers. My microbenchmarking does show at least 5% difference.
+> > Both flavors can handle sleepable uprobes waiting for page faults.
+> > Tasks Trace flavor is already used for tracing in the BPF realm,
+> > including for sleepable uprobes and works well. It's not going away.
+>
+> I need to look into this new RCU flavour and why it exists -- for
+> example, why can't SRCU be improved to gain the same benefits. This is
+> what we've always done, improve SRCU.
 
-On 7/4/24 9:41 AM, James Morse wrote:
-> Hi Reinette,
-> 
-> On 28/06/2024 17:53, Reinette Chatre wrote:
->> On 6/14/24 8:00 AM, James Morse wrote:
->>> resctrl_exit() was intended for use when the 'resctrl' module was unloaded.
->>> resctrl can't be built as a module, and the kernfs helpers are not exported
->>> so this is unlikely to change. MPAM has an error interrupt which indicates
->>> the MPAM driver has gone haywire. Should this occur tasks could run with
->>> the wrong control values, leading to bad performance for impoartant tasks.
->>
->> impoartant -> important
->>
->>> The MPAM driver needs a way to tell resctrl that no further configuration
->>> should be attempted.
->>>
->>> Using resctrl_exit() for this leaves the system in a funny state as
->>> resctrl is still mounted, but cannot be un-mounted because the sysfs
->>> directory that is typically used has been removed. Dave Martin suggests
->>> this may cause systemd trouble in the future as not all filesystems
->>> can be unmounted.
->>>
->>> Add calls to remove all the files and directories in resctrl, and
->>> remove the sysfs_remove_mount_point() call that leaves the system
->>> in a funny state. When triggered, this causes all the resctrl files
->>> to disappear. resctrl can be unmounted, but not mounted again.
-> 
->> I am not familiar with these flows so I would like to confirm ...
->> In this scenario the resctrl filesystem will be unregistered, are
->> you saying that it is possible to unmount a filesystem after it has
->> been unregistered?
-> 
-> Counter-intuitively: yes.
-> 
-> The rules are described in fs/filesystems.c: We can access the members of the struct
-> file_system_type if the list lock is held, or a reference is held to the module. This is
-> how /proc/mounts is able to print the filesystem name from struct file_system_type without
-> taking the lock - it holds a reference to any module to prevent the structure from being
+Yes, that makes sense, in principle. But if it takes too much time to
+improve SRCU, I'd say it's reasonable to use the faster solution until
+it can be unified (if at all, of course).
 
-hmmm ... does this mean I am supposed to find calls to try_module_get() in the flow from
-mounts_open_common()?
+>
+> > Now, you keep pushing for SRCU instead of RCU Tasks Trace, but I
+> > haven't seen a single argument why. Please provide that, or let's
+> > stick to RCU Tasks Trace, because uprobe's use case is an ideal case
+> > of what Tasks Trace flavor was designed for.
+>
+> Because I actually know SRCU, and because it provides a local scope.
+> It isolates the unregister waiters from other random users. I'm not
+> going to use this funky new flavour until I truly understand it.
+>
+> Also, we actually want two scopes here, there is no reason for the
+> consumer unreg to wait for the retprobe stuff.
+>
 
-> freed. Because resctrl can't be built as a module, we can say there is always a reference
-> held, and we can never free struct file_system_type.
+Uprobe attachment/detachment (i.e., register/unregister) is a very
+rare operation. Its performance doesn't really matter in the great
+scheme of things. In the sense that whether it takes 1, 10, or 200
+milliseconds is immaterial compared to uprobe/uretprobe triggering
+performance. The only important thing is that it doesn't take multiple
+seconds and minutes (or even hours, if we do synchronize_rcu
+unconditionally after each unregister) to attach/detach 100s/1000s+
+uprobes.
 
-unregister_filesystem() continues to be called and as I understand in new MPAM usages will be
-called during runtime. unregister_filesystem() comments state "Once this function has returned
-the &struct file_system_type structure may be freed or reused.". Could you please highlight to me
-what gives the confidence of "we can say there is always a reference held"? Could you please
-point to me where that reference is obtained that will prevent the structure from being
-freed?
+I'm just saying this is the wrong target to optimize for if we just
+ensure that it's reasonably performant in the face of multiple uprobes
+registering/unregistering. (so one common SRCU scope for
+registration/unregistration is totally fine, IMO)
 
-Thank you
 
-Reinette
+> > 3. Regardless of RCU flavor, due to RCU protection, we have to add
+> > batched register/unregister APIs, so we can amortize sync_rcu cost
+> > during deregistration. Can we please agree on that as well? This is
+> > the main goal of this patch set and I'd like to land it before working
+> > further on changing and improving the rest of the locking schema.
+>
+> See my patch here:
+>
+>   https://lkml.kernel.org/r/20240704084524.GC28838@noisy.programming.kick=
+s-ass.net
+>
+> I don't think it needs to be more complicated than that.
 
+Alright, I'll take a closer look this week and will run it through my
+tests and benchmarks, thanks for working on this and sending it out!
+
+>
+> > I won't be happy about it, but just to move things forward, I can drop
+> > a) custom refcounting and/or b) percpu RW semaphore. Both are
+> > beneficial but not essential for batched APIs work. But if you force
+> > me to do that, please state clearly your reasons/arguments.
+>
+> The reason I'm pushing RCU here is because AFAICT uprobes doesn't
+> actually need the stronger serialisation that rwlock (any flavour)
+> provide. It is a prime candidate for RCU, and I think you'll find plenty
+> papers / articles (by both Paul and others) that show that RCU scales
+> better.
+>
+> As a bonus, you avoid that horrific write side cost that per-cpu rwsem
+> has.
+>
+> The reason I'm not keen on that refcount thing was initially because I
+> did not understand the justification for it, but worse, once I did read
+> your justification, your very own numbers convinced me that the refcount
+> is fundamentally problematic, in any way shape or form.
+>
+> > No one had yet pointed out why refcounting is broken
+>
+> Your very own numbers point out that refcounting is a problem here.
+
+Yes, I already agreed on avoiding refcounting if possible. The
+question above was why the refcounting I added was broken by itself.
+But it's a moot point (at least for now), let me go look at your
+patches.
+
+>
+> > and why percpu RW semaphore is bad.
+>
+> Literature and history show us that RCU -- where possible -- is
+> always better than any reader-writer locking scheme.
+>
+> > 4. Another tactical thing, but an important one. Refcounting schema
+> > for uprobes. I've replied already, but I think refcounting is
+> > unavoidable for uretprobes,
+>
+> I think we can fix that, I replied here:
+>
+>   https://lkml.kernel.org/r/20240704083152.GQ11386@noisy.programming.kick=
+s-ass.net
+>
+> > and current refcounting schema is
+> > problematic for batched APIs due to race between finding uprobe and
+> > there still being a possibility we'd need to undo all that and retry
+> > again.
+>
+> Right, I've not looked too deeply at that, because I've not seen a
+> reason to actually change that. I can go think about it if you want, but
+> meh.
+
+Ok, let's postpone that if we can get away with just sync/nosync
+uprobe_unregister.
 
