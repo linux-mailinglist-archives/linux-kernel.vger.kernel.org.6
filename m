@@ -1,332 +1,379 @@
-Return-Path: <linux-kernel+bounces-244344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2921592A2F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:39:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DADD492A2F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BEF11F21E9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A92E1C218CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAD58062A;
-	Mon,  8 Jul 2024 12:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RpaPPVIv"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA38C811E6;
+	Mon,  8 Jul 2024 12:39:02 +0000 (UTC)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC49A81728
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E76180BF0;
+	Mon,  8 Jul 2024 12:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720442325; cv=none; b=OuP4i/M4ze7Zi3iPKH4seGqjCn17SL+A3By0TEN7pQF84A6wanIcQ+44Kw0PWaBgHBD1ogTTWm9C4EAjn+raeekCfov+TCn2nhh0lDvURelENJEoJqpmpqmLeLp2BKQOlIwkqcybba/tEV2QvMlU5DpNHcFtr9ckf6umqPEthxw=
+	t=1720442342; cv=none; b=Ti6fWT9aNHeofPMPVippkJAOdVxtLikh4f4nzvH3sdDBNzkPmNQzhz9ZgUqR4dzQUETRrYiSwyTuhlUCYvAdfctFYCkkL1EhdORroHEJ+KfEVtvhgIsyzyI3odAU5BHTdXHPgnsJtkAV7txFzj9iSvzMe+qnQhVKeylBgrdIdFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720442325; c=relaxed/simple;
-	bh=1vZk5GsWcdChzn+bigtzvVvktoIVsx95llSxf1ko35o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GSo5XlrouFBmLWWdn/99cBwi2FkSYLFRTm79x2zcg4szkrt2JiYEsxrltEdZYWwS4rQKVD8IntEfR7SD295tgxMS8DvrtJg/wblp70YYoYM5wyUCZ3inrfCqyGYjV01gDQth6XKCl89Hx0eJMQpTdY1HublKkqupYCk3VjsD83w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RpaPPVIv; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so23448645e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 05:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720442322; x=1721047122; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/aU2q954k7Pqzke3Hv8uoJ/bxX1c3M9argU9x2Zn9lI=;
-        b=RpaPPVIvpMyLrHIbgIM8584sl5hO+TKsxs3OWOncp6lg5TLDpPCe+KPUSsh9ibjFqa
-         8yhDfxlqnvf6ziU2AwXg04bNqbKIX7sMYEXB4AdpQmRJrXdaBf/FaqrkH5ur6zHL97GH
-         l4XbRgc2D0nOVqoBxFykfezsmCKQkRZsKbj73+zm4//LAgIoi7HCpbefa5//rV4JeeIG
-         otQQwnvDaHaCT1F8boCprVcgIwn135Rv2ndOcZ/4ZSJz15hd8nFQzkoFBj1+II4M6RmV
-         oolo5j2T9ZVjHmPZc1y7+Xi9KlIQrWbqcM9H03fDvWsZ1TeV4i5jGGW156Dhb8j6J+rz
-         RTFA==
+	s=arc-20240116; t=1720442342; c=relaxed/simple;
+	bh=MuMeGbVvqywpuHQFMKFvXIYXy/pDZjZjiCLStCuARzM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kYc0SYh5mRm0qg80+JM1WD83rGjMu+CP7Z1mlH7NVD85Rw+yEHiW4Seg6qaGJuk/Tf0eZT4/toOY4myVfNqA+RN1F5/Kd6jOTcmfyu5LTY64fygkGw5Fb++4fP8s6Pb3zy5sXkd4oEAe3l/dBj+QLwD8dFYkWOfSXUJW4RF5334=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-426606f80ebso11420065e9.1;
+        Mon, 08 Jul 2024 05:38:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720442322; x=1721047122;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/aU2q954k7Pqzke3Hv8uoJ/bxX1c3M9argU9x2Zn9lI=;
-        b=eedrwjyuGA5dBJv46ioOJ9hfXhQi22NXjyaz5jHrfc9tqJ8nIB/gKEka1CUtab0dVm
-         /5G36dab4vmdMJnTnevT2lWeNsoOfiKvuqNUaywVmMF5aW1q5WSoQEPnX5mEwAW0qb6J
-         m3sE1ySpmSbwc0DUEou2fOMucV3O9n6D+tbzvV4KqYHoKDipAu1F+jdONaXV1qWJ34SZ
-         1x2JFOauzHH7bvoVXnha6UjDsEi8Ga+vLOSqK/p75NbvgI009RWT4h14Tvjj3O/BYU12
-         H9GzaEu5/6MFpb9ODnzFdXyedbKgnbtUFHcy4d8e/liZKQCtUKS+Jhs96xygL9ABd6WH
-         npLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk+oxj5ea9aS7/0L9t1mUPE3JI/A8MhOVZ21uYsJTP/hstoxZD66NgYdd6g+dcBpzLeqjJ57PjAWrdRr9UxhlFVj2LkFqkYRIq5QEH
-X-Gm-Message-State: AOJu0YxVlY/4Q7vcc4zD4KFYOT021dDQvgdQo6a2R5a2vnJU1MbOlY0N
-	moZn7mhbHX+uKCVxp4dX8In7XWrWCKevkkDT2zMgOw5cOczeTyUFQn+zsbP6vdaxiDKqu6KEtqN
-	pGps=
-X-Google-Smtp-Source: AGHT+IHI8RarLRg+heMdg+FAHprVbDdDgCFup50F66S9t2pYqCuDtpC35tI5zdb8tPj++iEFcuu8Ww==
-X-Received: by 2002:a05:600c:3510:b0:424:aa83:ef27 with SMTP id 5b1f17b1804b1-4264b0c5393mr107505895e9.1.1720442322192;
-        Mon, 08 Jul 2024 05:38:42 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:f482:8fc6:e8d0:6d7c? ([2a01:e0a:cad:2140:f482:8fc6:e8d0:6d7c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266c3650f4sm24577855e9.1.2024.07.08.05.38.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 05:38:41 -0700 (PDT)
-Message-ID: <c2a810b1-2926-4b4b-8939-e93b4f3673fe@linaro.org>
-Date: Mon, 8 Jul 2024 14:38:39 +0200
+        d=1e100.net; s=20230601; t=1720442338; x=1721047138;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SkXCXod+8stPwSETPfAmbC6N7MzjAmSVsvPT3kdrucw=;
+        b=nThIO5z/Kmu7/H/OWkFeaIQ4ZTMJBimUjw9WtzzAIG7BuGWTZeSAoCWYYoTNDMuqQV
+         hRy04WN7TpyJNM+VhI7ZyW6fLrVXqkVkcXqPhrG6XO4qjPqRP3FIIb6Mz8Qj/CsVMB1i
+         aWo2v/a7yhb3n22oQ6EzDEf/nZKqMpBmji7a+PxWmT9KJA2nmQfLkMa84kzGsaJLPddc
+         QNIwXJWCyIPWB77hRbsuGiVnYzh9ei+PYCqGNIDszpIzydiUiPKKb6rUaQf2CX6dkSoW
+         if5iz/YxzQ5k1O8aqAs1d0/fZMeFNu4hCECj5IkWLxrRA1GBJ22e4MlWIDdlzvbvLqUD
+         2mIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfiw1b8+S2XbJ0PuICJTjojw8k0nBQACkd6ZAy9AAbJ9auhyLWoCaVTNMRDIIgwpvIRL2j2IJ9ScTNnZ6S6As9zKXHqby4TPsU
+X-Gm-Message-State: AOJu0YxPp/t/+SbzVFYIhZSPsuvZH/vOn+svLaZVMnucc8IYbGV68RYB
+	UwS6BvBdcnEBedMfdTmO+RhaQkO6lis/uRSEvyWAKxWcSNPFJ/po
+X-Google-Smtp-Source: AGHT+IF4ngLA/mnARP8SJ0VAJ7zFJZ+h7e6R7j+iYex31aaFyE9T7v8Vzft7F5YUXkl1Trv4bi7/aw==
+X-Received: by 2002:a05:600c:894:b0:426:6edf:6597 with SMTP id 5b1f17b1804b1-4266edf6755mr2432675e9.19.1720442338209;
+        Mon, 08 Jul 2024 05:38:58 -0700 (PDT)
+Received: from [127.0.1.1] (p54ad9947.dip0.t-ipconnect.de. [84.173.153.71])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367a13b61f7sm10250609f8f.13.2024.07.08.05.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 05:38:57 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Date: Mon, 08 Jul 2024 14:38:56 +0200
+Subject: [PATCH v2] spi: add ch341a usb2spi driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 5/5] drm/panel: :boe-th101mb31ig002: Support for
- starry-er88577 MIPI-DSI panel
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- airlied@gmail.com, daniel@ffwll.ch, mripard@kernel.org, dianders@google.com,
- hsinyi@google.com, awarnecke002@hotmail.com, quic_jesszhan@quicinc.com,
- dmitry.baryshkov@linaro.org
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240704072958.27876-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240704072958.27876-6-lvzhaoxiong@huaqin.corp-partner.google.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240704072958.27876-6-lvzhaoxiong@huaqin.corp-partner.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240708-spi-ch341a-v2-1-b98af4e919bc@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAN/di2YC/03MTQ6DIBBA4auYWXcMIATalfdoukAdhf6AGUzTx
+ Hj3kq66/Bbv7VCIIxW4NDswvWOJOVWoUwNj8GkhjFM1KKG0sMJhWSOOodPSoz0PnuQktBkM1GB
+ lmuPnN7veqmfOL9wCk/9fGKmN7FxrnLIo8b6F/kGc6NlmXuA4vqowKXiTAAAA
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
+ Johannes Thumshirn <jth@kernel.org>
+X-Mailer: b4 0.13.0
 
-On 04/07/2024 09:29, Zhaoxiong Lv wrote:
-> The init_code of the starry-er88577 panel is very similar to the
-> panel-boe-th101mb31ig002-28a.c driver, so we make it compatible with
-> the panel-boe-th101mb31ig002-28a.c driver
-> 
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-> ---
-> Changes between V5 and V4:
-> -  1. Compatible with starry-er88577 panel in panel-boe-th101mb31ig002-28a.c driver,.
-> v4: https://lore.kernel.org/all/20240620115245.31540-3-lvzhaoxiong@huaqin.corp-partner.google.com/
-> 
-> Changes between V4 and V3:
-> -  1. Adjust the ".clock" assignment format.
-> v3: https://lore.kernel.org/all/20240614145609.25432-3-lvzhaoxiong@huaqin.corp-partner.google.com/
-> 
-> Changes between V3 and V2:
-> -  Separate Starry-er88577 from the panel-kingdisplay-kd101ne3 driver.
-> -  Use mipi_dsi_dcs_set_display_on_multi().
-> -  Use mipi_dsi_dcs_exit_sleep_mode_multi() and mipi_dsi_msleep().
-> v2: https://lore.kernel.org/all/20240601084528.22502-5-lvzhaoxiong@huaqin.corp-partner.google.com/
-> 
-> Changes between V2 and V1:
-> -  Add compatible for Starry er88577 in panel-kingdisplay-kd101ne3 drivers.
-> 
-> ---
->   .../drm/panel/panel-boe-th101mb31ig002-28a.c  | 119 ++++++++++++++++++
->   1 file changed, 119 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> index 736bfba607cf..c103236cc970 100644
-> --- a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> +++ b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> @@ -25,6 +25,12 @@ struct panel_desc {
->   	enum mipi_dsi_pixel_format format;
->   	int (*init)(struct boe_th101mb31ig002 *ctx);
->   	unsigned int lanes;
-> +	bool lp11_before_reset;
-> +	unsigned int vcioo_to_lp11_delay_ms;
-> +	unsigned int lp11_to_reset_delay_ms;
-> +	unsigned int backlight_off_to_display_off_delay_ms;
-> +	unsigned int enter_sleep_to_reset_down_delay_ms;
-> +	unsigned int power_off_delay_ms;
->   };
->   
->   struct boe_th101mb31ig002 {
-> @@ -108,6 +114,65 @@ static int boe_th101mb31ig002_enable(struct boe_th101mb31ig002 *ctx)
->   	return dsi_ctx.accum_err;
->   }
->   
-> +static int starry_er88577_init_cmd(struct boe_th101mb31ig002 *ctx)
-> +{
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
-> +
-> +	msleep(70);
-> +
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0xab, 0xba);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe1, 0xba, 0xab);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb1, 0x10, 0x01, 0x47, 0xff);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb2, 0x0c, 0x14, 0x04, 0x50, 0x50, 0x14);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb3, 0x56, 0x53, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb4, 0x33, 0x30, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb6, 0xb0, 0x00, 0x00, 0x10, 0x00, 0x10,
-> +					       0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb8, 0x05, 0x12, 0x29, 0x49, 0x40);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb9, 0x7c, 0x61, 0x4f, 0x42, 0x3e, 0x2d,
-> +					       0x31, 0x1a, 0x33, 0x33, 0x33, 0x52, 0x40,
-> +					       0x47, 0x38, 0x34, 0x26, 0x0e, 0x06, 0x7c,
-> +					       0x61, 0x4f, 0x42, 0x3e, 0x2d, 0x31, 0x1a,
-> +					       0x33, 0x33, 0x33, 0x52, 0x40, 0x47, 0x38,
-> +					       0x34, 0x26, 0x0e, 0x06);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc0, 0xcc, 0x76, 0x12, 0x34, 0x44, 0x44,
-> +					       0x44, 0x44, 0x98, 0x04, 0x98, 0x04, 0x0f,
-> +					       0x00, 0x00, 0xc1);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc1, 0x54, 0x94, 0x02, 0x85, 0x9f, 0x00,
-> +					       0x6f, 0x00, 0x54, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc2, 0x17, 0x09, 0x08, 0x89, 0x08, 0x11,
-> +					       0x22, 0x20, 0x44, 0xff, 0x18, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc3, 0x87, 0x47, 0x05, 0x05, 0x1c, 0x1c,
-> +					       0x1d, 0x1d, 0x02, 0x1e, 0x1e, 0x1f, 0x1f,
-> +					       0x0f, 0x0f, 0x0d, 0x0d, 0x13, 0x13, 0x11,
-> +					       0x11, 0x24);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc4, 0x06, 0x06, 0x04, 0x04, 0x1c, 0x1c,
-> +					       0x1d, 0x1d, 0x02, 0x1e, 0x1e, 0x1f, 0x1f,
-> +					       0x0e, 0x0e, 0x0c, 0x0c, 0x12, 0x12, 0x10,
-> +					       0x10, 0x24);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc8, 0x21, 0x00, 0x31, 0x42, 0x34, 0x16);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xca, 0xcb, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcd, 0x0e, 0x4b, 0x4b, 0x20, 0x19, 0x6b,
-> +					       0x06, 0xb3);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd2, 0xe3, 0x2b, 0x38, 0x08);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd4, 0x00, 0x01, 0x00, 0x0e, 0x04, 0x44,
-> +					       0x08, 0x10, 0x00, 0x00, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe6, 0x80, 0x09, 0xff, 0xff, 0xff, 0xff,
-> +					       0xff, 0xff);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x12, 0x03, 0x20, 0x00, 0xff);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf3, 0x00);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 20);
-> +
-> +	return dsi_ctx.accum_err;
-> +}
-> +
->   static int boe_th101mb31ig002_disable(struct drm_panel *panel)
->   {
->   	struct boe_th101mb31ig002 *ctx = container_of(panel,
-> @@ -115,12 +180,18 @@ static int boe_th101mb31ig002_disable(struct drm_panel *panel)
->   						      panel);
->   	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
->   
-> +	if (ctx->desc->backlight_off_to_display_off_delay_ms)
-> +		mipi_dsi_msleep(&dsi_ctx, ctx->desc->backlight_off_to_display_off_delay_ms);
-> +
->   	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
->   
->   	mipi_dsi_msleep(&dsi_ctx, 120);
->   
->   	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
->   
-> +	if (ctx->desc->enter_sleep_to_reset_down_delay_ms)
-> +		mipi_dsi_msleep(&dsi_ctx, ctx->desc->enter_sleep_to_reset_down_delay_ms);
-> +
->   	return dsi_ctx.accum_err;
->   }
->   
-> @@ -134,6 +205,9 @@ static int boe_th101mb31ig002_unprepare(struct drm_panel *panel)
->   	gpiod_set_value_cansleep(ctx->enable, 0);
->   	regulator_disable(ctx->power);
->   
-> +	if(ctx->desc->power_off_delay_ms)
-> +		msleep(ctx->desc->power_off_delay_ms);
-> +
->   	return 0;
->   }
->   
-> @@ -151,6 +225,18 @@ static int boe_th101mb31ig002_prepare(struct drm_panel *panel)
->   		return ret;
->   	}
->   
-> +	if (ctx->desc->vcioo_to_lp11_delay_ms)
-> +		msleep(ctx->desc->vcioo_to_lp11_delay_ms);
-> +
-> +	if (ctx->desc->lp11_before_reset) {
-> +		ret = mipi_dsi_dcs_nop(ctx->dsi);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (ctx->desc->lp11_to_reset_delay_ms)
-> +		msleep(ctx->desc->lp11_to_reset_delay_ms);
-> +
->   	gpiod_set_value_cansleep(ctx->enable, 1);
->   	msleep(50);
->   	boe_th101mb31ig002_reset(ctx);
-> @@ -187,6 +273,36 @@ static const struct panel_desc boe_th101mb31ig002_desc = {
->   	.init = boe_th101mb31ig002_enable,
->   };
->   
-> +static const struct drm_display_mode starry_er88577_default_mode = {
-> +	.clock	= (800 + 25 + 25 + 25) * (1280 + 20 + 4 + 12) * 60 / 1000,
-> +	.hdisplay = 800,
-> +	.hsync_start = 800 + 25,
-> +	.hsync_end = 800 + 25 + 25,
-> +	.htotal = 800 + 25 + 25 + 25,
-> +	.vdisplay = 1280,
-> +	.vsync_start = 1280 + 20,
-> +	.vsync_end = 1280 + 20 + 4,
-> +	.vtotal = 1280 + 20 + 4 + 12,
-> +	.width_mm = 135,
-> +	.height_mm = 216,
-> +	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-> +};
-> +
-> +static const struct panel_desc starry_er88577_desc = {
-> +	.modes = &starry_er88577_default_mode,
-> +	.lanes = 4,
-> +	.format = MIPI_DSI_FMT_RGB888,
-> +	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-> +		      MIPI_DSI_MODE_LPM,
-> +	.init = starry_er88577_init_cmd,
-> +	.lp11_before_reset = true,
-> +	.vcioo_to_lp11_delay_ms = 5,
-> +	.lp11_to_reset_delay_ms = 50,
-> +	.backlight_off_to_display_off_delay_ms = 100,
-> +	.enter_sleep_to_reset_down_delay_ms = 100,
-> +	.power_off_delay_ms = 1000,
-> +};
-> +
->   static int boe_th101mb31ig002_get_modes(struct drm_panel *panel,
->   					struct drm_connector *connector)
->   {
-> @@ -312,6 +428,9 @@ static const struct of_device_id boe_th101mb31ig002_of_match[] = {
->   	{ .compatible = "boe,th101mb31ig002-28a",
->   	  .data = &boe_th101mb31ig002_desc
->   	},
-> +	{ .compatible = "starry,er88577",
-> +	  .data = &starry_er88577_desc
-> +	},
->   	{ /* sentinel */ }
->   };
->   MODULE_DEVICE_TABLE(of, boe_th101mb31ig002_of_match);
+Add a driver for the QiHeng Electronics ch341a USB-to-SPI adapter.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+This driver is loosely based on the ch341a module from the flashrom project.
+
+Signed-off-by: Johannes Thumshirn <jth@kernel.org>
+---
+Changes to v1:
+- Change C style to C++ style comments in header
+- Sort Kconfig snippet alphabetically
+- Don't cast away usb_bulk_msg() return value
+- Call spi_unregister_device() on remove
+- Don't pass constant speed to ch341_config_stream()
+Link to v1:
+https://lore.kernel.org/linux-spi/20240705145138.5827-1-jth@kernel.org
+---
+ drivers/spi/Kconfig     |   6 ++
+ drivers/spi/Makefile    |   1 +
+ drivers/spi/spi-ch341.c | 241 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 248 insertions(+)
+
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index a2c99ff33e0a..ec1550c698d5 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -277,6 +277,12 @@ config SPI_CADENCE_XSPI
+ 	  device with a Cadence XSPI controller and want to access the
+ 	  Flash as an MTD device.
+ 
++config SPI_CH341
++	tristate "CH341 USB2SPI adapter"
++	depends on SPI_MASTER && USB
++	help
++	  Enables the SPI controller on the CH341a USB to serial chip
++
+ config SPI_CLPS711X
+ 	tristate "CLPS711X host SPI controller"
+ 	depends on ARCH_CLPS711X || COMPILE_TEST
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index e694254dec04..9de506d1d135 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -154,6 +154,7 @@ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+= spi-xtensa-xtfpga.o
+ obj-$(CONFIG_SPI_ZYNQ_QSPI)		+= spi-zynq-qspi.o
+ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
+ obj-$(CONFIG_SPI_AMD)			+= spi-amd.o
++obj-$(CONFIG_SPI_CH341)			+= spi-ch341.o
+ 
+ # SPI slave protocol handlers
+ obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
+diff --git a/drivers/spi/spi-ch341.c b/drivers/spi/spi-ch341.c
+new file mode 100644
+index 000000000000..d2351812d310
+--- /dev/null
++++ b/drivers/spi/spi-ch341.c
+@@ -0,0 +1,241 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// QiHeng Electronics ch341a USB-to-SPI adapter driver
++//
++// Copyright (C) 2024 Johannes Thumshirn <jth@kernel.org>
++//
++// Based on ch341a_spi.c from the flashrom project.
++
++#include <linux/module.h>
++#include <linux/usb.h>
++#include <linux/spi/spi.h>
++
++#define CH341_PACKET_LENGTH 32
++#define CH341_DEFAULT_TIMEOUT 1000
++
++#define CH341A_CMD_UIO_STREAM 0xab
++
++#define CH341A_CMD_UIO_STM_END 0x20
++#define CH341A_CMD_UIO_STM_DIR 0x40
++#define CH341A_CMD_UIO_STM_OUT 0x80
++
++#define CH341A_CMD_I2C_STREAM 0xaa
++#define CH341A_CMD_I2C_STM_SET 0x60
++#define CH341A_CMD_I2C_STM_END 0x00
++
++#define CH341A_CMD_SPI_STREAM 0xa8
++
++#define CH341A_STM_I2C_100K 0x01
++
++struct ch341_spi_dev {
++	struct spi_controller *ctrl;
++	struct usb_device *udev;
++	unsigned int write_pipe;
++	unsigned int read_pipe;
++	int rx_len;
++	void *rx_buf;
++	u8 *tx_buf;
++	struct urb *rx_urb;
++	struct spi_device *spidev;
++};
++
++static void ch341_set_cs(struct spi_device *spi, bool is_high)
++{
++	struct ch341_spi_dev *ch341 =
++		spi_controller_get_devdata(spi->controller);
++	int err;
++
++	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
++	ch341->tx_buf[0] = CH341A_CMD_UIO_STREAM;
++	ch341->tx_buf[1] = CH341A_CMD_UIO_STM_OUT | (is_high ? 0x36 : 0x37);
++
++	if (is_high) {
++		ch341->tx_buf[2] = CH341A_CMD_UIO_STM_DIR | 0x3f;
++		ch341->tx_buf[3] = CH341A_CMD_UIO_STM_END;
++	} else {
++		ch341->tx_buf[2] = CH341A_CMD_UIO_STM_END;
++	}
++
++	err = usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf,
++			   (is_high ? 4 : 3), NULL, CH341_DEFAULT_TIMEOUT);
++	if (err)
++		dev_err(&spi->dev,
++			"error sending USB message for setting CS (%d)\n", err);
++}
++
++static int ch341_transfer_one(struct spi_controller *host,
++			      struct spi_device *spi,
++			      struct spi_transfer *trans)
++{
++	struct ch341_spi_dev *ch341 =
++		spi_controller_get_devdata(spi->controller);
++	int len;
++	int ret;
++
++	len = min(CH341_PACKET_LENGTH, trans->len + 1);
++
++	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
++
++	ch341->tx_buf[0] = CH341A_CMD_SPI_STREAM;
++
++	memcpy(ch341->tx_buf + 1, trans->tx_buf, len);
++
++	ret = usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf, len,
++			   NULL, CH341_DEFAULT_TIMEOUT);
++	if (ret)
++		return ret;
++
++	return usb_bulk_msg(ch341->udev, ch341->read_pipe, trans->rx_buf,
++			    len - 1, NULL, CH341_DEFAULT_TIMEOUT);
++}
++
++static void ch341_recv(struct urb *urb)
++{
++	struct ch341_spi_dev *ch341 = urb->context;
++	struct usb_device *udev = ch341->udev;
++
++	switch (urb->status) {
++	case 0:
++		/* success */
++		break;
++	case -ENOENT:
++	case -ECONNRESET:
++	case -EPIPE:
++	case -ESHUTDOWN:
++		dev_dbg(&udev->dev, "rx urb terminated with status: %d\n",
++			urb->status);
++		return;
++	default:
++		dev_dbg(&udev->dev, "rx urb error: %d\n", urb->status);
++		break;
++	}
++}
++
++static int ch341_config_stream(struct ch341_spi_dev *ch341)
++{
++	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
++	ch341->tx_buf[0] = CH341A_CMD_I2C_STREAM;
++	ch341->tx_buf[1] = CH341A_CMD_I2C_STM_SET | CH341A_STM_I2C_100K;
++	ch341->tx_buf[2] = CH341A_CMD_I2C_STM_END;
++
++	return usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf, 3,
++			    NULL, CH341_DEFAULT_TIMEOUT);
++}
++
++static int ch341_enable_pins(struct ch341_spi_dev *ch341, bool enable)
++{
++	memset(ch341->tx_buf, 0, CH341_PACKET_LENGTH);
++	ch341->tx_buf[0] = CH341A_CMD_UIO_STREAM;
++	ch341->tx_buf[1] = CH341A_CMD_UIO_STM_OUT | 0x37;
++	ch341->tx_buf[2] = CH341A_CMD_UIO_STM_DIR | (enable ? 0x3f : 0x00);
++	ch341->tx_buf[3] = CH341A_CMD_UIO_STM_END;
++
++	return usb_bulk_msg(ch341->udev, ch341->write_pipe, ch341->tx_buf, 4,
++			    NULL, CH341_DEFAULT_TIMEOUT);
++}
++
++static struct spi_board_info chip = {
++	.modalias = "spi-ch341a",
++};
++
++static int ch341_probe(struct usb_interface *intf,
++		       const struct usb_device_id *id)
++{
++	struct usb_device *udev = interface_to_usbdev(intf);
++	struct usb_endpoint_descriptor *in, *out;
++	struct ch341_spi_dev *ch341;
++	struct spi_controller *ctrl;
++	int ret;
++
++	ret = usb_find_common_endpoints(intf->cur_altsetting, &in, &out, NULL,
++					NULL);
++	if (ret)
++		return ret;
++
++	ctrl = devm_spi_alloc_master(&udev->dev, sizeof(struct ch341_spi_dev));
++	if (!ctrl)
++		return -ENOMEM;
++
++	ch341 = spi_controller_get_devdata(ctrl);
++	ch341->ctrl = ctrl;
++	ch341->udev = udev;
++	ch341->write_pipe = usb_sndbulkpipe(udev, usb_endpoint_num(out));
++	ch341->read_pipe = usb_rcvbulkpipe(udev, usb_endpoint_num(in));
++
++	ch341->rx_len = usb_endpoint_maxp(in);
++	ch341->rx_buf = devm_kzalloc(&udev->dev, ch341->rx_len, GFP_KERNEL);
++	if (!ch341->rx_buf)
++		return -ENOMEM;
++
++	ch341->rx_urb = usb_alloc_urb(0, GFP_KERNEL);
++	if (!ch341->rx_urb)
++		return -ENOMEM;
++
++	ch341->tx_buf =
++		devm_kzalloc(&udev->dev, CH341_PACKET_LENGTH, GFP_KERNEL);
++	if (!ch341->tx_buf)
++		return -ENOMEM;
++
++	usb_fill_bulk_urb(ch341->rx_urb, udev, ch341->read_pipe, ch341->rx_buf,
++			  ch341->rx_len, ch341_recv, ch341);
++
++	ret = usb_submit_urb(ch341->rx_urb, GFP_KERNEL);
++	if (ret) {
++		usb_free_urb(ch341->rx_urb);
++		return -ENOMEM;
++	}
++
++	ctrl->bus_num = -1;
++	ctrl->mode_bits = SPI_CPHA;
++	ctrl->transfer_one = ch341_transfer_one;
++	ctrl->set_cs = ch341_set_cs;
++	ctrl->auto_runtime_pm = false;
++
++	usb_set_intfdata(intf, ch341);
++
++	ret = ch341_config_stream(ch341);
++	if (ret)
++		return ret;
++
++	ret = ch341_enable_pins(ch341, true);
++	if (ret)
++		return ret;
++
++	ret = spi_register_controller(ctrl);
++	if (ret)
++		return ret;
++
++	ch341->spidev = spi_new_device(ctrl, &chip);
++	if (!ch341->spidev)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static void ch341_disconnect(struct usb_interface *intf)
++{
++	struct ch341_spi_dev *ch341 = usb_get_intfdata(intf);
++
++	spi_unregister_device(ch341->spidev);
++	spi_unregister_controller(ch341->ctrl);
++	ch341_enable_pins(ch341, false);
++	usb_free_urb(ch341->rx_urb);
++}
++
++static const struct usb_device_id ch341_id_table[] = {
++	{ USB_DEVICE(0x1a86, 0x5512) },
++	{ }
++};
++MODULE_DEVICE_TABLE(usb, ch341_id_table);
++
++static struct usb_driver ch341a_usb_driver = {
++	.name = "spi-ch341",
++	.probe = ch341_probe,
++	.disconnect = ch341_disconnect,
++	.id_table = ch341_id_table,
++};
++module_usb_driver(ch341a_usb_driver);
++
++MODULE_AUTHOR("Johannes Thumshirn <jth@kernel.org>");
++MODULE_DESCRIPTION("QiHeng Electronics ch341 USB2SPI");
++MODULE_LICENSE("GPL v2");
+
+---
+base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
+change-id: 20240708-spi-ch341a-79bae1d045b5
+
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
+
 
