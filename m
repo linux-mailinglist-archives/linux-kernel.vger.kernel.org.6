@@ -1,238 +1,773 @@
-Return-Path: <linux-kernel+bounces-244033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985EA929E35
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:22:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90AE2929E3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BA4286073
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:22:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC55286080
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA9344C8F;
-	Mon,  8 Jul 2024 08:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46BE4503B;
+	Mon,  8 Jul 2024 08:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="ZiVLrDub"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2129.outbound.protection.outlook.com [40.107.215.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEsyKfIp"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA11C29CE8;
-	Mon,  8 Jul 2024 08:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.129
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720426941; cv=fail; b=pyF6IXMOzVH3SR8rWaKEpAVd7jKlfeu3IDwGbKuLW7AOkgo4UOXGDQo4e2UuEh1RzHva3Qw0UvTivvYcAyY2nt6un3nN+FOFFyDM7rByPXmre2/xj0K5rkNSX5sI/iAkwbAw0XejmwgIbf1PdzWl647kA1OVW6Y2Y2vSvuquYOE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720426941; c=relaxed/simple;
-	bh=YTOV367x83TZ3+ranjMVOmrDgrrLah7N6ltzGt9fZuc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kO9iUIEoiW5lTu7fu3mrHmwIpV23EVvjOCeMSzGW47s/DJnTFpx/Vq/pN5PKhYZ3qRjo8hx0jWTtQ2KtKfJswKEtGXC8f/5j/i2RYNoF318r2c8uchBnrU6NzKlIuRD6fn6KXAFNMkodPVSyXMBirVPRmvkF5aRcskeFhVMKFsw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=ZiVLrDub; arc=fail smtp.client-ip=40.107.215.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O0+njE9q9nnM5EWiL2hji3qWNXscnhAipSlWWUnKcfA3C74+Ry9sPOllGCfo1aFAe4zZ4+Xf3EpLRWD+GS6a2waGl2MOvSt4y7pQmFXKKBROjzUIKBz/hskatDp6txkpn5nsM/FNKlZk3l1K3zkIYxLAghYfmfvyWBtrrtczL/ymNhKWcvEOIo2MKlkd0RuGKC+uKLzuRY7iROheOC45ahDutmxkO4wtrgKMJTU+2CdGFSR0dx28ZUHZITxg1lyOtCtVqgFkvJCHYVdnNS0KsNWKFdTL1xMJjm+cFuVntcjvcMWxuccv/1MOyyPH7tn/KcwZg0LAsO99QlLNpJgKCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n9mML/VcoKWdD+iFTP96dRX77+RoiMxIC/1IUzQiei0=;
- b=XOy5/EsGFFr4LspZzci70zzFEr+kfMg8DdZBQOLT4wIk1iAnNCwQn0c1q8lfqr85UoPdr6jaKIjvZGq0N8JfwPDN4QCv8xBLIN00TCZPk3fjX6LeveM30Pt+Dn0MFmwJftcOySbj6ngXFnkrXONpMRJXLvMHChKHUSr3OKbXzKdNbjKaaRdDWXvllf8yWV3SZ9czw2TOVv63VCD+rM79GgVNXHm1smCOsRET3wqJaLjvP15J12CrENZN63i2RQb3SPPcoftabN9Md1q+jfiGKuSWq/oQy62USpdyyZM85fWm96xBYYfpe+mJM4yBlikDyIx0N1fiEvbH9QwS31jWCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n9mML/VcoKWdD+iFTP96dRX77+RoiMxIC/1IUzQiei0=;
- b=ZiVLrDubjAwqBDSxcI9R734IOODYh+jvU25+L+jyuhqS7AdjuYuYpZGXOjhSSICvQw+2kmzsB7P6VBZyMd7KyAzEgV2TbDGQqjQd9d3GFBTdWzeUNRkY9nGvGlPXTlSjnXibCve53v0Q7VRVKd974wTXOT738EIJDjv+ycee9r0LB6u1ZueqxpEXRrOBFE6MBEcXnVOhKoAjAFSGfsfm+QsQ0dsPtcmXCyoysPBU6oiQas9bo76dBICnUqNOxTU4FNhwCYipv6nWs2A1l/GbgA5N018Xn/iXRLUUOG74QxnISSYnVQhqy6oI/gEluta3HOG9LlBbX5XtIZ7ijj7xxg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from JH0PR03MB7468.apcprd03.prod.outlook.com (2603:1096:990:16::12)
- by KL1PR03MB8307.apcprd03.prod.outlook.com (2603:1096:820:10d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 08:22:17 +0000
-Received: from JH0PR03MB7468.apcprd03.prod.outlook.com
- ([fe80::4128:9446:1a0f:11fd]) by JH0PR03MB7468.apcprd03.prod.outlook.com
- ([fe80::4128:9446:1a0f:11fd%6]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 08:22:16 +0000
-Message-ID: <2c51fff5-bc63-4f30-bb6d-f5fe91854d6d@amlogic.com>
-Date: Mon, 8 Jul 2024 16:21:52 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: power: Add power sequence for Amloigc
- WCN chips
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
- <20240705-pwrseq-v1-1-31829b47fc72@amlogic.com>
- <a4d08999-55ea-4674-bb0f-6d618b7bdea7@kernel.org>
- <9c550278-2205-4663-917c-c303c65726ad@amlogic.com>
- <726a0561-b3fc-46bb-a834-3ed8b0e993e1@kernel.org>
- <91e42fbc-712e-44b4-8200-23aaf1fade43@amlogic.com>
- <7d109ab0-ebd0-4739-a15e-958e82552a7d@kernel.org>
-From: Yang Li <yang.li@amlogic.com>
-In-Reply-To: <7d109ab0-ebd0-4739-a15e-958e82552a7d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SGXP274CA0013.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::25)
- To JH0PR03MB7468.apcprd03.prod.outlook.com (2603:1096:990:16::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A429CE8;
+	Mon,  8 Jul 2024 08:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720426979; cv=none; b=QfF0vThJT/mPo47tyDrNfrhit1iROhWqXoTw0jsp6oNXA4aqoV8PyxdSzmxRipN95Nmr+4sfyygo9n5nBY/Rf/KfKAACF+QpNiZGXHS5OIJcEycEcvNnaZwLqX7Tubu0mzsuAIplyvFzxpXTExE/57Rw5PtyB80okNS+a59WCA4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720426979; c=relaxed/simple;
+	bh=lWsXWFZeh9kyGpEfA9XQGwP4qVbvEBjJStJiqRow9+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ta579CFmcG/K1aeoSl/u2iY1EEQdzx0OMitel0xFJFVt4lKRqsGanNC+bzOmJ5MnqfW9Ow3yVxSSkONCc3dZnDGUcUKfy7gdDQ0gXIieuGxOjF2pda+PUAkTMd/mk89+O5efBc8TufLaogv1sb+ojJ/2xP/DQcPs6tPos3FiStg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEsyKfIp; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fb1c918860so30302495ad.1;
+        Mon, 08 Jul 2024 01:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720426976; x=1721031776; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ib8ofPhHLLfeRsP8kdgypeNM8tmnRpEj607PjY7Rd3M=;
+        b=jEsyKfIpzMx0zcFWByswSNfJKgcqmo4JpUBKJGhkzBchsdggbbIk2XHIcPE/2f0zf/
+         ckcoD42e8lk2kb0UqpVVoVmtTjS1uDrb673OcQQjHbzejGpCzx+URS+2xVt+jvVfxQrv
+         HoT696GvztvLRzdAN9xm+eXd/lIUXeLuIHOaW2t5Yv9Ai0WxxU32v8kfWlTZZCp2r91l
+         X39obAyOyZYlvWfJ9yIy1AwlIdA7IsJslhbqezas417ayImFuHdXEBiCESsWpP7C6t0c
+         MUELTI0XjyIhlKm0me1XaHSLu+U3YHZqlKEEjE46i602mkmaSP/YJJn/hglmH0bK41jw
+         udZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720426976; x=1721031776;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ib8ofPhHLLfeRsP8kdgypeNM8tmnRpEj607PjY7Rd3M=;
+        b=HOOpqoQJLHL4SnEnKlsZHzXbhzU/F2vQCxPyAR3ZSLKL03SsUN8+0UJqLz53dUm0uA
+         3zeDewNe2SD1BAeCzAT/zN3II9BUfMe8dboN1BGKkH1HzxjdstRaEOrsVelon88AY7Br
+         U/tp6Pr3gWTQ4gZItyobbG+1T3YrKzLNsS6Q8IGb1SolDnKRG0DM54XvlLjkv9vphlzn
+         oSI8FfOIFn7AaYcR2T/M8cjj3O8+NBW65JtT/JE9B6MPYslFnhPQQfg66GaPWS+m0Ep1
+         kYYBGj6mRfewi4T5cyUenfdsKx0/7E07Mvn1/CHj/09F04+Ei/9VYqhV2ikKn7/cMoa3
+         P/yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZiIDXO6994BgrHNSYm3mtjrIPngzdpOu84XOUkQ7lQaVT1vwEmhoknf7O1iRbajfswGm32XLq20Q+Y9l2p1BizjjbH5D27kpZLJnf
+X-Gm-Message-State: AOJu0YxaoB8duyUd5dlagTvHFIRMPHiEV1qevhUsTaPOKLnA/gxTO0Pf
+	OLDDOMnzi1VgYfmQkr20EMyJD3tmtBkcFkSwANrciA4AYLNmU3yG
+X-Google-Smtp-Source: AGHT+IGu8guYBZ2ZxvyuhFcJKpmwc+cwme7aqTFq6u5iyJ9A3LBK3hCoBIllOBOy6ISebDTbVp0TVg==
+X-Received: by 2002:a17:903:1c2:b0:1fb:4215:d9d9 with SMTP id d9443c01a7336-1fb4215e4bcmr164256275ad.6.1720426975966;
+        Mon, 08 Jul 2024 01:22:55 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fb3b317cf9sm70272225ad.126.2024.07.08.01.22.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 01:22:55 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xfr@outlook.com,
+	rock.xu@nio.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v1] net: stmmac: Refactor Frame Preemption(FPE) implementation
+Date: Mon,  8 Jul 2024 16:22:20 +0800
+Message-Id: <20240708082220.877141-1-0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR03MB7468:EE_|KL1PR03MB8307:EE_
-X-MS-Office365-Filtering-Correlation-Id: d0370031-f6d3-4a31-4f40-08dc9f2713a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b1lZbmJScXJ1dWJtU1IrditZeEdXbFIxTzFqZGxnV1pGRnFweGpHN0ZIV3JQ?=
- =?utf-8?B?OXVzY015QnJVeDU5Yi9XcWY4V1RRMGxybWg0cURqS1lZTTdUV3lqUG0xSW03?=
- =?utf-8?B?dkhHNmtFQ0E3bUZlN2F2bXBFSmhIckJqQjZ1elE3Zm9Lc2p2em1VdnBlNFV1?=
- =?utf-8?B?VE1vSWFQS3VSZVdGTzByT09SbFREYWo3VnZlRTRhaUVueFlrbkxzeU9OOGt6?=
- =?utf-8?B?ZEh4MjAvOG5xWHhNWHdGemNtRklsVHRFbExBU2tUSlphekl3aVZXeEI2OFZn?=
- =?utf-8?B?NGEySHIvdlJPNlRlZlBuOGcxNVQ1S2Y2K2pQV0pDM0I1WTJNZ1dMbk92UFVv?=
- =?utf-8?B?UkZlUlBMZTR1QmwvQXJwN2FpeExuK2ZiTWNZWVVwQ1AwZVMwZ1R6VlJQalZr?=
- =?utf-8?B?bkJCcm9VSVVvYmVnODZaT213Z2lKeWoyRUVqbEgzVFZxTWFpeCsvL0s5SEJo?=
- =?utf-8?B?RHFVNENpWldpalQ5K0JnN016U2NOdjlBTXEvVHR1Qm5hMGgzV0JUK1dZOUhY?=
- =?utf-8?B?UW5iL1YzODRUdDQ1c3hKdnl2ekJWeklvMnBUanBOWUZJVk5RKzRSOHNhZVc0?=
- =?utf-8?B?ZkhPL2NKVGJ5WDR2WWxUOFFxK0pPOUpJM2lxenRGTHdSekRsbmt4clBlMkhO?=
- =?utf-8?B?KzdzWThDT0JaMlJhbEVTeG1XUlliQmJMYU5uS3ZKcHRqTG5wNHlmM3hFb2Fi?=
- =?utf-8?B?SUJXbDk1czZOZUw5a3dBU0UzVEkxZThGVGZKWEhHN01NMWNMRXRMVHk1SWFr?=
- =?utf-8?B?cEcwcjJHVkhxc0FBb0RoNXJoR0FYaFpRZnozZWlBQy9tUVkzYWxuMDFHdzVK?=
- =?utf-8?B?d1Q4eS8wQ3dqeU51VFJadGNja2FONTI5UEtuOUIySlFuWCsvSkNMUm14eVkr?=
- =?utf-8?B?N2NNTnMvNnhCZXhMZllWSWhsb0dEei93SUViMTFHTHZjS2YrQzBEUUtLWnF1?=
- =?utf-8?B?enFyWmh4T1VXaUwwWCtxWEFqb0duL0hZYmVjL21QbXowVS9oLzJSQU5QaTNE?=
- =?utf-8?B?dm50dksyQzhpMkpPdXUxRm1SOTdNWTB3dVJVeXVhYUlDY0NJZzJoRHBrN3Ja?=
- =?utf-8?B?Nlk4ZlN2YSs5a0d1NE9pdDZuc2JCaXpzK0RTQ09TUjNrbmpDSTVUdHhLWEIw?=
- =?utf-8?B?alJQSlBhMy9tckxxV25JWGVHS2wyc3FiMngvZ2dmUSttV3gvZlVKSU9scUNh?=
- =?utf-8?B?OFFhd0hZa1VZczd2bUVjMkl6THd1K0ZwNjgxMjY4eHI3ZXhBR1hxRDlGQVFz?=
- =?utf-8?B?am81Y0hNckJVM29IZFNxR1kzazF1MWt0b1RWSzdURjFaWDJ1QitYQ1hhSjVJ?=
- =?utf-8?B?VURvcVl6aTVEcGlmTHVJaXprNGhXcGVNZGd0dFNCQ2NhMk9LSzBwT0p6cUhu?=
- =?utf-8?B?M1RvTXpBbjZnaHJxL2s0TnBVUW1JaHdJcGZTL1BuN1RvOHFzVU9NbElJZW5k?=
- =?utf-8?B?ZlcvUVhUVDhySmYwQnVlWHBVeXpDRnlqNEg3ejM5L2p3SkVBaE9sTnd0NjlF?=
- =?utf-8?B?aDIzY1pNTGxZa1ZhT0ZRZFJsWHYzb3NIMlg4amh6QnlMZDFDQmV5ZTBNYjBh?=
- =?utf-8?B?QmNISzNlcWU3ajg3cG54Rmd0UVRKcEtzM1NDZ0t3ZVFvNXJuZUdoUURva1B5?=
- =?utf-8?B?NGZsSmpvaDByM1ZXSFRzSW1QYng1MzNtdUxzT0k4cHhSZnpiZi9RVmpYRXFJ?=
- =?utf-8?B?V0dqcW9SZXNoSWdTd2tyWEU2eGZsUlR4QzExYXR3RlJFLzc1eWFEY2pZajZM?=
- =?utf-8?B?RW1EbXpPa0ZJRHRRMkhMU0hPTUZJWDVzWVNGVFlQVWNhWnZrUGVwRHlMYjV0?=
- =?utf-8?B?L2NteHhzL0IyZHVFdkdxUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB7468.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MGFJMTFaUUgzZVEzU2tneWZRUzdxTXN4SXJrVzh3RERHVzd6eG5Db0FPQW5M?=
- =?utf-8?B?bkk1TjliWnM1VXhLejN0Q0pySmdHRythamVLdHd6c2l1U0JtSTBLRFluNTdr?=
- =?utf-8?B?d2NSYXFVTkJkNUhSTHlyb3gvYnh3cEo0TkwvcmV1WDcyNE9ycW5FU29SNHNZ?=
- =?utf-8?B?Mm41NTFWOGNReTlEb2RkcmMvOGVEYmFDTFpzWThQRk9yK1FNdHpZT2J4ZUtJ?=
- =?utf-8?B?TDRIblFPRlBJQUZMeFFvc0gzSm40LzE5VUdicGhKL3VCS1BYNUk3a3p4RGdE?=
- =?utf-8?B?UXZBdHRyOEw4Y1VTREZVMXFxZjU4YkF2S0trNkJrZlM2YmNScFppSmVVbUpu?=
- =?utf-8?B?UGsyYjJTbEFSQzJkNUxsWnN1ZFBnS01YbDBZUzI3RDV1MkczM1JpQmRCV21C?=
- =?utf-8?B?dm9CUVFZZnRkKzNSU0hlWmZDZFZrQUlRb2p5WXlxTHQ5WlZad1lDSGlpcFpU?=
- =?utf-8?B?K3U3UUZvUkk5bHpVVWd6eUsvZlJpR1RyODJNcDBBbEx5Rmc1WmYwMllLalFK?=
- =?utf-8?B?NVVLQ3VFTWJqLytTTEpoaHAwaEVUc2pZWUg0K1J2cmdBcWNVWFBVczB6MXBs?=
- =?utf-8?B?a3lmRGxLMUJxaG9JVTArM3YrUHJYNVplTWRMQnRrWnZGVG8wZVVkRDVoZTNp?=
- =?utf-8?B?bHFSOC91ZE1pUnRkd0lNRVVJaG5xRXk1YklLWDgwWExXQzdKSG1tTG1ZdUNl?=
- =?utf-8?B?RDNCVmxJVmI1djZRR2hmWVRKMnBYaUZOeEFuVlgyaUtBakM5b3dLTk9XeWZM?=
- =?utf-8?B?U0Z4YURwd2Y4WGtIejNKTUxYcGNsdTV1Q05obCtUbHBMay9oZUhvdXp5MjFK?=
- =?utf-8?B?SFhJU3FuOGZVUSthYzBlbS81cHpSWFhIVVJNaFE4S1k4SkJqOG9xZHZHUFJM?=
- =?utf-8?B?OVRWWkNIZ20vNTZKM0FxKzlNU2N2eXk3VzlhcXBVdFVYRm1DdXdjU3lNNGg2?=
- =?utf-8?B?VDQvd2QvTEJjZDF2bERUbzRsSHp4TGNLdDhqeGtDNzZVT3N5djhlbVU3TjN2?=
- =?utf-8?B?ak9UUkFIYUFJTFFEMXUvb0VONlVyTVZrL21Qajh4bHNIVnBKLzI1eENIRzN4?=
- =?utf-8?B?aW5HN1p2ZzNWZG91R0krUWhEOE81WGREdWJjbnJmMjV6bjVjK1dQMjB3WGNh?=
- =?utf-8?B?amk2L3BWQUNvYU9tZEhVUFFOS1IvRmpOTUFBZTRDdGxKbzcxMUNSa2s3NU8x?=
- =?utf-8?B?b2xXSzRkUlVEL1V6WXhYRWhLd1BsbFNXN3JEd2kxSkdJK1RzRS9NTmFDUFR3?=
- =?utf-8?B?MHpjSG1ZUExBdlM1eU51NXk2c2JTZm5EMzdUUXVGcVJqVG1DZEprb1BnbVpP?=
- =?utf-8?B?bFEwbktXYjlGS2IyN21SWFhBZGVNdmdUUUc5R1JuYnBUaTNhdWhZMzNyYkhL?=
- =?utf-8?B?alM3cnpRc2JYU1VHYll6dFVmSHlIQkhJWG9wb3ozZjJCMnkyNkVZWWhvaGFx?=
- =?utf-8?B?S2RSUHdoaUVZYUFzNHE5OFZGTzJXTTVhRS9jNEY3WkVHT3kwQ2JBOGxOWVdN?=
- =?utf-8?B?V2pZZE5TZ1FWRk5KZlRiVXpVWmZGNEVHY3J1cnFWT3JMYnNqSTlZc2k2SWhp?=
- =?utf-8?B?cEdmeEtHRUhZWGF2amlTa3ZMNi80T2RYNmp0N3ZnRmRWR2s0bEE2UEZkendB?=
- =?utf-8?B?RDlHcDJZQXFkUDhSUUYzRk5yUGdjRVZoUmJEODhoTUcvNkhqNHh2dXJBUGY0?=
- =?utf-8?B?SjcxeHN0a2htREJJSkNybzc1eUFOK2JNQjNmR2Juc012UFk5WEt6aGs3WXZT?=
- =?utf-8?B?QXJJbXRsQ0lLT1F0eVZLUlVFNmFVM0dFS1NBalJvOG94b1pIR0U5R3p1Rmkz?=
- =?utf-8?B?aEFaOHQ5TlQvcGNWYmhBeElQeHVEREpSeVJWTWJucVM0ZlNRYVg0RGRGZnl5?=
- =?utf-8?B?QjhIVTN1bmJzWWQ3TDVDTUd1OVB0bFRXMzlwUlBhZmJxVmpoYUNQeDREWnFQ?=
- =?utf-8?B?WWZwaHRUSDR2NHRRYVhITmc2M0ZsTWorRlh2cElZdk9qaWEwVDdKWUZJQ3JB?=
- =?utf-8?B?c0Zia3BEekgxajZpL2tXMXlydzhySXBhT1dOSDZTYm5kSjBSeGJkNEkweEhJ?=
- =?utf-8?B?M3RvZVhFVG50aGYrYUNrVXM1em1uUE5iaVRzOFdjSEdockJoT01KOGlpNXJL?=
- =?utf-8?Q?1qs3IsI4Ru5SrGsdWJAc/UTnm?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0370031-f6d3-4a31-4f40-08dc9f2713a8
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB7468.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 08:22:16.3310
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /8hoGg0uYIY0k5VFQbmutz28cWZqH+ZmE87BqPlKZLEyxxZdUEqZy8468lLw1xN1y1vyK1oBmpVuZHwP/7H1GQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8307
+Content-Transfer-Encoding: 8bit
 
+Refactor FPE implementation by moving common code for DWMAC4 and
+DWXGMAC into a separate FPE module.
 
-On 2024/7/8 15:32, Krzysztof Kozlowski wrote:
-> On 08/07/2024 08:32, Yang Li wrote:
->> 在 2024/7/8 14:11, Krzysztof Kozlowski wrote:
->>> On 08/07/2024 08:04, Yang Li wrote:
->>>>>> +
->>>>>> +required:
->>>>>> +  - compatible
->>>>>> +  - clocks
->>>>>> +  - clock-names
->>>>>> +  - amlogic,chip-enable-gpios
->>>>>> +  - amlogic,bt-enable-gpios
->>>>>> +
->>>>>> +additionalProperties: false
->>>>>> +
->>>>>> +examples:
->>>>>> +  - |
->>>>>> +    #include <dt-bindings/gpio/gpio.h>
->>>>>> +    wcn_pwrseq {
->>>>> No underscores in node names, generic node names.
->>>>>
->>>>> There is no device as "pwrseq". I also do not get what "wcn" means here.
->>>> Yes, I understand.
->>>>
->>>> Can I change "wcn_pwrseq" to "pmu", and do I need to change the binding
->>> What is pmu for your device? What is this device in the first place you
->>> are documenting? Where is the datasheet?
->> ^_^ Well, You are right, the "pmu" wasn't really fit in here.
->>
->> I'd like to explain the current usage first, and could you please give
->> me a suggestion?
->>
->> This module(pwrseq) used to power on Bluetooth & Wi-Fi combo chip, both
->> Bluetooth and
->>
->> Wi-Fi driver need to control "chip-en-gpios" pins, so we introduced the
->> power sequence module.
->>
->> What should we call it in this case?
-> Sorry, you describe driver, not a device.
->
-> That would be a no-go for entire binding. Please describe the hardware,
-> not what you want to achieve in Linux drivers.
-W155s2 is a Bluetooth and WiFi combination chip. Bluetooth requires the 
-bt-en pin to be pulled up, the chip-en pin to be pulled up, and the 
-32.768KHz clock. WiFi requires the chip-en pin to be pulled up, and the 
-32.768KHz clock. It can be seen that Bluetooth and WiFi are coupled to 
-the chip-en pin and the 32.768KHz clock. When Bluetooth and WiFi are 
-working at the same time, no matter which one is turned off, it will 
-affect the other device. Therefore, a pwrseq device is now abstracted to 
-manage the chip-en pin, bt-en pin, and the 32.768KHz clock.
+FPE implementation for DWMAC4 and DWXGMAC differs only for:
+1) Offset address of MAC_FPE_CTRL_STS
+2) FPRQ(Frame Preemption Residue Queue) field in MAC_RxQ_Ctrl1
 
-There is currently no matching device name for the pwrseq composite device.
+Tested on DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
 
-Could you please give me some advice?
+Signed-off-by: Furong Xu <0x1207@gmail.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h  |  1 +
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  6 --
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  | 66 --------------
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  | 16 ----
+ .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |  9 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   | 27 ------
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    | 20 ++++-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    | 31 ++++---
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  1 +
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.c  | 90 +++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.h  | 16 ++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 21 ++---
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   |  3 +-
+ 14 files changed, 157 insertions(+), 152 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
 
->
-> Best regards,
-> Krzysztof
->
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+index c2f0e91f6bf8..7e46dca90628 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Makefile
++++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+@@ -6,7 +6,7 @@ stmmac-objs:= stmmac_main.o stmmac_ethtool.o stmmac_mdio.o ring_mode.o	\
+ 	      mmc_core.o stmmac_hwtstamp.o stmmac_ptp.o dwmac4_descs.o	\
+ 	      dwmac4_dma.o dwmac4_lib.o dwmac4_core.o dwmac5.o hwif.o \
+ 	      stmmac_tc.o dwxgmac2_core.o dwxgmac2_dma.o dwxgmac2_descs.o \
+-	      stmmac_xdp.o stmmac_est.o \
++	      stmmac_xdp.o stmmac_est.o stmmac_fpe.o \
+ 	      $(stmmac-y)
+ 
+ stmmac-$(CONFIG_STMMAC_SELFTESTS) += stmmac_selftests.o
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index cd36ff4da68c..73c145dda11a 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -591,6 +591,7 @@ struct mac_device_info {
+ 	const struct stmmac_tc_ops *tc;
+ 	const struct stmmac_mmc_ops *mmc;
+ 	const struct stmmac_est_ops *est;
++	const struct stmmac_fpe_ops *fpe;
+ 	struct dw_xpcs *xpcs;
+ 	struct phylink_pcs *phylink_pcs;
+ 	struct mii_regs mii;	/* MII register Addresses */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+index dbd9f93b2460..1505ac738b13 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+@@ -1265,9 +1265,6 @@ const struct stmmac_ops dwmac410_ops = {
+ 	.set_arp_offload = dwmac4_set_arp_offload,
+ 	.config_l3_filter = dwmac4_config_l3_filter,
+ 	.config_l4_filter = dwmac4_config_l4_filter,
+-	.fpe_configure = dwmac5_fpe_configure,
+-	.fpe_send_mpacket = dwmac5_fpe_send_mpacket,
+-	.fpe_irq_status = dwmac5_fpe_irq_status,
+ 	.add_hw_vlan_rx_fltr = dwmac4_add_hw_vlan_rx_fltr,
+ 	.del_hw_vlan_rx_fltr = dwmac4_del_hw_vlan_rx_fltr,
+ 	.restore_hw_vlan_rx_fltr = dwmac4_restore_hw_vlan_rx_fltr,
+@@ -1317,9 +1314,6 @@ const struct stmmac_ops dwmac510_ops = {
+ 	.set_arp_offload = dwmac4_set_arp_offload,
+ 	.config_l3_filter = dwmac4_config_l3_filter,
+ 	.config_l4_filter = dwmac4_config_l4_filter,
+-	.fpe_configure = dwmac5_fpe_configure,
+-	.fpe_send_mpacket = dwmac5_fpe_send_mpacket,
+-	.fpe_irq_status = dwmac5_fpe_irq_status,
+ 	.add_hw_vlan_rx_fltr = dwmac4_add_hw_vlan_rx_fltr,
+ 	.del_hw_vlan_rx_fltr = dwmac4_del_hw_vlan_rx_fltr,
+ 	.restore_hw_vlan_rx_fltr = dwmac4_restore_hw_vlan_rx_fltr,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+index e02cebc3f1b7..1c431b918719 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+@@ -572,69 +572,3 @@ int dwmac5_flex_pps_config(void __iomem *ioaddr, int index,
+ 	writel(val, ioaddr + MAC_PPS_CONTROL);
+ 	return 0;
+ }
+-
+-void dwmac5_fpe_configure(void __iomem *ioaddr, struct stmmac_fpe_cfg *cfg,
+-			  u32 num_txq, u32 num_rxq,
+-			  bool enable)
+-{
+-	u32 value;
+-
+-	if (enable) {
+-		cfg->fpe_csr = EFPE;
+-		value = readl(ioaddr + GMAC_RXQ_CTRL1);
+-		value &= ~GMAC_RXQCTRL_FPRQ;
+-		value |= (num_rxq - 1) << GMAC_RXQCTRL_FPRQ_SHIFT;
+-		writel(value, ioaddr + GMAC_RXQ_CTRL1);
+-	} else {
+-		cfg->fpe_csr = 0;
+-	}
+-	writel(cfg->fpe_csr, ioaddr + MAC_FPE_CTRL_STS);
+-}
+-
+-int dwmac5_fpe_irq_status(void __iomem *ioaddr, struct net_device *dev)
+-{
+-	u32 value;
+-	int status;
+-
+-	status = FPE_EVENT_UNKNOWN;
+-
+-	/* Reads from the MAC_FPE_CTRL_STS register should only be performed
+-	 * here, since the status flags of MAC_FPE_CTRL_STS are "clear on read"
+-	 */
+-	value = readl(ioaddr + MAC_FPE_CTRL_STS);
+-
+-	if (value & TRSP) {
+-		status |= FPE_EVENT_TRSP;
+-		netdev_info(dev, "FPE: Respond mPacket is transmitted\n");
+-	}
+-
+-	if (value & TVER) {
+-		status |= FPE_EVENT_TVER;
+-		netdev_info(dev, "FPE: Verify mPacket is transmitted\n");
+-	}
+-
+-	if (value & RRSP) {
+-		status |= FPE_EVENT_RRSP;
+-		netdev_info(dev, "FPE: Respond mPacket is received\n");
+-	}
+-
+-	if (value & RVER) {
+-		status |= FPE_EVENT_RVER;
+-		netdev_info(dev, "FPE: Verify mPacket is received\n");
+-	}
+-
+-	return status;
+-}
+-
+-void dwmac5_fpe_send_mpacket(void __iomem *ioaddr, struct stmmac_fpe_cfg *cfg,
+-			     enum stmmac_mpacket_type type)
+-{
+-	u32 value = cfg->fpe_csr;
+-
+-	if (type == MPACKET_VERIFY)
+-		value |= SVER;
+-	else if (type == MPACKET_RESPONSE)
+-		value |= SRSP;
+-
+-	writel(value, ioaddr + MAC_FPE_CTRL_STS);
+-}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac5.h b/drivers/net/ethernet/stmicro/stmmac/dwmac5.h
+index bf33a51d229e..00b151b3b688 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac5.h
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac5.h
+@@ -11,15 +11,6 @@
+ #define PRTYEN				BIT(1)
+ #define TMOUTEN				BIT(0)
+ 
+-#define MAC_FPE_CTRL_STS		0x00000234
+-#define TRSP				BIT(19)
+-#define TVER				BIT(18)
+-#define RRSP				BIT(17)
+-#define RVER				BIT(16)
+-#define SRSP				BIT(2)
+-#define SVER				BIT(1)
+-#define EFPE				BIT(0)
+-
+ #define MAC_PPS_CONTROL			0x00000b70
+ #define PPS_MAXIDX(x)			((((x) + 1) * 8) - 1)
+ #define PPS_MINIDX(x)			((x) * 8)
+@@ -102,12 +93,5 @@ int dwmac5_rxp_config(void __iomem *ioaddr, struct stmmac_tc_entry *entries,
+ int dwmac5_flex_pps_config(void __iomem *ioaddr, int index,
+ 			   struct stmmac_pps_cfg *cfg, bool enable,
+ 			   u32 sub_second_inc, u32 systime_flags);
+-void dwmac5_fpe_configure(void __iomem *ioaddr, struct stmmac_fpe_cfg *cfg,
+-			  u32 num_txq, u32 num_rxq,
+-			  bool enable);
+-void dwmac5_fpe_send_mpacket(void __iomem *ioaddr,
+-			     struct stmmac_fpe_cfg *cfg,
+-			     enum stmmac_mpacket_type type);
+-int dwmac5_fpe_irq_status(void __iomem *ioaddr, struct net_device *dev);
+ 
+ #endif /* __DWMAC5_H__ */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
+index 6a2c7d22df1e..f359d70beb83 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
+@@ -84,8 +84,8 @@
+ #define XGMAC_MCBCQEN			BIT(15)
+ #define XGMAC_MCBCQ			GENMASK(11, 8)
+ #define XGMAC_MCBCQ_SHIFT		8
+-#define XGMAC_RQ			GENMASK(7, 4)
+-#define XGMAC_RQ_SHIFT			4
++#define XGMAC_FPRQ			GENMASK(7, 4)
++#define XGMAC_FPRQ_SHIFT		4
+ #define XGMAC_UPQ			GENMASK(3, 0)
+ #define XGMAC_UPQ_SHIFT			0
+ #define XGMAC_RXQ_CTRL2			0x000000a8
+@@ -96,10 +96,11 @@
+ #define XGMAC_LPIIS			BIT(5)
+ #define XGMAC_PMTIS			BIT(4)
+ #define XGMAC_INT_EN			0x000000b4
++#define XGMAC_FPEIE			BIT(15)
+ #define XGMAC_TSIE			BIT(12)
+ #define XGMAC_LPIIE			BIT(5)
+ #define XGMAC_PMTIE			BIT(4)
+-#define XGMAC_INT_DEFAULT_EN		(XGMAC_LPIIE | XGMAC_PMTIE)
++#define XGMAC_INT_DEFAULT_EN		(XGMAC_FPEIE | XGMAC_LPIIE | XGMAC_PMTIE)
+ #define XGMAC_Qx_TX_FLOW_CTRL(x)	(0x00000070 + (x) * 4)
+ #define XGMAC_PT			GENMASK(31, 16)
+ #define XGMAC_PT_SHIFT			16
+@@ -193,8 +194,6 @@
+ #define XGMAC_MDIO_ADDR			0x00000200
+ #define XGMAC_MDIO_DATA			0x00000204
+ #define XGMAC_MDIO_C22P			0x00000220
+-#define XGMAC_FPE_CTRL_STS		0x00000280
+-#define XGMAC_EFPE			BIT(0)
+ #define XGMAC_ADDRx_HIGH(x)		(0x00000300 + (x) * 0x8)
+ #define XGMAC_ADDR_MAX			32
+ #define XGMAC_AE			BIT(31)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+index 6a987cf598e4..e5bc3957041e 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+@@ -1505,31 +1505,6 @@ static void dwxgmac2_set_arp_offload(struct mac_device_info *hw, bool en,
+ 	writel(value, ioaddr + XGMAC_RX_CONFIG);
+ }
+ 
+-static void dwxgmac3_fpe_configure(void __iomem *ioaddr, struct stmmac_fpe_cfg *cfg,
+-				   u32 num_txq,
+-				   u32 num_rxq, bool enable)
+-{
+-	u32 value;
+-
+-	if (!enable) {
+-		value = readl(ioaddr + XGMAC_FPE_CTRL_STS);
+-
+-		value &= ~XGMAC_EFPE;
+-
+-		writel(value, ioaddr + XGMAC_FPE_CTRL_STS);
+-		return;
+-	}
+-
+-	value = readl(ioaddr + XGMAC_RXQ_CTRL1);
+-	value &= ~XGMAC_RQ;
+-	value |= (num_rxq - 1) << XGMAC_RQ_SHIFT;
+-	writel(value, ioaddr + XGMAC_RXQ_CTRL1);
+-
+-	value = readl(ioaddr + XGMAC_FPE_CTRL_STS);
+-	value |= XGMAC_EFPE;
+-	writel(value, ioaddr + XGMAC_FPE_CTRL_STS);
+-}
+-
+ const struct stmmac_ops dwxgmac210_ops = {
+ 	.core_init = dwxgmac2_core_init,
+ 	.set_mac = dwxgmac2_set_mac,
+@@ -1570,7 +1545,6 @@ const struct stmmac_ops dwxgmac210_ops = {
+ 	.config_l3_filter = dwxgmac2_config_l3_filter,
+ 	.config_l4_filter = dwxgmac2_config_l4_filter,
+ 	.set_arp_offload = dwxgmac2_set_arp_offload,
+-	.fpe_configure = dwxgmac3_fpe_configure,
+ };
+ 
+ static void dwxlgmac2_rx_queue_enable(struct mac_device_info *hw, u8 mode,
+@@ -1627,7 +1601,6 @@ const struct stmmac_ops dwxlgmac2_ops = {
+ 	.config_l3_filter = dwxgmac2_config_l3_filter,
+ 	.config_l4_filter = dwxgmac2_config_l4_filter,
+ 	.set_arp_offload = dwxgmac2_set_arp_offload,
+-	.fpe_configure = dwxgmac3_fpe_configure,
+ };
+ 
+ int dwxgmac2_setup(struct stmmac_priv *priv)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+index 29367105df54..8c8527ffc7f1 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
++++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+@@ -8,6 +8,7 @@
+ #include "stmmac.h"
+ #include "stmmac_ptp.h"
+ #include "stmmac_est.h"
++#include "stmmac_fpe.h"
+ 
+ static u32 stmmac_get_id(struct stmmac_priv *priv, u32 id_reg)
+ {
+@@ -116,6 +117,7 @@ static const struct stmmac_hwif_entry {
+ 	const void *tc;
+ 	const void *mmc;
+ 	const void *est;
++	const void *fpe;
+ 	int (*setup)(struct stmmac_priv *priv);
+ 	int (*quirks)(struct stmmac_priv *priv);
+ } stmmac_hw[] = {
+@@ -205,6 +207,7 @@ static const struct stmmac_hwif_entry {
+ 			.ptp_off = PTP_GMAC4_OFFSET,
+ 			.mmc_off = MMC_GMAC4_OFFSET,
+ 			.est_off = EST_GMAC4_OFFSET,
++			.fpe_off = FPE_CTRL_STS_GMAC4_OFFSET,
+ 		},
+ 		.desc = &dwmac4_desc_ops,
+ 		.dma = &dwmac410_dma_ops,
+@@ -214,6 +217,7 @@ static const struct stmmac_hwif_entry {
+ 		.tc = &dwmac510_tc_ops,
+ 		.mmc = &dwmac_mmc_ops,
+ 		.est = &dwmac510_est_ops,
++		.fpe = &dwmac_fpe_ops,
+ 		.setup = dwmac4_setup,
+ 		.quirks = NULL,
+ 	}, {
+@@ -225,6 +229,7 @@ static const struct stmmac_hwif_entry {
+ 			.ptp_off = PTP_GMAC4_OFFSET,
+ 			.mmc_off = MMC_GMAC4_OFFSET,
+ 			.est_off = EST_GMAC4_OFFSET,
++			.fpe_off = FPE_CTRL_STS_GMAC4_OFFSET,
+ 		},
+ 		.desc = &dwmac4_desc_ops,
+ 		.dma = &dwmac410_dma_ops,
+@@ -234,6 +239,7 @@ static const struct stmmac_hwif_entry {
+ 		.tc = &dwmac510_tc_ops,
+ 		.mmc = &dwmac_mmc_ops,
+ 		.est = &dwmac510_est_ops,
++		.fpe = &dwmac_fpe_ops,
+ 		.setup = dwmac4_setup,
+ 		.quirks = NULL,
+ 	}, {
+@@ -246,6 +252,7 @@ static const struct stmmac_hwif_entry {
+ 			.ptp_off = PTP_XGMAC_OFFSET,
+ 			.mmc_off = MMC_XGMAC_OFFSET,
+ 			.est_off = EST_XGMAC_OFFSET,
++			.fpe_off = FPE_CTRL_STS_XGMAC_OFFSET,
+ 		},
+ 		.desc = &dwxgmac210_desc_ops,
+ 		.dma = &dwxgmac210_dma_ops,
+@@ -255,6 +262,7 @@ static const struct stmmac_hwif_entry {
+ 		.tc = &dwmac510_tc_ops,
+ 		.mmc = &dwxgmac_mmc_ops,
+ 		.est = &dwmac510_est_ops,
++		.fpe = &dwmac_fpe_ops,
+ 		.setup = dwxgmac2_setup,
+ 		.quirks = NULL,
+ 	}, {
+@@ -267,6 +275,7 @@ static const struct stmmac_hwif_entry {
+ 			.ptp_off = PTP_XGMAC_OFFSET,
+ 			.mmc_off = MMC_XGMAC_OFFSET,
+ 			.est_off = EST_XGMAC_OFFSET,
++			.fpe_off = FPE_CTRL_STS_XGMAC_OFFSET,
+ 		},
+ 		.desc = &dwxgmac210_desc_ops,
+ 		.dma = &dwxgmac210_dma_ops,
+@@ -276,6 +285,7 @@ static const struct stmmac_hwif_entry {
+ 		.tc = &dwmac510_tc_ops,
+ 		.mmc = &dwxgmac_mmc_ops,
+ 		.est = &dwmac510_est_ops,
++		.fpe = &dwmac_fpe_ops,
+ 		.setup = dwxlgmac2_setup,
+ 		.quirks = stmmac_dwxlgmac_quirks,
+ 	},
+@@ -310,10 +320,13 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
+ 		(needs_gmac4 ? PTP_GMAC4_OFFSET : PTP_GMAC3_X_OFFSET);
+ 	priv->mmcaddr = priv->ioaddr +
+ 		(needs_gmac4 ? MMC_GMAC4_OFFSET : MMC_GMAC3_X_OFFSET);
+-	if (needs_gmac4)
++	if (needs_gmac4) {
+ 		priv->estaddr = priv->ioaddr + EST_GMAC4_OFFSET;
+-	else if (needs_xgmac)
++		priv->fpeaddr = priv->ioaddr + FPE_CTRL_STS_GMAC4_OFFSET;
++	} else if (needs_xgmac) {
+ 		priv->estaddr = priv->ioaddr + EST_XGMAC_OFFSET;
++		priv->fpeaddr = priv->ioaddr + FPE_CTRL_STS_XGMAC_OFFSET;
++	}
+ 
+ 	/* Check for HW specific setup first */
+ 	if (priv->plat->setup) {
+@@ -351,12 +364,15 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
+ 		mac->tc = mac->tc ? : entry->tc;
+ 		mac->mmc = mac->mmc ? : entry->mmc;
+ 		mac->est = mac->est ? : entry->est;
++		mac->fpe = mac->fpe ? : entry->fpe;
+ 
+ 		priv->hw = mac;
+ 		priv->ptpaddr = priv->ioaddr + entry->regs.ptp_off;
+ 		priv->mmcaddr = priv->ioaddr + entry->regs.mmc_off;
+ 		if (entry->est)
+ 			priv->estaddr = priv->ioaddr + entry->regs.est_off;
++		if (entry->fpe)
++			priv->fpeaddr = priv->ioaddr + entry->regs.fpe_off;
+ 
+ 		/* Entry found */
+ 		if (needs_setup) {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+index 97934ccba5b1..4d80892f6885 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
++++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+@@ -418,13 +418,6 @@ struct stmmac_ops {
+ 				bool en, bool udp, bool sa, bool inv,
+ 				u32 match);
+ 	void (*set_arp_offload)(struct mac_device_info *hw, bool en, u32 addr);
+-	void (*fpe_configure)(void __iomem *ioaddr, struct stmmac_fpe_cfg *cfg,
+-			      u32 num_txq, u32 num_rxq,
+-			      bool enable);
+-	void (*fpe_send_mpacket)(void __iomem *ioaddr,
+-				 struct stmmac_fpe_cfg *cfg,
+-				 enum stmmac_mpacket_type type);
+-	int (*fpe_irq_status)(void __iomem *ioaddr, struct net_device *dev);
+ };
+ 
+ #define stmmac_core_init(__priv, __args...) \
+@@ -523,12 +516,6 @@ struct stmmac_ops {
+ 	stmmac_do_callback(__priv, mac, config_l4_filter, __args)
+ #define stmmac_set_arp_offload(__priv, __args...) \
+ 	stmmac_do_void_callback(__priv, mac, set_arp_offload, __args)
+-#define stmmac_fpe_configure(__priv, __args...) \
+-	stmmac_do_void_callback(__priv, mac, fpe_configure, __args)
+-#define stmmac_fpe_send_mpacket(__priv, __args...) \
+-	stmmac_do_void_callback(__priv, mac, fpe_send_mpacket, __args)
+-#define stmmac_fpe_irq_status(__priv, __args...) \
+-	stmmac_do_callback(__priv, mac, fpe_irq_status, __args)
+ 
+ /* PTP and HW Timer helpers */
+ struct stmmac_hwtimestamp {
+@@ -660,10 +647,27 @@ struct stmmac_est_ops {
+ #define stmmac_est_irq_status(__priv, __args...) \
+ 	stmmac_do_void_callback(__priv, est, irq_status, __args)
+ 
++struct stmmac_fpe_ops {
++	void (*configure)(struct stmmac_priv *priv, struct stmmac_fpe_cfg *cfg,
++			  u32 num_txq, u32 num_rxq, bool enable);
++	int (*irq_status)(struct stmmac_priv *priv, struct net_device *dev);
++	void (*send_mpacket)(struct stmmac_priv *priv,
++			     struct stmmac_fpe_cfg *cfg,
++			     enum stmmac_mpacket_type type);
++};
++
++#define stmmac_fpe_configure(__priv, __args...) \
++	stmmac_do_void_callback(__priv, fpe, configure, __args)
++#define stmmac_fpe_irq_status(__priv, __args...) \
++	stmmac_do_callback(__priv, fpe, irq_status, __args)
++#define stmmac_fpe_send_mpacket(__priv, __args...) \
++	stmmac_do_void_callback(__priv, fpe, send_mpacket, __args)
++
+ struct stmmac_regs_off {
+ 	u32 ptp_off;
+ 	u32 mmc_off;
+ 	u32 est_off;
++	u32 fpe_off;
+ };
+ 
+ extern const struct stmmac_ops dwmac100_ops;
+@@ -683,6 +687,7 @@ extern const struct stmmac_desc_ops dwxgmac210_desc_ops;
+ extern const struct stmmac_mmc_ops dwmac_mmc_ops;
+ extern const struct stmmac_mmc_ops dwxgmac_mmc_ops;
+ extern const struct stmmac_est_ops dwmac510_est_ops;
++extern const struct stmmac_fpe_ops dwmac_fpe_ops;
+ 
+ #define GMAC_VERSION		0x00000020	/* GMAC CORE Version */
+ #define GMAC4_VERSION		0x00000110	/* GMAC4+ CORE Version */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+index b23b920eedb1..147e8c99ed51 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -315,6 +315,7 @@ struct stmmac_priv {
+ 	void __iomem *mmcaddr;
+ 	void __iomem *ptpaddr;
+ 	void __iomem *estaddr;
++	void __iomem *fpeaddr;
+ 	unsigned long active_vlans[BITS_TO_LONGS(VLAN_N_VID)];
+ 	int sfty_irq;
+ 	int sfty_ce_irq;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
+new file mode 100644
+index 000000000000..7bcde83dba0d
+--- /dev/null
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2024 Furong Xu <0x1207@gmail.com>
++ * stmmac FPE(802.3 Qbu) handling
++ */
++
++#include "stmmac.h"
++#include "stmmac_fpe.h"
++#include "dwmac4.h"
++#include "dwxgmac2.h"
++
++static void fpe_configure(struct stmmac_priv *priv, struct stmmac_fpe_cfg *cfg,
++			  u32 num_txq, u32 num_rxq, bool enable)
++{
++	u32 value;
++
++	if (enable) {
++		cfg->fpe_csr = FPE_CTRL_STS_EFPE;
++		if (priv->plat->has_xgmac) {
++			value = readl(priv->ioaddr + XGMAC_RXQ_CTRL1);
++			value &= ~XGMAC_FPRQ;
++			value |= (num_rxq - 1) << XGMAC_FPRQ_SHIFT;
++			writel(value, priv->ioaddr + XGMAC_RXQ_CTRL1);
++		} else if (priv->plat->has_gmac4) {
++			value = readl(priv->ioaddr + GMAC_RXQ_CTRL1);
++			value &= ~GMAC_RXQCTRL_FPRQ;
++			value |= (num_rxq - 1) << GMAC_RXQCTRL_FPRQ_SHIFT;
++			writel(value, priv->ioaddr + GMAC_RXQ_CTRL1);
++		}
++	} else {
++		cfg->fpe_csr = 0;
++	}
++
++	writel(cfg->fpe_csr, priv->fpeaddr);
++}
++
++static int fpe_irq_status(struct stmmac_priv *priv, struct net_device *dev)
++{
++	u32 value;
++	int status;
++
++	status = FPE_EVENT_UNKNOWN;
++
++	/* Reads from the MAC_FPE_CTRL_STS register should only be performed
++	 * here, since the status flags of MAC_FPE_CTRL_STS are "clear on read"
++	 */
++	value = readl(priv->fpeaddr);
++
++	if (value & FPE_CTRL_STS_TRSP) {
++		status |= FPE_EVENT_TRSP;
++		netdev_info(dev, "FPE: Respond mPacket is transmitted\n");
++	}
++
++	if (value & FPE_CTRL_STS_TVER) {
++		status |= FPE_EVENT_TVER;
++		netdev_info(dev, "FPE: Verify mPacket is transmitted\n");
++	}
++
++	if (value & FPE_CTRL_STS_RRSP) {
++		status |= FPE_EVENT_RRSP;
++		netdev_info(dev, "FPE: Respond mPacket is received\n");
++	}
++
++	if (value & FPE_CTRL_STS_RVER) {
++		status |= FPE_EVENT_RVER;
++		netdev_info(dev, "FPE: Verify mPacket is received\n");
++	}
++
++	return status;
++}
++
++static void fpe_send_mpacket(struct stmmac_priv *priv,
++			     struct stmmac_fpe_cfg *cfg,
++			     enum stmmac_mpacket_type type)
++{
++	u32 value = cfg->fpe_csr;
++
++	if (type == MPACKET_VERIFY)
++		value |= FPE_CTRL_STS_SVER;
++	else if (type == MPACKET_RESPONSE)
++		value |= FPE_CTRL_STS_SRSP;
++
++	writel(value, priv->fpeaddr);
++}
++
++const struct stmmac_fpe_ops dwmac_fpe_ops = {
++	.configure = fpe_configure,
++	.irq_status = fpe_irq_status,
++	.send_mpacket = fpe_send_mpacket,
++};
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
+new file mode 100644
+index 000000000000..b74cf8f2c2f2
+--- /dev/null
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2024 Furong Xu <0x1207@gmail.com>
++ * stmmac FPE(802.3 Qbu) handling
++ */
++
++#define FPE_CTRL_STS_GMAC4_OFFSET	0x00000234
++#define FPE_CTRL_STS_XGMAC_OFFSET	0x00000280
++
++#define FPE_CTRL_STS_TRSP		BIT(19)
++#define FPE_CTRL_STS_TVER		BIT(18)
++#define FPE_CTRL_STS_RRSP		BIT(17)
++#define FPE_CTRL_STS_RVER		BIT(16)
++#define FPE_CTRL_STS_SRSP		BIT(2)
++#define FPE_CTRL_STS_SVER		BIT(1)
++#define FPE_CTRL_STS_EFPE		BIT(0)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 4b6a359e5a94..2983e4efe17f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -974,8 +974,7 @@ static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
+ 	bool *hs_enable = &fpe_cfg->hs_enable;
+ 
+ 	if (is_up && *hs_enable) {
+-		stmmac_fpe_send_mpacket(priv, priv->ioaddr, fpe_cfg,
+-					MPACKET_VERIFY);
++		stmmac_fpe_send_mpacket(priv, priv, fpe_cfg, MPACKET_VERIFY);
+ 	} else {
+ 		*lo_state = FPE_STATE_OFF;
+ 		*lp_state = FPE_STATE_OFF;
+@@ -5996,8 +5995,7 @@ static void stmmac_fpe_event_status(struct stmmac_priv *priv, int status)
+ 
+ 		/* If user has requested FPE enable, quickly response */
+ 		if (*hs_enable)
+-			stmmac_fpe_send_mpacket(priv, priv->ioaddr,
+-						fpe_cfg,
++			stmmac_fpe_send_mpacket(priv, priv, fpe_cfg,
+ 						MPACKET_RESPONSE);
+ 	}
+ 
+@@ -6041,8 +6039,7 @@ static void stmmac_common_interrupt(struct stmmac_priv *priv)
+ 				      &priv->xstats, tx_cnt);
+ 
+ 	if (priv->dma_cap.fpesel) {
+-		int status = stmmac_fpe_irq_status(priv, priv->ioaddr,
+-						   priv->dev);
++		int status = stmmac_fpe_irq_status(priv, priv, priv->dev);
+ 
+ 		stmmac_fpe_event_status(priv, status);
+ 	}
+@@ -7394,8 +7391,7 @@ static void stmmac_fpe_lp_task(struct work_struct *work)
+ 
+ 		if (*lo_state == FPE_STATE_ENTERING_ON &&
+ 		    *lp_state == FPE_STATE_ENTERING_ON) {
+-			stmmac_fpe_configure(priv, priv->ioaddr,
+-					     fpe_cfg,
++			stmmac_fpe_configure(priv, priv, fpe_cfg,
+ 					     priv->plat->tx_queues_to_use,
+ 					     priv->plat->rx_queues_to_use,
+ 					     *enable);
+@@ -7413,8 +7409,7 @@ static void stmmac_fpe_lp_task(struct work_struct *work)
+ 		     *lp_state != FPE_STATE_ON) {
+ 			netdev_info(priv->dev, SEND_VERIFY_MPAKCET_FMT,
+ 				    *lo_state, *lp_state);
+-			stmmac_fpe_send_mpacket(priv, priv->ioaddr,
+-						fpe_cfg,
++			stmmac_fpe_send_mpacket(priv, priv, fpe_cfg,
+ 						MPACKET_VERIFY);
+ 		}
+ 		/* Sleep then retry */
+@@ -7428,8 +7423,7 @@ void stmmac_fpe_handshake(struct stmmac_priv *priv, bool enable)
+ {
+ 	if (priv->plat->fpe_cfg->hs_enable != enable) {
+ 		if (enable) {
+-			stmmac_fpe_send_mpacket(priv, priv->ioaddr,
+-						priv->plat->fpe_cfg,
++			stmmac_fpe_send_mpacket(priv, priv, priv->plat->fpe_cfg,
+ 						MPACKET_VERIFY);
+ 		} else {
+ 			priv->plat->fpe_cfg->lo_fpe_state = FPE_STATE_OFF;
+@@ -7896,8 +7890,7 @@ int stmmac_suspend(struct device *dev)
+ 
+ 	if (priv->dma_cap.fpesel) {
+ 		/* Disable FPE */
+-		stmmac_fpe_configure(priv, priv->ioaddr,
+-				     priv->plat->fpe_cfg,
++		stmmac_fpe_configure(priv, priv, priv->plat->fpe_cfg,
+ 				     priv->plat->tx_queues_to_use,
+ 				     priv->plat->rx_queues_to_use, false);
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+index 996f2bcd07a2..d12b860d03c9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+@@ -1110,8 +1110,7 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
+ 	}
+ 
+ 	priv->plat->fpe_cfg->enable = false;
+-	stmmac_fpe_configure(priv, priv->ioaddr,
+-			     priv->plat->fpe_cfg,
++	stmmac_fpe_configure(priv, priv, priv->plat->fpe_cfg,
+ 			     priv->plat->tx_queues_to_use,
+ 			     priv->plat->rx_queues_to_use,
+ 			     false);
+-- 
+2.34.1
+
 
