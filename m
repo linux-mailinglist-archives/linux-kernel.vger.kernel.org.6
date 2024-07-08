@@ -1,113 +1,173 @@
-Return-Path: <linux-kernel+bounces-244022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA61A929E19
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:13:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D6D929E1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD0C8283605
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:13:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 114B9B21CA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E643C6A6;
-	Mon,  8 Jul 2024 08:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532A53FB2C;
+	Mon,  8 Jul 2024 08:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UpOJQQI/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlyOZ6FR"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5D83BBCB;
-	Mon,  8 Jul 2024 08:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B8C39AFD;
+	Mon,  8 Jul 2024 08:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720426391; cv=none; b=ara3GcPHLxDSoCFlVYcsxCysdjw/IEagz96GUmS3Ehs5lpaJLJO3rA8dPWTwp72cs3WF0tFpanDq7Zchq5Mq+F8pZ6kiqXpp5G4Nxdu88lsShpZmOaN6+VVEwFFgDg06BZrJkV/f5uj9MadSQv4rIm0x+L11S6yQ25PQ80tAp1k=
+	t=1720426491; cv=none; b=axAC+o24GmMzzADe4hfLB1p7KTjj1Ajp9FEzPYVVRXnCQM2S9q7asbWh5xlk25foqKGV1acWkaCcfGvlYQhKJ+mp5FNjiQK9wR3sXo50an6sPvGTpo4oJMnQA8nP7Grte9JCgNESuI2Ej5USVHZeQ6L4uMOcRuK9RtDh597NqWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720426391; c=relaxed/simple;
-	bh=BFUzIPOv0ySPwMa2mu7N1DXM0azJEfwzaTlkkdwaXPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rijs40iZNZ5xqgqvJNYqGJQ0k7qRcTQ14hVhUEqh5+8Uz8hRASfYVTpCTVHiVzhTqogNqQyCvCqMnBJi2YD+PZJ7gnjs2AI3drbyIiELmgxZsbrYASGfnp8u0BH1B4BvtJUIZEIZ7ywoKyqflzl3iFs9AHzaN8eiap1caOtOsDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UpOJQQI/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720426386;
-	bh=ehOoMckc9mFUvnGz+TOMtMd6HLV8308mNf5RbSmYXqs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UpOJQQI/pC74Vdyw04KOnZ2nVCBeyjAvGoefzjaqz4zpBkvIZsQnLAeI8FAPsJXaW
-	 6Lg/W6g2gF8uvozY3x/7J/yZeP/7ApFMNVcH0rbyB3SuHEdd+kcLt6SPfyzeKmBFrF
-	 BD8LMq0oQ29dXoLpp2E9RxC43duv51SZ8ND2pyUMxuBqNAd1A7pAxwsuFaAjUumQAv
-	 2Fhenu3UQ10b4JOwUbMc6GWInkx9KW0g1heMOtyjl7VaV+XXaWOsXvOueftMYYuaXh
-	 uLIADaM53Tc/5dAF779nAg3zMQW/9ySqc5dhjARQ3UoLD3qHOCybubUo4t+b7tDKmG
-	 ztzxUFHp5X81g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WHcLp0C3Cz4xQP;
-	Mon,  8 Jul 2024 18:13:05 +1000 (AEST)
-Date: Mon, 8 Jul 2024 18:13:05 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Gross <agross@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson
- <andersson@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the qcom tree
-Message-ID: <20240708181305.03d40e13@canb.auug.org.au>
+	s=arc-20240116; t=1720426491; c=relaxed/simple;
+	bh=bW2kBwLh7hLCqFmQpvVPmf6stmpS/Uma1LaKPKgxZLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gHVb96biTIJNwImR2xeGHHN+BusEcI2yZlaUxw/3jM7s69Q3uW3HaU30bNH2b4Wg2V1cSHLNSsLSSoN9NlgpJWvsCFeS6aC8CmSY+T37nDl72bJQXUWMBvf4x01hU1JecjuweG7SIznnuyWYN+VarX1tuK33kvONIokxNpIFHpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlyOZ6FR; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4265921b0f6so15154065e9.2;
+        Mon, 08 Jul 2024 01:14:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720426488; x=1721031288; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LB/Swk3ycn4H//NhFUYR9qWMXgjl7noaRfXFak1SvO8=;
+        b=GlyOZ6FRwuPyUFnhN6P96zD9gvTFuYC6lXkbOoHbHGCw7kjqAEUh8eDPteQSRIO8Lv
+         tc1d5ZDsFoSURb+ARE408OHeqAb72DPbYc0AJwYMHU9pyIR/Y8TgPnpiqfw5dQmyeQOk
+         OJHV+LBMbHS+jZelhQg9kcwSjxmwg/Qes6dxXC9sycd8HN3ymdla1558si+1q+i1jFUa
+         IykClgZEx135AVIMMvL/MPlBzhcg685+uH7Am+301D8LaHpWjPUGHXrWTp0Ra6B/nXsm
+         pUMlyUpmfYjiBsaTs5iiB3eCFxroQpwLkNCcwF7Cmnb4NgCoFIZ4C/s/C8rDrWVvdVxb
+         meFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720426488; x=1721031288;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LB/Swk3ycn4H//NhFUYR9qWMXgjl7noaRfXFak1SvO8=;
+        b=ZSP6RXMG5HS5YAJfKXObUtVNe4B3Ek31zNhy2ZYqaJPXI8Oc0/UcJTT5R49jRtQy/X
+         OEOo9wFX4C3xJDmO/p647jubDmeRzpIGK66phJ6jqPodVYvyv/eGZ0qyMYgO4L1ptrTC
+         PtjdWxzKr2Dl55Ldcj4fBg+XfU+ke9EtXA3MIpOkP8G//ZNL+4lLhs9FDcYfhuEVTGEu
+         luwaRGxmVbn+8eARp8gDHVKjLPDPdnu0L0UesDzS3VXVttgqow1H3f4Vh6bfvD6mIwbv
+         tmwX24D9163mGG0qzMr1OstG9SaBD7almPtqNiD85xIvPSBrWzNbqxuq7k0N7Lg34BAF
+         oagg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiGsWAeqC/Pzw1rceg7VjpgdnsvmeLTj34op70pL9i8Gv7xELv3wiF5pI0G/3hIvprH8zgtyrRlvR2qhxgZLAGhezSPzIGA36GKVPl85KvnSHPIrTRPJCI09y9s+UDV2uB26YSHpyEEr5qI4pGiVfD8cDDZN+GL6NhUjWJ/0xLNr98SfvO+VmzHLK3zfXdrwmOcq6MO4XhyGLdSF8BvCJSE4uIp5NsRSBh2FZdh8Sz1YI7ZiwdqGcx3Q==
+X-Gm-Message-State: AOJu0YyHO+ksWWSKT92p7GRhx5i6D4NmX4S5a2biyV1bXdF8UBY/q7Fo
+	IJoNTThijwxkkOi7ggZaCTdEmyTpritiIDFlFepkb4gTu64GKHlj
+X-Google-Smtp-Source: AGHT+IG8F79NBHnf063XhYUCby0asGygjp8CO89/3eVOIoVh9aNxTtR8n7wvSe//36xefcMl+q9eLg==
+X-Received: by 2002:a05:600c:6d2:b0:426:5ef6:f5a9 with SMTP id 5b1f17b1804b1-4265ef6f63fmr37710785e9.13.1720426488061;
+        Mon, 08 Jul 2024 01:14:48 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:7e72:ed92:807f:1d20? (2a02-8389-41cf-e200-7e72-ed92-807f-1d20.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:7e72:ed92:807f:1d20])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d16b0sm152642145e9.7.2024.07.08.01.14.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 01:14:47 -0700 (PDT)
+Message-ID: <4cf71de7-dc47-475c-bba0-a9e755f66d49@gmail.com>
+Date: Mon, 8 Jul 2024 10:14:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TyC0BjEyTDRErTGd+_9+y=T";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] leds: bd2606mvv: use device_for_each_child_node() to
+ access device child nodes
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rob Herring <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
+ <20240706-device_for_each_child_node-available-v1-3-8a3f7615e41c@gmail.com>
+ <20240707175713.4deb559f@jic23-huawei>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20240707175713.4deb559f@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/TyC0BjEyTDRErTGd+_9+y=T
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 07/07/2024 18:57, Jonathan Cameron wrote:
+> On Sat, 06 Jul 2024 17:23:35 +0200
+> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> 
+>> The iterated nodes are direct children of the device node, and the
+>> `device_for_each_child_node()` macro accounts for child node
+>> availability.
+>>
+>> `fwnode_for_each_available_child_node()` is meant to access the child
+>> nodes of an fwnode, and therefore not direct child nodes of the device
+>> node.
+>>
+>> Use `device_for_each_child_node()` to indicate device's direct child
+>> nodes.
+>>
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> Why not the scoped variant?
+> There look to be two error paths in there which would be simplified.
+> 
 
-Hi all,
+I did not use the scoped variant because "child" is used outside the loop.
 
-In commit
+On the other hand, I think an fwnode_handle_get() is missing for every
+"led_fwnodes[reg] = child" because a simple assignment does not
+increment the refcount.
 
-  2bb98a88edd5 ("clk: qcom: gcc-x1e80100: Set parent rate for USB3 sec and =
-tert PHY pipe clks")
+After adding fwnode_handle_get(), the scoped variant could be used, and
+the call to fwnode_handle_put() would act on led_fwnodes[reg] instead.
 
-Fixes tag
+>> ---
+>>  drivers/leds/leds-bd2606mvv.c | 7 +++----
+>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/leds/leds-bd2606mvv.c b/drivers/leds/leds-bd2606mvv.c
+>> index 3fda712d2f80..4f38b7b4d9d1 100644
+>> --- a/drivers/leds/leds-bd2606mvv.c
+>> +++ b/drivers/leds/leds-bd2606mvv.c
+>> @@ -69,7 +69,7 @@ static const struct regmap_config bd2606mvv_regmap = {
+>>  
+>>  static int bd2606mvv_probe(struct i2c_client *client)
+>>  {
+>> -	struct fwnode_handle *np, *child;
+>> +	struct fwnode_handle *child;
+>>  	struct device *dev = &client->dev;
+>>  	struct bd2606mvv_priv *priv;
+>>  	struct fwnode_handle *led_fwnodes[BD2606_MAX_LEDS] = { 0 };
+>> @@ -77,8 +77,7 @@ static int bd2606mvv_probe(struct i2c_client *client)
+>>  	int err, reg;
+>>  	int i;
+>>  
+>> -	np = dev_fwnode(dev);
+>> -	if (!np)
+>> +	if (!dev_fwnode(dev))
+>>  		return -ENODEV;
+>>  
+>>  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> @@ -94,7 +93,7 @@ static int bd2606mvv_probe(struct i2c_client *client)
+>>  
+>>  	i2c_set_clientdata(client, priv);
+>>  
+>> -	fwnode_for_each_available_child_node(np, child) {
+>> +	device_for_each_child_node(dev, child) {
+>>  		struct bd2606mvv_led *led;
+>>  
+>>  		err = fwnode_property_read_u32(child, "reg", &reg);
+>>
+> 
 
-  Fixes: ("161b7c401f4b clk: qcom: Add Global Clock controller (GCC) driver=
- for X1E80100")
-
-has these problem(s):
-
-  - No SHA1 recognised
-
-Just use
-  git log -1 --format=3D'Fixes: %h ("%s")' <commit>
-thus
-  Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver=
- for X1E80100")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TyC0BjEyTDRErTGd+_9+y=T
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaLn5EACgkQAVBC80lX
-0GyFNgf9HTcl+xeT5x2N+36rEr7nWz4L/uGgoxhc0mB2wb3o32DZ9d+MYZQ6gX1R
-WMITvU8yY1cS/KgrXWHshlSfxzgVniVpyown7Y6MzeSdD+UFFpJVtYlU1dMs9rHE
-FWoig4CJnhG4gN9jzH42+l8ocl7RFarf+AmsEVoNYxcgKS7emK6qMfd6a5zw/FR0
-8tUh59/j0gRUWErQsff2Ik+qWNnLAPivCvWk/ACcCRcmpeUuSFbnWtmgtRY/w961
-QFyiV+6k4F8rcNNRSoh2WXolCcC+Ax9rzqVfdK31xyhQ2NGHQu9TfZ3oSFGJkJBE
-tJBUnydtU34cBLQ61+q291rEXd84Zw==
-=qlXF
------END PGP SIGNATURE-----
-
---Sig_/TyC0BjEyTDRErTGd+_9+y=T--
 
