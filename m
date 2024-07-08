@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-244139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB22929FA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F68929FAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADCBD1C212FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:55:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002411C21C06
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272967603F;
-	Mon,  8 Jul 2024 09:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9F87346F;
+	Mon,  8 Jul 2024 09:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mdO0h3ql"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tx/Eu68I"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E74A74076
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2F953362
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720432528; cv=none; b=MNxDGlOLKpOi6gzjlu9buh0Vr9RRfRDXpTwpDgD1Y8iPXzJ8BfTNxS7iIG6pKTDkVRm9ZbSmPjEEOZ96d+2xno7mGOBQgDERX/yobhsYT3yVenvgpPcjsIgPHG1dwO75UzI5gKvSG2d6aKweO1f1TksAS9wbEi8XBBbblR84DRg=
+	t=1720432570; cv=none; b=HGUiHjT9/VpResSqHVhDlbr4HOPjZyntI8KHMqUr2XaS61UqHDHcsS1XEIKcq2TueFIdFBo3JQQompllLzoFR53yrYvmUzvVYns5sQhg1kaPF/ceMLwe3y9yggqgGoUiW0HSFR7QdnOSi0TX3MxAsDUM9/mdluqwmJRj8VYeFvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720432528; c=relaxed/simple;
-	bh=jde/grl5A+5PHxKti4gHxQ9Vqj2LMrWdSMaC6OZaxGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WHz57HkjUUE6pW3xynWc5tA9m0dsSlee6OdtD576jQAGDkT5m1hamdtvBG9CPUX/tqzgjZWocIjOitu6hmHARwAJvH/3R+AElnpR5i1XXrcDrYsCyTIbw5PMji1/uHQIj+LQvKanQ8QseJuKxkCin3rLNoxsjqrIcNCZKLYZfHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mdO0h3ql; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LnVsUsli9cGl9o0UNlqKa/vfbovyOjfyvezGvaTuK2M=; b=mdO0h3qlnMwaQAaS2orJDpGisT
-	E+4RpjOWQhHUjMXTQMndLN7DpQz1jBTSFpDDE0+xvB8/Ztbq96AHSaNgWXXAEm02XH/petLh140Ve
-	+8Xqa91PUfTfkFtZCrbag2mKB5Z8wyTwIIg+P7TNSFmZEN4KvrtkbflmkK9bd5zGP6W8mGEqRD+DK
-	vmKqyKgfq8f17L4at6H2l9uhVryoPU5BsprHMp/NDn7lS5yrZlGsgfQuJJd7PDM5MDGrUCrN6sh9G
-	SMKg5Ir0uUA603KnttXAeniNSXqGxNtdcis2sEVu1+uOQErCIENPNwWycCWEwKkrpOgCCjmhKnZx3
-	i7LSsESg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sQl5c-00000006iYi-37BX;
-	Mon, 08 Jul 2024 09:55:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5BAC5300694; Mon,  8 Jul 2024 11:55:20 +0200 (CEST)
-Date: Mon, 8 Jul 2024 11:55:20 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Ingo Molnar <mingo@kernel.org>, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de
-Subject: Re: sched: Update MAINTAINERS
-Message-ID: <20240708095520.GI11386@noisy.programming.kicks-ass.net>
-References: <20240708075752.GF11386@noisy.programming.kicks-ass.net>
- <alpine.DEB.2.21.2407081038350.38148@angie.orcam.me.uk>
+	s=arc-20240116; t=1720432570; c=relaxed/simple;
+	bh=mLp3WBFRwG6lcPVCDP82jgIllOcTXUaIOucccBoUcjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HYfb0upj628uve9rE3c+rxCpcfveZvSN43Xd93lgHR7xuYzVHTTuJKXJieyWaqnUH4xzYXZSd12Rzp7T5uiHWk11A+LdmpEWga0DL/LQiJDPD7vbbmfJBNNFT/zzwq8GUg0ZZoeDXmmWiiMCiRp6lPlbDf3subx6X9QxVrj1cYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tx/Eu68I; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-64789495923so29726067b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 02:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720432568; x=1721037368; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jzask05GQU8+vHRdoPweB0hXQfqpLpGhajhE6Nvpc0w=;
+        b=tx/Eu68I1OGK5mQEAlvkzM9bANkmt22ZWAheYkevjgBzne+VqO3ltckvV4+7J7YVYw
+         J3yc5/mSYYqeOhyh9wtwQzVamdNjTdUSbjEmDWo+kolr3JIQ3XQCPJDicls5IP0ykADc
+         wR7IRT1mJH7vfcgDDUrSfeva+d3FGK9+5aepADJAkxQFMUkb3DjsVJ4SFdvdB5UkMo7k
+         0Ax2fssTggtKvZVHnFw+giUE7yrDvTXsBqncBrkZXEvA/ZnGFlmNn0vj4yii5r9sxLDo
+         nF52/Eb9W4GyLSR34AEw1ess3Iv8UcVis4F+YOBlEv/BzcziJ/RGkrCO9/+Dcy6mXQ/k
+         DR/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720432568; x=1721037368;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jzask05GQU8+vHRdoPweB0hXQfqpLpGhajhE6Nvpc0w=;
+        b=QUg1MOb+zNBsm/H3xYM9tQ3acnTDh1otUVHbDqT3cENbpqmQGgT/drSsAmaIDG/WDm
+         GKNVdrkuz4cCr91ONMI+dkvodvQqlNIFsdc4RITKu6THYJzDEF4ZSfekv2KhS+mgC/u4
+         U1AgPWh5nIjFfL/FqoVyQdmzdFfbeT0VloMY4VYETMvKw7Q0OpLNCfW/+FJzBQKs23Aq
+         +TYGn88S4y6SajXCBIcTAisMoQcuobSMp9AXxdWS1kKJZBke4wWShx8LPlnBF54OVBlO
+         WmEdL/CORfeQVub2fVDGhPdXrpcs9lxk3SDs5l+JCm3eMumX/X1j8ziyY4rtsL6yuuVF
+         G2bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBa8fAfdWo+OWN51Oni+jk52hwq1UZedEHXa14e6Ej0tcpMjT53MbjvXAxk6IbG3VBpXWRdP3rUSk2fI7bL3JXjaBguo6v8KUj3eCt
+X-Gm-Message-State: AOJu0YxRNrDY4WwOazNekgGuEpKKFtXj32dYZJOggJ2yaHYEQ1kHTjCV
+	dQV4SmuZ0/KC5bfPHNdVJA/C0pJpOR1yj4sUoTs5wjAKiVL3KHADZOmCVdoQCZDWa+jQV9Z9Hk2
+	5kUGvTobvlUEZy08AoKYaIe9gxH9rJIp5n93Wxg==
+X-Google-Smtp-Source: AGHT+IFjoQwu9LtRrNfNBaFbkc9SMl6CbmKGiqSj2aiwjk0wpQu4CIFn3QaaaSqZApTI7iBXbh6+zrGgoFtAav+hDMA=
+X-Received: by 2002:a81:ad17:0:b0:650:9d94:7982 with SMTP id
+ 00721157ae682-652d7e4b048mr125673257b3.46.1720432568114; Mon, 08 Jul 2024
+ 02:56:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2407081038350.38148@angie.orcam.me.uk>
+References: <20240707183829.41519-1-spasswolf@web.de> <172043242741.96960.2619738362693641818.b4-ty@linaro.org>
+In-Reply-To: <172043242741.96960.2619738362693641818.b4-ty@linaro.org>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Mon, 8 Jul 2024 11:55:57 +0200
+Message-ID: <CACMJSetUL3E4k_h6rUziRiDZCFhFk59D9EXNSoE=WLkA5ELuVw@mail.gmail.com>
+Subject: Re: [PATCH v2] pci: bus: only call of_platform_populate() if
+ CONFIG_OF is enabled
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bert Karwatzki <spasswolf@web.de>, caleb.connolly@linaro.org, bhelgaas@google.com, 
+	amit.pundir@linaro.org, neil.armstrong@linaro.org, 
+	Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 08, 2024 at 10:47:18AM +0100, Maciej W. Rozycki wrote:
-> On Mon, 8 Jul 2024, Peter Zijlstra wrote:
-> 
-> >   Thank you for having been our friend!
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19929,7 +19929,6 @@ R:	Dietmar Eggemann <dietmar.eggemann@ar
-> >  R:	Steven Rostedt <rostedt@goodmis.org> (SCHED_FIFO/SCHED_RR)
-> >  R:	Ben Segall <bsegall@google.com> (CONFIG_CFS_BANDWIDTH)
-> >  R:	Mel Gorman <mgorman@suse.de> (CONFIG_NUMA_BALANCING)
-> > -R:	Daniel Bristot de Oliveira <bristot@redhat.com> (SCHED_DEADLINE)
-> 
->  I think perhaps a CREDITS entry would be due rather than just dropping 
-> from MAINTAINERS.
+On Mon, 8 Jul 2024 at 11:54, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+>
+> On Sun, 07 Jul 2024 20:38:28 +0200, Bert Karwatzki wrote:
+> > If of_platform_populate() is called when CONFIG_OF is not defined this
+> > leads to spurious error messages of the following type:
+> >  pci 0000:00:01.1: failed to populate child OF nodes (-19)
+> >  pci 0000:00:02.1: failed to populate child OF nodes (-19)
+> >
+> > Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF nodes of the port node")
+> >
+> > [...]
+>
+> Applied, thanks!
+>
+> [1/1] pci: bus: only call of_platform_populate() if CONFIG_OF is enabled
+>       (no commit info)
+>
 
-Ah, I was not aware of that file. Yes we can add a few lines there.
+The commit is here[1], not sure why b4 didn't pick it up.
 
-Thank you for the suggestion.
+Bart
 
----
-diff --git a/CREDITS b/CREDITS
-index 1a1a54555e11..a58066be6d73 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -271,6 +271,9 @@ D: Driver for WaveFront soundcards (Turtle Beach Maui, Tropez, Tropez+)
- D: Various bugfixes and changes to sound drivers
- S: USA
- 
-+N: Daniel Bristot de Oliveira
-+D: Scheduler contributions, notably: SCHED_DEADLINE
-+
- N: Carlos Henrique Bauer
- E: chbauer@acm.org
- E: bauer@atlas.unisinos.br
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git/commit/?h=pwrseq/for-next&id=10a0e6c2a8fc0d4b7e8e684654e920ea55527f3b
+
+> Best regards,
+> --
+> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
