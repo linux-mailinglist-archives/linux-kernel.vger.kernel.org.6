@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-244340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A015892A2E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:37:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3A192A2E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02A1AB23E5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294F11F21FB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9FB8288D;
-	Mon,  8 Jul 2024 12:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A3180BF7;
+	Mon,  8 Jul 2024 12:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pdizYSDo"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DKZMfkKI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBD780C1D;
-	Mon,  8 Jul 2024 12:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E79C3FB94;
+	Mon,  8 Jul 2024 12:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720442222; cv=none; b=JpM/dGJr3sjsQWMC2wIatte4REtpYnnDd2uFZeQvqSVlRKkSbLaxrf9oTevAeoghQr1qObWCE48uCe5g2ud7C+gG1Flzyxi7IlSkUySfJ2Kmn0aOT4/KYK3+RHNQ75m0V3OKY43BqHItnP5hdT0aAtR6PMaGngmE1yuZ8m01u9c=
+	t=1720442203; cv=none; b=W7hDYQqiBg80f/Piyb4Q2Wm2ybCIHuCeWZUQhZtVBo2QHx83tMs6cmo2ns2n6VXCZWySlzTZrc9SIP/r/SeF40/JPtvyuhw4MJySu1337ePi4VwvyWc9rVLQNnTTNFmWi0U+U9D+PCbFnwY+yx27b4wY6bejtzAJ6pXvhmCBe7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720442222; c=relaxed/simple;
-	bh=k2nKkDwz2QUcUUubz+8bTRR+mcQV8cGn88iaImb1KnI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=TROVc97HjeXuZMW9CdA3gIJie2NMq0AC/mXylh8Zz8Y5Pqgy+5e3H/nssfVOMecHwL+wWwxw4Pz9Frn3DTq5NHLHdLF6M/AkA6ZmM1v9I3VRH94+IBTzEMAXrX5D3zWSDW769YQ+iM9ZrIMwe13rzFWBmUi/6Z8igziPFZT0Omk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pdizYSDo; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720442185; x=1721046985; i=markus.elfring@web.de;
-	bh=cMrB7BHtiDHWjGBwQZ00kQOwlupR+xSgXUFnmpTv91U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pdizYSDojXw7AtchFs1pXBqXpZPhlNn+TFbAaM9kML7LGKgr/csRNmmLldbRoVxt
-	 MEUK+boVQhC3GawxnB0xcZfitAJEKz56c9MQlAOzU8P21PfMIxiu//odMNR5xyB9K
-	 TGgqaOU5SyfsTZA9kC9wxLeg5d2umLyMtUUYF3Lxyxhj0kxfpkpvknPdr9Ehojfm5
-	 Fvyg7VMI7Cu7Cwb7oBMuozkNr1jy1kog92n7+Rp+cQrlwsAKQ0LBSp6PXYPmSHcDv
-	 962pDJWpYvYntkyLV0JzZ+I+GSK+ANmJtXvAhRqwxMQodQjcgDXSwOcavMu/0xmys
-	 4dtte0npcteg/f+V8Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpTxm-1s3ZHY41vA-00aKyi; Mon, 08
- Jul 2024 14:36:25 +0200
-Message-ID: <25a195a5-9c05-489b-8ad0-909486c15d25@web.de>
-Date: Mon, 8 Jul 2024 14:36:22 +0200
+	s=arc-20240116; t=1720442203; c=relaxed/simple;
+	bh=NWykdaXYXVK8+pVTG2FcuH3+VmdY5P2EdQq6iunNcAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nPB/g9ieLjx4XOQIRUGruLb0fUq4a93PeBR3O5wQ6+kbObsEbfUQeL0YSD7VaBevzo/scHzEm3OAPeDt+Vbac8oy1qCfHp2K5uRv479oVfS0jJCoK0Pcrq4SVfGPdqzMqsGeC2zelWqzCsKbr6DQflUgAgRTCSMjmAu1Xv8V3I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DKZMfkKI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7941DC116B1;
+	Mon,  8 Jul 2024 12:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720442202;
+	bh=NWykdaXYXVK8+pVTG2FcuH3+VmdY5P2EdQq6iunNcAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DKZMfkKIXat/MJn9ga5gS/rsVeC2r2ZMW8uFMmaqQIl+gLWharsERyViDu7MkjJqB
+	 uEsU2ZvMMPoPD7Wi8sQlOhPfXsuuZiUmUaBWJ4myyoAXnhNXDznzOgoG+aF9fltUSM
+	 OfglVx4gPfaSj3wbzvJWKLDE0rvD+T2frLBxNhd4=
+Date: Mon, 8 Jul 2024 14:36:39 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: stable@vger.kernel.org, sashal@kernel.org, ast@kernel.org,
+	keescook@chromium.org, linux-hardening@vger.kernel.org,
+	christophe.leroy@csgroup.eu, catalin.marinas@arm.com,
+	song@kernel.org, puranjay12@gmail.com, daniel@iogearbox.net,
+	andrii@kernel.org, martin.lau@linux.dev, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+	haoluo@google.com, jolsa@kernel.org, illusionist.neo@gmail.com,
+	linux@armlinux.org.uk, bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	chenhuacai@kernel.org, kernel@xen0n.name, loongarch@lists.linux.dev,
+	johan.almbladh@anyfinetworks.com, paulburton@kernel.org,
+	tsbogend@alpha.franken.de, linux-mips@vger.kernel.org,
+	deller@gmx.de, linux-parisc@vger.kernel.org, iii@linux.ibm.com,
+	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com, svens@linux.ibm.com,
+	linux-s390@vger.kernel.org, davem@davemloft.net,
+	sparclinux@vger.kernel.org, kuba@kernel.org, hawk@kernel.org,
+	netdev@vger.kernel.org, dsahern@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, guanwentao@uniontech.com,
+	baimingcong@uniontech.com
+Subject: Re: [PATCH] Revert "bpf: Take return from set_memory_rox() into
+ account with bpf_jit_binary_lock_ro()" for linux-6.6.37
+Message-ID: <2024070815-udder-charging-7f75@gregkh>
+References: <5A29E00D83AB84E3+20240706031101.637601-1-wangyuli@uniontech.com>
+ <2024070631-unrivaled-fever-8548@gregkh>
+ <B7E3B29557B78CB1+afadbaa6-987e-4db4-96b5-4e4d5465c37b@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jie Gan <quic_jiegan@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- James Clark <james.clark@arm.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Mike Leach <mike.leach@linaro.org>, Rob Herring <robh@kernel.org>,
- Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
- Song Chai <quic_songchai@quicinc.com>, Tao Zhang <quic_taozha@quicinc.com>,
- Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Trilok Soni <quic_tsoni@quicinc.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>
-References: <20240705090049.1656986-2-quic_jiegan@quicinc.com>
-Subject: Re: [PATCH v2 1/4] Coresight: Add trace_id function to collect trace
- ID
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240705090049.1656986-2-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ppbjShWg3ECY6M4nE8zVf+rKqhRfa0Xrt77Ns2HfQrBggCoV4QR
- J3wqtpk2WFk/l1+YrOVH/JF+vrUl7fd2H897VKaOFeJBT1tVTweussO0HSO8jjEdTqeHvqC
- 0vVgvhz3VR1Y3O/DkpJj9cK0xqNvuTbc0BXko4r8L2nle+pUQbGxz2Kmcla6Rny3qZF81kq
- VfY+MkxlbfrugFa+pMmhg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Bot9zNdFTVg=;5Z1ZIogJWU8LIfZLe0Ik57JF8te
- iLlu8HZsNBs3mYuz6h3N/8F0NqaLCgOsIasPV6QaCtyNa1UThySNplj3Qv7txKtZ9AEpV9eS+
- D5XDGSb1DzSHfvF06OfqO4PIyh6zx5cCh2MUpuqBKhh7LCt0qC8SjG8648m7GVZiFZ1LsEmUJ
- 8Va3cd5cYA7fWsxLZrasMTsJTroIoOIt7RZJTOy8LyNMcO/MavtGdz8rbbxT9azQrAwsTVR/D
- yGYS/08/gEbGjXXiRwNodufHQdEU0NLb6Ho5+Aw55wYBhFsThEnhO3VyUfzdlacnAeMOTIotd
- gfmvaysZ8wNB8Js4G4UoCWoJLS8AaTm0vrk9/Rb48rpZod/I3wA5Zs1V8cKDtm9zBD+mNkeEC
- vjAf1Zufqmft+lJqGRClMacljR/Sxfuroij8QplyOwemRcWHaglivwdYqbAmjgoXoizBO4jkH
- eh7+VPSn6eIwekxtJB0huaqY3N/n1/9piLli6vflBYadlvgH+1A7p+bYKn+I23EgC3pJ64cKe
- PG7/PPgd/lfj5frRNTr+b0W6bNJbYD6X39MB9q9+MgWAlicpn+Ga5QHvJhYey4LzapXSRgsD5
- eMFladDFNfuwPNP6RDCZtgqRQjopDYjUsYLDlpmrxAhiltYYC+RlROh4AvadH9d53bOW7yCAU
- mucpSgNYPtJTwXl0RxkWtHSdn3lT0jyUoaSfL2tYHBaOMHZBAFAqrHACx/E3Mb9IqtpR37JPU
- mRmCGTRQjeKVhhnMgYKy6MP7SgyxuKPq2o++NxWfX11xbCGrowmTKK/UxzvZ494IlYcBcmAec
- JVIJ02ZoFjU9Tqj8CgVXtmTQV4DI+AF1T9P3Q0vd4Yrr4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <B7E3B29557B78CB1+afadbaa6-987e-4db4-96b5-4e4d5465c37b@uniontech.com>
 
-> Add 'trace_id' function pointer in ops. It's responsible for collect the
-=E2=80=A6
+On Sun, Jul 07, 2024 at 03:34:15PM +0800, WangYuli wrote:
+> 
+> On 2024/7/6 17:30, Greg KH wrote:
+> > This makes it sound like you are reverting this because of a build
+> > error, which is not the case here, right?  Isn't this because of the
+> > powerpc issue reported here:
+> > 	https://lore.kernel.org/r/20240705203413.wbv2nw3747vjeibk@altlinux.org
+> > ?
+> 
+> No, it only occurs on ARM64 architecture. The reason is that before being
+> modified, the function
+> 
+> bpf_jit_binary_lock_ro() in arch/arm64/net/bpf_jit_comp.c +1651
+> 
+> was introduced with __must_check, which is defined as
+> __attribute__((__warn_unused_result__)).
+> 
+> 
+> However, at this point, calling bpf_jit_binary_lock_ro(header)
+> coincidentally results in an unused-result
+> 
+> warning.
 
-                                          It is?               collecting?
+Ok, thanks, but why is no one else seeing this in their testing?
 
+> > If not, why not just backport the single missing arm64 commit,
+> 
+> Upstream commit 1dad391daef1 ("bpf, arm64: use bpf_prog_pack for memory
+> management") is part of
+> 
+> a larger change that involves multiple commits. It's not an isolated commit.
+> 
+> 
+> We could certainly backport all of them to solve this problem, but it's not
+> the simplest solution.
 
-=E2=80=A6
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-=E2=80=A6
-> +	sink_data =3D kzalloc(sizeof(*sink_data), GFP_KERNEL);
-> +	if (!sink_data)
-> +		goto fail_end_stop;
-=E2=80=A6
-> +	if (coresight_enable_path(path, CS_MODE_PERF, sink_data)) {
-> +		kfree(sink_data);
->  		goto fail_end_stop;
-> +	}
-=E2=80=A6
+reverting the change feels wrong in that you will still have the bug
+present that it was trying to solve, right?  If so, can you then provide
+a working version?
 
-Would you like to to benefit any more from further applications of scope-b=
-ased
-resource management by using an attribute like =E2=80=9C__free(kfree)=E2=
-=80=9D?
-https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/slab.h#L28=
-2
+thanks,
 
-Regards,
-Markus
+greg k-h
 
