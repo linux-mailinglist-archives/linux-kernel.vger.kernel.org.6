@@ -1,160 +1,103 @@
-Return-Path: <linux-kernel+bounces-244293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B204792A242
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:13:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E2592A1FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7311F22CA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:13:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51886B25BF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED38823A9;
-	Mon,  8 Jul 2024 12:07:41 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0236513E3FD;
+	Mon,  8 Jul 2024 12:02:18 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811F380BEC
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908E713E04F;
+	Mon,  8 Jul 2024 12:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720440461; cv=none; b=CyVIdxZlznmyWsZPQtm4UMNANWMCiZJYKjqA96AlRSKVUdBT0wGra5OSsu7T1rw19E0MGY9xfO//N66RegsbBzREBHWaZP/Nl+WWBbQosBKrrQL+B9RE7YVQEbf7p//1NJjw9T5RHADLGbVVTa7nB7MajiuRxf1P0o30LO30IeI=
+	t=1720440137; cv=none; b=cXoKKGQrzVzciX+O5hsBeK5YUq5HC+y+U4AXoFeEil9oiqT1gtvj0Oz5lfPwuQAcktLa1VY1MJgcuck9REkMUkcLA7A0I79poL29tIbBCl5soz58QfDRyI98CY5d4fGaheHcV3ULpqPOqj1bpWCLRU1VZ+Rxga0+ZbeKjp0yO+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720440461; c=relaxed/simple;
-	bh=io01hl0mtesneL2LZ5G5Ith3zDY7NttBBQHX2oUhV+8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N/RpIZS6O22BOkgbWUqIseuBuf1xEw+LkfmyKs5srDlAMssLMKz+on9ORKlIykVkJ8QfFs6Lz4itl5ZTOxg1kIkdxsGCysxApVBD5fWGL9Io6K9kxABUtzAE3QJZPV5owdIev1mK5gje4LyPaE1Nd3/SE0rvue5JEEo3uPb03LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1720440137; c=relaxed/simple;
+	bh=t6Zv/lqQ79ZwHHAQ1h9A/xnNXcBw2yoD7S6LlS/Fqds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
+	 In-Reply-To:Content-Type; b=csatPhi0gLFpkvO8BkXVqSSURA3UWlVevRhO+cJMYXpdE550zMjf3qvbKX/SDnT7hxO72D3uExG5hmvYBeoX7F3Bb0jPNejqUGY1tQ51bmUg3tRLs9woA7poHH2Io5sUT+f++EfJsYoJjWtZdwg/Wf/1Otp3KVwXKFOYSA2aRt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WHjXt4M1hznYfQ;
-	Mon,  8 Jul 2024 20:07:10 +0800 (CST)
-Received: from kwepemf500005.china.huawei.com (unknown [7.202.181.243])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B176180AA6;
-	Mon,  8 Jul 2024 20:07:35 +0800 (CST)
-Received: from huawei.com (10.67.174.161) by kwepemf500005.china.huawei.com
- (7.202.181.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 8 Jul
- 2024 20:07:34 +0800
-From: Cheng Yu <serein.chengyu@huawei.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<bristot@redhat.com>, <vschneid@redhat.com>,
-	<changhuaixin@linux.alibaba.com>, <shanpeic@linux.alibaba.com>,
-	<dtcccc@linux.alibaba.com>, <vishalc@linux.ibm.com>, <tj@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <zhangqiao22@huawei.com>, <judy.chenhui@huawei.com>,
-	<yusongping@huawei.com>, <zhaowenhui8@huawei.com>,
-	<serein.chengyu@huawei.com>
-Subject: [PATCH v2] sched/fair: set burst to 0 when remove the restriction on cfs bandwidth
-Date: Mon, 8 Jul 2024 20:00:53 +0800
-Message-ID: <20240708120053.861037-1-serein.chengyu@huawei.com>
-X-Mailer: git-send-email 2.25.1
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WHjKh19jKzwWBn;
+	Mon,  8 Jul 2024 19:57:28 +0800 (CST)
+Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
+	by mail.maildlp.com (Postfix) with ESMTPS id 48202140156;
+	Mon,  8 Jul 2024 20:02:08 +0800 (CST)
+Received: from [10.67.109.184] (10.67.109.184) by
+ kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 8 Jul 2024 20:02:07 +0800
+Message-ID: <d9abcecb-1de1-4c88-923a-b465fb87ca51@huawei.com>
+Date: Mon, 8 Jul 2024 20:02:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf500005.china.huawei.com (7.202.181.243)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] riscv, bpf: Optimize stack usage of trampoline
+Content-Language: en-US
+To: Puranjay Mohan <puranjay@kernel.org>
+References: <20240708114758.64414-1-puranjay@kernel.org>
+CC: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+	<martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+	<song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+	<john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, Puranjay Mohan
+	<puranjay12@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	<bpf@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+From: Pu Lehui <pulehui@huawei.com>
+In-Reply-To: <20240708114758.64414-1-puranjay@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf100007.china.huawei.com (7.202.181.221)
 
-From: Zhao Wenhui <zhaowenhui8@huawei.com>
 
-In the cpu subsystem of cgroup v1 and v2, we set the restriction on cfs
-bandwidth by setting the quota and burst value. Later, when we remove
-the restriction by setting the quota to the default value, the burst
-value should also be forced to the its default value of zero.
+On 2024/7/8 19:47, Puranjay Mohan wrote:
+> When BPF_TRAMP_F_CALL_ORIG is not set, stack space for passing arguments
+> on stack doesn't need to be reserved because the original function is
+> not called.
+> 
+> Only reserve space for stacked arguments when BPF_TRAMP_F_CALL_ORIG is
+> set.
+> 
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> ---
+>   arch/riscv/net/bpf_jit_comp64.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+> index 685c7389ae7e..0795efdd3519 100644
+> --- a/arch/riscv/net/bpf_jit_comp64.c
+> +++ b/arch/riscv/net/bpf_jit_comp64.c
+> @@ -892,7 +892,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
+>   	stack_size += 8;
+>   	sreg_off = stack_size;
+>   
+> -	if (nr_arg_slots - RV_MAX_REG_ARGS > 0)
+> +	if ((flags & BPF_TRAMP_F_CALL_ORIG) && (nr_arg_slots - RV_MAX_REG_ARGS > 0))
+>   		stack_size += (nr_arg_slots - RV_MAX_REG_ARGS) * 8;
+>   
+>   	stack_size = round_up(stack_size, STACK_ALIGN);
 
-In the cgroup v1 cpu subsystem, assuming we have a cgroup named 'test',
-and we set cpu.cfs_quota_us and cpu.cfs_burst_us:
-    # echo 100000 > cpu.cfs_quota_us
-    # echo 100000 > cpu.cfs_burst_us
+Thanks!
 
-Next we remove the restriction on cfs bandwidth:
-    # echo -1 > cpu.cfs_quota_us
-    # cat cpu.cfs_quota_us
-    -1
-    # cat cpu.cfs_burst_us
-    100000
-
-Now we expect that the value of burst should be zero. When the burst is
-zero, it means that the restriction on burst is removed.
-
-The same situation exists for cgroup v2. The difference is that the
-interface definition of the cpu subsystem and the default value of
-quota. In v2, we remove the restriction on cfs bandwidth by setting max
-to cpu.max.
-
-Fixes: f4183717b370 ("sched/fair: Introduce the burstable CFS controller")
-Reported-by: Zhao Gongyi <zhaogongyi@huawei.com>
-Reported-by: Qixin Liao <liaoqixin@huawei.com>
-Signed-off-by: Zhao Wenhui <zhaowenhui8@huawei.com>
-Signed-off-by: Cheng Yu <serein.chengyu@huawei.com>
-Tested-by: Vishal Chourasia <vishalc@linux.ibm.com>
-Reviewed-by: Tianchen Ding <dtcccc@linux.alibaba.com>
-Reviewed-by: Ben Segall <bsegall@google.com>
----
-Change log:
-----------
-v2:
- - Put the modifications to cgroup v1 and v2 in one patch
-v1:
- - patch for cgroup v1:
-   https://lore.kernel.org/all/20220809120320.19496-1-zhaowenhui8@huawei.com/
- - patchset for cgroup v1 and v2:
-   https://lore.kernel.org/all/20240522031007.643498-1-serein.chengyu@huawei.com/
----
- kernel/sched/core.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bcf2c4cc0522..982d357b3983 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10840,6 +10840,12 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota,
- 				     burst + quota > max_cfs_runtime))
- 		return -EINVAL;
- 
-+	/*
-+	 * Ensure burst equals to zero when quota is -1.
-+	 */
-+	if (quota == RUNTIME_INF && burst)
-+		return -EINVAL;
-+
- 	/*
- 	 * Prevent race between setting of cfs_rq->runtime_enabled and
- 	 * unthrottle_offline_cfs_rqs().
-@@ -10899,8 +10905,10 @@ static int tg_set_cfs_quota(struct task_group *tg, long cfs_quota_us)
- 
- 	period = ktime_to_ns(tg->cfs_bandwidth.period);
- 	burst = tg->cfs_bandwidth.burst;
--	if (cfs_quota_us < 0)
-+	if (cfs_quota_us < 0) {
- 		quota = RUNTIME_INF;
-+		burst = 0;
-+	}
- 	else if ((u64)cfs_quota_us <= U64_MAX / NSEC_PER_USEC)
- 		quota = (u64)cfs_quota_us * NSEC_PER_USEC;
- 	else
-@@ -11406,8 +11414,11 @@ static ssize_t cpu_max_write(struct kernfs_open_file *of,
- 	int ret;
- 
- 	ret = cpu_period_quota_parse(buf, &period, &quota);
--	if (!ret)
-+	if (!ret) {
-+		if (quota == RUNTIME_INF)
-+			burst = 0;
- 		ret = tg_set_cfs_bandwidth(tg, period, quota, burst);
-+	}
- 	return ret ?: nbytes;
- }
- #endif
--- 
-2.25.1
-
+Acked-by: Pu Lehui <pulehui@huawei.com>
 
