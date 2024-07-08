@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-244884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111F392AAD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:00:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34BD992AADA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 437961C216AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:00:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C54ADB21D37
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EDC14E2E2;
-	Mon,  8 Jul 2024 21:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BDE14E2E2;
+	Mon,  8 Jul 2024 21:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTy6zSuu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="imEEaiQh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72415748A;
-	Mon,  8 Jul 2024 21:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A761DA53;
+	Mon,  8 Jul 2024 21:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720472446; cv=none; b=uXU1Kw9mnKUiiFS9d5ak4vmO2gtRCR8NJZ0PQnPh3o+HAweY/HHAvNTmCvdFRON7gsN5T7Ib6oAjt8huKLArkc5sdLRjHzmqV148twgF3TgVqm6xbNNwQlY6bL4iUpGBUVn6CR5+jYPPSlvgt7QU65Xfn64tHiN9W5D5f58TC58=
+	t=1720472536; cv=none; b=JSJQU+BJzzYFQvjgCZ51GMLy40/1+WAOYdg6pQ8/RMhvh0BwE1Jr/pT30ixh65d6YHF/S9Ehz3Jhnt30TCdp1z/JEUGR+rUrQ1Ijokb+21OeoQYKpP2A7mMxZ5lJzfzmsd6l4EkcMeW+lWA2TIrPWok7kMIJjx6xFGT6lJiQmwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720472446; c=relaxed/simple;
-	bh=42gS1nMI85V4oiOAsvAixKC1DvPcw6XJmD6MkJh3tm4=;
+	s=arc-20240116; t=1720472536; c=relaxed/simple;
+	bh=Sr7q5YZv7nmVUkMNEpRaZ5flo8nETsjiwr7pQ2wNePM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VggHdsZLvahGXoGv7VVnmkVjDftrkoIFOaFGkXG6gO6P+OeRDzXXKfgNtNWUNrMPR+Jcbzg3EOGlG7riv8jx11Tav4G616hkloZWuubTX97dc0eWRyW8f+QtKCBav1tIDruGYMZXrkHp89F8GRag6J5pNCt5U0cwjx37HW0mRe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTy6zSuu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E7EBC4AF0E;
-	Mon,  8 Jul 2024 21:00:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=md7Zdf8CuhfFSZiqVVZuzgr0eq2o1HaiBPUDu1AMc5tGnyMEfD+vzqWD9ARyojlWHrrH35hfefF5JmcT14tBGkWRi2hGTkfwOW5+w1TQTM1tzb+juGXfriisERXg7LakT6pF2rTLmQtPZKVZHVwEHNViqMRTMW6t2/qbRZ6tUQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=imEEaiQh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4961C116B1;
+	Mon,  8 Jul 2024 21:02:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720472445;
-	bh=42gS1nMI85V4oiOAsvAixKC1DvPcw6XJmD6MkJh3tm4=;
+	s=k20201202; t=1720472536;
+	bh=Sr7q5YZv7nmVUkMNEpRaZ5flo8nETsjiwr7pQ2wNePM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RTy6zSuuhRm55fKoP9JOgDqIYkJwgTtLlGmYYvmT/GeUKEBd5BGwuNO7FeZQP8tOy
-	 KVge5s7kJ/sBB2C+/8roi4w2jYIVofT3anDc8fZORhsNou4Sy3jPiKvhmDGT5I6nMy
-	 k7o4NYRr2eJo2sXIG50JPomyCPU+vvkG92cRYnAnm5l2g+6bgUO7vDiTgua/7tkequ
-	 k4LrMoEmhoSV8qTbXsojRm4jZ+A086tlGmAzczRX5E9qwlr3SfVxb6iaVbBHcQ3sjH
-	 sj12bEBssKy4v2Z9A+Pic5PfDFSkiCcgxXa5l/xJfXbIkqkH+c+KL8ktzpv2ReM0Ad
-	 Mo7NDsKlBwtMw==
-Date: Mon, 8 Jul 2024 15:00:44 -0600
+	b=imEEaiQhDXHaG6EqcPrez7MGicaKyffuagUHE6BxGYHBuFdvVJvyG7KihG75Oao5h
+	 PqcDPlcVcl/14/4egKop14k1y8+J8Zl9UVlXFJl8OBr5hGtEhDNJUDhKkFVTtmMjv3
+	 wEpPldZ9ZK795gOj+vDuvVNZXEH+b+mK9D/Mnno0mbgNGY2NJAEXzD06NL2pCbU6QC
+	 /4VDypBP8O4LKwus+766Cr4VMWjd/nftZE0pmS+BZqKXpw10FWYS8B6xch225jGAHW
+	 8P5kULsNWOCOCgtyBBMsckE8eUyXYkXo4YnTXIl+Nt2MbHM+fA9YjU0jMGBfL4wquW
+	 pIiU2Oae1h0nQ==
+Date: Mon, 8 Jul 2024 15:02:14 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: David Heidelberg <david@ixit.cz>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v7] dt-bindings: iommu: Convert msm,iommu-v0 to yaml
-Message-ID: <172047244295.3895229.16417666171365762021.robh@kernel.org>
-References: <20240705221520.109540-1-david@ixit.cz>
+Cc: Thierry Reding <treding@nvidia.com>,
+	Maxim Schwalm <maxim.schwalm@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-tegra@vger.kernel.org,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH] dt-bindings: arm: tegra: Document Nyan, all revisions in
+ kernel tree
+Message-ID: <172047253375.3899888.12655488091485132661.robh@kernel.org>
+References: <20240705235254.126567-1-david@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,51 +65,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240705221520.109540-1-david@ixit.cz>
+In-Reply-To: <20240705235254.126567-1-david@ixit.cz>
 
 
-On Fri, 05 Jul 2024 15:14:54 -0700, David Heidelberg wrote:
-> Convert Qualcomm IOMMU v0 implementation to yaml format.
-> 
-> iommus part being ommited for the other bindings, as mdp4 one.
+On Fri, 05 Jul 2024 16:52:43 -0700, David Heidelberg wrote:
+> Avoid firing useless warnings when running make dtbs_check
 > 
 > Signed-off-by: David Heidelberg <david@ixit.cz>
 > ---
-> v7:
->  - change maintainer to myself
->  - define NCB range (thx @Rob)
-> v6:
->  - clean iommu-cells description (thx @Robin)
-> v5:
->  - updated example (thx @Konrad)
->  - ordering of requirements + dropped > and | and reformatted (thx @Konrad)
-> v4:
->  - renamed to qcom,apq8064-iommu as Rob requested
->  - changed title to Qualcomm APQ8064 IOMMU
->  - dropped quotes around URLs
->  - dropped mdp node
->  - dropped unused mdp_port0 label
-> 
-> v3:
->  - I kept the name as -v0, since we have other binding -v1 and it look
->    good, I can change thou in v4 if requested.
->  - dropped non-existent smmu_clk part (and adjusted example, which was
->    using it)
->  - dropped iommu description
->  - moved iommu-cells description to the property #iommu-cells
-> 
-> v2:
->  - fix wrong path in binding $id
->  - comment qcom,mdp4 node example (we don't want to validate it yet)
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> 
->  .../bindings/iommu/msm,iommu-v0.txt           | 64 ---------------
->  .../bindings/iommu/qcom,apq8064-iommu.yaml    | 78 +++++++++++++++++++
->  2 files changed, 78 insertions(+), 64 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/iommu/msm,iommu-v0.txt
->  create mode 100644 Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
+>  .../devicetree/bindings/arm/tegra.yaml        | 42 +++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
