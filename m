@@ -1,93 +1,88 @@
-Return-Path: <linux-kernel+bounces-244867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B5992AA9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:30:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913E092AABF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882701F22EC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44CBC28309C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E2C14A4C3;
-	Mon,  8 Jul 2024 20:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B30014A60E;
+	Mon,  8 Jul 2024 20:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W9tJJy43"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Ya5O5hJ0"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62735A29;
-	Mon,  8 Jul 2024 20:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177C81E522;
+	Mon,  8 Jul 2024 20:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720470630; cv=none; b=r3QbKvPndcgoyVcQYBJu9wo8GOmkr4HWzFkuH4JPRsO7tmTNrRcImb8QLE3lGY2unARTrsn/CZSaRkqc1Qbgoe/nS5cMSoIM5VpVLURvaSVvrBB6DC8nQ8C9sQc/Bvt53Cr6FXPrBcY5e0IMjd7IhG3JJn2oIkryA4IOCli4ob0=
+	t=1720471695; cv=none; b=s7fCt6bsqU3n9yg2s9Fnk4GMZDBUzhAAYZ3aKimXMSGOFOKwrxJjBnoJa2ZYnggTgTaZQdH2UsFroKHAQHPz52PnIn3C+1PNfBKPYDb0LeVfRU+k93NT0ewl7tiiXxtQuygNSs53/fy37KM2CYZeAjbCcPK5EeyFyOS6NkEr11k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720470630; c=relaxed/simple;
-	bh=vlNndW/sPiV92dz+5Ual56vbhj+f8JVNkuLU5APUeqA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=eTdsG8vSu4/yn8rQaWToyDu0aH0lUG2LIAQHIdGtTgZf/sJWcQdlsC0Va/l1OULnp9XhNzHnXkpnbFdXOi9DAw86V23i437yCVnA1Xp68egFUkgZPRCP6uLb2M+fV53IOQUX77FvYr9Z77BwnHBgCcR5NxBE4lSjJ8oMlx6Nlc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W9tJJy43; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CE51EC3277B;
-	Mon,  8 Jul 2024 20:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720470629;
-	bh=vlNndW/sPiV92dz+5Ual56vbhj+f8JVNkuLU5APUeqA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=W9tJJy43ysN8anMdtxAm1OZ+y3sRENJiIFNFTk1aioPxfvoUJa7sW57sXl/ydG8AQ
-	 w/oEFN8goUgDvzJE5rtGK8/pOhx69aBHIqlgq3Z9sQOiHO11FDhD1vqi6eER7b5lYo
-	 +QzSVyo4XZ6C1C+4qLG9z/gwKT50zt6eXY804qe4GU1MLeE6jGKFI/HZzA4CBnGXLg
-	 jT1rFwsYQvAIFkaW8FXY3IjM2/7MHBDBSdhlx0/K9cz/2N/wXbM4/ha0v6O2dNBpSJ
-	 gMhtWP0tb6GFvhiwk83NdQbam/Pnxey1MxRyrxOXwPOGQ2yiCmSNO+ropUMPzSTo9w
-	 vm7bvbw6TfxWw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BBC91DF3713;
-	Mon,  8 Jul 2024 20:30:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720471695; c=relaxed/simple;
+	bh=hmf3tM7swWEbHP67M7gMRWixLCqvfDFzdn2pHxB7eYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aeB9PlROasxC/JpKPlB7uUf4djVut4zW3QZLLw93XgShSeYIOEoX3d0cv/1ao90YK1r43vsXFbXbBuLroKWP8jAAN0TWkrHBBD9YUMfS6vIpvVKcO+FpNYfxHYnzTJOLRjgL9SdiXmhl6KpOmN4S4b4bh0Hm7eonWKkIOK+ogEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=Ya5O5hJ0; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2NZfop9xMXj5MCVj5FYiZaUu1Tz5sI/EKDJi9yyJQdI=; b=Ya5O5hJ0EnKooPY1JBAy2CixYj
+	e5EOZp/uXx/nWW0cgyJO0B9zCk+ecCZe9ky9Slp5bnDVuJDCtCQrrJFYc3uS9UnBNr5wisFwN9H0d
+	BwYQhMfX8E80WoXTIELLHgZi8TLk10tCZDamK1wXIMd1qG03Hq31IM5psmzdxaE0/+n5fSsnXsTvg
+	JiIHK2pMy12F1YMIX9CXgIB980MjvaD/cNBAQ9JNd5dDIiXq5TFlnIsL+ACD5m4G/c67COwCBPhzg
+	SXne3UcAjbDTtef17SqZPs+F1AgFhn8tZAVfiRpxHw8DWHCjvZTIYI2N4jAqorM/ZOe7EumJmE0+D
+	gu/5u5Ag==;
+Date: Mon, 8 Jul 2024 22:32:05 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Rob Herring <robh@kernel.org>
+Cc: lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4] dt-bindings: regulator: twl-regulator: convert to
+ yaml
+Message-ID: <20240708223205.22b7029d@akphone>
+In-Reply-To: <CAL_Jsq+9v0i-6xvPY6cvnJUSLV1d4irqcPv60p+KwC5sx7WDDg@mail.gmail.com>
+References: <20240606111611.371463-1-andreas@kemnade.info>
+	<CAL_Jsq+9v0i-6xvPY6cvnJUSLV1d4irqcPv60p+KwC5sx7WDDg@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.37; aarch64-alpine-linux-musl)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172047062976.14874.1055573177494489309.git-patchwork-notify@kernel.org>
-Date: Mon, 08 Jul 2024 20:30:29 +0000
-References: <20240705145009.32340-1-puranjay@kernel.org>
-In-Reply-To: <20240705145009.32340-1-puranjay@kernel.org>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, puranjay12@gmail.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Tue, 11 Jun 2024 07:39:25 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
-
-On Fri,  5 Jul 2024 14:50:09 +0000 you wrote:
-> fexit_sleep test runs successfully now on the CI so remove it from the
-> deny list.
+> > +
+> > +        gpadc {
+> > +          compatible = "ti,twl6030-gpadc";
+> > +          interrupts = <6>;  
 > 
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-> ---
->  tools/testing/selftests/bpf/DENYLIST.aarch64 | 1 -
->  1 file changed, 1 deletion(-)
+> Now a warning in linux-next:
+> 
+> Documentation/devicetree/bindings/mfd/ti,twl.example.dtb: gpadc:
+> '#io-channel-cells' is a required property
+>         from schema $id:
+> http://devicetree.org/schemas/iio/adc/ti,twl6030-gpadc.yaml#
 
-Here is the summary with links:
-  - [bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
-    https://git.kernel.org/bpf/bpf-next/c/90dc946059b7
+I sent a fix. It was not applied, maybe because subject does not
+contain regulator and so missing Mark's filter?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Regards
+Andreas
 
