@@ -1,127 +1,97 @@
-Return-Path: <linux-kernel+bounces-244826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0748992A9F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:42:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DB192AA00
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88131F2294C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7031C215D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7D31F956;
-	Mon,  8 Jul 2024 19:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C28A14F100;
+	Mon,  8 Jul 2024 19:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Srwz8/bk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMTv13EM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B465C10953;
-	Mon,  8 Jul 2024 19:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D8214B95B;
+	Mon,  8 Jul 2024 19:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720467734; cv=none; b=i+vIgPBVBOth2d/DDliOGmpWz5ae7AbNHOK9UaTM6wrJlmlbg7vlVEWp6NbTSNTK8XRTIUnXt3uDYQ4JOpVaXeTYv8mqt+t3M64NeSG46tLBzXIOZKq6nYDYwp/+yklxFxP9t/pxSlbTDH78gEi4gZRTvZKqVH1Mq7CxOY0Xefc=
+	t=1720467746; cv=none; b=rUMIRL1RG+AO3QBja9c0PY2Xv4KU3Zz97/j9M2leKWIjpMnp0xm4Jac5TYz07kKTMjwQO8Ro04koeMFOXIKBLCLmihXfEAA4uLzkabSIQx97/wXXuGC5iETuQZg6UKD7V08ravMc7wtqiPYQr9HUsAeAxbc5MEyO1yfDi3bvXiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720467734; c=relaxed/simple;
-	bh=Zaeqe9YcdV6AbL26jg2M0CXgIkCa1m7pJ0j+84zhThE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZRYggpikLvAkVRwiDCBTkZzPQwfuvaQ5ROms8fm7TCvl6Z0f4eCWDZifszUh2ESK5TCAuGhFLdCnQ2m2dDnTEkTk0W0S9rFRO2Bh2Hg7z3i8laAQqDfrzXujQOZKv0b4705GJkAajXiDRjGxZDBCxlXYvGDAcOabDgcR7WRIVQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Srwz8/bk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F9B9C116B1;
-	Mon,  8 Jul 2024 19:42:11 +0000 (UTC)
+	s=arc-20240116; t=1720467746; c=relaxed/simple;
+	bh=UYEkDikTrK4yUGHNdvG5X7alA+OBfYc03Q1rcRBDxok=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=RHpep7a6+IX/HndLt5DCuu87HXA4WeFQrEvtF+YzeGjs2dN90gTtI2xQtVAOpYivr4N0wdkS9NGXSN58LluEOFd/xFrUl70ekGgLpJC6OvP+wP5IJjeTGZi/IAItMqgWqwKVbotTyDBK5fc4kVg8fNL9adov2/4dIGCGH/+N1rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMTv13EM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E7924C3277B;
+	Mon,  8 Jul 2024 19:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720467734;
-	bh=Zaeqe9YcdV6AbL26jg2M0CXgIkCa1m7pJ0j+84zhThE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Srwz8/bkE6ouu8XOlmuwDBnx/5ytuiJcVEelpJzUVejAgUQ+E+9duYv3UGlVYd6Qc
-	 r4zqmvsbWKdA0cJajv2SPxgVKcb0hijhaOklOVQlSBDVsoP9dL05EhvTl84inR0XV2
-	 SOhmg7oP7OTOnFbIRzEeCNf98/k5Kb+G8EL06x0tHIbr/ZVoc7Zxgt8CwqmF7jRC6F
-	 3dNkPwwFKbSZQeFd5N8obJRtfeSvW32wkDbjeh5Wn5IDPOkWN816USvFQOr8EafbJZ
-	 lkS0pd5oNTjeKR7fK/XaxFHAzBmgdhhESv/yj4IbEt7uSuqL4v2EsJhltUGJRUs1Aa
-	 9/6G86k2kaRvg==
-Message-ID: <3ae005d8-b2e3-4a71-af0b-d57f00727b30@kernel.org>
-Date: Mon, 8 Jul 2024 22:42:08 +0300
+	s=k20201202; t=1720467746;
+	bh=UYEkDikTrK4yUGHNdvG5X7alA+OBfYc03Q1rcRBDxok=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=bMTv13EMbkIVJRwr7CSLXUVzWa2fnxM1psAVIok12DIc+BoO+bqy5qhjS52mkK3TV
+	 wr0gDxVdbpcZmiYpWGPSys0n0bQZtOhPdLBf50hfjWMGufeMzfFrCZ9RAO3KlpDHw1
+	 NLyIdD2EmH6N2g6kgHL805hRjJO0+/CX64rKO2ELYRqtUJmOKIei/bdWiu6py5QNr/
+	 760c/u28g+h59M49Z5bNa+5IeRWZyDGZ5lHrqluZYPtZu5ETI9NzJXETTI6Slh57Iq
+	 6MOBwY2spaUDI6eCYLKTXmuNVb6lVV6LkE9H8Q7Zv668Fth7yEqBNKQWxytQ+fJuKN
+	 art3T7LQEkXfA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D2038DF3713;
+	Mon,  8 Jul 2024 19:42:25 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/6] net: ethernet: ti: am65-cpsw: Introduce
- multi queue Rx
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Siddharth Vadapalli <s-vadapalli@ti.com>, Julien Panis
- <jpanis@baylibre.com>, Simon Horman <horms@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, srk@ti.com, vigneshr@ti.com,
- danishanwar@ti.com, pekka Varis <p-varis@ti.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-References: <20240703-am65-cpsw-multi-rx-v3-0-f11cd860fd72@kernel.org>
- <20240703-am65-cpsw-multi-rx-v3-1-f11cd860fd72@kernel.org>
- <20240705181509.1437b12e@kernel.org>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240705181509.1437b12e@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v2 0/2] Small API fix for bpf_wq
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172046774585.17805.5648980759770927798.git-patchwork-notify@kernel.org>
+Date: Mon, 08 Jul 2024 19:42:25 +0000
+References: <20240708-fix-wq-v2-0-667e5c9fbd99@kernel.org>
+In-Reply-To: <20240708-fix-wq-v2-0-667e5c9fbd99@kernel.org>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
 
+Hello:
 
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-On 06/07/2024 04:15, Jakub Kicinski wrote:
-> On Wed, 03 Jul 2024 16:51:32 +0300 Roger Quadros wrote:
->>  
->> -	if (queue >= AM65_CPSW_MAX_TX_QUEUES)
->> +	if (queue >= AM65_CPSW_MAX_TX_QUEUES &&
->> +	    queue >= AM65_CPSW_MAX_RX_QUEUES)
->>  		return -EINVAL;
+On Mon, 08 Jul 2024 11:52:56 +0200 you wrote:
+> I realized this while having a map containing both a struct bpf_timer and
+> a struct bpf_wq: the third argument provided to the bpf_wq callback is
+> not the struct bpf_wq pointer itself, but the pointer to the value in
+> the map.
 > 
-> both MAXes are 8, the else conditions below are dead code
-> Same for set
-
-yes. Maybe I should just use one define for both? e.g. AM65_CPSW_MAX_QUEUES.
-
+> Which means that the users need to double cast the provided "value" as
+> this is not a struct bpf_wq *.
 > 
->> -	tx_chn = &common->tx_chns[queue];
->> +	if (queue < AM65_CPSW_MAX_TX_QUEUES) {
->> +		tx_chn = &common->tx_chns[queue];
->> +		coal->tx_coalesce_usecs = tx_chn->tx_pace_timeout / 1000;
->> +	} else {
->> +		coal->tx_coalesce_usecs = ~0;
->> +	}
->>  
->> -	coal->tx_coalesce_usecs = tx_chn->tx_pace_timeout / 1000;
->> +	if (queue < AM65_CPSW_MAX_RX_QUEUES) {
->> +		rx_flow = &common->rx_chns.flows[queue];
->> +		coal->rx_coalesce_usecs = rx_flow->rx_pace_timeout / 1000;
->> +	} else {
->> +		coal->rx_coalesce_usecs = ~0;
->> +	}
-> 
-> +	for (flow_idx = 0; flow_idx < common->rx_ch_num_flows; flow_idx++) {
-> +		flow = &rx_chn->flows[flow_idx];
-> +		for (i = 0; i < AM65_CPSW_MAX_RX_DESC; i++) {
-> +			page = page_pool_dev_alloc_pages(flow->page_pool);
-> +			if (!page) {
-> +				dev_err(common->dev, "cannot allocate page in flow %d\n",
-> +					flow_idx);
-> +				ret = -ENOMEM;
-> +				if (i)
-> +					goto fail_rx;
->  
-> -			return ret;
-> -		}
-> -		rx_chn->pages[i] = page;
-> +				return ret;
-> 
-> the direct returns now that it's a double-nested loop seem questionable,
-> don't you have to goto fail_rx?
+> [...]
 
-Good catch. I should just drop the "if (i)" and goto fail_rx regardless.
+Here is the summary with links:
+  - [bpf-next,v2,1/2] bpf: helpers: fix bpf_wq_set_callback_impl signature
+    https://git.kernel.org/bpf/bpf-next/c/f56f4d541eab
+  - [bpf-next,v2,2/2] selftests/bpf: amend for wrong bpf_wq_set_callback_impl signature
+    https://git.kernel.org/bpf/bpf-next/c/16e86f2e8199
 
+You are awesome, thank you!
 -- 
-cheers,
--roger
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
