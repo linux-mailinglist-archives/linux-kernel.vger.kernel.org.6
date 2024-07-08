@@ -1,197 +1,126 @@
-Return-Path: <linux-kernel+bounces-244005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C835929DC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:56:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D421929DCB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15CA21F22FF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C0F285821
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D533D39FFE;
-	Mon,  8 Jul 2024 07:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0643BB25;
+	Mon,  8 Jul 2024 07:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nlspGfP4"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PdGiSxna"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B112D638;
-	Mon,  8 Jul 2024 07:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9612E39AEB;
+	Mon,  8 Jul 2024 07:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720425409; cv=none; b=r8FLSBVmhAaBZcgDB0MIXSFxUmZxdp2Oz+LxI28OV953LbDQhu60VUKYnfoVymBPdmu7liqRguTcnBjqfAfDHu9CCnp+glexRes4gzvZLgWGytRKsMxS+/YLV71sQ561++66MmqmxT5ErBw30Av5yN5EzwUrDJZ7vG4jb56MB34=
+	t=1720425412; cv=none; b=ubqxrCh9wLQfv+bDVhZxg8NFoJtKOvHUyYriIp8uRA2+KBsyrWvXsIr+gv+leTk8akf/xmffRAFOmf6+n9m4IDrPXIlr1ZAYBYFg+sFtsUJCwQx3CDn9DUtwRnV/B2fxwncYhGqhDJXg0MGm3WC+2hFBfxNvOK48WA2MzIWslCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720425409; c=relaxed/simple;
-	bh=a3Eu5o4OYY5c8wyupf0NyYJSM4qQ3YVK9pDqmRZWaSs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fgWqbV370+t07//yJiT9wFidjFNXwguP6ngGfve/zdVWFVmK3HsKQzneQXNjDSYrhIbShV1zmW5OFEfl97CYlgqa7Y1H8iHXl9Rqj3UCYcVmOqFMF/SxBi3yzbp5//bvTRyua2Jyp/u2yOisnoGWpL6KpmQskEqBWbje//lgXis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nlspGfP4; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=o1jN8VRyIcfHumRP1KvLwsjLLnt/lHRWuKN52gcpPx4=; b=nlspGfP4A0tMOtPh4zYnRtT+SI
-	Aj+aSVhrWD2EsHdlmEcTf56+gI+RHP1Pw7kPB/9wGSxS8GBF8rIhDogIfYBnCrB/MSplddEdMSZwK
-	Afmw4YGMHEQ+x4e/Ywx6fPYkn+Rc2vqludS+1MKVYX8U3vkG07sZMNhq/ZBvZUsC7aBFezu821AT2
-	5Xo75ff7lUw71Bj31K64ognlgrY6qBjjidvVRcNt8Iiu/PpUCaNPWPwDqrqx9IYKTsU40fPVQbtFw
-	Z6mrjJD75z/wUyn90OF2X9J/90XFbcDT1Z3ZiPWTN6bh4ZiPgG0gz4SMrbq9JUZIeSC8Jfrb2yK67
-	5PcGrOWw==;
-Received: from [84.69.19.168] (helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sQjEi-00CNGq-2K; Mon, 08 Jul 2024 09:56:36 +0200
-From: Tvrtko Ursulin <tursulin@igalia.com>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Rik van Riel <riel@surriel.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v4] mm/numa_balancing: Teach mpol_to_str about the balancing mode
-Date: Mon,  8 Jul 2024 08:56:32 +0100
-Message-ID: <20240708075632.95857-1-tursulin@igalia.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1720425412; c=relaxed/simple;
+	bh=xQIJDnKzG/pmp1osbfArOuhYkmP/jZwxB3eVrcMED7k=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=StiL0cr9ScMsYFDquIQLXrR8Q1e891csTZOa6ixlsC42M6y/mxLuU1SMcc8KBMfnzd+054qCejXbFlkySGRkGlY2OBg4bhBaGNYORyZVubimJEqxi8ulaAuXSlivAp1Hilx6AHF6WGoCM6QvMQctdJKlccLZNEu37kMkiieyVaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PdGiSxna; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720425411; x=1751961411;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=xQIJDnKzG/pmp1osbfArOuhYkmP/jZwxB3eVrcMED7k=;
+  b=PdGiSxnaz4NrO8Fxgs21udNU7Ta9Pvl/ijJqm0oCs4QJqikFSCkpPYg0
+   Kc34b4AIGxb0hyDOD1X25sbx+6wOwsOIrHBhl3c9WRaNes/pntvEA56jw
+   Wi7Z2NNkJPYaq+ODBAP+rRMoS893VrRpZxSNBS1XSsZtF0N0tFzZZwMQ5
+   AlB0joiEadJrfZ3+0QLptIaPkKLVZ4TaK+MnHEhwo1gUAUNsY942zAY43
+   VByhbrgsYs3UhgftDh/RsFRI+YlM/PGyab8yltQdGHaGcUF7/jqsSYQem
+   GvAgWnVAbbk/tM4iO3gyb42E9MXjxZB3bzOUNQqZM6viQHECT60labE7g
+   A==;
+X-CSE-ConnectionGUID: zZ5RJX/ETe668umSksMZ/Q==
+X-CSE-MsgGUID: 9s1MH9aTSfqwB0ndvDMM3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11126"; a="28216830"
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="28216830"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 00:56:50 -0700
+X-CSE-ConnectionGUID: MpU4q5AvR+u8MXy46m853A==
+X-CSE-MsgGUID: FCqibOSORcWB32N6wXe7+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,191,1716274800"; 
+   d="scan'208";a="47859566"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.115])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 00:56:47 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 8 Jul 2024 10:56:43 +0300 (EEST)
+To: Xi Pardee <xi.pardee@linux.intel.com>
+cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/9] platform/x86:intel/pmc: Convert index variables to
+ be unsigned
+In-Reply-To: <20240624203218.2428475-4-xi.pardee@linux.intel.com>
+Message-ID: <f65374fd-1bdd-f6e2-4c9e-9ce5d9f7fd9e@linux.intel.com>
+References: <20240624203218.2428475-1-xi.pardee@linux.intel.com> <20240624203218.2428475-4-xi.pardee@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+On Mon, 24 Jun 2024, Xi Pardee wrote:
 
-Since balancing mode was added in
-bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes"),
-it was possible to set this mode but it wouldn't be shown in
-/proc/<pid>/numa_maps since there was no support for it in the
-mpol_to_str() helper.
+> From: Xi Pardee <xi.pardee@intel.com>
+> 
+> Convert the index variables type to unsigned to avoid confusion and
+> errors.
+> 
+> Signed-off-by: Xi Pardee <xi.pardee@intel.com>
+> ---
+>  drivers/platform/x86/intel/pmc/core.c | 51 ++++++++++++++++-----------
+>  1 file changed, 30 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+> index b524b74293ca..cbdcbf288f67 100644
+> --- a/drivers/platform/x86/intel/pmc/core.c
+> +++ b/drivers/platform/x86/intel/pmc/core.c
+> @@ -247,7 +247,7 @@ static void pmc_core_slps0_display(struct pmc *pmc, struct device *dev,
+>  
+>  static int pmc_core_lpm_get_arr_size(const struct pmc_bit_map **maps)
+>  {
+> -	int idx;
+> +	unsigned int idx;
+>  
+>  	for (idx = 0; maps[idx]; idx++)
+>  		;/* Nothing */
+> @@ -260,8 +260,8 @@ static void pmc_core_lpm_display(struct pmc *pmc, struct device *dev,
+>  				 const char *str,
+>  				 const struct pmc_bit_map **maps)
+>  {
+> -	int index, idx, len = 32, bit_mask, arr_size;
+> -	u32 *lpm_regs;
+> +	unsigned int index, idx, len = 32, arr_size;
+> +	u32 bit_mask, *lpm_regs;
+>  
+>  	arr_size = pmc_core_lpm_get_arr_size(maps);
 
-Furthermore, because the balancing mode sets the MPOL_F_MORON flag, it
-would be displayed as 'default' due a workaround introduced a few years
-earlier in
-8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps").
+Hi,
 
-To tidy this up we implement two changes:
+Thanks for these patches. I've applied them into review-ilpo branch.
 
-Replace the MPOL_F_MORON check by pointer comparison against the
-preferred_node_policy array. By doing this we generalise the current
-special casing and replace the incorrect 'default' with the correct
-'bind' for the mode.
+While applying, I altered the return type of pmc_core_lpm_get_arr_size() 
+to unsigned int as it seemed the right thing to do after everything 
+around it is already unsigned.
 
-Secondly, we add a string representation and corresponding handling for
-the MPOL_F_NUMA_BALANCING flag.
-
-With the two changes together we start showing the balancing flag when it
-is set and therefore complete the fix.
-
-Representation format chosen is to separate multiple flags with vertical
-bars, following what existed long time ago in kernel 2.6.25. But as
-between then and now there wasn't a way to display multiple flags, this
-patch does not change the format in practice.
-
-Some /proc/<pid>/numa_maps output examples:
-
- 555559580000 bind=balancing:0-1,3 file=...
- 555585800000 bind=balancing|static:0,2 file=...
- 555635240000 prefer=relative:0 file=
-
-v2:
- * Fully fix by introducing MPOL_F_KERNEL.
-
-v3:
- * Abandoned the MPOL_F_KERNEL approach in favour of pointer comparisons.
- * Removed lookup generalisation for easier backporting.
- * Replaced commas as separator with vertical bars.
- * Added a few more words about the string format in the commit message.
-
-v4:
- * Use is_power_of_2.
- * Use ARRAY_SIZE and update recommended buffer size for two flags.
-
-Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Fixes: bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes")
-References: 8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps")
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: <stable@vger.kernel.org> # v5.12+
----
- mm/mempolicy.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index aec756ae5637..a1bf9aa15c33 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -3293,8 +3293,9 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
-  * @pol:  pointer to mempolicy to be formatted
-  *
-  * Convert @pol into a string.  If @buffer is too short, truncate the string.
-- * Recommend a @maxlen of at least 32 for the longest mode, "interleave", the
-- * longest flag, "relative", and to display at least a few node ids.
-+ * Recommend a @maxlen of at least 51 for the longest mode, "weighted
-+ * interleave", plus the longest flag flags, "relative|balancing", and to
-+ * display at least a few node ids.
-  */
- void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
- {
-@@ -3303,7 +3304,10 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
- 	unsigned short mode = MPOL_DEFAULT;
- 	unsigned short flags = 0;
- 
--	if (pol && pol != &default_policy && !(pol->flags & MPOL_F_MORON)) {
-+	if (pol &&
-+	    pol != &default_policy &&
-+	    !(pol >= &preferred_node_policy[0] &&
-+	      pol <= &preferred_node_policy[ARRAY_SIZE(preferred_node_policy) - 1])) {
- 		mode = pol->mode;
- 		flags = pol->flags;
- 	}
-@@ -3331,12 +3335,18 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
- 		p += snprintf(p, buffer + maxlen - p, "=");
- 
- 		/*
--		 * Currently, the only defined flags are mutually exclusive
-+		 * Static and relative are mutually exclusive.
- 		 */
- 		if (flags & MPOL_F_STATIC_NODES)
- 			p += snprintf(p, buffer + maxlen - p, "static");
- 		else if (flags & MPOL_F_RELATIVE_NODES)
- 			p += snprintf(p, buffer + maxlen - p, "relative");
-+
-+		if (flags & MPOL_F_NUMA_BALANCING) {
-+			if (!is_power_of_2(flags & MPOL_MODE_FLAGS))
-+				p += snprintf(p, buffer + maxlen - p, "|");
-+			p += snprintf(p, buffer + maxlen - p, "balancing");
-+		}
- 	}
- 
- 	if (!nodes_empty(nodes))
 -- 
-2.44.0
+ i.
 
 
