@@ -1,174 +1,95 @@
-Return-Path: <linux-kernel+bounces-244365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75DB92A331
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:50:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA3A92A333
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833A4280E05
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:50:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E321F23159
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1838184FA5;
-	Mon,  8 Jul 2024 12:50:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1DA7E0EA;
-	Mon,  8 Jul 2024 12:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80098527D;
+	Mon,  8 Jul 2024 12:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZUMSpRq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E92824B5;
+	Mon,  8 Jul 2024 12:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720443019; cv=none; b=L4WEbWOgsBTm4bsKL4uDqsLWfWbYdjkNkv/Dd7SRWkwd2C7/Du0xBpXVWCgYNpBOQL3NFXRC34PEck9+To416aJ0Bdm05iE67bKtmU84RYqcDljGtxNt5DOSJfLvfpjsZgyZ3cyE8b9G5BG/fXmdILJiHEe7CmYfSCrrYQManE4=
+	t=1720443035; cv=none; b=Iot54r0bqdZ57+qptJxrtafQx8kRud80lWQnUQOzzAZmdp1WXYQ+uXHCMCRxQQf55UwKyvNYIoS8GNzEw5KLwCYKRneyRIFF6iLempOTnQsIw/y7l6fNrDkfxuk6Jt/9qWJ+JyL9eKF9Fn9NY73WVNuRszpHf8TAi49khzX7feY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720443019; c=relaxed/simple;
-	bh=OFqD32J3lAHI3ENFac/jIZMKqrQ93Cts5OasYxedmXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qlO3B3N+CtJFbFjDJvXZvHkUlWvkBwI8iY5YlEt6k925nHQ23uCKODv0CTgDmddyg6lZqkp4XY8Gd5WuiKUvvSXJ/KfNHlwGBC5ifSmc/3QHNw5eXreD6u8T7r0nW8ZM7Q11devtgtxghVMPQGoHsLPjjc+xVmrGx/snXHP79cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 096651042;
-	Mon,  8 Jul 2024 05:50:41 -0700 (PDT)
-Received: from [10.57.74.191] (unknown [10.57.74.191])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19AFC3F766;
-	Mon,  8 Jul 2024 05:50:12 -0700 (PDT)
-Message-ID: <6a23eb7f-2fad-4a44-bf7c-ab7f01c342f3@arm.com>
-Date: Mon, 8 Jul 2024 13:50:11 +0100
+	s=arc-20240116; t=1720443035; c=relaxed/simple;
+	bh=V3aqqYL6ua7qgetjLwetbv/p5bVprjmRsG1goa+0u+k=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=sb29ilP6PI3ISw8DB0Q/cLXhd5ZuxhQO0u1zbp1YAWIgKInVokz65CGOCizftZtqWbVPcsjlMafLIRthrLlyHMlw79hkxNqtB+Ky938Ud6lQnSIv0F9JZE+HjG+INyFA3J0lJo71Fsyc6nicmupRy3CdpGLJgyZ25Fw3l3tsYJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZUMSpRq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 67C0FC4AF0A;
+	Mon,  8 Jul 2024 12:50:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720443034;
+	bh=V3aqqYL6ua7qgetjLwetbv/p5bVprjmRsG1goa+0u+k=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=nZUMSpRqLKV3iLA1/JErWRtZIrsSJ/oWAuHHpeljt58UiH4CLC4fVmiwi02WvKcd7
+	 Y/uxwSinA8xqi9nOxM6VhlvXPPKXuBFXA+XUYaEJZfLQFlJgmgIS51peZ5bWHf5uhX
+	 pCSdd+7Nh/BaNwn1Zf4jnGydp3BX1zcLIEMtfwAZvzdgcipmIxkZqWRrYIEemw9/4G
+	 zq1Zb6PfucGEZCn4rMimKyj7ZCdKhWiLfjoy8EcRlq9/DpEVFxDr68+0OlQ8NL3jxV
+	 Z8XJdbpFGQeVxRT1nBXg39Erf/VKovscYOKIqZqAA9592y802G6zldfdQvM6LV8BfQ
+	 c9Fb/nXLbMIUw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55A3FDF3714;
+	Mon,  8 Jul 2024 12:50:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: arm: Add binding document for
- Coresight Control Unit device.
-Content-Language: en-GB
-To: JieGan <quic_jiegan@quicinc.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- James Clark <james.clark@arm.com>, Jinlong Mao <quic_jinlmao@quicinc.com>,
- Leo Yan <leo.yan@linaro.org>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Tao Zhang <quic_taozha@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>,
- Song Chai <quic_songchai@quicinc.com>, linux-arm-msm@vger.kernel.org
-References: <20240705090049.1656986-1-quic_jiegan@quicinc.com>
- <20240705090049.1656986-3-quic_jiegan@quicinc.com>
- <208b3861-6898-4506-9152-c9d770ef1555@arm.com>
- <Zou7FA2Av7CJO+ds@jiegan-gv.ap.qualcomm.com>
- <Zou+fmUJoyzamWcw@jiegan-gv.ap.qualcomm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <Zou+fmUJoyzamWcw@jiegan-gv.ap.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 1/1] net: dsa: microchip: lan9371/2: update MAC
+ capabilities for port 4
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172044303434.27885.6700462773905874303.git-patchwork-notify@kernel.org>
+Date: Mon, 08 Jul 2024 12:50:34 +0000
+References: <20240705084715.82752-1-o.rempel@pengutronix.de>
+In-Reply-To: <20240705084715.82752-1-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: davem@davemloft.net, andrew@lunn.ch, edumazet@google.com,
+ f.fainelli@gmail.com, kuba@kernel.org, pabeni@redhat.com, olteanv@gmail.com,
+ woojung.huh@microchip.com, arun.ramadoss@microchip.com,
+ florian.fainelli@broadcom.com, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ UNGLinuxDriver@microchip.com
 
-On 08/07/2024 11:25, JieGan wrote:
-> On Mon, Jul 08, 2024 at 06:10:28PM +0800, JieGan wrote:
->> On Mon, Jul 08, 2024 at 10:41:55AM +0100, Suzuki K Poulose wrote:
->>> On 05/07/2024 10:00, Jie Gan wrote:
->>>> Add binding document for Coresight Control Unit device.
->>>
->>> nit: This is again too generic ? corsight-tmc-control-unit ? After all
->>> thats what it is and not a *generic* coresight control unit ?
->>>
->> coresight-tmc-control-unit is much better. We will check it.
->>   
->>>>
->>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->>>> ---
->>>>    .../bindings/arm/qcom,coresight-ccu.yaml      | 87 +++++++++++++++++++
->>>>    1 file changed, 87 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
->>>> new file mode 100644
->>>> index 000000000000..9bb8ced393a7
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ccu.yaml
->>>> @@ -0,0 +1,87 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/arm/qcom,coresight-ccu.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: CoreSight Control Unit
->>>> +
->>>> +maintainers:
->>>> +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
->>>> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
->>>> +  - Jie Gan <quic_jiegan@quicinc.com>
->>>> +
->>>> +description:
->>>> +  The Coresight Control unit controls various Coresight behaviors.
->>>> +  Used to enable/disable ETR’s data filter function based on trace ID.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: qcom,coresight-ccu
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    maxItems: 1
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: apb_pclk
->>>> +
->>>> +  reg-names:
->>>> +    items:
->>>> +      - const: ccu-base
->>>> +
->>>> +  in-ports:
->>>> +    $ref: /schemas/graph.yaml#/properties/ports
->>>> +
->>>> +    unevaluatedProperties:
->>>> +      patternProperties:
->>>> +        '^port(@[0-7])?$':
->>>> +          description: Input connections from CoreSight Trace bus
->>>> +          $ref: /schemas/graph.yaml#/properties/port
->>>> +
->>>> +          properties:
->>>> +            qcom,ccu-atid-offset:
->>>
->>> Why do we need this atid offset ? Couldn't this be mapped to the "port"
->>> number ?
->>>
->>> e.g, input-port 0 on CCU => Offset x
->>>       input-port 1 on CCU => (Offset x + Size of 1 region)
->> If the first ATID offset remains constant, it appears to be feasible.
->> We will consider the possibility of this solution.
-> We just checked the ATID offset varies across different hardware platforms.
-> It defined as 0xf4 on some platforms, and some others defined as 0xf8.
+Hello:
 
-What do you mean ? The offset where you apply the filter changes across
-different platforms ? or different "tmc-control-unit" implementations ?
-Is this discoverable from the device ? We could use different
-compatibles for different "types" of the "devices". Simply adding
-something in the DT is not the right way.
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
+On Fri,  5 Jul 2024 10:47:15 +0200 you wrote:
+> Set proper MAC capabilities for port 4 on LAN9371 and LAN9372 switches with
+> integrated 100BaseTX PHY. And introduce the is_lan937x_tx_phy() function to
+> reuse it where applicable.
 > 
-> So I think it should be better to define it in device tree node.
-
-No. See above.
-
-Suzuki
-
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 > 
->>
->>>
->>> I believe I mentioned this in the previous posting too ?
->> Yes, you mentioned before. I moved it from TMC filed to CCU filed.
->>
->>>
->>> Suzuki
->>>
->>
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,1/1] net: dsa: microchip: lan9371/2: update MAC capabilities for port 4
+    https://git.kernel.org/netdev/net-next/c/5483cbfd863f
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
