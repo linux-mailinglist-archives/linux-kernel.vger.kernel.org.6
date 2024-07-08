@@ -1,200 +1,149 @@
-Return-Path: <linux-kernel+bounces-244177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567DD92A050
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C74E92A051
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A7771C21386
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803C31C215B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DB6757FD;
-	Mon,  8 Jul 2024 10:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAB378285;
+	Mon,  8 Jul 2024 10:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="C0UFvPKr"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x4WUN5VE"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E208178C71;
-	Mon,  8 Jul 2024 10:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B0878274
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720435011; cv=none; b=eExCgFvv5gkTXnNW/SIVhBHUTlKzlgYXftIW2ZDHa+50W25VJlKgUEXXYG7UmX2lNsbDtP2oCIArYaA+/wbpFoPhko7dUJL4P3NHIFFqpuMiqasNgtm/ZQpQMgTLQOojZN9/nwQykKbINgM2QeHAm+CTmaMsO+Y3FaEmqvqcuBU=
+	t=1720435021; cv=none; b=L27NjDbFRrbBfYsz94tbKH1CjYl4Ans9CUCSUp73oDrNkt9GbgRvyazW6z+fHmjIS/uVjH9afWm0sVAz3xG+F5/6RGOFBNIiUdh9oB+BahYvKkW730gvfI9WZM686UrLEGyGMh6v7i9NVjdTYfafj0eBL6TOhcoXYOobbiyjKJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720435011; c=relaxed/simple;
-	bh=ZknT70J/YVuHQy1WDrsv46ReyXrbk7c/94o+YsmatOc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fLYE3VogAHzdD92owTsu8SD5mHti8HAOxlGATR97M0eOXfG501QVXEMBX0VmyP26Tcqx8lWbH+oLXtqaL7KnRL16bl3qCO8EUgKTn7px6I8hBSHZNWtc+C1FqcPahbsx44LVKJQ5CuPWCpx/FNlj9qwRqZiKG7Ocn8G9Vy/lmvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=C0UFvPKr; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 3F310120009;
-	Mon,  8 Jul 2024 13:36:46 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 3F310120009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720435006;
-	bh=XEY2NBRjbxqea/5PRY6OMWGLU8etYTc47TSQerXA1j4=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
-	b=C0UFvPKr/f5dyEG9KFHKZ8BQnxrk4RbSGdGKLMt0QcvYTAKuqm+BCNOWUZKZjy2xA
-	 702tlsz1XXBBs7A+x5tQm/hwLY/A1Qh10DnUic4ym4x4M1u7fOSZCJ4zgNrNeIrgvS
-	 Y6B5H7rjBmyOSyg6Kid7g8I6Fd7bUznEiHKl64R22qPUrkfGVFHNVu8ZaTN/+nefEx
-	 OAb0aeHpuZ0uRj+TpvUsPvTZ423FdbqqJt0iswsA4pWZRIys2ZBPMQVFKhyO+UBzGJ
-	 b/j9kvKu7odhYOmMUzAlsXQryrYEIaTc0kcLiwXEK3vUBLvRxWv1mB6vgLSPVkWB2F
-	 L1s/U+ycioNcA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon,  8 Jul 2024 13:36:46 +0300 (MSK)
-Received: from p-i-exch-a-m1.sberdevices.ru (172.24.196.116) by
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 8 Jul 2024 13:36:45 +0300
-Received: from p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) by
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 8 Jul 2024 13:36:45 +0300
-Received: from p-i-exch-sc-m02.sberdevices.ru ([fe80::81d7:3d68:fdfd:518]) by
- p-i-exch-sc-m02.sberdevices.ru ([fe80::81d7:3d68:fdfd:518%9]) with mapi id
- 15.02.1118.040; Mon, 8 Jul 2024 13:36:45 +0300
-From: Alexey Romanov <avromanov@salutedevices.com>
-To: Rob Herring <robh@kernel.org>
-CC: "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "khilman@baylibre.com"
-	<khilman@baylibre.com>, "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-	"martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, kernel <kernel@sberdevices.ru>
-Subject: Re: [PATCH v8 19/23] dt-bindings: crypto: meson: support new SoC's
-Thread-Topic: [PATCH v8 19/23] dt-bindings: crypto: meson: support new SoC's
-Thread-Index: AQHauOTTNCzPPbvGFkCsgbh4L4mRC7HBaAeAgCs5UwA=
-Date: Mon, 8 Jul 2024 10:36:45 +0000
-Message-ID: <20240708103640.g62urznl37jltcvk@cab-wsm-0029881.sigma.sbrf.ru>
-References: <20240607141242.2616580-1-avromanov@salutedevices.com>
- <20240607141242.2616580-20-avromanov@salutedevices.com>
- <20240610223219.GA3175091-robh@kernel.org>
-In-Reply-To: <20240610223219.GA3175091-robh@kernel.org>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E64D23A2DAFEC54B8C21464339A86309@sberdevices.ru>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1720435021; c=relaxed/simple;
+	bh=91xCfqVwPuEvrOGMTcPxnP/qsP/FKrSL1WYjpbg9Wsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hoeW+DRttAD891OJZ3K+/Gr67kb5npfq4ZHpd3DlCPXzs2UDcSPBoT+/r5pioOL98QUzWERkdGc7QEiwbKmxlQZkss1CWUOEPvlMU4yZa9bMgaLZy8jy1LdJZ88B7E0NVF4MmutKGyKewjnKzWWlj9RN+LM6BX8Jt0nNhtiREQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x4WUN5VE; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee910d6a9eso27624531fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720435018; x=1721039818; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yApTVgxZv51OvpGfHpDvG6S/OL9cnD429XFROfWMdz8=;
+        b=x4WUN5VEdzSUyLck5l0769eqaRdETQsNLlBTaYN0O+KXdwMMexS7NAGR3Q5Kj2IiZG
+         qPMbQYrXY1OTfEiUevSrSEeSPYwu1ndR978UnLvJ3iwi7BUhTtpYjBoP4iTd61upjwxz
+         g8iSOKg7RSGPzPO8/m02P2kgVFY7YZ6uNdFLcqGYquK4Bq8xpmHzhmMquHm90bQ1Mnxj
+         emtXyXFAkv4MIppi8iiVtJQAy0/t3PyYkeBwQBoLrRLK/+U0XMEZu2yfYpWFRsODJFnP
+         MIom8spVOLqzU90gDLeW/37DhM8NEliXdUlMBVn6RtUnYkbNKyVJiF+EHm2YUhuuEU8F
+         vNgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720435018; x=1721039818;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yApTVgxZv51OvpGfHpDvG6S/OL9cnD429XFROfWMdz8=;
+        b=eTEHq+0I/P9CffKXUtPjmPQ6dENTeedjQhx8KycRfuy4MTm2Fze7CD7/R5gkdOvbQO
+         WXoxoURS1j2x5BtaYH/CDHq5Ngd47Exnr/wF5F/PBxeh3LkgChmQDtAMiLWtnF+b7vO3
+         zWpDg8zALKv2wC9uHfo6pifuXT3lhx6MxFViARLwh1z0QG6+rrpGlGtOwbkvbRwDTLBG
+         0fIzdfiD0MBoeopF3JCs0SD+wxiicz7N/DnOon8gfuZDXmD8CckrfPKAdkDk1tvchbHO
+         ojXFZMP9t4aM2tn7B1h+TF//oGNk1NtzjetXpivLHcDiDUd6+wwrkwzXTa3hgsmtt2bo
+         BdzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqD/eNhiT+dtfqjF8fxPgD3nrR4M74yjt4N/SjIJ0qEEURcAVLMPCYj0J57pLnZWqDooIDn4fh1zaQzW8a9GW0zmTY3EYTj4BoswDE
+X-Gm-Message-State: AOJu0YyvtKPEjlFoktEHTknaW3d5/h52ogIigqPbupCNvwcCVTpHf0JF
+	/DZjmjZyS6Bl9asuqRJYKeg8pvGqJFDmVt3b8M0ru76Hx1kSZWddzRLnrZbHw74=
+X-Google-Smtp-Source: AGHT+IE2uQJsw3yHMiO+05NpogI8aZi1dOYxSPeVl/4AImHJ2Z30byBvsdqf00HB9gH656IUDwMP7g==
+X-Received: by 2002:a2e:8e91:0:b0:2ec:5254:3360 with SMTP id 38308e7fff4ca-2ee8f2d8756mr35104971fa.22.1720435018089;
+        Mon, 08 Jul 2024 03:36:58 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee98a07c5bsm7336831fa.84.2024.07.08.03.36.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 03:36:57 -0700 (PDT)
+Message-ID: <af455a37-d8ad-43ff-b268-13193f75dd41@linaro.org>
+Date: Mon, 8 Jul 2024 12:36:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186370 [Jul 08 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: avromanov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, cab-wsm-0029881.sigma.sbrf.ru:7.1.1,5.0.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/08 09:16:00 #25900162
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: vendor-prefixes: Add prefix for ieisystem
+To: George Liu <liuxiwei1013@gmail.com>, linux-aspeed@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+References: <20240708034735.99939-1-liuxiwei@ieisystem.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240708034735.99939-1-liuxiwei@ieisystem.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Rob,
+On 08/07/2024 05:47, George Liu wrote:
+> Add a vendor prefix entry for ieisystem
+> 
+> Signed-off-by: George Liu <liuxiwei@ieisystem.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-On Mon, Jun 10, 2024 at 04:32:19PM -0600, Rob Herring wrote:
-> On Fri, Jun 07, 2024 at 05:12:38PM +0300, Alexey Romanov wrote:
-> > Now crypto module available at G12A/G12B/S4/A1/SM1/AXG.
-> >=20
-> > 1. Add new compatibles:
-> >   - amlogic,g12a-crypto
-> >   - amlogic,axg-crypto
-> >   - amlogic,a1-crypto
-> >   - amlogic,s4-crypto (uses a1-crypto as fallback)
-> >=20
-> > Difference between this compatibles:
-> >  * Different registers offset and the number of setup descriptors.
-> >  * GXL doesn't support hashing like the others.
-> >  * G12A/B and A1/S4 crypto HW don't support 192 AES key.
-> >  * GXL, G12A/B and AXG require a reverse IV key before processing.
-> >=20
-> > 2. Add power-domains in schema, which is required only for A1.
->=20
-> You added it in the prior patch, was that supposed to be done here? Kind=
-=20
-> of strange for h/w to optionally have a power-domain... It either has=20
-> one or it doesn't. OTOH, making required is an ABI break.
+Threading is broken, no changelog, From does not match Signed-off-by.
 
-This is vendor design. In old SoC's power domain for crypto HW
-was not configurable, but in A1-series it is configurable.
+Please fix all three above and send a fixed v3.
 
->=20
-> >=20
-> > Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-> > ---
-> >  .../bindings/crypto/amlogic,gxl-crypto.yaml   | 21 +++++++++++++++++--
-> >  1 file changed, 19 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypt=
-o.yaml b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > index aff6f3234dc9..a8344de71b4a 100644
-> > --- a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > +++ b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > @@ -11,8 +11,16 @@ maintainers:
-> > =20
-> >  properties:
-> >    compatible:
-> > -    items:
-> > -      - const: amlogic,gxl-crypto
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - amlogic,s4-crypto
-> > +          - const: amlogic,a1-crypto
-> > +      - enum:
-> > +          - amlogic,gxl-crypto
-> > +          - amlogic,axg-crypto
-> > +          - amlogic,g12a-crypto
-> > +          - amlogic,a1-crypto
-> > =20
-> >    reg:
-> >      maxItems: 1
-> > @@ -37,6 +45,15 @@ required:
-> >    - clocks
-> >    - clock-names
-> > =20
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          const: amlogic,a1-crypto
-> > +    then:
-> > +      required:
-> > +        - power-domains
-> > +
-> >  additionalProperties: false
-> > =20
-> >  examples:
-> > --=20
-> > 2.34.1
-> >=20
+Best regards,
+Krzysztof
 
---=20
-Thank you,
-Alexey=
 
