@@ -1,155 +1,193 @@
-Return-Path: <linux-kernel+bounces-244291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B0C92A23F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:12:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F30C92A1FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267241C21586
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:12:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D261F22AA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D39B80BF3;
-	Mon,  8 Jul 2024 12:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B438213EFF3;
+	Mon,  8 Jul 2024 12:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CScz0WZ9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ih1npZSt"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2074.outbound.protection.outlook.com [40.107.100.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C45680046;
-	Mon,  8 Jul 2024 12:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720440355; cv=none; b=HZiaYgaE4pUeQJdVSITh++TmoCXmXx7iNjHTC1e+/BTWgcdZWwH94Xg+dX1cbQX4DcTZQQqqEV7bjpK5w3kIRFcjJ5YGUEytqEgeDpohZrnEVSQBRiVAtlBwn05/+H2u4FkPKufQnaGTdoTfwfaLKLEij7Khul93SsPRInPv4ZQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720440355; c=relaxed/simple;
-	bh=zYiZL26YpL9nyJBbsDP8s4nzF/bHXrFqq56T1M+s51E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQl1JDn/iaifH6mY60F0ZjafawAj/aYQ1K7vUA7vbHNv4tvokzLG3VmMfLGxwUdYvYUG5DsH2Qv6cTjBDS95pHFpM4u0VlEflBWKYE0m1eyFe5RbcVU7g9xBOWRp35ahvYAmHLyIRs8O9qVOtSYEujrGc8r7EO8gmHOaJoh3iI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CScz0WZ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64675C116B1;
-	Mon,  8 Jul 2024 12:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720440354;
-	bh=zYiZL26YpL9nyJBbsDP8s4nzF/bHXrFqq56T1M+s51E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CScz0WZ99qjtrVPURkXM/OG7BWNP/9toOwOYu6FHQmMXHVS6vkrvE9s+tv5Ag5GyX
-	 d+zy08c/3FCc+bWgUIJ7D1QfpyaxOclKyAHbpORvZQ3DzeBDFFpM9eKl8bF8rGjBxg
-	 O8elQO+czjq/PgK0FCDdM25lfRqHJ5rZnhexQ2hQloqpbDSQaznCXUIj6Kkm7W2zar
-	 NA8pOYoEg8GY9ARqy90GQp9O/yRmwRLa4w8v5X27EEMtbutKNUoe1k2Ys/mxs1z7WY
-	 Q5DiUvNWoCzrUZ0ZEEFqFibTyuflF0nlqRRMzfMh5DnQLLR9rKpBDr8DjJik3arWvl
-	 3VRj9O/Fa7eQg==
-Date: Mon, 8 Jul 2024 19:51:43 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] serial: 8250: move mmp|pxa uart earlycon code and add
- xscale earlycon
-Message-ID: <ZovSzxZzZJRS8JWm@xhacker>
-References: <20240706101856.3077-1-jszhang@kernel.org>
- <20240706223323.GYA367.dlan.gentoo>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3366613E033;
+	Mon,  8 Jul 2024 12:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720440135; cv=fail; b=lxJIT8i7sf3TPUA/jpFbbHsIipNkGFG9g0ZGYnFeuPmZ9JFgo4SASYpgGfe1Qvg14kN5fwsoiz0fUKq6Hsiwih5+zsY26JsPssEZftQSzMAYI/se9/uPrO82lnOT59tGuBtYUj+7oG+KPAf7EOylIcvenLyJkULyR/+toShbq7s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720440135; c=relaxed/simple;
+	bh=HZPdJHo98IJDyiIE+59nkgVbHCaUJjoE88a8e4zhErw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=dh6+w64qGelwZ1muIlWUf0512bm/e/Emyy5bYYIfIN8pZIs8CE6Ehgzl5Ke5hT6mVK7A0jR69kVYTS4VhUGywaRDBHH17b7XXW30JUhQSk1ID/i3Kiy3XiOobgvsiqrCVklhgmESf55JcA3BzsjSW6Nurz+fc2cafnbS0qH/vts=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ih1npZSt; arc=fail smtp.client-ip=40.107.100.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RI1JQnOxOwRuoKnQ0sn6LuOBaZXCrJNzchsfc9YOmkMyVRcxJRrKCV/JNzPBo2yXeLL6u88GFKNbk0ZNlX2TRABVBhue9FD+q+Ggcb/4Zyrq0ow9gM55pACmQ4SOd1AFI/s0qEJTHut5e86hMz8+TjyW2viGN/CTfER+84noxGqmffhJcNmD1rQokb4scwJK9PMGMnS3HW3s4HZWOwh0MEbyy+BcanRSsL8ERaSg+/+px9v54qc0Sd5SpzsxTfTJmxlrevvJ5VKL327xADnzaivwrMHu18osCThe1/BabHV55q/jqkeZuIcLsieKwtIsAsiBIkqLB1/artSp+HnetA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cREcdg83i+E91FcU03gHGtmMztmDrz+EkM71cwATqWE=;
+ b=gl2eks/8XwM9ZUiO6CCLq8Be9ZUl/cSrXxMvSbDi92prBZLqmfUqygljAF8ZipO1BmOnArGkZTy7PuQEw7jUVMhymEkbKJZBIvKA/x57txcaVbuszoopMNaM65iR7R3CtgUIaf2tmWwE1dPaVZPqfbMMrWBy8k4/ptpYqlSzZZUEV1waYUkxQGzzT8uMqucPe64kfDE7tmKQL/hBqhBexP0j7t+a8FyI9sFeZQr7i6tl9LhmYx6xwiQdsQiYpvta7pQBT3wV92Ay+120LvLExVCTbi7pRizILWWv2niOpJUwyBaVOCmJpFT7xCHkRsfxBi4MPjGyFzpRiiWHU/xx2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=oracle.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cREcdg83i+E91FcU03gHGtmMztmDrz+EkM71cwATqWE=;
+ b=Ih1npZStdL0ipL36df7pqXXdPHSxQshSyZg8EEeERdYvmCI9rF/pgwNRmrvaN1EIqeI8a3dxbnJQeLFskyoWW/y9b2idHs5YglsQUxVUgAW7tcV9L/ZZMippvGT76rb/rPJ0DgM1Ohd1R0mORJPcAHu6fWolN3Wqgg8SH3EwK3h41QHx68lwej+dnCzPwVqJMGdCMI8GRFSPzOFEUuyxoxyJak8TNR23n75MoL69w1LteHQPJL6TvTDWkYLYKsMC5Rm8O7vm0YejfHcputEsk1udV+rN7DVh9X+m1Ws3ETR/zX1z8OFjmCtOHSFrzKZs5UfrliFQ0l6yIdAWYkqE+w==
+Received: from MN2PR05CA0021.namprd05.prod.outlook.com (2603:10b6:208:c0::34)
+ by CYYPR12MB8731.namprd12.prod.outlook.com (2603:10b6:930:ba::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Mon, 8 Jul
+ 2024 12:02:10 +0000
+Received: from BL6PEPF00020E62.namprd04.prod.outlook.com
+ (2603:10b6:208:c0:cafe::12) by MN2PR05CA0021.outlook.office365.com
+ (2603:10b6:208:c0::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.18 via Frontend
+ Transport; Mon, 8 Jul 2024 12:02:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL6PEPF00020E62.mail.protection.outlook.com (10.167.249.23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7762.17 via Frontend Transport; Mon, 8 Jul 2024 12:01:55 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 8 Jul 2024
+ 05:01:12 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 8 Jul 2024
+ 05:01:11 -0700
+Received: from dev-l-177.mtl.labs.mlnx (10.127.8.11) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 8 Jul 2024 05:01:08 -0700
+From: Dragos Tatulea <dtatulea@nvidia.com>
+Date: Mon, 8 Jul 2024 15:00:27 +0300
+Subject: [PATCH vhost v3 03/24] vdpa/mlx5: Drop redundant code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240706223323.GYA367.dlan.gentoo>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20240708-stage-vdpa-vq-precreate-v3-3-afe3c766e393@nvidia.com>
+References: <20240708-stage-vdpa-vq-precreate-v3-0-afe3c766e393@nvidia.com>
+In-Reply-To: <20240708-stage-vdpa-vq-precreate-v3-0-afe3c766e393@nvidia.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?utf-8?q?Eugenio_P=C3=A9rez?=
+	<eperezma@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
+	<leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu
+	<si-wei.liu@oracle.com>
+CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>, Cosmin Ratiu
+	<cratiu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
+X-Mailer: b4 0.13.0
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E62:EE_|CYYPR12MB8731:EE_
+X-MS-Office365-Filtering-Correlation-Id: f859f6e2-e1f6-42cb-7357-08dc9f45c330
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZVk4NHJSeDhMdFVYR0ZZeS9USEJOb1RBL0M1VWJJZ213dlplaHUwVEw5Wlkz?=
+ =?utf-8?B?SHlRT2VyWmx1bGVmZXM2aEJJRDE0djVZN2JEV1M3aisvQklBWnhxZTVDWlVp?=
+ =?utf-8?B?Qjd4WVNCcVpuaUxzcVlzWnh1RkQ2aGgrUGkzVldqa3BxbFVWSmMyd25yWUYr?=
+ =?utf-8?B?TXlOK1l3QitsTUFldUJDNnVhMURSYWZ3RlJvc1RGQzFITnhkOWNtN3pCMGlq?=
+ =?utf-8?B?c0dRTUY4ZUhVUENuclo4M2JsdWZ2MHA4aitheklGdmNzR2hWUWgyLzdlVjMr?=
+ =?utf-8?B?S0xwYmFsbDc1U0NCeE9OdmZKdFUxbVE5TU0zMGM3Y0tuMDFtamZETm1nTERU?=
+ =?utf-8?B?OXlkbFFMMi9zN1pqWXQ4T3pjS05RaG8wTG1NNFREa3JKQW15Q2t3eURpQVVs?=
+ =?utf-8?B?ZU8xdnFqRnk0SkxKTWFxMHlRclNSL1NvdzVLZXZOL1hISnMwYXRDZ1prQmE4?=
+ =?utf-8?B?ajF1MUhRcFlJeDJtcFdmckpFV3pNZk53THdCcDFCaVVqVk8xQVA4L1oyYkMr?=
+ =?utf-8?B?YjJzbFJ5Z2cxMXNsR084ZTA1M3F4TnVNcDJSZVcvVE5oMWF0cFlOUElkYzJB?=
+ =?utf-8?B?Ym4vaGpScWlmQ0svVmxJR2s4NkZqUWZTZHQ1WmhNc2hwc3p5eU1JOXlUOGxi?=
+ =?utf-8?B?cmNraC9uWjhSUDlXWnYxd3c3YWtEU2NnQ2tYbVJxMkNZV2NIdUVNbXJSaUJx?=
+ =?utf-8?B?TlJDOFdlNk9MUkorY1dCd2tJVDZoa2ZBYnNCWGN2TVkrNzc3NVVHUC9HVm9a?=
+ =?utf-8?B?dUtVcUZCYmJJNWQzUml5Z3BnWlZrTkxxWWNlcGQvbTZ5bzRGS1V6QitwYWla?=
+ =?utf-8?B?Lzk0ZUZXbWhTVmxLNWtsZVY3ZWJZc3hrWUJmRGlzdEdhcUFMNjBlVTQyM2Ez?=
+ =?utf-8?B?Y0xlWWVDM0NaRW1BSkxYek9ZQ3g4clJtVWQ5bE00QXVHMUV5RHh0YUdWdFlt?=
+ =?utf-8?B?bGdnb3VVblR3NFFsaXJqRG9UL0hBL1VGTXBqZFAxbTg1a3h0MkFEcEVBL3RI?=
+ =?utf-8?B?TXgwV2p1MWQ2ejEvQVN6MFhEK25jSFd4OW5ndC8yK3BXR3RlWE9nTzIzajRJ?=
+ =?utf-8?B?Qks5RWFkUmtaRHJaMVdhVUNCTDdNalh1VDFJcmkwTmtyY0c0aTA1MjVaV25V?=
+ =?utf-8?B?UXpwSVpERHNTK1dMYjdreUNMOW9razcvY2lzSks0QVFpd2ZvVTVIYmV3K1Jn?=
+ =?utf-8?B?Qkt2NzJ0NHB6SVMyK3lVdm16bUR4SE5uSldOYlRrc1p5cElNSlF4MlFWMGRT?=
+ =?utf-8?B?QVVEeTBOMmVGL0QvK3NZc09YNmdmNjdITGVWRkgvYTNnMlF4N2tuaTlZc2V5?=
+ =?utf-8?B?YkNWdjZzTnFKNExBVWtDNGc0enBWeFBOU0dTbzBlQUV0NXlEUjRYdWVrM0tz?=
+ =?utf-8?B?bkI3T2loUE8yWXMwbFJCYkYrYmE5c2U2SmlXYzVWN0cramVJUm5DMnFxaWNX?=
+ =?utf-8?B?c1VldjN0YldOa0s0cjZwUFZRV3UzQ0VkL0lHY0dpQ0h5RjdFYmllMVh0K1RX?=
+ =?utf-8?B?aGViSzVDYllPWFZmd1VCOVI1RXFLSnVYRkpmenlvSlI4RXN4VnlSL0M2UEdP?=
+ =?utf-8?B?d29YMGhRWjBOb2d1VnVsSEZSbERBQnE4U0ZsaWdCL08yRytQVGIzYWcwMHVQ?=
+ =?utf-8?B?THNlSFBQWEJqL2IvR3hab1QrQkJPZnFZcy9WdDVTL3VPRGFwK3cxcUg1akEy?=
+ =?utf-8?B?YjkxcGlSNnhZQ2w3ajVibTdMaHhZVjJKWFBkRzRnaGIzRDJJMWdaaFlyYksr?=
+ =?utf-8?B?OFlvTzBmaythbG9WSzZJZG5PRkRLWlJpWC9iNmFUVnMxYkJ1c3d1OEM5Uitq?=
+ =?utf-8?B?ekluTldCc3RaOENSak9Cc2FlZjltQnpvaTRyRkNZUml4c05PNmx5WlVTcjBX?=
+ =?utf-8?B?V001V29jL1EvTk1DNlF5ZUhhOExDb0JrNmxSSWlXcHVxVGpyMzBNZENpQWEx?=
+ =?utf-8?Q?clLO2p9/2/Z4JkpiBEoSZbyR5xiBNvK0?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 12:01:55.4028
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f859f6e2-e1f6-42cb-7357-08dc9f45c330
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E62.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8731
 
-On Sat, Jul 06, 2024 at 10:33:23PM +0000, Yixun Lan wrote:
-> Hi 
-> On 18:18 Sat 06 Jul     , Jisheng Zhang wrote:
-> > There are two other drivers that bind to "mrvl,mmp-uart": the 8250_of
-> > and the 8250_pxa. The previous one is generic and the latter is binded
-> > to ARCH_PXA || ARCH_MMP. Now we may have pxa programming compatible
-> > HW to support, making use of the generic 8250_of seems a good idea.
-> > However, there's no earlycon support if we go with this solution. So
-> > move the mmp|pxa-uart earlycon code to core 8250_early.c.
-> > 
-> > At the same, add xscale earlycon support too, only build test since
-> > I have no xscale machine any more.
-> > 
-> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> > ---
-> >  drivers/tty/serial/8250/8250_early.c | 11 +++++++++++
-> >  drivers/tty/serial/8250/8250_pxa.c   | 16 ----------------
-> >  2 files changed, 11 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/8250/8250_early.c b/drivers/tty/serial/8250/8250_early.c
-> > index e3f482fd3de4..6176083d0341 100644
-> > --- a/drivers/tty/serial/8250/8250_early.c
-> > +++ b/drivers/tty/serial/8250/8250_early.c
-> > @@ -171,6 +171,17 @@ OF_EARLYCON_DECLARE(ns16550a, "ns16550a", early_serial8250_setup);
-> >  OF_EARLYCON_DECLARE(uart, "nvidia,tegra20-uart", early_serial8250_setup);
-> >  OF_EARLYCON_DECLARE(uart, "snps,dw-apb-uart", early_serial8250_setup);
-> >  
-> > +static int __init early_serial8250_rs2_setup(struct earlycon_device *device,
-> > +					     const char *options)
-> > +{
-> > +	device->port.regshift = 2;
-> just wondering if possible to introduce a generic earlycon sub option? so kernel
+Originally, the second loop initialized the CVQ. But (acde3929492b
+("vdpa/mlx5: Use consistent RQT size") initialized all the queues in the
+first loop, so the second iteration in init_mvqs() is never called
+because the first one will iterate up to max_vqs.
 
-the 8250 ealycon can parse reg-shift from dt too, so no sub option is
-needed. The reason I hardcoded here is: pxa-uart and xscale-uart doesn't
-mandate "reg-shift" property in the binding, while I did see mmp-uart
-mentions "reg-shift" is required in the DT binding.
+Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+Acked-by: Eugenio Pérez <eperezma@redhat.com>
+Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+---
+ drivers/vdpa/mlx5/net/mlx5_vnet.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index 1ad281cbc541..b4d9ef4f66c8 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -3519,12 +3519,6 @@ static void init_mvqs(struct mlx5_vdpa_net *ndev)
+ 		mvq->fwqp.fw = true;
+ 		mvq->fw_state = MLX5_VIRTIO_NET_Q_OBJECT_NONE;
+ 	}
+-	for (; i < ndev->mvdev.max_vqs; i++) {
+-		mvq = &ndev->vqs[i];
+-		memset(mvq, 0, offsetof(struct mlx5_vdpa_virtqueue, ri));
+-		mvq->index = i;
+-		mvq->ndev = ndev;
+-	}
+ }
+ 
+ struct mlx5_vdpa_mgmtdev {
 
-> can parse reg-shift from command line parameter instead of hardcoding here,
-> which would benefit more drivers (potentially without adding more OF_EARLYCON_DECLAREs..)
-> 
-> I mean something like this:
-> Documentation/admin-guide/kernel-parameters.txt
-> uart[8250],mmio32,<addr>[,options[,reg-shift=0,1,2,4 ..]]
-> 
-> > +
-> > +	return early_serial8250_setup(device, options);
-> > +}
-> > +OF_EARLYCON_DECLARE(uart, "intel,xscale-uart", early_serial8250_rs2_setup);
-> > +OF_EARLYCON_DECLARE(uart, "mrvl,mmp-uart", early_serial8250_rs2_setup);
-> > +OF_EARLYCON_DECLARE(uart, "mrvl,pxa-uart", early_serial8250_rs2_setup);
-> > +
-> >  #ifdef CONFIG_SERIAL_8250_OMAP
-> >  
-> >  static int __init early_omap8250_setup(struct earlycon_device *device,
-> > diff --git a/drivers/tty/serial/8250/8250_pxa.c b/drivers/tty/serial/8250/8250_pxa.c
-> > index ba96fa913e7f..b5d937f6f3f9 100644
-> > --- a/drivers/tty/serial/8250/8250_pxa.c
-> > +++ b/drivers/tty/serial/8250/8250_pxa.c
-> > @@ -165,22 +165,6 @@ static struct platform_driver serial_pxa_driver = {
-> >  
-> >  module_platform_driver(serial_pxa_driver);
-> >  
-> > -#ifdef CONFIG_SERIAL_8250_CONSOLE
-> > -static int __init early_serial_pxa_setup(struct earlycon_device *device,
-> > -				  const char *options)
-> > -{
-> > -	struct uart_port *port = &device->port;
-> > -
-> > -	if (!(device->port.membase || device->port.iobase))
-> > -		return -ENODEV;
-> > -
-> > -	port->regshift = 2;
-> > -	return early_serial8250_setup(device, NULL);
-> > -}
-> > -OF_EARLYCON_DECLARE(early_pxa, "mrvl,pxa-uart", early_serial_pxa_setup);
-> > -OF_EARLYCON_DECLARE(mmp, "mrvl,mmp-uart", early_serial_pxa_setup);
-> > -#endif
-> > -
-> >  MODULE_AUTHOR("Sergei Ianovich");
-> >  MODULE_LICENSE("GPL");
-> >  MODULE_ALIAS("platform:pxa2xx-uart");
-> > -- 
-> > 2.43.0
-> > 
-> 
-> -- 
-> Yixun Lan (dlan)
-> Gentoo Linux Developer
-> GPG Key ID AABEFD55
+-- 
+2.45.2
+
 
