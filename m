@@ -1,147 +1,260 @@
-Return-Path: <linux-kernel+bounces-244977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C91792AC6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7392692AC70
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44701282807
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29291282EAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F400152E00;
-	Mon,  8 Jul 2024 23:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA431527BE;
+	Mon,  8 Jul 2024 23:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FnnQ8RiF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTmweUVh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E74114F9D9;
-	Mon,  8 Jul 2024 23:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F578152537;
+	Mon,  8 Jul 2024 23:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720480221; cv=none; b=P2q6KjRBsbuQWULwpp1Swq4R21LHmVbER2IKtgjgXCLK3DvLV5iGx72VQxTh5rtYKJ8GQC+Z/0gUEAnc85DUufRcf4LQiQmFVyte36ZIMaUM+ljDFn+zQ/3bLoi9PvOf1l0Rs0lJ9g3BHstthSYz3tXc7W59gWsjkoW+dEh812I=
+	t=1720480300; cv=none; b=FqzKYx1BIa+YTObH5iVekjD+q93PVeGhlvEt6SNhbN1r86NLfzs6kNSXUUfRy4T3Iqjb7cg3B3ve8uazUdrT/FIy9Goqw6cnhKvs203yZsm8VtObg/lYcDWm+AKgms808E6r4fvZeBnbBhRdwy4VzPX2TB948PwL/TqOM4rEIt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720480221; c=relaxed/simple;
-	bh=TtrFMUHs/W2r2VOSo2ppvM/WhSliMAnQyowd3rIp5SY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CKIjLtCl5K8BVpE4sfmj2WGAW+hbD5E0fshqDOHSMfcXdAVO7mFGh6ScHUscxbTWqHQjZ2EI4SyE9r7xDu7vbeIgFHVxrRxQb1WmMXYy3UNoTlM03CkL07kh4JUYMCjHTM13i5GXcwuw3qDgY2TaPCAGIel+pt75a2zkD3sNKhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FnnQ8RiF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468MjaYQ009259;
-	Mon, 8 Jul 2024 23:10:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dy2UesldC4XElGF1LE9xs2PmRBnT4drShFX9fHnwLlI=; b=FnnQ8RiFtxR4b+io
-	rMrIm0Pbs2bb/HF4PJ73tYBzJNHs00g0KKZc5OEUTodQ9tyKiVKSL6vv8F4XstLi
-	ogquKqr9dhAkbsIYM9pwoCH2YQrmxooeHoSNIXr5r2RuXroehQPcv0CFawylfvQz
-	zIWCacyJFFL5V5seLm7/s8zH0DYhWvbTC3VvWunN7h/KBQD3k2I2qr3ZumtM55CU
-	HG5+eXU42MfDNyn6ysLqboPuWKALZp1hP5b7SvLlvcZ0z5y3isIFVPYkQy/tMVOq
-	6M6H07E/U/juV18GPthuZtYVYc/3JcggUJ1i35mDW3h+m6OhvreW2DgjkzNO16gE
-	yI6i2A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wjn500d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 23:10:07 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468NA6Ye000939
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 8 Jul 2024 23:10:06 GMT
-Received: from [10.71.109.148] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
- 16:10:02 -0700
-Message-ID: <5c363e91-581c-4d33-ad5a-154da915b3fb@quicinc.com>
-Date: Mon, 8 Jul 2024 16:10:01 -0700
+	s=arc-20240116; t=1720480300; c=relaxed/simple;
+	bh=DdmKJ8cyJRaKktRQcB/n8k2HkaWTT1vMXmfpVgv1gKw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GyxPQKt5VSbVsLiWMAxQ9oWzd/a5yl5TLqDClqn7GH0SVhKJ1N50C6GR5h1MdtuHtoeudv3gVs/uwn/c6rNQi1N0pKd6w23y9ZscNxrw67qNGrsrJ/WtT4viukvApviS/MxYfqHfIvP39/8z3eqPDA3EiJX7e9OlUsGO1DvRvV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTmweUVh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92C2C116B1;
+	Mon,  8 Jul 2024 23:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720480299;
+	bh=DdmKJ8cyJRaKktRQcB/n8k2HkaWTT1vMXmfpVgv1gKw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CTmweUVh5ytN2mIgtHxq1K3NK5QK8m3OT+DXOgiXQAwqKk87udm8bJdQHpSzbfdpU
+	 e26t6vwHrxtc/35GDHFsl2yLfBAv+ujvACgX3YAk9G6hPvoKBiSux7WDSdhe50Z55H
+	 v+4FNZx2FPo0eSraDF4Xwk5xkudpbKgzrPDX33u8K9BQtax5+3tnd/ZO41ISA7GmJZ
+	 Pjx8FLBE8tJHrT0b8UEs98vbaY2EXc2xG1wBmBFSPB5fw5uRqawGv+oxvlorNSkoZb
+	 MJ+6DLZkwsZOioqF9gEqjCJusibS3Ml9GPCP+R642KBuMLpaHZ0Hk3OInsOblSa4Eg
+	 MLMdz5rtkQIQA==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: x86@kernel.org,
+	mingo@redhat.com,
+	tglx@linutronix.de,
+	jpoimboe@redhat.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	rihams@fb.com,
+	linux-perf-users@vger.kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v4] perf,x86: avoid missing caller address in stack traces captured in uprobe
+Date: Mon,  8 Jul 2024 16:11:27 -0700
+Message-ID: <20240708231127.1055083-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: CMA Regression issue - [PATCH v2] of: reserved_mem: Restructure
- code to call reserved mem init functions earlier
-To: Aisheng Dong <aisheng.dong@nxp.com>
-CC: Rob Herring <robh@kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "imx@lists.linux.dev" <imx@lists.linux.dev>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        Jason Liu <jason.hui.liu@nxp.com>,
-        "dongas86@gmail.com" <dongas86@gmail.com>,
-        "saravanak@google.com"
-	<saravanak@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, <kernel@quicinc.com>
-References: <DU0PR04MB9299C3EC247E1FE2C373440F80DE2@DU0PR04MB9299.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <DU0PR04MB9299C3EC247E1FE2C373440F80DE2@DU0PR04MB9299.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NQCTMusJS45gloHO2U81phdJdvWkemll
-X-Proofpoint-GUID: NQCTMusJS45gloHO2U81phdJdvWkemll
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_13,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=881 clxscore=1011
- mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407080172
+Content-Transfer-Encoding: 8bit
 
+When tracing user functions with uprobe functionality, it's common to
+install the probe (e.g., a BPF program) at the first instruction of the
+function. This is often going to be `push %rbp` instruction in function
+preamble, which means that within that function frame pointer hasn't
+been established yet. This leads to consistently missing an actual
+caller of the traced function, because perf_callchain_user() only
+records current IP (capturing traced function) and then following frame
+pointer chain (which would be caller's frame, containing the address of
+caller's caller).
 
-On 7/4/2024 4:41 AM, Aisheng Dong wrote:
-> Hi Oreoluwa,
->
-> We observed a CMA regression issue on MX8MN that the CMA region failed to be
-> setup by rmem_cma_setup() since the following patch:
-> f2a524d9ef5b ("of: reserved_mem: Restructure code to call reserved mem init functions earlier") [1]
-> And the CMA node was incorrect parsed (e.g. non-reuseable) due to NULL node pointer.
-> Below is one line boot log tested with the tag next-20240703 of linux-next tree.
-> OF: reserved mem: 0x0000000058000000..0x000000007fffffff (655360 KiB) map non-reusable linux,cma
-> NOTE: actually there is a reusable property:
-> linux,cma {
->         compatible = "shared-dma-pool";
->         reusable;
->         size = <0 0x28000000>;
->         alloc-ranges = <0 0x40000000 0 0x40000000>;
->         linux,cma-default;
-> };
->
-> The root cause was that the CMA region was initialized at a very early stage
-> since above commit in question.
-> The call flow became:
-> early_init_fdt_scan_reserved_mem()->fdt_scan_reserved_mem()->
-> __reserved_mem_alloc_size()->of_reserved_mem_save_node(NULL, xxx)->
-> of_init_reserved_mem_node()->__reserved_mem_init_node().
->
-> The rmem->dev_node is still NULL when calling __reserved_mem_init_node()
-> which fails to call the rmem_cma_setup().
->
-> Please let me know if there's already a fix patch.
->
-> [1] https://lore.kernel.org/all/20240620001027.2326275-1-quic_obabatun@quicinc.com/
->
-> Regards
-> Aisheng
-Hi Aisheng,
+So when we have target_1 -> target_2 -> target_3 call chain and we are
+tracing an entry to target_3, captured stack trace will report
+target_1 -> target_3 call chain, which is wrong and confusing.
 
-I have uploaded a fix here:
-https://lore.kernel.org/all/20240708230613.448846-1-quic_obabatun@quicinc.com/
+This patch proposes a x86-64-specific heuristic to detect `push %rbp`
+(`push %ebp` on 32-bit architecture) instruction being traced. Given
+entire kernel implementation of user space stack trace capturing works
+under assumption that user space code was compiled with frame pointer
+register (%rbp/%ebp) preservation, it seems pretty reasonable to use
+this instruction as a strong indicator that this is the entry to the
+function. In that case, return address is still pointed to by %rsp/%esp,
+so we fetch it and add to stack trace before proceeding to unwind the
+rest using frame pointer-based logic.
 
-Please test and see if this fixes the issue.
+We also check for `endbr64` (for 64-bit modes) as another common pattern
+for function entry, as suggested by Josh Poimboeuf. Even if we get this
+wrong sometimes for uprobes attached not at the function entry, it's OK
+because stack trace will still be overall meaningful, just with one
+extra bogus entry. If we don't detect this, we end up with guaranteed to
+be missing caller function entry in the stack trace, which is worse
+overall.
 
-Thank you!
-Oreoluwa
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+v3->v4:
+  - use get_user() instead of __get_user(), given untrusted input (Josh);
+  - reduced #ifdef-ery (Josh);
+v2->v3:
+  - added endr64 detection and extracted heuristics into a function (Josh);
+v1->v2:
+  - use native unsigned long for ret_addr (Peter);
+  - add same logic for compat logic in perf_callchain_user32 (Peter).
+
+ arch/x86/events/core.c  | 62 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/uprobes.h |  2 ++
+ kernel/events/uprobes.c |  2 ++
+ 3 files changed, 66 insertions(+)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 5b0dd07b1ef1..c09603d769a2 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -41,6 +41,7 @@
+ #include <asm/desc.h>
+ #include <asm/ldt.h>
+ #include <asm/unwind.h>
++#include <asm/uprobes.h>
+ 
+ #include "perf_event.h"
+ 
+@@ -2813,6 +2814,46 @@ static unsigned long get_segment_base(unsigned int segment)
+ 	return get_desc_base(desc);
+ }
+ 
++#ifdef CONFIG_UPROBES
++/*
++ * Heuristic-based check if uprobe is installed at the function entry.
++ *
++ * Under assumption of user code being compiled with frame pointers,
++ * `push %rbp/%ebp` is a good indicator that we indeed are.
++ *
++ * Similarly, `endbr64` (assuming 64-bit mode) is also a common pattern.
++ * If we get this wrong, captured stack trace might have one extra bogus
++ * entry, but the rest of stack trace will still be meaningful.
++ */
++static bool is_uprobe_at_func_entry(struct pt_regs *regs)
++{
++	struct arch_uprobe *auprobe;
++
++	if (!current->utask)
++		return false;
++
++	auprobe = current->utask->auprobe;
++	if (!auprobe)
++		return false;
++
++	/* push %rbp/%ebp */
++	if (auprobe->insn[0] == 0x55)
++		return true;
++
++	/* endbr64 (64-bit only) */
++	if (user_64bit_mode(regs) && *(u32 *)auprobe->insn == 0xfa1e0ff3)
++		return true;
++
++	return false;
++}
++
++#else
++static bool is_uprobe_at_func_entry(struct pt_regs *regs)
++{
++	return false;
++}
++#endif /* CONFIG_UPROBES */
++
+ #ifdef CONFIG_IA32_EMULATION
+ 
+ #include <linux/compat.h>
+@@ -2824,6 +2865,7 @@ perf_callchain_user32(struct pt_regs *regs, struct perf_callchain_entry_ctx *ent
+ 	unsigned long ss_base, cs_base;
+ 	struct stack_frame_ia32 frame;
+ 	const struct stack_frame_ia32 __user *fp;
++	u32 ret_addr;
+ 
+ 	if (user_64bit_mode(regs))
+ 		return 0;
+@@ -2833,6 +2875,12 @@ perf_callchain_user32(struct pt_regs *regs, struct perf_callchain_entry_ctx *ent
+ 
+ 	fp = compat_ptr(ss_base + regs->bp);
+ 	pagefault_disable();
++
++	/* see perf_callchain_user() below for why we do this */
++	if (is_uprobe_at_func_entry(regs) &&
++	    !get_user(ret_addr, (const u32 __user *)regs->sp))
++		perf_callchain_store(entry, ret_addr);
++
+ 	while (entry->nr < entry->max_stack) {
+ 		if (!valid_user_frame(fp, sizeof(frame)))
+ 			break;
+@@ -2861,6 +2909,7 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
+ {
+ 	struct stack_frame frame;
+ 	const struct stack_frame __user *fp;
++	unsigned long ret_addr;
+ 
+ 	if (perf_guest_state()) {
+ 		/* TODO: We don't support guest os callchain now */
+@@ -2884,6 +2933,19 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
+ 		return;
+ 
+ 	pagefault_disable();
++
++	/*
++	 * If we are called from uprobe handler, and we are indeed at the very
++	 * entry to user function (which is normally a `push %rbp` instruction,
++	 * under assumption of application being compiled with frame pointers),
++	 * we should read return address from *regs->sp before proceeding
++	 * to follow frame pointers, otherwise we'll skip immediate caller
++	 * as %rbp is not yet setup.
++	 */
++	if (is_uprobe_at_func_entry(regs) &&
++	    !get_user(ret_addr, (const unsigned long __user *)regs->sp))
++		perf_callchain_store(entry, ret_addr);
++
+ 	while (entry->nr < entry->max_stack) {
+ 		if (!valid_user_frame(fp, sizeof(frame)))
+ 			break;
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index b503fafb7fb3..a270a5892ab4 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -76,6 +76,8 @@ struct uprobe_task {
+ 	struct uprobe			*active_uprobe;
+ 	unsigned long			xol_vaddr;
+ 
++	struct arch_uprobe              *auprobe;
++
+ 	struct return_instance		*return_instances;
+ 	unsigned int			depth;
+ };
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 99be2adedbc0..6e22e4d80f1e 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -2082,6 +2082,7 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+ 	bool need_prep = false; /* prepare return uprobe, when needed */
+ 
+ 	down_read(&uprobe->register_rwsem);
++	current->utask->auprobe = &uprobe->arch;
+ 	for (uc = uprobe->consumers; uc; uc = uc->next) {
+ 		int rc = 0;
+ 
+@@ -2096,6 +2097,7 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+ 
+ 		remove &= rc;
+ 	}
++	current->utask->auprobe = NULL;
+ 
+ 	if (need_prep && !remove)
+ 		prepare_uretprobe(uprobe, regs); /* put bp at return */
+-- 
+2.43.0
+
 
