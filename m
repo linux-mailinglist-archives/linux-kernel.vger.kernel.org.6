@@ -1,88 +1,91 @@
-Return-Path: <linux-kernel+bounces-243999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950BF929DBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:51:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BFA929DBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BCF1C21EF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45E6284DD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574E56A8D2;
-	Mon,  8 Jul 2024 07:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42CF3B192;
+	Mon,  8 Jul 2024 07:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="p5ZIgrUZ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CHlfDzBF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F88947F5D
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C887836B11
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720425037; cv=none; b=lLiLGBJc+WpIihrZA5B/5k0K6pz03g83m+4s3OxnxRJCcMc+xSZt5AdrZBtUjYudHREw2Ca2fabWzVB1b/ZHkSlA3juLneq7TYSajCHVnmhhByqyyOG3um+R4noVlmejryg7XWoUWE428BmJrC02pW1KPZQoZTA00lF1xHq0yQk=
+	t=1720425093; cv=none; b=BvEknlgAPM0ogEH42IUrb6OPmJVWzBb09iBLkTAIa1YlXPZ4dSyOnxLbiN8uQkh/jxZg84bUAuCUTMDtn98WXPGozG9nOzJew7evDD2GeWWu2+u7KF/e6xWcr+yfvsa5hUqFYOZJBbzx2HiH0NmTLi0THyhHoVtCNQ0UIlvA3Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720425037; c=relaxed/simple;
-	bh=aWRGwjNl141O0N2eu4pMGXstKpSbZTAZRRlvToIsLls=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ql0A+tv0vCltZGx9CXS50XFDG6o7jLzCmjhaWXZPyNnjn5Q4xTE8cvWHcvX4K2O6hwbAC3DoL7Y4fn76X+Yv8Nr2OmnKFGuLNVPQjJsvdBQz2ZPYfKXR+0VgrDU8Uz0wwV96UdFhNM8i6uiy913vJbNpRTICa1rz9ZdK28lZGbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=p5ZIgrUZ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367a23462e6so2162786f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 00:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720425034; x=1721029834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mqzfRYx/eBkp9k5OzF2pgC0wEOIaJNu82fson6xrplE=;
-        b=p5ZIgrUZ+uadygfMxSy17GGXlCI2oeCEjVCrAw61Ydf7rSPc98lXSLPGwyO1ue++Dw
-         28xKFrb97PBRVAsOpk2SFw1R0rpoZo8b+0wmVebIMaLui4g1xCFNODyydsuiFj29xyIC
-         J8w6AEII6KlxdEQdVUUpiRIwGRoGRxNi/tOh0j0XlgAA58JQlAna2BLQCHqg6KiYlaYh
-         N5UvlAyvp/115pDhvYnHr6qE3SAzwKFc7NoTfmknO+OplHIs+0YaLhQ2nIQ4FAelKI7O
-         t0jTkmOaJs4DHu0eFz9+/5V9Uefet6oOmgmhV1k++7ALvudSvxlRTyDhenz1xuIg+2Sz
-         GkHw==
+	s=arc-20240116; t=1720425093; c=relaxed/simple;
+	bh=sMCuHNPwMzVOTIECsai/oVdKXcj1XiUQZZ+KQ8wvdlg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aeUZzmp/PVJFS1FBv7JU0lUkIWYanVIOXJUcMYTxRYcInzQM1qGskUQ2DcwzXc7hRiiyz3KP/UjdUXJSU6N0zqEwu53m3q1UdsnDmov4tQ9zeJv5GHxDq0ACK+FWaBDeLzpn9Y1uoL9GigMYJIDWoCtG4NyuPre9afI7vKNCG+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CHlfDzBF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720425090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mbt2usRMEhPQM41Uc5WG7giJsy4J3tFaRLey9pcvtWo=;
+	b=CHlfDzBFRoQYTepBz/g+Dr+p67wdQ6uf2yLq0AqXlfAXyXrvkwqtI6qbYEayaYOngal5bp
+	mzLbHQh7jAiOuVkm5ZwhbLhGaYSigz8FTuB4iQ5T4jfqWeJ3tLXfGN0WNPwFKf4oF3LX2Z
+	ypIoQsp2zBv12iliocaw5HCAaJpB+Mc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-118-m21sXNNNOLKEFnU2TNRM7w-1; Mon, 08 Jul 2024 03:51:29 -0400
+X-MC-Unique: m21sXNNNOLKEFnU2TNRM7w-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42668796529so5426895e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 00:51:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720425034; x=1721029834;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mqzfRYx/eBkp9k5OzF2pgC0wEOIaJNu82fson6xrplE=;
-        b=a94Oh4YgD94PWYbl1RQkPvmiMwVvw5RkL19mOZTlR7+ttaEbkBgWKgW1OentEGlMSb
-         QrhGWYa+HULmM4htfoqvmSSMGDCLm9/PBtMDgxnVPrZGqkc5WX1dsfrQABnvzuF0jODt
-         ROCaMr6/NfUDSNe7XTwmANwWANBf5TMOodHaZh0ASOWnq+rO0FIHc6XjSE/ue3u0gGbT
-         3f+0aOs+sVkqZq8igmXbbBToMmm9hyweUjNTQNV2ybvxMOxkcZDdE9Q5jnfHKicj8aRp
-         XwvfILgfqF4KN9xa46OwV2gVTGdIPSxaZNqlo9jN8yC6q6yVkdp0jhmE6JuL7Kl4FRiD
-         fsFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvKNJ/oDNprgw6UUkEy6dbwreIcxBM11sPSyJcavEats2Bhx3NitTa0BPzftFcO0m42ZeO4+a+tapIXDgY/o2wCqOAz3ACgKpYNTfo
-X-Gm-Message-State: AOJu0YzEv5dAaf1AMnFAz7rG1VOGL53/3SoA+uEdhlMYB4Bt9vUikGC9
-	7FXxfe6Aj2Gpyk/DMevmQSpZAYleuYKazh2JjgmNx+Tw7fxsOPsxvSj7YD3d09g=
-X-Google-Smtp-Source: AGHT+IHCdYtJ5gdajf8bIJppL3jAkrIqdYM6almNmdUFQezuZItVtFtLkoeiiigNoVNNGUV5o239kQ==
-X-Received: by 2002:adf:8bde:0:b0:35f:f58:38fc with SMTP id ffacd0b85a97d-3679dd29745mr8013567f8f.26.1720425034553;
-        Mon, 08 Jul 2024 00:50:34 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b5f9:a318:2e8a:9e50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3679d827789sm10160055f8f.76.2024.07.08.00.50.32
+        d=1e100.net; s=20230601; t=1720425088; x=1721029888;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mbt2usRMEhPQM41Uc5WG7giJsy4J3tFaRLey9pcvtWo=;
+        b=k3UmWg7JrUM9nnKsBIhXPpznIN/bV6pRFBrU1a1IlDuJExn11SuOKQYgZ/oIUqSSS+
+         /NHHbjG4hdkfIOdgzkLwYpEsM0KfkIOI/FT9CyvRobplY3VI30Y1T6zxBCKTmrLrXRv+
+         FN+rHc9Kav0vkQ4TNFWlfKJnn5xNGyI9KPE1cCF7Sfufh9Ya9bFHF5gxTi7Y9Z+znEgr
+         wVBO2BF6d6oEFxAtcWu0wcSki6e5AVWqTaZ16c9LJI1m0NjuWXxWL295xRg+h2Or6w/0
+         aepFc8RHnoRaRQKxs6Oj2THQrJiHHDE2aiPAKPvQrVdcubr4Q2crRBJV7VdkcG1UQVKo
+         p18w==
+X-Forwarded-Encrypted: i=1; AJvYcCVgdwYMqg6yS9udx3s7hGgFK5YI/ik2xEMsNixLT2I0UzSFaZxPBXzwe64321SM5fp1nWc1Ih4bFVRUNquVNlcDH2/SSYxNo/k1ws30
+X-Gm-Message-State: AOJu0Yz70U1J5yrIId9gqbkbdiZALoH1J/RxA/zFYvGs/u7caRxzAua7
+	l9K+UUPL2WV374jMDx6a2lchCcDWbYPR6lUxbBVuDpEyhDn4Zeu6WBfpDu32R5Mv6SwpVChiC+2
+	Avzt4djnzmKmR+Q2f+PkrBG/Wb1ZyEcJ3gRPusT7LqaeJlJGOwD1pAdpT5VDhoQ==
+X-Received: by 2002:a05:600c:2e49:b0:426:5471:156a with SMTP id 5b1f17b1804b1-426547117a5mr52986545e9.13.1720425087995;
+        Mon, 08 Jul 2024 00:51:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgOpusd4NR4jXY1q924v3zDOMC+LgMqX0gtVRoZWih+SE99nRuVfWcAwG/NI2cxpeKYpWMxw==
+X-Received: by 2002:a05:600c:2e49:b0:426:5471:156a with SMTP id 5b1f17b1804b1-426547117a5mr52986345e9.13.1720425087614;
+        Mon, 08 Jul 2024 00:51:27 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca4b7sm153482915e9.37.2024.07.08.00.51.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 00:50:33 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
+        Mon, 08 Jul 2024 00:51:27 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Frank Li <Frank.Li@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Cc: Stuart Yoder <stuyoder@gmail.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [RESEND PATCH net-next v3 4/4] net: phy: aquantia: add support for aqr115c
-Date: Mon,  8 Jul 2024 09:50:23 +0200
-Message-ID: <20240708075023.14893-5-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240708075023.14893-1-brgl@bgdev.pl>
-References: <20240708075023.14893-1-brgl@bgdev.pl>
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in QORIQ DPAA2 FSL-MC BUS DRIVER
+Date: Mon,  8 Jul 2024 09:51:24 +0200
+Message-ID: <20240708075124.73522-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,71 +94,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Add support for a new model to the Aquantia driver. This PHY supports
-2.5 gigabit speeds. The PHY mode is referred to by the manufacturer as
-Overclocked SGMII (OCSGMII) but this actually is just 2500BASEX without
-in-band signalling so reuse the existing mode to avoid changing the
-uAPI.
+Commit 78fa0d19a50a ("dt-bindings: misc: fsl,qoriq-mc: convert to yaml
+format") converts fsl,qoriq-mc.txt to yaml format, but misses to adjust the
+file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
+
+Adjust the file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
- drivers/net/phy/aquantia/aquantia_main.c | 26 ++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index 2c8ba2725a91..d12e35374231 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -29,6 +29,7 @@
- #define PHY_ID_AQR113	0x31c31c40
- #define PHY_ID_AQR113C	0x31c31c12
- #define PHY_ID_AQR114C	0x31c31c22
-+#define PHY_ID_AQR115C	0x31c31c33
- #define PHY_ID_AQR813	0x31c31cb2
- 
- #define MDIO_PHYXS_VEND_IF_STATUS		0xe812
-@@ -1005,6 +1006,30 @@ static struct phy_driver aqr_driver[] = {
- 	.led_hw_control_get = aqr_phy_led_hw_control_get,
- 	.led_polarity_set = aqr_phy_led_polarity_set,
- },
-+{
-+	PHY_ID_MATCH_MODEL(PHY_ID_AQR115C),
-+	.name           = "Aquantia AQR115C",
-+	.probe          = aqr107_probe,
-+	.get_rate_matching = aqr107_get_rate_matching,
-+	.config_init    = aqr113c_config_init,
-+	.config_aneg    = aqr_config_aneg,
-+	.config_intr    = aqr_config_intr,
-+	.handle_interrupt = aqr_handle_interrupt,
-+	.read_status    = aqr107_read_status,
-+	.get_tunable    = aqr107_get_tunable,
-+	.set_tunable    = aqr107_set_tunable,
-+	.suspend        = aqr107_suspend,
-+	.resume         = aqr107_resume,
-+	.get_sset_count = aqr107_get_sset_count,
-+	.get_strings    = aqr107_get_strings,
-+	.get_stats      = aqr107_get_stats,
-+	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
-+},
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR813),
- 	.name		= "Aquantia AQR813",
-@@ -1048,6 +1073,7 @@ static struct mdio_device_id __maybe_unused aqr_tbl[] = {
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR113) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR113C) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR114C) },
-+	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR115C) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR813) },
- 	{ }
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4cb9f0819d8e..13332cfc15f6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18588,7 +18588,7 @@ M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
+-F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
++F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.yaml
+ F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
+ F:	drivers/bus/fsl-mc/
+ F:	include/uapi/linux/fsl_mc.h
 -- 
-2.43.0
+2.45.2
 
 
