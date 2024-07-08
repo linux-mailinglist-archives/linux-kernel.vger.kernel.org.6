@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-244406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007A492A3D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:41:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB3192A3D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71251F22B1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:41:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76551B2264C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FBC13A89B;
-	Mon,  8 Jul 2024 13:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A9813A250;
+	Mon,  8 Jul 2024 13:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKHed9AE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0kQToWS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7141386A7;
-	Mon,  8 Jul 2024 13:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1723137756;
+	Mon,  8 Jul 2024 13:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446059; cv=none; b=lMqIyiQF21XDkZY/H9/AymK+t5WmNqXmVp5uzbNf/EjhrFqluycn3JlTCkGwh9CotEbnHr7gKW+u0aB8nW+xQFySVWrHKRb1ICsFoWR1BBrkxZl4UK2IUvsccsr8yNkFL/CfOx6mmqaMFzhTlR0rhhSjZSqNdmlfOT9S09V2Jq8=
+	t=1720446120; cv=none; b=d4Oi8y0dCblkiwLOdE+zRpb3nP8fgopETWBWggLI9m1TUl5c4BoJ21T897D16vE1dXbXbC1ZYeD831AmRLe8ZTJYvFCwCOFaVpsBFA86OxA+DY4BlrlOhsCZrxFUxRhPx8j1xczq76rvME5jnho0c63TgNB5AopAV08LZOcH3ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446059; c=relaxed/simple;
-	bh=71k5UpoftlrwEwxLXBZffE07JZCDzAyV2hgZQdfHspg=;
+	s=arc-20240116; t=1720446120; c=relaxed/simple;
+	bh=Jj4vAHxYg8R4Fyjft9iJg1dQ2fuZNmD4LJxaXm147r0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=W07Zh7Z/8Gz63/i9R/Y2TWdPz7SmV5mHJ/N9vmnhUzh5pjJntcgVAvnkKpIQ0eTkZ2RqywH5F5f2NTbeguGvQ9aCiXOaz2wpnGCtIhs/WBv3ZlMgkqym9tuC0vF9cM6mLrQ9AZ1EVetRZqvgFXf0KNsnKr1k1EbqocqTar3mWNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKHed9AE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E84C4AF0A;
-	Mon,  8 Jul 2024 13:40:54 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=eDv7dm6qYUl+DmNJG4UOAICkhScG1qynK0HXnTgKgG7sVd384tVRG0PlO3CSODY0RvNtngOhgvxE2SGBDIwHyXOL5zkniy/Ez3oUhEzvA3wiGMLFxfdMa3X/+C3jhAqcYuL6reg5Watw1ZrQyfFyGwIcV4M1iyp82B6JmGkG/aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0kQToWS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD48DC116B1;
+	Mon,  8 Jul 2024 13:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720446058;
-	bh=71k5UpoftlrwEwxLXBZffE07JZCDzAyV2hgZQdfHspg=;
+	s=k20201202; t=1720446120;
+	bh=Jj4vAHxYg8R4Fyjft9iJg1dQ2fuZNmD4LJxaXm147r0=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=WKHed9AEfHmvukWE3RMjK/5zQli5ekX4RJemt4i59mKlyKv9h7Rym98mBH0fuSjPj
-	 ckJi05cW746LqNJeR/qWZK/4w6gUalEEPempMEqnYzlGSJY8y0VhDWieu9K2dNMqX/
-	 kFE4dG5szgCru3nNn8OIcXpZcarMRiNNgr4wKxdbMLMdeRw09NiVTkrw5BBUKw5uKo
-	 TQkaohcXu2ExKDJ9xnIm9x6iHd7rOGFx0AoH5V2wNx7dUdpHH8pRd1rU+Z85+nMKLn
-	 j+/Pq2eM4URMaAlSUdrIWesSOU4DomPGKkfpV7Ljnwp80dIt47bgLXXsHPHQQqS2+i
-	 emhX1Cn8XHACA==
-Message-ID: <64d32e69-a216-4f63-9da5-0686b8706dd3@kernel.org>
-Date: Mon, 8 Jul 2024 15:40:52 +0200
+	b=C0kQToWSCQA6gCHh9QU32LHJ7dwyPGBEb0Sj9Wgp0tWwdRpcMU3aA0rt/NH6Qjfhg
+	 RtXws0vnfYWaCqkLPN84K69sgT6meQixx/fzYpLBDDFVNoN6XbrGwRC7tK9P8/bUMJ
+	 TxkDH0o+zkDb/itmuIl8NO0vwGIK1tMaGJSVeL/yvgPVVABx35UYUejRHhwaSrQLew
+	 /WgaaWbasy5ATneuI0nvOTFMKr3IHJVd3rBfk+yreICNbk3n8FOm2lyDUeC58mUNgv
+	 8gKyg17Ijp+vk1wCc/50ieULLgu+qFHqPc5/CYCpZBvhxJQ8qEHcduM1fCQzeaD69u
+	 flRRmwtnDWc6w==
+Message-ID: <dfd9822e-6aa7-4873-abaa-f6d8996fb3de@kernel.org>
+Date: Mon, 8 Jul 2024 15:41:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: phy: add YAML schema for cv1800-usb-phy
- driver bindings
+Subject: Re: [PATCH 2/3] riscv: dts: sophgo: add nodes for USB phy and
+ controller
 To: Yao Zi <ziyao@disroot.org>, Vinod Koul <vkoul@kernel.org>,
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -62,7 +62,7 @@ To: Yao Zi <ziyao@disroot.org>, Vinod Koul <vkoul@kernel.org>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-riscv@lists.infradead.org
 References: <20240708120830.5785-1-ziyao@disroot.org>
- <20240708120830.5785-2-ziyao@disroot.org>
+ <20240708120830.5785-3-ziyao@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,60 +108,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240708120830.5785-2-ziyao@disroot.org>
+In-Reply-To: <20240708120830.5785-3-ziyao@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/07/2024 14:08, Yao Zi wrote:
-> cv1800-usb-phy driver supports USB 2.0 phys integrated in Sophgo
-> Cv1800/SG200x SoCs. Add YAML schema for its binding.
-> 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+>  
+> +		usb_phy: usb-phy@3006000 {
+> +			compatible = "sophgo,cv1800-usb-phy";
+> +			reg = <0x3006000 0x60>, <0x3000048 0x4>;
+> +			reg-names = "phy", "pin";
+> +			clocks = <&clk CLK_APB_USB>,
+> +				 <&clk CLK_USB_125M>,
+> +				 <&clk CLK_USB_33K>,
+> +				 <&clk CLK_USB_12M>;
+> +			clock-names = "apb", "125m", "33k", "12m";
 
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-
-
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - sophgo,cv1800-usb-phy
-> +
-> +  reg:
-> +    maxItems: 2
-> +
-> +  reg-names:
-> +    items:
-> +      - const: phy
-> +      - const: pin
-> +
-> +  clocks:
-> +    maxItems: 4
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb
-> +      - const: 125m
-> +      - const: 33k
-> +      - const: 12m
-
-All these three should have rather some logical name, not frequency.
-
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  dr_role:
-
-No underscores in node names, missing vendor prefix (unless it is
-generic property), missing description.
-
-Please do not invent new properties like this. You probably wanted to
-reference usb-drd?
-
+Why are not you using dr_role property here?
 
 Best regards,
 Krzysztof
