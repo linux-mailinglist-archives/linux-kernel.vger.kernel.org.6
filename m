@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-243963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA65929D25
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:32:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A331A929D28
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16359B20E2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F7FC281969
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDD022095;
-	Mon,  8 Jul 2024 07:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFD9224CC;
+	Mon,  8 Jul 2024 07:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdJlhn8P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvfvbM22"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5091C69C;
-	Mon,  8 Jul 2024 07:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BE918EBF;
+	Mon,  8 Jul 2024 07:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720423945; cv=none; b=ZSm/yA8IIOFwgifLVPyr+Ny0GChSXUZf0f1zMtHJbQfsuSNHyllHfaIbp8frRABwQoE3IOGh9KS+ejjgoyoZl5l5NaDzjVTGH3EUvKP0Fpac9v5xcmQYoLclHhieDUzTdk32wl1k0NzDyjzGahVE/2WyW+BEDJluUmr71JR48Vc=
+	t=1720423993; cv=none; b=FaN6aN726MmwZv06Ho7f2Lfq32Tbgjbopep/Hw3PcsePT6v0gR0iQT6UCboAhUU//2+GUvMGtsVS6/XQVZqLLcZ+Rdxb3pXB8Fmtze7gJlEI5Wi/utshiW69hKfztbDZQtuFpO0jF3ESxASii11i+VrO7F/F8QiTLrlkGqsGW5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720423945; c=relaxed/simple;
-	bh=mxc0aIzrGRkymB+r7SJybcNK+Hz+AkkmmW0SRfK2dj4=;
+	s=arc-20240116; t=1720423993; c=relaxed/simple;
+	bh=A0VXbThaldSglFo32u5p70kxlO/JzsYI2cfWWiOLsWM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1H4x9ysuJdcHKv10dDwoKeKiKVO0H3HbXnWn/geqqL8dFGQ/5Y/8vtPHRZRYRBlgkVI7Nf4QtCAafiD+nqnmiqbCFHPhbw8aYhvUwK4tOpVbyaUR9njX/hRZbFeGS5dilK8IEGTJ2UMGyRYCPVzDrs+mYbJy86bww4Kr13mAjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdJlhn8P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DAFC116B1;
-	Mon,  8 Jul 2024 07:32:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=eQJiZDy1gzk1OV7I5PiWQRqLNMsi3WdZP9P8cDEu0wLEJ6ee+V8SWxVsCkBiJ/FU/ASNhGTa+ljL8JWK0TpziEDrS2+Dj/jq34jd3a++lPwWOJpv9zOQsd/G2NYrq4wXJh+twXg3Otvsleg6j4JHWLft1d67NzvgD1jpLsIZO/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvfvbM22; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23FF3C116B1;
+	Mon,  8 Jul 2024 07:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720423944;
-	bh=mxc0aIzrGRkymB+r7SJybcNK+Hz+AkkmmW0SRfK2dj4=;
+	s=k20201202; t=1720423992;
+	bh=A0VXbThaldSglFo32u5p70kxlO/JzsYI2cfWWiOLsWM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hdJlhn8P1C35+Wug77kuwygiEDgGjwhtpDqUrAc3i8laXYlnrHZO51x+FlfMOjxKL
-	 +PBtmzzc2GtT08BLhPSNPBX5E/TlHp/E1TeFCV3gGlsIfFzK5qHnz5o1nOBq0ZZqhY
-	 XyTtuxNSFTjy1NOPMs1I5QyWjqtuByRd5gNY/dgCTlXkXjqgAWPPl+24DTtOISYt6R
-	 rtK5txPpka3/wR0tWGGCHs85ZplWkm8CURYFv8/csWjM/gbDHoIcWDxbmt0l39NZR8
-	 +2Z3fiW8Bm4HfFFTfLR/Oo8AVzIViIfUxtEVflePrZ0hXfxhH+ds9vBfMDU/j0Kosx
-	 Q2dcGrq1F2gqA==
-Message-ID: <7d109ab0-ebd0-4739-a15e-958e82552a7d@kernel.org>
-Date: Mon, 8 Jul 2024 09:32:18 +0200
+	b=GvfvbM22UDRINvtifxCox/X+JeZqYyHhVMmTzQbouZWMjnC7X1F9IRdFbOdWWFNQT
+	 V8lEfmC23ArMqRJbn8PyWJVwZOhPKQ5KlOZxSG8oroPQgToyMtcfOouRmdzn+kOfyG
+	 6d13msSioRUBSfqhJwzVyg3KhCn6UHoW47s3ZJp3U9oD+/oOD4KP9vnvtUe61q5sn+
+	 Z6nI+16ddLW5tfkrlrELqcOPIJ8MgVgbEqcp28I2/JP3Xmb6f3C3IJopD4OlrzoQ+A
+	 TuB9u/AEX8yqW78NWwpne5ECccEAN3s29CIYu3PUqjtXI2hI5jY3PLw+wEVPY9C+Ps
+	 SwzvFD1dN/nKg==
+Message-ID: <304b7bb1-d315-4147-820b-1ec0aa63e759@kernel.org>
+Date: Mon, 8 Jul 2024 09:33:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: power: Add power sequence for Amloigc
- WCN chips
-To: Yang Li <yang.li@amlogic.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
- <20240705-pwrseq-v1-1-31829b47fc72@amlogic.com>
- <a4d08999-55ea-4674-bb0f-6d618b7bdea7@kernel.org>
- <9c550278-2205-4663-917c-c303c65726ad@amlogic.com>
- <726a0561-b3fc-46bb-a834-3ed8b0e993e1@kernel.org>
- <91e42fbc-712e-44b4-8200-23aaf1fade43@amlogic.com>
-Content-Language: en-US
+Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
+ Add Sophgo SARADC binding documentation
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Conor Dooley <conor@kernel.org>
+Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+ Inochi Amaoto <inochiama@outlook.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com>
+ <20240705-sg2002-adc-v2-1-83428c20a9b2@bootlin.com>
+ <20240705-unaired-pesticide-4135eaa04212@spud>
+ <6b5459fd-2873-4c26-b986-882413b8d95b@bootlin.com>
+ <20240706-remote-undergo-3b9dfe44d16f@spud> <20240708083011.058d0c57@xps-13>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -107,57 +112,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <91e42fbc-712e-44b4-8200-23aaf1fade43@amlogic.com>
+In-Reply-To: <20240708083011.058d0c57@xps-13>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 08/07/2024 08:32, Yang Li wrote:
+On 08/07/2024 08:30, Miquel Raynal wrote:
+> Hi Conor,
 > 
-> 在 2024/7/8 14:11, Krzysztof Kozlowski 写道:
->> [ EXTERNAL EMAIL ]
->>
->> On 08/07/2024 08:04, Yang Li wrote:
->>>>> +
->>>>> +required:
->>>>> +  - compatible
->>>>> +  - clocks
->>>>> +  - clock-names
->>>>> +  - amlogic,chip-enable-gpios
->>>>> +  - amlogic,bt-enable-gpios
->>>>> +
->>>>> +additionalProperties: false
->>>>> +
->>>>> +examples:
->>>>> +  - |
->>>>> +    #include <dt-bindings/gpio/gpio.h>
->>>>> +    wcn_pwrseq {
->>>> No underscores in node names, generic node names.
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    oneOf:
+>>>>> +      - items:
+>>>>> +          - enum:
+>>>>> +              - sophgo,cv1800b-saradc
+>>>>> +          - const: sophgo,cv18xx-saradc  
 >>>>
->>>> There is no device as "pwrseq". I also do not get what "wcn" means here.
->>> Yes, I understand.
->>>
->>> Can I change "wcn_pwrseq" to "pmu", and do I need to change the binding
->> What is pmu for your device? What is this device in the first place you
->> are documenting? Where is the datasheet?
+>>>> I don't think the fallback here makes sense. If there's other devices
+>>>> with a compatible programming model added later, we can fall back to the
+>>>> cv1800b.
 > 
-> ^_^ Well, You are right, the "pmu" wasn't really fit in here.
+> I'm sorry but isn't this slightly disagreeing with the "writing
+> bindings" doc pointed in v1? It says,
 > 
-> I'd like to explain the current usage first, and could you please give 
-> me a suggestion?
+> * DO use fallback compatibles when devices are the same as or a subset
+>   of prior implementations.
 > 
-> This module(pwrseq) used to power on Bluetooth & Wi-Fi combo chip, both 
-> Bluetooth and
-> 
-> Wi-Fi driver need to control "chip-en-gpios" pins, so we introduced the 
-> power sequence module.
-> 
-> What should we call it in this case?
+> I believe we fall in the "devices are the same" category, so I would
+> have myself wrote a similar binding here with a compatible matching
+> them all, plus a hardware-implementation-specific compatible as well;
+> just in case.
 
-Sorry, you describe driver, not a device.
-
-That would be a no-go for entire binding. Please describe the hardware,
-not what you want to achieve in Linux drivers.
-
+Fallback from one model to another. There is no "another" model here,
+but wildcard. There is no such device as cv18xx, right?
 
 Best regards,
 Krzysztof
