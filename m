@@ -1,210 +1,197 @@
-Return-Path: <linux-kernel+bounces-244004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A620C929DC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C835929DC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26DF41F2305D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:56:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15CA21F22FF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A14F39AEB;
-	Mon,  8 Jul 2024 07:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D533D39FFE;
+	Mon,  8 Jul 2024 07:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="epwNJMbl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nlspGfP4"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F412D638
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 07:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B112D638;
+	Mon,  8 Jul 2024 07:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720425391; cv=none; b=Ym8/OJ2qRAs1d6wSaevgPhQQCpToHRmsNXCunpTtzwzFmOAoFZrowWMzUaLz/p9+oZPWQGZy3c5lwtv+boJeLQMaw/gBn0CjdOHd52Qd6AR1xkT0T9Ru22KEIdO89JAzUQCxBeK2BK/xU5J+LbmpOpQ8FjKUxwkYOzCks1YTFT4=
+	t=1720425409; cv=none; b=r8FLSBVmhAaBZcgDB0MIXSFxUmZxdp2Oz+LxI28OV953LbDQhu60VUKYnfoVymBPdmu7liqRguTcnBjqfAfDHu9CCnp+glexRes4gzvZLgWGytRKsMxS+/YLV71sQ561++66MmqmxT5ErBw30Av5yN5EzwUrDJZ7vG4jb56MB34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720425391; c=relaxed/simple;
-	bh=84/fQrEjp3YoqyX3qchL2BRVbadeAft7a99wa/pPDzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SVvEP5jasbUeMaCwyRJQgr1qDWCywP4oaWeJJOEYWTKIpaeV0V+1g8iCBjLL/P6lbaFsj4NgUFXqpfnacoMCwLp8Sexrwne5P/dtlYBTZvPjeQmIDao8njVnuXvjCGoqBiKIpXmLmd6FnZpPeJQStHaQJnOIWM8HJXB/vISijCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=epwNJMbl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720425388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CMc2ljlt4DMiI4aPglfAN02tbdUjIn7sPq8R8D118xs=;
-	b=epwNJMblTEHNSGETXvctudPcleZoaml5w5St/jkd71LsHGuBI+bUwS1aAqdSe3jWZqCZ3E
-	XRcJH665PJ/LLM96PUYJf60K0yeJQX0CiveBBytNTpJZ3DZgGTqJrgtQOIX/JhR0MDlCUp
-	lG9AAlxYfliGbKZYSbjam9kcpxWpyAE=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-184-o6IDfCiyM6OgfeupvjxcqQ-1; Mon, 08 Jul 2024 03:56:24 -0400
-X-MC-Unique: o6IDfCiyM6OgfeupvjxcqQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a77bfa15f92so276781866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 00:56:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720425383; x=1721030183;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CMc2ljlt4DMiI4aPglfAN02tbdUjIn7sPq8R8D118xs=;
-        b=mbD+ooVqBMFn4rjKZKaKOQ/PfyYB9bFlk59YEG0kXYLchZT8Gd1XMcgp9gXoc/rywN
-         7jUqLs5CUL1m7s9/ws5QlbOc8qoufzNt7lHEVIaYgCi+fFOrK0/mmV/wtI9enrsN2HsZ
-         t6JZaNA3BRO1FipkGSFSLsgqqgr3QB/v33/SUnrZQwIYWaaS+T2ikYfqVCxcXZ6SDlYM
-         VsPL2aglZNasT3oGmgOI/5DmeDF3Sf/fbJ4DdqWzJYEqm067rD4kZdrv45h01F8q09A+
-         2RaXG25Rzvrpo7vebSzefJPVp8nHXJDPOtnsSfHbHS4vpb3+N2oVwvtMzhdBMXKbub27
-         ZRwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/BXBBBdXFv2AkcY9B9jRMcg/bi2ebhyPwsK6LAUNJyNCX6G9VgfEwLXNuj7VQXLWriehwFlcEIIOrA4HnL6mshMHJN29Va75BS3Z3
-X-Gm-Message-State: AOJu0YyIiCQCao1LTfJYYjF5vcwXyyhr3x9P2WdQf0P1gY6faRTzNLb4
-	f9yVDYWlU1VHnRaKIDIlgAGUInaOkNub6omulIvw8q+d47OIz1SHsEZfHWL6w7DaBqhDsLX5ps2
-	OA0PsN/X/+zd/etUz937I9DVinB758g7r2Al+KDbQdYP72WwHHeIH63sfu2k0RQ==
-X-Received: by 2002:a17:906:4556:b0:a77:b8d2:4566 with SMTP id a640c23a62f3a-a77ba72c927mr623126866b.77.1720425383417;
-        Mon, 08 Jul 2024 00:56:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwDhwbAOT2+jYH36rgsrg8H3M7HtgM6YMwgoIpy3dUhj6MLIdOwlXjThJoWDnueuyn7b4vOQ==
-X-Received: by 2002:a17:906:4556:b0:a77:b8d2:4566 with SMTP id a640c23a62f3a-a77ba72c927mr623125666b.77.1720425383010;
-        Mon, 08 Jul 2024 00:56:23 -0700 (PDT)
-Received: from [100.81.188.195] ([178.24.249.36])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77abd2b5e8sm404843766b.26.2024.07.08.00.56.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 00:56:22 -0700 (PDT)
-Message-ID: <e84fcec1-31bc-4397-851a-da70dd754b19@redhat.com>
-Date: Mon, 8 Jul 2024 09:56:21 +0200
+	s=arc-20240116; t=1720425409; c=relaxed/simple;
+	bh=a3Eu5o4OYY5c8wyupf0NyYJSM4qQ3YVK9pDqmRZWaSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fgWqbV370+t07//yJiT9wFidjFNXwguP6ngGfve/zdVWFVmK3HsKQzneQXNjDSYrhIbShV1zmW5OFEfl97CYlgqa7Y1H8iHXl9Rqj3UCYcVmOqFMF/SxBi3yzbp5//bvTRyua2Jyp/u2yOisnoGWpL6KpmQskEqBWbje//lgXis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nlspGfP4; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=o1jN8VRyIcfHumRP1KvLwsjLLnt/lHRWuKN52gcpPx4=; b=nlspGfP4A0tMOtPh4zYnRtT+SI
+	Aj+aSVhrWD2EsHdlmEcTf56+gI+RHP1Pw7kPB/9wGSxS8GBF8rIhDogIfYBnCrB/MSplddEdMSZwK
+	Afmw4YGMHEQ+x4e/Ywx6fPYkn+Rc2vqludS+1MKVYX8U3vkG07sZMNhq/ZBvZUsC7aBFezu821AT2
+	5Xo75ff7lUw71Bj31K64ognlgrY6qBjjidvVRcNt8Iiu/PpUCaNPWPwDqrqx9IYKTsU40fPVQbtFw
+	Z6mrjJD75z/wUyn90OF2X9J/90XFbcDT1Z3ZiPWTN6bh4ZiPgG0gz4SMrbq9JUZIeSC8Jfrb2yK67
+	5PcGrOWw==;
+Received: from [84.69.19.168] (helo=localhost)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sQjEi-00CNGq-2K; Mon, 08 Jul 2024 09:56:36 +0200
+From: Tvrtko Ursulin <tursulin@igalia.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Rik van Riel <riel@surriel.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Michal Hocko <mhocko@suse.com>,
+	David Rientjes <rientjes@google.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v4] mm/numa_balancing: Teach mpol_to_str about the balancing mode
+Date: Mon,  8 Jul 2024 08:56:32 +0100
+Message-ID: <20240708075632.95857-1-tursulin@igalia.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] mm/memblock: introduce a new helper
- memblock_estimated_nr_free_pages()
-To: Wei Yang <richard.weiyang@gmail.com>, rppt@kernel.org,
- akpm@linux-foundation.org, brauner@kernel.org, oleg@redhat.com,
- mjguzik@gmail.com, tandersen@netflix.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240708010010.32347-1-richard.weiyang@gmail.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240708010010.32347-1-richard.weiyang@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08.07.24 03:00, Wei Yang wrote:
-> During bootup, system may need the number of free pages in the whole system
-> to do some calculation before all pages are freed to buddy system. Usually
-> this number is get from totalram_pages(). Since we plan to move the free
-> pages accounting in __free_pages_core(), this value may not represent
-> total free pages at the early stage, especially when
-> CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled.
-> 
-> Instead of using raw memblock api, let's introduce a new helper for user
-> to get the estimated number of free pages from memblock point of view.
-> 
-> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> CC: David Hildenbrand <david@redhat.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> 
-> ---
-> v4: adjust comment per david's suggestion
-> ---
->   include/linux/memblock.h |  1 +
->   mm/memblock.c            | 20 ++++++++++++++++++++
->   2 files changed, 21 insertions(+)
-> 
-> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> index 40c62aca36ec..7d1c32b3dc12 100644
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -486,6 +486,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
->   
->   phys_addr_t memblock_phys_mem_size(void);
->   phys_addr_t memblock_reserved_size(void);
-> +unsigned long memblock_estimated_nr_pages(void);
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 
-^ stale name
+Since balancing mode was added in
+bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes"),
+it was possible to set this mode but it wouldn't be shown in
+/proc/<pid>/numa_maps since there was no support for it in the
+mpol_to_str() helper.
 
->   phys_addr_t memblock_start_of_DRAM(void);
->   phys_addr_t memblock_end_of_DRAM(void);
->   void memblock_enforce_memory_limit(phys_addr_t memory_limit);
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index e81fb68f7f88..26162902789f 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1729,6 +1729,26 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
->   	return memblock.reserved.total_size;
->   }
->   
-> +/**
-> + * memblock_estimated_nr_free_pages - return estimated number of free pages
-> + * from memblock point of view
-> + *
-> + * During bootup, subsystems might need a rough estimate of the number of free
-> + * pages in the whole system, before precise numbers are available from the
-> + * buddy. Especially with CONFIG_DEFERRED_STRUCT_PAGE_INIT, the numbers
-> + * obtained from the buddy might be very imprecise during bootup.
-> + *
-> + * While we can get the estimated number of free pages from memblock, which is
-> + * good enough for estimation.
+Furthermore, because the balancing mode sets the MPOL_F_MORON flag, it
+would be displayed as 'default' due a workaround introduced a few years
+earlier in
+8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps").
 
-I'd drop that sentence.
+To tidy this up we implement two changes:
 
+Replace the MPOL_F_MORON check by pointer comparison against the
+preferred_node_policy array. By doing this we generalise the current
+special casing and replace the incorrect 'default' with the correct
+'bind' for the mode.
 
-Apart form that LGTM
+Secondly, we add a string representation and corresponding handling for
+the MPOL_F_NUMA_BALANCING flag.
 
+With the two changes together we start showing the balancing flag when it
+is set and therefore complete the fix.
+
+Representation format chosen is to separate multiple flags with vertical
+bars, following what existed long time ago in kernel 2.6.25. But as
+between then and now there wasn't a way to display multiple flags, this
+patch does not change the format in practice.
+
+Some /proc/<pid>/numa_maps output examples:
+
+ 555559580000 bind=balancing:0-1,3 file=...
+ 555585800000 bind=balancing|static:0,2 file=...
+ 555635240000 prefer=relative:0 file=
+
+v2:
+ * Fully fix by introducing MPOL_F_KERNEL.
+
+v3:
+ * Abandoned the MPOL_F_KERNEL approach in favour of pointer comparisons.
+ * Removed lookup generalisation for easier backporting.
+ * Replaced commas as separator with vertical bars.
+ * Added a few more words about the string format in the commit message.
+
+v4:
+ * Use is_power_of_2.
+ * Use ARRAY_SIZE and update recommended buffer size for two flags.
+
+Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Fixes: bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes")
+References: 8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps")
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: <stable@vger.kernel.org> # v5.12+
+---
+ mm/mempolicy.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index aec756ae5637..a1bf9aa15c33 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -3293,8 +3293,9 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
+  * @pol:  pointer to mempolicy to be formatted
+  *
+  * Convert @pol into a string.  If @buffer is too short, truncate the string.
+- * Recommend a @maxlen of at least 32 for the longest mode, "interleave", the
+- * longest flag, "relative", and to display at least a few node ids.
++ * Recommend a @maxlen of at least 51 for the longest mode, "weighted
++ * interleave", plus the longest flag flags, "relative|balancing", and to
++ * display at least a few node ids.
+  */
+ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
+ {
+@@ -3303,7 +3304,10 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
+ 	unsigned short mode = MPOL_DEFAULT;
+ 	unsigned short flags = 0;
+ 
+-	if (pol && pol != &default_policy && !(pol->flags & MPOL_F_MORON)) {
++	if (pol &&
++	    pol != &default_policy &&
++	    !(pol >= &preferred_node_policy[0] &&
++	      pol <= &preferred_node_policy[ARRAY_SIZE(preferred_node_policy) - 1])) {
+ 		mode = pol->mode;
+ 		flags = pol->flags;
+ 	}
+@@ -3331,12 +3335,18 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
+ 		p += snprintf(p, buffer + maxlen - p, "=");
+ 
+ 		/*
+-		 * Currently, the only defined flags are mutually exclusive
++		 * Static and relative are mutually exclusive.
+ 		 */
+ 		if (flags & MPOL_F_STATIC_NODES)
+ 			p += snprintf(p, buffer + maxlen - p, "static");
+ 		else if (flags & MPOL_F_RELATIVE_NODES)
+ 			p += snprintf(p, buffer + maxlen - p, "relative");
++
++		if (flags & MPOL_F_NUMA_BALANCING) {
++			if (!is_power_of_2(flags & MPOL_MODE_FLAGS))
++				p += snprintf(p, buffer + maxlen - p, "|");
++			p += snprintf(p, buffer + maxlen - p, "balancing");
++		}
+ 	}
+ 
+ 	if (!nodes_empty(nodes))
 -- 
-Cheers,
-
-David / dhildenb
+2.44.0
 
 
