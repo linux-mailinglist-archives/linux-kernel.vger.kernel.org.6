@@ -1,183 +1,158 @@
-Return-Path: <linux-kernel+bounces-244208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A0492A0CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DCD92A0CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B9F1C21185
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAC3C1C21050
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6427C081;
-	Mon,  8 Jul 2024 11:14:27 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5100073451;
+	Mon,  8 Jul 2024 11:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7ObckCB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63998482DE;
-	Mon,  8 Jul 2024 11:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE2956766;
+	Mon,  8 Jul 2024 11:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720437267; cv=none; b=q/OedEgOIYtooHJr/JcDNJYRElDWAgCtXxpey21GuLrM8oNmtLy7Ow9zFIhL4n2hz2CBc1DY2BgBl5uRdmzMSf1WToSjiuALbXNQjwADiuqvuJGC/I756mqp3J4O8v/Y6D7F0V+/M31KVNqhU62/r6DdTb5y7p/r5EDpu6sJzHM=
+	t=1720437310; cv=none; b=ERRoyRsmGNJKOPh4IcuJwNnhcOniV08Azu7+rY8FcHMDoO689pjvXIV+vhNe0tR4UNQsdYJhbAfRS3dj90MjM4Qdf2ILihjkSBKnMH6xYrmMOx42uvHFSA03/++jLqYhi5J2ZXBfMEd77nVDkSwztpEBVH760dH7tcpz3yHOEp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720437267; c=relaxed/simple;
-	bh=LhPjovSVZgqmN9GfmU1S+wlhD8gvlbotPiGGcn0WHgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=azMSPW43k9wbEpJZhgb3pOFgREHrq15DBE9EkEu3zxrBOyeDV4NiTjtSqFWF2NrweemvYbX+yeC+fIw9fHEaJN4jhDwnzyEQP5h94juJf0HgXCgL2J1UAUpyfz89SnmB4Xd7bg2e85hTcvqhQ4B+JRmz47SOsgyaVR7TiVHfQb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A86D71FC0D;
-	Mon,  8 Jul 2024 11:14:23 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E6EB01396E;
-	Mon,  8 Jul 2024 11:14:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EiMJNg7Ki2YXWAAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Mon, 08 Jul 2024 11:14:22 +0000
-Message-ID: <f89d7f45-5d2b-4d8b-9d6a-2d83cd584756@suse.de>
-Date: Mon, 8 Jul 2024 14:14:18 +0300
+	s=arc-20240116; t=1720437310; c=relaxed/simple;
+	bh=MKgpxLh6aDM5ly4yBJOmK4CJOZT0PS1xUqiDWOzoQuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iUfgCp+jFE3pwUkB/Kbg1KJGVzfhlIO8xSfs6ET5Vphi3kqXJJQD9JSnC8pb6kxGWNZQ21DsoTRq4c7V+h9xzZIqnb1hmSSOhU0mRdO31mPEmI42htC2K2Re4QqlJn8xFsgBO2K71AOELtHx5PRXI0ir/CEmDHpH9byfBLdb+pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7ObckCB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070BFC116B1;
+	Mon,  8 Jul 2024 11:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720437309;
+	bh=MKgpxLh6aDM5ly4yBJOmK4CJOZT0PS1xUqiDWOzoQuk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H7ObckCBJqYgVbTWmIuilgBXfq7fXrZsEd/VkbxyKAtpmfeKEqQbtq81uKeftR7kW
+	 XGd1iJqmfSSD7fHojNeAXrYOq2/E2Uf85Sbr594Lm7w4LN3HvDn0u0ZtnuYTDtC/pJ
+	 a2mPz2ObVAf2mfXiCEZeL/mo5hJRPFlDX3VVzD2CeMG3l1ONJ/bkGnCOuO3XTdfAdW
+	 4oPjoN06mNzMyFOzykzHpq7TtA2VH5L93ws7ebAWPdQ9csgH0Nh1LCLjunGoQZZp+m
+	 EZMmQ+kpon6I3tg3Fi0LgiwowZU2Pc2VQWOARqr5YePKVmy+s7dRA7Pc2W6B3isLzA
+	 lHGS0nusWyBrA==
+Date: Mon, 8 Jul 2024 12:15:03 +0100
+From: Will Deacon <will@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] perf: Add perf_event_attr::bp_priv
+Message-ID: <20240708111503.GA11567@willie-the-truck>
+References: <20240621073910.8465-1-yangtiezhu@loongson.cn>
+ <20240621073910.8465-2-yangtiezhu@loongson.cn>
+ <20240705103413.GA8971@willie-the-truck>
+ <7522fc14-aacc-a8e3-3258-9064d7e2936f@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/12] PCI: brcmstb: Use swinit reset if available
-To: Philipp Zabel <p.zabel@pengutronix.de>,
- Jim Quinlan <james.quinlan@broadcom.com>,
- Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
- jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240703180300.42959-1-james.quinlan@broadcom.com>
- <20240703180300.42959-5-james.quinlan@broadcom.com>
- <362a728f-5487-47da-b7b9-a9220b27d567@suse.de>
- <CA+-6iNynwxcBAbRQ18TfJXwCctf+Ok7DnFyjgv4wNasX9MjV1Q@mail.gmail.com>
- <7b03c38f44f295a5484d0162a193f41b39039b85.camel@pengutronix.de>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <7b03c38f44f295a5484d0162a193f41b39039b85.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Queue-Id: A86D71FC0D
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7522fc14-aacc-a8e3-3258-9064d7e2936f@loongson.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi Philipp,
-
-On 7/8/24 12:37, Philipp Zabel wrote:
-> On Fr, 2024-07-05 at 13:46 -0400, Jim Quinlan wrote:
->> On Thu, Jul 4, 2024 at 8:56 AM Stanimir Varbanov <svarbanov@suse.de> wrote:
->>>
->>> Hi Jim,
->>>
->>> On 7/3/24 21:02, Jim Quinlan wrote:
->>>> The 7712 SOC adds a software init reset device for the PCIe HW.
->>>> If found in the DT node, use it.
->>>>
->>>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
->>>> ---
->>>>  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
->>>>  1 file changed, 19 insertions(+)
->>>>
->>>> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
->>>> index 4104c3668fdb..69926ee5c961 100644
->>>> --- a/drivers/pci/controller/pcie-brcmstb.c
->>>> +++ b/drivers/pci/controller/pcie-brcmstb.c
->>>> @@ -266,6 +266,7 @@ struct brcm_pcie {
->>>>       struct reset_control    *rescal;
->>>>       struct reset_control    *perst_reset;
->>>>       struct reset_control    *bridge;
->>>> +     struct reset_control    *swinit;
->>>>       int                     num_memc;
->>>>       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
->>>>       u32                     hw_rev;
->>>> @@ -1626,6 +1627,13 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->>>>               dev_err(&pdev->dev, "could not enable clock\n");
->>>>               return ret;
->>>>       }
->>>> +
->>>> +     pcie->swinit = devm_reset_control_get_optional_exclusive(&pdev->dev, "swinit");
->>>> +     if (IS_ERR(pcie->swinit)) {
->>>> +             ret = dev_err_probe(&pdev->dev, PTR_ERR(pcie->swinit),
->>>> +                                 "failed to get 'swinit' reset\n");
->>>> +             goto clk_out;
->>>> +     }
->>>>       pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
->>>>       if (IS_ERR(pcie->rescal)) {
->>>>               ret = PTR_ERR(pcie->rescal);
->>>> @@ -1637,6 +1645,17 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->>>>               goto clk_out;
->>>>       }
->>>>
->>>> +     ret = reset_control_assert(pcie->swinit);
->>>> +     if (ret) {
->>>> +             dev_err_probe(&pdev->dev, ret, "could not assert reset 'swinit'\n");
->>>> +             goto clk_out;
->>>> +     }
->>>> +     ret = reset_control_deassert(pcie->swinit);
->>>> +     if (ret) {
->>>> +             dev_err(&pdev->dev, "could not de-assert reset 'swinit' after asserting\n");
->>>> +             goto clk_out;
->>>> +     }
->>>
->>> why not call reset_control_reset(pcie->swinit) directly?
->> Hi Stan,
->>
->> There is no reset_control_reset() method defined for reset-brcmstb.c.
->> The only reason I can
->> think of for this is that it allows the callers of assert/deassert to
->> insert a delay if desired.
+On Sat, Jul 06, 2024 at 01:31:03PM +0800, Tiezhu Yang wrote:
 > 
-> The main reason for the existence of reset_control_reset() is that
-> there are reset controllers that can only be triggered (e.g. by writing
-> a bit to a self-clearing register) to produce a complete reset pulse,
-> with assertion, delay, and deassertion all handled by the reset
-> controller.
+> 
+> On 07/05/2024 06:34 PM, Will Deacon wrote:
+> > On Fri, Jun 21, 2024 at 03:39:08PM +0800, Tiezhu Yang wrote:
+> > > Add a member "bp_priv" at the end of the uapi struct perf_event_attr
+> > > to make a bridge between ptrace and hardware breakpoint.
+> > > 
+> > > This is preparation for later patch on some archs such as ARM, ARM64
+> > > and LoongArch which have privilege level of breakpoint.
+> > > 
+> > > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> > > ---
+> > >  include/uapi/linux/perf_event.h | 3 +++
+> > >  kernel/events/hw_breakpoint.c   | 1 +
+> > >  2 files changed, 4 insertions(+)
+> > > 
+> > > diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> > > index 3a64499b0f5d..f9f917e854e6 100644
+> > > --- a/include/uapi/linux/perf_event.h
+> > > +++ b/include/uapi/linux/perf_event.h
+> > > @@ -379,6 +379,7 @@ enum perf_event_read_format {
+> > >  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
+> > >  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
+> > >  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
+> > > +#define PERF_ATTR_SIZE_VER9	144	/* add: bp_priv */
+> > > 
+> > >  /*
+> > >   * Hardware event_id to monitor via a performance monitoring event:
+> > > @@ -522,6 +523,8 @@ struct perf_event_attr {
+> > >  	__u64	sig_data;
+> > > 
+> > >  	__u64	config3; /* extension of config2 */
+> > > +
+> > > +	__u8	bp_priv; /* privilege level of breakpoint */
+> > >  };
+> > 
+> > Why are we extending the user ABI for this? Perf events already have the
+> > privilege encoded (indirectly) by the exclude_{user,kernel,hv} fields in
+> > 'struct perf_event_attr'.
+> 
+> IMO, add bp_priv is to keep consistent with the other fields
+> bp_type, bp_addr and bp_len
 
+I disagree, as these are properties specific to hw_breakpoint. Privilege
+is not.
 
-Got it. Thank you for explanation.
+> , the meaning of bp_priv field is
+> explicit and different with exclude_{user,kernel,hv} fields.
 
-But, IMO that means that the consumer driver should have knowledge of
-low-level reset implementation, which is not generic API?
+How? You're changing the user ABI here, it needs to be properly justified.
 
-Otherwise, I don't see a problem to implement asset/deassert sequence in
-.reset op in this particular reset-brcmstb.c low-level driver.
+> Additionally, there is only 1 bit for exclude_{user,kernel,hv},
+> but bp_priv field has at least 2 bit according to the explanation
+> of Arm Reference Manual. At last, the initial aim is to remove
+> the check condition to assign the value of hw->ctrl.privilege.
 
+Why? What problem is hw->ctrl.privilege causing?
 
-~Stan
+> https://developer.arm.com/documentation/ddi0487/latest/
+> 
+> 1. D23: AArch64 System Register Descriptions (Page 8562)
+>    D23.3.11 DBGWCR<n>_EL1, Debug Watchpoint Control Registers, n = 0 - 63
+>    PAC, bits [2:1]
+>    Privilege of access control. Determines the Exception level or levels at
+> which a Watchpoint debug
+>    event for watchpoint n is generated.
+> 
+> 2. G8: AArch32 System Register Descriptions (Page 12334)
+>    G8.3.26 DBGWCR<n>, Debug Watchpoint Control Registers, n = 0 - 15
+>    PAC, bits [2:1]
+>    Privilege of access control. Determines the Exception level or levels at
+> which a Watchpoint debug
+>    event for watchpoint n is generated.
+
+You're just quoting bits of the Arm ARM. The architectural permission
+checking is much more complicated and takes into account all of the PAC,
+HMC, SSC and SSCE fields, but Linux doesn't need to care about most of
+that because it's only managing user, kernel and possibly hypervisor.
+These three can be expressed with the exclude_ options that we already
+have.
+
+So I really don't understand the rationale here.
+
+Will
 
