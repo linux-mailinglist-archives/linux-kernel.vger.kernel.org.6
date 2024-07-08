@@ -1,152 +1,233 @@
-Return-Path: <linux-kernel+bounces-244670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9011792A7A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:52:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F96592A7A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C0D1C20F00
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5B31F215B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA69147C7F;
-	Mon,  8 Jul 2024 16:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4CB146D53;
+	Mon,  8 Jul 2024 16:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="P+TUbkpO"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmhgnyXz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E93E147C82
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601A514532B;
+	Mon,  8 Jul 2024 16:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720457562; cv=none; b=oR0xV5VIptzYJAVnSGSoP7GjnJc6ceIWvFLpkQ4Fw7MNpSRhii2mICmi6TlLeYH3GxN/ttHA+GWg9OuU8+vGiU193OVkv1zPdXkyCf641xlM6rGt4JEwsdFgmhkthHgl1Tsi/sXdRidwvSN/ftzGvGZMhC8Z/xC/rQgzXbcfhb0=
+	t=1720457626; cv=none; b=Y+gEQfU0mNEUwrf32BfHM9cgMzwKo2a11L17dHS70fqFIdFXsjgAE9C8phNMaD/qQgtKF6/lJ8ig6H1O02PL782kWqA3vbG5o8OfuFyOo6ceQ+cvY6YgsWY/9OYwTa+YpOxFA8qlWMWjvLFVgLcLJqYAzaL8E2x0RPcy/409Bko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720457562; c=relaxed/simple;
-	bh=1B5tJgkSM04kGIIt7Bd4CwyiBDyOxIVq095mpakxwCo=;
+	s=arc-20240116; t=1720457626; c=relaxed/simple;
+	bh=FCryOTObg5pKp7VCt0NeoJMhOHHA4GbhkZTncEgyNQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9M1G4J4tWDPpVc+cvbRLLG8GjOKEjrvEDyczIIfkV+eEuVcXK+UmWTznHxoOiEZdUoTNHlW0hyp0PD84IQESZ7QqeMPSVgRDETIAX4eJJkhORiWMNHmPH3ad/7FcTtJbjDrUeTa5aaNFKacI3kzi2p7ETOg09bIQuPOkBfeWiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=P+TUbkpO; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-444fdb6c1cfso27632571cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1720457559; x=1721062359; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=44iLSgmAA8Jj5OzeQp5q3uGTMuRJb4ek81IJRNbfP50=;
-        b=P+TUbkpOGqpFLTWb4t5NSUvguJ5/6rVKfyrEcU8M/gVD35r280+g1ipvBHqy4Ujl89
-         4BSnWWR1YvaygNAqn4Ow6KuQclsaKNZLcCNhj3cCkaDjZtDd+UmOiH4NWHVUH+68msas
-         M1GFdT4yQHwcmbdKWavJjZJNCX5zEFCR9jqzxxoNB7ibBJqOQn8nhJRqWfq3XCjOQMPa
-         2esubhBzgBcBXIUSdSvYYkXotdxLTl37i654frtw9D1Y6CsM1HQLdgLWFZi9zwgIKx14
-         kfqe8LNIY3cwxvPKoDhXEHc9ekKXEy+9xugONCBQ+fbE0zdKmpvXn7PxxvQgEtxCmgjV
-         bzRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720457559; x=1721062359;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=44iLSgmAA8Jj5OzeQp5q3uGTMuRJb4ek81IJRNbfP50=;
-        b=jWzSlAi+jJZOq4MUtFLfRahmA9VLSrhDWWrx4Zh5FmNuKu7ucpjvMUiGC3nly1Io3c
-         xx+kpd79WjoA8/YmfcPospr7GsLVDB+PovS2L1ifyXBsnWHjCo7NJ1jNOkwqGOOx2XBv
-         DXVat0EMn4POcgoXibFVVt3Hx1/UdFbJcjKLJGfLsgFNORbM+s35RizWAspFOF2A7m49
-         T91tGBTvnkN0XSKk7TGEazp9zJ2HoQKfpIg82V4Ykq2msdMEgwRX2A5OhJbzxBvL6Ho1
-         gvQ6mlNQ5+4zP/Axy7X5HtIQAHrdZsJpKrj0sTWp2DqnrCMjr0Iq3+LLEHzYB+RCAXhP
-         u2ig==
-X-Forwarded-Encrypted: i=1; AJvYcCU4+7HlEBEoyk/SOtaxt7qT1Uziyxgzww64/911gTBSB13hgw/Yamlyi4JpvWZInSCHPQFHXuGqv0U6GvMbz1Kb9o2BOhDYPNLBScFW
-X-Gm-Message-State: AOJu0YxRl4aZFlftQz91Bw0s3UHFI7kXL/4Z0btiRYAF+WA1T5lzrWd+
-	kVAtveIM19IBiFfjk4e4bhy0XxiOBsdPU8viq2nFrLNw6VfPinPj0/uQBQJWSYk=
-X-Google-Smtp-Source: AGHT+IHmTDKEE4X7UqSrEePQ2yW2AFHAIlc2Xn5bxdXHYF1pSNmcIuJQ4brop8xp0q/dd20hJkGD6Q==
-X-Received: by 2002:ac8:58c6:0:b0:447:e532:b370 with SMTP id d75a77b69052e-447fa8aefa5mr156831cf.10.1720457559408;
-        Mon, 08 Jul 2024 09:52:39 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b40389sm1202611cf.36.2024.07.08.09.52.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 09:52:38 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sQrbS-000Uky-FO;
-	Mon, 08 Jul 2024 13:52:38 -0300
-Date: Mon, 8 Jul 2024 13:52:38 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
-	"Zeng, Oak" <oak.zeng@intel.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
-Message-ID: <20240708165238.GE14050@ziepe.ca>
-References: <cover.1719909395.git.leon@kernel.org>
- <20240703054238.GA25366@lst.de>
- <20240703105253.GA95824@unreal>
- <20240703143530.GA30857@lst.de>
- <20240703155114.GB95824@unreal>
- <20240704074855.GA26913@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzV3g/TNSx1CIS5I2j2N/PZxuf5VPmq8SbI6uRoOgLm4Ch86CMgRSml/s12qCb8ZAqL5miJxRDvFFD6+st81KF1GwoToueQMtVc/YqqAN4M9+Veutao+N0hSd6/51TM8lPJhdgawmyuEqSioEuZbow06z067qNBkCmOyRZxMRxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmhgnyXz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F8DC116B1;
+	Mon,  8 Jul 2024 16:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720457625;
+	bh=FCryOTObg5pKp7VCt0NeoJMhOHHA4GbhkZTncEgyNQo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QmhgnyXz02DisVxG5jMEKvqdnM7ZS6pKqa4VKSxai/AI8RbLrfyv8I9OViPo2pjKh
+	 kuP5KgZkcjKy+OihckUTDl2m/Yi7PElPK7ezbau+x/UucY/JAGfpBO2ueBtgBxeUu6
+	 lQeUXVbMQEg3zLfLGfIssijFPnfGEoE3YvVCPxEgBTlVyyO5o5Xt8jDd/UxipEzfZP
+	 V6hrDC9iqCTO+B6fB+OZHmd0fi9nJSs4KK2esLsrqlmwaWPmaywq9XSTZ7nYU+N1lz
+	 q8wO+WMdGDY4ps6nUBY+3Z3WlyXXfB6yM39l9wAGs9l9hUi37qURyGV1Bj2fxDGCl3
+	 bW7xkJQ9KYdVw==
+Date: Mon, 8 Jul 2024 09:53:42 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: add script and target to generate pacman
+ package
+Message-ID: <20240708165342.GA2417540@thelio-3990X>
+References: <20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net>
+ <20240708055046.GB1968570@thelio-3990X>
+ <9884e892-1d45-4854-971c-5963e4661a1b@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240704074855.GA26913@lst.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9884e892-1d45-4854-971c-5963e4661a1b@t-8ch.de>
 
-On Thu, Jul 04, 2024 at 09:48:56AM +0200, Christoph Hellwig wrote:
+On Mon, Jul 08, 2024 at 05:56:44PM +0200, Thomas Weiﬂschuh wrote:
+> Hi Nathan,
+> 
+> On 2024-07-07 22:50:46+0000, Nathan Chancellor wrote:
+> > On Sat, Jul 06, 2024 at 09:33:46AM +0200, Thomas Weiﬂschuh wrote:
+> > > pacman is the package manager used by Arch Linux and its derivates.
+> > > Creating native packages from the kernel tree has multiple advantages:
+> > > 
+> > > * The package triggers the correct hooks for initramfs generation and
+> > >   bootloader configuration
+> > > * Uninstallation is complete and also invokes the relevant hooks
+> > > * New UAPI headers can be installed without any manual bookkeeping
+> > > 
+> > > The PKGBUILD file is a simplified version of the one used for the
+> > > downstream Arch Linux "linux" package.
+> > > Extra steps that should not be necessary for a development kernel have
+> > > been removed and an UAPI header package has been added.
+> > > 
+> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> > 
+> > Thanks a lot for addressing my comments. From a PKGBUILD perspective,
+> > this looks good to me (I have a couple more comments below). I am not as
+> > familiar with the Kbuild packaging infrastructure, so Masahiro might
+> > have more comments on that, but it works for me in my basic testing so
+> > consider it:
+> > 
+> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> > Tested-by: Nathan Chancellor <nathan@kernel.org>
+> 
+> Thanks!
+> 
+> > 
+> > > ---
+> > > Changes in v2:
+> > > - Replace ${MAKE} with $MAKE for consistency with other variables
+> > > - Use $MAKE for "-s image_name"
+> > > - Avoid permission warnings from build directory
+> > > - Clarify reason for /build symlink removal
+> > > - Install System.map and config
+> > > - Install dtbs where available
+> > > - Allow cross-build through arch=any
+> > > - Sort Contributor/Maintainer chronologically
+> > > - Disable some unneeded makepkg options
+> > > - Use DEPMOD=true for consistency with rpm-package
+> > > - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
+> > > ---
+> > >  .gitignore               |  6 ++++
+> > >  scripts/Makefile.package | 15 +++++++++
+> > >  scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 104 insertions(+)
+> 
+> <snip>
+> 
+> > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > new file mode 100644
+> > > index 000000000000..fe899c77a976
+> > > --- /dev/null
+> > > +++ b/scripts/package/PKGBUILD
+> > > @@ -0,0 +1,83 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > +# Maintainer: Thomas Weiﬂschuh <linux@weissschuh.net>
+> > > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > > +
+> > > +pkgbase=linux-upstream
+> > > +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
+> > > +pkgver="${KERNELRELEASE//-/_}"
+> > > +pkgrel="$KBUILD_REVISION"
+> > > +pkgdesc='Linux'
+> > > +url='https://www.kernel.org/'
+> > > +arch=(any)
+> > 
+> > I see why you went this way but this feels a little dangerous because
+> > this means the package will be installable on architectures other than
+> > the one that it is built for. I think a better solution for this problem
+> > would be moving arch back to $UTS_MACHINE but setting CARCH to that same
+> > value in scripts/Makefile.package above. This diff works for me,
+> > allowing me to build an aarch64 package on x86_64:
+> 
+> This is what I used in v1 of the patch.
 
-> 1) The amount of code needed in nvme worries me a bit.  Now NVMe a messy
-> driver due to the stupid PRPs vs just using SGLs, but needing a fair
-> amount of extra boilerplate code in drivers is a bit of a warning sign.
-> I plan to look into this to see if I can help on improving it, but for
-> that I need a working version first.
+You had $UTS_MACHINE as arch but I don't see where CARCH was set for
+makepkg? If you tried to cross compile with v1, there was an error
+because the default CARCH value (the host) does not match the arch
+value, but explicitly passing CARCH to makepkg with $UTS_MACHINE should
+allow makepkg to build a package that is only installable on that
+machine?
 
-It would be nice to have less.  So much now depends on the caller to
-provide both the input and output data structure.
+> But I felt that this only works by pure chance.
 
-Ideally we'd have some template code that consolidates these loops to
-common code with driver provided hooks - there are a few ways to get
-that efficiently in C.
+I don't think it is by pure chance, it should be entirely based off of the
+builder's ARCH value, no? I might be misunderstanding something though.
 
-I think it will be clearer when we get to RDMA and there we have the
-same SGL/PRP kind of split up and we can see what is sharable.
+> IMO users of this feature should know what they are doing.
+> 
+> That said, if anybody has strong opinions on this, I'll be happy to change it.
 
-> Not quite as concerning, but doing an indirect call for each map
-> through dma_map_ops in addition to the iommu ops is not every
-> efficient.
+I don't feel strongly about it but I think this is different from pretty
+much all of the other package builds, which only build a package that is
+installable/usable on one archictecture, and the solution seems
+simple/robust enough.
 
-Yeah, there is no reason to support anything other than dma-iommu.c
-for the iommu path, so the dma_map_op indirection for this could just
-be removed.
+> > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > index 8c0c80f8bec0..a5b5b899d90c 100644
+> > --- a/scripts/Makefile.package
+> > +++ b/scripts/Makefile.package
+> > @@ -151,6 +151,7 @@ pacman-pkg:
+> >  		srctree="$(realpath $(srctree))" \
+> >  		objtree="$(realpath $(objtree))" \
+> >  		BUILDDIR="$(realpath $(objtree))/pacman" \
+> > +		CARCH="$(UTS_MACHINE)" \
+> >  		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+> >  		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
+> >  		makepkg
+> > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > index fe899c77a976..7f1a4588c3d3 100644
+> > --- a/scripts/package/PKGBUILD
+> > +++ b/scripts/package/PKGBUILD
+> > @@ -8,7 +8,7 @@ pkgver="${KERNELRELEASE//-/_}"
+> >  pkgrel="$KBUILD_REVISION"
+> >  pkgdesc='Linux'
+> >  url='https://www.kernel.org/'
+> > -arch=(any)
+> > +arch=($UTS_MACHINE)
+> >  options=(!debug !strip !buildflags !makeflags)
+> >  license=(GPL-2.0-only)
+> >  
+> > 
+> > > +options=(!debug !strip !buildflags !makeflags)
+> > > +license=(GPL-2.0-only)
+> > > +
+> 
+> <snip>
+> 
+> > > +
+> > > +package_linux-upstream-headers() {
+> > > +  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+> > > +
+> > > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> > > +  cd "$objtree"
+> > > +  local builddir="$pkgdir/usr/$MODLIB/build"
+> > > +
+> > > +  echo "Installing build files..."
+> > > +  "$srctree/scripts/package/install-extmod-build" "$builddir"
+> > > +
+> > > +  echo "Installing System.map and config..."
+> > > +  cp System.map "$builddir/System.map"
+> > > +  cp .config "$builddir/.config"
+> > 
+> > Remove the dot on the installation location so that it is more visible.
+> 
+> This is the location used by the downstream linux-headers package.
 
-I'm also cooking something that should let us build a way to iommu map
-a bio_vec very efficiently, which should transform this into a single
-indirect call into the iommu driver per bio_vec, and a single radix
-walk/etc.
+Ah, I did not realize that!
 
-> We've through for a while to allow direct calls to dma-iommu similar
-> how we do direct calls to dma-direct from the core mapping.c code.
-> This might be a good time to do that as a prep step for this work.
+> I can add a symlink for better visibility, though.
 
-I think there is room to benchmark and further improve these
-paths. Even the fast direct map path is not compiling down to a single
-load/store instruction per bio_vec entry as would be ideal.
+It probably isn't that big of a deal if it is in the package somewhere,
+I don't feel strongly enough about it.
 
-Jason
+> > > +  echo "Adding symlink..."
+> > > +  mkdir -p "$pkgdir/usr/src"
+> > > +  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+> > > +}
+> > > +
+> 
+> <snip>
 
