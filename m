@@ -1,275 +1,233 @@
-Return-Path: <linux-kernel+bounces-244020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04BDE929E12
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:11:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759E1929E15
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270E31C221A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E573F1F21E75
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A5D3BB21;
-	Mon,  8 Jul 2024 08:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CD73BBDE;
+	Mon,  8 Jul 2024 08:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CRDh1ppo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Uy8IWMaf"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E686B47F53
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 08:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9531864C;
+	Mon,  8 Jul 2024 08:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720426292; cv=none; b=RX33eC3Sny/BaVl7TK7XkIPW7kAmcZ9MDKR9Nls+BsuyI8nw2TXhssqSnur+1vLETJpFkgbj8YkH8+p7rk+xR78RDrA2FM6x6ml3KrIsJ0WhPBZLrYJQz0dBmf0g/VLJuXL+kaI4HN0PMb5wYdbTiSTsXHhWBao5gIp21rSX7M4=
+	t=1720426371; cv=none; b=HDdlBsTYSAbM392Y/SNH/M3+0l5NnKCd/lkhbP2S72uCXZDghD5iLTEhpRlB2qU82ueymuRj4sm7dx8brwXKKc5U2zcWr2h4VM0cMkjOuQfB9oe7kZ19Qpcx/2hbgx/xXGlGC1PrDeR/VsCB5iBrmobsLtvH+MEz+nfPxfoYPOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720426292; c=relaxed/simple;
-	bh=2oLuXobac5roJSa3IO5/5qzJKdTUjyDWzEQLC8i5HaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nqgHlcKT4m9BUoQ6BDtYVFkT5kEeT+bFPyZ8AyeAiisOTdQDVmar/yxLePm9curxYVm07nPWWw9d3q7Yk5A9msWXToc0myjcoYrFi0hbTxIoAylxFxM5dEC8EZu3RW8Y++wMv5GoS4V1cHStxES9d+E+VarCx5ATmlR71zKMsn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CRDh1ppo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720426289;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Gp+JU/F91iJfi0msXelpd8IVzKHprY8FUr3nyaI8s/Y=;
-	b=CRDh1ppojph0lN/tUL2mekl2l1WsWpgjT+L+wEm3k6/u6nNgRDBPPk2CL+l3OQ7uwUTl7X
-	i0pW1WxmfI6T+ystmAYTzO/6RskWBuexa1mjzBRJ0qsllnLDV1fJu6biNp7jzcitE+IdDM
-	rfPsTraNv2gIEwSDNJa2R67zBsRF4QA=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-78-b2WbAM__M8uzQDe2H5tfuA-1; Mon, 08 Jul 2024 04:11:28 -0400
-X-MC-Unique: b2WbAM__M8uzQDe2H5tfuA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7275e17256so320920366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 01:11:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720426287; x=1721031087;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Gp+JU/F91iJfi0msXelpd8IVzKHprY8FUr3nyaI8s/Y=;
-        b=hZoVz+SAu9Ebr/Pj9T7SHggYfmXzf0RObDyO+rayauR0qISsRONELF11ECi8gDIisx
-         skzLOplB3G0sxgw0Uy6atvb2VLLiQvQxIY5NEis9qb/JErmQXu6P1PsHao2lhtDye+sX
-         3raoKfY1hYSv2qhsKLkT4EDCdf2+5CsfWwKcme/s9Aj9KTQB9ki2OLrSoHYvHYKfI3VF
-         9UTH8QmC6FK0WgtlpnaHNWanyD16xq8CNXWCdp9TCpExtT0PZAZVSHSWWFGv8WGeOq/N
-         skUfcO5bMGWyBOLHXhwOryUKe7/ytUggj7MOByLrkKRBoVm4DLmZwfQN1uYc7tYSDmtl
-         BszA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJLopKPBcfvcshOUoekNmdUl3GVPVOJsSoPs+QvBF68UrPbHCBSUkoYfWCT8I1lnyPUNOz6HhpD12pqGk+bjjHIktqesGoRUu2IcxM
-X-Gm-Message-State: AOJu0Ywx0LVR5s9UxoqLmprbr2vTRYy8RHEUFmhKL8W+pMKN57WbAiVj
-	OhFr8v/Dl93hFNkHHadB4z1d46agxkXveiYvH9TccCyBp8WMc/G3KVmXxuCJnLbNxj0GB8xi/z+
-	7FMb/I7HUR+o2tvyibMFG0wsLcgvnvZzIIk02/on7liAh43H/PnxWOW5/ETvRMQ==
-X-Received: by 2002:a05:6402:311c:b0:58c:adad:cbb with SMTP id 4fb4d7f45d1cf-58e5cc0b694mr5634062a12.38.1720426287098;
-        Mon, 08 Jul 2024 01:11:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERhu1ncMdDmYLIvyQzpQhR84SA4zIqAfzm6r9bAw/Jyk06nNBrd+LkPTmKZbo4Xr0uenl3oQ==
-X-Received: by 2002:a05:6402:311c:b0:58c:adad:cbb with SMTP id 4fb4d7f45d1cf-58e5cc0b694mr5634038a12.38.1720426286701;
-        Mon, 08 Jul 2024 01:11:26 -0700 (PDT)
-Received: from [100.81.188.195] ([178.24.249.36])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-593c7f2845fsm411567a12.95.2024.07.08.01.11.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 01:11:26 -0700 (PDT)
-Message-ID: <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
-Date: Mon, 8 Jul 2024 10:11:24 +0200
+	s=arc-20240116; t=1720426371; c=relaxed/simple;
+	bh=XQe62ZyTOEoRiduvusCL/q8/fQjihKu6X4uLszViecE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Esgz1st4lcchpiL9fdVrgkTsnovFACN/Z8me/uNaaCYU0u1DvWGPxLeCH1VxeRQexTWzTNjcZLjN5bcUMbDnpdr2EkuUDuF8/C7BjMytzMMUYHRSw7teS34NfTLkVDFlPafM70Wxbo4hjaGUg/RI529gNLb8xzVs2D/x5I2UYMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Uy8IWMaf; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1720426361; x=1720685561;
+	bh=L+zTwXfvHIAolDRxRlsyaU2fxyf/8YP3cmYvff3qA98=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Uy8IWMaf14rIx+VTvzaKEKtxmFg/nEAqPAF5x3ASxk862EiUP+U9z6U4/Dxt+5W8T
+	 nPqwb4RgmXTa652gXd86/lmot5AD3maRbj4QMGN0F1OW2CSEKRjCfoWkkGyfX5FZgZ
+	 mP+LczrxDnIEqtvW60zUB80+M7MeDNF1AwseC1pSZ+FWDdpte7LpKpiaP+yR+iuHpE
+	 nZ4WSH6K/6PG7yuCuNOMaFXDBwopJ4aoff/M8qJ1eIYmUxdqGgnt3JXaZ/5T6vksEa
+	 XWP/vuaUXhcn63bUufn/kohCQIMMYeBfkkdKRBp+jkQrA4V2r3lySxux4aYWS1Egkr
+	 HifaRM1WXqJrQ==
+Date: Mon, 08 Jul 2024 08:12:34 +0000
+To: Danilo Krummrich <dakr@redhat.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 01/20] rust: alloc: add `Allocator` trait
+Message-ID: <5197ac37-ab92-4d99-a2e1-82d1cd9dc7e7@proton.me>
+In-Reply-To: <ZomRT_PQHVMVQ_RY@cassiopeiae>
+References: <20240704170738.3621-1-dakr@redhat.com> <20240704170738.3621-2-dakr@redhat.com> <37d87244-fbef-414c-a726-60839b305040@proton.me> <ZoklB7aLyc90kWPT@pollux.localdomain> <2c322b00-20f8-4102-9f3b-edab0c0907b9@proton.me> <ZolerSMkVl0C4yfF@pollux.localdomain> <50cec075-04f4-4267-8d19-1b498a9f51bf@proton.me> <ZomRT_PQHVMVQ_RY@cassiopeiae>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 970b5d08fd1eca9213c31b16e372ed5847539a46
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
- lazily freeable mappings
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev, tglx@linutronix.de, linux-crypto@vger.kernel.org,
- linux-api@vger.kernel.org, x86@kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
- Christian Brauner <brauner@kernel.org>,
- David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-References: <20240707002658.1917440-1-Jason@zx2c4.com>
- <20240707002658.1917440-2-Jason@zx2c4.com>
- <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
- <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
- <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
- <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
- <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
- <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 08.07.24 02:08, Linus Torvalds wrote:
-> On Sun, 7 Jul 2024 at 14:01, David Hildenbrand <david@redhat.com> wrote:
+On 06.07.24 20:47, Danilo Krummrich wrote:
+> On Sat, Jul 06, 2024 at 05:08:26PM +0000, Benno Lossin wrote:
+>> On 06.07.24 17:11, Danilo Krummrich wrote:
+>>> On Sat, Jul 06, 2024 at 01:17:19PM +0000, Benno Lossin wrote:
+>>>> On 06.07.24 13:05, Danilo Krummrich wrote:
+>>>>>>> +        layout: Layout,
+>>>>>>> +        flags: Flags,
+>>>>>>> +    ) -> Result<NonNull<[u8]>, AllocError>;
+>>>>>>> +
+>>>>>>> +    /// Free an existing memory allocation.
+>>>>>>> +    ///
+>>>>>>> +    /// # Safety
+>>>>>>> +    ///
+>>>>>>> +    /// `ptr` must point to an existing and valid memory allocatio=
+n created by this `Allocator`
+>>>>>>> +    /// instance.
+>>>>>>> +    unsafe fn free(&self, ptr: *mut u8) {
+>>>>>>
+>>>>>> `ptr` should be `NonNull<u8>`.
+>>>>>
+>>>>> Creating a `NonNull` from a raw pointer is an extra operation for any=
+ user of
+>>>>> `free` and given that all `free` functions in the kernel accept a NUL=
+L pointer,
+>>>>> I think there is not much value in making this `NonNull`.
+>>>>
+>>>> I don't think that this argument holds for Rust though. For example,
+>>>> `KBox` contains a `Unique` that contains a `NonNull`, so freeing could
+>>>> just be done with `free(self.0.0)`.
+>>>
+>>> Agreed, we can indeed make it a `&NonNull<u8>`. However, I find this a =
+bit
 >>
->> At least MAP_DROPPABLE doesn't quite make sense with hugetlb, but at least
->> the other ones do have semantics with hugetlb?
-> 
-> Hmm.
-> 
-> How about we just say that VM_DROPPABLE really is something separate
-> from MAP_PRIVATE or MAP_SHARED..
+>> I think you mean `NonNull<u8>`, right?
+>=20
+> Yes, but I still don't see how that improves things, e.g. in `Drop` of
+> `KVec`:
+>=20
+> `A::free(self.ptr.to_non_null().cast())`
+>=20
+> vs.
+>=20
+> `A::free(self.as_mut_ptr().cast())`
+>=20
+> I'm not against this change, but I don't see how this makes things better=
+.
 
-So it would essentially currently imply MAP_ANON|MAP_PRIVATE, without 
-COW (not shared with a child process).
+Ah you still need to convert the `Unique<T>` to a pointer...
+But we could have a trait that allows that conversion. Additionally, we
+could get rid of the cast if we made the function generic.
 
-Then, we should ignore any fd+offset that is passed (or bail out); I 
-assume that's what your proposal below does automatically without diving 
-into the code.
+>>> inconsistent with the signature of `realloc`.
+>>>
+>>> Should we go with separate `shrink` / `grow`, `free` could be implement=
+ed as
+>>> shrinking to zero and allowing a NULL pointer makes not much sense.
+>>>
+>>> But as mentioned, I'm not yet seeing the benefit of having `realloc` sp=
+lit into
+>>> `grow` and `shrink`.
+>>
+>> I would not split it into grow/shrink. I am not sure what exactly would
+>> be best here, but here is what I am trying to achieve:
+>> - people should strongly prefer alloc/free over realloc,
+>=20
+> I agree; the functions for that are there: `Allocator::alloc` and
+> `Allocator::free`.
+>=20
+> `KBox` uses both of them, `KVec` instead, for obvious reasons, uses
+> `Allocator::realloc` directly to grow from zero and `Allocator::free`.
+>=20
+>> - calling realloc with zero size should not signify freeing the memory,
+>>   but rather resizing the allocation to 0. E.g. because a buffer now
+>>   decides to hold zero elements (in this case, the size should be a
+>>   variable that just happens to be zero).
+>=20
+> If a buffer is forced to a new size of zero, isn't that effectively a fre=
+e?
 
-> 
-> And then we make the rule be that VM_DROPPABLE is never dumped and
-> always dropped on fork, just to make things simpler.
+I would argue that they are different, since you get a pointer back that
+points to an allocation of zero size. A vector of size zero still keeps
+around a (dangling) pointer.
+You also can free a zero sized allocation (it's a no-op), but you must
+not free an allocation twice.
 
-The semantics are much more intuitive. No need for separate mmap flags.
+> At least that's exactly what the kernel does, if we ask krealloc() to res=
+ize to
+> zero it will free the memory and return ZERO_SIZE_PTR.
 
-> 
-> It not only avoids a flag, but it actually makes sense: the pages
-> aren't stable for dumping anyway, and not copying them on fork() not
-> only avoids some overhead, but makes it much more reliable and
-> testable.
-> 
-> IOW, how about taking this approach:
-> 
->     --- a/include/uapi/linux/mman.h
->     +++ b/include/uapi/linux/mman.h
->     @@ -17,5 +17,6 @@
->      #define MAP_SHARED  0x01            /* Share changes */
->      #define MAP_PRIVATE 0x02            /* Changes are private */
->      #define MAP_SHARED_VALIDATE 0x03    /* share + validate extension flags */
->     +#define MAP_DROPPABLE       0x08    /* 4 is not in MAP_TYPE on parisc? */
-> 
->      /*
-> 
-> with do_mmap() doing:
-> 
->     --- a/mm/mmap.c
->     +++ b/mm/mmap.c
->     @@ -1369,6 +1369,23 @@ unsigned long do_mmap(struct file *file,
->                          pgoff = 0;
->                          vm_flags |= VM_SHARED | VM_MAYSHARE;
->                          break;
->     +            case MAP_DROPPABLE:
->     +                    /*
->     +                     * A locked or stack area makes no sense to
->     +                     * be droppable.
->     +                     *
->     +                     * Also, since droppable pages can just go
->     +                     * away at any time, it makes no sense to
->     +                     * copy them on fork or dump them.
->     +                     */
->     +                    if (flags & MAP_LOCKED)
->     +                            return -EINVAL;
+Not every allocator behaves like krealloc, in your patch, both vmalloc
+and kvmalloc are implemented with `if`s to check for the various special
+cases.
 
-Likely we'll have to adjust mlock() as well. Also, I think we should 
-just bail out with hugetlb as well.
+> So, what exactly would you want `realloc` to do when a size of zero is pa=
+ssed
+> in?
 
->     +                    if (vm_flags & (VM_GROWSDOWN|VM_GROWSUP))
->     +                            return -EINVAL;
->     +
->     +                    vm_flags |= VM_DROPPABLE;
->     +                    vm_flags |= VM_WIPEONFORK | VM_DONTDUMP;
+I don't want to change the behavior, I want to prevent people from using
+it unnecessarily.
 
-Further, maybe we want to disallow madvise() clearing these flags here, 
-just to be consistent.
+>> - calling realloc with a null pointer should not be necessary, since
+>>   `alloc` exists.
+>=20
+> But `alloc` calls `realloc` with a NULL pointer to allocate new memory.
+>=20
+> Let's take `Kmalloc` as example, surely I could implement `alloc` by call=
+ing
+> into kmalloc() instead. But then we'd have to implement `alloc` for all
+> allocators, instead of having a generic `alloc`.
 
->     +                    fallthrough;
->                  case MAP_PRIVATE:
->                          /*
->                           * Set pgoff according to addr for anon_vma.
-> 
-> which looks rather simple.
-> 
-> The only oddity is that parisc thing - every other archiecture has the
-> MAP_TYPE bits being 0xf, but parisc uses 0x2b (also four bits, but
-> instead of the low four bits it's 00101011 - strange).
+My intuition is telling me that I don't like that you can pass null to
+realloc. I can't put my finger on exactly why that is, maybe because
+there isn't actually any argument here or maybe there is. I'd like to
+hear other people's opinion.
 
-I assume, changing that would have the risk of breaking stupid user 
-space, right? (that sets a bit without any semantics)
+> And I wonder what's the point given that `realloc` with a NULL pointer al=
+ready
+> does this naturally? Besides that, it comes in handy when we want to allo=
+cate
+> memory for data structures that grow from zero, such as `KVec`.
 
-> 
-> So using 8 as a MAP_TYPE bit for MAP_DROPPABLE works everywhere, and
-> if we eventually want to do a "signaling" MAP_DROPPABLE we could use
-> 9.
+You can just `alloc` with size zero and then call `realloc` with the
+pointer that you got. I don't see how this would be a problem.
 
-Sounds good enough.
+>> This is to improve readability of code, or do you find
+>>
+>>     realloc(ptr, 0, Layout::new::<()>(), Flags(0))
+>>
+>> more readable than
+>>
+>>     free(ptr)
+>=20
+> No, but that's not what users of allocators would do. They'd just call `f=
+ree`,
+> as I do in `KBox` and `KVec`.
 
-> 
-> This has the added advantage that if somebody does this on an old
-> kernel,. they *will* get an error. Because unlike the 'flag' bits in
-> general, the MAP_TYPE bit space has always been tested.
-> 
-> Hmm?
+I agree that we have to free the memory when supplying a zero size, but
+I don't like adding additional features to `realloc`.
 
-As a side note, I'll raise that I am not a particular fan of the 
-"droppable" terminology, at least with the "read 0s" approach.
+Conceptually, I see an allocator like this:
 
- From a user perspective, the memory might suddenly lose its state and 
-read as 0s just like volatile memory when it loses power. "dropping 
-pages" sounds more like an implementation detail.
+    pub trait Allocator {
+        type Flags;
+        type Allocation;
+        type Error;
+   =20
+        fn alloc(layout: Layout, flags: Self::Flags) -> Result<Self::Alloca=
+tion, Self::Error>;
+   =20
+        fn realloc(
+            alloc: Self::Allocation,
+            old: Layout,
+            new: Layout,
+            flags: Self::Flags,
+        ) -> Result<Self::Allocation, (Self::Allocation, Self::Error)>;
+   =20
+        fn free(alloc: Self::Allocation);
+    }
 
-Something like MAP_VOLATILE might be more intuitive (similar to the 
-proposed MADV_VOLATILE).
+I.e. to reallocate something, you first have to have something
+allocated.
 
-But naming is hard, just mentioning to share my thought :)
+For some reason if we use `Option<NonNull<u8>>` instead of `*mut u8`, I
+have a better feeling, but that might be worse for ergonomics...
 
--- 
+---
 Cheers,
-
-David / dhildenb
+Benno
 
 
