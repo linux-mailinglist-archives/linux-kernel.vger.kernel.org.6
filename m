@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-244824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0C692A9EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:41:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74ACA92A9F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631981F2286D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EFC7284858
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBF614D6FC;
-	Mon,  8 Jul 2024 19:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8BC14BFB4;
+	Mon,  8 Jul 2024 19:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4psoOl1p"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A22UySBg"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02C814B97B
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73033149DFD
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720467681; cv=none; b=H6w9ZQVKlqa/fLoo1PP5IevB7eU6NcO/9G5M6285p6ebYFCa+R0ixgkzDyGosrOe4+ndZP68ZRWdp82DVyc/gF/FNYPI7ZeIleib9SLdEQzGmhHRcVrdWQaBl/OeSZbcs5PXdePWU5kybNeHJDiryq+AKE4+BQTI71z6kXgi4pA=
+	t=1720467688; cv=none; b=nRqjyFPDOpxRT/zXfs+yJ6Z3ltZCGhmPeW0FtRJMJidONTPCR5Zn3JDbDKTNUnJg4cGP0UXachNotTsIdneXhws1J3xTXBIzlNFeApAcWXIfKZWdz/yqGrRSFQCVPfIkoh0qJSxehfRNsu8wwcwRgFQPzx+TuGENYjFW1R9gcwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720467681; c=relaxed/simple;
-	bh=dOch4uHVwbdqhpbBV02MHHp9f3drQ4HsNxri8gTA2+w=;
+	s=arc-20240116; t=1720467688; c=relaxed/simple;
+	bh=J7SMmk8dkfxhtog/4tWjeMnExbVnXCqmGT5M8Wv6bCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f86Od3jLo0lE/NQCJk7MJOpYGUrDdXMnXd6Txn9p8PhU6IY7ve8KvODzRExXjEAbJS1ejzEojka3bb/eVy3hym0ap8mAiQy7rzAycM88yQVquqobtbFq3GI3A4C1iVqvGPFetNLK3tMDlMk79p9XRQ/vK32qbnulri1J83dy2ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4psoOl1p; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720467677;
-	bh=dOch4uHVwbdqhpbBV02MHHp9f3drQ4HsNxri8gTA2+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=4psoOl1pmK2PjRg2Yhg6judHKiY5A5m4nLsOe9zY58Y3C/syatG5SCwMXB6RQ3uvM
-	 lmgEXXcXBsWBhM/vmMloatC5WI5vqDX9+dDtq/GxjwNvhcxHfI7Ah7lr6AB8AhzPSP
-	 K75lTFKgxYPjcVdOINjCzMFdFR+gfzg5OoS3j6bu2EKhlrl5LsA1WAvpYcQqlJRlyl
-	 J/2ySoNymxM3VaKtdId92aeeonAmIC8OXeogoyj7CQzmJM4qd2OU/DL6xF2Dgks1V5
-	 sZFyhpGq71ep/BTjn9aYOB/9u3UlTKZXoMr84W5bXsktvdrlfHd0s/CToP0/oPSuGK
-	 DFv7OMe13+xPA==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2CAD0378042B;
-	Mon,  8 Jul 2024 19:41:14 +0000 (UTC)
-Date: Mon, 8 Jul 2024 15:41:13 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] nvmem: mtk-efuse: Only register socinfo device if needed
- cells are there
-Message-ID: <09652279-4148-4db2-b4d9-ef2393f1b0b8@notapiano>
-References: <20240708-mtk-socinfo-no-data-probe-err-v1-1-fb2acd3a47bf@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8uVvrExMDjxfye6BCl6T6SOlmnrOW4iAaLGg4EYb3ST0lB2292c/rTmpjdJney+4XSNSLGaeVh8WxgQgRI9Xf+2j+OGUxeAf1hShV2T1w1Af7hmuvibP96wYrx3rkFqtwCsqjJ1SoM2A13LnIaQn7oQMCYMPqBGH9CJ5vAm+hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A22UySBg; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso2199910a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 12:41:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1720467687; x=1721072487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZVILaPzBf0V9Eob5sjaqfm/n4CHzoRJIANCVQTtCSIs=;
+        b=A22UySBgefkGS7ukEfw4aMGekLyuVel/Y5he+WRFURMFdW3g7gX/Kw8bcx6CE2lmB5
+         sUyH9lhPFYQNB5LZuBND35ul84dkgfLVk/TCmU2t18ADoNh/b/EeSvroXo6IgoRqEnQe
+         CxgaGgpkJhvs7kZ+Ji7PkrVFqEmZd33/FdnKo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720467687; x=1721072487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZVILaPzBf0V9Eob5sjaqfm/n4CHzoRJIANCVQTtCSIs=;
+        b=lX07KtDJTYdKaZUrtexn+2bM0fEojKf0A8pxpYnqp65fZZzX0jiT6N65/FTWi5KYBA
+         Ag7GDam2kr7QBNIU/pfPNgO9Zgw9CRH+q5ShGUlo18JKtRaYEpWuegpzFcTffyHVqZk3
+         lwBOrvGNsf/bjenlTCLzWXbBK/0O9GIESk8whrlVtnzWIYpuDLfZuLetUioU5EfX72Qy
+         j3NNcBLgEsvvhkP6KBA5IwtJlC4A0XhBTf/l8Y3U+hCI8H4XXjRQ0d49ocAa7+M4/UJB
+         kMhxdO7aciUayyC6jg6kQy0xMRlSyK/0zJZpo25ValCSzhTsnUCLmB2HzSF71wLsJu3B
+         qpqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVa9xhW6PTZimno88wd9EnxJSVPvXXlASiz01UNY78ZqQSHXlh32F28APDwREGU2/if8LHxFKaQNInvdfzfJj5mJPS5MsL0f7Exwuum
+X-Gm-Message-State: AOJu0Yy53RfGSjtpkxYa5FSMivUqow8ou19g0kPH5FX9ANeWyBUG2LoA
+	bMWHX2sDzF5rwXgD8ZOhsEn+ewJcZ1T0x8j4r0qaZWg4B3GsENjdzn22fupbOQ==
+X-Google-Smtp-Source: AGHT+IGFI+xvdFWrb7IGzUvJh5OcLaq0riRRLCgKBNM5auJrGfeuMLRHx5Co1Yo1+Ag27hiq8HMFKw==
+X-Received: by 2002:a05:6a21:4d81:b0:1c0:e5b9:404d with SMTP id adf61e73a8af0-1c2982211e5mr392455637.26.1720467686832;
+        Mon, 08 Jul 2024 12:41:26 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:3e22:9cde:6b65:e5e8])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1fbb6a12ccfsm2414365ad.47.2024.07.08.12.41.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 12:41:26 -0700 (PDT)
+Date: Mon, 8 Jul 2024 12:41:25 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Nathan Chancellor <nathan@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH] cpumask: Switch from inline to __always_inline
+Message-ID: <ZoxA5cPpfcpKkzSM@google.com>
+References: <20240514204910.1383909-1-briannorris@chromium.org>
+ <ZnsML1RYMmEhhdPP@google.com>
+ <ZoWhPFJIvGpMGKm4@yury-ThinkPad>
+ <20240703195724.GA292031@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708-mtk-socinfo-no-data-probe-err-v1-1-fb2acd3a47bf@collabora.com>
+In-Reply-To: <20240703195724.GA292031@thelio-3990X>
 
-On Mon, Jul 08, 2024 at 03:35:42PM -0400, Nícolas F. R. A. Prado wrote:
-> Not every efuse region has cells storing SoC information. Only register
-> an socinfo device if the required cells are present.
-> 
-> This prevents the pointless process of creating an socinfo device,
-> probing it with the socinfo driver only to ultimately error out like so
-> 
->   mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
->   mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
-> 
-> This issue is observed on the mt8183-kukui-jacuzzi-juniper-sku16
-> platform, which has two efuse regions, but only one of them contains the
-> SoC data.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Hi Yury, Nathan,
 
-Sorry, there's an include missing in this patch. I'll send v2 with it added
-right away.
+On Wed, Jul 03, 2024 at 12:57:24PM -0700, Nathan Chancellor wrote:
+> On Wed, Jul 03, 2024 at 12:06:36PM -0700, Yury Norov wrote:
+> > On Tue, Jun 25, 2024 at 11:27:59AM -0700, Brian Norris wrote:
+> > > On Tue, May 14, 2024 at 01:49:01PM -0700, Brian Norris wrote:
+> > > > This change (plus more) has been previously proposed for other reasons
+> > > > -- that some of the bitmask 'const' machinery doesn't work without
+> > > > inlining -- in the past as:
+> > > > 
+> > > >   Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
+> > > >   https://lore.kernel.org/all/20221027043810.350460-2-yury.norov@gmail.com/
+> > > > 
+> > > > It seems like a good idea to at least make all cpumask functions use
+> > > > __always_inline; several already do.
+> 
+> > I feel that if we decide making cpumask an __always_inline is the
+> > right way, we also should make underlying bitmap API __always_inline
+> > just as well. Otherwise, there will be a chance of having outlined
+> > bitmap helpers, which may confuse clang again.
+> 
+> If this does not result in noticeable bloat, this may not be a bad
+> idea. I seem to recall this being an issue in the past for us but I
+> cannot seem to find the issue at this point. Commit 1dc01abad654
+> ("cpumask: Always inline helpers which use bit manipulation functions")
+> comes to mind.
 
-Thanks,
-Nícolas
+In the above quote, I already referenced Yury's previous post to do just
+that (__always_inline for all of bitmask and cpumask). I don't know why
+that wasn't ever merged, so I instead chose a smaller set that resolved
+my current problems.
+
+I can dust that off, rebase it, and give it a bloat check if that's
+preferable though.
+
+Brian
 
