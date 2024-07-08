@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-244245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C52A492A18F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:49:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A9692A19D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791ED283DF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9803F1C212F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4E380611;
-	Mon,  8 Jul 2024 11:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60158627D;
+	Mon,  8 Jul 2024 11:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MUyY6MBT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j/8rNp0/"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m7jomRyE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ccv/S2n9"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEBC7C081;
-	Mon,  8 Jul 2024 11:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F35280638;
+	Mon,  8 Jul 2024 11:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720439369; cv=none; b=ACNUhdKLoFyJghw7x2rEsq+g2VTVqDfPr0BWv2QcacAR5sd1qW4bOkklG3BvMLbFuWdr4f0/+giwZSzgvDaEqUdcoZsRvCtXCTXulm8gEJjGKgp0L9gHYdYWU84Su4YZh/VRv1xrrLkWVfqDLT/K0BRGe/bLeFxDxzyQ+DA9ttE=
+	t=1720439373; cv=none; b=uiMwFhfbb6C71En8k/T6Fx5pKaulUWHcPpS/vO5x/l5SzcB4j+J/jTrNJ6lJYiX27H+bByvoyqBqWeeHT1lLzk9wnGg98oPlYb4aq575rGBi4pqD42iYQApkDEWhCXXzHW52HlTUyQACBTNuo7/lGyqzYXrMsg2LPutSC/JL5iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720439369; c=relaxed/simple;
-	bh=FtaFVALYwIkUsySau/heuV6WhTmm4OoeH3g3/VEnOdY=;
+	s=arc-20240116; t=1720439373; c=relaxed/simple;
+	bh=vi48NEdXAo1IRu7REGJgNvpCnp3v4LLZNW/5lxQiZDQ=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=hzMh539OOBPcSz++R8h4MQCuVKEayfDrpGNRX+4Co7Bk/56vOq/PdQ3XW+0oFV9Q5J3cxltq8sSL4Ks4MsFZS4pNuYTg11XOE6BUegGWBcvYC9lhIsmeghOF+8gvgB0VSC3Kzb5Z+URrAA/fYuWhlXUWwZD75FZEsgv9s6VWxuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MUyY6MBT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j/8rNp0/; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=fsZroTzXAGYVNInJClg7jkiuyVjjosUTGk5jDkazvcaKIDVgR/hJrM+DAcm2SkZNhPbzGzGJf2Jq0Lq1WrhavJ397H0KiNP6Hu/SUCmZPS3ui/BpzrLME9mBbQtzhMQ7359pjNVK6RJTXFfN3isiD1IPxg2wXMBcOoMKhQBEIuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m7jomRyE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ccv/S2n9; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 08 Jul 2024 11:49:25 -0000
+Date: Mon, 08 Jul 2024 11:49:26 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720439365;
+	s=2020; t=1720439366;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uf2CQnkVDyheqTK58lLBnpwbPOAH4iRIW4ujULuE+WA=;
-	b=MUyY6MBT1+3qKsOPcmlBNyJeU8g3/rB2kg507O8PMQfH1jkE/2ulwtfSNxO37zI7yn+VXt
-	BRSt+i+QtqirEXPZ3RVGI4/qJZlRk/Q7Q3j89PJw/37QLnc8w2NcQXv7WZWWxRVtTPOyAW
-	IjffXjIepe8Qsjd/AeqKZpiUPfn3KW4VJMkcFH+mzE2zunS6buzKi2J0c2HsR3YW+L9CW/
-	kcpFJ82XIMmat4Ii/GsOlQ20Vfre4/jahRO1UAw9BYyVHEDCMxGQl4mro+c8q0J0QDLUcW
-	kC6AjhIQAhXyuDg0rjHYEFupRAdlA1d67G550HxyXJVNcicP22cE97RukoVdxg==
+	bh=NVdfKlL8poxlXvdZU0kwr06DAwc71YbDa7a7oPNvn7I=;
+	b=m7jomRyEEWFT1Dr6tzVgN88mu8S1dyASM89cJbmSpgcoX/AljSzX6emlHG4eL5pgz5f47O
+	fWKACeTItht8f7le7VqkllLgw9Yu31j5WRTQ88y4fZ2/fyKKWWwVLc/Lk8pQZyOSVWVQZ+
+	ALcmLSmOyDcQ66X1njyNiajudHfjFPUV5kZFVVM/J6p3yOU46vqhLc7BvuWCpZfpL8SdbN
+	L4BQCMrrj1+B+y/BlMgvb4s2pJwxeoAsZqDtaEvflDyR/U/OP0IIohuFkVns+uEzp/xdmz
+	MK12FYIg4Wwn9a+EmwAawadQV4HAUlDlmePJo9VGtPdZFQhgciG/gS+4+/vPjQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720439365;
+	s=2020e; t=1720439366;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uf2CQnkVDyheqTK58lLBnpwbPOAH4iRIW4ujULuE+WA=;
-	b=j/8rNp0/JAjpnMUx9f7EvPHfRMRqeNW63keVH5cis3p5aExF2tU87R59glA9HmvG0UxYgz
-	KfuIAmr008A6KiCg==
+	bh=NVdfKlL8poxlXvdZU0kwr06DAwc71YbDa7a7oPNvn7I=;
+	b=ccv/S2n9XYFSfg9NzF+xMrBFx6969bRuj1uW6smJ5C3DFOtQe3EILMdAW28Q1BtGGV12pu
+	znsvAVFUSiRtPoCw==
 From: "tip-bot2 for Brian Johannesmeyer" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] scripts/faddr2line: Invoke addr2line as a single
- long-running process
+Subject:
+ [tip: objtool/core] scripts/faddr2line: Combine three readelf calls into one
 Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
  Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240415145538.1938745-6-bjohannesmeyer@gmail.com>
-References: <20240415145538.1938745-6-bjohannesmeyer@gmail.com>
+In-Reply-To: <20240415145538.1938745-3-bjohannesmeyer@gmail.com>
+References: <20240415145538.1938745-3-bjohannesmeyer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172043936543.2215.9070138494709130266.tip-bot2@tip-bot2>
+Message-ID: <172043936609.2215.5281286773212396391.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,111 +82,47 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     e36b69e918112430ee53e24238bb87f5146f9acf
-Gitweb:        https://git.kernel.org/tip/e36b69e918112430ee53e24238bb87f5146f9acf
+Commit-ID:     b8d9d9496c1e78a8fd89f4fe9923d12b3c9ad8a3
+Gitweb:        https://git.kernel.org/tip/b8d9d9496c1e78a8fd89f4fe9923d12b3c9ad8a3
 Author:        Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-AuthorDate:    Mon, 15 Apr 2024 16:55:36 +02:00
+AuthorDate:    Mon, 15 Apr 2024 16:55:33 +02:00
 Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
 CommitterDate: Tue, 02 Jul 2024 23:38:36 -07:00
 
-scripts/faddr2line: Invoke addr2line as a single long-running process
+scripts/faddr2line: Combine three readelf calls into one
 
-Rather than invoking a separate addr2line process for each address, invoke
-a single addr2line coprocess, and pass each address to its stdin. Previous
-work [0] applied a similar change to perf, leading to a ~60x speed-up [1].
-
-If using an object file that is _not_ vmlinux, faddr2line passes a section
-name argument to addr2line. Because we do not know until runtime which
-section names will be passed to addr2line, we cannot apply this change to
-non-vmlinux object files. Hence, it only applies to vmlinux.
-
-[0] commit be8ecc57f180 ("perf srcline: Use long-running addr2line per
-DSO")
-[1] Link:
-https://eighty-twenty.org/2021/09/09/perf-addr2line-speed-improvement
+Rather than calling readelf three separate times to collect three different
+types of info, call it only once, and parse out the different types of info
+from its output.
 
 Signed-off-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-Link: https://lore.kernel.org/r/20240415145538.1938745-6-bjohannesmeyer@gmail.com
+Link: https://lore.kernel.org/r/20240415145538.1938745-3-bjohannesmeyer@gmail.com
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- scripts/faddr2line | 52 ++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 45 insertions(+), 7 deletions(-)
+ scripts/faddr2line | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/scripts/faddr2line b/scripts/faddr2line
-index 820680c..48fc8cf 100755
+index bf394bf..f011bda 100755
 --- a/scripts/faddr2line
 +++ b/scripts/faddr2line
-@@ -126,6 +126,48 @@ check_vmlinux() {
- 	fi
+@@ -105,10 +105,14 @@ find_dir_prefix() {
+ 
+ run_readelf() {
+ 	local objfile=$1
+-
+-	ELF_FILEHEADER=$(${READELF} --file-header $objfile)
+-	ELF_SECHEADERS=$(${READELF} --section-headers --wide $objfile)
+-	ELF_SYMS=$(${READELF} --symbols --wide $objfile)
++	local out=$(${READELF} --file-header --section-headers --symbols --wide $objfile)
++
++	# This assumes that readelf first prints the file header, then the section headers, then the symbols.
++	# Note: It seems that GNU readelf does not prefix section headers with the "There are X section headers"
++	# line when multiple options are given, so let's also match with the "Section Headers:" line.
++	ELF_FILEHEADER=$(echo "${out}" | sed -n '/There are [0-9]* section headers, starting at offset\|Section Headers:/q;p')
++	ELF_SECHEADERS=$(echo "${out}" | sed -n '/There are [0-9]* section headers, starting at offset\|Section Headers:/,$p' | sed -n '/Symbol table .* contains [0-9]* entries:/q;p')
++	ELF_SYMS=$(echo "${out}" | sed -n '/Symbol table .* contains [0-9]* entries:/,$p')
  }
  
-+init_addr2line() {
-+	local objfile=$1
-+
-+	check_vmlinux
-+
-+	ADDR2LINE_ARGS="--functions --pretty-print --inlines --addresses --exe=$objfile"
-+	if [[ $IS_VMLINUX = 1 ]]; then
-+		# If the executable file is vmlinux, we don't pass section names to
-+		# addr2line, so we can launch it now as a single long-running process.
-+		coproc ADDR2LINE_PROC (${ADDR2LINE} ${ADDR2LINE_ARGS})
-+	fi
-+}
-+
-+run_addr2line() {
-+	local addr=$1
-+	local sec_name=$2
-+
-+	if [[ $IS_VMLINUX = 1 ]]; then
-+		# We send to the addr2line process: (1) the address, then (2) a sentinel
-+		# value, i.e., something that can't be interpreted as a valid address
-+		# (i.e., ","). This causes addr2line to write out: (1) the answer for
-+		# our address, then (2) either "?? ??:0" or "0x0...0: ..." (if
-+		# using binutils' addr2line), or "," (if using LLVM's addr2line).
-+		echo ${addr} >& "${ADDR2LINE_PROC[1]}"
-+		echo "," >& "${ADDR2LINE_PROC[1]}"
-+		local first_line
-+		read -r first_line <& "${ADDR2LINE_PROC[0]}"
-+		ADDR2LINE_OUT=$(echo "${first_line}" | sed 's/^0x[0-9a-fA-F]*: //')
-+		while read -r line <& "${ADDR2LINE_PROC[0]}"; do
-+			if [[ "$line" == "?? ??:0" ]] || [[ "$line" == "," ]] || [[ $(echo "$line" | ${GREP} "^0x00*: ") ]]; then
-+				break
-+			fi
-+			ADDR2LINE_OUT+=$'\n'$(echo "$line" | sed 's/^0x[0-9a-fA-F]*: //')
-+		done
-+	else
-+		# Run addr2line as a single invocation.
-+		local sec_arg
-+		[[ -z $sec_name ]] && sec_arg="" || sec_arg="--section=${sec_name}"
-+		ADDR2LINE_OUT=$(${ADDR2LINE} ${ADDR2LINE_ARGS} ${sec_arg} ${addr} | sed 's/^0x[0-9a-fA-F]*: //')
-+	fi
-+}
-+
  __faddr2line() {
- 	local objfile=$1
- 	local func_addr=$2
-@@ -260,12 +302,8 @@ __faddr2line() {
- 
- 		# Pass section address to addr2line and strip absolute paths
- 		# from the output:
--		local args="--functions --pretty-print --inlines --addresses --exe=$objfile"
--		[[ $IS_VMLINUX = 0 ]] && args="$args --section=$sec_name"
--		local output_with_addr=$(${ADDR2LINE} $args $addr | sed "s; $dir_prefix\(\./\)*; ;")
--		[[ -z $output_with_addr ]] && continue
--
--		local output=$(echo "${output_with_addr}" | sed 's/^0x[0-9a-fA-F]*: //')
-+		run_addr2line $addr $sec_name
-+		local output=$(echo "${ADDR2LINE_OUT}" | sed "s; $dir_prefix\(\./\)*; ;")
- 		[[ -z $output ]] && continue
- 
- 		# Default output (non --list):
-@@ -309,7 +347,7 @@ run_readelf $objfile
- 
- echo "${ELF_SECHEADERS}" | ${GREP} -q '\.debug_info' || die "CONFIG_DEBUG_INFO not enabled"
- 
--check_vmlinux
-+init_addr2line $objfile
- 
- DIR_PREFIX=supercalifragilisticexpialidocious
- find_dir_prefix $objfile
 
