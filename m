@@ -1,100 +1,140 @@
-Return-Path: <linux-kernel+bounces-244537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD0B92A5A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:30:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5092592A5AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDEA1F21DC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:30:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF8C9B21451
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B3414386F;
-	Mon,  8 Jul 2024 15:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2zvUdOK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591F013F426;
-	Mon,  8 Jul 2024 15:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E3713EFF3;
+	Mon,  8 Jul 2024 15:30:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49561EA84
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720452584; cv=none; b=uvC2zuRnkhL11XtdLex50HBlNaSqOlt1PJ6i4Rc0P/bCSYenFHGcwTBqpk8+CZUkAMpLXqRl52EMJq4rgSI8dHQqU5AubEJNslzQVeVVK9gLfNiNov+evFeq4MgCg3kRCmsfEdXd5LA38Twv4RIv4Q4bZDIj8UGhrQ9cxxQzxlw=
+	t=1720452640; cv=none; b=JmrYUnFK2Py8Y38FzVcfAnWyJI/5qDo40mCthwjtMlAhD7bTEW/sSToULs47dwg5acCvl79dK00bMOPRd99ult8QkS35A/Jc7ihw4laJo3HflZGZ0P+vk0I6pANUFphimmElb6DyeO3U4dbC3eSK2J76+EpVZs5tknWyj9L031g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720452584; c=relaxed/simple;
-	bh=ztW0g2FoZv1Ha2AVuu/92vUst4UA6CVs3jAeJnz1ouU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SqPHK3r5v3ozNbdtP7397oLQGOrs7B7H0mER6XTgyCGxu8bqKa9Qk3AmnSxKd19urTRomMoULhqLXb5dY1mV1Q4yVbrZ6XooQR1tbgQ1BWP+2NfP89nvzn9aiad/BgYZ4ENhzffFq4lhbjKyD7kErHSAYGxSi/9L9w+UW6q1CBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2zvUdOK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB60DC116B1;
-	Mon,  8 Jul 2024 15:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720452584;
-	bh=ztW0g2FoZv1Ha2AVuu/92vUst4UA6CVs3jAeJnz1ouU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U2zvUdOKa60zfvyxouCovnzIYJPdLX2Ba6Ifi+5eEjkgsccW/d8ZWsClTVvVnlai0
-	 7eBjOuB+R3uElB9PAZhYeUXLyFk7KdDHzSArMzcMnLOp52GUtPc3x71AUsNiu/Y2k4
-	 ZY6PMjTf0uqbPVekBang/zSi6holrnmrPZybFcVlrVcCC2GiVt/D6BMfNpt1JhjAY5
-	 epoulaz/QvSYWNlwAYC7BgvTh9f7J8I7R0BX9m49CVQOTrsTh423kW4ld0peEdxcat
-	 yxgqleXx8MXUtY/tA/24eSFh9xfrv05Wap6xaO6cEGaDzq07JQPPVeNYIgqdboyT/2
-	 FCQHXBMARN2EQ==
-Message-ID: <6e57dbc0-f47a-464e-af6b-abd45c450dc6@kernel.org>
-Date: Mon, 8 Jul 2024 10:29:41 -0500
+	s=arc-20240116; t=1720452640; c=relaxed/simple;
+	bh=dQTtY3SoxZiiFNuasIQ2nT+tyAbwIFDezaf6yGDD4RA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcMqoNlmYohaZ2yKE5LeskbWNSTpQ1TItIbSZRRhzCuflaDv68oYcZRWKB6aAjrhf/gjYOUSjtD/lZO9R220cFaSbx4ejXba2Wy77t4tatBI771y/4N5e/tCNIOojdciiv/f7GzqilldjovfA1OXKykb/4Oje6Pr5VR41+hPrSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EABE21042;
+	Mon,  8 Jul 2024 08:31:02 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0ABAF3F641;
+	Mon,  8 Jul 2024 08:30:35 -0700 (PDT)
+Date: Mon, 8 Jul 2024 16:30:30 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 0/4] KVM: arm64: Fix underallocation of storage for
+ SVE state
+Message-ID: <ZowGFl/1AEuevh96@e133380.arm.com>
+References: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
+ <86a5iw3ri2.wl-maz@kernel.org>
+ <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pci: bus: only call of_platform_populate() if
- CONFIG_OF is enabled
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Lukas Wunner <lukas@wunner.de>, Bert Karwatzki <spasswolf@web.de>,
- caleb.connolly@linaro.org, bhelgaas@google.com, amit.pundir@linaro.org,
- neil.armstrong@linaro.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, Praveenkumar Patil <PraveenKumar.Patil@amd.com>
-References: <20240707183829.41519-1-spasswolf@web.de>
- <Zoriz1XDMiGX_Gr5@wunner.de> <20240708003730.GA586698@rocinante>
- <CACMJSevHmnuDk8hpK8W+R7icySmNF8nT1T9+dJDE_KMd4CbGNg@mail.gmail.com>
- <20240708083317.GA3715331@rocinante>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240708083317.GA3715331@rocinante>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
 
-On 7/8/2024 3:33, Krzysztof Wilczyński wrote:
-> [...]
->>> If there aren't any objections, I will take this via the PCI tree, and add
->>> the missing tags.  So, no need to send a new version of this patch.
->>>
->>> Thank you for the work here!  Appreciated.
->>>
->>>          Krzysztof
->>
->> I don't think you can take it via the PCI tree as it depends on the
->> changes that went via the new pwrseq tree (with Bjorn's blessing).
-> 
-> Aye.
-> 
->> Please leave your Ack here and I will take it with the other PCI
->> pwrctl changes.
-> 
-> Sounds good!  With that...
-> 
-> Acked-by: Krzysztof Wilczyński <kw@linux.com>
-> 
->> After the upcoming merge window we should go back to normal.
-> 
-> Thank you!
-> 
-> 	Krzysztof
+Hi all,
 
-FWIW this other patch makes it quieter too.
+On Fri, Jul 05, 2024 at 06:18:50PM +0100, Mark Brown wrote:
+> On Fri, Jul 05, 2024 at 02:20:05PM +0100, Marc Zyngier wrote:
+> > Mark Brown <broonie@kernel.org> wrote:
+> 
+> > > As observed during review the pKVM support for saving host SVE state is
+> > > broken if an asymmetric system has VLs larger than the maximum shared
+> > > VL, fix this by discovering then using the maximum VL for allocations
+> > > and using RDVL during the save/restore process.
+> 
+> > I really don't see why we need such complexity here.
 
-https://lore.kernel.org/linux-pci/20240702180839.71491-1-superm1@kernel.org/
+The first patch is orthogonal cleanup, and the rest doesn't really add
+complexity IIUC.
+
+> > Fuad did post something[1] that did the trick with a far less invasive
+> > change, and it really feels like we are putting the complexity at the
+> > wrong place.
+> 
+> > So what's wrong with that approach? I get that you want to shout about
+> > secondary CPUs, but that's an orthogonal problem.
+> 
+> As I've said from a clarity/fragility point of view I'm not happy with
+> configuring the vector length to one value then immediately doing things
+> that assume another value, even if everything is actually lined up
+> in a way that works.  Having uncommented code where you have to go and
+> check correctness when you see it isn't great, seeing an inconsistency
+> just raises alarm bells.  It is much clearer to write the code in a way
+> that makes it obvious that the VL we are using is the one the hardware
+> is using, for the host save/restore reading the actual VL back seemed
+> like the most straightforward way to do that.
+> 
+> A similar thing applies with the enumeration code - like I said in reply
+> to one of Fuad's postings I originally wrote something that's basically
+> the same as the patch Faud posted but because it is not consistent with
+> the surrounding code in how it approaches things it was just raising
+> questions about if the new code was missing something, or if there was
+> some problem that should be addressed in the existing code.  Rather than
+> write an extensive changelog and/or comments covering these
+> considerations it seemed more better to just write the code in a
+> consistent manner so the questions aren't prompted.  Keeping the
+> approach consistent is a bit more code right now but makes the result
+> much easier to reason about.
+> 
+> The late CPUs thing is really just an answer to the initial "why is this
+> different, what might we have missed?" question rather than a particular
+> goal itself.  Adding a warning is as much about documenting the handling
+> of late CPUs as it is about highlighting any unfortunate implementation
+> choices we run into.
+> 
+> Basically it's maintainability concerns, especially with the enumeration
+> code.
+
+I tend to agree here.
+
+It's probably best to stick to one convention everywhere about how the
+SVE regs are laid out for a given VL.  There's nothing wrong with Fuad's
+fixed sve_ffr_offset(), but it's different from the VL-dependent offset
+already used elsewhere and so risks causing confusion further down the
+line.
+
+
+One thing confuses me:
+
+The host could never use over-max VLs except in non-preemptible kernel
+code, since code doing that would be non-migratable to other physical
+CPUs.  This is done to probe SVE only, and the extra bits in the vector
+registers are never used at all.
+
+Can't pKVM just hide the non symmetrically supported VLs using ZCR_EL2,
+just as regular KVM does for the guest?
+
+(I may be making bad assumptions about pKVM's relationship with the host
+kernel.)
+
+Cheers
+---Dave
 
