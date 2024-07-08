@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-244789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B713492A992
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:08:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEAF92A999
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D2D1F22689
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB21F22456
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0880114BF8A;
-	Mon,  8 Jul 2024 19:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ChJ3f/tO"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB9914EC48;
+	Mon,  8 Jul 2024 19:08:14 +0000 (UTC)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC10A1474AF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEA614B967;
+	Mon,  8 Jul 2024 19:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720465684; cv=none; b=Eo2MMeCiJb2MXfSDSqPaWXcNX46lMFjMG9jCn9Mp24BJpZvR49mGEUC/ZYoBinfOI2XwVeKQCmPguS4weSeenmBFrCBlzJMl/tiacJjhWgtwuESp3pckQQxIef429IXVSV9RAhHnSfQesdPxCf5hhsjDsMa4LhoBT06a4th89z8=
+	t=1720465694; cv=none; b=OyvB9Pkhg7GaiX4B0liNrsXOHkqJdcaSxczmgK7dE9sYmnvd9L0W+e3qmEW9AQuEZyz9iYf18XDznuq4jl90tixeQsiS39Eg+23GF4QfLzMh+rExKYtIjaMF+5ML78KeO3enSDqsyOXOJEkeuq/TNrskRXRunomDl/XbBDjiG50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720465684; c=relaxed/simple;
-	bh=xY+rHXRDPFt2+6Xc8N+6s7u7829wLUiFzL2ck3Zfsts=;
+	s=arc-20240116; t=1720465694; c=relaxed/simple;
+	bh=pYbSygs6DFw3cN9dVfNQF3w63IPyDQV/ph7ZmPU1o+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z8uC6GQrrwVZGgk4n/zK4juA5U2kQUxQyc8wo4tnfH9lhaF/ru3uGfEe7oFxlHt2+OY4JeCxokQOT9peJTCmZ5vo0kp4s4J7exrvjenTpgHl+j1yHWY7YyOCn8Jf2jLHW1pyM8EL35XVtPPO7n8rij1BdpBmvNXugr9sWDy0pBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ChJ3f/tO; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4260440E019C;
-	Mon,  8 Jul 2024 19:07:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vQGfpxHeFspk; Mon,  8 Jul 2024 19:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720465675; bh=1HtKLhsmAYJfhAeUp+8fz+aKD3ClwbFy5mYK7dQwsbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ChJ3f/tOs8g59AvkunsLX1o4AmSPeDj9wcy4Cn00eJ3QFBXewfk4ty/S68i1bhDzb
-	 aHdIF0OLC7REutOui6aCrGn6JoWWHjjltiGwbLCr4p8ZlKDmpeWaJqdxknYz63sUYk
-	 WiYzCwZtX1XFMmJ2unKzUfTeskR2UiC86TrL4durA5CH92I+T+zQz7hIdkj4BqXAHT
-	 x4iOu+YfiJR/VWpkapqfTeqPP3aWDKF4j+qVOQSPEtNVufMpwMWp0rYUeVf9Q6azix
-	 GGRA3xU29rAkraPOEvXP1rVz9bMlyNUcV7ZUe9QjlhBAiDt92qqefvE8QlLALsp454
-	 KTRCk1yltTLOvYPG3aR+gS/2hsXbrdXCOcrTbfJaHay6b7I7r8+yL1EQIppbGVi0XG
-	 Z3BW9dQsLQHz+8Jr8bmjh/tWZLn3dAJPsnqTA2xLeqR+BQVTq0rb8SWDM+L+qi7IpZ
-	 GcIViXhSDesc5R5pRRFYfs7zhhII/tkvpjd13Gjo47XLTkuNdJ+uaR4zhygI/h41sF
-	 CjSoXew/rFfAeKuDV/vonhtbLDMNn3VA5Ubuvanv3Wj5a/4uEn9W3zYK2iApIo9kry
-	 tPtMRIE2BOuCqHmyTkJY5p6pt/8z2o4JC8UkJ6CfDuwPJbXRQf0tDepaMFg5wwsYoN
-	 zxKGXKFMvqnlIP64Y5VL1RyM=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5737540E0192;
-	Mon,  8 Jul 2024 19:07:29 +0000 (UTC)
-Date: Mon, 8 Jul 2024 21:07:24 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Pavin Joseph <me@pavinjoseph.com>,
-	Eric Hagberg <ehagberg@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
-	Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <20240708190724.GIZow47G0J8vO6J3ee@fat_crate.local>
-References: <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
- <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
- <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com>
- <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
- <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local>
- <CAMj1kXGsjU5CpF655me1XNA8-5nbk3020vT2Bu5ZoFY25igovg@mail.gmail.com>
- <20240703154301.GEZoVxhREtHjk0vtaL@fat_crate.local>
- <ZowI9w7huVfcKJ7I@swahl-home.5wahls.com>
- <20240708181133.GHZowr1eznPqgvdtRw@fat_crate.local>
- <CAMj1kXG8hZ86BFbar9S5mmvKMH4a0XF0oCm36WwZxYNqc0+pjQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iO5eyqz+2e1vMIexsxRu9mAYoWJoZZcvIgRliayGuW42qOYFqtOXjCgucMe+DkoAPMJ20Ys6UilnrV2Ylsfo7Qe+Px0TGYTKegUr/r0n0gaZOllP/DS1JpHQMgdksuXLL2iGxsaJQU7b1a+Ps6GPC2+FxjrCVLd0gYPbnexxPEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58b0dddab63so6406448a12.3;
+        Mon, 08 Jul 2024 12:08:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720465689; x=1721070489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i5VCdX60NWwfC1nVwekLYgNiGy5kNm96Cosdiq19/GM=;
+        b=Vc3Mr2ZQG15v6DVdtNOutBGcabEVLFta2MGTxn8reDEw6Yo0IWSnD6IPzvEZM+6cKC
+         K5Db3rTYoum2l89EN+2KapWbCCn2d9+TjfMe5+lF10zFZDpZL8wlJwJTpkU6VqwvFwHO
+         mRwjZyAePEyyIHGTEyiNrRBFYsyC8F29SRGOjOYWDIKVaOkQ6OEmcTfp4uOGJ/YFSDZY
+         tPrlIm3gjCVCeDUDoBPxDlckVAm1iCMtrkBaRLF+gR3BigVwZk4ajIZBgbzmUAsxAZPb
+         uz4hFSze6MaFTGZaSCC329XEvXga+sc0IdH/cvTSGX/xXy+Wl5P/+HaCF4KlBl63Txf5
+         o3Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCV98chX5X/iQdUCLMuD/yVXw9gyp0O5j+3GQMr4BbxjP29lcyy67kpIIW/0d+tH4RBdTyelKRlbeCglU8qTHBNYAK5vXz19UiWxj/3c/JeMAdoJ53wkEIfzW1b/nNwbj/UPhH+N
+X-Gm-Message-State: AOJu0Ywr9vv+1LaplFf0i2oOdXdOV7jB9/C14FvGaCG+kgAflWQh3gMW
+	jiO2krWkoO7XHeXnUTP/zLrUHO+nQLkIta8qEnhLTD/UWNk2nuv3
+X-Google-Smtp-Source: AGHT+IHe2bAuF3QoVgM+CiLRff4u7OuOz5mDHUAISjnBCInvO4afmYAsw4m/dW4O/4hmNTBdmgEXYA==
+X-Received: by 2002:a05:6402:84d:b0:57d:12c3:eca6 with SMTP id 4fb4d7f45d1cf-594ba0ced20mr293140a12.18.1720465688385;
+        Mon, 08 Jul 2024 12:08:08 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bda30f76sm146037a12.97.2024.07.08.12.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 12:08:08 -0700 (PDT)
+Date: Mon, 8 Jul 2024 12:08:05 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	kuba@kernel.org, horms@kernel.org, Roy.Pledge@nxp.com,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] soc: fsl: qbman: FSL_DPAA depends on COMPILE_TEST
+Message-ID: <Zow5FUmOADrqUpM9@gmail.com>
+References: <20240624162128.1665620-1-leitao@debian.org>
+ <202406261920.l5pzM1rj-lkp@intel.com>
+ <20240626140623.7ebsspddqwc24ne4@skbuf>
+ <Zn2yGBuwiW/BYvQ7@gmail.com>
+ <20240708133746.ea62kkeq2inzcos5@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXG8hZ86BFbar9S5mmvKMH4a0XF0oCm36WwZxYNqc0+pjQ@mail.gmail.com>
+In-Reply-To: <20240708133746.ea62kkeq2inzcos5@skbuf>
 
-On Mon, Jul 08, 2024 at 08:17:43PM +0200, Ard Biesheuvel wrote:
-> Happy to assist, but I'm not sure I follow the approach here.
-> 
-> In the context of a confidential VM, I don't think the page fault
-> handler is ever an acceptable approach. kexec should filter out config
-> tables that it doesn't recognize, and map the ones that it does (note
-> that EFI config tables have no standardized header with a length, so
-> mapping tables it does *not* recognize is not feasible to begin with).
-> 
-> All these games with on-demand paging may have made sense for 64-bit
-> kernels booting in 32-bit mode (which can only map the first 4G of
-> RAM), but in a confiidential VM context with measurement/attestation
-> etc I think the cure is worse than the disease.
+Hello Vladimir,
 
-See upthread. I think this is about AMD server machines which support SEV
-baremetal and not about SEV-ES/SNP guests which must do attestation.
+On Mon, Jul 08, 2024 at 04:37:46PM +0300, Vladimir Oltean wrote:
+> On Thu, Jun 27, 2024 at 11:40:24AM -0700, Breno Leitao wrote:
 
-Steve?
+> > > >      454 | static int dpaa_set_coalesce(struct net_device *dev,
+> > > >          |            ^
+> > > >    1 warning generated.
+> > > 
+> > > Arrays of NR_CPUS elements are what it probably doesn't like?
 
-AFAIR, there was some kink that we have to parse the blob regardless which
-I didn't like either but I'd need to refresh with Tom and see whether we can
-solve it differently after all. Perhaps check X86_FEATURE_HYPERVISOR or so...
+> > Can it use the number of online CPUs instead of NR_CPUS?
 
-Thx for offering to help still - appreciated! :-)
+> I don't see how, given that variable length arrays are something which
+> should be avoided in the kernel?
 
--- 
-Regards/Gruss,
-    Boris.
+I thought about a patch like the following (compile tested only). What
+do you think?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+	Author: Breno Leitao <leitao@debian.org>
+	Date:   Mon Jul 8 11:57:33 2024 -0700
+
+	    net: dpaa: Allocate only for online CPUs in dpaa_set_coalesce
+	    
+	    Currently, dpaa_set_coalesce allocates a boolean for every possible CPU
+	    (NR_CPUS). This approach is suboptimal and causes failures in COMPILE_TEST.
+	    For reference, see:
+	    https://lore.kernel.org/all/202406261920.l5pzM1rj-lkp@intel.com/
+	    
+	    Modify the allocation to consider only online CPUs instead of
+	    NR_CPUs. This change reduces the function's memory footprint and resolves
+	    the COMPILE_TEST issues.
+	    
+	    Signed-off-by: Breno Leitao <leitao@debian.org>
+
+	diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+	index 5bd0b36d1feb..7202a5310045 100644
+	--- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+	+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+	@@ -457,7 +457,7 @@ static int dpaa_set_coalesce(struct net_device *dev,
+				     struct netlink_ext_ack *extack)
+	 {
+		const cpumask_t *cpus = qman_affine_cpus();
+	-	bool needs_revert[NR_CPUS] = {false};
+	+	bool *needs_revert;
+		struct qman_portal *portal;
+		u32 period, prev_period;
+		u8 thresh, prev_thresh;
+	@@ -466,6 +466,11 @@ static int dpaa_set_coalesce(struct net_device *dev,
+		period = c->rx_coalesce_usecs;
+		thresh = c->rx_max_coalesced_frames;
+	 
+	+	needs_revert = kmalloc_array(num_possible_cpus(), sizeof(bool), GFP_KERNEL);
+	+	if (!needs_revert)
+	+		return -ENOMEM;
+	+	memset(needs_revert, 0, num_online_cpus() * sizeof(bool));
+	+
+		/* save previous values */
+		portal = qman_get_affine_portal(smp_processor_id());
+		qman_portal_get_iperiod(portal, &prev_period);
+	@@ -498,6 +503,7 @@ static int dpaa_set_coalesce(struct net_device *dev,
+			qman_dqrr_set_ithresh(portal, prev_thresh);
+		}
+	 
+	+	kfree(needs_revert);
+		return res;
+	 }
+	 
 
