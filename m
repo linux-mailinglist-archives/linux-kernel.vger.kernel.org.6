@@ -1,133 +1,217 @@
-Return-Path: <linux-kernel+bounces-244221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4E692A0F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:24:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7891092A0FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3781F21C92
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:24:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8981C20C98
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3B65644E;
-	Mon,  8 Jul 2024 11:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KPNIdJS6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6DE7BAE3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 11:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDC97CF3E;
+	Mon,  8 Jul 2024 11:24:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553B57BAE7
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 11:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720437883; cv=none; b=SVIzFgP33NDIKLlwwtcQ36ytq40sq/q2QsF3womyWBZPBIKYA7pTUBr8/Uou/XgkNI/zK7LWJ2QbBh0VbKGkL6XpPMRKlrag1F0jOkv+Xy3RF7dtESkBb/ejXpl8w/Fz1MloFXghizU9Z9GKRQCfq9BOszL/S4AGU36o8t4rYh4=
+	t=1720437899; cv=none; b=tzLSnRe4bNLsTc++FxibGeOtkwOjsIOrOcHB5lQxmpyCv+v3JRVh1urjPe1biDptzA3MZrxg+4OT70qKVc7XBYSwiBPi1paOhE50RI1ilLkwKheRTBK9tSKH9LPbv5jXWRF9Eie/cOskVkxESADzLC/YXjdveCB3fpiFe2ijS/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720437883; c=relaxed/simple;
-	bh=xTYdYQU1dKWsApIW/T3x4V9sQRMMo94fk5/3o9tWCig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AefOXyr+Zkh9CJUBxE+mPdEmDcc0l51qkpYAnHZJbtozNaD+5ddE1Sl0PrHfLFt5m4ouY/4eZEn3oBe54UGvJntaNkFtqFldw3FmNCt8fv8LpuHe6k+ScoJojDPFzVhU3MLAyLsD9xzBz/jcW4vVcP3U/uJr3gQQ89ANlPx+Znk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KPNIdJS6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720437881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oD998hd8L73BF0lomUfy/e1mUZZ0TqEdQJsnDYHHly0=;
-	b=KPNIdJS61m9yx8wjRfOllK4DUqqmqtpq0KOAdKGGkG5nfXS0o4BzpN5VuJ8AyZ9oEHvKro
-	QjFSHUbj2DBdj969LlXJDqeF8q4TfBxhLg1XLhXW9JKk3pPHoOM7Ru3We+xr/pTTD0WtTj
-	HRVroC2LpYGkFf7/Eenzyqvn1ZVx1Ng=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-548-pi5A12DENxea41DH-LfNTg-1; Mon, 08 Jul 2024 07:24:37 -0400
-X-MC-Unique: pi5A12DENxea41DH-LfNTg-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52ea88005bfso2648228e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 04:24:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720437876; x=1721042676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oD998hd8L73BF0lomUfy/e1mUZZ0TqEdQJsnDYHHly0=;
-        b=AekKSicx/hKuwEu9roTvOOJRDiZsXijb860wGOh5fkA6ubVON1A4k6GcTF8h6LTOOr
-         UnKciA1pPG6WMLjoL+c5+VW1loGBd6lMzLH7QdwITis5xQfVyNXAifNMifm+J1etS9lv
-         1L8qd048of8RpkDWiaCbR4J4vBLpmvTV9+CNrM+X7Q0k+xihXOHb95H77YEQt2mBv3QF
-         SpGuz5ivQ5QCJOLC66baOJZ7ZSOeYo8GnlCsUtLoavNFNPNQuj/n/K0spX35L7jdCQu8
-         XDsgFKNnM8hHKy1wXC6nWyxtaXBC61+1JafCD33MdYx8TYVOH75doedd0XPmErCA33F8
-         s+Qg==
-X-Gm-Message-State: AOJu0YzO7byTnX7bbKDJHyTMoePwneDAahz3PU28Sc9ZHNbG0RyGxR7l
-	Hrs7DWitA9Rf/R6qnAL7XrJS2GGjW3fT/e+Ks3ipET+Ib4kBBorBuVu9zdnWpqQY0ITq+tnmlgp
-	PuZt0Ry/U+2hQrDnPV1AsX75CVY/yGEQSq2uv6ftAIUEL6XiWACQR9tNsTQrIuw==
-X-Received: by 2002:a19:4355:0:b0:52e:9b87:233c with SMTP id 2adb3069b0e04-52ea063ee82mr7486544e87.36.1720437876445;
-        Mon, 08 Jul 2024 04:24:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFdnakvR9pu+5kvWDlp6fmVf2e9irGiK+WfFFlZ3YcSrSy8lWz1fBvfOFHg0op7WTodR+pyQ==
-X-Received: by 2002:a19:4355:0:b0:52e:9b87:233c with SMTP id 2adb3069b0e04-52ea063ee82mr7486521e87.36.1720437876002;
-        Mon, 08 Jul 2024 04:24:36 -0700 (PDT)
-Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a188edasm160811275e9.0.2024.07.08.04.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 04:24:35 -0700 (PDT)
-Date: Mon, 8 Jul 2024 13:24:32 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Andrew Ballance <andrewjballance@gmail.com>
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org, mcgrof@kernel.org, russ.weight@linux.dev,
-	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: firmware: fix invalid rustdoc link
-Message-ID: <ZovMcChz-sfSxNRc@pollux>
-References: <20240708090615.2267476-1-andrewjballance@gmail.com>
+	s=arc-20240116; t=1720437899; c=relaxed/simple;
+	bh=vCsnIG9iyyxJSFn463wx8Akn0jXBpPBcjIhrlNIw/Dc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=by7rgURkUn8bgnz4zRoqu97nyFYqLankWJj7J4MqvcRqml0nxvTSVVkWlegQdX1bHnzrcMtuVzTNWPYQ/lNDzES9oLuaQC2Xq4kQiu8R+XPxDEQhzsz6yW6TcC/n2QGCBjSypTyNJbVHn94wJcONUNjfQCWyUAn8CDs5wvUyDrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C7191042;
+	Mon,  8 Jul 2024 04:25:20 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FDCB3F641;
+	Mon,  8 Jul 2024 04:24:53 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Barry Song <baohua@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Daniel Gomez <da.gomez@samsung.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH v1] mm: shmem: Rename mTHP shmem counters
+Date: Mon,  8 Jul 2024 12:24:43 +0100
+Message-ID: <20240708112445.2690631-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708090615.2267476-1-andrewjballance@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-+ Greg
+The legacy PMD-sized THP counters at /proc/vmstat include
+thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
+rather confusingly refer to shmem THP and do not include any other types
+of file pages. This is inconsistent since in most other places in the
+kernel, THP counters are explicitly separated for anon, shmem and file
+flavours. However, we are stuck with it since it constitutes a user ABI.
 
-On Mon, Jul 08, 2024 at 04:06:15AM -0500, Andrew Ballance wrote:
-> rustdoc generates a link to a nonexistent file because of a extra quote
+Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
+anonymous shmem") added equivalent mTHP stats for shmem, keeping the
+same "file_" prefix in the names. But in future, we may want to add
+extra stats to cover actual file pages, at which point, it would all
+become very confusing.
 
-Please use the imperative like you did in the summary and write a full sentence,
-e.g. "Remove an extra quote in the doc comment in order to prevent rustdoc from
-generating a link to a non-existent file."
+So let's take the opportunity to rename these new counters "shmem_"
+before the change makes it upstream and the ABI becomes immutable.
 
-> 
-> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+---
 
-With that,
+Hi All,
 
-Reviewed-by: Danilo Krummrich <dakr@redhat.com>
+Applies on top of today's mm-unstable (2073cda629a4) and tested with mm
+selftests; no regressions observed.
 
-> ---
->  rust/kernel/firmware.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> index 386c8fb44785..763d7cbefab5 100644
-> --- a/rust/kernel/firmware.rs
-> +++ b/rust/kernel/firmware.rs
-> @@ -2,7 +2,7 @@
->  
->  //! Firmware abstraction
->  //!
-> -//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h")
-> +//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h)
->  
->  use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
->  use core::ptr::NonNull;
-> -- 
-> 2.45.2
-> 
+The backstory here is that I'd like to introduce some counters for regular file
+folio allocations to observe how often large folio allocation succeeds, but
+these shmem counters are named "file" which is going to make things confusing.
+So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add mTHP
+counters for anonymous shmem") goes upstream (it is currently in mm-stable).
+
+Admittedly, this change means the mTHP stat names are not the same as the legacy
+PMD-size THP names, but I think that's a smaller issue than having "file_" mTHP
+stats that only count shmem, then having to introduce "file2_" or "pgcache_"
+stats for the regular file memory, which is even more inconsistent IMHO. I guess
+the alternative is to count both shmem and file in these mTHP stats (that's how
+they were documented anyway) but I think it's better to be able to consider them
+separately like we do for all the other counters.
+
+Thanks,
+Ryan
+
+ Documentation/admin-guide/mm/transhuge.rst | 12 ++++++------
+ include/linux/huge_mm.h                    |  6 +++---
+ mm/huge_memory.c                           | 12 ++++++------
+ mm/shmem.c                                 |  8 ++++----
+ 4 files changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 747c811ee8f1..8b891689fc13 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -496,16 +496,16 @@ swpout_fallback
+ 	Usually because failed to allocate some continuous swap space
+ 	for the huge page.
+
+-file_alloc
+-	is incremented every time a file huge page is successfully
++shmem_alloc
++	is incremented every time a shmem huge page is successfully
+ 	allocated.
+
+-file_fallback
+-	is incremented if a file huge page is attempted to be allocated
++shmem_fallback
++	is incremented if a shmem huge page is attempted to be allocated
+ 	but fails and instead falls back to using small pages.
+
+-file_fallback_charge
+-	is incremented if a file huge page cannot be charged and instead
++shmem_fallback_charge
++	is incremented if a shmem huge page cannot be charged and instead
+ 	falls back to using small pages even though the allocation was
+ 	successful.
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index acb6ac24a07e..cff002be83eb 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -269,9 +269,9 @@ enum mthp_stat_item {
+ 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+ 	MTHP_STAT_SWPOUT,
+ 	MTHP_STAT_SWPOUT_FALLBACK,
+-	MTHP_STAT_FILE_ALLOC,
+-	MTHP_STAT_FILE_FALLBACK,
+-	MTHP_STAT_FILE_FALLBACK_CHARGE,
++	MTHP_STAT_SHMEM_ALLOC,
++	MTHP_STAT_SHMEM_FALLBACK,
++	MTHP_STAT_SHMEM_FALLBACK_CHARGE,
+ 	MTHP_STAT_SPLIT,
+ 	MTHP_STAT_SPLIT_FAILED,
+ 	MTHP_STAT_SPLIT_DEFERRED,
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 9ec64aa2be94..f9696c94e211 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+ DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+ DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+-DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+-DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+-DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
++DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
++DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
++DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+ DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+ DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+ DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+@@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] = {
+ 	&anon_fault_fallback_charge_attr.attr,
+ 	&swpout_attr.attr,
+ 	&swpout_fallback_attr.attr,
+-	&file_alloc_attr.attr,
+-	&file_fallback_attr.attr,
+-	&file_fallback_charge_attr.attr,
++	&shmem_alloc_attr.attr,
++	&shmem_fallback_attr.attr,
++	&shmem_fallback_charge_attr.attr,
+ 	&split_attr.attr,
+ 	&split_failed_attr.attr,
+ 	&split_deferred_attr.attr,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 921d59c3d669..f24dfbd387ba 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+ 			if (pages == HPAGE_PMD_NR)
+ 				count_vm_event(THP_FILE_FALLBACK);
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-			count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
++			count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
+ #endif
+ 			order = next_order(&suitable_orders, order);
+ 		}
+@@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+ 				count_vm_event(THP_FILE_FALLBACK_CHARGE);
+ 			}
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
+-			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
++			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK);
++			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+ #endif
+ 		}
+ 		goto unlock;
+@@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+ 			if (folio_test_pmd_mappable(folio))
+ 				count_vm_event(THP_FILE_ALLOC);
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
++			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_ALLOC);
+ #endif
+ 			goto alloced;
+ 		}
+--
+2.43.0
 
 
