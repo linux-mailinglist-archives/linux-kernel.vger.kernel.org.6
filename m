@@ -1,75 +1,53 @@
-Return-Path: <linux-kernel+bounces-244341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B0692A2E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:37:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A2A92A2EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA53CB24F36
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:37:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD46E28172B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4980A824A3;
-	Mon,  8 Jul 2024 12:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4907380043;
+	Mon,  8 Jul 2024 12:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V13oI9n7"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="R02JLmEZ"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD68823A3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53EC7E0F1;
+	Mon,  8 Jul 2024 12:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720442229; cv=none; b=hRvc+oWFHPRPMGzvyDqx75Gfi3gUxnvFOgZQ+jvx2gp4IbNXluTUWwGC91iyowL9jkkYIJ6ej1fPwFyXu6KSUO3jA+jIy8zaRn77tw8lUhfBG0WfDIKP/xP11uP3tuK3zgefO+pd1tfrgiHElLMV8wTatUyt/kN50qkpSdR0cUI=
+	t=1720442303; cv=none; b=Ggv0PohLebA4rMFWRPEuFLWRf8licPZ7KXAJndSnHNhT4mMmS0pK3alP4p+P1I3NUat55n6kGYt9FaZq31vOMNhkluQKayY0HlhIGHsDjZYWoUU1udP0Jvw3N83a5PIRV6G2ka4iKgzERpRLrgt2bX8JEXx46QX356qE/HoiO78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720442229; c=relaxed/simple;
-	bh=aVjQp6hkSR6FL1HObsbs0Y1zAipIsbyyB8oSdT3lhyE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=We+Yk3IqD8Mw0elj4UoGm/AitYkziWvCErw8lUR5ggJdD4OGTOd3IAgRm9vKQoPwhOg3eQ7vIlqZe7HJhl7oarrBz74foa3aXDKbNhyIdjEvzYwyM0VLgBhq4GiRaajdv8nJoHyl4w1tZ2EsQzi4srti/RanlU7sbRV87wRUSaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V13oI9n7; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4265921b0f6so16783635e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 05:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720442226; x=1721047026; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=96TJNAco6UswomCuF7kl+MAcyBf4on/lL0AOzmc2lek=;
-        b=V13oI9n7vtCl3yGxnyRibyp1aLJueVHPrVwklmJHawxFYSJi/EBcHPG6ksBILZ77OA
-         qYoqofQ+Sv42rj0RZPRtelC2+8/1XoVp06/0AaTIzesmifBStaNNgOzZQ67GhhwIehGB
-         s3IYOT1WVcYDlh3vL8YNK1plPFEx9ngLai/aLhefucl4CCwYIlmGwTZlqmsX4yahLIOv
-         TPc0PrIyQo0lStTxA/x2R0teXeLtFHryjwiwm7nzH6pvTgvKk9k5bBRDB4YhwDaAYFQe
-         POKLx6mPc2R8dXVXq71ZFt8MuZN7h1MA5DwCOtfU1J4zVM61zV+8lpCXWU6p0h6VwAJK
-         WGTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720442226; x=1721047026;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=96TJNAco6UswomCuF7kl+MAcyBf4on/lL0AOzmc2lek=;
-        b=wk5c+S2/V3JDRxkZmEcN0JipNGkbca1OLqO9XH3CP+ql3ERVHHEJaspvfsZXPfsTnV
-         VGm8NL1/3C79YJ/HCwcRcFM9yTY+f5o0fL0il0a+GOOs4NYJjVj62ajeaLSVsVOQzIP6
-         vXQQeFkkcf4FI++RMWQdTC0d9ffSU91XIjZZBJxbMF7AKL0y9dgxG5lHVeDi6Z/E3P2y
-         0iBK7g/6r9k/Z8tOMcIX7n41pnb9RFAVZnPFxJee1GAT+rn97otcxmAche0cbiwfXf1L
-         Jdl9lwfvvFp6MkgEwGoSAPRp0nIltVkEAY+C+NfY2n6dvY2CYPC4ygZkB7rI1vFcKB+G
-         1k3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU7M0bwOsGVtdAzpGFyEwMIpfpoKX3xiUon8mHYz2hNCG7gM1zzY9jF+9mvlwrz5tHBQCdso2N2Mp8LfqMiNxBaFfkSyHQaOBXaVSSC
-X-Gm-Message-State: AOJu0YwqssBrTlA1uzzID+K4UZ9W5RTJlSu1uu529dHtjcK1wusKhp1v
-	kiKNEIXeQrZLyHp8xSwHxv3kBt5Q307x+gaY0zLnmF955fhhjeVKbTlcESs9yaw=
-X-Google-Smtp-Source: AGHT+IHIUGHCJQHdqzNxOo2k+mrRHFj4Rg40rb/Uq0fOelGFJdpvW+XuLNcPwM5LrV9+ssCLjGxIjQ==
-X-Received: by 2002:a05:600c:33a9:b0:426:5b29:b5c8 with SMTP id 5b1f17b1804b1-4265b29bd52mr52831365e9.28.1720442226128;
-        Mon, 08 Jul 2024 05:37:06 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:f482:8fc6:e8d0:6d7c? ([2a01:e0a:cad:2140:f482:8fc6:e8d0:6d7c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2518f9sm164932565e9.31.2024.07.08.05.37.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 05:37:05 -0700 (PDT)
-Message-ID: <861c8b22-8842-4eb6-8905-1e1a6467e661@linaro.org>
-Date: Mon, 8 Jul 2024 14:37:02 +0200
+	s=arc-20240116; t=1720442303; c=relaxed/simple;
+	bh=6YTcBypVx+Kf/BJx+Vz0MGCNsTs1ZskfwUvSJLUfHV4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L5hHdHsWs136nmJC/+HY/4FTlanUqRtxMbPes1UEzeVLZuAnXYtli06AW8N3woCsGx2S/IDgZuLJSJBs/uoucVgOcgAOrAagCu1u18IEaQtXe8e+YjEMTCADoFlNszBQ1kz+wCU9I0bllEKlEp/N5QMlUItmsUUy70Li1VaXnas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=R02JLmEZ; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1720442297;
+	bh=6YTcBypVx+Kf/BJx+Vz0MGCNsTs1ZskfwUvSJLUfHV4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R02JLmEZGJ0YDiRP82phncL9p8m9P6IKTCcHFwfFKItoAMUZRQIuX+sd2h/jnnmKT
+	 4VOfHuzBK0qEThEOM2uyUO/XaFf4TMSJ6cNUgct9+4RlSZxHs+yXoEZgIovhRyOhwK
+	 eZ9+9MDpnDH+I6tjNueG01x4heNu+xOTE5wgWweeNNXnmnG1sTiE1n3xktl1cfa5iJ
+	 R+EtuWhDWAepqOVMdTJ0qUIlzFFTJFTGDLg2CyWobilQ/uEyQ3bP7e2z2CuFMRgyGF
+	 eXAe1zUMOK2B0n8TqF7K45tq44jMp34RmzxCoDX0D/bYPsnmokH63oxYw/ZTKbZbVl
+	 H0GhvDatES7QA==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 7491160078;
+	Mon,  8 Jul 2024 12:38:16 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id D23182011BC;
+	Mon, 08 Jul 2024 12:38:12 +0000 (UTC)
+Message-ID: <36b8ba99-0a8d-4b06-89cc-c1cc1cceeb8b@fiberby.net>
+Date: Mon, 8 Jul 2024 12:38:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,73 +55,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 2/5] drm/panel: boe-th101mb31ig002: switch to
- devm_gpiod_get_optional() for reset_gpio
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- airlied@gmail.com, daniel@ffwll.ch, mripard@kernel.org, dianders@google.com,
- hsinyi@google.com, awarnecke002@hotmail.com, quic_jesszhan@quicinc.com,
- dmitry.baryshkov@linaro.org
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240704072958.27876-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240704072958.27876-3-lvzhaoxiong@huaqin.corp-partner.google.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240704072958.27876-3-lvzhaoxiong@huaqin.corp-partner.google.com>
+Subject: Re: [PATCH net-next v2 01/10] net/sched: flower: refactor tunnel flag
+ definitions
+To: Davide Caratti <dcaratti@redhat.com>
+Cc: netdev@vger.kernel.org, Ilya Maximets <i.maximets@ovn.org>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
+ Simon Horman <horms@kernel.org>, Ratheesh Kannoth <rkannoth@marvell.com>,
+ Florian Westphal <fw@strlen.de>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ linux-kernel@vger.kernel.org, Stephen Hemminger <stephen@networkplumber.org>
+References: <20240705133348.728901-1-ast@fiberby.net>
+ <20240705133348.728901-2-ast@fiberby.net>
+ <aadf8f7c-2f99-4282-b94e-9c46c55975dd@fiberby.net>
+ <CAKa-r6u85yD=Ct4nq2xZLXLT+3vWsz+WoDZ__xS4tkpge=yf-Q@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <CAKa-r6u85yD=Ct4nq2xZLXLT+3vWsz+WoDZ__xS4tkpge=yf-Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/07/2024 09:29, Zhaoxiong Lv wrote:
-> Switch the driver to use devm_gpiod_get_optional() on reset_gpio to avoid
-> driver probe issues when reset line is not specified.
+Hi Davide,
+
+On 7/8/24 12:07 PM, Davide Caratti wrote:
+> On Mon, Jul 8, 2024 at 1:12 PM Asbjørn Sloth Tønnesen<ast@fiberby.net>  wrote:
+> [...]
 > 
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-> ---
->   drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>> Davide, I think David Ahern would be happy [1] if you could post a new iproute2 patch,
+>> since the kernel patches should preferably hit net-next this week (due to uAPI breakage).
+> I will send an updated patch (don't use "matches" + add missing man
+> page + rename keywords [1])  in the next hours.
+
+Great.
+
+>> Nit: I would prefix all of these with "tun_".
+> "tun_" or just "tun" ? please note that each flag can have a "no"
+> prefix, so is it better
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> index 159e401ad0e6..9f225c15b21c 100644
-> --- a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> +++ b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> @@ -286,7 +286,7 @@ static int boe_th101mb31ig002_dsi_probe(struct mipi_dsi_device *dsi)
->   		return dev_err_probe(&dsi->dev, PTR_ERR(ctx->enable),
->   				     "Failed to get enable GPIO\n");
->   
-> -	ctx->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_HIGH);
-> +	ctx->reset = devm_gpiod_get_optional(&dsi->dev, "reset", GPIOD_OUT_HIGH);
->   	if (IS_ERR(ctx->reset))
->   		return dev_err_probe(&dsi->dev, PTR_ERR(ctx->reset),
->   				     "Failed to get reset GPIO\n");
+> notuncsum
+> notundf
+> notunoam
+> notuncrit
+> 
+> or
+> 
+> notun_csum
+> notun_df
+> notun_oam
+> notun_crit
+> 
+> ?
+> 
+> (I'm for not using the underscore - but I'm open to ideas: please let me know)
 
-Hmm, the reset gpio is not in the bindings, please fix that!
+I'm fine with no underscores, alternatively recognizing both "no" and "no_" prefixes.
 
-Neil
+-- 
+Best regards
+Asbjørn Sloth Tønnesen
+Network Engineer
+Fiberby - AS42541
 
