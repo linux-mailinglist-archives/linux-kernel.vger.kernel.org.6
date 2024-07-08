@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-243925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360B0929C82
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:52:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE05A929C88
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68391F218A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:52:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77A06281507
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659FB1B28A;
-	Mon,  8 Jul 2024 06:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C601CA96;
+	Mon,  8 Jul 2024 06:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFFiqZsa"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PXVuP5iC"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC1717721
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919181946F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720421547; cv=none; b=IhDduFmS0xlJ/LXUNQIoftflA8K5ZxRjYPl+vsJl+ST64E/xHLxyMSwRtWe8TOJkeF/VMGb4BRwZfUZolVZWROcoZnBa0+IqVktrj00mM3KdE+IYQxI9E9tE1Qi5BPFEVRq9GXLdimi7wrSRY9Rym2iY7B7oLaeKRmeLo1HsZfk=
+	t=1720421576; cv=none; b=UBU+OKoVkgJ75ojEix/JJJn+5Bf2jGCWLSR2ml1WFZaleQ5biGFVf/+Rh9BS5GAuI9yh3X8VKOpG/Xs1TiGceT4c/puawcIlQjAKnkwhovTCGD7lMahladXIzCYjgD2p/1XujCpIJPBhJjPLa08lGtoupNQY9pLCcm59wnMv+/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720421547; c=relaxed/simple;
-	bh=l2FIO3fCqBGmXOF5K6tW+a19O8tFfegMu7Ea4neklnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWL5tiqXYbGz8EKBAFGXT1EPYCDLq602Vkh/J8sfBL9IltdZZUP9o3DUQ1WkareCTX0XxanJOC9E9sF02C8MNp/dXC4cbBEhTon9M5TGjB+UpYwgCRw6ODPxZPOd3S+GBdx1eggP40M8/1ye0J2z4wU17D7EEmVDH0zuj1qDjuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RFFiqZsa; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-382458be739so17177545ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 23:52:25 -0700 (PDT)
+	s=arc-20240116; t=1720421576; c=relaxed/simple;
+	bh=AEvwklKkahMqU5NTDzmQKtCMtYWlnzq3g2SsYFh0OP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LJtD0B1C3d1yDX8L0BBGxAG9MCpWJXpuM+IDlve222QsKYozsn2CUfSXsH9A78TEzDgaNvLMMLi9nP34Ss8xeO+TawMXnZqwz9jnslAfL9IiyZ9HGvArzhB5c5uOrxTaQFCyWZXorOOOQRX5iaBu29Yot4IfzPdGJl+2dLYKgB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PXVuP5iC; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-58ce966a1d3so30413a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 23:52:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720421545; x=1721026345; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+DS07n3S2EpZ5vKJ03RyX8V+ApT3KBt/z3ClQ42xfto=;
-        b=RFFiqZsa93lgN4L2ybRuE1iIgzzWKmQx6Plink61hltm+xQrYzzYF5z8S+vK4ibqSF
-         CbF+FK9DxfndMwJgGwsaLyNipXDmGpimihM1OyTQoMHL2TbCvr3n86MR+vsg0z5wh17T
-         k+ifdEckHPTaWtWIRHxa6khT5bMdL+vi4OHIgSiCcGNYHeNvei3atuttii8JDA81ksut
-         OE8RibZrAhCpEM2bsyvSOPGUpfeNsMC8fzMoR9la36cOQt1QFq5rrcUth6TT3ZDUOtn3
-         BsEmlTkSitrp0GZYVx0CJk9PuGMC6cKtsqz04o5ymD4M+yXTalbhxFLoEsAfP8JgdGpi
-         EQHA==
+        d=google.com; s=20230601; t=1720421573; x=1721026373; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9whkwrmVJ5LTYmQjDX1Dcp6xV4ICCXH4l+UXuqVSVG8=;
+        b=PXVuP5iCT9zjIADZSIEaZQSfq0gMpRTiur0fUk5yhBqZIIfGwh4HoTN517r58sm1Y8
+         N4A5eIbabSge6Ntc1p1l3B74qtZhOgBLHHVrQW/necgudNwJtj4XqQU+LQLTREd6/p+i
+         xjoYPnF0hYAGeT6/jmSQwANSOcDDT+PsKzHdQn+O0H6Nmn2nz0vxb+3rRTq5iNBfv4OU
+         EuUvNyHH0iTSobcQpH7aQanszSxCyPWR9voPYoKtL2mGJWeigvtK9sPPytoVPqx+4GUs
+         Wjd+U5hgYmKT1voWkxsofVzZNJy7g9UbenVrUTlL91LurGzWspAx3It2XznLRn6IRN8/
+         xmnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720421545; x=1721026345;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+DS07n3S2EpZ5vKJ03RyX8V+ApT3KBt/z3ClQ42xfto=;
-        b=mTLdkjS9jyEHxcca4JWDEHcVtVmP301KmM2/1NshmKFPi7TiwIJFHWQTTWpw1YnsuF
-         /ZVkbOyuWrdJvwKPuxCx4gaCpF8KXqfPccRjhZtAi7eqFRHgX5AtxegY+v3gOSMRf4cL
-         0L3vW/9NyyHtoFMeVDyroTvXw4GJKHafZk7STQaoqx6bgzv/jW31TyuHo44xXmQO0adp
-         N95LJlkWxvjtnhRhb8CfXQBUpGpJbiJaoo493Ju5ZVlenCm96ZwPSExRiumZa2BEfz5t
-         EE3W+pwNgYp839+Y8fftrpkEakRSj0FrlTQOIFr+8NlCbtcNNRX7jVnfclPdTskRjrBw
-         KfJw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8lFRomcJwfT/rJMj2+A+wSvBd96B1hye8sGRNncj8O4MTyOz46gCQtR2WXBlYwTlP0b3H23Hc08zQ0Sw8xn25+tVXtwE5aM7G/873
-X-Gm-Message-State: AOJu0Yz3sYuaND8SOBGx+jcvT+b7CopVrqKG8nrUdUfkT/3F6u4XoJFP
-	2ZcPBH69Qf2gcKSEjIen0hfbCwG8acjINFZXai1ST1JEvW7XDo/Ac0PfT5+m4ydimqx+oRbXg3W
-	e
-X-Google-Smtp-Source: AGHT+IFBya5V2xQbhJizaPr/Q8T7hEPEzcZGX3jK6EfAM0X5nJdKs0HW0u+/neZnaqmpTki+tnx14w==
-X-Received: by 2002:a05:6e02:1d86:b0:376:4049:69d2 with SMTP id e9e14a558f8ab-38398710582mr172377945ab.6.1720421545272;
-        Sun, 07 Jul 2024 23:52:25 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b2248b69esm3094293b3a.144.2024.07.07.23.52.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jul 2024 23:52:24 -0700 (PDT)
-Date: Mon, 8 Jul 2024 12:22:22 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	kernel@collabora.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] cpufreq: mediatek: Use dev_err_probe in every error
- path in probe
-Message-ID: <20240708065222.iip3hzlffn2dthjg@vireshk-i7>
-References: <20240705-mtk-cpufreq-dvfs-fail-init-err-v2-1-3a7f91b02ab0@collabora.com>
+        d=1e100.net; s=20230601; t=1720421573; x=1721026373;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9whkwrmVJ5LTYmQjDX1Dcp6xV4ICCXH4l+UXuqVSVG8=;
+        b=SdTV1BFa4kGkT5EuCtQp0PAI05ID+uyV92IOSoRdaiBLNRva1/XL2XUmGMIy6kR6fe
+         Ph0N6WG0l6xtOUZ8owLmLteniW/916Aor5tPnnkxQ4HM/elOYWMZZE6KW0rQmuZSzDU3
+         n2QQIyi7Qqlst+bENImQsadmBudCx3zH4evYwdK3GuVTOEPmA7WhHmsyKxMRZkUOfvy+
+         b7yuL6s+Hx5ZIqzlq4rQToBAiAJRp1KG2bgo+Kww6dhXqXBxO/qu2lSTyQZgznfzhgMO
+         uYIyGgHDtMBgpeGGlq/l3Pn+4DGtDnOUwxUbJNPdtB3mu6RbxA8KFi8Zarl+D034gP1C
+         X3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjU8ejcuED8+SsYZdJBX0h/BSwVL1JeS4b/I+qSQdbtKaPEFNLPQVP6+krFcipdK4/tQodIZeCZO7BMQeFZIRXpvH880TSx6T0Jr44
+X-Gm-Message-State: AOJu0YxhOLiUUu4ivQAx1/YUCpzqcut5aAi0Ii71X6tvI+PNWJDcXEkn
+	usL4xpLVOi2hLe6fbFLzHfXavKrCmEvbZZ2U7CE0SHTBiySxFxwkEg+A4dlDyvI/G64vfI3fbGW
+	fVr8Dtj4f1b6PmPoTDM0R4XIPwn9SgZvLtaVa
+X-Google-Smtp-Source: AGHT+IFN5kJ6GOce4aE1Yj+jUNSNYIaA8MJOELU5iBuuDRasF2YS08Shp8PeHvRwpV6zyoqz/feShY8ANBbLonjV3cc=
+X-Received: by 2002:a50:8d1a:0:b0:58b:b1a0:4a2d with SMTP id
+ 4fb4d7f45d1cf-58e28e6929fmr420362a12.1.1720421572714; Sun, 07 Jul 2024
+ 23:52:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240705-mtk-cpufreq-dvfs-fail-init-err-v2-1-3a7f91b02ab0@collabora.com>
+References: <00000000000037162f0618b6fefb@google.com> <tencent_8BBB6433BC9E1C1B7B4BDF1BF52574BA8808@qq.com>
+ <172021445223.2844396.7059951310501602233.b4-ty@kernel.org> <20240706-wucher-gegossen-ed347171f1f0@brauner>
+In-Reply-To: <20240706-wucher-gegossen-ed347171f1f0@brauner>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 8 Jul 2024 08:52:41 +0200
+Message-ID: <CACT4Y+aZ=pBg7sOMmMojM6-gOsxk-e7Z91VaqS9cyjN40ZFirA@mail.gmail.com>
+Subject: Re: [PATCH] hfsplus: fix uninit-value in copy_name
+To: Christian Brauner <brauner@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com, 
+	Edward Adam Davis <eadavis@qq.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 05-07-24, 11:54, Nícolas F. R. A. Prado wrote:
-> Use the dev_err_probe() helper to log the errors on every error path in
-> the probe function and its sub-functions. This includes
-> * adding error messages where there was none
-> * converting over dev_err/dev_warn
-> * removing the top-level error message after mtk_cpu_dvfs_info_init() is
->   called, since every error path inside that function already logs the
->   error reason. This gets rid of the misleading error message when probe
->   is deferred:
-> 
->     mtk-cpufreq mtk-cpufreq: failed to initialize dvfs info for cpu0
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
-> Changes in v2:
-> - Fixed one occurrence of the error code being set after the usage
-> - For the paths that need to set the `ret` variable to the error code,
->   changed them so they set it from dev_err_probe()'s return, in a single
->   line.
-> - Link to v1: https://lore.kernel.org/r/20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com
-> ---
->  drivers/cpufreq/mediatek-cpufreq.c | 72 ++++++++++++++++++--------------------
->  1 file changed, 34 insertions(+), 38 deletions(-)
+On Sat, 6 Jul 2024 at 09:20, Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Fri, Jul 05, 2024 at 02:20:54PM GMT, Kees Cook wrote:
+> > On Tue, 21 May 2024 13:21:46 +0800, Edward Adam Davis wrote:
+> > > [syzbot reported]
+> > > BUG: KMSAN: uninit-value in sized_strscpy+0xc4/0x160
+> > >  sized_strscpy+0xc4/0x160
+> > >  copy_name+0x2af/0x320 fs/hfsplus/xattr.c:411
+> > >  hfsplus_listxattr+0x11e9/0x1a50 fs/hfsplus/xattr.c:750
+> > >  vfs_listxattr fs/xattr.c:493 [inline]
+> > >  listxattr+0x1f3/0x6b0 fs/xattr.c:840
+> > >  path_listxattr fs/xattr.c:864 [inline]
+> > >  __do_sys_listxattr fs/xattr.c:876 [inline]
+> > >  __se_sys_listxattr fs/xattr.c:873 [inline]
+> > >  __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+> > >  x64_sys_call+0x2ba0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:195
+> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > >
+> > > [...]
+> >
+> > I've taken some security-related hfsplus stuff before, so:
+>
+> It's in #vfs.fixes to go out with the next vfs fixes pr.
 
-Applied. Thanks.
-
--- 
-viresh
+Oops, sorry for creating a mess.
+It's just really hard to understand a random patch status.
 
