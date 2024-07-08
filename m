@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-243927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9DD929C85
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:53:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360B0929C82
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACBE281331
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68391F218A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56BA1803A;
-	Mon,  8 Jul 2024 06:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659FB1B28A;
+	Mon,  8 Jul 2024 06:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ss7ef+kK"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFFiqZsa"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A906200AF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC1717721
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720421554; cv=none; b=RWsjdo2D0ISC4dQ6XftletopSC0Reh2mzXfzAfpRcTfObUGAfSDmXeUaYQetJ0ZsyGtwrookKTH5hqJzj9SsfVmBeOu88m6CWLBHWpnoe34gOkVtIQKAtYUSuA7nxIbjsc1YUFXDx9V0twqLHrR0/MWZtLEUB1/4OwtiuDfQDqc=
+	t=1720421547; cv=none; b=IhDduFmS0xlJ/LXUNQIoftflA8K5ZxRjYPl+vsJl+ST64E/xHLxyMSwRtWe8TOJkeF/VMGb4BRwZfUZolVZWROcoZnBa0+IqVktrj00mM3KdE+IYQxI9E9tE1Qi5BPFEVRq9GXLdimi7wrSRY9Rym2iY7B7oLaeKRmeLo1HsZfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720421554; c=relaxed/simple;
-	bh=zRhlyuXhTQjaOFUBRx80GzQFpflKwVW3Y87pwAN2x3Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q/HvY6NK/OQN0rPolVfXUs2HR0d7rg7eOqM+tv96FCeaRO9LXePdQGmIAt9+5buUkqqlInVH3or9IBIs8NpWmFpD3ZcwJ0+Zalo7NJGVUaWLVlthCTpbNaClDIwI2tzeD66xZY5gKvYAlPWlesnrX1cBJQYBSOQshy0DhKvzgUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ss7ef+kK; arc=none smtp.client-ip=209.85.128.175
+	s=arc-20240116; t=1720421547; c=relaxed/simple;
+	bh=l2FIO3fCqBGmXOF5K6tW+a19O8tFfegMu7Ea4neklnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hWL5tiqXYbGz8EKBAFGXT1EPYCDLq602Vkh/J8sfBL9IltdZZUP9o3DUQ1WkareCTX0XxanJOC9E9sF02C8MNp/dXC4cbBEhTon9M5TGjB+UpYwgCRw6ODPxZPOd3S+GBdx1eggP40M8/1ye0J2z4wU17D7EEmVDH0zuj1qDjuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RFFiqZsa; arc=none smtp.client-ip=209.85.166.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6561850a7bcso10198087b3.3
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 23:52:32 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-382458be739so17177545ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 23:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720421551; x=1721026351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rOg2mJdaYN11tN/PM3G1aLLpFsk8ehaLevbZnEx35NM=;
-        b=ss7ef+kKW1dghDs05dKvIR3bZGP7tTxOSy1X+Bwv4JRIFVp1tCqAJvQSz2QK8O8Xm3
-         MQRUv0BVExaeQkL7kH0HMTty7Jg6OJYG49fxSOjxM/FbUhgPRkfpYImb8AOTNk7AHAPo
-         D8vUnTfobWqvQegK6RU4R6oa3J51zMCSUhs40IGpzjWbl6wo229+9ltIozDySnJPo0Cr
-         PtKUKNdOBdp3ZKuH0+Go/BGFboG32JyuMourOyuLzvMUujOtT6tVdRGtO80C3+aCa5Ta
-         WtpkGodObblgL1oC7yyN9IXsUFul9n0o6RLW0U/8oDXEB79Vz11XqLbOMDG4LRdcE4vr
-         VD4w==
+        d=linaro.org; s=google; t=1720421545; x=1721026345; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+DS07n3S2EpZ5vKJ03RyX8V+ApT3KBt/z3ClQ42xfto=;
+        b=RFFiqZsa93lgN4L2ybRuE1iIgzzWKmQx6Plink61hltm+xQrYzzYF5z8S+vK4ibqSF
+         CbF+FK9DxfndMwJgGwsaLyNipXDmGpimihM1OyTQoMHL2TbCvr3n86MR+vsg0z5wh17T
+         k+ifdEckHPTaWtWIRHxa6khT5bMdL+vi4OHIgSiCcGNYHeNvei3atuttii8JDA81ksut
+         OE8RibZrAhCpEM2bsyvSOPGUpfeNsMC8fzMoR9la36cOQt1QFq5rrcUth6TT3ZDUOtn3
+         BsEmlTkSitrp0GZYVx0CJk9PuGMC6cKtsqz04o5ymD4M+yXTalbhxFLoEsAfP8JgdGpi
+         EQHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720421551; x=1721026351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rOg2mJdaYN11tN/PM3G1aLLpFsk8ehaLevbZnEx35NM=;
-        b=FGQMNwR5sJKEwlZJat3rkLkdk3c05gTIcztpSXamlMvNuuiQ6mBuY8+XtOrOMmfSZD
-         8eqwjOceRu/obkk9eUs7K9+xC+X7j3XX3YwORN+/OVMjC3Ou69DLZmijqJIuMw9sxp07
-         dCsQ5iB47/S/5krM1lUacDP0aZZrHb3J1CJFwChCm6LOBGI14+xtfBCB+sRtBDXdBuIN
-         OvL6JBYPeoGm5TX8f0EPOQYwwb74p3/HGN2+JKe8esYVnb5wsOKHbwNWKvjTnoWhQP1z
-         XWbGo7bgSpYxKYw9KfzAG0tpiATUi85UKE5Huwh1FijFKJ7uivaDs/MhuH8TQwqQxGYz
-         7qBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfUdlP47C2eCBLvxiH8FObdAKME1uL3de35Oa9cTvSo9aPoJNgr6NjhImAI/5wAVYPcqEP2nfAHyGl72tBfpkE570SFcsFwZlGntsn
-X-Gm-Message-State: AOJu0YyI8KxOX+rx+tjerFki9mMFXJe3AmROPjiM/IVFNFPH3SPnEiG1
-	To7rrCM5daqs8JzqcZXr/3uUb315+0Wwzs3HnLkdrd71zLT0JoayQiSFoetzjQWMyvcbJ6xTYny
-	9tI2w4p9YjJYaLUFqnyTzE+QrY5RzYbHz9wet8w==
-X-Google-Smtp-Source: AGHT+IGsjN2ISvHbQJ0hEWcsn2gnbHHG74Niwgiq79T+e158g02IMIphzJrwCDT8Hh+wIKqGqtAOcVpq23jRxFShnUg=
-X-Received: by 2002:a05:690c:f03:b0:64a:7379:eb53 with SMTP id
- 00721157ae682-652d853536dmr142990527b3.43.1720421551421; Sun, 07 Jul 2024
- 23:52:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720421545; x=1721026345;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+DS07n3S2EpZ5vKJ03RyX8V+ApT3KBt/z3ClQ42xfto=;
+        b=mTLdkjS9jyEHxcca4JWDEHcVtVmP301KmM2/1NshmKFPi7TiwIJFHWQTTWpw1YnsuF
+         /ZVkbOyuWrdJvwKPuxCx4gaCpF8KXqfPccRjhZtAi7eqFRHgX5AtxegY+v3gOSMRf4cL
+         0L3vW/9NyyHtoFMeVDyroTvXw4GJKHafZk7STQaoqx6bgzv/jW31TyuHo44xXmQO0adp
+         N95LJlkWxvjtnhRhb8CfXQBUpGpJbiJaoo493Ju5ZVlenCm96ZwPSExRiumZa2BEfz5t
+         EE3W+pwNgYp839+Y8fftrpkEakRSj0FrlTQOIFr+8NlCbtcNNRX7jVnfclPdTskRjrBw
+         KfJw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8lFRomcJwfT/rJMj2+A+wSvBd96B1hye8sGRNncj8O4MTyOz46gCQtR2WXBlYwTlP0b3H23Hc08zQ0Sw8xn25+tVXtwE5aM7G/873
+X-Gm-Message-State: AOJu0Yz3sYuaND8SOBGx+jcvT+b7CopVrqKG8nrUdUfkT/3F6u4XoJFP
+	2ZcPBH69Qf2gcKSEjIen0hfbCwG8acjINFZXai1ST1JEvW7XDo/Ac0PfT5+m4ydimqx+oRbXg3W
+	e
+X-Google-Smtp-Source: AGHT+IFBya5V2xQbhJizaPr/Q8T7hEPEzcZGX3jK6EfAM0X5nJdKs0HW0u+/neZnaqmpTki+tnx14w==
+X-Received: by 2002:a05:6e02:1d86:b0:376:4049:69d2 with SMTP id e9e14a558f8ab-38398710582mr172377945ab.6.1720421545272;
+        Sun, 07 Jul 2024 23:52:25 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b2248b69esm3094293b3a.144.2024.07.07.23.52.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jul 2024 23:52:24 -0700 (PDT)
+Date: Mon, 8 Jul 2024 12:22:22 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	kernel@collabora.com, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2] cpufreq: mediatek: Use dev_err_probe in every error
+ path in probe
+Message-ID: <20240708065222.iip3hzlffn2dthjg@vireshk-i7>
+References: <20240705-mtk-cpufreq-dvfs-fail-init-err-v2-1-3a7f91b02ab0@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240707183829.41519-1-spasswolf@web.de> <Zoriz1XDMiGX_Gr5@wunner.de>
- <20240708003730.GA586698@rocinante>
-In-Reply-To: <20240708003730.GA586698@rocinante>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Mon, 8 Jul 2024 08:52:20 +0200
-Message-ID: <CACMJSevHmnuDk8hpK8W+R7icySmNF8nT1T9+dJDE_KMd4CbGNg@mail.gmail.com>
-Subject: Re: [PATCH v2] pci: bus: only call of_platform_populate() if
- CONFIG_OF is enabled
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Lukas Wunner <lukas@wunner.de>, Bert Karwatzki <spasswolf@web.de>, caleb.connolly@linaro.org, 
-	bhelgaas@google.com, amit.pundir@linaro.org, neil.armstrong@linaro.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Praveenkumar Patil <PraveenKumar.Patil@amd.com>, Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240705-mtk-cpufreq-dvfs-fail-init-err-v2-1-3a7f91b02ab0@collabora.com>
 
-On Mon, 8 Jul 2024 at 02:37, Krzysztof Wilczy=C5=84ski <kw@linux.com> wrote=
-:
->
-> Hello,
->
-> > > If of_platform_populate() is called when CONFIG_OF is not defined thi=
-s
-> > > leads to spurious error messages of the following type:
-> > >  pci 0000:00:01.1: failed to populate child OF nodes (-19)
-> > >  pci 0000:00:02.1: failed to populate child OF nodes (-19)
-> > >
-> > > Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child O=
-F nodes of the port node")
-> > >
-> > > Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-> >
-> > Reported-by: Praveenkumar Patil <PraveenKumar.Patil@amd.com>
-> > Closes: https://lore.kernel.org/all/20240702173255.39932-1-superm1@kern=
-el.org/
-> > Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> > Cc: Mario Limonciello <mario.limonciello@amd.com>
->
-> If there aren't any objections, I will take this via the PCI tree, and ad=
-d
-> the missing tags.  So, no need to send a new version of this patch.
->
-> Thank you for the work here!  Appreciated.
->
->         Krzysztof
+On 05-07-24, 11:54, Nícolas F. R. A. Prado wrote:
+> Use the dev_err_probe() helper to log the errors on every error path in
+> the probe function and its sub-functions. This includes
+> * adding error messages where there was none
+> * converting over dev_err/dev_warn
+> * removing the top-level error message after mtk_cpu_dvfs_info_init() is
+>   called, since every error path inside that function already logs the
+>   error reason. This gets rid of the misleading error message when probe
+>   is deferred:
+> 
+>     mtk-cpufreq mtk-cpufreq: failed to initialize dvfs info for cpu0
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+> Changes in v2:
+> - Fixed one occurrence of the error code being set after the usage
+> - For the paths that need to set the `ret` variable to the error code,
+>   changed them so they set it from dev_err_probe()'s return, in a single
+>   line.
+> - Link to v1: https://lore.kernel.org/r/20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com
+> ---
+>  drivers/cpufreq/mediatek-cpufreq.c | 72 ++++++++++++++++++--------------------
+>  1 file changed, 34 insertions(+), 38 deletions(-)
 
-I don't think you can take it via the PCI tree as it depends on the
-changes that went via the new pwrseq tree (with Bjorn's blessing).
-Please leave your Ack here and I will take it with the other PCI
-pwrctl changes.
+Applied. Thanks.
 
-After the upcoming merge window we should go back to normal.
-
-Bart
+-- 
+viresh
 
