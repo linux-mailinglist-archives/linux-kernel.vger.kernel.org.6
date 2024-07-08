@@ -1,198 +1,147 @@
-Return-Path: <linux-kernel+bounces-244612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35D192A6D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5439292A6DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596C9282A94
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:08:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6612865DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1D31459FE;
-	Mon,  8 Jul 2024 16:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6318C1465A9;
+	Mon,  8 Jul 2024 16:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Np9I2hyF"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VqrsY0w5"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1807145323;
-	Mon,  8 Jul 2024 16:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD36142E90
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454892; cv=none; b=OC/I3G98GbHUo8jasIGF4fN9MNodPvJ5EaCzogJj/hTwl6bf7TTfX6/AC7R2U2kCOrBQsXl+awY6dKuX5fR2ELIQckHVKOsF1do/tShhu6xnQayE7nOdd47GgZXOOyRmAOfOYqaHXGa/AuMCmjRmrIu84uGy3gPEx/+j18slNRQ=
+	t=1720454953; cv=none; b=j/OxZpXrFd6ulkbX8EI7FJQRPDq2kIlO3UxJNTu7TD/zqS1Yn2mBdXuixSYb6S4mO2ot7MGvXXn8JZl5iHvcRbo06p/OZJ1jUW6VbQpkfAGCmT2NERSlB1wDWxx8LruB4p4n0NiUwwAmZf7q7FU3V/FvlU0PYnJHt1f4RaUGtsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454892; c=relaxed/simple;
-	bh=Ohz5ZdQ+jbe/FZ9CBFSI5OQgynmaRZyJo1WPETgWsmE=;
+	s=arc-20240116; t=1720454953; c=relaxed/simple;
+	bh=Vuy+tdEYiWTkuOL1+Ju14j/vlrE3oT4RzPh9CG4iLj0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O3AP7/1HL3S2HHV7pD3AP/MELwZ6dGZ46/RcRKPHCZpOXD3tnUn12+AfPFKjjquSW3TdZVegMASIwZtGth5uym0PaWn2ALRqKn406WO4VY8cW4xoY401MURAwYtMgxWnTfjI3stroSvvhBZcLn0FS+vHwKUGkTwGfrt2bZtD6TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Np9I2hyF; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58b966b4166so4933169a12.1;
-        Mon, 08 Jul 2024 09:08:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=LRagxpD7RIfiGkzRx6yJzAMywO6gVjaNif0hdN44i4MqFtVYKdw/Y7HceOXwCfiFzMa12n5iHnz74Ly8PKlu6M1nUn+3e742wpEjpDCZyQDMIkBtQdP9fb3qlFEguRAQ2ltGM6JIPZPGa01YYZbJmr6WyyErrKVscpgpeqT2sVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VqrsY0w5; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58ce966a1d3so38714a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:09:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720454889; x=1721059689; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720454950; x=1721059750; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aavLayNlXjLJf72+lQ0+sff2DIyRHzLorFjyS57FhqE=;
-        b=Np9I2hyF6GQgh6PdkiailXjbjucth7OUAGXrlTCgjFx+3SjOklMZwFnp7GMIlbLxXZ
-         Z0YeQ0upj2eNPK6t+ppMbKvsQ4o20dN9B84iLYl46gt8yfpVEGKtZLqYWrXgKw4LxKjt
-         XGjY4/b8AYSR6xOZiSlKAGtGUUWXM61/WOOlgE1N69VRMp3ir41vX1YTFFSKQZIJh7r1
-         9qAeAzYQnp5aJjYGFzViGNb1BBiJYjKTsX1ImsBR6ZpkNSJgrzxIGbw5cYNpqVo6yYq1
-         MKRsiCVNhS4L4h0CJSdEW+wa+42PRQh+QjyIi7QPQyWZd7OqGcncTmDIjxIVjku5dv5v
-         wdww==
+        bh=rsiFj/WxLrZpXhxwXs3+FDSwWwZ1Cd4GcIfLRJ1s7ho=;
+        b=VqrsY0w5ejKEVldgEKJIRbeyqZ9zuUGKF86JuCw6p2IFCoAxNFyaeqq2Dh3q64hO/x
+         dkYXzluGQPJrYaBUD5Gj7NTBQrkFQtRwXL8lmrZPD9IS4z1MRKEcY7/H+mFMMSBteQWa
+         FR44zgKoCMFDmg/ZsDIkwintaK4q7XqQgrjnvxdc1AU+bwrZxA002cOnMqb6yU6atuRo
+         1yhWKFVFGlraZeF2OxMQiW6L8og8fylrQmIBfLW/z67Loz7IGpSKIr+O7XXezhTPDcIv
+         qzrnEejjDLidPqvbrKh5667Lu4di/DuUoikzbLfCuKJISjNRlGs3u64mKrJE6aduhb7b
+         53lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720454889; x=1721059689;
+        d=1e100.net; s=20230601; t=1720454950; x=1721059750;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aavLayNlXjLJf72+lQ0+sff2DIyRHzLorFjyS57FhqE=;
-        b=c8pv87nAhrJtqbs6DQXvargdzY7yPQ0RXBqVJh4IPXkz+p2EsvBLAgsrmuSV6yqLHT
-         unJD8/MjPP1joa9smkf7V9bLdc3rAyu7FFYU1NVlFu2/gf7byNYjHjo1FcYsLuyx7oes
-         EWbcqsn0MVXPKgiLy+pjWHrvGsho9c2zIDC4TaKVG3nNwW/ROcxf+5rKXzqFlRUhj480
-         aJ4jvrn3AtYqXuZXVbr1OUQSZaK7kzAyUor6VYCQiFKP4yfTYsw1JTwggb67TPWOhHd2
-         bxISxdyUIWncPfl9GOTAslTKodtwHhn5h27zPoxyaknLT+/vzvKrAmI+LTf5mAeR1u8s
-         e6Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCXt42mn0NeITPBeuDTWKm7NiZyrQtXFZyXDqhFg+gNNRZfntQIL/1o907SM5hktKhUXoGbsPtSaSMSHLGcR02bgJ1aPh84NrE7fM9+O5yDRSenLIBM+TbIlylReOPYcT41EWp6hvcL8iUg=
-X-Gm-Message-State: AOJu0YxAVeyGftE18eK8TC33fVgVi8oz1o0aeM6yhcFXTmDSApVutC6F
-	zrrkH6rMreHpsD3hM9KawlLTnE1mcusdyHyl3r/otmUr2+D9/XgZlT5lLSurFILHZVtHo9Wud+U
-	sHXFtKpBbHB6GspvERMNa7OYUDpU=
-X-Google-Smtp-Source: AGHT+IGBuBsw5Er0D3slVAnl7KNp4MNQfixvpP3uu91ADW0Oceb8a3AAsW8EYYftAq8wcuShcWo9fj1p/2VVRmbJBlA=
-X-Received: by 2002:a05:6402:3551:b0:58d:b529:7db8 with SMTP id
- 4fb4d7f45d1cf-594baa8bd1fmr43107a12.9.1720454888764; Mon, 08 Jul 2024
- 09:08:08 -0700 (PDT)
+        bh=rsiFj/WxLrZpXhxwXs3+FDSwWwZ1Cd4GcIfLRJ1s7ho=;
+        b=SGqtLJ4dv2VofTNXlm6+FZVRkdtfg7H/tk8YUVAJZnUwlBKtoXPVzu+vAmtHlsMM2Q
+         tWTgKnUUTIYP/NpSluKRX+aau9Zkjgn/NIAW0Vare5U6Pi7oTshBMJT2m/r3/gqUhnr3
+         HEJfkqx/ZNt+7czR9iBDnBZ7cqX7LbFAteEanBArf5CThxT15xdZaXzIT+iWzWYHrgXy
+         qgLKdHePyx8Ts8sfIpig5DBEHR0i5e5xT90IRW5KSECzKIqK5P4bVxbIp5GPo88y0jWX
+         06iTfopTf2HGWMcJVADjqX8gF8kGPHVjzqmlSwy35c3sZcInbpmuAmtA+PrC6mQVxLYF
+         rQ+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXADUokuaOJ0Q61GWwW8spPnmOHEIwJx27uI9/+vvwY9DZqJ8UkXX93lzuS5XqaAepNH/9s7ySE8evg+ltLUXiOmOB3TYgyKGRarQtj
+X-Gm-Message-State: AOJu0YyQgqCvtbWYxesuHicZHa2cYlQx/wi8Bll36/pBCxshy1TxfWTy
+	qiC9+v9IhxpGM6EuDESPRmQ/cv2ZpTWuV2JQOe5NLHBZWQ4O0QrQuvhpcC01CUE/D6WTeKjZpSg
+	CJi6/4wQd1XodI5DkCH8L0rqGznxTpMc3XIHJ
+X-Google-Smtp-Source: AGHT+IG68WVmOzY4xDmfQcCAQVMnFKtmNO3cbEdYJgbHLx0bLl7VhaJKp8PuklOozwexmfThc7tkOd6AwzlEUeRW6sA=
+X-Received: by 2002:a50:8ad3:0:b0:57c:bb0d:5e48 with SMTP id
+ 4fb4d7f45d1cf-58e00933a13mr529925a12.2.1720454949927; Mon, 08 Jul 2024
+ 09:09:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240616163055.75174-1-max@enpas.org> <CAEc3jaCkH5JwNTpHRZYsekbwX+G6T5tMTLD0+O6E7Q2hqcAFHw@mail.gmail.com>
- <dedb2c39-fc28-4cba-802f-5d56f23db722@enpas.org>
-In-Reply-To: <dedb2c39-fc28-4cba-802f-5d56f23db722@enpas.org>
-From: Roderick Colenbrander <thunderbird2k@gmail.com>
-Date: Mon, 8 Jul 2024 09:07:56 -0700
-Message-ID: <CAEc3jaC-Tmd2XtK9H2sipBJAhCf16dMWx46r8Hs4p9At3LC_Jg@mail.gmail.com>
-Subject: Re: [PATCH v1] hid-playstation: DS4: Update rumble and lightbar together
-To: Max Staudt <max@enpas.org>
-Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>, Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Mon, 8 Jul 2024 09:08:29 -0700
+Message-ID: <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: Florian Weimer <fweimer@redhat.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Max,
+Hi
 
-See my comments inline.
+On Fri, Jul 5, 2024 at 11:03=E2=80=AFAM Florian Weimer <fweimer@redhat.com>=
+ wrote:
+>
+> * Micka=C3=ABl Sala=C3=BCn:
+>
+> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > allowed for execution.  The main use case is for script interpreters an=
+d
+> > dynamic linkers to check execution permission according to the kernel's
+> > security policy. Another use case is to add context to access logs e.g.=
+,
+> > which script (instead of interpreter) accessed a file.  As any
+> > executable code, scripts could also use this check [1].
+>
+> Some distributions no longer set executable bits on most shared objects,
+> which I assume would interfere with AT_CHECK probing for shared objects.
+> Removing the executable bit is attractive because of a combination of
+> two bugs: a binutils wart which until recently always set the entry
+> point address in the ELF header to zero, and the kernel not checking for
+> a zero entry point (maybe in combination with an absent program
+> interpreter) and failing the execve with ELIBEXEC, instead of doing the
+> execve and then faulting at virtual address zero.  Removing the
+> executable bit is currently the only way to avoid these confusing
+> crashes, so I understand the temptation.
+>
+Will dynamic linkers use the execveat(AT_CHECK) to check shared
+libraries too ?  or just the main executable itself.
 
-Thanks,
-Roderick
+Thanks.
+-Jeff
 
-On Thu, Jun 20, 2024 at 12:26=E2=80=AFPM Max Staudt <max@enpas.org> wrote:
->
-> Hi Roderick,
->
-> So as far as I understand, my suggested driver behaviour is sound, becaus=
-e both the console's own behaviour as well as other drivers show that flags=
- =3D=3D 0x03 is working perfectly fine with original controllers. Is my und=
-erstanding correct?
->
 
-The console behavior (I checked the code) does use the flags as well
-like I do. The architecture there between usermode/kernel is a bit
-different, so in some cases flags do get set when not needed.
-
-Various devices tried to capture bit patterns and see what kind of
-worked even though not really right. (Officially licensed controllers
-are a different story they use different hid reports.) We didn't know
-other devices did this wrong.
-
-> In fact, hid-sony used to send these updates at the same time (it had fla=
-gs =3D=3D 0x07), so for some 3rd party controllers, the move to hid-playsta=
-tion has already been a regression in the FF/lightbar department.
->
-Kind of a regression, but not entirely. Many devices didn't work prior
-in hid-sony, because sensor coefficients were 0 or they didn't handle
-some reports (e.g. the one to get mac address, which was changed to a
-more compatible one in hid-playstation).
-
-> Do you see a way to move forward with this patch and get it merged, even =
-if it is with some delay? Is there something that I can improve?
->
->
-> As for downstream users' regression tests, this argument confuses me. Cou=
-ld you please give me a bit of help here?
->
-> My understanding, so far, is as follows:
->
-> Tests checking the FF bit should not fail if, say, the lightbar bit is al=
-so set. If they fail, then that means that the test is too sensitive. After=
- all, the patch does not change anything from userspace's point of view, no=
-r from the actual human user's point of view. The DualShock 4 behaves all t=
-he same, and it's just the wire protocol that changes.
->
-> So if a downstream user wishes to do a full end-to-end integration test, =
-technically they would need to connect a real DualShock 4 and test that. Bu=
-t I can see that this is not easily automatable ;) so they may test at the =
-HID level instead. The result is that, depending on how they structure thei=
-r tests, they might no longer be testing end-to-end, but rather testing an =
-implementation and its quirks. This bears the risk that the test will fail =
-because of a legitimate change in the driver, or elsewhere in the kernel.
-
-Correct the validation tests are all uhid based, which is the best
-which can be done. There is the hid-tools one, but the one which we
-help out with, but the key one is the Android ones. We have so many
-problems with these. Mostly because of vendors not enabling e.g. FF
-support or LED support other things. The kernel landscape for Android
-was very fragmented and has been getting better in the last few years
-(binary kernels instead of vendors hacking up their own kernel builds
-based on e.g. a fork from Qualcomm forked from Android kernel forked
-from upstream).
-
-> I suppose this is what you want to avoid, but... isn't avoiding such chan=
-ges the reason why LTS kernels exist?
->
-> And there is only one LTS kernel with this driver, v6.6, released 8 month=
-s ago. How did it become necessary to ossify the driver's wire behaviour in=
- this time frame?
-
-The main new Android kernel (public knowledge) is now 6.6 and many new
-devices due later this year/early next year will use it.  The eco
-system is a lot wider now and the drivers are used a lot on non-mobile
-devices (cars, televisions, chromecast,..). Occassionally driver
-patches are also backported from upstream to older Android kernels
-(patches have to be merged upstream first).
-
-> Hence I'm confused why changing the wire protocol upstream, without break=
-ing any functionality on the original controller or backporting to LTS kern=
-els, creates problems. Either the tests are correctly written in a way to n=
-ot be affected by this change, mimicking the original gamepad which is unaf=
-fected. Or the tests are protected from breaking by using LTS kernels. In t=
-he latter case, the tests will break on a kernel version bump - legitimatel=
-y so, and fixing them should be easy.
->
->
-> Am I missing something?
->
->
-> Do you see a way to get this patch in?
->
-> Would it help you to have some time for warning your downstream contacts =
-to stabilise their tests, and I could re-send this patch in 6 months from n=
-ow?
-
-Not that I wouldn't want these kind of patches, but I have to weigh
-both sides. The pain on addressing things downstream and in Android
-conformance tests is quite painful. We would also have both code paths
-used in the wild forever, because existing 6.6 devices wouldn't change
-behavior. (The official Android tests are kind of kernel version
-agnostic as they work across multiple kernel and Android versions.
-
->
-> Hopeful greetings,
-> Max
+> Thanks,
+> Florian
 >
 
