@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-243845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C31929B7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:19:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B3AA929B83
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 07:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1B01F215DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:19:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3CEB20B7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EEFBA5E;
-	Mon,  8 Jul 2024 05:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F0FC2FC;
+	Mon,  8 Jul 2024 05:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="bMfYhjyH"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="WnsO9vuh"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66FC8BF3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 05:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74E36FCC;
+	Mon,  8 Jul 2024 05:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720415965; cv=none; b=T4ha504NUHhZdXxbANgMDyfExDKAcOzNcG9oaEcCHWuiuVgM8YxarO5hxotqXdH46LhgOxkyLDA2QX99h5L4Liwx+i9aF6XOp4a+bC2gnY3UX3qN2yt8gdsKLK2aEm+Z2rNdcbu6OuLLJZ/BL+bJi6wpXmUOCCHb39CWVBNZmZ4=
+	t=1720416029; cv=none; b=rX4rh5sC9VPFURb7PljYZ12cxenoTx+m16LcrrVwD5iEiv2HjzbvtYdhNwOwakUHBT0lb2RW63W2I8BUgaAJCt788MBAgq902+ry0e8EuH2IlJn2hwu1UDxQpYKEc7ZmgIDlGdhx1leGein6OlpdCDlb5Vmk+Zv9uhGostiM0C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720415965; c=relaxed/simple;
-	bh=obAmZQjKYTR4UL87PjfxdDYKt/Cd4nommN23G2lJ6Zk=;
+	s=arc-20240116; t=1720416029; c=relaxed/simple;
+	bh=GckL64D37jrZIlvJDo0KtMZP1iFZsTMxQ7mIvSziZnU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JndcLvG2BGdNDg/m73v3TUrNOEkxgO8tJxlkYUZKSlB+6wS2WKT4rbZeT1tZjwe1ft5Gj9HkwI/mVld+Jps1pn6j7U8Q/ZqSfDkLgo/21D54oTfgUe2aLPHr+efyDRosU6xqGl1hl10l5vUlyZxVKO5cvh3F9B86DlfKSHrY46Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=bMfYhjyH; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4266dc7591fso271665e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 22:19:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1720415962; x=1721020762; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=st0ZPkxd5F2MKlXcA3s5v8aNC1YTG+RQErMhWa4hH14=;
-        b=bMfYhjyHrOpHJTemmUiHIfnwoSuq4Lb1JBn35+xc6WPW52xUTfafC5Noq5GqnWCFjs
-         K1bb5eBNnFyfQffnS93vuI0/Zb53uVen+6MsIjBldxvmTq8YRQuqb2Fi9LZx8vC9rCGc
-         oP6xGNVz+1MZ2Eu4CIFF9J+Ug0pQ9SHAL1r0C16cFdwzuBN5VGp7niiKpc/a6aSOYzRU
-         vcsCAUh3I/3KatWqRTJ5TQlHLZpSE/6ZZGe6A4qQODm2wKMSf/i97S7jRuCXphnalje7
-         e0zfyGLTDRfBfh7NMUTeSZ62k+5sRrLOHUe4c7x+wRJ1nRnnzuhi4fjZsSPmj7TjdtHM
-         aYGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720415962; x=1721020762;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=st0ZPkxd5F2MKlXcA3s5v8aNC1YTG+RQErMhWa4hH14=;
-        b=YoBlpdwXTkOXhfBdtufus9RbSEwa4EeHCh7lTcBMlBHqsqeMyOkfuXj+xT9VE3L0Mp
-         n/guDPhJ8Hb46voFAiyA4v+Lv+WKqPFZV4/rJjveELpjJCqgctzQsJY5msgpl9ZZ5VD+
-         a1a0bN0eYx2TbPvnJDSKFl3vlX73OIxtC2kY0d3Gg2Sey23njS8qlnp0NENfd9Uv9qw1
-         +bs2HhheRItJoknPmIiXoikZWPusrv3ppVgleRUo6SMRu2w0RAc+gOhSy6HnEfVo9GFc
-         xYOPzV56pCHONMs5W3vL69nsx58Abjv2eSlgG0hWgCZtU/y2Ih2M4W9RIBzSsFGvNyHF
-         p7eA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2ejUrhmASHP9B6nLYUfgxSQT6bBSlxh/RRBfVXiVu/Ax/+rby06A+HveGq80/Lu9HHA1CKeGDTEJWa/HlMXf8BoNCXyTlYuzbavps
-X-Gm-Message-State: AOJu0YxlqfdH/T4+t0YCT+aZ3qFLgkWwNeKHNhLuGGcKS3vVaaLynwag
-	VVbRV49WN2zA3qVyxMi+vKVsHKQw++t+uhCjNa/2UpXti6aJEePxa0ciKEesJBU=
-X-Google-Smtp-Source: AGHT+IETsBIsaljp9EWGAGT81NQ2T8WGDGmhewcJPHsOXa8m0v7dKcV/UUR92Qj8s3oEWCOzEEaNvQ==
-X-Received: by 2002:a05:600c:4289:b0:426:627e:37a7 with SMTP id 5b1f17b1804b1-426627e3bf2mr27955515e9.8.1720415962157;
-        Sun, 07 Jul 2024 22:19:22 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266a38f5a5sm21441355e9.43.2024.07.07.22.19.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jul 2024 22:19:21 -0700 (PDT)
-Message-ID: <dc232ee9-b28d-486f-a878-0320be84d1b9@tuxon.dev>
-Date: Mon, 8 Jul 2024 08:19:18 +0300
+	 In-Reply-To:Content-Type; b=cJzuoE3iQUlCWJaxrWZPKRBRDwg1w2xGkGpwTWkmfOG14CnePTPWAaPWi3LVSMQl7qhjvPH/zKuZjjNsvqkZQTqngYVvxFG1YmN9dnJd2P4ww1W1cFRU76I/jyrNS+FYNH9WDgK78RAwNJLLAQ7twv+F1WCGxllvc7KqYQDkIBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=WnsO9vuh; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1720416012; x=1721020812; i=quwenruo.btrfs@gmx.com;
+	bh=xh1PC1KpvsfDiu3WYc24IbhjgduzYppmOJMHenWUC68=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WnsO9vuh+b90gj7H1I+rpl8oBonOjtWk6IgUE4MpoKXc8rzT2XrsY4Eo5NsNIgY7
+	 22DdGZvHi+ADpa0/cqXUvmQStcRiJMqWXxp/BT+NdSj3s3k6rt7pokr0Kgr0PHiP3
+	 XF6BIoJ9U0LjAAKYr/dxxZIUGDeJQd7YWF3Ak3y9Jh0EqX1RBh3tY+M8PZciLtIQu
+	 9n5ZKdRnlftkh3O2ikf8B6wO2tsWossNGNSba8h5XLroxe4kTjYbOxh2+mTQd1tAV
+	 uuM6oCNAMoZn+r4IaeKR0z0p5OBnS3b3/0unYv9WUhFe9Eha8X1ZettprTER/+lU6
+	 4nOz7V0rCHhkX12cBA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MLiCu-1siDgB3y1g-00Ys8D; Mon, 08
+ Jul 2024 07:20:12 +0200
+Message-ID: <ecd368a8-2582-4d23-a89d-549abb8c4902@gmx.com>
+Date: Mon, 8 Jul 2024 14:50:07 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,93 +57,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
+Subject: Re: [PATCH v4 3/7] btrfs: split RAID stripes on deletion
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240705-b4-rst-updates-v4-0-f3eed3f2cfad@kernel.org>
+ <20240705-b4-rst-updates-v4-3-f3eed3f2cfad@kernel.org>
+ <e0041c2d-f888-41cb-adb8-52c82ca0d03f@gmx.com>
+ <e3927e86-d85e-4003-9ce5-e9e88741afa3@wdc.com>
 Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Andi Shyti <andi.shyti@kernel.org>
-Cc: chris.brandt@renesas.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, wsa+renesas@sang-engineering.com,
- linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com>
- <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
- <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <e3927e86-d85e-4003-9ce5-e9e88741afa3@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HPL/K+hCXncaMbuI5AbXTGUtBZX6CYPY7mmBYaMYTMHcq9AIG29
+ tCThzsFrBY3hXlzVM6PA0r1NfPsdT15xClFkkbeyIo6R+cOh/cs94T9G/+LSBHYl6OyFR2v
+ H+jf4M4gtZz7FJWQ28MX95DCDKVo+V4H4y3jadjjBbN185i6B5WhEzYs+oAHqI2uwrwZui9
+ 3CLuMTDeeAE2dcLaZ3vmQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:P916Mzac2hU=;rC7JTAKPnmwG/lw2OzdT/9ij7JG
+ vxg+0+YNZScE+aB87UUiLzkw3X9Ga0mzdgE2XmlEXR/iyRA7aWEyAFXXWXC3/EC0xwrBE1RwJ
+ R7dJ9AlDfW5zI+DP8pb9B84Uo07kCNa+4JeZxzhGswtVScKCeRBpctU4oyLE1YI0VYvr6etFc
+ w5P+Eut9Z1Dh2xGnD3RMihM/wzIdTIVpMaOt9q8OP/58YV9hEc0QWnMltzbv6GVPjpJvXRGtn
+ q5LHR8qlXpjN4U3FysIm3+EVwuo25DrPeD5/q34ThqNVzNaC2Od73XM52S/UM3R24LwzK+c1L
+ PjUqVOxVxWq+nFLVuNsN6g5pX80m3BVgFgouEPzcNtLJ82b/ivAa0r6u8kOVBijPZoInFgeMa
+ WlPYuy/BwJmupNlQn0kU8dWHQ0Wa24NrGppKzmnAcI1k8I0W7Fb4iJ8pNp6+oReBDXP1rMVDe
+ 8MeGn4Y5mQCTTEhhcYhbRZwH5SUP9DqMdTF7N4VM++dRIfZnKc76Tw8Mc0pF9H3IKZk/N4flq
+ jrALpRZVVJTos5k0NsewZ8wmcSx4N6cEPdVfnA0ARvKlsGAa7y9P+C1KGgIki6aXjfxOnAO+N
+ xZJg0mprVtYzfX/kMMjIxYTESXaX2UpaJpKSw/pkP4iSv7DGWHaZ0311E6fe/0i0Pke8zxHby
+ WyihQVUftJIcqZWjh4z5Ks84PsBpVU/uEgx58HIWe6zYz7b+0QBERRak0tQunDWTMBivSDYnq
+ 92IGGTGbokOSuNQuR1MDE3rnSg0sbBIRm4fxRtZGiR7P3m991UccVFU8RsTAdOIcW5GTufOQL
+ ePcVLaYgzWKI7Nt87tv7FDTAgBd92BbnJqUgaAg25OCy0=
 
 
 
-On 05.07.2024 10:19, Geert Uytterhoeven wrote:
-> Hi Andi,
-> 
-> On Fri, Jul 5, 2024 at 12:42 AM Andi Shyti <andi.shyti@kernel.org> wrote:
->>> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
->>> index 83e4d5e14ab6..002b11b020fa 100644
->>> --- a/drivers/i2c/busses/i2c-riic.c
->>> +++ b/drivers/i2c/busses/i2c-riic.c
->>> @@ -113,6 +113,8 @@ struct riic_irq_desc {
->>>       char *name;
->>>  };
+=E5=9C=A8 2024/7/8 14:26, Johannes Thumshirn =E5=86=99=E9=81=93:
+> On 06.07.24 01:26, Qu Wenruo wrote:
+>>
+>>
+>> =E5=9C=A8 2024/7/6 00:43, Johannes Thumshirn =E5=86=99=E9=81=93:
+>>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 >>>
->>> +static const char * const riic_rpm_err_msg = "Failed to runtime resume";
->>
->> Please, don't do this. Much clearer to write the message
->> explicitly.
-> 
-> And the compiler will merge all identical strings, emitting
-> just a single string.
-> 
->>
->>> +
->>>  static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offset)
->>>  {
->>>       writeb(val, riic->base + riic->info->regs[offset]);
->>> @@ -133,10 +135,14 @@ static int riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
->>>       struct riic_dev *riic = i2c_get_adapdata(adap);
->>>       struct device *dev = adap->dev.parent;
->>>       unsigned long time_left;
->>> -     int i;
->>> +     int i, ret;
->>>       u8 start_bit;
+>>> The current RAID stripe code assumes, that we will always remove a
+>>> whole stripe entry.
 >>>
->>> -     pm_runtime_get_sync(dev);
->>> +     ret = pm_runtime_resume_and_get(dev);
+>>> But if we're only removing a part of a RAID stripe we're hitting the
+>>> ASSERT()ion checking for this condition.
+>>>
+>>> Instead of assuming the complete deletion of a RAID stripe, split the
+>>> stripe if we need to.
 >>
->> In principle I like the error message to be always checked and I
-> 
-> s/message/condition/?
-> 
->> will always approve it. Whenever there is a return value, even
->> when we are sure it's always '0', it needs to be checked.
+>> Sorry to be so critical, but if I understand correctly,
+>> btrfs_insert_one_raid_extent() does not do any merge of stripe extent.
+>
+> No problem at all. I want to solve bugs, not increase my patch count ;).
+>
 >>
->> I had lots of discussions in the past about this topic but I
->> haven't always found support. I'd love to have the ack from a
->> renesas maintainer here.
-> 
-> I don't mind checking for the error here.
-> 
+>> Thus one stripe extent always means part of a data extent.
 >>
->>> +     if (ret) {
->>> +             dev_err(dev, riic_rpm_err_msg);
-> 
-> Do you need to print these error messages?
+>> In that case a removal of a data extent should always remove all its
+>> stripe extents.
+>>
+>> Furthermore due to the COW nature on zoned/rst devices, the space of a
+>> deleted data extent should not be re-allocated until a transaction
+>> commitment.
+>>
+>> Thus I'm wonder if this split is masking some bigger problems.
+>
+> Hmm now that you're saying it. The reason I wrote this path is, that I
+> did hit the following ASSERT() in my testing:
+>
+>>> -		ASSERT(found_start >=3D start && found_end <=3D end);
+>
+> This indicates a partial delete of a stripe extent. But I agree as
+> stripe extents are tied to extent items, this shouldn't really happen.
+>
+> So maybe most of this series (apart from the deadlock fix) masks problem=
+s?
+>
+> I'm back to the drawing board :(.
 
-No. I have it here as a result of some internal reviews.
+Can the ASSERT() be reproduced without a zoned device? (I'm really not a
+fan of the existing tcmu emulated solution, meanwhile libvirt still
+doesn't support ZNS devices)
 
-Thank you,
-Claudiu Beznea
+If it can be reproduced just with RST feature, I may provide some help
+digging into the ASSERT().
 
-> AFAIU, this cannot happen anyway.
-> Ultimately, I expect the device driver that requested the transfer to
-> handle failures, and print a message when needed.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Thanks,
+Qu
 
