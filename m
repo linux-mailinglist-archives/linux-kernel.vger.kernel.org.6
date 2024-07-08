@@ -1,65 +1,77 @@
-Return-Path: <linux-kernel+bounces-244932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D399992ABCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9641692ABCE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB111C21654
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:13:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495D11F22F6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8872152165;
-	Mon,  8 Jul 2024 22:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415AB14F9F0;
+	Mon,  8 Jul 2024 22:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lKgeq+CP"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKxLyBY1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6721509A5;
-	Mon,  8 Jul 2024 22:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5522814F9C9
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 22:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720476784; cv=none; b=XSemsbjky9lbmgeA+i1/pGxZhfL606sIUsbm/hc/T79pIWLchYw8XwFyNXf01v5woTd6DkB3ft4zcuoq1RfQYVIy9Jjoox7BwtKiWGKzESzaxtczbNjFoTTft648tq1dPnkXoFrTIahphn/4UoPU+V3B31/UMFMsTMiIEZPrj5g=
+	t=1720476817; cv=none; b=HVqKl+M4SM2Eo8W2IzHZCjbb8h2FI/r1gsFzaI8F2txwosDrTrez654pIhsjDb1G/UMeaIBGsP+EAkXblcK9pRO0F9uUHLEvPzHHWXKs3vlXXCsyCIVe8tczGu2v2vAJLRtACHBJos21CGJNz6pOKdgzpJ8QubGdYiRYIXkEcuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720476784; c=relaxed/simple;
-	bh=0g9ZqQ34v/Y9q91tPXMcX2UQRI2ExeR/qOQkYnG0C3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CT7EVZeraYR/gHEBoPpVYyXTk3eDi7KtzsNsGLGj0CzdMFZNYnaolz90WR8TmyFFE0DGt57mtbvt5LduWbwGd5H6X44tPMgilV0XgT8kr3PiS16sl+vKmPsVYkyuW84fBv1Dp3OfeTV2m2QHRXwXW17jqbsvEr0NCuZr09RrDi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lKgeq+CP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=i/+aDu6z/bqon10/zj70vwV8SqER1DJmyZY2X7lDB68=; b=lKgeq+CPjQYMHzPZ6RgiJ7Ikxa
-	a/hrFPtzxmA3G6vx48jk9nPqhwvMMs8r+iBOz8i8oWPpRw7Knq2MPr8n8GaYEcP1InItJWEpxiGWz
-	3zRPM5j8ocquC2+NA82oaelN+s0jlB7h28yqq0PH+mY0SJt47bL1tGP6aoq+aPX8Ey4cd0bNqUnaE
-	7ai5AaonGZdzqhMjKNa2JXvCQ5oQje6N8513q58Y3Zm9ej6RStMVmRZOhz5nCRMH/z6XDxUt9jRRe
-	2R/757wEQYkborAz60Ip/EegeMsQRNrEOqeEbegMQeoJ1OexyLLbeNAYZN54VGuJwqgX2u2xQf5pk
-	EOlujcCw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sQwbS-00000005Aya-1dK6;
-	Mon, 08 Jul 2024 22:12:58 +0000
-Date: Mon, 8 Jul 2024 15:12:58 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	Chandan Babu R <chandan.babu@oracle.com>, djwong@kernel.org,
-	david@fromorbit.com, willy@infradead.org,
-	Christian Brauner <brauner@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: akpm@linux-foundation.org, yang@os.amperecomputing.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, p.raghav@samsung.com, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v9 00/10] enable bs > ps in XFS
-Message-ID: <Zoxkap1DtwZ-1tjI@bombadil.infradead.org>
-References: <20240704112320.82104-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1720476817; c=relaxed/simple;
+	bh=DC1LlKEm1w/fgZ5XPSPBySuVhFHJDQTj+rDfpvB5IkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Eqvpx2d4s6y8vz9crdYseRdVHaqDnKKgE/fXc0GB9dHMY6owMKTL6LccHHexMG6ZMLmorxn+i8fFpFuJ1YOuFVNk0vrv2VL+fItbvS8kSHB1xziisSBtJsCC0Krk8NiN44YbTtHhhxa0w4nazQIDPLE4wo2vC5T84feZMhJ1WdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKxLyBY1; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720476815; x=1752012815;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DC1LlKEm1w/fgZ5XPSPBySuVhFHJDQTj+rDfpvB5IkM=;
+  b=nKxLyBY1AlbkBj1YcMZT4pRvWf/7QCp7PkU/QaxgCwUEk23Ous06K4Jx
+   B1fpc6bMPTZepczKr8UIbTjzj63N/dmm3Tj4LUdUgcNOtJgANmiv8YDs0
+   NzlCYAW2ZnSoMW2lvyMBMIDb7gEfx8gXdrsihjAfYN/7WBK+wFbZizFwv
+   nkQVeBuL+Q7VMMQrTmmqkGZ0jg4O2UhG9mlkR98Rg6nfqHXfaG/6YGrIW
+   HraPFaIQvxP4x+LwVvZ31hv/MVpFAPOuVtH9Hf0oPHfWC/XxgAQ9bBVgz
+   IoHTAa8qQb4kcS5fj8IJN4tHesCsTfwcNQuRJABUER/ro5JTUopRkr0NS
+   w==;
+X-CSE-ConnectionGUID: 289eLXdyQ+qNm6ekzVYxQw==
+X-CSE-MsgGUID: bAkANgONQlCNPma+IbFPcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17838410"
+X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
+   d="scan'208";a="17838410"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 15:13:34 -0700
+X-CSE-ConnectionGUID: v5l4vE8VTBq8584fL3wZqg==
+X-CSE-MsgGUID: 62LySIIERn+SGYdHH6Gf6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
+   d="scan'208";a="47560606"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 08 Jul 2024 15:13:32 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sQwby-000W4w-0L;
+	Mon, 08 Jul 2024 22:13:30 +0000
+Date: Tue, 9 Jul 2024 06:13:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Kees Cook <keescook@chromium.org>
+Subject: WARNING: modpost: vmlinux: section mismatch in reference:
+ alloc_tag_save+0x24 (section: .text.unlikely) -> initcall_level_names
+ (section: .init.data)
+Message-ID: <202407090645.ruIapj8y-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,18 +80,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240704112320.82104-1-kernel@pankajraghav.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Thu, Jul 04, 2024 at 11:23:10AM +0000, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> This is the ninth version of the series that enables block size > page size
-> (Large Block Size) in XFS.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   256abd8e550ce977b728be79a74e1729438b4948
+commit: b951aaff503502a7fe066eeed2744ba8a6413c89 mm: enable page allocation tagging
+date:   2 months ago
+config: xtensa-randconfig-r132-20240707 (https://download.01.org/0day-ci/archive/20240709/202407090645.ruIapj8y-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240709/202407090645.ruIapj8y-lkp@intel.com/reproduce)
 
-It's too late to get this in for v6.11, but I'd like to get it more exposure
-for testing. Anyone oppose getting this to start being merged now into
-linux-next so we can start testing for *more* than a kernel release cycle?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407090645.ruIapj8y-lkp@intel.com/
 
-  Luis
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+>> WARNING: modpost: vmlinux: section mismatch in reference: alloc_tag_save+0x24 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
+WARNING: modpost: vmlinux: section mismatch in reference: bitmap_copy_clear_tail+0x5c (section: .text.unlikely) -> __setup_str_initcall_blacklist (section: .init.rodata)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
