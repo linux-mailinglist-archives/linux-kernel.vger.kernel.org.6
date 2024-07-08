@@ -1,133 +1,330 @@
-Return-Path: <linux-kernel+bounces-244638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC03392A737
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C4092A739
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92B21F20F65
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03661F21601
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF3D146A98;
-	Mon,  8 Jul 2024 16:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD601145B3B;
+	Mon,  8 Jul 2024 16:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Drq9qjIX"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ckXZVWfb"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05BB146A77
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC911419B5
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720455779; cv=none; b=p29GGVLCbTWvuP6ZSRsCvN5ptygacZBMJinbxquRa3nz+hmXM9e14kPkeNORfc9t7U6WIJfIt/52/QPQaDTjrUt9iyZZDbqsf+4KUk1c4qrfopvBpegg7hLPJLPceQNLPFY3PPAyhyrOTg8ycaDPSnG2kKiO9vEPKNhHrN+R2Pg=
+	t=1720455833; cv=none; b=JukcuMk+eSIi912DySe1sw0zc5Glr1adVYe7XDGFQnbotBIqRHY5NmoMo1CexhpoqN+XxbcMTTSCcH7O9+jISRBRgMyjnxK3bFXt5IVO89TEUlS8XSEUqMEQ5LSenAa8TYMJViVqFEiIu4c4c6rYbZf1nNfgkjvHuNl/eSFD5SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720455779; c=relaxed/simple;
-	bh=39Ok3aZtiGyAkg4DskALCfPqlmoQpaapP1QZtS597l4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/kKHYB7cvvWXJb0Pzhdy86KzorlNZZnGnrST2u9PePbL2mHdoBXR02m990ZzTsUOipgeu27N47300hpG+C7QMXVzSPM0CIRN93m4q1HXtHDHZXY3RbuEvKTOjBGsTlz1wproTnVIBSCzHtbRJUizI91LCHcD+ceVMrH2XuxYdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Drq9qjIX; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-79ef7edb08cso190620685a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:22:57 -0700 (PDT)
+	s=arc-20240116; t=1720455833; c=relaxed/simple;
+	bh=jSn78okXtRS0dnv+PeonQjGYOxB3OOwhhyM3PscgFWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hbxHxCnRr4MoD6TtelO6U10GOyyAyrOF7vEIJdNkVaHzhVLlQqes+3QhYcGiSJIG8PUpdg+BNBy2kCjS8D5J0bBi28NKoPcBjUg1JmGjrsSksKQrEV0xtLY+6jk57g+kdG+QnyEl4a9erO3lG8HOJLfY6NvzwR3uO5HyqltixaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ckXZVWfb; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so42925441fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:23:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1720455776; x=1721060576; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ka0gK+6TRBkr1g04M4X3WeamKoRpIybVWjVNgzYyEOk=;
-        b=Drq9qjIXmnmZFqs2u6lziVhfe8RyTyIVZEOdewael6nwBMS9rOGF63YJInSvac78Lb
-         V+sHN/vTkGBTzDhxxffdeUq+vydtCBxJj7Z9NIHn6mst7YZDwWNqIeix9sL8wx6VCpbk
-         ZMAGexKlla+MY45b+t8MIxsAS/3+m8kT7LNf3ooNV/o9f3b+HV9XWz+TCazwrfN9qjOy
-         eUMFH0sLIX/9SE67tnow4503etT0dpdLBexUQcNVATAwn8SlESud70vO+nuoJUjwMvmE
-         I/UfJTfiveZe7hXFghIrOaFNWXzd0e/DNzNbLl+P1K9ol8cSVCD1kx7CoKjM+uMsPN95
-         f8jw==
+        d=tuxon.dev; s=google; t=1720455830; x=1721060630; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HoLRPpuQmo9FjJRLgcNB4t0ZfZDeWh8+0GFq1KxijDo=;
+        b=ckXZVWfb8N58353GHqAsfQlBagJ+doEF5R7DQDf92I+qAzUKdssxoJN5FLXGovTv/W
+         h0Lso0BoIeA1Z9Nt0yjH1jhs3nxDmJvOlSVbZE2CeeIiocjZBNb4gRRZAbA0XaFwAYkv
+         C8pZvknFQM7GJjWEwNwp7WQBivU47a2Fy9pq3T9S3NABE+lluB9+zfrpm/lLGsPYAYxc
+         7wHSarO3gbYOIhWB+N68DtzGKsc1af652sVOKVu0Q2OJiII/vWC83Slm1TFAFIrj2noK
+         +ewAhxAjQcGBYNm9hxnj9cofUAdbHNrUlfX5VF32+M1rta+LTXzj7OSv6v7hvlz5NGX6
+         BZFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720455776; x=1721060576;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ka0gK+6TRBkr1g04M4X3WeamKoRpIybVWjVNgzYyEOk=;
-        b=Z9TxJ/cFSfSFePgS8pR0RKOL84DNc6kMOmwiVgHRJTmbXoKcwkwGe8z2hnvlhCIiOM
-         Aow19TcIkmAZjo0c8k7uAk67qbFXXaWHhAhDqGlQ+daAYSAqbDLI3FaP6Jv5BQoZ2mjk
-         BNQXm0+i/YRxMV5q+6UCcfef7SnXItGYZbhhpOOPDlN251S7gaSHHMexDjRip6lQwECj
-         PSjR/Wp9V36kGfRGiq7OmiOd6rB9ygaV/wyxa4RNokIb4QXybXnjq8vu3zAGoxUNbq/Z
-         A6p0ryTAWI3u6+nkYhe1hsvwgdDIvIrXSKwFvZz8ZPqEsn58lDx6UaKkgKz/X0dD5X5p
-         jMGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWl7jVxQNh/oD67YS8Qxn7ao2yta9m0b/3GGN+pVkTnxB6tHeRBrQ8/o26yfjUjL42FuqA003E0uFXVsIDsPGKYuAnh3AmxWJTQGBu
-X-Gm-Message-State: AOJu0Yyj0U3HGJNOI4Zv1L39rqPFYH6Xqpbr67pPJjPn5FLBbURjENZX
-	/S1HLpLsWzcEmtXdXvdcTDlkfZq6FcH3vtMoLksBk6PaPGS2aYspeiKpj/9BSJA=
-X-Google-Smtp-Source: AGHT+IEWk4zyOjmKegu6Ou87+AD0hzX/bn+Dtu9fsIyTz6kLGJ/J3j+Jl6yX9VsoZO3luJTYUeKCCA==
-X-Received: by 2002:a05:620a:1b:b0:79f:1731:ae24 with SMTP id af79cd13be357-79f19a65363mr2034085a.32.1720455776575;
-        Mon, 08 Jul 2024 09:22:56 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f190b4c57sm5520685a.132.2024.07.08.09.22.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 09:22:55 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sQr8h-000S83-1x;
-	Mon, 08 Jul 2024 13:22:55 -0300
-Date: Mon, 8 Jul 2024 13:22:55 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, Baolu Lu <baolu.lu@linux.intel.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 06/10] iommufd: Add iommufd fault object
-Message-ID: <20240708162255.GA14050@ziepe.ca>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-7-baolu.lu@linux.intel.com>
- <ZoXZZ2SJ/WdlMJaX@Asurada-Nvidia>
- <309e37d1-6066-4ba1-b30c-402a3c3e7c76@linux.intel.com>
- <ZoY01iLmzoV4fIPG@Asurada-Nvidia>
- <BN9PR11MB52769E10ED0741F5ED3E5B668CDE2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <fc7f5bb1-25b7-4a5f-8d6b-1fa17b1af534@linux.intel.com>
- <Zoct3LVVHhDNbPBT@Asurada-Nvidia>
- <BN9PR11MB52760E55FE52C5B670AA75058CDF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1720455830; x=1721060630;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HoLRPpuQmo9FjJRLgcNB4t0ZfZDeWh8+0GFq1KxijDo=;
+        b=TXdpVUlfS7zDzZcgLQs1vK1osjg8N4yjF5FqOhvaIrvPfxAAlQk46ny+eyl3hiykPS
+         59zGm6wc4mxGIDQeCuUuxkPmmpJW6r7RdaiVT5TADwIr3emCWcsR9egzJ7TaFntqxVre
+         Jbw6RYDVvLtU9W5agtrauc67cBZHZOZN7B9T2fe+KgYECMcEdlOSmwg4ZXL8l0WUYRGG
+         2e8zlOWye8guLQgi8qt+HjmlqLSSPyCWxncXmDhUdQqEl14VSxTCvbPAaB/pMcfhVIMd
+         02HmuSUhJAXR4NBKKpCOctcbvMaEg4ql+TV76N6JsD3QNjG2kL6XZuXpGtpdztOSnTvM
+         YxZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJDxiNjRZWQcpZY8P+2UfCNbDyNlsDc9HJYaMVP31MTlF3/wnZNznKVk1gy40OdnObjr1IeZ3z7fy5jc9YXC50/mMVLNqhoQdYFejI
+X-Gm-Message-State: AOJu0YzaZ31xWXOREuwfNhU+15CrA9qVm63g5AyVjO7s4HHjjpAujsbR
+	ni3R6RBBww35OcZpVckG635cYA6nRsX7MLQWAGF4wiofChjzWTykk+9sJR/s4Tk=
+X-Google-Smtp-Source: AGHT+IGxsHExHJR7X7r40hND2PJrszccNLJS04p/sluUMjMNNpVGXPTD8PTGT/+3qIb2tmK/jqegMA==
+X-Received: by 2002:a2e:9495:0:b0:2ec:558f:a3a with SMTP id 38308e7fff4ca-2eeb30b9fd7mr1471511fa.4.1720455829885;
+        Mon, 08 Jul 2024 09:23:49 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42667720667sm59826685e9.33.2024.07.08.09.23.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 09:23:48 -0700 (PDT)
+Message-ID: <30fc0b41-49b9-41b8-82ef-c27d202492e6@tuxon.dev>
+Date: Mon, 8 Jul 2024 19:23:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB52760E55FE52C5B670AA75058CDF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: microchip: sam9x60: Move i2c address/size to
+ dtsi
+Content-Language: en-US
+To: devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Mihai Sain <mihai.sain@microchip.com>
+References: <20240528153109.439407-1-ada@thorsis.com>
+ <20240705-defection-septum-dd9202836b23@thorsis.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240705-defection-septum-dd9202836b23@thorsis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 05, 2024 at 12:49:10AM +0000, Tian, Kevin wrote:
 
-> > > > > > > +enum iommu_fault_type {
-> > > > > > > +     IOMMU_FAULT_TYPE_HWPT_IOPF,
-> > > > > > > +     IOMMU_FAULT_TYPE_VIOMMU_IRQ,
-> > > > > > > +};
-> > > > > > >
-> > > > > > >    struct iommu_fault_alloc {
-> > > > > > >        __u32 size;
-> > > > > > >        __u32 flags;
-> > > > > > > +     __u32 type;  /* enum iommu_fault_type */
-> > > > > > >        __u32 out_fault_id;
-> > > > > > >        __u32 out_fault_fd;
-> > > > and need a new reserved field for alignment.
-> > 
-> > Hmm, what's the reason for enforcing a 64-bit alignment to an
-> > all-u32 struct though? I thought we need a reserved field only
-> > for padding. The struct iommu_ioas_alloc has three u32 members
-> > for example?
+
+On 05.07.2024 09:19, Alexander Dahl wrote:
+> Hei hei,
 > 
-> yeah please ignore this comment.
+> Am Tue, May 28, 2024 at 05:31:09PM +0200 schrieb Alexander Dahl:
+>> These properties are common for all i2c subnodes, and marked as
+>> 'required' in atmel/microchip i2c bindings.  Allows to add i2c device
+>> nodes (like an rtc for example) in other .dts files including
+>> sam9x60.dtsi without requiring to repeat these properties for each i2c
+>> device again and again.
+>>
+>> Found on a custom board after adding this in .dts:
+>>
+>>     &flx5 {
+>>             atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
+>>             status = "okay";
+>>
+>>             i2c5: i2c@600 {
+>>                     pinctrl-0 = <&pinctrl_flx5_default>;
+>>                     status = "okay";
+>>
+>>                     pcf8523: rtc@68 {
+>>                             compatible = "nxp,pcf8523";
+>>                             reg = <0x68>;
+>>                     };
+>>             };
+>>     };
+>>
+>> … which created a warning like this:
+>>
+>>     […]:236.4-17: Warning (reg_format): /ahb/apb/flexcom@f0004000/i2c@600/rtc@68:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+>>     […]: Warning (pci_device_reg): Failed prerequisite 'reg_format'
+>>     […]: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+>>     […]: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+>>     […]/linux-6.6.25/arch/arm/boot/dts/microchip/sam9x60.dtsi:283.19-299.7: Warning (i2c_bus_bridge): /ahb/apb/flexcom@f0004000/i2c@600: incorrect #address-cells for I2C bus also defined at […]:228.16-238.4
+>>     […]/linux-6.6.25/arch/arm/boot/dts/microchip/sam9x60.dtsi:283.19-299.7: Warning (i2c_bus_bridge): /ahb/apb/flexcom@f0004000/i2c@600: incorrect #size-cells for I2C bus also defined at […]:228.16-238.4
+>>     […]: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+>>     […]: Warning (i2c_bus_reg): Failed prerequisite 'i2c_bus_bridge'
+>>     […]: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+>>     […]:234.19-237.5: Warning (avoid_default_addr_size): /ahb/apb/flexcom@f0004000/i2c@600/rtc@68: Relying on default #address-cells value
+>>     […]:234.19-237.5: Warning (avoid_default_addr_size): /ahb/apb/flexcom@f0004000/i2c@600/rtc@68: Relying on default #size-cells value
+>>     […]: Warning (avoid_unnecessary_addr_size): Failed prerequisite 'avoid_default_addr_size'
+>>     […]: Warning (unique_unit_address): Failed prerequisite 'avoid_default_addr_size'
+>>
+>> This probably should have been done with commit 84f23f3284d5 ("ARM: dts:
+>> at91: sam9x60: move flexcom definitions") already, where those
+>> address-cells and size-cells properties were left in the board .dts
+>> files instead of moving them to the dtsi.
+> 
+> It's been a while.  Is something wrong with the patch?  Or with the
+> commit message?
 
-Sometimes I encourage it so that people notice the if the structure is
-changed later. Almost all structs here are 8 byte aligned. It is OK
-like this too.
+Please CC your patches to proper people (e.g., use
+./script/get_maintainer.pl). I see no Microchip AT91 maintainers in the
+initial to/cc list of your patch.
 
-Jason
+Thank you,
+Claudiu Beznea
+
+> 
+> at91 support seems to have slowed down somehow lately? :-/
+> 
+> Greets
+> Alex
+> 
+>>
+>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+>> ---
+>>  .../dts/microchip/at91-sam9x60_curiosity.dts  |  2 --
+>>  .../arm/boot/dts/microchip/at91-sam9x60ek.dts |  4 ---
+>>  arch/arm/boot/dts/microchip/sam9x60.dtsi      | 26 +++++++++++++++++++
+>>  3 files changed, 26 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+>> index c6fbdd29019f..b9ffd9e5faac 100644
+>> --- a/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+>> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60_curiosity.dts
+>> @@ -198,8 +198,6 @@ i2c0: i2c@600 {
+>>  		dmas = <0>, <0>;
+>>  		pinctrl-names = "default";
+>>  		pinctrl-0 = <&pinctrl_flx0_default>;
+>> -		#address-cells = <1>;
+>> -		#size-cells = <0>;
+>>  		i2c-analog-filter;
+>>  		i2c-digital-filter;
+>>  		i2c-digital-filter-width-ns = <35>;
+>> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+>> index f3cbb675cea4..3b38707d736e 100644
+>> --- a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+>> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+>> @@ -207,8 +207,6 @@ &flx0 {
+>>  	status = "okay";
+>>  
+>>  	i2c0: i2c@600 {
+>> -		#address-cells = <1>;
+>> -		#size-cells = <0>;
+>>  		dmas = <0>, <0>;
+>>  		pinctrl-names = "default";
+>>  		pinctrl-0 = <&pinctrl_flx0_default>;
+>> @@ -254,8 +252,6 @@ &flx6 {
+>>  	status = "okay";
+>>  
+>>  	i2c6: i2c@600 {
+>> -		#address-cells = <1>;
+>> -		#size-cells = <0>;
+>>  		dmas = <0>, <0>;
+>>  		pinctrl-names = "default";
+>>  		pinctrl-0 = <&pinctrl_flx6_default>;
+>> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+>> index 291540e5d81e..551b46894f47 100644
+>> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+>> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+>> @@ -215,6 +215,8 @@ i2c4: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -284,6 +286,8 @@ i2c5: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <14 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -394,6 +398,8 @@ i2c11: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <32 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 32>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -443,6 +449,8 @@ i2c12: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 33>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -600,6 +608,8 @@ i2c6: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <9 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -649,6 +659,8 @@ i2c7: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <10 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -698,6 +710,8 @@ i2c8: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <11 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -766,6 +780,8 @@ i2c0: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <5 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -834,6 +850,8 @@ i2c1: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -902,6 +920,8 @@ i2c2: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <7 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -970,6 +990,8 @@ i2c3: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -1074,6 +1096,8 @@ i2c9: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <15 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>> @@ -1123,6 +1147,8 @@ i2c10: i2c@600 {
+>>  					compatible = "microchip,sam9x60-i2c";
+>>  					reg = <0x600 0x200>;
+>>  					interrupts = <16 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>>  					clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
+>>  					dmas = <&dma0
+>>  						(AT91_XDMAC_DT_MEM_IF(0) |
+>>
+>> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+>> -- 
+>> 2.39.2
+>>
+>>
+> 
 
