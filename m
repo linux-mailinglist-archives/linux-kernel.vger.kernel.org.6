@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-244896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C72B92AB18
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:20:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516CE92AB20
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6BA81F2239C
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:20:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE1391F22578
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8632214F114;
-	Mon,  8 Jul 2024 21:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1155014F100;
+	Mon,  8 Jul 2024 21:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tzf3OvlJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BrFEH0TF"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88E11CD3D;
-	Mon,  8 Jul 2024 21:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE2E14EC51
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 21:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720473633; cv=none; b=JM1F47VgL4NNYO78YuuN5M3SqbC+9QSZdvtq54K4LWqoOaeu6W+7b1Vymn3xbdXye/D/TT+7regkADtmEH2johAiunhbihww6Jfs1gIMBC3PlolfnjXDKX9l4obmWEjw9CPbzS1l3XwQhEw7OIEoISMsGEgTxJswAjcTSOMTYH0=
+	t=1720473937; cv=none; b=eFVYm2QTH+/zv4/LycjPCYH960gCRrwFbf0HjpAkYusBbW4I4b/UEIQ7P1vP9sLZoT6uHFI1iYs4v9qWM8r4ecUktXsmTE5YakkUxPPCtlImbMTHvqrYU4soZ0Nj2OyjgZKikT/+MRqbJotR5dSLzupSIFlH1h/C2fO7DkiOnvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720473633; c=relaxed/simple;
-	bh=UWSUycG/PBa3IFkaEkQfdVNMaUwjTzQgOq0EeeYQahg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AW+0UYntgCrSeVWqg1DtHJcwJscqZsZCT4ixRmvcO7QTXyomIuEMndH3EjA0v8S+8WjNrs9BkH1zrn/PH6TBgn2DuFPE1SYBH9zVpD+yOZxHCVpPK7NV0sCG/cwFmBcZ/xZw+DAlaKU4/c+Ho3EjQTM0EPEA9CuyyGnTo/TbOwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tzf3OvlJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7FC7AC3277B;
-	Mon,  8 Jul 2024 21:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720473633;
-	bh=UWSUycG/PBa3IFkaEkQfdVNMaUwjTzQgOq0EeeYQahg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Tzf3OvlJ7VLaI7Cc6adcYuF1tiePYjXl4cOjQ04OvnQMp253PGnyf7Bwb6vRtvFEW
-	 Fn57tGkPCruoBjaHyBpKpvww5/isXUak0mbOrx24QvxkssRgHcWIm3SmnT9pNlSvax
-	 1sEhKlCwCwgBod7ztWUmPvxEuvdtoGCjrh94WRDjx//T+qPxBYH0Cwsj3hZ0rkJz+S
-	 2AAkTVyJvaA+KUavhg81LB+b5xf1dsE38s7UBYlS8Z2/XSKLklhSEeP5c+ksq2CAVY
-	 xzM3Rz4me6mGtnDvSJ5080Z8flYjK+hEWhGgcfcTTBBciXcAIo9GixDzdh+sDSUu4u
-	 +QGHsMp9iik7A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 722C7DF3716;
-	Mon,  8 Jul 2024 21:20:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720473937; c=relaxed/simple;
+	bh=7JctZJAKiS8OEudEyYr/ynOmVp0voSFvu/g3pykv3D0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PRxbR7jilFqUDvysXfzNpP4yzzTFwe00kcjfnPpfUENzTGteaOh9r/B91nRLBSAg3kPLyfusmRQwJnlutR18pL0nVTI/vcJWS3PJMJuBMksx+6nxXcNPW2BNpEiHMF/XwgdCOmvLyn0N0y4roOQprS7MSOLpe0acz2mo3QCOUyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BrFEH0TF; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25e0c0df558so2291150fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 14:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720473935; x=1721078735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xJvFU7TYtpQ06K0DjMCeUx+4vp854MVTBkG3gu9NGtM=;
+        b=BrFEH0TFO/sVO7amffuQwbUgj3tcoE1Z/l702jjZY9TMQl173pUcT2uiQl7nyqVnuH
+         K7KqbPqGVUwUN+uMec7k/rD1soOQHcjbRa9jgFWSIGm1fmi2wBzT466XVfbH5WAjs3Ra
+         CMcNj04TEE9CaoPXDgfNsC0I70JS7YR0QJesCaqPFeQcRIXWp920wDuY/2NoC2grPgvR
+         f74uea0Qw39QZzGA0Us6hkDDmntJcY+xw0K64BCr7Y4G7zAfKKTfb2OnSmAWnD8Qbso5
+         zZZtJATBIjvU6N0Ojwhu3RFhc81RR/aTyvzmmfTk71soOE4JtErqUxNJvZWjEBgZglZF
+         fTIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720473935; x=1721078735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xJvFU7TYtpQ06K0DjMCeUx+4vp854MVTBkG3gu9NGtM=;
+        b=xI3LY9699Pb5RKM2eTcp8P2PDdpamcXrUTQaEApdGM87ZbHxFh5GJdUDXXyeOYW6wu
+         LeuhBfPtriZvE6Qv++EGt6oSHmLX2pNGlyJ1A+ytYm5Px620GJY2ErfMY7s9WTYrnr0F
+         sJqoYWEsGVxFQYlENzTEzpK3Tgu3SlfGFpywbM57qw/eX4IAnG4YWJcPvx2GeaUcPgtn
+         HoHP7WgNKIbLMBTipqYVqGoonByihAJUkNbMG3gYX+3a0QLu3eD+rZPM/w4DHeUB0byC
+         k8s0ahFeTFm1urRYwnw5RmNrZMuzPahMSxyEbHyuoH9r8YpZ6MA29GlNsyUY1BjGsz6X
+         6Gdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPc5NR8g53QdHBSC0feChWh8KUT5NQXTVzFoNKpK3M8yfTEuZ+kiKeuJN+PmKvhekTLHLNdtaHu4CdpacbQxZILNTclsvFhEv7wxCs
+X-Gm-Message-State: AOJu0YwyBIcIbV5Pn93v2Y4PVtXrzWtFYcpofFwOWL/bZIPqRn2J8NBs
+	6r/XsIHZ0luUU8gWAky+Fl9DRKShKPHlJFeoLJ0XZ0rp+ZtXgF7kuvwMl2aTkEU=
+X-Google-Smtp-Source: AGHT+IFibYrQLzTfmVuZB2cwTblZ0w0GWvA/Rp6zMFtf4QieNjy5zWIw9c6j8/BZsVvjrbrriJbOIg==
+X-Received: by 2002:a05:6870:2105:b0:25e:1f67:b3c2 with SMTP id 586e51a60fabf-25eae756dc3mr544905fac.1.1720473934739;
+        Mon, 08 Jul 2024 14:25:34 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25ea9feb688sm194630fac.20.2024.07.08.14.25.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 14:25:34 -0700 (PDT)
+Message-ID: <d4505dbf-a886-4fbe-8305-9ebee22a46b9@baylibre.com>
+Date: Mon, 8 Jul 2024 16:25:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v7 0/8] Bluetooth: btmtk: MediaTek ISO data transmission
- support
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <172047363346.9973.16198479983313620239.git-patchwork-notify@kernel.org>
-Date: Mon, 08 Jul 2024 21:20:33 +0000
-References: <20240704060116.16600-1-chris.lu@mediatek.com>
-In-Reply-To: <20240704060116.16600-1-chris.lu@mediatek.com>
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- sean.wang@mediatek.com, aaron.hou@mediatek.com, steve.lee@mediatek.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 7/7] docs: iio: Add documentation for AD4000
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, corbet@lwn.net, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1719686465.git.marcelo.schmitt@analog.com>
+ <d5f07e2ea4f4aaae1c13ed0b1b0c6abb15492a67.1719686465.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <d5f07e2ea4f4aaae1c13ed0b1b0c6abb15492a67.1719686465.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Thu, 4 Jul 2024 14:01:08 +0800 you wrote:
-> Since SIG has not yet clearly defined the specification for ISO data
-> transmission over USB, MediaTek has adopted a method of adding an
-> additional interrupt endpoint for ISO data transmission. This approach
-> differs from the current method used in the Bluetooth upstream driver,
-> which utilizes existing bulk endpoints. The interrupt endpoint provides
-> guaranteed bandwidth, sufficient maximum data length for ISO packets
-> and error checking.
+On 6/29/24 2:07 PM, Marcelo Schmitt wrote:
+> Document wiring configurations for the AD4000 series of ADCs.
 > 
-> [...]
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
 
-Here is the summary with links:
-  - [v7,1/8] Bluetooth: btusb: mediatek: remove the unnecessary goto tag
-    https://git.kernel.org/bluetooth/bluetooth-next/c/a06a1458192e
-  - [v7,2/8] Bluetooth: btusb: mediatek: return error for failed reg access
-    https://git.kernel.org/bluetooth/bluetooth-next/c/ac7daf0f197c
-  - [v7,3/8] Bluetooth: btmtk: rename btmediatek_data
-    https://git.kernel.org/bluetooth/bluetooth-next/c/dfad4030dcc4
-  - [v7,4/8] Bluetooth: btusb: add callback function in btusb suspend/resume
-    https://git.kernel.org/bluetooth/bluetooth-next/c/cacda8ed6753
-  - [v7,5/8] Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to btmtk.c
-    https://git.kernel.org/bluetooth/bluetooth-next/c/39a9e1c69e74
-  - [v7,6/8] Bluetooth: btmtk: move btusb_mtk_[setup, shutdown] to btmtk.c
-    https://git.kernel.org/bluetooth/bluetooth-next/c/314f1c00d267
-  - [v7,7/8] Bluetooth: btmtk: move btusb_recv_acl_mtk to btmtk.c
-    https://git.kernel.org/bluetooth/bluetooth-next/c/91d0ac304edf
-  - [v7,8/8] Bluetooth: btusb: mediatek: add ISO data transmission functions
-    https://git.kernel.org/bluetooth/bluetooth-next/c/7eac027d1b20
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
 
 
