@@ -1,63 +1,82 @@
-Return-Path: <linux-kernel+bounces-244765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684E792A921
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D8C92A923
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E973DB21019
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:45:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE8D1F21B50
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DAE14B956;
-	Mon,  8 Jul 2024 18:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1281DFC7;
+	Mon,  8 Jul 2024 18:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="J8eDdFKA"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCEM8HEd"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C7515A8;
-	Mon,  8 Jul 2024 18:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B646B17C9E;
+	Mon,  8 Jul 2024 18:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720464292; cv=none; b=a32bEs5tglvkOQkvFUjjg8M3YngIQU3kxn4BnVr+HsjyuBoEHsrMSOe4TlBf65cVV/4+JVQVHP/mJmmXeVFvWpfu6O4fTYDRDyylOl0aOWNcjB1uWxBP9XJdpQXwgMnM41rTP5c8noW/fczsfiw1ZkYIT3HEUbLkK1BPNyMIrIM=
+	t=1720464321; cv=none; b=T51zzVF3Zyer6tn9pwxiI1t33CqrOtfoWWXTFh8hrV0aFyurhU+zuNNR4F1dcT4yVmUr5L7ED32exc5T8tyIuA4Vj1FPznpz66BEl2B4BrOVLJp7UKvn6AJAzBUugBemUhBLQOynEH1Q40YQsUjMSzt6KKaLVxoti7VNtBfZC4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720464292; c=relaxed/simple;
-	bh=l49eRQh1iAOOzBvGwGGaY19pDowiDJbszbFd5KoxyX4=;
+	s=arc-20240116; t=1720464321; c=relaxed/simple;
+	bh=x+md8Yw2vlsX1Vo5jhFawgklg5cgaDj76s25DaKsTuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k1bbXhICQle4XSocTOZ7RSCuEnTqsOxbT2WNYtpEg7jw2AVno5VuZrjMbdqXV386au6PxoibPTrUUjDEPMdjChfrZ46ry42okcyPv2yTOra7DLEcTUqnxKI8i5aAo5ss/yZVhHYL9dhVL2Z1Fu+ylS8qiDKsmkGRq/g5fxJtdPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=J8eDdFKA; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=BaKxXGEMOlayyhLsGXif1KQG2vcFB+P6/Y+sfJMfeVA=; b=J8eDdFKAUUOdx5ph0CN/m2xC+D
-	q1H9spsGcMgxv81OvAfZKTaFS8gQZagbqS1iLl4h26o3OAUxP2qYL+VZthAYLoyy7WajsNWQ8bl2a
-	sP5BzTDMRdT5tyhZbpfS9lLFbDu+hHxcemziOZCWJKCcrC1EJ8D1pf6iZlykEr4ND9BY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sQtLj-0024FS-FX; Mon, 08 Jul 2024 20:44:31 +0200
-Date: Mon, 8 Jul 2024 20:44:31 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Furong Xu <0x1207@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v1] net: stmmac: Refactor Frame Preemption(FPE)
- implementation
-Message-ID: <7cde7743-2a8c-4d12-aecb-d1e50d5099ea@lunn.ch>
-References: <20240708082220.877141-1-0x1207@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t0fGe2MAo3WC+rHyeh4QEXvptMYFu5V3pbfr4XrQ9EKtFsecH75w5iVfEqz7e/lNGYrWuInGusrGK0E7Vq3RgyhSmn/VaUSf7Ox8FJSTdH6twH3GxPy9XS4434Kq/0HMVTH3xGBekcYrt2sBrKfJcI77PD5KxY2CEtqtVZsAsok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCEM8HEd; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c9df3eb0edso1559576a91.3;
+        Mon, 08 Jul 2024 11:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720464319; x=1721069119; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C7TXhObjjg10CfoE/exetflVyceR3Yc7EDIa0HGfVmw=;
+        b=UCEM8HEdPBFx8Q5xsqK/g8FKKKecjMH4F5HhUcDXePz/yXlgaueH1flB3P+hGHMPZP
+         4uO0xqwzZVdjgom4sj7Vx5B8hUD1LdDvW5w8VKsZbp2C4z6qhYvodNqMSEsmg6QbpX0I
+         v0O8soFYcpMRoKXcwHjvvEhOLvDRXVFp8UOM+SpK0xo3GeCqYJh+W4w+4Vl9SDNDIcP+
+         bkOdt9uKCZo1uW7bbqbHWAnjJGAGn/DxhMtJrwdyQ8Hag69NCtdlqa3r4QneVqgz3zmA
+         rfknvEsP/y48by+xjcQ0HHPxje5KfVLnBhiiWEvGfRwLBKYblzeDzeNySJJJhagUyA58
+         fcgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720464319; x=1721069119;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C7TXhObjjg10CfoE/exetflVyceR3Yc7EDIa0HGfVmw=;
+        b=Xeipmx+lAMci+PU3b/FkhrPxgvmyk4QPdMXAdHt0iscuejLkGusjv0p2XrPNQEnBcL
+         XYVbv6dBy3eur0TM8UUajp5/TaopLs8ihXzVUWuj8qr1JoF/aRsH/On/0gdv+JEOODH/
+         yd/kQtTTkVk7gIWb2frOQdDFY/rnvkpu5/AdQBCTcWT86v9SY32XDhO/2wqtEFZhnSHm
+         xSFkIRpSvfQarMjkMCltQgaCnN84mVNQ1sQYD7R+SR1NOdYEZVqtjlg6GCJTzWU0KXbd
+         yoA9SAYBjFkI0B8aD5X97qMDNryNND3WPwKgmxUAsNgrnxy+4sfRhCMK5mkGCCLxDcYn
+         Rukw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwVK9fYxU7Pyo2qvhHVQ7ZUdKlk3fuQbrh8LebKnAGK/YD8m03JGQEn4n3MBaFDNpOXALBpadmftBRzwPsYjMdRcKCBcGA/RPa/ALudipGM7hvrBm/Hw9a2b+1g5+x3hC7bvb4ag==
+X-Gm-Message-State: AOJu0YzY7npsb1cj/V3wLVR4ojit3Zbs+BXWkVC2R+asQ8haw5kd+/sB
+	fbN4hzhSVF5IwE/Rar/dJDKKPIBu9GYOG7iE5+2NZPWXMYWJFRLF
+X-Google-Smtp-Source: AGHT+IFVh9il2ma4+p1y4h18bpW6blOTWcBiQJgR4kCqbGo/4tYu2OhH+kzL5lAsaEDZZR9TkOARhg==
+X-Received: by 2002:a17:90a:e610:b0:2c9:8d45:7bdd with SMTP id 98e67ed59e1d1-2ca35be7c96mr463994a91.10.1720464318934;
+        Mon, 08 Jul 2024 11:45:18 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a97c196sm8568745a91.26.2024.07.08.11.45.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 11:45:18 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 8 Jul 2024 08:45:17 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH-cgroup 1/2] cgroup: Show # of subsystem CSSes in
+ /proc/cgroups
+Message-ID: <Zowzvf2NEOzgXYr3@slm.duckdns.org>
+References: <20240706005622.2003606-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,87 +85,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240708082220.877141-1-0x1207@gmail.com>
+In-Reply-To: <20240706005622.2003606-1-longman@redhat.com>
 
-On Mon, Jul 08, 2024 at 04:22:20PM +0800, Furong Xu wrote:
-> Refactor FPE implementation by moving common code for DWMAC4 and
-> DWXGMAC into a separate FPE module.
+Hello, Waiman.
+
+On Fri, Jul 05, 2024 at 08:56:21PM -0400, Waiman Long wrote:
+> The /proc/cgroups file shows the number of cgroups for each of the
+> subsystems.  With cgroup v1, the number of CSSes is the same as the
+> number of cgroups. That is not the case anymore with cgroup v2. The
+> /proc/cgroups file cannot show the actual number of CSSes for the
+> subsystems that are bound to cgroup v2.
 > 
-> FPE implementation for DWMAC4 and DWXGMAC differs only for:
-> 1) Offset address of MAC_FPE_CTRL_STS
-> 2) FPRQ(Frame Preemption Residue Queue) field in MAC_RxQ_Ctrl1
+> So if a v2 cgroup subsystem is leaking cgroups (typically memory
+> cgroup), we can't tell by looking at /proc/cgroups which cgroup
+> subsystems may be responsible.  This patch adds a css counter in the
+> cgroup_subsys structure to keep track of the number of CSSes for each
+> of the cgroup subsystems.
 
-This quite a big patch. Could you split it up a bit please.
+The count sounds useful to me but can we add it in cgroup.stats instead?
 
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> @@ -84,8 +84,8 @@
->  #define XGMAC_MCBCQEN			BIT(15)
->  #define XGMAC_MCBCQ			GENMASK(11, 8)
->  #define XGMAC_MCBCQ_SHIFT		8
-> -#define XGMAC_RQ			GENMASK(7, 4)
-> -#define XGMAC_RQ_SHIFT			4
-> +#define XGMAC_FPRQ			GENMASK(7, 4)
-> +#define XGMAC_FPRQ_SHIFT		4
+Thanks.
 
-You could for example put renames like this into a patch. It should
-then be obviously correct, so quick and easy to review.
-
-> @@ -96,10 +96,11 @@
->  #define XGMAC_LPIIS			BIT(5)
->  #define XGMAC_PMTIS			BIT(4)
->  #define XGMAC_INT_EN			0x000000b4
-> +#define XGMAC_FPEIE			BIT(15)
->  #define XGMAC_TSIE			BIT(12)
->  #define XGMAC_LPIIE			BIT(5)
->  #define XGMAC_PMTIE			BIT(4)
-> -#define XGMAC_INT_DEFAULT_EN		(XGMAC_LPIIE | XGMAC_PMTIE)
-> +#define XGMAC_INT_DEFAULT_EN		(XGMAC_FPEIE | XGMAC_LPIIE | XGMAC_PMTIE)
-
-This change is not obvious. First off, it would of been easier to read
-if you put XGMAC_LPIIE at the end. But i would also suggest you make
-this a separate patch, and have the commit message explain why this is
-needed.
-
-> +static void fpe_configure(struct stmmac_priv *priv, struct stmmac_fpe_cfg *cfg,
-> +			  u32 num_txq, u32 num_rxq, bool enable)
-> +{
-> +	u32 value;
-> +
-> +	if (enable) {
-> +		cfg->fpe_csr = FPE_CTRL_STS_EFPE;
-> +		if (priv->plat->has_xgmac) {
-> +			value = readl(priv->ioaddr + XGMAC_RXQ_CTRL1);
-> +			value &= ~XGMAC_FPRQ;
-> +			value |= (num_rxq - 1) << XGMAC_FPRQ_SHIFT;
-> +			writel(value, priv->ioaddr + XGMAC_RXQ_CTRL1);
-> +		} else if (priv->plat->has_gmac4) {
-> +			value = readl(priv->ioaddr + GMAC_RXQ_CTRL1);
-> +			value &= ~GMAC_RXQCTRL_FPRQ;
-> +			value |= (num_rxq - 1) << GMAC_RXQCTRL_FPRQ_SHIFT;
-> +			writel(value, priv->ioaddr + GMAC_RXQ_CTRL1);
-> +		}
-
-Since you are using a structure of function pointers, it would seem
-more logical to have a fpe_xgmac_configure() and a
-fpe_gmac4_configure(), and then xgmac_fpe_ops and gmac4_fpe_ops.
-
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -974,8 +974,7 @@ static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
->  	bool *hs_enable = &fpe_cfg->hs_enable;
->  
->  	if (is_up && *hs_enable) {
-> -		stmmac_fpe_send_mpacket(priv, priv->ioaddr, fpe_cfg,
-> -					MPACKET_VERIFY);
-> +		stmmac_fpe_send_mpacket(priv, priv, fpe_cfg, MPACKET_VERIFY);
-
-passing priv twice looks very odd! It makes me think the API is
-designed wrong. This could be because of the refactoring changes you
-made? Maybe add another patch cleaning this up?
-
-    Andrew
-
----
-pw-bot: cr
+-- 
+tejun
 
