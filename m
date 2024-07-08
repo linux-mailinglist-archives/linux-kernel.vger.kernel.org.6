@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-244431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CDEF92A432
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AEF92A434
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5731C211BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:58:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CBFFB2253D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0814113BAD7;
-	Mon,  8 Jul 2024 13:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6913D639;
+	Mon,  8 Jul 2024 13:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtw1fbI6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVlpEur2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBDB137923;
-	Mon,  8 Jul 2024 13:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD2C137923;
+	Mon,  8 Jul 2024 13:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447110; cv=none; b=PFDUQrig2woHdFrdQbQ3P2B2+kykgQJooIgxzKd7+hMoZQThsX4V3vYCXvHMc2vzMbBp7JaZ4dHNU8e8EVINI72hI4NbBo2TX17fks2AxeemCWyVIgL2AflYFlagWZZjscPj6Y+Im51eoEq7OeN2u912zjFJj1bT60ghN+NojMw=
+	t=1720447114; cv=none; b=Mwcn/sOVkxDTGCuyQXUNKWxvSutl0nuWbANU4XmAl/uf/9wk7FfuBF0b9W6YH8XkHyySbIzOBV6LnMKZ5BzTm1fRpKMC8vfoMPyWhn2qi/cB1qxHGmPtbSzFhaLlTO9l4xegRdPZQkXvfhR7Xw3IPg6vzkDWxxxQ7zptumMet+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447110; c=relaxed/simple;
-	bh=wouNF8BXEZ4escIBHpIcmwyAcz/iPh2eGVPERjaaqao=;
+	s=arc-20240116; t=1720447114; c=relaxed/simple;
+	bh=HVmCLKs7Dxyy/ms3P7PoXodZyzMQsqaqhS3Jq50CZ44=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mVAiD+CPUQYLkW0sTnSjgwPMa6piMZOYFT0pypEXBAx787EHjI5Sb4vxgF7zpw8ypPOwtl138ybJbSe4u6x7ttDxQkQTwjASJrGxkWNdMCEsD44KzcNSyaqRO5CqdCOSLaEXBD4x76Sa1c0/gcu3se7pUS1JQ8TDO0nFJ+/WQK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtw1fbI6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C6EC116B1;
-	Mon,  8 Jul 2024 13:58:24 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=uyLXDwP6YkLIMYEoXNSM/8wGucSHXPQQTIyCBVWc/sLOiee3REKrg3Urq0fNT+wjuEPfVPnvcbz3MlJDoJfXf+SIY9J4cEZL0Y/xSNGHWRUQK/qjW2TK8tajfA/nRm1f1BcaFQJ1zgELaHH4JUJc6Hv1HpHDeOcj5m/GBZt/eko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVlpEur2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8740C32786;
+	Mon,  8 Jul 2024 13:58:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720447109;
-	bh=wouNF8BXEZ4escIBHpIcmwyAcz/iPh2eGVPERjaaqao=;
+	s=k20201202; t=1720447114;
+	bh=HVmCLKs7Dxyy/ms3P7PoXodZyzMQsqaqhS3Jq50CZ44=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rtw1fbI6NfEPqJLhDMPj+Zq/6yh3YRxCtHJIZHWxUpJ5GQBvn5aG3/Nfnji4Sn4Wp
-	 /9Uaq6JQrk01k/YDnRE755ueLKQi9BKZFsECfsWzffN3kOC1yY8Zx548OyMXIIxWcz
-	 rNycKt4k4zEjef1GavNHedgDYbPaO3+WGN376lqDxaQ4anCA4AA/h+yaTXIAVw52Y1
-	 fgHb9ujqjIDxy7dC4cHJTfdvNnk18uvv2X+F6Gp8a5+Ium6Dlxag0y3nqyT+7oFpCW
-	 FaszMJFA03Ok+IMW/QqKWGeW0uZ5FiQ4cb6h3XSkpv8kY25jERYZHV5XR6iEmK+gYf
-	 FQa7NDGoNhiVA==
-Message-ID: <e7290b87-60a8-41ab-803b-3fbb06b27f67@kernel.org>
-Date: Mon, 8 Jul 2024 15:58:22 +0200
+	b=iVlpEur2h3EdCJrCH5veolHk4TjgbIw7fRKPpzxzNsNPkV5tsmSXc+VQedmb3wfg7
+	 AyL1oAc5HQVgJdLGWp0U6kuT8yr2wXJkqI+VxWQdkd3oepjwdZpnXw5QOAlFGX/MCq
+	 0Aaj3XPM38ZHtwuPmbXRssWyQmMm5UvJkFp5yiDvm6QQsQgQapmF28q44Z/JwUzled
+	 x0f8sOxKhZCee6vBkwTDX9ya99iAlNkIXsxPHE/giQdBHRxZz05jFVAxj8hztSyceI
+	 sdotTNBEm0iHAYaGkaJlgT/ylD0VOv9gk0IUWj9aVDOFmwNFoB/DEBSLGf93b+JaX7
+	 lK5KLZgTTEPHw==
+Message-ID: <9d53eba5-e4bc-4a98-bd26-e37eb61d56dc@kernel.org>
+Date: Mon, 8 Jul 2024 15:58:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: gpio: vf610: Allow gpio-line-names to
- be set
-To: Frieder Schrempf <frieder@fris.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Stefan Agner <stefan@agner.ch>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 2/5] dt-bindings: regulator: pca9450: Make interrupt
+ optional
+To: Frieder Schrempf <frieder@fris.de>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Robin Gong <yibin.gong@nxp.com>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, Joy Zou
+ <joy.zou@nxp.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 References: <20240708084107.38986-1-frieder@fris.de>
- <20240708084107.38986-2-frieder@fris.de>
+ <20240708084107.38986-3-frieder@fris.de>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,15 +105,15 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240708084107.38986-2-frieder@fris.de>
+In-Reply-To: <20240708084107.38986-3-frieder@fris.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/07/2024 10:40, Frieder Schrempf wrote:
 > From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> Describe common "gpio-line-names" property to allow DTs to
-> specify names for GPIO lines.
+> The interrupt is optional in hardware and not connected on
+> some boards. Make it optional in the binding.
 > 
 > Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 > ---
