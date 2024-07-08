@@ -1,120 +1,155 @@
-Return-Path: <linux-kernel+bounces-244584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7E992A67E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:58:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576EE92A67F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D50286E56
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E041F21A9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49E4145A08;
-	Mon,  8 Jul 2024 15:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2BA1474C3;
+	Mon,  8 Jul 2024 15:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWpyd+WJ"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="kRJkI7N5"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4AB145A01;
-	Mon,  8 Jul 2024 15:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF95A1474A2
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454072; cv=none; b=IpnB6o7IFjpr8BUS40NqX0/PIqOgQPlyntlPuzgfOCrZ/mc5747FDdcrZlEgD6eHlKTEJYMH2h8mq1dMSJQW36BTMUKATbbGMk+TG0h3pzq4PXV059qwxxMjSPLoTk4vWjU64Fe075IKBjp4YiLSFGpBGHs2/TRON2QYisjsdu4=
+	t=1720454081; cv=none; b=mqwL5zlAWGnNvzqQUBfZCMmiLkb4/s2CpKLoy/1tV+i0xEIxl9JgDjUDmloe6MRBcnp13Xep+MZaIckh6QyDb/1kwMf2WNmz5bcpNLj0F2zTQj31Oo7Ok5v6FcdZ/+mg/u8Wyem1b4bkT9chKj0wP8rgS5ulmdFeM9T+Wtlg/nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454072; c=relaxed/simple;
-	bh=TrC9tl/J8IWK07HqC0Jtxhbm3VnByPog6tc9bj27EIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u7wEpEPJMGdcqUJZfmo4u9XZHkQgTp2B1oI5Kyu7jp4T5kvhLB7kEqWyaHd9hTRA2ets1bUlX63pi+afPWr2+eCSNM3k6iJsy+2VvU0ZsIHd6573utL6uB1wIEgikFJYTl+1DUIiwnx5MeAPCeExAUDZer3f+zk6dy++h4iGEgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWpyd+WJ; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-810177d1760so1293087241.2;
-        Mon, 08 Jul 2024 08:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720454069; x=1721058869; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/jA0wRlSERdOUIy/qi57GffPjw/ZRlZpxkgmsgkKytY=;
-        b=GWpyd+WJly4QUzCEGbz3X2t7plZbhggDCNRPbS4VFXha03z0P2jzihULbUd26Jslwr
-         CTMzqnXEW3dOYNQY334FIfvzL0pfJ2FkK2q6NEV5HjdBguS8pmykDhzhJDF0Q+HjvUBw
-         UDIzz1zQf3YLwRax4F3sRShF3oy2w6emndJMbO3FTBjLTNEJI9YadSIp8WNQvpjq9Yli
-         DwUKSIDzig0HSd63l4Ru5rW7ryS7cn4REfrQTNjydSKtMMIJeebBLBOcKyDggd7YMD03
-         6zHzr+yal7Hd6gg6QXPhvPgg7sTLRWZ3+1eD+0D9WMpLJwPQWeE8C7HUYhVKgB1PPzOc
-         3u5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720454069; x=1721058869;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/jA0wRlSERdOUIy/qi57GffPjw/ZRlZpxkgmsgkKytY=;
-        b=ZfIPn3qjqZ3BttO63JrOaYo+qIKq9GhxYZuzTVuJZG+KqS0P/5A1YgwrvTCSWmWMME
-         GcEStq+Mzs8asyNGYaCK3B4mR9yt9hWndGywDJLzjic/hjvmMbpqYE5OFnro27lggvCK
-         7/0EItkrF3jnrV0O22vpSWb/7nNN0RPVMY1U+UEu0I8bxGTUoV8s+dEe385XNLRGPMAa
-         NBtQC9bejRuMgkHxlZag72GAkflyytH6t6AWQu0Cusvrgkb71m5sNmFgmE5MHkPmO0DP
-         7ME9x+15eOHg1Bpcu7AfrqRfevvvrgg1YxsrHLTqCNWygQQcg6Q6FIOepAb5JEwvIeqH
-         I/6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCHotjeM4tNX0u89KI9PiREfoGzbwsEv9lBI+M//90++TZO+QOh5c42iv9jadcGqH0gb9zkkq3wt7i3oIKJkq7PAMnNbpFY+g57UtSRFqXy7Eig1gOmHDEM+LX35MI6AWL2OSHpUdlr+N8TSig4WsS9Y+kiUK/s8MOcEmcIIczVBPgVjf9b3eGchncvfU0f6jjz1Dnxyrwbgwwg4VO9ngw8s3xVr9a6BUNEV0o6vkeUw/2+GmvDF+res7H+h8wQ1Ah+01ql0DW68Acfogv48B7B8YuTthFGleVOWWm4ylsOmipT+tatpQFIy6/dPaVWhXUYtEIXUNntqNPOLFxjxC3iMT+dE82fx7ouEscJePK6fGAWtpL1gZIpXzQO55AKiXe4qRaC/SLPwtDv7qRUtasYiKpaq0RQ85U7q3MMdrq2XkEl4x6Ii3X+I1LmuuF1dE=
-X-Gm-Message-State: AOJu0YywDrsVU/7FUPnOCt6b4gzyXPg6rAiHjIlrEXCht9iVZ8I9SwF9
-	glL7W5vxJ56R82scCtZ56FD/Ue4emt8S+uf06VJyXQYy/BuDzE5LTuTeIw+1hWV4VOfResmiTG1
-	86/auE7SfXofThq6z0Ej80jHGpGWE6lKB
-X-Google-Smtp-Source: AGHT+IEZBoFU3ZLzG609wCmA5rnXqDuMLd0d2n5SrJ2I0lXatTkHpvsta1P7z0S7Pi2hNjQpBbhQnvIV2JNr2DTMmOU=
-X-Received: by 2002:a67:e302:0:b0:48f:eabd:d72a with SMTP id
- ada2fe7eead31-48fee8a4cb2mr13105031137.17.1720454069449; Mon, 08 Jul 2024
- 08:54:29 -0700 (PDT)
+	s=arc-20240116; t=1720454081; c=relaxed/simple;
+	bh=Kt5KUWdxd+J5SzA+sJLjT1CTq0d6T7GN684Xz0uIAtU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SuSE63rpn2hU0oX9itxedJpjrCmLWhVZgLXsgnYUdZXqjSA6lhebDqLUERBOaEf1mPjcJQMbfs48de3/Cpevsb4XgujXx07EI1F83g3D/gc6Dx3sLqyJBJnO5f0Z4MOF3ncH/y8D5YSnEaPHL4Q1qVnjWt3et44aWRWeX1C2CFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=kRJkI7N5; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1720454065; x=1721058865; i=wahrenst@gmx.net;
+	bh=Ub6J2Z53f3wUO+xk78tLgojAcxeSDWJYJRW9UqqTXuU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=kRJkI7N5Y5kwc2auIa/1TDvEI+sDMNgZ97XaMnH9duurji6mq9RSsZbl9WBCDeIy
+	 +Df6n3PiB0BDLDfPYavI6TxaVul1QDpW1VwN4uC6fAUn0fk58aoOQ9FbnJ6lJWzbn
+	 Xl4yD9ZPEWZ7hns2Leyx/r697OEOtNCmmT3PDBRvul9xwJEJH83EpFDwa+PEmcpxX
+	 j+1KJF6088qELty6kLKsv5DCM1AIhKpL8Xk17008MxQxhJ5U5+jrd4GBvh3S+Ed39
+	 hwQQxLjN1U9HAnbsP+XTu3l+YdvfVl+iVcf/zOxNDsItDFqWg9xHHtMU98W8P6wNe
+	 GsEVeWg1R1UcXdN8BQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MI5UD-1sdpFG3JKh-00DhVy; Mon, 08
+ Jul 2024 17:54:25 +0200
+Message-ID: <a5c69147-c0fe-4cda-8996-e46698c5e9e8@gmx.net>
+Date: Mon, 8 Jul 2024 17:54:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-23-e3f6662017ac@gmail.com> <13fea5c0-5906-4075-b734-52649e35eb69@linaro.org>
-In-Reply-To: <13fea5c0-5906-4075-b734-52649e35eb69@linaro.org>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 8 Jul 2024 18:54:18 +0300
-Message-ID: <CABTCjFDebBxf=XcvTbVtifROFHrQLXtArLtj0wHVF_e529NVAg@mail.gmail.com>
-Subject: Re: [PATCH v3 23/23] arm64: dts: qcom: starqltechn: add new features
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ARM: bcm2835_defconfig: Enable SMP support
+To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ Russell King <linux@armlinux.org.uk>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240707-raspi-config-v1-0-3e122f2122e9@gmx.net>
+ <20240707-raspi-config-v1-2-3e122f2122e9@gmx.net>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240707-raspi-config-v1-2-3e122f2122e9@gmx.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dwXQtn/8x3viNcyK+GebOAFG6pbReHTLNl/d7R07Vf/unMTjnLj
+ mcjo0bhnR0mkq9SfP4cO5zu6iyEwNXwqgxXk6aaEOM443I65G5hs82sNK41InPQyTZ7bh8i
+ U/UEv70ZzFqkvLLNHXW9of4aE2nQyJDZpYdJyc5st+f5e8zcJD9bhYNcbXf3P1u/ZkbXvgG
+ 0K3xNRl/4+2mX3KMnjsdg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vj6fKrjzQ6s=;wQoKj+lLp8+q55CJrsYQWZWBxxh
+ /HNuQtmM3he53oXLIdv0ycxXIuGqNygYA6WsU+QaTrdwA0K6/CWfk7G5d0JX84NDQDbDR6vvn
+ f4GH4DyH6bWJXZ7gi6eg+VCsHOvTN878MGg4X2jiUFcG8ZTZlUYMglAWd8yID0zKNONGrB47j
+ JouaPSI0iigOZvJEthUHBZKLxK1TAGZi+6PwUaZyzOLI462LEIq2h21cMfW3TlOH96qP+HW66
+ EsQFdch+ojtultor7H5InF/7BPzk4FJq/zEsotd92EOI2tEimW/ysTv3WTXaAgYXiKcx8cqrE
+ MbadPNR45D0C6ASMrgeu9kZ8af7iNUvMTAmxRNfkS0IRaXCteWKY2lpyQ498txOoUQhGph4AT
+ mm8wcV/4ct7k0Dr4TVuy3pWOxVbyPTFrv4ylvUdUPj7RzlwA+js77IycfYMCD2g8jMhDZSw9J
+ 5VwrTt140W9gGOgs0KB2CsA77jfbXDhyXND8tDqAxfCq95BbqE9OE0YaM36MAAttLZM5WY3O1
+ I1qNkDJK5R7dLYetpfwwP9JY/7wsarw73k7UUFGcGREuaEzImacwHslmQ1OD95v2SnbnBecKZ
+ Ez23GF4XzDuqEP0UrQYfpsD1AetTCnxovDEfNBLDhMHdwjYjbyNA13j8ou3BzsRr7U+h7F305
+ NmoXEvMt5djOJhy2Cp1zZfexWSKHSGzq335JGj8+FTyizKdeVMV2MG+N9LKOOj2waUPS4A2hE
+ 8yzlhV1T/ugOzFuK1gL1IUvoyxqOLFCS+kA9FqmlvGStoogHQvpZUQq5gAjVrS0OcsuMdg3Rc
+ Ljy2O+EkvWr0DgMA7GA1sL0da7PVeu9x3MJ1+FYtAF8Os=
 
-=D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 17:12, Kon=
-rad Dybcio <konrad.dybcio@linaro.org>:
->
->
-...
->
-> >       gpio-reserved-ranges =3D <0 4>, <27 4>, <81 4>, <85 4>;
->
-> Do you know what these are for?
->
-> Konrad
+Hi Jonathan,
 
-<85 4> is spi for fingerprint.
-<27 4> is spi for eSE(embedded Secure Element)
-The rest shouldn't be reserved.
+Am 07.07.24 um 23:48 schrieb Jonathan Neusch=C3=A4fer:
+> Since there is only one Raspberry Pi related defconfig in the mainline
+> kernel, it's useful to have to work well on all 32-bit Raspberry Pis.
+this wasn't intention of bcm2835_defconfig. It's more focused on BCM2835
+SOC and kernel-ci (both non-SMP). If you want to use the BCM2836 &
+BCM2837 (incl. SMP), please use multi_v7_defconfig instead. Applying
+this change would decrease the test coverage.
+> To that end, this patch enables CONFIG_SMP and CONFIG_SMP_ON_UP, which
+> allows the kernel to run well on multi- and single-CPU systems.
+>
+> PM and suspend support is necessary in order to keep KEXEC enabled.
+In this case the subject contains only half of the truth.
 
---=20
+Regards
+> - Raspberry Pi 2 Model B V1.1 (BCM2836, SMP)
+> - Raspberry Pi Model B (BCM2835, UP)
+>
+> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> ---
+>   arch/arm/configs/bcm2835_defconfig | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm28=
+35_defconfig
+> index da49dcfd359050..d505058715b66f 100644
+> --- a/arch/arm/configs/bcm2835_defconfig
+> +++ b/arch/arm/configs/bcm2835_defconfig
+> @@ -24,6 +24,7 @@ CONFIG_KEXEC=3Dy
+>   CONFIG_ARCH_MULTI_V6=3Dy
+>   CONFIG_ARCH_BCM=3Dy
+>   CONFIG_ARCH_BCM2835=3Dy
+> +CONFIG_SMP=3Dy
+>   CONFIG_CPU_FREQ=3Dy
+>   CONFIG_CPU_FREQ_STAT=3Dy
+>   CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=3Dy
+> @@ -33,8 +34,6 @@ CONFIG_CPU_FREQ_GOV_ONDEMAND=3Dy
+>   CONFIG_CPUFREQ_DT=3Dy
+>   CONFIG_ARM_RASPBERRYPI_CPUFREQ=3Dy
+>   CONFIG_VFP=3Dy
+> -# CONFIG_SUSPEND is not set
+> -CONFIG_PM=3Dy
+>   CONFIG_JUMP_LABEL=3Dy
+>   CONFIG_MODULES=3Dy
+>   CONFIG_MODULE_UNLOAD=3Dy
+> @@ -175,6 +174,7 @@ CONFIG_DEBUG_FS=3Dy
+>   CONFIG_KGDB=3Dy
+>   CONFIG_KGDB_KDB=3Dy
+>   CONFIG_DEBUG_MEMORY_INIT=3Dy
+> +# CONFIG_RCU_TRACE is not set
+>   CONFIG_FUNCTION_PROFILER=3Dy
+>   CONFIG_STACK_TRACER=3Dy
+>   CONFIG_SCHED_TRACER=3Dy
+>
+> --
+> 2.43.0
+>
+>
 
-Best regards,
-Dzmitry
 
