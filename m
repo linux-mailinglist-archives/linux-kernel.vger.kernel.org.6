@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-244066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8892929EA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:05:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 106C0929EAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 11:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4AA7282C35
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:05:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB9E1C2196E
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 09:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4802D6BFA5;
-	Mon,  8 Jul 2024 09:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623D75579F;
+	Mon,  8 Jul 2024 09:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USoGd6ui"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M448UVm2"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8022361FCF;
-	Mon,  8 Jul 2024 09:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EA28C06;
+	Mon,  8 Jul 2024 09:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720429510; cv=none; b=qMeGL2g/GncwYqIOCRFLT8l9jbzkdJSEHRD59/WbXpa/OueJI8k0VGmsP8ZNobA+BvUXdoZ/6U50JdXeVrL3IqEZQVjZFqvV+mw/UEoYTNP/Ywh5GpJMKSppbJPlOITf87PjdStznurw9G/CNlnNWNM9l5tdDkbTx5OSo5KnPGI=
+	t=1720429622; cv=none; b=LeA5ENOHr+VaFpzUDHP5oIvFkictGl3VdQoNjhy5j/niy+BsCUHBOjYSBj2Dsr9nmRnhJpDZ5d1uYXEf6lpouVp/9wGyGTMBv4Yv+vNHKvZDJ0wY1yydXbmx+HvSCYKUG/+0uFqlKTk27Wwi9yhRUCkUubpqvX0UX5T0ufMNxK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720429510; c=relaxed/simple;
-	bh=NnQqjUbKvjNZY7J0GvOZUH87Q46eIm6qNoQROrVlD08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XTF9fpp1/bdGgYSgmSfqpH+CgOdE6lMA8BXH9Qwbc+ju5NrZLGoomvh8m54JvueqfvDn4+QOwRyCWSfokXRBZMKcJ9d+KzP7WWUxDuKER+fo2jvaIfed7IdJToo/WLoz4TjrfBVI2GbOAaRGmlcdsftArrUP5SsL2adVsqs/zBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USoGd6ui; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4389C116B1;
-	Mon,  8 Jul 2024 09:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720429510;
-	bh=NnQqjUbKvjNZY7J0GvOZUH87Q46eIm6qNoQROrVlD08=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=USoGd6uiu9WBBz3dnB5q8pTS3aRRunNU0rDk0lXLDo8e4xzFSgXBynZK0BLZIapG7
-	 0Y9nmCmqKqR6aF3/ZqbphXbEvR+YiYCq3NdhnRiB627erT2J5ysCcvxvhD8A07iBFu
-	 XCsfPjvSTsF2G33Gcn9TiKlJE9PWP72H6QSkfayQqoZ/lAPziUvCpkA/2ToZq3KJEl
-	 63GhtgZhTOxiuGDOEDDRH/5kDz5KHat++8Vge7diE5JNA7d6FXBMEgu4UVToiycHzK
-	 4f1fAf0f80DI0rUCPrZ/+Q3mph4fbJXRTEwJkx00JXorkZQdCzc2zwzwy3SJ/nx69b
-	 KYKNkZ0QDTWEg==
-Message-ID: <67d29f3c-35c0-4c55-a274-432df5dc9393@kernel.org>
-Date: Mon, 8 Jul 2024 11:05:02 +0200
+	s=arc-20240116; t=1720429622; c=relaxed/simple;
+	bh=mV1LipK/FuGq7j+gzyLCLNXhEfHp8ZALbfN4s0sw87w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Us273fE4ihRgd/QfiVi6jn3hBlxrxdxqaogDHLFR5iM+b7H77VO53Lyo3p88Pje0oU2BrmowbDbCooLdbeHZd+dTCe2gdBOAvMsrF+TW3wp2nJQh6RfacAPCwj8PTN9VedMnd8cqzjV8KR6ZgiFFFoWvbBjTmxd5zcFYAt4nYfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M448UVm2; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d9272287easo1007101b6e.2;
+        Mon, 08 Jul 2024 02:07:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720429620; x=1721034420; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sszcVanAVKdYYqxBnbm3QO7r8vp/tfxRsbR3NwzhhxM=;
+        b=M448UVm2Y0/nI3SQ6es5axXPKsSv10P9jTQ+6aizWNjomeTe/cUd5RfIsj1lNkI7D/
+         IKMdGB6UGjwuzr4gDCNUMRLHHKBWc1nZ7fzYlwYVS511Uh3yirbOtGRmv/6j9O4a49gT
+         5ssytXWxsuo0P6G3MGvLVXs6gzig9i8Iw7NRT5G/hZ07nwctvRbToS9eDLWS2TYHio4o
+         Zdve+7UhClQ3TB9JMHc6yVg9+f07lub/i0lcxjTFUWE9/pzbmWSsFaxChYMoqejgzolM
+         arS2M9Ew9Vvp8KNKsXZ0JOOHtdWFnDuq95A6Yoate6pXyodz3j2+7vxU03ufGcQf5dzg
+         7BAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720429620; x=1721034420;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sszcVanAVKdYYqxBnbm3QO7r8vp/tfxRsbR3NwzhhxM=;
+        b=hz+GCPlbFPf1iwYmwwXMQ/+TmCABS0zZ+xegJG9FWUI/OQQaAgJdZEgo5ErTm71e6c
+         xPP840Xo58qIgrsCZnS2s2Pxy1WRCAmKjXwFjBHdS9LfPc+fnrRRoXqeI2ChmlqZijUk
+         AJJXk+bCK3ueHIAFFsTj82shmv7JHMfVKLFL2x5AlDE9xcqz42fuZnAwQIl/4+9Q26HM
+         TDL605Hk7h6Q22Ds/+mReRXkYjFtR8iPxDh4WOF6ovrHjI/S+U0rMPvVLcOf75t0YiFJ
+         s1sAfJfzyxpfB20rF0Mg61mXxadDgyKYaP1vvGup9s6QEigAGVFY6YfWbF9LkBXwxei4
+         sNAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYslzf8Ubs4zWrHLvZ3i71mswXagbFSbLQzzBUAjJfYPnA/mBbIrH0yCxsD27NT/dVlk5U/AFgH4hCD2tqOXDhcUTrvqxP1RLTDFojeA4=
+X-Gm-Message-State: AOJu0YyU5XSxzVp7WAjAfDi2DicfKa/FCRfQzOwV6L9jgEw65osYUkxS
+	vSDpMzlvCscEWeeOwBtVVBU6F2UuF5UT17JZmX2v0c5xVbsXfod/0zP+hQld
+X-Google-Smtp-Source: AGHT+IGCkR3C+3ZBC987fOhuAC48dnbIyUz8o1kUcoAFt73gHT0rqnuvtcV3On4BM4WUJy/9+DhKuQ==
+X-Received: by 2002:a05:6808:120d:b0:3d2:1cca:77ad with SMTP id 5614622812f47-3d914c62a65mr14638845b6e.13.1720429620393;
+        Mon, 08 Jul 2024 02:07:00 -0700 (PDT)
+Received: from my-computer.lan (c-98-39-68-68.hsd1.tx.comcast.net. [98.39.68.68])
+        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3d62fa4164csm3720563b6e.46.2024.07.08.02.06.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 02:07:00 -0700 (PDT)
+From: Andrew Ballance <andrewjballance@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	mcgrof@kernel.org,
+	russ.weight@linux.dev,
+	dakr@redhat.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	rust-for-linux@vger.kernel.org,
+	Andrew Ballance <andrewjballance@gmail.com>
+Subject: [PATCH] rust: firmware: fix invalid rustdoc link
+Date: Mon,  8 Jul 2024 04:06:15 -0500
+Message-ID: <20240708090615.2267476-1-andrewjballance@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in QORIQ DPAA2 FSL-MC BUS
- DRIVER
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Frank Li <Frank.Li@nxp.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20240708075124.73522-1-lukas.bulwahn@redhat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240708075124.73522-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/07/2024 09:51, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 78fa0d19a50a ("dt-bindings: misc: fsl,qoriq-mc: convert to yaml
-> format") converts fsl,qoriq-mc.txt to yaml format, but misses to adjust the
-> file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Adjust the file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
-> 
+rustdoc generates a link to a nonexistent file because of a extra quote
 
-Frank Li,
+Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+---
+ rust/kernel/firmware.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please start checking all the paths when you rename files. That's the
-second issue reported recently.
-
-Best regards,
-Krzysztof
+diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+index 386c8fb44785..763d7cbefab5 100644
+--- a/rust/kernel/firmware.rs
++++ b/rust/kernel/firmware.rs
+@@ -2,7 +2,7 @@
+ 
+ //! Firmware abstraction
+ //!
+-//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h")
++//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h)
+ 
+ use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
+ use core::ptr::NonNull;
+-- 
+2.45.2
 
 
