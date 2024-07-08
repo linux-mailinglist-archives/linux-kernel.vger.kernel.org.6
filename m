@@ -1,175 +1,215 @@
-Return-Path: <linux-kernel+bounces-244727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F383992A890
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:00:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA8092A892
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24FCAB20D82
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:00:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54CF1F21F41
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5F914388F;
-	Mon,  8 Jul 2024 18:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1063914A614;
+	Mon,  8 Jul 2024 18:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lh0ffxK8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fOczIMa3"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2053.outbound.protection.outlook.com [40.107.236.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96F81465BD
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 18:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720461625; cv=none; b=WKX+3n89qmlXO238wJtsaY6QaeGMkBD4u7hIBtA6XOv2nUVx8C4oevtgJU0u090uQzXPGGXa98BXAUra1LWA+IWihVbd7Ya7/xzgOGYudibw4ZqvnFLMGRue7UutfapzGsSnPLO8v5x/U2u6nmWlCISoAYhDVI+S4pTjs5eaM44=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720461625; c=relaxed/simple;
-	bh=G2eT1PidgYA5S25gC19Hg0ZQz21aenhcmJENyToU1tw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TG2dXuUj0TWL8C+jJIhrUkG4Y22+rw2uyD6EwQkVv0fb5EW9o67+E6uK0dUyVAaaxApGjr7mheW5++oD6C8bDR2mfRx1SlUt2sTFXGQ3n5MoDAV+K6e2we7/UpwjGtu8klVn/5jX6kXOXntuQF2/N8II2eeEmNKDU290O/1W3j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lh0ffxK8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720461622;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ur8aidqR86eMlg5hVh3kQFIlHZgeTOY5AvM2A0WS6wI=;
-	b=Lh0ffxK8m9v9H/733gYuiKVIRHlB2ZcxbQ9wdG1EryDicy+ZcZFu22c/t+kl8gxhrX6j9S
-	bAVZoR7odXKsfUDCjiUIYMaitmS4H/Ghoye3NYKZZnqdd/ODIVYjPKdeJDSts7Or88UgIL
-	tKtxFSYWuy+d60JfHVbKa7vOv3w9FCU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-BLTMqZN-MRiC1hCbXOT78Q-1; Mon,
- 08 Jul 2024 14:00:17 -0400
-X-MC-Unique: BLTMqZN-MRiC1hCbXOT78Q-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB5361956048;
-	Mon,  8 Jul 2024 18:00:07 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.113])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A030B1955F40;
-	Mon,  8 Jul 2024 17:59:48 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,  Al Viro
- <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Kees Cook
- <keescook@chromium.org>,  Linus Torvalds <torvalds@linux-foundation.org>,
-  Paul Moore <paul@paul-moore.com>,  Theodore Ts'o <tytso@mit.edu>,
-  Alejandro Colomar <alx@kernel.org>,  Aleksa Sarai <cyphar@cyphar.com>,
-  Andrew Morton <akpm@linux-foundation.org>,  Andy Lutomirski
- <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Casey Schaufler
- <casey@schaufler-ca.com>,  Christian Heimes <christian@python.org>,
-  Dmitry Vyukov <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,
-  Eric Chiang <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,
-  Geert Uytterhoeven <geert@linux-m68k.org>,  James Morris
- <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
- <jannh@google.com>,  Jeff Xu <jeffxu@google.com>,  Jonathan Corbet
- <corbet@lwn.net>,  Jordan R Abrahams <ajordanr@google.com>,  Lakshmi
- Ramasubramanian <nramas@linux.microsoft.com>,  Luca Boccassi
- <bluca@debian.org>,  Luis Chamberlain <mcgrof@kernel.org>,  "Madhavan T .
- Venkataraman" <madvenka@linux.microsoft.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
- <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
- Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
- <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
- <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
- Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
- Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-security-module@vger.kernel.org,  linux-mm@kvack.org
-Subject: Re: [PATCH] binfmt_elf: Fail execution of shared objects with ELIBEXEC
-In-Reply-To: <87cynn3hzv.fsf@email.froward.int.ebiederm.org> (Eric
-	W. Biederman's message of "Mon, 08 Jul 2024 12:34:28 -0500")
-References: <20240704190137.696169-1-mic@digikod.net>
-	<20240704190137.696169-2-mic@digikod.net>
-	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
-	<20240706.poo9ahd3La9b@digikod.net>
-	<871q46bkoz.fsf@oldenburg.str.redhat.com>
-	<20240708.zooj9Miaties@digikod.net>
-	<878qybet6t.fsf_-_@oldenburg.str.redhat.com>
-	<87cynn3hzv.fsf@email.froward.int.ebiederm.org>
-Date: Mon, 08 Jul 2024 19:59:45 +0200
-Message-ID: <87msmrdasu.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDED148FED;
+	Mon,  8 Jul 2024 18:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720461626; cv=fail; b=dch63UqzZkNJtv4yqSNIA+qnGgI2NSm7gjUwgmgFfk9ai/IX0ZNCKgHyUGJyhF+jQocLwEjB4Zl9lWdkarATkL7GFoonzZFKeoCrVnwZWJu/K283Gciddan5HtcMv5pcJzx5tmCV27yDwm26ewSTJ0FmQ+Hq/aWKWccoVuX2LYM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720461626; c=relaxed/simple;
+	bh=YHD+IUTgWhh3Q2uXB03FRo+20ysHhawR+2R2EMI0/5Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZuP6XmpP0xWvRsN0P6ZziLw4ZEvSOHJNA+Iasx5/QXbUogPI+jS/rX4yIMbTqiNeoqsp7zhfLLjUGP7q0NDTVhBCA1owUBtjVRWbEEkKLkYodEJx3mqz43iRiSgXq+Z/YbJn1GBUqQUvr5GaFfD2/qqinTJnIrJz9mwjoP8A5o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fOczIMa3; arc=fail smtp.client-ip=40.107.236.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OUxqrHVpoAbyyK6+MTblz5qgrtg+85TCZx42CwKPvlnhAyqBOBPQi4T0tVUdJJqvmuWbFIp2OZkwR0cTrm/LcA/CtayH51RAv/BDq+o27AfF4osn1ezQyzjDwVGN/5qBZ45OHEvpGYj5cFbxZ69ei3epbQwoVhF0SvTyVWPyWU7OCNJL2NbW2bX8y9gnfENmVWF1eVkrhDIS9bgGapqCRQGhmuPvOXsZWyyw836+FRdIfsf+vN2p5vJvKBltWxws12y+F4flDoU8yUCUloOd/YLJCD5uA5e0E157ji0PwcgaD9Kjj+sq09PiDO/O0KnJahWYnIyBzX48KEtpJW1w4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UxOmm2epH13EdpJ6HL/edlHsyICNkqJmexqRtCIPnmo=;
+ b=FnNKv1VzYOVYZYgZ1zuOiJbObqO8z4w76WLy+v1RchGsARm3qWmWVOWxMGZRoauasU8qNOLczAaOdYQvgljQqyToeKQcmHP3OdTx2WAcRRdPKa+EoV7g+d7EBt+0DVSgPMsrwCeC8NRPE3oBLrOktkp317jwmSlfgekJ3j34I6x9yje1xeF3umFSpGP+m5GU2V6EvmRoqFUrIOw6mkruK/wzQ5kTEx6RoOO4jvjyUaMsXkl1kpE8Hnv0oHM6clTpwd6zknrq6CQHRR9jgmXsp+j16rGk8oUFteqIj9hxqpcJeTTSSv4OJEx4iExpmmwKU41wszpl1kNGH55FYeGDzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UxOmm2epH13EdpJ6HL/edlHsyICNkqJmexqRtCIPnmo=;
+ b=fOczIMa3smU79pLlTUsxoa7KRyURT+KP0G4PkkrhMt5DpzwLIryRqhrtzPhnLFIKx5LGWP5YxegxiPTfSEvnr8PK6KJKimc8Y37zTaT545XfCXpSRukZiuOmH8jNfvHq/cawCMwCpuZGWvdTZ1n5IQE2YSKM4XwDsE8+CJvGXuXihzRGN3zbJu5Ji9duywRMAwLNkYENfrLYW7ubbKUiP1Su5ovzP/PXm36mCqb3yR4Zj8gIgA06TmiRLIzoKBjT/lFsQFS039tVb4It7N0nU47kstYRzQPs8rzYsRkDBpbMI7jShS/5/FewtdarT/M5j1zIYqM2yizWqrwssUyw0Q==
+Received: from PH7PR17CA0069.namprd17.prod.outlook.com (2603:10b6:510:325::29)
+ by SA3PR12MB8021.namprd12.prod.outlook.com (2603:10b6:806:305::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
+ 2024 18:00:17 +0000
+Received: from CO1PEPF000042AD.namprd03.prod.outlook.com
+ (2603:10b6:510:325:cafe::58) by PH7PR17CA0069.outlook.office365.com
+ (2603:10b6:510:325::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35 via Frontend
+ Transport; Mon, 8 Jul 2024 18:00:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1PEPF000042AD.mail.protection.outlook.com (10.167.243.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7762.17 via Frontend Transport; Mon, 8 Jul 2024 18:00:16 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 8 Jul 2024
+ 10:59:57 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 8 Jul 2024
+ 10:59:57 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 8 Jul 2024 10:59:56 -0700
+Date: Mon, 8 Jul 2024 10:59:54 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Will Deacon <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v9 4/6] iommu/arm-smmu-v3: Add CS_NONE quirk for
+ CONFIG_TEGRA241_CMDQV
+Message-ID: <ZowpGi/q7MeS5iYO@Asurada-Nvidia>
+References: <cover.1718228494.git.nicolinc@nvidia.com>
+ <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
+ <20240702174307.GB4740@willie-the-truck>
+ <ZoREzIAqzyamQBWL@Asurada-Nvidia>
+ <20240702184942.GD5167@willie-the-truck>
+ <ZoRZP4k1A3G7nH9q@Asurada-Nvidia>
+ <ZoReq/kNi368x79q@Asurada-Nvidia>
+ <20240705152721.GA9485@willie-the-truck>
+ <Zog3IgdmYRU7VbJB@Asurada-Nvidia>
+ <20240708112928.GB11567@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240708112928.GB11567@willie-the-truck>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042AD:EE_|SA3PR12MB8021:EE_
+X-MS-Office365-Filtering-Correlation-Id: e17d9c03-375e-4615-e652-08dc9f77d2cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Wszt82HctndE/6+MUAWVwGzMhNQy6PocCJq89KSlx7G51pNMDUZ0PkP+7ul8?=
+ =?us-ascii?Q?36a032VhBRNmXbZdSPD9eiwYswyFlTx1eA8iwJhQnxL/YQdCAee4GzWaolsz?=
+ =?us-ascii?Q?xdnt1mhe5sl7xgkqV4Dr60lprBohny6AnU21w3wnFftM4RHWeyQwlZTQtX/W?=
+ =?us-ascii?Q?RyzctHRRRhaOPFQdUE00GVuCZZm26vZogkCDvCY6+eIUfc+8v/deST+TqDq6?=
+ =?us-ascii?Q?+bcgeoXcTITtQBu0TuMWyIVEmaP0QiNEKjI3jrCRP6XUyb87LLlgtgkX7qGe?=
+ =?us-ascii?Q?UnldTgjsXg6tULKJjHT8TKQSdBveMrEhZmfMHs/xbw/rHRwOGR2vU7y1gBUS?=
+ =?us-ascii?Q?b17FXIXhoeaCCtyVYDi/k8f2azI/H+S9vzyqkIff9VnuzrmCpLTfGHGbrLFh?=
+ =?us-ascii?Q?sxGFrJ0fl537wFZMXTd04ye7kqkpvxHRkKuTDy7Gjli8ndd7D1cepTVAwikg?=
+ =?us-ascii?Q?tTR9aLFlWvwhwM6DBuyWAEA4tpnMSsUlswtx6eQ6jqCNuatcocqTzkDQTzdW?=
+ =?us-ascii?Q?yHYkxYoVo/WjOoBxCQ8k+Kke4D2coJ05DePPZe1MOy71mfINrT99qiKvURGe?=
+ =?us-ascii?Q?ib8JKqM1qHZ9EaCtcJApLUrSpsbD4qEtTSAffP+c/Nvmeh9Q0V3oazx1BpnA?=
+ =?us-ascii?Q?vvKH2E7bXexqwVWME3ttRW7AcmvWONF/hfZdmPJcZl/vJhkFeCUNGaJLYXju?=
+ =?us-ascii?Q?dKfE7W0Nqcu5+TbAqg4OvpN4DK4MyZNwS/WjXOPk/nfSPq2TAPSPSxVZaV8C?=
+ =?us-ascii?Q?qld9TvsjVZp66FKDPshtv1oQjEpXqWJPnLctzLlaGKA6WzPgJUt8qggIt8my?=
+ =?us-ascii?Q?idfwFVaUk74lXgZClJdxdPqOwwafTXrbMmQo14phWPGbxJVuAwxxLdU+iiHs?=
+ =?us-ascii?Q?izIlwyWgKM4LanR7kT0DrPQ++nkWjS19WSYLigDnDEe9vE2RlJtERoQ1XEbj?=
+ =?us-ascii?Q?3vCQ8ea2Z3dyfB6wqSIhOhxcqsCyEr1VrA/xZ9mUnxvtTGX7MKPwleGcG60g?=
+ =?us-ascii?Q?7PzvNKSTQQb0M33sHD8LRMiIdo06hDFa7E8AWanX0mZSRvbLJqJASRB/5nMV?=
+ =?us-ascii?Q?PCS8MXyYcSt/RTDy2TZV8eM2aYl14x+4FVq1HaX9Ri7K0pADuIVp+KWZG3hP?=
+ =?us-ascii?Q?5Er3PmQ0IuHF5/ebfCb/iIlAAxQw0/WBpIFMY/4HRPvqyN23Oby3Levdmjdy?=
+ =?us-ascii?Q?rDq7gKVXaIy4ho9fMuOg1B4x41NQ1dygZWNQ81LNpVC/54xFrG92uDBszHMY?=
+ =?us-ascii?Q?O8w7463PpCB1ygbNfFdZEncTqrvZDaVvT73DKNHkGHoSGEpgVKe2sg2BGM/H?=
+ =?us-ascii?Q?Z0T++cI8o/CNJw410EqMQ7AuWHyCSblN8/ip6uChR076GwHfaALbO+uXVz2H?=
+ =?us-ascii?Q?VCldiTZL3dLXiHBpOEO0fvAAOG/XMaLchg0kS394sdE/D6bXQ62C4qYlTwu3?=
+ =?us-ascii?Q?JJQ/S3HUOBA7lv0h1EpGer3JbyVlqsIE?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 18:00:16.4995
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e17d9c03-375e-4615-e652-08dc9f77d2cd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042AD.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8021
 
-* Eric W. Biederman:
+On Mon, Jul 08, 2024 at 12:29:28PM +0100, Will Deacon wrote:
+> > With that, we cannot avoid an unconditional hard-coding tegra
+> > function call even if we switch to an impl design:
+> >
+> > +static int acpi_smmu_impl_init(u32 model, struct arm_smmu_device *smmu)
+> > +{
+> > +     /*
+> > +      * unconditional go through ACPI table to detect if there is a tegra241
+> > +      * implementation that extends SMMU with a CMDQV. The probe() will fill
+> > +      * the smmu->impl pointer upon success. Otherwise, fall back to regular
+> > +      * SMMU CMDQ.
+> > +      */
+> > +     tegra241_impl_acpi_probe(smmu);
+> 
+> In-line the minimal DSDT parsing to figure out if we're on a Tegra part.
+> If it's that bad, put it in a static inline in arm-smmu-v3.h.
 
-> As written I find the logic of the patch confusing, and slightly wrong.
->
-> The program header value e_entry is a virtual address, possibly adjusted
-> by load_bias.  Which makes testing it against the file offset of a
-> PT_LOAD segment wrong.  It needs to test against elf_ppnt->p_vaddr.
+OK. How about the following?
 
-I think we need to test both against zero, or maybe invert the logic: if
-something is mapped at virtual address zero that doesn't come from a
-zero file offset, we disable the ELIBEXEC check.
+/* arm-smmu-v3.h */
+static inline void arm_smmu_impl_acpi_dsdt_probe(struct arm_smmu_device *smmu,
+						 struct acpi_iort_node *node)
+{
+	tegra241_cmdqv_acpi_dsdt_probe(smmu, node);
+}
 
-> I think performing an early sanity check to avoid very confusing crashes
-> seems sensible (as long as it is inexpensive).  This appears inexpensive
-> enough that we don't care.  This code is also before begin_new_exec
-> so it is early enough to be meaningful.
+/* arm-smmu-v3.c */
+static int arm_smmu_impl_acpi_probe(struct arm_smmu_device *smmu,
+				    struct acpi_iort_node *node)
+{
+	/*
+	 * DSDT might holds some SMMU extension, so we have no option but to go
+	 * through ACPI tables unconditionally. This probe function should fill
+	 * the smmu->impl pointer upon success. Otherwise, just carry on with a
+	 * standard SMMU.
+	 */
+	arm_smmu_impl_acpi_dsdt_probe(smmu, node);
 
-Yeah, it was quite confusing when it was after begin_new_exec because
-the ELIBEXEC error is visible under strace, and then the SIGSEGV comes =E2=
-=80=A6
+	return 0;
+}
 
-> I think the check should simply test if e_entry is mapped.  So a range
-> check please to see if e_entry falls in a PT_LOAD segment.
+> > +     return 0;
+> > +}
+> >
+> > As for arm_smmu_cmdq_needs_busy_polling, it doesn't really look
+> > very optimal to me.
+> 
+> "optimal" in what sense? In that you don't like how it smells, or that
+> it's measurably bad?
 
-It's usually mapped even with e_entry =3D=3D0 because the ELF header is
-loaded at virtual address zero for ET_DYN using the default linker flags
-(and this is the case we care about).  With -z noseparate-code, it is
-even mapped executable.
+It would potentially not work if someday an implementation has
+two secondary queues? I got your point of making it an option
+just like the existing ARM_SMMU_OPT_MSIPOLL though..
 
-> Having code start at virtual address 0 is a perfectly fine semantically
-> and might happen in embedded scenarios.
-
-To keep supporting this case, we need to check that the ELF header is at
-address zero, because we make a leap of faith and assume it's not really
-executable even if it is mapped as such because due to its role in the
-file format, it does not contain executable instructions.  That's why
-the patch is focused on the ELF header.
-
-I could remove all these checks and just return ELIBEXEC for a zero
-entry point.  I think this is valid based on the ELF specification, but
-it may have a backwards compatibility impact.
-
-> The program header is not required to be mapped or be first, (AKA
-> p_offset and p_vaddr can have a somewhat arbitrary relationship) so any
-> mention of the program header in your logic seems confusing to me.
-
-It's the ELF header.
-
-> I think your basic structure will work.  Just the first check needs to
-> check if e_entry is lands inside the virtual address of a PT_LOAD
-> segment.  The second check should just be checking a variable to see if
-> e_entry was inside any PT_LOAD segment, and there is no interpreter.
-
-I think the range check doesn't help here.  Just checking p_vaddr for
-zero in addition to p_offset should be sufficient.  If you agree, can
-test and send an updated patch.
-
-Thanks,
-Florian
-
+Thanks
+Nicolin
 
