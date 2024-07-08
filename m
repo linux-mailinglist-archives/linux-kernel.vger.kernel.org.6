@@ -1,214 +1,136 @@
-Return-Path: <linux-kernel+bounces-244717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A1D92A864
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:49:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C67F92A869
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72AA21F21CEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6A31C21277
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92F814900C;
-	Mon,  8 Jul 2024 17:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57AB1494C9;
+	Mon,  8 Jul 2024 17:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huxJos3v"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kxMjx8y8"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7716684A4E;
-	Mon,  8 Jul 2024 17:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962C01482F5
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 17:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720460954; cv=none; b=j/KQ2sWMsMC78rb12892klPIp0Uzo7hUi9aJ7z3LbH/HFrv+FzcL2kXtTB+Tm8G8UTzey5Qt9Vc+vTD7wIPueZOpveviM1wOKtD1qfijCPE0eYriNReRLa2/oQikmOm8Y3SM7jlMbrrM9I48pCmce4YZvk9qZaycGYOQBgwO1zE=
+	t=1720461012; cv=none; b=JtBBVwg7MldKpzQiYO9hLjoZsKKXIMjzDh66Fx5GwbXSa3YS1b+rFBcpptHIfVEG6d9Vz7y8x0ZjzzQe8G51vL99ogj3zkzG6/Kd5Qd6nJ4xQAENA0htpziK/wEA5MdPo+V2CDAqe0Q7qsWbm7dO+g6cM4RcZXyjchQ+VsSyWAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720460954; c=relaxed/simple;
-	bh=ljvA7ZGwe6cs5dyKfeIfRfczHOFZV0hYLnUVsKu+hfo=;
+	s=arc-20240116; t=1720461012; c=relaxed/simple;
+	bh=Cgeu270hOmX3S5GZTXTxjnZltMxA5nAub89Ban01DjU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m96j8pakXq1TtHts+7f1b9eW/zXzi4h1A+nQe+eHQFEIjd0DXt+s+1AfCnbXuMpdzIyLVWfHWruVv5eb5cy3U578Cb0/9zkh234j3GCVTwtCwB62Wk0lUg99g8NcICrBqKPQtFhNDYXLOKLcHDFI4p2pmWrojrplkcRgwEM5l4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huxJos3v; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b9776123a3so1974848eaf.0;
-        Mon, 08 Jul 2024 10:49:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZoxLrpjpZww+0QikNfYhTECxPxFKF1InHNpW36oLhThfoQdVpEh4hVEfVk1JY7FEAgJ5wyOADLaKZGN3pMg4u7Gh6UW0pECEAnG51qrgV1LEmbbQrrVpEMmZiWH7cWGGnb7BWNxmrAwMjUgUAOzpkOZrwUYpVngIqB9GTqXh1H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kxMjx8y8; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-df481bf6680so4080161276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 10:50:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720460951; x=1721065751; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720461009; x=1721065809; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QLr4VpzoU0x7SxOx86Qw7mNibo7Vi7FJZVfERxotGP8=;
-        b=huxJos3vbmZL66pGQoTBn96BDZPd7cBxwGvF/v7q5MDmNwzwH+eNEgKC3GTh1R6Sd+
-         rtZxgTRxVyzmZS42zY5l8JHdtuzR8FpA/7HWrE86AacEuobO9QS/Pzwv6mQYVbAWIDC4
-         5yspSe3Nm5QOQ8t7GbSi3eAlKsLAo0mU5BKYeB7/Azd4CNRZrXFK7DIEauEVbOedoctg
-         uJoCVRi3L7Y9uWwOC4Esq1RRSvbskI5nXOpBdtso/AtOGvfBO/Qh8RBlguWY1P1PFSKM
-         5y1weAZ8WOk9cGwAj5+hQxDfggKOD0yOfoiZ00TMYGoZE+yRgRwrLOIey2MkBCdA7elO
-         f11g==
+        bh=nESyMzGZXBtAqIeO/AYycg3VVtY82ta3I2iF0FVP4cE=;
+        b=kxMjx8y8+f//+s7hEupd9DKh37DXdEahAVb2tjOhRg3I+KR8cBC+wrlTsZAnearr09
+         poj2fR+HiezIpXAOvx/+j4SXmv+jxd0LUv5DwTlvGskBUXBE8x75i0fSPlD85ZY0TpUf
+         ljmRpZu75n+UXw9PVSFuH4+fI/ctN49/YzKmtyLM7aLkkeiPp92sAzp5BEO3nZ2O7Zov
+         Anr+kyAuj3iiTQB4BwPToWM9CnelVdJ+vWj3uZclatMRnAU5+NEzocQ5+gY6rptYn5U4
+         5SfYoxdr3MyxJSy59iWeIaFI31lEwYk7Hdi9y6LrbijHXCaf9kewubcp5GHXvOL186U2
+         exzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720460951; x=1721065751;
+        d=1e100.net; s=20230601; t=1720461009; x=1721065809;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QLr4VpzoU0x7SxOx86Qw7mNibo7Vi7FJZVfERxotGP8=;
-        b=EIP1tHwXAxKYqEvIEHgV/ht/kTsRJG7N9BnCxJgOO0CfrVSG6R72msdXQ+NykR5+pI
-         R8Fu7uoQVrPbYVdSFCF1sbiK+znAgBRLs0kSuwWpOHU6VkFxuRwxOA04eZj47JFqzZPa
-         bdrxmEvtw/QiSIXevNXpxGkt8JApEVF7+SoU2slAaw4k+ckHfAuTnDpBiQ396dW1UF6K
-         FIZIIwle/W3ma6pxY6cnP87bEK0AGy4cTHf8QgPTY3YCcO/hieo3diNAJFHQ5fUcbaMG
-         ZxdrbaLCesVQqc71G5QQoxaSFkxt45gifVRsJ10ifgitK8oK9OGkADJgREPhG6KyEKQO
-         KPcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0jNQFwsELbLO10qGh1ydITVPZMypdhmJBsDNhxKYKs1wXAUwc0w2/lHuSTe1G42xsfz0xrWHqnZ5XZPgsjhdxdf86zBvs56kiAfAyyojt/sZNrgzN1DB0sqou9DgSu1JtrzVkqEoPU7ChBAmho15yM86K01ojURe52Fy+ywZ2cEBoD7YG
-X-Gm-Message-State: AOJu0YxwwIKeT8x1P+gFsVgpRlxonXJX8Y7xC2wMHPZmTXhcwFoeaZya
-	JsGi99WnVUk/o1Ljutl1+q/pzF0nHsDA5rJGaz2/NhfWrD9yxFACJuUHbRRRppd2EXc9qJHzWSq
-	acqgcCQu32teM6tJe7KfQW9dtKzO6Ew==
-X-Google-Smtp-Source: AGHT+IF3c3QRj8KXZ6xxR6LBcvnTrzUiRqpzoC/ZXbD4Pnmk7miQM7eU6tFAb1TgHTykhdnMryUbw68YNkeujU+eYCg=
-X-Received: by 2002:a05:6870:ac24:b0:254:963e:cc3f with SMTP id
- 586e51a60fabf-25eae755eb3mr83265fac.1.1720460951456; Mon, 08 Jul 2024
- 10:49:11 -0700 (PDT)
+        bh=nESyMzGZXBtAqIeO/AYycg3VVtY82ta3I2iF0FVP4cE=;
+        b=aeLwtckJH9LuR7w3uumJ82CoXvOJuNOvqaEjzeTvarEvFyFIBOCx+oy1rR9WYAQkA7
+         CZcXc9yrnSWxAVbS/jysU9LAAr/Z42rlLXeQiAo7pVZYUQA4JkWU0ym7uxmg8h9pJTH8
+         qPxoZs/oUGTtYYWkO/Vc+iqxP6oBwRfXai6HJYRxlbyxYd6Cq3x67sWCZ/wFryk0ysEQ
+         v/p7Ay9UKJ8nlsDaIq8HzIWEWd8Km0jtCL9bt51LJor8peK3MX5g0ljXIBe+WPaqWOsK
+         a66T34lalNkSo16s27QTJOwKGtwqBm+H+uMaSIYf6ZdgDwlmw7pleuzQBWaQVrVHoZQO
+         iaBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpmrtZdLh8JeOy6s9c1dXx7naSSGF4oJJer99qGftYXBH0HFppd+pW4XIa/Ml43qDm8EkRzJ+MrqNsxL/cyIGgEdu7Zfn2mZ1ggIwv
+X-Gm-Message-State: AOJu0YxxhRV7RgLhLv7KCIDz8Kyo2NgBtWjL0ZzRl15sAjNi7pAKJbj5
+	nTz0WuGl6IEdGvSJtNfhTntjUK64Z2LyH9Ma+yz2WTRidvuQ54hZwLVpi1HhzLdjjK6vpFHFrqs
+	z/D8gs7VnyOdLIbdT/ruVJ9S6NH9c+KwohvfQ
+X-Google-Smtp-Source: AGHT+IHcxq/i9rzCxsEN5hnVo4LPbu8O3jBlhcP+IANI38Pst6MQnmRwrHXpKPTOw9a59dfbicjTNMHGzlIpXAxgcP4=
+X-Received: by 2002:a05:6902:1361:b0:e03:4e08:c93c with SMTP id
+ 3f1490d57ef6-e041b03995dmr571404276.13.1720461009288; Mon, 08 Jul 2024
+ 10:50:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701223935.3783951-1-andrii@kernel.org> <CAEf4BzaZhi+_MZ0M4Pz-1qmej6rrJeLO9x1+nR5QH9pnQXzwdw@mail.gmail.com>
- <20240704091559.GS11386@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240704091559.GS11386@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 8 Jul 2024 10:48:59 -0700
-Message-ID: <CAEf4BzZxsyFGy9Ny5ekc=hvso7vu3=1toq0hW+jR_EukMn3M_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
- and per-CPU RW semaphore
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com, 
-	bpf@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, clm@meta.com, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20240708134654.1725-1-yuzenghui@huawei.com>
+In-Reply-To: <20240708134654.1725-1-yuzenghui@huawei.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Mon, 8 Jul 2024 10:49:57 -0700
+Message-ID: <CABdmKX1CXWuw0-gRukZeSoF=SZFi3eRPELe=EU_-q3OVKQHZzw@mail.gmail.com>
+Subject: Re: [PATCH] kselftests: dmabuf-heaps: Ensure the driver name is null-terminated
+To: Zenghui Yu <yuzenghui@huawei.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sumit.semwal@linaro.org, 
+	benjamin.gaignard@collabora.com, Brian.Starkey@arm.com, jstultz@google.com, 
+	shuah@kernel.org, wanghaibin.wang@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 4, 2024 at 2:16=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
+On Mon, Jul 8, 2024 at 6:47=E2=80=AFAM Zenghui Yu <yuzenghui@huawei.com> wr=
+ote:
 >
-> On Wed, Jul 03, 2024 at 02:33:06PM -0700, Andrii Nakryiko wrote:
+> Even if a vgem device is configured in, we will skip the import_vgem_fd()
+> test almost every time.
 >
-> > 2. More tactically, RCU protection seems like the best way forward. We
-> > got hung up on SRCU vs RCU Tasks Trace. Thanks to Paul, we also
-> > clarified that RCU Tasks Trace has nothing to do with Tasks Rude
-> > flavor (whatever that is, I have no idea).
-> >
-> > Now, RCU Tasks Trace were specifically designed for least overhead
-> > hotpath (reader side) performance, at the expense of slowing down much
-> > rarer writers. My microbenchmarking does show at least 5% difference.
-> > Both flavors can handle sleepable uprobes waiting for page faults.
-> > Tasks Trace flavor is already used for tracing in the BPF realm,
-> > including for sleepable uprobes and works well. It's not going away.
+>   TAP version 13
+>   1..11
+>   # Testing heap: system
+>   # =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   # Testing allocation and importing:
+>   ok 1 # SKIP Could not open vgem -1
 >
-> I need to look into this new RCU flavour and why it exists -- for
-> example, why can't SRCU be improved to gain the same benefits. This is
-> what we've always done, improve SRCU.
+> The problem is that we use the DRM_IOCTL_VERSION ioctl to query the drive=
+r
+> version information but leave the name field a non-null-terminated string=
+.
+> Terminate it properly to actually test against the vgem device.
 
-Yes, that makes sense, in principle. But if it takes too much time to
-improve SRCU, I'd say it's reasonable to use the faster solution until
-it can be unified (if at all, of course).
-
->
-> > Now, you keep pushing for SRCU instead of RCU Tasks Trace, but I
-> > haven't seen a single argument why. Please provide that, or let's
-> > stick to RCU Tasks Trace, because uprobe's use case is an ideal case
-> > of what Tasks Trace flavor was designed for.
->
-> Because I actually know SRCU, and because it provides a local scope.
-> It isolates the unregister waiters from other random users. I'm not
-> going to use this funky new flavour until I truly understand it.
->
-> Also, we actually want two scopes here, there is no reason for the
-> consumer unreg to wait for the retprobe stuff.
->
-
-Uprobe attachment/detachment (i.e., register/unregister) is a very
-rare operation. Its performance doesn't really matter in the great
-scheme of things. In the sense that whether it takes 1, 10, or 200
-milliseconds is immaterial compared to uprobe/uretprobe triggering
-performance. The only important thing is that it doesn't take multiple
-seconds and minutes (or even hours, if we do synchronize_rcu
-unconditionally after each unregister) to attach/detach 100s/1000s+
-uprobes.
-
-I'm just saying this is the wrong target to optimize for if we just
-ensure that it's reasonably performant in the face of multiple uprobes
-registering/unregistering. (so one common SRCU scope for
-registration/unregistration is totally fine, IMO)
-
-
-> > 3. Regardless of RCU flavor, due to RCU protection, we have to add
-> > batched register/unregister APIs, so we can amortize sync_rcu cost
-> > during deregistration. Can we please agree on that as well? This is
-> > the main goal of this patch set and I'd like to land it before working
-> > further on changing and improving the rest of the locking schema.
->
-> See my patch here:
->
->   https://lkml.kernel.org/r/20240704084524.GC28838@noisy.programming.kick=
-s-ass.net
->
-> I don't think it needs to be more complicated than that.
-
-Alright, I'll take a closer look this week and will run it through my
-tests and benchmarks, thanks for working on this and sending it out!
+Hm yeah. Looks like drm_copy_field resets version.name to the actual
+size of the name in the case of truncation, so maybe worth checking
+that too in case there is a name like "vgemfoo" that gets converted to
+"vgem\0" by this?
 
 >
-> > I won't be happy about it, but just to move things forward, I can drop
-> > a) custom refcounting and/or b) percpu RW semaphore. Both are
-> > beneficial but not essential for batched APIs work. But if you force
-> > me to do that, please state clearly your reasons/arguments.
+> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> ---
+>  tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> The reason I'm pushing RCU here is because AFAICT uprobes doesn't
-> actually need the stronger serialisation that rwlock (any flavour)
-> provide. It is a prime candidate for RCU, and I think you'll find plenty
-> papers / articles (by both Paul and others) that show that RCU scales
-> better.
+> diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/t=
+esting/selftests/dmabuf-heaps/dmabuf-heap.c
+> index 5f541522364f..2fcc74998fa9 100644
+> --- a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+> +++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+> @@ -32,6 +32,8 @@ static int check_vgem(int fd)
+>         if (ret)
+>                 return 0;
 >
-> As a bonus, you avoid that horrific write side cost that per-cpu rwsem
-> has.
+> +       name[4] =3D '\0';
+> +
+>         return !strcmp(name, "vgem");
+>  }
 >
-> The reason I'm not keen on that refcount thing was initially because I
-> did not understand the justification for it, but worse, once I did read
-> your justification, your very own numbers convinced me that the refcount
-> is fundamentally problematic, in any way shape or form.
+> --
+> 2.33.0
 >
-> > No one had yet pointed out why refcounting is broken
->
-> Your very own numbers point out that refcounting is a problem here.
-
-Yes, I already agreed on avoiding refcounting if possible. The
-question above was why the refcounting I added was broken by itself.
-But it's a moot point (at least for now), let me go look at your
-patches.
-
->
-> > and why percpu RW semaphore is bad.
->
-> Literature and history show us that RCU -- where possible -- is
-> always better than any reader-writer locking scheme.
->
-> > 4. Another tactical thing, but an important one. Refcounting schema
-> > for uprobes. I've replied already, but I think refcounting is
-> > unavoidable for uretprobes,
->
-> I think we can fix that, I replied here:
->
->   https://lkml.kernel.org/r/20240704083152.GQ11386@noisy.programming.kick=
-s-ass.net
->
-> > and current refcounting schema is
-> > problematic for batched APIs due to race between finding uprobe and
-> > there still being a possibility we'd need to undo all that and retry
-> > again.
->
-> Right, I've not looked too deeply at that, because I've not seen a
-> reason to actually change that. I can go think about it if you want, but
-> meh.
-
-Ok, let's postpone that if we can get away with just sync/nosync
-uprobe_unregister.
 
