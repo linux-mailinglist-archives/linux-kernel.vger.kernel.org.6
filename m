@@ -1,137 +1,197 @@
-Return-Path: <linux-kernel+bounces-244159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BCE92A008
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:20:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A6D929FFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E16ABB2B271
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FAA1F2507C
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8BF76C61;
-	Mon,  8 Jul 2024 10:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ttOvH8Ce"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C974E59164;
+	Mon,  8 Jul 2024 10:15:20 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549BA76C76
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF61D2E3F2
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720433690; cv=none; b=bvJ/XtWEvgfG/AQr+GK770Qewflwu11B27IPqTcXzj8aoKiuO8Ce8XQNoQd4jIg53samIdWhIb6+zn1D/H0mDF+kie7c/6hjmHYLRLRrFUPCCg+TAH/tIqtBTNL61weTA2HcTaeXms1Ed/gO/b48BScY5k2NRIrUp+XtypJFn7A=
+	t=1720433720; cv=none; b=uN88l7WljA+qku50PjXjNRnmGS9QdokekO0fWK6ZeWljE2aE9yFaNwFP6aYJECBE8ThBlc78tI/GcQeGXBTNloYj8Fi1bPfeNe2fjODMTB4k4nN8yCppu+pF9fB6dm3o2Mnp96d5cqVX4QryaS8fBbm7lJ7ospcLyS1eTNlE/cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720433690; c=relaxed/simple;
-	bh=SkWEHtSDPfXsyLQ1VAkX/uYzEH+1I/9hiZephDJ7+KI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0PoO9RHAch5PkFPDX81ZBVqH2kjeFxk2o8iibliYCAtwrXokuELVa2AMqB2aDgnJ857k+li69496FarkDef7wLh92qhjI47PwRap6gl/joe8pSii9E21kkKqOz8+6eIqfULzHI/IL8Hoh05UBYwUB6rYxS3KkBiAucb+otBxHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ttOvH8Ce; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c6661bca43so790402eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1720433687; x=1721038487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8o4FeBTkQydEY+E5Ft9ergtCpLoarVxrr2b76p2ARdE=;
-        b=ttOvH8Ceg7X7g8zwWCa5c2nAM8Mf5a9A6s7VILm8t+Zb/ug2x24s79sKi7UOx82QvE
-         P7SPRuQoYYbDomxDfRiM8iDjfeHl0O9Gltw9Q28TqxeYDu6JX+TJrVPoJjHrtnmRQCLQ
-         lEPq7KQV5/lwA9cwYI7v9uY3pTZCKXaiMGzMfSFWK0QQKVgYxTFBb5RlAX6P8wbcQzUh
-         3wPfN3K2AhOGUltm1T93z/gLb+N2PBy2VsmT05gTBTErFPvhnD3Rib3u7VWTbiUss+sU
-         qjqtlcGWAPsNx1+Itn/O9GqQwuYgE1dhcnZy5C605FS+L/V6X8pLJNLnEcZWR1qvhdi8
-         ordA==
+	s=arc-20240116; t=1720433720; c=relaxed/simple;
+	bh=P+A8E0zkZTYhke4a2Ujh2jGsSdr3lzUCZCw10OWxTsQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dEk1HniuNuIc2KI0G6e7XqbKLI8Lim+lKzfk2dzrhkZqZeM8hyAJueR8TFMe/xeY8WOowOtIl+2SObWpSi4ZTSn8s6EHpIMgvZmqsjC0D54bS3lEHnPtgHcp4jGHF7A3VMJLhZsyJZ0VcoXWjHC8AtRz8YrKfa9/AEWvJcQm8Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7fb19ed628aso200996639f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:15:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720433687; x=1721038487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8o4FeBTkQydEY+E5Ft9ergtCpLoarVxrr2b76p2ARdE=;
-        b=fZgKrpkI53BRFaXz+W7bW8QK8IvlVsdIcesrkskrdUmY/Z4Q73rXIBpiKjyoq1/J9N
-         +bizFFaypv8MXw/r+wm3Gqjpb+yignXxjyQln06BtWGU7Y8ak1thq1p3Ch0bDUxFidrq
-         BvinveuZ12dlNEKYjOGnlGKxsn2kowKdJAOQAxTrPzlUTqh6HZzzoib/+TpnX1CTI2P7
-         KC8s8r9lYNZYDRehIecdS2op5BPX8aiOIEJxk8inFwsMHe5vffAtPwvgZhF0VSjsmZzL
-         7JO1WN+tJp5rcAzsyC9sd6WBC5KJbO640hdRPytvlVm/ZR135QIuhnFnAjg5v3N7jARz
-         IBtg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/nDp1l76slnvEe6NcoBDA+2V1KSm8EigUpPFpeJuogKr72KKDtun92l61CetsOPLDU+l6vIugx0cyp8RDsgCDbC8Tni2zh4fJ9Vi/
-X-Gm-Message-State: AOJu0YxH1WWmiUG6s/x8ZtaxkR2jg4+1r5P+D1S7On2GJFbCecdSI/Eh
-	mXpdXk4GBT4S9U8712NU8N7rLxDEWYnzKWteemAaECrAnEMqPQDNzbKezn2hPWdOdMQ2J5An+wu
-	v
-X-Google-Smtp-Source: AGHT+IE/zS6WEa6AYR9d5DtByxCxkrGdmxNX7wGLzq43cS2MXgaaIKi+XNyuyDfoV7t+ibOfdSJHMw==
-X-Received: by 2002:a05:6870:5b81:b0:25e:15c1:257e with SMTP id 586e51a60fabf-25e2b9de8cfmr11531140fac.6.1720433687408;
-        Mon, 08 Jul 2024 03:14:47 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b03a9d996sm7596909b3a.96.2024.07.08.03.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 03:14:47 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sQlOO-008PAB-1z;
-	Mon, 08 Jul 2024 20:14:44 +1000
-Date: Mon, 8 Jul 2024 20:14:44 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Alex Shi <seakeel@gmail.com>
-Cc: linux-xfs@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: xfs deadlock on mm-unstable kernel?
-Message-ID: <Zou8FCgPKqqWXKyS@dread.disaster.area>
-References: <e5814465-b39a-44d8-aa3d-427773c9ae16@gmail.com>
+        d=1e100.net; s=20230601; t=1720433718; x=1721038518;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mGfZ/xlazb6vQbChhVhL7rFha/pF23EZgGn4WVNLNJs=;
+        b=BsH4OnXSCetg0LbeEK87rPH7CpvtAP4BdE8y4otVMMPOeEv45s4Y8YBQaxYvbvqh9u
+         SFj9G+6pcVOUjMIhgNMbnHmgpvxStwIdHJX1w0bzm07dX0tG0P2xEcFxCVT0Ev1jw2gf
+         YvgWVbgri2iU0sEQ47vTlPAo1jVtkA9b+Qvpx/KqxKBIHvonGu/jUQ39QhMA08KVtxV0
+         E4+mS3lLJteGfftAf6IMilpLGY2HwXh+CBbK64S9huEBAYrv6+8EC1G2sI/xwTm90bUg
+         RhUTYWoNRWaPFOSpO0r/+aY7R0JP6Xvr1bttz/f8vbqAH3s8DvQFir1Zvg1kqb1K+u/W
+         OVuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUoKTw2FjrdGC8Pxwh4SeYNMT3z2jZ/tVfbYTkEARgEIaBlOI2B/vPj2+uBwmdlRWaqWhOwH02F6lr13+pQotsYTrz65B5ZWTH767A
+X-Gm-Message-State: AOJu0YxoRiECPoKpckrA132VpdOA3BQhTiHen8LiexsIqB8HvxpXc5TH
+	/4UZ0dTUQk7KLFxokhIiZuLFbCMNBbDkGaa0waqvI54UofAIWmH4ffIxuhE8skUJ6oUk7dq7c69
+	ayZWRws0bxE8JmNnblfBXB5ymcqC4ViWG8+SHlLebVlQKeQYvms36m70=
+X-Google-Smtp-Source: AGHT+IE0zhQknJ2gUGYF46ymFvAofXGJ2CUZ/XwesLS/ICqk5AxE8wI617eYEMR2Ohhzx5PgJ8iIAL+Jdhd1k/W88KDxH3qBnYce
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5814465-b39a-44d8-aa3d-427773c9ae16@gmail.com>
+X-Received: by 2002:a05:6638:370c:b0:4c0:a8a5:81dc with SMTP id
+ 8926c6da1cb9f-4c0a8a58dc1mr86879173.6.1720433717767; Mon, 08 Jul 2024
+ 03:15:17 -0700 (PDT)
+Date: Mon, 08 Jul 2024 03:15:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009b85eb061cb9b0fc@google.com>
+Subject: [syzbot] [mm?] KCSAN: data-race in __swap_writepage /
+ scan_swap_map_slots (2)
+From: syzbot <syzbot+da25887cc13da6bf3b8c@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 08, 2024 at 04:36:08PM +0800, Alex Shi wrote:
->   372.297234][ T3001] ============================================
-> [  372.297530][ T3001] WARNING: possible recursive locking detected
-> [  372.297827][ T3001] 6.10.0-rc6-00453-g2be3de2b70e6 #64 Not tainted
-> [  372.298137][ T3001] --------------------------------------------
-> [  372.298436][ T3001] cc1/3001 is trying to acquire lock:
-> [  372.298701][ T3001] ffff88802cb910d8 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_reclaim_inode+0x59e/0x710
-> [  372.299242][ T3001] 
-> [  372.299242][ T3001] but task is already holding lock:
-> [  372.299679][ T3001] ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
-> [  372.300258][ T3001] 
-> [  372.300258][ T3001] other info that might help us debug this:
-> [  372.300650][ T3001]  Possible unsafe locking scenario:
-> [  372.300650][ T3001] 
-> [  372.301031][ T3001]        CPU0
-> [  372.301231][ T3001]        ----
-> [  372.301386][ T3001]   lock(&xfs_dir_ilock_class);
-> [  372.301623][ T3001]   lock(&xfs_dir_ilock_class);
-> [  372.301860][ T3001] 
-> [  372.301860][ T3001]  *** DEADLOCK ***
-> [  372.301860][ T3001] 
-> [  372.302325][ T3001]  May be due to missing lock nesting notation
-> [  372.302325][ T3001] 
-> [  372.302723][ T3001] 3 locks held by cc1/3001:
-> [  372.302944][ T3001]  #0: ffff88800e146078 (&inode->i_sb->s_type->i_mutex_dir_key){++++}-{3:3}, at: walk_component+0x2a5/0x500
-> [  372.303554][ T3001]  #1: ffff88800e145e58 (&xfs_dir_ilock_class){++++}-{3:3}, at: xfs_ilock_data_map_shared+0x4d/0x60
-> [  372.304183][ T3001]  #2: ffff8880040190e0 (&type->s_umount_key#48){++++}-{3:3}, at: super_cache_scan+0x82/0x4e0
+Hello,
 
-False positive. Inodes above allocation must be actively referenced,
-and inodes accees by xfs_reclaim_inode() must have no references and
-been evicted and destroyed by the VFS. So there is no way that an
-unreferenced inode being locked for reclaim in xfs_reclaim_inode()
-can deadlock against the refrenced inode locked by the inode lookup
-code.
+syzbot found the following issue on:
 
-Unfortunately, we don't have enough lockdep subclasses available to
-annotate this correctly - we're already using all
-MAX_LOCKDEP_SUBCLASSES to tell lockdep about all the ways we can
-nest inode locks. That leaves us no space to add a "reclaim"
-annotation for locking done from super_cache_scan() paths that would
-avoid these false positives....
+HEAD commit:    256abd8e550c Linux 6.10-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=106f73b9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d41a21b8562873d8
+dashboard link: https://syzkaller.appspot.com/bug?extid=da25887cc13da6bf3b8c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eb12c934492f/disk-256abd8e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a25b9e666500/vmlinux-256abd8e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef2e7d0332d0/bzImage-256abd8e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+da25887cc13da6bf3b8c@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in __swap_writepage / scan_swap_map_slots
+
+read-write to 0xffff888103c5ee10 of 8 bytes by task 12496 on cpu 0:
+ scan_swap_map_slots+0x51/0x10e0 mm/swapfile.c:868
+ get_swap_pages+0x30b/0x480 mm/swapfile.c:1115
+ folio_alloc_swap+0x3b7/0x490 mm/swap_slots.c:346
+ shmem_writepage+0x43e/0x970 mm/shmem.c:1493
+ pageout mm/vmscan.c:660 [inline]
+ shrink_folio_list+0x194f/0x2560 mm/vmscan.c:1341
+ shrink_inactive_list mm/vmscan.c:1944 [inline]
+ shrink_list mm/vmscan.c:2179 [inline]
+ shrink_lruvec+0xbd9/0x15f0 mm/vmscan.c:5703
+ shrink_node_memcgs mm/vmscan.c:5889 [inline]
+ shrink_node+0x9d1/0x13c0 mm/vmscan.c:5924
+ shrink_zones mm/vmscan.c:6168 [inline]
+ do_try_to_free_pages+0x3c6/0xc50 mm/vmscan.c:6230
+ try_to_free_mem_cgroup_pages+0x1eb/0x4e0 mm/vmscan.c:6545
+ try_charge_memcg+0x27a/0xcd0 mm/memcontrol.c:2944
+ try_charge mm/memcontrol.c:3092 [inline]
+ charge_memcg mm/memcontrol.c:7495 [inline]
+ __mem_cgroup_charge+0x63/0x100 mm/memcontrol.c:7510
+ mem_cgroup_charge include/linux/memcontrol.h:691 [inline]
+ shmem_alloc_and_add_folio mm/shmem.c:1677 [inline]
+ shmem_get_folio_gfp+0x480/0xb70 mm/shmem.c:2055
+ shmem_get_folio mm/shmem.c:2160 [inline]
+ shmem_write_begin+0xa0/0x1c0 mm/shmem.c:2743
+ generic_perform_write+0x1d5/0x410 mm/filemap.c:4015
+ shmem_file_write_iter+0xc8/0xf0 mm/shmem.c:2919
+ __kernel_write_iter+0x24f/0x4e0 fs/read_write.c:523
+ dump_emit_page fs/coredump.c:893 [inline]
+ dump_user_range+0x3a7/0x550 fs/coredump.c:954
+ elf_core_dump+0x1aeb/0x1c30 fs/binfmt_elf.c:2083
+ do_coredump+0xff6/0x1860 fs/coredump.c:767
+ get_signal+0xdc1/0x1080 kernel/signal.c:2894
+ arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ irqentry_exit_to_user_mode+0x94/0x130 kernel/entry/common.c:231
+ irqentry_exit+0x12/0x50 kernel/entry/common.c:334
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+read to 0xffff888103c5ee10 of 8 bytes by task 12516 on cpu 1:
+ __swap_writepage+0x88/0xc50 mm/page_io.c:387
+ swap_writepage+0xa9/0x160 mm/page_io.c:209
+ shmem_writepage+0x7be/0x970 mm/shmem.c:1518
+ pageout mm/vmscan.c:660 [inline]
+ shrink_folio_list+0x194f/0x2560 mm/vmscan.c:1341
+ shrink_inactive_list mm/vmscan.c:1944 [inline]
+ shrink_list mm/vmscan.c:2179 [inline]
+ shrink_lruvec+0xbd9/0x15f0 mm/vmscan.c:5703
+ shrink_node_memcgs mm/vmscan.c:5889 [inline]
+ shrink_node+0x9d1/0x13c0 mm/vmscan.c:5924
+ shrink_zones mm/vmscan.c:6168 [inline]
+ do_try_to_free_pages+0x3c6/0xc50 mm/vmscan.c:6230
+ try_to_free_mem_cgroup_pages+0x1eb/0x4e0 mm/vmscan.c:6545
+ try_charge_memcg+0x27a/0xcd0 mm/memcontrol.c:2944
+ try_charge mm/memcontrol.c:3092 [inline]
+ charge_memcg mm/memcontrol.c:7495 [inline]
+ __mem_cgroup_charge+0x63/0x100 mm/memcontrol.c:7510
+ mem_cgroup_charge include/linux/memcontrol.h:691 [inline]
+ shmem_alloc_and_add_folio mm/shmem.c:1677 [inline]
+ shmem_get_folio_gfp+0x480/0xb70 mm/shmem.c:2055
+ shmem_get_folio mm/shmem.c:2160 [inline]
+ shmem_write_begin+0xa0/0x1c0 mm/shmem.c:2743
+ generic_perform_write+0x1d5/0x410 mm/filemap.c:4015
+ shmem_file_write_iter+0xc8/0xf0 mm/shmem.c:2919
+ __kernel_write_iter+0x24f/0x4e0 fs/read_write.c:523
+ dump_emit_page fs/coredump.c:893 [inline]
+ dump_user_range+0x3a7/0x550 fs/coredump.c:954
+ elf_core_dump+0x1aeb/0x1c30 fs/binfmt_elf.c:2083
+ do_coredump+0xff6/0x1860 fs/coredump.c:767
+ get_signal+0xdc1/0x1080 kernel/signal.c:2894
+ arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ irqentry_exit_to_user_mode+0x94/0x130 kernel/entry/common.c:231
+ irqentry_exit+0x12/0x50 kernel/entry/common.c:334
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+value changed: 0x0000000000004083 -> 0x0000000000008083
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 12516 Comm: syz.2.2868 Not tainted 6.10.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
