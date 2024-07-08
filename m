@@ -1,271 +1,377 @@
-Return-Path: <linux-kernel+bounces-244549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8047D92A5D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:36:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCA492A5C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31C5628215A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2429D2823C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135EA145325;
-	Mon,  8 Jul 2024 15:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="FvIN2spM"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04445142E8D;
+	Mon,  8 Jul 2024 15:34:56 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0E8142E80;
-	Mon,  8 Jul 2024 15:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCAF1E898;
+	Mon,  8 Jul 2024 15:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720452974; cv=none; b=Agt/xtKlPLFgZbyJbOVg3COVLx2raBwPMcX0qEcnTzsHyNJt3njcgRxHVU9u2WNrtrj2Y8+Lrr+lHhto0U0ypcdQaLIQ4p5fBctZMFqAHLN3II+5k/GeCHU8N2d3KqxReMNPlWArUh3vnh0zHTv6DR4sViqlUNIqGMfj3CBDXtA=
+	t=1720452895; cv=none; b=XM8xMLeZUbn1DC6qAEAQNUaBopfXj0jthHi1lW+uiirlRayu8F52qLqet2H4V/7OJHwfz1zhp4LX6VlmG7h49UU94K9nmD+4kReW++oe0npce7pwvF+ongHXK8bOKt5Pgu0X5p0kwvECiglMq4OdfvjdckNUvnXAd6w9SBB9BHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720452974; c=relaxed/simple;
-	bh=mspshzsk4qCcQkDJFLcNj/FhNKlRqUzNiUciBZ3Kpb0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E7or1a7f/pN+gsuIz3earpJ73GqhqgDFe9OME1TqnqcgOnVn+wpm4mDYeVFoKN5fxtCH86brjv1sh7hzNZGZ/kFVAYE5L0v3W0QnxjATVlJtBOFFtlIGOcgdGAPZOSMgOXMIS4DvlzAMkvkhQRe8t9hrDul+mkfVZu6TqPCHVgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=FvIN2spM; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468CNpqB021626;
-	Mon, 8 Jul 2024 17:35:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	J1GYQoG/MOzUks6R/F0NbZqXAOFjwLwk5Y99MtlLrsM=; b=FvIN2spMKl3qjXzf
-	hMqdVuleorPi9LcAjikRn9LTr8KWXmxUC+9vKjD23UelWaWAI84sEh80koUBsMJd
-	AyqbFsWru6F6isJ1Co/PBzZRqLAED/YzY6FZX4tYC8WCz9U/s5GgrvlGV1y2gFQ4
-	FdigcwG2gYSN7esmz7FYtRUCHiRyO+I1i4GAEupsM8O6BttRRRs71l09x35EGR6d
-	afDByyp3S9np7ofbNrGStUovJ8Q/vtRY9jmjZz5oedYOk8WvFTvVz3V1wrZzTT3V
-	8ZRlXuTyRbm8SrJK0CWOK/bqwFoNP1xGkjDNK64hP/vJYRWA0EWDY1QUCLOHSIbL
-	fDKwyg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 406wqt7h00-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 17:35:50 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 02FEA40044;
-	Mon,  8 Jul 2024 17:35:47 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5209422D0F2;
-	Mon,  8 Jul 2024 17:35:08 +0200 (CEST)
-Received: from localhost (10.48.86.111) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 8 Jul
- 2024 17:35:07 +0200
-From: Valentin Caron <valentin.caron@foss.st.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Valentin Caron <valentin.caron@foss.st.com>
-Subject: [PATCH v2 2/2] rtc: stm32: add new st,stm32mp25-rtc compatible and check RIF configuration
-Date: Mon, 8 Jul 2024 17:34:34 +0200
-Message-ID: <20240708153434.416287-3-valentin.caron@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240708153434.416287-1-valentin.caron@foss.st.com>
-References: <20240708153434.416287-1-valentin.caron@foss.st.com>
+	s=arc-20240116; t=1720452895; c=relaxed/simple;
+	bh=LebzdJzhqdkNpzWYA4hxosalA/gbc8kD4iPdCi9ZICI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a5YuT2nXwL7jEJHsyYJ4zzIvS1noEn2/UlCPl2lprq9p0aO71Is7Er4/OfhpVQLyi1S5hU3BSWdv4oYmjtvqysLNoJRRQkJvze4ZNPZ/GwGqjI6U5nIC/muAWEq8mdGWnsPkAe+y/L3FjWAmjiO3Lq3RE8Mr0BQei0vWCHVsKLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WHp6x5gcXz6K64W;
+	Mon,  8 Jul 2024 23:33:29 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 68E25140736;
+	Mon,  8 Jul 2024 23:34:49 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
+ 2024 16:34:48 +0100
+Date: Mon, 8 Jul 2024 16:34:47 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, Shengwei
+ Luo <luoshengwei@huawei.com>, Ard Biesheuvel <ardb@kernel.org>, James Morse
+	<james.morse@arm.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Shiju Jose <shiju.jose@huawei.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, "Dan
+ Williams" <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, Shuai Xue <xueshuai@linux.alibaba.com>, "Steven
+ Rostedt" <rostedt@goodmis.org>, Tyler Baicar <tbaicar@codeaurora.org>, "Will
+ Deacon" <will@kernel.org>, Xie XiuQi <xiexiuqi@huawei.com>,
+	<linux-acpi@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Jason Tian
+	<jason@os.amperecomputing.com>, Daniel Ferguson
+	<danielf@os.amperecomputing.com>
+Subject: Re: [PATCH 2/6] RAS: Report all ARM processor CPER information to
+ userspace
+Message-ID: <20240708163447.0000274f@Huawei.com>
+In-Reply-To: <48ed5eb4448d85ccb5503335087a3e6a5159ca1e.1720436039.git.mchehab+huawei@kernel.org>
+References: <cover.1720436039.git.mchehab+huawei@kernel.org>
+	<48ed5eb4448d85ccb5503335087a3e6a5159ca1e.1720436039.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_09,2024-07-05_01,2024-05-17_01
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Introduce new st,stm32mp25-rtc compatible. It is based on st,stm32mp1-rtc.
+On Mon,  8 Jul 2024 13:18:11 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Difference is that stm32mp25 soc implements a triple protection on RTC
-registers:
-- Secure bit based protection
-- Privileged context based protection
-- Compartment ID filtering based protection
-This driver will now check theses configurations before probing to avoid
-exceptions and fake reads on register.
+> From: Shengwei Luo <luoshengwei@huawei.com>
+> 
+> The ARM processor CPER record was added at UEFI 2.6, and hasn't
+> any changes up to UEFI 2.10 on its struct.
+> 
+> Yet, the original arm_event trace code added on changeset
+> e9279e83ad1f ("trace, ras: add ARM processor error trace event") is
+> incomplete, as it only traces some fields of UAPI 2.6 table N.16,
+> not exporting at all any information from tables N.17 to N.29 of
+> the record.
+> 
+> This is not enough for user to take appropriate action or to log
+> what exactly happened.
+> 
+> According to UEFI_2_9 specification chapter N2.4.4, the ARM processor
+> error section includes:
+> 
+> - several (ERR_INFO_NUM) ARM processor error information structures
+>   (Tables N.17 to N.20);
+> - several (CONTEXT_INFO_NUM) ARM processor context information
+>   structures (Tables N.21 to N.29);
+> - several vendor specific error information structures. The
+>   size is given by Section Length minus the size of the other
+>   fields.
+> 
+> In addition to those data, it also exports two fields that are
+> parsed by the GHES driver when firmware reports it, e. g.:
+> 
+> - error severity
+> - cpu logical index
+> 
+> Report all of these information to userspace via trace uAPI, So that
+> userspace can properly record the error and take decisions related
+> to cpu core isolation according to error severity and other info.
+> 
+> After this patch, all the data from ARM Processor record from table
+> N.16 are directly or indirectly visible on userspace:
+> 
+> ======================================	=============================
+> UEFI field on table N.16		ARM Processor trace fields
+> ======================================	=============================
+> Validation				handled when filling data for
+> 					affinity MPIDR and running
+> 					state.
+> ERR_INFO_NUM				pei_len
+> CONTEXT_INFO_NUM			ctx_len
+> Section Length				indirectly reported by
+> 					pei_len, ctx_len and oem_len
+> Error affinity level			affinity
+> MPIDR_EL1				mpidr
+> MIDR_EL1				midr
+> Running State				running_state
+> PSCI State				psci_state
+> Processor Error Information Structure	pei_err - count at pei_len
+> Processor Context			ctx_err- count at ctx_len
+> Vendor Specific Error Info		oem - count at oem_len
+> ======================================	=============================
+> 
+> It should be noticed that decoding of tables N.17 to N.29, if needed,
+> will be handled on userspace. That gives more flexibility, as there
+> won't be any need to flood the Kernel with micro-architecture specific
+> error decoding).
+> Also, decoding the other fields require a complex logic, and should
+> be done for each of the several values inside the record field.
+> So, let userspace daemons like rasdaemon decode them, parsing such
+> tables and having vendor-specific micro-architecture-specific decoders.
+> 
+> [mchehab: modified patch description and fix coding style]
+> Fixes: e9279e83ad1f ("trace, ras: add ARM processor error trace event")
+> Signed-off-by: Shengwei Luo <luoshengwei@huawei.com>
+> Signed-off-by: Jason Tian <jason@os.amperecomputing.com>
+> Signed-off-by: Daniel Ferguson <danielf@os.amperecomputing.com>
+> Tested-by: Shiju Jose <shiju.jose@huawei.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Link: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section
 
-At this time, driver needs only to check two resources: INIT and ALARM_A.
-Other resources are not used.
+A few comments inline but all of the 'I'd have done this slightly differently'
+variety.  This is fine as it stands though.
 
-Resource isolation framework (RIF) is a comprehensive set of hardware
-blocks designed to enforce and manage isolation of STM32 hardware
-resources, like memory and peripherals.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Link: https://www.st.com/resource/en/reference_manual/rm0457-stm32mp25xx-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf#page=4081
-Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
----
- drivers/rtc/rtc-stm32.c | 78 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+> ---
+>  drivers/acpi/apei/ghes.c |  3 +--
+>  drivers/ras/ras.c        | 45 +++++++++++++++++++++++++++++++++++--
+>  include/linux/ras.h      | 16 ++++++++++----
+>  include/ras/ras_event.h  | 48 +++++++++++++++++++++++++++++++++++-----
+>  4 files changed, 99 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index 2589a3536d91..90efca025d27 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -538,9 +538,8 @@ static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
+>  	int sec_sev, i;
+>  	char *p;
+>  
+> -	log_arm_hw_error(err);
+> -
+>  	sec_sev = ghes_severity(gdata->error_severity);
+> +	log_arm_hw_error(err, sec_sev);
+>  	if (sev != GHES_SEV_RECOVERABLE || sec_sev != GHES_SEV_RECOVERABLE)
+>  		return false;
+>  
+> diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
+> index 5d94ab79c8c3..75acc09bc96a 100644
+> --- a/drivers/ras/ras.c
+> +++ b/drivers/ras/ras.c
+> @@ -52,10 +52,51 @@ void log_non_standard_event(const guid_t *sec_type, const guid_t *fru_id,
+>  	trace_non_standard_event(sec_type, fru_id, fru_text, sev, err, len);
+>  }
+>  
+> -void log_arm_hw_error(struct cper_sec_proc_arm *err)
+> +void log_arm_hw_error(struct cper_sec_proc_arm *err, const u8 sev)
+>  {
+>  #if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+> -	trace_arm_event(err);
+> +	struct cper_arm_err_info *err_info;
+> +	struct cper_arm_ctx_info *ctx_info;
+> +	u8 *ven_err_data;
+> +	u32 ctx_len = 0;
+> +	int n, sz, cpu;
+> +	s32 vsei_len;
+> +	u32 pei_len;
+> +	u8 *pei_err;
+> +	u8 *ctx_err;
+> +
+> +	pei_len = sizeof(struct cper_arm_err_info) * err->err_info_num;
+> +	pei_err = (u8 *)err + sizeof(struct cper_sec_proc_arm);
+> +
+> +	err_info = (struct cper_arm_err_info *)(err + 1);
+> +	ctx_info = (struct cper_arm_ctx_info *)(err_info + err->err_info_num);
+> +	ctx_err = (u8 *)ctx_info;
+> +	for (n = 0; n < err->context_info_num; n++) {
+> +		sz = sizeof(struct cper_arm_ctx_info) + ctx_info->size;
+> +		ctx_info = (struct cper_arm_ctx_info *)((long)ctx_info + sz);
+> +		ctx_len += sz;
+> +	}
+> +
+> +	vsei_len = err->section_length - (sizeof(struct cper_sec_proc_arm) +
+> +					  pei_len + ctx_len);
+> +	if (vsei_len < 0) {
+> +		pr_warn(FW_BUG
+> +			"section length: %d\n", err->section_length);
+> +		pr_warn(FW_BUG
+> +			"section length is too small\n");
+> +		pr_warn(FW_BUG
+> +			"firmware-generated error record is incorrect\n");
+> +		vsei_len = 0;
+> +	}
+> +	ven_err_data = (u8 *)ctx_info;
+> +
+> +	cpu = GET_LOGICAL_INDEX(err->mpidr);
+> +	/* when return value is invalid, set cpu index to -1 */
+> +	if (cpu < 0)
+> +		cpu = -1;
+> +
+> +	trace_arm_event(err, pei_err, pei_len, ctx_err, ctx_len,
+> +			ven_err_data, (u32)vsei_len, sev, cpu);
+>  #endif
+>  }
+>  
+> diff --git a/include/linux/ras.h b/include/linux/ras.h
+> index a64182bc72ad..6025afe5736a 100644
+> --- a/include/linux/ras.h
+> +++ b/include/linux/ras.h
+> @@ -24,8 +24,7 @@ int __init parse_cec_param(char *str);
+>  void log_non_standard_event(const guid_t *sec_type,
+>  			    const guid_t *fru_id, const char *fru_text,
+>  			    const u8 sev, const u8 *err, const u32 len);
+> -void log_arm_hw_error(struct cper_sec_proc_arm *err);
+> -
+> +void log_arm_hw_error(struct cper_sec_proc_arm *err, const u8 sev);
+>  #else
+>  static inline void
+>  log_non_standard_event(const guid_t *sec_type,
+> @@ -33,7 +32,7 @@ log_non_standard_event(const guid_t *sec_type,
+>  		       const u8 sev, const u8 *err, const u32 len)
+>  { return; }
+>  static inline void
+> -log_arm_hw_error(struct cper_sec_proc_arm *err) { return; }
+> +log_arm_hw_error(struct cper_sec_proc_arm *err, const u8 sev) { return; }
+>  #endif
+>  
+>  struct atl_err {
+> @@ -52,5 +51,14 @@ static inline void amd_retire_dram_row(struct atl_err *err) { }
+>  static inline unsigned long
+>  amd_convert_umc_mca_addr_to_sys_addr(struct atl_err *err) { return -EINVAL; }
+>  #endif /* CONFIG_AMD_ATL */
+> -
 
-diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
-index 76753c71d92e..98b07969609d 100644
---- a/drivers/rtc/rtc-stm32.c
-+++ b/drivers/rtc/rtc-stm32.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/bcd.h>
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/errno.h>
- #include <linux/iopoll.h>
-@@ -83,6 +84,18 @@
- #define STM32_RTC_VERR_MAJREV_SHIFT	4
- #define STM32_RTC_VERR_MAJREV		GENMASK(7, 4)
- 
-+/* STM32_RTC_SECCFGR bit fields */
-+#define STM32_RTC_SECCFGR		0x20
-+#define STM32_RTC_SECCFGR_ALRA_SEC	BIT(0)
-+#define STM32_RTC_SECCFGR_INIT_SEC	BIT(14)
-+#define STM32_RTC_SECCFGR_SEC		BIT(15)
-+
-+/* STM32_RTC_RXCIDCFGR bit fields */
-+#define STM32_RTC_RXCIDCFGR(x)		(0x80 + 0x4 * (x))
-+#define STM32_RTC_RXCIDCFGR_CFEN	BIT(0)
-+#define STM32_RTC_RXCIDCFGR_CID		GENMASK(6, 4)
-+#define STM32_RTC_RXCIDCFGR_CID1	1
-+
- /* STM32_RTC_WPR key constants */
- #define RTC_WPR_1ST_KEY			0xCA
- #define RTC_WPR_2ND_KEY			0x53
-@@ -120,6 +133,7 @@ struct stm32_rtc_data {
- 	bool has_pclk;
- 	bool need_dbp;
- 	bool need_accuracy;
-+	bool rif_protected;
- };
- 
- struct stm32_rtc {
-@@ -134,6 +148,14 @@ struct stm32_rtc {
- 	int irq_alarm;
- };
- 
-+struct stm32_rtc_rif_resource {
-+	unsigned int num;
-+	u32 bit;
-+};
-+
-+static const struct stm32_rtc_rif_resource STM32_RTC_RES_ALRA = {0, STM32_RTC_SECCFGR_ALRA_SEC};
-+static const struct stm32_rtc_rif_resource STM32_RTC_RES_INIT = {5, STM32_RTC_SECCFGR_INIT_SEC};
-+
- static void stm32_rtc_wpr_unlock(struct stm32_rtc *rtc)
- {
- 	const struct stm32_rtc_registers *regs = &rtc->data->regs;
-@@ -553,6 +575,7 @@ static const struct stm32_rtc_data stm32_rtc_data = {
- 	.has_pclk = false,
- 	.need_dbp = true,
- 	.need_accuracy = false,
-+	.rif_protected = false,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -575,6 +598,7 @@ static const struct stm32_rtc_data stm32h7_rtc_data = {
- 	.has_pclk = true,
- 	.need_dbp = true,
- 	.need_accuracy = false,
-+	.rif_protected = false,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -606,6 +630,7 @@ static const struct stm32_rtc_data stm32mp1_data = {
- 	.has_pclk = true,
- 	.need_dbp = false,
- 	.need_accuracy = true,
-+	.rif_protected = false,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -624,14 +649,57 @@ static const struct stm32_rtc_data stm32mp1_data = {
- 	.clear_events = stm32mp1_rtc_clear_events,
- };
- 
-+static const struct stm32_rtc_data stm32mp25_data = {
-+	.has_pclk = true,
-+	.need_dbp = false,
-+	.need_accuracy = true,
-+	.rif_protected = true,
-+	.regs = {
-+		.tr = 0x00,
-+		.dr = 0x04,
-+		.cr = 0x18,
-+		.isr = 0x0C, /* named RTC_ICSR on stm32mp25 */
-+		.prer = 0x10,
-+		.alrmar = 0x40,
-+		.wpr = 0x24,
-+		.sr = 0x50,
-+		.scr = 0x5C,
-+		.verr = 0x3F4,
-+	},
-+	.events = {
-+		.alra = STM32_RTC_SR_ALRA,
-+	},
-+	.clear_events = stm32mp1_rtc_clear_events,
-+};
-+
- static const struct of_device_id stm32_rtc_of_match[] = {
- 	{ .compatible = "st,stm32-rtc", .data = &stm32_rtc_data },
- 	{ .compatible = "st,stm32h7-rtc", .data = &stm32h7_rtc_data },
- 	{ .compatible = "st,stm32mp1-rtc", .data = &stm32mp1_data },
-+	{ .compatible = "st,stm32mp25-rtc", .data = &stm32mp25_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, stm32_rtc_of_match);
- 
-+static int stm32_rtc_check_rif(struct stm32_rtc *stm32_rtc,
-+			       struct stm32_rtc_rif_resource res)
-+{
-+	u32 rxcidcfgr = readl_relaxed(stm32_rtc->base + STM32_RTC_RXCIDCFGR(res.num));
-+	u32 seccfgr;
-+
-+	/* Check if RTC available for our CID */
-+	if ((rxcidcfgr & STM32_RTC_RXCIDCFGR_CFEN) &&
-+	    (FIELD_GET(STM32_RTC_RXCIDCFGR_CID, rxcidcfgr) != STM32_RTC_RXCIDCFGR_CID1))
-+		return -EACCES;
-+
-+	/* Check if RTC available for non secure world */
-+	seccfgr = readl_relaxed(stm32_rtc->base + STM32_RTC_SECCFGR);
-+	if ((seccfgr & STM32_RTC_SECCFGR_SEC) | (seccfgr & res.bit))
-+		return -EACCES;
-+
-+	return 0;
-+}
-+
- static int stm32_rtc_init(struct platform_device *pdev,
- 			  struct stm32_rtc *rtc)
- {
-@@ -787,6 +855,16 @@ static int stm32_rtc_probe(struct platform_device *pdev)
- 		regmap_update_bits(rtc->dbp, rtc->dbp_reg,
- 				   rtc->dbp_mask, rtc->dbp_mask);
- 
-+	if (rtc->data->rif_protected) {
-+		ret = stm32_rtc_check_rif(rtc, STM32_RTC_RES_INIT);
-+		if (!ret)
-+			ret = stm32_rtc_check_rif(rtc, STM32_RTC_RES_ALRA);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Failed to probe RTC due to RIF configuration\n");
-+			goto err;
-+		}
-+	}
-+
- 	/*
- 	 * After a system reset, RTC_ISR.INITS flag can be read to check if
- 	 * the calendar has been initialized or not. INITS flag is reset by a
--- 
-2.25.1
+I'd keep a blank line here for readability.
+
+> +#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+> +#include <asm/smp_plat.h>
+> +/*
+> + * Include ARM specific SMP header which provides a function mapping mpidr to
+> + * cpu logical index.
+> + */
+> +#define GET_LOGICAL_INDEX(mpidr) get_logical_index(mpidr & MPIDR_HWID_BITMASK)
+> +#else
+> +#define GET_LOGICAL_INDEX(mpidr) -EINVAL
+> +#endif /* CONFIG_ARM || CONFIG_ARM64 */
+>  #endif /* __RAS_H__ */
+> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+> index 7c47151d5c72..ce5214f008eb 100644
+> --- a/include/ras/ras_event.h
+> +++ b/include/ras/ras_event.h
+> @@ -168,11 +168,24 @@ TRACE_EVENT(mc_event,
+>   * This event is generated when hardware detects an ARM processor error
+>   * has occurred. UEFI 2.6 spec section N.2.4.4.
+>   */
+> +#define APEIL "ARM Processor Err Info data len"
+> +#define APEID "ARM Processor Err Info raw data"
+> +#define APECIL "ARM Processor Err Context Info data len"
+> +#define APECID "ARM Processor Err Context Info raw data"
+> +#define VSEIL "Vendor Specific Err Info data len"
+> +#define VSEID "Vendor Specific Err Info raw data"
+
+I don't think I'd have bothered with these defines, but
+it doesn't really matter.
+traceprintk is strictly for debug convenience etc so not
+vital how it is formatted however, maybe could have used a
+shorter description as
+"Vendor Specific Err Info (Length %d): %s"
+However it would be inconsistent with existing entries.
+
+
+>  TRACE_EVENT(arm_event,
+>  
+> -	TP_PROTO(const struct cper_sec_proc_arm *proc),
+> +	TP_PROTO(const struct cper_sec_proc_arm *proc, const u8 *pei_err,
+> +			const u32 pei_len,
+> +			const u8 *ctx_err,
+> +			const u32 ctx_len,
+> +			const u8 *oem,
+> +			const u32 oem_len,
+> +			u8 sev,
+> +			int cpu),
+>  
+> -	TP_ARGS(proc),
+> +	TP_ARGS(proc, pei_err, pei_len, ctx_err, ctx_len, oem, oem_len, sev, cpu),
+>  
+>  	TP_STRUCT__entry(
+>  		__field(u64, mpidr)
+> @@ -180,6 +193,14 @@ TRACE_EVENT(arm_event,
+>  		__field(u32, running_state)
+>  		__field(u32, psci_state)
+>  		__field(u8, affinity)
+> +		__field(u32, pei_len)
+> +		__dynamic_array(u8, buf, pei_len)
+
+Can we do better than naming buf, buf1, buf2?
+Will make the code below easier to read if they are pei_buf, ctx_buf, oem_buf
+
+> +		__field(u32, ctx_len)
+> +		__dynamic_array(u8, buf1, ctx_len)
+> +		__field(u32, oem_len)
+> +		__dynamic_array(u8, buf2, oem_len)
+> +		__field(u8, sev)
+> +		__field(int, cpu)
+>  	),
+>  
+>  	TP_fast_assign(
+> @@ -199,12 +220,29 @@ TRACE_EVENT(arm_event,
+>  			__entry->running_state = ~0;
+>  			__entry->psci_state = ~0;
+>  		}
+> +		__entry->pei_len = pei_len;
+> +		memcpy(__get_dynamic_array(buf), pei_err, pei_len);
+> +		__entry->ctx_len = ctx_len;
+> +		memcpy(__get_dynamic_array(buf1), ctx_err, ctx_len);
+> +		__entry->oem_len = oem_len;
+> +		memcpy(__get_dynamic_array(buf2), oem, oem_len);
+> +		__entry->sev = sev;
+> +		__entry->cpu = cpu;
+>  	),
+>  
+> -	TP_printk("affinity level: %d; MPIDR: %016llx; MIDR: %016llx; "
+> -		  "running state: %d; PSCI state: %d",
+> +	TP_printk("cpu: %d; error: %d; affinity level: %d; MPIDR: %016llx; MIDR: %016llx; "
+> +		  "running state: %d; PSCI state: %d; "
+> +		  "%s: %d; %s: %s; %s: %d; %s: %s; %s: %d; %s: %s",
+> +		  __entry->cpu,
+> +		  __entry->sev,
+>  		  __entry->affinity, __entry->mpidr, __entry->midr,
+> -		  __entry->running_state, __entry->psci_state)
+> +		  __entry->running_state, __entry->psci_state,
+> +		  APEIL, __entry->pei_len, APEID,
+> +		  __print_hex(__get_dynamic_array(buf), __entry->pei_len),
+> +		  APECIL, __entry->ctx_len, APECID,
+> +		  __print_hex(__get_dynamic_array(buf1), __entry->ctx_len),
+> +		  VSEIL, __entry->oem_len, VSEID,
+> +		  __print_hex(__get_dynamic_array(buf2), __entry->oem_len))
+>  );
+>  
+>  /*
 
 
