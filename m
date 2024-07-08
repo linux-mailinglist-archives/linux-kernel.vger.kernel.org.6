@@ -1,135 +1,253 @@
-Return-Path: <linux-kernel+bounces-244059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F13929E91
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:57:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2409C929E97
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AE3DB231A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:57:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 478971C22801
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A74558A5;
-	Mon,  8 Jul 2024 08:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EDF4F88C;
+	Mon,  8 Jul 2024 08:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0MfGmOLJ"
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUpoadlI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491E7481B9
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 08:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610B313ACC;
+	Mon,  8 Jul 2024 08:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720429040; cv=none; b=WtbuuPzUHCsJb3Xj6q+aKZYmgPDHIdShGfDJYNU2+rLBtirbjFPUNkKceqthH/kTbdKQrDklJNoSld6YJJ/JtT4vUNUYQeYsa8Bb2upVGqIzK4b094W/x12cFdtg2eQ163Id1lybQg60KbGTVHkfzQnGTygd84cFdb6iEAMisE4=
+	t=1720429146; cv=none; b=KTyEbqbPSNdklpPcSBdP5k3vxbzdl6oS8CFOt5fmhdbFPObUEY2nhDjwnwlsOa3aN+3TkIMV1OtPZXT4OcRb0rFxz/cpQn5nJwwwLW3uiS8Lnv0r/fNEfy5rG0BHkffvorInFq/71EAurm6sYcLOA3BYuWlebIgqsZsLEtMHhts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720429040; c=relaxed/simple;
-	bh=Cb1AF0mLzMpKLDzenlvnWCSwmMf5JIIi0U9107W5+ro=;
+	s=arc-20240116; t=1720429146; c=relaxed/simple;
+	bh=RenBZxrZQ2uo1BEUtqkw5WbG0pW2r+nrPK0CryNPH8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UAk31DnJzBvjmUQjMC5yhwpmuwlQg64nqJ3Qw29xNkhYU5rX29cgJmS8pc9w56DZ6ENv2KpuMsp2AXGY5/DUPpCiOCxz8fwxGzh1dIbzNOWHUH1kdJKwPosw1r6vmeVkN4CaNtTcrVNeo9VjK/hrKs2kR0dmwF/rrsBTVdIxZcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0MfGmOLJ; arc=none smtp.client-ip=84.16.66.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHdKc1k4lzkyc;
-	Mon,  8 Jul 2024 10:57:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720429028;
-	bh=7bLt7WxO3ulEYXhk1rhXT6KKMcWMaVDQidRXNgAZAWs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMtHvYGQ86NgdPbsBvYHetdAi289sGWekWsbVVrEZuMzc0GU0OL14U9eJgubu8dz8OzT2yXXAGrgd2Vbm7R50iGd1ZmTRsm78kikbzsKakkt0PWG7AVsSCB9dnrZP7OAjQ2DAMuhB8L/2sfOETVf2nWNDe/IrENBeBF+UPop0A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUpoadlI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A4AC116B1;
+	Mon,  8 Jul 2024 08:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720429146;
+	bh=RenBZxrZQ2uo1BEUtqkw5WbG0pW2r+nrPK0CryNPH8o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0MfGmOLJXnmucGesfHgTcGIrV1AuYeLm7OPKPfCmEW0e1L+aQfqE3m5322nbHkmbp
-	 o/g25CO5nyDvvCCX0mNrl+9Vxi2omD86s/oTmd2DYsR4YvIMPmAftfijfVaZPvAxYt
-	 1uPPfRCpd1M7aQnk90+oYq6XmUBltSw7ahYrQLDs=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHdKV00tCzWdS;
-	Mon,  8 Jul 2024 10:57:01 +0200 (CEST)
-Date: Mon, 8 Jul 2024 10:56:59 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240708.zooj9Miaties@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
- <20240706.poo9ahd3La9b@digikod.net>
- <871q46bkoz.fsf@oldenburg.str.redhat.com>
+	b=mUpoadlIITe5dJ5HUpP+WWOXnabtiIRVanDlVE+OSEyu6I/ACr+DKp8yGBp75moYq
+	 WZWEkqzKC/ijcE4hSbndlwmXZu9Gq8H4qWINe7z0U91MTnfKamQRAF4Ly6St2vKnCR
+	 yznMhGZ2AbjtbNc5mFL/DYGAHt5Tpsfrz96Ye6FGDxa1Gx/1rkEgeg6ZjJSTqHx00b
+	 pmoegFoMEswOut0YspJ/2xIaVjXZfsfBduocYGCrLCi/wSU/TO9bWHtK3FUZ/BZjg+
+	 a1qSoUmUJZUZmkq7SkMocmYk/UfZqjIdWYlzfH6QSM3UR6KU2ls4yJ8hPHPGqkYeoo
+	 vBEhXW80WRMMQ==
+Date: Mon, 8 Jul 2024 11:59:02 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
+ during reset
+Message-ID: <20240708085902.GF6788@unreal>
+References: <20240705085937.1644229-1-huangjunxian6@hisilicon.com>
+ <20240705085937.1644229-3-huangjunxian6@hisilicon.com>
+ <20240707083007.GE6695@unreal>
+ <42e9f7dd-05bd-176f-c5c0-02e200b3f58c@hisilicon.com>
+ <20240708053850.GA6788@unreal>
+ <7cae577b-e469-9357-8375-d14746a7787b@hisilicon.com>
+ <20240708073315.GC6788@unreal>
+ <0bac285b-c8ae-8c9f-7c42-ee345f8682d1@hisilicon.com>
+ <20240708082755.GD6788@unreal>
+ <26c02b2b-4232-2049-5c9f-f757fef759a0@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <871q46bkoz.fsf@oldenburg.str.redhat.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <26c02b2b-4232-2049-5c9f-f757fef759a0@hisilicon.com>
 
-On Sat, Jul 06, 2024 at 05:32:12PM +0200, Florian Weimer wrote:
-> * Mickaël Salaün:
+On Mon, Jul 08, 2024 at 04:45:34PM +0800, Junxian Huang wrote:
 > 
-> > On Fri, Jul 05, 2024 at 08:03:14PM +0200, Florian Weimer wrote:
-> >> * Mickaël Salaün:
-> >> 
-> >> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> >> > allowed for execution.  The main use case is for script interpreters and
-> >> > dynamic linkers to check execution permission according to the kernel's
-> >> > security policy. Another use case is to add context to access logs e.g.,
-> >> > which script (instead of interpreter) accessed a file.  As any
-> >> > executable code, scripts could also use this check [1].
-> >> 
-> >> Some distributions no longer set executable bits on most shared objects,
-> >> which I assume would interfere with AT_CHECK probing for shared objects.
+> 
+> On 2024/7/8 16:27, Leon Romanovsky wrote:
+> > On Mon, Jul 08, 2024 at 03:46:26PM +0800, Junxian Huang wrote:
+> >>
+> >>
+> >> On 2024/7/8 15:33, Leon Romanovsky wrote:
+> >>> On Mon, Jul 08, 2024 at 02:50:50PM +0800, Junxian Huang wrote:
+> >>>>
+> >>>>
+> >>>> On 2024/7/8 13:38, Leon Romanovsky wrote:
+> >>>>> On Mon, Jul 08, 2024 at 10:29:54AM +0800, Junxian Huang wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 2024/7/7 16:30, Leon Romanovsky wrote:
+> >>>>>>> On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
+> >>>>>>>> From: wenglianfa <wenglianfa@huawei.com>
+> >>>>>>>>
+> >>>>>>>> During reset, cmdq events won't be reported, leading to a long and
+> >>>>>>>> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
+> >>>>>>>> of reset.
+> >>>>>>>>
+> >>>>>>>> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
+> >>>>>>>> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
+> >>>>>>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+> >>>>>>>> ---
+> >>>>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
+> >>>>>>>>  1 file changed, 18 insertions(+)
+> >>>>>>>>
+> >>>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >>>>>>>> index a5d746a5cc68..ff135df1a761 100644
+> >>>>>>>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >>>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >>>>>>>> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+> >>>>>>>>  
+> >>>>>>>>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
+> >>>>>>>>  }
+> >>>>>>>> +
+> >>>>>>>> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
+> >>>>>>>> +{
+> >>>>>>>> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
+> >>>>>>>> +	int i;
+> >>>>>>>> +
+> >>>>>>>> +	if (!hr_dev->cmd_mod)
+> >>>>>>>
+> >>>>>>> What prevents cmd_mod from being changed?
+> >>>>>>>
+> >>>>>>
+> >>>>>> It's set when the device is being initialized, and won't be changed after that.
+> >>>>>
+> >>>>> This is exactly the point, you are assuming that the device is already
+> >>>>> ininitialized or not initialized at all. What prevents hns_roce_v2_reset_notify_cmd()
+> >>>>> from being called in the middle of initialization?
+> >>>>>
+> >>>>> Thanks
+> >>>>>
+> >>>>
+> >>>> This is ensured by hns3 NIC driver.
+> >>>>
+> >>>> Initialization and reset of hns RoCE are both called by hns3. It will check the state
+> >>>> of RoCE device (see line 3798), and notify RoCE device to reset (hns_roce_v2_reset_notify_cmd()
+> >>>> is called) only if the RoCE device has been already initialized:
+> >>>
+> >>> So why do you have "if (!hr_dev->cmd_mod)" check in the code?
+> >>>
+> >>> Thanks
+> >>>
+> >>
+> >> cmd_mod indicates the mode of cmdq (0: poll mode, 1: event mode).
+> >> This patch only affects event mode because HW won't report events during reset.
+> > 
+> > You set cmd_mod to 1 in hns_roce_hw_v2_init_instance() without any
+> > condition, I don't see when hns v2 IB device is created and continue
+> > to operate in polling mode. 
+> > 
+> > Thanks
 > >
-> > A file without the execute permission is not considered as executable by
-> > the kernel.  The AT_CHECK flag doesn't change this semantic.  Please
-> > note that this is just a check, not a restriction.  See the next patch
-> > for the optional policy enforcement.
-> >
-> > Anyway, we need to define the policy, and for Linux this is done with
-> > the file permission bits.  So for systems willing to have a consistent
-> > execution policy, we need to rely on the same bits.
 > 
-> Yes, that makes complete sense.  I just wanted to point out the odd
-> interaction with the old binutils bug and the (sadly still current)
-> kernel bug.
-> 
-> >> Removing the executable bit is attractive because of a combination of
-> >> two bugs: a binutils wart which until recently always set the entry
-> >> point address in the ELF header to zero, and the kernel not checking for
-> >> a zero entry point (maybe in combination with an absent program
-> >> interpreter) and failing the execve with ELIBEXEC, instead of doing the
-> >> execve and then faulting at virtual address zero.  Removing the
-> >> executable bit is currently the only way to avoid these confusing
-> >> crashes, so I understand the temptation.
-> >
-> > Interesting.  Can you please point to the bug report and the fix?  I
-> > don't see any ELIBEXEC in the kernel.
-> 
-> The kernel hasn't been fixed yet.  I do think this should be fixed, so
-> that distributions can bring back the executable bit.
+> Event mode is the default. In hns_roce_cmd_use_events(), if kcalloc() fails
+> then it'll be set to polling mode instead.
 
-Can you please point to the mailing list discussion or the bug report?
+1. Awesome, and we are returning back to the question. What prevents
+   hns_roce_v2_reset_notify_cmd() from being called in the middle of
+   changing cmd_mod from 1 to 0 and from 0 to 1?
+2. This cmd_mode swtich from 1 to 0 should be removed. Failure to
+   allocate memory is not a reason to switch to polling mode. The reason
+   can be HW limitation, but not OS limitation.
+
+Thanks
+
+> 
+> Junxian
+> 
+> >>
+> >> Junxian
+> >>
+> >>>>
+> >>>>  3791 static int hclge_notify_roce_client(struct hclge_dev *hdev,
+> >>>>  3792                                     enum hnae3_reset_notify_type type)
+> >>>>  3793 {
+> >>>>  3794         struct hnae3_handle *handle = &hdev->vport[0].roce;
+> >>>>  3795         struct hnae3_client *client = hdev->roce_client;
+> >>>>  3796         int ret;
+> >>>>  3797
+> >>>>  3798         if (!test_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state) || !client)
+> >>>>  3799                 return 0;
+> >>>>  3800
+> >>>>  3801         if (!client->ops->reset_notify)
+> >>>>  3802                 return -EOPNOTSUPP;
+> >>>>  3803
+> >>>>  3804         ret = client->ops->reset_notify(handle, type);
+> >>>>  3805         if (ret)
+> >>>>  3806                 dev_err(&hdev->pdev->dev, "notify roce client failed %d(%d)",
+> >>>>  3807                         type, ret);
+> >>>>  3808
+> >>>>  3809         return ret;
+> >>>>  3810 }
+> >>>>
+> >>>> And the bit is set (see line 11246) after the initialization has been done (line 11242):
+> >>>>
+> >>>> 11224 static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
+> >>>> 11225                                            struct hclge_vport *vport)
+> >>>> 11226 {
+> >>>> 11227         struct hclge_dev *hdev = ae_dev->priv;
+> >>>> 11228         struct hnae3_client *client;
+> >>>> 11229         int rst_cnt;
+> >>>> 11230         int ret;
+> >>>> 11231
+> >>>> 11232         if (!hnae3_dev_roce_supported(hdev) || !hdev->roce_client ||
+> >>>> 11233             !hdev->nic_client)
+> >>>> 11234                 return 0;
+> >>>> 11235
+> >>>> 11236         client = hdev->roce_client;
+> >>>> 11237         ret = hclge_init_roce_base_info(vport);
+> >>>> 11238         if (ret)
+> >>>> 11239                 return ret;
+> >>>> 11240
+> >>>> 11241         rst_cnt = hdev->rst_stats.reset_cnt;
+> >>>> 11242         ret = client->ops->init_instance(&vport->roce);
+> >>>> 11243         if (ret)
+> >>>> 11244                 return ret;
+> >>>> 11245
+> >>>> 11246         set_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state);
+> >>>> 11247         if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
+> >>>> 11248             rst_cnt != hdev->rst_stats.reset_cnt) {
+> >>>> 11249                 ret = -EBUSY;
+> >>>> 11250                 goto init_roce_err;
+> >>>> 11251         }
+> >>>>
+> >>>> Junxian
+> >>>>
+> >>>>>>
+> >>>>>> Junxian
+> >>>>>>
+> >>>>>>>> +		return;
+> >>>>>>>> +
+> >>>>>>>> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
+> >>>>>>>> +		hr_cmd->context[i].result = -EBUSY;
+> >>>>>>>> +		complete(&hr_cmd->context[i].done);
+> >>>>>>>> +	}
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+> >>>>>>>>  {
+> >>>>>>>>  	struct hns_roce_dev *hr_dev;
+> >>>>>>>> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+> >>>>>>>>  	hr_dev->dis_db = true;
+> >>>>>>>>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
+> >>>>>>>>  
+> >>>>>>>> +	/* Complete the CMDQ event in advance during the reset. */
+> >>>>>>>> +	hns_roce_v2_reset_notify_cmd(hr_dev);
+> >>>>>>>> +
+> >>>>>>>>  	return 0;
+> >>>>>>>>  }
+> >>>>>>>>  
+> >>>>>>>> -- 
+> >>>>>>>> 2.33.0
+> >>>>>>>>
+> >>>>>>
+> >>>>
+> 
 
