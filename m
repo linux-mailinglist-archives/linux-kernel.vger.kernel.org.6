@@ -1,233 +1,185 @@
-Return-Path: <linux-kernel+bounces-244671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F96592A7A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:53:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CD792A7AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5B31F215B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:53:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A86B210FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 16:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4CB146D53;
-	Mon,  8 Jul 2024 16:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9962146D7F;
+	Mon,  8 Jul 2024 16:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmhgnyXz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m/8gox0M"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601A514532B;
-	Mon,  8 Jul 2024 16:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3D914532B
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 16:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720457626; cv=none; b=Y+gEQfU0mNEUwrf32BfHM9cgMzwKo2a11L17dHS70fqFIdFXsjgAE9C8phNMaD/qQgtKF6/lJ8ig6H1O02PL782kWqA3vbG5o8OfuFyOo6ceQ+cvY6YgsWY/9OYwTa+YpOxFA8qlWMWjvLFVgLcLJqYAzaL8E2x0RPcy/409Bko=
+	t=1720457777; cv=none; b=Fu46dh7+ZgCElQcO+x4jKMmBfFFPd3G9gzhZUJxCyFZXalbpdCD+dztiMXxHs0Llc/7DeLKRIt3fBUTObAdz7urQXr7lOTS9AY95arKsBQezpjs7b71GiOddpWpybGnONbDast3n3Q1muKNkIfQvMM4aBtt+dNltz49xPqMGZZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720457626; c=relaxed/simple;
-	bh=FCryOTObg5pKp7VCt0NeoJMhOHHA4GbhkZTncEgyNQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bzV3g/TNSx1CIS5I2j2N/PZxuf5VPmq8SbI6uRoOgLm4Ch86CMgRSml/s12qCb8ZAqL5miJxRDvFFD6+st81KF1GwoToueQMtVc/YqqAN4M9+Veutao+N0hSd6/51TM8lPJhdgawmyuEqSioEuZbow06z067qNBkCmOyRZxMRxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmhgnyXz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F8DC116B1;
-	Mon,  8 Jul 2024 16:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720457625;
-	bh=FCryOTObg5pKp7VCt0NeoJMhOHHA4GbhkZTncEgyNQo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QmhgnyXz02DisVxG5jMEKvqdnM7ZS6pKqa4VKSxai/AI8RbLrfyv8I9OViPo2pjKh
-	 kuP5KgZkcjKy+OihckUTDl2m/Yi7PElPK7ezbau+x/UucY/JAGfpBO2ueBtgBxeUu6
-	 lQeUXVbMQEg3zLfLGfIssijFPnfGEoE3YvVCPxEgBTlVyyO5o5Xt8jDd/UxipEzfZP
-	 V6hrDC9iqCTO+B6fB+OZHmd0fi9nJSs4KK2esLsrqlmwaWPmaywq9XSTZ7nYU+N1lz
-	 q8wO+WMdGDY4ps6nUBY+3Z3WlyXXfB6yM39l9wAGs9l9hUi37qURyGV1Bj2fxDGCl3
-	 bW7xkJQ9KYdVw==
-Date: Mon, 8 Jul 2024 09:53:42 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: add script and target to generate pacman
- package
-Message-ID: <20240708165342.GA2417540@thelio-3990X>
-References: <20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net>
- <20240708055046.GB1968570@thelio-3990X>
- <9884e892-1d45-4854-971c-5963e4661a1b@t-8ch.de>
+	s=arc-20240116; t=1720457777; c=relaxed/simple;
+	bh=C49tfT6Wgt5Ck261hQAy7mqF+kocGPwYPx6Hpdry0JM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aFPMYGsN1hSs1sZuBDxTzRUbKtg7N+VBRFxMZTnximBDxTFX11VXSqLPtZzyB1KtwPn8VSi5oflUq6kEsFpeLar8isyApn+sGjZHmtXsnATuXWgz7ekxwOVneWdSyomiW9VieQbNrWs6WIcQ4cTK69/8cQyuZiyLXFzaHeBnt3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m/8gox0M; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so25522535e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 09:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720457773; x=1721062573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=p+qnhD2hx9xrENWu0QP60bAxducN4cTQgp2xM1mPbvI=;
+        b=m/8gox0MTf+NjrIvFPNAU226j7NG6CyymNo9EeMJVqj6ACWrSQ/v+Sv4qtCZ3x2Sj+
+         7TP/bdhHg+9sOTb3PgbRMGk/b8pB4tCVFr0HDiWPECpsW55S4FEzt3QrmMz2D1x8W+lY
+         PJEPZA7MQNxTokO1pLQXoyXhh99R/2ohYofY1kZM8gPZtx32p8xlVdeG64CiSkEXQBPC
+         hJs4ld5QlMcmvN7IP4A/9uJx3o0NoiGIH/ahkG+XNhBnfKUIjiAeQBs1uG5fnWWxxail
+         Y3dsssHkKAkEYT3cddmnOb6HVuAe9SNvbpbAG39IJy71PehTZGOVB3xETmGOwQ0HYXcz
+         4IPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720457773; x=1721062573;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p+qnhD2hx9xrENWu0QP60bAxducN4cTQgp2xM1mPbvI=;
+        b=Vc7gTU17OWG7fhfEawMEWegA7tZWejGLvqPFHAYc3SZSir6CRxRrYX18/YQzdKVi8W
+         6P/86iphnCXWwbS+iNaUE6DSMm5itP+za903HxuJ4feU3vflADM3+0vTByAqnliZ6Ktx
+         qvy+LmPuMnJpCnWOQyGSosm2mxcXieyxp2aORmYyvaLvDg8mHg4LezYKs73CVAjIlgAl
+         t/s6/tjX/1Yz9u0Xba2WjG3p+57aZcQcTgKkcI7E3ytQNR85bjNAa0d7Mn30tmJX1ldK
+         1eNN0SZIBRPkxZmaNSsnOKnlIatsRaS2F0n2JJ6m5QokDXe6xWW0BnENEHnNjUe8m4ap
+         HyjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXl6EKGZyoZOvKyhnM29vl1Dq37WtKOfceoKDKwAmn4kgAuG7Mb7xBXeVNu8axaosQATwNwY44LOdVCvrIhQbQ6OmnrpgSCeSu53yKD
+X-Gm-Message-State: AOJu0YzKf5niEovfgON8Dwto9kb2g8+Kd91+3t9w1K8XcC2LwAOLf4PQ
+	PvyK17xgZ0I6b8KyQcUBiLEk1gYI0y5+FcVOJlm/AZVgYBAaXXY85xePdmPBapk=
+X-Google-Smtp-Source: AGHT+IE2oQep7Ey6Ar/9JAg1Ao7dM6HGDWBtWiUxfm3nMI4/309WpySEbis5SAYg3/+9ERZd988WYQ==
+X-Received: by 2002:a7b:ce88:0:b0:426:6981:1bd with SMTP id 5b1f17b1804b1-426698103bbmr32048115e9.5.1720457773455;
+        Mon, 08 Jul 2024 09:56:13 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:cf24:cce:17df:12ab? ([2a05:6e02:1041:c10:cf24:cce:17df:12ab])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42650b26c48sm138476945e9.17.2024.07.08.09.56.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 09:56:12 -0700 (PDT)
+Message-ID: <598da6e0-4d7e-4800-a47a-3914070669d0@linaro.org>
+Date: Mon, 8 Jul 2024 18:56:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clocksource/drivers/sh_cmt: Address race condition for
+ clock events
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>, Thomas Gleixner
+ <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20240702190230.3825292-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240702190230.3825292-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9884e892-1d45-4854-971c-5963e4661a1b@t-8ch.de>
 
-On Mon, Jul 08, 2024 at 05:56:44PM +0200, Thomas Weiﬂschuh wrote:
-> Hi Nathan,
+On 02/07/2024 21:02, Niklas S√∂derlund wrote:
+> There is a race condition in the CMT interrupt handler. In the interrupt
+> handler the driver sets a driver private flag, FLAG_IRQCONTEXT. This
+> flag is used to indicate any call to set_next_event() should not be
+> directly propagated to the device, but instead cached. This is done as
+> the interrupt handler itself reprograms the device when needed before it
+> completes and this avoids this operation to take place twice.
 > 
-> On 2024-07-07 22:50:46+0000, Nathan Chancellor wrote:
-> > On Sat, Jul 06, 2024 at 09:33:46AM +0200, Thomas Weiﬂschuh wrote:
-> > > pacman is the package manager used by Arch Linux and its derivates.
-> > > Creating native packages from the kernel tree has multiple advantages:
-> > > 
-> > > * The package triggers the correct hooks for initramfs generation and
-> > >   bootloader configuration
-> > > * Uninstallation is complete and also invokes the relevant hooks
-> > > * New UAPI headers can be installed without any manual bookkeeping
-> > > 
-> > > The PKGBUILD file is a simplified version of the one used for the
-> > > downstream Arch Linux "linux" package.
-> > > Extra steps that should not be necessary for a development kernel have
-> > > been removed and an UAPI header package has been added.
-> > > 
-> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> > 
-> > Thanks a lot for addressing my comments. From a PKGBUILD perspective,
-> > this looks good to me (I have a couple more comments below). I am not as
-> > familiar with the Kbuild packaging infrastructure, so Masahiro might
-> > have more comments on that, but it works for me in my basic testing so
-> > consider it:
-> > 
-> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> > Tested-by: Nathan Chancellor <nathan@kernel.org>
+> It is unclear why this design was chosen, my suspicion is to allow the
+> struct clock_event_device.event_handler callback, which is called while
+> the FLAG_IRQCONTEXT is set, can update the next event without having to
+> write to the device twice.
 > 
-> Thanks!
+> Unfortunately there is a race between when the FLAG_IRQCONTEXT flag is
+> set and later cleared where the interrupt handler have already started to
+> write the next event to the device. If set_next_event() is called in
+> this window the value is only cached in the driver but not written. This
+> leads to the board to misbehave, or worse lockup and produce a splat.
 > 
-> > 
-> > > ---
-> > > Changes in v2:
-> > > - Replace ${MAKE} with $MAKE for consistency with other variables
-> > > - Use $MAKE for "-s image_name"
-> > > - Avoid permission warnings from build directory
-> > > - Clarify reason for /build symlink removal
-> > > - Install System.map and config
-> > > - Install dtbs where available
-> > > - Allow cross-build through arch=any
-> > > - Sort Contributor/Maintainer chronologically
-> > > - Disable some unneeded makepkg options
-> > > - Use DEPMOD=true for consistency with rpm-package
-> > > - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
-> > > ---
-> > >  .gitignore               |  6 ++++
-> > >  scripts/Makefile.package | 15 +++++++++
-> > >  scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 104 insertions(+)
+>     rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+>     rcu:     0-...!: (0 ticks this GP) idle=f5e0/0/0x0 softirq=519/519 fqs=0 (false positive?)
+>     rcu:     (detected by 1, t=6502 jiffies, g=-595, q=77 ncpus=2)
+>     Sending NMI from CPU 1 to CPUs 0:
+>     NMI backtrace for cpu 0
+>     CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0-rc5-arm64-renesas-00019-g74a6f86eaf1c-dirty #20
+>     Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+>     pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>     pc : tick_check_broadcast_expired+0xc/0x40
+>     lr : cpu_idle_poll.isra.0+0x8c/0x168
+>     sp : ffff800081c63d70
+>     x29: ffff800081c63d70 x28: 00000000580000c8 x27: 00000000bfee5610
+>     x26: 0000000000000027 x25: 0000000000000000 x24: 0000000000000000
+>     x23: ffff00007fbb9100 x22: ffff8000818f1008 x21: ffff8000800ef07c
+>     x20: ffff800081c79ec0 x19: ffff800081c70c28 x18: 0000000000000000
+>     x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffffc2c717d8
+>     x14: 0000000000000000 x13: ffff000009c18080 x12: ffff8000825f7fc0
+>     x11: 0000000000000000 x10: ffff8000818f3cd4 x9 : 0000000000000028
+>     x8 : ffff800081c79ec0 x7 : ffff800081c73000 x6 : 0000000000000000
+>     x5 : 0000000000000000 x4 : ffff7ffffe286000 x3 : 0000000000000000
+>     x2 : ffff7ffffe286000 x1 : ffff800082972900 x0 : ffff8000818f1008
+>     Call trace:
+>      tick_check_broadcast_expired+0xc/0x40
+>      do_idle+0x9c/0x280
+>      cpu_startup_entry+0x34/0x40
+>      kernel_init+0x0/0x11c
+>      do_one_initcall+0x0/0x260
+>      __primary_switched+0x80/0x88
+>     rcu: rcu_preempt kthread timer wakeup didn't happen for 6501 jiffies! g-595 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
+>     rcu:     Possible timer handling issue on cpu=0 timer-softirq=262
+>     rcu: rcu_preempt kthread starved for 6502 jiffies! g-595 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
+>     rcu:     Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+>     rcu: RCU grace-period kthread stack dump:
+>     task:rcu_preempt     state:I stack:0     pid:15    tgid:15    ppid:2      flags:0x00000008
+>     Call trace:
+>      __switch_to+0xbc/0x100
+>      __schedule+0x358/0xbe0
+>      schedule+0x48/0x148
+>      schedule_timeout+0xc4/0x138
+>      rcu_gp_fqs_loop+0x12c/0x764
+>      rcu_gp_kthread+0x208/0x298
+>      kthread+0x10c/0x110
+>      ret_from_fork+0x10/0x20
 > 
-> <snip>
+> The design have been part of the driver since it was first merged in
+> early 2009. It becomes increasingly harder to trigger the issue the
+> older kernel version one tries. It only takes a few boots on v6.10-rc5,
+> while hundreds of boots are needed to trigger it on v5.10.
 > 
-> > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> > > new file mode 100644
-> > > index 000000000000..fe899c77a976
-> > > --- /dev/null
-> > > +++ b/scripts/package/PKGBUILD
-> > > @@ -0,0 +1,83 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > +# Maintainer: Thomas Weiﬂschuh <linux@weissschuh.net>
-> > > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-> > > +
-> > > +pkgbase=linux-upstream
-> > > +pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
-> > > +pkgver="${KERNELRELEASE//-/_}"
-> > > +pkgrel="$KBUILD_REVISION"
-> > > +pkgdesc='Linux'
-> > > +url='https://www.kernel.org/'
-> > > +arch=(any)
-> > 
-> > I see why you went this way but this feels a little dangerous because
-> > this means the package will be installable on architectures other than
-> > the one that it is built for. I think a better solution for this problem
-> > would be moving arch back to $UTS_MACHINE but setting CARCH to that same
-> > value in scripts/Makefile.package above. This diff works for me,
-> > allowing me to build an aarch64 package on x86_64:
+> Close the race condition by using the CMT channel lock for the two
+> competing sections. The channel lock was added to the driver after its
+> initial design.
 > 
-> This is what I used in v1 of the patch.
+> Signed-off-by: Niklas S√∂derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+> Hello,
+> 
+> I only have access to R-Car based SoCs and that is what I have tested
+> this change on. I have not been able to test on any SH platforms which
+> also uses this driver.
+> ---
 
-You had $UTS_MACHINE as arch but I don't see where CARCH was set for
-makepkg? If you tried to cross compile with v1, there was an error
-because the default CARCH value (the host) does not match the arch
-value, but explicitly passing CARCH to makepkg with $UTS_MACHINE should
-allow makepkg to build a package that is only installable on that
-machine?
+Mmh, it seems to fix the race conditions but the testing coverage is 
+incomplete. I'll pick it but keep an eye on it in case it breaks other 
+platforms. If someone can give a try to test on the sh platforms that 
+would be nice.
 
-> But I felt that this only works by pure chance.
 
-I don't think it is by pure chance, it should be entirely based off of the
-builder's ARCH value, no? I might be misunderstanding something though.
+-- 
+<http://www.linaro.org/> Linaro.org ‚îÇ Open source software for ARM SoCs
 
-> IMO users of this feature should know what they are doing.
-> 
-> That said, if anybody has strong opinions on this, I'll be happy to change it.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-I don't feel strongly about it but I think this is different from pretty
-much all of the other package builds, which only build a package that is
-installable/usable on one archictecture, and the solution seems
-simple/robust enough.
-
-> > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> > index 8c0c80f8bec0..a5b5b899d90c 100644
-> > --- a/scripts/Makefile.package
-> > +++ b/scripts/Makefile.package
-> > @@ -151,6 +151,7 @@ pacman-pkg:
-> >  		srctree="$(realpath $(srctree))" \
-> >  		objtree="$(realpath $(objtree))" \
-> >  		BUILDDIR="$(realpath $(objtree))/pacman" \
-> > +		CARCH="$(UTS_MACHINE)" \
-> >  		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
-> >  		KBUILD_REVISION="$(shell $(srctree)/init/build-version)" \
-> >  		makepkg
-> > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> > index fe899c77a976..7f1a4588c3d3 100644
-> > --- a/scripts/package/PKGBUILD
-> > +++ b/scripts/package/PKGBUILD
-> > @@ -8,7 +8,7 @@ pkgver="${KERNELRELEASE//-/_}"
-> >  pkgrel="$KBUILD_REVISION"
-> >  pkgdesc='Linux'
-> >  url='https://www.kernel.org/'
-> > -arch=(any)
-> > +arch=($UTS_MACHINE)
-> >  options=(!debug !strip !buildflags !makeflags)
-> >  license=(GPL-2.0-only)
-> >  
-> > 
-> > > +options=(!debug !strip !buildflags !makeflags)
-> > > +license=(GPL-2.0-only)
-> > > +
-> 
-> <snip>
-> 
-> > > +
-> > > +package_linux-upstream-headers() {
-> > > +  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-> > > +
-> > > +  export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> > > +  cd "$objtree"
-> > > +  local builddir="$pkgdir/usr/$MODLIB/build"
-> > > +
-> > > +  echo "Installing build files..."
-> > > +  "$srctree/scripts/package/install-extmod-build" "$builddir"
-> > > +
-> > > +  echo "Installing System.map and config..."
-> > > +  cp System.map "$builddir/System.map"
-> > > +  cp .config "$builddir/.config"
-> > 
-> > Remove the dot on the installation location so that it is more visible.
-> 
-> This is the location used by the downstream linux-headers package.
-
-Ah, I did not realize that!
-
-> I can add a symlink for better visibility, though.
-
-It probably isn't that big of a deal if it is in the package somewhere,
-I don't feel strongly enough about it.
-
-> > > +  echo "Adding symlink..."
-> > > +  mkdir -p "$pkgdir/usr/src"
-> > > +  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
-> > > +}
-> > > +
-> 
-> <snip>
 
