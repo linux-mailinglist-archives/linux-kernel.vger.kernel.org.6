@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-244743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBE492A8C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:12:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B3B92A8C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD13928271A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:12:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5BECB21DAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFCF149C60;
-	Mon,  8 Jul 2024 18:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC2A148FE4;
+	Mon,  8 Jul 2024 18:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CmaD9auL"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQ3mpz7F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0953A149DEF
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 18:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5F014A619;
+	Mon,  8 Jul 2024 18:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720462336; cv=none; b=dE9Edou5TqbiMZEmC+ZhlFi1uTI5FVxvOCLnUai29ar6wlGhcSOeNJon8zKO887DvZe+Zus2s9C5clrq8hXe9Ns6sbAFYP9IMeeN2sh6FPzMDZtY/jg0IlisR5nDvd7c3Njo8otpuznQdOptt+Wf142ojI3LsDJE8amWI0ltU9E=
+	t=1720462340; cv=none; b=PN3XsQZSBAMvaBeRZTgBJhoZzxrmgRqkCirNYyTJBvGBJWhaQIeHO+VCEMOZR/xF6LLjGacf8ydr8yjRjSsmECRmSTVxE0gYJ5X0MKldvfL3LAi+87zUEePvKCylre/xaU9AcOpf/w4D60kThmwSjWLCL7QRSrXXFrn5+zIEE2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720462336; c=relaxed/simple;
-	bh=3SRN07gW8KadA07WMWKLIZWwgaoZ2seUB0z5+wWRPjY=;
+	s=arc-20240116; t=1720462340; c=relaxed/simple;
+	bh=dfSIIph8640L3j+F3/oXa8l7Q2U92Wp9f8ImyBywmYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eipQ+I9p7HGV/8YuoO6OdiJxcCpoldMuIqc8PV1+H+ptBwsJQ9drLRnmOqhNrH7dAXAZO6+iA46b2+G7QWPirqeGeHGRxaiJNMltkBO4aqW2mQ116T32tiaxeNh7aahY9f1YRp4JcE//PkCybi7kBRzjky3eqMsFHCYBrSoRJOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CmaD9auL; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0AA3A40E019D;
-	Mon,  8 Jul 2024 18:12:11 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DFr0AByshgNo; Mon,  8 Jul 2024 18:12:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720462328; bh=iX4Q3ez4xLSCHud0GhEsaXKGZ96Mpi5r9OTimi4q+9g=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qv3Oory4YEZCaPozaT2vRjj5Qi3OnqTHahcPbYulx23BZRG1FmKcVTwk5Oivj6meAzUbdc0tNyEXIvSSn7HrAvaph8UQEhL66YwVYf8iPkicaGfo+I4TDWVN6PbgZVzaHAaBoYHg+LrdAs8dH4eAMdyJwoC7TMaQ10N6WTX1JFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQ3mpz7F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBCEC4AF0B;
+	Mon,  8 Jul 2024 18:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720462340;
+	bh=dfSIIph8640L3j+F3/oXa8l7Q2U92Wp9f8ImyBywmYQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CmaD9auL69GOeBgiiE8OrA7wGSx8/r1tUP+hB7Z0ZWXm4YOfw3QOPKd+QIqB7oJEX
-	 FE5D/QrvmpIDmk9VHv/V42IbqSveZV4ZemfHkH3tszj+2OWHci41giKBbWQqD0MZqq
-	 wNKJpDG+acBx1UkxNlYrPcW+3SRPL80UthZAW/KqHplxb7ryGfdB31YWu/jdOSKrgr
-	 5AKISE4wl8PzjdmzvYAFP9iH8y3p+Rc01wBfrldS+P1bXP/Ki4INGgF0PJa6ba5lKK
-	 MiAGzMQXI/H+kkoyPoOwm4sAX/2NOtiOXVhnAI5EJlb0cwO5MX1tYpGz0gjF3fAKRx
-	 0yrc79j+r9smxfaRlrEjTO5yaDG16vPhdgSfFn3/3gVW99Mp6hy0yOlxq1QDBWWqxw
-	 CH1g38CoCTR1uCvG0LMbKyPP4K32T/yttwj7QTnB6BoEc7FlZJfvqwXYcAcctC0Vr2
-	 wPPU0PawaTps0qk3yvPTEfc4ktmm1EPRk6517+ftTvOCJOVgTxn+IL++63zxCnlI6Z
-	 CAiwYxMQF7eM9VVI4J/JASniUFmjtHm2PMKpLv+hylbLraBQUVKFUueWgmMI1+Xzi1
-	 DQTf65HpfF5GrQsK7nvpSRjNW3tz6PPXhH+LKO+oiMmv5EEt2OitrmS3wm6GKoPOss
-	 nI2Qpjr+OHKEptZKqajJkFZ4=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9B9C140E0192;
-	Mon,  8 Jul 2024 18:11:41 +0000 (UTC)
-Date: Mon, 8 Jul 2024 20:11:33 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Steve Wahl <steve.wahl@hpe.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ashish Kalra <ashish.kalra@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Pavin Joseph <me@pavinjoseph.com>,
-	Eric Hagberg <ehagberg@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
-	Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <20240708181133.GHZowr1eznPqgvdtRw@fat_crate.local>
-References: <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com>
- <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
- <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
- <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
- <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com>
- <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
- <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local>
- <CAMj1kXGsjU5CpF655me1XNA8-5nbk3020vT2Bu5ZoFY25igovg@mail.gmail.com>
- <20240703154301.GEZoVxhREtHjk0vtaL@fat_crate.local>
- <ZowI9w7huVfcKJ7I@swahl-home.5wahls.com>
+	b=EQ3mpz7Fy6DgD3i9V4i0zppZ+ackgDpWqyIQKkX7aSAbBsoamrRivjgQOJQ3wLJpr
+	 /SHi7maFX9flEGWHyVlpSPvK9I7+bAW1GGAldhC1uVoC+4jfFh0fqGSdrUiwLzA+U/
+	 n1ogQlpHtaq/eJX1DrFGssQAxSFr7Aes9UrUnZNsvD0rpaM/e6djEet0LZLF0vsjuV
+	 jtD4tacO2yTGag2G6DwhfOZefXQ+bUX6DO12HXhuRf+WUrbA5/ZemsD9XWJ1M9VLId
+	 OyDu60R14KiR3z0gdoGedU/Iyl93vpmd1qUJx8jtUPlA8XzSLHc/Z/HU89ChsAvXcG
+	 Q8XToVZSl0RQg==
+Date: Mon, 8 Jul 2024 19:12:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Marc Zyngier <maz@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 0/4] KVM: arm64: Fix underallocation of storage for
+ SVE state
+Message-ID: <69e0d4c2-b222-43d0-b95a-686fee465f79@sirena.org.uk>
+References: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
+ <86a5iw3ri2.wl-maz@kernel.org>
+ <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
+ <ZowGFl/1AEuevh96@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VcXe+ClQvdjQIrFK"
 Content-Disposition: inline
-In-Reply-To: <ZowI9w7huVfcKJ7I@swahl-home.5wahls.com>
+In-Reply-To: <ZowGFl/1AEuevh96@e133380.arm.com>
+X-Cookie: Many are cold, but few are frozen.
 
-On Mon, Jul 08, 2024 at 10:42:47AM -0500, Steve Wahl wrote:
-> So I looked at the code more closely, and I don't think boot_page_fault is
-> going to work prior to the call to initialize_identity_maps.  In the current
-> flow in head_64.S, that comes after load_stage2_idt, where here we were
-> trying to use it just after load_stage1_idt, quite a bit earlier.
 
-But still after setting up the #PF handlers in both cases. So it can't be
-that.
+--VcXe+ClQvdjQIrFK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Is there a reason you want to avoid having these areas already entered
-> in the identity map setup by kexec?
+On Mon, Jul 08, 2024 at 04:30:30PM +0100, Dave Martin wrote:
 
-Well, imagine my one-liner worked. Can you think of a reason then?
+> One thing confuses me:
 
-So, theoretically, this should be reproducible in a VM too, I'd say. If we
-could manage to get that EFI config table placed at the right address, to be
-outside of a 1G page so that it doesn't get covered by a Gb mapping.
+> The host could never use over-max VLs except in non-preemptible kernel
+> code, since code doing that would be non-migratable to other physical
+> CPUs.  This is done to probe SVE only, and the extra bits in the vector
+> registers are never used at all.
 
-Or use "nogbpages" and then maybe perhaps with Ard's help hack up OVMF to do
-so. :)
+> Can't pKVM just hide the non symmetrically supported VLs using ZCR_EL2,
+> just as regular KVM does for the guest?
 
-So, can someone with such a box boot with "efi=debug" on the kernel cmdline so
-that we can try to reproduce the memory layout in a VM?
+> (I may be making bad assumptions about pKVM's relationship with the host
+> kernel.)
 
-Thx.
+That'd be another way to do it, constrain the VLs the host can set - I
+assume there's something about how pKVM or hVHE does things that makes
+problems for that.
 
--- 
-Regards/Gruss,
-    Boris.
+--VcXe+ClQvdjQIrFK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-https://people.kernel.org/tglx/notes-about-netiquette
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaMK/0ACgkQJNaLcl1U
+h9CcgwgAhKlyjxfW4+Ot8Z919qxzzty8vnvRjVgxKSOxN6kdpVj78smo3R328/AB
+/Igx4H5XbmzGy9rwYdhvU63bROvvArzVgXvn3Z4tDe2ievCsLmsoHrSBHHOwwW5q
+5YqQm22MhwJ2l08axfuboCNqNa3MPijtXIsZyLkwBvHtZrd52XVZoCimv58rQ6ya
+gnihvtDJlXM/BPJ5cgWJuZtTJk7+0k3ETjMBHvQxV6ar7P6g/UCd2h7F3nM/N9wE
+i1kURSEgR0l+fT/hBxI63bj2IZFOpdNz0ZZM+LB5NKp8rUK4OPMQdIP9azNVDTl5
+VpsDwosilUyFpFHHLiTZvQH1PF2Yow==
+=Y2Yf
+-----END PGP SIGNATURE-----
+
+--VcXe+ClQvdjQIrFK--
 
