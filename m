@@ -1,165 +1,115 @@
-Return-Path: <linux-kernel+bounces-244149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE8B929FD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE2B929FD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF941C20C03
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:05:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BBD21C21567
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 10:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFCB74C1B;
-	Mon,  8 Jul 2024 10:05:51 +0000 (UTC)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A031BF37
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 10:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E5C76025;
+	Mon,  8 Jul 2024 10:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="HbnVZgRC"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1831E13ACC;
+	Mon,  8 Jul 2024 10:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720433151; cv=none; b=B35DOInb7k74m1/s9EdUI+o6WGE/WzEhZzmxsPoro0v1pWz/SrTAIesgQEpdFo0McBQim1w8qzBHjw+wGkNpbOGZA6155C03kkiM5ZwF5A2M8DPd1d6DpULkjhIWMOB+KMk34RLzQG7BMHjfmFI8r/nAbgfcSbpPvKoTv/c0j1Q=
+	t=1720433194; cv=none; b=hnQkFGA7W1aFx0CxiPch+GxIXwzUjEVWrMCpvaqZB2QbOQEARsaworR0CWUnvJa6aVlWZVmB5xqsCqpzBijHMRrPepnPILYvfa6m13v+xNlVuuwHBS3USYiYCv1eqPmxSsRpxDgdAGVpZn1MpZWOOXuks4cQVmdQQO/UomUTjDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720433151; c=relaxed/simple;
-	bh=R07v5njRYO1kmgalthCceieXraLo4fbqfHCdXHiYUD0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VQobmS1DSoeV+rd+zskOW78r3vgWIGDwHhqepDkg1s4LMQUXYuIfbSdtfxpY8K7zXyqc7df/o82vfiJb/IRP2jxDSBEQU9yo3IkicNbNzUbuzfqtZEdYOhLz5YxOI0D6XEZRXTovB0WYnxdqdTwnTrQbaTHim0YZQU30qj2RX6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-48fddbb579dso1124512137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 03:05:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720433149; x=1721037949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/tsYyibVEXL+6UmILt7GnYiNyfPwNj+z3ZkernFD+Ag=;
-        b=tCA04qvVxgEbmSwTM1tfjXDBCryBkJ1qbq8tjS/jvo5Kg3muK8xKZ9FIEaIDFNKvH7
-         h6ony5fpf8EMgJXvTSFyYDoPUrjxXCauWlLVpx8GS84qCs+/vjn+hAsTwM0VnNcE4qHd
-         GoZHhJOqBG3BS2vSdCF31rTK9VfEYin71JVuclQTT97O+ap9ehK5pLeMtNd+ptu5yCon
-         9Zcq+0eXg/5oXkY1c/nAykO3oQ35l7NGiZCWxeojUcGjGvst/sEXkm80YssX3TVIS1zL
-         iU5QtjCSK9UwBPZSuYkT2um8hhL5PTcFmhcKLWBrNZSHDim2UDSIyM7aeWbCjY6tipjR
-         Zuww==
-X-Forwarded-Encrypted: i=1; AJvYcCWod25VVncpnImVAwmH2d8iBwwRLP/1O12xUk1Y5fdanARdoMiLvb4i/6hVA/lyA81jS1JUb0KWepN0JjXAEuW3cjyBaojnp1v9RLws
-X-Gm-Message-State: AOJu0YxzMGcjYrgztKBCm1rESxuMIsIPAFPBSm+5TooyG9CDKgDZYSZ3
-	Iyi08T0ZuNOkVT7vuU3izqRMO1j84LQB8B2mrX8EobWGQfZMABA3MGwudWBiZCBO1OHz8LysI8R
-	K7+WtaFG/61Q2kRkippWUpXOOJ/E=
-X-Google-Smtp-Source: AGHT+IFSPah4hfiBN6PfhxDs/lAMd6pYf3ppUrht3vHNaTQSMPvMhayjumxla0Vg9p9RnsmuJ+1WSVPyQimrmvMSm/E=
-X-Received: by 2002:a67:e292:0:b0:48f:4416:dd59 with SMTP id
- ada2fe7eead31-48fee7ed7famr12349014137.33.1720433148742; Mon, 08 Jul 2024
- 03:05:48 -0700 (PDT)
+	s=arc-20240116; t=1720433194; c=relaxed/simple;
+	bh=dxHrFPe2Oclcjmv0GLPO4gTX01NRE6R2X4oSLDjQhko=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=JKark3fg+Gv34DrjEVP9sVk8D7YZWhKJOfM1CQt2qFgCqx4UyD1nqinNkOKffpTgJ9eR/aCi6pguA/u+4BjNL9q+rd0pF8k0YnoBx5Zc+y9EiYvILfJV2ZFo49wVErmmAcMeS8UI16Q8dphn+0qsWzIPBVBUZWG2jHjtEa+hkB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=HbnVZgRC; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from [IPV6:2a02:8010:6359:2:e181:9992:7c46:d034] (unknown [IPv6:2a02:8010:6359:2:e181:9992:7c46:d034])
+	(Authenticated sender: james)
+	by mail.katalix.com (Postfix) with ESMTPSA id B47167D926;
+	Mon,  8 Jul 2024 11:06:25 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1720433185; bh=dxHrFPe2Oclcjmv0GLPO4gTX01NRE6R2X4oSLDjQhko=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:From;
+	z=Message-ID:=20<cfee59ae-4807-f384-b525-ce47fa4135e6@katalix.com>|
+	 Date:=20Mon,=208=20Jul=202024=2011:06:25=20+0100|MIME-Version:=201
+	 .0|To:=20Hillf=20Danton=20<hdanton@sina.com>|Cc:=20netdev@vger.ker
+	 nel.org,=20linux-kernel@vger.kernel.org,=0D=0A=20syzkaller-bugs@go
+	 oglegroups.com,=20tparkin@katalix.com,=0D=0A=20syzbot+b471b7c93630
+	 1a59745b@syzkaller.appspotmail.com,=0D=0A=20syzbot+c041b4ce3a6dfd1
+	 e63e2@syzkaller.appspotmail.com|References:=20<20240705103250.3144
+	 -1-hdanton@sina.com>|From:=20James=20Chapman=20<jchapman@katalix.c
+	 om>|Subject:=20Re:=20[PATCH=20net-next=20v2]=20l2tp:=20fix=20possi
+	 ble=20UAF=20when=20cleaning=20up=0D=0A=20tunnels|In-Reply-To:=20<2
+	 0240705103250.3144-1-hdanton@sina.com>;
+	b=HbnVZgRC6k6bL5IzcY0F2hUALh6H0tiQ3R2NYZipLKTBxDacmi5dEgs834RxG70u8
+	 IrtEpz/hMGslrB2sPVguDSAu9MIlqIrQujX/dmL0jjip8PmYPwA1ESLKpp4lwfpQZw
+	 pCqdqBg4sZsDrFenOwCGFR94SyrB8+9hsVJDertZ04jD7K7NUmPK6lRGaVpoUhiyUT
+	 EmItYLpzWRzeEjFKnnAc0ZV3tJTHBop2hSRJs/9LyivRPjbErjh8A6zaaMTgWTMhTT
+	 JqxYIJofXvJ2IRmjvZHkbInS909hoYvlyWZDayXHLkGp+wWBlOKMj26KI5iGntN6wy
+	 jlJbGX1UBz+Qw==
+Message-ID: <cfee59ae-4807-f384-b525-ce47fa4135e6@katalix.com>
+Date: Mon, 8 Jul 2024 11:06:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708090413.888-1-justinjiang@vivo.com> <ad7873f4-9c98-45cc-b7be-0c1c36b65ade@redhat.com>
- <CAGsJ_4zN95hh6G15L=hCTmXx4Y_OC-ExpsU7iErZ2SiZZaxmhA@mail.gmail.com> <611dd616-a626-4968-b88a-4db82dccfb90@redhat.com>
-In-Reply-To: <611dd616-a626-4968-b88a-4db82dccfb90@redhat.com>
-From: Barry Song <baohua@kernel.org>
-Date: Mon, 8 Jul 2024 22:05:37 +1200
-Message-ID: <CAGsJ_4zrC6Ma82OcOM+yMH7Tj-9oUO5Lbv7hCejH7dQqqO_Q6w@mail.gmail.com>
-Subject: Re: [PATCH v5] mm: shrink skip folio mapped by an exiting process
-To: David Hildenbrand <david@redhat.com>
-Cc: Zhiguo Jiang <justinjiang@vivo.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+To: Hillf Danton <hdanton@sina.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, tparkin@katalix.com,
+ syzbot+b471b7c936301a59745b@syzkaller.appspotmail.com,
+ syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
+References: <20240705103250.3144-1-hdanton@sina.com>
+Content-Language: en-US
+From: James Chapman <jchapman@katalix.com>
+Organization: Katalix Systems Ltd
+Subject: Re: [PATCH net-next v2] l2tp: fix possible UAF when cleaning up
+ tunnels
+In-Reply-To: <20240705103250.3144-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 8, 2024 at 9:49=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 08.07.24 11:46, Barry Song wrote:
-> > On Mon, Jul 8, 2024 at 9:36=E2=80=AFPM David Hildenbrand <david@redhat.=
-com> wrote:
-> >>
-> >> On 08.07.24 11:04, Zhiguo Jiang wrote:
-> >>> The releasing process of the non-shared anonymous folio mapped solely=
- by
-> >>> an exiting process may go through two flows: 1) the anonymous folio i=
-s
-> >>> firstly is swaped-out into swapspace and transformed into a swp_entry
-> >>> in shrink_folio_list; 2) then the swp_entry is released in the proces=
-s
-> >>> exiting flow. This will increase the cpu load of releasing a non-shar=
-ed
-> >>> anonymous folio mapped solely by an exiting process, because the foli=
-o
-> >>> go through swap-out and the releasing the swapspace and swp_entry.
-> >>>
-> >>> When system is low memory, it is more likely to occur, because more
-> >>> backend applidatuions will be killed.
-> >>>
-> >>> The modification is that shrink skips the non-shared anonymous folio
-> >>> solely mapped by an exting process and the folio is only released
-> >>> directly in the process exiting flow, which will save swap-out time
-> >>> and alleviate the load of the process exiting.
-> >>>
-> >>> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
-> >>> ---
-> >>>
-> >>> Change log:
-> >>> v4->v5:
-> >>> 1.Modify to skip non-shared anonymous folio only.
-> >>> 2.Update comments for pra->referenced =3D -1.
-> >>> v3->v4:
-> >>> 1.Modify that the unshared folios mapped only in exiting task are ski=
-p.
-> >>> v2->v3:
-> >>> Nothing.
-> >>> v1->v2:
-> >>> 1.The VM_EXITING added in v1 patch is removed, because it will fail
-> >>> to compile in 32-bit system.
-> >>>
-> >>>    mm/rmap.c   | 13 +++++++++++++
-> >>>    mm/vmscan.c |  7 ++++++-
-> >>>    2 files changed, 19 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/mm/rmap.c b/mm/rmap.c
-> >>> index 26806b49a86f..5b5281d71dbb
-> >>> --- a/mm/rmap.c
-> >>> +++ b/mm/rmap.c
-> >>> @@ -843,6 +843,19 @@ static bool folio_referenced_one(struct folio *f=
-olio,
-> >>>        int referenced =3D 0;
-> >>>        unsigned long start =3D address, ptes =3D 0;
-> >>>
-> >>> +     /*
-> >>> +      * Skip the non-shared anonymous folio mapped solely by
-> >>> +      * the single exiting process, and release it directly
-> >>> +      * in the process exiting.
-> >>> +      */
-> >>> +     if ((!atomic_read(&vma->vm_mm->mm_users) ||
-> >>> +             test_bit(MMF_OOM_SKIP, &vma->vm_mm->flags)) &&
-> >>> +             folio_test_anon(folio) && folio_test_swapbacked(folio) =
-&&
-> >>> +             !folio_likely_mapped_shared(folio)) {
-> >>
-> >> I'm currently working on moving all folio_likely_mapped_shared() under
-> >> the PTL, where we are then sure that the folio is actually mapped by
-> >> this process (e.g., no concurrent unmapping poisslbe).
-> >>
-> >> Can we do the same here directly?
-> >
-> > Implementing this is challenging because page_vma_mapped_walk() is
-> > responsible for
-> > traversing the page table to acquire and release the PTL. This becomes
-> > particularly
-> > complex with mTHP, as we may need to interrupt the page_vma_mapped_walk
-> > loop at the first PTE.
->
-> Why can't we perform the check under the PTL and bail out? I'm missing
-> something important.
+On 05/07/2024 11:32, Hillf Danton wrote:
+> On Thu,  4 Jul 2024 16:25:08 +0100 James Chapman <jchapman@katalix.com>
+>> --- a/net/l2tp/l2tp_core.c
+>> +++ b/net/l2tp/l2tp_core.c
+>> @@ -1290,17 +1290,20 @@ static void l2tp_session_unhash(struct l2tp_session *session)
+>>   static void l2tp_tunnel_closeall(struct l2tp_tunnel *tunnel)
+>>   {
+>>   	struct l2tp_session *session;
+>> -	struct list_head *pos;
+>> -	struct list_head *tmp;
+>>   
+>>   	spin_lock_bh(&tunnel->list_lock);
+>>   	tunnel->acpt_newsess = false;
+>> -	list_for_each_safe(pos, tmp, &tunnel->session_list) {
+>> -		session = list_entry(pos, struct l2tp_session, list);
+>> +	for (;;) {
+>> +		session = list_first_entry_or_null(&tunnel->session_list,
+>> +						   struct l2tp_session, list);
+>> +		if (!session)
+>> +			break;
+>> +		l2tp_session_inc_refcount(session);
+>>   		list_del_init(&session->list);
+>>   		spin_unlock_bh(&tunnel->list_lock);
+>>   		l2tp_session_delete(session);
+>>   		spin_lock_bh(&tunnel->list_lock);
+>> +		l2tp_session_dec_refcount(session);
+> 
+> Bumping refcount up makes it safe for the current cpu to go thru race
+> after releasing lock, and if it wins the race, dropping refcount makes
+> the peer head on uaf.
 
-You are right. we might use page_vma_mapped_walk_done() to bail out.
+Thanks for reviewing this. Can you elaborate on what you mean by "makes 
+the peer head on uaf", please?
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
 
