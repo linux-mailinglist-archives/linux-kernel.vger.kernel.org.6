@@ -1,265 +1,132 @@
-Return-Path: <linux-kernel+bounces-244390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA8592A3A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:30:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A1792A3B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52DDE1C218A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:30:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43983B218F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C241613C3C2;
-	Mon,  8 Jul 2024 13:29:55 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF3F13212D;
+	Mon,  8 Jul 2024 13:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWR5sSIr"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E3A137923
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E4D28E3;
+	Mon,  8 Jul 2024 13:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720445395; cv=none; b=mp6TrYMeWUiyWuyxmyfCd0ldtkl8sWcWDwzpRprmKGXVd38FDxcMPXJpFnHgKi8l9Z7yZMOcx/vPiuMarmRC1S5rllgxK+6+0sWfyj631/9GWhZFcJytuw4yetFn6snehjESAXe3p2Tpe/4ZJsrmrgbD+Z9hhgnXvzVXi+Vzmts=
+	t=1720445646; cv=none; b=mWIuQYslx5xY7apvrYzgVlh8FJoo8yjP39dR3vK4n/hEnkvLCR46Fydef7OyIY9g//s3ykIzFx1zLRyba+W8KJLjerE0B05ybaax+zDqatXCPbUMCIKcwWvG0V6Zxyu9yaxGkobTlGFdsLJQ9cCfoKTJKyS8mnoPuxYhfRLjycA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720445395; c=relaxed/simple;
-	bh=+v1vN4nVdfPzeqBmxm+ZPwaumg7jxBDFH3+la7D2d1g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EXUcc7BPrDSCl0CNinrgn/+SpxAW71YWJw5iJ06oMsY92vhsTsxtqJfNzARW/RbJEt3OwgS2QbkcDu5BCEtb4hP3srnQTKZZSn3QoUALEphN+weVSgUeZEcBR1w12t7vltq6qK4aH9QK+jRH1lrXjUbbQhyyE89bmiB7bqO15/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WHlHm4ZpBzQktx;
-	Mon,  8 Jul 2024 21:25:56 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5CB6B14022D;
-	Mon,  8 Jul 2024 21:29:50 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
- 2024 21:29:49 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <linux@armlinux.org.uk>, <bhe@redhat.com>, <vgoyal@redhat.com>,
-	<dyoung@redhat.com>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <arnd@arndb.de>, <afd@ti.com>,
-	<akpm@linux-foundation.org>, <rmk+kernel@armlinux.org.uk>,
-	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>,
-	<gregkh@linuxfoundation.org>, <deller@gmx.de>, <javierm@redhat.com>,
-	<robh@kernel.org>, <thunder.leizhen@huawei.com>, <austindh.kim@gmail.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kexec@lists.infradead.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH 3/3] ARM: Use generic interface to simplify crashkernel reservation
-Date: Mon, 8 Jul 2024 21:33:48 +0800
-Message-ID: <20240708133348.3592667-4-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240708133348.3592667-1-ruanjinjie@huawei.com>
-References: <20240708133348.3592667-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1720445646; c=relaxed/simple;
+	bh=v8OHFlk7ICswpQ3iB+blCtY7cm91+7G5/yFt+R4dKFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lypOqbwQltwLUbnz5yQuNd7XsL8LHKLmMIu3p5Z6j+RMeva5LTsxEmNqglGe259M6tBhHFsaxFx3u+Q9b/m+poN8gQJKaF/peiHEgqdcqOgu+AWJVo8A8pdd+rv5xKZDgBXpsJY5Oj33SHzS15ACV3w5agpWSO4w5yCGV8rIopc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWR5sSIr; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec61eeed8eso48437781fa.0;
+        Mon, 08 Jul 2024 06:34:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720445643; x=1721050443; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a9KZem+hR+Ssu5sLJZQFJef/Bm0HGi/lC7YM1maoGyM=;
+        b=XWR5sSIrDofgLBs0wuaeWemGMoaPMeh8vGVjoVBc0BFAHwyL5BjD/cqHYypp6T/LTG
+         knNKrosEKoixL5vyCo9itItAUQKEk+IoQAPcohA8yMH9sZ4ucfNWt0jDmvIP8LjFys7H
+         BnNBIcQFT2PG4ALT9EU/bnWJAscYp6fCrRIp4Maf5/hRH7Fv9CVnK9/68a+LawCWlaUA
+         8346eDwNmmX6ZYCVoV1Zyhc3Z84MId5q+sRrgjSZLDLahvoYfsTpoyONyzIzA3oJwfXb
+         RkJjdwavjHfrN/8CWJuv6mz8eyC1xMV9RKNI7+iqsa50JLnMbWdx769F5C9DX/v5BwU6
+         BQ3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720445643; x=1721050443;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a9KZem+hR+Ssu5sLJZQFJef/Bm0HGi/lC7YM1maoGyM=;
+        b=AxatTtu2a72kiAVuPpfJSKC06DwYOmS6TLdEijznAan66vCaLiNnOvJm+FTRGsi+kj
+         EyEEM5dGdgo2garklAZ7iCaLwRyrQYPMeO6D2nwSFP/zN32E3cDYhjuurxyR61fQXgee
+         TaXOVdO4ZEOfJZWXfLVpKI/WfiKlCyQC3nPoGoOgOjN9ucjYHSYAI1EtvmaZZUmhC3Gn
+         q5TGLB8PzUVyXZ+2kP4JpcOfof8Dmuja59mEdSCSgYIW3GcwoWe5wPC9vpEKWxJ9dmNQ
+         w/zYYiGpbj+/KYHmK6pURft7wuClLpLjiky7T05CAfGwM8L2Z/NbITXtcVRqaPRAK1PY
+         LZSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcMShdE7CGGeTRD5KQGpGgZgV/DSIzPHC69+cDfJUwHUv9HsVeCGu5ffqwXEg+Kx+g9LweVmMGwYrQqC/cST+S8PpOnyyb5oPQj7jRqBaFSvJ4mjp+5lBoVHNS6NfUWHvxNKun
+X-Gm-Message-State: AOJu0Ywhq9ThG4LH7Dz1jGYoBPCu4mLqWvi6cHcDGhKrXR9GImF0b2mB
+	MbUP4WP5CjqdqvoAOvD7r1BBtp8cwuUdQiqMrvnZgRcpgwUNx/LE
+X-Google-Smtp-Source: AGHT+IEQu9zjQlULh2lm47m/DaCiSvsXwcsjLuaAMCjs8rdt+0vOxB36+NT7Ah6gIEaprzFcZ7Qu+Q==
+X-Received: by 2002:a2e:bc0c:0:b0:2ee:7bcd:a3f with SMTP id 38308e7fff4ca-2ee8ed5edfamr103234371fa.22.1720445642560;
+        Mon, 08 Jul 2024 06:34:02 -0700 (PDT)
+Received: from skbuf ([188.25.110.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36784e3e0f5sm16538327f8f.11.2024.07.08.06.34.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 06:34:02 -0700 (PDT)
+Date: Mon, 8 Jul 2024 16:33:59 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Landen Chao <Landen.Chao@mediatek.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v5] net: dsa: mt7530: fix impossible MDIO address and
+ issue warning
+Message-ID: <20240708133359.rylvvmpcwlsxtrs5@skbuf>
+References: <f485d1d4f7b34cc2ebf3d60030d1c67b4016af3c.1720107535.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+In-Reply-To: <f485d1d4f7b34cc2ebf3d60030d1c67b4016af3c.1720107535.git.daniel@makrotopia.org>
 
-Currently, x86, arm64, riscv and loongarch has been switched to generic
-crashkernel reservation. With the help of function parse_crashkernel()
-and generic reserve_crashkernel_generic(), arm32 crashkernel reservation
-can also be simplified by steps:
+On Fri, Jul 05, 2024 at 11:48:40AM +0100, Daniel Golle wrote:
+> The MDIO address of the MT7530 and MT7531 switch ICs can be configured
+> using bootstrap pins. However, there are only 4 possible options for the
+> switch itself: 7, 15, 23 and 31. As in MediaTek's SDK the address of the
+> switch is wrongly stated in the device tree as 0 (while in reality it is
+> 31), warn the user about such broken device tree and make a good guess
+> what was actually intended.
+> 
+> This is necessary to not break compatibility with existing Device Trees
+> wrongly declaring the switch to be present at address 0 or 1, as with
+> commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of switch
+> from device tree") the address in device tree will be taken into
+> account, while before it was hard-coded in the driver to 0x1f
+> independently of the value in Device Tree.
+> 
+> Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> Reviewed-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> ---
 
-1) Add a new header file <asm/crash_reserve.h>, and define CRASH_ALIGN,
-   CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX in it;
+Despite having commented on v3, I am not going to leave a review tag on
+this patch. Its contents has nothing to do with DSA, so I have no
+technical objections of my own, plus little authority for an ack.
+It basically boils down to whether the phylib maintainers are okay with
+this use of mdio_device_remove() API from mdio_device drivers
+themselves.
 
-2) Add arch_reserve_crashkernel() to call parse_crashkernel() and
-   reserve_crashkernel_generic();
-
-3) Add ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION Kconfig in
-   arch/arm/Kconfig.
-
-The old reserve_crashkernel() can be removed.
-
-Following test cases have been performed as expected on QEMU vexpress-a9
-(1GB system memory):
-
-1) crashkernel=4G,high				// invalid
-2) crashkernel=1G,high				// invalid
-3) crashkernel=1G,high crashkernel=0M,low	// invalid
-4) crashkernel=256M,high			// invalid
-5) crashkernel=256M,low				// invalid
-6) crashkernel=256M crashkernel=256M,high	// high is ignored, ok
-7) crashkernel=256M crashkernel=256M,low	// low is ignored, ok
-8) crashkernel=256M,high crashkernel=256M,low	// invalid
-9) crashkernel=256M,high crashkernel=4G,low	// invalid
-10) crashkernel=256M				// ok
-11) crashkernel=512M				// ok
-12) crashkernel=256M@0x88000000			// ok
-13) crashkernel=256M@0x78000000			// ok
-14) crashkernel=512M@0x78000000			// ok
-
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- arch/arm/Kconfig                     |  3 ++
- arch/arm/include/asm/crash_reserve.h | 24 +++++++++++
- arch/arm/kernel/setup.c              | 62 ++++------------------------
- 3 files changed, 36 insertions(+), 53 deletions(-)
- create mode 100644 arch/arm/include/asm/crash_reserve.h
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 68990e1645d5..02e620e185c0 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1596,6 +1596,9 @@ config ATAGS_PROC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
-+	def_bool CRASH_RESERVE
-+
- config AUTO_ZRELADDR
- 	bool "Auto calculation of the decompressed kernel image address" if !ARCH_MULTIPLATFORM
- 	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
-diff --git a/arch/arm/include/asm/crash_reserve.h b/arch/arm/include/asm/crash_reserve.h
-new file mode 100644
-index 000000000000..85c9298bd3b7
---- /dev/null
-+++ b/arch/arm/include/asm/crash_reserve.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _ARM_CRASH_RESERVE_H
-+#define _ARM_CRASH_RESERVE_H
-+
-+/*
-+ * The crash region must be aligned to 128MB to avoid
-+ * zImage relocating below the reserved region.
-+ */
-+#define CRASH_ALIGN			(128 << 20)
-+
-+#define CRASH_ADDR_LOW_MAX		crash_addr_low_max()
-+#define CRASH_ADDR_HIGH_MAX		memblock_end_of_DRAM()
-+
-+static inline unsigned long crash_addr_low_max(void)
-+{
-+	unsigned long long crash_max = idmap_to_phys((u32)~0);
-+	unsigned long long lowmem_max = __pa(high_memory - 1) + 1;
-+
-+	return (crash_max > lowmem_max) ? lowmem_max : crash_max;
-+}
-+
-+
-+#define HAVE_ARCH_ADD_CRASH_RES_TO_IOMEM_EARLY
-+#endif
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 59e1a13b5cf6..3a8b6f08f4ec 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -979,13 +979,6 @@ static int __init init_machine_late(void)
- }
- late_initcall(init_machine_late);
- 
--#ifdef CONFIG_CRASH_RESERVE
--/*
-- * The crash region must be aligned to 128MB to avoid
-- * zImage relocating below the reserved region.
-- */
--#define CRASH_ALIGN	(128 << 20)
--
- static inline unsigned long long get_total_mem(void)
- {
- 	unsigned long total;
-@@ -994,61 +987,27 @@ static inline unsigned long long get_total_mem(void)
- 	return total << PAGE_SHIFT;
- }
- 
--/**
-- * reserve_crashkernel() - reserves memory are for crash kernel
-- *
-- * This function reserves memory area given in "crashkernel=" kernel command
-- * line parameter. The memory reserved is used by a dump capture kernel when
-- * primary kernel is crashing.
-- */
--static void __init reserve_crashkernel(void)
-+static void __init arch_reserve_crashkernel(void)
- {
- 	unsigned long long crash_size, crash_base;
-+	unsigned long long low_size = 0;
- 	unsigned long long total_mem;
-+	bool high = false;
- 	int ret;
- 
-+	if (!IS_ENABLED(CONFIG_CRASH_RESERVE))
-+		return;
-+
- 	total_mem = get_total_mem();
- 	ret = parse_crashkernel(boot_command_line, total_mem,
- 				&crash_size, &crash_base,
--				NULL, NULL);
-+				&low_size, &high);
- 	/* invalid value specified or crashkernel=0 */
- 	crash_size = (phys_addr_t)crash_size;
- 	if (ret || !crash_size)
- 		return;
- 
--	if (crash_base <= 0) {
--		unsigned long long crash_max = idmap_to_phys((u32)~0);
--		unsigned long long lowmem_max = __pa(high_memory - 1) + 1;
--		if (crash_max > lowmem_max)
--			crash_max = lowmem_max;
--
--		crash_base = memblock_phys_alloc_range(crash_size, CRASH_ALIGN,
--						       CRASH_ALIGN, crash_max);
--		if (!crash_base) {
--			pr_err("crashkernel reservation failed - No suitable area found.\n");
--			return;
--		}
--	} else {
--		unsigned long long crash_max = crash_base + crash_size;
--		unsigned long long start;
--
--		start = memblock_phys_alloc_range(crash_size, SECTION_SIZE,
--						  crash_base, crash_max);
--		if (!start) {
--			pr_err("crashkernel reservation failed - memory is in use.\n");
--			return;
--		}
--	}
--
--	pr_info("Reserving %ldMB of memory at %ldMB for crashkernel (System RAM: %ldMB)\n",
--		(unsigned long)(crash_size >> 20),
--		(unsigned long)(crash_base >> 20),
--		(unsigned long)(total_mem >> 20));
--
--	/* The crashk resource must always be located in normal mem */
--	crashk_res.start = crash_base;
--	crashk_res.end = crash_base + crash_size - 1;
--	insert_resource(&iomem_resource, &crashk_res);
-+	reserve_crashkernel_generic(boot_command_line, crash_size, crash_base, low_size, high);
- 
- 	if (arm_has_idmap_alias()) {
- 		/*
-@@ -1065,9 +1024,6 @@ static void __init reserve_crashkernel(void)
- 		insert_resource(&iomem_resource, &crashk_boot_res);
- 	}
- }
--#else
--static inline void reserve_crashkernel(void) {}
--#endif /* CONFIG_CRASH_RESERVE*/
- 
- void __init hyp_mode_check(void)
- {
-@@ -1190,7 +1146,7 @@ void __init setup_arch(char **cmdline_p)
- 	if (!is_smp())
- 		hyp_mode_check();
- 
--	reserve_crashkernel();
-+	arch_reserve_crashkernel();
- 
- #ifdef CONFIG_VT
- #if defined(CONFIG_VGA_CONSOLE)
--- 
-2.34.1
-
+I did have a technical concern in v3 about a race between the finishing
+of probe() and the call to mdio_device_remove(), which Daniel did not
+respond to, but I suspect that __device_driver_lock() from
+drivers/base/dd.c will serialize those.
 
