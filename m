@@ -1,98 +1,128 @@
-Return-Path: <linux-kernel+bounces-244414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB9F92A3FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 487E392A400
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69EE11F222D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7AB81F227E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAC813A407;
-	Mon,  8 Jul 2024 13:47:11 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D65713D275;
+	Mon,  8 Jul 2024 13:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4+J9ZaO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B59413C674;
-	Mon,  8 Jul 2024 13:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F30D770F3;
+	Mon,  8 Jul 2024 13:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720446430; cv=none; b=leJgItZ7GbJi7Nk5zc5SGun3K5ZQxqkVV9Ctuvvt/kmyAWB+iI/107HTJE1EJk6pJOIMoN4fjfOmgquEynFd2/hkZGwahjdqkb0kXRTppDYCg7jlic6MiW7IYIkVctFEvaXqS0qhTXPZQYNKAp7DfJlkLrYovA6VCeu1Wjho4is=
+	t=1720446435; cv=none; b=dALAEssrgr5l8ZyL/IF6AVunTxAVtne1YMgPqLFnO929yaVULWk9T2c6o4Y5JhejLHkHOYy/wn0zW4QlZDtQ9S+KikC/P/67YAEyALf6grBGCbiQq9nPcnBaeTMboQ2inVxBjFdKVmMa1NYy2b1uv9riLzE66TZvVp2XMN0ATJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720446430; c=relaxed/simple;
-	bh=Z2ybd0Usyw2/wpk/t/F+xiGAID0UDg1H3MGfl9My+tM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ULwpH/46JRE8r5l6HumMHHZPWIMYDW8UUHkSe5+r96e5ZuWzyRTgPmaCLR485JKL5sKB6e+Gi1bxOFlnC8QZP0q8SfQlJIteUvuapvFaxXggKWxP98SVFpMEJGbUas7b/aXHtiR86GXo3TFJbzOFEbRvFfA0mHpfYHf2volwu0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WHlfw48V3zxVbW;
-	Mon,  8 Jul 2024 21:42:32 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id AF0F6180AA6;
-	Mon,  8 Jul 2024 21:47:05 +0800 (CST)
-Received: from DESKTOP-8RFUVS3.china.huawei.com (10.174.185.179) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 8 Jul 2024 21:47:04 +0800
-From: Zenghui Yu <yuzenghui@huawei.com>
-To: <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linaro-mm-sig@lists.linaro.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <sumit.semwal@linaro.org>, <benjamin.gaignard@collabora.com>,
-	<Brian.Starkey@arm.com>, <jstultz@google.com>, <tjmercier@google.com>,
-	<shuah@kernel.org>, <wanghaibin.wang@huawei.com>, Zenghui Yu
-	<yuzenghui@huawei.com>
-Subject: [PATCH] kselftests: dmabuf-heaps: Ensure the driver name is null-terminated
-Date: Mon, 8 Jul 2024 21:46:54 +0800
-Message-ID: <20240708134654.1725-1-yuzenghui@huawei.com>
-X-Mailer: git-send-email 2.23.0.windows.1
+	s=arc-20240116; t=1720446435; c=relaxed/simple;
+	bh=2vomq8mEESeFfhHmhQ5eoZsQ2DEc5hIHJUkmN3qwLnk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=JZDGCsf0s0tsQW9V7SLkIgy1RSjMlVO47w7azzyzdg6N93XIZudcSNGD9tMoz0o5WV4bpvcPFJOSi2Xv8RiLO3Yw/j66H246+HUc4gzddrJjyNWF3hEOmuGikdL2kgr/WIeMweDWtkJODvFR9KeKkJPaMhwY68Kp56duoTOwnTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4+J9ZaO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F10C116B1;
+	Mon,  8 Jul 2024 13:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720446435;
+	bh=2vomq8mEESeFfhHmhQ5eoZsQ2DEc5hIHJUkmN3qwLnk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=U4+J9ZaO/WP8O9id+1gpZf41+qJtJ56JjqlQnnetfmgZDX/p2Em4SdLADSZVpPvsY
+	 yS8b1uvRqw5fvEeCWqd5acaYwMZ+r4Ny51XKZVYXdYJ8GRaJR/PnKMN+hCAWpn1XK0
+	 tcoTG+akL0rGlgz9YTzEun1YKj8dZfT4TP8lhM+nTshNRQBQ7adqOKom/SVyp83lFO
+	 IrbNk41MFFgQ3C10uLFXioOZ1hH5j/phbVMoNQZeZTZOru2a6OUwFIZgIkXtK6MxZs
+	 F5E72UiQ6UfWD066+LPn76RavHu0coAoqv0FxPL7CZ2Y7c2IdBVi1KfIzaKNULk1IT
+	 CZX6WsUHtwoxw==
+Date: Mon, 08 Jul 2024 07:47:13 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm600007.china.huawei.com (7.193.23.208)
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+ Viresh Kumar <vireshk@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Andy Gross <agross@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
+ Robert Marko <robimarko@gmail.com>, linux-kernel@vger.kernel.org, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Rob Herring <robh+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Niklas Cassel <nks@flawful.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+In-Reply-To: <20240708-topic-cpr3h-v15-4-5bc8b8936489@linaro.org>
+References: <20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org>
+ <20240708-topic-cpr3h-v15-4-5bc8b8936489@linaro.org>
+Message-Id: <172044643349.2927781.3846230770478390037.robh@kernel.org>
+Subject: Re: [PATCH v15 04/10] dt-bindings: soc: qcom: cpr3: Add bindings
+ for CPR3+ driver
 
-Even if a vgem device is configured in, we will skip the import_vgem_fd()
-test almost every time.
 
-  TAP version 13
-  1..11
-  # Testing heap: system
-  # =======================================
-  # Testing allocation and importing:
-  ok 1 # SKIP Could not open vgem -1
+On Mon, 08 Jul 2024 14:22:35 +0200, Konrad Dybcio wrote:
+> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> 
+> Add the bindings for the Qualcomm CPR3+ hardware.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> [Konrad: Make binding check pass, some other changes]
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  .../devicetree/bindings/soc/qcom/qcom,cpr3.yaml    | 286 +++++++++++++++++++++
+>  1 file changed, 286 insertions(+)
+> 
 
-The problem is that we use the DRM_IOCTL_VERSION ioctl to query the driver
-version information but leave the name field a non-null-terminated string.
-Terminate it properly to actually test against the vgem device.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
----
- tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c | 2 ++
- 1 file changed, 2 insertions(+)
+yamllint warnings/errors:
 
-diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-index 5f541522364f..2fcc74998fa9 100644
---- a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-+++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-@@ -32,6 +32,8 @@ static int check_vgem(int fd)
- 	if (ret)
- 		return 0;
- 
-+	name[4] = '\0';
-+
- 	return !strcmp(name, "vgem");
- }
- 
--- 
-2.33.0
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-1:qcom,opp-cloop-vadj:0: [0] is too short
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-1:qcom,opp-oloop-vadj:0: [0] is too short
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-2:qcom,opp-cloop-vadj:0: [0] is too short
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-2:qcom,opp-oloop-vadj:0: [0] is too short
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-3:qcom,opp-cloop-vadj:0: [0] is too short
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.example.dtb: opp-table-cprh: opp-3:qcom,opp-oloop-vadj:0: [0] is too short
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2-qcom-level.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240708-topic-cpr3h-v15-4-5bc8b8936489@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
