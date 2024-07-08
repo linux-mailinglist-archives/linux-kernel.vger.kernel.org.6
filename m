@@ -1,94 +1,97 @@
-Return-Path: <linux-kernel+bounces-244811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7533292A9D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:30:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2DC92A9D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12FE0B21034
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:30:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36FC1F2273B
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 19:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9119979FD;
-	Mon,  8 Jul 2024 19:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65C414D6E0;
+	Mon,  8 Jul 2024 19:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="QUQbLp4h"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MaFLwqRV"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F4118E1E
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 19:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A614AD10;
+	Mon,  8 Jul 2024 19:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720467014; cv=none; b=lre0pwnCsPXgMMbqcQ1+VFg7ZE8OsejfBOkRVcci4VVIJtC0Lr1q/FDUEM8KJFWhicYd2sJTph/sh01NjBKbLROawL/v5LKgV4ROBq9zwqsMfBRmyradubpMirjehIExOXJvSdrmUnNxgw/qAq7k6GzMR+gxnr0WvkL64xqaLPw=
+	t=1720466971; cv=none; b=scrmIGKgJ4lFXY2Q5A996/yyi7HAR0vwQfBHcBQDMLKtu1+J0sLAOr9mUgS9j4+/jAjSzFvvF2C5rjZzoK8aUXlAUy4W5hsihZQLE4eNiEoeYz31bvl/j82fLyIjDf/sVoHLZz9t22FelhYXXkDTI+6kTObCjIy2vYI0WJK2hzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720467014; c=relaxed/simple;
-	bh=NpgwHPX/d3tp/EyiDsUQn8KVXyW32rJMURGHE0iQyAA=;
+	s=arc-20240116; t=1720466971; c=relaxed/simple;
+	bh=hvfcFq+RhHBIafO6zqI+Oj5jKR3KEkoCbyXd0TVIjlk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gyHypsyR/Vt0Dy1B+eavf2mP5BHBC9X+FKxS2nPMt7XzKlNRQO86A7/BExiDzXAHVGVrWX+IzVF0tpQg9UKGrBTgTJezMfcRWmrtto7RY04peyThePik7ZJriGULr855vdrnQLM5YPMuR/NBLH+LrXTuD2Xh34Qt2LBHcBd5+nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=QUQbLp4h; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
-	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468IQVFh002080;
-	Mon, 8 Jul 2024 19:29:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pps0720; bh=H4RsE4EKfRow56WbdKNcMSY
-	bYBDOUL/8VYeHWiX8J0U=; b=QUQbLp4hc5zBnowbt4miBJIo/pPjTvOXYq7dWPN
-	FID6/tagd9nUfPWpqHqmse17Ih0bFjm86ai+AkmBMB2PrzHZWgcRDeB9v4B5fQiG
-	o3trblrMIFPBrhgQks+GRYlQVzae1M7s0EtfxBGAKZImcnQy7yloltup2Jg/fDdX
-	9JVmwimV8PctEEs/yvtgLgcwRbxapKYEZjd91VlN+w9Ma1QGbixCNQZER7TtjGN6
-	UFbFpa1ZjUKcOYGtqUvfMcA0OVB60H5MH4erph72DGoQBB3r9BlVwy5wz/VgyBNb
-	rl8IGNwTdqEfgI0Qvz95niMAyj6bvYklRx/+07nwzhdczug==
-Received: from p1lg14878.it.hpe.com ([16.230.97.204])
-	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 408dr8vfm0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 19:29:16 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id 7A64912E9A;
-	Mon,  8 Jul 2024 19:29:13 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 855628014F7;
-	Mon,  8 Jul 2024 19:29:07 +0000 (UTC)
-Date: Mon, 8 Jul 2024 14:29:05 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Steve Wahl <steve.wahl@hpe.com>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>,
-        Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>,
-        Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>,
-        Sarah Brofeldt <srhb@dbc.dk>, Russ Anderson <rja@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Hou Wenlong <houwenlong.hwl@antgroup.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <Zow-AXsLHjU6gfET@swahl-home.5wahls.com>
-References: <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
- <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com>
- <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
- <20240702174425.GHZoQ8edlTfB1falcO@fat_crate.local>
- <CAMj1kXGsjU5CpF655me1XNA8-5nbk3020vT2Bu5ZoFY25igovg@mail.gmail.com>
- <20240703154301.GEZoVxhREtHjk0vtaL@fat_crate.local>
- <ZowI9w7huVfcKJ7I@swahl-home.5wahls.com>
- <20240708181133.GHZowr1eznPqgvdtRw@fat_crate.local>
- <CAMj1kXG8hZ86BFbar9S5mmvKMH4a0XF0oCm36WwZxYNqc0+pjQ@mail.gmail.com>
- <20240708190724.GIZow47G0J8vO6J3ee@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SAYtGfFMHqSAZ9kpu9geTYZYvusduFOnCsT8S3sF97aaU+t26z392k3hPOIuGCUmQGL8sCy9FzIFI0alne2wtiqA7A1WgxlEd8Hde8hvDXUDCMQ8CzUjX/Xv3MFAmrfzitJLK+XrFpgL0/2tGHN1wIHJ2u9Qh01cnalE3RnUQ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MaFLwqRV; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-77d3f00778cso212888a12.3;
+        Mon, 08 Jul 2024 12:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720466969; x=1721071769; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dWA69OCwnmf93mOPUresyAYLqJ69nFaplaBAWlh6EJs=;
+        b=MaFLwqRVISNjUj2wBTg22YTVhGeSsRvasjXnhz9wIt9NEU3fDVBook5RlAWlg7RULr
+         R6+nGpNG4vIHHlokWwzyQHi+yN0XuTSlsTP950JAY3iZ78MbDFCqjLSpP5qz2OLRdAsH
+         FlkoOhQoI2OqGF3b8YK4eL6umc+KW3ZT2OZHxi4RdHpWurbP0lGkk85yL918XL3F3jsA
+         l7yLLFwyWCQ6R+3nGX7i3UHkk7+M+cvg7eFnvm93wKC/5tst1V27d0RGG+2igXkjk0kX
+         KOgG17rku1E9zfHkvNjBARjEiIsiq0CMUvloCICr3uDG1NrVQkSGg3Jx9aCcDxKVjziD
+         7OUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720466969; x=1721071769;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dWA69OCwnmf93mOPUresyAYLqJ69nFaplaBAWlh6EJs=;
+        b=gCO+JFS9zNYtUOjjDuciXCf0qFtRTr1HbOZVndTnZQbNwYWqa2F/uoIW5KixflRaAw
+         nLgSFpLNhuGN5PQMenMuSBpyvHiHW8Iq71q13rz+TxX8wZcJufcTMu7ePrQwphz0UyYo
+         ivGlRVlQ3jM1n9BUKo7YpWsov3K3oENyxFdYUn5TQzS0j6Uu1Tt/wMrWGy+/GwV6BBVG
+         w/NYr/f1WLtJIMnz+RuOkzx5A7DiJdkpN20jnzqWH8YyU2IvfcyQQZtza1QSW7Umb304
+         Eaw7sq7IKe7dKTBjZFhSryOZrv66m9Jc4BgMDI0e218I8T3v05Q18lb/1hKWIYEFfmLC
+         sm2A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/Xg2vEh2lSO9+KmTnund3ADdvePsAI0UutS0MtGnJth+aPXjWv7CvxvP7jFP+lV7n9KE4HYKqS6xhlgy7ZrDUetqGII6vPHmZQnCSOwwkwS0qWdyY+cdG1IWxFCUj41/b
+X-Gm-Message-State: AOJu0YzxUkDIGhTr6BiymrQfTTZ6kKHuQtG1kIruE1QftZ0tvngV5bvm
+	c5NIQAyYNdb4y+/RGka82CT41vR9B2g6YKqtbpxHFcnwDvKH72qP
+X-Google-Smtp-Source: AGHT+IFKU0Rv3ZsXkK3+TO67PIvDnwUXwpsZqzgXZ30ovAVccORyIgPePH4wncI7/a3i2Y32/HYc4g==
+X-Received: by 2002:a05:6a20:9145:b0:1c0:f594:198c with SMTP id adf61e73a8af0-1c29820c067mr497789637.11.1720466968675;
+        Mon, 08 Jul 2024 12:29:28 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b30b9sm240356b3a.178.2024.07.08.12.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 12:29:28 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 8 Jul 2024 09:29:27 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH v2 sched_ext/for-6.11] sched_ext: Account for idle policy
+ when setting p->scx.weight in scx_ops_enable_task()
+Message-ID: <Zow-F1SsJEGyWttX@slm.duckdns.org>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240501151312.635565-5-tj@kernel.org>
+ <20240624102331.GI31592@noisy.programming.kicks-ass.net>
+ <ZnoIRnCZaN_oHQ6N@slm.duckdns.org>
+ <20240625072954.GQ31592@noisy.programming.kicks-ass.net>
+ <ZntZcRgm-zok7kyb@slm.duckdns.org>
+ <Znt6sLf62JTIdGxR@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,69 +100,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240708190724.GIZow47G0J8vO6J3ee@fat_crate.local>
-X-Proofpoint-ORIG-GUID: oWEE9cDr5kzfnxuLmOl787osxcn3GcUb
-X-Proofpoint-GUID: oWEE9cDr5kzfnxuLmOl787osxcn3GcUb
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_10,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
- suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0 mlxlogscore=996
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2407080146
+In-Reply-To: <Znt6sLf62JTIdGxR@slm.duckdns.org>
 
-On Mon, Jul 08, 2024 at 09:07:24PM +0200, Borislav Petkov wrote:
-> On Mon, Jul 08, 2024 at 08:17:43PM +0200, Ard Biesheuvel wrote:
-> > Happy to assist, but I'm not sure I follow the approach here.
-> > 
-> > In the context of a confidential VM, I don't think the page fault
-> > handler is ever an acceptable approach. kexec should filter out config
-> > tables that it doesn't recognize, and map the ones that it does (note
-> > that EFI config tables have no standardized header with a length, so
-> > mapping tables it does *not* recognize is not feasible to begin with).
-> > 
-> > All these games with on-demand paging may have made sense for 64-bit
-> > kernels booting in 32-bit mode (which can only map the first 4G of
-> > RAM), but in a confiidential VM context with measurement/attestation
-> > etc I think the cure is worse than the disease.
-> 
-> See upthread. I think this is about AMD server machines which support SEV
-> baremetal and not about SEV-ES/SNP guests which must do attestation.
-> 
-> Steve?
+From e98abd22fbcada509f776229af688b7f74d6cdba Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Mon, 8 Jul 2024 09:19:14 -1000
+Subject: [PATCH] sched_ext: Account for idle policy when setting p->scx.weight
+ in scx_ops_enable_task()
 
-Yes, this is about AMD machines which support SEV, running bare metal.
-("Server" is in question, one of my testers is known to be using a
-laptop, so the facilities must be present in non-servers as well.)
+When initializing p->scx.weight, scx_ops_enable_task() wasn't considering
+whether the task is SCHED_IDLE. Update it to use WEIGHT_IDLEPRIO as the
+source weight for SCHED_IDLE tasks. This leaves reweight_task_scx() the sole
+user of set_task_scx_weight(). Open code it. @weight is going to be provided
+by sched core in the future anyway.
 
-> AFAIR, there was some kink that we have to parse the blob regardless which
-> I didn't like either but I'd need to refresh with Tom and see whether we can
-> solve it differently after all. Perhaps check X86_FEATURE_HYPERVISOR or so...
-> 
-> Thx for offering to help still - appreciated! :-)
+v2: Use the newly available @lw->weight to set @p->scx.weight in
+    reweight_task_scx().
 
-You asked me to imagine if the one-liner had worked.  Yes, it would
-have been a magical, easy fix!  But things should be as simple as
-possible, but no simpler, and that solution is "simpler than
-possible".
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+---
+A slight adjustment in reweight_task_scx() to match the new load_weight
+argument. Applied to sched_ext/for-6.11.
 
-As far as I can see it, the effort you're putting into finding a
-different solution must mean you find something less than desirable
-about the solution I have offered.  But at this point, I don't
-understand why; and lacking that understanding, I'm powerless to help
-find alternatives that would be more acceptable.
+Thanks.
 
-Having kexec place these portions in the identity map before jumping
-to the new kernel more closely mimics the conditions we are under when
-entered from the BIOS and bootloader.  So it seems to me to be the
-logical way to go.
+ kernel/sched/ext.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-Thanks,
-
---> Steve
-
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 525102f3ff5b..3eb7169e3973 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -3237,22 +3237,23 @@ static int scx_ops_init_task(struct task_struct *p, struct task_group *tg, bool
+ 	return 0;
+ }
+ 
+-static void set_task_scx_weight(struct task_struct *p)
+-{
+-	u32 weight = sched_prio_to_weight[p->static_prio - MAX_RT_PRIO];
+-
+-	p->scx.weight = sched_weight_to_cgroup(weight);
+-}
+-
+ static void scx_ops_enable_task(struct task_struct *p)
+ {
++	u32 weight;
++
+ 	lockdep_assert_rq_held(task_rq(p));
+ 
+ 	/*
+ 	 * Set the weight before calling ops.enable() so that the scheduler
+ 	 * doesn't see a stale value if they inspect the task struct.
+ 	 */
+-	set_task_scx_weight(p);
++	if (task_has_idle_policy(p))
++		weight = WEIGHT_IDLEPRIO;
++	else
++		weight = sched_prio_to_weight[p->static_prio - MAX_RT_PRIO];
++
++	p->scx.weight = sched_weight_to_cgroup(weight);
++
+ 	if (SCX_HAS_OP(enable))
+ 		SCX_CALL_OP_TASK(SCX_KF_REST, enable, p);
+ 	scx_set_task_state(p, SCX_TASK_ENABLED);
+@@ -3408,7 +3409,7 @@ static void reweight_task_scx(struct rq *rq, struct task_struct *p,
+ {
+ 	lockdep_assert_rq_held(task_rq(p));
+ 
+-	set_task_scx_weight(p);
++	p->scx.weight = sched_weight_to_cgroup(scale_load_down(lw->weight));
+ 	if (SCX_HAS_OP(set_weight))
+ 		SCX_CALL_OP_TASK(SCX_KF_REST, set_weight, p, p->scx.weight);
+ }
 -- 
-Steve Wahl, Hewlett Packard Enterprise
+2.45.2
+
 
