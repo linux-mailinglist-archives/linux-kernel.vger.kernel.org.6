@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-244560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25A792A609
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:46:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9F092A60F
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 410A9B21688
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:46:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C3C2284CF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA9C143C47;
-	Mon,  8 Jul 2024 15:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qxjh3HJN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247FB14430B;
+	Mon,  8 Jul 2024 15:47:08 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D387F1EA6F;
-	Mon,  8 Jul 2024 15:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567313EFF3;
+	Mon,  8 Jul 2024 15:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720453599; cv=none; b=tiRrqP11dlONwJR3s5lgcKmSetI6s78piU2XJYGBBNQ8Gk2Ktkkh2Fj+qAEy/yRKu4Ps0Qpa2fwstGbYCF3NczpGttsT9LBCzUDwsRxy3RMf/gASenBPGspiz1KX4IOS3CXDOzYOShImh+ajd5hNEgbO+Zu4sm6urDEgO8aEMlY=
+	t=1720453627; cv=none; b=cOo0QdQlNOW04jdOZjgo4Z4lpxDBkvHWmek8aXDzr1INWMo5lCaWigaRxodbwKGC2GHtN4drTXYyRUf9lgTIqHI5CSs+up+0ylUTZKj4/lqtq2ey31H9wBeSf1IuvdfrQ8FALHHYwFJlatPknU8SfbGL+bjWgzaAkNS9hyBlVIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720453599; c=relaxed/simple;
-	bh=5YlED3eojCPyxdbMnaXUCWC34VX7tNeqn4YeTXySpSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rIrDZe8XG4He178hADPniEXLu4FI7fChJAUlWMU4ZmOINNIdhRk1MCLNhOjzRbhXj46ul02Sjda/NtmdSFmTinxmzo6SfehbvJL+aogvcWATHNbVom3HdXPg48dr+cIZu3PPXeUNYiyJ+TiZF2H5X1aHZbo2PfQUfcjObX1Eoo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qxjh3HJN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E4B1C32786;
-	Mon,  8 Jul 2024 15:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720453599;
-	bh=5YlED3eojCPyxdbMnaXUCWC34VX7tNeqn4YeTXySpSY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qxjh3HJNIxyvG2AbjKc+btkfqiwTVxjyMzTXdKoiBRRuxpuztHP+q8ILVB8EsUePq
-	 l0lU+AmOudBFzxvaFXraGRC0b+8EU1sBgY1oCUKqg/t+69vgrpcFVrAPNeXwmUCb0g
-	 EC4DJsLCwpwyeRLdGsuihhQQCJmhVh75HnHPs0CKo6bummT0wQZgKmiVSZUzHfIizk
-	 /WA/K86lKsYL2AxLjP7Prq5QsfJRoyTYQJU1FVjHD2PKwGK4GEPnuyE7/8AwJEIFRm
-	 Axrto4L7leARObxmMOceXxl282FaVcjXZsZ2XQJer5uGqrotFqlHA8ypUqzIWHyffy
-	 rCkHYS2WZF6KA==
-Message-ID: <664619a9-c80f-4f81-b302-b9c5258b5e0e@kernel.org>
-Date: Mon, 8 Jul 2024 10:46:37 -0500
+	s=arc-20240116; t=1720453627; c=relaxed/simple;
+	bh=1axdbPWJ5c/v1s3yEaBZnHAgFH2hQmVUWdS89FqPcCo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T90bUA/GzkpYCrjJJgPYt3oqISYkQ/bDeEkE1v0vGt0X6nE6wEb64kQCDDA0Y5tQGJD86LtjHbj31/0+p7fsd71GiiPwhLDaGOyurLAdRKj13Qh8l+bgR/okrrntUkRgzCiEctkss37ULCo3TfQKRwMMd5dLkT6II2xdkly8tSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WHpNF5vvhz6K8pZ;
+	Mon,  8 Jul 2024 23:45:01 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id E9F8B140B63;
+	Mon,  8 Jul 2024 23:47:02 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
+ 2024 16:47:01 +0100
+Date: Mon, 8 Jul 2024 16:47:00 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, "Ard
+ Biesheuvel" <ardb@kernel.org>, James Morse <james.morse@arm.com>, "Len Brown"
+	<lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Shiju Jose"
+	<shiju.jose@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
+	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-edac@vger.kernel.org>, <linux-efi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] docs: efi: add CPER functions to driver-api
+Message-ID: <20240708164700.00003b87@Huawei.com>
+In-Reply-To: <2d0e11752d2bde41b61822b04b5b6f839d46b998.1720436039.git.mchehab+huawei@kernel.org>
+References: <cover.1720436039.git.mchehab+huawei@kernel.org>
+	<2d0e11752d2bde41b61822b04b5b6f839d46b998.1720436039.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pci: bus: only call of_platform_populate() if
- CONFIG_OF is enabled
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Lukas Wunner <lukas@wunner.de>, Bert Karwatzki <spasswolf@web.de>,
- caleb.connolly@linaro.org, bhelgaas@google.com, amit.pundir@linaro.org,
- neil.armstrong@linaro.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, Praveenkumar Patil <PraveenKumar.Patil@amd.com>
-References: <20240707183829.41519-1-spasswolf@web.de>
- <Zoriz1XDMiGX_Gr5@wunner.de> <20240708003730.GA586698@rocinante>
- <CACMJSevHmnuDk8hpK8W+R7icySmNF8nT1T9+dJDE_KMd4CbGNg@mail.gmail.com>
- <20240708083317.GA3715331@rocinante>
- <6e57dbc0-f47a-464e-af6b-abd45c450dc6@kernel.org>
- <CACMJSetAKtPp_Gua2S7m_+aC-f9HSUyfF1YoHUPdtcibLtQxpA@mail.gmail.com>
- <20240708154401.GD5745@thinkpad>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240708154401.GD5745@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 7/8/2024 10:44, Manivannan Sadhasivam wrote:
-> On Mon, Jul 08, 2024 at 05:34:29PM +0200, Bartosz Golaszewski wrote:
->> On Mon, 8 Jul 2024 at 17:29, Mario Limonciello <superm1@kernel.org> wrote:
->>>
->>> On 7/8/2024 3:33, Krzysztof Wilczyński wrote:
->>>> [...]
->>>>>> If there aren't any objections, I will take this via the PCI tree, and add
->>>>>> the missing tags.  So, no need to send a new version of this patch.
->>>>>>
->>>>>> Thank you for the work here!  Appreciated.
->>>>>>
->>>>>>           Krzysztof
->>>>>
->>>>> I don't think you can take it via the PCI tree as it depends on the
->>>>> changes that went via the new pwrseq tree (with Bjorn's blessing).
->>>>
->>>> Aye.
->>>>
->>>>> Please leave your Ack here and I will take it with the other PCI
->>>>> pwrctl changes.
->>>>
->>>> Sounds good!  With that...
->>>>
->>>> Acked-by: Krzysztof Wilczyński <kw@linux.com>
->>>>
->>>>> After the upcoming merge window we should go back to normal.
->>>>
->>>> Thank you!
->>>>
->>>>        Krzysztof
->>>
->>> FWIW this other patch makes it quieter too.
->>>
->>> https://lore.kernel.org/linux-pci/20240702180839.71491-1-superm1@kernel.org/
->>
->> I had applied it previously but backed it out in favor of the new one.
->>
-> 
-> That sounds sensible. The patch referenced above still causes
-> of_platform_populate() to be called on non-OF platforms, which is not optimal.
+On Mon,  8 Jul 2024 13:18:15 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-But couldn't I just as well have CONFIG_OF enabled in my kconfig and get 
-the same new noise?
+> There are two kernel-doc like descriptions at cper, which is used
+> by other parts of cper and on ghes driver. They both have kernel-doc
+> like descriptions.
+> 
+> Change the tags for them to be actual kernel-doc tags and add them
+> to the driver-api documentaion at the UEFI section.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+Other than the blob at the end that belongs in earlier patch LGTM.
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  Documentation/driver-api/firmware/efi/index.rst | 11 ++++++++---
+>  drivers/firmware/efi/cper.c                     | 10 ++++------
+>  2 files changed, 12 insertions(+), 9 deletions(-)
 > 
-> - Mani
-> 
+> diff --git a/Documentation/driver-api/firmware/efi/index.rst b/Documentation/driver-api/firmware/efi/index.rst
+> index 4fe8abba9fc6..5a6b6229592c 100644
+> --- a/Documentation/driver-api/firmware/efi/index.rst
+> +++ b/Documentation/driver-api/firmware/efi/index.rst
+> @@ -1,11 +1,16 @@
+>  .. SPDX-License-Identifier: GPL-2.0
+>  
+> -============
+> -UEFI Support
+> -============
+> +====================================================
+> +Unified Extensible Firmware Interface (UEFI) Support
+> +====================================================
+>  
+>  UEFI stub library functions
+>  ===========================
+>  
+>  .. kernel-doc:: drivers/firmware/efi/libstub/mem.c
+>     :internal:
+> +
+> +UEFI Common Platform Error Record (CPER) functions
+> +==================================================
+> +
+> +.. kernel-doc:: drivers/firmware/efi/cper.c
+> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+> index f8c8a15cd527..2785c8ea8ad8 100644
+> --- a/drivers/firmware/efi/cper.c
+> +++ b/drivers/firmware/efi/cper.c
+> @@ -69,7 +69,7 @@ const char *cper_severity_str(unsigned int severity)
+>  }
+>  EXPORT_SYMBOL_GPL(cper_severity_str);
+>  
+> -/*
+> +/**
+>   * cper_print_bits - print strings for set bits
+>   * @pfx: prefix for each line, including log level and prefix string
+>   * @bits: bit mask
+> @@ -106,18 +106,16 @@ void cper_print_bits(const char *pfx, unsigned int bits,
+>  		printk("%s\n", buf);
+>  }
+>  
+> -/*
+> +/**
+>   * cper_bits_to_str - return a string for set bits
+>   * @buf: buffer to store the output string
+>   * @buf_size: size of the output string buffer
+>   * @bits: bit mask
+>   * @strs: string array, indexed by bit position
+>   * @strs_size: size of the string array: @strs
+> - * @mask: a continuous bitmask used to detect the first valid bit of the
+> - *        bitmap.
+>   *
+> - * Add to @buf the bitmask in hexadecimal. Then, for each set bit in @bits
+> - * mask, add the corresponding string describing the bit in @strs to @buf.
+> + * Add to @buf the bitmask in hexadecimal. Then, for each set bit in @bits,
+> + * add the corresponding string describing the bit in @strs to @buf.
+This is in wrong patch.  No point in introducing wrong docs to fix later.
+
+>   */
+>  char *cper_bits_to_str(char *buf, int buf_size, unsigned long bits,
+>  		       const char * const strs[], unsigned int strs_size)
 
 
