@@ -1,107 +1,158 @@
-Return-Path: <linux-kernel+bounces-243917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCCD929C5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:43:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065F5929C63
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 08:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D1F8B20F42
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:43:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82823B20B1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 06:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EC817583;
-	Mon,  8 Jul 2024 06:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBA718AEA;
+	Mon,  8 Jul 2024 06:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j6XsnBZQ"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PzOy6Z2W"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A1410953
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 06:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5146B1171D;
+	Mon,  8 Jul 2024 06:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720420977; cv=none; b=me1nBpUfInfvqYOt3x5LAcOlbhz9mHHiNT/x73llfo8LuiE8c1UZcaOK679SGAFBwXR0Mr2I1+DcVWNKMCX7IAm6TfQXsxOAIHkdGvK09PEDvdOXQG//kShrPjRejHNDxNr1WnN2oGTWJToyaJUSXaRKH/Pt3HVLtNlmmk1XA0k=
+	t=1720421097; cv=none; b=L8I+/4PV/fc/Xp85ejoSA9P4q4md7O1jmOA6k4B0wRZKoOAFZQMe1z7eA0z/q/zCSqeSLRfFnk2J8EpiEt7wDktMYgLh3D+t2+LD7Mk0pnfikq4AdL9JUZVpah0b6Cm+6XFmLhTiy69v0bpPFHrgGoNHw7Lz9hFxnyy1I6e7kEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720420977; c=relaxed/simple;
-	bh=XDCXukSSG5eu7Enir6B20Xw7BTHGqHHg5Qjp0HFF7D4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YzhWtyHtwMb5kmdvlBplCjkK7m9kicJ+HXt133K2MLQ6ZvKayAVZQ35fVPsXSr1O/wTU+hkG5NrEbR0nEA7YssYQksfI7V3Q3ONIVfN6EzobFWUkRtPwrPxMPUA26M1gmnfzCivXVXIj+7M9e7iM+HxkrYcCs813raIf4xTRzaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j6XsnBZQ; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5c66ffadb7aso526778eaf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 23:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720420975; x=1721025775; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1FcWtX9vaZBCwduln3dpe45i1fpCK57rnuMSwlu6aWA=;
-        b=j6XsnBZQ+KLh0p6v2x9lK//D99xqJ2pfrdVgZvmSuyl8Ep17Ci66hOgGaD2tt+Cb4Z
-         h1wW8r+7qEXsI2LkIrvoCEy4PF+IG/efjJe6xAaWcdVfH76bjDsWp5ebdbj/4klDai5y
-         5CkZU2vVuPZJTbda6ttRb3xM7/QAPjRStFHY2RCZ/ZaDqX7kRsy8mzYxNaquflqaklET
-         VH9dL6E2hjBfx5xMKngMeXF4TfO4rRgMlQGa8qAdZOhI50IjJGmQ9rtJ0d1g7pdRmoJJ
-         sjdascT11jiNSFTXsWap467yXHVHJ4UimXgri637BIDEZOK+VXuw1wOvmN2rHXw680oR
-         o6Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720420975; x=1721025775;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1FcWtX9vaZBCwduln3dpe45i1fpCK57rnuMSwlu6aWA=;
-        b=DwQMylTC99fz9ZpfqknF1RMPwnHZ5crHVGqqUxD1EpDHy3/IuY4coKDNJiLOW9JJQw
-         djWWunWdeYgUh25HwCeVtJrzjSPPnW4jIKMEI+f4IfaOUdUOn/JcBHebCECMWs+LP6au
-         Y9j93Q9+Mqd67+KTK/CmUsB2+LTZHMKmPuOkULNfJ18miNY1M0DMLYMA1MPgZGdfBgBz
-         MNAfiNwh/YarAqciJP2FV56bvV0rS+I+oaEQod/4fPUWfmGiL5Gtt/fkR4MHEwUluR9G
-         sPR3E/NGpJKLZJFb0hIxd31Rw47PaNeaigdjICXE/B6hFszvrxKRblHqXHC5I2qE3SIz
-         VViw==
-X-Forwarded-Encrypted: i=1; AJvYcCUle7wdb1SKbXoGkji3XtovCU06A3nNhQuvTNgcDK8o4ubtRRLSmpDutR6xgdMUfCGEd2U/h94XYIkjiX0IRQ/+lM8aEFHqpDyLpYsS
-X-Gm-Message-State: AOJu0YzAVK+tyI4DoRJZgxiF2ZdEI5ilKyE4Bh+Y9KzECerW7jLYdKwk
-	sni9I0jdSHxBnX/dm/+VKt3JG6Ul3xXTu2xfMJ6N+eAePU3oqmcKTGIFAe11TbI=
-X-Google-Smtp-Source: AGHT+IEpqAis6dJIEMNcexBdNxU9+uzyMP+q55/0m9GwePwrj4Gs0P9PuuQDc9r/zZs34DMwLSdBrg==
-X-Received: by 2002:a05:6871:688:b0:25e:14f0:62c3 with SMTP id 586e51a60fabf-25e2bd878b7mr9528568fac.33.1720420974988;
-        Sun, 07 Jul 2024 23:42:54 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b116e43f0sm5260455b3a.101.2024.07.07.23.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jul 2024 23:42:54 -0700 (PDT)
-Date: Mon, 8 Jul 2024 12:12:52 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, kernel@collabora.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: mediatek: Use dev_err_probe in every error path
- in probe
-Message-ID: <20240708064252.sydvhfnmx3akafql@vireshk-i7>
-References: <20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com>
- <20240702055703.obendyy2ykbbutrz@vireshk-i7>
- <aa6e93bd-aba2-4e4d-bce9-04e818ac25ed@collabora.com>
- <20240702084307.wwvl5dchxa4frif3@vireshk-i7>
- <8602bf12-1b8d-4249-8814-52ecaa29d0ec@notapiano>
+	s=arc-20240116; t=1720421097; c=relaxed/simple;
+	bh=EqDlk82dE7XS0/JGyUAUcCtCsFHxwVbAJvsEIiMzMrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lB7ncdu4H92hljLvLomFhCNSXzlRKANIQYx3y0Afv377oux+58S5vdUUB+T8By9yHlAWS2nprSgZRgCgSWdDWamFs2Rw0J03bba2g988CLlPzrArfyJ+WNMWMP1ZJTKM22HRsuIo4AcxeiyfX86j3YRqNd2h3EeCKkdsW028B0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PzOy6Z2W; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 817CBE0006;
+	Mon,  8 Jul 2024 06:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720421086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kN45r2MzRBKAE4raZ17kWauJPTnIek3N3oaVcC2BO/g=;
+	b=PzOy6Z2WDoUDIURvXSdTtpzbHX3JQqR2TwTpbeUTnfB6vX3dNcZ37ATxjxBqYPJmXyybOW
+	/cSvPuilXVhZeR7B2dXURK6eJ39WhH4IRmB3cgvultxkXbdYRWIJAVPOSzfOAYpJjJ6yjj
+	T4otuw7FybtaZrQhYLIzqq3zUvj4Jc9ZhqWNxjCSwxjRvmd7Z4M+rCx4VXtxp9PGAb8E1q
+	oZ1dnF7ScZhNf1MbVD05qQH3qQWLfMAQwFkOz4wVja8KUEs30B2F3BIx4guMRdC+Ulvnk+
+	YXsH623cgVPmDlxftJRPmEBJAk7rpJRwu3UnaQOHOTk3BC9lbm01fchVhlirnQ==
+Date: Mon, 8 Jul 2024 08:44:40 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Marco Felsch <m.felsch@pengutronix.de>, Richard
+ Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Russell King <linux@armlinux.org.uk>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+ <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>, Michael
+ Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+ openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+ linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
+Message-ID: <20240708084440.70186564@xps-13>
+In-Reply-To: <20240702-mighty-brilliant-eel-b0d9fa@houat>
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+	<20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
+	<07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
+	<mafs0ikxnykpr.fsf@kernel.org>
+	<20240702-congenial-vigilant-boar-aeae44@houat>
+	<mafs0ed8byj5z.fsf@kernel.org>
+	<20240702-mighty-brilliant-eel-b0d9fa@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8602bf12-1b8d-4249-8814-52ecaa29d0ec@notapiano>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On 05-07-24, 11:13, Nícolas F. R. A. Prado wrote:
-> That would only run once during boot and only in the error path...
-> I'm confident in saying this won't amount to any real performance gain. So the
-> usage of dev_err_probe() everywhere for log and source code standardization is
-> well worth it.
+Hi,
 
-Hmm. Fair enough.
+> > >> >> Port the current misc/eeprom/at24.c driver to the MTD framework s=
+ince
+> > >> >> EEPROMs are memory-technology devices and the framework already s=
+upports =20
+> > >> >
+> > >> > I was under the impression that MTD devices are tightly coupled by=
+ erase
+> > >> > blocks. But then we see MTD_NO_ERASE, so what are MTD devices afte=
+r all? =20
+> > >>=20
+> > >> I was curious as well so I did some digging.
+> > >>  =20
+> > [...] =20
+> > >>=20
+> > >> I also found a thread from 2013 by Maxime Ripard (+Cc) suggesting ad=
+ding
+> > >> EEPROMs to MTD [1]. The main purpose would have been unifying the EE=
+PROM
+> > >> drivers under a single interface. I am not sure what came of it thou=
+gh,
+> > >> since I can't find any patches that followed up with the proposal. =
+=20
+> > >
+> > > That discussion led to drivers/nvmem after I started to work on
+> > > some early prototype, and Srinivas took over that work. =20
+> >=20
+> > So would you say it is better for EEPROM drivers to use nvmem instead of
+> > moving under MTD? =20
+>=20
+> I thought so at the time, but that was more than 10y ago, and I have
+> followed neither nvmem nor MTD since so I don't really have an opinion
+> there.
+>=20
+> It looks like drivers/misc/eeprom/at24.c has support for nvmem though,
+> and MTD can be used as an nvmem provider too, so it's not clear to me
+> why we would want to create yet another variant.
+>=20
+> But again, you shouldn't really ask me in the first place :)
+>=20
+> I'm sure Miquel, Srinivas, and surely others, are much more relevant to
+> answer that question.
 
--- 
-viresh
+More relevant, I doubt, but just a feeling: EEPROMs have their own
+subsystem now, NVMEM, which, as Maxime said, was initially written for
+that very specific case. EEPROMs don't have the complexity of MTD
+devices, and thus pulling the whole MTD subsystem just for getting
+partitions seems counter intuitive to me. You can definitely "split"
+EEPROM devices with NVMEM as well anyway.
+
+Overall I think the idea of getting rid of these misc/ drivers is goes
+into the right direction, but registering directly into NVMEM makes
+more sense IMO.
+
+Thanks,
+Miqu=C3=A8l
 
