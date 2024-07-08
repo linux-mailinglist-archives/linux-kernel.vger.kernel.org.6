@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-244294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349B892A246
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CB192A248
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 14:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6598A1C215B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:13:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F124A280F8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 12:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE5613C3F6;
-	Mon,  8 Jul 2024 12:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EC4839E4;
+	Mon,  8 Jul 2024 12:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h0vvqDe8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="D8q1AFg9"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86D53C08A
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 12:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A043C08A;
+	Mon,  8 Jul 2024 12:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720440496; cv=none; b=pmqSuapibdUOIRbV6oMv7V5f5U6SFuLHy2Ww24gfbN7Wzu2OKYieqIQ0inHlPnelaJxr7FNsKDOUGX4IvmVz83r7W0674RsRUtRXoR2OQBKVq7eyma7Z9EL1D08N0MCGHgw+3+BDL9uyM6wll5oLpLuKXaGzHWkpT4t8s3Wnyw4=
+	t=1720440582; cv=none; b=gvOGJl7C3Q7wOwNytZACI2OKaChsqui2YH1S6bNX/TjqOEYHMk0gUvaSULX2zh8sKSGru2o5xk/VvA/SBjvv+YZRBPKVBt6Tz1LiJvuBFlco0XJcXnnR5F8AePoewxPpZ/YNWvZOAFEr1k61AceqkddeYiH5XqgiV8NNiADTQ9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720440496; c=relaxed/simple;
-	bh=CZz0OjF+N3d/uH296pPaOfWKFpaq9SpRo0F+caUTF6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i7ZtRAFuldGGL/HDL987y1TuXTs3E7GzqJke3Rjcq9lq5u9j5c4mRHjzyLmceL3sp15q3FJBqphWgtzAAeZP5yGzXu3i5WDSvYT/7fdbMaenfVYhimho/25bjPGXX1A//mmXA3q4FSxV6SxSgC10IrYcqk+0Qr3hVo3Au2NXz0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h0vvqDe8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720440493;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nwb/NHCNDPBbNOYdrz+GYj8J2TCseSslvd8sX/M8mWk=;
-	b=h0vvqDe8ogmpj3+nSGVKfQmMZMw9Hiw/9bf973evxfzsnfJs4kayuvF5qez0SUe0KeYA+Y
-	HzEhrGrjgq9pU8kLg+GZMsXFSaycgVBWJ21frk8ZllG0XaRO8R+UAS8HWr7BHYWFFGlzcH
-	MZeDg/yeH0emLnO+2fPVQ8YWYf+G+J4=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-25-bq_DEXeJOnu7jSAyH_mHaw-1; Mon, 08 Jul 2024 08:08:12 -0400
-X-MC-Unique: bq_DEXeJOnu7jSAyH_mHaw-1
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-75ea23782f5so1586812a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 05:08:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720440490; x=1721045290;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nwb/NHCNDPBbNOYdrz+GYj8J2TCseSslvd8sX/M8mWk=;
-        b=VAn304rVmjsElbx/WKmn39Z2RKn8EWPWGL3TdyfPh5uRHYY1zmZWP4NwxceTkVOJnC
-         TTyYqvKocG4fAXwWBIzgH5dY+p2YoS9OYqoM4XCzCb+ArNpR3YuKbMOgEQLYNxHuFlp4
-         VSNO5x29bE61V7clxB32nazbOdzwponVOe1zZRfa7SYayKMoL+blUVNLj+G5q9DRzZkb
-         s9wKIWTe+HTL1dLurP6wLydPaBZHGV9tsAfPN8Bm9bmJ+kT5LM54YaUOU8HPaQZPYRe2
-         3O+ieQ/xW4EFg92eUfNalFJlqOGjWfa2zrgfimN2a6LZFEU6pHjiP+o2J9Ivk/T1rVx8
-         OJpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYMaQxfu9Cea1u09J7BAU9bZjFN3ReQxuHgE3WRLwtKE5uT+O04WePpTSishEo2myG2ugVjQHIU6ksJev4+j2kj/QGktKxuFOcw/XZ
-X-Gm-Message-State: AOJu0YzerT1bKX5dzkQdUmd39SBy88afSKtMj7DxMveyJNtZUZVAmftP
-	70tIlNUWa+wWOtsrkj5QaXZkGH9XV81O/3iGjPsM4adYEPatlB+5IXRrCXSF85fCNa2U2pMsz0o
-	kcyjAQx35V/dUDZ2T10r5lEbnF7IXWGeYuTPNFyBhqMdi+gtEYOCpIXYnzZ0J2T1zUTEVJN5GYS
-	MwhkloimjgoG5pYrVR/IyN62hjl12sVjSWKHZr
-X-Received: by 2002:a17:90a:ac0d:b0:2c9:7616:dec7 with SMTP id 98e67ed59e1d1-2c99c54186fmr7125412a91.6.1720440490510;
-        Mon, 08 Jul 2024 05:08:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPwHzsQDzGu+xR3DQUoweoTT1Kf7TAdTBOw1dFR4nyWDCgQYp85Jk5+a4EU54LIpsTE9hEkS0qlGqZ3527u2o=
-X-Received: by 2002:a17:90a:ac0d:b0:2c9:7616:dec7 with SMTP id
- 98e67ed59e1d1-2c99c54186fmr7125397a91.6.1720440490094; Mon, 08 Jul 2024
- 05:08:10 -0700 (PDT)
+	s=arc-20240116; t=1720440582; c=relaxed/simple;
+	bh=LixmteUS5gYgJ/PPXczu+PsnnDVZsOkJdxUiZfHsntw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s3sGWVoRl2rn6ewIft6xvVZLtCT0UVP89SdSUeL+eTjxfWCfH6raosL8w7ud1s5m2koGnT3zBIgvjhqBu2Vmmoul2TEGdBkPLlLsT9BLyL11MykmlsE8JINiWCkX0S7nf4zDGU5qU4iASDcxE+1suYWTI6uVKXMTaPPiBgDzh/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=D8q1AFg9; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8E9E041AAD;
+	Mon,  8 Jul 2024 14:09:32 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id ZZdBFLd7Gx_I; Mon,  8 Jul 2024 14:09:31 +0200 (CEST)
+From: Yao Zi <ziyao@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1720440571; bh=LixmteUS5gYgJ/PPXczu+PsnnDVZsOkJdxUiZfHsntw=;
+	h=From:To:Cc:Subject:Date;
+	b=D8q1AFg9z24hBB18YM8MJt044NefpABngXoUt0Z3FlzL2tkFswv3SlkdPaNOZqPuP
+	 LHCQaSX3n7Vxr6EhXUWfJfoX4IerSx0AJ8uN21Um97G1YY86q5mUNcidnKw1HGPbWz
+	 M6fNSRQIJh00FAHGk8su6FiL4udi2E1aaQbsYG4yU3Av0VDaJkWXYgzm/+cTok5jGz
+	 X0BqirpWpzZ7SroB6ZWUpQhpoff9inRjovijWA52o2KBm6P5kCb9ZH7ZA+/+QEXiEh
+	 MQpev+aQ/v4xG/3+44KTuTN0Ouvd4FhuruqxH+61RNWhPZA+WSIXNESeO/nIN3sGrs
+	 ZH6rPB8wrQxBw==
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 0/3] Add USB support for Sophgo CV1800/SG200x SoCs
+Date: Mon,  8 Jul 2024 12:08:27 +0000
+Message-ID: <20240708120830.5785-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705133348.728901-1-ast@fiberby.net> <20240705133348.728901-2-ast@fiberby.net>
- <aadf8f7c-2f99-4282-b94e-9c46c55975dd@fiberby.net>
-In-Reply-To: <aadf8f7c-2f99-4282-b94e-9c46c55975dd@fiberby.net>
-From: Davide Caratti <dcaratti@redhat.com>
-Date: Mon, 8 Jul 2024 14:07:58 +0200
-Message-ID: <CAKa-r6u85yD=Ct4nq2xZLXLT+3vWsz+WoDZ__xS4tkpge=yf-Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 01/10] net/sched: flower: refactor tunnel flag definitions
-To: =?UTF-8?B?QXNiasO4cm4gU2xvdGggVMO4bm5lc2Vu?= <ast@fiberby.net>
-Cc: netdev@vger.kernel.org, Ilya Maximets <i.maximets@ovn.org>, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
-	Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>, 
-	Ratheesh Kannoth <rkannoth@marvell.com>, Florian Westphal <fw@strlen.de>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org, 
-	Stephen Hemminger <stephen@networkplumber.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-hello,
+Sophgo CV1800/SG200x SoCs integrate a USB 2.0 phy and a USB 2.0
+controller based on dwc2 IP. This series implements a basic driver
+for the USB phy and add USB-related device tree nodes.
 
-On Mon, Jul 8, 2024 at 1:12=E2=80=AFPM Asbj=C3=B8rn Sloth T=C3=B8nnesen <as=
-t@fiberby.net> wrote:
->
+Yao Zi (3):
+  dt-bindings: phy: add YAML schema for cv1800-usb-phy driver bindings
+  riscv: dts: sophgo: add nodes for USB phy and controller
+  phy: sophgo: add usb phy driver for Sophgo CV1800 SoCs
 
-[...]
+ .../bindings/phy/sophgo,cv1800-usb-phy.yaml   |  67 ++++++
+ arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |  23 ++
+ drivers/phy/Kconfig                           |   1 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/sophgo/Kconfig                    |  10 +
+ drivers/phy/sophgo/Makefile                   |   2 +
+ drivers/phy/sophgo/phy-cv1800-usb.c           | 213 ++++++++++++++++++
+ 7 files changed, 317 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/sophgo,cv1800-usb-phy.yaml
+ create mode 100644 drivers/phy/sophgo/Kconfig
+ create mode 100644 drivers/phy/sophgo/Makefile
+ create mode 100644 drivers/phy/sophgo/phy-cv1800-usb.c
 
-> Davide, I think David Ahern would be happy [1] if you could post a new ip=
-route2 patch,
-> since the kernel patches should preferably hit net-next this week (due to=
- uAPI breakage).
-
-I will send an updated patch (don't use "matches" + add missing man
-page + rename keywords [1])  in the next hours.
-thanks,
---=20
-davide
-
-[1]
-
-> Nit: I would prefix all of these with "tun_".
-
-"tun_" or just "tun" ? please note that each flag can have a "no"
-prefix, so is it better
-
-notuncsum
-notundf
-notunoam
-notuncrit
-
-or
-
-notun_csum
-notun_df
-notun_oam
-notun_crit
-
-?
-
-(I'm for not using the underscore - but I'm open to ideas: please let me kn=
-ow)
+-- 
+2.45.2
 
 
