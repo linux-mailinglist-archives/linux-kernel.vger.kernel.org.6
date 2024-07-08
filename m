@@ -1,126 +1,183 @@
-Return-Path: <linux-kernel+bounces-244552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4DB92A5E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:39:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB7A92A5E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4501C2162D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C3C2845EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E159D1422CA;
-	Mon,  8 Jul 2024 15:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76306143749;
+	Mon,  8 Jul 2024 15:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PsHVBUn7"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Abd06NVO"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A430A13B7A3
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233C313B7A3;
+	Mon,  8 Jul 2024 15:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720453180; cv=none; b=TbhQ8vQrKdQEHb3BtxGzyi71OrygYSSfcstFBW2wTNEyES9ioo8KlTCc4hh8uzJ+DlZ1OxP777vnBOQ2sWEEuvm8C7BmM4GcxxcpzdnWDZLd0BqZ6mUYrcmPMSmYdJisJI51CrFlxZ8Kb9sTve2ii7hizfvXLecwvz1+mALTNsI=
+	t=1720453204; cv=none; b=InkVtugEMsF9w7YOyzIcTiWCLbFf90voi9qy72TX3p61CQLdhu//G4qmMwC74HnkmFhwMCTjNkeVrKnQ4cacgqEubqqGBt9MMc9yRl8GHCQGRURNu9PkSQxPQBLORkKOx1BQ0reLaJ4yCd4Jpd/H1RQX1hH4M/jvsYgYR2hV90w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720453180; c=relaxed/simple;
-	bh=lFmVvDZRq/Ve1iuqOkYT5EoULMpc/byYke1wKWP0OrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Dl7zRpDmJwPuE+Ztr3wvDeCRcbrT/00H7QQagOzFP3u7Ihst8mhhTGL0eENiVp55gF57poRfh6SLnsEPhrayj4+TePxmTB/bdZnbuSjz/MUo+CvatcGlVXgfpA19xhoJBhjFk6B8wNdWDWlmp8BBEEqJ/3pBQOEJLm69rwyMOE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PsHVBUn7; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5c6639b34fcso1408850eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 08:39:38 -0700 (PDT)
+	s=arc-20240116; t=1720453204; c=relaxed/simple;
+	bh=pvPOUFYWBe65xe/4kqz1kS7V0Nu6FfHZexhreB2xFqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LRIY0e79/f8yMzgVMefFl6n2lCQ6jDuKUe0iQSiNr8aZbjkyJ1s31AgoPKnQXe5ed/HfArw20DICOYTdXjNL5YTm/ivkNNjutOgbexfQoweGBJDLOlJ/4BZE38AJ1aN1KtB2QX4VhSJ4fJrxddEB/8pD3ogqKVmgd1jtOvVl3RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Abd06NVO; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58c947a6692so5129512a12.0;
+        Mon, 08 Jul 2024 08:40:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720453178; x=1721057978; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ko4nEiDfhlR7fhraWGQD/gHhjHGleJUcF9JQDJhaqVg=;
-        b=PsHVBUn7Dv9qm9gG1nPU2z4Iiil1/ZLId1E9tR+syI5S2nYTTljL83N7lyot+3C+Es
-         xTDVfK6JK/2melVVeXvRY7VuqCzX1Onr4T59oB2AFGOgbPUAsMOA8aDOMdoZyuZrjWdT
-         K1RndZFu0DGeClSX/a5YX6YfrObFKOU0qX2zD35v/61W2z/0UT6UvELdXbHm7cA8zRC6
-         nwHXj/kazf2KVuwUogeg7iv8Y6sVbcVNGt1sykmwqf33esT38E4wBB8c8rtG9Wt2kds4
-         jHngWid4+7Nh/1/xu0tuSvXE018QYOCFgKEi+MgFXb3tnwGp6WhqIXdC7fTAOTYRTVHu
-         gffw==
+        d=gmail.com; s=20230601; t=1720453201; x=1721058001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8cIbrzp/9+rBGOi+JydWc8Pqt8a2TXPEYOYm+hPpzu4=;
+        b=Abd06NVOHqA4pbtDragAmKXrVQQMrsOSeN4CM8MKdCO6sX+UH/DUthgw/9vs1MbMok
+         0ITMhZS7Vap5dy0T/uRK4jqPHiHINUmnncnD2DN2/xLFLRhBvdfKa5sA7Ag7E1tmm4pO
+         2Ymr7khRRI5+RJWlEb4mGdqe76LonP1qnkWDaeuT9T0lMhDF0i0Gu3d64mE52pmIuP+l
+         KWvYult7po7ejxBTapSQywtG333YF9pXf0O/gaaDcza6BUdyfhY+oL8UZqwDmE5yCE7/
+         1W55tzkvJ6hLQaRkb1fAdXspb+ab+KeBx8uTfsDXNuS4Uv148re4V2P26XVaRhdJdcY1
+         1z3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720453178; x=1721057978;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ko4nEiDfhlR7fhraWGQD/gHhjHGleJUcF9JQDJhaqVg=;
-        b=TmO+ZdD2B79+C5CMluVt+ndFUPYYvzBEawPcaR3Ti41xgm1iEPehB58skKhW0qceh8
-         J/IdRkqXh2sjCKLOCO4S8Yp1obwP90LyGF2eGknmMFKLcbg/syiznnAwHwxhs7dvqU2X
-         tCnR5c9Oq8eavrV61vLJ94PNx/sKXifb93pWoW/lVnmnsjTNK8jsa2+ODBQ4WOBX03/o
-         twxom61DUjdlbJqB70nAeNwIxlwDiqeiukK14H3245noT4Iz/EO9KRPqN1AX8XZENQId
-         TmIz5YSCelcvfAoW+v+7W7nAotbq1bjVHs4FQKh2vLbGJprALA5hArarHwLChncSnZWg
-         WjKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfpLnEEc17GT5xBK1I8o8ICTSMTBvW+jGAgR1Qnnk2gWd4WZwwZGo8jZLgfaQs2/VeGWtKx/B5lUUun/V0ogUfqP1Gt6ilx3ilKuTj
-X-Gm-Message-State: AOJu0Yzxw2BORc9CaROTj+njJFgklcTiwusVKBUaGMlagUx//MuAfGsx
-	2DETpg6MPCqXzANjEg9vdqt9j9p8rJdJpt2lktzZBkAud/XPM24gYGaUeFt4EFaMvOuTszP03IU
-	=
-X-Google-Smtp-Source: AGHT+IHZ+X32NksTb54ym15qqLdWcT2/2e6/hNZhPy7Iz2Eghsby8ddGDc0YUlTOyQwI2Yx4TvgURA==
-X-Received: by 2002:a05:6870:9690:b0:24f:c31a:5c29 with SMTP id 586e51a60fabf-25e2bf1eebbmr10662019fac.43.1720453177758;
-        Mon, 08 Jul 2024 08:39:37 -0700 (PDT)
-Received: from thinkpad ([120.56.193.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b1d15b336sm4760838b3a.198.2024.07.08.08.39.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 08:39:37 -0700 (PDT)
-Date: Mon, 8 Jul 2024 21:09:33 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: maz@kernel.org, tglx@linutronix.de
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: MSIs not freed in GICv3 ITS driver
-Message-ID: <20240708153933.GC5745@thinkpad>
+        d=1e100.net; s=20230601; t=1720453201; x=1721058001;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8cIbrzp/9+rBGOi+JydWc8Pqt8a2TXPEYOYm+hPpzu4=;
+        b=iQ20wYMRndvj1ZviPb/fIbphL+boIbr7oxpAWSFD+Q14igYZgf7llwF2BzP+qPxBZ1
+         2C9BHCZ0IbtsSna7GQmmkxdsMCjBqLBZa3bzZYxGEjwCPLBGhCU16rdiBYrsHjXrbI/U
+         cpLko2AWcho+bhSBtNBdMH4NxJ6I/0Ud3y9kB9DaauS5wXFenuM31VQ7at81boss329/
+         aJYbFGXlaSh3jdf71ZZhaCcKFsn5iP18IDipFzxgwTQh90OV7dzN1qXgBEEP55QBTy/w
+         KsuqizZ+PzI9d6O+EsuKOviQH9kaiRp4dbxPVyQ+gYNKHvLTFoBldfhmFdvQ1igkDp8g
+         pIjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyNGx5xDcsGaNxJJsV9wyGrONA4+iV9E8lWnA1KGOD87822XbcN+42ufVLLGMlnd/hWst2MJ9c9/KiOaVP2jXRfhzQAapRfUR0/UGV
+X-Gm-Message-State: AOJu0YzZP6DaTZRJUlvh4Ra4All92siGITg4HkIpGWZDZLFrvm9RCIHn
+	2BwwFa+RSPJ8B//7aXpfir/KF0AKv/PNijMnrEEt0VE/hcE+k6Xn
+X-Google-Smtp-Source: AGHT+IFGpZR2YtZobflHmofogwGIAmCHG0go1fqlzmSQEcoFqmffLFqMWjBXdMl1Taf3eaT4uezs8A==
+X-Received: by 2002:a17:906:228d:b0:a77:c314:d621 with SMTP id a640c23a62f3a-a77c314d83amr592775266b.13.1720453201110;
+        Mon, 08 Jul 2024 08:40:01 -0700 (PDT)
+Received: from [192.168.42.229] ([85.255.235.223])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff021sm4139166b.103.2024.07.08.08.40.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 08:40:00 -0700 (PDT)
+Message-ID: <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
+Date: Mon, 8 Jul 2024 16:40:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
+ get_signal()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
+ <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ Julian Orth <ju.orth@gmail.com>, Tejun Heo <tj@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+References: <cover.1720368770.git.asml.silence@gmail.com>
+ <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
+ <20240708104221.GA18761@redhat.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240708104221.GA18761@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Marc, Thomas,
+On 7/8/24 11:42, Oleg Nesterov wrote:
+> On 07/07, Pavel Begunkov wrote:
+>>
+>> io_uring can asynchronously add a task_work while the task is getting
+>> freezed. TIF_NOTIFY_SIGNAL will prevent the task from sleeping in
+>> do_freezer_trap(), and since the get_signal()'s relock loop doesn't
+>> retry task_work, the task will spin there not being able to sleep
+>> until the freezing is cancelled / the task is killed / etc.
+>>
+>> Cc: stable@vger.kernel.org
+>> Link: https://github.com/systemd/systemd/issues/33626
+>> Fixes: 3146cba99aa28 ("io-wq: make worker creation resilient against signals")
+> 
+> I don't think we should blame io_uring even if so far it is the only user
+> of TWA_SIGNAL.
 
-I'm seeing a weird behavior with GICv3 ITS driver while allocating MSIs from
-PCIe devices. When the PCIe driver (I'm using virtio_pci_common.c) tries to
-allocate non power of 2 MSIs (like 3), then the GICv3 MSI driver always rounds
-the MSI count to power of 2 to find the order. In this case, the order becomes 2
-in its_alloc_device_irq(). So 4 entries are allocated by
-bitmap_find_free_region().
+And it's not entirely correct even for backporting purposes,
+I'll pin it to when freezing was introduced then.
 
-But since the PCIe driver has only requested 3 MSIs, its_irq_domain_alloc()
-will only allocate 3 MSIs, leaving one bitmap entry unused.
+> Perhaps we should change do_freezer_trap() somehow, not sure... It assumes
+> that TIF_SIGPENDING is the only reason to not sleep in TASK_INTERRUPTIBLE,
+> today this is not true.
 
-And when the driver frees the MSIs using pci_free_irq_vectors(), only 3
-allocated MSIs were freed and their bitmap entries were also released. But the
-entry for the additional bitmap was never released. Due to this,
-its_free_device() was also never called, resulting in the ITS device not getting
-freed.
+Let's CC Peter Zijlstra and Tejun in case they might have
+some input on that.
 
-So when the PCIe driver tries to request the MSIs again (PCIe device being
-removed and inserted back), because the ITS device was not freed previously,
-MSIs were again requested for the same ITS device. And due to the stale bitmap
-entry, the ITS driver refuses to allocate 4 MSIs as only 3 bitmap entries were
-available. This forces the PCIe driver to reduce the MSI count, which is sub
-optimal.
+Link to this patch for convenience:
+https://lore.kernel.org/all/1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com/
 
-This behavior might be applicable to other irqchip drivers handling MSI as well.
-I want to know if this behavior is already known with MSI and irqchip drivers?
+>> --- a/kernel/signal.c
+>> +++ b/kernel/signal.c
+>> @@ -2694,6 +2694,10 @@ bool get_signal(struct ksignal *ksig)
+>>   	try_to_freeze();
+>>   
+>>   relock:
+>> +	clear_notify_signal();
+>> +	if (unlikely(task_work_pending(current)))
+>> +		task_work_run();
+>> +
+>>   	spin_lock_irq(&sighand->siglock);
+> 
+> Well, but can't we kill the same code at the start of get_signal() then?
+> Of course, in this case get_signal() should check signal_pending(), not
+> task_sigpending().
 
-For fixing this issue, the PCIe drivers could always request MSIs of power of 2,
-and use a dummy MSI handler for the extra number of MSIs allocated. This could
-also be done in the generic MSI driver itself to avoid changes in the PCIe
-drivers. But I wouldn't say it is the best possible fix.
+Should be fine, but I didn't want to change the
+try_to_freeze() -> __refrigerator() path, which also reschedules.
 
-Is there any other way to address this issue? Or am I missing something
-completely?
+> Or perhaps something like the patch below makes more sense? I dunno...
 
-- Mani
+It needs a far backporting, I'd really prefer to keep it
+lean and without more side effects if possible, unless
+there is a strong opinion on that.
+
+> Oleg.
+> 
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 1f9dd41c04be..e2ae85293fbb 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2676,6 +2676,7 @@ bool get_signal(struct ksignal *ksig)
+>   	struct signal_struct *signal = current->signal;
+>   	int signr;
+>   
+> +start:
+>   	clear_notify_signal();
+>   	if (unlikely(task_work_pending(current)))
+>   		task_work_run();
+> @@ -2760,10 +2761,11 @@ bool get_signal(struct ksignal *ksig)
+>   			if (current->jobctl & JOBCTL_TRAP_MASK) {
+>   				do_jobctl_trap();
+>   				spin_unlock_irq(&sighand->siglock);
+> +				goto relock;
+>   			} else if (current->jobctl & JOBCTL_TRAP_FREEZE)
+>   				do_freezer_trap();
+> -
+> -			goto relock;
+> +				goto start;
+> +			}
+>   		}
+>   
+>   		/*
+> 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Pavel Begunkov
 
