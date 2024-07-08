@@ -1,253 +1,103 @@
-Return-Path: <linux-kernel+bounces-243821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-243822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D90C929B13
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:25:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8018F929B18
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 05:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B95A1C20AEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 03:25:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2F028124A
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 03:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9C179F2;
-	Mon,  8 Jul 2024 03:25:22 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE19479C8;
+	Mon,  8 Jul 2024 03:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g8HneZJX"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222A87494;
-	Mon,  8 Jul 2024 03:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C9E184F
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 03:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720409121; cv=none; b=NeBf7Zmz5D7LKWDnoVJfYhaRgbuO1vs8qU+cMZbIGudxtvydGFe6jbWamoZz1XPuB6ERq5ZR2T0QVQDpNRoXnM0uJmeI98BZpG/9UhdwmEaQo0wVRX6qDhAed9gIlpYfkG7xN6COguYxYWay1oZ5ATie+WpkjP2QLBOBcJDeGzs=
+	t=1720409555; cv=none; b=f6LauvrWad092zO+z5v/VP0rS91Dff+dECn9k9QV/IJYcUZdCtFF/HvkdLDsK2KMRIN0uKTiiHlAPy+zW+sxEhZE61ifVmiQou9L9/Ni2b8y1jjYIzVVQxo6ZL+GacGRAgR+bq1Z5uNRf8Sj2uhqu8OwcmQjEBw+a1G+P5dSzNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720409121; c=relaxed/simple;
-	bh=dkU4z013Z+G02C6TKWPigEwbImuXYJcAukS3s4VQPdU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YqmNaVYG+21+zodrZ4A+l/zis+OrjswacQoJjokzuthTKbQqxOTns9yu97mHxOKBWvoDoAyscBEl4Ls6ZLpYVRzSsPvpyedmYzc6gL8H385safdn11s5BIps7vHihED/stsp8/V8XR9VmqNDNC/loMJSimeX/JWKBTPaeXtQ8qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WHTsK05h6z1T5Y1;
-	Mon,  8 Jul 2024 11:20:37 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7CDA31800C0;
-	Mon,  8 Jul 2024 11:25:01 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 8 Jul
- 2024 11:24:46 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <bjorn@kernel.org>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <peterz@infradead.org>, <mingo@redhat.com>,
-	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<dev.mbstr@gmail.com>, <samuel.holland@sifive.com>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v3 2/2] riscv: stacktrace: Add USER_STACKTRACE support
-Date: Mon, 8 Jul 2024 11:28:47 +0800
-Message-ID: <20240708032847.2998158-3-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240708032847.2998158-1-ruanjinjie@huawei.com>
-References: <20240708032847.2998158-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1720409555; c=relaxed/simple;
+	bh=5uPJt6ndXC3JLmQO14ovBQlb/bFzah8Bquk6QpCYuQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQYsdnGRn+/0SBuN2VPgeThceU/FR8DnKMkic1vQNJQxeyw1RInXpplWeekCcYkTJsQ843BEB26TKks+NEQUxSHeLpZx06YrTOATuvNxjkmJk3tVRdB03tF8av3Sl0PPWLKsapVm5bvl3xydJg45wOIrQ/EwVqb/fWlLvxSRRmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g8HneZJX; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fa55dbf2e7so15578535ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 07 Jul 2024 20:32:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1720409553; x=1721014353; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zXCHivUeTgzK2s7c5iMX6VZA50wGYQ3SoObiW0cz39M=;
+        b=g8HneZJXvQZdZ5ZgHsi/2Qds4AmXsVmpQehbE69Z0g/bLLB1QaaDN/3CFDRRxrSRk5
+         MbeXOC8Ehw6JnmDZjN3CIhqNE0jek04v0C2r4ZdlrYOsTaWs5SF+yYZqk+z4vTVHrDwA
+         O90Yb4o02csvYZoJJ06e4/bq4uqSZsFNuugfY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720409553; x=1721014353;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zXCHivUeTgzK2s7c5iMX6VZA50wGYQ3SoObiW0cz39M=;
+        b=lrsndaS+Ao7hJSUcLrKmu3jGo+BaSiSphnwJvJiArYjojbt952+SAwsnFWLqSFuVrB
+         Ac2uX7wzaLJUXDwuAvP85uyHFam4Y9Wvta33FwXzTW+MVcKRTGU9DEJnn+a9RwrkB0gJ
+         ISEy1xg4Zsf6dDwlhFKxbbi+sWY9kEo2u2HA3lT3zgkCkXBoyneZlPo8rNat0urU5rBj
+         pXcc4txx93OY8EX7MG6uQ3fXJMiNSB046M3xFiM/VKXavj8qaGjtv48wpSu19L7qPjLB
+         9vegGfHUOj+7LqYvgvM9594r/QH91YfoOb7KGzhHqAITGYgm5O6AV0em+Cz19MTg97II
+         nXqw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+No8TIookQqd4RPpJDHFk7xLhyHLDKuiL6hUZLR6PGYeYZzsDA4eQORWKRMxTxfrHN702g0/zICpAB/EngJAENSmUPUszgh5QYS5n
+X-Gm-Message-State: AOJu0YzVI1XauJ04vpfLUF+4P/vPSh4UlwKuuR2HR1sDkoGj9NLSputF
+	fxJTSlUlpBNzJv0mo6IvSc9Ldf5Pq5IpwzYvS7pLxL8n7RI8kFn8McJJtjKOtg==
+X-Google-Smtp-Source: AGHT+IEQ9icmnoYZ5EiPLnYtHgy8R0QJ1szKIWGaEQlf865q5Czazs3nuA+XujWtDqFqWgak8oR8kA==
+X-Received: by 2002:a17:902:d512:b0:1fb:5c3d:b8ea with SMTP id d9443c01a7336-1fb5c3dc4aamr28446625ad.13.1720409553127;
+        Sun, 07 Jul 2024 20:32:33 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:eda0:6e46:c522:d0b1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb27bdc357sm75660155ad.177.2024.07.07.20.32.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jul 2024 20:32:32 -0700 (PDT)
+Date: Mon, 8 Jul 2024 12:32:28 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mike Galbraith <umgwanakikbuti@gmail.com>
+Subject: Re: [PATCH v2 1/3] zram: Replace bit spinlocks with a spinlock_t.
+Message-ID: <20240708033228.GB797471@google.com>
+References: <20240620153556.777272-1-bigeasy@linutronix.de>
+ <20240620153556.777272-2-bigeasy@linutronix.de>
+ <27fb4f62-d656-449c-9f3c-5d0b61a88cca@intel.com>
+ <20240704121908.GjH4p40u@linutronix.de>
+ <801cac51-1bd3-4f79-8474-251a7a81ca08@intel.com>
+ <20240708030330.GA797471@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240708030330.GA797471@google.com>
 
-Currently, userstacktrace is unsupported for riscv. So use the
-perf_callchain_user() code as blueprint to implement the
-arch_stack_walk_user() which add userstacktrace support on riscv.
-Meanwhile, we can use arch_stack_walk_user() to simplify the implementation
-of perf_callchain_user().
+On (24/07/08 12:03), Sergey Senozhatsky wrote:
+[..]
+> > I meant
+> > 
+> > 	for (size_t index = 0; index < num_pages; index++)
+> > 
+> > It's allowed and even recommended for a couple years already.
+> 
+> I wonder since when?  Do gcc 5.1 and clang 13.0.1 support this?
 
-A ftrace test case is shown as below:
-
-	# cd /sys/kernel/debug/tracing
-	# echo 1 > options/userstacktrace
-	# echo 1 > options/sym-userobj
-	# echo 1 > events/sched/sched_process_fork/enable
-	# cat trace
-	......
-	            bash-178     [000] ...1.    97.968395: sched_process_fork: comm=bash pid=178 child_comm=bash child_pid=231
-	            bash-178     [000] ...1.    97.970075: <user stack trace>
-	 => /lib/libc.so.6[+0xb5090]
-
-Also a simple perf test is ok as below:
-
-	# perf record -e cpu-clock --call-graph fp top
-	# perf report --call-graph
-
-	.....
-	[[31m  66.54%[[m     0.00%  top      [kernel.kallsyms]            [k] ret_from_exception
-            |
-            ---ret_from_exception
-               |
-               |--[[31m58.97%[[m--do_trap_ecall_u
-               |          |
-               |          |--[[31m17.34%[[m--__riscv_sys_read
-               |          |          ksys_read
-               |          |          |
-               |          |           --[[31m16.88%[[m--vfs_read
-               |          |                     |
-               |          |                     |--[[31m10.90%[[m--seq_read
-
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Tested-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: Björn Töpel <bjorn@kernel.org>
----
-v3:
-- Remove the LTP message as Björn suggested.
-- Keep fp 16-bytes aligned in arch_stack_walk_user().
-- Add the test info.
-v2:
-- Fix the cocci warning, !A || A && B is equivalent to !A || B.
----
----
- arch/riscv/Kconfig                 |  1 +
- arch/riscv/kernel/perf_callchain.c | 46 ++----------------------------
- arch/riscv/kernel/stacktrace.c     | 43 ++++++++++++++++++++++++++++
- 3 files changed, 47 insertions(+), 43 deletions(-)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 3b44e7b51436..46121dbcf750 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -194,6 +194,7 @@ config RISCV
- 	select THREAD_INFO_IN_TASK
- 	select TRACE_IRQFLAGS_SUPPORT
- 	select UACCESS_MEMCPY if !MMU
-+	select USER_STACKTRACE_SUPPORT
- 	select ZONE_DMA32 if 64BIT
- 
- config CLANG_SUPPORTS_DYNAMIC_FTRACE
-diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_callchain.c
-index 2932791e9388..c7468af77c66 100644
---- a/arch/riscv/kernel/perf_callchain.c
-+++ b/arch/riscv/kernel/perf_callchain.c
-@@ -6,37 +6,9 @@
- 
- #include <asm/stacktrace.h>
- 
--/*
-- * Get the return address for a single stackframe and return a pointer to the
-- * next frame tail.
-- */
--static unsigned long user_backtrace(struct perf_callchain_entry_ctx *entry,
--				    unsigned long fp, unsigned long reg_ra)
-+static bool fill_callchain(void *entry, unsigned long pc)
- {
--	struct stackframe buftail;
--	unsigned long ra = 0;
--	unsigned long __user *user_frame_tail =
--		(unsigned long __user *)(fp - sizeof(struct stackframe));
--
--	/* Check accessibility of one struct frame_tail beyond */
--	if (!access_ok(user_frame_tail, sizeof(buftail)))
--		return 0;
--	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
--				      sizeof(buftail)))
--		return 0;
--
--	if (reg_ra != 0)
--		ra = reg_ra;
--	else
--		ra = buftail.ra;
--
--	fp = buftail.fp;
--	if (ra != 0)
--		perf_callchain_store(entry, ra);
--	else
--		return 0;
--
--	return fp;
-+	return perf_callchain_store(entry, pc) == 0;
- }
- 
- /*
-@@ -56,19 +28,7 @@ static unsigned long user_backtrace(struct perf_callchain_entry_ctx *entry,
- void perf_callchain_user(struct perf_callchain_entry_ctx *entry,
- 			 struct pt_regs *regs)
- {
--	unsigned long fp = 0;
--
--	fp = regs->s0;
--	perf_callchain_store(entry, regs->epc);
--
--	fp = user_backtrace(entry, fp, regs->ra);
--	while (fp && !(fp & 0x7) && entry->nr < entry->max_stack)
--		fp = user_backtrace(entry, fp, 0);
--}
--
--static bool fill_callchain(void *entry, unsigned long pc)
--{
--	return perf_callchain_store(entry, pc) == 0;
-+	arch_stack_walk_user(fill_callchain, entry, regs);
- }
- 
- void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
-diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
-index 0d3f00eb0bae..5480cc11b523 100644
---- a/arch/riscv/kernel/stacktrace.c
-+++ b/arch/riscv/kernel/stacktrace.c
-@@ -161,3 +161,46 @@ noinline noinstr void arch_stack_walk(stack_trace_consume_fn consume_entry, void
- {
- 	walk_stackframe(task, regs, consume_entry, cookie);
- }
-+
-+/*
-+ * Get the return address for a single stackframe and return a pointer to the
-+ * next frame tail.
-+ */
-+static unsigned long unwind_user_frame(stack_trace_consume_fn consume_entry,
-+				       void *cookie, unsigned long fp,
-+				       unsigned long reg_ra)
-+{
-+	struct stackframe buftail;
-+	unsigned long ra = 0;
-+	unsigned long __user *user_frame_tail =
-+		(unsigned long __user *)(fp - sizeof(struct stackframe));
-+
-+	/* Check accessibility of one struct frame_tail beyond */
-+	if (!access_ok(user_frame_tail, sizeof(buftail)))
-+		return 0;
-+	if (__copy_from_user_inatomic(&buftail, user_frame_tail,
-+				      sizeof(buftail)))
-+		return 0;
-+
-+	ra = reg_ra ? : buftail.ra;
-+
-+	fp = buftail.fp;
-+	if (!ra || !consume_entry(cookie, ra))
-+		return 0;
-+
-+	return fp;
-+}
-+
-+void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *cookie,
-+			  const struct pt_regs *regs)
-+{
-+	unsigned long fp = 0;
-+
-+	fp = regs->s0;
-+	if (!consume_entry(cookie, regs->epc))
-+		return;
-+
-+	fp = unwind_user_frame(consume_entry, cookie, fp, regs->ra);
-+	while (fp && !(fp & 0x7))
-+		fp = unwind_user_frame(consume_entry, cookie, fp, 0);
-+}
--- 
-2.34.1
-
+Since C99.  gcc 5.1/clang 13.0.1 are fine with that.  TIL.
 
