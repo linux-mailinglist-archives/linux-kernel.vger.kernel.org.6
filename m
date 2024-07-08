@@ -1,179 +1,202 @@
-Return-Path: <linux-kernel+bounces-244850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B5B92AA4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:06:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4487492AA51
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 22:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92E21B2202F
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D47282EE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1524B2261D;
-	Mon,  8 Jul 2024 20:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAFE328B6;
+	Mon,  8 Jul 2024 20:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="dAWt6+XE"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LnqwapQA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1C01BDD0
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D1721103
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 20:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720469174; cv=none; b=YrdLoadSlhnQ2lPxR8/yw2J206r24gHHigbysK9Zk9+Q3k1Gn5cmiQaIi0jU2egpPb0U1fvgbnFdCibrXu1uOLMLjof16xCr/9XByUH5vk5/1k9FGwsL7gtzHFPNyDReVZ9xmUlB4Jg0RuKZhWFD2RoUsCZ7H11+wOhjAH+4uvw=
+	t=1720469210; cv=none; b=lZ/K7RkX63Rl/fgZ6fBnReiC59c58CNljMVwqzy50Hs6uX4L/9gBC8FGibQe/orEovikn3Jc//310ef4cwFBly60Khmi5xHJOfRxWGHrNMjS6tdX8M/p+MeTDC8WV/oIrWZzxGmgTzKrknd9KNeK2VqOdSrvGhm7cnCKETEMb4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720469174; c=relaxed/simple;
-	bh=Rb8pK4bcgsh7Jcc62mQtYB7d7vvGePU09yswm0BW+JA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oB/YNv/4FamRHcvRt+yJk1eMPvRPDJW3iMpelCAzd8OjyoLoZ5Rh/jo+63MxF9CY88uqc1h1Isu8HK02aKkEKxQ7iUxju+rEgsBKFFEs6EMkPrzutXl4A+J6ZXyPO6YHDrX0whIuYFRI7gWAQVQXSGI7JrpqoG9GAg3bznYoA5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=dAWt6+XE; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d928fa9586so1232230b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1720469171; x=1721073971; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PT3BoGht7MDiQ2sKnuW3oqH0kk6WkmSkEQOa9yN3mT4=;
-        b=dAWt6+XEYtGY0YGLocdGGif+FdCeJTypU/AcLiser9mk5uwRkGspQDujKTcRVOgsPq
-         VpVqEhQlnzS/li+UX2cf9P0/Y9OrZWVA02qVXKJ9SAD6itKmvqkBQdDWLHY4wWuUGCWL
-         Y4liaF/OW71K94vDIIaZyzdngvE8e26yIld4epzBeuLrplhwsJkO6iEKnlFx58oEz4zW
-         iUwX4RLUxCXf201x+YhOACRpbsgbs8Xg/I+Bq5A7KgHxtIk/txDJmwfiwObzC4cfwtCF
-         meblQ1KzptZuYaowuWVnWJ+5xabx21YzSSjvrzW3Wo2SQbmqNksH0jfQ3OK5VV79MTI9
-         hqRQ==
+	s=arc-20240116; t=1720469210; c=relaxed/simple;
+	bh=lopMJKNUkM5mdilFcbxOlowjhB72XNJu1hZbshGnERQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+FXun+vTk2bngmh+BKgpwcHfOoj4oG2FOU4Ivkn0gg+0y0fBPcgauQt/Aw+un8PfITMmocXIp6UDS+Y9KzX6h4rb5OvMSptXdr3YvKwXte0MLJsdLElbWITSu/e9thk8KrW9vtYcYXcQwIqyqNmusVj9IasCxz8lzsvkMz1VJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LnqwapQA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720469208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ufhtylmYb0l9ME9pQ71j54Ozfhc8pZ6jpAyIxmjbQ/M=;
+	b=LnqwapQASNNRRiG/ufczNJ479981WcHAjexfiyDWV/ZWDk6NjKPHdft9Ez1vt1PxCvPe06
+	4wEAFFrQTDZ3r33chllkkCujFVyK0k7rRDdCmJ0qrcoOEsatVGdB71pz83swror8WlhjYW
+	F1NB8qW2JXHIlUwj7NY0pi8lX4lId2I=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-215-v_oVmEALOq-dlPY5ED8s6g-1; Mon, 08 Jul 2024 16:06:46 -0400
+X-MC-Unique: v_oVmEALOq-dlPY5ED8s6g-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42668796626so10756755e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 13:06:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720469171; x=1721073971;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PT3BoGht7MDiQ2sKnuW3oqH0kk6WkmSkEQOa9yN3mT4=;
-        b=hn9chjHBaHyeOWRtvyjcroEDn4IfNLGhF1LQRTL7awt4c6hsM5Kg0/hNj6YHsEKZfb
-         l7aDl11BVk+Dre87Y+ucyqIWc0T1EZGgjFK560eJRNsMPekzHEAX8XcAa8LiliUupH9R
-         TcTq2CBSqM4lvHMss9uJ9gv5Y15T18cu9ASWI/bJQhcu5o/RVqLf9sVWygWdS5zPzwIL
-         7Vb4uiKRFbKsHHhr8tM3X3gTTGBpUePwB7sGjolV7JZpPuWxQULNkIRbRd+B0Z1CgsMO
-         iNLJ6hhO1yfujgxQTGpFcy+G+VMZqGYkpn7CS6315AbZIR12GJhHpsgkG4p6oqJ8WD1T
-         BZrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkgJX/m7rzIKoguVPe9fWwx/tcVrAlI6K0a/v4KCPyxUICZCq+mjLeYlftvlWiS3sx8znDfl7fzQP6S1kFAOWpUyZU79o75gUaLwy6
-X-Gm-Message-State: AOJu0YzIr6Se801q5sOcQeY8FNzuGYgQta6XYV3yvoVWKAqmsr/0Zvyo
-	Ehuy6lu/6BtxMzENtd9UeWekBc37FnOXUTB9OLbDqZZoNtoG4GPIJPHlwpdKe1c=
-X-Google-Smtp-Source: AGHT+IE4oTv5nlTr+ZYjb3suPY2974lpOVzXcklRhNhSxddMJzpIkvMo3L4ZPRzyT17kor2vaVQLXA==
-X-Received: by 2002:a05:6808:201b:b0:3d9:31d9:f447 with SMTP id 5614622812f47-3d93c046f04mr512139b6e.25.1720469169394;
-        Mon, 08 Jul 2024 13:06:09 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:f295:d317:eb7e:d88e])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d93acff4d9sm115349b6e.5.2024.07.08.13.06.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 13:06:08 -0700 (PDT)
-Date: Mon, 8 Jul 2024 15:06:07 -0500
-From: Corey Minyard <corey@minyard.net>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Corey Minyard <minyard@acm.org>,
-	openipmi-developer@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipmi: Drop explicit initialization of struct
- i2c_device_id::driver_data to 0
-Message-ID: <ZoxGrySzTwCYnhFf@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20240708150914.18190-2-u.kleine-koenig@baylibre.com>
+        d=1e100.net; s=20230601; t=1720469205; x=1721074005;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ufhtylmYb0l9ME9pQ71j54Ozfhc8pZ6jpAyIxmjbQ/M=;
+        b=n0jQzB4NJHNSaAa1jc2V2guM7X0hf9f7erKDUAoY/Hcg5vS+u+PQeRsiMBLbZcnxBO
+         nL4ZKSCkPH1JDsh5D3iXbSts+sJRv+t4lYVkzBuUR0VUPktHkOrOW9ldxXWoZWGzumkt
+         K5TceTfe8sAQgJuDAc8FXZYzwxEM6JnHeVJWRu1vEhOASQcjSNlwOvK4Q7yEWCcr2ctM
+         3mf7ipnf5keevnkKV6XQpE5or8fpjfBzPYyVj+McOyVxtD1eyyJ2Sa2Y26ooeqGAXulz
+         zdvmIBoa+KaOcTDTGqRQrjM8XLV+0qAXlsAwK45L08LRDGo6vBPYS7FuMcDYfAbNUmdv
+         9pCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLcC+z1QwGlgR1WrVUrKJktnqtU30TfxzZOl+RVJwXVQ7Hnbcv8eeMNL865AspKo4+QKGKRnxH454UHxQP6sGXqabnQdsv89YOVASt
+X-Gm-Message-State: AOJu0Yz0diYML6VqKHe8qLyJhWoCNVAIXUpqQvkGGUolHiueacQb+36D
+	m2VtH4JOg8ceHKY7tP98Jr3A1OW6mdTZSHqGC6qCmapol7ZrYlfFBGY5wDQgBK+KSC5imAmAjiy
+	10Q5vGaD2mZrb9s+EWUI7wrmVA+nwwh45LxHVGgiNv2qSs6rNyuo4ys0NRq8x0w==
+X-Received: by 2002:a05:600c:896:b0:426:64a2:5375 with SMTP id 5b1f17b1804b1-426707cbf60mr4187885e9.1.1720469205673;
+        Mon, 08 Jul 2024 13:06:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFY3cy8KO7R2bm9GD3OsyrOijDD4r+Wzecwv9hQQdddOHxtAoBS7yAbuwECbpXjcjqzix6Adw==
+X-Received: by 2002:a05:600c:896:b0:426:64a2:5375 with SMTP id 5b1f17b1804b1-426707cbf60mr4187585e9.1.1720469205258;
+        Mon, 08 Jul 2024 13:06:45 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c744:2200:bad7:95bd:e25e:a9e? (p200300cbc7442200bad795bde25e0a9e.dip0.t-ipconnect.de. [2003:cb:c744:2200:bad7:95bd:e25e:a9e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5f25sm10628625e9.26.2024.07.08.13.06.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 13:06:44 -0700 (PDT)
+Message-ID: <75cf01cd-8a45-4a79-b06c-cdf2d68cdd53@redhat.com>
+Date: Mon, 8 Jul 2024 22:06:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708150914.18190-2-u.kleine-koenig@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
+ linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <20240707002658.1917440-1-Jason@zx2c4.com>
+ <20240707002658.1917440-2-Jason@zx2c4.com>
+ <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
+ <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
+ <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
+ <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+ <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
+ <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+ <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
+ <Zovv4lzM38EHtnms@zx2c4.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zovv4lzM38EHtnms@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 08, 2024 at 05:09:12PM +0200, Uwe Kleine-König wrote:
-> These drivers don't use the driver_data member of struct i2c_device_id,
-> so don't explicitly initialize this member.
+On 08.07.24 15:55, Jason A. Donenfeld wrote:
+> Hi David,
 > 
-> This prepares putting driver_data in an anonymous union which requires
-> either no initialization or named designators. But it's also a nice
-> cleanup on its own.
+> On Mon, Jul 08, 2024 at 10:11:24AM +0200, David Hildenbrand wrote:
+>> The semantics are much more intuitive. No need for separate mmap flags.
 > 
-> While at it, also remove commas after the sentinel entries.
+> Agreed.
+>   
+>> Likely we'll have to adjust mlock() as well. Also, I think we should
+>> just bail out with hugetlb as well.
+> 
+> Ack.
+> 
+>> Further, maybe we want to disallow madvise() clearing these flags here,
+>> just to be consistent.
+> 
+> Good thinking.
+> 
+>> As a side note, I'll raise that I am not a particular fan of the
+>> "droppable" terminology, at least with the "read 0s" approach.
+>>
+>>   From a user perspective, the memory might suddenly lose its state and
+>> read as 0s just like volatile memory when it loses power. "dropping
+>> pages" sounds more like an implementation detail.
+>>
+>> Something like MAP_VOLATILE might be more intuitive (similar to the
+>> proposed MADV_VOLATILE).
+>>
+>> But naming is hard, just mentioning to share my thought :)
+> 
+> Naming is hard, but *renaming* is annoying. I like droppable simply
+> because that's what I've been calling it in my head. MAP_VOLATILE is
+> fine with me though, and seems reasonable enough. So I'll name it that,
+> and then please don't change your mind about it later so I won't have to
+> rename everything again. :)
 
-I've pulled this into my tree.
+:) Nah. But wait with any remaining until more than one person thinks 
+it's a good idea.
 
-Thanks,
+-- 
+Cheers,
 
--corey
+David / dhildenb
 
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-> ---
->  drivers/char/ipmi/ipmb_dev_int.c | 4 ++--
->  drivers/char/ipmi/ipmi_ipmb.c    | 4 ++--
->  drivers/char/ipmi/ipmi_ssif.c    | 2 +-
->  drivers/char/ipmi/ssif_bmc.c     | 4 ++--
->  4 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
-> index 49100845fcb7..7296127181ec 100644
-> --- a/drivers/char/ipmi/ipmb_dev_int.c
-> +++ b/drivers/char/ipmi/ipmb_dev_int.c
-> @@ -350,8 +350,8 @@ static void ipmb_remove(struct i2c_client *client)
->  }
->  
->  static const struct i2c_device_id ipmb_id[] = {
-> -	{ "ipmb-dev", 0 },
-> -	{},
-> +	{ "ipmb-dev" },
-> +	{}
->  };
->  MODULE_DEVICE_TABLE(i2c, ipmb_id);
->  
-> diff --git a/drivers/char/ipmi/ipmi_ipmb.c b/drivers/char/ipmi/ipmi_ipmb.c
-> index 4e335832fc26..6a4f279c7c1f 100644
-> --- a/drivers/char/ipmi/ipmi_ipmb.c
-> +++ b/drivers/char/ipmi/ipmi_ipmb.c
-> @@ -561,8 +561,8 @@ MODULE_DEVICE_TABLE(of, of_ipmi_ipmb_match);
->  #endif
->  
->  static const struct i2c_device_id ipmi_ipmb_id[] = {
-> -	{ DEVICE_NAME, 0 },
-> -	{},
-> +	{ DEVICE_NAME },
-> +	{}
->  };
->  MODULE_DEVICE_TABLE(i2c, ipmi_ipmb_id);
->  
-> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-> index 3f509a22217b..96ad571d041a 100644
-> --- a/drivers/char/ipmi/ipmi_ssif.c
-> +++ b/drivers/char/ipmi/ipmi_ssif.c
-> @@ -2049,7 +2049,7 @@ static int dmi_ipmi_probe(struct platform_device *pdev)
->  #endif
->  
->  static const struct i2c_device_id ssif_id[] = {
-> -	{ DEVICE_NAME, 0 },
-> +	{ DEVICE_NAME },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, ssif_id);
-> diff --git a/drivers/char/ipmi/ssif_bmc.c b/drivers/char/ipmi/ssif_bmc.c
-> index ab4e87a99f08..a14fafc583d4 100644
-> --- a/drivers/char/ipmi/ssif_bmc.c
-> +++ b/drivers/char/ipmi/ssif_bmc.c
-> @@ -852,8 +852,8 @@ static const struct of_device_id ssif_bmc_match[] = {
->  MODULE_DEVICE_TABLE(of, ssif_bmc_match);
->  
->  static const struct i2c_device_id ssif_bmc_id[] = {
-> -	{ DEVICE_NAME, 0 },
-> -	{ },
-> +	{ DEVICE_NAME },
-> +	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, ssif_bmc_id);
->  
-> 
-> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-> -- 
-> 2.43.0
-> 
 
