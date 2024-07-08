@@ -1,396 +1,162 @@
-Return-Path: <linux-kernel+bounces-244377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB0392A37A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:11:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBC892A407
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F229C1C2117A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49271F216A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 13:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F108137923;
-	Mon,  8 Jul 2024 13:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="An6G4Uph"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2070.outbound.protection.outlook.com [40.107.117.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF7913A87E;
+	Mon,  8 Jul 2024 13:49:00 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2113.outbound.protection.partner.outlook.cn [139.219.17.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C806674057
-	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 13:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1001B970;
+	Mon,  8 Jul 2024 13:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.113
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720444300; cv=fail; b=N1iqjO9Iyfd9SR473vNFiJEgyvg76ItdUO+65vnjhasR1FiFnYZKzHZX9jaYFq5ECoHxEoLLeyO/Gw40NcXNv2NWUineJnA8PZkZkcm+tkP6KmDXH3p5af3ioaqNNvetYaG8pKgtO59LJk/3dCIKWxG4x/nV2iHSFMr5+VVRxPE=
+	t=1720446540; cv=fail; b=WkdLUrfGXONiBPRea3qzli364ra9Nqx8pIi0XcdIxBn1JNl+HrQGhrnrlY8A40xKavkwMTROLYW9EWu107oiqLwFbbiENeDBeeN6N61kiajK/wka6ZNnKxW9AMP6ei1ot3NrPwZI5Fl51+YENGz6j2PU/iATM2Yvwj9NXSXZbjQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720444300; c=relaxed/simple;
-	bh=LPMsGI0RXgRz8+GoO3mqN+yMS/FtpT6rh+oYJj8sk3I=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ex0EYdIprvWzj/BEODS9vHBq/Y5hEbENtwGVDTDZ1z/VimUwAfY94ciZsyk9Elwe+YDkI2HO5DH1DctYI/jEUwGF69psnixmHlR7dZW6iT17sv87b8mt/vs9k897FFAlKgjLqqrHIdyS/BruV3wHZHRP07dPxi+gCEM9BeduSgE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=An6G4Uph; arc=fail smtp.client-ip=40.107.117.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	s=arc-20240116; t=1720446540; c=relaxed/simple;
+	bh=CNZL79ofy5W0kA59sTYR4TZXiiTYej5YMVQ/r4C7h0I=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bwjcLDe80WFCh1JG2ucu3jOokVu+8TYViv0ACT5tkMw9tgpLbPhcMa02b3G7/yR8NObX9P02VuK7NdytIm9PnfYjxcyseGq3o19MpE4TxUlXF9jST3lHvK6CFsqD2p02P1NitWK8EmJ7a2I0sdfH4FeTiFN/cYJlH3c21XH9ErY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bsk1rkoKsW+UZ8qrrHsWfdj9hrjO+DGKhUzN/wpp7KO8bMpuNEa2z/leVtxMUmqhEAsGlFzCF7xDAO8aiB+V9E9OleIIKNqIijFog4T5r6O30jY9C5wuOHHbqjM1mTWtZoeJ21crt3sC3YAY2l39fz580n4Qo9J62gJ2imMFYOtb4B6ZxIEbM4KBhr4iOfeT5sClkgF5jp7Znco7uy26uKI0fdmEFTPl36Bei/rpGrovqsFrrvWsfQf55O8PpfXvAjlZ1H2c9MSm6LiLAgK6uywl5kas/Ehhv6kgOlfyOa9nll0q6Vpc+zQr43H/ETWrsagXL+xrqeqAGNGiKP2B7A==
+ b=TlBVZ57bvEEQ/u/arbLzgFuzMGSo+P6G7e6AKXqoTFF2DlidunOTA6H/5b7isI4DI9cTtha0je7LlIZVwmAljZy3U4nV2upso9rapJ/mDD7U4rkdJZwOPqn0BZxlZSN9lqxf8YbJx7uOJMSVRPMKxoKDvH9spVVEG/UUYWozyYac2E4EtfzYgZrf4Mo8x9GPRVBgbtXiCcQ1KY/0VgRZlCiKr/YLKDHaxZ7SSgd6rvziutZM0hDVSpel6lWecFUIE84dXjWv7Vuk5hU6uCZIaGyzG9M75L+FxNnu1NXU6vK+2Iq9MpGlE9xyGYhn1w0cxe59Ignstbj1ZpG3exPTyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gBG9stpm67lT3u2dRH8M8bs/2f50sOXAHyVPfArHOF4=;
- b=NbiAyIjiq+B2dCeudHkQDJKtK2jsWIoP+TzyfvVAGO80PzTzNtLVkog/8v4ekfJw6KcoMS6d4A0uTZVniQY9R8jbv9KZlNuuZ05ZKoinI0/GZMAfLBpczKxGdc8DNPLd6Ni+96wFAFfpx4jlcw1qhzieztQjDiRKNerN3hw/FrP3LYMC95qBJ8PzvjiXE3RoJWkIBqqk1M+XzEitFBVjMlnaU7OAnUYmGbtoNq3BIzoEIGJsljTnpa8rNnAnoAwocfIFu/TaMhFlc/ovia7CSeV9izQsBVQbZb/YIzJrRMlq2lZZYg4cWQ6Pmkd9dVT7WdlihQVwR0cBrpRP0gFb0A==
+ bh=CNZL79ofy5W0kA59sTYR4TZXiiTYej5YMVQ/r4C7h0I=;
+ b=HVWm4GqtLCNf+fUSc1+nO81xPgA0jonyuWVVoAKWAWuxansZ+G9lLfOkt+0dMRcAZ6wUfRmCMtKF3HYTBpU2ppzbAtjIxV0ii2R467z2DSraOEmTcie4HanzcdkGxycYaoJxYAHo6choO1VKvvX/DTTPEx6OCxilfpaXYv6PdZSpZ9SBWg1akat+4hdmUhu/PcR+fv5Vjg59W4NQFKA05cDSUdR/VrO7ngmJTETiFSv6Gc49hc5kq+gBBVgBxLkXREi+lEIY9uLh1cQLzCxNrog0bUhBS+LGR9tHSbkaVHzopoMipRWuchjAEMdp1UQMzo/JXc3jHVxq3DbEL+/fWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gBG9stpm67lT3u2dRH8M8bs/2f50sOXAHyVPfArHOF4=;
- b=An6G4UphJ6awY479yzMndq9omKQQjplEtEmtPyVC8tzoJRrYt1hNvGCVyVAHZTRRerkw2R1CGW5vISycfYDBm7ond+l3oqZlEPIkGgV4mgq9APBooNlR0CybLl4UbUXBupOFiBsBeSNettTEzd0hrVXNOWTUE+oOtE/bkcnU37qcU2qpD1GvNulj53G+Z0DWpSkBkhcwORmsg/mAygYMYMawQO0V/KA2w6RBVK5+E/zc7lc9X2xPjSfUs4SjwDZl21BKy8q8m1X+ChraoM2avipoD7McSRCWZvdkqFeIrBaNgkXk+OhHxLrHHoZaOPgystfjuY3sHFrtdKURkygHeA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from JH0PR06MB6849.apcprd06.prod.outlook.com (2603:1096:990:47::12)
- by JH0PR06MB7211.apcprd06.prod.outlook.com (2603:1096:990:97::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 13:11:33 +0000
-Received: from JH0PR06MB6849.apcprd06.prod.outlook.com
- ([fe80::ed24:a6cd:d489:c5ed]) by JH0PR06MB6849.apcprd06.prod.outlook.com
- ([fe80::ed24:a6cd:d489:c5ed%3]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 13:11:32 +0000
-Message-ID: <cf6c6d1f-3719-4744-b943-5c572d0d5fb4@vivo.com>
-Date: Mon, 8 Jul 2024 21:11:31 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] mm: shrink skip folio mapped by an exiting process
-To: Barry Song <baohua@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- LKML <linux-kernel@vger.kernel.org>, opensource.kernel@vivo.com
-References: <20240708090413.888-1-justinjiang@vivo.com>
- <CAGsJ_4yrGR5ULU=MDXZq+hEDb+TWuRkfbg9V9Rg=mGAWOpUkxQ@mail.gmail.com>
- <122bbe20-f2ab-4d44-97ac-76df8469d3fa@vivo.com>
- <4ca9836c-4f03-4792-9be8-f7db71a2b162@vivo.com>
- <CAGsJ_4xMrzTfAC8wicK1-CLftXY-Bm+mZ8BnD=ZvtmB_NKzbKA@mail.gmail.com>
-From: zhiguojiang <justinjiang@vivo.com>
-In-Reply-To: <CAGsJ_4xMrzTfAC8wicK1-CLftXY-Bm+mZ8BnD=ZvtmB_NKzbKA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0023.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::19) To JH0PR06MB6849.apcprd06.prod.outlook.com
- (2603:1096:990:47::12)
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1b::9) by ZQ0PR01MB0949.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29; Mon, 8 Jul
+ 2024 13:14:03 +0000
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ ([fe80::64c5:50d8:4f2c:59aa]) by
+ ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%6])
+ with mapi id 15.20.7741.033; Mon, 8 Jul 2024 13:14:03 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, Ming Qian <ming.qian@nxp.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Nicolas Dufresne
+	<nicolas.dufresne@collabora.com>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Tomi Valkeinen
+	<tomi.valkeinen+renesas@ideasonboard.com>, Mingjia Zhang
+	<mingjia.zhang@mediatek.com>, Marvin Lin <milkfafa@gmail.com>
+CC: Jack Zhu <jack.zhu@starfivetech.com>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-staging@lists.linux.dev"
+	<linux-staging@lists.linux.dev>
+Subject:
+ =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjQgMDEvMTNdIG1lZGlhOiBzdGFyZml2ZTogQWRk?=
+ =?utf-8?Q?_JH7110_ISP_module_definitions?=
+Thread-Topic: [PATCH v4 01/13] media: starfive: Add JH7110 ISP module
+ definitions
+Thread-Index: AQHahOSTx7demjpW5k2Wo+tNur9vjrHQ+QgAgBxsdMA=
+Date: Mon, 8 Jul 2024 13:14:03 +0000
+Message-ID:
+ <ZQ0PR01MB1302CAD4A6F9DB486793DD95F2DA2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+References: <20240402100011.13480-1-changhuang.liang@starfivetech.com>
+ <20240402100011.13480-2-changhuang.liang@starfivetech.com>
+ <c401600b-263e-4798-9cb9-91a511c6adc5@xs4all.nl>
+In-Reply-To: <c401600b-263e-4798-9cb9-91a511c6adc5@xs4all.nl>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB0949:EE_
+x-ms-office365-filtering-correlation-id: 80d427fd-85b5-4ed4-d232-08dc9f4fd6f6
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|41320700013|366016|7416014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ xfRMDSvSkYpu0WyNQFpya8r7nbRowfLKPPCIyg0l1XiwUb/uCVzB+e2StBgmKMF4NVCjNrmCwYg3Q0ED9TJBBvJIHbf+pLqovztzOyS48962Nkca1dTi0dMOfBOP2yRXeuohAH0BO20l+FO/lMpZ31rMCdznMzvjeja8OejO+DMHQtBSceP4eaS84M8MwcVjtEpHWdB+mxYfUUzr7dtp+SXtD448TBaDyo3myu7CIhAt1al8dZUr/lqTxJflRsrTVG83Fw9mMjDb4BAvH67K0YrvnJsQgxNqgAvA0Ep/Uxpl/SStQ8ja29y1TitDpbczA5U5JR9tW4WQ5r3N/kFMx/+K8iLHMxgl41Xqi7fwvN1v3jFrxdeoqxcBs7yQPNEnTILYwm3agTck2kl9PqNWg7zELoK1ssfuqEd6XcYWT9xxRQUXZn2WU3cZ3AtpX1fnaKDDTpMiMmDRnaghiUioLolWQ343SeftKeU27E2uyWfxO+Z6XbrphjFLm20AlZSBlkcrN2Mfqy8/JJzGO2emiMbAmYIMsI4cyPCbXR/Pq887ZqdOfJt8J6sXYxhqSdOqEqnjevluuGSoxhDNf3XT/snL1EL28IgiksHY2/XZyL09PXyqKNJ9mPQPTqmu0lkdSEOlvxZ1qoPJEwBL65SzYg==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(41320700013)(366016)(7416014)(921020)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?RG95T2hSUXI5LzdkTnBLTzJCTEhWRDF6YWdSejRVd2RCYU84bWVaWmRubGJC?=
+ =?utf-8?B?Y1ZvT3hkakRuNlVrQjQxQkNId3B0SHF5VlFEMHVuRFZhR3EyaE5YNUlBY1Nv?=
+ =?utf-8?B?YnR5anNiU2F5WFFtVHlsbGw3Q1YrVGQ3NDdBSXMxUjZZc0NJTm5wKzdJN0V6?=
+ =?utf-8?B?dS9jeFFHSmZVM3VRRk9COTZXQXl4Y3J1R1BYaFM4SHlibVJxSWRPNnJ0ZFFC?=
+ =?utf-8?B?NzJlWlVRUU9TV2NNaUl5S2Frak5kemFQdjVmSGpvZm9PTDBJQlhrUGdpT0F5?=
+ =?utf-8?B?UlBVcFA5cUdkZVlUU3g0TjBqaFBRcVRaNUljc2VZU1RuWnBsZ3NqcDhSck0y?=
+ =?utf-8?B?dGxwdmhjWDJaMk84c0NpVksrTW1UbkF6ZW1pWVZ3UVZSYlNjRDBPRHdyWXYr?=
+ =?utf-8?B?SDYvcTBJWjUra002RjFvdko4UGRpYld5L0NaUWJaVWZYckw0ZEJsYUhlMHor?=
+ =?utf-8?B?WTR2T1pINllRREwvaU5VcEs5Vm1KNmJTYk8wQk56M2JyOHdCeDRVZVpVQS90?=
+ =?utf-8?B?MFlqSUhJVHI4TE83L3FDL3UyaVg2c28rMjBqY05JaW1IMmlON21qMWNuaTVS?=
+ =?utf-8?B?WnFjS0F4SEh1aDZxbG1rc2tPbU94WVdFMlN3WUdmRUhOMFpuaUl6QlFqeDQ2?=
+ =?utf-8?B?b3NNU1cwNHVRMjlQaGE4ejE3VnM4U1I5RTVaRjhHbjVaSi9VZFh0QlZPQWo1?=
+ =?utf-8?B?anFEbkNXNExKUVRJQkIvSUVib0JGR3hGSkFGYVgra25pUEpDWWVXbkFnTzRJ?=
+ =?utf-8?B?b1pvaDRzKy8vNEM3TE9nT1luQ1RjbUJWR2FacXdyN1V3bzlPVTRTRzRzQnFY?=
+ =?utf-8?B?eFA4aVlQRTh4NFQrMi9rYmtKeUUrVDY4WnZrWDRUZ3Zsd3F3dFYzOVpLSERB?=
+ =?utf-8?B?MDZWc2pieXM5SXNBaXRYS2cyMFVRMFlhK1VENnlROU14UkZyR2h2TnRxaWRG?=
+ =?utf-8?B?M2NwTXg2cEN5aTkrUGtZVFhUYWdtalFMNTE1V2wvcXlxLzFOMFhnWG1acm83?=
+ =?utf-8?B?eEhOTDQ0eXdVMTQ2azhoUkUvQk92VXE0SnkvTkRDVkhVbVV6bWFnbUNuSXJq?=
+ =?utf-8?B?amFTWk9HNkpkUTRhUG5YcHNSZmd4b3BnbjhkczFFSk96OWtRSlJRUTZoQlZm?=
+ =?utf-8?B?eGtJQnAwbjBvQXczWE9pN3U2ZUVPNUYwUEFGbGNFNGJsL2cyTDlZcGJDREl1?=
+ =?utf-8?B?bXNBSTR3WlM5dDdBZGxKSytNcjFXQ29pazhUL2k5TWRIVUdCa2Y1UDAra1Vq?=
+ =?utf-8?B?akxZSnBCSVZrc1VhNlM1VlVuNnZrU3QyT2R6NWd6SnZwSTUyYWVMQjdwN253?=
+ =?utf-8?B?aDk5eTFJRFpBUHJWRHRsSGtsZm4vNlFhSXpoMVFCcDVwLytuZ1d5OFMvRVBL?=
+ =?utf-8?B?bDNRbVVyZEx4bGIvTytEdlFOOE1PUUtmZXRsSW9rekxrQnZ5blBMSFJzK2FF?=
+ =?utf-8?B?QkQwQ25UT3NaWkxOYmdaZXAvLzNYNE5mclk1WE9tdFl6M3BVQmt5ak96Nnl4?=
+ =?utf-8?B?T25QMStwenVUWXdZN2Mxek96aml1aHFGdEoyM2YydjIxM0JTWXVqUEQ4RHU5?=
+ =?utf-8?B?bEhBTkNjdjRZa2NMcjc1ajRCckIzd1VURGZiOVFpM2wvTTU2bUpzcXBrUlBr?=
+ =?utf-8?B?SENITk5YdzRpZHprZGZuWmN2NUtTc0o2ZDJvRVF3enZ6NUhnamRZd0xuWW5v?=
+ =?utf-8?B?UVBheHFnUko4YVBOSUszVE1IVzZyeXhYYlpxWUtTd2QwMVNYSlN0Nzd6VklS?=
+ =?utf-8?B?cXFCTUoySDJLd3J0UkFjT3UrMGl0Y2xvRGZ4ME95Q0U0dERVdGpqaG8vWlAz?=
+ =?utf-8?B?Y1krZzZNSDRMMWlxeTNiVW1MbHpSR210by96eS9QU3J0R05NL2ZmRjZ2Ungx?=
+ =?utf-8?B?MVNjQ1h4NmpsWXFuVEF0SnlrTkFDNEhxdEd0TkE2WEMrYnZwTjBXRzlSM0ZB?=
+ =?utf-8?B?TWhnUExwUGpQSU40NThrVk5Ebm9nMGphZ3hRWUdwUnQ4aHF0V1BmaVF1OXJt?=
+ =?utf-8?B?RE0yaGxqaFVabnZSSFBkdFQxMkRYSXRGMkFHWDlrYlZsQVVhUThHTkpqYllC?=
+ =?utf-8?B?Q09mZHVvRmlnR3dzTmFtbUVmaytOTGJUVWZxcWNMenkxeWo3SGd5Z20zNUtm?=
+ =?utf-8?B?eXBibCtKcUEwRjdXYlJlcWIyUktJU0NWYzl3bVlRYlRma1F0UjVvWHZYYVdC?=
+ =?utf-8?B?T0E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR06MB6849:EE_|JH0PR06MB7211:EE_
-X-MS-Office365-Filtering-Correlation-Id: f11681bb-b118-42cd-a6dc-08dc9f4f7cfd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014|43062017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aVFFbjJFempOamVKM3k1djNEeEJaWlJXU1RhT2JwTVc4cTFVT1VjK0JFVzRM?=
- =?utf-8?B?MkVRWVBGNXF3ZDlrRjMrS1JkVTZlcHdubnVhZE5hdm5pOGxEemJTYzFhRGJz?=
- =?utf-8?B?R3I3RS94SzhTejhmNEpYVlRzUHBlMHp4cm1ubDkrU09QQmJKT0xiWVdZS2hP?=
- =?utf-8?B?Ui9neU9IMEVlNlhHWjRENW9uTmlKdnFKNmJGY0pYRmh1QnE5VFIzRDUvbU1j?=
- =?utf-8?B?Wlk4MXE3dnUzYnczQ0hjbjloNzh0NGhSSEowZzlTSWpRUHplbCt4Z2Zha3VF?=
- =?utf-8?B?ajNNM2d4eXZwd2FwVXIzZHJTMVI3dnVFSldheGFUTE5XQTNsSjhCc3JUeGt5?=
- =?utf-8?B?QzBPNjcxZFVjQytNVEY5NjJCcE5ibG41K0NKMUtNUE0xelZUU3NBU2hKb1Fp?=
- =?utf-8?B?WlpsOEpUOS9JTGZhQStJNjBHUm9GeTJ5c1VENWhuc3lXM085Wm42OEtCU3Jw?=
- =?utf-8?B?MXpmOFBZRWhoNWNMSzd6U0ttUjhnK3FZVzJYb2Y5bkFRZHBaM3RDQjRZKzlk?=
- =?utf-8?B?ZGFzcm91c3g3RmdqekZLVWo1S29nQzVaM0FhTldsYUpOYWJLM0dkU3puUVBR?=
- =?utf-8?B?aUZiWjNPK1JlZ1hsNERXUjZVMlowNUZGNmpUL3o3SkltdStyU1hrQStkam5S?=
- =?utf-8?B?U1E4MWdZTzIzWE01V01xa2I2aDRna1FzdVZ1SHlaZVJjTnJVTFkxa08rQ0I0?=
- =?utf-8?B?c3IrYTJaNVlJbGNzUVRTaVRDYmhFMnBaQVAyYUNFZXJhZVpwNWN4NmNYMWw4?=
- =?utf-8?B?NHFKUnVqN1A2T1RrZkUrL01vT1gxZFRhMlhQUW0zWjducU0zdFFacE5zUjVD?=
- =?utf-8?B?RVlQelpva3pLNVVobC8wMS9lSHdFck9wOWFaMGtwU1c3VGtFSEtuVTFnY2pp?=
- =?utf-8?B?aTVyeko3cVJ1SHkxNitIbXJsdGlDVFZyNC9Fb0syOFhOOHRNU0dRSktlMHFp?=
- =?utf-8?B?OU05K21ISTRSUXcxQTloK2hZSXZPb2w4dnZsSzQ1VzV2YkdiV1FBbU1KTG52?=
- =?utf-8?B?dnZUT1ZnMzlnWVhSZ0tLdEkxTDQxOVhQVlJpSEdXaXdGMitVVWtVSjlBWnlZ?=
- =?utf-8?B?eElIVDhrcjBKbm9STWY3MEozdUYvQUNuVi9mQWo1U1BtMElueUt2NGU2eW1O?=
- =?utf-8?B?ZTg1Y01ac0hFdDRBM1lNZHpvVk43YjhVZjFuM3VqWk9tWElKSUFsditPOHhT?=
- =?utf-8?B?ZWkvb3JsSzlRS3hsZCtBUmg1SmlodCtCczNidkJtTDlSYzNqcGJMaDdYR2s1?=
- =?utf-8?B?UDZDUU9JR0VCb2VjSGFYeHhUWVpiUVZZM2orK1kxL2REU3lWeU1ReTVDdlJX?=
- =?utf-8?B?TW9OZnZja1NSM0JYRXRUMEZnN3lmTkszRjJxTS8zdGhBNlMxQzdCcXovbTlY?=
- =?utf-8?B?SFFHM0t5Uko0R0tYWVY3ZDcyaWZXcW5iZ09uWXZSeEluZGdtd3RuamZJVTlw?=
- =?utf-8?B?TzVsSVBrdEpPdmZtbm01SkFiSmVzV2d4RnRBcmZlbjFwRW5Fa3JjMWxRS3VJ?=
- =?utf-8?B?NjA2Q2t1T2lSclI0d1d2cktJTHJndEQ2UHMrOGIzWnQ4Ym8rSzZJR3FtT1Z2?=
- =?utf-8?B?TXdXRmJjZWViOGdESEozVlRqY0l5OHJDZHh5VFV0YlJPTDRCbEYyQ1JWdGp4?=
- =?utf-8?B?cnd6bTdwaUlSSDV2djZheUo2TENxSC9WVFlMcmRUbThiUU4yVGNsMTFwUDBn?=
- =?utf-8?B?WWxmQ0Z5dU5CU29hVU5FY1JxQ0RobHBqRzZaNXQ0UTkwSkV4SzByZWl4NEQr?=
- =?utf-8?B?VHo2REJkQTlQbE1UaUZDa1ZKKzR3L2JNNGRKZDF4cE5VQkpmL1IwbHVmMjRI?=
- =?utf-8?B?OVVSUG9RRWovaXF6eHdRT1ZacHBtaHV3ZTVxdVBNVkh6cHkwb2R1WXJwckxW?=
- =?utf-8?B?Qmp0ZDFES0JTTVNydG5VYWZDN2xlL01QcWN5TGxoVk9rWjcyMFRSazZ4RHRh?=
- =?utf-8?Q?hD2Q9zwrTeE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB6849.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014)(43062017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MGNzK0cwUFB6ejVVZXNCTEJLS0NhUjNyNnBtM2lOM0didTI1VEhyQllUNWJt?=
- =?utf-8?B?cEdqTUh1S3VWSmRyTEY3c2UvcnEzL2wzWWdLVjl1VHJmZ2pmb2w4Qk1PN3Vs?=
- =?utf-8?B?M2FnVHBkTWoyL3JDY1FjbFROUEZjOUhacTBpZ3VNaG9KSW9RNmxQNWpJM2Mr?=
- =?utf-8?B?Zmtab1Y0Rmd1d0JORTVxKzhCamlkV25qVksrSGdnOWE0dnhiTFpXdE5uVFJo?=
- =?utf-8?B?RjFlMFdXZ1lZaXhEb2VjR0hCQTVEM29zSkE4QUx2TGM1TWlBWVYxWU0xQ24z?=
- =?utf-8?B?QjVXMjJQVFIxZ2VOUi9oMjRCcmkrenVnOW5IOUNKNU5PRnNUZlQ2TVhDZDZD?=
- =?utf-8?B?R21mT0x5SHNpRFc2MUUyVHV1N0FLRlVCSE1lZERlN0lHeHpsbUJBd0NZeWtB?=
- =?utf-8?B?ckozNXJPbVFldUZsZmtEQUpEYVpOc09QUG9YcHJlU1lpRm1DNHdYdzVtNnR4?=
- =?utf-8?B?WE9RUmozZ1BaQWNjM1hmRVptd1BqakJVeWhVWHVJZEdBckZMd1VENlhYMy85?=
- =?utf-8?B?ZHEydU9Fd21kOHlyMk83NGxBQ2Z1QS9sUmNpbWkwUi9RYWt3ckRYR2JaK0FJ?=
- =?utf-8?B?RUxsMThUdWc3K25XbUpMWEhkOGhud29JYzFQOUVrcGRWZGtQZmgxWUg4R0ZQ?=
- =?utf-8?B?OVo4V09XK3RFamE4bnlKRjZxNTd5eTBDMytzbTNMUXpmenZNbU5FUU1KaEZh?=
- =?utf-8?B?aWtSNnBYVlUxWGt6NmlSc0FpTjF5UXpTVGxOM0pTMlRhNSs0WUhoQVd4aGM2?=
- =?utf-8?B?elNibzFRdnhqN0tBSnhSS3dVaExCMDlmMW9NL242NjIycUFFc29kdGRPMkIz?=
- =?utf-8?B?NnFFc1ArVWlza3NwaHo2aHFLQlM1RVF3ZnROdTl0TlJ5N1RwWEcyV3QwQjRK?=
- =?utf-8?B?T2FqejhMVHJWVkw0ZHMyYlhmdlcxT1VCYzN2SEZCSzFNV1ptYU9Oa2lmRTZ5?=
- =?utf-8?B?cHV3UXR5MXIvQ1JHM2ViazZ0aklyaHBGUytsNGZHSnk2WDdxRURnZVZSZlNV?=
- =?utf-8?B?RFkrR0hxWE5ETHdrdDRLMk9MRkZXalRqQzVjREpZNzBNdkFMRkdReURnRndW?=
- =?utf-8?B?UkNndkd6SVJuUWN0di9vbFZ2a3A4U0RXbC9LS09IOTRkeklRL0c0YjF5cmJY?=
- =?utf-8?B?MHZYNE5GZE9RMFhKNzNVYVBZSWY3RlJ1S0JEckNReDBjUmhJaDZUZVBGZHFK?=
- =?utf-8?B?Tkx4Wkl2bVhvbjc4YjJWbElLLzc0MkFzSVBCNmtneGhJeE5mWi9mWmhKU1R4?=
- =?utf-8?B?S1pXWDhiVVdCem4zMmNVampleDczSDZSYlRpUU9HeGwwY0d4TXFsNnQvQmVZ?=
- =?utf-8?B?TXlQOTNuUjZJd1ErY2ZURTZaQk5HRzM0N1BSb0VpRVV2NDV3MzhTdjduSSto?=
- =?utf-8?B?UXZJTms3UkFXRktCMFRwMHp6aWhwNURMOUhFdzhoeExsY3ZwRTNtVENvNEw5?=
- =?utf-8?B?MG03Y1pMVFo1eVozeVpyWmRvWlVOZ0VURjJCWGhBWkNvT0RrUTNtSFk1c2Zx?=
- =?utf-8?B?VVZpejRKeVhwTlJWckh6ZHNXSHVJMHdUeGhoZGplQ040YWROM0Z4c1Zoa28v?=
- =?utf-8?B?bjZEUDdrclZuTzNLRGRobUw0RkExdnhPcEEwNysxR2k3SnNBMU5SeFdzSDll?=
- =?utf-8?B?OEk2T3dyeTR5ampUMVFMVkQyRTQzTUUzOUY1QVd2YXhOenV1eGFJOUJOd3k0?=
- =?utf-8?B?KzZQaGswbDdsdTI0b2p1QitVUkpPNU1QeWdSWVlhWTdoSUdxbnJzZm9CMmc2?=
- =?utf-8?B?bm9iSnpyRDh0WXkvL1Y0N0lSQWxwSzZndlI5TjE3c0FuZXpjTGV5eG5uOUcw?=
- =?utf-8?B?ZVFLUEZCM3doTlNnQXF0U0VJS2hMQlhEREsvdlBaVTdkdzlPUHA1Ukh1MlVI?=
- =?utf-8?B?dVVVVllUK05TdXhtd1gveVB4bVdFRDcxTHJKMW9ER2RLalgzUmlkS0EvdVhu?=
- =?utf-8?B?OFFSdnFCbzM1V0RhVTE0ZGRwQ0FuMUtwUTZhNmppTm1qTkQzUFVrWFVGTjFx?=
- =?utf-8?B?KzhXYWxHODRsT2dDZXZiQXJUOXcwQ2w4ZWRtM0I4V09jVzVNODB3MjUzMThN?=
- =?utf-8?B?NE05cGNSMDh3STNCeWJLeUFEUkxZRENHa1dYb0tUUzl4SEFUclA3TGExOUtY?=
- =?utf-8?Q?/msz/W51lv4/yF6nM5PCYt2wQ?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f11681bb-b118-42cd-a6dc-08dc9f4f7cfd
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB6849.apcprd06.prod.outlook.com
+X-OriginatorOrg: starfivetech.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 13:11:32.8632
+X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80d427fd-85b5-4ed4-d232-08dc9f4fd6f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2024 13:14:03.7373
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tDJN9Uv3wBHoawSKOD9jlqVv7aJUJp4jh4+ib2nX0sbNsQ93WO/XTHZYUO7dzBX4hRcM2wtXAsHxMvtW1R4hHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7211
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: u5AOhWUs9wRH5xKr6ymtJUgdvKgnyIxd1apW+VWkpVGtoLQ2Z05fDZWVfj6j5h1ba5QCYfgssqT3onaZUXwhPk532pNf385J2uLSb2/Zt+4JhibUx//TNFJuG/EOIGLv
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB0949
 
-
-
-在 2024/7/8 20:41, Barry Song 写道:
->
->
-> zhiguojiang <justinjiang@vivo.com> 于 2024年7月9日周二 00:25写道：
->
->
->
->     在 2024/7/8 20:17, zhiguojiang 写道:
->     >
->     >
->     > 在 2024/7/8 19:02, Barry Song 写道:
->     >> On Mon, Jul 8, 2024 at 9:04 PM Zhiguo Jiang <justinjiang@vivo.com>
->     >> wrote:
->     >>> The releasing process of the non-shared anonymous folio mapped
->     >>> solely by
->     >>> an exiting process may go through two flows: 1) the anonymous
->     folio is
->     >>> firstly is swaped-out into swapspace and transformed into a
->     swp_entry
->     >>> in shrink_folio_list; 2) then the swp_entry is released in the
->     process
->     >>> exiting flow. This will increase the cpu load of releasing a
->     non-shared
->     >>> anonymous folio mapped solely by an exiting process, because
->     the folio
->     >>> go through swap-out and the releasing the swapspace and swp_entry.
->     >>>
->     >>> When system is low memory, it is more likely to occur, because
->     more
->     >>> backend applidatuions will be killed.
->     >>>
->     >>> The modification is that shrink skips the non-shared anonymous
->     folio
->     >>> solely mapped by an exting process and the folio is only released
->     >>> directly in the process exiting flow, which will save swap-out
->     time
->     >>> and alleviate the load of the process exiting.
->     >>>
->     >>> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
->     >>> ---
->     >>>
->     >>> Change log:
->     >>> v4->v5:
->     >>> 1.Modify to skip non-shared anonymous folio only.
->     >>> 2.Update comments for pra->referenced = -1.
->     >>> v3->v4:
->     >>> 1.Modify that the unshared folios mapped only in exiting task
->     are skip.
->     >>> v2->v3:
->     >>> Nothing.
->     >>> v1->v2:
->     >>> 1.The VM_EXITING added in v1 patch is removed, because it will
->     fail
->     >>> to compile in 32-bit system.
->     >>>
->     >>>   mm/rmap.c   | 13 +++++++++++++
->     >>>   mm/vmscan.c |  7 ++++++-
->     >>>   2 files changed, 19 insertions(+), 1 deletion(-)
->     >>>
->     >>> diff --git a/mm/rmap.c b/mm/rmap.c
->     >>> index 26806b49a86f..5b5281d71dbb
->     >>> --- a/mm/rmap.c
->     >>> +++ b/mm/rmap.c
->     >>> @@ -843,6 +843,19 @@ static bool folio_referenced_one(struct
->     folio
->     >>> *folio,
->     >>>          int referenced = 0;
->     >>>          unsigned long start = address, ptes = 0;
->     >>>
->     >>> +       /*
->     >>> +        * Skip the non-shared anonymous folio mapped solely by
->     >>> +        * the single exiting process, and release it directly
->     >>> +        * in the process exiting.
->     >>> +        */
->     >>> +       if ((!atomic_read(&vma->vm_mm->mm_users) ||
->     >>> +               test_bit(MMF_OOM_SKIP, &vma->vm_mm->flags)) &&
->     >>> +               folio_test_anon(folio) &&
->     >>> folio_test_swapbacked(folio) &&
->     >>> + !folio_likely_mapped_shared(folio)) {
->     >>> +               pra->referenced = -1;
->     >>> +               return false;
->     >>> +       }
->     >>> +
->     >>>          while (page_vma_mapped_walk(&pvmw)) {
->     >>>                  address = pvmw.address;
->     > Sure, I agree with your modification suggestions. This way,
->     using PTL
->     > indeed sure
->     > that the folio is mapped by this process.
->     > Thanks
->     >> As David suggested, what about the below?
->     >>
->     >> @@ -883,6 +870,21 @@ static bool folio_referenced_one(struct folio
->     >> *folio,
->     >>                          continue;
->     >>                  }
->     >>
->     >> +               /*
->     >> +                * Skip the non-shared anonymous folio mapped
->     solely by
->     >> +                * the single exiting process, and release it
->     directly
->     >> +                * in the process exiting.
->     >> +                */
->     >> +               if ((!atomic_read(&vma->vm_mm->mm_users) ||
->     >> + test_bit(MMF_OOM_SKIP,
->     >> &vma->vm_mm->flags)) &&
->     >> + folio_test_anon(folio) &&
->     >> folio_test_swapbacked(folio) &&
->     >> + !folio_likely_mapped_shared(folio)) {
->     >> +                       pra->referenced = -1;
->     >> + page_vma_mapped_walk_done(&pvmw);
->     >> +                       return false;
->     >> +               }
->     >> +
->     >>                  if (pvmw.pte) {
->     >>                          if (lru_gen_enabled() &&
->     >> pte_young(ptep_get(pvmw.pte))) {
->     >>
->     >>
->     >> By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
->     >> &vma->vm_mm->flags) is
->     >> correct (I think it is wrong).   For example, global_init can
->     >> directly have it:
->     >>                  if (is_global_init(p)) {
->     >>                          can_oom_reap = false;
->     >>                          set_bit(MMF_OOM_SKIP, &mm->flags);
->     >>                          pr_info("oom killer %d (%s) has mm
->     pinned by
->     >> %d (%s)\n",
->     >> task_pid_nr(victim),
->     >> victim->comm,
->     >> task_pid_nr(p), p->comm);
->     >>                          continue;
->     >>                  }
->     >>
->     >> And exit_mmap() automatically has MMF_OOM_SKIP.
->     >>
->     >> What is the purpose of this check? Is there a better way to
->     determine
->     >> if a process is an
->     >> OOM target? What about check_stable_address_space() ?
->     > 1.Sorry, I overlook the situation with if (is_global_init(p)),
->     > MMF_OOM_SKIP is indeed not suitable.
->     >
->     > 2.check_stable_address_space() can indicate oom_reaper, but it
->     seems
->     > unable to identify the situation where the process exits normally.
->     > What about task_is_dying()? static inline bool
->     task_is_dying(void) {
->     > return tsk_is_oom_victim(current) ||
->     fatal_signal_pending(current) ||
->     > (current->flags & PF_EXITING); } Thanks
->     We can migrate task_is_dying() from mm/memcontrol.c to
->     include/linux/oom.h
->     > static inline bool task_is_dying(void)
->     > {
->     >     return tsk_is_oom_victim(current) ||
->     fatal_signal_pending(current) ||
->     >         (current->flags & PF_EXITING);
->     > }
->
->
-> no. current is kswapd.
-Hi Barry,
-
-It seems feasible for check_stable_address_space() replacing MMF_OOM_SKIP.
-check_stable_address_space() can indicate oom kill, and 
-!atomic_read(&vma->vm_mm->mm_users)
-can indicate the normal process exiting.
-
-         /*
-          * Skip the non-shared anonymous folio mapped solely by
-          * the single exiting process, and release it directly
-          * in the process exiting.
-          */
-         if ((!atomic_read(&vma->vm_mm->mm_users) ||
-             check_stable_address_space(vma->vm_mm)) &&
-             folio_test_anon(folio) && folio_test_swapbacked(folio) &&
-             !folio_likely_mapped_shared(folio)) {
-             pra->referenced = -1;
-             page_vma_mapped_walk_done(&pvmw);
-             return false;
-         }
-
-Thanks
-Zhiguo
->
->
->     >>
->     >>
->     >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->     >>> index 0761f91b407f..bae7a8bf6b3d
->     >>> --- a/mm/vmscan.c
->     >>> +++ b/mm/vmscan.c
->     >>> @@ -863,7 +863,12 @@ static enum folio_references
->     >>> folio_check_references(struct folio *folio,
->     >>>          if (vm_flags & VM_LOCKED)
->     >>>                  return FOLIOREF_ACTIVATE;
->     >>>
->     >>> -       /* rmap lock contention: rotate */
->     >>> +       /*
->     >>> +        * There are two cases to consider.
->     >>> +        * 1) Rmap lock contention: rotate.
->     >>> +        * 2) Skip the non-shared anonymous folio mapped solely by
->     >>> +        *    the single exiting process.
->     >>> +        */
->     >>>          if (referenced_ptes == -1)
->     >>>                  return FOLIOREF_KEEP;
->     >>>
->     >>> --
->     >>> 2.39.0
->     >>>
->     >> Thanks
->     >> Barry
->     >
->
-
+SGkgSGFucywNCg0KVGhhbmtzIGZvciB5b3VyIGNvbW1lbnRzLiANCg0KPiANCj4gSGkgQ2hhbmdo
+dWFuZywNCj4gDQo+IEhhdmUgeW91IGNoZWNrZWQgdGhhdCB0aGVzZSBzdHJ1Y3RzIGhhdmUgdGhl
+IHNhbWUgbGF5b3V0IGZvciAzMiBhbmQgNjQNCj4gYXJjaGl0ZWN0dXJlcz8NCj4gcGFob2xlIGlz
+IGEgdXNlZnVsIHRvb2wgZm9yIHRoYXQuDQo+IA0KPiBJLmUuLCBpZiB0aGUga2VybmVsIGlzIDY0
+IGJpdCBidXQgdXNlcnNwYWNlIGlzIGNvbXBpbGVkIGZvciAzMiBiaXQsIHRoZW4gdGhlc2UNCj4g
+c3RydWN0cyBzaG91bGQgc3RpbGwgaGF2ZSB0aGUgc2FtZSBsYXlvdXQuDQo+IA0KPiBJdCBwcm9i
+YWJseSBpcyBmaW5lLCBjaGVja2luZyBpdCB3aXRoIHBhaG9sZSBpcyBhIGdvb2QgaWRlYS4NCj4g
+DQoNCkkgdGVzdGVkIHRoZSAzMiBhbmQgNjQgYXJjaGl0ZWN0dXJlcyB1c2luZyBwYWhvbGUsIHRo
+ZXkgaGF2ZSB0aGUgc2FtZSBsYXlvdXQuDQpUaGFua3MgZm9yIHBvaW50aW5nIG91dCB0aGUgc3Bl
+bGxpbmcgZXJyb3IsIEkgd2lsbCBjaGVjayBhbGwgdGhlIHNwZWxsaW5nIGFuZCBmaXggdGhlbS4N
+Cg0KUmVnYXJkcywNCkNoYW5naHVhbmcNCg==
 
