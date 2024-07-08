@@ -1,199 +1,163 @@
-Return-Path: <linux-kernel+bounces-244740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C65D92A8C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B66792A8C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 20:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0951E28290E
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB301C21646
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 18:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC3014B967;
-	Mon,  8 Jul 2024 18:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90399149DF7;
+	Mon,  8 Jul 2024 18:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ndlKJtgp"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2073.outbound.protection.outlook.com [40.107.22.73])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mgo15zhu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F0A149DF4;
-	Mon,  8 Jul 2024 18:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720462214; cv=fail; b=IE7hPZtBDKrP3xKYsMICSmnVgcIQMnqWbDUHUTjIbAhzor8lntZs6hXUQTDxOQ/lJ05QgjCCKlgmljdd6NDAzy5DveLi/g0cDNPA9k2IBsJiX1rtoNII7rqfpRl6PI5ipjvlNQL14b9unNzIcrNm5k+yNfyzgl1YmgsJf7Vr2Ro=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720462214; c=relaxed/simple;
-	bh=FctKiJtnCpILoNYRf3LCt3/zWpmkTI1uPCtOT+B1Gmk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PTBHwSKBWJlZIW98999uGkXRhzKCrO8K/2/suo1Od3uYL/GCaJTcQJPs/GnXvuOy8vYdpThCBFMRbX6gjDBeuZGydtbQExiIH0C8fpmapa45/gKOH75wbMcbeGzs5arwwm0LM4zrMke2+DWg3decoqCHimd3CYzA5HxQjQsc+Ys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=ndlKJtgp; arc=fail smtp.client-ip=40.107.22.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=m/HLbM3/sFt8KTRf46rfovlrtqeJx2C3QJGxfu2Xf33+wda/8l8Zk3aLQa/wwJmsv7baViSRjiHyEIAxgtvq0XR7sZzaSQ2+T5XGtYTtyjGxoj1EdZzDrcRM93SzR515grnKaAuaN0CDX/ZbN21QNdbkBdQjRplNinLz09TSqlN7fZ9a8ZCUIFwpMQqox8mpmWPrquOngUFrCJWjPkdC2Iv61rRzRuyQq29TBIphJvykwVYr5SkutlE1g5Cg6G2K9jtiZrHIbjTYmH3kU9l7Cuoda/ji5eO8rXi/E2vCpCSAB0PQuvV37e9Dml/y+MGA45mQMPgVH9J0FnGuRNRsgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IUcPJud1lduNOdrm+gPGDV6AdcKouB8HkpYCVpbovrM=;
- b=J0xhAfGvn7h8my8dI+P5xHNGNZThzyvT5pherNJMyssyvmfB2CTk8cjwU8Ik+ivXz/WTqs4+jEwk11sddai6lIQAtdrQvxXAJ+ABWaIe1JB2TKRf8cnCBI0gBukW5m18Ol/5uNw2xiRjwV3fhZzSmnjbpmM2l5jIQEdfPybjNBzNIapSIwfih8g6etrRYm5Oa/cc2zx1Iy4c3Haenrz0OhfRpDQRf18XWtHXQ5vx5STgIFaIEMeYcfb8vI9lpVAY4r+6s0fg0Jng/HnCga0cO1SkRXfAMdzbQNRXed3VUIs8g/3cjK7vfBuUnsyhF9dn+Utk3rOTng8euZxd1WFVTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IUcPJud1lduNOdrm+gPGDV6AdcKouB8HkpYCVpbovrM=;
- b=ndlKJtgp6Zn3TIZUbAhVkp/jhXJqG2QV/qfW2NpkMmG+fStVVJFVatvygQmTrWuZVLxko7MZSO0HRRo1qlnm+joYYo39M3xfRzIzbtG/VN7N2g8EW58tnU8T3Ezp27kV6n1ksWKySrj6s05l0Tomo/KPO8ipZybKpH62orlDzCU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU4PR04MB10718.eurprd04.prod.outlook.com (2603:10a6:10:58f::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 18:10:10 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 18:10:10 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: robh@kernel.org
-Cc: Frank.Li@nxp.com,
-	conor+dt@kernel.org,
-	davem@davemloft.net,
-	devicetree@vger.kernel.org,
-	edumazet@google.com,
-	imx@lists.linux.dev,
-	krzk+dt@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	madalin.bucur@nxp.com,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	sean.anderson@seco.com
-Subject: [PATCH v4 2/2] dt-bindings: net: fsl,fman: add ptimer-handle property
-Date: Mon,  8 Jul 2024 14:09:49 -0400
-Message-Id: <20240708180949.1898495-2-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240708180949.1898495-1-Frank.Li@nxp.com>
-References: <20240708180949.1898495-1-Frank.Li@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR16CA0022.namprd16.prod.outlook.com
- (2603:10b6:a03:1a0::35) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D2714388F;
+	Mon,  8 Jul 2024 18:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720462314; cv=none; b=hmixB9lat5u1VGTQQcXmCa9z/f0tqF9S8Uy2+XOT6V2z4cLSkqjSgd5m7L2hDyrl9mDQyAGIg/k0pCdBMK21OOaq4FzG/3jhTYG4sVrKRmy7rPRvpE5yuqOYvGTRr8QE7ZI5K0SjHk25wCDvyj0eQt9rY/tZUsiWzxWAtig4+dY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720462314; c=relaxed/simple;
+	bh=v3c5CepbkkjKt6gptE+TJUk1F9DMb0UyjaEvOMi9Kpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=t0+f5ytaNpaLfT9H6fNSuxuMxtq0PJR1OwqwIaZZNcuMvVphY7CYFxcQbXtoqbDDMpleHMxPeuTexxe0Hq4zkp0iQC2PJGdJqcBCghZDMysWtHPu8jAPN4JW7ivEQ8Hj7LAL0QJFJHt/HNcsx7mAD2IA06WCEylawSYxQhb0HCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mgo15zhu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468AMIbf022158;
+	Mon, 8 Jul 2024 18:11:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IRv0YX0tDp29skyu4SDzayb7EgtbAAvR4vc2HCkWIAs=; b=Mgo15zhuyRWUblmy
+	nBE+Ad4RTiBlolUEFhS0r2PWU+8bCIv5mVlZRHFcYSIUAfR+zX4vRoRBqMtnOamt
+	i/yy3siE6S7ogitUs3hW7pimqONUw//teXYc/PxxiwmKXXXX0KOllpG+cUm2c2bi
+	816H0b4iBXRxmFNfJt52v/3LtXNdHRuahxflQuQCFm7rHISaARCTIhw9fFrAu+lO
+	tmGT/M0rV6pucd3Uv4MRo1b+9mpcS1e5qrf0UezbzkhwTxwCa2effDoL38FIzVP3
+	DsJ/IXW/fyKAR/Lb9djrI/K/IKqv1nuktbikAnaLsv7S2pEnmzmM0bWGFiMXAq3H
+	HU3kOQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8vfeu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 18:11:49 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 468IBmDw023223
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 18:11:48 GMT
+Received: from [10.47.206.1] (10.49.16.6) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 11:11:47 -0700
+Message-ID: <da84b5e1-ae11-42e1-8b93-8d93df1862ad@quicinc.com>
+Date: Mon, 8 Jul 2024 11:10:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10718:EE_
-X-MS-Office365-Filtering-Correlation-Id: 179e4348-f945-44ad-6621-08dc9f79348d
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?MeTQMfgQvW05cXwM9g4Ra64eYKgNc973CGDCvmK+pNozhJioam4UGd/lT8jz?=
- =?us-ascii?Q?6tgSEscX/eeqByE7r8jsmfq7PBR1CpHOprhuVVNyni1wIUg/4CZZw0Se1W5y?=
- =?us-ascii?Q?q9+j1nwRuCGbiiKjRiP5eIcPkv7Y9FbUtAikfaAuMQsznnKpgc7343EKwSo6?=
- =?us-ascii?Q?oqrhTsyUJ4EaTUWIwvg/CP+vLfO1/5Y6e0ZDvT7CJzJ1gOQ1v/bU1UW1M29a?=
- =?us-ascii?Q?BvlR2S/LReR1+3UMx995S3aVu5673C9SL4+TiE66m5L5/7dmS4HLeZn7chs6?=
- =?us-ascii?Q?28dDGYaAOh1sEXo4lpDVD/UQl0WrAY7InTlWlpAfuDNzCIWoAU5n2GaTB3ZO?=
- =?us-ascii?Q?em8xG6miTZatB8bMKcw9mBWibWk++Gmrx/q4j5q1981VxfLgeB5IwIzeWBTB?=
- =?us-ascii?Q?/Yu+Xx7Eh08xcPlEWJIPoeezPrMs0eneFuxm5/I9TaCXcWT+q+QPC0Jrh5TE?=
- =?us-ascii?Q?HOQZw2DbcOUtMhvYMi69cwnNe60loZ8mvpHyuOTag/7uJpHwdxNV/rjqIMji?=
- =?us-ascii?Q?YXlKovCvlAjsnl1JvPxZb/YeAmD82szLWXiqyjEROoYRCY6fTuYPrRod4Nd3?=
- =?us-ascii?Q?S/yWzN2NWNJjWMdDf6wadN5BXRCEwhingnWzXPaIIY9vWcv+p6c31MgwPIbw?=
- =?us-ascii?Q?tNNxFLcU1Wk4NTb5Bdz6DjSyRmBR1tqg8kmavuGSEun0HTuUy/agXjLJOQAr?=
- =?us-ascii?Q?Qw8fAX4wbAqm+W+TqZzziN9pconRteqlwCIsGNYHPvd4QLRs6qRMme6R+Ehv?=
- =?us-ascii?Q?Myl5CQAhpNRiZOAtKeRFKclIZFYk0IeEL8EccjFyqXBGwbxreprJzfCJ4Rtf?=
- =?us-ascii?Q?y2xi81JAFZFRasa+cRaxrJ7o3eHGF0J7C4DyW/cdB8oAP2j7ORG4ns/68hes?=
- =?us-ascii?Q?b+oWsLaXHastpyyg8RHYpsgsyDUkzZ2W2BCEqZTqDESzxVl9gv+LF/ZLkgKc?=
- =?us-ascii?Q?004V+L+idr0MVrj9XZ/w4EgXGjbXtkLM7gUbpENPslYcQPK9GpVePbCIzG2Z?=
- =?us-ascii?Q?H28FgjhKBEiaO4B1GjCUS+nlf/0hsKGmu+DuXcmo1WRFUC23IdDUWgjrEpWu?=
- =?us-ascii?Q?NpchsgaVC2deqhg+XDfmX4xqhw2yCcawCsSjEnWAmM5Mj8AKur1CH4TbUrDv?=
- =?us-ascii?Q?R4aRgA8PctTIY6uXbz8vUB+PmcgCRzZj0bYIf0AP63aG/Z3+C2a1Um45wEMa?=
- =?us-ascii?Q?7XSFy1lCUfR2QQf7AS74su8FrQKJmh1rvGGPPCeZ9I1CjDiNAMERMAcAklUX?=
- =?us-ascii?Q?UML1ihp/hGPCyauEtLO7ufaC2VZ0H+1grcbhj7JuVy6n5hDadrJQHQ9DVRzX?=
- =?us-ascii?Q?QP1TBX6iIwZYEG5gqNsfzmsXp/GJZ023n8fhGPz/5jrXizIsW5nJTQRVliTc?=
- =?us-ascii?Q?WUo5G0UeAWZJ0CQQDUP1YuOM/bhlXUcqWoCpLK0mxdxrT47w6Q=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?LzD6TDWWXyYrkRtXPMmJpdhhrq7D6lvYDSDV44VI/n8hOiw8k7e5nwZbBJZ/?=
- =?us-ascii?Q?g84ljTBjgxzHOXBIvfAmMCiD2otC0wtTpia+xT4/P5sxloXWmDB+gZV1rWbq?=
- =?us-ascii?Q?BcsdlsW035TsM5GofAiUq8+bv07qWbJufLNnrbqfhT4jI9oJNh6N752Yyvma?=
- =?us-ascii?Q?BSgyZ21/QSd+sbPmUTsWL3HLbtCQAf2DXRzUVzhGJCLT4xWMXXj5PGgRIW7q?=
- =?us-ascii?Q?MOBGzGRfzweDun7wkrfNDJ+TWFd4P/vgeN75a66IjT+jLmPhQmWTWNsU6YrJ?=
- =?us-ascii?Q?/ZoJtzWV+t7x47NpbO4HBZHav0jsuKyCfxgUJuYsAuOX/tBluT64k4XZ4Tbp?=
- =?us-ascii?Q?lHLwqcpsqT/bswjNpEFYJdDfdbgGJrAewZAwyeUUEGRWMz6A7Ofqf91DcTS3?=
- =?us-ascii?Q?F3Ku1c1nsAGT6JRraAmcKyIoOprQOvwmjT8ADVRvtk6Jh3k/AcI8zS/PB1my?=
- =?us-ascii?Q?r3c3sES6sBAmS/AaUwtY8I+8UJP2CoAWBzh0gnrJgWSdQ2GmHNgHctoQbuIJ?=
- =?us-ascii?Q?8X7+sJIDMGRtlhiZsvoCCk6HHDAAznY0mDMstNvNeRjKXXCU8xuFOGmk7fq8?=
- =?us-ascii?Q?yyT1iTr18xN5m+if2fO32w0xHx6VUzNdhcDas+Kxv0eocW+vZeoklDU5HrrH?=
- =?us-ascii?Q?50cdSjL5Ib8uDsbaXtdgBs7eQVzGHAgZBTTIJfPxjqjTC8ClnPIZNGJx3VIW?=
- =?us-ascii?Q?7tgLLGePK/bQDeraqZuV5enxo+L3V2Ubv6t4xJA+l9DyEtVs9b7ctkR9hijn?=
- =?us-ascii?Q?BfMmjXmHMxcdwsJWydE9y3IX49wNupAmOnFcFuQNCpz0k3FOE8nlFrXXN7A5?=
- =?us-ascii?Q?F4GoypmmahrF4BALzR+z+Wmp4iXX1SqR+Ze2Yv6fro0n27PaFV6y0H34Dx0Z?=
- =?us-ascii?Q?2SFo0pBCXrD2bjaoMOpyOWTOk3yr9uF5qDrhp2DWxH3Y5oGabiT4FCIPCn7z?=
- =?us-ascii?Q?riC52pQzFzbMFYIepzhWLhyszGCIWP1HfUVstnyKUl9q5QR1SpS/UMUz+5Um?=
- =?us-ascii?Q?p4l7wkTyRv91AxdAppw9osdvu5aMS2oGviaCndef2yYUirm1Lw9jXDsBDVs9?=
- =?us-ascii?Q?T55vm8xjeaL7wFA/JMNp0MGalotg7gODHfYJGDaN7pav1JFiFbWSqnyE0qx+?=
- =?us-ascii?Q?N47oliwl7CmSwMFEC84LCRkXHnr0MoeSH7H2SSzb82Fh5FLG7sVF58z03vN9?=
- =?us-ascii?Q?yxVlotEvyUBJ5S8R2vpUiYyQViWGTTblJXisxYk4k60TW+5CbDkojOyQKCg5?=
- =?us-ascii?Q?6gWQLQCb/5KRmvMkW5Tle94T/azvAWi2GmjTyonzOal4CaJVGggWfYrynNQ0?=
- =?us-ascii?Q?S2IyrvoLGQPJS5jEc7SgnsyOW5+VWzKG6EnWuBUzGAmNKg7DKgURrFnzbiTq?=
- =?us-ascii?Q?doomk5TsVzGQgr0yKwepw2sjkolUF+qCPnrroII9Lv08Bhlb6gDZtWXLPQC9?=
- =?us-ascii?Q?KxEHbX/elPmUOUjs0y6DEIvIsNutuZiAz2CqrWKKmPvB+/R6d7O/THcgs/er?=
- =?us-ascii?Q?sPG8V44jVwv3mOAik+meQA3VcLvoE07oAuDsPLQ5Tp5Huby+EPIH6vYM55rQ?=
- =?us-ascii?Q?7DsvDQj3fq5ji0NMqZ2DPaE1TyCNdBMmrJbcdMey?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 179e4348-f945-44ad-6621-08dc9f79348d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 18:10:10.4236
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qps2UjcZEKEz55kMZHhlQPTQFpDwLs15gvL12IFqPdcNNDd8IU/iNy4ecM4S46D2Wqj+u/r+2jeZN/YXGlK1AA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10718
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] spmi: pmic-arb: use correct node when adding irq domain
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Stephen Boyd <sboyd@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+        Dan
+ Carpenter <dan.carpenter@linaro.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <20240703221157.3640361-1-quic_collinsd@quicinc.com>
+ <wbdccdzncuje5ynof6y27e22dqipqho5j4qtqczlctu7bqhp6z@5qatffxbjykx>
+Content-Language: en-US
+From: David Collins <quic_collinsd@quicinc.com>
+In-Reply-To: <wbdccdzncuje5ynof6y27e22dqipqho5j4qtqczlctu7bqhp6z@5qatffxbjykx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OZM6kLUoItK5cuPCoyHwKuTIP6tJalB8
+X-Proofpoint-ORIG-GUID: OZM6kLUoItK5cuPCoyHwKuTIP6tJalB8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_09,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ malwarescore=0 priorityscore=1501 clxscore=1015 impostorscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080136
 
-Add ptimer-handle property to link to ptp-timer node handle.
-Fix below warning:
-arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: fman@1a00000: 'ptimer-handle' do not match any of the regexes: '^ethernet@[a-f0-9]+$', '^mdio@[a-f0-9]+$', '^muram@[a-f0-9]+$', '^phc@[a-f0-9]+$', '^port@[a-f0-9]+$', 'pinctrl-[0-9]+'
+On 7/3/24 19:30, Bjorn Andersson wrote:
+> On Wed, Jul 03, 2024 at 03:11:57PM GMT, David Collins wrote:
+>> Pass a pointer to the SPMI bus subnode instead of the top-
+>> level PMIC arbiter node when calling irq_domain_add_tree().
+>> This ensures that consumer IRQ mappings can be found
+>> successfully at runtime.
+>>
+>> Here is an example of a consumer device probe deferral that
+>> happens without this fix in place:
+>>
+>> [   18.197271] platform c42d000.spmi:qcom,pmk8550@0:pon_hlos@1300:pwrkey:
+>>   deferred probe pending: pm8941-pwrkey: IRQ index 0 not found
+>> [   18.197275] platform c42d000.spmi:qcom,pmk8550@0:pon_hlos@1300:resin:
+>>   deferred probe pending: pm8941-pwrkey: IRQ index 0 not found
+>>
+>> Fixes: 02922ccbb330 ("spmi: pmic-arb: Register controller for bus instead of arbiter")
+>> Fixes: 979987371739 ("spmi: pmic-arb: Add multi bus support")
+>> Signed-off-by: David Collins <quic_collinsd@quicinc.com>
+> 
+> Not sure if Stephen was waiting for some fixes tags, but otherwise this
+> was already proposed and reviewed here:
+> 
+> https://lore.kernel.org/all/20240522-topic-spmi_multi_master_irqfix-v2-1-7ec92a862b9f@linaro.org/
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v2 to v4
-- none
-Change from v1 to v2
-- Add Rob's review tag
----
- Documentation/devicetree/bindings/net/fsl,fman.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks Bjorn for the link to this previous patch.  I was unaware that it
+had been sent out.  I ran into this bug when testing with the recent
+pmic-arb multi-bus support series.  I searched to see if it been
+submitted before and couldn't find mention of it, so I sent out my fix
+for it.
 
-diff --git a/Documentation/devicetree/bindings/net/fsl,fman.yaml b/Documentation/devicetree/bindings/net/fsl,fman.yaml
-index f0261861f3cb2..9bbf39ef31a25 100644
---- a/Documentation/devicetree/bindings/net/fsl,fman.yaml
-+++ b/Documentation/devicetree/bindings/net/fsl,fman.yaml
-@@ -80,6 +80,10 @@ properties:
- 
-   dma-coherent: true
- 
-+  ptimer-handle:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: see ptp/fsl,ptp.yaml
-+
-   fsl,qman-channel-range:
-     $ref: /schemas/types.yaml#/definitions/uint32-array
-     description:
--- 
-2.34.1
+It would be great if Konrad's version of the fix (with Fixes tag(s)
+added) or mine could be picked up.  That will ensure that client IRQ
+usage isn't broken on targets specifying spmi-pmic-arb SPMI bus subnode
+devices in DT.
+
+Thanks,
+David
+
+
+> FWIW:
+> 
+> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> 
+> Regards,
+> Bjorn
+> 
+>> ---
+>>  drivers/spmi/spmi-pmic-arb.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+>> index 791cdc160c51..e6a4bf3abb1f 100644
+>> --- a/drivers/spmi/spmi-pmic-arb.c
+>> +++ b/drivers/spmi/spmi-pmic-arb.c
+>> @@ -1737,8 +1737,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+>>  
+>>  	dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
+>>  
+>> -	bus->domain = irq_domain_add_tree(dev->of_node,
+>> -					  &pmic_arb_irq_domain_ops, bus);
+>> +	bus->domain = irq_domain_add_tree(node, &pmic_arb_irq_domain_ops, bus);
+>>  	if (!bus->domain) {
+>>  		dev_err(&pdev->dev, "unable to create irq_domain\n");
+>>  		return -ENOMEM;
 
 
