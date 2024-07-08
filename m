@@ -1,169 +1,245 @@
-Return-Path: <linux-kernel+bounces-244550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C734D92A5DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA0C92A5E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 17:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8317428220A
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859C6282CDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 15:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2718C14373C;
-	Mon,  8 Jul 2024 15:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEBB1E898;
+	Mon,  8 Jul 2024 15:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="v1VQQhwl"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZFbTujmY"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77F61E898;
-	Mon,  8 Jul 2024 15:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E8113B7A3
+	for <linux-kernel@vger.kernel.org>; Mon,  8 Jul 2024 15:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720453050; cv=none; b=op33gn6icAj/o5vHfmROC01R1AeIZkU9veE23snhzAM2J/QE2otwZmfZR9xdcIAKo1AWg7ZjiK45Kl1S+UXsjPT3q25W9O4FfSqDTEDjhv0P9DTdA4IUYFJb/6N0leAcFUdfrejXCzhmPb5VR8ML+I5IVsqshthU3Jg6hQmPkfU=
+	t=1720453105; cv=none; b=GYmgdaVMsJB9dkiwmxyqW9gQ3uMng5DShSIyGJHnyRK9B0WNEw9fzQo2RgWbmqephY/uo7voNNn91NDsfi/i5arclOHPlODLwdGPjVSFRuO2Fwlx+vRH8BGKLVW0ESxx5v6e57URyOjyb6ApnzAu915K9KIEegG3bSUtbtiyXkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720453050; c=relaxed/simple;
-	bh=91QbJhmZE7ivkt7ImAusrGfiOF3UCW7ZXNMXwT01oH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Tkhcdb4osRZoRnpxVE38SI4/NIi1eZ4JhZlFL+NgNnk3vEMGEcvWeggArvaTawHq4Qc5A+2RE4dSyTRIHOkwEt4NFt/SnmhGxeS4JCo020pV17/DRgtHc6HajmJlTVMBWNhHYmn5PuRHlHG1vQutNHyMzshlnjIdSecC0KwBIDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=v1VQQhwl; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 10192120005;
-	Mon,  8 Jul 2024 18:37:22 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 10192120005
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720453042;
-	bh=Bo/6XCu3DzX8pb2DXto2aIjlWq7K1MB2e/LDCsAwPr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=v1VQQhwlvdIQcefu+5VOdf7ahVdnlEg1GJcsptyzWz02GK5Bj4V/Zer5Fv6yXQOK7
-	 02NUnd2qSIJ+LT1tBtFr8Bh6ksotDPwLM9ttqdDOcG/OKEkx4rAkqR/cishfu7iDFy
-	 /XczqEpgrlTs+mTlk4aecTuT/Z5STeoIn7pN2Gh5tKCXcCvMBe02X9ZZ5Y/ODo2TYV
-	 QK2568OIt1RZrrQ0GisIHSAc1vU7/uWbdTjT8fRaPU5oe0RSJZ5b4FDLxFOB3g2UJU
-	 /XZb/XMcGqSyn/c9MZBvd42O0gTRaNGvD3UC1aP1M9f2qot/IWtd1t4+j0hixdeEVK
-	 aI3aFVmir5bdg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon,  8 Jul 2024 18:37:21 +0300 (MSK)
-Received: from [172.28.64.179] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 8 Jul 2024 18:37:21 +0300
-Message-ID: <4ec6b50e-b915-4e18-a8a5-97ca7ab9e4ce@salutedevices.com>
-Date: Mon, 8 Jul 2024 18:37:21 +0300
+	s=arc-20240116; t=1720453105; c=relaxed/simple;
+	bh=aGp3pPD0oenYfC7jSBCPniKrqyp0afq6xNim1DW4trA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PzEc6U0iknvY3K7Wq5atoGmccFYL44rYm8EDk0bNXqTx6HJJ0pm3fSMxqhpkDnu96g+7Tz+dx9GnkmLYln7Np+AwszzhdFrlb9raYt/gcc7xYv8saFFo6LVfIWMx4tGFUZOPfDm3xL+Uo7Zs1kTJ9HHe3Pcz800+rWJ/VVxvCzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZFbTujmY; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c080b521so446896866b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 08:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1720453101; x=1721057901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w34rqWgCcHq9KaDMcF1K9V05O8+jp85pDo61liIVZb8=;
+        b=ZFbTujmY41BMVQhEh3J13mHA3VyGKleXAjnPuK00CzX36KND+O73plCYK5Fh3cWLwb
+         JWhCVqWq78R/B/dTwUy2hFTC+v9cZmPygWTQpqHkniYin84U/K/kUhGuBfyoxU9bL5IY
+         qZThLm/Vwey3Q+AN28C1r3a7BoNepFMwq5Q+8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720453101; x=1721057901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w34rqWgCcHq9KaDMcF1K9V05O8+jp85pDo61liIVZb8=;
+        b=t2Y7SmYu1tMlzPV99cbFgpXgLND7LDQIIWmzNpSlq+p1i1hmky8JFCrTZUDTVr4ldk
+         KBeOiPL/SmMtGdUBMfKttPsPhmLaV1cRzCpGSlOJZqk981yd3fOXFzd4dvEL7BDWPE0j
+         VpmpesL3OqwvUaa9KLLAx9sVvokK9gz3nnJHDibl9M69lfgMqBb2Lf2kNn8SL0h7SU2V
+         l5NZi7DTjrqyvpn+cpVCaKwm+v9AriGnKYA3IqRKsG63ZZ0rg0EumD9aKWpDLTmcocG8
+         9NS/Wd5lCVlmvBHKf+kSpilcUT1pWKqwlvyfxmoUX/kEZt40WvBytSvibXBFJIpMSqUA
+         1V1Q==
+X-Gm-Message-State: AOJu0YwDa5ckCMoeOCvoJhudGp3xqSsg4lUZUvPM5gsu3UTGoMMcFbZJ
+	FV+OMTq4G3o3pXLKEpTqxBvm8pBbT8FFxzWfDpiUxgwPRTF4L0bRjqFsMZqgEw==
+X-Google-Smtp-Source: AGHT+IGfJf5E1FlCxXlb7YlvLUM/aRKQi1x9rGPaCigLwsDmfBL68P5j1meHpALFop4+7XnPv7nNBw==
+X-Received: by 2002:a17:907:2d94:b0:a77:e715:f10e with SMTP id a640c23a62f3a-a77e715f293mr444110166b.71.1720453101497;
+        Mon, 08 Jul 2024 08:38:21 -0700 (PDT)
+Received: from danielgeorgem.c.googlers.com.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a8545adsm3881866b.159.2024.07.08.08.38.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 08:38:21 -0700 (PDT)
+From: George-Daniel Matei <danielgeorgem@chromium.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH] PCI: r8169: add suspend/resume aspm quirk
+Date: Mon,  8 Jul 2024 15:38:15 +0000
+Message-ID: <20240708153815.2757367-1-danielgeorgem@chromium.org>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: pwm: amlogic: Add new bindings for
- meson A1 PWM
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: <ukleinek@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <hkallweit1@gmail.com>,
-	<linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>, Dmitry Rokosov
-	<ddrokosov@salutedevices.com>
-References: <20240702123425.584610-1-gnstark@salutedevices.com>
- <20240702123425.584610-2-gnstark@salutedevices.com>
- <1j8qychvv6.fsf@starbuckisacylon.baylibre.com>
-Content-Language: en-US
-From: George Stark <gnstark@salutedevices.com>
-In-Reply-To: <1j8qychvv6.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186376 [Jul 08 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 23 0.3.23 8881c50ebb08f9085352475be251cf18bb0fcfdd, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/08 12:56:00
-X-KSMG-LinksScanning: Clean, bases: 2024/07/08 14:31:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/08 12:25:00 #25908179
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 
-Hello Jerome
+Added aspm suspend/resume hooks that run
+before and after suspend and resume to change
+the ASPM states of the PCI bus in order to allow
+the system suspend while trying to prevent card hangs
 
-Thanks for the review
+Signed-off-by: George-Daniel Matei <danielgeorgem@chromium.org>
+---
+ drivers/pci/quirks.c | 142 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 142 insertions(+)
 
-On 7/8/24 16:11, Jerome Brunet wrote:
-> On Tue 02 Jul 2024 at 15:34, George Stark <gnstark@salutedevices.com> wrote:
-> 
->> The chip has 3 dual-channel PWM modules PWM_AB, PWM_CD, PWM_EF.
->>
->> Signed-off-by: George Stark <gnstark@salutedevices.com>
->> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
->> ---
->>   .../devicetree/bindings/pwm/pwm-amlogic.yaml    | 17 +++++++++++++++++
->>   1 file changed, 17 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
->> index 1d71d4f8f328..e021cf59421a 100644
->> --- a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
->> +++ b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
-
-...
-
-> 
-> The change is not only introducing a1 compatibility but also allowing a
-> power-domain for the other SoC, even if optional.
-> 
-> If that is intended, it should be stated in the description and probably
-> a separate change.
-
-AFAIK the only SoC with a separate PD for PWM is A1 (currently). I added 
-PD to bindings by an independent change in series #2 [1] but Rob
-proposed it should be squashed into compatible patch. The only thing 
-missed in series #2 was the conditional schema making PD required for A1.
-
-I personally would prefer to add PD as a separate change.
-I'll give it a try.
-
-[1] 
-https://lore.kernel.org/lkml/20240701172016.523402-1-gnstark@salutedevices.com/T/#m0e004fc0d22e205aa3bf6bdd0284d251f26eb0f3
-
-
-> 
->>     "#pwm-cells":
->>       const: 3
->>   
->> @@ -136,6 +143,16 @@ allOf:
->>         required:
->>           - clocks
->>   
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - amlogic,meson-a1-pwm
->> +    then:
->> +      required:
->> +        - power-domains
->> +
->>   additionalProperties: false
->>   
->>   examples:
-> 
-
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index dc12d4a06e21..aa3dba2211d3 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -6189,6 +6189,148 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56b0, aspm_l1_acceptable_latency
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56b1, aspm_l1_acceptable_latency);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c0, aspm_l1_acceptable_latency);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c1, aspm_l1_acceptable_latency);
++
++static const struct dmi_system_id chromebox_match_table[] = {
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Brask"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Aurash"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++		{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Bujia"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Gaelin"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Gladios"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Hahn"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Jeev"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Kinox"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Kuldax"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Lisbon"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{
++			.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Moli"),
++			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
++		}
++	},
++	{ }
++};
++
++static void rtl8169_suspend_aspm_settings(struct pci_dev *dev)
++{
++	u16 val = 0;
++
++	if (dmi_check_system(chromebox_match_table)) {
++		//configure parent
++		pcie_capability_clear_and_set_word(dev->bus->self,
++						   PCI_EXP_LNKCTL,
++						   PCI_EXP_LNKCTL_ASPMC,
++						   PCI_EXP_LNKCTL_ASPM_L1);
++
++		pci_read_config_word(dev->bus->self,
++				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
++				     &val);
++		val = (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
++		      PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1_2 |
++		      PCI_L1SS_CTL1_ASPM_L1_1;
++		pci_write_config_word(dev->bus->self,
++				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
++				      val);
++
++		//configure device
++		pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
++						   PCI_EXP_LNKCTL_ASPMC,
++						   PCI_EXP_LNKCTL_ASPM_L1);
++
++		pci_read_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, &val);
++		val = (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
++		      PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1_2 |
++		      PCI_L1SS_CTL1_ASPM_L1_1;
++		pci_write_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, val);
++	}
++}
++
++DECLARE_PCI_FIXUP_SUSPEND(PCI_VENDOR_ID_REALTEK, 0x8168,
++			  rtl8169_suspend_aspm_settings);
++
++static void rtl8169_resume_aspm_settings(struct pci_dev *dev)
++{
++	u16 val = 0;
++
++	if (dmi_check_system(chromebox_match_table)) {
++		//configure device
++		pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
++						   PCI_EXP_LNKCTL_ASPMC, 0);
++
++		pci_read_config_word(dev->bus->self,
++				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
++				     &val);
++		val = val & ~PCI_L1SS_CTL1_L1SS_MASK;
++		pci_write_config_word(dev->bus->self,
++				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
++				      val);
++
++		//configure parent
++		pcie_capability_clear_and_set_word(dev->bus->self,
++						   PCI_EXP_LNKCTL,
++						   PCI_EXP_LNKCTL_ASPMC, 0);
++
++		pci_read_config_word(dev->bus->self,
++				     dev->bus->self->l1ss + PCI_L1SS_CTL1,
++				     &val);
++		val = val & ~PCI_L1SS_CTL1_L1SS_MASK;
++		pci_write_config_word(dev->bus->self,
++				      dev->bus->self->l1ss + PCI_L1SS_CTL1,
++				      val);
++	}
++}
++
++DECLARE_PCI_FIXUP_RESUME(PCI_VENDOR_ID_REALTEK, 0x8168,
++			 rtl8169_resume_aspm_settings);
+ #endif
+ 
+ #ifdef CONFIG_PCIE_DPC
 -- 
-Best regards
-George
+2.45.2.803.g4e1b14247a-goog
+
 
