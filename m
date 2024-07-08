@@ -1,234 +1,255 @@
-Return-Path: <linux-kernel+bounces-244917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-244918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09D692AB74
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:45:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABC792AB77
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 23:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721DD1F22753
-	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:45:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2122A2817CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  8 Jul 2024 21:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066614F9C7;
-	Mon,  8 Jul 2024 21:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FD414EC61;
+	Mon,  8 Jul 2024 21:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5yEIF7M"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HYdPNGuj"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C5E149C57;
-	Mon,  8 Jul 2024 21:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720475145; cv=none; b=Cn7BtTPCXMr109qOP8PzJGaNlmtgJ5JZ1wy2h8VcQ/3Myjd3TSQbqweost0t8ok2lx9glEBdHEo0WRFAtu43yvyR4GVpSmZs6w5pmMz91RKdGtvM7zBsbV8MD+v5UED+sbXDs0Y5q3EhwQ6wdzM8G4d9H5CWB0mJBtyFsH6mFVs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720475145; c=relaxed/simple;
-	bh=+ae8pg1lKkpGlOeMfZCLm0kbUy557ShXe/omxZLskjM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dQ+LkZttQde+dhH0KD3Ti1fqZTqlNzPfWX0eNPu/i3YnMAYAjX54fSxDSYf6KOdidwBActzBOmon8uaKBoBpTUF0F54gm0PM8P80egRvqc6QUhxzNi1WXfFYGPIHWJiy7GBE0Rxqs3BHMczM18uta6fOLF0nbnmZ2dRvipkBls4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5yEIF7M; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-75a6c290528so2311825a12.1;
-        Mon, 08 Jul 2024 14:45:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720475143; x=1721079943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZCU3c2nAd7aJdRcBLdbkRzXUYEZGaosmRWTEVwbkU6w=;
-        b=f5yEIF7M3s5j1N+3VTe+FSXAgIz/ejZRx7gRht8iQrJi7x/39XEqqh3M0SJo3Ti2P2
-         rlZgAutHcrUr876WvsW5IKWsS26Jgw8K04640/pSMYShiTdzzQQuupOEO6yHTuyArLb/
-         LUyT4ShKEjWV8tEMbMyVpfuqfJ4+qEkVjRQMd4SaDP1PwMSujXbrnU7au5ckgLiuL41D
-         ScvA4ofFrK3cCBTyixLXfq7I2wel8XLx6uH0wBW4wfx+nmHbVlTmthQkFvBfMrozPJWV
-         bK2WasaoWsBh6VBR4YttuWOAuoTPMqzZTckhUT1+WtbaYbcHEww1oe2RYnr3A+IywDKE
-         DsHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720475143; x=1721079943;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZCU3c2nAd7aJdRcBLdbkRzXUYEZGaosmRWTEVwbkU6w=;
-        b=X5xeWgbEBtAxjbqCBgJ7Zh1avKExbQc6XdH39o7BExUzIIpZT+h1trv0K+jkGacvOI
-         1zf/eYELmOm8/zX6LXXMb+AW7cOlQagmVKpVdZtBHHogapa5/pIAG3gWXplYICyPzmBj
-         UyV5KjUznaDUwo8xiYwEiMRhaBKPCZKO9WZyv1OOfwy8fFSUltsQqwnrFptLIdE+GK/X
-         9Wj7TcxR93xZRH78nsNLpyVZ44mcTM4VXs/j02wl9dogO86FJklg9AwDa3zLY1svDQN9
-         Orok5c2zUFUEmQnMLyB3p7Y21wqkk+JF8yQGoMzv2phRJ5WjId9GIKksU/aX1LiJaSBx
-         wsWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMUvEBjd4IVtJj1wkUQIg/QdCqld8jYZA9goC2M/ZtPRPCHKsN5Zr6j85CiJ1nJBJnJRspBl5zYTPSwfxoeK88GAu0aEfFZBcjwCp5EfDlUYioQkD3mIi7J+ukzxMMaJihv06bK7PfrMdbrjIzQgtqpzZZc0YpT0bZYEWVHmyrKbjLh+h0
-X-Gm-Message-State: AOJu0YyGMHINq64lbRAyFnC0tUafuTpk6zNQOBicyRvH62fycTBUjR0d
-	i5DDDyV2M90ga5vYdv3Rkm98LnmM1OeeaOGhgpR+q4fmhGFZ2XVr
-X-Google-Smtp-Source: AGHT+IGVa/Isf9H+e8+4NivDbgTeA4ktp0isulq+ODjXuA8oyJMRlgUb0nG0ofIfTiRW70PZb765yQ==
-X-Received: by 2002:a05:6a21:3393:b0:1c2:8e77:a813 with SMTP id adf61e73a8af0-1c298205f0dmr843724637.1.1720475143018;
-        Mon, 08 Jul 2024 14:45:43 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a0fc20sm3376065ad.2.2024.07.08.14.45.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 14:45:41 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <12045925-7876-492a-952b-7ecf04bcddb8@roeck-us.net>
-Date: Mon, 8 Jul 2024 14:45:39 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4923F1CD23;
+	Mon,  8 Jul 2024 21:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720475234; cv=fail; b=hM2HzDkCtQ60JrCVKNWbFndKUbYbv2LkmY8wWKwfy+vV3pBXRllMSlsk/K8WaYOEE4ZKedVbZM8GICXF+LVpWzhD9Kqx1HEiuzdmLFgqFvE/tUxD5s5iBuE2ZzmUKO1uxtXQFsvuFYpHvoc/Czhf2b178Cvvp3gKHbzFVTn3L40=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720475234; c=relaxed/simple;
+	bh=/BwcokY2vW7tKXbWETim8k22TRJ7fHGY2SE6Fv9uJgs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KW1UQ4YYBZooONHPUqtDGLu531KG1TNq7C0wDybsuXatvV0dDFeggD0F7u0sjQnS2G9KxG6mIGWVtIl6TN/VVdXk6t/njqhgFdmTmCUL86aXvZCMD2synIov05OdlndW4z6THMfwrIUn7I8oVZEheul3p9EcccjuZms2EaZzQtw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HYdPNGuj; arc=fail smtp.client-ip=40.107.223.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=COXn5FvtDmgoRFVFWPLZpyHgBJrjfYPzswoHIZAL1G2gcB0oUD1PwLjorG/a9aNq1XRJLbPWeZmxhVGKNhgtEsTtdGXam5b761b27/RVmT3zogeqQYaIlZuKHrGMvVXejQqxToTvSQOBrC8TmJNIrZYd0U8yd5smEIAvvdcHoo+nYdZ7CXxMub/8N6xIqP4foL2A2dgcWqHv07l+DmSLc6YpqGoKLGhbzd/60xs5qO2aOqmRyaY1c9060NtbM0edRLFLrnDYq7AKzt9lyTOMWrw86JO/1Pd6WMyrLWW+tz9UCsvSV3BgqDQuJ3Bq01qmv6qH6btlk8/LNN9XhTSLEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OXdiJvLiOfy8bH3v7JnIC7YPid5NxFMs5jccm3ffUSY=;
+ b=Phd3UlEXqQXGIIWg5ToE5uxljnFDKtRq5ql246YzXZZzjsYLePnTV3lNppH7zqgRDdEV7o1iOJzc/pjHAYWRJRS+s8KeJ8gl+T9LYVkkIKDBvJMnCMF/1tNxwrkgizXTYVl0Gvl8UHcvvm5yC2b+yKoSOudQ920a1FRu8dflRIPBnSYiITTYTcIpBu5z6/AncPjJMm63VbkspfWKxYEC+6XJX8fAR4wfc2NMj/TRN6mM8t9ixI3bmdNR9ExnAitSiOLdNcTvheJWMkwqqc8TS2Fl5zRd76NMRn31wX2Z+gc8D51Wpjab0DpZvQX3SQ+YMtpFWy/KG4Ipp0EWVqphPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OXdiJvLiOfy8bH3v7JnIC7YPid5NxFMs5jccm3ffUSY=;
+ b=HYdPNGujRsQMeYTxa32GojFDIQpitQRoJAWhmrdnJV3mL1a05V3IV932xju/XVcCi12tY2WhGs8xjfJlXuqTpP9pIwk9vZvBlk0hP6sv+GaLAcPlB94ub2O6ZgdJace8tpGk280VhYTArr3nTqbEcxEEFR00fyKnLksT9bxojYE=
+Received: from MW4PR04CA0237.namprd04.prod.outlook.com (2603:10b6:303:87::32)
+ by PH8PR12MB6820.namprd12.prod.outlook.com (2603:10b6:510:1cb::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Mon, 8 Jul
+ 2024 21:47:09 +0000
+Received: from MWH0EPF000A6734.namprd04.prod.outlook.com
+ (2603:10b6:303:87:cafe::1d) by MW4PR04CA0237.outlook.office365.com
+ (2603:10b6:303:87::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35 via Frontend
+ Transport; Mon, 8 Jul 2024 21:47:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000A6734.mail.protection.outlook.com (10.167.249.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7762.17 via Frontend Transport; Mon, 8 Jul 2024 21:47:08 +0000
+Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 8 Jul
+ 2024 16:47:06 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <pstanner@redhat.com>
+CC: <airlied@gmail.com>, <bhelgaas@google.com>, <dakr@redhat.com>,
+	<daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>, <hdegoede@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<sam@ravnborg.org>, <tzimmermann@suse.de>, <thomas.lendacky@amd.com>,
+	<mario.limonciello@amd.com>
+Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
+Date: Mon, 8 Jul 2024 21:46:56 +0000
+Message-ID: <20240708214656.4721-1-Ashish.Kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240613115032.29098-11-pstanner@redhat.com>
+References: <20240613115032.29098-11-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/8] hwmon: (amc6821) add support for tsd,mule
-To: Farouk Bouabid <farouk.bouabid@cherry.de>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>,
- Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>,
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20240708-dev-mule-i2c-mux-v5-0-71446d3f0b8d@cherry.de>
- <20240708-dev-mule-i2c-mux-v5-4-71446d3f0b8d@cherry.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240708-dev-mule-i2c-mux-v5-4-71446d3f0b8d@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6734:EE_|PH8PR12MB6820:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8ed2d98-6cb0-4642-fe59-08dc9f978451
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Y83mq33wIyUuuvco3rh/YszKgkEMQoFzIOllQ1IHAOXA3JpdPujc+4afHXiX?=
+ =?us-ascii?Q?YQ1KU3VBO7hMUUTPD59onOCJRK96+g0rKm02fujw3eD6OXpVaeoXpqmFBVby?=
+ =?us-ascii?Q?gl4B/ar4LqMcmNl+rT5aHZwAnRfI+gYqABFv2f6BVwBd8yxZXjWBDHCPU+/Z?=
+ =?us-ascii?Q?vQecLRWURXqBqMNYnxVCcoKzVRTeEx4+Z86sLpu1bIp1z4E2JyQYTzOUDUwT?=
+ =?us-ascii?Q?cKGKIFH/sgjn94stM5L56j0g3ZAOVK+dFM3vzLzqbdDMNJhva823XKiWqXUD?=
+ =?us-ascii?Q?s+vBiehe0L+5ubUZ3J+uYmdI6srl2Ie034KF4g+k6TsKIhnTTAQ6FMr18YsO?=
+ =?us-ascii?Q?brEEROLwxZ3Ip+3mmal59OMsK/V4z+mHcw9vvcAC0qQx3ymT0SAGvFgduXHO?=
+ =?us-ascii?Q?iS3se1sIrsiDsFO19uHo1BHLcZ/Z5uwOVsJ/JEkn+WGFw1S18G9t51w513pg?=
+ =?us-ascii?Q?MBxuIQFYJ3g45eP+1e3oE7mWU0KRKnZlKSrZefqBPVtgaj32E7XBw5uMPc0H?=
+ =?us-ascii?Q?H4DoV/2FTJztdD3ut9VVnKo8SjnqU0/4qBD8d8IhnuLRqvLsju0eDZ975mI4?=
+ =?us-ascii?Q?dKA4OceoVvq3StFAbmLipNfVyMxO4zENX+toLEOxjzVfmrR/yopGWyE8kB07?=
+ =?us-ascii?Q?IZ5AU8WFXSMkPSSjdpyUeDojahGZKVY3lX9+NmmR7PpwhFWqXY7LsmElQLjP?=
+ =?us-ascii?Q?Zzt323jeVEClrCf/9A5nrkuQocGydrZkYSc/qor+HcOkMWDMOjW5jK0poh7u?=
+ =?us-ascii?Q?HtbIACBa1Xn6Fh5q7+96AHbskhqKJ+e5b5+B3JrVylL41iFuw0n130u2qhjP?=
+ =?us-ascii?Q?W2SYrghLVgV7G/0KwTRjKK56g0OiKpdgrjfzRhTjZcmco0nkRKkCDanPn5u4?=
+ =?us-ascii?Q?TvtEwxnPxGG9vSq6y3HsFC1E28A55huRifks+BVgtzLbPniO2JDhJMV7Tyw9?=
+ =?us-ascii?Q?b2DHd40uFzRe0y2jd+wsDxTAsHg0Xgt4/3dT3HMPGkO32VrIUYIQDpLs4ZQA?=
+ =?us-ascii?Q?3cxfKyqAlYzLsjNhZXMGHpLmCsUK0JKiacnBLsyFFUeV+vuAmjj/L/SzWSB1?=
+ =?us-ascii?Q?3gxdnWSmgk8I7hNS151b69FmlDyVqslTtTKMa0o11lI+x4HyspzEDmmoLg6a?=
+ =?us-ascii?Q?lpSyz3CylfwbNUxdiXwMRsHUoVoAmmBqtBOmm9lEVad4YaeeBN3wX1CsH61d?=
+ =?us-ascii?Q?VWq7ctVcM4okedwQGnch9irTwtrnCje+ndsjtRyOdmbwnCw2+GV5foDFkuhx?=
+ =?us-ascii?Q?vA0Q98bIO6QRBrI4yPHh5vouLpR4wlejc/owKkGUfjlAcMVK1cb3UMhqxCcO?=
+ =?us-ascii?Q?fSKVntATpdYREamF9T+9ig5iV15Iq6OY8sDRM5yTQPrd0QAJJ+aWDPfRVbfU?=
+ =?us-ascii?Q?/Ow0itLn6d2iGcAEXTDUO105jw665IZA3vJSFFY/qwP3kiXiOg2PnNMDsbCr?=
+ =?us-ascii?Q?uq4bCPL92IewU3bA8dbzg47yzUxvnL1X?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 21:47:08.6893
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8ed2d98-6cb0-4642-fe59-08dc9f978451
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6734.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6820
 
-On 7/8/24 09:12, Farouk Bouabid wrote:
-> Theobroma Systems Mule is an MCU that emulates a set of I2C devices,
-> among which is an amc6821 and other devices that are reachable through
-> an I2C-mux.
-> 
-> The devices on the mux can be selected by writing the appropriate device
-> number to an I2C config register (amc6821: reg 0xff)
-> 
-> Implement "tsd,mule" compatible to instantiate the I2C-mux platform device
-> when probing the amc6821.
-> 
-> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
-> ---
->   drivers/hwmon/amc6821.c | 25 ++++++++++++++++++++++++-
->   1 file changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
-> index 0661cc6a6f8e..93c3b79b5f13 100644
-> --- a/drivers/hwmon/amc6821.c
-> +++ b/drivers/hwmon/amc6821.c
-> @@ -22,6 +22,7 @@
->   #include <linux/minmax.h>
->   #include <linux/module.h>
->   #include <linux/mutex.h>
-> +#include <linux/of_platform.h>
->   #include <linux/regmap.h>
->   #include <linux/slab.h>
->   
-> @@ -895,8 +896,17 @@ static const struct regmap_config amc6821_regmap_config = {
->   	.cache_type = REGCACHE_MAPLE,
->   };
->   
-> +static const struct regmap_config amc6821_mule_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = 0xff,
+With this patch applied, we are observing unloading and then reloading issues with the AMD Crypto (CCP) driver:
 
-Unnecessary since the maximum possible register address is 0xff.
+with DEVRES logging enabled, we observe the following logs:
 
-> +	.volatile_reg = amc6821_volatile_reg,
-> +	.cache_type = REGCACHE_MAPLE,
-> +};
-> +
+[  218.093588] ccp 0000:a2:00.1: DEVRES REL 00000000c18c52fb 0xffff8d09dc1972c0 devm_kzalloc_release (152 bytes)
+[  218.105527] ccp 0000:a2:00.1: DEVRES REL 000000003091fb95 0xffff8d09d3aad000 devm_kzalloc_release (3072 bytes)
+[  218.117500] ccp 0000:a2:00.1: DEVRES REL 0000000049e4adfe 0xffff8d09d588f000 pcim_intx_restore (4 bytes)
+[  218.129519] ccp 0000:a2:00.1: DEVRES ADD 000000001a2ac6ad 0xffff8cfa867b7cc0 pcim_intx_restore (4 bytes)
+[  218.140434] ccp 0000:a2:00.1: DEVRES REL 00000000627ecaf7 0xffff8d09d588f680 pcim_msi_release (16 bytes)
+[  218.151665] ccp 0000:a2:00.1: DEVRES REL 0000000058b2252a 0xffff8d09dc199680 msi_device_data_release (80 bytes)
+[  218.163625] ccp 0000:a2:00.1: DEVRES REL 00000000435cc85e 0xffff8d09d588ff80 devm_attr_group_remove (8 bytes)
+[  218.175224] ccp 0000:a2:00.1: DEVRES REL 00000000cb6fcd9b 0xffff8d09eb583660 pcim_addr_resource_release (40 bytes)
+[  218.187319] ccp 0000:a2:00.1: DEVRES REL 00000000d64a8b84 0xffff8d09eb583180 pcim_iomap_release (48 bytes)
+[  218.198615] ccp 0000:a2:00.1: DEVRES REL 0000000099ac6b28 0xffff8d09eb5830c0 pcim_addr_resource_release (40 bytes)
+[  218.210730] ccp 0000:a2:00.1: DEVRES REL 00000000bdd27f88 0xffff8d09d3ac2700 pcim_release (0 bytes)
+[  218.221489] ccp 0000:a2:00.1: DEVRES REL 00000000e763315c 0xffff8d09d3ac2240 devm_kzalloc_release (20 bytes)
+[  218.233008] ccp 0000:a2:00.1: DEVRES REL 00000000ae90f983 0xffff8d09dc25a800 devm_kzalloc_release (184 bytes)
+[  218.245251] ccp 0000:23:00.1: DEVRES REL 00000000a2ec0085 0xffff8cfa86bee700 fw_name_devm_release (16 bytes)
+[  218.256748] ccp 0000:23:00.1: DEVRES REL 0000000021bccd98 0xffff8cfaa528d5c0 devm_pages_release (16 bytes)
+[  218.268044] ccp 0000:23:00.1: DEVRES REL 000000003ef7cbc7 0xffff8cfaa1b5ec00 devm_kzalloc_release (104 bytes)
+[  218.279631] ccp 0000:23:00.1: DEVRES REL 00000000619322e1 0xffff8cfaa1b5e480 devm_kzalloc_release (152 bytes)
+[  218.300438] ccp 0000:23:00.1: DEVRES REL 00000000c261523b 0xffff8cfaad88b000 devm_kzalloc_release (3072 bytes)
+[  218.331000] ccp 0000:23:00.1: DEVRES REL 00000000fbd19618 0xffff8cfaa528d140 pcim_intx_restore (4 bytes)
+[  218.361330] ccp 0000:23:00.1: DEVRES ADD 0000000057f8e767 0xffff8cfa867b7740 pcim_intx_restore (4 bytes)
+[  218.391226] ccp 0000:23:00.1: DEVRES REL 0000000058c9dce1 0xffff8cfaa528d880 pcim_msi_release (16 bytes)
+[  218.421340] ccp 0000:23:00.1: DEVRES REL 00000000c8ab08a7 0xffff8cfa9e617300 msi_device_data_release (80 bytes)
+[  218.452357] ccp 0000:23:00.1: DEVRES REL 00000000cf5baccb 0xffff8cfaa528d8c0 devm_attr_group_remove (8 bytes)
+[  218.483011] ccp 0000:23:00.1: DEVRES REL 00000000b8cbbadd 0xffff8cfa9c596060 pcim_addr_resource_release (40 bytes)
+[  218.514343] ccp 0000:23:00.1: DEVRES REL 00000000920f9607 0xffff8cfa9c596c60 pcim_iomap_release (48 bytes)
+[  218.544659] ccp 0000:23:00.1: DEVRES REL 00000000d401a708 0xffff8cfa9c596840 pcim_addr_resource_release (40 bytes)
+[  218.575774] ccp 0000:23:00.1: DEVRES REL 00000000865d2fa2 0xffff8cfaa528d940 pcim_release (0 bytes)
+[  218.605758] ccp 0000:23:00.1: DEVRES REL 00000000f5b79222 0xffff8cfaa528d080 devm_kzalloc_release (20 bytes)
+[  218.636260] ccp 0000:23:00.1: DEVRES REL 0000000037ef240a 0xffff8cfa9eeb3f00 devm_kzalloc_release (184 bytes)
 
-Anyway, don't bother. Just drop max_register from amc6821_regmap_config.
+and the CCP driver reload issue during driver probe:
+
+[  226.552684] pci 0000:23:00.1: Resources present before probing
+[  226.568846] pci 0000:a2:00.1: Resources present before probing
+
+From the above DEVRES logging, it looks like pcim_intx_restore associated resource is being released but then
+being re-added during detach/unload, which causes really_probe() to fail at probe time, as dev->devres_head is
+not empty due to this added resource:
+...
+[  218.331000] ccp 0000:23:00.1: DEVRES REL 00000000fbd19618 0xffff8cfaa528d140 pcim_intx_restore (4 bytes)
+[  218.361330] ccp 0000:23:00.1: DEVRES ADD 0000000057f8e767 0xffff8cfa867b7740 pcim_intx_restore (4 bytes)
+...
+
+Going more deep into this: 
+
+This is the initial pcim_intx_resoure associated resource being added during first (CCP) driver load:
+
+[   40.418933]  pcim_intx+0x3a/0x120
+[   40.418936]  pci_intx+0x8b/0xa0
+[   40.418939]  __pci_enable_msix_range+0x369/0x530
+[   40.418943]  pci_enable_msix_range+0x18/0x20
+[   40.418946]  sp_pci_probe+0x106/0x310 [ccp]
+[   40.418965] ipmi device interface
+[   40.418960]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   40.418969]  local_pci_probe+0x4f/0xb0
+[   40.418973]  work_for_cpu_fn+0x1e/0x30
+[   40.418976]  process_one_work+0x183/0x350
+[   40.418980]  worker_thread+0x2df/0x3f0
+[   40.418982]  ? __pfx_worker_thread+0x10/0x10
+[   40.418985]  kthread+0xd0/0x100
+[   40.418987]  ? __pfx_kthread+0x10/0x10
+[   40.418990]  ret_from_fork+0x40/0x60
+[   40.418993]  ? __pfx_kthread+0x10/0x10
+[   40.418996]  ret_from_fork_asm+0x1a/0x30
+[   40.419001]  </TASK>
+..
+..
+[   40.419012] ccp 0000:23:00.1: DEVRES ADD 00000000fbd19618 0xffff8cfaa528d140 pcim_intx_restore (4 bytes)
+
+Now, at driver unload: 
+devres_release_all() -> remove_nodes() -> release_nodes() ...
+
+remove_nodes() moves normal devres entries to the todo list, as can be seen with the following log:
+...
+[  218.245241] moving node 00000000fbd19618 0xffff8cfaa528d140 from devres to todo list
+...
+
+So, now this pcim_intx_resource associated resource is no longer part of dev->devres_head list and has been
+moved to the todo list.
+
+Later, when release_nodes() is invoked, it calls the associated release() callback associated with this devres:
+...
+[  218.331000] ccp 0000:23:00.1: DEVRES REL 00000000fbd19618 0xffff8cfaa528d140 pcim_intx_restore (4 bytes)
+...
+
+The call flow for that is:
+pcim_intx_restore() -> pci_intx() -> pcim_intx() ...
+
+Now, pcim_intx() calls get_or_create_intx_devres() which tries to find it's associated devres using devres_find(), but 
+that fails to find the devres, as the devres is no longer on dev->devres_head and has been moved to todo list.
+
+Therefore, get_or_create_intx_devres() adds a new devres at driver unload/detach time:
+...
+[  218.361330] ccp 0000:23:00.1: DEVRES ADD 0000000057f8e767 0xffff8cfa867b7740 pcim_intx_restore (4 bytes)
+...
+
+But, then this is an issue as pcim_intx() is supposed to restore the original PCI INTx state on driver detach, but it now
+operating on a newly added devres and not the original devres (added at driver probe) which contains the original PCI INTx
+state, so it will be restoring an incorrect PCI INTx state ?
+
+Additionally, this newly added devres causes driver reload/probe failure as really_probe() now finds resources present
+before probing.
+
+Not sure, if this issue has been observed with other PCI device drivers.
 
 Thanks,
-Guenter
-
->   static int amc6821_probe(struct i2c_client *client)
->   {
-> +	const struct regmap_config *config;
->   	struct device *dev = &client->dev;
->   	struct amc6821_data *data;
->   	struct device *hwmon_dev;
-> @@ -907,7 +917,10 @@ static int amc6821_probe(struct i2c_client *client)
->   	if (!data)
->   		return -ENOMEM;
->   
-> -	regmap = devm_regmap_init_i2c(client, &amc6821_regmap_config);
-> +	config = of_device_is_compatible(dev->of_node, "tsd,mule") ?
-> +		&amc6821_mule_regmap_config : &amc6821_regmap_config;
-> +
-> +	regmap = devm_regmap_init_i2c(client, config);
->   	if (IS_ERR(regmap))
->   		return dev_err_probe(dev, PTR_ERR(regmap),
->   				     "Failed to initialize regmap\n");
-> @@ -917,6 +930,13 @@ static int amc6821_probe(struct i2c_client *client)
->   	if (err)
->   		return err;
->   
-> +	if (of_device_is_compatible(dev->of_node, "tsd,mule")) {
-> +		err = devm_of_platform_populate(dev);
-> +		if (err)
-> +			return dev_err_probe(dev, err,
-> +				     "Failed to create sub-devices\n");
-> +	}
-> +
->   	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name,
->   							 data, &amc6821_chip_info,
->   							 amc6821_groups);
-> @@ -934,6 +954,9 @@ static const struct of_device_id __maybe_unused amc6821_of_match[] = {
->   	{
->   		.compatible = "ti,amc6821",
->   	},
-> +	{
-> +		.compatible = "tsd,mule",
-> +	},
->   	{ }
->   };
->   
-> 
-
+Ashish
 
