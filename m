@@ -1,47 +1,70 @@
-Return-Path: <linux-kernel+bounces-246116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B327992BDC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:04:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 147FA92BDC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2A228AEC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:04:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9939BB2ABDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E5619CD1A;
-	Tue,  9 Jul 2024 15:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF20719D07B;
+	Tue,  9 Jul 2024 15:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oicXCYE7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AN0eLQke"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F6915251B;
-	Tue,  9 Jul 2024 15:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154BA18FDBD;
+	Tue,  9 Jul 2024 15:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720537435; cv=none; b=SahpM02WqCsgaHdTkjLfQ3WxTOcEnu44EXnTTfzK2gb9SVGN4lV82nTO2n1cm+ReZ6kcA6U0bkF1zUTUOfOQKkyBSDT2iqqvl8/vdNvsKTlzy/oNVdof9+fj+J/g6iN/C4lQdV/DqBYGHbflcg50jtfZGWCnEjT0oRbPBxKwSDE=
+	t=1720537454; cv=none; b=GbUoBbIV0DDJHM8oeI979fazeyhPZZvN80unMbCxY4QuFm3P9Q/W4fR/oHVk73H8bYRhvdy0M6cU/1jx/p4SjV9z/E7vpApKjWo6AGPoAKBqjQGtFT2bnzm9ZlskbIsGKLgkOypUu69Y5k43g/sBDdwU1IAJeBL/l3iv/6p3Jtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720537435; c=relaxed/simple;
-	bh=M48o/dOMm2yWwBWNTN3+DlMS6PsBnBYif1wNXO3pgKA=;
+	s=arc-20240116; t=1720537454; c=relaxed/simple;
+	bh=GCSDwXOWFZkc9huLYqRuNrJ/14e9sx/LUwzMnc2pKrs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fUrqOuihmj5w8aytUNtjl0ybtmYpAOaPJGbGjYj2aNKP+iMlbGM/ew4bFEcGZusTOm++vuOJsC1HFriHOFG5PgtXkUVGAa9G/g3wsYFNlR29w+pykuPDm8dHEe9DQjbc4zNB9Ht1r9x+4+4ja0AjOx2NlTZ2A4KM/URXGeRVO/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oicXCYE7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F412C3277B;
-	Tue,  9 Jul 2024 15:03:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720537435;
-	bh=M48o/dOMm2yWwBWNTN3+DlMS6PsBnBYif1wNXO3pgKA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oicXCYE7RLrzmuZP5kd7MEVSJzDQbm7BGA5p+d+mc4iMhpXCSeCTLi32zp2ejrCb3
-	 bpzqCyRPLQ3LgY3DwpFinHEwBWm8AYx6y+W9LwcFFPb/pnyTTIm9DBEBTHq5G682nK
-	 KGRvv1e4HMdoADkW0YoKBoW2EuouPfIUB0aJKgo3/tUojdGtvPGb0D4APiU6Q9xRwo
-	 Tp8u6jJNQqdA87TAUeiX+nJbwT5Wap0aU9+p2SZLnpVdRKQXxFrCSk+Hh01b4Xnp72
-	 j/AiRnLIB4dKYo0fbXQOzV0FeKzwgl5QisDv2UcnLNqBFsUK+Qg6Ix5MQDyW9fY0GE
-	 jLqGpSaX3BOXg==
-Message-ID: <04a6feac-c9aa-4e7c-9f45-e81b6950db7d@kernel.org>
-Date: Tue, 9 Jul 2024 17:03:47 +0200
+	 In-Reply-To:Content-Type; b=bQHA5eYjidT5TkuZ+xcC2xX50ZeUrbpx+hEoRsrGkp6Ij8Tw2xlESDe9eZwtdXRWkxkFlXTgNXXx/EyMAHpWeiIMB+wqAYmmZTkVNP1IibcvWaOMpNDwi7CiJwursfDgaenZ42VlbedrhXYHh/Q+5N+eJEk62qyQ50Bbo8cAS0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AN0eLQke; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720537452; x=1752073452;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GCSDwXOWFZkc9huLYqRuNrJ/14e9sx/LUwzMnc2pKrs=;
+  b=AN0eLQkeWyEkTOglbLWMQFl+/euhk3nbBCwyNd6+hfvc3tuY9OjHB99S
+   pwm3pgTfCagcj0qYkWJvAU9jXe4pkJbIVzlguBQALYFieoU5scyjHTgwa
+   waGfOfBojjG0Up6HJM2ZfOtGlSZfMBhY+RKwV5Dn0wPCchZQ8ld14W733
+   cN9ga/EmHhbJysI9Wz/khPQ7RIXnToV+aD4vasik3jRsErJ3RwxggnNqd
+   z2h6213xGazSRVXK9d9OlZtmCTK47+AtPcobcNsRr5z7r4C7ZS8QXT6Nr
+   8hZ2dpp48QQe3jTvgVLH/dqT8to3aMmIgc5nnoNx6i5Bnp+5beJltt3VT
+   w==;
+X-CSE-ConnectionGUID: TdqBC4CNRuO/Qc7Rnd35aw==
+X-CSE-MsgGUID: Oxpq/u/YQYuNOX/Vtkj1VQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="17669063"
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="17669063"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 08:04:11 -0700
+X-CSE-ConnectionGUID: UlaX7gnsQD6sSrVnmHD1Xw==
+X-CSE-MsgGUID: RDVfSdQBShuxGRviDkc9Lw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="47806393"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 08:04:11 -0700
+Received: from [10.212.46.239] (kliang2-mobl1.ccr.corp.intel.com [10.212.46.239])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id A3E1420B8CFF;
+	Tue,  9 Jul 2024 08:04:08 -0700 (PDT)
+Message-ID: <96037040-3b00-4d9a-9ff0-568b7b7b4f30@linux.intel.com>
+Date: Tue, 9 Jul 2024 11:04:07 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +72,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: thermal: Drop 'trips' node as required
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240709150154.3272825-1-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 08/11] perf/x86: Enable NMI source reporting for
+ perfmon
+To: Jacob Pan <jacob.jun.pan@linux.intel.com>, X86 Kernel <x86@kernel.org>,
+ Sean Christopherson <seanjc@google.com>, LKML
+ <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Xin Li <xin3.li@intel.com>, linux-perf-users@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Tony Luck <tony.luck@intel.com>,
+ Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
+ Andi Kleen <andi.kleen@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ "Mehta, Sohil" <sohil.mehta@intel.com>, Zeng Guang <guang.zeng@intel.com>
+References: <20240709143906.1040477-1-jacob.jun.pan@linux.intel.com>
+ <20240709143906.1040477-9-jacob.jun.pan@linux.intel.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240709150154.3272825-1-robh@kernel.org>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240709143906.1040477-9-jacob.jun.pan@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/07/2024 17:01, Rob Herring (Arm) wrote:
-> It is possible to have thermal zones which don't have any trip points.
-> These zones in effect simply represent a temperature sensor without any
-> action associated with it. While the schema has always required a
-> 'trips' node, users have existed for a long time without it. Update the
-> schema to match reality.
+
+
+On 2024-07-09 10:39 a.m., Jacob Pan wrote:
+> Program the designated NMI source vector into the performance monitoring
+> interrupt (PMI) of the local vector table. PMI handler will be directly
+> invoked when its NMI is generated. This avoids the latency of calling all
+> NMI handlers blindly.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> Co-developed-by: Zeng Guang <guang.zeng@intel.com>
+> Signed-off-by: Zeng Guang <guang.zeng@intel.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>
+
+Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+
+Thanks,
+Kan
+
 > ---
->  Documentation/devicetree/bindings/thermal/thermal-zones.yaml | 1 -
->  1 file changed, 1 deletion(-)
+> v4: Use a macro for programming PVTPC unconditionally (Kan)
+> v3: Program NMI source vector in PVTPC unconditionally (HPA)
+> v2: Fix a compile error apic_perfmon_ctr is undefined in i386 config
+> ---
+>  arch/x86/events/core.c       | 4 ++--
+>  arch/x86/events/intel/core.c | 6 +++---
+>  arch/x86/include/asm/apic.h  | 2 ++
+>  3 files changed, 7 insertions(+), 5 deletions(-)
 > 
-
-Indeed I noticed some new warnings after my recent fixes in Mediatek DTS.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index 1ef2201e48ac..e69c52f9d662 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -1680,7 +1680,7 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
+>  	 * This generic handler doesn't seem to have any issues where the
+>  	 * unmasking occurs so it was left at the top.
+>  	 */
+> -	apic_write(APIC_LVTPC, APIC_DM_NMI);
+> +	apic_write(APIC_LVTPC, APIC_PERF_NMI);
+>  
+>  	for (idx = 0; idx < x86_pmu.num_counters; idx++) {
+>  		if (!test_bit(idx, cpuc->active_mask))
+> @@ -1723,7 +1723,7 @@ void perf_events_lapic_init(void)
+>  	/*
+>  	 * Always use NMI for PMU
+>  	 */
+> -	apic_write(APIC_LVTPC, APIC_DM_NMI);
+> +	apic_write(APIC_LVTPC, APIC_PERF_NMI);
+>  }
+>  
+>  static int
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 38c1b1f1deaa..e7e114616e24 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -3093,7 +3093,7 @@ static int intel_pmu_handle_irq(struct pt_regs *regs)
+>  	 * NMI handler.
+>  	 */
+>  	if (!late_ack && !mid_ack)
+> -		apic_write(APIC_LVTPC, APIC_DM_NMI);
+> +		apic_write(APIC_LVTPC, APIC_PERF_NMI);
+>  	intel_bts_disable_local();
+>  	cpuc->enabled = 0;
+>  	__intel_pmu_disable_all(true);
+> @@ -3130,7 +3130,7 @@ static int intel_pmu_handle_irq(struct pt_regs *regs)
+>  
+>  done:
+>  	if (mid_ack)
+> -		apic_write(APIC_LVTPC, APIC_DM_NMI);
+> +		apic_write(APIC_LVTPC, APIC_PERF_NMI);
+>  	/* Only restore PMU state when it's active. See x86_pmu_disable(). */
+>  	cpuc->enabled = pmu_enabled;
+>  	if (pmu_enabled)
+> @@ -3143,7 +3143,7 @@ static int intel_pmu_handle_irq(struct pt_regs *regs)
+>  	 * Haswell CPUs.
+>  	 */
+>  	if (late_ack)
+> -		apic_write(APIC_LVTPC, APIC_DM_NMI);
+> +		apic_write(APIC_LVTPC, APIC_PERF_NMI);
+>  	return handled;
+>  }
+>  
+> diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+> index 9327eb00e96d..d284eff7849c 100644
+> --- a/arch/x86/include/asm/apic.h
+> +++ b/arch/x86/include/asm/apic.h
+> @@ -30,6 +30,8 @@
+>  #define APIC_EXTNMI_ALL		1
+>  #define APIC_EXTNMI_NONE	2
+>  
+> +#define APIC_PERF_NMI		(APIC_DM_NMI | NMI_SOURCE_VEC_PMI)
+> +
+>  /*
+>   * Define the default level of output to be very little
+>   * This can be turned up by using apic=verbose for more
 
