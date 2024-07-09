@@ -1,122 +1,180 @@
-Return-Path: <linux-kernel+bounces-246795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB1592C6CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:51:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87E692C6D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369881F23B6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:51:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE352820EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF51189F57;
-	Tue,  9 Jul 2024 23:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D65189F5F;
+	Tue,  9 Jul 2024 23:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7YPbSV7"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AupPn7Sw"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5AF189F24;
-	Tue,  9 Jul 2024 23:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE0F1474BE;
+	Tue,  9 Jul 2024 23:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720569098; cv=none; b=XlUhooVMUk1sgelkjIS8XxheoEsTLUtzzQXz8vd8oHEivDoUoUe3xlUbZZx0bXAsxz3q8EpgWKcXPwCi6FsQR5N9vvlatExocD4bnlylJPITk6sVgnNSyf4PcjiWW3eAvJzK0yU8JWDsY62F3jaicBevJK9WWuxiX1M5mC0YxfI=
+	t=1720569345; cv=none; b=bBHyYh1HKiVHNpIVxIgo8P16LI0pRAo0JFK9jBZfKhNjtOR2EE/+HBMuNt0V3m/CJluLwKg89xjX0vpm9sgC7q6Y9+nWi6jZShwwNPsbhBjZJtBAyNZk6xfX8MdMOFgB6Pk1sFoplWHIob3lDRhl8mYcEN/nQSMAIjVYjruYmGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720569098; c=relaxed/simple;
-	bh=3wzr2a0XimtxVC1KBQ1Ni94wnk3cR05AnPNN2T/ZKn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NwRHULk5d1rct5QBRRGDRpbpr3cPPJsJzkq1rSX3kmuVJj6fYOgTYBOc33NElAGT2BQS0qM6TU/neXaTIgrqy5HM3Lud7U3AWADn5bz7W/9MkXKyDrqos5uA1iQ7PPbqRLBReB2gSB6cXNGi9gjwW9Qj5mAAGOcLeD2QE1ugFAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7YPbSV7; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1720569345; c=relaxed/simple;
+	bh=/dIqGJHEmP9PlKvKZMoDzFDoLSE4bSZOgbfmkLTxb9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=meVTcZ73v10aEEpoeC5HcFY5AhI7gVdjMYa3fjFSy6TeDA6HMUzkVXjCwKN06Ym6seZtFbb6sHlXy2LusTqrT3O5C1PMXkPfgyNxjCRKqikI7M3fC3ZsP5htuDiA4isYqFX65DUNRo8e6EF+mkaENy1xSMug0ehHKEUoJ/ZvARw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AupPn7Sw; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso7149337a12.2;
-        Tue, 09 Jul 2024 16:51:36 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c7fa0c9a8cso3424987a91.1;
+        Tue, 09 Jul 2024 16:55:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720569095; x=1721173895; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nB80/jNPAo2TOKBslokBr5EVRDZovXrVO3U4Gd3724I=;
-        b=G7YPbSV7j+q7cm9sEHumGk1Ao09i6ud4c+UfN4XCrbysTR2lEDRR7KDjVsrDIHvVm1
-         ysfc02b2mMxbldvRDBiE54OKN0jZIAY7ymbueAyr2kBFXRQ1PpOe3hFCdWc25mXJ4Fhn
-         xTh/fye37bYrFV3nr8NQLzFOua1/i9KSzBaCW3e7tgb3vQzPbea0TbUNz9Dh/cnCtpRm
-         THKNCgQ3vIsdS3JZqDlpDs6XM+DKcNn8qfoOMOm6oSg4wk2rbQsb3aku/p3ILOgQu2e2
-         jTIYnFmAC9N063SZT/3IPdQU/KiWKh3/OXHjDb4V8IdlA142YrFuKq67XljnC87b/Hnr
-         EnpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720569095; x=1721173895;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720569343; x=1721174143; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nB80/jNPAo2TOKBslokBr5EVRDZovXrVO3U4Gd3724I=;
-        b=Z6GTkR5FJJQ5Au4tBkf++ftMleU+nq/MOgrZQRBmMTWSMEv6mK4a9Qw1j+LlaPhHIm
-         N4EpqY4sOwoUx+7PLE8RJ7ZVMVzgEEXqOdScR4HShOM2HBVubNbY5Ag4FvrAQCfLjId3
-         oTZxaMIBaQqlaId57RQViFJS7i8VCq3+shWTPM7rcUgPo+U6h0zyyiYPqrMjMD8OHxu6
-         Mu6WBgxrKovRIOUzwjR3uAacxm8jUt1QJAU/O6CT2W0JlvT8A3gzwRC6Kim5LHSKYKj4
-         3wXTRb7wJDTmiSOluCUUBfVq0JQ5wMijG6TEMF5zwhIQoRboVRgg0hwIr8T7BS//NFtc
-         UJUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQOMUcEfYIYWhJzmTeqVtFyX7lEU8k5lyOJ+cdO4jLom5vGC+RkymoyU9kiWyhUeTeSYWO3PdWfA4nPbxuqTQgY0pivG8p98tNEjIHP22cbCLJ1bSn+1q2G7xboZ2NN0DhkSn3CKPLHnhmTTnF7RD2N3FjUFFSGE1ck3JCV0WRXRehmA==
-X-Gm-Message-State: AOJu0YzxF6/u7EPArulzQ8nqf4TUTCozRHlIM2rowWDu1/g9ZQ5xg6Ok
-	dn5/TDJUEmTw9hhU21uED1nfjTWFoO936DvPGouMGOXxCk1xKBAQ
-X-Google-Smtp-Source: AGHT+IERo/xgDrSK200bxqmR2c3Sm004d5DwR5IVGhXm6Nz9ihnXROLaZHmA+7eaORxPCJKinnytmw==
-X-Received: by 2002:a17:907:7e9c:b0:a6f:e3cf:2b8e with SMTP id a640c23a62f3a-a780b89dd3bmr375371966b.76.1720569095026;
-        Tue, 09 Jul 2024 16:51:35 -0700 (PDT)
-Received: from andrea ([84.242.162.60])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7fef9dsm115320266b.99.2024.07.09.16.51.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 16:51:34 -0700 (PDT)
-Date: Wed, 10 Jul 2024 01:51:32 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] riscv: Implement cmpxchg8/16() using Zabha
-Message-ID: <Zo3NBHUEMMec/6uD@andrea>
-References: <20240626130347.520750-1-alexghiti@rivosinc.com>
- <20240626130347.520750-4-alexghiti@rivosinc.com>
- <Zn1StcN3H0r/eHjh@andrea>
- <1cd452af-58cd-468c-9bb6-90f67711d0b0@ghiti.fr>
+        bh=8fZNeIHzdmh4+7HMyMU6YPTZUzH6nI9xv/tzO/kNJwE=;
+        b=AupPn7SwhgQbttJI5rdT2qsRlZLp1iDihHJ7v3J+osaGsnC3bR84RYACTqv897Yk/r
+         eKXrpk3CZoRcHkpVjUkffu/JrbYarO7Nufsaq9if2lhuUFPC17e4arbf06U78vyTFlnq
+         Pzwor2bMdNEbLGyltYveWJ1Eq+MKo3AbxMOZV6YK5tleelHl/RV01ZdgcYFDnR+ivAHm
+         kC9As2Es+1vrhOt82ynrCOCFANxYlIEeby0mrrVNepgaLd+Xte2pBH2dpecOER/FcUBg
+         cazo326ytsR2cNhAKDN69mokfIBIxcFaSH+mIn/kx4ntVQqqHIpCgrXBCO0if7apNHof
+         05qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720569343; x=1721174143;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8fZNeIHzdmh4+7HMyMU6YPTZUzH6nI9xv/tzO/kNJwE=;
+        b=B4tPFYnQdrWKeEoAnP9awYNzriusquoRIHuZYAiMd+RES4t/qlfBKm8cws0P+lJege
+         tnYGlu5/jFqjHqXAXnVIKAqkCkeh1/7jpOXVNwnq7YNI0ePCOQLSecuxxm3NG/vTFd8O
+         Ina5vryrrgTdv4YCQIprcu4okHeADwWQa3CyepJJ9JtMmiBd8vdgaEryL2woIUhzv6M3
+         HoAro/9UU2sUg6FXztOLG6JZr38KthzKjvTd03KlhJsV/dZd7KYAwfF1asHyU/FM4hFq
+         hflVxtNtPWEhTTF/InpabdVr/8HCXgzp1IbgbXLf7NlEVSNYfvS0aAhUV3Jvc/P/UBN5
+         BJPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgo90JjdkuPTJ+ABxTqlkN5EUX5zdMQjLyYcmQz8kQDONPnXli2pEkP8ovlB+mxNGiXNbOi25XugPOXucO3C8ix1/JoDH5CwwkHx7o9tKjhQDvKQWQxKdiLytWVPW3Xrv82ShXx8++F9ZXY+rCJK9ByE7CAzK28WV8lSI1+5yFALZAgl2jAHySwfrizTnFvl1fkzuWklkJtjCrS+Af6aKiDRxhJA==
+X-Gm-Message-State: AOJu0Yz/XaQvcGY4O6ynYNeR4QlhIAMp2CISCAWv30Mvv+vRjLz9yqGf
+	8qfa0fgJlWyoRc/ynMGBeGgJ4UwaNCpIHR/o6S95Fhb2hUrDsvkHBQ4nST0CoAE5GdEYBj0DVpd
+	Khr7b071HvniG2478CAFeNxz4BNoSbSti
+X-Google-Smtp-Source: AGHT+IFgnerXF1rpKy3OWibi3DTuoiRwqzNxvbuHariwFHiHe/NkICs34kLZl5BrQEUA9GjjlMF/qCNX2tVUb8pBojo=
+X-Received: by 2002:a17:90a:7e18:b0:2c9:888a:7a7b with SMTP id
+ 98e67ed59e1d1-2ca35c735d4mr3150623a91.25.1720569343014; Tue, 09 Jul 2024
+ 16:55:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1cd452af-58cd-468c-9bb6-90f67711d0b0@ghiti.fr>
+References: <20240709005142.4044530-1-liaochang1@huawei.com> <20240709005142.4044530-2-liaochang1@huawei.com>
+In-Reply-To: <20240709005142.4044530-2-liaochang1@huawei.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 9 Jul 2024 16:55:31 -0700
+Message-ID: <CAEf4BzYDrVJXnAruko-h5-oXCGuZ92x4KnY-2cD=XXBp1U_kBg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] uprobes: Optimize the return_instance related routines
+To: Liao Chang <liaochang1@huawei.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, mykolal@fb.com, shuah@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > I admit that I found this all quite difficult to read; IIUC, this is
-> > missing an IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) check.
-> 
-> I'm not sure we need the zacas check here, since we could use a toolchain
-> that supports zabha but not zacas, run this on a zabha/zacas platform and it
-> would work.
+On Mon, Jul 8, 2024 at 6:00=E2=80=AFPM Liao Chang <liaochang1@huawei.com> w=
+rote:
+>
+> Reduce the runtime overhead for struct return_instance data managed by
+> uretprobe. This patch replaces the dynamic allocation with statically
+> allocated array, leverage two facts that are limited nesting depth of
+> uretprobe (max 64) and the function call style of return_instance usage
+> (create at entry, free at exit).
+>
+> This patch has been tested on Kunpeng916 (Hi1616), 4 NUMA nodes, 64
+> cores @ 2.4GHz. Redis benchmarks show a throughput gain by 2% for Redis
+> GET and SET commands:
+>
+> ------------------------------------------------------------------
+> Test case       | No uretprobes | uretprobes     | uretprobes
+>                 |               | (current)      | (optimized)
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Redis SET (RPS) | 47025         | 40619 (-13.6%) | 41529 (-11.6%)
+> ------------------------------------------------------------------
+> Redis GET (RPS) | 46715         | 41426 (-11.3%) | 42306 (-9.4%)
+> ------------------------------------------------------------------
+>
+> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+> ---
+>  include/linux/uprobes.h |  10 ++-
+>  kernel/events/uprobes.c | 162 ++++++++++++++++++++++++----------------
+>  2 files changed, 105 insertions(+), 67 deletions(-)
+>
 
-One specific set-up I was concerned about is as follows:
+[...]
 
-  1) hardware implements both zabha and zacas
-  2) toolchain supports both zabha and zacas
-  3) CONFIG_RISCV_ISA_ZABHA=y and CONFIG_RISCV_ISA_ZACAS=n
+> +static void cleanup_return_instances(struct uprobe_task *utask, bool cha=
+ined,
+> +                                    struct pt_regs *regs)
+> +{
+> +       struct return_frame *frame =3D &utask->frame;
+> +       struct return_instance *ri =3D frame->return_instance;
+> +       enum rp_check ctx =3D chained ? RP_CHECK_CHAIN_CALL : RP_CHECK_CA=
+LL;
+> +
+> +       while (ri && !arch_uretprobe_is_alive(ri, ctx, regs)) {
+> +               ri =3D next_ret_instance(frame, ri);
+> +               utask->depth--;
+> +       }
+> +       frame->return_instance =3D ri;
+> +}
+> +
+> +static struct return_instance *alloc_return_instance(struct uprobe_task =
+*task)
+> +{
+> +       struct return_frame *frame =3D &task->frame;
+> +
+> +       if (!frame->vaddr) {
+> +               frame->vaddr =3D kcalloc(MAX_URETPROBE_DEPTH,
+> +                               sizeof(struct return_instance), GFP_KERNE=
+L);
 
-Since CONFIG_RISCV_ISA_ZABHA=y, the first asm goto will get executed
-and, since the hardware implements zacas, that will result in a nop.
-Then the second asm goto will get executed and, since the hardware
-implements zabha, it will result in the j zabha.  In conclusion, the
-amocas instruction following the zabha: label will get executed, thus
-violating (the semantics of) CONFIG_RISCV_ISA_ZACAS=n.  IIUC, the diff
-I've posted previously in this thread shared a similar limitation/bug.
+Are you just pre-allocating MAX_URETPROBE_DEPTH instances always?
+I.e., even if we need just one (because there is no recursion), you'd
+still waste memory for all 64 ones?
 
-  Andrea
+That seems rather wasteful.
+
+Have you considered using objpool for fast reuse across multiple CPUs?
+Check lib/objpool.c.
+
+> +               if (!frame->vaddr)
+> +                       return NULL;
+> +       }
+> +
+> +       if (!frame->return_instance) {
+> +               frame->return_instance =3D frame->vaddr;
+> +               return frame->return_instance;
+> +       }
+> +
+> +       return ++frame->return_instance;
+> +}
+> +
+> +static inline bool return_frame_empty(struct uprobe_task *task)
+> +{
+> +       return !task->frame.return_instance;
+>  }
+>
+>  /*
+
+[...]
 
