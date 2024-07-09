@@ -1,250 +1,739 @@
-Return-Path: <linux-kernel+bounces-245547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C307B92B432
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:42:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8077592B431
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E663F1C219DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DD11F23205
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A73156880;
-	Tue,  9 Jul 2024 09:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E198156654;
+	Tue,  9 Jul 2024 09:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGjg0Ce0"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZPorx5f+"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B503C155C93;
-	Tue,  9 Jul 2024 09:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDF7155352
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518081; cv=none; b=tcqF/m43PsDbzZlz3bgF0gVO2l7YLxI3pO8i0SyeH4/IM/sDaKdNOg+mjJSdGUXsMtKnYesJH7fpFGvpdnLcB9JORpgtDKIqu+TUZwGVGt5ykuGVafNahIS87pjzNRgatPFerRDB+ROS6B0d18kFV1QwPfdah7VVNhI1blH2PYM=
+	t=1720518079; cv=none; b=lecidODGimejFT2zet+Y+WyN5Aje1WeR6zpE53QZ54kOm1Mc1IxGsLDT2co1WpqVGqckjUTH8omZtfTyV174UKYvD/xDQkBi8Pgiz03jsU0IgoRjCdebnX0VqIbgvQfmaG2EnziygOyrTrvfUg+mXsVs7zF98/ayTic7tiYwAIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518081; c=relaxed/simple;
-	bh=6/8m5t3tBJG+vQHucRBM2B3L/XB592V14euivKILF9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h07UjGTDjz4R5beyT1jr9w/nqe6rMFdHmuyVOTagIm9dl2wNSfSCqP/c+noEzQ0G1FaU6WvkQosD/KFo0IexxhPGNmb+Q8otwKFvKCfDElZaJDWg6E6zTaL6gTrbdb2JJzctBiqERvQ5ZIfWlVvizDfQcmGjfosCqVh2MuAbb6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iGjg0Ce0; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c927152b4bso3332892a91.2;
-        Tue, 09 Jul 2024 02:41:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720518079; x=1721122879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oVroGXjljN7UKU/yhFIYpLiSd6PbIzKS4cUQFOHvuWw=;
-        b=iGjg0Ce0P/9yEInGqudsvhaCU6JRtqUtUaTY7qecXQsa6++ODQ15F8BPa38hRmihMx
-         kB6Z37QP58SdtpNYf4YuFvUuUwgSKifHMzgYhH/OULQEsvUTLRXljclspxr146S52oXd
-         3QGUnYS5ssSkvo+qJbh9Ag/kPmmTeAEV/BxiyyHf4oGE6pGfFlTXZCP8IUgE3woYzVqW
-         po+xUadHAUtSS4eQ/YiOSSfvyF97GCrSd93xoin8N7Mgip6cb5+Vt95HWjiaSypJmH2Q
-         hthc/rDZD3haDnJfjsV1nO4ccUDkTeM2jzuJsrBXU6ooVTsdFsyciEELGrKyw34sJ8x3
-         Ix+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720518079; x=1721122879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oVroGXjljN7UKU/yhFIYpLiSd6PbIzKS4cUQFOHvuWw=;
-        b=RwqhyYJByh8kpd5vhqNp7pNt1t6B9oUvLJ+AnTm90Ps69ELSPLjSw0MB3oNiCnUjM4
-         4C8/NQeGhUYA52vUvgA291SCBXsX0XKUtJDWsNunoqFUo2pYBvK0tXSaPd4TuWm/hfdh
-         IdW4o3IySYt+rsIcUempp5svEJ4LuB2aNCNZ5JPbzvgOR2yUxquxdb7KkWSlJXY1Al8i
-         ULHtW3Y5Fd/w4/1lbjMO4zQklSLiGfkPmbIjWH5wdsv4hdkKWT549e7iowNtKfxrm5Bt
-         1ZXoQfyQPomn5IeNYQa9vplSzwN4DR/nOT735NfFgdMSbzfewOeurzjIQzp1bkS6SHCc
-         uU1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZajYMN0TMAJMzMFcONmANW2JiUtyQK4WmW2tP+G4B40IRUW/obkuZNYJREJ+7SU35lggWnuXPp+enIJLUul95oSSX+xT4cXf9I4WqjqeWtqMfPB75b5N7O4doFRpFMDqoZ6vYlGCaSDZJa5k=
-X-Gm-Message-State: AOJu0YxxvoI7DGIsz2D9M1ofT7FIXmEgvzg8k4dYYO15PRk8vQS8DHwY
-	HWbu+XDPlHJZB1EEXurftGv2Fv7CqVId0p9BnfJ4HMTw9/4/KJn6YTyTEvu3FeQVtFUIQASWYCF
-	NG4y+WMCOnYxwwVX1n2nRrxf0ugs=
-X-Google-Smtp-Source: AGHT+IF8ZjDYhseE4Khi5hh3/IVLxfQ67v9J2c5cotmB0Lq+rDdIDmRbQdZ5yWgqnTKcX7faKxVbS2/+f/aXqcOR3ns=
-X-Received: by 2002:a17:90b:1e05:b0:2c8:1f30:4e04 with SMTP id
- 98e67ed59e1d1-2ca35d48f74mr1921776a91.36.1720518079028; Tue, 09 Jul 2024
- 02:41:19 -0700 (PDT)
+	s=arc-20240116; t=1720518079; c=relaxed/simple;
+	bh=XPIsFVXgwA9FCgNz5P2nYsLxf0pqZwg75q89ZRFrNWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Yj+xJwFEsKoCshDGYQoNxn4Ss9snOZq50WRJqn2WXHHYBBsFSK9I5DwS3U34Hr9XqOip9F3vMh0eZH7kusjugD9DHUejwmmtCnFFr/ymwphZdtYDgR50+1qdFTtkvNZLQXrGJbeXAACtna+FvXaaTQVdQtrmu/MZbOWlE+Pcy1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZPorx5f+; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720518074; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=riNJyWxRa1VzSquqPBMbNCMrZG4NCzYH+P5oXM3guIM=;
+	b=ZPorx5f+/zAAitGhNnUAmox2wJucedecyoMgQx+MDJ6EsAZVQ9OSBf1aHnnuhbmpXOOMHrEHaaj3O82GtDMVFOV0NDDkh2Vk+adekK+oeElZXt1t9GgqnHEM3noSXkjqS4F+qoChxB4rt7X7Ido7uv4IHcRjiW7eHasvHjRR5j4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0WABZZp6_1720518072;
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WABZZp6_1720518072)
+          by smtp.aliyun-inc.com;
+          Tue, 09 Jul 2024 17:41:13 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH 3/3] erofs: tidy up stream decompressors
+Date: Tue,  9 Jul 2024 17:41:06 +0800
+Message-ID: <20240709094106.3018109-3-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20240709094106.3018109-1-hsiangkao@linux.alibaba.com>
+References: <20240709094106.3018109-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709084458.158659-1-jfalempe@redhat.com> <20240709084458.158659-5-jfalempe@redhat.com>
-In-Reply-To: <20240709084458.158659-5-jfalempe@redhat.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 9 Jul 2024 11:41:06 +0200
-Message-ID: <CANiq72kS2fAgRnR8yNfpN69tMG+UPfgfytaA8sE=tYH+OQ_L6A@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] drm/panic: Add a qr_code panic screen
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Jocelyn,
+Just use a generic helper to prepare buffers for all supported
+stream decompressors, eliminating similar logic.
 
-A quick docs-only review of the Rust side (some of these apply in
-several cases -- I just wanted to give an overview for you to
-consider).
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/compress.h             |  15 ++++
+ fs/erofs/decompressor.c         |  83 ++++++++++++++++++
+ fs/erofs/decompressor_deflate.c | 131 +++++++---------------------
+ fs/erofs/decompressor_lzma.c    | 148 ++++++++++----------------------
+ fs/erofs/decompressor_zstd.c    | 136 ++++++++---------------------
+ 5 files changed, 209 insertions(+), 304 deletions(-)
 
-On Tue, Jul 9, 2024 at 10:45=E2=80=AFAM Jocelyn Falempe <jfalempe@redhat.co=
-m> wrote:
->
-> +//! This is a simple qr encoder for DRM panic.
-> +//!
-> +//! Due to the Panic constraint, it doesn't allocate memory and does all
+diff --git a/fs/erofs/compress.h b/fs/erofs/compress.h
+index 601f533c9649..526edc0a7d2d 100644
+--- a/fs/erofs/compress.h
++++ b/fs/erofs/compress.h
+@@ -88,6 +88,21 @@ extern const struct z_erofs_decompressor z_erofs_deflate_decomp;
+ extern const struct z_erofs_decompressor z_erofs_zstd_decomp;
+ extern const struct z_erofs_decompressor *z_erofs_decomp[];
+ 
++struct z_erofs_stream_dctx {
++	struct z_erofs_decompress_req *rq;
++	unsigned int inpages, outpages;	/* # of {en,de}coded pages */
++	int no, ni;			/* the current {en,de}coded page # */
++
++	unsigned int avail_out;		/* remaining bytes in the decoded buffer */
++	unsigned int inbuf_pos, inbuf_sz;
++					/* current status of the encoded buffer */
++	u8 *kin, *kout;			/* buffer mapped pointers */
++	void *bounce;			/* bounce buffer for inplace I/Os */
++	bool bounced;			/* is the bounce buffer used now? */
++};
++
++int z_erofs_stream_switch_bufs(struct z_erofs_stream_dctx *dctx, void **dst,
++			       void **src, struct page **pgpl);
+ int z_erofs_fixup_insize(struct z_erofs_decompress_req *rq, const char *padbuf,
+ 			 unsigned int padbufsize);
+ int __init z_erofs_init_decompressor(void);
+diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+index b22fce114061..eac9e415194b 100644
+--- a/fs/erofs/decompressor.c
++++ b/fs/erofs/decompressor.c
+@@ -372,6 +372,89 @@ static int z_erofs_transform_plain(struct z_erofs_decompress_req *rq,
+ 	return 0;
+ }
+ 
++int z_erofs_stream_switch_bufs(struct z_erofs_stream_dctx *dctx, void **dst,
++			       void **src, struct page **pgpl)
++{
++	struct z_erofs_decompress_req *rq = dctx->rq;
++	struct super_block *sb = rq->sb;
++	struct page **pgo, *tmppage;
++	unsigned int j;
++
++	if (!dctx->avail_out) {
++		if (++dctx->no >= dctx->outpages || !rq->outputsize) {
++			erofs_err(sb, "insufficient space for decompressed data");
++			return -EFSCORRUPTED;
++		}
++
++		if (dctx->kout)
++			kunmap_local(dctx->kout);
++		dctx->avail_out = min(rq->outputsize, PAGE_SIZE - rq->pageofs_out);
++		rq->outputsize -= dctx->avail_out;
++		pgo = &rq->out[dctx->no];
++		if (!*pgo && rq->fillgaps) {		/* deduped */
++			*pgo = erofs_allocpage(pgpl, rq->gfp);
++			if (!*pgo) {
++				dctx->kout = NULL;
++				return -ENOMEM;
++			}
++			set_page_private(*pgo, Z_EROFS_SHORTLIVED_PAGE);
++		}
++		if (*pgo) {
++			dctx->kout = kmap_local_page(*pgo);
++			*dst = dctx->kout + rq->pageofs_out;
++		} else {
++			*dst = dctx->kout = NULL;
++		}
++		rq->pageofs_out = 0;
++	}
++
++	if (dctx->inbuf_pos == dctx->inbuf_sz && rq->inputsize) {
++		if (++dctx->ni >= dctx->inpages) {
++			erofs_err(sb, "invalid compressed data");
++			return -EFSCORRUPTED;
++		}
++		if (dctx->kout) /* unlike kmap(), take care of the orders */
++			kunmap_local(dctx->kout);
++		kunmap_local(dctx->kin);
++
++		dctx->inbuf_sz = min_t(u32, rq->inputsize, PAGE_SIZE);
++		rq->inputsize -= dctx->inbuf_sz;
++		dctx->kin = kmap_local_page(rq->in[dctx->ni]);
++		*src = dctx->kin;
++		dctx->bounced = false;
++		if (dctx->kout) {
++			j = (u8 *)*dst - dctx->kout;
++			dctx->kout = kmap_local_page(rq->out[dctx->no]);
++			*dst = dctx->kout + j;
++		}
++		dctx->inbuf_pos = 0;
++	}
++
++	/*
++	 * Handle overlapping: Use the given bounce buffer if the input data is
++	 * under processing; Or utilize short-lived pages from the on-stack page
++	 * pool, where pages are shared among the same request.  Note that only
++	 * a few inplace I/O pages need to be doubled.
++	 */
++	if (!dctx->bounced && rq->out[dctx->no] == rq->in[dctx->ni]) {
++		memcpy(dctx->bounce, *src, dctx->inbuf_sz);
++		*src = dctx->bounce;
++		dctx->bounced = true;
++	}
++
++	for (j = dctx->ni + 1; j < dctx->inpages; ++j) {
++		if (rq->out[dctx->no] != rq->in[j])
++			continue;
++		tmppage = erofs_allocpage(pgpl, rq->gfp);
++		if (!tmppage)
++			return -ENOMEM;
++		set_page_private(tmppage, Z_EROFS_SHORTLIVED_PAGE);
++		copy_highpage(tmppage, rq->in[j]);
++		rq->in[j] = tmppage;
++	}
++	return 0;
++}
++
+ const struct z_erofs_decompressor *z_erofs_decomp[] = {
+ 	[Z_EROFS_COMPRESSION_SHIFTED] = &(const struct z_erofs_decompressor) {
+ 		.decompress = z_erofs_transform_plain,
+diff --git a/fs/erofs/decompressor_deflate.c b/fs/erofs/decompressor_deflate.c
+index 79232ef15654..5070d2fcc737 100644
+--- a/fs/erofs/decompressor_deflate.c
++++ b/fs/erofs/decompressor_deflate.c
+@@ -100,24 +100,23 @@ static int z_erofs_load_deflate_config(struct super_block *sb,
+ static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
+ 				      struct page **pgpl)
+ {
+-	const unsigned int nrpages_out =
+-		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
+-	const unsigned int nrpages_in =
+-		PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT;
+ 	struct super_block *sb = rq->sb;
+-	unsigned int insz, outsz, pofs;
++	struct z_erofs_stream_dctx dctx = {
++		.rq = rq,
++		.inpages = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT,
++		.outpages = PAGE_ALIGN(rq->pageofs_out + rq->outputsize)
++				>> PAGE_SHIFT,
++		.no = -1, .ni = 0,
++	};
+ 	struct z_erofs_deflate *strm;
+-	u8 *kin, *kout = NULL;
+-	bool bounced = false;
+-	int no = -1, ni = 0, j = 0, zerr, err;
++	int zerr, err;
+ 
+ 	/* 1. get the exact DEFLATE compressed size */
+-	kin = kmap_local_page(*rq->in);
+-	err = z_erofs_fixup_insize(rq, kin + rq->pageofs_in,
+-			min_t(unsigned int, rq->inputsize,
+-			      sb->s_blocksize - rq->pageofs_in));
++	dctx.kin = kmap_local_page(*rq->in);
++	err = z_erofs_fixup_insize(rq, dctx.kin + rq->pageofs_in,
++			min(rq->inputsize, sb->s_blocksize - rq->pageofs_in));
+ 	if (err) {
+-		kunmap_local(kin);
++		kunmap_local(dctx.kin);
+ 		return err;
+ 	}
+ 
+@@ -134,102 +133,35 @@ static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
+ 	spin_unlock(&z_erofs_deflate_lock);
+ 
+ 	/* 3. multi-call decompress */
+-	insz = rq->inputsize;
+-	outsz = rq->outputsize;
+ 	zerr = zlib_inflateInit2(&strm->z, -MAX_WBITS);
+ 	if (zerr != Z_OK) {
+ 		err = -EIO;
+ 		goto failed_zinit;
+ 	}
+ 
+-	pofs = rq->pageofs_out;
+-	strm->z.avail_in = min_t(u32, insz, PAGE_SIZE - rq->pageofs_in);
+-	insz -= strm->z.avail_in;
+-	strm->z.next_in = kin + rq->pageofs_in;
++	rq->fillgaps = true;	/* DEFLATE doesn't support NULL output buffer */
++	strm->z.avail_in = min(rq->inputsize, PAGE_SIZE - rq->pageofs_in);
++	rq->inputsize -= strm->z.avail_in;
++	strm->z.next_in = dctx.kin + rq->pageofs_in;
+ 	strm->z.avail_out = 0;
++	dctx.bounce = strm->bounce;
+ 
+ 	while (1) {
+-		if (!strm->z.avail_out) {
+-			if (++no >= nrpages_out || !outsz) {
+-				erofs_err(sb, "insufficient space for decompressed data");
+-				err = -EFSCORRUPTED;
+-				break;
+-			}
+-
+-			if (kout)
+-				kunmap_local(kout);
+-			strm->z.avail_out = min_t(u32, outsz, PAGE_SIZE - pofs);
+-			outsz -= strm->z.avail_out;
+-			if (!rq->out[no]) {
+-				rq->out[no] = erofs_allocpage(pgpl, rq->gfp);
+-				if (!rq->out[no]) {
+-					kout = NULL;
+-					err = -ENOMEM;
+-					break;
+-				}
+-				set_page_private(rq->out[no],
+-						 Z_EROFS_SHORTLIVED_PAGE);
+-			}
+-			kout = kmap_local_page(rq->out[no]);
+-			strm->z.next_out = kout + pofs;
+-			pofs = 0;
+-		}
+-
+-		if (!strm->z.avail_in && insz) {
+-			if (++ni >= nrpages_in) {
+-				erofs_err(sb, "invalid compressed data");
+-				err = -EFSCORRUPTED;
+-				break;
+-			}
+-
+-			if (kout) { /* unlike kmap(), take care of the orders */
+-				j = strm->z.next_out - kout;
+-				kunmap_local(kout);
+-			}
+-			kunmap_local(kin);
+-			strm->z.avail_in = min_t(u32, insz, PAGE_SIZE);
+-			insz -= strm->z.avail_in;
+-			kin = kmap_local_page(rq->in[ni]);
+-			strm->z.next_in = kin;
+-			bounced = false;
+-			if (kout) {
+-				kout = kmap_local_page(rq->out[no]);
+-				strm->z.next_out = kout + j;
+-			}
+-		}
+-
+-		/*
+-		 * Handle overlapping: Use bounced buffer if the compressed
+-		 * data is under processing; Or use short-lived pages from the
+-		 * on-stack pagepool where pages share among the same request
+-		 * and not _all_ inplace I/O pages are needed to be doubled.
+-		 */
+-		if (!bounced && rq->out[no] == rq->in[ni]) {
+-			memcpy(strm->bounce, strm->z.next_in, strm->z.avail_in);
+-			strm->z.next_in = strm->bounce;
+-			bounced = true;
+-		}
+-
+-		for (j = ni + 1; j < nrpages_in; ++j) {
+-			struct page *tmppage;
+-
+-			if (rq->out[no] != rq->in[j])
+-				continue;
+-			tmppage = erofs_allocpage(pgpl, rq->gfp);
+-			if (!tmppage) {
+-				err = -ENOMEM;
+-				goto failed;
+-			}
+-			set_page_private(tmppage, Z_EROFS_SHORTLIVED_PAGE);
+-			copy_highpage(tmppage, rq->in[j]);
+-			rq->in[j] = tmppage;
+-		}
++		dctx.avail_out = strm->z.avail_out;
++		dctx.inbuf_sz = strm->z.avail_in;
++		err = z_erofs_stream_switch_bufs(&dctx,
++					(void **)&strm->z.next_out,
++					(void **)&strm->z.next_in, pgpl);
++		if (err)
++			break;
++		strm->z.avail_out = dctx.avail_out;
++		strm->z.avail_in = dctx.inbuf_sz;
+ 
+ 		zerr = zlib_inflate(&strm->z, Z_SYNC_FLUSH);
+-		if (zerr != Z_OK || !(outsz + strm->z.avail_out)) {
++		if (zerr != Z_OK || !(rq->outputsize + strm->z.avail_out)) {
+ 			if (zerr == Z_OK && rq->partial_decoding)
+ 				break;
+-			if (zerr == Z_STREAM_END && !outsz)
++			if (zerr == Z_STREAM_END && !rq->outputsize)
+ 				break;
+ 			erofs_err(sb, "failed to decompress %d in[%u] out[%u]",
+ 				  zerr, rq->inputsize, rq->outputsize);
+@@ -237,13 +169,12 @@ static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
+ 			break;
+ 		}
+ 	}
+-failed:
+ 	if (zlib_inflateEnd(&strm->z) != Z_OK && !err)
+ 		err = -EIO;
+-	if (kout)
+-		kunmap_local(kout);
++	if (dctx.kout)
++		kunmap_local(dctx.kout);
+ failed_zinit:
+-	kunmap_local(kin);
++	kunmap_local(dctx.kin);
+ 	/* 4. push back DEFLATE stream context to the global list */
+ 	spin_lock(&z_erofs_deflate_lock);
+ 	strm->next = z_erofs_deflate_head;
+diff --git a/fs/erofs/decompressor_lzma.c b/fs/erofs/decompressor_lzma.c
+index 80e735dc8406..06a722b85a45 100644
+--- a/fs/erofs/decompressor_lzma.c
++++ b/fs/erofs/decompressor_lzma.c
+@@ -5,7 +5,6 @@
+ struct z_erofs_lzma {
+ 	struct z_erofs_lzma *next;
+ 	struct xz_dec_microlzma *state;
+-	struct xz_buf buf;
+ 	u8 bounce[PAGE_SIZE];
+ };
+ 
+@@ -150,23 +149,25 @@ static int z_erofs_load_lzma_config(struct super_block *sb,
+ static int z_erofs_lzma_decompress(struct z_erofs_decompress_req *rq,
+ 				   struct page **pgpl)
+ {
+-	const unsigned int nrpages_out =
+-		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
+-	const unsigned int nrpages_in =
+-		PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT;
+-	unsigned int inlen, outlen, pageofs;
++	struct super_block *sb = rq->sb;
++	struct z_erofs_stream_dctx dctx = {
++		.rq = rq,
++		.inpages = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT,
++		.outpages = PAGE_ALIGN(rq->pageofs_out + rq->outputsize)
++				>> PAGE_SHIFT,
++		.no = -1, .ni = 0,
++	};
++	struct xz_buf buf = {};
+ 	struct z_erofs_lzma *strm;
+-	u8 *kin;
+-	bool bounced = false;
+-	int no, ni, j, err = 0;
++	enum xz_ret xz_err;
++	int err;
+ 
+ 	/* 1. get the exact LZMA compressed size */
+-	kin = kmap(*rq->in);
+-	err = z_erofs_fixup_insize(rq, kin + rq->pageofs_in,
+-			min_t(unsigned int, rq->inputsize,
+-			      rq->sb->s_blocksize - rq->pageofs_in));
++	dctx.kin = kmap_local_page(*rq->in);
++	err = z_erofs_fixup_insize(rq, dctx.kin + rq->pageofs_in,
++			min(rq->inputsize, sb->s_blocksize - rq->pageofs_in));
+ 	if (err) {
+-		kunmap(*rq->in);
++		kunmap_local(dctx.kin);
+ 		return err;
+ 	}
+ 
+@@ -183,108 +184,45 @@ static int z_erofs_lzma_decompress(struct z_erofs_decompress_req *rq,
+ 	spin_unlock(&z_erofs_lzma_lock);
+ 
+ 	/* 3. multi-call decompress */
+-	inlen = rq->inputsize;
+-	outlen = rq->outputsize;
+-	xz_dec_microlzma_reset(strm->state, inlen, outlen,
++	xz_dec_microlzma_reset(strm->state, rq->inputsize, rq->outputsize,
+ 			       !rq->partial_decoding);
+-	pageofs = rq->pageofs_out;
+-	strm->buf.in = kin + rq->pageofs_in;
+-	strm->buf.in_pos = 0;
+-	strm->buf.in_size = min_t(u32, inlen, PAGE_SIZE - rq->pageofs_in);
+-	inlen -= strm->buf.in_size;
+-	strm->buf.out = NULL;
+-	strm->buf.out_pos = 0;
+-	strm->buf.out_size = 0;
+-
+-	for (ni = 0, no = -1;;) {
+-		enum xz_ret xz_err;
+-
+-		if (strm->buf.out_pos == strm->buf.out_size) {
+-			if (strm->buf.out) {
+-				kunmap(rq->out[no]);
+-				strm->buf.out = NULL;
+-			}
+-
+-			if (++no >= nrpages_out || !outlen) {
+-				erofs_err(rq->sb, "decompressed buf out of bound");
+-				err = -EFSCORRUPTED;
+-				break;
+-			}
+-			strm->buf.out_pos = 0;
+-			strm->buf.out_size = min_t(u32, outlen,
+-						   PAGE_SIZE - pageofs);
+-			outlen -= strm->buf.out_size;
+-			if (!rq->out[no] && rq->fillgaps) {	/* deduped */
+-				rq->out[no] = erofs_allocpage(pgpl, rq->gfp);
+-				if (!rq->out[no]) {
+-					err = -ENOMEM;
+-					break;
+-				}
+-				set_page_private(rq->out[no],
+-						 Z_EROFS_SHORTLIVED_PAGE);
+-			}
+-			if (rq->out[no])
+-				strm->buf.out = kmap(rq->out[no]) + pageofs;
+-			pageofs = 0;
+-		} else if (strm->buf.in_pos == strm->buf.in_size) {
+-			kunmap(rq->in[ni]);
+-
+-			if (++ni >= nrpages_in || !inlen) {
+-				erofs_err(rq->sb, "compressed buf out of bound");
+-				err = -EFSCORRUPTED;
+-				break;
+-			}
+-			strm->buf.in_pos = 0;
+-			strm->buf.in_size = min_t(u32, inlen, PAGE_SIZE);
+-			inlen -= strm->buf.in_size;
+-			kin = kmap(rq->in[ni]);
+-			strm->buf.in = kin;
+-			bounced = false;
+-		}
++	buf.in_size = min(rq->inputsize, PAGE_SIZE - rq->pageofs_in);
++	rq->inputsize -= buf.in_size;
++	buf.in = dctx.kin + rq->pageofs_in,
++	dctx.bounce = strm->bounce;
++	do {
++		dctx.avail_out = buf.out_size - buf.out_pos;
++		dctx.inbuf_sz = buf.in_size;
++		dctx.inbuf_pos = buf.in_pos;
++		err = z_erofs_stream_switch_bufs(&dctx, (void **)&buf.out,
++						 (void **)&buf.in, pgpl);
++		if (err)
++			break;
+ 
+-		/*
+-		 * Handle overlapping: Use bounced buffer if the compressed
+-		 * data is under processing; Otherwise, Use short-lived pages
+-		 * from the on-stack pagepool where pages share with the same
+-		 * request.
+-		 */
+-		if (!bounced && rq->out[no] == rq->in[ni]) {
+-			memcpy(strm->bounce, strm->buf.in, strm->buf.in_size);
+-			strm->buf.in = strm->bounce;
+-			bounced = true;
++		if (buf.out_size == buf.out_pos) {
++			buf.out_size = dctx.avail_out;
++			buf.out_pos = 0;
+ 		}
+-		for (j = ni + 1; j < nrpages_in; ++j) {
+-			struct page *tmppage;
++		buf.in_size = dctx.inbuf_sz;
++		buf.in_pos = dctx.inbuf_pos;
+ 
+-			if (rq->out[no] != rq->in[j])
+-				continue;
+-			tmppage = erofs_allocpage(pgpl, rq->gfp);
+-			if (!tmppage) {
+-				err = -ENOMEM;
+-				goto failed;
+-			}
+-			set_page_private(tmppage, Z_EROFS_SHORTLIVED_PAGE);
+-			copy_highpage(tmppage, rq->in[j]);
+-			rq->in[j] = tmppage;
+-		}
+-		xz_err = xz_dec_microlzma_run(strm->state, &strm->buf);
+-		DBG_BUGON(strm->buf.out_pos > strm->buf.out_size);
+-		DBG_BUGON(strm->buf.in_pos > strm->buf.in_size);
++		xz_err = xz_dec_microlzma_run(strm->state, &buf);
++		DBG_BUGON(buf.out_pos > buf.out_size);
++		DBG_BUGON(buf.in_pos > buf.in_size);
+ 
+ 		if (xz_err != XZ_OK) {
+-			if (xz_err == XZ_STREAM_END && !outlen)
++			if (xz_err == XZ_STREAM_END && !rq->outputsize)
+ 				break;
+-			erofs_err(rq->sb, "failed to decompress %d in[%u] out[%u]",
++			erofs_err(sb, "failed to decompress %d in[%u] out[%u]",
+ 				  xz_err, rq->inputsize, rq->outputsize);
+ 			err = -EFSCORRUPTED;
+ 			break;
+ 		}
+-	}
+-failed:
+-	if (no < nrpages_out && strm->buf.out)
+-		kunmap(rq->out[no]);
+-	if (ni < nrpages_in)
+-		kunmap(rq->in[ni]);
++	} while (1);
++
++	if (dctx.kout)
++		kunmap_local(dctx.kout);
++	kunmap_local(dctx.kin);
+ 	/* 4. push back LZMA stream context to the global list */
+ 	spin_lock(&z_erofs_lzma_lock);
+ 	strm->next = z_erofs_lzma_head;
+diff --git a/fs/erofs/decompressor_zstd.c b/fs/erofs/decompressor_zstd.c
+index 49415bc40d7c..7e177304967e 100644
+--- a/fs/erofs/decompressor_zstd.c
++++ b/fs/erofs/decompressor_zstd.c
+@@ -138,27 +138,26 @@ static int z_erofs_load_zstd_config(struct super_block *sb,
+ static int z_erofs_zstd_decompress(struct z_erofs_decompress_req *rq,
+ 				   struct page **pgpl)
+ {
+-	const unsigned int nrpages_out =
+-		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
+-	const unsigned int nrpages_in =
+-		PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT;
+-	zstd_dstream *stream;
+ 	struct super_block *sb = rq->sb;
+-	unsigned int insz, outsz, pofs;
+-	struct z_erofs_zstd *strm;
++	struct z_erofs_stream_dctx dctx = {
++		.rq = rq,
++		.inpages = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT,
++		.outpages = PAGE_ALIGN(rq->pageofs_out + rq->outputsize)
++				>> PAGE_SHIFT,
++		.no = -1, .ni = 0,
++	};
+ 	zstd_in_buffer in_buf = { NULL, 0, 0 };
+ 	zstd_out_buffer out_buf = { NULL, 0, 0 };
+-	u8 *kin, *kout = NULL;
+-	bool bounced = false;
+-	int no = -1, ni = 0, j = 0, zerr, err;
++	struct z_erofs_zstd *strm;
++	zstd_dstream *stream;
++	int zerr, err;
+ 
+ 	/* 1. get the exact compressed size */
+-	kin = kmap_local_page(*rq->in);
+-	err = z_erofs_fixup_insize(rq, kin + rq->pageofs_in,
+-			min_t(unsigned int, rq->inputsize,
+-			      sb->s_blocksize - rq->pageofs_in));
++	dctx.kin = kmap_local_page(*rq->in);
++	err = z_erofs_fixup_insize(rq, dctx.kin + rq->pageofs_in,
++			min(rq->inputsize, sb->s_blocksize - rq->pageofs_in));
+ 	if (err) {
+-		kunmap_local(kin);
++		kunmap_local(dctx.kin);
+ 		return err;
+ 	}
+ 
+@@ -166,109 +165,48 @@ static int z_erofs_zstd_decompress(struct z_erofs_decompress_req *rq,
+ 	strm = z_erofs_isolate_strms(false);
+ 
+ 	/* 3. multi-call decompress */
+-	insz = rq->inputsize;
+-	outsz = rq->outputsize;
+ 	stream = zstd_init_dstream(z_erofs_zstd_max_dictsize, strm->wksp, strm->wkspsz);
+ 	if (!stream) {
+ 		err = -EIO;
+ 		goto failed_zinit;
+ 	}
+ 
+-	pofs = rq->pageofs_out;
+-	in_buf.size = min_t(u32, insz, PAGE_SIZE - rq->pageofs_in);
+-	insz -= in_buf.size;
+-	in_buf.src = kin + rq->pageofs_in;
++	rq->fillgaps = true;	/* ZSTD doesn't support NULL output buffer */
++	in_buf.size = min_t(u32, rq->inputsize, PAGE_SIZE - rq->pageofs_in);
++	rq->inputsize -= in_buf.size;
++	in_buf.src = dctx.kin + rq->pageofs_in;
++	dctx.bounce = strm->bounce;
++
+ 	do {
+-		if (out_buf.size == out_buf.pos) {
+-			if (++no >= nrpages_out || !outsz) {
+-				erofs_err(sb, "insufficient space for decompressed data");
+-				err = -EFSCORRUPTED;
+-				break;
+-			}
++		dctx.avail_out = out_buf.size - out_buf.pos;
++		dctx.inbuf_sz = in_buf.size;
++		dctx.inbuf_pos = in_buf.pos;
++		err = z_erofs_stream_switch_bufs(&dctx, &out_buf.dst,
++						 (void **)&in_buf.src, pgpl);
++		if (err)
++			break;
+ 
+-			if (kout)
+-				kunmap_local(kout);
+-			out_buf.size = min_t(u32, outsz, PAGE_SIZE - pofs);
+-			outsz -= out_buf.size;
+-			if (!rq->out[no]) {
+-				rq->out[no] = erofs_allocpage(pgpl, rq->gfp);
+-				if (!rq->out[no]) {
+-					kout = NULL;
+-					err = -ENOMEM;
+-					break;
+-				}
+-				set_page_private(rq->out[no],
+-						 Z_EROFS_SHORTLIVED_PAGE);
+-			}
+-			kout = kmap_local_page(rq->out[no]);
+-			out_buf.dst = kout + pofs;
++		if (out_buf.size == out_buf.pos) {
++			out_buf.size = dctx.avail_out;
+ 			out_buf.pos = 0;
+-			pofs = 0;
+ 		}
++		in_buf.size = dctx.inbuf_sz;
++		in_buf.pos = dctx.inbuf_pos;
+ 
+-		if (in_buf.size == in_buf.pos && insz) {
+-			if (++ni >= nrpages_in) {
+-				erofs_err(sb, "invalid compressed data");
+-				err = -EFSCORRUPTED;
+-				break;
+-			}
+-
+-			if (kout) /* unlike kmap(), take care of the orders */
+-				kunmap_local(kout);
+-			kunmap_local(kin);
+-			in_buf.size = min_t(u32, insz, PAGE_SIZE);
+-			insz -= in_buf.size;
+-			kin = kmap_local_page(rq->in[ni]);
+-			in_buf.src = kin;
+-			in_buf.pos = 0;
+-			bounced = false;
+-			if (kout) {
+-				j = (u8 *)out_buf.dst - kout;
+-				kout = kmap_local_page(rq->out[no]);
+-				out_buf.dst = kout + j;
+-			}
+-		}
+-
+-		/*
+-		 * Handle overlapping: Use bounced buffer if the compressed
+-		 * data is under processing; Or use short-lived pages from the
+-		 * on-stack pagepool where pages share among the same request
+-		 * and not _all_ inplace I/O pages are needed to be doubled.
+-		 */
+-		if (!bounced && rq->out[no] == rq->in[ni]) {
+-			memcpy(strm->bounce, in_buf.src, in_buf.size);
+-			in_buf.src = strm->bounce;
+-			bounced = true;
+-		}
+-
+-		for (j = ni + 1; j < nrpages_in; ++j) {
+-			struct page *tmppage;
+-
+-			if (rq->out[no] != rq->in[j])
+-				continue;
+-			tmppage = erofs_allocpage(pgpl, rq->gfp);
+-			if (!tmppage) {
+-				err = -ENOMEM;
+-				goto failed;
+-			}
+-			set_page_private(tmppage, Z_EROFS_SHORTLIVED_PAGE);
+-			copy_highpage(tmppage, rq->in[j]);
+-			rq->in[j] = tmppage;
+-		}
+ 		zerr = zstd_decompress_stream(stream, &out_buf, &in_buf);
+-		if (zstd_is_error(zerr) || (!zerr && outsz)) {
++		if (zstd_is_error(zerr) || (!zerr && rq->outputsize)) {
+ 			erofs_err(sb, "failed to decompress in[%u] out[%u]: %s",
+ 				  rq->inputsize, rq->outputsize,
+ 				  zerr ? zstd_get_error_name(zerr) : "unexpected end of stream");
+ 			err = -EFSCORRUPTED;
+ 			break;
+ 		}
+-	} while (outsz || out_buf.pos < out_buf.size);
+-failed:
+-	if (kout)
+-		kunmap_local(kout);
++	} while (rq->outputsize || out_buf.pos < out_buf.size);
++
++	if (dctx.kout)
++		kunmap_local(dctx.kout);
+ failed_zinit:
+-	kunmap_local(kin);
++	kunmap_local(dctx.kin);
+ 	/* 4. push back ZSTD stream context to the global list */
+ 	spin_lock(&z_erofs_zstd_lock);
+ 	strm->next = z_erofs_zstd_head;
+-- 
+2.43.5
 
-Perhaps clarify "Panic constraint" here?
-
-> +//! the work on the stack or on the provided buffers. For
-> +//! simplification, it only supports Low error correction, and apply the
-
-"applies"?
-
-> +//! first mask (checkboard). It will draw the smallest QRcode that can
-
-"QR code"? "QR-code"?
-
-In other places "QR-code" is used -- it would be ideal to be
-consistent. (Although, isn't the common spelling "QR code"?)
-
-> +//! contain the string passed as parameter. To get the most compact
-> +//! QR-code, the start of the url is encoded as binary, and the
-
-Probably "URL".
-
-> +//! compressed kmsg is encoded as numeric.
-> +//!
-> +//! The binary data must be a valid url parameter, so the easiest way is
-> +//! to use base64 encoding. But this waste 25% of data space, so the
-
-"wastes"
-
-> +//! whole stack trace won't fit in the QR-Code. So instead it encodes
-> +//! every 13bits of input into 4 decimal digits, and then use the
-
-"uses"
-
-> +//! efficient numeric encoding, that encode 3 decimal digits into
-> +//! 10bits. This makes 39bits of compressed data into 12 decimal digits,
-> +//! into 40bits in the QR-Code, so wasting only 2.5%. And numbers are
-> +//! valid url parameter, so the website can do the reverse, to get the
-
-"And the numbers are valid URL parameters"?
-
-> +//! Inspired by this 3 projects, all under MIT license:
-
-"these"
-
-> +// Generator polynomials for QR Code, only those that are needed for Low=
- quality
-
-If possible, please remember to use periods at the end for both
-comments and docs. It is very pedantic, but if possible we would like
-to try to be consistent across subsystems on how the documentation
-looks etc. If everything looks the same, it is also easy to
-remember/check how to do it for new files and so on.
-
-> +/// QRCode parameter for Low quality ECC:
-> +/// - Error Correction polynomial
-> +/// - Number of blocks in group 1
-> +/// - Number of blocks in group 2
-> +/// - Block size in group 1
-> +/// (Block size in group 2 is one more than group 1)
-
-We typically leave a newline after a list.
-
-> +    // Return the smallest QR Version than can hold these segments
-> +    fn from_segments(segments: &[&Segment<'_>]) -> Option<Version> {
-
-Should be docs, even if private? i.e. `///`?
-
-Also third person and period.
-
-> +// padding bytes
-> +const PADDING: [u8; 2] =3D [236, 17];
-
-`///`?
-
-> +/// get the next 13 bits of data, starting at specified offset (in bits)
-
-Please capitalize.
-
-> +        // b is 20 at max (bit_off <=3D 7 and size <=3D 13)
-
-Please use Markdown for comments too.
-
-> +/// EncodedMsg will hold the data to be put in the QR-Code, with correct=
- segment
-> +/// encoding, padding, and Error Code Correction.
-
-Missing newline? In addition, for the title (i.e. first paragraph), we
-try to keep it short/simple, e.g. you could perhaps say something
-like:
-
-    /// Data to be put in the QR code (with correct segment encoding,
-padding, and error code correction).
-
-> +/// QrImage
-> +///
-> +/// A QR-Code image, encoded as a linear binary framebuffer.
-
-Please remove the title -- the second paragraph should be the title.
-
-> +/// Max width is 177 for V40 QR code, so u8 is enough for coordinate.
-
-`u8`
-
-> +/// drm_panic_qr_generate()
-
-You can remove this title.
-
-> +/// C entry point for the rust QR Code generator.
-> +///
-> +/// Write the QR code image in the data buffer, and return the qrcode si=
-ze, or 0
-> +/// if the data doesn't fit in a QR code.
-> +///
-> +/// * `url` The base url of the QR code. It will be encoded as Binary se=
-gment.
-
-Typically we would write a colon. after the key, e.g.
-
-    /// * `url`: the base URL of the QR code.
-
-> +/// # Safety
-> +///
-> +/// * `url` must be null or point at a nul-terminated string.
-> +/// * `data` must be valid for reading and writing for `data_size` bytes=
-.
-> +/// * `data_len` must be less than `data_size`.
-> +/// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
-
-It would be nice to mention for which duration these need to hold,
-e.g. the call or something else.
-
-> +        // Safety: url must be a valid pointer to a nul-terminated strin=
-g.
-
-Please use the `// SAFETY: ` prefix instead, since it is how we tag
-these (i.e. differently from from the `# Safety` section).
-
-> +/// * `version` QR code version, between 1-40.
-
-If something like this happens to be used in several places, you may
-want to consider using transparent newtypes for them. This would allow
-you to avoid having to document each use point and it would enrich the
-signatures.
-
-Thanks!
-
-Cheers,
-Miguel
 
