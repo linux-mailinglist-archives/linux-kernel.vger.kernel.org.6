@@ -1,90 +1,95 @@
-Return-Path: <linux-kernel+bounces-245403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85ECA92B21C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB9892B220
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4241128266E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38FA1F23220
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4621715380A;
-	Tue,  9 Jul 2024 08:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE2B152E04;
+	Tue,  9 Jul 2024 08:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="0ZRmm3vF"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MKs58uMT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6C215217D;
-	Tue,  9 Jul 2024 08:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575B6143752;
+	Tue,  9 Jul 2024 08:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720513568; cv=none; b=stR+o4Xn+WF4jcFH1k2qB2eW+E1X4jemBwC1/M7qjoHAH6uGaSq5drjOT8rEzT89vX1XTPqTj9w3UW/bRZeaMP71DLHCiRnMYqCKtGSWgrL9+Ic9gthHjAw97UEdTtsYT9j+50AWm3oXBgKIpHK6a2tA6ItaDF1aB0X9uvAo6aQ=
+	t=1720513633; cv=none; b=fO632M2+WLcaP0tvzzqCbgi0NVuFbJ0KneRAbfL0jKhnIMQUBJqDR5zcrX38rW1nIyzASBwI1EQy02x2DcREE2U495T05AttI4OujEM6re9oBEuKj93ols1LdtQ5mKLGoOvEedFAuApTEZ7UogyAN4ulHzEcHmNqA4RGzdymYzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720513568; c=relaxed/simple;
-	bh=/Kcbq38F3t2lGyUAbSOrk4SsT5WKlUG23fqe0qwPa/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EYCc3qLJE2pOuyOLN0hvyuc9BiD4sQgjiUeDqW9BD1I+/+eyydfjluvf0OLdDBbmNDSU+K3aDKziirKFMbS7OJ6PhQmPogDfDu7hkg8Na9Dm3il0GZHZXjV50U592i6tDgHDNCPRqElup9VVuMJTURh+msnxVds3aj5DAI3w27M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=0ZRmm3vF; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 282ACDAD0C;
-	Tue,  9 Jul 2024 10:26:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1720513562; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=7NSbd3FG1+desO+r0VWZurfe63tFQccOAYvzD3pYTNM=;
-	b=0ZRmm3vFk2VUvd2eWBKAS5BpHs8PsWwx3B+JL3BQPXbg22kdoC+40Rl/5mkxalhz1EZAAA
-	l4fQf9/qKdKFPvfIYUCB/X5i4mYfhwG65iC5e3Q+B88Gi5MDBQYQStmuwJXqNS7Z4lBcDh
-	FihaglNGI9fD9axDq7JSAEV1nLAc5CHVBTUILVZC7XFESyHwkBGsV8/owT+Ewsv1HYTDdf
-	Rt8i9Upv+k+ORZ/tSLIvshwN/00Xlmbn705SZ4Ak9D/SP3rhq2WSnk0+rgpRw/AaXL8gjJ
-	7eToZ5hEdgxuTOXFHl96w2BLUBOVn2D0IFPsG9b5w7hyjKNK6rtDeWXXLMMKrw==
-From: Daniel Wagner <wagi@monom.org>
-To: LKML <linux-kernel@vger.kernel.org>,
-	 <linux-rt-users@vger.kernel.org>,
-	 <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>
-Cc: Daniel Wagner <wagi@monom.org>
-Subject: [PATCH RT 1/1] Linux 4.19.317-rt137
-Date: Tue,  9 Jul 2024 10:25:58 +0200
-Message-ID: <20240709082558.11012-2-wagi@monom.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240709082558.11012-1-wagi@monom.org>
-References: <20240709082558.11012-1-wagi@monom.org>
+	s=arc-20240116; t=1720513633; c=relaxed/simple;
+	bh=8swVpidJ5ergHaUtyYa0T5Ao4WQQVKO8d3kfW7RqCAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A3s2vjr3rZ7Wu5ZRo73htv0rlbO53yc6gu13WVYr69La6uTBpxtF07/cRi6qlrM0FjJ+ruozZzZ52+XxOZcb+eyZXGPh9b6kNqC/AB641oF1Nj1src84bHX8FBZE8N3EGLFLj2BLVmO+iflgiG9nO+ZR+uSI9DPUvliE1uEKPw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MKs58uMT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7963CC3277B;
+	Tue,  9 Jul 2024 08:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720513632;
+	bh=8swVpidJ5ergHaUtyYa0T5Ao4WQQVKO8d3kfW7RqCAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MKs58uMTimJSNukbLWZVm36D1otxy9BBGzP/Gob20xKl25WDcspRBnkP4N2py/S2S
+	 X7NY9l4aN4axsk2IoB5jvqmW4SXmP3lcd5b+oyvO3NjG659aBjUBnv/eiZE98rxHHY
+	 YOsSyPUoaa/ItFlU+AIle/K1xTdXgvs23G2qEWDw=
+Date: Tue, 9 Jul 2024 10:27:09 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: nmi <nmi@metaspace.dk>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Adam Bratschi-Kaye <ark.email@gmail.com>,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: Re: [PATCH] rust: add `module_params` macro
+Message-ID: <2024070924-darkening-knee-bfef@gregkh>
+References: <20240705111455.142790-1-nmi@metaspace.dk>
+ <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
+ <LHGWBNSEDaOsx4BbADR1pZYqPV0KKhVaJ1Qvwe9h4UPeERRAA4s1DTIsnFR5rpHBGa6uIG1tU_4hTBXgjAc5BNwNqo0Rg_kOx2W_y0EUy_I=@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <LHGWBNSEDaOsx4BbADR1pZYqPV0KKhVaJ1Qvwe9h4UPeERRAA4s1DTIsnFR5rpHBGa6uIG1tU_4hTBXgjAc5BNwNqo0Rg_kOx2W_y0EUy_I=@metaspace.dk>
 
-v4.19.317-rt137-rc1 stable review patch.
-If anyone has any objections, please let me know.
+On Tue, Jul 09, 2024 at 06:00:46AM +0000, nmi wrote:
+> Hi Luis,
+> 
+> On Monday, July 8th, 2024 at 23:42, Luis Chamberlain <mcgrof@kernel.org> wrote:
+> 
+> > I'm starting to feel the same way about modules, but modules requires
+> > more work than the firmware loader. And since I also know Andreas has
+> > already a lot on his plate, I'm at a cross roads. My above request for
+> > the firmware loader made sense to the person working on the firmware
+> > loader changes, but who would help on the modules side of things? And
+> > does this request make sense to help scale?
+> >
+> > The rationale here is that a rust binding means commitment then also
+> > from fresh blood to help co-maintain review C / Rust for exising code
+> > when there is will / desire to collaborate from an existing C maintainer.
+> >
+> > I realize this may be a lot to ask, but I think this is one of the
+> > responsible ways to ask to scale here.
+> 
+> I am not sure I am the right person for the task, because as you say,
+> I have a lot on my plate. But perhaps lets schedule a call so I can
+> get a sense of the required effort. 
 
------------
+Kernel development is done through emails, not calls :)
 
+If a submitter isn't willing to maintain the code they submit, then it
+should be rejected as maintance is the most important part.
 
-Signed-off-by: Daniel Wagner <wagi@monom.org>
----
- localversion-rt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry,
 
-diff --git a/localversion-rt b/localversion-rt
-index f824f53c19ea..41b444e910ef 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt136
-+-rt137
--- 
-2.45.2
-
+greg k-h
 
