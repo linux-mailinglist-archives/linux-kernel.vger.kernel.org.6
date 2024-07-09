@@ -1,177 +1,134 @@
-Return-Path: <linux-kernel+bounces-245780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10A092B91C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:14:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98D992B8FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B70E1F22DF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:14:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7287F284ED3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA5E158A0D;
-	Tue,  9 Jul 2024 12:13:55 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2137.outbound.protection.partner.outlook.cn [139.219.17.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B075C15886B;
+	Tue,  9 Jul 2024 12:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoZFPiWI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D5D13C3C9;
-	Tue,  9 Jul 2024 12:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.137
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720527235; cv=fail; b=odhDp92IDIATf2cYhT68AEmfuwVlMfMDvOogKxUwO+YuzKjrMwuwlSUV5SEjlO0yau38Gq/2DdKCm1PAUpgDbENvadEBJ3gMRtJ5kr2627zrwEsQLW0ol+ixsgyps1FaPoNbUkzA1PMSUKeZW1H7uIZAZdO5ZavlnKM/quHgitE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720527235; c=relaxed/simple;
-	bh=YXVf4i/sN9NU5gh6kvXcYEZKgS+BTdiwt8q4OM1BUc8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jXbnKluBiDG/GyJit+wJmJD0BGU7FTHaFHNhWqXeWZcKJEVHvOzelNmH+OOBt1eeSBZ6nwNpGUOKNhmVS2ilqkMBtund9Br05IftgzWhVHZK7cSzTqoTih7/nPbMPlq2Ds/HDrkYexezP78QX6Py2FqbCc88Zb+d9t0eH/fuUNQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=P6vObatM8uIQh5TmBD38iST38A+WkouQOFm+c0J6z2Aow7nVP2E8vdNugiySHbMaSLuYMLSS74dBSrY+tR4SFphjSw2Ncbi0qZ546VI8+lWTGUc40NiWt7QbNMSvTggakKl2uwN4tURO0vCa3tHba++bMHsBnEs12NYJ5ZfsRRrN1eNM0TzdI1ocpwIPkFJYQbl52/R4NaNp1a5/QgA0owJVYzmehFwSsjqe64VfsQ8JQXIKXkKdMDU2nxdIRA+t2hjPjfY00ZYVtSkDTG2amvWEFHbLnsAlCashfNJ4FuwctnOlu+L8A/Oyp2Y4aupUZ3sPFZj0J5WvsKbG25v9jA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+7QPFBE9U0w7r8drB9DKAoS+4PQ5oP4sBCYlmsaH0hA=;
- b=URaSewCn4A26Zr0RiNzv3RVZ8wLO8iBdOaVi38fYyKoBLHFG/JAWZ8wGi/bPrtbs6C4NlR/7aHEN73yzgmxSMwlCFDBA/OE7jnRRtQ3T5SH5iBI/D7J8rWU0hHMxSFMUci06LwQyU6MySmHY9LNQNZ6mOPBSC4qypC/HjW4sQ2KMIj6IGPAJh4EtdP31KIGLdRjiCmHUquZ+o77Iw1K/mA+lya8B3UlpepS/Qm6bU32jf847kHPYfEYJONgw3cWsGWC86SWLM7sV8a+vdyq0GR/+DKEJa37kPlrgtTqF9Dk0WcxWkmw5+PdgFlJYugTFyqgm3ZSCqAyjhQUmraEh/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB1271.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:18::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.37; Tue, 9 Jul
- 2024 08:38:35 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%6])
- with mapi id 15.20.7741.033; Tue, 9 Jul 2024 08:38:35 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mingjia Zhang <mingjia.zhang@mediatek.com>
-Cc: Jack Zhu <jack.zhu@starfivetech.com>,
-	Keith Zhao <keith.zhao@starfivetech.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH v5 03/14] media: videodev2.h, v4l2-ioctl: Add StarFive ISP meta buffer format
-Date: Tue,  9 Jul 2024 01:38:13 -0700
-Message-Id: <20240709083824.430473-4-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
-References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZQ0PR01CA0031.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:2::16) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83CB12DDAE;
+	Tue,  9 Jul 2024 12:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720526660; cv=none; b=V6P4cn7g1sFMBq1zZr419GoaJ5dnENxFBveUyaC0TXEO0OUBAdnJolkJNvZwvFHOzy9P1aN9Xv3mnXwy49Vx1U1jc0IZ9VKvtfUMRj4Sk4Lb0WnrabeCPtInsKkf8mUQw3TcFpuQSDG86eITW8fJVpKcR9lKcXBuVgyY3h/CEqs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720526660; c=relaxed/simple;
+	bh=SrhoJeKBbAEYzxdE1V+GdZPDntsSpImr4rqlfBA4UyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EXqHwJ+Nj+9BxXye5E+8zi582BatdplC1yRZyrG0p3QZZluSAfA2/tD6sqyXaNDqD0cKO+7YaqOsZViFMR01Jiv9Bp89631CluizlxLqBBKYqmaIhMjfVeZgxcG9sutin3trgGPaTxkZRbQsSvxGDySSKxBhQxuHWQh+C5caV/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoZFPiWI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96878C3277B;
+	Tue,  9 Jul 2024 12:04:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720526659;
+	bh=SrhoJeKBbAEYzxdE1V+GdZPDntsSpImr4rqlfBA4UyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UoZFPiWIQppoyym1oPlAXiIL3Yh/A68blo9/dr4qFRjqIg8EYAsS9dInpbuvzJddz
+	 6L6zwOvxFjTJAJF/LPajTp32MdzifK0G5z6uy4MQifS0pHfKk5RcmsGMXfnwYJmK1A
+	 PUC1t4vI4V6WUm+8xwXtbdKdhozP0AcyT6boR4bmOapfI6ssuO9lohsu8xMg1tVmje
+	 5PuOUMiItONrexD8xXShpaM+Q76dp6qIxKHt9CKu9/x/Ur2jNN/21pCbLv1oS+jJye
+	 HtwYmA0g8onmTz8Qz55CJzaFi7YBmLdlRmJ0rWLXSmJ7HHWgLjLRKgIn3aqkXvypeW
+	 Mtk0Cxf2msmZg==
+Date: Tue, 9 Jul 2024 13:04:13 +0100
+From: Will Deacon <will@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v4 00/15] arm64: Support for running as a guest in Arm CCA
+Message-ID: <20240709120412.GE13242@willie-the-truck>
+References: <20240701095505.165383-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1271:EE_
-X-MS-Office365-Filtering-Correlation-Id: e98e7261-49af-4425-c8a2-08dc9ff285c6
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|41320700013|366016|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	3zeAzqPTbg8RNZZH6UOHa3x+OnTlCep5HB17CCiKG4kyDatL3N3yq6PI1zb3NZQ5HhX5oIm9yFexk/hJammyqZ32LUJL+rnv+CnXyBhSn7IbTyC6ZYrRemRoYFfJ5ll+2dLtl0wb7znJ85KSn4Z96mHqialhxnzOUNOpA+MAh0iNryZFlaWTM+MsqLHbyhyijbVF+l7ECPiCnpLTLomNw0l+3sOqqtsSyMzVU9cqmY6WAfFSEMZGDS8OlV/JxXrXSMfYtyJBpO0Cey9fnFEt1Yz2ZznfOzD4xsWPh0clEjsENf7bUdFG5XmsVAXARYxU3/KygEqzuSC/M2MyG+pJbln4lqqLT42mfgW732hp5RBDspYEqHrF13swlEZWSZAExoMnk0+QixTksUewVdeqx/p3/S3cjnTeka43e6nrMMLENvNVCoTDFEM/kRExnhr6plEmO4AGWJoQYspxknqTeQ+XRIQnWwN5d9PuNn6xle315iGdrH1sH0wKnVChhCTFOAta/7hEU0yv0seJ3dqsWmFS12j0Qp5ly1gQoxCcBKd3Ju5JGaPp2htysL/o98jD6TMzjv+Jg7peUTdTD9gdsgtKliybUq3GXYEXOOJwJEDD/hQJzAO5v4dcVdr3zqrb
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(41320700013)(366016)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SsdPeC37s9Mg9lqPQwM5fOKx6+AOjgY1ONfdZeTY6GrddXZo2o6blvWqR6F4?=
- =?us-ascii?Q?qyDK+7Kl9XeqOO7lgXJWC76P0JMXYUdXWXKagjJNEFbRaQ9Kn2zDDUrSsgai?=
- =?us-ascii?Q?2/I41HQu9tq076kVUGrwr0yJtXdncRqK8kH+5CSD5KfG0gwFVuqL57BnGjkr?=
- =?us-ascii?Q?P0lL+MGMBdAgAy6bb/XsPoCoX8eh+ClZSIsmUshHSST3Dlh5mxuqhavS9wYC?=
- =?us-ascii?Q?BY8t6Vm1x/IsBLTWMO/+VKxYqfL9IDtDIKZnNX97B68/wUysCLTm/+BasG70?=
- =?us-ascii?Q?NK/pfrkAuKfCdV3cj1hCGmlFegzyDcfFRfj6/iS22rQCCdPKAWiCpbMAg3sG?=
- =?us-ascii?Q?Gr9WC60eNBu2SMBaDzdtIjiCUAugA+B3bzyxqRpZajdO+y60J46gAHz22dTZ?=
- =?us-ascii?Q?JDICdf/TPN5ZeGgqeIHN6oyvDPP1uR24LaA0G/zQRo8r5Tj0OOyn/Ivt7EE3?=
- =?us-ascii?Q?BUN28Cc6ReuVFVcHeqrJM2cYuVm64nGnVb1RCMQELmefWUB6T9a0nhvD0L+i?=
- =?us-ascii?Q?GZ7mHQOwuiox0Sgju12qTpve7r+Vt6CmFe2C2bCRPSIu7pQY3C+06YX/gjy+?=
- =?us-ascii?Q?gW7i0ntfR/LCz1zspkNftNAewinHy+8jTXsZ7NlkKQH0dZA/QQsb96krz0AM?=
- =?us-ascii?Q?c1IJv2xQjydJ/dMwUj08hZiqlIdhObOvkCUraLiaPhQR6cUeYtTc9S0Rk1Gn?=
- =?us-ascii?Q?HGbmrVXHgb3BRhxIWZuw4GbMai6lalr2suBk4gXF2j+KqAi0sP8+mMFzGfG6?=
- =?us-ascii?Q?1FoLXPkXeKIl3kAsnH0ARGsm9akvt5TFL9m0ALaaRl/y5FIlu56pH1GAS9gC?=
- =?us-ascii?Q?mA1U4C8dc31fhN83G0drAs7t642L2SqK00gZqgeoj5dPWa//L3oXeikBtkSs?=
- =?us-ascii?Q?ULj555ukSntVcaxQitFkfKlVLqHRLJvqCJZbOyrmgAScmUrIh2BlmbAF9U4c?=
- =?us-ascii?Q?NtICHG5V1X9eXl23tui+72dzFsqPXWCcQKhrkMrn7VwcUY8jl+BlwEKcaJzJ?=
- =?us-ascii?Q?5cHJGlj6lex9xyAMTRczj0lewp+7y+FHFBaMfKFPUGrHL60C3TIAxif9A2Z0?=
- =?us-ascii?Q?dX85X1ihfWuhgK4rdjNKcRaEQrW/i4ObQV3/SBBBDHS8hkYVKVjAA86h3AJB?=
- =?us-ascii?Q?C3ftPCEFUmQwWAE2N2/zsnHTbIerKC/GZf1uIJ+WTJKKTrkrL3ES1gca/DSF?=
- =?us-ascii?Q?ZONusxJHGi6DEW0+94EJTSsqwAZ9xdf3rb/iCiog5U1NpWA6G3LLNtwEHFMq?=
- =?us-ascii?Q?owILuYiN0JOd42gk+VAO22XE57N25/CcqPIrhhbOrbFlpaecvGPGcAZajuW4?=
- =?us-ascii?Q?ChmlE3SgNdQDZysgfFhY9xJ8cXIhzv/4R+3ANBYrdvQy6aAqoJkbte2PtQkA?=
- =?us-ascii?Q?kUB5kePeWnoNyBNFONfemehve9KD8da7NQyfUFlcauhnxa8B8oWKbn9VzdDy?=
- =?us-ascii?Q?kiZRC7d1Naww4NwoLzkvkNPHUS3zKvthrn9UcQYwm/BUM8uzv08iHAMP6Z/v?=
- =?us-ascii?Q?dfQblaadVah195E9o19dLi5sZusnkmk2ELioQga0NiN0UVO56Ft39GsF+pFU?=
- =?us-ascii?Q?NGBKv1cyF2mId+N5u2E11QO/B3TITFdmaZrqnIN0kHQmrqf4hBvNYao819vW?=
- =?us-ascii?Q?ZdRt3KYJeMU9mz1fCnlxIcs=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e98e7261-49af-4425-c8a2-08dc9ff285c6
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 08:38:35.6296
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5KRyTcXmWzV3ZGc3QKrD/p292/y3Sn5eddM9Rea7JuGpAD+Mu5Zacsxp6w2/5NEiaPmisOLp56Upd5XOYLbv1rLNyngQgJLlKszhb+dh1BWhxDrdznNV5aThw+bY3WXS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1271
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701095505.165383-1-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Add the StarFive ISP specific metadata format
-V4L2_META_FMT_STF_ISP_PARAMS & V4L2_META_FMT_STF_ISP_STAT_3A for 3A.
+Hi Steven,
 
-Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
----
- drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
- include/uapi/linux/videodev2.h       | 4 ++++
- 2 files changed, 6 insertions(+)
+On Mon, Jul 01, 2024 at 10:54:50AM +0100, Steven Price wrote:
+> This series adds support for running Linux in a protected VM under the
+> Arm Confidential Compute Architecture (CCA). This has been updated
+> following the feedback from the v3 posting[1]. Thanks for the feedback!
+> Individual patches have a change log. But things to highlight:
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 4c76d17b4629..8770bfb31c5c 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1456,6 +1456,8 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_META_FMT_VIVID:       descr = "Vivid Metadata"; break;
- 	case V4L2_META_FMT_RK_ISP1_PARAMS:	descr = "Rockchip ISP1 3A Parameters"; break;
- 	case V4L2_META_FMT_RK_ISP1_STAT_3A:	descr = "Rockchip ISP1 3A Statistics"; break;
-+	case V4L2_META_FMT_STF_ISP_PARAMS:	descr = "StarFive ISP 3A Parameters"; break;
-+	case V4L2_META_FMT_STF_ISP_STAT_3A:	descr = "StarFive ISP 3A Statistics"; break;
- 	case V4L2_PIX_FMT_NV12_8L128:	descr = "NV12 (8x128 Linear)"; break;
- 	case V4L2_PIX_FMT_NV12M_8L128:	descr = "NV12M (8x128 Linear)"; break;
- 	case V4L2_PIX_FMT_NV12_10BE_8L128:	descr = "10-bit NV12 (8x128 Linear, BE)"; break;
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index fe6b67e83751..cfcbfe9bf973 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -841,6 +841,10 @@ struct v4l2_pix_format {
- #define V4L2_META_FMT_RK_ISP1_PARAMS	v4l2_fourcc('R', 'K', '1', 'P') /* Rockchip ISP1 3A Parameters */
- #define V4L2_META_FMT_RK_ISP1_STAT_3A	v4l2_fourcc('R', 'K', '1', 'S') /* Rockchip ISP1 3A Statistics */
- 
-+/* Vendor specific - used for StarFive JH7110 ISP camera sub-system */
-+#define V4L2_META_FMT_STF_ISP_PARAMS	v4l2_fourcc('S', 'T', 'F', 'P') /* StarFive ISP 3A Parameters */
-+#define V4L2_META_FMT_STF_ISP_STAT_3A	v4l2_fourcc('S', 'T', 'F', 'S') /* StarFive ISP 3A Statistics */
-+
- #ifdef __KERNEL__
- /*
-  * Line-based metadata formats. Remember to update v4l_fill_fmtdesc() when
--- 
-2.25.1
+Hold onto your hat, I'm going to dust off our pKVM protected guest
+changes and see what we can share here! I've left a few comments on the
+series, but the main differences seem to be:
 
+  - You try to probe really early
+  - You have that horrible split IPA space thing from the RSI spec
+
+but some of the mechanisms are broadly similar (e.g. implementing the
+set_memory_*crypted() API).
+
+Hopefully I can give your GIC changes a spin, too.
+
+Just one minor (but probably annoying) comment:
+
+>  arch/arm64/Kconfig                            |   3 +
+>  arch/arm64/include/asm/fixmap.h               |   2 +-
+>  arch/arm64/include/asm/io.h                   |   8 +-
+>  arch/arm64/include/asm/mem_encrypt.h          |  17 ++
+>  arch/arm64/include/asm/pgtable-hwdef.h        |   6 -
+>  arch/arm64/include/asm/pgtable-prot.h         |   3 +
+>  arch/arm64/include/asm/pgtable.h              |  13 +-
+>  arch/arm64/include/asm/rsi.h                  |  64 ++++++
+>  arch/arm64/include/asm/rsi_cmds.h             | 134 +++++++++++
+>  arch/arm64/include/asm/rsi_smc.h              | 142 ++++++++++++
+>  arch/arm64/include/asm/set_memory.h           |   3 +
+>  arch/arm64/kernel/Makefile                    |   3 +-
+>  arch/arm64/kernel/efi.c                       |   2 +-
+>  arch/arm64/kernel/rsi.c                       | 104 +++++++++
+>  arch/arm64/kernel/setup.c                     |   8 +
+>  arch/arm64/mm/init.c                          |  10 +-
+>  arch/arm64/mm/pageattr.c                      |  76 ++++++-
+>  drivers/firmware/psci/psci.c                  |  25 +++
+>  drivers/irqchip/irq-gic-v3-its.c              | 142 +++++++++---
+>  drivers/virt/coco/Kconfig                     |   2 +
+>  drivers/virt/coco/Makefile                    |   1 +
+>  drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
+>  drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
+>  .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211 ++++++++++++++++++
+>  include/linux/psci.h                          |   5 +
+>  25 files changed, 953 insertions(+), 44 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/mem_encrypt.h
+>  create mode 100644 arch/arm64/include/asm/rsi.h
+>  create mode 100644 arch/arm64/include/asm/rsi_cmds.h
+>  create mode 100644 arch/arm64/include/asm/rsi_smc.h
+>  create mode 100644 arch/arm64/kernel/rsi.c
+>  create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
+>  create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
+>  create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+
+Any chance of some documentation, please?
+
+Cheers,
+
+Will
 
