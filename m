@@ -1,128 +1,92 @@
-Return-Path: <linux-kernel+bounces-246141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6725D92BE0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:19:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445FA92BE13
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 981D71C22919
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:19:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F243F283DE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF52F19D07C;
-	Tue,  9 Jul 2024 15:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5422619D89F;
+	Tue,  9 Jul 2024 15:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1RPpgbzI"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="Y2RGSdut"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C340515EFBD
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5632919CCFE;
+	Tue,  9 Jul 2024 15:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538342; cv=none; b=D+7yxFacOdjav65tNHtESB0wrBcBb5uOR/vtoQyGzLwCsr+JO+CdWTuFprFqXBl0l1a2MN4UmZTMqBANmu0TKK63haFkIXDmtmPRxCTokb+VHDfxsGiakq2bt4BGI0Ok2v0TfJKXGs902uVjyRJOK4j8Y43KykgQgxjMFTaVY1o=
+	t=1720538344; cv=none; b=DWyPl6162Ytkj98PdJJ4vPGPrjncH6V3zNZz1vMYarL3lLEJh9amYRmosw58ECbzD/oz4U9xDQhehWTiMjSj6sUMAUEpfogeR2oDjCNlK93M6Sjw4J00t+RR6sqOUiZxo8Jnu/bILcNaIq3/pYGcJcag0UUjR4ctIzAsHXfKIPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538342; c=relaxed/simple;
-	bh=ojN2JmcT7kvuAEXfKcAoFG86zqUA6Rqq1vkhBEhguOg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oNIQbJewxpro7WSvkfc9BgXFMGTKs5gSHdQIfFsarLsZa8kmhQW8rY0CLkkdlpJBREAEBWKJhOJmUTT802FMdXO7IPC3FxQ0G21twzCMHJdqZWcorxUiAQvcjQOZDVzAJ/eveqnk3vNy9LlMiFcAFxGBezZAruT5pYdVF02Flrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1RPpgbzI; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-654d96c2bb5so49293337b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:19:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720538340; x=1721143140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WFa9c2fe6FXvwC1bTAk+U1J7rwHtRLarFBf2iyFVXFo=;
-        b=1RPpgbzIGzHo3yWZJf4MsJNhfbVGOR5W46lwsH9F7sdjsJc/Q64O2ZOHjRg5AXOjur
-         TjOk7MRSlsyr6otXso+gw4UZ4IxGZ7p8XdG0bdRuh/agGo+4nuNkxkz/3jGUxkutCx2P
-         EPlgZbQgRmvW1vFhiTocAtPbl3fAiivnzqFDJkp1njpS9tkhLMsBtjCvu8VFdy18ttZo
-         W3vkT6Rp+puih+IBWSyrijQ6vyf2+2gitNeYtZUWxptbb5xUnJ6UU9jCzlh3dTllU0xC
-         JtQ6UU/Ra3HHthOAtekVePEixR1y9ZrKPzlHTJP0lnlqn9zb8hzgvblHGyEsz2xcBzfH
-         F+PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720538340; x=1721143140;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WFa9c2fe6FXvwC1bTAk+U1J7rwHtRLarFBf2iyFVXFo=;
-        b=EO1z4I3/VOyQUtQvDsHZqhldIqMW5Kf/2FB36gGRAiSo3XzSuzVWNwFlZXClVe0vRz
-         10OL8FxB6+nC6xQz2WQum6CxgxptJiMf938+p6vSzy1Js1XsJBIZ/ev1wk7oS8OFsFoi
-         kgGHMB5p5f0vKlfPVgPPdvBsEQOJN+PQ5fNj5qjbzz2In+7dMibvDYqY281sypvdadVq
-         m+hx1q9x6fk6b5ad3FQUuhq/1WzLfjRaE1+bBxB4hHtWvHeMm0FHRGLlSC5fva5ekO0D
-         eXck4vSF77q5GGfO+egl8371ICmX5dHVpkmTyr8M1WPAV86POps3EWnOV8SlLr1C88yD
-         li0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWaRK367M+B+RvtecGbM35TyEPniU+NzzkwKTFhWD9FkBkDawjUlrFfgkHg7ITuZUBJjHT9BOVAMz5reW8rZ/kpUMPy7rDv4oq50OyF
-X-Gm-Message-State: AOJu0Yy3Top3hZeK0ZcvWYcWOLZaMK1AlyfH+Qk33rJf+01nB4LTNytF
-	6UkgC+vzDoJqn3iv6wwGTDxpqNbSzFqE3Cxoy2SrG+cM+/WnW2ZmrlekxTktCCr6TNIz9qA4U7N
-	L+w==
-X-Google-Smtp-Source: AGHT+IG6s2DL4z5jJ3caJ1nyKbichgc+9treufuJXMxHE5/JSZIsXGqVg7GvHDIihpvMghDuHrXil7HRN0A=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:690c:46c8:b0:62c:de05:5a78 with SMTP id
- 00721157ae682-658f01fd061mr279197b3.6.1720538339849; Tue, 09 Jul 2024
- 08:18:59 -0700 (PDT)
-Date: Tue, 9 Jul 2024 17:18:57 +0200
-In-Reply-To: <70756a7b4ed5bd32f2d881aa1a0d1e7760ce4215.1720213293.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1720538344; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=iPxpWS1Jj4wSZSWEl7tJFTsGjCE+kUY1M37DpiYLMnNrEY5iVfzUH8j5JVD5qf6hjxaDS7OppSIijfvMtTYEZc/afDAS3CdC/2FsNjvXM/TQaKMUqygRs8Wvzs6ndxWunGEdMfiiy3EFj3f8BsgZsMiPulIsH1fBvXl7vBFEGTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=Y2RGSdut; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1720538339; x=1721143139; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Y2RGSdutiUPcHwWt+lTq9NdFFAUX3PjVTRZefHmwnpucOK+uCPhOg/YShrv7YesK
+	 AdXnjU2sWRZcoFwfk/UHXALaiheMCZJmfnJnwhCCmQQixK4P1uPMP3/oV+X+YUY7h
+	 KevQ6rEZN2N1Aawws30AglFlnlZSVw+ssaRmOOvp23XEGu2QfyVln43BMTxv+U82h
+	 dE11AYawb/49su9/RQxAzNRN8odQCtxvar5QWlng+Dq+UuJUN9M+a7u0+RMkwnwHO
+	 QkLtLG1c9/an1a0vHSl7jrysmEYwCdyWITA7qQzBYFz1zQtdRfxuvgZ5DSLtvnmdq
+	 8NrFuU7L+SLf3gkLBA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.100.20] ([92.116.253.144]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MuUnK-1sADvl1MYs-017Nqb; Tue, 09
+ Jul 2024 17:18:59 +0200
+Message-ID: <268b039f-b810-496a-8c9f-a9db1f833e74@gmx.de>
+Date: Tue, 9 Jul 2024 17:18:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <36958dbc486e1f975f4d4ecdfa51ae65c2c4ced0.1720213293.git.fahimitahera@gmail.com>
- <70756a7b4ed5bd32f2d881aa1a0d1e7760ce4215.1720213293.git.fahimitahera@gmail.com>
-Message-ID: <Zo1U4dX-kGcm0hHA@google.com>
-Subject: Re: [PATCH v1 2/2] Landlock: Signal scoping tests
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: mic@digikod.net, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bjorn3_gh@protonmail.com, jannh@google.com, outreachy@lists.linux.dev, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:ZsCCciyRw7X8jqtGN97V3oAJdeXwjjym+NpSKqqoBDgrzpinzAR
+ SlysNkVEX0ZZrdtQJ5cVdTQC+UMXuXfDQOcFzAHdgPeRDyWfDa7yMg5t7lU8MDeNCfGJwCB
+ WSC0xTgo1McPAoUyT08J2uYpBIjZLEany6BroLo34ob2aCc1iJFQqNUP83ZAVlAk8AtO7bI
+ ZwrmhsWDIMS9X/yJxA4wg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/9AxidmAcGw=;QG2AUrJjt83Oq9cYeVHBCT5zW8q
+ ZHsDkDp0XEuVG04LfueEvu+ufKRlGYXhoQzfDL19bWgg4jc6VuBFKih0G9jThiTUM3sI+X/7E
+ gAOkB2cAQPIaH7kazfC3K83n/dwqZO68nHHJiL6z91OOXqR2u22NPfUOdnvONrZSkrXim21f8
+ Zem/ngO2sG3dprW6KXAwaXwLp8QuIhOP1jDvKOOy/qBvN4eQGzA/5hopYz8KUAZlFomNuquHb
+ EDYAh4FADRJ8hhJnbUEUUsx6uJf4D9R+7CElKQCrBytoA4zPhgGGyqASe01BcBpmxclsG0zEE
+ HxDUqIVz2mwonZ9jAHicEGj8nOiIo/UdEI4BdNyZpeJeIkQENnw2cCpq+6rv40VejSHtWLZf3
+ 01M3e2oOFfHTVwhm1wN/LCy29bfqLPuKt+q0xB+HpfMClkYCpIhqxArAHab0Z9I9PqXFZDgXF
+ /N410iur8L9Hz4bVRHRqFBahQWl0LXjSlyxb3is67/bTyoaoDHKKQB87zedHb34Qr+5YHwQNI
+ 5Iuz7xZCNkMHmoQfbZTd8du9pVYsSATNOZabz6axOvBnUk/ErFp5l9N1T9fR4Qiv7D7c1KB16
+ /iTU7ehqTdd8iCbIM9gqAYD4gnzL2crDlqOwFB/LKmfs2rbhdmYFQQ9eW1afDP3OVkbdn1/Gb
+ N5N7a/0HuAfMmnnhF6H2UGUU1Rjnb4dmrW6wB6o21uN976Xw+dFoYjHi71k0zs5Zw0EcxiBhi
+ 8SqeaCIr3Byi1kZ6WXvWZnABSMN8txPCxE6n/UUJo+FkfSixwLZOZBgZIPlud9IJzob3qNEyQ
+ Fz3kNw+aZUzcS9f1Th6R2Pmg==
 
-On Fri, Jul 05, 2024 at 03:21:43PM -0600, Tahera Fahimi wrote:
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
->  .../testing/selftests/landlock/ptrace_test.c  | 216 ++++++++++++++++++
->  1 file changed, 216 insertions(+)
->=20
-> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testi=
-ng/selftests/landlock/ptrace_test.c
-> index a19db4d0b3bd..e092b67f8b67 100644
-> --- a/tools/testing/selftests/landlock/ptrace_test.c
-> +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> [...]
+Hi Greg
 
-> +static void scope_signal_handler(int sig, siginfo_t *info, void *ucontex=
-t)
-> +{
-> +	if (sig =3D=3D SIGHUP || sig =3D=3D SIGURG || sig =3D=3D SIGTSTP || sig=
- =3D=3D SIGTRAP)
-> +		signaled =3D 1;
-> +
-> +	// signal process group
-> +	//kill(-(t->pid), SIGKILL);
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-There is commented-out code like this in various places in this patch.
+Thanks
 
-I am pretty sure that scripts/checkpatch.pl should flag that.
-See https://docs.kernel.org/dev-tools/checkpatch.html
-and https://docs.kernel.org/process/submitting-patches.html#style-check-you=
-r-changes
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
-I personally just keep a checklist of things to remember before sending a p=
-atch.
-(rebase as needed, clang-format -i (for Landlock files), run tests, check c=
-ommit
-metadata, git format-patch with -v and --cover-letter, scripts/checkpatch.p=
-l,
-edit cover letter, git send-email)
-
-=E2=80=94G=C3=BCnther
 
